@@ -39,7 +39,7 @@ import AvatarPlat from "@/components/AvatarPlat";
 import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 import { useTransClient } from "@/app/i18n/client";
 import AddAccountModal from "../AddAccountModal";
-import { getIpLocation, IpLocationInfo, formatLocationInfo } from "@/utils/ipLocation";
+import { getIpLocation, IpLocationInfo, formatLocationInfo, extractCountry } from "@/utils/ipLocation";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -194,7 +194,7 @@ const SpaceInfoCard = ({
                   cursor: 'help',
                   fontWeight: '500'
                 }}>
-                  {currentSpace.ip} | {currentSpace.location}
+                  {extractCountry(currentSpace.location)} | {currentSpace.ip}
                 </span>
               </Tooltip>
             </div>
@@ -256,8 +256,6 @@ const UserManageModal = memo(
       const [cutLoading, setCutLoading] = useState(false);
       const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
       const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
-      const [chooseGroupOpen, setChooseGroupOpen] = useState(false);
-      const [chosenGroupId, setChosenGroupId] = useState<string | undefined>(undefined);
       const preAccountIds = useRef<Set<string>>(new Set());
       const pendingGroupIdRef = useRef<string | null>(null);
       const isAssigningRef = useRef(false);
@@ -266,7 +264,7 @@ const UserManageModal = memo(
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
           {
-            title: "账号",
+            title: t("userManageModal.account"),
             render: (text, am) => {
               return (
                 <div
@@ -287,7 +285,7 @@ const UserManageModal = memo(
             key: "nickname",
           },
           {
-            title: "平台",
+            title: t("userManageModal.platform"),
             render: (text, am) => {
               const platInfo = AccountPlatInfoMap.get(am.type)!;
               return (
@@ -337,7 +335,7 @@ const UserManageModal = memo(
             key: "nickname",
           },
           {
-            title: "所属列表",
+            title: t("userManageModal.space"),
             render: (text, am) => {
               return (
                 <UserGroupSelect
@@ -410,13 +408,14 @@ const UserManageModal = memo(
       };
       useImperativeHandle(ref, () => imperativeHandle);
 
-      const openAddAccountFlow = async () => {
+      const openAddAccountFlow = async () => { 
         const currentGroupId = activeGroup;
         close();
         if (currentGroupId === allUser.current) {
-          setChosenGroupId(accountGroupList[0]?.id);
-          setChooseGroupOpen(true);
+          // 如果选择的是"全部账号"，需要用户选择空间
+          setIsAddAccountOpen(true);
         } else {
+          // 如果选择的是具体空间，直接使用该空间
           pendingGroupIdRef.current = currentGroupId;
           setTargetGroupIdForModal(currentGroupId);
           if ((useAccountStore.getState().accountList || []).length === 0) {
@@ -586,34 +585,7 @@ const UserManageModal = memo(
               </div>
             </Spin>
           </Modal>
-          <Modal
-            open={chooseGroupOpen}
-            title={t("chooseSpace" as any)}
-            onCancel={() => setChooseGroupOpen(false)}
-            onOk={async () => {
-              if (!chosenGroupId) return message.warning(t("pleaseChooseSpace" as any));
-              pendingGroupIdRef.current = chosenGroupId;
-              setTargetGroupIdForModal(chosenGroupId);
-              if ((useAccountStore.getState().accountList || []).length === 0) {
-                await getAccountList();
-              }
-              preAccountIds.current = new Set(
-                (useAccountStore.getState().accountList || []).map((v) => v.id),
-              );
-              snapshotReadyRef.current = true;
-              setChooseGroupOpen(false);
-              setIsAddAccountOpen(true);
-            }}
-            width={420}
-          >
-            <Select
-              style={{ width: "100%" }}
-              placeholder={t("pleaseChooseSpace" as any)}
-              value={chosenGroupId}
-              onChange={setChosenGroupId}
-              options={accountGroupList.map((g) => ({ value: g.id, label: g.name }))}
-            />
-          </Modal>
+
 
           <AddAccountModal
             open={isAddAccountOpen}
@@ -633,6 +605,7 @@ const UserManageModal = memo(
               }
             }}
             targetGroupId={targetGroupIdForModal}
+            showSpaceSelector={activeGroup === allUser.current}
           />
         </>
       );

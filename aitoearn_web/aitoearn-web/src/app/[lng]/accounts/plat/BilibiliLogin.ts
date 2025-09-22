@@ -28,12 +28,14 @@ export async function bilibiliSkip(platType: PlatType) {
 export function bilibiliLogin(taskId:any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
+        let pollCount = 0;
+        const maxPollCount = 30; // 最大轮询次数
 
         // 开始轮询检查授权状态
         const checkAuthStatus = async () => {
           try {
+            pollCount++;
             const authRess:any = await apiCheckBilibiliAuth(taskId);
-            console.log('authRess', authRess);
             let authRes = authRess;
             if (authRes?.code === 0 && authRes?.data.status == 1) {
               // message.success('授权成功');
@@ -43,6 +45,13 @@ export function bilibiliLogin(taskId:any): Promise<any> {
               resolve(authRes);
               return true;
             }
+            
+            // 检查是否达到最大轮询次数
+            if (pollCount >= maxPollCount) {
+              console.log('达到最大轮询次数，停止轮询');
+              return true;
+            }
+            
             // return false;
           } catch (error) {
             console.error('检查授权状态失败:', error);
@@ -55,6 +64,9 @@ export function bilibiliLogin(taskId:any): Promise<any> {
           const isSuccess = await checkAuthStatus();
           if (isSuccess) {
             clearInterval(interval);
+            if (pollCount >= maxPollCount) {
+              reject(new Error('授权超时，已达到最大轮询次数'));
+            }
           }
         }, 2000);
 

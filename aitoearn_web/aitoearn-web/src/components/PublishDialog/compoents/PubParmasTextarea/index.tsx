@@ -25,6 +25,7 @@ import VideoCoverSeting from "@/components/PublishDialog/compoents/PubParmasText
 import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload";
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubType } from "@/app/config/publishConfig";
+import { useTransClient } from "@/app/i18n/client";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -89,6 +90,7 @@ const PubParmasTextarea = memo(
         effect: true,
         sort: true,
       });
+      const { t } = useTransClient("publish");
 
       useEffect(() => {
         if (isFirst.current.effect) {
@@ -437,7 +439,7 @@ const PubParmasTextarea = memo(
                   style={{ marginTop: "10px" }}
                   onClick={() => setVideoCoverSetingModal(true)}
                 >
-                  裁剪封面
+                  {t("actions.cropCover")}
                 </Button>
               )}
             </div>

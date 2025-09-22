@@ -12,6 +12,9 @@ export interface AppDownloadConfig {
   tips: string[];
 }
 
+// 主应用下载配置
+export const MAIN_APP_DOWNLOAD_URL = "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk";
+
 export const APP_DOWNLOAD_CONFIGS: Record<string, AppDownloadConfig> = {
   xhs: {
     platform: "小红书",

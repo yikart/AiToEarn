@@ -158,6 +158,10 @@
     "imageSizeLimit": "图片大小限制",
     "imageSizeLimitValue": "小于30MB",
     "imageFormatSupport": "支持格式",
-    "imageFormatSupportValue": "JPG, PNG, WEBP"
+    "imageFormatSupportValue": "JPG, PNG, WEBP",
+    "estimatedCreditCost": "预计消耗积分",
+    "credits": "积分",
+    "getImageModelsFailed": "获取图片生成模型失败",
+    "getVideoModelsFailed": "获取视频生成模型失败"
   }
 }

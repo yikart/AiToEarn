@@ -7,6 +7,9 @@ import KwaiParams from "@/components/PublishDialog/compoents/PlatParamsSetting/p
 import FacebookParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/FacebookParams";
 import InstagramParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/InstagramParams";
 import YouTubeParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/YouTubeParams";
+import WxGzhParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/WxGzhParams";
+import PinterestParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/PinterestParams";
+import TikTokParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/TikTokParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 
@@ -41,12 +44,18 @@ const PlatParamsSetting = memo(
             return <KwaiParams pubItem={pubItem} />;
           case PlatType.BILIBILI:
             return <BilibParams pubItem={pubItem} />;
+          case PlatType.WxGzh:
+            return <WxGzhParams pubItem={pubItem} />;
           case PlatType.Facebook:
             return <FacebookParams pubItem={pubItem} />;
           case PlatType.Instagram:
             return <InstagramParams pubItem={pubItem} />;
           case PlatType.YouTube:
             return <YouTubeParams pubItem={pubItem} />;
+          case PlatType.Pinterest:
+            return <PinterestParams pubItem={pubItem} />;
+          case PlatType.Tiktok:
+            return <TikTokParams pubItem={pubItem} />;
           default:
             return <KwaiParams pubItem={pubItem} />;
         }

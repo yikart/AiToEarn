@@ -27,6 +27,8 @@ export const useNotification = () => {
     }
   }, [token]);
 
+  // @@.@@
+
   useEffect(() => {
     // 初始获取
     fetchUnreadCount();
@@ -34,7 +36,7 @@ export const useNotification = () => {
     // 每10秒获取一次未读数量
     const interval = setInterval(() => {
       fetchUnreadCount();
-    }, 60000);
+    }, 20000);
 
     return () => {
       clearInterval(interval);

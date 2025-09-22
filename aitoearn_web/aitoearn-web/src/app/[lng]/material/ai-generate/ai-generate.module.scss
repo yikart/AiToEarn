@@ -12,7 +12,7 @@
   margin-bottom: 24px;
   padding: 16px;
   background-color: #f8f9fa;
-  border-radius: 12px;
+  
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
 
@@ -66,10 +66,91 @@
 
 .content {
   background-color: #f8f9fa;
-  border-radius: 12px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+// 新增：左右主布局
+.mainLayout {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  min-height: 100%;
+}
+
+.leftSidebar {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.06);
+  
+  display: flex;
+  flex-direction: column;
+}
+
+.moduleTabs {
+  display: flex;
+  gap: 1px;
+}
+
+.moduleTab {
+  flex: 1;
+  height: 44px;
+  border: none;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s ease;
+  color: #666;
+
+  :global {
+    .anticon {
+      font-size: 18px;
+      color: inherit;
+      transition: color .2s ease;
+    }
+  }
+}
+
+.moduleTab:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+.moduleTabActive {
+  /* 顶部图片/视频切换：更浅的选中底色，与下方子菜单区分 */
+  background: rgba(166,106,228,.1);
+  color: var(--theColor5);
+
+  :global {
+    .anticon { color: var(--theColor5); }
+  }
+}
+
+// 新增：图片子菜单
+.imageSubTabs {
+  display: flex;
+  flex-direction: column;
+}
+
+.subTab {
+  width: 100%;
+  height: 70px;
+  border: none;
+  background: #fafafa;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all .2s ease;
+  padding: 6px 4px;
+}
+
+.subTab:hover { background: #f0f1f3; }
+.subTabActive { background: rgba(166,106,228,.3); color: var(--theColor5); border-color: transparent; }
+
+.rightContent {
+  background: #f8f9fa;
+
 }
 
 .tabs {
@@ -113,9 +194,66 @@
 .section {
   padding: 20px;
   border: 1px solid rgba(0, 0, 0, 0.05);
-  border-radius: 12px;
+  
   background-color: #fff;
 }
+
+// 新增：textToImage 左右分栏
+.twoColumn { display: grid; grid-template-columns: 399px 1fr; gap: 16px; }
+.leftPanel { display: flex; flex-direction: column; gap: 12px; }
+.rightPanel { }
+
+.blockTitle { font-size: 14px; color: #999; }
+
+.modelList { display: flex; flex-direction: column; gap: 8px; }
+.modelSelect { position: relative; }
+.modelSelectBtn { width: 100%; display: flex; gap: 10px; align-items: center; padding: 10px; border: 1px solid rgba(0,0,0,.06); background: #fff; cursor: pointer; }
+.modelCaret { margin-left: auto; color: #999; }
+.modelDropdown { position: absolute; left: 0; right: 0; top: calc(100% + 6px); background: #fff; border: 1px solid rgba(0,0,0,.1); box-shadow: 0 8px 24px rgba(0,0,0,.08); z-index: 10; border-radius: 8px; }
+.modelListScrollable { max-height: 340px; overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+.modelItem {
+  display: flex; gap: 10px; padding: 10px; border: 1px solid rgba(0,0,0,.06); background: #fafafa; cursor: pointer; transition: all .2s ease;
+}
+.modelItem:hover { background: #f0f1f3; }
+.modelItemActive { background: rgba(166,106,228,.12); border-color: rgba(166,106,228,.25); }
+.modelIcon { width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; color: var(--theColor5); }
+.modelMain { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.modelHeader { display: flex; align-items: center; gap: 6px; }
+.modelName { font-size: 14px; color: #333; font-weight: 500; }
+.modelTag { font-size: 11px; color: #fff; background: var(--theColor5); padding: 1px 6px; border-radius: 10px; }
+.modelDesc { font-size: 12px; color: #666; }
+.modelMeta { font-size: 12px; color: #999; }
+
+.exampleChips { display: flex; flex-wrap: wrap; gap: 8px; }
+.exampleChip { padding: 4px 8px; border-radius: 12px; background: #f5f6f8; color: #555; cursor: pointer; }
+.exampleChip:hover { background: #eef0f2; }
+
+.pillRow { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.pillGroupBox { background: rgba(166,106,228,.08); border: 1px solid rgba(166,106,228,.15); border-radius: 10px; padding: 6px; }
+.pillGroup { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.pill { height: 36px; border-radius: 8px; background: #fff; border: 1px solid rgba(166,106,228,.2); color: var(--theColor5); cursor: pointer; transition: all .15s ease; }
+.pill:hover { background: rgba(166,106,228,.12); }
+.pillActive { background: var(--theColor5); color: #fff; border-color: transparent; }
+
+// 示例轮播
+.sampleCarousel { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center; }
+.sampleStage { position: relative; width: 100%; aspect-ratio: 16/10; background: #2a2a2a; border-radius: 8px; overflow: hidden; }
+.sampleStage img { width: 100%; height: 100%; object-fit: cover; }
+.samplePrev, .sampleNext { position: absolute; top: 50%; transform: translateY(-50%); width: 36px; height: 36px; border-radius: 18px; background: rgba(0,0,0,.4); color: #fff; border: none; cursor: pointer; }
+.samplePrev { left: 10px; }
+.sampleNext { right: 10px; }
+.sampleDots { display: flex; gap: 6px; }
+.sampleDot { width: 6px; height: 6px; border-radius: 3px; background: #c9c9c9; cursor: pointer; }
+.sampleDotActive { background: var(--theColor5); }
+
+// 视频首尾帧上传面板
+.uploadPanel { display: flex; align-items: center; gap: 12px; width: 100%; }
+.uploadCard { flex: 1; height: 120px; border: 1px dashed rgba(0,0,0,.15); border-radius: 8px; background: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
+.uploadCard img { width: 100%; height: 100%; object-fit: cover; }
+.uploadPlaceholder { display: flex; flex-direction: column; align-items: center; gap: 8px; color: #999; }
+.uploadIcon { width: 28px; height: 28px; border-radius: 14px; background: rgba(166,106,228,.12); color: var(--theColor5); display: inline-flex; align-items: center; justify-content: center; font-weight: 600; }
+.uploadText { font-size: 12px; color: #666; }
+.swapIcon { color: #bbb; }
 
 .form {
   display: flex;
@@ -190,12 +328,25 @@
   gap: 16px;
 }
 
+// 调整复选框标签为小字、同一行对齐
+.options label {
+  font-size: 12px;
+  color: #666;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.options label input[type="checkbox"] {
+  margin: 0;
+}
+
 .polling {
   margin-top: 16px;
   text-align: center;
   padding: 24px;
   background-color: #f8f9fa;
-  border-radius: 12px;
+  
   animation: fadeIn 0.3s ease;
   border: 1px solid rgba(0, 0, 0, 0.05);
 
@@ -212,11 +363,10 @@
 }
 
 .result {
-  margin-top: 16px;
   text-align: center;
-  padding: 16px;
+  padding: 8px;
   border: 1px dashed rgba(0, 0, 0, 0.1);
-  border-radius: 12px;
+  
   animation: fadeIn 0.3s ease;
   background-color: #fff;
 
@@ -227,96 +377,37 @@
   }
 }
 
+.imageCard { position: relative; width: 100%; border-radius: 8px; overflow: hidden; }
+.imageCard img { width: 100%; height: 100%; max-height: 100vh; object-fit: cover; display: block; }
+.imageActions { position: absolute; right: 8px; bottom: 8px; display: flex; gap: 6px; }
+
 // 模板选择网格
 .templateGrid {
   display: flex;
-  gap: 12px;
-  overflow-x: auto;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 4px 0;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
-
-  &::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-  }
-
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(0, 0, 0, 0.3);
-  }
 }
 
 .templateCard {
-  border: 2px solid rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 8px;
   background: #fff;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  flex-shrink: 0;
-  width: 160px;
-
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
-  }
+  transition: all 0.15s ease;
+  padding: 6px 10px;
 }
 
-.templateCardActive {
-  border-color: var(--theColor5) !important;
-  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.2), 0 4px 12px rgba(166, 106, 228, 0.15) !important;
-  transform: translateY(-1px);
-  position: relative;
+.templateCard:hover { border-color: var(--theColor5); box-shadow: 0 2px 10px rgba(166,106,228,.12); }
+.templateCardActive { background: rgba(166,106,228,.12); border-color: var(--theColor5); }
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    border: 2px solid var(--theColor5);
-    border-radius: 12px;
-    pointer-events: none;
-    animation: pulse 2s infinite;
-  }
-}
+.templateThumb { width: 22px; height: 22px; border-radius: 4px; overflow: hidden; background: #f6f7f9; display: flex; align-items: center; justify-content: center; }
+.templateThumb img { width: 100%; height: 100%; object-fit: cover; }
 
-.templateThumb {
-  position: relative;
-  width: 100%;
-  /* 维持 800x500 比例 = 5:3 */
-  padding-top: 62.5%;
-  background: #f6f7f9;
-
-  img {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.templateLabel {
-  padding: 10px 12px;
-  font-size: 13px;
-  color: #444;
-  text-align: left;
-  font-weight: 500;
-  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
-}
+.templateLabel { font-size: 12px; color: #444; font-weight: 500; }
 
 @keyframes fadeIn {
   from {
@@ -350,6 +441,9 @@
   .content {
     padding: 16px;
   }
+
+  .mainLayout { grid-template-columns: 1fr; }
+  .leftSidebar { flex-direction: row; }
 
   .tabs {
     :global {

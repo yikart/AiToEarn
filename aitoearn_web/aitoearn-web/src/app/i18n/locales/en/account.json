@@ -9,7 +9,7 @@
   "newWork": "New Work",
   "allPlatforms": "All Platforms",
   "accountManager": "Acct Manager",
-  "addAccount": "Add Account",
+  "addAccount": "Add Channels",
   "mcpManager": "MCP Manager",
   "online": "Online",
   "offline": "Offline",
@@ -25,7 +25,10 @@
   "unknownAccount": "Unknown Account",
   "addAccountModal": {
     "title": "Add Account",
-    "subtitle": "Select Platform"
+    "subtitle": "Select Platform",
+    "currentSpace": "Current Space",
+    "pleaseChooseSpaceFirst": "Please choose a space first",
+    "addTo": "Add to:"
   },
   "facebookPages": {
     "title": "Select Facebook Pages",
@@ -43,7 +46,13 @@
     "title": "Publish Plans",
     "recordCount": "{{count}} plans total",
     "newWork": "New Work",
-    "noRecords": "No publish plans"
+    "noRecords": "No publish plans",
+    "queue": "Queue",
+    "sent": "Sent",
+    "createdDaysAgo": "You created this {{days}} days ago",
+    "viewPost": "View Post",
+    "noSentPosts": "No sent posts",
+    "selectAccountFirst": "Please select an account first"
   },
   "chooseSpace": "Choose Space",
   "pleaseChooseSpace": "Please choose a space",
@@ -53,5 +62,48 @@
     "loading": "Getting IP info...",
     "error": "Failed to get IP info",
     "tooltip": "ASN: {{asn}}\nOrganization: {{org}}"
-  }
+  },
+  "createSpace": {
+    "title": "Add space",
+    "button": "Add space",
+    "name": "Channel Name",
+    "namePlaceholder": "Enter channel name",
+    "cancel": "Cancel",
+    "save": "Save",
+    "success": "Channel created successfully",
+    "failed": "Failed to create channel",
+    "nameRequired": "Please enter channel name"
+  },
+  "locationRestriction": {
+    "cnSpace": "Current space is in China region, only domestic platforms are shown",
+    "nonCnSpace": "Current space is in non-China region, domestic platforms are temporarily unavailable"
+  },
+  "userManageSidebar": {
+    "allAccounts": "All Accounts",
+    "spaces": "Spaces",
+    "createSpace": "Create Space",
+    "spaceNamePlaceholder": "Enter space name",
+    "cannotOperateDefault": "Cannot operate default list",
+    "rename": "Rename",
+    "delete": "Delete",
+    "confirmDelete": "Confirm",
+    "confirmDeleteContent": "Please confirm to delete the list:",
+    "deleteSuccess": "Deleted successfully",
+    "createSpaceTitle": "Create Space",
+    "renameSpaceTitle": "Rename Space",
+    "cancel": "Cancel",
+    "save": "Save",
+    "spaceName": "Space Name"
+  },
+  "userManageModal": {
+    "account": "Account",
+    "platform": "Platform",
+    "space": "Space"
+  },
+  "rednote": "Rednote",
+  "kwai": "Kwai",
+  "bilibili": "Bilibili",
+  "wxgzh": "WeChat Official Account",
+  "douyin": "Douyin",
+  "wxsph": "WeChat Channels"
 }

@@ -14,6 +14,7 @@ export interface UserInfo {
   avatar?: string;
   isVip?: boolean;
   score?: number;
+  income?: number; // 余额字段
   popularizeCode?: string;
   vipInfo?: {
     id: string;

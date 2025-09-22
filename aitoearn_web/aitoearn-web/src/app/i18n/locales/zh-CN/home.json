@@ -4,13 +4,14 @@
     "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
   },
   "header": {
-    "logo": "Aitorarn",
+    "logo": "Aitoearn",
     "nav": {
       "marketplace": "市场",
       "pricing": "价格",
       "status": "状态",
-      "docs": "问题",
-      "blog": "博客"
+      "docs": "文档",
+      "blog": "博客",
+      "download": "下载"
     },
     "getStarted": "立即开始"
   },
@@ -20,59 +21,120 @@
     "github": "GitHub",
     "title": "成为最好用的内容营销\nAI Agent",
     "subtitle": "从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。",
-    "getStarted": "立即开始"
+    "getStarted": "立即开始",
+    "useMobilePhone": "使用移动设备"
   },
   "brandBar": {
     "title": "支持的社交媒体平台"
   },
   "buildSection": {
-    "badge": "灵感创意",
-    "title": "灵感枯竭?",
-    "titleBlue": "来看看全网有哪些热点吧",
+    "badge": "功能1",
+    "title": "Content Publishing — 一键发布 · 多平台触达",
+    "titleBlue": "从创意灵感到多平台分发，再到数据分析和商业化",
     "features": {
       "hotTopic": {
-        "title": "AI热点抓取，全网热点一网打尽",
-        "description": "通过AI抓取全网热点，AI分析一键生成同款爆款内容,热点流量一网打尽"
+        "title": "多平台分发",
+        "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。"
       },
       "international": {
-        "title": "国际站：YouTube 、 TikTok 、 Facebook 、 Instagram 、 LinkedIn 、 X (Twitter) 、 Rednote",
-        "description": "海外站热点抓取，让你第一时间了解最新动态"
+        "title": "日历编排",
+        "description": "像操作日历一样规划内容，实现多平台协同发布。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "hotspotSection": {
+    "badge": "功能2",
+    "title": "Content Hotspot — 爆款灵感引擎",
+    "titleBlue": "爆款案例库与趋势捕捉",
+    "features": {
+      "hotTopic": {
+        "title": "爆款案例库",
+        "description": "随时查看他人如何打造 10,000+ 点赞的内容。"
       },
-      "domestic": {
-        "title": "国内站：抖音 、 快手 、 微信 、 Bilibili",
-        "description": "支持国内站的热点抓取，让你不错过每一条热点流量"
+      "international": {
+        "title": "趋势捕捉",
+        "description": "快速发现流行趋势，降低创作焦虑。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "searchSection": {
+    "badge": "功能3",
+    "title": "Content Search — 品牌与市场洞察",
+    "titleBlue": "品牌监控与内容搜索",
+    "features": {
+      "hotTopic": {
+        "title": "品牌监控",
+        "description": "实时追踪品牌相关讨论，第一时间响应。"
+      },
+      "international": {
+        "title": "内容搜索",
+        "description": "找到目标帖子和话题，高效互动，精准拓展市场。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "commentsSection": {
+    "badge": "功能4",
+    "title": "Comments Search — 精准用户挖掘",
+    "titleBlue": "智能评论搜索与精准转化",
+    "features": {
+      "hotTopic": {
+        "title": "智能评论搜索",
+        "description": "快速发现\"求链接\"\"怎么购买\"等高转化信号。"
+      },
+      "international": {
+        "title": "精准转化",
+        "description": "主动回复，提升流量变现效率。"
       }
     },
     "carouselHint": "使用滚轮切换图片"
   },
   "connectSection": {
-    "badge": "功能介绍",
-    "title": "自媒体运营平台一站式解决方案",
-    "titleBlue": "从灵感创意到内容制作，从内容分发到内容互动管理",
+    "badge": "功能5",
+    "title": "Content Engagement — 互动与增长引擎",
+    "titleBlue": "统一后台与主动运营",
     "features": {
       "creation": {
-        "title": "内容创作",
-        "description": "AI内容创作，AI图片生成，图文创作等AI能力，让你的内容更加生动有趣"
+        "title": "统一后台",
+        "description": "集中管理所有内容，互动零遗漏。"
       },
       "distribution": {
-        "title": "内容分发",
-        "description": "支持国内外多平台分发，让你的内容触达更多用户，一键式管理，让你的内容触达更多用户"
-      },
-      "interaction": {
-        "title": "内容互动管理",
-        "description": "支持国内外多平台互动管理，让你的内容互动更加高效，一键式管理，让你的内容互动更加高效"
-      },
-      "analytics": {
-        "title": "数据分析",
-        "description": "支持国内外多平台数据分析，让你的数据分析更加高效，一键式管理，让你的数据分析更加高效"
+        "title": "主动运营",
+        "description": "参与热门话题，与潜在用户双向互动。把\"被动内容运营\"变成\"主动流量经营\"。"
       }
     },
     "carouselHint": "使用滚轮切换图片"
   },
+  "upcomingSection": {
+    "badge": "即将上线",
+    "title": "AI 驱动的全链路内容增长与变现平台",
+    "titleBlue": "即将上线功能，敬请期待",
+    "features": {
+      "smartImport": {
+        "title": "智能导入",
+        "description": "直接导入历史内容，快速编辑、二次分发。例如：小红书创作者可一键同步到 YouTube，让更多用户看到。"
+      },
+      "analytics": {
+        "title": "Content Analytics — 全景化数据视图",
+        "description": "多平台对比：一个平台不给流量，不代表所有平台不给。全链路监控：追踪内容表现，助力打造下一个百万博主。"
+      },
+      "aiCreation": {
+        "title": "AI Content Creation — 全流程 AI 助手",
+        "description": "AI 文案生成：自动生成标题、描述，高效产出。AI 评论生成：主动出击，获取流量。图文卡片生成，全流程加速创作。支持主流 AI 视频模型和图片模型。"
+      },
+      "marketplace": {
+        "title": "Content Marketplace — 内容交易与变现",
+        "description": "创作者变现：在平台直接出售内容，让优质作品快速找到买家。品牌采购：企业可直接购买现成内容，节省时间与成本。让创作变成收益 —— Let's use AI to earn. Let's earn money together!"
+      }
+    }
+  },
   "downloadSection": {
     "title": "随时随地开始创作",
     "titleBlue": "移动端也能轻松管理",
-    "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供 iOS 和 Android 移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+    "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供App移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+    "qrCodeText": "扫描二维码下载",
     "appStore": {
       "text": "Download on the",
       "store": "App Store"
@@ -131,6 +193,8 @@
       "wechat": "微信群组",
       "community": "创作者交流群"
     },
+    "wechatPopup": "扫码关注微信公众号",
+    "communityPopup": "扫码加入社区群",
     "stats": {
       "downloads": {
         "number": "20万+",
@@ -152,6 +216,7 @@
       "links": {
         "docs": "文档",
         "blog": "博客",
+        "download": "下载",
         "education": "教育",
         "partner": "合作伙伴",
         "support": "服务支持",

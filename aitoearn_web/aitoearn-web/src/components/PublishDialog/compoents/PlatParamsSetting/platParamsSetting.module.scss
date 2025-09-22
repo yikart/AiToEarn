@@ -40,3 +40,38 @@
   align-items: center;
   height: 32px;
 }
+
+// 自定义Tooltip样式 - 白色背景
+.tooltipOverride {
+  :global {
+    .ant-tooltip .ant-tooltip-inner {
+      background-color: #ffffff !important;
+      color: #333333 !important;
+      border: 1px solid #d9d9d9 !important;
+      box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08), 0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .ant-tooltip .ant-tooltip-arrow::before {
+      background-color: #ffffff !important;
+      border: 1px solid #d9d9d9 !important;
+    }
+  }
+}
+
+// 全局Tooltip样式覆盖
+.globalTooltipOverride {
+  :global {
+    .ant-tooltip .ant-tooltip-inner {
+      background-color: #ffffff !important;
+      color: #333333 !important;
+      border: 1px solid #d9d9d9 !important;
+    }
+    
+    .ant-tooltip .ant-tooltip-arrow::before {
+      background-color: #ffffff !important;
+      border: 1px solid #d9d9d9 !important;
+    }
+  }
+}
+    
+

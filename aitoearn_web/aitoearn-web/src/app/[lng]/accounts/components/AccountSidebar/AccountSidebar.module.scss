@@ -12,6 +12,11 @@
   }
 
   :global {
+    .ant-collapse {
+      height: 100%;
+      overflow: auto;
+    }
+
     .ant-skeleton-paragraph {
       margin-top: 15px !important;
     }
@@ -90,7 +95,7 @@
     }
 
     .accountSidebar-footer {
-      padding: 5px 0;
+      padding: 10px;
       border-top: 1px solid var(--grayColor3);
       text-align: center;
     }
@@ -169,8 +174,6 @@
     }
 
     .ant-collapse {
-      overflow: auto;
-      height: 100%;
       border: none;
       background: transparent;
       .ant-collapse-content-box {
@@ -357,6 +360,8 @@
       overflow: hidden;
       position: relative;
       padding: 10px;
+      display: flex;
+      flex-direction: column;
 
       &-head {
         display: flex;

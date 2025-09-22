@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
 import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
+import SignInCalendar from "@/components/SignInCalendar";
 
 export interface ILyaoutHeaderRef {}
 
@@ -42,20 +43,8 @@ function UserInfo() {
         </div>
       ),
     },
-    // {
-    //   key: "2",
-    //   label: (
-    //     <div
-    //       onClick={() => {
-    //         router.push("/notification");
-    //       }}
-    //     >
-    //       {t("header.messages")}
-    //     </div>
-    //   ),
-    // },
     {
-      key: "3",
+      key: "5",
       label: (
         <div
           onClick={() => {
@@ -67,7 +56,7 @@ function UserInfo() {
       ),
     },
     {
-      key: "4",
+      key: "6",
       label: (
         <div
           onClick={() => {
@@ -79,7 +68,44 @@ function UserInfo() {
       ),
     },
     {
-      key: "5",
+      key: "2",
+      label: (
+        <div
+          onClick={() => {
+            router.push("/income");
+          }}
+        >
+          {t("header.income" as any)}
+        </div>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <div
+          onClick={() => {
+            router.push("/wallet");
+          }}
+        >
+          {t("header.wallet" as any)}
+        </div>
+      ),
+    },
+    // {
+    //   key: "4",
+    //   label: (
+    //     <div
+    //       onClick={() => {
+    //         router.push("/notification");
+    //       }}
+    //     >
+    //       {t("header.messages")}
+    //     </div>
+    //   ),
+    // },
+
+    {
+      key: "7",
       label: (
         <div
           onClick={() => {
@@ -157,6 +183,9 @@ const LyaoutHeader = memo(
                 {userStore.lang === "zh-CN" ? "EN" : "中文"}
               </Button>
               <NoSSR>
+                {userStore.token && (
+                  <SignInCalendar className={styles.signInCalendarButton} />
+                )}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
                     <Button

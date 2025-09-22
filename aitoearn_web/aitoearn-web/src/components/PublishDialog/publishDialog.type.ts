@@ -45,6 +45,10 @@ export interface IPlatOption {
     // 如果copyright为转载，则此字段表示转载来源
     source?: string;
   };
+  wxGzh?: {
+    // 平台独立标题，仅用于微信公众号
+    title?: string;
+  };
   facebook?: {
     // 页面ID，由获取Facebook页面信息接口得到
     page_id?: string;
@@ -62,6 +66,24 @@ export interface IPlatOption {
     regionCode?: string;
     // 视频分类ID
     categoryId?: string;
+  };
+  pinterest?: {
+    // Board ID，由获取Pinterest Board信息接口得到
+    boardId?: string;
+  };
+  tiktok?: {
+    // 隐私级别：PUBLIC_TO_EVERYONE、MUTUAL_FOLLOW_FRIENDS、SELF_ONLY
+    privacy_level?: string;
+    // 是否禁用评论
+    comment_disabled?: boolean;
+    // 是否禁用合拍
+    duet_disabled?: boolean;
+    // 是否禁用拼接
+    stitch_disabled?: boolean;
+    // 品牌有机内容开关
+    brand_organic_toggle?: boolean;
+    // 品牌内容开关
+    brand_content_toggle?: boolean;
   };
 }
 

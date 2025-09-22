@@ -1,8 +1,8 @@
 import { Platform } from '../hot';
 
-interface HotValueHistory {
-  timestamp: Date; // 记录时间
-  value: number; // 热度值
+export interface HotValueHistory {
+  updateTime: string; // 记录时间
+  hotValue: number; // 热度值
 }
 
 export interface HotTopic {

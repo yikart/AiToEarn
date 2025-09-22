@@ -41,7 +41,9 @@
     "regionPlaceholder": "Select region",
     "category": "Category",
     "categoryPlaceholder": "Select category",
-    "categoryPlaceholderDisabled": "Select region first"
+    "categoryPlaceholderDisabled": "Select region first",
+    "board": "Board",
+    "boardPlaceholder": "Select Board"
   },
   "upload": {
     "finishingUp": "Finishing up...",
@@ -66,11 +68,19 @@
     "partitionRequired": "You must select a partition!",
     "sourceRequired": "Source must be filled when reprinting!",
     "pageRequired": "You must select a page!",
+    "boardRequired": "You must select a Board!",
     "coverSizeError": "Cover minimum size 400*400!"
   },
   "preview": {
     "title": "Preview",
-    "emptyDescription": "See your work preview here"
+    "emptyDescription": "See your work preview here",
+    "videoInfo": {
+      "filename": "Filename",
+      "format": "Format",
+      "resolution": "Resolution",
+      "size": "Size",
+      "duration": "Duration"
+    }
   },
   "draft": {
     "selectDraft": "Select Draft",
@@ -92,6 +102,35 @@
   },
   "actions": {
     "selectMaterial": "Select Material",
-    "selectDraft": "Select Draft"
+    "selectDraft": "Select Draft",
+    "cropCover": "Crop Cover"
+  },
+  "tiktok": {
+    "creatorInfo": "Creator Info",
+    "privacy": {
+      "title": "Who can view this video",
+      "placeholder": "Select privacy level",
+      "public": "Public",
+      "friends": "Friends",
+      "private": "Private"
+    },
+    "interactions": {
+      "title": "Allow users to",
+      "comment": "Comment",
+      "duet": "Duet",
+      "stitch": "Stitch"
+    },
+    "commercial": {
+      "title": "Disclose video content",
+      "toggle": "Turn on to disclose that this video promotes goods orservices in exchange for something of value. Your video",
+      "yourBrand": "Your Brand - You are promoting yourself or your own business. This content will be classified as Brand Organic.",
+      "brandedContent": "Branded Content - You are promoting another brand or a third party. This content will be classified as Branded Content."
+    },
+    "compliance": {
+      "default": "By posting, you agree to TikTok's Music Usage Confirmation.",
+      "organic": "By posting, you agree to TikTok's Music Usage Confirmation.",
+      "branded": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.",
+      "both": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation."
+    }
   }
 } 

@@ -11,25 +11,67 @@ export enum SignInType {
   PUL_VIDEO = "pul_video",
 }
 
+export interface SignInResponse {
+  success: boolean;
+  message?: string;
+  score?: number; // 签到后更新的积分
+  data?: any;
+}
+
+export interface PublishDayInfo {
+  _id: string;
+  userId: string;
+  publishTotal: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PublishDayInfoResponse {
+  total: number;
+  list: PublishDayInfo[];
+}
+
+export interface PublishInfoData {
+  _id: string;
+  userId: string;
+  days: number; // 连续签到天数
+  createdAt: string;
+  updatedAt: string;
+  upInfoDate: string;
+  id: string;
+}
+
+export interface PublishInfoResponse {
+  code: number;
+  data: PublishInfoData;
+}
+
 export const signInApi = {
   /**
    * 创建签到
    */
-  async createSignInRecord(type: SignInType = SignInType.PUL_VIDEO) {
-    const res = await http.post<any>(`reward/signIn`, {
+  async createSignInRecord(type: SignInType = SignInType.PUL_VIDEO): Promise<SignInResponse> {
+    const res = await http.post<SignInResponse>(`reward/signIn`, {
       type,
     });
     return res!.data;
   },
 
   /**
-   * 获取签到列表
+   * 获取签到日历数据
    */
-  async getSignInList(params: { type: SignInType; time?: [Date, Date] }) {
-    const res = await http.get<any>(`reward/signIn/list`, {
-      isToken: true,
-      params,
-    });
+  async getSignInCalendar(year: number, month: number): Promise<PublishDayInfoResponse> {
+    const res = await http.get<PublishDayInfoResponse>(`plat/publish/publishDayInfo/list/1/99`);
     return res!.data;
   },
+
+  /**
+   * 获取连续签到天数
+   */
+  async getConsecutiveDays(): Promise<PublishInfoResponse> {
+    const res:any = await http.get<PublishInfoResponse>(`plat/publish/publishInfo/data`);
+    return res;
+  },
+
+
 };

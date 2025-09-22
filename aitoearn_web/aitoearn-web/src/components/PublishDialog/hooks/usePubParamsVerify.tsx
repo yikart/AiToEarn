@@ -9,6 +9,8 @@ import { PubType } from "@/app/config/publishConfig";
 export interface ErrPubParamsItem {
   // 参数错误提示消息
   parErrMsg?: string;
+  // 错误状态
+  errStatus?: boolean;
 }
 
 export type ErrPubParamsMapType = Map<string | number, ErrPubParamsItem>;
@@ -176,6 +178,18 @@ export default function usePubParamsVerify(data: PubItem[]) {
                 return setErrorMsg(t("validation.instagramStoryNoDes"));
               }
               break;
+          }
+        }
+
+        // Pinterest 的强制校验 
+        if (v.account.type === PlatType.Pinterest) {
+          // 强制需要标题
+          if (!v.params.title) {
+            return setErrorMsg(t("validation.titleRequired"));
+          }
+          // 强制需要 选择Board
+          if (!v.params.option.pinterest?.boardId) {
+            return setErrorMsg(t("validation.boardRequired"));
           }
         }
       })();

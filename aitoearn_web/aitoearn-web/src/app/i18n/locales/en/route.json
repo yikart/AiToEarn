@@ -4,5 +4,11 @@
   "publish": "Publish",
   "hotContent": "Hot Content",
   "hotContentNew": "Hot Content New",
-  "navigation": "Navigation"
+  "aiTools": "AI Tools",
+  "tasks": "Tasks",
+  "interactive": "Interactive",
+  "engagement": "Engagement",
+  "dataStatistics": "Data Statistics",
+  "navigation": "Navigation",
+  "aiRank": "AI Rank"
 }

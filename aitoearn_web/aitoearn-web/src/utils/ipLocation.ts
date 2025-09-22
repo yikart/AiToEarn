@@ -62,10 +62,22 @@ export const getIpLocation = (): Promise<IpLocationInfo> => {
 };
 
 /**
+ * 从位置信息中提取国家
+ * @param location 位置信息字符串
+ * @returns 国家名称
+ */
+export const extractCountry = (location: string): string => {
+  // 位置信息通常格式为: "国家 省份 城市" 或 "国家"
+  const parts = location.split(' ');
+  return parts[0] || location;
+};
+
+/**
  * 格式化地理位置信息
  * @param info IP地理位置信息
  * @returns 格式化后的字符串
  */
 export const formatLocationInfo = (info: IpLocationInfo): string => {
-  return `${info.ip} | ${info.location}`;
+  const country = extractCountry(info.location);
+  return `${country} | ${info.ip}`;
 };

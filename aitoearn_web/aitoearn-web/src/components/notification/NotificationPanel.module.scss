@@ -1,5 +1,6 @@
 .notificationItem {
   padding: 16px;
+  padding-left: 10px !important;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -16,7 +17,7 @@
   &.unread {
     background: linear-gradient(135deg, #f6ffed 0%, #e6f7ff 100%);
     position: relative;
-    padding-left: 10px !important;
+    
 
   }
 }
@@ -55,7 +56,7 @@
   line-height: 1.6;
   margin-bottom: 12px;
   font-size: 14px;
-  background: #fafafa;
+  background: #fff;
   padding: 12px;
   border-radius: 6px;
   border-left: 3px solid #d9d9d9;

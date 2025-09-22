@@ -1,13 +1,12 @@
-import { Pagination } from './types';
-import { HotTopic } from './types/hotTopic';
-import { Topic } from './types/topic';
-import { ViralTitle } from './types/viralTitles';
-import { request } from '@/utils/request';
-import { APP_HOT_URL } from '@/constant';
+import { Pagination } from "./types";
+import { HotTopic } from "./types/hotTopic";
+import { Topic } from "./types/topic";
+import { ViralTitle } from "./types/viralTitles";
+import { request } from "@/utils/request";
 import {
   GetAiToolsRankingApiParams,
   GetAiToolsRankingApiRes,
-} from './types/platform.type';
+} from "./types/platform.type";
 
 export interface Platform {
   id: string;
@@ -51,7 +50,7 @@ export interface PlatformRanking {
   platformId: string;
   parentId: string;
   platform: Platform;
-  type: 'daily' | 'weekly' | 'monthly';
+  type: "daily" | "weekly" | "monthly";
   description: string;
   icon: string;
   status: number;
@@ -63,6 +62,16 @@ export interface PlatformRanking {
   createTime: string;
   updateTime: string;
   items?: RankingItem[];
+}
+
+// 榜单日期
+export interface RankingDate {
+  originalQueryDate: string;
+  queryDate: string;
+  rankingId: string;
+  showDate: string;
+  spiderTime: string;
+  value: string;
 }
 
 export interface Author {
@@ -87,17 +96,22 @@ export interface RankingContent {
   title: string;
   cover: string;
   url: string;
+  photoId: string;
   rankingPosition: number;
   category: string;
   publishTime: string;
+  subCategory: string;
   author: {
     name: string;
     avatar: string;
     fansCount: number;
+    id: string;
   };
   stats: Stats;
+  collectCount?: number;
+  shareCount?: number;
   anaAdd: {
-    addCollectedCunt: number;
+    addCollectCount: number;
     addCommentCount: number;
     addInteractiveCount: number;
     addLikeCount: number;
@@ -122,7 +136,6 @@ export interface PaginationMeta {
   currentPage: number;
 }
 
-
 export interface RankingContentsResponse {
   items: RankingContent[];
   meta: PaginationMeta;
@@ -133,7 +146,7 @@ export const platformApi = {
   getPlatformList() {
     return request<Platform[]>({
       url: `hotdata/hotinfo/platform`,
-      method: 'GET'
+      method: "GET",
     });
   },
 
@@ -141,7 +154,7 @@ export const platformApi = {
   getPlatformRanking(platformId: string) {
     return request<PlatformRanking[]>({
       url: `hotdata/ranking/platform?platformId=${platformId}`,
-      method: 'GET'
+      method: "GET",
     });
   },
 
@@ -158,7 +171,7 @@ export const platformApi = {
       pageSize,
     };
 
-    if (category && category !== '全部') {
+    if (category && category !== "全部") {
       params.category = category;
     }
 
@@ -168,7 +181,7 @@ export const platformApi = {
 
     return request<RankingContentsResponse>({
       url: `hotdata/ranking/${rankingId}/contents`,
-      method: 'GET',
+      method: "GET",
       params,
     });
   },
@@ -177,29 +190,28 @@ export const platformApi = {
   getRankingLabel(rankingId: string) {
     return request<string[]>({
       url: `hotdata/ranking/label/${rankingId}`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
   // 获取榜单日期
   getRankingDates(rankingId: string) {
-    return request<string[]>({
+    return request<RankingDate[]>({
       url: `hotdata/ranking/hotinfo/${rankingId}/dates`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
   // 获取八大平台热点事件
   getAllHotTopics() {
-    return request<{
-      platform: Platform;
-      hotTopic: HotTopic;
-    }[]>({
+    return request<
+      {
+        platform: Platform;
+        topics: HotTopic[];
+      }[]
+    >({
       url: `hotdata/hot-topics/all`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -209,8 +221,7 @@ export const platformApi = {
   getTopics() {
     return request<string[]>({
       url: `hotdata/topics/topics`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -218,8 +229,7 @@ export const platformApi = {
   getMsgType() {
     return request<string[]>({
       url: `hotdata/topics/msgType`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -227,8 +237,7 @@ export const platformApi = {
   getTopicLabels(msgType: string) {
     return request<string[]>({
       url: `hotdata/topics/labels/${msgType}`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -236,8 +245,7 @@ export const platformApi = {
   getTopicTimeTypes(msgType: string) {
     return request<string[]>({
       url: `hotdata/topics/timeType/${msgType}`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -255,8 +263,8 @@ export const platformApi = {
   }) {
     return request<Pagination<Topic>>({
       url: `hotdata/topics`,
-      method: 'GET',
-      
+      method: "GET",
+
       params,
     });
   },
@@ -266,8 +274,7 @@ export const platformApi = {
   findPlatformsWithData() {
     return request<Platform[]>({
       url: `hotdata/viral-titles/platforms`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -275,8 +282,7 @@ export const platformApi = {
   findCategoriesByPlatform(platformId: string) {
     return request<string[]>({
       url: `hotdata/viral-titles/platforms/${platformId}/categories`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -285,13 +291,15 @@ export const platformApi = {
     platformId: string,
     timeType?: string, // 时间分类
   ) {
-    return request<{
-      category: string;
-      titles: ViralTitle[];
-    }[]>({
+    return request<
+      {
+        category: string;
+        titles: ViralTitle[];
+      }[]
+    >({
       url: `hotdata/viral-titles/platforms/${platformId}/top-by-categories`,
-      method: 'GET',
-      
+      method: "GET",
+
       params: {
         timeType,
       },
@@ -312,8 +320,8 @@ export const platformApi = {
   ) {
     return request<Pagination<ViralTitle>>({
       url: `hotdata/viral-titles/platforms/${platformId}`,
-      method: 'GET',
-      
+      method: "GET",
+
       params,
     });
   },
@@ -322,8 +330,7 @@ export const platformApi = {
   getViralTitleTimeTypes() {
     return request<string[]>({
       url: `hotdata/viral-titles/timeType`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -332,8 +339,7 @@ export const platformApi = {
   findTalksPlatforms() {
     return request<Platform[]>({
       url: `hotdata/talks/platforms`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -341,11 +347,10 @@ export const platformApi = {
   findTalksColumn(platformId: string) {
     return request<string[]>({
       url: `hotdata/talks/column`,
-      method: 'GET',
+      method: "GET",
       params: {
         platformId,
       },
-      
     });
   },
 
@@ -353,8 +358,7 @@ export const platformApi = {
   getXhsDates() {
     return request<string[]>({
       url: `hotdata/xhs/dates`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -362,8 +366,7 @@ export const platformApi = {
   getXhsCategories() {
     return request<string[]>({
       url: `hotdata/xhs/category`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -371,9 +374,8 @@ export const platformApi = {
   getXhsSubjectsRank(data: { phone: string }) {
     return request<string>({
       url: `hotdata/xhs/contents`,
-      method: 'POST',
+      method: "POST",
       data,
-      
     });
   },
 
@@ -381,8 +383,7 @@ export const platformApi = {
   getDyDates() {
     return request<string[]>({
       url: `hotdata/dy/dates`,
-      method: 'GET',
-      
+      method: "GET",
     });
   },
 
@@ -390,11 +391,23 @@ export const platformApi = {
   getAiToolsRankingApi(data: GetAiToolsRankingApiParams) {
     return request<GetAiToolsRankingApiRes>({
       url: `hotdata/products/ranking/ai`,
-      method: 'POST',
+      method: "POST",
       data: {
         ...data,
         pageSize: 100,
         area: +data.area,
+      },
+    });
+  },
+
+  // 获取热点数据 公众号 链接
+  getDetailUrl(photoId: string) {
+    return request<string>({
+      url: `hotdata/contents/query/getDetailUrl`,
+      method: "POST",
+      data: {
+        platform: 0,
+        photoId,
       },
     });
   },

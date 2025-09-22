@@ -7,10 +7,16 @@ export interface MaterialMedia {
   content?: string;
 }
 
+export enum MaterialType {
+  VIDEO = 'video', // 视频
+  ARTICLE = 'article', // 文章
+}
+
 export interface NewMaterialTask {
   groupId: string;
   num: number;
   aiModelTag: string;
+  type: MaterialType;
   prompt: string;
   title?: string;
   desc?: string;
@@ -20,7 +26,7 @@ export interface NewMaterialTask {
   coverGroup: string;
   option?: Record<string, any>;
   textMax?: number;
-  language?: "中文" | "英文";
+  language?: string;
 }
 
 // 创建素材草稿组

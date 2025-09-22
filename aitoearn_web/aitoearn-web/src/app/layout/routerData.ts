@@ -1,5 +1,6 @@
 import { StaticImageData } from "next/image";
 import { MenuItemType } from "antd/es/menu/interface";
+import { directTrans } from "@/app/i18n/client";
 
 export interface IRouterDataItem {
   // 导航标题
@@ -27,15 +28,30 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "accounts",
     path: "/accounts",
   },
-  {
-    name: "热门内容",
-    translationKey: "hotContent",
-    path: "/hot-content",
-  },
+  // {
+  //   name: "热门内容",
+  //   translationKey: "hotContent",
+  //   path: "/hotContent",
+  // },
   {
     name: "AI工具",
-    translationKey: "AI Tools",
+    translationKey: "aiTools",
     path: "/material/ai-generate",
+  },
+  {
+    name: "任务中心",
+    translationKey: "tasks",
+    path: "/tasks",
+  },
+  {
+    name: "互动数据",
+    translationKey: "Engage",
+    path: "/interactive",
+  },
+  {
+    name: "数据统计",
+    translationKey: "dataStatistics",
+    path: "/dataStatistics",
   },
 ];
 
@@ -53,3 +69,42 @@ const recursion = (
 };
 
 export const peRouterData = recursion(routerData);
+
+export const homeHeaderRouterData = {
+  get value() {
+    return [
+      {
+        href: "/",
+        title: "",
+      },
+      {
+        href: "/pricing",
+        title: directTrans("home", "header.nav.pricing"),
+      },
+      {
+        href: "https://status.aitoearn.ai/",
+        title: directTrans("home", "header.nav.status"),
+      },
+      {
+        href: "https://docs.aitoearn.ai/",
+        title: directTrans("home", "header.nav.docs"),
+      },
+      {
+        href: "https://blog.aitoearn.ai/",
+        title: directTrans("home", "header.nav.blog"),
+      },
+      {
+        href: "https://docs.aitoearn.ai/zh/downloads",
+        title: directTrans("home", "header.nav.download"),
+      },
+      {
+        href: "/hotContent",
+        title: directTrans("route", "hotContent"),
+      },
+      {
+        href: "/aiRank",
+        title: directTrans("route", "aiRank"),
+      },
+    ];
+  },
+};

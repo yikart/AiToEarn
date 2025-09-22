@@ -1,0 +1,81 @@
+.dataStatisticsDetails {
+  :global {
+    .dataStatisticsDetails-head {
+      display: flex;
+      justify-content: space-between;
+      margin: 30px 0;
+
+      h3 {
+        position: relative;
+        padding-left: 20px;
+        &:after {
+          content: "";
+          display: block;
+          position: absolute;
+          top: 45%;
+          transform: translateY(-50%);
+          left: 0;
+          width: 2px;
+          height: 50%;
+          background: var(--colorPrimary5);
+        }
+      }
+    }
+
+    .dataStatisticsDetails-content {
+      display: flex;
+      gap: 15px;
+      &-item {
+        background: rgb(247, 250, 250);
+        flex: 1;
+        border-radius: 8px;
+        box-sizing: border-box;
+        padding: 15px;
+        height: 105px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        &-title {
+          margin-bottom: 5px;
+        }
+        &-count {
+          font-size: var(--fs-lg);
+        }
+        &-yesterday {
+          margin-top: 5px;
+          background: rgb(237, 242, 242);
+          display: inline-block;
+          border-radius: 30px;
+          padding: 2px 8px;
+          font-size: var(--fs-xs);
+          b {
+            margin-left: 5px;
+          }
+        }
+        &-icon {
+          display: inline-block;
+          margin-right: 10px;
+          svg,  {
+            font-size: 18px;
+            fill: var(--colorPrimary5);
+          }
+        }
+        &:hover {
+          opacity: 0.7;
+        }
+        &--active {
+          background: #fff;
+          border: 1px solid var(--colorPrimary5);
+          .dataStatisticsDetails-content-item-title {
+            color: var(--colorPrimary5);
+          }
+          @include triangle-indicator(12px, #fff, var(--colorPrimary5), 1px);
+        }
+      }
+    }
+
+    #dataStatisticsEchartLine {
+      width: 100%;
+      height: 400px;
+    }
+  }
+}

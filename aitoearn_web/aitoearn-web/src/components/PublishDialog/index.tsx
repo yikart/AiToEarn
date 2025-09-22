@@ -321,9 +321,7 @@ const PublishDialog = memo(
               });
             }
           }
-          console.log(draft);
 
-          console.log(nextParams);
           if (step === 1 && expandedPubItem) {
             setOnePubParams(nextParams, expandedPubItem.account.id);
           } else {
@@ -400,8 +398,8 @@ const PublishDialog = memo(
             accountType: item.account.type,
             videoUrl: item.params.video?.ossUrl,
             coverUrl:
-              item.params.video?.cover.ossUrl || item.params.images![0].ossUrl!,
-            imgUrlList: item.params.images?.map((v) => v.ossUrl!),
+              item.params.video?.cover.ossUrl || (item.params.images && item.params.images.length > 0 ? item.params.images[0].ossUrl : undefined),
+            imgUrlList: item.params.images?.map((v) => v.ossUrl).filter((url): url is string => url !== undefined) || [],
             publishTime,
             option: item.params.option,
           });
@@ -548,9 +546,10 @@ const PublishDialog = memo(
                         }}
                       >
                         <AvatarPlat
-                          className="publishDialog-con-acconts-item-avatar"
+                          className={`publishDialog-con-acconts-item-avatar ${!isChoosed ? 'disabled' : ''}`}
                           account={pubItem.account}
                           size="large"
+                          disabled={!isChoosed}
                         />
                       </div>
                     );

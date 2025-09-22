@@ -15,7 +15,7 @@ function Header() {
         </div>
         <nav className={styles.nav}>
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-
+          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
           <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
         </nav>
@@ -95,7 +95,10 @@ export default function PrivacyPolicyPage() {
                 We may collect information through your communications with our customer support team or other communications that you may send us and their contents.
               </p>
 
-
+              <h3 className={styles.subSectionTitle}>Making a Purchase</h3>
+              <p className={styles.sectionContent}>
+                When you make payments through the Service, you will need to provide Personal Information such as your credit card number and billing address.
+              </p>
 
               <h3 className={styles.subSectionTitle}>Social Media</h3>
               <p className={styles.sectionContent}>
@@ -163,7 +166,7 @@ export default function PrivacyPolicyPage() {
                 We may use the Personal Information we obtain about you to:
               </p>
               <ul className={styles.listContent}>
-                <li>create and manage your account, provide our Service, and respond to your inquiries;</li>
+                <li>create and manage your account, provide our Service, process payments, and respond to your inquiries;</li>
                 <li>manage account authentication such as two-factor authentication;</li>
                 <li>communicate with you to verify your account and for informational and operational purposes;</li>
                 <li>tailor our Service (e.g., we may use cookies and similar technologies to remember your preferences);</li>

@@ -10,7 +10,7 @@ interface Resources {
     "newWork": "新建作品",
     "allPlatforms": "所有平台",
     "accountManager": "账号管理器",
-    "addAccount": "添加账号",
+    "addAccount": "添加频道",
     "mcpManager": "MCP 管理器",
     "online": "在线",
     "offline": "离线",
@@ -26,7 +26,10 @@ interface Resources {
     "unknownAccount": "未知账户",
     "addAccountModal": {
       "title": "账号添加",
-      "subtitle": "选择平台添加账号"
+      "subtitle": "选择平台添加账号",
+      "currentSpace": "当前空间",
+      "pleaseChooseSpaceFirst": "请先选择空间",
+      "addTo": "添加到："
     },
     "facebookPages": {
       "title": "选择Facebook页面",
@@ -44,7 +47,13 @@ interface Resources {
       "title": "发布计划列表",
       "recordCount": "共 {{count}} 条发布计划",
       "newWork": "新建作品",
-      "noRecords": "暂无发布计划"
+      "noRecords": "暂无发布计划",
+      "queue": "列表",
+      "sent": "发布历史",
+      "createdDaysAgo": "您于 {{days}} 天前创建",
+      "viewPost": "查看帖子",
+      "noSentPosts": "暂无已发布的帖子",
+      "selectAccountFirst": "请先选择一个账号"
     },
     "chooseSpace": "选择空间",
     "pleaseChooseSpace": "请选择空间",
@@ -54,7 +63,50 @@ interface Resources {
       "loading": "获取IP信息中...",
       "error": "IP信息获取失败",
       "tooltip": "ASN: {{asn}}\n组织: {{org}}"
-    }
+    },
+    "createSpace": {
+      "title": "新建空间",
+      "button": "新建空间",
+      "name": "空间名",
+      "namePlaceholder": "请输入空间名称",
+      "cancel": "取消",
+      "save": "保存",
+      "success": "新建空间成功",
+      "failed": "新建空间失败",
+      "nameRequired": "请输入空间名称"
+    },
+    "locationRestriction": {
+      "cnSpace": "当前空间为中国属地，仅显示国内平台",
+      "nonCnSpace": "当前空间为非中国属地，国内平台暂不可用"
+    },
+    "userManageSidebar": {
+      "allAccounts": "全部账号",
+      "spaces": "空间",
+      "createSpace": "新建空间",
+      "spaceNamePlaceholder": "请输入空间名称",
+      "cannotOperateDefault": "不能操作默认列表",
+      "rename": "重命名",
+      "delete": "删除",
+      "confirmDelete": "提示",
+      "confirmDeleteContent": "请确认是否删除列表：",
+      "deleteSuccess": "删除成功",
+      "createSpaceTitle": "新建空间",
+      "renameSpaceTitle": "重命名空间",
+      "cancel": "取消",
+      "save": "保存",
+      "spaceName": "空间名"
+    },
+    "userManageModal": {
+      "account": "账号",
+      "platform": "平台",
+      "space": "所属列表"
+    },
+    "rednote": "小红书",
+    "kwai": "快手",
+    "bilibili": "哔哩哔哩",
+    "wxgzh": "微信公众号",
+    "douyin": "抖音",
+    "wxsph": "微信视频号"
   },
   "cgmaterial": {
     "header": {
@@ -219,8 +271,43 @@ interface Resources {
     },
     "header": {
       "messages": "消息通知",
+      "income": "收入记录",
+      "wallet": "我的钱包",
       "materialLibrary": "素材库",
       "draftBox": "草稿箱"
+    },
+    "tasks": "任务中心",
+    "signIn": {
+      "title": "每日签到得积分",
+      "myPoints": "我的积分",
+      "signIn": "签到",
+      "today": "今天",
+      "rules": "签到规则",
+      "rules1": "连续签到 1-7天, 每天1积分",
+      "rules2": "连续签到 8-21天, 每天2积分",
+      "rules3": "连续签到 22天以上, 每天3积分",
+      "signedIn": "已签到",
+      "notSignedIn": "未签到",
+      "signInSuccess": "签到成功",
+      "signInFailed": "签到失败",
+      "alreadySignedIn": "今日已签到",
+      "consecutiveDays": "连续签到天数",
+      "totalPoints": "总积分"
+    },
+    "downloadApp": {
+      "title": "下载{{appName}}",
+      "operationInApp": "请在{{appName}}中操作添加",
+      "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+      "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
+      "scanQrCode": "扫描二维码下载",
+      "downloadLink": "下载链接：",
+      "copy": "复制",
+      "copySuccess": "复制成功",
+      "copyFailed": "复制失败，请手动复制",
+      "copied": "已复制",
+      "close": "关闭",
+      "downloadNow": "立即下载",
+      "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
     },
     "websit": {
       "termsOfService": {
@@ -283,9 +370,58 @@ interface Resources {
       }
     }
   },
+  "dataStatistics": {
+    "title": "数据统计",
+    "description": "在这里查看和分析您的数据统计信息。",
+    "accountData": "账号数据",
+    "selectSpace": "选择空间",
+    "inputAccountName": "请输入账号名称",
+    "noAccount": "暂无账号",
+    "totalAccount": "累计账号数",
+    "online": "在线",
+    "offline": "离线",
+    "fansCount": "粉丝数",
+    "growthFansCount": "涨粉数",
+    "loginFailed": "登陆失败",
+    "relogin": "重新登录",
+    "dataDetails": "数据明细",
+    "timeRange": "时间范围：",
+    "yesterdayIncrease": "昨日新增",
+    "readCount": "播放数",
+    "commentCount": "评论数",
+    "likeCount": "点赞数",
+    "collectCount": "收藏数",
+    "forwardCount": "分享数"
+  },
   "demo": {
     "demoText": "测试文字",
     "title": "测试页面标题"
+  },
+  "engagement": {
+    "title": "互动数据",
+    "columns": {
+      "postId": "帖子ID",
+      "platform": "平台",
+      "title": "标题",
+      "mediaType": "媒体类型",
+      "publishTime": "发布时间",
+      "viewCount": "浏览数",
+      "likeCount": "点赞数",
+      "commentCount": "评论数",
+      "shareCount": "分享数",
+      "clickCount": "点击数",
+      "impressionCount": "曝光数",
+      "favoriteCount": "收藏数",
+      "permaLink": "外链",
+      "open": "打开"
+    },
+    "placeholders": {
+      "uid": "请输入账户UID"
+    },
+    "actions": {
+      "search": "查询",
+      "reset": "重置"
+    }
   },
   "home": {
     "releaseBanner": {
@@ -293,13 +429,14 @@ interface Resources {
       "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
     },
     "header": {
-      "logo": "Aitorarn",
+      "logo": "Aitoearn",
       "nav": {
         "marketplace": "市场",
         "pricing": "价格",
         "status": "状态",
-        "docs": "问题",
-        "blog": "博客"
+        "docs": "文档",
+        "blog": "博客",
+        "download": "下载"
       },
       "getStarted": "立即开始"
     },
@@ -309,59 +446,120 @@ interface Resources {
       "github": "GitHub",
       "title": "成为最好用的内容营销\nAI Agent",
       "subtitle": "从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。",
-      "getStarted": "立即开始"
+      "getStarted": "立即开始",
+      "useMobilePhone": "使用移动设备"
     },
     "brandBar": {
       "title": "支持的社交媒体平台"
     },
     "buildSection": {
-      "badge": "灵感创意",
-      "title": "灵感枯竭?",
-      "titleBlue": "来看看全网有哪些热点吧",
+      "badge": "功能1",
+      "title": "Content Publishing — 一键发布 · 多平台触达",
+      "titleBlue": "从创意灵感到多平台分发，再到数据分析和商业化",
       "features": {
         "hotTopic": {
-          "title": "AI热点抓取，全网热点一网打尽",
-          "description": "通过AI抓取全网热点，AI分析一键生成同款爆款内容,热点流量一网打尽"
+          "title": "多平台分发",
+          "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。"
         },
         "international": {
-          "title": "国际站：YouTube 、 TikTok 、 Facebook 、 Instagram 、 LinkedIn 、 X (Twitter) 、 Rednote",
-          "description": "海外站热点抓取，让你第一时间了解最新动态"
+          "title": "日历编排",
+          "description": "像操作日历一样规划内容，实现多平台协同发布。"
+        }
+      },
+      "carouselHint": "使用滚轮切换图片"
+    },
+    "hotspotSection": {
+      "badge": "功能2",
+      "title": "Content Hotspot — 爆款灵感引擎",
+      "titleBlue": "爆款案例库与趋势捕捉",
+      "features": {
+        "hotTopic": {
+          "title": "爆款案例库",
+          "description": "随时查看他人如何打造 10,000+ 点赞的内容。"
         },
-        "domestic": {
-          "title": "国内站：抖音 、 快手 、 微信 、 Bilibili",
-          "description": "支持国内站的热点抓取，让你不错过每一条热点流量"
+        "international": {
+          "title": "趋势捕捉",
+          "description": "快速发现流行趋势，降低创作焦虑。"
+        }
+      },
+      "carouselHint": "使用滚轮切换图片"
+    },
+    "searchSection": {
+      "badge": "功能3",
+      "title": "Content Search — 品牌与市场洞察",
+      "titleBlue": "品牌监控与内容搜索",
+      "features": {
+        "hotTopic": {
+          "title": "品牌监控",
+          "description": "实时追踪品牌相关讨论，第一时间响应。"
+        },
+        "international": {
+          "title": "内容搜索",
+          "description": "找到目标帖子和话题，高效互动，精准拓展市场。"
+        }
+      },
+      "carouselHint": "使用滚轮切换图片"
+    },
+    "commentsSection": {
+      "badge": "功能4",
+      "title": "Comments Search — 精准用户挖掘",
+      "titleBlue": "智能评论搜索与精准转化",
+      "features": {
+        "hotTopic": {
+          "title": "智能评论搜索",
+          "description": "快速发现\"求链接\"\"怎么购买\"等高转化信号。"
+        },
+        "international": {
+          "title": "精准转化",
+          "description": "主动回复，提升流量变现效率。"
         }
       },
       "carouselHint": "使用滚轮切换图片"
     },
     "connectSection": {
-      "badge": "功能介绍",
-      "title": "自媒体运营平台一站式解决方案",
-      "titleBlue": "从灵感创意到内容制作，从内容分发到内容互动管理",
+      "badge": "功能5",
+      "title": "Content Engagement — 互动与增长引擎",
+      "titleBlue": "统一后台与主动运营",
       "features": {
         "creation": {
-          "title": "内容创作",
-          "description": "AI内容创作，AI图片生成，图文创作等AI能力，让你的内容更加生动有趣"
+          "title": "统一后台",
+          "description": "集中管理所有内容，互动零遗漏。"
         },
         "distribution": {
-          "title": "内容分发",
-          "description": "支持国内外多平台分发，让你的内容触达更多用户，一键式管理，让你的内容触达更多用户"
-        },
-        "interaction": {
-          "title": "内容互动管理",
-          "description": "支持国内外多平台互动管理，让你的内容互动更加高效，一键式管理，让你的内容互动更加高效"
-        },
-        "analytics": {
-          "title": "数据分析",
-          "description": "支持国内外多平台数据分析，让你的数据分析更加高效，一键式管理，让你的数据分析更加高效"
+          "title": "主动运营",
+          "description": "参与热门话题，与潜在用户双向互动。把\"被动内容运营\"变成\"主动流量经营\"。"
         }
       },
       "carouselHint": "使用滚轮切换图片"
     },
+    "upcomingSection": {
+      "badge": "即将上线",
+      "title": "AI 驱动的全链路内容增长与变现平台",
+      "titleBlue": "即将上线功能，敬请期待",
+      "features": {
+        "smartImport": {
+          "title": "智能导入",
+          "description": "直接导入历史内容，快速编辑、二次分发。例如：小红书创作者可一键同步到 YouTube，让更多用户看到。"
+        },
+        "analytics": {
+          "title": "Content Analytics — 全景化数据视图",
+          "description": "多平台对比：一个平台不给流量，不代表所有平台不给。全链路监控：追踪内容表现，助力打造下一个百万博主。"
+        },
+        "aiCreation": {
+          "title": "AI Content Creation — 全流程 AI 助手",
+          "description": "AI 文案生成：自动生成标题、描述，高效产出。AI 评论生成：主动出击，获取流量。图文卡片生成，全流程加速创作。支持主流 AI 视频模型和图片模型。"
+        },
+        "marketplace": {
+          "title": "Content Marketplace — 内容交易与变现",
+          "description": "创作者变现：在平台直接出售内容，让优质作品快速找到买家。品牌采购：企业可直接购买现成内容，节省时间与成本。让创作变成收益 —— Let's use AI to earn. Let's earn money together!"
+        }
+      }
+    },
     "downloadSection": {
       "title": "随时随地开始创作",
       "titleBlue": "移动端也能轻松管理",
-      "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供 iOS 和 Android 移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+      "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供App移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+      "qrCodeText": "扫描二维码下载",
       "appStore": {
         "text": "Download on the",
         "store": "App Store"
@@ -420,6 +618,8 @@ interface Resources {
         "wechat": "微信群组",
         "community": "创作者交流群"
       },
+      "wechatPopup": "扫码关注微信公众号",
+      "communityPopup": "扫码加入社区群",
       "stats": {
         "downloads": {
           "number": "20万+",
@@ -441,6 +641,7 @@ interface Resources {
         "links": {
           "docs": "文档",
           "blog": "博客",
+          "download": "下载",
           "education": "教育",
           "partner": "合作伙伴",
           "support": "服务支持",
@@ -499,7 +700,7 @@ interface Resources {
     "comments": "评论数",
     "collections": "收藏数",
     "publishTime": "发布于",
-    "fans": "粉丝",
+    "fans": "粉丝数",
     "viewMore": "查看更多",
     "timeRange": "时间范围",
     "filter": "筛选",
@@ -511,13 +712,87 @@ interface Resources {
     "noHotTopics": "暂无热点数据",
     "noViralTitles": "暂无爆款标题数据",
     "noTopicData": "暂无专题数据",
-    "total": "共",
+    "total": "总",
     "items": "条",
     "video": "视频",
     "noImage": "暂无图片",
     "platform": "平台",
     "hotEvents": "热点事件",
-    "hotContent": "热点内容"
+    "hotContent": "热点内容",
+    "noTitle": "暂无标题",
+    "baseInfo": "基本信息",
+    "views": "播放数",
+    "recommend": "推荐数",
+    "watch": "在看数",
+    "dailyRank": "日榜",
+    "updateFrequency": "更新时间",
+    "statEndTime": "统计数据截止",
+    "daily": "按日",
+    "sortRule": "排序规则",
+    "sortRuleDesc": "统计当日点赞量前500名的作品推荐",
+    "dataDescription": "数据说明",
+    "expand": "展开",
+    "collapse": "收起",
+    "hotValue": "热度值",
+    "hotTrend": "热度趋势",
+    "shortDrama": "短剧",
+    "cultureTourism": "文旅",
+    "contentOverseas": "内容出海",
+    "hot": "热点",
+    "last3days": "近3天",
+    "last7days": "近7天",
+    "last15days": "近15天",
+    "last30days": "近30天",
+    "backToAll": "返回全部",
+    "last90days": "近90天"
+  },
+  "income": {
+    "title": "我的收入",
+    "subtitle": "管理您的收入记录和提现申请",
+    "currentBalance": "当前余额",
+    "incomeRecords": "收入记录",
+    "withdrawRecords": "提现记录",
+    "incomeId": "收入ID",
+    "amount": "金额",
+    "type": "类型",
+    "description": "描述",
+    "createTime": "创建时间",
+    "actions": "操作",
+    "applyWithdraw": "申请提现",
+    "withdrawId": "提现ID",
+    "status": "状态",
+    "updateTime": "更新时间",
+    "confirmWithdraw": "确认提现申请",
+    "cancel": "取消",
+    "confirm": "确认提现",
+    "withdrawAmount": "提现金额",
+    "incomeType": "收入类型",
+    "withdrawWarning": "⚠️ 提现申请提交后，我们将在1-3个工作日内处理您的申请。",
+    "withdrawWarning2": "请确保您的账户信息正确，提现成功后金额将转入您的指定账户。",
+    "incomeTypes": {
+      "task": "任务收入",
+      "task_back": "任务回退",
+      "reward_back": "奖励回退",
+      "task_withdraw": "任务提现"
+    },
+    "withdrawStatus": {
+      "wait": "等待处理",
+      "success": "提现成功",
+      "fail": "提现失败",
+      "task_withdraw": "任务提现"
+    },
+    "messages": {
+      "getIncomeRecordsFailed": "获取收入记录失败",
+      "getWithdrawRecordsFailed": "获取提现记录失败",
+      "withdrawSubmitted": "提现申请提交成功",
+      "withdrawFailed": "提现申请提交失败",
+      "pleaseLoginFirst": "请先登录",
+      "noIncomeRecords": "暂无收入记录",
+      "noWithdrawRecords": "暂无提现记录",
+      "loading": "加载中...",
+      "totalRecords": "共 {{total}} 条记录"
+    },
+    "myWallet": "我的钱包"
   },
   "login": {
     "welcomeBack": "哎呦赚",
@@ -662,7 +937,6 @@ interface Resources {
       "fireflyCardGenerationFailed": "生成流光卡片失败",
       "pleaseEnterContentAndTitle": "请输入内容和标题",
       "taskSubmittedSuccess": "任务已提交",
-      "videoGenerationSuccess": "视频生成成功",
       "checkVideoTaskStatusFailed": "检查视频任务状态失败",
       "pleaseEnterVideoDescription": "请输入视频描述",
       "selectSizePlaceholder": "选择尺寸",
@@ -689,7 +963,110 @@ interface Resources {
       "templateEasy": "边框",
       "templateWrite": "手写",
       "pleaseUploadFirstFrame": "请上传首帧图片",
-      "pleaseUploadTailFrame": "请上传尾帧图片"
+      "pleaseUploadTailFrame": "请上传尾帧图片",
+      "imageRequirements": "图片要求",
+      "aspectRatioRange": "宽高比范围",
+      "aspectRatioRangeValue": "(0.4, 2.5)",
+      "dimensionRange": "宽高长度范围",
+      "dimensionRangeValue": "(300px, 6000px)",
+      "imageSizeLimit": "图片大小限制",
+      "imageSizeLimitValue": "小于30MB",
+      "imageFormatSupport": "支持格式",
+      "imageFormatSupportValue": "JPG, PNG, WEBP",
+      "estimatedCreditCost": "预计消耗积分",
+      "credits": "积分",
+      "getImageModelsFailed": "获取图片生成模型失败",
+      "getVideoModelsFailed": "获取视频生成模型失败"
+    }
+  },
+  "notification": {
+    "title": "消息通知",
+    "detailTitle": "通知详情",
+    "markAllAsRead": "全部标记为已读",
+    "markAsRead": "标记为已读",
+    "delete": "删除",
+    "close": "关闭",
+    "noNotifications": "暂无通知",
+    "confirmDelete": "确定要删除这条通知吗？",
+    "confirm": "确定",
+    "cancel": "取消",
+    "deleteSuccess": "删除成功",
+    "deleteFailed": "删除失败",
+    "markSuccess": "标记成功",
+    "markFailed": "标记失败",
+    "markAllSuccess": "全部标记成功",
+    "getNotificationListFailed": "获取通知列表失败",
+    "getNotificationDetailFailed": "获取通知详情失败",
+    "createTime": "创建时间",
+    "readTime": "已读时间",
+    "taskDetail": "任务详情",
+    "acceptTask": "接受任务",
+    "noTaskDetails": "暂无任务详情",
+    "taskProcessing": "任务处理中...",
+    "acceptingTask": "正在接受任务...",
+    "publishingTask": "正在发布任务...",
+    "submittingTask": "正在提交任务...",
+    "taskCompleted": "任务完成",
+    "taskProcessFailed": "任务处理失败",
+    "acceptTaskFailed": "接受任务失败",
+    "publishTaskFailed": "发布任务失败",
+    "submitTaskFailed": "提交任务失败",
+    "getTaskDetailFailed": "获取任务详情失败",
+    "accountInfoFailed": "账号信息获取失败",
+    "appRequiredNotice": "⚠️ 注意：",
+    "appRequiredMessage": "发布账号({{platform}})的任务需要在移动端App中操作，请下载对应App后继续。",
+    "mediaPreview": "媒体预览",
+    "pageInfo": "第 {{start}}-{{end}} 条，共 {{total}} 条",
+    "notificationTypes": {
+      "system": "系统通知",
+      "user": "用户通知",
+      "material": "素材通知",
+      "task_reminder": "任务提醒",
+      "other": "其他通知"
+    },
+    "taskStatus": {
+      "active": "进行中",
+      "inactive": "已结束"
+    },
+    "taskInfo": {
+      "description": "描述",
+      "publisherAccount": "发布账号",
+      "reward": "奖励",
+      "taskType": "任务类型",
+      "platformTypes": "支持平台"
+    },
+    "taskTypes": {
+      "video": "视频",
+      "article": "图文",
+      "article2": "纯文字"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "twitter": "Twitter",
+      "bilibili": "哔哩哔哩",
+      "KWAI": "快手",
+      "douyin": "抖音",
+      "xhs": "小红书",
+      "wxSph": "微信视频号",
+      "wxGzh": "微信公众号",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "pinterest": "Pinterest"
+    },
+    "time": {
+      "justNow": "刚刚",
+      "minutesAgo": "{{minutes}}分钟前",
+      "hoursAgo": "{{hours}}小时前",
+      "daysAgo": "{{days}}天前"
+    },
+    "accountSelect": {
+      "title": "选择发布账号",
+      "description": "描述",
+      "noAccounts": "没有符合条件的账号，请先添加账号",
+      "redirectingToAccounts": "正在跳转到账户界面，请添加符合条件的账号",
+      "accountId": "账号ID"
     }
   },
   "pinterest": {
@@ -707,7 +1084,8 @@ interface Resources {
       "view": "查看",
       "edit": "编辑",
       "delete": "删除",
-      "link": "链接"
+      "link": "链接",
+      "change": "更改"
     },
     "stats": {
       "followers": "关注者",
@@ -769,7 +1147,8 @@ interface Resources {
       "followers": "关注者",
       "owner": "拥有者",
       "yes": "是",
-      "no": "否"
+      "no": "否",
+      "selected": "当前选择"
     },
     "empty": {
       "noBoards": "暂无Board",
@@ -796,7 +1175,8 @@ interface Resources {
       "selectImageFile": "请选择图片文件",
       "imageSizeLimit": "图片大小不能超过10MB",
       "imageUploadSuccess": "图片上传成功",
-      "imageUploadFailed": "图片上传失败，请重试"
+      "imageUploadFailed": "图片上传失败，请重试",
+      "noAccountFound": "没有找到Pinterest账户"
     },
     "validation": {
       "boardNameRequired": "请输入Board名称",
@@ -814,6 +1194,7 @@ interface Resources {
     "subtitle": "选择最适合您需求的套餐，开始您的AI创作之旅",
     "monthly": "月付",
     "yearly": "年付",
+    "save25": "省25%",
     "save50": "省50%",
     "month": "月",
     "credits": "积分",
@@ -858,28 +1239,388 @@ interface Resources {
     },
     "faq": {
       "title": "常见问题",
-      "items": [
-        {
-          "question": "如何选择合适的套餐？",
-          "answer": "如果您是个人用户或刚开始使用AI创作，建议选择Free套餐体验。如果您需要更多功能和更高的使用限制，Plus套餐是更好的选择。"
-        },
-        {
-          "question": "可以随时升级或降级套餐吗？",
-          "answer": "是的，您可以随时升级到更高套餐。降级将在当前计费周期结束后生效。"
-        },
-        {
-          "question": "积分是如何计算的？",
-          "answer": "积分根据您生成的内容类型和复杂度计算。视频生成消耗更多积分，图片生成消耗较少积分。"
-        },
-        {
-          "question": "支持哪些支付方式？",
-          "answer": "我们支持信用卡、借记卡、PayPal等多种支付方式，确保安全便捷的支付体验。"
-        },
-        {
-          "question": "有退款政策吗？",
-          "answer": "我们提供7天无理由退款保证。如果您对服务不满意，可以在购买后7天内申请全额退款。"
+      "paymentMethods": {
+        "question": "你们支持哪些支付方式？",
+        "answer": "我们支持多种支付方式，包括主要的信用卡（Visa、MasterCard、American Express）以及支付宝等。如果您在中国使用我们的服务，可以通过支付宝购买一次性服务。"
+      },
+      "creditDeduction": {
+        "question": "图片和视频生成时，积分是如何扣除的？",
+        "answer": "我们的图片和视频生成定价与官方渠道保持一致。通常情况下，如果官方渠道有大额采购折扣，我们也会同步将这些优惠让利给您。",
+        "pricingTable": {
+          "title": "详细价格表",
+          "headers": {
+            "model": "模型",
+            "type": "类型",
+            "duration": "时长",
+            "resolution": "分辨率",
+            "notes": "备注",
+            "credits": "积分",
+            "price": "价格",
+            "channel": "渠道"
+          },
+          "rows": [
+            {
+              "model": "gpt-5",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "",
+              "notes": "大模型价格以官方价格为准",
+              "credits": "每百万tokens",
+              "price": "输入 9元，输出 72元",
+              "channel": "yun"
+            },
+            {
+              "model": "gpt-5-mini",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "",
+              "price": "输入 1.8元，输出 14.4元",
+              "channel": "yun"
+            },
+            {
+              "model": "gpt-5-nano",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "",
+              "price": "输入 0.36元，输出 2.88元",
+              "channel": "yun"
+            },
+            {
+              "model": "gemini-2.5-pro",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "支持视频",
+              "notes": "",
+              "credits": "",
+              "price": "输入9元，输出 72元",
+              "channel": "yun"
+            },
+            {
+              "model": "chatgpt-4o-latest",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "",
+              "price": "输入 36元，输出 108元",
+              "channel": "yun"
+            },
+            {
+              "model": "gemini-2.5-flash",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "支持视频",
+              "notes": "",
+              "credits": "",
+              "price": "输入 2.16元，输出 18元",
+              "channel": "yun"
+            },
+            {
+              "model": "qwen-vl-max-latest",
+              "type": "大模型",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "",
+              "price": "输入1.6元，输出4元",
+              "channel": "yun"
+            },
+            {
+              "model": "gemini-2.5-flash-image",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "",
+              "notes": "又名nano banana，支持多图像输入",
+              "credits": "1",
+              "price": "0.27元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedream-3.0",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "2.6",
+              "price": "0.26元",
+              "channel": "官方"
+            },
+            {
+              "model": "seededit-3.0",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "",
+              "notes": "图片编辑，支持jpeg、png格式",
+              "credits": "3",
+              "price": "0.3元",
+              "channel": "官方"
+            },
+            {
+              "model": "gpt-image-1",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "支持图片编辑",
+              "notes": "",
+              "credits": "促销",
+              "price": "low $0.011-0.016，medium $0.042-0.063，high $0.167-0.25",
+              "channel": "yun"
+            },
+            {
+              "model": "FLUX.1 Kontext [max]",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "支持图片编辑",
+              "notes": "",
+              "credits": "1.5",
+              "price": "0.6元",
+              "channel": "yun"
+            },
+            {
+              "model": "FLUX.1 Kontext [pro]",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "支持图片编辑",
+              "notes": "",
+              "credits": "1",
+              "price": "0.3元",
+              "channel": "yun"
+            },
+            {
+              "model": "Flux 1.1 pro ultra",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "4.5",
+              "price": "0.45元",
+              "channel": "官方"
+            },
+            {
+              "model": "Flux1.1 pro",
+              "type": "图片生成",
+              "duration": "",
+              "resolution": "",
+              "notes": "",
+              "credits": "3",
+              "price": "0.3元",
+              "channel": "官方"
+            },
+            {
+              "model": "midjourney relax",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "",
+              "notes": "",
+              "credits": "免费",
+              "price": "",
+              "channel": "yun"
+            },
+            {
+              "model": "midjourney fast/turbo",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "",
+              "notes": "",
+              "credits": "4",
+              "price": "",
+              "channel": "yun"
+            },
+            {
+              "model": "kling1.5/1.6/2.1",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "720p",
+              "notes": "",
+              "credits": "20",
+              "price": "2元",
+              "channel": "yun"
+            },
+            {
+              "model": "kling1.5/1.6/2.1",
+              "type": "视频生成",
+              "duration": "10秒",
+              "resolution": "720p",
+              "notes": "",
+              "credits": "40",
+              "price": "4元",
+              "channel": "yun"
+            },
+            {
+              "model": "kling1.5/1.6/2.1",
+              "duration": "5秒",
+              "resolution": "1080p",
+              "notes": "",
+              "credits": "35",
+              "price": "3.5元",
+              "channel": "yun"
+            },
+            {
+              "model": "kling1.5/1.6/2.1",
+              "type": "视频生成",
+              "duration": "10秒",
+              "resolution": "1080p",
+              "notes": "",
+              "credits": "70",
+              "price": "7元",
+              "channel": "yun"
+            },
+            {
+              "model": "kling2.1大师",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "1080p",
+              "notes": "",
+              "credits": "100",
+              "price": "10元",
+              "channel": "yun"
+            },
+            {
+              "model": "kling2.1大师",
+              "type": "视频生成",
+              "duration": "10秒",
+              "resolution": "1080p",
+              "notes": "",
+              "credits": "200",
+              "price": "20元",
+              "channel": "yun"
+            },
+            {
+              "model": "wan2.2-plus",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "480p",
+              "notes": "",
+              "credits": "70",
+              "price": "0.7元",
+              "channel": "yun"
+            },
+            {
+              "model": "wan2.2-plus",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "1080p",
+              "notes": "",
+              "credits": "35",
+              "price": "3.5元",
+              "channel": "yun"
+            },
+            {
+              "model": "wan2.1-turbo(14b）",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "720p",
+              "notes": "不要使用火山渠道",
+              "credits": "12",
+              "price": "1.2元",
+              "channel": "yun"
+            },
+            {
+              "model": "wan2.1-plus",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "720p",
+              "notes": "支持首尾帧",
+              "credits": "35",
+              "price": "3.5元",
+              "channel": "yun"
+            },
+            {
+              "model": "wanx2.1-vace-plus",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "720p",
+              "notes": "视频编辑",
+              "credits": "35",
+              "price": "3.5元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedance-1.0-pro",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "480p",
+              "notes": "支持10秒",
+              "credits": "7.2",
+              "price": "0.72元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedance-1.0-pro",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "720p",
+              "notes": "10秒价格翻倍",
+              "credits": "16.4",
+              "price": "1.64元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedance-1.0-pro",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "1080p",
+              "notes": "",
+              "credits": "36.7",
+              "price": "3.67元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedance-1.0-lite",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "480p",
+              "notes": "支持首尾帧",
+              "credits": "5",
+              "price": "0.5元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedance-1.0-lite",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "720p",
+              "notes": "支持10秒",
+              "credits": "11",
+              "price": "1.1元",
+              "channel": "yun"
+            },
+            {
+              "model": "seedance-1.0-lite",
+              "type": "视频生成",
+              "duration": "5秒",
+              "resolution": "1080p",
+              "notes": "10秒价格翻倍",
+              "credits": "25",
+              "price": "2.5元",
+              "channel": "yun"
+            }
+          ]
         }
-      ]
+      },
+      "creditExpiry": {
+        "question": "我的积分会过期吗？",
+        "answer": "我们的积分过期机制非常宽松。积分自获取之日起 12 个自然月后才会过期，您有充足的时间使用。"
+      },
+      "moreCredits": {
+        "question": "如果我需要更多积分怎么办？",
+        "answer": "您可以通过每天发布内容来获取免费积分。同时，也可以通过开通会员或直接购买积分的方式获得更多积分。"
+      },
+      "checkCredits": {
+        "question": "如何查看我的积分情况？",
+        "answer": "点击您的积分余额，即可查看积分的变更明细。"
+      },
+      "hiddenFees": {
+        "question": "是否存在隐藏费用？",
+        "answer": "没有。您所看到的价格就是您最终支付的价格，不会有任何额外的隐性收费。"
+      },
+      "refundPolicy": {
+        "question": "有退款政策吗？",
+        "answer": "我们提供7天无理由退款保证。如果您对服务不满意，可以在购买后7天内申请全额退款。"
+      }
     }
   },
   "profile": {
@@ -985,8 +1726,37 @@ interface Resources {
       "expire": "过期",
       "aiService": "AI服务",
       "userRegister": "用户注册",
+      "publish": "发布作品",
+      "point": "积分交易",
       "noPointsRecords": "暂无积分记录",
       "totalRecords": "共 {{total}} 条记录"
+    },
+    "pointsPurchase": {
+      "title": "购买积分",
+      "currentPoints": "当前积分",
+      "selectAmount": "选择购买数量",
+      "description": "每1000积分售价15美元，滑动选择购买数量",
+      "purchasePoints": "购买积分",
+      "totalPrice": "总价",
+      "buyNow": "立即购买",
+      "paying": "支付中...",
+      "paymentTip": "支付完成后，请点击下方按钮确认支付状态",
+      "confirmPayment": "我已支付",
+      "purchaseSuccess": "积分购买成功！",
+      "paymentPending": "订单尚未支付成功，请稍后再试",
+      "orderRefunded": "订单已退款",
+      "orderCancelled": "订单已取消",
+      "orderUnknown": "订单状态未知，请稍后再试",
+      "queryFailed": "查询订单状态失败，请重试",
+      "createOrderFailed": "创建支付订单失败，请重试",
+      "redirectingToPayment": "正在跳转到支付页面...",
+      "publish": "发布",
+      "publishDesc": "发布内容获得积分奖励",
+      "vip": "开通会员",
+      "vipDesc": "会员专享积分福利",
+      "buyPoints": "购买积分",
+      "buyPointsDesc": "直接充值获得积分",
+      "getPointsMethods": "获取积分的方法："
     },
     "freeTrial": {
       "title": "🎉 免费会员体验",
@@ -1046,7 +1816,9 @@ interface Resources {
       "regionPlaceholder": "请选择国区",
       "category": "视频分类",
       "categoryPlaceholder": "请选择视频分类",
-      "categoryPlaceholderDisabled": "请先选择国区"
+      "categoryPlaceholderDisabled": "请先选择国区",
+      "board": "Board",
+      "boardPlaceholder": "请选择Board"
     },
     "upload": {
       "finishingUp": "正在完成...",
@@ -1071,11 +1843,19 @@ interface Resources {
       "partitionRequired": "您必须选择分区!",
       "sourceRequired": "转载时必须填写转载来源!",
       "pageRequired": "您必须选择页面!",
+      "boardRequired": "您必须选择Board!",
       "coverSizeError": "封面最小尺寸400*400!"
     },
     "preview": {
       "title": "预览",
-      "emptyDescription": "在这里看到你的作品预览"
+      "emptyDescription": "在这里看到你的作品预览",
+      "videoInfo": {
+        "filename": "文件名",
+        "format": "格式",
+        "resolution": "分辨率",
+        "size": "大小",
+        "duration": "时长"
+      }
     },
     "draft": {
       "selectDraft": "选择草稿",
@@ -1097,7 +1877,36 @@ interface Resources {
     },
     "actions": {
       "selectMaterial": "选择素材",
-      "selectDraft": "选择草稿"
+      "selectDraft": "选择草稿",
+      "cropCover": "裁剪封面"
+    },
+    "tiktok": {
+      "creatorInfo": "创作者信息",
+      "privacy": {
+        "title": "谁可以观看",
+        "placeholder": "请选择隐私级别",
+        "public": "公开",
+        "friends": "朋友",
+        "private": "仅自己"
+      },
+      "interactions": {
+        "title": "允许用户",
+        "comment": "评论",
+        "duet": "合拍",
+        "stitch": "拼接"
+      },
+      "commercial": {
+        "title": "披露视频",
+        "toggle": "开启以披露此视频推广商品或服务以换取价值。",
+        "yourBrand": "您的品牌 - 您正在推广自己或自己的业务。此内容将被分类为品牌有机内容。",
+        "brandedContent": "品牌内容 - 您正在推广另一个品牌或第三方。此内容将被分类为品牌内容。"
+      },
+      "compliance": {
+        "default": "发布即表示您同意 TikTok 的音乐使用确认。",
+        "organic": "发布即表示您同意 TikTok 的音乐使用确认。",
+        "branded": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
+        "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
+      }
     }
   },
   "route": {
@@ -1106,7 +1915,117 @@ interface Resources {
     "publish": "发布",
     "hotContent": "热门内容",
     "hotContentNew": "热门内容新",
-    "navigation": "导航"
+    "download": "下载",
+    "aiTools": "AI工具",
+    "tasks": "任务中心",
+    "interactive": "作品互动",
+    "engagement": "互动数据",
+    "dataStatistics": "数据统计",
+    "navigation": "导航",
+    "aiRank": "AI热榜"
+  },
+  "task": {
+    "title": "任务中心",
+    "subtitle": "接受任务，完成任务，获得奖励",
+    "pendingTasks": "待接受任务",
+    "acceptedTasks": "已接受任务",
+    "taskDetails": "任务详情",
+    "acceptTask": "接受任务",
+    "completeTask": "完成任务",
+    "submitTask": "提交任务",
+    "viewDetails": "查看详情",
+    "taskProcessing": "任务处理中...",
+    "acceptingTask": "正在接受任务...",
+    "publishingTask": "正在发布任务...",
+    "submittingTask": "正在提交任务...",
+    "taskCompleted": "任务完成",
+    "taskStatus": {
+      "pending": "待完成",
+      "doing": "已完成",
+      "accepted": "已接受",
+      "completed": "已完成",
+      "rejected": "已拒绝",
+      "active": "进行中",
+      "inactive": "已结束"
+    },
+    "taskTypes": {
+      "video": "视频",
+      "article": "图文",
+      "article2": "纯文字"
+    },
+    "platforms": {
+      "tiktok": "TikTok",
+      "youtube": "YouTube",
+      "twitter": "Twitter",
+      "bilibili": "哔哩哔哩",
+      "KWAI": "快手",
+      "douyin": "抖音",
+      "xhs": "小红书",
+      "wxSph": "微信视频号",
+      "wxGzh": "微信公众号",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "pinterest": "Pinterest"
+    },
+    "taskInfo": {
+      "publishTime": "发布时间",
+      "endTime": "结束时间",
+      "acceptTime": "接受时间",
+      "submitTime": "提交时间",
+      "reward": "奖励",
+      "type": "类型",
+      "status": "状态",
+      "description": "描述",
+      "account": "发布账号",
+      "currentRecruits": "已接受",
+      "maxRecruits": "最大招募",
+      "people": "人",
+      "firstSubmission": "首次提交"
+    },
+    "messages": {
+      "pleaseLoginFirst": "请先登录以查看任务",
+      "getPendingTasksFailed": "获取待接受任务失败",
+      "getAcceptedTasksFailed": "获取已接受任务失败",
+      "acceptTaskSuccess": "接受任务成功！",
+      "acceptTaskFailed": "接受任务失败",
+      "submitTaskSuccess": "任务提交成功！",
+      "submitTaskFailed": "任务提交失败",
+      "publishTaskFailed": "发布任务失败",
+      "getTaskDetailFailed": "获取任务详情失败",
+      "taskProcessFailed": "任务处理失败",
+      "noPendingTasks": "暂无待接受任务",
+      "noAcceptedTasks": "暂无已接受任务",
+      "noTaskDetails": "暂无任务详情",
+      "loading": "加载中...",
+      "totalRecords": "共 {{total}} 条记录",
+      "pageInfo": "第 {{start}}-{{end}} 条，共 {{total}} 条",
+      "taskInProgress": "任务正在进行中，可以接受",
+      "taskEnded": "任务已结束",
+      "acceptedCount": "已接受 {{current}}/{{max}} 人"
+    },
+    "modal": {
+      "submitTask": "提交任务",
+      "submitLink": "提交链接",
+      "submitLinkPlaceholder": "请输入任务完成后的链接",
+      "submitTip": "请确保您已经完成了任务要求，并提供了正确的提交链接。",
+      "confirmSubmit": "确认提交",
+      "cancel": "取消",
+      "close": "关闭",
+      "mediaPreview": "媒体预览"
+    },
+    "time": {
+      "justNow": "刚刚",
+      "minutesAgo": "{{minutes}}分钟前",
+      "hoursAgo": "{{hours}}小时前",
+      "daysAgo": "{{days}}天前"
+    },
+    "accountSelect": {
+      "title": "选择账号",
+      "description": "请选择要用于发布任务的账号",
+      "accountId": "账号ID",
+      "redirectingToAccounts": "正在跳转到账户页面，请添加频道账号"
+    }
   },
   "translation": {
     "title": "AIToEarn官方网站",
@@ -1126,8 +2045,8 @@ interface Resources {
       "description": "选择连续包月或连续包年，可享受7天免费试用期！"
     },
     "trialText": {
-      "month": "前7天免费，之后$15/月",
-      "year": "前7天免费，之后$120/年"
+      "month": "前7天免费，之后$19/月",
+      "year": "前7天免费，之后$144/年"
     },
     "badge": {
       "onceMonth": "一次性",
@@ -1150,6 +2069,55 @@ interface Resources {
       "onceMonth": "一次性月度",
       "month": "月度订阅",
       "year": "年度订阅"
+    }
+  },
+  "wallet": {
+    "title": "我的钱包",
+    "columns": {
+      "userName": "真实姓名",
+      "mail": "邮箱",
+      "account": "账号",
+      "type": "类型",
+      "phone": "手机号",
+      "cardNum": "身份证号",
+      "actions": "操作"
+    },
+    "types": {
+      "ZFB": "支付宝",
+      "WX_PAY": "微信支付"
+    },
+    "actions": {
+      "create": "新增账户",
+      "edit": "编辑",
+      "delete": "删除",
+      "deleteConfirm": "确认删除该钱包账户？"
+    },
+    "dialogs": {
+      "createTitle": "新增钱包账户",
+      "editTitle": "编辑钱包账户"
+    },
+    "form": {
+      "userId": "用户ID",
+      "userIdPlaceholder": "自动填充当前用户ID",
+      "mail": "邮箱",
+      "mailPlaceholder": "请输入邮箱",
+      "mailInvalid": "请输入有效的邮箱地址",
+      "userName": "真实姓名",
+      "userNamePlaceholder": "请输入真实姓名（可选）",
+      "account": "账号",
+      "accountPlaceholder": "请输入收款账号",
+      "cardNum": "身份证号",
+      "cardNumPlaceholder": "请输入身份证号（可选）",
+      "phone": "手机号",
+      "phonePlaceholder": "请输入绑定手机号（可选）",
+      "type": "类型",
+      "typePlaceholder": "请选择类型",
+      "required": "必填项"
+    },
+    "messages": {
+      "createSuccess": "创建成功",
+      "updateSuccess": "更新成功",
+      "deleteSuccess": "删除成功"
     }
   },
   "youtube": {

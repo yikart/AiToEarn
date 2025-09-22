@@ -41,7 +41,9 @@
     "regionPlaceholder": "请选择国区",
     "category": "视频分类",
     "categoryPlaceholder": "请选择视频分类",
-    "categoryPlaceholderDisabled": "请先选择国区"
+    "categoryPlaceholderDisabled": "请先选择国区",
+    "board": "Board",
+    "boardPlaceholder": "请选择Board"
   },
   "upload": {
     "finishingUp": "正在完成...",
@@ -66,11 +68,19 @@
     "partitionRequired": "您必须选择分区!",
     "sourceRequired": "转载时必须填写转载来源!",
     "pageRequired": "您必须选择页面!",
+    "boardRequired": "您必须选择Board!",
     "coverSizeError": "封面最小尺寸400*400!"
   },
   "preview": {
     "title": "预览",
-    "emptyDescription": "在这里看到你的作品预览"
+    "emptyDescription": "在这里看到你的作品预览",
+    "videoInfo": {
+      "filename": "文件名",
+      "format": "格式",
+      "resolution": "分辨率",
+      "size": "大小",
+      "duration": "时长"
+    }
   },
   "draft": {
     "selectDraft": "选择草稿",
@@ -92,6 +102,35 @@
   },
   "actions": {
     "selectMaterial": "选择素材",
-    "selectDraft": "选择草稿"
+    "selectDraft": "选择草稿",
+    "cropCover": "裁剪封面"
+  },
+  "tiktok": {
+    "creatorInfo": "创作者信息",
+    "privacy": {
+      "title": "谁可以观看",
+      "placeholder": "请选择隐私级别",
+      "public": "公开",
+      "friends": "朋友",
+      "private": "仅自己"
+    },
+    "interactions": {
+      "title": "允许用户",
+      "comment": "评论",
+      "duet": "合拍",
+      "stitch": "拼接"
+    },
+    "commercial": {
+      "title": "披露视频",
+      "toggle": "开启以披露此视频推广商品或服务以换取价值。",
+      "yourBrand": "您的品牌 - 您正在推广自己或自己的业务。此内容将被分类为品牌有机内容。",
+      "brandedContent": "品牌内容 - 您正在推广另一个品牌或第三方。此内容将被分类为品牌内容。"
+    },
+    "compliance": {
+      "default": "发布即表示您同意 TikTok 的音乐使用确认。",
+      "organic": "发布即表示您同意 TikTok 的音乐使用确认。",
+      "branded": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
+      "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
+    }
   }
 } 
