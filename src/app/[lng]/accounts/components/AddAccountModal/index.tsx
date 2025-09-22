@@ -371,6 +371,7 @@ const AddAccountModal = memo(
                     <Tooltip title={value.tips?.account} key={key}>
                       <Button
                         type="text"
+                        style={{ width: '84px', }}
                         className={`addAccountModal_plats-item ${!isAvailable ? 'disabled' : ''}`}
                         disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId)}
                         onClick={() => handlePlatformClick(key as PlatType, value)}
