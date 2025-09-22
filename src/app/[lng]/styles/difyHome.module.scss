@@ -544,6 +544,9 @@
     max-width: 900px;
     margin: 0 auto;
   }
+
+  @media (max-width: 768px) {
+  }
 }
 
 .buildLeft,
@@ -1515,8 +1518,8 @@
   
   .buildContent,
   .connectContent {
-    grid-template-columns: 1fr;
-    gap: 40px;
+    //grid-template-columns: 1fr;
+    //gap: 40px;
   }
   
   .productionFeatures {
@@ -1729,14 +1732,17 @@
 }
 
 .carouselSlide {
-  position: absolute;
-  top: 0;
-  left: 220px;
+  //position: absolute;
+  //top: 0;
+  //right: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
-  
+  display: flex;
+  justify-content: right;
+  align-items: flex-start;
+
   &.active {
     opacity: 1;
   }
