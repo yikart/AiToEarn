@@ -50,13 +50,17 @@
 }
 
 .header {
-  padding: 20px 0;
+  padding: 15px 0;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   position: sticky;
   top: 0;
   z-index: 100;
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 768px) {
+    padding: 10px 0 !important;
+  }
 }
 
 .headerContainer {
@@ -71,7 +75,7 @@
 .headerRight {
   @media (max-width: 768px) {
     display: flex;
-    justify-content: right;
+    align-items: center;
   }
 }
 
@@ -83,6 +87,13 @@
   font-size: 24px;
   font-weight: 700;
   color: #4f46e5;
+  @media (max-width: 768px) {
+    font-size: 18px;
+    img {
+      width: 40px;
+      object-fit: contain;
+    }
+  }
 }
 
 .logoText {
