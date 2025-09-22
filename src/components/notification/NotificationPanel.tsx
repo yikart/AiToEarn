@@ -29,20 +29,8 @@ import styles from "./NotificationPanel.module.scss";
 import { useParams, useRouter } from "next/navigation";
 import { getDays, getUtcDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 
-// 导入平台图标
-import douyinIcon from '@/assets/svgs/plat/douyin.svg';
-import tiktokIcon from '@/assets/svgs/plat/tiktok.svg';
-import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
-import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
-import xhsIcon from '@/assets/svgs/plat/xhs.svg';
-import ksIcon from '@/assets/svgs/plat/ks.svg';
-import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
-import wxGzhIcon from '@/assets/svgs/plat/wx-gzh.svg';
-import facebookIcon from '@/assets/svgs/plat/facebook.svg';
-import instagramIcon from '@/assets/svgs/plat/instagram.svg';
-import threadsIcon from '@/assets/svgs/plat/xiancheng.svg';
-import pinterestIcon from '@/assets/svgs/plat/pinterest.svg';
-import twitterIcon from '@/assets/svgs/plat/twtter.svg';
+// 平台配置（图标等）
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 
 interface NotificationPanelProps {
   visible: boolean;
@@ -553,24 +541,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     return taskTypeNames[type] || type;
   };
 
-  // 获取平台图标
+  /**
+   * 从平台配置中获取平台图标
+   * 兼容字符串路径与含有src字段的对象
+   */
   const getPlatformIcon = (type: string) => {
-    const iconMap: Record<string, any> = {
-      'douyin': douyinIcon,
-      'tiktok': tiktokIcon,
-      'youtube': youtubeIcon,
-      'bilibili': bilibiliIcon,
-      'xhs': xhsIcon,
-      'KWAI': ksIcon,
-      'wxSph': wxSphIcon,
-      'wxGzh': wxGzhIcon,
-      'facebook': facebookIcon,
-      'instagram': instagramIcon,
-      'threads': threadsIcon,
-      'pinterest': pinterestIcon,
-      'twitter': twitterIcon,
-    };
-    return iconMap[type] || null;
+    const info = AccountPlatInfoMap.get(type as PlatType);
+    const icon: any = info?.icon;
+    if (!icon) return null;
+    if (typeof icon === 'string') return icon;
+    return icon?.src || icon?.default || null;
   };
 
   // 根据accountId获取账号信息

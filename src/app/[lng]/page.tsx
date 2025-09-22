@@ -19,7 +19,7 @@ import xhsIcon from '@/assets/svgs/plat/xhs.svg';
 import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
 import TwitterIcon from '@/assets/svgs/plat/twtter.svg';
 import FacebookIcon from '@/assets/svgs/plat/facebook.svg';
-import InstagramIcon from '@/assets/svgs/plat/instagram.svg';
+import InstagramIcon from '@/assets/svgs/plat/instagram.png';
 import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.svg';
 import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
@@ -200,7 +200,7 @@ function BrandBar() {
     { name: '视频号', key: 'Wechat Channels', hasIcon: true, iconPath: wxSphIcon },
     { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon },
     { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon },
-    { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon },
+    { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
     { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon },
     { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon },
     { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon },

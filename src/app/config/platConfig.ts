@@ -6,7 +6,7 @@ import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import tiktokSvg from "@/assets/svgs/plat/tiktok.svg";
 import twitterSvg from "@/assets/svgs/plat/twtter.svg";
 import facebookSvg from "@/assets/svgs/plat/facebook.svg";
-import instagramSvg from "@/assets/svgs/plat/instagram.svg";
+import instagramSvg from "@/assets/svgs/plat/instagram.png";
 import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
 import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
@@ -228,7 +228,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Instagram,
     {
       name: "Instagram",
-      icon: instagramSvg,
+      icon: instagramSvg.src,
       url: "https://www.instagram.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
