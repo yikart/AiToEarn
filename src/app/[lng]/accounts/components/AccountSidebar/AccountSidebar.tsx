@@ -8,7 +8,17 @@ import {
   useState,
 } from "react";
 import styles from "./AccountSidebar.module.scss";
-import { Avatar, Button, Collapse, Popover, Skeleton, Tooltip, Modal, Input, message, Select } from "antd";
+import {
+  Avatar,
+  Button,
+  Collapse,
+  Popover,
+  Skeleton,
+  Tooltip,
+  Modal,
+  Input,
+  message,
+} from "antd";
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
 import {
   CheckCircleOutlined,
@@ -25,7 +35,12 @@ import { AccountStatus } from "@/app/config/accountConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import { getOssUrl } from "@/utils/oss";
 import { useTransClient } from "@/app/i18n/client";
-import { getIpLocation, IpLocationInfo, formatLocationInfo, extractCountry } from "@/utils/ipLocation";
+import {
+  getIpLocation,
+  IpLocationInfo,
+  formatLocationInfo,
+  extractCountry,
+} from "@/utils/ipLocation";
 import { createAccountGroupApi, updateAccountApi } from "@/api/account";
 import AddAccountModal from "../AddAccountModal";
 
@@ -84,7 +99,7 @@ const AccountPopoverInfo = ({
             <p>{t("platform")}：</p>
             <p>
               <img src={platInfo?.icon} />
-              {platInfo.name }
+              {platInfo.name}
             </p>
           </div>
         </div>
@@ -157,9 +172,10 @@ const AccountSidebar = memo(
       const userManageModalRef = useRef<IUserManageModalRef>(null);
       const [mcpManagerModalOpen, setMcpManagerModalOpen] = useState(false);
       const mcpManagerModalRef = useRef<IMCPManagerModalRef>(null);
-      
+
       // IP地理位置信息状态
-      const [ipLocationInfo, setIpLocationInfo] = useState<IpLocationInfo | null>(null);
+      const [ipLocationInfo, setIpLocationInfo] =
+        useState<IpLocationInfo | null>(null);
       const [ipLocationLoading, setIpLocationLoading] = useState(false);
 
       // 新建空间状态
@@ -200,7 +216,7 @@ const AccountSidebar = memo(
             const info = await getIpLocation();
             setIpLocationInfo(info);
           } catch (error) {
-            console.error('获取IP地理位置信息失败:', error);
+            console.error("获取IP地理位置信息失败:", error);
           } finally {
             setIpLocationLoading(false);
           }
@@ -216,7 +232,7 @@ const AccountSidebar = memo(
           message.error("请先创建空间");
           return;
         }
-        
+
         // 直接打开AddAccountModal，让用户选择空间
         if ((useAccountStore.getState().accountList || []).length === 0) {
           await getAccountList();
@@ -235,7 +251,9 @@ const AccountSidebar = memo(
           if (isAssigningRef.current) return;
           if (!snapshotReadyRef.current) return;
           const currList = fullAccountList || [];
-          const newAccounts = currList.filter((a) => !preAccountIds.current.has(a.id));
+          const newAccounts = currList.filter(
+            (a) => !preAccountIds.current.has(a.id),
+          );
           if (newAccounts.length === 0) return;
           isAssigningRef.current = true;
           try {
@@ -278,7 +296,10 @@ const AccountSidebar = memo(
             onAddSuccess={async (acc) => {
               try {
                 if (pendingGroupIdRef.current) {
-                  await updateAccountApi({ id: acc.id, groupId: pendingGroupIdRef.current });
+                  await updateAccountApi({
+                    id: acc.id,
+                    groupId: pendingGroupIdRef.current,
+                  });
                   message.success(t("accountAddedToSpace"));
                 }
               } finally {
@@ -289,8 +310,6 @@ const AccountSidebar = memo(
             showSpaceSelector={true}
           />
 
-
-
           {/* 新建空间Modal */}
           <Modal
             open={openCreateGroup}
@@ -298,7 +317,9 @@ const AccountSidebar = memo(
             onCancel={createGroupCancel}
             footer={
               <>
-                <Button onClick={createGroupCancel}>{t("createSpace.cancel")}</Button>
+                <Button onClick={createGroupCancel}>
+                  {t("createSpace.cancel")}
+                </Button>
                 <Button
                   type="primary"
                   onClick={async () => {
@@ -363,7 +384,7 @@ const AccountSidebar = memo(
           {/*  accounts={accountList}*/}
           {/*  isFooter={false}*/}
           {/*/>*/}
-          
+
           <div className={styles.accountSidebar}>
             <div className="accountSidebar-top">
               <div className="accountSidebar-top-box">
@@ -375,7 +396,6 @@ const AccountSidebar = memo(
                   <UserOutlined />
                   {t("accountManager")}
                 </Button>
-                
               </div>
               {/* mcp 按钮 */}
               <div className="accountSidebar-top-box">
@@ -407,13 +427,14 @@ const AccountSidebar = memo(
                   // 为默认分组添加IP和地址信息
                   const isDefaultGroup = v.isDefault;
                   const showIpInfo = isDefaultGroup && ipLocationInfo;
-                  
-                  return { 
+                  return {
                     key: v.id,
                     label: (
                       <>
                         <div className="accountSidebar-groupLabel">
-                          <span className="accountSidebar-groupName">{v.name}</span>
+                          <span className="accountSidebar-groupName">
+                            {v.name}
+                          </span>
                           <span className="accountSidebar-userCount">
                             {v.children?.length}/
                             {
@@ -423,26 +444,38 @@ const AccountSidebar = memo(
                             }
                           </span>
                           {/* 根据proxyIp判断显示IP信息 */}
-                          {(!v.proxyIp || v.proxyIp === "") ? (
+                          {!v.proxyIp || v.proxyIp === "" ? (
                             // 本地IP显示
                             <div className="accountSidebar-ipInfo">
                               {ipLocationLoading ? (
-                                <span className="accountSidebar-ipLoading">{t("ipInfo.loading")}</span>
+                                <span className="accountSidebar-ipLoading">
+                                  {t("ipInfo.loading")}
+                                </span>
                               ) : ipLocationInfo ? (
-                                <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
+                                <Tooltip
+                                  title={t("ipInfo.tooltip", {
+                                    asn: ipLocationInfo.asn,
+                                    org: ipLocationInfo.org,
+                                  })}
+                                >
                                   <span className="accountSidebar-ipText">
                                     {formatLocationInfo(ipLocationInfo)}
                                   </span>
                                 </Tooltip>
                               ) : (
-                                <span className="accountSidebar-ipError">{t("ipInfo.error")}</span>
+                                <span className="accountSidebar-ipError">
+                                  {t("ipInfo.error")}
+                                </span>
                               )}
                             </div>
                           ) : (
                             // 数据中的IP显示
-                            v.ip && v.location && (
+                            v.ip &&
+                            v.location && (
                               <div className="accountSidebar-ipInfo">
-                                <Tooltip title={`IP: ${v.ip}\n位置: ${v.location}`}>
+                                <Tooltip
+                                  title={`IP: ${v.ip}\n位置: ${v.location}`}
+                                >
                                   <span className="accountSidebar-ipText">
                                     {extractCountry(v.location)} | {v.ip}
                                   </span>
@@ -451,8 +484,6 @@ const AccountSidebar = memo(
                             )
                           )}
                         </div>
-                        
-                        
                       </>
                     ),
                     children: (
@@ -517,7 +548,6 @@ const AccountSidebar = memo(
                             </li>
                           );
                         })}
-                        
                       </ul>
                     ),
                   };
@@ -525,21 +555,17 @@ const AccountSidebar = memo(
               />
             )}
 
-            {/* 添加账号按钮 */}
-            <div style={{ padding: "10px", height: "100%", paddingTop: "20px" }}>
+            <div className="accountSidebar-footer">
               <Button
                 type="default"
                 icon={<PlusOutlined />}
                 onClick={openAddAccountFlow}
-                style={{ width: "100%" }}
+                style={{ width: "100%", marginBottom: "10px" }}
               >
                 {t("addAccount")}
               </Button>
-            </div>
 
-            {/* 新建空间按钮 */}
-            <div style={{ padding: "10px", borderTop: "1px solid var(--grayColor3)" }}>
-                          <Button
+              <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => {
@@ -550,17 +576,6 @@ const AccountSidebar = memo(
                 {t("createSpace.button")}
               </Button>
             </div>
-
-            {/*<div className="accountSidebar-footer">*/}
-            {/*  <Button*/}
-            {/*    type="link"*/}
-            {/*    onClick={() => {*/}
-            {/*      pubAccountDetModuleRef.current?.startDet();*/}
-            {/*    }}*/}
-            {/*  >*/}
-            {/*    {t("checkAllLoginStatus")}*/}
-            {/*  </Button>*/}
-            {/*</div>*/}
           </div>
         </>
       );

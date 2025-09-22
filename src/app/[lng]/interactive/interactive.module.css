@@ -1,5 +1,6 @@
 .container {
-  min-height: 100%;
+  min-height: 0;
+  height: 100%;
 }
 
 /* 页面头部样式 */

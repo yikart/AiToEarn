@@ -332,7 +332,7 @@ export default function InteractivePage() {
       </div>
 
       {/* 右侧内容 */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ flex: 1, minWidth: 0, height: '100%', overflow: 'auto' }}>
       {!accountActive?.uid ? (
         <Card style={{ height: '100%', minHeight: 360, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{ textAlign: 'center', maxWidth: 520 }}>
