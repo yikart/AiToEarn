@@ -94,6 +94,10 @@ export const homeHeaderRouterData = {
         title: directTrans("home", "header.nav.blog"),
       },
       {
+        href: "https://docs.aitoearn.ai/zh/downloads",
+        title: directTrans("home", "header.nav.download"),
+      },
+      {
         href: "/hotContent",
         title: directTrans("route", "hotContent"),
       },

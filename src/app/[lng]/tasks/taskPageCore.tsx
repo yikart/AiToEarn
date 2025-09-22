@@ -308,7 +308,7 @@ export default function TaskPageCore() {
       
       if (minutes < 60) return `${minutes}分钟后`;
       if (hours < 24) return `${hours}小时后`;
-      if (days < 7) return `${days}天后`;
+      if (days < 7) return `${days}天后` ;
     }
     
     // 显示具体日期时间
