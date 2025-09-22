@@ -27,7 +27,7 @@ module.exports = {
     };
   },
 
-  additionalPaths: async (config) => {
+  additionalPaths: async () => {
     const allPageFiles = glob.sync("src/app/**/page.{js,tsx}", {
       cwd: process.cwd(),
       ignore: ["**/node_modules/**"],
@@ -72,14 +72,10 @@ module.exports = {
         }
 
         result.push({
-          loc: `/${slug ? "/" + slug : ""}`,
+          loc: `/${lang}${slug ? "/" + slug : ""}`,
           changefreq,
           priority,
           lastmod,
-          alternateRefs: languages.map((lng) => ({
-            hrefLang: lng,
-            href: `${siteUrl}/${lng}`,
-          })),
         });
       }
     }

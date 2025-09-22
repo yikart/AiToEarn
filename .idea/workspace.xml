@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 1. 删除demo。 2. 优化站点地图">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 1. 站点地图优化">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/next-sitemap.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next-sitemap.config.js" afterDir="false" />
     </list>
@@ -219,15 +219,7 @@
       <workItem from="1758384058524" duration="10000" />
       <workItem from="1758505349114" duration="516000" />
       <workItem from="1758510004297" duration="4147000" />
-      <workItem from="1758514243321" duration="7711000" />
-    </task>
-    <task id="LOCAL-00035" summary="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音">
-      <option name="closed" value="true" />
-      <created>1753789563113</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1753789563113</updated>
+      <workItem from="1758514243321" duration="7846000" />
     </task>
     <task id="LOCAL-00036" summary="feat: password 密码登录、重置密码，添加md5加密">
       <option name="closed" value="true" />
@@ -613,7 +605,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758525216904</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="feat: 1. 站点地图优化">
+      <option name="closed" value="true" />
+      <created>1758526826569</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1758526826569</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -664,7 +664,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(数据统计): 添加昨日新增" />
     <MESSAGE value="feat(热门内容): 恢复新热门内容" />
     <MESSAGE value="feat(热门内容): 添加侧边栏、标签数据、构建获取数据的基本逻辑及缓存逻辑" />
     <MESSAGE value="feat(热门内容): 热门内容添加日期选择" />
@@ -689,6 +688,7 @@
     <MESSAGE value="feat: 热门内容详情开发中" />
     <MESSAGE value="fix: 热门内容边界处理" />
     <MESSAGE value="feat: 1. 删除demo。 2. 优化站点地图" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 1. 删除demo。 2. 优化站点地图" />
+    <MESSAGE value="feat: 1. 站点地图优化" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 1. 站点地图优化" />
   </component>
 </project>
