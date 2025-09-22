@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import styles from "./AccountSidebar.module.scss";
+import userStyles from "./AccountSidebar.module.scss";
 import {
   Avatar,
   Button,
@@ -25,6 +26,7 @@ import {
   PlusOutlined,
   UserOutlined,
   WarningOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useShallow } from "zustand/react/shallow";
 import { useAccountStore } from "@/store/account";
@@ -41,7 +43,7 @@ import {
   formatLocationInfo,
   extractCountry,
 } from "@/utils/ipLocation";
-import { createAccountGroupApi, updateAccountApi } from "@/api/account";
+import { createAccountGroupApi, updateAccountApi, deleteAccountsApi } from "@/api/account";
 import AddAccountModal from "../AddAccountModal";
 
 export interface IAccountSidebarRef {}
@@ -76,8 +78,10 @@ const AccountStatusView = ({ account }: { account: SocialAccount }) => {
 
 const AccountPopoverInfo = ({
   accountInfo,
+  onDeleteClick,
 }: {
   accountInfo: SocialAccount;
+  onDeleteClick?: (account: SocialAccount) => void;
 }) => {
   const { t } = useTransClient("account");
   const platInfo = AccountPlatInfoMap.get(accountInfo.type)!;
@@ -95,12 +99,16 @@ const AccountPopoverInfo = ({
             <p>{t("nickname")}：</p>
             <p>{accountInfo.nickname}</p>
           </div>
-          <div className="accountPopoverInfo-item">
+          {/* <div className="accountPopoverInfo-item">
             <p>{t("platform")}：</p>
             <p>
               <img src={platInfo?.icon} />
               {platInfo.name}
             </p>
+          </div> */}
+          <div className="accountPopoverInfo-item">
+            <p>{t("fansCount")}：</p>
+            <p>{accountInfo.fansCount ?? 0}</p>
           </div>
         </div>
       </div>
@@ -109,34 +117,22 @@ const AccountPopoverInfo = ({
         <p>{t("loginStatus")}：</p>
         <p>
           <AccountStatusView account={accountInfo} />
-          {/*<Button*/}
-          {/*  type="link"*/}
-          {/*  style={{ padding: "0 0 0 5px" }}*/}
-          {/*  loading={detLoading}*/}
-          {/*  onClick={async () => {*/}
-          {/*    // TODO 登录状态检测*/}
-          {/*    // setDetLoading(true);*/}
-          {/*    // const res = await acpAccountLoginCheck(*/}
-          {/*    //   accountInfo!.type,*/}
-          {/*    //   accountInfo!.uid,*/}
-          {/*    // );*/}
-          {/*    // message.success(*/}
-          {/*    //   `登录状态检测完成：${res.status === AccountStatus.USABLE ? "在线" : "离线，请重新登录"}`,*/}
-          {/*    // );*/}
-          {/*    // setTimeout(async () => {*/}
-          {/*    //   setDetLoading(false);*/}
-          {/*    //   if (res.status === AccountStatus.DISABLE) {*/}
-          {/*    //     const res = await accountLogin(accountInfo.type);*/}
-          {/*    //     if (!res) return;*/}
-          {/*    //     message.success("账号更新成功！");*/}
-          {/*    //   }*/}
-          {/*    // }, 500);*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  {t("checkLoginStatus")}*/}
-          {/*</Button>*/}
+
+          
+          <Button 
+            type="primary" 
+            danger 
+            ghost 
+            size="small" 
+            icon={<DeleteOutlined />} 
+            style={{ marginLeft: 18, border: "none" }}
+            onClick={() => onDeleteClick?.(accountInfo)}
+          >
+            删除账户
+          </Button>
         </p>
       </div>
+
     </div>
   );
 };
@@ -172,6 +168,9 @@ const AccountSidebar = memo(
       const userManageModalRef = useRef<IUserManageModalRef>(null);
       const [mcpManagerModalOpen, setMcpManagerModalOpen] = useState(false);
       const mcpManagerModalRef = useRef<IMCPManagerModalRef>(null);
+      const [deleteHitOpen, setDeleteHitOpen] = useState(false);
+      const [deleteLoading, setDeleteLoading] = useState(false);
+      const [deleteTarget, setDeleteTarget] = useState<SocialAccount | null>(null);
 
       // IP地理位置信息状态
       const [ipLocationInfo, setIpLocationInfo] =
@@ -537,6 +536,10 @@ const AccountSidebar = memo(
                                     content={
                                       <AccountPopoverInfo
                                         accountInfo={account}
+                                        onDeleteClick={(acc) => {
+                                          setDeleteTarget(acc);
+                                          setDeleteHitOpen(true);
+                                        }}
                                       />
                                     }
                                     placement="right"
@@ -576,6 +579,48 @@ const AccountSidebar = memo(
                 {t("createSpace.button")}
               </Button>
             </div>
+          {/* 删除账户确认弹窗 */}
+          <Modal
+            open={deleteHitOpen}
+            title="删除提示"
+            width={500}
+            zIndex={1002}
+            rootClassName={userStyles.userManageDeleteHitModal}
+            onCancel={() => setDeleteHitOpen(false)}
+            footer={
+              <>
+                <Button onClick={() => setDeleteHitOpen(false)}>取消</Button>
+                <Button
+                  type="primary"
+                  loading={deleteLoading}
+                  onClick={async () => {
+                    if (!deleteTarget) return setDeleteHitOpen(false);
+                    try {
+                      setDeleteLoading(true);
+                      const res = await deleteAccountsApi([deleteTarget.id]);
+                      if (!res) return setDeleteLoading(false);
+                      await getAccountList();
+                      message.success("删除成功");
+                      setDeleteHitOpen(false);
+                      setDeleteTarget(null);
+                    } finally {
+                      setDeleteLoading(false);
+                    }
+                  }}
+                >
+                  确认
+                </Button>
+              </>
+            }
+          >
+            <p>是否删除以下账号？</p>
+            {deleteTarget && (
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Avatar src={getOssUrl(deleteTarget.avatar)} />
+                <span>{deleteTarget.nickname}</span>
+              </div>
+            )}
+          </Modal>
           </div>
         </>
       );
