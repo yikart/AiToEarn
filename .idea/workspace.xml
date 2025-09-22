@@ -4,21 +4,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: 热门内容边界处理">
+    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="feat: 1. 删除demo。 2. 优化站点地图">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/next-sitemap.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/next-sitemap.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/robots.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/sitemap.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoContent.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoData.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoIncome.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoInteract.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoNote.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoPublish.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/demoTask.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/ipTest.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/demo/uploadExample.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -231,15 +219,7 @@
       <workItem from="1758384058524" duration="10000" />
       <workItem from="1758505349114" duration="516000" />
       <workItem from="1758510004297" duration="4147000" />
-      <workItem from="1758514243321" duration="6110000" />
-    </task>
-    <task id="LOCAL-00034" summary="fix(日历)：发布时间格式修复">
-      <option name="closed" value="true" />
-      <created>1753409153113</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1753409153113</updated>
+      <workItem from="1758514243321" duration="7711000" />
     </task>
     <task id="LOCAL-00035" summary="fix: 账号过滤不支持的三个平台：视频号、小红书、抖音">
       <option name="closed" value="true" />
@@ -625,7 +605,15 @@
       <option name="project" value="LOCAL" />
       <updated>1758288596853</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="feat: 1. 删除demo。 2. 优化站点地图">
+      <option name="closed" value="true" />
+      <created>1758525216903</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1758525216904</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -676,7 +664,6 @@
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(数据统计): 1. echarts图优化。 2. 平台名称进行国际化。" />
     <MESSAGE value="feat(数据统计): 添加昨日新增" />
     <MESSAGE value="feat(热门内容): 恢复新热门内容" />
     <MESSAGE value="feat(热门内容): 添加侧边栏、标签数据、构建获取数据的基本逻辑及缓存逻辑" />
@@ -701,6 +688,7 @@
     <MESSAGE value="feat: 热门内容添加微信公众号跳转到作品" />
     <MESSAGE value="feat: 热门内容详情开发中" />
     <MESSAGE value="fix: 热门内容边界处理" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: 热门内容边界处理" />
+    <MESSAGE value="feat: 1. 删除demo。 2. 优化站点地图" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 1. 删除demo。 2. 优化站点地图" />
   </component>
 </project>

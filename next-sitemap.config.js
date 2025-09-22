@@ -5,7 +5,8 @@ const path = require("path");
 
 const BLOCKLIST_REGEX = /material\/album\/\[id\]/;
 const HAS_DYNAMIC_SEGMENT = /\[[^/]+?\]/;
-const siteUrl = "https://aitoearn.ai";
+const siteUrl = process.env.NEXT_PUBLIC_HOST_URL || "https://aitoearn.ai";
+const languages = ["en", "zh-CN"];
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -26,8 +27,7 @@ module.exports = {
     };
   },
 
-  additionalPaths: async () => {
-    const languages = ["en", "zh-CN"];
+  additionalPaths: async (config) => {
     const allPageFiles = glob.sync("src/app/**/page.{js,tsx}", {
       cwd: process.cwd(),
       ignore: ["**/node_modules/**"],
@@ -72,10 +72,14 @@ module.exports = {
         }
 
         result.push({
-          loc: `/${lang}${slug ? "/" + slug : ""}`,
+          loc: `/${slug ? "/" + slug : ""}`,
           changefreq,
           priority,
           lastmod,
+          alternateRefs: languages.map((lng) => ({
+            hrefLang: lng,
+            href: `${siteUrl}/${lng}`,
+          })),
         });
       }
     }
