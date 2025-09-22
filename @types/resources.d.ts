@@ -1915,6 +1915,7 @@ interface Resources {
     "publish": "发布",
     "hotContent": "热门内容",
     "hotContentNew": "热门内容新",
+    "download": "下载",
     "aiTools": "AI工具",
     "tasks": "任务中心",
     "interactive": "作品互动",
