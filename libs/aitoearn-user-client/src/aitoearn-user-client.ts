@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common'
 import { NatsClient } from '@yikart/nats-client'
 import {
   AddPointsDto,
+  AddUsedStorageDto,
   DeductPointsDto,
+  DeductUsedStorageDto,
   GetUserByPopularizeCodeDto,
   GoogleLoginDto,
   NewMailDto,
@@ -10,6 +12,9 @@ import {
   PointsBalanceVo,
   PointsRecordsDto,
   PointsRecordsVo,
+  SetTotalStorageDto,
+  StorageInfoDto,
+  StorageInfoVo,
   SuccessResponse,
   UpdateUserInfoDto,
   UpdateUserPasswordDto,
@@ -141,5 +146,34 @@ export class AitoearnUserClient {
    */
   async getUserList(dto: UserListDto): Promise<UserListResponse> {
     return this.natsClient.send<UserListResponse>('user.admin.user.list', dto)
+  }
+  // ==================== Storage Module Methods ====================
+
+  /**
+   * 获取用户存储信息
+   */
+  async getStorageInfo(data: StorageInfoDto): Promise<StorageInfoVo> {
+    return this.natsClient.send('user.storage.info', data)
+  }
+
+  /**
+   * 增加已用存储
+   */
+  async addUsedStorage(data: AddUsedStorageDto): Promise<void> {
+    return this.natsClient.send('user.storage.addUsed', data)
+  }
+
+  /**
+   * 减少已用存储
+   */
+  async deductUsedStorage(data: DeductUsedStorageDto): Promise<void> {
+    return this.natsClient.send('user.storage.deductUsed', data)
+  }
+
+  /**
+   * 设置总存储容量
+   */
+  async setTotalStorage(data: SetTotalStorageDto): Promise<void> {
+    return this.natsClient.send('user.storage.setTotal', data)
   }
 }

@@ -29,6 +29,7 @@ export enum ResponseCode {
   // 12000 (user)
   UserNotFound = 12000,
   UserPointsInsufficient = 12001,
+  UserStorageExceeded = 12002,
 
   // 13000 (ai)
   InvalidModel = 13000,

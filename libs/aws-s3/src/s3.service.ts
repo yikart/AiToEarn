@@ -39,16 +39,20 @@ export class S3Service {
     return { path: objectPath }
   }
 
+  async headObject(objectPath: string) {
+    const command = new HeadObjectCommand({
+      Bucket: this.config.bucketName,
+      Key: objectPath,
+    })
+    return await this.client.send(command)
+  }
+
   async putObjectFromUrl(
     url: string,
     objectPath: string,
   ) {
     try {
-      const command = new HeadObjectCommand({
-        Bucket: this.config.bucketName,
-        Key: objectPath,
-      })
-      await this.client.send(command)
+      await this.headObject(objectPath)
       return { path: objectPath, exists: true }
     }
     catch {

@@ -19,7 +19,7 @@ import { ResponseInterceptor } from './interceptors'
 import { CloudWatchLogger } from './loggers/cloud-watch.logger'
 import { ConsoleLogger } from './loggers/console.logger'
 import { ZodValidationPipe } from './pipes'
-import { patchNestJsSwagger, setupNatsMessagePattern, zodToJsonSchemaOptions } from './utils'
+import { patchNestJsSwagger, setupNatsPattern, zodToJsonSchemaOptions } from './utils'
 
 z.config(z.locales.zhCN())
 
@@ -98,7 +98,7 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
 
   app.useLogger(app.get(PinoLogger))
 
-  setupNatsMessagePattern(app.get(ModulesContainer), new MetadataScanner(), config.nats.prefix)
+  setupNatsPattern(app.get(ModulesContainer), new MetadataScanner(), config.nats.prefix)
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.NATS,

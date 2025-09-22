@@ -181,3 +181,33 @@ export interface UserListResponse {
   list: User[]
   total: number
 }
+
+// ==================== Storage Module Interfaces ====================
+
+// Storage DTO interfaces
+export interface StorageInfoDto {
+  userId: string
+}
+
+export interface AddUsedStorageDto {
+  userId: string
+  amount: number
+}
+
+export interface DeductUsedStorageDto {
+  userId: string
+  amount: number
+}
+
+export interface SetTotalStorageDto {
+  userId: string
+  totalStorage: number
+  expiredAt?: Date
+}
+
+// Storage VO interfaces
+export interface StorageInfoVo {
+  used: number
+  total: number
+  available: number
+}

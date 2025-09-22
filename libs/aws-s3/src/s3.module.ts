@@ -7,7 +7,6 @@ import { S3Service } from './s3.service'
 
 @Module({})
 export class S3Module {
-  // 同步配置
   static forRoot(config: S3Config): DynamicModule {
     const providers: Provider[] = [
       {
