@@ -1,16 +1,16 @@
 import { PubType } from "@/app/config/publishConfig";
 import ksSvg from "@/assets/svgs/plat/ks.svg";
 import bilibiliSvg from "@/assets/svgs/plat/bilibili.svg";
-import youtubeSvg from "@/assets/svgs/plat/youtube.svg";
+import youtubeSvg from "@/assets/svgs/plat/youtube.png";
 import douyinSvg from "@/assets/svgs/plat/douyin.svg";
 import tiktokSvg from "@/assets/svgs/plat/tiktok.svg";
-import twitterSvg from "@/assets/svgs/plat/twtter.svg";
-import facebookSvg from "@/assets/svgs/plat/facebook.svg";
+import twitterSvg from "@/assets/svgs/plat/twitter.png";
+import facebookSvg from "@/assets/svgs/plat/facebook.png";
 import instagramSvg from "@/assets/svgs/plat/instagram.png";
-import threadsSvg from "@/assets/svgs/plat/xiancheng.svg";
+import threadsSvg from "@/assets/svgs/plat/threads.png";
 import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
-import pinterestSvg from "@/assets/svgs/plat/pinterest.svg";
+import pinterestSvg from "@/assets/svgs/plat/pinterest.png";
 import xhsSvg from "@/assets/svgs/plat/xhs.svg";
 import { directTrans } from "@/app/i18n/client";
 
@@ -182,7 +182,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.YouTube,
     {
       name: "YouTube",
-      icon: youtubeSvg,
+      icon: youtubeSvg.src,
       url: "https://www.youtube.com/",
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
@@ -197,7 +197,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Twitter,
     {
       name: "Twitter",
-      icon: twitterSvg,
+      icon: twitterSvg.src,
       url: "https://x.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
@@ -212,7 +212,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Facebook,
     {
       name: "Facebook",
-      icon: facebookSvg,
+      icon: facebookSvg.src,
       url: "https://www.facebook.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
@@ -244,7 +244,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Threads,
     {
       name: "Threads",
-      icon: threadsSvg,
+      icon: threadsSvg.src,
       url: "https://www.threads.net/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
@@ -260,7 +260,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     PlatType.Pinterest,
     {
       name: "Pinterest",
-      icon: pinterestSvg,
+      icon: pinterestSvg.src,
       url: "https://www.pinterest.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {

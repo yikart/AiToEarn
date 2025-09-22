@@ -16,13 +16,13 @@ import ksIcon from '@/assets/svgs/plat/ks.svg';
 import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
 import gongzhonghaoIcon from '@/assets/svgs/plat/gongzhonghao.png';
 import xhsIcon from '@/assets/svgs/plat/xhs.svg';
-import youtubeIcon from '@/assets/svgs/plat/youtube.svg';
-import TwitterIcon from '@/assets/svgs/plat/twtter.svg';
-import FacebookIcon from '@/assets/svgs/plat/facebook.svg';
+import youtubeIcon from '@/assets/svgs/plat/youtube.png';
+import TwitterIcon from '@/assets/svgs/plat/twitter.png';
+import FacebookIcon from '@/assets/svgs/plat/facebook.png';
 import InstagramIcon from '@/assets/svgs/plat/instagram.png';
 import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
-import PinterestIcon from '@/assets/svgs/plat/pinterest.svg';
-import ThreadsIcon from '@/assets/svgs/plat/xiancheng.svg';
+import PinterestIcon from '@/assets/svgs/plat/pinterest.png';
+import ThreadsIcon from '@/assets/svgs/plat/threads.png';
 
 // 资料图片
 import publish1 from '@/assets/images/publish1.png';
@@ -191,7 +191,7 @@ function BrandBar() {
 
   // 平台数据配置
   const platforms = [
-    { name: 'YouTube', key: 'YouTube', hasIcon: true, iconPath: youtubeIcon },
+    { name: 'YouTube', key: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
     { name: 'TikTok', key: 'TikTok', hasIcon: true, iconPath: tiktokIcon },
     { name: '小红书', key: 'Rednote', hasIcon: true, iconPath: xhsIcon },
     { name: '抖音', key: 'Douyin', hasIcon: true, iconPath: douyinIcon },
@@ -199,12 +199,12 @@ function BrandBar() {
     { name: '公众号', key: 'Wechat Offical Account', hasIcon: true, iconPath: gongzhonghaoIcon.src },
     { name: '视频号', key: 'Wechat Channels', hasIcon: true, iconPath: wxSphIcon },
     { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon },
-    { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon },
+    { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
     { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
     { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon },
-    { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon },
-    { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon },
-    { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon },
+    { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
+    { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
+    { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
   ];
 
   // 为了实现无缝滚动，复制一份数据
