@@ -99,23 +99,24 @@ const HotContent = memo(
       // 跳转到作者主页
       const goAuthorPage = useCallback(
         (data: RankingContent) => {
+          let authorUrl = "";
           switch (selectedLabelInfo.ranking.platform.type) {
             case "douyin":
-              console.log(data);
+              authorUrl = `https://www.douyin.com/user/${data.secUid}`;
               break;
             case "xiaohongshu":
-              window.open(
-                `https://www.xiaohongshu.com/user/profile/${data.author.id}`,
-                "_blank",
-              );
+              authorUrl = `https://www.xiaohongshu.com/user/profile/${data.author.id}`;
               break;
             case "kuaishou":
+              authorUrl = `https://kuaishou.cn/profile/${data.secUid}`;
               break;
             case "bilibili":
+              authorUrl = `https://space.bilibili.com/${data.mid}`;
               break;
             case "shipinhao":
               break;
           }
+          if (authorUrl) window.open(authorUrl, "_blank");
         },
         [selectedLabelInfo],
       );

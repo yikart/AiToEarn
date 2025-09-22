@@ -1,4 +1,5 @@
 import { createPersistStore } from "@/utils/createPersistStore";
+import { getUserInfoApi } from "@/api/apiReq";
 
 export interface UserInfo {
   createTime: string;
@@ -59,6 +60,16 @@ export const useUserStore = createPersistStore(
       },
       setUserInfo: (userInfo: UserInfo) => {
         set({ userInfo });
+      },
+
+      // 获取用户信息
+      async getUserInfo() {
+        const res = await getUserInfoApi();
+        if (res) {
+          set({
+            userInfo: res.data,
+          });
+        }
       },
 
       // 清除登录状态
