@@ -17,6 +17,7 @@ interface Resources {
     "checkLoginStatus": "登录状态检测",
     "checkAllLoginStatus": "一键检测登录状态",
     "nickname": "昵称",
+    "fansCount": "粉丝数",
     "platform": "平台",
     "loginStatus": "登录状态",
     "accountStatus": "账号状态",
