@@ -68,6 +68,13 @@
   justify-content: space-between;
 }
 
+.headerRight {
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: right;
+  }
+}
+
 .logo {
   display: flex;
   flex-direction: row;
@@ -503,6 +510,10 @@
       opacity: 0.3;
     }
   }
+
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  }
 }
 
 // 脉冲动画
@@ -546,6 +557,21 @@
   }
 
   @media (max-width: 768px) {
+    grid-template-columns: 1fr; // 单列上下布局
+    gap: 40px;
+    min-height: auto;
+  }
+}
+
+// 保证左右区块在移动端占满宽度
+@media (max-width: 768px) {
+  .buildLeft,
+  .buildRight {
+    width: 100%;
+    min-height: 400px;
+    img {
+      max-width: 100%;
+    }
   }
 }
 
@@ -686,6 +712,10 @@
   padding: 120px 0;
   overflow: hidden;
   position: relative;
+
+  @media (max-width: 768px) {
+    padding: 40px 0;
+  }
 }
 
 .downloadContainer {
@@ -724,6 +754,10 @@
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 }
 
 .downloadBtn {
@@ -1439,6 +1473,10 @@
   justify-content: space-between;
   align-items: center;
   font-size: 15px;
+
+  @media (max-width: 768px) {
+    position: static;
+  }
 }
 
 .copyright {
@@ -1509,6 +1547,9 @@
   background-clip: text;
   -webkit-background-clip: text;
   transition: color 0.1s ease;
+  @media (max-width: 748px) {
+    margin-left: 20px !important;
+  }
 }
 
 @media (max-width: 1024px) {
@@ -1732,9 +1773,9 @@
 }
 
 .carouselSlide {
-  //position: absolute;
-  //top: 0;
-  //right: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
@@ -1745,6 +1786,17 @@
 
   &.active {
     opacity: 1;
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    img {
+      height: 100%;
+    }
+    video {
+      height: 100%;
+    }
   }
 }
 
@@ -1905,7 +1957,7 @@
   }
 }
 
-// 即将上线功能模块样式
+// 即将上线功能��块样式
 .comingSoonPlaceholder {
   display: flex;
   flex-direction: column;

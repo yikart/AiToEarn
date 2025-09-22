@@ -40,6 +40,7 @@ import { deleteAccountsApi, updateAccountApi } from "@/api/account";
 import { useTransClient } from "@/app/i18n/client";
 import AddAccountModal from "../AddAccountModal";
 import { getIpLocation, IpLocationInfo, formatLocationInfo, extractCountry } from "@/utils/ipLocation";
+import DeleteUserConfirmModal from "@/app/[lng]/accounts/components/AccountSidebar/DeleteUserConfirmModal";
 
 export interface IUserManageModalRef {
   setActiveGroup: (groupId: string) => void;
@@ -79,13 +80,13 @@ const UserGroupSelect = ({
 };
 
 // 空间信息展示组件
-const SpaceInfoCard = ({ 
-  activeGroup, 
-  accountGroupList, 
-  allUser 
-}: { 
-  activeGroup: string; 
-  accountGroupList: any[]; 
+const SpaceInfoCard = ({
+  activeGroup,
+  accountGroupList,
+  allUser
+}: {
+  activeGroup: string;
+  accountGroupList: any[];
   allUser: string;
 }) => {
   const { t } = useTransClient("account");
@@ -120,9 +121,9 @@ const SpaceInfoCard = ({
   if (!currentSpace) return null;
 
   return (
-    <Card 
-      size="small" 
-      style={{ 
+    <Card
+      size="small"
+      style={{
         marginBottom: '16px',
         backgroundColor: 'var(--grayColor1)',
         border: '1px solid var(--grayColor3)'
@@ -130,8 +131,8 @@ const SpaceInfoCard = ({
     >
       <Space direction="vertical" size="small" style={{ width: '100%' }}>
         {/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ 
-            fontSize: 'var(--fs-xs)', 
+          <span style={{
+            fontSize: 'var(--fs-xs)',
             color: 'var(--grayColor6)',
             backgroundColor: 'var(--grayColor2)',
             padding: '2px 8px',
@@ -140,13 +141,13 @@ const SpaceInfoCard = ({
             {currentSpace.children?.length || 0} 个账号
           </span>
         </div> */}
-        
+
         {/* 根据proxyIp判断显示IP和属地信息 */}
         {(!currentSpace.proxyIp || currentSpace.proxyIp === "") ? (
           // 本地IP显示
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
             gap: '8px',
             padding: '8px',
             backgroundColor: 'var(--grayColor2)',
@@ -162,7 +163,7 @@ const SpaceInfoCard = ({
               </span>
             ) : ipLocationInfo ? (
               <Tooltip title={t("ipInfo.tooltip", { asn: ipLocationInfo.asn, org: ipLocationInfo.org })}>
-                <span style={{ 
+                <span style={{
                   color: 'var(--grayColor7)',
                   cursor: 'help',
                   fontWeight: '500'
@@ -179,9 +180,9 @@ const SpaceInfoCard = ({
         ) : (
           // 数据中的IP显示
           currentSpace.ip && currentSpace.location && (
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
               gap: '8px',
               padding: '8px',
               backgroundColor: 'var(--grayColor2)',
@@ -189,7 +190,7 @@ const SpaceInfoCard = ({
             }}>
               <GlobalOutlined style={{ color: 'var(--colorPrimary5)' }} />
               <Tooltip title={`IP: ${currentSpace.ip}\n位置: ${currentSpace.location}`}>
-                <span style={{ 
+                <span style={{
                   color: 'var(--grayColor7)',
                   cursor: 'help',
                   fontWeight: '500'
@@ -200,10 +201,10 @@ const SpaceInfoCard = ({
             </div>
           )
         )}
-        
+
         {/* 空间创建时间等信息 */}
-        <div style={{ 
-          fontSize: 'var(--fs-xs)', 
+        <div style={{
+          fontSize: 'var(--fs-xs)',
           color: 'var(--grayColor6)',
           display: 'flex',
           alignItems: 'center',
@@ -212,7 +213,7 @@ const SpaceInfoCard = ({
           <EnvironmentOutlined />
           <span>空间ID: {currentSpace.id}</span>
           {currentSpace.isDefault && (
-            <span style={{ 
+            <span style={{
               color: 'var(--colorPrimary5)',
               backgroundColor: 'var(--colorPrimary1)',
               padding: '1px 6px',
@@ -408,7 +409,7 @@ const UserManageModal = memo(
       };
       useImperativeHandle(ref, () => imperativeHandle);
 
-      const openAddAccountFlow = async () => { 
+      const openAddAccountFlow = async () => {
         const currentGroupId = activeGroup;
         close();
         if (currentGroupId === allUser.current) {
@@ -459,54 +460,16 @@ const UserManageModal = memo(
 
       return (
         <>
-          <Modal
+          <DeleteUserConfirmModal
+            deleteUsers={selectedRows}
             open={deleteHitOpen}
-            title="删除提示"
-            width={500}
-            zIndex={1002}
-            rootClassName={styles.userManageDeleteHitModal}
-            footer={
-              <>
-                <Button onClick={() => setDeleteHitOpen(false)}>取消</Button>
-                <Button
-                  type="primary"
-                  loading={deleteLoading}
-                  onClick={async () => {
-                    setDeleteLoading(true);
-                    const res = await deleteAccountsApi(
-                      selectedRows.map((v) => v.id),
-                    );
-                    if (!res) return setDeleteLoading(false);
-                    await getAccountList();
-                    setDeleteHitOpen(false);
-                    setSelectedRows([]);
-                    message.success("删除成功");
-                    setDeleteLoading(false);
-                  }}
-                >
-                  确认
-                </Button>
-              </>
-            }
-          >
-            <p>
-              是否删除以下
-              <span style={{ color: "var(--errerColor)" }}>
-                {selectedRows.length}
-              </span>
-              个账号？
-            </p>
-            <div className={styles["userManageDeleteHitModal-users"]}>
-              {selectedRows.map((v) => {
-                return (
-                  <li key={v.id}>
-                    <AvatarPlat account={v} size="large" />
-                    <span>{v.nickname}</span>
-                  </li>
-                );
-              })}
-            </div>
-          </Modal>
+            onClose={() => setDeleteHitOpen(false)}
+            onDeleteSuccess={async () => {
+              await getAccountList();
+              setSelectedRows([]);
+              message.success("删除成功");
+            }}
+          />
 
           <Modal
             open={open}
@@ -530,12 +493,12 @@ const UserManageModal = memo(
 
                 <div className="userManage-content">
                   {/* 空间信息卡片 - 显示在右侧上方 */}
-                  <SpaceInfoCard 
+                  <SpaceInfoCard
                     activeGroup={activeGroup}
                     accountGroupList={accountGroupList}
                     allUser={allUser.current}
                   />
-                  
+
                   <div className="userManage-content-head" style={{ marginBottom: "8px", display: "flex", justifyContent: "flex-end" }}>
                     <Button type="primary" onClick={openAddAccountFlow}>{t("addAccount")}</Button>
                   </div>

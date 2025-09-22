@@ -984,7 +984,7 @@ function UpcomingFeaturesSection() {
             </div>
           </div>
 
-          <div className={styles.buildRight}>
+          <div className={styles.buildRight} style={{ minHeight: '500px' }}>
             <div className={styles.imageCarousel}>
               <div className={styles.carouselContainer}>
                                  <div className={`${styles.carouselSlide} ${styles.active}`}>
