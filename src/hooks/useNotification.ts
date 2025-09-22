@@ -27,7 +27,6 @@ export const useNotification = () => {
     }
   }, [token]);
 
-  // @@.@@
 
   useEffect(() => {
     // 初始获取
