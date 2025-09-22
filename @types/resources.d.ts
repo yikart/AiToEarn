@@ -434,7 +434,7 @@ interface Resources {
         "marketplace": "市场",
         "pricing": "价格",
         "status": "状态",
-        "docs": "问题",
+        "docs": "文档",
         "blog": "博客",
         "download": "下载"
       },
