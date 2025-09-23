@@ -18,15 +18,18 @@ interface AccountPageCoreProps {
   };
 }
 
-export default function AccountPageCore({ searchParams }: AccountPageCoreProps) {
-  const { accountInit, accountActive, setAccountActive, accountGroupList } = useAccountStore(
-    useShallow((state) => ({
-      accountInit: state.accountInit,
-      setAccountActive: state.setAccountActive,
-      accountActive: state.accountActive,
-      accountGroupList: state.accountGroupList,
-    })),
-  );
+export default function AccountPageCore({
+  searchParams,
+}: AccountPageCoreProps) {
+  const { accountInit, accountActive, setAccountActive, accountGroupList } =
+    useAccountStore(
+      useShallow((state) => ({
+        accountInit: state.accountInit,
+        setAccountActive: state.setAccountActive,
+        accountActive: state.accountActive,
+        accountGroupList: state.accountGroupList,
+      })),
+    );
 
   // 添加账号弹窗状态
   const [addAccountModalOpen, setAddAccountModalOpen] = useState(false);
@@ -43,15 +46,15 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
       // 验证平台类型是否有效
       const platform = searchParams.platform as PlatType;
       const validPlatforms = Object.values(PlatType);
-      
+
       if (searchParams.platform && validPlatforms.includes(platform)) {
         setTargetPlatform(platform);
       }
-      
+
       if (searchParams.spaceId) {
         setTargetSpaceId(searchParams.spaceId);
       }
-      
+
       // 打开添加账号弹窗
       setAddAccountModalOpen(true);
     }
@@ -65,11 +68,11 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
   const handleAddAccountClose = () => {
     setAddAccountModalOpen(false);
     // 清除URL参数（可选）
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      url.searchParams.delete('platform');
-      url.searchParams.delete('spaceId');
-      window.history.replaceState({}, '', url.toString());
+      url.searchParams.delete("platform");
+      url.searchParams.delete("spaceId");
+      window.history.replaceState({}, "", url.toString());
     }
   };
 
@@ -87,7 +90,7 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
           }}
         />
         <CalendarTiming />
-        
+
         {/* 添加账号弹窗 */}
         <AddAccountModal
           open={addAccountModalOpen}
