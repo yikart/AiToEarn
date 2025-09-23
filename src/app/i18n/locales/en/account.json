@@ -76,8 +76,8 @@
     "nameRequired": "Please enter channel name"
   },
   "locationRestriction": {
-    "cnSpace": "Current space is in China region, only domestic platforms are shown",
-    "nonCnSpace": "Current space is in non-China region, domestic platforms are temporarily unavailable"
+    "cnSpace": "Current space is in China region, only chinese platforms are shown",
+    "nonCnSpace": "Current space is in non-China region,chinese platforms are temporarily unavailable"
   },
   "userManageSidebar": {
     "allAccounts": "All Accounts",
