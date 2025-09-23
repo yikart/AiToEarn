@@ -126,7 +126,17 @@ export class ImageService {
    */
   async edit(request: ImageEditDto) {
     const { image, mask, user, ...params } = request
-    const imageFile = await this.getUploadableByUrlOrDataUri(image, 'image')
+
+    let imageFile: Uploadable | Uploadable[]
+    if (Array.isArray(image)) {
+      imageFile = await Promise.all(image.map((img, index) =>
+        this.getUploadableByUrlOrDataUri(img, `image-${index}`),
+      ))
+    }
+    else {
+      imageFile = await this.getUploadableByUrlOrDataUri(image, 'image')
+    }
+
     const maskFile = mask ? await this.getUploadableByUrlOrDataUri(mask, 'mask') : undefined
 
     if (params.model === 'gpt-image-1') {

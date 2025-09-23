@@ -1,5 +1,5 @@
 import { Pagination } from '@yikart/common'
-import { Document, FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
+import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
 
 export interface PaginationParams<TDocument> extends Pagination {
   filter?: FilterQuery<TDocument>
@@ -18,7 +18,7 @@ export class BaseRepository<TDocument> {
   /**
    * 根据ID获取单个文档
    */
-  async getById(id: string, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
+  async getById(id: string, options?: QueryOptions<TDocument>) {
     return await this.model.findById(id, undefined, options).exec()
   }
 
@@ -44,7 +44,7 @@ export class BaseRepository<TDocument> {
     id: string,
     update: UpdateDocumentType<TDocument>,
     options?: QueryOptions<TDocument>,
-  ): Promise<TDocument | null> {
+  ) {
     return await this.model.findByIdAndUpdate(id, update, { new: true, ...options }).exec()
   }
 
@@ -55,21 +55,21 @@ export class BaseRepository<TDocument> {
     filter: FilterQuery<TDocument>,
     update: UpdateDocumentType<TDocument>,
     options?: QueryOptions<TDocument>,
-  ): Promise<TDocument | null> {
+  ) {
     return await this.model.findOneAndUpdate(filter, update, { new: true, ...options }).exec()
   }
 
   /**
    * 根据ID删除文档
    */
-  async deleteById(id: string, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
+  async deleteById(id: string, options?: QueryOptions<TDocument>) {
     return await this.model.findByIdAndDelete(id, options).exec()
   }
 
   /**
    * 删除单个文档
    */
-  protected async deleteOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
+  protected async deleteOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>) {
     return await this.model.findOneAndDelete(filter, options).exec()
   }
 
@@ -83,7 +83,7 @@ export class BaseRepository<TDocument> {
   /**
    * 分页查询
    */
-  async findWithPagination(params: PaginationParams<TDocument>): Promise<[Document<unknown, object, TDocument>[], number]> {
+  protected async findWithPagination(params: PaginationParams<TDocument>) {
     const { page, pageSize, filter = {}, options = {} } = params
     const skip = (page - 1) * pageSize
 
@@ -94,20 +94,20 @@ export class BaseRepository<TDocument> {
       this.model.countDocuments(filter).exec(),
     ])
 
-    return [items, total]
+    return [items, total] as const
   }
 
   /**
    * 查找单个文档
    */
-  protected async findOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>): Promise<TDocument | null> {
+  protected async findOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>) {
     return await this.model.findOne(filter, undefined, options).exec()
   }
 
   /**
    * 查找多个文档
    */
-  protected async find(filter: FilterQuery<TDocument> = {}, options?: QueryOptions<TDocument>): Promise<TDocument[]> {
+  protected async find(filter: FilterQuery<TDocument> = {}, options?: QueryOptions<TDocument>) {
     return await this.model.find(filter, undefined, options).exec()
   }
 

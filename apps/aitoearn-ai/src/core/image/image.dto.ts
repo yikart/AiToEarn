@@ -19,7 +19,7 @@ export class ImageGenerationDto extends createZodDto(imageGenerationSchema) {}
 // 图片编辑请求
 const imageEditSchema = z.object({
   model: z.string().describe('图片编辑模型'),
-  image: z.string().describe('原始图片'),
+  image: z.string().or(z.string().array()).describe('原始图片'),
   prompt: z.string().min(1).max(4000).describe('编辑描述'),
   mask: z.string().optional().describe('遮罩图片'),
   n: z.int().min(1).max(1).optional().describe('生成图片数量'),

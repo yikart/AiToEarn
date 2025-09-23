@@ -1,4 +1,4 @@
-import { createZodDto } from '@yikart/common'
+import { createPaginationVo, createZodDto } from '@yikart/common'
 import { AiLogChannel } from '@yikart/mongodb'
 import { z } from 'zod'
 import {
@@ -97,6 +97,8 @@ const videoTaskStatusResponseSchema = z.object({
 })
 
 export class VideoTaskStatusResponseVo extends createZodDto(videoTaskStatusResponseSchema) {}
+
+export class ListVideoTasksResponseVo extends createPaginationVo(videoTaskStatusResponseSchema) {}
 
 // 视频生成模型参数 VO
 const videoGenerationModelSchema = z.object({

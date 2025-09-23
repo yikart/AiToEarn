@@ -3,14 +3,10 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
-import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { DashscopeAction, KlingAction, TaskStatus } from '../../common/enums'
 import { config } from '../../config'
-import {
-  DashscopeService,
-  TaskStatus as DashscopeTaskStatus,
-  GetVideoTaskResponse,
-} from '../../libs/dashscope'
+import { DashscopeService, TaskStatus as DashscopeTaskStatus, GetVideoTaskResponse } from '../../libs/dashscope'
 import {
   Image2VideoCreateTaskResponseData,
   KlingService,
@@ -40,6 +36,7 @@ import {
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
   KlingText2VideoRequestDto,
+  UserListVideoTasksQueryDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
   VideoGenerationModelsQueryDto,
@@ -278,18 +275,7 @@ export class VideoService {
     }
   }
 
-  /**
-   * 查询视频任务状态
-   */
-  async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
-    const { taskId } = request
-
-    const aiLog = await this.aiLogRepo.getById(taskId)
-
-    if (aiLog == null || aiLog.type !== AiLogType.Video) {
-      throw new AppException(ResponseCode.InvalidAiTaskId)
-    }
-
+  async transformToCommonResponse(aiLog: AiLog) {
     if (aiLog.status === AiLogStatus.Generating) {
       return {
         task_id: aiLog.id,
@@ -320,6 +306,29 @@ export class VideoService {
     else {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
+  }
+
+  /**
+   * 查询视频任务状态
+   */
+  async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
+    const { taskId } = request
+
+    const aiLog = await this.aiLogRepo.getById(taskId)
+
+    if (aiLog == null || aiLog.type !== AiLogType.Video) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+    return this.transformToCommonResponse(aiLog)
+  }
+
+  async listVideoTasks(request: UserListVideoTasksQueryDto) {
+    const [aiLogs, count] = await this.aiLogRepo.listWithPagination({
+      ...request,
+      type: AiLogType.Video,
+    })
+
+    return [await Promise.all(aiLogs.map(log => this.transformToCommonResponse(log))), count] as const
   }
 
   /**

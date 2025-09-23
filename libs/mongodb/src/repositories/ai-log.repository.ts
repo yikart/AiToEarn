@@ -60,7 +60,7 @@ export class AiLogRepository extends BaseRepository<AiLog> {
     })
   }
 
-  async list(params: ListAiLogFilter): Promise<AiLog[]> {
+  async list(params: ListAiLogFilter) {
     const { userId, userType, type, status, model, createdAt } = params
 
     const filter: FilterQuery<AiLog> = {}
@@ -85,11 +85,11 @@ export class AiLogRepository extends BaseRepository<AiLog> {
     return await this.find(filter, { sort: { createdAt: -1 } })
   }
 
-  async getByTaskId(taskId: string): Promise<AiLog | null> {
+  async getByTaskId(taskId: string) {
     return await this.findOne({ taskId })
   }
 
-  async getByIdAndUserId(id: string, userId: string, userType: UserType): Promise<AiLog | null> {
+  async getByIdAndUserId(id: string, userId: string, userType: UserType) {
     return await this.findOne({ _id: id, userId, userType })
   }
 }

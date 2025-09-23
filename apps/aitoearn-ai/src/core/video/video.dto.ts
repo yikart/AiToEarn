@@ -1,4 +1,4 @@
-import { createZodDto, UserType } from '@yikart/common'
+import { createZodDto, PaginationDtoSchema, UserType } from '@yikart/common'
 import { z } from 'zod'
 import { AspectRatio, CameraControlType, TaskStatus as KlingTaskStatus, Mode } from '../../libs/kling'
 import { ContentType, ImageRole, TaskStatus } from '../../libs/volcengine'
@@ -42,6 +42,15 @@ const userVideoTaskQuerySchema = z.object({
 })
 
 export class UserVideoTaskQueryDto extends createZodDto(userVideoTaskQuerySchema) {}
+
+// 通用视频任务状态查询
+const listUserVideoTasksQuerySchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  ...PaginationDtoSchema.shape,
+})
+
+export class UserListVideoTasksQueryDto extends createZodDto(listUserVideoTasksQuerySchema) {}
 
 // Kling文生视频请求
 const klingText2VideoRequestSchema = z.object({

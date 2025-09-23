@@ -12,6 +12,7 @@ import {
   KlingMultiImage2VideoRequestDto,
   KlingTaskQueryDto,
   KlingText2VideoRequestDto,
+  UserListVideoTasksQueryDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
   VideoGenerationModelsQueryDto,
@@ -20,7 +21,18 @@ import {
   VolcengineTaskQueryDto,
 } from './video.dto'
 import { VideoService } from './video.service'
-import { DashscopeTaskStatusResponseVo, DashscopeVideoGenerationResponseVo, KlingTaskStatusResponseVo, KlingVideoGenerationResponseVo, VideoGenerationModelParamsVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo, VolcengineTaskStatusResponseVo, VolcengineVideoGenerationResponseVo } from './video.vo'
+import {
+  DashscopeTaskStatusResponseVo,
+  DashscopeVideoGenerationResponseVo,
+  KlingTaskStatusResponseVo,
+  KlingVideoGenerationResponseVo,
+  ListVideoTasksResponseVo,
+  VideoGenerationModelParamsVo,
+  VideoGenerationResponseVo,
+  VideoTaskStatusResponseVo,
+  VolcengineTaskStatusResponseVo,
+  VolcengineVideoGenerationResponseVo,
+} from './video.vo'
 
 @Controller('/video')
 export class VideoController {
@@ -38,6 +50,12 @@ export class VideoController {
   async getVideoTaskStatus(@Payload() data: UserVideoTaskQueryDto): Promise<VideoTaskStatusResponseVo> {
     const response = await this.videoService.getVideoTaskStatus(data)
     return VideoTaskStatusResponseVo.create(response)
+  }
+
+  @NatsMessagePattern('ai.video.task.list')
+  async listVideoTasks(@Payload() data: UserListVideoTasksQueryDto): Promise<ListVideoTasksResponseVo> {
+    const [list, total] = await this.videoService.listVideoTasks(data)
+    return new ListVideoTasksResponseVo(list, total, data)
   }
 
   @NatsMessagePattern('ai.video.generation.models')

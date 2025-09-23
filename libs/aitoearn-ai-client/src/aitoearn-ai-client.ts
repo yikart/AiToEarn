@@ -35,6 +35,7 @@ import {
   UserImageEditDto,
   // Image interfaces
   UserImageGenerationDto,
+  UserListVideoTasksQueryDto,
   UserMd2CardDto,
   // Video interfaces
   UserVideoGenerationRequestDto,
@@ -127,6 +128,13 @@ export class AitoearnAiClient {
    */
   async getVideoTaskStatus(data: UserVideoTaskQueryDto): Promise<VideoTaskStatusResponseVo> {
     return this.natsClient.send('ai.video.task.query', data)
+  }
+
+  /**
+   * 查询用户视频任务状态
+   */
+  async listVideoTasks(data: UserListVideoTasksQueryDto): Promise<PaginationVo<VideoTaskStatusResponseVo>> {
+    return this.natsClient.send('ai.video.task.list', data)
   }
 
   /**

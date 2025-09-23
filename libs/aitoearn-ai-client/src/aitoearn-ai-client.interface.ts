@@ -1,4 +1,4 @@
-import { UserType } from '@yikart/common'
+import { Pagination, UserType } from '@yikart/common'
 
 export enum AiLogType {
   Chat = 'chat',
@@ -385,7 +385,12 @@ export interface UserVideoGenerationRequestDto extends VideoGenerationRequestDto
   userType: UserType
 }
 
-export interface UserVideoTaskQueryDto extends VideoTaskQueryDto {
+export interface UserListVideoTasksQueryDto extends VideoTaskQueryDto {
+  userId: string
+  userType: UserType
+}
+
+export interface UserVideoTaskQueryDto extends Pagination {
   userId: string
   userType: UserType
 }
