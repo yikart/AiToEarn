@@ -394,7 +394,7 @@ const PublishDialog = memo(
               : PubType.ImageText,
             title: item.params.title || "",
             desc: item.params.des,
-            accountId: item.account.account,
+            accountId: item.account.id,
             accountType: item.account.type,
             videoUrl: item.params.video?.ossUrl,
             coverUrl:
