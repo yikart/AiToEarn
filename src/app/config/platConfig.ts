@@ -12,6 +12,7 @@ import wxSphSvg from "@/assets/svgs/plat/wx-sph.svg";
 import gongzhonghaoSvg from "@/assets/svgs/plat/gongzhonghao.png";
 import pinterestSvg from "@/assets/svgs/plat/pinterest.png";
 import xhsSvg from "@/assets/svgs/plat/xhs.svg";
+import linkedinSvg from "@/assets/svgs/plat/linkedin.png";
 import { directTrans } from "@/app/i18n/client";
 
 // 平台类型
@@ -29,6 +30,7 @@ export enum PlatType {
   Instagram = "instagram", // Instagram
   Threads = "threads", // Threads
   Pinterest = "pinterest", // Pinterest
+  LinkedIn = "linkedin", // LinkedIn
 }
 
 export interface IAccountPlatInfo {
@@ -270,6 +272,22 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         imagesMax: 1,
       },
       themeColor: "#CC2025",
+    },
+  ],
+  [
+    PlatType.LinkedIn,
+    {
+      name: "LinkedIn",
+      icon: linkedinSvg.src,
+      url: "https://www.linkedin.com/",
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
+      commonPubParamsConfig: {
+        titleMax: 80,
+        topicMax: 100,
+        desMax: 500,
+        imagesMax: 20,
+      },
+      themeColor: "blue",
     },
   ],
 ]);

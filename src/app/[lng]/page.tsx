@@ -20,7 +20,7 @@ import youtubeIcon from '@/assets/svgs/plat/youtube.png';
 import TwitterIcon from '@/assets/svgs/plat/twitter.png';
 import FacebookIcon from '@/assets/svgs/plat/facebook.png';
 import InstagramIcon from '@/assets/svgs/plat/instagram.png';
-import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
+import LinkedInIcon from '@/assets/svgs/plat/linkedin.png';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.png';
 import ThreadsIcon from '@/assets/svgs/plat/threads.png';
 
@@ -201,7 +201,7 @@ function BrandBar() {
     { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon },
     { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
     { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
-    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon },
+    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon.src },
     { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
     { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
     { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
