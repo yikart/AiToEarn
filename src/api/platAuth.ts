@@ -121,6 +121,20 @@ export const getThreadsAuthUrlApi = (mail: string) => {
   });
 };
 
+/**
+ * 获取linkedin授权链接
+ * 逻辑与facebook一致，仅platform传linkedin
+ */
+export const getLinkedInAuthUrlApi = (mail: string) => {
+  return request({
+    url: 'plat/meta/auth/url',
+    method: 'POST',
+    data: {
+      platform: 'linkedin',
+    },
+  });
+};
+
 
 /**
  * 获取tiktok授权状态

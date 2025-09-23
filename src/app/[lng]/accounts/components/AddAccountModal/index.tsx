@@ -14,6 +14,7 @@ import { instagramSkip } from "../../plat/InstagramLogin";
 import { threadsSkip } from "../../plat/ThreadsLogin";
 import { wxGzhSkip } from "../../plat/WxGzh";
 import { pinterestSkip } from "../../plat/PinterestLogin";
+import { linkedinSkip } from "../../plat/LinkedinLogin";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import { getIpLocation, IpLocationInfo } from "@/utils/ipLocation";
@@ -253,6 +254,9 @@ const AddAccountModal = memo(
             break;
           case PlatType.Pinterest:
             await pinterestSkip(key);
+            break;
+          case PlatType.LinkedIn:
+            await linkedinSkip(key);
             break;
         }
 
