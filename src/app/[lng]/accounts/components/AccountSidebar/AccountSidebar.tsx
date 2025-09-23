@@ -45,6 +45,7 @@ import {
 } from "@/utils/ipLocation";
 import { createAccountGroupApi, updateAccountApi, deleteAccountsApi } from "@/api/account";
 import AddAccountModal from "../AddAccountModal";
+import DeleteUserConfirmModal from "./DeleteUserConfirmModal";
 
 export interface IAccountSidebarRef {}
 
@@ -579,48 +580,19 @@ const AccountSidebar = memo(
                 {t("createSpace.button")}
               </Button>
             </div>
-          {/* 删除账户确认弹窗 */}
-          <Modal
+          {/* 删除账户确认弹窗（复用组件） */}
+          <DeleteUserConfirmModal
             open={deleteHitOpen}
-            title="删除提示"
-            width={500}
-            zIndex={1002}
-            rootClassName={userStyles.userManageDeleteHitModal}
-            onCancel={() => setDeleteHitOpen(false)}
-            footer={
-              <>
-                <Button onClick={() => setDeleteHitOpen(false)}>取消</Button>
-                <Button
-                  type="primary"
-                  loading={deleteLoading}
-                  onClick={async () => {
-                    if (!deleteTarget) return setDeleteHitOpen(false);
-                    try {
-                      setDeleteLoading(true);
-                      const res = await deleteAccountsApi([deleteTarget.id]);
-                      if (!res) return setDeleteLoading(false);
-                      await getAccountList();
-                      message.success("删除成功");
-                      setDeleteHitOpen(false);
-                      setDeleteTarget(null);
-                    } finally {
-                      setDeleteLoading(false);
-                    }
-                  }}
-                >
-                  确认
-                </Button>
-              </>
-            }
-          >
-            <p>是否删除以下账号？</p>
-            {deleteTarget && (
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <Avatar src={getOssUrl(deleteTarget.avatar)} />
-                <span>{deleteTarget.nickname}</span>
-              </div>
-            )}
-          </Modal>
+            deleteUsers={deleteTarget ? [deleteTarget] : []}
+            onClose={() => {
+              setDeleteHitOpen(false);
+            }}
+            onDeleteSuccess={async () => {
+              await getAccountList();
+              setDeleteTarget(null);
+              message.success("删除成功");
+            }}
+          />
           </div>
         </>
       );
