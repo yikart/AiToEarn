@@ -51,7 +51,7 @@ export interface ImageGenerationDto {
 
 export interface ImageEditDto {
   model?: string
-  image: string
+  image: string | string[]
   prompt: string
   mask?: string
   n?: number
