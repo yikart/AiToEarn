@@ -6,7 +6,7 @@ import type { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec
 import type { Request, Response } from 'express'
 import type { StreamEntry } from 'pino'
 import type { BaseConfig } from './config'
-import { ClassSerializerInterceptor, HttpStatus, Logger, Module } from '@nestjs/common'
+import { HttpStatus, Logger, Module } from '@nestjs/common'
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, MetadataScanner, ModulesContainer, NestFactory } from '@nestjs/core'
 import { Transport } from '@nestjs/microservices'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
@@ -70,10 +70,6 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ClassSerializerInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
