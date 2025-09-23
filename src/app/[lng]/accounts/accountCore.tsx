@@ -10,6 +10,8 @@ import CalendarTiming from "@/app/[lng]/accounts/components/CalendarTiming";
 import AddAccountModal from "@/app/[lng]/accounts/components/AddAccountModal";
 import { PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
+import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
+import { useTransClient } from "@/app/i18n/client";
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -35,6 +37,7 @@ export default function AccountPageCore({
   const [addAccountModalOpen, setAddAccountModalOpen] = useState(false);
   const [targetPlatform, setTargetPlatform] = useState<PlatType | undefined>();
   const [targetSpaceId, setTargetSpaceId] = useState<string | undefined>();
+  const { t } = useTransClient("account");
 
   useEffect(() => {
     accountInit();
@@ -82,12 +85,33 @@ export default function AccountPageCore({
         <AccountSidebar
           activeAccountId={accountActive?.id || ""}
           onAccountChange={(account) => {
-            if (account.id === accountActive?.id) {
-              setAccountActive(undefined);
-            } else {
-              setAccountActive(account);
-            }
+            setAccountActive(account);
           }}
+          sidebarTopExtra={
+            <>
+              <div
+                className={[
+                  "accountList-item",
+                  `${!accountActive?.id ? "accountList-item--active" : ""}`,
+                ].join(" ")}
+                style={{
+                  border: "1px solid #d9d9d9",
+                  borderRight: "none",
+                  borderLeft: "none",
+                }}
+                onClick={async () => {
+                  setAccountActive(undefined);
+                }}
+              >
+                <AllPlatIcon size={38} />
+                <div className="accountList-item-right">
+                  <div className="accountList-item-right-name">
+                    {t("allPlatforms")}
+                  </div>
+                </div>
+              </div>
+            </>
+          }
         />
         <CalendarTiming />
 

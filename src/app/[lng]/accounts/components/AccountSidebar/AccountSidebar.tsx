@@ -55,6 +55,8 @@ export interface IAccountSidebarProps {
   onAccountChange: (info: SocialAccount) => void;
   // 排除的平台类型
   excludePlatforms?: PlatType[];
+  // 侧边栏内容顶部扩展内容
+  sidebarTopExtra?: React.ReactNode;
 }
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
@@ -142,6 +144,7 @@ const AccountSidebar = memo(
         activeAccountId,
         onAccountChange,
         excludePlatforms = [],
+        sidebarTopExtra,
       }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
@@ -412,6 +415,7 @@ const AccountSidebar = memo(
               </>
             ) : (
               <div className="accountSidebar-content">
+                {sidebarTopExtra}
                 <Collapse
                   key={defaultActiveKey}
                   defaultActiveKey={defaultActiveKey}

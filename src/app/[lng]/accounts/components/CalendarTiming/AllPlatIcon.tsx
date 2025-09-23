@@ -4,15 +4,19 @@ import styles from "./calendarTiming.module.scss";
 export interface IAllPlatIconRef {}
 
 export interface IAllPlatIconProps {
-  width?: number;
+  size?: number;
+  style?: React.CSSProperties;
 }
 
 const AllPlatIcon = memo(
   forwardRef(
-    ({ width = 50 }: IAllPlatIconProps, ref: ForwardedRef<IAllPlatIconRef>) => {
+    (
+      { size = 50, style = {} }: IAllPlatIconProps,
+      ref: ForwardedRef<IAllPlatIconRef>,
+    ) => {
       const widthChild = useMemo(() => {
-        return width / 5;
-      }, [width]);
+        return size / 5;
+      }, [size]);
 
       const childStyle = useMemo(() => {
         return {
@@ -24,7 +28,7 @@ const AllPlatIcon = memo(
       return (
         <div
           className={styles.allPlatIcon}
-          style={{ width: width + "px", height: width + "px" }}
+          style={{ width: size + "px", height: size + "px", ...style }}
         >
           <ul>
             <li style={childStyle}></li>
