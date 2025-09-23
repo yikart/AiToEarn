@@ -385,12 +385,12 @@ export interface UserVideoGenerationRequestDto extends VideoGenerationRequestDto
   userType: UserType
 }
 
-export interface UserListVideoTasksQueryDto extends VideoTaskQueryDto {
+export interface UserVideoTaskQueryDto extends VideoTaskQueryDto {
   userId: string
   userType: UserType
 }
 
-export interface UserVideoTaskQueryDto extends Pagination {
+export interface UserListVideoTasksQueryDto extends Pagination {
   userId: string
   userType: UserType
 }
