@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 import { directTrans, useTransClient } from "../i18n/client";
-import { MAIN_APP_DOWNLOAD_URL } from "../config/appDownloadConfig";
+import { MAIN_APP_DOWNLOAD_URL, getMainAppDownloadUrl } from "../config/appDownloadConfig";
 
 import logo from '@/assets/images/logo.png';
 
@@ -1025,7 +1025,7 @@ function DownloadSection() {
             </p>
 
             <div className={styles.downloadButtons}>
-              <a href={MAIN_APP_DOWNLOAD_URL} className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
+              <a href={getMainAppDownloadUrl()} className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
                   <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
@@ -1052,7 +1052,7 @@ function DownloadSection() {
             <div className={styles.qrCode}>
                 {/* <div className={styles.qrCodeImage}> */}
                   <QRCode
-                    value={MAIN_APP_DOWNLOAD_URL}
+                    value={getMainAppDownloadUrl()}
                     size={120}
                   />
                 {/* </div> */}
