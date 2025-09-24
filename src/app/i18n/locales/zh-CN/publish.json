@@ -103,7 +103,11 @@
   "actions": {
     "selectMaterial": "选择素材",
     "selectDraft": "选择草稿",
-    "cropCover": "裁剪封面"
+    "cropCover": "裁剪封面",
+    "contentModeration": "内容安全检测",
+    "checkingContent": "检测中...",
+    "contentSafe": "内容安全",
+    "contentUnsafe": "内容不安全"
   },
   "tiktok": {
     "creatorInfo": "创作者信息",
