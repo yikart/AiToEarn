@@ -40,6 +40,7 @@ import { useTransClient } from "@/app/i18n/client";
 import { apiGetMaterialGroupList, apiGetMaterialList } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
+import { toolsApi } from "@/api/tools";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -109,7 +110,69 @@ const PublishDialog = memo(
       );
       const { errParamsMap } = usePubParamsVerify(pubListChoosed);
       const [createLoading, setCreateLoading] = useState(false);
+      // 内容安全检测状态
+      const [moderationLoading, setModerationLoading] = useState(false);
+      const [moderationResult, setModerationResult] = useState<boolean | null>(null);
       const { t } = useTransClient("publish");
+
+      // 内容安全检测函数
+      const handleContentModeration = useCallback(async () => {
+        // 获取当前描述内容
+        let contentToCheck = "";
+        if (step === 0 && pubListChoosed.length >= 2) {
+          contentToCheck = commonPubParams.des || "";
+        } else if (step === 1 && expandedPubItem) {
+          contentToCheck = expandedPubItem.params.des || "";
+        } else if (pubListChoosed.length === 1) {
+          contentToCheck = pubListChoosed[0].params.des || "";
+        }
+
+        if (!contentToCheck.trim()) {
+          message.warning("请先输入内容");
+          return;
+        }
+        
+        try {
+          setModerationLoading(true);
+          setModerationResult(null);
+          const result = await toolsApi.textModeration(contentToCheck);
+          setModerationResult(!!result);
+          if (result) {
+            message.success("内容安全");
+          } else {
+            message.warning("内容不安全");
+          }
+        } catch (error) {
+          console.error("内容安全检测失败:", error);
+          message.error("内容安全检测失败，请稍后重试");
+        } finally {
+          setModerationLoading(false);
+        }
+      }, [step, pubListChoosed, commonPubParams, expandedPubItem, t]);
+
+      // 检查是否有描述内容
+      const hasDescription = useMemo(() => {
+        if (step === 0 && pubListChoosed.length >= 2) {
+          return !!(commonPubParams.des && commonPubParams.des.trim());
+        } else if (step === 1 && expandedPubItem) {
+          return !!(expandedPubItem.params.des && expandedPubItem.params.des.trim());
+        } else if (pubListChoosed.length === 1) {
+          return !!(pubListChoosed[0].params.des && pubListChoosed[0].params.des.trim());
+        }
+        return false;
+      }, [step, pubListChoosed, commonPubParams, expandedPubItem]);
+
+      // 监听内容变化，重置内容安全检测状态
+      useEffect(() => {
+        setModerationResult(null);
+      }, [commonPubParams.des, expandedPubItem?.params.des, pubListChoosed.map(item => item.params.des).join(',')]);
+
+      // 当内容被清空时，也重置检测状态
+      useEffect(() => {
+        if (!hasDescription) {
+          setModerationResult(null);
+        }
+      }, [hasDescription]);
 
       // 草稿选择弹窗/数据
       const [draftModalOpen, setDraftModalOpen] = useState(false);
@@ -607,7 +670,7 @@ const PublishDialog = memo(
               >
                 <PublishDialogDataPicker />
 
-                <div className="publishDialog-footer-btns">
+                <div className="publishDialog-footer-btns" style={{ display: 'flex', flexDirection: 'row', gap: 12 }}>
                   {step === 0 && pubListChoosed.length >= 2 ? (
                     <Button
                       size="large"
@@ -621,31 +684,62 @@ const PublishDialog = memo(
                     </Button>
                   ) : (
                     <>
-                      <Button size="large" onClick={closeDialog}>
-                        {t("buttons.cancelPublish")}
-                      </Button>
-                      <Button
-                        size="large"
-                        type="primary"
-                        loading={createLoading}
-                        onClick={() => {
-                          for (const [key, errVideoItem] of errParamsMap) {
-                            if (errVideoItem) {
-                              const pubItem = pubListChoosed.find(
-                                (v) => v.account.id === key,
-                              )!;
-                              if (step === 1) {
-                                setExpandedPubItem(pubItem);
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        {moderationResult !== null && (
+                          <span style={{ 
+                            fontSize: 14, 
+                            color: moderationResult ? '#52c41a' : '#ff4d4f',
+                            fontWeight: 500,
+                            width: 100,
+                          }}>
+                            {moderationResult ? "内容安全" : "内容不安全"}
+                          </span>
+                        )}
+
+                        {hasDescription && (
+                          <Button
+                            size="large"
+                            loading={moderationLoading}
+                            onClick={handleContentModeration}
+                            type={moderationResult === true ? "primary" : moderationResult === false ? "default" : "default"}
+                            style={{
+                              backgroundColor: moderationResult === true ? '#52c41a' : moderationResult === false ? '#ff4d4f' : undefined,
+                              borderColor: moderationResult === true ? '#52c41a' : moderationResult === false ? '#ff4d4f' : undefined,
+                              color: moderationResult === true || moderationResult === false ? '#fff' : undefined
+                            }}
+                          >
+                            {moderationLoading ? "检测中..." : "内容安全检测"}
+                          </Button>
+                        )}
+                        
+                      </div>
+                      <div style={{ display: 'flex', gap: 12 }}>
+                        <Button size="large" onClick={closeDialog}>
+                          {t("buttons.cancelPublish")}
+                        </Button>
+                        <Button
+                          size="large"
+                          type="primary"
+                          loading={createLoading}
+                          onClick={() => {
+                            for (const [key, errVideoItem] of errParamsMap) {
+                              if (errVideoItem) {
+                                const pubItem = pubListChoosed.find(
+                                  (v) => v.account.id === key,
+                                )!;
+                                if (step === 1) {
+                                  setExpandedPubItem(pubItem);
+                                }
+                                message.warning(errVideoItem.parErrMsg);
+                                return;
                               }
-                              message.warning(errVideoItem.parErrMsg);
-                              return;
                             }
-                          }
-                          pubClick();
-                        }}
-                      >
-                        {t("buttons.schedulePublish")}
-                      </Button>
+                            pubClick();
+                          }}
+                        >
+                          {t("buttons.schedulePublish")}
+                        </Button>
+                      </div>
                     </>
                   )}
                 </div>
