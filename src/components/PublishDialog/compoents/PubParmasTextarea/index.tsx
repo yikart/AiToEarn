@@ -26,6 +26,7 @@ import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubPar
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubType } from "@/app/config/publishConfig";
 import { useTransClient } from "@/app/i18n/client";
+import { toolsApi } from "@/api/tools";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -85,12 +86,40 @@ const PubParmasTextarea = memo(
       );
       // 裁剪弹框
       const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
+      // 内容安全检测状态
+      const [moderationLoading, setModerationLoading] = useState(false);
+      const [moderationResult, setModerationResult] = useState<boolean | null>(null);
       const textareaRef = useRef<TextAreaRef>(null);
       const isFirst = useRef({
         effect: true,
         sort: true,
       });
       const { t } = useTransClient("publish");
+
+      // 内容安全检测函数
+      const handleContentModeration = useCallback(async () => {
+        if (!value.trim()) {
+          message.warning("请先输入内容");
+          return;
+        }
+        
+        try {
+          setModerationLoading(true);
+          setModerationResult(null);
+          const result = await toolsApi.textModeration(value);
+          setModerationResult(result);
+          if (result) {
+            message.success(t("actions.contentSafe"));
+          } else {
+            message.warning(t("actions.contentUnsafe"));
+          }
+        } catch (error) {
+          console.error("内容安全检测失败:", error);
+          message.error("内容安全检测失败，请稍后重试");
+        } finally {
+          setModerationLoading(false);
+        }
+      }, [value, t]);
 
       useEffect(() => {
         if (isFirst.current.effect) {
@@ -307,6 +336,32 @@ const PubParmasTextarea = memo(
                   }, 10);
                 }}
               />
+              {value.trim() && (
+                <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <Button
+                    size="small"
+                    loading={moderationLoading}
+                    onClick={handleContentModeration}
+                    type={moderationResult === true ? "primary" : moderationResult === false ? "default" : "default"}
+                    style={{
+                      backgroundColor: moderationResult === true ? '#52c41a' : moderationResult === false ? '#ff4d4f' : undefined,
+                      borderColor: moderationResult === true ? '#52c41a' : moderationResult === false ? '#ff4d4f' : undefined,
+                      color: moderationResult === true || moderationResult === false ? '#fff' : undefined
+                    }}
+                  >
+                    {moderationLoading ? t("actions.checkingContent") : t("actions.contentModeration")}
+                  </Button>
+                  {moderationResult !== null && (
+                    <span style={{ 
+                      fontSize: 12, 
+                      color: moderationResult ? '#52c41a' : '#ff4d4f',
+                      fontWeight: 500
+                    }}>
+                      {moderationResult ? t("actions.contentSafe") : t("actions.contentUnsafe")}
+                    </span>
+                  )}
+                </div>
+              )}
               <ReactSortable
                 className="pubParmasTextarea-uploads"
                 list={imageFileList}
