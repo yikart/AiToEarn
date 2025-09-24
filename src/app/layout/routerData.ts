@@ -54,6 +54,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "dataStatistics",
     path: "/dataStatistics",
   },
+  {
+    name: "Chat",
+    translationKey: "chat",
+    path: "/chat",
+  },
 ];
 
 const recursion = (
