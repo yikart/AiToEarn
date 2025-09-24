@@ -27,6 +27,7 @@ export function middleware(req: NextRequest) {
       "/sitemap-4.xml",
       "/sitemap",
       "/chat",
+      "/aitoearnChat",
     ].find((v) => req.nextUrl.pathname.includes(v!))
   ) {
     return NextResponse.next();

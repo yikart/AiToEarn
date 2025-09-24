@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: PageParams) {
 export default function Page({ params }: PageParams) {
   return (
     <iframe
-      src="https://aitoearn.ai/chat"
+      src={`${process.env.NEXT_PUBLIC_HOST_URL}/aitoearnChat`}
       style={{ height: "100%", border: "none" }}
     />
   );
