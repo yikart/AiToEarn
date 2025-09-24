@@ -330,6 +330,17 @@ const PublishDialog = memo(
         }
       }, [pubListChoosed, setPubListChoosed]);
 
+      // 过滤PC端不支持的平台账户：如被默认选中则自动移除
+      useEffect(() => {
+        const filtered = pubListChoosed.filter((item) => {
+          const plat = AccountPlatInfoMap.get(item.account.type);
+          return !(plat && plat.pcNoThis === true);
+        });
+        if (filtered.length !== pubListChoosed.length) {
+          setPubListChoosed(filtered);
+        }
+      }, [pubListChoosed, setPubListChoosed]);
+
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
         confirm({
@@ -552,7 +563,12 @@ const PublishDialog = memo(
                   </div>
                 </div>
                 <div className="publishDialog-con-acconts">
-                  {pubList.map((pubItem) => {
+                  {pubList
+                    .filter((pubItem) => {
+                      const plat = AccountPlatInfoMap.get(pubItem.account.type);
+                      return !(plat && plat.pcNoThis === true);
+                    })
+                    .map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
                       pubItem.account.type,
                     )!;
