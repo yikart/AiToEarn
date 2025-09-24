@@ -1,6 +1,7 @@
 import {
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
+  DeleteObjectCommand,
   HeadObjectCommand,
   PutObjectCommandInput,
   S3Client,
@@ -133,6 +134,15 @@ export class S3Service {
       MultipartUpload: { Parts: parts },
     })
 
+    await this.client.send(command)
+  }
+
+  // 删除文件
+  async deleteObject(objectPath: string) {
+    const command = new DeleteObjectCommand({
+      Bucket: this.config.bucketName,
+      Key: objectPath,
+    })
     await this.client.send(command)
   }
 }
