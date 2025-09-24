@@ -103,7 +103,11 @@
   "actions": {
     "selectMaterial": "Select Material",
     "selectDraft": "Select Draft",
-    "cropCover": "Crop Cover"
+    "cropCover": "Crop Cover",
+    "contentModeration": "Content Moderation",
+    "checkingContent": "Checking...",
+    "contentSafe": "Content Safe",
+    "contentUnsafe": "Content Unsafe"
   },
   "tiktok": {
     "creatorInfo": "Creator Info",
