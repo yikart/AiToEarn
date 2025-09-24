@@ -56,7 +56,7 @@ export const routerData: IRouterDataItem[] = [
   },
   {
     name: "Chat",
-    translationKey: "chat",
+    translationKey: "Chat",
     path: "/appChat",
   },
 ];
