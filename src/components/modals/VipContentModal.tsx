@@ -1,14 +1,10 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { Modal, Button } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Modal, Button, Tag } from "antd";
 import styles from "./outsideCloseModal.module.css";
 import vipStyles from "./vipContentModal.module.css";
-import pricingStyles from "@/app/[lng]/styles/pricing.module.scss";
 import IncomePage from "@/app/[lng]/income/page";
-import { useUserStore } from "@/store/user";
-import { useTransClient } from "@/app/i18n/client";
 
 interface VipContentModalProps {
   open: boolean;
@@ -16,70 +12,8 @@ interface VipContentModalProps {
 }
 
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
-  const { lang } = useUserStore();
-  const { t } = useTransClient('pricing');
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
-  const modalWidth = useMemo(() => 960, []);
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
-
-  const plans = [
-    {
-      name: t('plans.free.name'),
-      price: 0,
-      originalPrice: 0,
-      credits: t('plans.free.credits'),
-      videos: t('plans.free.videos'),
-      images: t('plans.free.images'),
-      features: [
-        { text: t('features.textModeration'), included: false },
-        { text: t('features.imageModeration'), included: false },
-        { text: t('features.videoModeration'), included: false },
-        { text: t('features.multiModel'), included: true },
-        { text: t('features.textToVideo'), included: true },
-        { text: t('features.imageToVideo'), included: true },
-        { text: t('features.videoToVideo'), included: true },
-        { text: t('features.consistentCharacter'), included: true },
-        { text: t('features.aiAnimation'), included: true },
-        { text: t('features.aiImage'), included: true },
-        { text: t('features.voiceClone'), included: true },
-        { text: t('features.voiceSynthesis'), included: true },
-        { text: t('features.fasterSpeed'), included: false },
-        { text: t('features.withWatermark'), included: true },
-        { text: t('features.storage500M'), included: true },
-      ],
-      buttonText: t('plans.free.button'),
-      buttonType: 'default' as const,
-      popular: false,
-    },
-    {
-      name: t('plans.plus.name'),
-      price: billingCycle === 'yearly' ? 12 : 19,
-      originalPrice: billingCycle === 'yearly' ? 20 : 15,
-      credits: t('plans.plus.credits'),
-      videos: t('plans.plus.videos'),
-      images: t('plans.plus.images'),
-      features: [
-        { text: t('features.textModeration'), included: true },
-        { text: t('features.imageModeration'), included: true },
-        { text: t('features.videoModeration'), included: true },
-        { text: t('features.multiModel'), included: true },
-        { text: t('features.textToVideo'), included: true },
-        { text: t('features.imageToVideo'), included: true },
-        { text: t('features.videoToVideo'), included: true },
-        { text: t('features.consistentCharacter'), included: true },
-        { text: t('features.aiAnimation'), included: true },
-        { text: t('features.aiImage'), included: true },
-        { text: t('features.voiceClone'), included: true },
-        { text: t('features.voiceSynthesis'), included: true },
-        { text: t('features.fasterSpeed'), included: true },
-        { text: t('features.noWatermark'), included: true },
-        { text: t('features.storage5G'), included: true },
-      ],
-      buttonText: t('plans.plus.button'),
-      buttonType: 'primary' as const,
-      popular: true,
-    },
-  ];
+  const modalWidth = useMemo(() => "76%" as const, []);
 
   return (
     <Modal
@@ -93,8 +27,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       centered
     >
       <div className={vipStyles.wrapper}>
-        {/* 顶部头部（白底，标题含渐变高亮文字，右侧“积分详情”按钮） */}
-        <div className={vipStyles.header}>
+        {/* 顶部区域 */}
+        <div className={vipStyles.header}
+             style={{background: 'transparent'}}>
           <div className={vipStyles.titleBlock}>
             <h2 className={vipStyles.title}>
               1元试用7天会员 <span className={vipStyles.highlight}>立得200积分</span>
@@ -106,120 +41,81 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             </div>
           </div>
           <div className={vipStyles.headerRight}>
-            <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>
-              积分详情
-            </Button>
+            <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>积分详情</Button>
           </div>
         </div>
 
-        {/* 内容（白色背景） */}
-        <div className={vipStyles.content}>
-          {/* Billing Toggle */}
-          <div className={pricingStyles.billingToggle}>
-            <div className={pricingStyles.toggleContainer}>
-              <button
-                className={`${pricingStyles.toggleButton} ${billingCycle === 'monthly' ? pricingStyles.active : ''}`}
-                onClick={() => setBillingCycle('monthly')}
-              >
-                {t('monthly')}
-                {billingCycle === 'monthly' && (
-                  <span className={pricingStyles.saveBadge}>{t('save25')}</span>
-                )}
-              </button>
-              <button
-                className={`${pricingStyles.toggleButton} ${billingCycle === 'yearly' ? pricingStyles.active : ''}`}
-                onClick={() => setBillingCycle('yearly')}
-              >
-                {t('yearly')}
-                {billingCycle === 'yearly' && (
-                  <span className={pricingStyles.saveBadge}>{t('save50')}</span>
-                )}
-              </button>
-            </div>
+        {/* 顶部选项卡 */}
+        {/* <div className={vipStyles.switchRow}>
+          <div className={`${vipStyles.switchBtn} ${vipStyles.active}`}>连续包年 <Tag color="#2bd3ff" style={{marginLeft: 6}}>5折</Tag></div>
+          <div className={vipStyles.switchBtn}>连续包月 <Tag color="#2bd3ff" style={{marginLeft: 6}}>6折</Tag></div>
+          <div className={vipStyles.switchBtn}>单月购买</div>
+        </div> */}
+
+        {/* 价格区域 */}
+        <div className={vipStyles.grid}>
+          {/* 左侧免费卡片 */}
+          <div className={vipStyles.freeCard}>
+            <div className={vipStyles.freeTitle}>免费</div>
+            <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
+            <div className={vipStyles.freeForever}>永久</div>
+            <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
+            <div className={vipStyles.freeItem}>每天赠送积分</div>
           </div>
 
-          {/* Pricing Cards */}
-          <div className={pricingStyles.pricingCards}>
-            {plans.map((plan, index) => (
-              <div
-                key={plan.name}
-                className={`${pricingStyles.pricingCard} ${plan.popular ? pricingStyles.popular : ''}`}
-              >
-                {plan.popular && (
-                  <div className={pricingStyles.popularBadge}>
-                    {billingCycle === 'yearly' ? t('flashSale50') : t('mostPopular')}
-                  </div>
-                )}
+          {/* 基础会员 */}
+          <div className={vipStyles.planCard}>
+            <div className={vipStyles.planHead}>✚ 基础会员</div>
+            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>1</span><span className={vipStyles.unit}>天</span></div>
+            <div className={vipStyles.planDesc}>1元试用7天，首年5折¥329 · 次年¥659自动续费</div>
+            <Button className={vipStyles.primaryBtn}>¥1 试用7天</Button>
+            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 1,080积分每月</div>
+            <div className={vipStyles.subDesc}>最多生成4320张图和216个视频</div>
+            <ul className={vipStyles.featureList}>
+              <li>每天赠送积分</li>
+              <li>生成类视频无限次加速</li>
+              <li>生成作品去除品牌水印</li>
+              <li>视频内置罩</li>
+              <li>视频更高清</li>
+              <li>视频更流畅（可补帧到最高60FPS）</li>
+            </ul>
+          </div>
 
-                <div className={pricingStyles.cardHeader}>
-                  <h2 className={pricingStyles.planName}>{plan.name}</h2>
-                  <div className={pricingStyles.priceContainer}>
-                    {plan.originalPrice > plan.price && (
-                      <span className={pricingStyles.originalPrice}>
-                        ${plan.originalPrice} USD
-                      </span>
-                    )}
-                    <div className={pricingStyles.price}>
-                      <span className={pricingStyles.currency}>$</span>
-                      <span className={pricingStyles.amount}>{plan.price}</span>
-                      <span className={pricingStyles.period}>/{t('month')}</span>
-                    </div>
-                    {billingCycle === 'yearly' && plan.price > 0 && (
-                      <div className={pricingStyles.monthlyPrice}>
-                        ${(plan.price * 12).toFixed(0)} USD/{t('yearly')}
-                      </div>
-                    )}
-                  </div>
-                </div>
+          {/* 标准会员 */}
+          <div className={vipStyles.planCard}>
+            <div className={vipStyles.planHead}>✚ 标准会员</div>
+            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>949</span><span className={vipStyles.unit}>每年</span></div>
+            <div className={vipStyles.planDesc}>首年5折¥949 · 次年续费金额¥1,899 · 包年可随时取消</div>
+            <Button className={vipStyles.primaryBtn}>¥949 首年5折</Button>
+            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 4,000积分每月</div>
+            <div className={vipStyles.subDesc}>最多生成16000张图和800个视频</div>
+            <ul className={vipStyles.featureList}>
+              <li>每天赠送积分</li>
+              <li>生成类视频无限次加速</li>
+              <li>生成作品去除品牌水印</li>
+              <li>视频内置罩</li>
+              <li>视频更高清</li>
+              <li>视频更流畅（可补帧到最高60FPS）</li>
+            </ul>
+          </div>
 
-                <div className={pricingStyles.planFeatures}>
-                  <div className={pricingStyles.mainFeatures}>
-                    <div className={pricingStyles.featureItem}>
-                      <span className={pricingStyles.featureLabel}>{t('credits')}</span>
-                      <span className={pricingStyles.featureValue}>{plan.credits}</span>
-                    </div>
-                    <div className={pricingStyles.featureItem}>
-                      <span className={pricingStyles.featureLabel}>{t('videos')}</span>
-                      <span className={pricingStyles.featureValue}>{plan.videos}</span>
-                    </div>
-                    <div className={pricingStyles.featureItem}>
-                      <span className={pricingStyles.featureLabel}>{t('images')}</span>
-                      <span className={pricingStyles.featureValue}>{plan.images}</span>
-                    </div>
-                  </div>
-
-                  <div className={pricingStyles.featuresList}>
-                    {plan.features.map((feature, featureIndex) => (
-                      <div key={featureIndex} className={pricingStyles.featureRow}>
-                        {feature.included ? (
-                          <CheckOutlined className={pricingStyles.checkIcon} />
-                        ) : (
-                          <CloseOutlined className={pricingStyles.closeIcon} />
-                        )}
-                        <span className={`${pricingStyles.featureText} ${!feature.included ? pricingStyles.disabled : ''}`}>
-                          {feature.text}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Button
-                  type={plan.buttonType}
-                  size="large"
-                  className={pricingStyles.ctaButton}
-                  onClick={() => {
-                    if (plan.name === t('plans.free.name')) {
-                      window.location.href = '/vip';
-                    } else {
-                      window.location.href = '/vip';
-                    }
-                  }}
-                >
-                  {plan.buttonText}
-                </Button>
-              </div>
-            ))}
+          {/* 高级会员 */}
+          <div className={`${vipStyles.planCard} ${vipStyles.premium}`}
+               >
+            <div className={vipStyles.planHead}>✚ 高级会员 <Tag color="#5b7cff">最划算</Tag></div>
+            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>2,599</span><span className={vipStyles.unit}>每年</span></div>
+            <div className={vipStyles.planDesc}>首年5折¥2,599 · 次年续费金额¥5,199 · 包年可随时取消</div>
+            <Button className={vipStyles.primaryBtn}>¥2,599 首年5折</Button>
+            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 15,000积分每月</div>
+            <div className={vipStyles.subDesc}>最多生成60000张图和3000个视频</div>
+            <ul className={vipStyles.featureList}>
+              <li>每天赠送积分</li>
+              <li>生成类视频无限次加速（最快）</li>
+              <li>生成作品去除品牌水印</li>
+              <li>视频内置罩</li>
+              <li>视频更高清</li>
+              <li>视频更流畅（可补帧到最高60FPS）</li>
+            </ul>
           </div>
         </div>
       </div>
