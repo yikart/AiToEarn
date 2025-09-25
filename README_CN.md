@@ -90,7 +90,7 @@ npm run dev
 
 ### 1. 内容发布 —— 一键多平台
 
-* **全网分发**：覆盖最广的平台矩阵（Douyin、Kwai、WeChat、Bilibili、Rednote、Facebook、Instagram、TikTok、LinkedIn、Threads、Bluesky、YouTube Shorts、Pinterest、Google Business、Mastodon、X）。
+* **全网分发**：覆盖最广的平台矩阵（Douyin、Kwai、WeChat Channels、WeChat Offical Accounts、 Bilibili、Rednote、Facebook、Instagram、TikTok、LinkedIn、Threads、YouTube、Pinterest、X（Twitter））。
 * **（即将推出）智能导入**：导入历史内容，快速二次编辑与再分发。
 
   * 例如：一键将你的小红书内容同步到 YouTube。
