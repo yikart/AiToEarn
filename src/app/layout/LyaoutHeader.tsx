@@ -202,16 +202,6 @@ const LyaoutHeader = memo(
                     />
                   </Tooltip>
                 )}
-                {/* 积分详情入口 */}
-                {userStore.token && (
-                  <Button
-                    type="text"
-                    icon={<InfoCircleOutlined />}
-                    onClick={() => setPointsModalVisible(true)}
-                  >
-                    {t("pointsDetail" as any) || "积分详情"}
-                  </Button>
-                )}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
                     <Button
