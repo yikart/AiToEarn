@@ -1,0 +1,60 @@
+.wrapper {
+  background: #ffffff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 12px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.highlight {
+  background: linear-gradient(90deg, #1fb4ff 0%, #5b7cff 40%, #6d4cff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.links {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.linkButton {
+  color: #2563eb;
+  cursor: pointer;
+}
+
+.headerRight {}
+
+.pointsBtn {
+  height: 32px;
+  border-radius: 16px;
+}
+
+.content {
+  padding: 16px 24px 24px 24px;
+}
+
+
