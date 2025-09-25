@@ -5,10 +5,12 @@ import {
   BrowserProfile,
   BrowserProfileSchema,
 } from './browser-profile.schema'
+import { Checkout, CheckoutSchema } from './checkout.schema'
 import {
   CloudSpace,
   CloudSpaceSchema,
 } from './cloud-space.schema'
+import { Coupon, CouponSchema } from './coupon.schema'
 import { Feedback, FeedbackSchema } from './feedback.schema'
 import {
   IncomeRecord,
@@ -23,6 +25,9 @@ import {
   PointsRecord,
   PointsRecordSchema,
 } from './points-record.schema'
+import { Price, PriceSchema } from './price.schema'
+import { Product, ProductSchema } from './product.schema'
+import { Subscription, SubscriptionSchema } from './subscription.schema'
 import {
   UserWalletAccount,
   UserWalletAccountSchema,
@@ -35,20 +40,30 @@ import {
   User,
   UserSchema,
 } from './user.schema'
+import {
+  WithdrawRecord,
+  withdrawRecordSchema,
+} from './withdraw-record.schema'
 
 export * from './ai-log.schema'
 export * from './app-config.schema'
 export * from './blog.schema'
 export * from './browser-profile.schema'
+export * from './checkout.schema'
 export * from './cloud-space.schema'
+export * from './coupon.schema'
 export * from './feedback.schema'
 export * from './income-record.schema'
 export * from './multilogin-account.schema'
 export * from './notification.schema'
 export * from './points-record.schema'
+export * from './price.schema'
+export * from './product.schema'
+export * from './subscription.schema'
 export * from './user-wallet-account.schema'
 export * from './user-wallet.schema'
 export * from './user.schema'
+export * from './withdraw-record.schema'
 
 export const schemas = [
   { name: User.name, schema: UserSchema },
@@ -64,4 +79,10 @@ export const schemas = [
   { name: Blog.name, schema: BlogSchema },
   { name: Feedback.name, schema: FeedbackSchema },
   { name: Notification.name, schema: NotificationSchema },
+  { name: Checkout.name, schema: CheckoutSchema },
+  { name: Coupon.name, schema: CouponSchema },
+  { name: Price.name, schema: PriceSchema },
+  { name: Product.name, schema: ProductSchema },
+  { name: Subscription.name, schema: SubscriptionSchema },
+  { name: WithdrawRecord.name, schema: withdrawRecordSchema },
 ] as const
