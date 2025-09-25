@@ -37,7 +37,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             <div className={vipStyles.links}>
               <span>选择合适你的套餐，或直接</span>
               <span className={vipStyles.linkButton}>购买积分</span>
-              <span className={vipStyles.linkButton}>会员兑换</span>
             </div>
           </div>
           <div className={vipStyles.headerRight}>
