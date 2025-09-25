@@ -5,9 +5,10 @@
 .header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 20px 24px 12px 24px;
   border-bottom: 1px solid #f0f0f0;
+  position: relative;
 }
 
 .titleBlock {
@@ -39,6 +40,7 @@
   display: flex;
   gap: 12px;
   font-size: 13px;
+  justify-content: center;
 }
 
 .linkButton {
@@ -46,7 +48,10 @@
   cursor: pointer;
 }
 
-.headerRight {}
+.headerRight {
+  position: absolute;
+  right: 28px;
+}
 
 .pointsBtn {
   height: 32px;
@@ -56,5 +61,78 @@
 .content {
   padding: 16px 24px 24px 24px;
 }
+
+/* New exact-layout styles */
+.switchRow {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 24px 20px 24px;
+}
+
+.switchBtn {
+  background: #ffffff;
+  color: #374151;
+  border-radius: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.active {
+  background: var(--theColor5);
+  border-color: var(--theColor5);
+  color: #ffffff;
+}
+
+.grid {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 0 24px 24px 24px;
+}
+
+.freeCard {
+  background: #ffffff;
+  color: #111827;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+.freeTitle { font-weight: 700; margin-bottom: 12px; color:#111827; }
+.freePrice { font-size: 36px; font-weight: 800; margin: 12px 0; color:#111827; }
+.freePrice span { font-size: 18px; }
+.unit { margin-left: 6px; font-size: 14px; color: #6b7280; }
+.freeForever { color: #6b7280; margin-bottom: 16px; }
+.freeBtn { width: 100%; margin-bottom: 16px; }
+.freeItem { font-size: 12px; color: #6b7280; }
+
+.planCard {
+  background: #ffffff;
+  color: #111827;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+  border: 1px solid #eef2f7;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.premium { box-shadow: 0 0 0 1px rgba(91,124,255,0.4), 0 0 30px rgba(91,124,255,0.25) inset; }
+
+.planHead { font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color:#111827; }
+.planPriceLine { display: flex; align-items: baseline; gap: 4px; margin: 6px 0 10px; }
+.currency { font-size: 18px; }
+.bigNum { font-size: 44px; font-weight: 800; color: #111827; }
+.planDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; line-height: 1.6; }
+.primaryBtn { width: 100%; background: #23d4ff; border-color: #23d4ff; color: #001524; font-weight: 700; margin-bottom: 16px; }
+.primaryBtn:hover { background: #1ec3ec; border-color: #1ec3ec; }
+
+.benefitBox { background: #f4fbff; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; color: #0369a1; margin-bottom: 8px; }
+.dot { width: 8px; height: 8px; background: #23d4ff; border-radius: 50%; display: inline-block; }
+.subDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
+.featureList { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; color: #374151; font-size: 13px; }
 
 
