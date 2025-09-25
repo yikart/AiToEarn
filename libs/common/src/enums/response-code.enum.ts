@@ -45,4 +45,7 @@ export enum ResponseCode {
   AiCallFailed = 13001,
   InvalidAiTaskId = 13002,
   AiLogNotFound = 13003,
+
+  // 14000 (notification)
+  NotificationNotFound = 14000,
 }

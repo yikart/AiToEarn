@@ -1,5 +1,6 @@
 import { Pagination } from '@yikart/common'
-import { FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose'
+import { DeleteOptions } from 'mongodb'
+import { FilterQuery, Model, MongooseBaseQueryOptions, QueryOptions, UpdateQuery } from 'mongoose'
 
 export interface PaginationParams<TDocument> extends Pagination {
   filter?: FilterQuery<TDocument>
@@ -69,8 +70,8 @@ export class BaseRepository<TDocument> {
   /**
    * 删除单个文档
    */
-  protected async deleteOne(filter: FilterQuery<TDocument>, options?: QueryOptions<TDocument>) {
-    return await this.model.findOneAndDelete(filter, options).exec()
+  protected async deleteOne(filter: FilterQuery<TDocument>, options?: (DeleteOptions & MongooseBaseQueryOptions<TDocument>)) {
+    return await this.model.deleteOne(filter, options).exec()
   }
 
   /**

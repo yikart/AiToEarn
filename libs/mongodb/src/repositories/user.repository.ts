@@ -1,7 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
 import { FilterQuery, Model } from 'mongoose'
-import { User, UserStatus } from '../schemas'
+import { UserStatus } from '../enums'
+import { User } from '../schemas'
 import { BaseRepository } from './base.repository'
 
 export interface ListUserParams extends Pagination {

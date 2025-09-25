@@ -243,6 +243,61 @@ importers:
         specifier: ^9.0.10
         version: 9.0.10
 
+  apps/aitoearn-other:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/microservices':
+        specifier: ^11.1.6
+        version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(ioredis@5.7.0)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/swagger':
+        specifier: ^11.2.0
+        version: 11.2.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      '@yikart/common':
+        specifier: workspace:*
+        version: link:../../libs/common
+      '@yikart/mongodb':
+        specifier: workspace:*
+        version: link:../../libs/mongodb
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.2
+        version: 0.14.2
+      dayjs:
+        specifier: ^1.11.14
+        version: 1.11.15
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
+      openai:
+        specifier: ^5.18.1
+        version: 5.18.1(ws@8.18.3)(zod@4.1.4)
+      rxjs:
+        specifier: ^7.8.0
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+      zod:
+        specifier: ^4.0.17
+        version: 4.1.4
+    devDependencies:
+      '@types/data-urls':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
+
   apps/aitoearn-user:
     dependencies:
       '@nestjs/common':

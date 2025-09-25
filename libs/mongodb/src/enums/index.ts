@@ -1,4 +1,7 @@
 export * from './ai-log.enum'
 export * from './cloud-space.enum'
+export * from './feedback.enum'
 export * from './income-record.enum'
+export * from './notification.enum'
 export * from './user-wallet-account.enum'
+export * from './user.enum'
