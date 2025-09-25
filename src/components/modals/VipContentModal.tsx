@@ -4,7 +4,7 @@ import { memo, useMemo, useState } from "react";
 import { Modal, Button, Tag, message } from "antd";
 import styles from "./outsideCloseModal.module.css";
 import vipStyles from "./vipContentModal.module.css";
-import IncomePage from "@/app/[lng]/income/page";
+import PointsDetailModal from "@/components/modals/PointsDetailModal";
 import { useUserStore } from "@/store/user";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
 
@@ -125,19 +125,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
         </div>
       </div>
 
-      {/* 内联积分详情弹窗（不再引用独立组件） */}
-      <Modal
-        title={null}
-        open={pointsModalVisible}
-        onCancel={() => setPointsModalVisible(false)}
-        footer={null}
-        width={980}
-        className={styles.outsideCloseModal}
-        destroyOnClose
-        centered
-      >
-        <IncomePage />
-      </Modal>
+      {/* 积分详情弹窗（复用组件） */}
+      <PointsDetailModal open={pointsModalVisible} onClose={() => setPointsModalVisible(false)} />
 
       <PointsRechargeModal open={rechargeVisible} onClose={() => setRechargeVisible(false)} />
     </Modal>
