@@ -6,12 +6,8 @@
  * @Description: 用户钱包账户
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { WalletAccountType } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
-
-export enum WalletAccountType {
-  ZFB = 'ZFB',
-  WX_PAY = 'WX_PAY',
-}
 
 @Schema({
   collection: 'userWalletAccount',
@@ -29,24 +25,29 @@ export class UserWalletAccount extends WithTimestampSchema {
   userId: string
 
   @Prop({
-    required: true,
+    required: false,
   })
-  userName: string // 真实姓名
+  mail?: string // 邮箱
 
   @Prop({
     required: false,
   })
-  account?: string // 账号
+  userName?: string // 真实姓名
 
   @Prop({
     required: true,
   })
-  cardNum: string // 身份证号
+  account: string // 账号
 
   @Prop({
-    required: true,
+    required: false,
   })
-  phone: string // 绑定的手机号
+  cardNum?: string // 身份证号
+
+  @Prop({
+    required: false,
+  })
+  phone?: string // 绑定的手机号
 
   @Prop({
     required: true,
@@ -63,3 +64,5 @@ export class UserWalletAccount extends WithTimestampSchema {
 
 export const UserWalletAccountSchema
   = SchemaFactory.createForClass(UserWalletAccount)
+
+UserWalletAccountSchema.index({ userId: 1, type: 1, account: 1 }, { unique: true })

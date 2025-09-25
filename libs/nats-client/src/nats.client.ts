@@ -29,4 +29,17 @@ export class NatsClient {
 
     return response.data
   }
+
+  async emit<TResult = unknown>(pattern: string, data?: unknown): Promise<TResult> {
+    pattern = this.config.prefix ? `${this.config.prefix}.${pattern}` : pattern
+    const response = await lastValueFrom(
+      this.client.emit<CommonResponse<TResult>>(pattern, data),
+    )
+
+    if (response.code !== 0) {
+      throw new AppException(response.code, response.message)
+    }
+
+    return response.data
+  }
 }

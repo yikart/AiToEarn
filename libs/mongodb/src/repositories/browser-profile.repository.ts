@@ -35,12 +35,8 @@ export class BrowserProfileRepository extends BaseRepository<BrowserProfile> {
     })
   }
 
-  async findByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfile[]> {
-    return await this.find({ cloudSpaceId })
-  }
-
   async listByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfile[]> {
-    return await this.findByCloudSpaceId(cloudSpaceId)
+    return await this.find({ cloudSpaceId })
   }
 
   async getByCloudSpaceId(cloudSpaceId: string): Promise<BrowserProfile | null> {

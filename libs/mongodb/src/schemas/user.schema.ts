@@ -11,7 +11,6 @@ import { WithTimestampSchema } from './timestamp.schema'
 export enum UserStatus {
   STOP = 0,
   OPEN = 1,
-  DELETE = -1,
 }
 
 export enum EarnInfoStatus {
@@ -29,6 +28,7 @@ export enum UserVipCycleType {
   NONE = 0, // 未认证
   MONTH = 1, // 月
   YEAR = 2, // 年
+  EXPERIENCE = 3, // 体验
 }
 
 @Schema({
@@ -80,6 +80,20 @@ export class UserVipInfo {
 
   @Prop({ required: true })
   expireTime: Date
+
+  @Prop({ required: true, default: false })
+  autoContinue: boolean
+}
+
+export class UserStorage {
+  @Prop({
+    required: true,
+    default: 500 * 1024 * 1024,
+  })
+  total: number // 总存储（Bytes）
+
+  @Prop({ required: false })
+  expiredAt?: Date
 }
 
 @Schema({
@@ -101,7 +115,6 @@ export class User extends WithTimestampSchema {
   @Prop({
     required: false,
     index: true,
-    unique: true,
   })
   mail: string
 
@@ -134,6 +147,14 @@ export class User extends WithTimestampSchema {
   })
   status: UserStatus
 
+  // 是否删除
+  @Prop({
+    required: true,
+    default: false,
+    index: true,
+  })
+  isDelete: boolean
+
   @Prop({ required: false })
   wxOpenid?: string
 
@@ -156,7 +177,7 @@ export class User extends WithTimestampSchema {
   earnInfo?: UserEarnInfo
 
   @Prop({ type: Object, required: false })
-  googleAccount?: Record<string, unknown> // Google账号信息
+  googleAccount?: Record<string, any> // Google账号信息
 
   // 用户VIP会员信息
   @Prop({ type: UserVipInfo, required: false })
@@ -166,7 +187,31 @@ export class User extends WithTimestampSchema {
     required: true,
     default: 0,
   })
-  score: number // 积分字段
+  score: number // 积分
+
+  @Prop({
+    required: true,
+    default: 0,
+  })
+  income: number // 收入（分）
+
+  // 累计收入
+  @Prop({
+    required: true,
+    default: 0,
+  })
+  totalIncome: number
+
+  @Prop({
+    required: true,
+    default: 0,
+  })
+  usedStorage: number // 已用存储（Bytes）
+
+  @Prop({ type: UserStorage, required: true, default: {
+    total: 500 * 1024 * 1024,
+  } })
+  storage: UserStorage
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

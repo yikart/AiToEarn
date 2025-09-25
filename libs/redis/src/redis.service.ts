@@ -1,11 +1,4 @@
 import type { Redis } from 'ioredis'
-/*
- * @Author: nevin
- * @Date: 2024-08-31 19:15:15
- * @LastEditTime: 2024-09-18 11:42:41
- * @LastEditors: nevin
- * @Description:
- */
 import { Injectable } from '@nestjs/common'
 
 @Injectable()

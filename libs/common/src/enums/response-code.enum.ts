@@ -31,6 +31,15 @@ export enum ResponseCode {
   UserPointsInsufficient = 12001,
   UserStorageExceeded = 12002,
 
+  // 12100 (income)
+  IncomeRecordNotFound = 12100,
+  IncomeRecordNotWithdrawable = 12101,
+  UserInsufficientBalance = 12102,
+
+  // 12200 (wallet-account)
+  UserWalletAccountAlreadyExists = 12200,
+  UserWalletAccountLimitExceeded = 12201,
+
   // 13000 (ai)
   InvalidModel = 13000,
   AiCallFailed = 13001,
