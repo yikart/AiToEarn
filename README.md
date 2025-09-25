@@ -98,7 +98,7 @@ From creative ideas, to multi-channel publishing, to analytics & monetization â€
 
 ### 1. Content Publishing â€” One-Click Multi-Platform
 
-* **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X).
+* **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat Channels, WeChat Offical Account, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, x(Twitter)).
 * **(Coming soon) Smart Import**: Import historical content for fast re-editing & redistribution.
 
   * Example: Sync your Xiaohongshu posts to YouTube in one click.
