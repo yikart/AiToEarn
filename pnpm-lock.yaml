@@ -275,9 +275,61 @@ importers:
       nats:
         specifier: ^2.29.3
         version: 2.29.3
-      openai:
-        specifier: ^5.18.1
-        version: 5.18.1(ws@8.18.3)(zod@4.1.4)
+      rxjs:
+        specifier: ^7.8.0
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+      zod:
+        specifier: ^4.0.17
+        version: 4.1.4
+    devDependencies:
+      '@types/data-urls':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
+
+  apps/aitoearn-payment:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/microservices':
+        specifier: ^11.1.6
+        version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(ioredis@5.7.0)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/swagger':
+        specifier: ^11.2.0
+        version: 11.2.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      '@yikart/common':
+        specifier: workspace:*
+        version: link:../../libs/common
+      '@yikart/mongodb':
+        specifier: workspace:*
+        version: link:../../libs/mongodb
+      '@yikart/stripe':
+        specifier: workspace:*
+        version: link:../../libs/stripe
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.2
+        version: 0.14.2
+      dayjs:
+        specifier: ^1.11.14
+        version: 1.11.15
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
       rxjs:
         specifier: ^7.8.0
         version: 7.8.2
@@ -537,8 +589,11 @@ importers:
         specifier: ^11.0.3
         version: 11.0.3(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(mongoose@8.18.0)(rxjs@7.8.2)
       '@yikart/common':
-        specifier: ^0.0.6
-        version: 0.0.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/microservices@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)(zod@4.1.4)
+        specifier: workspace:*
+        version: link:../common
+      '@yikart/stripe':
+        specifier: workspace:*
+        version: link:../stripe
       mongodb:
         specifier: ~6.18.0
         version: 6.18.0
@@ -614,6 +669,27 @@ importers:
       ioredis:
         specifier: ^5.7.0
         version: 5.7.0
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+      zod:
+        specifier: ^4.0.0
+        version: 4.1.4
+
+  libs/stripe:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@yikart/common':
+        specifier: '*'
+        version: 0.0.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/microservices@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)(zod@4.1.4)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      stripe:
+        specifier: ^18.5.0
+        version: 18.5.0(@types/node@22.17.2)
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -7595,6 +7671,15 @@ packages:
   strip-json-comments@5.0.3:
     resolution: {integrity: sha512-1tB5mhVo7U+ETBKNf92xT4hrQa3pm0MZ0PQvuDnWgAAGHDsfp4lPSpiS6psrSiet87wyGPh9ft6wmhOMQ0hDiw==}
     engines: {node: '>=14.16'}
+
+  stripe@18.5.0:
+    resolution: {integrity: sha512-Hp+wFiEQtCB0LlNgcFh5uVyKznpDjzyUZ+CNVEf+I3fhlYvh7rZruIg+jOwzJRCpy0ZTPMjlzm7J2/M2N6d+DA==}
+    engines: {node: '>=12.*'}
+    peerDependencies:
+      '@types/node': '>=12.x.x'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
 
   strnum@2.1.1:
     resolution: {integrity: sha512-7ZvoFTiCnGxBtDqJ//Cu6fWtZtc7Y3x+QOirG15wztbdngGSkht27o2pyGWrVy0b4WAy3jbKmnoK6g5VlVNUUw==}
@@ -17163,6 +17248,12 @@ snapshots:
   strip-json-comments@3.1.1: {}
 
   strip-json-comments@5.0.3: {}
+
+  stripe@18.5.0(@types/node@22.17.2):
+    dependencies:
+      qs: 6.14.0
+    optionalDependencies:
+      '@types/node': 22.17.2
 
   strnum@2.1.1: {}
 

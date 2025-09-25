@@ -35,7 +35,8 @@
       "@yikart/nats-client": ["libs/nats-client/src/index.ts"],
       "@yikart/redis": ["libs/redis/src/index.ts"],
       "@yikart/redlock": ["libs/redlock/src/index.ts"],
-      "@yikart/ucloud": ["libs/ucloud/src/index.ts"]
+      "@yikart/ucloud": ["libs/ucloud/src/index.ts"],
+      "@yikart/stripe": ["libs/stripe/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
