@@ -18,6 +18,7 @@ const PointsDetailModal = memo(({ open, onClose }: PointsDetailModalProps) => {
       onCancel={onClose}
       footer={null}
       width={980}
+      height={720}
       className={styles.outsideCloseModal}
       destroyOnClose
       centered
