@@ -1,10 +1,12 @@
 "use client";
 
 import { memo, useMemo, useState } from "react";
-import { Modal, Button, Tag } from "antd";
+import { Modal, Button, Tag, message } from "antd";
 import styles from "./outsideCloseModal.module.css";
 import vipStyles from "./vipContentModal.module.css";
 import IncomePage from "@/app/[lng]/income/page";
+import { useUserStore } from "@/store/user";
+import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
 
 interface VipContentModalProps {
   open: boolean;
@@ -13,7 +15,9 @@ interface VipContentModalProps {
 
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
+  const userStore = useUserStore();
   const modalWidth = useMemo(() => "76%" as const, []);
+  const [rechargeVisible, setRechargeVisible] = useState(false);
 
   return (
     <Modal
@@ -36,7 +40,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             </h2>
             <div className={vipStyles.links}>
               <span>选择合适你的套餐，或直接</span>
-              <span className={vipStyles.linkButton}>购买积分</span>
+              <span className={vipStyles.linkButton}
+                onClick={() => setRechargeVisible(true)}
+              >购买积分</span>
             </div>
           </div>
           <div className={vipStyles.headerRight}>
@@ -132,6 +138,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       >
         <IncomePage />
       </Modal>
+
+      <PointsRechargeModal open={rechargeVisible} onClose={() => setRechargeVisible(false)} />
     </Modal>
   );
 });

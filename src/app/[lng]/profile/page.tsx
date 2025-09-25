@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, Tag, Popconfirm, DatePicker, Select, Space } from "antd";
 import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
 import { createPaymentOrderApi, PaymentType as VipPaymentType } from "@/api/vip";
@@ -12,12 +12,14 @@ import type { Order, OrderListParams, SubscriptionListParams, RefundParams, Unsu
 import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
 import { useTransClient } from "@/app/i18n/client";
+import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 
 export default function ProfilePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { userInfo, setUserInfo, clearLoginStatus, token, lang } = useUserStore();
   const { t } = useTransClient('profile');
   const [loading, setLoading] = useState(true);
@@ -35,6 +37,8 @@ export default function ProfilePage() {
       setHasShownFreeTrial(true);
     }
   }, []);
+
+  // removed URL-driven auto-open; now fully controlled by state
   
   // 订单相关状态
   const [orders, setOrders] = useState<Order[]>([]);
@@ -1185,98 +1189,8 @@ export default function ProfilePage() {
         </div>
       </Modal>
 
-            {/* 积分充值弹窗 */}
-      <Modal
-        title={t('pointsPurchase.title' as any)}
-        open={pointsRechargeVisible}
-        onCancel={handleRechargeCancel}
-        footer={null}
-        width={500}
-        centered
-        maskClosable={false}
-        closable={true}
-      >
-        <div className={styles.rechargeContent}>
-          <div className={styles.currentPoints}>
-            <span className={styles.pointsLabel}>{t('pointsPurchase.currentPoints' as any)}</span>
-            <span className={styles.pointsValue}>{userInfo?.score || 0}</span>
-          </div>
-          
-          <div className={styles.rechargeSection}>
-            <h4>{t('pointsPurchase.selectAmount' as any)}</h4>
-            <p className={styles.rechargeDescription}>{t('pointsPurchase.description' as any)}</p>
-            
-            <div className={styles.sliderContainer}>
-              <div 
-                className={styles.sliderTrack}
-                onClick={handleSliderClick}
-              >
-                <div 
-                  className={styles.sliderHandle}
-                  style={{ left: `${(rechargeAmount / 50) * 100}%` }}
-                  onMouseDown={handleSliderMouseDown}
-                />
-              </div>
-              <div className={styles.sliderLabels}>
-                <span>1K</span>
-                <span>50K</span>
-              </div>
-            </div>
-            
-            <div className={styles.amountInput}>
-              <Input
-                type="number"
-                value={rechargeAmount}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (value >= 1 && value <= 50) {
-                    setRechargeAmount(value);
-                  }
-                }}
-                min={1}
-                max={50}
-                style={{ width: '80px', marginRight: '8px' }}
-              />
-              <span>*1000积分</span>
-            </div>
-            
-            <div className={styles.totalPrice}>
-              <span>{t('pointsPurchase.purchasePoints' as any)}：</span>
-              <span className={styles.priceValue}>{rechargeAmount * 1000}</span>
-            </div>
-            
-            <div className={styles.totalPrice}>
-              <span>{t('pointsPurchase.totalPrice' as any)}：</span>
-              <span className={styles.priceValue}>${(rechargeAmount * 15).toFixed(2)}</span>
-            </div>
-          </div>
-          
-          <Button 
-            type="primary" 
-            size="large" 
-            block
-            onClick={() => handleRechargeSubmit({ amount: rechargeAmount })}
-            className={styles.rechargeButton}
-            disabled={showPaymentSuccess}
-          >
-            {showPaymentSuccess ? t('pointsPurchase.paying' as any) : t('pointsPurchase.buyNow' as any)}
-          </Button>
-
-          {/* 支付成功提示 */}
-          {showPaymentSuccess && (
-            <div className={styles.paymentSuccessTip}>
-              <p>{t('pointsPurchase.paymentTip' as any)}</p>
-              <Button 
-                type="primary" 
-                onClick={handlePaymentSuccess}
-                className={styles.paymentSuccessButton}
-              >
-                {t('pointsPurchase.confirmPayment' as any)}
-              </Button>
-            </div>
-          )}
-        </div>
-      </Modal>
+      {/* 积分充值弹窗（复用组件） */}
+      <PointsRechargeModal open={pointsRechargeVisible} onClose={handleRechargeCancel} />
     </div>
   );
 } 
