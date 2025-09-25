@@ -1,9 +1,10 @@
 "use client";
 
-import { memo, useMemo } from "react";
-import { Modal } from "antd";
+import { memo, useMemo, useState } from "react";
+import { Modal, Button } from "antd";
+import PointsDetailModal from "@/components/modals/PointsDetailModal";
 import styles from "./outsideCloseModal.module.css";
-import VipPage from "@/app/[lng]/vip/page";
+import PricingPage from "@/app/[lng]/pricing/page";
 import { useUserStore } from "@/store/user";
 
 interface VipContentModalProps {
@@ -13,6 +14,7 @@ interface VipContentModalProps {
 
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const { lang } = useUserStore();
+  const [pointsModalVisible, setPointsModalVisible] = useState(false);
   const modalWidth = useMemo(() => 960, []);
 
   return (
@@ -26,9 +28,17 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       destroyOnClose
       centered
     >
-      {/* 直接渲染 VIP 页面核心内容 */}
-      {/* VipPage 内部使用 i18n，依赖 store 的 lang 即可 */}
-      <VipPage />
+      {/* 渲染定价页内容（隐藏 FAQ） */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+          <Button type="link" onClick={() => setPointsModalVisible(true)}>
+            积分详情
+          </Button>
+        </div>
+        <PricingPage hideFaq />
+      </div>
+
+      <PointsDetailModal open={pointsModalVisible} onClose={() => setPointsModalVisible(false)} />
     </Modal>
   );
 });
