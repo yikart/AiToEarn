@@ -67,9 +67,9 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
       destroyOnClose
     >
       <Space direction="vertical" size={16} style={{width:'100%'}}>
-        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
+        <div style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:18}}>
           <span style={{color:'#6b7280'}}>当前积分</span>
-          <span style={{fontWeight:700}}>{userStore.userInfo?.score || 0}</span>
+          <span style={{fontWeight:700}}>{Math.floor(userStore.userInfo?.score || 0)}</span>
         </div>
         <div>
           <Typography.Text type="secondary">每1000积分售价15美元</Typography.Text>
@@ -119,7 +119,7 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
               <span>50K</span>
             </div>
           </div>
-          <div style={{marginTop:12, display:'flex', alignItems:'center', gap:12}}>
+          <div style={{marginTop:28, display:'flex', alignItems:'center', gap:12}}>
             <InputNumber min={1} max={50} value={rechargeAmount} onChange={(v) => setRechargeAmount(Number(v) || 1)} />
             <span>* 1000 积分</span>
           </div>
