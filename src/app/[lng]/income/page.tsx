@@ -18,8 +18,8 @@ const { Option } = Select;
 
 export default function IncomePage() {
   const router = useRouter();
-  const { lng } = useParams();
-  const { userInfo, token } = useUserStore();
+  const params = useParams();
+  const { userInfo, token, lang } = useUserStore();
   const { t } = useTransClient('income');
   
   // 收入记录相关状态
@@ -291,7 +291,10 @@ export default function IncomePage() {
             <span
               className={styles.walletLink}
               role="button"
-              onClick={() => router.push(`/${lng}/wallet`)}
+              onClick={() => {
+                const effectiveLng = (params as any)?.lng || lang || "zh-CN";
+                router.push(`/${effectiveLng}/wallet`);
+              }}
             >
               {t('myWallet')}
             </span>
