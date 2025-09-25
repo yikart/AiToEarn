@@ -7,19 +7,23 @@ import Link from "next/link";
 import Image from "next/image";
 import LayoutNav from "@/app/layout/layoutNav";
 import { NoSSR } from "@kwooshung/react-no-ssr";
-import { Button, Dropdown, MenuProps, Badge } from "antd";
+import { Button, Dropdown, MenuProps, Badge, Tooltip } from "antd";
 import logo from "@/assets/images/logo.png";
 import defaultAvatar from "./images/defaultAvatar.jpg";
 import {
   BellOutlined,
   CaretDownOutlined,
   GlobalOutlined,
+  CrownOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
 import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
-import SignInCalendar from "@/components/SignInCalendar";
+import SignInCalendar from "@/components/SignInCalendar"; 
+import VipContentModal from "@/components/modals/VipContentModal";
+import PointsDetailModal from "@/components/modals/PointsDetailModal";
 
 export interface ILyaoutHeaderRef {}
 
@@ -147,6 +151,8 @@ const LyaoutHeader = memo(
     const router = useRouter();
     const { t } = useTransClient("common");
     const [notificationVisible, setNotificationVisible] = useState(false);
+    const [vipModalVisible, setVipModalVisible] = useState(false);
+    const [pointsModalVisible, setPointsModalVisible] = useState(false);
     const { unreadCount } = useNotification();
 
     const toggleLanguage = () => {
@@ -186,6 +192,26 @@ const LyaoutHeader = memo(
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
                 )}
+                {/* 未开通 VIP 时显示图标，点击打开 VIP 弹窗 */}
+                {userStore.token && !userStore.userInfo?.vipInfo && (
+                  <Tooltip title={t("vip" as any) || "VIP"}>
+                    <Button
+                      type="text"
+                      icon={<CrownOutlined />}
+                      onClick={() => setVipModalVisible(true)}
+                    />
+                  </Tooltip>
+                )}
+                {/* 积分详情入口 */}
+                {userStore.token && (
+                  <Button
+                    type="text"
+                    icon={<InfoCircleOutlined />}
+                    onClick={() => setPointsModalVisible(true)}
+                  >
+                    {t("pointsDetail" as any) || "积分详情"}
+                  </Button>
+                )}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
                     <Button
@@ -217,6 +243,10 @@ const LyaoutHeader = memo(
           visible={notificationVisible} 
           onClose={() => setNotificationVisible(false)} 
         />
+        {/* VIP 弹窗 */}
+        <VipContentModal open={vipModalVisible} onClose={() => setVipModalVisible(false)} />
+        {/* 积分详情弹窗 */}
+        <PointsDetailModal open={pointsModalVisible} onClose={() => setPointsModalVisible(false)} />
       </>
     );
   }),
