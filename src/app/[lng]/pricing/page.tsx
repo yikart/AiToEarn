@@ -9,7 +9,7 @@ import pricingStyles from "../styles/pricing.module.scss";
 /**
  * 定价页面组件
  */
-export default function PricingPage() {
+export default function PricingPage({ hideFaq = false }: { hideFaq?: boolean }) {
   const { t } = useTransClient('pricing');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
 
@@ -700,53 +700,55 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* FAQ Section */}
-        <div className={pricingStyles.faqSection}>
-          <h2 className={pricingStyles.faqTitle}>{t('faq.title')}</h2>
-          <Collapse
-            className={pricingStyles.faqCollapse}
-            items={faqItems.map((faq, index) => ({
-              key: index,
-              label: faq.question,
-              children: (
-                <div>
-                  <p>{faq.answer}</p>
-                  {faq.question === t('faq.creditDeduction.question') && (
-                    <div className={pricingStyles.pricingTableContainer}>
-                      <h4>{t('faq.creditDeduction.pricingTable.title' as any)}</h4>
-                      <div className={pricingStyles.pricingTableWrapper}>
-                        <table className={pricingStyles.pricingTable}>
-                          <thead>
-                            <tr>
-                              <th>{t('faq.creditDeduction.pricingTable.headers.model' as any)}</th>
-                              <th>{t('faq.creditDeduction.pricingTable.headers.type' as any)}</th>
-                              <th>{t('faq.creditDeduction.pricingTable.headers.duration' as any)}</th>
-                              <th>{t('faq.creditDeduction.pricingTable.headers.resolution' as any)}</th>
-                              <th>{t('faq.creditDeduction.pricingTable.headers.credits' as any)}</th>
-                              <th>{t('faq.creditDeduction.pricingTable.headers.price' as any)}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {getPricingData().map((row: any, rowIndex: number) => (
-                              <tr key={rowIndex}>
-                                <td>{row.model}</td>
-                                <td>{row.type}</td>
-                                <td>{row.duration}</td>
-                                <td>{row.resolution}</td>
-                                <td>{row.credits}</td>
-                                <td>{row.price}</td>
+        {/* FAQ Section (可隐藏) */}
+        {!hideFaq && (
+          <div className={pricingStyles.faqSection}>
+            <h2 className={pricingStyles.faqTitle}>{t('faq.title')}</h2>
+            <Collapse
+              className={pricingStyles.faqCollapse}
+              items={faqItems.map((faq, index) => ({
+                key: index,
+                label: faq.question,
+                children: (
+                  <div>
+                    <p>{faq.answer}</p>
+                    {faq.question === t('faq.creditDeduction.question') && (
+                      <div className={pricingStyles.pricingTableContainer}>
+                        <h4>{t('faq.creditDeduction.pricingTable.title' as any)}</h4>
+                        <div className={pricingStyles.pricingTableWrapper}>
+                          <table className={pricingStyles.pricingTable}>
+                            <thead>
+                              <tr>
+                                <th>{t('faq.creditDeduction.pricingTable.headers.model' as any)}</th>
+                                <th>{t('faq.creditDeduction.pricingTable.headers.type' as any)}</th>
+                                <th>{t('faq.creditDeduction.pricingTable.headers.duration' as any)}</th>
+                                <th>{t('faq.creditDeduction.pricingTable.headers.resolution' as any)}</th>
+                                <th>{t('faq.creditDeduction.pricingTable.headers.credits' as any)}</th>
+                                <th>{t('faq.creditDeduction.pricingTable.headers.price' as any)}</th>
                               </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                            </thead>
+                            <tbody>
+                              {getPricingData().map((row: any, rowIndex: number) => (
+                                <tr key={rowIndex}>
+                                  <td>{row.model}</td>
+                                  <td>{row.type}</td>
+                                  <td>{row.duration}</td>
+                                  <td>{row.resolution}</td>
+                                  <td>{row.credits}</td>
+                                  <td>{row.price}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              )
-            }))}
-          />
-        </div>
+                    )}
+                  </div>
+                )
+              }))}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
