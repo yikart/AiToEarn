@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Space, Typography, message } from 'antd';
 import { DownloadOutlined, QrcodeOutlined, CopyOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
-import { MAIN_APP_DOWNLOAD_URL } from '@/app/config/appDownloadConfig';
+import { MAIN_APP_DOWNLOAD_URL, getMainAppDownloadUrl } from '@/app/config/appDownloadConfig';
 import logo from '@/assets/images/logo.png';
 import { QRCode } from 'react-qrcode-logo';
 
@@ -35,12 +35,12 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   const [copySuccess, setCopySuccess] = useState(false);
 
   const handleDownload = () => {
-    const linkToOpen = downloadUrl || MAIN_APP_DOWNLOAD_URL;
+    const linkToOpen = downloadUrl || getMainAppDownloadUrl();
     window.open(linkToOpen, '_blank');
   };
 
   const handleCopyLink = async () => {
-    const linkToCopy = downloadUrl || MAIN_APP_DOWNLOAD_URL;
+    const linkToCopy = downloadUrl || getMainAppDownloadUrl();
     try {
       await navigator.clipboard.writeText(linkToCopy);
       setCopySuccess(true);
@@ -116,7 +116,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
             />
           ) : (
             <QRCode
-              value={downloadUrl || MAIN_APP_DOWNLOAD_URL}
+              value={downloadUrl || getMainAppDownloadUrl()}
               size={120}
               logoImage={logo.src}
               logoWidth={30}
@@ -155,7 +155,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
                 textAlign: 'left'
               }}
             >
-              {downloadUrl || MAIN_APP_DOWNLOAD_URL}
+              {downloadUrl || getMainAppDownloadUrl()}
             </Text>
             <Button
               size="small"

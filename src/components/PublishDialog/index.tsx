@@ -322,6 +322,25 @@ const PublishDialog = memo(
         }
       }, [accounts, open]);
 
+      // 离线账号（status === 0）不可参与发布：如被默认选中则自动移除
+      useEffect(() => {
+        const filtered = pubListChoosed.filter((item) => item.account.status !== 0);
+        if (filtered.length !== pubListChoosed.length) {
+          setPubListChoosed(filtered);
+        }
+      }, [pubListChoosed, setPubListChoosed]);
+
+      // 过滤PC端不支持的平台账户：如被默认选中则自动移除
+      useEffect(() => {
+        const filtered = pubListChoosed.filter((item) => {
+          const plat = AccountPlatInfoMap.get(item.account.type);
+          return !(plat && plat.pcNoThis === true);
+        });
+        if (filtered.length !== pubListChoosed.length) {
+          setPubListChoosed(filtered);
+        }
+      }, [pubListChoosed, setPubListChoosed]);
+
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
         confirm({
@@ -544,13 +563,19 @@ const PublishDialog = memo(
                   </div>
                 </div>
                 <div className="publishDialog-con-acconts">
-                  {pubList.map((pubItem) => {
+                  {pubList
+                    .filter((pubItem) => {
+                      const plat = AccountPlatInfoMap.get(pubItem.account.type);
+                      return !(plat && plat.pcNoThis === true);
+                    })
+                    .map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
                       pubItem.account.type,
                     )!;
                     const isChoosed = pubListChoosed.find(
                       (v) => v.account.id === pubItem.account.id,
                     );
+                    const isOffline = pubItem.account.status === 0;
 
                     return (
                       <div
@@ -568,6 +593,10 @@ const PublishDialog = memo(
                         key={pubItem.account.id}
                         onClick={(e) => {
                           e.stopPropagation();
+                          if (isOffline) {
+                            message.warning("该账号已离线，无法发布");
+                            return;
+                          }
                           const newPubListChoosed = [...pubListChoosed];
                           // 查找当前账户是否已被选择
                           const index = newPubListChoosed.findIndex(
@@ -608,12 +637,34 @@ const PublishDialog = memo(
                           setPubListChoosed(newPubListChoosed);
                         }}
                       >
-                        <AvatarPlat
-                          className={`publishDialog-con-acconts-item-avatar ${!isChoosed ? 'disabled' : ''}`}
-                          account={pubItem.account}
-                          size="large"
-                          disabled={!isChoosed}
-                        />
+                        {/* 账号头像：离线显示遮罩并禁用 */}
+                        <div style={{ position: "relative" }}>
+                          <AvatarPlat
+                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline ? 'disabled' : ''}`}
+                            account={pubItem.account}
+                            size="large"
+                            disabled={isOffline || !isChoosed}
+                          />
+                          {isOffline && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.45)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 12,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                              }}
+                            >
+                              已离线
+                            </div>
+                          )}
+                        </div>
                       </div>
                     );
                   })}
