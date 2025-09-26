@@ -81,7 +81,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               <li>生成类视频无限次加速</li>
               <li>生成作品去除品牌水印</li>
               <li>视频内置罩</li>
-              <li>视频更高清</li>
+              <li>内容安全审核</li>
               <li>视频更流畅（可补帧到最高60FPS）</li>
             </ul>
           </div>
@@ -99,7 +99,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               <li>生成类视频无限次加速</li>
               <li>生成作品去除品牌水印</li>
               <li>视频内置罩</li>
-              <li>视频更高清</li>
+              <li>内容安全审核</li>
               <li>视频更流畅（可补帧到最高60FPS）</li>
             </ul>
           </div>
@@ -118,7 +118,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               <li>生成类视频无限次加速（最快）</li>
               <li>生成作品去除品牌水印</li>
               <li>视频内置罩</li>
-              <li>视频更高清</li>
+              <li>内容安全审核</li>
               <li>视频更流畅（可补帧到最高60FPS）</li>
             </ul>
           </div>

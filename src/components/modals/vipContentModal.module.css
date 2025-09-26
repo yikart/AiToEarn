@@ -81,8 +81,8 @@
 }
 
 .active {
-  background: var(--theColor5);
-  border-color: var(--theColor5);
+  background: #a66ae4;
+  border-color: #a66ae4;
   color: #ffffff;
 }
 
@@ -120,18 +120,18 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-.premium { box-shadow: 0 0 0 1px rgba(91,124,255,0.4), 0 0 30px rgba(91,124,255,0.25) inset; }
+.premium { box-shadow: 0 0 0 1px rgba(166,106,228,0.4), 0 0 30px rgba(166,106,228,0.25) inset; }
 
 .planHead { font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color:#111827; }
 .planPriceLine { display: flex; align-items: baseline; gap: 4px; margin: 6px 0 10px; }
 .currency { font-size: 18px; }
 .bigNum { font-size: 44px; font-weight: 800; color: #111827; }
 .planDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; line-height: 1.6; }
-.primaryBtn { width: 100%; background: #23d4ff; border-color: #23d4ff; color: #001524; font-weight: 700; margin-bottom: 16px; }
-.primaryBtn:hover { background: #1ec3ec; border-color: #1ec3ec; }
+.primaryBtn { width: 100%; background: #a66ae4; border-color: #a66ae4; color: #ffffff; font-weight: 700; margin-bottom: 16px; }
+.primaryBtn:hover { background: #9556d1; border-color: #9556d1; }
 
-.benefitBox { background: #f4fbff; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; color: #0369a1; margin-bottom: 8px; }
-.dot { width: 8px; height: 8px; background: #23d4ff; border-radius: 50%; display: inline-block; }
+.benefitBox { background: #f8f4ff; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; color: #7c3aed; margin-bottom: 8px; }
+.dot { width: 8px; height: 8px; background: #a66ae4; border-radius: 50%; display: inline-block; }
 .subDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
 .featureList { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; color: #374151; font-size: 13px; }
 

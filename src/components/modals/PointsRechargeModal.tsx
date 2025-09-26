@@ -93,7 +93,7 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
                   top: 0,
                   height: '100%',
                   width: `${amountToPercent(rechargeAmount)}%`,
-                  background: 'var(--theColor5)',
+                  background: '#a66ae4',
                   borderRadius: 6
                 }}
               />
@@ -106,7 +106,7 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
                   width: 20,
                   height: 20,
                   background: '#ffffff',
-                  border: '2px solid var(--theColor5)',
+                  border: '2px solid #a66ae4',
                   borderRadius: '50%',
                   transform: 'translateY(-50%)',
                   boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
