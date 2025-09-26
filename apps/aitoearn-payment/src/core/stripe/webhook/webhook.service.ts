@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Checkout, Subscription } from '@yikart/mongodb'
-import { ChargeService, ICheckoutMode, ICheckoutStatus, ISubscriptionStatus, SubscriptionService } from '@yikart/stripe'
+import { CheckoutRepository, SubscriptionRepository } from '@yikart/mongodb'
+import { ChargeService, ICheckoutMode, ICheckoutStatus, ICurrency, ISubscriptionStatus, SubscriptionService } from '@yikart/stripe'
 import _ from 'lodash'
-import { Model } from 'mongoose'
 import { IWebhookType } from './comment'
 import {
   ChargeDto,
@@ -17,9 +15,8 @@ export class WebhookService {
   constructor(
     private readonly subscriptionApiService: SubscriptionService,
     private readonly chargeApiService: ChargeService,
-    @InjectModel(Subscription.name)
-    private subscriptionModel: Model<Subscription>,
-    @InjectModel(Checkout.name) private checkoutModel: Model<Checkout>,
+    private readonly subscriptionRepository: SubscriptionRepository,
+    private readonly checkoutRepository: CheckoutRepository,
   ) {}
 
   // 事件推送
@@ -90,29 +87,20 @@ export class WebhookService {
       if (!paid || refunded)
         return this.logger.log('该笔订单未付款, 或者已经退款', id)
     }
-    const checkout = await this.checkoutModel.findOne({ id }, 'userId').lean()
+    const checkout = await this.checkoutRepository.getById(id)
     const userId = _.get(checkout, 'userId')
     const { customer, created, currency } = info
     const body = {
       id: subscriptionId,
       status: ISubscriptionStatus.active,
-      currency,
+      currency: currency as ICurrency,
       created,
       info,
       metadata,
       userId,
-      customer,
+      customer: typeof customer === 'string' ? customer : customer.id,
     }
-    await this.subscriptionModel
-      .findOneAndUpdate(
-        { id: subscriptionId },
-        { $set: body },
-        {
-          new: true,
-          upsert: true,
-        },
-      )
-      .lean()
+    await this.subscriptionRepository.upsertById(subscriptionId, body)
     return this.saveSuccessChargeToCheckout(
       chargeInfo,
       id,
@@ -142,7 +130,7 @@ export class WebhookService {
     const { amount, amount_refunded, paid, refunded, id: charge } = chargeInfo
     if (amount_total > 0 && (!paid || refunded))
       return this.logger.log({ id }, '该笔订单未付款, 或者已经退款')
-    const $set = {
+    const body = {
       chargeInfo,
       amount,
       amount_refunded,
@@ -151,9 +139,7 @@ export class WebhookService {
       subscription,
       status: ICheckoutStatus.succeeded,
     }
-    return this.checkoutModel
-      .findOneAndUpdate({ id }, { $set }, { new: true })
-      .lean()
+    return this.checkoutRepository.updateById(id, body)
     //  toDo 发送nats 开通用户对应会员  存储积分   这块逻辑写到gateway中
   }
 
@@ -178,18 +164,13 @@ export class WebhookService {
       payment_intent,
       status: ICheckoutStatus.refunded,
     }
-    return this.checkoutModel
-      .findOneAndUpdate(
-        { charge: id, status: ICheckoutStatus.succeeded },
-        { $set },
-        { new: true },
+    const checkout = await this.checkoutRepository.getByChargeAndStatus(id, ICheckoutStatus.succeeded)
+    if (!checkout) {
+      throw new Error(
+        `未找到状态为成功支付的退款订单,或者已退款，订单id为${id}`,
       )
-      .lean()
-      .catch(() => {
-        throw new Error(
-          `未找到状态为成功支付的退款订单,或者已退款，订单id为${id}`,
-        )
-      })
+    }
+    return this.checkoutRepository.updateById(checkout.id, $set)
     // toDo 发送nats 取消会员 这块逻辑写到gateway中
   }
 
@@ -197,13 +178,11 @@ export class WebhookService {
   async expired(data: any) {
     const { id } = data
     const $set = { status: ICheckoutStatus.expired }
-    return this.checkoutModel
-      .findOneAndUpdate(
-        { id, status: ICheckoutStatus.created },
-        { $set },
-        { new: true },
-      )
-      .lean()
+    const checkout = await this.checkoutRepository.getByIdAndStatus(id, ICheckoutStatus.created)
+    if (!checkout) {
+      return null
+    }
+    return this.checkoutRepository.updateById(id, $set)
   }
 
   async subscriptionCancel(data: { id: string }) {
@@ -212,12 +191,6 @@ export class WebhookService {
     if (status !== 'canceled')
       return
     const body = { id: data.id, status: ISubscriptionStatus.canceled, info }
-    await this.subscriptionModel
-      .findOneAndUpdate(
-        { id: data.id },
-        { $set: body },
-        { new: true, upsert: true },
-      )
-      .lean()
+    await this.subscriptionRepository.upsertById(data.id, body)
   }
 }

@@ -6,11 +6,9 @@
  * @Description: product
  */
 import { Injectable, Logger } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Checkout } from '@yikart/mongodb'
+import { CheckoutRepository } from '@yikart/mongodb'
 import { ICheckoutMode, ICheckoutStatus, IPayment, IPaymentToMode, IPriceId, StripeService } from '@yikart/stripe'
 import _ from 'lodash'
-import { Model } from 'mongoose'
 import { config } from '../../../config'
 import { CheckoutBodyDto, CheckoutDto, LineItemsDto } from './checkout.dto'
 
@@ -19,23 +17,23 @@ export class CheckoutService {
   private readonly logger = new Logger(CheckoutService.name)
   constructor(
     private readonly stripeService: StripeService,
-    @InjectModel(Checkout.name) private checkoutModel: Model<Checkout>,
+    private readonly checkoutRepository: CheckoutRepository,
   ) {}
 
   // 获取订单
-  async getById(id: string, userId: string) {
-    // status: { $in: [ICheckoutStatus.succeeded, ICheckoutStatus.refunded] }
-    const query = { id, userId }
-    const result = await this.checkoutModel.find(query, { info: 0, chargeInfo: 0 })
-    this.logger.log(result)
+  async getById(id: string, userId?: string) {
+    const result = await this.checkoutRepository.getByIdAndUserId(id, userId)
     return result
   }
 
   // 获取订单列表
   async list(userId: string, size = 100, page = 1) {
-    const query = { userId, status: { $in: [ICheckoutStatus.succeeded, ICheckoutStatus.refunded] } }
-    const count = await this.checkoutModel.countDocuments(query)
-    const list = await this.checkoutModel.find(query, { info: 0, chargeInfo: 0 }).sort({ created: -1 }).limit(size).skip((page - 1) * size)
+    const [list, count] = await this.checkoutRepository.listWithPagination({
+      page,
+      pageSize: size,
+      userId,
+      status: [ICheckoutStatus.succeeded, ICheckoutStatus.refunded],
+    })
     return { list, count }
   }
 
@@ -80,26 +78,18 @@ export class CheckoutService {
       currency,
       amount: amount_total,
     }
-    checkout = await this.checkoutModel.findOneAndUpdate({ id }, checkout, { upsert: true, new: true })
+    checkout = await this.checkoutRepository.upsertById(id, checkout)
     return checkout
   }
 
   // 管理员订单列表--支持搜索订单id  cahrgeid   userId
   async adminList(search: string, size = 100, page = 1) {
-    //  status: { $in: [ICheckoutStatus.succeeded, ICheckoutStatus.refunded] }
-    const query: any = { status: { $in: [ICheckoutStatus.succeeded, ICheckoutStatus.refunded] } }
-    if (!_.isEmpty(search)) {
-      const searchExample = {
-        $regex: search,
-        $options: 'i',
-      }
-      query.$or = []
-      query.$or.push({ id: searchExample })
-      query.$or.push({ charge: searchExample })
-      query.$or.push({ userId: searchExample })
-    }
-    const count = await this.checkoutModel.countDocuments(query)
-    const list = await this.checkoutModel.find(query).limit(size).skip((page - 1) * size)
+    const [list, count] = await this.checkoutRepository.listWithPagination({
+      page,
+      pageSize: size,
+      status: [ICheckoutStatus.succeeded, ICheckoutStatus.refunded],
+      search: _.isEmpty(search) ? undefined : search,
+    })
     return { list, count }
   }
 }

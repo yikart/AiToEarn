@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common'
+import { NatsMessagePattern } from '@yikart/common'
 import { AdminWithdrawListDto, WithdrawReleaseDto } from '../withdraw.dto'
 import { WithdrawAdminService } from './withdrawAdmin.service'
 

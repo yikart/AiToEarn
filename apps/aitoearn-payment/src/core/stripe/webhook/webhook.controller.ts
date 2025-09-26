@@ -1,7 +1,7 @@
-import { WebhookDto } from '@core/stripe/webhook/dto/webhook.dto'
 import { Controller, Logger, Post } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common/decorators'
+import { NatsMessagePattern } from '@yikart/common'
+import { WebhookDto } from './webhook.dto'
 import { WebhookService } from './webhook.service'
 
 @Controller('webhook')

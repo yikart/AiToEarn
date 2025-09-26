@@ -6,32 +6,26 @@
  * @Description: checkout Checkout
  */
 import { Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
 import { TableDto } from '@yikart/common'
-import { Checkout } from '@yikart/mongodb'
-import { Model } from 'mongoose'
+import { CheckoutRepository } from '@yikart/mongodb'
 
 @Injectable()
 export class AdminCheckoutService {
   constructor(
-    @InjectModel(Checkout.name) private checkoutModel: Model<Checkout>,
+    private readonly checkoutRepository: CheckoutRepository,
   ) {
   }
 
   // 订单列表
   async list(page: TableDto) {
-    const result = await this.checkoutModel.find(
-      {},
-      {},
-      {
-        skip: (page.pageNo - 1) * page.pageSize,
-        limit: page.pageSize,
-      },
-    )
+    const [items, total] = await this.checkoutRepository.listWithPagination({
+      page: page.pageNo,
+      pageSize: page.pageSize,
+    })
 
     return {
-      total: await this.checkoutModel.countDocuments(),
-      list: result,
+      total,
+      list: items,
     }
   }
 }

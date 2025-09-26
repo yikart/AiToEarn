@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
-import { FilterQuery, Model } from 'mongoose'
+import { FilterQuery, Model, PipelineStage } from 'mongoose'
 import { WithdrawRecord } from '../schemas'
 import { BaseRepository } from './base.repository'
 
@@ -41,5 +41,17 @@ export class WithdrawRecordRepository extends BaseRepository<WithdrawRecord> {
       filter,
       options: { sort: { createdAt: -1 } },
     })
+  }
+
+  async getByIncomeRecordId(incomeRecordId: string) {
+    return await this.findOne({ incomeRecordId })
+  }
+
+  async listWithAggregation(pipeline: PipelineStage[]) {
+    return await this.model.aggregate(pipeline).exec()
+  }
+
+  async countByFilter(filter: FilterQuery<WithdrawRecord>) {
+    return await this.count(filter)
   }
 }

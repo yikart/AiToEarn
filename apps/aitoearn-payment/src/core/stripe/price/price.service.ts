@@ -6,10 +6,8 @@
  * @Description: product
  */
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Price } from '@yikart/mongodb'
+import { PriceRepository } from '@yikart/mongodb'
 import { StripeService } from '@yikart/stripe'
-import { Model } from 'mongoose'
 import { PriceDto } from './price.dto'
 
 @Injectable()
@@ -18,7 +16,7 @@ export class PriceService {
 
   constructor(
     private readonly stripeService: StripeService,
-    @InjectModel(Price.name) private priceModel: Model<Price>,
+    private readonly priceRepository: PriceRepository,
   ) {
   }
 
@@ -38,7 +36,7 @@ export class PriceService {
       })
     const { id, unit_amount, active, currency, product, metadata } = result
     let price = { id, currency, active, unit_amount, product, metadata }
-    price = await this.priceModel.findOneAndUpdate({ id }, price, { upsert: true, new: true })
+    price = await this.priceRepository.upsertById(id, price)
     return price
     // return this.resultModule.findOneAndUpdate({ id: result.id }, result)
   }
@@ -51,15 +49,18 @@ export class PriceService {
       })
     const { unit_amount, active, currency, product, metadata } = result
     let price = { currency, active, unit_amount, product, metadata }
-    price = await this.priceModel.findOneAndUpdate({ id }, price, { upsert: true, new: true })
+    price = await this.priceRepository.upsertById(id, price)
     return price
     // return this.resultModule.findOneAndUpdate({ id: result.id }, result)
   }
 
   // 获取价格列表
   async list(product: string, size = 100, page = 1) {
-    const count = await this.priceModel.countDocuments({ product })
-    const list = await this.priceModel.find({ product }).limit(size).skip((page - 1) * size)
+    const [list, count] = await this.priceRepository.listWithPagination({
+      page,
+      pageSize: size,
+      product,
+    })
     return { list, count }
   }
 }

@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { AppException, NatsMessagePattern } from '@/common'
+import { AppException, NatsMessagePattern, ResponseCode } from '@yikart/common'
 import { UserWithdrawListDto, WithdrawCreateDto, WithdrawInfoDto } from './withdraw.dto'
 import { WithdrawService } from './withdraw.service'
 
@@ -15,7 +15,7 @@ export class WithdrawController {
     if (body.incomeRecordId) {
       const oldData = await this.withdrawService.getInfoByIncomeId(body.incomeRecordId)
       if (oldData)
-        throw new AppException(1000, 'The withdrawal record already exists')
+        throw new AppException(ResponseCode.WithdrawRecordExists)
     }
     return this.withdrawService.create(body)
   }

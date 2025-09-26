@@ -6,11 +6,9 @@
  * @Description: product
  */
 import { Injectable, Logger } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Checkout } from '@yikart/mongodb'
+import { CheckoutRepository } from '@yikart/mongodb'
 import { StripeService } from '@yikart/stripe'
 import * as _ from 'lodash'
-import { Model } from 'mongoose'
 import { RefundBodyDto } from './refund.dto'
 
 @Injectable()
@@ -19,15 +17,14 @@ export class RefundService {
 
   constructor(
     private readonly stripeService: StripeService,
-    @InjectModel(Checkout.name) private checkoutModel: Model<Checkout>,
+    private readonly checkoutRepository: CheckoutRepository,
   ) { }
 
   // 创建退款
   async create(body: RefundBodyDto, isAdmin = 0) {
     const { charge, userId } = body
     // 验证该用户是否有有权限来操作退款  需本人退款  超管的逻辑后面再加
-    const filter = isAdmin ? { charge } : { userId, charge }
-    const checkout: Checkout | null = await this.checkoutModel.findOne(filter)
+    const checkout = await this.checkoutRepository.getByChargeAndUserId(charge, isAdmin ? undefined : userId)
     // 权限不够或者找不到 charge
     if (_.isEmpty(checkout))
       return

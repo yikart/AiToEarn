@@ -39,7 +39,7 @@ export class RefundBodyDto {
   @IsString({ message: 'checkout表里面的charge id' })
   @IsOptional()
   @Expose()
-  readonly charge?: string
+  readonly charge: string
 
   @IsString({ message: 'userId' })
   @IsOptional()

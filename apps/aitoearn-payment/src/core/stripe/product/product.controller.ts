@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Param, Post, Put } from '@nestjs/common'
+import { Controller, Get, Param, Post, Put } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { ProductDto } from './product.dto'
 import { ProductService } from './product.service'
@@ -32,13 +32,5 @@ export class ProductController {
     @Payload() body: ProductDto,
   ) {
     return this.productService.modify(id, body)
-  }
-
-  // 更新产品
-  @Delete('/:id')
-  async del(
-    @Param('id') id: string,
-  ) {
-    return this.productService.del(id)
   }
 }

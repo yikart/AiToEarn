@@ -1,7 +1,7 @@
-import { IIsAdmin } from '@libs/stripe/checkout/comment'
 import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common'
+import { NatsMessagePattern } from '@yikart/common'
+import { IIsAdmin } from '@yikart/stripe'
 import { RefundBodyDto } from './refund.dto'
 import { RefundService } from './refund.service'
 

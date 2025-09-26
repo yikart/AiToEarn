@@ -1,6 +1,6 @@
 import { Controller, Param } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common'
+import { NatsMessagePattern } from '@yikart/common'
 import { CouponDto, ListCouponDto } from './coupon.dto'
 import { CouponService } from './coupon.service'
 

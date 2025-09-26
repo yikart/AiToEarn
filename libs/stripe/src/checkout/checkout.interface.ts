@@ -46,15 +46,17 @@ export enum ICheckoutMode {
   subscription = 'subscription',
 }
 
-export const IPaymentToMode = {
+export const IPaymentToMode: Record<IPayment, ICheckoutMode> = {
   [IPayment.year]: ICheckoutMode.subscription,
   [IPayment.month]: ICheckoutMode.subscription,
   [IPayment.onceYear]: ICheckoutMode.payment,
   [IPayment.onceMonth]: ICheckoutMode.payment,
   [IPayment.points]: ICheckoutMode.payment,
-} as const
+  [IPayment.cloudSpaceMonth]: ICheckoutMode.subscription,
+  [IPayment.cloudSpaceOnceMonth]: ICheckoutMode.payment,
+}
 
-export const IPriceId = {
+export const IPriceId: { [key: string]: { [key: string]: string } } = {
   [ICheckoutMode.subscription]: {
     [IPayment.month]: 'price_1S8NOEClgjQcLawNySA59RXH', // 19刀连续包月
     [IPayment.year]: 'price_1S8NPPClgjQcLawNRNUseHhF', // 144刀连续包年

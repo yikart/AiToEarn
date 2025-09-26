@@ -1,7 +1,7 @@
-import { IIsAdmin } from '@libs/stripe/checkout/comment'
 import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common/decorators'
+import { NatsMessagePattern } from '@yikart/common'
+import { IIsAdmin } from '@yikart/stripe'
 import { UnsubscribeDto } from './subscription.dto'
 import { SubscriptionService } from './subscription.service'
 

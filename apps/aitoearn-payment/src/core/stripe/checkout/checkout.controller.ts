@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@/common/decorators'
+import { NatsMessagePattern } from '@yikart/common'
 import { CheckoutBodyDto } from './checkout.dto'
 import { CheckoutService } from './checkout.service'
 

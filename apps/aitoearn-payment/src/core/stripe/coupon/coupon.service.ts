@@ -6,10 +6,8 @@
  * @Description: product
  */
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { InjectModel } from '@nestjs/mongoose'
-import { Coupon } from '@yikart/mongodb'
+import { CouponRepository } from '@yikart/mongodb'
 import { StripeService } from '@yikart/stripe'
-import { Model } from 'mongoose'
 import { CouponDto } from './coupon.dto'
 
 @Injectable()
@@ -18,7 +16,7 @@ export class CouponService {
 
   constructor(
     private readonly stripeService: StripeService,
-    @InjectModel(Coupon.name) private couponModel: Model<Coupon>,
+    private readonly couponRepository: CouponRepository,
   ) {
   }
 
@@ -30,7 +28,7 @@ export class CouponService {
       })
     const { id, created, currency, duration, percent_off } = result
     let coupon = { id, created, currency, duration, percent_off }
-    coupon = await this.couponModel.findOneAndUpdate({ id }, coupon, { upsert: true, new: true })
+    coupon = await this.couponRepository.upsertById(id, coupon)
     return coupon
     // return this.resultModule.findOneAndUpdate({ id: result.id }, result)
   }
@@ -41,14 +39,16 @@ export class CouponService {
       .catch((e) => {
         throw new BadRequestException(`删除产品失败${e.message()} `)
       })
-    return result ? this.couponModel.deleteOne({ id }) : { message: '删除优惠券失败' }
+    return result ? this.couponRepository.deleteById(id) : { message: '删除优惠券失败' }
     // return this.resultModule.findOneAndUpdate({ id: result.id }, result)
   }
 
   // 获取优惠券列表
   async list(size = 100, page = 1) {
-    const count = await this.couponModel.countDocuments()
-    const list = await this.couponModel.find().limit(size).skip((page - 1) * size)
+    const [list, count] = await this.couponRepository.listWithPagination({
+      page,
+      pageSize: size,
+    })
     return { list, count }
   }
 }
