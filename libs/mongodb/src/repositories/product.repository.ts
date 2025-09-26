@@ -32,4 +32,8 @@ export class ProductRepository extends BaseRepository<Product> {
       options: { sort: { name: 1 } },
     })
   }
+
+  async upsertById(id: string, data: Partial<Product>) {
+    return await this.model.findOneAndUpdate({ id }, { $set: data }, { upsert: true, new: true }).exec()
+  }
 }

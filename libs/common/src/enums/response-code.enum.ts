@@ -48,4 +48,7 @@ export enum ResponseCode {
 
   // 14000 (notification)
   NotificationNotFound = 14000,
+
+  // 15000 (payment)
+  WithdrawRecordExists = 15000,
 }

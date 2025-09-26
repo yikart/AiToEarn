@@ -11,6 +11,7 @@ export interface ListSubscriptionParams extends Pagination {
   status?: ISubscriptionStatus
   currency?: ICurrency
   createdAt?: Date[]
+  search?: string
 }
 
 export class SubscriptionRepository extends BaseRepository<Subscription> {
@@ -21,7 +22,7 @@ export class SubscriptionRepository extends BaseRepository<Subscription> {
   }
 
   async listWithPagination(params: ListSubscriptionParams) {
-    const { page, pageSize, userId, customer, status, currency, createdAt } = params
+    const { page, pageSize, userId, customer, status, currency, createdAt, search } = params
 
     const filter: FilterQuery<Subscription> = {}
     if (userId)
@@ -38,6 +39,16 @@ export class SubscriptionRepository extends BaseRepository<Subscription> {
         $lte: Math.floor(createdAt[1].getTime() / 1000),
       }
     }
+    if (search) {
+      const searchExample = {
+        $regex: search,
+        $options: 'i',
+      }
+      filter.$or = [
+        { id: searchExample },
+        { userId: searchExample },
+      ]
+    }
 
     return await this.findWithPagination({
       page,
@@ -45,5 +56,25 @@ export class SubscriptionRepository extends BaseRepository<Subscription> {
       filter,
       options: { sort: { created: -1 } },
     })
+  }
+
+  async listByUserId(userId: string) {
+    return await this.find({ userId }, { sort: { created: -1 } })
+  }
+
+  async getByUserIdAndStatus(userId: string, status: ISubscriptionStatus) {
+    return await this.findOne({ userId, status })
+  }
+
+  async getByIdAndStatus(id: string, status: ISubscriptionStatus) {
+    return await this.findOne({ id, status })
+  }
+
+  async upsertById(id: string, data: Partial<Subscription>) {
+    return await this.model.findOneAndUpdate({ id }, { $set: data }, { upsert: true, new: true }).exec()
+  }
+
+  async countByFilter(filter: FilterQuery<Subscription>) {
+    return await this.count(filter)
   }
 }

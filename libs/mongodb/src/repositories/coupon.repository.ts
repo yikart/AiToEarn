@@ -40,4 +40,8 @@ export class CouponRepository extends BaseRepository<Coupon> {
       options: { sort: { created: -1 } },
     })
   }
+
+  async upsertById(id: string, data: Partial<Coupon>) {
+    return await this.model.findOneAndUpdate({ id }, data, { upsert: true, new: true })
+  }
 }

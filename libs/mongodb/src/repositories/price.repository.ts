@@ -36,4 +36,8 @@ export class PriceRepository extends BaseRepository<Price> {
       options: { sort: { unit_amount: 1 } },
     })
   }
+
+  async upsertById(id: string, data: Partial<Price>) {
+    return await this.model.findOneAndUpdate({ id }, data, { upsert: true, new: true })
+  }
 }
