@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, Tag, Popconfirm, DatePicker, Select, Space } from "antd";
-import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled } from "@ant-design/icons";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled, EditOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { WalletOutlined } from "@ant-design/icons";
 import { useUserStore } from "@/store/user";
@@ -692,96 +692,51 @@ export default function ProfilePage() {
 
   // 个人信息内容
   const renderProfileContent = () => (
-    <>
+  <>
+      {/* 顶部头像/邮箱/ID/积分 */}
+      <div style={{
+        background: '#ffffff',
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 20,
+        textAlign: 'center'
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          <div style={{
+            width: 80,
+            height: 80,
+            borderRadius: '50%',
+            overflow: 'hidden',
+            background: '#f3e8ff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#a66ae4',
+            fontSize: 36,
+            border: '2px solid rgba(166,106,228,0.35)'
+          }}>
+            <UserOutlined />
+          </div>
+          <div style={{ fontSize: 16, fontWeight: 700, color: '#111827', display:'flex', alignItems:'center', gap:8 }}>
+            <span>{userInfo?.name || '-'}</span>
+            <EditOutlined style={{ cursor: 'pointer', color: '#a66ae4' }} onClick={() => setIsModalOpen(true)} />
+          </div>
+          <div style={{ color: '#6b7280', fontSize: 13 }}>{userInfo?.mail || '-'}</div>
+          <div style={{ color: '#9ca3af', fontSize: 12 }}>ID: {userInfo?.id || '-'}</div>
+          <div style={{ marginTop: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
+            <span style={{ color: '#6b7280' }}>积分</span>
+            <span style={{
+              fontWeight: 800,
+              background: 'linear-gradient(135deg, #a66ae4, #8b5cf6)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              fontSize: 20
+            }}>{Math.floor((userInfo?.score as number) || 0)}</span>
+          </div>
 
-{/* <div className={styles.vipCard}>
-        <div className={styles.vipContent}>
-          <div className={styles.vipHeader}>
-            <span className={styles.vipIcon}><CrownOutlined /></span>
-            <h2 className={styles.vipTitle}>{t('plusMember')}</h2>
-          </div>
-          {isVip ? (<p className={styles.vipDescription}>
-            {t('vipUserGreeting')}
-          </p>
-          ) : (
-            <p className={styles.vipDescription}>
-              {t('vipDescription')}
-            </p>
-          )}
-          <div className={styles.benefitsGrid}>
-            {vipBenefits.map((benefit, index) => (
-              <div key={index} className={styles.benefitItem}>
-                <div className={styles.benefitIcon}>{benefit.icon}</div>
-                <p className={styles.benefitName}>{benefit.name}</p>
-              </div>
-            ))}
-          </div>
-          {isVip ? (
-            <div className={styles.vipInfo}>
-            </div>
-          ) : (
-            <button className={styles.activateButton} onClick={handleGoToVipPage}>
-              {t('activateNow')}
-            </button>
-          )}
         </div>
-      </div> */}
+      </div>
 
-      
-      {/* 积分显示卡片 */}
-      {/* <div className={styles.pointsCard}>
-        <div className={styles.pointsContent}>
-          <div className={styles.pointsHeader}>
-            <div className={styles.pointsTitleSection}>
-              <span className={styles.pointsIcon}><GiftFilled /></span>
-              <span className={styles.pointsTitle}>{t('points.myPoints')}</span>
-            </div>
-            <span className={styles.pointsCount}>{userInfo?.score || 0}</span>
-          </div>
-          <p className={styles.pointsDescription}>
-            {t('points.pointsDescription')}
-          </p>
-          
-          <div className={styles.pointsMethods}>
-            <h4 className={styles.methodsTitle}>{t('pointsPurchase.getPointsMethods' as any)}</h4>
-            <div className={styles.methodsGrid}>
-              <div className={styles.methodItem} onClick={handleGoToPublish}>
-                <div className={styles.methodIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                  </svg>
-                </div>
-                <div className={styles.methodContent}>
-                  <h5>{t('pointsPurchase.publish' as any)}</h5>
-                  <p>{t('pointsPurchase.publishDesc' as any)}</p>
-                </div>
-              </div>
-              
-              <div className={styles.methodItem} onClick={handleGoToVip}>
-                <div className={styles.methodIcon}>
-                  <CrownOutlined />
-                </div>
-                <div className={styles.methodContent}>
-                  <h5>{t('pointsPurchase.vip' as any)}</h5>
-                  <p>{t('pointsPurchase.vipDesc' as any)}</p>
-                </div>
-              </div>
-              
-              <div className={styles.methodItem} onClick={handleRechargePoints}>
-                <div className={styles.methodIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                  </svg>
-                </div>
-                <div className={styles.methodContent}>
-                  <h5>{t('pointsPurchase.buyPoints' as any)}</h5>
-                  <p>{t('pointsPurchase.buyPointsDesc' as any)}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> */}
 
       {/* 余额显示卡片 */}
       <div className={styles.incomeCard}>
@@ -819,21 +774,8 @@ export default function ProfilePage() {
       <Card 
         title={t('personalInfo')} 
         className={`${styles.card} ${styles.personalInfoCard}`}
-        extra={
-          <div className={styles.actions}>
-            <Button type="primary" onClick={() => setIsModalOpen(true)}>
-              {t('modifyUsername')}
-            </Button>
-            <Button type="primary" danger onClick={handleLogout}>
-              {t('logout')}
-            </Button>
-          </div>
-        }
       >
         <Descriptions bordered column={1}>
-          <Descriptions.Item label={t('userId')}>{userInfo?.id}</Descriptions.Item>
-          <Descriptions.Item label={t('username')}>{userInfo?.name}</Descriptions.Item>
-          <Descriptions.Item label={t('email')}>{userInfo?.mail}</Descriptions.Item>
           <Descriptions.Item label={t('accountStatus')}>
             {userInfo?.status === 1 ? t('normal') : t('disabled')}
           </Descriptions.Item>
@@ -855,6 +797,11 @@ export default function ProfilePage() {
           </button>
         </div>
       )}
+
+      {/* 底部申请注销按钮 */}
+      <div style={{ marginTop: 24, textAlign: 'center' }}>
+        <Button danger>{'申请注销'}</Button>
+      </div>
     </>
   );
 
