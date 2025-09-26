@@ -33,15 +33,18 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
 
   // 检查用户是否可以享受免费试用
   useEffect(() => {
+    console.log('userStore.userInfo', userStore);
     if (userStore.userInfo) {
       // 如果用户没有vipInfo，说明从未开过会员，可以享受免费试用
-      const hasVipInfo = userStore.userInfo.vipInfo && Object.keys(userStore.userInfo.vipInfo).length > 0;
+      const hasVipInfo = userStore.userInfo.vipInfo;
+      console.log('hasVipInfo', hasVipInfo);
       setCanUseTrial(!hasVipInfo);
     }
   }, [userStore.userInfo]);
 
   // 开通会员逻辑
   const handleActivate = async (planType: 'year' | 'month' | 'once') => {
+    console.log('canUseTrial', canUseTrial);
     try {
       setLoading(true);
       
@@ -174,7 +177,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
                 <div className={vipStyles.planHead}>年度会员 <Tag color="#5b7cff">最划算</Tag></div>
                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>144</span><span className={vipStyles.unit}>每年</span></div>
-                <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$300/年</span> · 包年可随时取消</div>
+                <div className={vipStyles.planDesc}>
+                  {canUseTrial ? '7天免费试用' : ''} · <span style={{textDecoration: 'line-through'}}>$300/年</span> · 包年可随时取消</div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
@@ -220,7 +224,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
                  <div className={vipStyles.planHead}>月度会员 </div>
                  <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>228</span><span className={vipStyles.unit}>每年</span></div>
-                 <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$25/月</span> · 包月可随时取消</div>
+                 <div className={vipStyles.planDesc}>
+                   {canUseTrial ? '7天免费试用' : ''} · <span style={{textDecoration: 'line-through'}}>$25/月</span> · 包月可随时取消</div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
