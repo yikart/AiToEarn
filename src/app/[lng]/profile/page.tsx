@@ -705,7 +705,23 @@ export default function ProfilePage() {
   <>
       {/* 顶部头部卡片 */}
       <div className={styles.headerCard}>
-        <div className={styles.avatar}>
+        {/* VIP 提示（已是VIP时显示） */}
+        {isVip && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          color: '#a66ae4',
+          fontWeight: 700,
+        }}>
+          <Image src={plusvip} alt="VIP" className={styles.vipBadgeTop} />
+          <span>{t('vipHonorText' as any)}</span>
+        </div>
+      )}
+
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: 8 }}>
+      <div className={styles.avatar}>
           <Image src={logoHesd} alt="Logo"  className={styles.logoHesd} />
         </div>
         <div className={styles.nameBlock}>
@@ -716,24 +732,7 @@ export default function ProfilePage() {
           <div className={styles.subRow}>
             <span>{userInfo?.mail || '-'}</span>
           </div>
-        </div>
-        <div className={styles.scoreRow}>
-          {/* VIP 提示（已是VIP时显示） */}
-          {isVip && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-          color: '#a66ae4',
-          fontWeight: 700,
-        }}>
-          <Image src={plusvip} alt="VIP" className={styles.vipBadgeTop} />
-          <span>您是尊贵的VIP用户</span>
-        </div>
-      )}
-
-        <div className={styles.scoreRowThis}>
+          <div className={styles.scoreRowThis}>
           <span className={styles.scoreLabel}>{t('inviteCode' as any)}</span>
           <span className={styles.scoreValue}>{userInfo?.popularizeCode || '-'}</span>
           <CopyOutlined
@@ -751,6 +750,13 @@ export default function ProfilePage() {
         </div>
         </div>
       </div>
+       
+        <div className={styles.scoreRow}>
+          
+
+        
+        </div>
+      </div>
 
             
 
@@ -764,17 +770,14 @@ export default function ProfilePage() {
         </div>
         <div className={styles.statsGrid}>
           <div className={styles.statsItem}  onClick={() => router.push('/income')} >
-            <div className={styles.statsValue}>{userInfo?.income || 0}</div>
-            <div className={styles.statsLabel}>{t('stats.balance' as any)}</div>
+            
+            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {userInfo?.income || 0} </span> CNY</div>
           </div>
           <div className={styles.statsItem} style={{cursor:'pointer'}} onClick={() => setPointsDetailVisible(true)}>
-            <div className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0)}</div>
-            <div className={styles.statsLabel}>{t('stats.points' as any)}</div>
+            
+            <div className={styles.statsLabel}>{t('stats.points' as any)} <span className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0) } </span> {t('stats.points' as any)}</div>
           </div>
-          <div className={styles.statsItem}>
-            <div className={styles.statsValue}>{(userInfo as any)?.couponCount ?? 0}</div>
-            <div className={styles.statsLabel}>{t('stats.coupons' as any)}</div>
-          </div>
+          
         </div>
       </div>
 
@@ -794,8 +797,8 @@ export default function ProfilePage() {
 
 
       {/* 底部申请注销按钮 */}
-      <div style={{ marginTop: 24, textAlign: 'center', borderTop: '1px solid #D4E0FA', paddingTop: 24, display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:"center"  }}>
-        <div style={{ display:'flex', flexDirection:'column', justifyContent:'space-between', alignItems:"flex-start" }}>
+      <div style={{ textAlign: 'center', paddingTop: 24, display:'flex', flexDirection:'column', justifyContent:'center', alignItems:"flex-start"  }}>
+        <div style={{ display:'flex', flexDirection:'column', justifyContent:'space-between', alignItems:"flex-start", marginBottom: 8 }}>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>{t('deleteAccount.title' as any)}</div>
           <div>{t('deleteAccount.desc' as any)}</div>
         </div>
