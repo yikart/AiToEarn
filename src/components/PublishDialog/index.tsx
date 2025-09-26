@@ -113,6 +113,7 @@ const PublishDialog = memo(
       // 内容安全检测状态
       const [moderationLoading, setModerationLoading] = useState(false);
       const [moderationResult, setModerationResult] = useState<boolean | null>(null);
+      const [moderationDesc, setModerationDesc] = useState<string>("");
       const { t } = useTransClient("publish");
 
       // 内容安全检测函数
@@ -135,12 +136,23 @@ const PublishDialog = memo(
         try {
           setModerationLoading(true);
           setModerationResult(null);
+          setModerationDesc("");
           const result = await toolsApi.textModeration(contentToCheck);
           console.log("result",result);
           
           if (result?.code === 0) {
-            setModerationResult(!result?.data);
-            message.success("内容安全");
+            const data: any = result?.data || {} as any;
+            const descriptions: string = (data && (data.descriptions as string)) || "";
+            const labels: string = (data && (data.labels as string)) || "";
+            const reason: string = (data && (data.reason as string)) || "";
+            const isSafe = !descriptions && !labels && !reason;
+            setModerationResult(isSafe);
+            setModerationDesc(isSafe ? "" : (descriptions || reason || "内容不安全"));
+            if (isSafe) {
+              message.success("内容安全");
+            } else {
+              message.error("内容不安全");
+            }
           }
         } catch (error) {
           console.error("内容安全检测失败:", error);
@@ -165,12 +177,14 @@ const PublishDialog = memo(
       // 监听内容变化，重置内容安全检测状态
       useEffect(() => {
         setModerationResult(null);
+        setModerationDesc("");
       }, [commonPubParams.des, expandedPubItem?.params.des, pubListChoosed.map(item => item.params.des).join(',')]);
 
       // 当内容被清空时，也重置检测状态
       useEffect(() => {
         if (!hasDescription) {
           setModerationResult(null);
+          setModerationDesc("");
         }
       }, [hasDescription]);
 
@@ -737,14 +751,18 @@ const PublishDialog = memo(
                     <>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         {moderationResult !== null && (
-                          <span style={{ 
-                            fontSize: 14, 
-                            color: moderationResult ? '#52c41a' : '#ff4d4f',
-                            fontWeight: 500,
-                            width: 100,
-                          }}>
-                            {moderationResult ? "内容安全" : "内容不安全"}
-                          </span>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ 
+                              fontSize: 14, 
+                              color: moderationResult ? '#52c41a' : '#ff4d4f',
+                              fontWeight: 500,
+                            }}>
+                              {moderationResult ? "内容安全" : "内容不安全"}
+                            </span>
+                            {!moderationResult && !!moderationDesc && (
+                              <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap' }}>{moderationDesc}</span>
+                            )}
+                          </div>
                         )}
 
                         {hasDescription && (
