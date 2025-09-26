@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, Tag, Popconfirm, DatePicker, Select, Space } from "antd";
-import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled, EditOutlined } from "@ant-design/icons";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled, EditOutlined, CopyOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { WalletOutlined } from "@ant-design/icons";
+import Image from "next/image";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
 import { createPaymentOrderApi, PaymentType as VipPaymentType } from "@/api/vip";
@@ -14,6 +15,9 @@ import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
 import { useTransClient } from "@/app/i18n/client";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
+
+import plusvip from "@/assets/images/plusvip.png";
+import logoHesd from "@/assets/images/logo.png";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
@@ -690,118 +694,105 @@ export default function ProfilePage() {
     },
   ];
 
+  
+
   // 个人信息内容
   const renderProfileContent = () => (
   <>
-      {/* 顶部头像/邮箱/ID/积分 */}
-      <div style={{
-        background: '#ffffff',
-        borderRadius: 12,
-        padding: 20,
-        marginBottom: 20,
-        textAlign: 'center'
-      }}>
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-          <div style={{
-            width: 80,
-            height: 80,
-            borderRadius: '50%',
-            overflow: 'hidden',
-            background: '#f3e8ff',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#a66ae4',
-            fontSize: 36,
-            border: '2px solid rgba(166,106,228,0.35)'
-          }}>
-            <UserOutlined />
-          </div>
-          <div style={{ fontSize: 16, fontWeight: 700, color: '#111827', display:'flex', alignItems:'center', gap:8 }}>
+      {/* 顶部头部卡片 */}
+      <div className={styles.headerCard}>
+        <div className={styles.avatar}>
+          <Image src={logoHesd} alt="Logo"  className={styles.logoHesd} />
+        </div>
+        <div className={styles.nameBlock}>
+          <div className={styles.nameRow}>
             <span>{userInfo?.name || '-'}</span>
             <EditOutlined style={{ cursor: 'pointer', color: '#a66ae4' }} onClick={() => setIsModalOpen(true)} />
           </div>
-          <div style={{ color: '#6b7280', fontSize: 13 }}>{userInfo?.mail || '-'}</div>
-          <div style={{ color: '#9ca3af', fontSize: 12 }}>ID: {userInfo?.id || '-'}</div>
-          <div style={{ marginTop: 8, display: 'flex', gap: 12, alignItems: 'center' }}>
-            <span style={{ color: '#6b7280' }}>积分</span>
-            <span style={{
-              fontWeight: 800,
-              background: 'linear-gradient(135deg, #a66ae4, #8b5cf6)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              fontSize: 20
-            }}>{Math.floor((userInfo?.score as number) || 0)}</span>
-          </div>
-
-        </div>
-      </div>
-
-
-      {/* 余额显示卡片 */}
-      <div className={styles.incomeCard}>
-        <div className={styles.incomeContent}>
-          <div className={styles.incomeHeader}>
-            <div className={styles.incomeTitleSection}>
-              <span className={styles.incomeIcon}>
-                <WalletOutlined />
-              </span>
-              <span className={styles.incomeTitle}>我的余额</span>
-            </div>
-            <span className={styles.incomeCount}>CNY {userInfo?.income || 0}</span>
-          </div>
-          <div style={{ textAlign: 'right', marginTop: '4px', fontSize: '12px', color: '#999' }}>累计收益：CNY {(userInfo as any)?.totalIncome ?? 0}</div>
-          <p className={styles.incomeDescription}>
-            通过完成任务获得的收入余额
-          </p>
-          
-          <div className={styles.incomeActions}>
-            <button 
-              className={styles.incomeButton} 
-              onClick={() => router.push('/income')}
-            >
-              <span className={styles.buttonIcon}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                </svg>
-              </span>
-              <span>查看详情</span>
-            </button>
+          <div className={styles.subRow}>
+            <span>{userInfo?.mail || '-'}</span>
           </div>
         </div>
-      </div>
-
-      <Card 
-        title={t('personalInfo')} 
-        className={`${styles.card} ${styles.personalInfoCard}`}
-      >
-        <Descriptions bordered column={1}>
-          <Descriptions.Item label={t('accountStatus')}>
-            {userInfo?.status === 1 ? t('normal') : t('disabled')}
-          </Descriptions.Item>
-          <Descriptions.Item label='邀请码'>{userInfo?.popularizeCode}</Descriptions.Item>
+        <div className={styles.scoreRow}>
+          {/* VIP 提示（已是VIP时显示） */}
           {isVip && (
-            <>
-              <Descriptions.Item label={t('memberType')}>{vipCycleType}</Descriptions.Item>
-              <Descriptions.Item label={t('memberExpireTime')}>{vipExpireTime}</Descriptions.Item>
-            </>
-          )}
-        </Descriptions>
-      </Card>
-
-      {!isVip && (
-        <div className={styles.normalUserCallToAction}>
-          <p>{t('upgradeCallToAction')}</p>
-          <button className={styles.activateButton} onClick={handleGoToVipPage}>
-            {t('activatePlusMember')}
-          </button>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          color: '#a66ae4',
+          fontWeight: 700,
+        }}>
+          <Image src={plusvip} alt="VIP" className={styles.vipBadgeTop} />
+          <span>您是尊贵的VIP用户</span>
         </div>
       )}
 
-      {/* 底部申请注销按钮 */}
-      <div style={{ marginTop: 24, textAlign: 'center' }}>
-        <Button danger>{'申请注销'}</Button>
+        <div className={styles.scoreRowThis}>
+          <span className={styles.scoreLabel}>邀请码</span>
+          <span className={styles.scoreValue}>{userInfo?.popularizeCode || '-'}</span>
+          <CopyOutlined
+            style={{ color: '#a66ae4', cursor: 'pointer' }}
+            onClick={() => {
+              const code = userInfo?.popularizeCode || '';
+              if (!code) return;
+              navigator.clipboard?.writeText(code).then(() => {
+                message.success('已复制');
+              }).catch(() => {
+                message.success('已复制');
+              });
+            }}
+          />
+        </div>
+        </div>
       </div>
+
+            
+
+      {/* 深色统计卡片 */}
+      <div className={styles.statsCard}>
+        <div className={styles.statsHeader}>
+          <Image src={plusvip} alt="VIP"  className={styles.vipBadge} />
+          <span className={styles.statsTitle}>累计赚钱</span>
+          <span className={styles.statsAmount}>{(userInfo as any)?.totalIncome ?? 0}</span>
+          <span className={styles.statsCurrency}>元</span>
+        </div>
+        <div className={styles.statsGrid}>
+          <div className={styles.statsItem}>
+            <div className={styles.statsValue}>{userInfo?.income || 0}</div>
+            <div className={styles.statsLabel}>余额</div>
+          </div>
+          <div className={styles.statsItem}>
+            <div className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0)}</div>
+            <div className={styles.statsLabel}>积分</div>
+          </div>
+          <div className={styles.statsItem}>
+            <div className={styles.statsValue}>{(userInfo as any)?.couponCount ?? 0}</div>
+            <div className={styles.statsLabel}>优惠券</div>
+          </div>
+        </div>
+      </div>
+
+
+      {/* 账号状态（仅非正常时显示） */}
+      {userInfo?.status !== 1 && (
+        <div style={{
+          marginTop: 18,
+          marginBottom: 18,
+          color: '#ef4444',
+          fontSize: 14
+        }}>
+          {t('accountStatus')}: {t('disabled')}
+        </div>
+      )}
+
+
+
+      {/* 底部申请注销按钮 */}
+      {/* <div style={{ marginTop: 24, textAlign: 'center' }}>
+        <Button danger>{'申请注销'}</Button>
+      </div> */}
     </>
   );
 
