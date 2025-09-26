@@ -1,7 +1,10 @@
 "use client";
 
-import { memo, useMemo, useState } from "react";
+import { memo, useMemo, useState, useEffect } from "react";
 import { Modal, Button, Tag, message } from "antd";
+import { useRouter } from "next/navigation";
+import { createPaymentOrderApi, PaymentType } from "@/api/vip";
+import { useTransClient } from "@/app/i18n/client";
 import styles from "./outsideCloseModal.module.css";
 import vipStyles from "./vipContentModal.module.css";
 import PointsDetailModal from "@/components/modals/PointsDetailModal";
@@ -16,11 +19,95 @@ interface VipContentModalProps {
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
   const userStore = useUserStore();
+  const router = useRouter();
+  const { t } = useTransClient('vip');
   const modalWidth = useMemo(() => "66%" as const, []);
   const [rechargeVisible, setRechargeVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'year' | 'month' | 'once'>('year');
+  const [loading, setLoading] = useState(false);
+  const [canUseTrial, setCanUseTrial] = useState(false);
+  
   const handleTabClick = (tab: 'year' | 'month' | 'once') => {
     setActiveTab(tab);
+  };
+
+  // 检查用户是否可以享受免费试用
+  useEffect(() => {
+    if (userStore.userInfo) {
+      // 如果用户没有vipInfo，说明从未开过会员，可以享受免费试用
+      const hasVipInfo = userStore.userInfo.vipInfo && Object.keys(userStore.userInfo.vipInfo).length > 0;
+      setCanUseTrial(!hasVipInfo);
+    }
+  }, [userStore.userInfo]);
+
+  // 开通会员逻辑
+  const handleActivate = async (planType: 'year' | 'month' | 'once') => {
+    try {
+      setLoading(true);
+      
+      // 检查用户是否已登录
+      if (!userStore.userInfo?.id) {
+        message.error(t('pleaseLoginFirst'));
+        router.push('/login');
+        return;
+      }
+
+      // 根据选择的计划映射到支付类型
+      let paymentType;
+      let paymentMethod;
+      let flagTrialPeriodDays = 0; // 默认不给免费试用
+
+      switch (planType) {
+        case 'once':
+          paymentType = PaymentType.ONCE_MONTH;
+          paymentMethod = 'payment';
+          break;
+        case 'month':
+          paymentType = PaymentType.MONTH;
+          paymentMethod = 'subscription';
+          // 如果是订阅模式且用户从未开过会员，给免费试用
+          flagTrialPeriodDays = canUseTrial ? 1 : 0;
+          break;
+        case 'year':
+          paymentType = PaymentType.YEAR;
+          paymentMethod = 'subscription';
+          // 如果是订阅模式且用户从未开过会员，给免费试用
+          flagTrialPeriodDays = canUseTrial ? 1 : 0;
+          break;
+        default:
+          paymentType = PaymentType.MONTH;
+          paymentMethod = 'subscription';
+          flagTrialPeriodDays = canUseTrial ? 1 : 0;
+      }
+      
+      // 创建支付订单
+      const response: any = await createPaymentOrderApi({
+        success_url: userStore.lang === 'zh-CN' ? "/zh-CN/profile" : "/en/profile",
+        mode: paymentMethod,
+        payment: paymentType,
+        flagTrialPeriodDays,
+        metadata: {
+          userId: userStore.userInfo.id
+        }
+      });
+      
+      if (response?.code === 0) {
+        message.success(t('paymentOrderCreated'));
+        // 直接跳转到支付页面
+        if (response.data?.url) {
+          window.open(response.data.url, '_blank');
+        } else {
+          message.error(t('paymentLinkNotFound'));
+        }
+      } else {
+        message.error(response?.message || response?.msg || t('createPaymentOrderFailed'));
+      }
+    } catch (error) {
+      console.error('创建支付订单失败:', error);
+      message.error(t('createPaymentOrderError'));
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <Modal
@@ -88,7 +175,13 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.planHead}>年度会员 <Tag color="#5b7cff">最划算</Tag></div>
                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>144</span><span className={vipStyles.unit}>每年</span></div>
                 <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$300/年</span> · 包年可随时取消</div>
-                <Button className={vipStyles.primaryBtn}>$144/年 省50%</Button>
+                 <Button 
+                   className={vipStyles.primaryBtn}
+                   onClick={() => handleActivate('year')}
+                   loading={loading}
+                 >
+                   $144/年 省50%
+                 </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 8,400积分</div>
                 <div className={vipStyles.subDesc}>最多生成16,800张图和8,400个视频</div>
                 <ul className={vipStyles.featureList}>
@@ -123,12 +216,18 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 </ul>
               </div>
 
-              {/* 月度会员 */}
-              <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-                <div className={vipStyles.planHead}>月度会员 </div>
-                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>228</span><span className={vipStyles.unit}>每年</span></div>
-                <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$25/月</span> · 包月可随时取消</div>
-                <Button className={vipStyles.primaryBtn}>$19/月 省25%</Button>
+               {/* 月度会员 */}
+               <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
+                 <div className={vipStyles.planHead}>月度会员 </div>
+                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>228</span><span className={vipStyles.unit}>每年</span></div>
+                 <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$25/月</span> · 包月可随时取消</div>
+                 <Button 
+                   className={vipStyles.primaryBtn}
+                   onClick={() => handleActivate('month')}
+                   loading={loading}
+                 >
+                   $19/月 省25%
+                 </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 8,400积分</div>
                 <div className={vipStyles.subDesc}>最多生成16,800张图和8,400个视频</div>
                 <ul className={vipStyles.featureList}>
@@ -162,11 +261,17 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 </ul>
               </div>
 
-              {/* 一次性月度会员 */}
-              <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-                <div className={vipStyles.planHead}>一次性月度会员 </div>
-                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>25</span><span className={vipStyles.unit}>每月</span></div>
-                <Button className={vipStyles.primaryBtn}>$19/月 省25%</Button>
+               {/* 一次性月度会员 */}
+               <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
+                 <div className={vipStyles.planHead}>一次性月度会员 </div>
+                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>25</span><span className={vipStyles.unit}>每月</span></div>
+                 <Button 
+                   className={vipStyles.primaryBtn}
+                   onClick={() => handleActivate('once')}
+                   loading={loading}
+                 >
+                   $19/月 省25%
+                 </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 700积分</div>
                 <div className={vipStyles.subDesc}>最多生成1400张图和700个视频</div>
                 <ul className={vipStyles.featureList}>
