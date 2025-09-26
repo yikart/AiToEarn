@@ -15,6 +15,7 @@ import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
 import { useTransClient } from "@/app/i18n/client";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
+import PointsDetailModal from "@/components/modals/PointsDetailModal";
 
 import plusvip from "@/assets/images/plusvip.png";
 import logoHesd from "@/assets/images/logo.png";
@@ -82,6 +83,7 @@ export default function ProfilePage() {
   const [isDragging, setIsDragging] = useState(false);
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [pointsDetailVisible, setPointsDetailVisible] = useState(false);
 
   // 积分记录类型定义
   interface PointsRecord {
@@ -759,11 +761,11 @@ export default function ProfilePage() {
           <span className={styles.statsCurrency}>元</span>
         </div>
         <div className={styles.statsGrid}>
-          <div className={styles.statsItem}>
+          <div className={styles.statsItem}  onClick={() => router.push('/income')} >
             <div className={styles.statsValue}>{userInfo?.income || 0}</div>
             <div className={styles.statsLabel}>余额</div>
           </div>
-          <div className={styles.statsItem}>
+          <div className={styles.statsItem} style={{cursor:'pointer'}} onClick={() => setPointsDetailVisible(true)}>
             <div className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0)}</div>
             <div className={styles.statsLabel}>积分</div>
           </div>
@@ -1089,6 +1091,7 @@ export default function ProfilePage() {
 
       {/* 积分充值弹窗（复用组件） */}
       <PointsRechargeModal open={pointsRechargeVisible} onClose={handleRechargeCancel} />
+      <PointsDetailModal open={pointsDetailVisible} onClose={() => setPointsDetailVisible(false)} />
     </div>
   );
 } 

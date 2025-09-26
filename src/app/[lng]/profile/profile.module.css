@@ -1049,6 +1049,10 @@
   padding: 16px 8px 18px 8px;
 }
 
+.statsItem:hover{
+  cursor: pointer;
+}
+
 .statsValue {
   font-size: 22px;
   font-weight: 800;
