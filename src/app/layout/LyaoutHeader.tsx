@@ -193,7 +193,7 @@ const LyaoutHeader = memo(
                   <SignInCalendar className={styles.signInCalendarButton} />
                 )}
                 {/* 未开通 VIP 时显示图标，点击打开 VIP 弹窗 */}
-                      {userStore.token && !userStore.userInfo?.vipInfo && (
+                      {userStore.token && (
                         <Tooltip title={t("vip" as any) || "VIP"}>
                           <Button
                             type="text"
@@ -201,7 +201,7 @@ const LyaoutHeader = memo(
                             onClick={() => setVipModalVisible(true)}
                             style={{ position: 'relative' }}
                           >
-                            <span style={{
+                            {!userStore.userInfo?.vipInfo && <span style={{
                               position: 'absolute',
                               top: '-2px',
                               right: '-11px',
@@ -216,7 +216,7 @@ const LyaoutHeader = memo(
                               textAlign: 'center'
                             }}>
                               HOT
-                            </span>
+                            </span>}
                           </Button>
                         </Tooltip>
                       )}

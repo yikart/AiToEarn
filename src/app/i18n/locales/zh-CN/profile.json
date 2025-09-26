@@ -153,8 +153,8 @@
   "copySuccess": "已复制",
   "stats": {
     "totalEarned": "累计赚钱",
-    "balance": "余额",
-    "points": "积分",
+    "balance": "当前余额",
+    "points": "可用积分",
     "coupons": "优惠券",
     "currencyYuan": "元"
   },

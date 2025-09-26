@@ -909,13 +909,12 @@
 
 /* 顶部头部信息卡片 */
 .headerCard {
-  background: linear-gradient(135deg, #D6E2FC 0%, #D4E0FA 100%);
   border-radius: 16px;
-  padding: 20px 20px;
+  padding: 20px 0px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
-  margin-bottom: 16px;
 }
 
 .avatar {
@@ -935,7 +934,10 @@
 .nameBlock {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   gap: 4px;
+  margin-top: 5px;
 }
 
 .nameRow {
@@ -950,6 +952,7 @@
 .vipBadge {
   width: 30px;
   height: auto;
+  margin-bottom: 10px;
 }
 
 .vipBadgeTop {
@@ -1017,10 +1020,10 @@
 }
 
 .statsAmount {
-  margin-left: 6px;
   font-size: 28px;
   font-weight: 800;
   color: #54687B;
+  margin-bottom: 10px;
 }
 
 .statsCurrency {
@@ -1032,11 +1035,9 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   text-align: center;
-  background: #D6E2FC;
-  margin-top: 12px;
-  margin-bottom: 18px;
-  border-radius: 10px;
-  padding: 8px 0px;
+  margin-top: 16px;
+  padding-top: 12px;
+  padding-bottom: 8px;
 }
 
 .logoHesd {
@@ -1055,13 +1056,14 @@
 .statsValue {
   font-size: 22px;
   font-weight: 800;
-  color: #4A6777;
+  color: #a66ae4;
 }
 
 .statsLabel {
   margin-top: 4px;
   color: #95887D;
   font-size: 12px;
+  text-align: left;
 }
 
 .incomeCard::before {
