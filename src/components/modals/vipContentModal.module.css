@@ -80,6 +80,10 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
+.outsideCloseModal{
+  max-width: 1000px;
+}
+
 .active {
   background: #a66ae4;
   border-color: #a66ae4;
@@ -89,7 +93,7 @@
 .grid {
   margin-top: 18px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 24px;
   padding: 0 24px 24px 24px;
 }
@@ -120,7 +124,7 @@
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-.premium { box-shadow: 0 0 0 1px rgba(166,106,228,0.4), 0 0 30px rgba(166,106,228,0.25) inset; }
+.premium { box-shadow: 0 0 0 1px rgba(166,106,228,0.4), 0 0 30px rgba(166,106,228,0.25) inset; min-height: 530px; }
 
 .planHead { font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color:#111827; }
 .planPriceLine { display: flex; align-items: baseline; gap: 4px; margin: 6px 0 10px; }
