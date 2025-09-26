@@ -270,7 +270,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    onClick={() => handleActivate('once')}
                    loading={loading}
                  >
-                   $19/月 省25%
+                   $25/月
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 700积分</div>
                 <div className={vipStyles.subDesc}>最多生成1400张图和700个视频</div>
