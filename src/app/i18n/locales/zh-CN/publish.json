@@ -107,6 +107,7 @@
     "contentModeration": "内容安全检测",
     "checkingContent": "检测中...",
     "contentSafe": "内容安全",
+    "riskLevel": "等级:",
     "contentUnsafe": "内容不安全"
   },
   "tiktok": {

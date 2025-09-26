@@ -107,6 +107,7 @@
     "contentModeration": "Content Moderation",
     "checkingContent": "Checking...",
     "contentSafe": "Content Safe",
+    "riskLevel": "Level:",
     "contentUnsafe": "Content Unsafe"
   },
   "tiktok": {

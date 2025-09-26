@@ -763,7 +763,7 @@ const PublishDialog = memo(
                               color: moderationResult ? '#52c41a' : '#ff4d4f',
                               fontWeight: 500,
                             }}>
-                              {moderationResult ? "内容安全" : "等级:" + moderationLevel.riskLevel}
+                            {moderationResult ? t('actions.contentSafe' as any) : (moderationLevel?.riskLevel ? `${t('actions.riskLevel' as any)} ${moderationLevel.riskLevel}` : t('actions.contentUnsafe' as any))}
                             </span>
                             {!moderationResult && !!moderationDesc && (
                               <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -788,7 +788,7 @@ const PublishDialog = memo(
                               color: moderationResult === true || moderationResult === false ? '#fff' : undefined
                             }}
                           >
-                            {moderationLoading ? "检测中..." : "内容安全检测"}
+                            {moderationLoading ? t('actions.checkingContent' as any) : t('actions.contentModeration' as any)}
                           </Button>
                         )}
                         
