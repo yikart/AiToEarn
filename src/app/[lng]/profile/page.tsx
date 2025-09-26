@@ -719,7 +719,7 @@ export default function ProfilePage() {
         </div>
         <div className={styles.scoreRow}>
           {/* VIP 提示（已是VIP时显示） */}
-          {!isVip && (
+          {isVip && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -734,7 +734,7 @@ export default function ProfilePage() {
       )}
 
         <div className={styles.scoreRowThis}>
-          <span className={styles.scoreLabel}>邀请码</span>
+          <span className={styles.scoreLabel}>{t('inviteCode' as any)}</span>
           <span className={styles.scoreValue}>{userInfo?.popularizeCode || '-'}</span>
           <CopyOutlined
             style={{ color: '#a66ae4', cursor: 'pointer' }}
@@ -742,9 +742,9 @@ export default function ProfilePage() {
               const code = userInfo?.popularizeCode || '';
               if (!code) return;
               navigator.clipboard?.writeText(code).then(() => {
-                message.success('已复制');
+                message.success(t('copySuccess' as any));
               }).catch(() => {
-                message.success('已复制');
+                message.success(t('copySuccess' as any));
               });
             }}
           />
@@ -758,22 +758,22 @@ export default function ProfilePage() {
       <div className={styles.statsCard}>
         <div className={styles.statsHeader}>
           <Image src={plusvip} alt="VIP"  className={styles.vipBadge} />
-          <span className={styles.statsTitle}>累计赚钱</span>
+          <span className={styles.statsTitle}>{t('stats.totalEarned' as any)}</span>
           <span className={styles.statsAmount}>{(userInfo as any)?.totalIncome ?? 0}</span>
-          <span className={styles.statsCurrency}>元</span>
+          <span className={styles.statsCurrency}>{t('stats.currencyYuan' as any)}</span>
         </div>
         <div className={styles.statsGrid}>
           <div className={styles.statsItem}  onClick={() => router.push('/income')} >
             <div className={styles.statsValue}>{userInfo?.income || 0}</div>
-            <div className={styles.statsLabel}>余额</div>
+            <div className={styles.statsLabel}>{t('stats.balance' as any)}</div>
           </div>
           <div className={styles.statsItem} style={{cursor:'pointer'}} onClick={() => setPointsDetailVisible(true)}>
             <div className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0)}</div>
-            <div className={styles.statsLabel}>积分</div>
+            <div className={styles.statsLabel}>{t('stats.points' as any)}</div>
           </div>
           <div className={styles.statsItem}>
             <div className={styles.statsValue}>{(userInfo as any)?.couponCount ?? 0}</div>
-            <div className={styles.statsLabel}>优惠券</div>
+            <div className={styles.statsLabel}>{t('stats.coupons' as any)}</div>
           </div>
         </div>
       </div>
@@ -796,14 +796,10 @@ export default function ProfilePage() {
       {/* 底部申请注销按钮 */}
       <div style={{ marginTop: 24, textAlign: 'center', borderTop: '1px solid #D4E0FA', paddingTop: 24, display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:"center"  }}>
         <div style={{ display:'flex', flexDirection:'column', justifyContent:'space-between', alignItems:"flex-start" }}>
-          <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>
-          Delete your account
-          </div>
-          <div>
-          When you delete your account, you lose access to Aitoearn account services, and we permanently delete your personal data.
-          </div>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>{t('deleteAccount.title' as any)}</div>
+          <div>{t('deleteAccount.desc' as any)}</div>
         </div>
-        <Button danger>{'申请注销'}</Button>
+        <Button danger>{t('deleteAccount.apply' as any)}</Button>
       </div>
     </>
   );
