@@ -9,7 +9,6 @@ import LayoutNav from "@/app/layout/layoutNav";
 import { NoSSR } from "@kwooshung/react-no-ssr";
 import { Button, Dropdown, MenuProps, Badge, Tooltip } from "antd";
 import logo from "@/assets/images/logo.png";
-import defaultAvatar from "./images/defaultAvatar.jpg";
 import {
   BellOutlined,
   CaretDownOutlined,
@@ -129,10 +128,11 @@ function UserInfo() {
         <div className={styles["layoutHeader-userinfo"]}>
           <Image
             className={styles["layoutHeader-userinfo-avatar"]}
-            src={userInfo?.avatar || defaultAvatar}
+            src={userInfo?.avatar || logo}
             alt={t("profile")}
             width={35}
             height={35}
+            style={{ borderRadius: '50%', backgroundColor: '#e9d5ff', padding: '3px' }}
           />
           <div className={styles["layoutHeader-userinfo-name"]}>
             {userInfo.name || t("unknownUser")}
