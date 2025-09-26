@@ -193,15 +193,34 @@ const LyaoutHeader = memo(
                   <SignInCalendar className={styles.signInCalendarButton} />
                 )}
                 {/* 未开通 VIP 时显示图标，点击打开 VIP 弹窗 */}
-                {userStore.token && !userStore.userInfo?.vipInfo && (
-                  <Tooltip title={t("vip" as any) || "VIP"}>
-                    <Button
-                      type="text"
-                      icon={<CrownOutlined />}
-                      onClick={() => setVipModalVisible(true)}
-                    />
-                  </Tooltip>
-                )}
+                      {userStore.token && !userStore.userInfo?.vipInfo && (
+                        <Tooltip title={t("vip" as any) || "VIP"}>
+                          <Button
+                            type="text"
+                            icon={<CrownOutlined />}
+                            onClick={() => setVipModalVisible(true)}
+                            style={{ position: 'relative' }}
+                          >
+                            <span style={{
+                              position: 'absolute',
+                              top: '-2px',
+                              right: '-11px',
+                              background: '#ff4d4f',
+                              color: 'white',
+                              fontSize: '8px',
+                              fontWeight: 'bold',
+                              padding: '1px 4px',
+                              borderRadius: '8px',
+                              lineHeight: '10px',
+                              minWidth: '16px',
+                              textAlign: 'center'
+                            }}>
+                              HOT
+                            </span>
+                          </Button>
+                        </Tooltip>
+                      )}
+                {/* 通知 */}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
                     <Button
