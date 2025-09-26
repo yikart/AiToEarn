@@ -147,8 +147,8 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
             const res: any = await createPaymentOrderApi({
               mode: 'payment',
               payment: PaymentType.POINTS,
-              flagTrialPeriodDays: 0,
               metadata: { userId: userStore.userInfo.id },
+              quantity: rechargeAmount,
               success_url: userStore.lang === 'zh-CN' ? '/zh-CN/profile' : '/en/profile'
             });
             if (res?.code === 0 && res.data?.url) {
