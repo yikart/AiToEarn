@@ -27,6 +27,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const [loading, setLoading] = useState(false);
   const [canUseTrial, setCanUseTrial] = useState(false);
   
+  // 辅助函数处理翻译
+  const translate = (key: string) => t(key as any);
+  
   const handleTabClick = (tab: 'year' | 'month' | 'once') => {
     setActiveTab(tab);
   };
@@ -106,7 +109,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
         message.error(response?.message || response?.msg || t('createPaymentOrderFailed'));
       }
     } catch (error) {
-      console.error('创建支付订单失败:', error);
+      console.error('Create payment order failed:', error);
       message.error(t('createPaymentOrderError'));
     } finally {
       setLoading(false);
@@ -129,25 +132,31 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
           style={{ background: 'transparent' }}>
           <div className={vipStyles.titleBlock}>
             <h2 className={vipStyles.title}>
-              免费试用7天会员 <span className={vipStyles.highlight}>立得100积分</span>
+              {translate('modal.title')} <span className={vipStyles.highlight}>{translate('modal.highlight')}</span>
             </h2>
             <div className={vipStyles.links}>
-              <span>选择合适你的套餐，或直接</span>
+              <span>{translate('modal.choosePlan')}</span>
               <span className={vipStyles.linkButton}
                 onClick={() => setRechargeVisible(true)}
-              >购买积分</span>
+              >{translate('modal.buyPoints')}</span>
             </div>
           </div>
           <div className={vipStyles.headerRight}>
-            <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>积分详情</Button>
+            <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
           </div>
         </div>
 
         {/* 顶部选项卡 */}
         <div className={vipStyles.switchRow}>
-          <div onClick={() => handleTabClick('year')} className={`${vipStyles.switchBtn} ${activeTab === 'year' ? vipStyles.active : ''}`}>连续包年 <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>省50%</Tag></div>
-          <div onClick={() => handleTabClick('month')} className={`${vipStyles.switchBtn} ${activeTab === 'month' ? vipStyles.active : ''}`}>连续包月 <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>省25%</Tag></div>
-          <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>单月购买</div>
+          <div onClick={() => handleTabClick('year')} className={`${vipStyles.switchBtn} ${activeTab === 'year' ? vipStyles.active : ''}`}>
+            {translate('modal.tabs.yearly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.yearly')}</Tag>
+          </div>
+          <div onClick={() => handleTabClick('month')} className={`${vipStyles.switchBtn} ${activeTab === 'month' ? vipStyles.active : ''}`}>
+            {translate('modal.tabs.monthly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.monthly')}</Tag>
+          </div>
+          <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>
+            {translate('modal.tabs.once')}
+          </div>
         </div>
 
         {/* 价格区域 */}
@@ -159,43 +168,43 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
 
               {/* 左侧免费卡片 */}
               <div className={vipStyles.freeCard}>
-                <div className={vipStyles.freeTitle}>免费</div>
-                <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
-                <div className={vipStyles.freeForever}>永久</div>
-                <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 60积分每月</div>
+                <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
+                <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
+                <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
+                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>发布赠送积分</li>
-                  <li>最高60 积分</li>
-                  <li>每月最高可生成60个视频</li>
-                  <li>每月最高可生成120张图片</li>
-                  <li>存储空间500M</li>
+                  <li>{translate('modal.free.features.dailyPoints')}</li>
+                  <li>{translate('modal.free.features.maxPoints')}</li>
+                  <li>{translate('modal.free.features.videos')}</li>
+                  <li>{translate('modal.free.features.images')}</li>
+                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
               {/* 高级会员 */}
               <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-                <div className={vipStyles.planHead}>年度会员 <Tag color="#5b7cff">最划算</Tag></div>
-                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>144</span><span className={vipStyles.unit}>每年</span></div>
+                <div className={vipStyles.planHead}>{translate('modal.plans.yearly.title')} <Tag color="#5b7cff">{translate('modal.plans.yearly.bestValue')}</Tag></div>
+                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.yearly.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.yearly.period')}</span></div>
                 <div className={vipStyles.planDesc}>
-                  {canUseTrial ? '7天免费试用' : ''} · <span style={{textDecoration: 'line-through'}}>$300/年</span> · 包年可随时取消</div>
+                  {canUseTrial ? translate('modal.trial') : ''} · <span style={{textDecoration: 'line-through'}}>{translate('modal.plans.yearly.originalPrice')}</span> · {translate('modal.cancelAnytime')}</div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
                  >
-                   $144/年 省50%
+                   {translate('modal.plans.yearly.button')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 8,400积分</div>
-                <div className={vipStyles.subDesc}>最多生成16,800张图和8,400个视频</div>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>每天赠送积分</li>
-                  <li>内容安全审核</li>
-                  <li>多模型一站式支持</li>
-                  <li>文字转视频，图文转视频</li>
-                  <li>AI动画生成，AI图像生成</li>
-                  <li>无水印输出，更快的生成速度</li>
-                  <li>存储空间5G</li>
+                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.yearly.features.contentReview')}</li>
+                  <li>{translate('modal.plans.yearly.features.multiModel')}</li>
+                  <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
+                  <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
+                  <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
+                  <li>{translate('modal.plans.yearly.features.storage')}</li>
                 </ul>
               </div>
             </>
@@ -206,43 +215,43 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             <>
               {/* 左侧免费卡片 */}
               <div className={vipStyles.freeCard}>
-                <div className={vipStyles.freeTitle}>免费</div>
-                <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
-                <div className={vipStyles.freeForever}>永久</div>
-                <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 60积分每月</div>
+                <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
+                <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
+                <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
+                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>发布赠送积分</li>
-                  <li>最高60 积分</li>
-                  <li>每月最高可生成60个视频</li>
-                  <li>每月最高可生成120张图片</li>
-                  <li>存储空间500M</li>
+                  <li>{translate('modal.free.features.dailyPoints')}</li>
+                  <li>{translate('modal.free.features.maxPoints')}</li>
+                  <li>{translate('modal.free.features.videos')}</li>
+                  <li>{translate('modal.free.features.images')}</li>
+                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
                {/* 月度会员 */}
                <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-                 <div className={vipStyles.planHead}>月度会员 </div>
-                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>228</span><span className={vipStyles.unit}>每年</span></div>
+                 <div className={vipStyles.planHead}>{translate('modal.plans.monthly.title')} </div>
+                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.monthly.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.monthly.period')}</span></div>
                  <div className={vipStyles.planDesc}>
-                   {canUseTrial ? '7天免费试用' : ''} · <span style={{textDecoration: 'line-through'}}>$25/月</span> · 包月可随时取消</div>
+                   {canUseTrial ? translate('modal.trial') : ''} · <span style={{textDecoration: 'line-through'}}>{translate('modal.plans.monthly.originalPrice')}</span> · {translate('modal.cancelMonthly')}</div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
                  >
-                   $19/月 省25%
+                   {translate('modal.plans.monthly.button')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 8,400积分</div>
-                <div className={vipStyles.subDesc}>最多生成16,800张图和8,400个视频</div>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>每天赠送积分</li>
-                  <li>内容安全审核</li>
-                  <li>多模型一站式支持</li>
-                  <li>文字转视频，图文转视频</li>
-                  <li>AI动画生成，AI图像生成</li>
-                  <li>无水印输出，更快的生成速度</li>
-                  <li>存储空间5G</li>
+                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.yearly.features.contentReview')}</li>
+                  <li>{translate('modal.plans.yearly.features.multiModel')}</li>
+                  <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
+                  <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
+                  <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
+                  <li>{translate('modal.plans.yearly.features.storage')}</li>
                 </ul>
               </div>
             </>
@@ -252,41 +261,41 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             <>
               {/* 左侧免费卡片 */}
               <div className={vipStyles.freeCard}>
-                <div className={vipStyles.freeTitle}>免费</div>
-                <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
-                <div className={vipStyles.freeForever}>永久</div>
-                <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 60积分每月</div>
+                <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
+                <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
+                <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
+                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>发布赠送积分</li>
-                  <li>最高60 积分</li>
-                  <li>每月最高可生成60个视频</li>
-                  <li>每月最高可生成120张图片</li>
-                  <li>存储空间500M</li>
+                  <li>{translate('modal.free.features.dailyPoints')}</li>
+                  <li>{translate('modal.free.features.maxPoints')}</li>
+                  <li>{translate('modal.free.features.videos')}</li>
+                  <li>{translate('modal.free.features.images')}</li>
+                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
                {/* 一次性月度会员 */}
                <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-                 <div className={vipStyles.planHead}>一次性月度会员 </div>
-                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>25</span><span className={vipStyles.unit}>每月</span></div>
+                 <div className={vipStyles.planHead}>{translate('modal.plans.once.title')} </div>
+                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.once.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.once.period')}</span></div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('once')}
                    loading={loading}
                  >
-                   $25/月
+                   {translate('modal.plans.once.button')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 700积分</div>
-                <div className={vipStyles.subDesc}>最多生成1400张图和700个视频</div>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.once.points')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.once.description')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>每天赠送积分</li>
-                  <li>内容安全审核</li>
-                  <li>多模型一站式支持</li>
-                  <li>文字转视频，图文转视频</li>
-                  <li>AI动画生成，AI图像生成</li>
-                  <li>无水印输出，更快的生成速度</li>
-                  <li>存储空间3G</li>
+                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.yearly.features.contentReview')}</li>
+                  <li>{translate('modal.plans.yearly.features.multiModel')}</li>
+                  <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
+                  <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
+                  <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
+                  <li>{translate('modal.plans.once.storage')}</li>
                 </ul>
               </div>
             </>
