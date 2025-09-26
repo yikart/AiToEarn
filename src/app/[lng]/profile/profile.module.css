@@ -909,7 +909,7 @@
 
 /* 顶部头部信息卡片 */
 .headerCard {
-  background: linear-gradient(135deg, #C7C8F6 0%, #D4E0FA 100%);
+  background: linear-gradient(135deg, #D6E2FC 0%, #D4E0FA 100%);
   border-radius: 16px;
   padding: 16px 20px;
   display: flex;
@@ -998,12 +998,10 @@
 
 /* 深色统计卡片 */
 .statsCard {
-  background: linear-gradient(135deg, #C7C8F6 0%, #D4E0FA 100%);
   border-radius: 14px;
-  padding: 14px 16px 0 16px;
+  padding: 18px  0;
   color: #e5e7eb;
   border: 1px solid rgba(255,255,255,0.06);
-  box-shadow: 0 8px 24px rgba(17,24,39,0.35);
   overflow: hidden;
 }
 

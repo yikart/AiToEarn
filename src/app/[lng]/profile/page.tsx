@@ -15,6 +15,7 @@ import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
 import { useTransClient } from "@/app/i18n/client";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
+import VipContentModal from "@/components/modals/VipContentModal";
 import PointsDetailModal from "@/components/modals/PointsDetailModal";
 
 import plusvip from "@/assets/images/plusvip.png";
@@ -84,6 +85,7 @@ export default function ProfilePage() {
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
   const [pointsDetailVisible, setPointsDetailVisible] = useState(false);
+  const [vipModalVisible, setVipModalVisible] = useState(false);
 
   // 积分记录类型定义
   interface PointsRecord {
@@ -146,7 +148,7 @@ export default function ProfilePage() {
         setUserInfo(response.data);
         
         // 检查是否需要显示免费会员提示
-        const hasVipInfo = response.data.vipInfo && Object.keys(response.data.vipInfo).length > 0;
+        const hasVipInfo = response.data.vipInfo;
         if (!hasVipInfo && !hasShownFreeTrial) {
           // 延迟显示弹框，确保页面加载完成
           setTimeout(() => {
@@ -341,7 +343,7 @@ export default function ProfilePage() {
   const handleFreeTrialModalOk = () => {
     setFreeTrialModalVisible(false);
     localStorage.setItem('freeTrialShown', 'true');
-    router.push('/vip');
+    setVipModalVisible(true);
   };
 
   const handleFreeTrialModalCancel = () => {
@@ -717,7 +719,7 @@ export default function ProfilePage() {
         </div>
         <div className={styles.scoreRow}>
           {/* VIP 提示（已是VIP时显示） */}
-          {isVip && (
+          {!isVip && (
         <div style={{
           display: 'flex',
           alignItems: 'center',
@@ -792,9 +794,17 @@ export default function ProfilePage() {
 
 
       {/* 底部申请注销按钮 */}
-      {/* <div style={{ marginTop: 24, textAlign: 'center' }}>
+      <div style={{ marginTop: 24, textAlign: 'center', borderTop: '1px solid #D4E0FA', paddingTop: 24, display:'flex', flexDirection:'row', justifyContent:'space-between', alignItems:"center"  }}>
+        <div style={{ display:'flex', flexDirection:'column', justifyContent:'space-between', alignItems:"flex-start" }}>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>
+          Delete your account
+          </div>
+          <div>
+          When you delete your account, you lose access to Aitoearn account services, and we permanently delete your personal data.
+          </div>
+        </div>
         <Button danger>{'申请注销'}</Button>
-      </div> */}
+      </div>
     </>
   );
 
@@ -1092,6 +1102,7 @@ export default function ProfilePage() {
       {/* 积分充值弹窗（复用组件） */}
       <PointsRechargeModal open={pointsRechargeVisible} onClose={handleRechargeCancel} />
       <PointsDetailModal open={pointsDetailVisible} onClose={() => setPointsDetailVisible(false)} />
+      <VipContentModal open={vipModalVisible} onClose={() => setVipModalVisible(false)} />
     </div>
   );
 } 
