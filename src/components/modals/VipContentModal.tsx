@@ -16,9 +16,12 @@ interface VipContentModalProps {
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
   const userStore = useUserStore();
-  const modalWidth = useMemo(() => "76%" as const, []);
+  const modalWidth = useMemo(() => "66%" as const, []);
   const [rechargeVisible, setRechargeVisible] = useState(false);
-
+  const [activeTab, setActiveTab] = useState<'year' | 'month' | 'once'>('year');
+  const handleTabClick = (tab: 'year' | 'month' | 'once') => {
+    setActiveTab(tab);
+  };
   return (
     <Modal
       title={null}
@@ -33,7 +36,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       <div className={vipStyles.wrapper}>
         {/* 顶部区域 */}
         <div className={vipStyles.header}
-             style={{background: 'transparent'}}>
+          style={{ background: 'transparent' }}>
           <div className={vipStyles.titleBlock}>
             <h2 className={vipStyles.title}>
               1元试用7天会员 <span className={vipStyles.highlight}>立得200积分</span>
@@ -51,26 +54,144 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
         </div>
 
         {/* 顶部选项卡 */}
-        {/* <div className={vipStyles.switchRow}>
-          <div className={`${vipStyles.switchBtn} ${vipStyles.active}`}>连续包年 <Tag color="#2bd3ff" style={{marginLeft: 6}}>5折</Tag></div>
-          <div className={vipStyles.switchBtn}>连续包月 <Tag color="#2bd3ff" style={{marginLeft: 6}}>6折</Tag></div>
-          <div className={vipStyles.switchBtn}>单月购买</div>
-        </div> */}
+        <div className={vipStyles.switchRow}>
+          <div onClick={() => handleTabClick('year')} className={`${vipStyles.switchBtn} ${activeTab === 'year' ? vipStyles.active : ''}`}>连续包年 <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>省50%</Tag></div>
+          <div onClick={() => handleTabClick('month')} className={`${vipStyles.switchBtn} ${activeTab === 'month' ? vipStyles.active : ''}`}>连续包月 <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>省25%</Tag></div>
+          <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>单月购买</div>
+        </div>
 
         {/* 价格区域 */}
         <div className={vipStyles.grid}>
-          {/* 左侧免费卡片 */}
-          <div className={vipStyles.freeCard}>
+
+
+          {activeTab === 'year' && (
+            <>
+
+              {/* 左侧免费卡片 */}
+              <div className={vipStyles.freeCard}>
+                <div className={vipStyles.freeTitle}>免费</div>
+                <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
+                <div className={vipStyles.freeForever}>永久</div>
+                <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 60积分每月</div>
+                <ul className={vipStyles.featureList}>
+                  <li>发布赠送积分</li>
+                  <li>最高60 积分</li>
+                  <li>每月最高可生成60个视频</li>
+                  <li>每月最高可生成120张图片</li>
+                  <li>存储空间500M</li>
+                </ul>
+              </div>
+
+              {/* 高级会员 */}
+              <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
+                <div className={vipStyles.planHead}>年度会员 <Tag color="#5b7cff">最划算</Tag></div>
+                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>144</span><span className={vipStyles.unit}>每年</span></div>
+                <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$300/年</span> · 包年可随时取消</div>
+                <Button className={vipStyles.primaryBtn}>$144/年 省50%</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 8,400积分</div>
+                <div className={vipStyles.subDesc}>最多生成16,800张图和8,400个视频</div>
+                <ul className={vipStyles.featureList}>
+                  <li>每天赠送积分</li>
+                  <li>内容安全审核</li>
+                  <li>多模型一站式支持</li>
+                  <li>文字转视频，图文转视频</li>
+                  <li>AI动画生成，AI图像生成</li>
+                  <li>无水印输出，更快的生成速度</li>
+                  <li>存储空间5G</li>
+                </ul>
+              </div>
+            </>
+          )}
+
+
+          {activeTab === 'month' && (
+            <>
+              {/* 左侧免费卡片 */}
+              <div className={vipStyles.freeCard}>
+                <div className={vipStyles.freeTitle}>免费</div>
+                <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
+                <div className={vipStyles.freeForever}>永久</div>
+                <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 60积分每月</div>
+                <ul className={vipStyles.featureList}>
+                  <li>发布赠送积分</li>
+                  <li>最高60 积分</li>
+                  <li>每月最高可生成60个视频</li>
+                  <li>每月最高可生成120张图片</li>
+                  <li>存储空间500M</li>
+                </ul>
+              </div>
+
+              {/* 月度会员 */}
+              <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
+                <div className={vipStyles.planHead}>月度会员 </div>
+                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>228</span><span className={vipStyles.unit}>每年</span></div>
+                <div className={vipStyles.planDesc}>7天免费试用 · <span style={{textDecoration: 'line-through'}}>$25/月</span> · 包月可随时取消</div>
+                <Button className={vipStyles.primaryBtn}>$19/月 省25%</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 8,400积分</div>
+                <div className={vipStyles.subDesc}>最多生成16,800张图和8,400个视频</div>
+                <ul className={vipStyles.featureList}>
+                  <li>每天赠送积分</li>
+                  <li>内容安全审核</li>
+                  <li>多模型一站式支持</li>
+                  <li>文字转视频，图文转视频</li>
+                  <li>AI动画生成，AI图像生成</li>
+                  <li>无水印输出，更快的生成速度</li>
+                  <li>存储空间5G</li>
+                </ul>
+              </div>
+            </>
+          )}
+
+          {activeTab === 'once' && (
+            <>
+              {/* 左侧免费卡片 */}
+              <div className={vipStyles.freeCard}>
+                <div className={vipStyles.freeTitle}>免费</div>
+                <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
+                <div className={vipStyles.freeForever}>永久</div>
+                <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 60积分每月</div>
+                <ul className={vipStyles.featureList}>
+                  <li>发布赠送积分</li>
+                  <li>最高60 积分</li>
+                  <li>每月最高可生成60个视频</li>
+                  <li>每月最高可生成120张图片</li>
+                  <li>存储空间500M</li>
+                </ul>
+              </div>
+
+              {/* 一次性月度会员 */}
+              <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
+                <div className={vipStyles.planHead}>一次性月度会员 </div>
+                <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>25</span><span className={vipStyles.unit}>每月</span></div>
+                <Button className={vipStyles.primaryBtn}>$19/月 省25%</Button>
+                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 700积分</div>
+                <div className={vipStyles.subDesc}>最多生成1400张图和700个视频</div>
+                <ul className={vipStyles.featureList}>
+                  <li>每天赠送积分</li>
+                  <li>内容安全审核</li>
+                  <li>多模型一站式支持</li>
+                  <li>文字转视频，图文转视频</li>
+                  <li>AI动画生成，AI图像生成</li>
+                  <li>无水印输出，更快的生成速度</li>
+                  <li>存储空间5G</li>
+                </ul>
+              </div>
+            </>
+          )}
+
+          {/* <div className={vipStyles.freeCard}>
             <div className={vipStyles.freeTitle}>免费</div>
             <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
             <div className={vipStyles.freeForever}>永久</div>
             <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
-            <div className={vipStyles.freeItem}>每天赠送积分</div>
+            <div className={vipStyles.freeItem}>发布赠送积分</div>
           </div>
 
-          {/* 基础会员 */}
           <div className={vipStyles.planCard}>
-            <div className={vipStyles.planHead}>✚ 基础会员</div>
+            <div className={vipStyles.planHead}>一次性月度会员</div>
             <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>1</span><span className={vipStyles.unit}>天</span></div>
             <div className={vipStyles.planDesc}>1元试用7天，首年5折¥329 · 次年¥659自动续费</div>
             <Button className={vipStyles.primaryBtn}>¥1 试用7天</Button>
@@ -86,9 +207,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             </ul>
           </div>
 
-          {/* 标准会员 */}
           <div className={vipStyles.planCard}>
-            <div className={vipStyles.planHead}>✚ 标准会员</div>
+            <div className={vipStyles.planHead}>✚ 月度会员</div>
             <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>949</span><span className={vipStyles.unit}>每年</span></div>
             <div className={vipStyles.planDesc}>首年5折¥949 · 次年续费金额¥1,899 · 包年可随时取消</div>
             <Button className={vipStyles.primaryBtn}>¥949 首年5折</Button>
@@ -104,10 +224,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             </ul>
           </div>
 
-          {/* 高级会员 */}
-          <div className={`${vipStyles.planCard} ${vipStyles.premium}`}
-               >
-            <div className={vipStyles.planHead}>✚ 高级会员 <Tag color="#5b7cff">最划算</Tag></div>
+          <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
+            <div className={vipStyles.planHead}>✚ 年度会员 <Tag color="#5b7cff">最划算</Tag></div>
             <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>2,599</span><span className={vipStyles.unit}>每年</span></div>
             <div className={vipStyles.planDesc}>首年5折¥2,599 · 次年续费金额¥5,199 · 包年可随时取消</div>
             <Button className={vipStyles.primaryBtn}>¥2,599 首年5折</Button>
@@ -121,7 +239,11 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               <li>内容安全审核</li>
               <li>视频更流畅（可补帧到最高60FPS）</li>
             </ul>
-          </div>
+          </div> */}
+
+
+
+
         </div>
       </div>
 
