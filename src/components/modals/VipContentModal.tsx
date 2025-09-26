@@ -176,7 +176,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>文字转视频，图文转视频</li>
                   <li>AI动画生成，AI图像生成</li>
                   <li>无水印输出，更快的生成速度</li>
-                  <li>存储空间5G</li>
+                  <li>存储空间3G</li>
                 </ul>
               </div>
             </>
