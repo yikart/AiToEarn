@@ -136,11 +136,11 @@ const PublishDialog = memo(
           setModerationLoading(true);
           setModerationResult(null);
           const result = await toolsApi.textModeration(contentToCheck);
-          setModerationResult(!!result);
-          if (result) {
+          console.log("result",result);
+          
+          if (result?.code === 0) {
+            setModerationResult(!result?.data);
             message.success("内容安全");
-          } else {
-            message.warning("内容不安全");
           }
         } catch (error) {
           console.error("内容安全检测失败:", error);
