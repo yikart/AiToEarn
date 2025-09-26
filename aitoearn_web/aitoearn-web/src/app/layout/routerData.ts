@@ -1,6 +1,7 @@
 import { StaticImageData } from "next/image";
 import { MenuItemType } from "antd/es/menu/interface";
 import { directTrans } from "@/app/i18n/client";
+import { useUserStore } from "@/store/user";
 
 export interface IRouterDataItem {
   // 导航标题
@@ -45,13 +46,18 @@ export const routerData: IRouterDataItem[] = [
   },
   {
     name: "互动数据",
-    translationKey: "Engage",
+    translationKey: "interactive",
     path: "/interactive",
   },
   {
     name: "数据统计",
     translationKey: "dataStatistics",
     path: "/dataStatistics",
+  },
+  {
+    name: "Chat",
+    translationKey: "Chat",
+    path: "/appChat",
   },
 ];
 
@@ -70,8 +76,17 @@ const recursion = (
 
 export const peRouterData = recursion(routerData);
 
+/**
+ * 首页头部导航数据（根据语言动态生成）
+ * - 英文语言跳转英文下载页：https://docs.aitoearn.ai/en/downloads
+ * - 中文语言跳转中文下载页：https://docs.aitoearn.ai/zh/downloads
+ */
 export const homeHeaderRouterData = {
   get value() {
+    const lang = useUserStore.getState().lang;
+    const downloadHref = lang === "en"
+      ? "https://docs.aitoearn.ai/en/downloads"
+      : "https://docs.aitoearn.ai/zh/downloads";
     return [
       {
         href: "/",
@@ -94,7 +109,7 @@ export const homeHeaderRouterData = {
         title: directTrans("home", "header.nav.blog"),
       },
       {
-        href: "https://docs.aitoearn.ai/zh/downloads",
+        href: downloadHref,
         title: directTrans("home", "header.nav.download"),
       },
       {

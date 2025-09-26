@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input, Tabs, Table, Tag, Popconfirm, DatePicker, Select, Space } from "antd";
-import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled } from "@ant-design/icons";
-import { useRouter } from "next/navigation";
+import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, ShoppingCartOutlined, UserOutlined, GiftFilled, EditOutlined, CopyOutlined } from "@ant-design/icons";
+import { useRouter, useSearchParams } from "next/navigation";
+import { WalletOutlined } from "@ant-design/icons";
+import Image from "next/image";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
 import { createPaymentOrderApi, PaymentType as VipPaymentType } from "@/api/vip";
@@ -12,12 +14,19 @@ import type { Order, OrderListParams, SubscriptionListParams, RefundParams, Unsu
 import { OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./profile.module.css";
 import { useTransClient } from "@/app/i18n/client";
+import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
+import VipContentModal from "@/components/modals/VipContentModal";
+import PointsDetailModal from "@/components/modals/PointsDetailModal";
+
+import plusvip from "@/assets/images/plusvip.png";
+import logoHesd from "@/assets/images/logo.png";
 
 const { TabPane } = Tabs;
 const { Option } = Select;
 
 export default function ProfilePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { userInfo, setUserInfo, clearLoginStatus, token, lang } = useUserStore();
   const { t } = useTransClient('profile');
   const [loading, setLoading] = useState(true);
@@ -35,6 +44,8 @@ export default function ProfilePage() {
       setHasShownFreeTrial(true);
     }
   }, []);
+
+  // removed URL-driven auto-open; now fully controlled by state
   
   // 订单相关状态
   const [orders, setOrders] = useState<Order[]>([]);
@@ -73,6 +84,8 @@ export default function ProfilePage() {
   const [isDragging, setIsDragging] = useState(false);
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+  const [pointsDetailVisible, setPointsDetailVisible] = useState(false);
+  const [vipModalVisible, setVipModalVisible] = useState(false);
 
   // 积分记录类型定义
   interface PointsRecord {
@@ -135,7 +148,7 @@ export default function ProfilePage() {
         setUserInfo(response.data);
         
         // 检查是否需要显示免费会员提示
-        const hasVipInfo = response.data.vipInfo && Object.keys(response.data.vipInfo).length > 0;
+        const hasVipInfo = response.data.vipInfo;
         if (!hasVipInfo && !hasShownFreeTrial) {
           // 延迟显示弹框，确保页面加载完成
           setTimeout(() => {
@@ -330,7 +343,7 @@ export default function ProfilePage() {
   const handleFreeTrialModalOk = () => {
     setFreeTrialModalVisible(false);
     localStorage.setItem('freeTrialShown', 'true');
-    router.push('/vip');
+    setVipModalVisible(true);
   };
 
   const handleFreeTrialModalCancel = () => {
@@ -685,173 +698,112 @@ export default function ProfilePage() {
     },
   ];
 
+  
+
   // 个人信息内容
   const renderProfileContent = () => (
-    <>
-
-<div className={styles.vipCard}>
-        <div className={styles.vipContent}>
-          <div className={styles.vipHeader}>
-            <span className={styles.vipIcon}><CrownOutlined /></span>
-            <h2 className={styles.vipTitle}>{t('plusMember')}</h2>
-          </div>
-          {isVip ? (<p className={styles.vipDescription}>
-            {t('vipUserGreeting')}
-          </p>
-          ) : (
-            <p className={styles.vipDescription}>
-              {t('vipDescription')}
-            </p>
-          )}
-          <div className={styles.benefitsGrid}>
-            {vipBenefits.map((benefit, index) => (
-              <div key={index} className={styles.benefitItem}>
-                <div className={styles.benefitIcon}>{benefit.icon}</div>
-                <p className={styles.benefitName}>{benefit.name}</p>
-              </div>
-            ))}
-          </div>
-          {isVip ? (
-            <div className={styles.vipInfo}>
-            </div>
-          ) : (
-            <button className={styles.activateButton} onClick={handleGoToVipPage}>
-              {t('activateNow')}
-            </button>
-          )}
-        </div>
-      </div>
-
-      
-      {/* 积分显示卡片 */}
-      <div className={styles.pointsCard}>
-        <div className={styles.pointsContent}>
-          <div className={styles.pointsHeader}>
-            <div className={styles.pointsTitleSection}>
-              <span className={styles.pointsIcon}><GiftFilled /></span>
-              <span className={styles.pointsTitle}>{t('points.myPoints')}</span>
-            </div>
-            <span className={styles.pointsCount}>{userInfo?.score || 0}</span>
-          </div>
-          <p className={styles.pointsDescription}>
-            {t('points.pointsDescription')}
-          </p>
-          
-          <div className={styles.pointsMethods}>
-            <h4 className={styles.methodsTitle}>{t('pointsPurchase.getPointsMethods' as any)}</h4>
-            <div className={styles.methodsGrid}>
-              <div className={styles.methodItem} onClick={handleGoToPublish}>
-                <div className={styles.methodIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                  </svg>
-                </div>
-                <div className={styles.methodContent}>
-                  <h5>{t('pointsPurchase.publish' as any)}</h5>
-                  <p>{t('pointsPurchase.publishDesc' as any)}</p>
-                </div>
-              </div>
-              
-              <div className={styles.methodItem} onClick={handleGoToVip}>
-                <div className={styles.methodIcon}>
-                  <CrownOutlined />
-                </div>
-                <div className={styles.methodContent}>
-                  <h5>{t('pointsPurchase.vip' as any)}</h5>
-                  <p>{t('pointsPurchase.vipDesc' as any)}</p>
-                </div>
-              </div>
-              
-              <div className={styles.methodItem} onClick={handleRechargePoints}>
-                <div className={styles.methodIcon}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                  </svg>
-                </div>
-                <div className={styles.methodContent}>
-                  <h5>{t('pointsPurchase.buyPoints' as any)}</h5>
-                  <p>{t('pointsPurchase.buyPointsDesc' as any)}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 余额显示卡片 */}
-      <div className={styles.incomeCard}>
-        <div className={styles.incomeContent}>
-          <div className={styles.incomeHeader}>
-            <div className={styles.incomeTitleSection}>
-              <span className={styles.incomeIcon}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 10.9 13 11.5 13 12h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/>
-                </svg>
-              </span>
-              <span className={styles.incomeTitle}>我的余额</span>
-            </div>
-            <span className={styles.incomeCount}>CNY {userInfo?.income || 0}</span>
-          </div>
-          <div style={{ textAlign: 'right', marginTop: '4px', fontSize: '12px', color: '#999' }}>累计收益：CNY {(userInfo as any)?.totalIncome ?? 0}</div>
-          <p className={styles.incomeDescription}>
-            通过完成任务获得的收入余额
-          </p>
-          
-          <div className={styles.incomeActions}>
-            <button 
-              className={styles.incomeButton} 
-              onClick={() => router.push('/income')}
-            >
-              <span className={styles.buttonIcon}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
-                </svg>
-              </span>
-              <span>查看详情</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <Card 
-        title={t('personalInfo')} 
-        className={`${styles.card} ${styles.personalInfoCard}`}
-        extra={
-          <div className={styles.actions}>
-            <Button type="primary" onClick={() => setIsModalOpen(true)}>
-              {t('modifyUsername')}
-            </Button>
-            <Button type="primary" danger onClick={handleLogout}>
-              {t('logout')}
-            </Button>
-          </div>
-        }
-      >
-        <Descriptions bordered column={1}>
-          <Descriptions.Item label={t('userId')}>{userInfo?.id}</Descriptions.Item>
-          <Descriptions.Item label={t('username')}>{userInfo?.name}</Descriptions.Item>
-          <Descriptions.Item label={t('email')}>{userInfo?.mail}</Descriptions.Item>
-          <Descriptions.Item label={t('accountStatus')}>
-            {userInfo?.status === 1 ? t('normal') : t('disabled')}
-          </Descriptions.Item>
-          <Descriptions.Item label='邀请码'>{userInfo?.popularizeCode}</Descriptions.Item>
-          {isVip && (
-            <>
-              <Descriptions.Item label={t('memberType')}>{vipCycleType}</Descriptions.Item>
-              <Descriptions.Item label={t('memberExpireTime')}>{vipExpireTime}</Descriptions.Item>
-            </>
-          )}
-        </Descriptions>
-      </Card>
-
-      {!isVip && (
-        <div className={styles.normalUserCallToAction}>
-          <p>{t('upgradeCallToAction')}</p>
-          <button className={styles.activateButton} onClick={handleGoToVipPage}>
-            {t('activatePlusMember')}
-          </button>
+  <>
+      {/* 顶部头部卡片 */}
+      <div className={styles.headerCard}>
+        {/* VIP 提示（已是VIP时显示） */}
+        {isVip && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+          color: '#a66ae4',
+          fontWeight: 700,
+        }}>
+          <Image src={plusvip} alt="VIP" className={styles.vipBadgeTop} />
+          <span>{t('vipHonorText' as any)}</span>
         </div>
       )}
+
+      <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'center', gap: 8 }}>
+      <div className={styles.avatar}>
+          <Image src={logoHesd} alt="Logo"  className={styles.logoHesd} />
+        </div>
+        <div className={styles.nameBlock}>
+          <div className={styles.nameRow}>
+            <span>{userInfo?.name || '-'}</span>
+            <EditOutlined style={{ cursor: 'pointer', color: '#a66ae4' }} onClick={() => setIsModalOpen(true)} />
+          </div>
+          <div className={styles.subRow}>
+            <span>{userInfo?.mail || '-'}</span>
+          </div>
+          <div className={styles.scoreRowThis}>
+          <span className={styles.scoreLabel}>{t('inviteCode' as any)}</span>
+          <span className={styles.scoreValue}>{userInfo?.popularizeCode || '-'}</span>
+          <CopyOutlined
+            style={{ color: '#a66ae4', cursor: 'pointer' }}
+            onClick={() => {
+              const code = userInfo?.popularizeCode || '';
+              if (!code) return;
+              navigator.clipboard?.writeText(code).then(() => {
+                message.success(t('copySuccess' as any));
+              }).catch(() => {
+                message.success(t('copySuccess' as any));
+              });
+            }}
+          />
+        </div>
+        </div>
+      </div>
+       
+        <div className={styles.scoreRow}>
+          
+
+        
+        </div>
+      </div>
+
+            
+
+      {/* 深色统计卡片 */}
+      <div className={styles.statsCard}>
+        <div className={styles.statsHeader}>
+          <Image src={plusvip} alt="VIP"  className={styles.vipBadge} />
+          <span className={styles.statsTitle}>{t('stats.totalEarned' as any)}</span>
+          <span className={styles.statsAmount}>{(userInfo as any)?.totalIncome ?? 0}</span>
+          <span className={styles.statsCurrency}>{t('stats.currencyYuan' as any)}</span>
+        </div>
+        <div className={styles.statsGrid}>
+          <div className={styles.statsItem}  onClick={() => router.push('/income')} >
+            
+            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {userInfo?.income || 0} </span> CNY</div>
+          </div>
+          <div className={styles.statsItem} style={{cursor:'pointer'}} onClick={() => setPointsDetailVisible(true)}>
+            
+            <div className={styles.statsLabel}>{t('stats.points' as any)} <span className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0) } </span> {t('stats.points' as any)}</div>
+          </div>
+          
+        </div>
+      </div>
+
+
+      {/* 账号状态（仅非正常时显示） */}
+      {userInfo?.status !== 1 && (
+        <div style={{
+          marginTop: 18,
+          marginBottom: 18,
+          color: '#ef4444',
+          fontSize: 14
+        }}>
+          {t('accountStatus')}: {t('disabled')}
+        </div>
+      )}
+
+
+
+      {/* 底部申请注销按钮 */}
+      <div style={{ textAlign: 'center', paddingTop: 24, display:'flex', flexDirection:'column', justifyContent:'center', alignItems:"flex-start"  }}>
+        <div style={{ display:'flex', flexDirection:'column', justifyContent:'space-between', alignItems:"flex-start", marginBottom: 8 }}>
+          <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>{t('deleteAccount.title' as any)}</div>
+          <div>{t('deleteAccount.desc' as any)}</div>
+        </div>
+        <Button danger>{t('deleteAccount.apply' as any)}</Button>
+      </div>
     </>
   );
 
@@ -920,35 +872,6 @@ export default function ProfilePage() {
     </div>
   );
 
-  // 积分记录内容
-  const renderPointsContent = () => (
-    <div className={styles.orderContent}>
-      <Card>
-        <Table
-          columns={pointsColumns}
-          dataSource={pointsRecords}
-          loading={pointsLoading}
-          rowKey="id"
-          className={styles.pointsTable}
-          pagination={{
-            current: pointsPagination.current,
-            pageSize: pointsPagination.pageSize,
-            total: pointsPagination.total,
-            onChange: (page, size) => {
-              fetchPointsRecords({ page, pageSize: size || 10 });
-            },
-            showSizeChanger: true,
-            showQuickJumper: true,
-            showTotal: (total) => t('points.totalRecords', { total }),
-            pageSizeOptions: ['10', '20', '50'],
-          }}
-          locale={{
-            emptyText: pointsLoading ? t('loading') : t('points.noPointsRecords')
-          }}
-        />
-      </Card>
-    </div>
-  );
 
   if (loading) {
     return null;
@@ -990,17 +913,7 @@ export default function ProfilePage() {
         >
           {renderOrderContent()}
         </TabPane>
-        <TabPane 
-          tab={
-            <span>
-              <GiftFilled />
-              {t('points.title')}
-            </span>
-          } 
-          key="points"
-        >
-          {renderPointsContent()}
-        </TabPane>
+
       </Tabs>
 
       <Modal
@@ -1185,98 +1098,10 @@ export default function ProfilePage() {
         </div>
       </Modal>
 
-            {/* 积分充值弹窗 */}
-      <Modal
-        title={t('pointsPurchase.title' as any)}
-        open={pointsRechargeVisible}
-        onCancel={handleRechargeCancel}
-        footer={null}
-        width={500}
-        centered
-        maskClosable={false}
-        closable={true}
-      >
-        <div className={styles.rechargeContent}>
-          <div className={styles.currentPoints}>
-            <span className={styles.pointsLabel}>{t('pointsPurchase.currentPoints' as any)}</span>
-            <span className={styles.pointsValue}>{userInfo?.score || 0}</span>
-          </div>
-          
-          <div className={styles.rechargeSection}>
-            <h4>{t('pointsPurchase.selectAmount' as any)}</h4>
-            <p className={styles.rechargeDescription}>{t('pointsPurchase.description' as any)}</p>
-            
-            <div className={styles.sliderContainer}>
-              <div 
-                className={styles.sliderTrack}
-                onClick={handleSliderClick}
-              >
-                <div 
-                  className={styles.sliderHandle}
-                  style={{ left: `${(rechargeAmount / 50) * 100}%` }}
-                  onMouseDown={handleSliderMouseDown}
-                />
-              </div>
-              <div className={styles.sliderLabels}>
-                <span>1K</span>
-                <span>50K</span>
-              </div>
-            </div>
-            
-            <div className={styles.amountInput}>
-              <Input
-                type="number"
-                value={rechargeAmount}
-                onChange={(e) => {
-                  const value = Number(e.target.value);
-                  if (value >= 1 && value <= 50) {
-                    setRechargeAmount(value);
-                  }
-                }}
-                min={1}
-                max={50}
-                style={{ width: '80px', marginRight: '8px' }}
-              />
-              <span>*1000积分</span>
-            </div>
-            
-            <div className={styles.totalPrice}>
-              <span>{t('pointsPurchase.purchasePoints' as any)}：</span>
-              <span className={styles.priceValue}>{rechargeAmount * 1000}</span>
-            </div>
-            
-            <div className={styles.totalPrice}>
-              <span>{t('pointsPurchase.totalPrice' as any)}：</span>
-              <span className={styles.priceValue}>${(rechargeAmount * 15).toFixed(2)}</span>
-            </div>
-          </div>
-          
-          <Button 
-            type="primary" 
-            size="large" 
-            block
-            onClick={() => handleRechargeSubmit({ amount: rechargeAmount })}
-            className={styles.rechargeButton}
-            disabled={showPaymentSuccess}
-          >
-            {showPaymentSuccess ? t('pointsPurchase.paying' as any) : t('pointsPurchase.buyNow' as any)}
-          </Button>
-
-          {/* 支付成功提示 */}
-          {showPaymentSuccess && (
-            <div className={styles.paymentSuccessTip}>
-              <p>{t('pointsPurchase.paymentTip' as any)}</p>
-              <Button 
-                type="primary" 
-                onClick={handlePaymentSuccess}
-                className={styles.paymentSuccessButton}
-              >
-                {t('pointsPurchase.confirmPayment' as any)}
-              </Button>
-            </div>
-          )}
-        </div>
-      </Modal>
+      {/* 积分充值弹窗（复用组件） */}
+      <PointsRechargeModal open={pointsRechargeVisible} onClose={handleRechargeCancel} />
+      <PointsDetailModal open={pointsDetailVisible} onClose={() => setPointsDetailVisible(false)} />
+      <VipContentModal open={vipModalVisible} onClose={() => setVipModalVisible(false)} />
     </div>
   );
 } 

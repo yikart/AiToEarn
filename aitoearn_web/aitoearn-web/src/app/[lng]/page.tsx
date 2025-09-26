@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
 import { directTrans, useTransClient } from "../i18n/client";
-import { MAIN_APP_DOWNLOAD_URL } from "../config/appDownloadConfig";
+import { MAIN_APP_DOWNLOAD_URL, getMainAppDownloadUrl } from "../config/appDownloadConfig";
 
 import logo from '@/assets/images/logo.png';
 
@@ -20,7 +20,7 @@ import youtubeIcon from '@/assets/svgs/plat/youtube.png';
 import TwitterIcon from '@/assets/svgs/plat/twitter.png';
 import FacebookIcon from '@/assets/svgs/plat/facebook.png';
 import InstagramIcon from '@/assets/svgs/plat/instagram.png';
-import LinkedInIcon from '@/assets/svgs/plat/linkedin.svg';
+import LinkedInIcon from '@/assets/svgs/plat/linkedin.png';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.png';
 import ThreadsIcon from '@/assets/svgs/plat/threads.png';
 
@@ -201,7 +201,7 @@ function BrandBar() {
     { name: 'Bilibili', key: 'Bilibili', hasIcon: true, iconPath: bilibiliIcon },
     { name: 'Facebook', key: 'Facebook', hasIcon: true, iconPath: FacebookIcon.src },
     { name: 'Instagram', key: 'Instagram', hasIcon: true, iconPath: InstagramIcon.src },
-    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon },
+    { name: 'LinkedIn', key: 'LinkedIn', hasIcon: true, iconPath: LinkedInIcon.src },
     { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
     { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
     { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
@@ -984,7 +984,7 @@ function UpcomingFeaturesSection() {
             </div>
           </div>
 
-          <div className={styles.buildRight}>
+          <div className={styles.buildRight} style={{ minHeight: '500px' }}>
             <div className={styles.imageCarousel}>
               <div className={styles.carouselContainer}>
                                  <div className={`${styles.carouselSlide} ${styles.active}`}>
@@ -1025,7 +1025,7 @@ function DownloadSection() {
             </p>
 
             <div className={styles.downloadButtons}>
-              <a href={MAIN_APP_DOWNLOAD_URL} className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
+              <a href={getMainAppDownloadUrl()} className={styles.downloadBtn} target="_blank" rel="noopener noreferrer">
                 <div className={styles.downloadBtnContent}>
                   <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
@@ -1052,7 +1052,7 @@ function DownloadSection() {
             <div className={styles.qrCode}>
                 {/* <div className={styles.qrCodeImage}> */}
                   <QRCode
-                    value={MAIN_APP_DOWNLOAD_URL}
+                    value={getMainAppDownloadUrl()}
                     size={120}
                   />
                 {/* </div> */}

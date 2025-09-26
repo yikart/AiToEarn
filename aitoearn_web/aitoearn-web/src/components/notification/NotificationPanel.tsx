@@ -270,7 +270,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           const publishData = {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
-            accountId: publishAccount.account,
+            accountId: publishAccount.id,
             title: selectedTask.title,
             desc: selectedTask.description,
             type: selectedTask.type as any, // 转换为PubType

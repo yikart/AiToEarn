@@ -4,6 +4,7 @@ import lodash from "lodash";
 import { AccountGroupItem, SocialAccount } from "@/api/types/account.type";
 import { getAccountGroupApi, getAccountListApi } from "@/api/account";
 import { directTrans } from "@/app/i18n/client";
+import { useUserStore } from "@/store/user";
 
 export interface AccountGroup extends AccountGroupItem {
   children: SocialAccount[];
@@ -77,7 +78,10 @@ export const useAccountStore = create(
             const timeoutPromise = new Promise<any>((resolve) => {
               setTimeout(() => resolve({ code: -1, data: [] }), timeoutMs);
             });
-            const result = await Promise.race([getAccountListApi(), timeoutPromise]);
+            const result = await Promise.race([
+              getAccountListApi(),
+              timeoutPromise,
+            ]);
 
             if (result?.code !== 0) return;
 

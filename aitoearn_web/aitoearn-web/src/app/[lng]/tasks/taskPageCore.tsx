@@ -624,7 +624,7 @@ export default function TaskPageCore() {
           const publishData = {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
-            accountId: publishAccount.account,
+            accountId: publishAccount.id,
             title: task.title,
             desc: task.description,
             type: task.type as any, // 转换为PubType
@@ -752,7 +752,7 @@ export default function TaskPageCore() {
           const publishData = {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
-            accountId: publishAccount.account,
+            accountId: publishAccount.id,
             title: acceptedTaskDetail.task?.title,
             desc: acceptedTaskDetail.task?.description,
             type: acceptedTaskDetail.task?.type as any, // 转换为PubType

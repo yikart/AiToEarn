@@ -52,6 +52,7 @@ export interface PublishRecordItem {
   accountId: string;
   accountType: PlatType;
   uid: string;
+  updatedAt: string;
   videoUrl?: string;
   coverUrl?: string;
   imgUrlList: string[];

@@ -92,6 +92,8 @@ export interface Stats {
 }
 
 export interface RankingContent {
+  mid: string;
+  secUid: string;
   id: string;
   title: string;
   cover: string;

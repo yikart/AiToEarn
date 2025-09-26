@@ -7,7 +7,7 @@ import { useTransClient } from '@/app/i18n/client';
 import { signInApi, SignInType, SignInResponse, PublishDayInfoResponse, PublishInfoResponse } from '@/api/signIn';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'next/navigation';
-import styles from './SignInCalendar.module.scss';
+import styles from './SignInCalendar.module.scss'; 
 
 interface SignInCalendarProps {
   className?: string;

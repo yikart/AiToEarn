@@ -1,3 +1,7 @@
+/*
+ * 添加账号弹窗样式
+ * 平台按钮区域：当空间不足时自动换行，禁止出现横向滚动条
+ */
 .addAccountModal {
   :global {
     h1 {
@@ -6,16 +10,18 @@
     }
     .addAccountModal_plats {
       display: grid;
-      grid-template-columns: repeat(6, 1fr);
+      /* 自适应列数：根据可用宽度自动换行 */
+      grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
       gap: 12px;
-      max-height: 400px;
       overflow-y: auto;
+      overflow-x: hidden;
       margin-bottom: 20px;
       &-item {
         padding: 8px;
         border-radius: 8px;
         height: 90px;
-        white-space: nowrap;
+        /* 允许内容换行，避免撑出横向滚动条 */
+        white-space: normal;
         display: flex;
         flex-direction: column;
         align-items: center;

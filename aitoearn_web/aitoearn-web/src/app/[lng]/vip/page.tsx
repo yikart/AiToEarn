@@ -82,7 +82,6 @@ export default function VipPage() {
         success_url: lang === 'zh-CN' ? "/zh-CN/profile" : "/en/profile",
         mode: paymentMethod,
         payment: paymentType,
-        flagTrialPeriodDays,
         metadata: {
           userId: userInfo.id
         }

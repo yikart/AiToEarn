@@ -7,19 +7,22 @@ import Link from "next/link";
 import Image from "next/image";
 import LayoutNav from "@/app/layout/layoutNav";
 import { NoSSR } from "@kwooshung/react-no-ssr";
-import { Button, Dropdown, MenuProps, Badge } from "antd";
+import { Button, Dropdown, MenuProps, Badge, Tooltip } from "antd";
 import logo from "@/assets/images/logo.png";
-import defaultAvatar from "./images/defaultAvatar.jpg";
 import {
   BellOutlined,
   CaretDownOutlined,
   GlobalOutlined,
+  CrownOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
 import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
-import SignInCalendar from "@/components/SignInCalendar";
+import SignInCalendar from "@/components/SignInCalendar"; 
+import VipContentModal from "@/components/modals/VipContentModal";
+import PointsDetailModal from "@/components/modals/PointsDetailModal";
 
 export interface ILyaoutHeaderRef {}
 
@@ -125,10 +128,11 @@ function UserInfo() {
         <div className={styles["layoutHeader-userinfo"]}>
           <Image
             className={styles["layoutHeader-userinfo-avatar"]}
-            src={userInfo?.avatar || defaultAvatar}
+            src={userInfo?.avatar || logo}
             alt={t("profile")}
             width={35}
             height={35}
+            style={{ borderRadius: '50%', backgroundColor: '#e9d5ff', padding: '3px' }}
           />
           <div className={styles["layoutHeader-userinfo-name"]}>
             {userInfo.name || t("unknownUser")}
@@ -147,6 +151,8 @@ const LyaoutHeader = memo(
     const router = useRouter();
     const { t } = useTransClient("common");
     const [notificationVisible, setNotificationVisible] = useState(false);
+    const [vipModalVisible, setVipModalVisible] = useState(false);
+    const [pointsModalVisible, setPointsModalVisible] = useState(false);
     const { unreadCount } = useNotification();
 
     const toggleLanguage = () => {
@@ -186,6 +192,35 @@ const LyaoutHeader = memo(
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
                 )}
+                {/* 未开通 VIP 时显示图标，点击打开 VIP 弹窗 */}
+                      {userStore.token && (
+                        <Tooltip title={t("vip" as any) || "VIP"}>
+                          <Button
+                            type="text"
+                            icon={<CrownOutlined />}
+                            onClick={() => setVipModalVisible(true)}
+                            style={{ position: 'relative' }}
+                          >
+                            {!userStore.userInfo?.vipInfo && <span style={{
+                              position: 'absolute',
+                              top: '-2px',
+                              right: '-11px',
+                              background: '#ff4d4f',
+                              color: 'white',
+                              fontSize: '8px',
+                              fontWeight: 'bold',
+                              padding: '1px 4px',
+                              borderRadius: '8px',
+                              lineHeight: '10px',
+                              minWidth: '16px',
+                              textAlign: 'center'
+                            }}>
+                              HOT
+                            </span>}
+                          </Button>
+                        </Tooltip>
+                      )}
+                {/* 通知 */}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
                     <Button
@@ -217,6 +252,10 @@ const LyaoutHeader = memo(
           visible={notificationVisible} 
           onClose={() => setNotificationVisible(false)} 
         />
+        {/* VIP 弹窗 */}
+        <VipContentModal open={vipModalVisible} onClose={() => setVipModalVisible(false)} />
+        {/* 积分详情弹窗 */}
+        <PointsDetailModal open={pointsModalVisible} onClose={() => setPointsModalVisible(false)} />
       </>
     );
   }),

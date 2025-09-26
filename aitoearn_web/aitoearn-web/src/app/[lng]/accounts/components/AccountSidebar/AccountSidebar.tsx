@@ -25,6 +25,7 @@ import {
   PlusOutlined,
   UserOutlined,
   WarningOutlined,
+  DeleteOutlined,
 } from "@ant-design/icons";
 import { useShallow } from "zustand/react/shallow";
 import { useAccountStore } from "@/store/account";
@@ -43,6 +44,7 @@ import {
 } from "@/utils/ipLocation";
 import { createAccountGroupApi, updateAccountApi } from "@/api/account";
 import AddAccountModal from "../AddAccountModal";
+import DeleteUserConfirmModal from "./DeleteUserConfirmModal";
 
 export interface IAccountSidebarRef {}
 
@@ -53,6 +55,8 @@ export interface IAccountSidebarProps {
   onAccountChange: (info: SocialAccount) => void;
   // 排除的平台类型
   excludePlatforms?: PlatType[];
+  // 侧边栏内容顶部扩展内容
+  sidebarTopExtra?: React.ReactNode;
 }
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
@@ -76,8 +80,10 @@ const AccountStatusView = ({ account }: { account: SocialAccount }) => {
 
 const AccountPopoverInfo = ({
   accountInfo,
+  onDeleteClick,
 }: {
   accountInfo: SocialAccount;
+  onDeleteClick?: (account: SocialAccount) => void;
 }) => {
   const { t } = useTransClient("account");
   const platInfo = AccountPlatInfoMap.get(accountInfo.type)!;
@@ -95,12 +101,16 @@ const AccountPopoverInfo = ({
             <p>{t("nickname")}：</p>
             <p>{accountInfo.nickname}</p>
           </div>
-          <div className="accountPopoverInfo-item">
+          {/* <div className="accountPopoverInfo-item">
             <p>{t("platform")}：</p>
             <p>
               <img src={platInfo?.icon} />
               {platInfo.name}
             </p>
+          </div> */}
+          <div className="accountPopoverInfo-item">
+            <p>{t("fansCount")}：</p>
+            <p>{accountInfo.fansCount ?? 0}</p>
           </div>
         </div>
       </div>
@@ -109,32 +119,18 @@ const AccountPopoverInfo = ({
         <p>{t("loginStatus")}：</p>
         <p>
           <AccountStatusView account={accountInfo} />
-          {/*<Button*/}
-          {/*  type="link"*/}
-          {/*  style={{ padding: "0 0 0 5px" }}*/}
-          {/*  loading={detLoading}*/}
-          {/*  onClick={async () => {*/}
-          {/*    // TODO 登录状态检测*/}
-          {/*    // setDetLoading(true);*/}
-          {/*    // const res = await acpAccountLoginCheck(*/}
-          {/*    //   accountInfo!.type,*/}
-          {/*    //   accountInfo!.uid,*/}
-          {/*    // );*/}
-          {/*    // message.success(*/}
-          {/*    //   `登录状态检测完成：${res.status === AccountStatus.USABLE ? "在线" : "离线，请重新登录"}`,*/}
-          {/*    // );*/}
-          {/*    // setTimeout(async () => {*/}
-          {/*    //   setDetLoading(false);*/}
-          {/*    //   if (res.status === AccountStatus.DISABLE) {*/}
-          {/*    //     const res = await accountLogin(accountInfo.type);*/}
-          {/*    //     if (!res) return;*/}
-          {/*    //     message.success("账号更新成功！");*/}
-          {/*    //   }*/}
-          {/*    // }, 500);*/}
-          {/*  }}*/}
-          {/*>*/}
-          {/*  {t("checkLoginStatus")}*/}
-          {/*</Button>*/}
+
+          <Button
+            type="primary"
+            danger
+            ghost
+            size="small"
+            icon={<DeleteOutlined />}
+            style={{ marginLeft: 18, border: "none" }}
+            onClick={() => onDeleteClick?.(accountInfo)}
+          >
+            删除账户
+          </Button>
         </p>
       </div>
     </div>
@@ -148,6 +144,7 @@ const AccountSidebar = memo(
         activeAccountId,
         onAccountChange,
         excludePlatforms = [],
+        sidebarTopExtra,
       }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
@@ -172,6 +169,11 @@ const AccountSidebar = memo(
       const userManageModalRef = useRef<IUserManageModalRef>(null);
       const [mcpManagerModalOpen, setMcpManagerModalOpen] = useState(false);
       const mcpManagerModalRef = useRef<IMCPManagerModalRef>(null);
+      const [deleteHitOpen, setDeleteHitOpen] = useState(false);
+      const [deleteLoading, setDeleteLoading] = useState(false);
+      const [deleteTarget, setDeleteTarget] = useState<SocialAccount | null>(
+        null,
+      );
 
       // IP地理位置信息状态
       const [ipLocationInfo, setIpLocationInfo] =
@@ -376,14 +378,6 @@ const AccountSidebar = memo(
               />
             </div>
           </Modal>
-          {/*TODO 在线状态检测 */}
-          {/*<PubAccountDetModule*/}
-          {/*  title="账号检测"*/}
-          {/*  tips="所有平台在线"*/}
-          {/*  ref={pubAccountDetModuleRef}*/}
-          {/*  accounts={accountList}*/}
-          {/*  isFooter={false}*/}
-          {/*/>*/}
 
           <div className={styles.accountSidebar}>
             <div className="accountSidebar-top">
@@ -420,139 +414,148 @@ const AccountSidebar = memo(
                 <Skeleton avatar paragraph={{ rows: 1 }} active />
               </>
             ) : (
-              <Collapse
-                key={defaultActiveKey}
-                defaultActiveKey={defaultActiveKey}
-                items={accountGroupList.map((v) => {
-                  // 为默认分组添加IP和地址信息
-                  const isDefaultGroup = v.isDefault;
-                  const showIpInfo = isDefaultGroup && ipLocationInfo;
-                  return {
-                    key: v.id,
-                    label: (
-                      <>
-                        <div className="accountSidebar-groupLabel">
-                          <span className="accountSidebar-groupName">
-                            {v.name}
-                          </span>
-                          <span className="accountSidebar-userCount">
-                            {v.children?.length}/
-                            {
-                              v.children?.map(
-                                (v) => v.status === AccountStatus.USABLE,
-                              ).length
-                            }
-                          </span>
-                          {/* 根据proxyIp判断显示IP信息 */}
-                          {!v.proxyIp || v.proxyIp === "" ? (
-                            // 本地IP显示
-                            <div className="accountSidebar-ipInfo">
-                              {ipLocationLoading ? (
-                                <span className="accountSidebar-ipLoading">
-                                  {t("ipInfo.loading")}
-                                </span>
-                              ) : ipLocationInfo ? (
-                                <Tooltip
-                                  title={t("ipInfo.tooltip", {
-                                    asn: ipLocationInfo.asn,
-                                    org: ipLocationInfo.org,
-                                  })}
-                                >
-                                  <span className="accountSidebar-ipText">
-                                    {formatLocationInfo(ipLocationInfo)}
-                                  </span>
-                                </Tooltip>
-                              ) : (
-                                <span className="accountSidebar-ipError">
-                                  {t("ipInfo.error")}
-                                </span>
-                              )}
-                            </div>
-                          ) : (
-                            // 数据中的IP显示
-                            v.ip &&
-                            v.location && (
+              <div className="accountSidebar-content">
+                {sidebarTopExtra}
+                <Collapse
+                  key={defaultActiveKey}
+                  defaultActiveKey={defaultActiveKey}
+                  items={accountGroupList.map((v) => {
+                    // 为默认分组添加IP和地址信息
+                    const isDefaultGroup = v.isDefault;
+                    const showIpInfo = isDefaultGroup && ipLocationInfo;
+                    return {
+                      key: v.id,
+                      label: (
+                        <>
+                          <div className="accountSidebar-groupLabel">
+                            <span className="accountSidebar-groupName">
+                              {v.name}
+                            </span>
+                            <span className="accountSidebar-userCount">
+                              {v.children?.length}/
+                              {
+                                v.children?.map(
+                                  (v) => v.status === AccountStatus.USABLE,
+                                ).length
+                              }
+                            </span>
+                            {/* 根据proxyIp判断显示IP信息 */}
+                            {!v.proxyIp || v.proxyIp === "" ? (
+                              // 本地IP显示
                               <div className="accountSidebar-ipInfo">
-                                <Tooltip
-                                  title={`IP: ${v.ip}\n位置: ${v.location}`}
-                                >
-                                  <span className="accountSidebar-ipText">
-                                    {extractCountry(v.location)} | {v.ip}
+                                {ipLocationLoading ? (
+                                  <span className="accountSidebar-ipLoading">
+                                    {t("ipInfo.loading")}
                                   </span>
-                                </Tooltip>
+                                ) : ipLocationInfo ? (
+                                  <Tooltip
+                                    title={t("ipInfo.tooltip", {
+                                      asn: ipLocationInfo.asn,
+                                      org: ipLocationInfo.org,
+                                    })}
+                                  >
+                                    <span className="accountSidebar-ipText">
+                                      {formatLocationInfo(ipLocationInfo)}
+                                    </span>
+                                  </Tooltip>
+                                ) : (
+                                  <span className="accountSidebar-ipError">
+                                    {t("ipInfo.error")}
+                                  </span>
+                                )}
                               </div>
-                            )
-                          )}
-                        </div>
-                      </>
-                    ),
-                    children: (
-                      <ul key={v.id} className="accountList">
-                        {v.children?.map((account) => {
-                          if (excludePlatforms.includes(account.type))
-                            return "";
-                          const platInfo = AccountPlatInfoMap.get(
-                            account.type,
-                          )!;
-                          return (
-                            <li
-                              className={[
-                                "accountList-item",
-                                `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
-                                // 失效状态
-                                account.status === AccountStatus.DISABLE &&
-                                  "accountList-item--disable",
-                              ].join(" ")}
-                              key={account.id}
-                              onClick={async () => {
-                                if (account.status === AccountStatus.DISABLE) {
-                                  // TODO 账户登录
-                                  // const res = await accountLogin(account.type);
-                                  // if (!res) return;
-                                  // message.success("账号登录成功！");
-                                  // return;
-                                }
-                                onAccountChange(account);
-                              }}
-                            >
-                              <Avatar
-                                src={getOssUrl(account.avatar)}
-                                size="large"
-                              />
-                              <div className="accountList-item-right">
-                                <div
-                                  className="accountList-item-right-name"
-                                  title={account.nickname}
-                                >
-                                  <Tooltip title={undefined}>
-                                    {account.nickname}
+                            ) : (
+                              // 数据中的IP显示
+                              v.ip &&
+                              v.location && (
+                                <div className="accountSidebar-ipInfo">
+                                  <Tooltip
+                                    title={`IP: ${v.ip}\n位置: ${v.location}`}
+                                  >
+                                    <span className="accountSidebar-ipText">
+                                      {extractCountry(v.location)} | {v.ip}
+                                    </span>
                                   </Tooltip>
                                 </div>
-                                <div className="accountList-item-right-footer">
-                                  <p className="accountList-item-right-plat">
-                                    <img src={platInfo?.icon} />
-                                    <span>{platInfo?.name}</span>
-                                  </p>
-                                  <Popover
-                                    content={
-                                      <AccountPopoverInfo
-                                        accountInfo={account}
-                                      />
-                                    }
-                                    placement="right"
+                              )
+                            )}
+                          </div>
+                        </>
+                      ),
+                      children: (
+                        <ul key={v.id} className="accountList">
+                          {v.children?.map((account) => {
+                            if (excludePlatforms.includes(account.type))
+                              return "";
+                            const platInfo = AccountPlatInfoMap.get(
+                              account.type,
+                            )!;
+                            return (
+                              <li
+                                className={[
+                                  "accountList-item",
+                                  `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
+                                  // 失效状态
+                                  account.status === AccountStatus.DISABLE &&
+                                    "accountList-item--disable",
+                                ].join(" ")}
+                                key={account.id}
+                                onClick={async () => {
+                                  if (
+                                    account.status === AccountStatus.DISABLE
+                                  ) {
+                                    // TODO 账户登录
+                                    // const res = await accountLogin(account.type);
+                                    // if (!res) return;
+                                    // message.success("账号登录成功！");
+                                    // return;
+                                  }
+                                  onAccountChange(account);
+                                }}
+                              >
+                                <Avatar
+                                  src={getOssUrl(account.avatar)}
+                                  size="large"
+                                />
+                                <div className="accountList-item-right">
+                                  <div
+                                    className="accountList-item-right-name"
+                                    title={account.nickname}
                                   >
-                                    ...
-                                  </Popover>
+                                    <Tooltip title={undefined}>
+                                      {account.nickname}
+                                    </Tooltip>
+                                  </div>
+                                  <div className="accountList-item-right-footer">
+                                    <p className="accountList-item-right-plat">
+                                      <img src={platInfo?.icon} />
+                                      <span>{platInfo?.name}</span>
+                                    </p>
+                                    <Popover
+                                      content={
+                                        <AccountPopoverInfo
+                                          accountInfo={account}
+                                          onDeleteClick={(acc) => {
+                                            setDeleteTarget(acc);
+                                            setDeleteHitOpen(true);
+                                          }}
+                                        />
+                                      }
+                                      placement="right"
+                                    >
+                                      ...
+                                    </Popover>
+                                  </div>
                                 </div>
-                              </div>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    ),
-                  };
-                })}
-              />
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ),
+                    };
+                  })}
+                />
+              </div>
             )}
 
             <div className="accountSidebar-footer">
@@ -576,6 +579,19 @@ const AccountSidebar = memo(
                 {t("createSpace.button")}
               </Button>
             </div>
+            {/* 删除账户确认弹窗（复用组件） */}
+            <DeleteUserConfirmModal
+              open={deleteHitOpen}
+              deleteUsers={deleteTarget ? [deleteTarget] : []}
+              onClose={() => {
+                setDeleteHitOpen(false);
+              }}
+              onDeleteSuccess={async () => {
+                await getAccountList();
+                setDeleteTarget(null);
+                message.success("删除成功");
+              }}
+            />
           </div>
         </>
       );

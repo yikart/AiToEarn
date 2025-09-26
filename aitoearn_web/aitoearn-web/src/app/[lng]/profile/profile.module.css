@@ -36,7 +36,7 @@
 }
 
 .personalInfoCard::before {
-  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
 }
 
 .personalInfoCard .ant-card-head {
@@ -46,10 +46,10 @@
 }
 
 .personalInfoCard .ant-card-head-title {
-  color: #fce2a9;
+  color: #a66ae4;
   font-size: 18px;
   font-weight: 600;
-  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  background: linear-gradient(135deg, #a66ae4, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -61,8 +61,8 @@
 }
 
 .personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-label {
-  background: rgba(252, 226, 169, 0.1);
-  color: #fce2a9;
+  background: rgba(166, 106, 228, 0.1);
+  color: #a66ae4;
   font-weight: 600;
   border-color: rgba(255, 255, 255, 0.1);
 }
@@ -82,15 +82,15 @@
 }
 
 .personalInfoCard .ant-btn-primary {
-  background: linear-gradient(135deg, #6a5acd 0%, #a64dd8 100%);
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
   border: none;
-  box-shadow: 0 2px 8px rgba(106, 90, 205, 0.3);
+  box-shadow: 0 2px 8px rgba(166, 106, 228, 0.3);
 }
 
 .personalInfoCard .ant-btn-primary:hover {
-  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a66ae4 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(106, 90, 205, 0.4);
+  box-shadow: 0 4px 12px rgba(166, 106, 228, 0.4);
 }
 
 .personalInfoCard .ant-btn-dangerous {
@@ -223,9 +223,9 @@
 }
 
 .activateButton {
-  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
-  border: 2px solid rgba(252, 226, 169, 0.3);
-  color: #2B2F36;
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+  border: 2px solid rgba(166, 106, 228, 0.3);
+  color: #ffffff;
   padding: 14px 24px;
   border-radius: 12px;
   font-size: 15px;
@@ -235,7 +235,7 @@
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(252, 226, 169, 0.3);
+  box-shadow: 0 4px 16px rgba(166, 106, 228, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
@@ -272,20 +272,20 @@
 }
 
 .activateButton:hover {
-  background: linear-gradient(135deg, #ffd700 0%, #fce2a9 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a66ae4 100%);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 25px rgba(252, 226, 169, 0.5);
-  border-color: rgba(252, 226, 169, 0.6);
+  box-shadow: 0 8px 25px rgba(166, 106, 228, 0.5);
+  border-color: rgba(166, 106, 228, 0.6);
 }
 
 .activateButton:active {
   transform: translateY(-1px) scale(0.98);
-  box-shadow: 0 4px 12px rgba(252, 226, 169, 0.4);
+  box-shadow: 0 4px 12px rgba(166, 106, 228, 0.4);
 }
 
 .activateButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(252, 226, 169, 0.3), 0 4px 16px rgba(252, 226, 169, 0.3);
+  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.3), 0 4px 16px rgba(166, 106, 228, 0.3);
 }
 
 .normalUserCallToAction {
@@ -896,15 +896,174 @@
 
 /* 余额卡片样式 */
 .incomeCard {
-  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  background: #ffffff;
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  color: #fff;
-  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+  color: #2B2F36;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.08);
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(252, 226, 169, 0.35);
+}
+
+/* 顶部头部信息卡片 */
+.headerCard {
+  border-radius: 16px;
+  padding: 20px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e9d5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a66ae4;
+  font-size: 28px;
+  border: 2px solid rgba(166,106,228,0.35);
+}
+
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 5px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.vipBadge {
+  width: 30px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.vipBadgeTop {
+  width: 20px;
+  height: auto;
+}
+
+.subRow {
+  display: flex;
+  gap: 12px;
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.scoreRow {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.scoreRowThis {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.scoreLabel {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.scoreValue {
+  margin-top: 2px;
+  font-weight: 600;
+  font-size: 18px;
+  background: linear-gradient(135deg, #a66ae4, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 深色统计卡片 */
+.statsCard {
+  border-radius: 14px;
+  padding: 18px  0;
+  color: #e5e7eb;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+
+.statsHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statsTitle {
+  color: #4B6775;
+  font-size: 14px;
+}
+
+.statsAmount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #54687B;
+  margin-bottom: 10px;
+}
+
+.statsCurrency {
+  margin-left: 6px;
+  color: #4B6775;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+
+.logoHesd {
+  width: 38px;
+  height: 38px;
+}
+
+.statsItem {
+  padding: 16px 8px 18px 8px;
+}
+
+.statsItem:hover{
+  cursor: pointer;
+}
+
+.statsValue {
+  font-size: 22px;
+  font-weight: 800;
+  color: #a66ae4;
+}
+
+.statsLabel {
+  margin-top: 4px;
+  color: #95887D;
+  font-size: 12px;
+  text-align: left;
 }
 
 .incomeCard::before {
@@ -913,9 +1072,8 @@
   top: 0;
   left: 0;
   right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
-  animation: shimmer 3s ease-in-out infinite;
+  height: 3px;
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
 }
 
 .incomeContent {
@@ -938,11 +1096,11 @@
 
 .incomeIcon {
   font-size: 20px;
-  color: #fce2a9;
-  background: rgba(252, 226, 169, 0.1);
+  color: #a66ae4;
+  background: rgba(166, 106, 228, 0.18);
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -951,15 +1109,14 @@
 .incomeTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #fce2a9;
+  color: #2B2F36;
 }
 
 .incomeCount {
   font-size: 28px;
-  font-weight: bold;
-  color: #fce2a9;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  font-weight: 800;
+  color: #a66ae4;
+  background: linear-gradient(135deg, #a66ae4, #8b5cf6);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -967,9 +1124,9 @@
 
 .incomeDescription {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 18px;
-  line-height: 1.4;
+  color: #7c7c7c;
+  margin-bottom: 12px;
+  line-height: 1.5;
 }
 
 .incomeActions {
@@ -978,9 +1135,9 @@
 }
 
 .incomeButton {
-  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
-  border: 2px solid rgba(252, 226, 169, 0.3);
-  color: #2B2F36;
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+  border: 2px solid rgba(166, 106, 228, 0.4);
+  color: #ffffff;
   padding: 12px 20px;
   border-radius: 8px;
   font-size: 14px;
@@ -989,7 +1146,7 @@
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(252, 226, 169, 0.3);
+  box-shadow: 0 2px 8px rgba(166, 106, 228, 0.35);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1009,7 +1166,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
   transition: left 0.6s ease;
 }
 
@@ -1018,10 +1175,10 @@
 }
 
 .incomeButton:hover {
-  background: linear-gradient(135deg, #ffd700 0%, #fce2a9 100%);
+  background: linear-gradient(135deg, #8b5cf6 0%, #a66ae4 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(252, 226, 169, 0.4);
-  border-color: rgba(252, 226, 169, 0.6);
+  box-shadow: 0 4px 12px rgba(166, 106, 228, 0.5);
+  border-color: rgba(166, 106, 228, 0.6);
 }
 
 .incomeButton:hover .buttonIcon {
@@ -1030,10 +1187,10 @@
 
 .incomeButton:active {
   transform: translateY(-1px);
-  box-shadow: 0 2px 6px rgba(252, 226, 169, 0.3);
+  box-shadow: 0 2px 6px rgba(166, 106, 228, 0.3);
 }
 
 .incomeButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(252, 226, 169, 0.3), 0 2px 8px rgba(252, 226, 169, 0.3);
+  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.35), 0 2px 8px rgba(166, 106, 228, 0.35);
 } 

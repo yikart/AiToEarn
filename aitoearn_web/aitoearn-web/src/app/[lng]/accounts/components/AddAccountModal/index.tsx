@@ -14,6 +14,7 @@ import { instagramSkip } from "../../plat/InstagramLogin";
 import { threadsSkip } from "../../plat/ThreadsLogin";
 import { wxGzhSkip } from "../../plat/WxGzh";
 import { pinterestSkip } from "../../plat/PinterestLogin";
+import { linkedinSkip } from "../../plat/LinkedinLogin";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import { getIpLocation, IpLocationInfo } from "@/utils/ipLocation";
@@ -150,7 +151,7 @@ const AddAccountModal = memo(
       // 判断平台是否在当前属地可用
       const isPlatformAvailable = (platType: PlatType): boolean => {
         // TODO: 暂时屏蔽国内平台 @@.@@
-        // return true;
+        return true;
         if (isCnSpace === null) return true; // 未确定属地时显示所有平台
         
         const cnOnlyPlatforms = new Set<PlatType>([
@@ -253,6 +254,9 @@ const AddAccountModal = memo(
             break;
           case PlatType.Pinterest:
             await pinterestSkip(key);
+            break;
+          case PlatType.LinkedIn:
+            await linkedinSkip(key);
             break;
         }
 
@@ -371,6 +375,7 @@ const AddAccountModal = memo(
                     <Tooltip title={value.tips?.account} key={key}>
                       <Button
                         type="text"
+                        style={{ width: '84px', }}
                         className={`addAccountModal_plats-item ${!isAvailable ? 'disabled' : ''}`}
                         disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId)}
                         onClick={() => handlePlatformClick(key as PlatType, value)}

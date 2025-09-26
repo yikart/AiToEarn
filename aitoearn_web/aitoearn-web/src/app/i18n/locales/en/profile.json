@@ -147,5 +147,20 @@
     "completelyFree": "🎁 Completely free, no payment required",
     "claimNow": "Claim Now",
     "later": "Later"
+  },
+  "vipHonorText": "VIP Member",
+  "inviteCode": "Invite Code",
+  "copySuccess": "Copied",
+  "stats": {
+    "totalEarned": "Total Earned",
+    "balance": "Balance",
+    "points": "Points",
+    "coupons": "Coupons",
+    "currencyYuan": "CNY"
+  },
+  "deleteAccount": {
+    "title": "Delete your account",
+    "desc": "When you delete your account, you lose access to Aitoearn services and we permanently delete your personal data.",
+    "apply": "Delete Account"
   }
 } 

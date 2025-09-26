@@ -19,7 +19,13 @@ import {
 import { CSSTransition } from "react-transition-group";
 import { DatesSetArg } from "@fullcalendar/core";
 import { Button, Tabs } from "antd";
-import { LeftOutlined, PlusOutlined, RightOutlined, CalendarOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  LeftOutlined,
+  PlusOutlined,
+  RightOutlined,
+  CalendarOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
@@ -48,7 +54,9 @@ const CalendarTiming = memo(
       );
       const { t } = useTransClient("account");
       const [currentDate, setCurrentDate] = useState<Date>(new Date());
-      const [activeMode, setActiveMode] = useState<"calendar" | "list">("calendar");
+      const [activeMode, setActiveMode] = useState<"calendar" | "list">(
+        "calendar",
+      );
       const handleDatesSet = (arg: DatesSetArg) => {
         const date = calendarRef.current?.getApi().getDate();
         if (date) {
@@ -99,16 +107,16 @@ const CalendarTiming = memo(
 
       // 监听 URL 参数，自动打开发布弹窗
       useEffect(() => {
-        const openPublish = searchParams.get('openPublish');
-        const fromSignIn = searchParams.get('fromSignIn');
-        
-        if (openPublish === 'true' && fromSignIn === 'true') {
+        const openPublish = searchParams.get("openPublish");
+        const fromSignIn = searchParams.get("fromSignIn");
+
+        if (openPublish === "true" && fromSignIn === "true") {
           setPublishDialogOpen(true);
           // 清除 URL 参数，避免刷新页面时重复打开
           const url = new URL(window.location.href);
-          url.searchParams.delete('openPublish');
-          url.searchParams.delete('fromSignIn');
-          window.history.replaceState({}, '', url.toString());
+          url.searchParams.delete("openPublish");
+          url.searchParams.delete("fromSignIn");
+          window.history.replaceState({}, "", url.toString());
         }
       }, [searchParams]);
 
@@ -120,10 +128,16 @@ const CalendarTiming = memo(
           }
         };
 
-        window.addEventListener('openPublishDialog', handleOpenPublishDialog as EventListener);
-        
+        window.addEventListener(
+          "openPublishDialog",
+          handleOpenPublishDialog as EventListener,
+        );
+
         return () => {
-          window.removeEventListener('openPublishDialog', handleOpenPublishDialog as EventListener);
+          window.removeEventListener(
+            "openPublishDialog",
+            handleOpenPublishDialog as EventListener,
+          );
         };
       }, []);
 
@@ -319,7 +333,7 @@ const CalendarTiming = memo(
               </div>
             </CSSTransition>
           ) : (
-            <ListMode 
+            <ListMode
               onClickPub={(date) => {
                 publishDialogRef.current!.setPubTime(date);
                 setPublishDialogOpen(true);

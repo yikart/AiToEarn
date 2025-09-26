@@ -10,6 +10,8 @@ import CalendarTiming from "@/app/[lng]/accounts/components/CalendarTiming";
 import AddAccountModal from "@/app/[lng]/accounts/components/AddAccountModal";
 import { PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
+import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
+import { useTransClient } from "@/app/i18n/client";
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -18,20 +20,24 @@ interface AccountPageCoreProps {
   };
 }
 
-export default function AccountPageCore({ searchParams }: AccountPageCoreProps) {
-  const { accountInit, accountActive, setAccountActive, accountGroupList } = useAccountStore(
-    useShallow((state) => ({
-      accountInit: state.accountInit,
-      setAccountActive: state.setAccountActive,
-      accountActive: state.accountActive,
-      accountGroupList: state.accountGroupList,
-    })),
-  );
+export default function AccountPageCore({
+  searchParams,
+}: AccountPageCoreProps) {
+  const { accountInit, accountActive, setAccountActive, accountGroupList } =
+    useAccountStore(
+      useShallow((state) => ({
+        accountInit: state.accountInit,
+        setAccountActive: state.setAccountActive,
+        accountActive: state.accountActive,
+        accountGroupList: state.accountGroupList,
+      })),
+    );
 
   // 添加账号弹窗状态
   const [addAccountModalOpen, setAddAccountModalOpen] = useState(false);
   const [targetPlatform, setTargetPlatform] = useState<PlatType | undefined>();
   const [targetSpaceId, setTargetSpaceId] = useState<string | undefined>();
+  const { t } = useTransClient("account");
 
   useEffect(() => {
     accountInit();
@@ -43,15 +49,15 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
       // 验证平台类型是否有效
       const platform = searchParams.platform as PlatType;
       const validPlatforms = Object.values(PlatType);
-      
+
       if (searchParams.platform && validPlatforms.includes(platform)) {
         setTargetPlatform(platform);
       }
-      
+
       if (searchParams.spaceId) {
         setTargetSpaceId(searchParams.spaceId);
       }
-      
+
       // 打开添加账号弹窗
       setAddAccountModalOpen(true);
     }
@@ -65,11 +71,11 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
   const handleAddAccountClose = () => {
     setAddAccountModalOpen(false);
     // 清除URL参数（可选）
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      url.searchParams.delete('platform');
-      url.searchParams.delete('spaceId');
-      window.history.replaceState({}, '', url.toString());
+      url.searchParams.delete("platform");
+      url.searchParams.delete("spaceId");
+      window.history.replaceState({}, "", url.toString());
     }
   };
 
@@ -79,15 +85,36 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
         <AccountSidebar
           activeAccountId={accountActive?.id || ""}
           onAccountChange={(account) => {
-            if (account.id === accountActive?.id) {
-              setAccountActive(undefined);
-            } else {
-              setAccountActive(account);
-            }
+            setAccountActive(account);
           }}
+          sidebarTopExtra={
+            <>
+              <div
+                className={[
+                  "accountList-item",
+                  `${!accountActive?.id ? "accountList-item--active" : ""}`,
+                ].join(" ")}
+                style={{
+                  border: "1px solid #d9d9d9",
+                  borderRight: "none",
+                  borderLeft: "none",
+                }}
+                onClick={async () => {
+                  setAccountActive(undefined);
+                }}
+              >
+                <AllPlatIcon size={38} />
+                <div className="accountList-item-right">
+                  <div className="accountList-item-right-name">
+                    {t("allPlatforms")}
+                  </div>
+                </div>
+              </div>
+            </>
+          }
         />
         <CalendarTiming />
-        
+
         {/* 添加账号弹窗 */}
         <AddAccountModal
           open={addAccountModalOpen}

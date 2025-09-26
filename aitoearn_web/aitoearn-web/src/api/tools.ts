@@ -219,9 +219,9 @@ export const toolsApi = {
    * 文本内容安全
    */
   async textModeration(content: string) {
-    const res = await http.post<string>("tools/common/text/moderation", {
+    const res = await http.post<string>("aliGreen/textGreen", {
       content,
     });
-    return res!.data;
+    return res;
   },
 };

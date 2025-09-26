@@ -12,8 +12,19 @@ export interface AppDownloadConfig {
   tips: string[];
 }
 
-// 主应用下载配置
-export const MAIN_APP_DOWNLOAD_URL = "https://yikart.oss-cn-beijing.aliyuncs.com/aitoearn-1.0.9.1.apk";
+// 主应用下载配置（默认英文）
+export const MAIN_APP_DOWNLOAD_URL = "https://docs.aitoearn.ai/en/downloads";
+
+// 根据语言获取主应用下载地址
+// zh-* 使用中文地址，其余使用英文地址
+import { useUserStore } from "@/store/user";
+export const getMainAppDownloadUrl = (lng?: string): string => {
+  const lang = (lng || useUserStore.getState().lang || "zh-CN").toLowerCase();
+  const isZh = lang.startsWith("zh");
+  return isZh
+    ? "https://docs.aitoearn.ai/zh/downloads"
+    : "https://docs.aitoearn.ai/en/downloads";
+};
 
 export const APP_DOWNLOAD_CONFIGS: Record<string, AppDownloadConfig> = {
   xhs: {

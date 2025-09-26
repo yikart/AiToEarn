@@ -44,8 +44,12 @@ export async function request<T>(params: RequestParams) {
     const lang = useUserStore.getState().lang || "zh-CN";
     const isZh = (lang || "").toLowerCase().startsWith("zh");
     const i18nText = {
-      networkBusy: isZh ? "网络繁忙，请稍后重试！" : "Network busy, please try again later!",
-      networkError: isZh ? "网络异常，请稍后重试！" : "Network error, please try again later!",
+      networkBusy: isZh
+        ? "网络繁忙，请稍后重试！"
+        : "Network busy, please try again later!",
+      networkError: isZh
+        ? "网络异常，请稍后重试！"
+        : "Network error, please try again later!",
       contact: isZh ? "如需帮助请联系客服：" : "Need help? Contact support:",
     };
 
