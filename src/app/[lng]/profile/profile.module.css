@@ -911,7 +911,7 @@
 .headerCard {
   background: linear-gradient(135deg, #D6E2FC 0%, #D4E0FA 100%);
   border-radius: 16px;
-  padding: 16px 20px;
+  padding: 20px 20px;
   display: flex;
   align-items: center;
   gap: 16px;
@@ -1036,6 +1036,7 @@
   margin-top: 12px;
   margin-bottom: 18px;
   border-radius: 10px;
+  padding: 8px 0px;
 }
 
 .logoHesd {
