@@ -114,6 +114,7 @@ const PublishDialog = memo(
       const [moderationLoading, setModerationLoading] = useState(false);
       const [moderationResult, setModerationResult] = useState<boolean | null>(null);
       const [moderationDesc, setModerationDesc] = useState<string>("");
+      const [moderationLevel, setModerationLevel] = useState<any>(null);
       const { t } = useTransClient("publish");
 
       // 内容安全检测函数
@@ -144,9 +145,11 @@ const PublishDialog = memo(
             const data: any = result?.data || {} as any;
             const descriptions: string = (data && (data.descriptions as string)) || "";
             const labels: string = (data && (data.labels as string)) || "";
-            const reason: string = (data && (data.reason as string)) || "";
+            const reason: any = (data && JSON.parse(data.reason)) || "";
             const isSafe = !descriptions && !labels && !reason;
             setModerationResult(isSafe);
+
+            setModerationLevel(reason);
             setModerationDesc(isSafe ? "" : (descriptions || reason || "内容不安全"));
             if (isSafe) {
               message.success("内容安全");
@@ -757,7 +760,7 @@ const PublishDialog = memo(
                               color: moderationResult ? '#52c41a' : '#ff4d4f',
                               fontWeight: 500,
                             }}>
-                              {moderationResult ? "内容安全" : "内容不安全"}
+                              {moderationResult ? "内容安全" : "等级:" + moderationLevel.riskLevel}
                             </span>
                             {!moderationResult && !!moderationDesc && (
                               <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap' }}>{moderationDesc}</span>
