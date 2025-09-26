@@ -91,7 +91,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
         success_url: userStore.lang === 'zh-CN' ? "/zh-CN/profile" : "/en/profile",
         mode: paymentMethod,
         payment: paymentType,
-        flagTrialPeriodDays,
         metadata: {
           userId: userStore.userInfo.id
         }

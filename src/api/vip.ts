@@ -20,7 +20,6 @@ export interface CreatePaymentOrderParams {
   success_url?: string;
   mode: string;
   payment: PaymentType;
-  flagTrialPeriodDays?: number; // 订阅模式下是否给七天免费试用时长， 0 - 不给， 1-给
   quantity?: number; // 购买数量，用于积分购买
   metadata: {
     userId: string;
