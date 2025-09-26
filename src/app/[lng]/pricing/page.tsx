@@ -9,7 +9,7 @@ import pricingStyles from "../styles/pricing.module.scss";
 /**
  * 定价页面组件
  */
-export default function PricingPage({ hideFaq = false }: { hideFaq?: boolean }) {
+export default function PricingPage() {
   const { t } = useTransClient('pricing');
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
 
@@ -700,9 +700,8 @@ export default function PricingPage({ hideFaq = false }: { hideFaq?: boolean }) 
           ))}
         </div>
 
-        {/* FAQ Section (可隐藏) */}
-        {!hideFaq && (
-          <div className={pricingStyles.faqSection}>
+        {/* FAQ Section */}
+        <div className={pricingStyles.faqSection}>
             <h2 className={pricingStyles.faqTitle}>{t('faq.title')}</h2>
             <Collapse
               className={pricingStyles.faqCollapse}
@@ -748,7 +747,6 @@ export default function PricingPage({ hideFaq = false }: { hideFaq?: boolean }) 
               }))}
             />
           </div>
-        )}
       </div>
     </div>
   );
