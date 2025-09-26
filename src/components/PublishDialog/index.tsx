@@ -9,13 +9,14 @@ import {
   useState,
 } from "react";
 import styles from "./publishDialog.module.scss";
-import { Button, message, Modal, List, Spin } from "antd";
+import { Button, message, Modal, List, Spin, Tooltip } from "antd";
 import {
   ArrowRightOutlined,
   ExclamationCircleFilled,
   FileTextOutlined,
   FolderOpenOutlined,
   PictureOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
@@ -138,6 +139,7 @@ const PublishDialog = memo(
           setModerationLoading(true);
           setModerationResult(null);
           setModerationDesc("");
+          setModerationLevel(null);
           const result = await toolsApi.textModeration(contentToCheck);
           console.log("result",result);
           
@@ -145,10 +147,9 @@ const PublishDialog = memo(
             const data: any = result?.data || {} as any;
             const descriptions: string = (data && (data.descriptions as string)) || "";
             const labels: string = (data && (data.labels as string)) || "";
-            const reason: any = (data && JSON.parse(data.reason)) || "";
+            const reason: any = (data && (data.reason ? JSON.parse(data.reason) : ""));
             const isSafe = !descriptions && !labels && !reason;
             setModerationResult(isSafe);
-
             setModerationLevel(reason);
             setModerationDesc(isSafe ? "" : (descriptions || reason || "内容不安全"));
             if (isSafe) {
@@ -181,6 +182,7 @@ const PublishDialog = memo(
       useEffect(() => {
         setModerationResult(null);
         setModerationDesc("");
+        setModerationLevel(null);
       }, [commonPubParams.des, expandedPubItem?.params.des, pubListChoosed.map(item => item.params.des).join(',')]);
 
       // 当内容被清空时，也重置检测状态
@@ -188,6 +190,7 @@ const PublishDialog = memo(
         if (!hasDescription) {
           setModerationResult(null);
           setModerationDesc("");
+          setModerationLevel(null);
         }
       }, [hasDescription]);
 
@@ -763,7 +766,12 @@ const PublishDialog = memo(
                               {moderationResult ? "内容安全" : "等级:" + moderationLevel.riskLevel}
                             </span>
                             {!moderationResult && !!moderationDesc && (
-                              <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap' }}>{moderationDesc}</span>
+                              <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                {moderationDesc}
+                                <Tooltip title={moderationLevel?.riskTips || ''} placement="top">
+                                  <InfoCircleOutlined style={{ color: '#ff4d4f' }} />
+                                </Tooltip>
+                              </span>
                             )}
                           </div>
                         )}
