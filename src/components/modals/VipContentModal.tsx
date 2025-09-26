@@ -126,7 +126,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
           style={{ background: 'transparent' }}>
           <div className={vipStyles.titleBlock}>
             <h2 className={vipStyles.title}>
-              1元试用7天会员 <span className={vipStyles.highlight}>立得200积分</span>
+              免费试用7天会员 <span className={vipStyles.highlight}>立得100积分</span>
             </h2>
             <div className={vipStyles.links}>
               <span>选择合适你的套餐，或直接</span>
