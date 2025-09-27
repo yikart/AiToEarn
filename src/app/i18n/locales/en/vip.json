@@ -2,6 +2,8 @@
   "title": "PLUS Member",
   "description": "Upgrade to unlock all features with 8 benefits",
   "activateNow": "Activate Now",
+  "upgrade": "Upgrade",
+  "membership": "Membership",
   "pleaseLoginFirst": "Please login first",
   "paymentOrderCreated": "Payment order created",
   "paymentLinkNotFound": "Payment link not found",

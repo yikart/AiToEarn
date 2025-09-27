@@ -2,6 +2,8 @@
   "title": "PLUS会员",
   "description": "开通会员解锁全部功能，立享8种权益",
   "activateNow": "立即开通",
+  "upgrade": "开通会员",
+  "membership": "会员",
   "pleaseLoginFirst": "请先登录",
   "paymentOrderCreated": "支付订单创建成功",
   "paymentLinkNotFound": "未获取到支付链接",

@@ -32,6 +32,7 @@ function UserInfo() {
   const userInfo = useUserStore((state) => state.userInfo)!;
   const router = useRouter();
   const { t } = useTransClient("common");
+  const { t: tVip } = useTransClient("vip");
 
   const items: MenuProps["items"] = [
     {
@@ -150,6 +151,7 @@ const LyaoutHeader = memo(
     const layoutHeader = useRef<HTMLDivElement>(null);
     const router = useRouter();
     const { t } = useTransClient("common");
+    const { t: tVip } = useTransClient("vip");
     const [notificationVisible, setNotificationVisible] = useState(false);
     const [vipModalVisible, setVipModalVisible] = useState(false);
     const [pointsModalVisible, setPointsModalVisible] = useState(false);
@@ -192,20 +194,26 @@ const LyaoutHeader = memo(
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
                 )}
-                {/* 未开通 VIP 时显示图标，点击打开 VIP 弹窗 */}
-                      {userStore.token && (
-                        <Tooltip title={t("vip" as any) || "VIP"}>
+                {/* 会员状态显示 */}
+                      {userStore.token && (() => {
+                        // 判断是否为有效会员：有vipInfo且未过期
+                        const isVip = userStore.userInfo?.vipInfo && 
+                                    userStore.userInfo.vipInfo.expireTime && 
+                                    new Date(userStore.userInfo.vipInfo.expireTime) > new Date();
+                        
+                        return (
                           <Button
                             type="text"
-                            icon={<CrownOutlined />}
+                            icon={<CrownOutlined style={{ fontSize: 18, color: isVip ? '#F5AB03' : '#999' }} />}
                             onClick={() => setVipModalVisible(true)}
                             style={{ position: 'relative' }}
                           >
-                            {!userStore.userInfo?.vipInfo && <span style={{
+                            <span style={{
                               position: 'absolute',
-                              top: '-2px',
-                              right: '-11px',
-                              background: '#ff4d4f',
+                              top: '28px',
+                              width: '55px',
+                              right: '-6px',
+                              background: 'rgb(245, 171, 3)',
                               color: 'white',
                               fontSize: '8px',
                               fontWeight: 'bold',
@@ -215,11 +223,11 @@ const LyaoutHeader = memo(
                               minWidth: '16px',
                               textAlign: 'center'
                             }}>
-                              HOT
-                            </span>}
+                              {isVip ? (tVip("membership" as any) || "Membership") : (tVip("upgrade" as any) || "Upgrade")}
+                            </span>
                           </Button>
-                        </Tooltip>
-                      )}
+                        );
+                      })()}
                 {/* 通知 */}
                 {userStore.token && (
                   <Badge count={unreadCount} size="small">
