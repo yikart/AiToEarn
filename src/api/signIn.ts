@@ -75,3 +75,24 @@ export const signInApi = {
 
 
 };
+
+/**
+ * 注销账户相关接口
+ */
+export const cancelAccountApi = {
+  /**
+   * 获取注销验证码
+   */
+  async getCancelCode(): Promise<{ success: boolean; message?: string; code?: string }> {
+    const res = await http.get<{ success: boolean; message?: string; code?: string }>(`login/cancel/code`);
+    return res!.data;
+  },
+
+  /**
+   * 注销账户
+   */
+  async cancelAccount(data: { code: string; password: string }): Promise<{ success: boolean; message?: string }> {
+    const res = await http.delete<{ success: boolean; message?: string }>(`login/cancel`, data);
+    return res!.data;
+  },
+};
