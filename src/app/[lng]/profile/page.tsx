@@ -43,6 +43,7 @@ export default function ProfilePage() {
   const [cancelForm] = Form.useForm();
   const [cancelCode, setCancelCode] = useState('');
   const [cancelLoading, setCancelLoading] = useState(false);
+  const [codeCountdown, setCodeCountdown] = useState(0);
   
   // 检查是否已经显示过免费会员提示
   useEffect(() => {
@@ -305,13 +306,18 @@ export default function ProfilePage() {
   const handleGetCancelCode = async () => {
     try {
       const response = await cancelAccountApi.getCancelCode();
-      if (response) {
-        setCancelCode(response.code || '');
+      console.log('验证码响应:', response);
+      
+      if (response && response.code === 0) {
+        setCancelCode(response.data?.code || '');
         message.success('验证码已发送');
+        // 开始倒计时
+        setCodeCountdown(60);
       } else {
-        message.error('获取验证码失败');
+        message.error(response?.message || '获取验证码失败');
       }
     } catch (error) {
+      console.error('获取验证码错误:', error);
       message.error('获取验证码失败');
     }
   };
@@ -324,21 +330,22 @@ export default function ProfilePage() {
       const values = await cancelForm.validateFields();
       setCancelLoading(true);
       
-      const response = await cancelAccountApi.cancelAccount({
+      console.log('发送注销请求，验证码:', values.code);
+      
+      const response:any = await cancelAccountApi.cancelAccount({
         code: values.code
       });
       
-      if (response.success) {
+
+      if (response && response.code === 0) {
         message.success('账户注销成功');
         setCancelModalVisible(false);
         // 清除登录状态并跳转到登录页
         clearLoginStatus();
         router.push('/login');
-      } else {
-        message.error(response.message || '注销失败');
       }
     } catch (error) {
-      message.error('注销失败');
+      
     } finally {
       setCancelLoading(false);
     }
@@ -351,7 +358,23 @@ export default function ProfilePage() {
     setCancelModalVisible(true);
     cancelForm.resetFields();
     setCancelCode('');
+    setCodeCountdown(0);
   };
+
+  // 倒计时效果
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (codeCountdown > 0) {
+      timer = setTimeout(() => {
+        setCodeCountdown(codeCountdown - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [codeCountdown]);
 
   useEffect(() => {
     if (!token) {
@@ -1198,8 +1221,12 @@ export default function ProfilePage() {
             >
               <div style={{ display: 'flex', gap: '8px' }}>
                 <Input placeholder="请输入验证码" />
-                <Button onClick={handleGetCancelCode} disabled={!!cancelCode}>
-                  {cancelCode ? '已发送' : '获取验证码'}
+                <Button 
+                  onClick={handleGetCancelCode} 
+                  disabled={codeCountdown > 0}
+                  loading={codeCountdown > 0}
+                >
+                  {codeCountdown > 0 ? `${codeCountdown}s后重发` : '获取验证码'}
                 </Button>
               </div>
             </Form.Item>

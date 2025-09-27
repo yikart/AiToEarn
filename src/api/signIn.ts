@@ -83,16 +83,16 @@ export const cancelAccountApi = {
   /**
    * 获取注销验证码
    */
-  async getCancelCode(): Promise<{ success: boolean; message?: string; code?: string }> {
-    const res = await http.get<{ success: boolean; message?: string; code?: string }>(`login/cancel/code`);
-    return res!.data;
+  async getCancelCode(): Promise<any> {
+    const res = await http.get<any>(`login/cancel/code`);
+    return res;
   },
 
   /**
    * 注销账户
    */
-  async cancelAccount(data: { code: string }): Promise<{ success: boolean; message?: string }> {
-    const res = await http.delete<{ success: boolean; message?: string }>(`login/cancel`, data);
-    return res!.data;
+  async cancelAccount(data: { code: string }): Promise<any> {
+    const res = await http.delete<any>(`login/cancel`, data);
+    return res;
   },
 };
