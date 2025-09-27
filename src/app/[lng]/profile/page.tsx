@@ -8,6 +8,7 @@ import { WalletOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
+import { cancelAccountApi } from "@/api/signIn";
 import { createPaymentOrderApi, PaymentType as VipPaymentType } from "@/api/vip";
 import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
 import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
@@ -36,6 +37,12 @@ export default function ProfilePage() {
   // 免费会员提示弹框状态
   const [freeTrialModalVisible, setFreeTrialModalVisible] = useState(false);
   const [hasShownFreeTrial, setHasShownFreeTrial] = useState(false);
+  
+  // 注销账户相关状态
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [cancelForm] = Form.useForm();
+  const [cancelCode, setCancelCode] = useState('');
+  const [cancelLoading, setCancelLoading] = useState(false);
   
   // 检查是否已经显示过免费会员提示
   useEffect(() => {
@@ -290,6 +297,61 @@ export default function ProfilePage() {
     } finally {
       setOrderDetailLoading(false);
     }
+  };
+
+  /**
+   * 获取注销验证码
+   */
+  const handleGetCancelCode = async () => {
+    try {
+      const response = await cancelAccountApi.getCancelCode();
+      if (response.success) {
+        setCancelCode(response.code || '');
+        message.success('验证码已发送');
+      } else {
+        message.error(response.message || '获取验证码失败');
+      }
+    } catch (error) {
+      message.error('获取验证码失败');
+    }
+  };
+
+  /**
+   * 处理注销账户
+   */
+  const handleCancelAccount = async () => {
+    try {
+      const values = await cancelForm.validateFields();
+      setCancelLoading(true);
+      
+      const response = await cancelAccountApi.cancelAccount({
+        code: values.code,
+        password: values.password
+      });
+      
+      if (response.success) {
+        message.success('账户注销成功');
+        setCancelModalVisible(false);
+        // 清除登录状态并跳转到登录页
+        clearLoginStatus();
+        router.push('/login');
+      } else {
+        message.error(response.message || '注销失败');
+      }
+    } catch (error) {
+      message.error('注销失败');
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  /**
+   * 打开注销确认弹窗
+   */
+  const handleOpenCancelModal = () => {
+    setCancelModalVisible(true);
+    cancelForm.resetFields();
+    setCancelCode('');
   };
 
   useEffect(() => {
@@ -802,7 +864,7 @@ export default function ProfilePage() {
           <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>{t('deleteAccount.title' as any)}</div>
           <div>{t('deleteAccount.desc' as any)}</div>
         </div>
-        <Button danger>{t('deleteAccount.apply' as any)}</Button>
+        <Button danger onClick={handleOpenCancelModal}>{t('deleteAccount.apply' as any)}</Button>
       </div>
     </>
   );
@@ -1102,6 +1164,72 @@ export default function ProfilePage() {
       <PointsRechargeModal open={pointsRechargeVisible} onClose={handleRechargeCancel} />
       <PointsDetailModal open={pointsDetailVisible} onClose={() => setPointsDetailVisible(false)} />
       <VipContentModal open={vipModalVisible} onClose={() => setVipModalVisible(false)} />
+
+      {/* 注销账户确认弹窗 */}
+      <Modal
+        title="注销账户"
+        open={cancelModalVisible}
+        onCancel={() => setCancelModalVisible(false)}
+        footer={null}
+        width={500}
+        centered
+      >
+        <div style={{ padding: '20px 0' }}>
+          <div style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
+            <p>注销账户是不可逆的操作，一旦注销，您的所有数据将被永久删除，包括：</p>
+            <ul style={{ margin: '10px 0', paddingLeft: '20px' }}>
+              <li>个人资料和设置</li>
+              <li>所有发布的内容</li>
+              <li>积分和会员权益</li>
+              <li>订单和支付记录</li>
+            </ul>
+            <p style={{ color: '#ff4d4f', fontWeight: 'bold' }}>请谨慎操作！</p>
+          </div>
+          
+          <Form
+            form={cancelForm}
+            layout="vertical"
+            onFinish={handleCancelAccount}
+          >
+            <Form.Item
+              label="验证码"
+              name="code"
+              rules={[{ required: true, message: '请输入验证码' }]}
+            >
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Input placeholder="请输入验证码" />
+                <Button onClick={handleGetCancelCode} disabled={!!cancelCode}>
+                  {cancelCode ? '已发送' : '获取验证码'}
+                </Button>
+              </div>
+            </Form.Item>
+            
+            <Form.Item
+              label="确认密码"
+              name="password"
+              rules={[{ required: true, message: '请输入密码' }]}
+            >
+              <Input.Password placeholder="请输入您的密码" />
+            </Form.Item>
+            
+            <Form.Item>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <Button onClick={() => setCancelModalVisible(false)}>
+                  取消
+                </Button>
+                <Button 
+                  type="primary" 
+                  danger 
+                  htmlType="submit" 
+                  loading={cancelLoading}
+                >
+                  确认注销
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
     </div>
   );
 } 
