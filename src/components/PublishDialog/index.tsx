@@ -10,6 +10,7 @@ import {
 } from "react";
 import styles from "./publishDialog.module.scss";
 import { Button, message, Modal, List, Spin, Tooltip } from "antd";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 import {
   ArrowRightOutlined,
   ExclamationCircleFilled,
@@ -116,6 +117,9 @@ const PublishDialog = memo(
       const [moderationResult, setModerationResult] = useState<boolean | null>(null);
       const [moderationDesc, setModerationDesc] = useState<string>("");
       const [moderationLevel, setModerationLevel] = useState<any>(null);
+      // 下载App弹窗状态
+      const [downloadModalVisible, setDownloadModalVisible] = useState(false);
+      const [currentPlatform, setCurrentPlatform] = useState<string>('');
       const { t } = useTransClient("publish");
 
       // 内容安全检测函数
@@ -350,16 +354,7 @@ const PublishDialog = memo(
         }
       }, [pubListChoosed, setPubListChoosed]);
 
-      // 过滤PC端不支持的平台账户：如被默认选中则自动移除
-      useEffect(() => {
-        const filtered = pubListChoosed.filter((item) => {
-          const plat = AccountPlatInfoMap.get(item.account.type);
-          return !(plat && plat.pcNoThis === true);
-        });
-        if (filtered.length !== pubListChoosed.length) {
-          setPubListChoosed(filtered);
-        }
-      }, [pubListChoosed, setPubListChoosed]);
+      // 移除PC端不支持的平台账户过滤逻辑，改为在UI中显示遮罩
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
@@ -584,10 +579,6 @@ const PublishDialog = memo(
                 </div>
                 <div className="publishDialog-con-acconts">
                   {pubList
-                    .filter((pubItem) => {
-                      const plat = AccountPlatInfoMap.get(pubItem.account.type);
-                      return !(plat && plat.pcNoThis === true);
-                    })
                     .map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
                       pubItem.account.type,
@@ -596,25 +587,40 @@ const PublishDialog = memo(
                       (v) => v.account.id === pubItem.account.id,
                     );
                     const isOffline = pubItem.account.status === 0;
+                    const isPcNotSupported = platConfig && platConfig.pcNoThis === true;
 
                     return (
-                      <div
-                        className={[
-                          "publishDialog-con-acconts-item",
-                          isChoosed
-                            ? "publishDialog-con-acconts-item--active"
-                            : "",
-                        ].join(" ")}
-                        style={{
-                          borderColor: isChoosed
-                            ? platConfig.themeColor
-                            : "transparent",
-                        }}
+                      <Tooltip
+                        title={
+                          isPcNotSupported 
+                            ? t('tips.pcNotSupported' as any)
+                            : isOffline 
+                            ? t('tips.accountOffline' as any)
+                            : undefined
+                        }
                         key={pubItem.account.id}
-                        onClick={(e) => {
+                      >
+                        <div
+                          className={[
+                            "publishDialog-con-acconts-item",
+                            isChoosed
+                              ? "publishDialog-con-acconts-item--active"
+                              : "",
+                          ].join(" ")}
+                          style={{
+                            borderColor: isChoosed
+                              ? platConfig.themeColor
+                              : "transparent",
+                          }}
+                          onClick={(e) => {
                           e.stopPropagation();
                           if (isOffline) {
-                            message.warning("该账号已离线，无法发布");
+                            message.warning(t('tips.accountOffline' as any));
+                            return;
+                          }
+                          if (isPcNotSupported) {
+                            setCurrentPlatform(platConfig?.name || '');
+                            setDownloadModalVisible(true);
                             return;
                           }
                           const newPubListChoosed = [...pubListChoosed];
@@ -657,13 +663,13 @@ const PublishDialog = memo(
                           setPubListChoosed(newPubListChoosed);
                         }}
                       >
-                        {/* 账号头像：离线显示遮罩并禁用 */}
+                        {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
                         <div style={{ position: "relative" }}>
                           <AvatarPlat
-                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline ? 'disabled' : ''}`}
+                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported ? 'disabled' : ''}`}
                             account={pubItem.account}
                             size="large"
-                            disabled={isOffline || !isChoosed}
+                            disabled={isOffline || !isChoosed || isPcNotSupported}
                           />
                           {isOffline && (
                             <div
@@ -684,8 +690,30 @@ const PublishDialog = memo(
                               已离线
                             </div>
                           )}
+                          {isPcNotSupported && !isOffline && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.6)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 10,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                                textAlign: "center",
+                                lineHeight: 1.2,
+                              }}
+                            >
+                              APP
+                            </div>
+                          )}
                         </div>
-                      </div>
+                        </div>
+                      </Tooltip>
                     );
                   })}
                 </div>
@@ -1155,6 +1183,14 @@ const PublishDialog = memo(
               </div>
             )}
           </Modal>
+
+          {/* 下载App弹窗 */}
+          <DownloadAppModal
+            visible={downloadModalVisible}
+            onClose={() => setDownloadModalVisible(false)}
+            platform={currentPlatform}
+            appName="Aitoearn App"
+          />
         </>
       );
     },
