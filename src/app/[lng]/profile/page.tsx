@@ -305,11 +305,11 @@ export default function ProfilePage() {
   const handleGetCancelCode = async () => {
     try {
       const response = await cancelAccountApi.getCancelCode();
-      if (response.success) {
+      if (response) {
         setCancelCode(response.code || '');
         message.success('验证码已发送');
       } else {
-        message.error(response.message || '获取验证码失败');
+        message.error('获取验证码失败');
       }
     } catch (error) {
       message.error('获取验证码失败');
@@ -325,8 +325,7 @@ export default function ProfilePage() {
       setCancelLoading(true);
       
       const response = await cancelAccountApi.cancelAccount({
-        code: values.code,
-        password: values.password
+        code: values.code
       });
       
       if (response.success) {
@@ -827,17 +826,17 @@ export default function ProfilePage() {
         <div className={styles.statsHeader}>
           <Image src={plusvip} alt="VIP"  className={styles.vipBadge} />
           <span className={styles.statsTitle}>{t('stats.totalEarned' as any)}</span>
-          <span className={styles.statsAmount}>{(userInfo as any)?.totalIncome ?? 0}</span>
+          <span className={styles.statsAmount}>{((userInfo as any)?.totalIncome ?? 0).toFixed(2)}</span>
           <span className={styles.statsCurrency}>{t('stats.currencyYuan' as any)}</span>
         </div>
         <div className={styles.statsGrid}>
           <div className={styles.statsItem}  onClick={() => router.push('/income')} >
             
-            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {userInfo?.income || 0} </span> CNY</div>
+            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {(userInfo?.income || 0).toFixed(2) } </span> CNY</div>
           </div>
           <div className={styles.statsItem} style={{cursor:'pointer'}} onClick={() => setPointsDetailVisible(true)}>
             
-            <div className={styles.statsLabel}>{t('stats.points' as any)} <span className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0) } </span> {t('stats.points' as any)}</div>
+            <div className={styles.statsLabel}>{t('stats.points' as any)} <span className={styles.statsValue}>{(Math.floor((userInfo?.score as number) || 0)).toFixed(1) } </span> {t('stats.points' as any)}</div>
           </div>
           
         </div>
@@ -1174,7 +1173,7 @@ export default function ProfilePage() {
         width={500}
         centered
       >
-        <div style={{ padding: '20px 0' }}>
+        <div style={{ paddingTop: '20px' }}>
           <div style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
             <p>注销账户是不可逆的操作，一旦注销，您的所有数据将被永久删除，包括：</p>
             <ul style={{ margin: '10px 0', paddingLeft: '20px' }}>
@@ -1184,6 +1183,7 @@ export default function ProfilePage() {
               <li>订单和支付记录</li>
             </ul>
             <p style={{ color: '#ff4d4f', fontWeight: 'bold' }}>请谨慎操作！</p>
+            <p style={{ color: '#1890ff', fontSize: '14px' }}>为了您的账户安全，请先获取验证码进行身份验证。</p>
           </div>
           
           <Form
@@ -1204,13 +1204,6 @@ export default function ProfilePage() {
               </div>
             </Form.Item>
             
-            <Form.Item
-              label="确认密码"
-              name="password"
-              rules={[{ required: true, message: '请输入密码' }]}
-            >
-              <Input.Password placeholder="请输入您的密码" />
-            </Form.Item>
             
             <Form.Item>
               <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>

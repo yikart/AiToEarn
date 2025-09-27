@@ -91,7 +91,7 @@ export const cancelAccountApi = {
   /**
    * 注销账户
    */
-  async cancelAccount(data: { code: string; password: string }): Promise<{ success: boolean; message?: string }> {
+  async cancelAccount(data: { code: string }): Promise<{ success: boolean; message?: string }> {
     const res = await http.delete<{ success: boolean; message?: string }>(`login/cancel`, data);
     return res!.data;
   },
