@@ -30,6 +30,13 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   // 辅助函数处理翻译
   const translate = (key: string) => t(key as any);
   
+  // 判断用户是否为有效会员
+  const isVip = useMemo(() => {
+    return userStore.userInfo?.vipInfo && 
+           userStore.userInfo.vipInfo.expireTime && 
+           new Date(userStore.userInfo.vipInfo.expireTime) > new Date();
+  }, [userStore.userInfo]);
+  
   const handleTabClick = (tab: 'year' | 'month' | 'once') => {
     setActiveTab(tab);
   };
@@ -170,7 +177,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
                 <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
                 <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
-                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <Button disabled className={vipStyles.freeBtn}>
+                  {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
+                </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
@@ -217,7 +226,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
                 <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
                 <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
-                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <Button disabled className={vipStyles.freeBtn}>
+                  {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
+                </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
@@ -263,7 +274,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
                 <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
                 <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
-                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <Button disabled className={vipStyles.freeBtn}>
+                  {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
+                </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
                   <li>{translate('modal.free.features.dailyPoints')}</li>

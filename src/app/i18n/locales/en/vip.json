@@ -60,6 +60,7 @@
       "period": "/month",
       "forever": "Forever",
       "currentPlan": "Current Plan",
+      "freePlan": "Free Plan",
       "points": "60 pts/month",
       "features": {
         "dailyPoints": "Daily credits",
