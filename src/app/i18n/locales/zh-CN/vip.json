@@ -71,7 +71,7 @@
       "yearly": {
         "title": "年度会员",
         "bestValue": "最划算",
-        "price": "$144",
+        "price": "144",
         "period": "每年",
         "originalPrice": "$300/年",
         "button": "$144/年 省50%",
@@ -89,7 +89,7 @@
       },
       "monthly": {
         "title": "月度会员",
-        "price": "$228",
+        "price": "228",
         "period": "每年",
         "originalPrice": "$25/月",
         "button": "$19/月 省25%",
@@ -98,7 +98,7 @@
       },
       "once": {
         "title": "一次性月度会员",
-        "price": "$25",
+        "price": "25",
         "period": "每月",
         "button": "$25/月",
         "points": "700积分",
