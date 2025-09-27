@@ -212,7 +212,7 @@ const LyaoutHeader = memo(
                               position: 'absolute',
                               top: '28px',
                               width: '55px',
-                              right: '-6px',
+                              right: '-4px',
                               background: 'rgb(245, 171, 3)',
                               color: 'white',
                               fontSize: '8px',
