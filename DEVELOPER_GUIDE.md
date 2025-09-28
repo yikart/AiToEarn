@@ -11,9 +11,10 @@
     - [1.2. IDE 插件](#12-ide-插件)
     - [1.3. 核心目录结构](#13-核心目录结构)
   - [2. 开发入门](#2-开发入门)
-    - [2.1. 环境准备](#21-环境准备)
-    - [2.2. 核心开发命令](#22-核心开发命令)
-    - [2.3. 日常开发流程](#23-日常开发流程)
+    - [2.1. 快速上手](#21-快速上手)
+    - [2.2. 环境准备](#22-环境准备)
+    - [2.3. 核心开发命令](#23-核心开发命令)
+    - [2.4. 日常开发流程](#24-日常开发流程)
   - [3. 新增子项目与发布](#3-新增子项目与发布)
     - [3.1. 安装 Nx 插件](#31-安装-nx-插件)
     - [3.2. 使用自定义生成器](#32-使用自定义生成器)
@@ -32,22 +33,23 @@
   - [6. CI/CD](#6-cicd)
       - [6.1 工作流程（Workflows）](#61-工作流程workflows)
       - [6.2 如何运作](#62-如何运作)
-    - [8. Docker](#8-docker)
-      - [8.1. Dockerfile](#81-dockerfile)
-      - [8.2. 构建和运行单个服务](#82-构建和运行单个服务)
-    - [9. 环境配置](#9-环境配置)
-      - [9.1. 配置文件](#91-配置文件)
-      - [9.2. 配置加载](#92-配置加载)
-    - [9.3 如何访问配置](#93-如何访问配置)
-  - [10. 公共库说明](#10-公共库说明)
-    - [10.1. 核心库详解 (`common` \& `mongodb`)](#101-核心库详解-common--mongodb)
-      - [10.1.1. `common` 库](#1011-common-库)
+      - [6.3 可视化流程图](#63-可视化流程图)
+    - [7. Docker](#7-docker)
+      - [7.1. Dockerfile](#71-dockerfile)
+      - [7.2. 构建和运行单个服务](#72-构建和运行单个服务)
+    - [8. 环境配置](#8-环境配置)
+      - [8.1. 配置文件](#81-配置文件)
+      - [8.2. 配置加载](#82-配置加载)
+    - [8.3 如何访问配置](#83-如何访问配置)
+  - [9. 公共库说明](#9-公共库说明)
+    - [9.1. 核心库详解 (`common` & `mongodb`)](#91-核心库详解-common--mongodb)
+      - [9.1.1. `common` 库](#911-common-库)
         - [代码风格与核心原则](#代码风格与核心原则)
         - [核心目录结构与功能](#核心目录结构与功能)
-      - [10.1.2. `mongodb` 库](#1012-mongodb-库)
-        - [代码风格与核心原则](#代码风格与核心原则-1)
-        - [核心目录结构与功能](#核心目录结构与功能-1)
-    - [10.2. 其他公共库](#102-其他公共库)
+      - [9.1.2. `mongodb` 库](#912-mongodb-库)
+        - [代码风格与核心原则-1](#代码风格与核心原则-1)
+        - [核心目录结构与功能-1](#核心目录结构与功能-1)
+    - [9.2. 其他公共库](#92-其他公共库)
 
 ## 1. 项目架构
 
@@ -57,8 +59,8 @@
 
 我们使用 [**Nx**](https://nx.dev/) 作为 Monorepo 的管理和构建工具。Nx 提供了以下核心优势：
 
-- **智能构建**: Nx 能够分析项目间的依赖关系，只构建和测试受变更影响的部分。
-- **任务缓存**: 对构建、测试等任务的结果进行缓存，极大提升了重复执行任务的速度。
+- **智能构建**: Nx 能够分析项目间的依赖关系，只构建受变更影响的部分。
+- **任务缓存**: 对构建等任务的结果进行缓存，极大提升了重复执行任务的速度。
 - **代码生成**: 提供强大的代码生成器，可以快速创建新的应用和库。
 - **统一的命令**: 通过 `nx` 命令行工具，可以方便地在所有项目上执行相同的任务。
 
@@ -99,7 +101,49 @@ aitoearn-monorepo/
 
 ## 2. 开发入门
 
-### 2.1. 环境准备
+### 2.1. 快速上手
+
+以下步骤帮助你在本地快速运行任意一个应用（以 aitoearn-ai 为例）：
+
+1) 安装依赖
+
+```bash
+pnpm install
+```
+
+2) 启动开发服务器（开发配置）
+
+```bash
+nx serve aitoearn-ai --configuration=dev
+```
+
+3) 构建单个应用或库（可选）
+
+```bash
+# 构建应用
+nx build aitoearn-ai
+
+# 构建库示例
+nx build aws-s3
+```
+
+4) 构建 Docker 镜像（可选）
+
+```bash
+pnpm nx run aitoearn-cloud-space:docker-build
+# 或
+node scripts/build-docker.mjs aitoearn-cloud-space
+```
+
+5) 预览发布（可选）
+
+```bash
+pnpm nx release --dry-run
+```
+
+完成以上步骤后，即可在本地迭代开发。如果你的应用需要环境配置，请参考“环境配置”章节的 8.1/8.2/8.3。
+
+### 2.2. 环境准备
 
 1.  **安装 Node.js**: 确保你的 Node.js 版本符合 `package.json` 中 `engines` 字段的要求。
 2.  **安装 pnpm**: 本项目使用 `pnpm` 作为包管理工具。通过 `npm install -g pnpm` 进行安装。
@@ -109,7 +153,7 @@ aitoearn-monorepo/
     pnpm install
     ```
 
-### 2.2. 核心开发命令
+### 2.3. 核心开发命令
 
 在本项目中，我们主要使用 `nx` 命令行工具来执行各种开发任务。基本语法为 `nx <target> <project-name>`。
 
@@ -144,7 +188,7 @@ aitoearn-monorepo/
   pnpm lint
   ```
 
-### 2.3. 日常开发流程
+### 2.4. 日常开发流程
 
 1.  **切换到你的开发分支**: `git checkout -b feature/my-new-feature`
 2.  **启动应用**: `nx serve <app-name>`
@@ -390,14 +434,14 @@ Nx 会自动检测自上次发布以来有代码变更的库，计算下一个�
 
 ## 6. CI/CD
 
-本项目的持续集成与持续部署（CI/CD）流程基于 **GitHub Actions**，旨在实现代码提交、测试、构建和部署的完全自动化，确保代码质量和交付效率。
+本项目的持续集成与持续部署（CI/CD）流程基于 **GitHub Actions**，旨在实现代码提交、构建和部署的完全自动化，确保代码质量和交付效率。
 
 #### 6.1 工作流程（Workflows）
 
 CI/CD 流程由定义在 `.github/workflows` 目录下的两个核心文件驱动：
 
 - **`release.yml`**: 该工作流程负责在 `main` 分支有新的 `push` 操作时，自动执行以下任务：
-  - **构建与测试**: 编译所有服务和库，并运行单元测试与端到端测试。
+  - **构建**: 编译所有服务和库。
   - **版本管理**: 根据提交信息自动生成版本号（Semantic Versioning）。
   - **发布**: 创建一个新的 GitHub Release，并将构建产物打包发布到 GitHub Packages。
 
@@ -408,21 +452,40 @@ CI/CD 流程由定义在 `.github/workflows` 目录下的两个核心文件驱�
 #### 6.2 如何运作
 
 1. **代码提交**: 开发者将代码推送到 `main` 分支。
-2. **自动构建与测试**: `release.yml` 捕捉到 `push` 事件，开始执行构建和测试任务。
+2. **自动构建**: `release.yml` 捕捉到 `push` 事件，开始执行构建任务。
 3. **发布新版本**: 如果所有任务成功，将自动创建一个新的 Release，并发布到 GitHub Packages。
 4. **手动部署**: 开发者在 GitHub Actions 页面手动触发 `deploy.yml` 工作流程，选择要部署的应用、环境和版本。工作流将构建新的 Docker 镜像，推送到 ECR，并创建 PR 到 Helm 仓库。PR 合并后，应用将自动更新。
 
+#### 6.3 可视化流程图
+
+Mermaid 流程图（在支持 Mermaid 的平台可视化展示）：
+
+```mermaid
+flowchart TD
+  DevPush[开发者 Push 到 main] --> ReleaseYML[GitHub Actions: release.yml]
+  ReleaseYML --> Build[构建应用与库]
+  ReleaseYML --> Version[版本管理]
+  ReleaseYML --> Publish[发布到 GitHub Packages]
+
+  ManualTrigger[开发者在 Actions 手动触发 deploy.yml] --> DeployYML[GitHub Actions: deploy.yml]
+  DeployYML --> DockerBuild[构建 Docker 镜像]
+  DockerBuild --> ECR[推送到 Amazon ECR]
+  DeployYML --> HelmPR[创建 PR 到 Helm 仓库]
+  HelmPR --> Merge[PR 合并]
+  Merge --> K8sUpdate[Kubernetes 自动更新部署]
+```
+
 ---
 
-### 8. Docker
+### 7. Docker
 
-项目使用 Docker 来确保开发、测试和生产环境的一致性。我们通过一个定制的脚本来简化和标准化 Docker 镜像的构建过程。
+项目使用 Docker 来确保开发和生产环境的一致性。我们通过一个定制的脚本来简化和标准化 Docker 镜像的构建过程。
 
-#### 8.1. Dockerfile
+#### 7.1. Dockerfile
 
 每个需要容器化的应用都可以在其根目录下包含一个 `Dockerfile`。如果应用特定的 `Dockerfile` 不存在，将使用项目根目录下的通用 `Dockerfile`。
 
-#### 8.2. 构建和运行单个服务
+#### 7.2. 构建和运行单个服务
 
 我们通过在 `project.json` 中为每个应用定义 `docker-build` 目标来标准化 Docker 镜像的构建过程。
 
@@ -446,11 +509,11 @@ node scripts/build-docker.mjs aitoearn-cloud-space
 
 构建完成后，会生成一个带有日期和 Git 提交哈希的标签的镜像，例如 `aitoearn-cloud-space:20231027-a1b2c3d`。
 
-### 9. 环境配置
+### 8. 环境配置
 
 本项目通过在应用或库的 `config` 目录下区分环境加载配置，并结合使用 `@yikart/common` 中的 `selectConfig` 函数来管理不同环境的配置。
 
-#### 9.1. 配置文件
+#### 8.1. 配置文件
 
 每个应用或库都可以包含一个 `config` 目录，用于存放不同环境的配置文件。例如，`aitoearn-cloud-space` 应用的配置结构如下：
 
@@ -469,7 +532,7 @@ apps/aitoearn-cloud-space/
 
 这些配置文件导出一个对象，其中包含了该环境下的所有配置变量。配置可以从环境变量、硬编码值或其他来源获取。
 
-#### 9.2. 配置加载
+#### 8.2. 配置加载
 
 配置的加载和验证由 `@yikart/common` 库中的 `selectConfig` 函数和 Zod schema 共同完成。
 
@@ -507,7 +570,7 @@ apps/aitoearn-cloud-space/
 
     `selectConfig` 函数负责从命令行参数中获取配置文件路径，并使用 Zod schema 进行验证。`startApplication` 则使用加载好的配置来初始化 Nest.js 应用的各个模块。
 
-### 9.3 如何访问配置
+### 8.3 如何访问配置
 
 配置是通过 `config` 对象直接传递给需要它的模块，通常是在 `AppModule` 中通过模块的 `forRoot` 静态方法。
 
@@ -549,13 +612,13 @@ export class MyService {
 }
 ```
 
-## 10. 公共库说明
+## 9. 公共库说明
 
-### 10.1. 核心库详解 (`common` & `mongodb`)
+### 9.1. 核心库详解 (`common` & `mongodb`)
 
 接下来，我们将详细介绍 `common` 和 `mongodb` 这两个核心库的设计和使用方式。
 
-#### 10.1.1. `common` 库
+#### 9.1.1. `common` 库
 
 `@yikart/common` 是整个 Monorepo 的基石，提供了大量可复用的基础组件、工具函数和统一的编程规范。它的设计目标是提升开发效率、保证代码质量和项目一致性。
 
@@ -580,13 +643,13 @@ export class MyService {
 - **`starter.ts`**: 封装了 Nest.js 应用的启动逻辑，集成了日志、管道、过滤器等通用配置。
 - **`utils`**: 通用的工具函数集合。
 
-#### 10.1.2. `mongodb` 库
+#### 9.1.2. `mongodb` 库
 
 `@yikart/mongodb` 库封装了与 MongoDB 数据库的交互逻辑，提供了一个结构化、可复用的数据访问层。它基于 Mongoose 构建，并增加了对事务、仓储模式（Repository Pattern）等的支持。
 
 ##### 代码风格与核心原则
 
-- **仓储模式 (Repository Pattern)**: 每个 `Schema`（模式）都对应一个 `Repository`（仓储）。所有的数据库操作（增删改查）都应该在 `Repository` 中完成，而不是在业务逻辑（Service）中直接调用 Mongoose 的 `Model`。这使得数据访问逻辑与业务逻辑解藕，更易于测试和维护。
+- **仓储模式 (Repository Pattern)**: 每个 `Schema`（模式）都对应一个 `Repository`（仓储）。所有的数据库操作（增删改查）都应该在 `Repository` 中完成，而不是在业务逻辑（Service）中直接调用 Mongoose 的 `Model`。这使得数据访问逻辑与业务逻辑解藕，更易于验证与维护。
 - **Schema 定义**: Mongoose `Schema` 用于定义数据模型。我们约定在 `schemas` 目录下创建和管理这些模型。
 - **事务支持**: 提供了 `@Transactional()` 装饰器和 `TransactionalInjector`，可以方便地在需要原子操作的业务方法上启用 MongoDB 事务。
 - **统一配置**: 通过 `MongodbModule.forRoot()` 进行数据库连接配置，支持多数据库连接。
@@ -599,7 +662,7 @@ export class MyService {
 - **`transactional.injector.ts`**: 实现了事务装饰器背后的逻辑，通过 `AsyncLocalStorage` 来管理和传递事务会话（Session）。
 - **`mongodb.module.ts`**: 封装了 Mongoose 的连接和模块注册逻辑。
 
-### 10.2. 其他公共库
+### 9.2. 其他公共库
 
 - **`@yikart/aitoearn-ai-client`**: `aitoearn-ai` 服务的客户端库，用于调用 AI 相关功能，如对话、绘画等。
 - **`@yikart/aitoearn-user-client`**: `aitoearn-user` 服务的客户端库，用于获取和管理用户信息。
