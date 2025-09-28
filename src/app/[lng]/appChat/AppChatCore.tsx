@@ -12,7 +12,7 @@ export const AppChatCore = () => {
         location.origin.includes("localhost")
           ? "https://dev.aitoearn.ai"
           : location.origin
-      }/chat`,
+      }/chat/#/new-chat?mask=100000`,
     );
   }, []);
 
