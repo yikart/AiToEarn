@@ -13,7 +13,9 @@
     "delete": "Delete"
   },
   "tips": {
-    "workSaved": "Please select the account to publish"
+    "workSaved": "Please select the account to publish",
+    "pcNotSupported": "Web does not support this platform, please download the App to publish",
+    "accountOffline": "This account is offline and cannot be published"
   },
   "status": {
     "publishFailed": "Failed",

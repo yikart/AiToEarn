@@ -1035,7 +1035,6 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   text-align: center;
-  margin-top: 16px;
   padding-top: 12px;
   padding-bottom: 8px;
 }

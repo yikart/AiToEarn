@@ -145,8 +145,8 @@ const PointsDetailModal = memo(({ open, onClose }: PointsDetailModalProps) => {
               <div style={{ textAlign: 'center', padding: '60px 0', color: '#9ca3af' }}>{translate('points.noData')}</div>
             ) : (
               <div style={{ display: 'grid', gap: 12 }}>
-                {filtered.map((r) => (
-                  <div key={r._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', border: '1px solid #eef2f7', borderRadius: 10 }}>
+                {filtered.map((r, index) => (
+                  <div key={r._id || `record-${index}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 14px', border: '1px solid #eef2f7', borderRadius: 10 }}>
                     <div>
                       <div style={{ fontWeight: 600, color: '#111827' }}>
                         {translate('points.recordChange')} - {r.type ? translate(`points.recordTypes.${r.type}`) : translate('points.recordChange')}

@@ -16,6 +16,7 @@ import {
   Tooltip,
   Collapse,
 } from "antd";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 import { CheckOutlined } from "@ant-design/icons";
 import { useShallow } from "zustand/react/shallow";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
@@ -76,6 +77,9 @@ const SimpleAccountChoose = memo(
       const [accountGroupList, setAccountGroupList] = useState<AccountGroup[]>([]);
       // 每次change操作的数据
       const recentData = useRef<SocialAccount>();
+      // 下载App弹窗状态
+      const [downloadModalVisible, setDownloadModalVisible] = useState(false);
+      const [currentPlatform, setCurrentPlatform] = useState<string>('');
       const { accountList } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
@@ -191,6 +195,17 @@ const SimpleAccountChoose = memo(
         const platInfo = AccountPlatInfoMap.get(account.type);
         const isSelected = choosedAccountsList.some(item => item.id === account.id);
         const isDisable = choosedAccounts?.find((k) => k.id === account.id) && isCancelChooseAccount;
+        const isPcNotSupported = platInfo && platInfo.pcNoThis === true;
+
+        const handleAccountClick = () => {
+          if (isDisable) return;
+          if (isPcNotSupported) {
+            setCurrentPlatform(platInfo?.name || '');
+            setDownloadModalVisible(true);
+            return;
+          }
+          handleSelectAccount(account);
+        };
 
         return (
           <div
@@ -199,18 +214,24 @@ const SimpleAccountChoose = memo(
               "simpleAccountChoose-accounts-item",
               isSelected && "simpleAccountChoose-accounts-item--active",
               isDisable && "simpleAccountChoose-accounts-item--disable",
+              isPcNotSupported && "simpleAccountChoose-accounts-item--pc-not-supported",
             ].join(" ")}
-            onClick={() => {
-              if (isDisable) return;
-              handleSelectAccount(account);
-            }}
+            onClick={handleAccountClick}
           >
             <Tooltip
               title={
-                <>
-                  <p>昵称：{account.nickname}</p>
-                  <p>平台：{platInfo?.name}</p>
-                </>
+                isPcNotSupported ? (
+                  <>
+                    <p>昵称：{account.nickname}</p>
+                    <p>平台：{platInfo?.name}</p>
+                    <p style={{ color: '#ff4d4f' }}>Web不支持该平台，请下载App</p>
+                  </>
+                ) : (
+                  <>
+                    <p>昵称：{account.nickname}</p>
+                    <p>平台：{platInfo?.name}</p>
+                  </>
+                )
               }
             >
               <div className="simpleAccountChoose-accounts-item-avatar">
@@ -226,9 +247,15 @@ const SimpleAccountChoose = memo(
               </span>
             </Tooltip>
 
-            <div className="simpleAccountChoose-accounts-item-choose">
-              <CheckOutlined />
-            </div>
+            {isPcNotSupported ? (
+              <div className="simpleAccountChoose-accounts-item-overlay">
+                <span className="simpleAccountChoose-accounts-item-overlay-text">APP</span>
+              </div>
+            ) : (
+              <div className="simpleAccountChoose-accounts-item-choose">
+                <CheckOutlined />
+              </div>
+            )}
           </div>
         );
       };
@@ -318,6 +345,14 @@ const SimpleAccountChoose = memo(
               {renderGroupContent()}
             </>
           )}
+
+          {/* 下载App弹窗 */}
+          <DownloadAppModal
+            visible={downloadModalVisible}
+            onClose={() => setDownloadModalVisible(false)}
+            platform={currentPlatform}
+            appName="Aitoearn App"
+          />
         </div>
       );
     },

@@ -8,6 +8,7 @@ import { WalletOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import { useUserStore } from "@/store/user";
 import { getUserInfoApi, updateUserInfoApi, getPointsRecordsApi } from "@/api/apiReq";
+import { cancelAccountApi } from "@/api/signIn";
 import { createPaymentOrderApi, PaymentType as VipPaymentType } from "@/api/vip";
 import { getOrderListApi, getOrderDetailApi, getSubscriptionListApi, refundOrderApi, unsubscribeApi } from "@/api/payment";
 import type { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams } from "@/api/types/payment";
@@ -36,6 +37,13 @@ export default function ProfilePage() {
   // 免费会员提示弹框状态
   const [freeTrialModalVisible, setFreeTrialModalVisible] = useState(false);
   const [hasShownFreeTrial, setHasShownFreeTrial] = useState(false);
+  
+  // 注销账户相关状态
+  const [cancelModalVisible, setCancelModalVisible] = useState(false);
+  const [cancelForm] = Form.useForm();
+  const [cancelCode, setCancelCode] = useState('');
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [codeCountdown, setCodeCountdown] = useState(0);
   
   // 检查是否已经显示过免费会员提示
   useEffect(() => {
@@ -291,6 +299,82 @@ export default function ProfilePage() {
       setOrderDetailLoading(false);
     }
   };
+
+  /**
+   * 获取注销验证码
+   */
+  const handleGetCancelCode = async () => {
+    try {
+      const response = await cancelAccountApi.getCancelCode();
+      console.log('验证码响应:', response);
+      
+      if (response && response.code === 0) {
+        setCancelCode(response.data?.code || '');
+        message.success('验证码已发送');
+        // 开始倒计时
+        setCodeCountdown(60);
+      } else {
+        message.error(response?.message || '获取验证码失败');
+      }
+    } catch (error) {
+      console.error('获取验证码错误:', error);
+      message.error('获取验证码失败');
+    }
+  };
+
+  /**
+   * 处理注销账户
+   */
+  const handleCancelAccount = async () => {
+    try {
+      const values = await cancelForm.validateFields();
+      setCancelLoading(true);
+      
+      console.log('发送注销请求，验证码:', values.code);
+      
+      const response:any = await cancelAccountApi.cancelAccount({
+        code: values.code
+      });
+      
+
+      if (response && response.code === 0) {
+        message.success('账户注销成功');
+        setCancelModalVisible(false);
+        // 清除登录状态并跳转到登录页
+        clearLoginStatus();
+        router.push('/login');
+      }
+    } catch (error) {
+      
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
+  /**
+   * 打开注销确认弹窗
+   */
+  const handleOpenCancelModal = () => {
+    setCancelModalVisible(true);
+    cancelForm.resetFields();
+    setCancelCode('');
+    setCodeCountdown(0);
+  };
+
+  // 倒计时效果
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (codeCountdown > 0) {
+      timer = setTimeout(() => {
+        setCodeCountdown(codeCountdown - 1);
+      }, 1000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [codeCountdown]);
 
   useEffect(() => {
     if (!token) {
@@ -765,17 +849,17 @@ export default function ProfilePage() {
         <div className={styles.statsHeader}>
           <Image src={plusvip} alt="VIP"  className={styles.vipBadge} />
           <span className={styles.statsTitle}>{t('stats.totalEarned' as any)}</span>
-          <span className={styles.statsAmount}>{(userInfo as any)?.totalIncome ?? 0}</span>
+          <span className={styles.statsAmount}>{((userInfo as any)?.totalIncome ?? 0).toFixed(2)}</span>
           <span className={styles.statsCurrency}>{t('stats.currencyYuan' as any)}</span>
         </div>
         <div className={styles.statsGrid}>
           <div className={styles.statsItem}  onClick={() => router.push('/income')} >
             
-            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {userInfo?.income || 0} </span> CNY</div>
+            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {(userInfo?.income || 0).toFixed(2) } </span> CNY</div>
           </div>
           <div className={styles.statsItem} style={{cursor:'pointer'}} onClick={() => setPointsDetailVisible(true)}>
             
-            <div className={styles.statsLabel}>{t('stats.points' as any)} <span className={styles.statsValue}>{Math.floor((userInfo?.score as number) || 0) } </span> {t('stats.points' as any)}</div>
+            <div className={styles.statsLabel}>{t('stats.points' as any)} <span className={styles.statsValue}>{(Math.floor((userInfo?.score as number) || 0)).toFixed(1) } </span> {t('stats.points' as any)}</div>
           </div>
           
         </div>
@@ -802,7 +886,7 @@ export default function ProfilePage() {
           <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>{t('deleteAccount.title' as any)}</div>
           <div>{t('deleteAccount.desc' as any)}</div>
         </div>
-        <Button danger>{t('deleteAccount.apply' as any)}</Button>
+        <Button danger onClick={handleOpenCancelModal}>{t('deleteAccount.apply' as any)}</Button>
       </div>
     </>
   );
@@ -1102,6 +1186,70 @@ export default function ProfilePage() {
       <PointsRechargeModal open={pointsRechargeVisible} onClose={handleRechargeCancel} />
       <PointsDetailModal open={pointsDetailVisible} onClose={() => setPointsDetailVisible(false)} />
       <VipContentModal open={vipModalVisible} onClose={() => setVipModalVisible(false)} />
+
+      {/* 注销账户确认弹窗 */}
+      <Modal
+        title="注销账户"
+        open={cancelModalVisible}
+        onCancel={() => setCancelModalVisible(false)}
+        footer={null}
+        width={500}
+        centered
+      >
+        <div style={{ paddingTop: '20px' }}>
+          <div style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
+            <p>注销账户是不可逆的操作，一旦注销，您的所有数据将被永久删除，包括：</p>
+            <ul style={{ margin: '10px 0', paddingLeft: '20px' }}>
+              <li>个人资料和设置</li>
+              <li>所有发布的内容</li>
+              <li>积分和会员权益</li>
+              <li>订单和支付记录</li>
+            </ul>
+            <p style={{ color: '#ff4d4f', fontWeight: 'bold' }}>请谨慎操作！</p>
+            <p style={{ color: '#1890ff', fontSize: '14px' }}>为了您的账户安全，请先获取验证码进行身份验证。</p>
+          </div>
+          
+          <Form
+            form={cancelForm}
+            layout="vertical"
+            onFinish={handleCancelAccount}
+          >
+            <Form.Item
+              label="验证码"
+              name="code"
+              rules={[{ required: true, message: '请输入验证码' }]}
+            >
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Input placeholder="请输入验证码" />
+                <Button 
+                  onClick={handleGetCancelCode} 
+                  disabled={codeCountdown > 0}
+                  loading={codeCountdown > 0}
+                >
+                  {codeCountdown > 0 ? `${codeCountdown}s后重发` : '获取验证码'}
+                </Button>
+              </div>
+            </Form.Item>
+            
+            
+            <Form.Item>
+              <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                <Button onClick={() => setCancelModalVisible(false)}>
+                  取消
+                </Button>
+                <Button 
+                  type="primary" 
+                  danger 
+                  htmlType="submit" 
+                  loading={cancelLoading}
+                >
+                  确认注销
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </div>
+      </Modal>
     </div>
   );
 } 

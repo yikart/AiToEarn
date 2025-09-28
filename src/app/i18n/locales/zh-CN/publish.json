@@ -13,7 +13,9 @@
     "delete": "删除"
   },
   "tips": {
-    "workSaved": "请选择要发布的账户"
+    "workSaved": "请选择要发布的账户",
+    "pcNotSupported": "Web不支持该平台，请下载App进行发布",
+    "accountOffline": "该账号已离线，无法发布"
   },
   "status": {
     "publishFailed": "发布失败",

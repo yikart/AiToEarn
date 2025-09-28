@@ -2,6 +2,8 @@
   "title": "PLUS会员",
   "description": "开通会员解锁全部功能，立享8种权益",
   "activateNow": "立即开通",
+  "upgrade": "开通会员",
+  "membership": "会员",
   "pleaseLoginFirst": "请先登录",
   "paymentOrderCreated": "支付订单创建成功",
   "paymentLinkNotFound": "未获取到支付链接",
@@ -58,6 +60,7 @@
       "period": "每月",
       "forever": "永久",
       "currentPlan": "当前计划",
+      "freePlan": "免费计划",
       "points": "60积分每月",
       "features": {
         "dailyPoints": "发布赠送积分",
@@ -71,7 +74,7 @@
       "yearly": {
         "title": "年度会员",
         "bestValue": "最划算",
-        "price": "$144",
+        "price": "144",
         "period": "每年",
         "originalPrice": "$300/年",
         "button": "$144/年 省50%",
@@ -89,7 +92,7 @@
       },
       "monthly": {
         "title": "月度会员",
-        "price": "$228",
+        "price": "228",
         "period": "每年",
         "originalPrice": "$25/月",
         "button": "$19/月 省25%",
@@ -98,12 +101,12 @@
       },
       "once": {
         "title": "一次性月度会员",
-        "price": "$25",
+        "price": "25",
         "period": "每月",
         "button": "$25/月",
         "points": "700积分",
         "description": "最多生成1400张图和700个视频",
-        "storage": "存储空间3G"
+        "storage": "存储空间5G"
       }
     },
     "trial": "7天免费试用",

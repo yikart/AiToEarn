@@ -34,8 +34,8 @@ $assistantWidth: 330px;
       }
       &-acconts {
         display: flex;
-        flex-wrap: nowrap;
-        gap: 12px;
+        flex-wrap: wrap;
+        gap: 11px;
         &-item {
           border: 2px solid transparent;
           border-radius: 50%;

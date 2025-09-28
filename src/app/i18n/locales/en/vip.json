@@ -2,6 +2,8 @@
   "title": "PLUS Member",
   "description": "Upgrade to unlock all features with 8 benefits",
   "activateNow": "Activate Now",
+  "upgrade": "Upgrade",
+  "membership": "Membership",
   "pleaseLoginFirst": "Please login first",
   "paymentOrderCreated": "Payment order created",
   "paymentLinkNotFound": "Payment link not found",
@@ -58,9 +60,10 @@
       "period": "/month",
       "forever": "Forever",
       "currentPlan": "Current Plan",
+      "freePlan": "Free Plan",
       "points": "60 pts/month",
       "features": {
-        "dailyPoints": "Daily points",
+        "dailyPoints": "Daily credits",
         "maxPoints": "Max 60 pts",
         "videos": "60 videos/month",
         "images": "120 images/month",
@@ -71,14 +74,14 @@
       "yearly": {
         "title": "Yearly",
         "bestValue": "Best Value",
-        "price": "$144",
+        "price": "144",
         "period": "/year",
         "originalPrice": "$300/year",
         "button": "$144/year Save 50%",
         "points": "8,400 pts",
         "description": "16,800 images & 8,400 videos",
         "features": {
-          "dailyPoints": "Daily points",
+          "dailyPoints": "Daily credits",
           "contentReview": "Content review",
           "multiModel": "Multi-model support",
           "textToVideo": "Text to video",
@@ -89,7 +92,7 @@
       },
       "monthly": {
         "title": "Monthly",
-        "price": "$228",
+        "price": "228",
         "period": "/year",
         "originalPrice": "$25/month",
         "button": "$19/month Save 25%",
@@ -98,12 +101,12 @@
       },
       "once": {
         "title": "One-time",
-        "price": "$25",
+        "price": "25",
         "period": "/month",
         "button": "$25/month",
         "points": "700 pts",
         "description": "1,400 images & 700 videos",
-        "storage": "3G storage"
+        "storage": "5G storage"
       }
     },
     "trial": "7-day free trial",
@@ -138,11 +141,11 @@
   "recharge": {
     "title": "Buy Points",
     "current": "Current Points",
-    "price": "1000 points for $15",
+    "price": "1000 credits for $15",
     "amount": "Buy Points",
     "total": "Total",
     "buyNow": "Buy Now",
     "range": "1K-50K",
-    "unit": "points"
+    "unit": "credits"
   }
 } 
