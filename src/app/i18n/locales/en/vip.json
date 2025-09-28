@@ -39,12 +39,46 @@
     "month": "Monthly",
     "year": "Yearly"
   },
+  "subscriptionManagement": "Subscription Management",
+  "subscriptionPlanManagement": "Subscription Plan Management",
+  "purchaseHistory": "Purchase History",
+  "myMembership": "My Membership",
+  "basicMembership": "Basic Membership",
+  "validUntil": "Valid Until",
+  "activatedAutoRenewalPlans": "Activated Auto-renewal Plans",
+  "activatedAutoRenewalPlansno": "Unactivated Auto-renewal Plans",
+  "noAutoRenewalItems": "You haven't activated any auto-renewal items yet",
+  "viewMorePlans": "View More Plans",
+  "continuousAnnual": "Continuous Annual",
+  "oneTimePurchase": "One-time Purchase",
+  "alipayPayment": "Alipay Payment",
+  "noMoreContent": "No more content",
+  "previousPage": "Previous",
+  "nextPage": "Next",
+  "pageInfo": "Page {current} of {total}",
+  "continuousMember": "Continuous Member",
+  "singleMember": "Single Month Member",
+  "autoRenewalEnabled": "Auto-renewal Enabled",
+  "autoRenewalDisabled": "Auto-renewal Disabled",
+  "nextRenewalDate": "Next Renewal Date",
+  "membershipExpires": "Membership Expires",
   "modal": {
     "title": "7-Day Free Trial",
     "highlight": "Get 100 Points",
     "choosePlan": "Choose your plan or",
     "buyPoints": "Buy Points",
     "pointsDetail": "Points Detail",
+    "vipInfo": {
+      "details": "Details",
+      "subscription": "Subscription",
+      "planType": "Plan Type",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "singleMonth": "Single Month",
+      "expireTime": "Expire Time",
+      "remainingPoints": "Remaining Points",
+      "buyPoints": "Buy Points"
+    },
     "tabs": {
       "yearly": "Yearly",
       "monthly": "Monthly",
@@ -64,7 +98,7 @@
       "points": "60 pts/month",
       "features": {
         "dailyPoints": "Daily credits",
-        "maxPoints": "Max 60 pts",
+        "maxPoints": "Max 60",
         "videos": "60 videos/month",
         "images": "120 images/month",
         "storage": "500M storage"
@@ -78,7 +112,7 @@
         "period": "/year",
         "originalPrice": "$300/year",
         "button": "$144/year Save 50%",
-        "points": "8,400 pts",
+        "points": "760 credits/month",
         "description": "16,800 images & 8,400 videos",
         "features": {
           "dailyPoints": "Daily credits",
@@ -96,7 +130,7 @@
         "period": "/year",
         "originalPrice": "$25/month",
         "button": "$19/month Save 25%",
-        "points": "8,400 pts",
+        "points": "760 credits/month",
         "description": "16,800 images & 8,400 videos"
       },
       "once": {
@@ -104,7 +138,7 @@
         "price": "25",
         "period": "/month",
         "button": "$25/month",
-        "points": "700 pts",
+        "points": "760 credits/month",
         "description": "1,400 images & 700 videos",
         "storage": "5G storage"
       }

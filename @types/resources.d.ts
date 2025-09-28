@@ -1627,7 +1627,7 @@ interface Resources {
   "profile": {
     "personalInfo": "个人信息",
     "orderManagement": "订单管理",
-    "myOrders": "我的订单",
+    "myOrders": "购买记录",
     "mySubscriptions": "我的订阅",
     "plusMember": "PLUS会员",
     "vipUserGreeting": "尊敬的VIP用户，您已解锁全部会员权益",
@@ -1668,6 +1668,7 @@ interface Resources {
     "goToPayment": "前往支付",
     "internalId": "内部ID",
     "subscriptionMode": "订阅模式",
+    "paymentMethod": "支付方式",
     "refundedAmount": "已退款金额",
     "paymentIntent": "Payment Intent",
     "paymentLink": "支付链接",

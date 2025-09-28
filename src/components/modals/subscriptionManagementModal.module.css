@@ -1,0 +1,445 @@
+/* 订阅管理弹窗样式 */
+.subscriptionModal {
+  background: white;
+  border-radius: 12px;
+}
+
+.subscriptionModal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.subscriptionModal .ant-modal-header {
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.subscriptionModal .ant-modal-body {
+  border-radius: 0 0 12px 12px;
+  padding: 0;
+}
+
+.modalContent {
+  background: white;
+  padding: 0;
+  margin-top: 8px;
+}
+
+/* 我的会员区域 */
+.myMembership {
+  min-height: 780px;
+  max-height: 60vh;
+  overflow: scroll;
+}
+
+.myMembership h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.membershipCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.membershipInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.membershipIcon {
+  font-size: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+}
+
+.membershipDetails {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.membershipName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.membershipExpire {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 自动续费区域 */
+.autoRenewal {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+/* 会员状态 */
+.membershipStatus {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* 活跃订阅区域 */
+.activeSubscription {
+  border-radius: 8px;
+}
+
+.subscriptionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.subscriptionInfo {
+  flex: 1;
+}
+
+.subscriptionName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.subscriptionStatus {
+  font-size: 14px;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.subscriptionActions {
+  margin-left: 16px;
+}
+
+/* 订阅卡片样式 */
+.subscriptionCards {
+  margin-top: 16px;
+}
+
+.subscriptionCard {
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.subscriptionHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.subscriptionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.subscriptionDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.subscriptionDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.subscriptionDetailItem .detailLabel {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.subscriptionDetailItem .detailValue {
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subscriptionDetailItem .copyBtn {
+  padding: 0;
+  height: auto;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.subscriptionDetailItem .copyBtn:hover {
+  color: #374151;
+}
+
+.autoRenewal h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: #111827;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+  border-radius: 8px;
+}
+
+.emptyState p {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.viewMoreBtn {
+  background: #374151;
+  border-color: #374151;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.viewMoreBtn:hover {
+  background: #4b5563;
+  border-color: #4b5563;
+}
+
+/* 操作按钮 */
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actionButtons .ant-btn {
+  font-size: 12px;
+  padding: 4px 8px;
+  height: auto;
+}
+
+/* 订单详情弹窗 */
+.orderDetailModal .ant-descriptions-item-label {
+  font-weight: 600;
+  color: #374151;
+  width: 120px;
+}
+
+.orderDetailModal .ant-descriptions-item-content {
+  color: #111827;
+}
+
+/* 表格样式优化 */
+.ant-table-thead > tr > th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f8f9fa;
+}
+
+/* 分页样式 */
+.ant-pagination {
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* 标签样式 */
+.ant-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+}
+
+/* 购买记录卡片布局 */
+.purchaseHistory {
+  padding: 0;
+  min-height: 780px;
+  max-height: 60vh;
+  overflow: scroll;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.loadingText {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.orderCards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderCard {
+  background: white;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.orderCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.orderHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.orderTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orderDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.detailLabel {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.detailValue {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copyBtn {
+  padding: 4px 8px;
+  height: auto;
+  font-size: 12px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.copyBtn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px 0;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.noMoreContent {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.noMoreContent p {
+  margin: 0;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .subscriptionModal {
+    width: 95% !important;
+    max-width: none;
+  }
+  
+  .membershipInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .actionButtons .ant-btn {
+    width: 100%;
+  }
+  
+  .orderDetailItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .detailLabel {
+    min-width: auto;
+  }
+  
+  .paginationContainer {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

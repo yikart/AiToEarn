@@ -335,7 +335,7 @@ const AccountSidebar = memo(
                         name: groupName.trim(),
                       });
                       await getAccountGroup();
-                      message.success(t("createSpace.success"));
+                      // message.success(t("createSpace.success"));
                       createGroupCancel();
                     } catch (error) {
                       message.error(t("createSpace.failed"));

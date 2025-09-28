@@ -51,43 +51,56 @@ export const useCalendarTiming = create(
 
         // 获取发布记录数据
         async getPubRecord() {
-          methods.setListLoading(true);
-          const date = getDays(get().calendarRef?.getApi().getDate() || new Date());
-          const startOfMonth = date.startOf("month");
-          const endOfMonth = date.endOf("month");
+          try {
+            methods.setListLoading(true);
+            const date = getDays(get().calendarRef?.getApi().getDate() || new Date());
+            const startOfMonth = date.startOf("month");
+            const endOfMonth = date.endOf("month");
 
-          const res = await getPublishList({
-            time: [startOfMonth.utc().format(), endOfMonth.utc().format()],
-            accountType: useAccountStore.getState().accountActive?.type,
-          });
-          methods.setListLoading(false);
-          if (!res) return;
-          const recordMap = new Map<string, PublishRecordItem[]>();
-          // 将数据分拣到对应天中
-          res?.data.map((v) => {
-            const days = getDays(v.publishTime);
-            const timeStr = days.format("YYYY-MM-DD");
-            let list = recordMap.get(timeStr);
-            if (!list) {
-              list = [];
+            const res = await getPublishList({
+              time: [startOfMonth.utc().format(), endOfMonth.utc().format()],
+              accountType: useAccountStore.getState().accountActive?.type,
+            });
+            methods.setListLoading(false);
+            
+            // 检查响应数据是否有效
+            if (!res || !res.data || !Array.isArray(res.data)) {
+              console.warn('获取发布记录数据失败或数据格式不正确:', res);
+              methods.setRecordMap(new Map());
+              return;
+            }
+            
+            const recordMap = new Map<string, PublishRecordItem[]>();
+            // 将数据分拣到对应天中
+            res.data.map((v) => {
+              const days = getDays(v.publishTime);
+              const timeStr = days.format("YYYY-MM-DD");
+              let list = recordMap.get(timeStr);
+              if (!list) {
+                list = [];
+                recordMap.set(timeStr, list);
+              }
+              list.push(v);
               recordMap.set(timeStr, list);
-            }
-            list.push(v);
-            recordMap.set(timeStr, list);
-          });
-          // 对每一天的记录按照 publishTime 时间从早到晚排序
-          recordMap.forEach((v, k) => {
-            let list = recordMap.get(k);
-            if (list) {
-              list = list.sort(
-                (a, b) =>
-                  new Date(a.publishTime).getTime() -
-                  new Date(b.publishTime).getTime(),
-              );
-              recordMap.set(k, list);
-            }
-          });
-          methods.setRecordMap(recordMap);
+            });
+            // 对每一天的记录按照 publishTime 时间从早到晚排序
+            recordMap.forEach((v, k) => {
+              let list = recordMap.get(k);
+              if (list) {
+                list = list.sort(
+                  (a, b) =>
+                    new Date(a.publishTime).getTime() -
+                    new Date(b.publishTime).getTime(),
+                );
+                recordMap.set(k, list);
+              }
+            });
+            methods.setRecordMap(recordMap);
+          } catch (error) {
+            console.error('获取发布记录数据时发生错误:', error);
+            methods.setListLoading(false);
+            methods.setRecordMap(new Map());
+          }
         },
 
         clear() {

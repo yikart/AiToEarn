@@ -39,12 +39,46 @@
     "month": "月度订阅",
     "year": "年度订阅"
   },
+  "subscriptionManagement": "订阅管理",
+  "subscriptionPlanManagement": "订阅计划管理",
+  "purchaseHistory": "购买记录",
+  "myMembership": "我的会员",
+  "basicMembership": "基础会员",
+  "validUntil": "有效期至",
+  "activatedAutoRenewalPlans": "已开通自动续费套餐",
+  "activatedAutoRenewalPlansno": "未开通自动续费套餐",
+  "noAutoRenewalItems": "你还没有开通自动续费项目哦",
+  "viewMorePlans": "查看更多套餐",
+  "continuousAnnual": "连续包年",
+  "oneTimePurchase": "一次性购买",
+  "alipayPayment": "支付宝支付",
+  "noMoreContent": "没有内容了",
+  "previousPage": "上一页",
+  "nextPage": "下一页",
+  "pageInfo": "第 {current} 页，共 {total} 页",
+  "continuousMember": "连续会员",
+  "singleMember": "单月会员",
+  "autoRenewalEnabled": "自动续费已开启",
+  "autoRenewalDisabled": "自动续费未开启",
+  "nextRenewalDate": "下次续费时间",
+  "membershipExpires": "有效期至",
   "modal": {
     "title": "免费试用7天会员",
     "highlight": "立得100积分",
     "choosePlan": "选择合适你的套餐，或直接",
     "buyPoints": "购买积分",
     "pointsDetail": "积分详情",
+    "vipInfo": {
+      "details": "详情",
+      "subscription": "订阅管理",
+      "planType": "计划",
+      "monthly": "月度会员",
+      "yearly": "年度会员",
+      "singleMonth": "单月会员",
+      "expireTime": "到期时间",
+      "remainingPoints": "剩余积分",
+      "buyPoints": "购买积分"
+    },
     "tabs": {
       "yearly": "连续包年",
       "monthly": "连续包月",
@@ -78,7 +112,7 @@
         "period": "每年",
         "originalPrice": "$300/年",
         "button": "$144/年 省50%",
-        "points": "8,400积分",
+        "points": "760 积分/月",
         "description": "最多生成16,800张图和8,400个视频",
         "features": {
           "dailyPoints": "每天赠送积分",
@@ -96,7 +130,7 @@
         "period": "每年",
         "originalPrice": "$25/月",
         "button": "$19/月 省25%",
-        "points": "8,400积分",
+        "points": "760 积分/月",
         "description": "最多生成16,800张图和8,400个视频"
       },
       "once": {
@@ -104,7 +138,7 @@
         "price": "25",
         "period": "每月",
         "button": "$25/月",
-        "points": "700积分",
+        "points": "760 积分/月",
         "description": "最多生成1400张图和700个视频",
         "storage": "存储空间5G"
       }

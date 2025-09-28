@@ -139,4 +139,160 @@
 .subDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
 .featureList { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; color: #374151; font-size: 13px; }
 
+/* 会员信息区域样式 */
+.vipInfoSection {
+  border-radius: 12px;
+  margin: 20px 24px;
+  padding-top: 20px;
+}
+
+.vipInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.defaultAvatar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #a66ae4 0%, #5b7cff 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.userDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.userName {
+  font-weight: 600;
+  font-size: 16px;
+  color: #111827;
+}
+
+.userEmail {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.vipActions {
+  display: flex;
+  gap: 8px;
+}
+
+.detailBtn {
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  background: white;
+}
+
+.subscriptionBtn {
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #a66ae4;
+  border-color: #a66ae4;
+  color: white;
+}
+
+.vipPlanInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  background: white;
+  border-radius: 8px;
+}
+
+.planDetails {
+  display: flex;
+  flex-direction: row;
+  gap: 68px;
+}
+
+.planType, .expireTime {
+  font-size: 14px;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.planValue, .expireValue {
+  color: #111827;
+}
+
+.expireValueHover {
+  color: #a66ae4;
+  cursor: pointer;
+}
+
+.pointsInfo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.remainingPoints {
+  font-size: 14px;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pointsValue {
+  font-weight: 600;
+  color: #a66ae4;
+  font-size: 16px;
+}
+
+.buyPointsBtn {
+  height: 32px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #10b981;
+  border-color: #10b981;
+  color: white;
+  font-weight: 600;
+}
+
+.buyPointsBtn:hover {
+  background: #059669;
+  border-color: #059669;
+}
+
 

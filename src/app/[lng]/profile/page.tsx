@@ -786,7 +786,7 @@ export default function ProfilePage() {
 
   // 个人信息内容
   const renderProfileContent = () => (
-  <>
+  <div style={{ }}>
       {/* 顶部头部卡片 */}
       <div className={styles.headerCard}>
         {/* VIP 提示（已是VIP时显示） */}
@@ -881,14 +881,14 @@ export default function ProfilePage() {
 
 
       {/* 底部申请注销按钮 */}
-      <div style={{ textAlign: 'center', paddingTop: 24, display:'flex', flexDirection:'column', justifyContent:'center', alignItems:"flex-start"  }}>
+      {/* <div style={{ textAlign: 'center', paddingTop: 24, display:'flex', flexDirection:'column', justifyContent:'center', alignItems:"flex-start"  }}>
         <div style={{ display:'flex', flexDirection:'column', justifyContent:'space-between', alignItems:"flex-start", marginBottom: 8 }}>
           <div style={{ fontSize: 16, fontWeight: 800, color: '#54687B' }}>{t('deleteAccount.title' as any)}</div>
           <div>{t('deleteAccount.desc' as any)}</div>
         </div>
         <Button danger onClick={handleOpenCancelModal}>{t('deleteAccount.apply' as any)}</Button>
-      </div>
-    </>
+      </div> */}
+    </div>
   );
 
   // 订单管理内容
