@@ -46,6 +46,7 @@ const imageEditModelSchema = z.object({
   description: z.string().describe('模型描述'),
   sizes: z.array(z.string()).describe('支持的尺寸'),
   pricing: z.string(),
+  maxInputImages: z.number(),
 })
 
 export class ImageEditModelParamsVo extends createZodDto(imageEditModelSchema) {}

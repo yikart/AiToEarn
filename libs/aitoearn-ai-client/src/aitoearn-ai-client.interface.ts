@@ -174,6 +174,7 @@ export interface ImageEditModelParamsVo {
   description: string
   sizes: string[]
   pricing: string
+  maxInputImages: number
 }
 
 // 画面纵横比枚举

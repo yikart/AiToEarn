@@ -41,6 +41,7 @@ const aiModelsConfigSchema = z.object({
       description: z.string(),
       sizes: z.array(z.string()),
       pricing: z.string(),
+      maxInputImages: z.number(),
     })),
   }),
   video: z.object({
