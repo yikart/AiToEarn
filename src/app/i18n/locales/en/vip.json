@@ -45,6 +45,17 @@
     "choosePlan": "Choose your plan or",
     "buyPoints": "Buy Points",
     "pointsDetail": "Points Detail",
+    "vipInfo": {
+      "details": "Details",
+      "subscription": "Subscription",
+      "planType": "Plan Type",
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "singleMonth": "Single Month",
+      "expireTime": "Expire Time",
+      "remainingPoints": "Remaining Points",
+      "buyPoints": "Buy Points"
+    },
     "tabs": {
       "yearly": "Yearly",
       "monthly": "Monthly",
