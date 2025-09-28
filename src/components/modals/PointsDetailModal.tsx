@@ -139,7 +139,7 @@ const PointsDetailModal = memo(({ open, onClose }: PointsDetailModalProps) => {
         </div>
 
         {/* 列表 */}
-        <div style={{ padding: '0 20px 16px 20px', minHeight: 399, maxHeight: '60vh', overflowY: 'auto' }}>
+        <div style={{ padding: '0 20px 16px 20px', minHeight: 550, maxHeight: '60vh', overflowY: 'auto' }}>
           <Spin spinning={loading}>
             {filtered.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px 0', color: '#9ca3af' }}>{translate('points.noData')}</div>

@@ -986,7 +986,7 @@ export default function ProfilePage() {
         >
           {renderProfileContent()}
         </TabPane>
-        <TabPane 
+        {/* <TabPane 
           tab={
             <span>
               <ShoppingCartOutlined />
@@ -996,7 +996,7 @@ export default function ProfilePage() {
           key="orders"
         >
           {renderOrderContent()}
-        </TabPane>
+        </TabPane> */}
 
       </Tabs>
 

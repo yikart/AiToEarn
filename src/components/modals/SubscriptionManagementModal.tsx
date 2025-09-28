@@ -262,7 +262,9 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                         subscription.amount && (
                                           <div className={styles.subscriptionDetailItem}>
                                             <span className={styles.detailLabel}>{tProfile('amount')}:</span>
-                                            <span className={styles.detailValue}>¥{(subscription.amount / 100).toFixed(2)}</span>
+                                            <span className={styles.detailValue}>
+                                                {subscription.currency}
+                                                {(subscription.amount / 100).toFixed(2)}</span>
                                           </div>
                                         )
                                       } 
@@ -404,7 +406,11 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                           </div>
                           <div className={styles.orderDetailItem}>
                             <span className={styles.detailLabel}>{tProfile('amount')}:</span>
-                            <span className={styles.detailValue}>¥{(order.amount / 100).toFixed(2)}</span>
+                            <span className={styles.detailValue}>
+                                { (order.amount / 100).toFixed(2) } &nbsp;
+                                { order.currency }
+                                </span>
+                                
                           </div>
                           <div className={styles.orderDetailItem}>
                             <span className={styles.detailLabel}>{tProfile('createTime')}:</span>

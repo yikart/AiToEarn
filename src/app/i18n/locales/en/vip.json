@@ -62,6 +62,7 @@
   "autoRenewalDisabled": "Auto-renewal Disabled",
   "nextRenewalDate": "Next Renewal Date",
   "membershipExpires": "Membership Expires",
+  "currentPlan": "Current Plan",
   "modal": {
     "title": "7-Day Free Trial",
     "highlight": "Get 100 Points",

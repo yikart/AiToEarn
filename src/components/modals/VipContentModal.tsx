@@ -41,6 +41,24 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
            userStore.userInfo.vipInfo.expireTime && 
            new Date(userStore.userInfo.vipInfo.expireTime) > new Date();
   }, [userStore.userInfo]);
+
+  // 判断用户是否已经是相同类型的会员且未过期
+  const isCurrentPlan = useMemo(() => {
+    if (!userStore.userInfo?.vipInfo || !isVip) {
+      return {
+        month: false,
+        year: false,
+        once: false
+      };
+    }
+    
+    const vipInfo = userStore.userInfo.vipInfo;
+    return {
+      month: vipInfo.cycleType === 1, // 1 是月度
+      year: vipInfo.cycleType === 2,  // 2 是年度
+      once: false // 一次性购买不在此判断范围内
+    };
+  }, [userStore.userInfo, isVip]);
   
   const handleTabClick = (tab: 'year' | 'month' | 'once') => {
     setActiveTab(tab);
@@ -67,6 +85,13 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       if (!userStore.userInfo?.id) {
         message.error(t('pleaseLoginFirst'));
         router.push('/login');
+        return;
+      }
+
+      // 检查用户是否已经是相同类型的会员且未过期
+      if (isCurrentPlan[planType]) {
+        message.warning(translate('currentPlan'));
+        setLoading(false);
         return;
       }
 
@@ -277,8 +302,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
+                   disabled={isCurrentPlan.year}
                  >
-                   {translate('modal.plans.yearly.button')}
+                   {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.yearly.button')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
@@ -326,8 +352,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
+                   disabled={isCurrentPlan.month}
                  >
-                   {translate('modal.plans.monthly.button')}
+                   {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.monthly.button')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>

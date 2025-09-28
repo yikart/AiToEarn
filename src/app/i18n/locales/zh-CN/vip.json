@@ -62,6 +62,7 @@
   "autoRenewalDisabled": "自动续费未开启",
   "nextRenewalDate": "下次续费时间",
   "membershipExpires": "有效期至",
+  "currentPlan": "当前计划",
   "modal": {
     "title": "免费试用7天会员",
     "highlight": "立得100积分",
