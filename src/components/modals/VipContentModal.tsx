@@ -233,9 +233,13 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
           <div onClick={() => handleTabClick('month')} className={`${vipStyles.switchBtn} ${activeTab === 'month' ? vipStyles.active : ''}`}>
             {translate('modal.tabs.monthly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.monthly')}</Tag>
           </div>
-          <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>
-            {translate('modal.tabs.once')}
-          </div>
+         {
+          !userStore.userInfo?.vipInfo?.autoContinue && (
+            <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>
+              {translate('modal.tabs.once')}
+            </div>
+          )
+         } 
         </div>
 
         {/* 价格区域 */}

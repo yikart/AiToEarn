@@ -169,269 +169,13 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
     return typeMap[paymentType as PaymentType] || paymentType || tProfile('unknown');
   };
 
-  // 订单表格列
-  const orderColumns = [
-    {
-      title: tProfile('orderId'),
-      dataIndex: 'id',
-      key: 'id',
-      ellipsis: true,
-      width: 200,
-    },
-    {
-      title: tProfile('packageType'),
-      dataIndex: 'metadata',
-      key: 'packageType',
-      width: 120,
-      render: (metadata: any) => getPaymentTypeText(metadata?.payment),
-    },
-    {
-      title: tProfile('amount'),
-      dataIndex: 'amount',
-      key: 'amount',
-      width: 100,
-      render: (amount: number) => `¥${(amount / 100).toFixed(2)}`,
-    },
-    {
-      title: tProfile('status'),
-      dataIndex: 'status',
-      key: 'status',
-      width: 120,
-      render: (status: OrderStatus) => getOrderStatusTag(status),
-    },
-    {
-      title: tProfile('createTime'),
-      dataIndex: 'created',
-      key: 'created',
-      width: 150,
-      render: (created: number) => new Date(created * 1000).toLocaleString(),
-    },
-    {
-      title: tProfile('actions'),
-      key: 'actions',
-      width: 120,
-      render: (_: any, record: Order) => (
-        <div className={styles.actionButtons}>
-          <Button 
-            size="small" 
-            onClick={(e) => {
-              e.stopPropagation();
-              fetchOrderDetail(record.id);
-            }}
-          >
-            {tProfile('viewDetails')}
-          </Button>
-          {record.status === OrderStatus.SUCCEEDED && (
-            <Button 
-              size="small" 
-              danger
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRefund(record);
-              }}
-            >
-              {tProfile('points.refund')}
-            </Button>
-          )}
-        </div>
-      ),
-    },
-  ];
-
-  // 订阅表格列
-  const subscriptionColumns = [
-    {
-      title: tProfile('subscriptionId'),
-      dataIndex: 'id',
-      key: 'id',
-      ellipsis: true,
-      width: 200,
-    },
-    {
-      title: tProfile('packageType'),
-      dataIndex: 'metadata',
-      key: 'packageType',
-      width: 120,
-      render: (metadata: any) => getPaymentTypeText(metadata?.payment),
-    },
-    {
-      title: tProfile('amount'),
-      dataIndex: 'amount',
-      key: 'amount',
-      width: 100,
-      render: (amount: number) => `¥${(amount / 100).toFixed(2)}`,
-    },
-    {
-      title: tProfile('status'),
-      dataIndex: 'status',
-      key: 'status',
-      width: 120,
-      render: (status: OrderStatus) => {
-        const statusMap = {
-          1: { color: 'green', text: tProfile('subscriptionSuccess') },
-          2: { color: 'red', text: tProfile('subscriptionCancelled') },
-          3: { color: 'purple', text: tProfile('refundSuccess') },
-          4: { color: 'orange', text: tProfile('orderCancelled') }
-        };
-        const config = statusMap[status] || { color: 'default', text: `状态${status}` };
-        return <Tag color={config.color}>{config.text}</Tag>;
-      },
-    },
-    {
-      title: tProfile('createTime'),
-      dataIndex: 'created',
-      key: 'created',
-      width: 150,
-      render: (created: number) => new Date(created * 1000).toLocaleString(),
-    },
-    {
-      title: tProfile('actions'),
-      key: 'actions',
-      width: 120,
-      render: (_: any, record: Order) => (
-        <div className={styles.actionButtons}>
-          <Button 
-            size="small" 
-            onClick={(e) => {
-              e.stopPropagation();
-              fetchOrderDetail(record.id);
-            }}
-          >
-            {tProfile('viewDetails')}
-          </Button>
-          {record.status === 1 && (
-            <Button 
-              size="small" 
-              danger
-              onClick={(e) => {
-                e.stopPropagation();
-                handleUnsubscribe(record);
-              }}
-            >
-              {tProfile('cancelSubscription')}
-            </Button>
-          )}
-        </div>
-      ),
-    },
-  ];
 
   // 弹窗打开时加载数据
   useEffect(() => {
     if (open) {
-    //   fetchOrders({ page: 0, size: 10 });
-    //   fetchSubscriptions({ page: 0, size: 10 });
-      
-      // 添加假数据用于测试样式
-      const mockSubscriptions: Order[] = [
-        {
-          _id: 'mock_sub_1',
-          id: 'sub_1234567890',
-          amount: 2999, // 29.99 元
-          amount_refunded: 0,
-          created: Math.floor(Date.now() / 1000) - 86400 * 30, // 30天前
-          currency: 'cny',
-          customer: null,
-          customer_details: null,
-          expires_at: Math.floor(Date.now() / 1000) + 86400 * 30, // 30天后
-          info: null,
-          metadata: {
-            userId: 'user123',
-            payment: 'month',
-            mode: 'subscription'
-          },
-          mode: 'subscription',
-          payment_intent: 'pi_mock_123',
-          price: 'price_monthly',
-          status: 1, // SUCCEEDED
-          subscription: { id: 'sub_1234567890' },
-          success_url: '/success',
-          url: '',
-          userId: 'user123'
-        },
-        {
-          _id: 'mock_sub_2',
-          id: 'sub_0987654321',
-          amount: 9999, // 99.99 元
-          amount_refunded: 0,
-          created: Math.floor(Date.now() / 1000) - 86400 * 7, // 7天前
-          currency: 'cny',
-          customer: null,
-          customer_details: null,
-          expires_at: Math.floor(Date.now() / 1000) + 86400 * 365, // 365天后
-          info: null,
-          metadata: {
-            userId: 'user123',
-            payment: 'year',
-            mode: 'subscription'
-          },
-          mode: 'subscription',
-          payment_intent: 'pi_mock_456',
-          price: 'price_yearly',
-          status: 1, // SUCCEEDED
-          subscription: { id: 'sub_0987654321' },
-          success_url: '/success',
-          url: '',
-          userId: 'user123'
-        },
-        {
-          _id: 'mock_sub_2',
-          id: 'sub_0987654321',
-          amount: 9999, // 99.99 元
-          amount_refunded: 0,
-          created: Math.floor(Date.now() / 1000) - 86400 * 7, // 7天前
-          currency: 'cny',
-          customer: null,
-          customer_details: null,
-          expires_at: Math.floor(Date.now() / 1000) + 86400 * 365, // 365天后
-          info: null,
-          metadata: {
-            userId: 'user123',
-            payment: 'year',
-            mode: 'subscription'
-          },
-          mode: 'subscription',
-          payment_intent: 'pi_mock_456',
-          price: 'price_yearly',
-          status: 1, // SUCCEEDED
-          subscription: { id: 'sub_0987654321' },
-          success_url: '/success',
-          url: '',
-          userId: 'user123'
-        },
-        {
-          _id: 'mock_sub_2',
-          id: 'sub_0987654321',
-          amount: 9999, // 99.99 元
-          amount_refunded: 0,
-          created: Math.floor(Date.now() / 1000) - 86400 * 7, // 7天前
-          currency: 'cny',
-          customer: null,
-          customer_details: null,
-          expires_at: Math.floor(Date.now() / 1000) + 86400 * 365, // 365天后
-          info: null,
-          metadata: {
-            userId: 'user123',
-            payment: 'year',
-            mode: 'subscription'
-          },
-          mode: 'subscription',
-          payment_intent: 'pi_mock_456',
-          price: 'price_yearly',
-          status: 1, // SUCCEEDED
-          subscription: { id: 'sub_0987654321' },
-          success_url: '/success',
-          url: '',
-          userId: 'user123'
-        }
-      ];
-      
-      setSubscriptions(mockSubscriptions);
-      setSubscriptionsPagination({
-        current: 1,
-        pageSize: 10,
-        total: 2
-      });
+      fetchOrders({ page: 0, size: 10 });
+      fetchSubscriptions({ page: 0, size: 10 });
+    
     }
   }, [open]);
 
@@ -506,15 +250,22 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                        <div className={styles.subscriptionDetailItem}>
                                          <span className={styles.detailLabel}>{tProfile('subscriptionMode')}:</span>
                                          <span className={styles.detailValue}>
-                                           {subscription.metadata?.payment === 'month' 
+                                           {/* {subscription.metadata?.payment === 'month' 
                                              ? tVip('modal.vipInfo.monthly' as any)
-                                             : tVip('modal.vipInfo.yearly' as any)}
+                                             : tVip('modal.vipInfo.yearly' as any)} */}
+                                             {
+                                                getPaymentTypeText(subscription.metadata?.payment)
+                                             }
                                          </span>
                                        </div>
-                                       <div className={styles.subscriptionDetailItem}>
-                                         <span className={styles.detailLabel}>{tProfile('amount')}:</span>
-                                         <span className={styles.detailValue}>¥{(subscription.amount / 100).toFixed(2)}</span>
-                                       </div>
+                                      {
+                                        subscription.amount && (
+                                          <div className={styles.subscriptionDetailItem}>
+                                            <span className={styles.detailLabel}>{tProfile('amount')}:</span>
+                                            <span className={styles.detailValue}>¥{(subscription.amount / 100).toFixed(2)}</span>
+                                          </div>
+                                        )
+                                      } 
                                        <div className={styles.subscriptionDetailItem}>
                                          <span className={styles.detailLabel}>{tProfile('createTime')}:</span>
                                          <span className={styles.detailValue}>
@@ -548,13 +299,13 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                          <span className={styles.detailLabel}>{tProfile('status')}:</span>
                                          <span className={styles.detailValue}>
                                            {subscription.status === 1 ? (
-                                             <Tag color="green">{tProfile('subscriptionSuccess')}</Tag>
+                                             <Tag color="green" style={{marginRight: 0,marginLeft: 6}}>{tProfile('subscriptionSuccess')}</Tag>
                                            ) : subscription.status === 2 ? (
-                                             <Tag color="red">{tProfile('subscriptionCancelled')}</Tag>
+                                             <Tag color="red" style={{marginRight: 0,marginLeft: 6}}>{tProfile('subscriptionCancelled')}</Tag>
                                            ) : subscription.status === 3 ? (
-                                             <Tag color="purple">{tProfile('refundSuccess')}</Tag>
+                                             <Tag color="purple" style={{marginRight: 0,marginLeft: 6}}>{tProfile('refundSuccess')}</Tag>
                                            ) : (
-                                             <Tag color="orange">{tProfile('orderCancelled')}</Tag>
+                                             <Tag color="orange" style={{marginRight: 0,marginLeft: 6}}>{tProfile('orderCancelled')}</Tag>
                                            )}
                                          </span>
                                        </div>
@@ -565,6 +316,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                              <Button 
                                                size="small" 
                                                danger
+                                               style={{fontSize: 12}}
                                                onClick={() => handleUnsubscribe(subscription)}
                                              >
                                                {tProfile('cancelSubscription')}
@@ -644,7 +396,10 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                           <div className={styles.orderDetailItem}>
                             <span className={styles.detailLabel}>{tProfile('subscriptionMode')}:</span>
                             <span className={styles.detailValue}>
-                              {order.mode === 'subscription' ? tVip('continuousAnnual' as any) : tVip('oneTimePurchase' as any)}
+                              {/* {order.mode === 'subscription' ? tVip('continuousAnnual' as any) : tVip('oneTimePurchase' as any)} */}
+                              {
+                                                getPaymentTypeText(order.metadata?.payment)
+                                             }
                             </span>
                           </div>
                           <div className={styles.orderDetailItem}>
