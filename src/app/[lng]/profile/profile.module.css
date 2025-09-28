@@ -1,5 +1,14 @@
 .container {
   padding: 24px;
+  display: flex;
+  justify-content: center;
+  min-height: 80vh;
+  margin-top: 80px;
+}
+
+.profileContent {
+  max-width: 800px;
+  width: 100%;
 }
 
 .card {
@@ -909,17 +918,19 @@
 
 /* 顶部头部信息卡片 */
 .headerCard {
+  background-color: #F7F8FA;
   border-radius: 16px;
-  padding: 20px 0px;
+  padding: 20px 30px;
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: flex-start;
   gap: 16px;
+  margin-top: 18px;
 }
 
 .avatar {
-  width: 68px;
-  height: 68px;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
   overflow: hidden;
   background: #e9d5ff;
@@ -938,6 +949,7 @@
   align-items: flex-start;
   gap: 4px;
   margin-top: 5px;
+  margin-left: 10px;
 }
 
 .nameRow {
@@ -978,7 +990,7 @@
 
 .scoreRowThis {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: baseline;
   gap: 8px;
   margin-top: 2px;
@@ -993,10 +1005,8 @@
   margin-top: 2px;
   font-weight: 600;
   font-size: 18px;
-  background: linear-gradient(135deg, #a66ae4, #8b5cf6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: #F2F3F5;
+
 }
 
 /* 深色统计卡片 */
@@ -1006,6 +1016,7 @@
   color: #e5e7eb;
   border: 1px solid rgba(255,255,255,0.06);
   overflow: hidden;
+  margin-top: 20px;
 }
 
 .statsHeader {
@@ -1040,8 +1051,8 @@
 }
 
 .logoHesd {
-  width: 38px;
-  height: 38px;
+  width: 68px;
+  height: 68px;
 }
 
 .statsItem {
@@ -1192,4 +1203,67 @@
 .incomeButton:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.35), 0 2px 8px rgba(166, 106, 228, 0.35);
+}
+
+/* Edit Card 样式 */
+.editCard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 0;
+}
+
+.editCard > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
+}
+
+.editCard > div:last-child {
+  margin-bottom: 0;
+}
+
+.editCard .scoreLabel {
+  font-weight: 600;
+  font-size: 16px;
+  color: #374151;
+  min-width: 60px;
+}
+
+.editCard .fieldContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.editCard .fieldInput {
+  flex: 1;
+  background-color: #F2F3F5;
+  padding: 15px 12px;
+  border-radius: 8px;
+  border: none;
+  color: #374151;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.editCard .fieldButton {
+  color: #424A57;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 15px 16px;
+  background-color: #F2F3F5;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.editCard .fieldButton:hover {
+  background-color: #e2e8f0;
+  color: #8b5cf6;
 } 
