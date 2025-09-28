@@ -23,12 +23,6 @@
         "assets": ["libs/mongodb/*.md"]
       }
     },
-    "nx-release-publish": {
-      "dependsOn": ["build"],
-      "options": {
-        "packageRoot": "dist/{projectRoot}"
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": [
