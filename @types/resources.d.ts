@@ -1668,6 +1668,7 @@ interface Resources {
     "goToPayment": "前往支付",
     "internalId": "内部ID",
     "subscriptionMode": "订阅模式",
+    "paymentMethod": "支付方式",
     "refundedAmount": "已退款金额",
     "paymentIntent": "Payment Intent",
     "paymentLink": "支付链接",
