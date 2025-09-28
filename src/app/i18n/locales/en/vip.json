@@ -48,6 +48,13 @@
   "activatedAutoRenewalPlans": "Activated Auto-renewal Plans",
   "noAutoRenewalItems": "You haven't activated any auto-renewal items yet",
   "viewMorePlans": "View More Plans",
+  "continuousAnnual": "Continuous Annual",
+  "oneTimePurchase": "One-time Purchase",
+  "alipayPayment": "Alipay Payment",
+  "noMoreContent": "No more content",
+  "previousPage": "Previous",
+  "nextPage": "Next",
+  "pageInfo": "Page {current} of {total}",
   "modal": {
     "title": "7-Day Free Trial",
     "highlight": "Get 100 Points",
