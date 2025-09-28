@@ -46,6 +46,7 @@
   "basicMembership": "Basic Membership",
   "validUntil": "Valid Until",
   "activatedAutoRenewalPlans": "Activated Auto-renewal Plans",
+  "activatedAutoRenewalPlansno": "Unactivated Auto-renewal Plans",
   "noAutoRenewalItems": "You haven't activated any auto-renewal items yet",
   "viewMorePlans": "View More Plans",
   "continuousAnnual": "Continuous Annual",

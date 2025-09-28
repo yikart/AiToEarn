@@ -381,36 +381,47 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                 </div>
 
                 {/* 根据 autoContinue 显示不同的内容 */}
-                {userInfo?.vipInfo?.autoContinue ? (
                   <div className={styles.autoRenewal}>
-                    <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3>
-                    <div className={styles.activeSubscription}>
-                      <div className={styles.subscriptionItem}>
-                        <div className={styles.subscriptionInfo}>
-                          <div className={styles.subscriptionName}>
-                            {userInfo.vipInfo.cycleType === 1 
-                              ? tVip('modal.vipInfo.monthly' as any)
-                              : tVip('modal.vipInfo.yearly' as any)}
-                          </div>
-                          <div className={styles.subscriptionStatus}>
-                            {tVip('continuousMember' as any)}
-                          </div>
-                        </div>
-                        <div className={styles.subscriptionActions}>
-                         
-                        </div>
-                      </div>
-                    </div>
+                    {userInfo?.vipInfo?.autoContinue ? ( <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3> ) : (
+                        <h3>{tVip('activatedAutoRenewalPlansno' as any)}</h3>
+                    )}
+                
+                     {
+                     subscriptions.length ?(
+                             <div className={styles.subscriptionTable}>
+                                 <Table
+                                   columns={subscriptionColumns}
+                                   dataSource={subscriptions}
+                                   loading={subscriptionsLoading}
+                                   rowKey="id"
+                                   pagination={{
+                                     current: subscriptionsPagination.current,
+                                     pageSize: subscriptionsPagination.pageSize,
+                                     total: subscriptionsPagination.total,
+                                     onChange: (page, size) => {
+                                       fetchSubscriptions({ page: page - 1, size: size || 10 });
+                                     },
+                                     showSizeChanger: true,
+                                     showQuickJumper: true,
+                                     showTotal: (total) => tProfile('totalRecords', { total }),
+                                     pageSizeOptions: ['10', '20', '50'],
+                                   }}
+                                   locale={{
+                                     emptyText: subscriptionsLoading ? tProfile('loading') : tProfile('noSubscriptionRecords')
+                                   }}
+                                 />
+                             </div>
+                         ) : (
+                             <div className={styles.emptyState}>
+                                 <p style={{marginBottom: 20}}>{tVip('noAutoRenewalItems' as any)}</p>
+                                 <Button className={styles.viewMoreBtn}>{tVip('viewMorePlans' as any)}</Button>
+                             </div>
+                         )
+                     }
+                    
+
                   </div>
-                ) : (
-                  <div className={styles.autoRenewal}>
-                    <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3>
-                    <div className={styles.emptyState}>
-                      <p style={{marginBottom: 20}}>{tVip('noAutoRenewalItems' as any)}</p>
-                      <Button className={styles.viewMoreBtn}>{tVip('viewMorePlans' as any)}</Button>
-                    </div>
-                  </div>
-                )}
+                
 
               </div>
               

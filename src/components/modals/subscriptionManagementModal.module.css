@@ -33,7 +33,7 @@
 .myMembership h3 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: #111827;
 }
 
@@ -124,10 +124,34 @@
   margin-left: 16px;
 }
 
+/* 订阅表格样式 */
+.subscriptionTable {
+  margin-top: 16px;
+}
+
+.subscriptionTable .ant-table {
+  background: white;
+}
+
+.subscriptionTable .ant-table-thead > tr > th {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #374151;
+}
+
+.subscriptionTable .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.subscriptionTable .ant-table-tbody > tr:hover > td {
+  background: #f9fafb;
+}
+
 .autoRenewal h3 {
   margin: 0 0 16px 0;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   color: #111827;
 }
 

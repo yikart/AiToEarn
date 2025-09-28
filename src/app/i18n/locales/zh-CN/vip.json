@@ -46,6 +46,7 @@
   "basicMembership": "基础会员",
   "validUntil": "有效期至",
   "activatedAutoRenewalPlans": "已开通的自动续费套餐",
+  "activatedAutoRenewalPlansno": "未开通的自动续费套餐",
   "noAutoRenewalItems": "你还没有开通自动续费项目哦",
   "viewMorePlans": "查看更多套餐",
   "continuousAnnual": "连续包年",
