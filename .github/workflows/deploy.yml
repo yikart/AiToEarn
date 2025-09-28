@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - dev
+          - staging
           - prod
       version:
         description: 镜像版本 (留空使用默认生成规则)
