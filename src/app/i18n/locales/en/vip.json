@@ -55,6 +55,12 @@
   "previousPage": "Previous",
   "nextPage": "Next",
   "pageInfo": "Page {current} of {total}",
+  "continuousMember": "Continuous Member",
+  "singleMember": "Single Month Member",
+  "autoRenewalEnabled": "Auto-renewal Enabled",
+  "autoRenewalDisabled": "Auto-renewal Disabled",
+  "nextRenewalDate": "Next Renewal Date",
+  "membershipExpires": "Membership Expires",
   "modal": {
     "title": "7-Day Free Trial",
     "highlight": "Get 100 Points",

@@ -14,6 +14,9 @@ import {
 import { Order, OrderListParams, SubscriptionListParams, RefundParams, UnsubscribeParams, OrderStatus, PaymentType } from "@/api/types/payment";
 import styles from "./subscriptionManagementModal.module.css";
 
+import Image from "next/image";
+import plusvip from "@/assets/images/plusvip.png";
+
 const { TabPane } = Tabs;
 
 interface SubscriptionManagementModalProps {
@@ -333,6 +336,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
         onCancel={onClose}
         footer={null}
         width={1000}
+
         className={styles.subscriptionModal}
         destroyOnClose
         centered
@@ -344,57 +348,178 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                 <h3>{tVip('myMembership' as any)}</h3>
                 <div className={styles.membershipCard}>
                   <div className={styles.membershipInfo}>
-                    <div className={styles.membershipIcon}>💎</div>
+                    <div className={styles.membershipIcon}>
+                        <Image src={plusvip} alt="plusvip" style={{ width: 28, height: 'auto', marginTop: -5 }}/> 
+                    </div>
                     <div className={styles.membershipDetails}>
-                      <div className={styles.membershipName}>{tVip('basicMembership' as any)}</div>
+                      <div className={styles.membershipName}>
+                        {userInfo?.vipInfo?.cycleType === 1 
+                          ? tVip('modal.vipInfo.monthly' as any)
+                          : tVip('modal.vipInfo.yearly' as any)}
+                        {userInfo?.vipInfo?.autoContinue === false && ` (${tVip('modal.vipInfo.singleMonth' as any)})`}
+                      </div>
+                      <div>
+
+                      
                       <div className={styles.membershipExpire}>
-                        {tVip('validUntil' as any)} 2025-09-29 15:04
+                        {
+                         tVip('membershipExpires' as any)
+                        } 
+                      </div>
+                      <div className={styles.membershipStatus}>
+                      {userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleString('zh-CN', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        }) : '2025-09-29 15:04'}
+                      </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+                {/* 根据 autoContinue 显示不同的内容 */}
+                {userInfo?.vipInfo?.autoContinue ? (
+                  <div className={styles.autoRenewal}>
+                    <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3>
+                    <div className={styles.activeSubscription}>
+                      <div className={styles.subscriptionItem}>
+                        <div className={styles.subscriptionInfo}>
+                          <div className={styles.subscriptionName}>
+                            {userInfo.vipInfo.cycleType === 1 
+                              ? tVip('modal.vipInfo.monthly' as any)
+                              : tVip('modal.vipInfo.yearly' as any)}
+                          </div>
+                          <div className={styles.subscriptionStatus}>
+                            {tVip('continuousMember' as any)}
+                          </div>
+                        </div>
+                        <div className={styles.subscriptionActions}>
+                         
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className={styles.autoRenewal}>
+                    <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3>
+                    <div className={styles.emptyState}>
+                      <p style={{marginBottom: 20}}>{tVip('noAutoRenewalItems' as any)}</p>
+                      <Button className={styles.viewMoreBtn}>{tVip('viewMorePlans' as any)}</Button>
+                    </div>
+                  </div>
+                )}
+
               </div>
               
-              <div className={styles.autoRenewal}>
-                <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3>
-                <div className={styles.emptyState}>
-                  <p>{tVip('noAutoRenewalItems' as any)}</p>
-                  <Button className={styles.viewMoreBtn}>{tVip('viewMorePlans' as any)}</Button>
-                </div>
-              </div>
+              
             </TabPane>
             
             <TabPane tab={tVip('purchaseHistory' as any)} key="orders">
-              <Card>
-                <Table
-                  columns={orderColumns}
-                  dataSource={orders}
-                  loading={ordersLoading}
-                  rowKey="_id"
-                  onRow={(record) => ({
-                    onClick: () => {
-                      fetchOrderDetail(record.id);
-                    },
-                    style: { cursor: 'pointer' }
-                  })}
-                  pagination={{
-                    current: ordersPagination.current,
-                    pageSize: ordersPagination.pageSize,
-                    total: ordersPagination.total,
-                    onChange: (page, size) => {
-                      fetchOrders({ page: page - 1, size: size || 10 });
-                    },
-                    showSizeChanger: true,
-                    showQuickJumper: true,
-                    showTotal: (total) => tProfile('totalRecords', { total }),
-                    pageSizeOptions: ['10', '20', '50'],
-                  }}
-                  scroll={{ x: 1200 }}
-                  locale={{
-                    emptyText: ordersLoading ? tProfile('loading') : tProfile('noOrderRecords')
-                  }}
-                />
-              </Card>
+              <div className={styles.purchaseHistory}>
+                {ordersLoading ? (
+                  <div className={styles.loadingContainer}>
+                    <div className={styles.loadingText}>{tProfile('loading')}</div>
+                  </div>
+                ) : orders.length > 0 ? (
+                  <div className={styles.orderCards}>
+                    {orders.map((order) => (
+                      <div key={order._id} className={styles.orderCard}>
+                        <div className={styles.orderHeader}>
+                          <div className={styles.orderTitle}>
+                            {userInfo?.vipInfo?.cycleType === 1 
+                              ? tVip('modal.vipInfo.monthly' as any)
+                              : tVip('modal.vipInfo.yearly' as any)}
+                            {userInfo?.vipInfo?.autoContinue === false && ` (${tVip('modal.vipInfo.singleMonth' as any)})`}
+                          </div>
+                        </div>
+                        <div className={styles.orderDetails}>
+                          <div className={styles.orderDetailItem}>
+                            <span className={styles.detailLabel}>{tProfile('subscriptionMode')}:</span>
+                            <span className={styles.detailValue}>
+                              {order.mode === 'subscription' ? tVip('continuousAnnual' as any) : tVip('oneTimePurchase' as any)}
+                            </span>
+                          </div>
+                          <div className={styles.orderDetailItem}>
+                            <span className={styles.detailLabel}>{tProfile('amount')}:</span>
+                            <span className={styles.detailValue}>¥{(order.amount / 100).toFixed(2)}</span>
+                          </div>
+                          <div className={styles.orderDetailItem}>
+                            <span className={styles.detailLabel}>{tProfile('createTime')}:</span>
+                            <span className={styles.detailValue}>
+                              {new Date(order.created * 1000).toLocaleString('zh-CN', {
+                                year: 'numeric',
+                                month: '2-digit',
+                                day: '2-digit',
+                                hour: '2-digit',
+                                minute: '2-digit'
+                              })}
+                            </span>
+                          </div>
+                          <div className={styles.orderDetailItem}>
+                            <span className={styles.detailLabel}>{tProfile('orderId')}:</span>
+                            <span className={styles.detailValue}>
+                              {order.id}
+                              <Button 
+                                type="text" 
+                                size="small" 
+                                className={styles.copyBtn}
+                                onClick={() => {
+                                  navigator.clipboard.writeText(order.id);
+                                  message.success('已复制');
+                                }}
+                              >
+                                📋
+                              </Button>
+                            </span>
+                          </div>
+                          <div className={styles.orderDetailItem}>
+                            <span className={styles.detailLabel}>{tProfile('paymentMethod' as any)}:</span>
+                            <span className={styles.detailValue}>
+                              {(order as any).payment_method || tVip('alipayPayment' as any)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {ordersPagination.total > ordersPagination.pageSize ? (
+                      <div className={styles.paginationContainer}>
+                        <Button 
+                          disabled={ordersPagination.current === 1}
+                          onClick={() => fetchOrders({ 
+                            page: ordersPagination.current - 2, 
+                            size: ordersPagination.pageSize 
+                          })}
+                        >
+                          {tVip('previousPage' as any)}
+                        </Button>
+                        <span className={styles.paginationInfo}>
+                          {tVip('pageInfo' as any).replace('{current}', ordersPagination.current.toString()).replace('{total}', Math.ceil(ordersPagination.total / ordersPagination.pageSize).toString())}
+                        </span>
+                        <Button 
+                          disabled={ordersPagination.current >= Math.ceil(ordersPagination.total / ordersPagination.pageSize)}
+                          onClick={() => fetchOrders({ 
+                            page: ordersPagination.current, 
+                            size: ordersPagination.pageSize 
+                          })}
+                        >
+                          {tVip('nextPage' as any)}
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className={styles.noMoreContent}>
+                        <p>{tVip('noMoreContent' as any)}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className={styles.emptyState}>
+                    <p>{tProfile('noOrderRecords')}</p>
+                  </div>
+                )}
+              </div>
             </TabPane>
           </Tabs>
         </div>

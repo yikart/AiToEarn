@@ -1,16 +1,33 @@
 /* 订阅管理弹窗样式 */
 .subscriptionModal {
   background: white;
+  border-radius: 12px;
+}
+
+.subscriptionModal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.subscriptionModal .ant-modal-header {
+  border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.subscriptionModal .ant-modal-body {
+  border-radius: 0 0 12px 12px;
+  padding: 0;
 }
 
 .modalContent {
   background: white;
   padding: 0;
+  margin-top: 8px;
 }
 
 /* 我的会员区域 */
 .myMembership {
-  margin-bottom: 24px;
+  min-height: 780px;
 }
 
 .myMembership h3 {
@@ -24,7 +41,6 @@
   background: #f8f9fa;
   border-radius: 8px;
   padding: 16px;
-  border: 1px solid #e5e7eb;
 }
 
 .membershipInfo {
@@ -35,17 +51,19 @@
 
 .membershipIcon {
   font-size: 24px;
-  width: 40px;
-  height: 40px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #e0e7ff;
   border-radius: 8px;
 }
 
 .membershipDetails {
   flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .membershipName {
@@ -62,7 +80,48 @@
 
 /* 自动续费区域 */
 .autoRenewal {
+  margin-top: 24px;
   margin-bottom: 24px;
+}
+
+/* 会员状态 */
+.membershipStatus {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* 活跃订阅区域 */
+.activeSubscription {
+  border-radius: 8px;
+}
+
+.subscriptionItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.subscriptionInfo {
+  flex: 1;
+}
+
+.subscriptionName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 4px;
+}
+
+.subscriptionStatus {
+  font-size: 14px;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.subscriptionActions {
+  margin-left: 16px;
 }
 
 .autoRenewal h3 {
@@ -75,9 +134,7 @@
 .emptyState {
   text-align: center;
   padding: 40px 20px;
-  background: #f8f9fa;
   border-radius: 8px;
-  border: 1px solid #e5e7eb;
 }
 
 .emptyState p {
@@ -149,6 +206,136 @@
   padding: 2px 8px;
 }
 
+/* 购买记录卡片布局 */
+.purchaseHistory {
+  padding: 0;
+  min-height: 780px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.loadingText {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.orderCards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.orderCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.orderCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.orderHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+}
+
+.orderTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.orderDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.orderDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.detailLabel {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.detailValue {
+  font-size: 14px;
+  color: #111827;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copyBtn {
+  padding: 4px 8px;
+  height: auto;
+  font-size: 12px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.copyBtn:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.paginationContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 24px;
+  padding: 16px 0;
+}
+
+.paginationInfo {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 60px 20px;
+  color: #6b7280;
+}
+
+.emptyState p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.noMoreContent {
+  text-align: center;
+  padding: 20px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.noMoreContent p {
+  margin: 0;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .subscriptionModal {
@@ -169,5 +356,20 @@
   
   .actionButtons .ant-btn {
     width: 100%;
+  }
+  
+  .orderDetailItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  
+  .detailLabel {
+    min-width: auto;
+  }
+  
+  .paginationContainer {
+    flex-direction: column;
+    gap: 12px;
   }
 }
