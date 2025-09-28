@@ -78,7 +78,7 @@
         "period": "每年",
         "originalPrice": "$300/年",
         "button": "$144/年 省50%",
-        "points": "8,400积分",
+        "points": "760 积分/月",
         "description": "最多生成16,800张图和8,400个视频",
         "features": {
           "dailyPoints": "每天赠送积分",
@@ -96,7 +96,7 @@
         "period": "每年",
         "originalPrice": "$25/月",
         "button": "$19/月 省25%",
-        "points": "8,400积分",
+        "points": "760 积分/月",
         "description": "最多生成16,800张图和8,400个视频"
       },
       "once": {
@@ -104,7 +104,7 @@
         "price": "25",
         "period": "每月",
         "button": "$25/月",
-        "points": "700积分",
+        "points": "760 积分/月",
         "description": "最多生成1400张图和700个视频",
         "storage": "存储空间5G"
       }

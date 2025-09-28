@@ -64,7 +64,7 @@
       "points": "60 pts/month",
       "features": {
         "dailyPoints": "Daily credits",
-        "maxPoints": "Max 60 pts",
+        "maxPoints": "Max 60",
         "videos": "60 videos/month",
         "images": "120 images/month",
         "storage": "500M storage"
@@ -78,7 +78,7 @@
         "period": "/year",
         "originalPrice": "$300/year",
         "button": "$144/year Save 50%",
-        "points": "8,400 pts",
+        "points": "760 credits/month",
         "description": "16,800 images & 8,400 videos",
         "features": {
           "dailyPoints": "Daily credits",
@@ -96,7 +96,7 @@
         "period": "/year",
         "originalPrice": "$25/month",
         "button": "$19/month Save 25%",
-        "points": "8,400 pts",
+        "points": "760 credits/month",
         "description": "16,800 images & 8,400 videos"
       },
       "once": {
@@ -104,7 +104,7 @@
         "price": "25",
         "period": "/month",
         "button": "$25/month",
-        "points": "700 pts",
+        "points": "760 credits/month",
         "description": "1,400 images & 700 videos",
         "storage": "5G storage"
       }
