@@ -28,6 +28,8 @@
 /* 我的会员区域 */
 .myMembership {
   min-height: 780px;
+  max-height: 60vh;
+  overflow: scroll;
 }
 
 .myMembership h3 {
@@ -124,28 +126,70 @@
   margin-left: 16px;
 }
 
-/* 订阅表格样式 */
-.subscriptionTable {
+/* 订阅卡片样式 */
+.subscriptionCards {
   margin-top: 16px;
 }
 
-.subscriptionTable .ant-table {
+.subscriptionCard {
   background: white;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.subscriptionTable .ant-table-thead > tr > th {
-  background: #f8f9fa;
-  border-bottom: 1px solid #e5e7eb;
-  font-weight: 600;
-  color: #374151;
-}
-
-.subscriptionTable .ant-table-tbody > tr > td {
+.subscriptionHeader {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #f3f4f6;
 }
 
-.subscriptionTable .ant-table-tbody > tr:hover > td {
-  background: #f9fafb;
+.subscriptionTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.subscriptionDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.subscriptionDetailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.subscriptionDetailItem .detailLabel {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.subscriptionDetailItem .detailValue {
+  font-size: 14px;
+  color: #1f2937;
+  font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.subscriptionDetailItem .copyBtn {
+  padding: 0;
+  height: auto;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.subscriptionDetailItem .copyBtn:hover {
+  color: #374151;
 }
 
 .autoRenewal h3 {
@@ -234,6 +278,8 @@
 .purchaseHistory {
   padding: 0;
   min-height: 780px;
+  max-height: 60vh;
+  overflow: scroll;
 }
 
 .loadingContainer {
@@ -255,11 +301,11 @@
 }
 
 .orderCard {
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  transition: all 0.2s ease;
+  background: white;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .orderCard:hover {

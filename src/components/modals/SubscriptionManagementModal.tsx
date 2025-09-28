@@ -122,12 +122,9 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
       if (response?.code === 0) {
         message.success(tProfile('unsubscribeSuccess'));
         fetchSubscriptions({ page: subscriptionsPagination.current - 1, size: subscriptionsPagination.pageSize });
-      } else {
-        message.error(response?.message || tProfile('unsubscribeFailed'));
       }
     } catch (error) {
       console.error('退订失败:', error);
-      message.error(tProfile('unsubscribeFailed'));
     }
   };
 
@@ -322,8 +319,119 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
   // 弹窗打开时加载数据
   useEffect(() => {
     if (open) {
-      fetchOrders({ page: 0, size: 10 });
-      fetchSubscriptions({ page: 0, size: 10 });
+    //   fetchOrders({ page: 0, size: 10 });
+    //   fetchSubscriptions({ page: 0, size: 10 });
+      
+      // 添加假数据用于测试样式
+      const mockSubscriptions: Order[] = [
+        {
+          _id: 'mock_sub_1',
+          id: 'sub_1234567890',
+          amount: 2999, // 29.99 元
+          amount_refunded: 0,
+          created: Math.floor(Date.now() / 1000) - 86400 * 30, // 30天前
+          currency: 'cny',
+          customer: null,
+          customer_details: null,
+          expires_at: Math.floor(Date.now() / 1000) + 86400 * 30, // 30天后
+          info: null,
+          metadata: {
+            userId: 'user123',
+            payment: 'month',
+            mode: 'subscription'
+          },
+          mode: 'subscription',
+          payment_intent: 'pi_mock_123',
+          price: 'price_monthly',
+          status: 1, // SUCCEEDED
+          subscription: { id: 'sub_1234567890' },
+          success_url: '/success',
+          url: '',
+          userId: 'user123'
+        },
+        {
+          _id: 'mock_sub_2',
+          id: 'sub_0987654321',
+          amount: 9999, // 99.99 元
+          amount_refunded: 0,
+          created: Math.floor(Date.now() / 1000) - 86400 * 7, // 7天前
+          currency: 'cny',
+          customer: null,
+          customer_details: null,
+          expires_at: Math.floor(Date.now() / 1000) + 86400 * 365, // 365天后
+          info: null,
+          metadata: {
+            userId: 'user123',
+            payment: 'year',
+            mode: 'subscription'
+          },
+          mode: 'subscription',
+          payment_intent: 'pi_mock_456',
+          price: 'price_yearly',
+          status: 1, // SUCCEEDED
+          subscription: { id: 'sub_0987654321' },
+          success_url: '/success',
+          url: '',
+          userId: 'user123'
+        },
+        {
+          _id: 'mock_sub_2',
+          id: 'sub_0987654321',
+          amount: 9999, // 99.99 元
+          amount_refunded: 0,
+          created: Math.floor(Date.now() / 1000) - 86400 * 7, // 7天前
+          currency: 'cny',
+          customer: null,
+          customer_details: null,
+          expires_at: Math.floor(Date.now() / 1000) + 86400 * 365, // 365天后
+          info: null,
+          metadata: {
+            userId: 'user123',
+            payment: 'year',
+            mode: 'subscription'
+          },
+          mode: 'subscription',
+          payment_intent: 'pi_mock_456',
+          price: 'price_yearly',
+          status: 1, // SUCCEEDED
+          subscription: { id: 'sub_0987654321' },
+          success_url: '/success',
+          url: '',
+          userId: 'user123'
+        },
+        {
+          _id: 'mock_sub_2',
+          id: 'sub_0987654321',
+          amount: 9999, // 99.99 元
+          amount_refunded: 0,
+          created: Math.floor(Date.now() / 1000) - 86400 * 7, // 7天前
+          currency: 'cny',
+          customer: null,
+          customer_details: null,
+          expires_at: Math.floor(Date.now() / 1000) + 86400 * 365, // 365天后
+          info: null,
+          metadata: {
+            userId: 'user123',
+            payment: 'year',
+            mode: 'subscription'
+          },
+          mode: 'subscription',
+          payment_intent: 'pi_mock_456',
+          price: 'price_yearly',
+          status: 1, // SUCCEEDED
+          subscription: { id: 'sub_0987654321' },
+          success_url: '/success',
+          url: '',
+          userId: 'user123'
+        }
+      ];
+      
+      setSubscriptions(mockSubscriptions);
+      setSubscriptionsPagination({
+        current: 1,
+        pageSize: 10,
+        total: 2
+      });
     }
   }, [open]);
 
@@ -388,28 +496,114 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                 
                      {
                      subscriptions.length ?(
-                             <div className={styles.subscriptionTable}>
-                                 <Table
-                                   columns={subscriptionColumns}
-                                   dataSource={subscriptions}
-                                   loading={subscriptionsLoading}
-                                   rowKey="id"
-                                   pagination={{
-                                     current: subscriptionsPagination.current,
-                                     pageSize: subscriptionsPagination.pageSize,
-                                     total: subscriptionsPagination.total,
-                                     onChange: (page, size) => {
-                                       fetchSubscriptions({ page: page - 1, size: size || 10 });
-                                     },
-                                     showSizeChanger: true,
-                                     showQuickJumper: true,
-                                     showTotal: (total) => tProfile('totalRecords', { total }),
-                                     pageSizeOptions: ['10', '20', '50'],
-                                   }}
-                                   locale={{
-                                     emptyText: subscriptionsLoading ? tProfile('loading') : tProfile('noSubscriptionRecords')
-                                   }}
-                                 />
+                             <div className={styles.subscriptionCards}>
+                                 {subscriptions.map((subscription) => (
+                                   <div key={subscription._id} className={styles.subscriptionCard}>
+                                     <div className={styles.subscriptionHeader}>
+                                       <div className={styles.subscriptionTitle}>{tVip('basicMembership' as any)}</div>
+                                     </div>
+                                     <div className={styles.subscriptionDetails}>
+                                       <div className={styles.subscriptionDetailItem}>
+                                         <span className={styles.detailLabel}>{tProfile('subscriptionMode')}:</span>
+                                         <span className={styles.detailValue}>
+                                           {subscription.metadata?.payment === 'month' 
+                                             ? tVip('modal.vipInfo.monthly' as any)
+                                             : tVip('modal.vipInfo.yearly' as any)}
+                                         </span>
+                                       </div>
+                                       <div className={styles.subscriptionDetailItem}>
+                                         <span className={styles.detailLabel}>{tProfile('amount')}:</span>
+                                         <span className={styles.detailValue}>¥{(subscription.amount / 100).toFixed(2)}</span>
+                                       </div>
+                                       <div className={styles.subscriptionDetailItem}>
+                                         <span className={styles.detailLabel}>{tProfile('createTime')}:</span>
+                                         <span className={styles.detailValue}>
+                                           {new Date(subscription.created * 1000).toLocaleString('zh-CN', {
+                                             year: 'numeric',
+                                             month: '2-digit',
+                                             day: '2-digit',
+                                             hour: '2-digit',
+                                             minute: '2-digit'
+                                           })}
+                                         </span>
+                                       </div>
+                                       <div className={styles.subscriptionDetailItem}>
+                                         <span className={styles.detailLabel}>{tProfile('subscriptionId')}:</span>
+                                         <span className={styles.detailValue}>
+                                           {subscription.id}
+                                           <Button
+                                             type="text"
+                                             size="small"
+                                             className={styles.copyBtn}
+                                             onClick={() => {
+                                               navigator.clipboard.writeText(subscription.id);
+                                               message.success('已复制');
+                                             }}
+                                           >
+                                             📋
+                                           </Button>
+                                         </span>
+                                       </div>
+                                       <div className={styles.subscriptionDetailItem}>
+                                         <span className={styles.detailLabel}>{tProfile('status')}:</span>
+                                         <span className={styles.detailValue}>
+                                           {subscription.status === 1 ? (
+                                             <Tag color="green">{tProfile('subscriptionSuccess')}</Tag>
+                                           ) : subscription.status === 2 ? (
+                                             <Tag color="red">{tProfile('subscriptionCancelled')}</Tag>
+                                           ) : subscription.status === 3 ? (
+                                             <Tag color="purple">{tProfile('refundSuccess')}</Tag>
+                                           ) : (
+                                             <Tag color="orange">{tProfile('orderCancelled')}</Tag>
+                                           )}
+                                         </span>
+                                       </div>
+                                       <div className={styles.subscriptionDetailItem}>
+                                         <span className={styles.detailLabel}>{tProfile('actions')}:</span>
+                                         <span className={styles.detailValue}>
+                                           {subscription.status === 1 && (
+                                             <Button 
+                                               size="small" 
+                                               danger
+                                               onClick={() => handleUnsubscribe(subscription)}
+                                             >
+                                               {tProfile('cancelSubscription')}
+                                             </Button>
+                                           )}
+                                         </span>
+                                       </div>
+                                     </div>
+                                   </div>
+                                 ))}
+                                 {subscriptionsPagination.total > subscriptionsPagination.pageSize ? (
+                                   <div className={styles.paginationContainer}>
+                                     <Button 
+                                       disabled={subscriptionsPagination.current === 1}
+                                       onClick={() => fetchSubscriptions({ 
+                                         page: subscriptionsPagination.current - 2, 
+                                         size: subscriptionsPagination.pageSize 
+                                       })}
+                                     >
+                                       {tVip('previousPage' as any)}
+                                     </Button>
+                                     <span className={styles.paginationInfo}>
+                                       {tVip('pageInfo' as any).replace('{current}', subscriptionsPagination.current.toString()).replace('{total}', Math.ceil(subscriptionsPagination.total / subscriptionsPagination.pageSize).toString())}
+                                     </span>
+                                     <Button 
+                                       disabled={subscriptionsPagination.current >= Math.ceil(subscriptionsPagination.total / subscriptionsPagination.pageSize)}
+                                       onClick={() => fetchSubscriptions({ 
+                                         page: subscriptionsPagination.current, 
+                                         size: subscriptionsPagination.pageSize 
+                                       })}
+                                     >
+                                       {tVip('nextPage' as any)}
+                                     </Button>
+                                   </div>
+                                 ) : (
+                                   <div className={styles.noMoreContent}>
+                                     <p>{tVip('noMoreContent' as any)}</p>
+                                   </div>
+                                 )}
                              </div>
                          ) : (
                              <div className={styles.emptyState}>
