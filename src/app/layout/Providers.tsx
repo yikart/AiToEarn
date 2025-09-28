@@ -37,7 +37,7 @@ export function Providers({
   });
 
   useEffect(() => {
-    if (useUserStore.getState().token) {
+    if (useUserStore.getState().getToken()) {
       useUserStore.getState().getUserInfo();
       useAccountStore.getState().accountInit();
     }

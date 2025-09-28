@@ -41,6 +41,8 @@ const state: IUserStore = {
   lang: "",
 };
 
+let tempToken: string | undefined;
+
 export const useUserStore = createPersistStore(
   {
     ...state,
@@ -61,6 +63,20 @@ export const useUserStore = createPersistStore(
       },
       setUserInfo: (userInfo: UserInfo) => {
         set({ userInfo });
+      },
+
+      getToken() {
+        const { token } = _get();
+
+        if (!tempToken) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const queryToken = urlParams.get("token");
+          if (queryToken) {
+            tempToken = queryToken;
+          }
+        }
+
+        return tempToken || token;
       },
 
       // 获取用户信息
