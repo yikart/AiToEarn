@@ -57,7 +57,7 @@ export async function request<T>(params: RequestParamsWithSilent) {
       contact: isZh ? "如需帮助请联系客服：" : "Need help? Contact support:",
     };
 
-    if (data.code === 401) {
+    if (data.code === 401 && !useUserStore.getState().token) {
       // useUserStore.getState().logout();
       // message.error({
       //   key: "NoPermission",
