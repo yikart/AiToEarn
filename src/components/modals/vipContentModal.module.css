@@ -207,7 +207,7 @@
 
 .vipActions {
   display: flex;
-  gap: 8px;
+  gap: 28px;
 }
 
 .detailBtn {
@@ -240,7 +240,7 @@
 .planDetails {
   display: flex;
   flex-direction: row;
-  gap: 68px;
+  gap: 88px;
 }
 
 .planType, .expireTime {

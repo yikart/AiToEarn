@@ -26,7 +26,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const userStore = useUserStore();
   const router = useRouter();
   const { t } = useTransClient('vip');
-  const modalWidth = useMemo(() => "880px" as const, []);
+  const modalWidth = useMemo(() => "900px" as const, []);
   const [rechargeVisible, setRechargeVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'year' | 'month' | 'once'>('year');
   const [loading, setLoading] = useState(false);
@@ -246,7 +246,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 
               </div>
             </div>
-            <h5 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center' }}> 订阅计划 </h5>
+            <h5 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center', marginTop: 16 }}> 订阅计划 </h5>
           </div>
         )}
 
