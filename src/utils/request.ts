@@ -57,13 +57,14 @@ export async function request<T>(params: RequestParamsWithSilent) {
       contact: isZh ? "如需帮助请联系客服：" : "Need help? Contact support:",
     };
 
+    // 未登录拦截
     if (data.code === 401 && !useUserStore.getState().token) {
-      // useUserStore.getState().logout();
-      // message.error({
-      //   key: "NoPermission",
-      //   content: "登录状态过期，请重新登录",
-      // });
       return null;
+    }
+
+    // 已登录、但是登录过期
+    if (data.code === 401) {
+      useUserStore.getState().logout();
     }
 
     if (data.code !== 0) {
