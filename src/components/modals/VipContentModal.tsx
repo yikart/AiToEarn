@@ -11,6 +11,9 @@ import PointsDetailModal from "@/components/modals/PointsDetailModal";
 import { useUserStore } from "@/store/user";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
 
+import logo from '@/assets/images/logo.png';
+import Image from "next/image";
+
 interface VipContentModalProps {
   open: boolean;
   onClose: () => void;
@@ -134,25 +137,93 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
     >
       <div className={vipStyles.wrapper}>
         {/* 顶部区域 */}
-        <div className={vipStyles.header}
-          style={{ background: 'transparent' }}>
-          <div className={vipStyles.titleBlock}>
-            <h2 className={vipStyles.title}>
-              {translate('modal.title')} <span className={vipStyles.highlight}>{translate('modal.highlight')}</span>
-            </h2>
-            <div className={vipStyles.links}>
-              <span>{translate('modal.choosePlan')}</span>
-              <span className={vipStyles.linkButton}
-                onClick={() => setRechargeVisible(true)}
-              >{translate('modal.buyPoints')}</span>
+        {
+          !isVip && (
+            <div className={vipStyles.header}
+              style={{ background: 'transparent' }}>
+              <div className={vipStyles.titleBlock}>
+                <h2 className={vipStyles.title}>
+                  {translate('modal.title')} <span className={vipStyles.highlight}>{translate('modal.highlight')}</span>
+                </h2>
+                <div className={vipStyles.links}>
+                  <span>{translate('modal.choosePlan')}</span>
+                  <span className={vipStyles.linkButton}
+                    onClick={() => setRechargeVisible(true)}
+                  >{translate('modal.buyPoints')}</span>
+                </div>
+              </div>
+              <div className={vipStyles.headerRight}>
+                <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
+              </div>
             </div>
-          </div>
-          <div className={vipStyles.headerRight}>
-            <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
-          </div>
-        </div>
+          )
+        }
+        
 
-        {/* 顶部选项卡 */}
+        {/* 会员信息区域 */}
+        {isVip && userStore.userInfo?.vipInfo && (
+          <div className={vipStyles.vipInfoSection}>
+            <div className={vipStyles.vipInfoRow}>
+              <div className={vipStyles.userInfo}>
+                <div className={vipStyles.avatar}>
+                  {userStore.userInfo.avatar ? (
+                    <img src={userStore.userInfo.avatar} alt="用户头像" />
+                  ) : (
+                    <Image src={logo} alt="用户头像" style={{ padding: '3px', backgroundColor: '#e9d5ff' }} />
+                  )}
+                </div>
+                <div className={vipStyles.userDetails}>
+                  <div className={vipStyles.userName}>{userStore.userInfo.name}</div>
+                  {/* <div className={vipStyles.userEmail}>{userStore.userInfo.mail}</div> */}
+                </div>
+              </div>
+              <div className={vipStyles.vipActions}>
+                <Button className={vipStyles.detailBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
+                <Button className={vipStyles.subscriptionBtn}>{translate('modal.vipInfo.subscription')}</Button>
+              </div>
+            </div>
+            
+            <div className={vipStyles.vipPlanInfo}>
+              <div className={vipStyles.planDetails}>
+                <div className={vipStyles.planType}>
+                  {translate('modal.vipInfo.planType')}: 
+                  <span className={vipStyles.planValue}>
+                    {userStore.userInfo.vipInfo.cycleType === 1 
+                      ? translate('modal.vipInfo.monthly') 
+                      : translate('modal.vipInfo.yearly')}
+                    {!userStore.userInfo.vipInfo.autoContinue && ` (${translate('modal.vipInfo.singleMonth')})`}
+                  </span>
+                </div>
+                <div className={vipStyles.expireTime}>
+                  {translate('modal.vipInfo.expireTime')}: 
+                  <span className={vipStyles.expireValue}>
+                    {new Date(userStore.userInfo.vipInfo.expireTime).toLocaleDateString()}
+                  </span>
+                </div>
+
+                <div className={vipStyles.expireTime}>
+                  {translate('modal.vipInfo.remainingPoints')}: 
+
+                  <div>
+                    <span onClick={() => setPointsModalVisible(true)} className={vipStyles.expireValue} style={{ color: '#727E84' }}>
+                      {(userStore.userInfo.score || 0).toFixed(1)}
+                    </span>
+                    <span onClick={() => setRechargeVisible(true)} className={vipStyles.expireValueHover} style={{ color: '#a66ae4', paddingLeft: 8 }}>
+                      {translate('modal.buyPoints')}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+              <div className={vipStyles.pointsInfo}>
+                
+              </div>
+            </div>
+            <h5 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center' }}> 订阅计划 </h5>
+          </div>
+        )}
+
+        {/* 选项卡 */}
         <div className={vipStyles.switchRow}>
           <div onClick={() => handleTabClick('year')} className={`${vipStyles.switchBtn} ${activeTab === 'year' ? vipStyles.active : ''}`}>
             {translate('modal.tabs.yearly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.yearly')}</Tag>

@@ -21,6 +21,7 @@ export interface UserInfo {
     id: string;
     cycleType: number;
     expireTime: string;
+    autoContinue: boolean;
     _id: string;
   };
 }
