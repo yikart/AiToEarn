@@ -27,7 +27,7 @@
 
 /* 我的会员区域 */
 .myMembership {
-  min-height: 780px;
+  min-height: 785px;
   max-height: 60vh;
   overflow: scroll;
 }
