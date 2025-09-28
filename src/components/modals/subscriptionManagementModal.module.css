@@ -1,0 +1,173 @@
+/* 订阅管理弹窗样式 */
+.subscriptionModal {
+  background: white;
+}
+
+.modalContent {
+  background: white;
+  padding: 0;
+}
+
+/* 我的会员区域 */
+.myMembership {
+  margin-bottom: 24px;
+}
+
+.myMembership h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.membershipCard {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #e5e7eb;
+}
+
+.membershipInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.membershipIcon {
+  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e0e7ff;
+  border-radius: 8px;
+}
+
+.membershipDetails {
+  flex: 1;
+}
+
+.membershipName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.membershipExpire {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 自动续费区域 */
+.autoRenewal {
+  margin-bottom: 24px;
+}
+
+.autoRenewal h3 {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
+.emptyState p {
+  margin: 0 0 16px 0;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.viewMoreBtn {
+  background: #374151;
+  border-color: #374151;
+  color: white;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.viewMoreBtn:hover {
+  background: #4b5563;
+  border-color: #4b5563;
+}
+
+/* 操作按钮 */
+.actionButtons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.actionButtons .ant-btn {
+  font-size: 12px;
+  padding: 4px 8px;
+  height: auto;
+}
+
+/* 订单详情弹窗 */
+.orderDetailModal .ant-descriptions-item-label {
+  font-weight: 600;
+  color: #374151;
+  width: 120px;
+}
+
+.orderDetailModal .ant-descriptions-item-content {
+  color: #111827;
+}
+
+/* 表格样式优化 */
+.ant-table-thead > tr > th {
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.ant-table-tbody > tr:hover > td {
+  background: #f8f9fa;
+}
+
+/* 分页样式 */
+.ant-pagination {
+  margin-top: 16px;
+  text-align: right;
+}
+
+/* 标签样式 */
+.ant-tag {
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 2px 8px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .subscriptionModal {
+    width: 95% !important;
+    max-width: none;
+  }
+  
+  .membershipInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .actionButtons .ant-btn {
+    width: 100%;
+  }
+}

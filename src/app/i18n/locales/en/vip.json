@@ -39,6 +39,15 @@
     "month": "Monthly",
     "year": "Yearly"
   },
+  "subscriptionManagement": "Subscription Management",
+  "subscriptionPlanManagement": "Subscription Plan Management",
+  "purchaseHistory": "Purchase History",
+  "myMembership": "My Membership",
+  "basicMembership": "Basic Membership",
+  "validUntil": "Valid Until",
+  "activatedAutoRenewalPlans": "Activated Auto-renewal Plans",
+  "noAutoRenewalItems": "You haven't activated any auto-renewal items yet",
+  "viewMorePlans": "View More Plans",
   "modal": {
     "title": "7-Day Free Trial",
     "highlight": "Get 100 Points",

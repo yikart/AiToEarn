@@ -10,6 +10,7 @@ import vipStyles from "./vipContentModal.module.css";
 import PointsDetailModal from "@/components/modals/PointsDetailModal";
 import { useUserStore } from "@/store/user";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
+import SubscriptionManagementModal from "@/components/modals/SubscriptionManagementModal";
 
 import logo from '@/assets/images/logo.png';
 import Image from "next/image";
@@ -21,6 +22,7 @@ interface VipContentModalProps {
 
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
+  const [subscriptionModalVisible, setSubscriptionModalVisible] = useState(false);
   const userStore = useUserStore();
   const router = useRouter();
   const { t } = useTransClient('vip');
@@ -136,7 +138,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       centered
     >
       <div className={vipStyles.wrapper}>
-        {/* 顶部区域 */}
+        {/* 非会员顶部区域 */}
         {
           !isVip && (
             <div className={vipStyles.header}
@@ -177,10 +179,10 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   {/* <div className={vipStyles.userEmail}>{userStore.userInfo.mail}</div> */}
                 </div>
               </div>
-              <div className={vipStyles.vipActions}>
-                <Button className={vipStyles.detailBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
-                <Button className={vipStyles.subscriptionBtn}>{translate('modal.vipInfo.subscription')}</Button>
-              </div>
+                <div className={vipStyles.vipActions}>
+                  <Button className={vipStyles.detailBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
+                  <Button className={vipStyles.subscriptionBtn} onClick={() => setSubscriptionModalVisible(true)}>{translate('modal.vipInfo.subscription')}</Button>
+                </div>
             </div>
             
             <div className={vipStyles.vipPlanInfo}>
@@ -453,6 +455,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       <PointsDetailModal open={pointsModalVisible} onClose={() => setPointsModalVisible(false)} />
 
       <PointsRechargeModal open={rechargeVisible} onClose={() => setRechargeVisible(false)} />
+
+      {/* 订阅管理弹窗 */}
+      <SubscriptionManagementModal open={subscriptionModalVisible} onClose={() => setSubscriptionModalVisible(false)} />
     </Modal>
   );
 });

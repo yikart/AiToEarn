@@ -39,6 +39,15 @@
     "month": "月度订阅",
     "year": "年度订阅"
   },
+  "subscriptionManagement": "订阅管理",
+  "subscriptionPlanManagement": "订阅计划管理",
+  "purchaseHistory": "购买记录",
+  "myMembership": "我的会员",
+  "basicMembership": "基础会员",
+  "validUntil": "有效期至",
+  "activatedAutoRenewalPlans": "已开通的自动续费套餐",
+  "noAutoRenewalItems": "你还没有开通自动续费项目哦",
+  "viewMorePlans": "查看更多套餐",
   "modal": {
     "title": "免费试用7天会员",
     "highlight": "立得100积分",
