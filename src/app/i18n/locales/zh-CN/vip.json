@@ -45,6 +45,17 @@
     "choosePlan": "选择合适你的套餐，或直接",
     "buyPoints": "购买积分",
     "pointsDetail": "积分详情",
+    "vipInfo": {
+      "details": "详情",
+      "subscription": "订阅管理",
+      "planType": "计划",
+      "monthly": "月度会员",
+      "yearly": "年度会员",
+      "singleMonth": "单月会员",
+      "expireTime": "到期时间",
+      "remainingPoints": "剩余积分",
+      "buyPoints": "购买积分"
+    },
     "tabs": {
       "yearly": "连续包年",
       "monthly": "连续包月",
