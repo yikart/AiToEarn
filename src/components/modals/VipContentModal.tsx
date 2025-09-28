@@ -26,7 +26,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const userStore = useUserStore();
   const router = useRouter();
   const { t } = useTransClient('vip');
-  const modalWidth = useMemo(() => "66%" as const, []);
+  const modalWidth = useMemo(() => "880px" as const, []);
   const [rechargeVisible, setRechargeVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'year' | 'month' | 'once'>('year');
   const [loading, setLoading] = useState(false);

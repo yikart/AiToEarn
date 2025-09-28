@@ -127,8 +127,8 @@
       },
       "monthly": {
         "title": "Monthly",
-        "price": "228",
-        "period": "/year",
+        "price": "19",
+        "period": "/month",
         "originalPrice": "$25/month",
         "button": "$19/month Save 25%",
         "points": "760 credits/month",

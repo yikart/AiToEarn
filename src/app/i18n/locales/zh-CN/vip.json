@@ -127,8 +127,8 @@
       },
       "monthly": {
         "title": "月度会员",
-        "price": "228",
-        "period": "每年",
+        "price": "19",
+        "period": "每月",
         "originalPrice": "$25/月",
         "button": "$19/月 省25%",
         "points": "760 积分/月",
