@@ -206,7 +206,7 @@ const LyaoutHeader = memo(
                             type="text"
                             icon={<CrownOutlined style={{ fontSize: 18, color: isVip ? '#F5AB03' : '#999' }} />}
                             onClick={() => setVipModalVisible(true)}
-                            style={{ position: 'relative' }}
+                            style={{ position: 'relative', marginTop: -14 }}
                           >
                             <span style={{
                               position: 'absolute',
