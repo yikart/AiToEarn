@@ -222,7 +222,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   </span>
                 </div>
                 <div className={vipStyles.expireTime}>
-                  {translate('modal.vipInfo.expireTime')}: 
+                  { !userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.xufeiTime') : translate('modal.vipInfo.expireTime')}: 
                   <span className={vipStyles.expireValue}>
                     {new Date(userStore.userInfo.vipInfo.expireTime).toLocaleDateString()}
                   </span>

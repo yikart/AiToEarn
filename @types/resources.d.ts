@@ -1655,6 +1655,7 @@ interface Resources {
     "status": "状态",
     "createTime": "创建时间",
     "expireTime": "过期时间",
+    "xufeiTime": "续费时间",
     "actions": "操作",
     "viewDetails": "查看详情",
     "goToPay": "去支付",

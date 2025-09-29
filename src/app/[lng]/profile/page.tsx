@@ -737,7 +737,7 @@ export default function ProfilePage() {
             <Descriptions.Item label={t('createTime')}>
               {new Date(currentOrderDetail.created * 1000).toLocaleString()}
             </Descriptions.Item>
-            <Descriptions.Item label={t('expireTime')}>
+            <Descriptions.Item label={ t('expireTime')}>
               {new Date(currentOrderDetail.expires_at * 1000).toLocaleString()}
             </Descriptions.Item>
             <Descriptions.Item label={t('userId')}>{currentOrderDetail.userId}</Descriptions.Item>

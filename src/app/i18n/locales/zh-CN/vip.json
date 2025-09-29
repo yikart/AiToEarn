@@ -76,7 +76,8 @@
       "monthly": "月度会员",
       "yearly": "年度会员",
       "singleMonth": "单月会员",
-      "expireTime": "到期时间",
+      "expireTime": "到期时间", 
+      "xufeiTime": "续费时间",
       "remainingPoints": "剩余积分",
       "buyPoints": "购买积分"
     },
