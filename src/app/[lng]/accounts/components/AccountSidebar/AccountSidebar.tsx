@@ -514,6 +514,7 @@ const AccountSidebar = memo(
                                 }}
                               >
                                 <Avatar
+                                  style={{backgroundColor: 'aliceblue'}}
                                   src={getOssUrl(account.avatar)}
                                   size="large"
                                 />
