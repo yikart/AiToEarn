@@ -97,33 +97,33 @@
       "forever": "永久",
       "currentPlan": "当前计划",
       "freePlan": "免费计划",
-      "points": "60积分每月",
+      "points": "每月签到赠送60积分",
       "features": {
-        "dailyPoints": "发布赠送积分",
-        "maxPoints": "最高60 积分",
-        "videos": "每月最高可生成60个视频",
-        "images": "每月最高可生成120张图片",
-        "storage": "存储空间500M"
+        "dailyPoints": "每月最高10+次seedance等模型视频生成",
+        "maxPoints": "全网热门内容洞察",
+        "videos": "抖音、小红书、视频号、快手、哔哩哔哩、微信公众号TikTok、YouTube、Facebook、Instagram、Threads、Twitter(X)、Pinterest全平台支持",
+        "images": "无限制频道连接",
+        "storage": "内容搜索、评论搜索、智能互动管理"
       }
     },
     "plans": {
+      "goumai": "购买",
       "yearly": {
         "title": "年度会员",
         "bestValue": "最划算",
-        "price": "144",
-        "period": "每年",
+        "price": "12",
+        "period": "每月",
         "originalPrice": "$300/年",
         "button": "$144/年 省50%",
-        "points": "760 积分/月",
-        "description": "最多生成16,800张图和8,400个视频",
+        "points": "760 积分/月(包含签到赠送60积分)",
+        "description": "每月最高150+次seedance等模型视频生成",
         "features": {
-          "dailyPoints": "每天赠送积分",
           "contentReview": "内容安全审核",
-          "multiModel": "多模型一站式支持",
-          "textToVideo": "文字转视频，图文转视频",
-          "aiGeneration": "AI动画生成，AI图像生成",
-          "noWatermark": "无水印输出，更快的生成速度",
-          "storage": "存储空间5G"
+          "dailyPoints": "限时nano banana等图片模型无限免费使用",
+          "multiModel": "GPT5，Gemini-2.5-Pro等大模型使用",
+          "textToVideo": "抖音、小红书、视频号、快手、哔哩唑哩,微信公众号、TikTok、YouTube、Facebook、Instagram.Threads、Twitter(X)、Pinterest全平台支持",
+          "aiGeneration": "无限制频道连接",
+          "noWatermark": "内容搜索、评论搜索、智能互动管理"
         }
       },
       "monthly": {
@@ -132,16 +132,16 @@
         "period": "每月",
         "originalPrice": "$25/月",
         "button": "$19/月 省25%",
-        "points": "760 积分/月",
-        "description": "最多生成16,800张图和8,400个视频"
+        "points": "760 积分/月(包含签到赠送60积分)",
+        "description": "每月最高150+次seedance等模型视频生成"
       },
       "once": {
         "title": "一次性月度会员",
         "price": "25",
         "period": "每月",
         "button": "$25/月",
-        "points": "760 积分/月",
-        "description": "最多生成1400张图和700个视频",
+        "points": "760 积分/月(包含签到赠送60积分)",
+        "description": "每月最高150+次seedance等模型视频生成",
         "storage": "存储空间5G"
       }
     },

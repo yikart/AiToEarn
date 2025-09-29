@@ -288,7 +288,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
                   <li>{translate('modal.free.features.images')}</li>
-                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
@@ -297,14 +296,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.planHead}>{translate('modal.plans.yearly.title')} <Tag color="#5b7cff">{translate('modal.plans.yearly.bestValue')}</Tag></div>
                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.yearly.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.yearly.period')}</span></div>
                 <div className={vipStyles.planDesc}>
-                  {canUseTrial ? translate('modal.trial') : ''} · <span style={{textDecoration: 'line-through'}}>{translate('modal.plans.yearly.originalPrice')}</span> · {translate('modal.cancelAnytime')}</div>
+                  {translate('modal.plans.yearly.button')}
+                  </div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
                    disabled={isCurrentPlan.year}
                  >
-                   {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.yearly.button')}
+                   {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
@@ -315,7 +315,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
                   <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
                   <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
-                  <li>{translate('modal.plans.yearly.features.storage')}</li>
                 </ul>
               </div>
             </>
@@ -338,7 +337,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
                   <li>{translate('modal.free.features.images')}</li>
-                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
@@ -347,14 +345,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                  <div className={vipStyles.planHead}>{translate('modal.plans.monthly.title')} </div>
                  <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.monthly.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.monthly.period')}</span></div>
                  <div className={vipStyles.planDesc}>
-                   {canUseTrial ? translate('modal.trial') : ''} · <span style={{textDecoration: 'line-through'}}>{translate('modal.plans.monthly.originalPrice')}</span> · {translate('modal.cancelMonthly')}</div>
+                  {translate('modal.plans.monthly.button')}
+                  </div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
                    disabled={isCurrentPlan.month}
                  >
-                   {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.monthly.button')}
+                   {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>
@@ -365,7 +364,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
                   <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
                   <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
-                  <li>{translate('modal.plans.yearly.features.storage')}</li>
                 </ul>
               </div>
             </>
@@ -387,7 +385,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
                   <li>{translate('modal.free.features.images')}</li>
-                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
@@ -400,7 +397,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    onClick={() => handleActivate('once')}
                    loading={loading}
                  >
-                   {translate('modal.plans.once.button')}
+                   {translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.once.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.once.description')}</div>
@@ -411,7 +408,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
                   <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
                   <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
-                  <li>{translate('modal.plans.once.storage')}</li>
                 </ul>
               </div>
             </>
