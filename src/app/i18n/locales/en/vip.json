@@ -99,31 +99,31 @@
       "freePlan": "Free Plan",
       "points": "60 pts/month",
       "features": {
-        "dailyPoints": "Daily credits",
-        "maxPoints": "Max 60",
-        "videos": "60 videos/month",
-        "images": "120 images/month",
-        "storage": "500M storage"
+        "dailyPoints": "Up to 10+ video gens/month",
+        "maxPoints": "Trending insights",
+        "videos": "All major platforms",
+        "images": "Unlimited channel links",
+        "storage": "Content & comment search, smart engage"
       }
     },
     "plans": {
+      "goumai": "Buy",
       "yearly": {
         "title": "Yearly",
         "bestValue": "Best Value",
-        "price": "144",
-        "period": "/year",
+        "price": "12",
+        "period": "/month",
         "originalPrice": "$300/year",
         "button": "$144/year Save 50%",
-        "points": "760 credits/month",
-        "description": "16,800 images & 8,400 videos",
+        "points": "760 pts/month (incl. 60 check-in)",
+        "description": "Up to 150+ video gens/month",
         "features": {
-          "dailyPoints": "Daily credits",
-          "contentReview": "Content review",
-          "multiModel": "Multi-model support",
-          "textToVideo": "Text to video",
-          "aiGeneration": "AI generation",
-          "noWatermark": "No watermark, faster",
-          "storage": "5G storage"
+          "contentReview": "Content safety review",
+          "dailyPoints": "Free nano, banana image models (limited)",
+          "multiModel": "GPT-5, Gemini 2.5 Pro",
+          "textToVideo": "Douyin、Redbook、Kwai、Bilibli,Wechat、TikTok、YouTube、Facebook、Instagram.Threads、Twitter(X)、Pinterest All major platforms",
+          "aiGeneration": "Unlimited channel links",
+          "noWatermark": "Content & comment search, smart engage"
         }
       },
       "monthly": {
@@ -132,16 +132,16 @@
         "period": "/month",
         "originalPrice": "$25/month",
         "button": "$19/month Save 25%",
-        "points": "760 credits/month",
-        "description": "16,800 images & 8,400 videos"
+        "points": "760 pts/month (incl. 60 check-in)",
+        "description": "Up to 150+ video gens/month"
       },
       "once": {
-        "title": "One-time",
+        "title": "One-time Monthly",
         "price": "25",
         "period": "/month",
         "button": "$25/month",
-        "points": "760 credits/month",
-        "description": "1,400 images & 700 videos",
+        "points": "760 pts/month (incl. 60 check-in)",
+        "description": "Up to 150+ video gens/month",
         "storage": "5G storage"
       }
     },
