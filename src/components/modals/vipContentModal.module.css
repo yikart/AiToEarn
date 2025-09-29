@@ -143,7 +143,8 @@
 .vipInfoSection {
   border-radius: 12px;
   margin: 20px 24px;
-  padding-top: 20px;
+  padding: 20px;
+  background: aliceblue;
 }
 
 .vipInfoRow {
@@ -233,7 +234,6 @@
   justify-content: space-between;
   align-items: center;
   padding-bottom: 16px;
-  background: white;
   border-radius: 8px;
 }
 
