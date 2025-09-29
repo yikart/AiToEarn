@@ -250,7 +250,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
           </div>
         )}
 
-{isVip && userStore.userInfo?.vipInfo && (<h5 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center', marginTop: 16, marginBottom: 16 }}> 订阅计划 </h5>)}
+{isVip && userStore.userInfo?.vipInfo && (<h5 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center', marginTop: 16, marginBottom: 16 }}> {translate('subscriptionPlans')} </h5>)}
 
         {/* 选项卡 */}
         <div className={vipStyles.switchRow}>
