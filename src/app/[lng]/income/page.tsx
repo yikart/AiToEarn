@@ -285,7 +285,7 @@ export default function IncomePage() {
               </div>
               <div className={styles.balanceInfo}>
                 <div className={styles.balanceLabel}>{t('currentBalance')}</div>
-                <div className={styles.balanceAmount}>CNY {userInfo?.income || 0}</div>
+                <div className={styles.balanceAmount}>CNY {(userInfo?.income as number / 100 || 0).toFixed(2)}</div>
               </div>
             </div>
             <span
@@ -308,7 +308,7 @@ export default function IncomePage() {
           <TabPane 
             tab={
               <span>
-                <DollarOutlined />
+                <DollarOutlined />&nbsp;
                 {t('incomeRecords')}
               </span>
             } 
@@ -343,7 +343,7 @@ export default function IncomePage() {
           <TabPane 
             tab={
               <span>
-                <HistoryOutlined />
+                <HistoryOutlined />&nbsp;
                 {t('withdrawRecords')}
               </span>
             } 

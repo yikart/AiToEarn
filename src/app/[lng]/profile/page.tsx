@@ -558,13 +558,13 @@ export default function ProfilePage() {
         <div className={styles.statsHeader}>
           <Image src={plusvip} alt="VIP" className={styles.vipBadge} />
           <span className={styles.statsTitle}>{t('stats.totalEarned' as any)}</span>
-          <span className={styles.statsAmount}>{((userInfo as any)?.totalIncome ?? 0).toFixed(2)}</span>
+          <span className={styles.statsAmount}>{((userInfo as any)?.totalIncome as number / 100 || 0).toFixed(2)}</span>
           <span className={styles.statsCurrency}>{t('stats.currencyYuan' as any)}</span>
         </div>
         <div className={styles.statsGrid}>
           <div className={styles.statsItem} onClick={() => router.push('/income')} >
 
-            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {(userInfo?.income || 0).toFixed(2)} </span> CNY</div>
+            <div className={styles.statsLabel}>{t('stats.balance' as any)} <span className={styles.statsValue}> {( userInfo?.income as number / 100 || 0).toFixed(2)} </span> CNY</div>
           </div>
           <div className={styles.statsItem} style={{ cursor: 'pointer' }} onClick={() => setPointsDetailVisible(true)}>
 
