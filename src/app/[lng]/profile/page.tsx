@@ -457,57 +457,6 @@ export default function ProfilePage() {
   };
 
 
-  // 积分记录表格列
-  const pointsColumns = [
-    {
-      title: t('points.pointsChange'),
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount: number) => (
-        <span style={{ color: amount > 0 ? '#52c41a' : '#ff4d4f', fontWeight: 'bold' }}>
-          {amount > 0 ? '+' : ''}{amount}
-        </span>
-      ),
-    },
-    {
-      title: t('points.balance'),
-      dataIndex: 'balance',
-      key: 'balance',
-      render: (balance: number) => (
-        <span style={{ fontWeight: 'bold' }}>
-          {balance}
-        </span>
-      ),
-    },
-    {
-      title: t('points.changeType'),
-      dataIndex: 'type',
-      key: 'type',
-      render: (type: string) => {
-        const typeMap: { [key: string]: { color: string; text: string } } = {
-          'ai_service': { color: 'green', text: t('points.aiService' as any) },
-          'user_register': { color: 'blue', text: t('points.userRegister' as any) },
-          'publish': { color: 'purple', text: t('points.publish' as any) },
-          'point': { color: 'cyan', text: t('points.point' as any) },
-          'earn': { color: 'green', text: t('points.earn' as any) },
-          'spend': { color: 'red', text: t('points.spend' as any) },
-          'refund': { color: 'blue', text: t('points.refund' as any) },
-          'expire': { color: 'orange', text: t('points.expire' as any) }
-        };
-        const config = typeMap[type] || { color: 'default', text: type };
-        return <span style={{ color: config.color, fontWeight: 'bold' }}>{config.text}</span>;
-      },
-    },
-    {
-      title: t('points.description'),
-      dataIndex: 'description',
-      key: 'description',
-      ellipsis: true,
-    },
-  ];
-
-
-
   // 个人信息内容
   const renderProfileContent = () => (
     <div style={{}}>
@@ -517,14 +466,14 @@ export default function ProfilePage() {
       {isVip && (
         <div style={{
           display: 'flex',
-          alignItems: 'flex-start',
+          alignItems: 'center',
           justifyContent: 'flex-start',
           gap: 8,
           color: '#a66ae4',
           fontWeight: 700,
         }}>
           <Image src={plusvip} alt="VIP" className={styles.vipBadgeTop} />
-          <span>{t('vipHonorText' as any)}</span>
+          <span style={{ fontSize: 16 }}>{t('vipHonorText' as any)}</span>
         </div>
       )}
 
