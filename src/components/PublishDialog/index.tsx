@@ -725,11 +725,14 @@ const PublishDialog = memo(
                     );
                     const isOffline = pubItem.account.status === 0;
                     const isPcNotSupported = platConfig && platConfig.pcNoThis === true;
+                    const isTikTokForbidden = pubItem.account.type === PlatType.Tiktok;
 
                     return (
                       <Tooltip
                         title={
-                          isPcNotSupported 
+                          isTikTokForbidden
+                            ? t('tips.tiktokForbidden' as any)
+                            : isPcNotSupported 
                             ? t('tips.pcNotSupported' as any)
                             : isOffline 
                             ? t('tips.accountOffline' as any)
@@ -751,6 +754,10 @@ const PublishDialog = memo(
                           }}
                           onClick={(e) => {
                           e.stopPropagation();
+                          // TikTok 禁止发布，直接禁止点击
+                          if (isTikTokForbidden) {
+                            return;
+                          }
                           // 离线账户的点击由头像容器处理，这里不处理
                           if (isOffline) {
                             return;
@@ -806,14 +813,37 @@ const PublishDialog = memo(
                           
                         >
                           <AvatarPlat
-                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported ? 'disabled' : ''}`}
+                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported || isTikTokForbidden ? 'disabled' : ''}`}
                             account={pubItem.account}
                             size="large"
-                            disabled={isOffline || !isChoosed || isPcNotSupported}
+                            disabled={isOffline || !isChoosed || isPcNotSupported || isTikTokForbidden}
                           />
+                          {isTikTokForbidden && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.6)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 12,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                              }}
+                            >
+                              {t('badges.forbidden' as any)}
+                            </div>
+                          )}
                           {isOffline && (
                             <div
                             onClick={(e) => {
+                              // TikTok 禁止发布：不允许任何点击
+                              if (isTikTokForbidden) {
+                                return;
+                              }
                               // 只有离线账户才触发授权跳转
                               if (isOffline) {
                                 handleOfflineAvatarClick(pubItem.account);
@@ -835,7 +865,7 @@ const PublishDialog = memo(
                                 cursor: "pointer",
                               }}
                             >
-                              已离线
+                              {t('badges.offline' as any)}
                             </div>
                           )}
                           {isPcNotSupported && !isOffline && (

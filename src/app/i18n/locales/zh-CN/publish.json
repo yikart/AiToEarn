@@ -15,7 +15,8 @@
   "tips": {
     "workSaved": "请选择要发布的账户",
     "pcNotSupported": "Web不支持该平台，请下载App进行发布",
-    "accountOffline": "该账号已离线，无法发布"
+    "accountOffline": "该账号已离线，无法发布",
+    "tiktokForbidden": "该平台暂不支持发布"
   },
   "status": {
     "publishFailed": "发布失败",
@@ -115,6 +116,10 @@
     "contentSafe": "内容安全",
     "riskLevel": "等级:",
     "contentUnsafe": "内容不安全"
+  },
+  "badges": {
+    "offline": "已离线",
+    "forbidden": "禁"
   },
   "tiktok": {
     "creatorInfo": "创作者信息",
