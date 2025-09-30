@@ -180,7 +180,7 @@ export class UserService {
     // 验证是否已经存在
     const userInfo = await this.userRepository.getUserByMail(googleUser.email!)
 
-    if (userInfo) {
+    if (userInfo && !userInfo.isDelete) {
       return userInfo
     }
 
