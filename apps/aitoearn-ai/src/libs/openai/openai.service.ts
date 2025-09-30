@@ -19,6 +19,7 @@ export class OpenaiService {
     return new OpenAI({
       apiKey: apiKey ?? this.config.apiKey,
       baseURL: this.config.baseUrl,
+      timeout: this.config.timeout,
     })
   }
 
@@ -28,6 +29,7 @@ export class OpenaiService {
     return new ChatOpenAI({
       ...options,
       maxRetries: 1,
+      timeout: options.timeout ?? this.config.timeout,
       apiKey: options.apiKey ?? this.config.apiKey,
       configuration: {
         baseURL: this.config.baseUrl,
