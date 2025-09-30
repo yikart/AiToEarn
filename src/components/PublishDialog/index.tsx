@@ -23,7 +23,7 @@ import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogA
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
 import { SocialAccount } from "@/api/types/account.type";
-import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
@@ -44,6 +44,21 @@ import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
 import { toolsApi } from "@/api/tools";
 import { useRouter } from "next/navigation";
+import { PlatType } from "@/app/config/platConfig";
+// 导入各平台授权函数
+import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
+import { bilibiliSkip } from "@/app/[lng]/accounts/plat/BilibiliLogin";
+import { youtubeSkip } from "@/app/[lng]/accounts/plat/YoutubeLogin";
+import { twitterSkip } from "@/app/[lng]/accounts/plat/TwtterLogin";
+import { tiktokSkip } from "@/app/[lng]/accounts/plat/TiktokLogin";
+import { facebookSkip } from "@/app/[lng]/accounts/plat/FacebookLogin";
+import { instagramSkip } from "@/app/[lng]/accounts/plat/InstagramLogin";
+import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
+import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
+import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
+import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
+import { useAccountStore } from "@/store/account";
+import { updateAccountApi } from "@/api/account";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -123,17 +138,126 @@ const PublishDialog = memo(
       const [currentPlatform, setCurrentPlatform] = useState<string>('');
       const { t } = useTransClient("publish");
       const router = useRouter();
+      
+      // 获取账户store
+      const { accountGroupList, getAccountList } = useAccountStore(
+        useShallow((state) => ({
+          accountGroupList: state.accountGroupList,
+          getAccountList: state.getAccountList,
+        }))
+      );
 
-      // 处理离线账户头像点击，跳转到对应平台授权页面
-      const handleOfflineAvatarClick = useCallback((account: SocialAccount) => {
-        // 构建跳转URL，包含平台类型和空间ID参数
+      // 处理离线账户头像点击，直接跳转到对应平台授权页面
+      const handleOfflineAvatarClick = useCallback(async (account: SocialAccount) => {
         const platform = account.type;
-        const spaceId = account.groupId;
-        const accountsUrl = `/${window.location.pathname.split('/')[1]}/accounts?platform=${platform}&spaceId=${spaceId}`;
+        const targetSpaceId = account.groupId; // 使用账户原本的空间ID
         
-        // 跳转到账户页面并自动打开授权弹窗
-        router.push(accountsUrl);
-      }, [router]);
+        try {
+          // 记录授权前的账号数量，用于后续识别新账号
+          const beforeAuthCount = accountGroupList.reduce((total, group) => total + group.children.length, 0);
+
+          // 根据平台类型调用对应的授权函数
+          switch (platform) {
+            case PlatType.KWAI:
+              await kwaiSkip(platform);
+              break;
+            case PlatType.BILIBILI:
+              await bilibiliSkip(platform);
+              break;
+            case PlatType.YouTube:
+              await youtubeSkip(platform);
+              break;
+            case PlatType.Twitter:
+              await twitterSkip(platform);
+              break;
+            case PlatType.Tiktok:
+              await tiktokSkip(platform);
+              break;
+            case PlatType.Facebook:
+              try {
+                await facebookSkip(platform);
+                // Facebook授权成功后显示页面选择弹窗
+                // handleFacebookAuthSuccess(); // 这里可能需要处理Facebook页面选择
+              } catch (error) {
+                console.error('Facebook授权失败:', error);
+              }
+              break;
+            case PlatType.Instagram:
+              await instagramSkip(platform);
+              break;
+            case PlatType.Threads:
+              await threadsSkip(platform);
+              break;
+            case PlatType.WxGzh:
+              await wxGzhSkip(platform);
+              break;
+            case PlatType.Pinterest:
+              await pinterestSkip(platform);
+              break;
+            case PlatType.LinkedIn:
+              await linkedinSkip(platform);
+              break;
+            default:
+              console.warn(`未支持的平台类型: ${platform}`);
+              message.warning(`暂不支持 ${platform} 平台的直接授权`);
+              return;
+          }
+
+          // 如果指定了目标空间，等待授权完成后移动新账号
+          if (targetSpaceId) {
+            // 检查选中的空间是否是默认空间
+            const targetGroup = accountGroupList.find(group => group.id === targetSpaceId);
+            const isDefaultSpace = targetGroup?.isDefault;
+            
+            // 只有当选择了非默认空间时才移动账号
+            if (!isDefaultSpace) {
+              console.log('准备移动账号到空间:', targetGroup?.name);
+              setTimeout(async () => {
+                try {
+                  // 刷新账号列表
+                  await getAccountList();
+                  
+                  // 获取最新的账号组列表
+                  const currentState = useAccountStore.getState();
+                  const defaultGroup = currentState.accountGroupList.find(group => group.isDefault);
+                  
+                  if (defaultGroup) {
+                    // 找到相同平台类型的最后一个账号（最新添加的）
+                    const sameTypeAccounts = defaultGroup.children.filter(account => account.type === platform);
+                    const latestAccount = sameTypeAccounts[sameTypeAccounts.length - 1];
+                    
+                    if (latestAccount) {
+                      console.log('找到最新账号:', latestAccount.account, '平台:', platform);
+                      
+                      // 将新账号移动到指定空间
+                      console.log('移动账号:', latestAccount.account, '到空间:', targetGroup?.name);
+                      await updateAccountApi({
+                        id: latestAccount.id,
+                        groupId: targetSpaceId
+                      });
+                    } else {
+                      console.log('未找到相同平台类型的账号');
+                    }
+                    
+                    // 再次刷新账号列表以更新UI
+                    await getAccountList();
+                    console.log('账号移动完成');
+                  }
+                } catch (error) {
+                  console.error('移动账号到指定空间失败:', error);
+                }
+              }, 3000); // 等待3秒让授权完成
+            } else {
+              console.log('选择的是默认空间，无需移动账号');
+            }
+          } else {
+            console.log('未选择空间，不移动账号');
+          }
+        } catch (error) {
+          console.error('授权失败:', error);
+          message.error('授权失败，请重试');
+        }
+      }, [accountGroupList, getAccountList]);
 
       // 内容安全检测函数
       const handleContentModeration = useCallback(async () => {
@@ -627,8 +751,8 @@ const PublishDialog = memo(
                           }}
                           onClick={(e) => {
                           e.stopPropagation();
+                          // 离线账户的点击由头像容器处理，这里不处理
                           if (isOffline) {
-                            message.warning(t('tips.accountOffline' as any));
                             return;
                           }
                           if (isPcNotSupported) {
@@ -679,12 +803,7 @@ const PublishDialog = memo(
                         {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
                         <div 
                           style={{ position: "relative" }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            if (isOffline) {
-                              handleOfflineAvatarClick(pubItem.account);
-                            }
-                          }}
+                          
                         >
                           <AvatarPlat
                             className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported ? 'disabled' : ''}`}
@@ -694,6 +813,13 @@ const PublishDialog = memo(
                           />
                           {isOffline && (
                             <div
+                            onClick={(e) => {
+                              // 只有离线账户才触发授权跳转
+                              if (isOffline) {
+                                handleOfflineAvatarClick(pubItem.account);
+                              }
+                              // 正常账户的点击事件由父容器处理，这里不需要额外处理
+                            }}
                               style={{
                                 position: "absolute",
                                 inset: 0,
