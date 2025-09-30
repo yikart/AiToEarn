@@ -122,7 +122,7 @@ const PinterestParams = memo(
           setCreatingBoard(true);
           const response = await createPinterestBoardApi(
             { name: newBoardName.trim() }, 
-            pinterestAccount.account
+            pinterestAccount.id
           );
           
           if (response?.code === 0) {
