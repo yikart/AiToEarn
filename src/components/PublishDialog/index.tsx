@@ -43,6 +43,7 @@ import { apiGetMaterialGroupList, apiGetMaterialList } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
 import { toolsApi } from "@/api/tools";
+import { useRouter } from "next/navigation";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -121,6 +122,18 @@ const PublishDialog = memo(
       const [downloadModalVisible, setDownloadModalVisible] = useState(false);
       const [currentPlatform, setCurrentPlatform] = useState<string>('');
       const { t } = useTransClient("publish");
+      const router = useRouter();
+
+      // 处理离线账户头像点击，跳转到对应平台授权页面
+      const handleOfflineAvatarClick = useCallback((account: SocialAccount) => {
+        // 构建跳转URL，包含平台类型和空间ID参数
+        const platform = account.type;
+        const spaceId = account.groupId;
+        const accountsUrl = `/${window.location.pathname.split('/')[1]}/accounts?platform=${platform}&spaceId=${spaceId}`;
+        
+        // 跳转到账户页面并自动打开授权弹窗
+        router.push(accountsUrl);
+      }, [router]);
 
       // 内容安全检测函数
       const handleContentModeration = useCallback(async () => {
@@ -664,7 +677,15 @@ const PublishDialog = memo(
                         }}
                       >
                         {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
-                        <div style={{ position: "relative" }}>
+                        <div 
+                          style={{ position: "relative" }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isOffline) {
+                              handleOfflineAvatarClick(pubItem.account);
+                            }
+                          }}
+                        >
                           <AvatarPlat
                             className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported ? 'disabled' : ''}`}
                             account={pubItem.account}
@@ -684,7 +705,8 @@ const PublishDialog = memo(
                                 color: "#fff",
                                 fontSize: 12,
                                 fontWeight: 600,
-                                pointerEvents: "none",
+                                pointerEvents: "auto",
+                                cursor: "pointer",
                               }}
                             >
                               已离线
