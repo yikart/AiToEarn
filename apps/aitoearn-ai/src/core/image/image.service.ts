@@ -255,6 +255,7 @@ export class ImageService {
     run: () => Promise<T>
   }): Promise<T> {
     const { userId, userType, model, channel, type, pricing, request, run } = opts
+    const startedAt = new Date()
 
     const log = await this.aiLogRepo.create({
       userId,
@@ -265,6 +266,7 @@ export class ImageService {
       points: pricing,
       request,
       status: AiLogStatus.Generating,
+      startedAt,
     })
 
     if (pricing > 0 && userType === UserType.User) {
@@ -275,7 +277,6 @@ export class ImageService {
       await this.deductUserPoints(userId, pricing, model)
     }
 
-    const startedAt = new Date()
     const result = await run().catch(async (e) => {
       if (pricing > 0 && userType === UserType.User) {
         await this.addUserPoints(userId, pricing, model)
@@ -284,7 +285,6 @@ export class ImageService {
 
       await this.aiLogRepo.updateById(log.id, {
         duration,
-        startedAt,
         status: AiLogStatus.Failed,
         errorMessage: e.message,
       })
@@ -294,7 +294,6 @@ export class ImageService {
 
     await this.aiLogRepo.updateById(log.id, {
       duration,
-      startedAt,
       status: AiLogStatus.Success,
       response: result as Record<string, unknown>,
     })
