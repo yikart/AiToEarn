@@ -215,14 +215,14 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.planType}>
                   {translate('modal.vipInfo.planType')}: 
                   <span className={vipStyles.planValue}>
-                    {userStore.userInfo.vipInfo.cycleType === 1 
-                      ? translate('modal.vipInfo.monthly') 
-                      : translate('modal.vipInfo.yearly')}
-                    {!userStore.userInfo.vipInfo.autoContinue && ` (${translate('modal.vipInfo.singleMonth')})`}
+                    { userStore.userInfo.vipInfo.cycleType === 2 && ( userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.yearly') : translate('modal.vipInfo.yearly2'))}
+                    { userStore.userInfo.vipInfo.cycleType === 1 && ( userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.monthly') : translate('modal.vipInfo.monthly2'))}
+                      
+                    {/* {!userStore.userInfo.vipInfo.autoContinue && ` (${translate('modal.vipInfo.singleMonth')})`} */}
                   </span>
                 </div>
                 <div className={vipStyles.expireTime}>
-                  { !userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.xufeiTime') : translate('modal.vipInfo.expireTime')}: 
+                  { userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.xufeiTime') : translate('modal.vipInfo.expireTime')}: 
                   <span className={vipStyles.expireValue}>
                     {new Date(userStore.userInfo.vipInfo.expireTime).toLocaleDateString()}
                   </span>
@@ -304,9 +304,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
-                   disabled={isCurrentPlan.year}
+                   disabled={isCurrentPlan.year&& userStore.userInfo?.vipInfo?.autoContinue}
                  >
-                   {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.goumai')}
+                   {(isCurrentPlan.year && userStore.userInfo?.vipInfo?.autoContinue) ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
@@ -353,9 +353,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
-                   disabled={isCurrentPlan.month}
+                   disabled={isCurrentPlan.month&& userStore.userInfo?.vipInfo?.autoContinue}
                  >
-                   {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.goumai')}
+                   {(isCurrentPlan.month && userStore.userInfo?.vipInfo?.autoContinue) ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>
