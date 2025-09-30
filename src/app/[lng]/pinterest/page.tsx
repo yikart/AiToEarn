@@ -162,7 +162,7 @@ export default function PinterestPage() {
 
       try {
         setLoading(true);
-        const response = await getPinterestBoardListApi({ page, size }, selectedAccount.account);
+        const response = await getPinterestBoardListApi({ page, size }, selectedAccount.id);
         if (response?.code === 0) {
           setBoards(response.data?.list || []);
           setTotal(response.data?.count || 0);
