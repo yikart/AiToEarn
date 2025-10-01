@@ -41,9 +41,9 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 
 OS | Download
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.18-green?logo=android&logoColor=white)]((https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/app-release-1.0.18.apk))
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.18-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarn+1.0.18.dmg)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.18-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarnSetup-1.0.18.exe)
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.27-green?logo=android&logoColor=white)]((https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/aitoearn_1.0.27.apk))
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.24-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.24/AiToEarnSetup-1.0.24.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.27-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/AiToEarn+1.0.27.dmg)
 iOS |  **Coming soon!**
 
 [Google Play Download](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
