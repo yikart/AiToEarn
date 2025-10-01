@@ -197,6 +197,7 @@ AiToEarn 集成了多种官方 API。以下是开发者密钥配置指南：
 * 2025.08.08 — [发布 win-0.8.1](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
 * 2025.08.08 — [发布 web-0.1-beta](./aitoearn_web/README.md)
 * 2025.09.16 — [发布 v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
+* 2025.10.01 — [发布 v1.0.27](https://github.com/yikart/AiToEarn/releases/tag/v1.0.27)
 
 ---
 ## [常见问题](https://docs.aitoearn.ai)
