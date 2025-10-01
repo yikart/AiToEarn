@@ -36,9 +36,9 @@ AiToEarn 通过**AI 自动化**，帮助创作者、品牌与企业在全球主�
 
 操作系统 | 下载
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.18-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/app-release-1.0.18.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.18-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarnSetup-1.0.18.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.18-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.18/AiToEarn+1.0.18.dmg)
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.27-green?logo=android&logoColor=white)]((https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/aitoearn_1.0.27.apk))
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.27-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/AiToEarnSetup-1.0.27.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.27-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/AiToEarn+1.0.27.dmg)
 iOS |  **即将推出！**
 
 [Google Play 下载](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
