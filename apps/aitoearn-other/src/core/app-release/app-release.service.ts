@@ -111,7 +111,7 @@ export class AppReleaseService {
       latestVersion: latestRelease.version,
       latestBuildNumber: latestRelease.buildNumber,
       currentVersion: data.currentVersion,
-      currentBuildNumber: data.currentBuildNumber,
+      currentBuildNumber: data.currentBuildNumber ?? 0,
       notes: latestRelease.notes,
       links: latestRelease.links,
       publishedAt: latestRelease.publishedAt,
