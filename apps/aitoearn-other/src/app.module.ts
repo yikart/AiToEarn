@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { MongodbModule } from '@yikart/mongodb'
 import { config } from './config'
 import { AppConfigModule } from './core/app-config/app-config.module'
+import { AppReleaseModule } from './core/app-release/app-release.module'
 import { FeedbackModule } from './core/feedback/feedback.module'
 import { NotificationModule } from './core/notification/notification.module'
 
@@ -11,6 +12,7 @@ import { NotificationModule } from './core/notification/notification.module'
     AppConfigModule,
     FeedbackModule,
     NotificationModule,
+    AppReleaseModule,
   ],
   controllers: [],
   providers: [],
