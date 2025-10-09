@@ -27,6 +27,9 @@ on:
         options:
           - aitoearn-ai
           - aitoearn-cloud-space
+          - aitoearn-user
+          - aitoearn-other
+          - aitoearn-payment
 
 permissions:
   id-token: write
