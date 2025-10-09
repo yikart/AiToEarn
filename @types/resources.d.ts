@@ -460,7 +460,7 @@ interface Resources {
       "features": {
         "hotTopic": {
           "title": "多平台分发",
-          "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。"
+          "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X）。"
         },
         "international": {
           "title": "日历编排",
