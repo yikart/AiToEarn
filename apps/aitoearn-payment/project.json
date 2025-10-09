@@ -36,7 +36,7 @@
       "defaultConfiguration": "local",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "cloud-space:build",
+        "buildTarget": "aitoearn-payment:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
