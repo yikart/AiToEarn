@@ -4,3 +4,98 @@
   min-height: 0;
   overflow: auto;
 }
+
+// 移动端下载提示：遮罩
+.mobileDownloadOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+// 移动端下载提示：底部弹窗
+.mobileDownloadSheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 1001;
+  animation: slideUp 0.25s ease-out;
+  padding: 16px 16px 20px;
+}
+
+.sheetHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sheetTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.sheetClose {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+}
+
+.sheetBody {
+  padding: 12px 4px 4px;
+}
+
+.sheetDesc {
+  margin: 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.sheetFooter {
+  padding-top: 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.sheetCta {
+  display: inline-block;
+  background: #4f46e5;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 6px 18px rgba(79, 70, 229, 0.35);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
