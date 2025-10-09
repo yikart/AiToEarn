@@ -13,7 +13,10 @@
     "delete": "Delete"
   },
   "tips": {
-    "workSaved": "Please select the account to publish"
+    "workSaved": "Please select the account to publish",
+    "pcNotSupported": "Web does not support this platform, please download the App to publish",
+    "accountOffline": "This account is offline and cannot be published",
+    "tiktokForbidden": "This platform does not support publishing yet"
   },
   "status": {
     "publishFailed": "Failed",
@@ -48,6 +51,8 @@
   "upload": {
     "finishingUp": "Finishing up...",
     "uploadImageOrVideo": "Upload image or video",
+    "uploadImage": "Please upload image",
+    "uploadVideo": "Please upload video",
     "dragAndSelect": "Drag & select image or video"
   },
   "validation": {
@@ -61,6 +66,8 @@
     "descriptionRequired": "Description is required",
     "imageMaxExceeded": "{{platformName}} images cannot exceed {{maxCount}}",
     "uploadImageOrVideo": "Please upload image or video",
+    "uploadImage": "Please upload image",
+    "uploadVideo": "Please upload video",
     "topicMaxExceeded": "{{platformName}} topics cannot exceed {{maxCount}}",
     "topicFormatError": "Topics in description must be separated by spaces, such as: \"#topic1 #topic2\"",
     "titleRequired": "Title is required",
@@ -107,7 +114,12 @@
     "contentModeration": "Content Moderation",
     "checkingContent": "Checking...",
     "contentSafe": "Content Safe",
+    "riskLevel": "Level:",
     "contentUnsafe": "Content Unsafe"
+  },
+  "badges": {
+    "offline": "Offline",
+    "forbidden": "No"
   },
   "tiktok": {
     "creatorInfo": "Creator Info",

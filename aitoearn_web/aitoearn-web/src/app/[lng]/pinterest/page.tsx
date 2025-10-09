@@ -162,7 +162,7 @@ export default function PinterestPage() {
 
       try {
         setLoading(true);
-        const response = await getPinterestBoardListApi({ page, size }, selectedAccount.account);
+        const response = await getPinterestBoardListApi({ page, size }, selectedAccount.id);
         if (response?.code === 0) {
           setBoards(response.data?.list || []);
           setTotal(response.data?.count || 0);
@@ -180,7 +180,7 @@ export default function PinterestPage() {
 
       try {
         setLoading(true);
-        const response = await getPinterestPinListApi({ page: page, size }, selectedAccount.account);
+        const response = await getPinterestPinListApi({ page: page, size }, selectedAccount.id);
         if (response?.code === 0) {
           setPins(response.data?.list || []);
           setTotal(response.data?.count || 0);
@@ -203,7 +203,7 @@ export default function PinterestPage() {
 
     try {
       setLoading(true);
-      const response = await createPinterestBoardApi(values, selectedAccount.account);
+      const response = await createPinterestBoardApi(values, selectedAccount.id);
       if (response?.code === 0) {
         message.success(t('messages.boardCreateSuccess'));
         setBoardModalVisible(false);
@@ -226,7 +226,7 @@ export default function PinterestPage() {
 
     try {
       setLoading(true);
-      const response = await deletePinterestBoardApi(boardId, selectedAccount.account);
+      const response = await deletePinterestBoardApi(boardId, selectedAccount.id);
       if (response?.code === 0) {
         message.success(t('messages.boardDeleteSuccess'));
         loadBoards(1, 20);
@@ -265,7 +265,7 @@ export default function PinterestPage() {
         }
       };
 
-      const response = await createPinterestPinApi(pinData, selectedAccount.account);
+      const response = await createPinterestPinApi(pinData, selectedAccount.id);
       if (response?.code === 0) {
         message.success(t('messages.pinCreateSuccess'));
         setPinModalVisible(false);
@@ -289,7 +289,7 @@ export default function PinterestPage() {
 
     try {
       setLoading(true);
-      const response = await deletePinterestPinApi(pinId, selectedAccount.account);
+      const response = await deletePinterestPinApi(pinId, selectedAccount.id);
       if (response?.code === 0) {
         message.success(t('messages.pinDeleteSuccess'));
         loadPins(currentPage, pageSize);
@@ -360,7 +360,7 @@ export default function PinterestPage() {
 
     try {
       setLoading(true);
-      const response = await getPinterestBoardApi(board.id, selectedAccount.account);
+      const response = await getPinterestBoardApi(board.id, selectedAccount.id);
       if (response?.code === 0) {
         setSelectedBoard(response.data);
         setBoardDetailModalVisible(true);
@@ -381,7 +381,7 @@ export default function PinterestPage() {
 
     try {
       setLoading(true);
-      const response = await getPinterestPinApi(pin.id, selectedAccount.account);
+      const response = await getPinterestPinApi(pin.id, selectedAccount.id);
       if (response?.code === 0) {
         setSelectedPin(response.data);
         setPinDetailModalVisible(true);

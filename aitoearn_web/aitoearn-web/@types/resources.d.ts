@@ -460,7 +460,7 @@ interface Resources {
       "features": {
         "hotTopic": {
           "title": "多平台分发",
-          "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X）。"
+          "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X）。"
         },
         "international": {
           "title": "日历编排",
@@ -1627,7 +1627,7 @@ interface Resources {
   "profile": {
     "personalInfo": "个人信息",
     "orderManagement": "订单管理",
-    "myOrders": "我的订单",
+    "myOrders": "购买记录",
     "mySubscriptions": "我的订阅",
     "plusMember": "PLUS会员",
     "vipUserGreeting": "尊敬的VIP用户，您已解锁全部会员权益",
@@ -1655,6 +1655,7 @@ interface Resources {
     "status": "状态",
     "createTime": "创建时间",
     "expireTime": "过期时间",
+    "xufeiTime": "续费时间",
     "actions": "操作",
     "viewDetails": "查看详情",
     "goToPay": "去支付",
@@ -1668,6 +1669,7 @@ interface Resources {
     "goToPayment": "前往支付",
     "internalId": "内部ID",
     "subscriptionMode": "订阅模式",
+    "paymentMethod": "支付方式",
     "refundedAmount": "已退款金额",
     "paymentIntent": "Payment Intent",
     "paymentLink": "支付链接",
@@ -1824,6 +1826,8 @@ interface Resources {
     "upload": {
       "finishingUp": "正在完成...",
       "uploadImageOrVideo": "上传图片或视频",
+      "uploadImage": "上传图片",
+      "uploadVideo": "上传视频",
       "dragAndSelect": "拖放 & 选择图片或视频"
     },
     "validation": {
@@ -1837,6 +1841,8 @@ interface Resources {
       "descriptionRequired": "描述是必须的",
       "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
       "uploadImageOrVideo": "请上传图片或视频",
+      "uploadImage": "上传图片",
+      "uploadVideo": "上传视频",
       "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
       "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
       "titleRequired": "标题是必须的",

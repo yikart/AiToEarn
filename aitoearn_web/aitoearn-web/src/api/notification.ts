@@ -54,7 +54,7 @@ export const markAllNotificationsAsRead = () => {
 
 // 获取未读数量
 export const getUnreadCount = () => {
-  return http.get<UnreadCountResponse>("notification/unread-count");
+  return http.get<UnreadCountResponse>("notification/unread-count", undefined, true);
 };
 
 // 删除通知

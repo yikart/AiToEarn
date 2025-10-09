@@ -35,7 +35,7 @@
     "features": {
       "hotTopic": {
         "title": "Distribute Everywhere",
-        "description": "Publish to the widest range of global platforms (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, Bluesky, YouTube Shorts, Pinterest, Google Business, Mastodon, X)."
+        "description": "Publish to the widest range of global platforms (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X)."
       },
       "international": {
         "title": "Calendar Scheduler",

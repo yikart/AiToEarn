@@ -12,6 +12,7 @@ import { PlatType } from "@/app/config/platConfig";
 import { SocialAccount } from "@/api/types/account.type";
 import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
 import { useTransClient } from "@/app/i18n/client";
+import { useUserStore } from "@/store/user";
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -38,6 +39,10 @@ export default function AccountPageCore({
   const [targetPlatform, setTargetPlatform] = useState<PlatType | undefined>();
   const [targetSpaceId, setTargetSpaceId] = useState<string | undefined>();
   const { t } = useTransClient("account");
+  const userStore = useUserStore();
+
+  // 移动端下载提示弹窗开关
+  const [showMobileDownload, setShowMobileDownload] = useState(false);
 
   useEffect(() => {
     accountInit();
@@ -62,6 +67,52 @@ export default function AccountPageCore({
       setAddAccountModalOpen(true);
     }
   }, [searchParams]);
+
+  /**
+   * 在移动端首次进入 accounts 页面时，展示下载提示弹窗
+   * - 条件：屏幕宽度 <= 768
+   * - 只在当前会话展示一次（使用 sessionStorage 标记）
+   */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const isMobile = window.innerWidth <= 768;
+    const hasShown = sessionStorage.getItem("accountsMobileDownloadShown");
+    if (isMobile) {
+      setShowMobileDownload(true);
+      sessionStorage.setItem("accountsMobileDownloadShown", "1");
+    }
+  }, []);
+
+  /**
+   * 关闭下载提示弹窗
+   */
+  const closeMobileDownload = () => setShowMobileDownload(false);
+
+  /**
+   * 生成下载链接（根据语言）
+   */
+  const getDownloadHref = () => {
+    const lang = userStore.lang;
+    return lang === "en"
+      ? "https://docs.aitoearn.ai/en/downloads"
+      : "https://docs.aitoearn.ai/zh/downloads";
+  };
+
+  const downloadTexts = (() => {
+    const lang = userStore.lang;
+    if (lang === "zh-CN") {
+      return {
+        title: "欢迎使用 AitoEarn",
+        desc: "为了获得完整体验，请在设备上下载 App",
+        cta: "下载 App",
+      };
+    }
+    return {
+      title: "Welcome to AitoEarn",
+      desc: "To enjoy the full experience, please download the app on your device",
+      cta: "Download App",
+    };
+  })();
 
   const handleAddAccountSuccess = (accountInfo: SocialAccount) => {
     setAddAccountModalOpen(false);
@@ -124,6 +175,35 @@ export default function AccountPageCore({
           showSpaceSelector={!targetSpaceId}
           autoTriggerPlatform={targetPlatform}
         />
+
+        {/* 移动端下载提示（遮罩 + 底部弹窗） */}
+        {showMobileDownload && (
+          <>
+            <div className={styles.mobileDownloadOverlay}  />
+            <div className={styles.mobileDownloadSheet} role="dialog" aria-modal="true">
+              <div className={styles.sheetHeader}>
+                <div className={styles.sheetTitle}>{downloadTexts.title} 👋</div>
+                <button className={styles.sheetClose} aria-label="Close" onClick={closeMobileDownload}>
+                  ×
+                </button>
+              </div>
+              <div className={styles.sheetBody}>
+                <p className={styles.sheetDesc}>{downloadTexts.desc}</p>
+              </div>
+              <div className={styles.sheetFooter}>
+                <a
+                  className={styles.sheetCta}
+                  href={getDownloadHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={closeMobileDownload}
+                >
+                  {downloadTexts.cta}
+                </a>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </NoSSR>
   );

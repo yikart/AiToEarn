@@ -37,6 +37,11 @@ export function Providers({
   });
 
   useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const queryToken = urlParams.get("token");
+    if (queryToken) {
+      useUserStore.getState().setToken(queryToken);
+    }
     if (useUserStore.getState().token) {
       useUserStore.getState().getUserInfo();
       useAccountStore.getState().accountInit();

@@ -98,7 +98,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
           v.params.images?.length === 0 &&
           !v.params.video
         ) {
-          return setErrorMsg(t("validation.uploadImageOrVideo"));
+          let msgs:any = t("validation.uploadImageOrVideo");
+          if (platInfo.pubTypes.has(PubType.ImageText) && platInfo.pubTypes.has(PubType.VIDEO)) {
+            msgs = t("validation.uploadImageOrVideo");
+          } else if (platInfo.pubTypes.has(PubType.ImageText)) {
+            msgs = t("validation.uploadImage");
+          } else if (platInfo.pubTypes.has(PubType.VIDEO)) {
+            msgs = t("validation.uploadVideo");
+          }
+          return  setErrorMsg(msgs);
         }
 
         // 话题数量校验

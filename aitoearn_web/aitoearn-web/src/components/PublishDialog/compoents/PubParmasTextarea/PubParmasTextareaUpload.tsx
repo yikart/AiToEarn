@@ -158,7 +158,7 @@ const PubParmasTextareaUpload = memo(
               )}
             </div>
           ) : (
-            <Tooltip title={t("upload.uploadImageOrVideo")}>
+            <Tooltip title={ t("upload.uploadImageOrVideo") } >
               <Dragger
                 accept={uploadAccept}
                 multiple={uploadAccept.includes("image")}

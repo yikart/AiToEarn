@@ -84,7 +84,7 @@ export default function WalletPage() {
         width: 120,
         fixed: 'right' as any,
         render: (_: any, record: UserWalletAccount) => (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', gap: '4px' }}>
             <Button 
               size="small" 
               type="link" 

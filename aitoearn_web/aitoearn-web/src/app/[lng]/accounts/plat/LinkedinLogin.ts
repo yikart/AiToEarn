@@ -1,6 +1,7 @@
 import { PlatType } from "@/app/config/platConfig";
 import { getLinkedInAuthUrlApi, checkMetaAuthApi } from "@/api/platAuth";
 import { useUserStore } from "@/store/user";
+import { useAccountStore } from "@/store/account";
 
 /**
  * LinkedIn 被点击
@@ -37,6 +38,8 @@ export function linkedinLogin(taskId: any): Promise<any> {
           const authRess: any = await checkMetaAuthApi(taskId);
           const authRes = authRess;
           if (authRes?.code === 0 && authRes?.data.status == 1) {
+            const accountStore = useAccountStore.getState();
+            await accountStore.getAccountList();
             resolve(authRes);
             return true;
           }

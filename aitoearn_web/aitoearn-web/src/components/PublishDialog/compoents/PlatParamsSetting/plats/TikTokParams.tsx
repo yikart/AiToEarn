@@ -37,7 +37,7 @@ const TikTokParams = memo(
       const fetchCreatorInfo = async () => {
         try {
           setLoading(true);
-          const response = await http.get<TikTokCreatorInfo>(`plat/tiktok/creator/info/${pubItem.account.account}`);
+          const response = await http.get<TikTokCreatorInfo>(`plat/tiktok/creator/info/${pubItem.account.id}`);
           if (response && response.code === 0) {
             setCreatorInfo(response.data as TikTokCreatorInfo);
           }

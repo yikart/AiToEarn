@@ -132,7 +132,7 @@ export const usePublishDialogData = create(
             return;
           }
           
-          const res:any = await getPinterestBoardListApi({ page: 1, size: 100 }, pinterestAccount.account);
+          const res:any = await getPinterestBoardListApi({ page: 1, size: 100 }, pinterestAccount.id);
           set({
             pinterestBoards: res?.data?.list || [],
           });

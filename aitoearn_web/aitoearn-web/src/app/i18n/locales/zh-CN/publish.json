@@ -13,7 +13,10 @@
     "delete": "删除"
   },
   "tips": {
-    "workSaved": "请选择要发布的账户"
+    "workSaved": "请选择要发布的账户",
+    "pcNotSupported": "Web不支持该平台，请下载App进行发布",
+    "accountOffline": "该账号已离线，无法发布",
+    "tiktokForbidden": "该平台暂不支持发布"
   },
   "status": {
     "publishFailed": "发布失败",
@@ -48,6 +51,8 @@
   "upload": {
     "finishingUp": "正在完成...",
     "uploadImageOrVideo": "上传图片或视频",
+    "uploadImage": "请上传图片",
+    "uploadVideo": "请上传视频",
     "dragAndSelect": "拖放 & 选择图片或视频"
   },
   "validation": {
@@ -61,6 +66,8 @@
     "descriptionRequired": "描述是必须的",
     "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
     "uploadImageOrVideo": "请上传图片或视频",
+    "uploadImage": "请上传图片",
+    "uploadVideo": "请上传视频",
     "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
     "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
     "titleRequired": "标题是必须的",
@@ -107,7 +114,12 @@
     "contentModeration": "内容安全检测",
     "checkingContent": "检测中...",
     "contentSafe": "内容安全",
+    "riskLevel": "等级:",
     "contentUnsafe": "内容不安全"
+  },
+  "badges": {
+    "offline": "已离线",
+    "forbidden": "禁"
   },
   "tiktok": {
     "creatorInfo": "创作者信息",

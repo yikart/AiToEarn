@@ -2,6 +2,8 @@
   "title": "PLUS Member",
   "description": "Upgrade to unlock all features with 8 benefits",
   "activateNow": "Activate Now",
+  "upgrade": "Upgrade",
+  "membership": "Membership",
   "pleaseLoginFirst": "Please login first",
   "paymentOrderCreated": "Payment order created",
   "paymentLinkNotFound": "Payment link not found",
@@ -37,12 +39,51 @@
     "month": "Monthly",
     "year": "Yearly"
   },
+  "subscriptionManagement": "Subscription Management",
+  "subscriptionPlanManagement": "Subscription Plan Management",
+  "subscriptionPlans": "Plans",
+  "purchaseHistory": "Purchase History",
+  "myMembership": "My Membership",
+  "basicMembership": "Basic Membership",
+  "validUntil": "Valid Until",
+  "activatedAutoRenewalPlans": "Activated Auto-renewal Plans",
+  "activatedAutoRenewalPlansno": "Unactivated Auto-renewal Plans",
+  "noAutoRenewalItems": "You haven't activated any auto-renewal items yet",
+  "viewMorePlans": "View More Plans",
+  "continuousAnnual": "Continuous Annual",
+  "oneTimePurchase": "One-time Purchase",
+  "alipayPayment": "Alipay Payment",
+  "noMoreContent": "No more content",
+  "previousPage": "Previous",
+  "nextPage": "Next",
+  "pageInfo": "Page {current} of {total}",
+  "continuousMember": "Continuous Member",
+  "singleMember": "Single Month Member",
+  "autoRenewalEnabled": "Auto-renewal Enabled",
+  "autoRenewalDisabled": "Auto-renewal Disabled",
+  "nextRenewalDate": "Next Renewal Date",
+  "membershipExpires": "Membership Expires",
+  "currentPlan": "Current Plan",
   "modal": {
     "title": "7-Day Free Trial",
     "highlight": "Get 100 Points",
     "choosePlan": "Choose your plan or",
     "buyPoints": "Buy Points",
     "pointsDetail": "Points Detail",
+    "vipInfo": {
+      "details": "Details",
+      "subscription": "Subscription",
+      "planType": "Plan Type",
+      "monthly": "Monthly PLUS",
+      "monthly2": "Monthly",
+      "yearly2": "Yearly",
+      "yearly": "Yearly PLUS",
+      "singleMonth": "Single Month",
+      "expireTime": "Expire Time",
+      "xufeiTime": "Renewal Time",
+      "remainingPoints": "Remaining Points",
+      "buyPoints": "Buy Points"
+    },
     "tabs": {
       "yearly": "Yearly",
       "monthly": "Monthly",
@@ -58,52 +99,53 @@
       "period": "/month",
       "forever": "Forever",
       "currentPlan": "Current Plan",
+      "freePlan": "Free Plan",
       "points": "60 pts/month",
       "features": {
-        "dailyPoints": "Daily points",
-        "maxPoints": "Max 60 pts",
-        "videos": "60 videos/month",
-        "images": "120 images/month",
-        "storage": "500M storage"
+        "dailyPoints": "Up to 10+ video gens/month",
+        "maxPoints": "Trending insights",
+        "videos": "All major platforms",
+        "images": "Unlimited channel links",
+        "storage": "Content & comment search, smart engage"
       }
     },
     "plans": {
+      "goumai": "Buy",
       "yearly": {
         "title": "Yearly",
         "bestValue": "Best Value",
-        "price": "$144",
-        "period": "/year",
+        "price": "12",
+        "period": "/month",
         "originalPrice": "$300/year",
         "button": "$144/year Save 50%",
-        "points": "8,400 pts",
-        "description": "16,800 images & 8,400 videos",
+        "points": "760 pts/month (incl. 60 check-in)",
+        "description": "Up to 150+ video gens/month",
         "features": {
-          "dailyPoints": "Daily points",
-          "contentReview": "Content review",
-          "multiModel": "Multi-model support",
-          "textToVideo": "Text to video",
-          "aiGeneration": "AI generation",
-          "noWatermark": "No watermark, faster",
-          "storage": "5G storage"
+          "contentReview": "Content safety review",
+          "dailyPoints": "Free nano, banana image models (limited)",
+          "multiModel": "GPT-5, Gemini 2.5 Pro",
+          "textToVideo": "Douyin、Redbook、Kwai、Bilibli,Wechat、TikTok、YouTube、Facebook、Instagram.Threads、Twitter(X)、Pinterest All major platforms",
+          "aiGeneration": "Unlimited channel links",
+          "noWatermark": "Content & comment search, smart engage"
         }
       },
       "monthly": {
         "title": "Monthly",
-        "price": "$228",
-        "period": "/year",
+        "price": "19",
+        "period": "/month",
         "originalPrice": "$25/month",
         "button": "$19/month Save 25%",
-        "points": "8,400 pts",
-        "description": "16,800 images & 8,400 videos"
+        "points": "760 pts/month (incl. 60 check-in)",
+        "description": "Up to 150+ video gens/month"
       },
       "once": {
-        "title": "One-time",
-        "price": "$25",
+        "title": "One-time Monthly",
+        "price": "25",
         "period": "/month",
         "button": "$25/month",
-        "points": "700 pts",
-        "description": "1,400 images & 700 videos",
-        "storage": "3G storage"
+        "points": "760 pts/month (incl. 60 check-in)",
+        "description": "Up to 150+ video gens/month",
+        "storage": "5G storage"
       }
     },
     "trial": "7-day free trial",
@@ -138,11 +180,11 @@
   "recharge": {
     "title": "Buy Points",
     "current": "Current Points",
-    "price": "1000 points for $15",
+    "price": "1000 credits for $15",
     "amount": "Buy Points",
     "total": "Total",
     "buyNow": "Buy Now",
     "range": "1K-50K",
-    "unit": "points"
+    "unit": "credits"
   }
 } 

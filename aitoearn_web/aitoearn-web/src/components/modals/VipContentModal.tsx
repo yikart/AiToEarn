@@ -10,6 +10,10 @@ import vipStyles from "./vipContentModal.module.css";
 import PointsDetailModal from "@/components/modals/PointsDetailModal";
 import { useUserStore } from "@/store/user";
 import PointsRechargeModal from "@/components/modals/PointsRechargeModal";
+import SubscriptionManagementModal from "@/components/modals/SubscriptionManagementModal";
+
+import logo from '@/assets/images/logo.png';
+import Image from "next/image";
 
 interface VipContentModalProps {
   open: boolean;
@@ -18,10 +22,11 @@ interface VipContentModalProps {
 
 const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   const [pointsModalVisible, setPointsModalVisible] = useState(false);
+  const [subscriptionModalVisible, setSubscriptionModalVisible] = useState(false);
   const userStore = useUserStore();
   const router = useRouter();
   const { t } = useTransClient('vip');
-  const modalWidth = useMemo(() => "66%" as const, []);
+  const modalWidth = useMemo(() => "900px" as const, []);
   const [rechargeVisible, setRechargeVisible] = useState(false);
   const [activeTab, setActiveTab] = useState<'year' | 'month' | 'once'>('year');
   const [loading, setLoading] = useState(false);
@@ -29,6 +34,31 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   
   // 辅助函数处理翻译
   const translate = (key: string) => t(key as any);
+  
+  // 判断用户是否为有效会员
+  const isVip = useMemo(() => {
+    return userStore.userInfo?.vipInfo && 
+           userStore.userInfo.vipInfo.expireTime && 
+           new Date(userStore.userInfo.vipInfo.expireTime) > new Date();
+  }, [userStore.userInfo]);
+
+  // 判断用户是否已经是相同类型的会员且未过期
+  const isCurrentPlan = useMemo(() => {
+    if (!userStore.userInfo?.vipInfo || !isVip) {
+      return {
+        month: false,
+        year: false,
+        once: false
+      };
+    }
+    
+    const vipInfo = userStore.userInfo.vipInfo;
+    return {
+      month: vipInfo.cycleType === 1, // 1 是月度
+      year: vipInfo.cycleType === 2,  // 2 是年度
+      once: false // 一次性购买不在此判断范围内
+    };
+  }, [userStore.userInfo, isVip]);
   
   const handleTabClick = (tab: 'year' | 'month' | 'once') => {
     setActiveTab(tab);
@@ -55,6 +85,13 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       if (!userStore.userInfo?.id) {
         message.error(t('pleaseLoginFirst'));
         router.push('/login');
+        return;
+      }
+
+      // 检查用户是否已经是相同类型的会员且未过期
+      if (isCurrentPlan[planType]) {
+        message.warning(translate('currentPlan'));
+        setLoading(false);
         return;
       }
 
@@ -126,26 +163,96 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       centered
     >
       <div className={vipStyles.wrapper}>
-        {/* 顶部区域 */}
-        <div className={vipStyles.header}
-          style={{ background: 'transparent' }}>
-          <div className={vipStyles.titleBlock}>
-            <h2 className={vipStyles.title}>
-              {translate('modal.title')} <span className={vipStyles.highlight}>{translate('modal.highlight')}</span>
-            </h2>
-            <div className={vipStyles.links}>
-              <span>{translate('modal.choosePlan')}</span>
-              <span className={vipStyles.linkButton}
-                onClick={() => setRechargeVisible(true)}
-              >{translate('modal.buyPoints')}</span>
+        {/* 非会员顶部区域 */}
+        {
+          !isVip && (
+            <div className={vipStyles.header}
+              style={{ background: 'transparent' }}>
+              <div className={vipStyles.titleBlock}>
+                <h2 className={vipStyles.title}>
+                  {translate('modal.title')} <span className={vipStyles.highlight}>{translate('modal.highlight')}</span>
+                </h2>
+                <div className={vipStyles.links}>
+                  <span>{translate('modal.choosePlan')}</span>
+                  <span className={vipStyles.linkButton}
+                    onClick={() => setRechargeVisible(true)}
+                  >{translate('modal.buyPoints')}</span>
+                </div>
+              </div>
+              <div className={vipStyles.headerRight}>
+                <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
+              </div>
             </div>
-          </div>
-          <div className={vipStyles.headerRight}>
-            <Button className={vipStyles.pointsBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
-          </div>
-        </div>
+          )
+        }
+        
 
-        {/* 顶部选项卡 */}
+        {/* 会员信息区域 */}
+        {isVip && userStore.userInfo?.vipInfo && (
+          <div className={vipStyles.vipInfoSection}>
+            <div className={vipStyles.vipInfoRow}>
+              <div className={vipStyles.userInfo}>
+                <div className={vipStyles.avatar}>
+                  {userStore.userInfo.avatar ? (
+                    <img src={userStore.userInfo.avatar} alt="用户头像" />
+                  ) : (
+                    <Image src={logo} alt="用户头像" style={{ padding: '3px', backgroundColor: '#e9d5ff' }} />
+                  )}
+                </div>
+                <div className={vipStyles.userDetails}>
+                  <div className={vipStyles.userName}>{userStore.userInfo.name}</div>
+                  {/* <div className={vipStyles.userEmail}>{userStore.userInfo.mail}</div> */}
+                </div>
+              </div>
+                <div className={vipStyles.vipActions}>
+                  <Button className={vipStyles.detailBtn} onClick={() => setPointsModalVisible(true)}>{translate('modal.pointsDetail')}</Button>
+                  <Button className={vipStyles.subscriptionBtn} onClick={() => setSubscriptionModalVisible(true)}>{translate('modal.vipInfo.subscription')}</Button>
+                </div>
+            </div>
+            
+            <div className={vipStyles.vipPlanInfo}>
+              <div className={vipStyles.planDetails}>
+                <div className={vipStyles.planType}>
+                  {translate('modal.vipInfo.planType')}: 
+                  <span className={vipStyles.planValue}>
+                    { userStore.userInfo.vipInfo.cycleType === 2 && ( userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.yearly') : translate('modal.vipInfo.yearly2'))}
+                    { userStore.userInfo.vipInfo.cycleType === 1 && ( userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.monthly') : translate('modal.vipInfo.monthly2'))}
+                      
+                    {/* {!userStore.userInfo.vipInfo.autoContinue && ` (${translate('modal.vipInfo.singleMonth')})`} */}
+                  </span>
+                </div>
+                <div className={vipStyles.expireTime}>
+                  { userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.xufeiTime') : translate('modal.vipInfo.expireTime')}: 
+                  <span className={vipStyles.expireValue}>
+                    {new Date(userStore.userInfo.vipInfo.expireTime).toLocaleDateString()}
+                  </span>
+                </div>
+
+                <div className={vipStyles.expireTime}>
+                  {translate('modal.vipInfo.remainingPoints')}: 
+
+                  <div>
+                    <span onClick={() => setPointsModalVisible(true)} className={vipStyles.expireValue} style={{ color: '#727E84' }}>
+                      {(userStore.userInfo.score || 0).toFixed(1)}
+                    </span>
+                    <span onClick={() => setRechargeVisible(true)} className={vipStyles.expireValueHover} style={{ color: '#a66ae4', paddingLeft: 8 }}>
+                      {translate('modal.buyPoints')}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+              <div className={vipStyles.pointsInfo}>
+                
+              </div>
+            </div>
+            
+          </div>
+        )}
+
+{isVip && userStore.userInfo?.vipInfo && (<h5 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0f172a', textAlign: 'center', marginTop: 16, marginBottom: 16 }}> {translate('subscriptionPlans')} </h5>)}
+
+        {/* 选项卡 */}
         <div className={vipStyles.switchRow}>
           <div onClick={() => handleTabClick('year')} className={`${vipStyles.switchBtn} ${activeTab === 'year' ? vipStyles.active : ''}`}>
             {translate('modal.tabs.yearly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.yearly')}</Tag>
@@ -153,9 +260,13 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
           <div onClick={() => handleTabClick('month')} className={`${vipStyles.switchBtn} ${activeTab === 'month' ? vipStyles.active : ''}`}>
             {translate('modal.tabs.monthly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.monthly')}</Tag>
           </div>
-          <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>
-            {translate('modal.tabs.once')}
-          </div>
+         {
+          !userStore.userInfo?.vipInfo?.autoContinue && (
+            <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>
+              {translate('modal.tabs.once')}
+            </div>
+          )
+         } 
         </div>
 
         {/* 价格区域 */}
@@ -170,14 +281,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
                 <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
                 <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
-                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <Button disabled className={vipStyles.freeBtn}>
+                  {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
+                </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
                   <li>{translate('modal.free.features.images')}</li>
-                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
@@ -186,13 +298,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.planHead}>{translate('modal.plans.yearly.title')} <Tag color="#5b7cff">{translate('modal.plans.yearly.bestValue')}</Tag></div>
                 <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.yearly.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.yearly.period')}</span></div>
                 <div className={vipStyles.planDesc}>
-                  {canUseTrial ? translate('modal.trial') : ''} · <span style={{textDecoration: 'line-through'}}>{translate('modal.plans.yearly.originalPrice')}</span> · {translate('modal.cancelAnytime')}</div>
+                  {translate('modal.plans.yearly.button')}
+                  </div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
+                   disabled={isCurrentPlan.year&& userStore.userInfo?.vipInfo?.autoContinue}
                  >
-                   {translate('modal.plans.yearly.button')}
+                   {(isCurrentPlan.year && userStore.userInfo?.vipInfo?.autoContinue) ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
@@ -203,7 +317,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
                   <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
                   <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
-                  <li>{translate('modal.plans.yearly.features.storage')}</li>
                 </ul>
               </div>
             </>
@@ -217,14 +330,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
                 <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
                 <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
-                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <Button disabled className={vipStyles.freeBtn}>
+                  {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
+                </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
                   <li>{translate('modal.free.features.images')}</li>
-                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
@@ -233,13 +347,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                  <div className={vipStyles.planHead}>{translate('modal.plans.monthly.title')} </div>
                  <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>$</span><span className={vipStyles.bigNum}>{translate('modal.plans.monthly.price')}</span><span className={vipStyles.unit}>{translate('modal.plans.monthly.period')}</span></div>
                  <div className={vipStyles.planDesc}>
-                   {canUseTrial ? translate('modal.trial') : ''} · <span style={{textDecoration: 'line-through'}}>{translate('modal.plans.monthly.originalPrice')}</span> · {translate('modal.cancelMonthly')}</div>
+                  {translate('modal.plans.monthly.button')}
+                  </div>
                  <Button 
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
+                   disabled={isCurrentPlan.month&& userStore.userInfo?.vipInfo?.autoContinue}
                  >
-                   {translate('modal.plans.monthly.button')}
+                   {(isCurrentPlan.month && userStore.userInfo?.vipInfo?.autoContinue) ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>
@@ -250,7 +366,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
                   <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
                   <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
-                  <li>{translate('modal.plans.yearly.features.storage')}</li>
                 </ul>
               </div>
             </>
@@ -263,14 +378,15 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.freeTitle}>{translate('modal.free.title')}</div>
                 <div className={vipStyles.freePrice}><span>{translate('modal.free.price')}</span><span className={vipStyles.unit}>{translate('modal.free.period')}</span></div>
                 <div className={vipStyles.freeForever}>{translate('modal.free.forever')}</div>
-                <Button disabled className={vipStyles.freeBtn}>{translate('modal.free.currentPlan')}</Button>
+                <Button disabled className={vipStyles.freeBtn}>
+                  {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
+                </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
                   <li>{translate('modal.free.features.images')}</li>
-                  <li>{translate('modal.free.features.storage')}</li>
                 </ul>
               </div>
 
@@ -283,7 +399,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    onClick={() => handleActivate('once')}
                    loading={loading}
                  >
-                   {translate('modal.plans.once.button')}
+                   {translate('modal.plans.goumai')}
                  </Button>
                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.once.points')}</div>
                 <div className={vipStyles.subDesc}>{translate('modal.plans.once.description')}</div>
@@ -294,7 +410,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
                   <li>{translate('modal.plans.yearly.features.aiGeneration')}</li>
                   <li>{translate('modal.plans.yearly.features.noWatermark')}</li>
-                  <li>{translate('modal.plans.once.storage')}</li>
                 </ul>
               </div>
             </>
@@ -369,6 +484,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       <PointsDetailModal open={pointsModalVisible} onClose={() => setPointsModalVisible(false)} />
 
       <PointsRechargeModal open={rechargeVisible} onClose={() => setRechargeVisible(false)} />
+
+      {/* 订阅管理弹窗 */}
+      <SubscriptionManagementModal open={subscriptionModalVisible} onClose={() => setSubscriptionModalVisible(false)} />
     </Modal>
   );
 });

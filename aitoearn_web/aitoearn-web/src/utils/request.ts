@@ -10,6 +10,10 @@ type ResponseType<T> = {
   url: string;
 };
 
+type RequestParamsWithSilent = RequestParams & {
+  silent?: boolean; // 是否静默处理错误，不显示提示
+};
+
 const fetchService = new FetchService({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/`,
   requestInterceptor(requestParams) {
@@ -36,7 +40,7 @@ const fetchService = new FetchService({
   },
 });
 
-export async function request<T>(params: RequestParams) {
+export async function request<T>(params: RequestParamsWithSilent) {
   try {
     const res = await fetchService.request(params);
     const data: ResponseType<T> = await res.json();
@@ -53,29 +57,31 @@ export async function request<T>(params: RequestParams) {
       contact: isZh ? "如需帮助请联系客服：" : "Need help? Contact support:",
     };
 
-    if (res.status === 401) {
-      // useUserStore.getState().logout();
-      // message.error({
-      //   key: "NoPermission",
-      //   content: "登录状态过期，请重新登录",
-      // });
-      return data;
+    // 未登录拦截
+    if (data.code === 401 && !useUserStore.getState().token) {
+      return null;
+    }
+
+    // 已登录、但是登录过期
+    if (data.code === 401) {
+      useUserStore.getState().logout();
     }
 
     if (data.code !== 0) {
-      if (typeof window !== "undefined")
+      if (!params.silent && typeof window !== "undefined") {
         message.warning({
           content: `${data.message || i18nText.networkBusy} ${i18nText.contact} https://t.me/harryyyy2025`,
           key: "apiErrorMessage",
           duration: 6,
         });
+      }
       return null;
     }
 
     return data;
   } catch (e) {
     console.warn(e);
-    if (typeof window !== "undefined") {
+    if (!params.silent && typeof window !== "undefined") {
       message.error({
         content: `${(useUserStore.getState().lang || "zh-CN").toLowerCase().startsWith("zh") ? "网络异常，请稍后重试！" : "Network error, please try again later!"} ${(useUserStore.getState().lang || "zh-CN").toLowerCase().startsWith("zh") ? "如需帮助请联系客服：" : "Need help? Contact support:"} https://t.me/harryyyy2025`,
         key: "apiErrorMessage",
@@ -87,32 +93,36 @@ export async function request<T>(params: RequestParams) {
 }
 
 export default {
-  get<T>(url: string, data?: any) {
+  get<T>(url: string, data?: any, silent?: boolean) {
     return request<T>({
       url,
       params: data,
       method: "GET",
+      silent,
     });
   },
-  post<T>(url: string, data?: any) {
+  post<T>(url: string, data?: any, silent?: boolean) {
     return request<T>({
       url,
       data: data,
       method: "POST",
+      silent,
     });
   },
-  put<T>(url: string, data?: any) {
+  put<T>(url: string, data?: any, silent?: boolean) {
     return request<T>({
       url,
       data: data,
       method: "PUT",
+      silent,
     });
   },
-  delete<T>(url: string, data?: any) {
+  delete<T>(url: string, data?: any, silent?: boolean) {
     return request<T>({
       url,
       data: data,
       method: "DELETE",
+      silent,
     });
   },
 };

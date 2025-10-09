@@ -9,19 +9,21 @@ import {
   useState,
 } from "react";
 import styles from "./publishDialog.module.scss";
-import { Button, message, Modal, List, Spin } from "antd";
+import { Button, message, Modal, List, Spin, Tooltip } from "antd";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 import {
   ArrowRightOutlined,
   ExclamationCircleFilled,
   FileTextOutlined,
   FolderOpenOutlined,
   PictureOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
 import { CSSTransition } from "react-transition-group";
 import { SocialAccount } from "@/api/types/account.type";
-import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import AvatarPlat from "@/components/AvatarPlat";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
@@ -41,6 +43,22 @@ import { apiGetMaterialGroupList, apiGetMaterialList } from "@/api/material";
 import { getMediaGroupList, getMediaList } from "@/api/media";
 import { getOssUrl } from "@/utils/oss";
 import { toolsApi } from "@/api/tools";
+import { useRouter } from "next/navigation";
+import { PlatType } from "@/app/config/platConfig";
+// 导入各平台授权函数
+import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
+import { bilibiliSkip } from "@/app/[lng]/accounts/plat/BilibiliLogin";
+import { youtubeSkip } from "@/app/[lng]/accounts/plat/YoutubeLogin";
+import { twitterSkip } from "@/app/[lng]/accounts/plat/TwtterLogin";
+import { tiktokSkip } from "@/app/[lng]/accounts/plat/TiktokLogin";
+import { facebookSkip } from "@/app/[lng]/accounts/plat/FacebookLogin";
+import { instagramSkip } from "@/app/[lng]/accounts/plat/InstagramLogin";
+import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
+import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
+import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
+import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
+import { useAccountStore } from "@/store/account";
+import { updateAccountApi } from "@/api/account";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -114,7 +132,132 @@ const PublishDialog = memo(
       const [moderationLoading, setModerationLoading] = useState(false);
       const [moderationResult, setModerationResult] = useState<boolean | null>(null);
       const [moderationDesc, setModerationDesc] = useState<string>("");
+      const [moderationLevel, setModerationLevel] = useState<any>(null);
+      // 下载App弹窗状态
+      const [downloadModalVisible, setDownloadModalVisible] = useState(false);
+      const [currentPlatform, setCurrentPlatform] = useState<string>('');
       const { t } = useTransClient("publish");
+      const router = useRouter();
+      
+      // 获取账户store
+      const { accountGroupList, getAccountList } = useAccountStore(
+        useShallow((state) => ({
+          accountGroupList: state.accountGroupList,
+          getAccountList: state.getAccountList,
+        }))
+      );
+
+      // 处理离线账户头像点击，直接跳转到对应平台授权页面
+      const handleOfflineAvatarClick = useCallback(async (account: SocialAccount) => {
+        const platform = account.type;
+        const targetSpaceId = account.groupId; // 使用账户原本的空间ID
+        
+        try {
+          // 记录授权前的账号数量，用于后续识别新账号
+          const beforeAuthCount = accountGroupList.reduce((total, group) => total + group.children.length, 0);
+
+          // 根据平台类型调用对应的授权函数
+          switch (platform) {
+            case PlatType.KWAI:
+              await kwaiSkip(platform);
+              break;
+            case PlatType.BILIBILI:
+              await bilibiliSkip(platform);
+              break;
+            case PlatType.YouTube:
+              await youtubeSkip(platform);
+              break;
+            case PlatType.Twitter:
+              await twitterSkip(platform);
+              break;
+            case PlatType.Tiktok:
+              await tiktokSkip(platform);
+              break;
+            case PlatType.Facebook:
+              try {
+                await facebookSkip(platform);
+                // Facebook授权成功后显示页面选择弹窗
+                // handleFacebookAuthSuccess(); // 这里可能需要处理Facebook页面选择
+              } catch (error) {
+                console.error('Facebook授权失败:', error);
+              }
+              break;
+            case PlatType.Instagram:
+              await instagramSkip(platform);
+              break;
+            case PlatType.Threads:
+              await threadsSkip(platform);
+              break;
+            case PlatType.WxGzh:
+              await wxGzhSkip(platform);
+              break;
+            case PlatType.Pinterest:
+              await pinterestSkip(platform);
+              break;
+            case PlatType.LinkedIn:
+              await linkedinSkip(platform);
+              break;
+            default:
+              console.warn(`未支持的平台类型: ${platform}`);
+              message.warning(`暂不支持 ${platform} 平台的直接授权`);
+              return;
+          }
+
+          // 如果指定了目标空间，等待授权完成后移动新账号
+          if (targetSpaceId) {
+            // 检查选中的空间是否是默认空间
+            const targetGroup = accountGroupList.find(group => group.id === targetSpaceId);
+            const isDefaultSpace = targetGroup?.isDefault;
+            
+            // 只有当选择了非默认空间时才移动账号
+            if (!isDefaultSpace) {
+              console.log('准备移动账号到空间:', targetGroup?.name);
+              setTimeout(async () => {
+                try {
+                  // 刷新账号列表
+                  await getAccountList();
+                  
+                  // 获取最新的账号组列表
+                  const currentState = useAccountStore.getState();
+                  const defaultGroup = currentState.accountGroupList.find(group => group.isDefault);
+                  
+                  if (defaultGroup) {
+                    // 找到相同平台类型的最后一个账号（最新添加的）
+                    const sameTypeAccounts = defaultGroup.children.filter(account => account.type === platform);
+                    const latestAccount = sameTypeAccounts[sameTypeAccounts.length - 1];
+                    
+                    if (latestAccount) {
+                      console.log('找到最新账号:', latestAccount.account, '平台:', platform);
+                      
+                      // 将新账号移动到指定空间
+                      console.log('移动账号:', latestAccount.account, '到空间:', targetGroup?.name);
+                      await updateAccountApi({
+                        id: latestAccount.id,
+                        groupId: targetSpaceId
+                      });
+                    } else {
+                      console.log('未找到相同平台类型的账号');
+                    }
+                    
+                    // 再次刷新账号列表以更新UI
+                    await getAccountList();
+                    console.log('账号移动完成');
+                  }
+                } catch (error) {
+                  console.error('移动账号到指定空间失败:', error);
+                }
+              }, 3000); // 等待3秒让授权完成
+            } else {
+              console.log('选择的是默认空间，无需移动账号');
+            }
+          } else {
+            console.log('未选择空间，不移动账号');
+          }
+        } catch (error) {
+          console.error('授权失败:', error);
+          message.error('授权失败，请重试');
+        }
+      }, [accountGroupList, getAccountList]);
 
       // 内容安全检测函数
       const handleContentModeration = useCallback(async () => {
@@ -137,6 +280,7 @@ const PublishDialog = memo(
           setModerationLoading(true);
           setModerationResult(null);
           setModerationDesc("");
+          setModerationLevel(null);
           const result = await toolsApi.textModeration(contentToCheck);
           console.log("result",result);
           
@@ -144,9 +288,10 @@ const PublishDialog = memo(
             const data: any = result?.data || {} as any;
             const descriptions: string = (data && (data.descriptions as string)) || "";
             const labels: string = (data && (data.labels as string)) || "";
-            const reason: string = (data && (data.reason as string)) || "";
+            const reason: any = (data && (data.reason ? JSON.parse(data.reason) : ""));
             const isSafe = !descriptions && !labels && !reason;
             setModerationResult(isSafe);
+            setModerationLevel(reason);
             setModerationDesc(isSafe ? "" : (descriptions || reason || "内容不安全"));
             if (isSafe) {
               message.success("内容安全");
@@ -178,6 +323,7 @@ const PublishDialog = memo(
       useEffect(() => {
         setModerationResult(null);
         setModerationDesc("");
+        setModerationLevel(null);
       }, [commonPubParams.des, expandedPubItem?.params.des, pubListChoosed.map(item => item.params.des).join(',')]);
 
       // 当内容被清空时，也重置检测状态
@@ -185,6 +331,7 @@ const PublishDialog = memo(
         if (!hasDescription) {
           setModerationResult(null);
           setModerationDesc("");
+          setModerationLevel(null);
         }
       }, [hasDescription]);
 
@@ -344,16 +491,7 @@ const PublishDialog = memo(
         }
       }, [pubListChoosed, setPubListChoosed]);
 
-      // 过滤PC端不支持的平台账户：如被默认选中则自动移除
-      useEffect(() => {
-        const filtered = pubListChoosed.filter((item) => {
-          const plat = AccountPlatInfoMap.get(item.account.type);
-          return !(plat && plat.pcNoThis === true);
-        });
-        if (filtered.length !== pubListChoosed.length) {
-          setPubListChoosed(filtered);
-        }
-      }, [pubListChoosed, setPubListChoosed]);
+      // 移除PC端不支持的平台账户过滤逻辑，改为在UI中显示遮罩
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
@@ -578,10 +716,6 @@ const PublishDialog = memo(
                 </div>
                 <div className="publishDialog-con-acconts">
                   {pubList
-                    .filter((pubItem) => {
-                      const plat = AccountPlatInfoMap.get(pubItem.account.type);
-                      return !(plat && plat.pcNoThis === true);
-                    })
                     .map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
                       pubItem.account.type,
@@ -590,25 +724,47 @@ const PublishDialog = memo(
                       (v) => v.account.id === pubItem.account.id,
                     );
                     const isOffline = pubItem.account.status === 0;
+                    const isPcNotSupported = platConfig && platConfig.pcNoThis === true;
+                    const isTikTokForbidden = pubItem.account.type === PlatType.Tiktok;
 
                     return (
-                      <div
-                        className={[
-                          "publishDialog-con-acconts-item",
-                          isChoosed
-                            ? "publishDialog-con-acconts-item--active"
-                            : "",
-                        ].join(" ")}
-                        style={{
-                          borderColor: isChoosed
-                            ? platConfig.themeColor
-                            : "transparent",
-                        }}
+                      <Tooltip
+                        title={
+                          isTikTokForbidden
+                            ? t('tips.tiktokForbidden' as any)
+                            : isPcNotSupported 
+                            ? t('tips.pcNotSupported' as any)
+                            : isOffline 
+                            ? t('tips.accountOffline' as any)
+                            : undefined
+                        }
                         key={pubItem.account.id}
-                        onClick={(e) => {
+                      >
+                        <div
+                          className={[
+                            "publishDialog-con-acconts-item",
+                            isChoosed
+                              ? "publishDialog-con-acconts-item--active"
+                              : "",
+                          ].join(" ")}
+                          style={{
+                            borderColor: isChoosed
+                              ? platConfig.themeColor
+                              : "transparent",
+                          }}
+                          onClick={(e) => {
                           e.stopPropagation();
+                          // TikTok 禁止发布，直接禁止点击
+                          if (isTikTokForbidden) {
+                            return;
+                          }
+                          // 离线账户的点击由头像容器处理，这里不处理
                           if (isOffline) {
-                            message.warning("该账号已离线，无法发布");
+                            return;
+                          }
+                          if (isPcNotSupported) {
+                            setCurrentPlatform(platConfig?.name || '');
+                            setDownloadModalVisible(true);
                             return;
                           }
                           const newPubListChoosed = [...pubListChoosed];
@@ -651,16 +807,49 @@ const PublishDialog = memo(
                           setPubListChoosed(newPubListChoosed);
                         }}
                       >
-                        {/* 账号头像：离线显示遮罩并禁用 */}
-                        <div style={{ position: "relative" }}>
+                        {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
+                        <div 
+                          style={{ position: "relative" }}
+                          
+                        >
                           <AvatarPlat
-                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline ? 'disabled' : ''}`}
+                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported || isTikTokForbidden ? 'disabled' : ''}`}
                             account={pubItem.account}
                             size="large"
-                            disabled={isOffline || !isChoosed}
+                            disabled={isOffline || !isChoosed || isPcNotSupported || isTikTokForbidden}
                           />
+                          {isTikTokForbidden && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.6)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 12,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                              }}
+                            >
+                              {t('badges.forbidden' as any)}
+                            </div>
+                          )}
                           {isOffline && (
                             <div
+                            onClick={(e) => {
+                              // TikTok 禁止发布：不允许任何点击
+                              if (isTikTokForbidden) {
+                                return;
+                              }
+                              // 只有离线账户才触发授权跳转
+                              if (isOffline) {
+                                handleOfflineAvatarClick(pubItem.account);
+                              }
+                              // 正常账户的点击事件由父容器处理，这里不需要额外处理
+                            }}
                               style={{
                                 position: "absolute",
                                 inset: 0,
@@ -672,14 +861,37 @@ const PublishDialog = memo(
                                 color: "#fff",
                                 fontSize: 12,
                                 fontWeight: 600,
-                                pointerEvents: "none",
+                                pointerEvents: "auto",
+                                cursor: "pointer",
                               }}
                             >
-                              已离线
+                              {t('badges.offline' as any)}
+                            </div>
+                          )}
+                          {isPcNotSupported && !isOffline && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.6)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 10,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                                textAlign: "center",
+                                lineHeight: 1.2,
+                              }}
+                            >
+                              APP
                             </div>
                           )}
                         </div>
-                      </div>
+                        </div>
+                      </Tooltip>
                     );
                   })}
                 </div>
@@ -757,10 +969,15 @@ const PublishDialog = memo(
                               color: moderationResult ? '#52c41a' : '#ff4d4f',
                               fontWeight: 500,
                             }}>
-                              {moderationResult ? "内容安全" : "内容不安全"}
+                            {moderationResult ? t('actions.contentSafe' as any) : (moderationLevel?.riskLevel ? `${t('actions.riskLevel' as any)} ${moderationLevel.riskLevel}` : t('actions.contentUnsafe' as any))}
                             </span>
                             {!moderationResult && !!moderationDesc && (
-                              <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap' }}>{moderationDesc}</span>
+                              <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                {moderationDesc}
+                                <Tooltip title={moderationLevel?.riskTips || ''} placement="top">
+                                  <InfoCircleOutlined style={{ color: '#ff4d4f' }} />
+                                </Tooltip>
+                              </span>
                             )}
                           </div>
                         )}
@@ -777,7 +994,7 @@ const PublishDialog = memo(
                               color: moderationResult === true || moderationResult === false ? '#fff' : undefined
                             }}
                           >
-                            {moderationLoading ? "检测中..." : "内容安全检测"}
+                            {moderationLoading ? t('actions.checkingContent' as any) : t('actions.contentModeration' as any)}
                           </Button>
                         )}
                         
@@ -1144,6 +1361,14 @@ const PublishDialog = memo(
               </div>
             )}
           </Modal>
+
+          {/* 下载App弹窗 */}
+          <DownloadAppModal
+            visible={downloadModalVisible}
+            onClose={() => setDownloadModalVisible(false)}
+            platform={currentPlatform}
+            appName="Aitoearn App"
+          />
         </>
       );
     },
