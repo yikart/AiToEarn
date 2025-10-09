@@ -70,4 +70,4 @@ export class WithdrawRecord extends WithTimestampSchema {
   status: WithdrawRecordStatus
 }
 
-export const withdrawRecordSchema = SchemaFactory.createForClass(WithdrawRecord)
+export const WithdrawRecordSchema = SchemaFactory.createForClass(WithdrawRecord)

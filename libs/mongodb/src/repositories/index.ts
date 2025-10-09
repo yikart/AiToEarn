@@ -1,5 +1,6 @@
 import { AiLogRepository } from './ai-log.repository'
 import { AppConfigRepository } from './app-config.repository'
+import { AppReleaseRepository } from './app-release.repository'
 import { BlogRepository } from './blog.repository'
 import { BrowserProfileRepository } from './browser-profile.repository'
 import { CheckoutRepository } from './checkout.repository'
@@ -20,6 +21,7 @@ import { WithdrawRecordRepository } from './withdraw-record.repository'
 
 export * from './ai-log.repository'
 export * from './app-config.repository'
+export * from './app-release.repository'
 export * from './base.repository'
 export * from './blog.repository'
 export * from './browser-profile.repository'
@@ -59,4 +61,5 @@ export const repositories = [
   UserWalletRepository,
   UserRepository,
   WithdrawRecordRepository,
+  AppReleaseRepository,
 ] as const
