@@ -93,9 +93,9 @@ export interface AppReleaseVo {
   forceUpdate: boolean
   notes: string
   links: AppReleaseLinks
-  publishedAt: Date
-  createdAt?: Date
-  updatedAt?: Date
+  publishedAt: string
+  createdAt?: string
+  updatedAt?: string
 }
 
 // 版本检查结果 VO
@@ -108,7 +108,7 @@ export interface CheckVersionVo {
   currentBuildNumber: number
   notes: string
   links: AppReleaseLinks
-  publishedAt: Date
+  publishedAt: string
 }
 
 // 操作结果 VO
@@ -155,10 +155,10 @@ export interface NotificationVo {
   content: string
   type: NotificationType
   status: NotificationStatus
-  readAt?: Date
+  readAt?: string
   relatedId: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }
 
 export interface UnreadCountVo {
@@ -184,8 +184,8 @@ export interface FeedbackVo {
   type: FeedbackType
   tagList?: string[]
   fileUrlList?: string[]
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }
 
 // ==================== Blog 模块接口 ====================
@@ -205,8 +205,8 @@ export interface BlogVo {
   content: string
   tagList?: string[]
   fileUrlList?: string[]
-  createdAt: Date
-  updatedAt: Date
+  createdAt: string
+  updatedAt: string
 }
 
 // ==================== AppConfig 模块接口 ====================
@@ -255,8 +255,8 @@ export interface AppConfigVo {
   value: unknown
   description?: string
   metadata?: Record<string, unknown>
-  createdAt?: Date
-  updatedAt?: Date
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface AppConfigListVo {
