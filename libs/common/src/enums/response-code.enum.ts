@@ -51,4 +51,8 @@ export enum ResponseCode {
 
   // 15000 (payment)
   WithdrawRecordExists = 15000,
+
+  // 16000 (app-release)
+  AppReleaseNotFound = 16000,
+  AppReleaseAlreadyExists = 16001,
 }

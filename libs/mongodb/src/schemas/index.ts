@@ -1,5 +1,6 @@
 import { AiLog, AiLogSchema } from './ai-log.schema'
 import { AppConfig, AppConfigSchema } from './app-config.schema'
+import { AppRelease, AppReleaseSchema } from './app-release.schema'
 import { Blog, BlogSchema } from './blog.schema'
 import {
   BrowserProfile,
@@ -42,11 +43,12 @@ import {
 } from './user.schema'
 import {
   WithdrawRecord,
-  withdrawRecordSchema,
+  WithdrawRecordSchema,
 } from './withdraw-record.schema'
 
 export * from './ai-log.schema'
 export * from './app-config.schema'
+export * from './app-release.schema'
 export * from './blog.schema'
 export * from './browser-profile.schema'
 export * from './checkout.schema'
@@ -84,5 +86,6 @@ export const schemas = [
   { name: Price.name, schema: PriceSchema },
   { name: Product.name, schema: ProductSchema },
   { name: Subscription.name, schema: SubscriptionSchema },
-  { name: WithdrawRecord.name, schema: withdrawRecordSchema },
+  { name: WithdrawRecord.name, schema: WithdrawRecordSchema },
+  { name: AppRelease.name, schema: AppReleaseSchema },
 ] as const
