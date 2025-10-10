@@ -4,8 +4,8 @@ import { sleep } from "@/utils";
 import { useAccountStore } from "@/store/account";
 import { useUserStore } from "@/store/user";
 
-export async function kwaiSkip(platType: PlatType) {
-  const res = await createKwaiAuth("pc");
+export async function kwaiSkip(platType: PlatType, spaceId?: string) {
+  const res = await createKwaiAuth("pc", spaceId);
   if (res?.code == 1) {
           useUserStore.getState().logout();
           return

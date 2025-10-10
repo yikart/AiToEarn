@@ -2,11 +2,15 @@ import http from "@/utils/request";
 import { request } from "@/utils/request";
 
 // 获取 YouTube 授权 URL
-export const getYouTubeAuthUrlApi = (mail: string) => {
+export const getYouTubeAuthUrlApi = (mail: string, spaceId?: string) => {
+  const params: any = { type: 'pc' };
+  if (spaceId) {
+    params.spaceId = spaceId;
+  }
   return request({
     url: 'plat/youtube/auth/url',
     method: 'GET',
-    params: { type: 'pc' },
+    params,
   });
 };
 
@@ -65,16 +69,21 @@ export const getYouTubeChannelSectionsApi = (data: any) => {
 
 /**
  * 获取facebook授权状态
- * @param taskId 任务ID
+ * @param mail 邮箱
+ * @param spaceId 空间ID（可选）
  * @returns
  */
-export const getFacebookAuthUrlApi = (mail: string) => {
+export const getFacebookAuthUrlApi = (mail: string, spaceId?: string) => {
+  const data: any = {
+    platform: 'facebook',
+  };
+  if (spaceId) {
+    data.spaceId = spaceId;
+  }
   return request({
     url: 'plat/meta/auth/url',
     method: 'POST',
-    data: {
-      platform: 'facebook',
-    },
+    data,
   });
 };
 
@@ -91,16 +100,21 @@ export const checkMetaAuthApi = ( taskId:any ) => {
 
 /**
  * 获取instagram授权状态
- * @param taskId 任务ID
+ * @param mail 邮箱
+ * @param spaceId 空间ID（可选）
  * @returns
  */
-export const getInstagramAuthUrlApi = (mail: string) => {
+export const getInstagramAuthUrlApi = (mail: string, spaceId?: string) => {
+  const data: any = {
+    platform: 'instagram',
+  };
+  if (spaceId) {
+    data.spaceId = spaceId;
+  }
   return request({
     url: 'plat/meta/auth/url',
     method: 'POST',
-    data: {
-      platform: 'instagram',
-    },
+    data,
   });
 };
 
@@ -108,44 +122,60 @@ export const getInstagramAuthUrlApi = (mail: string) => {
 
 /**
  * 获取threads授权状态
- * @param taskId 任务ID
+ * @param mail 邮箱
+ * @param spaceId 空间ID（可选）
  * @returns
  */
-export const getThreadsAuthUrlApi = (mail: string) => {
+export const getThreadsAuthUrlApi = (mail: string, spaceId?: string) => {
+  const data: any = {
+    platform: 'threads',
+  };
+  if (spaceId) {
+    data.spaceId = spaceId;
+  }
   return request({
     url: 'plat/meta/auth/url',
     method: 'POST',
-    data: {
-      platform: 'threads',
-    },
+    data,
   });
 };
 
 /**
  * 获取linkedin授权链接
  * 逻辑与facebook一致，仅platform传linkedin
+ * @param mail 邮箱
+ * @param spaceId 空间ID（可选）
  */
-export const getLinkedInAuthUrlApi = (mail: string) => {
+export const getLinkedInAuthUrlApi = (mail: string, spaceId?: string) => {
+  const data: any = {
+    platform: 'linkedin',
+  };
+  if (spaceId) {
+    data.spaceId = spaceId;
+  }
   return request({
     url: 'plat/meta/auth/url',
     method: 'POST',
-    data: {
-      platform: 'linkedin',
-    },
+    data,
   });
 };
 
 
 /**
  * 获取tiktok授权状态
- * @param taskId 任务ID
+ * @param mail 邮箱
+ * @param spaceId 空间ID（可选）
  * @returns
  */
-export const getTiktokAuthUrlApi = (mail: string) => {
+export const getTiktokAuthUrlApi = (mail: string, spaceId?: string) => {
+  const data: any = { type: 'pc' };
+  if (spaceId) {
+    data.spaceId = spaceId;
+  }
   return request({
     url: 'plat/tiktok/auth/url',
     method: 'POST', 
-    data: { type: 'pc' },
+    data,
   });
 };
 
@@ -158,11 +188,15 @@ export const checkTiktokAuthApi = ( taskId:any ) => {
 
 
 // 微信授权
-export const getWxGzhAuthUrlApi = (mail: string) => {
+export const getWxGzhAuthUrlApi = (mail: string, spaceId?: string) => {
+  const params: any = { type: 'pc' };
+  if (spaceId) {
+    params.spaceId = spaceId;
+  }
   return request({
     url: 'plat/wxGzh/auth/url/pc',
     method: 'GET', 
-    params: { type: 'pc' },
+    params,
   });
 };
 
@@ -175,14 +209,20 @@ export const checkWxGzAuthApi = ( taskId:any ) => {
 
 
 /**
- * 获取facebook授权状态
- * @param taskId 任务ID
+ * 获取pinterest授权状态
+ * @param mail 邮箱
+ * @param spaceId 空间ID（可选）
  * @returns
  */
-export const getPinterestAuthUrlApi = (mail: string) => {
+export const getPinterestAuthUrlApi = (mail: string, spaceId?: string) => {
+  const params: any = {};
+  if (spaceId) {
+    params.spaceId = spaceId;
+  }
   return request({
     url: 'plat/pinterest/getAuth',
     method: 'GET',
+    params,
   });
 };
 

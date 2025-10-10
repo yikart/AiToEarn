@@ -58,7 +58,6 @@ import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
 import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
 import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
 import { useAccountStore } from "@/store/account";
-import { updateAccountApi } from "@/api/account";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -283,6 +282,67 @@ const PublishDialog = memo(
         },
         [accountGroupList, getAccountList],
       );
+          // 根据平台类型调用对应的授权函数，传递目标空间ID
+          switch (platform) {
+            case PlatType.KWAI:
+              await kwaiSkip(platform, targetSpaceId);
+              break;
+            case PlatType.BILIBILI:
+              await bilibiliSkip(platform, targetSpaceId);
+              break;
+            case PlatType.YouTube:
+              await youtubeSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Twitter:
+              await twitterSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Tiktok:
+              await tiktokSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Facebook:
+              try {
+                await facebookSkip(platform, targetSpaceId);
+                // Facebook授权成功后显示页面选择弹窗
+                // handleFacebookAuthSuccess(); // 这里可能需要处理Facebook页面选择
+              } catch (error) {
+                console.error('Facebook授权失败:', error);
+              }
+              break;
+            case PlatType.Instagram:
+              await instagramSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Threads:
+              await threadsSkip(platform, targetSpaceId);
+              break;
+            case PlatType.WxGzh:
+              await wxGzhSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Pinterest:
+              await pinterestSkip(platform, targetSpaceId);
+              break;
+            case PlatType.LinkedIn:
+              await linkedinSkip(platform, targetSpaceId);
+              break;
+            default:
+              console.warn(`未支持的平台类型: ${platform}`);
+              message.warning(`暂不支持 ${platform} 平台的直接授权`);
+              return;
+          }
+
+          // 授权完成后刷新账号列表
+          setTimeout(async () => {
+            try {
+              await getAccountList();
+              console.log('账号列表已刷新');
+            } catch (error) {
+              console.error('刷新账号列表失败:', error);
+            }
+          }, 3000); // 等待3秒让授权完成
+        } catch (error) {
+          console.error('授权失败:', error);
+          message.error('授权失败，请重试');
+        }
+      }, [accountGroupList, getAccountList]);
 
       // 内容安全检测函数
       const handleContentModeration = useCallback(async () => {

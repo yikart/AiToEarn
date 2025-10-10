@@ -55,7 +55,7 @@ export const usePublishDialogData = create(
           const res = await apiGetBilibiliPartitions(
             useAccountStore
               .getState()
-              .accountList.find((v) => v.type === PlatType.BILIBILI)!.account,
+              .accountList.find((v) => v.type === PlatType.BILIBILI)!.id,
           );
           set({
             bilibiliPartitions: res?.data,

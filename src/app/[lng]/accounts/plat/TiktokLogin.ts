@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * Tiktok被点击
  * @param platType
  */
-export async function tiktokSkip(platType: PlatType) {
+export async function tiktokSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.Tiktok) return;
 
-  const res: any = await getTiktokAuthUrlApi('pc');
+  const res: any = await getTiktokAuthUrlApi('pc', spaceId);
     if (res?.code == 1) {
             useUserStore.getState().logout();
             return

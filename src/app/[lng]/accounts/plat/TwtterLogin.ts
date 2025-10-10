@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * b站被点击
  * @param platType
  */
-export async function twitterSkip(platType: PlatType) {
+export async function twitterSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.Twitter) return;
 
-  const res: any = await getTwitterAuthUrlApi('pc');
+  const res: any = await getTwitterAuthUrlApi('pc', spaceId);
     if (res?.code == 1) {
               useUserStore.getState().logout();
               return

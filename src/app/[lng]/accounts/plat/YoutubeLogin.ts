@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * b站被点击
  * @param platType
  */
-export async function youtubeSkip(platType: PlatType) {
+export async function youtubeSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.YouTube) return;
 
-  const res: any = await getYouTubeAuthUrlApi('pc');
+  const res: any = await getYouTubeAuthUrlApi('pc', spaceId);
   if (res?.code == 1) {
                 useUserStore.getState().logout();
                 return

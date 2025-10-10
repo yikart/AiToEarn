@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * Pinterest被点击
  * @param platType
  */
-export async function pinterestSkip(platType: PlatType) {
+export async function pinterestSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.Pinterest) return;
 
-  const res: any = await getPinterestAuthUrlApi('pc');
+  const res: any = await getPinterestAuthUrlApi('pc', spaceId);
   if (res?.code == 1) {
           useUserStore.getState().logout();
           return

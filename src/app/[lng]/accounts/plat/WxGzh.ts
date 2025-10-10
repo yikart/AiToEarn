@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * 微信被点击
  * @param platType
  */
-export async function wxGzhSkip(platType: PlatType) {
+export async function wxGzhSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.WxGzh) return;
 
-  const res: any = await getWxGzhAuthUrlApi('pc');
+  const res: any = await getWxGzhAuthUrlApi('pc', spaceId);
   if (res?.code == 1) {
               useUserStore.getState().logout();
               return
