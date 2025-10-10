@@ -106,5 +106,11 @@
   "bilibili": "哔哩哔哩",
   "wxgzh": "微信公众号",
   "douyin": "抖音",
-  "wxsph": "微信视频号"
+  "wxsph": "微信视频号",
+  "deleteConfirm": {
+    "title": "删除提示",
+    "content": "是否删除以下 {{count}} 个账号？",
+    "cancel": "取消",
+    "confirm": "确认"
+  }
 }
