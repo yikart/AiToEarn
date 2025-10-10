@@ -229,8 +229,22 @@ function NavPE() {
     // 确保使用当前语言前缀
     const targetPath = e.key.startsWith('/') ? e.key : `/${e.key}`;
     const fullPath = `/${lng}${targetPath}`;
-    router.push(fullPath);
+    
+    // 调试信息
+    console.log('Menu click debug:', {
+      key: e.key,
+      lng,
+      targetPath,
+      fullPath,
+      currentPath: window.location.pathname
+    });
+    
+    // 先关闭菜单
     setOpen(false);
+    
+    // 使用 window.location.href 进行跳转，确保完全重新加载页面
+    // 这样可以避免路由状态混乱的问题
+    window.location.href = fullPath;
   };
 
   return (

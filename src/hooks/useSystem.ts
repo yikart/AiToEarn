@@ -1,7 +1,14 @@
 import { useParams } from "next/navigation";
-import { fallbackLng } from "@/app/i18n/settings";
+import { fallbackLng, languages } from "@/app/i18n/settings";
 
 export function useGetClientLng() {
-  const lng = useParams()?.lng || fallbackLng;
-  return lng as string;
+  const params = useParams();
+  const lng = params?.lng;
+  
+  // 确保返回的语言在支持的语言列表中
+  if (lng && languages.includes(lng as string)) {
+    return lng as string;
+  }
+  
+  return fallbackLng;
 }

@@ -34,6 +34,9 @@ i18next
     detection: {
       order: ["path", "htmlTag", "cookie", "navigator"],
       caches: ["cookie"], // 只缓存到 cookie，避免其他缓存干扰
+      // 禁用自动语言检测，完全依赖 URL 参数
+      lookupFromPathIndex: 0,
+      checkWhitelist: true,
     },
     preload: runsOnServerSide ? languages : [],
     // 确保语言切换时立即生效
@@ -69,12 +72,15 @@ export function useTransClient<
     useEffect(() => {
       if (!lng) return;
       
-      // 如果当前 i18next 语言与 URL 参数不同，强制切换
+      // 始终使用 URL 参数中的语言，忽略 i18next 的自动检测
       if (i18next.resolvedLanguage !== lng) {
         i18next.changeLanguage(lng).then(() => {
           // 语言切换完成后，强制重新渲染
           setActiveLng(lng);
         });
+      } else {
+        // 即使语言相同，也确保状态同步
+        setActiveLng(lng);
       }
     }, [lng]);
     
