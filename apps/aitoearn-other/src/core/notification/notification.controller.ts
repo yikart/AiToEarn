@@ -1,11 +1,13 @@
 import { Controller, Logger } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
+import { OneSignalService } from '@yikart/one-signal'
 import {
   BatchDeleteDto,
   CreateNotificationsByUserDto,
   GetUnreadCountDto,
   MarkAsReadDto,
+  PushNotificationDto,
   QueryNotificationsDto,
 } from './notification.dto'
 import { NotificationService } from './notification.service'
@@ -19,7 +21,10 @@ import {
 export class NotificationController {
   private readonly logger = new Logger(NotificationController.name)
 
-  constructor(private readonly notificationService: NotificationService) {}
+  constructor(
+    private readonly notificationService: NotificationService,
+    private readonly oneSignalService: OneSignalService,
+  ) {}
 
   @NatsMessagePattern('other.notification.createForUser')
   async createForUser(@Payload() data: CreateNotificationsByUserDto) {
@@ -63,5 +68,10 @@ export class NotificationController {
   async getUnreadCount(@Payload() getCountDto: GetUnreadCountDto): Promise<UnreadCountVo> {
     const result = await this.notificationService.getUnreadCount(getCountDto)
     return UnreadCountVo.create(result)
+  }
+
+  @NatsMessagePattern('other.notification.push')
+  async pushNotification(@Payload() dto: PushNotificationDto) {
+    await this.oneSignalService.pushNotificationToUser(dto.userIds, dto)
   }
 }
