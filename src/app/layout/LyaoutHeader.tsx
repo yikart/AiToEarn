@@ -18,6 +18,7 @@ import {
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import { useGetClientLng } from "@/hooks/useSystem";
 import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
 import SignInCalendar from "@/components/SignInCalendar"; 
@@ -33,6 +34,7 @@ function UserInfo() {
   const router = useRouter();
   const { t } = useTransClient("common");
   const { t: tVip } = useTransClient("vip");
+  const lng = useGetClientLng();
 
   const items: MenuProps["items"] = [
     {
@@ -40,7 +42,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/profile");
+            router.push(`/${lng}/profile`);
           }}
         >
           {t("profile")}
@@ -52,7 +54,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/material");
+            router.push(`/${lng}/material`);
           }}
         >
           {t("header.materialLibrary")}
@@ -64,7 +66,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/cgmaterial");
+            router.push(`/${lng}/cgmaterial`);
           }}
         >
           {t("header.draftBox")}
@@ -76,7 +78,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/income");
+            router.push(`/${lng}/income`);
           }}
         >
           {t("header.income" as any)}
@@ -88,7 +90,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/wallet");
+            router.push(`/${lng}/wallet`);
           }}
         >
           {t("header.wallet" as any)}
@@ -100,7 +102,7 @@ function UserInfo() {
     //   label: (
     //     <div
     //       onClick={() => {
-    //         router.push("/notification");
+    //         router.push(`/${lng}/notification`);
     //       }}
     //     >
     //       {t("header.messages")}
@@ -114,7 +116,7 @@ function UserInfo() {
         <div
           onClick={() => {
             useUserStore.getState().logout();
-            router.push("/");
+            router.push(`/${lng}/`);
           }}
         >
           {t("logout")}
@@ -249,7 +251,8 @@ const LyaoutHeader = memo(
                 ) : (
                   <Button
                     onClick={() => {
-                      router.push("/login");
+                      const lng = useGetClientLng();
+                      router.push(`/${lng}/login`);
                     }}
                   >
                     {t("login")}

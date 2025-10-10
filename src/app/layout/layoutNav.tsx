@@ -22,11 +22,16 @@ import { useGetClientLng } from "@/hooks/useSystem";
  */
 function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
   const { t } = useTransClient("route");
+  const lng = useGetClientLng();
   const path = child.path || "/";
+  
+  // 确保路径包含语言前缀
+  const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`;
+  
   return (
     <>
       {!child.children ? (
-        <Link href={path || "/"} target={path[0] === "/" ? "_self" : "_blank"}>
+        <Link href={fullPath} target={path[0] === "/" ? "_self" : "_blank"}>
           {t(child.translationKey as any)}
         </Link>
       ) : (
@@ -71,7 +76,10 @@ function ParcelTag({
   if (child.children) {
     return <>{children}</>;
   } else {
-    return <Link href={child.path || "/"}>{children}</Link>;
+    const lng = useGetClientLng();
+    const path = child.path || "/";
+    const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`;
+    return <Link href={fullPath}>{children}</Link>;
   }
 }
 
