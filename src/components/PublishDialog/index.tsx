@@ -862,7 +862,7 @@ const PublishDialog = memo(
                       )}
                       {pubListChoosed.length >= 2 && (
                         <PubParmasTextarea
-                          key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? "video" : "no-video"}-${commonPubParams.des?.length || 0}`}
+                          key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? "video" : "no-video"}`}
                           platType={PlatType.Instagram}
                           rows={16}
                           desValue={commonPubParams.des}
