@@ -154,6 +154,7 @@ const LyaoutHeader = memo(
     const router = useRouter();
     const { t } = useTransClient("common");
     const { t: tVip } = useTransClient("vip");
+    const lng = useGetClientLng();
     const [notificationVisible, setNotificationVisible] = useState(false);
     const [vipModalVisible, setVipModalVisible] = useState(false);
     const [pointsModalVisible, setPointsModalVisible] = useState(false);
@@ -251,7 +252,6 @@ const LyaoutHeader = memo(
                 ) : (
                   <Button
                     onClick={() => {
-                      const lng = useGetClientLng();
                       router.push(`/${lng}/login`);
                     }}
                   >
