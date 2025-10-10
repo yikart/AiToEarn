@@ -13,6 +13,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Drawer, Menu } from "antd";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 /**
  *
@@ -196,7 +197,7 @@ function NavPC() {
               }, 300);
             }}
           >
-            {getNameTag(v1, 0)}
+            {getNameTag(v1, 0)} 
             <ChildNav
               key={v1.name}
               child={v1}
@@ -213,6 +214,7 @@ function NavPE() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { t } = useTransClient("route");
+  const lng = useGetClientLng();
 
   const translatedMenuItems = routerData.map((item) => ({
     key: item.path || item.name,
@@ -222,6 +224,14 @@ function NavPE() {
       label: t(child.translationKey as any),
     })),
   }));
+
+  const handleMenuClick = (e: { key: string }) => {
+    // 确保使用当前语言前缀
+    const targetPath = e.key.startsWith('/') ? e.key : `/${e.key}`;
+    const fullPath = `/${lng}${targetPath}`;
+    router.push(fullPath);
+    setOpen(false);
+  };
 
   return (
     <div className={styles.layoutNavPE}>
@@ -238,10 +248,7 @@ function NavPE() {
         <Menu
           className="layoutNavPE-menu"
           selectable={false}
-          onClick={(e) => {
-            router.push(e.key);
-            setOpen(false);
-          }}
+          onClick={handleMenuClick}
           style={{ width: "100%" }}
           mode="inline"
           items={translatedMenuItems}

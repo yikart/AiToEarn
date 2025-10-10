@@ -158,11 +158,16 @@ const LyaoutHeader = memo(
     const { unreadCount } = useNotification();
 
     const toggleLanguage = () => {
-      const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
+      const currentLng = userStore.lang;
+      const newLng = currentLng === "zh-CN" ? "en" : "zh-CN";
       userStore.setLang(newLng);
-      router.push(
-        `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
-      );
+      
+      // 获取当前路径并替换语言前缀
+      const currentPath = location.pathname;
+      const pathWithoutLang = currentPath.replace(`/${currentLng}`, "") || "/";
+      const newPath = `/${newLng}${pathWithoutLang}`;
+      
+      router.push(newPath);
     };
 
     return (
