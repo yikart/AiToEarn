@@ -94,20 +94,35 @@ export class AppReleaseService {
       throw new AppException(ResponseCode.AppReleaseNotFound)
     }
 
+    // 获取最新的强制更新版本
+    const latestForceUpdateRelease = await this.appReleaseRepo.getLatestByPlatform(data.platform, { forceUpdate: true })
+
     // 优先比较 buildNumber，如果没有传入则比较 version
     let hasUpdate: boolean
+    let forceUpdate = false
+
     if (data.currentBuildNumber !== undefined) {
       // 使用 buildNumber 比较
       hasUpdate = data.currentBuildNumber < latestRelease.buildNumber
+
+      // 如果存在强制更新版本，且当前版本低于强制更新版本，则触发强制更新
+      if (latestForceUpdateRelease && data.currentBuildNumber < latestForceUpdateRelease.buildNumber) {
+        forceUpdate = true
+      }
     }
     else {
       // 使用 version 比较
       hasUpdate = this.compareVersion(data.currentVersion, latestRelease.version) < 0
+
+      // 如果存在强制更新版本，且当前版本低于强制更新版本，则触发强制更新
+      if (latestForceUpdateRelease && this.compareVersion(data.currentVersion, latestForceUpdateRelease.version) < 0) {
+        forceUpdate = true
+      }
     }
 
     return {
       hasUpdate,
-      forceUpdate: hasUpdate && latestRelease.forceUpdate,
+      forceUpdate,
       latestVersion: latestRelease.version,
       latestBuildNumber: latestRelease.buildNumber,
       currentVersion: data.currentVersion,
