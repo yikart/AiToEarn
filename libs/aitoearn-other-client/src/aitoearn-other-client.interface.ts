@@ -165,6 +165,112 @@ export interface UnreadCountVo {
   count: number
 }
 
+export type LanguageKey
+  = | 'en'
+    | 'ar'
+    | 'bs'
+    | 'bg'
+    | 'ca'
+    | 'zh_hans'
+    | 'zh_hant'
+    | 'zh'
+    | 'hr'
+    | 'cs'
+    | 'da'
+    | 'nl'
+    | 'et'
+    | 'fi'
+    | 'fr'
+    | 'ka'
+    | 'de'
+    | 'el'
+    | 'hi'
+    | 'he'
+    | 'hu'
+    | 'id'
+    | 'it'
+    | 'ja'
+    | 'ko'
+    | 'lv'
+    | 'lt'
+    | 'ms'
+    | 'nb'
+    | 'pl'
+    | 'fa'
+    | 'pt'
+    | 'pa'
+    | 'ro'
+    | 'ru'
+    | 'sr'
+    | 'sk'
+    | 'es'
+    | 'sv'
+    | 'th'
+    | 'tr'
+    | 'uk'
+    | 'vi'
+
+export interface PushNotificationDto {
+  userIds: string[]
+  contents: Record<LanguageKey, string>
+  headings?: Record<LanguageKey, string>
+  subtitle?: Record<LanguageKey, string>
+  name?: string
+  ios_attachments?: { id: string }
+  big_picture?: string
+  huawei_big_picture?: string
+  adm_big_picture?: string
+  chrome_web_image?: string
+  small_icon?: string
+  huawei_small_icon?: string
+  adm_small_icon?: string
+  large_icon?: string
+  huawei_large_icon?: string
+  adm_large_icon?: string
+  chrome_web_icon?: string
+  firefox_icon?: string
+  chrome_web_badge?: string
+  android_channel_id?: string
+  existing_android_channel_id?: string
+  huawei_channel_id?: string
+  huawei_existing_channel_id?: string
+  huawei_category?: 'MARKETING' | 'IM' | 'VOIP' | 'SUBSCRIPTION' | 'TRAVEL' | 'HEALTH' | 'WORK' | 'ACCOUNT' | 'EXPRESS' | 'FINANCE' | 'DEVICE_REMINDER' | 'MAIL'
+  huawei_msg_type?: 'message' | 'data'
+  huawei_bi_tag?: string
+  priority?: 5 | 10
+  ios_interruption_level?: 'active' | 'passive' | 'time_sensitive' | 'critical'
+  ios_sound?: string
+  ios_badgeType?: 'None' | 'SetTo' | 'Increase'
+  ios_badgeCount?: number
+  android_accent_color?: string
+  huawei_accent_color?: string
+  url?: string
+  app_url?: string
+  web_url?: string
+  target_content_identifier?: string
+  buttons?: unknown[]
+  web_buttons?: unknown[]
+  thread_id?: string
+  ios_relevance_score?: string
+  android_group?: string
+  adm_group?: string
+  ttl?: number
+  collapse_id?: string
+  web_push_topic?: string
+  data?: Record<string, unknown>
+  content_available?: boolean
+  ios_category?: string
+  apns_push_type_override?: string
+  send_after?: string
+  delayed_option?: string
+  delivery_time_of_day?: string
+  throttle_rate_per_minute?: number
+  enable_frequency_cap?: boolean
+  idempotency_key?: string
+  template_id?: string
+  custom_data?: Record<string, unknown>
+}
+
 // ==================== Feedback 模块接口 ====================
 
 export interface CreateFeedbackDto {
