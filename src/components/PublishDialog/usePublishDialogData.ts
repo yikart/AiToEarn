@@ -114,7 +114,7 @@ export const usePublishDialogData = create(
             return;
           }
           
-          const res:any = await apiGetYouTubeCategories(youtubeAccount.account, regionCode);
+          const res:any = await apiGetYouTubeCategories(youtubeAccount?.id || '', regionCode);
           set({
             youTubeCategories: res?.data.items || [],
           });
