@@ -36,9 +36,9 @@ i18next
     },
     preload: runsOnServerSide ? languages : [],
     // 确保语言切换时立即生效
-    react: {
-      useSuspense: false,
-    },
+    // react: {
+    //   useSuspense: false,
+    // },
   });
 
 export function useTransClient<
