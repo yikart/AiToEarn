@@ -4,11 +4,15 @@ import { BiblPartItem } from "@/components/PublishDialog/publishDialog.type";
 
 /**
  *  获取B站登录地址
+ * @param type 授权类型
+ * @param spaceId 空间ID（可选）
  * @returns
  */
-export const apiGetBilibiliLoginUrl = (type: "h5" | "pc") => {
+export const apiGetBilibiliLoginUrl = (type: "h5" | "pc", spaceId?: string) => {
+  const params = spaceId ? { spaceId } : {};
   return http.get<{ code: number; data: { taskId: string; url: string } }>(
     `plat/bilibili/auth/url/${type}`,
+     params 
   );
 };
 

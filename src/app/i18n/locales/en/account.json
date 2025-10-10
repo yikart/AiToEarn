@@ -106,5 +106,11 @@
   "bilibili": "Bilibili",
   "wxgzh": "WeChat Official",
   "douyin": "Douyin",
-  "wxsph": "WeChat Channels"
+  "wxsph": "WeChat Channels",
+  "deleteConfirm": {
+    "title": "Delete Confirmation",
+    "content": "Are you sure you want to delete {{count}} account(s)?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  }
 }
