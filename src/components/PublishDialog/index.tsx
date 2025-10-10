@@ -129,159 +129,32 @@ const PublishDialog = memo(
       const [createLoading, setCreateLoading] = useState(false);
       // 内容安全检测状态
       const [moderationLoading, setModerationLoading] = useState(false);
-      const [moderationResult, setModerationResult] = useState<boolean | null>(
-        null,
-      );
+      const [moderationResult, setModerationResult] = useState<boolean | null>(null);
       const [moderationDesc, setModerationDesc] = useState<string>("");
       const [moderationLevel, setModerationLevel] = useState<any>(null);
       // 下载App弹窗状态
       const [downloadModalVisible, setDownloadModalVisible] = useState(false);
-      const [currentPlatform, setCurrentPlatform] = useState<string>("");
+      const [currentPlatform, setCurrentPlatform] = useState<string>('');
       const { t } = useTransClient("publish");
       const router = useRouter();
-
+      
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
         useShallow((state) => ({
           accountGroupList: state.accountGroupList,
           getAccountList: state.getAccountList,
-        })),
+        }))
       );
 
       // 处理离线账户头像点击，直接跳转到对应平台授权页面
-      const handleOfflineAvatarClick = useCallback(
-        async (account: SocialAccount) => {
-          const platform = account.type;
-          const targetSpaceId = account.groupId; // 使用账户原本的空间ID
+      const handleOfflineAvatarClick = useCallback(async (account: SocialAccount) => {
+        const platform = account.type;
+        const targetSpaceId = account.groupId; // 使用账户原本的空间ID
+        
+        try {
+          // 记录授权前的账号数量，用于后续识别新账号
+          const beforeAuthCount = accountGroupList.reduce((total, group) => total + group.children.length, 0);
 
-          try {
-            // 记录授权前的账号数量，用于后续识别新账号
-            const beforeAuthCount = accountGroupList.reduce(
-              (total, group) => total + group.children.length,
-              0,
-            );
-
-            // 根据平台类型调用对应的授权函数
-            switch (platform) {
-              case PlatType.KWAI:
-                await kwaiSkip(platform);
-                break;
-              case PlatType.BILIBILI:
-                await bilibiliSkip(platform);
-                break;
-              case PlatType.YouTube:
-                await youtubeSkip(platform);
-                break;
-              case PlatType.Twitter:
-                await twitterSkip(platform);
-                break;
-              case PlatType.Tiktok:
-                await tiktokSkip(platform);
-                break;
-              case PlatType.Facebook:
-                try {
-                  await facebookSkip(platform);
-                  // Facebook授权成功后显示页面选择弹窗
-                  // handleFacebookAuthSuccess(); // 这里可能需要处理Facebook页面选择
-                } catch (error) {
-                  console.error("Facebook授权失败:", error);
-                }
-                break;
-              case PlatType.Instagram:
-                await instagramSkip(platform);
-                break;
-              case PlatType.Threads:
-                await threadsSkip(platform);
-                break;
-              case PlatType.WxGzh:
-                await wxGzhSkip(platform);
-                break;
-              case PlatType.Pinterest:
-                await pinterestSkip(platform);
-                break;
-              case PlatType.LinkedIn:
-                await linkedinSkip(platform);
-                break;
-              default:
-                console.warn(`未支持的平台类型: ${platform}`);
-                message.warning(`暂不支持 ${platform} 平台的直接授权`);
-                return;
-            }
-
-            // 如果指定了目标空间，等待授权完成后移动新账号
-            if (targetSpaceId) {
-              // 检查选中的空间是否是默认空间
-              const targetGroup = accountGroupList.find(
-                (group) => group.id === targetSpaceId,
-              );
-              const isDefaultSpace = targetGroup?.isDefault;
-
-              // 只有当选择了非默认空间时才移动账号
-              if (!isDefaultSpace) {
-                console.log("准备移动账号到空间:", targetGroup?.name);
-                setTimeout(async () => {
-                  try {
-                    // 刷新账号列表
-                    await getAccountList();
-
-                    // 获取最新的账号组列表
-                    const currentState = useAccountStore.getState();
-                    const defaultGroup = currentState.accountGroupList.find(
-                      (group) => group.isDefault,
-                    );
-
-                    if (defaultGroup) {
-                      // 找到相同平台类型的最后一个账号（最新添加的）
-                      const sameTypeAccounts = defaultGroup.children.filter(
-                        (account) => account.type === platform,
-                      );
-                      const latestAccount =
-                        sameTypeAccounts[sameTypeAccounts.length - 1];
-
-                      if (latestAccount) {
-                        console.log(
-                          "找到最新账号:",
-                          latestAccount.account,
-                          "平台:",
-                          platform,
-                        );
-
-                        // 将新账号移动到指定空间
-                        console.log(
-                          "移动账号:",
-                          latestAccount.account,
-                          "到空间:",
-                          targetGroup?.name,
-                        );
-                        await updateAccountApi({
-                          id: latestAccount.id,
-                          groupId: targetSpaceId,
-                        });
-                      } else {
-                        console.log("未找到相同平台类型的账号");
-                      }
-
-                      // 再次刷新账号列表以更新UI
-                      await getAccountList();
-                      console.log("账号移动完成");
-                    }
-                  } catch (error) {
-                    console.error("移动账号到指定空间失败:", error);
-                  }
-                }, 3000); // 等待3秒让授权完成
-              } else {
-                console.log("选择的是默认空间，无需移动账号");
-              }
-            } else {
-              console.log("未选择空间，不移动账号");
-            }
-          } catch (error) {
-            console.error("授权失败:", error);
-            message.error("授权失败，请重试");
-          }
-        },
-        [accountGroupList, getAccountList],
-      );
           // 根据平台类型调用对应的授权函数，传递目标空间ID
           switch (platform) {
             case PlatType.KWAI:
@@ -360,28 +233,24 @@ const PublishDialog = memo(
           message.warning("请先输入内容");
           return;
         }
-
+        
         try {
           setModerationLoading(true);
           setModerationResult(null);
           setModerationDesc("");
           setModerationLevel(null);
           const result = await toolsApi.textModeration(contentToCheck);
-          console.log("result", result);
-
+          console.log("result",result);
+          
           if (result?.code === 0) {
-            const data: any = result?.data || ({} as any);
-            const descriptions: string =
-              (data && (data.descriptions as string)) || "";
+            const data: any = result?.data || {} as any;
+            const descriptions: string = (data && (data.descriptions as string)) || "";
             const labels: string = (data && (data.labels as string)) || "";
-            const reason: any =
-              data && (data.reason ? JSON.parse(data.reason) : "");
+            const reason: any = (data && (data.reason ? JSON.parse(data.reason) : ""));
             const isSafe = !descriptions && !labels && !reason;
             setModerationResult(isSafe);
             setModerationLevel(reason);
-            setModerationDesc(
-              isSafe ? "" : descriptions || reason || "内容不安全",
-            );
+            setModerationDesc(isSafe ? "" : (descriptions || reason || "内容不安全"));
             if (isSafe) {
               message.success("内容安全");
             } else {
@@ -401,13 +270,9 @@ const PublishDialog = memo(
         if (step === 0 && pubListChoosed.length >= 2) {
           return !!(commonPubParams.des && commonPubParams.des.trim());
         } else if (step === 1 && expandedPubItem) {
-          return !!(
-            expandedPubItem.params.des && expandedPubItem.params.des.trim()
-          );
+          return !!(expandedPubItem.params.des && expandedPubItem.params.des.trim());
         } else if (pubListChoosed.length === 1) {
-          return !!(
-            pubListChoosed[0].params.des && pubListChoosed[0].params.des.trim()
-          );
+          return !!(pubListChoosed[0].params.des && pubListChoosed[0].params.des.trim());
         }
         return false;
       }, [step, pubListChoosed, commonPubParams, expandedPubItem]);
@@ -417,11 +282,7 @@ const PublishDialog = memo(
         setModerationResult(null);
         setModerationDesc("");
         setModerationLevel(null);
-      }, [
-        commonPubParams.des,
-        expandedPubItem?.params.des,
-        pubListChoosed.map((item) => item.params.des).join(","),
-      ]);
+      }, [commonPubParams.des, expandedPubItem?.params.des, pubListChoosed.map(item => item.params.des).join(',')]);
 
       // 当内容被清空时，也重置检测状态
       useEffect(() => {
@@ -582,9 +443,7 @@ const PublishDialog = memo(
 
       // 离线账号（status === 0）不可参与发布：如被默认选中则自动移除
       useEffect(() => {
-        const filtered = pubListChoosed.filter(
-          (item) => item.account.status !== 0,
-        );
+        const filtered = pubListChoosed.filter((item) => item.account.status !== 0);
         if (filtered.length !== pubListChoosed.length) {
           setPubListChoosed(filtered);
         }
@@ -731,14 +590,8 @@ const PublishDialog = memo(
             accountType: item.account.type,
             videoUrl: item.params.video?.ossUrl,
             coverUrl:
-              item.params.video?.cover.ossUrl ||
-              (item.params.images && item.params.images.length > 0
-                ? item.params.images[0].ossUrl
-                : undefined),
-            imgUrlList:
-              item.params.images
-                ?.map((v) => v.ossUrl)
-                .filter((url): url is string => url !== undefined) || [],
+              item.params.video?.cover.ossUrl || (item.params.images && item.params.images.length > 0 ? item.params.images[0].ossUrl : undefined),
+            imgUrlList: item.params.images?.map((v) => v.ossUrl).filter((url): url is string => url !== undefined) || [],
             publishTime,
             option: item.params.option,
           });
@@ -820,7 +673,8 @@ const PublishDialog = memo(
                   </div>
                 </div>
                 <div className="publishDialog-con-acconts">
-                  {pubList.map((pubItem) => {
+                  {pubList
+                    .map((pubItem) => {
                     const platConfig = AccountPlatInfoMap.get(
                       pubItem.account.type,
                     )!;
@@ -828,21 +682,19 @@ const PublishDialog = memo(
                       (v) => v.account.id === pubItem.account.id,
                     );
                     const isOffline = pubItem.account.status === 0;
-                    const isPcNotSupported =
-                      platConfig && platConfig.pcNoThis === true;
-                    const isTikTokForbidden =
-                      pubItem.account.type === PlatType.Tiktok;
+                    const isPcNotSupported = platConfig && platConfig.pcNoThis === true;
+                    const isTikTokForbidden = pubItem.account.type === PlatType.Tiktok;
 
                     return (
                       <Tooltip
                         title={
                           isTikTokForbidden
-                            ? t("tips.tiktokForbidden" as any)
-                            : isPcNotSupported
-                              ? t("tips.pcNotSupported" as any)
-                              : isOffline
-                                ? t("tips.accountOffline" as any)
-                                : undefined
+                            ? t('tips.tiktokForbidden' as any)
+                            : isPcNotSupported 
+                            ? t('tips.pcNotSupported' as any)
+                            : isOffline 
+                            ? t('tips.accountOffline' as any)
+                            : undefined
                         }
                         key={pubItem.account.id}
                       >
@@ -859,145 +711,143 @@ const PublishDialog = memo(
                               : "transparent",
                           }}
                           onClick={(e) => {
-                            e.stopPropagation();
-                            // TikTok 禁止发布，直接禁止点击
-                            if (isTikTokForbidden) {
-                              return;
-                            }
-                            // 离线账户的点击由头像容器处理，这里不处理
-                            if (isOffline) {
-                              return;
-                            }
-                            if (isPcNotSupported) {
-                              setCurrentPlatform(platConfig?.name || "");
-                              setDownloadModalVisible(true);
-                              return;
-                            }
-                            const newPubListChoosed = [...pubListChoosed];
-                            // 查找当前账户是否已被选择
-                            const index = newPubListChoosed.findIndex(
-                              (v) => v.account.id === pubItem.account.id,
+                          e.stopPropagation();
+                          // TikTok 禁止发布，直接禁止点击
+                          if (isTikTokForbidden) {
+                            return;
+                          }
+                          // 离线账户的点击由头像容器处理，这里不处理
+                          if (isOffline) {
+                            return;
+                          }
+                          if (isPcNotSupported) {
+                            setCurrentPlatform(platConfig?.name || '');
+                            setDownloadModalVisible(true);
+                            return;
+                          }
+                          const newPubListChoosed = [...pubListChoosed];
+                          // 查找当前账户是否已被选择
+                          const index = newPubListChoosed.findIndex(
+                            (v) => v.account.id === pubItem.account.id,
+                          );
+                          if (index !== -1) {
+                            newPubListChoosed.splice(index, 1);
+                          } else {
+                            newPubListChoosed.push(pubItem);
+                          }
+                          // 是否自动回到第一步
+                          if (newPubListChoosed.length === 0 && step === 1) {
+                            const isBack = newPubListChoosed.every(
+                              (v) =>
+                                !v.params.des &&
+                                !v.params.video &&
+                                !v.params.images?.length,
                             );
-                            if (index !== -1) {
-                              newPubListChoosed.splice(index, 1);
-                            } else {
-                              newPubListChoosed.push(pubItem);
+                            if (isBack) {
+                              setStep(0);
                             }
-                            // 是否自动回到第一步
-                            if (newPubListChoosed.length === 0 && step === 1) {
-                              const isBack = newPubListChoosed.every(
-                                (v) =>
-                                  !v.params.des &&
-                                  !v.params.video &&
-                                  !v.params.images?.length,
-                              );
-                              if (isBack) {
-                                setStep(0);
-                              }
+                          }
+                          // 是否自动前往第二步
+                          if (step === 0 && newPubListChoosed.length !== 0) {
+                            const isFront = newPubListChoosed.every(
+                              (v) =>
+                                v.params.des ||
+                                v.params.video ||
+                                v.params.images?.length !== 0,
+                            );
+                            if (isFront) {
+                              setStep(1);
                             }
-                            // 是否自动前往第二步
-                            if (step === 0 && newPubListChoosed.length !== 0) {
-                              const isFront = newPubListChoosed.every(
-                                (v) =>
-                                  v.params.des ||
-                                  v.params.video ||
-                                  v.params.images?.length !== 0,
-                              );
-                              if (isFront) {
-                                setStep(1);
-                              }
-                            }
-                            if (newPubListChoosed.length === 1) {
-                              setExpandedPubItem(newPubListChoosed[0]);
-                            }
-                            setPubListChoosed(newPubListChoosed);
-                          }}
+                          }
+                          if (newPubListChoosed.length === 1) {
+                            setExpandedPubItem(newPubListChoosed[0]);
+                          }
+                          setPubListChoosed(newPubListChoosed);
+                        }}
+                      >
+                        {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
+                        <div 
+                          style={{ position: "relative" }}
+                          
                         >
-                          {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
-                          <div style={{ position: "relative" }}>
-                            <AvatarPlat
-                              className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported || isTikTokForbidden ? "disabled" : ""}`}
-                              account={pubItem.account}
-                              size="large"
-                              disabled={
-                                isOffline ||
-                                !isChoosed ||
-                                isPcNotSupported ||
-                                isTikTokForbidden
+                          <AvatarPlat
+                            className={`publishDialog-con-acconts-item-avatar ${!isChoosed || isOffline || isPcNotSupported || isTikTokForbidden ? 'disabled' : ''}`}
+                            account={pubItem.account}
+                            size="large"
+                            disabled={isOffline || !isChoosed || isPcNotSupported || isTikTokForbidden}
+                          />
+                          {isTikTokForbidden && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.6)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 12,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                              }}
+                            >
+                              {t('badges.forbidden' as any)}
+                            </div>
+                          )}
+                          {isOffline && (
+                            <div
+                            onClick={(e) => {
+                              // TikTok 禁止发布：不允许任何点击
+                              if (isTikTokForbidden) {
+                                return;
                               }
-                            />
-                            {isTikTokForbidden && (
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  inset: 0,
-                                  background: "rgba(0,0,0,0.6)",
-                                  borderRadius: "50%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "#fff",
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                  pointerEvents: "none",
-                                }}
-                              >
-                                {t("badges.forbidden" as any)}
-                              </div>
-                            )}
-                            {isOffline && (
-                              <div
-                                onClick={(e) => {
-                                  // TikTok 禁止发布：不允许任何点击
-                                  if (isTikTokForbidden) {
-                                    return;
-                                  }
-                                  // 只有离线账户才触发授权跳转
-                                  if (isOffline) {
-                                    handleOfflineAvatarClick(pubItem.account);
-                                  }
-                                  // 正常账户的点击事件由父容器处理，这里不需要额外处理
-                                }}
-                                style={{
-                                  position: "absolute",
-                                  inset: 0,
-                                  background: "rgba(0,0,0,0.45)",
-                                  borderRadius: "50%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "#fff",
-                                  fontSize: 12,
-                                  fontWeight: 600,
-                                  pointerEvents: "auto",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                {t("badges.offline" as any)}
-                              </div>
-                            )}
-                            {isPcNotSupported && !isOffline && (
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  inset: 0,
-                                  background: "rgba(0,0,0,0.6)",
-                                  borderRadius: "50%",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  color: "#fff",
-                                  fontSize: 10,
-                                  fontWeight: 600,
-                                  pointerEvents: "none",
-                                  textAlign: "center",
-                                  lineHeight: 1.2,
-                                }}
-                              >
-                                APP
-                              </div>
-                            )}
-                          </div>
+                              // 只有离线账户才触发授权跳转
+                              if (isOffline) {
+                                handleOfflineAvatarClick(pubItem.account);
+                              }
+                              // 正常账户的点击事件由父容器处理，这里不需要额外处理
+                            }}
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.45)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 12,
+                                fontWeight: 600,
+                                pointerEvents: "auto",
+                                cursor: "pointer",
+                              }}
+                            >
+                              {t('badges.offline' as any)}
+                            </div>
+                          )}
+                          {isPcNotSupported && !isOffline && (
+                            <div
+                              style={{
+                                position: "absolute",
+                                inset: 0,
+                                background: "rgba(0,0,0,0.6)",
+                                borderRadius: "50%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                color: "#fff",
+                                fontSize: 10,
+                                fontWeight: 600,
+                                pointerEvents: "none",
+                                textAlign: "center",
+                                lineHeight: 1.2,
+                              }}
+                            >
+                              APP
+                            </div>
+                          )}
+                        </div>
                         </div>
                       </Tooltip>
                     );
@@ -1055,10 +905,7 @@ const PublishDialog = memo(
               >
                 <PublishDialogDataPicker />
 
-                <div
-                  className="publishDialog-footer-btns"
-                  style={{ display: "flex", flexDirection: "row", gap: 12 }}
-                >
+                <div className="publishDialog-footer-btns" style={{ display: 'flex', flexDirection: 'row', gap: 12 }}>
                   {step === 0 && pubListChoosed.length >= 2 ? (
                     <Button
                       size="large"
@@ -1072,50 +919,21 @@ const PublishDialog = memo(
                     </Button>
                   ) : (
                     <>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 12,
-                        }}
-                      >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                         {moderationResult !== null && (
-                          <div
-                            style={{ display: "flex", flexDirection: "column" }}
-                          >
-                            <span
-                              style={{
-                                fontSize: 14,
-                                color: moderationResult ? "#52c41a" : "#ff4d4f",
-                                fontWeight: 500,
-                              }}
-                            >
-                              {moderationResult
-                                ? t("actions.contentSafe" as any)
-                                : moderationLevel?.riskLevel
-                                  ? `${t("actions.riskLevel" as any)} ${moderationLevel.riskLevel}`
-                                  : t("actions.contentUnsafe" as any)}
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ 
+                              fontSize: 14, 
+                              color: moderationResult ? '#52c41a' : '#ff4d4f',
+                              fontWeight: 500,
+                            }}>
+                            {moderationResult ? t('actions.contentSafe' as any) : (moderationLevel?.riskLevel ? `${t('actions.riskLevel' as any)} ${moderationLevel.riskLevel}` : t('actions.contentUnsafe' as any))}
                             </span>
                             {!moderationResult && !!moderationDesc && (
-                              <span
-                                style={{
-                                  fontSize: 12,
-                                  color: "#ff4d4f",
-                                  maxWidth: 360,
-                                  whiteSpace: "pre-wrap",
-                                  display: "inline-flex",
-                                  alignItems: "center",
-                                  gap: 6,
-                                }}
-                              >
+                              <span style={{ fontSize: 12, color: '#ff4d4f', maxWidth: 360, whiteSpace: 'pre-wrap', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                                 {moderationDesc}
-                                <Tooltip
-                                  title={moderationLevel?.riskTips || ""}
-                                  placement="top"
-                                >
-                                  <InfoCircleOutlined
-                                    style={{ color: "#ff4d4f" }}
-                                  />
+                                <Tooltip title={moderationLevel?.riskTips || ''} placement="top">
+                                  <InfoCircleOutlined style={{ color: '#ff4d4f' }} />
                                 </Tooltip>
                               </span>
                             )}
@@ -1127,40 +945,19 @@ const PublishDialog = memo(
                             size="large"
                             loading={moderationLoading}
                             onClick={handleContentModeration}
-                            type={
-                              moderationResult === true
-                                ? "primary"
-                                : moderationResult === false
-                                  ? "default"
-                                  : "default"
-                            }
+                            type={moderationResult === true ? "primary" : moderationResult === false ? "default" : "default"}
                             style={{
-                              backgroundColor:
-                                moderationResult === true
-                                  ? "#52c41a"
-                                  : moderationResult === false
-                                    ? "#ff4d4f"
-                                    : undefined,
-                              borderColor:
-                                moderationResult === true
-                                  ? "#52c41a"
-                                  : moderationResult === false
-                                    ? "#ff4d4f"
-                                    : undefined,
-                              color:
-                                moderationResult === true ||
-                                moderationResult === false
-                                  ? "#fff"
-                                  : undefined,
+                              backgroundColor: moderationResult === true ? '#52c41a' : moderationResult === false ? '#ff4d4f' : undefined,
+                              borderColor: moderationResult === true ? '#52c41a' : moderationResult === false ? '#ff4d4f' : undefined,
+                              color: moderationResult === true || moderationResult === false ? '#fff' : undefined
                             }}
                           >
-                            {moderationLoading
-                              ? t("actions.checkingContent" as any)
-                              : t("actions.contentModeration" as any)}
+                            {moderationLoading ? t('actions.checkingContent' as any) : t('actions.contentModeration' as any)}
                           </Button>
                         )}
+                        
                       </div>
-                      <div style={{ display: "flex", gap: 12 }}>
+                      <div style={{ display: 'flex', gap: 12 }}>
                         <Button size="large" onClick={closeDialog}>
                           {t("buttons.cancelPublish")}
                         </Button>
@@ -1208,11 +1005,7 @@ const PublishDialog = memo(
             open={draftModalOpen}
             onCancel={() => setDraftModalOpen(false)}
             footer={null}
-            title={
-              selectedGroup
-                ? t("draft.selectDraftItem")
-                : t("draft.selectDraftGroup")
-            }
+            title={selectedGroup ? t("draft.selectDraftItem") : t("draft.selectDraftGroup")}
             width={720}
           >
             {!selectedGroup ? (
@@ -1374,11 +1167,7 @@ const PublishDialog = memo(
             open={libraryModalOpen}
             onCancel={() => setLibraryModalOpen(false)}
             footer={null}
-            title={
-              selectedLibraryGroup
-                ? t("draft.selectLibraryItem")
-                : t("draft.selectLibraryGroup")
-            }
+            title={selectedLibraryGroup ? t("draft.selectLibraryItem") : t("draft.selectLibraryGroup")}
             width={720}
           >
             {!selectedLibraryGroup ? (
@@ -1455,9 +1244,7 @@ const PublishDialog = memo(
                                 item.type === "img" ? "#52c41a" : "#1890ff",
                             }}
                           >
-                            {item.type === "img"
-                              ? t("draft.imageGroup")
-                              : t("draft.videoGroup")}
+                            {item.type === "img" ? t("draft.imageGroup") : t("draft.videoGroup")}
                           </div>
                         </div>
                       </List.Item>
