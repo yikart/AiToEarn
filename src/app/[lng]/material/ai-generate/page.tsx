@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { message, Input, Button, Select, Row, Col, Modal, Progress } from "antd";
 import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined, DownloadOutlined } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
-import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card } from "@/api/ai";
+import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card, getVideoGenerations } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { uploadToOss } from "@/api/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
@@ -94,6 +94,11 @@ export default function AIGeneratePage() {
   const [videoResult, setVideoResult] = useState<string | null>(null);
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
+
+  // 视频历史记录
+  const [videoHistory, setVideoHistory] = useState<any[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   // 首/尾帧上传
   const firstFrameInputRef = useRef<HTMLInputElement | null>(null);
@@ -236,7 +241,67 @@ export default function AIGeneratePage() {
       }
     } catch (e) { console.error(e); }
   };
+
+  const fetchVideoHistory = async () => {
+    try {
+      setLoadingHistory(true);
+      const res: any = await getVideoGenerations({ page: 1, pageSize: 20 });
+      if (res.data?.list) {
+        setVideoHistory(res.data.list);
+      }
+    } catch (e) {
+      console.error(e);
+      message.error(t("aiGenerate.taskFailed"));
+    } finally {
+      setLoadingHistory(false);
+    }
+  };
+
+  // 格式化时间戳
+  const formatTime = (timestamp: number) => {
+    if (!timestamp) return '-';
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleString();
+  };
+
+  // 获取状态显示文本
+  const getStatusText = (status: string) => {
+    switch (status?.toUpperCase()) {
+      case 'SUCCESS':
+        return '已完成';
+      case 'FAILED':
+        return '失败';
+      case 'PROCESSING':
+        return '处理中';
+      case 'SUBMITTED':
+      case 'PENDING':
+      case 'QUEUED':
+        return '已提交';
+      default:
+        return status || '-';
+    }
+  };
+
+  // 处理历史记录项点击
+  const handleHistoryItemClick = (item: any) => {
+    if (item.status === 'SUCCESS' && item.data?.video_url) {
+      setVideoResult(item.data.video_url);
+      setVideoStatus('completed');
+      setVideoProgress(100);
+    } else if (item.status === 'PROCESSING') {
+      setVideoTaskId(item.task_id);
+      setVideoStatus('processing');
+      pollVideoTaskStatus(item.task_id);
+    }
+  };
   useEffect(() => { fetchImageModels(); fetchVideoModels(); }, []);
+
+  // 当切换到视频模块时自动加载历史记录
+  useEffect(() => {
+    if (activeModule === "video" && videoHistory.length === 0) {
+      fetchVideoHistory();
+    }
+  }, [activeModule]);
 
   // 当模型切换时，自动设置合适的 quality 值
   useEffect(() => {
@@ -833,6 +898,116 @@ export default function AIGeneratePage() {
                   )}
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* 视频历史记录区域 */}
+          {activeModule === "video" && (
+            <div className={styles.historySection}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ margin: 0, fontSize: '18px', fontWeight: 'bold' }}>视频生成历史</h3>
+                <Button 
+                  onClick={fetchVideoHistory} 
+                  loading={loadingHistory}
+                  size="small"
+                  type="primary"
+                >
+                  刷新
+                </Button>
+              </div>
+              
+              {loadingHistory ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                  加载中...
+                </div>
+              ) : videoHistory.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                  暂无历史记录
+                </div>
+              ) : (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px' }}>
+                  {videoHistory.map((item, index) => (
+                    <div 
+                      key={item.task_id || index}
+                      style={{ 
+                        border: '1px solid #e8e8e8', 
+                        borderRadius: 12, 
+                        padding: 16, 
+                        cursor: 'pointer',
+                        // backgroundColor: item.status === 'SUCCESS' ? '#f6ffed' : item.status === 'FAILED' ? '#fff2f0' : '#fafafa',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                      }}
+                      onClick={() => handleHistoryItemClick(item)}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'translateY(-2px)';
+                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(0,0,0,0.15)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'translateY(0)';
+                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
+                      }}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                        <span style={{ fontWeight: 'bold', fontSize: '16px', color: '#1890ff' }}>
+                          {item.task_id ? `#${item.task_id.slice(-8)}` : `#${index + 1}`}
+                        </span>
+                        <span style={{ 
+                          fontSize: '12px', 
+                          padding: '4px 8px', 
+                          borderRadius: '6px',
+                          backgroundColor: item.status === 'SUCCESS' ? '#52c41a' : item.status === 'FAILED' ? '#ff4d4f' : '#1890ff',
+                          color: 'white',
+                          fontWeight: 'bold'
+                        }}>
+                          {getStatusText(item.status)}
+                        </span>
+                      </div>
+                      
+                      <div style={{ fontSize: '13px', color: '#666', marginBottom: 8 }}>
+                        <div style={{ marginBottom: 4 }}>
+                          <strong>提交时间:</strong> {formatTime(item.submit_time)}
+                        </div>
+                        {item.finish_time && (
+                          <div style={{ marginBottom: 4 }}>
+                            <strong>完成时间:</strong> {formatTime(item.finish_time)}
+                          </div>
+                        )}
+                       
+                      </div>
+                      
+           
+                      
+                      {item.progress && (
+                        <div style={{ fontSize: '13px', color: '#1890ff', marginBottom: 8 }}>
+                          <strong>进度:</strong> {item.progress}
+                        </div>
+                      )}
+                      
+                      {item.fail_reason && item.status === 'FAILED' && (
+                        <div style={{ fontSize: '13px', color: '#ff4d4f', marginBottom: 8 }}>
+                          <strong>失败原因:</strong> {item.fail_reason}
+                        </div>
+                      )}
+                      
+                      {item.data?.video_url && item.status === 'SUCCESS' && (
+                        <div style={{ marginTop: 12 }}>
+                          <video 
+                            src={getOssUrl(item.data.video_url)} 
+                            controls 
+                            style={{ 
+                              width: '100%', 
+                              borderRadius: 8,
+                              maxHeight: '200px',
+                              objectFit: 'cover'
+                            }} 
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
             </div>
