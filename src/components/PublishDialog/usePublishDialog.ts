@@ -214,7 +214,9 @@ export const usePublishDialog = create(
             const v = pubList[i];
             const platConfig = AccountPlatInfoMap.get(v.account.type)!;
             if (!pubListChoosed.some((k) => k.account.id === v.account.id)) {
-              v.params.des = pubParmas.des || "";
+              if (pubParmas.des !== undefined) {
+                v.params.des = pubParmas.des || "";
+              }
               if (platConfig.pubTypes.has(PubType.VIDEO) && pubParmas.video) {
                 v.params.video = pubParmas.video;
               }
