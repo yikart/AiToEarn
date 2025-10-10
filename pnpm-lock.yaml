@@ -260,6 +260,9 @@ importers:
       '@yikart/mongodb':
         specifier: workspace:*
         version: link:../../libs/mongodb
+      '@yikart/one-signal':
+        specifier: workspace:*
+        version: link:../../libs/one-signal
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -431,6 +434,9 @@ importers:
       '@yikart/nats-client':
         specifier: '*'
         version: 0.0.1(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -449,6 +455,9 @@ importers:
       '@yikart/nats-client':
         specifier: '*'
         version: 0.0.1(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -467,6 +476,9 @@ importers:
       '@yikart/nats-client':
         specifier: '*'
         version: 0.0.1(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -530,6 +542,9 @@ importers:
       '@yikart/nats-client':
         specifier: '*'
         version: 0.0.1(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(ioredis@5.7.0)(nats@2.29.3)(pino-http@10.5.0)(reflect-metadata@0.2.2)(typescript@5.8.3)
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
       tslib:
         specifier: ^2.3.0
         version: 2.8.1
@@ -645,6 +660,30 @@ importers:
       '@yikart/common':
         specifier: '*'
         version: 0.0.3(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/microservices@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)(zod@4.1.4)
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
+      rxjs:
+        specifier: ^7.8.0
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+      zod:
+        specifier: ^4.0.0
+        version: 4.1.4
+
+  libs/one-signal:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@onesignal/node-onesignal':
+        specifier: 5.3.1-beta1
+        version: 5.3.1-beta1
+      '@yikart/common':
+        specifier: '*'
+        version: 0.0.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(@nestjs/microservices@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.8.3)(zod@4.1.4)
       rxjs:
         specifier: ^7.8.0
         version: 7.8.2
@@ -2283,6 +2322,9 @@ packages:
   '@nx/workspace@21.4.0':
     resolution: {integrity: sha512-C39fOy9PYp7xvGdRdUvNDJQS2zN/96oS+KzOZSCp8ZyZosRSsR2qaQWLI0zds0K6T3jy21Rh5AzyztDuQrK8Jg==}
 
+  '@onesignal/node-onesignal@5.3.1-beta1':
+    resolution: {integrity: sha512-md7JMEVQZLnI8hhaZj4U8FuwOBtaW8IzE0vkDI2ShFFu+kVoBuAmARErXKXFTLbI9QpOQuPo4Phl6YL//rsT7w==}
+
   '@oxc-resolver/binding-android-arm-eabi@11.7.1':
     resolution: {integrity: sha512-K0gF1mD6CYMAuX0dMWe6XW1Js00xCOBh/+ZAAJReQMa4+jmAk3bIeitsc8VnDthDbzOOKp3riizP3o/tBvNpgw==}
     cpu: [arm]
@@ -3750,6 +3792,11 @@ packages:
     resolution: {integrity: sha512-WIsKqkSC0ABoBJuT1LEX+2HEvNmNKKgnTAyd0fL8qzK4SH2i9NXg+t08YtdZp/V9IZ33cxe3iV4yM0qg8lMQng==}
     engines: {node: '>=16.20.1'}
 
+  btoa@1.2.1:
+    resolution: {integrity: sha512-SB4/MIGlsiVkMcHmT+pSmIPoNDoHg+7cMzmt3Uxt628MTz2487DKSqK/fuhFBrkuqrYv5UCEnACpF4dTFNKc/g==}
+    engines: {node: '>= 0.4.0'}
+    hasBin: true
+
   buffer-builder@0.2.0:
     resolution: {integrity: sha512-7VPMEPuYznPSoR21NE1zvd2Xna6c/CloiZCfcMXR1Jny6PjX0N4Nsa38zcBFo/FMK+BlA+FLKbJCQ0i2yxp+Xg==}
 
@@ -4478,6 +4525,9 @@ packages:
     resolution: {integrity: sha512-w+5mJ3GuFL+NjVtJlvydShqE1eN3h3PbI7/5LAsYJP/2qtuMXjfL2LpHSRqo4b4eSF5K/DH1JXKUAHSB2UW50g==}
     engines: {node: '>= 0.4'}
 
+  es6-promise@4.2.8:
+    resolution: {integrity: sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w==}
+
   escalade@3.2.0:
     resolution: {integrity: sha512-WUj2qlxaQtO4g6Pq5c29GTcWGDyd8itL8zTlipgECz3JesAiiOKotd8JU6otB3PACgG6xkJUyVhboMS+bje/jA==}
     engines: {node: '>=6'}
@@ -4950,6 +5000,10 @@ packages:
     peerDependenciesMeta:
       vue-template-compiler:
         optional: true
+
+  form-data@2.5.5:
+    resolution: {integrity: sha512-jqdObeR2rxZZbPSGL+3VckHMYtu+f9//KXBsVny6JSX/pa38Fy+bGjuG8eW/H6USNQWhLi8Num++cU2yOCNz4A==}
+    engines: {node: '>= 0.12'}
 
   form-data@4.0.4:
     resolution: {integrity: sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==}
@@ -7036,6 +7090,9 @@ packages:
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
 
+  querystringify@2.2.0:
+    resolution: {integrity: sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ==}
+
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -8011,6 +8068,9 @@ packages:
 
   url-join@4.0.1:
     resolution: {integrity: sha512-jk1+QP6ZJqyOiuEI9AEWQfju/nB2Pw466kbA0LEZljHwKeMgd9WrAEgEGxjPDD2+TNbbb37rTyhEfrCXfuKXnA==}
+
+  url-parse@1.5.10:
+    resolution: {integrity: sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ==}
 
   url-template@2.0.8:
     resolution: {integrity: sha512-XdVKMF4SJ0nP/O7XIPB0JwAEuT9lDIYnNsK8yGVe43y0AWoKeJNdv3ZNWh7ksJ6KqQFjOO6ox/VEitLnaVNufw==}
@@ -10873,6 +10933,13 @@ snapshots:
       - '@swc/core'
       - debug
 
+  '@onesignal/node-onesignal@5.3.1-beta1':
+    dependencies:
+      btoa: 1.2.1
+      es6-promise: 4.2.8
+      form-data: 2.5.5
+      url-parse: 1.5.10
+
   '@oxc-resolver/binding-android-arm-eabi@11.7.1':
     optional: true
 
@@ -12718,6 +12785,8 @@ snapshots:
 
   bson@6.10.4: {}
 
+  btoa@1.2.1: {}
+
   buffer-builder@0.2.0: {}
 
   buffer-equal-constant-time@1.0.1: {}
@@ -13447,6 +13516,8 @@ snapshots:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
 
+  es6-promise@4.2.8: {}
+
   escalade@3.2.0: {}
 
   escape-html@1.0.3: {}
@@ -14079,6 +14150,15 @@ snapshots:
       tapable: 2.2.3
       typescript: 5.8.3
       webpack: 5.99.9(@swc/core@1.13.5(@swc/helpers@0.5.17))(webpack-cli@5.1.4)
+
+  form-data@2.5.5:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.2
+      mime-types: 2.1.35
+      safe-buffer: 5.2.1
 
   form-data@4.0.4:
     dependencies:
@@ -16566,6 +16646,8 @@ snapshots:
 
   quansync@0.2.11: {}
 
+  querystringify@2.2.0: {}
+
   queue-microtask@1.2.3: {}
 
   quick-format-unescaped@4.0.4: {}
@@ -17619,6 +17701,11 @@ snapshots:
       punycode: 2.3.1
 
   url-join@4.0.1: {}
+
+  url-parse@1.5.10:
+    dependencies:
+      querystringify: 2.2.0
+      requires-port: 1.0.0
 
   url-template@2.0.8: {}
 

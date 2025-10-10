@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { NotificationRepository, NotificationStatus, NotificationType } from '@yikart/mongodb'
+import { OneSignalService } from '@yikart/one-signal'
 import {
   AdminBatchDeleteDto,
   AdminQueryNotificationsDto,
@@ -14,6 +15,7 @@ import {
 export class NotificationService {
   constructor(
     private readonly notificationRepository: NotificationRepository,
+    private readonly oneSignalService: OneSignalService,
   ) {}
 
   async createForUser(data: {
@@ -34,6 +36,19 @@ export class NotificationService {
       data,
       status: NotificationStatus.Unread,
     })
+    // await this.oneSignalService.pushNotificationToUser([userId], {
+    //   headings: {
+    //     zh: title,
+    //   },
+    //   contents: {
+    //     zh: content,
+    //   },
+    //   data: {
+    //     type,
+    //     relatedId,
+    //     data,
+    //   },
+    // })
 
     return saved
   }

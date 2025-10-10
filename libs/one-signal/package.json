@@ -1,7 +1,7 @@
 {
-  "name": "@yikart/nats-client",
+  "name": "@yikart/one-signal",
   "type": "commonjs",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"
@@ -13,12 +13,11 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
-    "@nestjs/microservices": "^11.0.0",
     "@yikart/common": "*",
-    "nats": "^2.29.3",
     "zod": "^4.0.0"
   },
   "dependencies": {
+    "@onesignal/node-onesignal": "5.3.1-beta1",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0"
   }
