@@ -51,7 +51,7 @@ import { bilibiliSkip } from "@/app/[lng]/accounts/plat/BilibiliLogin";
 import { youtubeSkip } from "@/app/[lng]/accounts/plat/YoutubeLogin";
 import { twitterSkip } from "@/app/[lng]/accounts/plat/TwtterLogin";
 import { tiktokSkip } from "@/app/[lng]/accounts/plat/TiktokLogin";
-import { facebookSkip } from "@/app/[lng]/accounts/plat/FacebookLogin";
+import { facebookSkip, FacebookPagesModal } from "@/app/[lng]/accounts/plat/FacebookLogin";
 import { instagramSkip } from "@/app/[lng]/accounts/plat/InstagramLogin";
 import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
 import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
@@ -135,6 +135,8 @@ const PublishDialog = memo(
       // 下载App弹窗状态
       const [downloadModalVisible, setDownloadModalVisible] = useState(false);
       const [currentPlatform, setCurrentPlatform] = useState<string>('');
+      // Facebook页面选择弹窗状态
+      const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
       const { t } = useTransClient("publish");
       const router = useRouter();
       
@@ -176,7 +178,7 @@ const PublishDialog = memo(
               try {
                 await facebookSkip(platform, targetSpaceId);
                 // Facebook授权成功后显示页面选择弹窗
-                // handleFacebookAuthSuccess(); // 这里可能需要处理Facebook页面选择
+                handleFacebookAuthSuccess();
               } catch (error) {
                 console.error('Facebook授权失败:', error);
               }
@@ -216,6 +218,17 @@ const PublishDialog = memo(
           message.error('授权失败，请重试');
         }
       }, [accountGroupList, getAccountList]);
+
+      // 处理Facebook授权成功后的页面选择
+      const handleFacebookAuthSuccess = () => {
+        setShowFacebookPagesModal(true);
+      };
+
+      // 处理Facebook页面选择成功
+      const handleFacebookPagesSuccess = () => {
+        setShowFacebookPagesModal(false);
+        // 可以在这里添加成功提示或其他逻辑
+      };
 
       // 内容安全检测函数
       const handleContentModeration = useCallback(async () => {
@@ -1326,6 +1339,13 @@ const PublishDialog = memo(
             onClose={() => setDownloadModalVisible(false)}
             platform={currentPlatform}
             appName="Aitoearn App"
+          />
+
+          {/* Facebook页面选择弹窗 */}
+          <FacebookPagesModal
+            open={showFacebookPagesModal}
+            onClose={() => setShowFacebookPagesModal(false)}
+            onSuccess={handleFacebookPagesSuccess}
           />
         </>
       );

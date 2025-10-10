@@ -257,10 +257,6 @@ const UserManageModal = memo(
       const [cutLoading, setCutLoading] = useState(false);
       const [isAddAccountOpen, setIsAddAccountOpen] = useState(false);
       const [targetGroupIdForModal, setTargetGroupIdForModal] = useState<string | undefined>(undefined);
-      const preAccountIds = useRef<Set<string>>(new Set());
-      const pendingGroupIdRef = useRef<string | null>(null);
-      const isAssigningRef = useRef(false);
-      const snapshotReadyRef = useRef(false);
 
       const columns = useMemo(() => {
         const columns: TableProps<SocialAccount>["columns"] = [
@@ -417,46 +413,11 @@ const UserManageModal = memo(
           setIsAddAccountOpen(true);
         } else {
           // 如果选择的是具体空间，直接使用该空间
-          pendingGroupIdRef.current = currentGroupId;
           setTargetGroupIdForModal(currentGroupId);
-          if ((useAccountStore.getState().accountList || []).length === 0) {
-            await getAccountList();
-          }
-          preAccountIds.current = new Set(
-            (useAccountStore.getState().accountList || []).map((v) => v.id),
-          );
-          snapshotReadyRef.current = true;
           setIsAddAccountOpen(true);
         }
       };
 
-      useEffect(() => {
-        const maybeAssign = async () => {
-          if (!pendingGroupIdRef.current) return;
-          if (isAssigningRef.current) return;
-          if (!snapshotReadyRef.current) return;
-          const currList = accountList || [];
-          const newAccounts = currList.filter((a) => !preAccountIds.current.has(a.id));
-          if (newAccounts.length === 0) return;
-          isAssigningRef.current = true;
-          try {
-            const targetGroupId = pendingGroupIdRef.current!;
-            for (const acc of newAccounts) {
-              try {
-                await updateAccountApi({ id: acc.id, groupId: targetGroupId });
-              } catch {}
-            }
-            await getAccountList();
-            message.success(t("accountAddedToSpace" as any));
-          } finally {
-            pendingGroupIdRef.current = null;
-            preAccountIds.current = new Set();
-            isAssigningRef.current = false;
-            snapshotReadyRef.current = false;
-          }
-        };
-        maybeAssign();
-      }, [accountList]);
 
       return (
         <>
@@ -557,15 +518,8 @@ const UserManageModal = memo(
               setTargetGroupIdForModal(undefined);
             }}
             onAddSuccess={async (acc) => {
-              try {
-                if (pendingGroupIdRef.current) {
-                  await updateAccountApi({ id: acc.id, groupId: pendingGroupIdRef.current });
-                  message.success(t("accountAddedToSpace" as any));
-                }
-              } finally {
-                pendingGroupIdRef.current = null;
-                await getAccountList();
-              }
+              // 账号已经在授权时直接添加到指定空间，无需额外移动
+              await getAccountList();
             }}
             targetGroupId={targetGroupIdForModal}
             showSpaceSelector={activeGroup === allUser.current}
