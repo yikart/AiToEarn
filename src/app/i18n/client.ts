@@ -29,14 +29,10 @@ i18next
   )
   // .use(LocizeBackend) // locize backend could be used on client side, but prefer to keep it in sync with server side
   .init({
-    ...getOptions(),
-    lng: undefined, // let detect the language on client side
+    ...getOptions(undefined), // 不传递 lng 参数，让 i18next 自动检测
     detection: {
       order: ["path", "htmlTag", "cookie", "navigator"],
       caches: ["cookie"], // 只缓存到 cookie，避免其他缓存干扰
-      // 禁用自动语言检测，完全依赖 URL 参数
-      lookupFromPathIndex: 0,
-      checkWhitelist: true,
     },
     preload: runsOnServerSide ? languages : [],
     // 确保语言切换时立即生效
