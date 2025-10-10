@@ -39,10 +39,13 @@ export class AppReleaseRepository extends BaseRepository<AppRelease> {
     }).exec()
   }
 
-  async getLatestByPlatform(platform: AppPlatform) {
+  async getLatestByPlatform(platform: AppPlatform, options?: {
+    forceUpdate?: boolean
+  }) {
     return await this.model.findOne({
       platform,
-    }).sort({ publishedAt: -1 }).exec()
+      ...options,
+    }).sort({ buildNumber: -1 }).exec()
   }
 
   async checkExistsByPlatformAndBuildNumber(platform: AppPlatform, buildNumber: number, excludeId?: string) {
