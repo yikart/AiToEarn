@@ -23,6 +23,7 @@ import {
   MarkAsReadDto,
   NotificationVo,
   OperationResultVo,
+  PushNotificationDto,
   QueryAppReleaseDto,
   QueryNotificationsDto,
   UnreadCountVo,
@@ -135,6 +136,13 @@ export class AitoearnOtherClient {
    */
   async getUnreadCount(data: GetUnreadCountDto): Promise<UnreadCountVo> {
     return this.natsClient.send('other.notification.unreadCount', data)
+  }
+
+  /**
+   * 推送通知
+   */
+  async pushNotification(data: PushNotificationDto): Promise<void> {
+    return this.natsClient.send('other.notification.push', data)
   }
 
   // ==================== Feedback Module Methods ====================
