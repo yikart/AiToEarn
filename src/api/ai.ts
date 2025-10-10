@@ -82,6 +82,14 @@ export const getVideoTaskStatus = (taskId: string) => {
   return http.get(`ai/video/generations/${taskId}`);
 };
 
+// 获取视频生成历史记录
+export const getVideoGenerations = (params?: {
+  page?: number;
+  pageSize?: number;
+}) => {
+  return http.get("ai/video/generations", { params });
+};
+
 // 保留旧的接口以保持向后兼容性（可选）
 // 文生图 - 旧接口（已废弃）
 export const textToImage = (data: {
