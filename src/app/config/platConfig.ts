@@ -114,7 +114,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         titleMax: 80,
         desMax: 2000,
       },
-      themeColor: "blue",
+      themeColor: "#F06198",
     },
   ],
   [
@@ -192,7 +192,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         topicMax: 100,
         desMax: 5000,
       },
-      themeColor: "blue",
+      themeColor: "#F07171",
     },
   ],
   [
