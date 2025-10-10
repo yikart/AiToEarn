@@ -136,7 +136,7 @@ function UserInfo() {
             style={{ borderRadius: '50%', backgroundColor: '#e9d5ff', padding: '3px' }}
           />
           <div className={styles["layoutHeader-userinfo-name"]}>
-            {userInfo.name || t("unknownUser")}
+            {userInfo?.name || t("unknownUser")}
           </div>
           <CaretDownOutlined />
         </div>
