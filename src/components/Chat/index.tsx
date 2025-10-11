@@ -1,5 +1,6 @@
 import { ForwardedRef, forwardRef, memo, useEffect, useState } from "react";
 import * as React from "react";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 export interface IChatRef {}
 
@@ -10,16 +11,22 @@ export interface IChatProps {
 const Chat = memo(
   forwardRef(({ defaultMask }: IChatProps, ref: ForwardedRef<IChatRef>) => {
     const [iframeUrl, setIframeUrl] = useState("");
+    const lng = useGetClientLng();
 
     useEffect(() => {
+      const base = location.origin.includes("localhost")
+        ? "https://dev.aitoearn.ai"
+        : location.origin;
+
+      const params = new URLSearchParams();
+      if (defaultMask) params.set("mask", defaultMask);
+      if (lng) params.set("lang", lng);
+
+      const qs = params.toString();
       setIframeUrl(
-        `${
-          location.origin.includes("localhost")
-            ? "https://dev.aitoearn.ai"
-            : location.origin
-        }/chat/#/new-chat?mask=${defaultMask}`,
+        `${base}/chat${defaultMask ? "/#/new-chat" : "/#/chat"}${qs ? `?${qs}` : ""}`,
       );
-    }, []);
+    }, [defaultMask, lng]);
 
     return (
       <iframe
