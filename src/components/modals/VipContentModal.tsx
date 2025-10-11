@@ -159,7 +159,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       footer={null}
       width={modalWidth}
       className={styles.outsideCloseModal}
-      destroyOnClose
+      destroyOnHidden
       centered
     >
       <div className={vipStyles.wrapper}>

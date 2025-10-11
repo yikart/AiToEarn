@@ -73,7 +73,7 @@ const PointsDetailModal = memo(({ open, onClose }: PointsDetailModalProps) => {
       footer={null}
       width={980}
       className={styles.outsideCloseModal}
-      destroyOnClose
+      destroyOnHidden
       centered
     >
       <div style={{ background: '#fff', borderRadius: 12 }}>
