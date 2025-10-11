@@ -129,7 +129,7 @@ const TikTokParams = memo(
             {...pubParmasTextareaCommonParams}
             extend={
               <>
-                <CommonTitleInput pubItem={pubItem}  />
+                {/* <CommonTitleInput pubItem={pubItem}  /> */}
                 
                 {/* Creator Info Display */}
                 {creatorInfo && (
