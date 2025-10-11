@@ -6,6 +6,7 @@
   "header": {
     "logo": "Aitoearn",
     "nav": {
+      "home": "首页",
       "marketplace": "市场",
       "pricing": "价格",
       "status": "状态",

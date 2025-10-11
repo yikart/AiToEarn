@@ -90,7 +90,7 @@ export const homeHeaderRouterData = {
     return [
       {
         href: "/",
-        title: "",
+        title: directTrans("home", "header.nav.home"), 
       },
       {
         href: "/pricing",
