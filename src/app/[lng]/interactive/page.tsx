@@ -118,7 +118,7 @@ export default function InteractivePage() {
     }
     // 如果已有 platform 则不覆盖用户手动选择
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [accountActive?.account]);
+  }, [accountActive?.id]);
 
   const PostCard = ({ item }: { item: EngagementPostItem }) => {
     return (
@@ -171,11 +171,11 @@ export default function InteractivePage() {
   };
 
   const loadCommentsV2 = async (postId: string, before?: string, after?: string) => {
-    if (!accountActive?.account || !platform) return;
+    if (!accountActive?.id || !platform) return;
     setCommentLoading(true);
     try {
       const res = await apiGetPostComments({
-        accountId: accountActive.account,
+        accountId: accountActive.id,
         platform: platform as any,
         postId,
         pagination: { before, after, limit: 20 }
@@ -192,13 +192,13 @@ export default function InteractivePage() {
   };
 
   const expandReplies = async (commentId: string) => {
-    if (!accountActive?.account || !platform) return;
+    if (!accountActive?.id || !platform) return;
     setRepliesByComment((prev) => ({
       ...prev,
       [commentId]: { ...(prev[commentId] || { list: [], cursor: {}, expanded: true }), loading: true, expanded: true },
     }));
     const res = await apiGetCommentReplies({
-      accountId: accountActive.account,
+      accountId: accountActive.id,
       platform: platform as any,
       commentId,
       pagination: { limit: 20 },
@@ -223,10 +223,10 @@ export default function InteractivePage() {
 
   const loadMoreReplies = async (commentId: string) => {
     const state = repliesByComment[commentId];
-    if (!state?.cursor?.after || !accountActive?.account || !platform) return;
+    if (!state?.cursor?.after || !accountActive?.id || !platform) return;
     setRepliesByComment((prev) => ({ ...prev, [commentId]: { ...(prev[commentId] as any), loading: true } }));
     const res = await apiGetCommentReplies({
-      accountId: accountActive.account,
+      accountId: accountActive.id,
       platform: platform as any,
       commentId,
       pagination: { after: state.cursor.after, limit: 20 },
@@ -246,10 +246,10 @@ export default function InteractivePage() {
    * 提交帖子评论
    */
   const submitPostComment = async () => {
-    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform || sending) return;
+    if (!commentPost || !replyText.trim() || !accountActive?.id || !platform || sending) return;
     setSending(true);
     try {
-      const res = await apiPublishPostComment({ accountId: accountActive.account, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
+      const res = await apiPublishPostComment({ accountId: accountActive.id, platform: platform as any, postId: commentPost.postId, message: replyText.trim() });
       if (res) {
         setReplyText('');
         setReplyTarget(null);
@@ -267,10 +267,10 @@ export default function InteractivePage() {
    * 提交评论回复
    */
   const submitReply = async (parentId?: string) => {
-    if (!commentPost || !replyText.trim() || !accountActive?.account || !platform || sending) return;
+    if (!commentPost || !replyText.trim() || !accountActive?.id || !platform || sending) return;
     setSending(true);
     try {
-      const res = await apiPublishCommentReply({ accountId: accountActive.account, platform: platform as any, commentId: parentId || '', message: replyText.trim() });
+      const res = await apiPublishCommentReply({ accountId: accountActive.id, platform: platform as any, commentId: parentId || '', message: replyText.trim() });
       if (res) {
         setReplyText('');
         setReplyTarget(null);
@@ -319,9 +319,9 @@ export default function InteractivePage() {
       {/* 左侧账户选择栏 */}
       <div >
         <AccountSidebar
-          activeAccountId={accountActive?.account || ''}
+          activeAccountId={accountActive?.id || ''}
           onAccountChange={(account) => {
-            if (account.id === accountActive?.account) {
+            if (account.id === accountActive?.id) {
               setAccountActive(undefined);
             } else {
               setAccountActive(account);
