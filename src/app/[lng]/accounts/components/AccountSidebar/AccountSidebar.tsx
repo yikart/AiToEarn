@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -45,6 +46,18 @@ import {
 import { createAccountGroupApi, updateAccountApi } from "@/api/account";
 import AddAccountModal from "../AddAccountModal";
 import DeleteUserConfirmModal from "./DeleteUserConfirmModal";
+// 导入各平台授权函数
+import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
+import { bilibiliSkip } from "@/app/[lng]/accounts/plat/BilibiliLogin";
+import { youtubeSkip } from "@/app/[lng]/accounts/plat/YoutubeLogin";
+import { twitterSkip } from "@/app/[lng]/accounts/plat/TwtterLogin";
+import { tiktokSkip } from "@/app/[lng]/accounts/plat/TiktokLogin";
+import { facebookSkip, FacebookPagesModal } from "@/app/[lng]/accounts/plat/FacebookLogin";
+import { instagramSkip } from "@/app/[lng]/accounts/plat/InstagramLogin";
+import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
+import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
+import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
+import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
 
 export interface IAccountSidebarRef {}
 
@@ -199,6 +212,9 @@ const AccountSidebar = memo(
       const snapshotReadyRef = useRef(false);
       const allUser = useRef("-1");
 
+      // Facebook页面选择弹窗状态
+      const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
+
       // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
       const accountList = useMemo(() => {
         return fullAccountList.filter(
@@ -227,6 +243,80 @@ const AccountSidebar = memo(
         // 只在组件挂载时获取一次IP信息
         fetchIpLocation();
       }, []);
+
+      // 处理离线账户点击，直接跳转到对应平台授权页面
+      const handleOfflineAccountClick = useCallback(async (account: SocialAccount) => {
+        const platform = account.type;
+        const targetSpaceId = account.groupId; // 使用账户原本的空间ID
+        
+        try {
+          // 根据平台类型调用对应的授权函数，传递目标空间ID
+          switch (platform) {
+            case PlatType.KWAI:
+              await kwaiSkip(platform, targetSpaceId);
+              break;
+            case PlatType.BILIBILI:
+              await bilibiliSkip(platform, targetSpaceId);
+              break;
+            case PlatType.YouTube:
+              await youtubeSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Twitter:
+              await twitterSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Tiktok:
+              await tiktokSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Facebook:
+              try {
+                await facebookSkip(platform, targetSpaceId);
+                // Facebook授权成功后显示页面选择弹窗
+                setShowFacebookPagesModal(true);
+              } catch (error) {
+                console.error('Facebook授权失败:', error);
+              }
+              break;
+            case PlatType.Instagram:
+              await instagramSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Threads:
+              await threadsSkip(platform, targetSpaceId);
+              break;
+            case PlatType.WxGzh:
+              await wxGzhSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Pinterest:
+              await pinterestSkip(platform, targetSpaceId);
+              break;
+            case PlatType.LinkedIn:
+              await linkedinSkip(platform, targetSpaceId);
+              break;
+            default:
+              console.warn(`未支持的平台类型: ${platform}`);
+              message.warning(`暂不支持 ${platform} 平台的直接授权`);
+              return;
+          }
+
+          // 授权完成后刷新账号列表
+          setTimeout(async () => {
+            try {
+              await getAccountList();
+              console.log('账号列表已刷新');
+            } catch (error) {
+              console.error('刷新账号列表失败:', error);
+            }
+          }, 3000); // 等待3秒让授权完成
+        } catch (error) {
+          console.error('授权失败:', error);
+          message.error('授权失败，请重试');
+        }
+      }, [getAccountList]);
+
+      // 处理Facebook页面选择成功
+      const handleFacebookPagesSuccess = () => {
+        setShowFacebookPagesModal(false);
+        // 可以在这里添加成功提示或其他逻辑
+      };
 
       // 添加账号流程
       const openAddAccountFlow = async () => {
@@ -504,11 +594,9 @@ const AccountSidebar = memo(
                                   if (
                                     account.status === AccountStatus.DISABLE
                                   ) {
-                                    // TODO 账户登录
-                                    // const res = await accountLogin(account.type);
-                                    // if (!res) return;
-                                    // message.success("账号登录成功！");
-                                    // return;
+                                    // 掉线账户直接触发重新授权
+                                    await handleOfflineAccountClick(account);
+                                    return;
                                   }
                                   onAccountChange(account);
                                 }}
@@ -592,6 +680,13 @@ const AccountSidebar = memo(
                 setDeleteTarget(null);
                 message.success("删除成功");
               }}
+            />
+
+            {/* Facebook页面选择弹窗 */}
+            <FacebookPagesModal
+              open={showFacebookPagesModal}
+              onClose={() => setShowFacebookPagesModal(false)}
+              onSuccess={handleFacebookPagesSuccess}
             />
           </div>
         </>
