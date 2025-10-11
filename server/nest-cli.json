@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "assets": [
+      {
+        "include": "files/**",
+        "outDir": "dist/src",
+        "watchAssets": true
+      },
+      {
+        "include": "modules/tools/kwaiSign/kuaiShoSignCore.js",
+        "outDir": "dist/src",
+        "watchAssets": true
+      },
+      "views/",
+      "public/"
+    ],
+    "watchAssets": true
+  }
+}

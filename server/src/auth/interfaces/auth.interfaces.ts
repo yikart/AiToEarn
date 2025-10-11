@@ -1,0 +1,21 @@
+/*
+ * @Author: nevin
+ * @Date: 2022-01-21 14:28:19
+ * @LastEditors: nevin
+ * @LastEditTime: 2024-11-22 09:50:08
+ * @Description: 认证相关接口
+ */
+import { Request } from 'express';
+
+export interface TokenInfo {
+  readonly phone?: string;
+  readonly id: string;
+  readonly name?: string;
+  readonly exp?: number;
+  readonly isManager?: boolean;
+  readonly mail?: string;
+}
+
+export interface TokenReq extends Request {
+  tokenInfo: TokenInfo;
+}
