@@ -18,6 +18,7 @@ import { GlobalExceptionFilter } from './filters'
 import { ResponseInterceptor } from './interceptors'
 import { CloudWatchLogger } from './loggers/cloud-watch.logger'
 import { ConsoleLogger } from './loggers/console.logger'
+import { FeishuLogger } from './loggers/feishu.logger'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, setupNatsPattern, zodToJsonSchemaOptions } from './utils'
 
@@ -53,6 +54,13 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     loggers.push({
       level: config.logger.cloudWatch.level,
       stream: new CloudWatchLogger(config.logger.cloudWatch),
+    })
+  }
+
+  if (config.logger?.feishu?.enable) {
+    loggers.push({
+      level: config.logger.feishu.level,
+      stream: new FeishuLogger(config.logger.feishu),
     })
   }
 
