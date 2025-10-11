@@ -14,11 +14,11 @@ export interface BaseNotificationWithoutTemplate<L extends LangMap> {
   /**
    * The message title with [language-specific values](https://documentation.onesignal.com/docs/multi-language-messaging#supported-languages). Required for Huawei and Web Push. If not set for Web Push, it defaults to your 'Site Name'. Not required if using template_id or content_available. Supports [Message Personalization](https://documentation.onesignal.com/docs/message-personalization) and must include the same languages as contents to ensure localization consistency.
    */
-  headings?: L & Partial<Record<Exclude<keyof LanguageStringMap, keyof L>, never>>
+  headings?: L
   /**
    * iOS only. The subtitle with [language-specific values](https://documentation.onesignal.com/docs/multi-language-messaging#supported-languages). Supports [Message Personalization](https://documentation.onesignal.com/docs/message-personalization) and must include the same languages as contents to ensure localization consistency.
    */
-  subtitle?: L & Partial<Record<Exclude<keyof LanguageStringMap, keyof L>, never>>
+  subtitle?: L
   /**
    * An internal name you set to help organize and track messages. Not shown to recipients. Maximum 128 characters.
    */

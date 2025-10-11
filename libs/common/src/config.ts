@@ -38,9 +38,17 @@ export const consoleLoggerConfig = z.object({
   translateTime: z.boolean().default(true),
 })
 
+export const feishuLoggerConfig = z.object({
+  enable: z.boolean().default(false),
+  level: logLevel.default('error'),
+  url: z.url(),
+  secret: z.string(),
+})
+
 export const loggerConfig = z.object({
   cloudWatch: cloudWatchLoggerConfig.optional(),
   console: consoleLoggerConfig.optional(),
+  feishu: feishuLoggerConfig.optional(),
 })
 
 export const baseConfig = z.object({

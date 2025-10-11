@@ -36,19 +36,19 @@ export class NotificationService {
       data,
       status: NotificationStatus.Unread,
     })
-    // await this.oneSignalService.pushNotificationToUser([userId], {
-    //   headings: {
-    //     zh: title,
-    //   },
-    //   contents: {
-    //     zh: content,
-    //   },
-    //   data: {
-    //     type,
-    //     relatedId,
-    //     data,
-    //   },
-    // })
+    await this.oneSignalService.pushNotificationToUser([userId], {
+      headings: {
+        zh: title,
+      },
+      contents: {
+        zh: content,
+      },
+      data: {
+        type,
+        relatedId,
+        data,
+      },
+    })
 
     return saved
   }
