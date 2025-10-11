@@ -41,14 +41,15 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 
 OS | Download
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.27-green?logo=android&logoColor=white)]((https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/aitoearn_1.0.27.apk))
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.27-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/AiToEarnSetup-1.0.27.exe)
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.0.27-green?logo=android&logoColor=white)]((https://github.com/yikart/AiToEarn/releases/download/v1.1.0/aitoearn-1.1.0.apk))
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.0.27-blue?logo=windows&logoColor=white)](https://github.com/yikart/AiToEarn/releases/download/v1.1.0/AiToEarnSetup-1.1.0.exe)
 macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.0.27-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.0.27/AiToEarn+1.0.27.dmg)
 iOS |  **Coming soon!**
+Web | [Use on Web](https://aitoearn.ai/en/accounts)
 
 [Google Play Download](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
-[Use on Web](https://aitoearn.ai/en/accounts)
+
 
 
 ## Start Web Project
