@@ -5,6 +5,33 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 
+.chatSection {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.subTabLabel {
+  margin-top: 3px;
+}
+
+.chatContainer {
+  width: 100%;
+  height: calc(100vh - 120px);
+  min-height: 700px;
+
+  overflow: hidden;
+  position: relative;
+  
+  iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 8px;
+  }
+}
+
 .historySection {
   padding: 24px 10px;
   background-color: #fff;
@@ -207,7 +234,10 @@
 // 新增：textToImage 左右分栏
 .twoColumn { display: grid; grid-template-columns: 399px 1fr; gap: 16px; }
 .leftPanel { display: flex; flex-direction: column; gap: 12px; }
-.rightPanel { }
+.rightPanel { 
+  display: flex;
+  flex-direction: column;
+}
 
 .blockTitle { font-size: 14px; color: #999; }
 

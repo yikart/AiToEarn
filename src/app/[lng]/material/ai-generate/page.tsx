@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { message, Input, Button, Select, Row, Col, Modal, Progress } from "antd";
-import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined, DownloadOutlined } from "@ant-design/icons";
+import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined, DownloadOutlined, MessageOutlined } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
 import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card, getVideoGenerations } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
@@ -11,6 +11,7 @@ import { uploadToOss } from "@/api/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
 import { useTransClient } from "@/app/i18n/client";
 import { md2CardTemplates, defaultMarkdown } from "./md2card";
+import { AppChatCore } from "@/app/[lng]/appChat/AppChatCore";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -42,12 +43,12 @@ export default function AIGeneratePage() {
   // 根据 URL 初始化模块与子标签
   const queryTab = (searchParams.get("tab") || "").toString();
   const initIsVideo = ["videoGeneration", "text2video", "image2video"].includes(queryTab);
-  const initImageTab = ["textToImage", "textToFireflyCard", "md2card"].includes(queryTab) ? (queryTab as any) : "textToImage";
+  const initImageTab = ["textToImage", "textToFireflyCard", "md2card", "chat"].includes(queryTab) ? (queryTab as any) : "textToImage";
   const initVideoTab = queryTab === "image2video" ? "image2video" : "text2video";
   // 左侧模块切换
   const [activeModule, setActiveModule] = useState<"image" | "video">(initIsVideo ? "video" : "image");
   // 图片子模块切换
-  const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "textToFireflyCard" | "md2card">(initImageTab);
+  const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "textToFireflyCard" | "md2card" | "chat">(initImageTab);
   // 视频子模块切换
   const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">(initVideoTab);
 
@@ -325,7 +326,7 @@ export default function AIGeneratePage() {
     if (tab === 'videoGeneration' || tab === 'text2video' || tab === 'image2video') {
       setActiveModule('video');
       setActiveVideoTab(tab === 'image2video' ? 'image2video' : 'text2video');
-    } else if (tab === 'textToImage' || tab === 'textToFireflyCard' || tab === 'md2card') {
+    } else if (tab === 'textToImage' || tab === 'textToFireflyCard' || tab === 'md2card' || tab === 'chat') {
       setActiveModule('image');
       setActiveImageTab(tab as any);
     }
@@ -492,15 +493,19 @@ export default function AIGeneratePage() {
             <div className={styles.imageSubTabs}>
               <button className={`${styles.subTab} ${activeImageTab==='textToImage' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('textToImage')}>
                 <div className="subTabIcon"><PictureOutlined /></div>
-                <div className="subTabLabel">{t("aiGenerate.textToImage")}</div>
+                <div className={styles.subTabLabel}>{t("aiGenerate.textToImage")}</div>
               </button>
               <button className={`${styles.subTab} ${activeImageTab==='textToFireflyCard' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('textToFireflyCard')}>
                 <div className="subTabIcon"><FireOutlined /></div>
-                <div className="subTabLabel">{t("aiGenerate.fireflyCard")}</div>
+                <div className={styles.subTabLabel}>{t("aiGenerate.fireflyCard")}</div>
               </button>
               <button className={`${styles.subTab} ${activeImageTab==='md2card' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('md2card')}>
                 <div className="subTabIcon"><FileTextOutlined /></div>
-                <div className="subTabLabel">{t("aiGenerate.markdownToCard")}</div>
+                <div className={styles.subTabLabel}>{t("aiGenerate.markdownToCard")}</div>
+              </button>
+              <button className={`${styles.subTab} ${activeImageTab==='chat' ? styles.subTabActive : ''}`} onClick={()=>setActiveImageTab('chat')}>
+                <div className="subTabIcon"><MessageOutlined /></div>
+                <div className={styles.subTabLabel}>Nano Banana</div>
               </button>
       </div>
           )}
@@ -509,11 +514,11 @@ export default function AIGeneratePage() {
             <div className={styles.imageSubTabs}>
               <button className={`${styles.subTab} ${activeVideoTab==='text2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('text2video')}>
                 <div className="subTabIcon"><VideoCameraOutlined /></div>
-                <div className="subTabLabel">{t('aiGenerate.textToVideo')}</div>
+                <div className={styles.subTabLabel}>{t('aiGenerate.textToVideo')}</div>
               </button>
               <button className={`${styles.subTab} ${activeVideoTab==='image2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('image2video')}>
                 <div className="subTabIcon"><PictureOutlined /></div>
-                <div className="subTabLabel">{t('aiGenerate.imageToVideo')}</div>
+                <div className={styles.subTabLabel}>{t('aiGenerate.imageToVideo')}</div>
               </button>
             </div>
           )}
@@ -746,6 +751,14 @@ export default function AIGeneratePage() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {activeImageTab === 'chat' && (
+                <div className={styles.chatSection}>
+                  <div className={styles.chatContainer}>
+                    <AppChatCore />
                   </div>
                 </div>
               )}
