@@ -142,7 +142,7 @@ const AccountPopoverInfo = ({
             style={{ marginLeft: 18, border: "none" }}
             onClick={() => onDeleteClick?.(accountInfo)}
           >
-            删除账户
+            {t("deleteAccount" as any)}
           </Button>
         </p>
       </div>
@@ -234,7 +234,7 @@ const AccountSidebar = memo(
             const info = await getIpLocation();
             setIpLocationInfo(info);
           } catch (error) {
-            console.error("获取IP地理位置信息失败:", error);
+            console.error(t("messages.ipLocationError" as any), error);
           } finally {
             setIpLocationLoading(false);
           }
@@ -273,7 +273,7 @@ const AccountSidebar = memo(
                 // Facebook授权成功后显示页面选择弹窗
                 setShowFacebookPagesModal(true);
               } catch (error) {
-                console.error('Facebook授权失败:', error);
+                console.error(t('messages.facebookAuthFailed' as any), error);
               }
               break;
             case PlatType.Instagram:
@@ -292,8 +292,8 @@ const AccountSidebar = memo(
               await linkedinSkip(platform, targetSpaceId);
               break;
             default:
-              console.warn(`未支持的平台类型: ${platform}`);
-              message.warning(`暂不支持 ${platform} 平台的直接授权`);
+              console.warn(`${t('messages.unsupportedPlatform' as any)}: ${platform}`);
+              message.warning(t('messages.platformNotSupported' as any, { platform }));
               return;
           }
 
@@ -301,14 +301,14 @@ const AccountSidebar = memo(
           setTimeout(async () => {
             try {
               await getAccountList();
-              console.log('账号列表已刷新');
+              console.log(t('messages.accountListRefreshed' as any));
             } catch (error) {
-              console.error('刷新账号列表失败:', error);
+              console.error(t('messages.refreshAccountListFailed' as any), error);
             }
           }, 3000); // 等待3秒让授权完成
         } catch (error) {
-          console.error('授权失败:', error);
-          message.error('授权失败，请重试');
+          console.error(t('messages.authFailed' as any), error);
+          message.error(t('messages.authFailed' as any) + '，' + t('messages.pleaseRetry' as any));
         }
       }, [getAccountList]);
 
@@ -321,7 +321,7 @@ const AccountSidebar = memo(
       // 添加账号流程
       const openAddAccountFlow = async () => {
         if (accountGroupList.length === 0) {
-          message.error("请先创建空间");
+          message.error(t("messages.createSpaceFirst" as any));
           return;
         }
 
@@ -678,7 +678,7 @@ const AccountSidebar = memo(
               onDeleteSuccess={async () => {
                 await getAccountList();
                 setDeleteTarget(null);
-                message.success("删除成功");
+                message.success(t("messages.deleteSuccess" as any));
               }}
             />
 

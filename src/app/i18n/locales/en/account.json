@@ -41,7 +41,11 @@
     "fetchError": "Failed to fetch pages",
     "submitError": "Failed to select pages",
     "submitSuccess": "Pages selected successfully",
-    "selectAtLeastOne": "Please select at least one page"
+    "selectAtLeastOne": "Please select at least one page",
+    "noPagesMessage": "You haven't created any Facebook pages yet",
+    "createPageTip": "Click the link above to create a page, then click refresh",
+    "createPageLink": "Create Facebook Page",
+    "refresh": "Refresh"
   },
   "listMode": {
     "title": "Publish Plans",
@@ -100,6 +104,19 @@
     "account": "Account",
     "platform": "Platform",
     "space": "Space"
+  },
+  "deleteAccount": "Delete",
+  "messages": {
+    "ipLocationError": "Failed to get IP location information",
+    "createSpaceFirst": "Please create a space first",
+    "deleteSuccess": "Deleted successfully",
+    "facebookAuthFailed": "Facebook authorization failed",
+    "unsupportedPlatform": "Unsupported platform type",
+    "accountListRefreshed": "Account list refreshed",
+    "refreshAccountListFailed": "Failed to refresh account list",
+    "authFailed": "Authorization failed",
+    "pleaseRetry": "Please try again",
+    "platformNotSupported": "Direct authorization for {{platform}} platform is not supported yet"
   },
   "rednote": "Rednote",
   "kwai": "Kwai",
