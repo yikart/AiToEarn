@@ -41,7 +41,11 @@
     "fetchError": "Failed to fetch pages",
     "submitError": "Failed to select pages",
     "submitSuccess": "Pages selected successfully",
-    "selectAtLeastOne": "Please select at least one page"
+    "selectAtLeastOne": "Please select at least one page",
+    "noPagesMessage": "You haven't created any Facebook pages yet",
+    "createPageTip": "Click the link above to create a page, then click refresh",
+    "createPageLink": "Create Facebook Page",
+    "refresh": "Refresh"
   },
   "listMode": {
     "title": "Publish Plans",
