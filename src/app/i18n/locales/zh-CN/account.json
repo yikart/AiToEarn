@@ -41,7 +41,11 @@
     "fetchError": "获取页面列表失败",
     "submitError": "页面选择失败",
     "submitSuccess": "页面选择成功",
-    "selectAtLeastOne": "请至少选择一个页面"
+    "selectAtLeastOne": "请至少选择一个页面",
+    "noPagesMessage": "您还没有创建任何Facebook页面",
+    "createPageTip": "点击上方链接创建页面，然后点击刷新按钮",
+    "createPageLink": "创建Facebook页面",
+    "refresh": "刷新"
   },
   "listMode": {
     "title": "发布计划列表",
