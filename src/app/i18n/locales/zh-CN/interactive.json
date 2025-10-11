@@ -1,0 +1,41 @@
+{
+  "title": "互动管理",
+  "messages": {
+    "pleaseLoginFirst": "请先登录",
+    "commentSuccess": "评论成功",
+    "commentFailed": "评论失败，请重试",
+    "replySuccess": "回复成功",
+    "replyFailed": "回复失败，请重试"
+  },
+  "ui": {
+    "selectChannel": "请在左侧选择需要互动的频道",
+    "selectChannelDesc": "选择一个账号后，将自动加载该频道的最新作品与评论互动功能。",
+    "loadMore": "加载更多",
+    "noMorePosts": "没有更多作品",
+    "loading": "加载中...",
+    "sending": "发送中...",
+    "send": "发送",
+    "reply": "回复",
+    "expandReplies": "展开回复",
+    "collapseReplies": "收起回复",
+    "loadMoreReplies": "加载更多回复",
+    "loadMoreComments": "加载更多评论",
+    "commentPlaceholder": "输入评论...",
+    "replyPlaceholder": "回复@{name}",
+    "noImage": "无图片"
+  },
+  "stats": {
+    "likes": "点赞",
+    "comments": "评论", 
+    "views": "浏览",
+    "shares": "分享",
+    "clicks": "点击",
+    "impressions": "曝光",
+    "favorites": "收藏"
+  },
+  "mediaTypes": {
+    "video": "视频",
+    "image": "图片",
+    "article": "文章"
+  }
+}
