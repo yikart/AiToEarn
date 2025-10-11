@@ -164,6 +164,12 @@ const RecordCore = memo(
                   <div className="recordDetails-center-left-status">
                     <PubStatus status={publishRecord.status} />
                   </div>
+                  <div
+                    title={publishRecord.errorMsg}
+                    className="recordDetails-center-left-failMsg"
+                  >
+                    {publishRecord.errorMsg}
+                  </div>
                 </div>
                 <div className="recordDetails-center-right">
                   {publishRecord.videoUrl ? (
