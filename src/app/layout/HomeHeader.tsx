@@ -81,6 +81,9 @@ const HomeHeader = memo(
             {/* 桌面端导航 */}
             <nav className={styles.nav}>
               {homeHeaderRouterData.value.map((v) => {
+                if (v.href === "/") {
+                  return null;
+                }
                 return (
                   <Link
                     key={v.title}
@@ -148,6 +151,9 @@ const HomeHeader = memo(
           
           <nav className={styles.mobileMenuNav}>
             {homeHeaderRouterData.value.map((v) => {
+              if (v.href === "/") {
+                return null;
+              }
               return (
                 <Link
                   key={v.title}
