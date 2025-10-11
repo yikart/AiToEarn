@@ -11,7 +11,7 @@ import { uploadToOss } from "@/api/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
 import { useTransClient } from "@/app/i18n/client";
 import { md2CardTemplates, defaultMarkdown } from "./md2card";
-import { AppChatCore } from "@/app/[lng]/appChat/AppChatCore";
+import Chat from "@/components/Chat";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -758,7 +758,7 @@ export default function AIGeneratePage() {
               {activeImageTab === 'chat' && (
                 <div className={styles.chatSection}>
                   <div className={styles.chatContainer}>
-                    <AppChatCore />
+                    <Chat defaultMask='100000' />
                   </div>
                 </div>
               )}
