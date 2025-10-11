@@ -105,6 +105,19 @@
     "platform": "平台",
     "space": "所属列表"
   },
+  "deleteAccount": "删除账户",
+  "messages": {
+    "ipLocationError": "获取IP地理位置信息失败",
+    "createSpaceFirst": "请先创建空间",
+    "deleteSuccess": "删除成功",
+    "facebookAuthFailed": "Facebook授权失败",
+    "unsupportedPlatform": "未支持的平台类型",
+    "accountListRefreshed": "账号列表已刷新",
+    "refreshAccountListFailed": "刷新账号列表失败",
+    "authFailed": "授权失败",
+    "pleaseRetry": "请重试",
+    "platformNotSupported": "暂不支持 {{platform}} 平台的直接授权"
+  },
   "rednote": "小红书",
   "kwai": "快手",
   "bilibili": "哔哩哔哩",
