@@ -14,7 +14,6 @@ import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCo
 import { ReactSortable } from "react-sortablejs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
-import isEqual from "lodash/isEqual";
 import { TextAreaRef } from "antd/es/input/TextArea";
 import {
   IImgFile,
@@ -239,6 +238,10 @@ const PubParmasTextarea = memo(
         [imageFileList, videoMax, imageMax, videoFile, platConfig],
       );
 
+      const desMax = useMemo(() => {
+        return platConfig.commonPubParamsConfig?.desMax || 2200;
+      }, [platConfig]);
+
       return (
         <>
           <VideoCoverSeting
@@ -296,6 +299,7 @@ const PubParmasTextarea = memo(
                 onChange={(e) => setValue(e.target.value)}
                 rows={rows}
                 autoFocus={true}
+                maxLength={desMax}
                 onFocus={() => {
                   setTimeout(() => {
                     if (textareaRef.current) {
@@ -335,7 +339,7 @@ const PubParmasTextarea = memo(
                         enter: styles.itemEnter,
                         enterActive: styles.itemEnterActive,
                         exit: styles.itemExit,
-                        exitActive: styles.itemExitActive,
+                        exitActive: styles.itemExitActive
                       }}
                     >
                       <div
@@ -373,7 +377,7 @@ const PubParmasTextarea = memo(
                           enter: styles.itemEnter,
                           enterActive: styles.itemEnterActive,
                           exit: styles.itemExit,
-                          exitActive: styles.itemExitActive,
+                          exitActive: styles.itemExitActive
                         }}
                         key={i}
                       >
@@ -413,7 +417,7 @@ const PubParmasTextarea = memo(
                         enter: styles.itemEnter,
                         enterActive: styles.itemEnterActive,
                         exit: styles.itemExit,
-                        exitActive: styles.itemExitActive,
+                        exitActive: styles.itemExitActive
                       }}
                       unmountOnExit
                     >
@@ -442,6 +446,10 @@ const PubParmasTextarea = memo(
                   {t("actions.cropCover")}
                 </Button>
               )}
+
+              <div className="pubParmasTextarea-maxLength">
+                {desMax - value.length}
+              </div>
             </div>
 
             {extend && <div className="pubParmasTextarea-other">{extend}</div>}

@@ -7,12 +7,21 @@ $boxHegiht: 110px;
   :global {
     .pubParmasTextarea-input {
       padding: 15px;
-      textarea {
+      position: relative;
+      textarea, .ant-input-outlined {
         resize: none;
         border-radius: 3px;
         border: none;
-        box-shadow: none;
+        box-shadow: none !important;
         padding: 0;
+      }
+      .pubParmasTextarea-maxLength {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        border: 1px solid #505050;
+        border-radius: 6px;
+        padding: 0 6px;
       }
     }
 
