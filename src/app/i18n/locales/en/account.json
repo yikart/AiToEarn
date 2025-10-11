@@ -105,6 +105,19 @@
     "platform": "Platform",
     "space": "Space"
   },
+  "deleteAccount": "Delete",
+  "messages": {
+    "ipLocationError": "Failed to get IP location information",
+    "createSpaceFirst": "Please create a space first",
+    "deleteSuccess": "Deleted successfully",
+    "facebookAuthFailed": "Facebook authorization failed",
+    "unsupportedPlatform": "Unsupported platform type",
+    "accountListRefreshed": "Account list refreshed",
+    "refreshAccountListFailed": "Failed to refresh account list",
+    "authFailed": "Authorization failed",
+    "pleaseRetry": "Please try again",
+    "platformNotSupported": "Direct authorization for {{platform}} platform is not supported yet"
+  },
   "rednote": "Rednote",
   "kwai": "Kwai",
   "bilibili": "Bilibili",
