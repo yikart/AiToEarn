@@ -1871,7 +1871,7 @@ export default function TaskPageCore() {
         ]}
         width={previewMedia?.type === 'video' ? 800 : 600}
         zIndex={3000}
-        destroyOnClose={true}
+        destroyOnHidden={true}
         styles={{
           body: {
             padding: '24px',

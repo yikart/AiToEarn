@@ -190,7 +190,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
         width={1000}
 
         className={styles.subscriptionModal}
-        destroyOnClose
+        destroyOnHidden
         centered
       >
         <div className={styles.modalContent}>
