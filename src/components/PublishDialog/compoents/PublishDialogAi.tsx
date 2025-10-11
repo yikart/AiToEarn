@@ -1,5 +1,6 @@
 import { ForwardedRef, forwardRef, memo } from "react";
 import styles from "../publishDialog.module.scss";
+import Chat from "@/components/Chat";
 
 export interface IPublishDialogAiRef {}
 
@@ -11,7 +12,10 @@ const PublishDialogAi = memo(
     ({}: IPublishDialogAiProps, ref: ForwardedRef<IPublishDialogAiRef>) => {
       return (
         <div className={styles.publishDialogAi}>
-          <div className="publishDialogAi-wrapper">AI写作</div>
+          <h1>写作助手</h1>
+          <div className="publishDialogAi-wrapper">
+            <Chat />
+          </div>
         </div>
       );
     },
