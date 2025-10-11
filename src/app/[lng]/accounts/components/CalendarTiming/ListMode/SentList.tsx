@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { List, Card, Avatar, Typography, Space, Tag, Button, Skeleton, Empty } from 'antd';
-import { EyeOutlined, LikeOutlined, MessageOutlined, ShareAltOutlined, HeartOutlined } from '@ant-design/icons';
+import { EyeOutlined, LikeOutlined, MessageOutlined, ShareAltOutlined, HeartOutlined, BarChartOutlined, AimOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
 import { getSentPosts } from '@/api/sent';
 import { SentPost } from '@/api/types/sent.types';
@@ -162,31 +162,41 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
             <div className={styles.engagementMetrics}>
               <div className={styles.metricsRow}>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>👍</div>
+                  <div className={styles.metricIcon}><LikeOutlined /></div>
                   <div className={styles.metricLabel}>Likes</div>
                   <div className={styles.metricValue}>{post.likeCount}</div>
                 </div>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>🔄</div>
+                  <div className={styles.metricIcon}><ShareAltOutlined /></div>
                   <div className={styles.metricLabel}>Shares</div>
                   <div className={styles.metricValue}>{post.shareCount}</div>
                 </div>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>👁️</div>
+                  <div className={styles.metricIcon}><EyeOutlined /></div>
                   <div className={styles.metricLabel}>Views</div>
                   <div className={styles.metricValue}>{post.viewCount }</div>
                 </div>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>💬</div>
+                  <div className={styles.metricIcon}><MessageOutlined /></div>
                   <div className={styles.metricLabel}>Comments</div>
                   <div className={styles.metricValue}>{post.commentCount }</div>
                 </div>
                 <div className={styles.metricItem}>
-                  <div className={styles.metricIcon}>❤️</div>
+                  <div className={styles.metricIcon}><HeartOutlined /></div>
                   <div className={styles.metricLabel}>Favorites</div>
                   <div className={styles.metricValue}>{post.favoriteCount}</div>
                 </div>
-                <div className={styles.chartIcon}>📊</div>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}><AimOutlined /></div>
+                  <div className={styles.metricLabel}>Click</div>
+                  <div className={styles.metricValue}>{post.clickCount || 0}</div>
+                </div>
+                <div className={styles.metricItem}>
+                  <div className={styles.metricIcon}><EyeInvisibleOutlined /></div>
+                  <div className={styles.metricLabel}>Impression</div>
+                  <div className={styles.metricValue}>{post.impressionCount || 0}</div>
+                </div>
+                <div className={styles.chartIcon}><BarChartOutlined /></div>
               </div>
             </div>
 
