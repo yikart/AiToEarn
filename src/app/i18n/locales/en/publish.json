@@ -46,7 +46,8 @@
     "categoryPlaceholder": "Select category",
     "categoryPlaceholderDisabled": "Select region first",
     "board": "Board",
-    "boardPlaceholder": "Select Board"
+    "boardPlaceholder": "Select Board",
+    "descriptionPlaceholder": "Start writing"
   },
   "upload": {
     "finishingUp": "Finishing up...",
@@ -76,7 +77,13 @@
     "sourceRequired": "Source must be filled when reprinting!",
     "pageRequired": "You must select a page!",
     "boardRequired": "You must select a Board!",
-    "coverSizeError": "Cover minimum size 400*400!"
+    "coverSizeError": "Cover minimum size 400*400!",
+    "imageOnly": "Images already exist, you can only upload more images, not videos!",
+    "videoOnly": "Videos already exist, you can only upload more videos, not images!",
+    "imageVideoMixed": "Images and videos cannot be uploaded together!",
+    "onlyImageOrVideo": "Only image or video files can be uploaded!",
+    "videoMaxExceeded": "The number of videos uploaded cannot exceed {{maxCount}}",
+    "imageMaxExceeded": "The number of images uploaded cannot exceed {{maxCount}}"
   },
   "preview": {
     "title": "Preview",
@@ -115,7 +122,8 @@
     "checkingContent": "Checking...",
     "contentSafe": "Content Safe",
     "riskLevel": "Level:",
-    "contentUnsafe": "Content Unsafe"
+    "contentUnsafe": "Content Unsafe",
+    "preview": "Preview"
   },
   "badges": {
     "offline": "Offline",
@@ -149,4 +157,4 @@
       "both": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation."
     }
   }
-} 
+}

@@ -42,14 +42,18 @@ interface Resources {
       "fetchError": "获取页面列表失败",
       "submitError": "页面选择失败",
       "submitSuccess": "页面选择成功",
-      "selectAtLeastOne": "请至少选择一个页面"
+      "selectAtLeastOne": "请至少选择一个页面",
+      "noPagesMessage": "您还没有创建任何Facebook页面",
+      "createPageTip": "点击上方链接创建页面，然后点击刷新按钮",
+      "createPageLink": "创建Facebook页面",
+      "refresh": "刷新"
     },
     "listMode": {
       "title": "发布计划列表",
       "recordCount": "共 {{count}} 条发布计划",
       "newWork": "新建作品",
       "noRecords": "暂无发布计划",
-      "queue": "列表",
+      "queue": "我的发布",
       "sent": "发布历史",
       "createdDaysAgo": "您于 {{days}} 天前创建",
       "viewPost": "查看帖子",
@@ -102,12 +106,32 @@ interface Resources {
       "platform": "平台",
       "space": "所属列表"
     },
+    "deleteAccount": "删除账户",
+    "messages": {
+      "ipLocationError": "获取IP地理位置信息失败",
+      "createSpaceFirst": "请先创建空间",
+      "deleteSuccess": "删除成功",
+      "facebookAuthFailed": "Facebook授权失败",
+      "unsupportedPlatform": "未支持的平台类型",
+      "accountListRefreshed": "账号列表已刷新",
+      "refreshAccountListFailed": "刷新账号列表失败",
+      "authFailed": "授权失败",
+      "pleaseRetry": "请重试",
+      "platformNotSupported": "暂不支持 {{platform}} 平台的直接授权"
+    },
     "rednote": "小红书",
     "kwai": "快手",
     "bilibili": "哔哩哔哩",
     "wxgzh": "微信公众号",
     "douyin": "抖音",
-    "wxsph": "微信视频号"
+    "wxsph": "微信视频号",
+    "deleteConfirm": {
+      "title": "删除提示",
+      "content": "是否删除以下 {{count}} 个账号？",
+      "cancel": "取消",
+      "confirm": "确认"
+    },
+    "mobileOnlySupport": "移动端支持"
   },
   "cgmaterial": {
     "header": {
@@ -394,10 +418,6 @@ interface Resources {
     "collectCount": "收藏数",
     "forwardCount": "分享数"
   },
-  "demo": {
-    "demoText": "测试文字",
-    "title": "测试页面标题"
-  },
   "engagement": {
     "title": "互动数据",
     "columns": {
@@ -432,6 +452,7 @@ interface Resources {
     "header": {
       "logo": "Aitoearn",
       "nav": {
+        "home": "首页",
         "marketplace": "市场",
         "pricing": "价格",
         "status": "状态",
@@ -794,6 +815,47 @@ interface Resources {
       "totalRecords": "共 {{total}} 条记录"
     },
     "myWallet": "我的钱包"
+  },
+  "interactive": {
+    "title": "互动管理",
+    "messages": {
+      "pleaseLoginFirst": "请先登录",
+      "commentSuccess": "评论成功",
+      "commentFailed": "评论失败，请重试",
+      "replySuccess": "回复成功",
+      "replyFailed": "回复失败，请重试"
+    },
+    "ui": {
+      "selectChannel": "请在左侧选择需要互动的频道",
+      "selectChannelDesc": "选择一个账号后，将自动加载该频道的最新作品与评论互动功能。",
+      "loadMore": "加载更多",
+      "noMorePosts": "没有更多作品",
+      "loading": "加载中...",
+      "sending": "发送中...",
+      "send": "发送",
+      "reply": "回复",
+      "expandReplies": "展开回复",
+      "collapseReplies": "收起回复",
+      "loadMoreReplies": "加载更多回复",
+      "loadMoreComments": "加载更多评论",
+      "commentPlaceholder": "输入评论...",
+      "replyPlaceholder": "回复@{name}",
+      "noImage": "无图片"
+    },
+    "stats": {
+      "likes": "点赞",
+      "comments": "评论",
+      "views": "浏览",
+      "shares": "分享",
+      "clicks": "点击",
+      "impressions": "曝光",
+      "favorites": "收藏"
+    },
+    "mediaTypes": {
+      "video": "视频",
+      "image": "图片",
+      "article": "文章"
+    }
   },
   "login": {
     "welcomeBack": "哎呦赚",
@@ -1655,7 +1717,6 @@ interface Resources {
     "status": "状态",
     "createTime": "创建时间",
     "expireTime": "过期时间",
-    "xufeiTime": "续费时间",
     "actions": "操作",
     "viewDetails": "查看详情",
     "goToPay": "去支付",
@@ -1774,6 +1835,33 @@ interface Resources {
       "completelyFree": "🎁 完全免费，无需支付任何费用",
       "claimNow": "立即领取",
       "later": "稍后再说"
+    },
+    "vipHonorText": "您是尊贵的VIP用户",
+    "inviteCode": "邀请码",
+    "edit": "编辑",
+    "copy": "复制",
+    "copySuccess": "已复制",
+    "cancelAccount": "注销账户",
+    "cancelAccountWarning": "注销账户是不可逆的操作，一旦注销，您的所有数据将被永久删除，包括：",
+    "cancelAccountDataList": "个人资料和设置,所有发布的内容,积分和会员权益,订单和支付记录",
+    "cancelAccountCaution": "请谨慎操作！",
+    "cancelAccountSecurity": "为了您的账户安全，请先获取验证码进行身份验证。",
+    "verificationCode": "验证码",
+    "pleaseEnterVerificationCode": "请输入验证码",
+    "getVerificationCode": "获取验证码",
+    "resendAfter": "s后重发",
+    "confirmCancel": "确认注销",
+    "stats": {
+      "totalEarned": "累计赚钱",
+      "balance": "当前余额",
+      "points": "可用积分",
+      "coupons": "优惠券",
+      "currencyYuan": "元"
+    },
+    "deleteAccount": {
+      "title": "删除你的账户",
+      "desc": "删除账户后，你将无法继续使用 Aitoearn 服务，我们也会永久删除你的个人数据。",
+      "apply": "申请注销"
     }
   },
   "publish": {
@@ -1791,7 +1879,10 @@ interface Resources {
       "delete": "删除"
     },
     "tips": {
-      "workSaved": "请选择要发布的账户"
+      "workSaved": "请选择要发布的账户",
+      "pcNotSupported": "Web不支持该平台，请下载App进行发布",
+      "accountOffline": "该账号已离线，无法发布",
+      "tiktokForbidden": "该平台暂不支持发布"
     },
     "status": {
       "publishFailed": "发布失败",
@@ -1821,13 +1912,15 @@ interface Resources {
       "categoryPlaceholder": "请选择视频分类",
       "categoryPlaceholderDisabled": "请先选择国区",
       "board": "Board",
-      "boardPlaceholder": "请选择Board"
+      "boardPlaceholder": "请选择Board",
+      "description": "描述",
+      "descriptionPlaceholder": "开始写..."
     },
     "upload": {
       "finishingUp": "正在完成...",
       "uploadImageOrVideo": "上传图片或视频",
-      "uploadImage": "上传图片",
-      "uploadVideo": "上传视频",
+      "uploadImage": "请上传图片",
+      "uploadVideo": "请上传视频",
       "dragAndSelect": "拖放 & 选择图片或视频"
     },
     "validation": {
@@ -1839,10 +1932,10 @@ interface Resources {
       "titleMaxExceeded": "{{platformName}}标题最多{{maxCount}}字",
       "descriptionMaxExceeded": "{{platformName}}描述最多{{maxCount}}字",
       "descriptionRequired": "描述是必须的",
-      "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
+      "imageMaxExceeded": "图片上传数量不能大于{{maxCount}}",
       "uploadImageOrVideo": "请上传图片或视频",
-      "uploadImage": "上传图片",
-      "uploadVideo": "上传视频",
+      "uploadImage": "请上传图片",
+      "uploadVideo": "请上传视频",
       "topicMaxExceeded": "{{platformName}}话题最多不能超过{{maxCount}}个",
       "topicFormatError": "描述中的话题必须使用空格分割，如：\"#话题1 #话题2\"",
       "titleRequired": "标题是必须的",
@@ -1851,7 +1944,12 @@ interface Resources {
       "sourceRequired": "转载时必须填写转载来源!",
       "pageRequired": "您必须选择页面!",
       "boardRequired": "您必须选择Board!",
-      "coverSizeError": "封面最小尺寸400*400!"
+      "coverSizeError": "封面最小尺寸400*400!",
+      "imageOnly": "已有图片，仅可继续上传图片，不能上传视频！",
+      "videoOnly": "已有视频，仅可继续上传视频，不能上传图片！",
+      "imageVideoMixed": "图片和视频不能混合上传！",
+      "onlyImageOrVideo": "只能上传图片或视频文件！",
+      "videoMaxExceeded": "视频上传数量不能大于{{maxCount}}"
     },
     "preview": {
       "title": "预览",
@@ -1885,7 +1983,17 @@ interface Resources {
     "actions": {
       "selectMaterial": "选择素材",
       "selectDraft": "选择草稿",
-      "cropCover": "裁剪封面"
+      "cropCover": "裁剪封面",
+      "contentModeration": "内容安全检测",
+      "checkingContent": "检测中...",
+      "contentSafe": "内容安全",
+      "riskLevel": "等级:",
+      "contentUnsafe": "内容不安全",
+      "preview": "点击查看"
+    },
+    "badges": {
+      "offline": "已离线",
+      "forbidden": "禁"
     },
     "tiktok": {
       "creatorInfo": "创作者信息",
@@ -2042,6 +2150,8 @@ interface Resources {
     "title": "PLUS会员",
     "description": "开通会员解锁全部功能，立享8种权益",
     "activateNow": "立即开通",
+    "upgrade": "开通会员",
+    "membership": "会员",
     "pleaseLoginFirst": "请先登录",
     "paymentOrderCreated": "支付订单创建成功",
     "paymentLinkNotFound": "未获取到支付链接",
@@ -2076,6 +2186,154 @@ interface Resources {
       "onceMonth": "一次性月度",
       "month": "月度订阅",
       "year": "年度订阅"
+    },
+    "subscriptionManagement": "订阅管理",
+    "subscriptionPlanManagement": "订阅计划管理",
+    "subscriptionPlans": "订阅计划",
+    "purchaseHistory": "购买记录",
+    "myMembership": "我的会员",
+    "basicMembership": "基础会员",
+    "validUntil": "有效期至",
+    "activatedAutoRenewalPlans": "已开通自动续费套餐",
+    "activatedAutoRenewalPlansno": "未开通自动续费套餐",
+    "noAutoRenewalItems": "你还没有开通自动续费项目哦",
+    "viewMorePlans": "查看更多套餐",
+    "continuousAnnual": "连续包年",
+    "oneTimePurchase": "一次性购买",
+    "alipayPayment": "支付宝支付",
+    "noMoreContent": "没有内容了",
+    "previousPage": "上一页",
+    "nextPage": "下一页",
+    "pageInfo": "第 {current} 页，共 {total} 页",
+    "continuousMember": "连续会员",
+    "singleMember": "单月会员",
+    "autoRenewalEnabled": "自动续费已开启",
+    "autoRenewalDisabled": "自动续费未开启",
+    "nextRenewalDate": "下次续费时间",
+    "membershipExpires": "有效期至",
+    "currentPlan": "当前计划",
+    "modal": {
+      "title": "免费试用7天会员",
+      "highlight": "立得100积分",
+      "choosePlan": "选择合适你的套餐，或直接",
+      "buyPoints": "购买积分",
+      "pointsDetail": "积分详情",
+      "vipInfo": {
+        "details": "详情",
+        "subscription": "订阅管理",
+        "planType": "计划",
+        "monthly": "连续包月PLUS会员",
+        "monthly2": "月度会员",
+        "yearly": "连续包年PLUS会员",
+        "yearly2": "年度会员",
+        "singleMonth": "单月会员",
+        "expireTime": "到期时间",
+        "xufeiTime": "续费时间",
+        "remainingPoints": "剩余积分",
+        "buyPoints": "购买积分"
+      },
+      "tabs": {
+        "yearly": "连续包年",
+        "monthly": "连续包月",
+        "once": "单月购买"
+      },
+      "savings": {
+        "yearly": "省50%",
+        "monthly": "省25%"
+      },
+      "free": {
+        "title": "免费",
+        "price": "¥0",
+        "period": "每月",
+        "forever": "永久",
+        "currentPlan": "当前计划",
+        "freePlan": "免费计划",
+        "points": "每月签到赠送60积分",
+        "features": {
+          "dailyPoints": "每月最高10+次seedance等模型视频生成",
+          "maxPoints": "全网热门内容洞察",
+          "videos": "抖音、小红书、视频号、快手、哔哩哔哩、微信公众号TikTok、YouTube、Facebook、Instagram、Threads、Twitter(X)、Pinterest全平台支持",
+          "images": "无限制频道连接",
+          "storage": "内容搜索、评论搜索、智能互动管理"
+        }
+      },
+      "plans": {
+        "goumai": "购买",
+        "yearly": {
+          "title": "年度会员",
+          "bestValue": "最划算",
+          "price": "12",
+          "period": "每月",
+          "originalPrice": "$300/年",
+          "button": "$144/年 省50%",
+          "points": "760 积分/月(包含签到赠送60积分)",
+          "description": "每月最高150+次seedance等模型视频生成",
+          "features": {
+            "contentReview": "内容安全审核",
+            "dailyPoints": "限时nano banana等图片模型无限免费使用",
+            "multiModel": "GPT5，Gemini-2.5-Pro等大模型使用",
+            "textToVideo": "抖音、小红书、视频号、快手、哔哩唑哩,微信公众号、TikTok、YouTube、Facebook、Instagram.Threads、Twitter(X)、Pinterest全平台支持",
+            "aiGeneration": "无限制频道连接",
+            "noWatermark": "内容搜索、评论搜索、智能互动管理"
+          }
+        },
+        "monthly": {
+          "title": "月度会员",
+          "price": "19",
+          "period": "每月",
+          "originalPrice": "$25/月",
+          "button": "$19/月 省25%",
+          "points": "760 积分/月(包含签到赠送60积分)",
+          "description": "每月最高150+次seedance等模型视频生成"
+        },
+        "once": {
+          "title": "一次性月度会员",
+          "price": "25",
+          "period": "每月",
+          "button": "$25/月",
+          "points": "760 积分/月(包含签到赠送60积分)",
+          "description": "每月最高150+次seedance等模型视频生成",
+          "storage": "存储空间5G"
+        }
+      },
+      "trial": "7天免费试用",
+      "cancelAnytime": "包年可随时取消",
+      "cancelMonthly": "包月可随时取消"
+    },
+    "points": {
+      "title": "积分详情",
+      "current": "当前积分",
+      "remaining": "剩余积分",
+      "subscribed": "订阅积分",
+      "recharged": "充值积分",
+      "gifted": "赠送积分",
+      "validity": "积分有效期",
+      "tabs": {
+        "all": "全部",
+        "spend": "消耗",
+        "earn": "获得"
+      },
+      "noData": "没有内容了",
+      "disclaimer": "仅展示近1个月明细，数据更新可能有延时 积分规则",
+      "recordChange": "积分变动",
+      "recordTypes": {
+        "recharge": "充值",
+        "consume": "消耗",
+        "gift": "赠送",
+        "refund": "退款",
+        "expire": "过期",
+        "adjust": "调整"
+      }
+    },
+    "recharge": {
+      "title": "购买积分",
+      "current": "当前积分",
+      "price": "每1000积分售价15美元",
+      "amount": "购买积分",
+      "total": "总价",
+      "buyNow": "立即购买",
+      "range": "1K-50K",
+      "unit": "积分"
     }
   },
   "wallet": {

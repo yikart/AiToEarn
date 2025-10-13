@@ -46,7 +46,9 @@
     "categoryPlaceholder": "请选择视频分类",
     "categoryPlaceholderDisabled": "请先选择国区",
     "board": "Board",
-    "boardPlaceholder": "请选择Board"
+    "boardPlaceholder": "请选择Board",
+    "description": "描述",
+    "descriptionPlaceholder": "开始写"
   },
   "upload": {
     "finishingUp": "正在完成...",
@@ -76,7 +78,13 @@
     "sourceRequired": "转载时必须填写转载来源!",
     "pageRequired": "您必须选择页面!",
     "boardRequired": "您必须选择Board!",
-    "coverSizeError": "封面最小尺寸400*400!"
+    "coverSizeError": "封面最小尺寸400*400!",
+    "imageOnly": "已有图片，仅可继续上传图片，不能上传视频！",
+    "videoOnly": "已有视频，仅可继续上传视频，不能上传图片！",
+    "imageVideoMixed": "图片和视频不能混合上传！",
+    "onlyImageOrVideo": "只能上传图片或视频文件！",
+    "videoMaxExceeded": "视频上传数量不能大于{{maxCount}}",
+    "imageMaxExceeded": "图片上传数量不能大于{{maxCount}}"
   },
   "preview": {
     "title": "预览",
@@ -115,7 +123,8 @@
     "checkingContent": "检测中...",
     "contentSafe": "内容安全",
     "riskLevel": "等级:",
-    "contentUnsafe": "内容不安全"
+    "contentUnsafe": "内容不安全",
+    "preview": "点击查看"
   },
   "badges": {
     "offline": "已离线",
@@ -149,4 +158,4 @@
       "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
     }
   }
-} 
+}

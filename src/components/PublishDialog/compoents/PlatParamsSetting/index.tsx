@@ -12,6 +12,7 @@ import PinterestParams from "@/components/PublishDialog/compoents/PlatParamsSett
 import TikTokParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/TikTokParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IPlatParamsSettingRef {}
 
@@ -33,6 +34,7 @@ const PlatParamsSetting = memo(
           setExpandedPubItem: state.setExpandedPubItem,
         })),
       );
+      const { t } = useTransClient("publish");
 
       const platConfig = useMemo(() => {
         return AccountPlatInfoMap.get(pubItem.account.type)!;
@@ -89,7 +91,13 @@ const PlatParamsSetting = memo(
                   setExpandedPubItem(pubItem);
                 }}
               >
-                {pubItem.params.des}
+                {pubItem.params.des ? (
+                  pubItem.params.des
+                ) : (
+                  <span style={{ color: "var(--grayColor7)" }}>
+                    {t("form.descriptionPlaceholder")}...
+                  </span>
+                )}
               </div>
             )}
           </div>

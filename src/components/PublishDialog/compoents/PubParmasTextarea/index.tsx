@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Button, Image, Input, message, Modal, Tooltip, Upload } from "antd";
+import { Button, Image, Input, message, Tooltip, Upload } from "antd";
 import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss";
 import { ReactSortable } from "react-sortablejs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -181,22 +181,22 @@ const PubParmasTextarea = memo(
           };
 
           if (uploadHasImage && !platConfig.pubTypes.has(PubType.ImageText)) {
-            messageOpen("该平台不支持上传图片");
+            messageOpen(t("validation.uploadImage"));
             return false;
           }
           if (uploadHasVideo && !platConfig.pubTypes.has(PubType.VIDEO)) {
-            messageOpen("该平台不支持上传视频");
+            messageOpen(t("validation.uploadVideo"));
             return false;
           }
 
           // 已有图片，只能传图片
           if (hasImageInList && !hasVideoInList && uploadHasVideo) {
-            messageOpen("已有图片，仅可继续上传图片，不能上传视频！");
+            messageOpen(t("validation.imageOnly"));
             return false;
           }
           // 已有视频，只能传视频
           if (hasVideoInList && !hasImageInList && uploadHasImage) {
-            messageOpen("已有视频，仅可继续上传视频，不能上传图片！");
+            messageOpen(t("validation.videoOnly"));
             return false;
           }
           // 混合上传拦截
@@ -205,12 +205,12 @@ const PubParmasTextarea = memo(
             (hasImageInList && uploadHasVideo) ||
             (hasVideoInList && uploadHasImage)
           ) {
-            messageOpen("图片和视频不能混合上传！");
+            messageOpen(t("validation.imageVideoMixed"));
             return false;
           }
           // 非法类型
           if (invalidFile) {
-            messageOpen("只能上传图片或视频文件！");
+            messageOpen(t("validation.onlyImageOrVideo"));
             return false;
           }
           if (uploadHasVideo) {
@@ -219,7 +219,9 @@ const PubParmasTextarea = memo(
               (videoFile ? 1 : 0) +
               fileList.filter((f) => f.type.startsWith("video/")).length;
             if (totalVideoCount > videoMax) {
-              messageOpen(`视频上传数量不能大于${videoMax}`);
+              messageOpen(
+                t("validation.videoMaxExceeded", { maxCount: videoMax }),
+              );
               return false;
             }
           }
@@ -229,7 +231,9 @@ const PubParmasTextarea = memo(
               imageFileList.length +
               fileList.filter((f) => f.type.startsWith("image/")).length;
             if (totalImageCount > imageMax) {
-              messageOpen(`图片上传数量不能大于${imageMax}`);
+              messageOpen(
+                t("validation.imageMaxExceeded", { maxCount: imageMax }),
+              );
               return false;
             }
           }
@@ -279,7 +283,7 @@ const PubParmasTextarea = memo(
               {beforeExtend}
               <TextArea
                 ref={textareaRef}
-                placeholder="开始写"
+                placeholder={t("form.descriptionPlaceholder")}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 rows={rows}
@@ -346,7 +350,7 @@ const PubParmasTextarea = memo(
                         >
                           <CloseOutlined />
                         </div>
-                        <Tooltip title="点击查看">
+                        <Tooltip title={t("actions.preview")}>
                           <img src={v.imgUrl} />
                         </Tooltip>
                       </div>
@@ -381,7 +385,7 @@ const PubParmasTextarea = memo(
                           >
                             <CloseOutlined />
                           </div>
-                          <Tooltip title="点击查看">
+                          <Tooltip title={t("actions.preview")}>
                             <div className="pubParmasTextarea-uploads-item-video">
                               <img src={v.cover.imgUrl} />
                               <div className="pubParmasTextarea-uploads-item-play">
