@@ -24,7 +24,7 @@ const Chat = memo(
 
       const qs = params.toString();
       setIframeUrl(
-        `${base}/chat${defaultMask ? "/#/new-chat" : "/#/chat"}${qs ? `?${qs}` : ""}`,
+        `${base}/chat${qs ? `?${qs}` : ""}${defaultMask ? "#/new-chat" : "#/chat"}`,
       );
     }, [defaultMask, lng]);
 
