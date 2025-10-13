@@ -70,6 +70,8 @@ export interface IAccountSidebarProps {
   excludePlatforms?: PlatType[];
   // 侧边栏内容顶部扩展内容
   sidebarTopExtra?: React.ReactNode;
+  // 是否在interactive页面（用于应用特殊的平台过滤和蒙层效果）
+  isInteractivePage?: boolean;
 }
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
@@ -158,6 +160,7 @@ const AccountSidebar = memo(
         onAccountChange,
         excludePlatforms = [],
         sidebarTopExtra,
+        isInteractivePage = false,
       }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
@@ -214,13 +217,31 @@ const AccountSidebar = memo(
 
       // Facebook页面选择弹窗状态
       const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
+      
+      // App下载提示弹窗状态
+      const [showAppDownloadModal, setShowAppDownloadModal] = useState(false);
 
-      // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
+      // 在组件内部过滤账号列表，根据页面类型决定过滤逻辑
       const accountList = useMemo(() => {
-        return fullAccountList.filter(
-          (account) => !excludePlatforms.includes(account.type),
-        );
-      }, [fullAccountList, excludePlatforms]);
+        if (isInteractivePage) {
+          // 在interactive页面，只显示指定的平台
+          const allowedPlatforms = [
+            PlatType.Facebook,
+            PlatType.Instagram, 
+            PlatType.Threads,
+            PlatType.Douyin,
+            PlatType.Xhs
+          ];
+          return fullAccountList.filter(
+            (account) => !excludePlatforms.includes(account.type) && allowedPlatforms.includes(account.type),
+          );
+        } else {
+          // 在其他页面，正常过滤
+          return fullAccountList.filter(
+            (account) => !excludePlatforms.includes(account.type),
+          );
+        }
+      }, [fullAccountList, excludePlatforms, isInteractivePage]);
 
       const defaultActiveKey = useMemo(() => {
         return accountGroupList.find((v) => v.isDefault)?.id;
@@ -513,6 +534,14 @@ const AccountSidebar = memo(
                     // 为默认分组添加IP和地址信息
                     const isDefaultGroup = v.isDefault;
                     const showIpInfo = isDefaultGroup && ipLocationInfo;
+                    
+                    // 计算过滤后的账户数量和在线数量
+                    const groupAccounts = isInteractivePage ? 
+                      accountList.filter(account => account.groupId === v.id) : 
+                      v.children || [];
+                    const totalCount = groupAccounts.length;
+                    const onlineCount = groupAccounts.filter(account => account.status === AccountStatus.USABLE).length;
+                    
                     return {
                       key: v.id,
                       label: (
@@ -522,12 +551,7 @@ const AccountSidebar = memo(
                               {v.name}
                             </span>
                             <span className="accountSidebar-userCount">
-                              {v.children?.length}/
-                              {
-                                v.children?.map(
-                                  (v) => v.status === AccountStatus.USABLE,
-                                ).length
-                              }
+                              {totalCount}/{onlineCount}
                             </span>
                             {/* 根据proxyIp判断显示IP信息 */}
                             {!v.proxyIp || v.proxyIp === "" ? (
@@ -574,12 +598,21 @@ const AccountSidebar = memo(
                       ),
                       children: (
                         <ul key={v.id} className="accountList">
-                          {v.children?.map((account) => {
+                          {(isInteractivePage ? 
+                            // 在interactive页面，使用过滤后的账户列表
+                            accountList.filter(account => account.groupId === v.id) :
+                            // 在其他页面，使用原始的子账户列表
+                            v.children
+                          )?.map((account) => {
                             if (excludePlatforms.includes(account.type))
                               return "";
                             const platInfo = AccountPlatInfoMap.get(
                               account.type,
                             )!;
+                            
+                            // 检查是否为需要蒙层的平台（仅在interactive页面）
+                            const isMobileOnlyPlatform = isInteractivePage && (account.type === PlatType.Douyin || account.type === PlatType.Xhs);
+                            
                             return (
                               <li
                                 className={[
@@ -588,9 +621,17 @@ const AccountSidebar = memo(
                                   // 失效状态
                                   account.status === AccountStatus.DISABLE &&
                                     "accountList-item--disable",
+                                  // 移动端平台蒙层状态（仅在interactive页面）
+                                  isMobileOnlyPlatform && "accountList-item--mobile-only",
                                 ].join(" ")}
                                 key={account.id}
                                 onClick={async () => {
+                                  // 如果是移动端平台，显示下载提示
+                                  if (isMobileOnlyPlatform) {
+                                    setShowAppDownloadModal(true);
+                                    return;
+                                  }
+                                  
                                   if (
                                     account.status === AccountStatus.DISABLE
                                   ) {
@@ -636,6 +677,15 @@ const AccountSidebar = memo(
                                     </Popover>
                                   </div>
                                 </div>
+                                
+                                {/* 移动端平台蒙层（仅在interactive页面） */}
+                                {isMobileOnlyPlatform && (
+                                  <div className="accountList-item-overlay">
+                                    <div className="accountList-item-overlay-text">
+                                      移动端支持
+                                    </div>
+                                  </div>
+                                )}
                               </li>
                             );
                           })}
@@ -688,6 +738,36 @@ const AccountSidebar = memo(
               onClose={() => setShowFacebookPagesModal(false)}
               onSuccess={handleFacebookPagesSuccess}
             />
+            
+            {/* App下载提示弹窗（仅在interactive页面显示） */}
+            {isInteractivePage && (
+              <Modal
+                open={showAppDownloadModal}
+                onCancel={() => setShowAppDownloadModal(false)}
+                title="移动端支持"
+                footer={[
+                  <Button key="cancel" onClick={() => setShowAppDownloadModal(false)}>
+                    取消
+                  </Button>,
+                  <Button key="download" type="primary" onClick={() => {
+                    // 这里可以添加下载链接逻辑
+                    window.open('https://example.com/app-download', '_blank');
+                    setShowAppDownloadModal(false);
+                  }}>
+                    下载App
+                  </Button>
+                ]}
+              >
+                <div style={{ textAlign: 'center', padding: '20px 0' }}>
+                  <div style={{ fontSize: '16px', marginBottom: '16px' }}>
+                    抖音和小红书平台功能需要在移动端App中使用
+                  </div>
+                  <div style={{ color: '#666', fontSize: '14px' }}>
+                    请下载我们的移动端App来使用这些平台的功能
+                  </div>
+                </div>
+              </Modal>
+            )}
           </div>
         </>
       );

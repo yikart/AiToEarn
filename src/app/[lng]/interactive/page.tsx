@@ -327,6 +327,7 @@ export default function InteractivePage() {
               setAccountActive(account);
             }
           }}
+          isInteractivePage={true}
         />
       </div>
 
