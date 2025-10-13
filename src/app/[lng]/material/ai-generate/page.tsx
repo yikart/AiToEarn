@@ -158,6 +158,8 @@ export default function AIGeneratePage() {
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [loadingMediaGroups, setLoadingMediaGroups] = useState(false);
+  const [defaultMediaGroup, setDefaultMediaGroup] = useState<string | null>(null);
+  const [uploadedContent, setUploadedContent] = useState<Set<string>>(new Set());
 
   const [imageModels, setImageModels] = useState<any[]>([]);
   const [videoModels, setVideoModels] = useState<any[]>([]);
@@ -284,11 +286,14 @@ export default function AIGeneratePage() {
   };
 
   // 处理历史记录项点击
-  const handleHistoryItemClick = (item: any) => {
+  const handleHistoryItemClick = async (item: any) => {
     if (item.status === 'SUCCESS' && item.data?.video_url) {
       setVideoResult(item.data.video_url);
       setVideoStatus('completed');
       setVideoProgress(100);
+      
+      // 自动上传到默认素材库组
+      await autoUploadToDefaultGroup(item.data.video_url, "video", item.model || "Unknown Model", item.prompt || "");
     } else if (item.status === 'PROCESSING') {
       setVideoTaskId(item.task_id);
       setVideoStatus('processing');
@@ -368,7 +373,19 @@ export default function AIGeneratePage() {
   }, [videoModel, videoModels]);
 
   const fetchMediaGroups = async (type: "video" | "img" = "img") => {
-    try { setLoadingMediaGroups(true); const res: any = await getMediaGroupList(1, 100, type); if (res.data) setMediaGroups(res.data.list || []); }
+    try { 
+      setLoadingMediaGroups(true); 
+      const res: any = await getMediaGroupList(1, 100, type); 
+      if (res.data) {
+        const groups = res.data.list || [];
+        setMediaGroups(groups);
+        // 找到默认组
+        const defaultGroup = groups.find((group: any) => group.isDefault === true);
+        if (defaultGroup) {
+          setDefaultMediaGroup(defaultGroup._id);
+        }
+      }
+    }
     catch { message.error(t("aiGenerate.getMediaGroupListFailed")); }
     finally { setLoadingMediaGroups(false); }
   };
@@ -378,13 +395,34 @@ export default function AIGeneratePage() {
     try {
       setLoading(true);
       const res: any = await generateImage({ prompt, n, quality, style, size, model, response_format: "url" });
-      if (res.data?.list) setResult(res.data.list.map((i: any) => i.url)); else message.error(t("aiGenerate.imageGenerationFailed"));
+      if (res.data?.list) {
+        const imageUrls = res.data.list.map((i: any) => i.url);
+        setResult(imageUrls);
+        
+        // 自动上传第一张图片到默认素材库组
+        if (imageUrls.length > 0) {
+          await autoUploadToDefaultGroup(imageUrls[0], "img", model, prompt);
+        }
+      } else {
+        message.error(t("aiGenerate.imageGenerationFailed"));
+      }
     } catch { message.error(t("aiGenerate.imageGenerationFailed")); } finally { setLoading(false); }
   };
 
   const handleTextToFireflyCard = async () => {
     if (!content || !title) { message.error(t("aiGenerate.pleaseEnterContentAndTitle")); return; }
-    try { setLoadingFirefly(true); const res: any = await generateFireflyCard({ content, temp, title }); if (res.data?.image) setFireflyResult(res.data.image); else message.error(t("aiGenerate.fireflyCardGenerationFailed")); }
+    try { 
+      setLoadingFirefly(true); 
+      const res: any = await generateFireflyCard({ content, temp, title }); 
+      if (res.data?.image) {
+        setFireflyResult(res.data.image);
+        
+        // 自动上传到默认素材库组
+        await autoUploadToDefaultGroup(res.data.image, "img", "Firefly Card", `${title}: ${content}`);
+      } else {
+        message.error(t("aiGenerate.fireflyCardGenerationFailed"));
+      }
+    }
     catch { message.error(t("aiGenerate.fireflyCardGenerationFailed")); } finally { setLoadingFirefly(false); }
   };
 
@@ -433,7 +471,18 @@ export default function AIGeneratePage() {
           let percent = 0;
           if (typeof progress === "string") { const m = progress.match(/(\d+)/); percent = m ? Number(m[1]) : 0; }
           else if (typeof progress === "number") { percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100); }
-          if (normalized === "completed") { setVideoResult(res.data?.data?.video_url); setVideoProgress(100); message.success(t("aiGenerate.videoGenerationSuccess")); return true; }
+          if (normalized === "completed") { 
+            const videoUrl = res.data?.data?.video_url;
+            setVideoResult(videoUrl); 
+            setVideoProgress(100); 
+            message.success(t("aiGenerate.videoGenerationSuccess"));
+            
+            // 自动上传到默认素材库组
+            if (videoUrl) {
+              await autoUploadToDefaultGroup(videoUrl, "video", videoModel, videoPrompt);
+            }
+            return true; 
+          }
           if (normalized === "failed") { setVideoProgress(0); message.error(fail_reason || t("aiGenerate.videoGenerationFailed")); return true; }
           setVideoProgress(percent); return false;
         }
@@ -446,11 +495,81 @@ export default function AIGeneratePage() {
 
   const handleMd2CardGeneration = async () => {
     if (!markdownContent) { message.error(t("aiGenerate.pleaseEnterMarkdown")); return; }
-    try { setLoadingMd2Card(true); const res: any = await generateMd2Card({ markdown: markdownContent, theme: selectedTheme, themeMode, width: cardWidth, height: cardHeight, splitMode, mdxMode, overHiddenMode }); if (res.data?.images?.length) setMd2CardResult(res.data.images[0].url); else message.error(t("aiGenerate.cardGenerationFailed")); }
+    try { 
+      setLoadingMd2Card(true); 
+      const res: any = await generateMd2Card({ markdown: markdownContent, theme: selectedTheme, themeMode, width: cardWidth, height: cardHeight, splitMode, mdxMode, overHiddenMode }); 
+      if (res.data?.images?.length) {
+        const cardUrl = res.data.images[0].url;
+        setMd2CardResult(cardUrl);
+        
+        // 自动上传到默认素材库组
+        await autoUploadToDefaultGroup(cardUrl, "img", "Markdown Card", markdownContent.substring(0, 100));
+      } else {
+        message.error(t("aiGenerate.cardGenerationFailed"));
+      }
+    }
     catch { message.error(t("aiGenerate.cardGenerationFailed")); } finally { setLoadingMd2Card(false); }
   };
 
   const [currentUploadUrl, setCurrentUploadUrl] = useState<string | null>(null);
+  
+  // 自动上传到默认素材库组
+  const autoUploadToDefaultGroup = async (mediaUrl: string, mediaType: "video" | "img", modelName: string, description: string) => {
+    try {
+      // 检查是否已经上传过
+      if (uploadedContent.has(mediaUrl)) {
+        console.log('Content already uploaded:', mediaUrl);
+        return;
+      }
+      
+      // 获取素材库列表并找到默认组
+      const res: any = await getMediaGroupList(1, 100, mediaType);
+      let defaultGroupId = null;
+      
+      if (res.data) {
+        const groups = res.data.list || [];
+        const defaultGroup = groups.find((group: any) => group.isDefault === true);
+        if (defaultGroup) {
+          defaultGroupId = defaultGroup._id;
+          setDefaultMediaGroup(defaultGroupId);
+        }
+      }
+      
+      if (!defaultGroupId) {
+        console.warn('No default media group found');
+        message.error('未找到默认素材库组');
+        return;
+      }
+      
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+      const uploadTitle = modelName ? `${modelName} ${timeStr}` : timeStr;
+      
+      console.log('开始上传到默认组:', defaultGroupId, mediaUrl);
+      
+      const uploadRes: any = await createMedia({ 
+        groupId: defaultGroupId, 
+        url: mediaUrl, 
+        type: mediaType, 
+        title: uploadTitle, 
+        desc: description 
+      });
+      
+      if (uploadRes.data) {
+        // 标记为已上传
+        setUploadedContent(prev => new Set([...prev, mediaUrl]));
+        message.success(mediaType === "video" ? t("aiGenerate.videoUploadSuccess") : t("aiGenerate.uploadSuccess"));
+        console.log('上传成功');
+      } else {
+        message.error(mediaType === "video" ? t("aiGenerate.videoUploadFailed") : t("aiGenerate.uploadFailed"));
+        console.log('上传失败:', uploadRes);
+      }
+    } catch (error) {
+      console.error('Auto upload failed:', error);
+      message.error(mediaType === "video" ? t("aiGenerate.videoUploadFailed") : t("aiGenerate.uploadFailed"));
+    }
+  };
+  
   const handleUploadToMediaGroup = async (type: string = "img", url?: string) => {
     setSelectedMediaGroup(null);
     setCurrentUploadUrl(url || (videoResult || fireflyResult || md2CardResult) || null);
@@ -632,7 +751,7 @@ export default function AIGeneratePage() {
                                   <img src={getOssUrl(img)} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} />
                                   <div className={styles.imageActions}>
                                     <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(img)} />
-                                    <Button size="small" type="primary" onClick={()=>handleUploadToMediaGroup('img', img)} icon={<UploadOutlined />} />
+                                    <Button size="small" type="primary" icon={<UploadOutlined />} onClick={()=>handleUploadToMediaGroup('img', img)} />
                                   </div>
                                 </div>
                       </Col>
