@@ -258,36 +258,21 @@ const PubParmasTextarea = memo(
             }}
           />
 
-          <Modal
-            title="查看素材"
-            open={!!previewData}
-            onCancel={() => setPreviewData(undefined)}
-          >
-            {previewData && (
-              <>
-                {previewData!.file.type.startsWith("video") ? (
-                  <video
-                    src={(previewData as IVideoFile).videoUrl}
-                    controls={true}
-                    style={{ width: "100%", maxHeight: "600px" }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Image
-                      src={(previewData as IImgFile).imgUrl}
-                      style={{ width: "100%", height: "400px" }}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </Modal>
+          <Image
+            src={(previewData as IImgFile)?.imgUrl}
+            style={{
+              width: "100%",
+              height: "400px",
+              objectFit: "contain",
+              display: "none",
+            }}
+            preview={{
+              visible: !!previewData,
+              onVisibleChange: (visible) => {
+                if (!visible) setPreviewData(undefined);
+              },
+            }}
+          />
 
           <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
@@ -339,7 +324,7 @@ const PubParmasTextarea = memo(
                         enter: styles.itemEnter,
                         enterActive: styles.itemEnterActive,
                         exit: styles.itemExit,
-                        exitActive: styles.itemExitActive
+                        exitActive: styles.itemExitActive,
                       }}
                     >
                       <div
@@ -377,7 +362,7 @@ const PubParmasTextarea = memo(
                           enter: styles.itemEnter,
                           enterActive: styles.itemEnterActive,
                           exit: styles.itemExit,
-                          exitActive: styles.itemExitActive
+                          exitActive: styles.itemExitActive,
                         }}
                         key={i}
                       >
@@ -417,7 +402,7 @@ const PubParmasTextarea = memo(
                         enter: styles.itemEnter,
                         enterActive: styles.itemEnterActive,
                         exit: styles.itemExit,
-                        exitActive: styles.itemExitActive
+                        exitActive: styles.itemExitActive,
                       }}
                       unmountOnExit
                     >
