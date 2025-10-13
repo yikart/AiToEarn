@@ -1914,8 +1914,9 @@ interface Resources {
       "board": "Board",
       "boardPlaceholder": "请选择Board",
       "description": "描述",
-      "descriptionPlaceholder": "开始写..."
+      "descriptionPlaceholder": "开始写"
     },
+    "writingAssistant": "写作助手",
     "upload": {
       "finishingUp": "正在完成...",
       "uploadImageOrVideo": "上传图片或视频",
