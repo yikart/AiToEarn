@@ -58,6 +58,7 @@ import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
 import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
 import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
 import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 
 export interface IAccountSidebarRef {}
 
@@ -220,6 +221,7 @@ const AccountSidebar = memo(
       
       // App下载提示弹窗状态
       const [showAppDownloadModal, setShowAppDownloadModal] = useState(false);
+      const [mobileOnlyPlatform, setMobileOnlyPlatform] = useState<string>("");
 
       // 在组件内部过滤账号列表，根据页面类型决定过滤逻辑
       const accountList = useMemo(() => {
@@ -628,6 +630,7 @@ const AccountSidebar = memo(
                                 onClick={async () => {
                                   // 如果是移动端平台，显示下载提示
                                   if (isMobileOnlyPlatform) {
+                                    setMobileOnlyPlatform(account.type === PlatType.Douyin ? "抖音" : "小红书");
                                     setShowAppDownloadModal(true);
                                     return;
                                   }
@@ -682,7 +685,7 @@ const AccountSidebar = memo(
                                 {isMobileOnlyPlatform && (
                                   <div className="accountList-item-overlay">
                                     <div className="accountList-item-overlay-text">
-                                      移动端支持
+                                      {t('mobileOnlySupport' as any)}
                                     </div>
                                   </div>
                                 )}
@@ -741,32 +744,12 @@ const AccountSidebar = memo(
             
             {/* App下载提示弹窗（仅在interactive页面显示） */}
             {isInteractivePage && (
-              <Modal
-                open={showAppDownloadModal}
-                onCancel={() => setShowAppDownloadModal(false)}
-                title="移动端支持"
-                footer={[
-                  <Button key="cancel" onClick={() => setShowAppDownloadModal(false)}>
-                    取消
-                  </Button>,
-                  <Button key="download" type="primary" onClick={() => {
-                    // 这里可以添加下载链接逻辑
-                    window.open('https://example.com/app-download', '_blank');
-                    setShowAppDownloadModal(false);
-                  }}>
-                    下载App
-                  </Button>
-                ]}
-              >
-                <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                  <div style={{ fontSize: '16px', marginBottom: '16px' }}>
-                    抖音和小红书平台功能需要在移动端App中使用
-                  </div>
-                  <div style={{ color: '#666', fontSize: '14px' }}>
-                    请下载我们的移动端App来使用这些平台的功能
-                  </div>
-                </div>
-              </Modal>
+              <DownloadAppModal
+                visible={showAppDownloadModal}
+                onClose={() => setShowAppDownloadModal(false)}
+                platform={mobileOnlyPlatform}
+                zIndex={1000}
+              />
             )}
           </div>
         </>
