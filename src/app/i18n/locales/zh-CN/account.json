@@ -129,5 +129,6 @@
     "content": "是否删除以下 {{count}} 个账号？",
     "cancel": "取消",
     "confirm": "确认"
-  }
+  },
+  "mobileOnlySupport": "移动端支持"
 }

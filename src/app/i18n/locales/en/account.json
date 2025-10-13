@@ -129,5 +129,6 @@
     "content": "Are you sure you want to delete {{count}} account(s)?",
     "cancel": "Cancel",
     "confirm": "Confirm"
-  }
+  },
+  "mobileOnlySupport": "Mobile only"
 }
