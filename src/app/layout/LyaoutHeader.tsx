@@ -190,14 +190,14 @@ const LyaoutHeader = memo(
               className={styles["layoutHeader_wrapper-right"]}
               suppressHydrationWarning={true}
             >
-              <Button
+              {/* <Button
                 type="text"
                 icon={<GlobalOutlined />}
                 onClick={toggleLanguage}
                 className={styles.languageButton}
               >
                 {userStore.lang === "zh-CN" ? "EN" : "中文"}
-              </Button>
+              </Button> */}
               <NoSSR>
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
