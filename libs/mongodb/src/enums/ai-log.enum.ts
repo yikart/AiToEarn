@@ -18,4 +18,5 @@ export enum AiLogChannel {
   Kling = 'kling',
   Volcengine = 'volcengine',
   Dashscope = 'dashscope',
+  Sora2 = 'sora2',
 }

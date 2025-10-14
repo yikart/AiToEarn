@@ -12,6 +12,8 @@ import {
   KlingMultiImage2VideoRequestDto,
   KlingTaskQueryDto,
   KlingText2VideoRequestDto,
+  Sora2GenerationRequestDto,
+  Sora2TaskQueryDto,
   UserListVideoTasksQueryDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
@@ -141,5 +143,19 @@ export class VideoController {
   @Post('/dashscope/callback')
   async dashscopeCallback(@Body() data: DashscopeCallbackDto) {
     await this.videoService.dashscopeCallback(data)
+  }
+
+  @NatsMessagePattern('ai.video.sora2.generation')
+  async sora2Create(@Payload() data: Sora2GenerationRequestDto) {
+    const response = await this.videoService.sora2Create(data)
+    // return VolcengineVideoGenerationResponseVo.create(response)
+    return response
+  }
+
+  @NatsMessagePattern('ai.video.sora2.task.query')
+  async getSora2TaskStatus(@Payload() data: Sora2TaskQueryDto) {
+    const response = await this.videoService.getSora2Task(data.userId, data.userType, data.taskId)
+    // return Sora2TaskStatusResponseVo.create(response)
+    return response
   }
 }

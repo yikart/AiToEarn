@@ -7,6 +7,7 @@ import { fireflycardConfigSchema } from './libs/fireflycard'
 import { klingConfigSchema } from './libs/kling'
 import { md2cardConfigSchema } from './libs/md2card'
 import { openaiConfigSchema } from './libs/openai'
+import { sora2ConfigSchema } from './libs/sora2'
 import { volcengineConfigSchema } from './libs/volcengine'
 
 const aiModelsConfigSchema = z.object({
@@ -49,7 +50,7 @@ const aiModelsConfigSchema = z.object({
       name: z.string(),
       description: z.string(),
       channel: z.enum(AiLogChannel),
-      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video'])),
+      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video'])),
       resolutions: z.array(z.string()),
       durations: z.array(z.number()),
       supportedParameters: z.array(z.string()),
@@ -87,6 +88,7 @@ export const aiConfigSchema = z.object({
     ...dashscopeConfigSchema.shape,
     callbackUrl: z.string().optional(),
   }),
+  sora2: sora2ConfigSchema,
 })
 
 export const appConfigSchema = z.object({

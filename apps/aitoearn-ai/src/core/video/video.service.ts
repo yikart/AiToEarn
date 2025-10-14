@@ -17,6 +17,13 @@ import {
   Text2VideoGetTaskResponseData,
 } from '../../libs/kling'
 import {
+  GetVideoGenerationTaskResponse as Sora2GetVideoGenerationTaskResponse,
+  Sora2Service,
+  TaskStatus as Sora2TaskStatus,
+  VideoOrientation,
+  VideoSize,
+} from '../../libs/sora2'
+import {
   Content,
   ContentType,
   CreateVideoGenerationTaskResponse,
@@ -36,6 +43,8 @@ import {
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
   KlingText2VideoRequestDto,
+  Sora2CallbackDto,
+  Sora2GenerationRequestDto,
   UserListVideoTasksQueryDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
@@ -51,6 +60,7 @@ export class VideoService {
     private readonly dashscopeService: DashscopeService,
     private readonly klingService: KlingService,
     private readonly volcengineService: VolcengineService,
+    private readonly sora2Service: Sora2Service,
     private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
     private readonly s3Service: S3Service,
@@ -122,6 +132,8 @@ export class VideoService {
         return this.handleVolcengineGeneration(request, createTaskResponse)
       case AiLogChannel.Dashscope:
         return this.handleDashscopeGeneration(request, createTaskResponse)
+      case AiLogChannel.Sora2:
+        return this.handleSora2Genration(request, createTaskResponse)
       default:
         throw new AppException(ResponseCode.InvalidModel)
     }
@@ -135,6 +147,9 @@ export class VideoService {
     createTaskResponse: (taskId: string) => T,
   ) {
     const { userId, userType, model, prompt, mode, duration, image, image_tail } = request
+    if (Array.isArray(image)) {
+      throw new BadRequestException()
+    }
     const klingMode = mode === 'std' ? Mode.Std : mode === 'pro' ? Mode.Pro : undefined
     const klingDuration = duration ? duration.toString() as '5' | '10' : undefined
 
@@ -174,6 +189,11 @@ export class VideoService {
     createTaskResponse: (taskId: string) => T,
   ) {
     const { userId, userType, model, prompt, duration, size, image, image_tail } = request
+
+    if (Array.isArray(image)) {
+      throw new BadRequestException()
+    }
+
     const textCommand = parseModelTextCommand(prompt)
     const content: Content[] = []
 
@@ -222,6 +242,10 @@ export class VideoService {
     createTaskResponse: (taskId: string) => T,
   ) {
     const { userId, userType, model, prompt, duration, size, image, image_tail } = request
+
+    if (Array.isArray(image)) {
+      throw new BadRequestException()
+    }
 
     if (image && image_tail) {
       const dashscopeRequest: DashscopeKeyFrame2VideoRequestDto = {
@@ -275,6 +299,33 @@ export class VideoService {
     }
   }
 
+  /**
+   *
+   * 处理Sora2渠道的视频生成
+   */
+  private async handleSora2Genration<T>(
+    request: UserVideoGenerationRequestDto,
+    createTaskResponse: (taskId: string) => T,
+  ) {
+    const { userId, userType, model, prompt, duration, size, image } = request
+    if (image == null) {
+      throw new BadRequestException('image is required')
+    }
+
+    const sora2Request: Sora2GenerationRequestDto = {
+      userId,
+      userType,
+      model,
+      prompt,
+      duration: duration as 10 | 15,
+      size: size as VideoSize,
+      images: Array.isArray(image) ? image : [image],
+      orientation: VideoOrientation.Landscape,
+    }
+    const result = await this.sora2Create(sora2Request)
+    return createTaskResponse(result.id)
+  }
+
   async transformToCommonResponse(aiLog: AiLog) {
     if (aiLog.status === AiLogStatus.Generating) {
       return {
@@ -302,6 +353,9 @@ export class VideoService {
     }
     else if (aiLog.channel === AiLogChannel.Dashscope) {
       return await this.getDashscopeTaskResult(aiLog.response as unknown as GetVideoTaskResponse)
+    }
+    else if (aiLog.channel === AiLogChannel.Sora2) {
+      return await this.getSora2TaskResult(aiLog.response as unknown as Sora2GetVideoGenerationTaskResponse)
     }
     else {
       throw new AppException(ResponseCode.InvalidAiTaskId)
@@ -1036,6 +1090,154 @@ export class VideoService {
     return {
       ...result.output,
       task_id: aiLog.id,
+    }
+  }
+
+  /**
+   * Sora2视频生成
+   */
+  async sora2Create(request: Sora2GenerationRequestDto) {
+    const { userId, userType, model, prompt, ...params } = request
+
+    const pricing = await this.calculateVideoGenerationPrice({
+      duration: params.duration,
+      resolution: params.size,
+      model,
+    })
+
+    if (userType === UserType.User) {
+      const { balance } = await this.userClient.getPointsBalance({ userId })
+      if (balance < pricing) {
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+
+      await this.userClient.deductPoints({
+        userId,
+        amount: pricing,
+        type: 'ai_service',
+        description: model,
+      })
+    }
+
+    const startedAt = new Date()
+    const result = await this.sora2Service.createVideoGenerationTask({
+      ...params,
+      prompt,
+      model,
+    })
+
+    const aiLog = await this.aiLogRepo.create({
+      userId,
+      userType,
+      taskId: result.id,
+      model,
+      channel: AiLogChannel.Volcengine,
+      startedAt,
+      type: AiLogType.Video,
+      points: pricing,
+      request: {
+        ...params,
+        model,
+        prompt,
+      },
+      status: AiLogStatus.Generating,
+    })
+
+    return {
+      ...result,
+      id: aiLog.id,
+    } as CreateVideoGenerationTaskResponse
+  }
+
+  /**
+   * 查询Sora2任务状态
+   */
+  async getSora2TaskResult(result: Sora2GetVideoGenerationTaskResponse) {
+    const status = {
+      [Sora2TaskStatus.Completed]: TaskStatus.Success,
+      [Sora2TaskStatus.Pending]: TaskStatus.Submitted,
+      [Sora2TaskStatus.Running]: TaskStatus.InProgress,
+      [Sora2TaskStatus.Failed]: TaskStatus.Failure,
+      [Sora2TaskStatus.Cancelled]: TaskStatus.Failure,
+    }[result.status]
+
+    return {
+      task_id: result.id,
+      action: 'video',
+      status,
+      fail_reason: result?.video_url || result.finish_reason || '',
+      submit_time: result.status_update_time,
+      start_time: result.status_update_time,
+      finish_time: result.status_update_time,
+      progress: result.status === Sora2TaskStatus.Completed ? '100%' : '0%',
+      data: result || {},
+    }
+  }
+
+  async getSora2Task(userId: string, userType: UserType, taskId: string) {
+    const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
+
+    if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Volcengine) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+    if (aiLog.status === AiLogStatus.Generating) {
+      const result = await this.sora2Service.getVideoGenerationTask(aiLog.taskId)
+      if (result.status === Sora2TaskStatus.Completed || result.status === Sora2TaskStatus.Failed) {
+        await this.sora2Callback(result)
+      }
+      return result
+    }
+    return aiLog.response as unknown as GetVideoGenerationTaskResponse
+  }
+
+  async sora2Callback(data: Sora2CallbackDto) {
+    const { id, status, status_update_time } = data
+
+    const aiLog = await this.aiLogRepo.getByTaskId(id)
+    if (!aiLog || aiLog.channel !== AiLogChannel.Volcengine) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    if (status !== Sora2TaskStatus.Completed && status !== Sora2TaskStatus.Failed) {
+      return
+    }
+
+    let aiLogStatus: AiLogStatus
+    switch (status) {
+      case Sora2TaskStatus.Completed:
+        aiLogStatus = AiLogStatus.Success
+        break
+      case Sora2TaskStatus.Failed:
+        aiLogStatus = AiLogStatus.Failed
+        break
+      default:
+        aiLogStatus = AiLogStatus.Generating
+        break
+    }
+
+    if (data.video_url) {
+      const filename = `${aiLog.id}.mp4`
+      const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
+      const result = await this.s3Service.putObjectFromUrl(data.video_url, fullPath)
+      data.video_url = result.path
+    }
+
+    const duration = (status_update_time) - aiLog.startedAt.getTime()
+
+    await this.aiLogRepo.updateById(aiLog.id, {
+      status: aiLogStatus,
+      response: data,
+      duration,
+      errorMessage: status === Sora2TaskStatus.Failed ? data.finish_reason : undefined,
+    })
+
+    if (aiLogStatus === AiLogStatus.Failed && aiLog.userType === UserType.User) {
+      await this.userClient.addPoints({
+        userId: aiLog.userId,
+        amount: aiLog.points,
+        type: 'ai_service',
+        description: aiLog.model,
+      })
     }
   }
 }
