@@ -7,8 +7,8 @@ import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/m
 import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
 import _ from 'lodash'
-import { config } from '../../config'
 import { OpenaiService } from '../../libs/openai'
+import { ModelsConfigService } from '../models-config'
 import { ChatCompletionDto, ChatModelsQueryDto, UserChatCompletionDto } from './chat.dto'
 
 @Injectable()
@@ -19,6 +19,7 @@ export class ChatService {
     private readonly openaiService: OpenaiService,
     private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
+    private readonly modelsConfigService: ModelsConfigService,
   ) {}
 
   async chatCompletion(request: ChatCompletionDto) {
@@ -153,7 +154,7 @@ export class ChatService {
       try {
         const user = await this.userClient.getUserInfoById({ id: data.userId })
         if (user && user.vipInfo && dayjs(user.vipInfo.expireTime).isAfter(dayjs())) {
-          const models = _.cloneDeep(config.ai.models.chat)
+          const models = _.cloneDeep(this.modelsConfigService.config.chat)
           // 查找 gemini-2.5-flash-image 模型并直接修改价格
           const targetModel = models.find(model => model.name === 'gemini-2.5-flash-image')
           if (targetModel) {
@@ -167,6 +168,6 @@ export class ChatService {
       }
     }
 
-    return config.ai.models.chat
+    return this.modelsConfigService.config.chat
   }
 }

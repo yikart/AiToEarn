@@ -6,10 +6,10 @@ import { AppException, getExtByMimeType, ImageType, ResponseCode, UserType } fro
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
-import { config } from '../../config'
 import { FireflycardService } from '../../libs/fireflycard'
 import { Md2cardService } from '../../libs/md2card'
 import { OpenaiService } from '../../libs/openai'
+import { ModelsConfigService } from '../models-config'
 import {
   FireflyCardDto,
   ImageEditDto,
@@ -36,6 +36,7 @@ export class ImageService {
     private readonly md2cardService: Md2cardService,
     private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
+    private readonly modelsConfigService: ModelsConfigService,
   ) {}
 
   /**
@@ -379,7 +380,7 @@ export class ImageService {
    */
   async generationModelConfig(_data: ImageGenerationModelsQueryDto) {
     // 目前返回所有模型，后续可根据 userId 和 userType 进行个性化过滤
-    return config.ai.models.image.generation
+    return this.modelsConfigService.config.image.generation
   }
 
   /**
@@ -387,6 +388,6 @@ export class ImageService {
    * @param _data 查询参数，包含可选的 userId 和 userType，可用于后续个性化模型推荐
    */
   async editModelConfig(_data: ImageEditModelsQueryDto) {
-    return config.ai.models.image.edit
+    return this.modelsConfigService.config.image.edit
   }
 }
