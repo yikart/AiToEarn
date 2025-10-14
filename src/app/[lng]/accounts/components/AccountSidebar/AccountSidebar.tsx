@@ -20,28 +20,20 @@ import {
   Input,
   message,
 } from "antd";
-// 临时类型定义，等待安装react-beautiful-dnd
-interface DragDropContextProps {
-  onDragEnd: (result: any) => void;
-  children: React.ReactNode;
-}
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 
-interface DroppableProps {
-  droppableId: string;
-  children: (provided: any) => React.ReactNode;
-}
+// 六点拖拽图标组件
+const SixDotsIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <circle cx="2" cy="2" r="1" fill="currentColor" />
+    <circle cx="6" cy="2" r="1" fill="currentColor" />
+    <circle cx="10" cy="2" r="1" fill="currentColor" />
+    <circle cx="2" cy="6" r="1" fill="currentColor" />
+    <circle cx="6" cy="6" r="1" fill="currentColor" />
+    <circle cx="10" cy="6" r="1" fill="currentColor" />
+  </svg>
+);
 
-interface DraggableProps {
-  key: string;
-  draggableId: string;
-  index: number;
-  children: (provided: any, snapshot: any) => React.ReactNode;
-}
-
-// 临时组件定义
-const DragDropContext = ({ onDragEnd, children }: DragDropContextProps) => <div>{children}</div>;
-const Droppable = ({ droppableId, children }: DroppableProps) => children({ innerRef: null, droppableProps: {} });
-const Draggable = ({ key, draggableId, index, children }: DraggableProps) => children({ innerRef: null, draggableProps: {}, dragHandleProps: {} }, { isDragging: false });
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
 import {
   CheckCircleOutlined,
@@ -762,37 +754,40 @@ const AccountSidebar = memo(
                                     ].join(" ")}
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
-                                    onClick={async () => {
-                                  // 如果是移动端平台，显示下载提示
-                                  if (isMobileOnlyPlatform) {
-                                    setMobileOnlyPlatform(account.type === PlatType.Douyin ? "抖音" : "小红书");
-                                    setShowAppDownloadModal(true);
-                                    return;
-                                  }
-                                  
-                                  if (
-                                    account.status === AccountStatus.DISABLE
-                                  ) {
-                                    // 掉线账户直接触发重新授权
-                                    await handleOfflineAccountClick(account);
-                                    return;
-                                  }
-                                  onAccountChange(account);
-                                }}
                                 >
                                   {/* 拖拽手柄 */}
                                   <div 
                                     className="accountList-item-dragHandle"
                                     {...provided.dragHandleProps}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    <DragOutlined />
+                                    <SixDotsIcon />
                                   </div>
                                   <Avatar
                                     style={{backgroundColor: 'aliceblue'}}
                                     src={getOssUrl(account.avatar)}
                                     size="large"
                                   />
-                                  <div className="accountList-item-right">
+                                  <div 
+                                    className="accountList-item-right"
+                                    onClick={async () => {
+                                      // 如果是移动端平台，显示下载提示
+                                      if (isMobileOnlyPlatform) {
+                                        setMobileOnlyPlatform(account.type === PlatType.Douyin ? "抖音" : "小红书");
+                                        setShowAppDownloadModal(true);
+                                        return;
+                                      }
+                                      
+                                      if (
+                                        account.status === AccountStatus.DISABLE
+                                      ) {
+                                        // 掉线账户直接触发重新授权
+                                        await handleOfflineAccountClick(account);
+                                        return;
+                                      }
+                                      onAccountChange(account);
+                                    }}
+                                  >
                                   <div
                                     className="accountList-item-right-name"
                                     title={account.nickname}
