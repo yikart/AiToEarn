@@ -307,7 +307,7 @@ export class VideoService {
     request: UserVideoGenerationRequestDto,
     createTaskResponse: (taskId: string) => T,
   ) {
-    const { userId, userType, model, prompt, duration, size, image } = request
+    const { userId, userType, model, prompt, duration, size, image, metadata } = request
     if (image == null) {
       throw new BadRequestException('image is required')
     }
@@ -318,9 +318,9 @@ export class VideoService {
       model,
       prompt,
       duration: duration as 10 | 15,
-      size: size as VideoSize,
+      size: (size || VideoSize.Large) as VideoSize,
       images: Array.isArray(image) ? image : [image],
-      orientation: VideoOrientation.Landscape,
+      orientation: (metadata?.['orientation'] || VideoOrientation.Landscape) as VideoOrientation,
     }
     const result = await this.sora2Create(sora2Request)
     return createTaskResponse(result.id)
@@ -1131,7 +1131,7 @@ export class VideoService {
       userType,
       taskId: result.id,
       model,
-      channel: AiLogChannel.Volcengine,
+      channel: AiLogChannel.Sora2,
       startedAt,
       type: AiLogType.Video,
       points: pricing,
@@ -1177,7 +1177,7 @@ export class VideoService {
   async getSora2Task(userId: string, userType: UserType, taskId: string) {
     const aiLog = await this.aiLogRepo.getByIdAndUserId(taskId, userId, userType)
 
-    if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Volcengine) {
+    if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Sora2) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
     if (aiLog.status === AiLogStatus.Generating) {
@@ -1194,7 +1194,7 @@ export class VideoService {
     const { id, status, status_update_time } = data
 
     const aiLog = await this.aiLogRepo.getByTaskId(id)
-    if (!aiLog || aiLog.channel !== AiLogChannel.Volcengine) {
+    if (!aiLog || aiLog.channel !== AiLogChannel.Sora2) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
 
@@ -1220,6 +1220,13 @@ export class VideoService {
       const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
       const result = await this.s3Service.putObjectFromUrl(data.video_url, fullPath)
       data.video_url = result.path
+    }
+
+    if (data.thumbnail_url) {
+      const filename = `${aiLog.id}-thumbnail.webp`
+      const fullPath = path.join(`ai/video/${aiLog.model}`, aiLog.userId, filename)
+      const result = await this.s3Service.putObjectFromUrl(data.thumbnail_url, fullPath)
+      data.thumbnail_url = result.path
     }
 
     const duration = (status_update_time) - aiLog.startedAt.getTime()

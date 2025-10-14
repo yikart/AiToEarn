@@ -10,10 +10,14 @@ import { openaiConfigSchema } from './libs/openai'
 import { sora2ConfigSchema } from './libs/sora2'
 import { volcengineConfigSchema } from './libs/volcengine'
 
-const aiModelsConfigSchema = z.object({
+export const aiModelsConfigSchema = z.object({
   chat: z.array(z.object({
     name: z.string(),
     description: z.string(),
+    summary: z.string().optional(),
+    logo: z.string().optional(),
+    tags: z.string().array().default([]),
+    mainTag: z.string().optional(),
     inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     pricing: z.union([
@@ -32,6 +36,10 @@ const aiModelsConfigSchema = z.object({
     generation: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      summary: z.string().optional(),
+      logo: z.string().optional(),
+      tags: z.string().array().default([]),
+      mainTag: z.string().optional(),
       sizes: z.array(z.string()),
       qualities: z.array(z.string()),
       styles: z.array(z.string()),
@@ -40,6 +48,10 @@ const aiModelsConfigSchema = z.object({
     edit: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      summary: z.string().optional(),
+      logo: z.string().optional(),
+      tags: z.string().array().default([]),
+      mainTag: z.string().optional(),
       sizes: z.array(z.string()),
       pricing: z.string(),
       maxInputImages: z.number(),
@@ -49,6 +61,10 @@ const aiModelsConfigSchema = z.object({
     generation: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      summary: z.string().optional(),
+      logo: z.string().optional(),
+      tags: z.string().array().default([]),
+      mainTag: z.string().optional(),
       channel: z.enum(AiLogChannel),
       modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video'])),
       resolutions: z.array(z.string()),
