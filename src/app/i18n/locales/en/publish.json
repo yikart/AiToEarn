@@ -47,6 +47,9 @@
     "categoryPlaceholderDisabled": "Select region first",
     "board": "Board",
     "boardPlaceholder": "Select Board",
+    "location": "Location",
+    "searchLocation": "Search location",
+    "selectLocation": "Select location",
     "descriptionPlaceholder": "Start writing"
   },
   "writingAssistant": "Easiest Essay Writer",
