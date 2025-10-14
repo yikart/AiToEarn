@@ -416,7 +416,7 @@ const AccountSidebar = memo(
         }));
         
         try {
-          await apiUpdateAccountSortRank({ list: updateList });
+          await apiUpdateAccountSortRank({ groupId, list: updateList });
           await getAccountList();
           message.success(t("messages.sortSuccess" as any));
         } catch (error) {

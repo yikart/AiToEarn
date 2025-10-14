@@ -10,6 +10,11 @@ export interface SortRankRequest {
   list: SortRankItem[];
 }
 
+export interface AccountSortRankRequest {
+  groupId: string;
+  list: SortRankItem[];
+}
+
 /**
  * 更新分组排序
  * @param data 排序数据
@@ -24,6 +29,6 @@ export const apiUpdateAccountGroupSortRank = (data: SortRankRequest) => {
  * @param data 排序数据
  * @returns
  */
-export const apiUpdateAccountSortRank = (data: SortRankRequest) => {
+export const apiUpdateAccountSortRank = (data: AccountSortRankRequest) => {
   return http.put("account/sortRank", data);
 };
