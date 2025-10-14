@@ -1,6 +1,7 @@
 import { createZodDto, PaginationDtoSchema, UserType } from '@yikart/common'
 import { z } from 'zod'
 import { AspectRatio, CameraControlType, TaskStatus as KlingTaskStatus, Mode } from '../../libs/kling'
+import { TaskStatus as Sora2TaskStatus, VideoOrientation, VideoSize } from '../../libs/sora2'
 import { ContentType, ImageRole, TaskStatus } from '../../libs/volcengine'
 // 移除了不必要的类型导入，因为现在使用zod schema
 
@@ -8,7 +9,7 @@ import { ContentType, ImageRole, TaskStatus } from '../../libs/volcengine'
 const videoGenerationRequestSchema = z.object({
   model: z.string().min(1).describe('模型名称'),
   prompt: z.string().min(1).max(4000).describe('提示词'),
-  image: z.string().optional().describe('图片URL或base64'),
+  image: z.string().or(z.string().array()).optional().describe('图片URL或base64'),
   image_tail: z.string().optional().describe('尾帧图片URL或base64'),
   mode: z.string().optional().describe('生成模式'),
   size: z.string().optional().describe('尺寸'),
@@ -313,6 +314,29 @@ const dashscopeTaskQuerySchema = z.object({
 
 export class DashscopeTaskQueryDto extends createZodDto(dashscopeTaskQuerySchema) {}
 
+// Sora2视频生成请求
+const sora2GenerationRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  model: z.string().describe('模型'),
+  images: z.string().array().optional(),
+  orientation: z.enum(VideoOrientation),
+  prompt: z.string(),
+  size: z.enum(VideoSize),
+  duration: z.union([z.literal(10), z.literal(15)]),
+})
+
+export class Sora2GenerationRequestDto extends createZodDto(sora2GenerationRequestSchema) {}
+
+// Sora2任务查询DTO
+const sora2TaskQuerySchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  taskId: z.string().min(1).describe('任务ID'),
+})
+
+export class Sora2TaskQueryDto extends createZodDto(sora2TaskQuerySchema) {}
+
 // 视频生成模型查询DTO
 const videoGenerationModelsQuerySchema = z.object({
   userId: z.string().optional().describe('用户ID'),
@@ -320,3 +344,14 @@ const videoGenerationModelsQuerySchema = z.object({
 })
 
 export class VideoGenerationModelsQueryDto extends createZodDto(videoGenerationModelsQuerySchema) {}
+
+// Sora2回调接口DTO（与查询API返回格式一致）
+const sora2CallbackSchema = z.object({
+  id: z.string(),
+  status: z.enum(Sora2TaskStatus),
+  video_url: z.string().optional(),
+  status_update_time: z.number(),
+  finish_reason: z.string().optional(),
+})
+
+export class Sora2CallbackDto extends createZodDto(sora2CallbackSchema) {}
