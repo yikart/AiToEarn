@@ -218,7 +218,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.facebook.com/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
-        titleMax: 80,
         topicMax: 100,
         desMax: 5000,
         imagesMax: 10,
@@ -250,7 +249,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       url: "https://www.threads.net/",
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
       commonPubParamsConfig: {
-        titleMax: 80,
         topicMax: 100,
         desMax: 500,
         imagesMax: 20,
