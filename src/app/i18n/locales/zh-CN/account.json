@@ -116,7 +116,9 @@
     "refreshAccountListFailed": "刷新账号列表失败",
     "authFailed": "授权失败",
     "pleaseRetry": "请重试",
-    "platformNotSupported": "暂不支持 {{platform}} 平台的直接授权"
+    "platformNotSupported": "暂不支持 {{platform}} 平台的直接授权",
+    "sortSuccess": "排序成功",
+    "sortFailed": "排序失败"
   },
   "rednote": "小红书",
   "kwai": "快手",

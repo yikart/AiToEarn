@@ -116,7 +116,9 @@
     "refreshAccountListFailed": "Failed to refresh account list",
     "authFailed": "Authorization failed",
     "pleaseRetry": "Please try again",
-    "platformNotSupported": "Direct authorization for {{platform}} platform is not supported yet"
+    "platformNotSupported": "Direct authorization for {{platform}} platform is not supported yet",
+    "sortSuccess": "Sort successful",
+    "sortFailed": "Sort failed"
   },
   "rednote": "Rednote",
   "kwai": "Kwai",

@@ -20,6 +20,28 @@ import {
   Input,
   message,
 } from "antd";
+// 临时类型定义，等待安装react-beautiful-dnd
+interface DragDropContextProps {
+  onDragEnd: (result: any) => void;
+  children: React.ReactNode;
+}
+
+interface DroppableProps {
+  droppableId: string;
+  children: (provided: any) => React.ReactNode;
+}
+
+interface DraggableProps {
+  key: string;
+  draggableId: string;
+  index: number;
+  children: (provided: any, snapshot: any) => React.ReactNode;
+}
+
+// 临时组件定义
+const DragDropContext = ({ onDragEnd, children }: DragDropContextProps) => <div>{children}</div>;
+const Droppable = ({ droppableId, children }: DroppableProps) => children({ innerRef: null, droppableProps: {} });
+const Draggable = ({ key, draggableId, index, children }: DraggableProps) => children({ innerRef: null, draggableProps: {}, dragHandleProps: {} }, { isDragging: false });
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
 import {
   CheckCircleOutlined,
@@ -27,6 +49,9 @@ import {
   UserOutlined,
   WarningOutlined,
   DeleteOutlined,
+  UpOutlined,
+  DownOutlined,
+  DragOutlined,
 } from "@ant-design/icons";
 import { useShallow } from "zustand/react/shallow";
 import { useAccountStore } from "@/store/account";
@@ -44,6 +69,7 @@ import {
   extractCountry,
 } from "@/utils/ipLocation";
 import { createAccountGroupApi, updateAccountApi } from "@/api/account";
+import { apiUpdateAccountGroupSortRank, apiUpdateAccountSortRank } from "@/api/accountSort";
 import AddAccountModal from "../AddAccountModal";
 import DeleteUserConfirmModal from "./DeleteUserConfirmModal";
 // 导入各平台授权函数
@@ -223,6 +249,10 @@ const AccountSidebar = memo(
       const [showAppDownloadModal, setShowAppDownloadModal] = useState(false);
       const [mobileOnlyPlatform, setMobileOnlyPlatform] = useState<string>("");
 
+      // 排序相关状态
+      const [isGroupSorting, setIsGroupSorting] = useState(false);
+      const [isAccountSorting, setIsAccountSorting] = useState(false);
+
       // 在组件内部过滤账号列表，根据页面类型决定过滤逻辑
       const accountList = useMemo(() => {
         if (isInteractivePage) {
@@ -339,6 +369,67 @@ const AccountSidebar = memo(
       const handleFacebookPagesSuccess = () => {
         setShowFacebookPagesModal(false);
         // 可以在这里添加成功提示或其他逻辑
+      };
+
+      // 分组排序函数
+      const handleGroupSort = async (groupId: string, direction: 'up' | 'down') => {
+        const sortedGroups = [...accountGroupList].sort((a, b) => (a.rank || 0) - (b.rank || 0));
+        const currentIndex = sortedGroups.findIndex(g => g.id === groupId);
+        
+        if (currentIndex === -1) return;
+        
+        const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        if (newIndex < 0 || newIndex >= sortedGroups.length) return;
+        
+        // 交换位置
+        [sortedGroups[currentIndex], sortedGroups[newIndex]] = [sortedGroups[newIndex], sortedGroups[currentIndex]];
+        
+        // 更新rank
+        const updateList = sortedGroups.map((group, index) => ({
+          id: group.id,
+          rank: index
+        }));
+        
+        try {
+          await apiUpdateAccountGroupSortRank({ list: updateList });
+          await getAccountGroup();
+          message.success(t("messages.sortSuccess" as any));
+        } catch (error) {
+          message.error(t("messages.sortFailed" as any));
+        }
+      };
+
+      // 账户拖拽排序
+      const handleAccountDragEnd = async (result: any) => {
+        if (!result.destination) return;
+        
+        const { source, destination } = result;
+        const groupId = source.droppableId;
+        
+        // 获取该分组的账户列表
+        const groupAccounts = isInteractivePage ? 
+          accountList.filter(account => account.groupId === groupId) :
+          accountGroupList.find(g => g.id === groupId)?.children || [];
+        
+        const sortedAccounts = [...groupAccounts].sort((a, b) => (a.rank || 0) - (b.rank || 0));
+        
+        // 移动账户
+        const [movedAccount] = sortedAccounts.splice(source.index, 1);
+        sortedAccounts.splice(destination.index, 0, movedAccount);
+        
+        // 更新rank
+        const updateList = sortedAccounts.map((account, index) => ({
+          id: account.id,
+          rank: index
+        }));
+        
+        try {
+          await apiUpdateAccountSortRank({ list: updateList });
+          await getAccountList();
+          message.success(t("messages.sortSuccess" as any));
+        } catch (error) {
+          message.error(t("messages.sortFailed" as any));
+        }
       };
 
       // 添加账号流程
@@ -529,10 +620,13 @@ const AccountSidebar = memo(
             ) : (
               <div className="accountSidebar-content">
                 {sidebarTopExtra}
-                <Collapse
-                  key={defaultActiveKey}
-                  defaultActiveKey={defaultActiveKey}
-                  items={accountGroupList.map((v) => {
+                <DragDropContext onDragEnd={handleAccountDragEnd}>
+                  <Collapse
+                    key={defaultActiveKey}
+                    defaultActiveKey={defaultActiveKey}
+                    items={accountGroupList
+                      .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                      .map((v) => {
                     // 为默认分组添加IP和地址信息
                     const isDefaultGroup = v.isDefault;
                     const showIpInfo = isDefaultGroup && ipLocationInfo;
@@ -559,6 +653,7 @@ const AccountSidebar = memo(
                             {!v.proxyIp || v.proxyIp === "" ? (
                               // 本地IP显示
                               <div className="accountSidebar-ipInfo">
+                                <span className="accountSidebar-ipType">直连</span>
                                 {ipLocationLoading ? (
                                   <span className="accountSidebar-ipLoading">
                                     {t("ipInfo.loading")}
@@ -585,6 +680,7 @@ const AccountSidebar = memo(
                               v.ip &&
                               v.location && (
                                 <div className="accountSidebar-ipInfo">
+                                  <span className="accountSidebar-ipType">代理</span>
                                   <Tooltip
                                     title={`IP: ${v.ip}\n位置: ${v.location}`}
                                   >
@@ -595,17 +691,51 @@ const AccountSidebar = memo(
                                 </div>
                               )
                             )}
+                            {/* 分组排序按钮 */}
+                            <div className="accountSidebar-groupSort">
+                              <Tooltip title="上移">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<UpOutlined />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleGroupSort(v.id, 'up');
+                                  }}
+                                />
+                              </Tooltip>
+                              <Tooltip title="下移">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<DownOutlined />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleGroupSort(v.id, 'down');
+                                  }}
+                                />
+                              </Tooltip>
+                            </div>
                           </div>
                         </>
                       ),
                       children: (
-                        <ul key={v.id} className="accountList">
-                          {(isInteractivePage ? 
-                            // 在interactive页面，使用过滤后的账户列表
-                            accountList.filter(account => account.groupId === v.id) :
-                            // 在其他页面，使用原始的子账户列表
-                            v.children
-                          )?.map((account) => {
+                        <Droppable droppableId={v.id}>
+                          {(provided) => (
+                            <ul 
+                              key={v.id} 
+                              className="accountList"
+                              {...provided.droppableProps}
+                              ref={provided.innerRef}
+                            >
+                              {(isInteractivePage ? 
+                                // 在interactive页面，使用过滤后的账户列表
+                                accountList.filter(account => account.groupId === v.id) :
+                                // 在其他页面，使用原始的子账户列表
+                                v.children
+                              )
+                                ?.sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                                ?.map((account, index) => {
                             if (excludePlatforms.includes(account.type))
                               return "";
                             const platInfo = AccountPlatInfoMap.get(
@@ -616,18 +746,23 @@ const AccountSidebar = memo(
                             const isMobileOnlyPlatform = isInteractivePage && (account.type === PlatType.Douyin || account.type === PlatType.Xhs);
                             
                             return (
-                              <li
-                                className={[
-                                  "accountList-item",
-                                  `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
-                                  // 失效状态
-                                  account.status === AccountStatus.DISABLE &&
-                                    "accountList-item--disable",
-                                  // 移动端平台蒙层状态（仅在interactive页面）
-                                  isMobileOnlyPlatform && "accountList-item--mobile-only",
-                                ].join(" ")}
-                                key={account.id}
-                                onClick={async () => {
+                              <Draggable key={account.id} draggableId={account.id} index={index}>
+                                {(provided, snapshot) => (
+                                  <li
+                                    className={[
+                                      "accountList-item",
+                                      `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
+                                      // 失效状态
+                                      account.status === AccountStatus.DISABLE &&
+                                        "accountList-item--disable",
+                                      // 移动端平台蒙层状态（仅在interactive页面）
+                                      isMobileOnlyPlatform && "accountList-item--mobile-only",
+                                      // 拖拽状态
+                                      snapshot.isDragging && "accountList-item--dragging",
+                                    ].join(" ")}
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                    onClick={async () => {
                                   // 如果是移动端平台，显示下载提示
                                   if (isMobileOnlyPlatform) {
                                     setMobileOnlyPlatform(account.type === PlatType.Douyin ? "抖音" : "小红书");
@@ -644,13 +779,20 @@ const AccountSidebar = memo(
                                   }
                                   onAccountChange(account);
                                 }}
-                              >
-                                <Avatar
-                                  style={{backgroundColor: 'aliceblue'}}
-                                  src={getOssUrl(account.avatar)}
-                                  size="large"
-                                />
-                                <div className="accountList-item-right">
+                                >
+                                  {/* 拖拽手柄 */}
+                                  <div 
+                                    className="accountList-item-dragHandle"
+                                    {...provided.dragHandleProps}
+                                  >
+                                    <DragOutlined />
+                                  </div>
+                                  <Avatar
+                                    style={{backgroundColor: 'aliceblue'}}
+                                    src={getOssUrl(account.avatar)}
+                                    size="large"
+                                  />
+                                  <div className="accountList-item-right">
                                   <div
                                     className="accountList-item-right-name"
                                     title={account.nickname}
@@ -690,13 +832,19 @@ const AccountSidebar = memo(
                                   </div>
                                 )}
                               </li>
+                                )}
+                              </Draggable>
                             );
                           })}
-                        </ul>
+                              {provided.placeholder}
+                            </ul>
+                          )}
+                        </Droppable>
                       ),
                     };
                   })}
                 />
+                </DragDropContext>
               </div>
             )}
 
