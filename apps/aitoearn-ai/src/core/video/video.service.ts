@@ -34,6 +34,7 @@ import {
   VolcengineService,
   TaskStatus as VolcTaskStatus,
 } from '../../libs/volcengine'
+import { ModelsConfigService } from '../models-config'
 import {
   DashscopeCallbackDto,
   DashscopeImage2VideoRequestDto,
@@ -64,6 +65,7 @@ export class VideoService {
     private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
     private readonly s3Service: S3Service,
+    private readonly modelsConfigService: ModelsConfigService,
   ) {}
 
   async calculateVideoGenerationPrice(params: {
@@ -111,7 +113,7 @@ export class VideoService {
     const { model } = request
 
     // 查找模型配置以确定channel
-    const modelConfig = config.ai.models.video.generation.find(m => m.name === model)
+    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
@@ -390,7 +392,7 @@ export class VideoService {
    */
   async getVideoGenerationModelParams(_data: VideoGenerationModelsQueryDto) {
     // 可以根据userId和userType进行个性化过滤，目前返回所有模型
-    return config.ai.models.video.generation
+    return this.modelsConfigService.config.video.generation
   }
 
   /**
