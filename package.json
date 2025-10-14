@@ -56,6 +56,7 @@
     "react-qrcode-logo": "^4.0.0",
     "react-sortablejs": "^6.1.4",
     "react-transition-group": "^4.4.5",
+    "react-use": "^17.6.0",
     "sass": "^1.59.2",
     "sortablejs": "^1.15.6",
     "swiper": "^11.2.8",

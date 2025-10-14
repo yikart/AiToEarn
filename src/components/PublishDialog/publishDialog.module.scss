@@ -1,10 +1,20 @@
-$assistantWidth: 400px;
+$assistantWidth: 380px;
 
 .publishDialog {
   width: auto !important;
   margin: 0 auto;
   display: inline-block;
   :global {
+    .publishDialog-right {
+      display: flex;
+      position: relative;
+      #publishDialogAi {
+        position: absolute;
+        top: 0;
+        height: 100%;
+      }
+    }
+
     .ant-modal-content {
       padding: 0 !important;
     }
@@ -137,13 +147,20 @@ $assistantWidth: 400px;
 .publishDialogAi {
   display: flex;
   flex-direction: column;
-  margin-left: 15px;
+  z-index: 10;
+  margin: 0 15px;
   :global {
     h1 {
       font-size: var(--fs-md);
       font-weight: 600;
       text-align: left;
-      padding: 15px 0 0 15px;
+      padding: 15px 15px 0 15px;
+      display: flex;
+      justify-content: space-between;
+      .anticon {
+        cursor: pointer;
+        font-size: 20px;
+      }
     }
     .publishDialogAi-wrapper {
       min-width: $assistantWidth;

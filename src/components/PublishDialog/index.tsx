@@ -60,6 +60,9 @@ import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
 import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
 import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
 import { useAccountStore } from "@/store/account";
+import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
+import Aibrush from "./svgs/aibrush.svg";
+import { useWindowSize } from "react-use";
 
 export interface IPublishDialogRef {
   // 设置发布时间
@@ -91,6 +94,7 @@ const PublishDialog = memo(
       }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
+      const { width } = useWindowSize();
       const [openLeft, setOpenLeft] = useState(false);
       const {
         pubListChoosed,
@@ -604,6 +608,16 @@ const PublishDialog = memo(
         }
       }, [pubListChoosed, expandedPubItem, step]);
 
+      // 是否打开左侧
+      const openLeftSide = useMemo(() => {
+        if (!openLeft) return false;
+        if (step === 0) {
+          return pubListChoosed.length !== 0;
+        } else {
+          return expandedPubItem !== undefined;
+        }
+      }, [openLeft, step, pubListChoosed.length, expandedPubItem]);
+
       useEffect(() => {
         setErrParamsMap(errParamsMap);
       }, [errParamsMap]);
@@ -664,14 +678,16 @@ const PublishDialog = memo(
             footer={null}
             styles={{ wrapper: { textAlign: "center" } }}
           >
-            <CSSTransition
-              in={openLeft}
-              timeout={300}
-              classNames="left"
-              unmountOnExit
-            >
-              <PublishDialogAi />
-            </CSSTransition>
+            {width >= 1400 && (
+              <CSSTransition
+                in={openLeftSide}
+                timeout={300}
+                classNames="left"
+                unmountOnExit
+              >
+                <PublishDialogAi onClose={() => setOpenLeft(false)} />
+              </CSSTransition>
+            )}
 
             <div
               className="publishDialog-wrapper"
@@ -713,6 +729,16 @@ const PublishDialog = memo(
                       }}
                     >
                       {t("actions.selectDraft")}
+                    </Button>
+                    <Button
+                      size="small"
+                      icon={<Aibrush />}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenLeft(true);
+                      }}
+                    >
+                      {t("writingAssistant")}
                     </Button>
                   </div>
                 </div>
@@ -1090,14 +1116,26 @@ const PublishDialog = memo(
               </div>
             </div>
 
-            <CSSTransition
-              in={openRight}
-              timeout={300}
-              classNames="right"
-              unmountOnExit
-            >
-              <PublishDialogAi />
-            </CSSTransition>
+            <div className="publishDialog-right">
+              {width < 1400 && (
+                <CSSTransition
+                  in={openLeftSide}
+                  timeout={300}
+                  classNames="left"
+                  unmountOnExit
+                >
+                  <PublishDialogAi onClose={() => setOpenLeft(false)} />
+                </CSSTransition>
+              )}
+              <CSSTransition
+                in={openRight}
+                timeout={300}
+                classNames="right"
+                unmountOnExit
+              >
+                <PublishDialogPreview />
+              </CSSTransition>
+            </div>
           </Modal>
 
           {/* Draft Selection Modal */}
