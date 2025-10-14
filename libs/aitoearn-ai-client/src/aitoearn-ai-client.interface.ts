@@ -1,5 +1,28 @@
 import { Pagination, UserType } from '@yikart/common'
 
+// Models Config interfaces
+export interface ModelsConfigVo {
+  chat: Array<ChatModelConfigVo>
+  image: {
+    generation: Array<ImageGenerationModelParamsVo>
+    edit: Array<ImageEditModelParamsVo>
+  }
+  video: {
+    generation: Array<VideoGenerationModelParamsVo>
+  }
+}
+
+export interface ModelsConfigDto {
+  chat: Array<ChatModelConfigVo>
+  image: {
+    generation: Array<ImageGenerationModelParamsVo>
+    edit: Array<ImageEditModelParamsVo>
+  }
+  video: {
+    generation: Array<VideoGenerationModelParamsVo>
+  }
+}
+
 export enum AiLogType {
   Chat = 'chat',
   Image = 'image',
@@ -581,6 +604,56 @@ export interface VolcengineTaskStatusResponseVo {
     completion_tokens?: number
     total_tokens?: number
   }
+}
+
+export enum VideoSize {
+  Large = 'large',
+  Small = 'small',
+}
+
+// Sora2 接口定义
+export enum Sora2TaskStatus {
+  Pending = 'pending',
+  Running = 'running',
+  Cancelled = 'cancelled',
+  Completed = 'completed',
+  Failed = 'failed',
+}
+
+export enum VideoOrientation {
+  Portrait = 'portrait',
+  Landscape = 'landscape',
+}
+
+export interface Sora2GenerationRequestDto {
+  userId: string
+  userType: UserType
+  model: string
+  images?: string[]
+  orientation: VideoOrientation
+  prompt: string
+  size: VideoSize
+  duration: 10 | 15
+}
+
+export interface Sora2TaskQueryDto {
+  userId: string
+  userType: UserType
+  taskId: string
+}
+
+export interface Sora2VideoGenerationResponseVo {
+  id: string
+  status: Sora2TaskStatus
+}
+
+export interface Sora2TaskStatusResponseVo {
+  id: string
+  status: Sora2TaskStatus
+  video_url?: string
+  thumbnail_url?: string
+  status_update_time: number
+  finish_reason?: string
 }
 
 export interface VideoTaskStatusResponseVo {
