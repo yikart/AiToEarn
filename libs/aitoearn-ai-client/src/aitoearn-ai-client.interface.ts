@@ -190,7 +190,7 @@ export interface ImageGenerationModelParamsVo {
   summary?: string
   logo?: string
   tags: string[]
-  mainTag?: string[]
+  mainTag?: string
   sizes: string[]
   qualities: string[]
   styles: string[]
@@ -203,7 +203,7 @@ export interface ImageEditModelParamsVo {
   summary?: string
   logo?: string
   tags: string[]
-  mainTag?: string[]
+  mainTag?: string
   sizes: string[]
   pricing: string
   maxInputImages: number
@@ -674,7 +674,7 @@ export interface VideoGenerationModelParamsVo {
   summary?: string
   logo?: string
   tags: string[]
-  mainTag?: string[]
+  mainTag?: string
   modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video' | 'multi-image2video')[]
   channel: AiLogChannel
   resolutions: string[]
@@ -807,7 +807,7 @@ export interface ChatModelConfigVo {
   summary?: string
   logo?: string
   tags: string[]
-  mainTag?: string[]
+  mainTag?: string
   inputModalities: ('text' | 'image' | 'video' | 'audio')[]
   outputModalities: ('text' | 'image' | 'video' | 'audio')[]
   pricing: {
