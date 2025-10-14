@@ -350,6 +350,7 @@ const sora2CallbackSchema = z.object({
   id: z.string(),
   status: z.enum(Sora2TaskStatus),
   video_url: z.string().optional(),
+  thumbnail_url: z.string().optional(),
   status_update_time: z.number(),
   finish_reason: z.string().optional(),
 })

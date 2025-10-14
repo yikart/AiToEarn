@@ -40,6 +40,7 @@ export interface GetVideoGenerationTaskResponse {
   id: string
   status: TaskStatus
   video_url?: string
+  thumbnail_url?: string
   status_update_time: number
   finish_reason?: string
 }

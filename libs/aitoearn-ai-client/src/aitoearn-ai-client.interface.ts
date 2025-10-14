@@ -20,6 +20,7 @@ export enum AiLogChannel {
   Kling = 'kling',
   Volcengine = 'volcengine',
   Dashscope = 'dashscope',
+  Sora2 = 'sora2',
 }
 
 // Fireflycard 模板类型枚举
@@ -163,6 +164,10 @@ export interface FireflycardResponseVo {
 export interface ImageGenerationModelParamsVo {
   name: string
   description: string
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string[]
   sizes: string[]
   qualities: string[]
   styles: string[]
@@ -172,6 +177,10 @@ export interface ImageGenerationModelParamsVo {
 export interface ImageEditModelParamsVo {
   name: string
   description: string
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string[]
   sizes: string[]
   pricing: string
   maxInputImages: number
@@ -224,7 +233,7 @@ export enum VolcengineImageRole {
 export interface VideoGenerationRequestDto {
   model: string
   prompt: string
-  image?: string
+  image?: string | string[]
   image_tail?: string
   mode?: string
   size?: string
@@ -589,7 +598,11 @@ export interface VideoTaskStatusResponseVo {
 export interface VideoGenerationModelParamsVo {
   name: string
   description: string
-  modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video')[]
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string[]
+  modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video' | 'multi-image2video')[]
   channel: AiLogChannel
   resolutions: string[]
   durations: number[]
@@ -718,6 +731,10 @@ export interface ChatCompletionVo {
 export interface ChatModelConfigVo {
   name: string
   description: string
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string[]
   inputModalities: ('text' | 'image' | 'video' | 'audio')[]
   outputModalities: ('text' | 'image' | 'video' | 'audio')[]
   pricing: {

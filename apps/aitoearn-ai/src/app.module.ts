@@ -4,6 +4,7 @@ import { S3Module } from '@yikart/aws-s3'
 import { MongodbModule } from '@yikart/mongodb'
 import { config } from './config'
 import { ChatModule } from './core/chat'
+import { ModelsConfigModule } from './core/config'
 import { ImageModule } from './core/image'
 import { VideoModule } from './core/video'
 import { OpenaiModule } from './libs/openai'
@@ -19,6 +20,7 @@ import { SchedulerModule } from './scheduler'
     ChatModule,
     ImageModule,
     VideoModule,
+    ModelsConfigModule,
   ],
   controllers: [],
   providers: [],

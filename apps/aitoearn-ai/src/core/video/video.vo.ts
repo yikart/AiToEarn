@@ -105,6 +105,10 @@ export class ListVideoTasksResponseVo extends createPaginationVo(videoTaskStatus
 const videoGenerationModelSchema = z.object({
   name: z.string().describe('模型名称'),
   description: z.string().describe('模型描述'),
+  summary: z.string().optional(),
+  logo: z.string().optional(),
+  tags: z.string().array().default([]),
+  mainTag: z.string().optional(),
   channel: z.enum(AiLogChannel),
   modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video'])),
   resolutions: z.array(z.string()).describe('支持的尺寸'),
