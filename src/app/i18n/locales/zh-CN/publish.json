@@ -47,6 +47,9 @@
     "categoryPlaceholderDisabled": "请先选择国区",
     "board": "Board",
     "boardPlaceholder": "请选择Board",
+    "location": "位置",
+    "searchLocation": "搜索位置",
+    "selectLocation": "请选择位置",
     "description": "描述",
     "descriptionPlaceholder": "开始写"
   },
