@@ -244,6 +244,12 @@ const AccountSidebar = memo(
       // 排序相关状态
       const [isGroupSorting, setIsGroupSorting] = useState(false);
       const [isAccountSorting, setIsAccountSorting] = useState(false);
+      
+      // 本地账户排序状态，用于临时存储拖拽后的顺序
+      const [localAccountSort, setLocalAccountSort] = useState<Record<string, string[]>>({});
+      
+      // 自动保存定时器引用
+      const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
       // 在组件内部过滤账号列表，根据页面类型决定过滤逻辑
       const accountList = useMemo(() => {
@@ -392,7 +398,7 @@ const AccountSidebar = memo(
       };
 
       // 账户拖拽排序
-      const handleAccountDragEnd = async (result: any) => {
+      const handleAccountDragEnd = (result: any) => {
         if (!result.destination) return;
         
         const { source, destination } = result;
@@ -403,25 +409,56 @@ const AccountSidebar = memo(
           accountList.filter(account => account.groupId === groupId) :
           accountGroupList.find(g => g.id === groupId)?.children || [];
         
-        const sortedAccounts = [...groupAccounts].sort((a, b) => (a.rank || 0) - (b.rank || 0));
+        // 获取当前分组的本地排序，如果没有则使用原始排序
+        const currentSort = localAccountSort[groupId] || groupAccounts
+          .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+          .map(account => account.id);
         
-        // 移动账户
-        const [movedAccount] = sortedAccounts.splice(source.index, 1);
-        sortedAccounts.splice(destination.index, 0, movedAccount);
+        // 创建新的排序数组
+        const newSort = [...currentSort];
+        const [movedId] = newSort.splice(source.index, 1);
+        newSort.splice(destination.index, 0, movedId);
         
-        // 更新rank
-        const updateList = sortedAccounts.map((account, index) => ({
-          id: account.id,
-          rank: index
+        // 更新本地排序状态
+        setLocalAccountSort(prev => ({
+          ...prev,
+          [groupId]: newSort
         }));
         
-        try {
-          await apiUpdateAccountSortRank({ groupId, list: updateList });
-          await getAccountList();
-          message.success(t("messages.sortSuccess" as any));
-        } catch (error) {
-          message.error(t("messages.sortFailed" as any));
-        }
+
+        const updateList = newSort.map((accountId, index) => ({
+          id: accountId,
+          rank: index
+        }));
+
+        apiUpdateAccountSortRank({ groupId, list: updateList });
+
+        // // 清除之前的定时器
+        // if (saveTimeoutRef.current) {
+        //   clearTimeout(saveTimeoutRef.current);
+        // }
+        
+        // // 设置新的定时器，2秒后自动保存
+        // saveTimeoutRef.current = setTimeout(async () => {
+        //   try {
+        //     const updateList = newSort.map((accountId, index) => ({
+        //       id: accountId,
+        //       rank: index
+        //     }));
+            
+        //     await apiUpdateAccountSortRank({ groupId, list: updateList });
+        //     // 保存成功后清除本地排序状态，让界面使用服务器数据
+        //     setLocalAccountSort(prev => {
+        //       const newState = { ...prev };
+        //       delete newState[groupId];
+        //       return newState;
+        //     });
+        //     // await getAccountList();
+        //   } catch (error) {
+        //     console.error('自动保存排序失败:', error);
+        //     message.error(t("messages.sortFailed" as any));
+        //   }
+        // }, 2000);
       };
 
       // 添加账号流程
@@ -472,6 +509,15 @@ const AccountSidebar = memo(
         };
         maybeAssign();
       }, [fullAccountList]);
+
+      // 组件卸载时清理定时器
+      useEffect(() => {
+        return () => {
+          if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+          }
+        };
+      }, []);
 
       return (
         <>
@@ -720,14 +766,25 @@ const AccountSidebar = memo(
                               {...provided.droppableProps}
                               ref={provided.innerRef}
                             >
-                              {(isInteractivePage ? 
-                                // 在interactive页面，使用过滤后的账户列表
-                                accountList.filter(account => account.groupId === v.id) :
-                                // 在其他页面，使用原始的子账户列表
-                                v.children
-                              )
-                                ?.sort((a, b) => (a.rank || 0) - (b.rank || 0))
-                                ?.map((account, index) => {
+                              {(() => {
+                                // 获取该分组的账户列表
+                                const groupAccounts = isInteractivePage ? 
+                                  accountList.filter(account => account.groupId === v.id) :
+                                  v.children || [];
+                                
+                                // 获取本地排序，如果没有则使用原始排序
+                                const localSort = localAccountSort[v.id];
+                                let sortedAccounts = groupAccounts.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+                                
+                                // 如果有本地排序，则按照本地排序重新排列
+                                if (localSort && localSort.length > 0) {
+                                  const accountMap = new Map(sortedAccounts.map(account => [account.id, account]));
+                                  sortedAccounts = localSort
+                                    .map(id => accountMap.get(id))
+                                    .filter(Boolean) as typeof sortedAccounts;
+                                }
+                                
+                                return sortedAccounts.map((account, index) => {
                             if (excludePlatforms.includes(account.type))
                               return "";
                             const platInfo = AccountPlatInfoMap.get(
@@ -830,7 +887,8 @@ const AccountSidebar = memo(
                                 )}
                               </Draggable>
                             );
-                          })}
+                                });
+                              })()}
                               {provided.placeholder}
                             </ul>
                           )}
