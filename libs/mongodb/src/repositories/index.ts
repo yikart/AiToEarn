@@ -1,3 +1,5 @@
+import { AccountRepository } from './account.repository'
+import { AccountGroupRepository } from './accountGroup.repository'
 import { AiLogRepository } from './ai-log.repository'
 import { AppConfigRepository } from './app-config.repository'
 import { AppReleaseRepository } from './app-release.repository'
@@ -19,6 +21,8 @@ import { UserWalletRepository } from './user-wallet.repository'
 import { UserRepository } from './user.repository'
 import { WithdrawRecordRepository } from './withdraw-record.repository'
 
+export * from './account.repository'
+export * from './accountGroup.repository'
 export * from './ai-log.repository'
 export * from './app-config.repository'
 export * from './app-release.repository'
@@ -62,4 +66,6 @@ export const repositories = [
   UserRepository,
   WithdrawRecordRepository,
   AppReleaseRepository,
+  AccountRepository,
+  AccountGroupRepository,
 ] as const
