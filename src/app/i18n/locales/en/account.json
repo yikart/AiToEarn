@@ -52,7 +52,7 @@
     "recordCount": "{{count}} plans total",
     "newWork": "New Work",
     "noRecords": "No publish plans",
-    "queue": "Platform-published ",
+    "queue": "Queue ",
     "sent": "Sent",
     "createdDaysAgo": "You created this {{days}} days ago",
     "viewPost": "View Post",
