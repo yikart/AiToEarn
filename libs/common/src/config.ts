@@ -57,7 +57,7 @@ export const baseConfig = z.object({
   enableBadRequestDetails: z.boolean().default(false),
   openapi: openapiConfig.optional(),
   logger: loggerConfig.optional(),
-  nats: natsConfig,
+  nats: natsConfig.optional(),
 })
 
 export type BaseConfig = z.infer<typeof baseConfig>
