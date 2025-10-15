@@ -1,6 +1,5 @@
 import type { DynamicModule, Provider, Type } from '@nestjs/common'
 import type { NestApplication } from '@nestjs/core'
-import type { MicroserviceOptions } from '@nestjs/microservices'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import type { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface'
 import type { Request, Response } from 'express'
@@ -8,7 +7,6 @@ import type { StreamEntry } from 'pino'
 import type { BaseConfig } from './config'
 import { HttpStatus, Logger, Module } from '@nestjs/common'
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, MetadataScanner, ModulesContainer, NestFactory } from '@nestjs/core'
-import { Transport } from '@nestjs/microservices'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { apiReference } from '@scalar/nestjs-api-reference'
 import { LoggerModule, Logger as PinoLogger } from 'nestjs-pino'
@@ -102,19 +100,20 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
 
   app.useLogger(app.get(PinoLogger))
 
-  setupNatsPattern(app.get(ModulesContainer), new MetadataScanner(), config.nats.prefix)
+  // setupNatsPattern(app.get(ModulesContainer), new MetadataScanner(), config.nats.prefix)
+  setupNatsPattern(app.get(ModulesContainer), new MetadataScanner())
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.NATS,
-    options: {
-      name: config.nats.name,
-      servers: config.nats.servers,
-      user: config.nats.user,
-      pass: config.nats.pass,
-    },
-  }, {
-    inheritAppConfig: true,
-  })
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.NATS,
+  //   options: {
+  //     name: config.nats.name,
+  //     servers: config.nats.servers,
+  //     user: config.nats.user,
+  //     pass: config.nats.pass,
+  //   },
+  // }, {
+  //   inheritAppConfig: true,
+  // })
 
   if (config.globalPrefix)
     app.setGlobalPrefix(config.globalPrefix, { exclude: ['/'] })

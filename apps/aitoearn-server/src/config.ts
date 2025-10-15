@@ -9,15 +9,12 @@ const jwtConfigSchema = z.object({
   expiresIn: z.string().default('7d'),
 })
 
-const cof: any = {
+export const appConfigSchema = z.object({
   ...baseConfig.shape,
   mongodb: mongodbConfigSchema,
   jwt: jwtConfigSchema,
   oneSignal: oneSignalConfigSchema,
-}
-delete cof.nats
-
-export const appConfigSchema = z.object(cof)
+})
 
 export class AppConfig extends createZodDto(appConfigSchema) {}
 
