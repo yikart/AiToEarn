@@ -22,8 +22,10 @@
     "publishFailed": "发布失败",
     "publishing": "发布中",
     "publishSuccess": "发布成功",
-    "waitingPublish": "等待发布"
+    "waitingPublish": "等待发布",
+    "unknown": "未知状态"
   },
+  "creationInfo": "您于 {{date}} 创建了此内容",
   "form": {
     "title": "标题",
     "titlePlaceholder": "请输入标题",

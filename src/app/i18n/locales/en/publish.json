@@ -22,8 +22,10 @@
     "publishFailed": "Failed",
     "publishing": "Publishing",
     "publishSuccess": "Success",
-    "waitingPublish": "Waiting"
+    "waitingPublish": "Waiting",
+    "unknown": "Unknown"
   },
+  "creationInfo": "You created this on {{date}}",
   "form": {
     "title": "Title",
     "titlePlaceholder": "Enter title",

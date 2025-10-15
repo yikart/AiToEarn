@@ -48,7 +48,7 @@ const ListMode = memo(
       );
 
       useEffect(() => {
-        getPubRecord();
+        getPubRecord(0);
       }, [getPubRecord]);
 
       const renderRecordItem = (record: PublishRecordItem) => {
