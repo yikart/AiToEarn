@@ -11,6 +11,7 @@ import {
   loginWithMailApi, 
   getRegistUrlApi, 
   checkRegistStatusApi, 
+  mailRegistApi,
   googleLoginApi,
   GoogleLoginParams
 } from "@/api/apiReq";
@@ -62,45 +63,38 @@ export default function LoginPage() {
     }
   };
 
-  const handleRegistSubmit = async (values: { password: string; inviteCode?: string }) => {
+  const handleRegistSubmit = async (values: { password: string; code: string; inviteCode?: string }) => {
     try {
       setIsActivating(true);
-      message.info(t('activationEmailSent'));
       
-      // 开始循环检查注册状态
-      const timer = setInterval(async () => {
-        try {
-          const response = await checkRegistStatusApi({
-            code: registCode,
-            mail: email,
-            password: values.password,
-            inviteCode: values.inviteCode || ''
-          });
-          
-          if (!response) return;
-          
-          if (response.code === 0 && response.data.token) {
-            // 注册成功，清除定时器
-            if (activationTimer) {
-              clearInterval(activationTimer);
-            }
-            setIsActivating(false);
-            setIsChecking(false);
-            setIsModalOpen(false);
-            form.resetFields(); // 重置表单
-            setToken(response.data.token);
-            if (response.data.userInfo) {
-              setUserInfo(response.data.userInfo);
-            }
-            message.success(t('registerSuccess'));
-            router.push('/accounts');
-          }
-        } catch (error) {
-          console.error(t('checkStatusError'), error);
+      const response = await mailRegistApi({
+        mail: email,
+        code: values.code,
+        password: values.password,
+        inviteCode: values.inviteCode || ''
+      });
+      
+      if (!response) {
+        message.error(t('registerError'));
+        setIsActivating(false);
+        return;
+      }
+      
+      if (response.code === 0 && response.data.token) {
+        // 注册成功
+        setIsActivating(false);
+        setIsModalOpen(false);
+        form.resetFields(); // 重置表单
+        setToken(response.data.token);
+        if (response.data.userInfo) {
+          setUserInfo(response.data.userInfo);
         }
-      }, 2000); // 每2秒检查一次
-      
-      setActivationTimer(timer);
+        message.success(t('registerSuccess'));
+        router.push('/accounts');
+      } else {
+        message.error(response.message || t('registerError'));
+        setIsActivating(false);
+      }
     } catch (error) {
       message.error(t('registerError'));
       setIsActivating(false);
@@ -234,6 +228,17 @@ export default function LoginPage() {
           layout="vertical"
         >
           <Form.Item
+            label={t('emailCode')}
+            name="code"
+            rules={[
+              { required: true, message: t('emailCodeRequired') },
+              { len: 6, message: t('emailCodeLength') }
+            ]}
+          >
+            <Input placeholder={t('enterEmailCode')} maxLength={6} />
+          </Form.Item>
+          
+          <Form.Item
             label={t('setPassword')}
             name="password"
             rules={[
@@ -258,7 +263,7 @@ export default function LoginPage() {
               block 
               loading={isActivating}
             >
-              {isActivating ? t('waitingForActivation') : t('completeRegistration')}
+              {isActivating ? t('registering') : t('completeRegistration')}
             </Button>
           </Form.Item>
         </Form>

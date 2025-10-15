@@ -58,6 +58,20 @@ export const checkRegistStatusApi = (data: RegistCheckParams) => {
   });
 };
 
+// 邮箱注册接口
+export const mailRegistApi = (data: {
+  mail: string;
+  code: string;
+  password: string;
+  inviteCode?: string;
+}) => {
+  const hash = md5(data.password);
+  return http.post<LoginResponse>("login/mail/regist", {
+    ...data,
+    password: hash,
+  });
+};
+
 // 发送重置密码邮件
 export const sendResetPasswordMailApi = (data: { mail: string }) => {
   return http.post<LoginResponse>("login/repassword/mail", data);
