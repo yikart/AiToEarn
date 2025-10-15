@@ -1,4 +1,4 @@
-import { ForwardedRef, forwardRef, memo, useEffect, useState } from "react";
+import { ForwardedRef, forwardRef, memo, useEffect, useState, useCallback, useRef } from "react";
 import {
   IPlatsParamsProps,
   IPlatsParamsRef,
@@ -24,6 +24,7 @@ const ThreadsParams = memo(
       const [locations, setLocations] = useState<ThreadsLocationItem[]>([]);
       const [loading, setLoading] = useState(false);
       const [searchKeyword, setSearchKeyword] = useState("");
+      const debouncedSearchRef = useRef<ReturnType<typeof debounce> | null>(null);
 
       // 初始化Threads参数
       useEffect(() => {
@@ -44,15 +45,16 @@ const ThreadsParams = memo(
       }, [pubItem.account.id, setOnePubParams]);
 
       // 获取位置列表
-      const fetchLocations = async (keyword?: string) => {
+      const fetchLocations = useCallback(async (keyword?: string) => {
         if (!keyword) {
             return;
         }
+
         try {
           setLoading(true);
           const response:any = await apiGetThreadsLocations(
             pubItem.account.id,
-            keyword
+            keyword || ""
           );
           console.log('response', response)
           if (response && response.code === 0) {
@@ -63,17 +65,26 @@ const ThreadsParams = memo(
         } finally {
           setLoading(false);
         }
-      };
+      }, [pubItem.account.id]);
 
-      // 防抖搜索
-      const debouncedSearch = debounce((keyword: string) => {
-        fetchLocations(keyword);
-      }, 300);
+      // 创建防抖搜索函数
+      useEffect(() => {
+        debouncedSearchRef.current = debounce((keyword: string) => {
+          fetchLocations(keyword);
+        }, 500); // 增加防抖延迟到500ms
+
+        // 清理函数
+        return () => {
+          if (debouncedSearchRef.current) {
+            debouncedSearchRef.current.cancel();
+          }
+        };
+      }, [fetchLocations]);
 
       // 初始加载位置列表
       useEffect(() => {
         fetchLocations();
-      }, [pubItem.account.id]);
+      }, [fetchLocations]);
 
       // 处理位置选择
       const handleLocationChange = (locationId: string) => {
@@ -94,10 +105,12 @@ const ThreadsParams = memo(
       };
 
       // 处理搜索
-      const handleSearch = (value: string) => {
+      const handleSearch = useCallback((value: string) => {
         setSearchKeyword(value);
-        debouncedSearch(value);
-      };
+        if (debouncedSearchRef.current) {
+          debouncedSearchRef.current(value);
+        }
+      }, []);
 
       return (
         <>
