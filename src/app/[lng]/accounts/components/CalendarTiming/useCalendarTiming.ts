@@ -50,7 +50,7 @@ export const useCalendarTiming = create(
         },
 
         // 获取发布记录数据
-        async getPubRecord() {
+        async getPubRecord(status?: number) {
           try {
             methods.setListLoading(true);
             const date = getDays(get().calendarRef?.getApi().getDate() || new Date());
@@ -60,6 +60,7 @@ export const useCalendarTiming = create(
             const res = await getPublishList({
               time: [startOfMonth.utc().format(), endOfMonth.utc().format()],
               accountType: useAccountStore.getState().accountActive?.type,
+              status: status,
             });
             methods.setListLoading(false);
             
