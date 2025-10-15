@@ -30,6 +30,7 @@ on:
           - aitoearn-user
           - aitoearn-other
           - aitoearn-payment
+          - aitoearn-server
 
 permissions:
   id-token: write

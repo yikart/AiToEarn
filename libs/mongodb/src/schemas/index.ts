@@ -1,3 +1,5 @@
+import { Account, AccountSchema } from './account.schema'
+import { AccountGroup, AccountGroupSchema } from './accountGroup.schema'
 import { AiLog, AiLogSchema } from './ai-log.schema'
 import { AppConfig, AppConfigSchema } from './app-config.schema'
 import { AppRelease, AppReleaseSchema } from './app-release.schema'
@@ -46,6 +48,8 @@ import {
   WithdrawRecordSchema,
 } from './withdraw-record.schema'
 
+export * from './account.schema'
+export * from './accountGroup.schema'
 export * from './ai-log.schema'
 export * from './app-config.schema'
 export * from './app-release.schema'
@@ -88,4 +92,6 @@ export const schemas = [
   { name: Subscription.name, schema: SubscriptionSchema },
   { name: WithdrawRecord.name, schema: WithdrawRecordSchema },
   { name: AppRelease.name, schema: AppReleaseSchema },
+  { name: Account.name, schema: AccountSchema },
+  { name: AccountGroup.name, schema: AccountGroupSchema },
 ] as const

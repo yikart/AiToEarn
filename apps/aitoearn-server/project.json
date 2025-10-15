@@ -1,7 +1,7 @@
 {
-  "name": "aitoearn-other",
+  "name": "aitoearn-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/aitoearn-other/src",
+  "sourceRoot": "apps/aitoearn-server/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -9,11 +9,11 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/aitoearn-other",
-        "tsConfig": "apps/aitoearn-other/tsconfig.app.json",
-        "packageJson": "apps/aitoearn-other/package.json",
-        "main": "apps/aitoearn-other/src/main.ts",
-        "assets": ["apps/aitoearn-other/*.md"],
+        "outputPath": "dist/apps/aitoearn-server",
+        "tsConfig": "apps/aitoearn-server/tsconfig.app.json",
+        "packageJson": "apps/aitoearn-server/package.json",
+        "main": "apps/aitoearn-server/src/main.ts",
+        "assets": ["apps/aitoearn-server/*.md"],
         "generatePackageJson": true,
         "clean": true
       }
@@ -23,8 +23,8 @@
       "cache": true,
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
-        "{workspaceRoot}/dist/apps/aitoearn-other/package.json",
-        "{workspaceRoot}/dist/apps/aitoearn-other/pnpm-lock.yaml"
+        "{workspaceRoot}/dist/apps/aitoearn-server/package.json",
+        "{workspaceRoot}/dist/apps/aitoearn-server/pnpm-lock.yaml"
       ],
       "options": {
         "buildTarget": "build"
@@ -36,29 +36,29 @@
       "defaultConfiguration": "local",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "aitoearn-other:build",
+        "buildTarget": "aitoearn-server:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "local": {
-          "buildTarget": "aitoearn-other:build:development",
+          "buildTarget": "aitoearn-server:build:development",
           "args": [
             "-c",
-            "{workspaceRoot}/apps/aitoearn-other/config/local.config.js"
+            "{workspaceRoot}/apps/aitoearn-server/config/local.config.js"
           ]
         },
         "dev": {
-          "buildTarget": "aitoearn-other:build:development",
+          "buildTarget": "aitoearn-server:build:development",
           "args": [
             "-c",
-            "{workspaceRoot}/apps/aitoearn-other/config/dev.config.js"
+            "{workspaceRoot}/apps/aitoearn-server/config/dev.config.js"
           ]
         },
         "prod": {
-          "buildTarget": "aitoearn-other:build:production",
+          "buildTarget": "aitoearn-server:build:production",
           "args": [
             "-c",
-            "{workspaceRoot}/apps/aitoearn-other/config/prod.config.js"
+            "{workspaceRoot}/apps/aitoearn-server/config/prod.config.js"
           ]
         }
       }

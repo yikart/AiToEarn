@@ -12,8 +12,7 @@ export function zodValidate<
   schemaOrDto: ZodType<TOutput, TInput> | ZodDto<TOutput, TInput>,
   createValidationException: ZodExceptionCreator = createZodValidationException,
 ): TOutput {
-  // @ts-expect-error wtf???
-  const schema: ZodType = isZodDto(schemaOrDto) ? schemaOrDto.schema : schemaOrDto
+  const schema: any = isZodDto(schemaOrDto) ? schemaOrDto.schema : schemaOrDto
 
   const result = schema.safeParse(value)
 
