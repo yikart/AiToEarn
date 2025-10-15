@@ -68,6 +68,10 @@
     "error": "Failed to get IP info",
     "tooltip": "ASN: {{asn}}\nOrganization: {{org}}"
   },
+  "ipType": {
+    "direct": "Direct",
+    "proxy": "Proxy"
+  },
   "createSpace": {
     "title": "Add space",
     "button": "Add space",

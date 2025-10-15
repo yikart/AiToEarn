@@ -691,7 +691,7 @@ const AccountSidebar = memo(
                             {!v.proxyIp || v.proxyIp === "" ? (
                               // 本地IP显示
                               <div className="accountSidebar-ipInfo">
-                                <span className="accountSidebar-ipType">直连</span>
+                                <span className="accountSidebar-ipType" data-type="direct">{t("ipType.direct")}</span>
                                 {ipLocationLoading ? (
                                   <span className="accountSidebar-ipLoading">
                                     {t("ipInfo.loading")}
@@ -718,7 +718,7 @@ const AccountSidebar = memo(
                               v.ip &&
                               v.location && (
                                 <div className="accountSidebar-ipInfo">
-                                  <span className="accountSidebar-ipType">代理</span>
+                                  <span className="accountSidebar-ipType" data-type="proxy">{t("ipType.proxy")}</span>
                                   <Tooltip
                                     title={`IP: ${v.ip}\n位置: ${v.location}`}
                                   >

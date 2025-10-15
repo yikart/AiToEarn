@@ -70,7 +70,7 @@
       display: inline-block;
       background-color: var(--grayColor2);
       color: #8A5BF2;
-      padding: 2px 2px;
+      padding: 1px 2px;
       border-radius: 4px;
       font-size: 10px;
       font-weight: 500;
@@ -80,13 +80,13 @@
     .accountSidebar-ipType[data-type="direct"] {
       background-color: #e6f7ff;
       color: #1890ff;
-      border: 1px solid #91d5ff;
+      // border: 1px solid #91d5ff;
     }
 
     .accountSidebar-ipType[data-type="proxy"] {
       background-color: #fff7e6;
       color: #fa8c16;
-      border: 1px solid #ffd591;
+      // border: 1px solid #ffd591;
     }
 
     .accountSidebar-groupName {

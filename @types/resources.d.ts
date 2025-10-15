@@ -69,6 +69,10 @@ interface Resources {
       "error": "IP信息获取失败",
       "tooltip": "ASN: {{asn}}\n组织: {{org}}"
     },
+    "ipType": {
+      "direct": "直连",
+      "proxy": "代理"
+    },
     "createSpace": {
       "title": "新建空间",
       "button": "新建空间",

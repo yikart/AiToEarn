@@ -257,6 +257,7 @@ const LyaoutHeader = memo(
                     gap: '8px',
                     padding: '4px 8px',
                     height: 'auto',
+                    fontSize: '12px',
                   }}
                 >
                   <Image 
