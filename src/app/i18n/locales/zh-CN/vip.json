@@ -39,6 +39,17 @@
     "month": "月度订阅",
     "year": "年度订阅"
   },
+  "planTitles": {
+    "month": "月费会员",
+    "year": "年费会员",
+    "onceMonth": "月度会员"
+  },
+  "selectDuration": "选择开通时长",
+  "autoRenewal": "自动续订，随时取消",
+  "priceUnits": {
+    "month": "/月",
+    "year": "/年"
+  },
   "subscriptionManagement": "订阅管理",
   "subscriptionPlanManagement": "订阅计划管理",
   "subscriptionPlans": "订阅计划",

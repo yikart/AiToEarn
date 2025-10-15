@@ -39,6 +39,17 @@
     "month": "Monthly",
     "year": "Yearly"
   },
+  "planTitles": {
+    "month": "Monthly Member",
+    "year": "Yearly Member",
+    "onceMonth": "Monthly Member"
+  },
+  "selectDuration": "Select Duration",
+  "autoRenewal": "Auto-renewal, cancel anytime",
+  "priceUnits": {
+    "month": "/month",
+    "year": "/year"
+  },
   "subscriptionManagement": "Subscription Management",
   "subscriptionPlanManagement": "Subscription Plan Management",
   "subscriptionPlans": "Plans",
