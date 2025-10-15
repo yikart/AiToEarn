@@ -278,14 +278,11 @@
       font-weight: 500;
     }
 
-    .editButton,
-    .moreButton {
-      width: 32px;
+    .copyButton {
+      font-size: 14px;
       height: 32px;
       border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      font-weight: 500;
       border: 1px solid #d9d9d9;
       background: white;
       transition: all 0.2s ease;
