@@ -6,8 +6,6 @@ import {
   CloseCircleOutlined, 
   LoadingOutlined,
   SendOutlined,
-  EditOutlined,
-  MoreOutlined,
   MessageOutlined
 } from "@ant-design/icons";
 import { PublishRecordItem, PublishStatus } from "@/api/plat/types/publish.types";
@@ -67,7 +65,7 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
       default:
         return {
           color: "default",
-          text: "未知状态",
+          text: t("status.unknown"),
           icon: null
         };
     }
@@ -80,19 +78,20 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
       {/* 状态头部 */}
       <div className={styles.statusHeader}>
         <div className={styles.statusInfo}>
-          <span className={styles.statusText}>{statusInfo.text}</span>
+         
           <div className={styles.dateTime}>
             <span className={styles.date}>{days.format("MMM DD")}</span>
             <span className={styles.time}>{days.format("h:mm A")}</span>
           </div>
+          <span className={styles.statusText}>{statusInfo.text}</span>
         </div>
-        <div className={styles.statusBadge}>
+        {/* <div className={styles.statusBadge}>
           <Tag color={statusInfo.color} icon={statusInfo.icon}>
             {statusInfo.text}
           </Tag>
-        </div>
+        </div> */}
         <div className={styles.commentIcon}>
-          <MessageOutlined />
+          {/* <MessageOutlined /> */}
         </div>
       </div>
 
@@ -110,8 +109,14 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
 
       {/* 主要内容区域 */}
       <div className={styles.contentArea}>
-        {/* 账户信息 */}
-        <div className={styles.accountInfo}>
+
+        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '12px'}}>
+
+                   {/* 账户信息 */}
+
+                   <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}> 
+
+                   <div className={styles.accountInfo}>
           <div className={styles.avatarContainer}>
             <img 
               src={getOssUrl(account?.avatar || "")} 
@@ -130,11 +135,16 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
             <div className={styles.accountName}>{account?.nickname}</div>
             <div className={styles.accountHandle}>@{account?.account}</div>
           </div>
+          
         </div>
 
-        {/* 发布内容 */}
-        <div className={styles.postContent}>
-          <div className={styles.postText}>{record.desc}</div>
+                   <div className={styles.postText}>{record.desc}</div>
+                   </div>
+    
+
+              {/* 发布内容 */}
+              <div className={styles.postContent}>
+         
           
           {/* 媒体内容 */}
           {(record.coverUrl || record.imgUrlList?.length > 0) && (
@@ -162,17 +172,18 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
             </div>
           )}
 
-          {/* 分享图标 */}
-          <div className={styles.shareIcon}>
-            <div className={styles.shareSymbol}>↗</div>
-          </div>
         </div>
+
+        </div>
+     
+
+  
       </div>
 
       {/* 底部信息 */}
       <div className={styles.footer}>
         <div className={styles.creationInfo}>
-          您于 {days.format("YYYY年MM月DD日")} 创建了此内容
+          {t("creationInfo", { date: days.format("YYYY-MM-DD") })}
         </div>
         <div className={styles.actionButtons}>
           {record.status === PublishStatus.FAIL && (
@@ -185,16 +196,22 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
               {t("buttons.publishNow")}
             </Button>
           )}
-          <Button 
-            icon={<EditOutlined />}
-            onClick={() => onEdit?.(record)}
-            className={styles.editButton}
-          />
-          <Button 
-            icon={<MoreOutlined />}
-            onClick={() => onMore?.(record)}
-            className={styles.moreButton}
-          />
+          {record.workLink && (
+            <Button 
+              icon={<SendOutlined />}
+              onClick={async () => {
+                try {
+                  await navigator.clipboard.writeText(record.workLink);
+                  // 可以添加一个提示消息
+                } catch (err) {
+                  console.error('复制链接失败:', err);
+                }
+              }}
+              className={styles.copyButton}
+            >
+              {t("buttons.copyLink")}
+            </Button>
+          )}
         </div>
       </div>
     </div>
