@@ -131,7 +131,10 @@
 .currency { font-size: 18px; }
 .bigNum { font-size: 44px; font-weight: 800; color: #111827; }
 .planDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; line-height: 1.6; }
-.primaryBtn { width: 100%; background: #a66ae4; border-color: #a66ae4; color: #ffffff; font-weight: 700; margin-bottom: 16px; }
+
+
+
+.primaryBtn { width: 100%; background: linear-gradient(92deg,#66e9ff,#b5e9fd 34.5%,#a396ff 66.5%,#a66ae4) !important; border-color: #a66ae4; color: #ffffff; font-weight: 600 !important; margin-bottom: 16px; }
 .primaryBtn:hover { background: #9556d1; border-color: #9556d1; }
 
 .benefitBox { background: #f8f4ff; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; color: #7c3aed; margin-bottom: 8px; }
