@@ -10,7 +10,7 @@ export class ChannelService {
 
   /**
    * TODO: 获取用户账号列表
-   * @param data
+   * @param userId
    */
   async getUserAccounts(
     userId: string,

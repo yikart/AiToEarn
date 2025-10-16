@@ -27,12 +27,6 @@ export class AccountRepository extends BaseRepository<Account> {
     )
   }
 
-  /**
-   * 添加或更新账号
-   * @param account
-   * @param data
-   * @returns
-   */
   async addAccount(data: Partial<Account>): Promise<Account> {
     const info: Account | null = await this.accountModel.findOne({
       type: data.type,
@@ -155,12 +149,6 @@ export class AccountRepository extends BaseRepository<Account> {
     })
   }
 
-  /**
-   * 获取账户的统计信息
-   * @param userId
-   * @param type
-   * @returns
-   */
   async getAccountStatistics(
     userId: string,
     type?: AccountType,
@@ -188,11 +176,6 @@ export class AccountRepository extends BaseRepository<Account> {
     return res
   }
 
-  /**
-   * 获取用户的账户总数
-   * @param userId
-   * @returns
-   */
   async getUserAccountCount(userId: string) {
     return await this.accountModel.countDocuments({ userId })
   }
@@ -223,7 +206,6 @@ export class AccountRepository extends BaseRepository<Account> {
     return res.deletedCount > 0
   }
 
-  // 删除多个账户
   async deleteUserAccounts(ids: string[], userId: string) {
     const res = await this.accountModel.deleteMany({
       _id: { $in: ids },
@@ -243,7 +225,6 @@ export class AccountRepository extends BaseRepository<Account> {
     return res
   }
 
-  // 更新账户的统计信息
   async updateAccountStatistics(
     id: string,
     data: {
@@ -265,16 +246,12 @@ export class AccountRepository extends BaseRepository<Account> {
     return res.matchedCount > 0 || res.modifiedCount > 0
   }
 
-  /**
-   * 根据查询参数获取账号
-   */
   async getAccountByParam(param: { [key: string]: string }) {
     return await this.accountModel.findOne(param)
   }
 
   /**
    * 根据ID数组ids获取账户列表数组
-   * @param userId
    * @param ids
    * @returns
    */
@@ -316,7 +293,6 @@ export class AccountRepository extends BaseRepository<Account> {
     return accounts
   }
 
-  // 排序
   async sortRank(userId: string, groupId: string, list: { id: string, rank: number }[]) {
     const promises = list.map(element =>
       this.accountModel.updateOne({ userId, groupId, _id: element.id }, { $set: { rank: element.rank } }),

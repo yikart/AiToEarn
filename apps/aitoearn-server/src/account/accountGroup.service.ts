@@ -32,10 +32,6 @@ export class AccountGroupService {
     return data
   }
 
-  /**
-   * 更新组
-   * @param accountGroup
-   */
   async updateAccountGroup(
     id: string,
     accountGroup: Partial<AccountGroup>,

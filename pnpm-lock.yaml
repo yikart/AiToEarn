@@ -318,6 +318,12 @@ importers:
       '@nestjs/swagger':
         specifier: ^11.2.0
         version: 11.2.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      '@yikart/aitoearn-user-client':
+        specifier: workspace:*
+        version: link:../../libs/aitoearn-user-client
+      '@yikart/aws-s3':
+        specifier: workspace:*
+        version: link:../../libs/aws-s3
       '@yikart/cloud-space-client':
         specifier: workspace:*
         version: link:../../libs/cloud-space-client
