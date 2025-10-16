@@ -256,6 +256,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                         return statusInfo.isYearly ? translate('modal.vipInfo.yearly2') : translate('modal.vipInfo.monthly2');
                       } else if (userStore.userInfo.vipInfo.status === 'trialing') {
                         return ` ${translate('modal.vipInfo.trial' as any)}`;
+                      } else if (userStore.userInfo.vipInfo.status === 'active_nonrenewing') {
+                        return translate('modal.vipInfo.cancelled' as any);
                       }
                       return translate('modal.vipInfo.monthly');
                     })()}

@@ -244,6 +244,8 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                             return statusInfo.isYearly ? tVip('modal.vipInfo.yearly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})` : tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
                           } else if (userInfo.vipInfo.status === 'trialing') {
                             return tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.trial' as any)})`;
+                          } else if (userInfo.vipInfo.status === 'active_nonrenewing') {
+                            return tVip('modal.vipInfo.cancelled' as any);
                           }
                           return tVip('modal.vipInfo.monthly' as any);
                         })()}

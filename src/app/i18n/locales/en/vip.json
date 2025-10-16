@@ -91,6 +91,7 @@
       "yearly": "Yearly PLUS",
       "singleMonth": "Single Month",
       "trial": "Trial",
+      "cancelled": "Cancelled",
       "expireTime": "Expire Time",
       "xufeiTime": "Renewal Time",
       "remainingPoints": "Remaining Points",
