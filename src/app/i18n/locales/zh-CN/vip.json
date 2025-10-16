@@ -91,6 +91,7 @@
       "yearly2": "年度会员",
       "singleMonth": "单月会员",
       "trial": "试用中",
+      "cancelled": "已退订",
       "expireTime": "到期时间", 
       "xufeiTime": "续费时间",
       "remainingPoints": "剩余积分",
