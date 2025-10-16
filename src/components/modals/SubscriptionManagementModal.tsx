@@ -423,24 +423,9 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                       <div key={order._id} className={styles.orderCard}>
                         <div className={styles.orderHeader}>
                           <div className={styles.orderTitle}>
-                            {(() => {
-                              if (!userInfo?.vipInfo) return tVip('modal.vipInfo.monthly' as any);
-                              const statusInfo = getVipStatusInfo(userInfo.vipInfo.status);
-                              if (statusInfo.isYearly && statusInfo.isAutoRenew) {
-                                return tVip('modal.vipInfo.yearly' as any);
-                              } else if (statusInfo.isYearly && !statusInfo.isAutoRenew) {
-                                return tVip('modal.vipInfo.yearly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
-                              } else if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
-                                return tVip('modal.vipInfo.monthly' as any);
-                              } else if (statusInfo.isMonthly && !statusInfo.isAutoRenew) {
-                                return tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
-                              } else if (statusInfo.isOnce) {
-                                return statusInfo.isYearly ? tVip('modal.vipInfo.yearly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})` : tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
-                              } else if (userInfo.vipInfo.status === 'trialing') {
-                                return tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.trial' as any)})`;
-                              }
-                              return tVip('modal.vipInfo.monthly' as any);
-                            })()}
+                          {
+                                                getPaymentTypeText(order.metadata?.payment)
+                                             }
                           </div>
                         </div>
                         <div className={styles.orderDetails}>
