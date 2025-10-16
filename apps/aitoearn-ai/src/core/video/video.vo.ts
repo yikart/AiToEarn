@@ -126,6 +126,8 @@ const videoGenerationModelSchema = z.object({
     mode: z.string().optional(),
     duration: z.number().optional(),
     price: z.number(),
+    discount: z.string().optional(),
+    originPrice: z.number().optional(),
   }).array(),
 })
 

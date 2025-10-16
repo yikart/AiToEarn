@@ -40,6 +40,8 @@ const imageGenerationModelSchema = z.object({
   qualities: z.array(z.string()).describe('支持的质量选项'),
   styles: z.array(z.string()).describe('支持的风格选项'),
   pricing: z.string(),
+  discount: z.string().optional(),
+  originPrice: z.string().optional(),
 })
 
 export class ImageGenerationModelParamsVo extends createZodDto(imageGenerationModelSchema) {}
@@ -54,6 +56,8 @@ const imageEditModelSchema = z.object({
   mainTag: z.string().optional(),
   sizes: z.array(z.string()).describe('支持的尺寸'),
   pricing: z.string(),
+  discount: z.string().optional(),
+  originPrice: z.string().optional(),
   maxInputImages: z.number(),
 })
 

@@ -195,6 +195,8 @@ export interface ImageGenerationModelParamsVo {
   qualities: string[]
   styles: string[]
   pricing: string
+  discount?: string
+  originPrice?: string
 }
 
 export interface ImageEditModelParamsVo {
@@ -206,6 +208,8 @@ export interface ImageEditModelParamsVo {
   mainTag?: string
   sizes: string[]
   pricing: string
+  discount?: string
+  originPrice?: string
   maxInputImages: number
 }
 
@@ -679,7 +683,7 @@ export interface VideoGenerationModelParamsVo {
   channel: AiLogChannel
   resolutions: string[]
   durations: number[]
-  supportedParameters: ('image' | 'image_tail')[]
+  supportedParameters: string[]
   defaults?: {
     resolution?: string
     aspectRatio?: string
@@ -692,6 +696,8 @@ export interface VideoGenerationModelParamsVo {
     mode?: string
     duration?: number
     price: number
+    discount?: string
+    originPrice?: number
   }>
 }
 
@@ -811,12 +817,19 @@ export interface ChatModelConfigVo {
   inputModalities: ('text' | 'image' | 'video' | 'audio')[]
   outputModalities: ('text' | 'image' | 'video' | 'audio')[]
   pricing: {
+    discount?: string
     prompt: string
+    originPrompt?: string
     completion: string
+    originCompletion?: string
     image?: string
+    originImage?: string
     audio?: string
+    originAudio?: string
   } | {
     price: string
+    discount?: string
+    originPrice?: string
   }
 }
 
