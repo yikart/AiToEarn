@@ -99,12 +99,6 @@ export class AccountRepository extends BaseRepository<Account> {
     return accounts
   }
 
-  /**
-   * 获取所有账户
-   * @param filterDto
-   * @param pageInfo
-   * @returns
-   */
   async getAccounts(filterDto: {
     userId?: string
     types?: string[]

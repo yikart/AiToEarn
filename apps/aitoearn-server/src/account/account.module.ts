@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common'
 import { ChannelModule } from '../channel/channel.module'
+import { CloudSpaceModule } from '../cloud/core/cloud-space'
 import { FingerprintController } from '../fingerprint/fingerprint.controller'
 import { FingerprintService } from '../fingerprint/fingerprint.service'
 import { StatisticsModule } from '../statistics/statistics.module'
@@ -11,8 +12,8 @@ import { AccountGroupService } from './accountGroup.service'
 
 @Global()
 @Module({
-  imports: [TaskModule, ChannelModule, StatisticsModule],
+  imports: [CloudSpaceModule, TaskModule, ChannelModule, StatisticsModule],
   providers: [FingerprintService, AccountService, AccountGroupService],
   controllers: [AccountController, AccountGroupController, FingerprintController],
 })
-export class AccountModule {}
+export class AccountModule { }

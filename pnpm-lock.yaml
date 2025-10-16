@@ -303,6 +303,9 @@ importers:
       '@nestjs/axios':
         specifier: ^4.0.1
         version: 4.0.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(rxjs@7.8.2)
+      '@nestjs/bullmq':
+        specifier: ^11.0.3
+        version: 11.0.3(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(bullmq@5.58.2)
       '@nestjs/common':
         specifier: ^11.0.0
         version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -315,12 +318,18 @@ importers:
       '@nestjs/microservices':
         specifier: ^11.1.6
         version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(cache-manager@7.2.4)(ioredis@5.7.0)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/schedule':
+        specifier: ^6.0.0
+        version: 6.0.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
       '@nestjs/swagger':
         specifier: ^11.2.0
         version: 11.2.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
       '@yikart/aitoearn-user-client':
         specifier: workspace:*
         version: link:../../libs/aitoearn-user-client
+      '@yikart/ansible':
+        specifier: workspace:*
+        version: link:../../libs/ansible
       '@yikart/aws-s3':
         specifier: workspace:*
         version: link:../../libs/aws-s3
@@ -333,12 +342,24 @@ importers:
       '@yikart/mongodb':
         specifier: workspace:*
         version: link:../../libs/mongodb
+      '@yikart/multilogin':
+        specifier: workspace:*
+        version: link:../../libs/multilogin
       '@yikart/one-signal':
         specifier: workspace:*
         version: link:../../libs/one-signal
+      '@yikart/redlock':
+        specifier: workspace:*
+        version: link:../../libs/redlock
+      '@yikart/ucloud':
+        specifier: workspace:*
+        version: link:../../libs/ucloud
       axios:
         specifier: ^1.12.2
         version: 1.12.2
+      bullmq:
+        specifier: ^5.58.2
+        version: 5.58.2
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -354,6 +375,12 @@ importers:
       header-generator:
         specifier: ^2.1.75
         version: 2.1.75
+      js-yaml:
+        specifier: ^4.1.0
+        version: 4.1.0
+      jsonwebtoken:
+        specifier: ^9.0.2
+        version: 9.0.2
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -373,6 +400,9 @@ importers:
       '@types/data-urls':
         specifier: ^3.0.4
         version: 3.0.4
+      '@types/js-yaml':
+        specifier: ^4.0.9
+        version: 4.0.9
       '@types/jsonwebtoken':
         specifier: ^9.0.10
         version: 9.0.10
