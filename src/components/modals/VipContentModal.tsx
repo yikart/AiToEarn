@@ -334,8 +334,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <Button disabled className={vipStyles.freeBtn}>
                   {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
                 </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
+                {/* <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div> */}
                 <ul className={vipStyles.featureList}>
+                <li>{translate('modal.free.points')}</li>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
@@ -358,10 +359,10 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                  >
                    {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
-                <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
+                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.features.dailyPoints')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.yearly.description')}</li>
                   <li>{translate('modal.plans.yearly.features.contentReview')}</li>
                   <li>{translate('modal.plans.yearly.features.multiModel')}</li>
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
@@ -383,8 +384,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <Button disabled className={vipStyles.freeBtn}>
                   {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
                 </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
+                <li>{translate('modal.free.points')}</li>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
@@ -407,10 +408,10 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                  >
                    {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
-                <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>
+                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.features.dailyPoints')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.monthly.description')}</li>
                   <li>{translate('modal.plans.yearly.features.contentReview')}</li>
                   <li>{translate('modal.plans.yearly.features.multiModel')}</li>
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
@@ -431,8 +432,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <Button disabled className={vipStyles.freeBtn}>
                   {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
                 </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
+                <li>{translate('modal.free.points')}</li>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
@@ -451,10 +452,10 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                  >
                    {translate('modal.plans.goumai')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.once.points')}</div>
-                <div className={vipStyles.subDesc}>{translate('modal.plans.once.description')}</div>
+                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.features.dailyPoints')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.once.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.once.description')}</li>
                   <li>{translate('modal.plans.yearly.features.contentReview')}</li>
                   <li>{translate('modal.plans.yearly.features.multiModel')}</li>
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
@@ -464,68 +465,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               </div>
             </>
           )}
-
-          {/* <div className={vipStyles.freeCard}>
-            <div className={vipStyles.freeTitle}>免费</div>
-            <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
-            <div className={vipStyles.freeForever}>永久</div>
-            <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
-            <div className={vipStyles.freeItem}>发布赠送积分</div>
-          </div>
-
-          <div className={vipStyles.planCard}>
-            <div className={vipStyles.planHead}>一次性月度会员</div>
-            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>1</span><span className={vipStyles.unit}>天</span></div>
-            <div className={vipStyles.planDesc}>1元试用7天，首年5折¥329 · 次年¥659自动续费</div>
-            <Button className={vipStyles.primaryBtn}>¥1 试用7天</Button>
-            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 1,080积分每月</div>
-            <div className={vipStyles.subDesc}>最多生成4320张图和216个视频</div>
-            <ul className={vipStyles.featureList}>
-              <li>每天赠送积分</li>
-              <li>生成类视频无限次加速</li>
-              <li>生成作品去除品牌水印</li>
-              <li>视频内置罩</li>
-              <li>内容安全审核</li>
-              <li>视频更流畅（可补帧到最高60FPS）</li>
-            </ul>
-          </div>
-
-          <div className={vipStyles.planCard}>
-            <div className={vipStyles.planHead}>✚ 月度会员</div>
-            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>949</span><span className={vipStyles.unit}>每年</span></div>
-            <div className={vipStyles.planDesc}>首年5折¥949 · 次年续费金额¥1,899 · 包年可随时取消</div>
-            <Button className={vipStyles.primaryBtn}>¥949 首年5折</Button>
-            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 4,000积分每月</div>
-            <div className={vipStyles.subDesc}>最多生成16000张图和800个视频</div>
-            <ul className={vipStyles.featureList}>
-              <li>每天赠送积分</li>
-              <li>生成类视频无限次加速</li>
-              <li>生成作品去除品牌水印</li>
-              <li>视频内置罩</li>
-              <li>内容安全审核</li>
-              <li>视频更流畅（可补帧到最高60FPS）</li>
-            </ul>
-          </div>
-
-          <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-            <div className={vipStyles.planHead}>✚ 年度会员 <Tag color="#5b7cff">最划算</Tag></div>
-            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>2,599</span><span className={vipStyles.unit}>每年</span></div>
-            <div className={vipStyles.planDesc}>首年5折¥2,599 · 次年续费金额¥5,199 · 包年可随时取消</div>
-            <Button className={vipStyles.primaryBtn}>¥2,599 首年5折</Button>
-            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 15,000积分每月</div>
-            <div className={vipStyles.subDesc}>最多生成60000张图和3000个视频</div>
-            <ul className={vipStyles.featureList}>
-              <li>每天赠送积分</li>
-              <li>生成类视频无限次加速（最快）</li>
-              <li>生成作品去除品牌水印</li>
-              <li>视频内置罩</li>
-              <li>内容安全审核</li>
-              <li>视频更流畅（可补帧到最高60FPS）</li>
-            </ul>
-          </div> */}
-
-
-
 
         </div>
       </div>
