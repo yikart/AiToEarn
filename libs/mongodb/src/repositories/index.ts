@@ -10,6 +10,8 @@ import { CloudSpaceRepository } from './cloud-space.repository'
 import { CouponRepository } from './coupon.repository'
 import { FeedbackRepository } from './feedback.repository'
 import { IncomeRecordRepository } from './income-record.repository'
+import { MediaRepository } from './media.repository'
+import { MediaGroupRepository } from './mediaGroup.repository'
 import { MultiloginAccountRepository } from './multilogin-account.repository'
 import { NotificationRepository } from './notification.repository'
 import { PointsRecordRepository } from './points-record.repository'
@@ -34,6 +36,8 @@ export * from './cloud-space.repository'
 export * from './coupon.repository'
 export * from './feedback.repository'
 export * from './income-record.repository'
+export * from './media.repository'
+export * from './mediaGroup.repository'
 export * from './multilogin-account.repository'
 export * from './notification.repository'
 export * from './points-record.repository'
@@ -68,4 +72,6 @@ export const repositories = [
   AppReleaseRepository,
   AccountRepository,
   AccountGroupRepository,
+  MediaRepository,
+  MediaGroupRepository,
 ] as const

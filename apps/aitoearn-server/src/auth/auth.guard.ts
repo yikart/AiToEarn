@@ -18,8 +18,6 @@ import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
 import { config } from '../config'
 
-const _logger = new Logger('GetToken')
-
 export const GetToken = createParamDecorator(
   (_data: string, ctx: ExecutionContext) => {
     const req = ctx.switchToHttp().getRequest()

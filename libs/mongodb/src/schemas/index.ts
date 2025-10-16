@@ -19,6 +19,11 @@ import {
   IncomeRecord,
   IncomeRecordSchema,
 } from './income-record.schema'
+import { Material, MaterialSchema } from './material.schema'
+import { MaterialGroup, MaterialGroupSchema } from './materialGroup.schema'
+import { MaterialTask, MaterialTaskSchema } from './materialTask.schema'
+import { Media, MediaSchema } from './media.schema'
+import { MediaGroup, MediaGroupSchema } from './mediaGroup.schema'
 import {
   MultiloginAccount,
   MultiloginAccountSchema,
@@ -60,6 +65,11 @@ export * from './cloud-space.schema'
 export * from './coupon.schema'
 export * from './feedback.schema'
 export * from './income-record.schema'
+export * from './material.schema'
+export * from './materialGroup.schema'
+export * from './materialTask.schema'
+export * from './media.schema'
+export * from './mediaGroup.schema'
 export * from './multilogin-account.schema'
 export * from './notification.schema'
 export * from './points-record.schema'
@@ -94,4 +104,9 @@ export const schemas = [
   { name: AppRelease.name, schema: AppReleaseSchema },
   { name: Account.name, schema: AccountSchema },
   { name: AccountGroup.name, schema: AccountGroupSchema },
+  { name: MediaGroup.name, schema: MediaGroupSchema },
+  { name: Media.name, schema: MediaSchema },
+  { name: Material.name, schema: MaterialSchema },
+  { name: MaterialGroup.name, schema: MaterialGroupSchema },
+  { name: MaterialTask.name, schema: MaterialTaskSchema },
 ] as const

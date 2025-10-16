@@ -9,6 +9,8 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/swagger": "^11.2.0",
+    "@yikart/aitoearn-user-client": "workspace:*",
+    "@yikart/aws-s3": "workspace:*",
     "@yikart/cloud-space-client": "workspace:*",
     "@yikart/common": "workspace:*",
     "@yikart/mongodb": "workspace:*",

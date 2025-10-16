@@ -18,12 +18,6 @@ export class FeedbackService {
     return await this.feedbackRepository.create(newData)
   }
 
-  /**
-   * 获取列表
-   * @param pageInfo
-   * @param query
-   * @returns
-   */
   // async getFeedbackList(pageInfo: TableDto, query: GetFeedbackListDto) {
   //   const { skip, take } = TableUtil.GetSqlPaging(pageInfo);
   //   const filter: RootFilterQuery<Feedback> = {

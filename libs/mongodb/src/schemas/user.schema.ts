@@ -74,6 +74,19 @@ export class UserStorage {
   expiredAt?: Date
 }
 
+// Google账号信息
+export interface GoogleAccount {
+  id: string
+  email: string
+  verified_email?: boolean
+  name?: string
+  given_name?: string
+  family_name?: string
+  picture?: string
+  locale?: string
+  hd?: string // Hosted domain (for G Suite)
+}
+
 @Schema({
   collection: 'user',
   versionKey: false,
@@ -155,7 +168,7 @@ export class User extends WithTimestampSchema {
   earnInfo?: UserEarnInfo
 
   @Prop({ type: Object, required: false })
-  googleAccount?: Record<string, any> // Google账号信息
+  googleAccount?: GoogleAccount // Google账号信息
 
   // 用户VIP会员信息
   @Prop({ type: UserVipInfo, required: false })

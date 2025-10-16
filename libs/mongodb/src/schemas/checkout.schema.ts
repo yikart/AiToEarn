@@ -1,12 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { ICheckoutMode, ICheckoutStatus, ICurrency } from '@yikart/stripe'
-/*
- * @Author: white
- * @Date: 2025-06-25 16:12:27
- * @LastEditTime: 2025-06-26 09:47:37
- * @LastEditors: white
- * @Description: checkout
- */
 
 @Schema({
   collection: 'checkout',

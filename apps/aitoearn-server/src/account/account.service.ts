@@ -64,12 +64,6 @@ export class AccountService {
     )
   }
 
-  /**
-   * 添加或更新账号
-   * @param account
-   * @param data
-   * @returns
-   */
   async addAccount(data: CreateAccountDto): Promise<Account | null> {
     if (!data.groupId) {
       const defaultGroup = await this.accountGroupService.getDefaultGroup(
@@ -280,12 +274,6 @@ export class AccountService {
     return res
   }
 
-  /**
-   * 更新账户的统计信息
-   * @param id
-   * @param data
-   * @returns
-   */
   async updateAccountStatistics(
     id: string,
     data: {
