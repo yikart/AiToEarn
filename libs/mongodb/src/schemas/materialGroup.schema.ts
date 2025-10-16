@@ -7,7 +7,7 @@
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { UserType } from '@yikart/common'
-import { MaterialType } from './material.schema'
+import { MaterialType } from '../repositories/material.repository'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({

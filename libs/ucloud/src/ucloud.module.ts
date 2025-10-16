@@ -1,7 +1,6 @@
 import type { DynamicModule } from '@nestjs/common'
 import { Module } from '@nestjs/common'
 import { Client, Credential } from '@ucloud-sdks/ucloud-sdk-js'
-
 import { UCloudConfig } from './ucloud.config'
 import { UCloudService } from './ucloud.service'
 

@@ -1,9 +1,9 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { CloudSpaceClient } from '@yikart/cloud-space-client'
 import * as _ from 'lodash'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
+import { CloudSpaceService } from '../cloud/core/cloud-space'
 import { AccountGroupService } from './accountGroup.service'
 import { CreateAccountGroupDto, DeleteAccountGroupDto, SortRankDto, UpdateAccountGroupDto } from './dto/accountGroup.dto'
 
@@ -12,7 +12,7 @@ import { CreateAccountGroupDto, DeleteAccountGroupDto, SortRankDto, UpdateAccoun
 export class AccountGroupController {
   constructor(
     private readonly accountGroupService: AccountGroupService,
-    private readonly cloudSpaceClient: CloudSpaceClient,
+    private readonly cloudSpaceService: CloudSpaceService,
   ) {}
 
   @ApiOperation({ summary: '创建组' })
@@ -53,10 +53,9 @@ export class AccountGroupController {
   @Get('getList')
   async getUserAccounts(@GetToken() token: TokenInfo) {
     const res = await this.accountGroupService.getAccountGroup(token.id)
-    const cloudSpaces = await this.cloudSpaceClient.listCloudSpacesByUserId({
+    const cloudSpaces = await this.cloudSpaceService.listCloudSpacesByUserId({
       userId: token.id,
     })
-
     const cloudSpacesMap = _.keyBy(cloudSpaces, 'accountGroupId')
 
     return res.map((ag: { id: string | number }) => Object.assign(ag, { cloudSpace: cloudSpacesMap[ag.id] }))
