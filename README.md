@@ -41,7 +41,7 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 
 OS | Download
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.1.0-green?logo=android&logoColor=white)]((https://github.com/yikart/AiToEarn/releases/download/v1.1.0/aitoearn-1.1.0.apk))
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.1.0-green?logo=android&logoColor=white)](https://github.com/yikart/AiToEarn/releases/download/v1.1.0/aitoearn-1.1.0.apk)
 Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.1.0-blue?logo=windows&logoColor=white)](https://github.com/yikart/AiToEarn/releases/download/v1.1.0/AiToEarnSetup-1.1.0.exe)
 macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.1.0-black?logo=apple&logoColor=white)](https://github.com/yikart/AiToEarn/releases/download/v1.1.0/AiToEarn.1.1.0.dmg)
 iOS |  **Coming soon!**
