@@ -352,7 +352,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
-                   disabled={isCurrentPlan.year}
+                   disabled={isCurrentPlan.year || isCurrentPlan.month}
                  >
                    {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
@@ -401,7 +401,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
-                   disabled={isCurrentPlan.month}
+                   disabled={isCurrentPlan.month || isCurrentPlan.year}
                  >
                    {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
