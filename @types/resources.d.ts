@@ -855,7 +855,8 @@ interface Resources {
     "Redo": "重做",
     "Delete": "去除",
     "DeleteAll": "全部去除",
-    "Blend": "混合"
+    "Blend": "混合",
+    "imageEditing": "图像编辑"
   },
   "income": {
     "title": "我的收入",

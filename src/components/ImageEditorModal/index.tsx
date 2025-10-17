@@ -39,6 +39,7 @@ const ImageEditorModal = memo(
       const { t } = useTransClient("imageEditor");
       const imageEditorRef = useRef<any>();
       const [uploadLoading, setUploadLoading] = useState(false);
+      const isInit = useRef(false);
 
       const imageEditorLocale = useMemo(() => {
         if (lng === "en") return undefined;
@@ -63,9 +64,47 @@ const ImageEditorModal = memo(
         }
       }, [imgFile, open]);
 
+      // 添加裁剪预设
+      function addCropPreset(newClass: string, label: string, mode: number) {
+        if (document.querySelector(`.${newClass}`)) return;
+        const originClass = "preset-16-9";
+        const cropCon = document.querySelector(".tie-crop-preset-button")!;
+        const originPreset = cropCon.querySelector(`.${originClass}`)!;
+        // 克隆节点并清除所有事件
+        const cleanPreset = originPreset.cloneNode(true) as HTMLElement;
+        const newPreset = cleanPreset.cloneNode(true) as HTMLElement;
+        newPreset.querySelector("label")!.innerText = label;
+        newPreset.classList.remove(originClass);
+        newPreset.classList.add(newClass);
+        cropCon.appendChild(newPreset);
+        cropCon.addEventListener("click", (e) => {
+          const target = e.target as HTMLElement;
+          if (target.closest(`.${newClass}`)) {
+            const inst = imageEditorRef.current?.getInstance();
+            inst.stopDrawingMode();
+            inst.startDrawingMode("CROPPER");
+            inst.setCropzoneRect(mode);
+          }
+        });
+      }
+
+      useEffect(() => {
+        const timeId = setInterval(() => {
+          if (
+            !isInit.current &&
+            document.querySelector(".tie-crop-preset-button")
+          ) {
+            addCropPreset("preset-4-5", "4:5", 4 / 5);
+            addCropPreset("preset-1-1", "1:1", 1);
+            addCropPreset("preset-1_9-1", "1.19:1", 1.19);
+            clearInterval(timeId);
+          }
+        }, 100);
+      }, []);
+
       return (
         <Modal
-          title={"图像编辑"}
+          title={t("imageEditing")}
           open={open}
           onCancel={onCancel}
           width={1100}
