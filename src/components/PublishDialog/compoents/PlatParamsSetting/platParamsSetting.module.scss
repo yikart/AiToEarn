@@ -3,6 +3,7 @@
     .platParamsSetting-wrapper {
       display: flex;
       width: 100%;
+      min-width: 0;
     }
     .platParamsSetting-icon {
       margin: 5px 10px 0 0;
@@ -14,6 +15,7 @@
     .platParamsSetting-des {
       border: 1px solid var(--grayColor3);
       width: 100%;
+      min-width: 0;
       border-radius: 4px;
       height: 40px;
       cursor: pointer;
@@ -21,6 +23,11 @@
       align-items: center;
       padding-left: 15px;
       color: var(--grayColor11);
+      p {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
     .platParamsSetting-label {

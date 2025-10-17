@@ -94,13 +94,15 @@ const PlatParamsSetting = memo(
                   setExpandedPubItem(pubItem);
                 }}
               >
-                {pubItem.params.des ? (
-                  pubItem.params.des
-                ) : (
-                  <span style={{ color: "var(--grayColor7)" }}>
-                    {t("form.descriptionPlaceholder")}...
-                  </span>
-                )}
+                <p>
+                  {pubItem.params.des ? (
+                    pubItem.params.des
+                  ) : (
+                    <span style={{ color: "var(--grayColor7)" }}>
+                      {t("form.descriptionPlaceholder")}...
+                    </span>
+                  )}
+                </p>
               </div>
             )}
           </div>
