@@ -135,7 +135,12 @@ interface Resources {
       "cancel": "取消",
       "confirm": "确认"
     },
-    "mobileOnlySupport": "移动端支持"
+    "mobileOnlySupport": "移动端支持",
+    "reauthConfirm": {
+      "title": "会话已过期",
+      "content": "您的 {{platformName}} 账号 \"{{nickname}}\"（位于 {{spaceName}}）会话已过期。是否重新登录？",
+      "loginAgain": "重新登录"
+    }
   },
   "cgmaterial": {
     "header": {
