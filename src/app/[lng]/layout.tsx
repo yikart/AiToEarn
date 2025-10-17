@@ -1,7 +1,6 @@
 import "@/app/var.css";
 import "../globals.css";
 import { Providers } from "../layout/Providers";
-import Head from "next/head";
 import { dir } from "i18next";
 import { languages, fallbackLng } from "@/app/i18n/settings";
 import { useTranslation } from "@/app/i18n";
@@ -18,6 +17,7 @@ export async function generateMetadata({
   return {
     title: t("title"),
     description: t("content"),
+    keywords: "aitoearn, AiToEarn, ai, earn, aitoearn.com",
   };
 }
 
