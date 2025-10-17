@@ -1,10 +1,11 @@
 import { basename, join } from 'node:path'
 import { Injectable } from '@nestjs/common'
-import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { TableDto, UserType } from '@yikart/common'
 import { Media, MediaRepository, MediaType } from '@yikart/mongodb'
 import { config } from '../config'
+import { StorageService } from '../user/storage.service'
+import { UserService } from '../user/user.service'
 import { CreateMediaDto } from './dto/media.dto'
 
 @Injectable()
@@ -12,7 +13,8 @@ export class MediaService {
   constructor(
     private readonly s3Service: S3Service,
     private readonly mediaRepository: MediaRepository,
-    private readonly userClient: AitoearnUserClient,
+    private readonly userService: UserService,
+    private readonly storageService: StorageService,
   ) { }
 
   async create(userId: string, newData: CreateMediaDto) {
@@ -31,7 +33,7 @@ export class MediaService {
 
     const metadata = await this.s3Service.headObject(path)
 
-    await this.userClient.addUsedStorage({
+    await this.storageService.addUsedStorage({
       userId,
       amount: metadata.ContentLength!,
     })
@@ -57,7 +59,7 @@ export class MediaService {
   async del(id: string) {
     const media = await this.mediaRepository.getInfo(id)
     if (media?.userType === UserType.User && media?.url && media.metadata?.size) {
-      await this.userClient.deductUsedStorage({
+      await this.storageService.deductUsedStorage({
         userId: media.userId,
         amount: media.metadata.size,
       })
@@ -76,7 +78,7 @@ export class MediaService {
     const mediaList = await this.mediaRepository.getListByIds(ids)
     for (const media of mediaList) {
       if (media?.userType === UserType.User && media?.url && media.metadata?.size) {
-        this.userClient.deductUsedStorage({
+        this.storageService.deductUsedStorage({
           userId: media.userId,
           amount: media.metadata.size,
         })
@@ -134,11 +136,11 @@ export class MediaService {
       }
 
       if (newData.userType === UserType.User) {
-        await this.userClient.deductUsedStorage({
+        await this.storageService.deductUsedStorage({
           userId: newData.userId!,
           amount: oldMedia?.metadata?.size || 0,
         })
-        await this.userClient.addUsedStorage({
+        await this.storageService.addUsedStorage({
           userId: newData.userId!,
           amount: metadata.ContentLength!,
         })

@@ -21,6 +21,7 @@ import { SubscriptionRepository } from './subscription.repository'
 import { UserWalletAccountRepository } from './user-wallet-account.repository'
 import { UserWalletRepository } from './user-wallet.repository'
 import { UserRepository } from './user.repository'
+import { VipRepository } from './vip.repository'
 import { WithdrawRecordRepository } from './withdraw-record.repository'
 
 export * from './account.repository'
@@ -47,6 +48,7 @@ export * from './subscription.repository'
 export * from './user-wallet-account.repository'
 export * from './user-wallet.repository'
 export * from './user.repository'
+export * from './vip.repository'
 export * from './withdraw-record.repository'
 
 export const repositories = [
@@ -74,4 +76,5 @@ export const repositories = [
   AccountGroupRepository,
   MediaRepository,
   MediaGroupRepository,
+  VipRepository,
 ] as const
