@@ -1,0 +1,10 @@
+.imageEditorModal {
+  :global {
+    .tui-image-editor-container {
+      width: 100% !important;
+    }
+    .tui-image-editor-download-btn, .tui-image-editor-header-logo {
+      display: none !important;
+    }
+  }
+}

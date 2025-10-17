@@ -27,6 +27,7 @@
     "@react-oauth/google": "^0.12.2",
     "@svgr/webpack": "^6.5.1",
     "@szhsin/react-menu": "^4.4.1",
+    "@toast-ui/react-image-editor": "^3.15.2",
     "@types/blueimp-md5": "^2.18.2",
     "@types/react-beautiful-dnd": "^13.1.8",
     "accept-language": "3.0.20",
@@ -62,6 +63,7 @@
     "sass": "^1.59.2",
     "sortablejs": "^1.15.6",
     "swiper": "^11.2.8",
+    "tui-image-editor": "^3.15.3",
     "zustand": "^5.0.5"
   },
   "devDependencies": {

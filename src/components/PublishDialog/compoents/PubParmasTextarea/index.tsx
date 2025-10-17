@@ -25,6 +25,8 @@ import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubPar
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubType } from "@/app/config/publishConfig";
 import { useTransClient } from "@/app/i18n/client";
+import PubParmasTextuploadImage from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage";
+import VideoPreviewModal from "@/components/VideoPreviewModal";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -271,11 +273,16 @@ const PubParmasTextarea = memo(
               display: "none",
             }}
             preview={{
-              visible: !!previewData,
+              visible: !!(previewData && (previewData as IImgFile).imgUrl),
               onVisibleChange: (visible) => {
                 if (!visible) setPreviewData(undefined);
               },
             }}
+          />
+          <VideoPreviewModal
+            open={!!(previewData && (previewData as IVideoFile).videoUrl)}
+            videoUrl={(previewData as IVideoFile)?.videoUrl}
+            onCancel={() => setPreviewData(undefined)}
           />
 
           <div className={styles.pubParmasTextarea} style={style}>
@@ -331,29 +338,26 @@ const PubParmasTextarea = memo(
                         exitActive: styles.itemExitActive,
                       }}
                     >
-                      <div
-                        className="pubParmasTextarea-uploads-item"
+                      <PubParmasTextuploadImage
+                        onEditOk={(editedImg) => {
+                          setImageFileList((prevState) => {
+                            const newState = [...prevState];
+                            newState[i] = editedImg;
+                            return newState;
+                          });
+                        }}
+                        imageFile={v}
                         onClick={() => {
                           setPreviewData(v);
                         }}
-                      >
-                        <div
-                          className="pubParmasTextarea-uploads-item-close"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setImageFileList((prevState) => {
-                              const newState = [...prevState];
-                              newState.splice(i, 1);
-                              return newState;
-                            });
-                          }}
-                        >
-                          <CloseOutlined />
-                        </div>
-                        <Tooltip title={t("actions.preview")}>
-                          <img src={v.imgUrl} />
-                        </Tooltip>
-                      </div>
+                        onClose={() => {
+                          setImageFileList((prevState) => {
+                            const newState = [...prevState];
+                            newState.splice(i, 1);
+                            return newState;
+                          });
+                        }}
+                      />
                     </CSSTransition>
                   ))}
 

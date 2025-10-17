@@ -75,6 +75,11 @@ $boxHegiht: 110px;
         box-sizing: border-box;
         cursor: pointer;
         position: relative;
+        &-edit {
+          position: absolute;
+          bottom: 3px;
+          right: 3px;
+        }
         img, video {
           width: 100%;
           height: 100%;
