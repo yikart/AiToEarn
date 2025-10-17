@@ -11,7 +11,6 @@ import { Button, Dropdown, MenuProps, Badge, Tooltip } from "antd";
 import {
   BellOutlined,
   CaretDownOutlined,
-  GlobalOutlined,
   CrownOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
@@ -23,10 +22,9 @@ import { useNotification } from "@/hooks/useNotification";
 import SignInCalendar from "@/components/SignInCalendar"; 
 import VipContentModal from "@/components/modals/VipContentModal";
 import PointsDetailModal from "@/components/modals/PointsDetailModal";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
 import logo from "@/assets/images/logo.png";
-import zhLang from "@/assets/images/zh.png";
-import enLang from "@/assets/images/us.png";
 
 export interface ILyaoutHeaderRef {}
 
@@ -163,67 +161,6 @@ const LyaoutHeader = memo(
     const [pointsModalVisible, setPointsModalVisible] = useState(false);
     const { unreadCount } = useNotification();
 
-    const toggleLanguage = () => {
-      const currentLng = userStore.lang;
-      const newLng = currentLng === "zh-CN" ? "en" : "zh-CN";
-      userStore.setLang(newLng);
-      
-      // 获取当前路径并替换语言前缀
-      const currentPath = location.pathname;
-      const pathWithoutLang = currentPath.replace(`/${currentLng}`, "") || "/";
-      const newPath = `/${newLng}${pathWithoutLang}`;
-      
-      router.push(newPath);
-    };
-
-    const handleLanguageChange = (newLng: string) => {
-      userStore.setLang(newLng);
-      
-      // 获取当前路径并替换语言前缀
-      const currentPath = location.pathname;
-      const pathWithoutLang = currentPath.replace(`/${userStore.lang}`, "") || "/";
-      const newPath = `/${newLng}${pathWithoutLang}`;
-      
-      router.push(newPath);
-    };
-
-    // 语言选项配置
-    const languageOptions = [
-      {
-        key: 'en',
-        label: 'English',
-        flag: enLang,
-        current: userStore.lang === 'en'
-      },
-      {
-        key: 'zh-CN',
-        label: '简体中文',
-        flag: zhLang,
-        current: userStore.lang === 'zh-CN'
-      }
-    ];
-
-    const currentLanguage = languageOptions.find(lang => lang.current) || languageOptions[0];
-
-    const languageMenuItems: MenuProps['items'] = languageOptions.map(option => ({
-      key: option.key,
-      label: (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Image 
-              src={option.flag} 
-              alt={option.label}
-              width={16}
-              height={16}
-              style={{ borderRadius: '50%' }}
-            />
-            <span style={{ color: option.current ? '#52c41a' : '#000' }}>{option.label}</span>
-          </div>
-          {option.current && <span style={{ color: '#52c41a' }}>✓</span>}
-        </div>
-      ),
-      onClick: () => handleLanguageChange(option.key)
-    }));
 
     return (
       <>
@@ -242,35 +179,17 @@ const LyaoutHeader = memo(
               className={styles["layoutHeader_wrapper-right"]}
               suppressHydrationWarning={true}
             >
-              <Dropdown
-                menu={{ items: languageMenuItems }}
-                trigger={['click']}
-                placement="bottomRight"
-                overlayClassName={styles.languageDropdown}
-              >
-                <Button
-                  type="text"
-                  className={styles.languageButton}
-                  style={{ 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    gap: '8px',
-                    padding: '4px 8px',
-                    height: 'auto',
-                    fontSize: '12px',
-                  }}
-                >
-                  <Image 
-                    src={currentLanguage.flag} 
-                    alt={currentLanguage.label}
-                    width={16}
-                    height={16}
-                    style={{ borderRadius: '50%' }}
-                  />
-                  <span>{currentLanguage.label}</span>
-                  <CaretDownOutlined style={{ fontSize: '12px' }} />
-                </Button>
-              </Dropdown>
+              <LanguageSwitcher 
+                className={styles.languageButton}
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  padding: '4px 8px',
+                  height: 'auto',
+                  fontSize: '12px',
+                }}
+              />
               <NoSSR>
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
