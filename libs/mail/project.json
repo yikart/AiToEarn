@@ -1,0 +1,42 @@
+{
+  "name": "mail",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mail/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": ["dist/{projectRoot}"],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/mail",
+        "tsConfig": "libs/mail/tsconfig.lib.json",
+        "packageJson": "libs/mail/package.json",
+        "main": "libs/mail/src/index.ts",
+        "assets": ["libs/mail/*.md"]
+      }
+    },
+    "nx-release-publish": {
+      "dependsOn": ["build"],
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "fix": true
+      }
+    }
+  }
+}

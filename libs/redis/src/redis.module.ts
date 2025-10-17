@@ -20,7 +20,11 @@ export class RedisModule {
           },
           inject: [RedisConfig],
         },
-        RedisService,
+        {
+          provide: RedisService,
+          useFactory: (client: Redis) => new RedisService(client),
+          inject: [Redis],
+        },
       ],
       exports: [RedisService],
       global: true,

@@ -4,6 +4,8 @@ export enum ResponseCode {
   // 错误码域从 10000 开始，每个模块各自前缀 11000 12000 以此类推
   // 10 (libs)
   // 10000 (common)
+  MailSendFail = 10001,
+  ValidationFailed = 10002,
 
   // 10100 (s3)
   S3DownloadFileFailed = 10100,
@@ -30,6 +32,10 @@ export enum ResponseCode {
   UserNotFound = 12000,
   UserPointsInsufficient = 12001,
   UserStorageExceeded = 12002,
+  UserStatusError = 12003,
+  UserPasswordError = 12004,
+  UserLoginCodeError = 12005,
+  UserInviteCodeError = 12006,
 
   // 12100 (income)
   IncomeRecordNotFound = 12100,

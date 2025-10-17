@@ -1,12 +1,5 @@
-/*
- * @Author: nevin
- * @Date: 2022-11-16 22:04:18
- * @LastEditTime: 2025-05-06 15:50:05
- * @LastEditors: nevin
- * @Description: 用户
- */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { EarnInfoStatus, UserStatus, UserVipCycleType } from '../enums'
+import { EarnInfoStatus, UserStatus, VipStatus } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
@@ -48,19 +41,19 @@ export class UserEarnInfo {
   toObject: { virtuals: true },
 })
 export class UserVipInfo {
-  // 会员等级
-  @Prop({
-    required: true,
-    enum: UserVipCycleType,
-    default: UserVipCycleType.NONE,
-  })
-  cycleType: UserVipCycleType
-
   @Prop({ required: true })
   expireTime: Date
 
-  @Prop({ required: true, default: false })
-  autoContinue: boolean
+  @Prop({
+    required: true,
+    enum: VipStatus,
+    default: VipStatus.none,
+  })
+  status: VipStatus
+
+  // 开通时间
+  @Prop({ required: true })
+  startTime: Date
 }
 
 export class UserStorage {
@@ -155,7 +148,7 @@ export class User extends WithTimestampSchema {
   earnInfo?: UserEarnInfo
 
   @Prop({ type: Object, required: false })
-  googleAccount?: Record<string, any> // Google账号信息
+  googleAccount?: Record<string, unknown> // Google账号信息
 
   // 用户VIP会员信息
   @Prop({ type: UserVipInfo, required: false })
@@ -190,6 +183,13 @@ export class User extends WithTimestampSchema {
     total: 500 * 1024 * 1024,
   } })
   storage: UserStorage
+
+  // 累计收入
+  @Prop({
+    required: false,
+    default: 0,
+  })
+  tenDayExpPoint: number
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)
