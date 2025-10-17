@@ -47,8 +47,8 @@ export class UserService {
    * @param all
    * @returns
    */
-  async getUserInfoById(id: string, all = false) {
-    const res = await this.userRepository.getUserInfoById(id, all)
+  async getUserInfoById(id: string) {
+    const res = await this.userRepository.getUserInfoById(id)
     void this.redisService.setJson(`UserInfo:${id}`, res)
     if (!res)
       throw new AppException(1000, 'User does not exist')
@@ -217,7 +217,7 @@ export class UserService {
 
   // 判断会员权益
   async checkUserVipRights(userId: string): Promise<User> {
-    const userInfo = await this.getUserInfoById(userId, true)
+    const userInfo = await this.getUserInfoById(userId)
     if (userInfo.status !== UserStatus.OPEN)
       throw new AppException(1000, 'The user has been banned and is unable to create tasks')
     if (
