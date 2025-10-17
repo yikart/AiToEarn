@@ -136,5 +136,10 @@
     "cancel": "Cancel",
     "confirm": "Confirm"
   },
-  "mobileOnlySupport": "Mobile only"
+  "mobileOnlySupport": "Mobile only",
+  "reauthConfirm": {
+    "title": "Session Expired",
+    "content": "Your {{platformName}} account \"{{nickname}}\" (in {{spaceName}}) session has expired. Would you like to log in again?",
+    "loginAgain": "Reauthorize"
+  }
 }
