@@ -7,9 +7,10 @@ import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import Link from "next/link";
 import { Button } from "antd";
-import { GlobalOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { removeLocalePrefix } from "@/app/layout/layout.utils";
 import { homeHeaderRouterData } from "@/app/layout/routerData";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
 export interface IHomeHeaderRef {}
 
@@ -24,21 +25,6 @@ const HomeHeader = memo(
     const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, "") || "/";
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    /**
-     * 切换语言
-     */
-    const toggleLanguage = () => {
-      const currentLng = userStore.lang;
-      const newLng = currentLng === "zh-CN" ? "en" : "zh-CN";
-      userStore.setLang(newLng);
-      
-      // 获取当前路径并替换语言前缀
-      const currentPath = location.pathname;
-      const pathWithoutLang = currentPath.replace(`/${currentLng}`, "") || "/";
-      const newPath = `/${newLng}${pathWithoutLang}`;
-      
-      router.push(newPath);
-    };
 
     /**
      * 切换移动端菜单显示状态
@@ -100,14 +86,10 @@ const HomeHeader = memo(
             </nav>
 
             <div className={styles.headerRight}>
-              <Button
-                type="text"
-                icon={<GlobalOutlined />}
-                onClick={toggleLanguage}
+              <LanguageSwitcher 
                 className={styles.languageButton}
-              >
-                {userStore.lang === "zh-CN" ? "EN" : "中文"}
-              </Button>
+                size="small"
+              />
 
               {/* 移动端菜单按钮 */}
               <button
@@ -170,14 +152,10 @@ const HomeHeader = memo(
           </nav>
 
           <div className={styles.mobileMenuFooter}>
-            <Button
-              type="text"
-              icon={<GlobalOutlined />}
-              onClick={toggleLanguage}
+            <LanguageSwitcher 
               className={styles.mobileLanguageButton}
-            >
-              {userStore.lang === "zh-CN" ? "EN" : "中文"}
-            </Button>
+              size="small"
+            />
           </div>
         </div>
       </>
