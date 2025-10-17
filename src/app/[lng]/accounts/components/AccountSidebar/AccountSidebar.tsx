@@ -234,6 +234,10 @@ const AccountSidebar = memo(
       const snapshotReadyRef = useRef(false);
       const allUser = useRef("-1");
 
+      // 掉线账号重新登录确认弹窗状态
+      const [showReauthConfirm, setShowReauthConfirm] = useState(false);
+      const [reauthAccount, setReauthAccount] = useState<SocialAccount | null>(null);
+
       // Facebook页面选择弹窗状态
       const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
       
@@ -295,10 +299,20 @@ const AccountSidebar = memo(
         fetchIpLocation();
       }, []);
 
-      // 处理离线账户点击，直接跳转到对应平台授权页面
-      const handleOfflineAccountClick = useCallback(async (account: SocialAccount) => {
-        const platform = account.type;
-        const targetSpaceId = account.groupId; // 使用账户原本的空间ID
+      // 处理离线账户点击，显示确认弹窗
+      const handleOfflineAccountClick = useCallback((account: SocialAccount) => {
+        setReauthAccount(account);
+        setShowReauthConfirm(true);
+      }, []);
+
+      // 确认重新登录
+      const handleConfirmReauth = useCallback(async () => {
+        if (!reauthAccount) return;
+        
+        const platform = reauthAccount.type;
+        const targetSpaceId = reauthAccount.groupId; // 使用账户原本的空间ID
+        
+        setShowReauthConfirm(false);
         
         try {
           // 根据平台类型调用对应的授权函数，传递目标空间ID
@@ -360,8 +374,10 @@ const AccountSidebar = memo(
         } catch (error) {
           console.error(t('messages.authFailed' as any), error);
           message.error(t('messages.authFailed' as any) + '，' + t('messages.pleaseRetry' as any));
+        } finally {
+          setReauthAccount(null);
         }
-      }, [getAccountList]);
+      }, [reauthAccount, getAccountList, t]);
 
       // 处理Facebook页面选择成功
       const handleFacebookPagesSuccess = () => {
@@ -952,6 +968,43 @@ const AccountSidebar = memo(
                 zIndex={1000}
               />
             )}
+
+            {/* 掉线账号重新登录确认弹窗 */}
+            <Modal
+              open={showReauthConfirm}
+              title="Session Expired"
+              onCancel={() => {
+                setShowReauthConfirm(false);
+                setReauthAccount(null);
+              }}
+              footer={
+                <>
+                  <Button onClick={() => {
+                    setShowReauthConfirm(false);
+                    setReauthAccount(null);
+                  }}>
+                    {t("createSpace.cancel")}
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={handleConfirmReauth}
+                  >
+                    Log In Again
+                  </Button>
+                </>
+              }
+            >
+              <div className={styles.reauthConfirm}>
+                {reauthAccount && (
+                  <div>
+                    <p style={{ marginBottom: '16px' }}>
+                      Your {AccountPlatInfoMap.get(reauthAccount.type)?.name || reauthAccount.type} account "{reauthAccount.nickname}" (in {accountGroupList.find(group => group.id === reauthAccount.groupId)?.name || t("defaultSpace")}) session has expired. Would you like to log in again?
+                    </p>
+                    
+                  </div>
+                )}
+              </div>
+            </Modal>
           </div>
         </>
       );
