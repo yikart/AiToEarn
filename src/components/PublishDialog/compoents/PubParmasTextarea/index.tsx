@@ -49,6 +49,8 @@ export interface IPubParmasTextareaProps {
   extend?: React.ReactNode;
   // 在前面的扩展元素
   beforeExtend?: React.ReactNode;
+  // 在中间的扩展元素
+  centerExtend?: React.ReactNode;
   // 平台类型
   platType: PlatType;
   style?: CSSProperties;
@@ -71,6 +73,7 @@ const PubParmasTextarea = memo(
         rows = 12,
         videoMax = 1,
         extend,
+        centerExtend,
         imageFileListValue = [],
         videoFileValue,
         desValue = "",
@@ -462,6 +465,7 @@ const PubParmasTextarea = memo(
               </div>
             </div>
 
+            {centerExtend}
             {extend && <div className="pubParmasTextarea-other">{extend}</div>}
           </div>
         </>

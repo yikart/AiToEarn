@@ -112,6 +112,7 @@ const PublishDialog = memo(
         setPubTime,
         pubTime,
         setOnePubParams,
+        setWarningParamsMap,
       } = usePublishDialog(
         useShallow((state) => ({
           pubListChoosed: state.pubListChoosed,
@@ -126,12 +127,14 @@ const PublishDialog = memo(
           setExpandedPubItem: state.setExpandedPubItem,
           expandedPubItem: state.expandedPubItem,
           setErrParamsMap: state.setErrParamsMap,
+          setWarningParamsMap: state.setWarningParamsMap,
           setPubTime: state.setPubTime,
           pubTime: state.pubTime,
           setOnePubParams: state.setOnePubParams,
         })),
       );
-      const { errParamsMap } = usePubParamsVerify(pubListChoosed);
+      const { errParamsMap, warningParamsMap } =
+        usePubParamsVerify(pubListChoosed);
       const [createLoading, setCreateLoading] = useState(false);
       // 内容安全检测状态
       const [moderationLoading, setModerationLoading] = useState(false);
@@ -621,6 +624,9 @@ const PublishDialog = memo(
       useEffect(() => {
         setErrParamsMap(errParamsMap);
       }, [errParamsMap]);
+      useEffect(() => {
+        setWarningParamsMap(warningParamsMap);
+      }, [warningParamsMap]);
 
       const pubClick = useCallback(async () => {
         setCreateLoading(true);

@@ -37,6 +37,7 @@ const ImageEditorModal = memo(
     ) => {
       const lng = useGetClientLng();
       const { t } = useTransClient("imageEditor");
+      const account = useTransClient("account");
       const imageEditorRef = useRef<any>();
       const [uploadLoading, setUploadLoading] = useState(false);
       const isInit = useRef(false);
@@ -113,7 +114,7 @@ const ImageEditorModal = memo(
           footer={
             <>
               <Button size="large" onClick={onCancel}>
-                取消
+                {account.t("deleteConfirm.cancel")}
               </Button>
               <Button
                 type="primary"
@@ -137,9 +138,10 @@ const ImageEditorModal = memo(
                   image["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
                   setUploadLoading(false);
                   onOk(image);
+                  onCancel();
                 }}
               >
-                保存
+                {account.t("createSpace.cancel")}
               </Button>
             </>
           }

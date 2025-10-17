@@ -89,7 +89,7 @@
     "imageVideoMixed": "Images and videos cannot be uploaded together!",
     "onlyImageOrVideo": "Only image or video files can be uploaded!",
     "videoMaxExceeded": "The number of videos uploaded cannot exceed {{maxCount}}",
-    "imageMaxExceeded": "The number of images uploaded cannot exceed {{maxCount}}"
+    "instagramImageValidation": "For best results on your Instagram Grid and Feed, we recommend uploading images with a 4:5 aspect ratio."
   },
   "preview": {
     "title": "Preview",

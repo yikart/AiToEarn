@@ -23,6 +23,7 @@ export interface IPublishDialogStore {
   expandedPubItem?: PubItem;
   // 错误提示
   errParamsMap?: ErrPubParamsMapType;
+  warningParamsMap?: ErrPubParamsMapType;
   // 发布时间
   pubTime?: string;
 }
@@ -53,6 +54,7 @@ const store: IPublishDialogStore = {
   },
   expandedPubItem: undefined,
   errParamsMap: undefined,
+  warningParamsMap: undefined,
 };
 
 const getStore = () => {
@@ -79,6 +81,11 @@ export const usePublishDialog = create(
         setErrParamsMap(errParamsMap: ErrPubParamsMapType) {
           set({
             errParamsMap,
+          });
+        },
+        setWarningParamsMap(warningParamsMap: ErrPubParamsMapType) {
+          set({
+            warningParamsMap,
           });
         },
         setStep(step: number) {
@@ -143,30 +150,40 @@ export const usePublishDialog = create(
           for (let i = 0; i < pubList.length; i++) {
             const v = pubList[i];
             const platConfig = AccountPlatInfoMap.get(v.account.type)!;
-            
+
             // 更新描述
             if (pubParmas.des !== undefined) {
               v.params.des = pubParmas.des;
             }
-            
+
             // 更新标题
             if (pubParmas.title !== undefined) {
               v.params.title = pubParmas.title;
             }
-            
+
             // 更新视频（如果平台支持）
-            if (pubParmas.video !== undefined && platConfig.pubTypes.has(PubType.VIDEO)) {
+            if (
+              pubParmas.video !== undefined &&
+              platConfig.pubTypes.has(PubType.VIDEO)
+            ) {
               v.params.video = pubParmas.video;
             }
-            
+
             // 更新图片（如果平台支持）
-            if (pubParmas.images !== undefined && platConfig.pubTypes.has(PubType.ImageText)) {
+            if (
+              pubParmas.images !== undefined &&
+              platConfig.pubTypes.has(PubType.ImageText)
+            ) {
               v.params.images = pubParmas.images;
             }
-            
+
             // 更新选项
             if (pubParmas.option) {
-              v.params.option = lodash.merge({}, v.params.option, pubParmas.option);
+              v.params.option = lodash.merge(
+                {},
+                v.params.option,
+                pubParmas.option,
+              );
             }
           }
 

@@ -5,6 +5,7 @@ import { PubItem } from "@/components/PublishDialog/publishDialog.type";
 import { Alert } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 import { PubType } from "@/app/config/publishConfig";
+import { isAspectRatioMatch } from "@/components/PublishDialog/PublishDialog.util";
 
 export interface ErrPubParamsItem {
   // 参数错误提示消息
@@ -98,15 +99,18 @@ export default function usePubParamsVerify(data: PubItem[]) {
           v.params.images?.length === 0 &&
           !v.params.video
         ) {
-          let msgs:any = t("validation.uploadImageOrVideo");
-          if (platInfo.pubTypes.has(PubType.ImageText) && platInfo.pubTypes.has(PubType.VIDEO)) {
+          let msgs: any = t("validation.uploadImageOrVideo");
+          if (
+            platInfo.pubTypes.has(PubType.ImageText) &&
+            platInfo.pubTypes.has(PubType.VIDEO)
+          ) {
             msgs = t("validation.uploadImageOrVideo");
           } else if (platInfo.pubTypes.has(PubType.ImageText)) {
             msgs = t("validation.uploadImage");
           } else if (platInfo.pubTypes.has(PubType.VIDEO)) {
             msgs = t("validation.uploadVideo");
           }
-          return  setErrorMsg(msgs);
+          return setErrorMsg(msgs);
         }
 
         // 话题数量校验
@@ -189,7 +193,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
         }
 
-        // Pinterest 的强制校验 
+        // Pinterest 的强制校验
         if (v.account.type === PlatType.Pinterest) {
           // 强制需要标题
           if (!v.params.title) {
@@ -205,8 +209,36 @@ export default function usePubParamsVerify(data: PubItem[]) {
     return errParamsMapTemp;
   }, [data, t]);
 
+  // 警告参数，警告参数不会阻止发布，只是提示用户可能存在的问题
+  const warningParamsMap = useMemo(() => {
+    const warningParamsMapTemp: ErrPubParamsMapType = new Map();
+
+    for (const v of data) {
+      const setWarningMsg = (msg: string) => {
+        warningParamsMapTemp.set(v.account.id, {
+          parErrMsg: msg,
+        });
+      };
+
+      // Instagram 警告消息
+      if (v.account.type === PlatType.Instagram) {
+        // 图片比例判断
+        if (v.params.images && v.params.images.length > 0) {
+          for (const img of v.params.images) {
+            if (!isAspectRatioMatch(img.width, img.height, 4 / 5)) {
+              setWarningMsg(t("validation.instagramImageValidation"));
+              break;
+            }
+          }
+        }
+      }
+    }
+    return warningParamsMapTemp;
+  }, [data, t]);
+
   return {
     errParamsMap,
+    warningParamsMap,
   };
 }
 

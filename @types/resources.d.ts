@@ -2044,7 +2044,6 @@ interface Resources {
       "titleMaxExceeded": "{{platformName}}标题最多{{maxCount}}字",
       "descriptionMaxExceeded": "{{platformName}}描述最多{{maxCount}}字",
       "descriptionRequired": "描述是必须的",
-      "imageMaxExceeded": "图片上传数量不能大于{{maxCount}}",
       "uploadImageOrVideo": "请上传图片或视频",
       "uploadImage": "请上传图片",
       "uploadVideo": "请上传视频",
@@ -2061,7 +2060,9 @@ interface Resources {
       "videoOnly": "已有视频，仅可继续上传视频，不能上传图片！",
       "imageVideoMixed": "图片和视频不能混合上传！",
       "onlyImageOrVideo": "只能上传图片或视频文件！",
-      "videoMaxExceeded": "视频上传数量不能大于{{maxCount}}"
+      "videoMaxExceeded": "视频上传数量不能大于{{maxCount}}",
+      "imageMaxExceeded": "图片上传数量不能大于{{maxCount}}",
+      "instagramImageValidation": "在 Instagram 网格和动态中获得最佳效果，建议上传 4:5 比例的图片。"
     },
     "preview": {
       "title": "预览",

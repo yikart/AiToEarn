@@ -108,3 +108,21 @@ export const formatImg = async ({
     img.src = imgUrl;
   });
 };
+
+/**
+ * 判断宽高是否属于指定比例（带缓冲阈值）
+ * @param width 宽
+ * @param height 高
+ * @param ratio 目标比例（宽/高）
+ * @param threshold 缓冲阈值，默认0.02
+ */
+export function isAspectRatioMatch(
+  width: number,
+  height: number,
+  ratio: number,
+  threshold: number = 0.02,
+): boolean {
+  if (height === 0) return false;
+  const actualRatio = width / height;
+  return Math.abs(actualRatio - ratio) <= threshold;
+}
