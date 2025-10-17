@@ -27,6 +27,7 @@ import { PubType } from "@/app/config/publishConfig";
 import { useTransClient } from "@/app/i18n/client";
 import PubParmasTextuploadImage from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage";
 import VideoPreviewModal from "@/components/VideoPreviewModal";
+import dynamic from "next/dynamic";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -55,6 +56,11 @@ export interface IPubParmasTextareaProps {
   videoFileValue?: IVideoFile;
   desValue?: string;
 }
+
+const ImageEditorModal = dynamic(
+  () => import("@/components/ImageEditorModal"),
+  { ssr: false },
+);
 
 const PubParmasTextarea = memo(
   forwardRef(
@@ -92,6 +98,8 @@ const PubParmasTextarea = memo(
         sort: true,
       });
       const { t } = useTransClient("publish");
+      // 编辑图片的索引
+      const [editImgIndex, setEditImgIndex] = useState(-1);
 
       useEffect(() => {
         if (isFirst.current.effect) {
@@ -285,6 +293,19 @@ const PubParmasTextarea = memo(
             onCancel={() => setPreviewData(undefined)}
           />
 
+          <ImageEditorModal
+            onOk={(editedImg) => {
+              setImageFileList((prevState) => {
+                const newState = [...prevState];
+                newState[editImgIndex] = editedImg;
+                return newState;
+              });
+            }}
+            imgFile={imageFileList[editImgIndex]}
+            open={editImgIndex !== -1}
+            onCancel={() => setEditImgIndex(-1)}
+          />
+
           <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
               {beforeExtend}
@@ -339,12 +360,8 @@ const PubParmasTextarea = memo(
                       }}
                     >
                       <PubParmasTextuploadImage
-                        onEditOk={(editedImg) => {
-                          setImageFileList((prevState) => {
-                            const newState = [...prevState];
-                            newState[i] = editedImg;
-                            return newState;
-                          });
+                        onEditClick={() => {
+                          setEditImgIndex(i);
                         }}
                         imageFile={v}
                         onClick={() => {

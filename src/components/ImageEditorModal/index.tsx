@@ -25,7 +25,7 @@ export interface IImageEditorModalRef {}
 export interface IImageEditorModalProps {
   open: boolean;
   onCancel: () => void;
-  imgFile: IImgFile;
+  imgFile?: IImgFile;
   onOk: (editedImg: IImgFile) => void;
 }
 
@@ -54,10 +54,10 @@ const ImageEditorModal = memo(
       }, [lng, t]);
 
       useEffect(() => {
-        if (open) {
+        if (open && imgFile) {
           const inst = imageEditorRef.current?.getInstance();
           if (inst) {
-            inst.loadImageFromURL(imgFile.imgUrl, "lena").then(() => {
+            inst.loadImageFromURL(imgFile?.imgUrl, "lena").then(() => {
               inst.ui.resizeEditor();
             });
           }
@@ -89,6 +89,7 @@ const ImageEditorModal = memo(
       }
 
       useEffect(() => {
+        isInit.current = false;
         const timeId = setInterval(() => {
           if (
             !isInit.current &&
@@ -96,17 +97,18 @@ const ImageEditorModal = memo(
           ) {
             addCropPreset("preset-4-5", "4:5", 4 / 5);
             addCropPreset("preset-1-1", "1:1", 1);
-            addCropPreset("preset-1_9-1", "1.19:1", 1.19);
+            addCropPreset("preset-9_1-1", "1.91:1", 1.91);
             clearInterval(timeId);
           }
         }, 100);
-      }, []);
+      }, [imgFile?.imgUrl]);
 
       return (
         <Modal
           title={t("imageEditing")}
           open={open}
           onCancel={onCancel}
+          getContainer={() => document.body}
           width={1100}
           footer={
             <>
@@ -126,7 +128,7 @@ const ImageEditorModal = memo(
                   const image = await formatImg({
                     blob: blob,
                     path:
-                      imgFile.filename ||
+                      imgFile?.filename ||
                       `aitoearn_edited_image_${Date.now()}.png`,
                   });
                   const uploadCoverRes = await toolsApi.uploadFileTemp(
@@ -144,11 +146,12 @@ const ImageEditorModal = memo(
         >
           <div className={styles.imageEditorModal}>
             <ImageEditor
+              key={imgFile?.imgUrl}
               ref={imageEditorRef}
               includeUI={{
                 locale: imageEditorLocale,
                 loadImage: {
-                  path: imgFile.imgUrl,
+                  path: imgFile?.imgUrl,
                   name: "SampleImage",
                 },
                 menu: [

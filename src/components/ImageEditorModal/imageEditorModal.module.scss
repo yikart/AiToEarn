@@ -6,5 +6,21 @@
     .tui-image-editor-download-btn, .tui-image-editor-header-logo {
       display: none !important;
     }
+    .tui-colorpicker-palette-container {
+      & > ul {
+        &:nth-of-type(1) {
+          display: flex;
+          flex-wrap: wrap;
+          .tui-colorpicker-palette-button {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+          }
+        }
+      }
+      span {
+        color: transparent !important;
+      }
+    }
   }
 }
