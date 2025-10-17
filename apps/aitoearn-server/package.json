@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@langchain/core": "^0.3.72",
+    "@langchain/openai": "^0.6.11",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/bullmq": "^11.0.3",
     "@nestjs/common": "^11.0.0",
@@ -24,9 +26,11 @@
     "@yikart/redlock": "workspace:*",
     "@yikart/ucloud": "workspace:*",
     "axios": "^1.12.2",
+    "bignumber.js": "^9.3.1",
     "bullmq": "^5.58.2",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
+    "data-urls": "^5.0.0",
     "dayjs": "^1.11.14",
     "fingerprint-generator": "^2.1.75",
     "googleapis": "^150.0.1",
@@ -35,6 +39,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "nats": "^2.29.3",
+    "openai": "^5.18.1",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
     "zod": "^4.0.17"

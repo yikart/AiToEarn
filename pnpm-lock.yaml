@@ -233,6 +233,12 @@ importers:
 
   apps/aitoearn-server:
     dependencies:
+      '@langchain/core':
+        specifier: ^0.3.72
+        version: 0.3.72(openai@5.18.1(ws@8.18.3)(zod@4.1.4))
+      '@langchain/openai':
+        specifier: ^0.6.11
+        version: 0.6.11(@langchain/core@0.3.72(openai@5.18.1(ws@8.18.3)(zod@4.1.4)))(ws@8.18.3)
       '@nestjs/axios':
         specifier: ^4.0.1
         version: 4.0.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(rxjs@7.8.2)
@@ -296,6 +302,9 @@ importers:
       axios:
         specifier: ^1.12.2
         version: 1.12.2
+      bignumber.js:
+        specifier: ^9.3.1
+        version: 9.3.1
       bullmq:
         specifier: ^5.58.2
         version: 5.58.2
@@ -305,6 +314,9 @@ importers:
       class-validator:
         specifier: ^0.14.2
         version: 0.14.2
+      data-urls:
+        specifier: ^5.0.0
+        version: 5.0.0
       dayjs:
         specifier: ^1.11.14
         version: 1.11.15
@@ -329,6 +341,9 @@ importers:
       nats:
         specifier: ^2.29.3
         version: 2.29.3
+      openai:
+        specifier: ^5.18.1
+        version: 5.18.1(ws@8.18.3)(zod@4.1.4)
       rxjs:
         specifier: ^7.8.0
         version: 7.8.2
