@@ -34,6 +34,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
       const { topics } = parseTopicString(v.params.des || "");
       const topicsAll = [...new Set((v.params.topics ?? []).concat(topics))];
       const { topicMax } = platInfo.commonPubParamsConfig;
+      const video = v.params.video;
 
       const setErrorMsg = (msg: string) => {
         errParamsMapTemp.set(v.account.id, {
@@ -159,11 +160,19 @@ export default function usePubParamsVerify(data: PubItem[]) {
               if ((v.params.images?.length || 0) !== 0) {
                 return setErrorMsg(t("validation.facebookReelNoImage"));
               }
+              // facebook reel 视频时长 3–90 秒
+              if (video && (video.duration > 90 || video.duration < 3)) {
+                return setErrorMsg("facebook reel 视频时长 3–90 秒");
+              }
               break;
             case "story":
               // facebook story 只能选择图片、视频，不能有描述
               if (v.params.des) {
                 return setErrorMsg(t("validation.facebookStoryNoDes"));
+              }
+              // facebook story 视频时长 3–4小时
+              if (video && (video.duration > 14400 || video.duration < 3)) {
+                return setErrorMsg("facebook story 视频时长 3–4小时");
               }
               break;
           }
@@ -171,10 +180,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
         // instagram的强制校验
         if (v.account.type === PlatType.Instagram) {
+          // 视频大小 ≤ 100MB
+          if (video && video.size > 100 * 1024 * 1024) {
+            return setErrorMsg("instagram 视频大小 ≤ 100MB");
+          }
+
           switch (v.params.option.instagram?.content_category) {
             case "post":
               // instagram post不能上传视频，必须上传图片
-              if (v.params.video) {
+              if (video) {
                 return setErrorMsg(t("validation.instagramPostNoVideo"));
               }
               break;
@@ -183,13 +197,40 @@ export default function usePubParamsVerify(data: PubItem[]) {
               if ((v.params.images?.length || 0) !== 0) {
                 return setErrorMsg(t("validation.instagramReelNoImage"));
               }
+              // instagram reel 视频时长 5秒 – 15 分钟
+              if (video && (video.duration > 900 || video.duration < 5)) {
+                return setErrorMsg("instagram reel 视频时长 5秒 – 15 分钟");
+              }
               break;
             case "story":
               // instagram story 只能选择图片、视频，不能有描述
               if (v.params.des) {
                 return setErrorMsg(t("validation.instagramStoryNoDes"));
               }
+              // instagram story 视频时长 3–60 秒
+              if (video && (video.duration > 60 || video.duration < 3)) {
+                return setErrorMsg("instagram story 视频时长 3–60 秒");
+              }
               break;
+          }
+        }
+
+        if (v.account.type === PlatType.Threads) {
+          // Threads 视频大小限制 最大 1GB
+          if (video && video.size > 1024 * 1024 * 1024) {
+            return setErrorMsg("Threads 视频大小限制 最大 1GB");
+          }
+          // Threads视频限制，最长 5 分钟，最短 > 0 秒
+          if (video && (video.duration > 300 || video.duration <= 0)) {
+            return setErrorMsg("Threads视频限制，最长 5 分钟，最短 > 0 秒");
+          }
+          // Threads 图片限制，最少两张图片
+          if (
+            platInfo.pubTypes.has(PubType.ImageText) &&
+            (v.params.images?.length || 0) > 0 &&
+            (v.params.images?.length || 0) < 2
+          ) {
+            return setErrorMsg("Threads 图片限制，最少两张图片");
           }
         }
 
@@ -202,6 +243,42 @@ export default function usePubParamsVerify(data: PubItem[]) {
           // 强制需要 选择Board
           if (!v.params.option.pinterest?.boardId) {
             return setErrorMsg(t("validation.boardRequired"));
+          }
+          // Pinterest 视频限制，4 秒–15 分钟
+          if (video && (video.duration > 900 || video.duration < 4)) {
+            return setErrorMsg("Pinterest 视频限制，4 秒–15 分钟");
+          }
+          // Pinterest 视频大小≤ 1GB
+          if (video && video.size > 1024 * 1024 * 1024) {
+            return setErrorMsg("Pinterest 视频大小≤ 1GB");
+          }
+        }
+
+        // TikTok 的强制校验
+        if (v.account.type === PlatType.Tiktok) {
+          // 	TikTok 视频时长限制 3 秒至 10 分钟
+          if (video && (video.duration > 600 || video.duration < 3)) {
+            return setErrorMsg("TikTok 视频时长限制 3 秒至 10 分钟");
+          }
+          // TikTok视频大小限制1GB或更小
+          if (video && video.size > 1024 * 1024 * 1024) {
+            return setErrorMsg("TikTok视频大小限制1GB或更小");
+          }
+          // TikTok限制视频最小高度和宽度为 360 像素
+          if (video && (video.width < 360 || video.height < 360)) {
+            return setErrorMsg("TikTok限制视频最小高度和宽度为 360 像素");
+          }
+        }
+
+        // Twitter 的强制校验
+        if (v.account.type === PlatType.Twitter) {
+          // Twitter视频限制 最短 0.5 秒，最长 140 秒
+          if (video && (video.duration > 140 || video.duration < 0.5)) {
+            return setErrorMsg("Twitter视频限制 最短 0.5 秒，最长 140 秒");
+          }
+          // Twitter视频大小限制 最大 512MB
+          if (video && video.size > 512 * 1024 * 1024) {
+            return setErrorMsg("Twitter视频大小限制 最大 512MB");
           }
         }
       })();
@@ -223,7 +300,11 @@ export default function usePubParamsVerify(data: PubItem[]) {
       // Instagram 警告消息
       if (v.account.type === PlatType.Instagram) {
         // 图片比例判断
-        if (v.params.images && v.params.images.length > 0) {
+        if (
+          v.params.option.instagram?.content_category === "post" &&
+          v.params.images &&
+          v.params.images.length > 0
+        ) {
           for (const img of v.params.images) {
             if (!isAspectRatioMatch(img.width, img.height, 4 / 5)) {
               setWarningMsg(t("validation.instagramImageValidation"));
