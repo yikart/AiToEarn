@@ -162,7 +162,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
               }
               // facebook reel 视频时长 3–90 秒
               if (video && (video.duration > 90 || video.duration < 3)) {
-                return setErrorMsg("facebook reel 视频时长 3–90 秒");
+                return setErrorMsg(t("validation.facebookReelDuration"));
               }
               break;
             case "story":
@@ -172,7 +172,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
               }
               // facebook story 视频时长 3–4小时
               if (video && (video.duration > 14400 || video.duration < 3)) {
-                return setErrorMsg("facebook story 视频时长 3–4小时");
+                return setErrorMsg(t("validation.facebookStoryDuration"));
               }
               break;
           }
@@ -182,7 +182,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
         if (v.account.type === PlatType.Instagram) {
           // 视频大小 ≤ 100MB
           if (video && video.size > 100 * 1024 * 1024) {
-            return setErrorMsg("instagram 视频大小 ≤ 100MB");
+            return setErrorMsg(t("validation.instagramVideoSize"));
           }
 
           switch (v.params.option.instagram?.content_category) {
@@ -199,17 +199,17 @@ export default function usePubParamsVerify(data: PubItem[]) {
               }
               // instagram reel 视频时长 5秒 – 15 分钟
               if (video && (video.duration > 900 || video.duration < 5)) {
-                return setErrorMsg("instagram reel 视频时长 5秒 – 15 分钟");
+                return setErrorMsg(t("validation.instagramReelDuration"));
               }
               break;
             case "story":
-              // instagram story 只能选择图片、视频，不能有描述
+              // instagram story 只能选择图片��视频，不能有描述
               if (v.params.des) {
                 return setErrorMsg(t("validation.instagramStoryNoDes"));
               }
               // instagram story 视频时长 3–60 秒
               if (video && (video.duration > 60 || video.duration < 3)) {
-                return setErrorMsg("instagram story 视频时长 3–60 秒");
+                return setErrorMsg(t("validation.instagramStoryDuration"));
               }
               break;
           }
@@ -218,11 +218,11 @@ export default function usePubParamsVerify(data: PubItem[]) {
         if (v.account.type === PlatType.Threads) {
           // Threads 视频大小限制 最大 1GB
           if (video && video.size > 1024 * 1024 * 1024) {
-            return setErrorMsg("Threads 视频大小限制 最大 1GB");
+            return setErrorMsg(t("validation.threadsVideoSize"));
           }
           // Threads视频限制，最长 5 分钟，最短 > 0 秒
           if (video && (video.duration > 300 || video.duration <= 0)) {
-            return setErrorMsg("Threads视频限制，最长 5 分钟，最短 > 0 秒");
+            return setErrorMsg(t("validation.threadsVideoDuration"));
           }
           // Threads 图片限制，最少两张图片
           if (
@@ -230,7 +230,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
             (v.params.images?.length || 0) > 0 &&
             (v.params.images?.length || 0) < 2
           ) {
-            return setErrorMsg("Threads 图片限制，最少两张图片");
+            return setErrorMsg(t("validation.threadsImageMin"));
           }
         }
 
@@ -246,11 +246,11 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
           // Pinterest 视频限制，4 秒–15 分钟
           if (video && (video.duration > 900 || video.duration < 4)) {
-            return setErrorMsg("Pinterest 视频限制，4 秒–15 分钟");
+            return setErrorMsg(t("validation.pinterestVideoDuration"));
           }
           // Pinterest 视频大小≤ 1GB
           if (video && video.size > 1024 * 1024 * 1024) {
-            return setErrorMsg("Pinterest 视频大小≤ 1GB");
+            return setErrorMsg(t("validation.pinterestVideoSize"));
           }
         }
 
@@ -258,15 +258,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
         if (v.account.type === PlatType.Tiktok) {
           // 	TikTok 视频时长限制 3 秒至 10 分钟
           if (video && (video.duration > 600 || video.duration < 3)) {
-            return setErrorMsg("TikTok 视频时长限制 3 秒至 10 分钟");
+            return setErrorMsg(t("validation.tiktokVideoDuration"));
           }
           // TikTok视频大小限制1GB或更小
           if (video && video.size > 1024 * 1024 * 1024) {
-            return setErrorMsg("TikTok视频大小限制1GB或更小");
+            return setErrorMsg(t("validation.tiktokVideoSize"));
           }
           // TikTok限制视频最小高度和宽度为 360 像素
           if (video && (video.width < 360 || video.height < 360)) {
-            return setErrorMsg("TikTok限制视频最小高度和宽度为 360 像素");
+            return setErrorMsg(t("validation.tiktokVideoMinResolution"));
           }
         }
 
@@ -274,11 +274,11 @@ export default function usePubParamsVerify(data: PubItem[]) {
         if (v.account.type === PlatType.Twitter) {
           // Twitter视频限制 最短 0.5 秒，最长 140 秒
           if (video && (video.duration > 140 || video.duration < 0.5)) {
-            return setErrorMsg("Twitter视频限制 最短 0.5 秒，最长 140 秒");
+            return setErrorMsg(t("validation.twitterVideoDuration"));
           }
           // Twitter视频大小限制 最大 512MB
           if (video && video.size > 512 * 1024 * 1024) {
-            return setErrorMsg("Twitter视频大小限制 最大 512MB");
+            return setErrorMsg(t("validation.twitterVideoSize"));
           }
         }
       })();

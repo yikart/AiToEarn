@@ -2062,7 +2062,22 @@ interface Resources {
       "onlyImageOrVideo": "只能上传图片或视频文件！",
       "videoMaxExceeded": "视频上传数量不能大于{{maxCount}}",
       "imageMaxExceeded": "图片上传数量不能大于{{maxCount}}",
-      "instagramImageValidation": "在 Instagram 网格和动态中获得最佳效果，建议上传 4:5 比例的图片。"
+      "instagramImageValidation": "在 Instagram 网格和动态中获得最佳效果，建议上传 4:5 比例的图片。",
+      "facebookReelDuration": "Facebook Reel视频时长需为3–90秒",
+      "facebookStoryDuration": "Facebook Story视频时长需为3–4小时",
+      "instagramVideoSize": "Instagram视频大小不能超过100MB",
+      "instagramReelDuration": "Instagram Reel视频时长需为5秒–15分钟",
+      "instagramStoryDuration": "Instagram Story视频时长需为3–60秒",
+      "threadsVideoSize": "Threads视频大小不能超过1GB",
+      "threadsVideoDuration": "Threads视频时长需为0秒以上且不超过5分钟",
+      "threadsImageMin": "Threads图片至少需要两张",
+      "pinterestVideoDuration": "Pinterest视频时长需为4秒–15分钟",
+      "pinterestVideoSize": "Pinterest视频大小不能超过1GB",
+      "tiktokVideoDuration": "TikTok视频时长需为3秒至10分钟",
+      "tiktokVideoSize": "TikTok视频大小不能超过1GB",
+      "tiktokVideoMinResolution": "TikTok视频最小分辨率为360x360",
+      "twitterVideoDuration": "Twitter视频时长需为0.5秒–140秒",
+      "twitterVideoSize": "Twitter视频大小不能超过512MB"
     },
     "preview": {
       "title": "预览",

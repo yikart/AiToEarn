@@ -89,7 +89,22 @@
     "imageVideoMixed": "Images and videos cannot be uploaded together!",
     "onlyImageOrVideo": "Only image or video files can be uploaded!",
     "videoMaxExceeded": "The number of videos uploaded cannot exceed {{maxCount}}",
-    "instagramImageValidation": "For best results on your Instagram Grid and Feed, we recommend uploading images with a 4:5 aspect ratio."
+    "instagramImageValidation": "For best results on your Instagram Grid and Feed, we recommend uploading images with a 4:5 aspect ratio.",
+    "facebookReelDuration": "Facebook Reel video duration must be 3–90 seconds",
+    "facebookStoryDuration": "Facebook Story video duration must be 3–4 hours",
+    "instagramVideoSize": "Instagram video size cannot exceed 100MB",
+    "instagramReelDuration": "Instagram Reel video duration must be 5 seconds–15 minutes",
+    "instagramStoryDuration": "Instagram Story video duration must be 3–60 seconds",
+    "threadsVideoSize": "Threads video size cannot exceed 1GB",
+    "threadsVideoDuration": "Threads video duration must be greater than 0 and no more than 5 minutes",
+    "threadsImageMin": "Threads requires at least two images",
+    "pinterestVideoDuration": "Pinterest video duration must be 4 seconds–15 minutes",
+    "pinterestVideoSize": "Pinterest video size cannot exceed 1GB",
+    "tiktokVideoDuration": "TikTok video duration must be 3 seconds to 10 minutes",
+    "tiktokVideoSize": "TikTok video size cannot exceed 1GB",
+    "tiktokVideoMinResolution": "TikTok video minimum resolution is 360x360",
+    "twitterVideoDuration": "Twitter video duration must be 0.5–140 seconds",
+    "twitterVideoSize": "Twitter video size cannot exceed 512MB"
   },
   "preview": {
     "title": "Preview",
