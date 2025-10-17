@@ -972,35 +972,30 @@ const AccountSidebar = memo(
             {/* 掉线账号重新登录确认弹窗 */}
             <Modal
               open={showReauthConfirm}
-              title="Session Expired"
+              title={t("reauthConfirm.title" as any)}
               onCancel={() => {
                 setShowReauthConfirm(false);
                 setReauthAccount(null);
               }}
               footer={
-                <>
-                  <Button onClick={() => {
-                    setShowReauthConfirm(false);
-                    setReauthAccount(null);
-                  }}>
-                    {t("createSpace.cancel")}
-                  </Button>
-                  <Button
-                    type="primary"
-                    onClick={handleConfirmReauth}
-                  >
-                    Log In Again
-                  </Button>
-                </>
+                <Button
+                  type="primary"
+                  onClick={handleConfirmReauth}
+                >
+                  {t("reauthConfirm.loginAgain" as any)}
+                </Button>
               }
             >
               <div className={styles.reauthConfirm}>
                 {reauthAccount && (
                   <div>
                     <p style={{ marginBottom: '16px' }}>
-                      Your {AccountPlatInfoMap.get(reauthAccount.type)?.name || reauthAccount.type} account "{reauthAccount.nickname}" (in {accountGroupList.find(group => group.id === reauthAccount.groupId)?.name || t("defaultSpace")}) session has expired. Would you like to log in again?
+                      {t("reauthConfirm.content" as any, {
+                        platformName: AccountPlatInfoMap.get(reauthAccount.type)?.name || reauthAccount.type,
+                        nickname: reauthAccount.nickname,
+                        spaceName: accountGroupList.find(group => group.id === reauthAccount.groupId)?.name || t("defaultSpace")
+                      })}
                     </p>
-                    
                   </div>
                 )}
               </div>
