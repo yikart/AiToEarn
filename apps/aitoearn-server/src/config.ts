@@ -115,6 +115,12 @@ export const aiConfigSchema = z.object({
   }),
 })
 
+const AliGreenConfigSchema = z.object({
+  accessKeyId: z.string().default(''),
+  accessKeySecret: z.string().default(''),
+  endpoint: z.string().default(''),
+})
+
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
   ucloud: z.object({
@@ -156,6 +162,7 @@ export const appConfigSchema = z.object({
   mail: mailConfigSchema,
   environment: z.string().default('development'),
   ai: aiConfigSchema,
+  aliGreen: AliGreenConfigSchema,
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
