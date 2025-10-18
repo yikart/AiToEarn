@@ -12,12 +12,12 @@ import { removeLocalePrefix } from "@/app/layout/layout.utils";
 import { homeHeaderRouterData } from "@/app/layout/routerData";
 import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
-export interface IHomeHeaderRef {}
+export interface IHomeHeaderRef { }
 
-export interface IHomeHeaderProps {}
+export interface IHomeHeaderProps { }
 
 const HomeHeader = memo(
-  forwardRef(({}: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
+  forwardRef(({ }: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
     const pathname = usePathname();
     const { t } = useTransClient("home");
     const router = useRouter();
@@ -63,7 +63,7 @@ const HomeHeader = memo(
               <Image src={logo} alt="logo" width={50} />
               <span className={styles.logoText}>{t("header.logo")}</span>
             </div>
-            
+
             {/* 桌面端导航 */}
             <nav className={styles.nav}>
               {homeHeaderRouterData.value.map((v) => {
@@ -86,7 +86,7 @@ const HomeHeader = memo(
             </nav>
 
             <div className={styles.headerRight}>
-              <LanguageSwitcher 
+              <LanguageSwitcher
                 className={styles.languageButton}
                 size="small"
               />
@@ -130,7 +130,7 @@ const HomeHeader = memo(
               <CloseOutlined />
             </button>
           </div>
-          
+
           <nav className={styles.mobileMenuNav}>
             {homeHeaderRouterData.value.map((v) => {
               if (v.href === "/") {
@@ -152,7 +152,7 @@ const HomeHeader = memo(
           </nav>
 
           <div className={styles.mobileMenuFooter}>
-            <LanguageSwitcher 
+            <LanguageSwitcher
               className={styles.mobileLanguageButton}
               size="small"
             />

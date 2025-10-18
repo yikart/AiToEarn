@@ -20,12 +20,12 @@ const LanguageSwitcher = ({ className, style, size = 'middle' }: LanguageSwitche
 
   const handleLanguageChange = (newLng: string) => {
     userStore.setLang(newLng);
-    
+
     // 获取当前路径并替换语言前缀
     const currentPath = location.pathname;
     const pathWithoutLang = currentPath.replace(`/${userStore.lang}`, "") || "/";
     const newPath = `/${newLng}${pathWithoutLang}`;
-    
+
     router.push(newPath);
   };
 
@@ -52,8 +52,8 @@ const LanguageSwitcher = ({ className, style, size = 'middle' }: LanguageSwitche
     label: (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Image 
-            src={option.flag} 
+          <Image
+            src={option.flag}
             alt={option.label}
             width={16}
             height={16}
@@ -101,9 +101,9 @@ const LanguageSwitcher = ({ className, style, size = 'middle' }: LanguageSwitche
       <Button
         type="text"
         className={className}
-        style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
+        style={{
+          display: 'flex',
+          alignItems: 'center',
           gap: '8px',
           padding: '4px 8px',
           height: 'auto',
@@ -114,8 +114,8 @@ const LanguageSwitcher = ({ className, style, size = 'middle' }: LanguageSwitche
           ...style
         }}
       >
-        <Image 
-          src={currentLanguage.flag} 
+        <Image
+          src={currentLanguage.flag}
           alt={currentLanguage.label}
           width={buttonConfig.iconSize}
           height={buttonConfig.iconSize}
