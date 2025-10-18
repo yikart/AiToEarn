@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios'
 import { Module } from '@nestjs/common'
 import { InteractController } from './interact.controller'
 import { InteractService } from './interact.service'
@@ -7,7 +8,7 @@ import { ReplyCommentRecordController } from './replyCommentRecord.controller'
 import { ReplyCommentRecordService } from './replyCommentRecord.service'
 
 @Module({
-  imports: [],
+  imports: [HttpModule],
   controllers: [InteractController, InteractionRecordController, ReplyCommentRecordController],
   providers: [InteractService, InteractionRecordService, ReplyCommentRecordService],
 })
