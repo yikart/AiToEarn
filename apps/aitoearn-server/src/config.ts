@@ -158,7 +158,7 @@ export const appConfigSchema = z.object({
   redlock: redlockConfigSchema,
   jwt: jwtConfigSchema,
   oneSignal: oneSignalConfigSchema,
-  s3: s3ConfigSchema,
+  awsS3: s3ConfigSchema,
   mail: mailConfigSchema,
   environment: z.string().default('development'),
   ai: aiConfigSchema,

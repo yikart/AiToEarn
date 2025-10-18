@@ -11,6 +11,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^11.1.6",
+    "@nestjs/platform-express": "^11.1.6",
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
     "@yikart/aitoearn-user-client": "workspace:*",
@@ -39,17 +40,21 @@
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
+    "mime-types": "^3.0.1",
     "nats": "^2.29.3",
     "openai": "^5.18.1",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
+    "uuid": "^11.1.0",
     "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
+    "@types/express": "^5.0.0",
     "@types/js-yaml": "^4.0.9",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/lodash": "^4.17.20"
+    "@types/lodash": "^4.17.20",
+    "@types/multer": "^1.4.13"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
