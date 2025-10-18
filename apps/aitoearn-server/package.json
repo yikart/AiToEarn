@@ -14,6 +14,7 @@
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
     "@yikart/aitoearn-user-client": "workspace:*",
+    "@yikart/ali-green": "workspace:*",
     "@yikart/ansible": "workspace:*",
     "@yikart/aws-s3": "workspace:*",
     "@yikart/cloud-space-client": "workspace:*",
