@@ -4,8 +4,7 @@ import { AppReleaseService } from './app-release.service'
 
 @Global()
 @Module({
-  imports: [
-  ],
+  imports: [],
   providers: [AppReleaseService],
   controllers: [AppReleaseController],
 })

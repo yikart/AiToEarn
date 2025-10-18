@@ -7,6 +7,22 @@ export const appReleaseLinksSchema = z.object({
   store: z.string().optional().describe('商店链接'),
   direct: z.string().describe('直接下载链接'),
 })
+// 检查版本 DTO Schema
+const checkVersionDtoSchema = z.object({
+  platform: z.enum(AppPlatform).describe('平台'),
+  currentVersion: z.string().describe('当前版本号'),
+  currentBuildNumber: z.number().optional().describe('当前构建号'),
+})
+
+export class CheckVersionDto extends createZodDto(checkVersionDtoSchema) {}
+
+// 查询版本发布列表 DTO Schema（管理端）
+const queryAppReleaseDtoSchema = z.object({
+  platform: z.enum(AppPlatform).optional().describe('平台筛选'),
+  ...PaginationDtoSchema.shape,
+})
+
+export class QueryAppReleaseDto extends createZodDto(queryAppReleaseDtoSchema) {}
 
 // 创建版本发布 DTO Schema
 const createAppReleaseDtoSchema = z.object({
@@ -33,23 +49,6 @@ const updateAppReleaseDtoSchema = z.object({
 })
 
 export class UpdateAppReleaseDto extends createZodDto(updateAppReleaseDtoSchema) {}
-
-// 检查版本 DTO Schema
-const checkVersionDtoSchema = z.object({
-  platform: z.enum(AppPlatform).describe('平台'),
-  currentVersion: z.string().describe('当前版本号'),
-  currentBuildNumber: z.number().optional().describe('当前构建号'),
-})
-
-export class CheckVersionDto extends createZodDto(checkVersionDtoSchema) {}
-
-// 查询版本发布列表 DTO Schema（管理端）
-const queryAppReleaseDtoSchema = z.object({
-  platform: z.enum(AppPlatform).optional().describe('平台筛选'),
-  ...PaginationDtoSchema.shape,
-})
-
-export class QueryAppReleaseDto extends createZodDto(queryAppReleaseDtoSchema) {}
 
 // 获取版本发布详情 DTO Schema
 const getAppReleaseByIdDtoSchema = z.object({

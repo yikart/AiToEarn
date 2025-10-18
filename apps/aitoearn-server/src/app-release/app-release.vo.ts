@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto } from '@yikart/common'
+import { createZodDto } from '@yikart/common'
 import { AppPlatform } from '@yikart/mongodb'
 import { z } from 'zod'
 import { appReleaseLinksSchema } from './app-release.dto'
@@ -12,7 +12,7 @@ const appReleaseVoSchema = z.object({
   forceUpdate: z.boolean().describe('是否强制更新'),
   notes: z.string().describe('版本说明'),
   links: appReleaseLinksSchema.describe('版本链接'),
-  publishedAt: z.date().describe('发布时间'),
+  publishedAt: z.iso.datetime().describe('发布时间'),
   createdAt: z.date().optional().describe('创建时间'),
   updatedAt: z.date().optional().describe('更新时间'),
 })
@@ -33,6 +33,3 @@ const checkVersionVoSchema = z.object({
 })
 
 export class CheckVersionVo extends createZodDto(checkVersionVoSchema) {}
-
-// 版本发布列表 VO (使用分页)
-export class AppReleaseListVo extends createPaginationVo(appReleaseVoSchema, 'AppReleaseListVo') {}
