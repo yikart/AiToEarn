@@ -19,9 +19,9 @@ export interface UserInfo {
   popularizeCode?: string;
   vipInfo?: {
     id: string;
-    cycleType: number;
     expireTime: string;
-    autoContinue: boolean;
+    startTime: string;
+    status: 'none' | 'trialing' | 'monthly_once' | 'yearly_once' | 'active_monthly' | 'active_yearly' | 'active_nonrenewing' | 'expired';
     _id: string;
   };
 }

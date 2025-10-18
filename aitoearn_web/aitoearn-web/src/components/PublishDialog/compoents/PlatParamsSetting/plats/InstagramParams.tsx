@@ -46,7 +46,6 @@ const InstagramParams = memo(
             {...pubParmasTextareaCommonParams}
             extend={
               <>
-                <CommonTitleInput pubItem={pubItem} />
                 <div
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}

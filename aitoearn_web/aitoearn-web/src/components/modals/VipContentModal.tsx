@@ -35,11 +35,37 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
   // 辅助函数处理翻译
   const translate = (key: string) => t(key as any);
   
+  // 状态判断辅助函数
+  const getVipStatusInfo = (status: string) => {
+    switch (status) {
+      case 'none':
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'trialing':
+        return { isVip: true, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'monthly_once':
+        return { isVip: true, isMonthly: true, isYearly: false, isAutoRenew: false, isOnce: true };
+      case 'yearly_once':
+        return { isVip: true, isMonthly: false, isYearly: true, isAutoRenew: false, isOnce: true };
+      case 'active_monthly':
+        return { isVip: true, isMonthly: true, isYearly: false, isAutoRenew: true, isOnce: false };
+      case 'active_yearly':
+        return { isVip: true, isMonthly: false, isYearly: true, isAutoRenew: true, isOnce: false };
+      case 'active_nonrenewing':
+        return { isVip: true, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'expired':
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      default:
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+    }
+  };
+  
   // 判断用户是否为有效会员
   const isVip = useMemo(() => {
-    return userStore.userInfo?.vipInfo && 
-           userStore.userInfo.vipInfo.expireTime && 
-           new Date(userStore.userInfo.vipInfo.expireTime) > new Date();
+    const vipInfo = userStore.userInfo?.vipInfo;
+    if (!vipInfo) return false;
+    
+    const statusInfo = getVipStatusInfo(vipInfo.status);
+    return statusInfo.isVip && vipInfo.expireTime && new Date(vipInfo.expireTime) > new Date();
   }, [userStore.userInfo]);
 
   // 判断用户是否已经是相同类型的会员且未过期
@@ -53,10 +79,11 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
     }
     
     const vipInfo = userStore.userInfo.vipInfo;
+    const statusInfo = getVipStatusInfo(vipInfo.status);
     return {
-      month: vipInfo.cycleType === 1, // 1 是月度
-      year: vipInfo.cycleType === 2,  // 2 是年度
-      once: false // 一次性购买不在此判断范围内
+      month: statusInfo.isMonthly && statusInfo.isAutoRenew, // 连续包月
+      year: statusInfo.isYearly && statusInfo.isAutoRenew,  // 连续包年
+      once: statusInfo.isOnce // 一次性购买
     };
   }, [userStore.userInfo, isVip]);
   
@@ -159,7 +186,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       footer={null}
       width={modalWidth}
       className={styles.outsideCloseModal}
-      destroyOnClose
+      destroyOnHidden
       centered
     >
       <div className={vipStyles.wrapper}>
@@ -215,14 +242,32 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <div className={vipStyles.planType}>
                   {translate('modal.vipInfo.planType')}: 
                   <span className={vipStyles.planValue}>
-                    { userStore.userInfo.vipInfo.cycleType === 2 && ( userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.yearly') : translate('modal.vipInfo.yearly2'))}
-                    { userStore.userInfo.vipInfo.cycleType === 1 && ( userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.monthly') : translate('modal.vipInfo.monthly2'))}
-                      
-                    {/* {!userStore.userInfo.vipInfo.autoContinue && ` (${translate('modal.vipInfo.singleMonth')})`} */}
+                    {(() => {
+                      const statusInfo: any = getVipStatusInfo(userStore.userInfo.vipInfo.status);
+                      if (statusInfo.isYearly && statusInfo.isAutoRenew) {
+                        return translate('modal.vipInfo.yearly');
+                      } else if (statusInfo.isYearly && !statusInfo.isAutoRenew) {
+                        return translate('modal.vipInfo.yearly2');
+                      } else if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
+                        return translate('modal.vipInfo.monthly');
+                      } else if (statusInfo.isMonthly && !statusInfo.isAutoRenew) {
+                        return translate('modal.vipInfo.monthly2');
+                      } else if (statusInfo.isOnce) {
+                        return statusInfo.isYearly ? translate('modal.vipInfo.yearly2') : translate('modal.vipInfo.monthly2');
+                      } else if (userStore.userInfo.vipInfo.status === 'trialing') {
+                        return ` ${translate('modal.vipInfo.trial' as any)}`;
+                      } else if (userStore.userInfo.vipInfo.status === 'active_nonrenewing') {
+                        return translate('modal.vipInfo.cancelled' as any);
+                      }
+                      return translate('modal.vipInfo.monthly');
+                    })()}
                   </span>
                 </div>
                 <div className={vipStyles.expireTime}>
-                  { userStore.userInfo.vipInfo.autoContinue ? translate('modal.vipInfo.xufeiTime') : translate('modal.vipInfo.expireTime')}: 
+                  {(() => {
+                    const statusInfo = getVipStatusInfo(userStore.userInfo.vipInfo.status);
+                    return statusInfo.isAutoRenew ? translate('modal.vipInfo.xufeiTime') : translate('modal.vipInfo.expireTime');
+                  })()}: 
                   <span className={vipStyles.expireValue}>
                     {new Date(userStore.userInfo.vipInfo.expireTime).toLocaleDateString()}
                   </span>
@@ -261,7 +306,12 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
             {translate('modal.tabs.monthly')} <Tag style={{ marginLeft: 6, border: '1px solid rgba(184,221,255,.08)' }}>{translate('modal.savings.monthly')}</Tag>
           </div>
          {
-          !userStore.userInfo?.vipInfo?.autoContinue && (
+          (() => {
+            const vipInfo = userStore.userInfo?.vipInfo;
+            if (!vipInfo) return true;
+            const statusInfo = getVipStatusInfo(vipInfo.status);
+            return !statusInfo.isAutoRenew;
+          })() && (
             <div onClick={() => handleTabClick('once')} className={`${vipStyles.switchBtn} ${activeTab === 'once' ? vipStyles.active : ''}`}>
               {translate('modal.tabs.once')}
             </div>
@@ -284,8 +334,9 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <Button disabled className={vipStyles.freeBtn}>
                   {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
                 </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
+                {/* <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div> */}
                 <ul className={vipStyles.featureList}>
+                <li>{translate('modal.free.points')}</li>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
@@ -304,14 +355,14 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('year')}
                    loading={loading}
-                   disabled={isCurrentPlan.year&& userStore.userInfo?.vipInfo?.autoContinue}
+                   disabled={isCurrentPlan.year || isCurrentPlan.month}
                  >
-                   {(isCurrentPlan.year && userStore.userInfo?.vipInfo?.autoContinue) ? translate('currentPlan') : translate('modal.plans.goumai')}
+                   {isCurrentPlan.year ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.points')}</div>
-                <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.description')}</div>
+                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.features.dailyPoints')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.yearly.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.yearly.description')}</li>
                   <li>{translate('modal.plans.yearly.features.contentReview')}</li>
                   <li>{translate('modal.plans.yearly.features.multiModel')}</li>
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
@@ -333,8 +384,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <Button disabled className={vipStyles.freeBtn}>
                   {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
                 </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
+                <li>{translate('modal.free.points')}</li>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
@@ -353,14 +404,14 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                    className={vipStyles.primaryBtn}
                    onClick={() => handleActivate('month')}
                    loading={loading}
-                   disabled={isCurrentPlan.month&& userStore.userInfo?.vipInfo?.autoContinue}
+                   disabled={isCurrentPlan.month || isCurrentPlan.year}
                  >
-                   {(isCurrentPlan.month && userStore.userInfo?.vipInfo?.autoContinue) ? translate('currentPlan') : translate('modal.plans.goumai')}
+                   {isCurrentPlan.month ? translate('currentPlan') : translate('modal.plans.goumai')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.monthly.points')}</div>
-                <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.description')}</div>
+                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.features.dailyPoints')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.monthly.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.monthly.description')}</li>
                   <li>{translate('modal.plans.yearly.features.contentReview')}</li>
                   <li>{translate('modal.plans.yearly.features.multiModel')}</li>
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
@@ -381,8 +432,8 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                 <Button disabled className={vipStyles.freeBtn}>
                   {isVip ? translate('modal.free.freePlan') : translate('modal.free.currentPlan')}
                 </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.free.points')}</div>
                 <ul className={vipStyles.featureList}>
+                <li>{translate('modal.free.points')}</li>
                   <li>{translate('modal.free.features.dailyPoints')}</li>
                   <li>{translate('modal.free.features.maxPoints')}</li>
                   <li>{translate('modal.free.features.videos')}</li>
@@ -401,10 +452,10 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
                  >
                    {translate('modal.plans.goumai')}
                  </Button>
-                <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.once.points')}</div>
-                <div className={vipStyles.subDesc}>{translate('modal.plans.once.description')}</div>
+                 <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> {translate('modal.plans.yearly.features.dailyPoints')}</div>
+                <div className={vipStyles.subDesc}>{translate('modal.plans.once.points')}</div>
                 <ul className={vipStyles.featureList}>
-                  <li>{translate('modal.plans.yearly.features.dailyPoints')}</li>
+                  <li>{translate('modal.plans.once.description')}</li>
                   <li>{translate('modal.plans.yearly.features.contentReview')}</li>
                   <li>{translate('modal.plans.yearly.features.multiModel')}</li>
                   <li>{translate('modal.plans.yearly.features.textToVideo')}</li>
@@ -414,68 +465,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
               </div>
             </>
           )}
-
-          {/* <div className={vipStyles.freeCard}>
-            <div className={vipStyles.freeTitle}>免费</div>
-            <div className={vipStyles.freePrice}><span>¥</span>0<span className={vipStyles.unit}>每月</span></div>
-            <div className={vipStyles.freeForever}>永久</div>
-            <Button disabled className={vipStyles.freeBtn}>当前计划</Button>
-            <div className={vipStyles.freeItem}>发布赠送积分</div>
-          </div>
-
-          <div className={vipStyles.planCard}>
-            <div className={vipStyles.planHead}>一次性月度会员</div>
-            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>1</span><span className={vipStyles.unit}>天</span></div>
-            <div className={vipStyles.planDesc}>1元试用7天，首年5折¥329 · 次年¥659自动续费</div>
-            <Button className={vipStyles.primaryBtn}>¥1 试用7天</Button>
-            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 1,080积分每月</div>
-            <div className={vipStyles.subDesc}>最多生成4320张图和216个视频</div>
-            <ul className={vipStyles.featureList}>
-              <li>每天赠送积分</li>
-              <li>生成类视频无限次加速</li>
-              <li>生成作品去除品牌水印</li>
-              <li>视频内置罩</li>
-              <li>内容安全审核</li>
-              <li>视频更流畅（可补帧到最高60FPS）</li>
-            </ul>
-          </div>
-
-          <div className={vipStyles.planCard}>
-            <div className={vipStyles.planHead}>✚ 月度会员</div>
-            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>949</span><span className={vipStyles.unit}>每年</span></div>
-            <div className={vipStyles.planDesc}>首年5折¥949 · 次年续费金额¥1,899 · 包年可随时取消</div>
-            <Button className={vipStyles.primaryBtn}>¥949 首年5折</Button>
-            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 4,000积分每月</div>
-            <div className={vipStyles.subDesc}>最多生成16000张图和800个视频</div>
-            <ul className={vipStyles.featureList}>
-              <li>每天赠送积分</li>
-              <li>生成类视频无限次加速</li>
-              <li>生成作品去除品牌水印</li>
-              <li>视频内置罩</li>
-              <li>内容安全审核</li>
-              <li>视频更流畅（可补帧到最高60FPS）</li>
-            </ul>
-          </div>
-
-          <div className={`${vipStyles.planCard} ${vipStyles.premium}`} >
-            <div className={vipStyles.planHead}>✚ 年度会员 <Tag color="#5b7cff">最划算</Tag></div>
-            <div className={vipStyles.planPriceLine}><span className={vipStyles.currency}>¥</span><span className={vipStyles.bigNum}>2,599</span><span className={vipStyles.unit}>每年</span></div>
-            <div className={vipStyles.planDesc}>首年5折¥2,599 · 次年续费金额¥5,199 · 包年可随时取消</div>
-            <Button className={vipStyles.primaryBtn}>¥2,599 首年5折</Button>
-            <div className={vipStyles.benefitBox}><span className={vipStyles.dot} /> 15,000积分每月</div>
-            <div className={vipStyles.subDesc}>最多生成60000张图和3000个视频</div>
-            <ul className={vipStyles.featureList}>
-              <li>每天赠送积分</li>
-              <li>生成类视频无限次加速（最快）</li>
-              <li>生成作品去除品牌水印</li>
-              <li>视频内置罩</li>
-              <li>内容安全审核</li>
-              <li>视频更流畅（可补帧到最高60FPS）</li>
-            </ul>
-          </div> */}
-
-
-
 
         </div>
       </div>

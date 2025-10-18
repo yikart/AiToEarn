@@ -43,7 +43,7 @@ const CommonTitleInput = memo(
           <Input
             value={pubItem.params.title}
             maxLength={platConfig.commonPubParamsConfig.titleMax || 20}
-            placeholder={t("form.titlePlaceholder")}
+            placeholder={t("form.titlePlaceholder") }
             showCount
             onChange={(e) => {
               setOnePubParams(

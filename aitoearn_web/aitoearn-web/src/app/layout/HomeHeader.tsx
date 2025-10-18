@@ -7,16 +7,17 @@ import Image from "next/image";
 import logo from "@/assets/images/logo.png";
 import Link from "next/link";
 import { Button } from "antd";
-import { GlobalOutlined, MenuOutlined, CloseOutlined } from "@ant-design/icons";
+import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
 import { removeLocalePrefix } from "@/app/layout/layout.utils";
 import { homeHeaderRouterData } from "@/app/layout/routerData";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 
-export interface IHomeHeaderRef {}
+export interface IHomeHeaderRef { }
 
-export interface IHomeHeaderProps {}
+export interface IHomeHeaderProps { }
 
 const HomeHeader = memo(
-  forwardRef(({}: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
+  forwardRef(({ }: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
     const pathname = usePathname();
     const { t } = useTransClient("home");
     const router = useRouter();
@@ -24,16 +25,6 @@ const HomeHeader = memo(
     const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, "") || "/";
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-    /**
-     * 切换语言
-     */
-    const toggleLanguage = () => {
-      const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
-      userStore.setLang(newLng);
-      router.push(
-        `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
-      );
-    };
 
     /**
      * 切换移动端菜单显示状态
@@ -72,10 +63,13 @@ const HomeHeader = memo(
               <Image src={logo} alt="logo" width={50} />
               <span className={styles.logoText}>{t("header.logo")}</span>
             </div>
-            
+
             {/* 桌面端导航 */}
             <nav className={styles.nav}>
               {homeHeaderRouterData.value.map((v) => {
+                if (v.href === "/") {
+                  return null;
+                }
                 return (
                   <Link
                     key={v.title}
@@ -92,14 +86,10 @@ const HomeHeader = memo(
             </nav>
 
             <div className={styles.headerRight}>
-              <Button
-                type="text"
-                icon={<GlobalOutlined />}
-                onClick={toggleLanguage}
+              <LanguageSwitcher
                 className={styles.languageButton}
-              >
-                {userStore.lang === "zh-CN" ? "EN" : "中文"}
-              </Button>
+                size="small"
+              />
 
               {/* 移动端菜单按钮 */}
               <button
@@ -140,9 +130,12 @@ const HomeHeader = memo(
               <CloseOutlined />
             </button>
           </div>
-          
+
           <nav className={styles.mobileMenuNav}>
             {homeHeaderRouterData.value.map((v) => {
+              if (v.href === "/") {
+                return null;
+              }
               return (
                 <Link
                   key={v.title}
@@ -159,14 +152,10 @@ const HomeHeader = memo(
           </nav>
 
           <div className={styles.mobileMenuFooter}>
-            <Button
-              type="text"
-              icon={<GlobalOutlined />}
-              onClick={toggleLanguage}
+            <LanguageSwitcher
               className={styles.mobileLanguageButton}
-            >
-              {userStore.lang === "zh-CN" ? "EN" : "中文"}
-            </Button>
+              size="small"
+            />
           </div>
         </div>
       </>

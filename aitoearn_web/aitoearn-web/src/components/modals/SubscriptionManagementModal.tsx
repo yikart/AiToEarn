@@ -29,6 +29,30 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
   const { t: tVip } = useTransClient('vip');
   const { userInfo } = useUserStore();
   
+  // 状态判断辅助函数
+  const getVipStatusInfo = (status: string) => {
+    switch (status) {
+      case 'none':
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'trialing':
+        return { isVip: true, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'monthly_once':
+        return { isVip: true, isMonthly: true, isYearly: false, isAutoRenew: false, isOnce: true };
+      case 'yearly_once':
+        return { isVip: true, isMonthly: false, isYearly: true, isAutoRenew: false, isOnce: true };
+      case 'active_monthly':
+        return { isVip: true, isMonthly: true, isYearly: false, isAutoRenew: true, isOnce: false };
+      case 'active_yearly':
+        return { isVip: true, isMonthly: false, isYearly: true, isAutoRenew: true, isOnce: false };
+      case 'active_nonrenewing':
+        return { isVip: true, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'expired':
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      default:
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+    }
+  };
+  
   // 订单相关状态
   const [orders, setOrders] = useState<Order[]>([]);
   const [subscriptions, setSubscriptions] = useState<Order[]>([]);
@@ -155,7 +179,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
       [OrderStatus.REFUNDED]: { color: 'purple', text: tProfile('refundSuccess') },
       [OrderStatus.EXPIRED]: { color: 'red', text: tProfile('orderCancelled') }
     };
-    const config = statusMap[status] || { color: 'default', text: `状态${status}` };
+    const config = statusMap[status] || { color: 'default', text: `${tProfile('status')}${status}` };
     return <Tag color={config.color}>{config.text}</Tag>;
   };
 
@@ -190,7 +214,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
         width={1000}
 
         className={styles.subscriptionModal}
-        destroyOnClose
+        destroyOnHidden
         centered
       >
         <div className={styles.modalContent}>
@@ -205,10 +229,26 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                     </div>
                     <div className={styles.membershipDetails}>
                       <div className={styles.membershipName}>
-                        {userInfo?.vipInfo?.cycleType === 1 
-                          ? tVip('modal.vipInfo.monthly' as any)
-                          : tVip('modal.vipInfo.yearly' as any)}
-                        {userInfo?.vipInfo?.autoContinue === false && ` (${tVip('modal.vipInfo.singleMonth' as any)})`}
+                        {(() => {
+                          if (!userInfo?.vipInfo) return tVip('modal.vipInfo.monthly' as any);
+                          const statusInfo = getVipStatusInfo(userInfo.vipInfo.status);
+                          if (statusInfo.isYearly && statusInfo.isAutoRenew) {
+                            return tVip('modal.vipInfo.yearly' as any);
+                          } else if (statusInfo.isYearly && !statusInfo.isAutoRenew) {
+                            return tVip('modal.vipInfo.yearly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
+                          } else if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
+                            return tVip('modal.vipInfo.monthly' as any);
+                          } else if (statusInfo.isMonthly && !statusInfo.isAutoRenew) {
+                            return tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
+                          } else if (statusInfo.isOnce) {
+                            return statusInfo.isYearly ? tVip('modal.vipInfo.yearly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})` : tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.singleMonth' as any)})`;
+                          } else if (userInfo.vipInfo.status === 'trialing') {
+                            return tVip('modal.vipInfo.monthly' as any) + ` (${tVip('modal.vipInfo.trial' as any)})`;
+                          } else if (userInfo.vipInfo.status === 'active_nonrenewing') {
+                            return tVip('modal.vipInfo.cancelled' as any);
+                          }
+                          return tVip('modal.vipInfo.monthly' as any);
+                        })()}
                       </div>
                       <div>
 
@@ -234,9 +274,6 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
 
                 {/* 根据 autoContinue 显示不同的内容 */}
                   <div className={styles.autoRenewal}>
-                    {userInfo?.vipInfo?.autoContinue ? ( <h3>{tVip('activatedAutoRenewalPlans' as any)}</h3> ) : (
-                        <h3>{tVip('activatedAutoRenewalPlansno' as any)}</h3>
-                    )}
                 
                      {
                      subscriptions.length ?(
@@ -290,7 +327,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                              className={styles.copyBtn}
                                              onClick={() => {
                                                navigator.clipboard.writeText(subscription.id);
-                                               message.success('已复制');
+                                               message.success(tProfile('copySuccess'));
                                              }}
                                            >
                                              📋
@@ -388,10 +425,9 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                       <div key={order._id} className={styles.orderCard}>
                         <div className={styles.orderHeader}>
                           <div className={styles.orderTitle}>
-                            {userInfo?.vipInfo?.cycleType === 1 
-                              ? tVip('modal.vipInfo.monthly' as any)
-                              : tVip('modal.vipInfo.yearly' as any)}
-                            {userInfo?.vipInfo?.autoContinue === false && ` (${tVip('modal.vipInfo.singleMonth' as any)})`}
+                          {
+                                                getPaymentTypeText(order.metadata?.payment)
+                                             }
                           </div>
                         </div>
                         <div className={styles.orderDetails}>
@@ -434,7 +470,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                 className={styles.copyBtn}
                                 onClick={() => {
                                   navigator.clipboard.writeText(order.id);
-                                  message.success('已复制');
+                                  message.success(tProfile('copySuccess'));
                                 }}
                               >
                                 📋

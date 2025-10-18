@@ -11,10 +11,10 @@ import { useUserStore } from "@/store/user";
  * Facebook被点击
  * @param platType
  */
-export async function facebookSkip(platType: PlatType) {
+export async function facebookSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.Facebook) return;
 
-  const res: any = await getFacebookAuthUrlApi('pc');
+  const res: any = await getFacebookAuthUrlApi('pc', spaceId);
     if (res?.code == 1) {
       useUserStore.getState().logout();
       return

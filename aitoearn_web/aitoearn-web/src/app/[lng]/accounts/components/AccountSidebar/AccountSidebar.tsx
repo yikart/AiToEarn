@@ -2,6 +2,7 @@ import {
   ForwardedRef,
   forwardRef,
   memo,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -19,6 +20,20 @@ import {
   Input,
   message,
 } from "antd";
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+
+// 六点拖拽图标组件
+const SixDotsIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+    <circle cx="2" cy="2" r="1" fill="currentColor" />
+    <circle cx="6" cy="2" r="1" fill="currentColor" />
+    <circle cx="10" cy="2" r="1" fill="currentColor" />
+    <circle cx="2" cy="6" r="1" fill="currentColor" />
+    <circle cx="6" cy="6" r="1" fill="currentColor" />
+    <circle cx="10" cy="6" r="1" fill="currentColor" />
+  </svg>
+);
+
 // import { accountLogin, acpAccountLoginCheck } from "@/icp/account";
 import {
   CheckCircleOutlined,
@@ -26,6 +41,9 @@ import {
   UserOutlined,
   WarningOutlined,
   DeleteOutlined,
+  UpOutlined,
+  DownOutlined,
+  DragOutlined,
 } from "@ant-design/icons";
 import { useShallow } from "zustand/react/shallow";
 import { useAccountStore } from "@/store/account";
@@ -43,8 +61,22 @@ import {
   extractCountry,
 } from "@/utils/ipLocation";
 import { createAccountGroupApi, updateAccountApi } from "@/api/account";
+import { apiUpdateAccountGroupSortRank, apiUpdateAccountSortRank } from "@/api/accountSort";
 import AddAccountModal from "../AddAccountModal";
 import DeleteUserConfirmModal from "./DeleteUserConfirmModal";
+// 导入各平台授权函数
+import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
+import { bilibiliSkip } from "@/app/[lng]/accounts/plat/BilibiliLogin";
+import { youtubeSkip } from "@/app/[lng]/accounts/plat/YoutubeLogin";
+import { twitterSkip } from "@/app/[lng]/accounts/plat/TwtterLogin";
+import { tiktokSkip } from "@/app/[lng]/accounts/plat/TiktokLogin";
+import { facebookSkip, FacebookPagesModal } from "@/app/[lng]/accounts/plat/FacebookLogin";
+import { instagramSkip } from "@/app/[lng]/accounts/plat/InstagramLogin";
+import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
+import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
+import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
+import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
+import DownloadAppModal from "@/components/common/DownloadAppModal";
 
 export interface IAccountSidebarRef {}
 
@@ -57,6 +89,8 @@ export interface IAccountSidebarProps {
   excludePlatforms?: PlatType[];
   // 侧边栏内容顶部扩展内容
   sidebarTopExtra?: React.ReactNode;
+  // 是否在interactive页面（用于应用特殊的平台过滤和蒙层效果）
+  isInteractivePage?: boolean;
 }
 
 const AccountStatusView = ({ account }: { account: SocialAccount }) => {
@@ -129,7 +163,7 @@ const AccountPopoverInfo = ({
             style={{ marginLeft: 18, border: "none" }}
             onClick={() => onDeleteClick?.(accountInfo)}
           >
-            删除账户
+            {t("deleteAccount" as any)}
           </Button>
         </p>
       </div>
@@ -145,6 +179,7 @@ const AccountSidebar = memo(
         onAccountChange,
         excludePlatforms = [],
         sidebarTopExtra,
+        isInteractivePage = false,
       }: IAccountSidebarProps,
       ref: ForwardedRef<IAccountSidebarRef>,
     ) => {
@@ -199,12 +234,48 @@ const AccountSidebar = memo(
       const snapshotReadyRef = useRef(false);
       const allUser = useRef("-1");
 
-      // 在组件内部过滤账号列表，而不是在 useAccountStore 中过滤
+      // 掉线账号重新登录确认弹窗状态
+      const [showReauthConfirm, setShowReauthConfirm] = useState(false);
+      const [reauthAccount, setReauthAccount] = useState<SocialAccount | null>(null);
+
+      // Facebook页面选择弹窗状态
+      const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false);
+      
+      // App下载提示弹窗状态
+      const [showAppDownloadModal, setShowAppDownloadModal] = useState(false);
+      const [mobileOnlyPlatform, setMobileOnlyPlatform] = useState<string>("");
+
+      // 排序相关状态
+      const [isGroupSorting, setIsGroupSorting] = useState(false);
+      const [isAccountSorting, setIsAccountSorting] = useState(false);
+      
+      // 本地账户排序状态，用于临时存储拖拽后的顺序
+      const [localAccountSort, setLocalAccountSort] = useState<Record<string, string[]>>({});
+      
+      // 自动保存定时器引用
+      const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+      // 在组件内部过滤账号列表，根据页面类型决定过滤逻辑
       const accountList = useMemo(() => {
-        return fullAccountList.filter(
-          (account) => !excludePlatforms.includes(account.type),
-        );
-      }, [fullAccountList, excludePlatforms]);
+        if (isInteractivePage) {
+          // 在interactive页面，只显示指定的平台
+          const allowedPlatforms = [
+            PlatType.Facebook,
+            PlatType.Instagram, 
+            PlatType.Threads,
+            PlatType.Douyin,
+            PlatType.Xhs
+          ];
+          return fullAccountList.filter(
+            (account) => !excludePlatforms.includes(account.type) && allowedPlatforms.includes(account.type),
+          );
+        } else {
+          // 在其他页面，正常过滤
+          return fullAccountList.filter(
+            (account) => !excludePlatforms.includes(account.type),
+          );
+        }
+      }, [fullAccountList, excludePlatforms, isInteractivePage]);
 
       const defaultActiveKey = useMemo(() => {
         return accountGroupList.find((v) => v.isDefault)?.id;
@@ -218,7 +289,7 @@ const AccountSidebar = memo(
             const info = await getIpLocation();
             setIpLocationInfo(info);
           } catch (error) {
-            console.error("获取IP地理位置信息失败:", error);
+            console.error(t("messages.ipLocationError" as any), error);
           } finally {
             setIpLocationLoading(false);
           }
@@ -228,10 +299,188 @@ const AccountSidebar = memo(
         fetchIpLocation();
       }, []);
 
+      // 处理离线账户点击，显示确认弹窗
+      const handleOfflineAccountClick = useCallback((account: SocialAccount) => {
+        setReauthAccount(account);
+        setShowReauthConfirm(true);
+      }, []);
+
+      // 确认重新登录
+      const handleConfirmReauth = useCallback(async () => {
+        if (!reauthAccount) return;
+        
+        const platform = reauthAccount.type;
+        const targetSpaceId = reauthAccount.groupId; // 使用账户原本的空间ID
+        
+        setShowReauthConfirm(false);
+        
+        try {
+          // 根据平台类型调用对应的授权函数，传递目标空间ID
+          switch (platform) {
+            case PlatType.KWAI:
+              await kwaiSkip(platform, targetSpaceId);
+              break;
+            case PlatType.BILIBILI:
+              await bilibiliSkip(platform, targetSpaceId);
+              break;
+            case PlatType.YouTube:
+              await youtubeSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Twitter:
+              await twitterSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Tiktok:
+              await tiktokSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Facebook:
+              try {
+                await facebookSkip(platform, targetSpaceId);
+                // Facebook授权成功后显示页面选择弹窗
+                setShowFacebookPagesModal(true);
+              } catch (error) {
+                console.error(t('messages.facebookAuthFailed' as any), error);
+              }
+              break;
+            case PlatType.Instagram:
+              await instagramSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Threads:
+              await threadsSkip(platform, targetSpaceId);
+              break;
+            case PlatType.WxGzh:
+              await wxGzhSkip(platform, targetSpaceId);
+              break;
+            case PlatType.Pinterest:
+              await pinterestSkip(platform, targetSpaceId);
+              break;
+            case PlatType.LinkedIn:
+              await linkedinSkip(platform, targetSpaceId);
+              break;
+            default:
+              console.warn(`${t('messages.unsupportedPlatform' as any)}: ${platform}`);
+              message.warning(t('messages.platformNotSupported' as any, { platform }));
+              return;
+          }
+
+          // 授权完成后刷新账号列表
+          setTimeout(async () => {
+            try {
+              await getAccountList();
+              console.log(t('messages.accountListRefreshed' as any));
+            } catch (error) {
+              console.error(t('messages.refreshAccountListFailed' as any), error);
+            }
+          }, 3000); // 等待3秒让授权完成
+        } catch (error) {
+          console.error(t('messages.authFailed' as any), error);
+          message.error(t('messages.authFailed' as any) + '，' + t('messages.pleaseRetry' as any));
+        } finally {
+          setReauthAccount(null);
+        }
+      }, [reauthAccount, getAccountList, t]);
+
+      // 处理Facebook页面选择成功
+      const handleFacebookPagesSuccess = () => {
+        setShowFacebookPagesModal(false);
+        // 可以在这里添加成功提示或其他逻辑
+      };
+
+      // 分组排序函数
+      const handleGroupSort = async (groupId: string, direction: 'up' | 'down') => {
+        const sortedGroups = [...accountGroupList].sort((a, b) => (a.rank || 0) - (b.rank || 0));
+        const currentIndex = sortedGroups.findIndex(g => g.id === groupId);
+        
+        if (currentIndex === -1) return;
+        
+        const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1;
+        if (newIndex < 0 || newIndex >= sortedGroups.length) return;
+        
+        // 交换位置
+        [sortedGroups[currentIndex], sortedGroups[newIndex]] = [sortedGroups[newIndex], sortedGroups[currentIndex]];
+        
+        // 更新rank
+        const updateList = sortedGroups.map((group, index) => ({
+          id: group.id,
+          rank: index
+        }));
+        
+        try {
+          await apiUpdateAccountGroupSortRank({ list: updateList });
+          await getAccountGroup();
+          message.success(t("messages.sortSuccess" as any));
+        } catch (error) {
+          message.error(t("messages.sortFailed" as any));
+        }
+      };
+
+      // 账户拖拽排序
+      const handleAccountDragEnd = (result: any) => {
+        if (!result.destination) return;
+        
+        const { source, destination } = result;
+        const groupId = source.droppableId;
+        
+        // 获取该分组的账户列表
+        const groupAccounts = isInteractivePage ? 
+          accountList.filter(account => account.groupId === groupId) :
+          accountGroupList.find(g => g.id === groupId)?.children || [];
+        
+        // 获取当前分组的本地排序，如果没有则使用原始排序
+        const currentSort = localAccountSort[groupId] || groupAccounts
+          .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+          .map(account => account.id);
+        
+        // 创建新的排序数组
+        const newSort = [...currentSort];
+        const [movedId] = newSort.splice(source.index, 1);
+        newSort.splice(destination.index, 0, movedId);
+        
+        // 更新本地排序状态
+        setLocalAccountSort(prev => ({
+          ...prev,
+          [groupId]: newSort
+        }));
+        
+
+        const updateList = newSort.map((accountId, index) => ({
+          id: accountId,
+          rank: index
+        }));
+
+        apiUpdateAccountSortRank({ groupId, list: updateList });
+
+        // // 清除之前的定时器
+        // if (saveTimeoutRef.current) {
+        //   clearTimeout(saveTimeoutRef.current);
+        // }
+        
+        // // 设置新的定时器，2秒后自动保存
+        // saveTimeoutRef.current = setTimeout(async () => {
+        //   try {
+        //     const updateList = newSort.map((accountId, index) => ({
+        //       id: accountId,
+        //       rank: index
+        //     }));
+            
+        //     await apiUpdateAccountSortRank({ groupId, list: updateList });
+        //     // 保存成功后清除本地排序状态，让界面使用服务器数据
+        //     setLocalAccountSort(prev => {
+        //       const newState = { ...prev };
+        //       delete newState[groupId];
+        //       return newState;
+        //     });
+        //     // await getAccountList();
+        //   } catch (error) {
+        //     console.error('自动保存排序失败:', error);
+        //     message.error(t("messages.sortFailed" as any));
+        //   }
+        // }, 2000);
+      };
+
       // 添加账号流程
       const openAddAccountFlow = async () => {
         if (accountGroupList.length === 0) {
-          message.error("请先创建空间");
+          message.error(t("messages.createSpaceFirst" as any));
           return;
         }
 
@@ -276,6 +525,15 @@ const AccountSidebar = memo(
         };
         maybeAssign();
       }, [fullAccountList]);
+
+      // 组件卸载时清理定时器
+      useEffect(() => {
+        return () => {
+          if (saveTimeoutRef.current) {
+            clearTimeout(saveTimeoutRef.current);
+          }
+        };
+      }, []);
 
       return (
         <>
@@ -416,13 +674,24 @@ const AccountSidebar = memo(
             ) : (
               <div className="accountSidebar-content">
                 {sidebarTopExtra}
-                <Collapse
-                  key={defaultActiveKey}
-                  defaultActiveKey={defaultActiveKey}
-                  items={accountGroupList.map((v) => {
+                <DragDropContext onDragEnd={handleAccountDragEnd}>
+                  <Collapse
+                    key={defaultActiveKey}
+                    defaultActiveKey={defaultActiveKey}
+                    items={accountGroupList
+                      .sort((a, b) => (a.rank || 0) - (b.rank || 0))
+                      .map((v) => {
                     // 为默认分组添加IP和地址信息
                     const isDefaultGroup = v.isDefault;
                     const showIpInfo = isDefaultGroup && ipLocationInfo;
+                    
+                    // 计算过滤后的账户数量和在线数量
+                    const groupAccounts = isInteractivePage ? 
+                      accountList.filter(account => account.groupId === v.id) : 
+                      v.children || [];
+                    const totalCount = groupAccounts.length;
+                    const onlineCount = groupAccounts.filter(account => account.status === AccountStatus.USABLE).length;
+                    
                     return {
                       key: v.id,
                       label: (
@@ -432,17 +701,13 @@ const AccountSidebar = memo(
                               {v.name}
                             </span>
                             <span className="accountSidebar-userCount">
-                              {v.children?.length}/
-                              {
-                                v.children?.map(
-                                  (v) => v.status === AccountStatus.USABLE,
-                                ).length
-                              }
+                              {totalCount}/{onlineCount}
                             </span>
                             {/* 根据proxyIp判断显示IP信息 */}
                             {!v.proxyIp || v.proxyIp === "" ? (
                               // 本地IP显示
                               <div className="accountSidebar-ipInfo">
+                                <span className="accountSidebar-ipType" data-type="direct">{t("ipType.direct")}</span>
                                 {ipLocationLoading ? (
                                   <span className="accountSidebar-ipLoading">
                                     {t("ipInfo.loading")}
@@ -469,6 +734,7 @@ const AccountSidebar = memo(
                               v.ip &&
                               v.location && (
                                 <div className="accountSidebar-ipInfo">
+                                  <span className="accountSidebar-ipType" data-type="proxy">{t("ipType.proxy")}</span>
                                   <Tooltip
                                     title={`IP: ${v.ip}\n位置: ${v.location}`}
                                   >
@@ -479,46 +745,122 @@ const AccountSidebar = memo(
                                 </div>
                               )
                             )}
+                            {/* 分组排序按钮 */}
+                            <div className="accountSidebar-groupSort">
+                              <Tooltip title="上移">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<UpOutlined />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleGroupSort(v.id, 'up');
+                                  }}
+                                />
+                              </Tooltip>
+                              <Tooltip title="下移">
+                                <Button
+                                  type="text"
+                                  size="small"
+                                  icon={<DownOutlined />}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleGroupSort(v.id, 'down');
+                                  }}
+                                />
+                              </Tooltip>
+                            </div>
                           </div>
                         </>
                       ),
                       children: (
-                        <ul key={v.id} className="accountList">
-                          {v.children?.map((account) => {
+                        <Droppable droppableId={v.id}>
+                          {(provided) => (
+                            <ul 
+                              key={v.id} 
+                              className="accountList"
+                              {...provided.droppableProps}
+                              ref={provided.innerRef}
+                            >
+                              {(() => {
+                                // 获取该分组的账户列表
+                                const groupAccounts = isInteractivePage ? 
+                                  accountList.filter(account => account.groupId === v.id) :
+                                  v.children || [];
+                                
+                                // 获取本地排序，如果没有则使用原始排序
+                                const localSort = localAccountSort[v.id];
+                                let sortedAccounts = groupAccounts.sort((a, b) => (a.rank || 0) - (b.rank || 0));
+                                
+                                // 如果有本地排序，则按照本地排序重新排列
+                                if (localSort && localSort.length > 0) {
+                                  const accountMap = new Map(sortedAccounts.map(account => [account.id, account]));
+                                  sortedAccounts = localSort
+                                    .map(id => accountMap.get(id))
+                                    .filter(Boolean) as typeof sortedAccounts;
+                                }
+                                
+                                return sortedAccounts.map((account, index) => {
                             if (excludePlatforms.includes(account.type))
                               return "";
                             const platInfo = AccountPlatInfoMap.get(
                               account.type,
                             )!;
+                            
+                            // 检查是否为需要蒙层的平台（仅在interactive页面）
+                            const isMobileOnlyPlatform = isInteractivePage && (account.type === PlatType.Douyin || account.type === PlatType.Xhs);
+                            
                             return (
-                              <li
-                                className={[
-                                  "accountList-item",
-                                  `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
-                                  // 失效状态
-                                  account.status === AccountStatus.DISABLE &&
-                                    "accountList-item--disable",
-                                ].join(" ")}
-                                key={account.id}
-                                onClick={async () => {
-                                  if (
-                                    account.status === AccountStatus.DISABLE
-                                  ) {
-                                    // TODO 账户登录
-                                    // const res = await accountLogin(account.type);
-                                    // if (!res) return;
-                                    // message.success("账号登录成功！");
-                                    // return;
-                                  }
-                                  onAccountChange(account);
-                                }}
-                              >
-                                <Avatar
-                                  style={{backgroundColor: 'aliceblue'}}
-                                  src={getOssUrl(account.avatar)}
-                                  size="large"
-                                />
-                                <div className="accountList-item-right">
+                              <Draggable key={account.id} draggableId={account.id} index={index}>
+                                {(provided, snapshot) => (
+                                  <li
+                                    className={[
+                                      "accountList-item",
+                                      `${activeAccountId === account.id ? "accountList-item--active" : ""}`,
+                                      // 失效状态
+                                      account.status === AccountStatus.DISABLE &&
+                                        "accountList-item--disable",
+                                      // 移动端平台蒙层状态（仅在interactive页面）
+                                      isMobileOnlyPlatform && "accountList-item--mobile-only",
+                                      // 拖拽状态
+                                      snapshot.isDragging && "accountList-item--dragging",
+                                    ].join(" ")}
+                                    ref={provided.innerRef}
+                                    {...provided.draggableProps}
+                                >
+                                  {/* 拖拽手柄 */}
+                                  <div 
+                                    className="accountList-item-dragHandle"
+                                    {...provided.dragHandleProps}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <SixDotsIcon />
+                                  </div>
+                                  <Avatar
+                                    style={{backgroundColor: 'aliceblue'}}
+                                    src={getOssUrl(account.avatar)}
+                                    size="large"
+                                  />
+                                  <div 
+                                    className="accountList-item-right"
+                                    onClick={async () => {
+                                      // 如果是移动端平台，显示下载提示
+                                      if (isMobileOnlyPlatform) {
+                                        setMobileOnlyPlatform(account.type === PlatType.Douyin ? "抖音" : "小红书");
+                                        setShowAppDownloadModal(true);
+                                        return;
+                                      }
+                                      
+                                      if (
+                                        account.status === AccountStatus.DISABLE
+                                      ) {
+                                        // 掉线账户直接触发重新授权
+                                        await handleOfflineAccountClick(account);
+                                        return;
+                                      }
+                                      onAccountChange(account);
+                                    }}
+                                  >
                                   <div
                                     className="accountList-item-right-name"
                                     title={account.nickname}
@@ -548,14 +890,30 @@ const AccountSidebar = memo(
                                     </Popover>
                                   </div>
                                 </div>
+                                
+                                {/* 移动端平台蒙层（仅在interactive页面） */}
+                                {isMobileOnlyPlatform && (
+                                  <div className="accountList-item-overlay">
+                                    <div className="accountList-item-overlay-text">
+                                      {t('mobileOnlySupport' as any)}
+                                    </div>
+                                  </div>
+                                )}
                               </li>
+                                )}
+                              </Draggable>
                             );
-                          })}
-                        </ul>
+                                });
+                              })()}
+                              {provided.placeholder}
+                            </ul>
+                          )}
+                        </Droppable>
                       ),
                     };
                   })}
                 />
+                </DragDropContext>
               </div>
             )}
 
@@ -590,9 +948,58 @@ const AccountSidebar = memo(
               onDeleteSuccess={async () => {
                 await getAccountList();
                 setDeleteTarget(null);
-                message.success("删除成功");
+                message.success(t("messages.deleteSuccess" as any));
               }}
             />
+
+            {/* Facebook页面选择弹窗 */}
+            <FacebookPagesModal
+              open={showFacebookPagesModal}
+              onClose={() => setShowFacebookPagesModal(false)}
+              onSuccess={handleFacebookPagesSuccess}
+            />
+            
+            {/* App下载提示弹窗（仅在interactive页面显示） */}
+            {isInteractivePage && (
+              <DownloadAppModal
+                visible={showAppDownloadModal}
+                onClose={() => setShowAppDownloadModal(false)}
+                platform={mobileOnlyPlatform}
+                zIndex={1000}
+              />
+            )}
+
+            {/* 掉线账号重新登录确认弹窗 */}
+            <Modal
+              open={showReauthConfirm}
+              title={t("reauthConfirm.title" as any)}
+              onCancel={() => {
+                setShowReauthConfirm(false);
+                setReauthAccount(null);
+              }}
+              footer={
+                <Button
+                  type="primary"
+                  onClick={handleConfirmReauth}
+                >
+                  {t("reauthConfirm.loginAgain" as any)}
+                </Button>
+              }
+            >
+              <div className={styles.reauthConfirm}>
+                {reauthAccount && (
+                  <div>
+                    <p style={{ marginBottom: '16px' }}>
+                      {t("reauthConfirm.content" as any, {
+                        platformName: AccountPlatInfoMap.get(reauthAccount.type)?.name || reauthAccount.type,
+                        nickname: reauthAccount.nickname,
+                        spaceName: accountGroupList.find(group => group.id === reauthAccount.groupId)?.name || t("defaultSpace")
+                      })}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </Modal>
           </div>
         </>
       );

@@ -1006,7 +1006,6 @@ function UpcomingFeaturesSection() {
 
 // 移动应用下载区
 import { QRCode } from 'react-qrcode-logo';
-import HomeHeader from "@/app/layout/HomeHeader";
 function DownloadSection() {
   const { t } = useTransClient('home');
 

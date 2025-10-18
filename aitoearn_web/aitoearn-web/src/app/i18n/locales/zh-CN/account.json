@@ -41,14 +41,18 @@
     "fetchError": "获取页面列表失败",
     "submitError": "页面选择失败",
     "submitSuccess": "页面选择成功",
-    "selectAtLeastOne": "请至少选择一个页面"
+    "selectAtLeastOne": "请至少选择一个页面",
+    "noPagesMessage": "您还没有创建任何Facebook页面",
+    "createPageTip": "点击上方链接创建页面，然后点击刷新按钮",
+    "createPageLink": "创建Facebook页面",
+    "refresh": "刷新"
   },
   "listMode": {
     "title": "发布计划列表",
     "recordCount": "共 {{count}} 条发布计划",
     "newWork": "新建作品",
     "noRecords": "暂无发布计划",
-    "queue": "列表",
+    "queue": "我的发布",
     "sent": "发布历史",
     "createdDaysAgo": "您于 {{days}} 天前创建",
     "viewPost": "查看帖子",
@@ -63,6 +67,10 @@
     "loading": "获取IP信息中...",
     "error": "IP信息获取失败",
     "tooltip": "ASN: {{asn}}\n组织: {{org}}"
+  },
+  "ipType": {
+    "direct": "直连",
+    "proxy": "代理"
   },
   "createSpace": {
     "title": "新建空间",
@@ -101,10 +109,37 @@
     "platform": "平台",
     "space": "所属列表"
   },
+  "deleteAccount": "删除账户",
+  "messages": {
+    "ipLocationError": "获取IP地理位置信息失败",
+    "createSpaceFirst": "请先创建空间",
+    "deleteSuccess": "删除成功",
+    "facebookAuthFailed": "Facebook授权失败",
+    "unsupportedPlatform": "未支持的平台类型",
+    "accountListRefreshed": "账号列表已刷新",
+    "refreshAccountListFailed": "刷新账号列表失败",
+    "authFailed": "授权失败",
+    "pleaseRetry": "请重试",
+    "platformNotSupported": "暂不支持 {{platform}} 平台的直接授权",
+    "sortSuccess": "排序成功",
+    "sortFailed": "排序失败"
+  },
   "rednote": "小红书",
   "kwai": "快手",
   "bilibili": "哔哩哔哩",
   "wxgzh": "微信公众号",
   "douyin": "抖音",
-  "wxsph": "微信视频号"
+  "wxsph": "微信视频号",
+  "deleteConfirm": {
+    "title": "删除提示",
+    "content": "是否删除以下 {{count}} 个账号？",
+    "cancel": "取消",
+    "confirm": "确认"
+  },
+  "mobileOnlySupport": "移动端支持",
+  "reauthConfirm": {
+    "title": "会话已过期",
+    "content": "您的 {{platformName}} 账号 \"{{nickname}}\"（位于 {{spaceName}}）会话已过期。是否重新登录？",
+    "loginAgain": "重新登录"
+  }
 }

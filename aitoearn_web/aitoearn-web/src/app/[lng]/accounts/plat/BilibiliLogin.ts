@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * b站被点击
  * @param platType
  */
-export async function bilibiliSkip(platType: PlatType) {
+export async function bilibiliSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.BILIBILI) return;
 
-  const res: any = await apiGetBilibiliLoginUrl('pc');
+  const res: any = await apiGetBilibiliLoginUrl('pc', spaceId);
   if (res?.code == 1) {
     useUserStore.getState().logout();
     return

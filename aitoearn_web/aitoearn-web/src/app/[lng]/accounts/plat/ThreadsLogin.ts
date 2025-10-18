@@ -9,10 +9,10 @@ import { useUserStore } from "@/store/user";
  * b站被点击
  * @param platType
  */
-export async function threadsSkip(platType: PlatType) {
+export async function threadsSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.Threads) return;
 
-  const res: any = await getThreadsAuthUrlApi('pc');
+  const res: any = await getThreadsAuthUrlApi('pc', spaceId);
   if (res?.code == 1) {
             useUserStore.getState().logout();
             return

@@ -25,9 +25,14 @@ export const routerData: IRouterDataItem[] = [
   //   path: "/",
   // },
   {
-    name: "账户",
+    name: "发布",
     translationKey: "accounts",
     path: "/accounts",
+  },
+  {
+    name: "互动数据",
+    translationKey: "interactive",
+    path: "/interactive",
   },
   // {
   //   name: "热门内容",
@@ -44,21 +49,13 @@ export const routerData: IRouterDataItem[] = [
     translationKey: "tasks",
     path: "/tasks",
   },
-  {
-    name: "互动数据",
-    translationKey: "interactive",
-    path: "/interactive",
-  },
+
   {
     name: "数据统计",
     translationKey: "dataStatistics",
     path: "/dataStatistics",
   },
-  {
-    name: "Chat",
-    translationKey: "Chat",
-    path: "/appChat",
-  },
+
 ];
 
 const recursion = (
@@ -90,7 +87,7 @@ export const homeHeaderRouterData = {
     return [
       {
         href: "/",
-        title: "",
+        title: directTrans("home", "header.nav.home"), 
       },
       {
         href: "/pricing",

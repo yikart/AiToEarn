@@ -11,6 +11,7 @@ import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/Calen
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import SentList from "./SentList";
+import QueueItem from "./QueueItem";
 import { useAccountStore } from "@/store/account";
 
 export interface IListModeRef {}
@@ -47,27 +48,27 @@ const ListMode = memo(
       );
 
       useEffect(() => {
-        getPubRecord();
+        getPubRecord(0);
       }, [getPubRecord]);
 
       const renderRecordItem = (record: PublishRecordItem) => {
-        const days = getDays(record.publishTime);
-        
         return (
-          <List.Item
+          <QueueItem
             key={record.id}
-            className={styles.listItem}
-            actions={[
-              <div key="time" className={styles.timeInfo}>
-                <span className={styles.date}>{days.format("MM-DD")}</span>
-                <span className={styles.time}>{days.format("HH:mm")}</span>
-              </div>
-            ]}
-          >
-            <div className={styles.recordWrapper}>
-              <CalendarRecord publishRecord={record} />
-            </div>
-          </List.Item>
+            record={record}
+            onRetry={(record) => {
+              // TODO: 实现重试逻辑
+              console.log('Retry record:', record);
+            }}
+            onEdit={(record) => {
+              // TODO: 实现编辑逻辑
+              console.log('Edit record:', record);
+            }}
+            onMore={(record) => {
+              // TODO: 实现更多操作逻辑
+              console.log('More actions for record:', record);
+            }}
+          />
         );
       };
 
@@ -94,11 +95,9 @@ const ListMode = memo(
         <div className={styles.tabContent}>
           <DndProvider backend={HTML5Backend}>
             {sortedRecords.length > 0 ? (
-              <List
-                dataSource={sortedRecords}
-                renderItem={renderRecordItem}
-                className={styles.recordList}
-              />
+              <div className={styles.queueList}>
+                {sortedRecords.map(renderRecordItem)}
+              </div>
             ) : (
               <Empty
                 description={t('listMode.noRecords' as any)}

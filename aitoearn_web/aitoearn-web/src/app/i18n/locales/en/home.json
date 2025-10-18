@@ -6,6 +6,7 @@
   "header": {
     "logo": "Aitoearn",
     "nav": {
+      "home": "Home",
       "marketplace": "Marketplace",
       "pricing": "Pricing",
       "status": "Status",

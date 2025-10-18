@@ -47,6 +47,46 @@
       flex-wrap: wrap;
       gap: 8px;
       width: 100%;
+      position: relative;
+    }
+
+    .accountSidebar-groupSort {
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      transition: opacity 0.2s;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .accountSidebar-groupLabel:hover .accountSidebar-groupSort {
+      opacity: 1;
+    }
+
+    .accountSidebar-ipType {
+      display: inline-block;
+      background-color: var(--grayColor2);
+      color: #8A5BF2;
+      padding: 1px 2px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .accountSidebar-ipType[data-type="direct"] {
+      background-color: #e6f7ff;
+      color: #1890ff;
+      // border: 1px solid #91d5ff;
+    }
+
+    .accountSidebar-ipType[data-type="proxy"] {
+      background-color: #fff7e6;
+      color: #fa8c16;
+      // border: 1px solid #ffd591;
     }
 
     .accountSidebar-groupName {
@@ -127,6 +167,39 @@
         background: #fff;
         transition: 0.3s;
         color: #333;
+        position: relative;
+
+        .accountList-item-dragHandle {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 20px;
+          height: 20px;
+          margin-right: 8px;
+          cursor: grab;
+          color: var(--grayColor5);
+          opacity: 0;
+          transition: opacity 0.2s;
+          flex-shrink: 0;
+
+          &:active {
+            cursor: grabbing;
+          }
+
+          &:hover {
+            color: var(--grayColor7);
+          }
+        }
+
+        &:hover .accountList-item-dragHandle {
+          opacity: 1;
+        }
+
+        &--dragging {
+          transform: rotate(5deg);
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+          z-index: 1000;
+        }
         .ant-avatar {
           flex-shrink: 0;
         }
@@ -177,6 +250,37 @@
           filter: grayscale(100%) !important;
           opacity: 0.5 !important;
         }
+
+        &--mobile-only {
+          position: relative;
+          filter: grayscale(100%) !important;
+          opacity: 0.6 !important;
+        }
+      }
+    }
+
+    .accountList-item-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      cursor: pointer;
+      
+      &-text {
+        color: white;
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 4px 8px;
+        border-radius: 4px;
+        white-space: nowrap;
       }
     }
 

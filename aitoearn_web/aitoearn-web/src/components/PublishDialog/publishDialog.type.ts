@@ -85,6 +85,10 @@ export interface IPlatOption {
     // 品牌内容开关
     brand_content_toggle?: boolean;
   };
+  threads?: {
+    // 位置信息
+    location_id?: string | null;
+  };
 }
 
 // 发布参数

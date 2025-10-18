@@ -9,12 +9,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Button, Image, Input, message, Modal, Tooltip, Upload } from "antd";
+import { Button, Image, Input, message, Tooltip, Upload } from "antd";
 import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss";
 import { ReactSortable } from "react-sortablejs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
-import isEqual from "lodash/isEqual";
 import { TextAreaRef } from "antd/es/input/TextArea";
 import {
   IImgFile,
@@ -26,6 +25,9 @@ import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubPar
 import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import { PubType } from "@/app/config/publishConfig";
 import { useTransClient } from "@/app/i18n/client";
+import PubParmasTextuploadImage from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage";
+import VideoPreviewModal from "@/components/VideoPreviewModal";
+import dynamic from "next/dynamic";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -47,6 +49,8 @@ export interface IPubParmasTextareaProps {
   extend?: React.ReactNode;
   // 在前面的扩展元素
   beforeExtend?: React.ReactNode;
+  // 在中间的扩展元素
+  centerExtend?: React.ReactNode;
   // 平台类型
   platType: PlatType;
   style?: CSSProperties;
@@ -54,6 +58,11 @@ export interface IPubParmasTextareaProps {
   videoFileValue?: IVideoFile;
   desValue?: string;
 }
+
+const ImageEditorModal = dynamic(
+  () => import("@/components/ImageEditorModal"),
+  { ssr: false },
+);
 
 const PubParmasTextarea = memo(
   forwardRef(
@@ -64,6 +73,7 @@ const PubParmasTextarea = memo(
         rows = 12,
         videoMax = 1,
         extend,
+        centerExtend,
         imageFileListValue = [],
         videoFileValue,
         desValue = "",
@@ -91,6 +101,8 @@ const PubParmasTextarea = memo(
         sort: true,
       });
       const { t } = useTransClient("publish");
+      // 编辑图片的索引
+      const [editImgIndex, setEditImgIndex] = useState(-1);
 
       useEffect(() => {
         if (isFirst.current.effect) {
@@ -182,22 +194,22 @@ const PubParmasTextarea = memo(
           };
 
           if (uploadHasImage && !platConfig.pubTypes.has(PubType.ImageText)) {
-            messageOpen("该平台不支持上传图片");
+            messageOpen(t("validation.uploadImage"));
             return false;
           }
           if (uploadHasVideo && !platConfig.pubTypes.has(PubType.VIDEO)) {
-            messageOpen("该平台不支持上传视频");
+            messageOpen(t("validation.uploadVideo"));
             return false;
           }
 
           // 已有图片，只能传图片
           if (hasImageInList && !hasVideoInList && uploadHasVideo) {
-            messageOpen("已有图片，仅可继续上传图片，不能上传视频！");
+            messageOpen(t("validation.imageOnly"));
             return false;
           }
           // 已有视频，只能传视频
           if (hasVideoInList && !hasImageInList && uploadHasImage) {
-            messageOpen("已有视频，仅可继续上传视频，不能上传图片！");
+            messageOpen(t("validation.videoOnly"));
             return false;
           }
           // 混合上传拦截
@@ -206,12 +218,12 @@ const PubParmasTextarea = memo(
             (hasImageInList && uploadHasVideo) ||
             (hasVideoInList && uploadHasImage)
           ) {
-            messageOpen("图片和视频不能混合上传！");
+            messageOpen(t("validation.imageVideoMixed"));
             return false;
           }
           // 非法类型
           if (invalidFile) {
-            messageOpen("只能上传图片或视频文件！");
+            messageOpen(t("validation.onlyImageOrVideo"));
             return false;
           }
           if (uploadHasVideo) {
@@ -220,7 +232,9 @@ const PubParmasTextarea = memo(
               (videoFile ? 1 : 0) +
               fileList.filter((f) => f.type.startsWith("video/")).length;
             if (totalVideoCount > videoMax) {
-              messageOpen(`视频上传数量不能大于${videoMax}`);
+              messageOpen(
+                t("validation.videoMaxExceeded", { maxCount: videoMax }),
+              );
               return false;
             }
           }
@@ -230,7 +244,9 @@ const PubParmasTextarea = memo(
               imageFileList.length +
               fileList.filter((f) => f.type.startsWith("image/")).length;
             if (totalImageCount > imageMax) {
-              messageOpen(`图片上传数量不能大于${imageMax}`);
+              messageOpen(
+                t("validation.imageMaxExceeded", { maxCount: imageMax }),
+              );
               return false;
             }
           }
@@ -238,6 +254,10 @@ const PubParmasTextarea = memo(
         },
         [imageFileList, videoMax, imageMax, videoFile, platConfig],
       );
+
+      const desMax = useMemo(() => {
+        return platConfig.commonPubParamsConfig?.desMax || 2200;
+      }, [platConfig]);
 
       return (
         <>
@@ -255,47 +275,51 @@ const PubParmasTextarea = memo(
             }}
           />
 
-          <Modal
-            title="查看素材"
-            open={!!previewData}
+          <Image
+            src={(previewData as IImgFile)?.imgUrl}
+            style={{
+              width: "100%",
+              height: "400px",
+              objectFit: "contain",
+              display: "none",
+            }}
+            preview={{
+              visible: !!(previewData && (previewData as IImgFile).imgUrl),
+              onVisibleChange: (visible) => {
+                if (!visible) setPreviewData(undefined);
+              },
+            }}
+          />
+          <VideoPreviewModal
+            open={!!(previewData && (previewData as IVideoFile).videoUrl)}
+            videoUrl={(previewData as IVideoFile)?.videoUrl}
             onCancel={() => setPreviewData(undefined)}
-          >
-            {previewData && (
-              <>
-                {previewData!.file.type.startsWith("video") ? (
-                  <video
-                    src={(previewData as IVideoFile).videoUrl}
-                    controls={true}
-                    style={{ width: "100%", maxHeight: "600px" }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Image
-                      src={(previewData as IImgFile).imgUrl}
-                      style={{ width: "100%", height: "400px" }}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </Modal>
+          />
+
+          <ImageEditorModal
+            onOk={(editedImg) => {
+              setImageFileList((prevState) => {
+                const newState = [...prevState];
+                newState[editImgIndex] = editedImg;
+                return newState;
+              });
+            }}
+            imgFile={imageFileList[editImgIndex]}
+            open={editImgIndex !== -1}
+            onCancel={() => setEditImgIndex(-1)}
+          />
 
           <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
               {beforeExtend}
               <TextArea
                 ref={textareaRef}
-                placeholder="开始写"
+                placeholder={t("form.descriptionPlaceholder")}
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 rows={rows}
                 autoFocus={true}
+                maxLength={desMax}
                 onFocus={() => {
                   setTimeout(() => {
                     if (textareaRef.current) {
@@ -338,29 +362,22 @@ const PubParmasTextarea = memo(
                         exitActive: styles.itemExitActive,
                       }}
                     >
-                      <div
-                        className="pubParmasTextarea-uploads-item"
+                      <PubParmasTextuploadImage
+                        onEditClick={() => {
+                          setEditImgIndex(i);
+                        }}
+                        imageFile={v}
                         onClick={() => {
                           setPreviewData(v);
                         }}
-                      >
-                        <div
-                          className="pubParmasTextarea-uploads-item-close"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setImageFileList((prevState) => {
-                              const newState = [...prevState];
-                              newState.splice(i, 1);
-                              return newState;
-                            });
-                          }}
-                        >
-                          <CloseOutlined />
-                        </div>
-                        <Tooltip title="点击查看">
-                          <img src={v.imgUrl} />
-                        </Tooltip>
-                      </div>
+                        onClose={() => {
+                          setImageFileList((prevState) => {
+                            const newState = [...prevState];
+                            newState.splice(i, 1);
+                            return newState;
+                          });
+                        }}
+                      />
                     </CSSTransition>
                   ))}
 
@@ -392,7 +409,7 @@ const PubParmasTextarea = memo(
                           >
                             <CloseOutlined />
                           </div>
-                          <Tooltip title="点击查看">
+                          <Tooltip title={t("actions.preview")}>
                             <div className="pubParmasTextarea-uploads-item-video">
                               <img src={v.cover.imgUrl} />
                               <div className="pubParmasTextarea-uploads-item-play">
@@ -442,8 +459,13 @@ const PubParmasTextarea = memo(
                   {t("actions.cropCover")}
                 </Button>
               )}
+
+              <div className="pubParmasTextarea-maxLength">
+                {desMax - value.length}
+              </div>
             </div>
 
+            {centerExtend}
             {extend && <div className="pubParmasTextarea-other">{extend}</div>}
           </div>
         </>

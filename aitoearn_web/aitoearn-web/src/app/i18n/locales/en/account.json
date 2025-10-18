@@ -41,14 +41,18 @@
     "fetchError": "Failed to fetch pages",
     "submitError": "Failed to select pages",
     "submitSuccess": "Pages selected successfully",
-    "selectAtLeastOne": "Please select at least one page"
+    "selectAtLeastOne": "Please select at least one page",
+    "noPagesMessage": "You haven't created any Facebook pages yet",
+    "createPageTip": "Click the link above to create a page, then click refresh",
+    "createPageLink": "Create Facebook Page",
+    "refresh": "Refresh"
   },
   "listMode": {
     "title": "Publish Plans",
     "recordCount": "{{count}} plans total",
     "newWork": "New Work",
     "noRecords": "No publish plans",
-    "queue": "Queue",
+    "queue": "Queue ",
     "sent": "Sent",
     "createdDaysAgo": "You created this {{days}} days ago",
     "viewPost": "View Post",
@@ -63,6 +67,10 @@
     "loading": "Getting IP info...",
     "error": "Failed to get IP info",
     "tooltip": "ASN: {{asn}}\nOrganization: {{org}}"
+  },
+  "ipType": {
+    "direct": "Direct",
+    "proxy": "Proxy"
   },
   "createSpace": {
     "title": "Add space",
@@ -101,10 +109,37 @@
     "platform": "Platform",
     "space": "Space"
   },
+  "deleteAccount": "Delete",
+  "messages": {
+    "ipLocationError": "Failed to get IP location information",
+    "createSpaceFirst": "Please create a space first",
+    "deleteSuccess": "Deleted successfully",
+    "facebookAuthFailed": "Facebook authorization failed",
+    "unsupportedPlatform": "Unsupported platform type",
+    "accountListRefreshed": "Account list refreshed",
+    "refreshAccountListFailed": "Failed to refresh account list",
+    "authFailed": "Authorization failed",
+    "pleaseRetry": "Please try again",
+    "platformNotSupported": "Direct authorization for {{platform}} platform is not supported yet",
+    "sortSuccess": "Sort successful",
+    "sortFailed": "Sort failed"
+  },
   "rednote": "Rednote",
   "kwai": "Kwai",
   "bilibili": "Bilibili",
   "wxgzh": "WeChat Official",
   "douyin": "Douyin",
-  "wxsph": "WeChat Channels"
+  "wxsph": "WeChat Channels",
+  "deleteConfirm": {
+    "title": "Delete Confirmation",
+    "content": "Are you sure you want to delete {{count}} account(s)?",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "mobileOnlySupport": "Mobile only",
+  "reauthConfirm": {
+    "title": "Session Expired",
+    "content": "Your {{platformName}} account \"{{nickname}}\" (in {{spaceName}}) session has expired. Would you like to log in again?",
+    "loginAgain": "Reauthorize"
+  }
 }

@@ -64,6 +64,11 @@
         &-status {
           margin-top: 15px;
         }
+        &-failMsg {
+          margin-top: 5px;
+          font-size: var(--fs-xs);
+          color: var(--error-color);
+        }
       }
       &-right {
         img {

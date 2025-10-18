@@ -10,8 +10,10 @@ import YouTubeParams from "@/components/PublishDialog/compoents/PlatParamsSettin
 import WxGzhParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/WxGzhParams";
 import PinterestParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/PinterestParams";
 import TikTokParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/TikTokParams";
+import ThreadsParams from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/ThreadsParams";
 import { useShallow } from "zustand/react/shallow";
 import { PubItem } from "@/components/PublishDialog/publishDialog.type";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IPlatParamsSettingRef {}
 
@@ -33,6 +35,7 @@ const PlatParamsSetting = memo(
           setExpandedPubItem: state.setExpandedPubItem,
         })),
       );
+      const { t } = useTransClient("publish");
 
       const platConfig = useMemo(() => {
         return AccountPlatInfoMap.get(pubItem.account.type)!;
@@ -56,6 +59,8 @@ const PlatParamsSetting = memo(
             return <PinterestParams pubItem={pubItem} />;
           case PlatType.Tiktok:
             return <TikTokParams pubItem={pubItem} />;
+          case PlatType.Threads:
+            return <ThreadsParams pubItem={pubItem} />;
           default:
             return <KwaiParams pubItem={pubItem} />;
         }
@@ -89,7 +94,15 @@ const PlatParamsSetting = memo(
                   setExpandedPubItem(pubItem);
                 }}
               >
-                {pubItem.params.des}
+                <p>
+                  {pubItem.params.des ? (
+                    pubItem.params.des
+                  ) : (
+                    <span style={{ color: "var(--grayColor7)" }}>
+                      {t("form.descriptionPlaceholder")}...
+                    </span>
+                  )}
+                </p>
               </div>
             )}
           </div>

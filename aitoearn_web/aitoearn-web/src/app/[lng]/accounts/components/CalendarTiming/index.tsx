@@ -37,6 +37,8 @@ import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTimin
 import AvatarPlat from "@/components/AvatarPlat";
 import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
 import ListMode from "@/app/[lng]/accounts/components/CalendarTiming/ListMode";
+import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
+import dayjs from "dayjs";
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -236,6 +238,11 @@ const CalendarTiming = memo(
                 icon={<PlusOutlined />}
                 onClick={() => {
                   setPublishDialogOpen(true);
+                  usePublishDialog
+                    .getState()
+                    .setPubTime(
+                      dayjs(Date.now()).format("YYYY-MM-DD HH:mm:ss"),
+                    );
                 }}
               >
                 {t("newWork")}

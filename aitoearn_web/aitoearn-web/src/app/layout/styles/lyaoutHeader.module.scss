@@ -91,9 +91,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
+        border: 1px solid #EBEDEC;
+        height: 60px;
+        border-radius: 30px;
         transition: all 0.3s ease;
         
         &:hover {
@@ -172,7 +172,35 @@
 
 .languageButton {
   color: #333;
+  border: 1px solid #EBEDEC;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  
   &:hover {
     color: #1890ff;
+    border-color: #40a9ff;
+  }
+}
+
+.languageDropdown {
+  :global {
+    .ant-dropdown-menu {
+      border: 1px solid #EBEDEC;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      padding: 4px 0;
+      min-width: 140px;
+    }
+    
+    .ant-dropdown-menu-item {
+      padding: 8px 12px;
+      border-radius: 4px;
+      margin: 2px 4px;
+      
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
   }
 }

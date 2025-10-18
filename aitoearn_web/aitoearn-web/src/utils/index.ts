@@ -116,3 +116,14 @@ export async function sensitivityLoading() {
   }
   message.destroy(key);
 }
+
+// base64转Blob
+export function dataURLToBlob(dataURL: string): Blob {
+  const [header, data] = dataURL.split(",");
+  const mime = header.match(/data:(.*?);base64/)?.[1] || "image/png";
+  const binary = atob(data);
+  const len = binary.length;
+  const u8 = new Uint8Array(len);
+  for (let i = 0; i < len; i++) u8[i] = binary.charCodeAt(i);
+  return new Blob([u8], { type: mime });
+}

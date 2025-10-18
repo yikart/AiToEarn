@@ -8,21 +8,23 @@ import Image from "next/image";
 import LayoutNav from "@/app/layout/layoutNav";
 import { NoSSR } from "@kwooshung/react-no-ssr";
 import { Button, Dropdown, MenuProps, Badge, Tooltip } from "antd";
-import logo from "@/assets/images/logo.png";
 import {
   BellOutlined,
   CaretDownOutlined,
-  GlobalOutlined,
   CrownOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useRouter } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import { useGetClientLng } from "@/hooks/useSystem";
 import NotificationPanel from "@/components/notification/NotificationPanel";
 import { useNotification } from "@/hooks/useNotification";
 import SignInCalendar from "@/components/SignInCalendar"; 
 import VipContentModal from "@/components/modals/VipContentModal";
 import PointsDetailModal from "@/components/modals/PointsDetailModal";
+import LanguageSwitcher from "@/components/common/LanguageSwitcher";
+
+import logo from "@/assets/images/logo.png";
 
 export interface ILyaoutHeaderRef {}
 
@@ -33,6 +35,7 @@ function UserInfo() {
   const router = useRouter();
   const { t } = useTransClient("common");
   const { t: tVip } = useTransClient("vip");
+  const lng = useGetClientLng();
 
   const items: MenuProps["items"] = [
     {
@@ -40,7 +43,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/profile");
+            router.push(`/${lng}/profile`);
           }}
         >
           {t("profile")}
@@ -52,7 +55,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/material");
+            router.push(`/${lng}/material`);
           }}
         >
           {t("header.materialLibrary")}
@@ -64,7 +67,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/cgmaterial");
+            router.push(`/${lng}/cgmaterial`);
           }}
         >
           {t("header.draftBox")}
@@ -76,7 +79,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/income");
+            router.push(`/${lng}/income`);
           }}
         >
           {t("header.income" as any)}
@@ -88,7 +91,7 @@ function UserInfo() {
       label: (
         <div
           onClick={() => {
-            router.push("/wallet");
+            router.push(`/${lng}/wallet`);
           }}
         >
           {t("header.wallet" as any)}
@@ -100,7 +103,7 @@ function UserInfo() {
     //   label: (
     //     <div
     //       onClick={() => {
-    //         router.push("/notification");
+    //         router.push(`/${lng}/notification`);
     //       }}
     //     >
     //       {t("header.messages")}
@@ -114,7 +117,7 @@ function UserInfo() {
         <div
           onClick={() => {
             useUserStore.getState().logout();
-            router.push("/");
+            router.push(`/${lng}/`);
           }}
         >
           {t("logout")}
@@ -136,7 +139,7 @@ function UserInfo() {
             style={{ borderRadius: '50%', backgroundColor: '#e9d5ff', padding: '3px' }}
           />
           <div className={styles["layoutHeader-userinfo-name"]}>
-            {userInfo.name || t("unknownUser")}
+            {userInfo?.name || t("unknownUser")}
           </div>
           <CaretDownOutlined />
         </div>
@@ -152,18 +155,12 @@ const LyaoutHeader = memo(
     const router = useRouter();
     const { t } = useTransClient("common");
     const { t: tVip } = useTransClient("vip");
+    const lng = useGetClientLng();
     const [notificationVisible, setNotificationVisible] = useState(false);
     const [vipModalVisible, setVipModalVisible] = useState(false);
     const [pointsModalVisible, setPointsModalVisible] = useState(false);
     const { unreadCount } = useNotification();
 
-    const toggleLanguage = () => {
-      const newLng = userStore.lang === "zh-CN" ? "en" : "zh-CN";
-      userStore.setLang(newLng);
-      router.push(
-        `/${newLng}${location.pathname.replace(`/${userStore.lang}`, "")}`,
-      );
-    };
 
     return (
       <>
@@ -182,14 +179,17 @@ const LyaoutHeader = memo(
               className={styles["layoutHeader_wrapper-right"]}
               suppressHydrationWarning={true}
             >
-              <Button
-                type="text"
-                icon={<GlobalOutlined />}
-                onClick={toggleLanguage}
+              <LanguageSwitcher 
                 className={styles.languageButton}
-              >
-                {userStore.lang === "zh-CN" ? "EN" : "中文"}
-              </Button>
+                style={{ 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '8px',
+                  padding: '4px 8px',
+                  height: 'auto',
+                  fontSize: '12px',
+                }}
+              />
               <NoSSR>
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
@@ -244,7 +244,7 @@ const LyaoutHeader = memo(
                 ) : (
                   <Button
                     onClick={() => {
-                      router.push("/login");
+                      router.push(`/${lng}/login`);
                     }}
                   >
                     {t("login")}

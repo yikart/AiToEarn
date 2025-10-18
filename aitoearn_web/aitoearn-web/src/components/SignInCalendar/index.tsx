@@ -1,13 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { Button, Modal, Calendar, Badge, message } from 'antd';
-import { CalendarOutlined, CheckOutlined } from '@ant-design/icons';
+import { Button, Modal, Calendar, Badge, message, Image } from 'antd';
+import { BranchesOutlined, CheckOutlined } from '@ant-design/icons';
 import { useTransClient } from '@/app/i18n/client';
 import { signInApi, SignInType, SignInResponse, PublishDayInfoResponse, PublishInfoResponse } from '@/api/signIn';
 import { useUserStore } from '@/store/user';
 import { useRouter } from 'next/navigation';
 import styles from './SignInCalendar.module.scss'; 
+
+import faya from "@/assets/images/faya.png";
 
 interface SignInCalendarProps {
   className?: string;
@@ -147,7 +149,7 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
     <>
       <Button
         type="text"
-        icon={<CalendarOutlined />}
+        icon={<Image src={faya.src} alt="faya" style={{ width: 20, height: 'auto', marginTop: -5 }} preview={false}/>}
         onClick={() => setVisible(true)}
         className={`${styles.signInButton} ${className || ''}`}
         title={t('signIn.title')}

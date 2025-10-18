@@ -33,4 +33,48 @@
     padding-bottom: 12px;
     border-bottom: 1px solid #f0f0f0;
   }
+
+  .noPagesContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  .noPagesMessage {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 24px;
+  }
+
+  .createPageSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .createPageLink {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1890ff;
+    text-decoration: none;
+    
+    &:hover {
+      color: #40a9ff;
+      text-decoration: underline;
+    }
+  }
+
+  .createPageTip {
+    font-size: 14px;
+    color: #999;
+    line-height: 1.5;
+  }
+
+  .refreshButton {
+    margin-top: 8px;
+  }
 } 

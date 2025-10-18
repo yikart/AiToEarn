@@ -1,6 +1,6 @@
 {
   "home": "Home",
-  "accounts": "Accounts",
+  "accounts": "Publish",
   "publish": "Publish",
   "hotContent": "Hot Content",
   "hotContentNew": "Hot Content New",
@@ -8,7 +8,7 @@
   "tasks": "Tasks",
   "interactive": "Engage",
   "engagement": "Engagement",
-  "dataStatistics": "Data Statistics",
+  "dataStatistics": "Data",
   "navigation": "Navigation",
   "aiRank": "AI Rank"
 }

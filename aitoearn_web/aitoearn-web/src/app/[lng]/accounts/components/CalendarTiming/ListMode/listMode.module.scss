@@ -138,6 +138,13 @@
     padding: 0 5px 0 0;
   }
 
+  .queueList {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+  }
+
   .listContent {
     height: 100%;
     padding: 0 5px 0 0;

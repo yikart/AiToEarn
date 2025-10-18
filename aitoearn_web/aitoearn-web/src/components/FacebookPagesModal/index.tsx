@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Checkbox, List, Button, message, Spin, Avatar } from 'antd';
+import { Modal, Checkbox, List, Button, message, Spin, Avatar, Typography } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import { apiGetFacebookPages, apiSubmitFacebookPages } from '@/api/plat/facebook';
 import { useAccountStore } from '@/store/account';
 import { useTranslation } from 'react-i18next';
 import styles from './index.module.scss';
+
+const { Link } = Typography;
 
 export interface FacebookPageItem {
   id: string;
@@ -131,32 +134,59 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
       </div>
 
       <Spin spinning={loading}>
-        <List
-          className={styles.pageList}
-          dataSource={pages}
-          renderItem={(page) => (
-            <List.Item className={styles.pageItem}>
-              <Checkbox
-                checked={selectedPageIds.includes(page.id)}
-                onChange={(e) => handlePageChange(page.id, e.target.checked)}
-              >
-                <div className={styles.pageInfo}>
-                  <Avatar 
-                    src={page.profile_picture_url} 
-                    size={32}
-                    className={styles.pageAvatar}
-                  >
-                    {page.name?.charAt(0)}
-                  </Avatar>
-                  <span className={styles.pageName}>{page.name}</span>
+        {pages.length > 0 ? (
+          <List
+            className={styles.pageList}
+            dataSource={pages}
+            renderItem={(page) => (
+              <List.Item className={styles.pageItem}>
+                <Checkbox
+                  checked={selectedPageIds.includes(page.id)}
+                  onChange={(e) => handlePageChange(page.id, e.target.checked)}
+                >
+                  <div className={styles.pageInfo}>
+                    <Avatar 
+                      src={page.profile_picture_url} 
+                      size={32}
+                      className={styles.pageAvatar}
+                    >
+                      {page.name?.charAt(0)}
+                    </Avatar>
+                    <span className={styles.pageName}>{page.name}</span>
+                  </div>
+                </Checkbox>
+              </List.Item>
+            )}
+          />
+        ) : (
+          !loading && (
+            <div className={styles.noPagesContainer}>
+              <div className={styles.noPagesMessage}>
+                {t('facebookPages.noPagesMessage' as any)}
+              </div>
+              <div className={styles.createPageSection}>
+                <Link 
+                  href="https://www.facebook.com/pages/create" 
+                  target="_blank"
+                  className={styles.createPageLink}
+                >
+                  {t('facebookPages.createPageLink' as any)}
+                </Link>
+                <div className={styles.createPageTip}>
+                  {t('facebookPages.createPageTip' as any)}
                 </div>
-              </Checkbox>
-            </List.Item>
-          )}
-          locale={{
-            emptyText: loading ? t('facebookPages.loading' as any) : t('facebookPages.noPages' as any),
-          }}
-        />
+                <Button 
+                  type="primary" 
+                  icon={<ReloadOutlined />}
+                  onClick={fetchPages}
+                  className={styles.refreshButton}
+                >
+                  {t('facebookPages.refresh' as any)}
+                </Button>
+              </div>
+            </div>
+          )
+        )}
       </Spin>
     </Modal>
   );

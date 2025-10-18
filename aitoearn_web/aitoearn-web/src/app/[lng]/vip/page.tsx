@@ -129,7 +129,7 @@ export default function VipPage() {
         </div>
       </div>
 
-      <h3 className={styles.title}>选择开通时长</h3>
+      <h3 className={styles.title}>{t('selectDuration')}</h3>
       
       {/* 免费试用提示 */}
       {canUseTrial && (
@@ -148,14 +148,14 @@ export default function VipPage() {
           <span className={styles.badge}>
             {canUseTrial ? t('badge.month') : t('badge.monthOld')}
           </span>
-          <h4>月费会员</h4>
+          <h4>{t('planTitles.month')}</h4>
           <div>
             <span className={styles.originalPrice}>$30</span>
             <span className={styles.discount}>
               {canUseTrial ? t('badge.month') : t('badge.monthOld')}
             </span>
           </div>
-          <p className={styles.currentPrice}>$<span>19</span>/月</p>
+          <p className={styles.currentPrice}>$<span>19</span>{t('priceUnits.month')}</p>
           {canUseTrial && (
             <p className={styles.trialText}>{t('trialText.month')}</p>
           )}
@@ -167,15 +167,15 @@ export default function VipPage() {
           <span className={styles.badge}>
             {canUseTrial ? t('badge.year') : t('badge.yearOld')}
           </span>
-          <h4>年费会员</h4>
+          <h4>{t('planTitles.year')}</h4>
           <div>
             <span className={styles.originalPrice}>$180</span>
             <span className={styles.discount}>
               {canUseTrial ? t('badge.year') : t('badge.yearOld')}
             </span>
           </div>
-          <p className={styles.currentPrice}>$<span>12</span>/月</p>
-          <p className={styles.monthlyPrice}>$144/年</p>
+          <p className={styles.currentPrice}>$<span>12</span>{t('priceUnits.month')}</p>
+          <p className={styles.monthlyPrice}>$144{t('priceUnits.year')}</p>
           {canUseTrial && (
             <p className={styles.trialText}>{t('trialText.year')}</p>
           )}
@@ -185,7 +185,7 @@ export default function VipPage() {
           onClick={() => setSelectedPlan('onceMonth')}
         >
           <span className={styles.badge}>{t('badge.onceMonth')}</span>
-          <h4>月度会员</h4>
+          <h4>{t('planTitles.onceMonth')}</h4>
           <div>
             <span className={styles.originalPrice}>$30</span>
             <span className={styles.discount}>{t('badge.onceMonth')}</span>
@@ -194,7 +194,7 @@ export default function VipPage() {
         </div>
       </div>
       
-      <p className={styles.subscriptionInfo}>自动续订，随时取消</p>
+      <p className={styles.subscriptionInfo}>{t('autoRenewal')}</p>
 
       <button 
         className={styles.activateButton} 

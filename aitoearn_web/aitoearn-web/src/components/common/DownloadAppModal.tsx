@@ -150,9 +150,10 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
               code 
               style={{ 
                 flex: 1, 
-                fontSize: '11px', 
+                fontSize: '15px', 
                 wordBreak: 'break-all',
-                textAlign: 'left'
+                textAlign: 'left',
+                
               }}
             >
               {downloadUrl || getMainAppDownloadUrl()}

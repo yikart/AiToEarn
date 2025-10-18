@@ -22,8 +22,10 @@
     "publishFailed": "发布失败",
     "publishing": "发布中",
     "publishSuccess": "发布成功",
-    "waitingPublish": "等待发布"
+    "waitingPublish": "等待发布",
+    "unknown": "未知状态"
   },
+  "creationInfo": "您于 {{date}} 创建了此内容",
   "form": {
     "title": "标题",
     "titlePlaceholder": "请输入标题",
@@ -46,8 +48,14 @@
     "categoryPlaceholder": "请选择视频分类",
     "categoryPlaceholderDisabled": "请先选择国区",
     "board": "Board",
-    "boardPlaceholder": "请选择Board"
+    "boardPlaceholder": "请选择Board",
+    "location": "位置",
+    "searchLocation": "搜索位置",
+    "selectLocation": "请选择位置",
+    "description": "描述",
+    "descriptionPlaceholder": "开始写"
   },
+  "writingAssistant": "写作助手",
   "upload": {
     "finishingUp": "正在完成...",
     "uploadImageOrVideo": "上传图片或视频",
@@ -64,7 +72,6 @@
     "titleMaxExceeded": "{{platformName}}标题最多{{maxCount}}字",
     "descriptionMaxExceeded": "{{platformName}}描述最多{{maxCount}}字",
     "descriptionRequired": "描述是必须的",
-    "imageMaxExceeded": "{{platformName}}图片最多不能超过{{maxCount}}张",
     "uploadImageOrVideo": "请上传图片或视频",
     "uploadImage": "请上传图片",
     "uploadVideo": "请上传视频",
@@ -76,7 +83,29 @@
     "sourceRequired": "转载时必须填写转载来源!",
     "pageRequired": "您必须选择页面!",
     "boardRequired": "您必须选择Board!",
-    "coverSizeError": "封面最小尺寸400*400!"
+    "coverSizeError": "封面最小尺寸400*400!",
+    "imageOnly": "已有图片，仅可继续上传图片，不能上传视频！",
+    "videoOnly": "已有视频，仅可继续上传视频，不能上传图片！",
+    "imageVideoMixed": "图片和视频不能混合上传！",
+    "onlyImageOrVideo": "只能上传图片或视频文件！",
+    "videoMaxExceeded": "视频上传数量不能大于{{maxCount}}",
+    "imageMaxExceeded": "图片上传数量不能大于{{maxCount}}",
+    "instagramImageValidation": "在 Instagram 网格和动态中获得最佳效果，建议上传 4:5 比例的图片。",
+    "facebookReelDuration": "Facebook Reel视频时长需为3–90秒",
+    "facebookStoryDuration": "Facebook Story视频时长需为3–4小时",
+    "instagramVideoSize": "Instagram视频大小不能超过100MB",
+    "instagramReelDuration": "Instagram Reel视频时长需为5秒–15分钟",
+    "instagramStoryDuration": "Instagram Story视频时长需为3–60秒",
+    "threadsVideoSize": "Threads视频大小不能超过1GB",
+    "threadsVideoDuration": "Threads视频时长需为0秒以上且不超过5分钟",
+    "threadsImageMin": "Threads图片至少需要两张",
+    "pinterestVideoDuration": "Pinterest视频时长需为4秒–15分钟",
+    "pinterestVideoSize": "Pinterest视频大小不能超过1GB",
+    "tiktokVideoDuration": "TikTok视频时长需为3秒至10分钟",
+    "tiktokVideoSize": "TikTok视频大小不能超过1GB",
+    "tiktokVideoMinResolution": "TikTok视频最小分辨率为360x360",
+    "twitterVideoDuration": "Twitter视频时长需为0.5秒–140秒",
+    "twitterVideoSize": "Twitter视频大小不能超过512MB"
   },
   "preview": {
     "title": "预览",
@@ -115,7 +144,8 @@
     "checkingContent": "检测中...",
     "contentSafe": "内容安全",
     "riskLevel": "等级:",
-    "contentUnsafe": "内容不安全"
+    "contentUnsafe": "内容不安全",
+    "preview": "点击查看"
   },
   "badges": {
     "offline": "已离线",
@@ -148,5 +178,6 @@
       "branded": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
       "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
     }
-  }
-} 
+  },
+  "previewvideo": "预览视频"
+}

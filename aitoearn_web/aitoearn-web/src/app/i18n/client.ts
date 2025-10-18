@@ -29,12 +29,16 @@ i18next
   )
   // .use(LocizeBackend) // locize backend could be used on client side, but prefer to keep it in sync with server side
   .init({
-    ...getOptions(),
-    lng: undefined, // let detect the language on client side
+    ...getOptions(undefined), // 不传递 lng 参数，让 i18next 自动检测
     detection: {
       order: ["path", "htmlTag", "cookie", "navigator"],
+      caches: ["cookie"], // 只缓存到 cookie，避免其他缓存干扰
     },
     preload: runsOnServerSide ? languages : [],
+    // 确保语言切换时立即生效
+    // react: {
+    //   useSuspense: false,
+    // },
   });
 
 export function useTransClient<
@@ -53,14 +57,30 @@ export function useTransClient<
     i18next.changeLanguage(lng);
   } else {
     const [activeLng, setActiveLng] = useState(i18next.resolvedLanguage);
+    
+    // 监听 i18next 语言变化
     useEffect(() => {
       if (activeLng === i18next.resolvedLanguage) return;
       setActiveLng(i18next.resolvedLanguage);
     }, [activeLng, i18next.resolvedLanguage]);
+    
+    // 强制同步 URL 参数中的语言到 i18next
     useEffect(() => {
-      if (!lng || i18next.resolvedLanguage === lng) return;
-      i18next.changeLanguage(lng);
-    }, [lng, i18next]);
+      if (!lng) return;
+      
+      // 始终使用 URL 参数中的语言，忽略 i18next 的自动检测
+      if (i18next.resolvedLanguage !== lng) {
+        i18next.changeLanguage(lng).then(() => {
+          // 语言切换完成后，强制重新渲染
+          setActiveLng(lng);
+        });
+      } else {
+        // 即使语言相同，也确保状态同步
+        setActiveLng(lng);
+      }
+    }, [lng]);
+    
+    // 同步 cookie
     useEffect(() => {
       if (i18nextCookie === lng) return;
       setCookie(cookieName, lng, { path: "/" });

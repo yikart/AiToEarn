@@ -13,6 +13,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Drawer, Menu } from "antd";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
+import { useGetClientLng } from "@/hooks/useSystem";
 
 /**
  *
@@ -21,11 +22,16 @@ import { useTransClient } from "@/app/i18n/client";
  */
 function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
   const { t } = useTransClient("route");
+  const lng = useGetClientLng();
   const path = child.path || "/";
+
+  // 确保路径包含语言前缀
+  const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`;
+
   return (
     <>
       {!child.children ? (
-        <Link href={path || "/"} target={path[0] === "/" ? "_self" : "_blank"}>
+        <Link href={fullPath} target={path[0] === "/" ? "_self" : "_blank"}>
           {t(child.translationKey as any)}
         </Link>
       ) : (
@@ -70,7 +76,10 @@ function ParcelTag({
   if (child.children) {
     return <>{children}</>;
   } else {
-    return <Link href={child.path || "/"}>{children}</Link>;
+    const lng = useGetClientLng();
+    const path = child.path || "/";
+    const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`;
+    return <Link href={fullPath}>{children}</Link>;
   }
 }
 
@@ -166,7 +175,7 @@ function NavPC() {
   const timer = useRef<NodeJS.Timeout>();
   const route = useSelectedLayoutSegments();
   const { t } = useTransClient("route");
-  
+
   let currRouter = "/";
   if (route.length === 1) {
     currRouter = route[0];
@@ -213,6 +222,7 @@ function NavPE() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const { t } = useTransClient("route");
+  const lng = useGetClientLng();
 
   const translatedMenuItems = routerData.map((item) => ({
     key: item.path || item.name,
@@ -222,6 +232,28 @@ function NavPE() {
       label: t(child.translationKey as any),
     })),
   }));
+
+  const handleMenuClick = (e: { key: string }) => {
+    // 确保使用当前语言前缀
+    const targetPath = e.key.startsWith('/') ? e.key : `/${e.key}`;
+    const fullPath = `/${lng}${targetPath}`;
+
+    // 调试信息
+    console.log('Menu click debug:', {
+      key: e.key,
+      lng,
+      targetPath,
+      fullPath,
+      currentPath: window.location.pathname
+    });
+
+    // 先关闭菜单
+    setOpen(false);
+
+    // 使用 window.location.href 进行跳转，确保完全重新加载页面
+    // 这样可以避免路由状态混乱的问题
+    window.location.href = fullPath;
+  };
 
   return (
     <div className={styles.layoutNavPE}>
@@ -238,10 +270,7 @@ function NavPE() {
         <Menu
           className="layoutNavPE-menu"
           selectable={false}
-          onClick={(e) => {
-            router.push(e.key);
-            setOpen(false);
-          }}
+          onClick={handleMenuClick}
           style={{ width: "100%" }}
           mode="inline"
           items={translatedMenuItems}

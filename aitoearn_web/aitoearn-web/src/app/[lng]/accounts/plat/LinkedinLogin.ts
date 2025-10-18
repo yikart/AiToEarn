@@ -7,10 +7,10 @@ import { useAccountStore } from "@/store/account";
  * LinkedIn 被点击
  * @param platType 平台类型
  */
-export async function linkedinSkip(platType: PlatType) {
+export async function linkedinSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.LinkedIn) return;
 
-  const res: any = await getLinkedInAuthUrlApi('pc');
+  const res: any = await getLinkedInAuthUrlApi('pc', spaceId);
   if (res?.code == 1) {
     useUserStore.getState().logout();
     return;

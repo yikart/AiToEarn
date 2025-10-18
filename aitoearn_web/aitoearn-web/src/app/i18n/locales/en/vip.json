@@ -39,6 +39,17 @@
     "month": "Monthly",
     "year": "Yearly"
   },
+  "planTitles": {
+    "month": "Monthly Member",
+    "year": "Yearly Member",
+    "onceMonth": "Monthly Member"
+  },
+  "selectDuration": "Select Duration",
+  "autoRenewal": "Auto-renewal, cancel anytime",
+  "priceUnits": {
+    "month": "/month",
+    "year": "/year"
+  },
   "subscriptionManagement": "Subscription Management",
   "subscriptionPlanManagement": "Subscription Plan Management",
   "subscriptionPlans": "Plans",
@@ -79,6 +90,8 @@
       "yearly2": "Yearly",
       "yearly": "Yearly PLUS",
       "singleMonth": "Single Month",
+      "trial": "Trial",
+      "cancelled": "Cancelled",
       "expireTime": "Expire Time",
       "xufeiTime": "Renewal Time",
       "remainingPoints": "Remaining Points",
@@ -122,7 +135,7 @@
         "description": "Up to 150+ video gens/month",
         "features": {
           "contentReview": "Content safety review",
-          "dailyPoints": "Free nano, banana image models (limited)",
+          "dailyPoints": "Free Nano Banana, Sora-2 unlimited use",
           "multiModel": "GPT-5, Gemini 2.5 Pro",
           "textToVideo": "Douyin、Redbook、Kwai、Bilibli,Wechat、TikTok、YouTube、Facebook、Instagram.Threads、Twitter(X)、Pinterest All major platforms",
           "aiGeneration": "Unlimited channel links",

@@ -4,6 +4,7 @@ import { Button, Modal } from "antd";
 import { deleteAccountsApi } from "@/api/account";
 import AvatarPlat from "@/components/AvatarPlat";
 import { SocialAccount } from "@/api/types/account.type";
+import { useTransClient } from "@/app/i18n/client";
 
 export interface IDeleteUserConfirmModalRef {}
 
@@ -26,17 +27,19 @@ const DeleteUserConfirmModal = memo(
       ref: ForwardedRef<IDeleteUserConfirmModalRef>,
     ) => {
       const [deleteLoading, setDeleteLoading] = useState(false);
+      const { t } = useTransClient("account");
 
       return (
         <Modal
           open={open}
-          title="删除提示"
+          title={t("deleteConfirm.title" as any)}
           width={500}
           zIndex={1002}
+          onCancel={() => onClose()}
           rootClassName={styles.userManageDeleteHitModal}
           footer={
             <>
-              <Button onClick={() => onClose()}>取消</Button>
+              <Button onClick={() => onClose()}>{t("deleteConfirm.cancel" as any)}</Button>
               <Button
                 type="primary"
                 loading={deleteLoading}
@@ -51,17 +54,13 @@ const DeleteUserConfirmModal = memo(
                   onClose();
                 }}
               >
-                确认
+                {t("deleteConfirm.confirm" as any)}
               </Button>
             </>
           }
         >
           <p>
-            是否删除以下
-            <span style={{ color: "var(--errerColor)" }}>
-              {deleteUsers.length}
-            </span>
-            个账号？
+            {t("deleteConfirm.content" as any, { count: deleteUsers.length } as any)}
           </p>
           <div className={styles["userManageDeleteHitModal-users"]}>
             {deleteUsers.map((v) => {

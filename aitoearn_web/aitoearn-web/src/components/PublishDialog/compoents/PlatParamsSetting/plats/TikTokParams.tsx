@@ -129,8 +129,6 @@ const TikTokParams = memo(
             {...pubParmasTextareaCommonParams}
             extend={
               <>
-                <CommonTitleInput pubItem={pubItem}  />
-                
                 {/* Creator Info Display */}
                 {creatorInfo && (
                   <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>

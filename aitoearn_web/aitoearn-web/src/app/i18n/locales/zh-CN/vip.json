@@ -39,6 +39,17 @@
     "month": "月度订阅",
     "year": "年度订阅"
   },
+  "planTitles": {
+    "month": "月费会员",
+    "year": "年费会员",
+    "onceMonth": "月度会员"
+  },
+  "selectDuration": "选择开通时长",
+  "autoRenewal": "自动续订，随时取消",
+  "priceUnits": {
+    "month": "/月",
+    "year": "/年"
+  },
   "subscriptionManagement": "订阅管理",
   "subscriptionPlanManagement": "订阅计划管理",
   "subscriptionPlans": "订阅计划",
@@ -79,6 +90,8 @@
       "yearly": "连续包年PLUS会员",
       "yearly2": "年度会员",
       "singleMonth": "单月会员",
+      "trial": "试用中",
+      "cancelled": "已退订",
       "expireTime": "到期时间", 
       "xufeiTime": "续费时间",
       "remainingPoints": "剩余积分",

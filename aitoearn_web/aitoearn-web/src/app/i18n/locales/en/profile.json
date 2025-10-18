@@ -174,5 +174,16 @@
     "title": "Delete your account",
     "desc": "When you delete your account, you lose access to Aitoearn services and we permanently delete your personal data.",
     "apply": "Delete Account"
+  },
+  "messages": {
+    "getPointsRecordsFailed": "Failed to get points records",
+    "verificationCodeSent": "Verification code sent",
+    "getVerificationCodeFailed": "Failed to get verification code",
+    "accountCancelledSuccess": "Account cancelled successfully",
+    "priceId": "Price ID"
+  },
+  "memberTypes": {
+    "oneTime": "One-time",
+    "trial": "Trial"
   }
 } 

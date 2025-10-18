@@ -19,7 +19,6 @@ import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import { getIpLocation, IpLocationInfo } from "@/utils/ipLocation";
 import DownloadAppModal from "@/components/common/DownloadAppModal";
-import { updateAccountApi } from "@/api/account";
 
 const { Text } = Typography;
 
@@ -220,23 +219,23 @@ const AddAccountModal = memo(
 
         switch (key) {
           case PlatType.KWAI:
-            await kwaiSkip(key);
+            await kwaiSkip(key, selectedSpaceId);
             break;
           case PlatType.BILIBILI:
-            await bilibiliSkip(key);
+            await bilibiliSkip(key, selectedSpaceId);
             break;
           case PlatType.YouTube:
-            await youtubeSkip(key);
+            await youtubeSkip(key, selectedSpaceId);
             break;
           case PlatType.Twitter:
-            await twitterSkip(key);
+            await twitterSkip(key, selectedSpaceId);
             break;
           case PlatType.Tiktok:
-            await tiktokSkip(key);
+            await tiktokSkip(key, selectedSpaceId);
             break;
           case PlatType.Facebook:
             try {
-              await facebookSkip(key);
+              await facebookSkip(key, selectedSpaceId);
               // Facebook授权成功后显示页面选择弹窗
               handleFacebookAuthSuccess();
             } catch (error) {
@@ -244,80 +243,31 @@ const AddAccountModal = memo(
             }
             break;
           case PlatType.Instagram:
-            await instagramSkip(key);
+            await instagramSkip(key, selectedSpaceId);
             break;
           case PlatType.Threads:
-            await threadsSkip(key);
+            await threadsSkip(key, selectedSpaceId);
             break;
           case PlatType.WxGzh:
-            await wxGzhSkip(key);
+            await wxGzhSkip(key, selectedSpaceId);
             break;
           case PlatType.Pinterest:
-            await pinterestSkip(key);
+            await pinterestSkip(key, selectedSpaceId);
             break;
           case PlatType.LinkedIn:
-            await linkedinSkip(key);
+            await linkedinSkip(key, selectedSpaceId);
             break;
         }
 
-        // 如果指定了目标空间，等待授权完成后移动新账号
-        if (selectedSpaceId) {
-          // 检查选中的空间是否是默认空间
-          const targetGroup = accountGroupList.find(group => group.id === selectedSpaceId);
-          const isDefaultSpace = targetGroup?.isDefault;
-          
-          // console.log('移动空间调试信息:', {
-          //   selectedSpaceId,
-          //   targetGroupName: targetGroup?.name,
-          //   isDefaultSpace,
-          //   showSpaceSelector,
-          //   spaceSelectionRequired
-          // });
-          
-          // 只有当选择了非默认空间时才移动账号
-          if (!isDefaultSpace) {
-            console.log('准备移动账号到空间:', targetGroup?.name);
-            setTimeout(async () => {
-              try {
-                // 刷新账号列表
-                await getAccountList();
-                
-                // 获取最新的账号组列表
-                const currentState = useAccountStore.getState();
-                const defaultGroup = currentState.accountGroupList.find(group => group.isDefault);
-                
-                                 if (defaultGroup) {
-                   // 找到相同平台类型的最后一个账号（最新添加的）
-                   const sameTypeAccounts = defaultGroup.children.filter(account => account.type === key);
-                   const latestAccount = sameTypeAccounts[sameTypeAccounts.length - 1];
-                   
-                   if (latestAccount) {
-                     console.log('找到最新账号:', latestAccount.account, '平台:', key);
-                     
-                     // 将新账号移动到指定空间
-                     console.log('移动账号:', latestAccount.account, '到空间:', targetGroup?.name);
-                     await updateAccountApi({
-                       id: latestAccount.id,
-                       groupId: selectedSpaceId
-                     });
-                   } else {
-                     console.log('未找到相同平台类型的账号');
-                   }
-                  
-                  // 再次刷新账号列表以更新UI
-                  await getAccountList();
-                  console.log('账号移动完成');
-                }
-              } catch (error) {
-                console.error('移动账号到指定空间失败:', error);
-              }
-            }, 3000); // 等待3秒让授权完成
-          } else {
-            console.log('选择的是默认空间，无需移动账号');
+        // 授权完成后刷新账号列表
+        setTimeout(async () => {
+          try {
+            await getAccountList();
+            console.log('账号列表已刷新');
+          } catch (error) {
+            console.error('刷新账号列表失败:', error);
           }
-        } else {
-          console.log('未选择空间，不移动账号');
-        }
+        }, 2000); // 等待3秒让授权完成
       };
 
       return (

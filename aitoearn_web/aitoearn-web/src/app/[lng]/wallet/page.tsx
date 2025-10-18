@@ -239,7 +239,7 @@ export default function WalletPage() {
         onCancel={() => setModalOpen(false)}
         onOk={onSubmit}
         confirmLoading={submitting}
-        destroyOnClose
+        destroyOnHidden
         width="90%"
         style={{ 
           maxWidth: '500px',

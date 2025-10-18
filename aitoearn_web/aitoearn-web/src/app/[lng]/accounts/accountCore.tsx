@@ -13,6 +13,9 @@ import { SocialAccount } from "@/api/types/account.type";
 import AllPlatIcon from "@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon";
 import { useTransClient } from "@/app/i18n/client";
 import { useUserStore } from "@/store/user";
+import Image from "next/image";
+
+import rightArrow from "@/assets/images/jiantou.png";
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -43,6 +46,8 @@ export default function AccountPageCore({
 
   // 移动端下载提示弹窗开关
   const [showMobileDownload, setShowMobileDownload] = useState(false);
+  // 微信浏览器提示弹窗开关
+  const [showWechatBrowserTip, setShowWechatBrowserTip] = useState(false);
 
   useEffect(() => {
     accountInit();
@@ -69,17 +74,38 @@ export default function AccountPageCore({
   }, [searchParams]);
 
   /**
+   * 检测是否为微信浏览器
+   */
+  const isWechatBrowser = () => {
+    if (typeof window === "undefined") return false;
+    const ua = window.navigator.userAgent.toLowerCase();
+    return ua.includes('micromessenger');
+  };
+
+  /**
    * 在移动端首次进入 accounts 页面时，展示下载提示弹窗
    * - 条件：屏幕宽度 <= 768
    * - 只在当前会话展示一次（使用 sessionStorage 标记）
+   * - 如果是微信浏览器，先显示微信浏览器提示
    */
   useEffect(() => {
     if (typeof window === "undefined") return;
     const isMobile = window.innerWidth <= 768;
     const hasShown = sessionStorage.getItem("accountsMobileDownloadShown");
+    const hasShownWechatTip = sessionStorage.getItem("accountsWechatTipShown");
+    
     if (isMobile) {
-      setShowMobileDownload(true);
-      sessionStorage.setItem("accountsMobileDownloadShown", "1");
+      // 如果是微信浏览器且未显示过微信提示，先显示微信提示
+      if (isWechatBrowser() && !hasShownWechatTip) {
+        setShowWechatBrowserTip(true);
+        sessionStorage.setItem("accountsWechatTipShown", "1");
+      } else if (!hasShown) {
+        // 非微信浏览器或已显示过微信提示，显示下载提示
+        setShowMobileDownload(true);
+        sessionStorage.setItem("accountsMobileDownloadShown", "1");
+      }
+
+    
     }
   }, []);
 
@@ -87,6 +113,19 @@ export default function AccountPageCore({
    * 关闭下载提示弹窗
    */
   const closeMobileDownload = () => setShowMobileDownload(false);
+
+  /**
+   * 关闭微信浏览器提示弹窗
+   */
+  const closeWechatBrowserTip = () => {
+    setShowWechatBrowserTip(false);
+    // 关闭微信提示后，显示下载提示
+    const hasShown = sessionStorage.getItem("accountsMobileDownloadShown");
+    if (!hasShown) {
+      setShowMobileDownload(true);
+      sessionStorage.setItem("accountsMobileDownloadShown", "1");
+    }
+  };
 
   /**
    * 生成下载链接（根据语言）
@@ -111,6 +150,22 @@ export default function AccountPageCore({
       title: "Welcome to AitoEarn",
       desc: "To enjoy the full experience, please download the app on your device",
       cta: "Download App",
+    };
+  })();
+
+  const wechatBrowserTexts = (() => {
+    const lang = userStore.lang;
+    if (lang === "zh-CN") {
+      return {
+        title: "请在浏览器中打开",
+        desc: "请点击右上角，通过浏览器打开",
+        cta: "我知道了",
+      };
+    }
+    return {
+      title: "Please open in browser",
+      desc: "Please click the top-right corner to open via browser",
+      cta: "I understand",
     };
   })();
 
@@ -175,6 +230,41 @@ export default function AccountPageCore({
           showSpaceSelector={!targetSpaceId}
           autoTriggerPlatform={targetPlatform}
         />
+
+        {/* 微信浏览器提示（遮罩 + 箭头指向右上角） */}
+        {showWechatBrowserTip && (
+          <>
+            <div className={styles.mobileDownloadOverlay} onClick={closeWechatBrowserTip} />
+            <Image src={rightArrow} alt="rightArrow" width={120} height={120} className={styles.rightArrow} />
+            <div className={styles.wechatTipContainer}>
+              <div className={styles.wechatTipContent}>
+                <div className={styles.wechatTipTitle}>{wechatBrowserTexts.title}</div>
+                <div className={styles.wechatTipSteps}>
+                  <div className={styles.wechatTipStep}>
+                    <span className={styles.stepNumber}>1</span>
+                    <span className={styles.stepText}>
+                      {userStore.lang === "zh-CN" ? "点击右上角的" : "Click the top-right corner's"}
+                      <span className={styles.dotsButton}>⋯</span>
+                      {userStore.lang === "zh-CN" ? "按钮" : "button"}
+                    </span>
+                  </div>
+                  <div className={styles.wechatTipStep}>
+                    <span className={styles.stepNumber}>2</span>
+                    <span className={styles.stepText}>
+                      {userStore.lang === "zh-CN" ? "选择" : "Select"}
+                      <span className={styles.browserButton}>🌐</span>
+                      {userStore.lang === "zh-CN" ? "在浏览器中打开" : "Open in browser"}
+                    </span>
+                  </div>
+                </div>
+                <button className={styles.wechatTipClose} onClick={closeWechatBrowserTip}>
+                  {wechatBrowserTexts.cta}
+                </button>
+              </div>
+              
+            </div>
+          </>
+        )}
 
         {/* 移动端下载提示（遮罩 + 底部弹窗） */}
         {showMobileDownload && (

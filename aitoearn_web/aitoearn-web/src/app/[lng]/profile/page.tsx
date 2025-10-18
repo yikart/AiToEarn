@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Card, Descriptions, Button, message, Modal, Form, Input } from "antd";
 import { CrownOutlined, TrophyOutlined, GiftOutlined, StarOutlined, RocketOutlined, ThunderboltOutlined, HistoryOutlined, DollarOutlined, UserOutlined, GiftFilled, EditOutlined, CopyOutlined } from "@ant-design/icons";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -89,29 +89,65 @@ export default function ProfilePage() {
     createdAt?: string;
   }
 
-  // 获取会员状态和过期时间
-  const isVip = userInfo?.vipInfo?.cycleType && userInfo.vipInfo.cycleType > 0 &&
-    userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime) > new Date() : false;
-  const vipExpireTime = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleDateString() : '';
-
-  // 检查用户是否从未开过会员
-  const hasNeverBeenVip = !userInfo?.vipInfo || Object.keys(userInfo.vipInfo).length === 0;
-
-  // 获取会员类型显示文本
-  const getVipCycleTypeText = (cycleType: number) => {
-    switch (cycleType) {
-      case 0:
-        return t('nonMember');
-      case 1:
-        return t('monthlyMember');
-      case 2:
-        return t('yearlyMember');
+  // 状态判断辅助函数
+  const getVipStatusInfo = (status: string) => {
+    switch (status) {
+      case 'none':
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'trialing':
+        return { isVip: true, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'monthly_once':
+        return { isVip: true, isMonthly: true, isYearly: false, isAutoRenew: false, isOnce: true };
+      case 'yearly_once':
+        return { isVip: true, isMonthly: false, isYearly: true, isAutoRenew: false, isOnce: true };
+      case 'active_monthly':
+        return { isVip: true, isMonthly: true, isYearly: false, isAutoRenew: true, isOnce: false };
+      case 'active_yearly':
+        return { isVip: true, isMonthly: false, isYearly: true, isAutoRenew: true, isOnce: false };
+      case 'active_nonrenewing':
+        return { isVip: true, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
+      case 'expired':
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
       default:
-        return t('unknown');
+        return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false };
     }
   };
 
-  const vipCycleType = getVipCycleTypeText(userInfo?.vipInfo?.cycleType || 0);
+  // 获取会员状态和过期时间
+  const isVip = useMemo(() => {
+    const vipInfo = userInfo?.vipInfo;
+    if (!vipInfo) return false;
+    
+    const statusInfo = getVipStatusInfo(vipInfo.status);
+    return statusInfo.isVip && vipInfo.expireTime && new Date(vipInfo.expireTime) > new Date();
+  }, [userInfo]);
+  
+  const vipExpireTime = userInfo?.vipInfo?.expireTime ? new Date(userInfo.vipInfo.expireTime).toLocaleDateString() : '';
+
+  // 检查用户是否从未开过会员
+  const hasNeverBeenVip = !userInfo?.vipInfo || userInfo.vipInfo.status === 'none' || userInfo.vipInfo.status === 'expired';
+
+  // 获取会员类型显示文本
+  const getVipStatusText = (status: string) => {
+    const statusInfo = getVipStatusInfo(status);
+    if (statusInfo.isYearly && statusInfo.isAutoRenew) {
+      return t('yearlyMember');
+    } else if (statusInfo.isYearly && !statusInfo.isAutoRenew) {
+      return t('yearlyMember') + ` (${t('memberTypes.oneTime' as any)})`;
+    } else if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
+      return t('monthlyMember');
+    } else if (statusInfo.isMonthly && !statusInfo.isAutoRenew) {
+      return t('monthlyMember') + ` (${t('memberTypes.oneTime' as any)})`;
+    } else if (statusInfo.isOnce) {
+      return statusInfo.isYearly ? t('yearlyMember') + ` (${t('memberTypes.oneTime' as any)})` : t('monthlyMember') + ` (${t('memberTypes.oneTime' as any)})`;
+    } else if (status === 'trialing') {
+      return t('monthlyMember') + ` (${t('memberTypes.trial' as any)})`;
+    } else {
+      return t('nonMember');
+    }
+  };
+
+  const vipStatusText = getVipStatusText(userInfo?.vipInfo?.status || 'none');
 
   // 会员权益数据
   const vipBenefits = [
@@ -139,7 +175,8 @@ export default function ProfilePage() {
 
         // 检查是否需要显示免费会员提示
         const hasVipInfo = response.data.vipInfo;
-        if (!hasVipInfo && !hasShownFreeTrial) {
+        const isNeverVip = !hasVipInfo || hasVipInfo.status === 'none' || hasVipInfo.status === 'expired';
+        if (isNeverVip && !hasShownFreeTrial) {
           // 延迟显示弹框，确保页面加载完成
           setTimeout(() => {
             setFreeTrialModalVisible(true);
@@ -171,10 +208,10 @@ export default function ProfilePage() {
           total: paginatedData.total || 0
         });
       } else {
-        message.error(response?.message || '获取积分记录失败');
+        message.error(response?.message || t('messages.getPointsRecordsFailed' as any));
       }
     } catch (error) {
-      message.error('获取积分记录失败');
+      message.error(t('messages.getPointsRecordsFailed' as any));
     } finally {
       setPointsLoading(false);
     }
@@ -209,15 +246,15 @@ export default function ProfilePage() {
 
       if (response && response.code === 0) {
         setCancelCode(response.data?.code || '');
-        message.success('验证码已发送');
+        message.success(t('messages.verificationCodeSent' as any));
         // 开始倒计时
         setCodeCountdown(60);
       } else {
-        message.error(response?.message || '获取验证码失败');
+        message.error(response?.message || t('messages.getVerificationCodeFailed' as any));
       }
     } catch (error) {
       console.error('获取验证码错误:', error);
-      message.error('获取验证码失败');
+      message.error(t('messages.getVerificationCodeFailed' as any));
     }
   };
 
@@ -237,7 +274,7 @@ export default function ProfilePage() {
 
 
       if (response && response.code === 0) {
-        message.success('账户注销成功');
+        message.success(t('messages.accountCancelledSuccess' as any));
         setCancelModalVisible(false);
         // 清除登录状态并跳转到登录页
         clearLoginStatus();
@@ -690,7 +727,7 @@ export default function ProfilePage() {
               {new Date(currentOrderDetail.expires_at * 1000).toLocaleString()}
             </Descriptions.Item>
             <Descriptions.Item label={t('userId')}>{currentOrderDetail.userId}</Descriptions.Item>
-            <Descriptions.Item label="价格ID">{currentOrderDetail.price}</Descriptions.Item>
+            <Descriptions.Item label={t('messages.priceId' as any)}>{currentOrderDetail.price}</Descriptions.Item>
             {currentOrderDetail.payment_intent && (
               <Descriptions.Item label={t('paymentIntent')}>{currentOrderDetail.payment_intent}</Descriptions.Item>
             )}

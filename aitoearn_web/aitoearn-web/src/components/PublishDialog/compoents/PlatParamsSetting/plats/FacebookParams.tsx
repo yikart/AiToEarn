@@ -5,7 +5,6 @@ import {
 } from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type";
 import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
 import usePlatParamsCommon from "@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon";
-import CommonTitleInput from "@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput";
 import styles from "../platParamsSetting.module.scss";
 import { Radio } from "antd";
 import { useTransClient } from "@/app/i18n/client";
@@ -42,7 +41,6 @@ const FacebookParams = memo(
             {...pubParmasTextareaCommonParams}
             extend={
               <>
-                <CommonTitleInput pubItem={pubItem} />
                 <div
                   className={styles.commonTitleInput}
                   style={{ marginTop: "10px" }}
