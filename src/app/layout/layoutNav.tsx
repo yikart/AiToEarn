@@ -24,10 +24,10 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
   const { t } = useTransClient("route");
   const lng = useGetClientLng();
   const path = child.path || "/";
-  
+
   // 确保路径包含语言前缀
   const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`;
-  
+
   return (
     <>
       {!child.children ? (
@@ -175,7 +175,7 @@ function NavPC() {
   const timer = useRef<NodeJS.Timeout>();
   const route = useSelectedLayoutSegments();
   const { t } = useTransClient("route");
-  
+
   let currRouter = "/";
   if (route.length === 1) {
     currRouter = route[0];
@@ -205,7 +205,7 @@ function NavPC() {
               }, 300);
             }}
           >
-            {getNameTag(v1, 0)} 
+            {getNameTag(v1, 0)}
             <ChildNav
               key={v1.name}
               child={v1}
@@ -237,7 +237,7 @@ function NavPE() {
     // 确保使用当前语言前缀
     const targetPath = e.key.startsWith('/') ? e.key : `/${e.key}`;
     const fullPath = `/${lng}${targetPath}`;
-    
+
     // 调试信息
     console.log('Menu click debug:', {
       key: e.key,
@@ -246,10 +246,10 @@ function NavPE() {
       fullPath,
       currentPath: window.location.pathname
     });
-    
+
     // 先关闭菜单
     setOpen(false);
-    
+
     // 使用 window.location.href 进行跳转，确保完全重新加载页面
     // 这样可以避免路由状态混乱的问题
     window.location.href = fullPath;
