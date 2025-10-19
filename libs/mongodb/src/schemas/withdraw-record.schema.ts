@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { WithdrawRecordStatus, WithdrawRecordType } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
+import { UserWalletAccount } from './user-wallet-account.schema'
 
 @Schema({
   collection: 'withdrawRecord',
@@ -27,6 +28,11 @@ export class WithdrawRecord extends WithTimestampSchema {
     required: false,
   })
   userWalletAccountId?: string
+
+  @Prop({
+    required: false,
+  })
+  userWalletAccountInfo?: UserWalletAccount
 
   @Prop({
     required: true,
@@ -65,9 +71,15 @@ export class WithdrawRecord extends WithTimestampSchema {
   @Prop({
     required: true,
     enum: WithdrawRecordStatus,
-    default: WithdrawRecordStatus.Pending,
+    default: WithdrawRecordStatus.WAIT,
   })
   status: WithdrawRecordStatus
+
+  @Prop({
+    type: Object,
+    required: false,
+  })
+  metadata?: Record<string, unknown>
 }
 
 export const WithdrawRecordSchema = SchemaFactory.createForClass(WithdrawRecord)

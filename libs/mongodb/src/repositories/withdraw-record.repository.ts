@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
-import { FilterQuery, Model, PipelineStage } from 'mongoose'
+import { FilterQuery, Model, PipelineStage, RootFilterQuery } from 'mongoose'
 import { WithdrawRecord } from '../schemas'
 import { BaseRepository } from './base.repository'
 
@@ -16,6 +16,36 @@ export class WithdrawRecordRepository extends BaseRepository<WithdrawRecord> {
     @InjectModel(WithdrawRecord.name) withdrawRecordModel: Model<WithdrawRecord>,
   ) {
     super(withdrawRecordModel)
+  }
+
+  // 获取信息
+  getInfoByIncomeId(incomeRecordId: string) {
+    return this.model.findOne({ incomeRecordId })
+  }
+
+  async getListOfUser(page: {
+    pageNo: number
+    pageSize: number
+  }, query: { userId: string }) {
+    const { pageNo, pageSize } = page
+    const filter: RootFilterQuery<WithdrawRecord> = {
+      userId: query.userId,
+    }
+
+    const [list, total] = await Promise.all([
+      this.model
+        .find(filter)
+        .sort({ createdAt: -1 })
+        .skip((pageNo - 1) * pageSize)
+        .limit(pageSize)
+        .exec(),
+      this.model.countDocuments(filter),
+    ])
+
+    return {
+      list,
+      total,
+    }
   }
 
   async listWithPagination(params: ListWithdrawRecordParams) {

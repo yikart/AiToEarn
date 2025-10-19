@@ -4,7 +4,7 @@ export enum WithdrawRecordType {
 }
 
 export enum WithdrawRecordStatus {
-  Pending = 0,
-  Success = 1,
-  Failed = -1,
+  WAIT = 0,
+  SUCCESS = 1,
+  FAIL = -1,
 }
