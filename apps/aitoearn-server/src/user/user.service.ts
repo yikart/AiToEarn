@@ -30,6 +30,7 @@ export class UserService {
   /**
    * 获取用户信息
    * @param mail
+   * @param all
    * @returns
    */
   async getUserInfoByMail(mail: string, all = false) {
@@ -44,7 +45,6 @@ export class UserService {
   /**
    * 获取用户信息
    * @param id
-   * @param all
    * @returns
    */
   async getUserInfoById(id: string) {
