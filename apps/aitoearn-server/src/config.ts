@@ -163,6 +163,7 @@ export const appConfigSchema = z.object({
   environment: z.string().default('development'),
   ai: aiConfigSchema,
   aliGreen: AliGreenConfigSchema,
+  mailBackHost: z.string(),
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
