@@ -132,11 +132,14 @@ export class NotificationRepository extends BaseRepository<Notification> {
     return { affectedCount: result.modifiedCount }
   }
 
-  async countByUserIdUnread(userId: string) {
+  async countByUserIdUnread(userId: string, filter?: {
+    type?: NotificationType
+  }) {
     const count = await this.model.countDocuments({
       userId,
       status: NotificationStatus.Unread,
       deletedAt: { $exists: false },
+      ...filter,
     })
 
     return { count }

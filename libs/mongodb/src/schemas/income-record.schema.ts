@@ -31,7 +31,7 @@ export class IncomeRecord extends WithTimestampSchema {
   @Prop({
     index: true,
     enum: IncomeStatus,
-    default: IncomeStatus.Pending,
+    default: IncomeStatus.WAIT,
   })
   status: IncomeStatus
 
