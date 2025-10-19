@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { IncomeRecordStatus, IncomeRecordType } from '../enums'
+import { IncomeStatus, IncomeType } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
@@ -24,16 +24,16 @@ export class IncomeRecord extends WithTimestampSchema {
 
   @Prop({
     required: true,
-    enum: IncomeRecordType,
+    enum: IncomeType,
   })
-  type: IncomeRecordType
+  type: IncomeType
 
   @Prop({
     index: true,
-    enum: IncomeRecordStatus,
-    default: IncomeRecordStatus.Pending,
+    enum: IncomeStatus,
+    default: IncomeStatus.Pending,
   })
-  status: IncomeRecordStatus
+  status: IncomeStatus
 
   // 提现ID
   @Prop({

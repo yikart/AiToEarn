@@ -5,7 +5,6 @@ import { TableDto, UserType } from '@yikart/common'
 import { Media, MediaRepository, MediaType } from '@yikart/mongodb'
 import { config } from '../config'
 import { StorageService } from '../user/storage.service'
-import { UserService } from '../user/user.service'
 import { CreateMediaDto } from './dto/media.dto'
 
 @Injectable()
@@ -13,7 +12,6 @@ export class MediaService {
   constructor(
     private readonly s3Service: S3Service,
     private readonly mediaRepository: MediaRepository,
-    private readonly userService: UserService,
     private readonly storageService: StorageService,
   ) { }
 
@@ -21,7 +19,7 @@ export class MediaService {
     let path = newData.url
     try {
       const url = new URL(newData.url)
-      if (url.hostname === config.s3.hostUrl) {
+      if (url.hostname === config.awsS3.hostUrl) {
         path = url.pathname.substring(1)
       }
       else {
