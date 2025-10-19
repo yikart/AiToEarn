@@ -1,10 +1,11 @@
 import type { DynamicModule, Provider } from '@nestjs/common'
 import { S3Client } from '@aws-sdk/client-s3'
-import { Module } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 import { S3Config } from './s3.config'
 import { S3Factory } from './s3.factory'
 import { S3Service } from './s3.service'
 
+@Global()
 @Module({})
 export class S3Module {
   static forRoot(config: S3Config): DynamicModule {
