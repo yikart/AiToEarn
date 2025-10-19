@@ -8,7 +8,7 @@ import { AppReleaseModule } from './app-release/app-release.module'
 import { AuthModule } from './auth/auth.module'
 import { config } from './config'
 import { ContentModule } from './content/content.module'
-import { FeedbackModule } from './core/feedback/feedback.module'
+import { FeedbackModule } from './feedback/feedback.module'
 import { NotificationModule } from './notification/notification.module'
 import { UserModule } from './user/user.module'
 
