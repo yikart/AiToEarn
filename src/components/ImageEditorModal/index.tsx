@@ -112,10 +112,7 @@ const ImageEditorModal = memo(
           width={1100}
           footer={
             <>
-              <Button
-                size="large"
-                onClick={onCancel}
-              >
+              <Button size="large" onClick={onCancel}>
                 {account.t("deleteConfirm.cancel")}
               </Button>
               <Button
@@ -143,7 +140,7 @@ const ImageEditorModal = memo(
                   onCancel();
                 }}
               >
-                {account.t("createSpace.cancel")}
+                {account.t("createSpace.save")}
               </Button>
             </>
           }
