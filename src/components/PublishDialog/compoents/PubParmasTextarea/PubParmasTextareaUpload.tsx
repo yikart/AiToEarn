@@ -6,12 +6,11 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { message, Progress, Tooltip, Upload } from "antd";
+import { message, Progress, Upload } from "antd";
 import {
   formatImg,
   formatVideo,
 } from "@/components/PublishDialog/PublishDialog.util";
-import { PlusOutlined } from "@ant-design/icons";
 import {
   IImgFile,
   IVideoFile,
@@ -20,6 +19,8 @@ import { toolsApi } from "@/api/tools";
 import { OSS_URL } from "@/constant";
 import { RcFile } from "antd/es/upload";
 import { useTransClient } from "@/app/i18n/client";
+import { UploadRef } from "antd/es/upload/Upload";
+import { PlusOutlined } from "@ant-design/icons";
 
 const { Dragger } = Upload;
 
@@ -52,6 +53,7 @@ const PubParmasTextareaUpload = memo(
       const chooseCount = useRef<number>(0);
       const fileListRef = useRef<RcFile[]>([]);
       const { t } = useTransClient("publish");
+      const uploadRef = useRef<UploadRef>(null);
 
       // 上传视频
       const uploadVideo = useCallback(
@@ -126,6 +128,34 @@ const PubParmasTextareaUpload = memo(
           className="pubParmasTextarea-uploads-upload"
           onClick={(e) => e.stopPropagation()}
         >
+          <Dragger
+            ref={uploadRef}
+            style={{ display: "none" }}
+            accept={uploadAccept}
+            multiple={uploadAccept.includes("image")}
+            listType="text"
+            beforeUpload={async (file, uploadFileList) => {
+              if (!checkFileListType(uploadFileList)) {
+                return Upload.LIST_IGNORE;
+              }
+              if (file.type.startsWith("video/")) {
+                const video = await formatVideo(file);
+                await uploadVideo(video);
+              } else {
+                chooseCount.current++;
+                fileListRef.current = [...fileListRef.current, file];
+
+                if (chooseCount.current === uploadFileList.length) {
+                  await uploadImg(fileListRef.current);
+                  fileListRef.current = [];
+                  chooseCount.current = 0;
+                }
+              }
+              return false;
+            }}
+            showUploadList={false}
+          />
+
           {uploadLoading ? (
             <div className="pubParmasTextarea-uploads-upload-loading">
               <Progress
@@ -158,36 +188,20 @@ const PubParmasTextareaUpload = memo(
               )}
             </div>
           ) : (
-            <Tooltip title={ t("upload.uploadImageOrVideo") } >
-              <Dragger
-                accept={uploadAccept}
-                multiple={uploadAccept.includes("image")}
-                listType="text"
-                beforeUpload={async (file, uploadFileList) => {
-                  if (!checkFileListType(uploadFileList)) {
-                    return Upload.LIST_IGNORE;
-                  }
-                  if (file.type.startsWith("video/")) {
-                    const video = await formatVideo(file);
-                    await uploadVideo(video);
-                  } else {
-                    chooseCount.current++;
-                    fileListRef.current = [...fileListRef.current, file];
-
-                    if (chooseCount.current === uploadFileList.length) {
-                      await uploadImg(fileListRef.current);
-                      fileListRef.current = [];
-                      chooseCount.current = 0;
-                    }
-                  }
-                  return false;
-                }}
-                showUploadList={false}
-              >
-                <PlusOutlined />
-                <p>{t("upload.dragAndSelect")}</p>
-              </Dragger>
-            </Tooltip>
+            <div
+              className="pubParmasTextarea-uploads-upload-blocker"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                // 触发上传
+                uploadRef
+                  .current!.nativeElement?.querySelector("input")!
+                  .click();
+              }}
+            >
+              <PlusOutlined style={{ fontSize: "20px" }} />
+              Select Files
+            </div>
           )}
         </div>
       );
