@@ -137,6 +137,7 @@
     "confirm": "确认"
   },
   "mobileOnlySupport": "移动端支持",
+  "xhsOfflineTip": "小红书账号已离线，请下载App进行操作",
   "reauthConfirm": {
     "title": "会话已过期",
     "content": "您的 {{platformName}} 账号 \"{{nickname}}\"（位于 {{spaceName}}）会话已过期。是否重新登录？",

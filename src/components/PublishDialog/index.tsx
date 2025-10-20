@@ -196,7 +196,7 @@ const PublishDialog = memo(
                   // Facebook授权成功后显示页面选择弹窗
                   handleFacebookAuthSuccess();
                 } catch (error) {
-                  console.error("Facebook授权失败:", error);
+                  console.error(t("messages.facebookAuthFailed" as any), error);
                 }
                 break;
               case PlatType.Instagram:
@@ -215,8 +215,8 @@ const PublishDialog = memo(
                 await linkedinSkip(platform, targetSpaceId);
                 break;
               default:
-                console.warn(`未支持的平台类型: ${platform}`);
-                message.warning(`暂不支持 ${platform} 平台的直接授权`);
+                console.warn(`${t("messages.unsupportedPlatformType" as any)}: ${platform}`);
+                message.warning(t("messages.platformNotSupportedDirect" as any, { platform }));
                 return;
             }
 
@@ -224,14 +224,14 @@ const PublishDialog = memo(
             setTimeout(async () => {
               try {
                 await getAccountList();
-                console.log("账号列表已刷新");
+                console.log(t("messages.accountListRefreshed" as any));
               } catch (error) {
-                console.error("刷新账号列表失败:", error);
+                console.error(t("messages.refreshAccountListFailed" as any), error);
               }
             }, 3000); // 等待3秒让授权完成
           } catch (error) {
-            console.error("授权失败:", error);
-            message.error("授权失败，请重试");
+            console.error(t("messages.authFailed" as any), error);
+            message.error(t("messages.authFailedRetry" as any));
           }
         },
         [accountGroupList, getAccountList],
@@ -261,7 +261,7 @@ const PublishDialog = memo(
         }
 
         if (!contentToCheck.trim()) {
-          message.warning("请先输入内容");
+          message.warning(t("messages.pleaseInputContent" as any));
           return;
         }
 
@@ -284,17 +284,17 @@ const PublishDialog = memo(
             setModerationResult(isSafe);
             setModerationLevel(reason);
             setModerationDesc(
-              isSafe ? "" : descriptions || reason || "内容不安全",
+              isSafe ? "" : descriptions || reason || t("actions.contentUnsafe" as any),
             );
             if (isSafe) {
-              message.success("内容安全");
+              message.success(t("actions.contentSafe" as any));
             } else {
-              message.error("内容不安全");
+              message.error(t("actions.contentUnsafe" as any));
             }
           }
         } catch (error) {
-          console.error("内容安全检测失败:", error);
-          message.error("内容安全检测失败，请稍后重试");
+          console.error(t("messages.contentModerationError" as any), error);
+          message.error(t("messages.contentModerationFailed" as any));
         } finally {
           setModerationLoading(false);
         }
@@ -881,7 +881,13 @@ const PublishDialog = memo(
                                   if (isTikTokForbidden) {
                                     return;
                                   }
-                                  // 只有离线账户才触发授权跳转
+                                  // 小红书平台即使是掉线状态也显示下载App弹窗
+                                  if (pubItem.account.type === PlatType.Xhs) {
+                                    setCurrentPlatform(t("rednote" as any));
+                                    setDownloadModalVisible(true);
+                                    return;
+                                  }
+                                  // 其他平台的离线账户触发授权跳转
                                   if (isOffline) {
                                     handleOfflineAvatarClick(pubItem.account);
                                   }

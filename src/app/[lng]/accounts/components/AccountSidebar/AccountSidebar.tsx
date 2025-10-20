@@ -854,7 +854,13 @@ const AccountSidebar = memo(
                                       if (
                                         account.status === AccountStatus.DISABLE
                                       ) {
-                                        // 掉线账户直接触发重新授权
+                                        // 小红书平台即使是掉线状态也显示下载App弹窗
+                                        if (account.type === PlatType.Xhs) {
+                                          setMobileOnlyPlatform("小红书");
+                                          setShowAppDownloadModal(true);
+                                          return;
+                                        }
+                                        // 其他平台的掉线账户直接触发重新授权
                                         await handleOfflineAccountClick(account);
                                         return;
                                       }
