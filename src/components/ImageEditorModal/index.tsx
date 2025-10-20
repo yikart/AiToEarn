@@ -78,15 +78,14 @@ const ImageEditorModal = memo(
         newPreset.classList.remove(originClass);
         newPreset.classList.add(newClass);
         cropCon.appendChild(newPreset);
-        cropCon.addEventListener("click", (e) => {
-          const target = e.target as HTMLElement;
-          if (target.closest(`.${newClass}`)) {
+        newPreset.onclick = () => {
+          setTimeout(() => {
             const inst = imageEditorRef.current?.getInstance();
             inst.stopDrawingMode();
             inst.startDrawingMode("CROPPER");
             inst.setCropzoneRect(mode);
-          }
-        });
+          }, 10);
+        };
       }
 
       useEffect(() => {
@@ -113,7 +112,10 @@ const ImageEditorModal = memo(
           width={1100}
           footer={
             <>
-              <Button size="large" onClick={onCancel}>
+              <Button
+                size="large"
+                onClick={onCancel}
+              >
                 {account.t("deleteConfirm.cancel")}
               </Button>
               <Button
