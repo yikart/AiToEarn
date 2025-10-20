@@ -701,7 +701,7 @@ const AccountSidebar = memo(
                               {v.name}
                             </span>
                             <span className="accountSidebar-userCount">
-                              {totalCount}/{onlineCount}
+                              {onlineCount}/{totalCount}
                             </span>
                             {/* 根据proxyIp判断显示IP信息 */}
                             {!v.proxyIp || v.proxyIp === "" ? (
