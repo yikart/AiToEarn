@@ -6,7 +6,7 @@ import type { Request, Response } from 'express'
 import type { StreamEntry } from 'pino'
 import type { BaseConfig } from './config'
 import { HttpStatus, Logger, Module } from '@nestjs/common'
-import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, MetadataScanner, ModulesContainer, NestFactory } from '@nestjs/core'
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { apiReference } from '@scalar/nestjs-api-reference'
 import { LoggerModule, Logger as PinoLogger } from 'nestjs-pino'
@@ -18,7 +18,7 @@ import { CloudWatchLogger } from './loggers/cloud-watch.logger'
 import { ConsoleLogger } from './loggers/console.logger'
 import { FeishuLogger } from './loggers/feishu.logger'
 import { ZodValidationPipe } from './pipes'
-import { patchNestJsSwagger, setupNatsPattern, zodToJsonSchemaOptions } from './utils'
+import { patchNestJsSwagger, zodToJsonSchemaOptions } from './utils'
 
 z.config(z.locales.zhCN())
 
@@ -101,7 +101,7 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
   app.useLogger(app.get(PinoLogger))
 
   // setupNatsPattern(app.get(ModulesContainer), new MetadataScanner(), config.nats.prefix)
-  setupNatsPattern(app.get(ModulesContainer), new MetadataScanner())
+  // setupNatsPattern(app.get(ModulesContainer), new MetadataScanner())
 
   // app.connectMicroservice<MicroserviceOptions>({
   //   transport: Transport.NATS,
