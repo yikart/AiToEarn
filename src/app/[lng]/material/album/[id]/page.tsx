@@ -7,6 +7,7 @@ import styles from "./album.module.scss";
 import { createMedia, deleteMedia, getMediaList } from "@/api/media";
 import { uploadToOss } from "@/api/oss";
 import { getOssUrl } from "@/utils/oss";
+import { formatImg, VideoGrabFrame } from "@/components/PublishDialog/PublishDialog.util";
 
 interface Media {
   _id: string;
@@ -120,13 +121,24 @@ export default function AlbumPage() {
 
     try {
       const url = await uploadToOss(file);
-      
+      let thumbUrl: string;
+      if (file.type.startsWith('video/')) {
+        const res = await VideoGrabFrame(URL.createObjectURL(file), 0);
+        const blob = res.cover.file;
+        const fileName = file.name.replace(/\.[^/.]+$/, "") + "_cover.png";
+        const coverFile = new File([blob], fileName, {
+          type: blob.type || "image/png",
+        });
+        thumbUrl = await uploadToOss(coverFile);
+      }
+
       await createMedia({
         groupId: albumId,
         type: file.type.startsWith('video/') ? 'video' : file.type.startsWith('image/') ? 'img' : 'img',  // 音频暂时不支持     
         url,
         title: file.name,
-        desc: ''
+        desc: '',
+        thumbUrl
       });
 
       message.success('上传成功');
@@ -252,4 +264,4 @@ export default function AlbumPage() {
       )}
     </div>
   );
-} 
+}

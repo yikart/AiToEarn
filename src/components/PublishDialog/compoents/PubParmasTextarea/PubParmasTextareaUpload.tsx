@@ -183,11 +183,16 @@ const PubParmasTextareaUpload = memo(
                   imagefile["ossUrl"] = item.url;
                   onImgUpdateFinish([imagefile]);
                 } else {
-                  // TODO 视频素材，需要封面
+                  const coverOss = getOssUrl(item.thumbUrl || "");
                   const video: any = {
                     ossUrl: ossUrl,
                     videoUrl: ossUrl,
+                    cover: {
+                      ossUrl: coverOss,
+                      imgUrl: coverOss,
+                    },
                   };
+                  console.log(video);
                   onVideoUpdateFinish(video);
                 }
               } catch (e) {
