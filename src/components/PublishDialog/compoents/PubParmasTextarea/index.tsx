@@ -35,6 +35,7 @@ import dynamic from "next/dynamic";
 import Aibrush from "@/components/PublishDialog/svgs/aibrush.svg";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
+import DraftSelectionModal from "@/components/PublishDialog/compoents/DraftSelectionModal";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -89,6 +90,7 @@ const PubParmasTextarea = memo(
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
+      const [draftModalOpen, setDraftModalOpen] = useState(false);
       const { setOpenLeft } = usePublishDialog(
         useShallow((state) => ({
           setOpenLeft: state.setOpenLeft,
@@ -484,7 +486,7 @@ const PubParmasTextarea = memo(
                       type="text"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setOpenLeft(true);
+                        setDraftModalOpen(true);
                       }}
                     >
                       {t("actions.selectDraft")}
@@ -514,6 +516,11 @@ const PubParmasTextarea = memo(
                 <div className="pubParmasTextarea-footer-extend">{extend}</div>
               )}
             </div>
+
+            <DraftSelectionModal
+              draftModalOpen={draftModalOpen}
+              onCancel={() => setDraftModalOpen(false)}
+            />
           </div>
         </>
       );

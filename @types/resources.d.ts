@@ -138,6 +138,7 @@ interface Resources {
       "confirm": "确认"
     },
     "mobileOnlySupport": "移动端支持",
+    "xhsOfflineTip": "小红书账号已离线，请下载App进行操作",
     "reauthConfirm": {
       "title": "会话已过期",
       "content": "您的 {{platformName}} 账号 \"{{nickname}}\"（位于 {{spaceName}}）会话已过期。是否重新登录？",
@@ -1988,7 +1989,8 @@ interface Resources {
       "workSaved": "请选择要发布的账户",
       "pcNotSupported": "Web不支持该平台，请下载App进行发布",
       "accountOffline": "该账号已离线，无法发布",
-      "tiktokForbidden": "该平台暂不支持发布"
+      "tiktokForbidden": "该平台暂不支持发布",
+      "xhsOffline": "小红书账号已离线，请下载App进行操作"
     },
     "status": {
       "publishFailed": "发布失败",
@@ -2033,7 +2035,9 @@ interface Resources {
       "uploadImageOrVideo": "上传图片或视频",
       "uploadImage": "请上传图片",
       "uploadVideo": "请上传视频",
-      "dragAndSelect": "拖放 & 选择图片或视频"
+      "dragAndSelect": "拖放 & 选择图片或视频",
+      "selectFile": "选择文件",
+      "uploadLocal": "上传本地图片或视频"
     },
     "validation": {
       "facebookStoryNoDes": "Facebook Story不支持填写描述",
@@ -2118,6 +2122,18 @@ interface Resources {
       "riskLevel": "等级:",
       "contentUnsafe": "内容不安全",
       "preview": "点击查看"
+    },
+    "messages": {
+      "authFailedRetry": "授权失败，请重试",
+      "pleaseInputContent": "请先输入内容",
+      "contentModerationFailed": "内容安全检测失败，请稍后重试",
+      "contentModerationError": "内容安全检测失败",
+      "unsupportedPlatformType": "未支持的平台类型",
+      "platformNotSupportedDirect": "暂不支持 {{platform}} 平台的直接授权",
+      "facebookAuthFailed": "Facebook授权失败",
+      "accountListRefreshed": "账号列表已刷新",
+      "refreshAccountListFailed": "刷新账号列表失败",
+      "authFailed": "授权失败"
     },
     "badges": {
       "offline": "已离线",

@@ -9,13 +9,11 @@ import {
   useState,
 } from "react";
 import styles from "./publishDialog.module.scss";
-import { Button, message, Modal, List, Spin, Tooltip } from "antd";
+import { Button, message, Modal, Tooltip } from "antd";
 import DownloadAppModal from "@/components/common/DownloadAppModal";
 import {
   ArrowRightOutlined,
   ExclamationCircleFilled,
-  FileTextOutlined,
-  FolderOpenOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
@@ -37,10 +35,7 @@ import {
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { generateUUID } from "@/utils";
 import { useTransClient } from "@/app/i18n/client";
-import { apiGetMaterialGroupList, apiGetMaterialList } from "@/api/material";
-import { getOssUrl } from "@/utils/oss";
 import { toolsApi } from "@/api/tools";
-import { useRouter } from "next/navigation";
 import { PlatType } from "@/app/config/platConfig";
 // 导入各平台授权函数
 import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
@@ -150,7 +145,6 @@ const PublishDialog = memo(
       const [showFacebookPagesModal, setShowFacebookPagesModal] =
         useState(false);
       const { t } = useTransClient("publish");
-      const router = useRouter();
 
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
@@ -345,89 +339,6 @@ const PublishDialog = memo(
         }
       }, [hasDescription]);
 
-      // 草稿选择弹窗/数据
-      const [draftModalOpen, setDraftModalOpen] = useState(false);
-      const [groupLoading, setGroupLoading] = useState(false);
-      const [groups, setGroups] = useState<any[]>([]);
-      const [selectedGroup, setSelectedGroup] = useState<any | null>(null);
-      const [draftLoading, setDraftLoading] = useState(false);
-      const [drafts, setDrafts] = useState<any[]>([]);
-
-      // 过滤可用类型（根据当前步骤和账户选择）
-      const allowImage = useMemo(() => {
-        if (step === 1 && expandedPubItem) {
-          const platConfig = AccountPlatInfoMap.get(
-            expandedPubItem.account.type,
-          )!;
-          return platConfig.pubTypes.has(PubType.ImageText);
-        }
-        if (pubListChoosed.length === 1) {
-          const platConfig = AccountPlatInfoMap.get(
-            pubListChoosed[0].account.type,
-          )!;
-          return platConfig.pubTypes.has(PubType.ImageText);
-        }
-        return true;
-      }, [step, expandedPubItem, pubListChoosed]);
-
-      const allowVideo = useMemo(() => {
-        if (step === 1 && expandedPubItem) {
-          const platConfig = AccountPlatInfoMap.get(
-            expandedPubItem.account.type,
-          )!;
-          return platConfig.pubTypes.has(PubType.VIDEO);
-        }
-        if (pubListChoosed.length === 1) {
-          const platConfig = AccountPlatInfoMap.get(
-            pubListChoosed[0].account.type,
-          )!;
-          return platConfig.pubTypes.has(PubType.VIDEO);
-        }
-        return true;
-      }, [step, expandedPubItem, pubListChoosed]);
-
-      const fetchGroups = useCallback(async () => {
-        try {
-          setGroupLoading(true);
-          const res: any = await apiGetMaterialGroupList(1, 100);
-          const list = res?.data?.list || [];
-          const filtered = list.filter((g: any) => {
-            if (g.type === PubType.ImageText) return allowImage;
-            if (g.type === PubType.VIDEO) return allowVideo;
-            return true;
-          });
-          setGroups(filtered);
-        } catch (e) {
-        } finally {
-          setGroupLoading(false);
-        }
-      }, [allowImage, allowVideo]);
-
-      const fetchDrafts = useCallback(async (groupId: string) => {
-        try {
-          setDraftLoading(true);
-          const res: any = await apiGetMaterialList(groupId, 1, 100);
-          setDrafts(res?.data?.list || []);
-        } catch (e) {
-        } finally {
-          setDraftLoading(false);
-        }
-      }, []);
-
-      useEffect(() => {
-        if (draftModalOpen) {
-          setSelectedGroup(null);
-          setDrafts([]);
-          fetchGroups();
-        }
-      }, [draftModalOpen, fetchGroups]);
-
-      useEffect(() => {
-        if (selectedGroup?._id) {
-          fetchDrafts(selectedGroup._id);
-        }
-      }, [selectedGroup, fetchDrafts]);
-
       useEffect(() => {
         if (open) {
           init(accounts, defaultAccountId);
@@ -468,60 +379,6 @@ const PublishDialog = memo(
           },
         });
       }, [onClose, t]);
-
-      // 选择草稿后填充参数
-      const applyDraft = useCallback(
-        (draft: any) => {
-          const nextParams: any = {};
-          if (draft.title) nextParams.title = draft.title;
-          if (draft.desc) nextParams.des = draft.desc;
-
-          // 处理媒体内容
-          if (Array.isArray(draft.mediaList) && draft.mediaList.length > 0) {
-            const videos = draft.mediaList.filter(
-              (m: any) => m.type === PubType.VIDEO,
-            );
-            const images = draft.mediaList.filter(
-              (m: any) => m.type !== PubType.VIDEO,
-            );
-
-            // 如果有视频，设置视频参数
-            if (videos.length > 0) {
-              const firstVideo = videos[0];
-              const ossUrl = getOssUrl(firstVideo.url);
-              const coverOss = getOssUrl(draft.coverUrl);
-              nextParams.video = {
-                ossUrl: ossUrl,
-                videoUrl: ossUrl,
-                cover: {
-                  ossUrl: coverOss,
-                  imgUrl: coverOss,
-                },
-              };
-            }
-
-            // 如果有图片，设置图片参数
-            if (images.length > 0) {
-              nextParams.images = images.map((v: any) => {
-                const ossUrl = getOssUrl(v.url);
-                return {
-                  ossUrl,
-                  imgUrl: ossUrl,
-                };
-              });
-            }
-          }
-
-          if (step === 1 && expandedPubItem) {
-            setOnePubParams(nextParams, expandedPubItem.account.id);
-          } else {
-            setAccountAllParams(nextParams);
-          }
-          setDraftModalOpen(false);
-          message.success(t("draft.selectDraftSuccess"));
-        },
-        [setAccountAllParams, setOnePubParams, step, expandedPubItem],
-      );
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
@@ -625,29 +482,10 @@ const PublishDialog = memo(
               }}
             >
               <div className="publishDialog-con">
-                <div
-                  className="publishDialog-con-head"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
+                <div className="publishDialog-con-head">
                   <span className="publishDialog-con-head-title">
                     {t("title")}
                   </span>
-                  <div style={{ display: "flex", gap: 8 }}>
-                    <Button
-                      size="small"
-                      icon={<FileTextOutlined />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDraftModalOpen(true);
-                      }}
-                    >
-                      {t("actions.selectDraft")}
-                    </Button>
-                  </div>
                 </div>
                 <div className="publishDialog-con-acconts">
                   {pubList.map((pubItem) => {
@@ -1049,172 +887,6 @@ const PublishDialog = memo(
                 <PublishDialogPreview />
               </CSSTransition>
             </div>
-          </Modal>
-
-          {/* Draft Selection Modal */}
-          <Modal
-            open={draftModalOpen}
-            onCancel={() => setDraftModalOpen(false)}
-            footer={null}
-            title={
-              selectedGroup
-                ? t("draft.selectDraftItem")
-                : t("draft.selectDraftGroup")
-            }
-            width={720}
-          >
-            {!selectedGroup ? (
-              <div>
-                {groupLoading ? (
-                  <div style={{ textAlign: "center", padding: 24 }}>
-                    <Spin />
-                  </div>
-                ) : (
-                  <List
-                    grid={{ gutter: 16, column: 2 }}
-                    dataSource={groups}
-                    locale={{ emptyText: t("draft.noDraftGroups") }}
-                    renderItem={(item: any) => (
-                      <List.Item>
-                        <div
-                          style={{
-                            background: "#FAEFFC",
-                            border: "2px solid transparent",
-                            padding: "16px",
-                            borderRadius: "12px",
-                            cursor: "pointer",
-                            transition: "all 0.3s ease",
-                            minHeight: "80px",
-                            display: "flex",
-                            flexDirection: "column",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            textAlign: "center",
-                            position: "relative",
-                          }}
-                          onClick={() => setSelectedGroup(item)}
-                        >
-                          <div
-                            style={{
-                              fontSize: 24,
-                              marginBottom: 8,
-                              color: "#667eea",
-                            }}
-                          >
-                            <FolderOpenOutlined />
-                          </div>
-                          <div
-                            style={{
-                              fontWeight: 600,
-                              fontSize: 16,
-                              color: "#2c3e50",
-                              marginBottom: 4,
-                            }}
-                          >
-                            {item.name || item.title}
-                          </div>
-                          {item.desc && (
-                            <div
-                              style={{
-                                fontSize: 12,
-                                color: "#7f8c8d",
-                                lineHeight: 1.4,
-                              }}
-                            >
-                              {item.desc}
-                            </div>
-                          )}
-                          <div
-                            style={{
-                              position: "absolute",
-                              top: 8,
-                              left: 8,
-                              padding: "2px 8px",
-                              borderRadius: "12px",
-                              fontSize: 10,
-                              color: "#fff",
-                              background:
-                                item.type === PubType.ImageText
-                                  ? "#52c41a"
-                                  : "#1890ff",
-                            }}
-                          >
-                            {item.type === PubType.ImageText
-                              ? t("draft.imageGroup")
-                              : t("draft.videoGroup")}
-                          </div>
-                        </div>
-                      </List.Item>
-                    )}
-                  />
-                )}
-              </div>
-            ) : (
-              <div>
-                <div style={{ marginBottom: 12 }}>
-                  <Button type="link" onClick={() => setSelectedGroup(null)}>
-                    {t("draft.backToGroups")}
-                  </Button>
-                </div>
-                {draftLoading ? (
-                  <div style={{ textAlign: "center", padding: 24 }}>
-                    <Spin />
-                  </div>
-                ) : (
-                  <List
-                    grid={{ gutter: 16, column: 2 }}
-                    dataSource={drafts}
-                    locale={{ emptyText: t("draft.noDrafts") }}
-                    renderItem={(item: any) => (
-                      <List.Item>
-                        <div
-                          style={{
-                            border: "1px solid #eee",
-                            borderRadius: 8,
-                            overflow: "hidden",
-                            cursor: "pointer",
-                          }}
-                          onClick={() => applyDraft(item)}
-                        >
-                          <div
-                            style={{
-                              width: "100%",
-                              paddingTop: "56%",
-                              position: "relative",
-                              background: "#f7f7f7",
-                            }}
-                          >
-                            {Array.isArray(item.mediaList) &&
-                              item.mediaList[0] && (
-                                <img
-                                  src={getOssUrl(item.coverUrl)}
-                                  alt=""
-                                  style={{
-                                    position: "absolute",
-                                    left: 0,
-                                    top: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    objectFit: "cover",
-                                  }}
-                                />
-                              )}
-                          </div>
-                          <div style={{ padding: 8 }}>
-                            <div style={{ fontWeight: 600 }}>
-                              {item.title || "-"}
-                            </div>
-                            <div style={{ fontSize: 12, color: "#999" }}>
-                              {item.desc || ""}
-                            </div>
-                          </div>
-                        </div>
-                      </List.Item>
-                    )}
-                  />
-                )}
-              </div>
-            )}
           </Modal>
 
           {/* 下载App弹窗 */}

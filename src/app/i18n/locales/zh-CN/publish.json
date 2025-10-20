@@ -62,7 +62,9 @@
     "uploadImageOrVideo": "上传图片或视频",
     "uploadImage": "请上传图片",
     "uploadVideo": "请上传视频",
-    "dragAndSelect": "拖放 & 选择图片或视频"
+    "dragAndSelect": "拖放 & 选择图片或视频",
+    "selectFile": "选择文件",
+    "uploadLocal": "上传本地图片或视频"
   },
   "validation": {
     "facebookStoryNoDes": "Facebook Story不支持填写描述",

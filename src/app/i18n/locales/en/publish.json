@@ -61,7 +61,9 @@
     "uploadImageOrVideo": "Upload image or video",
     "uploadImage": "Please upload image",
     "uploadVideo": "Please upload video",
-    "dragAndSelect": "Drag & select image or video"
+    "dragAndSelect": "Drag & select image or video",
+    "selectFile": "Select File",
+    "uploadLocal": "Upload local image or video"
   },
   "validation": {
     "facebookStoryNoDes": "Facebook Story does not support description",

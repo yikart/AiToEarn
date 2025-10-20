@@ -141,7 +141,7 @@ const PubParmasTextareaUpload = memo(
                     .click();
                 }}
               >
-                上传本地图片或视频
+                {t("upload.uploadLocal")}
               </a>
             ),
           },
@@ -153,12 +153,8 @@ const PubParmasTextareaUpload = memo(
               </a>
             ),
           },
-          {
-            key: "3",
-            label: "选择草稿",
-          },
         ];
-      }, []);
+      }, [t]);
 
       return (
         <div
@@ -265,7 +261,7 @@ const PubParmasTextareaUpload = memo(
             <Dropdown menu={{ items: dropdownItems }} placement="top">
               <div className="pubParmasTextarea-uploads-upload-blocker">
                 <PlusOutlined style={{ fontSize: "20px" }} />
-                选择文件
+                {t("upload.selectFile")}
               </div>
             </Dropdown>
           )}
