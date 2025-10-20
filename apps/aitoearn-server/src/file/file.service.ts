@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { S3Service } from '@yikart/aws-s3'
 import dayjs from 'dayjs'
-import { Express } from 'express'
 import * as mime from 'mime-types'
 import { v4 as uuidv4 } from 'uuid'
 import { config } from '../config'
@@ -36,7 +35,7 @@ export class FileService {
    * @returns
    */
   async upFileStream(
-    file: Express.Multer.File,
+    file: any,
     path: string,
     newName?: string,
     permanent?: boolean,
