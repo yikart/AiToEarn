@@ -15,5 +15,6 @@ import { AccountGroupService } from './accountGroup.service'
   imports: [CloudSpaceModule, TaskModule, ChannelModule, StatisticsModule],
   providers: [FingerprintService, AccountService, AccountGroupService],
   controllers: [AccountController, AccountGroupController, FingerprintController],
+  exports: [AccountService, AccountGroupService],
 })
 export class AccountModule { }

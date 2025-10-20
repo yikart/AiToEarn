@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, TableDto } from '@yikart/common'
 import { AccountType, PublishStatus } from '@yikart/mongodb'
-import { UserTaskNatsApi } from '../task/api/user-task.natsApi'
+import { UserTaskService } from '../task/userTask.service'
 import { EngagementNatsApi } from './api/engagement/engagement.natsApi'
 import { PlatPublishNatsApi } from './api/publish.natsApi'
 import { PublishTaskNatsApi } from './api/publishTask.natsApi'
@@ -17,7 +17,7 @@ export class PublishService {
   constructor(
     private readonly platPublishNatsApi: PlatPublishNatsApi,
     private readonly publishTaskNatsApi: PublishTaskNatsApi,
-    private readonly userTaskNatsApi: UserTaskNatsApi,
+    private readonly userTaskService: UserTaskService,
     private readonly engagementNatsApi: EngagementNatsApi,
   ) { }
 
@@ -29,7 +29,7 @@ export class PublishService {
   async createRecord(newData: NewPublishRecordData) {
     // 如果有用户ID任务，则传入用户任务ID和任务ID
     if (newData.userTaskId) {
-      const userTask = await this.userTaskNatsApi.getUserTaskInfo(newData.userTaskId)
+      const userTask = await this.userTaskService.getUserTaskInfo(newData.userTaskId)
       if (userTask) {
         newData.taskId = userTask.taskId
       }

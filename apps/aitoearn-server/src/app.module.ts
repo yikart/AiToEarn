@@ -6,10 +6,12 @@ import { AccountModule } from './account/account.module'
 import { AppConfigModule } from './app-configs/app-config.module'
 import { AppReleaseModule } from './app-release/app-release.module'
 import { AuthModule } from './auth/auth.module'
+import { ChannelModule } from './channel/channel.module'
 import { config } from './config'
 import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
 import { NotificationModule } from './notification/notification.module'
+import { TaskModule } from './task/task.module'
 import { UserModule } from './user/user.module'
 
 @Module({
@@ -25,6 +27,8 @@ import { UserModule } from './user/user.module'
     AccountModule,
     UserModule,
     ContentModule,
+    ChannelModule,
+    TaskModule,
   ],
   controllers: [],
   providers: [],

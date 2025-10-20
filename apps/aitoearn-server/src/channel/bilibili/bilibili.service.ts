@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { PlatBilibiliApi } from './bilibili.api'
+import { PlatBilibiliNatsApi } from '../api/bilibili.natsApi'
 
 @Injectable()
 export class BilibiliService {
-  constructor(private readonly platBilibiliApi: PlatBilibiliApi) {}
+  constructor(private readonly platBilibiliNatsApi: PlatBilibiliNatsApi) {}
 
   /**
    * 检查登陆状态是否过期
@@ -12,7 +12,7 @@ export class BilibiliService {
    * @returns
    */
   async checkAccountAuthStatus(accountId: string) {
-    const res = await this.platBilibiliApi.getAccountAuthInfo(accountId)
+    const res = await this.platBilibiliNatsApi.getAccountAuthInfo(accountId)
     return res
   }
 }
