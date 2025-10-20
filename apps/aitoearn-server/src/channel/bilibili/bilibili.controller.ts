@@ -12,7 +12,7 @@ import { TableDto } from '@yikart/common'
 import { GetToken, Public } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
-import { PlatBilibiliApi } from './bilibili.api'
+import { PlatBilibiliNatsApi } from '../api/bilibili.natsApi'
 import { BilibiliService } from './bilibili.service'
 import {
   GetArchiveListDto,
@@ -24,7 +24,7 @@ import {
 export class BilibiliController {
   constructor(
     private readonly bilibiliService: BilibiliService,
-    private readonly platBilibiliApi: PlatBilibiliApi,
+    private readonly platBilibiliApi: PlatBilibiliNatsApi,
   ) {}
 
   @Public()

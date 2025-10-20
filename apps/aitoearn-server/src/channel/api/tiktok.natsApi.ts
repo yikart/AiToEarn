@@ -1,11 +1,4 @@
 import { HttpService } from '@nestjs/axios'
-/*
- * @Author: AI Assistant
- * @Date: 2025-01-08 00:00:00
- * @LastEditTime: 2025-01-08 00:00:00
- * @LastEditors: AI Assistant
- * @Description: TikTok Platform
- */
 import { Injectable } from '@nestjs/common'
 import { config } from '../../config'
 

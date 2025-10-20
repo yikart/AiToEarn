@@ -10,13 +10,13 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { TableDto } from '@yikart/common'
 import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
+import { ReplyCommentRecordNatsApi } from '../api/interact/replyCommentRecord.natsApi'
 import { AddReplyCommentRecordDto, ReplyCommentRecordFiltersDto } from './dto/replyCommentRecord.dto'
-import { ReplyCommentRecordService } from './replyCommentRecord.service'
 
 @ApiTags('评论回复记录')
 @Controller('channel/replyCommentRecord')
 export class ReplyCommentRecordController {
-  constructor(private readonly replyCommentRecordService: ReplyCommentRecordService) {}
+  constructor(private readonly replyCommentRecordNatsApi: ReplyCommentRecordNatsApi) {}
 
   @ApiOperation({ summary: '添加评论回复记录' })
   @Post()
@@ -24,7 +24,7 @@ export class ReplyCommentRecordController {
     @GetToken() token: TokenInfo,
     @Body() data: AddReplyCommentRecordDto,
   ) {
-    return this.replyCommentRecordService.add({
+    return this.replyCommentRecordNatsApi.add({
       userId: token.id,
       ...data,
     })
@@ -37,7 +37,7 @@ export class ReplyCommentRecordController {
     @Query() query: ReplyCommentRecordFiltersDto,
     @Param() param: TableDto,
   ) {
-    return this.replyCommentRecordService.list(token.id, query, param)
+    return this.replyCommentRecordNatsApi.list(token.id, query, param)
   }
 
   @ApiOperation({ summary: '删除评论回复记录' })
@@ -45,6 +45,6 @@ export class ReplyCommentRecordController {
   async replyComment(
     @Param('id') id: string,
   ) {
-    return this.replyCommentRecordService.del(id)
+    return this.replyCommentRecordNatsApi.del(id)
   }
 }

@@ -10,13 +10,13 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { TableDto } from '@yikart/common'
 import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
+import { InteractNatsApi } from '../api/interact/interact.natsApi'
 import { AddArcCommentDto, DelCommentDto, ReplyCommentDto } from './dto/interact.dto'
-import { InteractService } from './interact.service'
 
 @ApiTags('渠道互动')
 @Controller('channel/interact')
 export class InteractController {
-  constructor(private readonly interactService: InteractService) {}
+  constructor(private readonly interactApi: InteractNatsApi) {}
 
   @ApiOperation({ summary: '添加作品评论' })
   @Post('addArcComment')
@@ -24,7 +24,7 @@ export class InteractController {
     @GetToken() token: TokenInfo,
     @Body() data: AddArcCommentDto,
   ) {
-    return this.interactService.addArcComment(
+    return this.interactApi.addArcComment(
       data.accountId,
       data.dataId,
       data.content,
@@ -38,7 +38,7 @@ export class InteractController {
     @Query('recordId') recordId: string,
     @Param() query: TableDto,
   ) {
-    return this.interactService.getArcCommentList(recordId, query)
+    return this.interactApi.getArcCommentList(recordId, query)
   }
 
   @ApiOperation({ summary: '回复评论' })
@@ -47,7 +47,7 @@ export class InteractController {
     @GetToken() token: TokenInfo,
     @Body() data: ReplyCommentDto,
   ) {
-    return this.interactService.replyComment(
+    return this.interactApi.replyComment(
       data.accountId,
       data.commentId,
       data.content,
@@ -60,6 +60,6 @@ export class InteractController {
     @GetToken() token: TokenInfo,
     @Body() data: DelCommentDto,
   ) {
-    return this.interactService.delComment(data.accountId, data.commentId)
+    return this.interactApi.delComment(data.accountId, data.commentId)
   }
 }
