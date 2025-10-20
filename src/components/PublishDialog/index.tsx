@@ -16,7 +16,6 @@ import {
   ExclamationCircleFilled,
   FileTextOutlined,
   FolderOpenOutlined,
-  PictureOutlined,
   InfoCircleOutlined,
 } from "@ant-design/icons";
 import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
@@ -60,7 +59,6 @@ import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
 import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
 import { useAccountStore } from "@/store/account";
 import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
-import Aibrush from "./svgs/aibrush.svg";
 import { useWindowSize } from "react-use";
 
 export interface IPublishDialogRef {
@@ -94,7 +92,6 @@ const PublishDialog = memo(
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const { width } = useWindowSize();
-      const [openLeft, setOpenLeft] = useState(false);
       const {
         pubListChoosed,
         setPubListChoosed,
@@ -112,6 +109,8 @@ const PublishDialog = memo(
         pubTime,
         setOnePubParams,
         setWarningParamsMap,
+        setOpenLeft,
+        openLeft,
       } = usePublishDialog(
         useShallow((state) => ({
           pubListChoosed: state.pubListChoosed,
@@ -130,6 +129,8 @@ const PublishDialog = memo(
           setPubTime: state.setPubTime,
           pubTime: state.pubTime,
           setOnePubParams: state.setOnePubParams,
+          openLeft: state.openLeft,
+          setOpenLeft: state.setOpenLeft,
         })),
       );
       const { errParamsMap, warningParamsMap } =
@@ -645,16 +646,6 @@ const PublishDialog = memo(
                       }}
                     >
                       {t("actions.selectDraft")}
-                    </Button>
-                    <Button
-                      size="small"
-                      icon={<Aibrush />}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenLeft(true);
-                      }}
-                    >
-                      {t("writingAssistant")}
                     </Button>
                   </div>
                 </div>

@@ -26,6 +26,7 @@ export interface IPublishDialogStore {
   warningParamsMap?: ErrPubParamsMapType;
   // 发布时间
   pubTime?: string;
+  openLeft: boolean;
 }
 
 const store: IPublishDialogStore = {
@@ -55,6 +56,7 @@ const store: IPublishDialogStore = {
   expandedPubItem: undefined,
   errParamsMap: undefined,
   warningParamsMap: undefined,
+  openLeft: false,
 };
 
 const getStore = () => {
@@ -68,6 +70,11 @@ export const usePublishDialog = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        setOpenLeft(openLeft: boolean) {
+          set({
+            openLeft,
+          });
+        },
         setPubListChoosed(pubListChoosed: PubItem[]) {
           set({
             pubListChoosed,

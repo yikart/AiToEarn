@@ -4,7 +4,7 @@ import { AvatarSize } from "antd/es/avatar/AvatarContext";
 import { SocialAccount } from "@/api/types/account.type";
 import { Avatar } from "antd";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
-import { OSS_DOMAIN } from "@/utils/oss";
+import { OSS_URL } from "@/constant";
 
 export interface IAvatarPlatRef {}
 
@@ -21,7 +21,7 @@ const getAvatar = (url: string) => {
   if (url?.includes("https://")) {
     return url;
   } else {
-    return `${OSS_DOMAIN}/` + url;
+    return `${OSS_URL}/` + url;
   }
 };
 

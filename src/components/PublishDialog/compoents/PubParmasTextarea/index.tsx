@@ -13,7 +13,11 @@ import { Button, Image, Input, message, Tooltip, Upload } from "antd";
 import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss";
 import { ReactSortable } from "react-sortablejs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { CaretRightOutlined, CloseOutlined } from "@ant-design/icons";
+import {
+  CaretRightOutlined,
+  CloseOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 import { TextAreaRef } from "antd/es/input/TextArea";
 import {
   IImgFile,
@@ -28,6 +32,9 @@ import { useTransClient } from "@/app/i18n/client";
 import PubParmasTextuploadImage from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage";
 import VideoPreviewModal from "@/components/VideoPreviewModal";
 import dynamic from "next/dynamic";
+import Aibrush from "@/components/PublishDialog/svgs/aibrush.svg";
+import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
+import { useShallow } from "zustand/react/shallow";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -82,6 +89,11 @@ const PubParmasTextarea = memo(
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
+      const { setOpenLeft } = usePublishDialog(
+        useShallow((state) => ({
+          setOpenLeft: state.setOpenLeft,
+        })),
+      );
       const [value, setValue] = useState(desValue);
       const [previewData, setPreviewData] = useState<
         IImgFile | IVideoFile | undefined
@@ -460,14 +472,48 @@ const PubParmasTextarea = memo(
                   {t("actions.cropCover")}
                 </Button>
               )}
-
-              <div className="pubParmasTextarea-maxLength">
-                {desMax - value.length}
-              </div>
             </div>
 
             {centerExtend}
-            {extend && <div className="pubParmasTextarea-other">{extend}</div>}
+            <div className="pubParmasTextarea-footer">
+              <div className="pubParmasTextarea-footer-options">
+                <div className="pubParmasTextarea-footer-options-left">
+                  <div className="pubParmasTextarea-footer-options-left-item">
+                    <Button
+                      icon={<FileTextOutlined />}
+                      type="text"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenLeft(true);
+                      }}
+                    >
+                      {t("actions.selectDraft")}
+                    </Button>
+                  </div>
+                  <div className="pubParmasTextarea-footer-options-left-item">
+                    <Button
+                      className="pubParmasTextarea-footer-options-aibrush"
+                      icon={<Aibrush />}
+                      type="text"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenLeft(true);
+                      }}
+                    >
+                      {t("writingAssistant")}
+                    </Button>
+                  </div>
+                </div>
+                <div className="pubParmasTextarea-footer-options-right">
+                  <div className="pubParmasTextarea-maxLength">
+                    {desMax - value.length}
+                  </div>
+                </div>
+              </div>
+              {extend && (
+                <div className="pubParmasTextarea-footer-extend">{extend}</div>
+              )}
+            </div>
           </div>
         </>
       );

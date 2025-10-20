@@ -15,14 +15,6 @@ $boxHegiht: 110px;
         box-shadow: none !important;
         padding: 0;
       }
-      .pubParmasTextarea-maxLength {
-        position: absolute;
-        bottom: 20px;
-        right: 20px;
-        border: 1px solid #505050;
-        border-radius: 6px;
-        padding: 0 6px;
-      }
     }
 
     .ant-upload-wrapper {
@@ -143,9 +135,48 @@ $boxHegiht: 110px;
       }
     }
 
-    .pubParmasTextarea-other {
+    .pubParmasTextarea-footer {
       border-top: 1px solid var(--grayColor4);
-      padding: 10px 15px;
+      &-options {
+        padding: 10px 15px;
+        position: relative;
+
+        &-left {
+          display: flex;
+          align-items: center;
+          &-item {
+            border-left: 1px solid var(--grayColor4);
+            padding: 0 5px;
+            &:first-child {
+              border-left: none;
+            }
+          }
+        }
+        &-aibrush {
+          background: linear-gradient(90deg, #fff, #fff) !important;
+          transition: 0.3s;
+          &:hover {
+            background: linear-gradient(90deg, #ba6bff1a, #0715ff1a) !important;
+          }
+          &:active {
+            background: linear-gradient(90deg, #ba6bff33, #0715ff33) !important;
+          }
+        }
+        .pubParmasTextarea-maxLength {
+          position: absolute;
+          border: 1px solid #505050;
+          border-radius: 6px;
+          padding: 0 6px;
+          top: 50%;
+          transform: translateY(-50%);
+          right: 15px;
+        }
+
+      }
+      &-extend {
+        border-top: 1px solid var(--grayColor4);
+        padding: 0 15px 10px 15px;
+      }
     }
   }
 }
