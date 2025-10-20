@@ -68,13 +68,13 @@ export const usePublishDialogData = create(
           const facebookAccount = useAccountStore
             .getState()
             .accountList.find((v) => v.type === PlatType.Facebook);
-          
+
           if (!facebookAccount) {
             console.warn('没有找到Facebook账户');
             return;
           }
-          
-          const res:any = await apiGetFacebookPages(facebookAccount.account);
+
+          const res: any = await apiGetFacebookPages(facebookAccount.account);
           set({
             facebookPages: res?.data || [],
           });
@@ -86,13 +86,13 @@ export const usePublishDialogData = create(
           const youtubeAccount = useAccountStore
             .getState()
             .accountList.find((v) => v.type === PlatType.YouTube);
-          
+
           if (!youtubeAccount) {
             console.warn('没有找到YouTube账户');
             return;
           }
-          
-          const res:any = await apiGetYouTubeRegions(youtubeAccount.account);
+
+          const res: any = await apiGetYouTubeRegions(youtubeAccount.account);
           set({
             youTubeRegions: res?.data?.regionCode || [],
           });
@@ -103,7 +103,7 @@ export const usePublishDialogData = create(
           const youtubeAccount = useAccountStore
             .getState()
             .accountList.find((v) => v.type === PlatType.YouTube);
-          
+
           if (!youtubeAccount) {
             console.warn('没有找到YouTube账户');
             return;
@@ -113,8 +113,8 @@ export const usePublishDialogData = create(
             console.warn('需要先选择国区');
             return;
           }
-          
-          const res:any = await apiGetYouTubeCategories(youtubeAccount?.id || '', regionCode);
+
+          const res: any = await apiGetYouTubeCategories(youtubeAccount?.id || '', regionCode);
           set({
             youTubeCategories: res?.data.items || [],
           });
@@ -126,13 +126,13 @@ export const usePublishDialogData = create(
           const pinterestAccount = useAccountStore
             .getState()
             .accountList.find((v) => v.type === PlatType.Pinterest);
-          
+
           if (!pinterestAccount) {
             console.warn('没有找到Pinterest账户');
             return;
           }
-          
-          const res:any = await getPinterestBoardListApi({ page: 1, size: 100 }, pinterestAccount.id);
+
+          const res: any = await getPinterestBoardListApi({ page: 1, size: 100 }, pinterestAccount.id);
           set({
             pinterestBoards: res?.data?.list || [],
           });

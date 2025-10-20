@@ -249,14 +249,14 @@
 }
 
 /* 表格样式优化 */
-.ant-table-thead > tr > th {
+.ant-table-thead>tr>th {
   background: #f8f9fa;
   font-weight: 600;
   color: #374151;
   border-bottom: 2px solid #e5e7eb;
 }
 
-.ant-table-tbody > tr:hover > td {
+.ant-table-tbody>tr:hover>td {
   background: #f8f9fa;
 }
 
@@ -302,10 +302,10 @@
 
 .orderCard {
   background: white;
-    border-radius: 8px;
-    margin-bottom: 16px;
-    padding: 16px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .orderCard:hover {
@@ -412,32 +412,32 @@
     width: 95% !important;
     max-width: none;
   }
-  
+
   .membershipInfo {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .actionButtons {
     flex-direction: column;
     gap: 4px;
   }
-  
+
   .actionButtons .ant-btn {
     width: 100%;
   }
-  
+
   .orderDetailItem {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .detailLabel {
     min-width: auto;
   }
-  
+
   .paginationContainer {
     flex-direction: column;
     gap: 12px;
