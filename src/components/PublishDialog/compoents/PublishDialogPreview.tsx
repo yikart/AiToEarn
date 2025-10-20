@@ -76,7 +76,7 @@ const PublishDialogPreview = memo(
                         ref={videoRef}
                         src={expandedPubItem.params.video?.videoUrl}
                         controls
-                        poster={expandedPubItem.params.video?.cover.imgUrl}
+                        poster={expandedPubItem.params.video?.cover?.imgUrl}
                       />
                       {/* 视频信息显示 */}
                       <div className="publishDialogPreview-video-info" style={{ color: '#fff', fontSize: '11px' }}>

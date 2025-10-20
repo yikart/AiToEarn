@@ -3,10 +3,11 @@ import React, {
   forwardRef,
   memo,
   useCallback,
+  useMemo,
   useRef,
   useState,
 } from "react";
-import { message, Progress, Upload } from "antd";
+import { Dropdown, message, Progress, Upload } from "antd";
 import {
   formatImg,
   formatVideo,
@@ -21,6 +22,9 @@ import { RcFile } from "antd/es/upload";
 import { useTransClient } from "@/app/i18n/client";
 import { UploadRef } from "antd/es/upload/Upload";
 import { PlusOutlined } from "@ant-design/icons";
+import type { MenuProps } from "antd";
+import MaterialSelectionModal from "@/components/PublishDialog/compoents/MaterialSelectionModal";
+import { getOssUrl } from "@/utils/oss";
 
 const { Dragger } = Upload;
 
@@ -54,6 +58,7 @@ const PubParmasTextareaUpload = memo(
       const fileListRef = useRef<RcFile[]>([]);
       const { t } = useTransClient("publish");
       const uploadRef = useRef<UploadRef>(null);
+      const [materialSelectionOpen, setMaterialSelectionOpen] = useState(false);
 
       // 上传视频
       const uploadVideo = useCallback(
@@ -123,11 +128,80 @@ const PubParmasTextareaUpload = memo(
         [onImgUpdateFinish],
       );
 
+      const dropdownItems: MenuProps["items"] = useMemo(() => {
+        return [
+          {
+            key: "1",
+            label: (
+              <a
+                onClick={() => {
+                  // 触发上传
+                  uploadRef
+                    .current!.nativeElement?.querySelector("input")!
+                    .click();
+                }}
+              >
+                上传本地图片或视频
+              </a>
+            ),
+          },
+          {
+            key: "2",
+            label: (
+              <a onClick={() => setMaterialSelectionOpen(true)}>
+                {t("actions.selectMaterial")}
+              </a>
+            ),
+          },
+          {
+            key: "3",
+            label: "选择草稿",
+          },
+        ];
+      }, []);
+
       return (
         <div
           className="pubParmasTextarea-uploads-upload"
           onClick={(e) => e.stopPropagation()}
         >
+          <MaterialSelectionModal
+            onCancel={() => setMaterialSelectionOpen(false)}
+            libraryModalOpen={materialSelectionOpen}
+            allowImage={uploadAccept.includes("image")}
+            allowVideo={uploadAccept.includes("video")}
+            onSelected={async (item) => {
+              setUploadLoading(true);
+              const ossUrl = getOssUrl(item.url);
+              try {
+                if (item.type === "img") {
+                  // 图片素材，下载
+                  const req = await fetch(
+                    ossUrl.replace(OSS_URL, "/ossProxy/"),
+                  );
+                  const blob = await req.blob();
+                  const imagefile = await formatImg({
+                    blob,
+                    path: `${item.title || "image"}.${blob.type.split("/")[1]}`,
+                  });
+                  imagefile["ossUrl"] = item.url;
+                  onImgUpdateFinish([imagefile]);
+                } else {
+                  // TODO 视频素材，需要封面
+                  const video: any = {
+                    ossUrl: ossUrl,
+                    videoUrl: ossUrl,
+                  };
+                  onVideoUpdateFinish(video);
+                }
+              } catch (e) {
+                console.error(e);
+              } finally {
+                setUploadLoading(false);
+              }
+            }}
+          />
+
           <Dragger
             ref={uploadRef}
             style={{ display: "none" }}
@@ -188,20 +262,12 @@ const PubParmasTextareaUpload = memo(
               )}
             </div>
           ) : (
-            <div
-              className="pubParmasTextarea-uploads-upload-blocker"
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                // 触发上传
-                uploadRef
-                  .current!.nativeElement?.querySelector("input")!
-                  .click();
-              }}
-            >
-              <PlusOutlined style={{ fontSize: "20px" }} />
-              Select Files
-            </div>
+            <Dropdown menu={{ items: dropdownItems }} placement="top">
+              <div className="pubParmasTextarea-uploads-upload-blocker">
+                <PlusOutlined style={{ fontSize: "20px" }} />
+                选择文件
+              </div>
+            </Dropdown>
           )}
         </div>
       );

@@ -411,7 +411,7 @@ const PubParmasTextarea = memo(
                           </div>
                           <Tooltip title={t("actions.preview")}>
                             <div className="pubParmasTextarea-uploads-item-video">
-                              <img src={v.cover.imgUrl} />
+                              <img src={v.cover?.imgUrl} />
                               <div className="pubParmasTextarea-uploads-item-play">
                                 <CaretRightOutlined />
                               </div>

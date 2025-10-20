@@ -168,8 +168,8 @@ const ImageEditorModal = memo(
                 uiSize: { width: "1000px", height: "700px" },
                 menuBarPosition: "bottom",
               }}
-              cssMaxHeight={500}
-              cssMaxWidth={700}
+              cssMaxHeight={430}
+              cssMaxWidth={800}
               selectionStyle={{ cornerSize: 20, rotatingPointOffset: 70 }}
               usageStatistics={false}
             />
