@@ -109,12 +109,10 @@ export const usePublishDialogData = create(
             return;
           }
 
-          if (!regionCode) {
-            console.warn('需要先选择国区');
-            return;
-          }
+          // 如果没有提供 regionCode，使用默认值 "US"
+          const defaultRegionCode = regionCode || 'US';
 
-          const res: any = await apiGetYouTubeCategories(youtubeAccount?.id || '', regionCode);
+          const res: any = await apiGetYouTubeCategories(youtubeAccount?.id || '', defaultRegionCode);
           set({
             youTubeCategories: res?.data.items || [],
           });
