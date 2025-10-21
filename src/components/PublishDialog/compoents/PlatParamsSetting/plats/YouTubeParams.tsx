@@ -74,19 +74,19 @@ const YouTubeParams = memo(
                   style={{ marginTop: "10px" }}
                 >
                   <div className="platParamsSetting-label">{t("form.privacyStatus")}</div>
-                  <Radio.Group
+                  <Select
                     value={pubItem.params.option.youtube?.privacyStatus}
                     options={[
                       { value: "public", label: t("form.public") },
                       { value: "unlisted", label: t("form.unlisted") },
                       { value: "private", label: t("form.private") },
                     ]}
-                    onChange={(e) => {
+                    onChange={(value) => {
                       const option = pubItem.params.option;
                       if (!option.youtube) {
                         option.youtube = {};
                       }
-                      option.youtube.privacyStatus = e.target.value;
+                      option.youtube.privacyStatus = value;
                       setOnePubParams(
                         {
                           option,
@@ -94,6 +94,8 @@ const YouTubeParams = memo(
                         pubItem.account.id,
                       );
                     }}
+                    style={{ width: "100%" }}
+                    placeholder="请选择隐私状态"
                   />
                 </div>
 

@@ -40,6 +40,7 @@
     "page": "页面",
     "pagePlaceholder": "请选择页面",
     "privacyStatus": "隐私状态",
+    "selectPrivacyStatus": "请选择隐私状态",
     "public": "公开",
     "unlisted": "不公开",
     "private": "私人",
