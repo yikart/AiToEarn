@@ -91,6 +91,7 @@ const ListMode = memo(
         );
       }
 
+
       const queueTabContent = (
         <div className={styles.tabContent}>
           <DndProvider backend={HTML5Backend}>
@@ -132,7 +133,10 @@ const ListMode = memo(
           label: (
             <div className={styles.tabLabel}>
               <span>{t('listMode.queue' as any)}</span>
-              <span className={styles.tabBadge}>{sortedRecords.length}</span>
+              {sortedRecords.length>0?<span className={styles.tabBadge}>
+                {sortedRecords.length}
+                </span>:<span className={styles.tabBadgeNone}>
+                </span>}
             </div>
           ),
           children: queueTabContent,
