@@ -66,6 +66,12 @@ export interface IPlatOption {
     regionCode?: string;
     // 视频分类ID
     categoryId?: string;
+    // 是否通知订阅者
+    notifySubscribers?: boolean;
+    // 是否允许嵌入
+    embeddable?: boolean;
+    // 是否为儿童内容
+    selfDeclaredMadeForKids?: boolean;
   };
   pinterest?: {
     // Board ID，由获取Pinterest Board信息接口得到

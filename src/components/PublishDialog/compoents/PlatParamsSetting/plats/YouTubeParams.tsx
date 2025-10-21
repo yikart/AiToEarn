@@ -9,7 +9,7 @@ import CommonTitleInput from "@/components/PublishDialog/compoents/PlatParamsSet
 import { usePublishDialogData } from "@/components/PublishDialog/usePublishDialogData";
 import { useShallow } from "zustand/react/shallow";
 import styles from "../platParamsSetting.module.scss";
-import { Radio, Select } from "antd";
+import { Radio, Select, Checkbox } from "antd";
 import { YouTubeCategoryItem } from "@/components/PublishDialog/publishDialog.type";
 import { useTransClient } from "@/app/i18n/client";
 
@@ -43,8 +43,26 @@ const YouTubeParams = memo(
         if (!option.youtube) {
           option.youtube = {};
         }
+        let needsUpdate = false;
+        
         if (!option.youtube.privacyStatus) {
           option.youtube.privacyStatus = 'public';
+          needsUpdate = true;
+        }
+        if ((option.youtube as any).notifySubscribers === undefined) {
+          (option.youtube as any).notifySubscribers = true;
+          needsUpdate = true;
+        }
+        if ((option.youtube as any).embeddable === undefined) {
+          (option.youtube as any).embeddable = true;
+          needsUpdate = true;
+        }
+        if ((option.youtube as any).selfDeclaredMadeForKids === undefined) {
+          (option.youtube as any).selfDeclaredMadeForKids = false;
+          needsUpdate = true;
+        }
+        
+        if (needsUpdate) {
           setOnePubParams(
             {
               option,
@@ -69,35 +87,6 @@ const YouTubeParams = memo(
             extend={
               <>
                 <CommonTitleInput pubItem={pubItem} />
-                <div
-                  className={styles.commonTitleInput}
-                  style={{ marginTop: "10px" }}
-                >
-                  <div className="platParamsSetting-label">{t("form.privacyStatus")}</div>
-                  <Select
-                    value={pubItem.params.option.youtube?.privacyStatus}
-                    options={[
-                      { value: "public", label: t("form.public") },
-                      { value: "unlisted", label: t("form.unlisted") },
-                      { value: "private", label: t("form.private") },
-                    ]}
-                    onChange={(value) => {
-                      const option = pubItem.params.option;
-                      if (!option.youtube) {
-                        option.youtube = {};
-                      }
-                      option.youtube.privacyStatus = value;
-                      setOnePubParams(
-                        {
-                          option,
-                        },
-                        pubItem.account.id,
-                      );
-                    }}
-                    style={{ width: "100%" }}
-                    placeholder="请选择隐私状态"
-                  />
-                </div>
 
                 <div
                   className={styles.commonTitleInput}
@@ -131,9 +120,42 @@ const YouTubeParams = memo(
                   />
                 </div>
 
+                <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px'}}>
+
+
                 <div
                   className={styles.commonTitleInput}
-                  style={{ marginTop: "10px" }}
+                  style={{ marginTop: "10px", flex: 1 }}
+                >
+                  <div className="platParamsSetting-label">{t("form.privacyStatus")}</div>
+                  <Select
+                    value={pubItem.params.option.youtube?.privacyStatus}
+                    options={[
+                      { value: "public", label: t("form.public") },
+                      { value: "unlisted", label: t("form.unlisted") },
+                      { value: "private", label: t("form.private") },
+                    ]}
+                    onChange={(value) => {
+                      const option = pubItem.params.option;
+                      if (!option.youtube) {
+                        option.youtube = {};
+                      }
+                      option.youtube.privacyStatus = value;
+                      setOnePubParams(
+                        {
+                          option,
+                        },
+                        pubItem.account.id,
+                      );
+                    }}
+                    style={{ width: "100%" }}
+                    placeholder="请选择隐私状态"
+                  />
+                </div>
+
+                <div
+                  className={styles.commonTitleInput}
+                  style={{ marginTop: "10px", flex: 1 }}
                 >
                   <div className="platParamsSetting-label">{t("form.category")}</div>
                   <Select
@@ -160,6 +182,77 @@ const YouTubeParams = memo(
                     placeholder={pubItem.params.option.youtube?.regionCode ? t("form.categoryPlaceholder") : t("form.categoryPlaceholderDisabled")}
                     disabled={!pubItem.params.option.youtube?.regionCode}
                   />
+                </div>
+
+                </div>
+
+                {/* YouTube 复选框选项 */}
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'row', 
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginTop: '20px',
+                  flexWrap: 'wrap'
+                }}>
+
+                  <div style={{width: '40px'}}> </div>
+                  <Checkbox
+                    checked={(pubItem.params.option.youtube as any)?.notifySubscribers}
+                    onChange={(e) => {
+                      const option = pubItem.params.option;
+                      if (!option.youtube) {
+                        option.youtube = {};
+                      }
+                      (option.youtube as any).notifySubscribers = e.target.checked;
+                      setOnePubParams(
+                        {
+                          option,
+                        },
+                        pubItem.account.id,
+                      );
+                    }}
+                  >
+                    Notify Subscribers
+                  </Checkbox>
+
+                  <Checkbox
+                    checked={(pubItem.params.option.youtube as any)?.embeddable}
+                    onChange={(e) => {
+                      const option = pubItem.params.option;
+                      if (!option.youtube) {
+                        option.youtube = {};
+                      }
+                      (option.youtube as any).embeddable = e.target.checked;
+                      setOnePubParams(
+                        {
+                          option,
+                        },
+                        pubItem.account.id,
+                      );
+                    }}
+                  >
+                    Allow Embedding
+                  </Checkbox>
+
+                  <Checkbox
+                    checked={(pubItem.params.option.youtube as any)?.selfDeclaredMadeForKids}
+                    onChange={(e) => {
+                      const option = pubItem.params.option;
+                      if (!option.youtube) {
+                        option.youtube = {};
+                      }
+                      (option.youtube as any).selfDeclaredMadeForKids = e.target.checked;
+                      setOnePubParams(
+                        {
+                          option,
+                        },
+                        pubItem.account.id,
+                      );
+                    }}
+                  >
+                    Made for Kids
+                  </Checkbox>
                 </div>
               </>
             }
