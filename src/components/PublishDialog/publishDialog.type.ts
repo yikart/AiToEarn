@@ -62,10 +62,16 @@ export interface IPlatOption {
   youtube?: {
     // 隐私状态：public、unlisted、private
     privacyStatus?: string;
-    // 国区代码
-    regionCode?: string;
+    // 许可证类型：youtube、creativeCommon
+    license?: string;
     // 视频分类ID
     categoryId?: string;
+    // 是否通知订阅者
+    notifySubscribers?: boolean;
+    // 是否允许嵌入
+    embeddable?: boolean;
+    // 是否为儿童内容
+    selfDeclaredMadeForKids?: boolean;
   };
   pinterest?: {
     // Board ID，由获取Pinterest Board信息接口得到
