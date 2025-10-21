@@ -121,16 +121,6 @@ export default function AlbumPage() {
 
     try {
       const url = await uploadToOss(file);
-      let thumbUrl: string;
-      if (file.type.startsWith('video/')) {
-        const res = await VideoGrabFrame(URL.createObjectURL(file), 0);
-        const blob = res.cover.file;
-        const fileName = file.name.replace(/\.[^/.]+$/, "") + "_cover.png";
-        const coverFile = new File([blob], fileName, {
-          type: blob.type || "image/png",
-        });
-        thumbUrl = await uploadToOss(coverFile);
-      }
 
       await createMedia({
         groupId: albumId,
@@ -138,7 +128,6 @@ export default function AlbumPage() {
         url,
         title: file.name,
         desc: '',
-        thumbUrl
       });
 
       message.success('上传成功');

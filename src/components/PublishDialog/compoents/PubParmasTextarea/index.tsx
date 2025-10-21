@@ -309,7 +309,6 @@ const PubParmasTextarea = memo(
             videoUrl={(previewData as IVideoFile)?.videoUrl}
             onCancel={() => setPreviewData(undefined)}
           />
-
           <ImageEditorModal
             onOk={(editedImg) => {
               setImageFileList((prevState) => {
@@ -466,7 +465,7 @@ const PubParmasTextarea = memo(
               </ReactSortable>
 
               {/* 裁剪 */}
-              {videoFile && videoFile.file && (
+              {videoFile && (
                 <Button
                   style={{ marginTop: "10px" }}
                   onClick={() => setVideoCoverSetingModal(true)}

@@ -11,6 +11,7 @@ import { Dropdown, message, Progress, Upload } from "antd";
 import {
   formatImg,
   formatVideo,
+  VideoGrabFrame,
 } from "@/components/PublishDialog/PublishDialog.util";
 import {
   IImgFile,
@@ -183,16 +184,17 @@ const PubParmasTextareaUpload = memo(
                   imagefile["ossUrl"] = item.url;
                   onImgUpdateFinish([imagefile]);
                 } else {
-                  const coverOss = getOssUrl(item.thumbUrl || "");
+                  console.log(item);
+                  const videoInfo = await VideoGrabFrame(ossUrl, 0);
                   const video: any = {
                     ossUrl: ossUrl,
                     videoUrl: ossUrl,
-                    cover: {
-                      ossUrl: coverOss,
-                      imgUrl: coverOss,
-                    },
+                    width: videoInfo.width,
+                    height: videoInfo.height,
+                    duration: videoInfo.duration,
+                    size: item.metadata.size,
+                    cover: videoInfo.cover,
                   };
-                  console.log(video);
                   onVideoUpdateFinish(video);
                 }
               } catch (e) {
