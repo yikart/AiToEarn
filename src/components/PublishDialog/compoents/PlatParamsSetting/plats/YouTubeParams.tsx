@@ -81,13 +81,7 @@ const YouTubeParams = memo(
               <>
                 <CommonTitleInput pubItem={pubItem} />
 
-
-
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px' }}>
-
-
-                 
-
                   <div
                     className={styles.commonTitleInput}
                     style={{ marginTop: "10px", flex: 1 }}
@@ -114,7 +108,7 @@ const YouTubeParams = memo(
                         );
                       }}
                       showSearch={true}
-                       placeholder={t("form.categoryPlaceholder")}
+                      placeholder={t("form.categoryPlaceholder")}
                     />
                   </div>
 
@@ -150,34 +144,34 @@ const YouTubeParams = memo(
 
                 </div>
 
-                 <div
-                   className={styles.commonTitleInput}
-                   style={{ marginTop: "10px" }}
-                 >
-                   <div className="platParamsSetting-label">{t("form.license" as any)}</div>
-                   <Select
-                     style={{ width: "100%" }}
-                     options={[
-                       { value: "youtube", label: t("form.standardYouTubeLicense" as any) },
-                       { value: "creativeCommon", label: t("form.creativeCommonsLicense" as any) },
-                     ]}
-                     value={pubItem.params.option.youtube?.license}
-                     onChange={(value) => {
-                       const option = pubItem.params.option;
-                       if (!option.youtube) {
-                         option.youtube = {};
-                       }
-                       option.youtube.license = value;
-                       setOnePubParams(
-                         {
-                           option,
-                         },
-                         pubItem.account.id,
-                       );
-                     }}
-                     placeholder={t("form.licensePlaceholder" as any)}
-                   />
-                 </div>
+                <div
+                  className={styles.commonTitleInput}
+                  style={{ marginTop: "10px" }}
+                >
+                  <div className="platParamsSetting-label">{t("form.license" as any)}</div>
+                  <Select
+                    style={{ width: "100%" }}
+                    options={[
+                      { value: "youtube", label: t("form.standardYouTubeLicense" as any) },
+                      { value: "creativeCommon", label: t("form.creativeCommonsLicense" as any) },
+                    ]}
+                    value={pubItem.params.option.youtube?.license}
+                    onChange={(value) => {
+                      const option = pubItem.params.option;
+                      if (!option.youtube) {
+                        option.youtube = {};
+                      }
+                      option.youtube.license = value;
+                      setOnePubParams(
+                        {
+                          option,
+                        },
+                        pubItem.account.id,
+                      );
+                    }}
+                    placeholder={t("form.licensePlaceholder" as any)}
+                  />
+                </div>
 
                 {/* YouTube 复选框选项 */}
                 <div style={{
