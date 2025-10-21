@@ -11,6 +11,7 @@ import { config } from './config'
 import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
 import { NotificationModule } from './notification/notification.module'
+import { PaymentModule } from './payment/payment.module'
 import { TaskModule } from './task/task.module'
 import { UserModule } from './user/user.module'
 
@@ -29,6 +30,7 @@ import { UserModule } from './user/user.module'
     ContentModule,
     ChannelModule,
     TaskModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [],
