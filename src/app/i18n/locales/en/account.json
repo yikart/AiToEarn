@@ -52,12 +52,17 @@
     "recordCount": "{{count}} plans total",
     "newWork": "New Work",
     "noRecords": "No publish plans",
+    "channels": "Channels",
     "queue": "Queue ",
     "sent": "Sent",
     "createdDaysAgo": "You created this {{days}} days ago",
     "viewPost": "View Post",
     "noSentPosts": "No sent posts",
-    "selectAccountFirst": "Please select an account first"
+    "selectAccountFirst": "Please select an account first",
+    "searchChannels": "Search channels",
+    "selectAll": "Select All",
+    "noChannelsFound": "No channels found",
+    "selectChannel": "Select Channel"
   },
   "chooseSpace": "Choose Space",
   "pleaseChooseSpace": "Please choose a space",
