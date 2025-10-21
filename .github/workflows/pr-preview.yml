@@ -55,19 +55,15 @@ jobs:
           echo "Base: $BASE_REF"
           echo "Head: HEAD"
 
-          # 使用 Nx affected 命令检测受影响的应用
-          # --type=app 只检测应用（不包括库）
-          # --base 指定比较的基准分支
           AFFECTED_APPS=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --exclude="browser-automation-worker" --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
 
           if [ -z "$AFFECTED_APPS" ]; then
             echo "⚠️  未检测到受影响的应用"
             echo "changed_apps=" >> $GITHUB_OUTPUT
           else
-            echo "✅ 受影响的应用: $CHANGED_APPS"
-            echo "changed_apps=$CHANGED_APPS" >> $GITHUB_OUTPUT
+            echo "✅ 受影响的应用: $AFFECTED_APPS"
+            echo "changed_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
 
-            # 显示详细信息
             echo ""
             echo "📊 详细信息:"
             for APP in $(echo "$AFFECTED_APPS"); do
