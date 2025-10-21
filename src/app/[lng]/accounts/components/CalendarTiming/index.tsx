@@ -45,12 +45,12 @@ import ListMode from "@/app/[lng]/accounts/components/CalendarTiming/ListMode";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import dayjs from "dayjs";
 
-export interface ICalendarTimingRef {}
-export interface ICalendarTimingProps {}
+export interface ICalendarTimingRef { }
+export interface ICalendarTimingProps { }
 
 const CalendarTiming = memo(
   forwardRef(
-    ({}: ICalendarTimingProps, ref: ForwardedRef<ICalendarTimingRef>) => {
+    ({ }: ICalendarTimingProps, ref: ForwardedRef<ICalendarTimingRef>) => {
       const lng = useGetClientLng();
       const searchParams = useSearchParams();
       const calendarRef = useRef<FullCalendar | null>(null);
@@ -84,7 +84,7 @@ const CalendarTiming = memo(
       const [channelSearchText, setChannelSearchText] = useState('');
 
       // 筛选后的账户列表 - 只显示在线账户
-      const filteredAccounts = accountList.filter(account => 
+      const filteredAccounts = accountList.filter(account =>
         account.status === AccountStatus.USABLE && (
           account.nickname.toLowerCase().includes(channelSearchText.toLowerCase()) ||
           account.account.toLowerCase().includes(channelSearchText.toLowerCase())
@@ -119,8 +119,8 @@ const CalendarTiming = memo(
               filteredAccounts.map(account => {
                 const platInfo = AccountPlatInfoMap.get(account.type);
                 return (
-                  <div 
-                    key={account.id} 
+                  <div
+                    key={account.id}
                     style={{
                       padding: '8px 16px',
                       cursor: 'pointer',
@@ -141,8 +141,8 @@ const CalendarTiming = memo(
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <Avatar 
-                        src={getOssUrl(account.avatar)} 
+                      <Avatar
+                        src={getOssUrl(account.avatar)}
                         size={32}
                         style={{ flexShrink: 0, border: '1px solid #f0f0f0' }}
                       >
@@ -171,9 +171,9 @@ const CalendarTiming = memo(
               })
             ) : (
               <div style={{ textAlign: 'center', color: '#999', fontSize: '14px', padding: '40px 16px' }}>
-                {accountList.length === 0 ? '暂无账户' : 
-                 accountList.filter(account => account.status === AccountStatus.USABLE).length === 0 ? '暂无在线账户' : 
-                 t('listMode.noChannelsFound' as any)}
+                {accountList.length === 0 ? '暂无账户' :
+                  accountList.filter(account => account.status === AccountStatus.USABLE).length === 0 ? '暂无在线账户' :
+                    t('listMode.noChannelsFound' as any)}
               </div>
             )}
           </div>
@@ -199,8 +199,8 @@ const CalendarTiming = memo(
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '2px' }}>
                 {accountActive ? (
                   <>
-                    <Avatar 
-                      src={getOssUrl(accountActive.avatar)} 
+                    <Avatar
+                      src={getOssUrl(accountActive.avatar)}
                       size={20}
                       style={{ flexShrink: 0 }}
                     >

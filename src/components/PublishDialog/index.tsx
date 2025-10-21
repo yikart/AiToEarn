@@ -823,7 +823,7 @@ const PublishDialog = memo(
                                     : undefined,
                               color:
                                 moderationResult === true ||
-                                moderationResult === false
+                                  moderationResult === false
                                   ? "#fff"
                                   : undefined,
                             }}
