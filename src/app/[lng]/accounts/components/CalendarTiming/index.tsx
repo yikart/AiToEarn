@@ -18,19 +18,23 @@ import {
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { CSSTransition } from "react-transition-group";
 import { DatesSetArg } from "@fullcalendar/core";
-import { Button, Tabs } from "antd";
+import { Button, Tabs, Input, Avatar, Dropdown } from "antd";
 import {
   LeftOutlined,
   PlusOutlined,
   RightOutlined,
   CalendarOutlined,
   UnorderedListOutlined,
+  SearchOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { getOssUrl } from "@/utils/oss";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
@@ -67,11 +71,111 @@ const CalendarTiming = memo(
       };
       const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
       const [publishDialogOpen, setPublishDialogOpen] = useState(false);
-      const { accountList, accountActive } = useAccountStore(
+      const { accountList, accountActive, setAccountActive } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
           accountActive: state.accountActive,
+          setAccountActive: state.setAccountActive,
         })),
+      );
+
+      // 频道筛选相关状态
+      const [channelSearchText, setChannelSearchText] = useState('');
+
+      // 筛选后的账户列表
+      const filteredAccounts = accountList.filter(account => 
+        account.nickname.toLowerCase().includes(channelSearchText.toLowerCase()) ||
+        account.account.toLowerCase().includes(channelSearchText.toLowerCase())
+      );
+
+      // 处理账户选择 - 与 AccountSidebar 同步
+      const handleChannelSelect = (account: any) => {
+        setAccountActive(account);
+      };
+
+      // Channel 筛选器下拉菜单内容
+      const channelDropdownContent = (
+        <div className={styles.channelDropdown}>
+          <div className={styles.searchContainer}>
+            <Input
+              placeholder={t('listMode.searchChannels' as any)}
+              prefix={<SearchOutlined />}
+              value={channelSearchText}
+              onChange={(e) => setChannelSearchText(e.target.value)}
+              className={styles.searchInput}
+            />
+          </div>
+          <div className={styles.channelList}>
+            {filteredAccounts.map(account => {
+              const platInfo = AccountPlatInfoMap.get(account.type);
+              return (
+                <div 
+                  key={account.id} 
+                  className={`${styles.channelItem} ${accountActive?.id === account.id ? styles.channelItemActive : ''}`}
+                  onClick={() => handleChannelSelect(account)}
+                >
+                  <div className={styles.channelInfo}>
+                    <Avatar 
+                      src={getOssUrl(account.avatar)} 
+                      size={32}
+                      className={styles.channelAvatar}
+                    >
+                      {account.nickname?.[0] || account.account?.[0]}
+                    </Avatar>
+                    <div className={styles.channelDetails}>
+                      <span className={styles.channelName}>{account.nickname || account.account}</span>
+                      <div className={styles.channelPlatform}>
+                        <img src={platInfo?.icon} alt={platInfo?.name} />
+                        <span>{platInfo?.name}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            {filteredAccounts.length === 0 && (
+              <div className={styles.noChannels}>
+                {t('listMode.noChannelsFound' as any)}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+
+      // Channel 筛选器按钮
+      const channelFilter = (
+        <div className={styles.channelFilterButton}>
+          <Dropdown
+            overlay={channelDropdownContent}
+            trigger={['click']}
+            placement="bottomRight"
+            overlayClassName={styles.channelDropdownOverlay}
+          >
+            <Button className={styles.filterButton}>
+              <div className={styles.filterButtonContent}>
+                {accountActive ? (
+                  <>
+                    <Avatar 
+                      src={getOssUrl(accountActive.avatar)} 
+                      size={20}
+                      className={styles.filterButtonAvatar}
+                    >
+                      {accountActive.nickname?.[0] || accountActive.account?.[0]}
+                    </Avatar>
+                    <span className={styles.filterButtonText}>
+                      {accountActive.nickname || accountActive.account}
+                    </span>
+                  </>
+                ) : (
+                  <span className={styles.filterButtonText}>
+                    {t('listMode.selectChannel' as any)}
+                  </span>
+                )}
+                <DownOutlined className={styles.filterButtonIcon} />
+              </div>
+            </Button>
+          </Dropdown>
+        </div>
       );
       const {
         setCalendarCallWidth,
@@ -297,6 +401,7 @@ const CalendarTiming = memo(
                 size="small"
                 className={styles.modeTabs}
               />
+              {channelFilter}
             </div>
           </div>
           {activeMode === "calendar" ? (
