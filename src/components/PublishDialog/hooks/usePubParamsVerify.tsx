@@ -155,6 +155,16 @@ export default function usePubParamsVerify(data: PubItem[]) {
         // facebook的强制校验
         if (v.account.type === PlatType.Facebook) {
           switch (v.params.option.facebook?.content_category) {
+            case "post":
+              // facebook post 图片上限 ≤ 10MB
+              if (v.params.images) {
+                for (const img of v.params.images) {
+                  if (img.size > 10 * 1024 * 1024) {
+                    return setErrorMsg("facebook post 图片上限 ≤ 10MB");
+                  }
+                }
+              }
+              break;
             case "reel":
               // facebook reel 不支持图片，只支持视频 + 描述
               if ((v.params.images?.length || 0) !== 0) {
@@ -174,6 +184,14 @@ export default function usePubParamsVerify(data: PubItem[]) {
               if (video && (video.duration > 14400 || video.duration < 3)) {
                 return setErrorMsg(t("validation.facebookStoryDuration"));
               }
+              // facebook story 图片上限 ≤ 4MB
+              if (v.params.images) {
+                for (const img of v.params.images) {
+                  if (img.size > 4 * 1024 * 1024) {
+                    return setErrorMsg("facebook story 图片上限 ≤ 4MB");
+                  }
+                }
+              }
               break;
           }
         }
@@ -183,6 +201,14 @@ export default function usePubParamsVerify(data: PubItem[]) {
           // 视频大小 ≤ 100MB
           if (video && video.size > 100 * 1024 * 1024) {
             return setErrorMsg(t("validation.instagramVideoSize"));
+          }
+          // instagram 图片size上限8MB
+          if (v.params.images) {
+            for (const img of v.params.images) {
+              if (img.size > 8 * 1024 * 1024) {
+                return setErrorMsg("Instagram 图片size上限8MB");
+              }
+            }
           }
 
           switch (v.params.option.instagram?.content_category) {
@@ -224,13 +250,13 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (video && (video.duration > 300 || video.duration <= 0)) {
             return setErrorMsg(t("validation.threadsVideoDuration"));
           }
-          // Threads 图片限制，最少两张图片
-          if (
-            platInfo.pubTypes.has(PubType.ImageText) &&
-            (v.params.images?.length || 0) > 0 &&
-            (v.params.images?.length || 0) < 2
-          ) {
-            return setErrorMsg(t("validation.threadsImageMin"));
+          // Threads 图片限制，最少 2 张图片，最多 10 张图片
+          if (v.params.images) {
+            if (v.params.images.length < 2 || v.params.images.length > 10) {
+              return setErrorMsg(
+                "Threads 图片限制，最少 2 张图片，最多 10 张图片",
+              );
+            }
           }
         }
 
@@ -252,6 +278,14 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (video && video.size > 1024 * 1024 * 1024) {
             return setErrorMsg(t("validation.pinterestVideoSize"));
           }
+          // Pinterest图片size  ≤ 10MB
+          if (v.params.images) {
+            for (const img of v.params.images) {
+              if (img.size > 10 * 1024 * 1024) {
+                return setErrorMsg("Pinterest图片size  ≤ 10MB");
+              }
+            }
+          }
         }
 
         // TikTok 的强制校验
@@ -268,6 +302,35 @@ export default function usePubParamsVerify(data: PubItem[]) {
           if (video && (video.width < 360 || video.height < 360)) {
             return setErrorMsg(t("validation.tiktokVideoMinResolution"));
           }
+          // TikTok 图片数量限制 1 - 10
+          if (v.params.images) {
+            if (v.params.images.length < 1 || v.params.images.length > 10) {
+              return setErrorMsg("TikTok 图片数量限制 1 - 10");
+            }
+          }
+          // TikTok 图片size限制 最多 20MB
+          if (v.params.images) {
+            for (const img of v.params.images) {
+              if (img.size > 20 * 1024 * 1024) {
+                return setErrorMsg("TikTok 图片size限制 最多 20MB");
+              }
+            }
+          }
+          // TikTok 图片最大分辨率：1080 x 1920 像素或 1920 x 1080 像素
+          if (v.params.images) {
+            for (const img of v.params.images) {
+              if (
+                img.width > 1920 ||
+                img.height > 1920 ||
+                (img.width !== 1080 && img.width !== 1920) ||
+                (img.height !== 1080 && img.height !== 1920)
+              ) {
+                return setErrorMsg(
+                  "TikTok 图片最大分辨率：1080 x 1920 像素或 1920 x 1080 像素",
+                );
+              }
+            }
+          }
         }
 
         // Twitter 的强制校验
@@ -279,6 +342,22 @@ export default function usePubParamsVerify(data: PubItem[]) {
           // Twitter视频大小限制 最大 512MB
           if (video && video.size > 512 * 1024 * 1024) {
             return setErrorMsg(t("validation.twitterVideoSize"));
+          }
+          if (v.params.images) {
+            for (const img of v.params.images) {
+              // Twitter图片大小限制最大 5MB
+              if (img.size > 5 * 1024 * 1024) {
+                return setErrorMsg("Twitter图片大小限制最大 5MB");
+              }
+              // Twitter最大 8192 × 8192 像素
+              if (img.width > 8192 || img.height > 8192) {
+                return setErrorMsg("Twitter图片最大 8192 × 8192 像素");
+              }
+            }
+            // Twitter 最大4 张图片
+            if (v.params.images.length > 4) {
+              return setErrorMsg("Twitter 最大4 张图片");
+            }
           }
         }
       })();
@@ -310,6 +389,40 @@ export default function usePubParamsVerify(data: PubItem[]) {
               setWarningMsg(t("validation.instagramImageValidation"));
               break;
             }
+          }
+        }
+      }
+
+      // YouTube 警告消息
+      if (v.account.type === PlatType.YouTube) {
+        // 建议分辨率：1920×1080（16:9）或 1080×1920（9:16）。
+        if (v.params.video) {
+          const video = v.params.video;
+          if (
+            !isAspectRatioMatch(video.width, video.height, 16 / 9) &&
+            !isAspectRatioMatch(video.width, video.height, 9 / 16)
+          ) {
+            setWarningMsg(
+              "建议视频分辨率：1920×1080（16:9）或 1080×1920（9:16）。",
+            );
+          }
+        }
+      }
+
+      // 快手 警告消息
+      if (v.account.type === PlatType.KWAI) {
+        // 推荐分辨率：1080x1920（竖屏）
+        if (v.params.video) {
+          const video = v.params.video;
+          if (!isAspectRatioMatch(video.width, video.height, 9 / 16)) {
+            setWarningMsg("推荐视频分辨率：1080x1920（竖屏）。");
+          }
+        }
+        // 时长建议：15 秒 - 3 分钟
+        if (v.params.video) {
+          const video = v.params.video;
+          if (video.duration < 15 || video.duration > 180) {
+            setWarningMsg("视频时长建议：15 秒 - 3 分钟。");
           }
         }
       }
