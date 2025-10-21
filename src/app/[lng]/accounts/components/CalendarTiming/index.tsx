@@ -35,6 +35,7 @@ import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { getOssUrl } from "@/utils/oss";
+import { AccountStatus } from "@/app/config/accountConfig";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
@@ -82,10 +83,12 @@ const CalendarTiming = memo(
       // 频道筛选相关状态
       const [channelSearchText, setChannelSearchText] = useState('');
 
-      // 筛选后的账户列表
+      // 筛选后的账户列表 - 只显示在线账户
       const filteredAccounts = accountList.filter(account => 
-        account.nickname.toLowerCase().includes(channelSearchText.toLowerCase()) ||
-        account.account.toLowerCase().includes(channelSearchText.toLowerCase())
+        account.status === AccountStatus.USABLE && (
+          account.nickname.toLowerCase().includes(channelSearchText.toLowerCase()) ||
+          account.account.toLowerCase().includes(channelSearchText.toLowerCase())
+        )
       );
 
       // 处理账户选择 - 与 AccountSidebar 同步
@@ -168,7 +171,9 @@ const CalendarTiming = memo(
               })
             ) : (
               <div style={{ textAlign: 'center', color: '#999', fontSize: '14px', padding: '40px 16px' }}>
-                {accountList.length === 0 ? '暂无账户' : t('listMode.noChannelsFound' as any)}
+                {accountList.length === 0 ? '暂无账户' : 
+                 accountList.filter(account => account.status === AccountStatus.USABLE).length === 0 ? '暂无在线账户' : 
+                 t('listMode.noChannelsFound' as any)}
               </div>
             )}
           </div>
