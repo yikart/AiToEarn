@@ -184,7 +184,6 @@ const PubParmasTextareaUpload = memo(
                   imagefile["ossUrl"] = item.url;
                   onImgUpdateFinish([imagefile]);
                 } else {
-                  console.log(item);
                   const videoInfo = await VideoGrabFrame(ossUrl, 0);
                   const video: any = {
                     ossUrl: ossUrl,
