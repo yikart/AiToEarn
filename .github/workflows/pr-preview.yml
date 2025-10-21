@@ -3,8 +3,6 @@ name: Backend PR Preview Environment
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed]
-    branches:
-      - main
 
 permissions:
   id-token: write
