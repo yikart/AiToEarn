@@ -184,7 +184,7 @@ const CalendarTiming = memo(
       const channelFilter = (
         <div style={{ display: 'flex', alignItems: 'center', marginTop: '-15px' }}>
           <Dropdown
-            overlay={channelDropdownContent}
+            menu={{ items: [{ key: 'channelFilter', label: channelDropdownContent }] }}
             trigger={['click']}
             placement="bottomRight"
           >
