@@ -267,55 +267,55 @@ jobs:
             });
 
     # 销毁预览环境
-    destroy-environment:
-      if: github.event.action == 'closed'
-      runs-on: ubuntu-latest
+  destroy-environment:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
 
-      steps:
-        - uses: actions/create-github-app-token@v2
-          id: generate-token
-          with:
-            app-id: ${{ secrets.APP_ID }}
-            private-key: ${{ secrets.APP_PRIVATE_KEY }}
-            owner: ${{ github.repository_owner }}
-            repositories: ${{ env.INFRASTRUCTURE_REPO }}
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ env.INFRASTRUCTURE_REPO }}
 
-        # 关闭 infrastructure 仓库的 PR（会触发销毁）
-        - name: Close infrastructure PR
-          uses: actions/github-script@v7
-          with:
-            github-token: ${{ steps.generate-token.outputs.token }}
-            script: |
-              const prNumber = context.payload.pull_request.number;
-              const branchName = `env/pr-${prNumber}`;
+      # 关闭 infrastructure 仓库的 PR（会触发销毁）
+      - name: Close infrastructure PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const branchName = `env/pr-${prNumber}`;
 
-              try {
-                // 查找 infrastructure 仓库的对应 PR
-                const { data: prs } = await github.rest.pulls.list({
+            try {
+              // 查找 infrastructure 仓库的对应 PR
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: 'infrastructure',
+                state: 'open',
+                head: `${context.repo.owner}:${branchName}`
+              });
+
+              if (prs.length > 0) {
+                const infraPR = prs[0];
+
+                // 关闭 PR
+                await github.rest.pulls.update({
                   owner: context.repo.owner,
                   repo: 'infrastructure',
-                  state: 'open',
-                  head: `${context.repo.owner}:${branchName}`
+                  pull_number: infraPR.number,
+                  state: 'closed'
                 });
 
-                if (prs.length > 0) {
-                  const infraPR = prs[0];
-
-                  // 关闭 PR
-                  await github.rest.pulls.update({
-                    owner: context.repo.owner,
-                    repo: 'infrastructure',
-                    pull_number: infraPR.number,
-                    state: 'closed'
-                  });
-
-                  console.log(`✅ 已关闭 infrastructure PR #${infraPR.number}`);
-                } else {
-                  console.log('⚠️  未找到对应的 infrastructure PR，可能已被删除');
-                }
-              } catch (error) {
-                console.error('❌ 关闭 PR 失败:', error.message);
-                // 不抛出错误，因为 PR 可能已经被手动关闭
+                console.log(`✅ 已关闭 infrastructure PR #${infraPR.number}`);
+              } else {
+                console.log('⚠️  未找到对应的 infrastructure PR，可能已被删除');
               }
+            } catch (error) {
+              console.error('❌ 关闭 PR 失败:', error.message);
+              // 不抛出错误，因为 PR 可能已经被手动关闭
+            }
 
 
