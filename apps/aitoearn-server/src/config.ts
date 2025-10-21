@@ -170,6 +170,9 @@ export const appConfigSchema = z.object({
   task: z.object({
     baseUrl: z.string().default('http://localhost:3000'),
   }),
+  payment: z.object({
+    baseUrl: z.string().default('http://localhost:3000'),
+  }),
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }

@@ -13,6 +13,6 @@ import { VipService } from './vip.service'
 @Module({
   controllers: [UserController, LoginController, UserPopController, UserWalletAccountController],
   providers: [UserService, UserWalletAccountService, PointsService, VipService, StorageService],
-  exports: [UserService, VipService, StorageService],
+  exports: [UserService, VipService, StorageService, PointsService],
 })
 export class UserModule { }
