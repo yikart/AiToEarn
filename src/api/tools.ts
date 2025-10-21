@@ -98,14 +98,19 @@ export const toolsApi = {
     onProgress?: (prog: number) => void,
   ): Promise<string> {
     const fileSize = file.size;
-    const fileName = (file as any).name || 'file';
-    const contentType = file.type || 'application/octet-stream';
-    
+    const fileName = (file as any).name || "file";
+    const contentType = file.type || "application/octet-stream";
+
     // 如果文件大于10MB，使用分片上传
-    if (fileSize > (10 * 1024 * 1024)) {
-      return this.uploadFileTempMultipart(file, fileName, contentType, onProgress);
+    if (fileSize > 10 * 1024 * 1024) {
+      return this.uploadFileTempMultipart(
+        file,
+        fileName,
+        contentType,
+        onProgress,
+      );
     }
-    
+
     // 小于10MB，使用普通上传
     const formData = new FormData();
     formData.append("file", file);
@@ -169,7 +174,7 @@ export const toolsApi = {
         // 上传分片
         const formData = new FormData();
         formData.append("file", chunk);
-        
+
         const partResponse = await axios({
           url: `${process.env.NEXT_PUBLIC_API_URL}/file/uploadPart/upload`,
           method: "POST",
@@ -196,19 +201,19 @@ export const toolsApi = {
         console.log(`分片 ${i + 1}/${chunks} 上传完成`);
       }
 
-             // 3. 完成分片上传
-       await axios({
-         url: `${process.env.NEXT_PUBLIC_API_URL}/file/uploadPart/complete`,
-         method: "POST",
-         data: {
-           fileId,
-           uploadId,
-           parts,
-         },
-       });
+      // 3. 完成分片上传
+      await axios({
+        url: `${process.env.NEXT_PUBLIC_API_URL}/file/uploadPart/complete`,
+        method: "POST",
+        data: {
+          fileId,
+          uploadId,
+          parts,
+        },
+      });
 
-       // 文件地址在初始化时就已经返回了
-       return fileId;
+      // 文件地址在初始化时就已经返回了
+      return fileId;
     } catch (error) {
       console.error("分片上传失败:", error);
       throw error;

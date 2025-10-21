@@ -9,7 +9,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Button, Image, Input, message, Tooltip, Upload } from "antd";
+import { Button, Image, Input, message, Tooltip } from "antd";
 import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss";
 import { ReactSortable } from "react-sortablejs";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
@@ -36,10 +36,9 @@ import Aibrush from "@/components/PublishDialog/svgs/aibrush.svg";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import { useShallow } from "zustand/react/shallow";
 import DraftSelectionModal from "@/components/PublishDialog/compoents/DraftSelectionModal";
+import PubParmasMentionInput from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput";
 
 const { TextArea } = Input;
-const { Dragger } = Upload;
-
 export interface IPubParmasTextareaRef {}
 
 export interface IChangeParams {
@@ -109,7 +108,6 @@ const PubParmasTextarea = memo(
       );
       // 裁剪弹框
       const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
-      const textareaRef = useRef<TextAreaRef>(null);
       const isFirst = useRef({
         effect: true,
         sort: true,
@@ -325,25 +323,31 @@ const PubParmasTextarea = memo(
           <div className={styles.pubParmasTextarea} style={style}>
             <div className="pubParmasTextarea-input">
               {beforeExtend}
-              <TextArea
-                ref={textareaRef}
-                placeholder={t("form.descriptionPlaceholder")}
+              <PubParmasMentionInput
                 value={value}
-                onChange={(e) => setValue(e.target.value)}
-                rows={rows}
-                autoFocus={true}
+                onChange={(value) => setValue(value)}
+                placeholder={t("form.descriptionPlaceholder")}
                 maxLength={desMax}
-                onFocus={() => {
-                  setTimeout(() => {
-                    if (textareaRef.current) {
-                      const val =
-                        textareaRef.current.resizableTextArea!.textArea;
-                      const len = value.length;
-                      val.setSelectionRange(len, len);
-                    }
-                  }, 10);
-                }}
               />
+              {/*<TextArea*/}
+              {/*  ref={textareaRef}*/}
+              {/*  placeholder={t("form.descriptionPlaceholder")}*/}
+              {/*  value={value}*/}
+              {/*  onChange={(e) => setValue(e.target.value)}*/}
+              {/*  rows={rows}*/}
+              {/*  autoFocus={true}*/}
+              {/*  maxLength={desMax}*/}
+              {/*  onFocus={() => {*/}
+              {/*    setTimeout(() => {*/}
+              {/*      if (textareaRef.current) {*/}
+              {/*        const val =*/}
+              {/*          textareaRef.current.resizableTextArea!.textArea;*/}
+              {/*        const len = value.length;*/}
+              {/*        val.setSelectionRange(len, len);*/}
+              {/*      }*/}
+              {/*    }, 10);*/}
+              {/*  }}*/}
+              {/*/>*/}
               <ReactSortable
                 className="pubParmasTextarea-uploads"
                 list={imageFileList}

@@ -1,5 +1,8 @@
 .platParamsSetting {
   :global {
+    .platParamsSetting-textOverflow {
+      background: rgba(255, 48, 48, 0.1);
+    }
     .platParamsSetting-wrapper {
       display: flex;
       width: 100%;
@@ -21,7 +24,7 @@
       cursor: pointer;
       display: flex;
       align-items: center;
-      padding-left: 15px;
+      padding: 0 15px;
       color: var(--grayColor11);
       p {
         white-space: nowrap;

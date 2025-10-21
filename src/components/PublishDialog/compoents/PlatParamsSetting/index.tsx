@@ -94,7 +94,14 @@ const PlatParamsSetting = memo(
                   setExpandedPubItem(pubItem);
                 }}
               >
-                <p>
+                <p
+                  className={
+                    platConfig.commonPubParamsConfig.desMax <
+                    pubItem.params.des.length
+                      ? 'platParamsSetting-textOverflow'
+                      : ""
+                  }
+                >
                   {pubItem.params.des ? (
                     pubItem.params.des
                   ) : (
