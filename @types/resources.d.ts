@@ -1991,11 +1991,12 @@ interface Resources {
       "delete": "删除"
     },
     "tips": {
-      "workSaved": "请选择要发布的账户",
+      "workSaved": "你的工作被保存了，请选择账号，继续发布",
       "pcNotSupported": "Web不支持该平台，请下载App进行发布",
       "accountOffline": "该账号已离线，无法发布",
       "tiktokForbidden": "该平台暂不支持发布",
-      "xhsOffline": "小红书账号已离线，请下载App进行操作"
+      "xhsOffline": "小红书账号已离线，请下载App进行操作",
+      "selectAccount": "请选择要发布的账户"
     },
     "status": {
       "publishFailed": "发布失败",
@@ -2018,11 +2019,16 @@ interface Resources {
       "page": "页面",
       "pagePlaceholder": "请选择页面",
       "privacyStatus": "隐私状态",
+      "selectPrivacyStatus": "请选择隐私状态",
       "public": "公开",
       "unlisted": "不公开",
       "private": "私人",
       "region": "国区",
       "regionPlaceholder": "请选择国区",
+      "license": "许可证",
+      "licensePlaceholder": "请选择许可证",
+      "standardYouTubeLicense": "标准 YouTube 许可证",
+      "creativeCommonsLicense": "知识共享许可证",
       "category": "视频分类",
       "categoryPlaceholder": "请选择视频分类",
       "categoryPlaceholderDisabled": "请先选择国区",

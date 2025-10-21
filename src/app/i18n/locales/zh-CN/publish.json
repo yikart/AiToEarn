@@ -13,11 +13,12 @@
     "delete": "删除"
   },
   "tips": {
-    "workSaved": "请选择要发布的账户",
+    "workSaved": "你的工作被保存了，请选择账号，继续发布",
     "pcNotSupported": "Web不支持该平台，请下载App进行发布",
     "accountOffline": "该账号已离线，无法发布",
     "tiktokForbidden": "该平台暂不支持发布",
-    "xhsOffline": "小红书账号已离线，请下载App进行操作"
+    "xhsOffline": "小红书账号已离线，请下载App进行操作",
+    "selectAccount": "请选择要发布的账户"
   },
   "status": {
     "publishFailed": "发布失败",

@@ -716,10 +716,27 @@ const PublishDialog = memo(
                     </>
                   )}
 
-                  {pubListChoosed.length === 0 && (
-                    <div className="publishDialog-con-tips">
+                  {pubListChoosed.length === 0 &&
+                  pubList.some(
+                    (v) =>
+                      v.params.des ||
+                      v.params.video ||
+                      (v.params.images && v.params.images.length > 0),
+                  ) ? (
+                    <div
+                      className="publishDialog-con-tips"
+                      style={{ height: "400px" }}
+                    >
                       {t("tips.workSaved")}
                     </div>
+                  ) : (
+                    <>
+                      {pubListChoosed.length === 0 && (
+                        <div className="publishDialog-con-tips">
+                          {t("tips.selectAccount")}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -823,7 +840,7 @@ const PublishDialog = memo(
                                     : undefined,
                               color:
                                 moderationResult === true ||
-                                  moderationResult === false
+                                moderationResult === false
                                   ? "#fff"
                                   : undefined,
                             }}

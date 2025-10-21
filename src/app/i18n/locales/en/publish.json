@@ -13,7 +13,8 @@
     "delete": "Delete"
   },
   "tips": {
-    "workSaved": "Please select the account to publish",
+    "workSaved": "Your work has been saved. Select a Channel to create a post",
+    "selectAccount": "Please select the account to publish",
     "pcNotSupported": "Web does not support this platform, please download the App to publish",
     "accountOffline": "This account is offline and cannot be published",
     "tiktokForbidden": "This platform does not support publishing yet",

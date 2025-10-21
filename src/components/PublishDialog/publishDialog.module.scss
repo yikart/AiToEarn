@@ -86,6 +86,9 @@ $assistantWidth: 380px;
       }
 
       &-tips {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         text-align: center;
         color: var(--grayColor7);
       }
