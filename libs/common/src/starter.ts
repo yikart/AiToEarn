@@ -19,6 +19,7 @@ import { ResponseInterceptor } from './interceptors'
 import { CloudWatchLogger, ConsoleLogger, FeishuLogger } from './loggers'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, setupNatsPattern, zodToJsonSchemaOptions } from './utils'
+import './utils/load-file-from-env.util'
 
 z.config(z.locales.zhCN())
 

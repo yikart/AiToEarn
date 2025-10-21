@@ -1,0 +1,321 @@
+name: Backend PR Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REGISTRY: 339388639667.dkr.ecr.ap-southeast-1.amazonaws.com
+  IMAGE_REPO: aitoearn
+  INFRASTRUCTURE_REPO: terraform
+
+jobs:
+  # 构建并推送镜像
+  build-and-push:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+
+    outputs:
+      apps: ${{ steps.generate-apps.outputs.apps }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 使用 Nx 检测受影响的应用
+      - name: Detect affected apps
+        id: detect-changes
+        run: |
+          # 设置 base 分支
+          BASE_REF="origin/${{ github.base_ref }}"
+
+          echo "🔍 检测受影响的应用..."
+          echo "Base: $BASE_REF"
+          echo "Head: HEAD"
+
+          # 使用 Nx affected 命令检测受影响的应用
+          # --type=app 只检测应用（不包括库）
+          # --base 指定比较的基准分支
+          AFFECTED_APPS=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --exclude="browser-automation-worker" --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
+
+          if [ -z "$AFFECTED_APPS" ]; then
+            echo "⚠️  未检测到受影响的应用"
+            echo "changed_apps=" >> $GITHUB_OUTPUT
+          else
+            echo "✅ 受影响的应用: $CHANGED_APPS"
+            echo "changed_apps=$CHANGED_APPS" >> $GITHUB_OUTPUT
+
+            # 显示详细信息
+            echo ""
+            echo "📊 详细信息:"
+            for APP in $(echo "$AFFECTED_APPS"); do
+              echo "  - $APP"
+            done
+          fi
+
+      - name: Configure AWS credentials
+        if: steps.detect-changes.outputs.changed_apps != ''
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        if: steps.detect-changes.outputs.changed_apps != ''
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        if: steps.detect-changes.outputs.changed_apps != ''
+        uses: docker/setup-buildx-action@v3
+
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 版本: $VERSION"
+
+      - name: Build and push Docker images
+        if: steps.detect-changes.outputs.changed_apps != ''
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          IFS=',' read -ra APPS <<< "${{ steps.detect-changes.outputs.changed_apps }}"
+
+          for APP in "${APPS[@]}"; do
+            echo "🔨 构建应用: $APP"
+
+            # 构建应用
+            pnpm nx run $APP:build
+
+            # 准备 Docker context
+            pnpm nx run $APP:docker-context
+
+            echo "🐋 构建 Docker 镜像: $APP"
+
+            IMAGE_TAG="${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION"
+
+            # 使用 docker/build-push-action 的等效命令，但支持循环
+            docker buildx build \
+              --platform linux/amd64 \
+              --file ./tmp/docker-context/Dockerfile \
+              --build-arg APP_NAME=$APP \
+              --tag $IMAGE_TAG \
+              --push \
+              --cache-from type=gha,scope=$APP \
+              --cache-to type=gha,mode=max,scope=$APP \
+              --provenance=false \
+              --sbom=false \
+              ./tmp/docker-context
+
+            echo "✅ 推送镜像: $IMAGE_TAG"
+          done
+
+      # 生成应用配置
+      - name: Generate apps configuration
+        if: steps.detect-changes.outputs.changed_apps != ''
+        id: generate-apps
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          IFS=',' read -ra APPS <<< "${{ steps.detect-changes.outputs.changed_apps }}"
+
+          # 固定的健康检查路径
+          HEALTH_PATH="/health"
+
+          # 构建 JSON 配置
+          APPS_JSON="{"
+          FIRST=true
+
+          for APP in "${APPS[@]}"; do
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              APPS_JSON="$APPS_JSON,"
+            fi
+
+            CONFIG_FILE="apps/$APP/config/config.js"
+
+            if [ ! -f "$CONFIG_FILE" ]; then
+              echo "❌ 错误: 应用 $APP 的配置文件不存在: $CONFIG_FILE"
+              exit 1
+            fi
+
+            PORT=$(grep -oP 'port:\s*\K\d+' "$CONFIG_FILE" 2>/dev/null || echo "")
+
+            if [ -z "$PORT" ]; then
+              echo "❌ 错误: 无法从 $CONFIG_FILE 读取端口号"
+              echo "   请确保配置文件中包含 'port: <端口号>' 格式"
+              exit 1
+            fi
+
+            echo "  ✓ $APP 端口: $PORT"
+
+            APPS_JSON="$APPS_JSON\"$APP\":{\"image\":\"${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION\",\"port\":\"$PORT\",\"health_check\":{\"path\":\"$HEALTH_PATH\"}}"
+          done
+
+          APPS_JSON="$APPS_JSON}"
+
+          echo "apps<<EOF" >> $GITHUB_OUTPUT
+          echo "$APPS_JSON" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "📦 应用配置:"
+          echo "$APPS_JSON" | jq .
+
+  # 创建或更新预览环境
+  create-or-update-environment:
+    needs: build-and-push
+    if: github.event.action != 'closed' && needs.build-and-push.outputs.apps != ''
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ env.INFRASTRUCTURE_REPO }}
+
+      # 检查是否已存在预览环境
+      - name: Check if environment exists
+        id: check-env
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const branchName = `env/pr-${prNumber}`;
+
+            try {
+              // 查询 infrastructure 仓库的 PR
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: 'infrastructure',
+                state: 'open',
+                head: `${context.repo.owner}:${branchName}`
+              });
+
+              const exists = prs.length > 0;
+
+              if (exists) {
+                console.log(`✅ 预览环境已存在: PR #${prs[0].number}`);
+                core.setOutput('exists', 'true');
+                core.setOutput('event_type', 'pr-update');
+              } else {
+                console.log('🆕 需要创建新的预览环境');
+                core.setOutput('exists', 'false');
+                core.setOutput('event_type', 'pr-create');
+              }
+            } catch (error) {
+              console.log('⚠️  检查环境时出错，默认为创建新环境');
+              core.setOutput('exists', 'false');
+              core.setOutput('event_type', 'pr-create');
+            }
+
+      # 触发 infrastructure 仓库创建或更新环境
+      - name: Trigger environment deployment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const eventType = '${{ steps.check-env.outputs.event_type }}';
+            const owner = '${{ github.repository_owner }}'
+            const repo = '${{ env.INFRASTRUCTURE_REPO }}'
+            const apps = ${{ needs.build-and-push.outputs.apps }};
+
+            await github.rest.repos.createDispatchEvent({
+              owner: owner,
+              repo: repo,
+              event_type: eventType,
+              client_payload: {
+                pr_number: '${{ github.event.pull_request.number }}',
+                source_repo: '${{ github.repository }}',
+                apps: apps
+              }
+            });
+
+            console.log(`✅ 已触发 ${eventType} 事件`);
+            console.log('Payload:', {
+              pr_number: '${{ github.event.pull_request.number }}',
+              source_repo: '${{ github.repository }}',
+              apps: apps
+            });
+
+    # 销毁预览环境
+    destroy-environment:
+      if: github.event.action == 'closed'
+      runs-on: ubuntu-latest
+
+      steps:
+        - uses: actions/create-github-app-token@v2
+          id: generate-token
+          with:
+            app-id: ${{ secrets.APP_ID }}
+            private-key: ${{ secrets.APP_PRIVATE_KEY }}
+            owner: ${{ github.repository_owner }}
+            repositories: ${{ env.INFRASTRUCTURE_REPO }}
+
+        # 关闭 infrastructure 仓库的 PR（会触发销毁）
+        - name: Close infrastructure PR
+          uses: actions/github-script@v7
+          with:
+            github-token: ${{ steps.generate-token.outputs.token }}
+            script: |
+              const prNumber = context.payload.pull_request.number;
+              const branchName = `env/pr-${prNumber}`;
+
+              try {
+                // 查找 infrastructure 仓库的对应 PR
+                const { data: prs } = await github.rest.pulls.list({
+                  owner: context.repo.owner,
+                  repo: 'infrastructure',
+                  state: 'open',
+                  head: `${context.repo.owner}:${branchName}`
+                });
+
+                if (prs.length > 0) {
+                  const infraPR = prs[0];
+
+                  // 关闭 PR
+                  await github.rest.pulls.update({
+                    owner: context.repo.owner,
+                    repo: 'infrastructure',
+                    pull_number: infraPR.number,
+                    state: 'closed'
+                  });
+
+                  console.log(`✅ 已关闭 infrastructure PR #${infraPR.number}`);
+                } else {
+                  console.log('⚠️  未找到对应的 infrastructure PR，可能已被删除');
+                }
+              } catch (error) {
+                console.error('❌ 关闭 PR 失败:', error.message);
+                // 不抛出错误，因为 PR 可能已经被手动关闭
+              }
+
+
