@@ -1,6 +1,5 @@
 name: "✨ Refactor"
 description: Refactor existing code for improved readability and maintainability.
-title: "[Chore/Refactor] "
 labels:
   - refactor
 body:
