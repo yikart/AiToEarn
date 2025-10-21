@@ -62,8 +62,8 @@ export interface IPlatOption {
   youtube?: {
     // 隐私状态：public、unlisted、private
     privacyStatus?: string;
-    // 国区代码
-    regionCode?: string;
+    // 许可证类型：youtube、creativeCommon
+    license?: string;
     // 视频分类ID
     categoryId?: string;
     // 是否通知订阅者
