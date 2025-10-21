@@ -28,3 +28,14 @@ export function getRandomString(length: number, onlyNum = false): string {
   }
   return result
 }
+
+/**
+ * 获取某一天 UTC 的起止时间
+ * @param date 格式为 "2025-07-25"
+ * @returns { start: Date, end: Date }
+ */
+export function getDayRangeUTC(date: string): { start: Date, end: Date } {
+  const start = new Date(`${date} T00:00:00.000Z`)
+  const end = new Date(`${date} T23:59:59.999Z`)
+  return { start, end }
+}

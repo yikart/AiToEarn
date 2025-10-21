@@ -26,6 +26,7 @@
     "@yikart/one-signal": "workspace:*",
     "@yikart/redis": "workspace:*",
     "@yikart/redlock": "workspace:*",
+    "@yikart/statistics-db": "workspace:*",
     "@yikart/ucloud": "workspace:*",
     "axios": "^1.12.2",
     "bignumber.js": "^9.3.1",

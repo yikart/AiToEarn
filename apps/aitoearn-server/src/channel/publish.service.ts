@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppException, TableDto } from '@yikart/common'
-import { AccountType, PublishStatus } from '@yikart/mongodb'
-import { UserTaskService } from '../task/userTask.service'
+import { AppException } from '@yikart/common'
 import { EngagementNatsApi } from './api/engagement/engagement.natsApi'
 import { PlatPublishNatsApi } from './api/publish.natsApi'
 import { PublishTaskNatsApi } from './api/publishTask.natsApi'
@@ -17,7 +15,7 @@ export class PublishService {
   constructor(
     private readonly platPublishNatsApi: PlatPublishNatsApi,
     private readonly publishTaskNatsApi: PublishTaskNatsApi,
-    private readonly userTaskService: UserTaskService,
+    private readonly userTaskNatsApi: UserTaskNatsApi,
     private readonly engagementNatsApi: EngagementNatsApi,
   ) { }
 
@@ -29,7 +27,7 @@ export class PublishService {
   async createRecord(newData: NewPublishRecordData) {
     // 如果有用户ID任务，则传入用户任务ID和任务ID
     if (newData.userTaskId) {
-      const userTask = await this.userTaskService.getUserTaskInfo(newData.userTaskId)
+      const userTask = await this.userTaskNatsApi.getUserTaskInfo(newData.userTaskId)
       if (userTask) {
         newData.taskId = userTask.taskId
       }
@@ -69,7 +67,7 @@ export class PublishService {
         coverUrl: post.thumbnail || undefined,
         imgUrlList: post.mediaType === 'image' ? [post.thumbnail || ''] : [],
         publishTime: new Date(post.publishTime),
-        status: PublishStatus.PUBLISHED,
+        status: PublishStatus.RELEASED,
         errorMsg: '',
         engagement: {
           viewCount: post.viewCount,
@@ -103,8 +101,8 @@ export class PublishService {
       }
       else {
         let status = record.status
-        if (status === PublishStatus.PUBLISHING && record.publishTime > new Date()) {
-          status = PublishStatus.PUBLISHED
+        if (status === PublishStatus.PUB_LOADING && record.publishTime > new Date()) {
+          status = PublishStatus.RELEASED
         }
         result.set(record.dataId || record.id, {
           ...record,
@@ -151,12 +149,12 @@ export class PublishService {
     return await this.platPublishNatsApi.publishDataInfoList(userId, data, page)
   }
 
-  async getPublishRecordDetail(flowId: string, userId: string) {
+  async getPublishRecordDetail(flowId, userId: string) {
     try {
       const record = await this.platPublishNatsApi.getPublishRecordDetail(flowId, userId)
       return record
     }
-    catch (error: any) {
+    catch (error) {
       this.logger.error(`Failed to get publish record detail for flowId ${flowId} and userId ${userId}: ${error.message}`, error.stack)
     }
 

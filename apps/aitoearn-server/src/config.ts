@@ -121,6 +121,12 @@ const AliGreenConfigSchema = z.object({
   endpoint: z.string().default(''),
 })
 
+// MoreAPI配置
+const moreApiConfigSchema = z.object({
+  platApiUri: z.string().default(''),
+  xhsCreatorUri: z.string().default(''),
+})
+
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
   ucloud: z.object({
@@ -173,6 +179,7 @@ export const appConfigSchema = z.object({
   payment: z.object({
     baseUrl: z.string().default('http://localhost:3000'),
   }),
+  moreApi: moreApiConfigSchema,
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
