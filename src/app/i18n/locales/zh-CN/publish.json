@@ -108,7 +108,18 @@
     "tiktokVideoSize": "TikTok视频大小不能超过1GB",
     "tiktokVideoMinResolution": "TikTok视频最小分辨率为360x360",
     "twitterVideoDuration": "Twitter视频时长需为0.5秒–140秒",
-    "twitterVideoSize": "Twitter视频大小不能超过512MB"
+    "twitterVideoSize": "Twitter视频大小不能超过512MB",
+    "facebookPostImageSize": "Facebook Post图片大小不能超过10MB",
+    "facebookStoryImageSize": "Facebook Story图片大小不能超过4MB",
+    "instagramImageSize": "Instagram图片大小不能超过8MB",
+    "pinterestImageSize": "Pinterest图片大小不能超过10MB",
+    "tiktokImageSize": "TikTok图片大小不能超过20MB",
+    "tiktokImageResolution": "TikTok图片最大分辨率为1080x1920或1920x1080",
+    "twitterImageSize": "Twitter图片大小不能超过5MB",
+    "twitterImageResolution": "Twitter图片最大分辨率为8192x8192",
+    "youtubeResolutionSuggestion": "建议视频分辨率：1920×1080（16:9）或 1080×1920（9:16）。",
+    "kwaiResolutionSuggestion": "推荐视频分辨率：1080x1920（竖屏）。",
+    "kwaiDurationSuggestion": "视频时长建议：15秒-3分钟。"
   },
   "preview": {
     "title": "预览",

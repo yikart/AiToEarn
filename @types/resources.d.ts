@@ -53,12 +53,17 @@ interface Resources {
       "recordCount": "共 {{count}} 条发布计划",
       "newWork": "新建作品",
       "noRecords": "暂无发布计划",
+      "channels": "频道筛选",
       "queue": "我的发布",
       "sent": "发布历史",
       "createdDaysAgo": "您于 {{days}} 天前创建",
       "viewPost": "查看帖子",
       "noSentPosts": "暂无已发布的帖子",
-      "selectAccountFirst": "请先选择一个账号"
+      "selectAccountFirst": "请先选择一个账号",
+      "searchChannels": "搜索频道",
+      "selectAll": "全选",
+      "noChannelsFound": "未找到匹配的频道",
+      "selectChannel": "选择频道"
     },
     "chooseSpace": "选择空间",
     "pleaseChooseSpace": "请选择空间",
@@ -2081,7 +2086,18 @@ interface Resources {
       "tiktokVideoSize": "TikTok视频大小不能超过1GB",
       "tiktokVideoMinResolution": "TikTok视频最小分辨率为360x360",
       "twitterVideoDuration": "Twitter视频时长需为0.5秒–140秒",
-      "twitterVideoSize": "Twitter视频大小不能超过512MB"
+      "twitterVideoSize": "Twitter视频大小不能超过512MB",
+      "facebookPostImageSize": "Facebook Post图片大小不能超过10MB",
+      "facebookStoryImageSize": "Facebook Story图片大小不能超过4MB",
+      "instagramImageSize": "Instagram图片大小不能超过8MB",
+      "pinterestImageSize": "Pinterest图片大小不能超过10MB",
+      "tiktokImageSize": "TikTok图片大小不能超过20MB",
+      "tiktokImageResolution": "TikTok图片最大分辨率为1080x1920或1920x1080",
+      "twitterImageSize": "Twitter图片大小不能超过5MB",
+      "twitterImageResolution": "Twitter图片最大分辨率为8192x8192",
+      "youtubeResolutionSuggestion": "建议视频分辨率：1920×1080（16:9）或 1080×1920（9:16）。",
+      "kwaiResolutionSuggestion": "推荐视频分辨率：1080x1920（竖屏）。",
+      "kwaiDurationSuggestion": "视频时长建议：15秒-3分钟。"
     },
     "preview": {
       "title": "预览",

@@ -1,702 +1,86 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="AutoImportSettings">
-    <option name="autoReloadType" value="NONE" />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="fix: Fix the deprecated feature of Modal">
-      <change afterPath="$PROJECT_DIR$/src/components/Chat/index.tsx" afterDir="false" />
+    <list default="true" id="df845451-672d-42bf-9d33-70cadf3674f7" name="更改" comment="feat: i18">
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/material_theme_project_new.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/watcherTasks.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/appChat/AppChatCore.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/appChat/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/[lng]/material/ai-generate/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/[lng]/material/ai-generate/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/compoents/PublishDialogAi.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/publishDialog.module.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/@types/resources.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/@types/resources.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/en/publish.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/en/publish.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/publish.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/i18n/locales/zh-CN/publish.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublishDialog/hooks/usePubParamsVerify.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ClangdSettings">
-    <option name="formatViaClangd" value="false" />
-  </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="vue3组件模板" />
-        <option value="TypeScript JSX File" />
-        <option value="TypeScript File" />
-        <option value="tsx组件模板" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="PUSH_AUTO_UPDATE" value="true" />
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="main" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="RESET_MODE" value="HARD" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;gaozhenqiang&quot;
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "gaozhenqiang"
   }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/yikart/aitoearn-web.git&quot;,
-    &quot;accountId&quot;: &quot;f5430140-317f-4240-bde4-97758a52e360&quot;
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/yikart/aitoearn-web.git",
+    "accountId": "f5430140-317f-4240-bde4-97758a52e360"
   }
-}</component>
-  <component name="ProblemsViewState">
-    <option name="selectedTabId" value="CurrentFile" />
-  </component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 4
-}</component>
-  <component name="ProjectId" id="2zamg25p8l4plGQi1IzdkD1GGzA" />
-  <component name="ProjectLevelVcsManager">
-    <ConfirmationsSetting value="2" id="Add" />
-  </component>
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "customColor": "",
+  "associatedIndex": 4
+}]]></component>
+  <component name="ProjectId" id="34MsSFRUiDMlWa2T9VUjJNE4nFl" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder0&quot;: &quot;0&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder1&quot;: &quot;1&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder2&quot;: &quot;2&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatOrder3&quot;: &quot;3&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth0&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth1&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth2&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_flatWidth3&quot;: &quot;449&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder0&quot;: &quot;0&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder1&quot;: &quot;1&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder2&quot;: &quot;2&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeOrder3&quot;: &quot;3&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth0&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth1&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth2&quot;: &quot;450&quot;,
-    &quot;FileHistory.git4idea.history.GitHistoryProvider_treeWidth3&quot;: &quot;449&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/project-dev/web/艺咖/aitoearn-web/src/app/[lng]/aiRank&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "pnpm",
+    "settings.editor.selected.configurable": "vcs.Git",
+    "ts.external.directory.path": "E:\\project-dev\\web\\艺咖\\aitoearn-web\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="ReactBuddySettings">
-    <option name="extensionsIgnore" value="true" />
-  </component>
+}]]></component>
   <component name="ReactDesignerToolWindowState">
     <option name="myId2Visible">
       <map>
         <entry key="com.intellij.reactbuddy.reactComponents" value="false" />
         <entry key="com.intellij.reactbuddy.reactInspector" value="false" />
-        <entry key="com.intellij.reactbuddy.storybook" value="false" />
       </map>
     </option>
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\aiRank" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\aiRank\svgs" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotEvent" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\assets\fonts" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents\PublishDialogChat" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\components\PublishDialog\compoents" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\aiRank" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotEvent\svgs" />
-      <recent name="E:\project-dev\web\艺咖\aitoearn-web\src\app\[lng]\hotContent\components\HotContent\svgs" />
-    </key>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
-      <changelist id="8ce961ad-7c9e-494c-bc53-9ecde4358af8" name="更改" comment="" />
-      <created>1751977665735</created>
+      <changelist id="df845451-672d-42bf-9d33-70cadf3674f7" name="更改" comment="" />
+      <created>1761034773488</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1751977665735</updated>
-      <workItem from="1751977666787" duration="3372000" />
-      <workItem from="1751981060502" duration="18325000" />
-      <workItem from="1752112076161" duration="3845000" />
-      <workItem from="1752118620733" duration="566000" />
-      <workItem from="1752130881346" duration="11774000" />
-      <workItem from="1752200550278" duration="253000" />
-      <workItem from="1752200816463" duration="23828000" />
-      <workItem from="1752459064500" duration="10175000" />
-      <workItem from="1752498765091" duration="2121000" />
-      <workItem from="1752543943603" duration="2208000" />
-      <workItem from="1752546939831" duration="7230000" />
-      <workItem from="1752567594292" duration="8530000" />
-      <workItem from="1752584771781" duration="30000" />
-      <workItem from="1752584814578" duration="687000" />
-      <workItem from="1752585528140" duration="210000" />
-      <workItem from="1752631107036" duration="4455000" />
-      <workItem from="1752665692400" duration="3000" />
-      <workItem from="1752665730893" duration="748000" />
-      <workItem from="1752738413265" duration="84000" />
-      <workItem from="1752804252535" duration="15000" />
-      <workItem from="1752804870916" duration="14000" />
-      <workItem from="1752828239202" duration="20000" />
-      <workItem from="1753063047098" duration="105000" />
-      <workItem from="1753092552922" duration="175000" />
-      <workItem from="1753097558939" duration="57000" />
-      <workItem from="1753150834781" duration="808000" />
-      <workItem from="1753152450433" duration="1000" />
-      <workItem from="1753170190568" duration="25000" />
-      <workItem from="1753234548364" duration="170000" />
-      <workItem from="1753234753622" duration="6000" />
-      <workItem from="1753265763659" duration="874000" />
-      <workItem from="1753359739552" duration="307000" />
-      <workItem from="1753408516738" duration="2310000" />
-      <workItem from="1753435689663" duration="1073000" />
-      <workItem from="1753789971442" duration="4169000" />
-      <workItem from="1753795623367" duration="2306000" />
-      <workItem from="1753798078949" duration="901000" />
-      <workItem from="1753861179139" duration="9000" />
-      <workItem from="1754040377625" duration="1212000" />
-      <workItem from="1754042077113" duration="2348000" />
-      <workItem from="1754044730693" duration="454000" />
-      <workItem from="1754047243768" duration="1000000" />
-      <workItem from="1755225150122" duration="612000" />
-      <workItem from="1755226313826" duration="1275000" />
-      <workItem from="1755227809233" duration="31000" />
-      <workItem from="1755228511604" duration="692000" />
-      <workItem from="1755244619445" duration="36000" />
-      <workItem from="1755244670513" duration="1000" />
-      <workItem from="1755246170094" duration="785000" />
-      <workItem from="1755248310749" duration="19000" />
-      <workItem from="1755248688075" duration="30000" />
-      <workItem from="1755248861702" duration="1282000" />
-      <workItem from="1755250365882" duration="16000" />
-      <workItem from="1755264622809" duration="72000" />
-      <workItem from="1755484080021" duration="385000" />
-      <workItem from="1755484608688" duration="46000" />
-      <workItem from="1755592153030" duration="17000" />
-      <workItem from="1755592656980" duration="619000" />
-      <workItem from="1755850232694" duration="30000" />
-      <workItem from="1756092083221" duration="176000" />
-      <workItem from="1756218696332" duration="27000" />
-      <workItem from="1756800029903" duration="29000" />
-      <workItem from="1756968825319" duration="59000" />
-      <workItem from="1757578930648" duration="1505000" />
-      <workItem from="1757588797084" duration="46000" />
-      <workItem from="1757599699131" duration="5402000" />
-      <workItem from="1757646069183" duration="322000" />
-      <workItem from="1757646405605" duration="66000" />
-      <workItem from="1757646484870" duration="466000" />
-      <workItem from="1757647784882" duration="2426000" />
-      <workItem from="1757656251307" duration="25699000" />
-      <workItem from="1757687709611" duration="2478000" />
-      <workItem from="1757902659875" duration="8213000" />
-      <workItem from="1757990250575" duration="77000" />
-      <workItem from="1758007785895" duration="36707000" />
-      <workItem from="1758107883444" duration="5630000" />
-      <workItem from="1758384058524" duration="10000" />
-      <workItem from="1758505349114" duration="516000" />
-      <workItem from="1758510004297" duration="4147000" />
-      <workItem from="1758514243321" duration="7846000" />
-      <workItem from="1760177932390" duration="506000" />
-      <workItem from="1760180248062" duration="1347000" />
+      <updated>1761034773488</updated>
+      <workItem from="1761034775054" duration="176000" />
     </task>
-    <task id="LOCAL-00038" summary="fix: 删除代理地址">
-      <option name="closed" value="true" />
-      <created>1755227592381</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1755227592381</updated>
-    </task>
-    <task id="LOCAL-00039" summary="fix: 修复发布记录Dropdown报错">
-      <option name="closed" value="true" />
-      <created>1755246915725</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1755246915725</updated>
-    </task>
-    <task id="LOCAL-00040" summary="fix: 默认空间国际化">
-      <option name="closed" value="true" />
-      <created>1755250153811</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1755250153811</updated>
-    </task>
-    <task id="LOCAL-00041" summary="fix: 校验修复">
-      <option name="closed" value="true" />
-      <created>1755484449640</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1755484449640</updated>
-    </task>
-    <task id="LOCAL-00042" summary="Revert &quot;refactor: 删除旧热门内容&quot;&#10;&#10;This reverts commit 7a0af7fb">
-      <option name="closed" value="true" />
-      <created>1757578439683</created>
-      <option name="number" value="00042" />
-      <option name="presentableId" value="LOCAL-00042" />
-      <option name="project" value="LOCAL" />
-      <updated>1757578439683</updated>
-    </task>
-    <task id="LOCAL-00043" summary="feat: 选择代理">
-      <option name="closed" value="true" />
-      <created>1757600217030</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1757600217030</updated>
-    </task>
-    <task id="LOCAL-00044" summary="fix: 修复因为 @svgr/webpack 受到的影响">
-      <option name="closed" value="true" />
-      <created>1757603685024</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1757603685024</updated>
-    </task>
-    <task id="LOCAL-00045" summary="feat: 创建数据统计页面">
-      <option name="closed" value="true" />
-      <created>1757653916005</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1757653916005</updated>
-    </task>
-    <task id="LOCAL-00046" summary="feat: 创建数据统计header">
-      <option name="closed" value="true" />
-      <created>1757661071307</created>
-      <option name="number" value="00046" />
-      <option name="presentableId" value="LOCAL-00046" />
-      <option name="project" value="LOCAL" />
-      <updated>1757661071307</updated>
-    </task>
-    <task id="LOCAL-00047" summary="feat(数据统计): 顶部筛选完成">
-      <option name="closed" value="true" />
-      <created>1757668733903</created>
-      <option name="number" value="00047" />
-      <option name="presentableId" value="LOCAL-00047" />
-      <option name="project" value="LOCAL" />
-      <updated>1757668733903</updated>
-    </task>
-    <task id="LOCAL-00048" summary="feat(数据统计): 1. 找不到空间的账号更改为默认账号的ID。 2. 完善swiper。 3. 添加过滤后的账号">
-      <option name="closed" value="true" />
-      <created>1757674748578</created>
-      <option name="number" value="00048" />
-      <option name="presentableId" value="LOCAL-00048" />
-      <option name="project" value="LOCAL" />
-      <updated>1757674748578</updated>
-    </task>
-    <task id="LOCAL-00049" summary="feat(数据统计): 顶部账号完成">
-      <option name="closed" value="true" />
-      <created>1757676377923</created>
-      <option name="number" value="00049" />
-      <option name="presentableId" value="LOCAL-00049" />
-      <option name="project" value="LOCAL" />
-      <updated>1757676377923</updated>
-    </task>
-    <task id="LOCAL-00050" summary="feat(数据统计): 数据明细完成">
-      <option name="closed" value="true" />
-      <created>1757683195377</created>
-      <option name="number" value="00050" />
-      <option name="presentableId" value="LOCAL-00050" />
-      <option name="project" value="LOCAL" />
-      <updated>1757683195377</updated>
-    </task>
-    <task id="LOCAL-00051" summary="feat(数据统计): 接入数据API，并且分拣数据">
-      <option name="closed" value="true" />
-      <created>1757686166523</created>
-      <option name="number" value="00051" />
-      <option name="presentableId" value="LOCAL-00051" />
-      <option name="project" value="LOCAL" />
-      <updated>1757686166523</updated>
-    </task>
-    <task id="LOCAL-00052" summary="feat(数据统计): 引入echarts">
-      <option name="closed" value="true" />
-      <created>1757687087834</created>
-      <option name="number" value="00052" />
-      <option name="presentableId" value="LOCAL-00052" />
-      <option name="project" value="LOCAL" />
-      <updated>1757687087834</updated>
-    </task>
-    <task id="LOCAL-00053" summary="feat(数据统计): echarts图接入API">
-      <option name="closed" value="true" />
-      <created>1757688007998</created>
-      <option name="number" value="00053" />
-      <option name="presentableId" value="LOCAL-00053" />
-      <option name="project" value="LOCAL" />
-      <updated>1757688007999</updated>
-    </task>
-    <task id="LOCAL-00054" summary="feat(数据统计): 数据大体完成">
-      <option name="closed" value="true" />
-      <created>1757689928273</created>
-      <option name="number" value="00054" />
-      <option name="presentableId" value="LOCAL-00054" />
-      <option name="project" value="LOCAL" />
-      <updated>1757689928273</updated>
-    </task>
-    <task id="LOCAL-00055" summary="feat(数据统计): 1. 添加账号搜索功能。 2. 添加账号离线状态和重新登录。">
-      <option name="closed" value="true" />
-      <created>1757925090335</created>
-      <option name="number" value="00055" />
-      <option name="presentableId" value="LOCAL-00055" />
-      <option name="project" value="LOCAL" />
-      <updated>1757925090335</updated>
-    </task>
-    <task id="LOCAL-00056" summary="feat(数据统计): 优化">
-      <option name="closed" value="true" />
-      <created>1757925767099</created>
-      <option name="number" value="00056" />
-      <option name="presentableId" value="LOCAL-00056" />
-      <option name="project" value="LOCAL" />
-      <updated>1757925767099</updated>
-    </task>
-    <task id="LOCAL-00057" summary="feat(数据统计): 国际化处理完成">
-      <option name="closed" value="true" />
-      <created>1757927088404</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1757927088404</updated>
-    </task>
-    <task id="LOCAL-00058" summary="feat(数据统计): 1. echarts图优化。 2. 平台名称进行国际化。">
-      <option name="closed" value="true" />
-      <created>1757928966674</created>
-      <option name="number" value="00058" />
-      <option name="presentableId" value="LOCAL-00058" />
-      <option name="project" value="LOCAL" />
-      <updated>1757928966674</updated>
-    </task>
-    <task id="LOCAL-00059" summary="feat(数据统计): 添加昨日新增">
-      <option name="closed" value="true" />
-      <created>1757929872003</created>
-      <option name="number" value="00059" />
-      <option name="presentableId" value="LOCAL-00059" />
-      <option name="project" value="LOCAL" />
-      <updated>1757929872003</updated>
-    </task>
-    <task id="LOCAL-00060" summary="feat(热门内容): 恢复新热门内容">
-      <option name="closed" value="true" />
-      <created>1757930268660</created>
-      <option name="number" value="00060" />
-      <option name="presentableId" value="LOCAL-00060" />
-      <option name="project" value="LOCAL" />
-      <updated>1757930268660</updated>
-    </task>
-    <task id="LOCAL-00061" summary="feat(热门内容): 添加侧边栏、标签数据、构建获取数据的基本逻辑及缓存逻辑">
-      <option name="closed" value="true" />
-      <created>1757947500152</created>
-      <option name="number" value="00061" />
-      <option name="presentableId" value="LOCAL-00061" />
-      <option name="project" value="LOCAL" />
-      <updated>1757947500152</updated>
-    </task>
-    <task id="LOCAL-00062" summary="feat(热门内容): 热门内容添加日期选择">
-      <option name="closed" value="true" />
-      <created>1757949881878</created>
-      <option name="number" value="00062" />
-      <option name="presentableId" value="LOCAL-00062" />
-      <option name="project" value="LOCAL" />
-      <updated>1757949881878</updated>
-    </task>
-    <task id="LOCAL-00063" summary="feat(热门内容): 热门内容添加表格">
-      <option name="closed" value="true" />
-      <created>1758015551273</created>
-      <option name="number" value="00063" />
-      <option name="presentableId" value="LOCAL-00063" />
-      <option name="project" value="LOCAL" />
-      <updated>1758015551273</updated>
-    </task>
-    <task id="LOCAL-00064" summary="feat(热门内容): 热门内容，抖音、快手、b站、小红书优化完成。视频号数据需要对一下，微信公众号需要分两个，阅读榜、低粉爆文榜">
-      <option name="closed" value="true" />
-      <created>1758033777549</created>
-      <option name="number" value="00064" />
-      <option name="presentableId" value="LOCAL-00064" />
-      <option name="project" value="LOCAL" />
-      <updated>1758033777549</updated>
-    </task>
-    <task id="LOCAL-00065" summary="fix(热门内容): 修复热门内容过滤条件更改后不会更新的bug">
-      <option name="closed" value="true" />
-      <created>1758034268520</created>
-      <option name="number" value="00065" />
-      <option name="presentableId" value="LOCAL-00065" />
-      <option name="project" value="LOCAL" />
-      <updated>1758034268520</updated>
-    </task>
-    <task id="LOCAL-00066" summary="fix(热门内容): 上拉加载优化">
-      <option name="closed" value="true" />
-      <created>1758034949493</created>
-      <option name="number" value="00066" />
-      <option name="presentableId" value="LOCAL-00066" />
-      <option name="project" value="LOCAL" />
-      <updated>1758034949493</updated>
-    </task>
-    <task id="LOCAL-00067" summary="fix(热门内容): 添加表格跳转到对于链接">
-      <option name="closed" value="true" />
-      <created>1758035262966</created>
-      <option name="number" value="00067" />
-      <option name="presentableId" value="LOCAL-00067" />
-      <option name="project" value="LOCAL" />
-      <updated>1758035262966</updated>
-    </task>
-    <task id="LOCAL-00068" summary="fix(热门内容): 热门内容完成">
-      <option name="closed" value="true" />
-      <created>1758104032555</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1758104032555</updated>
-    </task>
-    <task id="LOCAL-00069" summary="feat(热门内容): 添加公众号逆向链接的代码">
-      <option name="closed" value="true" />
-      <created>1758105572256</created>
-      <option name="number" value="00069" />
-      <option name="presentableId" value="LOCAL-00069" />
-      <option name="project" value="LOCAL" />
-      <updated>1758105572256</updated>
-    </task>
-    <task id="LOCAL-00070" summary="feat(热点): 处理热门内容国际化：全部">
-      <option name="closed" value="true" />
-      <created>1758269543551</created>
-      <option name="number" value="00070" />
-      <option name="presentableId" value="LOCAL-00070" />
-      <option name="project" value="LOCAL" />
-      <updated>1758269543551</updated>
-    </task>
-    <task id="LOCAL-00071" summary="feat(热点): 热门内容国际化处理中">
-      <option name="closed" value="true" />
-      <created>1758270366506</created>
-      <option name="number" value="00071" />
-      <option name="presentableId" value="LOCAL-00071" />
-      <option name="project" value="LOCAL" />
-      <updated>1758270366506</updated>
-    </task>
-    <task id="LOCAL-00072" summary="feat(热点): 热点事件、侧边栏、标签组件国际化处理">
-      <option name="closed" value="true" />
-      <created>1758270721700</created>
-      <option name="number" value="00072" />
-      <option name="presentableId" value="LOCAL-00072" />
-      <option name="project" value="LOCAL" />
-      <updated>1758270721700</updated>
-    </task>
-    <task id="LOCAL-00073" summary="feat(热点): 热点事件折线图国际化处理">
-      <option name="closed" value="true" />
-      <created>1758270857904</created>
-      <option name="number" value="00073" />
-      <option name="presentableId" value="LOCAL-00073" />
-      <option name="project" value="LOCAL" />
-      <updated>1758270857904</updated>
-    </task>
-    <task id="LOCAL-00074" summary="feat(热点): 热门专题国际化处理">
-      <option name="closed" value="true" />
-      <created>1758271689870</created>
-      <option name="number" value="00074" />
-      <option name="presentableId" value="LOCAL-00074" />
-      <option name="project" value="LOCAL" />
-      <updated>1758271689870</updated>
-    </task>
-    <task id="LOCAL-00075" summary="feat(热点): 1. 处理爆款标题国际化。 2. 修复爆款标题label在“全部”切换日期不会刷新数据的bug">
-      <option name="closed" value="true" />
-      <created>1758272347434</created>
-      <option name="number" value="00075" />
-      <option name="presentableId" value="LOCAL-00075" />
-      <option name="project" value="LOCAL" />
-      <updated>1758272347434</updated>
-    </task>
-    <task id="LOCAL-00076" summary="feat: 国际化改回来">
-      <option name="closed" value="true" />
-      <created>1758273142974</created>
-      <option name="number" value="00076" />
-      <option name="presentableId" value="LOCAL-00076" />
-      <option name="project" value="LOCAL" />
-      <updated>1758273142974</updated>
-    </task>
-    <task id="LOCAL-00077" summary="feat(热门内容): 添加小红书作者跳转">
-      <option name="closed" value="true" />
-      <created>1758275776107</created>
-      <option name="number" value="00077" />
-      <option name="presentableId" value="LOCAL-00077" />
-      <option name="project" value="LOCAL" />
-      <updated>1758275776107</updated>
-    </task>
-    <task id="LOCAL-00078" summary="feat: 添加Ai工具排行榜">
-      <option name="closed" value="true" />
-      <created>1758282359740</created>
-      <option name="number" value="00078" />
-      <option name="presentableId" value="LOCAL-00078" />
-      <option name="project" value="LOCAL" />
-      <updated>1758282359740</updated>
-    </task>
-    <task id="LOCAL-00079" summary="feat: 优化ConditionalHeader的匹配规则">
-      <option name="closed" value="true" />
-      <created>1758282685389</created>
-      <option name="number" value="00079" />
-      <option name="presentableId" value="LOCAL-00079" />
-      <option name="project" value="LOCAL" />
-      <updated>1758282685389</updated>
-    </task>
-    <task id="LOCAL-00080" summary="feat: 热门内容添加微信公众号跳转到作品">
-      <option name="closed" value="true" />
-      <created>1758285846264</created>
-      <option name="number" value="00080" />
-      <option name="presentableId" value="LOCAL-00080" />
-      <option name="project" value="LOCAL" />
-      <updated>1758285846264</updated>
-    </task>
-    <task id="LOCAL-00081" summary="feat: 热门内容详情开发中">
-      <option name="closed" value="true" />
-      <created>1758287993125</created>
-      <option name="number" value="00081" />
-      <option name="presentableId" value="LOCAL-00081" />
-      <option name="project" value="LOCAL" />
-      <updated>1758287993125</updated>
-    </task>
-    <task id="LOCAL-00082" summary="fix: 热门内容边界处理">
-      <option name="closed" value="true" />
-      <created>1758288596853</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1758288596853</updated>
-    </task>
-    <task id="LOCAL-00083" summary="feat: 1. 删除demo。 2. 优化站点地图">
-      <option name="closed" value="true" />
-      <created>1758525216903</created>
-      <option name="number" value="00083" />
-      <option name="presentableId" value="LOCAL-00083" />
-      <option name="project" value="LOCAL" />
-      <updated>1758525216904</updated>
-    </task>
-    <task id="LOCAL-00084" summary="feat: 1. 站点地图优化">
-      <option name="closed" value="true" />
-      <created>1758526826569</created>
-      <option name="number" value="00084" />
-      <option name="presentableId" value="LOCAL-00084" />
-      <option name="project" value="LOCAL" />
-      <updated>1758526826569</updated>
-    </task>
-    <task id="LOCAL-00085" summary="fix: fix publish dialog first step&#10; textarea bug">
-      <option name="closed" value="true" />
-      <created>1760091349955</created>
-      <option name="number" value="00085" />
-      <option name="presentableId" value="LOCAL-00085" />
-      <option name="project" value="LOCAL" />
-      <updated>1760091349956</updated>
-    </task>
-    <task id="LOCAL-00086" summary="fix: Fix the deprecated feature of Modal">
-      <option name="closed" value="true" />
-      <created>1760178341130</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1760178341130</updated>
-    </task>
-    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
-  <component name="UnknownFeatures">
-    <option featureType="com.intellij.fileTypeFactory" implementationName="robots.txt" />
-    <option featureType="com.intellij.fileTypeFactory" implementationName="sitemap.xml" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Paths">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="file:$PROJECT_DIR$/next.config.mjs" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-        <entry key="User">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="*" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="false" />
-    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="feat(热门内容): 热门内容添加日期选择" />
-    <MESSAGE value="feat(热门内容): 热门内容添加表格" />
-    <MESSAGE value="feat(热门内容): 热门内容，抖音、快手、b站、小红书优化完成。视频号数据需要对一下，微信公众号需要分两个，阅读榜、低粉爆文榜" />
-    <MESSAGE value="fix(热门内容): 修复热门内容过滤条件更改后不会更新的bug" />
-    <MESSAGE value="fix(热门内容): 上拉加载优化" />
-    <MESSAGE value="fix(热门内容): 添加表格跳转到对于链接" />
-    <MESSAGE value="fix(热门内容): 热门内容完成" />
-    <MESSAGE value="feat(热门内容): 添加公众号逆向链接的代码" />
-    <MESSAGE value="feat(热点): 处理热门内容国际化：全部" />
-    <MESSAGE value="feat(热点): 热门内容国际化处理中" />
-    <MESSAGE value="feat(热点): 热点事件、侧边栏、标签组件国际化处理" />
-    <MESSAGE value="feat(热点): 热点事件折线图国际化处理" />
-    <MESSAGE value="feat(热点): 热门专题国际化处理" />
-    <MESSAGE value="feat(热点): 1. 处理爆款标题国际化。 2. 修复爆款标题label在“全部”切换日期不会刷新数据的bug" />
-    <MESSAGE value="feat: 国际化改回来" />
-    <MESSAGE value="feat(热门内容): 添加小红书作者跳转" />
-    <MESSAGE value="feat: 添加Ai工具排行榜" />
-    <MESSAGE value="feat: 优化ConditionalHeader的匹配规则" />
-    <MESSAGE value="feat: 热门内容添加微信公众号跳转到作品" />
-    <MESSAGE value="feat: 热门内容详情开发中" />
-    <MESSAGE value="fix: 热门内容边界处理" />
-    <MESSAGE value="feat: 1. 删除demo。 2. 优化站点地图" />
-    <MESSAGE value="feat: 1. 站点地图优化" />
-    <MESSAGE value="fix: fix publish dialog first step&#10; textarea bug" />
-    <MESSAGE value="fix: Fix the deprecated feature of Modal" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix: Fix the deprecated feature of Modal" />
+    <MESSAGE value="feat: i18" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: i18" />
   </component>
 </project>

@@ -107,7 +107,18 @@
     "tiktokVideoSize": "TikTok video size cannot exceed 1GB",
     "tiktokVideoMinResolution": "TikTok video minimum resolution is 360x360",
     "twitterVideoDuration": "Twitter video duration must be 0.5–140 seconds",
-    "twitterVideoSize": "Twitter video size cannot exceed 512MB"
+    "twitterVideoSize": "Twitter video size cannot exceed 512MB",
+    "facebookPostImageSize": "Facebook Post image size cannot exceed 10MB",
+    "facebookStoryImageSize": "Facebook Story image size cannot exceed 4MB",
+    "instagramImageSize": "Instagram image size cannot exceed 8MB",
+    "pinterestImageSize": "Pinterest image size cannot exceed 10MB",
+    "tiktokImageSize": "TikTok image size cannot exceed 20MB",
+    "tiktokImageResolution": "TikTok image max resolution is 1080x1920 or 1920x1080",
+    "twitterImageSize": "Twitter image size cannot exceed 5MB",
+    "twitterImageResolution": "Twitter image max resolution is 8192x8192",
+    "youtubeResolutionSuggestion": "Recommended video resolution: 1920×1080 (16:9) or 1080×1920 (9:16).",
+    "kwaiResolutionSuggestion": "Recommended video resolution: 1080x1920 (vertical).",
+    "kwaiDurationSuggestion": "Recommended video duration: 15 seconds - 3 minutes."
   },
   "preview": {
     "title": "Preview",
