@@ -1,5 +1,6 @@
 import { createPersistStore } from "@/utils/createPersistStore";
 import { getUserInfoApi } from "@/api/apiReq";
+import i18next from "i18next";
 
 export interface UserInfo {
   createTime: string;
@@ -21,7 +22,15 @@ export interface UserInfo {
     id: string;
     expireTime: string;
     startTime: string;
-    status: 'none' | 'trialing' | 'monthly_once' | 'yearly_once' | 'active_monthly' | 'active_yearly' | 'active_nonrenewing' | 'expired';
+    status:
+      | "none"
+      | "trialing"
+      | "monthly_once"
+      | "yearly_once"
+      | "active_monthly"
+      | "active_yearly"
+      | "active_nonrenewing"
+      | "expired";
     _id: string;
   };
 }
@@ -38,7 +47,7 @@ const state: IUserStore = {
   userInfo: {},
   // 添加账户是否默认开启代理
   isAddAccountPorxy: false,
-  lang: "",
+  lang: i18next.language || "en",
 };
 
 export const useUserStore = createPersistStore(

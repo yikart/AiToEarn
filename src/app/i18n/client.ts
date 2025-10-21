@@ -30,15 +30,11 @@ i18next
   // .use(LocizeBackend) // locize backend could be used on client side, but prefer to keep it in sync with server side
   .init({
     ...getOptions(undefined), // 不传递 lng 参数，让 i18next 自动检测
+    lng: undefined, // let detect the language on client side
     detection: {
       order: ["path", "htmlTag", "cookie", "navigator"],
-      caches: ["cookie"], // 只缓存到 cookie，避免其他缓存干扰
     },
     preload: runsOnServerSide ? languages : [],
-    // 确保语言切换时立即生效
-    // react: {
-    //   useSuspense: false,
-    // },
   });
 
 export function useTransClient<
@@ -57,17 +53,17 @@ export function useTransClient<
     i18next.changeLanguage(lng);
   } else {
     const [activeLng, setActiveLng] = useState(i18next.resolvedLanguage);
-    
+
     // 监听 i18next 语言变化
     useEffect(() => {
       if (activeLng === i18next.resolvedLanguage) return;
       setActiveLng(i18next.resolvedLanguage);
     }, [activeLng, i18next.resolvedLanguage]);
-    
+
     // 强制同步 URL 参数中的语言到 i18next
     useEffect(() => {
       if (!lng) return;
-      
+
       // 始终使用 URL 参数中的语言，忽略 i18next 的自动检测
       if (i18next.resolvedLanguage !== lng) {
         i18next.changeLanguage(lng).then(() => {
@@ -79,7 +75,7 @@ export function useTransClient<
         setActiveLng(lng);
       }
     }, [lng]);
-    
+
     // 同步 cookie
     useEffect(() => {
       if (i18nextCookie === lng) return;
