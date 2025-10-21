@@ -18,19 +18,24 @@ import {
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { CSSTransition } from "react-transition-group";
 import { DatesSetArg } from "@fullcalendar/core";
-import { Button, Tabs } from "antd";
+import { Button, Tabs, Input, Avatar, Dropdown } from "antd";
 import {
   LeftOutlined,
   PlusOutlined,
   RightOutlined,
   CalendarOutlined,
   UnorderedListOutlined,
+  SearchOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
 import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
 import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";
+import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { getOssUrl } from "@/utils/oss";
+import { AccountStatus } from "@/app/config/accountConfig";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
@@ -67,11 +72,168 @@ const CalendarTiming = memo(
       };
       const calendarTimingCalendarRef = useRef<HTMLDivElement>(null);
       const [publishDialogOpen, setPublishDialogOpen] = useState(false);
-      const { accountList, accountActive } = useAccountStore(
+      const { accountList, accountActive, setAccountActive } = useAccountStore(
         useShallow((state) => ({
           accountList: state.accountList,
           accountActive: state.accountActive,
+          setAccountActive: state.setAccountActive,
         })),
+      );
+
+      // 频道筛选相关状态
+      const [channelSearchText, setChannelSearchText] = useState('');
+
+      // 筛选后的账户列表 - 只显示在线账户
+      const filteredAccounts = accountList.filter(account => 
+        account.status === AccountStatus.USABLE && (
+          account.nickname.toLowerCase().includes(channelSearchText.toLowerCase()) ||
+          account.account.toLowerCase().includes(channelSearchText.toLowerCase())
+        )
+      );
+
+      // 处理账户选择 - 与 AccountSidebar 同步
+      const handleChannelSelect = (account: any) => {
+        setAccountActive(account);
+      };
+
+      // Channel 筛选器下拉菜单内容
+      const channelDropdownContent = (
+        <div style={{
+          width: '280px',
+          background: 'white',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          overflow: 'hidden'
+        }}>
+          <div style={{ padding: '16px 16px 0 16px' }}>
+            <Input
+              placeholder={t('listMode.searchChannels' as any)}
+              prefix={<SearchOutlined />}
+              value={channelSearchText}
+              onChange={(e) => setChannelSearchText(e.target.value)}
+              style={{ width: '100%' }}
+            />
+          </div>
+          <div style={{ maxHeight: '300px', overflowY: 'auto', padding: '8px 0' }}>
+            {filteredAccounts.length > 0 ? (
+              filteredAccounts.map(account => {
+                const platInfo = AccountPlatInfoMap.get(account.type);
+                return (
+                  <div 
+                    key={account.id} 
+                    style={{
+                      padding: '8px 16px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      borderBottom: '1px solid #f5f5f5',
+                      backgroundColor: accountActive?.id === account.id ? '#e6f7ff' : 'transparent'
+                    }}
+                    onClick={() => handleChannelSelect(account)}
+                    onMouseEnter={(e) => {
+                      if (accountActive?.id !== account.id) {
+                        e.currentTarget.style.backgroundColor = '#f5f5f5';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (accountActive?.id !== account.id) {
+                        e.currentTarget.style.backgroundColor = 'transparent';
+                      }
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <Avatar 
+                        src={getOssUrl(account.avatar)} 
+                        size={32}
+                        style={{ flexShrink: 0, border: '1px solid #f0f0f0' }}
+                      >
+                        {account.nickname?.[0] || account.account?.[0]}
+                      </Avatar>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{
+                          fontSize: '14px',
+                          color: '#333',
+                          fontWeight: 500,
+                          marginBottom: '4px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }}>
+                          {account.nickname || account.account}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#666' }}>
+                          <img src={platInfo?.icon} alt={platInfo?.name} style={{ width: '16px', height: '16px', borderRadius: '2px' }} />
+                          <span >{platInfo?.name}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <div style={{ textAlign: 'center', color: '#999', fontSize: '14px', padding: '40px 16px' }}>
+                {accountList.length === 0 ? '暂无账户' : 
+                 accountList.filter(account => account.status === AccountStatus.USABLE).length === 0 ? '暂无在线账户' : 
+                 t('listMode.noChannelsFound' as any)}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+
+      // Channel 筛选器按钮
+      const channelFilter = (
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: '-15px' }}>
+          <Dropdown
+            overlay={channelDropdownContent}
+            trigger={['click']}
+            placement="bottomRight"
+          >
+            <Button style={{
+              height: '32px',
+              padding: '0 12px',
+              borderRadius: '6px',
+              border: 'none',
+              background: 'white',
+              transition: 'all 0.2s ease'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '2px' }}>
+                {accountActive ? (
+                  <>
+                    <Avatar 
+                      src={getOssUrl(accountActive.avatar)} 
+                      size={20}
+                      style={{ flexShrink: 0 }}
+                    >
+                      {accountActive.nickname?.[0] || accountActive.account?.[0]}
+                    </Avatar>
+                    <span style={{
+                      fontSize: '14px',
+                      color: '#333',
+                      width: '52px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }}>
+                      {accountActive.nickname || accountActive.account}
+                    </span>
+                  </>
+                ) : (
+                  <span style={{
+                    fontSize: '14px',
+                    color: '#333',
+                    width: '80px',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {t('listMode.selectChannel' as any)}
+                  </span>
+                )}
+                <DownOutlined style={{ fontSize: '12px', color: '#666', flexShrink: 0 }} />
+              </div>
+            </Button>
+          </Dropdown>
+        </div>
       );
       const {
         setCalendarCallWidth,
@@ -297,6 +459,7 @@ const CalendarTiming = memo(
                 size="small"
                 className={styles.modeTabs}
               />
+              {channelFilter}
             </div>
           </div>
           {activeMode === "calendar" ? (

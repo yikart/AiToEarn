@@ -133,9 +133,194 @@
     line-height: 1;
   }
 
+  .tabBadgeNone {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: transparent;
+    color: transparent;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
   .tabContent {
     height: 100%;
     padding: 0 5px 0 0;
+  }
+
+  // Channel 筛选器按钮样式
+  .channelFilterButton {
+    display: flex;
+    align-items: center;
+  }
+
+  .filterButton {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 6px;
+    border: 1px solid #d9d9d9;
+    background: white;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #40a9ff;
+      background: #f6ffed;
+    }
+
+    &:focus {
+      border-color: #1890ff;
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+    }
+  }
+
+  .filterButtonContent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .filterButtonAvatar {
+    flex-shrink: 0;
+  }
+
+  .filterButtonText {
+    font-size: 14px;
+    color: #333;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .filterButtonIcon {
+    font-size: 12px;
+    color: #666;
+    flex-shrink: 0;
+  }
+
+  // 下拉菜单样式
+  .channelDropdownOverlay {
+    :global {
+      .ant-dropdown {
+        padding: 0;
+      }
+    }
+  }
+
+  .channelDropdown {
+    width: 280px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+  }
+
+  .searchContainer {
+    padding: 16px 16px 0 16px;
+  }
+
+  .searchInput {
+    width: 100%;
+    
+    :global {
+      .ant-input {
+        border-radius: 6px;
+        border: 1px solid #d9d9d9;
+        transition: all 0.2s ease;
+
+        &:hover {
+          border-color: #40a9ff;
+        }
+
+        &:focus {
+          border-color: #1890ff;
+          box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+        }
+      }
+
+      .ant-input-prefix {
+        color: #999;
+      }
+    }
+  }
+
+  .channelList {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 8px 0;
+  }
+
+  .channelItem {
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid #f5f5f5;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &:hover {
+      background: #f5f5f5;
+    }
+
+    &.channelItemActive {
+      background: #e6f7ff;
+      border-color: #91d5ff;
+    }
+  }
+
+  .channelInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .channelAvatar {
+    flex-shrink: 0;
+    border: 1px solid #f0f0f0;
+  }
+
+  .channelDetails {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .channelName {
+    font-size: 14px;
+    color: #333;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .channelPlatform {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #666;
+
+    img {
+      width: 16px;
+      height: 16px;
+      border-radius: 2px;
+    }
+  }
+
+  .noChannels {
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    padding: 40px 16px;
   }
 
   .queueList {
