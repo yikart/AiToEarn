@@ -51,37 +51,13 @@ function UserInfo() {
       ),
     },
     {
-      key: "5",
-      label: (
-        <div
-          onClick={() => {
-            router.push(`/${lng}/material`);
-          }}
-        >
-          {t("header.materialLibrary")}
-        </div>
-      ),
-    },
-    {
-      key: "6",
-      label: (
-        <div
-          onClick={() => {
-            router.push(`/${lng}/cgmaterial`);
-          }}
-        >
-          {t("header.draftBox")}
-        </div>
-      ),
-    },
-    {
       key: "2",
       label: (
         <div
           onClick={() => {
             router.push(`/${lng}/income`);
           }}
-        >
+        >导航位置调整
           {t("header.income" as any)}
         </div>
       ),

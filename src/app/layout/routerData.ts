@@ -56,6 +56,17 @@ export const routerData: IRouterDataItem[] = [
     path: "/dataStatistics",
   },
 
+  {
+    name: "素材库",
+    translationKey: "header.materialLibrary",
+    path: "/material",
+  },
+
+  {
+    name: "草稿箱",
+    translationKey: "header.draftBox",
+    path: "/cgmaterial",
+  },
 ];
 
 const recursion = (
