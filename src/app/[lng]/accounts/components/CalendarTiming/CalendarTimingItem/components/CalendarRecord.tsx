@@ -14,6 +14,7 @@ import {
   getUtcDays,
 } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { updatePublishRecordTimeApi } from "@/api/plat/publish";
+import dayjs from "dayjs";
 
 export interface ICalendarRecordRef {}
 
@@ -49,8 +50,20 @@ const CalendarRecord = memo(
               "YYYY-MM-DD",
             );
 
-            // 更新时间
-            item.publishRecord.publishTime = dropResult!.time.date;
+            // 原始时间
+            const oldDate = dayjs(item.publishRecord.publishTime);
+            // 新日期（只取年月日）
+            const newDate = dayjs(dropResult!.time.date);
+
+            // 合并年月日和时分秒
+            const mergedDate = newDate
+              .hour(oldDate.hour())
+              .minute(oldDate.minute())
+              .second(oldDate.second())
+              .millisecond(oldDate.millisecond());
+
+            item.publishRecord.publishTime = mergedDate.toDate();
+
             // 移除旧数据
             newRecordMap.set(
               timeStr,
