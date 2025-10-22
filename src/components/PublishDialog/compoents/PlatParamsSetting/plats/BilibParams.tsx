@@ -61,7 +61,7 @@ const BilibParams = memo(
                   <div className="platParamsSetting-label">{t("form.partition")}</div>
                   <Select
                     style={{ width: "100%" }}
-                    options={bilibiliPartitions} 
+                    options={bilibiliPartitions}
                     value={pubItem.params.option.bilibili?.tid}
                     onChange={(value) => {
                       const option = pubItem.params.option;
