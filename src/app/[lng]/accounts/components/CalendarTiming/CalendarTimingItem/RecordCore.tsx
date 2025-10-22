@@ -34,6 +34,7 @@ import { deletePublishRecordApi, nowPubTaskApi } from "@/api/plat/publish";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
 import { getOssUrl } from "@/utils/oss";
 import { useTransClient } from "@/app/i18n/client";
+import ScrollButtonContainer from "@/components/ScrollButtonContainer";
 
 export interface IRecordCoreRef {}
 
@@ -206,7 +207,11 @@ const RecordCore = memo(
                   )}
                 </div>
               </div>
-              <div className="recordDetails-info"></div>
+              <ScrollButtonContainer>
+                <div className="recordDetails-info">
+
+                </div>
+              </ScrollButtonContainer>
               <div className="recordDetails-bottom">
                 {publishRecord.workLink && (
                   <Button
