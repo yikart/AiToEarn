@@ -167,18 +167,20 @@ jobs:
 
             echo "  ✓ $APP 端口: $PORT"
 
-            # 检测并直接构造 inject_sources 的 JSON 字符串（保持可为空数组）
             INJECT_SOURCES=()
-            if grep -qE '^[[:space:]]*redis[[:space:]]*:' "$CONFIG_FILE"; then
-              INJECT_SOURCES+=("redis")
+            if grep -qE '^\s*redis\s*:' "$CONFIG_FILE"; then
+            INJECT_SOURCES+=("redis")
             fi
-            if grep -qE '^[[:space:]]*mongodb[[:space:]]*:' "$CONFIG_FILE"; then
-              INJECT_SOURCES+=("mongodb")
+            if grep -qE '^\s*mongodb\s*:' "$CONFIG_FILE"; then
+            INJECT_SOURCES+=("mongodb")
             fi
-            INJECT_SOURCES="[${SOURCES%,}]"
+
+            # 转换为 JSON 数组格式
+            INJECT_SOURCES_JSON=$(printf '"%s",' "${INJECT_SOURCES[@]}" | sed 's/,$//')
+            INJECT_SOURCES_JSON="[${INJECT_SOURCES_JSON}]"
 
             # 直接写入 APP_JSON
-            APP_JSON="{\"image\":\"${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION\",\"port\":\"$PORT\",\"config_path\":\"$CONFIG_FILE\",\"health_check\":{\"path\":\"$HEALTH_PATH\"},\"inject_sources\":$INJECT_SOURCES}"
+            APP_JSON="{\"image\":\"${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION\",\"port\":\"$PORT\",\"config_path\":\"$CONFIG_FILE\",\"health_check\":{\"path\":\"$HEALTH_PATH\"},\"inject_sources\":$INJECT_SOURCES_JSON}"
 
             APPS_JSON="$APPS_JSON\"$APP\":$APP_JSON"
           done
