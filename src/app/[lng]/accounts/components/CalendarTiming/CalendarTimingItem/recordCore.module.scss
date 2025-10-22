@@ -61,6 +61,7 @@
       justify-content: space-between;
       border-bottom: 1px solid var(--grayColor2);
       &-left {
+        width: 100%;
         &-status {
           margin-top: 15px;
         }
@@ -68,6 +69,11 @@
           margin-top: 5px;
           font-size: var(--fs-xs);
           color: var(--error-color);
+        }
+        &-desc {
+          @include omitText(2);
+          margin-top: 10px;
+          padding-right: 10px;
         }
       }
       &-right {
@@ -88,10 +94,8 @@
       padding: 12px;
       display: flex;
       justify-content: right;
+      gap: 10px;
       :global {
-        button {
-          margin-left: 10px;
-        }
         .anticon {
           font-size: 18px !important;
           font-weight: 900 !important;

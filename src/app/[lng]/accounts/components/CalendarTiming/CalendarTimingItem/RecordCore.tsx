@@ -19,6 +19,7 @@ import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
+  ExportOutlined,
   FieldTimeOutlined,
   FullscreenOutlined,
   LoadingOutlined,
@@ -162,6 +163,12 @@ const RecordCore = memo(
                       {account?.nickname}
                     </span>
                   </div>
+                  <div
+                    title={publishRecord.desc}
+                    className="recordDetails-center-left-desc"
+                  >
+                    {publishRecord.desc}
+                  </div>
                   <div className="recordDetails-center-left-status">
                     <PubStatus status={publishRecord.status} />
                   </div>
@@ -199,7 +206,19 @@ const RecordCore = memo(
                   )}
                 </div>
               </div>
+              <div className="recordDetails-info"></div>
               <div className="recordDetails-bottom">
+                {publishRecord.workLink && (
+                  <Button
+                    icon={<ExportOutlined />}
+                    onClick={() => {
+                      window.open(publishRecord.workLink, "_blank");
+                    }}
+                  >
+                    查看作品
+                  </Button>
+                )}
+
                 {publishRecord.status !== PublishStatus.RELEASED && (
                   <Button
                     loading={nowPubLoading}
