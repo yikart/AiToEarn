@@ -1,14 +1,18 @@
 $boxHegiht: 110px;
+
 .pubParmasTextarea {
   border: 1px solid var(--grayColor4);
   border-radius: 6px;
   flex: 1;
   text-align: left;
+
   :global {
     .pubParmasTextarea-input {
       padding: 15px;
       position: relative;
-      textarea, .ant-input-outlined {
+
+      textarea,
+      .ant-input-outlined {
         resize: none;
         border-radius: 3px;
         border: none;
@@ -26,9 +30,11 @@ $boxHegiht: 110px;
       grid-template-columns: repeat(5, 1fr);
       flex-wrap: wrap;
       gap: 10px;
+
       .pubParmasTextarea-uploads-upload {
         position: relative;
         height: $boxHegiht;
+
         &-loading {
           border: 1px dashed var(--colorPrimary3);
           height: 100%;
@@ -37,6 +43,7 @@ $boxHegiht: 110px;
           justify-content: center;
           border-radius: 6px;
         }
+
         &-count {
           position: absolute;
           top: 5px;
@@ -50,6 +57,7 @@ $boxHegiht: 110px;
           border-radius: 50%;
           font-size: var(--fs-xs);
         }
+
         &-blocker {
           width: 100%;
           height: 100%;
@@ -61,11 +69,13 @@ $boxHegiht: 110px;
           justify-content: center;
           cursor: pointer;
           gap: 10px;
+
           &:hover {
             border-color: var(--colorPrimary3);
           }
         }
       }
+
       &-item {
         //width: 98px;
         height: $boxHegiht;
@@ -74,20 +84,25 @@ $boxHegiht: 110px;
         box-sizing: border-box;
         cursor: pointer;
         position: relative;
+
         &-edit {
           position: absolute;
           bottom: 3px;
           right: 3px;
         }
-        img, video {
+
+        img,
+        video {
           width: 100%;
           height: 100%;
           object-fit: cover;
         }
+
         &-video {
           width: 100%;
           height: 100%;
         }
+
         &-play {
           position: absolute;
           bottom: 5px;
@@ -101,6 +116,7 @@ $boxHegiht: 110px;
           text-align: center;
           line-height: 25px;
         }
+
         &-close {
           color: #fff;
           background: rgba(0, 0, 0, 0.8);
@@ -117,6 +133,7 @@ $boxHegiht: 110px;
           transform: scale(1);
           transition: 0.3s;
           z-index: 10;
+
           &:hover {
             transform: scale(1.1);
           }
@@ -128,6 +145,7 @@ $boxHegiht: 110px;
       display: flex;
       border-top: 1px solid var(--grayColor4);
       padding: 15px 0;
+
       &-item {
         border-right: 1px solid var(--grayColor4);
         display: flex;
@@ -137,6 +155,7 @@ $boxHegiht: 110px;
 
     .pubParmasTextarea-footer {
       border-top: 1px solid var(--grayColor4);
+
       &-options {
         padding: 10px 15px;
         position: relative;
@@ -144,24 +163,30 @@ $boxHegiht: 110px;
         &-left {
           display: flex;
           align-items: center;
+
           &-item {
             border-left: 1px solid var(--grayColor4);
             padding: 0 5px;
+
             &:first-child {
               border-left: none;
             }
           }
         }
+
         &-aibrush {
           background: linear-gradient(90deg, #fff, #fff) !important;
           transition: 0.3s;
+
           &:hover {
             background: linear-gradient(90deg, #ba6bff1a, #0715ff1a) !important;
           }
+
           &:active {
             background: linear-gradient(90deg, #ba6bff33, #0715ff33) !important;
           }
         }
+
         .pubParmasTextarea-maxLength {
           position: absolute;
           border: 1px solid #505050;
@@ -173,6 +198,7 @@ $boxHegiht: 110px;
         }
 
       }
+
       &-extend {
         border-top: 1px solid var(--grayColor4);
         padding: 15px 15px 10px 15px;
@@ -186,15 +212,18 @@ $boxHegiht: 110px;
   opacity: 0;
   transform: scale(0.8);
 }
+
 .itemEnterActive {
   opacity: 1;
   transform: scale(1);
   transition: opacity 300ms, transform 300ms;
 }
+
 .itemExit {
   opacity: 1;
   transform: scale(1);
 }
+
 .itemExitActive {
   opacity: 0;
   transform: scale(0.8);
