@@ -87,7 +87,7 @@ const PubParmasMentionInput = memo(
       );
 
       // @ts-ignore
-      const beautifulMentionsProps: BeautifulMentionsPluginProps = {
+      const beautifulMentionsProps: any = {
         comboboxAnchor: comboboxAnchor.current,
         items: mentionItems,
         triggers: ["#"],
