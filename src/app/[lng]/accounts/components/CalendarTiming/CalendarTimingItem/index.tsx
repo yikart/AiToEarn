@@ -1,12 +1,12 @@
 import { ForwardedRef, forwardRef, memo, useMemo, useState } from "react";
-import styles from "./calendarTimingItem.module.scss";
+import styles from "./components/calendarTimingItem.module.scss";
 import { DayCellContentArg } from "@fullcalendar/core";
 import { Button, Skeleton } from "antd";
 import { useTransClient } from "@/app/i18n/client";
 import { DownOutlined, PlusOutlined, UpOutlined } from "@ant-design/icons";
 import { useDrop } from "react-dnd";
-import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
-import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CustomDragLayer";
+import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/CalendarRecord";
+import { CustomDragLayer } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/CustomDragLayer";
 import dayjs from "dayjs";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
 import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";

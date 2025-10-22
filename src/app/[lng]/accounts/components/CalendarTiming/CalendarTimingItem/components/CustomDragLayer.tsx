@@ -1,7 +1,7 @@
 import type { CSSProperties, FC } from "react";
 import type { XYCoord } from "react-dnd";
 import { useDragLayer } from "react-dnd";
-import { BoxDragPreview } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/BoxDragPreview";
+import { BoxDragPreview } from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/BoxDragPreview";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
 
 function snapToGrid(x: number, y: number): [number, number] {

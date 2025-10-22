@@ -29,7 +29,7 @@ import {
   DownOutlined,
 } from "@ant-design/icons";
 import { useTransClient } from "@/app/i18n/client";
-import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarTimingItem";
+import CalendarTimingItem from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem";
 import PublishDialog, { IPublishDialogRef } from "@/components/PublishDialog";
 import { useAccountStore } from "@/store/account";
 import { useShallow } from "zustand/react/shallow";

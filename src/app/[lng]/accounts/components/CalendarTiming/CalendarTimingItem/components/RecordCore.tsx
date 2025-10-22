@@ -158,7 +158,7 @@ const RecordCore = memo(
             label: t("record.metrics.likes"),
             icon: <LikeOutlined />,
           },
-            {
+          {
             label: t("record.metrics.shares"),
             icon: <ShareAltOutlined />,
           },

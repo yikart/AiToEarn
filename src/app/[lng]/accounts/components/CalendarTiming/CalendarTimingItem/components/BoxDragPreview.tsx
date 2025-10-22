@@ -1,6 +1,6 @@
 import type { CSSProperties, FC } from "react";
 import { memo, useEffect, useState } from "react";
-import RecordCore from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/RecordCore";
+import RecordCore from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/RecordCore";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
 
 const styles: CSSProperties = {

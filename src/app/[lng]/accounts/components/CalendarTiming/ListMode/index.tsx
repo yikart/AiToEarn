@@ -7,7 +7,7 @@ import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTimin
 import { useShallow } from "zustand/react/shallow";
 import { PublishRecordItem } from "@/api/plat/types/publish.types";
 import { getDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
-import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/CalendarRecord";
+import CalendarRecord from "@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/CalendarRecord";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { DndProvider } from "react-dnd";
 import SentList from "./SentList";
