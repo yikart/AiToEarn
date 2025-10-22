@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppException } from '@yikart/common'
+import { AppException, TableDto } from '@yikart/common'
+import { AccountType, PublishStatus } from '@yikart/mongodb'
+import { UserTaskNatsApi } from '../task/api/user-task.natsApi'
 import { EngagementNatsApi } from './api/engagement/engagement.natsApi'
 import { PlatPublishNatsApi } from './api/publish.natsApi'
 import { PublishTaskNatsApi } from './api/publishTask.natsApi'
@@ -67,7 +69,7 @@ export class PublishService {
         coverUrl: post.thumbnail || undefined,
         imgUrlList: post.mediaType === 'image' ? [post.thumbnail || ''] : [],
         publishTime: new Date(post.publishTime),
-        status: PublishStatus.RELEASED,
+        status: PublishStatus.PUBLISHING,
         errorMsg: '',
         engagement: {
           viewCount: post.viewCount,
@@ -101,8 +103,8 @@ export class PublishService {
       }
       else {
         let status = record.status
-        if (status === PublishStatus.PUB_LOADING && record.publishTime > new Date()) {
-          status = PublishStatus.RELEASED
+        if (status === PublishStatus.PUBLISHING && record.publishTime > new Date()) {
+          status = PublishStatus.PUBLISHING
         }
         result.set(record.dataId || record.id, {
           ...record,
@@ -149,12 +151,12 @@ export class PublishService {
     return await this.platPublishNatsApi.publishDataInfoList(userId, data, page)
   }
 
-  async getPublishRecordDetail(flowId, userId: string) {
+  async getPublishRecordDetail(flowId: string, userId: string) {
     try {
       const record = await this.platPublishNatsApi.getPublishRecordDetail(flowId, userId)
       return record
     }
-    catch (error) {
+    catch (error: any) {
       this.logger.error(`Failed to get publish record detail for flowId ${flowId} and userId ${userId}: ${error.message}`, error.stack)
     }
 

@@ -180,6 +180,7 @@ export const appConfigSchema = z.object({
     baseUrl: z.string().default('http://localhost:3000'),
   }),
   moreApi: moreApiConfigSchema,
+  statisticsDb: mongodbConfigSchema,
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
