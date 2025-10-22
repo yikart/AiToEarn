@@ -130,6 +130,9 @@ export default function AlbumPage() {
           type: blob.type || "image/png",
         });
         thumbUrl = await uploadToOss(coverFile);
+      } else {
+        // 对于图片文件，使用原图作为缩略图
+        thumbUrl = url;
       }
 
       await createMedia({
