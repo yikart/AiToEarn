@@ -211,5 +211,14 @@
       "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
     }
   },
-  "previewvideo": "预览视频"
+  "previewvideo": "预览视频",
+  "record": {
+    "metrics": {
+      "views": "查看数",
+      "comments": "评论数",
+      "likes": "点赞数",
+      "shares": "分享数"
+    },
+    "viewWork": "查看作品"
+  }
 }

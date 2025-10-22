@@ -210,5 +210,14 @@
       "both": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation."
     }
   },
-  "previewvideo": "Preview Video"
+  "previewvideo": "Preview Video",
+  "record": {
+    "metrics": {
+      "views": "Views",
+      "comments": "Comments",
+      "likes": "Likes",
+      "shares": "Shares"
+    },
+    "viewWork": "View Work"
+  }
 }

@@ -147,23 +147,23 @@ const RecordCore = memo(
       const recordInfo = useMemo(() => {
         return [
           {
-            label: "查看数",
+            label: t("record.metrics.views"),
             icon: <EyeOutlined />,
           },
           {
-            label: "评论数",
+            label: t("record.metrics.comments"),
             icon: <MessageOutlined />,
           },
           {
-            label: "点赞数",
+            label: t("record.metrics.likes"),
             icon: <LikeOutlined />,
           },
-          {
-            label: "分享数",
+            {
+            label: t("record.metrics.shares"),
             icon: <ShareAltOutlined />,
           },
         ];
-      }, []);
+      }, [t]);
 
       return (
         <Popover
@@ -253,7 +253,7 @@ const RecordCore = memo(
                       window.open(publishRecord.workLink, "_blank");
                     }}
                   >
-                    查看作品
+                    {t("record.viewWork")}
                   </Button>
                 )}
 
