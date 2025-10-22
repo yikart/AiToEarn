@@ -45,12 +45,12 @@ import ListMode from "@/app/[lng]/accounts/components/CalendarTiming/ListMode";
 import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
 import dayjs from "dayjs";
 
-export interface ICalendarTimingRef { }
-export interface ICalendarTimingProps { }
+export interface ICalendarTimingRef {}
+export interface ICalendarTimingProps {}
 
 const CalendarTiming = memo(
   forwardRef(
-    ({ }: ICalendarTimingProps, ref: ForwardedRef<ICalendarTimingRef>) => {
+    ({}: ICalendarTimingProps, ref: ForwardedRef<ICalendarTimingRef>) => {
       const lng = useGetClientLng();
       const searchParams = useSearchParams();
       const calendarRef = useRef<FullCalendar | null>(null);
@@ -81,14 +81,18 @@ const CalendarTiming = memo(
       );
 
       // 频道筛选相关状态
-      const [channelSearchText, setChannelSearchText] = useState('');
+      const [channelSearchText, setChannelSearchText] = useState("");
 
       // 筛选后的账户列表 - 只显示在线账户
-      const filteredAccounts = accountList.filter(account =>
-        account.status === AccountStatus.USABLE && (
-          account.nickname.toLowerCase().includes(channelSearchText.toLowerCase()) ||
-          account.account.toLowerCase().includes(channelSearchText.toLowerCase())
-        )
+      const filteredAccounts = accountList.filter(
+        (account) =>
+          account.status === AccountStatus.USABLE &&
+          (account.nickname
+            .toLowerCase()
+            .includes(channelSearchText.toLowerCase()) ||
+            account.account
+              .toLowerCase()
+              .includes(channelSearchText.toLowerCase())),
       );
 
       // 处理账户选择 - 与 AccountSidebar 同步
@@ -98,71 +102,102 @@ const CalendarTiming = memo(
 
       // Channel 筛选器下拉菜单内容
       const channelDropdownContent = (
-        <div style={{
-          width: '280px',
-          background: 'white',
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-          overflow: 'hidden'
-        }}>
-          <div style={{ padding: '16px 16px 0 16px' }}>
+        <div
+          style={{
+            width: "280px",
+            background: "white",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+            overflow: "hidden",
+          }}
+        >
+          <div style={{ padding: "16px 16px 0 16px" }}>
             <Input
-              placeholder={t('listMode.searchChannels' as any)}
+              placeholder={t("listMode.searchChannels" as any)}
               prefix={<SearchOutlined />}
               value={channelSearchText}
               onChange={(e) => setChannelSearchText(e.target.value)}
-              style={{ width: '100%' }}
+              style={{ width: "100%" }}
             />
           </div>
-          <div style={{ maxHeight: '300px', overflowY: 'auto', padding: '8px 0' }}>
+          <div
+            style={{ maxHeight: "300px", overflowY: "auto", padding: "8px 0" }}
+          >
             {filteredAccounts.length > 0 ? (
-              filteredAccounts.map(account => {
+              filteredAccounts.map((account) => {
                 const platInfo = AccountPlatInfoMap.get(account.type);
                 return (
                   <div
                     key={account.id}
                     style={{
-                      padding: '8px 16px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease',
-                      borderBottom: '1px solid #f5f5f5',
-                      backgroundColor: accountActive?.id === account.id ? '#e6f7ff' : 'transparent'
+                      padding: "8px 16px",
+                      cursor: "pointer",
+                      transition: "all 0.2s ease",
+                      borderBottom: "1px solid #f5f5f5",
+                      backgroundColor:
+                        accountActive?.id === account.id
+                          ? "#e6f7ff"
+                          : "transparent",
                     }}
                     onClick={() => handleChannelSelect(account)}
                     onMouseEnter={(e) => {
                       if (accountActive?.id !== account.id) {
-                        e.currentTarget.style.backgroundColor = '#f5f5f5';
+                        e.currentTarget.style.backgroundColor = "#f5f5f5";
                       }
                     }}
                     onMouseLeave={(e) => {
                       if (accountActive?.id !== account.id) {
-                        e.currentTarget.style.backgroundColor = 'transparent';
+                        e.currentTarget.style.backgroundColor = "transparent";
                       }
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "12px",
+                      }}
+                    >
                       <Avatar
                         src={getOssUrl(account.avatar)}
                         size={32}
-                        style={{ flexShrink: 0, border: '1px solid #f0f0f0' }}
+                        style={{ flexShrink: 0, border: "1px solid #f0f0f0" }}
                       >
                         {account.nickname?.[0] || account.account?.[0]}
                       </Avatar>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{
-                          fontSize: '14px',
-                          color: '#333',
-                          fontWeight: 500,
-                          marginBottom: '4px',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}>
+                        <div
+                          style={{
+                            fontSize: "14px",
+                            color: "#333",
+                            fontWeight: 500,
+                            marginBottom: "4px",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                        >
                           {account.nickname || account.account}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#666' }}>
-                          <img src={platInfo?.icon} alt={platInfo?.name} style={{ width: '16px', height: '16px', borderRadius: '2px' }} />
-                          <span >{platInfo?.name}</span>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            fontSize: "12px",
+                            color: "#666",
+                          }}
+                        >
+                          <img
+                            src={platInfo?.icon}
+                            alt={platInfo?.name}
+                            style={{
+                              width: "16px",
+                              height: "16px",
+                              borderRadius: "2px",
+                            }}
+                          />
+                          <span>{platInfo?.name}</span>
                         </div>
                       </div>
                     </div>
@@ -170,10 +205,21 @@ const CalendarTiming = memo(
                 );
               })
             ) : (
-              <div style={{ textAlign: 'center', color: '#999', fontSize: '14px', padding: '40px 16px' }}>
-                {accountList.length === 0 ? '暂无账户' :
-                  accountList.filter(account => account.status === AccountStatus.USABLE).length === 0 ? '暂无在线账户' :
-                    t('listMode.noChannelsFound' as any)}
+              <div
+                style={{
+                  textAlign: "center",
+                  color: "#999",
+                  fontSize: "14px",
+                  padding: "40px 16px",
+                }}
+              >
+                {accountList.length === 0
+                  ? "暂无账户"
+                  : accountList.filter(
+                        (account) => account.status === AccountStatus.USABLE,
+                      ).length === 0
+                    ? "暂无在线账户"
+                    : t("listMode.noChannelsFound" as any)}
               </div>
             )}
           </div>
@@ -182,21 +228,34 @@ const CalendarTiming = memo(
 
       // Channel 筛选器按钮
       const channelFilter = (
-        <div style={{ display: 'flex', alignItems: 'center', marginTop: '-15px' }}>
+        <div
+          style={{ display: "flex", alignItems: "center", marginTop: "-15px" }}
+        >
           <Dropdown
-            menu={{ items: [{ key: 'channelFilter', label: channelDropdownContent }] }}
-            trigger={['click']}
+            menu={{
+              items: [{ key: "channelFilter", label: channelDropdownContent }],
+            }}
+            trigger={["click"]}
             placement="bottomRight"
           >
-            <Button style={{
-              height: '32px',
-              padding: '0 12px',
-              borderRadius: '6px',
-              border: 'none',
-              background: 'white',
-              transition: 'all 0.2s ease'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', paddingBottom: '2px' }}>
+            <Button
+              style={{
+                height: "32px",
+                padding: "0 12px",
+                borderRadius: "6px",
+                border: "none",
+                background: "white",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  paddingBottom: "2px",
+                }}
+              >
                 {accountActive ? (
                   <>
                     <Avatar
@@ -204,32 +263,39 @@ const CalendarTiming = memo(
                       size={20}
                       style={{ flexShrink: 0 }}
                     >
-                      {accountActive.nickname?.[0] || accountActive.account?.[0]}
+                      {accountActive.nickname?.[0] ||
+                        accountActive.account?.[0]}
                     </Avatar>
-                    <span style={{
-                      fontSize: '14px',
-                      color: '#333',
-                      width: '52px',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap'
-                    }}>
+                    <span
+                      style={{
+                        fontSize: "14px",
+                        color: "#333",
+                        width: "52px",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
                       {accountActive.nickname || accountActive.account}
                     </span>
                   </>
                 ) : (
-                  <span style={{
-                    fontSize: '14px',
-                    color: '#333',
-                    width: '80px',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}>
-                    {t('listMode.selectChannel' as any)}
+                  <span
+                    style={{
+                      fontSize: "14px",
+                      color: "#333",
+                      width: "80px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {t("listMode.selectChannel" as any)}
                   </span>
                 )}
-                <DownOutlined style={{ fontSize: '12px', color: '#666', flexShrink: 0 }} />
+                <DownOutlined
+                  style={{ fontSize: "12px", color: "#666", flexShrink: 0 }}
+                />
               </div>
             </Button>
           </Dropdown>
@@ -250,7 +316,6 @@ const CalendarTiming = memo(
           setCalendarRef: state.setCalendarRef,
         })),
       );
-      const calendarTimingItemCallEl = useRef<HTMLDivElement | null>(null);
       const publishDialogRef = useRef<IPublishDialogRef>(null);
 
       useEffect(() => {
@@ -259,9 +324,6 @@ const CalendarTiming = memo(
         getPubRecord();
 
         setTimeout(() => {
-          calendarTimingItemCallEl.current = document.querySelector(
-            ".calendarTimingItem--js",
-          )!;
           handleResize();
         }, 1);
 
@@ -312,7 +374,7 @@ const CalendarTiming = memo(
       // 处理窗口大小变化
       const handleResize = () => {
         setTimeout(() => {
-          const el = calendarTimingItemCallEl.current!;
+          const el = document.querySelector(".calendarTimingItem--js")!;
           const style = window.getComputedStyle(el);
           const paddingLeft = parseFloat(style.paddingLeft);
           const paddingRight = parseFloat(style.paddingRight);
