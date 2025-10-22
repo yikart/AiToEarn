@@ -57,7 +57,7 @@ function UserInfo() {
           onClick={() => {
             router.push(`/${lng}/income`);
           }}
-        >导航位置调整
+        >
           {t("header.income" as any)}
         </div>
       ),
