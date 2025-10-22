@@ -49,6 +49,7 @@
 
     .layoutHeader-userinfo__wrapper {
       display: flex;
+      margin-left: 10px;
       .layoutHeader-userinfo {
         display: flex;
         align-items: center;
@@ -71,11 +72,11 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background-color: #f5f5f5;
           transform: scale(1.05);
@@ -111,8 +112,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         transition: all 0.3s ease;
         
