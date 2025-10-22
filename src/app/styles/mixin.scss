@@ -49,6 +49,7 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: $line;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @mixin triangle-indicator($size: 12px, $color: #fff, $active-color: var(--colorPrimary5), $border-width: 1px) {
