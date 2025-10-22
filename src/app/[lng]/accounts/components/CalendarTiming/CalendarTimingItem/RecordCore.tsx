@@ -20,11 +20,15 @@ import {
   ClockCircleOutlined,
   CloseCircleOutlined,
   ExportOutlined,
+  EyeOutlined,
   FieldTimeOutlined,
   FullscreenOutlined,
+  LikeOutlined,
   LoadingOutlined,
+  MessageOutlined,
   MoreOutlined,
   SendOutlined,
+  ShareAltOutlined,
 } from "@ant-design/icons";
 import AvatarPlat from "@/components/AvatarPlat";
 import { useAccountStore } from "@/store/account";
@@ -140,6 +144,27 @@ const RecordCore = memo(
         return AccountPlatInfoMap.get(publishRecord.accountType)?.icon;
       }, [publishRecord]);
 
+      const recordInfo = useMemo(() => {
+        return [
+          {
+            label: "查看数",
+            icon: <EyeOutlined />,
+          },
+          {
+            label: "评论数",
+            icon: <MessageOutlined />,
+          },
+          {
+            label: "点赞数",
+            icon: <LikeOutlined />,
+          },
+          {
+            label: "分享数",
+            icon: <ShareAltOutlined />,
+          },
+        ];
+      }, []);
+
       return (
         <Popover
           ref={popoverRef}
@@ -209,7 +234,15 @@ const RecordCore = memo(
               </div>
               <ScrollButtonContainer>
                 <div className="recordDetails-info">
-
+                  {recordInfo.map((v) => (
+                    <div key={v.label} className="recordDetails-info-item">
+                      <div className="recordDetails-info-item-top">
+                        {v.icon}
+                        <span>{v.label}</span>
+                      </div>
+                      <div className="recordDetails-info-item-num">0</div>
+                    </div>
+                  ))}
                 </div>
               </ScrollButtonContainer>
               <div className="recordDetails-bottom">

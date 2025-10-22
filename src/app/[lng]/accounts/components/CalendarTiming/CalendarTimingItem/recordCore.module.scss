@@ -55,6 +55,24 @@
       }
     }
 
+    .recordDetails-info {
+      display: flex;
+      gap: 15px;
+      padding: 10px;
+      border-bottom: 1px solid var(--grayColor2);
+      &-item {
+        flex: 1;
+        &-top {
+          display: flex;
+          gap: 5px;
+        }
+        &-num {
+          font-size: var(--fs-md);
+          font-weight: 600;
+        }
+      }
+    }
+
     .recordDetails-center {
       padding: 12px;
       display: flex;
@@ -76,6 +94,7 @@
           padding-right: 10px;
         }
       }
+
       &-right {
         img {
           width: 145px;
