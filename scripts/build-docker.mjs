@@ -38,6 +38,7 @@ async function prepareContext(projectName, options = {}) {
   await copyDockerfile(projectName, contextDir, verbose)
   await resetDependencies(projects, contextDir, verbose)
   await generateConfig(projects, graph, contextDir, verbose)
+  await copyAssets(contextDir, verbose)
 
   return {
     projectName,
@@ -283,6 +284,24 @@ async function resetDependencies(projects, contextDir, verbose = false) {
 
   if (verbose)
     console.info(chalk.green('工作区依赖版本重置完成'))
+}
+
+async function copyAssets(contextDir, verbose = false) {
+  if (verbose)
+    console.info(chalk.yellow('复制 assets 目录...'))
+
+  const assetsDir = 'assets'
+  if (await fs.pathExists(assetsDir)) {
+    const destPath = path.join(contextDir, 'assets')
+    await fs.copy(assetsDir, destPath)
+    if (verbose)
+      console.info(chalk.gray(`  ${assetsDir} -> ${destPath}`))
+    if (verbose)
+      console.info(chalk.green('assets 目录复制完成'))
+  }
+  else if (verbose) {
+    console.info(chalk.gray('未找到 assets 目录，跳过'))
+  }
 }
 
 async function generateConfig(projects, graph, contextDir, verbose = false) {
