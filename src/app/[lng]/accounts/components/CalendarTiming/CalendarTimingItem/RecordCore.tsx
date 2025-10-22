@@ -94,6 +94,7 @@ const RecordCore = memo(
       const [popoverOpen, setPopoverOpen] = useState(false);
       const popoverRef = useRef<TooltipRef>(null);
       const { t } = useTransClient("publish");
+      const [nowPubLoading, setNowPubLoading] = useState(false);
 
       const dropdownItems: MenuProps["items"] = useMemo(() => {
         if (publishRecord.workLink) {
@@ -201,10 +202,13 @@ const RecordCore = memo(
               <div className="recordDetails-bottom">
                 {publishRecord.status !== PublishStatus.RELEASED && (
                   <Button
+                    loading={nowPubLoading}
                     icon={<SendOutlined />}
                     onClick={async () => {
+                      setNowPubLoading(true);
                       await nowPubTaskApi(publishRecord.id);
                       getPubRecord();
+                      setNowPubLoading(false);
                     }}
                   >
                     {t("buttons.publishNow")}

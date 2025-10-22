@@ -16,5 +16,6 @@ export const getStatisticsPeriodApi = (data: StatisticsPeriodApiParams) => {
 export const getDouyinTopicsApi = (keyword: string) => {
   return http.post<string[]>("statistics/channels/douyin/searchTopic", {
     topic: keyword,
+    language: "en",
   });
 };

@@ -1,8 +1,8 @@
 // 调整通知徽章位置，让它更靠近铃铛图标
 .layoutHeader :global(.ant-badge) {
   :global(.ant-badge-count) {
-    margin-right: 5px;
-    margin-top: 5px;
+    margin-right: 2px;
+    margin-top: 2px;
   }
 }
 
