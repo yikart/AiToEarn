@@ -352,7 +352,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     if (!postModel) {
       throw new Error(`Unsupported platform: ${platform}`)
     }
-    const mainPipeline = [
+    const mainPipeline: any = [
       { $match: filters },
       ...unionPipelines,
       { $sort: { publishTime: -1 } },

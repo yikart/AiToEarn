@@ -1,5 +1,3 @@
-// @UseInterceptors(XmlParseInterceptor)
-
 import {
   CallHandler,
   ExecutionContext,
