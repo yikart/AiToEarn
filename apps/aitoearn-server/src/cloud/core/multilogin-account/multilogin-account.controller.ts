@@ -1,6 +1,4 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@yikart/common'
+import { Body, Controller, Post } from '@nestjs/common'
 import {
   CreateMultiloginAccountDto,
   IdDto,
@@ -19,32 +17,37 @@ export class MultiloginAccountController {
     private readonly multiloginAccountService: MultiloginAccountService,
   ) {}
 
-  @NatsMessagePattern('cloud-space.multilogin-account.create')
-  async create(@Payload() createDto: CreateMultiloginAccountDto): Promise<MultiloginAccountVo> {
+  // @NatsMessagePattern('cloud-space.multilogin-account.create')
+  @Post('cloud-space/multilogin-account/create')
+  async create(@Body() createDto: CreateMultiloginAccountDto) {
     const account = await this.multiloginAccountService.create(createDto)
-    return MultiloginAccountVo.create(account)
+    return account
   }
 
-  @NatsMessagePattern('cloud-space.multilogin-account.list')
-  async list(@Payload() listDto: ListMultiloginAccountsDto): Promise<MultiloginAccountListVo> {
+  // @NatsMessagePattern('cloud-space.multilogin-account.list')
+  @Post('cloud-space/multilogin-account/list')
+  async list(@Body() listDto: ListMultiloginAccountsDto): Promise<MultiloginAccountListVo> {
     const [accounts, total] = await this.multiloginAccountService.listWithPagination(listDto)
     return new MultiloginAccountListVo(accounts, total, listDto)
   }
 
-  @NatsMessagePattern('cloud-space.multilogin-account.getById')
-  async getById(@Payload() getDto: IdDto): Promise<MultiloginAccountVo> {
+  // @NatsMessagePattern('cloud-space.multilogin-account.getById')
+  @Post('cloud-space/multilogin-account/getById')
+  async getById(@Body() getDto: IdDto): Promise<MultiloginAccountVo> {
     const account = await this.multiloginAccountService.getById(getDto.id)
     return MultiloginAccountVo.create(account)
   }
 
-  @NatsMessagePattern('cloud-space.multilogin-account.update')
-  async update(@Payload() updateDto: UpdateMultiloginAccountDto): Promise<MultiloginAccountVo> {
+  // @NatsMessagePattern('cloud-space.multilogin-account.update')
+  @Post('cloud-space/multilogin-account/update')
+  async update(@Body() updateDto: UpdateMultiloginAccountDto): Promise<MultiloginAccountVo> {
     const account = await this.multiloginAccountService.update(updateDto)
     return MultiloginAccountVo.create(account)
   }
 
-  @NatsMessagePattern('multilogin-account.remove')
-  async remove(@Payload() removeDto: IdDto): Promise<void> {
+  // @NatsMessagePattern('multilogin-account.remove')
+  @Post('cloud-space/multilogin-account/remove')
+  async remove(@Body() removeDto: IdDto): Promise<void> {
     await this.multiloginAccountService.remove(removeDto.id)
   }
 }

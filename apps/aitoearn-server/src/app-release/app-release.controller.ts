@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Public } from '../auth/auth.guard'
 import { CheckVersionDto, QueryAppReleaseDto } from './app-release.dto'
 import { AppReleaseService } from './app-release.service'
-import { AppReleaseVo, CheckVersionVo } from './app-release.vo'
+import { CheckVersionVo } from './app-release.vo'
 
 @ApiTags('App Release')
 @Controller('app-release')
@@ -21,10 +21,10 @@ export class AppReleaseController {
   @ApiOperation({ summary: '获取最新版本' })
   @Get('latest')
   @Public()
-  async getLatest(@Query() query: QueryAppReleaseDto): Promise<AppReleaseVo | null> {
+  async getLatest(@Query() query: QueryAppReleaseDto) {
     const result = await this.appReleaseService.getLatestAppRelease(query)
     if (result == null)
       return null
-    return AppReleaseVo.create(result)
+    return result
   }
 }

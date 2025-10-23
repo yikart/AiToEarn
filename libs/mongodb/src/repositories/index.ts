@@ -1,5 +1,8 @@
 import { AccountRepository } from './account.repository'
 import { AccountGroupRepository } from './accountGroup.repository'
+import { AdminAccountRepository } from './admin/admin-account.repository'
+import { AdminUserRepository } from './admin/admin-user.repository'
+import { ManagerRepository } from './admin/manager.repository'
 import { AiLogRepository } from './ai-log.repository'
 import { AppConfigRepository } from './app-config.repository'
 import { AppReleaseRepository } from './app-release.repository'
@@ -26,6 +29,9 @@ import { WithdrawRecordRepository } from './withdraw-record.repository'
 
 export * from './account.repository'
 export * from './accountGroup.repository'
+export * from './admin/admin-account.repository'
+export * from './admin/admin-user.repository'
+export * from './admin/manager.repository'
 export * from './ai-log.repository'
 export * from './app-config.repository'
 export * from './app-release.repository'
@@ -77,4 +83,7 @@ export const repositories = [
   MediaRepository,
   MediaGroupRepository,
   VipRepository,
+  AdminAccountRepository,
+  ManagerRepository,
+  AdminUserRepository,
 ] as const

@@ -70,7 +70,7 @@ export class IncomeRecordRepository extends BaseRepository<IncomeRecord> {
     metadata?: Record<string, any>
     relId?: string
     withdrawId?: string
-  }): Promise<void> {
+  }) {
     const { userId, amount } = data
 
     await this.userModel.db.transaction(async () => {
@@ -90,6 +90,7 @@ export class IncomeRecordRepository extends BaseRepository<IncomeRecord> {
 
       await this.incomeRecordModel.create({ status: IncomeStatus.DO, ...data })
     })
+    return true
   }
 
   /**

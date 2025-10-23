@@ -1,6 +1,4 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@yikart/common'
+import { Body, Controller, Post } from '@nestjs/common'
 import { LogDetailQueryDto, LogListQueryDto } from './logs.dto'
 import { LogsService } from './logs.service'
 import { LogDetailResponseVo, LogListResponseVo } from './logs.vo'
@@ -11,14 +9,16 @@ export class LogsController {
     private readonly logsService: LogsService,
   ) {}
 
-  @NatsMessagePattern('ai.logs.list')
-  async getLogList(@Payload() query: LogListQueryDto): Promise<LogListResponseVo> {
+  // @NatsMessagePattern('ai.logs.list')
+  @Post('ai/logs/list')
+  async getLogList(@Body() query: LogListQueryDto): Promise<LogListResponseVo> {
     const [list, total] = await this.logsService.getLogList(query)
     return new LogListResponseVo(list, total, query)
   }
 
-  @NatsMessagePattern('ai.logs.detail')
-  async getLogDetail(@Payload() query: LogDetailQueryDto): Promise<LogDetailResponseVo> {
+  // @NatsMessagePattern('ai.logs.detail')
+  @Post('ai/logs/detail')
+  async getLogDetail(@Body() query: LogDetailQueryDto): Promise<LogDetailResponseVo> {
     const response = await this.logsService.getLogDetail(query)
     return LogDetailResponseVo.create(response)
   }

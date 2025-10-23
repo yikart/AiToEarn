@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { AppReleaseRepository } from '@yikart/mongodb'
 import { CheckVersionDto, CreateAppReleaseDto, DeleteAppReleaseDto, GetAppReleaseByIdDto, QueryAppReleaseDto, UpdateAppReleaseDto } from './app-release.dto'
-import { AppReleaseVo } from './app-release.vo'
 
 @Injectable()
 export class AppReleaseService {
@@ -161,6 +160,6 @@ export class AppReleaseService {
     if (list.length === 0) {
       return null
     }
-    return AppReleaseVo.create(list[0])
+    return list[0]
   }
 }

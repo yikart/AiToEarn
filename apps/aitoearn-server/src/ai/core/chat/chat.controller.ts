@@ -1,6 +1,4 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@yikart/common'
+import { Body, Controller, Post } from '@nestjs/common'
 import { ChatModelsQueryDto, UserChatCompletionDto } from './chat.dto'
 import { ChatService } from './chat.service'
 import { ChatCompletionVo, ChatModelConfigVo } from './chat.vo'
@@ -11,14 +9,16 @@ export class ChatController {
     private readonly chatService: ChatService,
   ) {}
 
-  @NatsMessagePattern('ai.chat.completion')
-  async chatCompletion(@Payload() data: UserChatCompletionDto): Promise<ChatCompletionVo> {
+  // @NatsMessagePattern('ai.chat.completion')
+  @Post('ai/chat/completion')
+  async chatCompletion(@Body() data: UserChatCompletionDto): Promise<ChatCompletionVo> {
     const response = await this.chatService.userChatCompletion(data)
     return ChatCompletionVo.create(response)
   }
 
-  @NatsMessagePattern('ai.chat.models')
-  async getChatModels(@Payload() data: ChatModelsQueryDto): Promise<ChatModelConfigVo[]> {
+  // @NatsMessagePattern('ai.chat.models')
+  @Post('ai/chat/models')
+  async getChatModels(@Body() data: ChatModelsQueryDto): Promise<ChatModelConfigVo[]> {
     const response = await this.chatService.getChatModelConfig(data)
     return response.map(item => ChatModelConfigVo.create(item))
   }
