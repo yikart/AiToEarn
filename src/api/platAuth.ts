@@ -58,14 +58,6 @@ export const getYouTubeListApi = (data: any) => {
   });
 };
 
-export const getYouTubeChannelSectionsApi = (data: any) => {
-  return request({
-    url: 'plat/youtube/video/categories',
-    method: 'GET',
-    params: data,
-  });
-};
-
 
 /**
  * 获取facebook授权状态
