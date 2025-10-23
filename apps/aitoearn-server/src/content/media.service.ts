@@ -114,6 +114,11 @@ export class MediaService {
     return res
   }
 
+  async getListByGroup(groupId: string) {
+    const res = await this.mediaRepository.getListByGroup(groupId)
+    return res
+  }
+
   async addUseCountOfList(ids: string[]): Promise<boolean> {
     const res = await this.mediaRepository.addUseCountOfList(ids)
     return res
@@ -146,6 +151,21 @@ export class MediaService {
     }
 
     const res = await this.mediaRepository.updateInfo(id, newData)
+    return res
+  }
+
+  /**
+   * 检查指定组是否为空（不包含任何媒体文件）
+   * @param groupId 组ID
+   * @returns 如果组为空返回true，否则返回false
+   */
+  async checkIsEmptyGroup(groupId: string): Promise<boolean> {
+    const exists = await this.mediaRepository.checkIsEmptyGroup(groupId)
+    return !exists
+  }
+
+  async addUseCount(id: string): Promise<boolean> {
+    const res = await this.mediaRepository.addUseCount(id)
     return res
   }
 }
