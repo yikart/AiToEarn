@@ -111,6 +111,12 @@ importers:
 
   apps/aitoearn-admin-server:
     dependencies:
+      '@aws-sdk/client-s3':
+        specifier: ^3.855.0
+        version: 3.886.0
+      '@aws-sdk/s3-request-presigner':
+        specifier: ^3.855.0
+        version: 3.886.0
       '@nestjs/axios':
         specifier: ^4.0.1
         version: 4.0.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(rxjs@7.8.2)
