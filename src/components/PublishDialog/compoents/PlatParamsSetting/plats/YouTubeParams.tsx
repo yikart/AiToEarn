@@ -33,6 +33,23 @@ const YouTubeParams = memo(
         getYouTubeCategories(pubItem.account.id);
       }, [getYouTubeCategories, pubItem.account.id]);
 
+      // 当获取到视频分类列表后，默认选中第一个分类
+      useEffect(() => {
+        if (youTubeCategories.length > 0 && !pubItem.params.option.youtube?.categoryId) {
+          const option = pubItem.params.option;
+          if (!option.youtube) {
+            option.youtube = {};
+          }
+          option.youtube.categoryId = youTubeCategories[0].id;
+          setOnePubParams(
+            {
+              option,
+            },
+            pubItem.account.id,
+          );
+        }
+      }, [youTubeCategories, pubItem.params.option.youtube?.categoryId, pubItem.account.id]);
+
       // 初始化YouTube参数
       useEffect(() => {
         const option = pubItem.params.option;
