@@ -13,6 +13,7 @@ import { FeedbackModule } from './feedback/feedback.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
 import { TaskModule } from './task/task.module'
+import { TransportsModule } from './transports/transports.module'
 import { UserModule } from './user/user.module'
 
 @Module({
@@ -20,6 +21,7 @@ import { UserModule } from './user/user.module'
     MongodbModule.forRoot(config.mongodb),
     RedisModule.register(config.redis),
     MailModule.forRoot(config.mail),
+    TransportsModule,
     AuthModule,
     AppConfigModule,
     FeedbackModule,
