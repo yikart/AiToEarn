@@ -5,10 +5,12 @@ import { Form, Input, Button, message, Modal } from "antd";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { sendResetPasswordMailApi, resetPasswordApi } from "@/api/apiReq";
+import { useTransClient } from "@/app/i18n/client";
 import styles from "./forgot-password.module.css";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
+  const { t } = useTransClient("login");
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -38,7 +40,7 @@ export default function ForgotPasswordPage() {
       setLoading(true);
       const response: any = await sendResetPasswordMailApi(values);
       if (!response) {
-        message.error('发送失败');
+        message.error(t('sendFailed' as any));
         return;
       }
 
@@ -46,10 +48,10 @@ export default function ForgotPasswordPage() {
         setResetCode(response.data);
         setIsModalOpen(true);
       } else {
-        message.error(response.message || '发送失败');
+        message.error(response.message || t('sendFailed' as any));
       }
     } catch (error) {
-      message.error('发送失败');
+      message.error(t('sendFailed' as any));
     } finally {
       setLoading(false);
     }
@@ -65,7 +67,7 @@ export default function ForgotPasswordPage() {
   // 处理重置密码
   const handleResetPassword = async (values: { password: string }) => {
     if (!resetCode) {
-      message.error('无效的重置码');
+      message.error(t('invalidResetCode' as any));
       return;
     }
 
@@ -78,13 +80,13 @@ export default function ForgotPasswordPage() {
       });
 
       if (!response) {
-        message.error('重置失败');
+        message.error(t('resetFailed' as any));
         return;
       }
 
       if (response.code === 0 && response.data?.token) {
         clearPolling();
-        message.success('密码重置成功');
+        message.success(t('resetSuccess' as any));
         router.push('/login');
         return;
       }
@@ -101,7 +103,7 @@ export default function ForgotPasswordPage() {
 
           if (statusResponse?.code === 0 && statusResponse.data?.token) {
             clearPolling();
-            message.success('密码重置成功');
+            message.success(t('resetSuccess' as any));
             router.push('/login');
             return true;
           }
@@ -122,10 +124,10 @@ export default function ForgotPasswordPage() {
       setPollingInterval(interval);
 
       // 显示提示信息
-      message.info('请点击邮件中的重置链接完成密码重置');
+      message.info(t('clickEmailLinkToReset' as any));
     } catch (error) {
       clearPolling();
-      message.error('重置失败');
+      message.error(t('resetFailed' as any));
     } finally {
       setLoading(false);
     }
@@ -144,7 +146,7 @@ export default function ForgotPasswordPage() {
   return (
     <div className={styles.container}>
       <div className={styles.box}>
-        <h1 className={styles.title}>重置密码</h1>
+        <h1 className={styles.title}>{t('resetPassword' as any)}</h1>
         <Form
           form={form}
           onFinish={handleSubmit}
@@ -152,13 +154,13 @@ export default function ForgotPasswordPage() {
         >
           <Form.Item
             name="mail"
-            label="邮箱"
+            label={t('emailLabel' as any)}
             rules={[
-              { required: true, message: '请输入邮箱' },
-              { type: 'email', message: '请输入有效的邮箱地址' }
+              { required: true, message: t('emailRequired' as any) },
+              { type: 'email', message: t('emailInvalid' as any) }
             ]}
           >
-            <Input placeholder="请输入注册邮箱" />
+            <Input placeholder={t('emailPlaceholder' as any)} />
           </Form.Item>
 
           <Form.Item>
@@ -169,20 +171,20 @@ export default function ForgotPasswordPage() {
               loading={loading}
               className={styles.submitButton}
             >
-              发送重置链接
+              {t('sendResetLink' as any)}
             </Button>
           </Form.Item>
         </Form>
 
         <div className={styles.links}>
           <Link href="/login" className={styles.link}>
-            返回登录
+            {t('backToLogin' as any)}
           </Link>
         </div>
       </div>
 
       <Modal
-        title="重置密码"
+        title={t('resetPassword' as any)}
         open={isModalOpen}
         onCancel={handleModalClose}
         maskClosable={false}
@@ -195,32 +197,32 @@ export default function ForgotPasswordPage() {
         >
           <Form.Item
             name="password"
-            label="新密码"
+            label={t('newPassword' as any)}
             rules={[
-              { required: true, message: '请输入新密码' },
-              { min: 6, message: '密码长度不能小于6个字符' }
+              { required: true, message: t('newPasswordRequired' as any) },
+              { min: 6, message: t('newPasswordMinLength' as any) }
             ]}
           >
-            <Input.Password placeholder="请输入新密码" />
+            <Input.Password placeholder={t('newPasswordPlaceholder' as any)} />
           </Form.Item>
 
           <Form.Item
             name="confirmPassword"
-            label="确认密码"
+            label={t('confirmPassword' as any)}
             dependencies={['password']}
             rules={[
-              { required: true, message: '请确认密码' },
+              { required: true, message: t('confirmPasswordRequired' as any) },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(new Error('两次输入的密码不一致'));
+                  return Promise.reject(new Error(t('confirmPasswordMismatch' as any)));
                 },
               }),
             ]}
           >
-            <Input.Password placeholder="请确认密码" />
+            <Input.Password placeholder={t('confirmPasswordPlaceholder' as any)} />
           </Form.Item>
 
           <Form.Item>
@@ -231,7 +233,7 @@ export default function ForgotPasswordPage() {
               loading={loading || isPolling}
               className={styles.submitButton}
             >
-              {isPolling ? '等待邮件确认中...' : '确认重置'}
+              {isPolling ? t('waitingForEmailConfirmation' as any) : t('confirmReset' as any)}
             </Button>
           </Form.Item>
         </Form>
