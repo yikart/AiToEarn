@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
-import { PlatKwaiNatsApi } from '../api/kwai.natsApi'
+import { PlatKwaiNatsApi } from '../../transports/channel/api/kwai.natsApi'
 
 @ApiTags('plat/kwai - 快手平台')
 @Controller('plat/kwai')

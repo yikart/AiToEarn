@@ -1,7 +1,7 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { Public } from '../../auth/auth.guard'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
-import { PlatWxGzhNatsApi } from '../api/wxGzh.natsApi'
+import { PlatWxGzhNatsApi } from '../../transports/channel/api/wxGzh.natsApi'
 import { CallbackMsgData } from './common'
 import { AuthBackQueryDto } from './dto/wxGzh.dto'
 

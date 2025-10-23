@@ -11,7 +11,7 @@ import { TableDto } from '@yikart/common'
 import { plainToInstance } from 'class-transformer'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
-import { PlatPublishNatsApi } from './api/publish.natsApi'
+import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
 import { PostHistoryItemDto, PublishRecordItemDto } from './dto/publish-response.dto'
 import {
   CreatePublishDto,

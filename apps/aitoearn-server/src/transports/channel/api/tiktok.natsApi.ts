@@ -1,13 +1,8 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
-import { config } from '../../config'
+import { ChannelBaseApi } from '../../channelBase.api'
 
 @Injectable()
-export class PlatTiktokNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class PlatTiktokNatsApi extends ChannelBaseApi {
   /**
    * 获取授权页面URL
    * @param userId 用户ID
@@ -16,15 +11,15 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getAuthUrl(userId: string, scopes?: string[], spaceId?: string) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/tiktok/authUrl`,
+    const res = await this.sendMessage<string>(
+      `plat/tiktok/authUrl`,
       {
         userId,
         scopes,
         spaceId: spaceId || '',
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -33,13 +28,13 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/tiktok/getAuthInfo`,
+    const res = await this.sendMessage<string>(
+      `plat/tiktok/getAuthInfo`,
       {
         taskId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -53,18 +48,18 @@ export class PlatTiktokNatsApi {
     code: string,
     state: string,
   ) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       status: 0 | 1
       message?: string
       accountId?: string
     }>(
-      `${config.channel.baseUrl}/plat/tiktok/createAccountAndSetAccessToken`,
+      `plat/tiktok/createAccountAndSetAccessToken`,
       {
         code,
         state,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -74,14 +69,14 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async refreshAccessToken(accountId: string, refreshToken: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/refreshAccessToken`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/refreshAccessToken`,
       {
         accountId,
         refreshToken,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -90,13 +85,13 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async revokeAccessToken(accountId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/revokeAccessToken`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/revokeAccessToken`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -105,13 +100,13 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getCreatorInfo(accountId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/getCreatorInfo`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/getCreatorInfo`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -122,15 +117,15 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async initVideoPublish(accountId: string, postInfo: any, sourceInfo: any) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/initVideoPublish`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/initVideoPublish`,
       {
         accountId,
         postInfo,
         sourceInfo,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -147,8 +142,8 @@ export class PlatTiktokNatsApi {
     postInfo: any,
     sourceInfo: any,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/initPhotoPublish`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/initPhotoPublish`,
       {
         accountId,
         postMode,
@@ -156,7 +151,7 @@ export class PlatTiktokNatsApi {
         sourceInfo,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -166,14 +161,14 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async getPublishStatus(accountId: string, publishId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/getPublishStatus`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/getPublishStatus`,
       {
         accountId,
         publishId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -188,15 +183,15 @@ export class PlatTiktokNatsApi {
     videoBase64: string,
     contentType: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/uploadVideoFile`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/uploadVideoFile`,
       {
         uploadUrl,
         videoBase64,
         contentType,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -205,10 +200,10 @@ export class PlatTiktokNatsApi {
    * @returns
    */
   async handleWebhookEvent(event: any) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/tiktok/handleWebhookEvent`,
+    const res = await this.sendMessage<any>(
+      `plat/tiktok/handleWebhookEvent`,
       event,
     )
-    return res.data
+    return res
   }
 }

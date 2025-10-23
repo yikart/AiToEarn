@@ -1,16 +1,11 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
 import { AccountType } from '@yikart/mongodb'
-import { config } from '../../../config'
+import { ChannelBaseApi } from '../../../channelBase.api'
 import { ReplyCommentRecord } from './common'
 
 @Injectable()
-export class ReplyCommentRecordNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class ReplyCommentRecordNatsApi extends ChannelBaseApi {
   async add(data: {
     userId: string
     accountId: string
@@ -20,11 +15,11 @@ export class ReplyCommentRecordNatsApi {
     commentContent: string
     replyContent: string
   }) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/replyCommentRecord/add`,
+    const res = await this.sendMessage<boolean>(
+      `channel/replyCommentRecord/add`,
       data,
     )
-    return res.data
+    return res
   }
 
   async list(userId: string, filters: {
@@ -33,11 +28,11 @@ export class ReplyCommentRecordNatsApi {
     commentId?: string
     time?: [Date, Date]
   }, page: TableDto) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       list: ReplyCommentRecord[]
       total: number
     }>(
-      `${config.channel.baseUrl}/channel/replyCommentRecord/list`,
+      `channel/replyCommentRecord/list`,
       {
         filters: {
           userId,
@@ -46,7 +41,7 @@ export class ReplyCommentRecordNatsApi {
         page,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -55,12 +50,12 @@ export class ReplyCommentRecordNatsApi {
    * @returns
    */
   async del(id: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/replyCommentRecord/del`,
+    const res = await this.sendMessage<boolean>(
+      `channel/replyCommentRecord/del`,
       {
         id,
       },
     )
-    return res.data
+    return res
   }
 }

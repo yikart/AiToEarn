@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
 import { TaskModule } from '../task/task.module'
-import { ChannelApiModule } from './api/channelApi.module'
+import { ChannelApiModule } from '../transports/channel/channelApi.module'
 import { BilibiliModule } from './bilibili/bilibili.module'
 import { ChannelController } from './channel.controller'
 import { ChannelService } from './channel.service'

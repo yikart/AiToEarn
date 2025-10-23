@@ -1,28 +1,23 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
-import { config } from '../../config'
+import { ChannelBaseApi } from '../../channelBase.api'
 import { AccessToken, AddArchiveData, ArchiveStatus } from './bilibili.common'
 
 @Injectable()
-export class PlatBilibiliNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class PlatBilibiliNatsApi extends ChannelBaseApi {
   /**
    * 获取账号的授权信息
    * @param accountId
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const res = await this.httpService.axiosRef.post<AccessToken | null>(
-      `${config.channel.baseUrl}/plat/bilibili/getAccountAuthInfo`,
+    const res = await this.sendMessage<AccessToken | null>(
+      `plat/bilibili/getAccountAuthInfo`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -32,18 +27,18 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getAuth(userId: string, type: 'pc' | 'h5', spaceId: string) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       url: string
       taskId: string
     }>(
-      `${config.channel.baseUrl}/plat/bilibili/auth`,
+      `plat/bilibili/auth`,
       {
         userId,
         type,
         spaceId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -56,15 +51,15 @@ export class PlatBilibiliNatsApi {
     code: string
     state: string
   }) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       status: 0 | 1
       message?: string
       accountId?: string
     }>(
-      `${config.channel.baseUrl}/plat/bilibili/createAccountAndSetAccessToken`,
+      `plat/bilibili/createAccountAndSetAccessToken`,
       data,
     )
-    return res.data
+    return res
   }
 
   /**
@@ -75,15 +70,15 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async videoInit(accountId: string, name: string, utype = 0) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/videoInit`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/videoInit`,
       {
         accountId,
         name,
         utype,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -98,15 +93,15 @@ export class PlatBilibiliNatsApi {
     uploadToken: string,
     data: AddArchiveData,
   ) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/archiveAddByUtoken`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/archiveAddByUtoken`,
       {
         accountId,
         uploadToken,
         data,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -115,13 +110,13 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async archiveTypeList(accountId: string) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/archiveTypeList`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/archiveTypeList`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -130,13 +125,13 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/bilibili/getAuthInfo`,
+    const res = await this.sendMessage<any>(
+      `plat/bilibili/getAuthInfo`,
       {
         taskId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -151,15 +146,15 @@ export class PlatBilibiliNatsApi {
       status?: ArchiveStatus
     },
   ) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/archiveList`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/archiveList`,
       {
         accountId,
         page,
         filter,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -168,13 +163,13 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getUserStat(accountId: string) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/userStat`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/userStat`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -184,14 +179,14 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getArcStat(accountId: string, resourceId: string) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/arcStat`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/arcStat`,
       {
         accountId,
         resourceId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -200,12 +195,12 @@ export class PlatBilibiliNatsApi {
    * @returns
    */
   async getArcIncStat(accountId: string) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/bilibili/arcIncStat`,
+    const res = await this.sendMessage<string>(
+      `plat/bilibili/arcIncStat`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 }

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Query, Render } from '@nestjs/commo
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
-import { PlatMetaNatsApi } from '../api/meta.natsApi'
+import { PlatMetaNatsApi } from '../../transports/channel/api/meta.natsApi'
 import {
   CreateAccountAndSetAccessTokenDto,
   FacebookPageSelectionDto,

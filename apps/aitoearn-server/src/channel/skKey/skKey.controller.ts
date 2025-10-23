@@ -19,7 +19,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { TableDto } from '@yikart/common'
 import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
-import { ChannelSkKeyNatsApi } from '../api/skKeyNatsApi.natsApi'
+import { ChannelSkKeyNatsApi } from '../../transports/channel/api/skKeyNatsApi.natsApi'
 import {
   CreateSkKeyDto,
   GetRefAccountListDto,

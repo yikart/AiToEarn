@@ -20,7 +20,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
-import { PlatYoutubeNatsApi } from '../api/youtube.natsApi'
+import { PlatYoutubeNatsApi } from '../../transports/channel/api/youtube.natsApi'
 import {
   DeleteCommentDto,
   DeletePlayItemsDto,

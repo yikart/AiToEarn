@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 
-import { EngagementNatsApi } from '../api/engagement/engagement.natsApi'
+import { EngagementNatsApi } from '../../transports/channel/api/engagement/engagement.api'
 import { AIGenCommentDto, AIGenCommentResponseVo, FetchCommentRepliesDto, FetchPostCommentsRequestDto, FetchPostCommentsResponseDto, FetchPostsRequestDto, FetchPostsResponseVo, PublishCommentReplyRequestDto, PublishCommentRequestDto, PublishCommentResponseDto, ReplyToCommentsDto, ReplyToCommentsResponseVo } from './dto/engagement.dto'
 
 @Injectable()

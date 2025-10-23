@@ -3,7 +3,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
-import { PlatTwitterNatsApi } from '../api/twitter.natsApi'
+import { PlatTwitterNatsApi } from '../../transports/channel/api/twitter.natsApi'
 import {
   CreateAccountAndSetAccessTokenDto,
   GetAuthUrlDto,

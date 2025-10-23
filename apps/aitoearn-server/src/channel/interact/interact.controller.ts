@@ -10,7 +10,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { TableDto } from '@yikart/common'
 import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
-import { InteractNatsApi } from '../api/interact/interact.natsApi'
+import { InteractNatsApi } from '../../transports/channel/api/interact/interact.natsApi'
 import { AddArcCommentDto, DelCommentDto, ReplyCommentDto } from './dto/interact.dto'
 
 @ApiTags('渠道互动')

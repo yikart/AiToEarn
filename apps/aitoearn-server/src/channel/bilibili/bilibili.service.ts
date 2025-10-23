@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PlatBilibiliNatsApi } from '../api/bilibili.natsApi'
+import { PlatBilibiliNatsApi } from '../../transports/channel/api/bilibili.natsApi'
 
 @Injectable()
 export class BilibiliService {

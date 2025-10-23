@@ -16,7 +16,7 @@ import {
   IsString,
   Matches,
 } from 'class-validator'
-import { ArchiveStatus } from '../../api/bilibili.common'
+import { ArchiveStatus } from '../../../transports/channel/api/bilibili.common'
 import { VideoUTypes } from '../common'
 
 export class AccountIdDto {
