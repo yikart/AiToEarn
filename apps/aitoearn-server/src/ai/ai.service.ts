@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import OpenAI from 'openai'
+import { LogListResponseVo } from './ai.vo'
 import { ChatModelConfigVo, ChatModelsQueryDto, ChatService, UserChatCompletionDto } from './core/chat'
 import { FireflycardResponseVo, ImageEditModelParamsVo, ImageEditModelsQueryDto, ImageGenerationModelParamsVo, ImageGenerationModelsQueryDto, ImageResponseVo, ImageService, Md2CardResponseVo, UserFireflyCardDto, UserImageEditDto, UserImageGenerationDto, UserMd2CardDto } from './core/image'
-import { LogListQueryDto, LogListResponseVo, LogsService } from './core/logs'
+import { LogListQueryDto, LogsService } from './core/logs'
 import { DashscopeImage2VideoRequestDto, DashscopeKeyFrame2VideoRequestDto, DashscopeTaskQueryDto, DashscopeTaskStatusResponseVo, DashscopeText2VideoRequestDto, DashscopeVideoGenerationResponseVo, KlingImage2VideoRequestDto, KlingMultiImage2VideoRequestDto, KlingTaskQueryDto, KlingTaskStatusResponseVo, KlingText2VideoRequestDto, KlingVideoGenerationResponseVo, ListVideoTasksResponseVo, UserListVideoTasksQueryDto, UserVideoGenerationRequestDto, UserVideoTaskQueryDto, VideoGenerationModelParamsVo, VideoGenerationModelsQueryDto, VideoGenerationResponseVo, VideoService, VideoTaskStatusResponseVo, VolcengineGenerationRequestDto, VolcengineTaskQueryDto, VolcengineTaskStatusResponseVo, VolcengineVideoGenerationResponseVo } from './core/video'
 
 @Injectable()

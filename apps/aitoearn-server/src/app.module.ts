@@ -3,6 +3,7 @@ import { MailModule } from '@yikart/mail'
 import { MongodbModule } from '@yikart/mongodb'
 import { RedisModule } from '@yikart/redis'
 import { AccountModule } from './account/account.module'
+import { LogsModule } from './ai/core/logs'
 import { AppConfigModule } from './app-configs/app-config.module'
 import { AppReleaseModule } from './app-release/app-release.module'
 import { AuthModule } from './auth/auth.module'
@@ -23,6 +24,7 @@ import { UserModule } from './user/user.module'
     RedisModule.forRoot(config.redis),
     MailModule.forRoot(config.mail),
     ToolsModule,
+    LogsModule,
     TransportsModule,
     AuthModule,
     AppConfigModule,

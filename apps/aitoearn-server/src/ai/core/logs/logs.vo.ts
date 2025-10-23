@@ -23,7 +23,7 @@ const logItemSchema = z.object({
 export class LogItemVo extends createZodDto(logItemSchema) {}
 
 // 日志列表响应
-export class LogListResponseVo extends createPaginationVo(logItemSchema, 'LogListResponseVo') {}
+export class LogsListResponseVo extends createPaginationVo(logItemSchema, 'LogsListResponseVo') {}
 
 // 日志详情响应
 const logDetailResponseSchema = z.object({

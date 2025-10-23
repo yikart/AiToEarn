@@ -1,10 +1,10 @@
 import path from 'node:path'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { config } from '../../../config'
+import { PointsService } from '../../../user/points.service'
 import { DashscopeAction, KlingAction, TaskStatus } from '../../common/enums'
 import { DashscopeService, TaskStatus as DashscopeTaskStatus, GetVideoTaskResponse } from '../../libs/dashscope'
 import {
@@ -62,11 +62,11 @@ export class VideoService {
     private readonly klingService: KlingService,
     private readonly volcengineService: VolcengineService,
     private readonly sora2Service: Sora2Service,
-    private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
     private readonly s3Service: S3Service,
     private readonly modelsConfigService: ModelsConfigService,
-  ) {}
+    private readonly pointsService: PointsService,
+  ) { }
 
   async calculateVideoGenerationPrice(params: {
     model: string
@@ -409,11 +409,11 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -453,11 +453,11 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -544,7 +544,7 @@ export class VideoService {
     })
 
     if (status === AiLogStatus.Failed && aiLog.userType === UserType.User) {
-      await this.userClient.addPoints({
+      await this.pointsService.addPoints({
         userId: aiLog.userId,
         amount: aiLog.points,
         type: 'ai_service',
@@ -675,7 +675,7 @@ export class VideoService {
     })
 
     if (aiLogStatus === AiLogStatus.Failed && aiLog.userType === UserType.User) {
-      await this.userClient.addPoints({
+      await this.pointsService.addPoints({
         userId: aiLog.userId,
         amount: aiLog.points,
         type: 'ai_service',
@@ -706,12 +706,12 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
 
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -803,11 +803,11 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -856,11 +856,11 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -908,11 +908,11 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -990,7 +990,7 @@ export class VideoService {
     })
 
     if (status === AiLogStatus.Failed && aiLog.userType === UserType.User) {
-      await this.userClient.addPoints({
+      await this.pointsService.addPoints({
         userId: aiLog.userId,
         amount: aiLog.points,
         type: 'ai_service',
@@ -1060,11 +1060,11 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -1108,12 +1108,12 @@ export class VideoService {
     })
 
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
 
-      await this.userClient.deductPoints({
+      await this.pointsService.deductPoints({
         userId,
         amount: pricing,
         type: 'ai_service',
@@ -1241,7 +1241,7 @@ export class VideoService {
     })
 
     if (aiLogStatus === AiLogStatus.Failed && aiLog.userType === UserType.User) {
-      await this.userClient.addPoints({
+      await this.pointsService.addPoints({
         userId: aiLog.userId,
         amount: aiLog.points,
         type: 'ai_service',

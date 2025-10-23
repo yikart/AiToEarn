@@ -1,12 +1,13 @@
 import { BaseMessage, ChatMessage } from '@langchain/core/messages'
 import { OpenAIClient } from '@langchain/openai'
 import { Injectable, Logger } from '@nestjs/common'
-import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
 import _ from 'lodash'
+import { PointsService } from '../../../user/points.service'
+import { UserService } from '../../../user/user.service'
 import { OpenaiService } from '../../libs/openai'
 import { ModelsConfigService } from '../models-config'
 import { ChatCompletionDto, ChatModelsQueryDto, UserChatCompletionDto } from './chat.dto'
@@ -16,8 +17,9 @@ export class ChatService {
   private readonly logger = new Logger(ChatService.name)
 
   constructor(
+    private readonly userService: UserService,
     private readonly openaiService: OpenaiService,
-    private readonly userClient: AitoearnUserClient,
+    private readonly pointsService: PointsService,
     private readonly aiLogRepo: AiLogRepository,
     private readonly modelsConfigService: ModelsConfigService,
   ) {}
@@ -61,7 +63,7 @@ export class ChatService {
     description: string,
     metadata?: Record<string, unknown>,
   ): Promise<void> {
-    await this.userClient.deductPoints({
+    await this.pointsService.deductPoints({
       userId,
       amount,
       type: 'ai_service',
@@ -77,7 +79,7 @@ export class ChatService {
     }
     const pricing = modelConfig.pricing
     if (userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < 0) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
@@ -152,7 +154,7 @@ export class ChatService {
   async getChatModelConfig(data: ChatModelsQueryDto) {
     if (data.userType === UserType.User && data.userId) {
       try {
-        const user = await this.userClient.getUserInfoById({ id: data.userId })
+        const user = await this.userService.getUserInfoById(data.userId)
         if (user && user.vipInfo && dayjs(user.vipInfo.expireTime).isAfter(dayjs())) {
           const models = _.cloneDeep(this.modelsConfigService.config.chat)
           // 查找 gemini-2.5-flash-image 模型并直接修改价格
