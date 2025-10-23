@@ -11,6 +11,7 @@ import { StatisticsApi } from './statistics/statistics.api'
 import { NotificationApi } from './task/notification.api'
 import { PortraitApi } from './task/portrait.api'
 import { RuleApi } from './task/rule.api'
+import { TaskMatcherApi } from './task/task-matcher.api'
 import { TaskApi } from './task/task.api'
 import { TaskPunishApi } from './task/taskPunish.api'
 import { UserTaskApi } from './task/user-task.api'
@@ -37,6 +38,7 @@ import { VipApi } from './user/vip.natsApi'
     TaskApi,
     NotificationApi,
     VipApi,
+    TaskMatcherApi,
   ],
   exports: [
     ChannelApi,
@@ -51,6 +53,7 @@ import { VipApi } from './user/vip.natsApi'
     TaskApi,
     NotificationApi,
     VipApi,
+    TaskMatcherApi,
   ],
 })
 export class TransportsModule { }

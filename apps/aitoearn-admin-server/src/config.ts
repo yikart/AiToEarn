@@ -21,10 +21,18 @@ const jwtConfigSchema = z.object({
   expiresIn: z.number().default(7 * 24 * 60 * 60),
 })
 
+export const mongodbConfigSchema = z.object({
+  uri: z.string(),
+  dbName: z.string().optional(),
+  autoIndex: z.boolean().optional(),
+  autoCreate: z.boolean().optional(),
+})
+
 export const configSchema = z.object({
   ...baseConfig.shape,
   environment: z.string().default('development'),
   redis: redisConfigSchema,
+  mongodb: mongodbConfigSchema,
   awsS3: s3ConfigSchema,
   userServer: userServerConfigSchema,
   jwt: jwtConfigSchema,
