@@ -3,6 +3,7 @@ import { Global, Module } from '@nestjs/common'
 import { AiApi } from './ai/ai.api'
 import { ChannelApi } from './channel/channel.api'
 import { ChannelBaseApi } from './channelBase.api'
+import { CloudSpacesApi } from './cloud-spaces/cloud-spaces.api'
 import { MaterialApi } from './content/material.api'
 import { PaymentApi } from './payment/payment.api'
 import { PaymentBaseApi } from './paymentBase.api'
@@ -39,6 +40,7 @@ import { VipApi } from './user/vip.natsApi'
     NotificationApi,
     VipApi,
     TaskMatcherApi,
+    CloudSpacesApi,
   ],
   exports: [
     ChannelApi,
@@ -54,6 +56,7 @@ import { VipApi } from './user/vip.natsApi'
     NotificationApi,
     VipApi,
     TaskMatcherApi,
+    CloudSpacesApi,
   ],
 })
 export class TransportsModule { }
