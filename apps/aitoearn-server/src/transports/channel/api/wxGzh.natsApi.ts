@@ -1,13 +1,8 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
-import { config } from '../../config'
+import { ChannelBaseApi } from '../../channelBase.api'
 
 @Injectable()
-export class PlatWxGzhNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class PlatWxGzhNatsApi extends ChannelBaseApi {
   /**
    * 创建授权任务
    * @param userId
@@ -16,11 +11,11 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async createAuthTask(userId: string, type: 'pc' | 'h5', prefix?: string, spaceId?: string) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       url: string
       taskId: string
     }>(
-      `${config.channel.baseUrl}/plat/wxGzh/auth`,
+      `plat/wxGzh/auth`,
       {
         userId,
         type,
@@ -28,7 +23,7 @@ export class PlatWxGzhNatsApi {
         spaceId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -37,13 +32,13 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getAuthTaskInfo(taskId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/wxGzh/getAuthInfo`,
+    const res = await this.sendMessage<any>(
+      `plat/wxGzh/getAuthInfo`,
       {
         taskId,
       },
     )
-    return res.data
+    return res
   }
 
   async createAccountAndSetAccessToken(query: {
@@ -51,11 +46,11 @@ export class PlatWxGzhNatsApi {
     auth_code: string
     expires_in: number
   }) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/wxGzh/createAccountAndSetAccessToken`,
+    const res = await this.sendMessage<any>(
+      `plat/wxGzh/createAccountAndSetAccessToken`,
       query,
     )
-    return res.data
+    return res
   }
 
   async updatePublishRecord(data: {
@@ -64,11 +59,11 @@ export class PlatWxGzhNatsApi {
     article_url?: string
     article_id: string
   }) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/wxGzh/updatePublishRecord`,
+    const res = await this.sendMessage<any>(
+      `plat/wxGzh/updatePublishRecord`,
       data,
     )
-    return res.data
+    return res
   }
 
   /**
@@ -77,13 +72,13 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/wxGzh/getAccountAuthInfo`,
+    const res = await this.sendMessage<any>(
+      `plat/wxGzh/getAccountAuthInfo`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -94,15 +89,15 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getUserCumulate(accountId: string, beginDate: string, endDate: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/wxGzh/getUserCumulate`,
+    const res = await this.sendMessage<any>(
+      `plat/wxGzh/getUserCumulate`,
       {
         accountId,
         beginDate,
         endDate,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -113,14 +108,14 @@ export class PlatWxGzhNatsApi {
    * @returns
    */
   async getUserRead(accountId: string, beginDate: string, endDate: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/wxGzh/getUserRead`,
+    const res = await this.sendMessage<any>(
+      `plat/wxGzh/getUserRead`,
       {
         accountId,
         beginDate,
         endDate,
       },
     )
-    return res.data
+    return res
   }
 }

@@ -1,14 +1,9 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
-import { config } from '../../config'
+import { ChannelBaseApi } from '../../channelBase.api'
 import { AccessToken } from './bilibili.common'
 
 @Injectable()
-export class PlatYoutubeNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class PlatYoutubeNatsApi extends ChannelBaseApi {
   /**
    * 获取授权页面URL
    * @param userId
@@ -23,8 +18,8 @@ export class PlatYoutubeNatsApi {
     prefix?: string,
     spaceId?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/youtube/authUrl`,
+    const res = await this.sendMessage<string>(
+      `plat/youtube/authUrl`,
       {
         userId,
         mail,
@@ -32,7 +27,7 @@ export class PlatYoutubeNatsApi {
         spaceId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -48,11 +43,11 @@ export class PlatYoutubeNatsApi {
       state: string
     },
   ) {
-    const res = await this.httpService.axiosRef.post<string>(
-      `${config.channel.baseUrl}/plat/youtube/setAccessToken`,
+    const res = await this.sendMessage<string>(
+      `plat/youtube/setAccessToken`,
       data,
     )
-    return res.data
+    return res
   }
 
   /**
@@ -61,13 +56,13 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const res = await this.httpService.axiosRef.post<AccessToken | null>(
-      `${config.channel.baseUrl}/plat/youtube/getAccountAuthInfo`,
+    const res = await this.sendMessage<AccessToken | null>(
+      `plat/youtube/getAccountAuthInfo`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -76,13 +71,13 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getAuthInfo`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getAuthInfo`,
       {
         taskId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -91,13 +86,13 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async isAuthorized(accountId: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/plat/youtube/isAuthorized`,
+    const res = await this.sendMessage<boolean>(
+      `plat/youtube/isAuthorized`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -106,13 +101,13 @@ export class PlatYoutubeNatsApi {
    * @returns
    */
   async refreshToken(accountId: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/plat/youtube/refreshToken`,
+    const res = await this.sendMessage<boolean>(
+      `plat/youtube/refreshToken`,
       {
         accountId,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -127,15 +122,15 @@ export class PlatYoutubeNatsApi {
     id?: string,
     regionCode?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getVideoCategories`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getVideoCategories`,
       {
         accountId,
         id,
         regionCode,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -155,8 +150,8 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getVideosList`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getVideosList`,
       {
         accountId,
         chart,
@@ -166,7 +161,7 @@ export class PlatYoutubeNatsApi {
         pageToken,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -193,8 +188,8 @@ export class PlatYoutubeNatsApi {
     categoryId?: string,
     publishAt?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/uploadVideo`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/uploadVideo`,
       {
         accountId,
         fileBuffer,
@@ -207,7 +202,7 @@ export class PlatYoutubeNatsApi {
         publishAt,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -245,11 +240,11 @@ export class PlatYoutubeNatsApi {
       contentLength: contentLength ? Number(contentLength) : undefined,
     }
 
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/initVideoUpload`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/initVideoUpload`,
       payload,
     )
-    return res.data
+    return res
   }
 
   /**
@@ -266,8 +261,8 @@ export class PlatYoutubeNatsApi {
     uploadToken: string,
     partNumber: number,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/uploadVideoPart`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/uploadVideoPart`,
       {
         accountId,
         fileBase64,
@@ -275,7 +270,7 @@ export class PlatYoutubeNatsApi {
         partNumber,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -297,11 +292,11 @@ export class PlatYoutubeNatsApi {
       totalSize: Number(totalSize), // 确保totalSize是数字类型
     }
 
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/videoComplete`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/videoComplete`,
       payload,
     )
-    return res.data
+    return res
   }
 
   /**
@@ -320,8 +315,8 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getCommentsList`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getCommentsList`,
       {
         accountId,
         id,
@@ -330,7 +325,7 @@ export class PlatYoutubeNatsApi {
         pageToken,
       },
     )
-    return res.data
+    return res
   }
 
   // 创建顶级评论（评论会话）
@@ -340,8 +335,8 @@ export class PlatYoutubeNatsApi {
     videoId: string,
     textOriginal: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/insertCommentThreads`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/insertCommentThreads`,
       {
         accountId,
         channelId,
@@ -349,7 +344,7 @@ export class PlatYoutubeNatsApi {
         textOriginal,
       },
     )
-    return res.data
+    return res
   }
 
   // 获取评论会话列表
@@ -363,8 +358,8 @@ export class PlatYoutubeNatsApi {
     order?: string,
     searchTerms?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getCommentThreadsList`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getCommentThreadsList`,
       {
         accountId,
         allThreadsRelatedToChannelId,
@@ -376,7 +371,7 @@ export class PlatYoutubeNatsApi {
         searchTerms,
       },
     )
-    return res.data
+    return res
   }
 
   // 创建二级评论
@@ -385,15 +380,15 @@ export class PlatYoutubeNatsApi {
     parentId: string,
     textOriginal: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/insertComment`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/insertComment`,
       {
         accountId,
         parentId,
         textOriginal,
       },
     )
-    return res.data
+    return res
   }
 
   // 更新评论
@@ -402,27 +397,27 @@ export class PlatYoutubeNatsApi {
     parentId: string,
     textOriginal: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/updateComment`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/updateComment`,
       {
         accountId,
         parentId,
         textOriginal,
       },
     )
-    return res.data
+    return res
   }
 
   // 删除评论
   async deleteComment(accountId: string, id: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/deleteComment`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/deleteComment`,
       {
         accountId,
         id,
       },
     )
-    return res.data
+    return res
   }
 
   // 设置评论状态
@@ -432,8 +427,8 @@ export class PlatYoutubeNatsApi {
     moderationStatus?: string,
     banAuthor?: boolean,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/setModerationStatusComments`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/setModerationStatusComments`,
       {
         accountId,
         id,
@@ -441,44 +436,44 @@ export class PlatYoutubeNatsApi {
         banAuthor,
       },
     )
-    return res.data
+    return res
   }
 
   // 对视频点赞、踩
   async setVideoRate(accountId: string, id: string, rating: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/setVideoRate`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/setVideoRate`,
       {
         accountId,
         id,
         rating,
       },
     )
-    return res.data
+    return res
   }
 
   // 获取视频的点赞、踩数
   async getVideoRate(accountId: string, id: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getVideoRate`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getVideoRate`,
       {
         accountId,
         id,
       },
     )
-    return res.data
+    return res
   }
 
   // 删除视频
   async deleteVideo(accountId: string, id: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/deleteVideo`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/deleteVideo`,
       {
         accountId,
         id,
       },
     )
-    return res.data
+    return res
   }
 
   // 更新视频
@@ -494,8 +489,8 @@ export class PlatYoutubeNatsApi {
     publishAt?: string,
     recordingDate?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/updateVideo`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/updateVideo`,
       {
         accountId,
         id,
@@ -509,7 +504,7 @@ export class PlatYoutubeNatsApi {
         recordingDate,
       },
     )
-    return res.data
+    return res
   }
 
   // 创建播放列表
@@ -519,8 +514,8 @@ export class PlatYoutubeNatsApi {
     description?: string,
     privacyStatus?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/createPlaylist`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/createPlaylist`,
       {
         accountId,
         title,
@@ -528,7 +523,7 @@ export class PlatYoutubeNatsApi {
         privacyStatus,
       },
     )
-    return res.data
+    return res
   }
 
   // 获取播放列表
@@ -540,8 +535,8 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getPlayList`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getPlayList`,
       {
         accountId,
         channelId,
@@ -551,7 +546,7 @@ export class PlatYoutubeNatsApi {
         pageToken,
       },
     )
-    return res.data
+    return res
   }
 
   // 更新播放列表
@@ -561,8 +556,8 @@ export class PlatYoutubeNatsApi {
     title: string,
     description?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/updatePlaylist`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/updatePlaylist`,
       {
         accountId,
         id,
@@ -570,19 +565,19 @@ export class PlatYoutubeNatsApi {
         description,
       },
     )
-    return res.data
+    return res
   }
 
   // 删除播放列表
   async deletePlaylist(accountId: string, id: string) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/deletePlaylist`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/deletePlaylist`,
       {
         accountId,
         id,
       },
     )
-    return res.data
+    return res
   }
 
   // 插入播放列表项
@@ -595,8 +590,8 @@ export class PlatYoutubeNatsApi {
     startAt?: string,
     endAt?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/insertPlayListItems`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/insertPlayListItems`,
       {
         accountId,
         id,
@@ -607,7 +602,7 @@ export class PlatYoutubeNatsApi {
         endAt,
       },
     )
-    return res.data
+    return res
   }
 
   // 获取播放列表项
@@ -619,12 +614,12 @@ export class PlatYoutubeNatsApi {
     pageToken?: string,
     videoId?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       code: number
       message: string
       data: any
     }>(
-      `${config.channel.baseUrl}/plat/youtube/getPlayListItems`,
+      `plat/youtube/getPlayListItems`,
       {
         accountId,
         id,
@@ -634,7 +629,7 @@ export class PlatYoutubeNatsApi {
         videoId,
       },
     )
-    return res.data
+    return res
   }
 
   // 更新播放列表项
@@ -648,8 +643,8 @@ export class PlatYoutubeNatsApi {
     startAt?: string,
     endAt?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/updatePlayListItems`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/updatePlayListItems`,
       {
         accountId,
         id,
@@ -661,23 +656,23 @@ export class PlatYoutubeNatsApi {
         endAt,
       },
     )
-    return res.data
+    return res
   }
 
   // 删除播放列表项
   async deletePlayListItems(accountId: string, id: string) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       code: number
       message: string
       data: any
     }>(
-      `${config.channel.baseUrl}/plat/youtube/deletePlayListItems`,
+      `plat/youtube/deletePlayListItems`,
       {
         accountId,
         id,
       },
     )
-    return res.data
+    return res
   }
 
   // 获取频道列表
@@ -690,8 +685,8 @@ export class PlatYoutubeNatsApi {
     maxResults?: number,
     pageToken?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getChannelsList`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getChannelsList`,
       {
         accountId,
         forHandle,
@@ -702,7 +697,7 @@ export class PlatYoutubeNatsApi {
         pageToken,
       },
     )
-    return res.data
+    return res
   }
 
   // 获取频道板块列表
@@ -712,8 +707,8 @@ export class PlatYoutubeNatsApi {
     id?: string,
     mine?: boolean,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/getChannelsSectionsList`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/getChannelsSectionsList`,
       {
         accountId,
         channelId,
@@ -721,7 +716,7 @@ export class PlatYoutubeNatsApi {
         mine,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -750,8 +745,8 @@ export class PlatYoutubeNatsApi {
     type?: string,
     videoCategoryId?: string,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/plat/youtube/search`,
+    const res = await this.sendMessage<any>(
+      `plat/youtube/search`,
       {
         accountId,
         forMine,
@@ -765,6 +760,6 @@ export class PlatYoutubeNatsApi {
         videoCategoryId,
       },
     )
-    return res.data
+    return res
   }
 }

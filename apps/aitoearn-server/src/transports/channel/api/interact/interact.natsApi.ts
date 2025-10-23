@@ -1,28 +1,23 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
-import { config } from '../../../config'
+import { ChannelBaseApi } from '../../../channelBase.api'
 
 @Injectable()
-export class InteractNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class InteractNatsApi extends ChannelBaseApi {
   /**
    * 添加作品评论
    * @returns
    */
   async addArcComment(accountId: string, dataId: string, content: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/interact/addArcComment`,
+    const res = await this.sendMessage<boolean>(
+      `channel/interact/addArcComment`,
       {
         accountId,
         dataId,
         content,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -30,18 +25,18 @@ export class InteractNatsApi {
    * @returns
    */
   async getArcCommentList(recordId: string, query: TableDto) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       list: any[]
       total: number
     }>(
-      `${config.channel.baseUrl}/channel/interact/getArcCommentList`,
+      `channel/interact/getArcCommentList`,
       {
         recordId,
         pageNo: query.pageNo,
         pageSize: query.pageSize,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -51,15 +46,15 @@ export class InteractNatsApi {
    * @returns
    */
   async replyComment(accountId: string, commentId: string, content: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/interact/replyComment`,
+    const res = await this.sendMessage<boolean>(
+      `channel/interact/replyComment`,
       {
         accountId,
         commentId,
         content,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -69,13 +64,13 @@ export class InteractNatsApi {
    * @returns
    */
   async delComment(accountId: string, commentId: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/interact/delComment`,
+    const res = await this.sendMessage<boolean>(
+      `channel/interact/delComment`,
       {
         accountId,
         commentId,
       },
     )
-    return res.data
+    return res
   }
 }

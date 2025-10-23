@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
-import { PlatTiktokNatsApi } from '../api/tiktok.natsApi'
+import { PlatTiktokNatsApi } from '../../transports/channel/api/tiktok.natsApi'
 
 @Injectable()
 export class TiktokService {

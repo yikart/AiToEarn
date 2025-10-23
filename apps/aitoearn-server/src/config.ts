@@ -170,7 +170,7 @@ export const appConfigSchema = z.object({
   ai: aiConfigSchema,
   aliGreen: AliGreenConfigSchema,
   mailBackHost: z.string(),
-  channel: z.object({
+  channelApi: z.object({
     baseUrl: z.string().default('http://localhost:3000'),
   }),
   task: z.object({

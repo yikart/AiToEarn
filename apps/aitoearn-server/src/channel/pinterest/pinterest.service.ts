@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PlatPinterestNatsApi } from '../api/pinterest.natsApi'
+import { PlatPinterestNatsApi } from '../../transports/channel/api/pinterest.natsApi'
 import {
   CreateBoardBodyDto,
   CreatePinBodyDto,

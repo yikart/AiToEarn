@@ -1,8 +1,8 @@
 import { AccountStatus, AccountType, PublishType } from '@yikart/mongodb'
-import { BilibiliPublishOption } from './api/bilibili.common'
-import { FacebookPostOptions, InstagramPostOptions, ThreadsPostOptions } from './api/meta.common'
-import { WxGzhPublishOption } from './api/wxGzh.common'
-import { YoutubePublishOption } from './api/youtube.common'
+import { BilibiliPublishOption } from '../transports/channel/api/bilibili.common'
+import { FacebookPostOptions, InstagramPostOptions, ThreadsPostOptions } from '../transports/channel/api/meta.common'
+import { WxGzhPublishOption } from '../transports/channel/api/wxGzh.common'
+import { YoutubePublishOption } from '../transports/channel/api/youtube.common'
 
 export interface AccountPortraitReportData {
   accountId?: string

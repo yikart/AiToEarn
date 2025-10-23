@@ -1,16 +1,11 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
 import { AccountType } from '@yikart/mongodb'
-import { config } from '../../../config'
+import { ChannelBaseApi } from '../../../channelBase.api'
 import { InteractionRecord } from './common'
 
 @Injectable()
-export class InteractionRecordNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class InteractionRecordNatsApi extends ChannelBaseApi {
   async add(data: {
     userId: string
     accountId: string
@@ -25,11 +20,11 @@ export class InteractionRecordNatsApi {
     likeTime?: string
     collectTime?: string
   }) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/interactionRecord/add`,
+    const res = await this.sendMessage<boolean>(
+      `channel/interactionRecord/add`,
       data,
     )
-    return res.data
+    return res
   }
 
   /**
@@ -42,11 +37,11 @@ export class InteractionRecordNatsApi {
     worksId?: string
     time?: [Date, Date]
   }, page: TableDto) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await this.sendMessage<{
       list: InteractionRecord[]
       total: number
     }>(
-      `${config.channel.baseUrl}/channel/interactionRecord/list`,
+      `channel/interactionRecord/list`,
       {
         filters: {
           userId,
@@ -55,7 +50,7 @@ export class InteractionRecordNatsApi {
         page,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -64,12 +59,12 @@ export class InteractionRecordNatsApi {
    * @returns
    */
   async del(id: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
-      `${config.channel.baseUrl}/channel/interactionRecord/del`,
+    const res = await this.sendMessage<boolean>(
+      `channel/interactionRecord/del`,
       {
         id,
       },
     )
-    return res.data
+    return res
   }
 }

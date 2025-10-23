@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { AccountService } from '../../account/account.service'
-import { PlatYoutubeNatsApi } from '../api/youtube.natsApi'
+import { PlatYoutubeNatsApi } from '../../transports/channel/api/youtube.natsApi'
 import { getRegionCodes } from './comments'
 
 export interface AuthTaskInfo {

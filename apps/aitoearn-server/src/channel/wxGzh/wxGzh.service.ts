@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PlatWxGzhNatsApi } from '../api/wxGzh.natsApi'
+import { PlatWxGzhNatsApi } from '../../transports/channel/api/wxGzh.natsApi'
 
 @Injectable()
 export class WxGzhService {

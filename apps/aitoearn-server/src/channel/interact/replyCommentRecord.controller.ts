@@ -10,7 +10,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { TableDto } from '@yikart/common'
 import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
-import { ReplyCommentRecordNatsApi } from '../api/interact/replyCommentRecord.natsApi'
+import { ReplyCommentRecordNatsApi } from '../../transports/channel/api/interact/replyCommentRecord.natsApi'
 import { AddReplyCommentRecordDto, ReplyCommentRecordFiltersDto } from './dto/replyCommentRecord.dto'
 
 @ApiTags('评论回复记录')
