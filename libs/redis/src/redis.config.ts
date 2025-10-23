@@ -1,4 +1,3 @@
-import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
 export const redisConfigSchema = z.object({
@@ -7,7 +6,18 @@ export const redisConfigSchema = z.object({
   username: z.string().optional(),
   password: z.string().optional(),
   db: z.number().optional(),
-  connectTimeout: z.number().default(10000),
-})
+  tls: z.record(z.string(), z.any()).optional(),
+}).or(z.object({
+  nodes: z.object({
+    host: z.string().optional(),
+    post: z.string().optional(),
+  }).array(),
+  options: z.object({
+    enableOfflineQueue: z.boolean().optional(),
+    enableReadyCheck: z.boolean().optional(),
+    lazyConnect: z.boolean().optional(),
+    redisOptions: z.record(z.string(), z.any()),
+  }),
+}))
 
-export class RedisConfig extends createZodDto(redisConfigSchema) {}
+export type RedisConfig = z.infer<typeof redisConfigSchema>

@@ -214,7 +214,7 @@ async function buildImage(projectName, contextDir, verbose = false) {
   const imageName = `${projectName}:${tag}`
 
   try {
-    await $({ cwd: contextDir })`docker build -t ${imageName} .`
+    await $({ cwd: contextDir })`docker build --build-arg APP_NAME=${projectName} --platform linux/amd64 -t ${imageName} .`
     console.info(chalk.green(`Docker 镜像构建完成: ${imageName}`))
   }
   catch (error) {

@@ -1,24 +1,29 @@
 import type { DynamicModule } from '@nestjs/common'
-import Redis from 'ioredis'
+import { Cluster, Redis } from 'ioredis'
 
 import { RedisConfig } from './redis.config'
 import { RedisService } from './redis.service'
 
 export class RedisModule {
-  static register(config: RedisConfig): DynamicModule {
+  static forRoot(config: RedisConfig): DynamicModule {
     return {
       module: RedisModule,
       providers: [
         {
-          provide: RedisConfig,
-          useValue: config,
-        },
-        {
           provide: Redis,
-          useFactory: (redisConfig: RedisConfig) => {
-            return new Redis(redisConfig)
+          useFactory: () => {
+            if ('nodes' in config) {
+              return new Cluster(config.nodes, {
+                ...config.options,
+                dnsLookup: (address, callback) => callback(null, address),
+              })
+            }
+            const tls = config.tls ? {} : undefined
+            return new Redis({
+              ...config,
+              tls,
+            })
           },
-          inject: [RedisConfig],
         },
         {
           provide: RedisService,

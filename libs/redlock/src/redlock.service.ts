@@ -1,15 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common'
-import Redis from 'ioredis'
+import { RedisService } from '@yikart/redis'
 
 @Injectable()
 export class RedlockService {
   private readonly logger = new Logger(RedlockService.name)
 
-  constructor(private redis: Redis) {}
+  constructor(private redis: RedisService) {}
 
   async acquireLock(key: string, value: string, ttl: number): Promise<boolean> {
-    const result = await this.redis.set(key, value, 'EX', ttl, 'NX')
-    return result === 'OK'
+    return await this.redis.setNx(key, value, ttl)
   }
 
   async releaseLock(key: string, value: string): Promise<boolean> {
