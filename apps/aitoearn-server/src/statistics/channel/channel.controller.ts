@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ChannelService } from './channel.service'
-import { HistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'
+import { BatchHistoryPostsRecordDto, HistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'
 
 @Controller()
 export class ChannelController {
@@ -16,18 +16,18 @@ export class ChannelController {
   // @NatsMessagePattern('statistics.channel.douyin.searchTopic')
   @Post('statistics/channel/douyin/searchTopic')
   async douYinSerachTopic(@Body() data: searchTopicDto) {
-    return this.channelService.getDouyinTopic(data.topic)
+    return this.channelService.getDouyinTopic(data.topic, data?.language)
   }
 
   /**
-   * 用户选择历史发布记录，记录后发送到草稿箱
+   * 用户选择历史发布记录，记录后发送到草稿箱（批量处理）
    * @param data
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.platform.postsRecord')
   @Post('statistics/channel/platform/postsRecord')
-  async setHistoryPostsRecord(@Body() data: HistoryPostsRecordDto) {
-    return this.channelService.historyPostsRecord(data.userId, data.platform, data.uid, data.postId, data?.accountId)
+  async setHistoryPostsRecord(@Body() data: BatchHistoryPostsRecordDto) {
+    return this.channelService.historyPostsRecord(data.records)
   }
 
   /**
