@@ -298,15 +298,15 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
           // 强制需要选择视频分类
           if (!v.params.option.youtube?.categoryId) {
-            return setErrorMsg(t("validation.categoryRequired"));
+            return setErrorMsg(t("validation.categoryRequired" as any));
           }
           // YouTube 视频大小限制 ≤ 256GB
           if (video && video.size > 256 * 1024 * 1024 * 1024) {
-            return setErrorMsg(t("validation.youtubeVideoSize"));
+            return setErrorMsg(t("validation.youtubeVideoSize" as any));
           }
           // YouTube 视频时长限制 ≤ 12小时
           if (video && video.duration > 43200) {
-            return setErrorMsg(t("validation.youtubeVideoDuration"));
+            return setErrorMsg(t("validation.youtubeVideoDuration" as any));
           }
         }
 
