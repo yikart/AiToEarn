@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
 import dayjs from 'dayjs'
 import { Connection, Model, RootFilterQuery } from 'mongoose'
+import { NewChannel } from '../schemas/account.schema'
 import { AuthorDatas } from '../schemas/authorData.schema'
 import { BaseRepository } from './base.repository'
 
@@ -38,11 +39,11 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
     private readonly AccountDayIncreaseModel: Model<AuthorDatas>,
     @InjectModel('PostDayIncrease')
     private readonly PostDayIncreaseModel: Model<AuthorDatas>,
-    @InjectModel('NewChannelDatas')
-    private readonly NewChannelModel: Model<AuthorDatas>,
+    @InjectModel('NewChannel')
+    private readonly NewChannelModel: Model<NewChannel>,
     @InjectConnection() private readonly connection: Connection,
   ) {
-    super(NewChannelModel)
+    super(BilibiliAuthorDatasModel)
   }
 
   async onModuleInit() {

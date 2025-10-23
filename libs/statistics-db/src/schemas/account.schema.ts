@@ -202,3 +202,25 @@ export class NewChannel {
 }
 
 export const NewChannelSchema = SchemaFactory.createForClass(NewChannel)
+
+@Schema({
+  versionKey: false,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
+export class ChannelCookie {
+  id: string
+
+  @Prop({
+    required: true,
+    enum: AccountType,
+  })
+  platform: AccountType
+
+  @Prop({
+    required: true,
+  })
+  res: Array<{cookie: string}>
+}
+
+export const ChannelCookieSchema = SchemaFactory.createForClass(ChannelCookie)

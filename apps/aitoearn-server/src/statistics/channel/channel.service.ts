@@ -4,11 +4,6 @@ import { AccountType, ChannelRepository } from '@yikart/statistics-db'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
 
-interface RedisCookie {
-  res: any[]
-  version?: string
-}
-
 interface HistoryPostsRecordItem {
   userId: string
   platform: AccountType
@@ -31,14 +26,12 @@ export class ChannelService {
    *  @param platform
    */
   async getChannelCookie(platform: string) {
-    const channelCookie = await this.redisService.getJson<RedisCookie>(
-      `cookie:channel:${platform}:common`,
-    )
+    const channelCookie = await this.channelRepository.getChannelCookieByPlatform(platform)
 
     const res = channelCookie?.res
     const chosen = Array.isArray(res) && res.length > 0
       ? res[Math.floor(Math.random() * res.length)]
-      : {}
+      : { cookie: '' }
     return chosen
   }
 
