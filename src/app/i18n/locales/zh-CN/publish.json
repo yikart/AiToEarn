@@ -124,6 +124,9 @@
     "twitterImageSize": "Twitter图片大小不能超过5MB",
     "twitterImageResolution": "Twitter图片最大分辨率为8192x8192",
     "youtubeResolutionSuggestion": "建议视频分辨率：1920×1080（16:9）或 1080×1920（9:16）。",
+    "youtubeVideoSize": "YouTube视频大小不能超过256GB",
+    "youtubeVideoDuration": "YouTube视频时长不能超过12小时",
+    "categoryRequired": "您必须选择视频分类！",
     "kwaiResolutionSuggestion": "推荐视频分辨率：1080x1920（竖屏）。",
     "kwaiDurationSuggestion": "视频时长建议：15秒-3分钟。"
   },
