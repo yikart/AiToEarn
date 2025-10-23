@@ -161,6 +161,7 @@ const moreApiConfigSchema = z.object({
 
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
+  fileHost: z.string().default('http://localhost:3000/api/file/'),
   ucloud: z.object({
     ...ucloudConfigSchema.shape,
     imageId: z.string(),

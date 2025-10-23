@@ -13,6 +13,9 @@ import { CloudSpaceRepository } from './cloud-space.repository'
 import { CouponRepository } from './coupon.repository'
 import { FeedbackRepository } from './feedback.repository'
 import { IncomeRecordRepository } from './income-record.repository'
+import { MaterialRepository } from './material.repository'
+import { MaterialGroupRepository } from './materialGroup.repository'
+import { MaterialTaskRepository } from './materialTask.repository'
 import { MediaRepository } from './media.repository'
 import { MediaGroupRepository } from './mediaGroup.repository'
 import { MultiloginAccountRepository } from './multilogin-account.repository'
@@ -43,6 +46,9 @@ export * from './cloud-space.repository'
 export * from './coupon.repository'
 export * from './feedback.repository'
 export * from './income-record.repository'
+export * from './material.repository'
+export * from './materialGroup.repository'
+export * from './materialTask.repository'
 export * from './media.repository'
 export * from './mediaGroup.repository'
 export * from './multilogin-account.repository'
@@ -86,4 +92,7 @@ export const repositories = [
   AdminAccountRepository,
   ManagerRepository,
   AdminUserRepository,
+  MaterialGroupRepository,
+  MaterialRepository,
+  MaterialTaskRepository,
 ] as const
