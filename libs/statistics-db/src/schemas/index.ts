@@ -1,4 +1,4 @@
-import { Account, AccountSchema } from './account.schema'
+import { Account, AccountSchema, ChannelCookie, ChannelCookieSchema, NewChannel, NewChannelSchema } from './account.schema'
 import { AuthorDatas, AuthorDatasSchema, PostDatas, PostDatasSchema } from './authorData.schema'
 import { PostsRecord, PostsRecordSchema } from './posts.schema'
 import { UserTaskPosts, UserTaskPostsSchema } from './task.schema'
@@ -14,4 +14,6 @@ export const schemas = [
   { name: PostDatas.name, schema: PostDatasSchema },
   { name: PostsRecord.name, schema: PostsRecordSchema },
   { name: UserTaskPosts.name, schema: UserTaskPostsSchema },
+  { name: NewChannel.name, schema: NewChannelSchema, collection: 'new_channels' },
+  { name: ChannelCookie.name, schema: ChannelCookieSchema, collection: 'channel_cookie' },
 ] as const

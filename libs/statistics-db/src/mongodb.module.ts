@@ -1,7 +1,7 @@
 import type { MongodbConfig } from './mongodb.config'
 import { Global } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import mongoose from 'mongoose'
+import mongoose, { Collection } from 'mongoose'
 import { repositories } from './repositories'
 import { schemas } from './schemas'
 import { PostDatasSchema } from './schemas/authorData.schema'
@@ -119,8 +119,7 @@ export class StatisticsDbModule {
     // 添加增量数据模型定义
     const increaseDataCollections = [
       { name: 'AccountDayIncrease', schema: PostDatasSchema },
-      { name: 'PostDayIncrease', schema: PostDatasSchema },
-      { name: 'NewChannelDatas', schema: PostDatasSchema },
+      { name: 'PostDayIncrease', schema: PostDatasSchema, collection: 'post_daily_insights_delta' },
     ]
 
     const forFeature = MongooseModule.forFeature([

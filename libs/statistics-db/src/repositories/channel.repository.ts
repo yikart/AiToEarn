@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/mongoose'
 import { Connection, Model } from 'mongoose'
-import { AccountType } from '../schemas/account.schema'
+import { AccountType, ChannelCookie } from '../schemas/account.schema'
 import { AuthorDatas } from '../schemas/authorData.schema'
 import { PostsRecord, PostsRecordStatus } from '../schemas/posts.schema'
 import { BaseRepository } from './base.repository'
@@ -45,6 +45,8 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
     private readonly YoutubeAuthorDatasModel: Model<AuthorDatas>,
     @InjectModel('PostsRecord') // posts history record
     private readonly PostsRecordModel: Model<PostsRecord>,
+    @InjectModel('ChannelCookie')
+    private readonly ChannelCookieModel: Model<ChannelCookie>,
 
     @InjectConnection() private readonly connection: Connection,
   ) {
@@ -197,5 +199,20 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
    * @param _uid
    */
   async averageDataMonthly(_platform: AccountType, _uid: string) {
+  }
+
+  /**
+   * 根据平台获取渠道cookie
+   * @param platform
+   */
+  async getChannelCookieByPlatform(platform: string) {
+    try {
+      const result = await this.ChannelCookieModel.findOne({ platform }).exec()
+      return result
+    }
+    catch (error) {
+      this.logger.error(`Failed to get channel cookie for platform ${platform}:`, error)
+      throw error
+    }
   }
 }
