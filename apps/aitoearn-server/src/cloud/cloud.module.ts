@@ -3,8 +3,10 @@ import { BullModule } from '@nestjs/bullmq'
 import { Global, Module } from '@nestjs/common'
 import { AnsibleModule } from '@yikart/ansible'
 import { MongodbModule } from '@yikart/mongodb'
+import { RedisModule } from '@yikart/redis'
 import { RedlockModule } from '@yikart/redlock'
 import { UCloudModule } from '@yikart/ucloud'
+import { Redis } from 'ioredis'
 import { config } from '../config'
 import { HelpersModule } from './common/helpers/helpers.module'
 import { ConsumersModule } from './consumers/consumers.module'
@@ -22,8 +24,14 @@ import { SchedulerModule } from './scheduler'
     UCloudModule.forRoot(config.ucloud),
     RedlockModule.forRoot(config.redlock),
     AnsibleModule.forRoot(config.ansible),
-    BullModule.forRoot({
-      connection: config.redis,
+    RedisModule.forRoot(config.redis),
+    BullModule.forRootAsync({
+      useFactory: (redis: Redis) => {
+        return {
+          connection: redis,
+        }
+      },
+      inject: [Redis],
     }),
     HelpersModule,
     MultiloginAccountModule,

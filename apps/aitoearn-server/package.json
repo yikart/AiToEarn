@@ -38,6 +38,7 @@
     "fingerprint-generator": "^2.1.75",
     "googleapis": "^150.0.1",
     "header-generator": "^2.1.75",
+    "ioredis": "^5.7.0",
     "js-yaml": "^4.1.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",

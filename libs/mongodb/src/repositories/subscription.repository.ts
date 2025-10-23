@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
-import { ICurrency, ISubscriptionStatus } from '@yikart/stripe'
+import { ICurrency, IPayment, ISubscriptionStatus } from '@yikart/stripe'
 import { FilterQuery, Model } from 'mongoose'
 import { Subscription } from '../schemas'
 import { BaseRepository } from './base.repository'
@@ -74,7 +74,15 @@ export class SubscriptionRepository extends BaseRepository<Subscription> {
     return await this.model.findOneAndUpdate({ id }, { $set: data }, { upsert: true, new: true }).exec()
   }
 
-  async countByFilter(filter: FilterQuery<Subscription>) {
-    return await this.count(filter)
+  async upsertByIdAndStatus(id: string, status: ISubscriptionStatus, data: Partial<Subscription>) {
+    return await this.model.findOneAndUpdate({ id }, { $set: data }, { upsert: true, new: true }).exec()
+  }
+
+  async upsertByUserIdAndStatus(userId: string, status: ISubscriptionStatus, data: Partial<Subscription>) {
+    return await this.model.findOneAndUpdate({ userId }, { $set: data }, { upsert: true, new: true }).exec()
+  }
+
+  async getSubscribeByUserId(userId: string) {
+    return await this.findOne({ userId, status: ISubscriptionStatus.active, payment: { $in: [IPayment.year, IPayment.month] } })
   }
 }
