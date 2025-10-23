@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ChannelService } from './channel.service'
-import { BatchHistoryPostsRecordDto, HistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'
+import { BatchHistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'
 
 @Controller()
 export class ChannelController {
