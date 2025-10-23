@@ -23,6 +23,8 @@ z.config(z.locales.zhCN())
 
 patchNestJsSwagger()
 
+const logger = new Logger('Bootstrap')
+
 @Module({})
 class RootModule {
   static setup(args: Omit<DynamicModule, 'module'>): DynamicModule {
@@ -38,6 +40,9 @@ export interface StartApplicationOptions {
   setupApp?: (app: NestApplication) => void
 }
 export async function startApplication(Module: Type<unknown>, config: BaseConfig, options: StartApplicationOptions = {}) {
+  if (config.enableConfigLogging) {
+    logger.log(JSON.stringify(config, null, 2))
+  }
   const loggers: StreamEntry[] = []
 
   if (config.logger?.console?.enable) {
@@ -172,8 +177,6 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
   app.disable('x-powered-by')
 
   app.enable('trust proxy')
-
-  const logger = new Logger('Bootstrap')
 
   process.on('uncaughtException', (reason) => {
     logger.error(reason)

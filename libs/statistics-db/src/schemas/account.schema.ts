@@ -220,7 +220,7 @@ export class ChannelCookie {
   @Prop({
     required: true,
   })
-  res: Array<{cookie: string}>
+  res: Array<{ cookie: string }>
 }
 
 export const ChannelCookieSchema = SchemaFactory.createForClass(ChannelCookie)
