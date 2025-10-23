@@ -31,7 +31,7 @@ export class RedisModule {
           inject: [Redis],
         },
       ],
-      exports: [RedisService],
+      exports: [RedisService, Redis],
       global: true,
     }
   }
