@@ -6,6 +6,14 @@ import { AuthorDatas } from '../schemas/authorData.schema'
 import { PostsRecord, PostsRecordStatus } from '../schemas/posts.schema'
 import { BaseRepository } from './base.repository'
 
+interface HistoryPostsRecordItem {
+  userId: string
+  platform: AccountType
+  uid: string
+  postId: string
+  accountId?: string
+}
+
 @Injectable()
 export class ChannelRepository extends BaseRepository<PostsRecord> implements OnModuleInit {
   private readonly logger = new Logger(ChannelRepository.name)
@@ -137,29 +145,37 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
 
   /**
    * 用户选择历史发布记录，记录后发送到草稿箱
-   * @param userId
-   * @param platform
-   * @param uid
-   * @param postId
-   * @param accountId
+   * @param records 历史发布记录数组
    */
-  async historyPostsRecord(userId: string, platform: AccountType, uid: string, postId: string, accountId?: string) {
-    const newData = {
-      accountId,
-      userId,
-      platform,
-      uid,
-      postId,
-      status: PostsRecordStatus.Pending,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    }
-    const result = await this.PostsRecordModel.updateOne(
-      { userId, platform, uid, postId },
-      { $set: newData },
-      { upsert: true },
-    )
-    this.logger.debug(`historyPostsRecord update result: ${JSON.stringify(result)}`)
+  async historyPostsRecord(records: HistoryPostsRecordItem[]) {
+    const bulkOps = records.map((record) => {
+      const newData = {
+        accountId: record.accountId,
+        userId: record.userId,
+        platform: record.platform,
+        uid: record.uid,
+        postId: record.postId,
+        status: PostsRecordStatus.Pending,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      }
+
+      return {
+        updateOne: {
+          filter: {
+            userId: record.userId,
+            platform: record.platform,
+            uid: record.uid,
+            postId: record.postId,
+          },
+          update: { $set: newData },
+          upsert: true,
+        },
+      }
+    })
+
+    const result = await this.PostsRecordModel.bulkWrite(bulkOps)
+    this.logger.debug(`historyPostsRecord bulk update result: ${JSON.stringify(result)}`)
     return result
   }
 
