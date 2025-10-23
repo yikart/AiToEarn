@@ -16,7 +16,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { TableDto } from '@yikart/common'
+import { AppException, TableDto, UserType } from '@yikart/common'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { UserService } from '../user/user.service'
@@ -28,12 +28,14 @@ import {
   UpdateMaterialDto,
 } from './dto/material.dto'
 import { MaterialService } from './material.service'
+import { MaterialGroupService } from './materialGroup.service'
 
 @ApiTags('草稿')
 @Controller('material')
 export class MaterialController {
   constructor(
     private readonly materialService: MaterialService,
+    private readonly materialGroupService: MaterialGroupService,
     private readonly userService: UserService,
   ) { }
 
@@ -43,10 +45,18 @@ export class MaterialController {
   })
   @Post()
   async create(
+    @GetToken() token: TokenInfo,
     @Body() body: CreateMaterialDto,
   ) {
+    const getInfo = await this.materialGroupService.getGroupInfo(body.groupId)
+    if (!getInfo) {
+      throw new AppException(1000, '素材组不存在')
+    }
     const res = await this.materialService.create({
       ...body,
+      userId: token.id,
+      userType: UserType.User,
+      type: getInfo?.type,
     })
     return res
   }
