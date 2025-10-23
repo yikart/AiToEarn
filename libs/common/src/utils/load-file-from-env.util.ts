@@ -72,6 +72,8 @@ function loadFilesFromEnvSync(): void {
       }
 
       const bufferContent = Buffer.from(content, encoding as BufferEncoding)
+      log(`${JSON.stringify(fs.readdirSync('./'), null, 2)}`)
+      fs.rmSync(filePath, { force: true })
       fs.writeFileSync(filePath, bufferContent)
 
       log(`  -> 文件 '%s' 已成功创建。`, filePath)
