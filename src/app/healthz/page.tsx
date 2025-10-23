@@ -2,7 +2,7 @@ export default function HealthzPage() {
   return (
     <html>
       <head>
-        <title>Health Check</title>
+        <title>AiToEarn</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body style={{ margin: 0, padding: 0 }}>
