@@ -15,6 +15,7 @@ export class RedisModule {
             if ('nodes' in config) {
               return new Cluster(config.nodes, {
                 ...config.options,
+                dnsLookup: (address, callback) => callback(null, address),
               })
             }
             const tls = config.tls ? {} : undefined
