@@ -359,6 +359,9 @@ importers:
       header-generator:
         specifier: ^2.1.75
         version: 2.1.75
+      ioredis:
+        specifier: ^5.7.0
+        version: 5.7.0
       js-yaml:
         specifier: ^4.1.0
         version: 4.1.0
