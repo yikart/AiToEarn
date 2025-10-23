@@ -94,3 +94,10 @@ export class UnsubscribeDto {
   @IsOptional()
   readonly userId?: string
 }
+
+export class GetVipSubscribeByUserIdDto {
+  @IsString({ message: 'userId' })
+  @Expose()
+  @IsOptional()
+  readonly userId: string
+}

@@ -11,13 +11,11 @@ import { ProductModule } from './core/stripe/product/product.module'
 import { RefundModule } from './core/stripe/refund/refund.module'
 import { SubscriptionModule } from './core/stripe/subscription/subscription.module'
 import { WebhookModule } from './core/stripe/webhook/webhook.module'
-import { WithdrawModule } from './core/withdraw/withdraw.module'
 
 @Module({
   imports: [
     MongodbModule.forRoot(config.mongodb),
     StripeModule.forRoot(config.stripe),
-    WithdrawModule,
     AdminModule,
     CheckoutModule,
     PriceModule,

@@ -30,16 +30,12 @@ export class WebhookService {
     switch (type) {
       case IWebhookType['checkout.session.completed']:
         return this.succeeded(data.object)
-        break
       case IWebhookType['charge.refunded']:
         return this.refunded(data.object)
-        break
       case IWebhookType['checkout.session.expired']:
         return this.expired(data.object)
-        break
       case IWebhookType['customer.subscription.deleted']:
         return this.subscriptionCancel(data.object)
-        break
       default:
     }
   }
@@ -58,10 +54,8 @@ export class WebhookService {
     switch (mode) {
       case ICheckoutMode.payment:
         return this.payment(data)
-        break
       case ICheckoutMode.subscription:
         return this.subscription(data)
-        break
       default:
     }
   }
@@ -72,7 +66,6 @@ export class WebhookService {
       subscription: subscriptionId,
       id,
       eventCreated,
-      metadata,
       amount_total,
     } = data
     const info
@@ -89,6 +82,8 @@ export class WebhookService {
     }
     const checkout = await this.checkoutRepository.getById(id)
     const userId = _.get(checkout, 'userId')
+    const metadata: any = _.get(checkout, 'metadata')
+    const payment = metadata?.payment || null
     const { customer, created, currency } = info
     const body = {
       id: subscriptionId,
@@ -99,6 +94,7 @@ export class WebhookService {
       metadata,
       userId,
       customer: typeof customer === 'string' ? customer : customer.id,
+      payment,
     }
     await this.subscriptionRepository.upsertById(subscriptionId, body)
     return this.saveSuccessChargeToCheckout(

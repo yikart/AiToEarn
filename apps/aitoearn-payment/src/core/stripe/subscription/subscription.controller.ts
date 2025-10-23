@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
 import { IIsAdmin } from '@yikart/stripe'
-import { UnsubscribeDto } from './subscription.dto'
+import { GetVipSubscribeByUserIdDto, UnsubscribeDto } from './subscription.dto'
 import { SubscriptionService } from './subscription.service'
 
 @Controller('subscription')
@@ -23,6 +23,13 @@ export class SubscriptionController {
     @Payload() body: UnsubscribeDto,
   ) {
     return this.subscriptionService.unsubscribe(body)
+  }
+
+  @NatsMessagePattern('payment.getVipSubscribeByUserId')
+  async getVipSubscribeByUserId(
+    @Payload() body: GetVipSubscribeByUserIdDto,
+  ) {
+    return this.subscriptionService.getVipSubscribeByUserId(body)
   }
 
   @NatsMessagePattern('admin.payment.subscription')
