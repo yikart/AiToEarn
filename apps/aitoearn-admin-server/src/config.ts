@@ -33,6 +33,7 @@ export const configSchema = z.object({
   environment: z.string().default('development'),
   redis: redisConfigSchema,
   mongodb: mongodbConfigSchema,
+  statisticsDb: mongodbConfigSchema,
   awsS3: s3ConfigSchema,
   userServer: userServerConfigSchema,
   jwt: jwtConfigSchema,
