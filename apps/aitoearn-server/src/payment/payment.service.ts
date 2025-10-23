@@ -139,6 +139,7 @@ export class PaymentService {
           VipStatus.none,
         )
       default:
+        return void 0
     }
   }
 
