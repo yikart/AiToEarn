@@ -13,7 +13,7 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
-    "@yikart/common": "*",
+    "@yikart/common": "workspace:*",
     "zod": "^4.0.0"
   },
   "dependencies": {

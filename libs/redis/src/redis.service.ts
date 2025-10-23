@@ -1,5 +1,5 @@
-import type { Redis } from 'ioredis'
 import { Injectable } from '@nestjs/common'
+import { Redis } from 'ioredis'
 
 @Injectable()
 export class RedisService {
@@ -10,9 +10,16 @@ export class RedisService {
    */
   async set(key: string, value: string, seconds?: number): Promise<boolean> {
     if (!seconds)
-      return !!(await this.client.set(key, value))
+      return (await this.client.set(key, value)) === 'OK'
 
-    return !!(await this.client.set(key, value, 'EX', seconds))
+    return (await this.client.set(key, value, 'EX', seconds)) === 'OK'
+  }
+
+  async setNx(key: string, value: string, seconds?: number): Promise<boolean> {
+    if (!seconds)
+      return (await this.client.set(key, value, 'NX')) === 'OK'
+
+    return (await this.client.set(key, value, 'EX', seconds, 'NX')) === 'OK'
   }
 
   /**
@@ -59,5 +66,13 @@ export class RedisService {
   async ttl(key: string): Promise<number> {
     const data = await this.client.pttl(key)
     return data
+  }
+
+  async eval(...args: [
+    script: string | Buffer,
+    numkeys: number | string,
+    ...args: (string | Buffer | number)[],
+  ]) {
+    return this.client.eval(...args)
   }
 }
