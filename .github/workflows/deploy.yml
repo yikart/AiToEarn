@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Checkout source code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -119,7 +119,7 @@ jobs:
           repositories: k8s-apps
 
       - name: Clone Helm repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: ${{ env.HELM_REPO }}
           token: ${{ steps.generate-token.outputs.token }}

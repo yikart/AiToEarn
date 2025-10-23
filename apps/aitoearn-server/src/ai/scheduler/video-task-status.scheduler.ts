@@ -3,6 +3,7 @@ import { Cron, CronExpression } from '@nestjs/schedule'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { VideoService } from '../core/video'
 import { DashscopeService } from '../libs/dashscope'
+import { Sora2Service } from '../libs/sora2'
 import { VolcengineService } from '../libs/volcengine'
 
 @Injectable()
@@ -14,6 +15,7 @@ export class VideoTaskStatusScheduler {
     private readonly videoService: VideoService,
     private readonly dashscopeService: DashscopeService,
     private readonly volcengineService: VolcengineService,
+    private readonly sora2Service: Sora2Service,
   ) {}
 
   /**
@@ -60,6 +62,10 @@ export class VideoTaskStatusScheduler {
     else if (channel === AiLogChannel.Volcengine) {
       const result = await this.volcengineService.getVideoGenerationTask(taskId)
       await this.videoService.volcengineCallback(result)
+    }
+    else if (channel === AiLogChannel.Sora2) {
+      const result = await this.sora2Service.getVideoGenerationTask(taskId)
+      await this.videoService.sora2Callback(result)
     }
     else {
       this.logger.warn(`任务 ${task.id} 未知的 channel: ${channel}，跳过检查`)

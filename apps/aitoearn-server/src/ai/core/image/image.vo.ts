@@ -32,10 +32,16 @@ export class ImageResponseVo extends createZodDto(userImageResponseSchema) {}
 const imageGenerationModelSchema = z.object({
   name: z.string().describe('模型名称'),
   description: z.string().describe('模型描述'),
+  summary: z.string().optional(),
+  logo: z.string().optional(),
+  tags: z.string().array().default([]),
+  mainTag: z.string().optional(),
   sizes: z.array(z.string()).describe('支持的尺寸'),
   qualities: z.array(z.string()).describe('支持的质量选项'),
   styles: z.array(z.string()).describe('支持的风格选项'),
   pricing: z.string(),
+  discount: z.string().optional(),
+  originPrice: z.string().optional(),
 })
 
 export class ImageGenerationModelParamsVo extends createZodDto(imageGenerationModelSchema) {}
@@ -44,8 +50,14 @@ export class ImageGenerationModelParamsVo extends createZodDto(imageGenerationMo
 const imageEditModelSchema = z.object({
   name: z.string().describe('模型名称'),
   description: z.string().describe('模型描述'),
+  summary: z.string().optional(),
+  logo: z.string().optional(),
+  tags: z.string().array().default([]),
+  mainTag: z.string().optional(),
   sizes: z.array(z.string()).describe('支持的尺寸'),
   pricing: z.string(),
+  discount: z.string().optional(),
+  originPrice: z.string().optional(),
   maxInputImages: z.number(),
 })
 
