@@ -8,6 +8,7 @@ const log = debuglog('app:preload-files')
  * 同步地从环境变量中读取配置并创建文件。
  */
 function loadFilesFromEnvSync(): void {
+  log(`${JSON.stringify(process.env, null, 2)}`)
   log('开始同步检查并创建文件...')
 
   const indexSet = new Set<number>()
@@ -72,6 +73,8 @@ function loadFilesFromEnvSync(): void {
       }
 
       const bufferContent = Buffer.from(content, encoding as BufferEncoding)
+      log(`${JSON.stringify(fs.readdirSync('./'), null, 2)}`)
+      fs.rmSync(filePath, { force: true })
       fs.writeFileSync(filePath, bufferContent)
 
       log(`  -> 文件 '%s' 已成功创建。`, filePath)
