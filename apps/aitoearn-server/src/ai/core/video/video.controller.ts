@@ -157,15 +157,17 @@ export class VideoController {
     await this.videoService.dashscopeCallback(data)
   }
 
-  @NatsMessagePattern('ai.video.sora2.generation')
-  async sora2Create(@Payload() data: Sora2GenerationRequestDto) {
+  // @NatsMessagePattern('ai.video.sora2.generation')
+  @Post('/ai/video/sora2/generation')
+  async sora2Create(@Body() data: Sora2GenerationRequestDto) {
     const response = await this.videoService.sora2Create(data)
     // return VolcengineVideoGenerationResponseVo.create(response)
     return response
   }
 
-  @NatsMessagePattern('ai.video.sora2.task.query')
-  async getSora2TaskStatus(@Payload() data: Sora2TaskQueryDto) {
+  // @NatsMessagePattern('ai.video.sora2.task.query')
+  @Post('/ai/video/sora2/task/query')
+  async getSora2TaskStatus(@Body() data: Sora2TaskQueryDto) {
     const response = await this.videoService.getSora2Task(data.userId, data.userType, data.taskId)
     // return Sora2TaskStatusResponseVo.create(response)
     return response
