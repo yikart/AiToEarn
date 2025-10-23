@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
+import { UserType } from '@yikart/common'
+import OpenAI from 'openai'
 import { ChatModelConfigVo, ChatModelsQueryDto, ChatService, UserChatCompletionDto } from './core/chat'
 import { FireflycardResponseVo, ImageEditModelParamsVo, ImageEditModelsQueryDto, ImageGenerationModelParamsVo, ImageGenerationModelsQueryDto, ImageResponseVo, ImageService, Md2CardResponseVo, UserFireflyCardDto, UserImageEditDto, UserImageGenerationDto, UserMd2CardDto } from './core/image'
 import { LogListQueryDto, LogListResponseVo, LogsService } from './core/logs'
@@ -6,6 +8,7 @@ import { DashscopeImage2VideoRequestDto, DashscopeKeyFrame2VideoRequestDto, Dash
 
 @Injectable()
 export class AiService {
+  private readonly logger = new Logger(AiService.name)
   constructor(
     private readonly chatService: ChatService,
     private readonly logsService: LogsService,
@@ -241,5 +244,203 @@ export class AiService {
   async getDashscopeTaskStatus(request: DashscopeTaskQueryDto) {
     const response = await this.videoService.getDashscopeTask(request.userId, request.userType, request.taskId)
     return DashscopeTaskStatusResponseVo.create(response)
+  }
+
+  // 智能图片文案
+  async imgContentByAi(user: { userId: string, userType: UserType }, model: string, imgUrl: string, prompt: string, option: {
+    title?: string
+    desc?: string
+    max?: number
+    language?: string
+  }): Promise<string> {
+    const { userId, userType } = user
+
+    const systemContent = `Generate copy based on the pictures and prompt words, as well as the reference titles and contents. Reply in ${option.language || 'English'}. The reply should not exceed ${option.max || 100} characters. Just return the copy.`
+    let text = `prompt${prompt}.`
+    if (option.title)
+      text += `Reference Title: ${option.title}`
+    if (option.desc)
+      text += `Reference description: ${option.desc}`
+
+    const request: UserChatCompletionDto = {
+      userId,
+      userType,
+      model,
+      messages: [
+        {
+          role: 'system',
+          content: systemContent,
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image_url',
+              image_url: {
+                url: imgUrl,
+              },
+            },
+            {
+              type: 'text',
+              text,
+            },
+          ],
+        },
+      ],
+    }
+
+    try {
+      const res = await this.userAiChat(request)
+      return res.content as string || ''
+    }
+    catch (error) {
+      this.logger.log({ data: error, path: '======= imgContentByAi error =======' })
+      return ''
+    }
+  }
+
+  // 智能视频文案
+  async videoContentByAi(user: { userId: string, userType: UserType }, model: string, videoUrl: string, prompt: string, option: {
+    title?: string
+    desc?: string
+    max?: number
+    language?: string
+  }): Promise<string> {
+    const { userId, userType } = user
+
+    const systemContent = `Generate copy based on the video and prompt words, as well as the reference titles and contents. Reply in ${option.language || 'English'}. The reply should not exceed ${option.max || 100} characters. Just return the copy.`
+    let text = `prompt${prompt}.`
+    if (option.title)
+      text += `Reference Title: ${option.title}`
+    if (option.desc)
+      text += `Reference description: ${option.desc}`
+
+    const request: UserChatCompletionDto = {
+      userId,
+      userType,
+      model,
+      messages: [
+        {
+          role: 'system',
+          content: systemContent,
+        },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'video',
+              video_url: {
+                url: videoUrl,
+              },
+            },
+            {
+              type: 'text',
+              text,
+            },
+          ],
+        },
+      ],
+    }
+
+    const res = await this.userAiChat(request)
+    return res.content as string || ''
+  }
+
+  // 根据图片返回文字内容
+  async getContentByAi(user: { userId: string, userType: UserType }, model: string, prompt: string, option: {
+    coverUrl?: string
+    title?: string
+    desc?: string
+    max?: number
+    language?: string
+  }): Promise<string> {
+    const { userId, userType } = user
+    if (!option.desc && !option.coverUrl)
+      return ''
+
+    const systemContent = `Based on the cover image, refer to the title and the original content to generate beautiful copy. Reply in ${option.language || 'English'} and the content of your reply should not exceed ${option.max || 100} words. Just return the copy`
+
+    let text = `prompt${prompt}.`
+    if (option.title)
+      text += `Reference Title: ${option.title}`
+    if (option.desc)
+      text += `Reference description: ${option.desc}`
+
+    const content: OpenAI.Chat.Completions.ChatCompletionContentPart[] = [
+      {
+        type: 'text',
+        text,
+      },
+    ]
+
+    if (option.coverUrl) {
+      content.push({
+        type: 'image_url',
+        image_url: {
+          url: option.coverUrl,
+        },
+      })
+    }
+    const request: UserChatCompletionDto = {
+      userId,
+      userType,
+      model,
+      messages: [
+        {
+          role: 'system',
+          content: systemContent,
+        },
+        {
+          role: 'user',
+          content,
+        },
+      ],
+    }
+
+    const res = await this.userAiChat(request)
+    return res.content as string || ''
+  }
+
+  // 根据图片返回文字内容
+  async getTitleByAi(user: { userId: string, userType: UserType }, model: string, desc: string, option: {
+    title?: string
+    max?: number
+    language?: string
+  }): Promise<string> {
+    const { userId, userType } = user
+    if (!desc)
+      return ''
+
+    const systemContent = `Generate the content title based on the reference title and the original content. Please reply in ${option.language || 'English'} and the content of your reply should not exceed  ${option.max || 100} words. Just return the title text`
+
+    let text = `Original content: ${desc}. `
+    if (option.title)
+      text += `Reference Title: ${option.title}`
+
+    const content: OpenAI.Chat.Completions.ChatCompletionContentPart[] = [
+      {
+        type: 'text',
+        text,
+      },
+    ]
+
+    const request: UserChatCompletionDto = {
+      userId,
+      userType,
+      model,
+      messages: [
+        {
+          role: 'system',
+          content: systemContent,
+        },
+        {
+          role: 'user',
+          content,
+        },
+      ],
+    }
+
+    const res = await this.userAiChat(request)
+    return res.content as string || ''
   }
 }
