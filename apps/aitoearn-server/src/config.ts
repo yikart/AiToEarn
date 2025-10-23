@@ -159,6 +159,16 @@ const moreApiConfigSchema = z.object({
   xhsCreatorUri: z.string().default(''),
 })
 
+const BullmqConnectionSchema = z.object({
+  host: z.string().default('127.0.0.1'),
+  port: z.number().default(6379),
+  password: z.string().default(''),
+  db: z.number().default(0),
+})
+const BullmqSchema = z.object({
+  connection: BullmqConnectionSchema,
+})
+
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
   fileHost: z.string().default('http://localhost:3000/api/file/'),
@@ -206,6 +216,7 @@ export const appConfigSchema = z.object({
   }),
   moreApi: moreApiConfigSchema,
   statisticsDb: mongodbConfigSchema,
+  bullmq: BullmqSchema,
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }

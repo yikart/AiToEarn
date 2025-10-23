@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { MailModule } from '@yikart/mail'
 import { MongodbModule } from '@yikart/mongodb'
@@ -23,6 +24,11 @@ import { UserModule } from './user/user.module'
     MongodbModule.forRoot(config.mongodb),
     RedisModule.forRoot(config.redis),
     MailModule.forRoot(config.mail),
+    BullModule.forRootAsync({
+      useFactory: () => {
+        return config.bullmq
+      },
+    }),
     ToolsModule,
     LogsModule,
     TransportsModule,
