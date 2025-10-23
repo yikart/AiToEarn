@@ -123,6 +123,9 @@
     "twitterImageSize": "Twitter image size cannot exceed 5MB",
     "twitterImageResolution": "Twitter image max resolution is 8192x8192",
     "youtubeResolutionSuggestion": "Recommended video resolution: 1920×1080 (16:9) or 1080×1920 (9:16).",
+    "youtubeVideoSize": "YouTube video size cannot exceed 256GB",
+    "youtubeVideoDuration": "YouTube video duration cannot exceed 12 hours",
+    "categoryRequired": "You must select a category!",
     "kwaiResolutionSuggestion": "Recommended video resolution: 1080x1920 (vertical).",
     "kwaiDurationSuggestion": "Recommended video duration: 15 seconds - 3 minutes."
   },
