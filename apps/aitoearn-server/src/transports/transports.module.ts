@@ -2,39 +2,22 @@ import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
 import { ChannelApiModule } from './channel/channelApi.module'
 import { ChannelBaseApi } from './channelBase.api'
-import { PaymentApi } from './payment/payment.api'
+import { PaymentNatsApi } from './payment/payment.natsApi'
 import { PaymentBaseApi } from './paymentBase.api'
-import { NotificationApi } from './task/notification.api'
-import { PortraitApi } from './task/portrait.api'
-import { RuleApi } from './task/rule.api'
-import { TaskApi } from './task/task.api'
-import { TaskPunishApi } from './task/taskPunish.api'
-import { UserTaskApi } from './task/user-task.api'
+import { TaskApiModule } from './task/taskApi.module'
 import { TaskBaseApi } from './taskBase.api'
 
 @Global()
 @Module({
-  imports: [HttpModule, ChannelApiModule],
+  imports: [HttpModule, ChannelApiModule, TaskApiModule],
   providers: [
     ChannelBaseApi,
     PaymentBaseApi,
     TaskBaseApi,
-    PaymentApi,
-    PortraitApi,
-    RuleApi,
-    TaskPunishApi,
-    UserTaskApi,
-    TaskApi,
-    NotificationApi,
+    PaymentNatsApi,
   ],
   exports: [
-    PaymentApi,
-    PortraitApi,
-    RuleApi,
-    TaskPunishApi,
-    UserTaskApi,
-    TaskApi,
-    NotificationApi,
+    PaymentNatsApi,
   ],
 })
 export class TransportsModule { }

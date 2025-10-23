@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { UserTaskNatsApi } from './api/user-task.natsApi'
+import { UserTaskNatsApi } from '../transports/task/api/user-task.natsApi'
 
 @Injectable()
 export class UserTaskService {
