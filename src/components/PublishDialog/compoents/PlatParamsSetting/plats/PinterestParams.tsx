@@ -50,8 +50,8 @@ const PinterestParams = memo(
       const [creatingBoard, setCreatingBoard] = useState(false);
 
       useEffect(() => {
-        getPinterestBoards();
-      }, [getPinterestBoards]);
+        getPinterestBoards(false, pubItem.account.id);
+      }, [getPinterestBoards, pubItem.account.id]);
 
       // 添加样式到页面
       useEffect(() => {
@@ -129,7 +129,7 @@ const PinterestParams = memo(
             message.success(t("messages.boardCreateSuccess"));
             setNewBoardName("");
             // 重新获取Board列表
-            await getPinterestBoards(true);
+            await getPinterestBoards(true, pubItem.account.id);
           } else {
             message.error(t("messages.boardCreateFailed"));
           }
