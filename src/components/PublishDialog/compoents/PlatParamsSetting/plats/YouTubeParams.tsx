@@ -30,8 +30,8 @@ const YouTubeParams = memo(
       );
 
       useEffect(() => {
-        getYouTubeCategories();
-      }, [getYouTubeCategories]);
+        getYouTubeCategories(pubItem.account.id);
+      }, [getYouTubeCategories, pubItem.account.id]);
 
       // 初始化YouTube参数
       useEffect(() => {
