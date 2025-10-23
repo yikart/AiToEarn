@@ -39,6 +39,7 @@ async function prepareContext(projectName, options = {}) {
   await resetDependencies(projects, contextDir, verbose)
   await generateConfig(projects, graph, contextDir, verbose)
   await copyAssets(contextDir, verbose)
+  // await copyConfig(contextDir, projectName, verbose)
 
   return {
     projectName,
@@ -301,6 +302,24 @@ async function copyAssets(contextDir, verbose = false) {
   }
   else if (verbose) {
     console.info(chalk.gray('未找到 assets 目录，跳过'))
+  }
+}
+
+async function copyConfig(contextDir, projectName, verbose = false) {
+  if (verbose)
+    console.info(chalk.yellow('复制 assets 目录...'))
+
+  const config = `apps/${projectName}/config/config.js`
+  if (await fs.pathExists(config)) {
+    const destPath = path.join(contextDir, 'config.js')
+    await fs.copy(config, destPath)
+    if (verbose)
+      console.info(chalk.gray(`  ${config} -> ${destPath}`))
+    if (verbose)
+      console.info(chalk.green('config 复制完成'))
+  }
+  else if (verbose) {
+    console.info(chalk.gray('未找到 config ，跳过'))
   }
 }
 

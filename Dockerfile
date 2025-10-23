@@ -20,6 +20,7 @@ COPY apps/ ./apps/
 COPY libs/ ./libs/
 COPY assets/ ./
 
+
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME
 
