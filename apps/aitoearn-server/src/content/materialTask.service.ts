@@ -1,3 +1,4 @@
+import { InjectQueue } from '@nestjs/bullmq'
 /*
  * @Author: nevin
  * @Date: 2024-06-17 19:19:15
@@ -7,16 +8,22 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, UserType } from '@yikart/common'
-import { MaterialStatus, MaterialTaskRepository } from '@yikart/mongodb'
+import { MaterialStatus, MaterialTaskRepository, MaterialType } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
+import { Queue } from 'bullmq'
 import { AiService } from '../ai/ai.service'
 import { ToolsService } from '../tools/tools.service'
-import { MaterialMedia, MaterialTask, MediaType, MediaUrlInfo, NewMaterial } from './common'
+import { MaterialMedia, MaterialTask, MediaType, MediaUrlInfo, NewMaterial, NewMaterialTask } from './common'
 import { CreateMaterialTaskDto } from './dto/material.dto'
 import { MaterialService } from './material.service'
 import { MaterialGroupService } from './materialGroup.service'
 import { MediaService } from './media.service'
+import { MediaGroupService } from './mediaGroup.service'
 
+const MaterialMediaTypeMap = new Map<MaterialType, MediaType>([
+  [MaterialType.VIDEO, MediaType.VIDEO],
+  [MaterialType.ARTICLE, MediaType.IMG],
+])
 @Injectable()
 export class MaterialTaskService {
   logger = new Logger(MaterialTaskService.name)
@@ -29,7 +36,81 @@ export class MaterialTaskService {
     readonly mediaService: MediaService,
     readonly materialService: MaterialService,
     private readonly materialGroupService: MaterialGroupService,
+    private readonly mediaGroupService: MediaGroupService,
+    @InjectQueue('bull_material_generate') private materialGenerateQueue: Queue,
   ) { }
+
+  /**
+   * 批量生成任务
+   * @param newData
+   * @returns
+   */
+  async createTask(data: NewMaterialTask) {
+    const { coverGroup, mediaGroups, type } = data
+    // 验证组不能为空组
+    if (coverGroup) {
+      const coverGroupIsEmpty = await this.mediaService.checkIsEmptyGroup(coverGroup)
+      if (coverGroupIsEmpty)
+        throw new AppException(1000, '封面组不能为空组')
+    }
+    if (mediaGroups && mediaGroups.length > 0) {
+      for (const mediaGroupId of mediaGroups) {
+        const mediaGroup = await this.mediaGroupService.getInfo(mediaGroupId)
+        if (!mediaGroup)
+          throw new AppException(1000, '媒体组不存在')
+
+        const needType = MaterialMediaTypeMap.get(type)
+        if (!needType)
+          throw new AppException(1000, '暂不支持该素材类型')
+        if (mediaGroup.type !== needType)
+          throw new AppException(1000, '媒体组类型错误')
+
+        const mediaGroupIsEmpty = await this.mediaService.checkIsEmptyGroup(mediaGroupId)
+
+        if (mediaGroupIsEmpty)
+          throw new AppException(1000, '内容组不能为空组')
+      }
+    }
+    const res = await this.addCreateMaterialTask(data)
+    return res
+  }
+
+  /**
+   * 生成任务结果预览
+   * @param newData
+   * @returns
+   */
+  async previewTask(taskId: string) {
+    const taskInfo = await this.getInfo(taskId)
+    if (!taskInfo)
+      throw new AppException(1, '任务信息不存在')
+
+    const res = await this.doCreateTask(taskInfo, true)
+    return res
+  }
+
+  /**
+   * 开始生成任务
+   * @param id
+   * @returns
+   */
+  async startTask(id: string) {
+    const taskInfo = await this.getInfo(id)
+    if (!taskInfo)
+      throw new AppException(1, '任务信息不存在')
+
+    // 开始任务
+    void this.materialGenerateQueue.add(
+      'start',
+      {
+        taskId: taskInfo.id,
+      },
+      // {
+      //   delay: 1000 * 60 * 5,
+      // },
+    )
+    return taskInfo._id
+  }
 
   /**
    * 生成媒体的二维数组

@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common'
+import { LogListResponseVo } from '../../ai.vo'
 import { LogDetailQueryDto, LogListQueryDto } from './logs.dto'
 import { LogsService } from './logs.service'
-import { LogDetailResponseVo, LogListResponseVo } from './logs.vo'
+import { LogDetailResponseVo } from './logs.vo'
 
 @Controller('/logs')
 export class LogsController {

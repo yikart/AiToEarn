@@ -5,9 +5,10 @@
  * @LastEditors: nevin
  * @Description: 工具模块
  */
-import { Module } from '@nestjs/common'
+import { Global, Module } from '@nestjs/common'
 import { ToolsService } from './tools.service'
 
+@Global()
 @Module({
   providers: [ToolsService],
   exports: [ToolsService],

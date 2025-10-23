@@ -29,6 +29,7 @@ import {
 } from './dto/material.dto'
 import { MaterialService } from './material.service'
 import { MaterialGroupService } from './materialGroup.service'
+import { MaterialTaskService } from './materialTask.service'
 
 @ApiTags('草稿')
 @Controller('material')
@@ -37,6 +38,7 @@ export class MaterialController {
     private readonly materialService: MaterialService,
     private readonly materialGroupService: MaterialGroupService,
     private readonly userService: UserService,
+    private readonly materialTaskService: MaterialTaskService,
   ) { }
 
   @ApiOperation({
@@ -71,7 +73,7 @@ export class MaterialController {
     @Body() body: CreateMaterialTaskDto,
   ) {
     await this.userService.checkUserVipRights(token.id)
-    const res = await this.materialService.createTask({
+    const res = await this.materialTaskService.createTask({
       ...body,
     })
     return res
@@ -83,7 +85,7 @@ export class MaterialController {
   })
   @Get('task/preview/:id')
   async previewTask(@Param('id') id: string) {
-    const res = await this.materialService.previewTask(id)
+    const res = await this.materialTaskService.previewTask(id)
     return res
   }
 
@@ -93,7 +95,7 @@ export class MaterialController {
   })
   @Get('task/start/:id')
   async startTask(@Param('id') id: string) {
-    const res = await this.materialService.startTask(id)
+    const res = await this.materialTaskService.startTask(id)
     return res
   }
 

@@ -1,7 +1,6 @@
 import * as fs from 'node:fs'
 import { Processor, WorkerHost } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
-import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { AnsibleService } from '@yikart/ansible'
 import { AppException, ResponseCode } from '@yikart/common'
 import { BrowserProfileRepository, CloudSpace, CloudSpaceRepository, CloudSpaceStatus } from '@yikart/mongodb'
@@ -9,6 +8,7 @@ import { Job } from 'bullmq'
 import * as yaml from 'js-yaml'
 import * as jwt from 'jsonwebtoken'
 import { config } from '../../config'
+import { UserService } from '../../user/user.service'
 import { QueueName } from '../common/enums'
 import { MultiloginAccountService } from '../core/multilogin-account'
 
@@ -25,7 +25,7 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
     private readonly browserProfileRepository: BrowserProfileRepository,
     private readonly multiloginAccountService: MultiloginAccountService,
     private readonly ansibleService: AnsibleService,
-    private readonly userClient: AitoearnUserClient,
+    private readonly userService: UserService,
   ) {
     super()
   }
@@ -92,7 +92,7 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
       },
     }
 
-    const user = await this.userClient.getUserInfoById({ id: cloudSpace.userId })
+    const user = await this.userService.getUserInfoById(cloudSpace.userId)
 
     if (!user) {
       throw new AppException(ResponseCode.UserNotFound)

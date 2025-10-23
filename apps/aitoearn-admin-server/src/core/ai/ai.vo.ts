@@ -182,7 +182,7 @@ export class LogItemVo extends createZodDto(logItemSchema) {}
 // 日志列表响应
 export class LogListResponseVo extends createPaginationVo(
   logItemSchema,
-  'LogListResponseVo',
+  'AdminLogListResponseVo',
 ) {}
 
 // 日志详情响应

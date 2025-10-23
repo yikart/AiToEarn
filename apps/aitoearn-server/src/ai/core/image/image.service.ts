@@ -1,11 +1,11 @@
 import path from 'node:path'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { AitoearnUserClient } from '@yikart/aitoearn-user-client'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
+import { PointsService } from '../../../user/points.service'
 import { FireflycardService } from '../../libs/fireflycard'
 import { Md2cardService } from '../../libs/md2card'
 import { OpenaiService } from '../../libs/openai'
@@ -34,10 +34,10 @@ export class ImageService {
     private readonly s3Service: S3Service,
     private readonly openaiService: OpenaiService,
     private readonly md2cardService: Md2cardService,
-    private readonly userClient: AitoearnUserClient,
     private readonly aiLogRepo: AiLogRepository,
+    private readonly pointsService: PointsService,
     private readonly modelsConfigService: ModelsConfigService,
-  ) {}
+  ) { }
 
   /**
    * 将 data uri 转换为 Uploadable
@@ -203,7 +203,7 @@ export class ImageService {
     description: string,
     metadata?: Record<string, unknown>,
   ): Promise<void> {
-    await this.userClient.deductPoints({
+    await this.pointsService.deductPoints({
       userId,
       amount,
       type: 'ai_service',
@@ -221,7 +221,7 @@ export class ImageService {
     description: string,
     metadata?: Record<string, unknown>,
   ): Promise<void> {
-    await this.userClient.addPoints({
+    await this.pointsService.addPoints({
       userId,
       amount,
       type: 'ai_service',
@@ -271,7 +271,7 @@ export class ImageService {
     })
 
     if (pricing > 0 && userType === UserType.User) {
-      const { balance } = await this.userClient.getPointsBalance({ userId })
+      const balance = await this.pointsService.getBalance(userId)
       if (balance < pricing) {
         throw new AppException(ResponseCode.UserPointsInsufficient)
       }
