@@ -29,6 +29,12 @@ import {
   LogListQueryDto,
   LogVo,
   Md2CardResponseVo,
+  ModelsConfigDto,
+  ModelsConfigVo,
+  Sora2GenerationRequestDto,
+  Sora2TaskQueryDto,
+  Sora2TaskStatusResponseVo,
+  Sora2VideoGenerationResponseVo,
   // Chat interfaces
   UserChatCompletionDto,
   UserFireflyCardDto,
@@ -228,5 +234,30 @@ export class AitoearnAiClient {
    */
   async getLogDetail(dto: LogDetailQueryDto): Promise<LogDetailVo> {
     return this.natsClient.send('ai.logs.detail', dto)
+  }
+
+  // ==================== Models Config Module Methods ====================
+
+  /**
+   * 获取模型配置
+   */
+  async getModelsConfig(): Promise<ModelsConfigVo> {
+    return this.natsClient.send('ai.models-config.get', {})
+  }
+
+  /**
+   * 保存模型配置
+   */
+  async saveModelsConfig(data: ModelsConfigDto): Promise<void> {
+    return this.natsClient.send('ai.models-config.save', data)
+  }
+
+  // Sora2 相关方法
+  async generateSora2Video(data: Sora2GenerationRequestDto): Promise<Sora2VideoGenerationResponseVo> {
+    return this.natsClient.send('ai.video.sora2.generation', data)
+  }
+
+  async getSora2TaskStatus(data: Sora2TaskQueryDto): Promise<Sora2TaskStatusResponseVo> {
+    return this.natsClient.send('ai.video.sora2.task.query', data)
   }
 }

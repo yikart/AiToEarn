@@ -1,7 +1,7 @@
 {
   "name": "@yikart/aitoearn-ai-client",
   "type": "commonjs",
-  "version": "0.0.13",
+  "version": "0.0.16",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"

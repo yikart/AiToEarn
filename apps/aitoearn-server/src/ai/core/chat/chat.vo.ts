@@ -32,21 +32,32 @@ const chatCompletionVoSchema = z.object({
 
 export class ChatCompletionVo extends createZodDto(chatCompletionVoSchema) {}
 
-// 图片编辑模型参数 VO
-const chatModelSchema = z.object({
+// 对话模型参数 VO
+export const chatModelSchema = z.object({
   name: z.string(),
   description: z.string(),
+  summary: z.string().optional(),
+  logo: z.string().optional(),
+  tags: z.string().array().default([]),
+  mainTag: z.string().optional(),
   inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
   outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
   pricing: z.union([
     z.object({
+      discount: z.string().optional(),
       prompt: z.string(),
+      originPrompt: z.string().optional(),
       completion: z.string(),
+      originCompletion: z.string().optional(),
       image: z.string().optional(),
+      originImage: z.string().optional(),
       audio: z.string().optional(),
+      originAudio: z.string().optional(),
     }),
     z.object({
       price: z.string(),
+      discount: z.string().optional(),
+      originPrice: z.string().optional(),
     }),
   ]),
 })

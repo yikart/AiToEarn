@@ -14,11 +14,10 @@ import pino from 'pino'
 import { z } from 'zod'
 import { GlobalExceptionFilter } from './filters'
 import { ResponseInterceptor } from './interceptors'
-import { CloudWatchLogger } from './loggers/cloud-watch.logger'
-import { ConsoleLogger } from './loggers/console.logger'
-import { FeishuLogger } from './loggers/feishu.logger'
+import { CloudWatchLogger, ConsoleLogger, FeishuLogger } from './loggers'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, zodToJsonSchemaOptions } from './utils'
+import './utils/load-file-from-env.util'
 
 z.config(z.locales.zhCN())
 

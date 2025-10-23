@@ -1,5 +1,28 @@
 import { Pagination, UserType } from '@yikart/common'
 
+// Models Config interfaces
+export interface ModelsConfigVo {
+  chat: Array<ChatModelConfigVo>
+  image: {
+    generation: Array<ImageGenerationModelParamsVo>
+    edit: Array<ImageEditModelParamsVo>
+  }
+  video: {
+    generation: Array<VideoGenerationModelParamsVo>
+  }
+}
+
+export interface ModelsConfigDto {
+  chat: Array<ChatModelConfigVo>
+  image: {
+    generation: Array<ImageGenerationModelParamsVo>
+    edit: Array<ImageEditModelParamsVo>
+  }
+  video: {
+    generation: Array<VideoGenerationModelParamsVo>
+  }
+}
+
 export enum AiLogType {
   Chat = 'chat',
   Image = 'image',
@@ -20,6 +43,7 @@ export enum AiLogChannel {
   Kling = 'kling',
   Volcengine = 'volcengine',
   Dashscope = 'dashscope',
+  Sora2 = 'sora2',
 }
 
 // Fireflycard 模板类型枚举
@@ -163,17 +187,29 @@ export interface FireflycardResponseVo {
 export interface ImageGenerationModelParamsVo {
   name: string
   description: string
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string
   sizes: string[]
   qualities: string[]
   styles: string[]
   pricing: string
+  discount?: string
+  originPrice?: string
 }
 
 export interface ImageEditModelParamsVo {
   name: string
   description: string
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string
   sizes: string[]
   pricing: string
+  discount?: string
+  originPrice?: string
   maxInputImages: number
 }
 
@@ -224,7 +260,7 @@ export enum VolcengineImageRole {
 export interface VideoGenerationRequestDto {
   model: string
   prompt: string
-  image?: string
+  image?: string | string[]
   image_tail?: string
   mode?: string
   size?: string
@@ -574,6 +610,56 @@ export interface VolcengineTaskStatusResponseVo {
   }
 }
 
+export enum VideoSize {
+  Large = 'large',
+  Small = 'small',
+}
+
+// Sora2 接口定义
+export enum Sora2TaskStatus {
+  Pending = 'pending',
+  Running = 'running',
+  Cancelled = 'cancelled',
+  Completed = 'completed',
+  Failed = 'failed',
+}
+
+export enum VideoOrientation {
+  Portrait = 'portrait',
+  Landscape = 'landscape',
+}
+
+export interface Sora2GenerationRequestDto {
+  userId: string
+  userType: UserType
+  model: string
+  images?: string[]
+  orientation: VideoOrientation
+  prompt: string
+  size: VideoSize
+  duration: 10 | 15
+}
+
+export interface Sora2TaskQueryDto {
+  userId: string
+  userType: UserType
+  taskId: string
+}
+
+export interface Sora2VideoGenerationResponseVo {
+  id: string
+  status: Sora2TaskStatus
+}
+
+export interface Sora2TaskStatusResponseVo {
+  id: string
+  status: Sora2TaskStatus
+  video_url?: string
+  thumbnail_url?: string
+  status_update_time: number
+  finish_reason?: string
+}
+
 export interface VideoTaskStatusResponseVo {
   task_id: string
   action: string
@@ -589,11 +675,15 @@ export interface VideoTaskStatusResponseVo {
 export interface VideoGenerationModelParamsVo {
   name: string
   description: string
-  modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video')[]
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string
+  modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video' | 'multi-image2video')[]
   channel: AiLogChannel
   resolutions: string[]
   durations: number[]
-  supportedParameters: ('image' | 'image_tail')[]
+  supportedParameters: string[]
   defaults?: {
     resolution?: string
     aspectRatio?: string
@@ -606,6 +696,8 @@ export interface VideoGenerationModelParamsVo {
     mode?: string
     duration?: number
     price: number
+    discount?: string
+    originPrice?: number
   }>
 }
 
@@ -718,15 +810,26 @@ export interface ChatCompletionVo {
 export interface ChatModelConfigVo {
   name: string
   description: string
+  summary?: string
+  logo?: string
+  tags: string[]
+  mainTag?: string
   inputModalities: ('text' | 'image' | 'video' | 'audio')[]
   outputModalities: ('text' | 'image' | 'video' | 'audio')[]
   pricing: {
+    discount?: string
     prompt: string
+    originPrompt?: string
     completion: string
+    originCompletion?: string
     image?: string
+    originImage?: string
     audio?: string
+    originAudio?: string
   } | {
     price: string
+    discount?: string
+    originPrice?: string
   }
 }
 

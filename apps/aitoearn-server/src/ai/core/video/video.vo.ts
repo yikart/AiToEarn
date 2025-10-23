@@ -4,6 +4,7 @@ import { z } from 'zod'
 import {
   TaskStatus as DashscopeTaskStatus,
 } from '../../libs/dashscope'
+import { TaskStatus as Sora2TaskStatus } from '../../libs/sora2'
 
 // Kling视频生成响应
 const klingVideoGenerationResponseSchema = z.object({
@@ -104,8 +105,12 @@ export class ListVideoTasksResponseVo extends createPaginationVo(videoTaskStatus
 const videoGenerationModelSchema = z.object({
   name: z.string().describe('模型名称'),
   description: z.string().describe('模型描述'),
+  summary: z.string().optional(),
+  logo: z.string().optional(),
+  tags: z.string().array().default([]),
+  mainTag: z.string().optional(),
   channel: z.enum(AiLogChannel),
-  modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video'])),
+  modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video'])),
   resolutions: z.array(z.string()).describe('支持的尺寸'),
   durations: z.array(z.number()).describe('支持的时长'),
   supportedParameters: z.array(z.string()).describe('支持的参数'),
@@ -121,6 +126,8 @@ const videoGenerationModelSchema = z.object({
     mode: z.string().optional(),
     duration: z.number().optional(),
     price: z.number(),
+    discount: z.string().optional(),
+    originPrice: z.number().optional(),
   }).array(),
 })
 
@@ -158,3 +165,13 @@ const dashscopeTaskStatusResponseSchema = z.object({
 })
 
 export class DashscopeTaskStatusResponseVo extends createZodDto(dashscopeTaskStatusResponseSchema) {}
+
+const sora2TaskStatusResponseSchema = z.object({
+  id: z.string(),
+  status: z.enum(Sora2TaskStatus),
+  video_url: z.string(),
+  status_update_time: z.number(),
+  finish_reason: z.string(),
+})
+
+export class Sora2TaskStatusResponseVo extends createZodDto(sora2TaskStatusResponseSchema) {}
