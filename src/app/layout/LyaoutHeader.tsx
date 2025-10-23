@@ -33,7 +33,6 @@ import LanguageSwitcher from "@/components/common/LanguageSwitcher";
 import {
   UserOutlined,
   FileTextOutlined,
-  WalletOutlined,
   GithubOutlined,
   LogoutOutlined,
   QuestionCircleOutlined,
@@ -56,17 +55,11 @@ function UserInfo() {
         href: `/profile`,
         label: t("profile"),
         icon: <UserOutlined />,
-        border: true,
       },
       {
         href: `/income`,
         label: t("header.income"),
         icon: <FileTextOutlined />,
-      },
-      {
-        href: `/wallet`,
-        label: t("header.wallet"),
-        icon: <WalletOutlined />,
         border: true,
       },
       {
@@ -124,7 +117,7 @@ function UserInfo() {
             <div className="layoutHeaderMenu-head">
               <div className="layoutHeaderMenu-head-info">
                 <span className="layoutHeaderMenu-head-info-name">
-                  {userInfo.name}
+                  {userInfo?.name || t("unknownUser")}
                 </span>
                 <span className="layoutHeaderMenu-head-info-mail">
                   {userInfo.mail}
@@ -166,12 +159,7 @@ function UserInfo() {
           </div>
         }
       >
-        <div className={styles["layoutHeader-userinfo"]}>
-          {avatar}
-          <div className={styles["layoutHeader-userinfo-name"]}>
-            {userInfo?.name || t("unknownUser")}
-          </div>
-        </div>
+        <div className={styles["layoutHeader-userinfo"]}>{avatar}</div>
       </Popover>
     </div>
   );
