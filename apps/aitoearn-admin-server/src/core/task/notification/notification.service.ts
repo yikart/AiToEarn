@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { NotificationRepository } from '@yikart/mongodb'
+import { NotificationApi } from '../../../transports/task/notification.api'
 import {
   AdminDeleteNotificationsDto,
   AdminQueryNotificationsDto,

@@ -1,6 +1,6 @@
 import { startApplication } from '@yikart/common'
-import { config } from '@/config'
 import { AppModule } from './app.module'
+import { config } from './config'
 
 startApplication(AppModule, config, {
   setupApp(app) {

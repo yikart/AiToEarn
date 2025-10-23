@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { TableDto, UserType } from '@yikart/common'
 import {
   Material,
   MaterialListByIdsFilter,

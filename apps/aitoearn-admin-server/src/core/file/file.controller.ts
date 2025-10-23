@@ -88,7 +88,7 @@ export class FileController {
   @Post('uploadPart/upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadPart(
-    @UploadedFile() file: Express.Multer.File,
+    @UploadedFile() file: any,
     @Query() query: UploadPartDto,
   ) {
     return await this.fileService.uploadPart(

@@ -75,7 +75,7 @@ export function filterTree<T extends TreeNode>(
 }
 
 export function deleteEmptyChildren(arr: any) {
-  arr?.forEach((node) => {
+  arr?.forEach((node: any) => {
     if (node.children?.length === 0)
       delete node.children
     else deleteEmptyChildren(node.children)

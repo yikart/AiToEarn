@@ -16,11 +16,10 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { TableDto } from 'src/common/dto/table.dto'
-import { MediaGroup } from 'src/transports/content/common'
-import { UserType } from '@/common'
-import { GetToken } from '@/common/auth/auth.guard'
-import { TokenInfo } from '@/common/auth/interfaces/auth.interfaces'
+import { TableDto, UserType } from '@yikart/common'
+import { MediaGroup } from '@yikart/mongodb'
+import { GetToken } from '../../common/auth/auth.guard'
+import { TokenInfo } from '../../common/auth/interfaces/auth.interfaces'
 import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto } from './dto/media.dto'
 import {
   CreateMediaGroupDto,
@@ -126,7 +125,7 @@ export class MediaController {
     const res = await this.mediaService.getList(
       { pageNo: 1, pageSize: 3 },
       userId,
-      group._id,
+      group.id,
     )
     return { ...group, mediaList: res }
   }
