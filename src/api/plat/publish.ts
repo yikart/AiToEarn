@@ -38,7 +38,7 @@ export const apiCreatePublish = (data: PublishParams) => {
 // 查询发布列表
 export const getPublishList = (data: GetPublishListParams) => {
   return request<PublishRecordItem[]>({
-    url: "plat/publish/getList",
+    url: "plat/publish/posts",
     method: "POST",
     data,
   });

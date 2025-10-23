@@ -14,7 +14,7 @@ import {
   PublishStatus,
 } from "@/api/plat/types/publish.types";
 import styles from "./recordCore.module.scss";
-import { AccountPlatInfoMap } from "@/app/config/platConfig";
+import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
@@ -109,7 +109,9 @@ const RecordCore = memo(
               key: "2",
               label: t("buttons.copyLink"),
               onClick: async () => {
-                await navigator.clipboard.writeText(publishRecord.workLink);
+                await navigator.clipboard.writeText(
+                  publishRecord?.workLink ?? "",
+                );
               },
             },
           ];
@@ -137,11 +139,13 @@ const RecordCore = memo(
       }, [publishRecord]);
 
       const account = useMemo(() => {
-        return accountAccountMap.get(publishRecord.accountId)!;
+        return accountAccountMap.get(publishRecord?.accountId ?? "");
       }, [accountAccountMap, publishRecord.accountId]);
 
       const platIcon = useMemo(() => {
-        return AccountPlatInfoMap.get(publishRecord.accountType)?.icon;
+        return AccountPlatInfoMap.get(
+          publishRecord?.accountType ?? PlatType.Xhs,
+        )?.icon;
       }, [publishRecord]);
 
       const recordInfo = useMemo(() => {
@@ -149,18 +153,22 @@ const RecordCore = memo(
           {
             label: t("record.metrics.views"),
             icon: <EyeOutlined />,
+            key: "viewCount",
           },
           {
             label: t("record.metrics.comments"),
             icon: <MessageOutlined />,
+            key: "commentCount",
           },
           {
             label: t("record.metrics.likes"),
             icon: <LikeOutlined />,
+            key: "likeCount",
           },
           {
             label: t("record.metrics.shares"),
             icon: <ShareAltOutlined />,
+            key: "shareCount",
           },
         ];
       }, [t]);
@@ -196,7 +204,9 @@ const RecordCore = memo(
                     {publishRecord.desc}
                   </div>
                   <div className="recordDetails-center-left-status">
-                    <PubStatus status={publishRecord.status} />
+                    {publishRecord.status && (
+                      <PubStatus status={publishRecord.status} />
+                    )}
                   </div>
                   <div
                     title={publishRecord.errorMsg}
@@ -240,7 +250,11 @@ const RecordCore = memo(
                         {v.icon}
                         <span>{v.label}</span>
                       </div>
-                      <div className="recordDetails-info-item-num">0</div>
+                      {publishRecord.engagement && (
+                        <div className="recordDetails-info-item-num">
+                          {publishRecord.engagement[v.key as "viewCount"] ?? 0}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

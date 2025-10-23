@@ -62,7 +62,7 @@ const CalendarRecord = memo(
               .second(oldDate.second())
               .millisecond(oldDate.millisecond());
 
-            item.publishRecord.publishTime = mergedDate.toDate();
+            item.publishRecord["publishTime"] = mergedDate.toDate();
 
             // 移除旧数据
             newRecordMap.set(

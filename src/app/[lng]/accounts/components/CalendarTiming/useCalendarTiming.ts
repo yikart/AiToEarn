@@ -53,7 +53,9 @@ export const useCalendarTiming = create(
         async getPubRecord(status?: number) {
           try {
             methods.setListLoading(true);
-            const date = getDays(get().calendarRef?.getApi().getDate() || new Date());
+            const date = getDays(
+              get().calendarRef?.getApi().getDate() || new Date(),
+            );
             const startOfMonth = date.startOf("month");
             const endOfMonth = date.endOf("month");
 
@@ -63,14 +65,14 @@ export const useCalendarTiming = create(
               status: status,
             });
             methods.setListLoading(false);
-            
+
             // 检查响应数据是否有效
             if (!res || !res.data || !Array.isArray(res.data)) {
-              console.warn('获取发布记录数据失败或数据格式不正确:', res);
+              console.warn("获取发布记录数据失败或数据格式不正确:", res);
               methods.setRecordMap(new Map());
               return;
             }
-            
+
             const recordMap = new Map<string, PublishRecordItem[]>();
             // 将数据分拣到对应天中
             res.data.map((v) => {
@@ -90,15 +92,15 @@ export const useCalendarTiming = create(
               if (list) {
                 list = list.sort(
                   (a, b) =>
-                    new Date(a.publishTime).getTime() -
-                    new Date(b.publishTime).getTime(),
+                    new Date(a?.publishTime ?? 0).getTime() -
+                    new Date(b?.publishTime ?? 0).getTime(),
                 );
                 recordMap.set(k, list);
               }
             });
             methods.setRecordMap(recordMap);
           } catch (error) {
-            console.error('获取发布记录数据时发生错误:', error);
+            console.error("获取发布记录数据时发生错误:", error);
             methods.setListLoading(false);
             methods.setRecordMap(new Map());
           }

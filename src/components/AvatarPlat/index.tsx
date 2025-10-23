@@ -9,7 +9,7 @@ import { OSS_URL } from "@/constant";
 export interface IAvatarPlatRef {}
 
 export interface IAvatarPlatProps {
-  account: SocialAccount;
+  account?: SocialAccount;
   size?: AvatarSize;
   className?: string;
   width?: number;

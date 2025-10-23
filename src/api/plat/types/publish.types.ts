@@ -1,6 +1,5 @@
 import { PubType } from "@/app/config/publishConfig";
 import { PlatType } from "@/app/config/platConfig";
-import { IPlatOption } from "@/components/PublishDialog/publishDialog.type";
 
 export enum PublishStatus {
   FAIL = -1, // 发布失败
@@ -38,26 +37,45 @@ export interface GetPublishListParams {
   type?: PubType;
   status?: PublishStatus;
   time?: [string, string];
+  // internal=平台发布，native=原生发布
+  publishingChannel?: "internal" | "native";
 }
 
 // 发布记录item数据
 export interface PublishRecordItem {
-  dataId: string;
-  id: string;
+  userId: string;
   flowId: string;
-  workLink: string;
+  userTaskId: string;
+  taskId: string;
+  taskMaterialId: string;
   type: string;
   title: string;
   desc: string;
   accountId: string;
+  topics: string[];
   accountType: PlatType;
   uid: string;
-  updatedAt: string;
-  videoUrl?: string;
-  coverUrl?: string;
+  videoUrl: string;
+  coverUrl: string;
   imgUrlList: string[];
   publishTime: Date;
   status: PublishStatus;
+  inQueue: boolean;
+  dataId: string;
+  workLink: string;
+  createdAt: string;
+  updatedAt: string;
+  id: string;
   errorMsg: string;
-  option: any;
+  engagement?: PublishRecordEngagement;
+}
+
+export interface PublishRecordEngagement {
+  viewCount: number;
+  commentCount: number;
+  likeCount: number;
+  shareCount: number;
+  clickCount: number;
+  impressionCount: number;
+  favoriteCount: number;
 }
