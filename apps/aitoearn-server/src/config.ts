@@ -11,6 +11,7 @@ import { fireflycardConfigSchema } from './ai/libs/fireflycard'
 import { klingConfigSchema } from './ai/libs/kling'
 import { md2cardConfigSchema } from './ai/libs/md2card'
 import { openaiConfigSchema } from './ai/libs/openai'
+import { sora2ConfigSchema } from './ai/libs/sora2'
 import { volcengineConfigSchema } from './ai/libs/volcengine'
 
 // JWT配置
@@ -35,21 +36,32 @@ const mailConfigSchema = z.object({
   template: z.any().optional(),
 })
 
-const aiModelsConfigSchema = z.object({
+export const aiModelsConfigSchema = z.object({
   chat: z.array(z.object({
     name: z.string(),
     description: z.string(),
+    summary: z.string().optional(),
+    logo: z.string().optional(),
+    tags: z.string().array().default([]),
+    mainTag: z.string().optional(),
     inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     pricing: z.union([
       z.object({
+        discount: z.string().optional(),
         prompt: z.string(),
+        originPrompt: z.string().optional(),
         completion: z.string(),
+        originCompletion: z.string().optional(),
         image: z.string().optional(),
+        originImage: z.string().optional(),
         audio: z.string().optional(),
+        originAudio: z.string().optional(),
       }),
       z.object({
         price: z.string(),
+        discount: z.string().optional(),
+        originPrice: z.string().optional(),
       }),
     ]),
   })),
@@ -57,16 +69,28 @@ const aiModelsConfigSchema = z.object({
     generation: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      summary: z.string().optional(),
+      logo: z.string().optional(),
+      tags: z.string().array().default([]),
+      mainTag: z.string().optional(),
       sizes: z.array(z.string()),
       qualities: z.array(z.string()),
       styles: z.array(z.string()),
       pricing: z.string(),
+      discount: z.string().optional(),
+      originPrice: z.string().optional(),
     })),
     edit: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      summary: z.string().optional(),
+      logo: z.string().optional(),
+      tags: z.string().array().default([]),
+      mainTag: z.string().optional(),
       sizes: z.array(z.string()),
       pricing: z.string(),
+      discount: z.string().optional(),
+      originPrice: z.string().optional(),
       maxInputImages: z.number(),
     })),
   }),
@@ -74,8 +98,12 @@ const aiModelsConfigSchema = z.object({
     generation: z.array(z.object({
       name: z.string(),
       description: z.string(),
+      summary: z.string().optional(),
+      logo: z.string().optional(),
+      tags: z.string().array().default([]),
+      mainTag: z.string().optional(),
       channel: z.enum(AiLogChannel),
-      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video'])),
+      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video'])),
       resolutions: z.array(z.string()),
       durations: z.array(z.number()),
       supportedParameters: z.array(z.string()),
@@ -91,6 +119,8 @@ const aiModelsConfigSchema = z.object({
         mode: z.string().optional(),
         duration: z.number().optional(),
         price: z.number(),
+        discount: z.string().optional(),
+        originPrice: z.number().optional(),
       }).array(),
     })),
   }),
@@ -113,6 +143,7 @@ export const aiConfigSchema = z.object({
     ...dashscopeConfigSchema.shape,
     callbackUrl: z.string().optional(),
   }),
+  sora2: sora2ConfigSchema,
 })
 
 const AliGreenConfigSchema = z.object({

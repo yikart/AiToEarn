@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { AppConfigRepository } from '@yikart/mongodb'
-import { config } from '../../config'
+import { config } from '../../../config'
 import { ModelsConfigDto } from './models-config.dto'
 
 @Injectable()
