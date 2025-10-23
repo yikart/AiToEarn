@@ -14,11 +14,11 @@ ARG APP_NAME
 
 WORKDIR /app
 
+COPY assets/ ./
 COPY --from=deps /app/ ./
 
 COPY apps/ ./apps/
 COPY libs/ ./libs/
-COPY assets/ ./
 
 
 ENV NODE_ENV=production
