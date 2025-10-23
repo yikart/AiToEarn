@@ -35,7 +35,6 @@ const ThreadsParams = memo(
               option: {
                 ...option,
                 threads: {
-                    location_id: null,
                 },
               },
             },
@@ -88,16 +87,27 @@ const ThreadsParams = memo(
 
       // 处理位置选择
       const handleLocationChange = (locationId: string) => {
+        
         const selectedLocation = locations.find(loc => loc.id === locationId);
         const option = pubItem.params.option;
+        
+        // 构建 threads 对象，如果没有选择位置则不包含 location_id
+        const threadsOption = {
+          ...option.threads,
+        };
+        
+        if (selectedLocation?.id) {
+          threadsOption.location_id = selectedLocation.id;
+        } else {
+          // 如果没有选择位置，删除 location_id 属性
+          delete threadsOption.location_id;
+        }
+        
         setOnePubParams(
           {
             option: {
               ...option,
-              threads: {
-                ...option.threads,
-                location_id: selectedLocation?.id || null,
-              },
+              threads: threadsOption,
             },
           },
           pubItem.account.id,
