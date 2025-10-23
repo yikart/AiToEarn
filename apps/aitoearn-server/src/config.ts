@@ -3,6 +3,7 @@ import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
 import { AiLogChannel, mongodbConfigSchema } from '@yikart/mongodb'
 import { oneSignalConfigSchema } from '@yikart/one-signal'
+import { redisConfigSchema } from '@yikart/redis'
 import { redlockConfigSchema } from '@yikart/redlock'
 import { ucloudConfigSchema } from '@yikart/ucloud'
 import z from 'zod'
@@ -165,15 +166,7 @@ export const appConfigSchema = z.object({
     imageId: z.string(),
     bundleId: z.string(),
   }),
-  redis: z.object({
-    host: z.string().optional(),
-    port: z.number().optional(),
-    keepAlive: z.number().optional(),
-    username: z.string().optional(),
-    password: z.string().optional(),
-    db: z.number().optional(),
-    connectTimeout: z.number().optional().default(10000),
-  }),
+  redis: redisConfigSchema,
   multilogin: z.object({
     launcherBaseUrl: z.string().default('https://launcher.mlx.yt:45001'),
     profileBaseUrl: z.string().default('https://api.multilogin.com'),

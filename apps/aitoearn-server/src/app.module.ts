@@ -19,7 +19,7 @@ import { UserModule } from './user/user.module'
 @Module({
   imports: [
     MongodbModule.forRoot(config.mongodb),
-    RedisModule.register(config.redis),
+    RedisModule.forRoot(config.redis),
     MailModule.forRoot(config.mail),
     TransportsModule,
     AuthModule,

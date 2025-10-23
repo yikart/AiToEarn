@@ -10,7 +10,7 @@ import { TransportsModule } from './transports/transports.module'
 @Module({
   imports: [
     TaskDbModule.forRoot(config.taskDb),
-    RedisModule.register(config.redis),
+    RedisModule.forRoot(config.redis),
     BullModule.forRoot({
       connection: config.bullmq.connection,
     }),
