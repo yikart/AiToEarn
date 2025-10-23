@@ -9,7 +9,7 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
-import { ICheckoutMode, ICheckoutStatus, IFlagTrialPeriodDays, IMetadata, IPayment, IPaymentStatus, IWebhookType } from '../api/comment'
+import { ICheckoutMode, ICheckoutStatus, IFlagTrialPeriodDays, IMetadata, IPayment, IPaymentStatus, IWebhookType } from '../../transports/payment/common'
 
 export class LineItemsDto {
   @IsString({ message: '价格id' })

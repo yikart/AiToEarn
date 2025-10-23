@@ -1,7 +1,6 @@
 import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
-import { ExceptionCode } from '../common'
 import { config } from '../config'
 
 @Injectable()
@@ -16,7 +15,7 @@ export class PaymentBaseApi {
       data: T
       timestamp: number
     }>(`${config.channelApi.baseUrl}/${path}`, body)
-    if (res.data.code !== ExceptionCode.Success) {
+    if (res.data.code !== 0) {
       this.logger.error({ path, ...res })
       throw new AppException(res.data.code, res.data.message)
     }

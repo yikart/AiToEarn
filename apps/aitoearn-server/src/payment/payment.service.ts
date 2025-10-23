@@ -4,11 +4,11 @@ import { VipStatus } from '@yikart/mongodb'
 import * as _ from 'lodash'
 import { AccountGroupService } from '../account/accountGroup.service'
 import { CloudSpaceService } from '../cloud/core/cloud-space'
+import { ICheckoutMode, ICheckoutStatus, IFlagTrialPeriodDays, IPayment, IPaymentStatus, IPaymentToUserVip, IPointsDescription } from '../transports/payment/common'
+import { PaymentNatsApi } from '../transports/payment/payment.natsApi'
 import { PointsService } from '../user/points.service'
 import { UserService } from '../user/user.service'
 import { VipService } from '../user/vip.service'
-import { ICheckoutMode, ICheckoutStatus, IFlagTrialPeriodDays, IPayment, IPaymentStatus, IPaymentToUserVip, IPointsDescription } from './api/comment'
-import { PaymentNatsApi } from './api/payment.natsApi'
 import {
   CheckoutBodyDto,
   CheckoutDto,
@@ -31,7 +31,7 @@ export class PaymentService {
     private readonly accountGroupService: AccountGroupService,
     private readonly userService: UserService,
 
-  ) {}
+  ) { }
 
   // 获取订单
   async getById(id: string, userId: string) {

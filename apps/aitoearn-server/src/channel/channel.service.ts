@@ -1,33 +1,28 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { AccountStatus } from '@yikart/mongodb'
-import { config } from '../config'
+import { ChannelApi } from '../transports/channel/channel.api'
 
 @Injectable()
 export class ChannelService {
   constructor(
-    private readonly httpService: HttpService,
+    private readonly channelApi: ChannelApi,
   ) { }
 
   /**
-   * TODO: 获取用户账号列表
+   * 获取用户账号列表
    * @param userId
    */
-  async getUserAccounts(
-    userId: string,
-  ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/account/portrait/report`,
+  async getUserAccounts(userId: string) {
+    const res = await this.channelApi.getUserAccounts(
       { userId },
     )
-    return res.data
+    return res
   }
 
   async updateChannelAccountStatus(userId: string, status: AccountStatus) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.channel.baseUrl}/account/portrait/report`,
+    const res = await this.channelApi.updateChannelAccountStatus(
       { userId, status },
     )
-    return res.data
+    return res
   }
 }

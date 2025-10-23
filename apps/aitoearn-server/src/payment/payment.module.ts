@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
 import { CloudSpaceModule } from '../cloud/core/cloud-space'
-import { PaymentNatsApi } from './api/payment.natsApi'
 import { PaymentController } from './payment.controller'
 import { PaymentService } from './payment.service'
 
@@ -12,7 +11,7 @@ import { PaymentService } from './payment.service'
     CloudSpaceModule,
   ],
   controllers: [PaymentController],
-  providers: [PaymentService, PaymentNatsApi],
+  providers: [PaymentService],
   exports: [PaymentService],
 })
 export class PaymentModule { }

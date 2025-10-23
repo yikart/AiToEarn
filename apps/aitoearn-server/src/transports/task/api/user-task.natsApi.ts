@@ -1,15 +1,10 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
-import { config } from '../../config'
+import { TaskBaseApi } from '../../taskBase.api'
 import { UserTask } from './common'
 
 @Injectable()
-export class UserTaskNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class UserTaskNatsApi extends TaskBaseApi {
   /**
    * 获取用户任务列表
    * @param page 分页
@@ -17,14 +12,14 @@ export class UserTaskNatsApi {
    * @returns 用户任务列表
    */
   async getUserTaskList(page: TableDto, filter: { userId: string, status?: string }) {
-    const res = await this.httpService.axiosRef.post<any[]>(
-      `${config.task.baseUrl}/task/userTask/list`,
+    const res = await this.sendMessage<any[]>(
+      `task/userTask/list`,
       {
         page,
         filter,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -33,13 +28,13 @@ export class UserTaskNatsApi {
    * @returns 信息
    */
   async getUserTaskInfo(id: string) {
-    const res = await this.httpService.axiosRef.post<UserTask>(
-      `${config.task.baseUrl}/task/userTask/info`,
+    const res = await this.sendMessage<UserTask>(
+      `task/userTask/info`,
       {
         id,
       },
     )
-    return res.data
+    return res
   }
 
   /**
@@ -49,13 +44,13 @@ export class UserTaskNatsApi {
    * @returns 信息
    */
   async getUserTaskDetail(id: string, userId: string) {
-    const res = await this.httpService.axiosRef.post<UserTask>(
-      `${config.task.baseUrl}/task/userTask/detail`,
+    const res = await this.sendMessage<UserTask>(
+      `task/userTask/detail`,
       {
         id,
         userId,
       },
     )
-    return res.data
+    return res
   }
 }

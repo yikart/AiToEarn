@@ -15,11 +15,13 @@ import { PlatTiktokNatsApi } from './api/tiktok.natsApi'
 import { PlatTwitterNatsApi } from './api/twitter.natsApi'
 import { PlatWxGzhNatsApi } from './api/wxGzh.natsApi'
 import { PlatYoutubeNatsApi } from './api/youtube.natsApi'
+import { ChannelApi } from './channel.api'
 
 @Global()
 @Module({
   imports: [HttpModule],
   providers: [
+    ChannelApi,
     EngagementNatsApi,
     InteractNatsApi,
     InteractionRecordNatsApi,
@@ -37,6 +39,7 @@ import { PlatYoutubeNatsApi } from './api/youtube.natsApi'
     PlatYoutubeNatsApi,
   ],
   exports: [
+    ChannelApi,
     EngagementNatsApi,
     InteractNatsApi,
     InteractionRecordNatsApi,

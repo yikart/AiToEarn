@@ -1,13 +1,8 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
-import { config } from '../../config'
+import { TaskBaseApi } from '../../taskBase.api'
 
 @Injectable()
-export class TaskPortraitNatsApi {
-  constructor(
-    private readonly httpService: HttpService,
-  ) { }
-
+export class TaskPortraitNatsApi extends TaskBaseApi {
   /**
    * 用户数据上报
    */
@@ -24,10 +19,10 @@ export class TaskPortraitNatsApi {
     totalLikes?: number
     totalCollects?: number
   }) {
-    const res = await this.httpService.axiosRef.post<any>(
-      `${config.task.baseUrl}/task/userPortrait/report`,
+    const res = await this.sendMessage<any>(
+      `task/userPortrait/report`,
       { ...data, ...(data.lastLoginTime && { lastLoginTime: data.lastLoginTime.toISOString() }) },
     )
-    return res.data
+    return res
   }
 }

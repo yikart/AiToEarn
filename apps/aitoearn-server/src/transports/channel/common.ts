@@ -1,4 +1,4 @@
-import { AccountType } from '../account/comment'
+import { AccountType } from '@yikart/mongodb'
 
 export enum PublishType {
   VIDEO = 'video', // 视频
