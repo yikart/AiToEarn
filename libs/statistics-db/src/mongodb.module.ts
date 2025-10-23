@@ -1,7 +1,7 @@
 import type { MongodbConfig } from './mongodb.config'
 import { Global } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import mongoose, { Collection } from 'mongoose'
+import mongoose from 'mongoose'
 import { repositories } from './repositories'
 import { schemas } from './schemas'
 import { PostDatasSchema } from './schemas/authorData.schema'
