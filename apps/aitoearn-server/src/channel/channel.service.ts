@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { AccountStatus } from '@yikart/mongodb'
+import { config } from '../config'
 
 @Injectable()
 export class ChannelService {
@@ -16,7 +17,7 @@ export class ChannelService {
     userId: string,
   ) {
     const res = await this.httpService.axiosRef.post<any>(
-      'http://127.0.0.1:3000/api/account/portrait/report',
+      `${config.channel.baseUrl}/account/portrait/report`,
       { userId },
     )
     return res.data
@@ -24,7 +25,7 @@ export class ChannelService {
 
   async updateChannelAccountStatus(userId: string, status: AccountStatus) {
     const res = await this.httpService.axiosRef.post<any>(
-      'http://127.0.0.1:3000/api/account/portrait/report',
+      `${config.channel.baseUrl}/account/portrait/report`,
       { userId, status },
     )
     return res.data

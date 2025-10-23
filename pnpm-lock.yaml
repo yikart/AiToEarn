@@ -109,6 +109,88 @@ importers:
         specifier: ^8.8.1
         version: 8.8.1
 
+  apps/aitoearn-admin-server:
+    dependencies:
+      '@nestjs/axios':
+        specifier: ^4.0.1
+        version: 4.0.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(rxjs@7.8.2)
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core':
+        specifier: ^11.1.6
+        version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.6)(@nestjs/platform-express@11.1.6)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/jwt':
+        specifier: ^11.0.0
+        version: 11.0.1(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))
+      '@nestjs/platform-express':
+        specifier: ^11.1.6
+        version: 11.1.6(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)
+      '@nestjs/swagger':
+        specifier: ^11.2.0
+        version: 11.2.0(@nestjs/common@11.1.6(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.6)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      '@yikart/common':
+        specifier: workspace:*
+        version: link:../../libs/common
+      '@yikart/mongodb':
+        specifier: workspace:*
+        version: link:../../libs/mongodb
+      '@yikart/redis':
+        specifier: workspace:*
+        version: link:../../libs/redis
+      '@yikart/statistics-db':
+        specifier: workspace:*
+        version: link:../../libs/statistics-db
+      '@yikart/task-db':
+        specifier: workspace:*
+        version: link:../../libs/task-db
+      axios:
+        specifier: ^1.9.0
+        version: 1.12.2
+      class-transformer:
+        specifier: ^0.5.1
+        version: 0.5.1
+      class-validator:
+        specifier: ^0.14.2
+        version: 0.14.2
+      commander:
+        specifier: ^14.0.0
+        version: 14.0.0
+      dayjs:
+        specifier: ^1.11.14
+        version: 1.11.15
+      googleapis:
+        specifier: ^150.0.1
+        version: 150.0.1
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      nats:
+        specifier: ^2.29.3
+        version: 2.29.3
+      rxjs:
+        specifier: ^7.8.0
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+      uuid:
+        specifier: ^11.1.0
+        version: 11.1.0
+      zod:
+        specifier: ^4.0.17
+        version: 4.1.4
+    devDependencies:
+      '@types/data-urls':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/jsonwebtoken':
+        specifier: ^9.0.10
+        version: 9.0.10
+      '@types/lodash':
+        specifier: ^4.17.20
+        version: 4.17.20
+
   apps/aitoearn-payment:
     dependencies:
       '@nestjs/common':

@@ -19,6 +19,7 @@ import {
   IncomeRecord,
   IncomeRecordSchema,
 } from './income-record.schema'
+import { Manager, ManagerSchema } from './manager.schema'
 import { Material, MaterialSchema } from './material.schema'
 import { MaterialGroup, MaterialGroupSchema } from './materialGroup.schema'
 import { MaterialTask, MaterialTaskSchema } from './materialTask.schema'
@@ -65,6 +66,7 @@ export * from './cloud-space.schema'
 export * from './coupon.schema'
 export * from './feedback.schema'
 export * from './income-record.schema'
+export * from './manager.schema'
 export * from './material.schema'
 export * from './materialGroup.schema'
 export * from './materialTask.schema'
@@ -110,4 +112,5 @@ export const schemas = [
   { name: Material.name, schema: MaterialSchema },
   { name: MaterialGroup.name, schema: MaterialGroupSchema },
   { name: MaterialTask.name, schema: MaterialTaskSchema },
+  { name: Manager.name, schema: ManagerSchema },
 ] as const
