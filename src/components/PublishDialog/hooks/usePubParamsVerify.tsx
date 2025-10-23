@@ -286,6 +286,30 @@ export default function usePubParamsVerify(data: PubItem[]) {
           }
         }
 
+        // YouTube 的强制校验
+        if (v.account.type === PlatType.YouTube) {
+          // 强制需要标题
+          if (!v.params.title) {
+            return setErrorMsg(t("validation.titleRequired"));
+          }
+          // 强制需要描述
+          if (!v.params.des) {
+            return setErrorMsg(t("validation.descriptionRequired"));
+          }
+          // 强制需要选择视频分类
+          if (!v.params.option.youtube?.categoryId) {
+            return setErrorMsg(t("validation.categoryRequired"));
+          }
+          // YouTube 视频大小限制 ≤ 256GB
+          if (video && video.size > 256 * 1024 * 1024 * 1024) {
+            return setErrorMsg(t("validation.youtubeVideoSize"));
+          }
+          // YouTube 视频时长限制 ≤ 12小时
+          if (video && video.duration > 43200) {
+            return setErrorMsg(t("validation.youtubeVideoDuration"));
+          }
+        }
+
         // TikTok 的强制校验
         if (v.account.type === PlatType.Tiktok) {
           // 	TikTok 视频时长限制 3 秒至 10 分钟
