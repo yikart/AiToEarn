@@ -39,7 +39,7 @@ async function prepareContext(projectName, options = {}) {
   await resetDependencies(projects, contextDir, verbose)
   await generateConfig(projects, graph, contextDir, verbose)
   await copyAssets(contextDir, verbose)
-  await copyConfig(contextDir, projectName, verbose)
+  // await copyConfig(contextDir, projectName, verbose)
 
   return {
     projectName,

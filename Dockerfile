@@ -19,7 +19,6 @@ COPY --from=deps /app/ ./
 COPY apps/ ./apps/
 COPY libs/ ./libs/
 COPY assets/ ./
-COPY config.js ./
 
 
 ENV NODE_ENV=production
