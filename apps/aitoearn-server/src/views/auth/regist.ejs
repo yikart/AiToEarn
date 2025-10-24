@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AiToEarn Registration result</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .logo-icon::before {
+            content: "✓";
+            color: white;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+
+        .email-info {
+            background: #e9ecef;
+            border-radius: 6px;
+            padding: 12px 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: #495057;
+            word-break: break-all;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .redirect-message {
+            margin-top: 25px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .tips {
+            background: #fff3cd;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 14px;
+            color: #856404;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .tips h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .tips ul {
+            padding-left: 20px;
+        }
+
+        .tips li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon"></div>
+        </div>
+
+        <h1>Sign up for AiToEarn!</h1>
+        
+        <div class="message">
+            Congratulations! You have successfully registered an account. Welcome to join us!
+        </div>
+
+        <% if (typeof mail !== 'undefined' && mail) { %>
+            <div class="email-info">
+                Email Address: <%= mail %>
+            </div>
+        <% } %>
+
+        <a href="/" class="btn">Return to the homepage</a>
+
+        <div class="tips">
+            <h3>Warm Reminder：</h3>
+            <ul>
+                <li>Please keep your account information safe</li>
+                <li>It is recommended to complete your personal information immediately</li>
+                <li>If you have any questions, please contact customer service</li>
+            </ul>
+        </div>
+
+        <div class="redirect-message">
+            The page will automatically redirect to the home page in <span id="countdown">10</span> seconds 
+        </div>
+    </div>
+
+    <script>
+        // 自动倒计时跳转到首页
+        let countdown = 10;
+        const countdownElement = document.getElementById('countdown');
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                window.location.href = '/';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
