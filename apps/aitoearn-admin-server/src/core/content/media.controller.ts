@@ -136,12 +136,10 @@ export class MediaController {
   })
   @Get('group/list/:pageNo/:pageSize')
   async getGroupList(
-    @GetToken() token: TokenInfo,
     @Param() param: TableDto,
     @Query() query: MediaGroupFilterDto,
   ) {
     const { list, total } = await this.mediaService.getGroupList(param, {
-      userId: token.id,
       ...query,
     })
 

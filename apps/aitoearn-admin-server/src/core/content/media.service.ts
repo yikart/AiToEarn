@@ -93,12 +93,15 @@ export class MediaService {
   async getGroupList(
     page: TableDto,
     filter: {
-      userId: string
+      userId?: string
       title?: string
       type?: MediaType
     },
   ) {
-    const res = await this.mediaGroupRepository.getList(filter, page)
+    const res = await this.mediaGroupRepository.getList({
+      userType: UserType.Admin,
+      ...filter,
+    }, page)
     return res
   }
 
