@@ -17,7 +17,9 @@
     "create": "新增账户",
     "edit": "编辑",
     "delete": "删除",
-    "deleteConfirm": "确认删除该钱包账户？"
+    "deleteConfirm": "确认删除该钱包账户？",
+    "confirm": "确认",
+    "cancel": "取消"
   },
   "dialogs": {
     "createTitle": "新增钱包账户",
