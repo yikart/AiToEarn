@@ -99,8 +99,6 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
     pageNo: number
     pageSize: number
   }) {
-    this.logger.debug({ path: '---- getList ----', data: pageInfo })
-
     const { pageNo, pageSize } = pageInfo
     const filter: RootFilterQuery<MaterialGroup> = {
       userId: inFilter.userId,
@@ -114,7 +112,8 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
         .find(filter)
         .sort({ createdAt: -1 })
         .skip((pageNo! - 1) * pageSize)
-        .limit(pageSize),
+        .limit(pageSize)
+        .lean(),
     ])
 
     return {
