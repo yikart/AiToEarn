@@ -50,7 +50,7 @@
     "docker-build": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "node scripts/build-docker.mjs {projectName}",
+        "command": "node scripts/build-docker.mjs {projectName} -p",
         "cwd": "{workspaceRoot}"
       }
     }
