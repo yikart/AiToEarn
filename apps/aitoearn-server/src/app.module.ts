@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common'
 import { MailModule } from '@yikart/mail'
 import { MongodbModule } from '@yikart/mongodb'
 import { RedisModule } from '@yikart/redis'
+import { Redis } from 'ioredis'
 import { AccountModule } from './account/account.module'
 import { LogsModule } from './ai/core/logs'
 import { AppConfigModule } from './app-configs/app-config.module'
@@ -28,9 +29,12 @@ import { UserModule } from './user/user.module'
     RedisModule.forRoot(config.redis),
     MailModule.forRoot(config.mail),
     BullModule.forRootAsync({
-      useFactory: () => {
-        return config.bullmq
+      useFactory: (redis: Redis) => {
+        return {
+          connection: redis,
+        }
       },
+      inject: [Redis],
     }),
     FileModule,
     ToolsModule,
