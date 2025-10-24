@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountService } from '../account/account.service'
-import { CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../account/dto/account.dto'
+import { AccountService } from '../../account/account.service'
+import { CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../../account/dto/account.dto'
 
 @Injectable()
-export class InternalService {
-  private readonly logger = new Logger(InternalService.name)
+export class AccountInternalService {
+  private readonly logger = new Logger(AccountInternalService.name)
   constructor(
     private readonly accountService: AccountService,
   ) { }
