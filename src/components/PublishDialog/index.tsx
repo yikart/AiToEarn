@@ -512,7 +512,7 @@ const PublishDialog = memo(
                                 ? t("tips.accountOffline" as any)
                                 : undefined
                         }
-                        key={pubItem.account.id}
+                        key={pubItem.account.id} 
                       >
                         <div
                           className={[

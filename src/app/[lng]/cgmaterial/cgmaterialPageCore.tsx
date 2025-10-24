@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Button, Form, Input, Select, Modal, message, Space, InputNumber, List, Card, Spin, Carousel, Avatar } from "antd";
 import styles from "./styles/cgmaterial.module.scss";
+import publishDialogStyles from "@/components/PublishDialog/publishDialog.module.scss";
 import {
   apiCreateMaterialGroup,
   apiGetMaterialGroupList,
@@ -1232,22 +1233,34 @@ export default function CgMaterialPageCore() {
       >
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontWeight: 600, marginBottom: 8 }}>选择账户</div>
-          <List
-            bordered
-            style={{ maxHeight: 200, overflow: 'auto' }}
-            dataSource={accountList}
-            renderItem={account => {
+          <div style={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 12,
+            maxHeight: 200, 
+            overflow: 'auto',
+            padding: '8px'
+          }}>
+            {accountList.map(account => {
               const isOffline = account.status === 0;
               const isChoosed = selectedAccount?.id === account.id;
               
               return (
-                <List.Item
-                  style={{ 
-                    cursor: 'pointer', 
-                    background: isChoosed ? '#e6f4ff' : '#fff',
-                    padding: '12px 16px'
+                <div
+                  key={account.id}
+                  className={[
+                    publishDialogStyles["publishDialog-con-acconts-item"],
+                    isChoosed
+                      ? publishDialogStyles["publishDialog-con-acconts-item--active"]
+                      : "",
+                  ].join(" ")}
+                  style={{
+                    borderColor: isChoosed
+                      ? '#1677ff'
+                      : "transparent",
                   }}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (isOffline) {
                       handleOfflineAvatarClick(account);
                       return;
@@ -1255,50 +1268,46 @@ export default function CgMaterialPageCore() {
                     handleSelectAccount(account);
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ position: 'relative' }}>
-                      <AvatarPlat
-                        account={account}
-                        size="large"
-                        disabled={isOffline}
-                      />
-                      {isOffline && (
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOfflineAvatarClick(account);
-                          }}
-                          style={{
-                            position: 'absolute',
-                            inset: 0,
-                            background: 'rgba(0,0,0,0.45)',
-                            borderRadius: '50%',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#fff',
-                            fontSize: 12,
-                            fontWeight: 600,
-                            pointerEvents: 'auto',
-                            cursor: 'pointer',
-                          }}
-                        >
-                          离线
-                        </div>
-                      )}
-                    </div>
-                    <div>
-                      <div style={{ fontWeight: 500 }}>{account.nickname}</div>
-                      <div style={{ fontSize: 12, color: '#666' }}>
-                        {getPlatformName(account.type)} • {account.workCount} 作品
-                        {isOffline && <span style={{ color: '#ff4d4f', marginLeft: 8 }}>• 离线</span>}
+                  {/* 账号头像：离线显示遮罩并禁用 */}
+                  <div style={{ position: "relative" }}>
+                    <AvatarPlat
+                      className={`${publishDialogStyles["publishDialog-con-acconts-item-avatar"]} ${!isChoosed || isOffline ? publishDialogStyles["disabled"] : ""}`}
+                      account={account}
+                      size="large"
+                      disabled={
+                        isOffline ||
+                        !isChoosed
+                      }
+                    />
+                    {isOffline && (
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOfflineAvatarClick(account);
+                        }}
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          background: "rgba(0,0,0,0.45)",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#fff",
+                          fontSize: 12,
+                          fontWeight: 600,
+                          pointerEvents: "auto",
+                          cursor: "pointer",
+                        }}
+                      >
+                        离线
                       </div>
-                    </div>
+                    )}
                   </div>
-                </List.Item>
+                </div>
               );
-            }}
-          />
+            })}
+          </div>
         </div>
 
         {selectedAccount && (
