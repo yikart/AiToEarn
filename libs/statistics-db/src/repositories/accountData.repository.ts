@@ -357,66 +357,30 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
     const end = dayjs(endDate).endOf('day')
 
     this.logger.debug(`查询账号 ${accountId} 在平台 ${platform} ${uid}从 ${startDate} 到 ${endDate} 的数据`)
-    this.logger.log(`使用的模型: ${model.modelName}, 集合名称: ${model.collection.name}`)
     return this.executeWithRetry(async () => {
-      // 先获取一些样本数据来查看实际的日期格式
-      const sampleData = await model.find({ uid }).limit(3).sort({ snapshotDate: -1 })
-      this.logger.log(`样本数据中的日期格式:`, JSON.stringify(sampleData.map(item => ({
-        snapshotDate: item.snapshotDate,
-        type: typeof item.snapshotDate,
-        formatted: item.snapshotDate ? dayjs(item.snapshotDate).format('YYYY-MM-DD') : 'null'
-      })), null, 2))
-
-      // 尝试不同的日期格式查询
-      let result
-
-      // 方式1：使用字符串格式查询
-      const startStr = start.format('YYYY-MM-DD')
-      const endStr = end.format('YYYY-MM-DD')
-      this.logger.log(`尝试字符串查询: ${startStr} 到 ${endStr}`)
-      
-      result = await model.find({
-        uid,
-        snapshotDate: {
-          $gte: startStr,
-          $lte: endStr,
+      // 使用聚合查询，将字符串日期转换为Date对象后进行范围查询
+      const result = await model.aggregate([
+        { $match: { uid } },
+        {
+          $addFields: {
+            snapshotDateAsDate: {
+              $dateFromString: {
+                dateString: '$snapshotDate',
+                onError: null, // 解析失败时为 null
+                onNull: null,
+              },
+            },
+          },
         },
-      }).sort({ snapshotDate: 1 })
-
-      this.logger.log(`字符串查询结果数量: ${result.length}`)
-
-      // 方式2：如果字符串查询没有结果，尝试Date对象查询
-      if (result.length === 0) {
-        this.logger.log(`尝试Date对象查询: ${start.toDate()} 到 ${end.toDate()}`)
-        
-        result = await model.find({
-          uid,
-          snapshotDate: {
-            $gte: start.toDate(),
-            $lte: end.toDate(),
+        {
+          $match: {
+            snapshotDateAsDate: { $gte: start.toDate(), $lte: end.toDate() },
           },
-        }).sort({ snapshotDate: 1 })
+        },
+        { $sort: { snapshotDateAsDate: 1 } },
+      ]).exec()
 
-        this.logger.log(`Date对象查询结果数量: ${result.length}`)
-      }
-
-      // 方式3：如果还是没有结果，尝试ISO字符串格式
-      if (result.length === 0) {
-        const startISO = start.toISOString()
-        const endISO = end.toISOString()
-        this.logger.log(`尝试ISO字符串查询: ${startISO} 到 ${endISO}`)
-        
-        result = await model.find({
-          uid,
-          snapshotDate: {
-            $gte: startISO,
-            $lte: endISO,
-          },
-        }).sort({ snapshotDate: 1 })
-
-        this.logger.log(`ISO字符串查询结果数量: ${result.length}`)
-      }
-
+      this.logger.log(`聚合查询结果数量: ${result.length}`)
       return result
     })
   }
