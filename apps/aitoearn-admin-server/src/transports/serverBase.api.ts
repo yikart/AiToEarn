@@ -15,7 +15,11 @@ export class ServerBaseApi {
       message: string
       data: T
       timestamp: number
-    }>(`${config.serverApi.baseUrl}/${path}`, body)
+    }>(`${config.serverApi.baseUrl}/${path}`, body, {
+      headers: {
+        Authorization: `Barer ${config.serverApi.internalToken}`,
+      },
+    })
     if (res.data.code !== ExceptionCode.Success) {
       this.logger.error({ path, ...res })
       throw new AppException(res.data.code, res.data.message)

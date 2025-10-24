@@ -11,44 +11,90 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
   private readonly logger = new Logger(AccountDataRepository.name)
 
   constructor(
-    @InjectModel('BilibiliAuthorDatas')
-    private readonly BilibiliAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('DouYinAuthorDatas')
-    private readonly DouYinAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('FaceBookAuthorDatas')
-    private readonly FaceBookAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('GzhAuthorDatas')
-    private readonly GzhAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('InstagramAuthorDatas')
-    private readonly InstagramAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('KwaiAuthorDatas')
-    private readonly KwaiAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('PinterestAuthorDatas')
-    private readonly PinterestAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('ThreadsAuthorDatas')
-    private readonly ThreadsAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('TiktokAuthorDatas')
-    private readonly TiktokAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('TwitterAuthorDatas')
-    private readonly TwitterAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('XhsAuthorDatas')
-    private readonly XhsAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('YoutubeAuthorDatas')
-    private readonly YoutubeAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('AccountDayIncrease')
-    private readonly AccountDayIncreaseModel: Model<AuthorDatas>,
-    @InjectModel('PostDayIncrease')
-    private readonly PostDayIncreaseModel: Model<AuthorDatas>,
-    @InjectModel('NewChannel')
-    private readonly NewChannelModel: Model<NewChannel>,
-    @InjectConnection() private readonly connection: Connection,
+    @InjectConnection('statistics-db-connection') private readonly connection: Connection,
   ) {
-    super(BilibiliAuthorDatasModel)
+    super(null as any) // 临时使用null，稍后会设置正确的模型
   }
 
   async onModuleInit() {
     // 等待数据库连接建立
     await this.waitForConnection()
+  }
+
+  /**
+   * 根据平台获取模型
+   */
+  private getModelByPlatform(platform: string): Model<AuthorDatas> {
+    // 根据平台名称格式化模型名称
+    let formattedPlatform = platform.charAt(0).toUpperCase() + platform.slice(1)
+
+    // 特殊处理各个平台名称
+    if (platform === 'douyin') {
+      formattedPlatform = 'DouYin'
+    }
+    else if (platform === 'wxGzh') {
+      formattedPlatform = 'Gzh'
+    }
+    else if (platform === 'wxSph') {
+      formattedPlatform = 'Sph'
+    }
+    else if (platform === 'facebook') {
+      formattedPlatform = 'FaceBook'
+    }
+    else if (platform === 'xhs') {
+      formattedPlatform = 'Xhs'
+    }
+    else if (platform === 'threads') {
+      formattedPlatform = 'Threads'
+    }
+    else if (platform === 'linkedin') {
+      formattedPlatform = 'LinkedIn'
+    }
+    else if (platform === 'instagram') {
+      formattedPlatform = 'Instagram'
+    }
+    else if (platform === 'tiktok') {
+      formattedPlatform = 'Tiktok'
+    }
+    else if (platform === 'twitter') {
+      formattedPlatform = 'Twitter'
+    }
+    else if (platform === 'pinterest') {
+      formattedPlatform = 'Pinterest'
+    }
+    else if (platform === 'youtube') {
+      formattedPlatform = 'Youtube'
+    }
+    else if (platform === 'KWAI') {
+      formattedPlatform = 'Kwai'
+    }
+    else if (platform === 'bilibili') {
+      formattedPlatform = 'Bilibili'
+    }
+
+    const modelName = `${formattedPlatform}AuthorDayDatas`
+    return this.connection.model(modelName) as Model<AuthorDatas>
+  }
+
+  /**
+   * 获取AccountDayIncrease模型
+   */
+  private getAccountDayIncreaseModel(): Model<AuthorDatas> {
+    return this.connection.model('AccountDayIncrease') as Model<AuthorDatas>
+  }
+
+  /**
+   * 获取PostDayIncrease模型
+   */
+  private getPostDayIncreaseModel(): Model<AuthorDatas> {
+    return this.connection.model('PostDayIncrease') as Model<AuthorDatas>
+  }
+
+  /**
+   * 获取NewChannel模型
+   */
+  private getNewChannelModel(): Model<NewChannel> {
+    return this.connection.model('NewChannel') as Model<NewChannel>
   }
 
   /**
@@ -118,7 +164,7 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
     for (let attempt = 1; attempt <= maxAttempts; attempt++) {
       const currentState = this.connection.readyState
       this.logger.log(`等待数据库连接... (${attempt}/${maxAttempts}) - 状态: ${states[currentState as keyof typeof states]} (${currentState})`)
-
+      this.logger.log(`数据库：- ${this.connection.db?.databaseName}`)
       if (currentState === 1) {
         this.logger.log('数据库连接已建立')
         return
@@ -153,41 +199,6 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
       collection: collectionName,
       modelName: model.modelName,
       connectionState: this.connection.readyState,
-    }
-  }
-
-  /**
-   * 根据平台 选择不同的集合
-   */
-  getModelByPlatform(platform: string): Model<AuthorDatas> {
-    switch (platform) {
-      case 'bilibili':
-        return this.BilibiliAuthorDatasModel
-      case 'douyin':
-        return this.DouYinAuthorDatasModel
-      case 'xhs':
-        return this.XhsAuthorDatasModel
-      case 'KWAI':
-        return this.KwaiAuthorDatasModel
-      case 'youtube':
-        return this.YoutubeAuthorDatasModel
-      case 'wxGzh':
-        return this.GzhAuthorDatasModel
-      case 'twitter':
-        return this.TwitterAuthorDatasModel
-      case 'tiktok':
-        return this.TiktokAuthorDatasModel
-      case 'facebook':
-        return this.FaceBookAuthorDatasModel
-      case 'instagram':
-        return this.InstagramAuthorDatasModel
-      case 'threads':
-        return this.ThreadsAuthorDatasModel
-      case 'pinterest':
-        return this.PinterestAuthorDatasModel
-      // 其他平台...
-      default:
-        throw new Error('不支持的平台')
     }
   }
 
@@ -301,7 +312,7 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
    */
   async getAccountDataIncrease(platform: string, uid: string) {
     return this.executeWithRetry(async () => {
-      const result = await this.AccountDayIncreaseModel.findOne({ platform, uid }).sort({ snapshotDate: -1 })
+      const result = await this.getAccountDayIncreaseModel().findOne({ platform, uid }).sort({ snapshotDate: -1 })
       this.logger.debug(`AccountDayIncrease result: ${JSON.stringify(result)}`)
       return result
     })
@@ -312,7 +323,7 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
    */
   async getPostDataIncrease(platform: string, uid: string) {
     return this.executeWithRetry(async () => {
-      const result = await this.PostDayIncreaseModel.findOne({ platform, uid }).sort({ snapshotDate: -1 })
+      const result = await this.getPostDayIncreaseModel().findOne({ platform, uid }).sort({ snapshotDate: -1 })
       this.logger.debug(`PostDataIncrease result: ${JSON.stringify(result)}`)
       return result
     })
@@ -325,10 +336,10 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
     return this.executeWithRetry(async () => {
       let result
       if (sort) {
-        result = await this.AccountDayIncreaseModel.find(params).sort(sort).skip(Math.floor(pageNo * pageSize)).limit(pageSize)
+        result = await this.getAccountDayIncreaseModel().find(params).sort(sort).skip(Math.floor(pageNo * pageSize)).limit(pageSize)
       }
       else {
-        result = await this.AccountDayIncreaseModel.find(params).skip(Math.floor(pageNo * pageSize)).limit(pageSize)
+        result = await this.getAccountDayIncreaseModel().find(params).skip(Math.floor(pageNo * pageSize)).limit(pageSize)
       }
       this.logger.debug(`查询结果: ${JSON.stringify(result)}`)
       return result
@@ -486,7 +497,7 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
       const { platform, uid } = q
       try {
         // 从 AccountDayIncreaseModel 查询增量数据
-        const docs = await this.AccountDayIncreaseModel.aggregate([
+        const docs = await this.getAccountDayIncreaseModel().aggregate([
           {
             $match: {
               uid,
@@ -590,13 +601,12 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
     }
     // 昨天
     const yesterday = dayjs().subtract(1, 'day').endOf('day')
-    // console.log(yesterday.toDate())
     // 并发执行每个 uid 的查询
     const promises = queries.map(async (q) => {
       const { platform, uid } = q
       try {
         // 从AccountDayIncreaseModel查询数据
-        const docs = await this.AccountDayIncreaseModel.aggregate([
+        const docs = await this.getAccountDayIncreaseModel().aggregate([
           {
             $match: {
               uid,
@@ -690,7 +700,7 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
   async setNewChannels(platform: string, uid: string) {
     return this.executeWithRetry(async () => {
       const newData = { type: platform, uid }
-      const result = await this.NewChannelModel.updateOne({ type: platform, uid }, { $set: newData }, { upsert: true })
+      const result = await this.getNewChannelModel().updateOne({ type: platform, uid }, { $set: newData }, { upsert: true })
       this.logger.debug(`setNewChannels result: ${JSON.stringify(result)}`)
       return result
     })

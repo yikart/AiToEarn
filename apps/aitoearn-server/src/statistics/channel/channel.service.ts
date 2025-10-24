@@ -27,7 +27,7 @@ export class ChannelService {
    */
   async getChannelCookie(platform: string) {
     const channelCookie = await this.channelRepository.getChannelCookieByPlatform(platform)
-
+    this.logger.log(`get cookie from db: ${channelCookie}`)
     const res = channelCookie?.res
     const chosen = Array.isArray(res) && res.length > 0
       ? res[Math.floor(Math.random() * res.length)]

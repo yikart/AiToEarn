@@ -11,38 +11,29 @@ export class PostRepository extends BaseRepository<PostModel> {
   private models: { [key: string]: Model<PostModel> } = {}
   private readonly logger = new Logger(PostRepository.name)
   constructor(
-    @InjectModel('bilibili') private readonly bilibiliPostModel: Model<PostModel>,
-    @InjectModel('douyin') private readonly douyinPostModel: Model<PostModel>,
-    @InjectModel('facebook') private readonly facebookPostModel: Model<PostModel>,
-    @InjectModel('wxgzh') private readonly gzhPostModel: Model<PostModel>,
-    @InjectModel('wxsph') private readonly wxsphPostModel: Model<PostModel>,
-    @InjectModel('instagram') private readonly instagramPostModel: Model<PostModel>,
-    @InjectModel('kwai') private readonly kwaiPostModel: Model<PostModel>,
-    @InjectModel('pinterest') private readonly pinterestPostModel: Model<PostModel>,
-    @InjectModel('threads') private readonly threadsPostModel: Model<PostModel>,
-    @InjectModel('tiktok') private readonly tiktokPostModel: Model<PostModel>,
-    @InjectModel('twitter') private readonly twitterPostModel: Model<PostModel>,
-    @InjectModel('xhs') private readonly xhsPostModel: Model<PostModel>,
-    @InjectModel('youtube') private readonly youtubePostModel: Model<PostModel>,
-    @InjectModel('linkedin') private readonly linkedinPostModel: Model<PostModel>,
-    @InjectConnection() private readonly connection: Connection,
+    @InjectConnection('statistics-db-connection') private readonly connection: Connection,
   ) {
-    super(bilibiliPostModel)
+    super(null as any) // 临时使用null，稍后会设置正确的模型
+    this.models = {} // 将在onModuleInit中初始化
+  }
+
+  async onModuleInit() {
+    // 初始化模型映射
     this.models = {
-      bilibili: this.bilibiliPostModel,
-      douyin: this.douyinPostModel,
-      facebook: this.facebookPostModel,
-      wxgzh: this.gzhPostModel,
-      wxsph: this.wxsphPostModel,
-      instagram: this.instagramPostModel,
-      kwai: this.kwaiPostModel,
-      pinterest: this.pinterestPostModel,
-      threads: this.threadsPostModel,
-      tiktok: this.tiktokPostModel,
-      twitter: this.twitterPostModel,
-      xhs: this.xhsPostModel,
-      youtube: this.youtubePostModel,
-      linkedin: this.linkedinPostModel,
+      bilibili: this.connection.model('bilibili') as Model<PostModel>,
+      douyin: this.connection.model('douyin') as Model<PostModel>,
+      facebook: this.connection.model('facebook') as Model<PostModel>,
+      wxgzh: this.connection.model('wxgzh') as Model<PostModel>,
+      wxsph: this.connection.model('wxsph') as Model<PostModel>,
+      instagram: this.connection.model('instagram') as Model<PostModel>,
+      kwai: this.connection.model('kwai') as Model<PostModel>,
+      pinterest: this.connection.model('pinterest') as Model<PostModel>,
+      threads: this.connection.model('threads') as Model<PostModel>,
+      tiktok: this.connection.model('tiktok') as Model<PostModel>,
+      twitter: this.connection.model('twitter') as Model<PostModel>,
+      xhs: this.connection.model('xhs') as Model<PostModel>,
+      youtube: this.connection.model('youtube') as Model<PostModel>,
+      linkedin: this.connection.model('linkedin') as Model<PostModel>,
     }
   }
 
@@ -60,7 +51,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     // 复用与普通帖子相同的 Schema，但绑定到 insights 集合
     // 注意：PostSchema 已在模块层注册；这里直接通过连接创建/复用模型即可
     const collectionName = `${platform}_post_insights_snapshot`
-    const model = this.connection.model<PostModel>(modelName, (this).xhsPostModel.schema, collectionName)
+    const model = this.connection.model<PostModel>(modelName, this.models['xhs'].schema, collectionName)
     this.logger.debug(`Using insights collection (new): ${model.collection.name}`)
     return model
   }

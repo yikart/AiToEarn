@@ -10,17 +10,22 @@ export class TaskRepository extends BaseRepository<UserTaskPosts> implements OnM
   private readonly logger = new Logger(TaskRepository.name)
 
   constructor(
-    @InjectModel(UserTaskPosts.name)
-    private readonly userTaskPostsModel: Model<UserTaskPosts>,
-    @InjectConnection() private readonly connection: Connection,
+    @InjectConnection('statistics-db-connection') private readonly connection: Connection,
     private readonly postRepository: PostRepository,
   ) {
-    super(userTaskPostsModel)
+    super(null as any) // 临时使用null，稍后会设置正确的模型
   }
 
   async onModuleInit() {
     // 等待数据库连接建立
     await this.waitForConnection()
+  }
+
+  /**
+   * 获取UserTaskPosts模型
+   */
+  private getUserTaskPostsModel(): Model<UserTaskPosts> {
+    return this.connection.model(UserTaskPosts.name) as Model<UserTaskPosts>
   }
 
   /**
@@ -50,14 +55,14 @@ export class TaskRepository extends BaseRepository<UserTaskPosts> implements OnM
 
   // 用户任务作品记录
   async userTaskPosts(accountId: string, type: AccountType, uid: string, taskId: string, postId: string) {
-    const result = await this.userTaskPostsModel.create({ accountId, type, uid, taskId, postId, createdAt: new Date() })
+    const result = await this.getUserTaskPostsModel().create({ accountId, type, uid, taskId, postId, createdAt: new Date() })
     this.logger.debug(`PostDataIncrease result: ${JSON.stringify(result)}`)
     return result
   }
 
   // 根据taskId 查询 作品信息
   async getTaskPostsByTaskId(taskId: string) {
-    const result = await this.userTaskPostsModel.find({ taskId })
+    const result = await this.getUserTaskPostsModel().find({ taskId })
     this.logger.debug(`TaskPostsByTaskId result: ${JSON.stringify(result)}`)
     return result
   }
