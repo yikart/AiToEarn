@@ -29,3 +29,25 @@ export const withdrawCreateAllSchema = z.object({
   userWalletAccountId: z.string(),
 })
 export class WithdrawCreateAllDto extends createZodDto(withdrawCreateAllSchema) {}
+
+export const addIncomeSchema = z.object({
+  userId: z.string(),
+  amount: z.number(),
+  type: z.enum(IncomeType),
+  description: z.string().optional(),
+  metadata: z.any().optional(),
+  relId: z.string().optional(),
+  withdrawId: z.string().optional(),
+})
+export class AddIncomeSchemaDto extends createZodDto(addIncomeSchema) {}
+
+export const DeductIncomeSchema = z.object({
+  userId: z.string(),
+  amount: z.number(),
+  type: z.enum(IncomeType),
+  description: z.string().optional(),
+  metadata: z.any().optional(),
+  relId: z.string().optional(),
+  withdrawId: z.string().optional(),
+})
+export class DeductIncomeDto extends createZodDto(DeductIncomeSchema) {}

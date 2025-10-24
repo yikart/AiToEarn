@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { NatsApi } from '../api'
-import { TransportsService } from '../transports.service'
+import { ServerBaseApi } from '../serverBase.api'
 import { User } from './comment'
 
 @Injectable()
-export class UserNatsApi extends TransportsService {
+export class UserNatsApi extends ServerBaseApi {
   /**
    * 获取用户信息
    */
   async getInfo(userId: string) {
-    const res = await this.aitoearnServerRequest<User>(
-      'post',
-      NatsApi.user.user.getUserInfoById,
+    const res = await this.sendMessage<User>(
+      'userInternal/user/info',
       { id: userId },
     )
 

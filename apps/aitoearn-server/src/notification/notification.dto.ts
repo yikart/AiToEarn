@@ -34,3 +34,13 @@ export class NotificationDetailDto extends createZodDto(
   notificationDetailDtoSchema,
 ) { }
 export class MarkAsReadDto extends createZodDto(markAsReadDtoSchema) { }
+
+const CreateToUserSchema = z.object({
+  userId: z.string().min(1),
+  title: z.string().min(1),
+  content: z.string().min(1),
+  type: z.enum(NotificationType).default(NotificationType.TaskReminder),
+  relatedId: z.string(),
+  data: z.any().optional(),
+})
+export class CreateToUserDto extends createZodDto(CreateToUserSchema) { }

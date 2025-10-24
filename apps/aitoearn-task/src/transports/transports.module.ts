@@ -2,7 +2,6 @@ import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
 import { AccountHttpApi } from './account/account.httpApi'
 import { MaterialNatsApi } from './content/material.natsApi'
-import { MediaNatsApi } from './content/media.natsApi'
 import { NotificationNatsApi } from './other/notification.natsApi'
 import { ServerBaseApi } from './serverBase.api'
 import { IncomeNatsApi } from './user/income.natsApi'
@@ -14,7 +13,6 @@ import { UserNatsApi } from './user/user.natsApi'
   providers: [
     ServerBaseApi,
     MaterialNatsApi,
-    MediaNatsApi,
     NotificationNatsApi,
     IncomeNatsApi,
     UserNatsApi,
@@ -22,7 +20,6 @@ import { UserNatsApi } from './user/user.natsApi'
   ],
   exports: [
     MaterialNatsApi,
-    MediaNatsApi,
     NotificationNatsApi,
     IncomeNatsApi,
     UserNatsApi,

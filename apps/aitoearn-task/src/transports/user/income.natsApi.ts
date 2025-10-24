@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { NatsApi } from '../api'
-import { TransportsService } from '../transports.service'
+import { ServerBaseApi } from '../serverBase.api'
 import { IncomeType } from './comment'
 
 @Injectable()
-export class IncomeNatsApi extends TransportsService {
+export class IncomeNatsApi extends ServerBaseApi {
   /**
    * 增加收入
    */
@@ -15,9 +14,8 @@ export class IncomeNatsApi extends TransportsService {
     desc?: string
     metadata?: Record<string, unknown>
   }) {
-    const res = await this.aitoearnServerRequest<boolean>(
-      'post',
-      NatsApi.user.income.add,
+    const res = await this.sendMessage<boolean>(
+      'incomeInternal/income/add',
       { userId, ...data },
     )
 
@@ -32,9 +30,8 @@ export class IncomeNatsApi extends TransportsService {
     desc?: string
     metadata?: Record<string, unknown>
   }) {
-    const res = await this.aitoearnServerRequest<boolean>(
-      'post',
-      NatsApi.user.income.deduct,
+    const res = await this.sendMessage<boolean>(
+      'incomeInternal/income/deduct',
       { userId, ...data },
     )
 

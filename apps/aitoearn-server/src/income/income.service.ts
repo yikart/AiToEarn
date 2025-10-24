@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { AppException, TableDto } from '@yikart/common'
 import { IncomeRecordRepository, IncomeStatus, IncomeType, WithdrawRecordType } from '@yikart/mongodb'
+import { AddIncomeSchemaDto, DeductIncomeDto } from './dto/income.dto'
 import { WithdrawService } from './withdraw.service'
 
 const getWithdrawRecordTypeMap = new Map<IncomeType, WithdrawRecordType>([
@@ -13,6 +14,26 @@ export class IncomeService {
     private readonly withdrawService: WithdrawService,
     private readonly incomeRecordRepository: IncomeRecordRepository,
   ) { }
+
+  /**
+   * 获取收入信息
+   * @param data
+   * @returns
+   */
+  async add(data: AddIncomeSchemaDto) {
+    const res = await this.incomeRecordRepository.add(data)
+    return res
+  }
+
+  /**
+   * 获取收入信息
+   * @param data
+   * @returns
+   */
+  async deduct(data: DeductIncomeDto) {
+    const res = await this.incomeRecordRepository.deduct(data)
+    return res
+  }
 
   /**
    * 获取收入信息
