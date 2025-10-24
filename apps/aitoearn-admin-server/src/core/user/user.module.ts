@@ -5,8 +5,7 @@ import { UserWalletAccountController } from './userWalletAccount.controller'
 import { UserWalletAccountService } from './userWalletAccount.service'
 
 @Module({
-  imports: [
-  ],
+  imports: [],
   controllers: [UserController, UserWalletAccountController],
   providers: [UserService, UserWalletAccountService],
   exports: [UserService, UserWalletAccountService],
