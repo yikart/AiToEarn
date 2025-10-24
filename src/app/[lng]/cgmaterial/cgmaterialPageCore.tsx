@@ -498,7 +498,7 @@ export default function CgMaterialPageCore() {
       }
       if (taskId) {
         await apiStartMaterialTask(taskId);
-        message.success("批量生成任务已启动");
+        message.success(t('batchGenerate.taskStarted'));
         setBatchModal(false);
         batchForm.resetFields();
         fetchMaterialList(selectedGroup._id);
@@ -506,7 +506,7 @@ export default function CgMaterialPageCore() {
         setLastTaskParams(null);
       }
     } catch (e) {
-      message.error("批量生成草稿失败");
+      message.error(t('batchGenerate.generateFailed'));
     } finally {
       setBatchTaskLoading(false);
     }
@@ -518,13 +518,13 @@ export default function CgMaterialPageCore() {
     setEditLoading(true);
     try {
       await apiUpdateMaterialGroupInfo(editingGroup._id, { name: editGroupName });
-      message.success("更新成功");
+      message.success(t('sidebar.updateSuccess'));
       setEditGroupModal(false);
       setEditGroupName("");
       setEditingGroup(null);
       fetchGroupList();
     } catch {
-      message.error("更新失败");
+      message.error(t('sidebar.updateFailed'));
     } finally {
       setEditLoading(false);
     }
@@ -724,21 +724,14 @@ export default function CgMaterialPageCore() {
       const res = await getAccountListApi();
       const allAccounts = res?.data || [];
       
-      // 过滤掉离线账户和平台不支持的账户
+      // 只过滤掉离线账户
       const availableAccounts = allAccounts.filter((account: any) => {
         // 过滤掉离线账户
         if (account.status === 0) {
           return false;
         }
         
-        // 过滤掉平台不支持的账户（根据实际需求调整支持的平台）
-        const supportedPlatforms = [
-          'tiktok', 'youtube', 'twitter', 'bilibili', 'KWAI', 
-          'douyin', 'xhs', 'wxSph', 'wxGzh', 'facebook', 
-          'instagram', 'threads'
-        ];
-        
-        return supportedPlatforms.includes(account.type);
+        return true;
       });
       
       setAccountList(availableAccounts);
@@ -793,7 +786,7 @@ export default function CgMaterialPageCore() {
         }));
       }
     } catch (e) {
-      message.error("获取发布列表失败");
+      message.error(t('import.getPublishListFailed'));
       if (page === 1) {
         setPublishList([]);
       }
@@ -1241,11 +1234,11 @@ export default function CgMaterialPageCore() {
             <Select placeholder={t('createGroup.typePlaceholder')}>
               <Select.Option value={PubType.ImageText}>
                 <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                {t('createGroup.imageTextDraft')}
+                图文草稿
               </Select.Option>
               <Select.Option value={PubType.VIDEO}>
                 <VideoCameraOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                {t('createGroup.videoDraft')}
+                视频草稿
               </Select.Option>
             </Select>
           </Form.Item>
@@ -1264,7 +1257,7 @@ export default function CgMaterialPageCore() {
       {/* 导入发布内容弹窗 */}
       <Modal
         open={importModal}
-        title="导入已有发布内容"
+        title={t('import.title')}
         onOk={handleImportPublishItems}
         onCancel={() => {
           setImportModal(false);
@@ -1274,11 +1267,11 @@ export default function CgMaterialPageCore() {
         }}
         confirmLoading={importLoading}
         width={800}
-        okText="导入选中内容"
+        okText={t('import.importSelected')}
         okButtonProps={{ disabled: selectedPublishItems.length === 0 }}
       >
         <div style={{ marginBottom: 16 }}>
-          <div style={{ fontWeight: 600, marginBottom: 8 }}>选择账户</div>
+          <div style={{ fontWeight: 600, marginBottom: 8 }}>{t('import.selectAccount')}</div>
           <div style={{ 
             display: 'flex', 
             flexWrap: 'wrap', 
@@ -1397,7 +1390,7 @@ export default function CgMaterialPageCore() {
       {/* 创建素材弹窗 */}
       <Modal
         open={createModal}
-        title="创建素材"
+        title={t('createMaterial.title')}
         onOk={handleCreateMaterial}
         onCancel={() => {
           setCreateModal(false);
@@ -1550,7 +1543,7 @@ export default function CgMaterialPageCore() {
         {selectedGroup?.type === PubType.VIDEO && (
           <Modal
             open={coverGroupModal}
-            title="选择封面组（图片组）"
+            title={t('createMaterial.selectCoverGroup')}
             onCancel={() => setCoverGroupModal(false)}
             footer={null}
             width={700}
@@ -1676,7 +1669,7 @@ export default function CgMaterialPageCore() {
         {selectedGroup?.type === PubType.VIDEO && (
           <Modal
             open={videoGroupModal}
-            title="选择视频组"
+            title={t('createMaterial.selectVideoGroup')}
             onCancel={() => setVideoGroupModal(false)}
             footer={null}
             width={700}
@@ -2235,7 +2228,7 @@ export default function CgMaterialPageCore() {
         {selectedGroup?.type === PubType.VIDEO && (
           <Modal
             open={editMaterialCoverGroupModal}
-            title="选择封面组（图片组）"
+            title={t('createMaterial.selectCoverGroup')}
             onCancel={() => setEditMaterialCoverGroupModal(false)}
             footer={null}
             width={700}
@@ -2361,7 +2354,7 @@ export default function CgMaterialPageCore() {
         {selectedGroup?.type === PubType.VIDEO && (
           <Modal
             open={editMaterialVideoGroupModal}
-            title="选择视频组"
+            title={t('createMaterial.selectVideoGroup')}
             onCancel={() => setEditMaterialVideoGroupModal(false)}
             footer={null}
             width={700}
