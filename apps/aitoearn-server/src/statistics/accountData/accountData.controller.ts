@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { Public } from '../../auth/auth.guard'
 import { AccountDataService } from './accountData.service'
 import {
   GetAccountDataByParamsDto,
@@ -59,7 +58,6 @@ export class AccountDataController {
 
   // 根据账号和日期查询频道数据
   // @NatsMessagePattern('statistics.account.getAuthorDataByDate')
-  @Public()
   @Post('author/getAuthorDataByDate')
   getAuthorDataByDate(@Body() data: GetAuthorDataByDateDto) {
     const res = this.accountDataService.getAuthorDataByDate(data.accountId, data.platform, data.date)
@@ -68,7 +66,7 @@ export class AccountDataController {
 
   // 根据账号查询频道最新数据
   // @NatsMessagePattern('statistics.account.getAccountDataLatest')
-  @Post('account/getAccountDataLatest')
+  @Post('account/latest')
   AuthorDataLatest(@Body() data: GetAccountDataLatestDto) {
     const res = this.accountDataService.getAccountDataLatest(data.accountId, data.platform, data.uid)
     return res
@@ -76,7 +74,7 @@ export class AccountDataController {
 
   // 根据账号查询频道最新增量数据
   // @NatsMessagePattern('statistics.account.getAccountDataIncrease')
-  @Post('account/getAccountDataIncrease')
+  @Post('account/increase')
   AccountDataIncrease(@Body() data: GetAccountDataLatestDto) {
     const res = this.accountDataService.getAccountDataIncrease(data.platform, data.uid)
     return res
@@ -92,7 +90,7 @@ export class AccountDataController {
 
   // 根据账号查询频道一段时间数据
   // @NatsMessagePattern('statistics.account.getAccountDataPeriod')
-  @Post('account/getAccountDataPeriod')
+  @Post('account/period')
   AccountDataPeriod(@Body() data: GetAccountDataPeriodDto) {
     const res = this.accountDataService.getAccountDataPeriod(data.accountId, data.platform, data.uid, data.startDate, data.endDate)
     return res
@@ -100,7 +98,6 @@ export class AccountDataController {
 
   // 根据platform和uid数组查询频道最新数据并汇总fansCount
   // @NatsMessagePattern('statistics.account.getChannelDataLatestByUids')
-  @Public()
   @Post('channels/period-batch')
   getChannelDataLatestByUids(@Body() data: GetChannelDataLatestByUidsDto) {
     const res = this.accountDataService.getChannelDataLatestByUids(data.queries)
@@ -109,7 +106,7 @@ export class AccountDataController {
 
   // 根据platform和uid数组查询频道一段时间增量数据
   // @NatsMessagePattern('statistics.account.getChannelDataPeriodByUids')
-  @Post('channel/getChannelDataPeriodByUids')
+  @Post('channels/latest-batch')
   getChannelDataPeriodByUids(@Body() data: GetChannelDataPeriodByUidsDto) {
     // const res = this.accountDataService.getChannelDataPeriodByUids(data.queries, data?.startDate, data?.endDate)
     return this.accountDataService.getChannelDataPeriodByUids(data.queries, data?.startDate, data?.endDate)
