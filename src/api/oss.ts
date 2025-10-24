@@ -1,5 +1,6 @@
 import { request } from "@/utils/request";
 import md5 from "blueimp-md5";
+import { useUserStore } from "@/store/user";
 
 // 获取 AWS S3 presigned post 数据
 const getPresignedPostData = async (fileName: string, fileSize: number, contentType: string) => {
@@ -26,7 +27,7 @@ export const uploadToOss = async (file: File | Blob, onProgress?: (prog: number)
     console.log("uploadToOss", file.size);
     
     // 获取文件信息
-    const fileName = md5(new Date().getTime().toString()) + (file as any).name || `file_${Date.now()}`;
+    const fileName = useUserStore.getState().userInfo?.id + "/" + md5(new Date().getTime().toString()) + (file as any).name || `file_${Date.now()}`;
     const fileSize = file.size;
     const contentType = file.type || "application/octet-stream";
     
