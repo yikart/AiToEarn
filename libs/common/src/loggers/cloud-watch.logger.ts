@@ -45,7 +45,7 @@ export class CloudWatchLogger implements DestinationStream {
     })
     await this.client.send(command)
       .catch((e) => {
-        log(`creating log group error ${e.message}`)
+        log(`creating log group: ${this.options.group} error ${e}`)
         if (e.name !== 'ResourceAlreadyExistsException')
           throw e
       })
@@ -61,7 +61,7 @@ export class CloudWatchLogger implements DestinationStream {
     })
     await this.client.send(command)
       .catch((e) => {
-        log(`creating log stream: ${this.options.stream} error ${e.message}`)
+        log(`creating log stream: ${this.options.stream} error ${e}`)
         if (e.name !== 'ResourceAlreadyExistsException')
           throw e
       })
