@@ -33,7 +33,7 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
    * 获取PostsRecord模型
    */
   private getPostsRecordModel(): Model<PostsRecord> {
-    return this.connection.model('PostsRecord') as Model<PostsRecord>
+    return this.connection.model('PostHistoryRecord') as Model<PostsRecord>
   }
 
   /**
