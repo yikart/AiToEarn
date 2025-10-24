@@ -1,56 +1,64 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
-import { AccountPortraitReportData } from './common'
+import { OnEvent } from '@nestjs/event-emitter'
+import { MaterialService } from '../content/material.service'
+import { TaskNatsApi } from '../transports/task/api/task.natsApi'
 
 @Injectable()
 export class TaskService {
   constructor(
-    private readonly httpService: HttpService,
+    private readonly taskNatsApi: TaskNatsApi,
+    private readonly materialService: MaterialService,
   ) { }
 
-  /**
-   * 账户数据上报
-   * @param data
-   */
-  async accountPortraitReport(
-    data: AccountPortraitReportData,
-  ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      'http://127.0.0.1:3000/api/account/portrait/report',
-      data,
-    )
-    return res.data
+  async getTaskOpportunityList(page: { pageNo: number, pageSize: number }, userId: string) {
+    return await this.taskNatsApi.getTaskOpportunityList(page, userId)
   }
 
-  async userPortraitReport(data: {
-    userId: string
-    name?: string
-    avatar?: string
-    status?: number
-    lastLoginTime?: Date
-    contentTags?: Record<string, number>
-    totalFollowers?: number
-    totalWorks?: number
-    totalViews?: number
-    totalLikes?: number
-    totalCollects?: number
-  }) {
-    const res = await this.httpService.axiosRef.post<any>(
-      'http://127.0.0.1:3000/api/user/portrait/report',
-      data,
-    )
-    return res.data
+  async getTaskInfoByOpportunityId(opportunityId: string) {
+    return await this.taskNatsApi.getTaskInfoByOpportunityId(opportunityId)
   }
 
-  async pushTaskWithUserCreate(
-    userId: string,
-  ) {
-    const res = await this.httpService.axiosRef.post<any>(
-      'http://127.0.0.1:3000/api/account/portrait/report',
-      {
-        userId,
-      },
+  async doView(userId: string, opportunityId: string) {
+    return await this.taskNatsApi.doView(userId, opportunityId)
+  }
+
+  async doViewAll(userId: string) {
+    return await this.taskNatsApi.doViewAll(userId)
+  }
+
+  async getNotViewCount(userId: string) {
+    return await this.taskNatsApi.getNotViewCount(userId)
+  }
+
+  async getTotalRewardAmount(userId: string) {
+    return await this.taskNatsApi.getTotalRewardAmount(userId)
+  }
+
+  async acceptTask(userId: string, opportunityId: string, accountId?: string) {
+    return await this.taskNatsApi.acceptTask({
+      opportunityId,
+      userId,
+      accountId,
+    })
+  }
+
+  async submitTask(userId: string, userTaskId: string, materialId?: string) {
+    const res = await this.taskNatsApi.submitTask(
+      userTaskId,
+      userId,
+      materialId,
     )
-    return res.data
+
+    // 素材计数
+    if (materialId) {
+      this.materialService.addUseCount(materialId)
+    }
+
+    return res
+  }
+
+  @OnEvent('task.push.withUserCreate')
+  pushTaskWithUserCreate(payload: { userId: string }) {
+    return this.taskNatsApi.pushTaskWithUserCreate(payload.userId)
   }
 }

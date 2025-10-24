@@ -9,6 +9,7 @@
     "@nestjs/bullmq": "^11.0.3",
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",

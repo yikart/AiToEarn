@@ -62,3 +62,17 @@ export interface TaskOpportunity {
   createdAt: Date
   updatedAt: Date
 }
+
+export interface UserPortraitReportData {
+  userId: string
+  name?: string
+  avatar?: string
+  status?: number
+  lastLoginTime?: Date
+  contentTags?: Record<string, number>
+  totalFollowers?: number
+  totalWorks?: number
+  totalViews?: number
+  totalLikes?: number
+  totalCollects?: number
+}

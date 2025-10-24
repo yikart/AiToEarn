@@ -90,4 +90,13 @@ export class TaskNatsApi extends TaskBaseApi {
     )
     return res
   }
+
+  async pushTaskWithUserCreate(userId: string) {
+    return await this.sendMessage<unknown>(
+      'task/push/withUserCreate',
+      {
+        userId,
+      },
+    )
+  }
 }

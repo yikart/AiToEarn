@@ -1,5 +1,6 @@
 import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
+import { EventEmitterModule } from '@nestjs/event-emitter'
 import { MailModule } from '@yikart/mail'
 import { MongodbModule } from '@yikart/mongodb'
 import { RedisModule } from '@yikart/redis'
@@ -25,6 +26,7 @@ import { UserModule } from './user/user.module'
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     MongodbModule.forRoot(config.mongodb),
     RedisModule.forRoot(config.redis),
     MailModule.forRoot(config.mail),

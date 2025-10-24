@@ -99,4 +99,14 @@ export class MaterialService {
     const res = await this.materialRepository.updateStatus(id, status, message)
     return res
   }
+
+  /**
+   * 使用计数增加
+   * @param id
+   * @returns
+   */
+  async addUseCount(id: string) {
+    const res = await this.materialRepository.addUseCount(id)
+    return res
+  }
 }
