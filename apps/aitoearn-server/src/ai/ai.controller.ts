@@ -24,6 +24,7 @@ import {
   VolcengineTaskStatusResponseVo,
   VolcengineVideoGenerationResponseVo,
 } from './ai.vo'
+import { TaskStatusResponseVo } from './core/image'
 import {
   ChatCompletionDto,
   DashscopeImage2VideoRequestDto,
@@ -98,6 +99,72 @@ export class AiController {
       ...body,
     })
     return ImageResponseVo.create(response)
+  }
+
+  @ApiOperation({ summary: '异步AI图片生成' })
+  @Post('image/generate/async')
+  async generateImageAsync(
+    @GetToken() token: TokenInfo,
+    @Body() body: ImageGenerationDto,
+  ) {
+    const response = await this.aiService.userImageGenerationAsync({
+      userId: token.id,
+      userType: UserType.User,
+      ...body,
+    })
+    return response
+  }
+
+  @ApiOperation({ summary: '异步AI图片编辑' })
+  @Post('image/edit/async')
+  async editImageAsync(
+    @GetToken() token: TokenInfo,
+    @Body() body: ImageEditDto,
+  ) {
+    const response = await this.aiService.userImageEditAsync({
+      userId: token.id,
+      userType: UserType.User,
+      ...body,
+    })
+    return response
+  }
+
+  @ApiOperation({ summary: '异步Markdown转卡片图片' })
+  @Post('md2card/async')
+  async generateMd2CardAsync(
+    @GetToken() token: TokenInfo,
+    @Body() body: Md2CardDto,
+  ) {
+    const response = await this.aiService.generateMd2CardAsync({
+      userId: token.id,
+      userType: UserType.User,
+      ...body,
+    })
+    return response
+  }
+
+  @ApiOperation({ summary: '异步Fireflycard生成卡片图片（免费）' })
+  @Post('fireflycard/async')
+  async generateFireflycardAsync(
+    @GetToken() token: TokenInfo,
+    @Body() body: FireflyCardDto,
+  ) {
+    const response = await this.aiService.generateFireflycardAsync({
+      userId: token.id,
+      userType: UserType.User,
+      ...body,
+    })
+    return response
+  }
+
+  @ApiOperation({ summary: '查询图片任务状态' })
+  @Get('image/task/:logId')
+  async getImageTaskStatus(
+    @GetToken() token: TokenInfo,
+    @Param('logId') logId: string,
+  ): Promise<TaskStatusResponseVo> {
+    const response = await this.aiService.getImageTaskStatus(logId)
+    return TaskStatusResponseVo.create(response)
   }
 
   @ApiOperation({ summary: '通用视频生成' })
