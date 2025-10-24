@@ -8,7 +8,7 @@
 import { Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { TableDto } from '@yikart/common'
-import { AccountType, PublishRecord, PublishRecordRepository } from '@yikart/mongodb'
+import { AccountType, PublishRecord, PublishRecordRepository, PublishStatus } from '@yikart/mongodb'
 import dayjs from 'dayjs'
 import { MaterialService } from '../content/material.service'
 import { TaskNatsApi } from '../transports/task/api/task.natsApi'
@@ -252,5 +252,13 @@ export class PublishRecordService {
       return false
     this.doTaskProcess(res)
     return !!res
+  }
+
+  async updatePublishRecordStatus(id: string, status: PublishStatus, errorMsg?: string) {
+    const res = await this.publishRecordRepository.updatePublishRecord(
+      { _id: id },
+      { status, errorMsg },
+    )
+    return res
   }
 }
