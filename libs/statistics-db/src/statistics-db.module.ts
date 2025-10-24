@@ -1,4 +1,4 @@
-import type { MongodbConfig } from './mongodb.config'
+import type { StatisticsDbConfig } from './statistics-db.config'
 import { Global } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
@@ -11,7 +11,7 @@ mongoose.set('transactionAsyncLocalStorage', true)
 
 @Global()
 export class StatisticsDbModule {
-  static forRoot(config: MongodbConfig) {
+  static forRoot(config: StatisticsDbConfig) {
     const platforms = [
       'bilibili',
       'douyin',
@@ -30,7 +30,7 @@ export class StatisticsDbModule {
     ]
 
     // 创建作者数据模型定义
-    const authorDataCollections = platforms.map((platform) => {
+    const authorDayDataCollections = platforms.map((platform) => {
       // 根据平台名称格式化模型名称
       let formattedPlatform = platform.charAt(0).toUpperCase() + platform.slice(1)
       // 特殊处理各个平台名称
@@ -77,16 +77,17 @@ export class StatisticsDbModule {
         formattedPlatform = 'Bilibili'
       }
 
-      const modelName = `${formattedPlatform}AuthorDatas`
+      const modelName = `${formattedPlatform}AuthorDayDatas`
       const collection = {
         name: modelName,
         schema: AuthorDatasSchema,
+        collection: `${platform.toLowerCase()}_account_insights_snapshot`,
       }
       return collection
     })
 
     // 创建PostRepository使用的模型定义
-    const postDataCollections = platforms.map((platform) => {
+    const postDayDataCollections = platforms.map((platform) => {
       let modelName
       // 根据PostRepository中的注入名称进行匹配
       if (platform === 'bilibili') {
@@ -112,6 +113,7 @@ export class StatisticsDbModule {
       const collection = {
         name: modelName,
         schema: PostDatasSchema,
+        collection: `${platform.toLowerCase()}_post_insights_snapshot`,
       }
       return collection
     })
@@ -122,17 +124,39 @@ export class StatisticsDbModule {
       { name: 'PostDayIncrease', schema: PostDatasSchema, collection: 'post_daily_insights_delta' },
     ]
 
+    // 创建PostRepository使用的模型定义
+    const postDataCollections = platforms.map((platform) => {
+      // 根据PostRepository中的注入名称进行匹配
+      const modelName = `${platform.toLowerCase()}_snapshot`
+      const collection = {
+        name: modelName,
+        schema: PostDatasSchema,
+        collection: `${platform.toLowerCase()}_post_snapshot`,
+      }
+      return collection
+    })
+
+    const { uri, dbName, ...options } = config
+
+    // 添加连接验证
+    const connectionOptions = {
+      ...options,
+      dbName: dbName || 'aitoearn_datas',
+      connectionName: 'statistics-db-connection',
+    }
+
     const forFeature = MongooseModule.forFeature([
       ...schemas,
-      ...authorDataCollections,
+      ...authorDayDataCollections,
+      ...postDayDataCollections,
       ...postDataCollections,
       ...increaseDataCollections,
-    ])
-    const { uri, ...options } = config
+    ], 'statistics-db-connection')
 
     return {
+      module: StatisticsDbModule,
       imports: [
-        MongooseModule.forRoot(uri, options),
+        MongooseModule.forRoot(uri, connectionOptions),
         forFeature,
       ],
       providers: [
@@ -143,8 +167,6 @@ export class StatisticsDbModule {
         forFeature,
         ...repositories,
       ],
-      module: StatisticsDbModule,
-      global: true,
     }
   }
 }

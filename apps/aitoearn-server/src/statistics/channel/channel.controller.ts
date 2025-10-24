@@ -1,4 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, Public } from '../../auth/auth.guard'
+import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { ChannelService } from './channel.service'
 import { BatchHistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'
 
@@ -14,8 +17,16 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.douyin.searchTopic')
+  @Public()
+  @ApiOperation({
+    summary: '话题搜索',
+    description: '话题搜索',
+  })
   @Post('statistics/channels/douyin/searchTopic')
-  async douYinSerachTopic(@Body() data: searchTopicDto) {
+  async douYinSerachTopic(
+    @GetToken() token: TokenInfo,
+    @Body() data: searchTopicDto,
+  ) {
     return this.channelService.getDouyinTopic(data.topic, data?.language)
   }
 
