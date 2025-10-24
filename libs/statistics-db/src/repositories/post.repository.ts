@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { InjectConnection } from '@nestjs/mongoose'
 import dayjs from 'dayjs'
 import { Connection, Model, PipelineStage, RootFilterQuery } from 'mongoose'
 import { PostData } from '../common'

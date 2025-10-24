@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { InjectConnection } from '@nestjs/mongoose'
 import dayjs from 'dayjs'
 import { Connection, Model, RootFilterQuery } from 'mongoose'
 import { NewChannel } from '../schemas/account.schema'
