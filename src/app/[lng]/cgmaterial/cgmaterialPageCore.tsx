@@ -28,6 +28,7 @@ import { useTransClient } from "@/app/i18n/client";
 import { PubType } from "@/app/config/publishConfig";
 import { useParams } from "next/navigation";
 import { getChatModels } from "@/api/ai";
+import AvatarPlat from "@/components/AvatarPlat";
 
 const { TextArea } = Input;
 
@@ -927,6 +928,30 @@ export default function CgMaterialPageCore() {
     return platformNames[type] || type;
   }
 
+  // 处理离线账户头像点击
+  function handleOfflineAvatarClick(account: any) {
+    // 根据平台类型跳转到对应的授权页面
+    const authUrls: Record<string, string> = {
+      'tiktok': '/accounts/plat/TikTokLogin',
+      'youtube': '/accounts/plat/YouTubeLogin',
+      'twitter': '/accounts/plat/TwitterLogin',
+      'bilibili': '/accounts/plat/BilibiliLogin',
+      'KWAI': '/accounts/plat/KwaiLogin',
+      'douyin': '/accounts/plat/DouyinLogin',
+      'xhs': '/accounts/plat/XhsLogin',
+      'wxSph': '/accounts/plat/WxSphLogin',
+      'wxGzh': '/accounts/plat/WxGzhLogin',
+      'facebook': '/accounts/plat/FacebookLogin',
+      'instagram': '/accounts/plat/InstagramLogin',
+      'threads': '/accounts/plat/ThreadsLogin',
+    };
+    
+    const authUrl = authUrls[account.type];
+    if (authUrl) {
+      window.open(authUrl, '_blank');
+    }
+  }
+
   return (
     <div className={styles.materialContainer}>
       <div className={styles.header}>
@@ -1211,28 +1236,68 @@ export default function CgMaterialPageCore() {
             bordered
             style={{ maxHeight: 200, overflow: 'auto' }}
             dataSource={accountList}
-            renderItem={account => (
-              <List.Item
-                style={{ 
-                  cursor: 'pointer', 
-                  background: selectedAccount?.id === account.id ? '#e6f4ff' : '#fff',
-                  padding: '12px 16px'
-                }}
-                onClick={() => handleSelectAccount(account)}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <Avatar src={account.avatar} size={32}>
-                    {account.nickname?.charAt(0)}
-                  </Avatar>
-                  <div>
-                    <div style={{ fontWeight: 500 }}>{account.nickname}</div>
-                    <div style={{ fontSize: 12, color: '#666' }}>
-                      {getPlatformName(account.type)} • {account.workCount} 作品
+            renderItem={account => {
+              const isOffline = account.status === 0;
+              const isChoosed = selectedAccount?.id === account.id;
+              
+              return (
+                <List.Item
+                  style={{ 
+                    cursor: 'pointer', 
+                    background: isChoosed ? '#e6f4ff' : '#fff',
+                    padding: '12px 16px'
+                  }}
+                  onClick={() => {
+                    if (isOffline) {
+                      handleOfflineAvatarClick(account);
+                      return;
+                    }
+                    handleSelectAccount(account);
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <div style={{ position: 'relative' }}>
+                      <AvatarPlat
+                        account={account}
+                        size="large"
+                        disabled={isOffline}
+                      />
+                      {isOffline && (
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOfflineAvatarClick(account);
+                          }}
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: 'rgba(0,0,0,0.45)',
+                            borderRadius: '50%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#fff',
+                            fontSize: 12,
+                            fontWeight: 600,
+                            pointerEvents: 'auto',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          离线
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 500 }}>{account.nickname}</div>
+                      <div style={{ fontSize: 12, color: '#666' }}>
+                        {getPlatformName(account.type)} • {account.workCount} 作品
+                        {isOffline && <span style={{ color: '#ff4d4f', marginLeft: 8 }}>• 离线</span>}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </List.Item>
-            )}
+                </List.Item>
+              );
+            }}
           />
         </div>
 
