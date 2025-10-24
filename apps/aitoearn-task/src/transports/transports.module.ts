@@ -4,7 +4,7 @@ import { AccountHttpApi } from './account/account.httpApi'
 import { MaterialNatsApi } from './content/material.natsApi'
 import { MediaNatsApi } from './content/media.natsApi'
 import { NotificationNatsApi } from './other/notification.natsApi'
-import { TransportsService } from './transports.service'
+import { ServerBaseApi } from './serverBase.api'
 import { IncomeNatsApi } from './user/income.natsApi'
 import { UserNatsApi } from './user/user.natsApi'
 
@@ -12,7 +12,7 @@ import { UserNatsApi } from './user/user.natsApi'
 @Module({
   imports: [HttpModule],
   providers: [
-    TransportsService,
+    ServerBaseApi,
     MaterialNatsApi,
     MediaNatsApi,
     NotificationNatsApi,
@@ -21,7 +21,6 @@ import { UserNatsApi } from './user/user.natsApi'
     AccountHttpApi,
   ],
   exports: [
-    TransportsService,
     MaterialNatsApi,
     MediaNatsApi,
     NotificationNatsApi,

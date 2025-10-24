@@ -8,6 +8,10 @@ export const appConfigSchema = z.object({
   redis: redisConfigSchema,
   taskDb: mongodbConfigSchema,
   environment: z.string().default('development'),
+  serverApi: z.object({
+    baseUrl: z.string().default('http://localhost:3000/api'),
+    internalToken: z.string(),
+  }),
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }

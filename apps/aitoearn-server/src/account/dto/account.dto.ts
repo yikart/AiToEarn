@@ -66,12 +66,10 @@ export class UpdateAccountDto extends createZodDto(
   UpdateAccountSchema,
 ) {}
 
-export class AccountIdDto {
-  @ApiProperty({ description: '账号ID' })
-  @IsString()
-  @Expose()
-  id: string
-}
+const AccountIdSchema = z.object({
+  id: z.string({ message: 'ID' }),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
 export class UpdateAccountStatusDto extends AccountIdDto {
   @ApiProperty({ description: '状态' })
@@ -84,13 +82,10 @@ export class UpdateAccountStatusDto extends AccountIdDto {
   status: AccountStatus
 }
 
-export class AccountListByIdsDto {
-  @ApiProperty({ description: '账号ID数组', type: [Number] })
-  @IsArray()
-  @IsString({ each: true })
-  @Expose()
-  ids: string[]
-}
+const AccountListByIdsSchema = z.object({
+  ids: z.array(z.string()).describe('账号ID数组'),
+})
+export class AccountListByIdsDto extends createZodDto(AccountListByIdsSchema) {}
 
 export class AccountStatisticsDto {
   @ApiProperty({ description: '账户类型', enum: AccountType, required: false })

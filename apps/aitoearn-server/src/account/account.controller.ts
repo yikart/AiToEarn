@@ -80,9 +80,9 @@ export class AccountController {
   @Post('list/ids')
   async getAccountListByIds(
     @GetToken() token: TokenInfo,
-    @Query() query: AccountListByIdsDto,
+    @Body() body: AccountListByIdsDto,
   ) {
-    return this.accountService.getAccountListByIds(token.id, query.ids)
+    return this.accountService.getAccountListByIdsOfUser(token.id, body.ids)
   }
 
   @ApiOperation({ summary: '获取账户总数' })

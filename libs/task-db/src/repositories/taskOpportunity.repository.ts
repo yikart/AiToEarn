@@ -14,7 +14,7 @@ export class TaskOpportunityRepository extends BaseRepository<TaskOpportunity> {
   }
 
   async findOneById(id: string) {
-    const res = await this.taskOpportunityModel.findById(id).exec()
+    const res = await this.taskOpportunityModel.findById(id).lean().exec()
     return res
   }
 
