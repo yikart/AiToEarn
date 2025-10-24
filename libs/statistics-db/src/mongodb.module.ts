@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
 import { repositories } from './repositories'
 import { schemas } from './schemas'
-import { PostDatasSchema } from './schemas/authorData.schema'
+import { AuthorDatasSchema, PostDatasSchema } from './schemas/authorData.schema'
 import { TransactionalInjector } from './transactional.injector'
 
 mongoose.set('transactionAsyncLocalStorage', true)
@@ -80,7 +80,7 @@ export class StatisticsDbModule {
       const modelName = `${formattedPlatform}AuthorDatas`
       const collection = {
         name: modelName,
-        schema: PostDatasSchema,
+        schema: AuthorDatasSchema,
       }
       return collection
     })
@@ -118,7 +118,7 @@ export class StatisticsDbModule {
 
     // 添加增量数据模型定义
     const increaseDataCollections = [
-      { name: 'AccountDayIncrease', schema: PostDatasSchema },
+      { name: 'AccountDayIncrease', schema: PostDatasSchema, collection: 'account_daily_insights_delta' },
       { name: 'PostDayIncrease', schema: PostDatasSchema, collection: 'post_daily_insights_delta' },
     ]
 
@@ -129,6 +129,8 @@ export class StatisticsDbModule {
       ...increaseDataCollections,
     ])
     const { uri, ...options } = config
+    console.log(uri)
+    console.log(options)
 
     return {
       imports: [

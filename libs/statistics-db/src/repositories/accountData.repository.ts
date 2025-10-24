@@ -3,7 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/mongoose'
 import dayjs from 'dayjs'
 import { Connection, Model, RootFilterQuery } from 'mongoose'
 import { NewChannel } from '../schemas/account.schema'
-import { AuthorDatas } from '../schemas/authorData.schema'
+import { AuthorDatas, PostDatas } from '../schemas/authorData.schema'
 import { BaseRepository } from './base.repository'
 
 @Injectable()

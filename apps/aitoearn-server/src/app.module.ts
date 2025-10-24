@@ -14,6 +14,7 @@ import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
+import { StatisticsModule } from './statistics/statistics.module'
 import { TaskModule } from './task/task.module'
 import { ToolsModule } from './tools/tools.module'
 import { TransportsModule } from './transports/transports.module'
@@ -43,6 +44,7 @@ import { UserModule } from './user/user.module'
     ChannelModule,
     TaskModule,
     PaymentModule,
+    StatisticsModule,
   ],
   controllers: [],
   providers: [],
