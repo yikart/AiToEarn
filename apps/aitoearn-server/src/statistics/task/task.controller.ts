@@ -1,6 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken, Public } from '../../auth/auth.guard'
+import { Public } from '../../auth/auth.guard'
 import { PostService } from '../post/post.service'
 import { postDetailDto, taskIdDto, taskPostDto } from './dto/task.dto'
 import { TaskService } from './task.service'
@@ -21,7 +20,7 @@ export class TaskController {
 
   @Post('statistics/task/posts/record')
   async getAccounts(@Body() data: taskPostDto) {
-    return this.taskService.userTaskPosts(data.accountId, data.type, data.uid, data.taskId, data.postId)
+    return this.taskService.userTaskPosts(data)
   }
 
   /**
