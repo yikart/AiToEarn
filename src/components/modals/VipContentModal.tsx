@@ -97,7 +97,6 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
     if (userStore.userInfo) {
       // 如果用户没有vipInfo，说明从未开过会员，可以享受免费试用
       const hasVipInfo = userStore.userInfo.vipInfo;
-      console.log('hasVipInfo', hasVipInfo);
       setCanUseTrial(!hasVipInfo);
     }
   }, [userStore.userInfo]);
