@@ -1,10 +1,11 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, Public } from '../../auth/auth.guard'
 import { FetchAllPostsRequestDto, FetchPostRequestDto, FetchPostsRequestDto } from './post.dto'
 import { PostService } from './post.service'
 
 @ApiTags('社交媒体作品')
-@Controller('posts')
+@Controller()
 export class PostController {
   constructor(
     private readonly postService: PostService,
