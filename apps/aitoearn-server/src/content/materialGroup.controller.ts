@@ -32,7 +32,7 @@ export class MaterialGroupController {
     description: '创建草稿组',
     summary: '创建草稿组',
   })
-  @Post('group')
+  @Post()
   async createGroup(
     @GetToken() token: TokenInfo,
     @Body() body: CreateMaterialGroupDto,
@@ -48,7 +48,7 @@ export class MaterialGroupController {
     description: '删除素材组',
     summary: '删除素材组',
   })
-  @Delete('group/:id')
+  @Delete(':id')
   async delGroup(@Param('id') id: string) {
     const res = await this.materialGroupService.delGroup(id)
     return res
@@ -58,7 +58,7 @@ export class MaterialGroupController {
     description: '更新素材组信息',
     summary: '更新素材组信息',
   })
-  @Post('group/info/:id')
+  @Post('info/:id')
   async updateGroupInfo(
     @Param('id') id: string,
     @Body() body: UpdateMaterialGroupDto,
@@ -71,7 +71,7 @@ export class MaterialGroupController {
     description: '获取素材组列表',
     summary: '获取素材组列表',
   })
-  @Get('group/list/:pageNo/:pageSize')
+  @Get('list/:pageNo/:pageSize')
   async getGroupList(
     @GetToken() token: TokenInfo,
     @Param() param: TableDto,
