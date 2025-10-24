@@ -39,3 +39,8 @@ export interface PublishRecord {
   createdAt: Date
   updatedAt: Date
 }
+
+export enum PublishingChannel {
+  INTERNAL = 'internal', // 通过我们内部系统发布的
+  NATIVE = 'native', // 平台原生端发布的
+}

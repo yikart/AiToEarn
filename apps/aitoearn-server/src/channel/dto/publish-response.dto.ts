@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { AccountType, PublishStatus } from '@yikart/mongodb'
+import { IsOptional } from 'class-validator'
+import { PublishingChannel } from '../../transports/channel/common'
 // import { AccountType } from '@yikart/common'
 
 export class PublishRecordItemDto {
@@ -68,6 +70,10 @@ export class PublishRecordItemDto {
     nullable: true,
   })
   errorMsg: string
+
+  @ApiProperty({ enum: PublishingChannel, description: '发布渠道', required: false })
+  @IsOptional()
+  publishingChannel: PublishingChannel
 }
 
 export class PostEngagementDto {

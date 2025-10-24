@@ -12,6 +12,7 @@ import {
   IsString,
 } from 'class-validator'
 import { z } from 'zod'
+import { PublishingChannel } from '../../transports/channel/common'
 
 export const CreatePublishSchema = z.object({
   flowId: z.string({ message: '流水ID' }).optional(),
@@ -98,6 +99,17 @@ export class PubRecordListFilterDto {
     value ? value.map((v: string) => new Date(v)) : undefined,
   )
   readonly time?: [Date, Date]
+
+  @ApiProperty({
+    title: '发布渠道',
+    required: false,
+    enum: PublishingChannel,
+    description: '发布渠道，通过我们内部系统发布的(internal)或平台原生端(native)',
+  })
+  @IsEnum(PublishingChannel, { message: '状态' })
+  @IsOptional()
+  @Expose()
+  publishingChannel: PublishingChannel
 }
 
 export class UpdatePublishRecordTimeDto {
