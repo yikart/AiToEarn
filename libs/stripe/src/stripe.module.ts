@@ -1,13 +1,14 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { Stripe } from 'stripe'
-import { ChargeService } from './charge/charge.service'
-import { CheckoutService } from './checkout/checkout.service'
-import { CouponService } from './coupon/coupon.service'
-import { PriceService } from './price/price.service'
-import { ProductService } from './product/product.service'
-import { RefundService } from './refund/refund.service'
+import { ChargeService } from './charge'
+import { CheckoutService } from './checkout'
+import { CouponService } from './coupon'
+import { PriceService } from './price'
+import { ProductService } from './product'
+import { RefundService } from './refund'
 import { StripeConfig } from './stripe.config'
-import { SubscriptionService } from './subscription/subscription.service'
+import { StripeService } from './stripe.service'
+import { SubscriptionService } from './subscription'
 
 @Module({})
 export class StripeModule {
@@ -20,6 +21,7 @@ export class StripeModule {
       ProductService,
       RefundService,
       SubscriptionService,
+      StripeService,
     ]
     return {
       module: StripeModule,
