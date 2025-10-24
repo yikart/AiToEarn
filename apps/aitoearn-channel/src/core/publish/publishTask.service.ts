@@ -68,12 +68,15 @@ export class PublishTaskService implements OnModuleDestroy {
     const newTask = await this.publishTaskModel.create(taskInfo)
 
     const publishImmediately = publishTime.getTime() < (Date.now() + IMMEDIATE_PUSH_THRESHOLD_MS)
-    if (!publishImmediately)
+    if (!publishImmediately) {
+      this.logger.log(`Publish task ${newTask.id} created, scheduled for ${publishTime.toISOString()}`)
       return newTask
+    }
 
     const res = await this.pushPubTask(newTask)
     if (!res)
       throw new AppException(1, `task publish failed, accountType: ${accountType}`)
+    this.logger.log(`Publish task ${newTask.id} created and pushed to queue immediately`)
     return newTask
   }
 

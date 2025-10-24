@@ -230,11 +230,13 @@ export class YoutubeService {
     let credential = await this.redisService.get<any>(
       `youtube:accessToken:${accountId}`,
     )
+    this.logger.log(`getOAuth2Credential from redis: ${JSON.stringify(credential)}`)
     if (!credential) {
       const oauth2Credential = await this.OAuth2CrendentialModel.findOne({
         accountId,
         platform: this.platform,
       })
+      this.logger.log(`getOAuth2Credential from db: ${JSON.stringify(oauth2Credential)}`)
       if (!oauth2Credential) {
         return null
       }
