@@ -473,10 +473,10 @@ export default function CgMaterialPageCore() {
         setPreviewData(res?.data?.data || null);
         setPreviewModal(true);
       } else {
-        message.error("获取预览失败");
+        message.error(t('batchGenerate.previewFailed'));
       }
     } catch (e) {
-      message.error("获取预览失败");
+      message.error(t('batchGenerate.previewFailed'));
     } finally {
       setPreviewLoading(false);
     }
@@ -1250,10 +1250,10 @@ export default function CgMaterialPageCore() {
             </Select>
           </Form.Item>
           
-          <Form.Item label="描述" name="desc">
+          <Form.Item label={t('createGroup.desc')} name="desc">
             <TextArea 
               rows={3} 
-              placeholder="请输入草稿箱组描述（可选）"
+              placeholder={t('createGroup.descPlaceholder')}
               maxLength={200}
               showCount
             />
