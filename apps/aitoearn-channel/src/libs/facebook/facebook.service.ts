@@ -74,7 +74,7 @@ export class FacebookService {
       const code = normalized.raw?.code
       const message = normalized.raw?.message || (error as Error)?.message
       this.logger.error(`[FB:${operation}] Failed url=${url} status=${status} code=${code} msg=${message}`)
-      throw new FacebookApiException(operation, normalized, { url, method: config.method }, { cause: error })
+      throw new FacebookApiException(operation, normalized, { url, method: config.method })
     }
   }
 
