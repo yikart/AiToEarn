@@ -31,7 +31,6 @@ export class MetaService {
     redisService: RedisService,
     accountService: AccountService,
   ) {
-    this.prefix = config.nats.prefix || 'meta'
     this.redisService = redisService
     this.accountService = accountService
   }
