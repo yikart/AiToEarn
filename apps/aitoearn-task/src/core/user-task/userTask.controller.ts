@@ -9,7 +9,7 @@ import {
 } from './userTask.dto'
 import { UserTaskService } from './userTask.service'
 
-@Controller('userTask')
+@Controller()
 export class UserTaskController {
   constructor(
     private readonly userTaskService: UserTaskService,
@@ -19,35 +19,35 @@ export class UserTaskController {
    * 用户接受任务
    */
   // @NatsMessagePattern('task.userTask.accept')
-  @Post('accept')
+  @Post('task/userTask/accept')
   async acceptTask(@Body() data: UserTaskAcceptDto) {
     const res = await this.userTaskService.acceptTask(data.userId, data.opportunityId, data.accountId)
     return res
   }
 
   // @NatsMessagePattern('task.userTask.submit')
-  @Post('submit')
+  @Post('task/userTask/submit')
   async submitUserTask(@Body() data: UserTaskSubmitDto) {
     const task = await this.userTaskService.submitTask(data)
     return task
   }
 
   // @NatsMessagePattern('task.userTask.list')
-  @Post('list')
+  @Post('task/userTask/list')
   async getUserTasks(@Body() data: UserTaskQueryDto) {
     const tasks = await this.userTaskService.findUserTasks(data.page, data.filter)
     return tasks
   }
 
   // @NatsMessagePattern('task.userTask.info')
-  @Post('info')
+  @Post('task/userTask/info')
   async getUserTask(@Body() data: { id: string }) {
     const task = await this.userTaskService.getUserTaskInfoById(data.id)
     return task
   }
 
   // @NatsMessagePattern('task.userTask.detail')
-  @Post('detail')
+  @Post('task/userTask/detail')
   async getUserTaskDetail(@Body() data: UserTaskDetailDto) {
     const task = await this.userTaskService.getUserTaskDetail(data.userId, data.id)
     return task
@@ -55,7 +55,7 @@ export class UserTaskController {
 
   @ApiOperation({ summary: '统计合计进行中的任务的金额总数' })
   // @NatsMessagePattern('task.task.rewardAmount')
-  @Post('rewardAmount')
+  @Post('task/task/rewardAmount')
   async getTotalAmountOfDoingTasks(@Body() data: UserIdDto) {
     const totalAmount = await this.userTaskService.getTotalAmountOfDoingTasks(data.userId)
     return { totalAmount }

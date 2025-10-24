@@ -12,7 +12,7 @@ export class TaskOpportunityController {
   ) {}
 
   // @NatsMessagePattern('task.taskOpportunity.del')
-  @Post('del')
+  @Post('task/taskOpportunity/del')
   async delTaskOpportunity(@Body() data: { id: string }) {
     const info = await this.taskOpportunityService.findOneById(data.id)
     if (!info || info.status !== TaskOpportunityStatus.PENDING)
@@ -21,25 +21,25 @@ export class TaskOpportunityController {
   }
 
   // @NatsMessagePattern('task.taskOpportunity.list')
-  @Post('list')
+  @Post('task/taskOpportunity/list')
   async taskOpportunityList(@Body() data: TaskOpportunityListDto) {
     return this.taskOpportunityService.findList(data.page, data.filter)
   }
 
   // @NatsMessagePattern('task.taskOpportunity.doView')
-  @Post('doView')
+  @Post('task/taskOpportunity/doView')
   async doView(@Body() data: { userId: string, id: string }) {
     return this.taskOpportunityService.doView(data.userId, data.id)
   }
 
   // @NatsMessagePattern('task.taskOpportunity.doViewAll')
-  @Post('doViewAll')
+  @Post('task/taskOpportunity/doViewAll')
   async doViewAll(@Body() data: { userId: string }) {
     return this.taskOpportunityService.doViewAll(data.userId)
   }
 
   // @NatsMessagePattern('task.taskOpportunity.notViewCount')
-  @Post('notViewCount')
+  @Post('task/taskOpportunity/notViewCount')
   async getNotViewCount(@Body() data: { userId: string }) {
     return this.taskOpportunityService.getNotViewCount(data.userId)
   }

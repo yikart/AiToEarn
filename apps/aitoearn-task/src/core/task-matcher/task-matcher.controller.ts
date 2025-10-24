@@ -11,19 +11,19 @@ import { TaskMatcherService } from './task-matcher.service'
 import { TaskMatcherListVo, TaskMatcherVo } from './task-matcher.vo'
 
 @ApiTags('matcher - 任务匹配规则')
-@Controller('matcher')
+@Controller()
 export class TaskMatcherController {
   constructor(private readonly taskMatcherService: TaskMatcherService) {}
 
   // @NatsMessagePattern('task.admin.matcher.create')
-  @Post('create')
+  @Post('task/admin/matcher/create')
   async create(@Body() createDto: CreateTaskMatcherDto): Promise<TaskMatcherVo> {
     const matcher = await this.taskMatcherService.create(createDto)
     return matcher
   }
 
   // @NatsMessagePattern('task.admin.matcher.get')
-  @Post('get')
+  @Post('task/admin/matcher/get')
   async get(@Payload() data: { id: string }): Promise<TaskMatcherVo> {
     const matcher = await this.taskMatcherService.findById(data.id)
     if (!matcher) {
@@ -33,7 +33,7 @@ export class TaskMatcherController {
   }
 
   // @NatsMessagePattern('task.admin.matcher.update')
-  @Post('update')
+  @Post('task/admin/matcher/update')
   async update(
     @Body() data: UpdateTaskMatcherDto,
   ): Promise<TaskMatcherVo> {
@@ -45,13 +45,13 @@ export class TaskMatcherController {
   }
 
   // @NatsMessagePattern('task.admin.matcher.delete')
-  @Post('delete')
+  @Post('task/admin/matcher/delete')
   async delete(@Body() data: { id: string }) {
     await this.taskMatcherService.delete(data.id)
   }
 
   // @NatsMessagePattern('task.admin.matcher.list')
-  @Post('list')
+  @Post('task/admin/matcher/list')
   async list(@Body() query: QueryTaskMatcherDto): Promise<TaskMatcherListVo> {
     const result = await this.taskMatcherService.getList(query)
     return TaskMatcherListVo.create(result)

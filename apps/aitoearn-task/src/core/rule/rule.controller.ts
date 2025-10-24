@@ -10,17 +10,19 @@ import { RuleService } from './rule.service'
 import { RuleListVo, RuleVo } from './rule.vo'
 
 @ApiTags('rule - 规则')
-@Controller('rule')
+@Controller()
 export class RuleController {
   constructor(private readonly ruleService: RuleService) {}
 
-  @Post('create')
+  // @NatsMessagePattern('task.rule.create')
+  @Post('task/rule/create')
   async create(@Body() body: CreateRuleDto): Promise<RuleVo> {
     const matcher = await this.ruleService.create(body)
     return RuleVo.create(matcher)
   }
 
-  @Post('get')
+  // @NatsMessagePattern('task.rule.get')
+  @Post('task/rule/get')
   async get(@Body() body: { id: string }): Promise<RuleVo> {
     const matcher = await this.ruleService.findById(body.id)
     if (!matcher) {
@@ -29,7 +31,8 @@ export class RuleController {
     return RuleVo.create(matcher)
   }
 
-  @Post('update')
+  // @NatsMessagePattern('task.rule.update')
+  @Post('task/rule/update')
   async update(
     @Body() body: UpdateRuleDto,
   ): Promise<RuleVo> {
@@ -40,12 +43,14 @@ export class RuleController {
     return RuleVo.create(matcher)
   }
 
-  @Post('delete')
+  // @NatsMessagePattern('task.rule.delete')
+  @Post('task/rule/delete')
   async delete(@Body() body: { id: string }) {
     await this.ruleService.delete(body.id)
   }
 
-  @Post('list')
+  // @NatsMessagePattern('task.rule.list')
+  @Post('task/rule/list')
   async list(@Body() body: QueryRuleDto): Promise<RuleListVo> {
     const result = await this.ruleService.getList(body.page, body.filter)
     return result

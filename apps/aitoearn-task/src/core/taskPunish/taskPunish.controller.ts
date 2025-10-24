@@ -9,19 +9,19 @@ import {
 import { TaskPunishService } from './taskPunish.service'
 
 @ApiTags('任务惩罚')
-@Controller('punish')
+@Controller()
 export class TaskPunishController {
   constructor(private readonly taskPunishService: TaskPunishService) {}
 
   // @NatsMessagePattern('task.admin.taskPunish.create')
-  @Post('create')
+  @Post('task/admin/taskPunish/create')
   async create(@Body() data: CreateTaskPunishDto) {
     const res = await this.taskPunishService.create(data)
     return res
   }
 
   // @NatsMessagePattern('task.admin.taskPunish.info')
-  @Post('info')
+  @Post('task/admin/taskPunish/info')
   async info(@Body() data: { id: string }) {
     const res = await this.taskPunishService.findById(data.id)
     if (!res) {
@@ -31,7 +31,7 @@ export class TaskPunishController {
   }
 
   // @NatsMessagePattern('task.admin.taskPunish.update')
-  @Post('update')
+  @Post('task/admin/taskPunish/update')
   async update(
     @Body() data: UpdateTaskPunishDto,
   ) {
@@ -43,13 +43,13 @@ export class TaskPunishController {
   }
 
   // @NatsMessagePattern('task.admin.taskPunish.delete')
-  @Post('delete')
+  @Post('task/admin/taskPunish/delete')
   async delete(@Body() data: { id: string }) {
     await this.taskPunishService.delete(data.id)
   }
 
   // @NatsMessagePattern('task.admin.taskPunish.list')
-  @Post('list')
+  @Post('task/admin/taskPunish/list')
   async list(@Body() query: QueryTaskPunishDto) {
     const res = await this.taskPunishService.getList(query)
     return res

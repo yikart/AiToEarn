@@ -4,7 +4,7 @@ import { TaskOpportunityStatus } from '@yikart/task-db'
 import { AdminTaskOpportunityListDto } from './adminTaskOpportunity.dto'
 import { AdminTaskOpportunityService } from './adminTaskOpportunity.service'
 
-@Controller('admin/taskOpportunity')
+@Controller('')
 export class AdminTaskOpportunityController {
   logger = new Logger(AdminTaskOpportunityController.name)
   constructor(
@@ -12,13 +12,13 @@ export class AdminTaskOpportunityController {
   ) {}
 
   // @NatsMessagePattern('task.admin.taskOpportunity.list')
-  @Post('list')
+  @Post('task/admin/taskOpportunity/list')
   async taskOpportunityList(@Body() data: AdminTaskOpportunityListDto) {
     return this.taskOpportunityService.findList(data.page, data.filter)
   }
 
   // @NatsMessagePattern('task.admin.taskOpportunity.del')
-  @Post('del')
+  @Post('task/admin/taskOpportunity/del')
   async delTaskOpportunity(@Body() data: { id: string }) {
     const info = await this.taskOpportunityService.info(data.id)
     if (!info || info.status !== TaskOpportunityStatus.PENDING) {

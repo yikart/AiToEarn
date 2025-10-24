@@ -8,20 +8,20 @@ export class UserPortraitController {
   constructor(private readonly userPortraitService: UserPortraitService) {}
 
   // @NatsMessagePattern('task.userPortrait.report')
-  @Post('report')
+  @Post('task/userPortrait/report')
   async reportUserPortrait(@Body() data: ReportUserPortraitDto) {
     await this.userPortraitService.reportUserPortrait(data)
   }
 
   // @NatsMessagePattern('task.userPortrait.get')
-  @Post('get')
+  @Post('task/userPortrait/get')
   async getUserPortrait(@Body() data: GetUserPortraitDto) {
     const portrait = await this.userPortraitService.getUserPortrait(data.userId)
     return portrait
   }
 
   // @NatsMessagePattern('task.userPortrait.list')
-  @Post('list')
+  @Post('task/userPortrait/list')
   async listUserPortraits(@Body() query: UserPortraitListQueryDto) {
     const result = await this.userPortraitService.listUserPortraits(query)
     return UserPortraitListVo.create({
