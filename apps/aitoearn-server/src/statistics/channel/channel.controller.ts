@@ -14,7 +14,7 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.douyin.searchTopic')
-  @Post('statistics/channel/douyin/searchTopic')
+  @Post('statistics/channels/douyin/searchTopic')
   async douYinSerachTopic(@Body() data: searchTopicDto) {
     return this.channelService.getDouyinTopic(data.topic, data?.language)
   }
@@ -25,7 +25,7 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.platform.postsRecord')
-  @Post('statistics/channel/platform/postsRecord')
+  @Post('statistics/channels/platform/postsRecord')
   async setHistoryPostsRecord(@Body() data: BatchHistoryPostsRecordDto) {
     return this.channelService.historyPostsRecord(data.records)
   }
@@ -36,7 +36,7 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.platform.postsRecordStatus')
-  @Post('statistics/channel/platform/postsRecordStatus')
+  @Post('statistics/channels/platform/postsRecordStatus')
   async getHistoryPostsRecordStatus(@Body() data: UserIdDto) {
     return this.channelService.historyPostsRecordStatus(data.userId)
   }
