@@ -35,6 +35,9 @@ export const configSchema = z.object({
   channelApi: z.object({
     baseUrl: z.string().default('http://localhost:3000/api'),
   }),
+  paymentApi: z.object({
+    baseUrl: z.string().default('http://localhost:3000/api'),
+  }),
   taskApi: z.object({
     baseUrl: z.string().default('http://localhost:3000/api'),
   }),
