@@ -136,6 +136,7 @@ export const configSchema = z.object({
   youtube: YoutubeSchema,
   oauth: MetaOAuth2ConfigSchema,
   aliGreen: AliGreenConfigSchema,
+  internalToken: z.string(),
 })
 
 export class AppConfig extends createZodDto(configSchema) {}

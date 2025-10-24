@@ -46,14 +46,12 @@ export class MetaController {
 
   // @NatsMessagePattern('plat.meta.facebook.pages')
   @Post('plat/meta/facebook/pages')
-  @Get('facebook/pages')
   async getAuthInfo(@Body() data: UserIdDto) {
     return await this.metaService.getFacebookPageList(data.userId)
   }
 
   // @NatsMessagePattern('plat.meta.facebook.pages.selection')
   @Post('plat/meta/facebook/pages/selection')
-  @Post('facebook/pages')
   async selectFacebookPages(@Body() data: PagesSelectionDto) {
     return await this.metaService.selectFacebookPages(data.userId, data.pageIds)
   }
