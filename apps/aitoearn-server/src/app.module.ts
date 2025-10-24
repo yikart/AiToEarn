@@ -12,6 +12,7 @@ import { ChannelModule } from './channel/channel.module'
 import { config } from './config'
 import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
+import { IncomeModule } from './income/income.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
 import { TaskModule } from './task/task.module'
@@ -43,6 +44,7 @@ import { UserModule } from './user/user.module'
     ChannelModule,
     TaskModule,
     PaymentModule,
+    IncomeModule,
   ],
   controllers: [],
   providers: [],

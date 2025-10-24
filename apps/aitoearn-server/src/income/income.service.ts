@@ -36,12 +36,15 @@ export class IncomeService {
     page: TableDto,
     filter: { userId: string, type?: IncomeType },
   ) {
-    const res = await this.incomeRecordRepository.listWithPagination({
+    const [list, total] = await this.incomeRecordRepository.listWithPagination({
       ...filter,
       page: page.pageNo,
       pageSize: page.pageSize,
     })
-    return res
+    return {
+      list,
+      total,
+    }
   }
 
   /**
