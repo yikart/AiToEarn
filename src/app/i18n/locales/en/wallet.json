@@ -1,0 +1,51 @@
+{
+  "title": "My Wallet",
+  "columns": {
+    "userName": "Real Name",
+    "mail": "Email",
+    "account": "Account",
+    "type": "Type",
+    "phone": "Phone",
+    "cardNum": "ID Number",
+    "actions": "Actions"
+  },
+  "types": {
+    "ZFB": "Alipay",
+    "WX_PAY": "WeChat Pay"
+  },
+  "actions": {
+    "create": "Add Account",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure to delete this wallet account?",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "dialogs": {
+    "createTitle": "Add Wallet Account",
+    "editTitle": "Edit Wallet Account"
+  },
+  "form": {
+    "userId": "User ID",
+    "userIdPlaceholder": "Auto-filled with current user ID",
+    "mail": "Email",
+    "mailPlaceholder": "Please enter email",
+    "mailInvalid": "Please enter a valid email address",
+    "userName": "Real Name",
+    "userNamePlaceholder": "Please enter real name (optional)",
+    "account": "Account",
+    "accountPlaceholder": "Please enter payment account",
+    "cardNum": "ID Number",
+    "cardNumPlaceholder": "Please enter ID number (optional)",
+    "phone": "Phone",
+    "phonePlaceholder": "Please enter phone number (optional)",
+    "type": "Type",
+    "typePlaceholder": "Please select type",
+    "required": "Required field"
+  },
+  "messages": {
+    "createSuccess": "Created successfully",
+    "updateSuccess": "Updated successfully",
+    "deleteSuccess": "Deleted successfully"
+  }
+}
