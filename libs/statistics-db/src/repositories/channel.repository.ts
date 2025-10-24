@@ -19,43 +19,28 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
   private readonly logger = new Logger(ChannelRepository.name)
 
   constructor(
-    @InjectModel('BilibiliAuthorDatas')
-    private readonly BilibiliAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('DouYinAuthorDatas')
-    private readonly DouYinAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('FaceBookAuthorDatas')
-    private readonly FaceBookAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('GzhAuthorDatas')
-    private readonly GzhAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('InstagramAuthorDatas')
-    private readonly InstagramAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('KwaiAuthorDatas')
-    private readonly KwaiAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('PinterestAuthorDatas')
-    private readonly PinterestAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('ThreadsAuthorDatas')
-    private readonly ThreadsAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('TiktokAuthorDatas')
-    private readonly TiktokAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('TwitterAuthorDatas')
-    private readonly TwitterAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('XhsAuthorDatas')
-    private readonly XhsAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('YoutubeAuthorDatas')
-    private readonly YoutubeAuthorDatasModel: Model<AuthorDatas>,
-    @InjectModel('PostsRecord') // posts history record
-    private readonly PostsRecordModel: Model<PostsRecord>,
-    @InjectModel('ChannelCookie')
-    private readonly ChannelCookieModel: Model<ChannelCookie>,
-
-    @InjectConnection() private readonly connection: Connection,
+    @InjectConnection('statistics-db-connection') private readonly connection: Connection,
   ) {
-    super(PostsRecordModel)
+    super(null as any) // 临时使用null，稍后会设置正确的模型
   }
 
   async onModuleInit() {
     // 等待数据库连接建立
     await this.waitForConnection()
+  }
+
+  /**
+   * 获取PostsRecord模型
+   */
+  private getPostsRecordModel(): Model<PostsRecord> {
+    return this.connection.model('PostsRecord') as Model<PostsRecord>
+  }
+
+  /**
+   * 获取ChannelCookie模型
+   */
+  private getChannelCookieModel(): Model<ChannelCookie> {
+    return this.connection.model('ChannelCookie') as Model<ChannelCookie>
   }
 
   /**
@@ -114,35 +99,55 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
    * 根据平台 选择不同的集合
    */
   getModelByPlatform(platform: string): Model<AuthorDatas> {
-    switch (platform) {
-      case 'bilibili':
-        return this.BilibiliAuthorDatasModel
-      case 'douyin':
-        return this.DouYinAuthorDatasModel
-      case 'xhs':
-        return this.XhsAuthorDatasModel
-      case 'KWAI':
-        return this.KwaiAuthorDatasModel
-      case 'youtube':
-        return this.YoutubeAuthorDatasModel
-      case 'wxGzh':
-        return this.GzhAuthorDatasModel
-      case 'twitter':
-        return this.TwitterAuthorDatasModel
-      case 'tiktok':
-        return this.TiktokAuthorDatasModel
-      case 'facebook':
-        return this.FaceBookAuthorDatasModel
-      case 'instagram':
-        return this.InstagramAuthorDatasModel
-      case 'threads':
-        return this.ThreadsAuthorDatasModel
-      case 'pinterest':
-        return this.PinterestAuthorDatasModel
-      // 其他平台...
-      default:
-        throw new Error('不支持的平台')
+    // 根据平台名称格式化模型名称
+    let formattedPlatform = platform.charAt(0).toUpperCase() + platform.slice(1)
+    
+    // 特殊处理各个平台名称
+    if (platform === 'douyin') {
+      formattedPlatform = 'DouYin'
     }
+    else if (platform === 'wxGzh') {
+      formattedPlatform = 'Gzh'
+    }
+    else if (platform === 'wxSph') {
+      formattedPlatform = 'Sph'
+    }
+    else if (platform === 'facebook') {
+      formattedPlatform = 'FaceBook'
+    }
+    else if (platform === 'xhs') {
+      formattedPlatform = 'Xhs'
+    }
+    else if (platform === 'threads') {
+      formattedPlatform = 'Threads'
+    }
+    else if (platform === 'linkedin') {
+      formattedPlatform = 'LinkedIn'
+    }
+    else if (platform === 'instagram') {
+      formattedPlatform = 'Instagram'
+    }
+    else if (platform === 'tiktok') {
+      formattedPlatform = 'Tiktok'
+    }
+    else if (platform === 'twitter') {
+      formattedPlatform = 'Twitter'
+    }
+    else if (platform === 'pinterest') {
+      formattedPlatform = 'Pinterest'
+    }
+    else if (platform === 'youtube') {
+      formattedPlatform = 'Youtube'
+    }
+    else if (platform === 'KWAI') {
+      formattedPlatform = 'Kwai'
+    }
+    else if (platform === 'bilibili') {
+      formattedPlatform = 'Bilibili'
+    }
+
+    const modelName = `${formattedPlatform}AuthorDayDatas`
+    return this.connection.model(modelName) as Model<AuthorDatas>
   }
 
   /**
@@ -176,7 +181,7 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
       }
     })
 
-    const result = await this.PostsRecordModel.bulkWrite(bulkOps)
+    const result = await this.getPostsRecordModel().bulkWrite(bulkOps)
     this.logger.debug(`historyPostsRecord bulk update result: ${JSON.stringify(result)}`)
     return result
   }
@@ -186,7 +191,7 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
    * @param userId
    */
   async historyPostsRecordStatus(userId: string) {
-    const result = await this.PostsRecordModel.find(
+    const result = await this.getPostsRecordModel().find(
       { userId },
     )
     this.logger.debug(`query history posts add to draft status result: ${JSON.stringify(result)}`)
@@ -207,7 +212,7 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
    */
   async getChannelCookieByPlatform(platform: string) {
     try {
-      const result = await this.ChannelCookieModel.findOne({ platform }).exec()
+      const result = await this.getChannelCookieModel().findOne({ platform }).exec()
       return result
     }
     catch (error) {

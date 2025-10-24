@@ -7,4 +7,4 @@ import { AccountDataService } from './accountData.service'
   controllers: [AccountDataController],
   providers: [AccountDataService],
 })
-export class AccountModule {}
+export class AccountDataModule {}

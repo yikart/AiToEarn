@@ -1,11 +1,11 @@
 import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
-export const mongodbConfigSchema = z.object({
+export const statisticsDbConfigSchema = z.object({
   uri: z.string(),
   dbName: z.string().optional(),
   autoIndex: z.boolean().optional(),
   autoCreate: z.boolean().optional(),
 })
 
-export class MongodbConfig extends createZodDto(mongodbConfigSchema) {}
+export class StatisticsDbConfig extends createZodDto(statisticsDbConfigSchema) {}
