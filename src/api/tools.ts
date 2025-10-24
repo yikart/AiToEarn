@@ -7,7 +7,6 @@
  */
 import http, { request } from "@/utils/request";
 import { AiCreateType } from "./types/tools";
-import axios from "axios";
 
 export const toolsApi = {
   /**
