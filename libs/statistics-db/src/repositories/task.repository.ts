@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { InjectConnection } from '@nestjs/mongoose'
 import { Connection, Model } from 'mongoose'
 import { AccountType, UserTaskPosts } from '../schemas'
 import { BaseRepository } from './base.repository'

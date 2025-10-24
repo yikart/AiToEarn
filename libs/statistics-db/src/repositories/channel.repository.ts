@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/mongoose'
+import { InjectConnection } from '@nestjs/mongoose'
 import { Connection, Model } from 'mongoose'
 import { AccountType, ChannelCookie } from '../schemas/account.schema'
 import { AuthorDatas } from '../schemas/authorData.schema'
@@ -101,7 +101,7 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
   getModelByPlatform(platform: string): Model<AuthorDatas> {
     // 根据平台名称格式化模型名称
     let formattedPlatform = platform.charAt(0).toUpperCase() + platform.slice(1)
-    
+
     // 特殊处理各个平台名称
     if (platform === 'douyin') {
       formattedPlatform = 'DouYin'

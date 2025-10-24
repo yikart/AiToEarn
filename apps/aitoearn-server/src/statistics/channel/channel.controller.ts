@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiOperation } from '@nestjs/swagger'
 import { GetToken, Public } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { ChannelService } from './channel.service'
