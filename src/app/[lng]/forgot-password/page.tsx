@@ -39,19 +39,12 @@ export default function ForgotPasswordPage() {
     try {
       setLoading(true);
       const response: any = await sendResetPasswordMailApi(values);
-      if (!response) {
-        message.error(t('sendFailed' as any));
-        return;
-      }
 
       if (response.code === 0 && response.data) {
         setResetCode(response.data);
         setIsModalOpen(true);
-      } else {
-        message.error(response.message || t('sendFailed' as any));
       }
     } catch (error) {
-      message.error(t('sendFailed' as any));
     } finally {
       setLoading(false);
     }
@@ -78,11 +71,6 @@ export default function ForgotPasswordPage() {
         mail: form.getFieldValue('mail'),
         password: values.password
       });
-
-      if (!response) {
-        message.error(t('resetFailed' as any));
-        return;
-      }
 
       if (response.code === 0 && response.data?.token) {
         clearPolling();
