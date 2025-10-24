@@ -1,4 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, Public } from '../../auth/auth.guard'
 import { PostService } from '../post/post.service'
 import { postDetailDto, taskIdDto, taskPostDto } from './dto/task.dto'
 import { TaskService } from './task.service'
@@ -28,6 +30,7 @@ export class TaskController {
    * @returns
    */
   // @NatsMessagePattern('statistics.task.posts.dataCube')
+  @Public()
   @Post('statistics/task/posts/dataCube')
   async getPostsStatistics(@Body() data: taskIdDto) {
     return await this.taskService.getTaskPostsSummary(data.taskId)
