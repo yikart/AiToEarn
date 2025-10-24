@@ -46,6 +46,7 @@
   },
   "pnpm": {
     "onlyBuiltDependencies": [
+      "@alicloud/openapi-core",
       "@nestjs/core",
       "@parcel/watcher",
       "@scarf/scarf",
