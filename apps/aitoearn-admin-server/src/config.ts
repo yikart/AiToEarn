@@ -30,6 +30,7 @@ export const configSchema = z.object({
   jwt: jwtConfigSchema,
   serverApi: z.object({
     baseUrl: z.string().default('http://localhost:3000/api'),
+    internalToken: z.string(),
   }),
   channelApi: z.object({
     baseUrl: z.string().default('http://localhost:3000/api'),
