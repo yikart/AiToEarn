@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken, Public } from '../../auth/auth.guard'
+import { ApiTags } from '@nestjs/swagger'
+import { Public } from '../../auth/auth.guard'
 import { AccountDataService } from './accountData.service'
 import {
   GetAccountDataByParamsDto,
