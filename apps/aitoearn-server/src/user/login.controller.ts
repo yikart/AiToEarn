@@ -199,7 +199,7 @@ export class LoginController {
       `userMailRepassword:${mail}`,
     )
     if (!rRes || rRes.code !== code)
-      throw new AppException(ResponseCode.ValidationFailed)
+      throw new AppException(ResponseCode.ValidationFailed, 'The verification code is incorrect')
 
     const userInfo = await this.userService.getUserInfoByMail(mail)
     if (!userInfo || userInfo.isDelete)
