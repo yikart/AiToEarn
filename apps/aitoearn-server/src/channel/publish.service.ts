@@ -1,15 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, TableDto } from '@yikart/common'
-import { AccountType, PublishStatus } from '@yikart/mongodb'
+import { AccountType, PublishRecord, PublishStatus } from '@yikart/mongodb'
+import { PostData } from '@yikart/statistics-db'
+import { PublishRecordService } from '../publishRecord/publishRecord.service'
+import { PostService } from '../statistics/post/post.service'
 import { EngagementNatsApi } from '../transports/channel/api/engagement/engagement.api'
 import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
 import { PublishTaskNatsApi } from '../transports/channel/api/publishTask.natsApi'
-import { PublishRecordItem } from '../transports/channel/api/types/publish.interfaces'
+import { PublishingChannel } from '../transports/channel/common'
 import { UserTaskNatsApi } from '../transports/task/api/user-task.natsApi'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
 import { PostHistoryItemDto } from './dto/publish-response.dto'
 import { PublishDayInfoListFiltersDto, PubRecordListFilterDto } from './dto/publish.dto'
-import { FetchPostsResponseVo } from './engagement/dto/engagement.dto'
 
 @Injectable()
 export class PublishService {
@@ -19,6 +21,8 @@ export class PublishService {
     private readonly publishTaskNatsApi: PublishTaskNatsApi,
     private readonly userTaskNatsApi: UserTaskNatsApi,
     private readonly engagementNatsApi: EngagementNatsApi,
+    private readonly publishRecordService: PublishRecordService,
+    private readonly postService: PostService,
   ) { }
 
   async create(newData: NewPublishData<PlatOptions>) {
@@ -44,7 +48,7 @@ export class PublishService {
   }
 
   async getList(data: PubRecordListFilterDto, userId: string) {
-    const list1 = await this.platPublishNatsApi.getPublishRecordList({
+    const list1 = await this.publishRecordService.getPublishRecordList({
       ...data,
       userId,
     })
@@ -52,9 +56,9 @@ export class PublishService {
     return [...list1, ...list2]
   }
 
-  private mergePostHistory(publishRecords: PublishRecordItem[], publishTasks: any[], postsHistory: FetchPostsResponseVo) {
+  private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
     const result = new Map<string, PostHistoryItemDto>()
-    for (const post of postsHistory.posts) {
+    for (const post of postsHistory) {
       result.set(post.postId, {
         id: post.postId,
         dataId: post.postId,
@@ -71,6 +75,7 @@ export class PublishService {
         publishTime: new Date(post.publishTime),
         status: PublishStatus.PUBLISHING,
         errorMsg: '',
+        publishingChannel: PublishingChannel.NATIVE,
         engagement: {
           viewCount: post.viewCount,
           commentCount: post.commentCount,
@@ -95,11 +100,12 @@ export class PublishService {
     for (const record of publishRecords) {
       if (record.dataId && result.has(record.dataId)) {
         const post = result.get(record.dataId)!
-        post.flowId = record.flowId
+        post.flowId = record.flowId || ''
         post.accountId = record.accountId
         post.accountType = record.accountType
         post.uid = record.uid
         post.errorMsg = record.errorMsg || ''
+        post.publishingChannel = PublishingChannel.INTERNAL
       }
       else {
         let status = record.status
@@ -107,9 +113,23 @@ export class PublishService {
           status = PublishStatus.PUBLISHING
         }
         result.set(record.dataId || record.id, {
-          ...record,
+          flowId: record.flowId || '',
+          title: record.title || '',
+          desc: record.desc || '',
+          id: record.id,
+          dataId: record.dataId,
+          type: record.type,
+          accountId: record.accountId,
+          accountType: record.accountType,
+          uid: record.uid,
+          videoUrl: record.videoUrl || '',
+          coverUrl: record.coverUrl || '',
+          imgUrlList: record.imgUrlList || [],
+          publishTime: record.publishTime,
+          errorMsg: record.errorMsg || '',
           status,
           engagement: defaultEngagement,
+          publishingChannel: PublishingChannel.INTERNAL,
         })
       }
     }
@@ -123,7 +143,7 @@ export class PublishService {
   }
 
   async getPostHistory(data: PubRecordListFilterDto, userId: string) {
-    const publishRecords = await this.platPublishNatsApi.getPublishRecordList({
+    const publishRecords = await this.publishRecordService.getPublishRecordList({
       ...data,
       userId,
     })
@@ -133,13 +153,17 @@ export class PublishService {
       range.start = data.time[0].toISOString()
       range.end = data.time[1].toISOString()
     }
-    const postsHistory = await this.engagementNatsApi.fetchChannelAllPosts({
+    const postsHistory = await this.postService.getUserAllPostsByPlatform({
       ...data,
       range,
       userId,
       platform: data.accountType as any,
     })
-    return this.mergePostHistory(publishRecords, publishTasks, postsHistory)
+    const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
+    if (data.publishingChannel) {
+      return posts.filter(post => post.publishingChannel === data.publishingChannel)
+    }
+    return posts
   }
 
   async publishInfoData(userId: string) {
