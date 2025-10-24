@@ -42,7 +42,7 @@
     "lodash": "^4.17.21",
     "mime-types": "^3.0.1",
     "moment": "^2.30.1",
-    "mongodb": "^6.16.0",
+    "mongodb": "^6.20.0",
     "mongoose": "^8.15.0",
     "nats": "^2.29.3",
     "needle": "^3.3.1",
