@@ -21,6 +21,7 @@ export class RedisModule {
             const tls = config.tls ? {} : undefined
             return new Redis({
               ...config,
+              maxRetriesPerRequest: null,
               tls,
             })
           },
