@@ -114,7 +114,9 @@ export class MediaGroupRepository extends BaseRepository<MediaGroup> {
         .find(filter)
         .sort({ createdAt: -1 })
         .skip((pageNo! - 1) * pageSize)
-        .limit(pageSize),
+        .limit(pageSize)
+        .lean()
+        .exec(),
     ])
 
     return {
