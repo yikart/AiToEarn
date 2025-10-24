@@ -16,6 +16,7 @@ import { WithTimestampSchema } from './timestamp.schema'
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
   timestamps: true,
+  id: true,
 })
 export class MediaGroup extends WithTimestampSchema {
   id: string

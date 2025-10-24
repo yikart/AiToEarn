@@ -87,7 +87,7 @@ export class MediaGroupController {
       { pageNo: 1, pageSize: 3 },
       {
         userId,
-        groupId: group.id,
+        groupId: (group as any)._id,
       },
     )
     return { ...group, mediaList: res }
@@ -111,6 +111,7 @@ export class MediaGroupController {
     const updatedList = await Promise.all(
       list.map(item => this.getMediaDesList(token.id, item)),
     )
+
     return { list: updatedList, total }
   }
 }

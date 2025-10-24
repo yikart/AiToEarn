@@ -25,6 +25,7 @@ export interface FileMetadata {
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
   timestamps: true,
+  id: true,
 })
 export class Media extends WithTimestampSchema {
   id: string

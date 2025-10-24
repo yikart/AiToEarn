@@ -83,6 +83,7 @@ export class MediaRepository extends BaseRepository<Media> {
       .skip((pageNo! - 1) * pageSize)
       .limit(pageSize)
       .lean()
+      .exec()
 
     return {
       total,
