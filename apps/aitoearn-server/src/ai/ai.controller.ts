@@ -277,6 +277,7 @@ export class AiController {
   }
 
   @ApiOperation({ summary: '获取视频生成模型参数' })
+  @Public()
   @Get('models/video/generation')
   async getVideoGenerationModels(@GetToken() token?: TokenInfo): Promise<VideoGenerationModelParamsVo[]> {
     const response = await this.aiService.getVideoGenerationModels({
