@@ -991,7 +991,7 @@ export default function AIGeneratePage() {
                         <div className={styles.uploadPanel}>
                           <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
                             {videoImage ? (
-                              <img src={videoImage} alt={t('aiGenerate.firstFrame')} />
+                              <img src={getOssUrl(videoImage) || ''} alt={t('aiGenerate.firstFrame')} />
                             ) : (
                               <div className={styles.uploadPlaceholder}>
                                 <span className={styles.uploadIcon}>+</span>
@@ -1006,7 +1006,7 @@ export default function AIGeneratePage() {
                           {(videoMode==='image2video' || videoMode==='flf2video' || videoMode==='lf2video' || videoMode==='multi-image2video') && supported.includes('image_tail') && (
                             <div className={styles.uploadCard} onClick={handlePickTailFrame}>
                               {videoImageTail ? (
-                                <img src={videoImageTail} alt={t('aiGenerate.tailFrame')} />
+                                <img src={getOssUrl(videoImageTail) || ''} alt={t('aiGenerate.tailFrame')} />
                               ) : (
                                 <div className={styles.uploadPlaceholder}>
                                   <span className={styles.uploadIcon}>+</span>

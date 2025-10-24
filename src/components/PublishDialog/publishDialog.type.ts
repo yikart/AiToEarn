@@ -3,7 +3,7 @@ import { SocialAccount } from "@/api/types/account.type";
 export interface IImgFile {
   id: string;
   size: number;
-  file: Blob;
+  file: File;
   // 前端临时路径，注意不要存到数据库
   imgUrl: string;
   filename: string;

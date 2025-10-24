@@ -18,8 +18,8 @@ import { useTransClient } from "@/app/i18n/client";
 import zhCNImageEditor from "@/app/i18n/locales/zh-CN/imageEditor.json";
 import { formatImg } from "@/components/PublishDialog/PublishDialog.util";
 import { dataURLToBlob } from "@/utils";
-import { toolsApi } from "@/api/tools";
-import { OSS_URL } from "@/constant";
+import { uploadToOss } from "@/api/oss";
+import { getOssUrl } from "@/utils/oss";
 
 export interface IImageEditorModalRef {}
 export interface IImageEditorModalProps {
@@ -131,10 +131,10 @@ const ImageEditorModal = memo(
                       imgFile?.filename ||
                       `aitoearn_edited_image_${Date.now()}.png`,
                   });
-                  const uploadCoverRes = await toolsApi.uploadFileTemp(
+                  const uploadCoverRes = await uploadToOss(
                     image.file,
                   );
-                  image["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
+                  image["ossUrl"] = getOssUrl(uploadCoverRes);
                   setUploadLoading(false);
                   onOk(image);
                   onCancel();

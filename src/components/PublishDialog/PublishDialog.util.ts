@@ -101,7 +101,7 @@ export const formatImg = async ({
         imgPath: path,
         size: blob!.size,
         filename,
-        file: blob!,
+        file: new File([blob!], filename, { type: blob!.type }),
         imgUrl,
       });
     };

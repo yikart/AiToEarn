@@ -19,8 +19,8 @@ import {
   IVideoFile,
 } from "@/components/PublishDialog/publishDialog.type";
 import ImgChoose from "@/components/PublishDialog/compoents/Choose/ImgChoose";
-import { toolsApi } from "@/api/tools";
-import { OSS_URL } from "@/constant";
+import { uploadToOss } from "@/api/oss";
+import { getOssUrl } from "@/utils/oss";
 
 export interface IVideoCoverSetingRef {}
 
@@ -133,10 +133,10 @@ const VideoCoverSeting = memo(
                         path: `${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
                       });
                       // 上传封面
-                      const uploadCoverRes = await toolsApi.uploadFileTemp(
+                      const uploadCoverRes = await uploadToOss(
                         cover.file,
                       );
-                      cover["ossUrl"] = `${OSS_URL}${uploadCoverRes}`;
+                      cover["ossUrl"] = getOssUrl(uploadCoverRes);
                       setUploadLoing(false);
                       onChoosed(cover);
                       close();

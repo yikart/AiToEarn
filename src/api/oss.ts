@@ -1,7 +1,7 @@
 import { request } from "@/utils/request";
 
 // 上传文件到OSS
-export const uploadToOss = async (file: File, onProgress?: (prog: number) => void) => {
+export const uploadToOss = async (file: File | Blob, onProgress?: (prog: number) => void) => {
   try {
     console.log("uploadToOss", file.size);
     // 如果文件大于10MB，使用分片上传
@@ -26,14 +26,14 @@ export const uploadToOss = async (file: File, onProgress?: (prog: number) => voi
 };
 
 // 分片上传文件到OSS
-export const uploadToOssMultipart = async (file: File, onProgress?: (prog: number) => void) => {
+export const uploadToOssMultipart = async (file: File | Blob, onProgress?: (prog: number) => void) => {
   try {
     // 1. 初始化分片上传
     const initResponse: any = await request({
       url: "file/uploadPart/init",
       method: "POST",
       data: {
-        fileName: file.name,
+        fileName: (file as any).name || "file",
         secondPath: "uploads",
         fileSize: file.size,
         contentType: file.type || "application/octet-stream",

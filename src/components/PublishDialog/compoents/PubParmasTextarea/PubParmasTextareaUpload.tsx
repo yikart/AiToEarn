@@ -17,7 +17,7 @@ import {
   IImgFile,
   IVideoFile,
 } from "@/components/PublishDialog/publishDialog.type";
-import { toolsApi } from "@/api/tools";
+import { uploadToOss } from "@/api/oss";
 import { OSS_URL } from "@/constant";
 import { RcFile } from "antd/es/upload";
 import { useTransClient } from "@/app/i18n/client";
@@ -69,7 +69,7 @@ const PubParmasTextareaUpload = memo(
           setUploadLoading(true);
           try {
             // 上传视频
-            const uploadVideoRes = await toolsApi.uploadFileTemp(
+            const uploadVideoRes = await uploadToOss(
               video.file,
               (prog) => {
                 setUploadProgress(prog === 100 ? 99 : prog);
@@ -77,7 +77,7 @@ const PubParmasTextareaUpload = memo(
             );
             setUploadProgress(100);
             // 上传封面
-            const uploadCoverRes = await toolsApi.uploadFileTemp(
+            const uploadCoverRes = await uploadToOss(
               video.cover.file,
             );
 
@@ -106,7 +106,7 @@ const PubParmasTextareaUpload = memo(
           const tasks: Promise<IImgFile>[] = [];
 
           const uploadImgCore = async (image: IImgFile): Promise<IImgFile> => {
-            const uploadRes = await toolsApi.uploadFileTemp(image.file);
+            const uploadRes = await uploadToOss(image.file);
             uploadFinishCount++;
             image["ossUrl"] = `${OSS_URL}${uploadRes}`;
             setUploadProgress(
