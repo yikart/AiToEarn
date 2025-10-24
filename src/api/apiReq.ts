@@ -84,7 +84,7 @@ export const resetPasswordApi = (data: {
   password: string;
 }) => {
   const hash = md5(data.password);
-  return http.post<LoginResponse>("login/repassword/mail/back", {
+  return http.post<LoginResponse>("login/repassword/mail", {
     ...data,
     password: hash,
   });
