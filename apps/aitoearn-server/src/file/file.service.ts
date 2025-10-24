@@ -145,33 +145,21 @@ export class FileService {
     return res
   }
 
-  // /**
-  //  * 获取分片上传的签名URL
-  //  * @param key
-  //  * @param contentType
-  //  * @param expiresIn
-  //  * @returns
-  //  */
-  // async getUploadUrl(
-  //   key: string,
-  //   contentType?: string,
-  //   expiresIn?: number,
-  // ) {
-  //   try {
-  //     const url = await this.s3Service.getUploadUrl(
-  //       key,
-  //       {
-  //         contentType,
-  //         expiresIn,
-  //       },
-  //     )
-  //     return { url, key }
-  //   }
-  //   catch (error) {
-  //     Logger.error(error)
-  //     throw new AppException(ErrHttpBack.fail)
-  //   }
-  // }
+  /**
+   * 获取分片上传的签名URL
+   * @param key
+   * @param contentType
+   * @param expiresIn
+   * @returns
+   */
+  async getUploadUrl(
+    key: string,
+  ) {
+    const presigned = await this.s3Service.getUploadSign(
+      key,
+    )
+    return presigned
+  }
 
   // /**
   //  * 获取分片上传的签名URL
