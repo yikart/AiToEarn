@@ -12,7 +12,7 @@
     "@yikart/stripe": "workspace:*",
     "dayjs": "^1.11.14",
     "lodash": "^4.17.21",
-    "mongodb": "~6.18.0",
+    "mongodb": "~6.20.0",
     "mongoose": "^8.18.0",
     "tslib": "^2.3.0",
     "zod": "^4.0.0"
