@@ -48,10 +48,9 @@ export class FileService {
     const filePath = `${newPath}/${newFileName}.${mime.extension(file.mimetype)}`
     const res = await this.s3Service.putObject(
       filePath,
-      file,
+      file.buffer,
     )
-
-    return res
+    return res.path
   }
 
   /**
