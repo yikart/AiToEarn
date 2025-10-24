@@ -16,7 +16,7 @@ import { TaskAdminService } from './task-admin.service'
 import { TaskListVo, TaskVo } from './task-admin.vo'
 
 @ApiTags('admin/task - 任务管理')
-@Controller('')
+@Controller()
 export class TaskAdminController {
   constructor(
     private readonly taskAdminService: TaskAdminService,

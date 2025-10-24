@@ -10,21 +10,21 @@ import {
 import { BooleanResultVo, NumberResultVo } from './admin.vo'
 import { UserTaskAdminService } from './user-task.service'
 
-@Controller('admin/userTask')
+@Controller()
 export class UserTaskAdminController {
   constructor(
     private readonly userTaskAdminService: UserTaskAdminService,
   ) { }
 
   // @NatsMessagePattern('task.admin.userTask.list')
-  @Post('list')
+  @Post('task/admin/userTask/list')
   async getList(@Body() data: AdminQueryUserTaskDto) {
     const res = await this.userTaskAdminService.getList(data.page, data.filter)
     return res
   }
 
   // @NatsMessagePattern('task.admin.userTask.info')
-  @Post('info')
+  @Post('task/admin/userTask/info')
   async getTaskInfo(@Body() data: UserTaskIdDto) {
     const res = await this.userTaskAdminService.getUserTaskInfoById(data.id)
     if (!res) {
@@ -34,14 +34,14 @@ export class UserTaskAdminController {
   }
 
   // @NatsMessagePattern('task.admin.userTask.approvedTaskCount')
-  @Post('approvedTaskCount')
+  @Post('task/admin/userTask/approvedTaskCount')
   async getCompletedTaskCount(): Promise<NumberResultVo> {
     const res = await this.userTaskAdminService.getCompletedTaskCount()
     return NumberResultVo.create({ count: res })
   }
 
   // @NatsMessagePattern('task.admin.userTask.approvedUserCount')
-  @Post('approvedUserCount')
+  @Post('task/admin/userTask/approvedUserCount')
   async getCompletedUserCount(): Promise<NumberResultVo> {
     const res = await this.userTaskAdminService.getCompletedUserCount()
     return NumberResultVo.create({ count: res })
@@ -53,7 +53,7 @@ export class UserTaskAdminController {
    * @returns
    */
   // @NatsMessagePattern('task.admin.userTask.verifyApproved')
-  @Post('verifyApproved')
+  @Post('task/admin/userTask/verifyApproved')
   async verifyUserTaskApproved(@Body() data: UserTaskApprovedDto): Promise<BooleanResultVo> {
     const userTask = await this.userTaskAdminService.getUserTaskInfoById(data.id)
     if (!userTask)
@@ -74,7 +74,7 @@ export class UserTaskAdminController {
    * @returns
    */
   // @NatsMessagePattern('task.admin.userTask.verifyRejected')
-  @Post('verifyRejected')
+  @Post('task/admin/userTask/verifyRejected')
   async verifyUserTaskRejected(@Body() data: RejectedTaskDto): Promise<BooleanResultVo> {
     const userTask = await this.userTaskAdminService.getUserTaskInfoById(data.id)
     if (!userTask)
@@ -93,7 +93,7 @@ export class UserTaskAdminController {
    * @returns
    */
   // @NatsMessagePattern('task.admin.userTask.rollbackApproved')
-  @Post('rollbackApproved')
+  @Post('task.admin.userTask.rollbackApproved')
   async rollbackUserTaskApproved(@Body() data: RejectedTaskDto): Promise<BooleanResultVo> {
     const userTask = await this.userTaskAdminService.getUserTaskInfoById(data.id)
     if (!userTask)
@@ -110,7 +110,7 @@ export class UserTaskAdminController {
   }
 
   // @NatsMessagePattern('task.admin.userTask.auto.auditRun')
-  @Post('auto/auditRun')
+  @Post('task/admin/userTask/auto/auditRun')
   async runUserTaskAuditAuto(@Body() inData: UserTaskIdDto) {
     const userTaskInfo = await this.userTaskAdminService.getUserTaskInfoById(
       inData.id,
