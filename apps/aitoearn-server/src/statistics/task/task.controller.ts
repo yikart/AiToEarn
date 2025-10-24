@@ -5,7 +5,7 @@ import { PostService } from '../post/post.service'
 import { postDetailDto, taskIdDto, taskPostDto } from './dto/task.dto'
 import { TaskService } from './task.service'
 
-@Controller()
+@Controller('statistics/task')
 export class TaskController {
   constructor(
     private readonly taskService: TaskService,
@@ -18,8 +18,7 @@ export class TaskController {
    * @returns
    */
   // @NatsMessagePattern('statistics.task.posts.record')
-
-  @Post('statistics/task/posts/record')
+  @Post('posts/record')
   async getAccounts(@Body() data: taskPostDto) {
     return this.taskService.userTaskPosts(data.accountId, data.type, data.uid, data.taskId, data.postId)
   }
@@ -30,8 +29,7 @@ export class TaskController {
    * @returns
    */
   // @NatsMessagePattern('statistics.task.posts.dataCube')
-  @Public()
-  @Post('statistics/task/posts/dataCube')
+  @Post('posts/dataCube')
   async getPostsStatistics(@Body() data: taskIdDto) {
     return await this.taskService.getTaskPostsSummary(data.taskId)
   }
@@ -42,7 +40,7 @@ export class TaskController {
    * @returns
    */
   // @NatsMessagePattern('statistics.task.posts.periodDetail')
-  @Post('statistics/task/posts/periodDetail')
+  @Post('posts/periodDetail')
   async getPostsStatisticsDetail(@Body() data: postDetailDto) {
     return await this.postService.getPostDataByDateRange({ platform: data.platform, postId: data.postId, page: 1, pageSize: 90 })
   }
