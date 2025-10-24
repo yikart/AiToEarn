@@ -5,6 +5,8 @@ import mongoose from 'mongoose'
 import { repositories } from './repositories'
 import { schemas } from './schemas'
 import { AuthorDatasSchema, PostDatasSchema } from './schemas/authorData.schema'
+import { PostsRecordSchema } from './schemas/posts.schema'
+import { UserTaskPostsSchema } from './schemas/task.schema'
 import { TransactionalInjector } from './transactional.injector'
 
 mongoose.set('transactionAsyncLocalStorage', true)
@@ -124,6 +126,12 @@ export class StatisticsDbModule {
       { name: 'PostDayIncrease', schema: PostDatasSchema, collection: 'post_daily_insights_delta' },
     ]
 
+    // 添加其他模型定义
+    const otherDataCollections = [
+      { name: 'UserTaskPosts', schema: UserTaskPostsSchema, collection: 'user_tasks_posts' },
+      { name: 'PostHistoryRecord', schema: PostsRecordSchema, collection: 'posts_history_record' },
+    ]
+
     // 创建PostRepository使用的模型定义
     const postDataCollections = platforms.map((platform) => {
       // 根据PostRepository中的注入名称进行匹配
@@ -151,6 +159,7 @@ export class StatisticsDbModule {
       ...postDayDataCollections,
       ...postDataCollections,
       ...increaseDataCollections,
+      ...otherDataCollections,
     ], 'statistics-db-connection')
 
     return {

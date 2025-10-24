@@ -17,7 +17,7 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.douyin.searchTopic')
-  @Public()
+  // @Public()
   @ApiOperation({
     summary: '话题搜索',
     description: '话题搜索',

@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, Public } from '../../auth/auth.guard'
 import { AccountDataService } from './accountData.service'
 import {
   GetAccountDataByParamsDto,
@@ -58,6 +59,7 @@ export class AccountDataController {
 
   // 根据账号和日期查询频道数据
   // @NatsMessagePattern('statistics.account.getAuthorDataByDate')
+  @Public()
   @Post('author/getAuthorDataByDate')
   getAuthorDataByDate(@Body() data: GetAuthorDataByDateDto) {
     const res = this.accountDataService.getAuthorDataByDate(data.accountId, data.platform, data.date)
@@ -98,7 +100,8 @@ export class AccountDataController {
 
   // 根据platform和uid数组查询频道最新数据并汇总fansCount
   // @NatsMessagePattern('statistics.account.getChannelDataLatestByUids')
-  @Post('channel/getChannelDataLatestByUids')
+  @Public()
+  @Post('channels/period-batch')
   getChannelDataLatestByUids(@Body() data: GetChannelDataLatestByUidsDto) {
     const res = this.accountDataService.getChannelDataLatestByUids(data.queries)
     return res
