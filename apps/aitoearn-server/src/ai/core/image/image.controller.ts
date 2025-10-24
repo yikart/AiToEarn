@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import {
   ImageEditModelsQueryDto,
   ImageGenerationModelsQueryDto,
@@ -8,7 +8,7 @@ import {
   UserMd2CardDto,
 } from './image.dto'
 import { ImageService } from './image.service'
-import { FireflycardResponseVo, ImageEditModelParamsVo, ImageGenerationModelParamsVo, ImageResponseVo, Md2CardResponseVo } from './image.vo'
+import { AsyncTaskResponseVo, FireflycardResponseVo, ImageEditModelParamsVo, ImageGenerationModelParamsVo, ImageResponseVo, Md2CardResponseVo, TaskStatusResponseVo } from './image.vo'
 
 @Controller()
 export class ImageController {
@@ -56,5 +56,40 @@ export class ImageController {
   async fireflyCard(@Body() data: UserFireflyCardDto): Promise<FireflycardResponseVo> {
     const response = await this.imageService.userFireFlyCard(data)
     return FireflycardResponseVo.create(response)
+  }
+
+  // 异步图片生成
+  @Post('ai/image/generations/async')
+  async imageGenerationAsync(@Body() data: UserImageGenerationDto): Promise<AsyncTaskResponseVo> {
+    const response = await this.imageService.userGenerationAsync(data)
+    return AsyncTaskResponseVo.create(response)
+  }
+
+  // 异步图片编辑
+  @Post('ai/image/edits/async')
+  async imageEditAsync(@Body() data: UserImageEditDto): Promise<AsyncTaskResponseVo> {
+    const response = await this.imageService.userEditAsync(data)
+    return AsyncTaskResponseVo.create(response)
+  }
+
+  // 异步 MD2Card 生成
+  @Post('ai/md2card/generate/async')
+  async md2CardAsync(@Body() data: UserMd2CardDto): Promise<AsyncTaskResponseVo> {
+    const response = await this.imageService.userMd2CardAsync(data)
+    return AsyncTaskResponseVo.create(response)
+  }
+
+  // 异步 FireflyCard 生成
+  @Post('ai/firefly-card/generate/async')
+  async fireflyCardAsync(@Body() data: UserFireflyCardDto): Promise<AsyncTaskResponseVo> {
+    const response = await this.imageService.userFireFlyCardAsync(data)
+    return AsyncTaskResponseVo.create(response)
+  }
+
+  // 查询任务状态
+  @Get('ai/image/task/:logId')
+  async getTaskStatus(@Param('logId') logId: string): Promise<TaskStatusResponseVo> {
+    const response = await this.imageService.getTaskStatus(logId)
+    return TaskStatusResponseVo.create(response)
   }
 }
