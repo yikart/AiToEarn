@@ -1,7 +1,10 @@
 import type { CloudWatchLogsClientConfig, Entity } from '@aws-sdk/client-cloudwatch-logs'
 import type { DestinationStream } from 'pino'
 import * as os from 'node:os'
+import { debuglog } from 'node:util'
 import { CloudWatchLogsClient, CreateLogGroupCommand, CreateLogStreamCommand, PutLogEventsCommand } from '@aws-sdk/client-cloudwatch-logs'
+
+const log = debuglog('app:cloud-watch:logger')
 
 export interface CloudWatchLoggerOptions extends CloudWatchLogsClientConfig {
   accessKeyId?: string
@@ -28,32 +31,41 @@ export class CloudWatchLogger implements DestinationStream {
       credentials,
     })
 
+    log('creating logger')
+
     this.options.stream = options.stream || `${os.hostname()}-${process.pid}-${Date.now()}`
 
     this.ready = this.createLogGroup().then(() => this.createLogStream())
   }
 
   async createLogGroup() {
+    log(`creating log group: ${this.options.group}`)
     const command = new CreateLogGroupCommand({
       logGroupName: this.options.group,
     })
     await this.client.send(command)
       .catch((e) => {
+        log(`creating log group error ${e.message}`)
         if (e.name !== 'ResourceAlreadyExistsException')
           throw e
       })
+
+    log(`created log group: ${this.options.group}`)
   }
 
   async createLogStream() {
+    log(`creating log stream: ${this.options.stream}`)
     const command = new CreateLogStreamCommand({
       logGroupName: this.options.group,
       logStreamName: this.options.stream,
     })
     await this.client.send(command)
       .catch((e) => {
+        log(`creating log stream: ${this.options.stream} error ${e.message}`)
         if (e.name !== 'ResourceAlreadyExistsException')
           throw e
       })
+    log(`created log stream: ${this.options.stream}`)
   }
 
   async write(msg: string): Promise<void> {
@@ -73,6 +85,7 @@ export class CloudWatchLogger implements DestinationStream {
       })
 
       await this.client.send(command)
+      log(`put logs`)
     })
 
     return this.writeQueue
