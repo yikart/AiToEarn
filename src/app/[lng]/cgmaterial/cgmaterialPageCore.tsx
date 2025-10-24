@@ -20,8 +20,10 @@ import { getOssUrl } from "@/utils/oss";
 import { EditOutlined, DeleteOutlined, PlusOutlined, ImportOutlined, FileTextOutlined, FolderOpenOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { getAccountListApi } from "@/api/account";
 import { getPublishList } from "@/api/plat/publish";
+import { apiGetEngagementPosts } from "@/api/engagement";
 import { PlatType } from "@/app/config/platConfig";
 import { PublishStatus } from "@/api/plat/types/publish.types";
+import { EngagementPostsParams, EngagementPostsResponse } from "@/api/types/engagement";
 import { useTransClient } from "@/app/i18n/client";
 import { PubType } from "@/app/config/publishConfig";
 import { useParams } from "next/navigation";
@@ -130,6 +132,15 @@ export default function CgMaterialPageCore() {
   const [publishList, setPublishList] = useState<any[]>([]);
   const [selectedPublishItems, setSelectedPublishItems] = useState<string[]>([]);
   const [importLoading, setImportLoading] = useState(false);
+  
+  // 分页相关状态
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0,
+    hasMore: false
+  });
+  const [publishListLoading, setPublishListLoading] = useState(false);
 
   // 初始化加载草稿箱组
   useEffect(() => {
@@ -717,17 +728,64 @@ export default function CgMaterialPageCore() {
   // 选择账户后获取发布列表
   async function handleSelectAccount(account: any) {
     setSelectedAccount(account);
+    setPublishList([]);
+    setPagination({
+      current: 1,
+      pageSize: 10,
+      total: 0,
+      hasMore: false
+    });
+    await fetchPublishList(account, 1);
+  }
+
+  // 获取发布帖子列表（支持分页）
+  async function fetchPublishList(account: any, page: number = 1) {
+    if (!account) return;
+    
+    setPublishListLoading(true);
     try {
-      const res = await getPublishList({
-        accountId: account.id,
-        accountType: account.type as PlatType,
-        status: PublishStatus.RELEASED, // 只获取已发布的内容
-      });
-      setPublishList(res?.data || []);
+      const params: EngagementPostsParams = {
+        platform: account.type as any,
+        uid: account.uid || account.id,
+        page,
+        pageSize: pagination.pageSize
+      };
+      
+      const res = await apiGetEngagementPosts(params);
+      if (res?.data) {
+        const { posts, total, hasMore } = res.data;
+        
+        if (page === 1) {
+          // 第一页，替换数据
+          setPublishList(posts || []);
+        } else {
+          // 后续页，追加数据
+          setPublishList(prev => [...prev, ...(posts || [])]);
+        }
+        
+        setPagination(prev => ({
+          ...prev,
+          current: page,
+          total,
+          hasMore
+        }));
+      }
     } catch (e) {
       message.error("获取发布列表失败");
-      setPublishList([]);
+      if (page === 1) {
+        setPublishList([]);
+      }
+    } finally {
+      setPublishListLoading(false);
     }
+  }
+
+  // 加载更多帖子
+  async function loadMorePosts() {
+    if (!selectedAccount || !pagination.hasMore || publishListLoading) return;
+    
+    const nextPage = pagination.current + 1;
+    await fetchPublishList(selectedAccount, nextPage);
   }
 
   // 导入选中的发布内容到草稿箱
@@ -745,33 +803,43 @@ export default function CgMaterialPageCore() {
     setImportLoading(true);
     try {
       const importPromises = selectedPublishItems.map(async (itemId) => {
-        const publishItem = publishList.find(item => item.id === itemId);
+        const publishItem = publishList.find(item => item.postId === itemId);
         if (!publishItem) return;
 
         // 构造素材数据
-        const mediaList = [];
-                 if (publishItem.imgUrlList && publishItem.imgUrlList.length > 0) {
-           mediaList.push(...publishItem.imgUrlList.map((url: string) => ({
-             url,
-             type: 'image',
-             content: '',
-           })));
-         }
-        if (publishItem.videoUrl) {
+        const mediaList: any[] = [];
+        
+        // 根据媒体类型处理不同的数据
+        if (publishItem.mediaType === 'image' && publishItem.thumbnail) {
           mediaList.push({
-            url: publishItem.videoUrl,
-            type: 'video',
+            url: publishItem.thumbnail,
+            type: PubType.ImageText,
+            content: '',
+          });
+        } else if (publishItem.mediaType === 'video' && publishItem.thumbnail) {
+          mediaList.push({
+            url: publishItem.thumbnail,
+            type: PubType.VIDEO,
             content: '',
           });
         }
 
         return apiCreateMaterial({
           groupId: selectedGroup._id,
-          coverUrl: publishItem.coverUrl || publishItem.imgUrlList?.[0] || '',
+          coverUrl: publishItem.thumbnail || '',
           mediaList,
           title: publishItem.title,
-          desc: publishItem.desc,
-          option: publishItem.option || {},
+          desc: publishItem.content,
+          option: {
+            platform: publishItem.platform,
+            postId: publishItem.postId,
+            permaLink: publishItem.permaLink,
+            publishTime: publishItem.publishTime,
+            viewCount: publishItem.viewCount,
+            likeCount: publishItem.likeCount,
+            commentCount: publishItem.commentCount,
+            shareCount: publishItem.shareCount,
+          },
           location: [0, 0], // 默认位置
         });
       });
@@ -1170,51 +1238,73 @@ export default function CgMaterialPageCore() {
 
         {selectedAccount && (
           <div>
-            <div style={{ fontWeight: 600, marginBottom: 8 }}>
-              {selectedAccount.nickname} 的发布内容 (选择要导入的内容)
+            <div style={{ fontWeight: 600, marginBottom: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>
+                {selectedAccount.nickname} 的发布内容 (选择要导入的内容)
+              </span>
+              <span style={{ fontSize: 12, color: '#666' }}>
+                共 {pagination.total} 条，已加载 {publishList.length} 条
+              </span>
             </div>
-            <List
-              bordered
-              style={{ maxHeight: 300, overflow: 'auto' }}
-              dataSource={publishList}
-              renderItem={item => (
-                <List.Item
-                  style={{ 
-                    cursor: 'pointer',
-                    background: selectedPublishItems.includes(item.id) ? '#e6f4ff' : '#fff',
-                    padding: '12px 16px'
-                  }}
-                  onClick={() => {
-                    setSelectedPublishItems(prev =>
-                      prev.includes(item.id)
-                        ? prev.filter(id => id !== item.id)
-                        : [...prev, item.id]
-                    );
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: 12, width: '100%' }}>
-                    {(item.coverUrl || item.imgUrlList?.[0]) && (
-                      <img
-                        src={getOssUrl(item.coverUrl || item.imgUrlList[0])}
-                        alt="cover"
-                        style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }}
-                      />
-                    )}
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 500, marginBottom: 4 }}>{item.title}</div>
-                      <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
-                        {item.desc?.substring(0, 100)}{item.desc?.length > 100 ? '...' : ''}
-                      </div>
-                      <div style={{ fontSize: 12, color: '#999' }}>
-                        {new Date(item.publishTime).toLocaleDateString()}
-                        {item.imgUrlList?.length > 0 && ` • ${item.imgUrlList.length} 张图片`}
-                        {item.videoUrl && ' • 包含视频'}
+            <Spin spinning={publishListLoading}>
+              <List
+                bordered
+                style={{ maxHeight: 300, overflow: 'auto' }}
+                dataSource={publishList}
+                renderItem={item => (
+                  <List.Item
+                    style={{ 
+                      cursor: 'pointer',
+                      background: selectedPublishItems.includes(item.postId) ? '#e6f4ff' : '#fff',
+                      padding: '12px 16px'
+                    }}
+                    onClick={() => {
+                      setSelectedPublishItems(prev =>
+                        prev.includes(item.postId)
+                          ? prev.filter(id => id !== item.postId)
+                          : [...prev, item.postId]
+                      );
+                    }}
+                  >
+                    <div style={{ display: 'flex', gap: 12, width: '100%' }}>
+                      {item.thumbnail && (
+                        <img
+                          src={item.thumbnail}
+                          alt="cover"
+                          style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }}
+                        />
+                      )}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontWeight: 500, marginBottom: 4 }}>{item.title}</div>
+                        <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                          {item.content?.substring(0, 100)}{item.content?.length > 100 ? '...' : ''}
+                        </div>
+                        <div style={{ fontSize: 12, color: '#999', display: 'flex', gap: 8 }}>
+                          <span>{new Date(item.publishTime).toLocaleDateString()}</span>
+                          <span>• {item.mediaType === 'image' ? '图片' : item.mediaType === 'video' ? '视频' : '文章'}</span>
+                          <span>• {item.viewCount} 浏览</span>
+                          <span>• {item.likeCount} 点赞</span>
+                          <span>• {item.commentCount} 评论</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </List.Item>
-              )}
-            />
+                  </List.Item>
+                )}
+              />
+            </Spin>
+            
+            {/* 加载更多按钮 */}
+            {pagination.hasMore && (
+              <div style={{ textAlign: 'center', marginTop: 16 }}>
+                <Button 
+                  type="link" 
+                  loading={publishListLoading}
+                  onClick={loadMorePosts}
+                >
+                  加载更多 ({pagination.total - publishList.length} 条剩余)
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Modal>
