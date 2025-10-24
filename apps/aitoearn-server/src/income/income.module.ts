@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common'
 import { IncomeController } from './income.controller'
 import { IncomeService } from './income.service'
+import { WithdrawController } from './withdraw.controller'
+import { WithdrawService } from './withdraw.service'
 
 @Module({
   imports: [],
-  controllers: [IncomeController],
-  providers: [IncomeService],
+  controllers: [IncomeController, WithdrawController],
+  providers: [IncomeService, WithdrawService],
 })
 export class IncomeModule {}
