@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
+import axios from 'axios'
 import { ExceptionCode } from '../common'
 import { config } from '../config'
 
@@ -9,7 +10,7 @@ export class PaymentBaseApi {
   private readonly logger = new Logger(PaymentBaseApi.name)
   constructor(private readonly httpService: HttpService) { }
   async sendMessage<T>(path: string, body: any): Promise<T> {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await axios.post<{
       code: number
       message: string
       data: T
