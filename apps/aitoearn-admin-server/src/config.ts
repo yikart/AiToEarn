@@ -1,16 +1,7 @@
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
+import { redisConfigSchema } from '@yikart/redis'
 import { z } from 'zod'
 import { s3ConfigSchema } from './libs/aws-s3/s3.config'
-
-// Redis配置
-const redisConfigSchema = z.object({
-  name: z.string().default('default'),
-  host: z.string().default('127.0.0.1'),
-  port: z.number().default(6379),
-  password: z.string().default(''),
-  db: z.number().default(0),
-  connectTimeout: z.number().default(10000),
-})
 
 const userServerConfigSchema = z.object({
   host: z.string().default('http://127.0.0.1'),
