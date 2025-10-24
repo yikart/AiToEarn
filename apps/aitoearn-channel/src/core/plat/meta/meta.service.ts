@@ -41,7 +41,7 @@ export class MetaService {
     oAuth2Scopes?: string[],
     spaceId = '',
   ) {
-    this.logger.log(`Generating authorize URL for userId: ${userId}, platform: ${platform}, configMap: ${JSON.stringify(metaOAuth2ConfigMap)}`)
+    this.logger.log(`Generating authorize URL for userId: ${userId}, platform: ${platform}}`)
     const scopes
       = oAuth2Scopes
         || config.oauth[platform].scopes
