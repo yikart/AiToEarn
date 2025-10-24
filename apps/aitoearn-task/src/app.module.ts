@@ -15,6 +15,7 @@ import { TransportsModule } from './transports/transports.module'
     BullModule.forRootAsync({
       useFactory: (redis: Redis) => {
         return {
+          prefix: '{bull}',
           connection: redis,
         }
       },
