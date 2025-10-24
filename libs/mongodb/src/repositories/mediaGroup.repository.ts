@@ -90,7 +90,7 @@ export class MediaGroupRepository extends BaseRepository<MediaGroup> {
 
   // 获取列表
   async getList(inFilter: {
-    userId: string
+    userId?: string
     userType?: UserType
     title?: string
     type?: MediaType
@@ -100,7 +100,7 @@ export class MediaGroupRepository extends BaseRepository<MediaGroup> {
   }) {
     const { pageNo, pageSize } = pageInfo
     const filter: RootFilterQuery<MediaGroup> = {
-      userId: inFilter.userId,
+      ...(inFilter.userId && { userId: inFilter.userId }),
       userType: inFilter.userType || UserType.User,
       ...(inFilter.type && { type: inFilter.type }),
       ...(inFilter.title && {
