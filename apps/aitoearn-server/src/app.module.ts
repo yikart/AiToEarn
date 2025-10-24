@@ -33,6 +33,7 @@ import { UserModule } from './user/user.module'
     BullModule.forRootAsync({
       useFactory: (redis: Redis) => {
         return {
+          prefix: '{bull}',
           connection: redis,
         }
       },
