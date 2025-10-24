@@ -34,7 +34,13 @@ const mailConfigSchema = z.object({
   defaults: z.object({
     from: z.string().default(''),
   }),
-  template: z.any().optional(),
+  template: z.object({
+    dir: z.string().default(''),
+    adapter: z.any().optional(),
+    options: z.object({
+      strict: z.boolean().default(true),
+    }).optional(),
+  }).optional(),
 })
 
 export const aiModelsConfigSchema = z.object({

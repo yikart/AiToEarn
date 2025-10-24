@@ -1,4 +1,5 @@
 import { MailerModule } from '@nestjs-modules/mailer'
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter'
 import { DynamicModule, Global, Module } from '@nestjs/common'
 import { MailConfig } from './mail.config'
 import { MailService } from './mail.service'
@@ -10,7 +11,16 @@ export class MailModule {
     return {
       module: MailModule,
       imports: [
-        MailerModule.forRoot(config),
+        MailerModule.forRoot({
+          template: {
+            dir: config.template.dir,
+            adapter: new HandlebarsAdapter(),
+            options: {
+              strict: true,
+            },
+          },
+          ...config,
+        }),
       ],
       providers: [
         { provide: MailConfig, useValue: config },

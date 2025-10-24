@@ -1,3 +1,4 @@
+import path from 'node:path'
 import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { EventEmitterModule } from '@nestjs/event-emitter'
@@ -29,7 +30,12 @@ import { UserModule } from './user/user.module'
     EventEmitterModule.forRoot(),
     MongodbModule.forRoot(config.mongodb),
     RedisModule.forRoot(config.redis),
-    MailModule.forRoot(config.mail),
+    MailModule.forRoot({
+      ...config.mail,
+      template: {
+        dir: path.join(__dirname, 'views'),
+      },
+    }),
     BullModule.forRootAsync({
       useFactory: (redis: Redis) => {
         return {
