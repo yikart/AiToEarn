@@ -1,6 +1,4 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@yikart/common'
+import { Body, Controller, Post } from '@nestjs/common'
 import { IIsAdmin } from '@yikart/stripe'
 import { RefundBodyDto } from './refund.dto'
 import { RefundService } from './refund.service'
@@ -12,9 +10,10 @@ export class RefundController {
   ) {}
 
   // 退款订单
-  @NatsMessagePattern('admin.payment.refund')
+  // @NatsMessagePattern('admin.payment.refund')
+  @Post('admin/payment/refund')
   async create(
-    @Payload() body: RefundBodyDto,
+    @Body() body: RefundBodyDto,
   ) {
     return this.refundService.create(body, IIsAdmin.client)
   }

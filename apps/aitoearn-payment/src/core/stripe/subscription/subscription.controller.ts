@@ -1,24 +1,26 @@
-import { Controller } from '@nestjs/common'
+import { Controller, Post } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { NatsMessagePattern } from '@yikart/common'
 import { IIsAdmin } from '@yikart/stripe'
 import { GetVipSubscribeByUserIdDto, UnsubscribeDto } from './subscription.dto'
 import { SubscriptionService } from './subscription.service'
 
-@Controller('subscription')
+@Controller()
 export class SubscriptionController {
   constructor(
     private readonly subscriptionService: SubscriptionService,
   ) {
   }
 
-  @NatsMessagePattern('payment.subscription')
+  // @NatsMessagePattern('payment.subscription')
+  @Post('payment/subscription')
   async list(@Payload() body: { userId: string, size: number, page: number }) {
     const { userId, size, page } = body
     return this.subscriptionService.list(userId, size, page)
   }
 
-  @NatsMessagePattern('payment.unsubscribe')
+  // @NatsMessagePattern('payment.unsubscribe')
+  @Post('payment/unsubscribe')
   async unsubscribe(
     @Payload() body: UnsubscribeDto,
   ) {
@@ -26,6 +28,7 @@ export class SubscriptionController {
   }
 
   @NatsMessagePattern('payment.getVipSubscribeByUserId')
+  @Post('payment/getVipSubscribeByUserId')
   async getVipSubscribeByUserId(
     @Payload() body: GetVipSubscribeByUserIdDto,
   ) {
@@ -33,12 +36,14 @@ export class SubscriptionController {
   }
 
   @NatsMessagePattern('admin.payment.subscription')
+  @Post('admin/payment/subscription')
   async adminList(@Payload() body: { search: string, size: number, page: number }) {
     const { search, size, page } = body
     return this.subscriptionService.adminList(search, size, page)
   }
 
   @NatsMessagePattern('admin.payment.unsubscribe')
+  @Post('admin/payment/unsubscribe')
   async adminUnsubscribe(
     @Payload() body: UnsubscribeDto,
   ) {
