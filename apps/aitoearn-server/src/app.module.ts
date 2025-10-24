@@ -15,6 +15,7 @@ import { FeedbackModule } from './feedback/feedback.module'
 import { IncomeModule } from './income/income.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
+import { StatisticsModule } from './statistics/statistics.module'
 import { TaskModule } from './task/task.module'
 import { ToolsModule } from './tools/tools.module'
 import { TransportsModule } from './transports/transports.module'
@@ -45,6 +46,7 @@ import { UserModule } from './user/user.module'
     TaskModule,
     PaymentModule,
     IncomeModule,
+    StatisticsModule,
   ],
   controllers: [],
   providers: [],
