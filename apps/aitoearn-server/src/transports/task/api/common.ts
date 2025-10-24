@@ -1,5 +1,11 @@
 import { AccountType } from '@yikart/mongodb'
 
+export enum TaskType {
+  VIDEO = 'video',
+  ARTICLE = 'article',
+  PROMOTION = 'promotion',
+  INTERACTION = 'interaction',
+}
 export enum UserTaskStatus {
   DOING = 'doing', // 进行中
   PENDING = 'pending', // 待提现奖励
@@ -75,4 +81,37 @@ export interface UserPortraitReportData {
   totalViews?: number
   totalLikes?: number
   totalCollects?: number
+}
+
+export enum TaskStatus {
+  ACTIVE = 'active',
+  CANCELLED = 'cancelled',
+  DEL = 'del',
+}
+
+export class InteractionTaskData {
+  type: string
+  targetWorksId: string
+  targetAuthorId?: string
+  platform?: string
+}
+
+export class Task {
+  id: string
+  title: string
+  description: string
+  type: TaskType
+  maxRecruits: number
+  currentRecruits: number
+  deadline: Date
+  reward: number
+  status: TaskStatus
+  accountTypes: AccountType[]
+  taskData?: InteractionTaskData
+  materialIds: string[]
+  materialGroupId?: string // 草稿箱ID
+  autoDeleteMaterial?: boolean
+  autoDispatch?: boolean // 是否自动派发 用户创建时
+  createdAt: Date
+  updatedAt: Date
 }

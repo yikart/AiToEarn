@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
-import { GetToken, Public } from '../../auth/auth.guard'
+import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { ChannelService } from './channel.service'
 import { BatchHistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'

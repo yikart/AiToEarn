@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { OnEvent } from '@nestjs/event-emitter'
 import { AccountType, TaskRepository } from '@yikart/statistics-db'
 
 @Injectable()
@@ -8,8 +9,9 @@ export class TaskService {
   ) { }
 
   // 用户任务作品记录
-  async userTaskPosts(accountId: string, type: AccountType, uid: string, taskId: string, postId: string) {
-    return this.taskRepository.userTaskPosts(accountId, type, uid, taskId, postId)
+  @OnEvent('statistics.task.userTaskPosts')
+  async userTaskPosts(data: { accountId: string, type: AccountType, uid: string, taskId: string, postId: string }) {
+    return this.taskRepository.userTaskPosts(data.accountId, data.type, data.uid, data.taskId, data.postId)
   }
 
   // 根据taskId 查询 作品信息

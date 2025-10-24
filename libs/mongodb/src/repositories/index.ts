@@ -23,6 +23,7 @@ import { NotificationRepository } from './notification.repository'
 import { PointsRecordRepository } from './points-record.repository'
 import { PriceRepository } from './price.repository'
 import { ProductRepository } from './product.repository'
+import { PublishRecordRepository } from './publishRecord.repository'
 import { SubscriptionRepository } from './subscription.repository'
 import { UserWalletAccountRepository } from './user-wallet-account.repository'
 import { UserWalletRepository } from './user-wallet.repository'
@@ -56,6 +57,7 @@ export * from './notification.repository'
 export * from './points-record.repository'
 export * from './price.repository'
 export * from './product.repository'
+export * from './publishRecord.repository'
 export * from './subscription.repository'
 export * from './user-wallet-account.repository'
 export * from './user-wallet.repository'
@@ -95,4 +97,5 @@ export const repositories = [
   MaterialGroupRepository,
   MaterialRepository,
   MaterialTaskRepository,
+  PublishRecordRepository,
 ] as const
