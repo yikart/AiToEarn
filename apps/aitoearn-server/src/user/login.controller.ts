@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Logger, Post, Put } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { AppException, ResponseCode } from '@yikart/common'
 import { MailService } from '@yikart/mail'
@@ -191,7 +191,7 @@ export class LoginController {
     description: '邮箱重设密码',
   })
   @Public()
-  @Post('repassword/mail')
+  @Put('repassword/mail')
   async getRepasswordByMailBack(@Body() body: RegistByMailDto) {
     const { mail, code, password } = body
 
