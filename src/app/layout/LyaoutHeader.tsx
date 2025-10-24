@@ -134,7 +134,7 @@ function UserInfo() {
                     key={v.label}
                     title={v.label}
                     target={v.href?.includes("https://") ? "_blank" : "_self"}
-                    onClick={() => v.onClick}
+                    onClick={v.onClick}
                   >
                     <p className="layoutHeaderMenu-item-label">
                       {v.icon}
