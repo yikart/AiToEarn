@@ -2,6 +2,7 @@ import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
 import { AccountType } from '@yikart/mongodb'
+import axios from 'axios'
 import { InteractionRecord } from './common'
 
 @Injectable()
@@ -24,7 +25,7 @@ export class InteractionRecordService {
     likeTime?: string
     collectTime?: string
   }) {
-    const res = await this.httpService.axiosRef.post<boolean>(
+    const res = await axios.post<boolean>(
       'http://127.0.0.1:3000/api/channel/interactionRecord/add',
       data,
     )
@@ -41,7 +42,7 @@ export class InteractionRecordService {
     worksId?: string
     time?: [Date, Date]
   }, page: TableDto) {
-    const res = await this.httpService.axiosRef.post<{
+    const res = await axios.post<{
       list: InteractionRecord[]
       total: number
     }>(
@@ -63,7 +64,7 @@ export class InteractionRecordService {
    * @returns
    */
   async del(id: string) {
-    const res = await this.httpService.axiosRef.post<boolean>(
+    const res = await axios.post<boolean>(
       'http://127.0.0.1:3000/api/channel/interactionRecord/del',
       {
         id,

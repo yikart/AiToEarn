@@ -1,5 +1,7 @@
 import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
+import axios from 'axios'
+
 import { ChannelAccountDataBulk, ChannelAccountDataCube, ChannelArcDataBulk, ChannelArcDataCube } from './common'
 
 @Injectable()
@@ -14,7 +16,7 @@ export class DataCubeApi {
    * @returns
    */
   async getAccountDataCube(accountId: string) {
-    const res = await this.httpService.axiosRef.post<ChannelAccountDataCube>(
+    const res = await axios.post<ChannelAccountDataCube>(
       'http://127.0.0.1:3000/api/channel/dataCube/getAccountDataCube',
       { accountId },
     )
@@ -27,7 +29,7 @@ export class DataCubeApi {
    * @returns
    */
   async getAccountDataBulk(accountId: string) {
-    const res = await this.httpService.axiosRef.post<ChannelAccountDataBulk>(
+    const res = await axios.post<ChannelAccountDataBulk>(
       'http://127.0.0.1:3000/api/channel/dataCube/getAccountDataBulk',
       { accountId },
     )
@@ -41,7 +43,7 @@ export class DataCubeApi {
    * @returns
    */
   async getArcDataCube(accountId: string, dataId: string) {
-    const res = await this.httpService.axiosRef.post<ChannelArcDataCube>(
+    const res = await axios.post<ChannelArcDataCube>(
       'http://127.0.0.1:3000/api/channel/dataCube/getArcDataCube',
       {
         accountId,
@@ -58,7 +60,7 @@ export class DataCubeApi {
    * @returns
    */
   async getArcDataBulk(accountId: string, dataId: string) {
-    const res = await this.httpService.axiosRef.post<ChannelArcDataBulk>(
+    const res = await axios.post<ChannelArcDataBulk>(
       'http://127.0.0.1:3000/api/channel/dataCube/getArcDataBulk',
       {
         accountId,
