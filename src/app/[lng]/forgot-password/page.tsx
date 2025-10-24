@@ -15,23 +15,11 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [resetForm] = Form.useForm();
-  const [resetCode, setResetCode] = useState<string>('');
-  const [pollingInterval, setPollingInterval] = useState<NodeJS.Timeout | null>(null);
-  const [isPolling, setIsPolling] = useState(false);
-
-  // 清除轮询
-  const clearPolling = () => {
-    if (pollingInterval) {
-      clearInterval(pollingInterval);
-      setPollingInterval(null);
-    }
-    setIsPolling(false);
-  };
 
   // 处理Modal关闭
   const handleModalClose = () => {
-    clearPolling();
     setIsModalOpen(false);
+    resetForm.resetFields();
   };
 
   // 处理发送重置密码邮件
@@ -40,96 +28,38 @@ export default function ForgotPasswordPage() {
       setLoading(true);
       const response: any = await sendResetPasswordMailApi(values);
 
-      if (response.code === 0 && response.data) {
-        setResetCode(response.data);
+      if (response.code === 0) {
+        message.success(t('resetEmailSent' as any));
         setIsModalOpen(true);
       }
     } catch (error) {
+      message.error(t('sendEmailFailed' as any));
     } finally {
       setLoading(false);
     }
   };
 
-  // 组件卸载时清理轮询
-  useEffect(() => {
-    return () => {
-      clearPolling();
-    };
-  }, []);
-
   // 处理重置密码
-  const handleResetPassword = async (values: { password: string }) => {
-    if (!resetCode) {
-      message.error(t('invalidResetCode' as any));
-      return;
-    }
-
+  const handleResetPassword = async (values: { code: string; password: string }) => {
     try {
       setLoading(true);
       const response: any = await resetPasswordApi({
-        code: resetCode,
+        code: values.code,
         mail: form.getFieldValue('mail'),
         password: values.password
       });
 
-      if (response.code === 0 && response.data?.token) {
-        clearPolling();
+      if (response.code === 0) {
         message.success(t('resetSuccess' as any));
+        setIsModalOpen(false);
         router.push('/login');
-        return;
       }
-
-      // 开始轮询检查用户是否点击邮箱链接
-      setIsPolling(true);
-      const checkResetStatus = async () => {
-        try {
-          const statusResponse: any = await resetPasswordApi({
-            code: resetCode,
-            mail: form.getFieldValue('mail'),
-            password: values.password
-          });
-
-          if (statusResponse?.code === 0 && statusResponse.data?.token) {
-            clearPolling();
-            message.success(t('resetSuccess' as any));
-            router.push('/login');
-            return true;
-          }
-          return false;
-        } catch (error) {
-          clearPolling();
-          return false;
-        }
-      };
-
-      // 设置轮询间隔
-      const interval = setInterval(async () => {
-        const isSuccess = await checkResetStatus();
-        if (isSuccess) {
-          clearPolling();
-        }
-      }, 2000);
-      setPollingInterval(interval);
-
-      // 显示提示信息
-      message.info(t('clickEmailLinkToReset' as any));
     } catch (error) {
-      clearPolling();
       message.error(t('resetFailed' as any));
     } finally {
       setLoading(false);
     }
   };
-
-  // 组件卸载时清理轮询
-  useEffect(() => {
-    return () => {
-      if (pollingInterval) {
-        clearInterval(pollingInterval);
-      }
-      setIsPolling(false);
-    };
-  }, [pollingInterval]);
 
   return (
     <div className={styles.container}>
@@ -184,6 +114,16 @@ export default function ForgotPasswordPage() {
           layout="vertical"
         >
           <Form.Item
+            name="code"
+            label={t('verificationCode' as any)}
+            rules={[
+              { required: true, message: t('verificationCodeRequired' as any) }
+            ]}
+          >
+            <Input placeholder={t('verificationCodePlaceholder' as any)} />
+          </Form.Item>
+
+          <Form.Item
             name="password"
             label={t('newPassword' as any)}
             rules={[
@@ -218,10 +158,10 @@ export default function ForgotPasswordPage() {
               type="primary" 
               htmlType="submit" 
               block 
-              loading={loading || isPolling}
+              loading={loading}
               className={styles.submitButton}
             >
-              {isPolling ? t('waitingForEmailConfirmation' as any) : t('confirmReset' as any)}
+              {t('confirmReset' as any)}
             </Button>
           </Form.Item>
         </Form>
