@@ -2,7 +2,7 @@ import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
 import { StatisticsDbModule } from '@yikart/statistics-db'
 import { config } from '../config'
-import { AccountModule } from './accountData/accountData.module'
+import { AccountDataModule } from './accountData/accountData.module'
 import { ChannelModule } from './channel/channel.module'
 import { PostModule } from './post/post.module'
 import { StatisticsController } from './statistics.controller'
@@ -15,7 +15,7 @@ import { TaskModule } from './task/task.module'
     HttpModule,
     StatisticsDbModule.forRoot(config.statisticsDb),
     ChannelModule,
-    AccountModule,
+    AccountDataModule,
     PostModule,
     TaskModule,
   ],

@@ -212,6 +212,7 @@ export const appConfigSchema = z.object({
   }),
   moreApi: moreApiConfigSchema,
   statisticsDb: mongodbConfigSchema,
+  internalToken: z.string(),
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
