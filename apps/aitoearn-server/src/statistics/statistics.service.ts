@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios'
 import { Injectable } from '@nestjs/common'
 import { AccountStatus } from '@yikart/mongodb'
+import axios from 'axios'
 import { NewAccountCrawlerData } from './common'
 
 @Injectable()
@@ -16,7 +17,7 @@ export class StatisticsService {
   async NewChannelReport(
     data: NewAccountCrawlerData,
   ) {
-    const res = await this.httpService.axiosRef.post<any>(
+    const res = await axios.post<any>(
       'http://127.0.0.1:3000/api/account/portrait/report',
       data,
     )
@@ -24,7 +25,7 @@ export class StatisticsService {
   }
 
   async updateStatisticsAccountStatus(userId: string, status: AccountStatus) {
-    const res = await this.httpService.axiosRef.post<any>(
+    const res = await axios.post<any>(
       'http://127.0.0.1:3000/api/account/portrait/report',
       { userId, status },
     )
