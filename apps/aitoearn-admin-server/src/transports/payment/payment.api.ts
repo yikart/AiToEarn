@@ -15,7 +15,7 @@ export class PaymentApi extends PaymentBaseApi {
    */
   async list(body: { page: number, size: number, search?: string }) {
     const result = await this.sendMessage<string>(
-      'payment/admin/heckout/list',
+      'payment/admin/checkout/list',
       body,
     )
     return result

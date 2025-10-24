@@ -1,6 +1,4 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@yikart/common'
+import { Body, Controller, Post } from '@nestjs/common'
 import { CheckoutBodyDto } from './checkout.dto'
 import { CheckoutService } from './checkout.service'
 
@@ -12,31 +10,35 @@ export class CheckoutController {
   }
 
   // 获取订单列表
-  @NatsMessagePattern('payment.list')
-  async list(@Payload() body: { userId: string, size: number, page: number }) {
+  // @NatsMessagePattern('payment.list')
+  @Post('payment/list')
+  async list(@Body() body: { userId: string, size: number, page: number }) {
     const { userId, size, page } = body
     return this.checkoutService.list(userId, size, page)
   }
 
   // 获取订单
-  @NatsMessagePattern('payment.getById')
+  // @NatsMessagePattern('payment.getById')
+  @Post('payment/getById')
   async getById(
-      @Payload() body: { id: string, userId: string },
+      @Body() body: { id: string, userId: string },
   ) {
     return this.checkoutService.getById(body.id, body.userId)
   }
 
   // 创建订单
-  @NatsMessagePattern('payment.create')
+  // @NatsMessagePattern('payment.create')
+  @Post('payment/create')
   async create(
-    @Payload() body: CheckoutBodyDto,
+    @Body() body: CheckoutBodyDto,
   ) {
     return this.checkoutService.create(body)
   }
 
   // 获取管理员订单列表
-  @NatsMessagePattern('admin.payment.list')
-  async adminList(@Payload() body: { search: string, size: number, page: number }) {
+  // @NatsMessagePattern('admin.payment.list')
+  @Post('admin/payment/list')
+  async adminList(@Body() body: { search: string, size: number, page: number }) {
     const { search, size, page } = body
     return this.checkoutService.adminList(search, size, page)
   }

@@ -1,10 +1,9 @@
 import { Controller, Logger, Post } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { NatsMessagePattern } from '@yikart/common'
 import { WebhookDto } from './webhook.dto'
 import { WebhookService } from './webhook.service'
 
-@Controller('webhook')
+@Controller()
 export class WebhookController {
   private readonly logger = new Logger(WebhookController.name)
   constructor(
@@ -13,8 +12,8 @@ export class WebhookController {
   }
 
   // 接收回调
-  @NatsMessagePattern('payment.webhook')
-  @Post('')
+  // @NatsMessagePattern('payment.webhook')
+  @Post('payment/webhook')
   async webhook(
     @Payload() body: WebhookDto,
   ) {
