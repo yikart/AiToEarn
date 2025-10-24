@@ -18,7 +18,7 @@ export class ServerBaseApi {
       timestamp: number
     }>(`${config.serverApi.baseUrl}/${path}`, body, {
       headers: {
-        Authorization: `Barer ${config.serverApi.internalToken}`,
+        Authorization: `Bearer ${config.serverApi.internalToken}`,
       },
     })
     if (res.data.code !== ExceptionCode.Success) {
