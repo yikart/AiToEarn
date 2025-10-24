@@ -1,9 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
-import { GetToken, Public } from '../../auth/auth.guard'
+import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { ChannelService } from './channel.service'
-import { BatchHistoryPostsRecordDto, searchTopicDto, UserIdDto } from './dto/channel.dto'
+import { BatchHistoryPostsRecordDto, searchTopicDto } from './dto/channel.dto'
 
 @Controller()
 export class ChannelController {
@@ -36,7 +36,6 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.platform.postsRecord')
-  @Public()
   @Post('statistics/channels/posts/postsRecord')
   async setHistoryPostsRecord(@Body() data: BatchHistoryPostsRecordDto) {
     return this.channelService.historyPostsRecord(data.records)
@@ -48,9 +47,8 @@ export class ChannelController {
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.platform.postsRecordStatus')
-  @Public()
-  @Post('statistics/channels/posts/postsRecordStatus')
-  async getHistoryPostsRecordStatus(@Body() data: UserIdDto) {
-    return this.channelService.historyPostsRecordStatus(data.userId)
+  @Post('statistics/channels/posts/recordStatus')
+  async getHistoryPostsRecordStatus(@GetToken() token: TokenInfo) {
+    return this.channelService.historyPostsRecordStatus(token.id)
   }
 }
