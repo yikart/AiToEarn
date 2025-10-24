@@ -2,10 +2,10 @@
 
 
 ## 地址
-https://dev.aitoearn.ai
+https://test.aitoearn.ai
 
 ## 测试服文档
-https://dev.aitoearn.ai/api/docs
+https://test.aitoearn.ai/api/docs
 
 ## 测试地址
 https://apitest.aitoearn.ai/api/

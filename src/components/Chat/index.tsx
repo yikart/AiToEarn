@@ -15,7 +15,7 @@ const Chat = memo(
 
     useEffect(() => {
       const base = location.origin.includes("localhost")
-        ? "https://dev.aitoearn.ai"
+        ? "https://test.aitoearn.ai"
         : location.origin;
 
       const params = new URLSearchParams();
