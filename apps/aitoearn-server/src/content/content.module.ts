@@ -28,5 +28,6 @@ import { MediaGroupService } from './mediaGroup.service'
   ],
   controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController],
   providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService],
+  exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService],
 })
 export class ContentModule { }

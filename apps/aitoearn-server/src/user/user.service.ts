@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { AppException, ResponseCode } from '@yikart/common'
 import { User, UserRepository, UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
 import dayjs from 'dayjs'
 import { google } from 'googleapis'
-import { TaskService } from '../task/task.service'
 import { NewUser, UserCreateType } from './class/user.class'
 import { UpdateUserInfoDto } from './dto/user.dto'
 import { PointsService } from './points.service'
@@ -17,12 +17,11 @@ export class UserService {
   private oauth2Client: any
 
   constructor(
+    private eventEmitter: EventEmitter2,
     private readonly userRepository: UserRepository,
     private readonly vipService: VipService,
     private readonly pointsService: PointsService,
-    private readonly taskService: TaskService,
     private readonly redisService: RedisService,
-
   ) {
     this.oauth2Client = new google.auth.OAuth2()
   }
@@ -240,8 +239,15 @@ export class UserService {
    * @returns
    */
   async afterLogin(user: User) {
-    const res = await this.taskService.userPortraitReport({ userId: user.id, lastLoginTime: new Date() })
-    return res
+    // 上报用户数据
+    this.eventEmitter.emit(
+      'task.userPortrait.report',
+      {
+        userId: user.id,
+        lastLoginTime: new Date(),
+      },
+    )
+    return true
   }
 
   /**
@@ -277,13 +283,16 @@ export class UserService {
     // TODO:创建默认的素材组
 
     // 上报用户数据
-    this.taskService.userPortraitReport({
-      userId: user.id,
-      name: user.name,
-      avatar: user.avatar,
-      status: UserStatus.OPEN,
-      lastLoginTime: new Date(),
-    })
+    this.eventEmitter.emit(
+      'task.userPortrait.report',
+      {
+        userId: user.id,
+        name: user.name,
+        avatar: user.avatar,
+        status: UserStatus.OPEN,
+        lastLoginTime: new Date(),
+      },
+    )
 
     // 生成推广码
     this.generateUsePopularizeCode(user.id)
@@ -314,6 +323,9 @@ export class UserService {
       }
     }
     // 派发新号任务
-    this.taskService.pushTaskWithUserCreate(user.id)
+    this.eventEmitter.emit(
+      'task.push.withUserCreate',
+      { userId: user.id },
+    )
   }
 }

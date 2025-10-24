@@ -2,10 +2,10 @@ import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { TableDto } from '@yikart/common'
 import { Account, AccountRepository, AccountStatus, AccountType } from '@yikart/mongodb'
 import { ChannelService } from '../channel/channel.service'
+import { AccountPortraitReportData } from '../channel/common'
 import { NewAccountCrawlerData } from '../statistics/common'
 import { StatisticsService } from '../statistics/statistics.service'
-import { AccountPortraitReportData } from '../task/common'
-import { TaskService } from '../task/task.service'
+import { TaskPortraitService } from '../task/portrait/portrait.service'
 import { AccountGroupService } from './accountGroup.service'
 import { AccountFilterDto, CreateAccountDto } from './dto/account.dto'
 
@@ -17,9 +17,9 @@ export class AccountService {
     private readonly accountRepository: AccountRepository,
     @Inject(forwardRef(() => AccountGroupService))
     private readonly accountGroupService: AccountGroupService,
-    private readonly taskService: TaskService,
     private readonly channelService: ChannelService,
     private readonly statisticsService: StatisticsService,
+    private readonly taskPortraitService: TaskPortraitService,
   ) { }
 
   /**
@@ -29,7 +29,7 @@ export class AccountService {
   private async accountPortraitReport(
     data: AccountPortraitReportData,
   ) {
-    return this.taskService.accountPortraitReport(
+    return this.taskPortraitService.accountPortraitReport(
       data,
     )
   }

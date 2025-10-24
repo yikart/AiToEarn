@@ -1,14 +1,14 @@
-import { HttpModule } from '@nestjs/axios'
-import { Global, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
+import { MaterialModule } from './material/material.module'
+import { TaskPortraitService } from './portrait/portrait.service'
 import { TaskController } from './task.controller'
 import { TaskService } from './task.service'
-import { UserTaskService } from './userTask.service'
+import { UserTaskModule } from './user-task/user-task.module'
 
-@Global()
 @Module({
-  imports: [HttpModule],
-  providers: [TaskService, UserTaskService],
+  imports: [MaterialModule, UserTaskModule],
   controllers: [TaskController],
-  exports: [TaskService, UserTaskService],
+  providers: [TaskService, TaskPortraitService],
+  exports: [TaskService, TaskPortraitService],
 })
 export class TaskModule {}
