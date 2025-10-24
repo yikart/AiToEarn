@@ -8,6 +8,7 @@
 import {
   Body,
   Controller,
+  Get,
   Headers,
   Post,
   Query,
@@ -19,6 +20,7 @@ import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Public } from '../auth/auth.guard'
 import {
   CompletePartDto,
+  GetUploadUrlDto,
   InitMultipartUploadDto,
   UploadPartDto,
 } from './dto/file.dto'
@@ -30,18 +32,16 @@ import { FileService } from './file.service'
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  // @ApiOperation({ description: '获取上传的签名URL', summary: '获取上传的签名URL' })
-  // @Get('uploadUrl')
-  // async getUploadUrl(
-  //   @Query() query: GetUploadUrlDto,
-  // ) {
-  //   const url = await this.fileService.getUploadUrl(
-  //     query.key,
-  //     query.contentType,
-  //     query.expiresIn,
-  //   )
-  //   return { url, key: query.key }
-  // }
+  @ApiOperation({ description: '获取上传的签名URL', summary: '获取上传的签名URL' })
+  @Get('uploadUrl')
+  async getUploadUrl(
+    @Query() query: GetUploadUrlDto,
+  ) {
+    const url = await this.fileService.getUploadUrl(
+      query.key,
+    )
+    return url
+  }
 
   @ApiOperation({ description: '存入临时目录', summary: '上传文件' })
   @ApiConsumes('multipart/form-data')

@@ -63,8 +63,6 @@ export class CompletePartDto {
 
 const getUploadUrlSchema = z.object({
   key: z.string().describe('文件名'),
-  contentType: z.string().optional().describe('文件类型'),
-  expiresIn: z.number().optional().describe('过期时间'),
 })
 export class GetUploadUrlDto extends createZodDto(getUploadUrlSchema) {}
 
