@@ -79,3 +79,29 @@ const fireflycardResponseSchema = z.object({
 })
 
 export class FireflycardResponseVo extends createZodDto(fireflycardResponseSchema) {}
+
+// 异步任务响应
+const asyncTaskResponseSchema = z.object({
+  logId: z.string().describe('任务日志ID'),
+  status: z.string().describe('任务状态'),
+  message: z.string().describe('响应消息'),
+})
+
+export class AsyncTaskResponseVo extends createZodDto(asyncTaskResponseSchema) {}
+
+// 任务状态响应
+const taskStatusResponseSchema = z.object({
+  logId: z.string().describe('任务日志ID'),
+  status: z.string().describe('任务状态'),
+  startedAt: z.date().describe('开始时间'),
+  duration: z.number().optional().describe('持续时间(毫秒)'),
+  points: z.number().describe('消耗积分'),
+  request: z.record(z.string(), z.unknown()).describe('请求参数'),
+  response: z.record(z.string(), z.unknown()).optional().describe('响应结果'),
+  images: z.array(imageObjectSchema).optional().describe('生成的图片列表'),
+  errorMessage: z.string().optional().describe('错误信息'),
+  createdAt: z.date().describe('创建时间'),
+  updatedAt: z.date().describe('更新时间'),
+})
+
+export class TaskStatusResponseVo extends createZodDto(taskStatusResponseSchema) {}

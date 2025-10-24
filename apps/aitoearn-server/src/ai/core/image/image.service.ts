@@ -1,8 +1,10 @@
 import path from 'node:path'
-import { BadRequestException, Injectable, Logger } from '@nestjs/common'
+import { InjectQueue } from '@nestjs/bullmq'
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { Queue } from 'bullmq'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
 import { PointsService } from '../../../user/points.service'
@@ -37,6 +39,7 @@ export class ImageService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly pointsService: PointsService,
     private readonly modelsConfigService: ModelsConfigService,
+    @InjectQueue('ai_image_async') private readonly imageQueue: Queue,
   ) { }
 
   /**
@@ -49,7 +52,7 @@ export class ImageService {
     }
     const ext = getExtByMimeType(file.mimeType.essence as ImageType)
 
-    return new File([file.body as any], `${filename}.${ext}`, { type: file.mimeType.essence })
+    return new File([file.body as BlobPart], `${filename}.${ext}`, { type: file.mimeType.essence })
   }
 
   /**
@@ -215,7 +218,7 @@ export class ImageService {
   /**
    * 恢复用户积分
    */
-  private async addUserPoints(
+  async addUserPoints(
     userId: string,
     amount: number,
     description: string,
@@ -389,5 +392,246 @@ export class ImageService {
    */
   async editModelConfig(_data: ImageEditModelsQueryDto) {
     return this.modelsConfigService.config.image.edit
+  }
+
+  /**
+   * 异步图片生成
+   */
+  async userGenerationAsync(request: UserImageGenerationDto) {
+    const { userId, userType, ...params } = request
+    const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
+
+    // 创建 AiLog 记录
+    const log = await this.aiLogRepo.create({
+      userId,
+      userType,
+      model: params.model,
+      channel: AiLogChannel.NewApi,
+      type: AiLogType.Image,
+      points: pricing,
+      request: params,
+      status: AiLogStatus.Generating,
+      startedAt: new Date(),
+    })
+
+    // 扣除积分
+    if (pricing > 0 && userType === UserType.User) {
+      const balance = await this.pointsService.getBalance(userId)
+      if (balance < pricing) {
+        await this.aiLogRepo.updateById(log.id, {
+          status: AiLogStatus.Failed,
+          errorMessage: '积分不足',
+        })
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      await this.deductUserPoints(userId, pricing, params.model)
+    }
+
+    // 添加队列任务
+    await this.imageQueue.add('generation', {
+      logId: log.id,
+      userId,
+      userType,
+      model: params.model,
+      channel: AiLogChannel.NewApi,
+      type: AiLogType.Image,
+      pricing,
+      request: { ...params, user: userId },
+      taskType: 'generation',
+    })
+
+    return {
+      logId: log.id,
+      status: 'generating',
+      message: '任务已提交，正在处理中',
+    }
+  }
+
+  /**
+   * 异步图片编辑
+   */
+  async userEditAsync(request: UserImageEditDto) {
+    const { userId, userType, ...params } = request
+    const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
+
+    // 创建 AiLog 记录
+    const log = await this.aiLogRepo.create({
+      userId,
+      userType,
+      model: params.model,
+      channel: AiLogChannel.NewApi,
+      type: AiLogType.Image,
+      points: pricing,
+      request: params,
+      status: AiLogStatus.Generating,
+      startedAt: new Date(),
+    })
+
+    // 扣除积分
+    if (pricing > 0 && userType === UserType.User) {
+      const balance = await this.pointsService.getBalance(userId)
+      if (balance < pricing) {
+        await this.aiLogRepo.updateById(log.id, {
+          status: AiLogStatus.Failed,
+          errorMessage: '积分不足',
+        })
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      await this.deductUserPoints(userId, pricing, params.model)
+    }
+
+    // 添加队列任务
+    await this.imageQueue.add('edit', {
+      logId: log.id,
+      userId,
+      userType,
+      model: params.model,
+      channel: AiLogChannel.NewApi,
+      type: AiLogType.Image,
+      pricing,
+      request: { ...params, user: userId },
+      taskType: 'edit',
+    })
+
+    return {
+      logId: log.id,
+      status: 'generating',
+      message: '任务已提交，正在处理中',
+    }
+  }
+
+  /**
+   * 异步 MD2Card 生成
+   */
+  async userMd2CardAsync(request: UserMd2CardDto) {
+    const { userId, userType, ...params } = request
+    const pricing = 2
+
+    // 创建 AiLog 记录
+    const log = await this.aiLogRepo.create({
+      userId,
+      userType,
+      model: 'md2card',
+      channel: AiLogChannel.Md2Card,
+      type: AiLogType.Card,
+      points: pricing,
+      request: params,
+      status: AiLogStatus.Generating,
+      startedAt: new Date(),
+    })
+
+    // 扣除积分
+    if (pricing > 0 && userType === UserType.User) {
+      const balance = await this.pointsService.getBalance(userId)
+      if (balance < pricing) {
+        await this.aiLogRepo.updateById(log.id, {
+          status: AiLogStatus.Failed,
+          errorMessage: '积分不足',
+        })
+        throw new AppException(ResponseCode.UserPointsInsufficient)
+      }
+      await this.deductUserPoints(userId, pricing, 'md2card')
+    }
+
+    // 添加队列任务
+    await this.imageQueue.add('md2card', {
+      logId: log.id,
+      userId,
+      userType,
+      model: 'md2card',
+      channel: AiLogChannel.Md2Card,
+      type: AiLogType.Card,
+      pricing,
+      request: params,
+      taskType: 'md2card',
+    })
+
+    return {
+      logId: log.id,
+      status: 'generating',
+      message: '任务已提交，正在处理中',
+    }
+  }
+
+  /**
+   * 异步 FireflyCard 生成
+   */
+  async userFireFlyCardAsync(request: UserFireflyCardDto) {
+    const { userId, userType, ...params } = request
+    const pricing = 0
+
+    // 创建 AiLog 记录
+    const log = await this.aiLogRepo.create({
+      userId,
+      userType,
+      model: 'fireflyCard',
+      channel: AiLogChannel.FireflyCard,
+      type: AiLogType.Card,
+      points: pricing,
+      request: params,
+      status: AiLogStatus.Generating,
+      startedAt: new Date(),
+    })
+
+    // 添加队列任务
+    await this.imageQueue.add('fireflyCard', {
+      logId: log.id,
+      userId,
+      userType,
+      model: 'fireflyCard',
+      channel: AiLogChannel.FireflyCard,
+      type: AiLogType.Card,
+      pricing,
+      request: params,
+      taskType: 'fireflyCard',
+    })
+
+    return {
+      logId: log.id,
+      status: 'generating',
+      message: '任务已提交，正在处理中',
+    }
+  }
+
+  /**
+   * 查询任务状态
+   */
+  async getTaskStatus(logId: string) {
+    const log = await this.aiLogRepo.getById(logId)
+    if (!log) {
+      throw new NotFoundException('任务不存在')
+    }
+
+    // 提取图片信息
+    let images: Array<{ url?: string, b64_json?: string, revised_prompt?: string }> | undefined
+    if (log.response) {
+      // 处理不同的响应格式
+      if (log.response['list'] && Array.isArray(log.response['list'])) {
+        // 图片生成和编辑的响应格式
+        images = log.response['list'] as Array<{ url?: string, b64_json?: string, revised_prompt?: string }>
+      }
+      else if (log.response['images'] && Array.isArray(log.response['images'])) {
+        // MD2Card 的响应格式
+        images = log.response['images'] as Array<{ url?: string, b64_json?: string, revised_prompt?: string }>
+      }
+      else if (log.response['image']) {
+        // FireflyCard 的响应格式
+        images = [{ url: log.response['image'] as string }]
+      }
+    }
+
+    return {
+      logId: log.id,
+      status: log.status,
+      startedAt: log.startedAt,
+      duration: log.duration,
+      points: log.points,
+      request: log.request,
+      response: log.response,
+      images,
+      errorMessage: log.errorMessage,
+      createdAt: log.createdAt,
+      updatedAt: log.updatedAt,
+    }
   }
 }
