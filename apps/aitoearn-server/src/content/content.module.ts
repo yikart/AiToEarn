@@ -4,6 +4,7 @@ import { S3Module } from '@yikart/aws-s3'
 import { AiModule } from '../ai/ai.module'
 import { config } from '../config'
 import { MaterialController } from './material.controller'
+import { MaterialInternalController } from './material.internal.controller'
 import { MaterialService } from './material.service'
 import { MaterialGroupController } from './materialGroup.controller'
 import { MaterialGroupService } from './materialGroup.service'
@@ -26,7 +27,7 @@ import { MediaGroupService } from './mediaGroup.service'
       },
     }),
   ],
-  controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController],
+  controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController, MaterialInternalController],
   providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService],
   exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService],
 })

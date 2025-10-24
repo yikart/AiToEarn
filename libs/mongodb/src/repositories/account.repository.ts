@@ -136,9 +136,21 @@ export class AccountRepository extends BaseRepository<Account> {
    * @param ids
    * @returns
    */
-  async getAccountListByIds(userId: string, ids: string[]) {
+  async getAccountListByIdsOfUser(userId: string, ids: string[]) {
     return this.accountModel.find({
       userId,
+      id: { $in: ids },
+    })
+  }
+
+  /**
+   * 根据ID数组ids获取账户列表数组
+   * @param userId
+   * @param ids
+   * @returns
+   */
+  async getAccountListByIds(ids: string[]) {
+    return this.accountModel.find({
       id: { $in: ids },
     })
   }

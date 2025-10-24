@@ -203,8 +203,17 @@ export class AccountService {
    * @param ids
    * @returns
    */
-  async getAccountListByIds(userId: string, ids: string[]) {
-    return this.accountRepository.getAccountListByIds(userId, ids)
+  async getAccountListByIdsOfUser(userId: string, ids: string[]) {
+    return this.accountRepository.getAccountListByIdsOfUser(userId, ids)
+  }
+
+  /**
+   * 根据ID数组ids获取账户列表数组
+   * @param ids
+   * @returns
+   */
+  async getAccountListByIds(ids: string[]) {
+    return this.accountRepository.getAccountListByIds(ids)
   }
 
   /**

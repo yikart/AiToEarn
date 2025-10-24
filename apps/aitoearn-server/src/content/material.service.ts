@@ -76,6 +76,16 @@ export class MaterialService {
   }
 
   /**
+   * 获取组内最优素材
+   * @param groupId
+   * @returns
+   */
+  async optimalInGroup(groupId: string): Promise<Material | null> {
+    const res = await this.materialRepository.optimalInGroup(groupId)
+    return res
+  }
+
+  /**
    * 获取素材列表
    * @param page
    * @param userId
@@ -87,6 +97,26 @@ export class MaterialService {
       userId,
       groupId,
     }, page)
+    return res
+  }
+
+  /**
+   * 获取素材列表
+   * @param materialIds
+   * @returns
+   */
+  async optimalByIds(materialIds: string[]) {
+    const res = await this.materialRepository.optimalByIds(materialIds)
+    return res
+  }
+
+  /**
+   * 草稿素材列表
+   * @param ids
+   * @returns
+   */
+  async getListByIds(ids: string[]) {
+    const res = await this.materialRepository.listByIds(ids)
     return res
   }
 
