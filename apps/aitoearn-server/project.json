@@ -13,7 +13,11 @@
         "tsConfig": "apps/aitoearn-server/tsconfig.app.json",
         "packageJson": "apps/aitoearn-server/package.json",
         "main": "apps/aitoearn-server/src/main.ts",
-        "assets": ["apps/aitoearn-server/*.md"],
+        "assets": [
+          "apps/aitoearn-server/*.md",
+          "apps/aitoearn-server/src/views/**/*",
+          "apps/aitoearn-server/src/public/**/*"
+        ],
         "generatePackageJson": true,
         "clean": true
       }
