@@ -39,7 +39,7 @@ async function prepareContext(projectName, options = {}) {
   await resetDependencies(projects, contextDir, verbose)
   await generateConfig(projects, graph, contextDir, verbose)
   await copyAssets(contextDir, verbose)
-  // await copyConfig(contextDir, projectName, verbose)
+  await copyConfig(contextDir, projectName, verbose)
 
   return {
     projectName,
@@ -86,54 +86,25 @@ async function copyArtifacts(projects, graph, contextDir, verbose = false) {
   if (verbose)
     console.info(chalk.yellow('复制构建产物...'))
 
-  const missing = []
-
   for (const project of projects) {
     const node = graph.nodes[project]
     const isApp = node && node.type === 'app'
     const src = isApp ? `dist/apps/${project}` : `dist/libs/${project}`
     const dest = isApp ? path.join(contextDir, 'apps', project) : path.join(contextDir, 'libs', project)
 
-    if (await fs.pathExists(src)) {
-      await fs.copy(src, dest)
-      if (verbose)
-        console.info(chalk.gray(`  ${src} -> ${dest}`))
+    try {
+      await $`npx nx build ${project}`
+      console.info(chalk.green(`${project} 构建完成`))
     }
-    else {
-      missing.push({ project, src })
-    }
-  }
-
-  if (missing.length > 0) {
-    console.info(chalk.yellow('发现缺失的构建产物，正在自动构建...'))
-
-    for (const { project, src } of missing) {
-      console.info(chalk.blue(`正在构建: ${project}`))
-
-      try {
-        await $`npx nx build ${project}`
-        console.info(chalk.green(`${project} 构建完成`))
-
-        if (!(await fs.pathExists(src))) {
-          throw new Error(`构建完成但产物仍不存在: ${src}`)
-        }
-
-        const node = graph.nodes[project]
-        const isApp = node && node.type === 'app'
-        const dest = isApp ? path.join(contextDir, 'apps', project) : path.join(contextDir, 'libs', project)
-
-        await fs.copy(src, dest)
-        if (verbose)
-          console.info(chalk.gray(`  ${src} -> ${dest}`))
-      }
-      catch (error) {
-        console.error(chalk.red(`${project} 构建失败:`))
-        console.error(chalk.red(`  ${error.message}`))
-        throw new Error(`项目 ${project} 构建失败，脚本终止执行`)
-      }
+    catch (error) {
+      console.error(chalk.red(`${project} 构建失败:`))
+      console.error(chalk.red(`  ${error.message}`))
+      throw new Error(`项目 ${project} 构建失败，脚本终止执行`)
     }
 
-    console.info(chalk.green('所有缺失的构建产物已自动构建完成'))
+    await fs.copy(src, dest)
+    if (verbose)
+      console.info(chalk.gray(`  ${src} -> ${dest}`))
   }
 }
 
@@ -199,7 +170,9 @@ async function createDepsWorkspace(projects, graph, contextDir, verbose = false)
   return depsDir
 }
 
-async function buildImage(projectName, contextDir, verbose = false) {
+async function buildImage(projectName, contextDir, options = {}) {
+  const { verbose = false, registry = '339388639667.dkr.ecr.ap-southeast-1.amazonaws.com/aitoearn', push = false } = options
+
   if (verbose)
     console.info(chalk.yellow(`构建 Docker 镜像: ${projectName}`))
 
@@ -207,19 +180,31 @@ async function buildImage(projectName, contextDir, verbose = false) {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
 
   // 获取 Git 短提交哈希
-  const gitHash = await $({ cwd: contextDir })`git rev-parse --short HEAD`
+  const gitHash = await $`git rev-parse --short HEAD`
   const shortHash = gitHash.stdout.trim()
 
   // 生成与 GitHub Actions 一致的标签格式
   const tag = `${date}-${shortHash}`
-  const imageName = `${projectName}:${tag}`
+  const localImageName = `${projectName}:${tag}`
+  const fullImageName = `${registry}/${projectName}:${tag}`
 
   try {
-    await $({ cwd: contextDir })`docker build --build-arg APP_NAME=${projectName} --platform linux/amd64 -t ${imageName} .`
-    console.info(chalk.green(`Docker 镜像构建完成: ${imageName}`))
+    // 构建镜像并打标签
+    await $({ cwd: contextDir })`docker build --build-arg APP_NAME=${projectName} --platform linux/amd64 -t ${localImageName} -t ${fullImageName} .`
+    console.info(chalk.green(`Docker 镜像构建完成:`))
+    console.info(chalk.gray(`  本地: ${localImageName}`))
+    console.info(chalk.gray(`  远程: ${fullImageName}`))
+
+    // 如果指定了 push，则推送到仓库
+    if (push) {
+      console.info(chalk.yellow(`推送镜像到仓库...`))
+
+      await $`docker push ${fullImageName}`
+      console.info(chalk.green(`镜像推送完成: ${fullImageName}`))
+    }
   }
   catch (error) {
-    console.error(chalk.red(`Docker 镜像构建失败: ${error.message}`))
+    console.error(chalk.red(`Docker 镜像操作失败: ${error.message}`))
     throw error
   }
 }
@@ -354,6 +339,8 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     .option('-o, --output <dir>', '输出目录', 'tmp/docker-context')
     .option('-v, --verbose', '显示详细日志', false)
     .option('--context-only', '仅准备 Docker 上下文，不构建镜像', false)
+    .option('-r, --registry <registry>', 'Docker 镜像仓库地址', '339388639667.dkr.ecr.ap-southeast-1.amazonaws.com/aitoearn')
+    .option('-p, --push', '构建后推送镜像到仓库', false)
     .action(async (appName, options) => {
       try {
         const finalOptions = { ...options, contextOnly: options.contextOnly }
@@ -361,7 +348,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
         const result = await prepareContext(appName, finalOptions)
 
         if (!options.contextOnly) {
-          await buildImage(result.projectName, result.outputDir, options.verbose)
+          await buildImage(result.projectName, result.outputDir, {
+            verbose: options.verbose,
+            registry: options.registry,
+            push: options.push,
+          })
         }
       }
       catch (error) {
