@@ -47,5 +47,10 @@
   "invalidResetCode": "Invalid reset code",
   "resetSuccess": "Password reset successful",
   "clickEmailLinkToReset": "Please click the reset link in the email to complete password reset",
-  "backToLogin": "Back to Login"
+  "backToLogin": "Back to Login",
+  "verificationCode": "Verification Code",
+  "verificationCodeRequired": "Please enter verification code",
+  "verificationCodePlaceholder": "Please enter the verification code from your email",
+  "resetEmailSent": "Reset email sent, please check your inbox",
+  "sendEmailFailed": "Failed to send email"
 } 
