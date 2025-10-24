@@ -12,6 +12,7 @@ export class MailModule {
       module: MailModule,
       imports: [
         MailerModule.forRoot({
+          ...config,
           template: {
             dir: config.template.dir,
             adapter: new HandlebarsAdapter(),
@@ -19,7 +20,6 @@ export class MailModule {
               strict: true,
             },
           },
-          ...config,
         }),
       ],
       providers: [
