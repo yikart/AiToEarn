@@ -7,7 +7,7 @@ import { config } from '../config'
 
 @Injectable()
 export class FileService {
-  constructor(private readonly s3Service: S3Service) {}
+  constructor(private readonly s3Service: S3Service) { }
 
   private getNewFilePath(opt: {
     path: string
@@ -50,7 +50,7 @@ export class FileService {
       filePath,
       file.buffer,
     )
-    return res.path
+    return { key: res.path }
   }
 
   /**
