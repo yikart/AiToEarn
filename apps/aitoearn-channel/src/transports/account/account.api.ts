@@ -20,7 +20,7 @@ export class AccountInternalApi extends InternalApi {
   async createAccount(
     data: Partial<Account>,
   ) {
-    const url = `/internal/${data.userId}/socials/accounts`
+    const url = `/api/internal/${data.userId}/socials/accounts`
     const config: AxiosRequestConfig = {
       method: 'POST',
       data,
@@ -35,7 +35,7 @@ export class AccountInternalApi extends InternalApi {
 
   // 更新账号信息
   async updateAccountInfo(accountId: string, data: Partial<Account>) {
-    const url = `/internal/${data.userId}/socials/accounts/${accountId}`
+    const url = `/api/internal/${data.userId}/socials/accounts/${accountId}`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data,
@@ -53,7 +53,7 @@ export class AccountInternalApi extends InternalApi {
    * @returns
    */
   async getAccountInfo(accountId: string) {
-    const url = `/internal/:userId/socials/accounts/${accountId}`
+    const url = `/api/internal/:userId/socials/accounts/${accountId}`
     const config: AxiosRequestConfig = {
       method: 'GET',
     }
@@ -71,7 +71,7 @@ export class AccountInternalApi extends InternalApi {
    * @returns
    */
   async updateAccountStatistics(accountId: string, data: UpdateAccountStatisticsData) {
-    const url = `/internal/:userId/socials/accounts/${accountId}/statistics`
+    const url = `/api/internal/:userId/socials/accounts/${accountId}/statistics`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data,
