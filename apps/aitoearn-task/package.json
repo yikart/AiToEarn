@@ -19,6 +19,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dayjs": "^1.11.14",
+    "ioredis": "^5.7.0",
     "lodash": "^4.17.21",
     "nats": "^2.29.3",
     "natural": "^8.1.0",
