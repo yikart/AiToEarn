@@ -11,7 +11,7 @@ export class ContentInternalApi extends InternalApi {
   }
 
   async delMaterial(id: string) {
-    const url = `/internal/publishing/materials/${id}`
+    const url = `/api/internal/publishing/materials/${id}`
     const config: AxiosRequestConfig = {
       method: 'DELETE',
     }

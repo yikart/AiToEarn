@@ -24,7 +24,7 @@ export class GetAuthorDataByDateDto extends AccountIdDto {
 }
 
 export class GetAccountDataLatestDto extends AccountIdDto {
-  @IsString({ message: '平台' })
+  @IsString({ message: 'platform' })
   @Expose()
   readonly platform: string
 

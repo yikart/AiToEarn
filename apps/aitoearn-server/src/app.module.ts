@@ -17,6 +17,7 @@ import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
 import { FileModule } from './file/file.module'
 import { IncomeModule } from './income/income.module'
+import { InternalModule } from './internal/internal.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
 import { PublishModule } from './publishRecord/publishRecord.module'
@@ -64,6 +65,7 @@ import { UserModule } from './user/user.module'
     IncomeModule,
     StatisticsModule,
     PublishModule,
+    InternalModule,
   ],
   controllers: [],
   providers: [],
