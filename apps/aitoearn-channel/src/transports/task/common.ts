@@ -1,0 +1,67 @@
+import { AccountType } from '../account/common'
+
+export enum UserTaskStatus {
+  DOING = 'doing', // 进行中
+  PENDING = 'pending', // 待提现奖励
+  APPROVED = 'approved', // 已通过（完成）
+  REJECTED = 'rejected', // 已拒绝
+  CANCELLED = 'cancelled', // 已取消
+  DEL = 'del', // 已删除或回退
+}
+
+export interface UserTask {
+  _id: string
+  id: string
+  userId: string
+  taskId: string
+  opportunityId?: string // 派发记录ID
+  accountId: string
+  accountType: AccountType
+  uid: string
+  status: UserTaskStatus
+  keepTime: number // 保持时间(秒)
+  submissionUrl?: string // 提交的视频、文章或截图URL
+  submissionTime?: Date // 提交时间
+  completionTime?: Date // 完成时间
+  rejectionReason?: string // 拒绝原因
+  metadata?: Record<string, unknown> // 额外信息，如审核反馈等
+  isFirstTimeSubmission: boolean // 是否首次提交，用于确定是否给予首次奖励
+  verifierUserId?: string // 核查人员ID
+  verificationNote?: string // 人工核查备注
+  reward: number // 奖励金额
+  rewardTime?: Date // 奖励发放时间
+  taskMaterialId?: string // 任务的素材ID
+  screenshotUrls?: string[] // 任务完成截图
+  createdAt: Date
+  updatedAt: Date
+}
+
+export enum TaskType {
+  VIDEO = 'video',
+  ARTICLE = 'article',
+  PROMOTION = 'promotion',
+  INTERACTION = 'interaction',
+}
+
+export enum TaskStatus {
+  ACTIVE = 'active',
+  CANCELLED = 'cancelled',
+  DEL = 'del',
+}
+export interface Task {
+  _id: string
+  id: string
+  title: string
+  description: string
+  type: TaskType
+  maxRecruits: number
+  currentRecruits: number
+  deadline: Date
+  reward: number
+  status: TaskStatus
+  accountTypes: AccountType[]
+  materialIds: string[]
+  autoDeleteMaterial?: boolean
+  createdAt: Date
+  updatedAt: Date
+}
