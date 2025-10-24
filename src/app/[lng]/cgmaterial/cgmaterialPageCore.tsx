@@ -22,6 +22,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined, ImportOutlined, FileTextOut
 import { getAccountListApi } from "@/api/account";
 import { getPublishList } from "@/api/plat/publish";
 import { apiGetEngagementPosts } from "@/api/engagement";
+import { apiImportPostsRecord, apiGetPostsRecordStatus } from "@/api/statistics";
 import { PlatType } from "@/app/config/platConfig";
 import { PublishStatus } from "@/api/plat/types/publish.types";
 import { EngagementPostsParams, EngagementPostsResponse } from "@/api/types/engagement";
@@ -721,7 +722,26 @@ export default function CgMaterialPageCore() {
     setImportModal(true);
     try {
       const res = await getAccountListApi();
-      setAccountList(res?.data || []);
+      const allAccounts = res?.data || [];
+      
+      // 过滤掉离线账户和平台不支持的账户
+      const availableAccounts = allAccounts.filter((account: any) => {
+        // 过滤掉离线账户
+        if (account.status === 0) {
+          return false;
+        }
+        
+        // 过滤掉平台不支持的账户（根据实际需求调整支持的平台）
+        const supportedPlatforms = [
+          'tiktok', 'youtube', 'twitter', 'bilibili', 'KWAI', 
+          'douyin', 'xhs', 'wxSph', 'wxGzh', 'facebook', 
+          'instagram', 'threads'
+        ];
+        
+        return supportedPlatforms.includes(account.type);
+      });
+      
+      setAccountList(availableAccounts);
     } catch (e) {
       message.error("获取账户列表失败");
     }
@@ -804,59 +824,85 @@ export default function CgMaterialPageCore() {
 
     setImportLoading(true);
     try {
-      const importPromises = selectedPublishItems.map(async (itemId) => {
+      // 构造导入记录
+      const records = selectedPublishItems.map(itemId => {
         const publishItem = publishList.find(item => item.postId === itemId);
-        if (!publishItem) return;
-
-        // 构造素材数据
-        const mediaList: any[] = [];
+        if (!publishItem) return null;
         
-        // 根据媒体类型处理不同的数据
-        if (publishItem.mediaType === 'image' && publishItem.thumbnail) {
-          mediaList.push({
-            url: publishItem.thumbnail,
-            type: PubType.ImageText,
-            content: '',
-          });
-        } else if (publishItem.mediaType === 'video' && publishItem.thumbnail) {
-          mediaList.push({
-            url: publishItem.thumbnail,
-            type: PubType.VIDEO,
-            content: '',
-          });
-        }
+        return {
+          accountId: selectedAccount.id,
+          platform: selectedAccount.type,
+          userId: selectedAccount.userId || selectedAccount.id, // 使用账户的用户ID
+          uid: selectedAccount.uid || selectedAccount.id,
+          postId: publishItem.postId
+        };
+      }).filter((record): record is NonNullable<typeof record> => record !== null);
 
-        return apiCreateMaterial({
-          groupId: selectedGroup._id,
-          coverUrl: publishItem.thumbnail || '',
-          mediaList,
-          title: publishItem.title,
-          desc: publishItem.content,
-          option: {
-            platform: publishItem.platform,
-            postId: publishItem.postId,
-            permaLink: publishItem.permaLink,
-            publishTime: publishItem.publishTime,
-            viewCount: publishItem.viewCount,
-            likeCount: publishItem.likeCount,
-            commentCount: publishItem.commentCount,
-            shareCount: publishItem.shareCount,
-          },
-          location: [0, 0], // 默认位置
-        });
-      });
+      console.log('构造的导入记录:', records);
+      console.log('选中的账户:', selectedAccount);
 
-      await Promise.all(importPromises);
-      message.success(`成功导入 ${selectedPublishItems.length} 条内容到草稿箱`);
-      setImportModal(false);
-      setSelectedPublishItems([]);
-      setSelectedAccount(null);
-      setPublishList([]);
-      fetchMaterialList(selectedGroup._id);
-    } catch (e) {
-      message.error('导入失败');
+      if (records.length === 0) {
+        message.warning('没有有效的发布内容可以导入');
+        return;
+      }
+
+      // 调用导入接口
+      console.log('开始调用导入接口...');
+      const res = await apiImportPostsRecord(records);
+      console.log('导入接口返回结果:', res);
+      
+      if (res?.code === 0) {
+        message.success(`成功提交 ${records.length} 条内容导入任务`);
+        
+        // 延迟查询状态
+        setTimeout(async () => {
+          await checkImportStatus(selectedPublishItems);
+        }, 2000);
+        
+        setImportModal(false);
+        setSelectedPublishItems([]);
+        setSelectedAccount(null);
+        setPublishList([]);
+        fetchMaterialList(selectedGroup._id);
+      } else {
+        message.error(res?.message || '导入失败');
+      }
+    } catch (e: any) {
+      console.error('导入失败详情:', e);
+      message.error(`导入失败: ${e?.message || e || '未知错误'}`);
     } finally {
       setImportLoading(false);
+    }
+  }
+
+  // 检查导入状态
+  async function checkImportStatus(postIds: string[]) {
+    try {
+      const res = await apiGetPostsRecordStatus(postIds);
+      
+      if (res?.code === 0 && res?.data && Array.isArray(res.data)) {
+        const statusData: any[] = res.data;
+        const successCount = statusData.filter((item: any) => item.status === 'success').length;
+        const failedCount = statusData.filter((item: any) => item.status === 'failed').length;
+        const runningCount = statusData.filter((item: any) => item.status === 'running').length;
+        const pendingCount = statusData.filter((item: any) => item.status === 'pending').length;
+        
+        let statusMessage = `导入状态：`;
+        if (successCount > 0) statusMessage += `成功 ${successCount} 条 `;
+        if (failedCount > 0) statusMessage += `失败 ${failedCount} 条 `;
+        if (runningCount > 0) statusMessage += `进行中 ${runningCount} 条 `;
+        if (pendingCount > 0) statusMessage += `等待中 ${pendingCount} 条 `;
+        
+        if (failedCount > 0) {
+          message.warning(statusMessage);
+        } else if (runningCount > 0 || pendingCount > 0) {
+          message.info(statusMessage);
+        } else {
+          message.success(statusMessage);
+        }
+      }
+    } catch (e) {
+      console.error('查询导入状态失败:', e);
     }
   }
 
@@ -1187,19 +1233,19 @@ export default function CgMaterialPageCore() {
           </Form.Item>
           
           <Form.Item 
-            label="类型" 
+            label={t('createGroup.type')} 
             name="type" 
-            rules={[{ required: true, message: '请选择草稿类型' }]}
+            rules={[{ required: true, message: t('createGroup.typePlaceholder') }]}
             initialValue={PubType.ImageText}
           >
-            <Select placeholder="请选择草稿类型">
+            <Select placeholder={t('createGroup.typePlaceholder')}>
               <Select.Option value={PubType.ImageText}>
                 <FileTextOutlined style={{ marginRight: 8, color: '#52c41a' }} />
-                图文草稿
+                {t('createGroup.imageTextDraft')}
               </Select.Option>
               <Select.Option value={PubType.VIDEO}>
                 <VideoCameraOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                视频草稿
+                {t('createGroup.videoDraft')}
               </Select.Option>
             </Select>
           </Form.Item>
@@ -1242,7 +1288,6 @@ export default function CgMaterialPageCore() {
             padding: '8px'
           }}>
             {accountList.map(account => {
-              const isOffline = account.status === 0;
               const isChoosed = selectedAccount?.id === account.id;
               
               return (
@@ -1261,49 +1306,15 @@ export default function CgMaterialPageCore() {
                   }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (isOffline) {
-                      handleOfflineAvatarClick(account);
-                      return;
-                    }
                     handleSelectAccount(account);
                   }}
                 >
-                  {/* 账号头像：离线显示遮罩并禁用 */}
-                  <div style={{ position: "relative" }}>
-                    <AvatarPlat
-                      className={`${publishDialogStyles["publishDialog-con-acconts-item-avatar"]} ${!isChoosed || isOffline ? publishDialogStyles["disabled"] : ""}`}
-                      account={account}
-                      size="large"
-                      disabled={
-                        isOffline ||
-                        !isChoosed
-                      }
-                    />
-                    {isOffline && (
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleOfflineAvatarClick(account);
-                        }}
-                        style={{
-                          position: "absolute",
-                          inset: 0,
-                          background: "rgba(0,0,0,0.45)",
-                          borderRadius: "50%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#fff",
-                          fontSize: 12,
-                          fontWeight: 600,
-                          pointerEvents: "auto",
-                          cursor: "pointer",
-                        }}
-                      >
-                        离线
-                      </div>
-                    )}
-                  </div>
+                  <AvatarPlat
+                    className={`${publishDialogStyles["publishDialog-con-acconts-item-avatar"]} ${!isChoosed ? publishDialogStyles["disabled"] : ""}`}
+                    account={account}
+                    size="large"
+                    disabled={!isChoosed}
+                  />
                 </div>
               );
             })}
