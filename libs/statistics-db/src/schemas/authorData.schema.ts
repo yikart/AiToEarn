@@ -89,6 +89,12 @@ export class AuthorDatas extends WithTimestampSchema {
   snapshotDate?: Date
 
   @Prop({
+    required: false,
+    type: Date,
+  })
+  businessDate?: Date
+
+  @Prop({
     required: true,
     default: 0,
   })
