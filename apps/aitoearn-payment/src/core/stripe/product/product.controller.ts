@@ -20,7 +20,7 @@ export class ProductController {
   // 创建产品信息
   @Post()
   async create(
-      @Payload() body: ProductDto,
+    @Payload() body: ProductDto,
   ) {
     return this.productService.create(body)
   }

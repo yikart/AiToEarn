@@ -21,7 +21,7 @@ export class CheckoutController {
   // @NatsMessagePattern('payment.getById')
   @Post('payment/getById')
   async getById(
-      @Body() body: { id: string, userId: string },
+    @Body() body: { id: string, userId: string },
   ) {
     return this.checkoutService.getById(body.id, body.userId)
   }

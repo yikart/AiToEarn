@@ -28,7 +28,7 @@ export class PriceController {
   // 创建价格
   @Post()
   async create(
-      @Payload() body: PriceDto,
+    @Payload() body: PriceDto,
   ) {
     return this.priceService.create(body)
   }
