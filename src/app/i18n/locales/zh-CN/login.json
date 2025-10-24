@@ -47,5 +47,10 @@
   "invalidResetCode": "无效的重置码",
   "resetSuccess": "密码重置成功",
   "clickEmailLinkToReset": "请点击邮件中的重置链接完成密码重置",
-  "backToLogin": "返回登录"
+  "backToLogin": "返回登录",
+  "verificationCode": "验证码",
+  "verificationCodeRequired": "请输入验证码",
+  "verificationCodePlaceholder": "请输入邮箱中的验证码",
+  "resetEmailSent": "重置邮件已发送，请查收",
+  "sendEmailFailed": "发送邮件失败"
 } 
