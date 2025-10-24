@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common'
 import { TaskBaseApi } from '../../taskBase.api'
-import { TaskOpportunity } from './common'
+import { Task, TaskOpportunity } from './common'
 import { TaskWithOpportunityDetail, TotalAmountResult, UserTaskDetail } from './task.interface'
 
 @Injectable()
 export class TaskNatsApi extends TaskBaseApi {
+  async getTaskInfo(taskId: string) {
+    const res = await this.sendMessage<Task>(
+      `task/task/info`,
+      {
+        id: taskId,
+      },
+    )
+    return res
+  }
+
   async getTaskOpportunityList(page: { pageNo: number, pageSize: number }, userId: string): Promise<TaskWithOpportunityDetail> {
     const res = await this.sendMessage<TaskWithOpportunityDetail>(
       `task/taskOpportunity/list`,

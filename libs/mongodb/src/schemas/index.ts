@@ -36,6 +36,9 @@ import {
 } from './points-record.schema'
 import { Price, PriceSchema } from './price.schema'
 import { Product, ProductSchema } from './product.schema'
+import { PublishDayInfo, PublishDayInfoSchema } from './publishDayInfo.schema'
+import { PublishInfo, PublishInfoSchema } from './publishInfo.schema'
+import { PublishRecord, PublishRecordSchema } from './publishRecord.schema'
 import { Subscription, SubscriptionSchema } from './subscription.schema'
 import {
   UserWalletAccount,
@@ -78,6 +81,9 @@ export * from './points-record.schema'
 export * from './points-record.schema'
 export * from './price.schema'
 export * from './product.schema'
+export * from './publishDayInfo.schema'
+export * from './publishInfo.schema'
+export * from './publishRecord.schema'
 export * from './subscription.schema'
 export * from './user-wallet-account.schema'
 export * from './user-wallet.schema'
@@ -113,4 +119,7 @@ export const schemas = [
   { name: MaterialGroup.name, schema: MaterialGroupSchema },
   { name: MaterialTask.name, schema: MaterialTaskSchema },
   { name: Manager.name, schema: ManagerSchema },
+  { name: PublishDayInfo.name, schema: PublishDayInfoSchema },
+  { name: PublishInfo.name, schema: PublishInfoSchema },
+  { name: PublishRecord.name, schema: PublishRecordSchema },
 ] as const

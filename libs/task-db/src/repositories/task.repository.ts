@@ -2,14 +2,13 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { ObjectId } from 'mongodb'
 import { Model } from 'mongoose'
-import { Task, TaskOpportunity } from '../schemas'
+import { Task } from '../schemas'
 import { BaseRepository } from './base.repository'
 
 @Injectable()
 export class TaskRepository extends BaseRepository<Task> {
   constructor(
     @InjectModel(Task.name) private taskModel: Model<Task>,
-    @InjectModel(TaskOpportunity.name) private taskOpportunityModel: Model<TaskOpportunity>,
   ) {
     super(taskModel)
   }
