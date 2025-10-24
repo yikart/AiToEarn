@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AiToEarn Verification Code</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .logo {
+      margin-bottom: 30px;
+    }
+
+    .logo-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    .logo-icon::before {
+      content: "🔒";
+      font-size: 30px;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #6c757d;
+      margin-bottom: 30px;
+    }
+
+    .code-container {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 30px 20px;
+      margin-bottom: 25px;
+      text-align: center;
+      border-left: 4px solid #667eea;
+    }
+
+    .code-label {
+      font-weight: 600;
+      color: #495057;
+      margin-bottom: 15px;
+      display: block;
+      font-size: 18px;
+    }
+
+    .verification-code {
+      font-size: 32px;
+      font-weight: bold;
+      color: #667eea;
+      letter-spacing: 8px;
+      font-family: 'Courier New', monospace;
+      padding: 10px;
+      background: white;
+      border-radius: 6px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .instructions {
+      background: #e9f7fe;
+      border-radius: 6px;
+      padding: 15px;
+      font-size: 14px;
+      color: #0c5460;
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .instructions h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .instructions ol {
+      padding-left: 20px;
+    }
+
+    .instructions li {
+      margin-bottom: 8px;
+    }
+
+    .footer {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #6c757d;
+    }
+
+    .warning {
+      color: #dc3545;
+      font-size: 14px;
+      font-weight: 500;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon"></div>
+    </div>
+
+    <h1>AiToEarn: Your Verification Code</h1>
+
+    <div class="message">
+      You are receiving this message because a verification code has been requested for your account.
+    </div>
+
+    <div class="code-container">
+      <div class="code-label">Verification Code</div>
+      <div class="verification-code">{{ code }}</div>
+    </div>
+
+    <div class="instructions">
+      <h3>Instructions:</h3>
+      <ol>
+        <li>Use this code to complete your verification process</li>
+        <li>Enter the code in the verification field on the website</li>
+        <li>This code will expire in 10 minutes</li>
+        <li>If you didn't request this code, please ignore this email</li>
+      </ol>
+    </div>
+
+    <div class="warning">
+      ⚠️ Never share this code with anyone. AiToEarn will never ask for this code via phone or email.
+    </div>
+
+    <div class="footer">
+      This code was sent to {{ mail }}. If you didn't request this code, please contact support.
+    </div>
+  </div>
+</body>
+
+</html>
