@@ -7,9 +7,8 @@ import { config } from '../config'
 @Injectable()
 export class ServerBaseApi {
   private readonly logger = new Logger(ServerBaseApi.name)
-
-  constructor(private readonly httpService: HttpService) { }
-
+  private readonly httpService: HttpService
+  constructor() { }
   async sendMessage<T>(path: string, body: any): Promise<T> {
     const res = await this.httpService.axiosRef.post<{
       code: number

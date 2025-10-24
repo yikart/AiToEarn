@@ -12,6 +12,7 @@ import { ChannelModule } from './channel/channel.module'
 import { config } from './config'
 import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
+import { FileModule } from './file/file.module'
 import { IncomeModule } from './income/income.module'
 import { NotificationModule } from './notification/notification.module'
 import { PaymentModule } from './payment/payment.module'
@@ -31,6 +32,7 @@ import { UserModule } from './user/user.module'
         return config.bullmq
       },
     }),
+    FileModule,
     ToolsModule,
     LogsModule,
     TransportsModule,

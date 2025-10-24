@@ -6,7 +6,7 @@
  * @Description: 文件存储
  */
 import { Global, Module } from '@nestjs/common'
-import { S3Module, S3Service } from '@yikart/aws-s3'
+import { S3Module } from '@yikart/aws-s3'
 import { config } from '../config'
 import { FileController } from './file.controller'
 import { FileService } from './file.service'
@@ -18,6 +18,6 @@ import { FileService } from './file.service'
   ],
   controllers: [FileController],
   providers: [FileService],
-  exports: [FileService, S3Service],
+  exports: [FileService],
 })
 export class FileModule {}
