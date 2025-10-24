@@ -22,7 +22,7 @@ export class CouponController {
   // @NatsMessagePattern('admin.coupon.create')
   @Post('admin/coupon/create')
   async create(
-      @Body() body: CouponDto,
+    @Body() body: CouponDto,
   ) {
     return this.couponService.create(body)
   }

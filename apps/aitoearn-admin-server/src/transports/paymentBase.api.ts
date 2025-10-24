@@ -15,7 +15,7 @@ export class PaymentBaseApi {
       message: string
       data: T
       timestamp: number
-    }>(`${config.channelApi.baseUrl}/${path}`, body)
+    }>(`${config.paymentApi.baseUrl}/${path}`, body)
     if (res.data.code !== ExceptionCode.Success) {
       this.logger.error({ path, ...res })
       throw new AppException(res.data.code, res.data.message)

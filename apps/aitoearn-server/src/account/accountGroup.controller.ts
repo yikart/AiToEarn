@@ -64,8 +64,8 @@ export class AccountGroupController {
   @ApiOperation({ summary: '更新排序' })
   @Put('sortRank')
   async sortRank(
-      @GetToken() token: TokenInfo,
-      @Body() body: SortRankDto,
+    @GetToken() token: TokenInfo,
+    @Body() body: SortRankDto,
   ) {
     return this.accountGroupService.sortRank(token.id, body.list)
   }
