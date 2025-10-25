@@ -6,33 +6,15 @@
  * @Description: 素材草稿
  */
 import { Injectable } from '@nestjs/common'
-import { TableDto } from '@yikart/common'
 import { ServerBaseApi } from '../serverBase.api'
 import {
   Material,
-  MaterialFilter,
-  MaterialListByIdsFilter,
   MaterialTask,
-  NewMaterial,
   NewMaterialTask,
-  UpMaterial,
 } from './common'
 
 @Injectable()
 export class MaterialApi extends ServerBaseApi {
-  /**
-   * 创建素材
-   * @param newData
-   * @returns
-   */
-  async create(newData: NewMaterial) {
-    const res = await this.sendMessage<Material>(
-      'content/material/create',
-      newData,
-    )
-    return res
-  }
-
   /**
    * 创建批量生成草稿任务
    * @param newData
@@ -71,100 +53,6 @@ export class MaterialApi extends ServerBaseApi {
       'content/material/startTask',
       { id: taskId },
     )
-
-    return res
-  }
-
-  /**
-   * 删除素材
-   * @param id
-   * @returns
-   */
-  async del(id: string) {
-    const res = await this.sendMessage<boolean>(
-      'content/material/delete',
-      { id },
-    )
-
-    return res
-  }
-
-  /**
-   * 删除素材
-   * @param groupId
-   * @param minUseCount
-   * @returns
-   */
-  async delByMinUseCount(groupId: string, minUseCount: number) {
-    const res = await this.sendMessage<boolean>(
-      'content/material/delete/minUseCount',
-      { groupId, minUseCount },
-    )
-
-    return res
-  }
-
-  /**
-   * 修改素材
-   * @param id
-   * @param newData
-   * @returns
-   */
-  async updateInfo(id: string, newData: UpMaterial) {
-    const res = await this.sendMessage<boolean>(
-      'content/material/updateInfo',
-      { id, ...newData },
-    )
-
-    return res
-  }
-
-  /**
-   * 获取素材信息
-   * @param id
-   * @returns
-   */
-  async getInfo(id: string) {
-    const res = await this.sendMessage<Material>(
-      'content/material/info',
-      { id },
-    )
-
-    return res
-  }
-
-  /**
-   * 获取素材列表
-   * @param page
-   * @param filter
-   * @returns
-   */
-  async getList(page: TableDto, filter: MaterialFilter) {
-    const res = await this.sendMessage<{
-      list: Material[]
-      total: number
-    }>('content/material/list', {
-      filter,
-      page,
-    })
-
-    return res
-  }
-
-  /**
-   * 获取素材列表
-   * @param page
-   * @param filter
-   * @returns
-   */
-  async listByIds(page: TableDto, filter: MaterialListByIdsFilter) {
-    const res = await this.sendMessage<{
-      list: Material[]
-      total: number
-    }>('content/admin/material/listByIds', {
-      filter,
-      page,
-    })
 
     return res
   }
