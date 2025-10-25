@@ -87,7 +87,7 @@ export class MaterialRepository extends BaseRepository<Material> {
 
   // 获取列表
   async getList(inFilter: {
-    userId: string
+    userId?: string
     userType?: UserType
     title?: string
     groupId?: string
@@ -129,12 +129,13 @@ export class MaterialRepository extends BaseRepository<Material> {
   }
 
   // 获取列表
-  async listByIds(materialIds: string[]) {
+  async listByIds(materialIds: string[], inFilter?: RootFilterQuery<Material>) {
     const filter: RootFilterQuery<Material> = {
       _id: {
         $in: materialIds,
       },
       status: MaterialStatus.SUCCESS,
+      ...inFilter,
     }
     const list = await this.materialModel
       .find(filter)
@@ -142,6 +143,33 @@ export class MaterialRepository extends BaseRepository<Material> {
       .lean()
 
     return list
+  }
+
+  async tableListByIds(materialIds: string[], page: {
+    pageNo: number
+    pageSize: number
+  }, inFilter?: RootFilterQuery<Material>) {
+    const filter: RootFilterQuery<Material> = {
+      _id: {
+        $in: materialIds,
+      },
+      ...inFilter,
+    }
+
+    const [total, list] = await Promise.all([
+      this.materialModel.countDocuments(filter),
+      this.materialModel
+        .find(filter)
+        .sort({ useCount: 1, createdAt: -1 })
+        .skip((page.pageNo! - 1) * page.pageSize)
+        .limit(page.pageSize)
+        .lean(),
+    ])
+
+    return {
+      total,
+      list,
+    }
   }
 
   async optimalByIds(materialIds: string[]): Promise<Material | null> {
