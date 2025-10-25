@@ -11,13 +11,10 @@ import { ServerBaseApi } from '../serverBase.api'
 import {
   Material,
   MaterialFilter,
-  MaterialGroup,
   MaterialListByIdsFilter,
   MaterialTask,
   NewMaterial,
-  NewMaterialGroup,
   NewMaterialTask,
-  UpdateMaterialGroup,
   UpMaterial,
 } from './common'
 
@@ -165,89 +162,6 @@ export class MaterialApi extends ServerBaseApi {
       list: Material[]
       total: number
     }>('content/admin/material/listByIds', {
-      filter,
-      page,
-    })
-
-    return res
-  }
-
-  // ----- 组 ------
-  /**
-   * 创建素材组
-   * @param newData
-   * @returns
-   */
-  async createGroup(newData: NewMaterialGroup) {
-    const res = await this.sendMessage<MaterialGroup>(
-      'content./materialGroup/create',
-      newData,
-    )
-
-    return res
-  }
-
-  /**
-   * 删除素材组
-   * @param id
-   * @returns
-   */
-  async delGroup(id: string) {
-    const res = await this.sendMessage<boolean>(
-      'content/materialGroup/delete',
-      { id },
-    )
-
-    return res
-  }
-
-  /**
-   * 修改素材组
-   * @param id
-   * @param newData
-   * @returns
-   */
-  async updateGroupInfo(id: string, newData: UpdateMaterialGroup) {
-    const res = await this.sendMessage<boolean>(
-      'content/materialGroup/update',
-      { id, ...newData },
-    )
-
-    return res
-  }
-
-  /**
-   * 获取组信息
-   * @param id
-   * @returns
-   */
-  async getGroupInfo(id: string) {
-    const res = await this.sendMessage<MaterialGroup>(
-      'content/materialGroup/info',
-      { id },
-    )
-
-    return res
-  }
-
-  /**
-   * 获取素材组列表
-   * @param page
-   * @param filter
-   * @returns
-   */
-  async getGroupList(
-    page: TableDto,
-    filter: {
-      userId: string
-      title?: string
-      userType?: string
-    },
-  ) {
-    const res = await this.sendMessage<{
-      list: MaterialGroup[]
-      total: number
-    }>('content/materialGroup/list', {
       filter,
       page,
     })

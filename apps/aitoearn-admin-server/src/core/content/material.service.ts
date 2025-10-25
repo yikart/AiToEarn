@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { TableDto, UserType } from '@yikart/common'
+import { MaterialRepository } from '@yikart/mongodb'
 import {
   Material,
   MaterialListByIdsFilter,
   NewMaterial,
-  NewMaterialGroup,
   NewMaterialTask,
-  UpdateMaterialGroup,
   UpMaterial,
 } from '../../transports/content/common'
 import { MaterialApi } from '../../transports/content/material.api'
@@ -14,7 +13,10 @@ import { MaterialFilterDto } from './dto/material.dto'
 
 @Injectable()
 export class MaterialService {
-  constructor(private readonly materialApi: MaterialApi) {}
+  constructor(
+    private readonly materialApi: MaterialApi,
+    private readonly materialRepository: MaterialRepository,
+  ) { }
 
   /**
    * 创建
@@ -22,7 +24,7 @@ export class MaterialService {
    * @returns
    */
   async create(newData: NewMaterial) {
-    const res = await this.materialApi.create(newData)
+    const res = await this.materialRepository.create(newData)
     return res
   }
 
@@ -62,7 +64,7 @@ export class MaterialService {
    * @returns
    */
   async del(id: string) {
-    const res = await this.materialApi.del(id)
+    const res = await this.materialRepository.delOne(id)
     return res
   }
 
@@ -73,7 +75,7 @@ export class MaterialService {
    * @returns
    */
   async delByMinUseCount(groupId: string, minUseCount: number) {
-    const res = await this.materialApi.delByMinUseCount(groupId, minUseCount)
+    const res = await this.materialRepository.delByMinUseCount(groupId, minUseCount)
     return res
   }
 
@@ -84,7 +86,7 @@ export class MaterialService {
    * @returns
    */
   async updateInfo(id: string, data: UpMaterial): Promise<boolean> {
-    const res = await this.materialApi.updateInfo(id, data)
+    const res = await this.materialRepository.updateInfo(id, data)
     return res
   }
 
@@ -93,8 +95,8 @@ export class MaterialService {
    * @param id
    * @returns
    */
-  async getInfo(id: string): Promise<Material> {
-    const res = await this.materialApi.getInfo(id)
+  async getInfo(id: string): Promise<Material | null> {
+    const res = await this.materialRepository.getInfo(id)
     return res
   }
 
@@ -105,10 +107,10 @@ export class MaterialService {
    * @returns
    */
   async getList(page: TableDto, filter?: MaterialFilterDto) {
-    const res = await this.materialApi.getList(page, {
+    const res = await this.materialRepository.getList({
       ...filter,
       userType: UserType.Admin,
-    })
+    }, page)
     return res
   }
 
@@ -119,46 +121,7 @@ export class MaterialService {
    * @returns
    */
   async listByIds(page: TableDto, filter: MaterialListByIdsFilter) {
-    const res = await this.materialApi.listByIds(page, filter)
-    return res
-  }
-
-  // ----- 组 ------
-  async createGroup(newData: NewMaterialGroup) {
-    const res = await this.materialApi.createGroup({
-      ...newData,
-      userType: UserType.Admin,
-    })
-    return res
-  }
-
-  async delGroup(id: string): Promise<boolean> {
-    const res = await this.materialApi.delGroup(id)
-    return res
-  }
-
-  async updateGroupInfo(id: string, newData: UpdateMaterialGroup) {
-    const res = await this.materialApi.updateGroupInfo(id, newData)
-    return res
-  }
-
-  async getGroupInfo(id: string) {
-    const res = await this.materialApi.getGroupInfo(id)
-    return res
-  }
-
-  async getGroupList(
-    page: TableDto,
-    filter: {
-      userId: string
-      userType: string
-      title?: string
-    },
-  ) {
-    const res = await this.materialApi.getGroupList(page, {
-      ...filter,
-      userType: UserType.Admin,
-    })
+    const res = await this.materialRepository.tableListByIds(filter.ids, page)
     return res
   }
 }

@@ -42,12 +42,12 @@ export interface Material {
   groupId?: string // 所属组ID
   type: MaterialType
   coverUrl?: string
-  mediaList: MaterialMedia[]
-  title: string
-  desc: string
+  mediaList?: MaterialMedia[]
+  title?: string
+  desc?: string
   status: MaterialStatus
-  option: Record<string, any>
-  createAt: Date
+  option?: Record<string, any>
+  createdAt: Date
   updatedAt: Date
 }
 

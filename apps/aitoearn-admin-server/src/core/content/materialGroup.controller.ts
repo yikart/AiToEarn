@@ -19,25 +19,25 @@ import { TableDto, UserType } from '@yikart/common'
 import { GetToken } from '../../common/auth/auth.guard'
 import { TokenInfo } from '../../common/auth/interfaces/auth.interfaces'
 import { CreateMaterialGroupDto, MaterialGroupFilterDto, UpdateMaterialGroupDto } from './dto/materialGroup.dto'
-import { MaterialService } from './material.service'
+import { MaterialGroupService } from './materialGroup.service'
 
 @ApiTags('草稿组')
 @Controller('material/group')
 export class MaterialGroupController {
   constructor(
-    private readonly materialService: MaterialService,
+    private readonly gaterialGroupService: MaterialGroupService,
   ) { }
 
   @ApiOperation({
     description: '创建素材组',
     summary: '创建素材组',
   })
-  @Post('group')
+  @Post()
   async createGroup(
     @GetToken() token: TokenInfo,
     @Body() body: CreateMaterialGroupDto,
   ) {
-    const res = await this.materialService.createGroup({
+    const res = await this.gaterialGroupService.createGroup({
       ...body,
       userId: token.id,
       userType: UserType.Admin,
@@ -49,9 +49,9 @@ export class MaterialGroupController {
     description: '删除素材组',
     summary: '删除素材组',
   })
-  @Delete('group/:id')
+  @Delete(':id')
   async delGroup(@GetToken() token: TokenInfo, @Param('id') id: string) {
-    const res = await this.materialService.delGroup(id)
+    const res = await this.gaterialGroupService.delGroup(id)
     return res
   }
 
@@ -59,13 +59,13 @@ export class MaterialGroupController {
     description: '更新素材组信息',
     summary: '更新素材组信息',
   })
-  @Post('group/info/:id')
+  @Post('info/:id')
   async updateGroupInfo(
     @GetToken() token: TokenInfo,
     @Param('id') id: string,
     @Body() body: UpdateMaterialGroupDto,
   ) {
-    const res = await this.materialService.updateGroupInfo(id, body)
+    const res = await this.gaterialGroupService.updateGroupInfo(id, body)
     return res
   }
 
@@ -73,12 +73,12 @@ export class MaterialGroupController {
     description: '获取素材组信息',
     summary: '获取素材组信息',
   })
-  @Get('group/info/:id')
+  @Get('info/:id')
   async getGroupInfo(
     @GetToken() token: TokenInfo,
     @Param('id') id: string,
   ) {
-    const res = await this.materialService.getGroupInfo(id)
+    const res = await this.gaterialGroupService.getGroupInfo(id)
     return res
   }
 
@@ -86,13 +86,13 @@ export class MaterialGroupController {
     description: '获取素材组列表',
     summary: '获取素材组列表',
   })
-  @Get('group/list/:pageNo/:pageSize')
+  @Get('list/:pageNo/:pageSize')
   async getGroupList(
     @GetToken() token: TokenInfo,
     @Param() param: TableDto,
     @Query() query: MaterialGroupFilterDto,
   ) {
-    const res = await this.materialService.getGroupList(param, {
+    const res = await this.gaterialGroupService.getGroupList(param, {
       userId: token.id,
       userType: UserType.Admin,
       ...query,
