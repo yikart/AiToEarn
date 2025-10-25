@@ -3,7 +3,7 @@
  * @Date: 2024-06-17 19:19:15
  * @LastEditTime: 2024-09-05 15:19:25
  * @LastEditors: nevin
- * @Description: Material material
+ * @Description: MaterialGroup materialGroup
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
@@ -93,18 +93,19 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
 
   // 获取列表
   async getList(inFilter: {
-    userId: string
+    userId?: string
     title?: string
+    userType?: UserType
   }, pageInfo: {
     pageNo: number
     pageSize: number
   }) {
     const { pageNo, pageSize } = pageInfo
     const filter: RootFilterQuery<MaterialGroup> = {
-      userId: inFilter.userId,
+      ...(inFilter.userId && { userId: inFilter.userId }),
+      ...(inFilter.userType && { userType: inFilter.userType }),
+      ...(inFilter.title && { title: { $regex: inFilter.title, $options: 'i' } }),
     }
-    if (inFilter.title)
-      filter['title'] = { $regex: inFilter.title, $options: 'i' }
 
     const [total, list] = await Promise.all([
       this.materialGroupModel.countDocuments(filter),
