@@ -8,7 +8,6 @@ import { MaterialApi } from './content/material.api'
 import { PaymentApi } from './payment/payment.api'
 import { PaymentBaseApi } from './paymentBase.api'
 import { ServerBaseApi } from './serverBase.api'
-import { StatisticsApi } from './statistics/statistics.api'
 import { NotificationApi } from './task/notification.api'
 import { PortraitApi } from './task/portrait.api'
 import { RuleApi } from './task/rule.api'
@@ -33,7 +32,6 @@ import { VipApi } from './user/vip.natsApi'
     PaymentApi,
     PortraitApi,
     RuleApi,
-    StatisticsApi,
     TaskPunishApi,
     UserTaskApi,
     TaskApi,
@@ -49,7 +47,6 @@ import { VipApi } from './user/vip.natsApi'
     PaymentApi,
     PortraitApi,
     RuleApi,
-    StatisticsApi,
     TaskPunishApi,
     UserTaskApi,
     TaskApi,

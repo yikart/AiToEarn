@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common'
-import { StatisticsApi } from '../../../transports/statistics/statistics.api'
+import { PostRepository, TaskRepository } from '@yikart/statistics-db'
 
 @Injectable()
 export class TaskStatisticsService {
-  constructor(private readonly statisticsApi: StatisticsApi) {}
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly postRepository: PostRepository,
+  ) { }
 
   // 根据任务ID 获取作品数据 并汇总
   async getTaskPostsStatistics(
     taskId: string,
   ) {
-    const res = await this.statisticsApi.getTaskPostsDataCube(taskId)
+    const res = await this.taskRepository.getTaskPostsSummary(taskId)
     return res
   }
 
@@ -18,7 +21,7 @@ export class TaskStatisticsService {
     platform: string,
     postId: string,
   ) {
-    const res = await this.statisticsApi.getTaskPostPeriodDetail(platform, postId)
+    const res = await this.postRepository.getPostDataByDateRange({ platform, postId })
     return res
   }
 }

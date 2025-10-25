@@ -1,4 +1,3 @@
-import { HttpService } from '@nestjs/axios'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
 import axios from 'axios'
@@ -8,7 +7,6 @@ import { config } from '../config'
 @Injectable()
 export class ServerBaseApi {
   private readonly logger = new Logger(ServerBaseApi.name)
-  private readonly httpService: HttpService
   constructor() { }
   async sendMessage<T>(path: string, body: any): Promise<T> {
     const res = await axios.post<{
