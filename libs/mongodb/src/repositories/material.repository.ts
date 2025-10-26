@@ -8,7 +8,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { UserType } from '@yikart/common'
-import { Model, RootFilterQuery } from 'mongoose'
+import { FilterQuery, Model, RootFilterQuery } from 'mongoose'
 import { Material, MaterialStatus } from '../schemas'
 import { BaseRepository } from './base.repository'
 
@@ -31,8 +31,8 @@ export class MaterialRepository extends BaseRepository<Material> {
   }
 
   // 批量删除
-  async delByIds(ids: string[]): Promise<boolean> {
-    const res = await this.materialModel.deleteMany({ _id: { $in: ids } })
+  async delByIds(ids: string[], filter?: FilterQuery<Material>): Promise<boolean> {
+    const res = await this.materialModel.deleteMany({ _id: { $in: ids }, ...filter })
     return res.deletedCount > 0
   }
 

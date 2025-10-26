@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { AppException, ResponseCode } from '@yikart/common'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { AccountService } from './account.service'
@@ -39,6 +40,10 @@ export class AccountController {
     @GetToken() token: TokenInfo,
     @Body() body: UpdateAccountDto,
   ) {
+    const account = await this.accountService.getAccountById(body.id)
+    if (!account || account.userId !== token.id) {
+      throw new AppException(ResponseCode.AccountNotFound, 'The account does not exist.')
+    }
     const res = await this.accountService.updateAccountInfoById(body.id, {
       userId: token.id,
       ...body,
@@ -49,8 +54,13 @@ export class AccountController {
   @ApiOperation({ summary: '更新账号状态' })
   @Post('status')
   async updateAccountStatus(
+    @GetToken() token: TokenInfo,
     @Body() body: UpdateAccountStatusDto,
   ) {
+    const account = await this.accountService.getAccountById(body.id)
+    if (!account || account.userId !== token.id) {
+      throw new AppException(ResponseCode.AccountNotFound, 'The account does not exist.')
+    }
     return this.accountService.updateAccountStatus(body.id, body.status)
   }
 
@@ -106,6 +116,10 @@ export class AccountController {
     @GetToken() token: TokenInfo,
     @Param() param: AccountIdDto,
   ) {
+    const account = await this.accountService.getAccountById(param.id)
+    if (!account || account.userId !== token.id) {
+      throw new AppException(ResponseCode.AccountNotFound, 'The account does not exist.')
+    }
     return this.accountService.deleteUserAccount(param.id, token.id)
   }
 
@@ -115,6 +129,10 @@ export class AccountController {
     @GetToken() token: TokenInfo,
     @Body() body: UpdateAccountStatisticsDto,
   ) {
+    const account = await this.accountService.getAccountById(body.id)
+    if (!account || account.userId !== token.id) {
+      throw new AppException(ResponseCode.AccountNotFound, '账号不存在')
+    }
     const {
       id,
       fansCount,

@@ -72,7 +72,7 @@ export class MediaService {
    * @param ids
    * @returns
    */
-  async delByIds(ids: string[]) {
+  async delByIds(userId: string, ids: string[]) {
     const mediaList = await this.mediaRepository.getListByIds(ids)
     for (const media of mediaList) {
       if (media?.userType === UserType.User && media?.url && media.metadata?.size) {
@@ -83,7 +83,10 @@ export class MediaService {
       }
     }
 
-    const res = await this.mediaRepository.delByIds(ids)
+    const res = await this.mediaRepository.delByIds(ids, {
+      userType: UserType.User,
+      userId,
+    })
     return res
   }
 
@@ -119,8 +122,10 @@ export class MediaService {
     return res
   }
 
-  async addUseCountOfList(ids: string[]): Promise<boolean> {
-    const res = await this.mediaRepository.addUseCountOfList(ids)
+  async addUseCountOfList(userId: string, ids: string[]): Promise<boolean> {
+    const res = await this.mediaRepository.addUseCountOfList(ids, {
+      userId,
+    })
     return res
   }
 

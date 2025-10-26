@@ -61,4 +61,15 @@ export enum ResponseCode {
   // 16000 (app-release)
   AppReleaseNotFound = 16000,
   AppReleaseAlreadyExists = 16001,
+
+  // 17000 (accunt)
+  AccountNotFound = 17000,
+
+  // 18000 (media)
+  MediaNotFound = 18000,
+  MediaGroupNotFound = 18001,
+
+  // 19000 (material)
+  MaterialNotFound = 19000,
+  MaterialGroupNotFound = 19001,
 }

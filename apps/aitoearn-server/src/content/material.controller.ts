@@ -16,7 +16,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { AppException, TableDto, UserType } from '@yikart/common'
+import { AppException, ResponseCode, TableDto, UserType } from '@yikart/common'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { UserService } from '../user/user.service'
@@ -104,17 +104,27 @@ export class MaterialController {
     description: '批量删除草稿',
   })
   @Delete('list')
-  async delByIds(@Body() body: MaterialIdsDto) {
-    const res = await this.materialService.delByIds(body.ids)
+  async delByIds(
+    @GetToken() token: TokenInfo,
+    @Body() body: MaterialIdsDto,
+  ) {
+    const res = await this.materialService.delByIds(token.id, body.ids)
     return res
   }
 
   @ApiOperation({
-    summary: '删除素材',
-    description: '删除素材',
+    summary: '删除草稿',
+    description: '删除草稿',
   })
   @Delete(':id')
-  async del(@Param('id') id: string) {
+  async del(
+    @GetToken() token: TokenInfo,
+    @Param('id') id: string,
+  ) {
+    const material = await this.materialService.getInfo(id)
+    if (!material || material.userId !== token.id) {
+      throw new AppException(ResponseCode.MaterialNotFound, 'Material not found')
+    }
     const res = await this.materialService.del(id)
     return res
   }
@@ -125,9 +135,14 @@ export class MaterialController {
   })
   @Put('info/:id')
   async upMaterialInfo(
+    @GetToken() token: TokenInfo,
     @Param('id') id: string,
     @Body() body: UpdateMaterialDto,
   ) {
+    const material = await this.materialService.getInfo(id)
+    if (!material || material.userId !== token.id) {
+      throw new AppException(ResponseCode.MaterialNotFound, 'Material not found')
+    }
     const res = await this.materialService.updateInfo(id, body)
     return res
   }

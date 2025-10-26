@@ -16,7 +16,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { TableDto } from '@yikart/common'
+import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto, MediaIdsDto } from './dto/media.dto'
@@ -47,7 +47,7 @@ export class MediaController {
   })
   @Delete('ids')
   async delByIds(@GetToken() token: TokenInfo, @Body() body: MediaIdsDto) {
-    const res = await this.mediaService.delByIds(body.ids)
+    const res = await this.mediaService.delByIds(token.id, body.ids)
     return res
   }
 
@@ -57,6 +57,10 @@ export class MediaController {
   })
   @Delete(':id')
   async del(@GetToken() token: TokenInfo, @Param('id') id: string) {
+    const media = await this.mediaService.getInfo(id)
+    if (!media || media.userId !== token.id) {
+      throw new AppException(ResponseCode.MediaNotFound, 'Media Group not found')
+    }
     const res = await this.mediaService.del(id)
     return res
   }
@@ -84,9 +88,10 @@ export class MediaController {
   })
   @Put('addUseCountOfList')
   async addUseCountOfList(
+    @GetToken() token: TokenInfo,
     @Body() body: AddUseCountOfListDto,
   ) {
-    const res = await this.mediaService.addUseCountOfList(body.ids)
+    const res = await this.mediaService.addUseCountOfList(token.id, body.ids)
     return res
   }
 }
