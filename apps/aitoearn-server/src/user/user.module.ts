@@ -7,11 +7,13 @@ import { UserService } from './user.service'
 import { UserPopController } from './userPop.controller'
 import { UserWalletAccountController } from './userWalletAccount.controller'
 import { UserWalletAccountService } from './userWalletAccount.service'
+import { VipController } from './vip.controller'
+import { VipInternalController } from './vip.internal.controller'
 import { VipService } from './vip.service'
 
 @Global()
 @Module({
-  controllers: [UserController, LoginController, UserPopController, UserWalletAccountController],
+  controllers: [UserController, LoginController, UserPopController, UserWalletAccountController, VipController, VipInternalController],
   providers: [UserService, UserWalletAccountService, PointsService, VipService, StorageService],
   exports: [UserService, VipService, StorageService, PointsService, UserWalletAccountService],
 })

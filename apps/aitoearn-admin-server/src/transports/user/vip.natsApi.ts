@@ -9,7 +9,7 @@ export class VipApi extends ServerBaseApi {
     status: VipStatus
   }) {
     const res = await this.sendMessage<boolean>(
-      'user/vip/set',
+      'vipInternal/set',
       {
         id: data.userId,
         status: data.status,
