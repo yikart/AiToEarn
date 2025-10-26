@@ -49,8 +49,8 @@ export class MaterialService {
    * @param ids
    * @returns
    */
-  async delByIds(ids: string[]): Promise<boolean> {
-    const res = await this.materialRepository.delByIds(ids)
+  async delByIds(userId: string, ids: string[]): Promise<boolean> {
+    const res = await this.materialRepository.delByIds(ids, { userId })
     return res
   }
 

@@ -15,7 +15,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { AppException, TableDto } from '@yikart/common'
+import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { MediaGroup } from '@yikart/mongodb'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
@@ -58,6 +58,10 @@ export class MediaGroupController {
   })
   @Delete(':id')
   async delGroup(@GetToken() token: TokenInfo, @Param('id') id: string) {
+    const mediaGroup = await this.mediaGroupService.getInfo(id)
+    if (!mediaGroup || mediaGroup.userId !== token.id) {
+      throw new AppException(ResponseCode.MediaGroupNotFound, 'Media Group not found')
+    }
     const res = await this.mediaGroupService.del(id)
     return res
   }

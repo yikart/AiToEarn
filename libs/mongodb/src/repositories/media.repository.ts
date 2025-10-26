@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { UserType } from '@yikart/common'
-import { Model, RootFilterQuery, Types } from 'mongoose'
+import { FilterQuery, Model, RootFilterQuery, Types } from 'mongoose'
 import { Media, MediaType } from '../schemas/media.schema'
 import { BaseRepository } from './base.repository'
 
@@ -31,8 +31,8 @@ export class MediaRepository extends BaseRepository<Media> {
   }
 
   // 批量删除素材
-  async delByIds(ids: string[]): Promise<boolean> {
-    const res = await this.mediaModel.deleteMany({ _id: { $in: ids } })
+  async delByIds(ids: string[], filter?: FilterQuery<Media>): Promise<boolean> {
+    const res = await this.mediaModel.deleteMany({ _id: { $in: ids }, ...filter })
     return res.deletedCount > 0
   }
 
@@ -107,9 +107,9 @@ export class MediaRepository extends BaseRepository<Media> {
     return res.modifiedCount > 0
   }
 
-  async addUseCountOfList(ids: string[]): Promise<boolean> {
+  async addUseCountOfList(ids: string[], filter?: FilterQuery<Media>): Promise<boolean> {
     const idList = ids.map(id => new Types.ObjectId(id))
-    const res = await this.mediaModel.updateMany({ _id: { $in: idList } }, { $inc: { useCount: 1 } })
+    const res = await this.mediaModel.updateMany({ _id: { $in: idList }, ...filter }, { $inc: { useCount: 1 } })
     return res.modifiedCount > 0
   }
 }

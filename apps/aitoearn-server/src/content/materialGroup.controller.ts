@@ -15,7 +15,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { TableDto } from '@yikart/common'
+import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { CreateMaterialGroupDto, MaterialGroupFilterDto, UpdateMaterialGroupDto } from './dto/materialGroup.dto'
@@ -49,7 +49,14 @@ export class MaterialGroupController {
     summary: '删除素材组',
   })
   @Delete(':id')
-  async delGroup(@Param('id') id: string) {
+  async delGroup(
+    @GetToken() token: TokenInfo,
+    @Param('id') id: string,
+  ) {
+    const materialGroup = await this.materialGroupService.getGroupInfo(id)
+    if (!materialGroup || materialGroup.userId !== token.id) {
+      throw new AppException(ResponseCode.MaterialGroupNotFound, 'Material Group not found')
+    }
     const res = await this.materialGroupService.delGroup(id)
     return res
   }
@@ -60,9 +67,14 @@ export class MaterialGroupController {
   })
   @Post('info/:id')
   async updateGroupInfo(
+    @GetToken() token: TokenInfo,
     @Param('id') id: string,
     @Body() body: UpdateMaterialGroupDto,
   ) {
+    const materialGroup = await this.materialGroupService.getGroupInfo(id)
+    if (!materialGroup || materialGroup.userId !== token.id) {
+      throw new AppException(ResponseCode.MaterialGroupNotFound, 'Material Group not found')
+    }
     const res = await this.materialGroupService.updateGroupInfo(id, body)
     return res
   }
