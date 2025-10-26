@@ -1,3 +1,4 @@
+import { createZodDto } from '@yikart/common'
 import { GenderEnum } from '@yikart/mongodb'
 /*
  * @Author: nevin
@@ -6,33 +7,19 @@ import { GenderEnum } from '@yikart/mongodb'
  * @LastEditors: nevin
  * @Description: 用户
  */
-import { Expose } from 'class-transformer'
-import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { z } from 'zod'
 
-export class ChangePasswordDto {
-  @IsString({ message: '密码' })
-  @Expose()
-  readonly password: string
-}
+const ChangePasswordSchema = z.object({
+  password: z.string({ message: '密码' }),
+})
 
-export class UpdateUserInfoDto {
-  @IsString({ message: '昵称' })
-  @IsOptional()
-  @Expose()
-  readonly name?: string
+export class ChangePasswordDto extends createZodDto(ChangePasswordSchema) {}
 
-  @IsString({ message: '头像' })
-  @IsOptional()
-  @Expose()
-  avatar?: string
+const UpdateUserInfoSchema = z.object({
+  name: z.string({ message: '昵称' }).optional(),
+  avatar: z.string({ message: '头像' }).optional(),
+  gender: z.nativeEnum(GenderEnum, { message: '性别' }).optional(),
+  desc: z.string({ message: '简介' }).optional(),
+})
 
-  @IsEnum(GenderEnum, { message: '性别' })
-  @IsOptional()
-  @Expose()
-  readonly gender?: GenderEnum
-
-  @IsString({ message: '简介' })
-  @IsOptional()
-  @Expose()
-  readonly desc?: string
-}
+export class UpdateUserInfoDto extends createZodDto(UpdateUserInfoSchema) {}

@@ -1,44 +1,32 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { createZodDto } from '@yikart/common'
 import { Expose, Transform, Type } from 'class-transformer'
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
+import { z } from 'zod'
 
 /**
  * 账号ID DTO
  */
-export class AccountIdDto {
-  @ApiProperty({ description: '账号ID' })
-  @IsString({ message: '账号ID必须是字符串' })
-  @Expose()
-  readonly accountId: string
-}
+const AccountIdSchema = z.object({
+  accountId: z.string({ message: '账号ID必须是字符串' }),
+})
+
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
 /**
  * 获取视频类别列表 DTO
  * 注意：id和regionCode只能选择一个
  */
-export class GetVideoCategoriesDto extends AccountIdDto {
-  @ApiProperty({
-    description: '视频类别ID, 注意：id和regionCode必须有且只能选择一个',
-    required: false,
-  })
-  @IsString({
+const GetVideoCategoriesSchema = AccountIdSchema.extend({
+  id: z.string({
     message: '视频类别ID必须是字符串, 注意：id和regionCode必须有且只能选择一个',
-  })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
-
-  @ApiProperty({
-    description: '区域代码, 注意：id和regionCode只能选择一个',
-    required: false,
-  })
-  @IsString({
+  }).optional(),
+  regionCode: z.string({
     message: '区域代码必须是字符串, 注意：id和regionCode只能选择一个',
-  })
-  @IsOptional()
-  @Expose()
-  readonly regionCode?: string
-}
+  }).optional(),
+})
+
+export class GetVideoCategoriesDto extends createZodDto(GetVideoCategoriesSchema) {}
 
 /**
  * 获取视频列表 DTO

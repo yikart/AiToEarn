@@ -1,45 +1,27 @@
 /*
  * @Author: nevin
  * @Date: 2024-08-19 15:58:47
- * @LastEditTime: 2025-03-17 12:41:12
+ * @LastEditTime: 2025-05-13 16:00:00
  * @LastEditors: nevin
  * @Description: mediaGroup MediaGroup
  */
-import { ApiProperty } from '@nestjs/swagger'
-import { createZodDto, TableDto } from '@yikart/common'
+import { createZodDto, TableDtoSchema } from '@yikart/common'
 import { MediaType } from '@yikart/mongodb'
-import { Expose, Type } from 'class-transformer'
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { z } from 'zod'
 
-export class MediaGroupIdDto {
-  @ApiProperty({ title: 'ID', required: true })
-  @IsString({ message: 'ID' })
-  @Expose()
-  readonly id: string
-}
+const MediaGroupIdSchema = z.object({
+  id: z.string().describe('ID'),
+})
 
-export class CreateMediaGroupDto {
-  @ApiProperty({
-    title: '类型',
-    required: true,
-    enum: MediaType,
-    description: '类型',
-  })
-  @IsEnum(MediaType, { message: '类型' })
-  @Expose()
-  readonly type: MediaType
+export class MediaGroupIdDto extends createZodDto(MediaGroupIdSchema) {}
 
-  @ApiProperty({ title: '标题', required: true })
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
+const CreateMediaGroupSchema = z.object({
+  type: z.enum(MediaType).describe('类型'),
+  title: z.string().describe('标题'),
+  desc: z.string().describe('描述'),
+})
 
-  @ApiProperty({ title: '描述', required: true })
-  @IsString({ message: '描述' })
-  @Expose()
-  readonly desc: string
-}
+export class CreateMediaGroupDto extends createZodDto(CreateMediaGroupSchema) {}
 
 export const UpdateMediaSchema = z.object({
   title: z.string().optional().describe('标题'),
@@ -47,32 +29,16 @@ export const UpdateMediaSchema = z.object({
 })
 export class UpdateMediaGroupDto extends createZodDto(UpdateMediaSchema) {}
 
-export class MediaGroupFilterDto {
-  @IsString({ message: '标题' })
-  @IsOptional()
-  @Expose()
-  readonly title?: string
+const MediaGroupFilterSchema = z.object({
+  title: z.string().optional().describe('标题'),
+  type: z.enum(MediaType).optional().describe('类型'),
+})
 
-  @ApiProperty({
-    title: '类型',
-    required: false,
-    enum: MediaType,
-    description: '类型',
-  })
-  @IsEnum(MediaType, { message: '类型' })
-  @IsOptional()
-  @Expose()
-  readonly type?: MediaType
-}
+export class MediaGroupFilterDto extends createZodDto(MediaGroupFilterSchema) {}
 
-export class MediaGroupListDto {
-  @ValidateNested()
-  @Type(() => MediaGroupFilterDto)
-  @Expose()
-  readonly filter: MediaGroupFilterDto
+const MediaGroupListSchema = z.object({
+  filter: MediaGroupFilterSchema.optional().describe('过滤条件'),
+  page: TableDtoSchema.describe('分页信息'),
+})
 
-  @ValidateNested()
-  @Type(() => TableDto)
-  @Expose()
-  readonly page: TableDto
-}
+export class MediaGroupListDto extends createZodDto(MediaGroupListSchema) {}

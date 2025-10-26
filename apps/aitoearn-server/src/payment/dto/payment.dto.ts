@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { CloudSpaceRegion } from '@yikart/cloud-space-client/src/cloud-space.interfaces'
+import { createZodDto } from '@yikart/common'
 import { Expose, Type } from 'class-transformer'
 import {
   IsInt,
@@ -9,31 +10,27 @@ import {
   IsString,
   ValidateNested,
 } from 'class-validator'
+import { z } from 'zod'
 import { ICheckoutMode, ICheckoutStatus, IFlagTrialPeriodDays, IMetadata, IPayment, IPaymentStatus, IWebhookType } from '../../transports/payment/common'
 
-export class LineItemsDto {
-  @IsString({ message: '价格id' })
-  @Expose()
-  readonly price: string
+const LineItemsSchema = z.object({
+  price: z.string({ message: '价格id' }),
+  quantity: z.number({ message: '数量' }).int(),
+})
 
-  @IsInt({ message: '数量' })
-  @Expose()
-  readonly quantity: number
-}
+export class LineItemsDto extends createZodDto(LineItemsSchema) {}
 
-export class MetadataDto {
-  @IsString({ message: 'userId' })
-  @IsOptional()
-  @Expose()
-  readonly userId?: string
-}
+const MetadataSchema = z.object({
+  userId: z.string({ message: 'userId' }).optional(),
+})
 
-export class SubscriptionDataDto {
-  @IsInt({ message: '免费试用天数' })
-  @IsOptional()
-  @Expose()
-  readonly trial_period_days?: number
-}
+export class MetadataDto extends createZodDto(MetadataSchema) {}
+
+const SubscriptionDataSchema = z.object({
+  trial_period_days: z.number({ message: '免费试用天数' }).int().optional(),
+})
+
+export class SubscriptionDataDto extends createZodDto(SubscriptionDataSchema) {}
 
 export class CheckoutBodyDto {
   @IsString({ message: '订单id' })
