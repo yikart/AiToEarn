@@ -1,12 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto, TableDto } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
-import { Expose, Type } from 'class-transformer'
+import { Expose } from 'class-transformer'
 import {
-  IsEnum,
-  IsOptional,
   IsString,
-  ValidateNested,
 } from 'class-validator'
 import { z } from 'zod'
 
@@ -62,37 +59,20 @@ export const UpdateMaterialSchema = z.object({
 })
 export class UpdateMaterialDto extends createZodDto(UpdateMaterialSchema) {}
 
-export class MaterialFilterDto {
-  @ApiProperty({ title: '标题', required: false })
-  @IsString({ message: '标题' })
-  @IsOptional()
-  @Expose()
-  readonly title?: string
+const MaterialFilterSchema = z.object({
+  title: z.string({ message: '标题' }).optional(),
+  groupId: z.string({ message: '组ID' }).optional(),
+  status: z.nativeEnum(MaterialStatus, { message: '草稿状态' }).optional(),
+})
 
-  @ApiProperty({ title: '组ID', required: false })
-  @IsString({ message: '组ID' })
-  @IsOptional()
-  @Expose()
-  readonly groupId?: string
+export class MaterialFilterDto extends createZodDto(MaterialFilterSchema) {}
 
-  @ApiProperty({ title: '草稿状态', required: false, enum: MaterialStatus })
-  @IsEnum(MaterialStatus, { message: '草稿状态' })
-  @IsOptional()
-  @Expose()
-  status?: MaterialStatus
-}
+const MaterialListSchema = z.object({
+  filter: MaterialFilterSchema,
+  page: TableDto.schema,
+})
 
-export class MaterialListDto {
-  @ValidateNested()
-  @Type(() => MaterialFilterDto)
-  @Expose()
-  readonly filter: MaterialFilterDto
-
-  @ValidateNested()
-  @Type(() => TableDto)
-  @Expose()
-  readonly page: TableDto
-}
+export class MaterialListDto extends createZodDto(MaterialListSchema) {}
 
 const MediaIdsSchema = z.object({
   ids: z.array(z.string()).min(1).describe('ID列表'),
