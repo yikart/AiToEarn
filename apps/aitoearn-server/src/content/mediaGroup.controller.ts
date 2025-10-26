@@ -15,7 +15,7 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { TableDto } from '@yikart/common'
+import { AppException, TableDto } from '@yikart/common'
 import { MediaGroup } from '@yikart/mongodb'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
@@ -72,6 +72,10 @@ export class MediaGroupController {
     @Param('id') id: string,
     @Body() body: UpdateMediaGroupDto,
   ) {
+    const dataInfo = await this.mediaGroupService.getInfo(id)
+    if (!dataInfo || dataInfo.userId !== token.id) {
+      throw new AppException(10009, 'No permission to operate this resource group')
+    }
     const res = await this.mediaGroupService.updateInfo(id, body)
     return res
   }

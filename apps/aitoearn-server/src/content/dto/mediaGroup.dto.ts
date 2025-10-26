@@ -6,10 +6,11 @@
  * @Description: mediaGroup MediaGroup
  */
 import { ApiProperty } from '@nestjs/swagger'
-import { TableDto } from '@yikart/common'
+import { createZodDto, TableDto } from '@yikart/common'
 import { MediaType } from '@yikart/mongodb'
 import { Expose, Type } from 'class-transformer'
 import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { z } from 'zod'
 
 export class MediaGroupIdDto {
   @ApiProperty({ title: 'ID', required: true })
@@ -40,19 +41,11 @@ export class CreateMediaGroupDto {
   readonly desc: string
 }
 
-export class UpdateMediaGroupDto {
-  @ApiProperty({ title: '标题', required: true })
-  @IsString({ message: '标题' })
-  @IsOptional()
-  @Expose()
-  readonly title?: string
-
-  @ApiProperty({ title: '描述', required: true })
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly desc?: string
-}
+export const UpdateMediaSchema = z.object({
+  title: z.string().optional().describe('标题'),
+  desc: z.string().optional().describe('描述'),
+})
+export class UpdateMediaGroupDto extends createZodDto(UpdateMediaSchema) {}
 
 export class MediaGroupFilterDto {
   @IsString({ message: '标题' })
