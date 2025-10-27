@@ -186,7 +186,7 @@ export class PlatMetaNatsApi extends ChannelBaseApi {
     keyword: string,
   ) {
     const res = await this.sendMessage<any>(
-      `plat/meta/searchFacebookLocations`,
+      `plat/meta/facebool/search/locations`,
       {
         userId,
         keyword,
@@ -200,7 +200,7 @@ export class PlatMetaNatsApi extends ChannelBaseApi {
     keyword: string,
   ) {
     const res = await this.sendMessage<{ id: string, label: string }[]>(
-      `plat/meta/searchThreadsLocations`,
+      `plat/meta/threads/search/locations`,
       {
         accountId,
         keyword,
