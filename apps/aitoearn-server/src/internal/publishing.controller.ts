@@ -15,18 +15,6 @@ import { PublishingInternalService } from './provider/publishing.service'
 export class PublishingController {
   constructor(private readonly publishingInternalService: PublishingInternalService) { }
 
-  // @ApiOperation({ summary: 'create social media accounts' })
-  // @Post('/:userId/socials/accounts')
-  // async createOrUpdateAccount(
-  //   @Param('userId') userId: string,
-  //   @Body() body: CreateAccountDto,
-  // ) {
-  //   return await this.internalService.createSocialMediaAccount(
-  //     userId,
-  //     body,
-  //   )
-  // }
-
   @ApiOperation({ summary: 'create publish record' })
   @Post('/publishing/records')
   async createPublishRecord(
