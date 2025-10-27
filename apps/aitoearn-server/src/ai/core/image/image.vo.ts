@@ -1,4 +1,5 @@
 import { createZodDto } from '@yikart/common'
+import { AiLogStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 
 // 使用情况统计
@@ -83,8 +84,7 @@ export class FireflycardResponseVo extends createZodDto(fireflycardResponseSchem
 // 异步任务响应
 const asyncTaskResponseSchema = z.object({
   logId: z.string().describe('任务日志ID'),
-  status: z.string().describe('任务状态'),
-  message: z.string().describe('响应消息'),
+  status: z.enum(AiLogStatus).describe('任务状态'),
 })
 
 export class AsyncTaskResponseVo extends createZodDto(asyncTaskResponseSchema) {}
@@ -92,7 +92,7 @@ export class AsyncTaskResponseVo extends createZodDto(asyncTaskResponseSchema) {
 // 任务状态响应
 const taskStatusResponseSchema = z.object({
   logId: z.string().describe('任务日志ID'),
-  status: z.string().describe('任务状态'),
+  status: z.enum(AiLogStatus).describe('任务状态'),
   startedAt: z.date().describe('开始时间'),
   duration: z.number().optional().describe('持续时间(毫秒)'),
   points: z.number().describe('消耗积分'),

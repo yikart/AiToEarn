@@ -3,7 +3,7 @@ import { UserType } from '@yikart/common'
 import OpenAI from 'openai'
 import { LogListResponseVo } from './ai.vo'
 import { ChatModelConfigVo, ChatModelsQueryDto, ChatService, UserChatCompletionDto } from './core/chat'
-import { AsyncTaskResponseVo, FireflycardResponseVo, ImageEditModelParamsVo, ImageEditModelsQueryDto, ImageGenerationModelParamsVo, ImageGenerationModelsQueryDto, ImageResponseVo, ImageService, Md2CardResponseVo, TaskStatusResponseVo, UserFireflyCardDto, UserImageEditDto, UserImageGenerationDto, UserMd2CardDto } from './core/image'
+import { FireflycardResponseVo, ImageEditModelParamsVo, ImageEditModelsQueryDto, ImageGenerationModelParamsVo, ImageGenerationModelsQueryDto, ImageResponseVo, ImageService, Md2CardResponseVo, TaskStatusResponseVo, UserFireflyCardDto, UserImageEditDto, UserImageGenerationDto, UserMd2CardDto } from './core/image'
 import { LogListQueryDto, LogsService } from './core/logs'
 import { DashscopeImage2VideoRequestDto, DashscopeKeyFrame2VideoRequestDto, DashscopeTaskQueryDto, DashscopeTaskStatusResponseVo, DashscopeText2VideoRequestDto, DashscopeVideoGenerationResponseVo, KlingImage2VideoRequestDto, KlingMultiImage2VideoRequestDto, KlingTaskQueryDto, KlingTaskStatusResponseVo, KlingText2VideoRequestDto, KlingVideoGenerationResponseVo, ListVideoTasksResponseVo, UserListVideoTasksQueryDto, UserVideoGenerationRequestDto, UserVideoTaskQueryDto, VideoGenerationModelParamsVo, VideoGenerationModelsQueryDto, VideoGenerationResponseVo, VideoService, VideoTaskStatusResponseVo, VolcengineGenerationRequestDto, VolcengineTaskQueryDto, VolcengineTaskStatusResponseVo, VolcengineVideoGenerationResponseVo } from './core/video'
 
@@ -64,7 +64,7 @@ export class AiService {
    */
   async userImageGenerationAsync(request: UserImageGenerationDto) {
     const response = await this.imageService.userGenerationAsync(request)
-    return AsyncTaskResponseVo.create(response)
+    return response
   }
 
   /**
@@ -74,7 +74,7 @@ export class AiService {
    */
   async userImageEditAsync(request: UserImageEditDto) {
     const response = await this.imageService.userEditAsync(request)
-    return AsyncTaskResponseVo.create(response)
+    return response
   }
 
   /**
@@ -84,7 +84,7 @@ export class AiService {
    */
   async generateMd2CardAsync(request: UserMd2CardDto) {
     const response = await this.imageService.userMd2CardAsync(request)
-    return AsyncTaskResponseVo.create(response)
+    return response
   }
 
   /**
@@ -94,7 +94,7 @@ export class AiService {
    */
   async generateFireflycardAsync(request: UserFireflyCardDto) {
     const response = await this.imageService.userFireFlyCardAsync(request)
-    return AsyncTaskResponseVo.create(response)
+    return response
   }
 
   /**

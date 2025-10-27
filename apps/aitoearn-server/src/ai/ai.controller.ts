@@ -24,7 +24,7 @@ import {
   VolcengineTaskStatusResponseVo,
   VolcengineVideoGenerationResponseVo,
 } from './ai.vo'
-import { TaskStatusResponseVo } from './core/image'
+import { AsyncTaskResponseVo, TaskStatusResponseVo } from './core/image'
 import {
   ChatCompletionDto,
   DashscopeImage2VideoRequestDto,
@@ -112,7 +112,7 @@ export class AiController {
       userType: UserType.User,
       ...body,
     })
-    return response
+    return AsyncTaskResponseVo.create(response)
   }
 
   @ApiOperation({ summary: '异步AI图片编辑' })
@@ -126,7 +126,7 @@ export class AiController {
       userType: UserType.User,
       ...body,
     })
-    return response
+    return AsyncTaskResponseVo.create(response)
   }
 
   @ApiOperation({ summary: '异步Markdown转卡片图片' })
@@ -140,7 +140,7 @@ export class AiController {
       userType: UserType.User,
       ...body,
     })
-    return response
+    return AsyncTaskResponseVo.create(response)
   }
 
   @ApiOperation({ summary: '异步Fireflycard生成卡片图片（免费）' })
@@ -154,7 +154,7 @@ export class AiController {
       userType: UserType.User,
       ...body,
     })
-    return response
+    return AsyncTaskResponseVo.create(response)
   }
 
   @ApiOperation({ summary: '查询图片任务状态' })

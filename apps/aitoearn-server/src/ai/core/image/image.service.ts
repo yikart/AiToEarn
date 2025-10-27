@@ -442,8 +442,7 @@ export class ImageService {
 
     return {
       logId: log.id,
-      status: 'generating',
-      message: '任务已提交，正在处理中',
+      status: AiLogStatus.Generating,
     }
   }
 
@@ -495,8 +494,7 @@ export class ImageService {
 
     return {
       logId: log.id,
-      status: 'generating',
-      message: '任务已提交，正在处理中',
+      status: AiLogStatus.Generating,
     }
   }
 
@@ -548,8 +546,7 @@ export class ImageService {
 
     return {
       logId: log.id,
-      status: 'generating',
-      message: '任务已提交，正在处理中',
+      status: AiLogStatus.Generating,
     }
   }
 
@@ -588,8 +585,7 @@ export class ImageService {
 
     return {
       logId: log.id,
-      status: 'generating',
-      message: '任务已提交，正在处理中',
+      status: AiLogStatus.Generating,
     }
   }
 
