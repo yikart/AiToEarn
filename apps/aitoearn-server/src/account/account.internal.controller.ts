@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Public } from '../auth/auth.guard'
+import { Public } from '@yikart/aitoearn-auth'
 import { AccountService } from './account.service'
 import { AccountIdDto, AccountListByIdsDto, AccountListByTypesDto } from './dto/account.dto'
 
