@@ -5,65 +5,35 @@
  * @LastEditors: nevin
  * @Description: materialGroup MaterialGroup
  */
-import { ApiProperty } from '@nestjs/swagger'
-import { TableDto } from '@yikart/common'
+import { createZodDto, TableDtoSchema } from '@yikart/common'
 import { MaterialType } from '@yikart/mongodb'
-import { Expose, Type } from 'class-transformer'
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { z } from 'zod'
 
-export class MaterialGroupIdDto {
-  @ApiProperty({ title: 'ID', required: true })
-  @IsString({ message: 'ID' })
-  @Expose()
-  readonly id: string
-}
+export const MaterialGroupIdSchema = z.object({
+  id: z.string().describe('ID'),
+})
+export class MaterialGroupIdDto extends createZodDto(MaterialGroupIdSchema) {}
 
-export class CreateMaterialGroupDto {
-  @ApiProperty({ description: '素材类型', enum: MaterialType })
-  @IsEnum(MaterialType, { message: '素材类型' })
-  @Expose()
-  type: MaterialType
+export const CreateMaterialGroupSchema = z.object({
+  type: z.enum(MaterialType).describe('素材类型'),
+  name: z.string().describe('标题'),
+  desc: z.string().optional().describe('描述'),
+})
+export class CreateMaterialGroupDto extends createZodDto(CreateMaterialGroupSchema) {}
 
-  @ApiProperty({ title: '标题', required: true })
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly name: string
+export const UpdateMaterialGroupSchema = z.object({
+  name: z.string().describe('标题'),
+  desc: z.string().optional().describe('描述'),
+})
+export class UpdateMaterialGroupDto extends createZodDto(UpdateMaterialGroupSchema) {}
 
-  @ApiProperty({ title: '描述', required: false })
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly desc?: string
-}
+export const MaterialGroupFilterSchema = z.object({
+  title: z.string().optional().describe('标题'),
+})
+export class MaterialGroupFilterDto extends createZodDto(MaterialGroupFilterSchema) {}
 
-export class UpdateMaterialGroupDto {
-  @ApiProperty({ title: '标题', required: true })
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly name: string
-
-  @ApiProperty({ title: '描述', required: false })
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly desc?: string
-}
-
-export class MaterialGroupFilterDto {
-  @IsString({ message: '标题' })
-  @IsOptional()
-  @Expose()
-  readonly title?: string
-}
-
-export class MaterialGroupListDto {
-  @ValidateNested()
-  @Type(() => MaterialGroupFilterDto)
-  @Expose()
-  readonly filter: MaterialGroupFilterDto
-
-  @ValidateNested()
-  @Type(() => TableDto)
-  @Expose()
-  readonly page: TableDto
-}
+export const MaterialGroupListSchema = z.object({
+  filter: MaterialGroupFilterSchema.optional().describe('过滤条件'),
+  page: TableDtoSchema.describe('分页信息'),
+})
+export class MaterialGroupListDto extends createZodDto(MaterialGroupListSchema) {}

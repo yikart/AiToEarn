@@ -1,255 +1,127 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto } from '@yikart/common'
 import { CloudSpaceRegion } from '@yikart/mongodb'
-import { Expose, Type } from 'class-transformer'
-import {
-  IsInt,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator'
 import { z } from 'zod'
-import { ICheckoutMode, ICheckoutStatus, IFlagTrialPeriodDays, IMetadata, IPayment, IPaymentStatus, IWebhookType } from '../../transports/payment/common'
 
 const LineItemsSchema = z.object({
-  price: z.string({ message: '价格id' }),
-  quantity: z.number({ message: '数量' }).int(),
+  price: z.string().describe('价格id'),
+  quantity: z.number().int().describe('数量'),
 })
 
-export class LineItemsDto extends createZodDto(LineItemsSchema) {}
+export class LineItemsDto extends createZodDto(LineItemsSchema) { }
 
 const MetadataSchema = z.object({
-  userId: z.string({ message: 'userId' }).optional(),
+  userId: z.string().optional().describe('userId'),
 })
 
-export class MetadataDto extends createZodDto(MetadataSchema) {}
+export class MetadataDto extends createZodDto(MetadataSchema) { }
 
 const SubscriptionDataSchema = z.object({
-  trial_period_days: z.number({ message: '免费试用天数' }).int().optional(),
+  trial_period_days: z.number().int().optional().describe('免费试用天数'),
 })
 
-export class SubscriptionDataDto extends createZodDto(SubscriptionDataSchema) {}
+export class SubscriptionDataDto extends createZodDto(SubscriptionDataSchema) { }
 
-export class CheckoutBodyDto {
-  @IsString({ message: '订单id' })
-  @Expose()
-  @IsOptional()
-  id: string
+export const CheckoutBodySchema = z.object({
+  id: z.string().optional().describe('订单id'),
+  success_url: z.string().optional().describe('默认回到域名首页，如果指定回调页面只需要加上域名后面path地址即可'),
+  payment: z.string().describe('付款模式-连续包月-连续包年-一次性付-购买积分'),
+  mode: z.string().describe('支付模式'),
+  quantity: z.number().optional().default(1).describe('购买的积分数目，如果payment是必须填写'),
+  flagTrialPeriodDays: z.number().optional().default(0).describe('订阅模式下是否给七天免费试用时长， 0 - 不给，   1-给'),
+  metadata: MetadataSchema.optional().describe('aitoearn订单信息'),
+})
 
-  @ApiProperty({ title: '默认回到域名首页，如果指定回调页面只需要加上域名后面path地址即可', required: false })
-  @IsString({ message: '成功的回调地址' })
-  @IsOptional()
-  @Expose()
-  success_url: string
+export class CheckoutBodyDto extends createZodDto(CheckoutBodySchema) { }
 
-  @ApiProperty({ title: '付款模式-连续包月-连续包年-一次性付-购买积分', enum: IPayment })
-  @IsString({ message: '付款模式-连续包月-连续包年-一次性付' })
-  @Expose()
-  readonly payment: IPayment
+export const DiscountsSchema = z.object({
+  coupon: z.string().optional().describe('优惠券id'),
+  promotion_code: z.string().optional().describe('促销代码'),
+})
 
-  @ApiProperty({ title: '支付模式', enum: ICheckoutMode })
-  @IsString({ message: '支付模式' })
-  @Expose()
-  readonly mode: ICheckoutMode
+export class DiscountsDto extends createZodDto(DiscountsSchema) { }
 
-  @IsNumber({}, { message: '购买的积分数目，如果payment是必须填写' })
-  @Expose()
-  @IsOptional()
-  readonly quantity: number = 1
+export const ChargeInfoSchema = z.object({
+  payment_status: z.string().describe('支付状态'),
+})
 
-  @ApiProperty({ title: '订阅模式下是否给七天免费试用时长， 0 - 不给，   1-给', enum: IFlagTrialPeriodDays })
-  @IsNumber({}, { message: '订阅模式下是否给七天免费试用时长， 0 - 不给，   1-给' })
-  @Expose()
-  @IsOptional()
-  flagTrialPeriodDays: IFlagTrialPeriodDays = IFlagTrialPeriodDays.false
+export class ChargeInfoDto extends createZodDto(ChargeInfoSchema) { }
 
-  @ApiProperty({ title: 'aitoearn订单信息', required: false })
-  @ValidateNested()
-  @Type(() => MetadataDto)
-  @Expose()
-  @IsOptional()
-  metadata: MetadataDto
-}
+export const CheckoutSchema = z.object({
+  userId: z.string().describe('成功的回调地址'),
+  mode: z.string().optional().describe('订单模式'),
+  quantity: z.number().optional().describe('购买的积分数目，如果payment是必须填写'),
+  status: z.number().optional().describe('订单状态'),
+  metadata: z.any().optional().describe('aitoearn订单信息'),
+  discounts: z.array(DiscountsSchema).optional().describe('优惠券参数'),
+  chargeInfo: ChargeInfoSchema.optional().describe('stripe推来付款订单详情'),
+})
 
-export class DiscountsDto {
-  @IsString({ message: '优惠券id' })
-  @IsOptional()
-  @Expose()
-  readonly coupon?: string
+export class CheckoutDto extends createZodDto(CheckoutSchema) { }
 
-  @IsString({ message: '促销代码' })
-  @IsOptional()
-  @Expose()
-  readonly promotion_code?: string
-}
+export const RefundSchema = z.object({
+  id: z.string().optional().describe('退款id'),
+  payment_intent: z.string().optional().describe('结账id'),
+  metadata: z.object({}).optional().describe('退款元数据'),
+  amount: z.number().optional().describe('退款金额'),
+  price_data: z.object({}).optional().describe('退款金额信息'),
+})
 
-export class ChargeInfoDto {
-  payment_status: IPaymentStatus
-}
+export class RefundDto extends createZodDto(RefundSchema) { }
 
-export class CheckoutDto {
-  @IsString({ message: '成功的回调地址' })
-  @Expose()
-  @IsOptional()
-  readonly userId: string
+export const CheckoutListBodySchema = z.object({
+  userId: z.string().optional().describe('userId'),
+  page: z.number().optional().describe('页面'),
+  size: z.number().optional().describe('每页个数'),
+})
 
-  @IsString({ message: '订单模式' })
-  @Expose()
-  @IsOptional()
-  readonly mode: ICheckoutMode
+export class CheckoutListBody extends createZodDto(CheckoutListBodySchema) { }
 
-  @IsNumber({}, { message: '购买的积分数目，如果payment是必须填写' })
-  @Expose()
-  @IsOptional()
-  readonly quantity: number
+export const RefundBodySchema = z.object({
+  charge: z.string().optional().describe('checkout表里面的charge'),
+  payment_intent: z.string().optional().describe('checkout表里面的chargeId'),
+  userId: z.string().optional().describe('userId'),
+})
 
-  @IsInt({ message: '订单状态' })
-  @Expose()
-  @IsOptional()
-  readonly status: ICheckoutStatus
+export class RefundBodyDto extends createZodDto(RefundBodySchema) { }
 
-  @IsObject({ message: 'aitoearn订单信息' })
-  @Expose()
-  @IsOptional()
-  readonly metadata: IMetadata
+export const SubscriptionBodySchema = z.object({
+  page: z.number().optional().describe('页面'),
+  size: z.number().optional().describe('每页个数'),
+  userId: z.string().optional().describe('userId'),
+})
 
-  @ApiProperty({ title: '优惠券参数', required: false })
-  @ValidateNested()
-  @Type(() => DiscountsDto)
-  @Expose()
-  @IsOptional()
-  readonly discounts?: DiscountsDto[]
+export class SubscriptionBodyDto extends createZodDto(SubscriptionBodySchema) { }
 
-  @IsObject({ message: 'stripe推来付款订单详情' })
-  @Expose()
-  @IsOptional()
-  readonly chargeInfo?: ChargeInfoDto
-}
+export const WebhookDataSchema = z.object({
+  object: z.object({}).optional().describe('object'),
+})
 
-export class RefundDto {
-  @IsString({ message: '退款id' })
-  @IsOptional()
-  @Expose()
-  readonly id: string
+export class WebhookDataDto extends createZodDto(WebhookDataSchema) { }
 
-  @IsString({ message: '结账id' })
-  @IsOptional()
-  @Expose()
-  readonly payment_intent: string
+export const WebhookSchema = z.object({
+  type: z.string().describe('事件类型'),
+  id: z.string().describe('id'),
+  body: z.object({}).describe('原本的请求体'),
+  data: WebhookDataSchema.describe('事件内容'),
+  created: z.number().describe('事件发生时间'),
+})
 
-  @IsObject({ message: '退款元数据' })
-  @Expose()
-  @IsOptional()
-  readonly metadata: object
+export class WebhookDto extends createZodDto(WebhookSchema) { }
 
-  @IsInt({ message: '退款金额' })
-  @IsOptional()
-  @Expose()
-  readonly amount: number
+export const UnSubscriptionBodySchema = z.object({
+  id: z.string().optional().describe('订阅id'),
+  userId: z.string().optional().describe('userId'),
+})
 
-  @IsObject({ message: '退款金额信息' })
-  @IsOptional()
-  @Expose()
-  readonly price_data: object
-}
+export class UnSubscriptionBodyDto extends createZodDto(UnSubscriptionBodySchema) { }
 
-export class CheckoutListBody {
-  @IsString({ message: 'userId' })
-  @IsOptional()
-  @Expose()
-  readonly userId: string
-
-  @ApiProperty({ title: '页面', required: false })
-  @IsInt({ message: '页面' })
-  @IsOptional()
-  @Expose()
-  readonly page: number
-
-  @ApiProperty({ title: '每页个数', required: false })
-  @IsInt({ message: '每页个数' })
-  @IsOptional()
-  @Expose()
-  readonly size: number
-}
-
-export class RefundBodyDto {
-  @ApiProperty({ title: 'checkout表里面的charge ', required: true })
-  @IsString({ message: 'checkout表里面的charge' })
-  @IsOptional()
-  @Expose()
-  readonly charge: string
-
-  @IsString({ message: 'checkout表里面的chargeId' })
-  @IsOptional()
-  @Expose()
-  readonly payment_intent?: string
-
-  @IsString({ message: 'userId' })
-  @IsOptional()
-  @Expose()
-  readonly userId?: string
-}
-
-export class SubscriptionBodyDto {
-  @ApiProperty({ title: '页面' })
-  @IsInt({ message: '页面' })
-  @IsOptional()
-  @Expose()
-  readonly page?: number
-
-  @ApiProperty({ title: '每页个数' })
-  @IsInt({ message: '每页个数' })
-  @IsOptional()
-  @Expose()
-  readonly size?: number
-
-  @IsString({ message: 'userId' })
-  @IsOptional()
-  @Expose()
-  readonly userId?: string
-}
-
-export class WebhookDataDto {
-  @IsObject({ message: 'object' })
-  @IsOptional()
-  @Expose()
-  readonly object: any
-}
-
-export class WebhookDto {
-  @IsString({ message: '事件类型' })
-  @Expose()
-  readonly type: IWebhookType
-
-  @IsString({ message: 'id' })
-  @Expose()
-  readonly id: string
-
-  @IsObject({ message: '原本的请求体' })
-  @Expose()
-  readonly body: object
-
-  @IsObject({ message: '事件内容' })
-  @Expose()
-  readonly data: WebhookDataDto
-
-  @IsNumber({ allowNaN: false }, { message: '事件发生时间' })
-  @Expose()
-  readonly created: number
-}
-
-export class UnSubscriptionBodyDto {
-  @ApiProperty({ title: '订阅id' })
-  @IsString({ message: '订阅id' })
-  @Expose()
-  readonly id?: string
-
-  @IsString({ message: 'userId' })
-  @IsOptional()
-  @Expose()
-  readonly userId?: string
+export interface ICreateCloudSpace {
+  userId?: string
+  accountGroupName?: string
+  accountGroupId?: string
+  region: CloudSpaceRegion
+  profileName?: string
+  month?: number
 }
 
 export interface ICreateCloudSpace {
