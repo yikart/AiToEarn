@@ -5,189 +5,72 @@
  * @LastEditors: nevin
  * @Description:
  */
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose, Type } from 'class-transformer'
-import {
-  ArrayMinSize,
-  IsArray,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Matches,
-} from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 import { ArchiveStatus } from '../../../transports/channel/api/bilibili.common'
 import { VideoUTypes } from '../common'
 
-export class AccountIdDto {
-  @ApiProperty({ title: '账户ID', required: true })
-  @IsString({ message: '账号ID' })
-  @Expose()
-  readonly accountId: string
-}
+const AccountIdSchema = z.object({
+  accountId: z.string({ message: '账号ID' }),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
 export class AccessBackDto {
-  @Expose()
   code: string
-
-  @Expose()
   state: string
 }
 
-export class VideoInitDto extends AccountIdDto {
-  @ApiProperty({ title: '文件名称(带格式)', required: true })
-  @IsString({ message: '文件名称' })
-  @Expose()
-  readonly name: string
+const VideoInitSchema = AccountIdSchema.extend({
+  name: z.string({ message: '文件名称' }),
+  utype: z.nativeEnum(VideoUTypes).optional(),
+})
+export class VideoInitDto extends createZodDto(VideoInitSchema) {}
 
-  @ApiProperty({ enum: VideoUTypes })
-  @IsEnum(VideoUTypes)
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly utype?: VideoUTypes
-}
+const UploadLitVideoSchema = z.object({
+  uploadToken: z.string({ message: '上传token' }),
+})
+export class UploadLitVideoDto extends createZodDto(UploadLitVideoSchema) {}
 
-export class UploadLitVideoDto {
-  @ApiProperty({ title: '上传token', required: true })
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
+const UploadVideoPartSchema = UploadLitVideoSchema.extend({
+  partNumber: z.number({ message: '分片索引' }),
+})
+export class UploadVideoPartDto extends createZodDto(UploadVideoPartSchema) {}
 
-export class UploadVideoPartDto extends UploadLitVideoDto {
-  @ApiProperty({ title: '分片索引', required: true })
-  @IsNumber(
-    { allowNaN: false },
-    {
-      message: '分片索引',
-    },
-  )
-  @Type(() => Number)
-  @Expose()
-  readonly partNumber: number
-}
+export class VideoCompleteDto extends createZodDto(UploadLitVideoSchema) {}
 
-export class VideoCompleteDto {
-  @ApiProperty({ title: '上传token', required: true })
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
+const ArchiveAddByUtokenBodySchema = z.object({
+  accountId: z.string({ message: '账号ID' }),
+  uploadToken: z.string({ message: '上传token' }),
+  title: z.string().regex(/^(?!\s*$).+/, { message: '标题不能为空或仅包含空白字符' }),
+  cover: z.string().optional(),
+  tid: z.number({ message: '分区ID，由获取分区信息接口得到' }),
+  noReprint: z.union([z.literal(0), z.literal(1)]).optional(),
+  desc: z.string().optional(),
+  tag: z.array(z.string()).min(1, { message: '最少添加一个标签' }).describe('标签必须是字符串数组'),
+  copyright: z.union([z.literal(1), z.literal(2)], { message: '1-原创，2-转载(转载时source必填)' }),
+  source: z.string().optional(),
+})
+export class ArchiveAddByUtokenBodyDto extends createZodDto(ArchiveAddByUtokenBodySchema) {}
 
-export class ArchiveAddByUtokenBodyDto {
-  @ApiProperty({ title: '账户ID', required: true })
-  @IsString({ message: '账号ID' })
-  @Expose()
-  readonly accountId: string
+const GetArchiveListSchema = AccountIdSchema.extend({
+  status: z.nativeEnum(ArchiveStatus).optional(),
+})
+export class GetArchiveListDto extends createZodDto(GetArchiveListSchema) {}
 
-  @ApiProperty({ title: '上传token', required: true })
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
+const GetArcStatSchema = AccountIdSchema.extend({
+  resourceId: z.string({ message: '稿件ID' }),
+})
+export class GetArcStatDto extends createZodDto(GetArcStatSchema) {}
 
-  @ApiProperty({ title: '标题', required: true })
-  @IsString({ message: '标题' })
-  @Matches(/^(?!s*$).+/, { message: '标题不能为空或仅包含空白字符' })
-  @Expose()
-  readonly title: string
+const GetUserCumulateDataSchema = AccountIdSchema.extend({
+  beginDate: z.string({ message: '开始日期' }),
+  endDate: z.string({ message: '结束日期' }),
+})
+export class GetUserCumulateData extends createZodDto(GetUserCumulateDataSchema) {}
 
-  @ApiProperty({ title: '封面url', required: false })
-  @IsString({ message: '封面url' })
-  @IsOptional()
-  @Expose()
-  readonly cover?: string
-
-  @ApiProperty({ title: '分区ID，由获取分区信息接口得到', required: true })
-  @IsNumber({ allowNaN: false }, { message: '分区ID，由获取分区信息接口得到' })
-  @Expose()
-  readonly tid: number
-
-  @ApiProperty({
-    title: '是否允许转载 0-允许，1-不允许。默认0',
-    required: true,
-  })
-  @IsNumber(
-    { allowNaN: false },
-    { message: '是否允许转载 0-允许，1-不允许。默认0' },
-  )
-  @IsOptional()
-  @Expose()
-  readonly noReprint?: 0 | 1
-
-  @ApiProperty({ title: '描述', required: false })
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly desc?: string
-
-  @ApiProperty({ title: '标签', required: false })
-  @IsArray({ message: '标签必须是字符串数组' })
-  @IsString({ each: true, message: '描述' })
-  @ArrayMinSize(1, { message: '最少添加一个标签' })
-  @Expose()
-  readonly tag: string[]
-
-  @ApiProperty({
-    title: '1-原创，2-转载(转载时source必填)',
-    required: true,
-  })
-  @IsNumber(
-    { allowNaN: false },
-    { message: '1-原创，2-转载(转载时source必填)' },
-  )
-  @Expose()
-  readonly copyright: 1 | 2
-
-  @ApiProperty({
-    title: '如果copyright为转载，则此字段表示转载来源',
-    required: false,
-  })
-  @IsString({ message: '如果copyright为转载，则此字段表示转载来源' })
-  @IsOptional()
-  @Expose()
-  readonly source?: string
-}
-
-export class GetArchiveListDto extends AccountIdDto {
-  @ApiProperty({ enum: ArchiveStatus })
-  @IsEnum(ArchiveStatus)
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly status?: ArchiveStatus
-}
-
-export class GetArcStatDto extends AccountIdDto {
-  @ApiProperty({ title: '稿件ID', required: true })
-  @IsString({ message: '稿件ID' })
-  @Expose()
-  readonly resourceId: string
-}
-
-export class GetUserCumulateData extends AccountIdDto {
-  @ApiProperty({ title: '开始日期', required: true })
-  @IsString({ message: '开始日期' })
-  @Expose()
-  readonly beginDate: string
-
-  @ApiProperty({ title: '结束日期', required: true })
-  @IsString({ message: '结束日期' })
-  @Expose()
-  readonly endDate: string
-}
-
-export class AuthBackQueryDto {
-  @IsString({ message: ' 透传数据（任务ID）' })
-  @Expose()
-  readonly stat: string
-
-  @IsString({ message: '授权码' })
-  @Expose()
-  readonly auth_code: string
-
-  @IsNumber({ allowNaN: false }, { message: '过期时间' })
-  @Type(() => Number)
-  @Expose()
-  readonly expires_in: number
-}
+const AuthBackQuerySchema = z.object({
+  stat: z.string({ message: ' 透传数据（任务ID）' }),
+  auth_code: z.string({ message: '授权码' }),
+  expires_in: z.number({ message: '过期时间' }),
+})
+export class AuthBackQueryDto extends createZodDto(AuthBackQuerySchema) {}
