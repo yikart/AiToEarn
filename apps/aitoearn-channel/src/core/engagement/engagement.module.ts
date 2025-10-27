@@ -1,7 +1,6 @@
 import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { AitoearnAiClientModule } from '@yikart/aitoearn-ai-client'
 import { EngagementSubTask, EngagementSubTaskSchema, EngagementTask, EngagementTaskSchema } from '../../libs/database/schema/engagement.task.schema'
 import { AIInternalApi } from '../../transports/ai/ai.api'
 import { TransportModule } from '../../transports/transport.module'
@@ -39,7 +38,6 @@ import { EngagementReplyToCommentWorker } from './workers/replyToComment.worker'
       { name: EngagementTask.name, schema: EngagementTaskSchema },
       { name: EngagementSubTask.name, schema: EngagementSubTaskSchema },
     ]),
-    AitoearnAiClientModule.forRoot({}),
     TransportModule,
   ],
   controllers: [EngagementController],

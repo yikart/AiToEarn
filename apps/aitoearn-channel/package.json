@@ -24,7 +24,6 @@
     "@rekog/mcp-nest": "^1.6.2",
     "@types/form-data": "^2.5.2",
     "@types/multer": "^2.0.0",
-    "@yikart/aitoearn-ai-client": "workspace:*",
     "@yikart/common": "workspace:*",
     "@yikart/redis": "workspace:*",
     "ali-oss": "^6.23.0",
