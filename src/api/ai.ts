@@ -5,7 +5,7 @@ export const getChatModels = () => {
   return http.get("ai/models/chat");
 };
 
-// 文生图 - 新的接口
+// 文生图 - 异步接口
 export const generateImage = (data: {
   prompt: string;
   model?: string;
@@ -16,7 +16,12 @@ export const generateImage = (data: {
   style?: "vivid" | "natural";
   user?: string;
 }) => {
-  return http.post("ai/image/generate", data);
+  return http.post("ai/image/generate/async", data);
+};
+
+// 查询图片任务状态
+export const getImageTaskStatus = (logId: string) => {
+  return http.get(`ai/image/task/${logId}`);
 };
 
 // 流光卡片生成 - 新的接口
