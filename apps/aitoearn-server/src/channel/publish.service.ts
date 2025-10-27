@@ -172,7 +172,7 @@ export class PublishService {
   }
 
   async publishDataInfoList(userId: string, data: PublishDayInfoListFiltersDto, page: TableDto) {
-    return await this.platPublishNatsApi.publishDataInfoList(userId, data, page)
+    return await this.publishRecordService.getPublishDayInfoList({ userId, time: data.time }, page)
   }
 
   async getPublishRecordDetail(flowId: string, userId: string) {
