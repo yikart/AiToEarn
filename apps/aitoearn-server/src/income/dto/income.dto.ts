@@ -20,8 +20,8 @@ export class IncomeListDto extends createZodDto(IncomeListSchema) {}
 
 export const withdrawCreateSchema = z.object({
   flowId: z.string().min(1).optional(),
-  userWalletAccountId: z.string().min(1).optional(),
-  incomeRecordId: z.string().min(1),
+  userWalletAccountId: z.string().min(1).describe('用户钱包账户ID'),
+  incomeRecordId: z.string().min(1).describe('收入记录ID'),
 })
 export class WithdrawCreateDto extends createZodDto(withdrawCreateSchema) {}
 
