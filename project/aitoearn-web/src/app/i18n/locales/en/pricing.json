@@ -1,0 +1,433 @@
+{
+
+
+  "title": "Pricing & Plans",
+  "subtitle": "Choose the plan that best fits your needs and start your AI creation journey",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "save25": "Save 25%",
+  "save50": "Save 50%",
+  "month": "month",
+  "credits": "Credits",
+  "videos": "Videos",
+  "images": "Images",
+  "flashSale50": "Flash Sale 50%",
+  "mostPopular": "Most Popular",
+  "plans": {
+    "free": {
+      "name": "Free",
+      "credits": "60 Credits",
+      "videos": "60 Videos/month",
+      "images": "120 Images/month",
+      "button": "Get Started"
+    },
+    "plus": {
+      "name": "Plus",
+      "credits": "700 Credits",
+      "videos": "700 Videos/month",
+      "images": "1400 Images/month",
+      "button": "Get Plus"
+    }
+  },
+  "features": {
+    "textModeration": "Text Moderation",
+    "imageModeration": "Image Moderation",
+    "videoModeration": "Video Moderation",
+    "multiModel": "Multi-Model Support",
+    "textToVideo": "Text to Video",
+    "imageToVideo": "Image to Video",
+    "videoToVideo": "Video to Video",
+    "consistentCharacter": "Consistent Character",
+    "aiAnimation": "AI Animation",
+    "aiImage": "AI Image",
+    "voiceClone": "Voice Clone",
+    "voiceSynthesis": "Voice Synthesis",
+    "fasterSpeed": "Faster Speed",
+    "withWatermark": "With Watermark",
+    "noWatermark": "No Watermark",
+    "storage500M": "500M Storage",
+    "storage5G": "5G Storage"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "paymentMethods": {
+      "question": "What payment methods do you support?",
+      "answer": "We support multiple payment methods, including major credit cards (Visa, MasterCard, American Express) as well as Alipay. If you are using our services in China, you can purchase one-time services with Alipay."
+    },
+    "creditDeduction": {
+      "question": "How are credits deducted for image and video generation?",
+      "answer": "Our pricing for image and video generation is aligned with the official channels. If bulk purchases from the official channels come with discounts, we will also pass those discounts on to you.",
+      "pricingTable": {
+        "title": "Detailed Pricing Table",
+        "headers": {
+          "model": "Model",
+          "type": "Type",
+          "duration": "Duration",
+          "resolution": "Resolution",
+          "notes": "Notes",
+          "credits": "Credits",
+          "price": "Price",
+          "channel": "Channel"
+        },
+        "rows": [
+          {
+            "model": "gpt-5",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "Large model pricing follows official pricing",
+            "credits": "Per million tokens",
+            "price": "Input ¥9, Output ¥72",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-mini",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input ¥1.8, Output ¥14.4",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-nano",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input ¥0.36, Output ¥2.88",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "Video Support",
+            "notes": "",
+            "credits": "",
+            "price": "Input ¥9, Output ¥72",
+            "channel": "yun"
+          },
+          {
+            "model": "chatgpt-4o-latest",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input ¥36, Output ¥108",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "Video Support",
+            "notes": "",
+            "credits": "",
+            "price": "Input ¥2.16, Output ¥18",
+            "channel": "yun"
+          },
+          {
+            "model": "qwen-vl-max-latest",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input ¥1.6, Output ¥4",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash-image",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "Also known as nano banana, supports multi-image input",
+            "credits": "1 credit",
+            "price": "¥0.27",
+            "channel": "yun"
+          },
+          {
+            "model": "seedream-3.0",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "2.6 credits",
+            "price": "¥0.26",
+            "channel": "Official"
+          },
+          {
+            "model": "seededit-3.0",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "Image editing, supports jpeg, png formats",
+            "credits": "3 credits",
+            "price": "¥0.3",
+            "channel": "Official"
+          },
+          {
+            "model": "gpt-image-1",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "Image editing support",
+            "notes": "",
+            "credits": "Promotion",
+            "price": "Low $0.011-0.016, Medium $0.042-0.063, High $0.167-0.25",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [max]",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "Image editing support",
+            "notes": "",
+            "credits": "1.5 credits",
+            "price": "¥0.6",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [pro]",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "Image editing support",
+            "notes": "",
+            "credits": "1 credit",
+            "price": "¥0.3",
+            "channel": "yun"
+          },
+          {
+            "model": "Flux 1.1 pro ultra",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "4.5 credits",
+            "price": "¥0.45",
+            "channel": "Official"
+          },
+          {
+            "model": "Flux1.1 pro",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "3 credits",
+            "price": "¥0.3",
+            "channel": "Official"
+          },
+          {
+            "model": "midjourney relax",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "",
+            "notes": "",
+            "credits": "Free",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "midjourney fast/turbo",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "",
+            "notes": "",
+            "credits": "4 credits",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "20 credits",
+            "price": "¥2",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "10s",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "40 credits",
+            "price": "¥4",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 credits",
+            "price": "¥3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "10s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "70 credits",
+            "price": "¥7",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1大师",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "100 credits",
+            "price": "¥10",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1大师",
+            "type": "Video Generation",
+            "duration": "10s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "200 credits",
+            "price": "¥20",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "",
+            "credits": "70 credits",
+            "price": "¥0.7",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 credits",
+            "price": "¥3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-turbo(14b）",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Do not use volcano channel",
+            "credits": "12 credits",
+            "price": "¥1.2",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Supports first and last frames",
+            "credits": "35 credits",
+            "price": "¥3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "wanx2.1-vace-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Video editing",
+            "credits": "35 credits",
+            "price": "¥3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "Supports 10s",
+            "credits": "7.2 credits",
+            "price": "¥0.72",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "10s price doubles",
+            "credits": "16.4 credits",
+            "price": "¥1.64",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "36.7 credits",
+            "price": "¥3.67",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "Supports first and last frames",
+            "credits": "5 credits",
+            "price": "¥0.5",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Supports 10s",
+            "credits": "11 credits",
+            "price": "¥1.1",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "10s price doubles",
+            "credits": "25 credits",
+            "price": "¥2.5",
+            "channel": "yun"
+          }
+        ]
+      }
+    },
+    "creditExpiry": {
+      "question": "Do my credits expire?",
+      "answer": "Our credit expiration policy is very flexible. Credits will only expire 12 calendar months after they are acquired, giving you plenty of time to use them."
+    },
+    "moreCredits": {
+      "question": "What if I need more credits?",
+      "answer": "You can earn free credits by publishing content daily. In addition, you can get more credits by subscribing to a membership or purchasing credits directly."
+    },
+    "checkCredits": {
+      "question": "How can I check my credit status?",
+      "answer": "Simply click on your credit balance to view detailed changes and usage history."
+    },
+    "hiddenFees": {
+      "question": "Are there any hidden fees?",
+      "answer": "No. The price you see is the price you pay. There are no hidden charges beyond the plan you select."
+    }
+  }
+}

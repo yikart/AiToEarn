@@ -1,0 +1,92 @@
+.hotTitle {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  :global {
+    .hotTitle-content {
+      height: 100%;
+      min-height: 0;
+      .hotTitle-content-wrapper {
+        height: 100%;
+        min-height: 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        overflow: auto;
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+          display: none;
+        }
+      }
+      .hotTitle-content-wrapper-details {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 0;
+        overflow: auto;
+        .hotTitleItem, .hotTitleItem-content {
+          display: flex;
+          flex-direction: column;
+          height: 100% !important;
+          min-height: 0;
+          margin: 0 !important;
+          @include table-flex-container-with-selectors;
+        }
+      }
+    }
+  }
+}
+
+.hotTitleItem {
+  :global {
+    .hotTitleItem-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-image: linear-gradient(to left, rgba(90,246,242,.1), rgba(254,44,85,.1));
+      padding: 10px 20px;
+      border-radius: 10px 10px 0 0;
+      .hotTitleItem-head-left {
+        display: flex;
+        position: relative;
+        font-weight: 500;
+        .anticon {
+          position: relative;
+          left: -20px;
+          svg {
+            width: 120px;
+          }
+        }
+      }
+    }
+    .hotTitleItem-content {
+      & > a {
+        text-align: center;
+        display: block;
+        margin-top: 15px;
+      }
+      tbody {
+        .ant-table-cell {
+          background: #fff !important;
+          .hotTitleItem-title {
+            @include omitText(1);
+            .ant-typography {
+              margin: 0 !important;
+              .ant-typography-copy {
+                display: none;
+              }
+              &:hover {
+                color: var(--colorPrimary5) !important;
+                .ant-typography-copy {
+                  display: inline-block;
+                }
+              }
+            }
+          }
+          padding: 8px !important;
+        }
+      }
+    }
+  }
+}

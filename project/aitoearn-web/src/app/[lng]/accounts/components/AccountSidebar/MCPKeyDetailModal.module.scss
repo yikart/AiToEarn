@@ -1,0 +1,77 @@
+.mcpKeyDetailModal {
+  .keyInfo {
+    margin-bottom: 24px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+
+    .keyHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      .keyName {
+        .label {
+          font-weight: 500;
+          color: #666;
+          margin-right: 8px;
+        }
+
+        .value {
+          font-weight: 600;
+          color: #333;
+        }
+      }
+    }
+
+    .keyValue {
+      margin-bottom: 12px;
+
+      .label {
+        font-weight: 500;
+        color: #666;
+        margin-right: 8px;
+      }
+
+      .value {
+        font-family: 'Courier New', monospace;
+        background: #fff;
+        padding: 4px 8px;
+        border-radius: 4px;
+        border: 1px solid #d9d9d9;
+        color: #333;
+      }
+    }
+
+    .keyMeta {
+      display: flex;
+      gap: 24px;
+
+      .metaItem {
+        .label {
+          font-weight: 500;
+          color: #666;
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+
+  .refList {
+    .sectionTitle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .emptyState {
+      padding: 40px 0;
+      text-align: center;
+    }
+  }
+} 

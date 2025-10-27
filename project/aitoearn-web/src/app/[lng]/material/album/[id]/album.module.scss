@@ -1,0 +1,294 @@
+.container {
+  padding: 24px;
+  width: 100%;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+  }
+}
+
+.uploadButton {
+  background-color: var(--theColor5);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--theColor6);
+  }
+
+  &:active {
+    background-color: var(--theColor7);
+  }
+}
+
+.mediaGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+.mediaCard {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.mediaWrapper {
+  position: relative;
+  padding-top: 75%;
+  background: #f5f5f5;
+  cursor: pointer;
+
+  img, video, audio {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.mediaActions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.mediaWrapper:hover .mediaActions {
+  opacity: 1;
+}
+
+.headerActions{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.actionButton {
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--theColor5);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: white;
+    color: var(--theColor6);
+  }
+
+  &:active {
+    color: var(--theColor7);
+  }
+
+  &.delete {
+    color: var(--error-color);
+
+    &:hover {
+      color: #ff7875;
+    }
+
+    &:active {
+      color: #d9363e;
+    }
+  }
+}
+
+.mediaInfo {
+  padding: 16px;
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    color: #333;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 48px 24px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  h3 {
+    margin: 0 0 16px 0;
+    color: #333;
+  }
+
+  p {
+    color: #666;
+    margin-bottom: 24px;
+  }
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+
+  h3 {
+    margin: 0;
+    font-size: var(--fs-lg);
+    color: var(--text-primary);
+  }
+
+  button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--grayColor8);
+    padding: 4px;
+    line-height: 1;
+
+    &:hover {
+      color: var(--text-primary);
+    }
+  }
+}
+
+.previewContent {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+
+  img, video, audio {
+    max-width: 100%;
+    max-height: calc(90vh - 100px);
+    object-fit: contain;
+  }
+
+  video {
+    width: 100%;
+    height: auto;
+  }
+
+  audio {
+    width: 100%;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  label {
+    font-weight: 500;
+    color: #333;
+  }
+
+  input, textarea {
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      border-color: #40a9ff;
+    }
+  }
+
+  textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+}
+
+.submitButton {
+  background: var(--theColor5);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: var(--theColor6);
+  }
+
+  &:active {
+    background: var(--theColor7);
+  }
+} 

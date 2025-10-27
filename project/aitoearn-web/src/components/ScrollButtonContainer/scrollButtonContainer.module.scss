@@ -1,0 +1,33 @@
+.scrollButtonContainer {
+  position: relative;
+  :global {
+    .scrollButtonContainer-content {
+      overflow-x: auto;
+      &::-webkit-scrollbar { display: none; }
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .scrollButtonContainer-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0;
+      &--left {
+        left: 0;
+      }
+      &--right {
+        right: 0;
+      }
+    }
+  }
+
+  &:hover {
+    :global {
+      .scrollButtonContainer-btn {
+        opacity: 1;
+        height: 30px;
+      }
+    }
+  }
+}

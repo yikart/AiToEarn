@@ -1,0 +1,47 @@
+{
+  "title": "My Income",
+  "subtitle": "Manage your income records and withdrawal applications",
+  "currentBalance": "Current Balance",
+  "incomeRecords": "Income Records",
+  "withdrawRecords": "Withdrawal Records",
+  "incomeId": "Income ID",
+  "amount": "Amount",
+  "type": "Type",
+  "description": "Description",
+  "createTime": "Create Time",
+  "actions": "Actions",
+  "applyWithdraw": "Apply Withdrawal",
+  "withdrawId": "Withdrawal ID",
+  "status": "Status",
+  "updateTime": "Update Time",
+  "confirmWithdraw": "Confirm Withdrawal Application",
+  "cancel": "Cancel",
+  "confirm": "Confirm Withdrawal",
+  "withdrawAmount": "Withdrawal Amount",
+  "incomeType": "Income Type",
+  "withdrawWarning": "⚠️ After submitting your withdrawal application, we will process your request within 1-3 business days.",
+  "withdrawWarning2": "Please ensure your account information is correct. After successful withdrawal, the amount will be transferred to your designated account.",
+  "incomeTypes": {
+    "task": "Task Income",
+    "task_back": "Task Refund",
+    "reward_back": "Reward Refund",
+    "task_withdraw": "Task Withdrawal"
+  },
+  "withdrawStatus": {
+    "wait": "Waiting",
+    "success": "Withdrawal Successful",
+    "fail": "Withdrawal Failed",
+    "task_withdraw": "Task Withdrawal"
+  },
+  "messages": {
+    "getIncomeRecordsFailed": "Failed to get income records",
+    "getWithdrawRecordsFailed": "Failed to get withdrawal records",
+    "withdrawSubmitted": "Withdrawal application submitted successfully",
+    "withdrawFailed": "Failed to submit withdrawal application",
+    "pleaseLoginFirst": "Please login first",
+    "noIncomeRecords": "No income records",
+    "noWithdrawRecords": "No withdrawal records",
+    "loading": "Loading...",
+    "totalRecords": "Total {{total}} records"
+  }
+}

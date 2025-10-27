@@ -1,0 +1,102 @@
+.mentionMenu, .mentionMenuLoading {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  z-index: 1000;
+  background: #fff;
+  color: #222;
+  min-width: 8rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 0.25rem;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+
+  li {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    &:hover, &[aria-selected="true"] {
+      background: #f3f4f6;
+    }
+  }
+}
+
+.mentionMenuLoading {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  span {
+    display: block;
+  }
+}
+
+.mentionMenuItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.95rem;
+  user-select: none;
+  outline: none;
+
+  &.selected {
+    background: #e0e7ff;
+    color: var(--colorPrimary5);
+  }
+}
+
+// 提及样式
+.mentionsStyle {
+  display: inline-block;
+  background: var(--colorPrimary5);
+  color: #fff;
+  border-radius: 0.375rem;
+  padding: 0.1em 0.5em;
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  margin: 0 2px;
+  vertical-align: middle;
+  box-shadow: 0 2px 8px rgba(130, 106, 228, 0.08);
+  transition: background 0.2s;
+}
+
+.mentionsPlaceholder {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 1001;
+  color: var(--grayColor5);
+}
+
+.mentionsContainer {
+  position: relative;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.mentionsContentEditable {
+  background: var(--background-color);
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  flex: 1;
+  border-radius: 0.375rem;
+  font-size: var(--fs-md);
+  color: var(--text-primary);
+  outline: none;
+  height: 250px;
+  overflow: auto !important;
+  transition: box-shadow 0.2s, border-color 0.2s;
+
+  &::placeholder {
+    color: var(--grayColor7);
+    opacity: 1;
+  }
+}

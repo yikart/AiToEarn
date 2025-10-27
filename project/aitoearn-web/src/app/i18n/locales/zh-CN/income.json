@@ -1,0 +1,48 @@
+{
+  "title": "我的收入",
+  "subtitle": "管理您的收入记录和提现申请",
+  "currentBalance": "当前余额",
+  "incomeRecords": "收入记录",
+  "withdrawRecords": "提现记录",
+  "incomeId": "收入ID",
+  "amount": "金额",
+  "type": "类型",
+  "description": "描述",
+  "createTime": "创建时间",
+  "actions": "操作",
+  "applyWithdraw": "申请提现",
+  "withdrawId": "提现ID",
+  "status": "状态",
+  "updateTime": "更新时间",
+  "confirmWithdraw": "确认提现申请",
+  "cancel": "取消",
+  "confirm": "确认提现",
+  "withdrawAmount": "提现金额",
+  "incomeType": "收入类型",
+  "withdrawWarning": "⚠️ 提现申请提交后，我们将在1-3个工作日内处理您的申请。",
+  "withdrawWarning2": "请确保您的账户信息正确，提现成功后金额将转入您的指定账户。",
+  "incomeTypes": {
+    "task": "任务收入",
+    "task_back": "任务回退",
+    "reward_back": "奖励回退",
+    "task_withdraw": "任务提现"
+  },
+  "withdrawStatus": {
+    "wait": "等待处理",
+    "success": "提现成功",
+    "fail": "提现失败",
+    "task_withdraw": "任务提现"
+  },
+  "messages": {
+    "getIncomeRecordsFailed": "获取收入记录失败",
+    "getWithdrawRecordsFailed": "获取提现记录失败",
+    "withdrawSubmitted": "提现申请提交成功",
+    "withdrawFailed": "提现申请提交失败",
+    "pleaseLoginFirst": "请先登录",
+    "noIncomeRecords": "暂无收入记录",
+    "noWithdrawRecords": "暂无提现记录",
+    "loading": "加载中...",
+    "totalRecords": "共 {{total}} 条记录"
+  },
+  "myWallet": "我的钱包"
+}
