@@ -310,9 +310,6 @@ export class VideoService {
     createTaskResponse: (taskId: string) => T,
   ) {
     const { userId, userType, model, prompt, duration, size, image, metadata } = request
-    if (image == null) {
-      throw new BadRequestException('image is required')
-    }
 
     const sora2Request: Sora2GenerationRequestDto = {
       userId,
@@ -321,7 +318,7 @@ export class VideoService {
       prompt,
       duration: duration as 10 | 15,
       size: (size || VideoSize.Large) as VideoSize,
-      images: Array.isArray(image) ? image : [image],
+      images: (Array.isArray(image) ? image : [image]) as (string[] | undefined),
       orientation: (metadata?.['orientation'] || VideoOrientation.Landscape) as VideoOrientation,
     }
     const result = await this.sora2Create(sora2Request)
