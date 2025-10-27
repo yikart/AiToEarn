@@ -113,6 +113,7 @@ export class LoginController {
     if (!rData)
       throw new AppException(ResponseCode.UserLoginCodeError, 'The verification code does not exist')
 
+    // config.environment === 'production' &&
     if (rData.code !== code)
       throw new AppException(ResponseCode.UserLoginCodeError, 'The verification code is incorrect')
 
