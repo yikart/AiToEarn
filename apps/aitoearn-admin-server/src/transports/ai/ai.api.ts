@@ -46,10 +46,11 @@ export class AiApi extends ServerBaseApi {
   async userImageGeneration(
     request: ImageGenerationRequest,
   ): Promise<ImageResponse> {
-    return await this.sendMessage<ImageResponse>(
+    const res = await this.sendMessage<ImageResponse>(
       'ai/image/generations',
       request,
     )
+    return res
   }
 
   /**
