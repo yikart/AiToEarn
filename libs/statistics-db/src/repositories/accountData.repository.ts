@@ -453,7 +453,7 @@ export class AccountDataRepository extends BaseRepository<AuthorDatas> implement
             platform,
             uid,
             increaseCount: {},
-            data: null,
+            data: [],
             followerCount: 0,
           })
         }

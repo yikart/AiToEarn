@@ -348,8 +348,8 @@ export class AccountService {
    * @param status
    * @returns
    */
-  async getAccountsByType(types: string[], status?: number) {
-    const res = await this.accountRepository.getAccountsByType(types, status)
+  async getAccountsByTypes(types: string[], status?: number) {
+    const res = await this.accountRepository.getAccountsByTypes(types, status)
     return res
   }
 

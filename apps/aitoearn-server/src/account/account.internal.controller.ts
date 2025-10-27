@@ -1,7 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Public } from '../auth/auth.guard'
 import { AccountService } from './account.service'
-import { AccountIdDto, AccountListByIdsDto } from './dto/account.dto'
+import { AccountIdDto, AccountListByIdsDto, AccountListByTypesDto } from './dto/account.dto'
 
 @ApiTags('频道(内部)')
 @Controller()
@@ -24,5 +25,16 @@ export class AccountInternalController {
     @Body() body: AccountListByIdsDto,
   ) {
     return this.accountService.getAccountListByIds(body.ids)
+  }
+
+  @ApiOperation({
+    summary: '获取频道列表（by types)',
+  })
+  @Public()
+  @Post('accountInternal/list/types')
+  async getAccountListByTypes(
+    @Body() body: AccountListByTypesDto,
+  ) {
+    return this.accountService.getAccountsByTypes(body.types, body.status)
   }
 }

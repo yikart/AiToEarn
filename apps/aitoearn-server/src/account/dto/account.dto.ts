@@ -159,6 +159,18 @@ export class AccountListBySpaceIdsDto {
   spaceIds: string[]
 }
 
+export class AccountListByTypesDto {
+  @IsArray({ message: '账号类型必须是数组' })
+  @IsEnum(AccountType, { each: true, message: '账号类型值不合法' })
+  @Expose()
+  types: AccountType[]
+
+  @IsEnum(AccountStatus, { message: '状态' })
+  @IsOptional()
+  @Expose()
+  readonly status?: AccountStatus
+}
+
 export const SortRankItemSchema = z.object({
   id: z.string({ message: '数据ID' }),
   rank: z.number({ message: '序号' }),

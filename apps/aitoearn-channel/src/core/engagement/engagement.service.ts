@@ -1,9 +1,10 @@
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
-import { AitoearnAiClient, UserChatCompletionDto } from '@yikart/aitoearn-ai-client'
+import { UserChatCompletionDto } from '@yikart/aitoearn-ai-client'
 import { AppException, UserType } from '@yikart/common'
 import { Queue } from 'bullmq'
 import { EngagementTargetScope, EngagementTaskStatus, EngagementTaskType } from '../../libs/database/schema/engagement.task.schema'
+import { AIInternalApi } from '../../transports/ai/ai.api'
 import { ReplyToCommentAnswer } from './dto/ai.dto'
 import { AIGenCommentDto, FetchCommentRepliesRequest, FetchPostCommentsRequest, PublishCommentReplyRequest, PublishCommentRequest, ReplyToCommentsDto } from './engagement.dto'
 import { EngagementProvider, PublishCommentResponse } from './engagement.interface'
@@ -21,7 +22,7 @@ export class EngagementService {
     instagramProvider: InstagramEngagementProvider,
     threadsProvider: ThreadsEngagementProvider,
     youtubeProvider: YoutubeEngagementProvider,
-    private readonly aiClient: AitoearnAiClient,
+    private readonly aiInternalApi: AIInternalApi,
     private readonly engagementRecordService: EngagementRecordService,
     @InjectQueue('engagement_task_distribution') private readonly distributeCommentTaskQ: Queue,
   ) {
@@ -85,7 +86,7 @@ export class EngagementService {
         content: data.prompt,
       })
     }
-    const resp = await this.aiClient.chatCompletion(aiChatReq)
+    const resp = await this.aiInternalApi.chatCompletion(aiChatReq)
     const replyMap: Record<string, string> = {}
     const replyList: ReplyToCommentAnswer[] = JSON.parse(resp.content as string)
     for (const replyItem of replyList) {

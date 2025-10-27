@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { AitoearnAiClientModule } from '@yikart/aitoearn-ai-client'
 import { EngagementSubTask, EngagementSubTaskSchema, EngagementTask, EngagementTaskSchema } from '../../libs/database/schema/engagement.task.schema'
+import { AIInternalApi } from '../../transports/ai/ai.api'
+import { TransportModule } from '../../transports/transport.module'
 import { MetaModule } from '../plat/meta/meta.module'
 import { YoutubeModule } from '../plat/youtube/youtube.module'
 import { EngagementController } from './engagement.controller'
@@ -14,16 +16,6 @@ import { ThreadsEngagementProvider } from './providers/threads.provider'
 import { YoutubeEngagementProvider } from './providers/youtube.provider'
 import { EngagementTaskDistributionWorker } from './workers/distributeEngatementTask.worker'
 import { EngagementReplyToCommentWorker } from './workers/replyToComment.worker'
-
-const nats = {
-  name: 'aitoearn-channel-dev',
-  servers: [
-    `nats://yikart:yikart@2025@dev.aitoearn.ai:4222`,
-  ],
-  user: 'yikart',
-  pass: 'yikart@2025',
-  prefix: 'dev',
-}
 
 @Module({
   imports: [
@@ -47,10 +39,12 @@ const nats = {
       { name: EngagementTask.name, schema: EngagementTaskSchema },
       { name: EngagementSubTask.name, schema: EngagementSubTaskSchema },
     ]),
-    AitoearnAiClientModule.forRoot(nats),
+    AitoearnAiClientModule.forRoot({}),
+    TransportModule,
   ],
   controllers: [EngagementController],
   providers: [
+    AIInternalApi,
     FacebookEngagementProvider,
     InstagramEngagementProvider,
     ThreadsEngagementProvider,
