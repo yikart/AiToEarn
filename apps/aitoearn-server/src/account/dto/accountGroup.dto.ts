@@ -1,63 +1,40 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto } from '@yikart/common'
-import { Expose } from 'class-transformer'
-import { IsArray, IsJSON, IsNumber, IsOptional, IsString } from 'class-validator'
 import z from 'zod'
 
-export class CreateAccountGroupDto {
-  @ApiProperty({ description: '组名称' })
-  @IsString()
-  @Expose()
-  name: string
+const CreateAccountGroupSchema = z.object({
+  name: z.string({ message: '组名称' }),
+  rank: z.number().optional(),
+  ip: z.string().optional(),
+  location: z.string().optional(),
+  proxyIp: z.string().optional(),
+  browserConfig: z.record(z.string(), z.any()).optional(),
+})
 
-  @ApiProperty({ description: '组排序，默认为 1' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  rank?: number
+export class CreateAccountGroupDto extends createZodDto(CreateAccountGroupSchema) {}
 
-  @IsString({ message: 'IP' })
-  @IsOptional()
-  @Expose()
-  ip?: string
+const UpdateAccountGroupSchema = z.object({
+  id: z.string({ message: '更新ID' }),
+  name: z.string({ message: '组名称' }).optional(),
+  rank: z.number().optional(),
+  ip: z.string().optional(),
+  location: z.string().optional(),
+  proxyIp: z.string().optional(),
+  browserConfig: z.record(z.string(), z.any()).optional(),
+})
 
-  @IsString({ message: '地址' })
-  @IsOptional()
-  @Expose()
-  location?: string
+export class UpdateAccountGroupDto extends createZodDto(UpdateAccountGroupSchema) {}
 
-  @ApiProperty({ description: '代理IP' })
-  @IsString({ message: '代理IP' })
-  @IsOptional()
-  @Expose()
-  proxyIp?: string
+const DeleteAccountGroupSchema = z.object({
+  ids: z.array(z.string({ message: 'ID' })),
+})
 
-  @ApiProperty({ description: '浏览器配置必须为JSON格式' })
-  @IsJSON()
-  @IsOptional()
-  @Expose()
-  browserConfig: Record<string, any>
-}
-
-export class UpdateAccountGroupDto extends CreateAccountGroupDto {
-  @ApiProperty({ description: '更新ID' })
-  @IsString()
-  @Expose()
-  id: string
-}
-
-export class DeleteAccountGroupDto {
-  @ApiProperty({ description: '要删除的ID' })
-  @IsArray()
-  @IsString({ each: true })
-  @Expose()
-  ids: string[]
-}
+export class DeleteAccountGroupDto extends createZodDto(DeleteAccountGroupSchema) {}
 
 export const SortRankItemSchema = z.object({
   id: z.string({ message: '数据ID' }),
   rank: z.number({ message: '序号' }),
 })
+
 export const SortRankSchema = z.object({
   list: z.array(SortRankItemSchema),
 })

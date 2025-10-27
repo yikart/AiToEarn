@@ -1,84 +1,52 @@
-import { Expose } from 'class-transformer'
-import { IsArray, IsOptional, IsString } from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import z from 'zod'
 
-export class AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly accountId: string
-}
+const AccountIdSchema = z.object({
+  accountId: z.string(),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) { }
 
-export class UserIdDto {
-  @IsString()
-  @Expose()
-  readonly userId: string
-}
+const UserIdSchema = z.object({
+  userId: z.string(),
+})
 
-export class GetAuthUrlDto extends UserIdDto {
-  @IsString()
-  @Expose()
-  readonly spaceId: string
+export class UserIdDto extends createZodDto(UserIdSchema) { }
 
-  @IsArray()
-  @IsOptional()
-  @Expose()
-  readonly scopes?: string[]
-}
+const GetAuthUrlSchema = z.object({
+  userId: z.string(),
+  spaceId: z.string(),
+  scopes: z.array(z.string()).optional(),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) { }
 
-export class GetAuthInfoDto {
-  @IsString()
-  @Expose()
-  readonly taskId: string
-}
+const GetAuthInfoSchema = z.object({
+  taskId: z.string(),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) { }
 
-export class CreateAccountAndSetAccessTokenDto {
-  @IsString()
-  @Expose()
-  readonly code: string
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  code: z.string(),
+  state: z.string(),
+})
 
-  @IsString()
-  @Expose()
-  readonly state: string
-}
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(CreateAccountAndSetAccessTokenSchema) {}
 
-export class RefreshTokenDto extends AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly refreshToken: string
-}
+const RefreshTokenSchema = z.object({
+  accountId: z.string(),
+  refreshToken: z.string(),
+})
+export class RefreshTokenDto extends createZodDto(RefreshTokenSchema) {}
 
-export class UserTimelineDto extends AccountIdDto {
-  @IsString()
-  @Expose()
-  userId: string
+const UserTimelineSchema = z.object({
+  accountId: z.string(),
+  userId: z.string(),
+  sinceId: z.string().optional(),
+  untilId: z.string().optional(),
+  maxResults: z.string().optional(),
+  paginationToken: z.string().optional(),
+  exclude: z.array(z.enum(['retweets', 'replies'])).optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+})
 
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly sinceId?: string
-
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly untilId?: string
-
-  @IsString()
-  @IsOptional()
-  readonly maxResults?: string
-
-  // pagination_token
-  @IsString()
-  @IsOptional()
-  readonly paginationToken?: string
-
-  @IsArray()
-  @IsOptional()
-  readonly exclude?: ('retweets' | 'replies')[]
-
-  @IsString()
-  @IsOptional()
-  readonly startTime?: string // ISO 8601 format
-
-  @IsString()
-  @IsOptional()
-  readonly endTime?: string // ISO 8601 format
-}
+export class UserTimelineDto extends createZodDto(UserTimelineSchema) {}

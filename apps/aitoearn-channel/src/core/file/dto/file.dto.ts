@@ -5,63 +5,32 @@
  * @LastEditors: nevin
  * @Description: 反馈
  */
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose, Type } from 'class-transformer'
-import { IsArray, IsNumber, IsString } from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import z from 'zod'
 
-export class InitMultipartUploadDto {
-  @ApiProperty({ title: '文件名称', required: true })
-  @IsString({ message: '文件名称' })
-  @Expose()
-  readonly fileName: string
+const InitMultipartUploadSchema = z.object({
+  fileName: z.string({ message: '文件名称' }),
+  secondPath: z.string({ message: '存放位置' }),
+  fileSize: z.string({ message: '文件大小' }),
+  contentType: z.string({ message: '文件类型' }),
+})
+export class InitMultipartUploadDto extends createZodDto(InitMultipartUploadSchema) {}
 
-  @ApiProperty({ title: '存放位置', required: true })
-  @IsString({ message: '存放位置' })
-  @Expose()
-  readonly secondPath: string
+const UploadPartSchema = z.object({
+  fileId: z.string({ message: '文件key' }),
+  uploadId: z.string({ message: '上传ID' }),
+  partNumber: z.number({ message: '分片索引' }),
+})
+export class UploadPartDto extends createZodDto(UploadPartSchema) {}
 
-  @ApiProperty({ title: '文件大小', required: true })
-  @IsNumber({ allowNaN: false }, { message: '文件大小' })
-  @Expose()
-  readonly fileSize: string
-
-  @ApiProperty({ title: '文件类型', required: true })
-  @IsString({ message: '文件类型' })
-  @Expose()
-  readonly contentType: string
-}
-
-export class UploadPartDto {
-  @ApiProperty({ title: '文件key', required: true })
-  @IsString({ message: '文件key' })
-  @Expose()
-  readonly fileId: string
-
-  @ApiProperty({ title: '上传ID', required: true })
-  @IsString({ message: '上传ID' })
-  @Expose()
-  readonly uploadId: string
-
-  @ApiProperty({ title: '分片索引', required: true })
-  @IsNumber({ allowNaN: false }, { message: '分片索引' })
-  @Type(() => Number)
-  @Expose()
-  readonly partNumber: number
-}
-
-export class CompletePartDto {
-  @ApiProperty({ title: '文件key', required: true })
-  @IsString({ message: '文件key' })
-  @Expose()
-  readonly fileId: string
-
-  @ApiProperty({ title: '上传ID', required: true })
-  @IsString({ message: '上传ID' })
-  @Expose()
-  readonly uploadId: string
-
-  @ApiProperty({ title: '分片', required: true })
-  @IsArray({ message: '分片' })
-  @Expose()
-  readonly parts: { PartNumber: number, ETag: string }[]
-}
+const CompletePartSchema = z.object({
+  fileId: z.string({ message: '文件key' }),
+  uploadId: z.string({ message: '上传ID' }),
+  parts: z.array(
+    z.object({
+      PartNumber: z.number(),
+      ETag: z.string(),
+    }),
+  ).describe('分片'),
+})
+export class CompletePartDto extends createZodDto(CompletePartSchema) {}
