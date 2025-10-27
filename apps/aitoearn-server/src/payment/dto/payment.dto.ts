@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { CloudSpaceRegion } from '@yikart/cloud-space-client/src/cloud-space.interfaces'
 import { createZodDto } from '@yikart/common'
+import { CloudSpaceRegion } from '@yikart/mongodb'
 import { Expose, Type } from 'class-transformer'
 import {
   IsInt,
