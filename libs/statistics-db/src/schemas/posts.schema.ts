@@ -47,12 +47,6 @@ export class PostsRecord extends WithTimestampSchema {
   })
   uid: string
 
-  //   @Prop({
-  //     required: false, // 作品类型
-  //     index: true
-  //   })
-  //   mediaType: string
-
   @Prop({
     required: false, // 作品ID
   })
@@ -60,6 +54,78 @@ export class PostsRecord extends WithTimestampSchema {
 
   @Prop({ default: PostsRecordStatus.Pending, enum: PostsRecordStatus, index: true })
   status: PostsRecordStatus
+
+  // 新增详情数据字段
+  @Prop({
+    required: false,
+    type: String,
+  })
+  title?: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  desc?: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  cover?: string
+
+  @Prop({
+    required: false,
+    type: Date,
+  })
+  publishTime?: Date
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  mediaType?: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  url?: string
+
+  @Prop({
+    required: false,
+    type: Number,
+    default: 0,
+  })
+  viewCount?: number
+
+  @Prop({
+    required: false,
+    type: Number,
+    default: 0,
+  })
+  commentCount?: number
+
+  @Prop({
+    required: false,
+    type: Number,
+    default: 0,
+  })
+  likeCount?: number
+
+  @Prop({
+    required: false,
+    type: Number,
+    default: 0,
+  })
+  shareCount?: number
+
+  @Prop({
+    required: false,
+    type: Number,
+    default: 0,
+  })
+  favoriteCount?: number
 }
 
 export const PostsRecordSchema = SchemaFactory.createForClass(PostsRecord)

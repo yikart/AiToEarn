@@ -12,6 +12,18 @@ interface HistoryPostsRecordItem {
   uid: string
   postId: string
   accountId?: string
+  title?: string
+  desc?: string
+  cover?: string
+  publishTime?: Date
+  // 新增字段用于存储详情数据
+  mediaType?: string
+  url?: string
+  viewCount?: number
+  commentCount?: number
+  likeCount?: number
+  shareCount?: number
+  favoriteCount?: number
 }
 
 @Injectable()
@@ -156,6 +168,8 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
    */
   async historyPostsRecord(records: HistoryPostsRecordItem[]) {
     const bulkOps = records.map((record) => {
+      // Add post detail
+
       const newData = {
         accountId: record.accountId,
         userId: record.userId,
@@ -165,6 +179,18 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
         status: PostsRecordStatus.Pending,
         createdAt: new Date(),
         updatedAt: new Date(),
+        title: record.title || '',
+        desc: record.desc || '',
+        cover: record.cover || '',
+        publishTime: record.publishTime ? new Date(record.publishTime) : new Date(),
+        // 添加详情数据中的其他字段
+        mediaType: record.mediaType || '',
+        url: record.url || '',
+        viewCount: record.viewCount || 0,
+        commentCount: record.commentCount || 0,
+        likeCount: record.likeCount || 0,
+        shareCount: record.shareCount || 0,
+        favoriteCount: record.favoriteCount || 0,
       }
 
       return {

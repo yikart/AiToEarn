@@ -13,6 +13,7 @@ export class ChannelController {
 
   /**
    * douyin search topic
+   * @param token
    * @param data
    * @returns
    */
@@ -43,7 +44,7 @@ export class ChannelController {
 
   /**
    * query history add to draft status
-   * @param userId
+   * @param token
    * @returns
    */
   // @NatsMessagePattern('statistics.channel.platform.postsRecordStatus')

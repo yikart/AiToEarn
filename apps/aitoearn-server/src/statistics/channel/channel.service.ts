@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { RedisService } from '@yikart/redis'
-import { AccountType, ChannelRepository } from '@yikart/statistics-db'
+import { AccountType, ChannelRepository, PostRepository } from '@yikart/statistics-db'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
 
@@ -10,6 +10,18 @@ interface HistoryPostsRecordItem {
   uid: string
   postId: string
   accountId?: string
+  title?: string
+  desc?: string
+  cover?: string
+  publishTime?: Date
+  // 新增字段用于存储详情数据
+  mediaType?: string
+  url?: string
+  viewCount?: number
+  commentCount?: number
+  likeCount?: number
+  shareCount?: number
+  favoriteCount?: number
 }
 
 @Injectable()
@@ -18,6 +30,7 @@ export class ChannelService {
 
   constructor(
     private readonly channelRepository: ChannelRepository,
+    private readonly postRepository: PostRepository,
     private readonly redisService: RedisService,
   ) {}
 
@@ -87,7 +100,48 @@ export class ChannelService {
    * @param records 历史发布记录数组
    */
   async historyPostsRecord(records: HistoryPostsRecordItem[]) {
-    return await this.channelRepository.historyPostsRecord(records)
+    // 批量查询每个记录的详情数据
+    const detailPromises = records.map(async (record) => {
+      try {
+        const postDetail = await this.postRepository.getPostsByPid({
+          platform: record.platform,
+          postId: record.postId,
+        })
+
+        // 检查是否查询到有效数据
+        const hasDetail = postDetail && Object.keys(postDetail).length > 0
+        const detail = postDetail as any // 类型断言，因为getPostsByPid可能返回空对象
+
+        // 将查询到的详情与原始数据合并
+        return {
+          ...record,
+          // 如果查询到详情，则用详情数据覆盖原始数据
+          title: hasDetail && detail.title ? detail.title : (record.title || ''),
+          desc: hasDetail && detail.desc ? detail.desc : (record.desc || ''),
+          cover: hasDetail && detail.cover ? detail.cover : (record.cover || ''),
+          publishTime: hasDetail && detail.publishTime ? new Date(detail.publishTime) : (record.publishTime || new Date()),
+          // 添加详情数据中的其他字段
+          mediaType: hasDetail ? detail.mediaType : '',
+          url: hasDetail ? detail.url : '',
+          viewCount: hasDetail ? detail.readCount : 0,
+          commentCount: hasDetail ? detail.commentCount : 0,
+          likeCount: hasDetail ? detail.likeCount : 0,
+          shareCount: hasDetail ? detail.forwardCount : 0,
+          favoriteCount: hasDetail ? detail.collectCount : 0,
+        }
+      }
+      catch (error) {
+        this.logger.warn(`Failed to get detail for post ${record.postId}: ${(error as Error).message}`)
+        // 如果查询失败，返回原始数据
+        return record
+      }
+    })
+
+    // 等待所有详情查询完成
+    const mergedRecords = await Promise.all(detailPromises)
+
+    // 将合并后的数据传递给后续业务处理
+    return await this.channelRepository.historyPostsRecord(mergedRecords)
   }
 
   /**
