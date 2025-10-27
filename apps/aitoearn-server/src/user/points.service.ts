@@ -43,7 +43,7 @@ export class PointsService {
       page,
       pageSize,
     })
-    return [list, total]
+    return { list, total }
   }
 
   /**
