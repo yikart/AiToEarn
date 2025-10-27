@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, Logger, Param, Post, Put } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { TableDto } from '@yikart/common'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { CreateUserWalletAccountDto, UpdateUserWalletAccountDto } from './dto/userWalletAccount.dto'
 import { UserWalletAccountService } from './userWalletAccount.service'
 

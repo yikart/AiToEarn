@@ -1,6 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
 enum SubMetaPlatform {
   FACEBOOK = 'facebook',
@@ -8,42 +7,25 @@ enum SubMetaPlatform {
   THREADS = 'threads',
   LINKEDIN = 'linkedin',
 }
-export class GetAuthUrlDto {
-  @ApiProperty({ title: '平台名称', required: true })
-  @IsEnum(SubMetaPlatform, { message: '平台名称不能为空' })
-  @Expose()
-  readonly platform: string
 
-  @ApiProperty({ title: '空间ID', required: false })
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly spaceId?: string
-}
+const GetAuthUrlSchema = z.object({
+  platform: z.enum(SubMetaPlatform, { message: '平台名称不能为空' }),
+  spaceId: z.string().optional(),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-export class GetAuthInfoDto {
-  @ApiProperty({ title: '任务ID', required: true })
-  @IsString({ message: '任务ID不能为空' })
-  @Expose()
-  readonly taskId: string
-}
+const GetAuthInfoSchema = z.object({
+  taskId: z.string({ message: '任务ID不能为空' }),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-export class FacebookPageSelectionDto {
-  @ApiProperty({ title: '页面ID列表', required: true })
-  @IsArray({ message: '页面ID列表必须是字符串数组' })
-  @IsString({ each: true, message: '页面ID不能为空' })
-  @Expose()
-  readonly pageIds: string[]
-}
+const FacebookPageSelectionSchema = z.object({
+  pageIds: z.array(z.string({ message: '页面ID不能为空' })).describe('页面ID列表必须是字符串数组'),
+})
+export class FacebookPageSelectionDto extends createZodDto(FacebookPageSelectionSchema) {}
 
-export class CreateAccountAndSetAccessTokenDto {
-  @ApiProperty({ title: '授权码', required: true })
-  @IsString({ message: '授权码不能为空' })
-  @Expose()
-  readonly code: string
-
-  @ApiProperty({ title: '状态码', required: true })
-  @IsString({ message: '状态码不能为空' })
-  @Expose()
-  readonly state: string
-}
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  code: z.string({ message: '授权码不能为空' }),
+  state: z.string({ message: '状态码不能为空' }),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(CreateAccountAndSetAccessTokenSchema) {}

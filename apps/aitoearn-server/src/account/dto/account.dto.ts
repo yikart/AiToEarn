@@ -171,6 +171,10 @@ export class AccountListByTypesDto {
   readonly status?: AccountStatus
 }
 
+export class AccountListByParamDto {
+  [key: string]: any
+}
+
 export const SortRankItemSchema = z.object({
   id: z.string({ message: '数据ID' }),
   rank: z.number({ message: '序号' }),

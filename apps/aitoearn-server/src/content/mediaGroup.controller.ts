@@ -15,10 +15,9 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { MediaGroup } from '@yikart/mongodb'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import {
   CreateMediaGroupDto,
   MediaGroupFilterDto,

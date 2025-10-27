@@ -99,7 +99,7 @@ export class PaymentService {
   async getHandlePoints(status: ICheckoutStatus, data: CheckoutDto) {
     const { userId, metadata, quantity } = data
     const { payment } = metadata
-    const amount = quantity * 1000
+    const amount = (quantity || 1) * 1000
     const description = IPointsDescription[status] + amount
     const type = 'point'
     const body = { userId, metadata, amount, description, type }

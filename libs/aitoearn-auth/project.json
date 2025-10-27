@@ -1,7 +1,7 @@
 {
-  "name": "nats-client",
+  "name": "aitoearn-auth",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/nats-client/src",
+  "sourceRoot": "libs/aitoearn-auth/src",
   "projectType": "library",
   "release": {
     "version": {
@@ -16,11 +16,11 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/nats-client",
-        "tsConfig": "libs/nats-client/tsconfig.lib.json",
-        "packageJson": "libs/nats-client/package.json",
-        "main": "libs/nats-client/src/index.ts",
-        "assets": ["libs/nats-client/*.md"]
+        "outputPath": "dist/libs/aitoearn-auth",
+        "tsConfig": "libs/aitoearn-auth/tsconfig.lib.json",
+        "packageJson": "libs/aitoearn-auth/package.json",
+        "main": "libs/aitoearn-auth/src/index.ts",
+        "assets": ["libs/aitoearn-auth/*.md"]
       }
     },
     "nx-release-publish": {

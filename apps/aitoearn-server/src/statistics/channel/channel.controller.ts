@@ -1,7 +1,6 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
-import { GetToken } from '../../auth/auth.guard'
-import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ChannelService } from './channel.service'
 import { BatchHistoryPostsRecordDto, searchTopicDto } from './dto/channel.dto'
 

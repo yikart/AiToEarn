@@ -5,103 +5,56 @@
  * @LastEditors: AI Assistant
  * @Description: TikTok Platform DTO
  */
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
-import {
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
-export class GetAuthUrlDto {
-  @ApiProperty({ title: '权限范围', required: false, type: [String], nullable: true })
-  @Expose()
-  readonly scopes?: string[]
+const GetAuthUrlSchema = z.object({
+  scopes: z.array(z.string()).optional(),
+  spaceId: z.string().optional(),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @ApiProperty({ title: '空间ID', required: false })
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly spaceId?: string
-}
+const GetAuthInfoSchema = z.object({
+  taskId: z.string({ message: '任务ID不能为空' }),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-export class GetAuthInfoDto {
-  @ApiProperty({ title: '任务ID', required: true })
-  @IsString({ message: '任务ID不能为空' })
-  @Expose()
-  readonly taskId: string
-}
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  code: z.string({ message: '授权码不能为空' }),
+  state: z.string({ message: '状态码不能为空' }),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(CreateAccountAndSetAccessTokenSchema) {}
 
-export class CreateAccountAndSetAccessTokenDto {
-  @ApiProperty({ title: '授权码', required: true })
-  @IsString({ message: '授权码不能为空' })
-  @Expose()
-  readonly code: string
+const AccountIdSchema = z.object({
+  accountId: z.string({ message: '账号ID不能为空' }),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-  @ApiProperty({ title: '状态码', required: true })
-  @IsString({ message: '状态码不能为空' })
-  @Expose()
-  readonly state: string
-}
+const RefreshTokenSchema = AccountIdSchema.extend({
+  refreshToken: z.string({ message: '刷新令牌不能为空' }),
+})
+export class RefreshTokenDto extends createZodDto(RefreshTokenSchema) {}
 
-export class AccountIdDto {
-  @ApiProperty({ title: '账户ID', required: true })
-  @IsString({ message: '账号ID不能为空' })
-  @Expose()
-  readonly accountId: string
-}
+const VideoPublishSchema = AccountIdSchema.extend({
+  postInfo: z.object({}).describe('发布信息必须是对象'),
+  sourceInfo: z.object({}).describe('源信息必须是对象'),
+})
+export class VideoPublishDto extends createZodDto(VideoPublishSchema) {}
 
-export class RefreshTokenDto extends AccountIdDto {
-  @ApiProperty({ title: '刷新令牌', required: true })
-  @IsString({ message: '刷新令牌不能为空' })
-  @Expose()
-  readonly refreshToken: string
-}
+const PhotoPublishSchema = AccountIdSchema.extend({
+  postMode: z.string({ message: '发布模式不能为空' }),
+  postInfo: z.object({}).describe('发布信息必须是对象'),
+  sourceInfo: z.object({}).describe('源信息必须是对象'),
+})
+export class PhotoPublishDto extends createZodDto(PhotoPublishSchema) {}
 
-export class VideoPublishDto extends AccountIdDto {
-  @ApiProperty({ title: '发布信息', required: true })
-  @IsObject({ message: '发布信息必须是对象' })
-  @Expose()
-  readonly postInfo: any
+const GetPublishStatusSchema = AccountIdSchema.extend({
+  publishId: z.string({ message: '发布ID不能为空' }),
+})
+export class GetPublishStatusDto extends createZodDto(GetPublishStatusSchema) {}
 
-  @ApiProperty({ title: '源信息', required: true })
-  @IsObject({ message: '源信息必须是对象' })
-  @Expose()
-  readonly sourceInfo: any
-}
-
-export class PhotoPublishDto extends AccountIdDto {
-  @ApiProperty({ title: '发布模式', required: true })
-  @IsString({ message: '发布模式不能为空' })
-  @Expose()
-  readonly postMode: string
-
-  @ApiProperty({ title: '发布信息', required: true })
-  @IsObject({ message: '发布信息必须是对象' })
-  @Expose()
-  readonly postInfo: any
-
-  @ApiProperty({ title: '源信息', required: true })
-  @IsObject({ message: '源信息必须是对象' })
-  @Expose()
-  readonly sourceInfo: any
-}
-
-export class GetPublishStatusDto extends AccountIdDto {
-  @ApiProperty({ title: '发布ID', required: true })
-  @IsString({ message: '发布ID不能为空' })
-  @Expose()
-  readonly publishId: string
-}
-
-export class UploadVideoFileDto {
-  @ApiProperty({ title: '上传URL', required: true })
-  @IsString({ message: '上传URL不能为空' })
-  @Expose()
-  readonly uploadUrl: string
-
-  @ApiProperty({ title: '内容类型', required: true })
-  @IsString({ message: '内容类型不能为空' })
-  @Expose()
-  readonly contentType: string
-}
+const UploadVideoFileSchema = z.object({
+  uploadUrl: z.string({ message: '上传URL不能为空' }),
+  contentType: z.string({ message: '内容类型不能为空' }),
+})
+export class UploadVideoFileDto extends createZodDto(UploadVideoFileSchema) {}

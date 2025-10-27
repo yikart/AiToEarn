@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AppException, ResponseCode } from '@yikart/common'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { AccountService } from './account.service'
 import {
   AccountIdDto,

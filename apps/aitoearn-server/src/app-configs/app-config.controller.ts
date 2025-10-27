@@ -7,7 +7,7 @@
  */
 import { Controller, Get, Param } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Public } from '../auth/auth.guard'
+import { Public } from '@yikart/aitoearn-auth'
 import { AppConfigService } from './app-config.service'
 import { GetAppConfigListDto } from './dto/app-config.dto'
 

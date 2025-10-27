@@ -24,7 +24,6 @@
     "@rekog/mcp-nest": "^1.6.2",
     "@types/form-data": "^2.5.2",
     "@types/multer": "^2.0.0",
-    "@yikart/aitoearn-ai-client": "workspace:*",
     "@yikart/common": "workspace:*",
     "@yikart/redis": "workspace:*",
     "ali-oss": "^6.23.0",
@@ -52,7 +51,6 @@
     "qs": "^6.14.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "tslib": "^2.3.0",
     "uuid": "^11.1.0",
     "xml2js": "^0.6.2",
     "zod": "^4.1.9"
@@ -81,12 +79,5 @@
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "@scarf/scarf",
-      "nestjs-pino"
-    ]
   }
 }

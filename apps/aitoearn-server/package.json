@@ -15,11 +15,10 @@
     "@nestjs/platform-express": "^11.1.6",
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
-    "@yikart/aitoearn-user-client": "workspace:*",
+    "@yikart/aitoearn-auth": "workspace:*",
     "@yikart/ali-green": "workspace:*",
     "@yikart/ansible": "workspace:*",
     "@yikart/aws-s3": "workspace:*",
-    "@yikart/cloud-space-client": "workspace:*",
     "@yikart/common": "workspace:*",
     "@yikart/mail": "workspace:*",
     "@yikart/mongodb": "workspace:*",
@@ -47,7 +46,6 @@
     "nats": "^2.29.3",
     "openai": "^5.18.1",
     "rxjs": "^7.8.0",
-    "tslib": "^2.3.0",
     "uuid": "^11.1.0",
     "xml2js": "^0.6.2",
     "zod": "^4.0.17"
@@ -59,12 +57,5 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.20",
     "@types/multer": "^1.4.13"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "@scarf/scarf",
-      "nestjs-pino"
-    ]
   }
 }

@@ -7,10 +7,9 @@ import {
   Query,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { IncomeStatus } from '@yikart/mongodb'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { UserWalletAccountService } from '../user/userWalletAccount.service'
 import { IncomeFilterDto, WithdrawCreateAllDto, WithdrawCreateDto } from './dto/income.dto'
 import { IncomeService } from './income.service'

@@ -2,6 +2,7 @@ import path from 'node:path'
 import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { EventEmitterModule } from '@nestjs/event-emitter'
+import { AitoearnAuthModule } from '@yikart/aitoearn-auth'
 import { MailModule } from '@yikart/mail'
 import { MongodbModule } from '@yikart/mongodb'
 import { RedisModule } from '@yikart/redis'
@@ -10,7 +11,6 @@ import { AccountModule } from './account/account.module'
 import { LogsModule } from './ai/core/logs'
 import { AppConfigModule } from './app-configs/app-config.module'
 import { AppReleaseModule } from './app-release/app-release.module'
-import { AuthModule } from './auth/auth.module'
 import { ChannelModule } from './channel/channel.module'
 import { config } from './config'
 import { ContentModule } from './content/content.module'
@@ -47,11 +47,11 @@ import { UserModule } from './user/user.module'
       },
       inject: [Redis],
     }),
+    AitoearnAuthModule.forRoot(config.auth),
     FileModule,
     ToolsModule,
     LogsModule,
     TransportsModule,
-    AuthModule,
     AppConfigModule,
     FeedbackModule,
     NotificationModule,

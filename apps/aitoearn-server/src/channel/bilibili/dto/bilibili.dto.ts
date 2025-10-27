@@ -1,11 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto } from '@yikart/common'
-import { Expose, Type } from 'class-transformer'
-import {
-  IsEnum,
-  IsOptional,
-  IsString,
-} from 'class-validator'
 import { z } from 'zod'
 import { ArchiveStatus } from '../bilibili.common'
 
@@ -20,18 +13,12 @@ export const AccessBackSchema = z.object({
 })
 export class AccessBackDto extends createZodDto(AccessBackSchema) {}
 
-export class GetArchiveListDto extends AccountIdDto {
-  @ApiProperty({ enum: ArchiveStatus })
-  @IsEnum(ArchiveStatus)
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly status?: ArchiveStatus
-}
+const GetArchiveListSchema = AccountIdSchema.extend({
+  status: z.enum(ArchiveStatus).optional(),
+})
+export class GetArchiveListDto extends createZodDto(GetArchiveListSchema) {}
 
-export class GetArcStatDto extends AccountIdDto {
-  @ApiProperty({ title: '稿件ID', required: true })
-  @IsString({ message: '稿件ID' })
-  @Expose()
-  readonly resourceId: string
-}
+const GetArcStatSchema = AccountIdSchema.extend({
+  resourceId: z.string({ message: '稿件ID' }),
+})
+export class GetArcStatDto extends createZodDto(GetArcStatSchema) {}

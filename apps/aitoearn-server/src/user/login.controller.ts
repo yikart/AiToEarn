@@ -1,12 +1,10 @@
 import { Body, Controller, Delete, Get, Logger, Post, Put } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { AitoearnAuthService, GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { AppException, ResponseCode } from '@yikart/common'
 import { MailService } from '@yikart/mail'
 import { UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
-import { GetToken, Public } from '../auth/auth.guard'
-import { AuthService } from '../auth/auth.service'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { getRandomString } from '../common/utils'
 import { encryptPassword, validatePassWord } from '../common/utils/password.util'
 import { config } from '../config'
@@ -29,7 +27,7 @@ interface UserMailRegistCache {
 export class LoginController {
   private readonly logger = new Logger(LoginController.name)
   constructor(
-    private readonly authService: AuthService,
+    private readonly authService: AitoearnAuthService,
     private readonly userService: UserService,
     private readonly redisService: RedisService,
     private readonly mailService: MailService,
@@ -115,6 +113,7 @@ export class LoginController {
     if (!rData)
       throw new AppException(ResponseCode.UserLoginCodeError, 'The verification code does not exist')
 
+    // config.environment === 'production' &&
     if (rData.code !== code)
       throw new AppException(ResponseCode.UserLoginCodeError, 'The verification code is incorrect')
 

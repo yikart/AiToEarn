@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -13,6 +14,7 @@ import { AccountInternalService } from './provider/account.service'
 @ApiTags('内部服务接口')
 @Controller('internal')
 export class AccountController {
+  private readonly logger = new Logger(AccountController.name)
   constructor(private readonly accountInternalService: AccountInternalService) { }
 
   @ApiOperation({ summary: 'create social media accounts' })
@@ -21,6 +23,9 @@ export class AccountController {
     @Param('userId') userId: string,
     @Body() body: CreateAccountDto,
   ) {
+    this.logger.log(
+      `Creating social media account for userId: ${userId} with body: ${JSON.stringify(body)}`,
+    )
     return await this.accountInternalService.createSocialMediaAccount(
       userId,
       body,
@@ -43,6 +48,7 @@ export class AccountController {
   @Patch('/:userId/socials/accounts/:accountId')
   async updateAccountInfo(
     @Param('userId') userId: string,
+    @Param('accountId') accountId: string,
     @Body() body: UpdateAccountDto,
   ) {
     const res = await this.accountInternalService.updateAccountInfo(
@@ -53,13 +59,13 @@ export class AccountController {
   }
 
   @ApiOperation({ summary: 'update account insights' })
-  @Patch('/:userId/socials/accounts/:accountId/statistics')
+  @Patch('/socials/accounts/:accountId/statistics')
   async updateAccountStatistics(
-    @Param('userId') userId: string,
+    @Param('accountId') accountId: string,
     @Body() body: UpdateAccountStatisticsDto,
   ) {
     return this.accountInternalService.updateAccountStatistics(
-      userId,
+      accountId,
       body,
     )
   }

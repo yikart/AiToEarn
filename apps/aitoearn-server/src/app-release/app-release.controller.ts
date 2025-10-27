@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Public } from '../auth/auth.guard'
+import { Public } from '@yikart/aitoearn-auth'
 import { CheckVersionDto, QueryAppReleaseDto } from './app-release.dto'
 import { AppReleaseService } from './app-release.service'
 import { CheckVersionVo } from './app-release.vo'

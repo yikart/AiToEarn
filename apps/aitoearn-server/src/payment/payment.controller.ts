@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post, Render, UseGuards } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import * as _ from 'lodash'
-import { GetToken, Public } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { OrgGuard } from '../common/interceptor/transform.interceptor'
 import { config } from '../config'
 import {

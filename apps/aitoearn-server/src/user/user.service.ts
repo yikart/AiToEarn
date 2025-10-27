@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { AppException, ResponseCode } from '@yikart/common'
-import { User, UserRepository, UserStatus } from '@yikart/mongodb'
+import { MaterialGroupRepository, MediaGroupRepository, User, UserRepository, UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
 import dayjs from 'dayjs'
@@ -22,6 +22,8 @@ export class UserService {
     private readonly vipService: VipService,
     private readonly pointsService: PointsService,
     private readonly redisService: RedisService,
+    private readonly materialGroupRepository: MaterialGroupRepository,
+    private readonly mediaGroupRepository: MediaGroupRepository,
   ) {
     this.oauth2Client = new google.auth.OAuth2()
   }
@@ -280,7 +282,9 @@ export class UserService {
   private async afterCreate(
     user: User,
   ) {
-    // TODO:创建默认的素材组
+    // 创建默认的素材组/草稿箱组
+    this.materialGroupRepository.createDefault(user.id)
+    this.mediaGroupRepository.createDefault(user.id)
 
     // 上报用户数据
     this.eventEmitter.emit(

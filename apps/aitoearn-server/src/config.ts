@@ -1,3 +1,4 @@
+import { aitoearnAuthConfigSchema } from '@yikart/aitoearn-auth'
 import { ansibleConfigSchema } from '@yikart/ansible'
 import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
@@ -14,12 +15,6 @@ import { md2cardConfigSchema } from './ai/libs/md2card'
 import { openaiConfigSchema } from './ai/libs/openai'
 import { sora2ConfigSchema } from './ai/libs/sora2'
 import { volcengineConfigSchema } from './ai/libs/volcengine'
-
-// JWT配置
-const jwtConfigSchema = z.object({
-  secret: z.string().default(''),
-  expiresIn: z.number().default(7 * 24 * 60 * 60),
-})
 
 const mailConfigSchema = z.object({
   transport: z.object({
@@ -167,6 +162,7 @@ const moreApiConfigSchema = z.object({
 
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
+  auth: aitoearnAuthConfigSchema,
   fileHost: z.string().default('http://localhost:3000/api/file/'),
   ucloud: z.object({
     ...ucloudConfigSchema.shape,
@@ -193,7 +189,6 @@ export const appConfigSchema = z.object({
   ansible: ansibleConfigSchema,
   mongodb: mongodbConfigSchema,
   redlock: redlockConfigSchema,
-  jwt: jwtConfigSchema,
   oneSignal: oneSignalConfigSchema,
   awsS3: s3ConfigSchema,
   mail: mailConfigSchema,
@@ -212,7 +207,6 @@ export const appConfigSchema = z.object({
   }),
   moreApi: moreApiConfigSchema,
   statisticsDb: mongodbConfigSchema,
-  internalToken: z.string(),
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
