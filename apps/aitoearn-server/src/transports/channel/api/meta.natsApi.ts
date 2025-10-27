@@ -27,7 +27,7 @@ export class PlatMetaNatsApi extends ChannelBaseApi {
 
   async getFacebookPages(userId: string) {
     const res = await this.sendMessage<any>(
-      `plat/meta/getFacebookPages`,
+      `plat/meta/facebook/pages`,
       {
         userId,
       },
@@ -40,7 +40,7 @@ export class PlatMetaNatsApi extends ChannelBaseApi {
     pageIds: string[],
   ) {
     const res = await this.sendMessage<any>(
-      `plat/meta/selectFacebookPages`,
+      `plat/meta/facebook/pages/selection`,
       {
         userId,
         pageIds,

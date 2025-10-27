@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
@@ -13,6 +14,7 @@ import { AccountInternalService } from './provider/account.service'
 @ApiTags('内部服务接口')
 @Controller('internal')
 export class AccountController {
+  private readonly logger = new Logger(AccountController.name)
   constructor(private readonly accountInternalService: AccountInternalService) { }
 
   @ApiOperation({ summary: 'create social media accounts' })
@@ -21,6 +23,9 @@ export class AccountController {
     @Param('userId') userId: string,
     @Body() body: CreateAccountDto,
   ) {
+    this.logger.log(
+      `Creating social media account for userId: ${userId} with body: ${JSON.stringify(body)}`,
+    )
     return await this.accountInternalService.createSocialMediaAccount(
       userId,
       body,
