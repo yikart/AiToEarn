@@ -390,6 +390,8 @@ export default function AIGeneratePage() {
         const defaultGroup = groups.find((group: any) => group.isDefault === true);
         if (defaultGroup) {
           setDefaultMediaGroup(defaultGroup._id);
+        }else{
+          setDefaultMediaGroup(groups[0]._id);
         }
       }
     }
@@ -538,6 +540,9 @@ export default function AIGeneratePage() {
         const defaultGroup = groups.find((group: any) => group.isDefault === true);
         if (defaultGroup) {
           defaultGroupId = defaultGroup._id;
+          setDefaultMediaGroup(defaultGroupId);
+        }else{
+          defaultGroupId = groups[0]._id;
           setDefaultMediaGroup(defaultGroupId);
         }
       }
@@ -990,8 +995,9 @@ export default function AIGeneratePage() {
                       {(videoMode==='image2video' || videoMode==='flf2video' || videoMode==='lf2video' || videoMode==='multi-image2video') && supported.includes('image') && (
                         <div className={styles.uploadPanel}>
                           <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
+                         
                             {videoImage ? (
-                              <img src={getOssUrl(videoImage) || ''} alt={t('aiGenerate.firstFrame')} />
+                              <img src={videoImage || ''} alt={t('aiGenerate.firstFrame')} />
                             ) : (
                               <div className={styles.uploadPlaceholder}>
                                 <span className={styles.uploadIcon}>+</span>
@@ -1006,7 +1012,7 @@ export default function AIGeneratePage() {
                           {(videoMode==='image2video' || videoMode==='flf2video' || videoMode==='lf2video' || videoMode==='multi-image2video') && supported.includes('image_tail') && (
                             <div className={styles.uploadCard} onClick={handlePickTailFrame}>
                               {videoImageTail ? (
-                                <img src={getOssUrl(videoImageTail) || ''} alt={t('aiGenerate.tailFrame')} />
+                                <img src={videoImageTail || ''} alt={t('aiGenerate.tailFrame')} />
                               ) : (
                                 <div className={styles.uploadPlaceholder}>
                                   <span className={styles.uploadIcon}>+</span>
