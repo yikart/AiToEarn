@@ -5,7 +5,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { message, Input, Button, Select, Row, Col, Modal, Progress } from "antd";
 import { ArrowLeftOutlined, RobotOutlined, FireOutlined, PictureOutlined, FileTextOutlined, UploadOutlined, VideoCameraOutlined, DownloadOutlined, MessageOutlined } from "@ant-design/icons";
 import styles from "./ai-generate.module.scss";
-import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card, getVideoGenerations } from "@/api/ai";
+import { generateImage, generateFireflyCard, getImageGenerationModels, generateVideo, getVideoTaskStatus, getVideoGenerationModels, generateMd2Card, getVideoGenerations, getImageTaskStatus } from "@/api/ai";
 import { getOssUrl } from "@/utils/oss";
 import { uploadToOss } from "@/api/oss";
 import { getMediaGroupList, createMedia } from "@/api/media";
@@ -61,6 +61,10 @@ export default function AIGeneratePage() {
   const [model, setModel] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<string[] | null>(null);
+  const [imageTaskId, setImageTaskId] = useState<string | null>(null);
+  const [imageStatus, setImageStatus] = useState<string>("");
+  const [imageProgress, setImageProgress] = useState(0);
+  const [checkingImageStatus, setCheckingImageStatus] = useState(false);
 
   // Firefly 卡片
   const [content, setContent] = useState("");
@@ -403,19 +407,19 @@ export default function AIGeneratePage() {
     if (!prompt) { message.error(t("aiGenerate.pleaseEnterPrompt")); return; }
     try {
       setLoading(true);
+      setImageStatus("submitted");
+      setImageProgress(10);
       const res: any = await generateImage({ prompt, n, quality, style, size, model, response_format: "url" });
-      if (res.data?.list) {
-        const imageUrls = res.data.list.map((i: any) => i.url);
-        setResult(imageUrls);
-        
-        // 自动上传第一张图片到默认素材库组
-        if (imageUrls.length > 0) {
-          await autoUploadToDefaultGroup(imageUrls[0], "img", model, prompt);
-        }
+      if (res.data?.logId) {
+        setImageTaskId(res.data.logId);
+        setImageStatus(res.data.status);
+        message.success(t("aiGenerate.taskSubmittedSuccess"));
+        pollImageTaskStatus(res.data.logId);
       } else {
         message.error(t("aiGenerate.imageGenerationFailed"));
+        setImageStatus("");
       }
-    } catch { message.error(t("aiGenerate.imageGenerationFailed")); } finally { setLoading(false); }
+    } catch { message.error(t("aiGenerate.imageGenerationFailed")); setImageStatus(""); } finally { setLoading(false); }
   };
 
   const handleTextToFireflyCard = async () => {
@@ -497,6 +501,52 @@ export default function AIGeneratePage() {
         }
           return false;
       } catch { return false; } finally { setCheckingStatus(false); }
+    };
+    const poll = async () => { const done = await checkStatus(); if (!done) setTimeout(poll, 5000); };
+    poll();
+  };
+
+  const pollImageTaskStatus = async (logId: string) => {
+    const checkStatus = async () => {
+      try {
+        setCheckingImageStatus(true);
+        const res: any = await getImageTaskStatus(logId);
+        if (res.data) {
+          const { status, fail_reason, response, images } = res.data;
+          const up = typeof status === "string" ? status.toUpperCase() : "";
+          const normalized = up === "SUCCESS" ? "completed" : up === "FAILED" ? "failed" : up === "PROCESSING" || up === "GENERATING" ? "processing" : up === "NOT_START" || up === "NOT_STARTED" || up === "QUEUED" || up === "PENDING" ? "submitted" : (status || "").toString().toLowerCase();
+          setImageStatus(normalized);
+          
+          // 计算进度 - 如果没有明确的progress字段，根据状态估算
+          let percent = 0;
+          if (normalized === "submitted") percent = 10;
+          else if (normalized === "processing") percent = 50;
+          else if (normalized === "completed") percent = 100;
+          else if (normalized === "failed") percent = 0;
+          
+          if (normalized === "completed") { 
+            // 优先使用 images 字段，如果没有则使用 response.list
+            const imageUrls = (images || response?.list || []).map((i: any) => i.url) || [];
+            setResult(imageUrls); 
+            setImageProgress(100); 
+            message.success("图片生成完成");
+            
+            // 自动上传第一张图片到默认素材库组
+            if (imageUrls.length > 0) {
+              await autoUploadToDefaultGroup(imageUrls[0], "img", model, prompt);
+            }
+            return true; 
+          }
+          if (normalized === "failed") { 
+            setImageProgress(0); 
+            message.error(fail_reason || t("aiGenerate.imageGenerationFailed")); 
+            return true; 
+          }
+          setImageProgress(percent); 
+          return false;
+        }
+          return false;
+      } catch { return false; } finally { setCheckingImageStatus(false); }
     };
     const poll = async () => { const done = await checkStatus(); if (!done) setTimeout(poll, 5000); };
     poll();
@@ -766,21 +816,35 @@ export default function AIGeneratePage() {
                       <Button type="primary" onClick={handleTextToImage} loading={loading} disabled={!prompt || !model} icon={<PictureOutlined />}>{t('aiGenerate.generate')}</Button>
                     </div>
                     <div className={styles.rightPanel}>
-                      {result ? (
-                <div className={styles.result}>
-                          <Row gutter={[16,16]} justify={'center'}>
-                            {result.map((img, idx)=>(
-                              <Col key={idx} xs={24} sm={12} md={12} lg={12}>
-                                <div className={styles.imageCard}>
-                                  <img src={getOssUrl(img)} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} />
-                                  <div className={styles.imageActions}>
-                                    <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(img)} />
-                                    <Button size="small" type="primary" icon={<UploadOutlined />} onClick={()=>handleUploadToMediaGroup('img', img)} />
+                      {(imageStatus || result) ? (
+                        <div className={styles.result}>
+                          {imageStatus && (
+                            <div style={{ marginBottom:16 }}>
+                              <div style={{ marginBottom:8 }}>
+                                <strong>{t('aiGenerate.taskStatus')}: </strong>
+                                {imageStatus === 'submitted' && t('aiGenerate.taskSubmitted')}
+                                {imageStatus === 'processing' && t('aiGenerate.taskProcessing')}
+                                {imageStatus === 'completed' && t('aiGenerate.taskCompleted')}
+                                {imageStatus === 'failed' && t('aiGenerate.taskFailed')}
+                              </div>
+                              {imageProgress>0 && imageProgress<100 && (<Progress percent={imageProgress} status="active" />)}
+                            </div>
+                          )}
+                          {result && (
+                            <Row gutter={[16,16]} justify={'center'}>
+                              {result.map((img, idx)=>(
+                                <Col key={idx} xs={24} sm={12} md={12} lg={12}>
+                                  <div className={styles.imageCard}>
+                                    <img src={getOssUrl(img)} alt={`${t('aiGenerate.textToImage')} ${idx+1}`} />
+                                    <div className={styles.imageActions}>
+                                      <Button size="small" icon={<DownloadOutlined />} onClick={()=>handleDownloadUrl(img)} />
+                                      <Button size="small" type="primary" icon={<UploadOutlined />} onClick={()=>handleUploadToMediaGroup('img', img)} />
+                                    </div>
                                   </div>
-                                </div>
-                      </Col>
-                    ))}
-                  </Row>
+                                </Col>
+                              ))}
+                            </Row>
+                          )}
                         </div>
                       ) : (
                         <div className={styles.sampleCarousel}>
@@ -794,9 +858,9 @@ export default function AIGeneratePage() {
                               <span key={i} className={`${styles.sampleDot} ${i===sampleIdx?styles.sampleDotActive:''}`} onClick={()=>setSampleIdx(i)}></span>
                             ))}
                           </div>
-                </div>
-              )}
-            </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
