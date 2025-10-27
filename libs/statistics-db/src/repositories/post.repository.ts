@@ -88,6 +88,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     }
 
     const posts: PostData[] = (postDocs).map(doc => ({
+      id: doc._id.toString(),
       postId: doc.postId ?? '',
       platform: doc.platform ?? platform,
       title: doc.title ?? null,
@@ -146,6 +147,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     }
 
     const posts: PostData[] = (postDocs).map(doc => ({
+      id: doc._id.toString(),
       postId: doc.postId ?? '',
       platform: doc.platform ?? platform,
       title: doc.title ?? null,
@@ -193,6 +195,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     }
 
     const work = {
+      id: postDoc._id.toString(),
       postId: postDoc.postId ?? '',
       platform: postDoc.platform ?? platform,
       title: postDoc.title ?? null,
@@ -345,7 +348,8 @@ export class PostRepository extends BaseRepository<PostModel> {
       return new Date(b.publishTime || 0).getTime() - new Date(a.publishTime || 0).getTime()
     })
     const posts: PostData[] = postDocs.map(doc => ({
-      postId: doc.postId,
+      id: doc.id,
+      postId: doc.postId ?? '',
       platform: doc.platform,
       title: doc.title ?? null,
       content: doc.desc ?? null,
@@ -405,6 +409,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     const postDocs = await postModel.find(filters, null, { sort: { publishTime: -1 } })
 
     const posts: PostData[] = postDocs.map(doc => ({
+      id: doc._id.toString(),
       postId: doc.postId ?? '',
       platform: doc.platform ?? platform,
       title: doc.title ?? null,
