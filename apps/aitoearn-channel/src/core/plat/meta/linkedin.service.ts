@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { RedisService } from '@yikart/redis'
 import { getCurrentTimestamp } from '../../../common'
-import { RedisService } from '../../../libs'
 import { LinkedInShareRequest, LinkedInUploadRequest, MemberNetworkVisibility, ShareMediaCategory, UploadRecipe } from '../../../libs/linkedin/linkedin.interface'
 import { LinkedinService as LinkedinAPIService } from '../../../libs/linkedin/linkedin.service'
 import { META_TIME_CONSTANTS, MetaRedisKeys } from './constants'
@@ -23,7 +23,7 @@ export class LinkedinService {
   private async authorize(
     accountId: string,
   ): Promise<MetaUserOAuthCredential | null> {
-    const credential = await this.redisService.get<MetaUserOAuthCredential>(
+    const credential = await this.redisService.getJson<MetaUserOAuthCredential>(
       MetaRedisKeys.getAccessTokenKey('linkedin', accountId),
     )
     if (!credential) {
@@ -78,7 +78,7 @@ export class LinkedinService {
   ): Promise<boolean> {
     const expireTime
       = tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       MetaRedisKeys.getAccessTokenKey(platform, accountId),
       tokenInfo,
       expireTime,

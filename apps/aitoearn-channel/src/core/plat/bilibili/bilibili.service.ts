@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { AppException } from '@yikart/common'
+import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../common/utils/time.util'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
 import { FileService } from '../../../core/file/file.service'
-import { RedisService } from '../../../libs'
 import { BilibiliApiService } from '../../../libs/bilibili/bilibiliApi.service'
 import {
   AccessToken,
@@ -63,7 +63,7 @@ export class BilibiliService {
   ) {
     const taskId = uuidv4()
     const urlInfo = await this.getAuthUrl(taskId, data.type)
-    const rRes = await this.redisService.setKey<AuthTaskInfo<BilibiliAuthInfo>>(
+    const rRes = await this.redisService.setJson(
       this.getAuthDataCacheKey(taskId),
       {
         taskId,
@@ -105,7 +105,7 @@ export class BilibiliService {
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const data = await this.redisService.get<{
+    const data = await this.redisService.getJson<{
       state: string
       status: number
       accountId?: string
@@ -127,7 +127,7 @@ export class BilibiliService {
    * @returns
    */
   async getAccountAuthInfo(accountId: string) {
-    const data = await this.redisService.get<AccessToken>(
+    const data = await this.redisService.getJson<AccessToken>(
       `bilibili:accessToken:${accountId}`,
     )
     return data
@@ -190,7 +190,7 @@ export class BilibiliService {
     accountId: string,
     accessTokenInfo: AccessToken,
   ) {
-    const cached = await this.redisService.setKey(
+    const cached = await this.redisService.setJson(
       `${this.platform}:accessToken:${accountId}`,
       accessTokenInfo,
     )
@@ -232,7 +232,7 @@ export class BilibiliService {
     const { code, state } = data
 
     const taskInfo
-      = await this.redisService.get<AuthTaskInfo<BilibiliAuthInfo>>(cacheKey)
+      = await this.redisService.getJson<AuthTaskInfo<BilibiliAuthInfo>>(cacheKey)
     if (!taskInfo || taskInfo.status !== 0) {
       return {
         status: 0,
@@ -248,7 +248,7 @@ export class BilibiliService {
     }
 
     // 延长授权时间
-    void this.redisService.setPexire(cacheKey, 60 * 3)
+    void this.redisService.expire(cacheKey, 60 * 3)
 
     // 获取token，创建账号
     const accessTokenInfo = await this.bilibiliApiService.getAccessToken(code)
@@ -308,7 +308,7 @@ export class BilibiliService {
     // 更新任务信息
     taskInfo.status = 1
     taskInfo.data.accountId = accountInfo.id
-    res = await this.redisService.setKey<AuthTaskInfo<BilibiliAuthInfo>>(
+    res = await this.redisService.setJson(
       cacheKey,
       taskInfo,
       60 * 3,
@@ -328,7 +328,7 @@ export class BilibiliService {
   private async getOAuth2Credential(
     accountId: string,
   ): Promise<AccessToken | null> {
-    let credential = await this.redisService.get<AccessToken>(
+    let credential = await this.redisService.getJson<AccessToken>(
       `${this.platform.toLowerCase()}:accessToken:${accountId}`,
     )
     if (!credential) {

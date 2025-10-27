@@ -7,11 +7,11 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
+import { RedisService } from '@yikart/redis'
 import { v4 as uuidv4 } from 'uuid'
 import { ExceptionCode } from '../../../common/enums/exception-code.enum'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
-import { RedisService } from '../../../libs'
 import { MyWxPlatApiService } from '../../../libs/myWxPlat/myWxPlatApi.service'
 import { WxPlatAuthorizerInfo } from '../../../libs/wxPlat/comment'
 import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
@@ -70,7 +70,7 @@ export class WxPlatService {
     if (!authUrl)
       throw new AppException(ExceptionCode.Failed, '不存在平台授权令牌')
 
-    const rRes = await this.redisService.setKey<AuthTaskInfo<WxPlatAuthInfo>>(
+    const rRes = await this.redisService.setJson(
       this.getAuthDataCacheKey(taskId),
       {
         taskId,
@@ -97,7 +97,7 @@ export class WxPlatService {
 
   // 获取授权任务信息
   async getAuthTaskInfo(taskId: string) {
-    const taskInfo = await this.redisService.get<AuthTaskInfo<WxPlatAuthInfo>>(
+    const taskInfo = await this.redisService.getJson<AuthTaskInfo<WxPlatAuthInfo>>(
       this.getAuthDataCacheKey(taskId),
     )
 
@@ -129,7 +129,7 @@ export class WxPlatService {
       }
     }
 
-    const timeout = await this.redisService.getPttl(this.getAuthRefreshTokenCacheKey(accountId))
+    const timeout = await this.redisService.ttl(this.getAuthRefreshTokenCacheKey(accountId))
     return {
       status: 1,
       timeout: timeout / 1000,
@@ -146,7 +146,7 @@ export class WxPlatService {
     authData: { authCode: string, expiresIn: number },
   ) {
     try {
-      const taskInfo = await this.redisService.get<AuthTaskInfo<WxPlatAuthInfo>>(
+      const taskInfo = await this.redisService.getJson<AuthTaskInfo<WxPlatAuthInfo>>(
         this.getAuthDataCacheKey(taskId),
       )
       if (!taskInfo || !taskInfo.data)
@@ -161,7 +161,7 @@ export class WxPlatService {
       }
 
       // 延长授权时间
-      void this.redisService.setPexire(this.getAuthDataCacheKey(taskId), 60 * 3)
+      void this.redisService.expire(this.getAuthDataCacheKey(taskId), 60 * 3)
 
       // 根据授权码获取授权信息
       const auth = await this.myWxPlatApiService.getQueryAuth(authData.authCode)
@@ -199,14 +199,14 @@ export class WxPlatService {
         return { status: 0, message: '添加账号失败' }
 
       // 设置授权信息
-      const setRes = await this.redisService.setKey<WxPlatAuthorizerInfo>(
+      const setRes = await this.redisService.setJson(
         this.getAuthAccessTokenCacheKey(accountInfo.id),
         auth,
         expires_in,
       )
 
       // 设置29天的刷新令牌
-      await this.redisService.setKey<string>(
+      await this.redisService.setJson(
         this.getAuthRefreshTokenCacheKey(accountInfo.id),
         auth.authorizer_refresh_token,
         2592000,
@@ -219,7 +219,7 @@ export class WxPlatService {
       taskInfo.status = 1
       taskInfo.data.accountId = accountInfo.id
 
-      const res = await this.redisService.setKey<AuthTaskInfo<WxPlatAuthInfo>>(
+      const res = await this.redisService.setJson(
         this.getAuthDataCacheKey(taskId),
         taskInfo,
         60 * 5,
@@ -245,12 +245,12 @@ export class WxPlatService {
       throw new Error('账号不存在')
 
     try {
-      const info = await this.redisService.get<WxPlatAuthorizerInfo>(
+      const info = await this.redisService.getJson<WxPlatAuthorizerInfo>(
         this.getAuthAccessTokenCacheKey(accountId),
       )
       if (info) {
         // 快超时就重新获取
-        const overTime = await this.redisService.getPttl(
+        const overTime = await this.redisService.ttl(
           this.getAuthAccessTokenCacheKey(accountId),
         )
         if (overTime < 60 * 10)
@@ -263,7 +263,7 @@ export class WxPlatService {
         if (!newInfo)
           throw new Error('获取授权方令牌失败')
 
-        const res = await this.redisService.setKey(
+        const res = await this.redisService.setJson(
           this.getAuthAccessTokenCacheKey(accountId),
           newInfo,
           newInfo.expires_in,
@@ -276,9 +276,8 @@ export class WxPlatService {
 
       // 没有值重新获取
       // 查看长期的刷新令牌
-      const refreshToken = await this.redisService.get<string>(
+      const refreshToken = await this.redisService.get(
         this.getAuthRefreshTokenCacheKey(accountId),
-        false,
       )
 
       if (!refreshToken)

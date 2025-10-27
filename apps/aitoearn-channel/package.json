@@ -27,6 +27,7 @@
     "@types/multer": "^2.0.0",
     "@yikart/aitoearn-ai-client": "workspace:*",
     "@yikart/common": "workspace:*",
+    "@yikart/redis": "workspace:*",
     "ali-oss": "^6.23.0",
     "axios": "^1.9.0",
     "body-parser": "^2.2.0",

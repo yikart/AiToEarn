@@ -1,13 +1,13 @@
 /* eslint-disable antfu/consistent-list-newline */
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../common'
 import { AccountService } from '../../../core/account/account.service'
 import { BilibiliAuthInfo } from '../../../core/plat/bilibili/common'
 import { AuthTaskInfo } from '../../../core/plat/common'
-import { RedisService } from '../../../libs'
 import { OAuth2Crendential } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { KwaiOAuthCredentialsResponse, KwaiVideoPubParams } from '../../../libs/kwai/kwaiApi.interfaces'
 import { KwaiApiService } from '../../../libs/kwai/kwaiApi.service'
@@ -27,7 +27,7 @@ export class KwaiService {
   ) { }
 
   private async getOAuth2Credential(accountId: string): Promise<KwaiOAuthCredentialsResponse | null> {
-    let credential = await this.redisService.get<KwaiOAuthCredentialsResponse>(
+    let credential = await this.redisService.getJson<KwaiOAuthCredentialsResponse>(
       `${this.platform.toLowerCase()}:accessToken:${accountId}`,
     )
     if (!credential) {
@@ -63,7 +63,7 @@ export class KwaiService {
     accountTokenInfo.expires_in
       = getCurrentTimestamp() + accountTokenInfo.expires_in - KWAI_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
 
-    return await this.redisService.setKey(key, accountTokenInfo, expiredAt)
+    return await this.redisService.setJson(key, accountTokenInfo, expiredAt)
   }
 
   /**
@@ -128,7 +128,7 @@ export class KwaiService {
   ) {
     const taskId = uuidv4()
     const urlInfo = this.kwaiApiService.getAuthPage(taskId, data.type)
-    const rRes = await this.redisService.setKey<AuthTaskInfo<BilibiliAuthInfo>>(
+    const rRes = await this.redisService.setJson(
       this.getAuthDataCacheKey(taskId),
       {
         taskId,
@@ -155,14 +155,14 @@ export class KwaiService {
   async createAccountAndSetAccessToken(taskId: string, data: { code: string, state: string }) {
     const cacheKey = this.getAuthDataCacheKey(taskId)
     const { code } = data
-    const taskInfo = await this.redisService.get<AuthTaskInfo<BilibiliAuthInfo>>(
+    const taskInfo = await this.redisService.getJson<AuthTaskInfo<BilibiliAuthInfo>>(
       cacheKey,
     )
     if (!taskInfo || taskInfo.status !== 0 || !taskInfo.data)
       return { status: 0, message: '任务不存在或已完成' }
 
     // 延长授权时间
-    void this.redisService.setPexire(cacheKey, 60 * 3)
+    void this.redisService.expire(cacheKey, 60 * 3)
 
     try {
       const account = await this.addKwaiAccount(code, taskInfo.data.userId, taskInfo.spaceId)
@@ -170,7 +170,7 @@ export class KwaiService {
         // 更新任务信息
         taskInfo.status = 1
         taskInfo.data['accountId'] = account.id
-        await this.redisService.setKey<AuthTaskInfo<BilibiliAuthInfo>>(
+        await this.redisService.setJson(
           cacheKey,
           taskInfo,
           60 * 3,
@@ -188,7 +188,7 @@ export class KwaiService {
   }
 
   async getAuthInfo(taskId: string) {
-    return await this.redisService.get<{
+    return await this.redisService.getJson<{
       state: string
       status: number
       accountId?: string
@@ -198,7 +198,7 @@ export class KwaiService {
   private async saveOAuthCredential(accountId: string, accessTokenInfo: KwaiOAuthCredentialsResponse) {
     accessTokenInfo.expires_in = accessTokenInfo.expires_in + getCurrentTimestamp() - KWAI_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     accessTokenInfo.refresh_token_expires_in = accessTokenInfo.refresh_token_expires_in + getCurrentTimestamp() - KWAI_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-    const cached = await this.redisService.setKey(
+    const cached = await this.redisService.setJson(
       `${this.platform.toLowerCase()}:accessToken:${accountId}`,
       accessTokenInfo,
     )

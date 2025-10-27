@@ -274,6 +274,9 @@ importers:
       '@yikart/common':
         specifier: workspace:*
         version: link:../../libs/common
+      '@yikart/redis':
+        specifier: workspace:*
+        version: link:../../libs/redis
       ali-oss:
         specifier: ^6.23.0
         version: 6.23.0

@@ -1,6 +1,7 @@
 import * as fs from 'node:fs'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException } from '@yikart/common'
+import { RedisService } from '@yikart/redis'
 import axios from 'axios'
 import FormData from 'form-data'
 import * as _ from 'lodash'
@@ -9,7 +10,6 @@ import { getCurrentTimestamp } from '../../../common'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
 import { WebhookDto } from '../../../core/plat/pinterest/dto/pinterest.dto'
-import { RedisService } from '../../../libs'
 import {
   AuthInfo,
   CreateBoardBody,
@@ -140,7 +140,7 @@ export class PinterestService {
     const path = `response_type=code&redirect_uri=${this.redirectURL}&client_id=${this.client_id}&${scope}&state=${taskId}`
     const uri = `https://www.pinterest.com/oauth/?${path}`
     const tokenInfo = { taskId, userId, status: ILoginStatus.wait, spaceId }
-    await this.redisService.setKey(redisKeyByTaskId, tokenInfo, 60 * 5)
+    await this.redisService.setJson(redisKeyByTaskId, tokenInfo, 60 * 5)
     return { taskId, userId, status: ILoginStatus.wait, uri }
   }
 
@@ -154,7 +154,7 @@ export class PinterestService {
       // 获取到token后第一时间创建account信息
       const redisKeyByTaskId = this.getAuthDataCacheKey(state)
       const redisCache: any
-        = await this.redisService.get<AuthInfo>(redisKeyByTaskId)
+        = await this.redisService.getJson<AuthInfo>(redisKeyByTaskId)
       const { userId } = redisCache
       // 创建本平台的平台账号
       const newData = new NewAccount({
@@ -196,13 +196,13 @@ export class PinterestService {
         status: ILoginStatus.success,
         userId,
       }
-      await this.redisService.setKey(
+      await this.redisService.setJson(
         this.getAccessTokenKey(accountInfo.id),
         tokenInfo,
       )
       // 更新任务信息
       const authDataCache = { taskId: state, status: ILoginStatus.success }
-      await this.redisService.setKey(redisKeyByTaskId, authDataCache, 5 * 60)
+      await this.redisService.setJson(redisKeyByTaskId, authDataCache, 5 * 60)
       return {
         status: 1,
         message: '授权成功',
@@ -234,7 +234,7 @@ export class PinterestService {
   async checkAuth(taskId: string) {
     const redisKeyByTaskId = this.getAuthDataCacheKey(taskId)
     const tokenInfo: AuthInfo | null
-      = await this.redisService.get<AuthInfo>(redisKeyByTaskId)
+      = await this.redisService.getJson<AuthInfo>(redisKeyByTaskId)
     if (_.isEmpty(tokenInfo))
       return { taskId, status: ILoginStatus.expired }
     const { status } = tokenInfo
@@ -245,7 +245,7 @@ export class PinterestService {
     this.logger.log(accountId)
     const redisKey = this.getAccessTokenKey(accountId)
     const tokenInfo: AuthInfo | null
-      = await this.redisService.get<AuthInfo>(redisKey)
+      = await this.redisService.getJson<AuthInfo>(redisKey)
     this.logger.log(accountId, '授权信息', JSON.stringify(tokenInfo))
     if (_.isEmpty(tokenInfo))
       throw new AppException(100011, 'The authorization has expired.')
@@ -295,7 +295,7 @@ export class PinterestService {
     this.logger.log(accountId)
     const redisKey = this.getAccessTokenKey(accountId)
     const tokenInfo: AuthInfo | null
-      = await this.redisService.get<AuthInfo>(redisKey)
+      = await this.redisService.getJson<AuthInfo>(redisKey)
     this.logger.log(accountId, '授权信息', JSON.stringify(tokenInfo))
     if (_.isEmpty(tokenInfo))
       throw new AppException(100011, 'The authorization has expired.')
@@ -325,7 +325,7 @@ export class PinterestService {
   async getAccessTokenStatus(accountId: string) {
     const redisKey = this.getAccessTokenKey(accountId)
     const tokenInfo: AuthInfo | null
-      = await this.redisService.get<AuthInfo>(redisKey)
+      = await this.redisService.getJson<AuthInfo>(redisKey)
     if (_.isEmpty(tokenInfo))
       return 0
     if (!tokenInfo.expires_in)

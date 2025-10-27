@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { RedisService } from '@yikart/redis'
 import axios, { AxiosResponse } from 'axios'
 import { getCurrentTimestamp } from '../../../common'
-import { RedisService } from '../../../libs'
 import {
   ChunkedVideoUploadRequest,
   ChunkedVideoUploadResponse,
@@ -56,7 +56,7 @@ export class FacebookService {
   private async authorize(
     accountId: string,
   ): Promise<MetaUserOAuthCredential | null> {
-    const credential = await this.redisService.get<MetaUserOAuthCredential>(
+    const credential = await this.redisService.getJson<MetaUserOAuthCredential>(
       MetaRedisKeys.getAccessTokenKey('facebook', accountId),
     )
     if (!credential) {
@@ -116,7 +116,7 @@ export class FacebookService {
   private async authorizePage(
     accountId: string,
   ): Promise<FacebookPageCredentials> {
-    const pageCredential = await this.redisService.get<FacebookPageCredentials>(
+    const pageCredential = await this.redisService.getJson<FacebookPageCredentials>(
       MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId),
     )
     if (!pageCredential) {
@@ -149,7 +149,7 @@ export class FacebookService {
           if (fbAccount.id === pageCredential.id) {
             newPageCredential = credential
           }
-          await this.redisService.setKey(
+          await this.redisService.setJson(
             MetaRedisKeys.getUserPageAccessTokenKey(
               'facebook',
               fbAccount.id,
@@ -188,7 +188,7 @@ export class FacebookService {
     const expireTime
       = now + tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     tokenInfo.expires_in = expireTime
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       MetaRedisKeys.getAccessTokenKey(platform, accountId),
       tokenInfo,
     )

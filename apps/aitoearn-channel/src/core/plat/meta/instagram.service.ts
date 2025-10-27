@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { RedisService } from '@yikart/redis'
 import { getCurrentTimestamp } from '../../../common'
-import { RedisService } from '../../../libs'
 import {
   ChunkedMediaUploadRequest,
   CreateMediaContainerRequest,
@@ -36,7 +36,7 @@ export class InstagramService {
   private async authorize(
     accountId: string,
   ): Promise<MetaUserOAuthCredential> {
-    const credential = await this.redisService.get<MetaUserOAuthCredential>(
+    const credential = await this.redisService.getJson<MetaUserOAuthCredential>(
       MetaRedisKeys.getAccessTokenKey('instagram', accountId),
     )
     if (!credential) {
@@ -93,7 +93,7 @@ export class InstagramService {
     const expireTime
       = now + tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     tokenInfo.expires_in = expireTime
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       MetaRedisKeys.getAccessTokenKey(platform, accountId),
       tokenInfo,
       expireTime,
