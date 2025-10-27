@@ -284,7 +284,7 @@ export class AccountRepository extends BaseRepository<Account> {
    * @param status
    * @returns
    */
-  async getAccountsByType(types: string[], status?: number) {
+  async getAccountsByTypes(types: string[], status?: number) {
     const filter: RootFilterQuery<Account> = {}
     filter.type = {
       $in: types,
