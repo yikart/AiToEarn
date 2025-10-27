@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Logger, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
 import { GetToken } from '../../auth/auth.guard'
 import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
@@ -7,6 +7,7 @@ import { BatchHistoryPostsRecordDto, searchTopicDto } from './dto/channel.dto'
 
 @Controller()
 export class ChannelController {
+  private readonly logger = new Logger(ChannelController.name)
   constructor(
     private readonly channelService: ChannelService,
   ) {}
@@ -28,6 +29,7 @@ export class ChannelController {
     @GetToken() token: TokenInfo,
     @Body() data: searchTopicDto,
   ) {
+    this.logger.log(token.id)
     return this.channelService.getDouyinTopic(data.topic, data?.language)
   }
 
