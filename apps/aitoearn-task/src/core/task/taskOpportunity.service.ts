@@ -74,7 +74,7 @@ export class TaskOpportunityService {
 
   // 获取未读的派发总数
   async getNotViewCount(userId: string) {
-    const res = await this.taskOpportunityRepository.doViewAll(userId)
+    const res = await this.taskOpportunityRepository.getNotViewCount(userId)
     return res
   }
 }
