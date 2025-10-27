@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@alexlau811/pino-cloudwatch": "^0.10.0",
     "@alicloud/credentials": "^2.4.4",
     "@alicloud/green20220302": "^2.22.1",
     "@alicloud/openapi-client": "^0.4.15",
@@ -45,10 +44,7 @@
     "moment": "^2.30.1",
     "mongodb": "^6.20.0",
     "mongoose": "^8.15.0",
-    "nats": "^2.29.3",
     "needle": "^3.3.1",
-    "nest-typed-config": "^2.10.1",
-    "nestjs-pino": "^4.4.0",
     "nodejs-base64": "2.0.0",
     "pino": "^9.7.0",
     "pino-http": "^10.5.0",
@@ -57,7 +53,7 @@
     "qs": "^6.14.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "stream": "^0.0.3",
+    "tslib": "^2.3.0",
     "uuid": "^11.1.0",
     "xml2js": "^0.6.2",
     "zod": "^4.1.9"
