@@ -70,7 +70,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     const db = this.publishRecordModel.find(filters).sort({
       createdAt: -1,
     })
-    const list = await db.lean().exec()
+    const list = await db.exec()
 
     return list
   }

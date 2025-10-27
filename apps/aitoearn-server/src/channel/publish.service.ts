@@ -59,8 +59,9 @@ export class PublishService {
   private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
     const result = new Map<string, PostHistoryItemDto>()
     for (const post of postsHistory) {
+      this.logger.log(`Merging post history: ${JSON.stringify(post)}`)
       result.set(post.postId, {
-        id: post.postId,
+        id: post.id,
         dataId: post.postId,
         flowId: '',
         type: post.mediaType,
@@ -98,8 +99,12 @@ export class PublishService {
     }
 
     for (const record of publishRecords) {
+      this.logger.log(`Merging publish record: ${JSON.stringify(record)}`)
       if (record.dataId && result.has(record.dataId)) {
         const post = result.get(record.dataId)!
+        post.id = record.id
+        post.title = record.title || ''
+        post.desc = record.desc || ''
         post.flowId = record.flowId || ''
         post.accountId = record.accountId
         post.accountType = record.accountType
@@ -113,10 +118,10 @@ export class PublishService {
           status = PublishStatus.PUBLISHING
         }
         result.set(record.dataId || record.id, {
+          id: record.id,
           flowId: record.flowId || '',
           title: record.title || '',
           desc: record.desc || '',
-          id: record.id,
           dataId: record.dataId,
           type: record.type,
           accountId: record.accountId,
@@ -134,7 +139,9 @@ export class PublishService {
       }
     }
     for (const task of publishTasks) {
+      this.logger.log(`Merging publish task: ${JSON.stringify(task)}`)
       result.set(task.dataId || task.id, {
+        id: task.id,
         ...task,
         engagement: defaultEngagement,
       })
