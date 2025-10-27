@@ -13,11 +13,11 @@ import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 @Injectable()
 export class AitoearnAuthGuard implements CanActivate {
   private readonly logger = new Logger(AitoearnAuthGuard.name)
-  private secret
+  private readonly reflector = new Reflector()
+  private readonly secret: string
   constructor(
     private readonly jwtService: JwtService,
     private readonly config: AitoearnAuthConfig,
-    private readonly reflector: Reflector,
   ) {
     this.secret = config.secret
   }
