@@ -8,9 +8,8 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { TableDto } from '@yikart/common'
-import { GetToken, Public } from '../../auth/auth.guard'
-import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatBilibiliNatsApi } from '../../transports/channel/api/bilibili.natsApi'
 import { BilibiliService } from './bilibili.service'

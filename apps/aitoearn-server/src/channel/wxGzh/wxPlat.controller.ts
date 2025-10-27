@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
-import { Public } from '../../auth/auth.guard'
+import { Public } from '@yikart/aitoearn-auth'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatWxGzhNatsApi } from '../../transports/channel/api/wxGzh.natsApi'
 import { CallbackMsgData } from './common'

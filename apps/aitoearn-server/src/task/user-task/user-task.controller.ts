@@ -1,8 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { TableDto } from '@yikart/common'
-import { GetToken } from '../../auth/auth.guard'
-import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
 import { UserTaskQueryFilterDto } from './user-task.dto'
 import { UserTaskService } from './user-task.service'
 

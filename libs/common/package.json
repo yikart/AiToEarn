@@ -17,6 +17,7 @@
     "@nestjs/microservices": "^11.1.6",
     "express": "5.1.0",
     "rxjs": "^7.8.2",
+    "tslib": "^2.3.0",
     "zod": "^4.0.0"
   },
   "dependencies": {
@@ -32,8 +33,7 @@
     "nest-typed-config": "^2.10.1",
     "nestjs-pino": "^4.4.0",
     "pino": "^9.7.0",
-    "pino-pretty": "^13.1.1",
-    "tslib": "^2.3.0"
+    "pino-pretty": "^13.1.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3"

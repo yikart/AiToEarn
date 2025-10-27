@@ -7,10 +7,9 @@
  */
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { TableDto } from '@yikart/common'
 import { plainToInstance } from 'class-transformer'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
 import { PostHistoryItemDto, PublishRecordItemDto } from './dto/publish-response.dto'
 import {

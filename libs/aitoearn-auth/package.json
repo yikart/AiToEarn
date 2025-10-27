@@ -1,7 +1,7 @@
 {
-  "name": "@yikart/aitoearn-other-client",
+  "name": "@yikart/aitoearn-auth",
   "type": "commonjs",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/yikart/aitoearn-monorepo.git"
@@ -13,12 +13,14 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
-    "@yikart/common": "^0.0.6",
-    "nats": "^2.29.3",
+    "@nestjs/core": "11.1.7",
+    "@nestjs/jwt": "^11.0.0",
+    "@nestjs/microservices": "^11.0.0",
+    "@yikart/common": "workspace:*",
     "tslib": "^2.3.0",
     "zod": "^4.0.0"
   },
   "dependencies": {
-    "@yikart/nats-client": "*"
+    "rxjs": "^7.8.0"
   }
 }

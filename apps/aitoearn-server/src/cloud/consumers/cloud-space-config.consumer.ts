@@ -104,10 +104,10 @@ export class CloudSpaceConfigConsumer extends WorkerHost {
         mail: user.mail,
         name: user.name,
       },
-      config.jwt.secret,
+      config.auth.secret,
       {
         algorithm: 'HS256',
-        expiresIn: config.jwt.expiresIn,
+        expiresIn: config.auth.expiresIn,
       },
     )
 

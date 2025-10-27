@@ -15,10 +15,10 @@
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.0",
     "@yikart/common": "*",
+    "tslib": "^2.3.0",
     "zod": "^4.0.0"
   },
   "dependencies": {
-    "ioredis": "^5.7.0",
-    "tslib": "^2.3.0"
+    "ioredis": "^5.7.0"
   }
 }

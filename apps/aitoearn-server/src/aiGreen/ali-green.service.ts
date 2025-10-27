@@ -1,7 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { TokenInfo } from '@yikart/aitoearn-auth'
 import { AliGreenApiService } from '@yikart/ali-green'
 import * as _ from 'lodash'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { UserService } from '../user/user.service'
 import { ImageBodyDto, TextBodyDto, VideoBodyDto, VideoResultBodyDto } from './dto/ali-green.dto'
 

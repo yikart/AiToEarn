@@ -15,10 +15,10 @@
     "@nestjs/common": "^11.0.0",
     "@yikart/common": "^0.0.6",
     "nats": "^2.29.3",
+    "tslib": "^2.3.0",
     "zod": "^4.0.0"
   },
   "dependencies": {
-    "@yikart/nats-client": "*",
-    "tslib": "^2.3.0"
+    "@yikart/nats-client": "*"
   }
 }

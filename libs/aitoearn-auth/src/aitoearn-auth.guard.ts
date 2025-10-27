@@ -1,41 +1,26 @@
-/*
- * @Author: nevin
- * @Date: 2024-12-22 21:14:15
- * @LastEditTime: 2025-02-25 21:33:04
- * @LastEditors: nevin
- * @Description:
- */
 import {
   CanActivate,
-  createParamDecorator,
   ExecutionContext,
   Injectable,
   Logger,
-  SetMetadata,
   UnauthorizedException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
-import { config } from '../config'
-
-export const GetToken = createParamDecorator(
-  (_data: string, ctx: ExecutionContext) => {
-    const req = ctx.switchToHttp().getRequest()
-    return req['user']
-  },
-)
-
-export const IS_PUBLIC_KEY = 'isPublic'
-export const Public = () => SetMetadata(IS_PUBLIC_KEY, true)
+import { AitoearnAuthConfig } from './aitoearn-auth.config'
+import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 
 @Injectable()
-export class AuthGuard implements CanActivate {
-  private readonly logger = new Logger(AuthGuard.name)
-  private secret = config.jwt.secret
+export class AitoearnAuthGuard implements CanActivate {
+  private readonly logger = new Logger(AitoearnAuthGuard.name)
+  private secret
   constructor(
-    private jwtService: JwtService,
-    private reflector: Reflector,
-  ) {}
+    private readonly jwtService: JwtService,
+    private readonly config: AitoearnAuthConfig,
+    private readonly reflector: Reflector,
+  ) {
+    this.secret = config.secret
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -52,7 +37,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException()
     }
 
-    if (token === config.internalToken) {
+    if (token === this.config.internalToken) {
       return true
     }
 

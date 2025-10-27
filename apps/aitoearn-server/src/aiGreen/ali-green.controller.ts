@@ -1,7 +1,6 @@
 import { Controller, Post } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AliGreenService } from './ali-green.service'
 import { ImageBodyDto, TextBodyDto, VideoBodyDto, VideoResultBodyDto } from './dto/ali-green.dto'
 

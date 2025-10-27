@@ -7,8 +7,7 @@
  */
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken } from '../auth/auth.guard'
-import { TokenInfo } from '../auth/interfaces/auth.interfaces'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { UserService } from '../user/user.service'
 import { CreateFeedBackDto } from './dto/feedback.dto'
 import { FeedbackService } from './feedback.service'

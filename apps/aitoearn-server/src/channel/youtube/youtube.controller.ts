@@ -17,8 +17,7 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken, Public } from '../../auth/auth.guard'
-import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatYoutubeNatsApi } from '../../transports/channel/api/youtube.natsApi'
 import {
