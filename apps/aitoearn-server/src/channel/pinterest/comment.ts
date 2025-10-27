@@ -58,3 +58,11 @@ export interface SourceType {
   image_url: 'image_url' //
   video_id: 'video_id' //
 }
+
+export enum SourceTypeEnum {
+  multiple_image_base64 = 'multiple_image_base64',
+  image_base64 = 'image_base64',
+  multiple_image_url = 'multiple_image_url',
+  image_url = 'image_url',
+  video_id = 'video_id',
+}

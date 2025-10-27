@@ -1,67 +1,24 @@
-import { Optional } from '@nestjs/common'
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
-import { IsString } from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
-export class CreateSkKeyDto {
-  @ApiProperty({
-    title: '备注',
-    required: false,
-    description: '备注',
-  })
-  @IsString({ message: '备注' })
-  @Optional()
-  @Expose()
-  readonly desc?: string
-}
+const CreateSkKeySchema = z.object({
+  desc: z.string({ message: '备注' }).optional(),
+})
+export class CreateSkKeyDto extends createZodDto(CreateSkKeySchema) { }
 
-export class SkKeyUpInfoDto {
-  @ApiProperty({
-    title: 'key',
-    required: true,
-    description: 'key',
-  })
-  @IsString({ message: 'key' })
-  @Expose()
-  readonly key: string
+const SkKeyUpInfoSchema = z.object({
+  key: z.string({ message: 'key' }),
+  desc: z.string({ message: '备注' }),
+})
+export class SkKeyUpInfoDto extends createZodDto(SkKeyUpInfoSchema) { }
 
-  @ApiProperty({
-    title: '备注',
-    required: true,
-    description: '备注',
-  })
-  @IsString({ message: '备注' })
-  @Expose()
-  readonly desc: string
-}
+const SkKeyAddRefAccountSchema = z.object({
+  key: z.string({ message: 'key' }),
+  accountId: z.string({ message: '账号ID' }),
+})
+export class SkKeyAddRefAccountDto extends createZodDto(SkKeyAddRefAccountSchema) { }
 
-export class SkKeyAddRefAccountDto {
-  @ApiProperty({
-    title: 'key',
-    required: true,
-    description: 'key',
-  })
-  @IsString({ message: 'key' })
-  @Expose()
-  readonly key: string
-
-  @ApiProperty({
-    title: '账号ID',
-    required: true,
-    description: '账号ID',
-  })
-  @IsString({ message: '账号ID' })
-  @Expose()
-  readonly accountId: string
-}
-
-export class GetRefAccountListDto {
-  @ApiProperty({
-    title: 'key',
-    required: true,
-    description: 'key',
-  })
-  @IsString({ message: 'key' })
-  @Expose()
-  readonly key: string
-}
+const GetRefAccountListSchema = z.object({
+  key: z.string({ message: 'key' }),
+})
+export class GetRefAccountListDto extends createZodDto(GetRefAccountListSchema) { }

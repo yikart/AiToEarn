@@ -1,34 +1,19 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
-import { IsOptional, IsString } from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
-export class GetAuthUrlDto {
-  @ApiProperty({ title: '权限范围', type: [String], required: false, nullable: true })
-  @Expose()
-  readonly scopes?: string[]
+const GetAuthUrlSchema = z.object({
+  scopes: z.array(z.string()).optional(),
+  spaceId: z.string().optional(),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @ApiProperty({ title: '空间ID', required: false })
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly spaceId?: string
-}
+const GetAuthInfoSchema = z.object({
+  taskId: z.string({ message: '任务ID不能为空' }),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-export class GetAuthInfoDto {
-  @ApiProperty({ title: '任务ID', required: true })
-  @IsString({ message: '任务ID不能为空' })
-  @Expose()
-  readonly taskId: string
-}
-
-export class CreateAccountAndSetAccessTokenDto {
-  @ApiProperty({ title: '授权码', required: true })
-  @IsString({ message: '授权码不能为空' })
-  @Expose()
-  readonly code: string
-
-  @ApiProperty({ title: '状态码', required: true })
-  @IsString({ message: '状态码不能为空' })
-  @Expose()
-  readonly state: string
-}
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  code: z.string({ message: '授权码不能为空' }),
+  state: z.string({ message: '状态码不能为空' }),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(CreateAccountAndSetAccessTokenSchema) {}

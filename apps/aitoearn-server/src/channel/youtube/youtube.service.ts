@@ -330,13 +330,13 @@ export class YoutubeService {
   // 创建二级评论
   async insertComment(
     accountId: string,
-    parentId: string,
-    textOriginal: string,
+    parentId?: string,
+    textOriginal?: string,
   ) {
     const { code, data, message } = await this.platYoutubeNatsApi.insertComment(
       accountId,
-      parentId,
       textOriginal,
+      parentId,
     )
     if (code)
       throw new AppException(code, message)

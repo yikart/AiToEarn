@@ -377,8 +377,8 @@ export class PlatYoutubeNatsApi extends ChannelBaseApi {
   // 创建二级评论
   async insertComment(
     accountId: string,
-    parentId: string,
-    textOriginal: string,
+    parentId?: string,
+    textOriginal?: string,
   ) {
     const res = await this.sendMessage<any>(
       `plat/youtube/insertComment`,
