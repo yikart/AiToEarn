@@ -7,7 +7,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosResponse } from 'axios'
 import * as _ from 'lodash'
-import { base64encode } from 'nodejs-base64'
 import qs from 'qs'
 import { config } from '../../config'
 
@@ -63,7 +62,7 @@ export class PinterestApiService {
       continuous_refresh: true,
     })
     const pwd = `${this.appId}:${this.appSecret}`
-    const Authorization = `Basic ${base64encode(pwd)}`
+    const Authorization = `Basic ${Buffer.from(pwd).toString('base64')}`
     const headers = {
       'Content-Type': 'application/x-www-form-urlencoded',
       Authorization,

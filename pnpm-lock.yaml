@@ -328,9 +328,6 @@ importers:
       needle:
         specifier: ^3.3.1
         version: 3.3.1
-      nodejs-base64:
-        specifier: 2.0.0
-        version: 2.0.0
       pino:
         specifier: ^9.7.0
         version: 9.14.0
@@ -8179,9 +8176,6 @@ packages:
 
   node-releases@2.0.26:
     resolution: {integrity: sha512-S2M9YimhSjBSvYnlr5/+umAnPHE++ODwt5e2Ij6FoX45HA/s4vHdkDx1eax2pAPeAOqu4s9b7ppahsyEFdVqQA==}
-
-  nodejs-base64@2.0.0:
-    resolution: {integrity: sha512-rf83teAz8f251P+HQW0nZyIhIIKrTs8wz11n5+Dp1b+/oWCYSeCfNfbUqda5B0DhspBVXwJ7SPk8aghv/TFsjQ==}
 
   nodemailer@6.10.1:
     resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
@@ -20007,8 +20001,6 @@ snapshots:
   node-machine-id@1.1.12: {}
 
   node-releases@2.0.26: {}
-
-  nodejs-base64@2.0.0: {}
 
   nodemailer@6.10.1:
     optional: true
