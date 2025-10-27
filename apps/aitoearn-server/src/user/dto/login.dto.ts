@@ -5,66 +5,43 @@
  * @LastEditors: nevin
  * @Description: 用户
  */
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto } from '@yikart/common'
-import { Expose } from 'class-transformer'
-import { IsEmail, IsString } from 'class-validator'
 import z from 'zod'
 
-export class MailLoginDto {
-  @ApiProperty({ title: '邮箱', required: true })
-  @IsEmail({}, { message: '邮箱' })
-  @Expose()
-  readonly mail: string
+const MailLoginSchema = z.object({
+  mail: z.string().email({ message: '邮箱' }),
+  password: z.string({ message: '密码' }),
+})
 
-  @ApiProperty({ required: true })
-  @IsString({ message: '密码' })
-  @Expose()
-  readonly password: string
-}
+export class MailLoginDto extends createZodDto(MailLoginSchema) {}
 
-export class MailRegistUrlDto {
-  @ApiProperty({ title: '邮箱', required: true })
-  @IsEmail({}, { message: '邮箱' })
-  @Expose()
-  readonly mail: string
-
-  @ApiProperty({ required: true })
-  @IsString({ message: '验证码' })
-  @Expose()
-  readonly code: string
-}
+const MailRegistUrlSchema = z.object({
+  mail: z.string().email({ message: '邮箱' }),
+})
+export class MailRegistUrlDto extends createZodDto(MailRegistUrlSchema) {}
 
 export const RegistByMailSchema = z.object({
-  mail: z.email().describe('邮箱'),
+  mail: z.string().email().describe('邮箱'),
   code: z.string().describe('验证码'),
   password: z.string().describe('密码'),
   inviteCode: z.string().describe('邀请码').optional(),
 })
-export class RegistByMailDto extends createZodDto(RegistByMailSchema) {}
+export class RegistByMailDto extends createZodDto(RegistByMailSchema) { }
 
-export class MailRepasswordDto {
-  @ApiProperty({ title: '邮箱', required: true })
-  @IsEmail({}, { message: '邮箱' })
-  @Expose()
-  readonly mail: string
-}
+const MailRepasswordSchema = z.object({
+  mail: z.string().email({ message: '邮箱' }),
+})
+export class MailRepasswordDto extends createZodDto(MailRepasswordSchema) {}
 
-export class GoogleLoginDto {
-  @ApiProperty({ description: 'Google客户端ID' })
-  @IsString()
-  @Expose()
-  clientId: string
+const GoogleLoginSchema = z.object({
+  clientId: z.string({ message: 'Google客户端ID' }),
+  credential: z.string({ message: 'Google认证凭证' }),
+})
 
-  @ApiProperty({ description: 'Google认证凭证' })
-  @IsString()
-  @Expose()
-  credential: string
-}
+export class GoogleLoginDto extends createZodDto(GoogleLoginSchema) {}
 
-export class UserCancelDto {
-  @ApiProperty({ required: true })
-  @IsString({ message: '验证码' })
-  @Expose()
-  readonly code: string
-}
+const UserCancelSchema = z.object({
+  code: z.string({ message: '验证码' }),
+})
+
+export class UserCancelDto extends createZodDto(UserCancelSchema) {}
