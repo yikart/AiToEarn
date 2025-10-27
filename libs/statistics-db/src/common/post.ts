@@ -1,4 +1,5 @@
 export interface PostData {
+  id: string // '记录ID',
   postId: string // '帖子ID',
   platform: string // describe('平台'),
   title?: string // nullable;.describe('标题'),
