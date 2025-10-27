@@ -75,4 +75,9 @@ export class RedisService {
   ]) {
     return this.client.eval(...args)
   }
+
+  async rename(oldKey: string, newKey: string): Promise<boolean> {
+    const result = await this.client.rename(oldKey, newKey)
+    return result === 'OK'
+  }
 }

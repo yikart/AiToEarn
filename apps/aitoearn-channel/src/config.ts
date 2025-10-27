@@ -1,33 +1,12 @@
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
+import { redisConfigSchema } from '@yikart/redis'
 import { z } from 'zod'
 import { s3ConfigSchema } from './libs/aws-s3/s3.config'
-
-// Redis配置
-const redisConfigSchema = z.object({
-  name: z.string().default('default'),
-  host: z.string().default('127.0.0.1'),
-  port: z.number().default(6379),
-  password: z.string().default(''),
-  db: z.number().default(0),
-  connectTimeout: z.number().default(10000),
-})
 
 // MongoDB配置
 const mongoConfigSchema = z.object({
   uri: z.string().default(''),
   dbName: z.string().default(''),
-})
-
-// bullmq配置
-const BullmqConnectionSchema = z.object({
-  host: z.string().default('127.0.0.1'),
-  port: z.number().default(6379),
-  password: z.string().default(''),
-  db: z.number().default(0),
-})
-const BullmqSchema = z.object({
-  connection: BullmqConnectionSchema,
-  prefix: z.string().optional(),
 })
 
 const kwaiSchema = z.object({
@@ -124,7 +103,6 @@ export const configSchema = z.object({
   redis: redisConfigSchema,
   mongodb: mongoConfigSchema,
   awsS3: s3ConfigSchema,
-  bullmq: BullmqSchema,
   bilibili: BilibiliSchema,
   kwai: kwaiSchema,
   google: GoogleSchema,

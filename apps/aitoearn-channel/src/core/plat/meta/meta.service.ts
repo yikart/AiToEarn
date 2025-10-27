@@ -1,12 +1,12 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
+import { RedisService } from '@yikart/redis'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { getCurrentTimestamp } from '../../../common'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
 import { Account } from '../../../libs/database/schema/account.schema'
 import { FacebookPageDetailRequest, FacebookPageDetailResponse } from '../../../libs/facebook/facebook.interfaces'
-import { RedisService } from '../../../libs/redis'
 import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
 import { META_TIME_CONSTANTS, metaOAuth2ConfigMap, MetaRedisKeys } from './constants'
 import {
@@ -81,7 +81,7 @@ export class MetaService {
     authorizeURL.search = params.toString()
     this.logger.debug(`Generated meta auth URL: ${authorizeURL.toString()}`)
 
-    const success = await this.redisService.setKey<MetaOAuth2TaskInfo>(
+    const success = await this.redisService.setJson(
       MetaRedisKeys.getAuthTaskKey(state),
       {
         state,
@@ -99,7 +99,7 @@ export class MetaService {
   }
 
   async getOAuth2TaskInfo(state: string) {
-    const result = await this.redisService.get<MetaOAuth2TaskStatus>(
+    const result = await this.redisService.getJson<MetaOAuth2TaskStatus>(
       MetaRedisKeys.getAuthTaskKey(state),
     )
     if (!result) {
@@ -242,7 +242,7 @@ export class MetaService {
     userId: string,
   ): Promise<FacebookPage[]> {
     const key = MetaRedisKeys.getUserPageListKey('facebook', userId)
-    const pages = await this.redisService.get<FacebookPage[]>(key)
+    const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (pages) {
       return pages
     }
@@ -259,7 +259,7 @@ export class MetaService {
       selectedPageIds: [],
     }
     const key = MetaRedisKeys.getUserPageListKey('facebook', userId)
-    const pages = await this.redisService.get<FacebookPage[]>(key)
+    const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (!pages || pages.length === 0) {
       this.logger.warn(`No Facebook pages found for userId: ${userId}`)
       result.message = 'No Facebook pages found for the user.'
@@ -281,7 +281,7 @@ export class MetaService {
         'facebook',
         pageId,
       )
-      const pageCredential = await this.redisService.get<FacebookPageCredentials>(pageCredentialKey)
+      const pageCredential = await this.redisService.getJson<FacebookPageCredentials>(pageCredentialKey)
       if (!pageCredential) {
         result.message = `Page access token not found for userId: ${userId}, pageId: ${pageId}`
         return result
@@ -303,13 +303,13 @@ export class MetaService {
         'facebook',
         accountInfo.id,
       )
-      await this.redisService.renameKey(
+      await this.redisService.rename(
         pageCredentialKey,
         newPageCredentialKey,
       )
       const previousFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey('facebook', userId)
       const newFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey('facebook', pageCredential.facebook_user_id)
-      await this.redisService.renameKey(
+      await this.redisService.rename(
         previousFacebookCredentialKey,
         newFacebookCredentialKey,
       )
@@ -354,7 +354,7 @@ export class MetaService {
   ) {
     const { code } = authData
 
-    const authTaskInfo = await this.redisService.get<MetaOAuth2TaskInfo>(
+    const authTaskInfo = await this.redisService.getJson<MetaOAuth2TaskInfo>(
       MetaRedisKeys.getAuthTaskKey(state),
     )
     if (!authTaskInfo) {
@@ -365,7 +365,7 @@ export class MetaService {
       }
     }
 
-    void this.redisService.setPexire(
+    void this.redisService.expire(
       MetaRedisKeys.getAuthTaskKey(state),
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
@@ -413,7 +413,7 @@ export class MetaService {
               fields: 'picture',
             })
             const expiredTime = getCurrentTimestamp() + credential.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-            await this.redisService.setKey(
+            await this.redisService.setJson(
               MetaRedisKeys.getUserPageAccessTokenKey(
                 authTaskInfo.platform,
                 pageAccount.id,
@@ -426,7 +426,7 @@ export class MetaService {
               profile_picture_url: pageDetail?.picture?.data?.url,
             })
           }
-          await this.redisService.setKey(
+          await this.redisService.setJson(
             MetaRedisKeys.getUserPageListKey(
               authTaskInfo.platform,
               authTaskInfo.userId,
@@ -578,7 +578,7 @@ export class MetaService {
     const expireTime
       = now + tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     tokenInfo.expires_in = expireTime
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       MetaRedisKeys.getAccessTokenKey(platform, accountId),
       tokenInfo,
     )
@@ -592,7 +592,7 @@ export class MetaService {
     authTaskInfo.status = 1
     authTaskInfo.accountId = accountId
 
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       MetaRedisKeys.getAuthTaskKey(state),
       authTaskInfo,
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
@@ -601,7 +601,7 @@ export class MetaService {
 
   async getAccessTokenStatus(accountId: string, platform: string): Promise<number> {
     if (platform === 'facebook') {
-      const pageCredential = await this.redisService.get<FacebookPageCredentials>(
+      const pageCredential = await this.redisService.getJson<FacebookPageCredentials>(
         MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId),
       )
       if (!pageCredential) {
@@ -609,7 +609,7 @@ export class MetaService {
       }
       return pageCredential.expires_in > getCurrentTimestamp() ? 1 : 0
     }
-    const credential = await this.redisService.get<MetaUserOAuthCredential>(
+    const credential = await this.redisService.getJson<MetaUserOAuthCredential>(
       MetaRedisKeys.getAccessTokenKey(platform, accountId),
     )
     if (!credential) {

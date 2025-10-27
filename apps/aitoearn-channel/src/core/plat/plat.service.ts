@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { RedisService } from '@yikart/redis'
 import { isInstance } from 'class-validator'
-import { RedisService } from '../../libs'
 import { AccountType } from '../../transports/account/common'
 import { AccountService } from '../account/account.service'
 import { BilibiliService } from './bilibili/bilibili.service'
@@ -123,7 +123,7 @@ export class PlatformService {
     if (!resp || !resp.taskId) {
       throw new Error(`Failed to generate authorization URL for platform: ${data.platform}`)
     }
-    const spaceInfoCached = await this.redisService.setKey(
+    const spaceInfoCached = await this.redisService.setJson(
       `platform:oauth:space:${resp.taskId}`,
       data.spaceId,
       600,

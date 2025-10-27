@@ -7,7 +7,6 @@
  */
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
-import { RedisModule } from '../../../libs'
 import { OAuth2Crendential, OAuth2CrendentialSchema } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { YoutubeApiModule } from '../../../libs/youtube/youtubeApi.module'
 import { AccountInternalApi } from '../../../transports/account/account.api'
@@ -21,7 +20,6 @@ import { YoutubeService } from './youtube.service'
       { name: OAuth2Crendential.name, schema: OAuth2CrendentialSchema },
     ]),
 
-    RedisModule,
     YoutubeApiModule,
     TransportModule,
   ],

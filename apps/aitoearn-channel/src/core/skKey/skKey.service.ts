@@ -7,10 +7,10 @@
  */
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { TableDto } from '../../common/global/dto/table.dto'
 import { strUtil } from '../../common/utils/str.util'
-import { RedisService } from '../../libs'
 import { Account } from '../../libs/database/schema/account.schema'
 import { SkKey } from '../../libs/database/schema/skKey.schema'
 import { SkKeyRefAccount } from '../../libs/database/schema/skKeyRefAccount.schema'
@@ -49,19 +49,19 @@ export class SkKeyService {
   }
 
   async getInfo(key: string) {
-    const data = await this.redisService.get<SkKey>(`skKey:${key}`)
+    const data = await this.redisService.getJson<SkKey>(`skKey:${key}`)
     if (data) {
       return data
     }
 
     const res = await this.skKeyModel.findOne({ key })
-    await this.redisService.setKey(`skKey:${key}`, res)
+    await this.redisService.setJson(`skKey:${key}`, res)
     return res
   }
 
   // 检查是否活跃
   async checkActive(key: string) {
-    const data = await this.redisService.getPttl(`skKey:${key}`)
+    const data = await this.redisService.ttl(`skKey:${key}`)
     return data > 0
   }
 

@@ -10,6 +10,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
 import { AppException } from '@yikart/common'
+import { RedisService } from '@yikart/redis'
 import axios from 'axios'
 import { Auth, google } from 'googleapis'
 import { Model } from 'mongoose'
@@ -18,7 +19,6 @@ import { getCurrentTimestamp } from '../../../common'
 import { ExceptionCode } from '../../../common/enums/exception-code.enum'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
-import { RedisService } from '../../../libs'
 import { Account } from '../../../libs/database/schema/account.schema'
 import {
   OAuth2Crendential,
@@ -85,7 +85,7 @@ export class YoutubeService {
   ) {
     const { code } = data
 
-    const authTask = await this.redisService.get<AuthTaskInfo>(
+    const authTask = await this.redisService.getJson<AuthTaskInfo>(
       `youtube:authTask:${taskId}`,
     )
 
@@ -142,7 +142,7 @@ export class YoutubeService {
       )
 
       // 缓存令牌
-      let res = await this.redisService.setKey(
+      let res = await this.redisService.setJson(
         `youtube:accessToken:${accountInfo.id}`,
         {
           access_token,
@@ -186,7 +186,7 @@ export class YoutubeService {
       authTask.status = 1
       authTask.accountId = accountInfo.id
       authTask.mail = email || ''
-      res = await this.redisService.setKey<AuthTaskInfo>(
+      res = await this.redisService.setJson(
         `youtube:authTask:${taskId}`,
         authTask,
         60 * 3,
@@ -208,7 +208,7 @@ export class YoutubeService {
 
   private async saveOAuthCredential(accountId: string, accessTokenInfo: any) {
     accessTokenInfo.expires_in = getCurrentTimestamp() + accessTokenInfo.expires_in
-    const cached = await this.redisService.setKey(
+    const cached = await this.redisService.setJson(
       `youtube:accessToken:${accountId}`,
       accessTokenInfo,
     )
@@ -227,7 +227,7 @@ export class YoutubeService {
   }
 
   private async getOAuth2Credential(accountId: string): Promise<any | null> {
-    let credential = await this.redisService.get<any>(
+    let credential = await this.redisService.getJson<any>(
       `youtube:accessToken:${accountId}`,
     )
     this.logger.log(`getOAuth2Credential from redis: ${JSON.stringify(credential)}`)
@@ -257,7 +257,7 @@ export class YoutubeService {
    * @returns
    */
   async setAccessToken(taskId: string, code: string) {
-    const authTaskState = await this.redisService.get<AuthTaskInfo>(
+    const authTaskState = await this.redisService.getJson<AuthTaskInfo>(
       `youtube:authTask:${taskId}`,
     )
     if (!authTaskState || authTaskState.state !== taskId)
@@ -324,7 +324,7 @@ export class YoutubeService {
       authTaskState.uid = googleId
       authTaskState.type = 'youtube'
       authTaskState.account = accountInfo.id
-      await this.redisService.setKey<AuthTaskInfo>(
+      await this.redisService.setJson(
         `youtube:authTask:${taskId}`,
         authTaskState,
         60 * 3,
@@ -568,7 +568,7 @@ export class YoutubeService {
 
     const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth')
     authUrl.search = params.toString()
-    const rRes = await this.redisService.setKey<AuthTaskInfo>(
+    const rRes = await this.redisService.setJson(
       `youtube:authTask:${state}`,
       { state, status: 0, userId, mail, spaceId },
       60 * 5,
@@ -589,7 +589,7 @@ export class YoutubeService {
    * @returns
    */
   async getAuthInfo(taskId: string) {
-    const data = await this.redisService.get<{
+    const data = await this.redisService.getJson<{
       state: string
       status: number
       accountId?: string

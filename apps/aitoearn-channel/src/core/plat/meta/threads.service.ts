@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { RedisService } from '@yikart/redis'
 import { getCurrentTimestamp } from '../../../common'
-import { RedisService } from '../../../libs'
 import {
   publicProfileResponse,
   ThreadsContainerRequest,
@@ -34,7 +34,7 @@ export class ThreadsService {
   private async authorize(
     accountId: string,
   ): Promise<MetaUserOAuthCredential | null> {
-    const credential = await this.redisService.get<MetaUserOAuthCredential>(
+    const credential = await this.redisService.getJson<MetaUserOAuthCredential>(
       MetaRedisKeys.getAccessTokenKey('threads', accountId),
     )
     if (!credential) {
@@ -88,7 +88,7 @@ export class ThreadsService {
     const expireTime
       = now + tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     tokenInfo.expires_in = expireTime
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       MetaRedisKeys.getAccessTokenKey(platform, accountId),
       tokenInfo,
     )

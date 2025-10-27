@@ -10,11 +10,11 @@ import { randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { AppException } from '@yikart/common'
+import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { getCurrentTimestamp } from '../../../common'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
-import { RedisService } from '../../../libs'
 import { OAuth2Crendential } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { TiktokPostMode, TiktokPrivacyLevel, TiktokSourceType } from '../../../libs/tiktok/tiktok.enum'
 import {
@@ -72,7 +72,7 @@ export class TiktokService {
 
     const authUrl = this.tiktokApiService.generateAuthUrl(requestedScopes, state)
 
-    const success = await this.redisService.setKey<AuthTaskInfo>(
+    const success = await this.redisService.setJson(
       TiktokRedisKeys.getAuthTaskKey(state),
       { state, status: 0, userId, spaceId },
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
@@ -84,7 +84,7 @@ export class TiktokService {
   private async saveOAuthCredential(accountId: string, accessTokenInfo: TiktokOAuthResponse) {
     accessTokenInfo.expires_in = getCurrentTimestamp() + accessTokenInfo.expires_in - TIKTOK_TIME_CONSTANTS.TOKEN_EXPIRE_BUFFER
     accessTokenInfo.refresh_expires_in = getCurrentTimestamp() + accessTokenInfo.refresh_expires_in - TIKTOK_TIME_CONSTANTS.TOKEN_REFRESH_THRESHOLD
-    const cached = await this.redisService.setKey(
+    const cached = await this.redisService.setJson(
       TiktokRedisKeys.getAccessTokenKey(accountId),
       accessTokenInfo,
     )
@@ -104,7 +104,7 @@ export class TiktokService {
   }
 
   private async getOAuth2Credential(accountId: string): Promise<TiktokOAuthResponse | null> {
-    let credential = await this.redisService.get<TiktokOAuthResponse>(
+    let credential = await this.redisService.getJson<TiktokOAuthResponse>(
       TiktokRedisKeys.getAccessTokenKey(accountId),
     )
     if (!credential) {
@@ -132,7 +132,7 @@ export class TiktokService {
    * 获取授权任务信息
    */
   async getAuthInfo(taskId: string) {
-    const result = await this.redisService.get<AuthTaskInfo>(
+    const result = await this.redisService.getJson<AuthTaskInfo>(
       TiktokRedisKeys.getAuthTaskKey(taskId),
     )
     if (!result) {
@@ -154,7 +154,7 @@ export class TiktokService {
   ) {
     const { code } = authData
 
-    const authTaskInfo = await this.redisService.get<AuthTaskInfo>(
+    const authTaskInfo = await this.redisService.getJson<AuthTaskInfo>(
       TiktokRedisKeys.getAuthTaskKey(taskId),
     )
     if (!authTaskInfo) {
@@ -165,7 +165,7 @@ export class TiktokService {
     }
 
     // 延长授权任务时间
-    void this.redisService.setPexire(
+    void this.redisService.expire(
       TiktokRedisKeys.getAuthTaskKey(taskId),
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
@@ -420,7 +420,7 @@ export class TiktokService {
     const now = getCurrentTimestamp()
     tokenInfo.expires_in = now + tokenInfo.expires_in - TIKTOK_TIME_CONSTANTS.TOKEN_EXPIRE_BUFFER
     tokenInfo.refresh_expires_in = now + tokenInfo.refresh_expires_in - TIKTOK_TIME_CONSTANTS.TOKEN_REFRESH_THRESHOLD
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       TiktokRedisKeys.getAccessTokenKey(accountId),
       tokenInfo,
     )
@@ -437,7 +437,7 @@ export class TiktokService {
     authTaskInfo.status = 1
     authTaskInfo.accountId = accountId
 
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       TiktokRedisKeys.getAuthTaskKey(taskId),
       authTaskInfo,
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXTEND,

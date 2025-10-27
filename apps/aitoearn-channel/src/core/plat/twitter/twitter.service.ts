@@ -1,11 +1,11 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { v4 as uuidV4 } from 'uuid'
 import { chunkedDownloadFile, fileUrlToBlob, getCurrentTimestamp, getFileSizeFromUrl, getFileTypeFromUrl } from '../../../common'
 import { AccountService } from '../../../core/account/account.service'
-import { RedisService } from '../../../libs'
 import { OAuth2Crendential } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { XMediaCategory, XMediaType } from '../../../libs/twitter/twitter.enum'
 import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XDeletePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../../libs/twitter/twitter.interfaces'
@@ -59,7 +59,7 @@ export class TwitterService {
 
   private async saveOAuthCredential(accountId: string, accessTokenInfo: TwitterOAuthCredential) {
     accessTokenInfo.expires_in = accessTokenInfo.expires_in + getCurrentTimestamp() - TWITTER_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-    const cached = await this.redisService.setKey(
+    const cached = await this.redisService.setJson(
       TwitterRedisKeys.getAccessTokenKey(accountId),
       accessTokenInfo,
     )
@@ -78,7 +78,7 @@ export class TwitterService {
   }
 
   private async getOAuth2Credential(accountId: string): Promise<TwitterOAuthCredential | null> {
-    let credential = await this.redisService.get<TwitterOAuthCredential>(
+    let credential = await this.redisService.getJson<TwitterOAuthCredential>(
       TwitterRedisKeys.getAccessTokenKey(accountId),
     )
     if (!credential) {
@@ -162,7 +162,7 @@ export class TwitterService {
       .update(codeVerifier)
       .digest('base64url')
     const state = randomBytes(32).toString('hex')
-    const success = await this.redisService.setKey<TwitterOAuthTaskInfo>(
+    const success = await this.redisService.setJson(
       TwitterRedisKeys.getAuthTaskKey(state),
       { state, status: 0, userId, codeVerifier, taskId, spaceId },
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
@@ -177,7 +177,7 @@ export class TwitterService {
   }
 
   async getOAuth2TaskInfo(state: string) {
-    return await this.redisService.get<TwitterOAuthTaskInfo>(
+    return await this.redisService.getJson<TwitterOAuthTaskInfo>(
       TwitterRedisKeys.getAuthTaskKey(state),
     )
   }
@@ -198,7 +198,7 @@ export class TwitterService {
     }
 
     // 延长授权任务时间
-    void this.redisService.setPexire(
+    void this.redisService.expire(
       TwitterRedisKeys.getAuthTaskKey(state),
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
@@ -295,7 +295,7 @@ export class TwitterService {
     authTaskInfo.status = 1
     authTaskInfo.accountId = accountId
 
-    return await this.redisService.setKey(
+    return await this.redisService.setJson(
       TwitterRedisKeys.getAuthTaskKey(state),
       authTaskInfo,
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXTEND,
