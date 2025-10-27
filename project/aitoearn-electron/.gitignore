@@ -13,7 +13,7 @@ dist-ssr
 dist-electron
 release
 *.local
-.vscode
+
 # Editor directories and files
 .vscode/.debug.env
 .idea
