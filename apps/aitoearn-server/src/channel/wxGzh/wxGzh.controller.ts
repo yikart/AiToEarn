@@ -7,8 +7,7 @@
  */
 import { Controller, Get, Param, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken } from '../../auth/auth.guard'
-import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { GetUserCumulateData } from './dto/wxGzh.dto'
 import { WxGzhService } from './wxGzh.service'
 

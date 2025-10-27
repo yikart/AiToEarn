@@ -17,7 +17,7 @@ import {
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Public } from '../auth/auth.guard'
+import { Public } from '@yikart/aitoearn-auth'
 import {
   CompletePartDto,
   GetUploadUrlDto,

@@ -15,19 +15,11 @@
     "lodash": "^4.17.21",
     "nats": "^2.29.3",
     "rxjs": "^7.8.0",
-    "tslib": "^2.3.0",
     "zod": "^4.0.17"
   },
   "devDependencies": {
     "@types/data-urls": "^3.0.4",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/lodash": "^4.17.20"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@nestjs/core",
-      "@scarf/scarf",
-      "nestjs-pino"
-    ]
   }
 }

@@ -1,7 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query, Render } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { GetToken, Public } from '../../auth/auth.guard'
-import { TokenInfo } from '../../auth/interfaces/auth.interfaces'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { PlatMetaNatsApi } from '../../transports/channel/api/meta.natsApi'
 import {
   CreateAccountAndSetAccessTokenDto,
