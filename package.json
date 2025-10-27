@@ -20,7 +20,6 @@
     "@ant-design/colors": "^7.2.1",
     "@ant-design/icons": "^6.0.0",
     "@ant-design/nextjs-registry": "^1.0.2",
-    "@aws-sdk/s3-presigned-post": "^3.916.0",
     "@fullcalendar/core": "^6.1.17",
     "@fullcalendar/daygrid": "^6.1.17",
     "@fullcalendar/react": "^6.1.17",
