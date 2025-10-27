@@ -331,27 +331,22 @@ export class PostRepository extends BaseRepository<PostModel> {
       'xhs',
       'youtube',
     ]
-    const unionPipelines = platforms.map(platform => ({
-      $unionWith: {
-        coll: `${platform}_post_snapshot`,
-        pipeline: [{ $match: filters }],
-      },
-    }))
-
-    const platform = 'facebook'
-    const postModel = this.models[platform]
-    if (!postModel) {
-      throw new Error(`Unsupported platform: ${platform}`)
+    const queries = []
+    for (const platform of platforms) {
+      const postModel = this.models[platform]
+      if (postModel) {
+        queries.push(
+          postModel.find(filters, null, { sort: { publishTime: -1 } }).exec(),
+        )
+      }
     }
-    const mainPipeline: any = [
-      { $match: filters },
-      ...unionPipelines,
-      { $sort: { publishTime: -1 } },
-    ]
-    const postDocs = await postModel.aggregate(mainPipeline).exec()
+    const postDocGroups = await Promise.all(queries)
+    const postDocs = postDocGroups.flat().sort((a, b) => {
+      return new Date(b.publishTime || 0).getTime() - new Date(a.publishTime || 0).getTime()
+    })
     const posts: PostData[] = postDocs.map(doc => ({
-      postId: doc.postId ?? '',
-      platform: doc.platform ?? platform,
+      postId: doc.postId,
+      platform: doc.platform,
       title: doc.title ?? null,
       content: doc.desc ?? null,
       thumbnail: doc.cover ?? null,
