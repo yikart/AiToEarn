@@ -20,7 +20,7 @@ import { MaterialGroupService } from './materialGroup.service'
 import { MediaService } from './media.service'
 import { MediaGroupService } from './mediaGroup.service'
 
-const MaterialMediaTypeMap = new Map<MaterialType, MediaType>([
+export const MaterialMediaTypeMap = new Map<MaterialType, MediaType>([
   [MaterialType.VIDEO, MediaType.VIDEO],
   [MaterialType.ARTICLE, MediaType.IMG],
 ])
@@ -98,7 +98,6 @@ export class MaterialTaskService {
     const taskInfo = await this.getInfo(id)
     if (!taskInfo)
       throw new AppException(1, '任务信息不存在')
-
     // 开始任务
     void this.materialGenerateQueue.add(
       'start',

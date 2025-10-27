@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { AppException, ResponseCode, TableDto, UserType } from '@yikart/common'
+import { MaterialType, MediaType } from '@yikart/mongodb'
 import { GetToken } from '../auth/auth.guard'
 import { TokenInfo } from '../auth/interfaces/auth.interfaces'
 import { UserService } from '../user/user.service'
@@ -30,6 +31,12 @@ import {
 import { MaterialService } from './material.service'
 import { MaterialGroupService } from './materialGroup.service'
 import { MaterialTaskService } from './materialTask.service'
+import { MediaGroupService } from './mediaGroup.service'
+
+export const MediaMaterialTypeMap = new Map<MediaType, MaterialType>([
+  [MediaType.VIDEO, MaterialType.VIDEO],
+  [MediaType.IMG, MaterialType.ARTICLE],
+])
 
 @ApiTags('草稿')
 @Controller('material')
@@ -39,6 +46,7 @@ export class MaterialController {
     private readonly materialGroupService: MaterialGroupService,
     private readonly userService: UserService,
     private readonly materialTaskService: MaterialTaskService,
+    private readonly mediaGroupService: MediaGroupService,
   ) { }
 
   @ApiOperation({
@@ -72,9 +80,16 @@ export class MaterialController {
     @GetToken() token: TokenInfo,
     @Body() body: CreateMaterialTaskDto,
   ) {
-    await this.userService.checkUserVipRights(token.id)
+    // await this.userService.checkUserVipRights(token.id)
+    const mediaGroupInfo = await this.mediaGroupService.getInfo(body.mediaGroups[0])
+    if (!mediaGroupInfo) {
+      throw new AppException(1000, '素材组不存在')
+    }
+
+    const type = mediaGroupInfo?.type
     const res = await this.materialTaskService.createTask({
       ...body,
+      type: MediaMaterialTypeMap.get(type)!,
     })
     return res
   }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto, TableDto } from '@yikart/common'
-import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
+import { MaterialStatus, MediaType } from '@yikart/mongodb'
 import { Expose } from 'class-transformer'
 import {
   IsString,
@@ -44,7 +44,7 @@ export const createMaterialTaskSchema = z.object({
   option: z.any().optional().describe('高级设置'),
   textMax: z.number().optional().describe('最大文字数量'),
   language: z.enum(['中文', '英文']).optional().describe('语言'),
-  type: z.enum([MaterialType.VIDEO, MaterialType.ARTICLE]).describe('草稿类型'),
+  // type: z.enum([MaterialType.VIDEO, MaterialType.ARTICLE]).describe('草稿类型'),
   autoDeleteMedia: z.boolean().optional().describe('自动删除素材'),
 })
 export class CreateMaterialTaskDto extends createZodDto(createMaterialTaskSchema) {}
