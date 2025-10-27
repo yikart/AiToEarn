@@ -10,7 +10,7 @@ export class TaskPortraitNatsApi extends TaskBaseApi {
    */
   async userPortraitReport(data: UserPortraitReportData) {
     const res = await this.sendMessage<any>(
-      `task/userPortrait/report`,
+      `task/user/portrait/report`,
       { ...data, ...(data.lastLoginTime && { lastLoginTime: data.lastLoginTime.toISOString() }) },
     )
     return res
@@ -21,7 +21,7 @@ export class TaskPortraitNatsApi extends TaskBaseApi {
    */
   async accountPortraitReport(data: AccountPortraitReportData) {
     const res = await this.sendMessage<any>(
-      `task/accountPortrait/report`,
+      `task/account/portrait/report`,
       data,
     )
     return res
