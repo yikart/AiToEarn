@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { ChatCompletionVo, UserChatCompletionDto } from '@yikart/aitoearn-ai-client'
 import { AxiosRequestConfig } from 'axios'
 import { InternalApi } from '../api'
+import { ChatCompletionVo, UserChatCompletionDto } from './ai.interface'
 
 @Injectable()
 export class AIInternalApi extends InternalApi {
