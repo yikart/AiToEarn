@@ -166,7 +166,7 @@ export class MediaService {
    */
   async checkIsEmptyGroup(groupId: string): Promise<boolean> {
     const exists = await this.mediaRepository.checkIsEmptyGroup(groupId)
-    return !exists
+    return exists
   }
 
   async addUseCount(id: string): Promise<boolean> {

@@ -6,6 +6,7 @@ import { config } from '../config'
 import { MaterialController } from './material.controller'
 import { MaterialInternalController } from './material.internal.controller'
 import { MaterialService } from './material.service'
+import { bullMaterialGenerate } from './materialGenerate.bull'
 import { MaterialGroupController } from './materialGroup.controller'
 import { MaterialGroupService } from './materialGroup.service'
 import { MaterialTaskService } from './materialTask.service'
@@ -28,7 +29,7 @@ import { MediaGroupService } from './mediaGroup.service'
     }),
   ],
   controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController, MaterialInternalController],
-  providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService],
+  providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, bullMaterialGenerate],
   exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService],
 })
 export class ContentModule { }
