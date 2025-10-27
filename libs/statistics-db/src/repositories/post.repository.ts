@@ -185,7 +185,7 @@ export class PostRepository extends BaseRepository<PostModel> {
       throw new Error(`Unsupported platform: ${payload.platform}`)
     }
     // const skip = (page - 1) * pageSize
-    const filters: RootFilterQuery<PostModel> = { postId: { $in: payload.postId }, platform: payload.platform }
+    const filters: RootFilterQuery<PostModel> = { postId: { $in: payload.postId } }
 
     const postDoc = await postModel.findOne(filters).lean()
     if (!postDoc) {
