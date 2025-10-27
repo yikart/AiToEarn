@@ -65,17 +65,18 @@ export class AccountService {
   }
 
   async addAccount(data: CreateAccountDto): Promise<Account | null> {
+    this.logger.log(`Adding new account with data: ${JSON.stringify(data)}`)
     if (!data.groupId) {
       const defaultGroup = await this.accountGroupService.getDefaultGroup(
         data.userId,
       )
       data['groupId'] = defaultGroup.id
     }
-
+    this.logger.log(`Using groupId: ${data.groupId} for new account`)
     const info: Account | null = await this.accountRepository.addAccount({
-      type: data.type,
-      uid: data.uid,
+      ...data,
     })
+    this.logger.log(`Account added: ${JSON.stringify(info)}`)
 
     try {
       this.accountPortraitReport({
