@@ -1,16 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto } from '@yikart/common'
 import { AccountType, PublishStatus, PublishType } from '@yikart/mongodb'
-import { Expose, Transform } from 'class-transformer'
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsOptional,
-  IsString,
-} from 'class-validator'
 import { z } from 'zod'
 
 /**
@@ -59,66 +48,19 @@ export const CreatePublishRecordSchema = z.object({
 })
 export class CreatePublishRecordDto extends createZodDto(CreatePublishRecordSchema) {}
 
-export class PublishRecordListFilterDto {
-  @IsString({ message: '用户ID' })
-  @Expose()
-  readonly userId: string
-
-  @IsString({ message: '账户ID' })
-  @IsOptional()
-  @Expose()
-  readonly accountId?: string
-
-  @IsString({ message: '第三方平台id' })
-  @IsOptional()
-  @Expose()
-  readonly uid?: string
-
-  @ApiProperty({
-    title: '账户类型',
-    required: false,
-    enum: AccountType,
-    description: '账户类型',
-  })
-  @IsEnum(AccountType, { message: '账户类型' })
-  @IsOptional()
-  @Expose()
-  readonly accountType?: AccountType
-
-  @ApiProperty({
-    title: '类型',
-    required: false,
-    enum: PublishType,
-    description: '类型',
-  })
-  @IsEnum(PublishType, { message: '类型' })
-  @IsOptional()
-  @Expose()
-  readonly type?: PublishType
-
-  @ApiProperty({
-    title: '状态',
-    required: false,
-    enum: PublishStatus,
-    description: '状态',
-  })
-  @IsEnum(PublishStatus, { message: '状态' })
-  @IsOptional()
-  @Expose()
-  readonly status?: PublishStatus
-
-  @ApiProperty({ title: '创建时间区间', required: false })
-  @IsArray({ message: '创建时间区间必须是一个数组' })
-  @ArrayMinSize(2, { message: '创建时间区间必须包含两个日期' })
-  @ArrayMaxSize(2, { message: '创建时间区间必须包含两个日期' })
-  @IsDate({ each: true, message: '创建时间区间中的每个元素必须是有效的日期' })
-  @IsOptional()
-  @Expose()
-  @Transform(({ value }) =>
-    value ? value.map((v: string) => new Date(v)) : undefined,
-  )
-  readonly time?: [Date, Date]
-}
+export const PublishRecordListFilterSchema = z.object({
+  userId: z.string({ message: '用户ID' }),
+  accountId: z.string({ message: '账户ID' }).optional(),
+  uid: z.string({ message: '第三方平台id' }).optional(),
+  accountType: z.enum(AccountType, { message: '账户类型' }).optional(),
+  type: z.enum(PublishType, { message: '类型' }).optional(),
+  status: z.enum(PublishStatus, { message: '状态' }).optional(),
+  time: z.tuple([
+    z.union([z.date(), z.string()]).transform(arg => new Date(arg)),
+    z.union([z.date(), z.string()]).transform(arg => new Date(arg)),
+  ]).optional(),
+})
+export class PublishRecordListFilterDto extends createZodDto(PublishRecordListFilterSchema) {}
 
 export const PublishDayInfoListFiltersSchema = z.object({
   userId: z.string(),

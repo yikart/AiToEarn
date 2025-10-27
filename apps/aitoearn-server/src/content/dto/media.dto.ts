@@ -5,63 +5,25 @@
  * @LastEditors: nevin
  * @Description: Media media
  */
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto, TableDtoSchema } from '@yikart/common'
 import { MediaType } from '@yikart/mongodb'
-import { Expose } from 'class-transformer'
-import { IsEnum, IsOptional, IsString } from 'class-validator'
 import { z } from 'zod'
 
-export class MediaIdDto {
-  @ApiProperty({ title: 'ID', required: true })
-  @IsString({ message: 'ID' })
-  @Expose()
-  readonly id: string
-}
+export const MediaIdSchema = z.object({
+  id: z.string().describe('ID'),
+})
+export class MediaIdDto extends createZodDto(MediaIdSchema) {}
 
-export class CreateMediaDto {
-  @ApiProperty({ title: '组ID', required: true })
-  @IsString({ message: '组ID' })
-  @Expose()
-  readonly groupId: string
-
-  @ApiProperty({ title: '素材ID', required: false })
-  @IsString({ message: '素材ID' })
-  @IsOptional()
-  @Expose()
-  readonly materialId?: string
-
-  @ApiProperty({
-    title: '类型',
-    required: true,
-    enum: MediaType,
-    description: '类型',
-  })
-  @IsEnum(MediaType, { message: '类型' })
-  @Expose()
-  readonly type: MediaType
-
-  @ApiProperty({ title: '文件链接', required: true })
-  @IsString({ message: '文件链接' })
-  @Expose()
-  readonly url: string
-
-  @ApiProperty({ title: '缩略图', required: false })
-  @IsString({ message: '缩略图' })
-  @IsOptional()
-  @Expose()
-  readonly thumbUrl?: string
-
-  @ApiProperty({ title: '标题', required: true })
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
-
-  @ApiProperty({ title: '描述', required: true })
-  @IsString({ message: '描述' })
-  @Expose()
-  readonly desc: string
-}
+export const CreateMediaSchema = z.object({
+  groupId: z.string().describe('组ID'),
+  materialId: z.string().optional().describe('素材ID'),
+  type: z.enum(MediaType).describe('类型'),
+  url: z.string().describe('文件链接'),
+  thumbUrl: z.string().optional().describe('缩略图'),
+  title: z.string().describe('标题'),
+  desc: z.string().describe('描述'),
+})
+export class CreateMediaDto extends createZodDto(CreateMediaSchema) {}
 
 export const MediaFilterSchema = z.object({
   groupId: z.string().optional().describe('组ID'),
