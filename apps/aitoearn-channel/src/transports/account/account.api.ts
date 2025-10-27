@@ -53,7 +53,7 @@ export class AccountInternalApi extends InternalApi {
    * @returns
    */
   async getAccountInfo(accountId: string) {
-    const url = `/api/internal/:userId/socials/accounts/${accountId}`
+    const url = `/api/internal/socials/accounts/${accountId}`
     const config: AxiosRequestConfig = {
       method: 'GET',
     }
@@ -71,7 +71,7 @@ export class AccountInternalApi extends InternalApi {
    * @returns
    */
   async updateAccountStatistics(accountId: string, data: UpdateAccountStatisticsData) {
-    const url = `/api/internal/:userId/socials/accounts/${accountId}/statistics`
+    const url = `/api/internal/socials/accounts/${accountId}/statistics`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data,

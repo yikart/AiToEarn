@@ -48,6 +48,7 @@ export class AccountController {
   @Patch('/:userId/socials/accounts/:accountId')
   async updateAccountInfo(
     @Param('userId') userId: string,
+    @Param('accountId') accountId: string,
     @Body() body: UpdateAccountDto,
   ) {
     const res = await this.accountInternalService.updateAccountInfo(
@@ -58,13 +59,13 @@ export class AccountController {
   }
 
   @ApiOperation({ summary: 'update account insights' })
-  @Patch('/:userId/socials/accounts/:accountId/statistics')
+  @Patch('/socials/accounts/:accountId/statistics')
   async updateAccountStatistics(
-    @Param('userId') userId: string,
+    @Param('accountId') accountId: string,
     @Body() body: UpdateAccountStatisticsDto,
   ) {
     return this.accountInternalService.updateAccountStatistics(
-      userId,
+      accountId,
       body,
     )
   }
