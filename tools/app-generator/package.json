@@ -1,0 +1,27 @@
+{
+  "name": "@yikart/app-generator",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "development": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "!**/*.tsbuildinfo",
+    "dist",
+    "generators.json"
+  ],
+  "dependencies": {
+    "@nx/devkit": "21.4.0",
+    "tslib": "^2.3.0"
+  },
+  "generators": "./generators.json"
+}

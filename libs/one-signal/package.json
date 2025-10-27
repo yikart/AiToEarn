@@ -1,0 +1,24 @@
+{
+  "name": "@yikart/one-signal",
+  "type": "commonjs",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@yikart/common": "*",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "@onesignal/node-onesignal": "5.3.1-beta1",
+    "rxjs": "^7.8.0",
+    "tslib": "^2.3.0"
+  }
+}
