@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
 import { PostRepository } from '@yikart/statistics-db'
 import { FetchAllPostsRequestDto, FetchPostRequestDto, FetchPostsBatchRequestDto, FetchPostsRequestDto } from './post.dto'
 
@@ -13,21 +12,21 @@ export class PostService {
 
   // 根据平台platform和uid 获取作品
   async getPostsByPlatform(
-    @Payload() payload: FetchPostsRequestDto,
+    payload: FetchPostsRequestDto,
   ) {
     return await this.postRepository.getPostsByPlatform(payload)
   }
 
   // 根据平台platform和作品id数组postIds 获取作品
   async getPostsByPids(
-    @Payload() payload: FetchPostsBatchRequestDto,
+    payload: FetchPostsBatchRequestDto,
   ) {
     return await this.postRepository.getPostsByPids(payload)
   }
 
   // 根据平台platform和作品postId 获取单个作品数据
   async getPostsByPid(
-    @Payload() payload: FetchPostRequestDto,
+    payload: FetchPostRequestDto,
   ) {
     return await this.postRepository.getPostsByPid(payload)
   }
@@ -50,13 +49,13 @@ export class PostService {
   }
 
   async getUserAllPosts(
-    @Payload() payload: FetchAllPostsRequestDto,
+    payload: FetchAllPostsRequestDto,
   ) {
     return await this.postRepository.getUserAllPosts(payload)
   }
 
   async getUserAllPostsByPlatform(
-    @Payload() payload: FetchAllPostsRequestDto,
+    payload: FetchAllPostsRequestDto,
   ) {
     return await this.postRepository.getUserAllPostsByPlatform(payload)
   }

@@ -1,4 +1,5 @@
 import { createZodDto } from '@yikart/common'
+import { AccountType } from '@yikart/statistics-db'
 import { z } from 'zod'
 
 export const KeysetPaginationSchema = z.object({
@@ -65,20 +66,7 @@ export const PublishCommentResponseSchema = z.object({
 }).describe('发布评论响应数据')
 
 export const FetchPostsRequestSchema = z.object({
-  platform: z.enum([
-    'bilibili',
-    'douyin',
-    'facebook',
-    'wxGzh',
-    'instagram',
-    'KWAI',
-    'pinterest',
-    'threads',
-    'tiktok',
-    'twitter',
-    'xhs',
-    'youtube',
-  ]).describe('平台'),
+  platform: z.enum(AccountType).describe('平台'),
   uid: z.string().describe('userId, account表中的uid字段'),
   page: z.number().min(1).nullable().default(1).describe('页码, 默认1'),
   pageSize: z.number().min(1).max(100).nullable().default(20).describe('每页数量, 默认20, 最大100'),

@@ -6,7 +6,7 @@ import { ChannelBaseApi } from '../../../channelBase.api'
 export class EngagementNatsApi extends ChannelBaseApi {
   async fetchPostComments(payload: FetchPostCommentsRequestDto) {
     const res = await this.sendMessage<FetchPostCommentsResponseDto>(
-      `channel/engagement/fetchPostComments`,
+      `channel/engagement/list/post/comments`,
       payload,
     )
     return res
@@ -14,7 +14,7 @@ export class EngagementNatsApi extends ChannelBaseApi {
 
   async fetchCommentReplies(payload: FetchCommentRepliesDto) {
     const res = await this.sendMessage<FetchPostCommentsResponseDto>(
-      `channel/engagement/fetchPostComments`,
+      `channel/engagement/list/comment/replies`,
       payload,
     )
     return res
@@ -22,7 +22,7 @@ export class EngagementNatsApi extends ChannelBaseApi {
 
   async commentOnPost(payload: PublishCommentRequestDto) {
     const res = await this.sendMessage<PublishCommentResponseDto>(
-      `channel/engagement/commentOnPost`,
+      `channel/engagement/publish/post/comment`,
       payload,
     )
     return res
@@ -30,7 +30,7 @@ export class EngagementNatsApi extends ChannelBaseApi {
 
   async replyToComment(payload: PublishCommentReplyRequestDto) {
     const res = await this.sendMessage<PublishCommentResponseDto>(
-      `channel/engagement/replyToComment`,
+      `channel/engagement/publish/comment/reply`,
       payload,
     )
     return res
