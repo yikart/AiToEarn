@@ -13,7 +13,7 @@ export class PublishingService extends BaseService {
   async createPublishRecord(
     data: Partial<PublishRecord>,
   ) {
-    const url = `/api/internal/publishing/records`
+    const url = `/internal/publishing/records`
     const config: AxiosRequestConfig = {
       method: 'POST',
       data,
@@ -26,7 +26,7 @@ export class PublishingService extends BaseService {
   }
 
   async getPublishRecordInfo(recordId: string) {
-    const url = `/api/internal/publishing/records/${recordId}`
+    const url = `/internal/publishing/records/${recordId}`
     const config: AxiosRequestConfig = {
       method: 'GET',
     }
@@ -38,7 +38,7 @@ export class PublishingService extends BaseService {
   }
 
   async getPublishRecordByDataId(dataId: string, uid: string) {
-    const url = `/api/internal/${uid}/publishing/records/${dataId}`
+    const url = `/internal/${uid}/publishing/records/${dataId}`
     const config: AxiosRequestConfig = {
       method: 'GET',
     }
@@ -53,7 +53,7 @@ export class PublishingService extends BaseService {
     workLink?: string
     dataOption?: any
   }) {
-    const url = `/api/internal/${filter.uid}/publishing/records/${filter.dataId}`
+    const url = `/internal/${filter.uid}/publishing/records/${filter.dataId}`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data,
@@ -66,7 +66,7 @@ export class PublishingService extends BaseService {
   }
 
   async updatePublishRecordStatus(id: string, status: PublishStatus, errorMsg?: string) {
-    const url = `/api/internal/publishing/records/${id}/status`
+    const url = `/internal/publishing/records/${id}/status`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data: {
