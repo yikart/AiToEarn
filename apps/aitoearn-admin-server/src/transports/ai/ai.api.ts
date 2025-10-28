@@ -50,7 +50,7 @@ export class AiApi extends ServerBaseApi {
    */
   async getVideoTaskStatus(request: VideoTaskQueryRequest): Promise<VideoTaskStatusResponse> {
     return await this.sendMessage<VideoTaskStatusResponse>(
-      'ai/video/task/query',
+      'internal/ai/video/status',
       request,
     )
   }
@@ -65,22 +65,17 @@ export class AiApi extends ServerBaseApi {
     userType: UserType
   }): Promise<ListVideoTasksResponseVo> {
     return await this.sendMessage<ListVideoTasksResponseVo>(
-      'ai/video/task/list',
+      'internal/ai/video/task/list',
       request,
     )
   }
 
-  /**
-   * 查询视频任务列表
-   * @param request 视频任务查询请求参数
-   * @returns 视频任务状态响应
-   */
   async fireflyCard(request: UserFireflyCardDto & {
     userId: string
     userType: UserType
   }): Promise<FireflycardResponseVo> {
     return await this.sendMessage<FireflycardResponseVo>(
-      'ai/firefly-card/generate',
+      'internal/ai/firefly-card/generate',
       request,
     )
   }

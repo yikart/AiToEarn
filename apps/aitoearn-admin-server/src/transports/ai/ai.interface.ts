@@ -118,6 +118,8 @@ export interface VideoGenerationResponse {
 // 通用视频任务状态查询请求接口
 export interface VideoTaskQueryRequest {
   taskId: string
+  userId: string
+  userType: UserType
 }
 
 // 通用视频任务状态响应接口
