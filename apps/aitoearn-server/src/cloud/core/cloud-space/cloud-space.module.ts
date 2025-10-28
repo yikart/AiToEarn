@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common'
 import { HelpersModule } from '../../common/helpers/helpers.module'
 import { CloudInstanceModule } from '../cloud-instance'
 import { MultiloginAccountModule } from '../multilogin-account'
-import { CloudSpaceController } from './cloud-space.controller'
 import { CloudSpaceService } from './cloud-space.service'
 
 @Module({
@@ -11,7 +10,6 @@ import { CloudSpaceService } from './cloud-space.service'
     MultiloginAccountModule,
     HelpersModule,
   ],
-  controllers: [CloudSpaceController],
   providers: [CloudSpaceService],
   exports: [CloudSpaceService],
 })

@@ -10,7 +10,7 @@ export class CloudSpacesApi extends ServerBaseApi {
     request: ListCloudSpacesDto,
   ) {
     return await this.sendMessage<CloudSpaceListVo>(
-      'cloud-space/list',
+      'internal/cloud-space/list',
       request,
     )
   }
@@ -19,7 +19,7 @@ export class CloudSpacesApi extends ServerBaseApi {
     request: GetCloudSpaceStatusDto,
   ) {
     return await this.sendMessage<CloudSpaceVo>(
-      'cloud-space/status',
+      'internal/cloud-space/status',
       request,
     )
   }
@@ -28,7 +28,7 @@ export class CloudSpacesApi extends ServerBaseApi {
     request: DeleteCloudSpaceDto,
   ) {
     return await this.sendMessage(
-      'cloud-space/delete',
+      'internal/cloud-space/delete',
       request,
     )
   }
@@ -37,7 +37,7 @@ export class CloudSpacesApi extends ServerBaseApi {
     request: RetryCloudSpaceDto,
   ) {
     return await this.sendMessage(
-      'cloud-space/retry',
+      'internal/cloud-space/retry',
       request,
     )
   }
@@ -46,7 +46,7 @@ export class CloudSpacesApi extends ServerBaseApi {
     request: ListBrowserProfilesDto,
   ) {
     return await this.sendMessage(
-      'cloud-space/profile/list',
+      'internal/cloud-space/profile/list',
       request,
     )
   }

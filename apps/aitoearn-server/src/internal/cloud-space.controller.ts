@@ -1,20 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import {
-  CreateCloudSpaceDto,
-  DeleteCloudSpaceDto,
-  GetCloudSpaceStatusDto,
-  ListCloudSpacesByUserIdDto,
-  ListCloudSpacesDto,
-  RenewCloudSpaceDto,
-  RetryCloudSpaceDto,
-} from './cloud-space.dto'
-import { CloudSpaceService } from './cloud-space.service'
-import {
-  CloudSpaceListVo,
-  CloudSpaceVo,
-} from './cloud-space.vo'
+import { Internal } from '@yikart/aitoearn-auth'
+import { CloudSpaceService, CreateCloudSpaceDto, DeleteCloudSpaceDto, GetCloudSpaceStatusDto, ListCloudSpacesByUserIdDto, ListCloudSpacesDto, RenewCloudSpaceDto, RetryCloudSpaceDto } from '../cloud/core/cloud-space'
+import { CloudSpaceListVo, CloudSpaceVo } from '../cloud/core/cloud-space/cloud-space.vo'
 
-@Controller()
+@Controller('internal')
+@Internal()
 export class CloudSpaceController {
   constructor(private readonly cloudSpaceService: CloudSpaceService) {}
 

@@ -3,19 +3,22 @@ import { AccountModule } from '../account/account.module'
 import { AiModule } from '../ai/ai.module'
 import { ChatModule, ChatService } from '../ai/core/chat'
 import { ModelsConfigService } from '../ai/core/models-config'
+import { CloudModule } from '../cloud/cloud.module'
+import { CloudSpaceModule } from '../cloud/core/cloud-space'
 import { PublishModule } from '../publishRecord/publishRecord.module'
 import { PublishRecordService } from '../publishRecord/publishRecord.service'
 import { AccountController } from './account.controller'
 import { AIController } from './ai.controller'
+import { CloudSpaceController } from './cloud-space.controller'
 import { AccountInternalService } from './provider/account.service'
 import { PublishingInternalService } from './provider/publishing.service'
 import { PublishingController } from './publishing.controller'
 
 @Global()
 @Module({
-  imports: [AccountModule, PublishModule, ChatModule, AiModule],
+  imports: [AccountModule, PublishModule, ChatModule, AiModule, CloudModule, CloudSpaceModule],
   providers: [AccountInternalService, PublishingInternalService, PublishRecordService, ModelsConfigService, ChatService],
-  controllers: [AccountController, PublishingController, AIController],
+  controllers: [AccountController, PublishingController, AIController, CloudSpaceController],
   exports: [AccountInternalService, PublishingInternalService, PublishRecordService],
 })
 export class InternalModule { }
