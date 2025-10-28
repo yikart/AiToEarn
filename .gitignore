@@ -44,3 +44,5 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 
 local.config.js
+.prettierignore
+.prettierrc

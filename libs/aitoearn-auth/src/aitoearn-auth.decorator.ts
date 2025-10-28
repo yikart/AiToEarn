@@ -1,5 +1,5 @@
 import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common'
-import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
+import { IS_INTERNAL_KEY, IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 
 export const GetToken = createParamDecorator(
   (_data: string, ctx: ExecutionContext) => {
@@ -9,3 +9,4 @@ export const GetToken = createParamDecorator(
 )
 
 export const Public = () => SetMetadata(IS_PUBLIC_KEY, true)
+export const Internal = () => SetMetadata(IS_INTERNAL_KEY, true)

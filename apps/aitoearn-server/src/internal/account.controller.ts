@@ -8,11 +8,13 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Internal } from '@yikart/aitoearn-auth'
 import { CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../account/dto/account.dto'
 import { AccountInternalService } from './provider/account.service'
 
 @ApiTags('内部服务接口')
 @Controller('internal')
+@Internal()
 export class AccountController {
   private readonly logger = new Logger(AccountController.name)
   constructor(private readonly accountInternalService: AccountInternalService) { }

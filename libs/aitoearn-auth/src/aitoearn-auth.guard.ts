@@ -8,7 +8,7 @@ import {
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
 import { AitoearnAuthConfig } from './aitoearn-auth.config'
-import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
+import { IS_INTERNAL_KEY, IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 
 @Injectable()
 export class AitoearnAuthGuard implements CanActivate {
@@ -38,7 +38,11 @@ export class AitoearnAuthGuard implements CanActivate {
     }
 
     if (token === this.config.internalToken) {
-      return true
+      const isInternal = this.reflector.getAllAndOverride<boolean>(IS_INTERNAL_KEY, [
+        context.getHandler(),
+        context.getClass(),
+      ])
+      return !!isInternal
     }
 
     try {

@@ -7,11 +7,13 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { Internal } from '@yikart/aitoearn-auth'
 import { AccountType, PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PublishingInternalService } from './provider/publishing.service'
 
 @ApiTags('内部服务接口')
 @Controller('internal')
+@Internal()
 export class PublishingController {
   constructor(private readonly publishingInternalService: PublishingInternalService) { }
 
