@@ -42,15 +42,15 @@ export default function AIGeneratePage() {
 
   // 根据 URL 初始化模块与子标签
   const queryTab = (searchParams.get("tab") || "").toString();
-  const initIsVideo = ["videoGeneration", "text2video", "image2video", "flf2video", "lf2video", "multi-image2video"].includes(queryTab);
+  const initIsVideo = ["videoGeneration", "text2video", "image2video"].includes(queryTab);
   const initImageTab = ["textToImage", "textToFireflyCard", "md2card", "chat"].includes(queryTab) ? (queryTab as any) : "textToImage";
-  const initVideoTab = ["image2video", "flf2video", "lf2video", "multi-image2video"].includes(queryTab) ? (queryTab as any) : "text2video";
+  const initVideoTab = ["image2video"].includes(queryTab) ? (queryTab as any) : "text2video";
   // 左侧模块切换
   const [activeModule, setActiveModule] = useState<"image" | "video">(initIsVideo ? "video" : "image");
   // 图片子模块切换
   const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "textToFireflyCard" | "md2card" | "chat">(initImageTab);
   // 视频子模块切换
-  const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video" | "flf2video" | "lf2video" | "multi-image2video">(initVideoTab);
+  const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">(initVideoTab);
 
   // 文生图
   const [prompt, setPrompt] = useState("");
@@ -225,10 +225,13 @@ export default function AIGeneratePage() {
   const filteredVideoModels = useMemo(() => {
     if (!Array.isArray(videoModels)) return [] as any[];
     if (videoMode === "text2video") return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("text2video"));
-    if (videoMode === "image2video") return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("image2video"));
-    if (videoMode === "flf2video") return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("flf2video"));
-    if (videoMode === "lf2video") return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("lf2video"));
-    if (videoMode === "multi-image2video") return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("multi-image2video"));
+    if (videoMode === "image2video") {
+      // 合并所有支持图片的视频模式
+      return (videoModels as any[]).filter((m: any) => {
+        const modes = m?.modes || [];
+        return modes.includes("image2video") || modes.includes("flf2video") || modes.includes("lf2video") || modes.includes("multi-image2video");
+      });
+    }
     return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("image2video"));
   }, [videoModels, videoMode]);
 
@@ -246,7 +249,7 @@ export default function AIGeneratePage() {
           setVideoModel(first.name);
           if (first?.durations?.length) setVideoDuration(first.durations[0]);
           if (first?.resolutions?.length) setVideoSize(first.resolutions[0]);
-          if (first?.modes?.includes("image2video")) setVideoMode("image2video");
+          if (first?.modes?.includes("image2video") || first?.modes?.includes("flf2video") || first?.modes?.includes("lf2video") || first?.modes?.includes("multi-image2video")) setVideoMode("image2video");
           else if (first?.modes?.includes("text2video")) setVideoMode("text2video");
         }
       }
@@ -338,7 +341,12 @@ export default function AIGeneratePage() {
     if (!tab) return;
     if (tab === 'videoGeneration' || tab === 'text2video' || tab === 'image2video' || tab === 'flf2video' || tab === 'lf2video' || tab === 'multi-image2video') {
       setActiveModule('video');
-      setActiveVideoTab(tab as any);
+      // 将所有图片相关的视频模式都映射到 image2video
+      if (tab === 'flf2video' || tab === 'lf2video' || tab === 'multi-image2video') {
+        setActiveVideoTab('image2video');
+      } else {
+        setActiveVideoTab(tab as any);
+      }
     } else if (tab === 'textToImage' || tab === 'textToFireflyCard' || tab === 'md2card' || tab === 'chat') {
       setActiveModule('image');
       setActiveImageTab(tab as any);
@@ -352,9 +360,6 @@ export default function AIGeneratePage() {
       }
     }
     if (videoMode === "text2video") { setVideoImage(""); setVideoImageTail(""); }
-    if (videoMode === "flf2video") { setVideoImage(""); setVideoImageTail(""); }
-    if (videoMode === "lf2video") { setVideoImage(""); setVideoImageTail(""); }
-    if (videoMode === "multi-image2video") { setVideoImage(""); setVideoImageTail(""); }
   }, [videoMode, filteredVideoModels]);
 
   useEffect(() => {
@@ -442,7 +447,7 @@ export default function AIGeneratePage() {
   const handleVideoGeneration = async () => {
     if (!videoPrompt) { message.error(t("aiGenerate.pleaseEnterVideoDescription")); return; }
     if (!videoModel) { message.error(t("aiGenerate.pleaseSelectVideoModel")); return; }
-    if (videoMode === "image2video" || videoMode === "flf2video" || videoMode === "lf2video" || videoMode === "multi-image2video") {
+    if (videoMode === "image2video") {
       const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
       const supported: string[] = current?.supportedParameters || [];
       if (supported.includes("image") && !videoImage) { message.error(t("aiGenerate.pleaseUploadFirstFrame")); return; }
@@ -461,7 +466,7 @@ export default function AIGeneratePage() {
       }
       
       const supported: string[] = current?.supportedParameters || [];
-      if (videoMode === "image2video" || videoMode === "flf2video" || videoMode === "lf2video" || videoMode === "multi-image2video") {
+      if (videoMode === "image2video") {
         if (supported.includes("image") && videoImage) data.image = videoImage;
         if (supported.includes("image_tail") && videoImageTail) data.image_tail = videoImageTail;
       }
@@ -700,18 +705,6 @@ export default function AIGeneratePage() {
               <button className={`${styles.subTab} ${activeVideoTab==='image2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('image2video')}>
                 <div className="subTabIcon"><PictureOutlined /></div>
                 <div className={styles.subTabLabel}>{t('aiGenerate.imageToVideo')}</div>
-              </button>
-              <button className={`${styles.subTab} ${activeVideoTab==='flf2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('flf2video')}>
-                <div className="subTabIcon"><VideoCameraOutlined /></div>
-                <div className={styles.subTabLabel}>FLF2Video</div>
-              </button>
-              <button className={`${styles.subTab} ${activeVideoTab==='lf2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('lf2video')}>
-                <div className="subTabIcon"><VideoCameraOutlined /></div>
-                <div className={styles.subTabLabel}>LF2Video</div>
-              </button>
-              <button className={`${styles.subTab} ${activeVideoTab==='multi-image2video' ? styles.subTabActive : ''}`} onClick={()=>setActiveVideoTab('multi-image2video')}>
-                <div className="subTabIcon"><PictureOutlined /></div>
-                <div className={styles.subTabLabel}>Multi-Image2Video</div>
               </button>
             </div>
           )}
@@ -976,10 +969,7 @@ export default function AIGeneratePage() {
                 <div className={styles.leftPanel}>
                   <div className={styles.blockTitle}>
                     {activeVideoTab==='text2video' ? t('aiGenerate.textToVideo') : 
-                     activeVideoTab==='image2video' ? t('aiGenerate.imageToVideo') :
-                     activeVideoTab==='flf2video' ? 'FLF2Video' :
-                     activeVideoTab==='lf2video' ? 'LF2Video' :
-                     activeVideoTab==='multi-image2video' ? 'Multi-Image2Video' : t('aiGenerate.textToVideo')}
+                     activeVideoTab==='image2video' ? t('aiGenerate.imageToVideo') : t('aiGenerate.textToVideo')}
                   </div>
                   {(() => { if (videoMode !== activeVideoTab) setVideoMode(activeVideoTab); return null; })()}
 
@@ -1055,40 +1045,97 @@ export default function AIGeneratePage() {
                     })()}</Select>
                   </div>
                   <div className={styles.options}>
-                    {(()=>{ const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; const supported:string[]=selected?.supportedParameters||[]; return (<>
-                      {(videoMode==='image2video' || videoMode==='flf2video' || videoMode==='lf2video' || videoMode==='multi-image2video') && supported.includes('image') && (
-                        <div className={styles.uploadPanel}>
-                          <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
-                         
-                            {videoImage ? (
-                              <img src={videoImage || ''} alt={t('aiGenerate.firstFrame')} />
-                            ) : (
-                              <div className={styles.uploadPlaceholder}>
-                                <span className={styles.uploadIcon}>+</span>
-                                <span className={styles.uploadText}>{t('aiGenerate.firstFrame')}</span>
+                    {(()=>{ 
+                      const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; 
+                      const supported:string[]=selected?.supportedParameters||[];
+                      const modes:string[]=selected?.modes||[];
+                      
+                      // 根据 modes 判断视频生成类型
+                      const isImage2Video = modes.includes('image2video');
+                      const isFlf2Video = modes.includes('flf2video');
+                      const isLf2Video = modes.includes('lf2video');
+                      const isMultiImage2Video = modes.includes('multi-image2video');
+                      
+                      return (<>
+                        {videoMode==='image2video' && (
+                          <div className={styles.uploadPanel}>
+                            {/* 单张图生视频 - 只需要首帧 */}
+                            {isImage2Video && supported.includes('image') && !supported.includes('image_tail') && (
+                              <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
+                                {videoImage ? (
+                                  <img src={videoImage || ''} alt={t('aiGenerate.firstFrame')} />
+                                ) : (
+                                  <div className={styles.uploadPlaceholder}>
+                                    <span className={styles.uploadIcon}>+</span>
+                                    <span className={styles.uploadText}>上传图片</span>
+                                  </div>
+                                )}
+                                <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
                               </div>
                             )}
-                            <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
-                          </div>
-                          {supported.includes('image_tail') && (
-                            <div className={styles.swapIcon}>↔</div>
-                          )}
-                          {(videoMode==='image2video' || videoMode==='flf2video' || videoMode==='lf2video' || videoMode==='multi-image2video') && supported.includes('image_tail') && (
-                            <div className={styles.uploadCard} onClick={handlePickTailFrame}>
-                              {videoImageTail ? (
-                                <img src={videoImageTail || ''} alt={t('aiGenerate.tailFrame')} />
-                              ) : (
-                                <div className={styles.uploadPlaceholder}>
-                                  <span className={styles.uploadIcon}>+</span>
-                                  <span className={styles.uploadText}>{t('aiGenerate.tailFrame')}</span>
+                            
+                            {/* 多图合成视频 - 需要多张图片 */}
+                            {isMultiImage2Video && supported.includes('image') && (
+                              <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
+                                {videoImage ? (
+                                  <img src={videoImage || ''} alt="多图合成" />
+                                ) : (
+                                  <div className={styles.uploadPlaceholder}>
+                                    <span className={styles.uploadIcon}>+</span>
+                                    <span className={styles.uploadText}>上传多张图片</span>
+                                  </div>
+                                )}
+                                <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
+                              </div>
+                            )}
+                            
+                            {/* 首尾帧生成视频 - 需要首帧和尾帧 */}
+                            {isFlf2Video && supported.includes('image') && supported.includes('image_tail') && (
+                              <>
+                                <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
+                                  {videoImage ? (
+                                    <img src={videoImage || ''} alt={t('aiGenerate.firstFrame')} />
+                                  ) : (
+                                    <div className={styles.uploadPlaceholder}>
+                                      <span className={styles.uploadIcon}>+</span>
+                                      <span className={styles.uploadText}>{t('aiGenerate.firstFrame')}</span>
+                                    </div>
+                                  )}
+                                  <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
                                 </div>
-                              )}
-                              <input type="file" accept="image/*" ref={tailFrameInputRef} onChange={handleTailFrameChange} style={{ display:'none' }} />
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </>); })()}
+                                <div className={styles.swapIcon}>↔</div>
+                                <div className={styles.uploadCard} onClick={handlePickTailFrame}>
+                                  {videoImageTail ? (
+                                    <img src={videoImageTail || ''} alt={t('aiGenerate.tailFrame')} />
+                                  ) : (
+                                    <div className={styles.uploadPlaceholder}>
+                                      <span className={styles.uploadIcon}>+</span>
+                                      <span className={styles.uploadText}>{t('aiGenerate.tailFrame')}</span>
+                                    </div>
+                                  )}
+                                  <input type="file" accept="image/*" ref={tailFrameInputRef} onChange={handleTailFrameChange} style={{ display:'none' }} />
+                                </div>
+                              </>
+                            )}
+                            
+                            {/* 仅尾帧生成视频 - 只需要尾帧 */}
+                            {isLf2Video && supported.includes('image_tail') && !supported.includes('image') && (
+                              <div className={styles.uploadCard} onClick={handlePickTailFrame}>
+                                {videoImageTail ? (
+                                  <img src={videoImageTail || ''} alt={t('aiGenerate.tailFrame')} />
+                                ) : (
+                                  <div className={styles.uploadPlaceholder}>
+                                    <span className={styles.uploadIcon}>+</span>
+                                    <span className={styles.uploadText}>{t('aiGenerate.tailFrame')}</span>
+                                  </div>
+                                )}
+                                <input type="file" accept="image/*" ref={tailFrameInputRef} onChange={handleTailFrameChange} style={{ display:'none' }} />
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </>); 
+                    })()}
                   </div>
                   {videoModel && videoDuration && videoSize && (
                     <div className={styles.creditCostInfo}><span style={{ color:'#1890ff', fontSize:14 }}>💰 {t('aiGenerate.estimatedCreditCost' as any)}: {getVideoModelCreditCost(videoModel, videoDuration, videoSize)} {t('aiGenerate.credits' as any)}</span></div>
