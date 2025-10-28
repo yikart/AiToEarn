@@ -44,5 +44,14 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 
 local.config.js
+<<<<<<< HEAD
 .prettierignore
 .prettierrc
+=======
+# 配置文件
+*.config.js
+# 排除部分项目
+/apps/aitoearn-task
+/apps/aitoearn-payment
+/apps/aitoearn-admin-server
+>>>>>>> pub

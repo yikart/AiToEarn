@@ -1,5 +1,0 @@
-export * from './user-portrait.controller'
-export * from './user-portrait.dto'
-export * from './user-portrait.module'
-export * from './user-portrait.service'
-export * from './user-portrait.vo'
