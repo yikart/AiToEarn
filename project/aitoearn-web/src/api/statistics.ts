@@ -14,10 +14,7 @@ export async function apiImportPostsRecord(records: Array<{
 }
 
 // 获取发布记录状态
-export async function apiGetPostsRecordStatus(postIds: string[]) {
-  return http.get("statistics/channels/posts/recordStatus", {
-    params: {
-      postIds: postIds.join(',')
-    }
+export async function apiGetPostsRecordStatus() {
+  return http.post("statistics/channels/posts/recordStatus", {
   });
 }

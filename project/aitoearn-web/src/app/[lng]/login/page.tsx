@@ -135,7 +135,7 @@ export default function LoginPage() {
             setUserInfo(response.data.userInfo);
           }
           message.success(t('loginSuccess'));
-          router.push('/');
+          router.push('/accounts');
         }
       } else {
         message.error(response.message || t('googleLoginFailed'));

@@ -2,7 +2,7 @@ import http from '@/utils/request';
 import { EngagementPostsParams, EngagementPostsResponse, EngagementCommentsParams, EngagementCommentsResponse, EngagementReplyParams, PostCommentsParamsV2, PostCommentsResponseV2, PublishPostCommentParams, PublishCommentReplyParams, CommentRepliesParams, CommentRepliesResponse } from './types/engagement';
 
 export async function apiGetEngagementPosts(params: EngagementPostsParams) {
-  return http.post<EngagementPostsResponse>('channel/engagement/posts', params);
+  return http.post<EngagementPostsResponse>('statistics/posts/list', params);
 }
 
 export async function apiGetEngagementComments(params: EngagementCommentsParams) {

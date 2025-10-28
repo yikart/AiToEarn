@@ -846,11 +846,7 @@ export default function CgMaterialPageCore() {
       
       if (res?.code === 0) {
         message.success(`成功提交 ${records.length} 条内容导入任务`);
-        
-        // 延迟查询状态
-        setTimeout(async () => {
-          await checkImportStatus(selectedPublishItems);
-        }, 2000);
+
         
         setImportModal(false);
         setSelectedPublishItems([]);
@@ -869,9 +865,9 @@ export default function CgMaterialPageCore() {
   }
 
   // 检查导入状态
-  async function checkImportStatus(postIds: string[]) {
+  async function checkImportStatus() {
     try {
-      const res = await apiGetPostsRecordStatus(postIds);
+      const res = await apiGetPostsRecordStatus();
       
       if (res?.code === 0 && res?.data && Array.isArray(res.data)) {
         const statusData: any[] = res.data;
@@ -880,22 +876,93 @@ export default function CgMaterialPageCore() {
         const runningCount = statusData.filter((item: any) => item.status === 'running').length;
         const pendingCount = statusData.filter((item: any) => item.status === 'pending').length;
         
-        let statusMessage = `导入状态：`;
-        if (successCount > 0) statusMessage += `成功 ${successCount} 条 `;
-        if (failedCount > 0) statusMessage += `失败 ${failedCount} 条 `;
-        if (runningCount > 0) statusMessage += `进行中 ${runningCount} 条 `;
-        if (pendingCount > 0) statusMessage += `等待中 ${pendingCount} 条 `;
+        let statusMessage = t('import.importStatus' as any);
+        if (successCount > 0) statusMessage += t('import.successCount' as any, { count: successCount }) + ' ';
+        if (failedCount > 0) statusMessage += t('import.failedCount' as any, { count: failedCount }) + ' ';
+        if (runningCount > 0) statusMessage += t('import.runningCount' as any, { count: runningCount }) + ' ';
+        if (pendingCount > 0) statusMessage += t('import.pendingCount' as any, { count: pendingCount }) + ' ';
         
-        if (failedCount > 0) {
-          message.warning(statusMessage);
-        } else if (runningCount > 0 || pendingCount > 0) {
-          message.info(statusMessage);
+        // 显示详细记录信息
+        if (statusData.length > 0) {
+          const detailInfo = statusData.map((item: any) => {
+            const platformName = getPlatformName(item.platform);
+            const statusText = item.status === 'success' ? '成功' : 
+                              item.status === 'failed' ? '失败' : 
+                              item.status === 'running' ? '进行中' : '等待中';
+            return `${platformName} - ${item.title || '无标题'} - ${statusText}`;
+          }).join('\n');
+          
+          Modal.info({
+            title: t('import.importRecords' as any),
+            content: (
+              <div>
+                <div style={{ marginBottom: 16, fontWeight: 600 }}>
+                  {statusMessage}
+                </div>
+                <div style={{ maxHeight: 400, overflow: 'auto' }}>
+                  {statusData.map((item: any, index: number) => (
+                    <div key={index} style={{ 
+                      marginBottom: 12, 
+                      padding: 12, 
+                      border: '1px solid #f0f0f0', 
+                      borderRadius: 6,
+                      backgroundColor: item.status === 'success' ? '#f6ffed' : 
+                                      item.status === 'failed' ? '#fff2f0' : '#f0f9ff'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                        <span style={{ fontWeight: 600 }}>
+                          {getPlatformName(item.platform)} - {item.title || t('import.noTitle' as any)}
+                        </span>
+                        <span style={{ 
+                          padding: '2px 8px', 
+                          borderRadius: 4, 
+                          fontSize: 12,
+                          color: item.status === 'success' ? '#52c41a' : 
+                                 item.status === 'failed' ? '#ff4d4f' : '#1890ff',
+                          backgroundColor: item.status === 'success' ? '#f6ffed' : 
+                                          item.status === 'failed' ? '#fff2f0' : '#f0f9ff'
+                        }}>
+                          {item.status === 'success' ? t('import.success' as any) : 
+                           item.status === 'failed' ? t('import.failed' as any) : 
+                           item.status === 'running' ? t('import.running' as any) : t('import.pending' as any)}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                        <div>{t('import.publishTime' as any)}: {new Date(item.publishTime).toLocaleString()}</div>
+                        <div>{t('import.mediaType' as any)}: {item.mediaType === 'image' ? t('import.image' as any) : item.mediaType === 'video' ? t('import.video' as any) : t('import.article' as any)}</div>
+                        {item.desc && <div>{t('import.desc' as any)}: {item.desc}</div>}
+                        <div>{t('import.interactionData' as any)}: {t('import.views' as any)} {item.viewCount} | {t('import.likes' as any)} {item.likeCount} | {t('import.comments' as any)} {item.commentCount} | {t('import.shares' as any)} {item.shareCount}</div>
+                      </div>
+                      {item.cover && (
+                        <div style={{ marginTop: 8 }}>
+                          <img 
+                            src={item.cover} 
+                            alt={t('import.cover' as any)} 
+                            style={{ 
+                              width: 60, 
+                              height: 60, 
+                              objectFit: 'cover', 
+                              borderRadius: 4,
+                              border: '1px solid #f0f0f0'
+                            }} 
+                          />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ),
+            width: 800,
+            okText: t('import.close' as any)
+          });
         } else {
-          message.success(statusMessage);
+          message.info(t('import.noRecords' as any));
         }
       }
     } catch (e) {
       console.error('查询导入状态失败:', e);
+      message.error(t('import.checkStatusFailed' as any));
     }
   }
 
@@ -1267,8 +1334,41 @@ export default function CgMaterialPageCore() {
         }}
         confirmLoading={importLoading}
         width={800}
-        okText={t('import.importSelected')}
-        okButtonProps={{ disabled: selectedPublishItems.length === 0 }}
+        footer={[
+          (
+            <Button 
+              key="check-progress" 
+              onClick={() => checkImportStatus()} 
+              // disabled={selectedPublishItems.length === 0}
+            >
+              {t('import.checkProgress' as any)}
+            </Button>
+          ),
+          (
+            <Button 
+              key="cancel" 
+              onClick={() => {
+                setImportModal(false);
+                setSelectedAccount(null);
+                setPublishList([]);
+                setSelectedPublishItems([]);
+              }}
+            >
+              {t('batchGenerate.cancel')}
+            </Button>
+          ),
+          (
+            <Button 
+              key="submit" 
+              type="primary" 
+              onClick={handleImportPublishItems} 
+              loading={importLoading}
+              disabled={selectedPublishItems.length === 0}
+            >
+              {t('import.importSelected')}
+            </Button>
+          )
+        ]}
       >
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontWeight: 600, marginBottom: 8 }}>{t('import.selectAccount')}</div>
