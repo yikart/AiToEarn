@@ -1,6 +1,6 @@
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
-import { AccountType } from '../../../transports/account/common'
 
 export const GetAccountInfoSchema = z.object({
   id: z.string().describe('账号ID'),

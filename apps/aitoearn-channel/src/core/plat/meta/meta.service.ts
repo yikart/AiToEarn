@@ -1,5 +1,10 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
+import {
+  AccountStatus,
+  AccountType,
+  NewAccount,
+} from '@yikart/aitoearn-server-client'
 import { RedisService } from '@yikart/redis'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { getCurrentTimestamp } from '../../../common'
@@ -10,11 +15,6 @@ import {
   FacebookPageDetailRequest,
   FacebookPageDetailResponse,
 } from '../../../libs/facebook/facebook.interfaces'
-import {
-  AccountStatus,
-  AccountType,
-  NewAccount,
-} from '../../../transports/account/common'
 import {
   META_TIME_CONSTANTS,
   metaOAuth2ConfigMap,

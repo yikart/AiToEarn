@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { PinterestDataService } from '../../core/dataCube/pinterestData.service'
 import { PinterestModule } from '../../core/plat/pinterest/pinterest.module'
-import { AccountInternalApi } from '../../transports/account/account.api'
 import { AccountModule } from '../account/account.module'
 import { BilibiliModule } from '../plat/bilibili/bilibili.module'
 import { MetaModule } from '../plat/meta/meta.module'
@@ -18,7 +17,7 @@ import { YoutubeDataService } from './youtubeData.service'
 @Module({
   imports: [BilibiliModule, MetaModule, YoutubeModule, WxPlatModule, PinterestModule, AccountModule],
   controllers: [DataCubeController],
-  providers: [BilibiliDataService, FacebookDataService, InstagramDataService, ThreadsDataService, YoutubeDataService, WxGzhDataService, PinterestDataService, AccountInternalApi],
+  providers: [BilibiliDataService, FacebookDataService, InstagramDataService, ThreadsDataService, YoutubeDataService, WxGzhDataService, PinterestDataService],
   exports: [BilibiliDataService, FacebookDataService, InstagramDataService, ThreadsDataService, YoutubeDataService, WxGzhDataService, PinterestDataService],
 })
 export class DataCubeModule {}

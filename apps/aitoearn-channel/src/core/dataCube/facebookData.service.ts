@@ -1,21 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { FacebookService } from '../plat/meta/facebook.service'
 import { DataCubeBase } from './data.base'
 
 @Injectable()
 export class FacebookDataService extends DataCubeBase {
   private readonly logger = new Logger(FacebookDataService.name)
-  constructor(readonly facebookService: FacebookService, readonly accountInternalApi: AccountInternalApi) {
+  constructor(
+    readonly facebookService: FacebookService,
+    private readonly serverClient: AitoearnServerClientService,
+  ) {
     super()
   }
 
   @OnEvent(`account.create.${AccountType.FACEBOOK}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    this.serverClient.account.updateAccountStatistics(accountId, {
       readCount: res.playNum,
       fansCount: res.fensNum,
     })

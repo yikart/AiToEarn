@@ -1,5 +1,5 @@
 {
-  "name": "@yikart/one-signal",
+  "name": "@yikart/aitoearn-server-client",
   "type": "commonjs",
   "version": "0.0.1",
   "repository": {
@@ -18,7 +18,7 @@
     "zod": "^4.0.0"
   },
   "dependencies": {
-    "@onesignal/node-onesignal": "5.3.1-beta1",
+    "axios": "^1.13.0",
     "rxjs": "^7.8.0"
   }
 }

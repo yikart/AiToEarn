@@ -112,7 +112,7 @@ export class KlingService {
       }
       return response
     }
-    this.httpClient.interceptors.response.use(resInterceptor, resInterceptor)
+    this.httpClient.interceptors.response.use(resInterceptor)
   }
 
   // ==================== 文生视频相关方法 ====================

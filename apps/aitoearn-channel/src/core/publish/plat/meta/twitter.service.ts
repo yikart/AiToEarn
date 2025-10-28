@@ -2,6 +2,7 @@ import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import {
@@ -27,7 +28,6 @@ import {
   XCreatePostRequest,
   XMediaUploadInitRequest,
 } from '../../../../libs/twitter/twitter.interfaces'
-import { AccountType } from '../../../../transports/account/common'
 import { DoPubRes } from '../../common'
 import { PublishBase } from '../publish.base'
 import { PostMediaContainerService } from './container.service'

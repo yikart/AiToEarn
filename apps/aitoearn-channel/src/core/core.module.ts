@@ -3,7 +3,6 @@ import { McpModule as TheMcpModule } from '@rekog/mcp-nest'
 import { SkKeyAuthGuard } from '../common/guards/skKeyAuth.guard'
 import { AliGreenModule } from '../core/ali-green/ali-green.module'
 import { PublishModule } from '../core/publish/publish.module'
-import { TransportModule } from '../transports/transport.module'
 import { AccountModule } from './account/account.module'
 import { DataCubeModule } from './dataCube/dataCube.module'
 import { EngagementModule } from './engagement/engagement.module'
@@ -42,7 +41,6 @@ import { TestModule } from './test/test.module'
     EngagementModule,
     AliGreenModule,
     PlatModule,
-    TransportModule,
   ],
   providers: [],
 })

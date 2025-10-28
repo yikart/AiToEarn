@@ -7,9 +7,8 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { PinterestService } from '../../core/plat/pinterest/pinterest.service'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
 import { DataCubeBase } from './data.base'
 
 @Injectable()
@@ -17,7 +16,7 @@ export class PinterestDataService extends DataCubeBase {
   private readonly logger = new Logger(PinterestDataService.name)
   constructor(
     readonly pinterestService: PinterestService,
-    readonly accountInternalApi: AccountInternalApi,
+    private readonly serverClient: AitoearnServerClientService,
   ) {
     super()
   }
@@ -25,7 +24,7 @@ export class PinterestDataService extends DataCubeBase {
   @OnEvent(`account.create.${AccountType.PINTEREST}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    this.serverClient.account.updateAccountStatistics(accountId, {
       workCount: res.arcNum,
       fansCount: res.fensNum,
     })

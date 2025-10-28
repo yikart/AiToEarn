@@ -6,12 +6,9 @@ import { Injectable } from '@nestjs/common'
  * @LastEditors: nevin
  * @Description: 测试
  */
-import { AccountInternalApi } from '../../transports/account/account.api'
-
 @Injectable()
 export class TestService {
   constructor(
-    private readonly accountInternalApi: AccountInternalApi,
   ) {
     // const data = {
     //   userId: '68abd359eb8332b30dba9c30',

@@ -9,6 +9,7 @@ import { Readable } from 'node:stream'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
+import { AccountStatus, AccountType, AitoearnServerClientService, NewAccount } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
@@ -25,9 +26,6 @@ import {
   TokenStatus,
 } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { YoutubeApiService } from '../../../libs/youtube/youtubeApi.service'
-
-import { AccountInternalApi } from '../../../transports/account/account.api'
-import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
 
 interface AuthTaskInfo {
   state: string
@@ -57,7 +55,7 @@ export class YoutubeService {
     private readonly redisService: RedisService,
     private readonly youtubeApiService: YoutubeApiService,
     private readonly accountService: AccountService,
-    private readonly accountInternalApi: AccountInternalApi,
+    private readonly serverClient: AitoearnServerClientService,
 
     @InjectModel(OAuth2Crendential.name)
     private OAuth2CrendentialModel: Model<OAuth2Crendential>,

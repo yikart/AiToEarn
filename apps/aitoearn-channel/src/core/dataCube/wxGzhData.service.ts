@@ -7,29 +7,31 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import moment from 'moment'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
+import dayjs from 'dayjs'
 import { WxGzhService } from '../plat/wxPlat/wxGzh.service'
 import { DataCubeBase } from './data.base'
 
 @Injectable()
 export class WxGzhDataService extends DataCubeBase {
   private readonly logger = new Logger(WxGzhDataService.name)
-  constructor(readonly wxGzhService: WxGzhService, readonly accountInternalApi: AccountInternalApi) {
+  constructor(
+    readonly wxGzhService: WxGzhService,
+    private readonly serverClient: AitoearnServerClientService,
+  ) {
     super()
   }
 
   @OnEvent(`account.create.${AccountType.WxGzh}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    this.serverClient.account.updateAccountStatistics(accountId, {
       fansCount: res.fensNum,
     })
   }
 
   async getAccountDataCube(accountId: string) {
-    const [startTime, endTime] = [moment().startOf('day').format('YYYY-MM-DD'), moment().format('YYYY-MM-DD')]
+    const [startTime, endTime] = [dayjs().startOf('day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')]
     const res = await this.wxGzhService.getusercumulate(accountId, startTime, endTime)
     const lastData = res.list[0]
 

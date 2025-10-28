@@ -244,12 +244,9 @@ importers:
       '@rekog/mcp-nest':
         specifier: ^1.6.2
         version: 1.8.4(@modelcontextprotocol/sdk@1.20.2)(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)(@nestjs/jwt@11.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)))(@nestjs/passport@11.0.5(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(passport@0.7.0))(express@5.1.0)(reflect-metadata@0.2.2)(zod-to-json-schema@3.24.6(zod@4.1.12))(zod@4.1.12)
-      '@types/form-data':
-        specifier: ^2.5.2
-        version: 2.5.2
-      '@types/multer':
-        specifier: ^2.0.0
-        version: 2.0.0
+      '@yikart/aitoearn-server-client':
+        specifier: workspace:*
+        version: link:../../libs/aitoearn-server-client
       '@yikart/common':
         specifier: workspace:*
         version: link:../../libs/common
@@ -262,9 +259,6 @@ importers:
       axios:
         specifier: ^1.9.0
         version: 1.12.2
-      body-parser:
-        specifier: ^2.2.0
-        version: 2.2.0
       bullmq:
         specifier: ^5.56.0
         version: 5.61.2
@@ -310,15 +304,6 @@ importers:
       needle:
         specifier: ^3.3.1
         version: 3.3.1
-      pino:
-        specifier: ^9.7.0
-        version: 9.14.0
-      pino-http:
-        specifier: ^10.5.0
-        version: 10.5.0
-      pino-pretty:
-        specifier: ^13.1.1
-        version: 13.1.2
       pnpm:
         specifier: ^10.12.4
         version: 10.19.0
@@ -362,6 +347,9 @@ importers:
       '@types/lodash':
         specifier: ^4.17.20
         version: 4.17.20
+      '@types/multer':
+        specifier: ^2.0.0
+        version: 2.0.0
       '@types/node':
         specifier: ^22.10.7
         version: 22.17.2
@@ -467,10 +455,10 @@ importers:
     dependencies:
       '@langchain/core':
         specifier: ^0.3.72
-        version: 0.3.78(openai@5.23.2(ws@8.18.3)(zod@4.1.12))
+        version: 0.3.78(openai@6.7.0(ws@8.18.3)(zod@4.1.12))
       '@langchain/openai':
         specifier: ^0.6.11
-        version: 0.6.16(@langchain/core@0.3.78(openai@5.23.2(ws@8.18.3)(zod@4.1.12)))(ws@8.18.3)
+        version: 0.6.16(@langchain/core@0.3.78(openai@6.7.0(ws@8.18.3)(zod@4.1.12)))(ws@8.18.3)
       '@nestjs/axios':
         specifier: ^4.0.1
         version: 4.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(rxjs@7.8.2)
@@ -589,8 +577,8 @@ importers:
         specifier: ^2.29.3
         version: 2.29.3
       openai:
-        specifier: ^5.18.1
-        version: 5.23.2(ws@8.18.3)(zod@4.1.12)
+        specifier: ^6.7.0
+        version: 6.7.0(ws@8.18.3)(zod@4.1.12)
       rxjs:
         specifier: ^7.8.0
         version: 7.8.2
@@ -744,6 +732,27 @@ importers:
         specifier: ^4.0.0
         version: 4.1.12
 
+  libs/aitoearn-server-client:
+    dependencies:
+      '@nestjs/common':
+        specifier: ^11.0.0
+        version: 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@yikart/common':
+        specifier: '*'
+        version: 0.0.10(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)(@nestjs/microservices@11.1.7)(axios@1.13.0)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)(zod@4.1.12)
+      axios:
+        specifier: ^1.13.0
+        version: 1.13.0
+      rxjs:
+        specifier: ^7.8.0
+        version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
+      zod:
+        specifier: ^4.0.0
+        version: 4.1.12
+
   libs/ali-green:
     dependencies:
       '@alicloud/credentials':
@@ -853,7 +862,7 @@ importers:
         version: 5.1.6
       nest-typed-config:
         specifier: ^2.10.1
-        version: 2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)
+        version: 2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)
       nestjs-pino:
         specifier: ^4.4.0
         version: 4.4.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(pino-http@10.5.0)(pino@9.14.0)(rxjs@7.8.2)
@@ -3795,10 +3804,6 @@ packages:
   '@types/express@5.0.4':
     resolution: {integrity: sha512-g64dbryHk7loCIrsa0R3shBnEu5p6LPJ09bu9NG58+jz+cRUjFrc3Bz0kNQ7j9bXeCsrRDvNET1G54P/GJkAyA==}
 
-  '@types/form-data@2.5.2':
-    resolution: {integrity: sha512-tfmcyHn1Pp9YHAO5r40+UuZUPAZbUEgqTel3EuEKpmF9hPkXgR4l41853raliXnb4gwyPNoQOfvgGGlHN5WSog==}
-    deprecated: This is a stub types definition. form-data provides its own type definitions, so you do not need this installed.
-
   '@types/graceful-fs@4.1.9':
     resolution: {integrity: sha512-olP3sd1qOEe5dXTSaFvQG+02VdRXcdytWLAZsAq1PecU8uqQAhkrnbli7DagjtXKW/Bl7YJbUsa8MPcuc8LHEQ==}
 
@@ -4484,6 +4489,9 @@ packages:
 
   axios@1.12.2:
     resolution: {integrity: sha512-vMJzPewAlRyOgxV2dU0Cuz2O8zzzx9VYtbJOaBgXFeLc4IV/Eg50n4LowmehOOR61S8ZMpc2K5Sa7g6A4jfkUw==}
+
+  axios@1.13.0:
+    resolution: {integrity: sha512-zt40Pz4zcRXra9CVV31KeyofwiNvAbJ5B6YPz9pMJ+yOSLikvPT4Yi5LjfgjRa9CawVYBaD1JQzIVcIvBejKeA==}
 
   babel-jest@29.7.0:
     resolution: {integrity: sha512-BrvGY3xZSwEcCzKvKsCi2GgHqDqsYkOP4/by5xCgIwGXQxIEh+8ew3gmrE1y7XRR6LHZIj6yLYnUi/mm2KXKBg==}
@@ -8196,12 +8204,12 @@ packages:
       zod:
         optional: true
 
-  openai@5.23.2:
-    resolution: {integrity: sha512-MQBzmTulj+MM5O8SKEk/gL8a7s5mktS9zUtAkU257WjvobGc9nKcBuVwjyEEcb9SI8a8Y2G/mzn3vm9n1Jlleg==}
+  openai@6.7.0:
+    resolution: {integrity: sha512-mgSQXa3O/UXTbA8qFzoa7aydbXBJR5dbLQXCRapAOtoNT+v69sLdKMZzgiakpqhclRnhPggPAXoniVGn2kMY2A==}
     hasBin: true
     peerDependencies:
       ws: ^8.18.0
-      zod: ^3.23.8
+      zod: ^3.25 || ^4.0
     peerDependenciesMeta:
       ws:
         optional: true
@@ -12871,14 +12879,14 @@ snapshots:
       '@jsonjoy.com/codegen': 1.0.0(tslib@2.8.1)
       tslib: 2.8.1
 
-  '@langchain/core@0.3.78(openai@5.23.2(ws@8.18.3)(zod@4.1.12))':
+  '@langchain/core@0.3.78(openai@6.7.0(ws@8.18.3)(zod@4.1.12))':
     dependencies:
       '@cfworker/json-schema': 4.1.1
       ansi-styles: 5.2.0
       camelcase: 6.3.0
       decamelize: 1.2.0
       js-tiktoken: 1.0.21
-      langsmith: 0.3.74(openai@5.23.2(ws@8.18.3)(zod@4.1.12))
+      langsmith: 0.3.74(openai@6.7.0(ws@8.18.3)(zod@4.1.12))
       mustache: 4.2.0
       p-queue: 6.6.2
       p-retry: 4.6.2
@@ -12891,9 +12899,9 @@ snapshots:
       - '@opentelemetry/sdk-trace-base'
       - openai
 
-  '@langchain/openai@0.6.16(@langchain/core@0.3.78(openai@5.23.2(ws@8.18.3)(zod@4.1.12)))(ws@8.18.3)':
+  '@langchain/openai@0.6.16(@langchain/core@0.3.78(openai@6.7.0(ws@8.18.3)(zod@4.1.12)))(ws@8.18.3)':
     dependencies:
-      '@langchain/core': 0.3.78(openai@5.23.2(ws@8.18.3)(zod@4.1.12))
+      '@langchain/core': 0.3.78(openai@6.7.0(ws@8.18.3)(zod@4.1.12))
       js-tiktoken: 1.0.21
       openai: 5.12.2(ws@8.18.3)(zod@3.25.76)
       zod: 3.25.76
@@ -12990,6 +12998,19 @@ snapshots:
       '@nestjs/common': 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       axios: 1.12.2
       rxjs: 7.8.2
+
+  '@nestjs/axios@4.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.0)(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      axios: 1.13.0
+      rxjs: 7.8.2
+    optional: true
+
+  '@nestjs/axios@4.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)':
+    dependencies:
+      '@nestjs/common': 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      rxjs: 7.8.2
+    optional: true
 
   '@nestjs/bull-shared@11.0.4(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)':
     dependencies:
@@ -14310,10 +14331,6 @@ snapshots:
       '@types/express-serve-static-core': 5.1.0
       '@types/serve-static': 1.15.10
 
-  '@types/form-data@2.5.2':
-    dependencies:
-      form-data: 4.0.4
-
   '@types/graceful-fs@4.1.9':
     dependencies:
       '@types/node': 22.17.2
@@ -14782,6 +14799,36 @@ snapshots:
       js-yaml: 3.14.1
       tslib: 2.8.1
 
+  '@yikart/common@0.0.10(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)(@nestjs/microservices@11.1.7)(axios@1.13.0)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)(zod@4.1.12)':
+    dependencies:
+      '@aws-sdk/client-cloudwatch-logs': 3.916.0
+      '@nestjs/common': 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/core': 11.1.7(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.7)(@nestjs/platform-express@11.1.7)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/microservices': 11.1.7(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)(ioredis@5.8.2)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      '@nestjs/platform-express': 11.1.7(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)
+      '@nestjs/swagger': 11.2.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      '@scalar/nestjs-api-reference': 0.5.14
+      commander: 14.0.1
+      express: 5.1.0
+      nanoid: 5.1.6
+      nest-typed-config: 2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)
+      nestjs-pino: 4.4.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(pino-http@10.5.0)(pino@9.14.0)(rxjs@7.8.2)
+      pino: 9.14.0
+      pino-pretty: 13.1.2
+      rxjs: 7.8.2
+      tslib: 2.8.1
+      zod: 4.1.12
+    transitivePeerDependencies:
+      - '@fastify/static'
+      - aws-crt
+      - axios
+      - class-transformer
+      - class-validator
+      - pino-http
+      - reflect-metadata
+      - supports-color
+      - typescript
+
   '@yikart/common@0.0.10(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.7)(@nestjs/microservices@11.1.7)(class-transformer@0.5.1)(class-validator@0.14.2)(express@5.1.0)(pino-http@10.5.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)(zod@4.1.12)':
     dependencies:
       '@aws-sdk/client-cloudwatch-logs': 3.916.0
@@ -14794,7 +14841,7 @@ snapshots:
       commander: 14.0.1
       express: 5.1.0
       nanoid: 5.1.6
-      nest-typed-config: 2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)
+      nest-typed-config: 2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3)
       nestjs-pino: 4.4.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(pino-http@10.5.0)(pino@9.14.0)(rxjs@7.8.2)
       pino: 9.14.0
       pino-pretty: 13.1.2
@@ -15084,6 +15131,14 @@ snapshots:
       - debug
 
   axios@1.12.2:
+    dependencies:
+      follow-redirects: 1.15.11
+      form-data: 4.0.4
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+
+  axios@1.13.0:
     dependencies:
       follow-redirects: 1.15.11
       form-data: 4.0.4
@@ -18625,7 +18680,7 @@ snapshots:
 
   klona@2.0.6: {}
 
-  langsmith@0.3.74(openai@5.23.2(ws@8.18.3)(zod@4.1.12)):
+  langsmith@0.3.74(openai@6.7.0(ws@8.18.3)(zod@4.1.12)):
     dependencies:
       '@types/uuid': 10.0.0
       chalk: 4.1.2
@@ -18635,7 +18690,7 @@ snapshots:
       semver: 7.7.3
       uuid: 10.0.0
     optionalDependencies:
-      openai: 5.23.2(ws@8.18.3)(zod@4.1.12)
+      openai: 6.7.0(ws@8.18.3)(zod@4.1.12)
 
   launch-editor@2.11.1:
     dependencies:
@@ -19766,7 +19821,7 @@ snapshots:
 
   neo-async@2.6.2: {}
 
-  nest-typed-config@2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3):
+  nest-typed-config@2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.0)(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3):
     dependencies:
       '@nestjs/common': 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       chalk: 4.1.2
@@ -19780,7 +19835,32 @@ snapshots:
       set-value: 4.1.0
     optionalDependencies:
       '@iarna/toml': 2.2.5
-      '@nestjs/axios': 4.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.12.2)(rxjs@7.8.2)
+      '@nestjs/axios': 4.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(axios@1.13.0)(rxjs@7.8.2)
+      cosmiconfig: 9.0.0(typescript@5.9.3)
+      dotenv: 17.2.3
+      dotenv-expand: 12.0.3
+      parse-json: 8.3.0
+      yaml: 2.8.1
+    transitivePeerDependencies:
+      - axios
+      - supports-color
+      - typescript
+
+  nest-typed-config@2.10.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typescript@5.9.3):
+    dependencies:
+      '@nestjs/common': 11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      chalk: 4.1.2
+      class-transformer: 0.5.1
+      class-validator: 0.14.2
+      debug: 4.3.4
+      lodash.frompairs: 4.0.1
+      lodash.merge: 4.6.2
+      reflect-metadata: 0.2.2
+      rxjs: 7.8.2
+      set-value: 4.1.0
+    optionalDependencies:
+      '@iarna/toml': 2.2.5
+      '@nestjs/axios': 4.0.1(@nestjs/common@11.1.7(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
       cosmiconfig: 9.0.0(typescript@5.9.3)
       dotenv: 17.2.3
       dotenv-expand: 12.0.3
@@ -19892,7 +19972,7 @@ snapshots:
       '@yarnpkg/lockfile': 1.1.0
       '@yarnpkg/parsers': 3.0.2
       '@zkochan/js-yaml': 0.0.7
-      axios: 1.12.2
+      axios: 1.13.0
       chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.6.1
@@ -20026,7 +20106,7 @@ snapshots:
       ws: 8.18.3
       zod: 3.25.76
 
-  openai@5.23.2(ws@8.18.3)(zod@4.1.12):
+  openai@6.7.0(ws@8.18.3)(zod@4.1.12):
     optionalDependencies:
       ws: 8.18.3
       zod: 4.1.12

@@ -1,16 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import { InternalApi } from '../api'
-
-import { Account, UpdateAccountStatisticsData } from './common'
+import { Account, UpdateAccountStatisticsData } from '../interfaces'
+import { BaseService } from './base.service'
 
 @Injectable()
-export class AccountInternalApi extends InternalApi {
-  override logger = new Logger(AccountInternalApi.name)
-  constructor() {
-    super()
-  }
-
+export class AccountService extends BaseService {
   /**
    * 创建账户
    * @param account

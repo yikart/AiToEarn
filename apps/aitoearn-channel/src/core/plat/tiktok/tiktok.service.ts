@@ -9,6 +9,7 @@
 import { randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
@@ -28,7 +29,6 @@ import {
   TikTokUserInfoResponse,
 } from '../../../libs/tiktok/tiktok.interfaces'
 import { TiktokService as TiktokApiService } from '../../../libs/tiktok/tiktok.service'
-import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
 import { TIKTOK_DEFAULT_SCOPES, TIKTOK_TIME_CONSTANTS, TiktokRedisKeys } from './constants'
 import {
   PhotoSourceInfoDto,

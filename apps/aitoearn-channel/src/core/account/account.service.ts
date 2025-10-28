@@ -1,11 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountStatus, AccountType, AitoearnServerClientService, NewAccount } from '@yikart/aitoearn-server-client'
 import { Model, UpdateQuery } from 'mongoose'
 import { TableDto } from '../../common/global/dto/table.dto'
 import { Account } from '../../libs/database/schema/account.schema'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountStatus, AccountType, NewAccount } from '../../transports/account/common'
 
 @Injectable()
 export class AccountService {
@@ -13,7 +12,7 @@ export class AccountService {
   constructor(
     @InjectModel(Account.name)
     private readonly accountModel: Model<Account>,
-    private readonly accountInternalApi: AccountInternalApi,
+    private readonly serverClient: AitoearnServerClientService,
     private eventEmitter: EventEmitter2,
   ) {}
 
@@ -73,7 +72,7 @@ export class AccountService {
     }
 
     try {
-      const ret = await this.accountInternalApi.createAccount(newData)
+      const ret = await this.serverClient.account.createAccount(newData)
       this.logger.log({
         msg: '-------- 333333 --------',
         data: ret,
@@ -100,7 +99,7 @@ export class AccountService {
     const res = await this.accountModel.updateOne({ _id: accountId }, data)
 
     try {
-      await this.accountInternalApi.updateAccountInfo(
+      await this.serverClient.account.updateAccountInfo(
         accountId,
         data,
       )

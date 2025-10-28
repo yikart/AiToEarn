@@ -6,7 +6,7 @@
  * @Description: 互动记录记录 interactionRecord
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { AccountType } from '../../../transports/account/common'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { BaseTemp } from './time.tamp'
 
 @Schema({

@@ -6,8 +6,8 @@
  * @Description: 平台数据
  */
 import { Body, Controller, Post } from '@nestjs/common'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
-import { AccountType } from '../../transports/account/common'
 import { AccountService } from '../account/account.service'
 import { BilibiliDataService } from './bilibiliData.service'
 import { DataCubeBase } from './data.base'

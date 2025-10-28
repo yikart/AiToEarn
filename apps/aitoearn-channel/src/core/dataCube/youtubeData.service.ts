@@ -7,22 +7,24 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { YoutubeService } from '../plat/youtube/youtube.service'
 import { DataCubeBase } from './data.base'
 
 @Injectable()
 export class YoutubeDataService extends DataCubeBase {
   private readonly logger = new Logger(YoutubeDataService.name)
-  constructor(readonly youtubeService: YoutubeService, readonly accountInternalApi: AccountInternalApi) {
+  constructor(
+    readonly youtubeService: YoutubeService,
+    private readonly serverClient: AitoearnServerClientService,
+  ) {
     super()
   }
 
   @OnEvent(`account.create.${AccountType.YOUTUBE}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    this.serverClient.account.updateAccountStatistics(accountId, {
       fansCount: res.fensNum,
       workCount: res.arcNum,
       readCount: res.playNum,

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { Schema as MongooseSchema } from 'mongoose'
-import { AccountType } from '../../../transports/account/common'
 import { BaseTemp } from './time.tamp'
 
 export enum AccountStatus {

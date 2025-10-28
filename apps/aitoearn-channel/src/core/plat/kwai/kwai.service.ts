@@ -1,6 +1,7 @@
 /* eslint-disable antfu/consistent-list-newline */
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
 import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
@@ -11,7 +12,6 @@ import { AuthTaskInfo } from '../../../core/plat/common'
 import { OAuth2Crendential } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { KwaiOAuthCredentialsResponse, KwaiVideoPubParams } from '../../../libs/kwai/kwaiApi.interfaces'
 import { KwaiApiService } from '../../../libs/kwai/kwaiApi.service'
-import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
 import { KWAI_TIME_CONSTANTS } from './constants'
 
 @Injectable()

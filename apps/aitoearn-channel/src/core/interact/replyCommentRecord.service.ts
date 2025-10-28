@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { Model, RootFilterQuery } from 'mongoose'
 import { TableDto } from '../../common/global/dto/table.dto'
 import { ReplyCommentRecord } from '../../libs/database/schema/replyCommentRecord.schema'
-import { AccountType } from '../../transports/account/common'
 import { AddReplyCommentRecordDto } from './dto/replyCommentRecord.dto'
 
 @Injectable()

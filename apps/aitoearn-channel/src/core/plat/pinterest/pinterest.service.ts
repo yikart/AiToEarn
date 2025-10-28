@@ -1,5 +1,6 @@
 import * as fs from 'node:fs'
 import { Injectable, Logger } from '@nestjs/common'
+import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
@@ -17,7 +18,6 @@ import {
   ILoginStatus,
 } from '../../../libs/pinterest/common'
 import { PinterestApiService } from '../../../libs/pinterest/pinterestApi.service'
-import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
 
 @Injectable()
 export class PinterestService {

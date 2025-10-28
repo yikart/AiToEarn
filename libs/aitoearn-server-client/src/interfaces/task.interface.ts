@@ -1,4 +1,4 @@
-import { AccountType } from '../account/common'
+import { AccountType } from '../interfaces'
 
 export enum UserTaskStatus {
   DOING = 'doing', // 进行中

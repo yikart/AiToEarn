@@ -2,10 +2,10 @@ import {
   GetPromptResult,
 } from '@modelcontextprotocol/sdk/types'
 import { Injectable, Logger } from '@nestjs/common'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
 import moment from 'moment'
 import { ExceptionCode } from '../../common/enums/exception-code.enum'
-import { AccountType } from '../../transports/account/common'
 import { AccountService } from '../account/account.service'
 import { PlatPulOption } from '../publish/common'
 import { PublishTaskService } from '../publish/publishTask.service'

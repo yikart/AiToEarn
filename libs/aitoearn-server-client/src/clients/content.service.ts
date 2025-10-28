@@ -1,16 +1,10 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import { InternalApi } from '../api'
+import { BaseService } from './base.service'
 
 @Injectable()
-export class ContentInternalApi extends InternalApi {
-  override logger = new Logger(ContentInternalApi.name)
-
-  constructor() {
-    super()
-  }
-
-  async delMaterial(id: string) {
+export class ContentService extends BaseService {
+  async deleteMaterial(id: string) {
     const url = `/api/internal/publishing/materials/${id}`
     const config: AxiosRequestConfig = {
       method: 'DELETE',

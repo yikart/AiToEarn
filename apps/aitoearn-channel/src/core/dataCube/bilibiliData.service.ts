@@ -7,8 +7,7 @@
  */
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { BilibiliService } from '../plat/bilibili/bilibili.service'
 import { DataCubeBase } from './data.base'
 
@@ -17,7 +16,7 @@ export class BilibiliDataService extends DataCubeBase {
   private readonly logger = new Logger(BilibiliDataService.name)
   constructor(
     readonly bilibiliService: BilibiliService,
-    readonly accountInternalApi: AccountInternalApi,
+    private readonly serverClient: AitoearnServerClientService,
   ) {
     super()
   }
@@ -25,7 +24,7 @@ export class BilibiliDataService extends DataCubeBase {
   @OnEvent(`account.create.${AccountType.BILIBILI}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    await this.serverClient.account.updateAccountStatistics(accountId, {
       workCount: res.arcNum,
       fansCount: res.fensNum,
     })

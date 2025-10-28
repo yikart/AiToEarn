@@ -1,5 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import {
+  AccountStatus,
+  AccountType,
+  NewAccount,
+} from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
@@ -16,11 +21,6 @@ import {
   VideoUTypes,
 } from '../../../libs/bilibili/common'
 import { OAuth2Crendential } from '../../../libs/database/schema/oauth2Crendential.schema'
-import {
-  AccountStatus,
-  AccountType,
-  NewAccount,
-} from '../../../transports/account/common'
 import { AuthTaskInfo } from '../common'
 import { BilibiliAuthInfo } from './common'
 

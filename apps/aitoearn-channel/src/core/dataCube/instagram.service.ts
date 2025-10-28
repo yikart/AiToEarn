@@ -1,22 +1,24 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { InstagramInsightsRequest, InstagramMediaInsightsRequest } from '../../libs/instagram/instagram.interfaces'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
 import { InstagramService } from '../plat/meta/instagram.service'
 import { DataCubeBase } from './data.base'
 
 @Injectable()
 export class InstagramDataService extends DataCubeBase {
   private readonly logger = new Logger(InstagramDataService.name)
-  constructor(readonly instagramService: InstagramService, readonly accountInternalApi: AccountInternalApi) {
+  constructor(
+    readonly instagramService: InstagramService,
+    private readonly serverClient: AitoearnServerClientService,
+  ) {
     super()
   }
 
   @OnEvent(`account.create.${AccountType.INSTAGRAM}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    this.serverClient.account.updateAccountStatistics(accountId, {
       workCount: res.arcNum,
       fansCount: res.fensNum,
     })

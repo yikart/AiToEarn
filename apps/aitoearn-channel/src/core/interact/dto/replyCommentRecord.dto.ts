@@ -1,6 +1,6 @@
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
-import { AccountType } from '../../../transports/account/common'
 
 export const AddReplyCommentRecordSchema = z.object({
   userId: z.string().min(1, { message: '用户ID不能为空' }),

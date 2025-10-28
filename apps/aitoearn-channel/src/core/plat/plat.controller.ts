@@ -1,5 +1,5 @@
 import { Body, Controller, Logger, Param, Post } from '@nestjs/common'
-import { AccountStatus } from '../../transports/account/common'
+import { AccountStatus } from '@yikart/aitoearn-server-client'
 import { GenAuthURLDto } from './plat.dto'
 import { PlatformService } from './plat.service'
 

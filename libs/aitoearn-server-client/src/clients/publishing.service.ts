@@ -1,19 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import { PublishRecord, PublishStatus } from '../account/common'
-import { InternalApi } from '../api'
+import { PublishRecord, PublishStatus } from '../interfaces'
+import { BaseService } from './base.service'
 
 @Injectable()
-export class PublishingInternalApi extends InternalApi {
-  override logger = new Logger(PublishingInternalApi.name)
-
-  constructor() {
-    super()
-  }
-
+export class PublishingService extends BaseService {
   /**
    * 创建账户
-   * @param account
    * @param data
    * @returns
    */

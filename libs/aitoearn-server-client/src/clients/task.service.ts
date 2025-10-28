@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import { InternalApi } from '../api'
-import { Task } from './common'
+import { Task } from '../interfaces'
+import { BaseService } from './base.service'
 
 @Injectable()
-export class TaskInternalApi extends InternalApi {
+export class TaskService extends BaseService {
   /**
    * 获取任务信息
    * @param taskId 任务id
    * @returns 用户信息
    */
-  async getTaskInfo(taskId: string) {
+  async getTask(taskId: string) {
     const url = `/internal/tasks/${taskId}`
     const config: AxiosRequestConfig = {
       method: 'GET',

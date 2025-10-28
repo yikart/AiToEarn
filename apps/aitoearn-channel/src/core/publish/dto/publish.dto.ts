@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { createZodDto } from '@yikart/common'
 import { Expose, Transform } from 'class-transformer'
 import {
@@ -17,7 +18,6 @@ import {
   PublishStatus,
   PublishType,
 } from '../../../libs/database/schema/publishTask.schema'
-import { AccountType } from '../../../transports/account/common'
 
 export class PublishRecordIdDto {
   @ApiProperty({ title: 'ID', required: true })

@@ -12,8 +12,6 @@ import {
   PublishTask,
   PublishTaskSchema,
 } from '../../libs/database/schema/publishTask.schema'
-import { PublishingInternalApi } from '../../transports/publishing/publishing.api'
-import { TransportModule } from '../../transports/transport.module'
 import { BilibiliModule } from '../plat/bilibili/bilibili.module'
 import { KwaiModule } from '../plat/kwai/kwai.module'
 import { MetaModule } from '../plat/meta/meta.module'
@@ -63,7 +61,6 @@ import { PublishTaskService } from './publishTask.service'
     MetaPublishModule,
     TwitterModule,
     PinterestModule,
-    TransportModule,
   ],
   providers: [
     PublishTaskService,
@@ -79,7 +76,6 @@ import { PublishTaskService } from './publishTask.service'
     TiktokPubService,
     MetaPublishWorker,
     LinkedinPublishService,
-    PublishingInternalApi,
   ],
   controllers: [PublishTaskController],
   exports: [PublishTaskService],

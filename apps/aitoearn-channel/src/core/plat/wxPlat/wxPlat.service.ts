@@ -6,6 +6,7 @@
  * @Description: WxPlat
  */
 import { Injectable, Logger } from '@nestjs/common'
+import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { v4 as uuidv4 } from 'uuid'
@@ -14,7 +15,6 @@ import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
 import { MyWxPlatApiService } from '../../../libs/myWxPlat/myWxPlatApi.service'
 import { WxPlatAuthorizerInfo } from '../../../libs/wxPlat/comment'
-import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
 import { AuthTaskInfo } from '../common'
 import { WxPlatAuthInfo } from './common'
 import { decode } from './WXMsgCrypto'

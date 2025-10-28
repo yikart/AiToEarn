@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { PublishStatus, PublishTask } from '../../../../libs/database/schema/publishTask.schema'
-import { AccountType } from '../../../../transports/account/common'
 import { DoPubRes } from '../../common'
 import { FacebookPublishService } from './facebook.service'
 import { InstagramPublishService } from './instgram.service'

@@ -8,8 +8,7 @@ import { ContentType, ImageRole } from '../libs/volcengine'
 const videoGenerationRequestSchema = z.object({
   model: z.string().min(1).describe('模型名称'),
   prompt: z.string().min(1).max(4000).describe('提示词'),
-  image: z.string().optional().describe('图片URL或base64'),
-  // image: z.string().or(z.string().array()).optional().describe('图片URL或base64'),
+  image: z.string().or(z.string().array()).optional().describe('图片URL或base64'),
   image_tail: z.string().optional().describe('尾帧图片URL或base64'),
   mode: z.string().optional().describe('生成模式'),
   size: z.string().optional().describe('尺寸'),

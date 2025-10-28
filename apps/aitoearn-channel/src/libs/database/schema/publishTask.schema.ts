@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import mongoose from 'mongoose'
 import { PlatPulOption } from '../../../core/publish/common'
-import { AccountType } from '../../../transports/account/common'
 import { BaseTemp } from './time.tamp'
 
 export enum PublishType {

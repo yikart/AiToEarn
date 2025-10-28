@@ -9,6 +9,7 @@ import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { KwaiService } from '../../../core/plat/kwai/kwai.service'
@@ -16,7 +17,6 @@ import {
   PublishStatus,
   PublishTask,
 } from '../../../libs/database/schema/publishTask.schema'
-import { AccountType } from '../../../transports/account/common'
 import { DoPubRes } from '../common'
 import { PublishBase } from './publish.base'
 

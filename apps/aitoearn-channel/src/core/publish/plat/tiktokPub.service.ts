@@ -2,6 +2,7 @@ import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
+import { AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { chunkedDownloadFile, getFileTypeFromUrl, getRemoteFileSize } from '../../../common'
@@ -11,7 +12,6 @@ import { PostInfoDto, VideoFileUploadSourceDto, VideoPullUrlSourceDto } from '..
 import { TiktokService } from '../../../core/plat/tiktok/tiktok.service'
 import { PublishStatus, PublishTask } from '../../../libs/database/schema/publishTask.schema'
 import { TiktokPrivacyLevel, TiktokSourceType } from '../../../libs/tiktok/tiktok.enum'
-import { PublishingInternalApi } from '../../../transports/publishing/publishing.api'
 import { DoPubRes } from '../common'
 import { TiktokWebhookDto } from '../dto/tiktok.webhook.dto'
 import { PublishBase } from './publish.base'
@@ -30,7 +30,7 @@ export class TiktokPubService extends PublishBase {
     @InjectQueue('post_publish') publishQueue: Queue,
     readonly tiktokService: TiktokService,
     readonly publishRecordService: PublishRecordService,
-    readonly publishingInternalApi: PublishingInternalApi,
+    private readonly serverClient: AitoearnServerClientService,
   ) {
     super(eventEmitter, publishTaskModel, publishQueue)
   }
@@ -204,7 +204,7 @@ export class TiktokPubService extends PublishBase {
         this.logger.error(`invalid publish_id in webhook: ${JSON.stringify(content)}`)
         return
       }
-      const publishRecord = await this.publishingInternalApi.getPublishRecordByDataId(publishId, dto.user_openid)
+      const publishRecord = await this.serverClient.publishing.getPublishRecordByDataId(publishId, dto.user_openid)
       if (!publishRecord) {
         this.logger.error(`未找到发布记录: ${publishId}, 用户: ${dto.user_openid}`)
         return

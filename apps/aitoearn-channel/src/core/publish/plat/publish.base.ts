@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { PublishRecord } from '@yikart/aitoearn-server-client'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import {
   PublishStatus,
   PublishTask,
 } from '../../../libs/database/schema/publishTask.schema'
-import { PublishRecord } from '../../../transports/account/common'
 import { DoPubRes } from '../common'
 
 @Injectable()

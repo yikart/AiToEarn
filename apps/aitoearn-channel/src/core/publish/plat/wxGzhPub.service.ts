@@ -2,6 +2,7 @@ import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import { WxGzhService } from '../../../core/plat/wxPlat/wxGzh.service'
@@ -10,7 +11,6 @@ import {
   PublishType,
 } from '../../../libs/database/schema/publishTask.schema'
 import { MediaType } from '../../../libs/wxGzh/common'
-import { AccountType } from '../../../transports/account/common'
 import { DoPubRes } from '../common'
 import { PublishBase } from './publish.base'
 

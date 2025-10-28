@@ -1,21 +1,23 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { AccountInternalApi } from '../../transports/account/account.api'
-import { AccountType } from '../../transports/account/common'
+import { AccountType, AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import { ThreadsService } from '../plat/meta/threads.service'
 import { DataCubeBase } from './data.base'
 
 @Injectable()
 export class ThreadsDataService extends DataCubeBase {
   private readonly logger = new Logger(ThreadsDataService.name)
-  constructor(readonly threadsService: ThreadsService, readonly accountInternalApi: AccountInternalApi) {
+  constructor(
+    readonly threadsService: ThreadsService,
+    private readonly serverClient: AitoearnServerClientService,
+  ) {
     super()
   }
 
   @OnEvent(`account.create.${AccountType.THREADS}`)
   async accountPortraitReport(accountId: string) {
     const res = await this.getAccountDataCube(accountId)
-    this.accountInternalApi.updateAccountStatistics(accountId, {
+    this.serverClient.account.updateAccountStatistics(accountId, {
       likeCount: res.likeNum,
       commentCount: res.commentNum,
       readCount: res.playNum,

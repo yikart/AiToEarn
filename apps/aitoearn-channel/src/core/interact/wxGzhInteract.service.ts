@@ -6,8 +6,8 @@
  * @Description: 微信公众号-交互
  */
 import { Injectable, Logger } from '@nestjs/common'
+import { PublishRecord } from '@yikart/aitoearn-server-client'
 import { Account } from '../../libs/database/schema/account.schema'
-import { PublishRecord } from '../../transports/account/common'
 import { WxGzhService } from '../plat/wxPlat/wxGzh.service'
 import { InteracteBase } from './interact.base'
 

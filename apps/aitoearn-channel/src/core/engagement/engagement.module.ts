@@ -2,8 +2,6 @@ import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { EngagementSubTask, EngagementSubTaskSchema, EngagementTask, EngagementTaskSchema } from '../../libs/database/schema/engagement.task.schema'
-import { AIInternalApi } from '../../transports/ai/ai.api'
-import { TransportModule } from '../../transports/transport.module'
 import { MetaModule } from '../plat/meta/meta.module'
 import { YoutubeModule } from '../plat/youtube/youtube.module'
 import { EngagementController } from './engagement.controller'
@@ -38,11 +36,9 @@ import { EngagementReplyToCommentWorker } from './workers/replyToComment.worker'
       { name: EngagementTask.name, schema: EngagementTaskSchema },
       { name: EngagementSubTask.name, schema: EngagementSubTaskSchema },
     ]),
-    TransportModule,
   ],
   controllers: [EngagementController],
   providers: [
-    AIInternalApi,
     FacebookEngagementProvider,
     InstagramEngagementProvider,
     ThreadsEngagementProvider,

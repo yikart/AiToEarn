@@ -6,7 +6,7 @@
  * @Description: 回复评论的记录 replyCommentRecord
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { AccountType } from '../../../transports/account/common'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { BaseTemp } from './time.tamp'
 
 @Schema({

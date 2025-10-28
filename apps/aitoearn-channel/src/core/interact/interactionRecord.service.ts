@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { Model, RootFilterQuery } from 'mongoose'
 import { TableDto } from '../../common/global/dto/table.dto'
 import { InteractionRecord } from '../../libs/database/schema/interactionRecord.schema'
-import { AccountType } from '../../transports/account/common'
 import { AddInteractionRecordDto } from './dto/interactionRecord.dto'
 
 @Injectable()

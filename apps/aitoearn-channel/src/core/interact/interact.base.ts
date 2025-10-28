@@ -1,5 +1,5 @@
+import { PublishRecord } from '@yikart/aitoearn-server-client'
 import { Account } from '../../libs/database/schema/account.schema'
-import { PublishRecord } from '../../transports/account/common'
 
 export abstract class InteracteBase {
   // 添加作品评论

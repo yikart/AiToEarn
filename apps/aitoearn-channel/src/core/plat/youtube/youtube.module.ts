@@ -9,8 +9,6 @@ import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { OAuth2Crendential, OAuth2CrendentialSchema } from '../../../libs/database/schema/oauth2Crendential.schema'
 import { YoutubeApiModule } from '../../../libs/youtube/youtubeApi.module'
-import { AccountInternalApi } from '../../../transports/account/account.api'
-import { TransportModule } from '../../../transports/transport.module'
 import { YoutubeController } from './youtube.controller'
 import { YoutubeService } from './youtube.service'
 
@@ -21,10 +19,9 @@ import { YoutubeService } from './youtube.service'
     ]),
 
     YoutubeApiModule,
-    TransportModule,
   ],
   controllers: [YoutubeController],
-  providers: [YoutubeService, AccountInternalApi],
+  providers: [YoutubeService],
   exports: [YoutubeService],
 })
 export class YoutubeModule {}

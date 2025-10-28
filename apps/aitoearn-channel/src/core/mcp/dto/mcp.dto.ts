@@ -1,6 +1,6 @@
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { z } from 'zod/v3'
 import { PublishType } from '../../../libs/database/schema/publishTask.schema'
-import { AccountType } from '../../../transports/account/common'
 
 export const GetAuthPageSchema = z.object({
   accountType: z.nativeEnum(AccountType).describe('平台类型'),

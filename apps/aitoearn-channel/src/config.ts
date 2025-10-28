@@ -1,3 +1,4 @@
+import { aitoearnServerClientConfigSchema } from '@yikart/aitoearn-server-client'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
 import { redisConfigSchema } from '@yikart/redis'
 import { z } from 'zod'
@@ -98,8 +99,8 @@ const AliGreenConfigSchema = z.object({
 })
 
 export const configSchema = z.object({
-  gateway: z.string(),
   ...baseConfig.shape,
+  server: aitoearnServerClientConfigSchema,
   redis: redisConfigSchema,
   mongodb: mongoConfigSchema,
   awsS3: s3ConfigSchema,
@@ -114,7 +115,6 @@ export const configSchema = z.object({
   youtube: YoutubeSchema,
   oauth: MetaOAuth2ConfigSchema,
   aliGreen: AliGreenConfigSchema,
-  internalToken: z.string(),
 })
 
 export class AppConfig extends createZodDto(configSchema) {}

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { AccountType } from '@yikart/aitoearn-server-client'
 import { RedisService } from '@yikart/redis'
 import { isInstance } from 'class-validator'
-import { AccountType } from '../../transports/account/common'
 import { AccountService } from '../account/account.service'
 import { BilibiliService } from './bilibili/bilibili.service'
 import { KwaiService } from './kwai/kwai.service'
