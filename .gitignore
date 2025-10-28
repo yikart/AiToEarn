@@ -36,10 +36,12 @@ release
 # 忽略所有.db文件
 *.db
 
-# 忽略所有.exe文件(太)
+# 忽略所有.exe文件
 *.exe
 
 # 忽略/public/bin目录下的非.md文件
 public/bin/*
 !public/bin/webkit
 !public/bin/*.md
+
+sh/*
