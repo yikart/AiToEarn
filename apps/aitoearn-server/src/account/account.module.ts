@@ -6,7 +6,6 @@ import { FingerprintService } from '../fingerprint/fingerprint.service'
 import { StatisticsModule } from '../statistics/statistics.module'
 import { TaskModule } from '../task/task.module'
 import { AccountController } from './account.controller'
-import { AccountInternalController } from './account.internal.controller'
 import { AccountService } from './account.service'
 import { AccountGroupController } from './accountGroup.controller'
 import { AccountGroupService } from './accountGroup.service'
@@ -15,7 +14,7 @@ import { AccountGroupService } from './accountGroup.service'
 @Module({
   imports: [CloudSpaceModule, TaskModule, ChannelModule, StatisticsModule],
   providers: [FingerprintService, AccountService, AccountGroupService],
-  controllers: [AccountController, AccountGroupController, FingerprintController, AccountInternalController],
+  controllers: [AccountController, AccountGroupController, FingerprintController],
   exports: [AccountService, AccountGroupService],
 })
 export class AccountModule { }

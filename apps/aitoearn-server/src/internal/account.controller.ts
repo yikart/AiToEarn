@@ -9,7 +9,8 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
-import { CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../account/dto/account.dto'
+import { AccountService } from '../account/account.service'
+import { AccountIdDto, CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../account/dto/account.dto'
 import { AccountInternalService } from './provider/account.service'
 
 @ApiTags('内部服务接口')
@@ -17,7 +18,18 @@ import { AccountInternalService } from './provider/account.service'
 @Internal()
 export class AccountController {
   private readonly logger = new Logger(AccountController.name)
-  constructor(private readonly accountInternalService: AccountInternalService) { }
+  constructor(
+    private readonly accountInternalService: AccountInternalService,
+    private readonly accountService: AccountService,
+  ) { }
+
+  @ApiOperation({
+    summary: '获取频道信息',
+  })
+  @Post('account/info')
+  async getAccountInfoToTask(@Body() body: AccountIdDto) {
+    return this.accountService.getAccountById(body.id)
+  }
 
   @ApiOperation({ summary: 'create social media accounts' })
   @Post('/:userId/socials/accounts')

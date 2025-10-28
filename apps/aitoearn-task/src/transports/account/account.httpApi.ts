@@ -5,15 +5,7 @@ import { Account } from './comment'
 @Injectable()
 export class AccountHttpApi extends ServerBaseApi {
   async getAccountInfoById(accountId: string) {
-    const res = await this.sendMessage<Account>(`accountInternal/info`, { id: accountId })
-    return res
-  }
-
-  async listByIds(ids: string[]) {
-    const res = await this.sendMessage<Account[]>(
-      `accountInternal/list/ids`,
-      { ids },
-    )
+    const res = await this.sendMessage<Account>(`internal/account/info`, { id: accountId })
     return res
   }
 }
