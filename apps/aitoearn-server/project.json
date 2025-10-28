@@ -1,13 +1,7 @@
 {
-<<<<<<<< HEAD:apps/aitoearn-server/project.json
   "name": "aitoearn-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/aitoearn-server/src",
-========
-  "name": "aitoearn-task",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/aitoearn-task/src",
->>>>>>>> origin/merge:apps/aitoearn-task/project.json
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -15,7 +9,6 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
-<<<<<<<< HEAD:apps/aitoearn-server/project.json
         "outputPath": "dist/apps/aitoearn-server",
         "tsConfig": "apps/aitoearn-server/tsconfig.app.json",
         "packageJson": "apps/aitoearn-server/package.json",
@@ -25,13 +18,6 @@
           "apps/aitoearn-server/src/views/**/*",
           "apps/aitoearn-server/src/public/**/*"
         ],
-========
-        "outputPath": "dist/apps/aitoearn-task",
-        "tsConfig": "apps/aitoearn-task/tsconfig.app.json",
-        "packageJson": "apps/aitoearn-task/package.json",
-        "main": "apps/aitoearn-task/src/main.ts",
-        "assets": ["apps/aitoearn-task/*.md"],
->>>>>>>> origin/merge:apps/aitoearn-task/project.json
         "generatePackageJson": true,
         "clean": true
       }
@@ -41,13 +27,8 @@
       "cache": true,
       "executor": "@nx/js:prune-lockfile",
       "outputs": [
-<<<<<<<< HEAD:apps/aitoearn-server/project.json
         "{workspaceRoot}/dist/apps/aitoearn-server/package.json",
         "{workspaceRoot}/dist/apps/aitoearn-server/pnpm-lock.yaml"
-========
-        "{workspaceRoot}/dist/apps/aitoearn-task/package.json",
-        "{workspaceRoot}/dist/apps/aitoearn-task/pnpm-lock.yaml"
->>>>>>>> origin/merge:apps/aitoearn-task/project.json
       ],
       "options": {
         "buildTarget": "build"
@@ -59,16 +40,11 @@
       "defaultConfiguration": "local",
       "dependsOn": ["build"],
       "options": {
-<<<<<<<< HEAD:apps/aitoearn-server/project.json
         "buildTarget": "aitoearn-server:build",
-========
-        "buildTarget": "aitoearn-task:build",
->>>>>>>> origin/merge:apps/aitoearn-task/project.json
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "local": {
-<<<<<<<< HEAD:apps/aitoearn-server/project.json
           "buildTarget": "aitoearn-server:build:development",
           "args": [
             "-c",
@@ -87,26 +63,6 @@
           "args": [
             "-c",
             "{workspaceRoot}/apps/aitoearn-server/config/prod.config.js"
-========
-          "buildTarget": "aitoearn-task:build:development",
-          "args": [
-            "-c",
-            "{workspaceRoot}/apps/aitoearn-task/config/local.config.js"
-          ]
-        },
-        "dev": {
-          "buildTarget": "aitoearn-task:build:development",
-          "args": [
-            "-c",
-            "{workspaceRoot}/apps/aitoearn-task/config/dev.config.js"
-          ]
-        },
-        "prod": {
-          "buildTarget": "aitoearn-task:build:production",
-          "args": [
-            "-c",
-            "{workspaceRoot}/apps/aitoearn-task/config/prod.config.js"
->>>>>>>> origin/merge:apps/aitoearn-task/project.json
           ]
         }
       }
