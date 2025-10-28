@@ -6,9 +6,20 @@ import { getCurrentTimestamp } from '../../../common'
 import { config } from '../../../config'
 import { AccountService } from '../../../core/account/account.service'
 import { Account } from '../../../libs/database/schema/account.schema'
-import { FacebookPageDetailRequest, FacebookPageDetailResponse } from '../../../libs/facebook/facebook.interfaces'
-import { AccountStatus, AccountType, NewAccount } from '../../../transports/account/common'
-import { META_TIME_CONSTANTS, metaOAuth2ConfigMap, MetaRedisKeys } from './constants'
+import {
+  FacebookPageDetailRequest,
+  FacebookPageDetailResponse,
+} from '../../../libs/facebook/facebook.interfaces'
+import {
+  AccountStatus,
+  AccountType,
+  NewAccount,
+} from '../../../transports/account/common'
+import {
+  META_TIME_CONSTANTS,
+  metaOAuth2ConfigMap,
+  MetaRedisKeys,
+} from './constants'
 import {
   FacebookAccountResponse,
   FacebookPage,
@@ -27,10 +38,7 @@ export class MetaService {
   private readonly accountService: AccountService
   private readonly logger = new Logger(MetaService.name)
 
-  constructor(
-    redisService: RedisService,
-    accountService: AccountService,
-  ) {
+  constructor(redisService: RedisService, accountService: AccountService) {
     this.redisService = redisService
     this.accountService = accountService
   }
@@ -41,18 +49,18 @@ export class MetaService {
     oAuth2Scopes?: string[],
     spaceId = '',
   ) {
-    this.logger.log(`Generating authorize URL for userId: ${userId}, platform: ${platform}}`)
+    this.logger.log(
+      `Generating authorize URL for userId: ${userId}, platform: ${platform}}`,
+    )
     const scopes
       = oAuth2Scopes
         || config.oauth[platform].scopes
         || metaOAuth2ConfigMap[platform].defaultScopes
     const state = randomBytes(32).toString('hex')
-    const scopeSeparator
-      = metaOAuth2ConfigMap[platform].scopesSeparator
+    const scopeSeparator = metaOAuth2ConfigMap[platform].scopesSeparator
     const params = new URLSearchParams({
       client_id: config.oauth[platform].clientId,
-      redirect_uri:
-        config.oauth[platform].redirectUri,
+      redirect_uri: config.oauth[platform].redirectUri,
       response_type: 'code',
       state,
     })
@@ -75,9 +83,7 @@ export class MetaService {
       params.append('code_challenge', codeChallenge)
     }
 
-    const authorizeURL = new URL(
-      metaOAuth2ConfigMap[platform].authURL,
-    )
+    const authorizeURL = new URL(metaOAuth2ConfigMap[platform].authURL)
     authorizeURL.search = params.toString()
     this.logger.debug(`Generated meta auth URL: ${authorizeURL.toString()}`)
 
@@ -118,16 +124,12 @@ export class MetaService {
   ): Promise<OAuth2Credential> {
     const platform = info.platform.toLowerCase()
     const pkceEnabled = metaOAuth2ConfigMap[platform].pkce
-    const accessTokenURL
-      = metaOAuth2ConfigMap[platform].accessTokenURL
+    const accessTokenURL = metaOAuth2ConfigMap[platform].accessTokenURL
     const longLivedAccessTokenURL
       = metaOAuth2ConfigMap[platform].longLivedAccessTokenURL || ''
-    const redirectURI
-      = config.oauth[platform].redirectUri
-    const clientId
-      = config.oauth[platform].clientId
-    const clientSecret
-      = config.oauth[platform].clientSecret
+    const redirectURI = config.oauth[platform].redirectUri
+    const clientId = config.oauth[platform].clientId
+    const clientSecret = config.oauth[platform].clientSecret
     const requestAccessTokenMethod
       = metaOAuth2ConfigMap[platform].requestAccessTokenMethod
 
@@ -143,7 +145,9 @@ export class MetaService {
     else {
       params.append('client_secret', clientSecret)
     }
-    this.logger.log(`Requesting access token with params: ${params.toString()}`)
+    this.logger.log(
+      `Requesting access token with params: ${params.toString()}`,
+    )
     const reqConfig: AxiosRequestConfig = {
       method: requestAccessTokenMethod,
       url: accessTokenURL,
@@ -158,7 +162,9 @@ export class MetaService {
     else {
       reqConfig.params = params
     }
-    this.logger.log(`Requesting access token with config: ${JSON.stringify(reqConfig)}`)
+    this.logger.log(
+      `Requesting access token with config: ${JSON.stringify(reqConfig)}`,
+    )
     const response: AxiosResponse<OAuth2Credential>
       = await axios.request(reqConfig)
 
@@ -177,13 +183,16 @@ export class MetaService {
         = metaOAuth2ConfigMap[platform].longLivedGrantType || 'fb_exchange_token'
 
       const longLivedAccessTokenReqParams = new URLSearchParams(lParams)
-      const llTokenResponse: AxiosResponse<OAuth2Credential>
-        = await axios.get(longLivedAccessTokenURL, {
+      const llTokenResponse: AxiosResponse<OAuth2Credential> = await axios.get(
+        longLivedAccessTokenURL,
+        {
           params: longLivedAccessTokenReqParams,
-        })
+        },
+      )
       const credential = llTokenResponse.data
       if (!credential.expires_in) {
-        credential.expires_in = META_TIME_CONSTANTS.FACEBOOK_LONG_LIVED_TOKEN_DEFAULT_EXPIRE
+        credential.expires_in
+          = META_TIME_CONSTANTS.FACEBOOK_LONG_LIVED_TOKEN_DEFAULT_EXPIRE
       }
       return credential
     }
@@ -205,17 +214,19 @@ export class MetaService {
         },
         params: query,
       }
-      const response: AxiosResponse<FacebookPageDetailResponse> = await axios.get(
-        url,
-        config,
-      )
+      const response: AxiosResponse<FacebookPageDetailResponse>
+        = await axios.get(url, config)
       return response.data
     }
     catch (error) {
       if (error.response) {
-        this.logger.error(`Error fetching page details pageId: ${pageId}, req: ${JSON.stringify(query)}: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+        this.logger.error(
+          `Error fetching page details pageId: ${pageId}, req: ${JSON.stringify(query)}: ${error.response.status} - ${JSON.stringify(error.response.data)}`,
+        )
       }
-      throw new Error(`Error fetching page details, pageId: ${pageId}, req: ${JSON.stringify(query)}`)
+      throw new Error(
+        `Error fetching page details, pageId: ${pageId}, req: ${JSON.stringify(query)}`,
+      )
     }
   }
 
@@ -223,8 +234,7 @@ export class MetaService {
     accessToken: string,
     platform: string,
   ): Promise<Record<string, any>> {
-    const userProfileURL
-      = metaOAuth2ConfigMap[platform].userProfileURL
+    const userProfileURL = metaOAuth2ConfigMap[platform].userProfileURL
     const url = new URL(userProfileURL)
     const config = {
       headers: {
@@ -238,9 +248,7 @@ export class MetaService {
     return response.data
   }
 
-  async getFacebookPageList(
-    userId: string,
-  ): Promise<FacebookPage[]> {
+  async getFacebookPageList(userId: string): Promise<FacebookPage[]> {
     const key = MetaRedisKeys.getUserPageListKey('facebook', userId)
     const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (pages) {
@@ -273,7 +281,9 @@ export class MetaService {
     for (const pageId of pageIds) {
       const page = pageMap.get(pageId)
       if (!page) {
-        this.logger.warn(`Page ID ${pageId} not found in user's Facebook pages`)
+        this.logger.warn(
+          `Page ID ${pageId} not found in user's Facebook pages`,
+        )
         result.message = `Page ID ${pageId} not found in user's Facebook pages`
         return result
       }
@@ -281,7 +291,10 @@ export class MetaService {
         'facebook',
         pageId,
       )
-      const pageCredential = await this.redisService.getJson<FacebookPageCredentials>(pageCredentialKey)
+      const pageCredential
+        = await this.redisService.getJson<FacebookPageCredentials>(
+          pageCredentialKey,
+        )
       if (!pageCredential) {
         result.message = `Page access token not found for userId: ${userId}, pageId: ${pageId}`
         return result
@@ -289,7 +302,12 @@ export class MetaService {
       const accountInfo = await this.createAccount(
         userId,
         AccountType.FACEBOOK,
-        { id: pageId, groupId: pageCredential.spaceId, name: page.name, profile_picture_url: page.profile_picture_url },
+        {
+          id: pageId,
+          groupId: pageCredential.spaceId,
+          name: page.name,
+          profile_picture_url: page.profile_picture_url,
+        },
       )
 
       if (!accountInfo) {
@@ -303,14 +321,20 @@ export class MetaService {
         'facebook',
         accountInfo.id,
       )
-      await this.redisService.setJson(
-        newPageCredentialKey,
-        pageCredential,
-      )
+      await this.redisService.setJson(newPageCredentialKey, pageCredential)
       await this.redisService.del(pageCredentialKey)
-      const previousFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey('facebook', userId)
-      const newFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey('facebook', pageCredential.facebook_user_id)
-      const facebookCredential = await this.redisService.getJson<MetaUserOAuthCredential>(previousFacebookCredentialKey)
+      const previousFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey(
+        'facebook',
+        userId,
+      )
+      const newFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey(
+        'facebook',
+        pageCredential.facebook_user_id,
+      )
+      const facebookCredential
+        = await this.redisService.getJson<MetaUserOAuthCredential>(
+          previousFacebookCredentialKey,
+        )
       if (facebookCredential) {
         await this.redisService.setJson(
           newFacebookCredentialKey,
@@ -319,8 +343,12 @@ export class MetaService {
         await this.redisService.del(previousFacebookCredentialKey)
       }
       else {
-        this.logger.warn(`No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`)
-        throw new Error(`No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`)
+        this.logger.warn(
+          `No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`,
+        )
+        throw new Error(
+          `No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`,
+        )
       }
       result.selectedPageIds.push(pageId)
     }
@@ -329,10 +357,7 @@ export class MetaService {
     return result
   }
 
-  async getFacebookAccount(
-    accessToken: string,
-    pageAccountURL: string,
-  ) {
+  async getFacebookAccount(accessToken: string, pageAccountURL: string) {
     try {
       const response: AxiosResponse<FacebookAccountResponse> = await axios.get(
         pageAccountURL,
@@ -350,9 +375,13 @@ export class MetaService {
     }
     catch (error) {
       if (error.response) {
-        this.logger.error(`Error fetching user account, status: ${error.response.status}, response: ${error.response.data}`)
+        this.logger.error(
+          `Error fetching user account, status: ${error.response.status}, response: ${error.response.data}`,
+        )
       }
-      this.logger.error(`Failed to fetch user account: ${error.message}, stack: ${error.stack}`)
+      this.logger.error(
+        `Failed to fetch user account: ${error.message}, stack: ${error.stack}`,
+      )
       return []
     }
   }
@@ -389,7 +418,9 @@ export class MetaService {
           message: '获取访问令牌失败',
         }
       }
-      this.logger.log(`Access token retrieved for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}, credential: ${JSON.stringify(credential)}`)
+      this.logger.log(
+        `Access token retrieved for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}, credential: ${JSON.stringify(credential)}`,
+      )
 
       // fetch user profile
       const userProfile = await this.getUserProfile(
@@ -412,22 +443,35 @@ export class MetaService {
         if (pageAccounts.length === 0) {
           return {
             status: 0,
-            message: 'No Facebook pages found for the user. Please ensure you have at least one Facebook Page and the necessary permissions.',
+            message:
+              'No Facebook pages found for the user. Please ensure you have at least one Facebook Page and the necessary permissions.',
           }
         }
         if (pageAccounts.length > 0) {
           const pages: FacebookPage[] = []
           for (const pageAccount of pageAccounts) {
-            const pageDetail = await this.getPageDetails(pageAccount.id, pageAccount.access_token, {
-              fields: 'picture',
-            })
-            const expiredTime = getCurrentTimestamp() + credential.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
+            const pageDetail = await this.getPageDetails(
+              pageAccount.id,
+              pageAccount.access_token,
+              {
+                fields: 'picture',
+              },
+            )
+            const expiredTime
+              = getCurrentTimestamp()
+                + credential.expires_in
+                - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
             await this.redisService.setJson(
               MetaRedisKeys.getUserPageAccessTokenKey(
                 authTaskInfo.platform,
                 pageAccount.id,
               ),
-              { ...pageAccount, facebook_user_id: userProfile.id, expires_in: expiredTime, spaceId: authTaskInfo.spaceId } as FacebookPageCredentials,
+              {
+                ...pageAccount,
+                facebook_user_id: userProfile.id,
+                expires_in: expiredTime,
+                spaceId: authTaskInfo.spaceId,
+              } as FacebookPageCredentials,
             )
             pages.push({
               id: pageAccount.id,
@@ -531,7 +575,9 @@ export class MetaService {
     }
     catch (error) {
       if (error.response) {
-        this.logger.error(`Error in OAuth2 callback: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
+        this.logger.error(
+          `Error in OAuth2 callback: ${error.response.status} - ${JSON.stringify(error.response.data)}`,
+        )
       }
       this.logger.error(
         `Error processing OAuth2 callback for state: ${state}, code: ${code}, error: ${error.message}`,
@@ -541,8 +587,14 @@ export class MetaService {
     }
   }
 
-  private async createAccount(userId: string, accountType: AccountType, userProfile: Record<string, any>): Promise<Account | null> {
-    this.logger.log(`Creating account for userId: ${userId}, platform: ${accountType}, userProfile: ${JSON.stringify(userProfile)}`)
+  private async createAccount(
+    userId: string,
+    accountType: AccountType,
+    userProfile: Record<string, any>,
+  ): Promise<Account | null> {
+    this.logger.log(
+      `Creating account for userId: ${userId}, platform: ${accountType}, userProfile: ${JSON.stringify(userProfile)}`,
+    )
     const newAccountData = new NewAccount({
       userId,
       type: accountType,
@@ -608,11 +660,15 @@ export class MetaService {
     )
   }
 
-  async getAccessTokenStatus(accountId: string, platform: string): Promise<number> {
+  async getAccessTokenStatus(
+    accountId: string,
+    platform: string,
+  ): Promise<number> {
     if (platform === 'facebook') {
-      const pageCredential = await this.redisService.getJson<FacebookPageCredentials>(
-        MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId),
-      )
+      const pageCredential
+        = await this.redisService.getJson<FacebookPageCredentials>(
+          MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId),
+        )
       if (!pageCredential) {
         return 0
       }
