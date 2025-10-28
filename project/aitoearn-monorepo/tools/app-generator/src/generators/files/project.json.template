@@ -1,0 +1,93 @@
+{
+  "name": "<%= name %>",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/<%= name %>/src",
+  "projectType": "application",
+  "tags": [],
+    "targets": {
+      "build": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "webpack-cli build",
+          "args": [
+            "--node-env=production"
+          ]
+        },
+        "configurations": {
+          "development": {
+            "args": [
+              "--node-env=development"
+            ]
+          }
+        }
+      },
+      "prune-lockfile": {
+        "dependsOn": ["build"],
+        "cache": true,
+        "executor": "@nx/js:prune-lockfile",
+        "outputs": [
+          "{workspaceRoot}/dist/apps/<%= name %>/package.json",
+          "{workspaceRoot}/dist/apps/<%= name %>/pnpm-lock.yaml"
+        ],
+        "options": {
+          "buildTarget": "build"
+        }
+      },
+      "copy-workspace-modules": {
+        "dependsOn": ["build"],
+        "cache": true,
+        "outputs": [
+          "{workspaceRoot}/dist/apps/<%= name %>/workspace_modules"
+        ],
+        "executor": "@nx/js:copy-workspace-modules",
+        "options": {
+          "buildTarget": "build"
+        }
+      },
+      "prune": {
+        "dependsOn": ["prune-lockfile", "copy-workspace-modules"],
+        "executor": "nx:noop"
+      },
+      "serve": {
+        "executor": "@nx/js:node",
+        "defaultConfiguration": "local",
+        "dependsOn": [
+          "build"
+        ],
+        "options": {
+          "buildTarget": "<%= name %>:build",
+          "runBuildTargetDependencies": false
+        },
+        "configurations": {
+          "local": {
+            "buildTarget": "<%= name %>:build:development",
+            "args": [
+              "-c",
+              "{workspaceRoot}/apps/<%= name %>/config/local.config.js"
+            ]
+          },
+          "dev": {
+            "buildTarget": "<%= name %>:build:development",
+            "args": [
+              "-c",
+              "{workspaceRoot}/apps/<%= name %>/config/dev.config.js"
+            ]
+          },
+          "prod": {
+            "buildTarget": "<%= name %>:build:production",
+            "args": [
+              "-c",
+              "{workspaceRoot}/apps/<%= name %>/config/prod.config.js"
+            ]
+          }
+        }
+      },
+      "lint": {
+        "executor": "@nx/eslint:lint",
+        "outputs": ["{options.outputFile}"],
+        "options": {
+          "fix": true
+        }
+      }
+    }
+  }

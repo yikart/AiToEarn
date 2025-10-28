@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "target": "es2021",
+    "types": ["node"],
+    "noImplicitAny": true,
+    "declaration": true,
+    "outDir": "../../dist/out-tsc"
+  },
+  "include": ["src/**/*.ts"]
+}

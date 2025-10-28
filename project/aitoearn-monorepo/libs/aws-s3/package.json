@@ -1,0 +1,26 @@
+{
+  "name": "@yikart/aws-s3",
+  "type": "commonjs",
+  "version": "0.0.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@yikart/common": "*",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.886.0",
+    "@aws-sdk/lib-storage": "^3.886.0",
+    "@aws-sdk/s3-presigned-post": "^3.886.0",
+    "@aws-sdk/s3-request-presigner": "^3.886.0"
+  }
+}

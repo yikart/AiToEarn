@@ -1,0 +1,30 @@
+const {
+  NATS_HOST,
+  NATS_PORT,
+  NATS_USERNAME,
+  NATS_PASSWORD,
+} = process.env
+
+module.exports = {
+  port: <%= port %>,
+  globalPrefix: 'api',
+  openapi: {
+    enable: true,
+    title: '<%= name %> API',
+    path: '/docs',
+  },
+  logger: {
+    console: {
+      enable: true,
+      level: 'debug',
+    },
+  },
+  nats: {
+    name: '<%= name %>',
+    servers: [`nats://${NATS_USERNAME}:${NATS_PASSWORD}@${NATS_HOST}:${NATS_PORT}`],
+    user: NATS_USERNAME,
+    pass: NATS_PASSWORD,
+    prefix: 'dev',
+  },
+  enableBadRequestDetails: true,
+}

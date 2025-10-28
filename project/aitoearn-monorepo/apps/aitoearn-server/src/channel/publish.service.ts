@@ -1,0 +1,200 @@
+import { Injectable, Logger } from '@nestjs/common'
+import { AppException, TableDto } from '@yikart/common'
+import { AccountType, PublishRecord, PublishStatus } from '@yikart/mongodb'
+import { PostData } from '@yikart/statistics-db'
+import { PublishRecordService } from '../publishRecord/publishRecord.service'
+import { PostService } from '../statistics/post/post.service'
+import { EngagementNatsApi } from '../transports/channel/api/engagement/engagement.api'
+import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
+import { PublishTaskNatsApi } from '../transports/channel/api/publishTask.natsApi'
+import { PublishingChannel } from '../transports/channel/common'
+import { UserTaskNatsApi } from '../transports/task/api/user-task.natsApi'
+import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
+import { PostHistoryItemDto } from './dto/publish-response.dto'
+import { PublishDayInfoListFiltersDto, PubRecordListFilterDto } from './dto/publish.dto'
+
+@Injectable()
+export class PublishService {
+  private readonly logger = new Logger(PublishService.name)
+  constructor(
+    private readonly platPublishNatsApi: PlatPublishNatsApi,
+    private readonly publishTaskNatsApi: PublishTaskNatsApi,
+    private readonly userTaskNatsApi: UserTaskNatsApi,
+    private readonly engagementNatsApi: EngagementNatsApi,
+    private readonly publishRecordService: PublishRecordService,
+    private readonly postService: PostService,
+  ) { }
+
+  async create(newData: NewPublishData<PlatOptions>) {
+    const res = await this.platPublishNatsApi.create(newData)
+    return res
+  }
+
+  async createRecord(newData: NewPublishRecordData) {
+    // 如果有用户ID任务，则传入用户任务ID和任务ID
+    if (newData.userTaskId) {
+      const userTask = await this.userTaskNatsApi.getUserTaskInfo(newData.userTaskId)
+      if (userTask) {
+        newData.taskId = userTask.taskId
+      }
+    }
+    const res = await this.platPublishNatsApi.createRecord(newData)
+    return res
+  }
+
+  async run(id: string) {
+    const res = await this.platPublishNatsApi.run(id)
+    return res
+  }
+
+  async getList(data: PubRecordListFilterDto, userId: string) {
+    const list1 = await this.publishRecordService.getPublishRecordList({
+      ...data,
+      userId,
+    })
+    const list2 = await this.publishTaskNatsApi.getPublishTaskList(userId, data)
+    return [...list1, ...list2]
+  }
+
+  private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
+    const result = new Map<string, PostHistoryItemDto>()
+    for (const post of postsHistory) {
+      this.logger.log(`Merging post history: ${JSON.stringify(post)}`)
+      result.set(post.postId, {
+        id: post.id,
+        dataId: post.postId,
+        flowId: '',
+        type: post.mediaType,
+        title: post.title || '',
+        desc: post.content || '',
+        accountId: '',
+        accountType: post.platform as AccountType,
+        uid: '',
+        videoUrl: post.mediaType === 'video' ? post.permaLink || '' : undefined,
+        coverUrl: post.thumbnail || undefined,
+        imgUrlList: post.mediaType === 'image' ? [post.thumbnail || ''] : [],
+        publishTime: new Date(post.publishTime),
+        status: PublishStatus.PUBLISHING,
+        errorMsg: '',
+        publishingChannel: PublishingChannel.NATIVE,
+        engagement: {
+          viewCount: post.viewCount,
+          commentCount: post.commentCount,
+          likeCount: post.likeCount,
+          shareCount: post.shareCount,
+          clickCount: post.clickCount,
+          impressionCount: post.impressionCount,
+          favoriteCount: post.favoriteCount,
+        },
+      })
+    }
+    const defaultEngagement = {
+      viewCount: 0,
+      commentCount: 0,
+      likeCount: 0,
+      shareCount: 0,
+      clickCount: 0,
+      impressionCount: 0,
+      favoriteCount: 0,
+    }
+
+    for (const record of publishRecords) {
+      this.logger.log(`Merging publish record: ${JSON.stringify(record)}`)
+      if (record.dataId && result.has(record.dataId)) {
+        const post = result.get(record.dataId)!
+        post.id = record.id
+        post.title = record.title || ''
+        post.desc = record.desc || ''
+        post.flowId = record.flowId || ''
+        post.accountId = record.accountId
+        post.accountType = record.accountType
+        post.uid = record.uid
+        post.errorMsg = record.errorMsg || ''
+        post.publishingChannel = PublishingChannel.INTERNAL
+      }
+      else {
+        let status = record.status
+        if (status === PublishStatus.PUBLISHING && record.publishTime > new Date()) {
+          status = PublishStatus.PUBLISHING
+        }
+        result.set(record.dataId || record.id, {
+          id: record.id,
+          flowId: record.flowId || '',
+          title: record.title || '',
+          desc: record.desc || '',
+          dataId: record.dataId,
+          type: record.type,
+          accountId: record.accountId,
+          accountType: record.accountType,
+          uid: record.uid,
+          videoUrl: record.videoUrl || '',
+          coverUrl: record.coverUrl || '',
+          imgUrlList: record.imgUrlList || [],
+          publishTime: record.publishTime,
+          errorMsg: record.errorMsg || '',
+          status,
+          engagement: defaultEngagement,
+          publishingChannel: PublishingChannel.INTERNAL,
+        })
+      }
+    }
+    for (const task of publishTasks) {
+      this.logger.log(`Merging publish task: ${JSON.stringify(task)}`)
+      result.set(task.dataId || task.id, {
+        id: task.id,
+        ...task,
+        engagement: defaultEngagement,
+      })
+    }
+    return Array.from(result.values()).sort((a, b) => new Date(b.publishTime).getTime() - new Date(a.publishTime).getTime())
+  }
+
+  async getPostHistory(data: PubRecordListFilterDto, userId: string) {
+    const publishRecords = await this.publishRecordService.getPublishRecordList({
+      ...data,
+      userId,
+    })
+    const publishTasks = await this.publishTaskNatsApi.getPublishTaskList(userId, data)
+    const range = { start: '', end: '' }
+    if (data.time) {
+      range.start = data.time[0].toISOString()
+      range.end = data.time[1].toISOString()
+    }
+    const postsHistory = await this.postService.getUserAllPostsByPlatform({
+      ...data,
+      range,
+      userId,
+      platform: data.accountType as any,
+    })
+    const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
+    if (data.publishingChannel) {
+      return posts.filter(post => post.publishingChannel === data.publishingChannel)
+    }
+    return posts
+  }
+
+  async publishInfoData(userId: string) {
+    const res = await this.platPublishNatsApi.getPublishInfoData(userId)
+    return res
+  }
+
+  async publishDataInfoList(userId: string, data: PublishDayInfoListFiltersDto, page: TableDto) {
+    return await this.publishRecordService.getPublishDayInfoList({ userId, time: data.time }, page)
+  }
+
+  async getPublishRecordDetail(flowId: string, userId: string) {
+    try {
+      const record = await this.publishRecordService.getPublishRecordDetail({ flowId, userId })
+      return record
+    }
+    catch (error: any) {
+      this.logger.error(`Failed to get publish record detail for flowId ${flowId} and userId ${userId}: ${error.message}`, error.stack)
+    }
+
+    const task = await this.platPublishNatsApi.getPublishTaskDetail(flowId, userId)
+    if (!task) {
+      throw new AppException(400, `publish record with flowId ${flowId} not found.`)
+    }
+    return task
+  }
+}
