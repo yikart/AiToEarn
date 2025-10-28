@@ -45,42 +45,22 @@ Web | [Use on Web](https://aitoearn.ai/en/accounts)
 [Google Play 下载](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
 
-<h2 id="start-web-project">启动 Web 项目</h2>
+<h2 id="start-web-project">启动 Aitoearn 项目</h2>
 
 ### 1. 启动后端服务
 
-用于本地开发：  
-在 `config` 目录下创建 `local.config.js`（可从 `./aitoearn_web/server/aitoearn-user/config/dev.config.js` 复制并按需修改）。
-
 ```bash
+cd project/aitoearn-monorepo
 pnpm install
-pnpm run dev:local
-````
+npx nx serve aitoearn-channel && npx nx serve aitoearn-server
+```
 
 ### 2. 启动前端 `aitoearn-web`
 
 ```bash
+cd project/aitoearn-web
 pnpm install
 pnpm run dev
-```
-
-<h2 id="start-electron-project">启动 Electron 项目</h2>
-
-```sh
-# 克隆仓库
-git clone https://github.com/yikart/AttAiToEarn.git
-
-# 进入目录
-cd AttAiToEarn
-
-# 安装依赖
-npm i
-
-# 编译 sqlite（better-sqlite3 依赖 node-gyp，本地需安装 Python）
-npm run rebuild
-
-# 启动开发
-npm run dev
 ```
 
 <h2 id="key-features">核心功能</h2>

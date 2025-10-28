@@ -55,12 +55,10 @@ Web | [Use on Web](https://aitoearn.ai/en/accounts)
 ## Start Web Project
 ### 1. Start the backend service
 
-For local setup:
-Create a `local.config.js` file under the `config` directory (copy from `./aitoearn_web/server/aitoearn-user/config/dev.config.js` and adjust configs).
-
 ```bash
+cd project/aitoearn-monorepo
 pnpm install
-pnpm run dev:local
+npx nx serve aitoearn-channel && npx nx serve aitoearn-server
 ```
 
 ### 2. Start the frontend `aitoearn-web`
