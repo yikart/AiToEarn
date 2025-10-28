@@ -114,7 +114,7 @@ export class AccountDataController {
 
   // 存储新增channel
   // @NatsMessagePattern('statistics.channel.newChannelReport')
-  @Post('channel/newChannelReport')
+  @Post('channels/newChannelReport')
   setNewChannelReport(@Body() data: NewChannelDto) {
     const res = this.accountDataService.setNewChannels(data.platform, data.uid)
     return res
