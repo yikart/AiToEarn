@@ -3,7 +3,7 @@ import { IIsAdmin } from '@yikart/stripe'
 import { RefundBodyDto } from './refund.dto'
 import { RefundService } from './refund.service'
 
-@Controller('refund')
+@Controller()
 export class RefundController {
   constructor(
     private readonly refundService: RefundService,

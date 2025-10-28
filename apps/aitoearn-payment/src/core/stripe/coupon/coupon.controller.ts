@@ -2,7 +2,7 @@ import { Body, Controller, Param, Post } from '@nestjs/common'
 import { CouponDto, ListCouponDto } from './coupon.dto'
 import { CouponService } from './coupon.service'
 
-@Controller('coupon')
+@Controller()
 export class CouponController {
   constructor(
     private readonly couponService: CouponService,
