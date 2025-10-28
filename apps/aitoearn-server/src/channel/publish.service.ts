@@ -184,7 +184,7 @@ export class PublishService {
 
   async getPublishRecordDetail(flowId: string, userId: string) {
     try {
-      const record = await this.platPublishNatsApi.getPublishRecordDetail(flowId, userId)
+      const record = await this.publishRecordService.getPublishRecordDetail({ flowId, userId })
       return record
     }
     catch (error: any) {

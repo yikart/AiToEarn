@@ -6,7 +6,7 @@ import { BaseService } from './base.service'
 @Injectable()
 export class AiService extends BaseService {
   async chatCompletion(data: UserChatCompletionDto) {
-    const url = `/api/internal/ai/chat/completion`
+    const url = `/internal/ai/chat/completion`
     const config: AxiosRequestConfig = {
       method: 'POST',
       data,

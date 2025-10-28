@@ -14,7 +14,7 @@ export class AccountService extends BaseService {
   async createAccount(
     data: Partial<Account>,
   ) {
-    const url = `/api/internal/${data.userId}/socials/accounts`
+    const url = `/internal/${data.userId}/socials/accounts`
     const config: AxiosRequestConfig = {
       method: 'POST',
       data,
@@ -29,7 +29,7 @@ export class AccountService extends BaseService {
 
   // 更新账号信息
   async updateAccountInfo(accountId: string, data: Partial<Account>) {
-    const url = `/api/internal/${data.userId}/socials/accounts/${accountId}`
+    const url = `/internal/${data.userId}/socials/accounts/${accountId}`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data,
@@ -47,7 +47,7 @@ export class AccountService extends BaseService {
    * @returns
    */
   async getAccountInfo(accountId: string) {
-    const url = `/api/internal/socials/accounts/${accountId}`
+    const url = `/internal/socials/accounts/${accountId}`
     const config: AxiosRequestConfig = {
       method: 'GET',
     }
@@ -65,7 +65,7 @@ export class AccountService extends BaseService {
    * @returns
    */
   async updateAccountStatistics(accountId: string, data: UpdateAccountStatisticsData) {
-    const url = `/api/internal/socials/accounts/${accountId}/statistics`
+    const url = `/internal/socials/accounts/${accountId}/statistics`
     const config: AxiosRequestConfig = {
       method: 'PATCH',
       data,
