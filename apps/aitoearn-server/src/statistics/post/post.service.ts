@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { Payload } from '@nestjs/microservices'
 import { PostRepository } from '@yikart/statistics-db'
 import { FetchAllPostsRequestDto, FetchPostRequestDto, FetchPostsBatchRequestDto, FetchPostsRequestDto } from './post.dto'
 
 @Injectable()
 export class PostService {
+  private readonly logger = new Logger(PostService.name)
   constructor(
     private readonly postRepository: PostRepository,
   ) {

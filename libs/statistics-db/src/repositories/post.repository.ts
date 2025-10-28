@@ -20,20 +20,20 @@ export class PostRepository extends BaseRepository<PostModel> {
   async onModuleInit() {
     // 初始化模型映射
     this.models = {
-      bilibili: this.connection.model('bilibili') as Model<PostModel>,
-      douyin: this.connection.model('douyin') as Model<PostModel>,
-      facebook: this.connection.model('facebook') as Model<PostModel>,
-      wxgzh: this.connection.model('wxgzh') as Model<PostModel>,
-      wxsph: this.connection.model('wxsph') as Model<PostModel>,
-      instagram: this.connection.model('instagram') as Model<PostModel>,
-      kwai: this.connection.model('kwai') as Model<PostModel>,
-      pinterest: this.connection.model('pinterest') as Model<PostModel>,
-      threads: this.connection.model('threads') as Model<PostModel>,
-      tiktok: this.connection.model('tiktok') as Model<PostModel>,
-      twitter: this.connection.model('twitter') as Model<PostModel>,
-      xhs: this.connection.model('xhs') as Model<PostModel>,
-      youtube: this.connection.model('youtube') as Model<PostModel>,
-      linkedin: this.connection.model('linkedin') as Model<PostModel>,
+      bilibili: this.connection.model('bilibili_snapshot') as Model<PostModel>,
+      douyin: this.connection.model('douyin_snapshot') as Model<PostModel>,
+      facebook: this.connection.model('facebook_snapshot') as Model<PostModel>,
+      wxgzh: this.connection.model('wxgzh_snapshot') as Model<PostModel>,
+      wxsph: this.connection.model('wxsph_snapshot') as Model<PostModel>,
+      instagram: this.connection.model('instagram_snapshot') as Model<PostModel>,
+      kwai: this.connection.model('kwai_snapshot') as Model<PostModel>,
+      pinterest: this.connection.model('pinterest_snapshot') as Model<PostModel>,
+      threads: this.connection.model('threads_snapshot') as Model<PostModel>,
+      tiktok: this.connection.model('tiktok_snapshot') as Model<PostModel>,
+      twitter: this.connection.model('twitter_snapshot') as Model<PostModel>,
+      xhs: this.connection.model('xhs_snapshot') as Model<PostModel>,
+      youtube: this.connection.model('youtube_snapshot') as Model<PostModel>,
+      linkedin: this.connection.model('linkedin_snapshot') as Model<PostModel>,
     }
   }
 
@@ -56,6 +56,25 @@ export class PostRepository extends BaseRepository<PostModel> {
     return model
   }
 
+  /**
+   * 获取各平台的 Insights 模型（指向 `${platform}_post_snapshot` 集合）
+   * 使用统一的模型命名缓存：`${platform}_snapshot`
+   */
+  private getSnapshotModel(platform: string): Model<PostModel> {
+    const modelName = `${platform}_snapshot`
+    // if (this.connection.models[modelName]) {
+    //   const existing = this.connection.models[modelName] as Model<PostModel>
+    //   this.logger.debug(`Using insights collection (cached): ${existing.collection.name}`)
+    //   return existing
+    // }
+    // 复用与普通帖子相同的 Schema，但绑定到 snapshot 集合
+    // 注意：PostSchema 已在模块层注册；这里直接通过连接创建/复用模型即可
+    const collectionName = `${platform}_post_snapshot`
+    const model = this.connection.model<PostModel>(modelName, this.models['xhs'].schema, collectionName)
+    this.logger.debug(`Using insights collection (new): ${model.collection.name}`)
+    return model
+  }
+
   // 根据平台platform和uid 获取作品
   async getPostsByPlatform(payload: {
     platform: AccountType
@@ -68,13 +87,13 @@ export class PostRepository extends BaseRepository<PostModel> {
     const page = Math.max(1, payload.page ?? 1)
     const pageSize = Math.min(100, Math.max(1, payload.pageSize ?? 20))
 
-    const postModel = this.models[platform]
+    const postModel = this.getSnapshotModel(platform)
     if (!postModel) {
       throw new Error(`Unsupported platform: ${payload.platform}`)
     }
     const skip = (page - 1) * pageSize
     const filters: RootFilterQuery<PostModel> = { uid, platform: payload.platform }
-
+    this.logger.log(`${uid}, ${payload.platform}, ${postModel.collection.name}`)
     const [postDocs, total] = await Promise.all([
       postModel
         .find(filters, null, { sort: { publishTime: -1 }, skip, limit: pageSize + 1 })
