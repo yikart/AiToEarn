@@ -1,8 +1,4 @@
 import { Injectable } from '@nestjs/common'
-<<<<<<< HEAD
-import { Account } from '@yikart/mongodb'
-=======
->>>>>>> origin/merge
 import { ChannelBaseApi } from '../../channelBase.api'
 
 @Injectable()
@@ -34,15 +30,11 @@ export class PlatKwaiNatsApi extends ChannelBaseApi {
     code: string
     state: string
   }) {
-<<<<<<< HEAD
-    const res = await this.sendMessage<Account>(
-=======
     const res = await this.sendMessage<{
       status: 0 | 1
       message?: string
       accountId?: string
     }>(
->>>>>>> origin/merge
       `plat/kwai/createAccountAndSetAccessToken`,
       data,
     )
