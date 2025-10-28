@@ -28,7 +28,11 @@ const CreateAccountSchema = z.object({
   }).optional(),
   uid: z.string().min(1),
   account: z.string().min(1),
+<<<<<<< HEAD
   avatar: z.string().min(1),
+=======
+  avatar: z.string().optional(),
+>>>>>>> origin/merge
   nickname: z.string().min(1),
   fansCount: z.number().optional(),
   readCount: z.number().optional(),

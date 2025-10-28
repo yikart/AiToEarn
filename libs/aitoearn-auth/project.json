@@ -1,7 +1,13 @@
 {
+<<<<<<<< HEAD:libs/aitoearn-auth/project.json
   "name": "aitoearn-auth",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/aitoearn-auth/src",
+========
+  "name": "mail",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mail/src",
+>>>>>>>> origin/merge:libs/mail/project.json
   "projectType": "library",
   "release": {
     "version": {
@@ -16,11 +22,19 @@
       "executor": "@nx/js:tsc",
       "outputs": ["{options.outputPath}"],
       "options": {
+<<<<<<<< HEAD:libs/aitoearn-auth/project.json
         "outputPath": "dist/libs/aitoearn-auth",
         "tsConfig": "libs/aitoearn-auth/tsconfig.lib.json",
         "packageJson": "libs/aitoearn-auth/package.json",
         "main": "libs/aitoearn-auth/src/index.ts",
         "assets": ["libs/aitoearn-auth/*.md"]
+========
+        "outputPath": "dist/libs/mail",
+        "tsConfig": "libs/mail/tsconfig.lib.json",
+        "packageJson": "libs/mail/package.json",
+        "main": "libs/mail/src/index.ts",
+        "assets": ["libs/mail/*.md"]
+>>>>>>>> origin/merge:libs/mail/project.json
       }
     },
     "nx-release-publish": {

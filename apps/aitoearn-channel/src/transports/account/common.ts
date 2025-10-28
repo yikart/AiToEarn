@@ -31,7 +31,11 @@ export interface Account {
   access_token?: string
   refresh_token?: string
   loginTime?: Date
+<<<<<<< HEAD
   avatar: string
+=======
+  avatar?: string
+>>>>>>> origin/merge
   nickname: string
   status: AccountStatus // 登录状态，用于判断是否失效
   channelId?: string
@@ -47,7 +51,11 @@ export class NewAccount implements Partial<Account> {
     access_token?: string
     refresh_token?: string
     token?: string
+<<<<<<< HEAD
     avatar: string
+=======
+    avatar?: string
+>>>>>>> origin/merge
     nickname: string
     lastStatsTime?: Date
     loginTime?: Date

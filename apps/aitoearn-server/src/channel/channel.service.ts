@@ -19,9 +19,15 @@ export class ChannelService {
     return res
   }
 
+<<<<<<< HEAD
   async updateChannelAccountStatus(userId: string, status: AccountStatus) {
     const res = await this.channelApi.updateChannelAccountStatus(
       { userId, status },
+=======
+  async updateChannelAccountStatus(accountId: string, status: AccountStatus) {
+    const res = await this.channelApi.updateChannelAccountStatus(
+      { accountId, status },
+>>>>>>> origin/merge
     )
     return res
   }

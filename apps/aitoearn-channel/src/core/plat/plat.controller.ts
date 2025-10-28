@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common'
+=======
+import { Body, Controller, Logger, Param, Post } from '@nestjs/common'
+>>>>>>> origin/merge
 import { AccountStatus } from '../../transports/account/common'
 import { GenAuthURLDto } from './plat.dto'
 import { PlatformService } from './plat.service'
@@ -14,7 +18,11 @@ export class PlatformController {
     return await this.platformService.getUserAccounts(data.userId)
   }
 
+<<<<<<< HEAD
   @Get(':userId/accounts')
+=======
+  @Post('platform/:userId/accounts')
+>>>>>>> origin/merge
   async getUserAccountsByRestful(@Param('userId') userId: string) {
     return await this.platformService.getUserAccounts(userId)
   }

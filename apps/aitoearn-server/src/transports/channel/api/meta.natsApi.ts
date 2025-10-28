@@ -186,7 +186,11 @@ export class PlatMetaNatsApi extends ChannelBaseApi {
     keyword: string,
   ) {
     const res = await this.sendMessage<any>(
+<<<<<<< HEAD
       `plat/meta/searchFacebookLocations`,
+=======
+      `plat/meta/facebool/search/locations`,
+>>>>>>> origin/merge
       {
         userId,
         keyword,
@@ -200,7 +204,11 @@ export class PlatMetaNatsApi extends ChannelBaseApi {
     keyword: string,
   ) {
     const res = await this.sendMessage<{ id: string, label: string }[]>(
+<<<<<<< HEAD
       `plat/meta/searchThreadsLocations`,
+=======
+      `plat/meta/threads/search/locations`,
+>>>>>>> origin/merge
       {
         accountId,
         keyword,

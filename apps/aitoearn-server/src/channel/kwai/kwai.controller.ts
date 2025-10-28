@@ -47,9 +47,17 @@ export class KwaiController {
       state: string
     },
   ) {
+<<<<<<< HEAD
     return await this.platKwaiNatsApi.createAccountAndSetAccessToken({
       taskId,
       ...query,
     })
+=======
+    const result = await this.platKwaiNatsApi.createAccountAndSetAccessToken({
+      taskId,
+      ...query,
+    })
+    return result
+>>>>>>> origin/merge
   }
 }

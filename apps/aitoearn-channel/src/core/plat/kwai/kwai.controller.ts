@@ -1,5 +1,9 @@
 import { Body, Controller, Post } from '@nestjs/common'
+<<<<<<< HEAD
 import { AccountIdDto, CreateAccountAndSetAccessTokenDto, GetAuthInfoDto, GetAuthUrlDto, GetPohotListDto } from './dot/kwai.dot'
+=======
+import { AccountIdDto, CreateAccountAndSetAccessTokenDto, GetAuthInfoDto, GetAuthUrlDto, GetPohotListDto } from './dto/kwai.dto'
+>>>>>>> origin/merge
 import { KwaiService } from './kwai.service'
 
 @Controller()
