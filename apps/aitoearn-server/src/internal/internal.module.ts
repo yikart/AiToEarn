@@ -1,5 +1,6 @@
 import { Global, Module } from '@nestjs/common'
 import { AccountModule } from '../account/account.module'
+import { AiModule } from '../ai/ai.module'
 import { ChatModule, ChatService } from '../ai/core/chat'
 import { ModelsConfigService } from '../ai/core/models-config'
 import { PublishModule } from '../publishRecord/publishRecord.module'
@@ -12,8 +13,8 @@ import { PublishingController } from './publishing.controller'
 
 @Global()
 @Module({
+  imports: [AccountModule, PublishModule, ChatModule, AiModule],
   providers: [AccountInternalService, PublishingInternalService, PublishRecordService, ModelsConfigService, ChatService],
-  imports: [AccountModule, PublishModule, ChatModule],
   controllers: [AccountController, PublishingController, AIController],
   exports: [AccountInternalService, PublishingInternalService, PublishRecordService],
 })

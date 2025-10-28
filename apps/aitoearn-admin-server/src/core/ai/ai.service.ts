@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { AiApi } from '../../transports/ai/ai.api'
-import { ImageGenerationRequest } from '../../transports/ai/ai.interface'
+import { ImageGenerationRequest, VideoGenerationCommonRequest } from '../../transports/ai/ai.interface'
 import { VideoTaskStatusResponseVo } from './common'
-import { AiModelsConfigDto, ChatModelsQueryDto, DashscopeImage2VideoRequestDto, UserFireflyCardDto, UserListVideoTasksQueryDto, UserVideoTaskQueryDto, VideoGenerationModelsQueryDto } from './dto'
+import { AiModelsConfigDto, ChatModelsQueryDto, UserFireflyCardDto, UserListVideoTasksQueryDto, UserVideoTaskQueryDto, VideoGenerationModelsQueryDto } from './dto'
 
 @Injectable()
 export class AiService {
@@ -19,6 +19,10 @@ export class AiService {
    */
   async userImageGeneration(request: ImageGenerationRequest) {
     return await this.aiApi.userImageGeneration(request)
+  }
+
+  async userVideoGeneration(request: VideoGenerationCommonRequest) {
+    return await this.aiApi.userVideoGeneration(request)
   }
 
   /**
@@ -71,15 +75,6 @@ export class AiService {
    */
   async getChatModels(data: ChatModelsQueryDto) {
     return await this.aiApi.getChatModels(data)
-  }
-
-  /**
-   * Dashscope 图生视频
-   * @param request 图生视频请求参数
-   * @returns 视频生成响应
-   */
-  async dashscopeImage2Video(request: DashscopeImage2VideoRequestDto) {
-    return await this.aiApi.dashscopeImage2Video(request)
   }
 
   /**

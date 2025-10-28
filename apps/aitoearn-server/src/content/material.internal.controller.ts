@@ -10,6 +10,7 @@ import {
   Controller,
   Post,
 } from '@nestjs/common'
+import { Internal } from '@yikart/aitoearn-auth'
 import {
   MaterialIdsDto,
 } from './dto/material.dto'
@@ -17,6 +18,7 @@ import { MaterialService } from './material.service'
 import { MaterialGroupService } from './materialGroup.service'
 
 @Controller()
+@Internal()
 export class MaterialInternalController {
   constructor(
     private readonly materialService: MaterialService,

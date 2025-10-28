@@ -10,6 +10,7 @@ import {
   ImageResponseVo,
   ListVideoTasksResponseVo,
   VideoGenerationModelParamsVo,
+  VideoGenerationResponseVo,
   VideoTaskStatusResponseVo,
 } from './ai.vo'
 import {
@@ -17,12 +18,13 @@ import {
   FireflyCardDto,
   ImageGenerationDto,
   UserListVideoTasksQueryDto,
+  VideoGenerationRequestDto,
 } from './dto'
 
 @ApiTags('AI')
 @Controller('ai')
 export class AiController {
-  constructor(private readonly aiService: AiService) {}
+  constructor(private readonly aiService: AiService) { }
 
   // 1
   @ApiOperation({ summary: 'AI图片生成' })
@@ -37,6 +39,20 @@ export class AiController {
       ...body,
     })
     return ImageResponseVo.create(response)
+  }
+
+  @ApiOperation({ summary: '通用视频生成' })
+  @Post('video/generations')
+  async videoGeneration(
+    @GetToken() token: TokenInfo,
+    @Body() body: VideoGenerationRequestDto,
+  ): Promise<VideoGenerationResponseVo> {
+    const response = await this.aiService.userVideoGeneration({
+      ...body,
+      userId: token.id,
+      userType: UserType.User,
+    })
+    return VideoGenerationResponseVo.create(response)
   }
 
   // 1

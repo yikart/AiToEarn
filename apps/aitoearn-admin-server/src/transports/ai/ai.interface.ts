@@ -91,9 +91,11 @@ export interface ImageResponse {
 
 // 通用视频生成请求接口
 export interface VideoGenerationCommonRequest {
+  userId: string
+  userType: UserType
   model: string
   prompt: string
-  image?: string
+  image?: string | string[]
   mode?: string
   size?: string
   duration?: number

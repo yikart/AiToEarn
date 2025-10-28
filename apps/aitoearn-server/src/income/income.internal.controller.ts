@@ -3,10 +3,12 @@ import {
   Controller,
   Post,
 } from '@nestjs/common'
+import { Internal } from '@yikart/aitoearn-auth'
 import { AddIncomeSchemaDto, DeductIncomeDto } from './dto/income.dto'
 import { IncomeService } from './income.service'
 
 @Controller()
+@Internal()
 export class IncomeInternalController {
   constructor(private readonly incomeService: IncomeService) { }
 

@@ -1,10 +1,11 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
-import { Public } from '@yikart/aitoearn-auth'
+import { Internal, Public } from '@yikart/aitoearn-auth'
 import { AccountService } from './account.service'
 import { AccountIdDto, AccountListByIdsDto, AccountListByParamDto, AccountListByTypesDto } from './dto/account.dto'
 
 @ApiTags('频道(内部)')
+@Internal()
 @Controller()
 export class AccountInternalController {
   constructor(private readonly accountService: AccountService) { }

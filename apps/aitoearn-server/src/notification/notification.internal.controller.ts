@@ -4,6 +4,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
+import { Internal } from '@yikart/aitoearn-auth'
 import {
   CreateToUserDto,
 } from './notification.dto'
@@ -11,6 +12,7 @@ import { NotificationService } from './notification.service'
 
 @ApiTags('notification - 通知')
 @Controller()
+@Internal()
 export class NotificationInternalController {
   constructor(private readonly notificationService: NotificationService) { }
 
