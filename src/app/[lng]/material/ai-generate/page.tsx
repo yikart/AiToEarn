@@ -93,6 +93,8 @@ export default function AIGeneratePage() {
   const [videoMode, setVideoMode] = useState("text2video");
   const [videoImage, setVideoImage] = useState("");
   const [videoImageTail, setVideoImageTail] = useState("");
+  const [videoImages, setVideoImages] = useState<string[]>([]);
+  const [videoImageKeys, setVideoImageKeys] = useState<string[]>([]);
   const [loadingVideo, setLoadingVideo] = useState(false);
   const [videoTaskId, setVideoTaskId] = useState<string | null>(null);
   const [videoStatus, setVideoStatus] = useState<string>("");
@@ -143,6 +145,52 @@ export default function AIGeneratePage() {
     try { setUploadingTailFrame(true); const key = await uploadToOss(file); setVideoImageTail(getOssUrl(key)); message.success(t("aiGenerate.uploadSuccess")); }
     catch { message.error(t("aiGenerate.uploadFailed")); }
     finally { setUploadingTailFrame(false); if (e.target) e.target.value = ""; }
+  };
+
+  // 多图上传处理
+  const handleMultiImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    
+    const validFiles: File[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (checkFileSize(file) && checkImageFormat(file)) {
+        validFiles.push(file);
+      }
+    }
+    
+    if (validFiles.length === 0) {
+      if (e.target) e.target.value = "";
+      return;
+    }
+    
+    try {
+      setUploadingFirstFrame(true);
+      const uploadPromises = validFiles.map(file => uploadToOss(file));
+      const keys = await Promise.all(uploadPromises);
+      const urls = keys.map(key => getOssUrl(key));
+      setVideoImages(prev => [...prev, ...urls]);
+      setVideoImageKeys(prev => [...prev, ...keys]);
+      message.success(`成功上传 ${validFiles.length} 张图片`);
+    } catch (error) {
+      message.error(t("aiGenerate.uploadFailed"));
+    } finally {
+      setUploadingFirstFrame(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
+  // 删除图片
+  const handleRemoveImage = (index: number) => {
+    setVideoImages(prev => prev.filter((_, i) => i !== index));
+    setVideoImageKeys(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // 清空所有图片
+  const handleClearAllImages = () => {
+    setVideoImages([]);
+    setVideoImageKeys([]);
   };
 
   // md2card
@@ -359,7 +407,7 @@ export default function AIGeneratePage() {
         setVideoModel((filteredVideoModels as any[])[0].name);
       }
     }
-    if (videoMode === "text2video") { setVideoImage(""); setVideoImageTail(""); }
+    if (videoMode === "text2video") { setVideoImage(""); setVideoImageTail(""); setVideoImages([]); setVideoImageKeys([]); }
   }, [videoMode, filteredVideoModels]);
 
   useEffect(() => {
@@ -450,8 +498,35 @@ export default function AIGeneratePage() {
     if (videoMode === "image2video") {
       const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
       const supported: string[] = current?.supportedParameters || [];
-      if (supported.includes("image") && !videoImage) { message.error(t("aiGenerate.pleaseUploadFirstFrame")); return; }
-      if (supported.includes("image_tail") && !videoImageTail) { message.error(t("aiGenerate.pleaseUploadTailFrame")); return; }
+      const modes: string[] = current?.modes || [];
+      
+      // 检查多图合成视频
+      if (modes.includes('multi-image2video') && supported.includes("image") && videoImageKeys.length === 0) {
+        message.error("请上传至少一张图片");
+        return;
+      }
+      
+      // 检查单图视频
+      if (modes.includes('image2video') && !modes.includes('multi-image2video') && supported.includes("image") && !videoImage) {
+        message.error(t("aiGenerate.pleaseUploadFirstFrame"));
+        return;
+      }
+      
+      // 检查首尾帧视频
+      if (modes.includes('flf2video') && supported.includes("image") && !videoImage) {
+        message.error(t("aiGenerate.pleaseUploadFirstFrame"));
+        return;
+      }
+      if (modes.includes('flf2video') && supported.includes("image_tail") && !videoImageTail) {
+        message.error(t("aiGenerate.pleaseUploadTailFrame"));
+        return;
+      }
+      
+      // 检查仅尾帧视频
+      if (modes.includes('lf2video') && supported.includes("image_tail") && !videoImageTail) {
+        message.error(t("aiGenerate.pleaseUploadTailFrame"));
+        return;
+      }
     }
     try {
       setLoadingVideo(true); setVideoStatus("submitted"); setVideoProgress(10);
@@ -466,9 +541,26 @@ export default function AIGeneratePage() {
       }
       
       const supported: string[] = current?.supportedParameters || [];
+      const modes: string[] = current?.modes || [];
+      
       if (videoMode === "image2video") {
-        if (supported.includes("image") && videoImage) data.image = videoImage;
-        if (supported.includes("image_tail") && videoImageTail) data.image_tail = videoImageTail;
+        // 多图合成视频
+        if (modes.includes('multi-image2video') && supported.includes("image") && videoImageKeys.length > 0) {
+          data.images = videoImageKeys;
+        }
+        // 单图视频
+        else if (modes.includes('image2video') && !modes.includes('multi-image2video') && supported.includes("image") && videoImage) {
+          data.image = videoImage;
+        }
+        // 首尾帧视频
+        else if (modes.includes('flf2video')) {
+          if (supported.includes("image") && videoImage) data.image = videoImage;
+          if (supported.includes("image_tail") && videoImageTail) data.image_tail = videoImageTail;
+        }
+        // 仅尾帧视频
+        else if (modes.includes('lf2video') && supported.includes("image_tail") && videoImageTail) {
+          data.image_tail = videoImageTail;
+        }
       }
       const res: any = await generateVideo(data);
       if (res.data?.task_id) { setVideoTaskId(res.data.task_id); setVideoStatus(res.data.status); message.success(t("aiGenerate.taskSubmittedSuccess")); pollVideoTaskStatus(res.data.task_id); }
@@ -1076,16 +1168,48 @@ export default function AIGeneratePage() {
                             
                             {/* 多图合成视频 - 需要多张图片 */}
                             {isMultiImage2Video && supported.includes('image') && (
-                              <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
-                                {videoImage ? (
-                                  <img src={videoImage || ''} alt="多图合成" />
-                                ) : (
+                              <div className={styles.multiImageUpload}>
+                                <div className={styles.uploadCard} onClick={() => firstFrameInputRef.current?.click()}>
                                   <div className={styles.uploadPlaceholder}>
                                     <span className={styles.uploadIcon}>+</span>
-                                    <span className={styles.uploadText}>上传多张图片</span>
+                                    <span className={styles.uploadText}>添加图片</span>
+                                  </div>
+                                  <input 
+                                    type="file" 
+                                    accept="image/*" 
+                                    multiple 
+                                    ref={firstFrameInputRef} 
+                                    onChange={handleMultiImageChange} 
+                                    style={{ display:'none' }} 
+                                  />
+                                </div>
+                                
+                                {videoImages.length > 0 && (
+                                  <div className={styles.imageGrid}>
+                                    {videoImages.map((img, index) => (
+                                      <div key={index} className={styles.imageItem}>
+                                        <img src={img} alt={`图片 ${index + 1}`} />
+                                        <button 
+                                          className={styles.removeBtn} 
+                                          onClick={() => handleRemoveImage(index)}
+                                          title="删除图片"
+                                        >
+                                          ×
+                                        </button>
+                                      </div>
+                                    ))}
                                   </div>
                                 )}
-                                <input type="file" accept="image/*" ref={firstFrameInputRef} onChange={handleFirstFrameChange} style={{ display:'none' }} />
+                                
+                                {videoImages.length > 0 && (
+                                  <button 
+                                    className={styles.clearAllBtn} 
+                                    onClick={handleClearAllImages}
+                                    style={{ marginTop: 8, fontSize: '12px', color: '#ff4d4f' }}
+                                  >
+                                    清空所有图片
+                                  </button>
+                                )}
                               </div>
                             )}
                             

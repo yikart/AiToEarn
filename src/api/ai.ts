@@ -72,7 +72,7 @@ export const getVideoGenerationModels = () => {
 export const generateVideo = (data: {
   model: string;
   prompt: string;
-  image?: string;
+  image?: any;
   image_tail?: string;
   mode?: string;
   size?: string;
