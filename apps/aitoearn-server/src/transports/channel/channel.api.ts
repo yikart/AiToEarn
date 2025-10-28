@@ -6,18 +6,18 @@ import { ChannelBaseApi } from '../channelBase.api'
 export class ChannelApi extends ChannelBaseApi {
   async getUserAccounts(payload: { userId: string }) {
     const res = await this.sendMessage<any>(
-      `account/portrait/report`,
+      `platform/${payload.userId}/accounts`,
       payload,
     )
     return res
   }
 
   async updateChannelAccountStatus(payload: {
-    userId: string
+    accountId: string
     status: AccountStatus
   }) {
     const res = await this.sendMessage<any>(
-      `account/portrait/report`,
+      `platform/accounts/updateStatus`,
       payload,
     )
     return res
