@@ -120,6 +120,8 @@ export class UserService {
 
   async upPortrait(userId: string) {
     const user = await this.userRepository.getById(userId)
+    if (!user)
+      throw new AppException(1000, 'User not found')
     return this.portraitApi.userPortraitReport(user)
   }
 }

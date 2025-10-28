@@ -20,7 +20,7 @@ export class ServerBaseApi {
       },
     })
     if (res.data.code !== ExceptionCode.Success) {
-      this.logger.error({ type: 'server api', path, ...res })
+      this.logger.error({ type: 'server api', path: `${config.serverApi.baseUrl}/${path}`, ...res })
       throw new AppException(res.data.code, res.data.message)
     }
     return res.data.data

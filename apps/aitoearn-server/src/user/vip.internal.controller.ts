@@ -1,8 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common'
+import { Internal } from '@yikart/aitoearn-auth'
 import { VipStatus } from '@yikart/mongodb'
 import { VipService } from './vip.service'
 
 @Controller()
+@Internal()
 export class VipInternalController {
   constructor(
     private readonly vipService: VipService,
