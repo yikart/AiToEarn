@@ -303,16 +303,25 @@ export class MetaService {
         'facebook',
         accountInfo.id,
       )
-      await this.redisService.rename(
-        pageCredentialKey,
+      await this.redisService.setJson(
         newPageCredentialKey,
+        pageCredential,
       )
+      await this.redisService.del(pageCredentialKey)
       const previousFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey('facebook', userId)
       const newFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey('facebook', pageCredential.facebook_user_id)
-      await this.redisService.rename(
-        previousFacebookCredentialKey,
-        newFacebookCredentialKey,
-      )
+      const facebookCredential = await this.redisService.getJson<MetaUserOAuthCredential>(previousFacebookCredentialKey)
+      if (facebookCredential) {
+        await this.redisService.setJson(
+          newFacebookCredentialKey,
+          facebookCredential,
+        )
+        await this.redisService.del(previousFacebookCredentialKey)
+      }
+      else {
+        this.logger.warn(`No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`)
+        throw new Error(`No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`)
+      }
       result.selectedPageIds.push(pageId)
     }
     result.success = true
