@@ -1,4 +1,5 @@
 import http from "@/utils/request";
+import { getOssUrl } from "@/utils/oss";
 
 // 获取聊天大模型列表
 export const getChatModels = () => {
@@ -79,6 +80,16 @@ export const generateVideo = (data: {
   duration?: number;
   metadata?: Record<string, any>;
 }) => {
+  // if (data.image) {
+  //   if (typeof data.image === 'string') {
+  //     data.image = getOssUrl(data.image);
+  //   } else {
+  //     data.image = data.image.map((item: any) => getOssUrl(item));
+  //   }
+  // }
+  // if (data.image_tail) {
+  //   data.image_tail = getOssUrl(data.image_tail);
+  // }
   return http.post("ai/video/generations", data);
 };
 

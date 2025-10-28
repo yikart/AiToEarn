@@ -12,6 +12,7 @@ import { getMediaGroupList, createMedia } from "@/api/media";
 import { useTransClient } from "@/app/i18n/client";
 import { md2CardTemplates, defaultMarkdown } from "./md2card";
 import Chat from "@/components/Chat";
+import { OSS_URL } from "@/constant";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -94,7 +95,6 @@ export default function AIGeneratePage() {
   const [videoImage, setVideoImage] = useState("");
   const [videoImageTail, setVideoImageTail] = useState("");
   const [videoImages, setVideoImages] = useState<string[]>([]);
-  const [videoImageKeys, setVideoImageKeys] = useState<string[]>([]);
   const [loadingVideo, setLoadingVideo] = useState(false);
   const [videoTaskId, setVideoTaskId] = useState<string | null>(null);
   const [videoStatus, setVideoStatus] = useState<string>("");
@@ -171,7 +171,6 @@ export default function AIGeneratePage() {
       const keys = await Promise.all(uploadPromises);
       const urls = keys.map(key => getOssUrl(key));
       setVideoImages(prev => [...prev, ...urls]);
-      setVideoImageKeys(prev => [...prev, ...keys]);
       message.success(`成功上传 ${validFiles.length} 张图片`);
     } catch (error) {
       message.error(t("aiGenerate.uploadFailed"));
@@ -184,13 +183,11 @@ export default function AIGeneratePage() {
   // 删除图片
   const handleRemoveImage = (index: number) => {
     setVideoImages(prev => prev.filter((_, i) => i !== index));
-    setVideoImageKeys(prev => prev.filter((_, i) => i !== index));
   };
 
   // 清空所有图片
   const handleClearAllImages = () => {
     setVideoImages([]);
-    setVideoImageKeys([]);
   };
 
   // md2card
@@ -407,7 +404,7 @@ export default function AIGeneratePage() {
         setVideoModel((filteredVideoModels as any[])[0].name);
       }
     }
-    if (videoMode === "text2video") { setVideoImage(""); setVideoImageTail(""); setVideoImages([]); setVideoImageKeys([]); }
+    if (videoMode === "text2video") { setVideoImage(""); setVideoImageTail(""); setVideoImages([]); }
   }, [videoMode, filteredVideoModels]);
 
   useEffect(() => {
@@ -492,6 +489,10 @@ export default function AIGeneratePage() {
     catch { message.error(t("aiGenerate.fireflyCardGenerationFailed")); } finally { setLoadingFirefly(false); }
   };
 
+  const replaceOssUrl = (url: string) => {
+    return url.replace("/ossProxy/", OSS_URL);
+  };
+
   const handleVideoGeneration = async () => {
     if (!videoPrompt) { message.error(t("aiGenerate.pleaseEnterVideoDescription")); return; }
     if (!videoModel) { message.error(t("aiGenerate.pleaseSelectVideoModel")); return; }
@@ -501,7 +502,7 @@ export default function AIGeneratePage() {
       const modes: string[] = current?.modes || [];
       
       // 检查多图合成视频
-      if (modes.includes('multi-image2video') && supported.includes("image") && videoImageKeys.length === 0) {
+      if (modes.includes('multi-image2video') && supported.includes("image") && videoImages.length === 0) {
         message.error("请上传至少一张图片");
         return;
       }
@@ -545,21 +546,22 @@ export default function AIGeneratePage() {
       
       if (videoMode === "image2video") {
         // 多图合成视频
-        if (modes.includes('multi-image2video') && supported.includes("image") && videoImageKeys.length > 0) {
-          data.images = videoImageKeys;
+        if (modes.includes('multi-image2video') && supported.includes("image") && videoImages.length > 0) {
+          data.image = videoImages.map((image: string) => replaceOssUrl(image));
         }
         // 单图视频
         else if (modes.includes('image2video') && !modes.includes('multi-image2video') && supported.includes("image") && videoImage) {
-          data.image = videoImage;
+          
+          data.image = replaceOssUrl(videoImage);
         }
         // 首尾帧视频
         else if (modes.includes('flf2video')) {
-          if (supported.includes("image") && videoImage) data.image = videoImage;
-          if (supported.includes("image_tail") && videoImageTail) data.image_tail = videoImageTail;
+          if (supported.includes("image") && videoImage) data.image = replaceOssUrl(videoImage);
+          if (supported.includes("image_tail") && videoImageTail) data.image_tail = replaceOssUrl(videoImageTail);
         }
         // 仅尾帧视频
         else if (modes.includes('lf2video') && supported.includes("image_tail") && videoImageTail) {
-          data.image_tail = videoImageTail;
+          data.image_tail = replaceOssUrl(videoImageTail);
         }
       }
       const res: any = await generateVideo(data);
@@ -655,7 +657,7 @@ export default function AIGeneratePage() {
       setLoadingMd2Card(true); 
       const res: any = await generateMd2Card({ markdown: markdownContent, theme: selectedTheme, themeMode, width: cardWidth, height: cardHeight, splitMode, mdxMode, overHiddenMode }); 
       if (res.data?.images?.length) {
-        const cardUrl = res.data.images[0].url;
+        const cardUrl = res.data.image[0].url;
         setMd2CardResult(cardUrl);
         
         // 自动上传到默认素材库组
