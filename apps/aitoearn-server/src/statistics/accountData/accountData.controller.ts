@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { AccountDataService } from './accountData.service'
 import {
   GetAccountDataByParamsDto,
@@ -98,7 +98,8 @@ export class AccountDataController {
 
   // 根据platform和uid数组查询频道最新数据并汇总fansCount
   // @NatsMessagePattern('statistics.account.getChannelDataLatestByUids')
-  @Post('channels/period-batch')
+  @ApiOperation({ summary: '批量获取频道最新数据并汇总粉丝数' })
+  @Post('channels/latest-batch')
   getChannelDataLatestByUids(@Body() data: GetChannelDataLatestByUidsDto) {
     const res = this.accountDataService.getChannelDataLatestByUids(data.queries)
     return res
@@ -106,9 +107,9 @@ export class AccountDataController {
 
   // 根据platform和uid数组查询频道一段时间增量数据
   // @NatsMessagePattern('statistics.account.getChannelDataPeriodByUids')
-  @Post('channels/latest-batch')
+  @ApiOperation({ summary: '批量获取频道一段时间数据' })
+  @Post('channels/period-batch')
   getChannelDataPeriodByUids(@Body() data: GetChannelDataPeriodByUidsDto) {
-    // const res = this.accountDataService.getChannelDataPeriodByUids(data.queries, data?.startDate, data?.endDate)
     return this.accountDataService.getChannelDataPeriodByUids(data.queries, data?.startDate, data?.endDate)
   }
 
