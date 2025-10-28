@@ -4,7 +4,6 @@ import { config } from '../../../config'
 import { FireflycardModule } from '../../libs/fireflycard'
 import { Md2cardModule } from '../../libs/md2card'
 import { ModelsConfigModule } from '../models-config'
-import { ImageController } from './image.controller'
 import { ImageService } from './image.service'
 import { ImageWorker } from './image.worker'
 
@@ -21,7 +20,7 @@ import { ImageWorker } from './image.worker'
       },
     }),
   ],
-  controllers: [ImageController],
+  controllers: [],
   providers: [ImageService, ImageWorker],
   exports: [ImageService],
 })
