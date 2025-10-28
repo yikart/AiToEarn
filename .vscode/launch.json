@@ -36,6 +36,50 @@
         "${workspaceFolder}/apps/browser-automation-worker/dist/**/*.(m|c|)js",
         "!**/node_modules/**"
       ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Channel with Nx",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nx", "serve", "aitoearn-channel", "--inspect-brk"],
+      "env": {
+        "NODE_ENV": "local",
+      },
+      "restart": true,
+      "stopOnEntry": false,
+      "continueOnAttach": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/apps/aitoearn-channel/dist/**/*.(m|c|)js",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Gateway with Nx",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["nx", "serve", "aitoearn-server", "--inspect-brk"],
+      "env": {
+        "NODE_ENV": "local",
+      },
+      "restart": true,
+      "stopOnEntry": false,
+      "continueOnAttach": true,
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true,
+      "outFiles": [
+        "${workspaceFolder}/apps/aitoearn-server/dist/**/*.(m|c|)js",
+        "!**/node_modules/**"
+      ]
     }
   ]
 }
