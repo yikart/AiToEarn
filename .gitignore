@@ -53,3 +53,5 @@ local.config.js
 /apps/aitoearn-task
 /apps/aitoearn-payment
 /apps/aitoearn-admin-server
+
+.npmrc
