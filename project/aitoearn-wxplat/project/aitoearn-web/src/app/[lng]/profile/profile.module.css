@@ -1,0 +1,1269 @@
+.container {
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  min-height: 80vh;
+  margin-top: 80px;
+}
+
+.profileContent {
+  max-width: 800px;
+  width: 100%;
+}
+
+.card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  overflow: hidden;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #fce2a9 0%, #ffd700 100%);
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* 个人信息卡片特殊样式 */
+.personalInfoCard {
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+}
+
+.personalInfoCard::before {
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+}
+
+.personalInfoCard .ant-card-head {
+  background: rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.personalInfoCard .ant-card-head-title {
+  color: #a66ae4;
+  font-size: 18px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a66ae4, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.personalInfoCard .ant-card-body {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-label {
+  background: rgba(166, 106, 228, 0.1);
+  color: #a66ae4;
+  font-weight: 600;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-content {
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.personalInfoCard .ant-btn {
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.personalInfoCard .ant-btn-primary {
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(166, 106, 228, 0.3);
+}
+
+.personalInfoCard .ant-btn-primary:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a66ae4 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(166, 106, 228, 0.4);
+}
+
+.personalInfoCard .ant-btn-dangerous {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%);
+  border: none;
+  box-shadow: 0 2px 8px rgba(255, 77, 79, 0.3);
+}
+
+.personalInfoCard .ant-btn-dangerous:hover {
+  background: linear-gradient(135deg, #ff7875 0%, #ffa39e 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 77, 79, 0.4);
+}
+
+/* 会员卡片样式 */
+.vipCard {
+  background: url('/assets/images/vipcard.png') no-repeat center center;
+  background-size: cover;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.vipCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  z-index: 0;
+  border-radius: 12px;
+}
+
+.vipContent {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.vipHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.vipIcon {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  background-color: rgba(252, 226, 169, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fce2a9;
+}
+
+.vipTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #fce2a9;
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.vipDescription {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.benefitsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.benefitItem {
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.benefitItem:hover {
+  transform: translateY(-2px);
+}
+
+.benefitIcon {
+  width: 36px;
+  height: 36px;
+  background-color: rgba(252, 226, 169, 0.15);
+  border-radius: 8px;
+  margin: 0 auto 8px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #fce2a9;
+  transition: all 0.3s ease;
+}
+
+.benefitItem:hover .benefitIcon {
+  background-color: rgba(252, 226, 169, 0.25);
+  transform: scale(1.1);
+}
+
+.benefitName {
+  font-size: 11px;
+  color: #fce2a9;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.activateButton {
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+  border: 2px solid rgba(166, 106, 228, 0.3);
+  color: #ffffff;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(166, 106, 228, 0.3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.activateButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.6s ease;
+}
+
+.activateButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.activateButton:hover::before {
+  left: 100%;
+}
+
+.activateButton:hover::after {
+  opacity: 1;
+}
+
+.activateButton:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a66ae4 100%);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(166, 106, 228, 0.5);
+  border-color: rgba(166, 106, 228, 0.6);
+}
+
+.activateButton:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 12px rgba(166, 106, 228, 0.4);
+}
+
+.activateButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.3), 0 4px 16px rgba(166, 106, 228, 0.3);
+}
+
+.normalUserCallToAction {
+  background-color: #f0f2f5;
+  padding: 16px;
+  border-radius: 6px;
+  text-align: center;
+  margin-top: 16px;
+}
+
+.normalUserCallToAction p {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+/* 积分卡片样式 */
+.pointsCard {
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pointsCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.05) 50%, transparent 70%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+}
+
+.pointsContent {
+  position: relative;
+  z-index: 1;
+}
+
+.pointsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.pointsTitleSection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pointsIcon {
+  font-size: 20px;
+  color: #fce2a9;
+  background: rgba(252, 226, 169, 0.1);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pointsTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fce2a9;
+}
+
+.pointsCount {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fce2a9;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.pointsDescription {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 18px;
+  line-height: 1.4;
+}
+
+.pointsMethods {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.methodsTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fce2a9;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.methodsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.methodItem {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.methodItem::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.methodItem:hover::before {
+  left: 100%;
+}
+
+.methodItem:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  border-color: rgba(252, 226, 169, 0.3);
+}
+
+.methodIcon {
+  width: 32px;
+  height: 32px;
+  background: rgba(252, 226, 169, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px auto;
+  font-size: 16px;
+  color: #fce2a9;
+  transition: all 0.3s ease;
+}
+
+.methodItem:hover .methodIcon {
+  background: rgba(252, 226, 169, 0.25);
+  transform: scale(1.1);
+}
+
+.methodContent h5 {
+  font-size: 13px;
+  font-weight: 600;
+  color: #fce2a9;
+  margin: 0 0 3px 0;
+}
+
+.methodContent p {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* 订单管理样式 */
+.orderContent {
+  margin-top: 12px;
+}
+
+.orderContent .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.orderContent .ant-table-tbody > tr:hover > td {
+  background-color: #f5f5f5;
+}
+
+.orderContent .ant-table-tbody > tr {
+  cursor: pointer;
+}
+
+.orderContent .ant-table-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.orderContent .ant-btn-link {
+  padding: 2px 6px;
+  height: auto;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.orderContent .ant-btn-link.ant-btn-dangerous {
+  color: #ff4d4f;
+}
+
+.orderContent .ant-btn-link.ant-btn-dangerous:hover {
+  background-color: #fff2f0;
+  border-color: #ffccc7;
+}
+
+.orderContent .ant-tag {
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 6px;
+}
+
+/* 订单详情弹窗样式 */
+.orderDetailModal .ant-descriptions-item-label {
+  background-color: #fafafa;
+  font-weight: 600;
+  width: 100px;
+  font-size: 12px;
+}
+
+.orderDetailModal .ant-descriptions-item-content {
+  background-color: #fff;
+  font-size: 12px;
+}
+
+/* 积分记录表格样式 */
+.pointsTable .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.pointsTable .ant-table-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.pointsTable .ant-tag {
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 6px;
+}
+
+/* 标签页样式 */
+.container .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+  padding: 8px 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.container .ant-tabs > .ant-tabs-nav .ant-tabs-tab-active {
+  color: #1890ff;
+}
+
+.container .ant-tabs-content-holder {
+  padding-top: 12px;
+}
+
+/* 积分记录表格样式 */
+.pointsTable .ant-table-thead > tr > th {
+  background-color: #fafafa;
+  color: #262626;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+
+.pointsTable .ant-table-tbody > tr > td {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+.pointsTable .ant-tag {
+  border-radius: 4px;
+  font-size: 11px;
+  padding: 1px 6px;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .container {
+    padding: 12px;
+  }
+  
+  .card {
+    margin-bottom: 12px;
+  }
+
+  .actions {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .benefitsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .orderContent .ant-table {
+    font-size: 11px;
+  }
+
+  .orderContent .ant-table-thead > tr > th,
+  .orderContent .ant-table-tbody > tr > td {
+    padding: 6px 4px;
+  }
+
+  .container .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
+    padding: 6px 8px;
+    font-size: 12px;
+  }
+
+  .vipCard,
+  .pointsCard {
+    padding: 12px;
+  }
+
+  .personalInfoCard .ant-card-head-title {
+    font-size: 16px;
+  }
+
+  .personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-label,
+  .personalInfoCard .ant-descriptions-bordered .ant-descriptions-item-content {
+    font-size: 12px;
+    padding: 8px 12px;
+  }
+
+  .personalInfoCard .ant-btn {
+    font-size: 12px;
+    padding: 4px 12px;
+    height: 32px;
+  }
+
+  .vipTitle {
+    font-size: 18px;
+  }
+
+  .vipIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .benefitsGrid {
+    padding: 12px;
+    gap: 8px;
+  }
+
+  .benefitIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .benefitName {
+    font-size: 10px;
+  }
+
+  .activateButton {
+    padding: 12px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
+
+  .pointsTitle {
+    font-size: 16px;
+  }
+
+  .pointsCount {
+    font-size: 22px;
+  }
+
+  .pointsIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .methodsGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .methodItem {
+    padding: 10px;
+  }
+
+  .methodIcon {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .methodContent h5 {
+    font-size: 12px;
+  }
+
+     .methodContent p {
+     font-size: 10px;
+   }
+
+   .paymentSuccessTip {
+     padding: 10px;
+     margin-bottom: 12px;
+   }
+
+   .paymentSuccessTip p {
+     font-size: 12px;
+   }
+
+   .paymentSuccessButton {
+     font-size: 12px;
+     padding: 6px 12px;
+   }
+ }
+
+/* 积分充值弹窗样式 */
+.rechargeContent {
+  padding: 20px 0;
+}
+
+.currentPoints {
+  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 24px;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
+}
+
+.pointsLabel {
+  display: block;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 8px;
+}
+
+.pointsValue {
+  display: block;
+  font-size: 28px;
+  font-weight: bold;
+  color: #fce2a9;
+  background: linear-gradient(135deg, #fce2a9, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.rechargeSection {
+  margin-bottom: 24px;
+}
+
+.rechargeSection h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.rechargeDescription {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.sliderContainer {
+  margin-bottom: 20px;
+}
+
+.sliderTrack {
+  position: relative;
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 3px;
+  margin-bottom: 8px;
+}
+
+.sliderHandle {
+  position: absolute;
+  top: -7px;
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #6a5acd 0%, #a64dd8 100%);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(106, 90, 205, 0.3);
+  border: 2px solid #fff;
+}
+
+.sliderHandle:hover {
+  transform: scale(1.1);
+  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+}
+
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #666;
+}
+
+.amountInput {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.amountInput span {
+  font-size: 14px;
+  color: #666;
+}
+
+.totalPrice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.priceValue {
+  color: #6a5acd;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.rechargeButton {
+  background: linear-gradient(135deg, #6a5acd 0%, #a64dd8 100%);
+  border: none;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  color: #fff;
+}
+
+ .rechargeButton:hover {
+   transform: translateY(-2px);
+   box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
+   background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+ }
+
+ /* 支付成功提示样式 */
+ .paymentSuccessTip {
+   background: rgba(82, 196, 26, 0.1);
+   border: 1px solid rgba(82, 196, 26, 0.3);
+   border-radius: 8px;
+   padding: 12px;
+   margin-bottom: 16px;
+   text-align: center;
+   margin-top: 20px;
+ }
+
+ .paymentSuccessTip p {
+   color: #52c41a;
+   font-size: 13px;
+   margin-bottom: 8px;
+   font-weight: 500;
+ }
+
+ .paymentSuccessButton {
+   background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+   border: none;
+   border-radius: 6px;
+   font-weight: 600;
+   transition: all 0.3s ease;
+   box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+ }
+
+ .paymentSuccessButton:hover {
+   background: linear-gradient(135deg, #73d13d 0%, #95de64 100%);
+   transform: translateY(-1px);
+   box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
+ }
+
+/* 余额卡片样式 */
+.incomeCard {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  color: #2B2F36;
+  box-shadow: 0 4px 16px rgba(43, 47, 54, 0.08);
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(252, 226, 169, 0.35);
+}
+
+/* 顶部头部信息卡片 */
+.headerCard {
+  background-color: #F7F8FA;
+  border-radius: 16px;
+  padding: 20px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e9d5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a66ae4;
+  font-size: 28px;
+  border: 2px solid rgba(166,106,228,0.35);
+}
+
+.nameBlock {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 5px;
+  margin-left: 10px;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.vipBadge {
+  width: 30px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.vipBadgeTop {
+  width: 22px;
+  height: auto;
+}
+
+.subRow {
+  display: flex;
+  gap: 12px;
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.scoreRow {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.scoreRowThis {
+  display: flex;
+  flex-direction: column;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.scoreLabel {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.scoreValue {
+  margin-top: 2px;
+  font-weight: 600;
+  font-size: 18px;
+  background: #F2F3F5;
+
+}
+
+/* 深色统计卡片 */
+.statsCard {
+  border-radius: 14px;
+  padding: 18px  0;
+  color: #e5e7eb;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  margin-top: 20px;
+}
+
+.statsHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statsTitle {
+  color: #4B6775;
+  font-size: 14px;
+}
+
+.statsAmount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #54687B;
+  margin-bottom: 10px;
+}
+
+.statsCurrency {
+  margin-left: 6px;
+  color: #4B6775;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  padding-top: 12px;
+  padding-bottom: 8px;
+}
+
+.logoHesd {
+  width: 68px;
+  height: 68px;
+}
+
+.statsItem {
+  padding: 16px 8px 18px 8px;
+}
+
+.statsItem:hover{
+  cursor: pointer;
+}
+
+.statsValue {
+  font-size: 22px;
+  font-weight: 800;
+  color: #a66ae4;
+}
+
+.statsLabel {
+  margin-top: 4px;
+  color: #95887D;
+  font-size: 12px;
+  text-align: left;
+}
+
+.incomeCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+}
+
+.incomeContent {
+  position: relative;
+  z-index: 1;
+}
+
+.incomeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.incomeTitleSection {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.incomeIcon {
+  font-size: 20px;
+  color: #a66ae4;
+  background: rgba(166, 106, 228, 0.18);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.incomeTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2B2F36;
+}
+
+.incomeCount {
+  font-size: 28px;
+  font-weight: 800;
+  color: #a66ae4;
+  background: linear-gradient(135deg, #a66ae4, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.incomeDescription {
+  font-size: 13px;
+  color: #7c7c7c;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.incomeActions {
+  display: flex;
+  justify-content: center;
+}
+
+.incomeButton {
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5cf6 100%);
+  border: 2px solid rgba(166, 106, 228, 0.4);
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(166, 106, 228, 0.35);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.buttonIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease;
+}
+
+.incomeButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  transition: left 0.6s ease;
+}
+
+.incomeButton:hover::before {
+  left: 100%;
+}
+
+.incomeButton:hover {
+  background: linear-gradient(135deg, #8b5cf6 0%, #a66ae4 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(166, 106, 228, 0.5);
+  border-color: rgba(166, 106, 228, 0.6);
+}
+
+.incomeButton:hover .buttonIcon {
+  transform: translateX(2px);
+}
+
+.incomeButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(166, 106, 228, 0.3);
+}
+
+.incomeButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.35), 0 2px 8px rgba(166, 106, 228, 0.35);
+}
+
+/* Edit Card 样式 */
+.editCard {
+  background: white;
+  border-radius: 12px;
+  padding: 24px 0;
+}
+
+.editCard > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 35px;
+}
+
+.editCard > div:last-child {
+  margin-bottom: 0;
+}
+
+.editCard .scoreLabel {
+  font-weight: 600;
+  font-size: 16px;
+  color: #374151;
+  min-width: 60px;
+}
+
+.editCard .fieldContainer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.editCard .fieldInput {
+  flex: 1;
+  background-color: #F2F3F5;
+  padding: 15px 12px;
+  border-radius: 8px;
+  border: none;
+  color: #374151;
+  font-size: 14px;
+  min-width: 200px;
+}
+
+.editCard .fieldButton {
+  color: #424A57;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 15px 16px;
+  background-color: #F2F3F5;
+  border-radius: 8px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.editCard .fieldButton:hover {
+  background-color: #e2e8f0;
+  color: #8b5cf6;
+} 

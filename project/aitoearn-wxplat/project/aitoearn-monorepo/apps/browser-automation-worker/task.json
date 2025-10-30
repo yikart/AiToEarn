@@ -1,0 +1,29 @@
+{
+  "multilogin": {
+    "_id": "68abc60ec175073e9c5c2f38",
+    "email": "meta@aitoearning.com",
+    "password": "Yika888666!",
+    "maxProfiles": 10,
+    "currentProfiles": 2,
+    "createdAt": "2025-08-25T02:10:22.337Z",
+    "updatedAt": "2025-08-25T06:46:28.707Z",
+    "token": "eyJhbGciOiJIUzUxMiJ9.eyJicGRzLmJ1Y2tldCI6Im1seC1icGRzLXByb2QtZXUtMSIsIm1hY2hpbmVJRCI6IiIsInByb2R1Y3RJRCI6IiIsIndvcmtzcGFjZVJvbGUiOiJvd25lciIsInZlcmlmaWVkIjp0cnVlLCJzaGFyZElEIjoiY2JlMTM4MDAtYmJhZi00YzhmLTgwYjMtMTk3Zjg5NjM5NGYyIiwidXNlcklEIjoiM2Y2YWYwMmUtYzFhMS00MWVmLTkxZDQtZWE2MDg4OTFkNmU1IiwiZW1haWwiOiJtZXRhQGFpdG9lYXJuaW5nLmNvbSIsImlzQXV0b21hdGlvbiI6dHJ1ZSwid29ya3NwYWNlSUQiOiJhYWI1ZTQ5ZS0wZWMyLTQyNTQtYjMzZi00NDg2OGRkMzczYTIiLCJqdGkiOiJhMmViMDY1Ny02NjU0LTRkNmItOWI2OC0yNDMzZDY3YjkzOWQiLCJzdWIiOiJNTFgiLCJpc3MiOiIzZjZhZjAyZS1jMWExLTQxZWYtOTFkNC1lYTYwODg5MWQ2ZTUiLCJpYXQiOjE3NTY4MTcyMzQsImV4cCI6MjA3ODIyNTIzNH0.EEaYIVThdwuiM5cdNu6EfEAck3DEogeXGDWqHdh2g0ERK6IrH-vMK4Zz40qTbDfOKA5UM0eBVE93geYnlsKMPg",
+    "id": "68abc60ec175073e9c5c2f38"
+  },
+  "folderId": "aab5e49e-0ec2-4254-b33f-44868dd373a2",
+  "profileId": "8ab4c311-dfb1-452d-8363-3ebb6d8083b8",
+  "windows": [
+    {
+      "url": "https://aitoearn.ai",
+      "localStorage": [
+        {
+          "name": "User",
+          "value": "{\"state\":{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsIjoibDE0OTEyNTU3ODFAZ21haWwuY29tIiwiaWQiOiI2ODlmNDBiMmVhZjY1ZjYwMDJkNDYzMmIiLCJuYW1lIjoi55So5oi3Xzh1bnM0d0xCIiwiaWF0IjoxNzU2MjAwNjEwLCJleHAiOjE3NTg3OTI2MTB9.YyqKpVdQFiFOY7dlLfXA_r3vQPpRdM2DxUiMXy5iksg\",\"userInfo\":{\"_id\":\"689f40b2eaf65f6002d4632b\",\"name\":\"用户_8uns4wLB\",\"mail\":\"l1491255781@gmail.com\",\"status\":1,\"googleAccount\":{\"googleId\":\"108483019791958614324\",\"email\":\"l1491255781@gmail.com\",\"refreshToken\":null},\"score\":10,\"updatedAt\":\"2025-08-15T14:14:10.873Z\",\"createdAt\":\"2025-08-15T14:14:10.832Z\",\"popularizeCode\":\"95KXR\",\"id\":\"689f40b2eaf65f6002d4632b\"},\"isAddAccountPorxy\":false,\"lang\":\"zh-CN\",\"lastUpdateTime\":0,\"_hasHydrated\":true},\"version\":0}"
+        }
+      ]
+    },
+    {
+      "url": "https://ping0.cc/"
+    }
+  ]
+}

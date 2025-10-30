@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "$id": "App",
+  "title": "Generate AitoEarn Application",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "The name of the application",
+      "$default": {
+        "$source": "argv",
+        "index": 0
+      },
+      "x-prompt": "What name would you like to use for the application?",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "port": {
+      "type": "number",
+      "description": "The port number for the application",
+      "default": 3001,
+      "x-prompt": "What port should the application run on?"
+    },
+    "description": {
+      "type": "string",
+      "description": "Description for the application",
+      "x-prompt": "What is the description for this application?"
+    }
+  },
+  "required": ["name"]
+}

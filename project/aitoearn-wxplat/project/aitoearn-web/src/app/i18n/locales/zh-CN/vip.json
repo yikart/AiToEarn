@@ -1,0 +1,203 @@
+{
+  "title": "PLUS会员",
+  "description": "开通会员解锁全部功能，立享8种权益",
+  "activateNow": "立即开通",
+  "upgrade": "开通会员",
+  "membership": "会员",
+  "pleaseLoginFirst": "请先登录",
+  "paymentOrderCreated": "支付订单创建成功",
+  "paymentLinkNotFound": "未获取到支付链接",
+  "createPaymentOrderFailed": "创建支付订单失败",
+  "createPaymentOrderError": "创建支付订单失败，请稍后重试",
+  "trialNotice": {
+    "badge": "🎉 新用户专享",
+    "description": "选择连续包月或连续包年，可享受7天免费试用期！"
+  },
+  "trialText": {
+    "month": "前7天免费，之后$19/月", 
+    "year": "前7天免费，之后$144/年"
+  },
+  "badge": {
+    "onceMonth": "一次性",
+    "month": "7天免费试用",
+    "year": "7天免费试用",
+    "monthOld": "25%优惠",
+    "yearOld": "50%优惠"
+  },
+  "vipBenefits": {
+    "exclusiveBadge": "专属标识",
+    "advancedFeatures": "高级功能",
+    "memberGift": "会员礼包",
+    "prioritySupport": "优先支持",
+    "discount": "优惠折扣",
+    "unlimitedTime": "无限时长",
+    "fastExperience": "极速体验",
+    "morePrivileges": "更多特权"
+  },
+  "plans": {
+    "onceMonth": "一次性月度",
+    "month": "月度订阅",
+    "year": "年度订阅"
+  },
+  "planTitles": {
+    "month": "月费会员",
+    "year": "年费会员",
+    "onceMonth": "月度会员"
+  },
+  "selectDuration": "选择开通时长",
+  "autoRenewal": "自动续订，随时取消",
+  "priceUnits": {
+    "month": "/月",
+    "year": "/年"
+  },
+  "subscriptionManagement": "订阅管理",
+  "subscriptionPlanManagement": "订阅计划管理",
+  "subscriptionPlans": "订阅计划",
+  "purchaseHistory": "购买记录",
+  "myMembership": "我的会员",
+  "basicMembership": "基础会员",
+  "validUntil": "有效期至",
+  "activatedAutoRenewalPlans": "已开通自动续费套餐",
+  "activatedAutoRenewalPlansno": "未开通自动续费套餐",
+  "noAutoRenewalItems": "你还没有开通自动续费项目哦",
+  "viewMorePlans": "查看更多套餐",
+  "continuousAnnual": "连续包年",
+  "oneTimePurchase": "一次性购买",
+  "alipayPayment": "支付宝支付",
+  "noMoreContent": "没有内容了",
+  "previousPage": "上一页",
+  "nextPage": "下一页",
+  "pageInfo": "第 {current} 页，共 {total} 页",
+  "continuousMember": "连续会员",
+  "singleMember": "单月会员",
+  "autoRenewalEnabled": "自动续费已开启",
+  "autoRenewalDisabled": "自动续费未开启",
+  "nextRenewalDate": "下次续费时间",
+  "membershipExpires": "有效期至",
+  "currentPlan": "当前计划",
+  "modal": {
+    "title": "免费试用7天会员",
+    "highlight": "立得100积分",
+    "choosePlan": "选择合适你的套餐，或直接",
+    "buyPoints": "购买积分",
+    "pointsDetail": "积分详情",
+    "vipInfo": {
+      "details": "详情",
+      "subscription": "订阅管理",
+      "planType": "计划",
+      "monthly": "连续包月PLUS会员",
+      "monthly2": "月度会员",
+      "yearly": "连续包年PLUS会员",
+      "yearly2": "年度会员",
+      "singleMonth": "单月会员",
+      "trial": "试用中",
+      "cancelled": "已退订",
+      "expireTime": "到期时间", 
+      "xufeiTime": "续费时间",
+      "remainingPoints": "剩余积分",
+      "buyPoints": "购买积分"
+    },
+    "tabs": {
+      "yearly": "连续包年",
+      "monthly": "连续包月",
+      "once": "单月购买"
+    },
+    "savings": {
+      "yearly": "省50%",
+      "monthly": "省25%"
+    },
+    "free": {
+      "title": "免费",
+      "price": "¥0",
+      "period": "每月",
+      "forever": "永久",
+      "currentPlan": "当前计划",
+      "freePlan": "免费计划",
+      "points": "每月签到赠送60积分",
+      "features": {
+        "dailyPoints": "每月最高10+次seedance等模型视频生成",
+        "maxPoints": "全网热门内容洞察",
+        "videos": "抖音、小红书、视频号、快手、哔哩哔哩、微信公众号TikTok、YouTube、Facebook、Instagram、Threads、Twitter(X)、Pinterest全平台支持",
+        "images": "无限制频道连接",
+        "storage": "内容搜索、评论搜索、智能互动管理"
+      }
+    },
+    "plans": {
+      "goumai": "购买",
+      "yearly": {
+        "title": "年度会员",
+        "bestValue": "最划算",
+        "price": "12",
+        "period": "每月",
+        "originalPrice": "$300/年",
+        "button": "$144/年 省50%",
+        "points": "760 积分/月(包含签到赠送60积分)",
+        "description": "每月最高150+次seedance等模型视频生成",
+        "features": {
+          "contentReview": "内容安全审核",
+          "dailyPoints": "限时nano banana等图片模型无限免费使用",
+          "multiModel": "GPT5，Gemini-2.5-Pro等大模型使用",
+          "textToVideo": "抖音、小红书、视频号、快手、哔哩唑哩,微信公众号、TikTok、YouTube、Facebook、Instagram.Threads、Twitter(X)、Pinterest全平台支持",
+          "aiGeneration": "无限制频道连接",
+          "noWatermark": "内容搜索、评论搜索、智能互动管理"
+        }
+      },
+      "monthly": {
+        "title": "月度会员",
+        "price": "19",
+        "period": "每月",
+        "originalPrice": "$25/月",
+        "button": "$19/月 省25%",
+        "points": "760 积分/月(包含签到赠送60积分)",
+        "description": "每月最高150+次seedance等模型视频生成"
+      },
+      "once": {
+        "title": "一次性月度会员",
+        "price": "25",
+        "period": "每月",
+        "button": "$25/月",
+        "points": "760 积分/月(包含签到赠送60积分)",
+        "description": "每月最高150+次seedance等模型视频生成",
+        "storage": "存储空间5G"
+      }
+    },
+    "trial": "7天免费试用",
+    "cancelAnytime": "包年可随时取消",
+    "cancelMonthly": "包月可随时取消"
+  },
+  "points": {
+    "title": "积分详情",
+    "current": "当前积分",
+    "remaining": "剩余积分",
+    "subscribed": "订阅积分",
+    "recharged": "充值积分",
+    "gifted": "赠送积分",
+    "validity": "积分有效期",
+    "tabs": {
+      "all": "全部",
+      "spend": "消耗",
+      "earn": "获得"
+    },
+    "noData": "没有内容了",
+    "disclaimer": "仅展示近1个月明细，数据更新可能有延时 积分规则",
+    "recordChange": "积分变动",
+    "recordTypes": {
+      "recharge": "充值",
+      "consume": "消耗",
+      "gift": "赠送",
+      "refund": "退款",
+      "expire": "过期",
+      "adjust": "调整"
+    }
+  },
+  "recharge": {
+    "title": "购买积分",
+    "current": "当前积分",
+    "price": "每1000积分售价15美元",
+    "amount": "购买积分",
+    "total": "总价",
+    "buyNow": "立即购买",
+    "range": "1K-50K",
+    "unit": "积分"
+  }
+} 

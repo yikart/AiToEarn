@@ -1,0 +1,23 @@
+{
+  "title": "数据统计",
+  "description": "在这里查看和分析您的数据统计信息。",
+  "accountData": "账号数据",
+  "selectSpace": "选择空间",
+  "inputAccountName": "请输入账号名称",
+  "noAccount": "暂无账号",
+  "totalAccount": "累计账号数",
+  "online": "在线",
+  "offline": "离线",
+  "fansCount": "粉丝数",
+  "growthFansCount": "涨粉数",
+  "loginFailed": "登陆失败",
+  "relogin": "重新登录",
+  "dataDetails": "数据明细",
+  "timeRange": "时间范围：",
+  "yesterdayIncrease": "昨日新增",
+  "readCount": "播放数",
+  "commentCount": "评论数",
+  "likeCount": "点赞数",
+  "collectCount": "收藏数",
+  "forwardCount": "分享数"
+}

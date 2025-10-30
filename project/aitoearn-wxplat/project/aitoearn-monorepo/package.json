@@ -1,0 +1,70 @@
+{
+  "name": "@yikart/source",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "prepare": "command -v git >/dev/null 2>&1 && npx simple-git-hooks || echo 'Git not available, skipping git hooks setup'",
+    "lint": "nx run-many --target=lint --nxBail --outputStyle=static"
+  },
+  "dependencies": {
+    "commander": "^14.0.0",
+    "reflect-metadata": "^0.2.2",
+    "zod": "^4.0.17",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^6.1.0",
+    "@eslint/js": "^9.38.0",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
+    "@nx/eslint": "21.4.0",
+    "@nx/eslint-plugin": "21.4.0",
+    "@nx/js": "21.4.0",
+    "@nx/nest": "21.4.0",
+    "@nx/node": "21.4.0",
+    "@nx/web": "21.4.0",
+    "@nx/webpack": "21.4.0",
+    "@nx/workspace": "21.4.0",
+    "@types/express": "^5.0.3",
+    "@types/mime-types": "^3.0.1",
+    "@types/node": "~22.17.2",
+    "eslint": "^9.38.0",
+    "eslint-plugin-format": "^1.0.2",
+    "eslint-plugin-import": "^2.32.0",
+    "jsonc-eslint-parser": "^2.4.1",
+    "lint-staged": "^16.1.5",
+    "nx": "21.4.0",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "~5.9.3",
+    "webpack-cli": "^5.1.4",
+    "zx": "^8.8.1"
+  },
+  "pnpm": {
+    "peerDependencyRules": {
+      "ignoreMissing": [
+        "axios"
+      ]
+    },
+    "onlyBuiltDependencies": [
+      "@alicloud/openapi-core",
+      "@nestjs/core",
+      "@parcel/watcher",
+      "@scarf/scarf",
+      "@swc/core",
+      "msgpackr-extract",
+      "nx",
+      "simple-git-hooks",
+      "unrs-resolver"
+    ]
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged"
+  },
+  "lint-staged": {
+    "*": "nx run-many --target=lint --nxBail --outputStyle=static"
+  },
+  "nx": {
+    "includedScripts": []
+  }
+}

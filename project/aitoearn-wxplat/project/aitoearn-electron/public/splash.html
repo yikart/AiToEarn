@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      /* background: var(--whiteColor1); */
+      overflow: hidden;
+    }
+    .splash-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .splash-image {
+      width: 300px;
+      height: 300px;
+      object-fit: contain;
+      animation: fadeInAndScale 1.5s ease-out;
+    }
+    .splash-title {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: fadeIn 1.5s ease-out;
+    }
+    @keyframes fadeInAndScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1.1);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    @keyframes fadeIn {
+      from { 
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container">
+    <img 
+      src="assets/splash.png" 
+      class="splash-image" 
+      alt="启动图"
+      onerror="console.error('Failed to load splash image')" 
+    />
+    <div class="splash-title">哎哟赚</div>
+  </div>
+  <script>
+    console.log('Splash HTML loaded');
+    document.querySelector('.splash-image').onload = () => {
+      console.log('Splash image loaded');
+    };
+  </script>
+</body>
+</html> 

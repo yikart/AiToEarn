@@ -1,0 +1,335 @@
+.login {
+  display: flex;
+  height: 100%;
+  position: relative;
+
+  :global {
+    .login-navbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px;
+      display: flex;
+      .login-navbar-darg {
+        width: 100%;
+        -webkit-app-region: drag;
+        user-select: none;
+        height: 100%;
+      }
+    }
+  }
+
+  //&:after {
+  //  content: "";
+  //  display: block;
+  //  position: absolute;
+  //  width: 100%;
+  //  height: 80px;
+  //  user-select: none;
+  //  -webkit-app-region: drag;
+  //}
+
+  .login_wrap {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login_left {
+    .login_left_top {
+      margin-bottom: 50px;
+    }
+
+    .login_left_texts {
+      padding: 30px;
+      li {
+        display: flex;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+
+      .login_left_texts_svg {
+        margin-right: 15px;
+      }
+
+      .login_left_text {
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+        strong {
+          margin-bottom: 4px;
+          font-weight: 400;
+          font-size: var(--fs-lg);
+        }
+        p {
+          margin: 0;
+          font-size: var(--fs-xs);
+          color: var(--grayColor7);
+        }
+        strong, p {
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  .loginCore {
+    width: 400px;
+    min-height: 380px;
+    padding: 40px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .phoneLogin {
+    width: 100%;
+    padding: 20px 0;
+
+    .loginHeader {
+      text-align: center;
+      margin-bottom: 40px;
+
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+      }
+    }
+  }
+
+  .switch_login_type {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    z-index: 1;
+    
+    .switch_icon {
+      font-size: 20px;
+      padding: 8px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        background: #e6f7ff;
+        color: #1890ff;
+      }
+    }
+  }
+
+  .qrcodeLogin {
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+
+    .qrcodeHeader {
+      margin-bottom: 40px;
+
+      h2 {
+        font-size: 24px;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+      }
+
+      p {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+      }
+    }
+
+    .qrcodeWrapper {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 40px;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .qrcodeMask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 8px;
+
+        p {
+          color: #666;
+          margin-bottom: 12px;
+        }
+
+        .refreshBtn {
+          color: #C367EF;
+          font-size: 14px;
+          
+          &:hover {
+            color: #64C9ED;
+          }
+
+          .anticon {
+            margin-right: 4px;
+          }
+        }
+      }
+    }
+
+    .loginForm-buttonWrapper {
+      margin-top: 0;
+      padding: 0 40px;
+    }
+
+    .agreement {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666;
+
+      a {
+        color: #C367EF;
+        text-decoration: none;
+        margin: 0 2px;
+        
+        &:hover {
+          color: #64C9ED;
+        }
+      }
+    }
+  }
+}
+
+.loginForm {
+  input {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: 1px solid #e8e8e8;
+    transition: all 0.3s;
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &:focus {
+      border-color: #C367EF;
+      box-shadow: 0 0 0 2px rgba(195, 103, 239, 0.1);
+    }
+  }
+
+  .loginForm-phone {
+    &-site {
+      border: 1px solid #e8e8e8;
+      color: #666;
+      padding: 0 12px;
+      line-height: 42px;
+      border-radius: 8px;
+      margin-right: 8px;
+      font-size: 14px;
+      background: #f9f9f9;
+    }
+  }
+
+  .submitBtn {
+    width: 100%;
+    height: 44px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background: #f0f0f0;
+    color: #999;
+    transition: all 0.3s;
+
+    &.active {
+      background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
+      color: white;
+      box-shadow: 0 8px 16px rgba(195, 103, 239, 0.2);
+
+      &:hover {
+        opacity: 0.9;
+      }
+
+      &:active {
+        opacity: 0.8;
+      }
+    }
+  }
+
+
+
+  .loginForm-buttonWrapper {
+    margin-top: 40px;
+  }
+}
+
+.loginForm-getCode {
+  color: #C367EF;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 16px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: opacity 0.3s;
+  z-index: 1;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:active {
+    opacity: 0.6;
+  }
+
+  &--disable {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  :global {
+    .ant-statistic {
+      position: static;
+    }
+    
+    .ant-statistic-content {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #C367EF 0%, #64C9ED 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      
+      &-value {
+        font-size: 14px !important;
+        font-weight: 500;
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+name: "🕷️ Bug report"
+description: Report errors or unexpected behavior
+labels:
+  - bug
+body:
+  - type: checkboxes
+    attributes:
+      label: Self Checks
+      description: "To make sure we get to you in time, please check the following :)"
+      options:
+        - label: I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).
+          required: true
+        - label: I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.
+          required: true
+        - label: I confirm that I am using English to submit this report, otherwise it will be closed.
+          required: true
+        - label: 【中文用户 & Non English User】请使用英语提交，否则会被关闭 ：）
+          required: true
+        - label: "Please do not modify this template :) and fill in all the required fields."
+          required: true
+
+  - type: input
+    attributes:
+      label: Aitoearn version
+      description: 
+    validations:
+      required: true
+
+  - type: dropdown
+    attributes:
+      label: Please select your platform
+      description: 
+      multiple: true
+      options:
+        - Android
+        - Windows
+        - Mac
+        - Web
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: We highly suggest including screenshots and a bug report log. Please use the right markdown syntax for code blocks.
+      placeholder: Having detailed steps helps us reproduce the bug. If you have logs, please use fenced code blocks (triple backticks ```) to format them.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: ✔️ Expected Behavior
+      description: Describe what you expected to happen.
+      placeholder: What were you expecting? Please do not copy and paste the steps to reproduce here.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: ❌ Actual Behavior
+      description: Describe what actually happened.
+      placeholder: What happened instead? Please do not copy and paste the steps to reproduce here.
+    validations:
+      required: false

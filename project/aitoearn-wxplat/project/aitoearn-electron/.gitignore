@@ -1,0 +1,45 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+dist-electron
+release
+*.local
+
+# Editor directories and files
+.vscode/.debug.env
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# .env
+
+#lockfile
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# 忽略所有.db文件
+*.db
+
+# 忽略所有.exe文件(太)
+*.exe
+
+# 忽略/public/bin目录下的非.md文件
+public/bin/*
+!public/bin/webkit
+!public/bin/*.md

@@ -1,0 +1,264 @@
+{
+  "releaseBanner": {
+    "tag": "Release v0.8.0",
+    "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
+  },
+  "header": {
+    "logo": "Aitoearn",
+    "nav": {
+      "home": "首页",
+      "marketplace": "市场",
+      "pricing": "价格",
+      "status": "状态",
+      "docs": "文档",
+      "blog": "博客",
+      "download": "下载"
+    },
+    "getStarted": "立即开始"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "stars on",
+    "github": "GitHub",
+    "title": "成为最好用的内容营销\nAI Agent",
+    "subtitle": "从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。",
+    "getStarted": "立即开始",
+    "useMobilePhone": "使用移动设备"
+  },
+  "brandBar": {
+    "title": "支持的社交媒体平台"
+  },
+  "buildSection": {
+    "badge": "功能1",
+    "title": "Content Publishing — 一键发布 · 多平台触达",
+    "titleBlue": "从创意灵感到多平台分发，再到数据分析和商业化",
+    "features": {
+      "hotTopic": {
+        "title": "多平台分发",
+        "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X）。"
+      },
+      "international": {
+        "title": "日历编排",
+        "description": "像操作日历一样规划内容，实现多平台协同发布。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "hotspotSection": {
+    "badge": "功能2",
+    "title": "Content Hotspot — 爆款灵感引擎",
+    "titleBlue": "爆款案例库与趋势捕捉",
+    "features": {
+      "hotTopic": {
+        "title": "爆款案例库",
+        "description": "随时查看他人如何打造 10,000+ 点赞的内容。"
+      },
+      "international": {
+        "title": "趋势捕捉",
+        "description": "快速发现流行趋势，降低创作焦虑。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "searchSection": {
+    "badge": "功能3",
+    "title": "Content Search — 品牌与市场洞察",
+    "titleBlue": "品牌监控与内容搜索",
+    "features": {
+      "hotTopic": {
+        "title": "品牌监控",
+        "description": "实时追踪品牌相关讨论，第一时间响应。"
+      },
+      "international": {
+        "title": "内容搜索",
+        "description": "找到目标帖子和话题，高效互动，精准拓展市场。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "commentsSection": {
+    "badge": "功能4",
+    "title": "Comments Search — 精准用户挖掘",
+    "titleBlue": "智能评论搜索与精准转化",
+    "features": {
+      "hotTopic": {
+        "title": "智能评论搜索",
+        "description": "快速发现\"求链接\"\"怎么购买\"等高转化信号。"
+      },
+      "international": {
+        "title": "精准转化",
+        "description": "主动回复，提升流量变现效率。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "connectSection": {
+    "badge": "功能5",
+    "title": "Content Engagement — 互动与增长引擎",
+    "titleBlue": "统一后台与主动运营",
+    "features": {
+      "creation": {
+        "title": "统一后台",
+        "description": "集中管理所有内容，互动零遗漏。"
+      },
+      "distribution": {
+        "title": "主动运营",
+        "description": "参与热门话题，与潜在用户双向互动。把\"被动内容运营\"变成\"主动流量经营\"。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "upcomingSection": {
+    "badge": "即将上线",
+    "title": "AI 驱动的全链路内容增长与变现平台",
+    "titleBlue": "即将上线功能，敬请期待",
+    "features": {
+      "smartImport": {
+        "title": "智能导入",
+        "description": "直接导入历史内容，快速编辑、二次分发。例如：小红书创作者可一键同步到 YouTube，让更多用户看到。"
+      },
+      "analytics": {
+        "title": "Content Analytics — 全景化数据视图",
+        "description": "多平台对比：一个平台不给流量，不代表所有平台不给。全链路监控：追踪内容表现，助力打造下一个百万博主。"
+      },
+      "aiCreation": {
+        "title": "AI Content Creation — 全流程 AI 助手",
+        "description": "AI 文案生成：自动生成标题、描述，高效产出。AI 评论生成：主动出击，获取流量。图文卡片生成，全流程加速创作。支持主流 AI 视频模型和图片模型。"
+      },
+      "marketplace": {
+        "title": "Content Marketplace — 内容交易与变现",
+        "description": "创作者变现：在平台直接出售内容，让优质作品快速找到买家。品牌采购：企业可直接购买现成内容，节省时间与成本。让创作变成收益 —— Let's use AI to earn. Let's earn money together!"
+      }
+    }
+  },
+  "downloadSection": {
+    "title": "随时随地开始创作",
+    "titleBlue": "移动端也能轻松管理",
+    "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供App移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+    "qrCodeText": "扫描二维码下载",
+    "appStore": {
+      "text": "Download on the",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "GET IT ON",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "企业级服务",
+    "title": "专业的AI自媒体解决方案",
+    "titleBlue": "助力企业营销成功",
+    "subtitle": "企业级AI营销转型不仅需要工具，更需要稳固的基础设施。AI ToEarn 提供可靠的平台，将AI内容创作能力分发到多个部门，实现无与伦比的营销效率。"
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "用户"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "社交平台"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "国家地区"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "内容发布"
+      }
+    },
+    "testimonial": {
+      "quote": "在内容营销竞争激烈的今天，快速验证和创作工具不仅有帮助，更是生存必需品。对于我们这样的营销公司来说，AI ToEarn 在这个AI前沿为我们提供了不可或缺的价值。",
+      "author": "李明",
+      "title": "某知名MCN机构 内容运营总监"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "预计每年节省创作时间",
+        "number": "50,000 小时"
+      },
+      "aiAssistant": {
+        "title": "AI营销助手：为500+企业客户提供跨平台内容分发服务"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "社区生态",
+    "title": "加入我们的",
+    "titleBlue": "活跃创作者社区",
+    "subtitle": "AI ToEarn 由全球AI内容创作者社区共同推动。加入我们，一起探索AI内容营销的无限边界。",
+    "buttons": {
+      "wechat": "微信群组",
+      "community": "创作者交流群"
+    },
+    "wechatPopup": "扫码关注微信公众号",
+    "communityPopup": "扫码加入社区群",
+    "stats": {
+      "downloads": {
+        "number": "20万+",
+        "label": "下载量"
+      },
+      "members": {
+        "number": "15K",
+        "label": "社区成员"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "活跃创作者"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "资源",
+      "links": {
+        "docs": "文档",
+        "blog": "博客",
+        "download": "下载",
+        "education": "教育",
+        "partner": "合作伙伴",
+        "support": "服务支持",
+        "roadmap": "产品线路图"
+      }
+    },
+    "company": {
+      "title": "公司",
+      "links": {
+        "talk": "联系我们",
+        "terms": "服务条款",
+        "privacy": "隐私政策",
+        "cookies": "Cookie 设置",
+        "data": "数据删除引导",
+        "marketplace": "市场协议",
+        "brand": "品牌指南"
+      }
+    },
+    "description": "AI ToEarn 自媒体运营平台一站式解决方案，从灵感创意到内容制作，从内容分发到内容互动管理",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Let's Use AI To",
+    "copyright": "© 2025 AITOEARN, Corp.", 
+    "tagline": "",
+    "dataDeletion": {
+      "title": "Data Deletion Instructions",
+      "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
+      "standardTitle": "Standard Procedure (Post-Launch):",
+      "standardSteps": [
+        "Log in to your AiToEarn account",
+        "Navigate to Settings > Privacy", 
+        "Click \"Request Account Deletion\"",
+        "Confirmation will be sent to your registered email"
+      ],
+      "contactTitle": "Contact for Assistance:",
+      "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
+    }
+  }
+} 

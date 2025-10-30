@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Google Login</title>
+  <style>
+    .google-btn {
+      background-color: white;
+      color: #444;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .google-btn:hover {
+      background-color: #f7f7f7;
+    }
+  </style>
+</head>
+<body>
+  <h2>登录</h2>
+  <button class="google-btn" onclick="handleGoogleLogin()">使用 Google 登录</button>
+
+  <script>
+    async function handleGoogleLogin() {
+      try {
+        const platform = 'google'; // 或 'android' / 'ios'
+        const url = `http://localhost:3000/api/plat/google/auth/login?platform=${encodeURIComponent(platform)}`;
+
+        const response = await fetch(url, {
+          method: 'GET',
+        });
+
+        if (!response.ok) {
+          throw new Error('请求失败: ' + response.statusText);
+        }
+
+        const data = await response.json();
+        console.log(data);
+        if (data.data) {
+          window.location.href = data.url; // 跳转到 Google OAuth URL
+        } else {
+          alert('未收到跳转地址');
+        }
+      } catch (error) {
+        console.error('登录出错:', error);
+        alert('登录失败，请重试');
+      }
+    }
+  </script>
+</body>
+</html>

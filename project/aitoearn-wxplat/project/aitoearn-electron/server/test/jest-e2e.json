@@ -1,0 +1,21 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "testTimeout": 100000,
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "globalSetup": "./setup.ts",
+  "globalTeardown": "./teardown.ts",
+  "setupFilesAfterEnv": [
+    "./each-setup-env.ts"
+  ],
+  "detectOpenHandles": true,
+  "forceExit": true
+}

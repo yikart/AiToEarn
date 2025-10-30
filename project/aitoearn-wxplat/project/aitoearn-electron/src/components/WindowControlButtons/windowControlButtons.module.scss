@@ -1,0 +1,32 @@
+.windowControlButtons {
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+
+  .minimize, .maximize, .close {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    transition: 0.3s;
+    width: 45px;
+    color: #595959;
+    font-size: 14px;
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+  .minimize {
+  }
+  .maximize {
+  }
+  .close {
+    &:hover {
+      color: #fff;
+      background: red;
+    }
+  }
+}

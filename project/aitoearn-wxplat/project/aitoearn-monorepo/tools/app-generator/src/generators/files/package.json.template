@@ -1,0 +1,8 @@
+{
+  "name": "@yikart/<%= name %>",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "@yikart/common": "workspace:^"
+  }
+}

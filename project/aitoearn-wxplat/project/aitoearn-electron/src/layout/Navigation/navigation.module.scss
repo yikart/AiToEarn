@@ -1,0 +1,105 @@
+.navigation {
+  background: var(--gradientBackColor);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 0 15px;
+
+  :global {
+    .navigation-userinfo {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      .navigation-line {
+        width: 1px;
+        height: 15px;
+        background: #fff;
+        margin: 0 15px;
+      }
+    }
+
+    .navigation-icon {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      cursor: pointer;
+      .anticon {
+        font-size: var(--fs-xl);
+      }
+      &-text {
+        font-size: var(--fs-xs);
+      }
+    }
+
+    .navigation_drag {
+      width: 100%;
+      height: 100%;
+      user-select: none;
+      -webkit-app-region: drag;
+    }
+
+    .navigation_left {
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+      .navigation-logo {
+        color: #fff;
+        font-weight: 900;
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        font-size: var(--fs-lg);
+        user-select: none;
+        -webkit-app-region: drag;
+        img {
+          margin-right: 4px;
+        }
+      }
+
+      .navigation-list {
+        display: flex;
+        &-text {
+          display: block;
+          margin-top: 3px;
+          white-space: nowrap;
+        }
+        &-item {
+          .anticon  {
+            font-size: 20px;
+          }
+          a {
+            width: 101px;
+            box-sizing: border-box;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 15px;
+            font-size: var(--fs-sm);
+          }
+
+          &--active {
+            background: rgba(255, 255, 255, 0.05);
+          }
+        }
+      }
+    }
+  }
+}
+
+.navigation-win32 {
+  //padding-right: 140px;
+  padding-right: 0;
+  :global {
+    .navigation-userinfo {
+      margin-right: 10px;
+    }
+  }
+}
+
+.navigation-darwin {
+  padding-left: 80px;
+}

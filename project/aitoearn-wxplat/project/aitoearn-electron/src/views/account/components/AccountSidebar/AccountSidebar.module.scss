@@ -1,0 +1,383 @@
+@use "@/styles/mixin";
+
+.accountSidebar {
+  border-right: 1px solid var(--grayColor3);
+  width: 200px;
+  height: 100%;
+  min-height: 0;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+
+  p {
+    margin: 0;
+  }
+
+  :global {
+    .accountSidebar-userCount {
+      display: inline-block;
+      margin-left: 10px;
+      color: var(--grayColor6);
+    }
+
+    .accountSidebar-top {
+      flex-shrink: 0;
+      padding: 0 10px;
+      button {
+        width: 100%;
+      }
+      &-box {
+        display: flex;
+        margin: 10px 0;
+      }
+      &-addUser {
+        margin-left: 10px;
+        width: 60px !important;
+      }
+    }
+
+    .accountSidebar-footer {
+      padding: 5px 0;
+      border-top: 1px solid var(--grayColor3);
+      text-align: center;
+    }
+
+    .accountList {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: auto;
+      &-item {
+        width: 100%;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        padding: 10px 15px;
+        box-sizing: border-box;
+        cursor: pointer;
+        background: #fff;
+        transition: 0.3s;
+        color: #333;
+        .ant-avatar {
+          flex-shrink: 0;
+        }
+        &-right {
+          margin-left: 10px;
+          box-sizing: border-box;
+          width: 100%;
+          overflow: hidden;
+          &-name {
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: var(--fs-sm);
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          &-footer {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--fs-sm);
+          }
+          &-plat {
+            display: flex;
+            align-items: center;
+            img {
+              width: 15px;
+              margin-right: 5px;
+            }
+            span {
+              font-size: var(--fs-xs);
+            }
+          }
+        }
+
+        &:hover {
+          color: var(--colorPrimary5);
+          background: var(--colorPrimary1);
+        }
+
+        &--active {
+          background: var(--colorPrimary1);
+        }
+
+        &--abnormal {
+          color: red !important;
+        }
+
+        &--disable {
+          filter: grayscale(100%) !important;
+          opacity: 0.5 !important;
+        }
+      }
+    }
+
+    .ant-collapse {
+      overflow: auto;
+      height: 100%;
+      border: none;
+      background: transparent;
+      .ant-collapse-content-box {
+        padding: 0;
+      }
+      .ant-collapse-header {
+        background: transparent;
+        padding: 10px;
+      }
+    }
+  }
+}
+
+.accountPopoverInfo {
+  padding: 10px;
+  width: 250px;
+  :global {
+    .accountPopoverInfo_top {
+      display: flex;
+      font-size: var(--fs-sm);
+      padding: 5px 0 10px 0;
+      border-bottom: 1px solid #dedede;
+      margin-bottom: 15px;
+      color: var(--grayColor7);
+      &-right {
+        margin-left: 10px;
+      }
+    }
+    .accountPopoverInfo-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+      p {
+        display: flex;
+        align-items: center;
+        &:nth-of-type(1) {
+          color: var(--grayColor7);
+        }
+        img {
+          width: 15px;
+          margin-right: 5px;
+        }
+
+        .anticon {
+          margin-right: 3px;
+        }
+      }
+    }
+  }
+}
+
+.userManageDeleteHitModal {
+  .userManageDeleteHitModal-users {
+    display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(6, 1fr);
+    margin-top: 10px;
+    li {
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      white-space: nowrap;
+      overflow: hidden;
+      & > span {
+        text-overflow: ellipsis;
+        display: block;
+        margin-top: 5px;
+        overflow: hidden;
+        width: 100%;
+        text-align: center;
+        font-size: var(--fs-xs);
+        color: var(--grayColor9);
+      }
+    }
+  }
+}
+.userManageModal {
+  :global {
+    .ant-modal-header {
+      margin-bottom: 0;
+    }
+    .ant-modal-content {
+      padding: 0 !important;
+      .ant-modal-title {
+        padding: 15px;
+        border-bottom: 1px solid var(--grayColor3);
+      }
+    }
+  }
+}
+.userManage {
+  display: flex;
+  min-width: 0;
+  height: 500px;
+  :global {
+    @include mixin.table-flex-container-with-selectors;
+
+    .ant-table-cell {
+      padding: 10px !important;
+    }
+
+    .userManage-sidebar {
+      width: 200px;
+      height: 100%;
+      border-right: 1px solid var(--grayColor3);
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding-top: 10px;
+      &-top {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+      &-bottom {
+        padding: 0 12px;
+        margin-bottom: 15px;
+        button {
+          width: 100%;
+        }
+      }
+      &-allUser, .userManage-sidebar-list-item {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 10px;
+        padding-left: 10px;
+        background: transparent;
+        &:hover {
+          background: var(--colorPrimary3);
+          cursor: pointer;
+        }
+      }
+      &-allUser {
+        padding-top: 5px;
+        padding-bottom: 5px;
+      }
+      &-sortHandle {
+        cursor: move;
+        margin-right: 10px;
+      }
+      &-left {
+        display: flex;
+      }
+      &-name {
+      }
+      &-count {
+        color: var(--grayColor8);
+      }
+      &-list {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        height: 100%;
+
+        &-title {
+          margin: 10px 0 10px 10px;
+          font-size: var(--fs-xs);
+          color: var(--grayColor8);
+        }
+
+        &-item {
+          padding-top: 10px;
+          padding-bottom: 10px;
+        }
+
+        &-sortable {
+          height: 100%;
+          overflow: auto;
+          padding-bottom: 15px;
+        }
+      }
+      &--active {
+        background: var(--colorPrimary3) !important;
+      }
+    }
+
+    .userManage-content {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      padding: 10px;
+
+      &-head {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        &-proxy {
+
+        }
+      }
+
+      .ant-drawer-header {
+        height: 40px;
+        .ant-drawer-close {
+          position: absolute;
+          right: 10px;
+        }
+      }
+
+      .ant-drawer-content-wrapper {
+        border: 1px solid var(--grayColor3);
+        border-radius: 20px 20px 0 0;
+        overflow: hidden;
+        .ant-drawer-content {
+        }
+        .ant-drawer-body {
+          overflow: hidden;
+        }
+      }
+
+      &-multiple {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+        &-item {
+          cursor: pointer;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          &-icon {
+            background: var(--grayColor1);
+            width: 36px;
+            height: 36px;
+            font-size: var(--fs-md);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 5px;
+          }
+          &:hover {
+            opacity: 0.6;
+          }
+        }
+      }
+
+      &-user {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        &--disable {
+          filter: grayscale(100%);
+          opacity: 0.5;
+        }
+        .ant-avatar {
+          margin-right: 5px;
+        }
+      }
+    }
+  }
+}
+
+.createGroup {
+  display: flex;
+  align-items: center;
+  margin: 30px 0 50px 0;
+  label {
+    white-space: nowrap;
+    margin-right: 10px;
+  }
+}

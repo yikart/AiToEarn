@@ -1,0 +1,80 @@
+{
+  "name": "aitoearn-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/aitoearn-server/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/aitoearn-server",
+        "tsConfig": "apps/aitoearn-server/tsconfig.app.json",
+        "packageJson": "apps/aitoearn-server/package.json",
+        "main": "apps/aitoearn-server/src/main.ts",
+        "assets": [
+          "apps/aitoearn-server/*.md",
+          "apps/aitoearn-server/src/views/**/*",
+          "apps/aitoearn-server/src/public/**/*"
+        ],
+        "generatePackageJson": true,
+        "clean": true
+      }
+    },
+    "prune-lockfile": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "executor": "@nx/js:prune-lockfile",
+      "outputs": [
+        "{workspaceRoot}/dist/apps/aitoearn-server/package.json",
+        "{workspaceRoot}/dist/apps/aitoearn-server/pnpm-lock.yaml"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "local",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "aitoearn-server:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "local": {
+          "buildTarget": "aitoearn-server:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/aitoearn-server/config/local.config.js"
+          ]
+        },
+        "dev": {
+          "buildTarget": "aitoearn-server:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/aitoearn-server/config/dev.config.js"
+          ]
+        },
+        "prod": {
+          "buildTarget": "aitoearn-server:build:production",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/aitoearn-server/config/prod.config.js"
+          ]
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "fix": true
+      }
+    },
+    "docker-context": {},
+    "docker-build": {}
+  }
+}

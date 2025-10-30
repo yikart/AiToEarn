@@ -1,0 +1,91 @@
+{
+  "title": "消息通知",
+  "detailTitle": "通知详情",
+  "markAllAsRead": "全部标记为已读",
+  "markAsRead": "标记为已读",
+  "delete": "删除",
+  "close": "关闭",
+  "noNotifications": "暂无通知",
+  "confirmDelete": "确定要删除这条通知吗？",
+  "confirm": "确定",
+  "cancel": "取消",
+  "deleteSuccess": "删除成功",
+  "deleteFailed": "删除失败",
+  "markSuccess": "标记成功",
+  "markFailed": "标记失败",
+  "markAllSuccess": "全部标记成功",
+  "getNotificationListFailed": "获取通知列表失败",
+  "getNotificationDetailFailed": "获取通知详情失败",
+  "createTime": "创建时间",
+  "readTime": "已读时间",
+  "taskDetail": "任务详情",
+  "acceptTask": "接受任务",
+  "noTaskDetails": "暂无任务详情",
+  "taskProcessing": "任务处理中...",
+  "acceptingTask": "正在接受任务...",
+  "publishingTask": "正在发布任务...",
+  "submittingTask": "正在提交任务...",
+  "taskCompleted": "任务完成",
+  "taskProcessFailed": "任务处理失败",
+  "acceptTaskFailed": "接受任务失败",
+  "publishTaskFailed": "发布任务失败",
+  "submitTaskFailed": "提交任务失败",
+  "getTaskDetailFailed": "获取任务详情失败",
+  "accountInfoFailed": "账号信息获取失败",
+  "appRequiredNotice": "⚠️ 注意：",
+  "appRequiredMessage": "发布账号({{platform}})的任务需要在移动端App中操作，请下载对应App后继续。",
+  "mediaPreview": "媒体预览",
+  "pageInfo": "第 {{start}}-{{end}} 条，共 {{total}} 条",
+  "notificationTypes": {
+    "system": "系统通知",
+    "user": "用户通知",
+    "material": "素材通知",
+    "task_reminder": "任务提醒",
+    "other": "其他通知"
+  },
+  "taskStatus": {
+    "active": "进行中",
+    "inactive": "已结束"
+  },
+  "taskInfo": {
+    "description": "描述",
+    "publisherAccount": "发布账号",
+    "reward": "奖励",
+    "taskType": "任务类型",
+    "platformTypes": "支持平台"
+  },
+  "taskTypes": {
+    "video": "视频",
+    "article": "图文",
+    "article2": "纯文字"
+  },
+  "platforms": {
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "twitter": "Twitter",
+    "bilibili": "哔哩哔哩",
+    "KWAI": "快手",
+    "douyin": "抖音",
+    "xhs": "小红书",
+    "wxSph": "微信视频号",
+    "wxGzh": "微信公众号",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest"
+  },
+  "time": {
+    "justNow": "刚刚",
+    "minutesAgo": "{{minutes}}分钟前",
+    "hoursAgo": "{{hours}}小时前",
+    "daysAgo": "{{days}}天前"
+  },
+  "accountSelect": {
+    "title": "选择发布账号",
+    "description": "请选择用于发布任务的账号：",
+    "noAccounts": "没有符合条件的账号，请先添加账号",
+    "redirectingToAccounts": "正在跳转到账户界面，请添加符合条件的账号",
+    "accountId": "账号ID",
+    "description": "描述"
+  }
+}

@@ -1,0 +1,15 @@
+.signInCard {
+  width: 320px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #eee;
+  padding: 24px 20px;
+  text-align: center;
+  .icon { margin-bottom: 8px; }
+  .title { font-size: 15px; color: #333; margin-bottom: 8px; }
+  .status { margin-bottom: 8px; }
+  .signed { color: #52c41a; font-weight: bold; }
+  .notSigned { color: #aaa; }
+  .progress { margin: 8px 0; }
+  .desc { color: #666; font-size: 13px; margin-bottom: 8px; }
+} 

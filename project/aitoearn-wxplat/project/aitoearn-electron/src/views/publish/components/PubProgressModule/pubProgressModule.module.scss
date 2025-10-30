@@ -1,0 +1,44 @@
+.pubProgressModule {
+  padding-top: 20px;
+  :global {
+    .pubProgressModule-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      &-left {
+        width: 50%;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        &-name {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          margin-left: 6px;
+          padding-right: 20px;
+        }
+      }
+
+      &-right {
+        width: 50%;
+        flex-shrink: 0;
+        &-msg {
+          color: var(--grayColor7);
+          font-size: var(--fs-xs);
+        }
+      }
+    }
+  }
+}
+
+.avatarPlat {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  & > img {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    transform: translate(-10%, 20%);
+    border-radius: 50%;
+  }
+}
