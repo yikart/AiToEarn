@@ -1,8 +1,7 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
+import { QueueService } from '@yikart/aitoearn-queue'
 import { AitoearnServerClientService, UserChatCompletionDto } from '@yikart/aitoearn-server-client'
 import { AppException, UserType } from '@yikart/common'
-import { Queue } from 'bullmq'
 import { EngagementTargetScope, EngagementTaskStatus, EngagementTaskType } from '../../libs/database/schema/engagement.task.schema'
 import { ReplyToCommentAnswer } from './dto/ai.dto'
 import { AIGenCommentDto, FetchCommentRepliesRequest, FetchPostCommentsRequest, PublishCommentReplyRequest, PublishCommentRequest, ReplyToCommentsDto } from './engagement.dto'
@@ -23,7 +22,7 @@ export class EngagementService {
     youtubeProvider: YoutubeEngagementProvider,
     private readonly serverClient: AitoearnServerClientService,
     private readonly engagementRecordService: EngagementRecordService,
-    @InjectQueue('engagement_task_distribution') private readonly distributeCommentTaskQ: Queue,
+    private readonly queueService: QueueService,
   ) {
     this.providerMap.set('facebook', facebookProvider)
     this.providerMap.set('instagram', instagramProvider)
@@ -134,8 +133,7 @@ export class EngagementService {
         })
       }
     }
-    await this.distributeCommentTaskQ.add(
-      `${task.platform}:engagement:task:${task.id}`,
+    await this.queueService.addEngagementTaskDistributionJob(
       {
         taskId: task.id,
         attempts: 0,

@@ -13,6 +13,12 @@ export class AccountGroupService {
   ) { }
 
   // 获取默认用户组, 没有则创建
+  async findOneById(id: string) {
+    const data = await this.accountGroupRepository.findOneById(id)
+    return data
+  }
+
+  // 获取默认用户组, 没有则创建
   async getDefaultGroup(userId: string): Promise<AccountGroup> {
     const data = await this.accountGroupRepository.getDefaultGroup(userId)
     return data

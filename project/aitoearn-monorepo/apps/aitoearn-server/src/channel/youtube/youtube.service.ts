@@ -34,7 +34,7 @@ export class YoutubeService {
    * @returns
    */
   async getAuthTaskStatus(taskId: string) {
-    const authTaskStatus = await this.redisService.get(
+    const authTaskStatus = await this.redisService.getJson(
       `youtube:authTask:${taskId}`,
     )
 

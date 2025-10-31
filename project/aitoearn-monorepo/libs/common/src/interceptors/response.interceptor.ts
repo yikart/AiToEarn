@@ -9,6 +9,7 @@ import {
   Logger,
   StreamableFile,
 } from '@nestjs/common'
+import { RENDER_METADATA } from '@nestjs/common/constants'
 import { map } from 'rxjs'
 import { ResponseCode } from '../enums'
 
@@ -16,6 +17,9 @@ export class ResponseInterceptor implements NestInterceptor {
   private readonly logger = new Logger(ResponseInterceptor.name)
   intercept(context: ExecutionContext, next: CallHandler) {
     const type = context.getType()
+
+    const isRender = Reflect.hasMetadata(RENDER_METADATA, context.getHandler())
+
     if (type === 'http') {
       const res = context.switchToHttp().getResponse<Response>()
 
@@ -23,7 +27,7 @@ export class ResponseInterceptor implements NestInterceptor {
 
       return next.handle().pipe(
         map((data) => {
-          if (data instanceof StreamableFile) {
+          if (data instanceof StreamableFile || isRender) {
             return data
           }
 

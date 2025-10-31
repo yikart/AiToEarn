@@ -54,7 +54,7 @@ export class EngagementNatsApi extends ChannelBaseApi {
 
   async generateRepliesByAI(userId: string, payload: AIGenCommentDto) {
     const res = await this.sendMessage<AIGenCommentResponseVo>(
-      `channel/engagement/generateRepliesByAI`,
+      `channel/engagement/ai/generate/replies`,
       {
         userId,
         ...payload,
@@ -65,7 +65,7 @@ export class EngagementNatsApi extends ChannelBaseApi {
 
   async replyToCommentsByAI(userId: string, payload: ReplyToCommentsDto) {
     const res = await this.sendMessage<AIGenCommentResponseVo>(
-      `channel/engagement/replyToCommentByAI`,
+      `channel/engagement/ai/reply/to/comments`,
       {
         userId,
         ...payload,

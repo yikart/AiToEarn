@@ -1,10 +1,10 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common'
 import { ApiOperation } from '@nestjs/swagger'
-import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ChannelService } from './channel.service'
-import { BatchHistoryPostsRecordDto, searchTopicDto } from './dto/channel.dto'
+import { BatchHistoryPostsRecordDto, searchTopicDto, SubmitChannelCrawlingDto } from './dto/channel.dto'
 
-@Controller()
+@Controller('statistics/channels')
 export class ChannelController {
   private readonly logger = new Logger(ChannelController.name)
   constructor(
@@ -12,45 +12,55 @@ export class ChannelController {
   ) {}
 
   /**
-   * douyin search topic
+   * Douyin search topic
    * @param token
    * @param data
    * @returns
    */
-  // @NatsMessagePattern('statistics.channel.douyin.searchTopic')
-  // @Public()
   @ApiOperation({
-    summary: '话题搜索',
-    description: '话题搜索',
+    summary: 'Topic search',
+    description: 'Search topics on Douyin/TikTok',
   })
-  @Post('statistics/channels/douyin/searchTopic')
+  @Public()
+  @Post('douyin/searchTopic')
   async douYinSerachTopic(
-    @GetToken() token: TokenInfo,
     @Body() data: searchTopicDto,
   ) {
-    this.logger.log(token.id)
     return this.channelService.getDouyinTopic(data.topic, data?.language)
   }
 
   /**
-   * 用户选择历史发布记录，记录后发送到草稿箱（批量处理）
+   * User selects history publish records and sends them to draft (batch)
    * @param data
    * @returns
    */
-  // @NatsMessagePattern('statistics.channel.platform.postsRecord')
-  @Post('statistics/channels/posts/postsRecord')
+  @Post('posts/postsRecord')
   async setHistoryPostsRecord(@Body() data: BatchHistoryPostsRecordDto) {
     return this.channelService.historyPostsRecord(data.records)
   }
 
   /**
-   * query history add to draft status
+   * Query history records added-to-draft status
    * @param token
    * @returns
    */
-  // @NatsMessagePattern('statistics.channel.platform.postsRecordStatus')
-  @Post('statistics/channels/posts/recordStatus')
+  @Post('posts/recordStatus')
   async getHistoryPostsRecordStatus(@GetToken() token: TokenInfo) {
     return this.channelService.historyPostsRecordStatus(token.id)
+  }
+
+  /**
+   * Submit channel for crawling
+   * @param data
+   * @returns
+   */
+  @ApiOperation({
+    summary: 'Submit channel for crawling',
+    description: 'Submit platform and uid to crawling queue; updateAt is set automatically',
+  })
+  @Public()
+  @Post('crawling/submit')
+  async submitChannelCrawling(@Body() data: SubmitChannelCrawlingDto) {
+    return this.channelService.submitChannelCrawling(data.platform, data.uid)
   }
 }

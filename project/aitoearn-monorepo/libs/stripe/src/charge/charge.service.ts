@@ -5,12 +5,13 @@
  * @LastEditors: white
  * @Description: product
  */
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { Stripe } from 'stripe'
 import { StripeConfig } from '../stripe.config'
 
 @Injectable()
 export class ChargeService {
+  private readonly logger = new Logger(ChargeService.name)
   constructor(private readonly stripe: Stripe, private readonly config: StripeConfig) {}
   // 获取订单
   async getChargeById(id: string) {
@@ -20,6 +21,9 @@ export class ChargeService {
   // 获取订单通过payment_intent
   async searchChargeByQuery(query: string) {
     const result = await this.stripe.charges.search({ query })
+    this.logger.debug({
+      result,
+    })
     return result?.data?.at(0)
   }
 

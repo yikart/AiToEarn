@@ -7,9 +7,10 @@
  */
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/common'
 import { Model, RootFilterQuery } from 'mongoose'
 import { PublishStatus, PublishType } from '../enums'
-import { AccountType, PublishDayInfo, PublishInfo, PublishRecord } from '../schemas'
+import { PublishDayInfo, PublishInfo, PublishRecord } from '../schemas'
 import { BaseRepository } from './base.repository'
 
 @Injectable()
@@ -220,6 +221,13 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
   async getPublishRecordByTaskId(taskId: string, userId: string) {
     const res = await this.publishRecordModel
       .findOne({ taskId, userId })
+      .sort({ createdAt: -1 })
+    return res
+  }
+
+  async getPublishRecordByDataIdAndUid(uid: string, dataId: string) {
+    const res = await this.publishRecordModel
+      .findOne({ uid, dataId })
       .sort({ createdAt: -1 })
     return res
   }

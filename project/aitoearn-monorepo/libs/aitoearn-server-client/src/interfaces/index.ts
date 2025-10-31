@@ -1,3 +1,7 @@
 export * from './account.interface'
 export * from './ai.interface'
+export * from './cloud-space.interface'
+export * from './content.interface'
+export * from './income.interface'
+export * from './notification.interface'
 export * from './task.interface'

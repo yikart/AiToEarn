@@ -15,7 +15,7 @@ export class PlatWxGzhNatsApi extends ChannelBaseApi {
       url: string
       taskId: string
     }>(
-      `plat/wxGzh/auth`,
+      `plat/wxPlat/auth`,
       {
         userId,
         type,
@@ -33,7 +33,7 @@ export class PlatWxGzhNatsApi extends ChannelBaseApi {
    */
   async getAuthTaskInfo(taskId: string) {
     const res = await this.sendMessage<any>(
-      `plat/wxGzh/getAuthInfo`,
+      `plat/wxPlat/getAuthInfo`,
       {
         taskId,
       },
@@ -47,7 +47,7 @@ export class PlatWxGzhNatsApi extends ChannelBaseApi {
     expires_in: number
   }) {
     const res = await this.sendMessage<any>(
-      `plat/wxGzh/createAccountAndSetAccessToken`,
+      `channel/wxPlat/createAccountAndSetAccessToken`,
       query,
     )
     return res
@@ -60,7 +60,7 @@ export class PlatWxGzhNatsApi extends ChannelBaseApi {
     article_id: string
   }) {
     const res = await this.sendMessage<any>(
-      `plat/wxGzh/updatePublishRecord`,
+      `channel/wxPlat/updatePublishRecord`,
       data,
     )
     return res
@@ -73,7 +73,7 @@ export class PlatWxGzhNatsApi extends ChannelBaseApi {
    */
   async getAccountAuthInfo(accountId: string) {
     const res = await this.sendMessage<any>(
-      `plat/wxGzh/getAccountAuthInfo`,
+      `plat/wxPlat/getAccountAuthInfo`,
       {
         accountId,
       },

@@ -1,9 +1,4 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 
 import { LinkedinService } from '../../../../core/plat/meta/linkedin.service'
 import {
@@ -30,13 +25,9 @@ export class LinkedinPublishService extends PublishBase {
   })
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly linkedinService: LinkedinService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
+    super()
   }
 
   // TODO: 校验账户授权状态
@@ -49,6 +40,16 @@ export class LinkedinPublishService extends PublishBase {
       status: 1,
       timeout: 10000,
     }
+  }
+
+  private generatePostMessage(publishTask: PublishTask): string {
+    if (!publishTask) {
+      return ''
+    }
+    if (publishTask.topics && publishTask.topics.length > 0) {
+      return `${publishTask.desc || ''} #${publishTask.topics.join(' #')}`
+    }
+    return publishTask.desc || ''
   }
 
   private determinePostCategory(
@@ -70,7 +71,7 @@ export class LinkedinPublishService extends PublishBase {
       lifecycleState: 'PUBLISHED',
       specificContent: {
         'com.linkedin.ugc.ShareContent': {
-          shareCommentary: { text: publishTask.desc || '' },
+          shareCommentary: { text: this.generatePostMessage(publishTask) || '' },
           shareMediaCategory: ShareMediaCategory.NONE,
         },
       },
@@ -113,7 +114,7 @@ export class LinkedinPublishService extends PublishBase {
       lifecycleState: 'PUBLISHED',
       specificContent: {
         'com.linkedin.ugc.ShareContent': {
-          shareCommentary: { text: publishTask.desc || '' },
+          shareCommentary: { text: this.generatePostMessage(publishTask) || '' },
           shareMediaCategory: ShareMediaCategory.IMAGE,
           media: medias,
         },
@@ -146,7 +147,7 @@ export class LinkedinPublishService extends PublishBase {
       lifecycleState: 'PUBLISHED',
       specificContent: {
         'com.linkedin.ugc.ShareContent': {
-          shareCommentary: { text: publishTask.desc || '' },
+          shareCommentary: { text: this.generatePostMessage(publishTask) || '' },
           shareMediaCategory: ShareMediaCategory.IMAGE,
           media: [
             {

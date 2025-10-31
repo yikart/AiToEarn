@@ -229,7 +229,7 @@ export class YoutubeService {
       `youtube:accessToken:${accountId}`,
     )
     this.logger.log(`getOAuth2Credential from redis: ${JSON.stringify(credential)}`)
-    if (!credential) {
+    if (!credential || !credential.refresh_token) {
       const oauth2Credential = await this.OAuth2CrendentialModel.findOne({
         accountId,
         platform: this.platform,
@@ -457,6 +457,10 @@ export class YoutubeService {
     if (!accessTokenInfo)
       return ''
 
+    // youtube did not return refresh_token again, so we need to keep the old one
+    if (!accessTokenInfo.refresh_token) {
+      accessTokenInfo.refresh_token = refreshToken
+    }
     const res = await this.saveOAuthCredential(accountId, accessTokenInfo)
     if (!res)
       return ''
@@ -486,6 +490,13 @@ export class YoutubeService {
     if (!credential.refresh_token) {
       this.logger.error(`refresh Token not found for accountId: ${accountId}`)
       throw new AppException(ExceptionCode.Failed, `refresh Token not found for accountId: ${accountId}`)
+    }
+
+    const isRefreshTokenExpired = credential.refresh_expires_in && credential.refresh_expires_in <= getCurrentTimestamp()
+    if (isRefreshTokenExpired) {
+      const errMsg = `youtube refresh Token expired for accountId: ${accountId}, expired at: ${credential.refresh_expires_in}, please re-authorize`
+      this.logger.error(errMsg)
+      throw new AppException(ExceptionCode.Failed, errMsg)
     }
 
     // 刷新并获取新令牌

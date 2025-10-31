@@ -1,9 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination } from '@yikart/common'
 import { ICheckoutStatus } from '@yikart/stripe'
-import { FilterQuery, Model } from 'mongoose'
+import { FilterQuery, Model, QueryOptions } from 'mongoose'
 import { Checkout } from '../schemas'
-import { BaseRepository } from './base.repository'
+import { BaseRepository, UpdateDocumentType } from './base.repository'
 
 export interface ListCheckoutParams extends Pagination {
   userId?: string
@@ -19,6 +19,13 @@ export class CheckoutRepository extends BaseRepository<Checkout> {
     @InjectModel(Checkout.name) checkoutModel: Model<Checkout>,
   ) {
     super(checkoutModel)
+  }
+
+  /**
+   * 根据ID获取单个文档
+   */
+  override async getById(id: string, options?: QueryOptions<Checkout>) {
+    return await this.model.findOne({ id }, undefined, options).exec()
   }
 
   async listWithPagination(params: ListCheckoutParams) {
@@ -63,6 +70,14 @@ export class CheckoutRepository extends BaseRepository<Checkout> {
       filter,
       options: { sort: { created: -1 } },
     })
+  }
+
+  override async updateById(
+    id: string,
+    update: UpdateDocumentType<Checkout>,
+    options?: QueryOptions<Checkout>,
+  ) {
+    return super.updateOne({}, update, options)
   }
 
   async getByUserId(userId: string) {

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
+import { QueueService } from '@yikart/aitoearn-queue'
 import { AppException, ResponseCode } from '@yikart/common'
 import { MaterialGroupRepository, MediaGroupRepository, User, UserRepository, UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
@@ -17,7 +17,7 @@ export class UserService {
   private oauth2Client: any
 
   constructor(
-    private eventEmitter: EventEmitter2,
+    private readonly queueService: QueueService,
     private readonly userRepository: UserRepository,
     private readonly vipService: VipService,
     private readonly pointsService: PointsService,
@@ -38,7 +38,7 @@ export class UserService {
     const res = await this.userRepository.getUserInfoByMail(mail, all)
     if (!res)
       return null
-    const vipInfo = await this.vipService.getVipInfo(res.id)
+    const vipInfo = await this.vipService.getVipInfo(res)
     res.vipInfo = vipInfo || undefined
     return res
   }
@@ -53,7 +53,9 @@ export class UserService {
     void this.redisService.setJson(`UserInfo:${id}`, res)
     if (!res)
       throw new AppException(1000, 'User does not exist')
-    const vipInfo = await this.vipService.getVipInfo(res.id)
+
+    const vipInfo = await this.vipService.getVipInfo(res)
+
     res.vipInfo = vipInfo || undefined
     return res
   }
@@ -242,13 +244,10 @@ export class UserService {
    */
   async afterLogin(user: User) {
     // 上报用户数据
-    this.eventEmitter.emit(
-      'task.userPortrait.report',
-      {
-        userId: user.id,
-        lastLoginTime: new Date(),
-      },
-    )
+    await this.queueService.addTaskUserPortraitReportJob({
+      userId: user.id,
+      lastLoginTime: (new Date()).toISOString(),
+    })
     return true
   }
 
@@ -287,16 +286,13 @@ export class UserService {
     this.mediaGroupRepository.createDefault(user.id)
 
     // 上报用户数据
-    this.eventEmitter.emit(
-      'task.userPortrait.report',
-      {
-        userId: user.id,
-        name: user.name,
-        avatar: user.avatar,
-        status: UserStatus.OPEN,
-        lastLoginTime: new Date(),
-      },
-    )
+    await this.queueService.addTaskUserPortraitReportJob({
+      userId: user.id,
+      name: user.name,
+      avatar: user.avatar,
+      status: UserStatus.OPEN,
+      lastLoginTime: (new Date()).toISOString(),
+    })
 
     // 生成推广码
     this.generateUsePopularizeCode(user.id)
@@ -327,9 +323,6 @@ export class UserService {
       }
     }
     // 派发新号任务
-    this.eventEmitter.emit(
-      'task.push.withUserCreate',
-      { userId: user.id },
-    )
+    await this.queueService.addTaskUserCreatePushJob({ userId: user.id })
   }
 }

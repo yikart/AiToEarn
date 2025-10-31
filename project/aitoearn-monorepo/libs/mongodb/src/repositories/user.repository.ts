@@ -35,7 +35,7 @@ export class UserRepository extends BaseRepository<User> {
     return userInfo
   }
 
-  async getUserInfoByMail(mail: string, all = false) {
+  async getUserInfoByMail(mail: string, all = false): Promise<User | null> {
     const db = this.model.findOne({
       mail,
       isDelete: false,

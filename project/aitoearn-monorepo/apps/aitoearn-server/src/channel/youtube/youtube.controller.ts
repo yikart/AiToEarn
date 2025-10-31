@@ -13,11 +13,12 @@ import {
   Param,
   Post,
   Query,
-  Render,
+  Res,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatYoutubeNatsApi } from '../../transports/channel/api/youtube.natsApi'
 import {
@@ -94,23 +95,23 @@ export class YoutubeController {
   @Public()
   @UseGuards(OrgGuard)
   @Get('auth/callback')
-  @Render('auth/back')
   async getAccessToken(
     @Query()
     query: {
       code: string
       state: string
     },
+    @Res() res: Response,
   ) {
     const stateData = JSON.parse(decodeURIComponent(query.state))
     const taskId = stateData.originalState // Use originalState as taskId
-    const res = await this.platYoutubeNatsApi.setAccessToken(
+    const result = await this.platYoutubeNatsApi.setAccessToken(
       {
         taskId,
         ...query,
       },
     )
-    return res
+    return res.render('auth/back', result)
   }
 
   @ApiOperation({ summary: '检查账号是否已经授权' })

@@ -1,10 +1,5 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/aitoearn-server-client'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import { getFileSizeFromUrl, streamDownloadAndUpload } from '../../../common'
 import { YoutubeService } from '../../../core/plat/youtube/youtube.service'
 import {
@@ -20,13 +15,9 @@ export class YoutubePubService extends PublishBase {
   private readonly logger = new Logger(YoutubePubService.name)
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly youtubeService: YoutubeService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
+    super()
   }
 
   // TODO: 校验账户授权状态
@@ -153,7 +144,9 @@ export class YoutubePubService extends PublishBase {
           // )
 
           // 完成发布任务
-          void this.completePublishTask(publishTask, resourceId)
+          void this.completePublishTask(publishTask, resourceId, {
+            workLink: `https://www.youtube.com/watch?v=${resourceId}`,
+          })
           res.message = '发布成功'
           res.status = 1
 

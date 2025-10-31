@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { TableDto } from '@yikart/common'
-import { Material, MaterialRepository, MaterialStatus } from '@yikart/mongodb'
+import { TableDto, UserType } from '@yikart/common'
+import { Material, MaterialRepository, MaterialStatus, MaterialType } from '@yikart/mongodb'
 import { NewMaterial, UpMaterial } from './common'
 import { MediaService } from './media.service'
 
@@ -55,6 +55,36 @@ export class MaterialService {
   }
 
   /**
+   * delete material (TODO: 待优化)
+   * @param userId
+   * @param filter
+   * @returns
+   */
+  async delByFilter(
+    userId: string,
+    inFilter: {
+      title?: string
+      groupId?: string
+      status?: MaterialStatus
+      useCount?: number
+      type?: MaterialType
+    },
+  ) {
+    const { groupId, type, useCount, title, status } = inFilter
+    const filter = {
+      userId,
+      userType: UserType.User,
+      ...(groupId && { groupId }),
+      ...(type && { type }),
+      ...(useCount !== undefined && { useCount: { $gte: useCount } }),
+      ...(title && { title: { $regex: title, $options: 'i' } }),
+      ...(status !== undefined && { status }),
+    }
+    const res = await this.materialRepository.delByFilter(filter)
+    return res
+  }
+
+  /**
    * 更新素材信息
    * @param id
    * @param data
@@ -86,16 +116,28 @@ export class MaterialService {
   }
 
   /**
-   * 获取素材列表
+   * 获取草稿列表
    * @param page
    * @param userId
-   * @param groupId
+   * @param filter
    * @returns
    */
-  async getList(page: TableDto, userId: string, groupId?: string) {
+  async getList(
+    page: TableDto,
+    userId: string,
+    filter: {
+      userId?: string
+      userType?: UserType
+      title?: string
+      groupId?: string
+      status?: MaterialStatus
+      ids?: string[]
+      useCount?: number
+    },
+  ) {
     const res = await this.materialRepository.getList({
       userId,
-      groupId,
+      ...filter,
     }, page)
     return res
   }

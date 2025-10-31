@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { createZodDto } from '@yikart/common'
-import { AccountStatus, AccountType } from '@yikart/mongodb'
+import { AccountType, createZodDto } from '@yikart/common'
+import { AccountStatus } from '@yikart/mongodb'
 import { Expose } from 'class-transformer'
 import {
   IsArray,
@@ -15,7 +15,7 @@ import { z } from 'zod'
 const CreateAccountSchema = z.object({
   refresh_token: z.string().min(1).optional(),
   access_token: z.string().min(1).optional(),
-  type: z.nativeEnum(AccountType),
+  type: z.enum(AccountType),
   loginCookie: z.string().min(1).optional(),
   loginTime: z.string().transform((val) => {
     if (!val)
@@ -48,7 +48,6 @@ const CreateAccountSchema = z.object({
   workCount: z.number().optional(),
   income: z.number().optional(),
   groupId: z.string().optional(),
-  userId: z.string(),
   _id: z.string().optional(),
 })
 export class CreateAccountDto extends createZodDto(
@@ -71,29 +70,24 @@ const AccountIdSchema = z.object({
 })
 export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-export class UpdateAccountStatusDto extends AccountIdDto {
-  @ApiProperty({ description: '状态' })
-  @IsEnum(AccountStatus, {
-    message: `status must be one of these values: ${Object.values(
-      AccountStatus,
-    ).join(', ')}`,
-  })
-  @Expose()
-  status: AccountStatus
-}
+export const UpdateAccountStatusSchema = AccountIdSchema.merge(
+  z.object({
+    status: z.enum(AccountStatus),
+  }),
+)
+export class UpdateAccountStatusDto extends createZodDto(
+  UpdateAccountStatusSchema,
+) {}
 
 const AccountListByIdsSchema = z.object({
   ids: z.array(z.string()).describe('账号ID数组'),
 })
 export class AccountListByIdsDto extends createZodDto(AccountListByIdsSchema) {}
 
-export class AccountStatisticsDto {
-  @ApiProperty({ description: '账户类型', enum: AccountType, required: false })
-  @IsEnum(AccountType)
-  @IsOptional()
-  @Expose()
-  type?: AccountType
-}
+const AccountStatisticsSchema = z.object({
+  type: z.enum(AccountType).optional().describe('账户类型'),
+})
+export class AccountStatisticsDto extends createZodDto(AccountStatisticsSchema) {}
 
 export class UpdateAccountStatisticsDto {
   @ApiProperty({ description: '账号ID' })
@@ -168,6 +162,7 @@ export class AccountListByTypesDto {
   @IsEnum(AccountStatus, { message: '状态' })
   @IsOptional()
   @Expose()
+
   readonly status?: AccountStatus
 }
 

@@ -36,6 +36,12 @@ export class MaterialRepository extends BaseRepository<Material> {
     return res.deletedCount > 0
   }
 
+  // 批量删除
+  async delByFilter(filter: FilterQuery<Material>): Promise<boolean> {
+    const res = await this.materialModel.deleteMany(filter)
+    return res.deletedCount > 0
+  }
+
   // 删除
   async delByMinUseCount(groupId: string, minUseCount: number): Promise<boolean> {
     const res = await this.materialModel.deleteMany({ groupId, useCount: { $gte: minUseCount } })
@@ -86,18 +92,21 @@ export class MaterialRepository extends BaseRepository<Material> {
   }
 
   // 获取列表
-  async getList(inFilter: {
-    userId?: string
-    userType?: UserType
-    title?: string
-    groupId?: string
-    status?: MaterialStatus
-    ids?: string[]
-    minUseCount?: number
-  }, pageInfo: {
-    pageNo: number
-    pageSize: number
-  }) {
+  async getList(
+    inFilter: {
+      userId?: string
+      userType?: UserType
+      title?: string
+      groupId?: string
+      status?: MaterialStatus
+      ids?: string[]
+      useCount?: number
+    },
+    pageInfo: {
+      pageNo: number
+      pageSize: number
+    },
+  ) {
     const { pageNo, pageSize } = pageInfo
 
     const filter: RootFilterQuery<Material> = {
@@ -109,7 +118,7 @@ export class MaterialRepository extends BaseRepository<Material> {
       ...(inFilter.groupId && { groupId: inFilter.groupId }),
       ...(inFilter.status !== undefined && { status: inFilter.status }),
       ...(inFilter.ids && { _id: { $in: [inFilter.ids] } }),
-      ...(inFilter.minUseCount !== undefined && { useCount: { $gte: inFilter.minUseCount } }),
+      ...(inFilter.useCount !== undefined && { useCount: { $gte: inFilter.useCount } }),
     }
 
     const [total, list] = await Promise.all([

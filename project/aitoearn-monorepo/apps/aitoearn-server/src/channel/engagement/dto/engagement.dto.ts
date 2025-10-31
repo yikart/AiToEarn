@@ -102,7 +102,7 @@ export const CommentSchema = z.object({
 })
 
 export const ReplyToCommentsSchema = z.object({
-  accountId: z.string().describe('账号ID, account列表中的account字段'),
+  accountId: z.string().describe('账号ID, account列表中的Id字段'),
   postId: z.string().describe('作品ID'),
   prompt: z.string().min(1).max(500).optional().describe('提示语, 最大500字符'),
   platform: z.enum(['facebook', 'instagram', 'threads', 'twitter', 'youtube', 'tiktok', 'bilibili', 'douyin', 'KWAI', 'xhs', 'linkedin', 'wxGzh', 'pinterest']).describe('平台'),

@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { AccountType } from '@yikart/aitoearn-server-client'
+import { AccountType } from '@yikart/common'
 import { BaseTemp } from './time.tamp'
 
 // 账号状态

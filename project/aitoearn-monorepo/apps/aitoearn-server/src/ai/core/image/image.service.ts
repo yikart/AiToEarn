@@ -1,10 +1,9 @@
 import path from 'node:path'
-import { InjectQueue } from '@nestjs/bullmq'
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { QueueService } from '@yikart/aitoearn-queue'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
-import { Queue } from 'bullmq'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
 import { PointsService } from '../../../user/points.service'
@@ -39,7 +38,7 @@ export class ImageService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly pointsService: PointsService,
     private readonly modelsConfigService: ModelsConfigService,
-    @InjectQueue('ai_image_async') private readonly imageQueue: Queue,
+    private readonly queueService: QueueService,
   ) { }
 
   /**
@@ -240,7 +239,7 @@ export class ImageService {
     const list = kind === 'generation' ? await this.generationModelConfig({ userId, userType }) : await this.editModelConfig({ userId, userType })
     const modelConfig = list.find(m => m.name === model)
     if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
+      throw new AppException(ResponseCode.InvalidModel, 'model not found')
     }
     return Number(modelConfig.pricing)
   }
@@ -428,7 +427,7 @@ export class ImageService {
     }
 
     // 添加队列任务
-    await this.imageQueue.add('generation', {
+    await this.queueService.addAiImageAsyncJob({
       logId: log.id,
       userId,
       userType,
@@ -480,7 +479,7 @@ export class ImageService {
     }
 
     // 添加队列任务
-    await this.imageQueue.add('edit', {
+    await this.queueService.addAiImageAsyncJob({
       logId: log.id,
       userId,
       userType,
@@ -532,7 +531,7 @@ export class ImageService {
     }
 
     // 添加队列任务
-    await this.imageQueue.add('md2card', {
+    await this.queueService.addAiImageAsyncJob({
       logId: log.id,
       userId,
       userType,
@@ -571,7 +570,7 @@ export class ImageService {
     })
 
     // 添加队列任务
-    await this.imageQueue.add('fireflyCard', {
+    await this.queueService.addAiImageAsyncJob({
       logId: log.id,
       userId,
       userType,

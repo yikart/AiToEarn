@@ -16,16 +16,16 @@ export class searchTopicDto extends createZodDto(searchTopic) {}
 
 export const SetHistoryPostsRecordSchema = z.object({
   accountId: z.string().optional().default('').describe('accountId'),
-  platform: z.enum(AccountType).describe('平台'),
-  userId: z.string().min(1, { message: 'userId is required' }).describe('userId, account表中的userId字段'),
-  uid: z.string().min(1, { message: 'uid is required' }).describe('userId, account表中的uid字段'),
-  postId: z.string().min(1, { message: 'postId is required' }).describe('作品ID'),
+  platform: z.enum(AccountType).describe('Platform'),
+  userId: z.string().min(1, { message: 'userId is required' }).describe('User ID from account table'),
+  uid: z.string().min(1, { message: 'uid is required' }).describe('UID from account table'),
+  postId: z.string().min(1, { message: 'postId is required' }).describe('Post ID'),
 })
 
 export class HistoryPostsRecordDto extends createZodDto(SetHistoryPostsRecordSchema) { }
 
 export const BatchHistoryPostsRecordSchema = z.object({
-  records: z.array(SetHistoryPostsRecordSchema).describe('历史发布记录数组'),
+  records: z.array(SetHistoryPostsRecordSchema).describe('Array of history posts records'),
 })
 
 export class BatchHistoryPostsRecordDto extends createZodDto(BatchHistoryPostsRecordSchema) {}
@@ -35,3 +35,10 @@ export const userIdSchema = z.object({
 })
 
 export class UserIdDto extends createZodDto(userIdSchema) {}
+
+export const SubmitChannelCrawlingSchema = z.object({
+  platform: z.enum(AccountType).describe('Platform type'),
+  uid: z.string().min(1, { message: 'uid is required' }).describe('Channel UID'),
+})
+
+export class SubmitChannelCrawlingDto extends createZodDto(SubmitChannelCrawlingSchema) {}

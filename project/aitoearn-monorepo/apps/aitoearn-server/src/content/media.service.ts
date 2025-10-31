@@ -19,7 +19,7 @@ export class MediaService {
     let path = newData.url
     try {
       const url = new URL(newData.url)
-      if (url.hostname === config.awsS3.hostUrl) {
+      if (url.origin === config.awsS3.endpoint) {
         path = url.pathname.substring(1)
       }
       else {
@@ -91,6 +91,42 @@ export class MediaService {
   }
 
   /**
+   * delete media (TODO: 待优化)
+   * @param userId
+   * @param inFilter
+   * @returns
+   */
+  async delByFilter(
+    userId: string,
+    inFilter: {
+      groupId?: string
+      type?: MediaType
+      useCount?: number
+    },
+  ) {
+    const { groupId, type, useCount } = inFilter
+    const filter = {
+      userId,
+      userType: UserType.User,
+      ...(groupId && { groupId }),
+      ...(type && { type }),
+      ...(useCount !== undefined && { useCount: { $gte: useCount } }),
+    }
+    const mediaList = await this.mediaRepository.getListByFilter(filter)
+    for (const media of mediaList) {
+      if (media?.userType === UserType.User && media?.url && media.metadata?.size) {
+        this.storageService.deductUsedStorage({
+          userId: media.userId,
+          amount: media.metadata.size,
+        })
+      }
+    }
+
+    const res = await this.mediaRepository.delByFilter(filter)
+    return res
+  }
+
+  /**
    * 获取素材信息
    * @param id
    * @returns
@@ -111,7 +147,13 @@ export class MediaService {
    */
   async getList(
     page: TableDto,
-    filter: { userId: string, groupId?: string, type?: MediaType },
+    filter: {
+      userId: string
+      groupId?: string
+      type?: MediaType
+      userType?: UserType
+      useCount?: number
+    },
   ) {
     const res = await this.mediaRepository.getList(filter, page)
     return res

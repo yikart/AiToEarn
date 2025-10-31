@@ -1,5 +1,4 @@
-import { Controller } from '@nestjs/common'
-import { Payload } from '@nestjs/microservices'
+import { Body, Controller } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GenerateFingerprintDto } from './dto/fingerprint.dto'
 import { FingerprintService } from './fingerprint.service'
@@ -14,7 +13,7 @@ export class FingerprintController {
   })
   // @NatsMessagePattern('account.fingerprint.generateFingerprint')
 
-  async generateFingerprint(@Payload() _data: GenerateFingerprintDto) {
+  async generateFingerprint(@Body() _data: GenerateFingerprintDto) {
     return null
   }
 }

@@ -10,7 +10,7 @@ import {
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
 import { AccountService } from '../account/account.service'
-import { AccountIdDto, CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../account/dto/account.dto'
+import { AccountIdDto, AccountListByIdsDto, AccountListByParamDto, AccountListByTypesDto, CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto, UpdateAccountStatusDto } from '../account/dto/account.dto'
 import { AccountInternalService } from './provider/account.service'
 
 @ApiTags('内部服务接口')
@@ -22,14 +22,6 @@ export class AccountController {
     private readonly accountInternalService: AccountInternalService,
     private readonly accountService: AccountService,
   ) { }
-
-  @ApiOperation({
-    summary: '获取频道信息',
-  })
-  @Post('account/info')
-  async getAccountInfoToTask(@Body() body: AccountIdDto) {
-    return this.accountService.getAccountById(body.id)
-  }
 
   @ApiOperation({ summary: 'create social media accounts' })
   @Post('/:userId/socials/accounts')
@@ -82,5 +74,43 @@ export class AccountController {
       accountId,
       body,
     )
+  }
+
+  @ApiOperation({ summary: 'get channel info' })
+  @Post('account/info')
+  async getAccountInfoToTask(@Body() body: AccountIdDto) {
+    return this.accountService.getAccountById(body.id)
+  }
+
+  @ApiOperation({ summary: 'get channel list（by ids）' })
+  @Post('account/list/ids')
+  async getAccountListByIds(
+    @Body() body: AccountListByIdsDto,
+  ) {
+    return this.accountService.getAccountListByIds(body.ids)
+  }
+
+  @ApiOperation({ summary: 'get channel list（by types)' })
+  @Post('account/list/types')
+  async getAccountListByTypes(
+    @Body() body: AccountListByTypesDto,
+  ) {
+    return this.accountService.getAccountsByTypes(body.types, body.status)
+  }
+
+  @ApiOperation({ summary: 'get channel list（by param)' })
+  @Post('account/list/param')
+  async getAccountListByParam(
+    @Body() body: AccountListByParamDto,
+  ) {
+    return this.accountService.getAccountByParam(body)
+  }
+
+  @ApiOperation({ summary: 'update account status' })
+  @Post('account/update/status')
+  async updateAccountStatus(
+    @Body() body: UpdateAccountStatusDto,
+  ) {
+    return this.accountService.updateAccountStatus(body.id, body.status)
   }
 }

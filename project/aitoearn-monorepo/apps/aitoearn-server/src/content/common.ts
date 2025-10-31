@@ -142,7 +142,7 @@ export interface MaterialFilter {
   readonly ids?: string[]
   readonly title?: string
   readonly groupId?: string
-  readonly minUseCount?: number
+  readonly useCount?: number
 }
 
 export interface MaterialListByIdsFilter {

@@ -1,3 +1,5 @@
+import { Stripe } from 'stripe'
+
 export * from './charge'
 export * from './checkout'
 export * from './coupon'
@@ -9,3 +11,4 @@ export * from './stripe.interface'
 export * from './stripe.module'
 export * from './stripe.service'
 export * from './subscription'
+export { Stripe }

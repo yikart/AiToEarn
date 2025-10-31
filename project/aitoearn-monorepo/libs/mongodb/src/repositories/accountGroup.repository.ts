@@ -9,6 +9,10 @@ export class AccountGroupRepository extends BaseRepository<AccountGroup> {
     private readonly accountGroupModel: Model<AccountGroup>,
   ) { super(accountGroupModel) }
 
+  async findOneById(id: string) {
+    return this.accountGroupModel.findOne({ _id: id }).exec()
+  }
+
   // 获取默认用户组, 没有则创建
   async getDefaultGroup(userId: string): Promise<AccountGroup> {
     const data = await this.accountGroupModel
@@ -48,11 +52,11 @@ export class AccountGroupRepository extends BaseRepository<AccountGroup> {
     id: string,
     accountGroup: Partial<AccountGroup>,
   ): Promise<boolean> {
-    const res = await this.accountGroupModel.updateOne(
-      { _id: id },
-      accountGroup,
+    const res = await this.accountGroupModel.findByIdAndUpdate(
+      id,
+      { $set: accountGroup },
     )
-    return res.modifiedCount > 0
+    return !!res
   }
 
   /**

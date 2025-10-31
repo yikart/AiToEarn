@@ -201,7 +201,7 @@ export class PlatTiktokNatsApi extends ChannelBaseApi {
    */
   async handleWebhookEvent(event: any) {
     const res = await this.sendMessage<any>(
-      `plat/tiktok/handleWebhookEvent`,
+      `publish/tiktok/post/webhook`,
       event,
     )
     return res

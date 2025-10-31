@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { AppException, TableDto } from '@yikart/common'
+import { AccountType, AppException, TableDto } from '@yikart/common'
 import { Model, RootFilterQuery } from 'mongoose'
-import { Account, AccountStatus, AccountType } from '../schemas/account.schema'
+import { Account, AccountStatus } from '../schemas'
 import { BaseRepository } from './base.repository'
 
 export class AccountRepository extends BaseRepository<Account> {
@@ -272,8 +272,9 @@ export class AccountRepository extends BaseRepository<Account> {
    * @param spaceIds
    * @returns
    */
-  async listBySpaceIds(spaceIds: string[]) {
+  async listBySpaceIds(userId: string, spaceIds: string[]) {
     return this.accountModel.find({
+      userId,
       groupId: { $in: spaceIds },
     })
   }

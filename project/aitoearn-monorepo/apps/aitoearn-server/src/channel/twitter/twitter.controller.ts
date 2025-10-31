@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query, Render, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatTwitterNatsApi } from '../../transports/channel/api/twitter.natsApi'
 import {
@@ -36,13 +37,14 @@ export class TwitterController {
   @UseGuards(OrgGuard)
   @ApiOperation({ summary: 'oAuth认证回调后续操作, 保存AccessToken并创建用户' })
   @Get('auth/back')
-  @Render('auth/back')
   async createAccountAndSetAccessToken(
     @Query() data: CreateAccountAndSetAccessTokenDto,
+    @Res() res: Response,
   ) {
-    return await this.platTwitterNatsApi.createAccountAndSetAccessToken(
+    const result = await this.platTwitterNatsApi.createAccountAndSetAccessToken(
       data.code,
       data.state,
     )
+    return res.render('auth/back', result)
   }
 }

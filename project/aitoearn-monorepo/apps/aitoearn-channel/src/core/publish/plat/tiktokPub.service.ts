@@ -1,10 +1,5 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
 import { AitoearnServerClientService } from '@yikart/aitoearn-server-client'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import { chunkedDownloadFile, getFileTypeFromUrl, getRemoteFileSize } from '../../../common'
 import { config } from '../../../config'
 import { PublishRecordService } from '../../../core/account/publishRecord.service'
@@ -24,15 +19,11 @@ export class TiktokPubService extends PublishBase {
   })
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly tiktokService: TiktokService,
     readonly publishRecordService: PublishRecordService,
     private readonly serverClient: AitoearnServerClientService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
+    super()
   }
 
   // TODO: 校验账户授权状态
@@ -74,7 +65,7 @@ export class TiktokPubService extends PublishBase {
     if (!contentLength) {
       throw new Error('get video meta failed')
     }
-    let chunkSize = 5 * 1024 * 1024 // 5MB
+    let chunkSize = 6 * 1024 * 1024 // 6MB
     if (contentLength < chunkSize) {
       chunkSize = contentLength
     }
@@ -93,8 +84,10 @@ export class TiktokPubService extends PublishBase {
       source: TiktokSourceType.FILE_UPLOAD,
       video_size: contentLength,
       chunk_size: chunkSize,
-      total_chunk_count: Math.ceil(contentLength / chunkSize),
+      total_chunk_count: Math.floor(contentLength / chunkSize),
     }
+
+    this.logger.log(`init video upload: accountId: ${accountId}, postInfo: ${JSON.stringify(postInfo)}, sourceInfo: ${JSON.stringify(sourceInfo)}`)
     const initUploadRes = await this.tiktokService.initVideoPublish(
       accountId,
       postInfo,
@@ -104,12 +97,18 @@ export class TiktokPubService extends PublishBase {
     if (!initUploadRes || !initUploadRes.upload_url) {
       throw new Error('init upload video failed')
     }
-    const totalParts = Math.ceil(contentLength / chunkSize)
-    for (let partNumber = 0; partNumber < totalParts; partNumber++) {
-      const start = partNumber * chunkSize
-      const end = Math.min(start + chunkSize - 1, contentLength - 1)
-      const range: [number, number] = [start, end]
-      const videoBlob = await chunkedDownloadFile(videoUrl, range)
+    const totalParts = Math.floor(contentLength / chunkSize)
+    const chunks: [number, number][] = []
+    let start = 0
+    for (let partNumber = 0; partNumber < totalParts - 1; partNumber++) {
+      const end = start + chunkSize - 1
+      chunks.push([start, end])
+      start += chunkSize
+    }
+    chunks.push([start, contentLength - 1])
+
+    for (const chunk of chunks) {
+      const videoBlob = await chunkedDownloadFile(videoUrl, chunk)
       if (!videoBlob) {
         throw new Error('download video chunk failed')
       }
@@ -117,7 +116,7 @@ export class TiktokPubService extends PublishBase {
       const uploadResult = await this.tiktokService.chunkedUploadVideoFile(
         initUploadRes.upload_url,
         videoBlob,
-        partNumber,
+        chunk,
         contentLength,
         mimeType,
       )
@@ -184,9 +183,9 @@ export class TiktokPubService extends PublishBase {
       }
     }
     catch (error) {
-      this.logger.error('doPub error', error)
+      this.logger.error(`Publish TikTok video failed: ${error.message}`, error.stack)
       res.status = PublishStatus.FAILED
-      res.message = error.message || '发布失败'
+      res.message = error.message || 'Publish TikTok video failed with unknown error'
       return res
     }
     return res

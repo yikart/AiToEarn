@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { ICurrency, ISubscriptionStatus } from '@yikart/stripe'
+import { ICurrency, IPayment, ISubscriptionStatus } from '@yikart/stripe'
 
 @Schema({
   collection: 'subscription',
@@ -38,6 +38,13 @@ export class Subscription {
   currency: ICurrency
 
   @Prop({
+    type: String,
+    required: false,
+    default: null,
+  })
+  payment: IPayment
+
+  @Prop({
     type: Number,
     required: true,
     default: ISubscriptionStatus.canceled,
@@ -54,7 +61,7 @@ export class Subscription {
   info?: object // 订阅的完整信息
 
   @Prop({ type: Object, required: false, default: {} })
-  metadata?: object // 元数据
+  metadata?: object | null // 元数据
 }
 
 export const SubscriptionSchema = SchemaFactory.createForClass(Subscription)

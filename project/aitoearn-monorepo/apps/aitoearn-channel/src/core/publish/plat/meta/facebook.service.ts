@@ -1,9 +1,4 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import {
   chunkedDownloadFile,
   fileUrlToBlob,
@@ -38,22 +33,15 @@ export class FacebookPublishService
   implements MetaPostPublisher {
   override queueName: string = 'facebook'
 
-  private readonly metaMediaTaskQueue: Queue
   private readonly logger = new Logger(FacebookPublishService.name, {
     timestamp: true,
   })
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
-    @InjectQueue('post_media_task') metaMediaTaskQueue: Queue,
     readonly facebookService: FacebookService,
     private readonly postMediaContainerService: PostMediaContainerService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
-    this.metaMediaTaskQueue = metaMediaTaskQueue
+    super()
     this.postMediaContainerService = postMediaContainerService
   }
 
@@ -161,17 +149,16 @@ export class FacebookPublishService
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
-    await this.metaMediaTaskQueue.add(
-      `facebook:reel:media:task:${task.id}`,
+    await this.queueService.addPostMediaTaskJob(
       {
         taskId: task.id,
         attempts: 0,
       },
       {
-        attempts: 3,
+        attempts: 30,
         backoff: {
           type: 'fixed',
-          delay: 20000, // 每次重试间隔 5 秒
+          delay: 10000, // 每次重试间隔 10 秒, 总共尝试 30 次
         },
         removeOnComplete: true,
         removeOnFail: true,
@@ -253,17 +240,16 @@ export class FacebookPublishService
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
-    await this.metaMediaTaskQueue.add(
-      `facebook:story:media:task:${task.id}`,
+    await this.queueService.addPostMediaTaskJob(
       {
         taskId: task.id,
         attempts: 0,
       },
       {
-        attempts: 3,
+        attempts: 30,
         backoff: {
           type: 'fixed',
-          delay: 20000,
+          delay: 10000,
         },
         removeOnComplete: true,
         removeOnFail: true,
@@ -566,8 +552,7 @@ export class FacebookPublishService
 
   override async pushPubTask(newData: PublishTask, attempts = 0): Promise<boolean> {
     await this.publishQueueOpen(newData.id)
-    const jobRes = await this.publishQueue.add(
-      `publish_${this.queueName}`,
+    const jobRes = await this.queueService.addPostPublishJob(
       {
         taskId: newData.id,
         attempts: attempts++, // 进行次数

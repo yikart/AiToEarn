@@ -40,7 +40,7 @@ export const consoleLoggerConfig = z.object({
 
 export const feishuLoggerConfig = z.object({
   enable: z.boolean().default(false),
-  level: logLevel.default('error'),
+  level: logLevel.default('fatal'),
   url: z.url(),
   secret: z.string(),
 })

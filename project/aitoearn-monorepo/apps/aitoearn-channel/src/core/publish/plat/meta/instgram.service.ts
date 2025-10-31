@@ -1,10 +1,4 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-
-import { InjectModel } from '@nestjs/mongoose'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import { InstagramService } from '../../../../core/plat/meta/instagram.service'
 import {
   PostCategory,
@@ -27,22 +21,15 @@ export class InstagramPublishService
   extends PublishBase
   implements MetaPostPublisher {
   override queueName: string = 'instagram'
-  private readonly metaMediaTaskQueue: Queue
   private readonly logger = new Logger(InstagramPublishService.name, {
     timestamp: true,
   })
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
-    @InjectQueue('post_media_task') metaMediaTaskQueue: Queue,
     readonly instagramService: InstagramService,
     private readonly postMediaContainerService: PostMediaContainerService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
-    this.metaMediaTaskQueue = metaMediaTaskQueue
+    super()
     this.postMediaContainerService = postMediaContainerService
   }
 
@@ -111,17 +98,16 @@ export class InstagramPublishService
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
-    await this.metaMediaTaskQueue.add(
-      `instagram:post:task:${task.id}`,
+    await this.queueService.addPostMediaTaskJob(
       {
         taskId: task.id,
         attempts: 0,
       },
       {
-        attempts: 3,
+        attempts: 30,
         backoff: {
           type: 'fixed',
-          delay: 20000,
+          delay: 10000,
         },
         removeOnComplete: true,
         removeOnFail: true,
@@ -161,17 +147,16 @@ export class InstagramPublishService
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
-    await this.metaMediaTaskQueue.add(
-      `instagram:reel:task:${task.id}`,
+    await this.queueService.addPostMediaTaskJob(
       {
         taskId: task.id,
         attempts: 0,
       },
       {
-        attempts: 3,
+        attempts: 30,
         backoff: {
           type: 'fixed',
-          delay: 20000,
+          delay: 10000,
         },
         removeOnComplete: true,
         removeOnFail: true,
@@ -209,17 +194,16 @@ export class InstagramPublishService
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
-    await this.metaMediaTaskQueue.add(
-      `instagram:story:task:${task.id}`,
+    await this.queueService.addPostMediaTaskJob(
       {
         taskId: task.id,
         attempts: 0,
       },
       {
-        attempts: 3,
+        attempts: 30,
         backoff: {
           type: 'fixed',
-          delay: 20000,
+          delay: 10000,
         },
         removeOnComplete: true,
         removeOnFail: true,
@@ -256,17 +240,16 @@ export class InstagramPublishService
     const task: PublishMetaPostTask = {
       id: publishTask.id,
     }
-    await this.metaMediaTaskQueue.add(
-      `instagram:photo:story:task:${task.id}`,
+    await this.queueService.addPostMediaTaskJob(
       {
         taskId: task.id,
         attempts: 0,
       },
       {
-        attempts: 3,
+        attempts: 30,
         backoff: {
           type: 'fixed',
-          delay: 20000,
+          delay: 10000,
         },
         removeOnComplete: true,
         removeOnFail: true,

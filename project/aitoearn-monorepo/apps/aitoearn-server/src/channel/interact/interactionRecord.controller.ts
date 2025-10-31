@@ -9,13 +9,13 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { TableDto } from '@yikart/common'
+import { InteractionRecordNatsApi } from '../../transports/channel/api/interact/interactionRecord.natsApi'
 import { AddInteractionRecordDto, InteractionRecordFiltersDto } from './dto/interactionRecord.dto'
-import { InteractionRecordService } from './interactionRecord.service'
 
 @ApiTags('渠道互动记录')
 @Controller('channel/interactionRecord')
 export class InteractionRecordController {
-  constructor(private readonly interactionRecordService: InteractionRecordService) {}
+  constructor(private readonly interactionRecordNatsApi: InteractionRecordNatsApi) {}
 
   @ApiOperation({ summary: '添加渠道互动记录' })
   @Post()
@@ -23,7 +23,7 @@ export class InteractionRecordController {
     @GetToken() token: TokenInfo,
     @Body() data: AddInteractionRecordDto,
   ) {
-    return this.interactionRecordService.add({
+    return this.interactionRecordNatsApi.add({
       userId: token.id,
       ...data,
     })
@@ -36,7 +36,7 @@ export class InteractionRecordController {
     @Query() query: InteractionRecordFiltersDto,
     @Param() param: TableDto,
   ) {
-    return this.interactionRecordService.list(token.id, query, param)
+    return this.interactionRecordNatsApi.list(token.id, query, param)
   }
 
   @ApiOperation({ summary: '删除记录' })
@@ -44,6 +44,6 @@ export class InteractionRecordController {
   async replyComment(
     @Param('id') id: string,
   ) {
-    return this.interactionRecordService.del(id)
+    return this.interactionRecordNatsApi.del(id)
   }
 }

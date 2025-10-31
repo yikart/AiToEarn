@@ -1,4 +1,5 @@
-import { AccountType, PublishStatus } from '@yikart/mongodb'
+import { AccountType } from '@yikart/common'
+import { PublishStatus } from '@yikart/mongodb'
 
 export interface PublishRecordItem {
   dataId: string

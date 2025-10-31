@@ -35,7 +35,8 @@
       "@yikart/ucloud": ["libs/ucloud/src/index.ts"],
       "@yikart/stripe": ["libs/stripe/src/index.ts"],
       "@yikart/one-signal": ["libs/one-signal/src/index.ts"],
-      "@yikart/aitoearn-auth": ["libs/aitoearn-auth/src/index.ts"]
+      "@yikart/aitoearn-auth": ["libs/aitoearn-auth/src/index.ts"],
+      "@yikart/aitoearn-queue": ["libs/aitoearn-queue/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

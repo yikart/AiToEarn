@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppException, TableDto } from '@yikart/common'
-import { AccountType, PublishRecord, PublishStatus } from '@yikart/mongodb'
+import { AccountType, AppException, TableDto } from '@yikart/common'
+import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PostData } from '@yikart/statistics-db'
 import { PublishRecordService } from '../publishRecord/publishRecord.service'
 import { PostService } from '../statistics/post/post.service'
@@ -59,7 +59,6 @@ export class PublishService {
   private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
     const result = new Map<string, PostHistoryItemDto>()
     for (const post of postsHistory) {
-      this.logger.log(`Merging post history: ${JSON.stringify(post)}`)
       result.set(post.postId, {
         id: post.id,
         dataId: post.postId,
@@ -77,6 +76,7 @@ export class PublishService {
         status: PublishStatus.PUBLISHING,
         errorMsg: '',
         publishingChannel: PublishingChannel.NATIVE,
+        workLink: post.permaLink || '',
         engagement: {
           viewCount: post.viewCount,
           commentCount: post.commentCount,
@@ -98,8 +98,11 @@ export class PublishService {
       favoriteCount: 0,
     }
 
+    const publishRecordCache = new Map<string, PublishRecord>()
     for (const record of publishRecords) {
-      this.logger.log(`Merging publish record: ${JSON.stringify(record)}`)
+      if (record.flowId) {
+        publishRecordCache.set(record.flowId, record)
+      }
       if (record.dataId && result.has(record.dataId)) {
         const post = result.get(record.dataId)!
         post.id = record.id
@@ -111,6 +114,9 @@ export class PublishService {
         post.uid = record.uid
         post.errorMsg = record.errorMsg || ''
         post.publishingChannel = PublishingChannel.INTERNAL
+        if (record.workLink) {
+          post.workLink = record.workLink
+        }
       }
       else {
         let status = record.status
@@ -135,16 +141,19 @@ export class PublishService {
           status,
           engagement: defaultEngagement,
           publishingChannel: PublishingChannel.INTERNAL,
+          workLink: record.workLink || '',
         })
       }
     }
     for (const task of publishTasks) {
-      this.logger.log(`Merging publish task: ${JSON.stringify(task)}`)
-      result.set(task.dataId || task.id, {
-        id: task.id,
-        ...task,
-        engagement: defaultEngagement,
-      })
+      if (task.flowId && !publishRecordCache.has(task.flowId)) {
+        result.set(task.dataId || task.id, {
+          id: task.id,
+          ...task,
+          engagement: defaultEngagement,
+          publishingChannel: PublishingChannel.INTERNAL,
+        })
+      }
     }
     return Array.from(result.values()).sort((a, b) => new Date(b.publishTime).getTime() - new Date(a.publishTime).getTime())
   }
@@ -174,7 +183,7 @@ export class PublishService {
   }
 
   async publishInfoData(userId: string) {
-    const res = await this.platPublishNatsApi.getPublishInfoData(userId)
+    const res = await this.publishRecordService.getPublishInfoData(userId)
     return res
   }
 

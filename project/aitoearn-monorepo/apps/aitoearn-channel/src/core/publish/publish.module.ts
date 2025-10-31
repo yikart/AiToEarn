@@ -1,4 +1,3 @@
-import { BullModule } from '@nestjs/bullmq'
 import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { PinterestModule } from '../../core/plat/pinterest/pinterest.module'
@@ -25,12 +24,12 @@ import { FacebookPublishService } from './plat/meta/facebook.service'
 import { InstagramPublishService } from './plat/meta/instgram.service'
 import { LinkedinPublishService } from './plat/meta/linkedin.service'
 import { MetaPublishModule } from './plat/meta/meta.module'
-import { MetaPublishWorker } from './plat/meta/publish.woker'
+import { MetaPublishConsumer } from './plat/meta/publish.consumer'
 import { ThreadsPublishService } from './plat/meta/threads.service'
 import { TiktokPubService } from './plat/tiktokPub.service'
 import { WxGzhPubService } from './plat/wxGzhPub.service'
 import { YoutubePubService } from './plat/youtubePub.service'
-import { PostPublishWorker } from './postPublish.worker'
+import { PostPublishConsumer } from './post-publish.consumer'
 import { PublishTaskController } from './publishTask.controller'
 import { PublishTaskService } from './publishTask.service'
 
@@ -41,16 +40,6 @@ import { PublishTaskService } from './publishTask.service'
       { name: PublishTask.name, schema: PublishTaskSchema },
       { name: PostMediaContainer.name, schema: PostMediaContainerSchema },
     ]),
-    BullModule.registerQueue({
-      name: 'post_publish',
-    }),
-    BullModule.registerQueue({
-      name: 'post_media_task',
-      defaultJobOptions: {
-        delay: 20000, // 20 seconds
-        removeOnComplete: true,
-      },
-    }),
     BilibiliModule,
     PinterestModule,
     KwaiModule,
@@ -64,7 +53,7 @@ import { PublishTaskService } from './publishTask.service'
   ],
   providers: [
     PublishTaskService,
-    PostPublishWorker,
+    PostPublishConsumer,
     BilibiliPubService,
     PinterestPubService,
     kwaiPubService,
@@ -74,7 +63,7 @@ import { PublishTaskService } from './publishTask.service'
     InstagramPublishService,
     ThreadsPublishService,
     TiktokPubService,
-    MetaPublishWorker,
+    MetaPublishConsumer,
     LinkedinPublishService,
   ],
   controllers: [PublishTaskController],

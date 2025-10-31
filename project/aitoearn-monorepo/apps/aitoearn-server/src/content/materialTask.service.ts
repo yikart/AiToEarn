@@ -1,4 +1,3 @@
-import { InjectQueue } from '@nestjs/bullmq'
 /*
  * @Author: nevin
  * @Date: 2024-06-17 19:19:15
@@ -7,12 +6,13 @@ import { InjectQueue } from '@nestjs/bullmq'
  * @Description: MaterialTask materialTask
  */
 import { Injectable, Logger } from '@nestjs/common'
+import { QueueService } from '@yikart/aitoearn-queue'
+import { buildUrl } from '@yikart/aws-s3'
 import { AppException, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialTaskRepository, MaterialType } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
-import { Queue } from 'bullmq'
 import { AiService } from '../ai/ai.service'
-import { ToolsService } from '../tools/tools.service'
+import { config } from '../config'
 import { MaterialMedia, MaterialTask, MediaType, MediaUrlInfo, NewMaterial, NewMaterialTask } from './common'
 import { CreateMaterialTaskDto } from './dto/material.dto'
 import { MaterialService } from './material.service'
@@ -32,12 +32,11 @@ export class MaterialTaskService {
     readonly redisService: RedisService,
     private readonly materialTaskRepository: MaterialTaskRepository,
     readonly aiService: AiService,
-    readonly toolsService: ToolsService,
     readonly mediaService: MediaService,
     readonly materialService: MaterialService,
     private readonly materialGroupService: MaterialGroupService,
     private readonly mediaGroupService: MediaGroupService,
-    @InjectQueue('bull_material_generate') private materialGenerateQueue: Queue,
+    private readonly queueService: QueueService,
   ) { }
 
   /**
@@ -99,15 +98,9 @@ export class MaterialTaskService {
     if (!taskInfo)
       throw new AppException(1, '任务信息不存在')
     // 开始任务
-    void this.materialGenerateQueue.add(
-      'start',
-      {
-        taskId: taskInfo.id,
-      },
-      // {
-      //   delay: 1000 * 60 * 5,
-      // },
-    )
+    await this.queueService.addMaterialGenerateJob({
+      taskId: taskInfo.id,
+    })
     return taskInfo._id
   }
 
@@ -314,7 +307,7 @@ export class MaterialTaskService {
         { userId: taskInfo.userId, userType: taskInfo.userType },
         taskInfo.aiModelTag,
         theOne.type,
-        this.toolsService.filePathToUrl(theOne.url),
+        await buildUrl(config.awsS3.endpoint, theOne.url),
         taskInfo.aiModelTag,
         {
           title: taskInfo.title,
@@ -470,7 +463,7 @@ export class MaterialTaskService {
             language: taskInfo.language,
           },
           theOneCover.url
-            ? this.toolsService.filePathToUrl(theOneCover.url)
+            ? await buildUrl(config.awsS3.endpoint, theOneCover.url)
             : undefined,
         )
 

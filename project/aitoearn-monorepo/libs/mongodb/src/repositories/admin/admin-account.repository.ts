@@ -1,6 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/common'
 import { Model, RootFilterQuery } from 'mongoose'
-import { Account, AccountStatus, AccountType } from '../../schemas/account.schema'
+import { Account, AccountStatus } from '../../schemas'
 import { BaseRepository } from '../base.repository'
 
 export class AdminAccountRepository extends BaseRepository<Account> {

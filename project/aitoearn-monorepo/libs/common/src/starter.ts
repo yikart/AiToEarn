@@ -13,7 +13,7 @@ import { LoggerModule, Logger as PinoLogger } from 'nestjs-pino'
 import pino from 'pino'
 import { z } from 'zod'
 import { GlobalExceptionFilter } from './filters'
-import { ResponseInterceptor } from './interceptors'
+import { PropagationInterceptor, ResponseInterceptor } from './interceptors'
 import { CloudWatchLogger, ConsoleLogger, FeishuLogger } from './loggers'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, zodToJsonSchemaOptions } from './utils'
@@ -77,6 +77,13 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     }),
   ]
   const providers: Provider[] = [
+    /**
+     * 传播上下文
+     */
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: PropagationInterceptor,
+    },
     {
       provide: APP_PIPE,
       useClass: ZodValidationPipe,

@@ -10,9 +10,8 @@ export class AccountInternalService {
   ) { }
 
   async createSocialMediaAccount(userId: string, body: CreateAccountDto) {
-    return await this.accountService.addAccount({
+    return await this.accountService.addAccount(userId, {
       ...body,
-      userId,
     })
   }
 

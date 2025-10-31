@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { AppException } from '@yikart/common'
 import * as _ from 'lodash'
 import { CloudSpaceService } from '../cloud/core/cloud-space'
 import { AccountGroupService } from './accountGroup.service'
@@ -32,7 +33,12 @@ export class AccountGroupController {
     @GetToken() token: TokenInfo,
     @Body() body: UpdateAccountGroupDto,
   ) {
-    const res = await this.accountGroupService.updateAccountGroup(token.id, {
+    const group = await this.accountGroupService.findOneById(body.id)
+    if (!group || group.userId !== token.id) {
+      throw new AppException(1000, 'Group does not exist')
+    }
+
+    const res = await this.accountGroupService.updateAccountGroup(body.id, {
       ...body,
       userId: token.id,
     })
@@ -57,7 +63,8 @@ export class AccountGroupController {
     })
     const cloudSpacesMap = _.keyBy(cloudSpaces, 'accountGroupId')
 
-    return res.map((ag: { id: string | number }) => Object.assign(ag, { cloudSpace: cloudSpacesMap[ag.id] }))
+    const sortedRes = _.sortBy(res, 'rank')
+    return sortedRes.map((ag: { id: string | number }) => Object.assign(ag, { cloudSpace: cloudSpacesMap[ag.id] }))
   }
 
   @ApiOperation({ summary: '更新排序' })

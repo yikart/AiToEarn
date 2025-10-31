@@ -1,10 +1,9 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Cron } from '@nestjs/schedule'
+import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { AppException } from '@yikart/common'
-import { Queue } from 'bullmq'
 import { Model, RootFilterQuery } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { ExceptionCode } from '../../common/enums/exception-code.enum'
@@ -47,7 +46,7 @@ export class PublishTaskService implements OnModuleDestroy {
     private readonly twitterPubService: TwitterPublishService,
     private readonly pinterestPubService: PinterestPubService,
     private readonly linkedInPubService: LinkedinPublishService,
-    @InjectQueue('post_publish') private readonly publishQueue: Queue,
+    private readonly queueService: QueueService,
   ) {
     this.publishServiceMap.set(AccountType.BILIBILI, this.bilibiliPubService)
     this.publishServiceMap.set(AccountType.KWAI, this.kwaiPubService)
@@ -213,7 +212,7 @@ export class PublishTaskService implements OnModuleDestroy {
 
   // 查询任务是否在队列中，如果在，删除队列中的任务
   async deleteQueueTask(queueId: string) {
-    const job = await this.publishQueue.getJob(queueId)
+    const job = await this.queueService.getPostPublishJob(queueId)
     if (job) {
       const state = await job.getState()
       if (state === 'waiting' || state === 'delayed') {
@@ -390,7 +389,7 @@ export class PublishTaskService implements OnModuleDestroy {
 
   async onModuleDestroy() {
     this.logger.log('Module is being destroyed, closing publish queue...')
-    await this.publishQueue.close()
+    await this.queueService.closePostPublishQueue()
     this.logger.log('Publish queue closed successfully')
   }
 }

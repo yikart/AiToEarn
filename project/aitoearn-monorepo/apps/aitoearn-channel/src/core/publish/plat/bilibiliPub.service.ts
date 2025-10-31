@@ -1,10 +1,5 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/aitoearn-server-client'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import {
   fileUrlToBase64,
   getFileTypeFromUrl,
@@ -24,14 +19,9 @@ export class BilibiliPubService extends PublishBase {
   private readonly logger = new Logger(BilibiliPubService.name)
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly bilibiliService: BilibiliService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
-    // this.createPublishRecord(null as any)
+    super()
   }
 
   // TODO: 校验账户授权状态

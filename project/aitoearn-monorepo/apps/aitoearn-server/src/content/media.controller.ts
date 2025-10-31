@@ -17,15 +17,23 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode, TableDto } from '@yikart/common'
-import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto, MediaIdsDto } from './dto/media.dto'
+import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
+import { Media } from '@yikart/mongodb'
+import { fileUtile } from '../util/file.util'
+import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto, MediaFilterSchema, MediaIdsDto } from './dto/media.dto'
 import { MediaService } from './media.service'
 
 @ApiTags('媒体资源')
 @Controller('media')
 export class MediaController {
-  constructor(private readonly mediaService: MediaService,
-  ) { }
+  constructor(private readonly mediaService: MediaService) { }
+
+  private processMediaFiles(mediaList: Media[]) {
+    mediaList.forEach((media) => {
+      media.url = fileUtile.buildUrl(media.url)
+      media.thumbUrl = fileUtile.buildUrl(media.thumbUrl)
+    })
+  }
 
   @ApiOperation({
     description: '创建媒体资源',
@@ -37,16 +45,27 @@ export class MediaController {
     @Body() body: CreateMediaDto,
   ) {
     const res = await this.mediaService.create(token.id, body)
+    this.processMediaFiles([res])
     return res
   }
 
   @ApiOperation({
-    description: '删除媒体资源',
-    summary: '删除媒体资源',
+    description: '根据ID列表',
+    summary: '批量删除媒体资源',
   })
   @Delete('ids')
   async delByIds(@GetToken() token: TokenInfo, @Body() body: MediaIdsDto) {
     const res = await this.mediaService.delByIds(token.id, body.ids)
+    return res
+  }
+
+  @ApiOperation({
+    description: 'Filter',
+    summary: 'Delete By Filter',
+  })
+  @Delete('filter')
+  async delByFilter(@GetToken() token: TokenInfo, @Body() body: MediaFilterDto) {
+    const res = await this.mediaService.delByFilter(token.id, body)
     return res
   }
 
@@ -64,11 +83,12 @@ export class MediaController {
     return res
   }
 
-  @ApiOperation({
-    description: '获取媒体列表',
-    summary: '获取媒体列表',
-  })
   @Get('list/:pageNo/:pageSize')
+  @ApiDoc({
+    summary: '获取媒体列表',
+    description: '获取媒体列表',
+    query: MediaFilterSchema,
+  })
   async getList(
     @GetToken() token: TokenInfo,
     @Param() param: TableDto,
@@ -78,6 +98,7 @@ export class MediaController {
       userId: token.id,
       ...query,
     })
+    this.processMediaFiles(res.list)
     return res
   }
 

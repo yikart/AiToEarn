@@ -5,12 +5,7 @@ import { BaseService } from './base.service'
 
 @Injectable()
 export class AccountService extends BaseService {
-  /**
-   * 创建账户
-   * @param account
-   * @param data
-   * @returns
-   */
+  /** 创建账户 */
   async createAccount(
     data: Partial<Account>,
   ) {
@@ -75,5 +70,42 @@ export class AccountService extends BaseService {
       config,
     )
     return res
+  }
+
+  // ====== Internal Query APIs (migrated from /accountInternal/*) ======
+  async getAccountInfoInternal(id: string) {
+    const url = `/internal/account/info`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data: { id },
+    }
+    return this.request<Account>(url, config)
+  }
+
+  async getAccountListByIds(ids: string[]) {
+    const url = `/internal/account/list/ids`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data: { ids },
+    }
+    return this.request<Account[]>(url, config)
+  }
+
+  async getAccountListByTypes(types: string[], status?: number) {
+    const url = `/internal/account/list/types`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data: { types, status },
+    }
+    return this.request<Account[]>(url, config)
+  }
+
+  async getAccountListByParam(param: Record<string, unknown>) {
+    const url = `/internal/account/list/param`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data: param,
+    }
+    return this.request<Account[]>(url, config)
   }
 }

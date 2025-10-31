@@ -1,4 +1,3 @@
-import { BullModule } from '@nestjs/bullmq'
 import { Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { EngagementSubTask, EngagementSubTaskSchema, EngagementTask, EngagementTaskSchema } from '../../libs/database/schema/engagement.task.schema'
@@ -11,31 +10,18 @@ import { FacebookEngagementProvider } from './providers/facebook.provider'
 import { InstagramEngagementProvider } from './providers/instagram.provider'
 import { ThreadsEngagementProvider } from './providers/threads.provider'
 import { YoutubeEngagementProvider } from './providers/youtube.provider'
-import { EngagementTaskDistributionWorker } from './workers/distributeEngatementTask.worker'
-import { EngagementReplyToCommentWorker } from './workers/replyToComment.worker'
+import { EngagementTaskDistributionConsumer } from './workers/distribute-engagement-task.consumer'
+import { EngagementReplyToCommentConsumer } from './workers/reply-to-comment.consumer'
 
 @Module({
   imports: [
     MetaModule,
     YoutubeModule,
-    BullModule.registerQueue({
-      name: 'engagement_task_distribution',
-      defaultJobOptions: {
-        // delay: 60000, // 60 seconds
-        removeOnComplete: true,
-      },
-    }),
-    BullModule.registerQueue({
-      name: 'engagement_reply_to_comment_task',
-      defaultJobOptions: {
-        // delay: 60000, // 60 seconds
-        removeOnComplete: true,
-      },
-    }),
     MongooseModule.forFeature([
       { name: EngagementTask.name, schema: EngagementTaskSchema },
       { name: EngagementSubTask.name, schema: EngagementSubTaskSchema },
     ]),
+
   ],
   controllers: [EngagementController],
   providers: [
@@ -45,8 +31,8 @@ import { EngagementReplyToCommentWorker } from './workers/replyToComment.worker'
     YoutubeEngagementProvider,
     EngagementService,
     EngagementRecordService,
-    EngagementTaskDistributionWorker,
-    EngagementReplyToCommentWorker,
+    EngagementTaskDistributionConsumer,
+    EngagementReplyToCommentConsumer,
   ],
   exports: [
     FacebookEngagementProvider,
@@ -55,8 +41,8 @@ import { EngagementReplyToCommentWorker } from './workers/replyToComment.worker'
     YoutubeEngagementProvider,
     EngagementService,
     EngagementRecordService,
-    EngagementTaskDistributionWorker,
-    EngagementReplyToCommentWorker,
+    EngagementTaskDistributionConsumer,
+    EngagementReplyToCommentConsumer,
   ],
 })
 export class EngagementModule {}

@@ -22,6 +22,13 @@ export enum AccountStatus {
   ABNORMAL = 0, // 不可用
 }
 
+export enum JobTaskStatus {
+  Pending = 'pending',
+  Running = 'running',
+  Success = 'success',
+  Failed = 'Failed',
+}
+
 @Schema({
   collection: 'account',
   versionKey: false,
@@ -225,3 +232,33 @@ export class ChannelCookie {
 }
 
 export const ChannelCookieSchema = SchemaFactory.createForClass(ChannelCookie)
+
+@Schema({
+  versionKey: false,
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
+export class ChannelsCrawl extends WithTimestampSchema {
+  id: string
+
+  @Prop({
+    required: true,
+    enum: AccountType,
+  })
+  platform: AccountType
+
+  @Prop({
+    required: true,
+  })
+  uid: string
+
+  @Prop({
+    required: true,
+    enum: JobTaskStatus,
+    default: JobTaskStatus.Pending,
+  })
+  status: JobTaskStatus
+}
+
+export const ChannelsCrawlSchema = SchemaFactory.createForClass(ChannelsCrawl)

@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AppException, ResponseCode } from '@yikart/common'
+import { fileUtile } from '../util/file.util'
 import { AccountService } from './account.service'
 import {
   AccountIdDto,
@@ -27,10 +28,14 @@ export class AccountController {
     @GetToken() token: TokenInfo,
     @Body() body: CreateAccountDto,
   ) {
-    return await this.accountService.addAccount({
+    const res = await this.accountService.addAccount(token.id, {
       ...body,
-      userId: token.id,
     })
+    if (!res) {
+      throw new AppException(ResponseCode.AccountNotFound, 'Create account failed.')
+    }
+    res.avatar = fileUtile.buildUrl(res.avatar)
+    return res
   }
 
   @ApiOperation({ summary: '更新账号' })
@@ -73,6 +78,9 @@ export class AccountController {
   @Get('list/all')
   async getUserAccounts(@GetToken() token: TokenInfo) {
     const res = await this.accountService.getUserAccounts(token.id)
+    res.forEach((item) => {
+      item.avatar = fileUtile.buildUrl(item.avatar)
+    })
     return res
   }
 
@@ -91,7 +99,11 @@ export class AccountController {
     @GetToken() token: TokenInfo,
     @Body() body: AccountListByIdsDto,
   ) {
-    return this.accountService.getAccountListByIdsOfUser(token.id, body.ids)
+    const res = await this.accountService.getAccountListByIdsOfUser(token.id, body.ids)
+    res.forEach((item) => {
+      item.avatar = fileUtile.buildUrl(item.avatar)
+    })
+    return res
   }
 
   @ApiOperation({ summary: '获取账户总数' })
@@ -162,7 +174,11 @@ export class AccountController {
     @GetToken() token: TokenInfo,
     @Query() query: AccountListBySpaceIdsDto,
   ) {
-    return this.accountService.listBySpaceIds(query.spaceIds)
+    const res = await this.accountService.listBySpaceIds(token.id, query.spaceIds)
+    res.forEach((item) => {
+      item.avatar = fileUtile.buildUrl(item.avatar)
+    })
+    return res
   }
 
   @ApiOperation({ summary: '更新排序' })

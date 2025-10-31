@@ -1,4 +1,5 @@
-import { AccountStatus, AccountType, PublishType } from '@yikart/mongodb'
+import { AccountType } from '@yikart/common'
+import { AccountStatus, PublishType } from '@yikart/mongodb'
 import { BilibiliPublishOption } from '../transports/channel/api/bilibili.common'
 import { FacebookPostOptions, InstagramPostOptions, ThreadsPostOptions } from '../transports/channel/api/meta.common'
 import { WxGzhPublishOption } from '../transports/channel/api/wxGzh.common'

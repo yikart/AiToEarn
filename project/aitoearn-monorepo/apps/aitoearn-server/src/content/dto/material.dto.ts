@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto, TableDto } from '@yikart/common'
-import { MaterialStatus, MediaType } from '@yikart/mongodb'
+import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
 import { Expose } from 'class-transformer'
 import {
   IsString,
@@ -59,10 +59,12 @@ export const UpdateMaterialSchema = z.object({
 })
 export class UpdateMaterialDto extends createZodDto(UpdateMaterialSchema) {}
 
-const MaterialFilterSchema = z.object({
+export const MaterialFilterSchema = z.object({
   title: z.string({ message: '标题' }).optional(),
   groupId: z.string({ message: '组ID' }).optional(),
-  status: z.nativeEnum(MaterialStatus, { message: '草稿状态' }).optional(),
+  status: z.enum(MaterialStatus, { message: '草稿状态' }).optional(),
+  type: z.enum(MaterialType, { message: '草稿类型' }).optional(),
+  useCount: z.number().optional().describe('最小使用次数'),
 })
 
 export class MaterialFilterDto extends createZodDto(MaterialFilterSchema) {}

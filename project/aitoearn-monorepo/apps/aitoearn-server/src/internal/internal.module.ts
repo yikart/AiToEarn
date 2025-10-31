@@ -1,24 +1,46 @@
-import { Global, Module } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { AccountModule } from '../account/account.module'
 import { AiModule } from '../ai/ai.module'
-import { ChatModule, ChatService } from '../ai/core/chat'
-import { ModelsConfigService } from '../ai/core/models-config'
-import { CloudModule } from '../cloud/cloud.module'
+import { ChatModule } from '../ai/core/chat'
 import { CloudSpaceModule } from '../cloud/core/cloud-space'
+import { ContentModule } from '../content/content.module'
+import { IncomeModule } from '../income/income.module'
+import { NotificationModule } from '../notification/notification.module'
 import { PublishModule } from '../publishRecord/publishRecord.module'
-import { PublishRecordService } from '../publishRecord/publishRecord.service'
+import { UserModule } from '../user/user.module'
 import { AccountController } from './account.controller'
-import { AIController } from './ai.controller'
+import { AiController } from './ai.controller'
 import { CloudSpaceController } from './cloud-space.controller'
+import { IncomeInternalController } from './income.controller'
+import { MaterialInternalController } from './material.controller'
+import { NotificationInternalController } from './notification.controller'
 import { AccountInternalService } from './provider/account.service'
 import { PublishingInternalService } from './provider/publishing.service'
 import { PublishingController } from './publishing.controller'
+import { UserInternalController } from './user.controller'
 
-@Global()
 @Module({
-  imports: [AccountModule, PublishModule, ChatModule, AiModule, CloudModule, CloudSpaceModule],
-  providers: [AccountInternalService, PublishingInternalService, PublishRecordService, ModelsConfigService, ChatService],
-  controllers: [AccountController, PublishingController, AIController, CloudSpaceController],
-  exports: [AccountInternalService, PublishingInternalService, PublishRecordService],
+  imports: [
+    UserModule,
+    AccountModule,
+    CloudSpaceModule,
+    ChatModule,
+    PublishModule,
+    IncomeModule,
+    NotificationModule,
+    ContentModule,
+    AiModule,
+  ],
+  providers: [AccountInternalService, PublishingInternalService],
+  controllers: [
+    UserInternalController,
+    AccountController,
+    AiController,
+    CloudSpaceController,
+    IncomeInternalController,
+    NotificationInternalController,
+    PublishingController,
+    MaterialInternalController,
+  ],
 })
-export class InternalModule { }
+export class InternalModule {}

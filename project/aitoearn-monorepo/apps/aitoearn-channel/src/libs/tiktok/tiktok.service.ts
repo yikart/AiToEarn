@@ -66,13 +66,12 @@ export class TiktokService {
     }
     catch (error) {
       if (error.response) {
-        this.logger.error(`TikTok API 请求失败: ${url}`, {
-          status: error.response.status,
-          data: error.response.data,
-        })
+        this.logger.error(`TikTok API request failed: ${url}, status: ${error.response.status}, data: ${JSON.stringify(error.response.data)}`)
+        const errMsg = error.response.error?.message || `TikTok API request failed: ${url}, status: ${error.response.status}`
+        throw new Error(errMsg)
       }
-      this.logger.error(`TikTok API 请求失败: ${url}`, error)
-      throw new Error(`TikTok API 请求失败: ${error}`)
+      this.logger.error(`TikTok API request failed: ${url}, error: ${error}`)
+      throw new Error(`TikTok API request failed: ${url}, error: ${error}`)
     }
   }
 
@@ -100,31 +99,15 @@ export class TiktokService {
     data: unknown,
     accessToken: string,
   ): Promise<T> {
-    try {
-      const response = await this.apiRequest<{ data: T }>(
-        url,
-        {
-          method: 'POST',
-          data,
-        },
-        accessToken,
-      )
-
-      return response.data
-    }
-    catch (error) {
-      let errorMsg = ''
-      if (error.response) {
-        this.logger.error(`TikTok 内容请求失败: ${url}`, {
-          status: error.response.status,
-          data: error.response.data,
-          error: error.response.error,
-        })
-        errorMsg = error.response.error || ''
-        this.logger.error(`TikTok 内容请求失败: ${url}`, error)
-      }
-      throw new Error(`TikTok 内容请求失败: ${errorMsg || error}`)
-    }
+    const response = await this.apiRequest<{ data: T }>(
+      url,
+      {
+        method: 'POST',
+        data,
+      },
+      accessToken,
+    )
+    return response.data
   }
 
   /**
@@ -280,20 +263,17 @@ export class TiktokService {
   async chunkedUploadVideoFile(
     uploadUrl: string,
     videoBuffer: Buffer,
-    chunkSeq: number,
+    range: [number, number],
     fileSize: number,
     contentType = 'video/mp4',
   ): Promise<void> {
-    const chunkSize = videoBuffer.length
-    const rangeStart = chunkSeq * chunkSize
-    const rangeEnd = Math.min(rangeStart + chunkSize - 1, fileSize - 1)
     await this.apiRequest<void>(uploadUrl, {
       method: 'PUT',
       data: videoBuffer,
       headers: {
         'Content-Type': contentType,
         'Content-Length': videoBuffer.length,
-        'Content-Range': `bytes ${rangeStart}-${rangeEnd}/${fileSize}`,
+        'Content-Range': `bytes ${range[0]}-${range[1]}/${fileSize}`,
       },
     })
   }

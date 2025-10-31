@@ -5,7 +5,7 @@ import { FetchAllPostsRequestDto, FetchPostRequestDto, FetchPostsRequestDto } fr
 import { PostService } from './post.service'
 
 @ApiTags('社交媒体作品')
-@Controller()
+@Controller('statistics/posts')
 export class PostController {
   constructor(
     private readonly postService: PostService,
@@ -18,25 +18,17 @@ export class PostController {
     return { message: 'PostController is working!' }
   }
 
-  // @NatsMessagePattern('statistics.channel.posts')
-  @Post('statistics/posts/list')
+  @Post('list')
   async fetchChannelPosts(@Body() payload: FetchPostsRequestDto) {
     return await this.postService.getPostsByPlatform(payload)
   }
 
-  // @Post()
-  // async FetchChannelPostsByHttp(@Body() payload: FetchPostsRequestDto) {
-  //   return await this.postService.getPostsByPlatform(payload)
-  // }
-
-  // @NatsMessagePattern('statistics.post.detail')
-  @Post('statistics/posts/detail')
+  @Post('detail')
   async fetchOnePostDetail(@Body() payload: FetchPostRequestDto) {
     return await this.postService.getPostsByPid(payload)
   }
 
-  // @NatsMessagePattern('statistics.channel.posts.withoutPagination')
-  @Post('statistics/posts/withoutPagination')
+  @Post('withoutPagination')
   async fetchChannelAllPosts(@Body() payload: FetchAllPostsRequestDto) {
     return await this.postService.getUserAllPostsByPlatform(payload)
   }
@@ -46,8 +38,7 @@ export class PostController {
    * @param payload
    * @returns
    */
-  // @NatsMessagePattern('statistics.channel.posts.average')
-  @Post('statistics/posts/average')
+  @Post('average')
   async userAverageSummaryMonthly(@Body() payload: FetchAllPostsRequestDto) {
     return this.postService.getAverageSummaryMonthly(payload)
   }

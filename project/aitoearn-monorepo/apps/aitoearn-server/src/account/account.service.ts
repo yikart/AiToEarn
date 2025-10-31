@@ -1,11 +1,11 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
-import { TableDto } from '@yikart/common'
-import { Account, AccountRepository, AccountStatus, AccountType } from '@yikart/mongodb'
+import { QueueService } from '@yikart/aitoearn-queue'
+import { AccountType, TableDto } from '@yikart/common'
+import { Account, AccountRepository, AccountStatus } from '@yikart/mongodb'
 import { ChannelService } from '../channel/channel.service'
 import { AccountPortraitReportData } from '../channel/common'
 import { NewAccountCrawlerData } from '../statistics/common'
 import { StatisticsService } from '../statistics/statistics.service'
-import { TaskPortraitService } from '../task/portrait/portrait.service'
 import { AccountGroupService } from './accountGroup.service'
 import { AccountFilterDto, CreateAccountDto } from './dto/account.dto'
 
@@ -19,7 +19,7 @@ export class AccountService {
     private readonly accountGroupService: AccountGroupService,
     private readonly channelService: ChannelService,
     private readonly statisticsService: StatisticsService,
-    private readonly taskPortraitService: TaskPortraitService,
+    private readonly queueService: QueueService,
   ) { }
 
   /**
@@ -29,9 +29,7 @@ export class AccountService {
   private async accountPortraitReport(
     data: AccountPortraitReportData,
   ) {
-    return this.taskPortraitService.accountPortraitReport(
-      data,
-    )
+    return await this.queueService.addTaskAccountPortraitReportJob(data)
   }
 
   /**
@@ -64,16 +62,17 @@ export class AccountService {
     )
   }
 
-  async addAccount(data: CreateAccountDto): Promise<Account | null> {
+  async addAccount(userId: string, data: CreateAccountDto): Promise<Account | null> {
     this.logger.log(`Adding new account with data: ${JSON.stringify(data)}`)
     if (!data.groupId) {
       const defaultGroup = await this.accountGroupService.getDefaultGroup(
-        data.userId,
+        userId,
       )
       data['groupId'] = defaultGroup.id
     }
     this.logger.log(`Using groupId: ${data.groupId} for new account`)
     const info: Account | null = await this.accountRepository.addAccount({
+      userId,
       ...data,
     })
     this.logger.log(`Account added: ${JSON.stringify(info)}`)
@@ -335,11 +334,12 @@ export class AccountService {
 
   /**
    * 根据空间ID数组spaceIds获取账户列表数组
+   * @param userId
    * @param spaceIds
    * @returns
    */
-  async listBySpaceIds(spaceIds: string[]) {
-    const res = await this.accountRepository.listBySpaceIds(spaceIds)
+  async listBySpaceIds(userId: string, spaceIds: string[]) {
+    const res = await this.accountRepository.listBySpaceIds(userId, spaceIds)
     return res
   }
 

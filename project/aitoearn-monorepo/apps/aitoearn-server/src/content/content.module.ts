@@ -1,12 +1,10 @@
-import { BullModule } from '@nestjs/bullmq'
 import { Global, Module } from '@nestjs/common'
 import { S3Module } from '@yikart/aws-s3'
 import { AiModule } from '../ai/ai.module'
 import { config } from '../config'
+import { MaterialGenerateConsumer } from './material-generate.consumer'
 import { MaterialController } from './material.controller'
-import { MaterialInternalController } from './material.internal.controller'
 import { MaterialService } from './material.service'
-import { bullMaterialGenerate } from './materialGenerate.bull'
 import { MaterialGroupController } from './materialGroup.controller'
 import { MaterialGroupService } from './materialGroup.service'
 import { MaterialTaskService } from './materialTask.service'
@@ -20,16 +18,9 @@ import { MediaGroupService } from './mediaGroup.service'
   imports: [
     S3Module.forRoot(config.awsS3),
     AiModule,
-    BullModule.registerQueue({
-      name: 'bull_material_generate', // 队列名称-任务自动审核
-      defaultJobOptions: {
-        delay: 20000, // 20 seconds
-        removeOnComplete: true,
-      },
-    }),
   ],
-  controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController, MaterialInternalController],
-  providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, bullMaterialGenerate],
-  exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService],
+  controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController],
+  providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, MaterialGenerateConsumer],
+  exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService],
 })
 export class ContentModule { }

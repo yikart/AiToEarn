@@ -1,4 +1,4 @@
-import { AccountType } from '@yikart/mongodb'
+import { AccountType } from '@yikart/common'
 
 export interface InteractionRecord {
   id: string

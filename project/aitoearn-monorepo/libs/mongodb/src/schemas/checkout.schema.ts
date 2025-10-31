@@ -1,5 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { ICheckoutMode, ICheckoutStatus, ICurrency } from '@yikart/stripe'
+import { ICheckoutMode, ICheckoutStatus, ICurrency, IPayment, Stripe } from '@yikart/stripe'
+
+export interface CheckoutMetadata {
+  userId: string
+  payment: IPayment
+  mode: ICheckoutMode
+  [key: string]: any
+}
 
 @Schema({
   collection: 'checkout',
@@ -127,16 +134,16 @@ export class Checkout {
   expires_at: number // 支付连接过期时间
 
   @Prop({ type: Object, required: false, default: {} })
-  info?: object // 订单的完整信息
+  info?: object | null // 订单的完整信息
 
   @Prop({ type: Object, required: false, default: {} })
-  chargeInfo?: object // charge的完整信息
+  chargeInfo?: Stripe.Charge | null // charge的完整信息
 
   @Prop({ type: Object, required: false, default: {} })
-  metadata?: object // 元数据
+  metadata: CheckoutMetadata // 元数据
 
   @Prop({ type: Object, required: false, default: {} })
-  customer_details?: object // 客户的完整信息
+  customer_details?: object | null // 客户的完整信息
 }
 
 export const CheckoutSchema = SchemaFactory.createForClass(Checkout)

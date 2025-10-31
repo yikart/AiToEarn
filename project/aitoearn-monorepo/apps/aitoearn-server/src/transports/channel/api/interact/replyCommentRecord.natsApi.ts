@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { TableDto } from '@yikart/common'
-import { AccountType } from '@yikart/mongodb'
+import { AccountType, TableDto } from '@yikart/common'
 import { ChannelBaseApi } from '../../../channelBase.api'
 import { ReplyCommentRecord } from './common'
 

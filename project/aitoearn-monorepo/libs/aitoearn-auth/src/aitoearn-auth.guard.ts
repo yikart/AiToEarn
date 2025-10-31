@@ -38,7 +38,7 @@ export class AitoearnAuthGuard implements CanActivate {
     }
 
     if (token === this.config.internalToken) {
-      const isInternal = this.reflector.getAllAndOverride<boolean>(IS_INTERNAL_KEY, [
+      const isInternal = this.reflector.getAllAndOverride<boolean | undefined>(IS_INTERNAL_KEY, [
         context.getHandler(),
         context.getClass(),
       ])

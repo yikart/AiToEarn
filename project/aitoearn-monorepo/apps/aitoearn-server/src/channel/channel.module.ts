@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
+import { PublishModule } from '../publishRecord/publishRecord.module'
 import { PostModule } from '../statistics/post/post.module'
 import { TaskModule } from '../task/task.module'
 import { ChannelApiModule } from '../transports/channel/channelApi.module'
@@ -41,6 +42,7 @@ import { YoutubeModule } from './youtube/youtube.module'
     EngagementModule,
     TaskModule,
     PostModule,
+    PublishModule,
   ],
   providers: [ChannelService, PublishService],
   controllers: [

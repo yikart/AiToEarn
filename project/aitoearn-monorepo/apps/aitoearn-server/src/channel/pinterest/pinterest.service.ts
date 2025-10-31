@@ -17,7 +17,7 @@ export class PinterestService {
    * @returns
    */
   async createBoard(body: CreateBoardBodyDto) {
-    return this.platPinterestNatsApi.createBoard(body)
+    return await this.platPinterestNatsApi.createBoard(body)
   }
 
   /**
@@ -25,7 +25,7 @@ export class PinterestService {
    * @returns
    */
   async getBoardList(body: ListBodyDto) {
-    return this.platPinterestNatsApi.getBoardList(body)
+    return await this.platPinterestNatsApi.getBoardList(body)
   }
 
   /**
@@ -35,7 +35,7 @@ export class PinterestService {
    * @returns
    */
   async getBoardById(id: string, accountId: string) {
-    return this.platPinterestNatsApi.getBoardById(id, accountId)
+    return await this.platPinterestNatsApi.getBoardById(id, accountId)
   }
 
   /**
@@ -45,7 +45,7 @@ export class PinterestService {
    * @returns
    */
   async delBoardById(id: string, accountId: string) {
-    return this.platPinterestNatsApi.delBoardById(id, accountId)
+    return await this.platPinterestNatsApi.delBoardById(id, accountId)
   }
 
   /**
@@ -54,7 +54,7 @@ export class PinterestService {
    * @returns
    */
   async createPin(body: CreatePinBodyDto) {
-    return this.platPinterestNatsApi.createPin(body)
+    return await this.platPinterestNatsApi.createPin(body)
   }
 
   /**
@@ -64,7 +64,7 @@ export class PinterestService {
    * @returns
    */
   async getPinById(id: string, accountId: string) {
-    return this.platPinterestNatsApi.getPinById(id, accountId)
+    return await this.platPinterestNatsApi.getPinById(id, accountId)
   }
 
   /**
@@ -73,7 +73,7 @@ export class PinterestService {
    * @returns
    */
   async getPinList(body: ListBodyDto) {
-    return this.platPinterestNatsApi.getPinList(body)
+    return await this.platPinterestNatsApi.getPinList(body)
   }
 
   /**
@@ -83,7 +83,7 @@ export class PinterestService {
    * @returns
    */
   async delPinById(id: string, accountId: string) {
-    return this.platPinterestNatsApi.delPinById(id, accountId)
+    return await this.platPinterestNatsApi.delPinById(id, accountId)
   }
 
   /**
@@ -92,7 +92,7 @@ export class PinterestService {
    * @returns
    */
   async getAuth(userId: string, spaceId: string) {
-    return this.platPinterestNatsApi.getAuth(userId, spaceId)
+    return await this.platPinterestNatsApi.getAuth(userId, spaceId)
   }
 
   /**
@@ -101,7 +101,7 @@ export class PinterestService {
    * @returns
    */
   async checkAuth(taskId: string) {
-    return this.platPinterestNatsApi.checkAuth(taskId)
+    return await this.platPinterestNatsApi.checkAuth(taskId)
   }
 
   /**
@@ -110,6 +110,6 @@ export class PinterestService {
    * @returns
    */
   async authWebhook(data: WebhookDto) {
-    return this.platPinterestNatsApi.authWebhook(data)
+    return await this.platPinterestNatsApi.authWebhook(data)
   }
 }

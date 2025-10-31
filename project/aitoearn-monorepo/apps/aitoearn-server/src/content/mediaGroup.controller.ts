@@ -18,6 +18,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { MediaGroup } from '@yikart/mongodb'
+import { fileUtile } from '../util/file.util'
 import {
   CreateMediaGroupDto,
   MediaGroupFilterDto,
@@ -97,6 +98,10 @@ export class MediaGroupController {
         groupId: (group as any)._id,
       },
     )
+    res.list.forEach((item) => {
+      item.url = fileUtile.buildUrl(item.url)
+      item.thumbUrl = fileUtile.buildUrl(item.thumbUrl)
+    })
     return { ...group, mediaList: res }
   }
 

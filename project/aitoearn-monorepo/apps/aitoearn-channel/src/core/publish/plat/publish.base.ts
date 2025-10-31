@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { InjectModel } from '@nestjs/mongoose'
+
+import { QueueService } from '@yikart/aitoearn-queue'
 import { PublishRecord } from '@yikart/aitoearn-server-client'
-import { Queue } from 'bullmq'
 import { Model } from 'mongoose'
 import {
   PublishStatus,
@@ -15,11 +17,16 @@ export abstract class PublishBase {
   protected readonly queueAttempts: number = 3 // 并发数量
   protected readonly queueDelay: number = 5 // 延迟时间
 
-  constructor(
-    readonly eventEmitter: EventEmitter2,
-    readonly publishTaskModel: Model<PublishTask>,
-    readonly publishQueue: Queue,
-  ) {}
+  @Inject(QueueService)
+  protected readonly queueService: QueueService
+
+  @Inject(EventEmitter2)
+  protected readonly eventEmitter: EventEmitter2
+
+  @InjectModel(PublishTask.name)
+  protected readonly publishTaskModel: Model<PublishTask>
+
+  constructor() {}
 
   // 检测授权是否失效
   abstract checkAuth(accountId: string): Promise<{
@@ -47,8 +54,7 @@ export abstract class PublishBase {
    */
   async pushPubTask(task: PublishTask, attempts = 0): Promise<boolean> {
     await this.publishQueueOpen(task.id)
-    const jobRes = await this.publishQueue.add(
-      `publish_${this.queueName}`,
+    const jobRes = await this.queueService.addPostPublishJob(
       {
         taskId: task.id,
         attempts: attempts++,

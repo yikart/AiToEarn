@@ -7,8 +7,8 @@
  */
 import { Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
-import { TableDto } from '@yikart/common'
-import { AccountType, PublishRecord, PublishRecordRepository, PublishStatus } from '@yikart/mongodb'
+import { AccountType, TableDto } from '@yikart/common'
+import { PublishRecord, PublishRecordRepository, PublishStatus } from '@yikart/mongodb'
 import dayjs from 'dayjs'
 import { MaterialService } from '../content/material.service'
 import { TaskNatsApi } from '../transports/task/api/task.natsApi'
@@ -226,6 +226,11 @@ export class PublishRecordService {
 
   async getPublishRecordByTaskId(taskId: string, userId: string) {
     const res = await this.publishRecordRepository.getPublishRecordByTaskId(taskId, userId)
+    return res
+  }
+
+  async getPublishRecordByDataIdAndUid(uid: string, dataId: string) {
+    const res = await this.publishRecordRepository.getPublishRecordByDataIdAndUid(uid, dataId)
     return res
   }
 

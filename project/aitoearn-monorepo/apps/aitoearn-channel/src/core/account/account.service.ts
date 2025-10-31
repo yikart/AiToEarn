@@ -78,7 +78,7 @@ export class AccountService {
         data: ret,
       })
       // 触发账户创建或更新事件
-      this.eventEmitter.emit(`account.create.${newOrUpdatedAccount?.type}`, newOrUpdatedAccount?.id)
+      // this.eventEmitter.emit(`account.create.${newOrUpdatedAccount?.type}`, newOrUpdatedAccount?.id)
     }
     catch (error) {
       this.logger.error(error)

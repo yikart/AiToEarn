@@ -1,6 +1,6 @@
 import { Account, AccountSchema, ChannelCookie, ChannelCookieSchema, NewChannel, NewChannelSchema } from './account.schema'
-import { AuthorDatas, AuthorDatasSchema, PostDatas, PostDatasSchema } from './authorData.schema'
-import { PostsRecord, PostsRecordSchema } from './posts.schema'
+import { AuthorDatas, AuthorDatasSchema } from './authorData.schema'
+import { PostDatas, PostDatasSchema, PostsRecord, PostsRecordSchema } from './posts.schema'
 import { UserTaskPosts, UserTaskPostsSchema } from './task.schema'
 
 export * from './account.schema'

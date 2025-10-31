@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppException, CommonResponse } from '@yikart/common'
+import { AppException, COMMON_PROPAGATION_HEADERS, CommonResponse, propagationContext } from '@yikart/common'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { AitoearnServerClientConfig } from '../aitoearn-server-client.config'
 
@@ -17,6 +17,20 @@ export class BaseService {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${this.config.token}`,
       },
+    })
+
+    this.httpClient.interceptors.request.use((request) => {
+      const store = propagationContext.getStore()
+      if (store == null)
+        return request
+      COMMON_PROPAGATION_HEADERS
+        .forEach((key) => {
+          const value = store.headers[key]
+          if (value) {
+            request.headers.set(key, value)
+          }
+        })
+      return request
     })
 
     const resInterceptor = (response: AxiosResponse) => {

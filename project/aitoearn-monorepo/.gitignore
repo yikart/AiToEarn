@@ -46,12 +46,3 @@ Thumbs.db
 local.config.js
 .prettierignore
 .prettierrc
-# 配置文件
-*.config.js
-**/config.js
-# 排除部分项目
-/apps/aitoearn-task
-/apps/aitoearn-payment
-/apps/aitoearn-admin-server
-
-.npmrc

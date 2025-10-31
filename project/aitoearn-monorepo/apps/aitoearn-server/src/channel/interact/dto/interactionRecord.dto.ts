@@ -1,5 +1,5 @@
-import { createZodDto } from '@yikart/common'
-import { AccountType } from '@yikart/mongodb'
+import { AccountType, createZodDto } from '@yikart/common'
+
 import { z } from 'zod'
 
 export const AddInteractionRecordSchema = z.object({

@@ -3,8 +3,11 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { S3Service } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import dayjs from 'dayjs'
+import _ from 'lodash'
 import { config } from '../../../config'
 import { PointsService } from '../../../user/points.service'
+import { UserService } from '../../../user/user.service'
 import { DashscopeAction, KlingAction, TaskStatus } from '../../common/enums'
 import { DashscopeService, TaskStatus as DashscopeTaskStatus, GetVideoTaskResponse } from '../../libs/dashscope'
 import {
@@ -58,6 +61,7 @@ import {
 export class VideoService {
   private readonly logger = new Logger(VideoService.name)
   constructor(
+    private readonly userService: UserService,
     private readonly dashscopeService: DashscopeService,
     private readonly klingService: KlingService,
     private readonly volcengineService: VolcengineService,
@@ -344,17 +348,29 @@ export class VideoService {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
 
+    const result = {
+      task_id: aiLog.id,
+      action: aiLog.action || '',
+      status: aiLog.status === AiLogStatus.Success ? TaskStatus.Success : TaskStatus.Failure,
+      fail_reason: '',
+      submit_time: Math.floor(aiLog.startedAt.getTime() / 1000),
+      start_time: Math.floor(aiLog.startedAt.getTime() / 1000),
+      finish_time: Math.floor((aiLog.startedAt.getTime() + (aiLog.duration || 0)) / 1000),
+      progress: '100%',
+      data: {},
+    }
+
     if (aiLog.channel === AiLogChannel.Kling) {
-      return await this.getKlingTaskResult(aiLog.response as unknown as Text2VideoGetTaskResponseData)
+      return Object.assign(result, await this.getKlingTaskResult(aiLog.response as unknown as Text2VideoGetTaskResponseData))
     }
     else if (aiLog.channel === AiLogChannel.Volcengine) {
-      return await this.getVolcengineTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse)
+      return Object.assign(result, await this.getVolcengineTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse))
     }
     else if (aiLog.channel === AiLogChannel.Dashscope) {
-      return await this.getDashscopeTaskResult(aiLog.response as unknown as GetVideoTaskResponse)
+      return Object.assign(result, await this.getDashscopeTaskResult(aiLog.response as unknown as GetVideoTaskResponse))
     }
     else if (aiLog.channel === AiLogChannel.Sora2) {
-      return await this.getSora2TaskResult(aiLog.response as unknown as Sora2GetVideoGenerationTaskResponse)
+      return Object.assign(result, await this.getSora2TaskResult(aiLog.response as unknown as Sora2GetVideoGenerationTaskResponse))
     }
     else {
       throw new AppException(ResponseCode.InvalidAiTaskId)
@@ -387,8 +403,26 @@ export class VideoService {
   /**
    * 获取视频生成模型参数
    */
-  async getVideoGenerationModelParams(_data: VideoGenerationModelsQueryDto) {
-    // 可以根据userId和userType进行个性化过滤，目前返回所有模型
+  async getVideoGenerationModelParams(data: VideoGenerationModelsQueryDto) {
+    if (data.userType === UserType.User && data.userId) {
+      try {
+        const user = await this.userService.getUserInfoById(data.userId)
+        if (user && user.vipInfo && dayjs(user.vipInfo.expireTime).isAfter(dayjs())) {
+          const models = _.cloneDeep(this.modelsConfigService.config.video.generation)
+          const targetModel = models.find((model: { name: string }) => model.name === 'sora-2')
+          if (targetModel) {
+            targetModel.pricing.forEach((price) => {
+              price.price = 0
+            })
+          }
+          return models
+        }
+      }
+      catch (error) {
+        this.logger.warn({ error })
+      }
+    }
+
     return this.modelsConfigService.config.video.generation
   }
 
@@ -562,14 +596,8 @@ export class VideoService {
     }[data.task_status]
 
     return {
-      task_id: data.task_id,
-      action: 'video',
       status,
       fail_reason: data.task_result.videos[0].url || data.task_status_msg || '',
-      submit_time: data.created_at,
-      start_time: data.created_at,
-      finish_time: data.updated_at,
-      progress: data.task_status === KlingTaskStatus.Succeed ? '100%' : '0%',
       data: data.task_result || {},
     }
   }
@@ -760,14 +788,8 @@ export class VideoService {
     }[result.status]
 
     return {
-      task_id: result.id,
-      action: 'video',
       status,
       fail_reason: result.content?.video_url || result.error?.message || '',
-      submit_time: result.created_at,
-      start_time: result.created_at,
-      finish_time: result.updated_at,
-      progress: result.status === VolcTaskStatus.Succeeded ? '100%' : '0%',
       data: result.content || {},
     }
   }
@@ -1033,14 +1055,7 @@ export class VideoService {
     }
 
     return {
-      task_id: output.task_id,
-      action: DashscopeAction.Text2Video,
-      status,
       fail_reason: status === TaskStatus.Failure ? result.message : '',
-      submit_time: output.submit_time ? Math.floor(new Date(output.submit_time).getTime() / 1000) : 0,
-      start_time: output.scheduled_time ? Math.floor(new Date(output.scheduled_time).getTime() / 1000) : 0,
-      finish_time: output.end_time ? Math.floor(new Date(output.end_time).getTime() / 1000) : 0,
-      progress: status === TaskStatus.Success ? '100%' : status === TaskStatus.Failure ? '0%' : '50%',
       data: output,
     }
   }
@@ -1152,23 +1167,8 @@ export class VideoService {
    * 查询Sora2任务状态
    */
   async getSora2TaskResult(result: Sora2GetVideoGenerationTaskResponse) {
-    const status = {
-      [Sora2TaskStatus.Completed]: TaskStatus.Success,
-      [Sora2TaskStatus.Pending]: TaskStatus.Submitted,
-      [Sora2TaskStatus.Running]: TaskStatus.InProgress,
-      [Sora2TaskStatus.Failed]: TaskStatus.Failure,
-      [Sora2TaskStatus.Cancelled]: TaskStatus.Failure,
-    }[result.status]
-
     return {
-      task_id: result.id,
-      action: 'video',
-      status,
       fail_reason: result?.video_url || result.finish_reason || '',
-      submit_time: result.status_update_time,
-      start_time: result.status_update_time,
-      finish_time: result.status_update_time,
-      progress: result.status === Sora2TaskStatus.Completed ? '100%' : '0%',
       data: result || {},
     }
   }

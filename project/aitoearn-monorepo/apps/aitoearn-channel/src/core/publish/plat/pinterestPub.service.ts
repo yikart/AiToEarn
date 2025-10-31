@@ -1,11 +1,6 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/aitoearn-server-client'
-import { Queue } from 'bullmq'
 import * as _ from 'lodash'
-import { Model } from 'mongoose'
 import { PinterestService } from '../../../core/plat/pinterest/pinterest.service'
 import { PublishStatus, PublishTask } from '../../../libs/database/schema/publishTask.schema'
 import { SourceType } from '../../../libs/pinterest/common'
@@ -18,14 +13,9 @@ export class PinterestPubService extends PublishBase {
   private readonly logger = new Logger(PinterestPubService.name)
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly pinterestService: PinterestService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
-    // this.createPublishRecord(null as any)
+    super()
   }
 
   // TODO: 校验账户授权状态
@@ -82,6 +72,9 @@ export class PinterestPubService extends PublishBase {
       res.message = '稿件发布失败'
       return resolve(res)
     }
+    await this.completePublishTask(publishTask, data.data.id, {
+      workLink: `https://www.pinterest.com/pin/${data.data.id}/`,
+    })
     res.message = '发布成功'
     res.status = PublishStatus.PUBLISHED
     resolve(res)
@@ -125,6 +118,9 @@ export class PinterestPubService extends PublishBase {
     }
     res.message = '发布成功'
     res.status = PublishStatus.PUBLISHED
+    await this.completePublishTask(publishTask, data.data.id, {
+      workLink: `https://www.pinterest.com/pin/${data.data.id}/`,
+    })
     resolve(res)
   }
 }

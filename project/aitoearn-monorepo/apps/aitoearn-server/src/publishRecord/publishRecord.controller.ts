@@ -6,7 +6,7 @@
  * @Description: 发布
  */
 import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
-import { AccountType } from '@yikart/mongodb'
+import { AccountType } from '@yikart/common'
 import { CreatePublishRecordDto, DonePublishRecordDto, GetPublishRecordDetailDto, PublishDayInfoListDto, PublishRecordIdDto, PublishRecordListFilterDto } from './dto/publish.dto'
 import { PublishRecordService } from './publishRecord.service'
 

@@ -17,13 +17,13 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode, TableDto, UserType } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode, TableDto, UserType } from '@yikart/common'
 import { MaterialType, MediaType } from '@yikart/mongodb'
-import { UserService } from '../user/user.service'
 import {
   CreateMaterialDto,
   CreateMaterialTaskDto,
   MaterialFilterDto,
+  MaterialFilterSchema,
   MaterialIdsDto,
   UpdateMaterialDto,
 } from './dto/material.dto'
@@ -43,7 +43,6 @@ export class MaterialController {
   constructor(
     private readonly materialService: MaterialService,
     private readonly materialGroupService: MaterialGroupService,
-    private readonly userService: UserService,
     private readonly materialTaskService: MaterialTaskService,
     private readonly mediaGroupService: MediaGroupService,
   ) { }
@@ -115,7 +114,20 @@ export class MaterialController {
 
   @ApiOperation({
     summary: '批量删除草稿',
-    description: '批量删除草稿',
+    description: '根据筛选',
+  })
+  @Delete('filter')
+  async delByFilter(
+    @GetToken() token: TokenInfo,
+    @Body() body: MaterialFilterDto,
+  ) {
+    const res = await this.materialService.delByFilter(token.id, body)
+    return res
+  }
+
+  @ApiOperation({
+    summary: '批量删除草稿',
+    description: '根据ID列表',
   })
   @Delete('list')
   async delByIds(
@@ -161,9 +173,10 @@ export class MaterialController {
     return res
   }
 
-  @ApiOperation({
+  @ApiDoc({
     summary: '获取草稿列表',
     description: '获取草稿列表',
+    query: MaterialFilterSchema,
   })
   @Get('list/:pageNo/:pageSize')
   async getList(
@@ -174,7 +187,7 @@ export class MaterialController {
     const res = await this.materialService.getList(
       param,
       token.id,
-      query.groupId,
+      query,
     )
     return res
   }

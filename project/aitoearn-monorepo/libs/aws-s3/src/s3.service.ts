@@ -14,6 +14,7 @@ import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { S3Config } from './s3.config'
+import { buildUrl } from './s3.util'
 
 @Injectable()
 export class S3Service {
@@ -144,5 +145,9 @@ export class S3Service {
       Key: objectPath,
     })
     await this.client.send(command)
+  }
+
+  buildUrl(objectPath: string) {
+    return buildUrl(this.config.endpoint, objectPath)
   }
 }

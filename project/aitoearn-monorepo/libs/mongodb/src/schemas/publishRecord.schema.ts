@@ -6,9 +6,9 @@
  * @Description: 发布记录
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { AccountType } from '@yikart/common'
 import mongoose from 'mongoose'
 import { PublishStatus, PublishType } from '../enums'
-import { AccountType } from './account.schema'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({

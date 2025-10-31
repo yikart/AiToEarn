@@ -184,11 +184,9 @@ export class VipService {
 
   async getVipInfo(user: User): Promise<UserVipInfo | null> {
     const vipInfo = user.vipInfo
-
     if (!vipInfo || !vipInfo.expireTime) {
       return null
     }
-
     const newStatus = this.getNewStatus(vipInfo)
 
     if (vipInfo.status !== newStatus) {

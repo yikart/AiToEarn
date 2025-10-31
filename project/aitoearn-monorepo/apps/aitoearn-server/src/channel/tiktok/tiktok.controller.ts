@@ -12,7 +12,7 @@ import {
   Param,
   Post,
   Query,
-  Render,
+  Res,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -20,6 +20,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatTiktokNatsApi } from '../../transports/channel/api/tiktok.natsApi'
 import {
@@ -60,14 +61,15 @@ export class TiktokController {
   @UseGuards(OrgGuard)
   @ApiOperation({ summary: '创建账号并设置授权Token' })
   @Get('auth/back')
-  @Render('auth/back')
   async createAccountAndSetAccessToken(
     @Query() data: CreateAccountAndSetAccessTokenDto,
+    @Res() res: Response,
   ) {
-    return await this.platTiktokNatsApi.createAccountAndSetAccessToken(
+    const result = await this.platTiktokNatsApi.createAccountAndSetAccessToken(
       data.code,
       data.state,
     )
+    return res.render('auth/back', result)
   }
 
   @ApiOperation({ summary: '刷新访问令牌' })

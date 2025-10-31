@@ -1,10 +1,5 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/aitoearn-server-client'
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import { WxGzhService } from '../../../core/plat/wxPlat/wxGzh.service'
 import {
   PublishTask,
@@ -20,13 +15,9 @@ export class WxGzhPubService extends PublishBase {
   override queueName: string = AccountType.WxGzh
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly wxGzhService: WxGzhService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
+    super()
   }
 
   async checkAuth(accountId: string): Promise<{

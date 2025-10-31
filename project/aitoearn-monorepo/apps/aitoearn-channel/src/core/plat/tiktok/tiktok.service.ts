@@ -382,14 +382,14 @@ export class TiktokService {
   async chunkedUploadVideoFile(
     uploadUrl: string,
     videoBuffer: Buffer,
-    chunkSeq: number,
+    range: [number, number],
     fileSize: number,
     contentType: string,
   ): Promise<void> {
     await this.tiktokApiService.chunkedUploadVideoFile(
       uploadUrl,
       videoBuffer,
-      chunkSeq,
+      range,
       fileSize,
       contentType,
     )

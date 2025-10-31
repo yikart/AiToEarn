@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { InjectConnection } from '@nestjs/mongoose'
 import { Connection, Model } from 'mongoose'
-import { AccountType, ChannelCookie } from '../schemas/account.schema'
+import { AccountType, ChannelCookie, ChannelsCrawl, JobTaskStatus } from '../schemas/account.schema'
 import { AuthorDatas } from '../schemas/authorData.schema'
 import { PostsRecord, PostsRecordStatus } from '../schemas/posts.schema'
 import { BaseRepository } from './base.repository'
@@ -233,7 +233,7 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
   }
 
   /**
-   * 根据平台获取渠道cookie
+   * get channel cookie
    * @param platform
    */
   async getChannelCookieByPlatform(platform: string) {
@@ -243,6 +243,69 @@ export class ChannelRepository extends BaseRepository<PostsRecord> implements On
     }
     catch (error) {
       this.logger.error(`Failed to get channel cookie for platform ${platform}:`, error)
+      throw error
+    }
+  }
+
+  /**
+   * Submit channel for crawling
+   * @param data Platform, uid, timestamps and status
+   * @param data.platform Platform type
+   * @param data.uid Channel UID
+   * @param data.createAt Initial created time (UTC)
+   * @param data.updateAt Update time (UTC)
+   * @param data.status Task status
+   */
+  async submitChannelCrawling(data: { platform: AccountType, uid: string, createAt: Date, updateAt: Date, status: JobTaskStatus }) {
+    try {
+      // Use ChannelsCrawling model to enable mongoose validation
+      const ChannelsCrawlingModel = this.connection.model('ChannelsCrawling') as Model<ChannelsCrawl>
+
+      // 10-minute rate limit logic (compare UTC Date)
+      const existing = await ChannelsCrawlingModel.findOne({ platform: data.platform, uid: data.uid })
+        .select({ updatedAt: 1 })
+        .lean()
+
+      const now = new Date()
+      if (existing?.updatedAt) {
+        const last = new Date(existing.updatedAt as unknown as string)
+        const diffMs = now.getTime() - last.getTime()
+        const tenMinutesMs = 10 * 60 * 1000
+        if (diffMs < tenMinutesMs) {
+          const nextAllowedAt = new Date(last.getTime() + tenMinutesMs)
+          return {
+            success: false,
+            limited: true,
+            platform: data.platform,
+            uid: data.uid,
+            updatedAt: existing.updatedAt,
+            nextAllowedAt,
+          }
+        }
+      }
+
+      // Insert new record only (no update)
+      const newRecord = await ChannelsCrawlingModel.create({
+        platform: data.platform,
+        uid: data.uid,
+        status: data.status,
+      })
+
+      this.logger.log(`Submitted channel for crawling: platform=${data.platform}, uid=${data.uid}, id=${newRecord._id}`)
+
+      return {
+        success: true,
+        platform: data.platform,
+        uid: data.uid,
+        status: data.status,
+        createdAt: newRecord.createdAt,
+        updatedAt: newRecord.updatedAt,
+        isNew: true,
+        id: newRecord._id.toString(),
+      }
+    }
+    catch (error) {
+      this.logger.error(`Failed to submit channel for crawling: ${(error as Error).message}`)
       throw error
     }
   }

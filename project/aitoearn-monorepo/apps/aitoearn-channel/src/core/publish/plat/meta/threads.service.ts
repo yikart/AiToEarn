@@ -1,10 +1,4 @@
-import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { InjectModel } from '@nestjs/mongoose'
-
-import { Queue } from 'bullmq'
-import { Model } from 'mongoose'
 import { ThreadsService } from '../../../../core/plat/meta/threads.service'
 import { PostMediaStatus } from '../../../../libs/database/schema/postMediaContainer.schema'
 import {
@@ -23,22 +17,15 @@ export class ThreadsPublishService
   extends PublishBase
   implements MetaPostPublisher {
   override queueName: string = 'threads'
-  private readonly metaMediaTaskQueue: Queue
   private readonly logger = new Logger(ThreadsPublishService.name, {
     timestamp: true,
   })
 
   constructor(
-    override readonly eventEmitter: EventEmitter2,
-    @InjectModel(PublishTask.name)
-    override readonly publishTaskModel: Model<PublishTask>,
-    @InjectQueue('post_publish') publishQueue: Queue,
     readonly threadsService: ThreadsService,
-    @InjectQueue('post_media_task') metaMediaTaskQueue: Queue,
     private readonly postMediaContainerService: PostMediaContainerService,
   ) {
-    super(eventEmitter, publishTaskModel, publishQueue)
-    this.metaMediaTaskQueue = metaMediaTaskQueue
+    super()
   }
 
   // TODO: 校验账户授权状态
@@ -173,14 +160,13 @@ export class ThreadsPublishService
       const task: PublishMetaPostTask = {
         id: publishTask.id,
       }
-      const result = await this.metaMediaTaskQueue.add(
-        `threads:media:task:${task.id}`,
+      const result = this.queueService.addPostMediaTaskJob(
         {
           taskId: task.id,
           attempts: 0,
         },
         {
-          attempts: 3,
+          attempts: 30,
           backoff: {
             type: 'fixed',
             delay: 10000,

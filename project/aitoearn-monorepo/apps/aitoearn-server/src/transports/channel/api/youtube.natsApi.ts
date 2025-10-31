@@ -43,7 +43,11 @@ export class PlatYoutubeNatsApi extends ChannelBaseApi {
       state: string
     },
   ) {
-    const res = await this.sendMessage<string>(
+    const res = await this.sendMessage<{
+      status: number
+      message: string
+      accountId: any
+    }>(
       `plat/youtube/setAccessToken`,
       data,
     )

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountType, PublishRecord, PublishStatus } from '@yikart/mongodb'
+import { AccountType } from '@yikart/common'
+import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import {
   GetPublishRecordDetailDto,
 } from '../../publishRecord/dto/publish.dto'
@@ -22,6 +23,10 @@ export class PublishingInternalService {
 
   async getPublishRecordByDataId(accountType: AccountType, dataId: string) {
     return this.publishingService.getPublishRecordByDataId(accountType, dataId)
+  }
+
+  async getPublishRecordByDataIdAndUid(uid: string, dataId: string) {
+    return this.publishingService.getPublishRecordByDataIdAndUid(uid, dataId)
   }
 
   async getPublishRecordDetail(data: GetPublishRecordDetailDto) {

@@ -24,7 +24,6 @@ export class MediaRepository extends BaseRepository<Media> {
     return res.deletedCount > 0
   }
 
-  // 批量删除素材
   async getListByIds(ids: string[]) {
     const mediaList = await this.mediaModel.find({ _id: { $in: ids } })
     return mediaList
@@ -33,6 +32,18 @@ export class MediaRepository extends BaseRepository<Media> {
   // 批量删除素材
   async delByIds(ids: string[], filter?: FilterQuery<Media>): Promise<boolean> {
     const res = await this.mediaModel.deleteMany({ _id: { $in: ids }, ...filter })
+    return res.deletedCount > 0
+  }
+
+  // 批量删除素材
+  async getListByFilter(filter: FilterQuery<Media>) {
+    const mediaList = await this.mediaModel.find(filter)
+    return mediaList
+  }
+
+  // 批量删除素材
+  async delByFilter(filter: FilterQuery<Media>): Promise<boolean> {
+    const res = await this.mediaModel.deleteMany(filter)
     return res.deletedCount > 0
   }
 
@@ -70,7 +81,7 @@ export class MediaRepository extends BaseRepository<Media> {
 
     const filter: RootFilterQuery<Media> = {
       userId: inFilter.userId,
-      groupId: inFilter.groupId,
+      ...(inFilter.groupId && { groupId: inFilter.groupId }),
       userType: inFilter.userType || UserType.User,
       ...(inFilter.type && { type: inFilter.type }),
       ...(inFilter.useCount !== undefined && { useCount: { $gte: inFilter.useCount } }),

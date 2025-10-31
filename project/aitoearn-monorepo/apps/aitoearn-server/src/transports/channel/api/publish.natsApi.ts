@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { TableDto } from '@yikart/common'
-import { AccountType, PublishStatus, PublishType } from '@yikart/mongodb'
+import { AccountType, TableDto } from '@yikart/common'
+import { PublishStatus, PublishType } from '@yikart/mongodb'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from '../../../channel/common'
 import { PublishDayInfoListFiltersDto } from '../../../channel/dto/publish.dto'
 import { ChannelBaseApi } from '../../channelBase.api'
@@ -88,7 +88,7 @@ export class PlatPublishNatsApi extends ChannelBaseApi {
   // 立即发布任务
   async nowPubTask(id: string) {
     const res = await this.sendMessage<boolean>(
-      `plat/publish/nowPubTask`,
+      `publish/task/run`,
       {
         id,
       },

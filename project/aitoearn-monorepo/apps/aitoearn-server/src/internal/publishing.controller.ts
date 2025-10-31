@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
-import { AccountType, PublishRecord, PublishStatus } from '@yikart/mongodb'
+import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PublishingInternalService } from './provider/publishing.service'
 
 @ApiTags('内部服务接口')
@@ -56,8 +56,8 @@ export class PublishingController {
     @Param('uid') uid: string,
     @Param('dataId') dataId: string,
   ) {
-    return await this.publishingInternalService.getPublishRecordByDataId(
-      uid as unknown as AccountType,
+    return await this.publishingInternalService.getPublishRecordByDataIdAndUid(
+      uid,
       dataId,
     )
   }

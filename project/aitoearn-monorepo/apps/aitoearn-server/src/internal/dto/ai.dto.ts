@@ -1,5 +1,7 @@
 import { createZodDto, PaginationDtoSchema, UserType } from '@yikart/common'
 import { z } from 'zod'
+import { fireflycardStyleSchema, fireflycardSwitchConfigSchema, fireflycardTempSchema } from '../../ai/dto'
+import { FireflycardTempTypes } from '../../ai/libs/fireflycard'
 
 // 图片生成请求
 const AdminImageGenerationSchema = z.object({
@@ -46,3 +48,15 @@ const adminListUserVideoTasksQuerySchema = z.object({
 })
 
 export class AdminUserListVideoTasksQueryDto extends createZodDto(adminListUserVideoTasksQuerySchema) {}
+
+const adminFireflyCardSchema = z.object({
+  content: z.string().min(1).describe('卡片内容'),
+  temp: fireflycardTempSchema.default(FireflycardTempTypes.A).describe('模板类型'),
+  title: z.string().optional().describe('标题'),
+  style: fireflycardStyleSchema.describe('样式配置'),
+  switchConfig: fireflycardSwitchConfigSchema.describe('开关配置'),
+  userId: z.string().describe('用户Id'),
+  userType: z.enum(UserType).describe('用户类型'),
+})
+
+export class AdminFireflyCardDto extends createZodDto(adminFireflyCardSchema) {}
