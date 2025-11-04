@@ -16,7 +16,7 @@ AiToEarn helps creators, brands, and businesses build, distribute, and monetize 
 
 Supported Channels:
 Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts,
-TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
+TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, Linkedin
 
 <details>
   <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
