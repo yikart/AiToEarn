@@ -12,7 +12,7 @@
 AiToEarn 通过**AI 自动化**，帮助创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
 
 支持渠道：  
-抖音（Douyin）、小红书（Rednote）、视频号（WeChat Channels）、快手（Kuaishou）、哔哩哔哩（Bilibili）、微信公众号（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、Linkedin
+抖音（Douyin）、小红书（Rednote）、视频号（WeChat Channels）、快手（Kuaishou）、哔哩哔哩（Bilibili）、微信公众号（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
 
 <details>
   <summary><h2 style="display:inline;margin:0">目录</h2></summary>
