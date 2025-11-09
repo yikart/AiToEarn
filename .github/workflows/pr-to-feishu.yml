@@ -1,63 +1,17 @@
-name: Notify Feishu on PR (Card Style)
+name: Feishu Notify (Org-wide, No Relay)
 on:
   pull_request:
-    types: [opened, reopened, synchronize, closed]
+    types: [opened, ready_for_review, closed]   
+  issues:
+    types: [opened, closed, reopened]
 
 jobs:
   notify:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send PR card to Feishu
-        run: |
-          PR_URL="${{ github.event.pull_request.html_url }}"
-          PR_TITLE="${{ github.event.pull_request.title }}"
-          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
-          PR_NUMBER="${{ github.event.pull_request.number }}"
-          PR_ACTION="${{ github.event.action }}"
-          PR_FROM="${{ github.event.pull_request.head.ref }}"
-          PR_TO="${{ github.event.pull_request.base.ref }}"
-          REPO="${{ github.repository }}"
-          STATUS_EMOJI="🟢"
-          if [ "$PR_ACTION" = "closed" ]; then STATUS_EMOJI="🔴"; fi
-
-          cat <<EOF > card.json
-          {
-            "msg_type": "interactive",
-            "card": {
-              "elements": [
-                {
-                  "tag": "div",
-                  "text": {
-                    "tag": "lark_md",
-                    "content": "**${STATUS_EMOJI} ${PR_ACTION^} Pull Request #${PR_NUMBER}**\\n**Repo:** ${REPO}\\n**Author:** ${PR_AUTHOR}\\n**Title:** ${PR_TITLE}\\n**From:** ${PR_FROM} → **To:** ${PR_TO}"
-                  }
-                },
-                {
-                  "tag": "action",
-                  "actions": [
-                    {
-                      "tag": "button",
-                      "text": {
-                        "tag": "plain_text",
-                        "content": "🔗 View on GitHub"
-                      },
-                      "type": "primary",
-                      "url": "${PR_URL}"
-                    }
-                  ]
-                }
-              ],
-              "header": {
-                "template": "blue",
-                "title": {
-                  "content": "🔔 PR Notification",
-                  "tag": "plain_text"
-                }
-              }
-            }
-          }
-          EOF
-
-          curl -X POST ${{ secrets.FEISHU_WEBHOOK }} \
-            -H "Content-Type: application/json" \
-            -d @card.json
+    uses: <your-org>/.github/.github/workflows/feishu-notify-template.yml@main
+    secrets: inherit
+    with:
+      important_labels: "urgent,security,release-blocker"
+      important_paths_regex: "^(apps/web/|infra/|payment/|security/)"
+      pr_min_changed_files: "30"                
+      title_keywords_regex: "(hotfix|rollback|security|incident)"
+      notify_issue_on_open_close_without_labels: "false"
