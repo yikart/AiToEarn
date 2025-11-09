@@ -1,0 +1,17 @@
+name: Feishu Notify (Org-wide, No Relay)
+on:
+  pull_request:
+    types: [opened, ready_for_review, closed]   
+  issues:
+    types: [opened, closed, reopened]
+
+jobs:
+  notify:
+    uses: <your-org>/.github/.github/workflows/feishu-notify-template.yml@main
+    secrets: inherit
+    with:
+      important_labels: "urgent,security,release-blocker"
+      important_paths_regex: "^(apps/web/|infra/|payment/|security/)"
+      pr_min_changed_files: "30"                
+      title_keywords_regex: "(hotfix|rollback|security|incident)"
+      notify_issue_on_open_close_without_labels: "false"
