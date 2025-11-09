@@ -1,21 +1,63 @@
-name: Notify Feishu on PR
+name: Notify Feishu on PR (Card Style)
 on:
   pull_request:
     types: [opened, reopened, synchronize, closed]
-    branches: ["**"]
+
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
-      - name: Send PR message to Feishu
-        uses: xiachufang/actions-feishu@v1.3.1
-        with:
-          webhook: ${{ secrets.FEISHU_WEBHOOK }}
-          # 可选：message_type 支持 text/post/template
-          message_type: post
-          title: "🔔 PR @${{ github.repository }}"
-          content: |
-            **${{ github.actor }}** ${{ github.event.action }} PR #${{ github.event.pull_request.number }}
-            **Title:** ${{ github.event.pull_request.title }}
-            **From:** ${{ github.event.pull_request.head.ref }} → **To:** ${{ github.event.pull_request.base.ref }}
-            **URL:** ${{ github.event.pull_request.html_url }}
+      - name: Send PR card to Feishu
+        run: |
+          PR_URL="${{ github.event.pull_request.html_url }}"
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          PR_AUTHOR="${{ github.event.pull_request.user.login }}"
+          PR_NUMBER="${{ github.event.pull_request.number }}"
+          PR_ACTION="${{ github.event.action }}"
+          PR_FROM="${{ github.event.pull_request.head.ref }}"
+          PR_TO="${{ github.event.pull_request.base.ref }}"
+          REPO="${{ github.repository }}"
+          STATUS_EMOJI="🟢"
+          if [ "$PR_ACTION" = "closed" ]; then STATUS_EMOJI="🔴"; fi
+
+          cat <<EOF > card.json
+          {
+            "msg_type": "interactive",
+            "card": {
+              "elements": [
+                {
+                  "tag": "div",
+                  "text": {
+                    "tag": "lark_md",
+                    "content": "**${STATUS_EMOJI} ${PR_ACTION^} Pull Request #${PR_NUMBER}**\\n**Repo:** ${REPO}\\n**Author:** ${PR_AUTHOR}\\n**Title:** ${PR_TITLE}\\n**From:** ${PR_FROM} → **To:** ${PR_TO}"
+                  }
+                },
+                {
+                  "tag": "action",
+                  "actions": [
+                    {
+                      "tag": "button",
+                      "text": {
+                        "tag": "plain_text",
+                        "content": "🔗 View on GitHub"
+                      },
+                      "type": "primary",
+                      "url": "${PR_URL}"
+                    }
+                  ]
+                }
+              ],
+              "header": {
+                "template": "blue",
+                "title": {
+                  "content": "🔔 PR Notification",
+                  "tag": "plain_text"
+                }
+              }
+            }
+          }
+          EOF
+
+          curl -X POST ${{ secrets.FEISHU_WEBHOOK }} \
+            -H "Content-Type: application/json" \
+            -d @card.json
