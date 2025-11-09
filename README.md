@@ -16,7 +16,7 @@ AiToEarn helps creators, brands, and businesses build, distribute, and monetize 
 
 Supported Channels:
 Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts,
-TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
+TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, Linkedin
 
 <details>
   <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
@@ -41,9 +41,9 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
 
 OS | Download
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.2.2-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.2.2/Aitoearn-1.2.2.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.2.2-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.2.2/AiToEarnSetup-1.2.2.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.2.2-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.2.2/AiToEarn+1.2.2.dmg)
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.0-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.0/Aitoearn-1.3.0.apk)
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.0-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.0/AiToEarnSetup-1.3.0.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.0-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.0/AiToEarn+1.3.0.dmg)
 iOS |  **Coming soon!**
 Web | [Use on Web](https://aitoearn.ai/en/accounts)
 
