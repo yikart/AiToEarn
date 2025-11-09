@@ -1,0 +1,21 @@
+name: Notify Feishu on PR
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    branches: ["**"]
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send PR message to Feishu
+        uses: xiachufang/actions-feishu@v1.3.1
+        with:
+          webhook: ${{ secrets.FEISHU_WEBHOOK }}
+          # 可选：message_type 支持 text/post/template
+          message_type: post
+          title: "🔔 PR @${{ github.repository }}"
+          content: |
+            **${{ github.actor }}** ${{ github.event.action }} PR #${{ github.event.pull_request.number }}
+            **Title:** ${{ github.event.pull_request.title }}
+            **From:** ${{ github.event.pull_request.head.ref }} → **To:** ${{ github.event.pull_request.base.ref }}
+            **URL:** ${{ github.event.pull_request.html_url }}
