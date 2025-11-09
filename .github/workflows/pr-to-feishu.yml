@@ -7,7 +7,7 @@ on:
 
 jobs:
   notify:
-    uses: <your-org>/.github/.github/workflows/feishu-notify-template.yml@main
+    uses: yikart/.github/.github/workflows/feishu-notify-template.yml@main
     secrets: inherit
     with:
       important_labels: "urgent,security,release-blocker"
