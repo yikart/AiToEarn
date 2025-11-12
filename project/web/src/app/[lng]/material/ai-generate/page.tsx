@@ -13,6 +13,7 @@ import { useTransClient } from "@/app/i18n/client";
 import { md2CardTemplates, defaultMarkdown } from "./md2card";
 import Chat from "@/components/Chat";
 import { OSS_URL } from "@/constant";
+import VipContentModal from "@/components/modals/VipContentModal";
 
 const { TextArea } = Input;
 const { Option } = Select;
@@ -52,6 +53,9 @@ export default function AIGeneratePage() {
   const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "imageToImage" | "textToFireflyCard" | "md2card" | "chat">(initImageTab);
   // 视频子模块切换
   const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">(initVideoTab);
+
+    // VIP弹窗状态
+    const [vipModalOpen, setVipModalOpen] = useState(false);
 
   // 文生图
   const [prompt, setPrompt] = useState("");
@@ -344,16 +348,16 @@ export default function AIGeneratePage() {
         size: imageEditSize, 
         response_format: "url" 
       });
-      if (res.data?.logId) {
+      if (res?.data?.logId) {
         setImageEditTaskId(res.data.logId);
         setImageEditStatus(res.data.status);
         message.success(t("aiGenerate.taskSubmittedSuccess"));
         pollImageEditTaskStatus(res.data.logId);
       } else {
-        message.error(t("aiGenerate.imageGenerationFailed"));
+        setVipModalOpen(true);
         setImageEditStatus("");
       }
-    } catch { message.error(t("aiGenerate.imageGenerationFailed")); setImageEditStatus(""); } finally { setImageEditLoading(false); }
+    } catch { setImageEditStatus(""); } finally { setImageEditLoading(false); }
   };
 
   const pollImageEditTaskStatus = async (logId: string) => {
@@ -643,16 +647,19 @@ export default function AIGeneratePage() {
       setImageStatus("submitted");
       setImageProgress(10);
       const res: any = await generateImage({ prompt, n, quality, style, size, model, response_format: "url" });
-      if (res.data?.logId) {
+      console.log('res', res)
+      if (res?.data?.logId) {
         setImageTaskId(res.data.logId);
         setImageStatus(res.data.status);
         message.success(t("aiGenerate.taskSubmittedSuccess"));
         pollImageTaskStatus(res.data.logId);
       } else {
-        message.error(t("aiGenerate.imageGenerationFailed"));
+        setVipModalOpen(true);
         setImageStatus("");
       }
-    } catch { message.error(t("aiGenerate.imageGenerationFailed")); setImageStatus(""); } finally { setLoading(false); }
+    } catch { 
+      setImageStatus(""); 
+    } finally { setLoading(false); }
   };
 
   const handleTextToFireflyCard = async () => {
@@ -839,17 +846,17 @@ export default function AIGeneratePage() {
     try { 
       setLoadingMd2Card(true); 
       const res: any = await generateMd2Card({ markdown: markdownContent, theme: selectedTheme, themeMode, width: cardWidth, height: cardHeight, splitMode, mdxMode, overHiddenMode }); 
-      if (res.data?.images?.length) {
+      if (res?.data?.images?.length) {
         const cardUrl = res.data.image[0].url;
         setMd2CardResult(cardUrl);
         
         // 自动上传到默认素材库组
         await autoUploadToDefaultGroup(cardUrl, "img", "Markdown Card", markdownContent.substring(0, 100));
       } else {
-        message.error(t("aiGenerate.cardGenerationFailed"));
+        setVipModalOpen(true);
       }
     }
-    catch { message.error(t("aiGenerate.cardGenerationFailed")); } finally { setLoadingMd2Card(false); }
+    catch { setVipModalOpen(true); } finally { setLoadingMd2Card(false); }
   };
 
   const [currentUploadUrl, setCurrentUploadUrl] = useState<string | null>(null);
@@ -1841,6 +1848,12 @@ export default function AIGeneratePage() {
           )}
             </div>
       </div>
+
+      {/* VIP弹窗 */}
+      <VipContentModal 
+          open={vipModalOpen}   
+          onClose={() => setVipModalOpen(false)} 
+        />
 
       <Modal title={t("aiGenerate.selectMediaGroup")} open={uploadModalVisible} onOk={handleUploadConfirm} onCancel={()=>setUploadModalVisible(false)} confirmLoading={uploading}>
         <Select placeholder={t("aiGenerate.selectMediaGroupPlaceholder")} value={selectedMediaGroup} onChange={setSelectedMediaGroup} style={{ width: "100%" }} loading={loadingMediaGroups}>
