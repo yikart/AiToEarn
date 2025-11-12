@@ -1,0 +1,84 @@
+name: Build Web Image
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'project/web/**'
+      - '.github/workflows/web-build.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 镜像版本 (留空使用默认生成规则)
+        required: false
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REGISTRY: 339388639667.dkr.ecr.ap-southeast-1.amazonaws.com
+  ROLE_TO_ASSUME: arn:aws:iam::339388639667:role/GithubActions
+  IMAGE_REPO: aitoearn
+  APP_NAME: aitoearn-web
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Generate version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Build and push application
+        uses: docker/build-push-action@v5
+        with:
+          context: ./project/web
+          file: ./project/web/Dockerfile
+          platforms: linux/amd64
+          push: true
+          tags: |
+            ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
+            ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## 📦 构建摘要" >> $GITHUB_STEP_SUMMARY
+          echo "- **应用**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **版本**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **平台**: linux/amd64" >> $GITHUB_STEP_SUMMARY
+          echo "- **镜像**: \`${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Latest**: \`${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 快速链接" >> $GITHUB_STEP_SUMMARY
+          echo "- [源代码提交](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [构建日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,251 @@
+name: Build Backend Images
+
+on:
+  workflow_call:
+    inputs:
+      base_ref:
+        description: 'Base branch for affected detection (for PR preview)'
+        required: false
+        type: string
+        default: ''
+      manual_apps:
+        description: 'Comma-separated list of apps to build (for manual deployment)'
+        required: false
+        type: string
+        default: ''
+    outputs:
+      has_changes:
+        description: 'Whether any apps were affected'
+        value: ${{ jobs.generate-matrix.outputs.has_changes }}
+
+permissions:
+  id-token: write
+  contents: read
+  actions: write
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECR_REGISTRY: 339388639667.dkr.ecr.ap-southeast-1.amazonaws.com
+  IMAGE_REPO: aitoearn
+  NX_NO_CLOUD: true
+  MONOREPO_DIR: project/aitoearn-monorepo
+
+jobs:
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_changes: ${{ steps.set-matrix.outputs.has_changes }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        if: inputs.manual_apps == ''
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        if: inputs.manual_apps == ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: ${{ env.MONOREPO_DIR }}/pnpm-lock.yaml
+
+      - name: Install dependencies
+        if: inputs.manual_apps == ''
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Detect affected apps
+        id: detect-changes
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: |
+          # 检查是否为手动部署模式
+          if [ -n "${{ inputs.manual_apps }}" ]; then
+            echo "🎯 手动部署模式: 使用指定的应用列表"
+            AFFECTED_APPS="${{ inputs.manual_apps }}"
+            echo "✅ 手动选择的应用: $AFFECTED_APPS"
+            echo "affected_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
+
+            echo ""
+            echo "详细信息:"
+            for APP in $(echo "$AFFECTED_APPS" | tr ',' ' '); do
+              echo "  - $APP"
+            done
+          else
+            # 根据触发方式设置 base 分支
+            if [ -n "${{ inputs.base_ref }}" ]; then
+              BASE_REF="origin/${{ inputs.base_ref }}"
+              echo "📋 PR 模式: 检测从 $BASE_REF 到 HEAD 的变更"
+            else
+              BASE_REF="HEAD~1"
+              echo "📋 Push 模式: 检测最近一次提交的变更"
+            fi
+
+            echo "Base: $BASE_REF"
+            echo "Head: HEAD"
+
+            AFFECTED_APPS=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --exclude="browser-automation-worker" --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
+
+            if [ -z "$AFFECTED_APPS" ]; then
+              echo "⚠️  未检测到受影响的应用"
+              echo "affected_apps=" >> $GITHUB_OUTPUT
+            else
+              echo "✅ 受影响的应用: $AFFECTED_APPS"
+              echo "affected_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
+
+              echo ""
+              echo "详细信息:"
+              for APP in $(echo "$AFFECTED_APPS" | tr ',' ' '); do
+                echo "  - $APP"
+              done
+            fi
+          fi
+
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 版本: $VERSION"
+
+      - name: Generate matrix
+        id: set-matrix
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: |
+          AFFECTED_APPS="${{ steps.detect-changes.outputs.affected_apps }}"
+          VERSION="${{ steps.version.outputs.version }}"
+
+          if [ -z "$AFFECTED_APPS" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+            echo "⚠️  无变更，跳过构建"
+            exit 0
+          fi
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+          # 构建 matrix JSON 数组
+          MATRIX_JSON="{"
+          MATRIX_JSON="$MATRIX_JSON\"include\":["
+
+          FIRST=true
+          IFS=',' read -ra APPS <<< "$AFFECTED_APPS"
+
+          for APP in "${APPS[@]}"; do
+            IMAGE_TAG="${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION"
+
+            # 添加到 matrix
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              MATRIX_JSON="$MATRIX_JSON,"
+            fi
+
+            MATRIX_JSON="$MATRIX_JSON{\"app\":\"$APP\",\"image\":\"$IMAGE_TAG\"}"
+          done
+
+          MATRIX_JSON="$MATRIX_JSON]}"
+
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "🎯 Matrix 配置:"
+          echo "$MATRIX_JSON" | jq .
+
+  build-and-push:
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: ${{ env.MONOREPO_DIR }}/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Restore Nx cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.MONOREPO_DIR }}/.nx/cache
+          key: nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-monorepo/pnpm-lock.yaml') }}-${{ matrix.app }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-monorepo/pnpm-lock.yaml') }}-${{ matrix.app }}-
+            nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-monorepo/pnpm-lock.yaml') }}-
+            nx-${{ runner.os }}-
+
+      - name: Build application
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: |
+          echo "🔨 构建应用: ${{ matrix.app }}"
+          pnpm nx run ${{ matrix.app }}:build
+
+      - name: Prepare Docker context
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: pnpm nx run ${{ matrix.app }}:docker-context
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            network=host
+            image=moby/buildkit:latest
+          buildkitd-flags: --debug
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ env.MONOREPO_DIR }}/tmp/docker-context
+          file: ${{ env.MONOREPO_DIR }}/tmp/docker-context/Dockerfile
+          platforms: linux/amd64
+          build-args: |
+            APP_NAME=${{ matrix.app }}
+          tags: ${{ matrix.image }}
+          push: true
+          cache-from: |
+            type=gha,scope=${{ matrix.app }}
+            type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ matrix.app }}:buildcache
+          cache-to: |
+            type=gha,mode=max,scope=${{ matrix.app }}
+            type=inline
+          provenance: false
+          sbom: false
+
+      - name: Build summary
+        run: |
+          echo "### ✅ 构建成功: ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **镜像**: \`${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY
+

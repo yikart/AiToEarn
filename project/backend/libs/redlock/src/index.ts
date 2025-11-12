@@ -1,0 +1,5 @@
+export * from './redlock.config'
+export * from './redlock.decorator'
+export * from './redlock.injector'
+export * from './redlock.module'
+export * from './redlock.service'

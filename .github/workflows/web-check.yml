@@ -1,0 +1,55 @@
+name: AitoEarn Web Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'project/web/**'
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  MONOREPO_DIR: project/web
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: ${{ env.MONOREPO_DIR }}/pnpm-lock.yaml
+
+      - name: Install dependencies
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: pnpm install --frozen-lockfile
+
+      - name: Run ESLint
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: pnpm lint
+
+      - name: Run build
+        working-directory: ${{ env.MONOREPO_DIR }}
+        run: pnpm build
+
+

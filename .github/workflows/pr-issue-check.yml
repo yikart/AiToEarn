@@ -1,0 +1,123 @@
+name: PR Issue Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  check-issue-linked:
+    name: Check Issue Linked
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check if PR is linked to an issue
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            let prBody = context.payload.pull_request.body || '';
+            const prTitle = context.payload.pull_request.title || '';
+            
+            // 移除注释内容（HTML/Markdown 注释格式：<!-- ... -->）
+            prBody = prBody.replace(/<!--[\s\S]*?-->/g, '');
+            
+            // 从 PR 描述和标题中提取 issue 编号
+            const issuePattern = /(?:closes?|fixes?|resolves?|related to|refs?)\s*#(\d+)/gi;
+            const matches = [];
+            
+            // 从 body 中提取（已移除注释）
+            const bodyMatches = prBody.matchAll(issuePattern);
+            for (const match of bodyMatches) {
+              matches.push(parseInt(match[1]));
+            }
+            
+            // 从 title 中提取（标题通常不包含注释，但为了安全也处理一下）
+            const titleWithoutComments = prTitle.replace(/<!--[\s\S]*?-->/g, '');
+            const titlePattern = /(?:closes?|fixes?|resolves?|related to|refs?)\s*#(\d+)/gi;
+            const titleMatches = titleWithoutComments.matchAll(titlePattern);
+            for (const match of titleMatches) {
+              matches.push(parseInt(match[1]));
+            }
+            
+            // 去重
+            const issueNumbers = [...new Set(matches)];
+            
+            if (issueNumbers.length === 0) {
+              core.setFailed(
+                '❌ This PR must be linked to an issue.\n\n' +
+                'Please add one of the following to your PR description or title:\n' +
+                '- Closes #123\n' +
+                '- Fixes #123\n' +
+                '- Resolves #123\n' +
+                '- Related to #123\n' +
+                '- Refs #123\n\n' +
+                'You can link multiple issues: Closes #12, Related to #34'
+              );
+              return;
+            }
+            
+            // 验证这些 issue 是否真实存在
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            let validIssues = [];
+            let invalidIssues = [];
+            
+            for (const issueNumber of issueNumbers) {
+              try {
+                const { data: issue } = await github.rest.issues.get({
+                  owner: owner,
+                  repo: repo,
+                  issue_number: issueNumber,
+                });
+                
+                // 确保是 issue 而不是 PR
+                if (!issue.pull_request) {
+                  validIssues.push(issueNumber);
+                  console.log(`✅ Found valid issue: #${issueNumber} - "${issue.title}"`);
+                } else {
+                  invalidIssues.push(issueNumber);
+                  console.log(`⚠️  #${issueNumber} is a PR, not an issue`);
+                }
+              } catch (error) {
+                invalidIssues.push(issueNumber);
+                console.log(`❌ Issue #${issueNumber} not found or not accessible`);
+                console.log(`Error details: ${error.message}`);
+                if (error.status) {
+                  console.log(`HTTP status: ${error.status}`);
+                }
+                // 如果是 404，可能是 issue 不存在或已删除
+                // 如果是 403，可能是权限问题
+                if (error.status === 403) {
+                  console.log(`⚠️  Permission denied. Make sure the workflow has 'issues: read' permission.`);
+                } else if (error.status === 404) {
+                  console.log(`⚠️  Issue #${issueNumber} not found in ${owner}/${repo}`);
+                }
+              }
+            }
+            
+            if (validIssues.length === 0) {
+              core.setFailed(
+                '❌ No valid issues found linked to this PR.\n\n' +
+                `Referenced: ${issueNumbers.map(n => `#${n}`).join(', ')}\n` +
+                (invalidIssues.length > 0 
+                  ? `Invalid or not found: ${invalidIssues.map(n => `#${n}`).join(', ')}\n`
+                  : '') +
+                '\nPlease ensure you link to a valid issue using:\n' +
+                '- Closes #123\n' +
+                '- Fixes #123\n' +
+                '- Resolves #123\n' +
+                '- Related to #123\n' +
+                '- Refs #123'
+              );
+            } else {
+              console.log(`✅ PR is linked to ${validIssues.length} valid issue(s): ${validIssues.map(n => `#${n}`).join(', ')}`);
+            }
+

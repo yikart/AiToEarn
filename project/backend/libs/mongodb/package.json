@@ -1,0 +1,22 @@
+{
+  "name": "@yikart/mongodb",
+  "type": "commonjs",
+  "version": "0.0.2",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/mongoose": "^11.0.3",
+    "@yikart/common": "workspace:*",
+    "dayjs": "^1.11.14",
+    "lodash": "^4.17.21",
+    "mongodb": "~6.20.0",
+    "mongoose": "^8.18.0",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.20"
+  }
+}

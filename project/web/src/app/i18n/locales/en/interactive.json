@@ -1,0 +1,53 @@
+{
+  "title": "Interactive Management",
+  "messages": {
+    "pleaseLoginFirst": "Please login first",
+    "commentSuccess": "Comment posted successfully",
+    "commentFailed": "Failed to post comment, please try again",
+    "replySuccess": "Reply posted successfully",
+    "replyFailed": "Failed to post reply, please try again",
+    "aiReplyTaskCreated": "AI reply task created successfully",
+    "aiReplyTaskFailed": "Failed to create AI reply task"
+  },
+  "ui": {
+    "selectChannel": "Please select a channel for interaction on the left",
+    "selectChannelDesc": "After selecting an account, the latest posts from that channel will be automatically loaded with comment interaction features.",
+    "loadMore": "Load More",
+    "noMorePosts": "No more posts",
+    "loading": "Loading...",
+    "sending": "Sending...",
+    "send": "Send",
+    "reply": "Reply",
+    "expandReplies": "Expand Replies",
+    "collapseReplies": "Collapse Replies",
+    "loadMoreReplies": "Load More Replies",
+    "loadMoreComments": "Load More Comments",
+    "commentPlaceholder": "Enter comment...",
+    "replyPlaceholder": "Reply to @",
+    "noImage": "No Image",
+    "videoPreview": "Video Preview",
+    "aiReply": "AI Reply",
+    "aiReplyModalTitle": "AI Smart Reply",
+    "selectAiModel": "Select AI Model:",
+    "aiModelPlaceholder": "Please select an AI model",
+    "replyPrompt": "Reply Prompt:",
+    "promptPlaceholder": "Enter AI reply prompt, e.g.: Please help me generate a friendly and professional reply",
+    "cancel": "Cancel",
+    "creating": "Creating...",
+    "createAiReplyTask": "Create AI Reply Task"
+  },
+  "stats": {
+    "likes": "Likes",
+    "comments": "Comments",
+    "views": "Views", 
+    "shares": "Shares",
+    "clicks": "Clicks",
+    "impressions": "Impressions",
+    "favorites": "Favorites"
+  },
+  "mediaTypes": {
+    "video": "Video",
+    "image": "Image",
+    "article": "Article"
+  }
+}

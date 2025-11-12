@@ -1,0 +1,27 @@
+{
+  "name": "@yikart/ali-green",
+  "type": "commonjs",
+  "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@alicloud/credentials": "^2.4.4",
+    "@alicloud/green20220302": "^2.22.1",
+    "@alicloud/openapi-client": "^0.4.15",
+    "@alicloud/tea-util": "^1.4.10",
+    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/common": "^11.0.0",
+    "@yikart/common": "workspace:*",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  }
+}

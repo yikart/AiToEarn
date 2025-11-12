@@ -1,0 +1,44 @@
+{
+  "name": "@yikart/common",
+  "type": "commonjs",
+  "version": "0.0.10",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/microservices": "^11.1.6",
+    "express": "5.1.0",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-cloudwatch-logs": "^3.864.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/microservices": "^11.1.6",
+    "@nestjs/platform-express": "^11.0.0",
+    "@nestjs/swagger": "^11.2.0",
+    "@scalar/nestjs-api-reference": "^0.5.12",
+    "accept-language-parser": "^1.5.0",
+    "art-template": "^4.13.4",
+    "commander": "^14.0.0",
+    "nanoid": "^5.1.5",
+    "nest-typed-config": "^2.10.1",
+    "nestjs-pino": "^4.4.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.1.1"
+  },
+  "devDependencies": {
+    "@types/accept-language-parser": "^1.5.8",
+    "@types/express": "^5.0.3"
+  }
+}

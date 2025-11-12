@@ -1,0 +1,24 @@
+{
+  "name": "@yikart/mail",
+  "type": "commonjs",
+  "version": "0.0.2",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
+    "@nestjs/common": "^11.0.0",
+    "@yikart/common": "workspace:*",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "ioredis": "^5.7.0"
+  }
+}
