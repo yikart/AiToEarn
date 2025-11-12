@@ -105,3 +105,20 @@ export const apiGetUserTaskDetail = (id: string) => {
 export const apiSubmitTask = (userTaskId: string, submissionUrl: string) => {
   return http.post<any>(`task/submit`, { userTaskId, submissionUrl });
 };
+
+/**
+ * 获取未读任务数量
+ * @returns 未读任务数量
+ */
+export const apiGetNotViewCount = () => {
+  return http.put<{ count: number }>('task/opportunity/getNotViewCount');
+};
+
+/**
+ * 标记任务为已读
+ * @param opportunityId 任务机会ID
+ * @returns 
+ */
+export const apiMarkTaskAsViewed = (opportunityId: string) => {
+  return http.put<any>(`task/opportunity/doView/${opportunityId}`);
+};

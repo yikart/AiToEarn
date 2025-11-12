@@ -97,7 +97,7 @@ export interface TaskResponse {
 
 // 获取任务详情
 export const getTaskDetail = (opportunityId: string) => {
-  return http.get<TaskResponse>(`task/opportunity/info/${opportunityId}`);
+  return http.get<TaskResponse>(`task/task/opportunity/info/${opportunityId}`);
 };
 
 // 接受任务
