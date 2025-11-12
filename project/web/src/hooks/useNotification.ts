@@ -35,7 +35,7 @@ export const useNotification = () => {
     // 每10秒获取一次未读数量
     const interval = setInterval(() => {
       fetchUnreadCount();
-    }, 30000);
+    }, 60000);
 
     return () => {
       clearInterval(interval);
