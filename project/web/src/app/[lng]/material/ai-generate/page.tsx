@@ -755,8 +755,8 @@ export default function AIGeneratePage() {
         }
       }
       const res: any = await generateVideo(data);
-      if (res.data?.task_id) { setVideoTaskId(res.data.task_id); setVideoStatus(res.data.status); message.success(t("aiGenerate.taskSubmittedSuccess")); pollVideoTaskStatus(res.data.task_id); }
-      else { setVideoStatus(""); }
+      if (res?.data?.task_id) { setVideoTaskId(res.data.task_id); setVideoStatus(res.data.status); message.success(t("aiGenerate.taskSubmittedSuccess")); pollVideoTaskStatus(res.data.task_id); }
+      else { setVipModalOpen(true); setVideoStatus(""); }
     } catch { setVideoStatus(""); } finally { setLoadingVideo(false); }
   };
 
