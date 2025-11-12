@@ -22,12 +22,13 @@ export interface IDraftSelectionModalRef {}
 export interface IDraftSelectionModalProps {
   draftModalOpen: boolean;
   onCancel: () => void;
+  onSelectDraft?: (draft: any) => void; // 新增：选择草稿后的回调函数
 }
 
 const DraftSelectionModal = memo(
   forwardRef(
     (
-      { draftModalOpen, onCancel }: IDraftSelectionModalProps,
+      { draftModalOpen, onCancel, onSelectDraft }: IDraftSelectionModalProps,
       ref: ForwardedRef<IDraftSelectionModalRef>,
     ) => {
       const {
@@ -116,6 +117,15 @@ const DraftSelectionModal = memo(
       // 选择草稿后填充参数
       const applyDraft = useCallback(
         (draft: any) => {
+          // 如果有自定义回调，优先使用自定义回调
+          if (onSelectDraft) {
+            onSelectDraft(draft);
+            onCancel();
+            message.success(t("draft.selectDraftSuccess"));
+            return;
+          }
+
+          // 否则使用默认的填充逻辑
           const nextParams: any = {};
           if (draft.title) nextParams.title = draft.title;
           if (draft.desc) nextParams.des = draft.desc;
@@ -164,7 +174,7 @@ const DraftSelectionModal = memo(
           onCancel();
           message.success(t("draft.selectDraftSuccess"));
         },
-        [setAccountAllParams, setOnePubParams, step, expandedPubItem],
+        [setAccountAllParams, setOnePubParams, step, expandedPubItem, onSelectDraft, onCancel, t],
       );
 
       useEffect(() => {
@@ -192,6 +202,7 @@ const DraftSelectionModal = memo(
               : t("draft.selectDraftGroup")
           }
           width={720}
+          zIndex={20}
         >
           {!selectedGroup ? (
             <div>

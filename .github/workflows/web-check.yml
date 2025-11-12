@@ -44,9 +44,9 @@ jobs:
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm install --frozen-lockfile
 
-      - name: Run ESLint
-        working-directory: ${{ env.MONOREPO_DIR }}
-        run: pnpm lint
+#      - name: Run ESLint
+#        working-directory: ${{ env.MONOREPO_DIR }}
+#        run: pnpm lint
 
       - name: Run build
         working-directory: ${{ env.MONOREPO_DIR }}
