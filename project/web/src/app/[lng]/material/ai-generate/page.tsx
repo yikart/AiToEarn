@@ -749,8 +749,8 @@ export default function AIGeneratePage() {
       }
       const res: any = await generateVideo(data);
       if (res.data?.task_id) { setVideoTaskId(res.data.task_id); setVideoStatus(res.data.status); message.success(t("aiGenerate.taskSubmittedSuccess")); pollVideoTaskStatus(res.data.task_id); }
-      else { message.error(t("aiGenerate.videoGenerationFailed")); setVideoStatus(""); }
-    } catch { message.error(t("aiGenerate.videoGenerationFailed")); setVideoStatus(""); } finally { setLoadingVideo(false); }
+      else { setVideoStatus(""); }
+    } catch { setVideoStatus(""); } finally { setLoadingVideo(false); }
   };
 
   const pollVideoTaskStatus = async (taskId: string) => {

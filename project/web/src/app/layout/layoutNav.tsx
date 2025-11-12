@@ -10,17 +10,20 @@ import Link from "next/link";
 import { MenuFoldOutlined, RightOutlined, UpOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
-import { Drawer, Menu } from "antd";
+import { Drawer, Menu, Badge } from "antd";
 import { useRouter, useSelectedLayoutSegments } from "next/navigation";
 import { useTransClient } from "@/app/i18n/client";
 import { useGetClientLng } from "@/hooks/useSystem";
+import { apiGetNotViewCount } from "@/api/task";
+import { useUserStore } from "@/store/user";
 
 /**
  *
  * @param child
  * @param iconLoca 0=上，1=右
+ * @param unreadCount 未读任务数量
  */
-function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
+function getNameTag(child: IRouterDataItem, iconLoca: number = 1, unreadCount?: number) {
   const { t } = useTransClient("route");
   const lng = useGetClientLng();
   const path = child.path || "/";
@@ -28,15 +31,31 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
   // 确保路径包含语言前缀
   const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`;
 
+  // 判断是否是任务中心
+  const isTasksRoute = child.path === '/tasks';
+  const showBadge = isTasksRoute && unreadCount && unreadCount > 0;
+
   return (
     <>
       {!child.children ? (
         <Link href={fullPath} target={path[0] === "/" ? "_self" : "_blank"}>
-          {t(child.translationKey as any)}
+          {showBadge ? (
+            <Badge count={unreadCount} offset={[10, 0]} style={{ backgroundColor: '#ff4d4f' }}>
+              <span>{t(child.translationKey as any)}</span>
+            </Badge>
+          ) : (
+            t(child.translationKey as any)
+          )}
         </Link>
       ) : (
         <span>
-          {t(child.translationKey as any)}
+          {showBadge ? (
+            <Badge count={unreadCount} offset={[10, 0]} style={{ backgroundColor: '#ff4d4f' }}>
+              {/* <span>{t(child.translationKey as any)}</span> */}
+            </Badge>
+          ) : (
+            t(child.translationKey as any)
+          )}
           {child.children &&
             (iconLoca === 0 ? <UpOutlined /> : <RightOutlined />)}
         </span>
@@ -48,16 +67,17 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1) {
 /**
  * 递归级联
  * @param child
+ * @param unreadCount 未读任务数量
  */
-function RecursionNav({ child }: { child: IRouterDataItem }) {
+function RecursionNav({ child, unreadCount }: { child: IRouterDataItem; unreadCount?: number }) {
   return (
     child.children && (
       <ul className={styles["recursionNav"]}>
         {child.children.map((v) => {
           return (
             <li key={v.name}>
-              {getNameTag(v)}
-              {v.children && <RecursionNav child={v} />}
+              {getNameTag(v, 1, unreadCount)}
+              {v.children && <RecursionNav child={v} unreadCount={unreadCount} />}
             </li>
           );
         })}
@@ -87,13 +107,16 @@ function ParcelTag({
  * 二级导航
  * @param child
  * @param visible
+ * @param unreadCount 未读任务数量
  */
 function ChildNav({
   child,
   visible,
+  unreadCount,
 }: {
   child: IRouterDataItem;
   visible: boolean;
+  unreadCount?: number;
 }) {
   const elRef = useRef<HTMLUListElement | null>(null);
   const [height, setHeight] = useState("auto");
@@ -161,7 +184,7 @@ function ChildNav({
                   {v1.children && <RightOutlined />}
                 </ParcelTag>
               </div>
-              <RecursionNav child={v1} />
+              <RecursionNav child={v1} unreadCount={unreadCount} />
             </li>
           );
         })}
@@ -172,9 +195,33 @@ function ChildNav({
 
 function NavPC() {
   const [activeNav, setActiveNav] = useState("");
+  const [unreadCount, setUnreadCount] = useState(0);
   const timer = useRef<NodeJS.Timeout>();
   const route = useSelectedLayoutSegments();
   const { t } = useTransClient("route");
+  const token = useUserStore((state) => state.token);
+
+  // 获取未读任务数量
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (!token) return;
+      try {
+        const response: any = await apiGetNotViewCount();
+        if (response) {
+          setUnreadCount(response.data || 0);
+        }
+      } catch (error) {
+        console.error("获取未读任务数量失败:", error);
+      }
+    };
+
+    fetchUnreadCount();
+    
+    // 每30秒刷新一次未读数量
+    const interval = setInterval(fetchUnreadCount, 30000);
+    
+    return () => clearInterval(interval);
+  }, [token]);
 
   let currRouter = "/";
   if (route.length === 1) {
@@ -205,11 +252,12 @@ function NavPC() {
               }, 300);
             }}
           >
-            {getNameTag(v1, 0)}
+            {getNameTag(v1, 0, unreadCount)}
             <ChildNav
               key={v1.name}
               child={v1}
               visible={activeNav === v1.name}
+              unreadCount={unreadCount}
             />
           </li>
         );
@@ -220,18 +268,54 @@ function NavPC() {
 
 function NavPE() {
   const [open, setOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const router = useRouter();
   const { t } = useTransClient("route");
   const lng = useGetClientLng();
+  const token = useUserStore((state) => state.token);
 
-  const translatedMenuItems = routerData.map((item) => ({
-    key: item.path || item.name,
-    label: t(item.translationKey as any),
-    children: item.children?.map((child) => ({
-      key: child.path || child.name,
-      label: t(child.translationKey as any),
-    })),
-  }));
+  // 获取未读任务数量
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      if (!token) return;
+      try {
+        const response: any = await apiGetNotViewCount();
+        if (response && response.code === 0 && response.data) {
+          setUnreadCount(response.data || 0);
+        }
+      } catch (error) {
+        console.error("获取未读任务数量失败:", error);
+      }
+    };
+
+    // fetchUnreadCount();
+    
+    // 每30秒刷新一次未读数量
+    const interval = setInterval(fetchUnreadCount, 50000);
+    
+    return () => clearInterval(interval);
+  }, [token]);
+
+  const translatedMenuItems = routerData.map((item) => {
+    // 判断是否是任务中心，需要显示徽章
+    const isTasksRoute = item.path === '/tasks';
+    const showBadge = isTasksRoute && unreadCount > 0;
+
+    return {
+      key: item.path || item.name,
+      label: showBadge ? (
+        <Badge count={unreadCount} style={{ backgroundColor: '#ff4d4f' }}>
+          <span style={{ marginRight: '20px' }}>{t(item.translationKey as any)}</span>
+        </Badge>
+      ) : (
+        t(item.translationKey as any)
+      ),
+      children: item.children?.map((child) => ({
+        key: child.path || child.name,
+        label: t(child.translationKey as any),
+      })),
+    };
+  });
 
   const handleMenuClick = (e: { key: string }) => {
     // 确保使用当前语言前缀

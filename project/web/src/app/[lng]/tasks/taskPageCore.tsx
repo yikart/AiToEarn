@@ -11,6 +11,7 @@ import {
   apiGetUserTaskDetail, 
   apiAcceptTask, 
   apiSubmitTask,
+  apiMarkTaskAsViewed,
   TaskOpportunity,
   UserTask
 } from "@/api/task";
@@ -23,10 +24,12 @@ import { getAccountListApi } from "@/api/account";
 import { SocialAccount } from "@/api/types/account.type";
 import { getTaskDetail, acceptTask, submitTask } from "@/api/notification";
 import { getDays, getUtcDays } from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
-import { Steps } from "antd";
+import { Steps, Radio } from "antd";
 import http from "@/utils/request";
 import { useRouter, useParams } from "next/navigation";
 import styles from "./taskPageCore.module.scss";
+import { apiGetMaterialList } from "@/api/material";
+import DraftSelectionModal from "@/components/PublishDialog/compoents/DraftSelectionModal";
 
 const { TabPane } = Tabs;
 
@@ -120,6 +123,20 @@ export default function TaskPageCore() {
   const [accountSelectVisible, setAccountSelectVisible] = useState(false);
   const [availableAccounts, setAvailableAccounts] = useState<SocialAccount[]>([]);
   const [selectedAccount, setSelectedAccount] = useState<SocialAccount | null>(null);
+  
+  // 素材列表状态
+  const [materialList, setMaterialList] = useState<any[]>([]);
+  const [materialLoading, setMaterialLoading] = useState(false);
+  const [materialPagination, setMaterialPagination] = useState({
+    current: 1,
+    pageSize: 9,
+    total: 0
+  });
+  
+  // 草稿选择状态
+  const [draftSource, setDraftSource] = useState<'task' | 'own'>('task'); // 'task': 任务草稿, 'own': 自己的草稿
+  const [selectedMaterial, setSelectedMaterial] = useState<any>(null); // 选中的任务素材
+  const [draftModalOpen, setDraftModalOpen] = useState(false); // 自己草稿选择弹窗
   const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([]);
 
   // 获取待接受任务列表
@@ -530,6 +547,31 @@ export default function TaskPageCore() {
   };
 
 
+  // 获取素材列表
+  const fetchMaterialList = async (groupId: string, page: number = 1, pageSize: number = 9) => {
+    try {
+      setMaterialLoading(true);
+      const response: any = await apiGetMaterialList(groupId, page, pageSize);
+      if (response && response.data && response.code === 0) {
+        setMaterialList(response.data.list || []);
+        setMaterialPagination({
+          current: page,
+          pageSize: pageSize,
+          total: response.data.total || 0
+        });
+        // 默认选中第一个素材
+        if (response.data.list && response.data.list.length > 0 && !selectedMaterial) {
+          setSelectedMaterial(response.data.list[0]);
+        }
+      }
+    } catch (error) {
+      console.error("获取素材列表失败:", error);
+      message.error("获取素材列表失败");
+    } finally {
+      setMaterialLoading(false);
+    }
+  };
+  
   // 查看任务详情
   const handleViewTaskDetail = async (opportunityId: string) => {
     try {
@@ -538,6 +580,25 @@ export default function TaskPageCore() {
       if (response && response.data && response.code === 0) {
         setTaskDetail(response.data);
         setTaskDetailModalVisible(true);
+        
+        // 重置草稿选择状态
+        setDraftSource('task');
+        setSelectedMaterial(null);
+        
+        // 如果有 materialGroupId，获取素材列表
+        if (response.data.materialGroupId) {
+          fetchMaterialList(response.data.materialGroupId, 1, 9);
+        }
+
+        // 标记任务为已读
+        try {
+          await apiMarkTaskAsViewed(opportunityId);
+          // 刷新任务列表以更新未读状态
+          fetchPendingTasks(pendingPagination.current, pendingPagination.pageSize);
+        } catch (error) {
+          console.error("标记任务为已读失败:", error);
+          // 标记失败不影响主流程，不显示错误提示
+        }
       } else {
         message.error(t('messages.getTaskDetailFailed'));
       }
@@ -574,6 +635,12 @@ export default function TaskPageCore() {
 
     if (!task) return;
     
+    // 验证是否选择了素材
+    if (!selectedMaterial) {
+      message.error("请选择一个草稿素材");
+      return;
+    }
+    
     // 关闭详情弹窗
     setTaskDetailModalVisible(false);
     
@@ -608,39 +675,29 @@ export default function TaskPageCore() {
         // 第二步：发布任务
         const publishAccount = account || getAccountById(task.accountId);
         if (publishAccount) {
-          // 处理素材链接，确保使用完整链接
-          const processedMaterials = task.materials?.map((material: any) => ({
-            ...material,
-            coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
-            mediaList: material.mediaList?.map((media: any) => ({
-              ...media,
-              url: getOssUrl(media.url),
-              coverUrl: media.coverUrl ? getOssUrl(media.coverUrl) : undefined
-            }))
-          }));
-
-   
+          // 使用选中的素材
+          const material = selectedMaterial;
+          
+          // 处理媒体内容
+          const videos = material.mediaList?.filter((m: any) => m.type === 'video') || [];
+          const images = material.mediaList?.filter((m: any) => m.type !== 'video') || [];
 
           const publishData = {
             flowId: publishAccount.uid, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
             accountId: publishAccount.id,
-            title: task.title,
-            desc: task.description,
-            type: task.type as any, // 转换为PubType
+            title: material.title || task.title,
+            desc: material.desc || task.description,
+            type: "article" as any, // 固定为 article 类型
             // 处理素材数据
-            videoUrl: processedMaterials?.[0]?.mediaList?.[0]?.type === 'video' ? 
-                     getOssUrl(processedMaterials[0].mediaList[0].url) : undefined,
-            coverUrl: processedMaterials?.[0]?.coverUrl,
-            imgUrlList: processedMaterials?.flatMap((material: any) => 
-              material.mediaList?.filter((media: any) => media.type !== 'video')
-                .map((media: any) => getOssUrl(media.url)) || []
-            ),
+            videoUrl: videos.length > 0 ? getOssUrl(videos[0].url) : undefined,
+            coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
+            imgUrlList: images.map((img: any) => getOssUrl(img.url)),
             option: {},
             topics: [],
             publishTime: getUtcDays(getDays().add(6, "minute")).format(),
             userTaskId: response.data.id,
-            taskMaterialId: task.materialIds[0]
+            taskMaterialId: material._id // 使用选中素材的ID
           };
 
           const publishResponse: any = await apiCreatePublish(publishData);
@@ -664,7 +721,7 @@ export default function TaskPageCore() {
 
             // 第三步：提交任务
             const userTaskId = response.data.id;
-            const submitResponse: any = await submitTask(userTaskId, task.materialIds[0]);
+            const submitResponse: any = await submitTask(userTaskId, material._id);
             
             if (submitResponse && submitResponse.code === 0) {
               // 更新进度：第三步完成，开始第四步
@@ -924,8 +981,23 @@ export default function TaskPageCore() {
                     <Card 
                       key={task.id} 
                       className={styles.taskCard}
-                      style={{ marginBottom: 0 }}
+                      style={{ marginBottom: 0, position: 'relative' }}
                     >
+                      {/* 未读红点标识 */}
+                      {!task.isView && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '8px',
+                          right: '8px',
+                          width: '8px',
+                          height: '8px',
+                          backgroundColor: '#ff4d4f',
+                          borderRadius: '50%',
+                          zIndex: 1,
+                          boxShadow: '0 0 0 2px #fff'
+                        }} />
+                      )}
+                      
                       <div className={styles.taskHeader}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           {/* 显示多个平台图标 */}
@@ -955,10 +1027,15 @@ export default function TaskPageCore() {
                           <span><strong>{t('taskInfo.endTime' as any)}：</strong>{formatAbsoluteTime(task.expiredAt)}</span>
                         </div>
                         
-                        <div style={{ marginBottom: '12px' }}>
+                        {task.reward > 0 && <div style={{ marginBottom: '12px' }}>
                           <strong>{t('taskInfo.reward' as any)}：</strong>
                           <span style={{ color: '#f50', fontWeight: 'bold' }}>¥ {task.reward/100}</span>
-                        </div>
+                        </div>}
+
+                        {task.cpmReward > 0 && <div style={{ marginBottom: '12px' }}>
+                          <strong>{t('taskInfo.CPM' as any)}：</strong>
+                          <span style={{ color: '#f50', fontWeight: 'bold' }}>¥ {task.cpmReward/100}</span>
+                        </div>} 
                         
                         
                         {/* 发布账号信息 */}
@@ -1189,12 +1266,13 @@ export default function TaskPageCore() {
         onCancel={() => {
           setTaskDetailModalVisible(false);
           setTaskDetail(null);
+          setMaterialList([]);
+          setSelectedMaterial(null);
+          setDraftSource('task');
         }}
-        footer={[
-          
-        ]}
-        width={800}
-        zIndex={2000}
+        footer={null}
+        width={1200}
+        zIndex={15}
         styles={{
           header: {
             borderBottom: '1px solid #f0f0f0',
@@ -1208,293 +1286,318 @@ export default function TaskPageCore() {
         <Spin spinning={taskDetailLoading}>
           {taskDetail ? (
             <div>
-              {/* 视频发布风格布局 */}
+              {/* 任务基本信息 */}
               <div style={{ 
-                display: 'flex', 
-                gap: '24px',
-                marginBottom: '24px'
+                marginBottom: '24px',
+                padding: '16px',
+                backgroundColor: '#f8f9fa',
+                borderRadius: '8px',
+                border: '1px solid #e9ecef'
               }}>
-                {/* 左侧：视频/媒体内容 */}
-                <div style={{ flex: '0 0 400px' }}>
-                  {taskDetail.materials && taskDetail.materials.length > 0 && (
-                    <div style={{ 
-                      border: '1px solid #e8e8e8', 
-                      borderRadius: '12px', 
-                      overflow: 'hidden',
-                      backgroundColor: '#000'
-                    }}>
-                      {taskDetail.materials[0].mediaList && taskDetail.materials[0].mediaList.length > 0 && (
-                        <div style={{ position: 'relative', cursor: 'pointer' }}>
-                          {taskDetail.materials[0].mediaList[0].type === 'video' ? (
-                            <div 
-                              style={{
-                                position: 'relative',
-                                overflow: 'hidden'
-                              }}
-                              onClick={() => handleVideoCoverClick(taskDetail.materials[0].mediaList[0], taskDetail.title)}
-                            >
-                              {/* 视频封面图片 */}
-                              <img
-                                src={taskDetail.materials[0].coverUrl ? getOssUrl(taskDetail.materials[0].coverUrl) : getOssUrl(taskDetail.materials[0].mediaList[0].url)}
-                                alt="video cover"
-                                style={{
-                                  width: '100%',
-                                  height: 'auto',
-                                  display: 'block'
-                                }}
-                              />
-                              {/* 播放按钮 */}
-                              <div style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                color: 'white',
-                                fontSize: '24px',
-                                background: 'rgba(0,0,0,0.7)',
-                                borderRadius: '50%',
-                                width: '60px',
-                                height: '60px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease'
-                              }}>
-                                ▶
-                              </div>
-                            </div>
-                          ) : (
-                            <img
-                              src={getOssUrl(taskDetail.materials[0].mediaList[0].url)}
-                              alt="media"
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                                display: 'block'
-                              }}
-                              onClick={() => handleMediaClick(taskDetail.materials[0].mediaList[0], taskDetail.title)}
-                            />
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  )}
+                <h2 style={{ 
+                  margin: '0 0 12px 0', 
+                  fontSize: '18px', 
+                  fontWeight: '600',
+                  color: '#1a1a1a'
+                }}>
+                  {taskDetail.title}
+                </h2>
+                
+                <div style={{ 
+                  fontSize: '14px', 
+                  lineHeight: '1.6',
+                  color: '#495057',
+                  marginBottom: '12px'
+                }}>
+                  <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
                 </div>
 
-                {/* 右侧：标题和描述 */}
-                <div style={{ flex: '1', minWidth: '300px' }}>
-                  {/* 标题区域 */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <h2 style={{ 
-                      margin: '0 0 8px 0', 
-                      fontSize: '20px', 
-                      fontWeight: '600',
-                      lineHeight: '1.4',
-                      color: '#1a1a1a'
-                    }}>
-                      {taskDetail.title}
-                    </h2>
-                    
-                    
-                    {/* 发布账号信息 */}
-                    {taskDetail.accountId && (() => {
-                      const publishAccount = getAccountById(taskDetail.accountId);
-                      return publishAccount ? (
-                        <div style={{ 
-                          display: 'flex', 
-                          alignItems: 'center', 
-                          gap: '8px',
-                          marginBottom: '12px'
-                        }}>
-                          <img
-                            src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                            alt="账号头像"
-                            style={{
-                              width: '32px',
-                              height: '32px',
-                              borderRadius: '50%',
-                              objectFit: 'cover'
-                            }}
-                            onError={(e) => {
-                              e.currentTarget.src = '/default-avatar.png';
-                            }}
-                          />
-                          <div>
-                            <div style={{ 
-                              fontSize: '14px', 
-                              fontWeight: '500',
-                              color: '#1a1a1a'
-                            }}>
-                              {publishAccount.nickname}
-                            </div>
-                            <div style={{ 
-                              fontSize: '12px', 
-                              color: '#666'
-                            }}>
-                              {getPlatformName(publishAccount.type)}
-                            </div>
-                          </div>
+                {/* 任务信息卡片 */}
+                <Row gutter={12}>
+                  {taskDetail.reward > 0 && (
+                    <Col span={8}>
+                      <div style={{ 
+                        padding: '12px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffeaa7',
+                        borderRadius: '8px',
+                        textAlign: 'center'
+                      }}>
+                        <div style={{ fontSize: '12px', color: '#856404', marginBottom: '4px' }}>
+                          {t('taskInfo.reward' as any)}
                         </div>
-                      ) : null;
-                    })()}
-                  </div>
-
-                  {/* 描述区域 */}
-                  <div style={{ 
-                    marginBottom: '16px',
-                    padding: '16px',
-                    backgroundColor: '#f8f9fa',
-                    borderRadius: '8px',
-                    border: '1px solid #e9ecef'
-                  }}>
-                    <div style={{ 
-                      fontSize: '14px', 
-                      lineHeight: '1.6',
-                      color: '#495057'
-                    }}>
-                      <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
-                    </div>
-                  </div>
-
-                  {/* 任务信息卡片 */}
-                  <div style={{ 
-                    display: 'flex', 
-                    gap: '12px',
-                    marginBottom: '16px'
-                  }}>
-                    <div style={{ 
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#fff3cd',
-                      border: '1px solid #ffeaa7',
-                      borderRadius: '8px',
-                      textAlign: 'center'
-                    }}>
-                      <div style={{ 
-                        fontSize: '12px', 
-                        color: '#856404',
-                        marginBottom: '4px'
-                      }}>
-                        {t('taskInfo.reward' as any)}
+                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#d63031' }}>
+                          ¥ {taskDetail.reward/100}
+                        </div>
                       </div>
+                    </Col>
+                  )}
+                  
+                  {taskDetail.cpmReward > 0 && (
+                    <Col span={8}>
                       <div style={{ 
-                        fontSize: '18px', 
-                        fontWeight: 'bold',
-                        color: '#d63031'
+                        padding: '12px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffeaa7',
+                        borderRadius: '8px',
+                        textAlign: 'center'
                       }}>
-                        ¥ {taskDetail.reward/100}
+                        <div style={{ fontSize: '12px', color: '#856404', marginBottom: '4px' }}>
+                          {t('taskInfo.CPM' as any)}
+                        </div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#d63031' }}>
+                          ¥ {taskDetail.cpmReward/100}
+                        </div>
                       </div>
-                    </div>
-                    
+                    </Col>
+                  )}
+                  
+                  <Col span={8}>
                     <div style={{ 
-                      flex: '1',
                       padding: '12px',
                       backgroundColor: '#d1ecf1',
                       border: '1px solid #bee5eb',
                       borderRadius: '8px',
                       textAlign: 'center'
                     }}>
-                      <div style={{ 
-                        fontSize: '12px', 
-                        color: '#0c5460',
-                        marginBottom: '4px'
-                      }}>
+                      <div style={{ fontSize: '12px', color: '#0c5460', marginBottom: '4px' }}>
                         {t('taskInfo.type' as any)}
                       </div>
-                      <div style={{ 
-                        fontSize: '14px', 
-                        fontWeight: '500',
-                        color: '#0c5460'
-                      }}>
+                      <div style={{ fontSize: '14px', fontWeight: '500', color: '#0c5460' }}>
                         {getTaskTypeName(taskDetail.type)}
                       </div>
                     </div>
-                  </div>
-
-                  {/* 支持的平台类型 */}
-                  {taskDetail.accountTypes && taskDetail.accountTypes.length > 0 && (
-                      <div style={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: '8px',
-                        marginBottom: '12px'
-                      }}>
-                        <span style={{ fontSize: '14px', color: '#666' }}>支持平台：</span>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          {taskDetail.accountTypes.map((platformType: string) => (
-                            <img 
-                              key={platformType}
-                              src={getPlatformIcon(platformType)} 
-                              alt={platformType}
-                              style={{ width: '25px', height: '25px' }}
-                            />
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                </div>
+                  </Col>
+                </Row>
               </div>
-              
-              {/* 底部状态栏 */}
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                padding: '16px 0',
-                borderTop: '1px solid #e8e8e8',
-                marginTop: '16px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Tag 
-                    color={taskDetail.status === 'active' ? 'green' : 'red'}
-                    style={{ 
-                      fontSize: '12px',
-                      padding: '4px 8px'
-                    }}
-                  >
-                    {taskDetail.status === 'active' ? t('taskStatus.active' as any) : t('taskStatus.inactive' as any)}
-                  </Tag>
-                  <span style={{ 
-                    fontSize: '12px', 
-                    color: '#666'
-                  }}>
-                    {taskDetail.status === 'active' ? t('messages.taskInProgress' as any) : t('messages.taskEnded' as any)}
-                  </span>
-                </div>
-                
+
+              {/* 草稿选择区域 */}
+              <div style={{ marginBottom: '24px' }}>
                 <div style={{ 
-                  fontSize: '12px', 
-                  color: '#999'
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                  marginBottom: '16px'
                 }}>
-                  {taskDetail.currentRecruits && taskDetail.maxRecruits && (
-                    <span>
-                      {t('messages.acceptedCount' as any, { current: taskDetail.currentRecruits, max: taskDetail.maxRecruits })}
-                    </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <span style={{ fontSize: '16px', fontWeight: '600' }}>选择草稿：</span>
+                    <Radio.Group 
+                      value={draftSource} 
+                      onChange={(e) => {
+                        setDraftSource(e.target.value);
+                        if (e.target.value === 'own') {
+                          setDraftModalOpen(true);
+                        }
+                      }}
+                    >
+                      <Radio value="task">任务草稿</Radio>
+                      <Radio value="own">我的草稿</Radio>
+                    </Radio.Group>
+                  </div>
+                  {draftSource === 'own' && selectedMaterial && (
+                    <Button 
+                      type="link" 
+                      onClick={() => setDraftModalOpen(true)}
+                    >
+                      重新选择
+                    </Button>
                   )}
                 </div>
+
+                {/* 任务草稿列表 */}
+                {draftSource === 'task' && (
+                  <Spin spinning={materialLoading}>
+                    {materialList.length > 0 ? (
+                      <>
+                        <div style={{ 
+                          display: 'grid', 
+                          gridTemplateColumns: 'repeat(3, 1fr)', 
+                          gap: '16px',
+                          marginBottom: '16px'
+                        }}>
+                          {materialList.map((material: any) => (
+                            <div
+                              key={material._id}
+                              onClick={() => setSelectedMaterial(material)}
+                              style={{
+                                border: selectedMaterial?._id === material._id ? '2px solid #1890ff' : '1px solid #e8e8e8',
+                                borderRadius: '8px',
+                                overflow: 'hidden',
+                                cursor: 'pointer',
+                                transition: 'all 0.3s ease',
+                                backgroundColor: selectedMaterial?._id === material._id ? '#e6f7ff' : '#fff'
+                              }}
+                            >
+                              {/* 素材封面 */}
+                              <div style={{ 
+                                position: 'relative', 
+                                paddingTop: '56.25%', 
+                                background: '#f0f0f0' 
+                              }}>
+                                {material.coverUrl && (
+                                  <img
+                                    src={getOssUrl(material.coverUrl)}
+                                    alt={material.title}
+                                    style={{
+                                      position: 'absolute',
+                                      top: 0,
+                                      left: 0,
+                                      width: '100%',
+                                      height: '100%',
+                                      objectFit: 'cover'
+                                    }}
+                                  />
+                                )}
+                                {material.mediaList && material.mediaList[0]?.type === 'video' && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    color: 'white',
+                                    fontSize: '32px',
+                                    textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                                  }}>
+                                    ▶
+                                  </div>
+                                )}
+                                {selectedMaterial?._id === material._id && (
+                                  <div style={{
+                                    position: 'absolute',
+                                    top: '8px',
+                                    right: '8px',
+                                    width: '24px',
+                                    height: '24px',
+                                    borderRadius: '50%',
+                                    backgroundColor: '#1890ff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'white',
+                                    fontSize: '14px'
+                                  }}>
+                                    ✓
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* 素材信息 */}
+                              <div style={{ padding: '12px' }}>
+                                <div style={{ 
+                                  fontSize: '14px', 
+                                  fontWeight: '500',
+                                  marginBottom: '4px',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}>
+                                  {material.title || '无标题'}
+                                </div>
+                                <div style={{ 
+                                  fontSize: '12px', 
+                                  color: '#999',
+                                  overflow: 'hidden',
+                                  textOverflow: 'ellipsis',
+                                  whiteSpace: 'nowrap'
+                                }}>
+                                  {material.desc || '无描述'}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        
+                        {/* 分页 */}
+                        {materialPagination.total > materialPagination.pageSize && (
+                          <div style={{ textAlign: 'center' }}>
+                            <Pagination
+                              current={materialPagination.current}
+                              pageSize={materialPagination.pageSize}
+                              total={materialPagination.total}
+                              onChange={(page, pageSize) => {
+                                if (taskDetail.materialGroupId) {
+                                  fetchMaterialList(taskDetail.materialGroupId, page, pageSize);
+                                }
+                              }}
+                              showSizeChanger={false}
+                            />
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <Empty description="暂无草稿素材" />
+                    )}
+                  </Spin>
+                )}
+
+                {/* 我的草稿选择结果 */}
+                {draftSource === 'own' && selectedMaterial && (
+                  <div style={{
+                    border: '2px solid #1890ff',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    backgroundColor: '#e6f7ff',
+                    padding: '16px'
+                  }}>
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                      {selectedMaterial.coverUrl && (
+                        <div style={{ 
+                          width: '120px', 
+                          height: '120px', 
+                          borderRadius: '8px',
+                          overflow: 'hidden',
+                          flexShrink: 0
+                        }}>
+                          <img
+                            src={getOssUrl(selectedMaterial.coverUrl)}
+                            alt={selectedMaterial.title}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                          />
+                        </div>
+                      )}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
+                          {selectedMaterial.title || '无标题'}
+                        </div>
+                        <div style={{ fontSize: '14px', color: '#666' }}>
+                          {selectedMaterial.desc || '无描述'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {draftSource === 'own' && !selectedMaterial && (
+                  <Empty description="请选择一个草稿" />
+                )}
               </div>
               
-              {/* 根据任务状态显示不同按钮 */}
-              {(() => {
-                // 如果是待接受任务，显示接受任务按钮
-                if (taskDetail.status === 'active' && taskDetail.currentRecruits < taskDetail.maxRecruits) {
-                  return (
-                    <div style={{ textAlign: 'center' }}>
-                      <Button 
-                        type="primary" 
-                        size="large"
-                        onClick={() => handleTaskAction(taskDetail)}
-                        style={{ marginTop: '12px' }}
-                      >
-                        {t('acceptTask')}
-                      </Button>
+              {/* 底部按钮 */}
+              {taskDetail.status === 'active' && taskDetail.currentRecruits < taskDetail.maxRecruits && (
+                <div style={{ 
+                  textAlign: 'center',
+                  paddingTop: '16px',
+                  borderTop: '1px solid #e8e8e8'
+                }}>
+                  <Button 
+                    type="primary" 
+                    size="large"
+                    onClick={() => handleTaskAction(taskDetail)}
+                    disabled={!selectedMaterial}
+                  >
+                    {t('acceptTask')}
+                  </Button>
+                  {!selectedMaterial && (
+                    <div style={{ marginTop: '8px', color: '#ff4d4f', fontSize: '12px' }}>
+                      请先选择一个草稿素材
                     </div>
-                  );
-                }
-                
-                return null;
-              })()}
+                  )}
+                </div>
+              )}
             </div>
           ) : !taskDetailLoading && (
             <div style={{ textAlign: 'center', color: '#999' }}>
@@ -1503,6 +1606,22 @@ export default function TaskPageCore() {
           )}
         </Spin>
       </Modal>
+      
+      {/* DraftSelectionModal 用于选择自己的草稿 */}
+      <DraftSelectionModal
+        draftModalOpen={draftModalOpen}
+        onCancel={() => {
+          setDraftModalOpen(false);
+          // 如果取消选择且当前选择的是自己的草稿，切换回任务草稿
+          if (draftSource === 'own' && !selectedMaterial) {
+            setDraftSource('task');
+          }
+        }}
+        onSelectDraft={(draft) => {
+          setSelectedMaterial(draft);
+          setDraftSource('own');
+        }}
+      />
 
       {/* 已接受任务详情弹窗 */}
       <Modal
