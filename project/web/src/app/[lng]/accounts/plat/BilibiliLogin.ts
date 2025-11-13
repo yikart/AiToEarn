@@ -4,8 +4,9 @@ import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
 
 /**
- * b站被点击
- * @param platType
+ * Handle Bilibili platform click
+ * @param platType - Platform type
+ * @param spaceId - Optional space ID
  */
 export async function bilibiliSkip(platType: PlatType, spaceId?: string) {
   if (platType !== PlatType.BILIBILI)
@@ -28,16 +29,16 @@ export function bilibiliLogin(taskId: any): Promise<any> {
   return new Promise(async (resolve, reject) => {
     try {
       let pollCount = 0
-      const maxPollCount = 30 // 最大轮询次数
+      const maxPollCount = 30 // Maximum poll count
 
-      // 开始轮询检查授权状态
+      // Start polling to check authorization status
       const checkAuthStatus = async () => {
         try {
           pollCount++
           const authRess: any = await apiCheckBilibiliAuth(taskId)
           const authRes = authRess
           if (authRes?.code === 0 && authRes?.data.status == 1) {
-            // message.success('授权成功');
+            // message.success('Authorization successful');
             // useAccountStore
             const accountStore = useAccountStore.getState()
             await accountStore.getAccountList()
@@ -45,36 +46,36 @@ export function bilibiliLogin(taskId: any): Promise<any> {
             return true
           }
 
-          // 检查是否达到最大轮询次数
+          // Check if maximum poll count reached
           if (pollCount >= maxPollCount) {
-            console.log('达到最大轮询次数，停止轮询')
+            console.log('Maximum poll count reached, stopping polling')
             return true
           }
 
           // return false;
         }
         catch (error) {
-          console.error('检查授权状态失败:', error)
+          console.error('Failed to check authorization status:', error)
           return false
         }
       }
 
-      // 设置轮询间隔
+      // Set polling interval
       const interval = setInterval(async () => {
         const isSuccess = await checkAuthStatus()
         if (isSuccess) {
           clearInterval(interval)
           if (pollCount >= maxPollCount) {
-            reject(new Error('授权超时，已达到最大轮询次数'))
+            reject(new Error('Authorization timeout, maximum poll count reached'))
           }
         }
       }, 2000)
 
-      // 5分钟后自动停止轮询
+      // Auto stop polling after 5 minutes
       setTimeout(() => {
         clearInterval(interval)
-        // message.error('授权超时，请重试');
-        reject(new Error('授权超时'))
+        // message.error('Authorization timeout, please retry');
+        reject(new Error('Authorization timeout'))
       }, 5 * 60 * 1000)
     }
     catch (e) {
