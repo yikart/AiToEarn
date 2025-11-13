@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 镜像版本 (留空使用默认生成规则)
+        description: Image version (leave empty to use default generation rule)
         required: false
         type: string
 
@@ -79,19 +79,19 @@ jobs:
       - name: Summary
         if: always()
         run: |
-          echo "## 📦 构建摘要" >> $GITHUB_STEP_SUMMARY
-          echo "- **应用**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **版本**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **平台**: linux/amd64" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **App**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platform**: linux/amd64" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🐳 ECR 镜像" >> $GITHUB_STEP_SUMMARY
-          echo "- **版本镜像**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 ECR Images" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Image**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Latest**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🐋 Docker Hub 镜像" >> $GITHUB_STEP_SUMMARY
-          echo "- **版本镜像**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐋 Docker Hub Images" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Image**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Latest**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔗 快速链接" >> $GITHUB_STEP_SUMMARY
-          echo "- [源代码提交](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
-          echo "- [构建日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+          echo "- [Source Commit](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [Build Log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
