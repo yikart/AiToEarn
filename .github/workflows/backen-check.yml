@@ -3,8 +3,6 @@ name: AitoEarn Backend Check
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-    paths:
-      - 'project/backend/**'
 
 permissions:
   contents: read
@@ -29,12 +27,29 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check if backend files changed
+        id: check-changes
+        run: |
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -q "^project/backend/"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Skip if no changes
+        if: steps.check-changes.outputs.changed == 'false'
+        run: |
+          echo "No changes in project/backend/, skipping checks"
+          exit 0
+
       - name: Install pnpm
+        if: steps.check-changes.outputs.changed == 'true'
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
       - name: Setup Node.js
+        if: steps.check-changes.outputs.changed == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -42,14 +57,17 @@ jobs:
           cache-dependency-path: ${{ env.MONOREPO_DIR }}/pnpm-lock.yaml
 
       - name: Install dependencies
+        if: steps.check-changes.outputs.changed == 'true'
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm install --frozen-lockfile
 
       - name: Run ESLint
+        if: steps.check-changes.outputs.changed == 'true'
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm nx run-many --target=lint --no-fix --nxBail --outputStyle=static
 
       - name: Run build
+        if: steps.check-changes.outputs.changed == 'true'
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm nx run-many --target=build --nxBail --outputStyle=static
 
