@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
-import { directTrans, useTransClient } from "../i18n/client";
-import { MAIN_APP_DOWNLOAD_URL, getMainAppDownloadUrlSync } from "../config/appDownloadConfig";
+import { useTransClient } from "../i18n/client";
+import { getMainAppDownloadUrlSync } from "../config/appDownloadConfig";
 
-import logo from '@/assets/images/logo.png';
-
-// 导入SVG图标
+// Import SVG icons
 import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
 import douyinIcon from '@/assets/svgs/plat/douyin.svg';
@@ -23,12 +21,10 @@ import InstagramIcon from '@/assets/svgs/plat/instagram.png';
 import LinkedInIcon from '@/assets/svgs/plat/linkedin.png';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.png';
 import ThreadsIcon from '@/assets/svgs/plat/threads.png';
-
-// 资料图片
 import publish1 from '@/assets/images/publish1.png';
 
 
-// 外部图片 URL 常量
+// External image URL constants
 const IMAGE_URLS = {
   calendar: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1.%20content%20publish/calendar.jpeg',
   supportChannels: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1.%20content%20publish/support_channels.jpeg',
@@ -45,16 +41,12 @@ const IMAGE_URLS = {
 };
 
 
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "antd";
-import { GlobalOutlined } from "@ant-design/icons";
-import { useUserStore } from "@/store/user";
 import { useParams } from "next/navigation";
 import { AndroidOutlined } from '@ant-design/icons';
 
-// 版本发布横幅
+// Release banner
 function ReleaseBanner() {
   const { t } = useTransClient('home');
 
@@ -74,7 +66,7 @@ function ReleaseBanner() {
 }
 
 
-// Hero 主标题区
+// Hero main title section
 function Hero() {
   const { t } = useTransClient('home');
   const [displayedText, setDisplayedText] = useState('');
@@ -84,14 +76,14 @@ function Hero() {
   const [startTyping, setStartTyping] = useState(false);
   const router = useRouter();
 
-  // 要显示的完整文本
+  // Full text to display
   const fullText = t('hero.title');
-  const typingSpeed = 120; // 打字速度（毫秒）
-  const initialDelay = 800; // 初始延迟（毫秒）
-  const cursorHideDelay = 2000; // 打字完成后光标消失的延迟
+  const typingSpeed = 120; // Typing speed (milliseconds)
+  const initialDelay = 800; // Initial delay (milliseconds)
+  const cursorHideDelay = 2000; // Delay before hiding cursor after typing completes
 
   useEffect(() => {
-    // 初始延迟后开始打字
+    // Start typing after initial delay
     const startTimer = setTimeout(() => {
       setStartTyping(true);
     }, initialDelay);
@@ -103,16 +95,16 @@ function Hero() {
     if (startTyping && currentIndex < fullText.length) {
       const currentChar = fullText[currentIndex];
 
-      // 根据字符类型调整打字速度
+      // Adjust typing speed based on character type
       let currentSpeed = typingSpeed;
       if (currentChar === '\n') {
-        currentSpeed = typingSpeed * 2; // 换行时稍作停顿
+        currentSpeed = typingSpeed * 2; // Pause slightly on line break
       } else if (currentChar === ' ') {
-        currentSpeed = typingSpeed * 0.5; // 空格快一点
+        currentSpeed = typingSpeed * 0.5; // Space is faster
       } else if (/[，。！？；：]/.test(currentChar)) {
-        currentSpeed = typingSpeed * 1.5; // 标点符号稍作停顿
+        currentSpeed = typingSpeed * 1.5; // Pause slightly on punctuation
       } else {
-        // 添加一些随机性，使打字更自然
+        // Add some randomness to make typing more natural
         currentSpeed = typingSpeed + Math.random() * 50 - 25;
       }
 
@@ -124,14 +116,14 @@ function Hero() {
       return () => clearTimeout(timer);
     } else if (currentIndex >= fullText.length && !isTypingComplete) {
       setIsTypingComplete(true);
-      // 打字完成后延迟隐藏光标
+      // Delay hiding cursor after typing completes
       setTimeout(() => {
         setHideCursor(true);
       }, cursorHideDelay);
     }
   }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay]);
 
-  // 将文本转换为JSX，处理换行
+  // Convert text to JSX, handle line breaks
   const renderText = () => {
     return displayedText.split('\n').map((line, index, array) => (
       <span key={index}>
@@ -158,7 +150,7 @@ function Hero() {
           <span className={`${styles.cursor} ${hideCursor ? styles.cursorHidden : styles.cursorVisible}`}>|</span>
         </h1>
 
-        {/* 移动端按钮 */}
+        {/* Mobile button */}
         <button onClick={() => {
           router.push("/accounts");
         }} className={`${styles.heroBtn} ${styles.heroBtnMobile}`}>
@@ -172,7 +164,7 @@ function Hero() {
           {t('hero.subtitle')}
         </p>
 
-        {/* PC端按钮 */}
+        {/* Desktop button */}
         <button onClick={() => {
           router.push("/accounts");
         }} className={`${styles.heroBtn} ${styles.heroBtnDesktop}`}>
@@ -199,12 +191,12 @@ function Hero() {
   );
 }
 
-// 品牌合作伙伴 Logo 区 - 社交媒体平台（无限滚动）
+// Brand partner logo section - social media platforms (infinite scroll)
 function BrandBar() {
   const { t } = useTransClient('home');
   const { lng } = useParams();
 
-  // 平台数据配置
+  // Platform data configuration
   const platforms = [
     { name: 'YouTube', key: 'YouTube', hasIcon: true, iconPath: youtubeIcon.src },
     { name: 'TikTok', key: 'TikTok', hasIcon: true, iconPath: tiktokIcon },
@@ -222,10 +214,10 @@ function BrandBar() {
     { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
   ];
 
-  // 为了实现无缝滚动，复制一份数据
+  // Duplicate data to achieve seamless scrolling
   const duplicatedPlatforms = [...platforms, ...platforms];
 
-  // 获取平台显示名称
+  // Get platform display name
   const getPlatformDisplayName = (platform: any) => {
     if (lng === 'en') {
       return platform.key;
@@ -262,7 +254,7 @@ function BrandBar() {
   );
 }
 
-// 1. Content Publishing — 一键发布 · 多平台触达
+// 1. Content Publishing — One-click publishing · Multi-platform reach
 function ContentPublishingSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -271,7 +263,7 @@ function ContentPublishingSection() {
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // 自动轮播
+  // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
@@ -291,7 +283,7 @@ function ContentPublishingSection() {
     };
   }, [autoRotate, images.length]);
 
-  // 滚轮控制
+  // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
@@ -391,7 +383,7 @@ function ContentPublishingSection() {
               </div>
 
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>Use scroll wheel to switch images</span>
               </div>
             </div>
           </div>
@@ -401,7 +393,7 @@ function ContentPublishingSection() {
   );
 }
 
-// 2. Content Hotspot — 爆款灵感引擎
+// 2. Content Hotspot — Viral inspiration engine
 function ContentHotspotSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -410,7 +402,7 @@ function ContentHotspotSection() {
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // 自动轮播
+  // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
@@ -430,7 +422,7 @@ function ContentHotspotSection() {
     };
   }, [autoRotate, images.length]);
 
-  // 滚轮控制
+  // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
@@ -530,7 +522,7 @@ function ContentHotspotSection() {
               </div>
 
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>Use scroll wheel to switch images</span>
               </div>
             </div>
           </div>
@@ -540,7 +532,7 @@ function ContentHotspotSection() {
   );
 }
 
-// 3. Content Search — 品牌与市场洞察
+// 3. Content Search — Brand and market insights
 function ContentSearchSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -549,7 +541,7 @@ function ContentSearchSection() {
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // 自动轮播
+  // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
@@ -569,7 +561,7 @@ function ContentSearchSection() {
     };
   }, [autoRotate, images.length]);
 
-  // 滚轮控制
+  // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
@@ -669,7 +661,7 @@ function ContentSearchSection() {
               </div>
 
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>Use scroll wheel to switch images</span>
               </div>
             </div>
           </div>
@@ -679,7 +671,7 @@ function ContentSearchSection() {
   );
 }
 
-// 4. Comments Search — 精准用户挖掘
+// 4. Comments Search — Precise user mining
 function CommentsSearchSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -688,7 +680,7 @@ function CommentsSearchSection() {
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // 自动轮播
+  // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
@@ -708,7 +700,7 @@ function CommentsSearchSection() {
     };
   }, [autoRotate, images.length]);
 
-  // 滚轮控制
+  // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
@@ -808,7 +800,7 @@ function CommentsSearchSection() {
               </div>
 
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>Use scroll wheel to switch images</span>
               </div>
             </div>
           </div>
@@ -818,7 +810,7 @@ function CommentsSearchSection() {
   );
 }
 
-// 5. Content Engagement — 互动与增长引擎
+// 5. Content Engagement — Interaction and growth engine
 function ContentEngagementSection() {
   const { t } = useTransClient('home');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -827,7 +819,7 @@ function ContentEngagementSection() {
   const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // 自动轮播
+  // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
@@ -847,7 +839,7 @@ function ContentEngagementSection() {
     };
   }, [autoRotate, images.length]);
 
-  // 滚轮控制
+  // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
@@ -947,7 +939,7 @@ function ContentEngagementSection() {
               </div>
 
               <div className={styles.carouselHint}>
-                <span>使用滚轮切换图片</span>
+                <span>Use scroll wheel to switch images</span>
               </div>
             </div>
           </div>
@@ -957,7 +949,7 @@ function ContentEngagementSection() {
   );
 }
 
-// 6-8. 即将上线功能整合模块
+// 6-8. Upcoming features integration module
 function UpcomingFeaturesSection() {
   const { t } = useTransClient('home');
 
@@ -1019,7 +1011,7 @@ function UpcomingFeaturesSection() {
   );
 }
 
-// 移动应用下载区
+// Mobile app download section
 import { QRCode } from 'react-qrcode-logo';
 function DownloadSection() {
   const { t } = useTransClient('home');
@@ -1120,7 +1112,7 @@ function DownloadSection() {
 
 
 
-// Enterprise 区块
+// Enterprise section
 function EnterpriseSection() {
   const { t } = useTransClient('home');
 
@@ -1145,7 +1137,7 @@ function EnterpriseSection() {
   );
 }
 
-// 数据统计区
+// Statistics section
 function StatsSection() {
   const { t } = useTransClient('home');
 
@@ -1195,7 +1187,7 @@ function StatsSection() {
   );
 }
 
-// 社区区块
+// Community section
 function CommunitySection() {
   const { t } = useTransClient('home');
   const [hoveredButton, setHoveredButton] = useState<string | null>(null);
@@ -1273,7 +1265,7 @@ function CommunitySection() {
         </div>
 
         <div className={styles.tweets}>
-          {/* 用户分享卡片区域 */}
+          {/* User sharing card area */}
         </div>
       </div>
     </section>
@@ -1287,7 +1279,7 @@ function Footer() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
-  // 背景图片数组
+  // Background image array
   const backgroundImages = [
     IMAGE_URLS.hotspot,
     IMAGE_URLS.hotspot2,
@@ -1318,7 +1310,7 @@ function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerContainer}>
-        {/* 上半部分：Resources 和 Company */}
+        {/* Top section: Resources and Company */}
         <div className={styles.footerTop}>
           <div className={styles.footerColumns}>
             {/* <div className={styles.footerColumn}>
@@ -1360,7 +1352,7 @@ function Footer() {
           </div>
         </div>
 
-        {/* 下半部分：imagine if */}
+        {/* Bottom section: imagine if */}
         <div className={styles.footerBottom}>
           <div
             className={styles.bigText}
