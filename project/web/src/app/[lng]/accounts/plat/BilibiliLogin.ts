@@ -1,4 +1,3 @@
-import qs from 'qs'
 import { apiCheckBilibiliAuth, apiGetBilibiliLoginUrl } from '@/api/plat/bilibili'
 import { PlatType } from '@/app/config/platConfig'
 import { useAccountStore } from '@/store/account'
@@ -13,7 +12,7 @@ export async function bilibiliSkip(platType: PlatType, spaceId?: string) {
     return
 
   const res: any = await apiGetBilibiliLoginUrl('pc', spaceId)
-  if (res?.code == 1) {
+  if (res?.code === 1) {
     useUserStore.getState().logout()
     return
   }
@@ -22,7 +21,7 @@ export async function bilibiliSkip(platType: PlatType, spaceId?: string) {
   const url = res.data.url
   window.open(`${url}`)
 
-  const bilibiliLoginRes = await bilibiliLogin(res.data.taskId)
+  await bilibiliLogin(res.data.taskId)
 }
 
 export function bilibiliLogin(taskId: any): Promise<any> {

@@ -192,6 +192,11 @@ const PublishDialog = memo(
         setPubListChoosed(newPubList)
       }, [md5Cache, tasks])
 
+      // 处理Facebook授权成功后的页面选择
+      const handleFacebookAuthSuccess = () => {
+        setShowFacebookPagesModal(true)
+      }
+
       // 处理离线账户头像点击，直接跳转到对应平台授权页面
       const handleOfflineAvatarClick = useCallback(
         async (account: SocialAccount) => {
@@ -278,11 +283,6 @@ const PublishDialog = memo(
         },
         [accountGroupList, getAccountList],
       )
-
-      // 处理Facebook授权成功后的页面选择
-      const handleFacebookAuthSuccess = () => {
-        setShowFacebookPagesModal(true)
-      }
 
       // 处理Facebook页面选择成功
       const handleFacebookPagesSuccess = () => {

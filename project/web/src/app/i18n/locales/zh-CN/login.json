@@ -30,7 +30,6 @@
   "emailLabel": "邮箱",
   "emailRequired": "请输入邮箱",
   "emailInvalid": "请输入有效的邮箱地址",
-  "emailPlaceholder": "请输入注册邮箱",
   "sendResetLink": "发送重置链接",
   "newPassword": "新密码",
   "newPasswordRequired": "请输入新密码",

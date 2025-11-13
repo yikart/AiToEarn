@@ -380,7 +380,7 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
         // TikTok 的强制校验
         if (v.account.type === PlatType.Tiktok) {
-          // 	TikTok 视频时长限制 3 秒至 10 分钟
+          // TikTok 视频时长限制 3 秒至 10 分钟
           if (video && (video.duration > 600 || video.duration < 3)) {
             return setErrorMsg(t('validation.tiktokVideoDuration'))
           }

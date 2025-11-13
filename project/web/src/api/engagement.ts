@@ -14,7 +14,7 @@ export async function apiGetEngagementComments(params: EngagementCommentsParams)
 }
 
 export async function apiReplyEngagementComment(params: EngagementReplyParams) {
-  return http.post<{}>('channel/engagement/comment/reply', params)
+  return http.post<any>('channel/engagement/comment/reply', params)
 }
 
 // 获取作品一级评论（V2）
@@ -23,11 +23,11 @@ export async function apiGetPostComments(params: PostCommentsParamsV2) {
 }
 
 export async function apiPublishPostComment(params: PublishPostCommentParams) {
-  return http.post<{}>('channel/engagement/post/comments/publish', params)
+  return http.post('channel/engagement/post/comments/publish', params)
 }
 
 export async function apiPublishCommentReply(params: PublishCommentReplyParams) {
-  return http.post<{}>('channel/engagement/comment/replies/publish', params)
+  return http.post('channel/engagement/comment/replies/publish', params)
 }
 
 // 获取评论的回复列表

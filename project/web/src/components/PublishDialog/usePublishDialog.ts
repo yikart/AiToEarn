@@ -151,7 +151,7 @@ export const usePublishDialog = create(
 
           // 更新 commonPubParams
           for (const key in pubParmas) {
-            if (pubParmas.hasOwnProperty(key)) {
+            if (Object.hasOwn(pubParmas, key)) {
               (commonPubParams as any)[key] = (pubParmas as any)[key]
             }
           }
@@ -234,7 +234,7 @@ export const usePublishDialog = create(
           }
 
           for (const key in pubParmas) {
-            if (pubParmas.hasOwnProperty(key) && key !== 'option') {
+            if (Object.hasOwn(pubParmas, key) && key !== 'option') {
               (findedData.params as any)[key] = (pubParmas as any)[key]
             }
           }

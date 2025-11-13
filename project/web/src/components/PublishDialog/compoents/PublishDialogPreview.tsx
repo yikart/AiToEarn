@@ -42,7 +42,7 @@ export interface IPublishDialogPreviewProps {}
 const PublishDialogPreview = memo(
   forwardRef(
     (
-      {}: IPublishDialogPreviewProps,
+      _: IPublishDialogPreviewProps,
       ref: ForwardedRef<IPublishDialogPreviewRef>,
     ) => {
       const { t } = useTranslation('publish')

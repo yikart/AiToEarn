@@ -166,7 +166,7 @@ function UserInfo() {
 }
 
 const LyaoutHeader = memo(
-  forwardRef(({ }: ILyaoutHeaderProps, ref: ForwardedRef<ILyaoutHeaderRef>) => {
+  forwardRef((_: ILyaoutHeaderProps, ref: ForwardedRef<ILyaoutHeaderRef>) => {
     const userStore = useUserStore()
     const layoutHeader = useRef<HTMLDivElement>(null)
     const router = useRouter()
