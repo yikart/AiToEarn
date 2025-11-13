@@ -69,7 +69,7 @@ $assistantWidth: 380px;
                 filter: grayscale(0);
               }
             }
-            
+
             // 未选中状态：保持置灰
             &.disabled {
               & > img {
@@ -111,7 +111,6 @@ $assistantWidth: 380px;
         }
       }
       &-time {
-
       }
     }
     .ant-modal-body {
@@ -123,24 +122,29 @@ $assistantWidth: 380px;
       box-shadow: none !important;
     }
 
-    .right-enter, .left-enter {
+    .right-enter,
+    .left-enter {
       width: 0;
     }
-    .right-enter-active, .left-enter-active {
+    .right-enter-active,
+    .left-enter-active {
       width: $assistantWidth;
       transition: all 300ms;
     }
-    .right-exit, .left-exit {
+    .right-exit,
+    .left-exit {
       width: $assistantWidth;
     }
-    .right-exit-active, .left-exit-active {
+    .right-exit-active,
+    .left-exit-active {
       width: 0;
       transition: all 300ms;
     }
   }
 }
 
-.publishDialogAi, .publishDialogPreview {
+.publishDialogAi,
+.publishDialogPreview {
   background: #fff;
   width: $assistantWidth;
   overflow: hidden;

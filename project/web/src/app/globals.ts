@@ -1,3 +1,3 @@
-export type PageParams = {
-  params: Promise<{ lng: string }>;
-};
+export interface PageParams {
+  params: Promise<{ lng: string }>
+}

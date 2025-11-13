@@ -1,41 +1,43 @@
-import {
+import type {
   ForwardedRef,
+} from 'react'
+import type {
+  IImgFile,
+  IVideoFile,
+} from '@/components/PublishDialog/publishDialog.type'
+import { Alert, Button, Modal, Slider, Spin } from 'antd'
+import Cropper from 'cropperjs'
+import {
   forwardRef,
   memo,
   useEffect,
   useRef,
   useState,
-} from "react";
-import styles from "./videoCoverSeting.module.scss";
-import { Alert, Button, Modal, Slider, Spin } from "antd";
-import Cropper from "cropperjs";
-import "cropperjs/dist/cropper.css";
+} from 'react'
+import { uploadToOss } from '@/api/oss'
+import ImgChoose from '@/components/PublishDialog/compoents/Choose/ImgChoose'
 import {
   formatImg,
   VideoGrabFrame,
-} from "@/components/PublishDialog/PublishDialog.util";
-import {
-  IImgFile,
-  IVideoFile,
-} from "@/components/PublishDialog/publishDialog.type";
-import ImgChoose from "@/components/PublishDialog/compoents/Choose/ImgChoose";
-import { uploadToOss } from "@/api/oss";
-import { getOssUrl } from "@/utils/oss";
+} from '@/components/PublishDialog/PublishDialog.util'
+import { getOssUrl } from '@/utils/oss'
+import styles from './videoCoverSeting.module.scss'
+import 'cropperjs/dist/cropper.css'
 
 export interface IVideoCoverSetingRef {}
 
 export interface IVideoCoverSetingProps {
   // 封面选择完成
-  onChoosed: (imgFile: IImgFile) => void;
+  onChoosed: (imgFile: IImgFile) => void
   // 当前选择的封面
-  value?: IImgFile;
+  value?: IImgFile
   // 需要截帧的视频
-  videoFile?: IVideoFile;
+  videoFile?: IVideoFile
   // 保存图片的唯一值
-  saveImgId?: string;
+  saveImgId?: string
   // 关闭按钮点击事件，如果有这个事件就会显示关闭按钮
-  onClose: () => void;
-  videoCoverSetingModal: boolean;
+  onClose: () => void
+  videoCoverSetingModal: boolean
 }
 
 // 视频封面设置
@@ -47,51 +49,54 @@ const VideoCoverSeting = memo(
         onChoosed,
         value,
         videoFile,
-        saveImgId = "",
+        saveImgId = '',
         onClose,
       }: IVideoCoverSetingProps,
       ref: ForwardedRef<IVideoCoverSetingRef>,
     ) => {
-      const [imgFile, setImgFile] = useState<IImgFile>();
-      const cropper = useRef<Cropper>();
-      const cropperImg = useRef<HTMLImageElement>(null);
-      const [videoCoverLoading, setVideoCoverLoading] = useState(false);
-      const [sliderVal, setSliderVal] = useState(0);
-      const [uploadLoing, setUploadLoing] = useState(false);
+      const [imgFile, setImgFile] = useState<IImgFile>()
+      const cropper = useRef<Cropper>()
+      const cropperImg = useRef<HTMLImageElement>(null)
+      const [videoCoverLoading, setVideoCoverLoading] = useState(false)
+      const [sliderVal, setSliderVal] = useState(0)
+      const [uploadLoing, setUploadLoing] = useState(false)
 
       useEffect(() => {
-        if (!videoCoverSetingModal) return;
+        if (!videoCoverSetingModal)
+          return
         if (value) {
-          setImgFile(value);
-          return;
+          setImgFile(value)
+          return
         }
-        getVideoCover(0);
-      }, [videoCoverSetingModal]);
+        getVideoCover(0)
+      }, [videoCoverSetingModal])
 
       useEffect(() => {
-        if (!imgFile) return;
-        initCropper();
-      }, [imgFile]);
+        if (!imgFile)
+          return
+        initCropper()
+      }, [imgFile])
 
       /* 获取封面 */
       const getVideoCover = async (n: number) => {
-        setVideoCoverLoading(true);
-        const videoInfo = await VideoGrabFrame(videoFile!.videoUrl, n);
-        setImgFile(videoInfo.cover);
-        setVideoCoverLoading(false);
-      };
+        setVideoCoverLoading(true)
+        const videoInfo = await VideoGrabFrame(videoFile!.videoUrl, n)
+        setImgFile(videoInfo.cover)
+        setVideoCoverLoading(false)
+      }
 
       const close = () => {
-        onClose();
-      };
+        onClose()
+      }
 
       // 初始化裁剪工具
       const initCropper = () => {
-        if (!cropperImg.current) return;
+        if (!cropperImg.current)
+          return
 
         if (cropper.current) {
-          cropper.current.destroy();
-          cropper.current = undefined;
+          cropper.current.destroy()
+          cropper.current = undefined
         }
 
         cropper.current = new Cropper(cropperImg.current!, {
@@ -105,10 +110,10 @@ const VideoCoverSeting = memo(
               top: 0,
               width: cropperImg.current!.naturalWidth,
               height: cropperImg.current!.naturalHeight,
-            });
+            })
           },
-        });
-      };
+        })
+      }
 
       return (
         <>
@@ -118,35 +123,35 @@ const VideoCoverSeting = memo(
             maskClosable={false}
             open={videoCoverSetingModal}
             onCancel={close}
-            footer={
+            footer={(
               <>
                 <Button onClick={close}>取消</Button>
                 <Button
                   loading={uploadLoing}
                   type="primary"
                   onClick={async () => {
-                    setUploadLoing(true);
-                    const canvas = cropper.current!.getCroppedCanvas();
-                    canvas.toBlob(async function (blob) {
+                    setUploadLoing(true)
+                    const canvas = cropper.current!.getCroppedCanvas()
+                    canvas.toBlob(async (blob) => {
                       const cover = await formatImg({
                         blob: blob!,
-                        path: `${saveImgId}.${imgFile?.file.type.split("/")[1]}`,
-                      });
+                        path: `${saveImgId}.${imgFile?.file.type.split('/')[1]}`,
+                      })
                       // 上传封面
                       const uploadCoverRes = await uploadToOss(
                         cover.file,
-                      );
-                      cover["ossUrl"] = getOssUrl(uploadCoverRes);
-                      setUploadLoing(false);
-                      onChoosed(cover);
-                      close();
-                    }, "image/png");
+                      )
+                      cover.ossUrl = getOssUrl(uploadCoverRes)
+                      setUploadLoing(false)
+                      onChoosed(cover)
+                      close()
+                    }, 'image/png')
                   }}
                 >
                   确定
                 </Button>
               </>
-            }
+            )}
           >
             <Spin spinning={videoCoverLoading}>
               <div className={styles.videoCoverSetingModal}>
@@ -158,8 +163,9 @@ const VideoCoverSeting = memo(
                   />
                   <ImgChoose
                     onChoose={(imgFile) => {
-                      if (!imgFile) return;
-                      setImgFile(imgFile);
+                      if (!imgFile)
+                        return
+                      setImgFile(imgFile)
                     }}
                   >
                     <Button>本地上传</Button>
@@ -168,15 +174,15 @@ const VideoCoverSeting = memo(
 
                 <div className="videoCoverSetingModal-cropper">
                   <img
-                    style={{ opacity: imgFile?.imgUrl ? "1" : "0" }}
+                    style={{ opacity: imgFile?.imgUrl ? '1' : '0' }}
                     ref={cropperImg}
-                    src={imgFile?.imgUrl || "/"}
+                    src={imgFile?.imgUrl || '/'}
                   />
                 </div>
 
                 <Slider
                   value={sliderVal}
-                  style={{ margin: "50px 0" }}
+                  style={{ margin: '50px 0' }}
                   step={1}
                   min={0}
                   max={videoFile?.duration}
@@ -187,10 +193,10 @@ const VideoCoverSeting = memo(
             </Spin>
           </Modal>
         </>
-      );
+      )
     },
   ),
-);
-VideoCoverSeting.displayName = "VideoCoverSeting";
+)
+VideoCoverSeting.displayName = 'VideoCoverSeting'
 
-export default VideoCoverSeting;
+export default VideoCoverSeting

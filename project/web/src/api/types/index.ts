@@ -6,16 +6,16 @@
  * @Description:
  */
 export interface ApiCorrectQuery {
-  pageSize: number;
-  pageNo: number;
+  pageSize: number
+  pageNo: number
 }
 
 export interface IPaginationMeta {
-  itemCount: number;
-  totalItems?: number;
-  itemsPerPage: number;
-  totalPages?: number;
-  currentPage: number;
+  itemCount: number
+  totalItems?: number
+  itemsPerPage: number
+  totalPages?: number
+  currentPage: number
 }
 
 export class Pagination<T> {
@@ -26,4 +26,4 @@ export class Pagination<T> {
 }
 
 // 导出支付相关类型
-export * from './payment';
+export * from './payment'

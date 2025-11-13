@@ -1,12 +1,12 @@
 // api url
-export const APP_HOT_URL = "https://att-contents.yikart.cn/api";
+export const APP_HOT_URL = 'https://att-contents.yikart.cn/api'
 
 // 代理地址
 export const ProxyUrls = [
-  "/api/",
+  '/api/',
   process.env.NEXT_PUBLIC_BILI_OSS_PROXY,
   process.env.NEXT_PUBLIC_OSS_URL_PROXY,
-];
+]
 
 // OSS URL
-export const OSS_URL = process.env.NEXT_PUBLIC_OSS_URL!;
+export const OSS_URL = process.env.NEXT_PUBLIC_OSS_URL!

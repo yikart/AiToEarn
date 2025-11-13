@@ -1,114 +1,120 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { FcGoogle } from "react-icons/fc";
-import { GoogleLogin } from "@react-oauth/google";
-import { message, Modal, Form, Input, Button } from "antd";
-import { useRouter } from "next/navigation";
-import styles from "./login.module.css";
-import { 
-  loginWithMailApi, 
-  getRegistUrlApi, 
-  checkRegistStatusApi, 
-  mailRegistApi,
+import { GoogleLogin } from '@react-oauth/google'
+import { Button, Form, Input, message, Modal } from 'antd'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { FcGoogle } from 'react-icons/fc'
+import {
+  checkRegistStatusApi,
+  getRegistUrlApi,
   googleLoginApi,
-  GoogleLoginParams
-} from "@/api/apiReq";
-import { useUserStore } from "@/store/user";
-import { useTransClient } from "@/app/i18n/client";
+  GoogleLoginParams,
+  loginWithMailApi,
+  mailRegistApi,
+} from '@/api/apiReq'
+import { useTransClient } from '@/app/i18n/client'
+import { useUserStore } from '@/store/user'
+import styles from './login.module.css'
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { setToken, setUserInfo } = useUserStore();
-  const { t } = useTransClient("login");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isChecking, setIsChecking] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [registCode, setRegistCode] = useState("");
-  const [form] = Form.useForm();
-  const [isActivating, setIsActivating] = useState(false);
-  const [activationTimer, setActivationTimer] = useState<NodeJS.Timeout | null>(null);
-  const [registUrl, setRegistUrl] = useState("");
-  const [showRegistModal, setShowRegistModal] = useState(false);
+  const router = useRouter()
+  const { setToken, setUserInfo } = useUserStore()
+  const { t } = useTransClient('login')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isChecking, setIsChecking] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [registCode, setRegistCode] = useState('')
+  const [form] = Form.useForm()
+  const [isActivating, setIsActivating] = useState(false)
+  const [activationTimer, setActivationTimer] = useState<NodeJS.Timeout | null>(null)
+  const [registUrl, setRegistUrl] = useState('')
+  const [showRegistModal, setShowRegistModal] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const response = await loginWithMailApi({ mail: email, password });
-      if (!response) return;
-      
+      const response = await loginWithMailApi({ mail: email, password })
+      if (!response)
+        return
+
       if (response.code === 0) {
         if (response.data.type === 'regist') {
           // 用户未注册，显示弹窗提示，并设置表单的默认密码值
-          setRegistCode(response.data.code || '');
-          form.setFieldsValue({ password: password }); // 设置密码字段的默认值
-          setIsModalOpen(true);
-          setIsChecking(true);
-        } else if (response.data.token) {
-          // 登录成功
-          setToken(response.data.token);
-          if (response.data.userInfo) {
-            setUserInfo(response.data.userInfo);
-          }
-          message.success(t('loginSuccess'));
-          router.push('/accounts');
+          setRegistCode(response.data.code || '')
+          form.setFieldsValue({ password }) // 设置密码字段的默认值
+          setIsModalOpen(true)
+          setIsChecking(true)
         }
-      } else {
-        message.error(response.message || t('loginFailed'));
+        else if (response.data.token) {
+          // 登录成功
+          setToken(response.data.token)
+          if (response.data.userInfo) {
+            setUserInfo(response.data.userInfo)
+          }
+          message.success(t('loginSuccess'))
+          router.push('/accounts')
+        }
       }
-    } catch (error) {
-      message.error(t('loginError'));
+      else {
+        message.error(response.message || t('loginFailed'))
+      }
     }
-  };
+    catch (error) {
+      message.error(t('loginError'))
+    }
+  }
 
-  const handleRegistSubmit = async (values: { password: string; code: string; inviteCode?: string }) => {
+  const handleRegistSubmit = async (values: { password: string, code: string, inviteCode?: string }) => {
     try {
-      setIsActivating(true);
-      
+      setIsActivating(true)
+
       const response = await mailRegistApi({
         mail: email,
         code: values.code,
         password: values.password,
-        inviteCode: values.inviteCode || ''
-      });
-      
+        inviteCode: values.inviteCode || '',
+      })
+
       if (!response) {
-        message.error(t('registerError'));
-        setIsActivating(false);
-        return;
+        message.error(t('registerError'))
+        setIsActivating(false)
+        return
       }
-      
+
       if (response.code === 0 && response.data.token) {
         // 注册成功
-        setIsActivating(false);
-        setIsModalOpen(false);
-        form.resetFields(); // 重置表单
-        setToken(response.data.token);
+        setIsActivating(false)
+        setIsModalOpen(false)
+        form.resetFields() // 重置表单
+        setToken(response.data.token)
         if (response.data.userInfo) {
-          setUserInfo(response.data.userInfo);
+          setUserInfo(response.data.userInfo)
         }
-        message.success(t('registerSuccess'));
-        router.push('/accounts');
-      } else {
-        message.error(response.message || t('registerError'));
-        setIsActivating(false);
+        message.success(t('registerSuccess'))
+        router.push('/accounts')
       }
-    } catch (error) {
-      message.error(t('registerError'));
-      setIsActivating(false);
+      else {
+        message.error(response.message || t('registerError'))
+        setIsActivating(false)
+      }
     }
-  };
+    catch (error) {
+      message.error(t('registerError'))
+      setIsActivating(false)
+    }
+  }
 
   // 组件卸载时清除定时器
   useEffect(() => {
     return () => {
       if (activationTimer) {
-        clearInterval(activationTimer);
+        clearInterval(activationTimer)
       }
-    };
-  }, [activationTimer]);
+    }
+  }, [activationTimer])
 
   const handleGoogleSuccess = async (credentialResponse: any) => {
     console.log('credentialResponse', credentialResponse)
@@ -117,37 +123,39 @@ export default function LoginPage() {
       const params: any = {
         platform: 'google',
         clientId: credentialResponse.clientId,
-        credential: credentialResponse.credential
-      };
+        credential: credentialResponse.credential,
+      }
 
-      const response: any = await googleLoginApi(params);
+      const response: any = await googleLoginApi(params)
       console.log('login response', response)
       if (!response) {
-        message.error(t('googleLoginFailed'));
-        return;
+        message.error(t('googleLoginFailed'))
+        return
       }
 
       if (response.code === 0) {
         if (response.data.type === 'login') {
           // 直接登录成功
-          setToken(response.data.token);
+          setToken(response.data.token)
           if (response.data.userInfo) {
-            setUserInfo(response.data.userInfo);
+            setUserInfo(response.data.userInfo)
           }
-          message.success(t('loginSuccess'));
-          router.push('/accounts');
+          message.success(t('loginSuccess'))
+          router.push('/accounts')
         }
-      } else {
-        message.error(response.message || t('googleLoginFailed'));
       }
-    } catch (error) {
-      message.error(t('googleLoginFailed'));
+      else {
+        message.error(response.message || t('googleLoginFailed'))
+      }
     }
-  };
+    catch (error) {
+      message.error(t('googleLoginFailed'))
+    }
+  }
 
   const handleGoogleError = () => {
-    console.log(t('googleLoginFailed'));
-  };
+    console.log(t('googleLoginFailed'))
+  }
 
   return (
     <div className={styles.container}>
@@ -159,7 +167,7 @@ export default function LoginPage() {
               type="email"
               placeholder={t('emailPlaceholder')}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               className={styles.input}
               required
             />
@@ -169,7 +177,7 @@ export default function LoginPage() {
               type="password"
               placeholder={t('passwordPlaceholder')}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               className={styles.input}
               required
             />
@@ -208,12 +216,12 @@ export default function LoginPage() {
         title={t('completeRegistration')}
         open={isModalOpen}
         onCancel={() => {
-          setIsModalOpen(false);
-          setIsChecking(false);
-          setIsActivating(false);
-          form.resetFields(); // 重置表单
+          setIsModalOpen(false)
+          setIsChecking(false)
+          setIsActivating(false)
+          form.resetFields() // 重置表单
           if (activationTimer) {
-            clearInterval(activationTimer);
+            clearInterval(activationTimer)
           }
         }}
         maskClosable={false}
@@ -232,23 +240,23 @@ export default function LoginPage() {
             name="code"
             rules={[
               { required: true, message: t('emailCodeRequired') },
-              { len: 6, message: t('emailCodeLength') }
+              { len: 6, message: t('emailCodeLength') },
             ]}
           >
             <Input placeholder={t('enterEmailCode')} maxLength={6} />
           </Form.Item>
-          
+
           <Form.Item
             label={t('setPassword')}
             name="password"
             rules={[
               { required: true, message: t('passwordRequired') },
-              { min: 6, message: t('passwordMinLength') }
+              { min: 6, message: t('passwordMinLength') },
             ]}
           >
             <Input.Password placeholder={t('enterPassword')} />
           </Form.Item>
-          
+
           <Form.Item
             label={t('inviteCode')}
             name="inviteCode"
@@ -257,10 +265,10 @@ export default function LoginPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              block 
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
               loading={isActivating}
             >
               {isActivating ? t('registering') : t('completeRegistration')}
@@ -269,5 +277,5 @@ export default function LoginPage() {
         </Form>
       </Modal>
     </div>
-  );
-} 
+  )
+}

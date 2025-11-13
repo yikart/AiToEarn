@@ -1,11 +1,12 @@
-import { ForwardedRef, forwardRef, memo, useMemo } from "react";
-import styles from "./calendarTiming.module.scss";
+import type { ForwardedRef } from 'react'
+import { forwardRef, memo, useMemo } from 'react'
+import styles from './calendarTiming.module.scss'
 
 export interface IAllPlatIconRef {}
 
 export interface IAllPlatIconProps {
-  size?: number;
-  style?: React.CSSProperties;
+  size?: number
+  style?: React.CSSProperties
 }
 
 const AllPlatIcon = memo(
@@ -15,20 +16,20 @@ const AllPlatIcon = memo(
       ref: ForwardedRef<IAllPlatIconRef>,
     ) => {
       const widthChild = useMemo(() => {
-        return size / 5;
-      }, [size]);
+        return size / 5
+      }, [size])
 
       const childStyle = useMemo(() => {
         return {
-          width: widthChild + "px",
-          height: widthChild + "px",
-        };
-      }, [widthChild]);
+          width: `${widthChild}px`,
+          height: `${widthChild}px`,
+        }
+      }, [widthChild])
 
       return (
         <div
           className={styles.allPlatIcon}
-          style={{ width: size + "px", height: size + "px", ...style }}
+          style={{ width: `${size}px`, height: `${size}px`, ...style }}
         >
           <ul>
             <li style={childStyle}></li>
@@ -39,9 +40,9 @@ const AllPlatIcon = memo(
             <li style={childStyle}></li>
           </ul>
         </div>
-      );
+      )
     },
   ),
-);
+)
 
-export default AllPlatIcon;
+export default AllPlatIcon

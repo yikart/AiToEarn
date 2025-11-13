@@ -14,7 +14,7 @@
     "description": "选择连续包月或连续包年，可享受7天免费试用期！"
   },
   "trialText": {
-    "month": "前7天免费，之后$15/月", 
+    "month": "前7天免费，之后$15/月",
     "year": "前7天免费，之后$120/年"
   },
   "badge": {
@@ -92,7 +92,7 @@
       "singleMonth": "单月会员",
       "trial": "试用中",
       "cancelled": "已退订",
-      "expireTime": "到期时间", 
+      "expireTime": "到期时间",
       "xufeiTime": "续费时间",
       "remainingPoints": "剩余积分",
       "buyPoints": "购买积分"
@@ -200,4 +200,4 @@
     "range": "1K-50K",
     "unit": "积分"
   }
-} 
+}

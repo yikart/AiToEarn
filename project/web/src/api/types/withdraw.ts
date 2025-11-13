@@ -11,12 +11,12 @@ export enum WithdrawRecordStatus {
 }
 
 export interface WithdrawRecord {
-  _id: string;
-  id: string;
-  userId: string;
+  _id: string
+  id: string
+  userId: string
   flowId?: string
   type: WithdrawRecordType
-  amount: number;
+  amount: number
   incomeRecordId?: string
   relId?: string
   desc?: string

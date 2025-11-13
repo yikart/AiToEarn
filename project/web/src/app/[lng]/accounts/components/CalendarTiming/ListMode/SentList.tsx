@@ -1,145 +1,141 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { List, Card, Avatar, Typography, Space, Tag, Button, Skeleton, Empty } from 'antd';
-import { EyeOutlined, LikeOutlined, MessageOutlined, ShareAltOutlined, HeartOutlined, BarChartOutlined, AimOutlined, EyeInvisibleOutlined } from '@ant-design/icons';
-import { useTransClient } from '@/app/i18n/client';
-import { getSentPosts } from '@/api/sent';
-import { SentPost } from '@/api/types/sent.types';
-import styles from './listMode.module.scss';
-import dayjs from 'dayjs';
-import { useAccountStore } from '@/store/account';
-import { useShallow } from 'zustand/react/shallow';
-import { getOssUrl } from '@/utils/oss';
-import { AccountPlatInfoMap } from '@/app/config/platConfig';
+import type { SentPost } from '@/api/types/sent.types'
+import { AimOutlined, BarChartOutlined, EyeInvisibleOutlined, EyeOutlined, HeartOutlined, LikeOutlined, MessageOutlined, ShareAltOutlined } from '@ant-design/icons'
+import { Avatar, Button, Card, Empty, List, Skeleton, Space, Tag, Typography } from 'antd'
+import dayjs from 'dayjs'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { getSentPosts } from '@/api/sent'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { useTransClient } from '@/app/i18n/client'
+import { useAccountStore } from '@/store/account'
+import { getOssUrl } from '@/utils/oss'
+import styles from './listMode.module.scss'
 
-const { Text, Title } = Typography;
+const { Text, Title } = Typography
 
 interface SentListProps {
-  platform: string;
-  uid: string;
-  onDataChange?: (count: number) => void;
+  platform: string
+  uid: string
+  onDataChange?: (count: number) => void
   accountInfo?: {
-    avatar: string;
-    nickname: string;
-    account: string;
-  };
+    avatar: string
+    nickname: string
+    account: string
+  }
 }
 
 const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accountInfo }) => {
-  const { t } = useTransClient("account");
-  const [posts, setPosts] = useState<SentPost[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
-  const [page, setPage] = useState(1);
+  const { t } = useTransClient('account')
+  const [posts, setPosts] = useState<SentPost[]>([])
+  const [loading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(false)
+  const [page, setPage] = useState(1)
 
   // Get account list for mapping
   const { accountList } = useAccountStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       accountList: state.accountList,
     })),
-  );
+  )
 
   // Create mapping from accountId to account information
   const accountMap = useMemo(() => {
-    const map = new Map();
-    accountList.forEach(account => {
-      map.set(account.id, account);
-    });
-    return map;
-  }, [accountList]);
+    const map = new Map()
+    accountList.forEach((account) => {
+      map.set(account.id, account)
+    })
+    return map
+  }, [accountList])
 
   const loadPosts = async (pageNum: number = 1, append: boolean = false) => {
-    setLoading(true);
+    setLoading(true)
     try {
       // Build request parameters, if platform and uid are not passed, don't pass
       const params: any = {
         time: [dayjs().subtract(1, 'month').utc().format(), dayjs().utc().format()],
-      };
-      
+      }
+
       if (platform) {
-        params.accountType = platform;
+        params.accountType = platform
       }
-      
+
       if (uid) {
-        params.uid = uid;
+        params.uid = uid
       }
-      
-      const response = await getSentPosts(params);
-      
+
+      const response = await getSentPosts(params)
+
       // Handle new API response format
-      const responseData = (response as any)?.data || response;
-      
-      console.log('SentList API Response:', {
-        code: (response as any)?.code,
-        message: (response as any)?.message,
-        data: responseData,
-        params
-      });
-      
+      const responseData = (response as any)?.data || response
+
       // Handle response data, directly use responseData as an array
-      const postsData = Array.isArray(responseData) ? responseData : (responseData?.posts || responseData?.list || []);
-      
+      const postsData = Array.isArray(responseData) ? responseData : (responseData?.posts || responseData?.list || [])
+
       if (append) {
-        setPosts(prev => [...prev, ...postsData]);
-      } else {
-        setPosts(postsData);
+        setPosts(prev => [...prev, ...postsData])
       }
-      setHasMore(responseData?.hasMore || false);
-      
+      else {
+        setPosts(postsData)
+      }
+      setHasMore(responseData?.hasMore || false)
+
       // Notify parent component of data change
       if (onDataChange) {
-        onDataChange(responseData?.total || postsData.length);
+        onDataChange(responseData?.total || postsData.length)
       }
-    } catch (error) {
-      console.error('Failed to load sent posts:', error);
+    }
+    catch (error) {
+      console.error('Failed to load sent posts:', error)
       // When an error occurs, reset data
       if (!append) {
-        setPosts([]);
-        setHasMore(false);
+        setPosts([])
+        setHasMore(false)
         if (onDataChange) {
-          onDataChange(0);
+          onDataChange(0)
         }
       }
-    } finally {
-      setLoading(false);
     }
-  };
+    finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
     // Enter the page and call it, regardless of whether there is platform and uid
-    loadPosts(1, false);
-  }, [platform, uid]);
+    loadPosts(1, false)
+  }, [platform, uid])
 
   const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    loadPosts(nextPage, true);
-  };
+    const nextPage = page + 1
+    setPage(nextPage)
+    loadPosts(nextPage, true)
+  }
 
   const formatTime = (timestamp: string | number) => {
-    const date = typeof timestamp === 'string' ? new Date(timestamp) : new Date(timestamp);
+    const date = typeof timestamp === 'string' ? new Date(timestamp) : new Date(timestamp)
     return {
       date: date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' }),
-      time: date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })
-    };
-  };
+      time: date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false }),
+    }
+  }
 
   const getMediaTypeTag = (mediaType: string) => {
     const typeMap = {
       video: { color: 'red', text: '视频' },
       image: { color: 'blue', text: '图片' },
-      article: { color: 'green', text: '文章' }
-    };
-    return typeMap[mediaType as keyof typeof typeMap] || { color: 'default', text: mediaType };
-  };
+      article: { color: 'green', text: '文章' },
+    }
+    return typeMap[mediaType as keyof typeof typeMap] || { color: 'default', text: mediaType }
+  }
 
   const renderPostItem = (post: SentPost) => {
     // Get account information based on accountId
-    const account = accountMap.get(post.accountId);
-    const platInfo = AccountPlatInfoMap.get(post.accountType as any);
-    
-    const timeInfo = formatTime(post.publishTime);
-    const postTime = typeof post.publishTime === 'string' ? new Date(post.publishTime).getTime() : post.publishTime;
-    const daysAgo = Math.floor((Date.now() - postTime) / (1000 * 60 * 60 * 24));
+    const account = accountMap.get(post.accountId)
+    const platInfo = AccountPlatInfoMap.get(post.accountType as any)
+
+    const timeInfo = formatTime(post.publishTime)
+    const postTime = typeof post.publishTime === 'string' ? new Date(post.publishTime).getTime() : post.publishTime
+    const daysAgo = Math.floor((Date.now() - postTime) / (1000 * 60 * 60 * 24))
 
     return (
       <div key={post.id} className={styles.sentPostItem}>
@@ -156,9 +152,9 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
           <div className={styles.postContent}>
             {/* User information */}
             <div className={styles.userInfo}>
-              <Avatar 
-                size={40} 
-                src={getOssUrl(account?.avatar || '')} 
+              <Avatar
+                size={40}
+                src={getOssUrl(account?.avatar || '')}
                 className={styles.userAvatar}
               >
                 {account?.nickname?.charAt(0) || account?.account?.charAt(0) || post.title?.charAt(0) || '?'}
@@ -174,7 +170,6 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                   <span>{platInfo?.name || post.accountType}</span>
                 </div>
               </div>
-              {/* <div className={styles.chatIcon}>💬</div> */}
             </div>
 
             {/* Post text */}
@@ -182,14 +177,12 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
               {post.desc}
             </div>
 
-           
-
             {/* Media content */}
             {post.coverUrl && (
               <div className={styles.mediaContainer}>
                 <div className={styles.mediaWrapper}>
-                  <img 
-                    src={post.coverUrl} 
+                  <img
+                    src={post.coverUrl}
                     alt={post.title || post.desc}
                     className={styles.mediaImage}
                   />
@@ -250,16 +243,18 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                 {t('listMode.createdDaysAgo' as any, { days: daysAgo })}
               </div>
               <div className={styles.actionButtons}>
-                <Button 
-                  type="link" 
+                <Button
+                  type="link"
                   size="small"
                   className={styles.viewPostBtn}
                   onClick={() => window.open(post.workLink, '_blank')}
                 >
-                  {t('listMode.viewPost' as any)} ↗️
+                  {t('listMode.viewPost' as any)}
+                  {' '}
+                  ↗️
                 </Button>
-                <Button 
-                  type="text" 
+                <Button
+                  type="text"
                   size="small"
                   className={styles.moreBtn}
                 >
@@ -270,13 +265,13 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
           </div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   // Filter out data that cannot be matched in the account list
   const validPosts = useMemo(() => {
-    return posts.filter(post => accountMap.has(post.accountId));
-  }, [posts, accountMap]);
+    return posts.filter(post => accountMap.has(post.accountId))
+  }, [posts, accountMap])
 
   if (loading && posts.length === 0) {
     return (
@@ -287,37 +282,39 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
           <Skeleton active paragraph={{ rows: 3 }} />
         </div>
       </div>
-    );
+    )
   }
 
   return (
     <div className={styles.sentList}>
-      {validPosts.length > 0 ? (
-        <>
-          <div className={styles.postsContainer}>
-            {validPosts.map(renderPostItem)}
-          </div>
-          {hasMore && (
-            <div className={styles.loadMoreContainer}>
-              <Button 
-                loading={loading}
-                onClick={loadMore}
-                className={styles.loadMoreButton}
-              >
-                Load more...
-              </Button>
+      {validPosts.length > 0
+        ? (
+            <>
+              <div className={styles.postsContainer}>
+                {validPosts.map(renderPostItem)}
+              </div>
+              {hasMore && (
+                <div className={styles.loadMoreContainer}>
+                  <Button
+                    loading={loading}
+                    onClick={loadMore}
+                    className={styles.loadMoreButton}
+                  >
+                    Load more...
+                  </Button>
+                </div>
+              )}
+            </>
+          )
+        : (
+            <div className={styles.emptyState}>
+              <Empty
+                description={t('listMode.noSentPosts' as any)}
+              />
             </div>
           )}
-        </>
-      ) : (
-        <div className={styles.emptyState}>
-          <Empty
-            description={t('listMode.noSentPosts' as any)}
-          />
-        </div>
-      )}
     </div>
-  );
-};
+  )
+}
 
-export default SentList;
+export default SentList

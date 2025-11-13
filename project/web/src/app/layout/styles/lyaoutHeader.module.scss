@@ -18,7 +18,7 @@
   transition: all 0.3s ease;
   max-height: 100px;
   opacity: 1;
-  
+
   &:hover {
     background: linear-gradient(90deg, #4338ca 0%, #6d28d9 100%);
   }
@@ -30,7 +30,10 @@
   padding-top: 0 !important;
   padding-bottom: 0 !important;
   opacity: 0 !important;
-  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease !important;
+  transition:
+    max-height 0.3s ease,
+    opacity 0.3s ease,
+    padding 0.3s ease !important;
 }
 
 .bannerContent {
@@ -56,22 +59,22 @@
   border-radius: 4px;
   transition: all 0.2s ease;
   opacity: 0.8;
-  
+
   &:hover {
     opacity: 1;
     background: rgba(255, 255, 255, 0.15);
     transform: translateY(-50%) rotate(90deg);
   }
-  
+
   &:active {
     transform: translateY(-50%) scale(0.9) rotate(90deg);
   }
-  
+
   svg {
     display: block;
     transition: transform 0.2s ease;
   }
-  
+
   @media (max-width: 768px) {
     right: 8px;
   }
@@ -178,7 +181,7 @@
           background-color: #f5f5f5;
           transform: scale(1.05);
         }
-        
+
         .anticon {
           font-size: 18px;
           color: #666;
@@ -189,16 +192,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border: 1px solid #EBEDEC;
+        border: 1px solid #ebedec;
         height: 60px;
         border-radius: 30px;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background-color: #f5f5f5;
           transform: scale(1.05);
         }
-        
+
         .anticon {
           font-size: 16px;
           color: #666;
@@ -213,12 +216,12 @@
         height: 30px;
         border-radius: 50%;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background-color: #f5f5f5;
           transform: scale(1.05);
         }
-        
+
         .anticon {
           font-size: 18px;
           color: #666;
@@ -235,7 +238,7 @@
         position: relative;
         padding-left: 12.5px;
         &:after {
-          content: "";
+          content: '';
           display: block;
           position: absolute;
           width: 5px;
@@ -285,10 +288,12 @@
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
-        &-name, &-mail {
+        &-name,
+        &-mail {
           @include omitText(1);
         }
-        &-name {}
+        &-name {
+        }
         &-mail {
           font-size: var(--fs-xs);
           color: var(--grayColor8);
@@ -325,7 +330,7 @@
       &--border {
         position: relative;
         &:after {
-          content: "";
+          content: '';
           display: block;
           position: absolute;
           width: 100%;
@@ -348,11 +353,11 @@
 
 .languageButton {
   color: #333;
-  border: 1px solid #EBEDEC;
+  border: 1px solid #ebedec;
   border-radius: 6px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background: #fff;
-  
+
   &:hover {
     color: #1890ff;
     border-color: #40a9ff;
@@ -362,18 +367,18 @@
 .languageDropdown {
   :global {
     .ant-dropdown-menu {
-      border: 1px solid #EBEDEC;
+      border: 1px solid #ebedec;
       border-radius: 6px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       padding: 4px 0;
       min-width: 140px;
     }
-    
+
     .ant-dropdown-menu-item {
       padding: 8px 12px;
       border-radius: 4px;
       margin: 2px 4px;
-      
+
       &:hover {
         background-color: #f5f5f5;
       }

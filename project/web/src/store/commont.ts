@@ -1,15 +1,15 @@
-import { create } from "zustand";
-import { combine } from "zustand/middleware";
-import { NotificationInstance } from "antd/es/notification/interface";
+import type { NotificationInstance } from 'antd/es/notification/interface'
+import { create } from 'zustand'
+import { combine } from 'zustand/middleware'
 
 export interface ICommontStore {
   // 全局通知api
-  notification?: NotificationInstance;
+  notification?: NotificationInstance
 }
 
 const store: ICommontStore = {
   notification: undefined,
-};
+}
 
 // 项目中的通用的、全局的状态和方法
 export const useCommontStore = create(
@@ -22,10 +22,10 @@ export const useCommontStore = create(
         setNotification(notification: NotificationInstance) {
           set({
             notification,
-          });
+          })
         },
-      };
-      return methods;
+      }
+      return methods
     },
   ),
-);
+)

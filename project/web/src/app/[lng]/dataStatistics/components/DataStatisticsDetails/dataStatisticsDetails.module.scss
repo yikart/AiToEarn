@@ -9,7 +9,7 @@
         position: relative;
         padding-left: 20px;
         &:after {
-          content: "";
+          content: '';
           display: block;
           position: absolute;
           top: 45%;
@@ -54,7 +54,7 @@
         &-icon {
           display: inline-block;
           margin-right: 10px;
-          svg,  {
+          svg {
             font-size: 18px;
             fill: var(--colorPrimary5);
           }

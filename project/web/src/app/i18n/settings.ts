@@ -1,11 +1,11 @@
-export const fallbackLng = "en";
-export const languages = [fallbackLng, "zh-CN"];
-export const defaultNS = "common";
-export const cookieName = "i18next";
+export const fallbackLng = 'en'
+export const languages = [fallbackLng, 'zh-CN']
+export const defaultNS = 'common'
+export const cookieName = 'i18next'
 
 export function getOptions(
   lng = fallbackLng,
-  ns: string | string[] = [defaultNS, "route"],
+  ns: string | string[] = [defaultNS, 'route'],
 ) {
   return {
     // debug: true,
@@ -19,5 +19,5 @@ export function getOptions(
     // backend: {
     //   projectId: '01b2e5e8-6243-47d1-b36f-963dbb8bcae3'
     // }
-  };
+  }
 }

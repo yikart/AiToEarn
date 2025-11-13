@@ -1,32 +1,32 @@
-import { create } from "zustand";
-import { combine } from "zustand/middleware";
-import lodash from "lodash";
-import { SocialAccount } from "@/api/types/account.type";
-import {
+import type { SocialAccount } from '@/api/types/account.type'
+import type { ErrPubParamsMapType } from '@/components/PublishDialog/hooks/usePubParamsVerify'
+import type {
   IPubParams,
   PubItem,
-} from "@/components/PublishDialog/publishDialog.type";
-import { ErrPubParamsMapType } from "@/components/PublishDialog/hooks/usePubParamsVerify";
-import { AccountPlatInfoMap } from "@/app/config/platConfig";
-import { PubType } from "@/app/config/publishConfig";
+} from '@/components/PublishDialog/publishDialog.type'
+import lodash from 'lodash'
+import { create } from 'zustand'
+import { combine } from 'zustand/middleware'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { PubType } from '@/app/config/publishConfig'
 
 export interface IPublishDialogStore {
   // 选择的发布列表
-  pubListChoosed: PubItem[];
+  pubListChoosed: PubItem[]
   // 所有发布列表
-  pubList: PubItem[];
+  pubList: PubItem[]
   // 通用发布参数
-  commonPubParams: IPubParams;
+  commonPubParams: IPubParams
   // 当前步骤，0=所有账号没有参数，要设置参数。 1=所有账号有参数，详细设置参数
-  step: number;
+  step: number
   // 第二步时需要，展开的账户参数
-  expandedPubItem?: PubItem;
+  expandedPubItem?: PubItem
   // 错误提示
-  errParamsMap?: ErrPubParamsMapType;
-  warningParamsMap?: ErrPubParamsMapType;
+  errParamsMap?: ErrPubParamsMapType
+  warningParamsMap?: ErrPubParamsMapType
   // 发布时间
-  pubTime?: string;
-  openLeft: boolean;
+  pubTime?: string
+  openLeft: boolean
 }
 
 const store: IPublishDialogStore = {
@@ -35,15 +35,15 @@ const store: IPublishDialogStore = {
   pubList: [],
   step: 0,
   commonPubParams: {
-    title: "",
-    des: "",
+    title: '',
+    des: '',
     video: undefined,
     images: [],
     option: {
       bilibili: {
         tid: undefined,
         copyright: 1,
-        source: "",
+        source: '',
       },
       facebook: {
         page_id: undefined,
@@ -57,11 +57,11 @@ const store: IPublishDialogStore = {
   errParamsMap: undefined,
   warningParamsMap: undefined,
   openLeft: false,
-};
+}
 
-const getStore = () => {
-  return lodash.cloneDeep(store);
-};
+function getStore() {
+  return lodash.cloneDeep(store)
+}
 
 export const usePublishDialog = create(
   combine(
@@ -73,48 +73,48 @@ export const usePublishDialog = create(
         setOpenLeft(openLeft: boolean) {
           set({
             openLeft,
-          });
+          })
         },
         setPubListChoosed(pubListChoosed: PubItem[]) {
           set({
             pubListChoosed,
-          });
+          })
         },
         setExpandedPubItem(expandedPubItem: PubItem | undefined) {
           set({
             expandedPubItem,
-          });
+          })
         },
         setErrParamsMap(errParamsMap: ErrPubParamsMapType) {
           set({
             errParamsMap,
-          });
+          })
         },
         setWarningParamsMap(warningParamsMap: ErrPubParamsMapType) {
           set({
             warningParamsMap,
-          });
+          })
         },
         setStep(step: number) {
-          set({ step });
+          set({ step })
         },
         setPubTime(pubTime: string | undefined) {
-          set({ pubTime });
+          set({ pubTime })
         },
         setPubList(pubList: PubItem[]) {
-          set({ pubList });
+          set({ pubList })
         },
 
         // 清空所有数据
         clear() {
           set({
             ...getStore(),
-          });
+          })
         },
 
         // 初始化发布参数
         pubParamsInit(): IPubParams {
-          return lodash.cloneDeep(get().commonPubParams);
+          return lodash.cloneDeep(get().commonPubParams)
         },
 
         /**
@@ -123,68 +123,68 @@ export const usePublishDialog = create(
          * @param defaultAccountId 默认选中的账户Id
          */
         init(account: SocialAccount[], defaultAccountId?: string) {
-          const pubList: PubItem[] = [];
+          const pubList: PubItem[] = []
 
           account.map((v) => {
             pubList.push({
               account: v,
               params: methods.pubParamsInit(),
-            });
-          });
+            })
+          })
 
           if (defaultAccountId) {
             methods.setPubListChoosed([
-              pubList.find((v) => v.account.id === defaultAccountId)!,
-            ]);
+              pubList.find(v => v.account.id === defaultAccountId)!,
+            ])
           }
 
           set({
             pubList,
-          });
+          })
         },
 
         // 参数设置到所有账户
         setAccountAllParams(pubParmas: Partial<IPubParams>) {
-          const pubList = [...get().pubList];
-          const commonPubParams = { ...get().commonPubParams };
-          let pubListChoosed = [...get().pubListChoosed];
+          const pubList = [...get().pubList]
+          const commonPubParams = { ...get().commonPubParams }
+          let pubListChoosed = [...get().pubListChoosed]
 
           // 更新 commonPubParams
           for (const key in pubParmas) {
             if (pubParmas.hasOwnProperty(key)) {
-              (commonPubParams as any)[key] = (pubParmas as any)[key];
+              (commonPubParams as any)[key] = (pubParmas as any)[key]
             }
           }
 
           // 更新所有账户的参数
           for (let i = 0; i < pubList.length; i++) {
-            const v = pubList[i];
-            const platConfig = AccountPlatInfoMap.get(v.account.type)!;
+            const v = pubList[i]
+            const platConfig = AccountPlatInfoMap.get(v.account.type)!
 
             // 更新描述
             if (pubParmas.des !== undefined) {
-              v.params.des = pubParmas.des;
+              v.params.des = pubParmas.des
             }
 
             // 更新标题
             if (pubParmas.title !== undefined) {
-              v.params.title = pubParmas.title;
+              v.params.title = pubParmas.title
             }
 
             // 更新视频（如果平台支持）
             if (
-              pubParmas.video !== undefined &&
-              platConfig.pubTypes.has(PubType.VIDEO)
+              pubParmas.video !== undefined
+              && platConfig.pubTypes.has(PubType.VIDEO)
             ) {
-              v.params.video = pubParmas.video;
+              v.params.video = pubParmas.video
             }
 
             // 更新图片（如果平台支持）
             if (
-              pubParmas.images !== undefined &&
-              platConfig.pubTypes.has(PubType.ImageText)
+              pubParmas.images !== undefined
+              && platConfig.pubTypes.has(PubType.ImageText)
             ) {
-              v.params.images = pubParmas.images;
+              v.params.images = pubParmas.images
             }
 
             // 更新选项
@@ -193,15 +193,16 @@ export const usePublishDialog = create(
                 {},
                 v.params.option,
                 pubParmas.option,
-              );
+              )
             }
           }
 
           pubListChoosed = pubListChoosed.map((v) => {
-            const findData = pubList.find((k) => k.account.id === v.account.id);
-            if (findData) return findData;
-            return v;
-          });
+            const findData = pubList.find(k => k.account.id === v.account.id)
+            if (findData)
+              return findData
+            return v
+          })
 
           set({
             pubList,
@@ -209,18 +210,19 @@ export const usePublishDialog = create(
             pubListChoosed,
             expandedPubItem: get().expandedPubItem
               ? pubList.find(
-                  (v) => v.account.id === get().expandedPubItem!.account.id,
+                  v => v.account.id === get().expandedPubItem!.account.id,
                 )
               : undefined,
-          });
+          })
         },
 
         // 设置单个账号的参数
         setOnePubParams(pubParmas: Partial<IPubParams>, accountId: string) {
-          const pubList = [...get().pubList];
-          let pubListChoosed = [...get().pubListChoosed];
-          const findedData = pubList.find((v) => v.account.id === accountId);
-          if (!findedData) return;
+          const pubList = [...get().pubList]
+          let pubListChoosed = [...get().pubListChoosed]
+          const findedData = pubList.find(v => v.account.id === accountId)
+          if (!findedData)
+            return
 
           // 使用lodash的merge来正确处理嵌套对象
           if (pubParmas.option) {
@@ -228,53 +230,54 @@ export const usePublishDialog = create(
               {},
               findedData.params.option,
               pubParmas.option,
-            );
+            )
           }
 
           for (const key in pubParmas) {
-            if (pubParmas.hasOwnProperty(key) && key !== "option") {
-              (findedData.params as any)[key] = (pubParmas as any)[key];
+            if (pubParmas.hasOwnProperty(key) && key !== 'option') {
+              (findedData.params as any)[key] = (pubParmas as any)[key]
             }
           }
 
           for (let i = 0; i < pubList.length; i++) {
-            const v = pubList[i];
-            const platConfig = AccountPlatInfoMap.get(v.account.type)!;
-            if (!pubListChoosed.some((k) => k.account.id === v.account.id)) {
+            const v = pubList[i]
+            const platConfig = AccountPlatInfoMap.get(v.account.type)!
+            if (!pubListChoosed.some(k => k.account.id === v.account.id)) {
               if (pubParmas.des !== undefined) {
-                v.params.des = pubParmas.des || "";
+                v.params.des = pubParmas.des || ''
               }
               if (platConfig.pubTypes.has(PubType.VIDEO) && pubParmas.video) {
-                v.params.video = pubParmas.video;
+                v.params.video = pubParmas.video
               }
               if (
-                platConfig.pubTypes.has(PubType.ImageText) &&
-                pubParmas.images
+                platConfig.pubTypes.has(PubType.ImageText)
+                && pubParmas.images
               ) {
-                v.params.images = pubParmas.images;
+                v.params.images = pubParmas.images
               }
             }
           }
 
           pubListChoosed = pubListChoosed.map((v) => {
-            const findData = pubList.find((k) => k.account.id === v.account.id);
-            if (findData) return findData;
-            return v;
-          });
+            const findData = pubList.find(k => k.account.id === v.account.id)
+            if (findData)
+              return findData
+            return v
+          })
 
           set({
             pubList,
             pubListChoosed,
             expandedPubItem: get().expandedPubItem
               ? pubList.find(
-                  (v) => v.account.id === get().expandedPubItem!.account.id,
+                  v => v.account.id === get().expandedPubItem!.account.id,
                 )
               : undefined,
-          });
+          })
         },
-      };
+      }
 
-      return methods;
+      return methods
     },
   ),
-);
+)

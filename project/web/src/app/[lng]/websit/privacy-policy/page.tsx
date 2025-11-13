@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { useTransClient } from "@/app/i18n/client";
-import styles from "../websit.module.scss";
+import { useTransClient } from '@/app/i18n/client'
+import styles from '../websit.module.scss'
 
 // 导入首页的Header组件
 function Header() {
-  const { t } = useTransClient('home');
-  
+  const { t } = useTransClient('home')
+
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
@@ -22,14 +22,14 @@ function Header() {
         <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
       </div>
     </header>
-  );
+  )
 }
 
 export default function PrivacyPolicyPage() {
   return (
     <div className={styles.websitPage}>
       <Header />
-      
+
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
@@ -40,20 +40,20 @@ export default function PrivacyPolicyPage() {
               Last Updated: 2024-12-26
             </p>
           </div>
-          
+
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
-              Aitoearn provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use, protection, and disclosure of Personal Information received from your use of this website, located at https://aitoearn.ai (“Site”), as well as all related websites including our subdomains, applications, browser extensions, and other services provided by us (collectively, together with the Site, our “Service”), and in connection with our customer, vendor, and partner relationships. This Privacy Policy also tells you about your rights and choices with respect to your Personal Information, and how you can reach us to update your contact information or get answers to questions you may have about our privacy practices.
+                Aitoearn provides this Privacy Policy to inform you of our policies and procedures regarding the collection, use, protection, and disclosure of Personal Information received from your use of this website, located at https://aitoearn.ai (“Site”), as well as all related websites including our subdomains, applications, browser extensions, and other services provided by us (collectively, together with the Site, our “Service”), and in connection with our customer, vendor, and partner relationships. This Privacy Policy also tells you about your rights and choices with respect to your Personal Information, and how you can reach us to update your contact information or get answers to questions you may have about our privacy practices.
               </p>
               <p className={styles.sectionContent}>
-              In addition to the activities described in this Privacy Policy, we may process Personal Information on behalf of our commercial customers when they use the Service. We process such Personal Information as a data processor of our commercial customers, which are the entities responsible for the data processing. To understand how a commercial customer processes your Personal Information, please refer to that customer’s privacy policy.
+                In addition to the activities described in this Privacy Policy, we may process Personal Information on behalf of our commercial customers when they use the Service. We process such Personal Information as a data processor of our commercial customers, which are the entities responsible for the data processing. To understand how a commercial customer processes your Personal Information, please refer to that customer’s privacy policy.
               </p>
               <p className={styles.sectionContent}>
                 Registration with, use of, and access to the Service is subject to this Privacy Policy and our Terms of Use located at https://aitoearn.ai/en/websit/terms-of-service.
               </p>
             </section>
-            
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Table of Contents</h2>
               <ul className={styles.listContent}>
@@ -84,7 +84,7 @@ export default function PrivacyPolicyPage() {
 
             <section className={styles.section} id="section2">
               <h2 className={styles.sectionTitle}>2. Personal Information Provided by You</h2>
-              
+
               <h3 className={styles.subSectionTitle}>Registration</h3>
               <p className={styles.sectionContent}>
                 If you desire to have access to certain restricted sections of the Site or request to receive marketing materials, you may be required to become a registered user, and to submit the following types of Personal Information to Aitoearn: your name, email address, phone number, full user name, password, city, and time zone.
@@ -145,7 +145,7 @@ export default function PrivacyPolicyPage() {
 
             <section className={styles.section} id="section2b">
               <h2 className={styles.sectionTitle}>2b. Personal Information Automatically Obtained from Your Interactions with the Service</h2>
-              
+
               <h3 className={styles.subSectionTitle}>Log Data</h3>
               <p className={styles.sectionContent}>
                 When you use our Service, our servers automatically record information that your browser sends whenever you visit a website ("Log Data"). This Log Data may include information such as your IP address, browser type or the domain from which you are visiting, the web-pages you visit, the search terms you use, and any advertisements on which you click.
@@ -257,7 +257,6 @@ export default function PrivacyPolicyPage() {
               </p>
             </section>
 
-
             <section className={styles.section} id="section11">
               <h2 className={styles.sectionTitle}>10. How to Contact Us</h2>
               <div className={styles.contactInfo}>
@@ -266,8 +265,13 @@ export default function PrivacyPolicyPage() {
                   Aitoearn Inc. is the entity responsible for the processing of your personal information. If you have any questions or comments regarding this privacy policy, or if you would like to exercise your rights to your personal information, you may contact us:
                 </p>
                 <p className={styles.contactText}>
-                  <strong>Email:</strong> hello@aitoearn.ai<br/>
-                  <strong>Privacy Questions:</strong> privacy@aitoearn.ai
+                  <strong>Email:</strong>
+                  {' '}
+                  hello@aitoearn.ai
+                  <br />
+                  <strong>Privacy Questions:</strong>
+                  {' '}
+                  privacy@aitoearn.ai
                 </p>
                 <p className={styles.contactText}>
                   If you have any thoughts or questions about this privacy policy please let us know at hello@aitoearn.ai
@@ -278,5 +282,5 @@ export default function PrivacyPolicyPage() {
         </div>
       </main>
     </div>
-  );
-} 
+  )
+}

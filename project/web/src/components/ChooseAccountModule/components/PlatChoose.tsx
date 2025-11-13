@@ -1,14 +1,10 @@
-import {
+import type {
   ForwardedRef,
-  forwardRef,
-  memo,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import styles from "../chooseAccountModule.module.scss";
+} from 'react'
+import type { SocialAccount } from '@/api/types/account.type'
+import type { PlatType } from '@/app/config/platConfig'
+import type { PubType } from '@/app/config/publishConfig'
+import { CheckOutlined } from '@ant-design/icons'
 import {
   Avatar,
   Badge,
@@ -17,44 +13,51 @@ import {
   Empty,
   Segmented,
   Tooltip,
-} from "antd";
-import { CheckOutlined } from "@ant-design/icons";
-import { useShallow } from "zustand/react/shallow";
-import useCssVariables from "@/app/hooks/useCssVariables";
-import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
-import { PubType } from "@/app/config/publishConfig";
-import { useAccountStore } from "@/store/account";
-import Link from "next/link";
-import { SocialAccount } from "@/api/types/account.type";
+} from 'antd'
+import Link from 'next/link'
+import {
+  forwardRef,
+  memo,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import useCssVariables from '@/app/hooks/useCssVariables'
+import { useAccountStore } from '@/store/account'
+import styles from '../chooseAccountModule.module.scss'
 
 export interface IPlatChooseRef {
   /**
    * 恢复选中状态
    * @param choosedAccounts
    */
-  recover: () => void;
+  recover: () => void
   // 每次关闭弹框的时候需要初始化一些状态
-  init: () => void;
+  init: () => void
   // 设置选中平台
-  setActivePlat: (activePlat: PlatType) => void;
+  setActivePlat: (activePlat: PlatType) => void
 }
 
 export interface IPlatChooseProps {
-  pubType: PubType;
+  pubType: PubType
   // 默认选择的平台
-  defaultPlat?: PlatType;
+  defaultPlat?: PlatType
   onChange?: (
     choosedAcounts: SocialAccount[],
     choosedAcount: SocialAccount,
-  ) => void;
+  ) => void
   // 外部传入的已经选中的数据，这个值只有在确认更改才会更新
-  choosedAccounts?: SocialAccount[];
+  choosedAccounts?: SocialAccount[]
   // 按平台 是否禁用多选，true=禁用，false=不禁用
-  disableAllSelect?: boolean;
+  disableAllSelect?: boolean
   // 可选择的平台，默认为全部
-  allowPlatSet?: Set<PlatType>;
+  allowPlatSet?: Set<PlatType>
   // 是否可以取消已经选择的账户，默认为 false
-  isCancelChooseAccount?: boolean;
+  isCancelChooseAccount?: boolean
 }
 
 const PlatChoose = memo(
@@ -71,147 +74,152 @@ const PlatChoose = memo(
       }: IPlatChooseProps,
       ref: ForwardedRef<IPlatChooseRef>,
     ) => {
-      const cssVars = useCssVariables();
+      const cssVars = useCssVariables()
       // 所有账户数据
       const [accountMap, setAccountMap] = useState<
         Map<PlatType, SocialAccount[]>
-      >(new Map());
+      >(new Map())
       // 当前选择的平台
-      const [activePlat, setActivePlat] = useState<PlatType | undefined>();
+      const [activePlat, setActivePlat] = useState<PlatType | undefined>()
       // 当前选择的账户数据
       const [choosedAcountMap, setChoosedAcountMap] = useState<
         Map<PlatType, SocialAccount[]>
-      >(new Map());
+      >(new Map())
       // 每次change操作的数据
-      const recentData = useRef<SocialAccount>();
+      const recentData = useRef<SocialAccount>()
       const { accountList } = useAccountStore(
-        useShallow((state) => ({
+        useShallow(state => ({
           accountList: state.accountList,
         })),
-      );
+      )
 
       // 经过 allowPlatSet 过滤后的账户数据
       const accountMapLast = useMemo(() => {
-        const newVal = new Map<PlatType, SocialAccount[]>();
+        const newVal = new Map<PlatType, SocialAccount[]>()
         for (const [accountType, accountList] of accountMap) {
           if (!allowPlatSet ? true : allowPlatSet.has(accountType)) {
-            newVal.set(accountType, accountList);
+            newVal.set(accountType, accountList)
           }
         }
-        return newVal;
-      }, [accountMap, allowPlatSet]);
+        return newVal
+      }, [accountMap, allowPlatSet])
 
       // 默认平台设置
       useEffect(() => {
         const defaultPlatData = Array.from(accountMapLast).find(
           ([plat, data]) => data.length !== 0,
-        );
+        )
         setActivePlat(
-          defaultPlat ||
-            (defaultPlatData
-              ? defaultPlatData[0]
-              : Array.from(accountMapLast.keys())[0]),
-        );
-      }, [accountMapLast]);
+          defaultPlat
+          || (defaultPlatData
+            ? defaultPlatData[0]
+            : Array.from(accountMapLast.keys())[0]),
+        )
+      }, [accountMapLast])
 
       // 所有平台的账户数据
       const getAllAccountList = useMemo(() => {
-        const allAccountList = [];
+        const allAccountList = []
         for (const [_, accountList] of accountMapLast) {
-          allAccountList.push(...accountList);
+          allAccountList.push(...accountList)
         }
-        return allAccountList;
-      }, [accountMapLast]);
+        return allAccountList
+      }, [accountMapLast])
 
       // 当前选择的所有平台的账户数据
       const getChoosedAllAccountList = useMemo(() => {
-        const allAccountList = [];
+        const allAccountList = []
         for (const [_, accountList] of choosedAcountMap) {
-          allAccountList.push(...accountList);
+          allAccountList.push(...accountList)
         }
-        return allAccountList;
-      }, [choosedAcountMap]);
+        return allAccountList
+      }, [choosedAcountMap])
 
       // 当前平台的所有用户数据
       const currAccountList = useMemo(
         () => (activePlat && accountMapLast.get(activePlat)) || [],
         [activePlat, accountMapLast],
-      );
+      )
 
       // 当前平台的选择账户的数据
       const currChoosedAcount = useMemo(
         () => (activePlat && choosedAcountMap.get(activePlat)) || [],
         [activePlat, choosedAcountMap],
-      );
+      )
 
       useEffect(() => {
         setAccountMap((prevMap) => {
-          const newMap = new Map(prevMap);
+          const newMap = new Map(prevMap)
           Array.from(AccountPlatInfoMap).map(([key, value]) => {
             if (value.pubTypes.has(pubType)) {
-              newMap.set(key, []);
+              newMap.set(key, [])
             }
-          });
+          })
           // 添加渲染账户数据值
           accountList.map((v) => {
-            newMap.get(v.type)?.push(v);
-          });
-          return newMap;
-        });
-      }, [accountList]);
+            newMap.get(v.type)?.push(v)
+          })
+          return newMap
+        })
+      }, [accountList])
 
       useEffect(() => {
         return () => {
-          setAccountMap(new Map());
-          setChoosedAcountMap(new Map());
-          init();
-        };
-      }, []);
+          setAccountMap(new Map())
+          setChoosedAcountMap(new Map())
+          init()
+        }
+      }, [])
 
       // change事件
       useEffect(() => {
-        if (!recentData.current) return;
-        let accounts: SocialAccount[] = [];
+        if (!recentData.current)
+          return
+        let accounts: SocialAccount[] = []
         Array.from(choosedAcountMap).map(([key, value]) => {
-          accounts = [...accounts, ...value];
-        });
-        if (onChange) onChange(accounts, recentData.current!);
-      }, [choosedAcountMap]);
+          accounts = [...accounts, ...value]
+        })
+        if (onChange)
+          onChange(accounts, recentData.current!)
+      }, [choosedAcountMap])
 
       const init = () => {
-        recentData.current = undefined;
-      };
+        recentData.current = undefined
+      }
 
       useImperativeHandle(ref, () => ({
         // 恢复到本次操作之前的状态
         recover() {
           if (!choosedAccounts || choosedAccounts.length === 0)
-            return setChoosedAcountMap(new Map());
+            return setChoosedAcountMap(new Map())
 
           setChoosedAcountMap(() => {
-            const newV = new Map();
+            const newV = new Map()
             choosedAccounts.map((v) => {
-              if (!newV.has(v.type)) newV.set(v.type, []);
-              newV.get(v.type)!.push(v);
-            });
-            return newV;
-          });
+              if (!newV.has(v.type))
+                newV.set(v.type, [])
+              newV.get(v.type)!.push(v)
+            })
+            return newV
+          })
         },
         setActivePlat,
         init,
-      }));
+      }))
 
       return (
         <div className={styles.platChoose}>
           {getAllAccountList.length === 0 ? (
             <div className="platChoose-empty">
               <Empty
-                description={
+                description={(
                   <>
-                    无账户数据，请前往 <Link href="/accounts">账户</Link>
+                    无账户数据，请前往
+                    {' '}
+                    <Link href="/accounts">账户</Link>
                     添加数据
                   </>
-                }
+                )}
               />
             </div>
           ) : (
@@ -220,31 +228,32 @@ const PlatChoose = memo(
                 {!disableAllSelect && (
                   <Checkbox
                     indeterminate={
-                      getChoosedAllAccountList.length > 0 &&
-                      getChoosedAllAccountList.length < getAllAccountList.length
+                      getChoosedAllAccountList.length > 0
+                      && getChoosedAllAccountList.length < getAllAccountList.length
                     }
                     onChange={(e) => {
-                      const { checked } = e.target;
+                      const { checked } = e.target
                       setChoosedAcountMap((v) => {
-                        const newMap = new Map(v);
-                        recentData.current = currAccountList[0];
+                        const newMap = new Map(v)
+                        recentData.current = currAccountList[0]
 
                         for (const [
                           accountType,
                           accountList,
                         ] of accountMapLast) {
                           if (checked) {
-                            newMap.set(accountType, accountList);
-                          } else {
-                            newMap.set(accountType, []);
+                            newMap.set(accountType, accountList)
+                          }
+                          else {
+                            newMap.set(accountType, [])
                           }
                         }
-                        return newMap;
-                      });
+                        return newMap
+                      })
                     }}
                     checked={
-                      getAllAccountList.length ===
-                      getChoosedAllAccountList.length
+                      getAllAccountList.length
+                      === getChoosedAllAccountList.length
                     }
                   >
                     选择所有平台账户
@@ -254,11 +263,11 @@ const PlatChoose = memo(
                   theme={{
                     components: {
                       Segmented: {
-                        trackBg: "#fff",
-                        itemSelectedBg: cssVars["--colorPrimary1"],
-                        itemHoverBg: cssVars["--colorPrimary2"],
-                        itemActiveBg: cssVars["--colorPrimary3"],
-                        itemSelectedColor: cssVars["--colorPrimary9"],
+                        trackBg: '#fff',
+                        itemSelectedBg: cssVars['--colorPrimary1'],
+                        itemHoverBg: cssVars['--colorPrimary2'],
+                        itemActiveBg: cssVars['--colorPrimary3'],
+                        itemSelectedColor: cssVars['--colorPrimary9'],
                       },
                     },
                   }}
@@ -269,8 +278,9 @@ const PlatChoose = memo(
                     value={activePlat}
                     options={Array.from(accountMapLast)
                       .map(([key, value]) => {
-                        if (value.length === 0) return undefined;
-                        const platInfo = AccountPlatInfoMap.get(key)!;
+                        if (value.length === 0)
+                          return undefined
+                        const platInfo = AccountPlatInfoMap.get(key)!
                         return {
                           value: key,
                           label: platInfo.name,
@@ -280,15 +290,15 @@ const PlatChoose = memo(
                               size="small"
                             >
                               <img
-                                style={{ width: "25px" }}
+                                style={{ width: '25px' }}
                                 src={platInfo.icon}
                               />
                             </Badge>
                           ),
-                        };
+                        }
                       })
-                      .filter((v) => v !== undefined)
-                      .filter((v) =>
+                      .filter(v => v !== undefined)
+                      .filter(v =>
                         allowPlatSet ? allowPlatSet.has(v.value) : true,
                       )}
                     onChange={setActivePlat}
@@ -299,74 +309,90 @@ const PlatChoose = memo(
               <div className="platChoose-con">
                 {currAccountList && (
                   <div className="platChoose-con-wrapper">
-                    {!disableAllSelect ? (
-                      <Checkbox
-                        indeterminate={
-                          currChoosedAcount.length > 0 &&
-                          currChoosedAcount.length < currAccountList.length
-                        }
-                        onChange={(e) => {
-                          setChoosedAcountMap((v) => {
-                            recentData.current = currAccountList[0];
-                            return new Map(v).set(
-                              activePlat!,
-                              e.target.checked ? currAccountList : [],
-                            );
-                          });
-                        }}
-                        checked={
-                          currChoosedAcount.length === currAccountList.length
-                        }
-                      >
-                        全选 已选择 {currChoosedAcount.length} 个
-                      </Checkbox>
-                    ) : (
-                      <span>已选择 {currChoosedAcount.length} 个</span>
-                    )}
+                    {!disableAllSelect
+                      ? (
+                          <Checkbox
+                            indeterminate={
+                              currChoosedAcount.length > 0
+                              && currChoosedAcount.length < currAccountList.length
+                            }
+                            onChange={(e) => {
+                              setChoosedAcountMap((v) => {
+                                recentData.current = currAccountList[0]
+                                return new Map(v).set(
+                                  activePlat!,
+                                  e.target.checked ? currAccountList : [],
+                                )
+                              })
+                            }}
+                            checked={
+                              currChoosedAcount.length === currAccountList.length
+                            }
+                          >
+                            全选 已选择
+                            {' '}
+                            {currChoosedAcount.length}
+                            {' '}
+                            个
+                          </Checkbox>
+                        )
+                      : (
+                          <span>
+                            已选择
+                            {currChoosedAcount.length}
+                            {' '}
+                            个
+                          </span>
+                        )}
                     <div className="platChoose-accounts">
                       {currAccountList.map((v) => {
                         // true=禁用
-                        const isDisable =
-                          choosedAccounts?.find((k) => k.id === v.id) &&
-                          isCancelChooseAccount;
+                        const isDisable
+                          = choosedAccounts?.find(k => k.id === v.id)
+                            && isCancelChooseAccount
                         return (
                           <div
                             key={v.id}
                             className={[
-                              "platChoose-accounts-item",
-                              currChoosedAcount.find((k) => k.id === v.id) &&
-                                "platChoose-accounts-item--active",
-                              isDisable && "platChoose-accounts-item--disable",
-                            ].join(" ")}
+                              'platChoose-accounts-item',
+                              currChoosedAcount.find(k => k.id === v.id)
+                              && 'platChoose-accounts-item--active',
+                              isDisable && 'platChoose-accounts-item--disable',
+                            ].join(' ')}
                             onClick={() => {
-                              if (isDisable) return;
-                              recentData.current = v;
+                              if (isDisable)
+                                return
+                              recentData.current = v
                               setChoosedAcountMap((prevV) => {
-                                const newV = new Map(prevV);
-                                let list = newV.get(activePlat!);
+                                const newV = new Map(prevV)
+                                let list = newV.get(activePlat!)
                                 if (!list) {
-                                  list = [];
-                                  newV.set(activePlat!, list);
+                                  list = []
+                                  newV.set(activePlat!, list)
                                 }
                                 // 是否存在
-                                if (list.some((k) => k.id === v.id)) {
+                                if (list.some(k => k.id === v.id)) {
                                   // 有、去掉
-                                  list = list.filter((k) => k.id !== v.id);
-                                } else {
-                                  // 无、添加
-                                  list.push(v);
+                                  list = list.filter(k => k.id !== v.id)
                                 }
-                                newV.set(activePlat!, list);
-                                return newV;
-                              });
+                                else {
+                                  // 无、添加
+                                  list.push(v)
+                                }
+                                newV.set(activePlat!, list)
+                                return newV
+                              })
                             }}
                           >
                             <Tooltip
-                              title={
+                              title={(
                                 <>
-                                  <p>昵称：{v.nickname}</p>
+                                  <p>
+                                    昵称：
+                                    {v.nickname}
+                                  </p>
                                 </>
-                              }
+                              )}
                             >
                               <Avatar src={v.avatar} />
                               <span className="platChoose-accounts-item-nickname">
@@ -378,7 +404,7 @@ const PlatChoose = memo(
                               <CheckOutlined />
                             </div>
                           </div>
-                        );
+                        )
                       })}
                     </div>
                   </div>
@@ -393,10 +419,10 @@ const PlatChoose = memo(
             </>
           )}
         </div>
-      );
+      )
     },
   ),
-);
-PlatChoose.displayName = "PlatChoose";
+)
+PlatChoose.displayName = 'PlatChoose'
 
-export default PlatChoose;
+export default PlatChoose

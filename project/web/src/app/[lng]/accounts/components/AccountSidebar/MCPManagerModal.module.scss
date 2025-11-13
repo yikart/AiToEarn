@@ -7,14 +7,14 @@
       transition: all 0.3s ease;
 
       &:hover {
-        border-color: #625BF2;
+        border-color: #625bf2;
         box-shadow: 0 2px 8px rgba(98, 91, 242, 0.1);
       }
 
       .ant-list-item-meta {
         .ant-list-item-meta-avatar {
           .ant-avatar {
-            background: linear-gradient(90deg, #625BF2 0%, #925BF2 100%);
+            background: linear-gradient(90deg, #625bf2 0%, #925bf2 100%);
           }
         }
 
@@ -58,15 +58,15 @@
 
       .ant-list-item-actions {
         .ant-btn-link {
-          color: #625BF2;
-          
+          color: #625bf2;
+
           &:hover {
-            color: #925BF2;
+            color: #925bf2;
           }
 
           &.ant-btn-dangerous {
             color: #ff4d4f;
-            
+
             &:hover {
               color: #ff7875;
             }
@@ -77,12 +77,12 @@
   }
 
   .createButton {
-    background: linear-gradient(90deg, #625BF2 0%, #925BF2 100%);
+    background: linear-gradient(90deg, #625bf2 0%, #925bf2 100%);
     border: none;
     border-radius: 6px;
     height: 40px;
     font-weight: 500;
-    
+
     &:hover {
       background: linear-gradient(90deg, #5a54e8 0%, #8a54e8 100%);
       transform: translateY(-1px);
@@ -111,4 +111,4 @@
       color: #ccc;
     }
   }
-} 
+}

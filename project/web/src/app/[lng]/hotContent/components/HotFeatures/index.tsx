@@ -1,5 +1,10 @@
-import {
+import type { TableProps } from 'antd'
+import type {
   ForwardedRef,
+} from 'react'
+import type { Topic } from '@/api/types/topic'
+import { Skeleton, Spin, Table } from 'antd'
+import {
   forwardRef,
   memo,
   useCallback,
@@ -7,86 +12,86 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import styles from "./hotFeatures.module.scss";
-import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
-import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
-import { useShallow } from "zustand/react/shallow";
-import { Skeleton, Spin, Table, type TableProps } from "antd";
-import InfiniteScroll from "react-infinite-scroll-component";
-import { Topic } from "@/api/types/topic";
-import { platformApi } from "@/api/hot";
-import hotContentStyles from "../HotContent/hotContent.module.scss";
+} from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { useShallow } from 'zustand/react/shallow'
+import { platformApi } from '@/api/hot'
 import {
   HotContentBaseInfo,
   SingleNumberCall,
-} from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
-import { useTransClient } from "@/app/i18n/client"; // 新增
+} from '@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget'
+import HotContentLabel from '@/app/[lng]/hotContent/components/HotContentLabel'
+import { useHotContent } from '@/app/[lng]/hotContent/useHotContent'
+import { useTransClient } from '@/app/i18n/client' // 新增
+import hotContentStyles from '../HotContent/hotContent.module.scss'
+import styles from './hotFeatures.module.scss'
 
 export interface IHotFeaturesRef {}
 
 export interface IHotFeaturesProps {}
 
-const NEXT_PUBLIC_YIKA_OSS_HOST = process.env.NEXT_PUBLIC_YIKA_OSS_HOST;
+const NEXT_PUBLIC_YIKA_OSS_HOST = process.env.NEXT_PUBLIC_YIKA_OSS_HOST
 
 const HotFeatures = memo(
   forwardRef(({}: IHotFeaturesProps, ref: ForwardedRef<IHotFeaturesRef>) => {
     const { hotContentPlatformList, twoMenuKey } = useHotContent(
-      useShallow((state) => ({
+      useShallow(state => ({
         hotContentPlatformList: state.hotContentPlatformList,
         twoMenuKey: state.twoMenuKey,
       })),
-    );
-    const { t } = useTransClient("hot-content"); // 新增
+    )
+    const { t } = useTransClient('hot-content') // 新增
     const allDates = useRef<string[]>([
-      t("last3days"),
-      t("last7days"),
-      t("last15days"),
-      t("last30days"),
-    ]);
+      t('last3days'),
+      t('last7days'),
+      t('last15days'),
+      t('last30days'),
+    ])
     // 当前选择的日期范围
-    const [currDate, setCurrDate] = useState(allDates.current[1]);
+    const [currDate, setCurrDate] = useState(allDates.current[1])
     // 当前选择的平台
-    const [currPlat, setCurrPlat] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [total, setTotal] = useState(0);
-    const page = useRef(1);
-    const [isReset, setIsReset] = useState(true);
-    const [dataSource, setDataSource] = useState<Topic[]>([]);
+    const [currPlat, setCurrPlat] = useState('')
+    const [loading, setLoading] = useState(false)
+    const [total, setTotal] = useState(0)
+    const page = useRef(1)
+    const [isReset, setIsReset] = useState(true)
+    const [dataSource, setDataSource] = useState<Topic[]>([])
 
     useEffect(() => {
-      setCurrPlat(hotContentPlatformList[0]?.name || "");
-    }, [hotContentPlatformList]);
+      setCurrPlat(hotContentPlatformList[0]?.name || '')
+    }, [hotContentPlatformList])
 
     const columns = useMemo(() => {
       const callParamsColumnsCommon = (title: string) => {
         return {
           width: 90,
           title: () => {
-            return <p style={{ textAlign: "center" }}>{title}</p>;
+            return <p style={{ textAlign: 'center' }}>{title}</p>
           },
-        };
-      };
+        }
+      }
 
-      const columns: TableProps<Topic>["columns"] = [
+      const columns: TableProps<Topic>['columns'] = [
         {
-          title: t("rank"),
+          title: t('rank'),
           width: 60,
           render: (text, data, ind) => (
             <>
-              {ind <= 2 ? (
-                <div className={hotContentStyles.rankingTopthree}>
-                  {ind + 1}
-                </div>
-              ) : (
-                <p style={{ width: "30px", textAlign: "center" }}>{ind + 1}</p>
-              )}
+              {ind <= 2
+                ? (
+                    <div className={hotContentStyles.rankingTopthree}>
+                      {ind + 1}
+                    </div>
+                  )
+                : (
+                    <p style={{ width: '30px', textAlign: 'center' }}>{ind + 1}</p>
+                  )}
             </>
           ),
         },
         {
-          title: t("baseInfo"),
-          dataIndex: "baseInfo",
+          title: t('baseInfo'),
+          dataIndex: 'baseInfo',
           render: (text, data) => {
             return (
               <HotContentBaseInfo
@@ -97,19 +102,19 @@ const HotFeatures = memo(
                 nickname={data.author!}
                 cover={data.cover}
                 onClick={() => {
-                  window.open(data.authorUrl, "_blank");
+                  window.open(data.authorUrl, '_blank')
                 }}
               />
-            );
+            )
           },
         },
         {
-          title: () => <p style={{ textAlign: "center" }}>{t("category")}</p>,
-          dataIndex: "category",
-          key: "category",
+          title: () => <p style={{ textAlign: 'center' }}>{t('category')}</p>,
+          dataIndex: 'category',
+          key: 'category',
           width: 120,
           render: (text, data) => (
-            <div style={{ textAlign: "center" }}>
+            <div style={{ textAlign: 'center' }}>
               <p>
                 <b>{text}</b>
               </p>
@@ -121,7 +126,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.shareCount
           ? [
               {
-                ...callParamsColumnsCommon(t("shares")),
+                ...callParamsColumnsCommon(t('shares')),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.shareCount} />
                 ),
@@ -131,7 +136,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.likeCount
           ? [
               {
-                ...callParamsColumnsCommon(t("likes")),
+                ...callParamsColumnsCommon(t('likes')),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.likeCount} />
                 ),
@@ -141,7 +146,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.commentCount
           ? [
               {
-                ...callParamsColumnsCommon(t("comments")),
+                ...callParamsColumnsCommon(t('comments')),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.commentCount} />
                 ),
@@ -151,7 +156,7 @@ const HotFeatures = memo(
         ...(dataSource[1]?.collectCount
           ? [
               {
-                ...callParamsColumnsCommon(t("collections")),
+                ...callParamsColumnsCommon(t('collections')),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall
                     total={data.collectCount}
@@ -164,86 +169,87 @@ const HotFeatures = memo(
         ...(dataSource[1]?.readCount
           ? [
               {
-                ...callParamsColumnsCommon(t("views")),
+                ...callParamsColumnsCommon(t('views')),
                 render: (text: any, data: Topic) => (
                   <SingleNumberCall total={data.readCount} highlight={true} />
                 ),
               },
             ]
           : []),
-      ];
+      ]
 
-      return columns;
-    }, [dataSource, t]);
+      return columns
+    }, [dataSource, t])
 
     // 获取数据
     const getTableData = useCallback(async () => {
-      if (loading) return;
+      if (loading)
+        return
 
       const res = await platformApi.getAllTopics({
         page: page.current,
         pageSize: 20,
-        platformId: hotContentPlatformList.find((v) => v.name === currPlat)?.id,
+        platformId: hotContentPlatformList.find(v => v.name === currPlat)?.id,
         timeType:
-          currDate === t("last3days")
-            ? "近3天"
-            : currDate === t("last7days")
-              ? "近7天"
-              : currDate === t("last15days")
-                ? "近15天"
-                : currDate === t("last30days")
-                  ? "近30天"
-                  : "",
+          currDate === t('last3days')
+            ? '近3天'
+            : currDate === t('last7days')
+              ? '近7天'
+              : currDate === t('last15days')
+                ? '近15天'
+                : currDate === t('last30days')
+                  ? '近30天'
+                  : '',
         msgType: twoMenuKey,
-      });
-      page.current = page.current + 1;
-      setTotal(res?.data.meta.totalItems || 0);
+      })
+      page.current = page.current + 1
+      setTotal(res?.data.meta.totalItems || 0)
       setDataSource((prevState) => {
-        return [...prevState, ...(res?.data.items || [])];
-      });
-    }, [currDate, currPlat, hotContentPlatformList, loading, twoMenuKey]);
+        return [...prevState, ...(res?.data.items || [])]
+      })
+    }, [currDate, currPlat, hotContentPlatformList, loading, twoMenuKey])
 
     useEffect(() => {
-      setIsReset(true);
-    }, [twoMenuKey]);
+      setIsReset(true)
+    }, [twoMenuKey])
 
     // 重置数据
     useEffect(() => {
       if (currPlat && isReset) {
-        page.current = 1;
-        setDataSource([]);
-        setLoading(true);
-        getTableData().then(() => setLoading(false));
-        setIsReset(false);
+        page.current = 1
+        setDataSource([])
+        setLoading(true)
+        getTableData().then(() => setLoading(false))
+        setIsReset(false)
       }
-    }, [isReset, currPlat, currDate, twoMenuKey]);
+    }, [isReset, currPlat, currDate, twoMenuKey])
 
     return (
       <div className={styles.hotFeatures}>
         <HotContentLabel
-          style={{ marginBottom: "15px" }}
-          labels={hotContentPlatformList.map((v) => v.name)}
+          style={{ marginBottom: '15px' }}
+          labels={hotContentPlatformList.map(v => v.name)}
           icons={hotContentPlatformList.map(
-            (v) => `${NEXT_PUBLIC_YIKA_OSS_HOST}/${v.icon}`,
+            v => `${NEXT_PUBLIC_YIKA_OSS_HOST}/${v.icon}`,
           )}
           value={currPlat}
           onChange={(value) => {
-            setIsReset(true);
-            setCurrPlat(value);
+            setIsReset(true)
+            setCurrPlat(value)
           }}
         />
         <HotContentLabel
           labels={allDates.current}
           value={currDate}
           onChange={(value) => {
-            setIsReset(true);
-            setCurrDate(value);
+            setIsReset(true)
+            setCurrDate(value)
           }}
         />
 
         <Spin spinning={loading}>
           <div
-            className={`${hotContentStyles["hotContent-table"]}`}
+            className={`${hotContentStyles['hotContent-table']}`}
             id="hotContent-table"
           >
             <InfiniteScroll
@@ -258,24 +264,25 @@ const HotFeatures = memo(
             >
               <Table
                 dataSource={dataSource}
-                rowKey={(record) => record._id}
+                rowKey={record => record._id}
                 columns={columns}
                 pagination={false}
                 onRow={(record) => {
                   return {
                     onClick: () => {
-                      if (!record.url) return;
-                      window.open(record.url, "_blank");
+                      if (!record.url)
+                        return
+                      window.open(record.url, '_blank')
                     },
-                  };
+                  }
                 }}
               />
             </InfiniteScroll>
           </div>
         </Spin>
       </div>
-    );
+    )
   }),
-);
+)
 
-export default HotFeatures;
+export default HotFeatures

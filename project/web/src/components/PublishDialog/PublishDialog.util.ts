@@ -1,98 +1,98 @@
-import { RcFile } from "antd/es/upload";
-import {
+import type { RcFile } from 'antd/es/upload'
+import type {
   IImgFile,
   IVideoFile,
-} from "@/components/PublishDialog/publishDialog.type";
-import { generateUUID, getFilePathName } from "@/utils";
+} from '@/components/PublishDialog/publishDialog.type'
+import { generateUUID, getFilePathName } from '@/utils'
 
-export const formatVideo = async (file: RcFile): Promise<IVideoFile> => {
-  const videoUrl = URL.createObjectURL(file);
-  const videoInfo = await VideoGrabFrame(videoUrl, 0);
+export async function formatVideo(file: RcFile): Promise<IVideoFile> {
+  const videoUrl = URL.createObjectURL(file)
+  const videoInfo = await VideoGrabFrame(videoUrl, 0)
 
   return {
     filename: file.name,
     videoUrl,
     size: file.size!,
-    file: file,
+    file,
     ...videoInfo,
-  };
-};
+  }
+}
 
 export function VideoGrabFrame(
   videoUrl: string,
   currentTime: number,
 ): Promise<{
-  width: number;
-  height: number;
+  width: number
+  height: number
   // 下取整的时长
-  duration: number;
+  duration: number
   // 视频首帧
-  cover: IImgFile;
+  cover: IImgFile
 }> {
   return new Promise((resolve) => {
-    const video = document.createElement("video");
-    video.src = videoUrl;
+    const video = document.createElement('video')
+    video.src = videoUrl
 
     // 当视频元数据加载完毕时执行回调
-    video.addEventListener("loadedmetadata", () => {
-      video.currentTime = currentTime;
-    });
+    video.addEventListener('loadedmetadata', () => {
+      video.currentTime = currentTime
+    })
 
-    video.addEventListener("seeked", function () {
+    video.addEventListener('seeked', () => {
       // 获取视频的宽度和高度
-      const width = video.videoWidth;
-      const height = video.videoHeight;
+      const width = video.videoWidth
+      const height = video.videoHeight
       // 获取视频的时长
-      const duration = video.duration;
+      const duration = video.duration
 
       // 获取视频首帧
-      const canvas = document.createElement("canvas");
-      canvas.width = width;
-      canvas.height = height;
-      const context = canvas.getContext("2d")!;
-      context.fillStyle = "white";
-      context.fillRect(0, 0, width, height);
-      context.drawImage(video, 0, 0);
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      const context = canvas.getContext('2d')!
+      context.fillStyle = 'white'
+      context.fillRect(0, 0, width, height)
+      context.drawImage(video, 0, 0)
       canvas.toBlob(async (blob) => {
         const cover = await formatImg({
           blob: blob!,
-          path: `cover.${blob!.type.split("/")[1]}`,
-        });
+          path: `cover.${blob!.type.split('/')[1]}`,
+        })
         resolve({
           width,
           height,
           duration: Math.floor(duration),
           cover,
-        });
-        video.remove();
-      });
-    });
+        })
+        video.remove()
+      })
+    })
 
     // 加载视频
-    video.load();
-  });
+    video.load()
+  })
 }
 
-export const formatImg = async ({
+export async function formatImg({
   path,
   file,
   blob,
 }: {
-  path: string;
-  file?: Uint8Array;
-  blob?: Blob;
-}): Promise<IImgFile> => {
+  path: string
+  file?: Uint8Array
+  blob?: Blob
+}): Promise<IImgFile> {
   return new Promise((resolve) => {
-    const { filename, suffix } = getFilePathName(path);
+    const { filename, suffix } = getFilePathName(path)
     if (!blob) {
       // @ts-ignore
       blob = new Blob([file!], {
         type: `image/${suffix}`,
-      });
+      })
     }
-    const imgUrl = URL.createObjectURL(blob);
+    const imgUrl = URL.createObjectURL(blob)
 
-    const img = new Image();
+    const img = new Image()
     img.onload = () => {
       resolve({
         id: generateUUID(),
@@ -103,11 +103,11 @@ export const formatImg = async ({
         filename,
         file: new File([blob!], filename, { type: blob!.type }),
         imgUrl,
-      });
-    };
-    img.src = imgUrl;
-  });
-};
+      })
+    }
+    img.src = imgUrl
+  })
+}
 
 /**
  * 判断宽高是否属于指定比例（带缓冲阈值）
@@ -122,9 +122,10 @@ export function isAspectRatioMatch(
   ratio: number,
   threshold: number = 0.02,
 ): boolean {
-  if (height === 0) return false;
-  const actualRatio = width / height;
-  return Math.abs(actualRatio - ratio) <= threshold;
+  if (height === 0)
+    return false
+  const actualRatio = width / height
+  return Math.abs(actualRatio - ratio) <= threshold
 }
 
 /**
@@ -142,7 +143,8 @@ export function isAspectRatioInRange(
   maxRatio: number,
   threshold: number = 0.02,
 ): boolean {
-  if (height === 0) return false;
-  const actualRatio = width / height;
-  return actualRatio >= minRatio - threshold && actualRatio <= maxRatio + threshold;
+  if (height === 0)
+    return false
+  const actualRatio = width / height
+  return actualRatio >= minRatio - threshold && actualRatio <= maxRatio + threshold
 }

@@ -69,7 +69,7 @@
     .accountSidebar-ipType {
       display: inline-block;
       background-color: var(--grayColor2);
-      color: #8A5BF2;
+      color: #8a5bf2;
       padding: 1px 2px;
       border-radius: 4px;
       font-size: 10px;
@@ -77,13 +77,13 @@
       margin-right: 4px;
     }
 
-    .accountSidebar-ipType[data-type="direct"] {
+    .accountSidebar-ipType[data-type='direct'] {
       background-color: #e6f7ff;
       color: #1890ff;
       // border: 1px solid #91d5ff;
     }
 
-    .accountSidebar-ipType[data-type="proxy"] {
+    .accountSidebar-ipType[data-type='proxy'] {
       background-color: #fff7e6;
       color: #fa8c16;
       // border: 1px solid #ffd591;
@@ -113,7 +113,7 @@
       background: var(--grayColor2);
       border-radius: 4px;
       transition: all 0.2s ease;
-      
+
       &:hover {
         background: var(--grayColor3);
         color: var(--grayColor7);
@@ -271,7 +271,7 @@
       justify-content: center;
       z-index: 10;
       cursor: pointer;
-      
+
       &-text {
         color: white;
         font-size: 12px;
@@ -408,7 +408,8 @@
           width: 100%;
         }
       }
-      &-allUser, .userManage-sidebar-list-item {
+      &-allUser,
+      .userManage-sidebar-list-item {
         display: flex;
         justify-content: space-between;
         padding-right: 10px;
@@ -480,7 +481,6 @@
         justify-content: space-between;
         margin-bottom: 10px;
         &-proxy {
-
         }
       }
 

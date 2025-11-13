@@ -1,10 +1,10 @@
-import {
+import type {
   BeautifulMentionsMenuItemProps,
   BeautifulMentionsMenuProps,
-} from "lexical-beautiful-mentions";
-import { forwardRef } from "react";
-import styles from "../pubParmasMentionInput.module.scss";
-import { LoadingOutlined } from "@ant-design/icons";
+} from 'lexical-beautiful-mentions'
+import { LoadingOutlined } from '@ant-design/icons'
+import { forwardRef } from 'react'
+import styles from '../pubParmasMentionInput.module.scss'
 
 /**
  * Menu component for the BeautifulMentionsPlugin.
@@ -16,9 +16,9 @@ export function Menu({ loading, ...other }: BeautifulMentionsMenuProps) {
         <span>Loading</span>
         <LoadingOutlined />
       </div>
-    );
+    )
   }
-  return <ul className={styles.mentionMenu} {...other} />;
+  return <ul className={styles.mentionMenu} {...other} />
 }
 
 /**
@@ -31,7 +31,7 @@ export const MenuItem = forwardRef<
   <li
     ref={ref}
     {...props}
-    className={`${styles.mentionMenuItem} ${selected ? styles.selected : ""}`}
+    className={`${styles.mentionMenuItem} ${selected ? styles.selected : ''}`}
   />
-));
-MenuItem.displayName = "MenuItem";
+))
+MenuItem.displayName = 'MenuItem'

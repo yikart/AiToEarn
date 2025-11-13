@@ -226,7 +226,7 @@
 
   .searchInput {
     width: 100%;
-    
+
     :global {
       .ant-input {
         border-radius: 6px;
@@ -718,7 +718,7 @@
 
     .loadingContainer {
       padding: 20px 0;
-      
+
       :global {
         .ant-skeleton {
           margin-bottom: 20px;
@@ -726,4 +726,4 @@
       }
     }
   }
-} 
+}

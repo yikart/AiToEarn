@@ -1,33 +1,33 @@
-import { request } from '@/utils/request';
-import { IncomeRecord } from './types/income';
+import type { IncomeRecord } from './types/income'
+import { request } from '@/utils/request'
 
 /**
  * 获取收入列表
  */
-export const apiGetIncomeList = (page: {
-  pageNo: number;
-  pageSize: number;
+export function apiGetIncomeList(page: {
+  pageNo: number
+  pageSize: number
 }, params: {
   type?: string
-}) => {
+}) {
   return request<{ list: IncomeRecord[], total: number }>({
     url: `income/list/${page.pageNo}/${page.pageSize}`,
     method: 'GET',
-    params
-  });
-};
+    params,
+  })
+}
 
 /**
  * 提交提现
  */
-export const apiSubmitWithdraw = (incomeRecordId: string, userWalletAccountId?: string, flowId?: string) => {
+export function apiSubmitWithdraw(incomeRecordId: string, userWalletAccountId?: string, flowId?: string) {
   return request<any>({
     url: `income/withdraw`,
     method: 'POST',
     data: {
       incomeRecordId,
       userWalletAccountId,
-      flowId
-    }
-  });
-};
+      flowId,
+    },
+  })
+}

@@ -1,75 +1,75 @@
-import { request } from '@/utils/request';
-import type { 
-  Order, 
-  OrderListParams, 
-  SubscriptionListParams,
-  RefundParams, 
-  UnsubscribeParams,
+import type {
+  Order,
+  OrderListParams,
+  PaginatedResponse,
   PaymentApiResponse,
-  PaginatedResponse
-} from './types/payment';
+  RefundParams,
+  SubscriptionListParams,
+  UnsubscribeParams,
+} from './types/payment'
+import { request } from '@/utils/request'
 
 /**
  * 获取订单列表
  */
-export const getOrderListApi = (params: OrderListParams) => {
+export function getOrderListApi(params: OrderListParams) {
   return request<PaginatedResponse<Order>>({
     url: 'payment/checkout',
     method: 'GET',
-    params
-  });
-};
+    params,
+  })
+}
 
 /**
  * 查询单个订单
  */
-export const getOrderDetailApi = (id: string) => {
+export function getOrderDetailApi(id: string) {
   return request<Order>({
     url: `payment/checkout/${id}`,
-    method: 'GET'
-  });
-};
+    method: 'GET',
+  })
+}
 
 /**
  * 获取订阅列表
  */
-export const getSubscriptionListApi = (params: SubscriptionListParams) => {
+export function getSubscriptionListApi(params: SubscriptionListParams) {
   return request<PaginatedResponse<Order>>({
     url: 'payment/subscriptions',
     method: 'GET',
-    params
-  });
-};
+    params,
+  })
+}
 
 /**
  * 订单退款
  */
-export const refundOrderApi = (params: RefundParams) => {
+export function refundOrderApi(params: RefundParams) {
   return request<any>({
     url: 'payment/refund',
     method: 'POST',
-    data: params
-  });
-};
+    data: params,
+  })
+}
 
 /**
  * 退订
  */
-export const unsubscribeApi = (params: any) => {
+export function unsubscribeApi(params: any) {
   return request<any>({
     url: `payment/subscriptions/${params.id}/cancel`,
     method: 'POST',
-    data: params
-  });
-}; 
+    data: params,
+  })
+}
 
 /**
  * 恢复订阅
  */
-export const cancelSubscriptionApi = (params: any) => {
+export function cancelSubscriptionApi(params: any) {
   return request<any>({
     url: `payment/subscriptions/${params.id}/resume`,
     method: 'POST',
-    data: params
-  });
-};
+    data: params,
+  })
+}

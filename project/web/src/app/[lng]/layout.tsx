@@ -1,44 +1,45 @@
-import "@/app/var.css";
-import "../globals.css";
-import { Providers } from "../layout/Providers";
-import { dir } from "i18next";
-import { languages, fallbackLng } from "@/app/i18n/settings";
-import { useTranslation } from "@/app/i18n";
-import ConditionalHeader from "../layout/ConditionalHeader";
+import { dir } from 'i18next'
+import { useTranslation } from '@/app/i18n'
+import { fallbackLng, languages } from '@/app/i18n/settings'
+import ConditionalHeader from '../layout/ConditionalHeader'
+import { Providers } from '../layout/Providers'
+import '@/app/var.css'
+import '../globals.css'
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ lng: string }>;
+  params: Promise<{ lng: string }>
 }) {
-  let { lng } = await params;
-  if (languages.indexOf(lng) < 0) lng = fallbackLng;
-  const { t } = await useTranslation(lng);
+  let { lng } = await params
+  if (!languages.includes(lng))
+    lng = fallbackLng
+  const { t } = await useTranslation(lng)
   return {
-    title: t("title"),
-    description: t("content"),
-    keywords: "aitoearn, AiToEarn, ai, earn, aitoearn.com",
-  };
+    title: t('title'),
+    description: t('content'),
+    keywords: 'aitoearn, AiToEarn, ai, earn, aitoearn.com',
+  }
 }
 
 export default async function RootLayout({
   children,
   params,
 }: Readonly<{
-  children: React.ReactNode;
-  params: Promise<{ lng: string }>;
+  children: React.ReactNode
+  params: Promise<{ lng: string }>
 }>) {
-  const { lng } = await params;
+  const { lng } = await params
   return (
     <html lang={lng} dir={dir(lng)}>
       <body>
         <Providers lng={lng}>
           <div
             style={{
-              height: "100vh",
-              display: "flex",
-              flexDirection: "column",
-              minHeight: "0",
+              height: '100vh',
+              display: 'flex',
+              flexDirection: 'column',
+              minHeight: '0',
             }}
           >
             <ConditionalHeader />
@@ -47,5 +48,5 @@ export default async function RootLayout({
         </Providers>
       </body>
     </html>
-  );
+  )
 }

@@ -1,10 +1,11 @@
-import { ForwardedRef, forwardRef, memo, useEffect } from "react";
-import { IPlatsParamsProps, IPlatsParamsRef } from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type";
-import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
-import usePlatParamsCommon from "@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon";
-import styles from "../platParamsSetting.module.scss";
-import { Input } from "antd";
-import { useTransClient } from "@/app/i18n/client";
+import type { ForwardedRef } from 'react'
+import type { IPlatsParamsProps, IPlatsParamsRef } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
+import { Input } from 'antd'
+import { forwardRef, memo, useEffect } from 'react'
+import { useTransClient } from '@/app/i18n/client'
+import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
+import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
+import styles from '../platParamsSetting.module.scss'
 
 /**
  * 微信公众号平台参数
@@ -12,8 +13,8 @@ import { useTransClient } from "@/app/i18n/client";
  */
 const WxGzhParams = memo(
   forwardRef(({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
-    const { t } = useTransClient("publish");
-    const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(pubItem);
+    const { t } = useTransClient('publish')
+    const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(pubItem)
 
     // 初始化 wxGzh 参数对象
     // useEffect(() => {
@@ -29,24 +30,24 @@ const WxGzhParams = memo(
       <>
         <PubParmasTextarea
           {...pubParmasTextareaCommonParams}
-          extend={<>
-            <div className={styles.commonTitleInput} style={{ marginTop: "10px" }}>
-              <div className="platParamsSetting-label">{t("form.title")}</div>
-              <Input
-                value={pubItem.params.title}
-                placeholder={t("form.titlePlaceholder")}
-                onChange={(e) => {
-                  setOnePubParams({ title: e.target.value }, pubItem.account.id);
-                }}
-              />
-            </div>
-          </>}
+          extend={(
+            <>
+              <div className={styles.commonTitleInput} style={{ marginTop: '10px' }}>
+                <div className="platParamsSetting-label">{t('form.title')}</div>
+                <Input
+                  value={pubItem.params.title}
+                  placeholder={t('form.titlePlaceholder')}
+                  onChange={(e) => {
+                    setOnePubParams({ title: e.target.value }, pubItem.account.id)
+                  }}
+                />
+              </div>
+            </>
+          )}
         />
       </>
-    );
-  })
-);
+    )
+  }),
+)
 
-export default WxGzhParams;
-
-
+export default WxGzhParams

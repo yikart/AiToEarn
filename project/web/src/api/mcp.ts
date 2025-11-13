@@ -1,57 +1,55 @@
 // MCP API接口
-import { request } from "@/utils/request";
-
-
+import { request } from '@/utils/request'
 
 /**
  * 创建MCP Key
  * @param data 创建参数
  * @returns
  */
-export const apiCreateMCPKey = (data:any) => {
+export function apiCreateMCPKey(data: any) {
   return request({
-    url: "channel/skKey",
-    method: "POST",
+    url: 'channel/skKey',
+    method: 'POST',
     data,
-  });
-};
+  })
+}
 
 /**
  * 更新MCP Key
  * @param data 更新参数
  * @returns
  */
-export const apiUpdateMCPKey = (data:any) => {
+export function apiUpdateMCPKey(data: any) {
   return request({
-    url: "channel/skKey",
-    method: "PUT",
+    url: 'channel/skKey',
+    method: 'PUT',
     data,
-  });
-};
+  })
+}
 
 /**
  * 删除MCP Key
  * @param key Key key
  * @returns
  */
-export const apiDeleteMCPKey = (key: string) => {
+export function apiDeleteMCPKey(key: string) {
   return request({
     url: `channel/skKey/${key}`,
-    method: "DELETE",
-  });
-};
+    method: 'DELETE',
+  })
+}
 
 /**
  * 获取MCP Key详情
  * @param key Key值
  * @returns
  */
-export const apiGetMCPKeyInfo = (key: string) => {
+export function apiGetMCPKeyInfo(key: string) {
   return request({
     url: `channel/skKey/info/${key}`,
-    method: "GET",
-  });
-};
+    method: 'GET',
+  })
+}
 
 /**
  * 获取MCP Key列表
@@ -59,38 +57,38 @@ export const apiGetMCPKeyInfo = (key: string) => {
  * @param pageSize 每页大小
  * @returns
  */
-export const apiGetMCPKeyList = (pageNo: number, pageSize: number) => {
+export function apiGetMCPKeyList(pageNo: number, pageSize: number) {
   return request({
     url: `channel/skKey/list/${pageNo}/${pageSize}`,
-    method: "GET",
-  });
-};
+    method: 'GET',
+  })
+}
 
 /**
  * 创建MCP Key关联
  * @param data 关联参数
  * @returns
  */
-export const apiCreateMCPRef = (data: any) => {
+export function apiCreateMCPRef(data: any) {
   return request({
-    url: "channel/skKey/ref",
-    method: "POST",
+    url: 'channel/skKey/ref',
+    method: 'POST',
     data,
-  });
-};
+  })
+}
 
 /**
  * 解除MCP Key关联
  * @param data 解除关联参数
  * @returns
  */
-export const apiDeleteMCPRef = (data: any) => {
+export function apiDeleteMCPRef(data: any) {
   return request({
-    url: "channel/skKey/ref",
-    method: "DELETE",
+    url: 'channel/skKey/ref',
+    method: 'DELETE',
     data,
-  });
-};
+  })
+}
 
 /**
  * 获取MCP Key关联列表
@@ -98,12 +96,12 @@ export const apiDeleteMCPRef = (data: any) => {
  * @param pageSize 每页大小
  * @returns
  */
-export const apiGetMCPRefList = (pageNo: number, pageSize: number, key: string) => {
+export function apiGetMCPRefList(pageNo: number, pageSize: number, key: string) {
   return request({
     url: `channel/skKey/ref/list/${pageNo}/${pageSize}`,
-    method: "GET",
+    method: 'GET',
     params: {
       key,
     },
-  });
-}; 
+  })
+}

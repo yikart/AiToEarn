@@ -1,16 +1,17 @@
-import { ForwardedRef, forwardRef, memo, useState } from "react";
-import styles from "./rankingTags.module.scss";
+import type { ForwardedRef } from 'react'
+import { forwardRef, memo, useState } from 'react'
+import styles from './rankingTags.module.scss'
 
 export interface IRankingtagsRef {}
 
 export interface IRankingtagsProps {
   options: {
-    label: string;
-    value: string;
-  }[];
-  defaultValue: string;
-  disable?: boolean;
-  onChange: (value: string) => void;
+    label: string
+    value: string
+  }[]
+  defaultValue: string
+  disable?: boolean
+  onChange: (value: string) => void
 }
 
 const Rankingtags = memo(
@@ -19,7 +20,7 @@ const Rankingtags = memo(
       { options, defaultValue, disable, onChange }: IRankingtagsProps,
       ref: ForwardedRef<IRankingtagsRef>,
     ) => {
-      const [activeValue, setActiveValue] = useState(defaultValue);
+      const [activeValue, setActiveValue] = useState(defaultValue)
 
       return (
         <div className={styles.rankingTags}>
@@ -27,25 +28,26 @@ const Rankingtags = memo(
             return (
               <div
                 className={[
-                  "rankingTags-tag",
-                  activeValue === v.value ? "rankingTags-tag--active" : "",
-                ].join(" ")}
+                  'rankingTags-tag',
+                  activeValue === v.value ? 'rankingTags-tag--active' : '',
+                ].join(' ')}
                 key={v.value}
                 onClick={() => {
-                  if (disable) return;
-                  onChange(v.value);
-                  setActiveValue(v.value);
+                  if (disable)
+                    return
+                  onChange(v.value)
+                  setActiveValue(v.value)
                 }}
               >
                 {v.label}
               </div>
-            );
+            )
           })}
         </div>
-      );
+      )
     },
   ),
-);
-Rankingtags.displayName = "Rankingtags";
+)
+Rankingtags.displayName = 'Rankingtags'
 
-export default Rankingtags;
+export default Rankingtags

@@ -22,7 +22,8 @@
       .ant-tag {
         margin-top: 6px;
       }
-      &-up, &-down {
+      &-up,
+      &-down {
         width: 100%;
         display: flex;
         align-items: center;
@@ -57,7 +58,7 @@
     .aiRanking-topthree {
       width: 30px;
       color: #fff;
-      background: url("../images/bg-rank-index.png") no-repeat center / cover;
+      background: url('../images/bg-rank-index.png') no-repeat center / cover;
     }
     .ant-table-thead {
       th {

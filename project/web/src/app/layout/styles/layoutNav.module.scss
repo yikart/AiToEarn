@@ -2,7 +2,6 @@
   border: 1px solid #ccc;
 }
 
-
 .layoutNavPC {
   display: flex;
   align-items: center;
@@ -27,7 +26,8 @@
       margin-right: 30px;
     }
     &:hover {
-      & > span, & > a {
+      & > span,
+      & > a {
         color: var(--theColor4);
       }
     }
@@ -75,7 +75,7 @@
     visibility: hidden;
     li {
       padding: 0 15px;
-      &:hover  {
+      &:hover {
         .layoutNavPC-one-item {
           span {
             color: var(--theColor4) !important;
@@ -102,7 +102,8 @@
         justify-content: left;
       }
     }
-    .layoutNavPC-one-item, .layoutNavPC-one-item a {
+    .layoutNavPC-one-item,
+    .layoutNavPC-one-item a {
       display: flex;
       align-items: center;
       position: relative;
@@ -139,11 +140,13 @@
         //width: 100px;
         position: relative;
         &:hover {
-          & > span, & > a {
+          & > span,
+          & > a {
             color: var(--theColor4) !important;
           }
         }
-        & > span, a {
+        & > span,
+        a {
           display: flex;
           align-items: center;
           justify-content: space-between;
@@ -184,4 +187,3 @@
     color: #1890ff;
   }
 }
-

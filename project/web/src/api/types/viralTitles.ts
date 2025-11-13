@@ -1,15 +1,15 @@
-import { Platform } from "@/api/hot";
+import type { Platform } from '@/api/hot'
 
 export interface ViralTitle {
-  _id: string;
-  platformId: Platform;
-  category: string;
-  title: string;
-  url: string; // 链接
-  rank: number; // 排名
-  engagement: number; // 互动量
-  publishTime?: Date;
-  createTime: Date;
-  updateTime: Date;
-  timeType: string;
+  _id: string
+  platformId: Platform
+  category: string
+  title: string
+  url: string // 链接
+  rank: number // 排名
+  engagement: number // 互动量
+  publishTime?: Date
+  createTime: Date
+  updateTime: Date
+  timeType: string
 }

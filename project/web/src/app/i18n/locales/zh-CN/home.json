@@ -245,7 +245,7 @@
       "twitter": "Twitter"
     },
     "bigText": "Let's Use AI To",
-    "copyright": "© 2025 AITOEARN, Corp.", 
+    "copyright": "© 2025 AITOEARN, Corp.",
     "tagline": "",
     "dataDeletion": {
       "title": "Data Deletion Instructions",
@@ -253,7 +253,7 @@
       "standardTitle": "Standard Procedure (Post-Launch):",
       "standardSteps": [
         "Log in to your AiToEarn account",
-        "Navigate to Settings > Privacy", 
+        "Navigate to Settings > Privacy",
         "Click \"Request Account Deletion\"",
         "Confirmation will be sent to your registered email"
       ],
@@ -261,4 +261,4 @@
       "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
     }
   }
-} 
+}

@@ -1,65 +1,69 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { Form, Input, Button, message, Modal } from "antd";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { sendResetPasswordMailApi, resetPasswordApi } from "@/api/apiReq";
-import { useTransClient } from "@/app/i18n/client";
-import styles from "./forgot-password.module.css";
+import { Button, Form, Input, message, Modal } from 'antd'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { resetPasswordApi, sendResetPasswordMailApi } from '@/api/apiReq'
+import { useTransClient } from '@/app/i18n/client'
+import styles from './forgot-password.module.css'
 
 export default function ForgotPasswordPage() {
-  const router = useRouter();
-  const { t } = useTransClient("login");
-  const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [resetForm] = Form.useForm();
+  const router = useRouter()
+  const { t } = useTransClient('login')
+  const [form] = Form.useForm()
+  const [loading, setLoading] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [resetForm] = Form.useForm()
 
   // 处理Modal关闭
   const handleModalClose = () => {
-    setIsModalOpen(false);
-    resetForm.resetFields();
-  };
+    setIsModalOpen(false)
+    resetForm.resetFields()
+  }
 
   // 处理发送重置密码邮件
   const handleSubmit = async (values: { mail: string }) => {
     try {
-      setLoading(true);
-      const response: any = await sendResetPasswordMailApi(values);
+      setLoading(true)
+      const response: any = await sendResetPasswordMailApi(values)
 
       if (response.code === 0) {
-        message.success(t('resetEmailSent' as any));
-        setIsModalOpen(true);
+        message.success(t('resetEmailSent' as any))
+        setIsModalOpen(true)
       }
-    } catch (error) {
-      message.error(t('sendEmailFailed' as any));
-    } finally {
-      setLoading(false);
     }
-  };
+    catch (error) {
+      message.error(t('sendEmailFailed' as any))
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 
   // 处理重置密码
-  const handleResetPassword = async (values: { code: string; password: string }) => {
+  const handleResetPassword = async (values: { code: string, password: string }) => {
     try {
-      setLoading(true);
+      setLoading(true)
       const response: any = await resetPasswordApi({
         code: values.code,
         mail: form.getFieldValue('mail'),
-        password: values.password
-      });
+        password: values.password,
+      })
 
       if (response.code === 0) {
-        message.success(t('resetSuccess' as any));
-        setIsModalOpen(false);
-        router.push('/login');
+        message.success(t('resetSuccess' as any))
+        setIsModalOpen(false)
+        router.push('/login')
       }
-    } catch (error) {
-      message.error(t('resetFailed' as any));
-    } finally {
-      setLoading(false);
     }
-  };
+    catch (error) {
+      message.error(t('resetFailed' as any))
+    }
+    finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -75,17 +79,17 @@ export default function ForgotPasswordPage() {
             label={t('emailLabel' as any)}
             rules={[
               { required: true, message: t('emailRequired' as any) },
-              { type: 'email', message: t('emailInvalid' as any) }
+              { type: 'email', message: t('emailInvalid' as any) },
             ]}
           >
             <Input placeholder={t('emailPlaceholder' as any)} />
           </Form.Item>
 
           <Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              block 
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
               loading={loading}
               className={styles.submitButton}
             >
@@ -117,7 +121,7 @@ export default function ForgotPasswordPage() {
             name="code"
             label={t('verificationCode' as any)}
             rules={[
-              { required: true, message: t('verificationCodeRequired' as any) }
+              { required: true, message: t('verificationCodeRequired' as any) },
             ]}
           >
             <Input placeholder={t('verificationCodePlaceholder' as any)} />
@@ -128,7 +132,7 @@ export default function ForgotPasswordPage() {
             label={t('newPassword' as any)}
             rules={[
               { required: true, message: t('newPasswordRequired' as any) },
-              { min: 6, message: t('newPasswordMinLength' as any) }
+              { min: 6, message: t('newPasswordMinLength' as any) },
             ]}
           >
             <Input.Password placeholder={t('newPasswordPlaceholder' as any)} />
@@ -143,9 +147,9 @@ export default function ForgotPasswordPage() {
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve();
+                    return Promise.resolve()
                   }
-                  return Promise.reject(new Error(t('confirmPasswordMismatch' as any)));
+                  return Promise.reject(new Error(t('confirmPasswordMismatch' as any)))
                 },
               }),
             ]}
@@ -154,10 +158,10 @@ export default function ForgotPasswordPage() {
           </Form.Item>
 
           <Form.Item>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
-              block 
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
               loading={loading}
               className={styles.submitButton}
             >
@@ -167,5 +171,5 @@ export default function ForgotPasswordPage() {
         </Form>
       </Modal>
     </div>
-  );
-} 
+  )
+}

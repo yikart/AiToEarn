@@ -1,4 +1,4 @@
-import { PlatType } from "@/app/config/platConfig";
+import type { PlatType } from '@/app/config/platConfig'
 
 export enum AccountType {
   Douyin = 'douyin', // 抖音
@@ -17,51 +17,51 @@ export enum AccountType {
 
 // 三方账户类型定义
 export interface SocialAccount {
-  id: string;
-  type: PlatType;
-  loginCookie?: string;
-  access_token?: string;
-  refresh_token?: string;
-  loginTime: string;
-  uid: string;
-  account: string;
-  avatar: string;
-  nickname: string;
-  fansCount: number;
-  readCount: number;
-  likeCount: number;
-  collectCount: number;
-  forwardCount: number;
-  commentCount: number;
-  lastStatsTime: string;
-  workCount: number;
-  income: number;
-  status: number;
-  createTime: string;
-  updateTime: string;
-  rank: number;
-  groupId: string;
+  id: string
+  type: PlatType
+  loginCookie?: string
+  access_token?: string
+  refresh_token?: string
+  loginTime: string
+  uid: string
+  account: string
+  avatar: string
+  nickname: string
+  fansCount: number
+  readCount: number
+  likeCount: number
+  collectCount: number
+  forwardCount: number
+  commentCount: number
+  lastStatsTime: string
+  workCount: number
+  income: number
+  status: number
+  createTime: string
+  updateTime: string
+  rank: number
+  groupId: string
 }
 
 // 更新账户统计数据
 export interface UpdateAccountStatisticsParams {
-  id: number;
-  fansCount: number;
-  readCount: number;
-  likeCount: number;
-  collectCount: number;
-  commentCount: number;
-  income: number;
-  workCount: number;
+  id: number
+  fansCount: number
+  readCount: number
+  likeCount: number
+  collectCount: number
+  commentCount: number
+  income: number
+  workCount: number
 }
 
 // 账户组 item 数据
 export interface AccountGroupItem {
-  id: string;
-  name: string;
-  rank: number;
-  isDefault: boolean;
-  proxyIp?: string;
-  ip?: string;
-  location?: string;
+  id: string
+  name: string
+  rank: number
+  isDefault: boolean
+  proxyIp?: string
+  ip?: string
+  location?: string
 }

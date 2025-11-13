@@ -1,5 +1,5 @@
-import http from "@/utils/request";
-import { AccountType } from "./types/account.type";
+import type { AccountType } from './types/account.type'
+import http from '@/utils/request'
 
 export enum TaskOpportunityStatus {
   PENDING = 'pending', // 待接取
@@ -8,8 +8,8 @@ export enum TaskOpportunityStatus {
 }
 
 export interface TaskOpportunity {
-  _id: string;
-  id: string;
+  _id: string
+  id: string
   taskId: string
   accountId: string
   userId: string
@@ -35,8 +35,8 @@ interface UserTaskAutoData {
 }
 
 export interface UserTask {
-  _id: string;
-  id: string;
+  _id: string
+  id: string
   userId: string
   taskId: string
   accountId: string
@@ -61,64 +61,61 @@ export interface UserTask {
 }
 
 // 获取待接受的任务列表
-export const apiGetTaskOpportunityList = (params: {
-  page?: number;
-  pageSize?: number;
-}) => {
-  return http.get<{list: TaskOpportunity[]}>(`task/opportunity/list/${params.page}/${params.pageSize}` );
-};
+export function apiGetTaskOpportunityList(params: {
+  page?: number
+  pageSize?: number
+}) {
+  return http.get<{ list: TaskOpportunity[] }>(`task/opportunity/list/${params.page}/${params.pageSize}`)
+}
 
 /**
  * 接取任务
- * @param opportunityId 
- * @returns 
+ * @param opportunityId
+ * @returns
  */
-export const apiAcceptTask = (opportunityId: string) => {
-  return http.post<any>(`task/accept`, { opportunityId });
-};
-
+export function apiAcceptTask(opportunityId: string) {
+  return http.post<any>(`task/accept`, { opportunityId })
+}
 
 // 获取已接受的任务列表
-export const apiGetUserTaskList = (params: {
-  page?: number;
-  pageSize?: number;
-}) => {
-  return http.get<{list: UserTask[]}>(`task/userTask/list/${params.page}/${params.pageSize}` ); 
-  
-};
-
+export function apiGetUserTaskList(params: {
+  page?: number
+  pageSize?: number
+}) {
+  return http.get<{ list: UserTask[] }>(`task/userTask/list/${params.page}/${params.pageSize}`)
+}
 
 /**
  * 已接受的任务详情
- * @param id 
- * @returns 
+ * @param id
+ * @returns
  */
-export const apiGetUserTaskDetail = (id: string) => {
-  return http.get<any>(`task/userTask/info/${id}`);
-};
+export function apiGetUserTaskDetail(id: string) {
+  return http.get<any>(`task/userTask/info/${id}`)
+}
 
 /**
  * 接取任务
- * @param userTaskId 
- * @returns 
+ * @param userTaskId
+ * @returns
  */
-export const apiSubmitTask = (userTaskId: string, submissionUrl: string) => {
-  return http.post<any>(`task/submit`, { userTaskId, submissionUrl });
-};
+export function apiSubmitTask(userTaskId: string, submissionUrl: string) {
+  return http.post<any>(`task/submit`, { userTaskId, submissionUrl })
+}
 
 /**
  * 获取未读任务数量
  * @returns 未读任务数量
  */
-export const apiGetNotViewCount = () => {
-  return http.put<{ count: number }>('task/opportunity/getNotViewCount');
-};
+export function apiGetNotViewCount() {
+  return http.put<{ count: number }>('task/opportunity/getNotViewCount')
+}
 
 /**
  * 标记任务为已读
  * @param opportunityId 任务机会ID
- * @returns 
+ * @returns
  */
-export const apiMarkTaskAsViewed = (opportunityId: string) => {
-  return http.put<any>(`task/opportunity/doView/${opportunityId}`);
-};
+export function apiMarkTaskAsViewed(opportunityId: string) {
+  return http.put<any>(`task/opportunity/doView/${opportunityId}`)
+}

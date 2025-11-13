@@ -1,13 +1,13 @@
-import { createPersistStore } from "@/utils/createPersistStore";
+import { createPersistStore } from '@/utils/createPersistStore'
 
 export interface ISystemStore {
   // 视频发布是否开启填写更多参数
-  moreParamsOpen: boolean;
+  moreParamsOpen: boolean
 }
 
 const state: ISystemStore = {
   moreParamsOpen: false,
-};
+}
 
 export const useSystemStore = createPersistStore(
   {
@@ -18,13 +18,13 @@ export const useSystemStore = createPersistStore(
       setMoreParamsOpen(moreParamsOpen: boolean) {
         set({
           moreParamsOpen,
-        });
+        })
       },
-    };
+    }
 
-    return methods;
+    return methods
   },
   {
-    name: "System",
+    name: 'System',
   },
-);
+)

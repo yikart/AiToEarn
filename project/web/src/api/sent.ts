@@ -1,11 +1,11 @@
-import { request } from "@/utils/request";
-import { SentPostsResponse } from "./types/sent.types";
+import type { SentPostsResponse } from './types/sent.types'
+import { request } from '@/utils/request'
 
 // Get published posts list
-export const getSentPosts = (params: any) => {
+export function getSentPosts(params: any) {
   return request<SentPostsResponse>({
-    url: "plat/publish/statuses/published/posts",
-    method: "POST",
+    url: 'plat/publish/statuses/published/posts',
+    method: 'POST',
     data: params,
-  });
-};
+  })
+}

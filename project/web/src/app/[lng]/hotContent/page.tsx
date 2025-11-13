@@ -1,14 +1,14 @@
-import { PageParams } from "@/app/globals";
-import { getMetadata } from "@/utils/general";
-import { HotContentCore } from "@/app/[lng]/hotContent/HotContentCore";
+import type { PageParams } from '@/app/globals'
+import { HotContentCore } from '@/app/[lng]/hotContent/HotContentCore'
+import { getMetadata } from '@/utils/general'
 
 export async function generateMetadata({ params }: PageParams) {
   return await getMetadata(
     {
-      title: "热门内容",
+      title: '热门内容',
     },
-    "en",
-  );
+    'en',
+  )
 }
 
 export default async function Page() {
@@ -24,5 +24,5 @@ export default async function Page() {
     <>
       <HotContentCore defaultHotContentData={undefined} />
     </>
-  );
+  )
 }

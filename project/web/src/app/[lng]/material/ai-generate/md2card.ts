@@ -1,9 +1,9 @@
 // md2card 模板类
 export interface Md2CardTemplate {
-  id: string;
-  nameCn: string;
-  nameEn: string;
-  preview: string;
+  id: string
+  nameCn: string
+  nameEn: string
+  preview: string
 }
 
 // md2card 模板列表
@@ -26,12 +26,12 @@ export const md2CardTemplates: Md2CardTemplate[] = [
   { id: 'typewriter', nameCn: '复古打字机', nameEn: 'Vintage Typewriter', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejypwo3-1755693735431_19p6s4.png' },
   { id: 'watercolor', nameCn: '水彩艺术', nameEn: 'Watercolor Art', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyqc5i-1755693755298_2kncmc.png' },
   { id: 'traditional-chinese', nameCn: '中国传统', nameEn: 'Traditional Chinese', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyqsuc-1755693777223_oa1j2.png' },
-  { id: 'fairytale', nameCn: '儿童童话', nameEn: "Children's Fairy Tale", preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyrimw-1755693810619_gm7tdq.png' },
+  { id: 'fairytale', nameCn: '儿童童话', nameEn: 'Children\'s Fairy Tale', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyrimw-1755693810619_gm7tdq.png' },
   { id: 'business', nameCn: '商务简报', nameEn: 'Business Brief', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyrzsx-1755693832927_ig6pam.png' },
   { id: 'japanese-magazine', nameCn: '日本杂志', nameEn: 'Japanese Magazine', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyslq2-1755693861264_767tr.png' },
   { id: 'cyberpunk', nameCn: '赛博朋克', nameEn: 'Cyberpunk', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyt0xp-1755693880945_yj6yts.png' },
   { id: 'meadow-dawn', nameCn: '青野晨光', nameEn: 'meadow dawn', preview: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/md2card/mejyte9q-1755693897993_t99xm.png' },
-];
+]
 
 // 默认的Markdown内容
 export const defaultMarkdown = `# Default Markdown
@@ -51,5 +51,4 @@ This is a sample Markdown content. You can type the content you want to convert 
 2. Choose a suitable theme
 3. Adjust parameter settings
 4. Click the generate button
-`;
-
+`

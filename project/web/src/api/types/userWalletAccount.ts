@@ -11,25 +11,25 @@ export enum WalletAccountType {
 }
 
 export interface UserWallet {
-  userId: string;
-  balance: number;
-  income: number;
+  userId: string
+  balance: number
+  income: number
 }
 
 export interface UserWalletAccount {
-  id: string;
-  account: string; // 账户号
-  userId: string;
-  userName: string; // 真实姓名
-  cardNum: string; // 身份证号
-  phone: string; // 绑定的手机号
-  type: WalletAccountType;
+  id: string
+  account: string // 账户号
+  userId: string
+  userName: string // 真实姓名
+  cardNum: string // 身份证号
+  phone: string // 绑定的手机号
+  type: WalletAccountType
 }
 
 export interface CreateUserWalletAccountParams {
-  account: string; // 账户号
-  userName: string; // 真实姓名
-  cardNum: string; // 身份证号
-  phone: string; // 绑定的手机号
-  type: WalletAccountType;
+  account: string // 账户号
+  userName: string // 真实姓名
+  cardNum: string // 身份证号
+  phone: string // 绑定的手机号
+  type: WalletAccountType
 }

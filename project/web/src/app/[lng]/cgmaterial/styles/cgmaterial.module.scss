@@ -171,7 +171,7 @@
   width: 100%;
   z-index: 2;
   position: relative;
-  
+
   span:first-child {
     font-size: 13px;
     color: #7f8c8d;
@@ -294,10 +294,10 @@
     font-size: 64px;
     color: #bdc3c7;
     margin-bottom: 16px;
-    
+
     :global(.anticon) {
       transition: all 0.3s ease;
-      
+
       &:hover {
         color: #667eea;
         transform: scale(1.1);
@@ -518,7 +518,7 @@
       .ant-modal-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
-        
+
         .ant-modal-title {
           color: white;
           font-weight: 600;
@@ -527,7 +527,7 @@
 
       .ant-modal-close {
         color: white;
-        
+
         &:hover {
           color: rgba(255, 255, 255, 0.8);
         }
@@ -576,4 +576,4 @@
       min-height: 200px;
     }
   }
-} 
+}

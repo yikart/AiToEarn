@@ -249,14 +249,14 @@
 }
 
 /* 表格样式优化 */
-.ant-table-thead>tr>th {
+.ant-table-thead > tr > th {
   background: #f8f9fa;
   font-weight: 600;
   color: #374151;
   border-bottom: 2px solid #e5e7eb;
 }
 
-.ant-table-tbody>tr:hover>td {
+.ant-table-tbody > tr:hover > td {
   background: #f8f9fa;
 }
 

@@ -1,16 +1,17 @@
-import { ForwardedRef, forwardRef, memo, useState } from "react";
-import { useTransClient } from "@/app/i18n/client";
-import { usePathname, useRouter } from "next/navigation";
-import { useUserStore } from "@/store/user";
-import styles from "@/app/[lng]/styles/difyHome.module.scss";
-import Image from "next/image";
-import logo from "@/assets/images/logo.png";
-import Link from "next/link";
-import { Button } from "antd";
-import { MenuOutlined, CloseOutlined } from "@ant-design/icons";
-import { removeLocalePrefix } from "@/app/layout/layout.utils";
-import { homeHeaderRouterData } from "@/app/layout/routerData";
-import LanguageSwitcher from "@/components/common/LanguageSwitcher";
+import type { ForwardedRef } from 'react'
+import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
+import { Button } from 'antd'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import { forwardRef, memo, useState } from 'react'
+import styles from '@/app/[lng]/styles/difyHome.module.scss'
+import { useTransClient } from '@/app/i18n/client'
+import { removeLocalePrefix } from '@/app/layout/layout.utils'
+import { homeHeaderRouterData } from '@/app/layout/routerData'
+import logo from '@/assets/images/logo.png'
+import LanguageSwitcher from '@/components/common/LanguageSwitcher'
+import { useUserStore } from '@/store/user'
 
 export interface IHomeHeaderRef { }
 
@@ -18,38 +19,40 @@ export interface IHomeHeaderProps { }
 
 const HomeHeader = memo(
   forwardRef(({ }: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
-    const pathname = usePathname();
-    const { t } = useTransClient("home");
-    const router = useRouter();
-    const userStore = useUserStore();
-    const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, "") || "/";
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+    const pathname = usePathname()
+    const { t } = useTransClient('home')
+    const router = useRouter()
+    const userStore = useUserStore()
+    const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, '') || '/'
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
     /**
      * 切换移动端菜单显示状态
      */
     const toggleMobileMenu = () => {
-      setIsMobileMenuOpen(!isMobileMenuOpen);
-    };
+      setIsMobileMenuOpen(!isMobileMenuOpen)
+    }
 
     /**
      * 关闭移动端菜单
      */
     const closeMobileMenu = () => {
-      setIsMobileMenuOpen(false);
-    };
+      setIsMobileMenuOpen(false)
+    }
 
     /**
      * 判断链接是否为当前激活状态
      */
     const isActive = (href: string) => {
-      if (!href.startsWith("/")) return false;
-      const normalizedHref = href.replace(/\/+$/, "") || "/";
-      if (normalizedHref === "/") return currentPath === "/";
-      if (currentPath === normalizedHref) return true;
-      return currentPath.startsWith(normalizedHref + "/");
-    };
+      if (!href.startsWith('/'))
+        return false
+      const normalizedHref = href.replace(/\/+$/, '') || '/'
+      if (normalizedHref === '/')
+        return currentPath === '/'
+      if (currentPath === normalizedHref)
+        return true
+      return currentPath.startsWith(`${normalizedHref}/`)
+    }
 
     return (
       <>
@@ -57,31 +60,31 @@ const HomeHeader = memo(
           <div className={styles.headerContainer}>
             <div
               className={styles.logo}
-              style={{ cursor: "pointer" }}
-              onClick={() => router.push("/")}
+              style={{ cursor: 'pointer' }}
+              onClick={() => router.push('/')}
             >
               <Image src={logo} alt="logo" width={50} />
-              <span className={styles.logoText}>{t("header.logo")}</span>
+              <span className={styles.logoText}>{t('header.logo')}</span>
             </div>
 
             {/* 桌面端导航 */}
             <nav className={styles.nav}>
               {homeHeaderRouterData.value.map((v) => {
-                if (v.href === "/") {
-                  return null;
+                if (v.href === '/') {
+                  return null
                 }
                 return (
                   <Link
                     key={v.title}
-                    className={`${styles.navLink} ${isActive(v.href) ? styles.active : ""}`}
+                    className={`${styles.navLink} ${isActive(v.href) ? styles.active : ''}`}
                     href={v.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    style={{ paddingTop: "3px" }}
+                    style={{ paddingTop: '3px' }}
                   >
                     {v.title}
                   </Link>
-                );
+                )
               })}
             </nav>
 
@@ -102,11 +105,11 @@ const HomeHeader = memo(
 
               <button
                 onClick={() => {
-                  router.push("/accounts");
+                  router.push('/accounts')
                 }}
                 className={styles.getStartedBtn}
               >
-                {t("header.getStarted")}
+                {t('header.getStarted')}
               </button>
             </div>
           </div>
@@ -118,10 +121,10 @@ const HomeHeader = memo(
         )}
 
         {/* 移动端侧边菜单 */}
-        <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ""}`}>
+        <div className={`${styles.mobileMenu} ${isMobileMenuOpen ? styles.mobileMenuOpen : ''}`}>
           <div className={styles.mobileMenuHeader}>
             <Image src={logo} alt="logo" width={40} />
-            <span className={styles.mobileMenuTitle}>{t("header.logo")}</span>
+            <span className={styles.mobileMenuTitle}>{t('header.logo')}</span>
             <button
               className={styles.mobileMenuClose}
               onClick={closeMobileMenu}
@@ -133,13 +136,13 @@ const HomeHeader = memo(
 
           <nav className={styles.mobileMenuNav}>
             {homeHeaderRouterData.value.map((v) => {
-              if (v.href === "/") {
-                return null;
+              if (v.href === '/') {
+                return null
               }
               return (
                 <Link
                   key={v.title}
-                  className={`${styles.mobileNavLink} ${isActive(v.href) ? styles.active : ""}`}
+                  className={`${styles.mobileNavLink} ${isActive(v.href) ? styles.active : ''}`}
                   href={v.href}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -147,7 +150,7 @@ const HomeHeader = memo(
                 >
                   {v.title}
                 </Link>
-              );
+              )
             })}
           </nav>
 
@@ -159,8 +162,8 @@ const HomeHeader = memo(
           </div>
         </div>
       </>
-    );
+    )
   }),
-);
+)
 
-export default HomeHeader;
+export default HomeHeader
