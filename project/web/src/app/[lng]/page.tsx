@@ -2,10 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import styles from "./styles/difyHome.module.scss";
-import { directTrans, useTransClient } from "../i18n/client";
-import { MAIN_APP_DOWNLOAD_URL, getMainAppDownloadUrlSync } from "../config/appDownloadConfig";
-
-import logo from '@/assets/images/logo.png';
+import { useTransClient } from "../i18n/client";
+import { getMainAppDownloadUrlSync } from "../config/appDownloadConfig";
 
 // Import SVG icons
 import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
@@ -23,8 +21,6 @@ import InstagramIcon from '@/assets/svgs/plat/instagram.png';
 import LinkedInIcon from '@/assets/svgs/plat/linkedin.png';
 import PinterestIcon from '@/assets/svgs/plat/pinterest.png';
 import ThreadsIcon from '@/assets/svgs/plat/threads.png';
-
-// Material images
 import publish1 from '@/assets/images/publish1.png';
 
 
@@ -45,12 +41,8 @@ const IMAGE_URLS = {
 };
 
 
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Button } from "antd";
-import { GlobalOutlined } from "@ant-design/icons";
-import { useUserStore } from "@/store/user";
 import { useParams } from "next/navigation";
 import { AndroidOutlined } from '@ant-design/icons';
 
