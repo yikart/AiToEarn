@@ -68,7 +68,7 @@ export class MediaRepository extends BaseRepository<Media> {
 
   // 获取列表
   async getList(inFilter: {
-    userId: string
+    userId?: string
     groupId?: string
     type?: MediaType
     userType?: UserType
@@ -80,9 +80,9 @@ export class MediaRepository extends BaseRepository<Media> {
     const { pageNo, pageSize } = pageInfo
 
     const filter: RootFilterQuery<Media> = {
-      userId: inFilter.userId,
+      ...(inFilter.userId && { userId: inFilter.userId }),
       ...(inFilter.groupId && { groupId: inFilter.groupId }),
-      userType: inFilter.userType || UserType.User,
+      ...(inFilter.userType && { userType: inFilter.userType }),
       ...(inFilter.type && { type: inFilter.type }),
       ...(inFilter.useCount !== undefined && { useCount: { $gte: inFilter.useCount } }),
     }

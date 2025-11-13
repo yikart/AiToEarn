@@ -30,7 +30,7 @@ export class ThreadsService {
     config: AxiosRequestConfig = {},
   ): Promise<T> {
     this.logger.debug(
-      `Threads API Request: ${url} with config: ${JSON.stringify(config)}`,
+      `Threads API Request: ${url}`,
     )
     try {
       const response: AxiosResponse<T> = await axios(url, config)

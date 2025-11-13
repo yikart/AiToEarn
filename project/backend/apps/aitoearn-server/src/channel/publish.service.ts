@@ -4,6 +4,7 @@ import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PostData } from '@yikart/statistics-db'
 import { PublishRecordService } from '../publishRecord/publishRecord.service'
 import { PostService } from '../statistics/post/post.service'
+import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
 import { PublishTaskNatsApi } from '../transports/channel/api/publishTask.natsApi'
 import { ChannelApi } from '../transports/channel/channel.api'
 import { PublishingChannel } from '../transports/channel/common'
@@ -18,16 +19,22 @@ export class PublishService {
     private readonly publishTaskNatsApi: PublishTaskNatsApi,
     private readonly publishRecordService: PublishRecordService,
     private readonly postService: PostService,
+    private readonly platPublishNatsApi: PlatPublishNatsApi,
     private readonly channelApi: ChannelApi,
   ) { }
 
   async create(newData: NewPublishData<PlatOptions>) {
-    const res = await this.publishRecordService.createPublishRecord(newData)
+    const res = await this.platPublishNatsApi.create(newData)
     return res
   }
 
   async createRecord(newData: NewPublishRecordData) {
     const res = await this.publishRecordService.createPublishRecord(newData)
+    return res
+  }
+
+  async run(id: string) {
+    const res = await this.platPublishNatsApi.run(id)
     return res
   }
 
