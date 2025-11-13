@@ -1799,6 +1799,12 @@ export default function AIGeneratePage() {
                           {getStatusText(item.status)}
                         </span>
                       </div>
+
+                      {item.data?.model && (
+                          <div style={{ fontSize: '13px', color: '#666', marginLeft: 'auto', marginBottom: 8 }}>
+                            <strong>Model:</strong> {item.data.model}
+                          </div>
+                        )}
                       
                       <div style={{ fontSize: '13px', color: '#666', marginBottom: 8 }}>
                         <div style={{ marginBottom: 4 }}>
@@ -1819,6 +1825,8 @@ export default function AIGeneratePage() {
                           <strong>{t('aiGenerate.progress' as any)}:</strong> {item.progress}
                         </div>
                       )}
+
+
                       
                       {item.fail_reason && item.status === 'FAILED' && (
                         <div style={{ fontSize: '13px', color: '#ff4d4f', marginBottom: 8 }}>
@@ -1840,6 +1848,8 @@ export default function AIGeneratePage() {
                           />
                         </div>
                       )}
+
+                       
                     </div>
                   ))}
                 </div>
