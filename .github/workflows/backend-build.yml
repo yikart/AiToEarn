@@ -1,6 +1,29 @@
 name: Build Backend Images
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'project/backend/**'
+      - '.github/workflows/backend-build.yml'
+  workflow_dispatch:
+    inputs:
+      build_aitoearn_channel:
+        description: 'aitoearn-channel'
+        required: false
+        type: boolean
+        default: false
+      build_aitoearn_server:
+        description: 'aitoearn-server'
+        required: false
+        type: boolean
+        default: false
+      push_latest:
+        description: 'Push as latest tag'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       base_ref:
@@ -19,20 +42,50 @@ on:
         value: ${{ jobs.generate-matrix.outputs.has_changes }}
 
 permissions:
-  id-token: write
   contents: read
   actions: write
 
 env:
-  AWS_REGION: ap-southeast-1
-  ECR_REGISTRY: 339388639667.dkr.ecr.ap-southeast-1.amazonaws.com
-  IMAGE_REPO: aitoearn
+  DOCKER_HUB_USERNAME: aitoearn
   NX_NO_CLOUD: true
-  MONOREPO_DIR: project/aitoearn-monorepo
+  MONOREPO_DIR: project/backend
 
 jobs:
+  parse-manual-apps:
+    runs-on: ubuntu-latest
+    outputs:
+      manual_apps: ${{ steps.parse.outputs.manual_apps }}
+    if: github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Parse manual app selection
+        id: parse
+        run: |
+          APPS=""
+          
+          if [ "${{ inputs.build_aitoearn_channel }}" = "true" ]; then
+            APPS="aitoearn-channel"
+          fi
+          
+          if [ "${{ inputs.build_aitoearn_server }}" = "true" ]; then
+            if [ -n "$APPS" ]; then
+              APPS="$APPS,aitoearn-server"
+            else
+              APPS="aitoearn-server"
+            fi
+          fi
+          
+          echo "manual_apps=$APPS" >> $GITHUB_OUTPUT
+          
+          if [ -n "$APPS" ]; then
+            echo "✅ Manually selected apps: $APPS"
+          else
+            echo "⚠️  No apps selected"
+          fi
+
   generate-matrix:
     runs-on: ubuntu-latest
+    needs: [parse-manual-apps]
+    if: always() && (needs.parse-manual-apps.result == 'success' || needs.parse-manual-apps.result == 'skipped')
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       has_changes: ${{ steps.set-matrix.outputs.has_changes }}
@@ -45,13 +98,11 @@ jobs:
           fetch-depth: 0
 
       - name: Install pnpm
-        if: inputs.manual_apps == ''
         uses: pnpm/action-setup@v4
         with:
           version: 10
 
       - name: Setup Node.js
-        if: inputs.manual_apps == ''
         uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -59,7 +110,6 @@ jobs:
           cache-dependency-path: ${{ env.MONOREPO_DIR }}/pnpm-lock.yaml
 
       - name: Install dependencies
-        if: inputs.manual_apps == ''
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm install --frozen-lockfile
 
@@ -67,26 +117,41 @@ jobs:
         id: detect-changes
         working-directory: ${{ env.MONOREPO_DIR }}
         run: |
-          # 检查是否为手动部署模式
-          if [ -n "${{ inputs.manual_apps }}" ]; then
-            echo "🎯 手动部署模式: 使用指定的应用列表"
-            AFFECTED_APPS="${{ inputs.manual_apps }}"
-            echo "✅ 手动选择的应用: $AFFECTED_APPS"
+          # Get manually selected apps (from workflow_dispatch or workflow_call)
+          MANUAL_APPS=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MANUAL_APPS="${{ needs.parse-manual-apps.outputs.manual_apps }}"
+            if [ -z "$MANUAL_APPS" ]; then
+              echo "⚠️  Manual trigger but no apps selected, will auto-detect affected apps"
+            fi
+          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.manual_apps }}" ]; then
+            MANUAL_APPS="${{ inputs.manual_apps }}"
+          fi
+          
+          # Check if manual mode
+          if [ -n "$MANUAL_APPS" ]; then
+            echo "🎯 Manual build mode: Using specified app list"
+            AFFECTED_APPS="$MANUAL_APPS"
+            echo "✅ Manually selected apps: $AFFECTED_APPS"
             echo "affected_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
 
             echo ""
-            echo "详细信息:"
+            echo "Details:"
             for APP in $(echo "$AFFECTED_APPS" | tr ',' ' '); do
               echo "  - $APP"
             done
           else
-            # 根据触发方式设置 base 分支
+            # Set base branch based on trigger type
             if [ -n "${{ inputs.base_ref }}" ]; then
               BASE_REF="origin/${{ inputs.base_ref }}"
-              echo "📋 PR 模式: 检测从 $BASE_REF 到 HEAD 的变更"
+              echo "📋 PR mode: Detecting changes from $BASE_REF to HEAD"
             else
               BASE_REF="HEAD~1"
-              echo "📋 Push 模式: 检测最近一次提交的变更"
+              if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+                echo "📋 Manual trigger mode: Detecting changes from last commit"
+              else
+                echo "📋 Push mode: Detecting changes from last commit"
+              fi
             fi
 
             echo "Base: $BASE_REF"
@@ -95,14 +160,14 @@ jobs:
             AFFECTED_APPS=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --exclude="browser-automation-worker" --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
 
             if [ -z "$AFFECTED_APPS" ]; then
-              echo "⚠️  未检测到受影响的应用"
+              echo "⚠️  No affected apps detected"
               echo "affected_apps=" >> $GITHUB_OUTPUT
             else
-              echo "✅ 受影响的应用: $AFFECTED_APPS"
+              echo "✅ Affected apps: $AFFECTED_APPS"
               echo "affected_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
 
               echo ""
-              echo "详细信息:"
+              echo "Details:"
               for APP in $(echo "$AFFECTED_APPS" | tr ',' ' '); do
                 echo "  - $APP"
               done
@@ -114,7 +179,7 @@ jobs:
         run: |
           VERSION="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "📦 版本: $VERSION"
+          echo "📦 Version: $VERSION"
 
       - name: Generate matrix
         id: set-matrix
@@ -126,13 +191,25 @@ jobs:
           if [ -z "$AFFECTED_APPS" ]; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
-            echo "⚠️  无变更，跳过构建"
+            echo "⚠️  No changes, skipping build"
             exit 0
           fi
 
           echo "has_changes=true" >> $GITHUB_OUTPUT
 
-          # 构建 matrix JSON 数组
+          # Determine if should push latest tag
+          PUSH_LATEST=false
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            PUSH_LATEST=true
+            echo "📌 Main branch push: Will push latest tag"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" = "true" ]; then
+            PUSH_LATEST=true
+            echo "📌 Manual trigger with push_latest: Will push latest tag"
+          fi
+
+          echo "push_latest=$PUSH_LATEST" >> $GITHUB_OUTPUT
+
+          # Build matrix JSON array
           MATRIX_JSON="{"
           MATRIX_JSON="$MATRIX_JSON\"include\":["
 
@@ -140,16 +217,16 @@ jobs:
           IFS=',' read -ra APPS <<< "$AFFECTED_APPS"
 
           for APP in "${APPS[@]}"; do
-            IMAGE_TAG="${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION"
+            IMAGE_TAG="${{ env.DOCKER_HUB_USERNAME }}/$APP:$VERSION"
 
-            # 添加到 matrix
+            # Add to matrix
             if [ "$FIRST" = true ]; then
               FIRST=false
             else
               MATRIX_JSON="$MATRIX_JSON,"
             fi
 
-            MATRIX_JSON="$MATRIX_JSON{\"app\":\"$APP\",\"image\":\"$IMAGE_TAG\"}"
+            MATRIX_JSON="$MATRIX_JSON{\"app\":\"$APP\",\"image\":\"$IMAGE_TAG\",\"push_latest\":$PUSH_LATEST}"
           done
 
           MATRIX_JSON="$MATRIX_JSON]}"
@@ -157,7 +234,7 @@ jobs:
           echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
 
           echo ""
-          echo "🎯 Matrix 配置:"
+          echo "🎯 Matrix configuration:"
           echo "$MATRIX_JSON" | jq .
 
   build-and-push:
@@ -201,21 +278,18 @@ jobs:
       - name: Build application
         working-directory: ${{ env.MONOREPO_DIR }}
         run: |
-          echo "🔨 构建应用: ${{ matrix.app }}"
+          echo "🔨 Building app: ${{ matrix.app }}"
           pnpm nx run ${{ matrix.app }}:build
 
       - name: Prepare Docker context
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm nx run ${{ matrix.app }}:docker-context
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -225,6 +299,17 @@ jobs:
             image=moby/buildkit:latest
           buildkitd-flags: --debug
 
+      - name: Prepare tags
+        id: tags
+        run: |
+          TAGS="${{ matrix.image }}"
+          if [ "${{ matrix.push_latest }}" = "true" ]; then
+            TAGS="$TAGS"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.app }}:latest"
+          fi
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -233,11 +318,11 @@ jobs:
           platforms: linux/amd64
           build-args: |
             APP_NAME=${{ matrix.app }}
-          tags: ${{ matrix.image }}
+          tags: ${{ steps.tags.outputs.tags }}
           push: true
           cache-from: |
             type=gha,scope=${{ matrix.app }}
-            type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ matrix.app }}:buildcache
+            type=registry,ref=${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.app }}:buildcache
           cache-to: |
             type=gha,mode=max,scope=${{ matrix.app }}
             type=inline
@@ -246,6 +331,9 @@ jobs:
 
       - name: Build summary
         run: |
-          echo "### ✅ 构建成功: ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **镜像**: \`${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Build successful: ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image**: \`${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ matrix.push_latest }}" = "true" ]; then
+            echo "- **Latest**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.app }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
 

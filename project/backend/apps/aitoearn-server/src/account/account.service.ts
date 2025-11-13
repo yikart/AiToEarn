@@ -1,7 +1,7 @@
 import { forwardRef, Inject, Injectable, Logger } from '@nestjs/common'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountType, AppException, ResponseCode, TableDto } from '@yikart/common'
-import { Account, AccountGroup, AccountRepository, AccountStatus } from '@yikart/mongodb'
+import { Account, AccountRepository, AccountStatus } from '@yikart/mongodb'
 import { ChannelService } from '../channel/channel.service'
 import { AccountPortraitReportData } from '../channel/common'
 import { NewAccountCrawlerData } from '../statistics/common'
@@ -24,10 +24,10 @@ export class AccountService {
 
   /**
    * Account data reporting
-   * @param data
+   * @param _data
    */
   private async accountPortraitReport(
-    data: AccountPortraitReportData,
+    _data: AccountPortraitReportData,
   ) {
   }
 

@@ -10,20 +10,24 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 镜像版本 (留空使用默认生成规则)
+        description: Image version (leave empty to use default generation rule)
         required: false
         type: string
+      push_latest:
+        description: 'Push as latest tag'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
   contents: read
 
 env:
-  AWS_REGION: ap-southeast-1
-  ECR_REGISTRY: 339388639667.dkr.ecr.ap-southeast-1.amazonaws.com
-  ROLE_TO_ASSUME: arn:aws:iam::339388639667:role/GithubActions
   IMAGE_REPO: aitoearn
   APP_NAME: aitoearn-web
+  MONOREPO_DIR: project/web
+  DOCKER_HUB_USERNAME: aitoearn
 
 jobs:
   build:
@@ -39,12 +43,18 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ env.ROLE_TO_ASSUME }}
-          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Generate version
         id: version
@@ -56,29 +66,61 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Determine push latest
+        id: push-latest
+        run: |
+          PUSH_LATEST=false
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            PUSH_LATEST=true
+            echo "📌 Main branch push: Will push latest tag"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.push_latest }}" = "true" ]; then
+            PUSH_LATEST=true
+            echo "📌 Manual trigger with push_latest: Will push latest tag"
+          fi
+          echo "push_latest=$PUSH_LATEST" >> $GITHUB_OUTPUT
+
+      - name: Prepare tags
+        id: tags
+        run: |
+          TAGS="${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"
+          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
+            TAGS="$TAGS"$'\n'"${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest"
+          fi
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build and push application
         uses: docker/build-push-action@v5
         with:
-          context: ./project/web
-          file: ./project/web/Dockerfile
+          context: ${{ env.MONOREPO_DIR }}/
+          file: ${{ env.MONOREPO_DIR }}/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: |
-            ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
-            ${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Summary
         if: always()
         run: |
-          echo "## 📦 构建摘要" >> $GITHUB_STEP_SUMMARY
-          echo "- **应用**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **版本**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **平台**: linux/amd64" >> $GITHUB_STEP_SUMMARY
-          echo "- **镜像**: \`${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Latest**: \`${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          echo "## 📦 Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **App**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Platform**: linux/amd64" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🔗 快速链接" >> $GITHUB_STEP_SUMMARY
-          echo "- [源代码提交](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
-          echo "- [构建日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 ECR Images" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Image**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
+            echo "- **Latest**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐋 Docker Hub Images" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Image**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
+            echo "- **Latest**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
+          echo "- [Source Commit](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+          echo "- [Build Log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY

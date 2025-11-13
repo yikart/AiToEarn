@@ -239,10 +239,10 @@ export class UserService {
 
   /**
    * Logic after login
-   * @param user
+   * @param _user
    * @returns
    */
-  async afterLogin(user: User) {
+  async afterLogin(_user: User) {
 
   }
 
