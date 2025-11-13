@@ -1,16 +1,10 @@
 import { request } from "@/utils/request";
-import { SentPostsParams, SentPostsResponse } from "./types/sent.types";
+import { SentPostsResponse } from "./types/sent.types";
 
-// 获取已发布帖子列表
+// Get published posts list
 export const getSentPosts = (params: any) => {
-  // return request<SentPostsResponse>({
-  //   url: "channel/engagement/posts",
-  //   method: "POST",
-  //   data: params,
-  // });
-
   return request<SentPostsResponse>({
-    url: "plat/publish/posts",
+    url: "plat/publish/statuses/published/posts",
     method: "POST",
     data: params,
   });
