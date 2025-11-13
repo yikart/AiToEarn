@@ -19,16 +19,13 @@ on:
         value: ${{ jobs.generate-matrix.outputs.has_changes }}
 
 permissions:
-  id-token: write
   contents: read
   actions: write
 
 env:
-  AWS_REGION: ap-southeast-1
-  ECR_REGISTRY: 339388639667.dkr.ecr.ap-southeast-1.amazonaws.com
-  IMAGE_REPO: aitoearn
+  DOCKER_HUB_USERNAME: aitoearn
   NX_NO_CLOUD: true
-  MONOREPO_DIR: project/aitoearn-monorepo
+  MONOREPO_DIR: project/backend
 
 jobs:
   generate-matrix:
@@ -140,7 +137,7 @@ jobs:
           IFS=',' read -ra APPS <<< "$AFFECTED_APPS"
 
           for APP in "${APPS[@]}"; do
-            IMAGE_TAG="${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/$APP:$VERSION"
+            IMAGE_TAG="${{ env.DOCKER_HUB_USERNAME }}/$APP:$VERSION"
 
             # 添加到 matrix
             if [ "$FIRST" = true ]; then
@@ -208,14 +205,11 @@ jobs:
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm nx run ${{ matrix.app }}:docker-context
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ env.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        uses: aws-actions/amazon-ecr-login@v2
+          username: ${{ env.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -237,7 +231,7 @@ jobs:
           push: true
           cache-from: |
             type=gha,scope=${{ matrix.app }}
-            type=registry,ref=${{ env.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ matrix.app }}:buildcache
+            type=registry,ref=${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.app }}:buildcache
           cache-to: |
             type=gha,mode=max,scope=${{ matrix.app }}
             type=inline
