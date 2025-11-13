@@ -56,7 +56,7 @@ export class BilibiliApiService {
   }
 
   private async request<CommonResponse>(url: string, config: AxiosRequestConfig = {}): Promise<CommonResponse> {
-    this.logger.debug(`Bilibili API Request: ${url} with config: ${JSON.stringify(config)}`)
+    this.logger.debug(`Bilibili API Request: ${url}`)
     try {
       const response: AxiosResponse<CommonResponse> = await axios(url, config)
       if (response.data['code'] !== 0) {

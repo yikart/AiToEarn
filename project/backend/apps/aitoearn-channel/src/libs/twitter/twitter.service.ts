@@ -50,7 +50,7 @@ export class TwitterService {
     config: AxiosRequestConfig = {},
   ): Promise<T> {
     this.logger.debug(
-      `Twitter API Request: ${url} with config: ${JSON.stringify(config)}`,
+      `Twitter API Request: ${url}`,
     )
     try {
       const response: AxiosResponse<T> = await axios(url, config)

@@ -43,6 +43,14 @@ export class AccountGroupService {
     upData: Partial<AccountGroup>,
   ): Promise<boolean> {
     const data = await this.accountGroupRepository.updateAccountGroup(group.id, upData)
+    // after update group, if country code changed, need to update all accounts' country code
+    if (upData.countryCode && group.countryCode !== upData.countryCode) {
+      await this.accountService.reportGroupAccounts(
+        group.userId,
+        { ...group, ...upData },
+      )
+    }
+
     return data
   }
 

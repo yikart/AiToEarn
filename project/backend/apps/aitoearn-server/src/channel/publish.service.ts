@@ -22,7 +22,7 @@ export class PublishService {
   ) { }
 
   async create(newData: NewPublishData<PlatOptions>) {
-    const res = await this.publishRecordService.createPublishRecord(newData)
+    const res = await this.platPublishNatsApi.create(newData)
     return res
   }
 

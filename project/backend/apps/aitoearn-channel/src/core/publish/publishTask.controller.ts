@@ -36,7 +36,7 @@ export class PublishTaskController {
 
   // 更新任务时间
   // @NatsMessagePattern('publish.task.changeTime')
-  @Post('publish/task/changeTime')
+  @Post('plat/publish/changeTime')
   async changeTaskTime(@Body() data: UpPublishTaskTimeDto) {
     data.publishTime = new Date(data.publishTime)
     const res = await this.publishTaskService.updatePublishTaskTime(
