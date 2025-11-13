@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PostsResponseVo } from '@yikart/common'
-import { ThreadsService } from '../../../core/plat/meta/threads.service'
+import { ThreadsService } from '../../../core/platforms/meta/threads.service'
 import { ThreadsObjectCommentsRequest, ThreadsPostsRequest } from '../../../libs/threads/threads.interfaces'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'
 import { EngagementComment, EngagementProvider, FetchPostCommentsResponse, PublishCommentResponse } from '../engagement.interface'

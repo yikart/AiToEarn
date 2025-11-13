@@ -1,21 +1,18 @@
 import { Module } from '@nestjs/common'
-import { McpModule as TheMcpModule } from '@rekog/mcp-nest'
-import { SkKeyAuthGuard } from '../common/guards/skKeyAuth.guard'
 import { AliGreenModule } from '../core/ali-green/ali-green.module'
-import { PublishModule } from '../core/publish/publish.module'
 import { AccountModule } from './account/account.module'
-import { DataCubeModule } from './dataCube/dataCube.module'
+import { DataCubeModule } from './data-cube/data-cube.module'
 import { EngagementModule } from './engagement/engagement.module'
 import { FileModule } from './file/file.module'
 import { InteracteModule } from './interact/interact.module'
-import { McpModule } from './mcp/mcp.module'
-import { MetaModule } from './plat/meta/meta.module'
-import { PlatModule } from './plat/plat.module'
-import { TiktokModule } from './plat/tiktok/tiktok.module'
-import { TwitterModule } from './plat/twitter/twitter.module'
-import { WxPlatModule } from './plat/wxPlat/wxPlat.module'
-import { YoutubeModule } from './plat/youtube/youtube.module'
-import { SkKeyModule } from './skKey/skKey.module'
+import { MetaModule } from './platforms/meta/meta.module'
+import { PlatModule } from './platforms/platforms.module'
+import { TiktokModule } from './platforms/tiktok/tiktok.module'
+import { TwitterModule } from './platforms/twitter/twitter.module'
+import { WxPlatModule } from './platforms/wx-plat/wx-plat.module'
+import { YoutubeModule } from './platforms/youtube/youtube.module'
+import { PublishModule } from './publishing/publishing.module'
+import { SkKeyModule } from './sk-key/sk-key.module'
 import { TestModule } from './test/test.module'
 
 @Module({
@@ -23,12 +20,6 @@ import { TestModule } from './test/test.module'
     TestModule,
     FileModule,
     SkKeyModule,
-    McpModule,
-    TheMcpModule.forRoot({
-      name: 'channel-mcp-server',
-      version: '1.0.0',
-      guards: [SkKeyAuthGuard],
-    }),
     AccountModule,
     PublishModule,
     TwitterModule,

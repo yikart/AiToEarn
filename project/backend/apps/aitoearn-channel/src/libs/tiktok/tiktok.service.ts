@@ -8,6 +8,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
+import { TiktokError } from './tiktok.exception'
 import {
   TiktokCreatorInfo,
   TikTokListVideosParams,
@@ -45,7 +46,9 @@ export class TiktokService {
     url: string,
     options: AxiosRequestConfig = {},
     accessToken?: string,
+    operation?: string,
   ): Promise<T> {
+    const method = (options.method || 'GET').toUpperCase()
     try {
       const config: AxiosRequestConfig = {
         ...options,
@@ -65,13 +68,11 @@ export class TiktokService {
       return response.data
     }
     catch (error) {
-      if (error.response) {
-        this.logger.error(`TikTok API request failed: ${url}, status: ${error.response.status}, data: ${JSON.stringify(error.response.data)}`)
-        const errMsg = error.response.error?.message || `TikTok API request failed: ${url}, status: ${error.response.status}`
-        throw new Error(errMsg)
-      }
-      this.logger.error(`TikTok API request failed: ${url}, error: ${error}`)
-      throw new Error(`TikTok API request failed: ${url}, error: ${error}`)
+      const err = TiktokError.buildFromError(error, operation)
+      this.logger.error(
+        `[TIKTOK:${operation || 'apiRequest'}] Error !! ${method} ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`,
+      )
+      throw err
     }
   }
 
@@ -81,6 +82,7 @@ export class TiktokService {
   private async oauthRequest<T = unknown>(
     url: string,
     data: Record<string, string>,
+    operation: string,
   ): Promise<T> {
     return this.apiRequest<T>(url, {
       method: 'POST',
@@ -88,7 +90,7 @@ export class TiktokService {
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-    })
+    }, undefined, operation)
   }
 
   /**
@@ -98,6 +100,7 @@ export class TiktokService {
     url: string,
     data: unknown,
     accessToken: string,
+    operation: string,
   ): Promise<T> {
     const response = await this.apiRequest<{ data: T }>(
       url,
@@ -106,6 +109,7 @@ export class TiktokService {
         data,
       },
       accessToken,
+      operation,
     )
     return response.data
   }
@@ -138,6 +142,7 @@ export class TiktokService {
         grant_type: 'authorization_code',
         redirect_uri: this.redirectUri,
       },
+      'getAccessToken',
     )
   }
 
@@ -153,6 +158,7 @@ export class TiktokService {
         grant_type: 'refresh_token',
         refresh_token: refreshToken,
       },
+      'refreshAccessToken',
     )
   }
 
@@ -167,6 +173,7 @@ export class TiktokService {
         client_secret: this.clientSecret,
         token: accessToken,
       },
+      'revokeAccessToken',
     )
   }
 
@@ -181,6 +188,7 @@ export class TiktokService {
         },
       },
       accessToken,
+      'getUserInfo',
     )
   }
 
@@ -192,6 +200,7 @@ export class TiktokService {
       `${this.apiBaseUrl}/post/publish/creator_info/query/`,
       {},
       accessToken,
+      'getCreatorInfo',
     )
   }
 
@@ -206,6 +215,7 @@ export class TiktokService {
       `${this.apiBaseUrl}/post/publish/inbox/video/init/`,
       publishRequest,
       accessToken,
+      'initVideoPublish',
     )
   }
 
@@ -220,6 +230,7 @@ export class TiktokService {
       `${this.apiBaseUrl}/post/publish/content/init/`,
       publishRequest,
       accessToken,
+      'initPhotoPublish',
     )
   }
 
@@ -234,6 +245,7 @@ export class TiktokService {
       `${this.apiBaseUrl}/post/publish/status/fetch/`,
       { publish_id: publishId },
       accessToken,
+      'getPublishStatus',
     )
   }
 
@@ -254,7 +266,7 @@ export class TiktokService {
         'Content-Type': contentType,
         'Content-Range': `bytes 0-${fileSize - 1}/${fileSize}`,
       },
-    })
+    }, undefined, 'uploadVideoFile')
   }
 
   /**
@@ -275,7 +287,7 @@ export class TiktokService {
         'Content-Length': videoBuffer.length,
         'Content-Range': `bytes ${range[0]}-${range[1]}/${fileSize}`,
       },
-    })
+    }, undefined, 'chunkedUploadVideoFile')
   }
 
   /**
@@ -309,16 +321,16 @@ export class TiktokService {
   ): Promise<TikTokListVideosResponse> {
     const url = `${this.apiBaseUrl}/video/list/`
     const config: AxiosRequestConfig = {
+      method: 'POST',
       params: { fields: query?.fields },
       headers: {
         'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': `Bearer ${accessToken}`,
+      },
+      data: {
+        cursor: query?.cursor,
+        max_count: query?.max_count,
       },
     }
-    const resp = await axios.post<TikTokListVideosResponse>(url, {
-      cursor: query?.cursor,
-      max_count: query?.max_count,
-    }, config)
-    return resp.data
+    return await this.apiRequest<TikTokListVideosResponse>(url, config, accessToken, 'getUserVideos')
   }
 }

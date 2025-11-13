@@ -22,7 +22,7 @@ export interface CreateBoardBody {
 }
 
 export interface CreatePinBody {
-  link: string // 点击链接;
+  link?: string // 点击链接;
   title?: string // 标题
   description?: string // 描述
   dominant_color?: string // RGB表示的颜色 主引脚颜色。十六进制数，例如“#6E7874”。

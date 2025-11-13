@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
-import { MetaOAuthLongLivedCredential } from '../../core/plat/meta/meta.interfaces'
+import { MetaOAuthLongLivedCredential } from '../../core/platforms/meta/meta.interfaces'
 import { ThreadsOAuth2Config } from './constants'
+import { ThreadsError } from './threads.exception'
 import {
   publicProfileResponse,
   ThreadsContainerRequest,
@@ -28,30 +29,25 @@ export class ThreadsService {
   private async request<T = unknown>(
     url: string,
     config: AxiosRequestConfig = {},
+    options: { operation?: string } = {},
   ): Promise<T> {
+    const operation = options.operation || 'threads request'
     this.logger.debug(
-      `Threads API Request: ${url}`,
+      `[THREADS:${operation}] Request -> ${url} ${config.method || 'GET'} ${config.params ? `params=${JSON.stringify(config.params)}` : ''}`,
     )
     try {
       const response: AxiosResponse<T> = await axios(url, config)
+      this.logger.debug(
+        `[THREADS:${operation}] Response <- ${url} status=${response.status} data=${JSON.stringify(response.data)}`,
+      )
       return response.data
     }
     catch (error) {
-      if (error.response) {
-        this.logger.error(
-          `Threads API request failed: ${url}, status: ${error.response.status}, data: ${JSON.stringify(error.response.data)}`,
-        )
-        if (error.response.data?.error) {
-          const { error_user_title, message, code, error_subcode } = error.response.data.error
-          const errMsg = `Threads API request failed: ${error_user_title || message} status=${error.response.status} code=${code} sub=${error_subcode}`
-          throw new Error(errMsg)
-        }
-        else {
-          throw new Error('Threads API request failed: An unknown error occurred')
-        }
-      }
-      this.logger.error(`Threads API request failed: ${url}`, error)
-      throw new Error(`Threads API request failed: ${error.message}`)
+      const err = ThreadsError.buildFromError(error, operation)
+      this.logger.error(
+        `[THREADS:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`,
+      )
+      throw err
     }
   }
 
@@ -66,6 +62,7 @@ export class ThreadsService {
     return await this.request<MetaOAuthLongLivedCredential>(
       this.longLivedAccessTokenURL,
       config,
+      { operation: 'refreshOAuthCredential' },
     )
   }
 
@@ -94,7 +91,7 @@ export class ThreadsService {
       data: formData,
     }
 
-    return await this.request<ThreadsPostResponse>(url, config)
+    return await this.request<ThreadsPostResponse>(url, config, { operation: 'createItemContainer' })
   }
 
   async publishPost(
@@ -109,7 +106,7 @@ export class ThreadsService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    return await this.request<ThreadsPostResponse>(url, config)
+    return await this.request<ThreadsPostResponse>(url, config, { operation: 'publishPost' })
   }
 
   async getObjectInfo(
@@ -127,7 +124,7 @@ export class ThreadsService {
     if (fields) {
       config.params = { fields }
     }
-    return await this.request<ThreadsObjectInfo>(url, config)
+    return await this.request<ThreadsObjectInfo>(url, config, { operation: 'getObjectInfo' })
   }
 
   async getAccountInsights(
@@ -143,7 +140,7 @@ export class ThreadsService {
       },
       params: query,
     }
-    return await this.request<ThreadsInsightsResponse>(url, config)
+    return await this.request<ThreadsInsightsResponse>(url, config, { operation: 'getAccountInsights' })
   }
 
   async getPublicProfile(
@@ -158,7 +155,7 @@ export class ThreadsService {
       },
       params: { username },
     }
-    return await this.request<publicProfileResponse>(url, config)
+    return await this.request<publicProfileResponse>(url, config, { operation: 'getPublicProfile' })
   }
 
   async getMediaInsights(
@@ -174,7 +171,7 @@ export class ThreadsService {
       },
       params: query,
     }
-    return await this.request<ThreadsInsightsResponse>(url, config)
+    return await this.request<ThreadsInsightsResponse>(url, config, { operation: 'getMediaInsights' })
   }
 
   async getAccountAllPosts(
@@ -190,7 +187,7 @@ export class ThreadsService {
       },
       params: query,
     }
-    return await this.request<ThreadsPostsResponse>(url, config)
+    return await this.request<ThreadsPostsResponse>(url, config, { operation: 'getAccountAllPosts' })
   }
 
   async fetchObjectComments(
@@ -206,7 +203,7 @@ export class ThreadsService {
       },
       params: query,
     }
-    return await this.request<ThreadsObjectCommentsResponse>(url, config)
+    return await this.request<ThreadsObjectCommentsResponse>(url, config, { operation: 'fetchObjectComments' })
   }
 
   async searchLocations(
@@ -223,7 +220,7 @@ export class ThreadsService {
         q: query.query,
       },
     }
-    return await this.request<ThreadsSearchLocationResponse>(url, config)
+    return await this.request<ThreadsSearchLocationResponse>(url, config, { operation: 'searchLocations' })
   }
 
   async deletePost(
@@ -237,6 +234,6 @@ export class ThreadsService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    await this.request<void>(url, config)
+    await this.request<void>(url, config, { operation: 'deletePost' })
   }
 }

@@ -151,6 +151,11 @@ export class PostDatas extends WithTimestampSchema {
   userId: string
 
   @Prop({
+    required: false, // 平台账户的唯一ID˝
+  })
+  accountId?: string
+
+  @Prop({
     required: false,
   })
   categoryId: string

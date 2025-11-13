@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
-import { OAuth2Credential } from '../../core/plat/meta/meta.interfaces'
+import { OAuth2Credential } from '../../core/platforms/meta/meta.interfaces'
 import { LinkedinOAuth2Config } from './constants'
+import { LinkedInError } from './linkedin.exception'
 import { LinkedInShareRequest, LinkedInUploadRequest, LinkedInUploadResponse } from './linkedin.interface'
 
 @Injectable()
@@ -13,6 +14,25 @@ export class LinkedinService {
   private readonly refreshAccessToken: string = LinkedinOAuth2Config.refreshTokenURL
   private readonly apiBaseUrl: string = LinkedinOAuth2Config.apiBaseUrl
 
+  private async request<T = unknown>(
+    url: string,
+    config: AxiosRequestConfig = {},
+    options: { operation?: string } = {},
+  ): Promise<T> {
+    const operation = options.operation || 'LinkedIn request'
+    this.logger.debug(`[LinkedIn:${operation}] Request -> ${url} ${config.method || 'GET'} ${config.params ? `params=${JSON.stringify(config.params)}` : ''}`)
+    try {
+      const response: AxiosResponse<T> = await axios(url, config)
+      this.logger.debug(`[LinkedIn:${operation}] Response <- ${url} status=${response.status} data=${JSON.stringify(response.data)}`)
+      return response.data
+    }
+    catch (error: unknown) {
+      const err = LinkedInError.buildFromError(error, operation)
+      this.logger.error(`[LinkedIn:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      throw err
+    }
+  }
+
   async refreshOAuthCredential(refresh_token: string) {
     const params: Record<string, string> = {
       grant_type: 'refresh_token',
@@ -20,11 +40,18 @@ export class LinkedinService {
       client_id: this.clientId,
       client_secret: this.clientSecret,
     }
-
-    const refreshTokenReqParams = new URLSearchParams(params)
-    const tokenResponse: AxiosResponse<OAuth2Credential>
-      = await axios.post(this.refreshAccessToken, refreshTokenReqParams)
-    return tokenResponse.data
+    const config: AxiosRequestConfig = {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      params: new URLSearchParams(params),
+      method: 'POST',
+    }
+    return this.request<OAuth2Credential>(
+      this.refreshAccessToken,
+      config,
+      { operation: 'refreshOAuthCredential' },
+    )
   }
 
   async initMediaUpload(accessToken: string, req: LinkedInUploadRequest): Promise<LinkedInUploadResponse> {
@@ -35,20 +62,14 @@ export class LinkedinService {
         'Content-type': 'application/json',
         'X-Restli-Protocol-Version': '2.0.0',
       },
+      method: 'POST',
+      data: req,
     }
-    try {
-      const response: AxiosResponse<LinkedInUploadResponse> = await axios.post(url, req, config)
-      const data = response.data
-      this.logger.log(`Init upload response: ${JSON.stringify(data)}`)
-      return data
-    }
-    catch (error) {
-      if (error.response) {
-        this.logger.error(`Error init upload: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-      }
-      this.logger.error(`Error init upload: ${error.message}`)
-      throw new Error(`Error init upload: ${error.message}`)
-    }
+    return this.request<LinkedInUploadResponse>(
+      url,
+      config,
+      { operation: 'initMediaUpload' },
+    )
   }
 
   async streamUpload(accessToken: string, src: string, dest: string) {
@@ -57,26 +78,15 @@ export class LinkedinService {
         'Authorization': `Bearer ${accessToken}`,
         'Content-type': 'application/octet-stream',
       },
+      method: 'POST',
     }
-    this.logger.log(`Upload URL: ${dest}`)
-    try {
-      const dlStream = await axios.get(src, { responseType: 'stream' })
-      const response = await axios.post(
-        dest,
-        dlStream.data,
-        config,
-      )
-      const data = response.data
-      this.logger.log(`Reel upload response: ${JSON.stringify(data)}`)
-      return data
-    }
-    catch (error) {
-      if (error.response) {
-        this.logger.error(`Error uploading reel: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-      }
-      this.logger.error(`Error uploading reel: ${error.message}`)
-      throw new Error(`Error uploading reel: ${error.message}`)
-    }
+    const dlStream = await axios.get(src, { responseType: 'stream' })
+    config.data = dlStream.data
+    return this.request<void>(
+      dest,
+      config,
+      { operation: 'streamUpload' },
+    )
   }
 
   async createShare(accessToken: string, req: LinkedInShareRequest) {
@@ -87,25 +97,27 @@ export class LinkedinService {
         'Content-type': 'application/json',
         'X-Restli-Protocol-Version': '2.0.0',
       },
+      method: 'POST',
+      data: req,
     }
     try {
-      const response: AxiosResponse = await axios.post(url, req, config)
-      if (response.status !== 201) {
-        throw new Error(`Unexpected response status: ${response.status}`)
-      }
+      const response = await axios.post(url, req, config)
       const shareId: string = response.headers['x-restli-id']
       if (!shareId) {
-        throw new Error('Missing x-restli-id header in response')
+        throw LinkedInError.buildFromResponse(
+          response,
+          'createShare',
+        )
       }
       this.logger.log(`Create share response: ${JSON.stringify(response.data)}, shareId: ${shareId}`)
       return shareId
     }
     catch (error) {
-      if (error.response) {
-        this.logger.error(`Error creating share: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-      }
-      this.logger.error(`Error creating share: ${error.message}`)
-      throw new Error(`Error creating share: ${error.message}`)
+      throw LinkedInError.buildFromError(
+        error,
+        'createShare',
+        { url, method: 'POST' },
+      )
     }
   }
 
@@ -117,21 +129,12 @@ export class LinkedinService {
         'Content-type': 'application/json',
         'X-Restli-Protocol-Version': '2.0.0',
       },
+      method: 'DELETE',
     }
-    try {
-      const response: AxiosResponse = await axios.delete(url, config)
-      if (response.status !== 204) {
-        throw new Error(`Unexpected response status: ${response.status}`)
-      }
-      this.logger.log(`Delete share response: ${JSON.stringify(response.data)}, shareId: ${shareId}`)
-      return shareId
-    }
-    catch (error) {
-      if (error.response) {
-        this.logger.error(`Error deleting share: ${error.response.status} - ${JSON.stringify(error.response.data)}`)
-      }
-      this.logger.error(`Error deleting share: ${error.message}`)
-      throw new Error(`Error deleting share: ${error.message}`)
-    }
+    return this.request<void>(
+      url,
+      config,
+      { operation: 'deletePost' },
+    )
   }
 }

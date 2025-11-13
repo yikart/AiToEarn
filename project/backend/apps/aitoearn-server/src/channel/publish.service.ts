@@ -61,7 +61,7 @@ export class PublishService {
         type: post.mediaType,
         title: post.title || '',
         desc: post.content || '',
-        accountId: '',
+        accountId: post.accountId || '',
         accountType: post.platform as AccountType,
         uid: '',
         videoUrl: post.mediaType === 'video' ? post.permaLink || '' : undefined,
@@ -207,12 +207,29 @@ export class PublishService {
   }
 
   async getQueuedPublishingTasks(data: PubRecordListFilterDto, userId: string) {
-    const publishRecords = await this.publishRecordService.getQueuedPublishRecords({
+    const publishTasks = await this.publishTaskNatsApi.getQueuedPublishTasks(userId, data)
+    const posts = this.mergePostHistory([], publishTasks, [])
+    return posts
+  }
+
+  async getPublishedPosts(data: PubRecordListFilterDto, userId: string) {
+    const publishRecords = await this.publishRecordService.getPublishRecordList({
       ...data,
       userId,
     })
-    const publishTasks = await this.publishTaskNatsApi.getQueuedPublishTasks(userId, data)
-    const posts = this.mergePostHistory(publishRecords, publishTasks, [])
+    const publishTasks = await this.publishTaskNatsApi.getPublishedPublishTasks(userId, data)
+    const range = { start: '', end: '' }
+    if (data.time) {
+      range.start = data.time[0].toISOString()
+      range.end = data.time[1].toISOString()
+    }
+    const postsHistory = await this.postService.getUserAllPostsByPlatform({
+      ...data,
+      range,
+      userId,
+      platform: data.accountType as any,
+    })
+    const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
     return posts
   }
 

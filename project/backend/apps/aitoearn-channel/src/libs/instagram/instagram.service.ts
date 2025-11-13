@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
-import { MetaOAuthLongLivedCredential } from '../../core/plat/meta/meta.interfaces'
+import { MetaOAuthLongLivedCredential } from '../../core/platforms/meta/meta.interfaces'
 import { InstagramOAuth2Config } from './constants'
-import { InstagramApiException, normalizeInstagramError } from './instagram-api.exception'
+import { InstagramError } from './instagram.exception'
 import {
   ChunkedMediaUploadRequest,
   CreateMediaContainerRequest,
@@ -43,19 +43,12 @@ export class InstagramService {
       return response.data
     }
     catch (error: unknown) {
-      const normalized = normalizeInstagramError(error)
-      if (normalized.raw) {
-        this.logger.error(
-          `[IG:${operation}] request ${url} failed: ${normalized.raw.error_user_title || normalized.raw.message} status=${normalized.status} code=${normalized.raw.code} sub=${normalized.raw.error_subcode} detail=${normalized.raw.error_user_msg}`,
-        )
-      }
-      else if (normalized.isNetwork) {
-        this.logger.error(`[IG:${operation}] network error ${url}`)
-      }
-      else {
-        this.logger.error(`[IG:${operation}] unexpected error ${url}: ${(error as any)?.message}`)
-      }
-      throw new InstagramApiException(operation, normalized, { url, method: config.method, operation })
+      const err = InstagramError.buildFromError(
+        error,
+        operation,
+      )
+      this.logger.error(`[IG:${operation}] error ${url} message=${err.message} status=${err.status} rawStatus=${err.rawStatus} rawError=${JSON.stringify(err.rawError)}`)
+      throw err
     }
   }
 

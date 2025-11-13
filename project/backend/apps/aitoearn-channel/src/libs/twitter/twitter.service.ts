@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
+import { TwitterError } from './twitter.exception'
 import {
   TwitterFollowingResponse,
   TwitterOAuthCredential,
@@ -48,35 +49,27 @@ export class TwitterService {
   private async request<T = unknown>(
     url: string,
     config: AxiosRequestConfig = {},
+    options: { operation?: string } = {},
   ): Promise<T> {
+    const method = (config.method || 'GET').toUpperCase()
+    const operation = options.operation || `${method} ${url}`
     this.logger.debug(
-      `Twitter API Request: ${url}`,
+      `[twitter:${operation}] Request -> ${url} ${method}, params=${JSON.stringify(config.params)}`,
     )
     try {
       const response: AxiosResponse<T> = await axios(url, config)
-      const data = response.data
       this.logger.debug(
-        `Twitter API Response: ${url} with data: ${JSON.stringify(data)}`,
+        `[twitter:${operation}] Response -> ${url} ${method} ${JSON.stringify(response.data)}`,
       )
+      const data = response.data
       return data
     }
     catch (error) {
-      if (error.response) {
-        this.logger.error(
-          `Twitter API request failed: ${url}, status: ${error.response.status}, data: ${JSON.stringify(error.response.data)}`,
-        )
-        const apiError = error.response.data
-        let errMsg = `Twitter API request failed: ${url}`
-        if (apiError?.title) {
-          errMsg = `${apiError.title}: ${apiError.detail ?? 'No detail'}`
-        }
-        else if (apiError) {
-          errMsg = `Twitter API Error: ${JSON.stringify(apiError)}`
-        }
-        throw new Error(errMsg)
-      }
-      this.logger.error(`Twitter API request failed: ${url}`, error)
-      throw new Error(`Twitter API request failed, error: ${error.message}`)
+      const err = TwitterError.buildFromError(error, operation)
+      this.logger.error(
+        `[twitter:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`,
+      )
+      throw err
     }
   }
 
@@ -117,7 +110,7 @@ export class TwitterService {
       headers: this.oAuthRequestHeader,
       data: params.toString(),
     }
-    return await this.request<TwitterOAuthCredential>(url, config)
+    return await this.request<TwitterOAuthCredential>(url, config, { operation: 'getOAuthCredential' })
   }
 
   async refreshOAuthCredential(
@@ -135,7 +128,7 @@ export class TwitterService {
       headers: this.oAuthRequestHeader,
       data: params.toString(),
     }
-    return await this.request<TwitterOAuthCredential>(url, config)
+    return await this.request<TwitterOAuthCredential>(url, config, { operation: 'refreshOAuthCredential' })
   }
 
   async revokeOAuthCredential(
@@ -150,7 +143,7 @@ export class TwitterService {
       method: 'POST',
       data: params.toString(),
     }
-    return await this.request<TwitterRevokeAccessResponse>(url, config)
+    return await this.request<TwitterRevokeAccessResponse>(url, config, { operation: 'revokeOAuthCredential' })
   }
 
   async getUserInfo(accessToken: string): Promise<TwitterUserInfo> {
@@ -165,9 +158,8 @@ export class TwitterService {
           'id,name,profile_image_url,username,verified,created_at,protected,public_metrics',
       },
     }
-    return await this.request<TwitterUserInfoResponse>(url, config).then(
-      res => res.data,
-    )
+    const response = await this.request<TwitterUserInfoResponse>(url, config, { operation: 'getUserInfo' })
+    return response.data
   }
 
   async followUser(
@@ -185,7 +177,7 @@ export class TwitterService {
       method: 'POST',
       data: params.toString(),
     }
-    return await this.request<TwitterFollowingResponse>(url, config)
+    return await this.request<TwitterFollowingResponse>(url, config, { operation: 'followUser' })
   }
 
   async initMediaUpload(
@@ -201,7 +193,7 @@ export class TwitterService {
       },
       data: req,
     }
-    return await this.request<XMediaUploadResponse>(url, config)
+    return await this.request<XMediaUploadResponse>(url, config, { operation: 'initMediaUpload' })
   }
 
   async chunkedMediaUploadRequest(
@@ -220,7 +212,7 @@ export class TwitterService {
       },
       data: formData,
     }
-    return await this.request<XMediaUploadResponse>(url, config)
+    return await this.request<XMediaUploadResponse>(url, config, { operation: 'chunkedMediaUpload' })
   }
 
   async finalizeMediaUpload(
@@ -234,7 +226,7 @@ export class TwitterService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    return await this.request<XMediaUploadResponse>(url, config)
+    return await this.request<XMediaUploadResponse>(url, config, { operation: 'finalizeMediaUpload' })
   }
 
   async createPost(
@@ -250,7 +242,7 @@ export class TwitterService {
       },
       data: tweet,
     }
-    return await this.request<XCreatePostResponse>(url, config)
+    return await this.request<XCreatePostResponse>(url, config, { operation: 'createPost' })
   }
 
   async deletePost(
@@ -264,7 +256,7 @@ export class TwitterService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    return await this.request<XDeletePostResponse>(url, config)
+    return await this.request<XDeletePostResponse>(url, config, { operation: 'deletePost' })
   }
 
   async getUserPosts(
@@ -284,7 +276,7 @@ export class TwitterService {
           'id,text,author_id,created_at,public_metrics,attachments,media_metadata',
       },
     }
-    return await this.request<XUserTimelineResponse>(url, config)
+    return await this.request<XUserTimelineResponse>(url, config, { operation: 'getUserPosts' })
   }
 
   async getUserTimeline(
@@ -304,7 +296,7 @@ export class TwitterService {
           'id,text,author_id,created_at,public_metrics,attachments',
       },
     }
-    return await this.request<XUserTimelineResponse>(url, config)
+    return await this.request<XUserTimelineResponse>(url, config, { operation: 'getUserTimeline' })
   }
 
   async getPostDetail(
@@ -323,7 +315,7 @@ export class TwitterService {
         'user.fields': 'id,name,username,profile_image_url,verified',
       },
     }
-    return await this.request<XPostDetailResponse>(url, config)
+    return await this.request<XPostDetailResponse>(url, config, { operation: 'getPostDetail' })
   }
 
   async getMediaStatus(
@@ -340,7 +332,7 @@ export class TwitterService {
         media_id: mediaId,
       },
     }
-    return await this.request<XMediaUploadResponse>(url, config)
+    return await this.request<XMediaUploadResponse>(url, config, { operation: 'getMediaStatus' })
   }
 
   async repost(
@@ -357,7 +349,7 @@ export class TwitterService {
       },
       data: { tweet_id: tweetId },
     }
-    return await this.request<XRePostResponse>(url, config)
+    return await this.request<XRePostResponse>(url, config, { operation: 'repost' })
   }
 
   async unRepost(
@@ -372,7 +364,7 @@ export class TwitterService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    return await this.request<XRePostResponse>(url, config)
+    return await this.request<XRePostResponse>(url, config, { operation: 'unRepost' })
   }
 
   async likePost(
@@ -389,7 +381,7 @@ export class TwitterService {
       },
       data: { tweet_id: tweetId },
     }
-    return await this.request<XLikePostResponse>(url, config)
+    return await this.request<XLikePostResponse>(url, config, { operation: 'likePost' })
   }
 
   async unlikePost(
@@ -404,7 +396,7 @@ export class TwitterService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    return await this.request<XLikePostResponse>(url, config)
+    return await this.request<XLikePostResponse>(url, config, { operation: 'unlikePost' })
   }
 
   async deleteTweet(

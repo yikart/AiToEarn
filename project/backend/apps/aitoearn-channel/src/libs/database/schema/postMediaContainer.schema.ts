@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import mongoose from 'mongoose'
-import { PlatPulOption } from '../../../core/publish/common'
+import { PlatPulOption } from '../../../core/publishing/common'
 import { BaseTemp } from './time.tamp'
 
 export enum PostMediaStatus {
@@ -37,6 +37,12 @@ export class PostMediaContainer extends BaseTemp {
     required: true,
   })
   publishId: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  jobId?: string
 
   @Prop({
     required: true,

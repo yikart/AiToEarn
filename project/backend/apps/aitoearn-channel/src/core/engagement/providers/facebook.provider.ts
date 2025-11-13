@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PostsResponseVo } from '@yikart/common'
-import { FacebookService } from '../../../core/plat/meta/facebook.service'
+import { FacebookService } from '../../../core/platforms/meta/facebook.service'
 import { FacebookPagePostRequest, FacebookPostCommentsRequest } from '../../../libs/facebook/facebook.interfaces'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'
 import { EngagementComment, EngagementProvider, FetchPostCommentsResponse, PublishCommentResponse } from '../engagement.interface'
