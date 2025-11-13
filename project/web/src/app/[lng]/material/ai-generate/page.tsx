@@ -18,7 +18,7 @@ import VipContentModal from "@/components/modals/VipContentModal";
 const { TextArea } = Input;
 const { Option } = Select;
 
-// 示例图片 URL 常量
+// Sample image URL constants
 const SAMPLE_IMAGE_URLS = {
   shili21: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-1.webp',
   shili22: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-2.jpeg',
@@ -30,9 +30,9 @@ const SAMPLE_IMAGE_URLS = {
 
 
 /**
- * AI 工具页（左右布局）
- * - 左侧：图标切换 图片/视频 两个模块
- * - 右侧：根据模块展示对应功能（复用原有功能逻辑，不改动接口与状态流转）
+ * AI tool page (left-right layout)
+ * - Left: Icon switching between image/video modules
+ * - Right: Display corresponding functions based on module (reuse existing logic, no changes to interfaces and state flow)
  */
 export default function AIGeneratePage() {
   const params = useParams();
@@ -42,22 +42,22 @@ export default function AIGeneratePage() {
   const lng = (params as any).lng as string;
   const isEnglishLang = typeof lng === "string" ? lng.toLowerCase().startsWith("en") : false;
 
-  // 根据 URL 初始化模块与子标签
+  // Initialize module and sub-tabs based on URL
   const queryTab = (searchParams.get("tab") || "").toString();
   const initIsVideo = ["videoGeneration", "text2video", "image2video"].includes(queryTab);
   const initImageTab = ["textToImage", "imageToImage", "textToFireflyCard", "md2card", "chat"].includes(queryTab) ? (queryTab as any) : "textToImage";
   const initVideoTab = ["image2video"].includes(queryTab) ? (queryTab as any) : "text2video";
-  // 左侧模块切换
+  // Left module switching
   const [activeModule, setActiveModule] = useState<"image" | "video">(initIsVideo ? "video" : "image");
-  // 图片子模块切换
+  // Image sub-module switching
   const [activeImageTab, setActiveImageTab] = useState<"textToImage" | "imageToImage" | "textToFireflyCard" | "md2card" | "chat">(initImageTab);
-  // 视频子模块切换
+  // Video sub-module switching
   const [activeVideoTab, setActiveVideoTab] = useState<"text2video" | "image2video">(initVideoTab);
 
-    // VIP弹窗状态
+    // VIP modal state
     const [vipModalOpen, setVipModalOpen] = useState(false);
 
-  // 文生图
+  // Text to image
   const [prompt, setPrompt] = useState("");
   const [size, setSize] = useState("1024x1024");
   const [n, setN] = useState(1);
@@ -71,7 +71,7 @@ export default function AIGeneratePage() {
   const [imageProgress, setImageProgress] = useState(0);
   const [checkingImageStatus, setCheckingImageStatus] = useState(false);
 
-  // Firefly 卡片
+  // Firefly card
   const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
   const [temp, setTemp] = useState("tempA");
@@ -90,7 +90,7 @@ export default function AIGeneratePage() {
     { key: "tempD", name: t("aiGenerate.templateD") },
   ];
 
-  // 视频生成
+  // Video generation
   const [videoPrompt, setVideoPrompt] = useState("");
   const [videoModel, setVideoModel] = useState("");
   const [videoSize, setVideoSize] = useState("720p");
@@ -106,12 +106,12 @@ export default function AIGeneratePage() {
   const [checkingStatus, setCheckingStatus] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
 
-  // 视频历史记录
+  // Video history
   const [videoHistory, setVideoHistory] = useState<any[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
 
-  // 首/尾帧上传
+  // First/tail frame upload
   const firstFrameInputRef = useRef<HTMLInputElement | null>(null);
   const tailFrameInputRef = useRef<HTMLInputElement | null>(null);
   const [uploadingFirstFrame, setUploadingFirstFrame] = useState(false);
@@ -151,7 +151,7 @@ export default function AIGeneratePage() {
     finally { setUploadingTailFrame(false); if (e.target) e.target.value = ""; }
   };
 
-  // 多图上传处理
+  // Multi-image upload handling
   const handleMultiImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -184,12 +184,12 @@ export default function AIGeneratePage() {
     }
   };
 
-  // 删除图片
+  // Remove image
   const handleRemoveImage = (index: number) => {
     setVideoImages(prev => prev.filter((_, i) => i !== index));
   };
 
-  // 清空所有图片
+  // Clear all images
   const handleClearAllImages = () => {
     setVideoImages([]);
   };
@@ -218,7 +218,7 @@ export default function AIGeneratePage() {
   const [videoModels, setVideoModels] = useState<any[]>([]);
   const [imageEditModels, setImageEditModels] = useState<any[]>([]);
 
-  // 图生图相关状态
+  // Image-to-image related state
   const [imageEditPrompt, setImageEditPrompt] = useState("");
   const [imageEditModel, setImageEditModel] = useState("");
   const [imageEditSize, setImageEditSize] = useState("1024x1024");
@@ -232,17 +232,17 @@ export default function AIGeneratePage() {
   const [sourceImages, setSourceImages] = useState<string[]>([]);
   const [uploadingSourceImage, setUploadingSourceImage] = useState(false);
 
-  // 自定义模型下拉
+  // Custom model dropdown
   const [showModelDropdown, setShowModelDropdown] = useState(false);
   const [showVideoModelDropdown, setShowVideoModelDropdown] = useState(false);
 
-  // 示例轮播
+  // Sample carousel
   const sampleImages = [SAMPLE_IMAGE_URLS.shili21, SAMPLE_IMAGE_URLS.shili22, SAMPLE_IMAGE_URLS.shili23, SAMPLE_IMAGE_URLS.shili24];
   const [sampleIdx, setSampleIdx] = useState(0);
   const handlePrevSample = () => setSampleIdx((p) => (p - 1 + sampleImages.length) % sampleImages.length);
   const handleNextSample = () => setSampleIdx((p) => (p + 1) % sampleImages.length);
 
-  // 保存结果到本地
+  // Save results to local
   const handleSaveResults = async () => {
     try {
       if (!result || !result.length) { message.warning(t('aiGenerate.imageGenerationFailed')); return; }
@@ -271,16 +271,16 @@ export default function AIGeneratePage() {
     document.body.removeChild(a);
   };
 
-  // 图片编辑相关函数
+  // Image editing related functions
   const handleSourceImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
     
-    // 检查当前模型的最大图片数量限制
+    // Check current model's maximum image count limit
     const selectedModel = imageEditModels.find((m: any) => m.name === imageEditModel);
     const maxImages = selectedModel?.maxInputImages || 1;
     
-    // 计算可以上传的图片数量
+    // Calculate number of images that can be uploaded
     const remainingSlots = maxImages - sourceImages.length;
     if (remainingSlots <= 0) {
       message.warning(t('aiGenerate.maxUploadLimitReached' as any, { count: maxImages }));
@@ -383,7 +383,7 @@ export default function AIGeneratePage() {
             setImageEditProgress(100); 
             message.success(t('aiGenerate.imageEditCompleted' as any));
             
-            // 自动上传第一张图片到默认素材库组
+            // Auto upload first image to default media group
             if (imageUrls.length > 0) {
               await autoUploadToDefaultGroup(imageUrls[0], "img", imageEditModel, imageEditPrompt);
             }
@@ -408,13 +408,13 @@ export default function AIGeneratePage() {
     const m = videoModels.find((v) => v.name === modelName);
     if (!m) return 0;
     
-    // 如果是 kling 模型，使用 mode 字段匹配
+    // If kling model, use mode field for matching
     if (m?.channel === 'kling' && m?.pricing) {
       const item = m.pricing.find((p: any) => p.duration === duration && p.mode === size);
       return item ? item.price : 0;
     }
     
-    // 其他模型使用 resolution 字段匹配
+    // Other models use resolution field for matching
     const item = m?.pricing?.find((p: any) => p.duration === duration && p.resolution === size);
     return item ? item.price : 0;
   };
@@ -423,7 +423,7 @@ export default function AIGeneratePage() {
     if (!Array.isArray(videoModels)) return [] as any[];
     if (videoMode === "text2video") return (videoModels as any[]).filter((m: any) => (m?.modes || []).includes("text2video"));
     if (videoMode === "image2video") {
-      // 合并所有支持图片的视频模式
+      // Merge all video modes that support images
       return (videoModels as any[]).filter((m: any) => {
         const modes = m?.modes || [];
         return modes.includes("image2video") || modes.includes("flf2video") || modes.includes("lf2video") || modes.includes("multi-image2video");
@@ -472,14 +472,14 @@ export default function AIGeneratePage() {
     }
   };
 
-  // 格式化时间戳
+  // Format timestamp
   const formatTime = (timestamp: number) => {
     if (!timestamp) return '-';
     const date = new Date(timestamp * 1000);
     return date.toLocaleString();
   };
 
-  // 获取状态显示文本
+  // Get status display text
   const getStatusText = (status: string) => {
     switch (status?.toUpperCase()) {
       case 'SUCCESS':
@@ -497,14 +497,14 @@ export default function AIGeneratePage() {
     }
   };
 
-  // 处理历史记录项点击
+  // Handle history item click
   const handleHistoryItemClick = async (item: any) => {
     if (item.status === 'SUCCESS' && item.data?.video_url) {
       setVideoResult(item.data.video_url);
       setVideoStatus('completed');
       setVideoProgress(100);
       
-      // 自动上传到默认素材库组
+      // Auto upload to default media group
       await autoUploadToDefaultGroup(item.data.video_url, "video", item.model || "Unknown Model", item.prompt || "");
     } else if (item.status === 'PROCESSING') {
       setVideoTaskId(item.task_id);
@@ -514,14 +514,14 @@ export default function AIGeneratePage() {
   };
   useEffect(() => { fetchImageModels(); fetchVideoModels(); fetchImageEditModels(); }, []);
 
-  // 当切换到视频模块时自动加载历史记录
+  // Auto load history when switching to video module
   useEffect(() => {
     if (activeModule === "video" && videoHistory.length === 0) {
       fetchVideoHistory();
     }
   }, [activeModule]);
 
-  // 当模型切换时，自动设置合适的 quality 值和尺寸值
+  // Auto set appropriate quality and size values when model changes
   useEffect(() => {
     if (!model || !imageModels.length) return;
     
@@ -530,21 +530,21 @@ export default function AIGeneratePage() {
     const sizes = selectedModel?.sizes || [];
     
     if (qualities.length > 0) {
-      // 如果当前 quality 不在模型的 qualities 列表中，则设置为第一个可用的 quality
+      // If current quality is not in model's qualities list, set to first available quality
       if (!qualities.includes(quality)) {
         setQuality(qualities[0]);
       }
     }
     
     if (sizes.length > 0) {
-      // 如果当前尺寸不在模型的 sizes 列表中，则设置为第一个可用的尺寸
+      // If current size is not in model's sizes list, set to first available size
       if (!sizes.includes(size)) {
         setSize(sizes[0]);
       }
     }
   }, [model, imageModels, quality, size]);
 
-  // 当图片编辑模型切换时，自动设置合适的尺寸值并处理图片数量限制
+  // Auto set appropriate size value and handle image count limit when image edit model changes
   useEffect(() => {
     if (!imageEditModel || !imageEditModels.length) return;
     
@@ -553,13 +553,13 @@ export default function AIGeneratePage() {
     const maxImages = selectedModel?.maxInputImages || 1;
     
     if (sizes.length > 0) {
-      // 如果当前尺寸不在模型的 sizes 列表中，则设置为第一个可用的尺寸
+      // If current size is not in model's sizes list, set to first available size
       if (!sizes.includes(imageEditSize)) {
         setImageEditSize(sizes[0]);
       }
     }
     
-    // 如果当前图片数量超过新模型的最大限制，则移除多余的图片
+    // If current image count exceeds new model's maximum limit, remove excess images
     if (sourceImages.length > maxImages) {
       const removedCount = sourceImages.length - maxImages;
       setSourceImages(prev => prev.slice(0, maxImages));
@@ -567,13 +567,13 @@ export default function AIGeneratePage() {
     }
   }, [imageEditModel, imageEditModels, imageEditSize, sourceImages.length]);
 
-  // 根据 URL ?tab=... 初始化/响应切换模块与子标签
+  // Initialize/respond to module and sub-tab switching based on URL ?tab=...
   useEffect(() => {
     const tab = searchParams.get('tab') || '';
     if (!tab) return;
     if (tab === 'videoGeneration' || tab === 'text2video' || tab === 'image2video' || tab === 'flf2video' || tab === 'lf2video' || tab === 'multi-image2video') {
       setActiveModule('video');
-      // 将所有图片相关的视频模式都映射到 image2video
+      // Map all image-related video modes to image2video
       if (tab === 'flf2video' || tab === 'lf2video' || tab === 'multi-image2video') {
         setActiveVideoTab('image2video');
       } else {
@@ -602,12 +602,12 @@ export default function AIGeneratePage() {
     let durations: any[] = [];
     let resolutions: any[] = [];
     
-    // 如果是 kling 模型，从 pricing 获取选项
+    // If kling model, get options from pricing
     if (current?.channel === 'kling' && current?.pricing) {
       durations = [...new Set(current.pricing.map((p: any) => p.duration))];
       resolutions = [...new Set(current.pricing.map((p: any) => p.mode))];
     } else {
-      // 其他模型从原有字段获取
+      // Other models get from original fields
       durations = current?.durations || [];
       resolutions = current?.resolutions || [];
     }
@@ -627,7 +627,7 @@ export default function AIGeneratePage() {
       if (res.data) {
         const groups = res.data.list || [];
         setMediaGroups(groups);
-        // 找到默认组
+        // Find default group
         const defaultGroup = groups.find((group: any) => group.isDefault === true);
         if (defaultGroup) {
           setDefaultMediaGroup(defaultGroup._id);
@@ -670,7 +670,7 @@ export default function AIGeneratePage() {
       if (res.data?.image) {
         setFireflyResult(res.data.image);
         
-        // 自动上传到默认素材库组
+        // Auto upload to default media group
         await autoUploadToDefaultGroup(res.data.image, "img", "Firefly Card", `${title}: ${content}`);
       } else {
         message.error(t("aiGenerate.fireflyCardGenerationFailed"));
@@ -691,19 +691,19 @@ export default function AIGeneratePage() {
       const supported: string[] = current?.supportedParameters || [];
       const modes: string[] = current?.modes || [];
       
-      // 检查多图合成视频
+      // Check multi-image video
       if (modes.includes('multi-image2video') && supported.includes("image") && videoImages.length === 0) {
         message.error(t('aiGenerate.pleaseUploadAtLeastOneImage' as any));
         return;
       }
       
-      // 检查单图视频
+      // Check single image video
       if (modes.includes('image2video') && !modes.includes('multi-image2video') && supported.includes("image") && !videoImage) {
         message.error(t("aiGenerate.pleaseUploadFirstFrame"));
         return;
       }
       
-      // 检查首尾帧视频
+      // Check first and tail frame video
       if (modes.includes('flf2video') && supported.includes("image") && !videoImage) {
         message.error(t("aiGenerate.pleaseUploadFirstFrame"));
         return;
@@ -713,7 +713,7 @@ export default function AIGeneratePage() {
         return;
       }
       
-      // 检查仅尾帧视频
+      // Check tail frame only video
       if (modes.includes('lf2video') && supported.includes("image_tail") && !videoImageTail) {
         message.error(t("aiGenerate.pleaseUploadTailFrame"));
         return;
@@ -724,7 +724,7 @@ export default function AIGeneratePage() {
       const current: any = (filteredVideoModels as any[]).find((m: any) => m.name === videoModel) || {};
       const data: any = { model: videoModel, prompt: videoPrompt, duration: videoDuration };
       
-      // 如果是 kling 模型，传递 mode 参数而不是 size 参数
+      // If kling model, pass mode parameter instead of size parameter
       if (current?.channel === 'kling') {
         data.mode = videoSize;
       } else {
@@ -735,21 +735,21 @@ export default function AIGeneratePage() {
       const modes: string[] = current?.modes || [];
       
       if (videoMode === "image2video") {
-        // 多图合成视频
+        // Multi-image video
         if (modes.includes('multi-image2video') && supported.includes("image") && videoImages.length > 0) {
           data.image = videoImages.map((image: string) => replaceOssUrl(image));
         }
-        // 单图视频
+        // Single image video
         else if (modes.includes('image2video') && !modes.includes('multi-image2video') && supported.includes("image") && videoImage) {
           
           data.image = replaceOssUrl(videoImage);
         }
-        // 首尾帧视频
+        // First and tail frame video
         else if (modes.includes('flf2video')) {
           if (supported.includes("image") && videoImage) data.image = replaceOssUrl(videoImage);
           if (supported.includes("image_tail") && videoImageTail) data.image_tail = replaceOssUrl(videoImageTail);
         }
-        // 仅尾帧视频
+        // Tail frame only video
         else if (modes.includes('lf2video') && supported.includes("image_tail") && videoImageTail) {
           data.image_tail = replaceOssUrl(videoImageTail);
         }
@@ -779,7 +779,7 @@ export default function AIGeneratePage() {
             setVideoProgress(100); 
             message.success(t("aiGenerate.videoGenerationSuccess"));
             
-            // 自动上传到默认素材库组
+            // Auto upload to default media group
             if (videoUrl) {
               await autoUploadToDefaultGroup(videoUrl, "video", videoModel, videoPrompt);
             }
@@ -806,7 +806,7 @@ export default function AIGeneratePage() {
           const normalized = up === "SUCCESS" ? "completed" : up === "FAILED" ? "failed" : up === "PROCESSING" || up === "GENERATING" ? "processing" : up === "NOT_START" || up === "NOT_STARTED" || up === "QUEUED" || up === "PENDING" ? "submitted" : (status || "").toString().toLowerCase();
           setImageStatus(normalized);
           
-          // 计算进度 - 如果没有明确的progress字段，根据状态估算
+          // Calculate progress - if no explicit progress field, estimate based on status
           let percent = 0;
           if (normalized === "submitted") percent = 10;
           else if (normalized === "processing") percent = 50;
@@ -814,13 +814,13 @@ export default function AIGeneratePage() {
           else if (normalized === "failed") percent = 0;
           
           if (normalized === "completed") { 
-            // 优先使用 images 字段，如果没有则使用 response.list
+            // Prefer images field, otherwise use response.list
             const imageUrls = (images || response?.list || []).map((i: any) => i.url) || [];
             setResult(imageUrls); 
             setImageProgress(100); 
             message.success(t('aiGenerate.imageGenerationCompleted' as any));
             
-            // 自动上传第一张图片到默认素材库组
+            // Auto upload first image to default media group
             if (imageUrls.length > 0) {
               await autoUploadToDefaultGroup(imageUrls[0], "img", model, prompt);
             }
@@ -850,7 +850,7 @@ export default function AIGeneratePage() {
         const cardUrl = res.data.image[0].url;
         setMd2CardResult(cardUrl);
         
-        // 自动上传到默认素材库组
+        // Auto upload to default media group
         await autoUploadToDefaultGroup(cardUrl, "img", "Markdown Card", markdownContent.substring(0, 100));
       } else {
         setVipModalOpen(true);
@@ -861,16 +861,16 @@ export default function AIGeneratePage() {
 
   const [currentUploadUrl, setCurrentUploadUrl] = useState<string | null>(null);
   
-  // 自动上传到默认素材库组
+  // Auto upload to default media group
   const autoUploadToDefaultGroup = async (mediaUrl: string, mediaType: "video" | "img", modelName: string, description: string) => {
     try {
-      // 检查是否已经上传过
+      // Check if already uploaded
       if (uploadedContent.has(mediaUrl)) {
         console.log('Content already uploaded:', mediaUrl);
         return;
       }
       
-      // 获取素材库列表并找到默认组
+      // Get media group list and find default group
       const res: any = await getMediaGroupList(1, 100, mediaType);
       let defaultGroupId = null;
       
@@ -907,7 +907,7 @@ export default function AIGeneratePage() {
       });
       
       if (uploadRes.data) {
-        // 标记为已上传
+        // Mark as uploaded
         setUploadedContent(prev => new Set([...prev, mediaUrl]));
         message.success(mediaType === "video" ? t("aiGenerate.videoUploadSuccess") : t("aiGenerate.uploadSuccess"));
         console.log('上传成功');
@@ -1545,7 +1545,7 @@ export default function AIGeneratePage() {
                     <Select value={videoSize} onChange={setVideoSize} style={{ width: "100%" }}>{(()=>{ 
                       const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; 
                       
-                      // 如果是 kling 模型，从 pricing 的 mode 字段获取分辨率选项
+                      // If kling model, get resolution options from pricing mode field
                       if (selected?.channel === 'kling' && selected?.pricing) {
                         const modes = [...new Set(selected.pricing.map((p: any) => p.mode))] as string[];
                         return modes.map((mode: string) => (
@@ -1553,7 +1553,7 @@ export default function AIGeneratePage() {
                         ));
                       }
                       
-                      // 其他模型从 resolutions 字段获取
+                      // Other models get from resolutions field
                       const sizes:string[]=selected?.resolutions||[]; 
                       return sizes.map((s)=> (<Option key={s} value={s}>{s}</Option>)); 
                     })()}</Select>
@@ -1561,7 +1561,7 @@ export default function AIGeneratePage() {
                     <Select value={videoDuration} onChange={setVideoDuration} style={{ width: "100%" }}>{(()=>{ 
                       const selected:any=(filteredVideoModels as any[]).find((m:any)=>m.name===videoModel)||{}; 
                       
-                      // 如果是 kling 模型，从 pricing 的 duration 字段获取时长选项
+                      // If kling model, get duration options from pricing duration field
                       if (selected?.channel === 'kling' && selected?.pricing) {
                         const durations = [...new Set(selected.pricing.map((p: any) => p.duration))] as number[];
                         return durations.map((d: number) => (
@@ -1569,7 +1569,7 @@ export default function AIGeneratePage() {
                         ));
                       }
                       
-                      // 其他模型从 durations 字段获取
+                      // Other models get from durations field
                       const durs:number[]=selected?.durations||[]; 
                       return durs.map((d)=> (<Option key={d} value={d}>{d}{t('aiGenerate.seconds')}</Option>)); 
                     })()}</Select>
@@ -1580,7 +1580,7 @@ export default function AIGeneratePage() {
                       const supported:string[]=selected?.supportedParameters||[];
                       const modes:string[]=selected?.modes||[];
                       
-                      // 根据 modes 判断视频生成类型
+                      // Determine video generation type based on modes
                       const isImage2Video = modes.includes('image2video');
                       const isFlf2Video = modes.includes('flf2video');
                       const isLf2Video = modes.includes('lf2video');
@@ -1589,7 +1589,7 @@ export default function AIGeneratePage() {
                       return (<>
                         {videoMode==='image2video' && (
                           <div className={styles.uploadPanel}>
-                            {/* 单张图生视频 - 只需要首帧 */}
+                            {/* Single image to video - only needs first frame */}
                             {isImage2Video && supported.includes('image') && !supported.includes('image_tail') && (
                               <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
                                 {videoImage ? (
@@ -1604,7 +1604,7 @@ export default function AIGeneratePage() {
                               </div>
                             )}
                             
-                            {/* 多图合成视频 - 需要多张图片 */}
+                            {/* Multi-image video - needs multiple images */}
                             {isMultiImage2Video && supported.includes('image') && (
                               <div className={styles.multiImageUpload}>
                                 <div className={styles.uploadCard} onClick={() => firstFrameInputRef.current?.click()}>
@@ -1651,7 +1651,7 @@ export default function AIGeneratePage() {
                               </div>
                             )}
                             
-                            {/* 首尾帧生成视频 - 需要首帧和尾帧 */}
+                            {/* First and tail frame video - needs first and tail frames */}
                             {isFlf2Video && supported.includes('image') && supported.includes('image_tail') && (
                               <>
                                 <div className={styles.uploadCard} onClick={handlePickFirstFrame}>
@@ -1680,7 +1680,7 @@ export default function AIGeneratePage() {
                               </>
                             )}
                             
-                            {/* 仅尾帧生成视频 - 只需要尾帧 */}
+                            {/* Tail frame only video - only needs tail frame */}
                             {isLf2Video && supported.includes('image_tail') && !supported.includes('image') && (
                               <div className={styles.uploadCard} onClick={handlePickTailFrame}>
                                 {videoImageTail ? (
@@ -1737,7 +1737,7 @@ export default function AIGeneratePage() {
             </div>
           )}
 
-          {/* 视频历史记录区域 */}
+          {/* Video history section */}
           {activeModule === "video" && (
             <div className={styles.historySection}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -1859,7 +1859,7 @@ export default function AIGeneratePage() {
             </div>
       </div>
 
-      {/* VIP弹窗 */}
+      {/* VIP modal */}
       <VipContentModal 
           open={vipModalOpen}   
           onClose={() => setVipModalOpen(false)} 
