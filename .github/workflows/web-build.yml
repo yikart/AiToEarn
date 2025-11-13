@@ -13,6 +13,11 @@ on:
         description: Image version (leave empty to use default generation rule)
         required: false
         type: string
+      push_latest:
+        description: 'Push as latest tag'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   id-token: write
@@ -61,6 +66,30 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+      - name: Determine push latest
+        id: push-latest
+        run: |
+          PUSH_LATEST=false
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            PUSH_LATEST=true
+            echo "📌 Main branch push: Will push latest tag"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.push_latest }}" = "true" ]; then
+            PUSH_LATEST=true
+            echo "📌 Manual trigger with push_latest: Will push latest tag"
+          fi
+          echo "push_latest=$PUSH_LATEST" >> $GITHUB_OUTPUT
+
+      - name: Prepare tags
+        id: tags
+        run: |
+          TAGS="${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"
+          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
+            TAGS="$TAGS"$'\n'"${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest"
+          fi
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build and push application
         uses: docker/build-push-action@v5
         with:
@@ -68,11 +97,7 @@ jobs:
           file: ${{ env.MONOREPO_DIR }}/Dockerfile
           platforms: linux/amd64
           push: true
-          tags: |
-            ${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
-            ${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest
-            ${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
-            ${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest
+          tags: ${{ steps.tags.outputs.tags }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -86,11 +111,15 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🐳 ECR Images" >> $GITHUB_STEP_SUMMARY
           echo "- **Version Image**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Latest**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
+            echo "- **Latest**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🐋 Docker Hub Images" >> $GITHUB_STEP_SUMMARY
           echo "- **Version Image**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Latest**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
+            echo "- **Latest**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🔗 Quick Links" >> $GITHUB_STEP_SUMMARY
           echo "- [Source Commit](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY

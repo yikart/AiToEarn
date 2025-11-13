@@ -19,6 +19,11 @@ on:
         required: false
         type: boolean
         default: false
+      push_latest:
+        description: 'Push as latest tag'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       base_ref:
@@ -192,6 +197,18 @@ jobs:
 
           echo "has_changes=true" >> $GITHUB_OUTPUT
 
+          # Determine if should push latest tag
+          PUSH_LATEST=false
+          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            PUSH_LATEST=true
+            echo "📌 Main branch push: Will push latest tag"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" = "true" ]; then
+            PUSH_LATEST=true
+            echo "📌 Manual trigger with push_latest: Will push latest tag"
+          fi
+
+          echo "push_latest=$PUSH_LATEST" >> $GITHUB_OUTPUT
+
           # Build matrix JSON array
           MATRIX_JSON="{"
           MATRIX_JSON="$MATRIX_JSON\"include\":["
@@ -209,7 +226,7 @@ jobs:
               MATRIX_JSON="$MATRIX_JSON,"
             fi
 
-            MATRIX_JSON="$MATRIX_JSON{\"app\":\"$APP\",\"image\":\"$IMAGE_TAG\"}"
+            MATRIX_JSON="$MATRIX_JSON{\"app\":\"$APP\",\"image\":\"$IMAGE_TAG\",\"push_latest\":$PUSH_LATEST}"
           done
 
           MATRIX_JSON="$MATRIX_JSON]}"
@@ -282,6 +299,17 @@ jobs:
             image=moby/buildkit:latest
           buildkitd-flags: --debug
 
+      - name: Prepare tags
+        id: tags
+        run: |
+          TAGS="${{ matrix.image }}"
+          if [ "${{ matrix.push_latest }}" = "true" ]; then
+            TAGS="$TAGS"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.app }}:latest"
+          fi
+          echo "tags<<EOF" >> $GITHUB_OUTPUT
+          echo "$TAGS" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -290,7 +318,7 @@ jobs:
           platforms: linux/amd64
           build-args: |
             APP_NAME=${{ matrix.app }}
-          tags: ${{ matrix.image }}
+          tags: ${{ steps.tags.outputs.tags }}
           push: true
           cache-from: |
             type=gha,scope=${{ matrix.app }}
@@ -305,4 +333,7 @@ jobs:
         run: |
           echo "### ✅ Build successful: ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Image**: \`${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ matrix.push_latest }}" = "true" ]; then
+            echo "- **Latest**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ matrix.app }}:latest\`" >> $GITHUB_STEP_SUMMARY
+          fi
 
