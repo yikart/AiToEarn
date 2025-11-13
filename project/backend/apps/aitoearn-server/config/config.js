@@ -21,7 +21,6 @@ const {
 
 const {
   CHANNEL_URL,
-  TASK_URL,
   PAYMENT_URL,
 } = process.env
 
