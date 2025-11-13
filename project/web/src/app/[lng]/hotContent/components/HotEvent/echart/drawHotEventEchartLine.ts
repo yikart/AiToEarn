@@ -1,29 +1,31 @@
-import * as echarts from "echarts";
-import { HotValueHistory } from "@/api/types/hotTopic";
-import { describeNumber } from "@/utils";
-import { directTrans } from "@/app/i18n/client";
+import type { HotValueHistory } from '@/api/types/hotTopic'
+import * as echarts from 'echarts'
+import { directTrans } from '@/app/i18n/client'
+import { describeNumber } from '@/utils'
 
-type EChartsOption = echarts.EChartsOption;
+type EChartsOption = echarts.EChartsOption
 
 export default function drawHotEventEchartLine(
   elId: string,
   data: HotValueHistory[],
 ) {
-  if (!data || data.length === 0) return;
+  if (!data || data.length === 0)
+    return
 
-  const chartDom = document.getElementById(elId)!;
-  if (!chartDom) return;
+  const chartDom = document.getElementById(elId)!
+  if (!chartDom)
+    return
   if (echarts.getInstanceByDom(chartDom)) {
-    echarts.dispose(chartDom);
+    echarts.dispose(chartDom)
   }
-  const myChart = echarts.init(chartDom);
+  const myChart = echarts.init(chartDom)
 
   // 只有一个点时，设置上下各留 50% 空间
-  let yMin, yMax;
+  let yMin, yMax
   if (data.length === 1) {
-    const v = data[0].hotValue;
-    yMin = v * 0.5;
-    yMax = v * 1.5;
+    const v = data[0].hotValue
+    yMin = v * 0.5
+    yMax = v * 1.5
   }
 
   // 处理每个点的颜色
@@ -31,46 +33,46 @@ export default function drawHotEventEchartLine(
     if (item.hotValue === null || item.hotValue === undefined) {
       return {
         value: null,
-        itemStyle: { color: "#a66ae4" },
-      };
+        itemStyle: { color: '#a66ae4' },
+      }
     }
-    return item.hotValue;
-  });
+    return item.hotValue
+  })
 
   const option: EChartsOption = {
     grid: { left: 0, right: 0, top: 0, bottom: 0, containLabel: false },
     tooltip: {
-      appendTo: "body",
-      trigger: "axis",
+      appendTo: 'body',
+      trigger: 'axis',
       show: true,
       formatter: (params: any) => {
-        const item = params[0];
-        return `${item.axisValue}<br/>${directTrans("hot-content", "hotValue")}: ${describeNumber(item.data)}`;
+        const item = params[0]
+        return `${item.axisValue}<br/>${directTrans('hot-content', 'hotValue')}: ${describeNumber(item.data)}`
       },
     },
     xAxis: {
-      type: "category",
-      data: data.map((item) => item.updateTime),
+      type: 'category',
+      data: data.map(item => item.updateTime),
       show: false,
       boundaryGap: false,
     },
     yAxis: {
-      type: "value",
+      type: 'value',
       show: false,
       min: yMin,
       max: yMax,
     },
     series: [
       {
-        type: "line",
+        type: 'line',
         data: seriesData,
         smooth: true,
-        symbol: data.length === 1 ? "circle" : "none",
+        symbol: data.length === 1 ? 'circle' : 'none',
         symbolSize: 6,
-        lineStyle: { width: 2, color: "#a66ae4" },
+        lineStyle: { width: 2, color: '#a66ae4' },
       },
     ],
-  };
+  }
 
-  myChart.setOption(option);
+  myChart.setOption(option)
 }

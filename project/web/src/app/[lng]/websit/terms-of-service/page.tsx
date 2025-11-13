@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { useTransClient } from "@/app/i18n/client";
-import styles from "../websit.module.scss";
+import { useTransClient } from '@/app/i18n/client'
+import styles from '../websit.module.scss'
 
 // 导入首页的Header组件
 function Header() {
-  const { t } = useTransClient('home');
-  
+  const { t } = useTransClient('home')
+
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
@@ -22,14 +22,14 @@ function Header() {
         <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
       </div>
     </header>
-  );
+  )
 }
 
 export default function TermsOfServicePage() {
   return (
     <div className={styles.websitPage}>
       <Header />
-      
+
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
@@ -40,28 +40,31 @@ export default function TermsOfServicePage() {
               Last Updated: 2024-12-26
             </p>
           </div>
-          
+
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
                 The following sets forth Aitoearn's Terms of Use. We know how tempting it is to skip these Terms of Use, but it's important to establish what you can expect from us as you use Aitoearn's Service, and what we expect from you. The Terms of Use is a binding legal document, and you are required to read and accept it in full in order to use our Service.
               </p>
             </section>
-            
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>Aitoearn, Inc Terms of Use</h2>
               <p className={styles.sectionContent}>
                 Welcome, and thank you for your interest in Aitoearn, Inc. ("Aitoearn," "we," or "us") and our website at aitoearn.ai, along with our related websites, networks, hosted applications, mobile or other downloadable applications, and other services provided by us (collectively, the "Service"). These Terms of Use are a legally binding contract between you and Aitoearn regarding your use of the Service.
               </p>
               <p className={styles.sectionContent}>
-                <strong>PLEASE READ THE FOLLOWING TERMS CAREFULLY:</strong><br/>
+                <strong>PLEASE READ THE FOLLOWING TERMS CAREFULLY:</strong>
+                <br />
                 BY CLICKING "I ACCEPT,"OR BY DOWNLOADING, INSTALLING, OR OTHERWISE ACCESSING OR USING THE SERVICE, YOU AGREE THAT YOU HAVE READ AND UNDERSTOOD, AND, AS A CONDITION TO YOUR USE OF THE SERVICE, YOU AGREE TO BE BOUND BY, THE FOLLOWING TERMS AND CONDITIONS, INCLUDING Aitoearn'S PRIVACY POLICY https://aitoearn.ai/en/websit/privacy-policy AND ANY ADDITIONAL TERMS AND POLICIES Aitoearn MAY PROVIDE FROM TIME TO TIME (TOGETHER, THESE "TERMS").
               </p>
               <p className={styles.sectionContent}>
-                <strong>Arbitration NOTICE.</strong> Except for certain kinds of disputes described in Section 14, you agree that disputes arising under these Terms will be resolved by binding, individual arbitration, and BY ACCEPTING THESE TERMS, YOU AND Aitoearn ARE EACH WAIVING THE RIGHT TO A TRIAL BY JURY OR TO PARTICIPATE IN ANY CLASS ACTION OR REPRESENTATIVE PROCEEDING.
+                <strong>Arbitration NOTICE.</strong>
+                {' '}
+                Except for certain kinds of disputes described in Section 14, you agree that disputes arising under these Terms will be resolved by binding, individual arbitration, and BY ACCEPTING THESE TERMS, YOU AND Aitoearn ARE EACH WAIVING THE RIGHT TO A TRIAL BY JURY OR TO PARTICIPATE IN ANY CLASS ACTION OR REPRESENTATIVE PROCEEDING.
               </p>
             </section>
-            
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>1. SERVICE AND ACCOUNT</h2>
               <h3 className={styles.subSectionTitle}>1.1 Service Overview</h3>
@@ -190,5 +193,5 @@ export default function TermsOfServicePage() {
         </div>
       </main>
     </div>
-  );
-} 
+  )
+}

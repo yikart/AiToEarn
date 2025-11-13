@@ -25,7 +25,6 @@
         }
       }
       &-options {
-
       }
     }
 
@@ -36,7 +35,8 @@
         margin: 0 15px 0 10px;
         font-size: 18px;
       }
-      &-left, &-right {
+      &-left,
+      &-right {
         display: flex;
         align-items: center;
         margin-bottom: 10px;
@@ -51,12 +51,12 @@
         .ant-tabs-tab {
           padding: 4px 12px;
           font-size: var(--fs-sm);
-          
+
           .anticon {
             margin-right: 4px;
           }
         }
-        
+
         .ant-tabs-tab-active {
           background: var(--colorPrimary1);
           border-radius: 6px;
@@ -120,7 +120,9 @@
 .slideLeftEnterActive {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 .slideLeftExit {
   opacity: 1;
@@ -129,7 +131,9 @@
 .slideLeftExitActive {
   opacity: 0;
   transform: translateX(-50px);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 .slideRightEnter {
   opacity: 0;
@@ -138,7 +142,9 @@
 .slideRightEnterActive {
   opacity: 1;
   transform: translateX(0);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 .slideRightExit {
   opacity: 1;
@@ -147,7 +153,9 @@
 .slideRightExitActive {
   opacity: 0;
   transform: translateX(50px);
-  transition: opacity 300ms, transform 300ms;
+  transition:
+    opacity 300ms,
+    transform 300ms;
 }
 .fadeEnter {
   opacity: 0;
@@ -258,7 +266,7 @@
 
   .searchInput {
     width: 100%;
-    
+
     :global {
       .ant-input {
         border-radius: 6px;

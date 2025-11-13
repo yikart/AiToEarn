@@ -1,28 +1,35 @@
-"use client";
+'use client'
 
-import { useEffect, useRef, useState } from "react";
-import styles from "./styles/difyHome.module.scss";
-import { useTransClient } from "../i18n/client";
-import { getMainAppDownloadUrlSync } from "../config/appDownloadConfig";
+import { AndroidOutlined } from '@ant-design/icons'
+import Image from 'next/image'
+import { useParams, useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
+// Mobile app download section
+import { QRCode } from 'react-qrcode-logo'
 // Import SVG icons
-import gongzhonghao from '@/assets/images/gongzhonghao.jpg';
-import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg';
-import douyinIcon from '@/assets/svgs/plat/douyin.svg';
-import tiktokIcon from '@/assets/svgs/plat/tiktok.svg';
-import ksIcon from '@/assets/svgs/plat/ks.svg';
-import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg';
-import gongzhonghaoIcon from '@/assets/svgs/plat/gongzhonghao.png';
-import xhsIcon from '@/assets/svgs/plat/xhs.svg';
-import youtubeIcon from '@/assets/svgs/plat/youtube.png';
-import TwitterIcon from '@/assets/svgs/plat/twitter.png';
-import FacebookIcon from '@/assets/svgs/plat/facebook.png';
-import InstagramIcon from '@/assets/svgs/plat/instagram.png';
-import LinkedInIcon from '@/assets/svgs/plat/linkedin.png';
-import PinterestIcon from '@/assets/svgs/plat/pinterest.png';
-import ThreadsIcon from '@/assets/svgs/plat/threads.png';
-import publish1 from '@/assets/images/publish1.png';
+import gongzhonghao from '@/assets/images/gongzhonghao.jpg'
+import publish1 from '@/assets/images/publish1.png'
+import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg'
+import douyinIcon from '@/assets/svgs/plat/douyin.svg'
+import FacebookIcon from '@/assets/svgs/plat/facebook.png'
+import gongzhonghaoIcon from '@/assets/svgs/plat/gongzhonghao.png'
+import InstagramIcon from '@/assets/svgs/plat/instagram.png'
+import ksIcon from '@/assets/svgs/plat/ks.svg'
+import LinkedInIcon from '@/assets/svgs/plat/linkedin.png'
+import PinterestIcon from '@/assets/svgs/plat/pinterest.png'
+import ThreadsIcon from '@/assets/svgs/plat/threads.png'
+import tiktokIcon from '@/assets/svgs/plat/tiktok.svg'
+import TwitterIcon from '@/assets/svgs/plat/twitter.png'
+import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg'
+import xhsIcon from '@/assets/svgs/plat/xhs.svg'
 
+import youtubeIcon from '@/assets/svgs/plat/youtube.png'
+import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
+
+import { useTransClient } from '../i18n/client'
+
+import styles from './styles/difyHome.module.scss'
 
 // External image URL constants
 const IMAGE_URLS = {
@@ -38,23 +45,20 @@ const IMAGE_URLS = {
   contentSearch4: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch4.jpeg',
   commentFilter: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/4.%20comments%20search/commentfilter.jpeg',
   commentFilter2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
-};
-
-
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
-import { AndroidOutlined } from '@ant-design/icons';
+}
 
 // Release banner
 function ReleaseBanner() {
-  const { t } = useTransClient('home');
+  const { t } = useTransClient('home')
 
   return (
     <div className={styles.releaseBanner}>
-      <div className={styles.bannerContent} onClick={() => {
-                    window.location.href = '/accounts?showVip=true';
-                }}>
+      <div
+        className={styles.bannerContent}
+        onClick={() => {
+          window.location.href = '/accounts?showVip=true'
+        }}
+      >
         {/* <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span> */}
         <span className={styles.releaseText}>Join Plus — Enjoy Unlimited Free Sora-2, Nano Banana!</span>
         {/* <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -62,66 +66,69 @@ function ReleaseBanner() {
         </svg> */}
       </div>
     </div>
-  );
+  )
 }
-
 
 // Hero main title section
 function Hero() {
-  const { t } = useTransClient('home');
-  const [displayedText, setDisplayedText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
-  const [hideCursor, setHideCursor] = useState(false);
-  const [startTyping, setStartTyping] = useState(false);
-  const router = useRouter();
+  const { t } = useTransClient('home')
+  const [displayedText, setDisplayedText] = useState('')
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isTypingComplete, setIsTypingComplete] = useState(false)
+  const [hideCursor, setHideCursor] = useState(false)
+  const [startTyping, setStartTyping] = useState(false)
+  const router = useRouter()
 
   // Full text to display
-  const fullText = t('hero.title');
-  const typingSpeed = 120; // Typing speed (milliseconds)
-  const initialDelay = 800; // Initial delay (milliseconds)
-  const cursorHideDelay = 2000; // Delay before hiding cursor after typing completes
+  const fullText = t('hero.title')
+  const typingSpeed = 120 // Typing speed (milliseconds)
+  const initialDelay = 800 // Initial delay (milliseconds)
+  const cursorHideDelay = 2000 // Delay before hiding cursor after typing completes
 
   useEffect(() => {
     // Start typing after initial delay
     const startTimer = setTimeout(() => {
-      setStartTyping(true);
-    }, initialDelay);
+      setStartTyping(true)
+    }, initialDelay)
 
-    return () => clearTimeout(startTimer);
-  }, []);
+    return () => clearTimeout(startTimer)
+  }, [])
 
   useEffect(() => {
     if (startTyping && currentIndex < fullText.length) {
-      const currentChar = fullText[currentIndex];
+      const currentChar = fullText[currentIndex]
 
       // Adjust typing speed based on character type
-      let currentSpeed = typingSpeed;
+      let currentSpeed = typingSpeed
       if (currentChar === '\n') {
-        currentSpeed = typingSpeed * 2; // Pause slightly on line break
-      } else if (currentChar === ' ') {
-        currentSpeed = typingSpeed * 0.5; // Space is faster
-      } else if (/[，。！？；：]/.test(currentChar)) {
-        currentSpeed = typingSpeed * 1.5; // Pause slightly on punctuation
-      } else {
+        currentSpeed = typingSpeed * 2 // Pause slightly on line break
+      }
+      else if (currentChar === ' ') {
+        currentSpeed = typingSpeed * 0.5 // Space is faster
+      }
+      else if (/[，。！？；：]/.test(currentChar)) {
+        currentSpeed = typingSpeed * 1.5 // Pause slightly on punctuation
+      }
+      else {
         // Add some randomness to make typing more natural
-        currentSpeed = typingSpeed + Math.random() * 50 - 25;
+        currentSpeed = typingSpeed + Math.random() * 50 - 25
       }
 
       const timer = setTimeout(() => {
-        setDisplayedText(prev => prev + fullText[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
-      }, currentSpeed);
+        setDisplayedText(prev => prev + fullText[currentIndex])
+        setCurrentIndex(prev => prev + 1)
+      }, currentSpeed)
 
-      return () => clearTimeout(timer);
-    } else if (currentIndex >= fullText.length && !isTypingComplete) {
-      setIsTypingComplete(true);
+      return () => clearTimeout(timer)
+    }
+    else if (currentIndex >= fullText.length && !isTypingComplete) {
+      setIsTypingComplete(true)
       // Delay hiding cursor after typing completes
       setTimeout(() => {
-        setHideCursor(true);
-      }, cursorHideDelay);
+        setHideCursor(true)
+      }, cursorHideDelay)
     }
-  }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay]);
+  }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay])
 
   // Convert text to JSX, handle line breaks
   const renderText = () => {
@@ -130,20 +137,22 @@ function Hero() {
         {line}
         {index < array.length - 1 && <br />}
       </span>
-    ));
-  };
+    ))
+  }
 
   return (
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
-        <div className={styles.githubStars} onClick={() => {
-          window.open('https://github.com/yikart/AiToEarn/releases', '_blank');
-        }}>
-          <img src={'https://img.shields.io/github/stars/yikart/AiToEarn.svg'} alt="logo" className={styles.logo} />
+        <div
+          className={styles.githubStars}
+          onClick={() => {
+            window.open('https://github.com/yikart/AiToEarn/releases', '_blank')
+          }}
+        >
+          <img src="https://img.shields.io/github/stars/yikart/AiToEarn.svg" alt="logo" className={styles.logo} />
           <span className={styles.starText}>{t('hero.starsText')}</span>
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
-
 
         <h1 className={styles.heroTitle}>
           {renderText()}
@@ -151,9 +160,12 @@ function Hero() {
         </h1>
 
         {/* Mobile button */}
-        <button onClick={() => {
-          router.push("/accounts");
-        }} className={`${styles.heroBtn} ${styles.heroBtnMobile}`}>
+        <button
+          onClick={() => {
+            router.push('/accounts')
+          }}
+          className={`${styles.heroBtn} ${styles.heroBtnMobile}`}
+        >
           {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -165,9 +177,12 @@ function Hero() {
         </p>
 
         {/* Desktop button */}
-        <button onClick={() => {
-          router.push("/accounts");
-        }} className={`${styles.heroBtn} ${styles.heroBtnDesktop}`}>
+        <button
+          onClick={() => {
+            router.push('/accounts')
+          }}
+          className={`${styles.heroBtn} ${styles.heroBtnDesktop}`}
+        >
           {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
             <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -178,9 +193,9 @@ function Hero() {
           className={styles.heroMobileLink}
           style={{ marginTop: '10px' }}
           onClick={() => {
-            const el = document.getElementById('download');
+            const el = document.getElementById('download')
             if (el) {
-              el.scrollIntoView({ behavior: 'smooth' });
+              el.scrollIntoView({ behavior: 'smooth' })
             }
           }}
         >
@@ -188,13 +203,13 @@ function Hero() {
         </p>
       </div>
     </section>
-  );
+  )
 }
 
 // Brand partner logo section - social media platforms (infinite scroll)
 function BrandBar() {
-  const { t } = useTransClient('home');
-  const { lng } = useParams();
+  const { t } = useTransClient('home')
+  const { lng } = useParams()
 
   // Platform data configuration
   const platforms = [
@@ -212,18 +227,18 @@ function BrandBar() {
     { name: 'Pinterest', key: 'Pinterest', hasIcon: true, iconPath: PinterestIcon.src },
     { name: 'Threads', key: 'Threads', hasIcon: true, iconPath: ThreadsIcon.src },
     { name: 'X (Twitter)', key: 'X (Twitter)', hasIcon: true, iconPath: TwitterIcon.src },
-  ];
+  ]
 
   // Duplicate data to achieve seamless scrolling
-  const duplicatedPlatforms = [...platforms, ...platforms];
+  const duplicatedPlatforms = [...platforms, ...platforms]
 
   // Get platform display name
   const getPlatformDisplayName = (platform: any) => {
     if (lng === 'en') {
-      return platform.key;
+      return platform.key
     }
-    return platform.name;
-  };
+    return platform.name
+  }
 
   return (
     <section className={styles.brandBar}>
@@ -234,15 +249,17 @@ function BrandBar() {
             {duplicatedPlatforms.map((platform, index) => (
               <div key={index} className={styles.platformItem}>
                 <div className={styles.platformIcon}>
-                  {platform.hasIcon ? (
-                    <img
-                      src={platform.iconPath}
-                      alt={`${getPlatformDisplayName(platform)} logo`}
-                      className={styles.platformSvg}
-                    />
-                  ) : (
-                    <span className={styles.platformEmoji}>{getPlatformDisplayName(platform)}</span>
-                  )}
+                  {platform.hasIcon
+                    ? (
+                        <img
+                          src={platform.iconPath}
+                          alt={`${getPlatformDisplayName(platform)} logo`}
+                          className={styles.platformSvg}
+                        />
+                      )
+                    : (
+                        <span className={styles.platformEmoji}>{getPlatformDisplayName(platform)}</span>
+                      )}
                 </div>
                 <span className={styles.platformName}>{getPlatformDisplayName(platform)}</span>
               </div>
@@ -251,74 +268,77 @@ function BrandBar() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 1. Content Publishing — One-click publishing · Multi-platform reach
 function ContentPublishingSection() {
-  const { t } = useTransClient('home');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const images = [IMAGE_URLS.calendar, IMAGE_URLS.supportChannels];
-  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { t } = useTransClient('home')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [autoRotate, setAutoRotate] = useState(true)
+  const images = [IMAGE_URLS.calendar, IMAGE_URLS.supportChannels]
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
   // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-      }, 3000);
-    } else {
+        setCurrentImageIndex(prev => (prev + 1) % images.length)
+      }, 3000)
+    }
+    else {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
-        autoRotateRef.current = null;
+        clearInterval(autoRotateRef.current)
+        autoRotateRef.current = null
       }
     }
 
     return () => {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current)
       }
-    };
-  }, [autoRotate, images.length]);
+    }
+  }, [autoRotate, images.length])
 
   // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
-        e.preventDefault();
+        e.preventDefault()
 
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false);
-          } else {
-            setAutoRotate(true);
-            return;
+            setCurrentImageIndex(prev => prev + 1)
+            setAutoRotate(false)
           }
-        } else {
+          else {
+            setAutoRotate(true)
+            return
+          }
+        }
+        else {
           if (currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
-            setAutoRotate(false);
+            setCurrentImageIndex(prev => prev - 1)
+            setAutoRotate(false)
           }
         }
 
         setTimeout(() => {
-          setAutoRotate(true);
-        }, 3000);
+          setAutoRotate(true)
+        }, 3000)
       }
-    };
+    }
 
-    const carousel = carouselRef.current;
+    const carousel = carouselRef.current
     if (carousel) {
-      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      carousel.addEventListener('wheel', handleWheel, { passive: false })
 
       return () => {
-        carousel.removeEventListener('wheel', handleWheel);
-      };
+        carousel.removeEventListener('wheel', handleWheel)
+      }
     }
-  }, [currentImageIndex, images.length]);
+  }, [currentImageIndex, images.length])
 
   return (
     <section className={styles.buildSection}>
@@ -374,9 +394,9 @@ function ContentPublishingSection() {
                     key={index}
                     className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
                     onClick={() => {
-                      setCurrentImageIndex(index);
-                      setAutoRotate(false);
-                      setTimeout(() => setAutoRotate(true), 3000);
+                      setCurrentImageIndex(index)
+                      setAutoRotate(false)
+                      setTimeout(() => setAutoRotate(true), 3000)
                     }}
                   />
                 ))}
@@ -390,74 +410,77 @@ function ContentPublishingSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 2. Content Hotspot — Viral inspiration engine
 function ContentHotspotSection() {
-  const { t } = useTransClient('home');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const images = [IMAGE_URLS.hotspot, IMAGE_URLS.hotspot2, IMAGE_URLS.hotspot3, IMAGE_URLS.hotspot4];
-  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { t } = useTransClient('home')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [autoRotate, setAutoRotate] = useState(true)
+  const images = [IMAGE_URLS.hotspot, IMAGE_URLS.hotspot2, IMAGE_URLS.hotspot3, IMAGE_URLS.hotspot4]
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
   // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-      }, 3000);
-    } else {
+        setCurrentImageIndex(prev => (prev + 1) % images.length)
+      }, 3000)
+    }
+    else {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
-        autoRotateRef.current = null;
+        clearInterval(autoRotateRef.current)
+        autoRotateRef.current = null
       }
     }
 
     return () => {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current)
       }
-    };
-  }, [autoRotate, images.length]);
+    }
+  }, [autoRotate, images.length])
 
   // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
-        e.preventDefault();
+        e.preventDefault()
 
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false);
-          } else {
-            setAutoRotate(true);
-            return;
+            setCurrentImageIndex(prev => prev + 1)
+            setAutoRotate(false)
           }
-        } else {
+          else {
+            setAutoRotate(true)
+            return
+          }
+        }
+        else {
           if (currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
-            setAutoRotate(false);
+            setCurrentImageIndex(prev => prev - 1)
+            setAutoRotate(false)
           }
         }
 
         setTimeout(() => {
-          setAutoRotate(true);
-        }, 3000);
+          setAutoRotate(true)
+        }, 3000)
       }
-    };
+    }
 
-    const carousel = carouselRef.current;
+    const carousel = carouselRef.current
     if (carousel) {
-      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      carousel.addEventListener('wheel', handleWheel, { passive: false })
 
       return () => {
-        carousel.removeEventListener('wheel', handleWheel);
-      };
+        carousel.removeEventListener('wheel', handleWheel)
+      }
     }
-  }, [currentImageIndex, images.length]);
+  }, [currentImageIndex, images.length])
 
   return (
     <section className={styles.buildSection}>
@@ -513,9 +536,9 @@ function ContentHotspotSection() {
                     key={index}
                     className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
                     onClick={() => {
-                      setCurrentImageIndex(index);
-                      setAutoRotate(false);
-                      setTimeout(() => setAutoRotate(true), 3000);
+                      setCurrentImageIndex(index)
+                      setAutoRotate(false)
+                      setTimeout(() => setAutoRotate(true), 3000)
                     }}
                   />
                 ))}
@@ -529,74 +552,77 @@ function ContentHotspotSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 3. Content Search — Brand and market insights
 function ContentSearchSection() {
-  const { t } = useTransClient('home');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const images = [IMAGE_URLS.contentSearch, IMAGE_URLS.contentSearch1, IMAGE_URLS.contentSearch2, IMAGE_URLS.contentSearch4];
-  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { t } = useTransClient('home')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [autoRotate, setAutoRotate] = useState(true)
+  const images = [IMAGE_URLS.contentSearch, IMAGE_URLS.contentSearch1, IMAGE_URLS.contentSearch2, IMAGE_URLS.contentSearch4]
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
   // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-      }, 3000);
-    } else {
+        setCurrentImageIndex(prev => (prev + 1) % images.length)
+      }, 3000)
+    }
+    else {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
-        autoRotateRef.current = null;
+        clearInterval(autoRotateRef.current)
+        autoRotateRef.current = null
       }
     }
 
     return () => {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current)
       }
-    };
-  }, [autoRotate, images.length]);
+    }
+  }, [autoRotate, images.length])
 
   // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
-        e.preventDefault();
+        e.preventDefault()
 
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false);
-          } else {
-            setAutoRotate(true);
-            return;
+            setCurrentImageIndex(prev => prev + 1)
+            setAutoRotate(false)
           }
-        } else {
+          else {
+            setAutoRotate(true)
+            return
+          }
+        }
+        else {
           if (currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
-            setAutoRotate(false);
+            setCurrentImageIndex(prev => prev - 1)
+            setAutoRotate(false)
           }
         }
 
         setTimeout(() => {
-          setAutoRotate(true);
-        }, 3000);
+          setAutoRotate(true)
+        }, 3000)
       }
-    };
+    }
 
-    const carousel = carouselRef.current;
+    const carousel = carouselRef.current
     if (carousel) {
-      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      carousel.addEventListener('wheel', handleWheel, { passive: false })
 
       return () => {
-        carousel.removeEventListener('wheel', handleWheel);
-      };
+        carousel.removeEventListener('wheel', handleWheel)
+      }
     }
-  }, [currentImageIndex, images.length]);
+  }, [currentImageIndex, images.length])
 
   return (
     <section className={styles.buildSection}>
@@ -652,9 +678,9 @@ function ContentSearchSection() {
                     key={index}
                     className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
                     onClick={() => {
-                      setCurrentImageIndex(index);
-                      setAutoRotate(false);
-                      setTimeout(() => setAutoRotate(true), 3000);
+                      setCurrentImageIndex(index)
+                      setAutoRotate(false)
+                      setTimeout(() => setAutoRotate(true), 3000)
                     }}
                   />
                 ))}
@@ -668,74 +694,77 @@ function ContentSearchSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 4. Comments Search — Precise user mining
 function CommentsSearchSection() {
-  const { t } = useTransClient('home');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const images = [IMAGE_URLS.commentFilter];
-  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { t } = useTransClient('home')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [autoRotate, setAutoRotate] = useState(true)
+  const images = [IMAGE_URLS.commentFilter]
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
   // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-      }, 3000);
-    } else {
+        setCurrentImageIndex(prev => (prev + 1) % images.length)
+      }, 3000)
+    }
+    else {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
-        autoRotateRef.current = null;
+        clearInterval(autoRotateRef.current)
+        autoRotateRef.current = null
       }
     }
 
     return () => {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current)
       }
-    };
-  }, [autoRotate, images.length]);
+    }
+  }, [autoRotate, images.length])
 
   // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
-        e.preventDefault();
+        e.preventDefault()
 
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false);
-          } else {
-            setAutoRotate(true);
-            return;
+            setCurrentImageIndex(prev => prev + 1)
+            setAutoRotate(false)
           }
-        } else {
+          else {
+            setAutoRotate(true)
+            return
+          }
+        }
+        else {
           if (currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
-            setAutoRotate(false);
+            setCurrentImageIndex(prev => prev - 1)
+            setAutoRotate(false)
           }
         }
 
         setTimeout(() => {
-          setAutoRotate(true);
-        }, 3000);
+          setAutoRotate(true)
+        }, 3000)
       }
-    };
+    }
 
-    const carousel = carouselRef.current;
+    const carousel = carouselRef.current
     if (carousel) {
-      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      carousel.addEventListener('wheel', handleWheel, { passive: false })
 
       return () => {
-        carousel.removeEventListener('wheel', handleWheel);
-      };
+        carousel.removeEventListener('wheel', handleWheel)
+      }
     }
-  }, [currentImageIndex, images.length]);
+  }, [currentImageIndex, images.length])
 
   return (
     <section className={styles.buildSection}>
@@ -791,9 +820,9 @@ function CommentsSearchSection() {
                     key={index}
                     className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
                     onClick={() => {
-                      setCurrentImageIndex(index);
-                      setAutoRotate(false);
-                      setTimeout(() => setAutoRotate(true), 3000);
+                      setCurrentImageIndex(index)
+                      setAutoRotate(false)
+                      setTimeout(() => setAutoRotate(true), 3000)
                     }}
                   />
                 ))}
@@ -807,74 +836,77 @@ function CommentsSearchSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 5. Content Engagement — Interaction and growth engine
 function ContentEngagementSection() {
-  const { t } = useTransClient('home');
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
-  const images = [IMAGE_URLS.commentFilter2];
-  const autoRotateRef = useRef<NodeJS.Timeout | null>(null);
-  const carouselRef = useRef<HTMLDivElement>(null);
+  const { t } = useTransClient('home')
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [autoRotate, setAutoRotate] = useState(true)
+  const images = [IMAGE_URLS.commentFilter2]
+  const autoRotateRef = useRef<NodeJS.Timeout | null>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
 
   // Auto rotation
   useEffect(() => {
     if (autoRotate) {
       autoRotateRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-      }, 3000);
-    } else {
+        setCurrentImageIndex(prev => (prev + 1) % images.length)
+      }, 3000)
+    }
+    else {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
-        autoRotateRef.current = null;
+        clearInterval(autoRotateRef.current)
+        autoRotateRef.current = null
       }
     }
 
     return () => {
       if (autoRotateRef.current) {
-        clearInterval(autoRotateRef.current);
+        clearInterval(autoRotateRef.current)
       }
-    };
-  }, [autoRotate, images.length]);
+    }
+  }, [autoRotate, images.length])
 
   // Wheel control
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (carouselRef.current && carouselRef.current.contains(e.target as Node)) {
-        e.preventDefault();
+        e.preventDefault()
 
         if (e.deltaY > 0) {
           if (currentImageIndex < images.length - 1) {
-            setCurrentImageIndex(prev => prev + 1);
-            setAutoRotate(false);
-          } else {
-            setAutoRotate(true);
-            return;
+            setCurrentImageIndex(prev => prev + 1)
+            setAutoRotate(false)
           }
-        } else {
+          else {
+            setAutoRotate(true)
+            return
+          }
+        }
+        else {
           if (currentImageIndex > 0) {
-            setCurrentImageIndex(prev => prev - 1);
-            setAutoRotate(false);
+            setCurrentImageIndex(prev => prev - 1)
+            setAutoRotate(false)
           }
         }
 
         setTimeout(() => {
-          setAutoRotate(true);
-        }, 3000);
+          setAutoRotate(true)
+        }, 3000)
       }
-    };
+    }
 
-    const carousel = carouselRef.current;
+    const carousel = carouselRef.current
     if (carousel) {
-      carousel.addEventListener('wheel', handleWheel, { passive: false });
+      carousel.addEventListener('wheel', handleWheel, { passive: false })
 
       return () => {
-        carousel.removeEventListener('wheel', handleWheel);
-      };
+        carousel.removeEventListener('wheel', handleWheel)
+      }
     }
-  }, [currentImageIndex, images.length]);
+  }, [currentImageIndex, images.length])
 
   return (
     <section className={styles.buildSection}>
@@ -930,9 +962,9 @@ function ContentEngagementSection() {
                     key={index}
                     className={`${styles.indicator} ${index === currentImageIndex ? styles.active : ''}`}
                     onClick={() => {
-                      setCurrentImageIndex(index);
-                      setAutoRotate(false);
-                      setTimeout(() => setAutoRotate(true), 3000);
+                      setCurrentImageIndex(index)
+                      setAutoRotate(false)
+                      setTimeout(() => setAutoRotate(true), 3000)
                     }}
                   />
                 ))}
@@ -946,12 +978,12 @@ function ContentEngagementSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // 6-8. Upcoming features integration module
 function UpcomingFeaturesSection() {
-  const { t } = useTransClient('home');
+  const { t } = useTransClient('home')
 
   return (
     <section className={styles.buildSection}>
@@ -996,7 +1028,7 @@ function UpcomingFeaturesSection() {
               <div className={styles.carouselContainer}>
                 <div className={`${styles.carouselSlide} ${styles.active}`}>
                   <video
-                    src={'https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4'}
+                    src="https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4"
                     controls
                     className={styles.desktopCarouselImage}
                     style={{ borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)' }}
@@ -1008,13 +1040,11 @@ function UpcomingFeaturesSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
-// Mobile app download section
-import { QRCode } from 'react-qrcode-logo';
 function DownloadSection() {
-  const { t } = useTransClient('home');
+  const { t } = useTransClient('home')
 
   return (
     <section className={styles.downloadSection} id="download">
@@ -1022,7 +1052,8 @@ function DownloadSection() {
         <div className={styles.downloadContent}>
           <div className={styles.downloadLeft}>
             <h2 className={styles.downloadTitle}>
-              {t('downloadSection.title')}<br />
+              {t('downloadSection.title')}
+              <br />
               <span className={styles.titleBlue}>{t('downloadSection.titleBlue')}</span>
             </h2>
 
@@ -1065,7 +1096,6 @@ function DownloadSection() {
                 <p className={styles.qrCodeText}>{t('downloadSection.qrCodeText' as any)}</p>
               </div>
 
-
               <div className={styles.phoneFrame}>
                 <div className={styles.phoneScreen}>
                   <div className={styles.phoneStatusBar}>
@@ -1101,20 +1131,17 @@ function DownloadSection() {
                 </div>
               </div>
 
-
             </div>
           </div>
         </div>
       </div>
     </section>
-  );
+  )
 }
-
-
 
 // Enterprise section
 function EnterpriseSection() {
-  const { t } = useTransClient('home');
+  const { t } = useTransClient('home')
 
   return (
     <section className={styles.enterpriseSection}>
@@ -1125,7 +1152,8 @@ function EnterpriseSection() {
         </div>
 
         <h2 className={styles.enterpriseTitle}>
-          {t('enterpriseSection.title')}<br />
+          {t('enterpriseSection.title')}
+          <br />
           <span className={styles.titleBlue}>{t('enterpriseSection.titleBlue')}</span>
         </h2>
 
@@ -1134,12 +1162,12 @@ function EnterpriseSection() {
         </p>
       </div>
     </section>
-  );
+  )
 }
 
 // Statistics section
 function StatsSection() {
-  const { t } = useTransClient('home');
+  const { t } = useTransClient('home')
 
   return (
     <section className={styles.statsSection}>
@@ -1165,7 +1193,11 @@ function StatsSection() {
 
         <div className={styles.testimonialCard}>
           <div className={styles.testimonialContent}>
-            <p>"{t('statsSection.testimonial.quote')}"</p>
+            <p>
+              "
+              {t('statsSection.testimonial.quote')}
+              "
+            </p>
             <div className={styles.testimonialAuthor}>
               <div className={styles.authorName}>{t('statsSection.testimonial.author')}</div>
               <div className={styles.authorTitle}>{t('statsSection.testimonial.title')}</div>
@@ -1184,13 +1216,13 @@ function StatsSection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // Community section
 function CommunitySection() {
-  const { t } = useTransClient('home');
-  const [hoveredButton, setHoveredButton] = useState<string | null>(null);
+  const { t } = useTransClient('home')
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null)
 
   return (
     <section className={styles.communitySection}>
@@ -1201,7 +1233,8 @@ function CommunitySection() {
         </div>
 
         <h2 className={styles.communityTitle}>
-          {t('communitySection.title')}<br />
+          {t('communitySection.title')}
+          <br />
           <span className={styles.titleBlue}>{t('communitySection.titleBlue')}</span>
         </h2>
 
@@ -1269,43 +1302,44 @@ function CommunitySection() {
         </div>
       </div>
     </section>
-  );
+  )
 }
 
 // Footer
 function Footer() {
-  const { t } = useTransClient('home');
-  const [isHovered, setIsHovered] = useState(false);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
+  const { t } = useTransClient('home')
+  const [isHovered, setIsHovered] = useState(false)
+  const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const intervalRef = useRef<NodeJS.Timeout | null>(null)
+  const router = useRouter()
   // Background image array
   const backgroundImages = [
     IMAGE_URLS.hotspot,
     IMAGE_URLS.hotspot2,
     IMAGE_URLS.hotspot3,
     IMAGE_URLS.hotspot4,
-  ];
+  ]
 
   useEffect(() => {
     if (isHovered) {
       intervalRef.current = setInterval(() => {
-        setCurrentImageIndex(prev => (prev + 1) % backgroundImages.length);
-      }, 1000);
-    } else {
+        setCurrentImageIndex(prev => (prev + 1) % backgroundImages.length)
+      }, 1000)
+    }
+    else {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+        clearInterval(intervalRef.current)
+        intervalRef.current = null
       }
-      setCurrentImageIndex(0);
+      setCurrentImageIndex(0)
     }
 
     return () => {
       if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+        clearInterval(intervalRef.current)
       }
-    };
-  }, [isHovered, backgroundImages.length]);
+    }
+  }, [isHovered, backgroundImages.length])
 
   return (
     <footer className={styles.footer}>
@@ -1326,14 +1360,23 @@ function Footer() {
             <div className={styles.footerColumn}>
               <h4>{t('footer.company.title')}</h4>
               <a onClick={() => {
-                router.push("/websit/terms-of-service");
-              }}>{t('footer.company.links.terms')}</a>
+                router.push('/websit/terms-of-service')
+              }}
+              >
+                {t('footer.company.links.terms')}
+              </a>
               <a onClick={() => {
-                router.push("/websit/privacy-policy");
-              }}>{t('footer.company.links.privacy')}</a>
+                router.push('/websit/privacy-policy')
+              }}
+              >
+                {t('footer.company.links.privacy')}
+              </a>
               <a onClick={() => {
-                router.push("/websit/data-deletion");
-              }}>{t('footer.company.links.data')}</a>
+                router.push('/websit/data-deletion')
+              }}
+              >
+                {t('footer.company.links.data')}
+              </a>
             </div>
           </div>
 
@@ -1370,7 +1413,7 @@ function Footer() {
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 color: isHovered ? 'transparent' : '#733DEC',
-                textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
               }}
             >
               Earn
@@ -1404,7 +1447,7 @@ function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }
 
 export default function Home() {
@@ -1420,10 +1463,10 @@ export default function Home() {
       <ContentEngagementSection />
       <UpcomingFeaturesSection />
       <DownloadSection />
-      {/*<EnterpriseSection />
+      {/* <EnterpriseSection />
       <StatsSection /> */}
       {/* <CommunitySection /> */}
       <Footer />
     </div>
-  );
+  )
 }

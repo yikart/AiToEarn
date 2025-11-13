@@ -1,16 +1,16 @@
-"use client";
+'use client'
 
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
-const App = () => {
-  const router = useRouter();
+function App() {
+  const router = useRouter()
 
   useEffect(() => {
-    router.replace("/aiRank/aiRanking");
-  }, [router]);
+    router.replace('/aiRank/aiRanking')
+  }, [router])
 
-  return null;
-};
+  return null
+}
 
-export default App;
+export default App

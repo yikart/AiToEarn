@@ -96,8 +96,12 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 // 微信浏览器提示：容器
@@ -207,14 +211,15 @@
   right: 20px;
   z-index: 1002;
   pointer-events: none;
-  background-color: #E9F6FF;
+  background-color: #e9f6ff;
   animation: arrowPulse 2s ease-in-out infinite;
   border-radius: 50%;
   padding: 10px;
 }
 
 @keyframes arrowPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.8;
     transform: translateY(-50%) scale(1);
   }

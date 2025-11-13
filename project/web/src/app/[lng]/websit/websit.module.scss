@@ -32,13 +32,13 @@
 .logoText {
   font-size: 24px;
   font-weight: bold;
-  color: #733DEC;
+  color: #733dec;
 }
 
 .nav {
   display: flex;
   gap: 32px;
-  
+
   @media (max-width: 768px) {
     display: none;
   }
@@ -49,14 +49,14 @@
   text-decoration: none;
   font-weight: 500;
   transition: color 0.2s;
-  
+
   &:hover {
     color: #111827;
   }
 }
 
 .getStartedBtn {
-  background: #733DEC;
+  background: #733dec;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -64,7 +64,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: background 0.2s;
-  
+
   &:hover {
     background: #5b2bc7;
   }
@@ -93,7 +93,7 @@
   font-weight: bold;
   color: #111827;
   margin-bottom: 16px;
-  
+
   @media (max-width: 768px) {
     font-size: 36px;
   }
@@ -119,7 +119,7 @@
   padding: 24px;
   background: #f9fafb;
   border-radius: 12px;
-  border-left: 4px solid #733DEC;
+  border-left: 4px solid #733dec;
 }
 
 .sectionTitle {
@@ -151,7 +151,7 @@
 }
 
 .stepNumber {
-  background: #733DEC;
+  background: #733dec;
   color: white;
   width: 24px;
   height: 24px;
@@ -221,20 +221,20 @@
 .listContent {
   margin: 16px 0;
   padding-left: 20px;
-  
+
   li {
     color: #374151;
     font-size: 16px;
     margin-bottom: 8px;
     line-height: 1.6;
-    
+
     a {
-      color: #733DEC;
+      color: #733dec;
       text-decoration: none;
       transition: color 0.2s;
-      
+
       &:hover {
-        color: #5B21B6;
+        color: #5b21b6;
         text-decoration: underline;
       }
     }
@@ -253,7 +253,7 @@
   font-size: 16px;
   line-height: 1.6;
   margin-bottom: 12px;
-  
+
   strong {
     color: #111827;
     font-weight: 600;
@@ -282,7 +282,7 @@
   padding: 16px;
   background: #f8fafc;
   border-radius: 8px;
-  border-left: 4px solid #733DEC;
+  border-left: 4px solid #733dec;
 }
 
 .stepNumber {
@@ -291,7 +291,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  background: #733DEC;
+  background: #733dec;
   color: white;
   border-radius: 50%;
   font-weight: 600;
@@ -320,4 +320,4 @@
   font-weight: 600;
   color: #92400e;
   margin-bottom: 8px;
-} 
+}

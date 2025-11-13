@@ -1,23 +1,24 @@
-import { ForwardedRef, forwardRef, memo } from "react";
-import {
+import type { ForwardedRef } from 'react'
+import type {
   IPlatsParamsProps,
   IPlatsParamsRef,
-} from "@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type";
-import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
-import usePlatParamsCommon from "@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon";
+} from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
+import { forwardRef, memo } from 'react'
+import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
+import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 
 const KwaiParams = memo(
   forwardRef(
     ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
-      const { pubParmasTextareaCommonParams } = usePlatParamsCommon(pubItem);
+      const { pubParmasTextareaCommonParams } = usePlatParamsCommon(pubItem)
 
       return (
         <>
           <PubParmasTextarea {...pubParmasTextareaCommonParams} />
         </>
-      );
+      )
     },
   ),
-);
+)
 
-export default KwaiParams;
+export default KwaiParams

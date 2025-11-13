@@ -44,3 +44,4 @@ public/bin/*
 !public/bin/*.md
 
 sh/*
+project/web/.cursor/

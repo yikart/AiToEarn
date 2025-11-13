@@ -1,6 +1,6 @@
 export enum HotType {
-  hotContent = "hotContent",
-  hotEvent = "hotEvent",
-  hotFeatures = "HotFeatures",
-  hotTitle = "hotTitle",
+  hotContent = 'hotContent',
+  hotEvent = 'hotEvent',
+  hotFeatures = 'HotFeatures',
+  hotTitle = 'hotTitle',
 }

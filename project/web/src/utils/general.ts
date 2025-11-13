@@ -1,9 +1,9 @@
-import { Metadata } from "next";
-import { useTranslation } from "@/app/i18n";
+import type { Metadata } from 'next'
+import { useTranslation } from '@/app/i18n'
 
 export async function getPageTitle(name: string, lng: string) {
-  const { t } = await useTranslation(lng);
-  return `${name} —— ${t("title")}`;
+  const { t } = await useTranslation(lng)
+  return `${name} —— ${t('title')}`
 }
 
 /**
@@ -16,16 +16,16 @@ export async function getMetadata(
   lng: string,
 ): Promise<Metadata> {
   const title = await getPageTitle(
-    typeof props.title === "string" ? props.title : "",
+    typeof props.title === 'string' ? props.title : '',
     lng,
-  );
+  )
   return {
     ...props,
     title,
-    referrer: "no-referrer",
-  };
+    referrer: 'no-referrer',
+  }
 }
 
 export function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms))
 }

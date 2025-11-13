@@ -1,17 +1,18 @@
-import React, { ForwardedRef, forwardRef, memo } from "react";
-import { CloseOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Tooltip } from "antd";
-import { useTranslation } from "react-i18next";
-import { IImgFile } from "@/components/PublishDialog/publishDialog.type";
-import PublishUploadProgress from "@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress";
+import type { ForwardedRef } from 'react'
+import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
+import { CloseOutlined, EditOutlined } from '@ant-design/icons'
+import { Button, Tooltip } from 'antd'
+import React, { forwardRef, memo } from 'react'
+import { useTranslation } from 'react-i18next'
+import PublishUploadProgress from '@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress'
 
 export interface IPubParmasTextuploadImageRef {}
 
 export interface IPubParmasTextuploadImageProps {
-  onClose: () => void;
-  onClick: () => void;
-  imageFile: IImgFile;
-  onEditClick: () => void;
+  onClose: () => void
+  onClick: () => void
+  imageFile: IImgFile
+  onEditClick: () => void
 }
 
 const PubParmasTextuploadImage = memo(
@@ -25,7 +26,7 @@ const PubParmasTextuploadImage = memo(
       }: IPubParmasTextuploadImageProps,
       ref: ForwardedRef<IPubParmasTextuploadImageRef>,
     ) => {
-      const { t } = useTranslation("publish");
+      const { t } = useTranslation('publish')
 
       return (
         <>
@@ -33,13 +34,13 @@ const PubParmasTextuploadImage = memo(
             <div
               className="pubParmasTextarea-uploads-item-close"
               onClick={(e) => {
-                e.stopPropagation();
-                onClose();
+                e.stopPropagation()
+                onClose()
               }}
             >
               <CloseOutlined />
             </div>
-            <Tooltip title={t("actions.preview")}>
+            <Tooltip title={t('actions.preview')}>
               <img src={imageFile.imgUrl} alt="preview" />
             </Tooltip>
 
@@ -49,8 +50,8 @@ const PubParmasTextuploadImage = memo(
                 icon={<EditOutlined />}
                 size="small"
                 onClick={(e) => {
-                  e.stopPropagation();
-                  onEditClick();
+                  e.stopPropagation()
+                  onEditClick()
                 }}
               />
             </Tooltip>
@@ -60,9 +61,9 @@ const PubParmasTextuploadImage = memo(
             )}
           </div>
         </>
-      );
+      )
     },
   ),
-);
+)
 
-export default PubParmasTextuploadImage;
+export default PubParmasTextuploadImage

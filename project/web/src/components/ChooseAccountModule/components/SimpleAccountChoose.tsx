@@ -1,5 +1,17 @@
-import {
+import type {
   ForwardedRef,
+} from 'react'
+import type { AccountGroupItem, SocialAccount } from '@/api/types/account.type'
+import { CheckOutlined } from '@ant-design/icons'
+import {
+  Avatar,
+  Checkbox,
+  Collapse,
+  Empty,
+  Tooltip,
+} from 'antd'
+import Link from 'next/link'
+import {
   forwardRef,
   memo,
   useEffect,
@@ -7,56 +19,45 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import styles from "../chooseAccountModule.module.scss";
-import {
-  Avatar,
-  Checkbox,
-  Empty,
-  Tooltip,
-  Collapse,
-} from "antd";
-import DownloadAppModal from "@/components/common/DownloadAppModal";
-import { CheckOutlined } from "@ant-design/icons";
-import { useShallow } from "zustand/react/shallow";
-import { AccountPlatInfoMap } from "@/app/config/platConfig";
-import { useAccountStore } from "@/store/account";
-import Link from "next/link";
-import { SocialAccount } from "@/api/types/account.type";
-import { getAccountGroupApi } from "@/api/account";
-import { AccountGroupItem } from "@/api/types/account.type";
+} from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { getAccountGroupApi } from '@/api/account'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import DownloadAppModal from '@/components/common/DownloadAppModal'
+import { useAccountStore } from '@/store/account'
+import styles from '../chooseAccountModule.module.scss'
 
 // 分组类型定义
 interface AccountGroup {
-  id: string;
-  name: string;
-  rank: number;
-  isDefault: boolean;
-  children?: SocialAccount[];
+  id: string
+  name: string
+  rank: number
+  isDefault: boolean
+  children?: SocialAccount[]
 }
 
 export interface ISimpleAccountChooseRef {
   /**
    * 恢复选中状态
    */
-  recover: () => void;
+  recover: () => void
   // 每次关闭弹框的时候需要初始化一些状态
-  init: () => void;
+  init: () => void
 }
 
 export interface ISimpleAccountChooseProps {
   onChange?: (
     choosedAcounts: SocialAccount[],
     choosedAcount: SocialAccount,
-  ) => void;
+  ) => void
   // 外部传入的已经选中的数据，这个值只有在确认更改才会更新
-  choosedAccounts?: SocialAccount[];
+  choosedAccounts?: SocialAccount[]
   // 是否禁用多选，true=禁用，false=不禁用
-  disableAllSelect?: boolean;
+  disableAllSelect?: boolean
   // 是否可以取消已经选择的账户，默认为 false
-  isCancelChooseAccount?: boolean;
+  isCancelChooseAccount?: boolean
   // 是否显示分组，默认为 true
-  showGroup?: boolean;
+  showGroup?: boolean
 }
 
 const SimpleAccountChoose = memo(
@@ -72,166 +73,188 @@ const SimpleAccountChoose = memo(
       ref: ForwardedRef<ISimpleAccountChooseRef>,
     ) => {
       // 当前选择的账户数据
-      const [choosedAccountsList, setChoosedAccountsList] = useState<SocialAccount[]>([]);
+      const [choosedAccountsList, setChoosedAccountsList] = useState<SocialAccount[]>([])
       // 分组数据
-      const [accountGroupList, setAccountGroupList] = useState<AccountGroup[]>([]);
+      const [accountGroupList, setAccountGroupList] = useState<AccountGroup[]>([])
       // 每次change操作的数据
-      const recentData = useRef<SocialAccount>();
+      const recentData = useRef<SocialAccount>()
       // 下载App弹窗状态
-      const [downloadModalVisible, setDownloadModalVisible] = useState(false);
-      const [currentPlatform, setCurrentPlatform] = useState<string>('');
+      const [downloadModalVisible, setDownloadModalVisible] = useState(false)
+      const [currentPlatform, setCurrentPlatform] = useState<string>('')
       const { accountList } = useAccountStore(
-        useShallow((state) => ({
+        useShallow(state => ({
           accountList: state.accountList,
         })),
-      );
+      )
 
       // 获取分组数据
       const fetchAccountGroups = async () => {
         try {
-          const res = await getAccountGroupApi();
-          const groupList = res?.data;
+          const res = await getAccountGroupApi()
+          const groupList = res?.data
 
-          if (!groupList || groupList.length === 0) return;
+          if (!groupList || groupList.length === 0)
+            return
 
-          const accountGroupList: AccountGroup[] = [];
+          const accountGroupList: AccountGroup[] = []
           // key=组ID，val=账户组
-          const accountGroupMap = new Map<string, AccountGroup>();
+          const accountGroupMap = new Map<string, AccountGroup>()
 
-          const defaultGroup = groupList.find((v:any) => v.isDefault)!;
+          const defaultGroup = groupList.find((v: any) => v.isDefault)!
 
-          groupList.map((v:any) => {
+          groupList.map((v: any) => {
             const accountGroupItem = {
               ...v,
               children: [],
-            };
-            accountGroupList.push(accountGroupItem);
-            accountGroupMap.set(v.id, accountGroupItem);
-          });
+            }
+            accountGroupList.push(accountGroupItem)
+            accountGroupMap.set(v.id, accountGroupItem)
+          })
 
           accountList.map((v) => {
             (
-              accountGroupMap.get(v.groupId!) ||
-              accountGroupMap.get(defaultGroup.id)!
-            ).children?.push(v);
-          });
+              accountGroupMap.get(v.groupId!)
+              || accountGroupMap.get(defaultGroup.id)!
+            ).children?.push(v)
+          })
 
           accountGroupList.sort((a, b) => {
-            return a.rank - b.rank;
-          });
+            return a.rank - b.rank
+          })
 
-          setAccountGroupList(accountGroupList);
-        } catch (error) {
-          console.error('获取账户分组失败:', error);
+          setAccountGroupList(accountGroupList)
         }
-      };
+        catch (error) {
+          console.error('获取账户分组失败:', error)
+        }
+      }
 
       // 初始化分组数据
       useEffect(() => {
         if (showGroup && accountList.length > 0) {
-          fetchAccountGroups();
+          fetchAccountGroups()
         }
-      }, [showGroup, accountList]);
+      }, [showGroup, accountList])
 
       // change事件
       useEffect(() => {
-        if (!recentData.current) return;
-        if (onChange) onChange(choosedAccountsList, recentData.current!);
-      }, [choosedAccountsList, onChange]);
+        if (!recentData.current)
+          return
+        if (onChange)
+          onChange(choosedAccountsList, recentData.current!)
+      }, [choosedAccountsList, onChange])
 
       const init = () => {
-        recentData.current = undefined;
-      };
+        recentData.current = undefined
+      }
 
       useImperativeHandle(ref, () => ({
         // 恢复到本次操作之前的状态
         recover() {
-          setChoosedAccountsList(choosedAccounts || []);
+          setChoosedAccountsList(choosedAccounts || [])
         },
         init,
-      }));
+      }))
 
       // 全选/取消全选
       const handleSelectAll = (checked: boolean) => {
-        recentData.current = accountList[0];
-        setChoosedAccountsList(checked ? [...accountList] : []);
-      };
+        recentData.current = accountList[0]
+        setChoosedAccountsList(checked ? [...accountList] : [])
+      }
 
       // 选择/取消选择单个账户
       const handleSelectAccount = (account: SocialAccount) => {
-        recentData.current = account;
-        setChoosedAccountsList(prev => {
-          const isSelected = prev.some(item => item.id === account.id);
+        recentData.current = account
+        setChoosedAccountsList((prev) => {
+          const isSelected = prev.some(item => item.id === account.id)
           if (isSelected) {
-            return prev.filter(item => item.id !== account.id);
-          } else {
-            return [...prev, account];
+            return prev.filter(item => item.id !== account.id)
           }
-        });
-      };
+          else {
+            return [...prev, account]
+          }
+        })
+      }
 
       // 选择/取消选择分组内所有账户
       const handleSelectGroup = (group: AccountGroup, checked: boolean) => {
-        if (!group.children || group.children.length === 0) return;
-        
-        recentData.current = group.children[0];
-        setChoosedAccountsList(prev => {
-          const groupAccountIds = group.children!.map(account => account.id);
-          const selectedInGroup = prev.filter(account => groupAccountIds.includes(account.id));
-          
+        if (!group.children || group.children.length === 0)
+          return
+
+        recentData.current = group.children[0]
+        setChoosedAccountsList((prev) => {
+          const groupAccountIds = group.children!.map(account => account.id)
+          const selectedInGroup = prev.filter(account => groupAccountIds.includes(account.id))
+
           if (checked) {
             // 选择分组内所有账户
-            const otherAccounts = prev.filter(account => !groupAccountIds.includes(account.id));
-            return [...otherAccounts, ...group.children!];
-          } else {
-            // 取消选择分组内所有账户
-            return prev.filter(account => !groupAccountIds.includes(account.id));
+            const otherAccounts = prev.filter(account => !groupAccountIds.includes(account.id))
+            return [...otherAccounts, ...group.children!]
           }
-        });
-      };
+          else {
+            // 取消选择分组内所有账户
+            return prev.filter(account => !groupAccountIds.includes(account.id))
+          }
+        })
+      }
 
       // 渲染单个账户
       const renderAccount = (account: SocialAccount) => {
-        const platInfo = AccountPlatInfoMap.get(account.type);
-        const isSelected = choosedAccountsList.some(item => item.id === account.id);
-        const isDisable = choosedAccounts?.find((k) => k.id === account.id) && isCancelChooseAccount;
-        const isPcNotSupported = platInfo && platInfo.pcNoThis === true;
+        const platInfo = AccountPlatInfoMap.get(account.type)
+        const isSelected = choosedAccountsList.some(item => item.id === account.id)
+        const isDisable = choosedAccounts?.find(k => k.id === account.id) && isCancelChooseAccount
+        const isPcNotSupported = platInfo && platInfo.pcNoThis === true
 
         const handleAccountClick = () => {
-          if (isDisable) return;
+          if (isDisable)
+            return
           if (isPcNotSupported) {
-            setCurrentPlatform(platInfo?.name || '');
-            setDownloadModalVisible(true);
-            return;
+            setCurrentPlatform(platInfo?.name || '')
+            setDownloadModalVisible(true)
+            return
           }
-          handleSelectAccount(account);
-        };
+          handleSelectAccount(account)
+        }
 
         return (
           <div
             key={account.id}
             className={[
-              "simpleAccountChoose-accounts-item",
-              isSelected && "simpleAccountChoose-accounts-item--active",
-              isDisable && "simpleAccountChoose-accounts-item--disable",
-              isPcNotSupported && "simpleAccountChoose-accounts-item--pc-not-supported",
-            ].join(" ")}
+              'simpleAccountChoose-accounts-item',
+              isSelected && 'simpleAccountChoose-accounts-item--active',
+              isDisable && 'simpleAccountChoose-accounts-item--disable',
+              isPcNotSupported && 'simpleAccountChoose-accounts-item--pc-not-supported',
+            ].join(' ')}
             onClick={handleAccountClick}
           >
             <Tooltip
               title={
-                isPcNotSupported ? (
-                  <>
-                    <p>昵称：{account.nickname}</p>
-                    <p>平台：{platInfo?.name}</p>
-                    <p style={{ color: '#ff4d4f' }}>Web不支持该平台，请下载App</p>
-                  </>
-                ) : (
-                  <>
-                    <p>昵称：{account.nickname}</p>
-                    <p>平台：{platInfo?.name}</p>
-                  </>
-                )
+                isPcNotSupported
+                  ? (
+                      <>
+                        <p>
+                          昵称：
+                          {account.nickname}
+                        </p>
+                        <p>
+                          平台：
+                          {platInfo?.name}
+                        </p>
+                        <p style={{ color: '#ff4d4f' }}>Web不支持该平台，请下载App</p>
+                      </>
+                    )
+                  : (
+                      <>
+                        <p>
+                          昵称：
+                          {account.nickname}
+                        </p>
+                        <p>
+                          平台：
+                          {platInfo?.name}
+                        </p>
+                      </>
+                    )
               }
             >
               <div className="simpleAccountChoose-accounts-item-avatar">
@@ -247,18 +270,20 @@ const SimpleAccountChoose = memo(
               </span>
             </Tooltip>
 
-            {isPcNotSupported ? (
-              <div className="simpleAccountChoose-accounts-item-overlay">
-                <span className="simpleAccountChoose-accounts-item-overlay-text">APP</span>
-              </div>
-            ) : (
-              <div className="simpleAccountChoose-accounts-item-choose">
-                <CheckOutlined />
-              </div>
-            )}
+            {isPcNotSupported
+              ? (
+                  <div className="simpleAccountChoose-accounts-item-overlay">
+                    <span className="simpleAccountChoose-accounts-item-overlay-text">APP</span>
+                  </div>
+                )
+              : (
+                  <div className="simpleAccountChoose-accounts-item-choose">
+                    <CheckOutlined />
+                  </div>
+                )}
           </div>
-        );
-      };
+        )
+      }
 
       // 渲染分组内容
       const renderGroupContent = () => {
@@ -267,7 +292,7 @@ const SimpleAccountChoose = memo(
             <div className="simpleAccountChoose-accounts">
               {accountList.map(renderAccount)}
             </div>
-          );
+          )
         }
 
         return (
@@ -276,75 +301,87 @@ const SimpleAccountChoose = memo(
             className="simpleAccountChoose-groups"
           >
             {accountGroupList.map((group) => {
-              const groupAccountIds = group.children?.map(account => account.id) || [];
-              const selectedInGroup = choosedAccountsList.filter(account => 
-                groupAccountIds.includes(account.id)
-              );
-              const isGroupSelected = selectedInGroup.length === group.children?.length;
-              const isGroupIndeterminate = selectedInGroup.length > 0 && selectedInGroup.length < (group.children?.length || 0);
+              const groupAccountIds = group.children?.map(account => account.id) || []
+              const selectedInGroup = choosedAccountsList.filter(account =>
+                groupAccountIds.includes(account.id),
+              )
+              const isGroupSelected = selectedInGroup.length === group.children?.length
+              const isGroupIndeterminate = selectedInGroup.length > 0 && selectedInGroup.length < (group.children?.length || 0)
 
               return (
                 <Collapse.Panel
                   key={group.id}
-                  header={
+                  header={(
                     <div className="simpleAccountChoose-group-header">
                       <Checkbox
                         indeterminate={isGroupIndeterminate}
                         checked={isGroupSelected}
-                        onChange={(e) => handleSelectGroup(group, e.target.checked)}
-                        onClick={(e) => e.stopPropagation()}
+                        onChange={e => handleSelectGroup(group, e.target.checked)}
+                        onClick={e => e.stopPropagation()}
                       >
-                        {group.name} ({group.children?.length || 0})
+                        {group.name}
+                        {' '}
+                        (
+                        {group.children?.length || 0}
+                        )
                       </Checkbox>
                     </div>
-                  }
+                  )}
                 >
                   <div className="simpleAccountChoose-accounts">
                     {group.children?.map(renderAccount)}
                   </div>
                 </Collapse.Panel>
-              );
+              )
             })}
           </Collapse>
-        );
-      };
+        )
+      }
 
       return (
         <div className={styles.simpleAccountChoose}>
-          {accountList.length === 0 ? (
-            <div className="simpleAccountChoose-empty">
-              <Empty
-                description={
-                  <>
-                    无账户数据，请前往 <Link href="/accounts">账户</Link>
-                    添加数据
-                  </>
-                }
-              />
-            </div>
-          ) : (
-            <>
-              <div className="simpleAccountChoose-header">
-                {!disableAllSelect && (
-                  <Checkbox
-                    indeterminate={
-                      choosedAccountsList.length > 0 &&
-                      choosedAccountsList.length < accountList.length
-                    }
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    checked={choosedAccountsList.length === accountList.length}
-                  >
-                    选择所有账户
-                  </Checkbox>
-                )}
-                <span className="simpleAccountChoose-count">
-                  已选择 {choosedAccountsList.length} 个
-                </span>
-              </div>
+          {accountList.length === 0
+            ? (
+                <div className="simpleAccountChoose-empty">
+                  <Empty
+                    description={(
+                      <>
+                        无账户数据，请前往
+                        {' '}
+                        <Link href="/accounts">账户</Link>
+                        添加数据
+                      </>
+                    )}
+                  />
+                </div>
+              )
+            : (
+                <>
+                  <div className="simpleAccountChoose-header">
+                    {!disableAllSelect && (
+                      <Checkbox
+                        indeterminate={
+                          choosedAccountsList.length > 0
+                          && choosedAccountsList.length < accountList.length
+                        }
+                        onChange={e => handleSelectAll(e.target.checked)}
+                        checked={choosedAccountsList.length === accountList.length}
+                      >
+                        选择所有账户
+                      </Checkbox>
+                    )}
+                    <span className="simpleAccountChoose-count">
+                      已选择
+                      {' '}
+                      {choosedAccountsList.length}
+                      {' '}
+                      个
+                    </span>
+                  </div>
 
-              {renderGroupContent()}
-            </>
-          )}
+                  {renderGroupContent()}
+                </>
+              )}
 
           {/* 下载App弹窗 */}
           <DownloadAppModal
@@ -354,10 +391,10 @@ const SimpleAccountChoose = memo(
             appName="Aitoearn App"
           />
         </div>
-      );
+      )
     },
   ),
-);
-SimpleAccountChoose.displayName = "SimpleAccountChoose";
+)
+SimpleAccountChoose.displayName = 'SimpleAccountChoose'
 
-export default SimpleAccountChoose; 
+export default SimpleAccountChoose

@@ -34,8 +34,13 @@
 }
 
 @keyframes shimmer {
-  0%, 100% { transform: translateX(-100%); }
-  50% { transform: translateX(100%); }
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
 }
 
 .headerLeft {
@@ -100,7 +105,6 @@
   gap: 12px;
   min-width: 200px;
 }
-
 
 .walletLink {
   display: inline-flex;
@@ -379,69 +383,69 @@
   .container {
     padding: 12px;
   }
-  
+
   .headerContent {
     flex-direction: column;
     gap: 20px;
     padding: 20px;
     text-align: center;
   }
-  
+
   .headerLeft {
     flex-direction: column;
     gap: 12px;
   }
-  
+
   .headerIcon {
     width: 48px;
     height: 48px;
     font-size: 20px;
   }
-  
+
   .headerTitle {
     font-size: 24px;
   }
-  
+
   .headerSubtitle {
     font-size: 14px;
   }
-  
+
   .balanceCard {
     min-width: auto;
     width: 100%;
     justify-content: center;
   }
-  
+
   .balanceAmount {
     font-size: 20px;
   }
-  
+
   .content {
     padding: 16px;
   }
-  
+
   .content .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
     padding: 8px 16px;
     font-size: 14px;
   }
-  
+
   .content .ant-table-thead > tr > th,
   .content .ant-table-tbody > tr > td {
     padding: 8px 6px;
     font-size: 12px;
   }
-  
+
   .content .ant-btn {
     font-size: 12px;
     padding: 4px 8px;
   }
-  
+
   .withdrawItem {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .withdrawValue {
     max-width: none;
     text-align: left;
@@ -452,19 +456,19 @@
   .headerContent {
     padding: 16px;
   }
-  
+
   .headerTitle {
     font-size: 20px;
   }
-  
+
   .balanceCard {
     padding: 16px;
   }
-  
+
   .content {
     padding: 12px;
   }
-  
+
   .content .ant-tabs > .ant-tabs-nav .ant-tabs-tab {
     padding: 6px 12px;
     font-size: 12px;

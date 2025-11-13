@@ -6,10 +6,10 @@ export enum IncomeType {
 
 // 订单类型 (根据实际API返回结构)
 export interface IncomeRecord {
-  _id: string;
-  id: string;
-  userId: string;
-  amount: number;
+  _id: string
+  id: string
+  userId: string
+  amount: number
   relId?: string
   type: IncomeType
   desc?: string

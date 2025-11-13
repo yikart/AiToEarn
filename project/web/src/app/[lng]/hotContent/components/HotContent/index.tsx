@@ -1,5 +1,16 @@
-import {
+import type { TableProps } from 'antd'
+import type {
   ForwardedRef,
+} from 'react'
+import type {
+  PlatformRanking,
+  RankingContent,
+  RankingContentsResponse,
+} from '@/api/hot'
+import Icon, { QuestionCircleOutlined } from '@ant-design/icons'
+import { Popover, Select, Skeleton, Spin, Table } from 'antd'
+import CryptoJS from 'crypto-js'
+import {
   forwardRef,
   memo,
   useCallback,
@@ -7,41 +18,34 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
-import { useShallow } from "zustand/react/shallow";
-import HotContentLabel from "@/app/[lng]/hotContent/components/HotContentLabel";
-import styles from "./hotContent.module.scss";
-import { Popover, Select, Skeleton, Spin, Table } from "antd";
-import Icon, { QuestionCircleOutlined } from "@ant-design/icons";
-import type { TableProps } from "antd";
+} from 'react'
+import InfiniteScroll from 'react-infinite-scroll-component'
+import { useShallow } from 'zustand/react/shallow'
 import {
   platformApi,
-  PlatformRanking,
-  RankingContent,
-  RankingContentsResponse,
-} from "@/api/hot";
-import InfiniteScroll from "react-infinite-scroll-component";
-import HotSvg from "../../svgs/hotContent.svg";
-import ReadSvg from "./svgs/read.svg";
+} from '@/api/hot'
 import {
   AnaAddCall,
   HotContentBaseInfo,
   SingleNumberCall,
-} from "@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget";
-import { useTransClient } from "@/app/i18n/client";
-import CryptoJS from "crypto-js";
-import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
+} from '@/app/[lng]/hotContent/components/HotContent/hotContentCommonWidget'
+import HotContentLabel from '@/app/[lng]/hotContent/components/HotContentLabel'
+import { useHotContent } from '@/app/[lng]/hotContent/useHotContent'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { useTransClient } from '@/app/i18n/client'
+import HotSvg from '../../svgs/hotContent.svg'
+import styles from './hotContent.module.scss'
+import ReadSvg from './svgs/read.svg'
 
 export interface IHotContentRef {}
 
 export interface IHotContentProps {
-  defaultHotContentData?: RankingContentsResponse;
+  defaultHotContentData?: RankingContentsResponse
 }
 
 const icons = {
   wechat: [ReadSvg, HotSvg],
-};
+}
 
 const HotContent = memo(
   forwardRef(
@@ -57,7 +61,7 @@ const HotContent = memo(
         twoMenuKey,
         setCurrentRankCategory,
       } = useHotContent(
-        useShallow((state) => ({
+        useShallow(state => ({
           labelData: state.labelData,
           rankingData: state.rankingData,
           datesData: state.datesData,
@@ -65,108 +69,109 @@ const HotContent = memo(
           currentRankCategory: state.currentRankCategory,
           setCurrentRankCategory: state.setCurrentRankCategory,
         })),
-      );
-      const { t } = useTransClient("hot-content");
-      const all = useRef<string>(t("all"));
+      )
+      const { t } = useTransClient('hot-content')
+      const all = useRef<string>(t('all'))
       // 当前选中的标签
-      const [labelValue, setLabelValue] = useState(all.current);
+      const [labelValue, setLabelValue] = useState(all.current)
       // 当前选中的日期
-      const [dateValue, setDateValue] = useState("");
+      const [dateValue, setDateValue] = useState('')
       // 数据loading
-      const [loading, setLoading] = useState(false);
+      const [loading, setLoading] = useState(false)
       // 表格数据
-      const [dataSource, setDataSource] = useState<RankingContent[]>([]);
+      const [dataSource, setDataSource] = useState<RankingContent[]>([])
       // 总数
-      const [total, setTotal] = useState(0);
-      const page = useRef(0);
-      const [isReset, setIsReset] = useState(false);
+      const [total, setTotal] = useState(0)
+      const page = useRef(0)
+      const [isReset, setIsReset] = useState(false)
 
       // 获取当前选中的标签、日期、榜单
       const selectedLabelInfo = useMemo(() => {
-        const platId = twoMenuKey.split("_")[1];
+        const platId = twoMenuKey.split('_')[1]
         return {
           // 所有榜单
           allRanking: rankingData[platId] || [],
           // 当前选择榜单
           ranking: (rankingData[platId]?.find(
-            (v) => v.id === currentRankCategory,
+            v => v.id === currentRankCategory,
           ) ?? {}) as PlatformRanking,
           labelData: labelData[platId] || [],
           datesData: datesData[platId] || [],
-        };
-      }, [labelData, rankingData, datesData, twoMenuKey, currentRankCategory]);
+        }
+      }, [labelData, rankingData, datesData, twoMenuKey, currentRankCategory])
 
       // 跳转到作者主页
       const goAuthorPage = useCallback(
         (data: RankingContent) => {
-          let authorUrl = "";
+          let authorUrl = ''
           switch (selectedLabelInfo.ranking.platform.type) {
-            case "douyin":
-              authorUrl = `https://www.douyin.com/user/${data.secUid}`;
-              break;
-            case "xiaohongshu":
-              authorUrl = `https://www.xiaohongshu.com/user/profile/${data.author.id}`;
-              break;
-            case "kuaishou":
-              authorUrl = `https://kuaishou.cn/profile/${data.secUid}`;
-              break;
-            case "bilibili":
-              authorUrl = `https://space.bilibili.com/${data.mid}`;
-              break;
-            case "shipinhao":
-              break;
+            case 'douyin':
+              authorUrl = `https://www.douyin.com/user/${data.secUid}`
+              break
+            case 'xiaohongshu':
+              authorUrl = `https://www.xiaohongshu.com/user/profile/${data.author.id}`
+              break
+            case 'kuaishou':
+              authorUrl = `https://kuaishou.cn/profile/${data.secUid}`
+              break
+            case 'bilibili':
+              authorUrl = `https://space.bilibili.com/${data.mid}`
+              break
+            case 'shipinhao':
+              break
           }
-          if (authorUrl) window.open(authorUrl, "_blank");
+          if (authorUrl)
+            window.open(authorUrl, '_blank')
         },
         [selectedLabelInfo],
-      );
+      )
 
       // 热门内容的平台类型转换到本地枚举
       const getPlatEnum = (type: string) => {
         switch (type) {
-          case "douyin":
+          case 'douyin':
             return {
               plat: PlatType.Douyin,
-            };
-          case "xiaohongshu":
+            }
+          case 'xiaohongshu':
             return {
               plat: PlatType.Xhs,
-            };
-          case "kuaishou":
+            }
+          case 'kuaishou':
             return {
               plat: PlatType.KWAI,
-            };
-          case "bilibili":
+            }
+          case 'bilibili':
             return {
               plat: PlatType.BILIBILI,
-            };
-          case "shipinhao":
+            }
+          case 'shipinhao':
             return {
               plat: PlatType.WxSph,
-            };
-          case "wechat":
+            }
+          case 'wechat':
             return {
               plat: PlatType.WxGzh,
-            };
+            }
         }
-      };
+      }
 
       const columns = useMemo(() => {
         const callParamsColumnsCommon = (title: string) => {
           return {
             width: 90,
             title: () => {
-              return <p style={{ textAlign: "center" }}>{title}</p>;
+              return <p style={{ textAlign: 'center' }}>{title}</p>
             },
-          };
-        };
-        const plat = selectedLabelInfo?.ranking?.platform?.type;
+          }
+        }
+        const plat = selectedLabelInfo?.ranking?.platform?.type
 
-        const anaAddColumns: TableProps<RankingContent>["columns"] = [
+        const anaAddColumns: TableProps<RankingContent>['columns'] = [
           ...(dataSource[1]?.anaAdd?.addCollectCount
             ? [
                 {
-                  ...callParamsColumnsCommon(t("collections")),
+                  ...callParamsColumnsCommon(t('collections')),
                   render: (text: string, data: RankingContent) => (
                     <AnaAddCall
                       add={data.anaAdd.addCollectCount!}
@@ -177,7 +182,7 @@ const HotContent = memo(
               ]
             : []),
           {
-            ...callParamsColumnsCommon(t("shares")),
+            ...callParamsColumnsCommon(t('shares')),
             render: (text, data) => (
               <AnaAddCall
                 add={data.anaAdd.addShareCount}
@@ -186,7 +191,7 @@ const HotContent = memo(
             ),
           },
           {
-            ...callParamsColumnsCommon(t("comments")),
+            ...callParamsColumnsCommon(t('comments')),
             render: (text, data) => (
               <AnaAddCall
                 add={data.anaAdd.addCommentCount}
@@ -197,7 +202,7 @@ const HotContent = memo(
           ...(dataSource[0]?.anaAdd?.addViewCount
             ? [
                 {
-                  ...callParamsColumnsCommon(t("views")),
+                  ...callParamsColumnsCommon(t('views')),
                   render: (text: string, data: RankingContent) => (
                     <AnaAddCall
                       add={data.anaAdd.addViewCount!}
@@ -208,19 +213,19 @@ const HotContent = memo(
               ]
             : []),
           {
-            ...callParamsColumnsCommon(t("likes")),
+            ...callParamsColumnsCommon(t('likes')),
             render: (text, data) => (
               <AnaAddCall
-                highlight={plat !== "xiaohongshu"}
+                highlight={plat !== 'xiaohongshu'}
                 add={data.anaAdd.addLikeCount}
                 total={data.anaAdd.useLikeCount}
               />
             ),
           },
-          ...(plat === "xiaohongshu"
+          ...(plat === 'xiaohongshu'
             ? [
                 {
-                  ...callParamsColumnsCommon(t("engagement")),
+                  ...callParamsColumnsCommon(t('engagement')),
                   render: (text: string, data: RankingContent) => (
                     <AnaAddCall
                       highlight={true}
@@ -231,40 +236,40 @@ const HotContent = memo(
                 },
               ]
             : []),
-        ];
+        ]
         // 视频号
-        const wxSphColumns: TableProps<RankingContent>["columns"] = [
+        const wxSphColumns: TableProps<RankingContent>['columns'] = [
           {
-            ...callParamsColumnsCommon(t("comments")),
+            ...callParamsColumnsCommon(t('comments')),
             render: (text, data) => (
               <SingleNumberCall total={data.stats.commentCount} />
             ),
           },
           {
-            ...callParamsColumnsCommon(t("shares")),
+            ...callParamsColumnsCommon(t('shares')),
             render: (text, data) => (
               <SingleNumberCall total={data.shareCount!} />
             ),
           },
           {
-            ...callParamsColumnsCommon(t("likes")),
+            ...callParamsColumnsCommon(t('likes')),
             render: (text, data) => (
               <SingleNumberCall total={data.stats.likeCount} />
             ),
           },
           {
-            ...callParamsColumnsCommon(t("recommend")),
+            ...callParamsColumnsCommon(t('recommend')),
             render: (text, data) => (
               <SingleNumberCall total={data.stats.likeCount} />
             ),
           },
-        ];
+        ]
         // 微信公众号
-        const wxGzhColumns: TableProps<RankingContent>["columns"] = [
+        const wxGzhColumns: TableProps<RankingContent>['columns'] = [
           ...(dataSource[1]?.stats.watchCount
             ? [
                 {
-                  ...callParamsColumnsCommon(t("watch")),
+                  ...callParamsColumnsCommon(t('watch')),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall total={data.stats.watchCount} />
                   ),
@@ -274,7 +279,7 @@ const HotContent = memo(
           ...(dataSource[1]?.stats.likeCount
             ? [
                 {
-                  ...callParamsColumnsCommon(t("likes")),
+                  ...callParamsColumnsCommon(t('likes')),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall total={data.stats.likeCount} />
                   ),
@@ -284,7 +289,7 @@ const HotContent = memo(
           ...(dataSource[1]?.shareCount
             ? [
                 {
-                  ...callParamsColumnsCommon(t("shares")),
+                  ...callParamsColumnsCommon(t('shares')),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall total={data.shareCount!} />
                   ),
@@ -294,7 +299,7 @@ const HotContent = memo(
           ...(dataSource[1]?.stats.viewCount
             ? [
                 {
-                  ...callParamsColumnsCommon(t("views")),
+                  ...callParamsColumnsCommon(t('views')),
                   render: (text: string, data: RankingContent) => (
                     <SingleNumberCall
                       total={data.stats.viewCount}
@@ -304,36 +309,38 @@ const HotContent = memo(
                 },
               ]
             : []),
-        ];
+        ]
 
-        const columns: TableProps<RankingContent>["columns"] = [
+        const columns: TableProps<RankingContent>['columns'] = [
           {
-            title: t("rank"),
-            dataIndex: "rankingPosition",
-            key: "rankingPosition",
+            title: t('rank'),
+            dataIndex: 'rankingPosition',
+            key: 'rankingPosition',
             width: 60,
             render: (text, data, ind) => (
               <>
-                {ind <= 2 ? (
-                  <div className={styles.rankingTopthree}>{ind + 1}</div>
-                ) : (
-                  <p style={{ width: "30px", textAlign: "center" }}>
-                    {ind + 1}
-                  </p>
-                )}
+                {ind <= 2
+                  ? (
+                      <div className={styles.rankingTopthree}>{ind + 1}</div>
+                    )
+                  : (
+                      <p style={{ width: '30px', textAlign: 'center' }}>
+                        {ind + 1}
+                      </p>
+                    )}
               </>
             ),
           },
           {
-            title: t("baseInfo"),
-            dataIndex: "baseInfo",
+            title: t('baseInfo'),
+            dataIndex: 'baseInfo',
             render: (text, data) => {
               const platInfo = getPlatEnum(
                 selectedLabelInfo.ranking?.platform?.type,
-              );
+              )
               const platConfig = AccountPlatInfoMap.get(
                 platInfo?.plat ?? PlatType.Xhs,
-              )!;
+              )!
 
               return (
                 <HotContentBaseInfo
@@ -351,19 +358,19 @@ const HotContent = memo(
                   nickname={data.author.name}
                   cover={data.cover}
                   onClick={() => {
-                    goAuthorPage(data);
+                    goAuthorPage(data)
                   }}
                 />
-              );
+              )
             },
           },
           {
-            title: () => <p style={{ textAlign: "center" }}>{t("category")}</p>,
-            dataIndex: "category",
-            key: "category",
+            title: () => <p style={{ textAlign: 'center' }}>{t('category')}</p>,
+            dataIndex: 'category',
+            key: 'category',
             width: 120,
             render: (text, data) => (
-              <div style={{ textAlign: "center" }}>
+              <div style={{ textAlign: 'center' }}>
                 <p>
                   <b>{text}</b>
                 </p>
@@ -372,49 +379,50 @@ const HotContent = memo(
             ),
           },
 
-          ...(plat === "shipinhao"
+          ...(plat === 'shipinhao'
             ? wxSphColumns
-            : plat === "wechat"
+            : plat === 'wechat'
               ? wxGzhColumns
               : anaAddColumns),
-        ];
-        return columns;
-      }, [selectedLabelInfo, dataSource, t]);
+        ]
+        return columns
+      }, [selectedLabelInfo, dataSource, t])
 
       const getTableData = useCallback(async () => {
-        if (loading) return;
+        if (loading)
+          return
 
         const res = await platformApi.getRankingContents(
           selectedLabelInfo.ranking.id,
           page.current,
           20,
-          labelValue === all.current ? "全部" : labelValue,
+          labelValue === all.current ? '全部' : labelValue,
           dateValue,
-        );
-        page.current += 1;
+        )
+        page.current += 1
         setDataSource((prevState) => {
-          return [...prevState, ...(res?.data.items || [])];
-        });
-        setTotal(res?.data.meta.totalItems || 0);
-      }, [selectedLabelInfo.ranking, labelValue, dateValue]);
+          return [...prevState, ...(res?.data.items || [])]
+        })
+        setTotal(res?.data.meta.totalItems || 0)
+      }, [selectedLabelInfo.ranking, labelValue, dateValue])
 
       // 当平台切换时，重置数据
       useEffect(() => {
         if (selectedLabelInfo.datesData.length > 0) {
-          setDateValue(selectedLabelInfo.datesData[0].value);
-          setLabelValue(all.current);
-          setIsReset(true);
+          setDateValue(selectedLabelInfo.datesData[0].value)
+          setLabelValue(all.current)
+          setIsReset(true)
         }
-      }, [selectedLabelInfo.datesData, twoMenuKey]);
+      }, [selectedLabelInfo.datesData, twoMenuKey])
 
       // 请求列表数据
       useEffect(() => {
         if (isReset && selectedLabelInfo.ranking?.id) {
-          page.current = 1;
-          setDataSource([]);
-          setLoading(true);
-          getTableData().then(() => setLoading(false));
-          setIsReset(false);
+          page.current = 1
+          setDataSource([])
+          setLoading(true)
+          getTableData().then(() => setLoading(false))
+          setIsReset(false)
         }
       }, [
         labelValue,
@@ -423,28 +431,28 @@ const HotContent = memo(
         selectedLabelInfo.ranking?.id,
         isReset,
         currentRankCategory,
-      ]);
+      ])
 
       return (
         <div className={`${styles.hotContent}`}>
           {selectedLabelInfo.allRanking.length > 1 && (
             <div className="hotContent-rankLabel">
               {selectedLabelInfo.allRanking.map((v, i) => {
-                const icon = (icons[v.platform.type as "wechat"] ?? [])[i];
+                const icon = (icons[v.platform.type as 'wechat'] ?? [])[i]
 
                 return (
                   <div
-                    className={`hotContent-rankLabel-item ${v.id === currentRankCategory ? "hotContent-rankLabel-item--active" : ""}`}
+                    className={`hotContent-rankLabel-item ${v.id === currentRankCategory ? 'hotContent-rankLabel-item--active' : ''}`}
                     key={v.id}
                     onClick={() => {
-                      setCurrentRankCategory(v.id);
-                      setIsReset(true);
+                      setCurrentRankCategory(v.id)
+                      setIsReset(true)
                     }}
                   >
                     <Icon component={icon} />
                     {v.name}
                   </div>
-                );
+                )
               })}
             </div>
           )}
@@ -453,51 +461,59 @@ const HotContent = memo(
             labels={[all.current, ...(selectedLabelInfo.labelData ?? [])]}
             value={labelValue}
             onChange={(value) => {
-              setLabelValue(value);
-              setIsReset(true);
+              setLabelValue(value)
+              setIsReset(true)
             }}
           />
 
           <div className="hotContent-options">
             <div className="hotContent-options-select">
               <div className="hotContent-options-select-label">
-                {t("dailyRank")}
+                {t('dailyRank')}
               </div>
               <Select
-                options={selectedLabelInfo.datesData.map((v) => ({
+                options={selectedLabelInfo.datesData.map(v => ({
                   label: v.showDate,
                   value: v.value,
                 }))}
                 value={dateValue}
                 onChange={(e) => {
-                  setDateValue(e);
-                  setIsReset(true);
+                  setDateValue(e)
+                  setIsReset(true)
                 }}
-              ></Select>
+              >
+              </Select>
             </div>
 
             <Popover
-              content={
+              content={(
                 <>
                   <p>
-                    {t("updateFrequency")}：
+                    {t('updateFrequency')}
+                    ：
                     {selectedLabelInfo.ranking.updateFrequency}
                   </p>
                   <p>
-                    {t("statEndTime")}：{selectedLabelInfo.ranking.updateTime}
+                    {t('statEndTime')}
+                    ：
+                    {selectedLabelInfo.ranking.updateTime}
                   </p>
                   <p>
-                    {t("updateFrequency")}：{t("daily")}
+                    {t('updateFrequency')}
+                    ：
+                    {t('daily')}
                   </p>
                   <p>
-                    {t("sortRule")}：{t("sortRuleDesc")}
+                    {t('sortRule')}
+                    ：
+                    {t('sortRuleDesc')}
                   </p>
                 </>
-              }
+              )}
               placement="bottomLeft"
             >
               <div className="hotContent-options-explain">
-                {t("dataDescription")}
+                {t('dataDescription')}
                 <QuestionCircleOutlined />
               </div>
             </Popover>
@@ -505,7 +521,7 @@ const HotContent = memo(
 
           <Spin spinning={loading}>
             <div
-              className={`${styles["hotContent-table"]} hotContent--${selectedLabelInfo?.ranking?.platform?.type}`}
+              className={`${styles['hotContent-table']} hotContent--${selectedLabelInfo?.ranking?.platform?.type}`}
               id="hotContent-table"
             >
               <InfiniteScroll
@@ -520,24 +536,24 @@ const HotContent = memo(
               >
                 <Table
                   dataSource={defaultHotContentData?.items ?? dataSource}
-                  rowKey={(record) => record.id}
+                  rowKey={record => record.id}
                   columns={columns}
                   pagination={false}
                   onRow={(record) => {
                     return {
                       onClick: async () => {
                         if (
-                          selectedLabelInfo.ranking.platform.type === "wechat"
+                          selectedLabelInfo.ranking.platform.type === 'wechat'
                         ) {
-                          setLoading(true);
+                          setLoading(true)
                           const res = await platformApi.getDetailUrl(
                             record.photoId,
-                          );
-                          setLoading(false);
+                          )
+                          setLoading(false)
 
-                          const key =
-                            CryptoJS.enc.Utf8.parse("cdxbxhs147258369");
-                          const encrypted = res?.data ?? "";
+                          const key
+                            = CryptoJS.enc.Utf8.parse('cdxbxhs147258369')
+                          const encrypted = res?.data ?? ''
 
                           const decrypted = CryptoJS.AES.decrypt(
                             encrypted,
@@ -546,25 +562,26 @@ const HotContent = memo(
                               mode: CryptoJS.mode.ECB,
                               padding: CryptoJS.pad.Pkcs7,
                             },
-                          );
-                          const result = CryptoJS.enc.Utf8.stringify(decrypted);
-                          window.open(result, "_blank");
-                          return;
+                          )
+                          const result = CryptoJS.enc.Utf8.stringify(decrypted)
+                          window.open(result, '_blank')
+                          return
                         }
 
-                        if (!record.url) return;
-                        window.open(record.url, "_blank");
+                        if (!record.url)
+                          return
+                        window.open(record.url, '_blank')
                       },
-                    };
+                    }
                   }}
                 />
               </InfiniteScroll>
             </div>
           </Spin>
         </div>
-      );
+      )
     },
   ),
-);
+)
 
-export default HotContent;
+export default HotContent

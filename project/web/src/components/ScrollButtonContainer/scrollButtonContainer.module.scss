@@ -3,7 +3,9 @@
   :global {
     .scrollButtonContainer-content {
       overflow-x: auto;
-      &::-webkit-scrollbar { display: none; }
+      &::-webkit-scrollbar {
+        display: none;
+      }
       scrollbar-width: none;
       -ms-overflow-style: none;
     }

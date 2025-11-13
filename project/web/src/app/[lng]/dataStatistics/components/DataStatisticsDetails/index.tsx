@@ -1,11 +1,12 @@
-import { ForwardedRef, forwardRef, memo } from "react";
-import styles from "./dataStatisticsDetails.module.scss";
-import { useDataStatisticsStore } from "@/app/[lng]/dataStatistics/useDataStatistics";
-import { useShallow } from "zustand/react/shallow";
-import Icon from "@ant-design/icons";
-import { DatePicker } from "antd";
-import { Dayjs } from "dayjs";
-import { useTransClient } from "@/app/i18n/client";
+import type { Dayjs } from 'dayjs'
+import type { ForwardedRef } from 'react'
+import Icon from '@ant-design/icons'
+import { DatePicker } from 'antd'
+import { forwardRef, memo } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
+import { useTransClient } from '@/app/i18n/client'
+import styles from './dataStatisticsDetails.module.scss'
 
 export interface IDataStatisticsDetailsRef {}
 
@@ -24,44 +25,44 @@ const DataStatisticsDetails = memo(
         setCurrentDetailType,
         timeRangeValue,
       } = useDataStatisticsStore(
-        useShallow((state) => ({
+        useShallow(state => ({
           dataDetails: state.dataDetails,
           currentDetailType: state.currentDetailType,
           setCurrentDetailType: state.setCurrentDetailType,
           setTimeRangeValue: state.setTimeRangeValue,
           timeRangeValue: state.timeRangeValue,
         })),
-      );
-      const { t } = useTransClient("dataStatistics");
+      )
+      const { t } = useTransClient('dataStatistics')
 
       return (
         <div className={styles.dataStatisticsDetails}>
           <div className="dataStatisticsDetails-head">
-            <h3>{t("dataDetails")}</h3>
+            <h3>{t('dataDetails')}</h3>
             <div className="dataStatisticsDetails-head-rangePicker">
-              <label>{t("timeRange")}</label>
+              <label>{t('timeRange')}</label>
               <DatePicker.RangePicker
                 value={timeRangeValue}
                 allowClear={false}
                 onChange={(e) => {
-                  const dates = e as [Dayjs, Dayjs];
-                  setTimeRangeValue(dates);
+                  const dates = e as [Dayjs, Dayjs]
+                  setTimeRangeValue(dates)
                 }}
               />
             </div>
           </div>
 
           <div className="dataStatisticsDetails-content">
-            {dataDetails.map((detail) => (
+            {dataDetails.map(detail => (
               <div
                 key={detail.value}
                 className={`dataStatisticsDetails-content-item ${
                   currentDetailType === detail.value
-                    ? "dataStatisticsDetails-content-item--active"
-                    : ""
+                    ? 'dataStatisticsDetails-content-item--active'
+                    : ''
                 }`}
                 onClick={() => {
-                  setCurrentDetailType(detail.value);
+                  setCurrentDetailType(detail.value)
                 }}
               >
                 <p className="dataStatisticsDetails-content-item-title">
@@ -74,7 +75,7 @@ const DataStatisticsDetails = memo(
                   {detail.total}
                 </p>
                 <p className="dataStatisticsDetails-content-item-yesterday">
-                  {t("yesterdayIncrease")}
+                  {t('yesterdayIncrease')}
                   <b>{detail.yesterday}</b>
                 </p>
               </div>
@@ -83,9 +84,9 @@ const DataStatisticsDetails = memo(
 
           <div id="dataStatisticsEchartLine" />
         </div>
-      );
+      )
     },
   ),
-);
+)
 
-export default DataStatisticsDetails;
+export default DataStatisticsDetails

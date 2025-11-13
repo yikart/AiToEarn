@@ -66,7 +66,8 @@
   display: flex;
   align-items: center;
   :global {
-    .rankingTopthree-rise, .rankingTopthree-fall {
+    .rankingTopthree-rise,
+    .rankingTopthree-fall {
       position: absolute;
       display: flex;
       align-items: center;

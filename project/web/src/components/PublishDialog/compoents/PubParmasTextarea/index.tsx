@@ -1,6 +1,20 @@
-import React, {
+import type {
   CSSProperties,
   ForwardedRef,
+} from 'react'
+import type { PlatType } from '@/app/config/platConfig'
+import type {
+  IImgFile,
+  IVideoFile,
+} from '@/components/PublishDialog/publishDialog.type'
+import {
+  CaretRightOutlined,
+  CloseOutlined,
+  FileTextOutlined,
+} from '@ant-design/icons'
+import { Button, Image, Input, message, Tooltip } from 'antd'
+import dynamic from 'next/dynamic'
+import React, {
   forwardRef,
   memo,
   useCallback,
@@ -8,69 +22,58 @@ import React, {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { Button, Image, Input, message, Tooltip } from "antd";
-import styles from "@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss";
-import { ReactSortable } from "react-sortablejs";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import {
-  CaretRightOutlined,
-  CloseOutlined,
-  FileTextOutlined,
-} from "@ant-design/icons";
-import {
-  IImgFile,
-  IVideoFile,
-} from "@/components/PublishDialog/publishDialog.type";
+} from 'react'
+import { ReactSortable } from 'react-sortablejs'
 
-import VideoCoverSeting from "@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting";
-import PubParmasTextareaUpload from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload";
-import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
-import { PubType } from "@/app/config/publishConfig";
-import { useTransClient } from "@/app/i18n/client";
-import PubParmasTextuploadImage from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage";
-import VideoPreviewModal from "@/components/VideoPreviewModal";
-import dynamic from "next/dynamic";
-import Aibrush from "@/components/PublishDialog/svgs/aibrush.svg";
-import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
-import { useShallow } from "zustand/react/shallow";
-import DraftSelectionModal from "@/components/PublishDialog/compoents/DraftSelectionModal";
-import PubParmasMentionInput from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput";
-import { usePublishManageUpload } from "@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload";
-import PublishUploadProgress from "@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress";
+import { CSSTransition, TransitionGroup } from 'react-transition-group'
+import { useShallow } from 'zustand/react/shallow'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { PubType } from '@/app/config/publishConfig'
+import { useTransClient } from '@/app/i18n/client'
+import DraftSelectionModal from '@/components/PublishDialog/compoents/DraftSelectionModal'
+import PublishUploadProgress from '@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress'
+import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
+import styles from '@/components/PublishDialog/compoents/PubParmasTextarea/pubCommonComps.module.scss'
+import PubParmasMentionInput from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput'
+import PubParmasTextareaUpload from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload'
+import PubParmasTextuploadImage from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage'
+import VideoCoverSeting from '@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting'
+import Aibrush from '@/components/PublishDialog/svgs/aibrush.svg'
+import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import VideoPreviewModal from '@/components/VideoPreviewModal'
 
-const { TextArea } = Input;
+const { TextArea } = Input
 export interface IPubParmasTextareaRef {}
 
 export interface IChangeParams {
-  imgs?: IImgFile[];
-  video?: IVideoFile;
-  value: string;
+  imgs?: IImgFile[]
+  video?: IVideoFile
+  value: string
 }
 
 export interface IPubParmasTextareaProps {
-  onChange?: (values: IChangeParams) => void;
-  rows?: number;
+  onChange?: (values: IChangeParams) => void
+  rows?: number
   // 视频数量限制
-  videoMax?: number;
+  videoMax?: number
   // 扩展内容
-  extend?: React.ReactNode;
+  extend?: React.ReactNode
   // 在前面的扩展元素
-  beforeExtend?: React.ReactNode;
+  beforeExtend?: React.ReactNode
   // 在中间的扩展元素
-  centerExtend?: React.ReactNode;
+  centerExtend?: React.ReactNode
   // 平台类型
-  platType: PlatType;
-  style?: CSSProperties;
-  imageFileListValue?: IImgFile[];
-  videoFileValue?: IVideoFile;
-  desValue?: string;
+  platType: PlatType
+  style?: CSSProperties
+  imageFileListValue?: IImgFile[]
+  videoFileValue?: IVideoFile
+  desValue?: string
 }
 
 const ImageEditorModal = dynamic(
-  () => import("@/components/ImageEditorModal"),
+  () => import('@/components/ImageEditorModal'),
   { ssr: false },
-);
+)
 
 const PubParmasTextarea = memo(
   forwardRef(
@@ -84,198 +87,206 @@ const PubParmasTextarea = memo(
         centerExtend,
         imageFileListValue = [],
         videoFileValue,
-        desValue = "",
+        desValue = '',
         beforeExtend,
         platType,
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
-      const [draftModalOpen, setDraftModalOpen] = useState(false);
+      const [draftModalOpen, setDraftModalOpen] = useState(false)
       const { setOpenLeft } = usePublishDialog(
-        useShallow((state) => ({
+        useShallow(state => ({
           setOpenLeft: state.setOpenLeft,
         })),
-      );
-      const [value, setValue] = useState(desValue);
+      )
+      const [value, setValue] = useState(desValue)
       const [previewData, setPreviewData] = useState<
         IImgFile | IVideoFile | undefined
-      >(undefined);
+      >(undefined)
       // 图片
-      const [imageFileList, setImageFileList] =
-        useState<IImgFile[]>(imageFileListValue);
+      const [imageFileList, setImageFileList]
+        = useState<IImgFile[]>(imageFileListValue)
       // 视频
       const [videoFile, setVideoFile] = useState<IVideoFile | undefined>(
         videoFileValue,
-      );
+      )
       // 裁剪弹框
-      const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false);
+      const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false)
       const isFirst = useRef({
         effect: true,
         sort: true,
-      });
-      const { t } = useTransClient("publish");
+      })
+      const { t } = useTransClient('publish')
       // 编辑图片的索引
-      const [editImgIndex, setEditImgIndex] = useState(-1);
+      const [editImgIndex, setEditImgIndex] = useState(-1)
       const { cancelUpload } = usePublishManageUpload(
-        useShallow((state) => ({
+        useShallow(state => ({
           cancelUpload: state.cancelUpload,
         })),
-      );
+      )
 
       useEffect(() => {
         if (isFirst.current.effect) {
-          isFirst.current.effect = false;
-          return;
+          isFirst.current.effect = false
+          return
         }
         const values = {
           imgs: imageFileList,
           video: videoFile,
           value,
-        };
-        if (onChange) onChange(values);
-      }, [imageFileList, videoFile, value]);
+        }
+        if (onChange)
+          onChange(values)
+      }, [imageFileList, videoFile, value])
       useEffect(() => {
-        setImageFileList(imageFileListValue ?? []);
-      }, [imageFileListValue]);
+        setImageFileList(imageFileListValue ?? [])
+      }, [imageFileListValue])
       useEffect(() => {
-        setValue(desValue || "");
-      }, [desValue]);
+        setValue(desValue || '')
+      }, [desValue])
       useEffect(() => {
-        setVideoFile(videoFileValue);
-      }, [videoFileValue]);
+        setVideoFile(videoFileValue)
+      }, [videoFileValue])
 
       const platConfig = useMemo(() => {
-        return AccountPlatInfoMap.get(platType)! || {};
-      }, [platType]);
+        return AccountPlatInfoMap.get(platType)! || {}
+      }, [platType])
       const imageMax = useMemo(() => {
-        return platConfig.commonPubParamsConfig?.imagesMax || 10;
-      }, [platConfig]);
+        return platConfig.commonPubParamsConfig?.imagesMax || 10
+      }, [platConfig])
 
       // 动态accept类型
       const uploadAccept = useMemo(() => {
-        const hasImage = imageFileList.length !== 0;
-        const hasVideo = !!videoFile;
+        const hasImage = imageFileList.length !== 0
+        const hasVideo = !!videoFile
         if (hasImage && !hasVideo && platConfig.pubTypes.has(PubType.ImageText))
-          return "image/*";
+          return 'image/*'
         if (!hasImage && hasVideo && platConfig.pubTypes.has(PubType.VIDEO))
-          return "video/*";
+          return 'video/*'
 
         if (
-          platConfig.pubTypes.has(PubType.ImageText) &&
-          platConfig.pubTypes.has(PubType.VIDEO)
-        )
-          return "video/*,image/*";
-        if (platConfig.pubTypes.has(PubType.ImageText)) return "image/*";
-        if (platConfig.pubTypes.has(PubType.VIDEO)) return "video/*";
+          platConfig.pubTypes.has(PubType.ImageText)
+          && platConfig.pubTypes.has(PubType.VIDEO)
+        ) {
+          return 'video/*,image/*'
+        }
+        if (platConfig.pubTypes.has(PubType.ImageText))
+          return 'image/*'
+        if (platConfig.pubTypes.has(PubType.VIDEO))
+          return 'video/*'
 
-        return "video/*,image/*";
-      }, [imageFileList, videoFile, platConfig]);
+        return 'video/*,image/*'
+      }, [imageFileList, videoFile, platConfig])
 
       // 是否可见Dragger
       const canShowDragger = useMemo(() => {
-        const imageCount = imageFileList.length;
-        const videoCount = videoFile ? 1 : 0;
-        const hasImage = imageCount > 0;
-        const hasVideo = videoCount > 0;
+        const imageCount = imageFileList.length
+        const videoCount = videoFile ? 1 : 0
+        const hasImage = imageCount > 0
+        const hasVideo = videoCount > 0
 
-        if (hasImage && imageCount >= imageMax) return false;
-        if (hasVideo && videoCount >= videoMax) return false;
+        if (hasImage && imageCount >= imageMax)
+          return false
+        if (hasVideo && videoCount >= videoMax)
+          return false
         // 视频和图片都没有，或者只选一种且未到上限
-        return true;
-      }, [videoFile, imageMax, videoMax, videoFile]);
+        return true
+      }, [videoFile, imageMax, videoMax, videoFile])
 
       // 检查上传文件类型
       const checkFileListType = useCallback(
         (fileList: File[]) => {
-          const hasImageInList = imageFileList.length !== 0;
-          const hasVideoInList = !!videoFile;
-          let uploadHasImage = false;
-          let uploadHasVideo = false;
-          let invalidFile = false;
+          const hasImageInList = imageFileList.length !== 0
+          const hasVideoInList = !!videoFile
+          let uploadHasImage = false
+          let uploadHasVideo = false
+          let invalidFile = false
 
           for (const file of fileList) {
-            if (file.type.startsWith("image/")) {
-              uploadHasImage = true;
-            } else if (file.type.startsWith("video/")) {
-              uploadHasVideo = true;
-            } else {
-              invalidFile = true;
+            if (file.type.startsWith('image/')) {
+              uploadHasImage = true
+            }
+            else if (file.type.startsWith('video/')) {
+              uploadHasVideo = true
+            }
+            else {
+              invalidFile = true
             }
           }
 
           const messageOpen = (content: string) => {
             message.open({
-              content: content,
-              type: "warning",
-              key: "1",
-            });
-          };
+              content,
+              type: 'warning',
+              key: '1',
+            })
+          }
 
           if (uploadHasImage && !platConfig.pubTypes.has(PubType.ImageText)) {
-            messageOpen(t("validation.uploadImage"));
-            return false;
+            messageOpen(t('validation.uploadImage'))
+            return false
           }
           if (uploadHasVideo && !platConfig.pubTypes.has(PubType.VIDEO)) {
-            messageOpen(t("validation.uploadVideo"));
-            return false;
+            messageOpen(t('validation.uploadVideo'))
+            return false
           }
 
           // 已有图片，只能传图片
           if (hasImageInList && !hasVideoInList && uploadHasVideo) {
-            messageOpen(t("validation.imageOnly"));
-            return false;
+            messageOpen(t('validation.imageOnly'))
+            return false
           }
           // 已有视频，只能传视频
           if (hasVideoInList && !hasImageInList && uploadHasImage) {
-            messageOpen(t("validation.videoOnly"));
-            return false;
+            messageOpen(t('validation.videoOnly'))
+            return false
           }
           // 混合上传拦截
           if (
-            (uploadHasImage && uploadHasVideo) ||
-            (hasImageInList && uploadHasVideo) ||
-            (hasVideoInList && uploadHasImage)
+            (uploadHasImage && uploadHasVideo)
+            || (hasImageInList && uploadHasVideo)
+            || (hasVideoInList && uploadHasImage)
           ) {
-            messageOpen(t("validation.imageVideoMixed"));
-            return false;
+            messageOpen(t('validation.imageVideoMixed'))
+            return false
           }
           // 非法类型
           if (invalidFile) {
-            messageOpen(t("validation.onlyImageOrVideo"));
-            return false;
+            messageOpen(t('validation.onlyImageOrVideo'))
+            return false
           }
           if (uploadHasVideo) {
             // 视频条数限制
-            const totalVideoCount =
-              (videoFile ? 1 : 0) +
-              fileList.filter((f) => f.type.startsWith("video/")).length;
+            const totalVideoCount
+              = (videoFile ? 1 : 0)
+                + fileList.filter(f => f.type.startsWith('video/')).length
             if (totalVideoCount > videoMax) {
               messageOpen(
-                t("validation.videoMaxExceeded", { maxCount: videoMax }),
-              );
-              return false;
+                t('validation.videoMaxExceeded', { maxCount: videoMax }),
+              )
+              return false
             }
           }
           if (uploadHasImage) {
             // 图片条数限制
-            const totalImageCount =
-              imageFileList.length +
-              fileList.filter((f) => f.type.startsWith("image/")).length;
+            const totalImageCount
+              = imageFileList.length
+                + fileList.filter(f => f.type.startsWith('image/')).length
             if (totalImageCount > imageMax) {
               messageOpen(
-                t("validation.imageMaxExceeded", { maxCount: imageMax }),
-              );
-              return false;
+                t('validation.imageMaxExceeded', { maxCount: imageMax }),
+              )
+              return false
             }
           }
-          return true;
+          return true
         },
         [imageFileList, videoMax, imageMax, videoFile, platConfig],
-      );
+      )
 
       const desMax = useMemo(() => {
-        return platConfig.commonPubParamsConfig?.desMax || 2200;
-      }, [platConfig]);
+        return platConfig.commonPubParamsConfig?.desMax || 2200
+      }, [platConfig])
 
       return (
         <>
@@ -286,25 +297,26 @@ const PubParmasTextarea = memo(
             value={videoFile?.cover}
             onChoosed={(newCover) => {
               setVideoFile((prevState) => {
-                const newState = { ...(prevState as IVideoFile) };
-                newState.cover = newCover;
-                return newState;
-              });
+                const newState = { ...(prevState as IVideoFile) }
+                newState.cover = newCover
+                return newState
+              })
             }}
           />
 
           <Image
             src={(previewData as IImgFile)?.imgUrl}
             style={{
-              width: "100%",
-              height: "400px",
-              objectFit: "contain",
-              display: "none",
+              width: '100%',
+              height: '400px',
+              objectFit: 'contain',
+              display: 'none',
             }}
             preview={{
               visible: !!(previewData && (previewData as IImgFile).imgUrl),
               onVisibleChange: (visible) => {
-                if (!visible) setPreviewData(undefined);
+                if (!visible)
+                  setPreviewData(undefined)
               },
             }}
           />
@@ -316,10 +328,10 @@ const PubParmasTextarea = memo(
           <ImageEditorModal
             onOk={(editedImg) => {
               setImageFileList((prevState) => {
-                const newState = [...prevState];
-                newState[editImgIndex] = editedImg;
-                return newState;
-              });
+                const newState = [...prevState]
+                newState[editImgIndex] = editedImg
+                return newState
+              })
             }}
             imgFile={imageFileList[editImgIndex]}
             open={editImgIndex !== -1}
@@ -331,8 +343,8 @@ const PubParmasTextarea = memo(
               {beforeExtend}
               <PubParmasMentionInput
                 value={value}
-                onChange={(value) => setValue(value)}
-                placeholder={t("form.descriptionPlaceholder")}
+                onChange={value => setValue(value)}
+                placeholder={t('form.descriptionPlaceholder')}
                 maxLength={desMax}
               />
               <ReactSortable
@@ -341,10 +353,10 @@ const PubParmasTextarea = memo(
                 animation={250}
                 setList={(newList) => {
                   if (isFirst.current.sort) {
-                    isFirst.current.sort = false;
-                    return;
+                    isFirst.current.sort = false
+                    return
                   }
-                  setImageFileList(newList);
+                  setImageFileList(newList)
                 }}
                 scrollSensitivity={100}
                 scrollSpeed={15}
@@ -368,22 +380,22 @@ const PubParmasTextarea = memo(
                     >
                       <PubParmasTextuploadImage
                         onEditClick={() => {
-                          setEditImgIndex(i);
+                          setEditImgIndex(i)
                         }}
                         imageFile={v}
                         onClick={() => {
-                          setPreviewData(v);
+                          setPreviewData(v)
                         }}
                         onClose={() => {
-                          const targetImage = imageFileList[i];
+                          const targetImage = imageFileList[i]
                           if (targetImage?.uploadTaskId) {
-                            cancelUpload(targetImage.uploadTaskId);
+                            cancelUpload(targetImage.uploadTaskId)
                           }
                           setImageFileList((prevState) => {
-                            const newState = [...prevState];
-                            newState.splice(i, 1);
-                            return newState;
-                          });
+                            const newState = [...prevState]
+                            newState.splice(i, 1)
+                            return newState
+                          })
                         }}
                       />
                     </CSSTransition>
@@ -405,7 +417,7 @@ const PubParmasTextarea = memo(
                         <div
                           className="pubParmasTextarea-uploads-item"
                           onClick={() => {
-                            setPreviewData(videoFile);
+                            setPreviewData(videoFile)
                           }}
                         >
                           {videoFile?.uploadTaskIds?.video && (
@@ -417,20 +429,20 @@ const PubParmasTextarea = memo(
                           <div
                             className="pubParmasTextarea-uploads-item-close"
                             onClick={(e) => {
-                              e.stopPropagation();
-                              const uploadIds = videoFile?.uploadTaskIds;
+                              e.stopPropagation()
+                              const uploadIds = videoFile?.uploadTaskIds
                               if (uploadIds?.video) {
-                                cancelUpload(uploadIds.video);
+                                cancelUpload(uploadIds.video)
                               }
                               if (uploadIds?.cover) {
-                                cancelUpload(uploadIds.cover);
+                                cancelUpload(uploadIds.cover)
                               }
-                              setVideoFile(undefined);
+                              setVideoFile(undefined)
                             }}
                           >
                             <CloseOutlined />
                           </div>
-                          <Tooltip title={t("actions.preview")}>
+                          <Tooltip title={t('actions.preview')}>
                             <div className="pubParmasTextarea-uploads-item-video">
                               <img src={v.cover?.imgUrl} />
                               <div className="pubParmasTextarea-uploads-item-play">
@@ -440,7 +452,7 @@ const PubParmasTextarea = memo(
                           </Tooltip>
                         </div>
                       </CSSTransition>
-                    );
+                    )
                   })}
 
                   {canShowDragger && (
@@ -461,45 +473,46 @@ const PubParmasTextarea = memo(
                         onVideoUpdateFinish={(video) => {
                           setVideoFile((prevState) => {
                             if (prevState) {
-                              const prevIds = prevState.uploadTaskIds ?? {};
-                              const nextIds = video?.uploadTaskIds ?? {};
+                              const prevIds = prevState.uploadTaskIds ?? {}
+                              const nextIds = video?.uploadTaskIds ?? {}
 
                               if (
-                                prevIds.video &&
-                                prevIds.video !== nextIds.video
+                                prevIds.video
+                                && prevIds.video !== nextIds.video
                               ) {
-                                cancelUpload(prevIds.video);
+                                cancelUpload(prevIds.video)
                               }
 
                               if (
-                                prevIds.cover &&
-                                prevIds.cover !== nextIds.cover
+                                prevIds.cover
+                                && prevIds.cover !== nextIds.cover
                               ) {
-                                cancelUpload(prevIds.cover);
+                                cancelUpload(prevIds.cover)
                               }
                             }
 
-                            return video;
-                          });
+                            return video
+                          })
                         }}
                         onImgUpdateFinish={(imgs) => {
                           setImageFileList((prevState) => {
-                            const next = [...prevState];
+                            const next = [...prevState]
 
                             imgs.forEach((img) => {
                               const index = next.findIndex(
-                                (item) => item.id === img.id,
-                              );
+                                item => item.id === img.id,
+                              )
 
                               if (index !== -1) {
-                                next[index] = img;
-                              } else {
-                                next.push(img);
+                                next[index] = img
                               }
-                            });
+                              else {
+                                next.push(img)
+                              }
+                            })
 
-                            return next;
-                          });
+                            return next
+                          })
                         }}
                       />
                     </CSSTransition>
@@ -510,10 +523,10 @@ const PubParmasTextarea = memo(
               {/* 裁剪 */}
               {videoFile && (
                 <Button
-                  style={{ marginTop: "10px" }}
+                  style={{ marginTop: '10px' }}
                   onClick={() => setVideoCoverSetingModal(true)}
                 >
-                  {t("actions.cropCover")}
+                  {t('actions.cropCover')}
                 </Button>
               )}
             </div>
@@ -527,11 +540,11 @@ const PubParmasTextarea = memo(
                       icon={<FileTextOutlined />}
                       type="text"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        setDraftModalOpen(true);
+                        e.stopPropagation()
+                        setDraftModalOpen(true)
                       }}
                     >
-                      {t("actions.selectDraft")}
+                      {t('actions.selectDraft')}
                     </Button>
                   </div>
                   <div className="pubParmasTextarea-footer-options-left-item">
@@ -540,11 +553,11 @@ const PubParmasTextarea = memo(
                       icon={<Aibrush />}
                       type="text"
                       onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenLeft(true);
+                        e.stopPropagation()
+                        setOpenLeft(true)
                       }}
                     >
-                      {t("writingAssistant")}
+                      {t('writingAssistant')}
                     </Button>
                   </div>
                 </div>
@@ -565,9 +578,9 @@ const PubParmasTextarea = memo(
             />
           </div>
         </>
-      );
+      )
     },
   ),
-);
+)
 
-export default PubParmasTextarea;
+export default PubParmasTextarea

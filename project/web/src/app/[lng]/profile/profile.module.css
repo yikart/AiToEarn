@@ -38,7 +38,7 @@
 
 /* 个人信息卡片特殊样式 */
 .personalInfoCard {
-  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  background: linear-gradient(135deg, #2b2f36 0%, #4e4c4d 100%);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 4px 16px rgba(43, 47, 54, 0.2);
@@ -135,7 +135,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  background: linear-gradient(135deg, #2b2f36 0%, #4e4c4d 100%);
   z-index: 0;
   border-radius: 12px;
 }
@@ -294,7 +294,9 @@
 
 .activateButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.3), 0 4px 16px rgba(166, 106, 228, 0.3);
+  box-shadow:
+    0 0 0 3px rgba(166, 106, 228, 0.3),
+    0 4px 16px rgba(166, 106, 228, 0.3);
 }
 
 .normalUserCallToAction {
@@ -313,7 +315,7 @@
 
 /* 积分卡片样式 */
 .pointsCard {
-  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  background: linear-gradient(135deg, #2b2f36 0%, #4e4c4d 100%);
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
@@ -336,8 +338,13 @@
 }
 
 @keyframes shimmer {
-  0%, 100% { transform: translateX(-100%); }
-  50% { transform: translateX(100%); }
+  0%,
+  100% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
 }
 
 .pointsContent {
@@ -604,7 +611,7 @@
   .container {
     padding: 12px;
   }
-  
+
   .card {
     margin-bottom: 12px;
   }
@@ -718,24 +725,24 @@
     font-size: 12px;
   }
 
-     .methodContent p {
-     font-size: 10px;
-   }
+  .methodContent p {
+    font-size: 10px;
+  }
 
-   .paymentSuccessTip {
-     padding: 10px;
-     margin-bottom: 12px;
-   }
+  .paymentSuccessTip {
+    padding: 10px;
+    margin-bottom: 12px;
+  }
 
-   .paymentSuccessTip p {
-     font-size: 12px;
-   }
+  .paymentSuccessTip p {
+    font-size: 12px;
+  }
 
-   .paymentSuccessButton {
-     font-size: 12px;
-     padding: 6px 12px;
-   }
- }
+  .paymentSuccessButton {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
 
 /* 积分充值弹窗样式 */
 .rechargeContent {
@@ -743,7 +750,7 @@
 }
 
 .currentPoints {
-  background: linear-gradient(135deg, #2B2F36 0%, #4E4C4D 100%);
+  background: linear-gradient(135deg, #2b2f36 0%, #4e4c4d 100%);
   border-radius: 12px;
   padding: 20px;
   text-align: center;
@@ -864,44 +871,44 @@
   color: #fff;
 }
 
- .rechargeButton:hover {
-   transform: translateY(-2px);
-   box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
-   background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
- }
+.rechargeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(106, 90, 205, 0.3);
+  background: linear-gradient(135deg, #7b68ee 0%, #b76dd9 100%);
+}
 
- /* 支付成功提示样式 */
- .paymentSuccessTip {
-   background: rgba(82, 196, 26, 0.1);
-   border: 1px solid rgba(82, 196, 26, 0.3);
-   border-radius: 8px;
-   padding: 12px;
-   margin-bottom: 16px;
-   text-align: center;
-   margin-top: 20px;
- }
+/* 支付成功提示样式 */
+.paymentSuccessTip {
+  background: rgba(82, 196, 26, 0.1);
+  border: 1px solid rgba(82, 196, 26, 0.3);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  text-align: center;
+  margin-top: 20px;
+}
 
- .paymentSuccessTip p {
-   color: #52c41a;
-   font-size: 13px;
-   margin-bottom: 8px;
-   font-weight: 500;
- }
+.paymentSuccessTip p {
+  color: #52c41a;
+  font-size: 13px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
 
- .paymentSuccessButton {
-   background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-   border: none;
-   border-radius: 6px;
-   font-weight: 600;
-   transition: all 0.3s ease;
-   box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
- }
+.paymentSuccessButton {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(82, 196, 26, 0.3);
+}
 
- .paymentSuccessButton:hover {
-   background: linear-gradient(135deg, #73d13d 0%, #95de64 100%);
-   transform: translateY(-1px);
-   box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
- }
+.paymentSuccessButton:hover {
+  background: linear-gradient(135deg, #73d13d 0%, #95de64 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(82, 196, 26, 0.4);
+}
 
 /* 余额卡片样式 */
 .incomeCard {
@@ -909,7 +916,7 @@
   border-radius: 12px;
   padding: 20px;
   margin-bottom: 20px;
-  color: #2B2F36;
+  color: #2b2f36;
   box-shadow: 0 4px 16px rgba(43, 47, 54, 0.08);
   position: relative;
   overflow: hidden;
@@ -918,7 +925,7 @@
 
 /* 顶部头部信息卡片 */
 .headerCard {
-  background-color: #F7F8FA;
+  background-color: #f7f8fa;
   border-radius: 16px;
   padding: 20px 30px;
   display: flex;
@@ -939,7 +946,7 @@
   justify-content: center;
   color: #a66ae4;
   font-size: 28px;
-  border: 2px solid rgba(166,106,228,0.35);
+  border: 2px solid rgba(166, 106, 228, 0.35);
 }
 
 .nameBlock {
@@ -1005,16 +1012,15 @@
   margin-top: 2px;
   font-weight: 600;
   font-size: 18px;
-  background: #F2F3F5;
-
+  background: #f2f3f5;
 }
 
 /* 深色统计卡片 */
 .statsCard {
   border-radius: 14px;
-  padding: 18px  0;
+  padding: 18px 0;
   color: #e5e7eb;
-  border: 1px solid rgba(255,255,255,0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   overflow: hidden;
   margin-top: 20px;
 }
@@ -1026,20 +1032,20 @@
 }
 
 .statsTitle {
-  color: #4B6775;
+  color: #4b6775;
   font-size: 14px;
 }
 
 .statsAmount {
   font-size: 28px;
   font-weight: 800;
-  color: #54687B;
+  color: #54687b;
   margin-bottom: 10px;
 }
 
 .statsCurrency {
   margin-left: 6px;
-  color: #4B6775;
+  color: #4b6775;
 }
 
 .statsGrid {
@@ -1059,7 +1065,7 @@
   padding: 16px 8px 18px 8px;
 }
 
-.statsItem:hover{
+.statsItem:hover {
   cursor: pointer;
 }
 
@@ -1071,7 +1077,7 @@
 
 .statsLabel {
   margin-top: 4px;
-  color: #95887D;
+  color: #95887d;
   font-size: 12px;
   text-align: left;
 }
@@ -1119,7 +1125,7 @@
 .incomeTitle {
   font-size: 18px;
   font-weight: 600;
-  color: #2B2F36;
+  color: #2b2f36;
 }
 
 .incomeCount {
@@ -1202,7 +1208,9 @@
 
 .incomeButton:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(166, 106, 228, 0.35), 0 2px 8px rgba(166, 106, 228, 0.35);
+  box-shadow:
+    0 0 0 3px rgba(166, 106, 228, 0.35),
+    0 2px 8px rgba(166, 106, 228, 0.35);
 }
 
 /* Edit Card 样式 */
@@ -1242,7 +1250,7 @@
 
 .editCard .fieldInput {
   flex: 1;
-  background-color: #F2F3F5;
+  background-color: #f2f3f5;
   padding: 15px 12px;
   border-radius: 8px;
   border: none;
@@ -1252,12 +1260,12 @@
 }
 
 .editCard .fieldButton {
-  color: #424A57;
+  color: #424a57;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
   padding: 15px 16px;
-  background-color: #F2F3F5;
+  background-color: #f2f3f5;
   border-radius: 8px;
   border: none;
   transition: all 0.2s ease;
@@ -1266,4 +1274,4 @@
 .editCard .fieldButton:hover {
   background-color: #e2e8f0;
   color: #8b5cf6;
-} 
+}

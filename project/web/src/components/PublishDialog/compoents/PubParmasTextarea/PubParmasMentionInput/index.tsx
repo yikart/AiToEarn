@@ -1,65 +1,70 @@
-"use client";
+'use client'
 
-import React, {
+import type {
+  InitialConfigType,
+} from '@lexical/react/LexicalComposer'
+import type { EditorState, LexicalEditor } from 'lexical'
+import type {
   ForwardedRef,
-  forwardRef,
-  memo,
-  useCallback,
-  useRef,
-} from "react";
+} from 'react'
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
+import {
+  LexicalComposer,
+} from '@lexical/react/LexicalComposer'
+import { ContentEditable } from '@lexical/react/LexicalContentEditable'
+import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
+import { $getRoot } from 'lexical'
 import {
   BeautifulMentionNode,
   BeautifulMentionsPlugin,
   PlaceholderNode,
-} from "lexical-beautiful-mentions";
-import {
-  InitialConfigType,
-  LexicalComposer,
-} from "@lexical/react/LexicalComposer";
-import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
-import { ContentEditable } from "@lexical/react/LexicalContentEditable";
-import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
-import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { EditorState, $getRoot, LexicalEditor } from "lexical";
-import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
-import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import styles from "./pubParmasMentionInput.module.scss";
+} from 'lexical-beautiful-mentions'
+import React, {
+  forwardRef,
+  memo,
+  useCallback,
+  useRef,
+} from 'react'
+import { getDouyinTopicsApi } from '@/api/dataStatistics'
 
 import {
   Menu,
   MenuItem,
-} from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/components/Menu";
-import { getDouyinTopicsApi } from "@/api/dataStatistics";
+} from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/components/Menu'
 import {
   InitialValuePlugin,
   PasteTopicsPlugin,
-} from "@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/utils/editor-utils";
+} from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/utils/editor-utils'
+import styles from './pubParmasMentionInput.module.scss'
 
 export interface IPubParmasMentionInputRef {}
 
 export interface IPubParmasMentionInputProps {
-  onChange: (value: string) => void;
-  value: string;
-  placeholder: string;
-  maxLength: number;
+  onChange: (value: string) => void
+  value: string
+  placeholder: string
+  maxLength: number
 }
 
 const mentionItems = {
-  "#": [],
-};
+  '#': [],
+}
 
 const editorConfig: InitialConfigType = {
   nodes: [BeautifulMentionNode, PlaceholderNode],
-  namespace: "PublishDescriptionEditor",
+  namespace: 'PublishDescriptionEditor',
   onError(error: Error) {
-    throw error;
+    throw error
   },
   theme: {
     beautifulMentions: {
-      "#": `${styles.mentionsStyle}`,
+      '#': `${styles.mentionsStyle}`,
     },
   },
-};
+}
 
 const PubParmasMentionInput = memo(
   forwardRef(
@@ -67,35 +72,36 @@ const PubParmasMentionInput = memo(
       { onChange, value, placeholder, maxLength }: IPubParmasMentionInputProps,
       ref: ForwardedRef<IPubParmasMentionInputRef>,
     ) => {
-      const comboboxAnchor = useRef<HTMLDivElement>(null);
+      const comboboxAnchor = useRef<HTMLDivElement>(null)
       const handleChange = useCallback(
         (editorState: EditorState, editor: LexicalEditor) => {
           editorState.read(() => {
-            const root = $getRoot();
-            const text = root.getTextContent();
-            onChange(text);
-          });
+            const root = $getRoot()
+            const text = root.getTextContent()
+            onChange(text)
+          })
         },
         [],
-      );
+      )
 
       const handleSearch = useCallback(
         async (trigger: string, queryString?: string | null) => {
-          if (!queryString) return [];
-          const res = await getDouyinTopicsApi(queryString!);
-          return res?.data ?? [];
+          if (!queryString)
+            return []
+          const res = await getDouyinTopicsApi(queryString!)
+          return res?.data ?? []
         },
         [],
-      );
+      )
 
       // @ts-ignore
       const beautifulMentionsProps: any = {
         comboboxAnchor: comboboxAnchor.current,
         items: mentionItems,
-        triggers: ["#"],
+        triggers: ['#'],
         autoSpace: true,
         creatable: {
-          "#": 'Add tag "{{name}}"',
+          '#': 'Add tag "{{name}}"',
         },
         menuComponent: Menu,
         menuItemComponent: MenuItem,
@@ -104,18 +110,18 @@ const PubParmasMentionInput = memo(
         allowSpaces: false,
         searchDelay: 200,
         onSearch: handleSearch,
-      };
+      }
 
       return (
         <div className={styles.mentionsContainer} ref={comboboxAnchor}>
           <LexicalComposer initialConfig={editorConfig}>
             <RichTextPlugin
-              contentEditable={
+              contentEditable={(
                 <ContentEditable
                   className={styles.mentionsContentEditable}
                   style={{ tabSize: 1 }}
                 />
-              }
+              )}
               placeholder={
                 <div className={styles.mentionsPlaceholder}>{placeholder}</div>
               }
@@ -132,9 +138,9 @@ const PubParmasMentionInput = memo(
             <BeautifulMentionsPlugin {...beautifulMentionsProps} />
           </LexicalComposer>
         </div>
-      );
+      )
     },
   ),
-);
+)
 
-export default PubParmasMentionInput;
+export default PubParmasMentionInput

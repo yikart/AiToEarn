@@ -6,12 +6,12 @@
   height: 40px;
   border-radius: 50%;
   transition: all 0.3s ease;
-  
+
   &:hover {
     background-color: #f5f5f5;
     transform: scale(1.05);
   }
-  
+
   .anticon {
     font-size: 18px;
     color: #666;
@@ -23,10 +23,10 @@
     border-bottom: 1px solid #f0f0f0;
     padding: 16px 24px;
   }
-  
-     .ant-modal-body {
-     padding: 28px;
-   }
+
+  .ant-modal-body {
+    padding: 28px;
+  }
 }
 
 .modalHeader {
@@ -35,7 +35,7 @@
   align-items: center;
   width: 100%;
   padding-top: 20px;
-  
+
   span {
     font-size: 16px;
     font-weight: 600;
@@ -48,7 +48,7 @@
   font-size: 14px;
   padding: 0;
   height: auto;
-  
+
   &:hover {
     color: #9254de;
   }
@@ -58,35 +58,35 @@
   padding-top: 0px;
   .ant-picker-calendar {
     border: none;
-    
+
     .ant-picker-calendar-header {
       padding: 0;
       margin-bottom: 16px;
     }
-    
-         .ant-picker-calendar-date {
-       border: none;
-       padding: 6px;
-       height: 40px;
-       display: flex;
-       align-items: center;
-       justify-content: center;
-       
-       &:hover {
-         background-color: #f5f5f5;
-       }
-     }
-    
+
+    .ant-picker-calendar-date {
+      border: none;
+      padding: 6px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+    }
+
     .ant-picker-calendar-date-today {
       background-color: #e6f7ff;
       border: 1px solid #1890ff;
     }
-    
-         .ant-picker-calendar-date-value {
-       font-size: 14px;
-       line-height: 1;
-     }
-    
+
+    .ant-picker-calendar-date-value {
+      font-size: 14px;
+      line-height: 1;
+    }
+
     .ant-picker-calendar-date-content {
       height: auto;
       line-height: 1;
@@ -144,13 +144,11 @@
   background-color: transparent;
 }
 
-
-
 .dateText {
   font-size: 12px;
   color: #333;
   line-height: 1;
-  
+
   &.today {
     color: #1890ff;
     font-weight: 600;
@@ -162,29 +160,29 @@
   padding: 20px;
   background-color: #f8f9fa;
   border-radius: 8px;
-  
-     h4 {
-     margin: 0 0 12px 0;
-     font-size: 16px;
-     font-weight: 600;
-     color: #333;
-   }
-   
-   ul {
-     margin: 0;
-     padding-left: 16px;
-     
-     li {
-       margin-bottom: 8px;
-       font-size: 14px;
-       color: #666;
-       line-height: 1.4;
-       
-       &:last-child {
-         margin-bottom: 0;
-       }
-     }
-   }
+
+  h4 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 16px;
+
+    li {
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #666;
+      line-height: 1.4;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
 }
 
 .signInInfo {
@@ -194,12 +192,12 @@
   padding: 16px 20px;
   background-color: #f0f8ff;
   border-radius: 6px;
-  
-     .infoItem {
-     font-size: 15px;
-     color: #1890ff;
-     font-weight: 500;
-   }
+
+  .infoItem {
+    font-size: 15px;
+    color: #1890ff;
+    font-weight: 500;
+  }
 }
 
 .signInActionButton {
@@ -209,13 +207,13 @@
   border-radius: 8px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border: none;
-  
+
   &:hover {
     background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
   }
-  
+
   &:disabled {
     background: #f5f5f5;
     color: #999;
@@ -232,27 +230,27 @@
       max-width: 550px;
     }
   }
-  
-     .calendarContainer {
-     .ant-picker-calendar-date {
-       height: 36px;
-     }
-     
-           .dateText {
-        font-size: 13px;
-      }
-      
-      .signedCircle,
-      .emptyCircle {
-        width: 6px;
-        height: 6px;
-      }
-   }
-  
+
+  .calendarContainer {
+    .ant-picker-calendar-date {
+      height: 36px;
+    }
+
+    .dateText {
+      font-size: 13px;
+    }
+
+    .signedCircle,
+    .emptyCircle {
+      width: 6px;
+      height: 6px;
+    }
+  }
+
   .signInInfo {
     flex-direction: column;
     gap: 8px;
-    
+
     .infoItem {
       text-align: center;
     }

@@ -30,7 +30,6 @@
   "emailLabel": "邮箱",
   "emailRequired": "请输入邮箱",
   "emailInvalid": "请输入有效的邮箱地址",
-  "emailPlaceholder": "请输入注册邮箱",
   "sendResetLink": "发送重置链接",
   "newPassword": "新密码",
   "newPasswordRequired": "请输入新密码",
@@ -53,4 +52,4 @@
   "verificationCodePlaceholder": "请输入邮箱中的验证码",
   "resetEmailSent": "重置邮件已发送，请查收",
   "sendEmailFailed": "发送邮件失败"
-} 
+}

@@ -1,25 +1,26 @@
-import { ForwardedRef, forwardRef, memo, useEffect, useMemo } from "react";
-import styles from "./hotContentSidebar.module.scss";
-import React from "react";
-import Icon from "@ant-design/icons";
-import { Menu } from "antd";
-import type { GetProp, MenuProps } from "antd";
-import HotContentSvg from "../../svgs/hotContent.svg";
-import HotEventSvg from "../../svgs/hotEvent.svg";
-import HotFeaturesSvg from "../../svgs/hotFeatures.svg";
-import HotTitleSvg from "../../svgs/hotTitle.svg";
-import { HotType } from "@/app/[lng]/hotContent/hotContent.enum";
-import { useShallow } from "zustand/react/shallow";
-import { useHotContent } from "@/app/[lng]/hotContent/useHotContent";
-import { useTransClient } from "@/app/i18n/client";
+import type { GetProp, MenuProps } from 'antd'
+import type { ForwardedRef } from 'react'
+import Icon from '@ant-design/icons'
+import { Menu } from 'antd'
+import React, { forwardRef, memo, useEffect, useMemo } from 'react'
 
-type MenuItem = GetProp<MenuProps, "items">[number];
+import { useShallow } from 'zustand/react/shallow'
+import { HotType } from '@/app/[lng]/hotContent/hotContent.enum'
+import { useHotContent } from '@/app/[lng]/hotContent/useHotContent'
+import { useTransClient } from '@/app/i18n/client'
+import HotContentSvg from '../../svgs/hotContent.svg'
+import HotEventSvg from '../../svgs/hotEvent.svg'
+import HotFeaturesSvg from '../../svgs/hotFeatures.svg'
+import HotTitleSvg from '../../svgs/hotTitle.svg'
+import styles from './hotContentSidebar.module.scss'
+
+type MenuItem = GetProp<MenuProps, 'items'>[number]
 
 export interface IHotContentSidebarRef {}
 
 export interface IHotContentSidebarProps {}
 
-const yikaOss = process.env.NEXT_PUBLIC_YIKA_OSS_HOST;
+const yikaOss = process.env.NEXT_PUBLIC_YIKA_OSS_HOST
 
 const HotContentSidebar = memo(
   forwardRef(
@@ -34,7 +35,7 @@ const HotContentSidebar = memo(
         hotTitlePlatformList,
         changeHotContentPlatform,
       } = useHotContent(
-        useShallow((state) => ({
+        useShallow(state => ({
           setHotType: state.setHotType,
           hotType: state.hotType,
           hotContentPlatformList: state.hotContentPlatformList,
@@ -44,22 +45,22 @@ const HotContentSidebar = memo(
           hotTitlePlatformList: state.hotTitlePlatformList,
           changeHotContentPlatform: state.changeHotContentPlatform,
         })),
-      );
-      const { t } = useTransClient("hot-content");
+      )
+      const { t } = useTransClient('hot-content')
 
       const items = useMemo(() => {
         const items: MenuItem[] = [
           {
             key: HotType.hotContent,
             icon: <Icon component={HotContentSvg} />,
-            label: <b>{t("hotContent")}</b>,
-            children: hotContentPlatformList.map((platform) => ({
+            label: <b>{t('hotContent')}</b>,
+            children: hotContentPlatformList.map(platform => ({
               key: `${HotType.hotContent}_${platform.id}`,
               label: platform.name,
               icon: (
                 <img
                   src={`${yikaOss}/${platform.icon}`}
-                  style={{ width: "18px" }}
+                  style={{ width: '18px' }}
                 />
               ),
             })),
@@ -67,53 +68,53 @@ const HotContentSidebar = memo(
           {
             key: HotType.hotEvent,
             icon: <Icon component={HotEventSvg} />,
-            label: <b>{t("hotEvents")}</b>,
+            label: <b>{t('hotEvents')}</b>,
           },
           {
             key: HotType.hotFeatures,
             icon: <Icon component={HotFeaturesSvg} />,
-            label: <b>{t("hotTopics")}</b>,
+            label: <b>{t('hotTopics')}</b>,
             children: [
               {
-                key: "AIGC",
-                label: "AIGC",
+                key: 'AIGC',
+                label: 'AIGC',
               },
               {
-                key: "短剧",
-                label: t("shortDrama"),
+                key: '短剧',
+                label: t('shortDrama'),
               },
               {
-                key: "文旅",
-                label: t("cultureTourism"),
+                key: '文旅',
+                label: t('cultureTourism'),
               },
               {
-                key: "内容出海",
-                label: t("contentOverseas"),
+                key: '内容出海',
+                label: t('contentOverseas'),
               },
             ],
           },
           {
             key: HotType.hotTitle,
             icon: <Icon component={HotTitleSvg} />,
-            label: <b>{t("viralTitles")}</b>,
-            children: hotTitlePlatformList.map((platform) => ({
+            label: <b>{t('viralTitles')}</b>,
+            children: hotTitlePlatformList.map(platform => ({
               key: `${HotType.hotTitle}_${platform.id}`,
               label: platform.name,
               icon: (
                 <img
                   src={`${yikaOss}/${platform.icon}`}
-                  style={{ width: "18px" }}
+                  style={{ width: '18px' }}
                 />
               ),
             })),
           },
-        ];
-        return items;
-      }, [hotContentPlatformList, hotTitlePlatformList, t]);
+        ]
+        return items
+      }, [hotContentPlatformList, hotTitlePlatformList, t])
 
       useEffect(() => {
-        init();
-      }, [init]);
+        init()
+      }, [init])
 
       return (
         <div className={styles.hotContentSidebar}>
@@ -128,24 +129,25 @@ const HotContentSidebar = memo(
             ]}
             selectedKeys={twoMenuKey ? [twoMenuKey, hotType] : [hotType]}
             onClick={(e) => {
-              const hotType = e["keyPath"][e["keyPath"].length - 1] as HotType;
+              const hotType = e.keyPath[e.keyPath.length - 1] as HotType
               // 热门内容分类设置
-              setHotType(hotType);
+              setHotType(hotType)
 
               switch (hotType) {
                 case HotType.hotContent:
-                  changeHotContentPlatform(e.key);
-                  break;
+                  changeHotContentPlatform(e.key)
+                  break
                 case HotType.hotTitle:
-                  changeHotContentPlatform(e.key);
-                  break;
+                  changeHotContentPlatform(e.key)
+                  break
               }
 
               if (e.keyPath.length === 2) {
                 // 侧边栏二级菜单选择
-                setTwoMenuKey(e.key);
-              } else {
-                setTwoMenuKey("");
+                setTwoMenuKey(e.key)
+              }
+              else {
+                setTwoMenuKey('')
               }
             }}
             items={items}
@@ -153,9 +155,9 @@ const HotContentSidebar = memo(
             inlineIndent={10}
           />
         </div>
-      );
+      )
     },
   ),
-);
+)
 
-export default HotContentSidebar;
+export default HotContentSidebar

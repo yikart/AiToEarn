@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 财务相关
  */
-import { UserWalletAccount } from './userWalletAccount';
+import type { UserWalletAccount } from './userWalletAccount'
 
 export enum UserWalletRecordType {
   TASK_COMMISSION = 'TASK_COMMISSION', // 任务佣金
@@ -19,16 +19,16 @@ export enum UserWalletRecordStatus {
 }
 
 export interface UserWalletRecord {
-  id: string;
-  userId: string;
-  account: UserWalletAccount;
-  dataId: string; // 关联数据的ID
-  type: UserWalletRecordType;
-  balance: number;
-  status: UserWalletRecordStatus;
-  payTime?: string;
-  des?: string;
-  imgUrl?: string; // 反馈截图
-  createdAt: string;
-  updatedAt: string;
+  id: string
+  userId: string
+  account: UserWalletAccount
+  dataId: string // 关联数据的ID
+  type: UserWalletRecordType
+  balance: number
+  status: UserWalletRecordStatus
+  payTime?: string
+  des?: string
+  imgUrl?: string // 反馈截图
+  createdAt: string
+  updatedAt: string
 }

@@ -79,9 +79,15 @@
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .pricingCards {
@@ -99,7 +105,7 @@
   background: #ffffff;
   border-radius: 12px;
   padding: 24px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   border: 1px solid #eef2f7;
   transition: all 0.3s ease;
   position: relative;
@@ -115,19 +121,29 @@
   background: #ffffff;
   color: #111827;
   transform: scale(1.02);
-  box-shadow: 0 0 0 1px rgba(166,106,228,0.4), 0 0 30px rgba(166,106,228,0.25) inset;
+  box-shadow:
+    0 0 0 1px rgba(166, 106, 228, 0.4),
+    0 0 30px rgba(166, 106, 228, 0.25) inset;
   min-height: 530px;
 }
 
 .pricingCard.popular:hover {
   transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 0 0 1px rgba(166,106,228,0.5), 0 0 40px rgba(166,106,228,0.3) inset;
+  box-shadow:
+    0 0 0 1px rgba(166, 106, 228, 0.5),
+    0 0 40px rgba(166, 106, 228, 0.3) inset;
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .popularBadge {
@@ -458,29 +474,29 @@
   .container {
     padding: 0 1rem;
   }
-  
+
   .title {
     font-size: 2.5rem;
   }
-  
+
   .pricingCards {
     grid-template-columns: 1fr;
     gap: 1.5rem;
   }
-  
+
   .pricingCard {
     padding: 2rem;
   }
-  
+
   .mainFeatures {
     grid-template-columns: 1fr;
     gap: 0.8rem;
   }
-  
+
   .faqSection {
     padding: 2rem;
   }
-  
+
   .faqTitle {
     font-size: 2rem;
   }
@@ -551,16 +567,16 @@
     padding: 1rem;
     margin-top: 1.5rem;
   }
-  
+
   .pricingTableContainer h4 {
     font-size: 1.125rem;
   }
-  
+
   .pricingTable {
     font-size: 0.8rem;
     min-width: 600px;
   }
-  
+
   .pricingTable th,
   .pricingTable td {
     padding: 0.5rem;

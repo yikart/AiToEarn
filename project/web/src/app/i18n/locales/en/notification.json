@@ -82,7 +82,6 @@
   },
   "accountSelect": {
     "title": "Select Publisher Account",
-    "description": "Please select an account to publish the task:",
     "noAccounts": "No eligible accounts found, please add an account first",
     "redirectingToAccounts": "Redirecting to accounts page, please add eligible accounts",
     "accountId": "Account ID",

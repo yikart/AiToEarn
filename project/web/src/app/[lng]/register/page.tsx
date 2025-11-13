@@ -1,23 +1,22 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import Link from "next/link";
-import styles from "./register.module.css";
+import Link from 'next/link'
+import { useState } from 'react'
+import styles from './register.module.css'
 
 export default function RegisterPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     if (password !== confirmPassword) {
-      alert("两次输入的密码不一致");
-      return;
+      return
     }
     // TODO: 实现注册逻辑
-    console.log("注册:", { email, password });
-  };
+    console.log('注册:', { email, password })
+  }
 
   return (
     <div className={styles.container}>
@@ -29,7 +28,7 @@ export default function RegisterPage() {
               type="email"
               placeholder="邮箱"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               className={styles.input}
               required
             />
@@ -39,7 +38,7 @@ export default function RegisterPage() {
               type="password"
               placeholder="密码"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               className={styles.input}
               required
             />
@@ -49,7 +48,7 @@ export default function RegisterPage() {
               type="password"
               placeholder="确认密码"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={e => setConfirmPassword(e.target.value)}
               className={styles.input}
               required
             />
@@ -65,5 +64,5 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
-  );
-} 
+  )
+}

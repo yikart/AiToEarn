@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { useTransClient } from "@/app/i18n/client";
-import styles from "../websit.module.scss";
+import { useTransClient } from '@/app/i18n/client'
+import styles from '../websit.module.scss'
 
 // 导入首页的Header组件
 function Header() {
-  const { t } = useTransClient('home');
-  
+  const { t } = useTransClient('home')
+
   return (
     <header className={styles.header}>
       <div className={styles.headerContainer}>
@@ -22,14 +22,14 @@ function Header() {
         <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
       </div>
     </header>
-  );
+  )
 }
 
 export default function DataProtectionAgreementPage() {
   return (
     <div className={styles.websitPage}>
       <Header />
-      
+
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
@@ -40,14 +40,14 @@ export default function DataProtectionAgreementPage() {
               Last Updated: 2024-12-26
             </p>
           </div>
-          
+
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
                 This Data Protection Agreement outlines how we handle, protect, and process your personal data in compliance with applicable data protection laws, including the General Data Protection Regulation (GDPR) and other relevant privacy regulations.
               </p>
             </section>
-            
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>1. Data Controller Information</h2>
               <p className={styles.sectionContent}>
@@ -56,25 +56,51 @@ export default function DataProtectionAgreementPage() {
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Contact Information</h3>
                 <p className={styles.contactText}>
-                  Email: privacy@aiearn.ai<br/>
-                  Address: [Company Address]<br/>
+                  Email: privacy@aiearn.ai
+                  <br />
+                  Address: [Company Address]
+                  <br />
                   Data Protection Officer: dpo@aiearn.ai
                 </p>
               </div>
             </section>
-            
+
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>2. Types of Data We Collect</h2>
               <p className={styles.sectionContent}>
                 We collect and process the following categories of personal data:
               </p>
               <ul className={styles.listContent}>
-                <li><strong>Account Information:</strong> Name, email address, username, password</li>
-                <li><strong>Profile Data:</strong> Profile pictures, bio information, social media links</li>
-                <li><strong>Content Data:</strong> Posts, comments, media files, scheduling information</li>
-                <li><strong>Usage Data:</strong> Platform interactions, feature usage, analytics data</li>
-                <li><strong>Technical Data:</strong> IP address, device information, browser type, session data</li>
-                <li><strong>Communication Data:</strong> Support tickets, feedback, correspondence</li>
+                <li>
+                  <strong>Account Information:</strong>
+                  {' '}
+                  Name, email address, username, password
+                </li>
+                <li>
+                  <strong>Profile Data:</strong>
+                  {' '}
+                  Profile pictures, bio information, social media links
+                </li>
+                <li>
+                  <strong>Content Data:</strong>
+                  {' '}
+                  Posts, comments, media files, scheduling information
+                </li>
+                <li>
+                  <strong>Usage Data:</strong>
+                  {' '}
+                  Platform interactions, feature usage, analytics data
+                </li>
+                <li>
+                  <strong>Technical Data:</strong>
+                  {' '}
+                  IP address, device information, browser type, session data
+                </li>
+                <li>
+                  <strong>Communication Data:</strong>
+                  {' '}
+                  Support tickets, feedback, correspondence
+                </li>
               </ul>
             </section>
 
@@ -84,10 +110,26 @@ export default function DataProtectionAgreementPage() {
                 We process your personal data based on the following legal grounds:
               </p>
               <ul className={styles.listContent}>
-                <li><strong>Contract Performance:</strong> To provide our services and fulfill our contractual obligations</li>
-                <li><strong>Legitimate Interest:</strong> To improve our services, prevent fraud, and ensure security</li>
-                <li><strong>Consent:</strong> For marketing communications and optional features (where required)</li>
-                <li><strong>Legal Obligation:</strong> To comply with applicable laws and regulations</li>
+                <li>
+                  <strong>Contract Performance:</strong>
+                  {' '}
+                  To provide our services and fulfill our contractual obligations
+                </li>
+                <li>
+                  <strong>Legitimate Interest:</strong>
+                  {' '}
+                  To improve our services, prevent fraud, and ensure security
+                </li>
+                <li>
+                  <strong>Consent:</strong>
+                  {' '}
+                  For marketing communications and optional features (where required)
+                </li>
+                <li>
+                  <strong>Legal Obligation:</strong>
+                  {' '}
+                  To comply with applicable laws and regulations
+                </li>
               </ul>
             </section>
 
@@ -97,10 +139,26 @@ export default function DataProtectionAgreementPage() {
                 We may share your personal data with:
               </p>
               <ul className={styles.listContent}>
-                <li><strong>Service Providers:</strong> Cloud hosting, analytics, payment processing, customer support</li>
-                <li><strong>Social Media Platforms:</strong> When you connect and publish content to external platforms</li>
-                <li><strong>Legal Authorities:</strong> When required by law or to protect our legal rights</li>
-                <li><strong>Business Partners:</strong> With your explicit consent for specific integrations</li>
+                <li>
+                  <strong>Service Providers:</strong>
+                  {' '}
+                  Cloud hosting, analytics, payment processing, customer support
+                </li>
+                <li>
+                  <strong>Social Media Platforms:</strong>
+                  {' '}
+                  When you connect and publish content to external platforms
+                </li>
+                <li>
+                  <strong>Legal Authorities:</strong>
+                  {' '}
+                  When required by law or to protect our legal rights
+                </li>
+                <li>
+                  <strong>Business Partners:</strong>
+                  {' '}
+                  With your explicit consent for specific integrations
+                </li>
               </ul>
               <p className={styles.sectionContent}>
                 We ensure all third parties maintain appropriate data protection standards through contractual agreements.
@@ -126,13 +184,41 @@ export default function DataProtectionAgreementPage() {
                 You have the following rights regarding your personal data:
               </p>
               <ul className={styles.listContent}>
-                <li><strong>Right of Access:</strong> Request copies of your personal data</li>
-                <li><strong>Right to Rectification:</strong> Correct inaccurate or incomplete data</li>
-                <li><strong>Right to Erasure:</strong> Request deletion of your personal data</li>
-                <li><strong>Right to Restrict Processing:</strong> Limit how we use your data</li>
-                <li><strong>Right to Data Portability:</strong> Receive your data in a portable format</li>
-                <li><strong>Right to Object:</strong> Object to certain types of processing</li>
-                <li><strong>Right to Withdraw Consent:</strong> Withdraw consent for consent-based processing</li>
+                <li>
+                  <strong>Right of Access:</strong>
+                  {' '}
+                  Request copies of your personal data
+                </li>
+                <li>
+                  <strong>Right to Rectification:</strong>
+                  {' '}
+                  Correct inaccurate or incomplete data
+                </li>
+                <li>
+                  <strong>Right to Erasure:</strong>
+                  {' '}
+                  Request deletion of your personal data
+                </li>
+                <li>
+                  <strong>Right to Restrict Processing:</strong>
+                  {' '}
+                  Limit how we use your data
+                </li>
+                <li>
+                  <strong>Right to Data Portability:</strong>
+                  {' '}
+                  Receive your data in a portable format
+                </li>
+                <li>
+                  <strong>Right to Object:</strong>
+                  {' '}
+                  Object to certain types of processing
+                </li>
+                <li>
+                  <strong>Right to Withdraw Consent:</strong>
+                  {' '}
+                  Withdraw consent for consent-based processing
+                </li>
               </ul>
             </section>
 
@@ -142,11 +228,31 @@ export default function DataProtectionAgreementPage() {
                 We retain your personal data for different periods depending on the purpose:
               </p>
               <ul className={styles.listContent}>
-                <li><strong>Account Data:</strong> Until account deletion plus 30 days for backup recovery</li>
-                <li><strong>Content Data:</strong> Until deletion by user or account termination</li>
-                <li><strong>Usage Analytics:</strong> Aggregated data retained for 2 years</li>
-                <li><strong>Legal/Compliance Data:</strong> As required by applicable laws</li>
-                <li><strong>Marketing Data:</strong> Until consent withdrawal or 3 years of inactivity</li>
+                <li>
+                  <strong>Account Data:</strong>
+                  {' '}
+                  Until account deletion plus 30 days for backup recovery
+                </li>
+                <li>
+                  <strong>Content Data:</strong>
+                  {' '}
+                  Until deletion by user or account termination
+                </li>
+                <li>
+                  <strong>Usage Analytics:</strong>
+                  {' '}
+                  Aggregated data retained for 2 years
+                </li>
+                <li>
+                  <strong>Legal/Compliance Data:</strong>
+                  {' '}
+                  As required by applicable laws
+                </li>
+                <li>
+                  <strong>Marketing Data:</strong>
+                  {' '}
+                  Until consent withdrawal or 3 years of inactivity
+                </li>
               </ul>
             </section>
 
@@ -186,8 +292,10 @@ export default function DataProtectionAgreementPage() {
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Data Protection Requests</h3>
                 <p className={styles.contactText}>
-                  Email: privacy@aiearn.ai<br/>
-                  Subject Line: Data Protection Request - [Type of Request]<br/>
+                  Email: privacy@aiearn.ai
+                  <br />
+                  Subject Line: Data Protection Request - [Type of Request]
+                  <br />
                   Response Time: Within 30 days of receipt
                 </p>
               </div>
@@ -222,9 +330,13 @@ export default function DataProtectionAgreementPage() {
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Data Protection Inquiries</h3>
                 <p className={styles.contactText}>
-                  For any questions about this Data Protection Agreement or our data processing practices:<br/><br/>
-                  Email: privacy@aiearn.ai<br/>
-                  Data Protection Officer: dpo@aiearn.ai<br/>
+                  For any questions about this Data Protection Agreement or our data processing practices:
+                  <br />
+                  <br />
+                  Email: privacy@aiearn.ai
+                  <br />
+                  Data Protection Officer: dpo@aiearn.ai
+                  <br />
                   General Contact: hello@aiearn.ai
                 </p>
               </div>
@@ -233,5 +345,5 @@ export default function DataProtectionAgreementPage() {
         </div>
       </main>
     </div>
-  );
-} 
+  )
+}

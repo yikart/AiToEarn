@@ -1,14 +1,14 @@
 // Threads API接口
-import http from "@/utils/request";
+import http from '@/utils/request'
 
 export interface ThreadsLocationItem {
-  id: string;
-  label: string;
+  id: string
+  label: string
 }
 
 export interface ThreadsLocationsResponse {
-  data: ThreadsLocationItem[];
-  code: number;
+  data: ThreadsLocationItem[]
+  code: number
 }
 
 /**
@@ -17,13 +17,13 @@ export interface ThreadsLocationsResponse {
  * @param keyword 搜索关键词（可选）
  * @returns
  */
-export const apiGetThreadsLocations = (accountId: string, keyword?: string) => {
-  const params: any = { accountId };
+export function apiGetThreadsLocations(accountId: string, keyword?: string) {
+  const params: any = { accountId }
   if (keyword) {
-    params.keyword = keyword;
+    params.keyword = keyword
   }
   return http.get<ThreadsLocationsResponse>(
     `plat/meta/threads/locations`,
-    params 
-  );
-};
+    params,
+  )
+}

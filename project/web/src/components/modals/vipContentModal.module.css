@@ -77,10 +77,10 @@
   padding: 8px 16px;
   cursor: pointer;
   border: 1px solid #e5e7eb;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.outsideCloseModal{
+.outsideCloseModal {
   max-width: 1000px;
 }
 
@@ -104,15 +104,40 @@
   border-radius: 12px;
   padding: 24px;
   border: 1px solid #eef2f7;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
-.freeTitle { font-weight: 700; margin-bottom: 12px; color:#111827; }
-.freePrice { font-size: 14px; margin: 12px 0; color:#111827; height: 69px; line-height: 69px; }
-.freePrice span { font-size: 18px; }
-.unit { margin-left: 6px; font-size: 14px; color: #6b7280; }
-.freeForever { color: #6b7280; margin-bottom: 16px; }
-.freeBtn { width: 100%; margin-bottom: 16px; }
-.freeItem { font-size: 12px; color: #6b7280; }
+.freeTitle {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #111827;
+}
+.freePrice {
+  font-size: 14px;
+  margin: 12px 0;
+  color: #111827;
+  height: 69px;
+  line-height: 69px;
+}
+.freePrice span {
+  font-size: 18px;
+}
+.unit {
+  margin-left: 6px;
+  font-size: 14px;
+  color: #6b7280;
+}
+.freeForever {
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+.freeBtn {
+  width: 100%;
+  margin-bottom: 16px;
+}
+.freeItem {
+  font-size: 12px;
+  color: #6b7280;
+}
 
 .planCard {
   background: #ffffff;
@@ -121,26 +146,90 @@
   padding: 24px;
   position: relative;
   border: 1px solid #eef2f7;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
-.premium { box-shadow: 0 0 0 1px rgba(166,106,228,0.4), 0 0 30px rgba(166,106,228,0.25) inset; min-height: 530px; }
+.premium {
+  box-shadow:
+    0 0 0 1px rgba(166, 106, 228, 0.4),
+    0 0 30px rgba(166, 106, 228, 0.25) inset;
+  min-height: 530px;
+}
 
-.planHead { font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; color:#111827; }
-.planPriceLine { display: flex; align-items: baseline; gap: 4px; margin: 6px 0 10px; }
-.currency { font-size: 18px; }
-.bigNum { font-size: 44px; font-weight: 800; color: #111827; }
-.planDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; line-height: 1.6; }
+.planHead {
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #111827;
+}
+.planPriceLine {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin: 6px 0 10px;
+}
+.currency {
+  font-size: 18px;
+}
+.bigNum {
+  font-size: 44px;
+  font-weight: 800;
+  color: #111827;
+}
+.planDesc {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 12px;
+  line-height: 1.6;
+}
 
+.primaryBtn {
+  width: 100%;
+  background: linear-gradient(92deg, #66e9ff, #b5e9fd 34.5%, #a396ff 66.5%, #a66ae4) !important;
+  border-color: #a66ae4;
+  color: #ffffff;
+  font-weight: 600 !important;
+  margin-bottom: 16px;
+}
+.primaryBtn:hover {
+  background: #9556d1;
+  border-color: #9556d1;
+}
 
-
-.primaryBtn { width: 100%; background: linear-gradient(92deg,#66e9ff,#b5e9fd 34.5%,#a396ff 66.5%,#a66ae4) !important; border-color: #a66ae4; color: #ffffff; font-weight: 600 !important; margin-bottom: 16px; }
-.primaryBtn:hover { background: #9556d1; border-color: #9556d1; }
-
-.benefitBox { background: #f8f4ff; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; color: #7c3aed; margin-bottom: 8px; }
-.dot { width: 8px; height: 8px; background: #a66ae4; border-radius: 50%; display: inline-block; }
-.subDesc { font-size: 12px; color: #6b7280; margin-bottom: 12px; }
-.featureList { list-style: none; padding: 0; margin: 0; padding-left: 3px; display: grid; gap: 10px; color: #374151; font-size: 13px; }
+.benefitBox {
+  background: #f8f4ff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7c3aed;
+  margin-bottom: 8px;
+}
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #a66ae4;
+  border-radius: 50%;
+  display: inline-block;
+}
+.subDesc {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+.featureList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  padding-left: 3px;
+  display: grid;
+  gap: 10px;
+  color: #374151;
+  font-size: 13px;
+}
 
 /* 会员信息区域样式 */
 .vipInfoSection {
@@ -246,7 +335,8 @@
   gap: 88px;
 }
 
-.planType, .expireTime {
+.planType,
+.expireTime {
   font-size: 14px;
   color: #374151;
   display: flex;
@@ -254,7 +344,8 @@
   gap: 8px;
 }
 
-.planValue, .expireValue {
+.planValue,
+.expireValue {
   color: #111827;
 }
 
@@ -297,5 +388,3 @@
   background: #059669;
   border-color: #059669;
 }
-
-

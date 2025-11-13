@@ -1,54 +1,55 @@
-import { create } from "zustand";
-import { combine } from "zustand/middleware";
-import lodash from "lodash";
-import { Platform, platformApi, PlatformRanking, RankingDate } from "@/api/hot";
-import { HotType } from "@/app/[lng]/hotContent/hotContent.enum";
+import type { Platform, PlatformRanking, RankingDate } from '@/api/hot'
+import lodash from 'lodash'
+import { create } from 'zustand'
+import { combine } from 'zustand/middleware'
+import { platformApi } from '@/api/hot'
+import { HotType } from '@/app/[lng]/hotContent/hotContent.enum'
 
 export interface IHotContentStore {
   // 当前选择的 热点分类
-  hotType: HotType;
+  hotType: HotType
   // 热门内容平台list
-  hotContentPlatformList: Platform[];
+  hotContentPlatformList: Platform[]
   // 爆款标题平台list
-  hotTitlePlatformList: Platform[];
+  hotTitlePlatformList: Platform[]
   // 数据loading
-  dataLoading: boolean;
+  dataLoading: boolean
   // 当前侧边栏二级菜单选择的ID
-  twoMenuKey: string;
+  twoMenuKey: string
   // 热门内容页面loading
-  pageLoading: boolean;
+  pageLoading: boolean
   // 热门内容的标签数据 key=平台，value=标签数组
   labelData: {
-    [key: string]: string[];
-  };
+    [key: string]: string[]
+  }
   // 热门内容的榜单数据 key=平台ID，value=榜单数据
   rankingData: {
-    [key: string]: PlatformRanking[];
-  };
+    [key: string]: PlatformRanking[]
+  }
   // 日期数据 key=平台ID，value=日期数据
   datesData: {
-    [key: string]: RankingDate[];
-  };
+    [key: string]: RankingDate[]
+  }
   // 当前选择的榜单分类
-  currentRankCategory: string;
+  currentRankCategory: string
 }
 
 const store: IHotContentStore = {
   hotType: HotType.hotContent,
   hotContentPlatformList: [],
   dataLoading: false,
-  twoMenuKey: "",
+  twoMenuKey: '',
   hotTitlePlatformList: [],
   pageLoading: false,
   labelData: {},
   rankingData: {},
   datesData: {},
-  currentRankCategory: "",
-};
+  currentRankCategory: '',
+}
 
-const getStore = () => {
-  return lodash.cloneDeep(store);
-};
+function getStore() {
+  return lodash.cloneDeep(store)
+}
 
 /**
  * 热门内容数据存储
@@ -62,76 +63,76 @@ export const useHotContent = create(
       const methods = {
         // 设置 currentRankCategory
         setCurrentRankCategory(currentRankCategory: string) {
-          set({ currentRankCategory });
+          set({ currentRankCategory })
         },
         // 设置 当前侧边栏二级菜单选择的ID
         setTwoMenuKey(twoMenuKey: string) {
-          set({ twoMenuKey });
+          set({ twoMenuKey })
         },
         // 设置当前选择的 热点分类
         setHotType(hotType: HotType) {
-          set({ hotType });
+          set({ hotType })
         },
 
         // 初始化
         async init() {
-          set({ pageLoading: true });
+          set({ pageLoading: true })
           await Promise.all([
             methods.getHotContentPlatform(),
             methods.getHotTitlePlatform(),
-          ]);
-          set({ pageLoading: false });
+          ])
+          set({ pageLoading: false })
         },
 
         // 获取热门内容平台
         async getHotContentPlatform() {
-          const res = await platformApi.getPlatformList();
-          const twoMenuKey = `${HotType.hotContent}_${res?.data?.[0]?.id}`;
+          const res = await platformApi.getPlatformList()
+          const twoMenuKey = `${HotType.hotContent}_${res?.data?.[0]?.id}`
 
           set({
             hotContentPlatformList: res?.data,
             twoMenuKey,
-          });
+          })
 
-          methods.changeHotContentPlatform(twoMenuKey);
+          methods.changeHotContentPlatform(twoMenuKey)
         },
 
         // 获取爆款标题平台
         async getHotTitlePlatform() {
-          const res = await platformApi.findPlatformsWithData();
+          const res = await platformApi.findPlatformsWithData()
 
           set({
             hotTitlePlatformList: res?.data,
-          });
+          })
         },
 
         // 热门内容平台切换
         async changeHotContentPlatform(platformId: string) {
-          const { rankingData } = get();
-          platformId = platformId.split("_")[1];
+          const { rankingData } = get()
+          platformId = platformId.split('_')[1]
 
           set({
             pageLoading: true,
-          });
+          })
 
           if (!rankingData[platformId]) {
-            const res = await platformApi.getPlatformRanking(platformId);
+            const res = await platformApi.getPlatformRanking(platformId)
             if (res?.data?.length) {
               const newRankingData = {
                 ...rankingData,
                 [platformId]: res.data,
-              };
-              set({ rankingData: newRankingData });
+              }
+              set({ rankingData: newRankingData })
             }
           }
 
           set({
-            currentRankCategory: get().rankingData[platformId]?.[0]?.id || "",
-          });
+            currentRankCategory: get().rankingData[platformId]?.[0]?.id || '',
+          })
 
           const rankingItem = get().rankingData[platformId].find(
-            (v) => v.id === get().currentRankCategory,
-          )!;
+            v => v.id === get().currentRankCategory,
+          )!
           // 获取标签和日期数据
           if (!get().labelData[platformId]) {
             await Promise.all([
@@ -141,25 +142,25 @@ export const useHotContent = create(
               const newLabelData = {
                 ...get().labelData,
                 [platformId]: labelRes!.data,
-              };
+              }
               const newDatesData = {
                 ...get().datesData,
                 [platformId]: dateRes!.data,
-              };
+              }
               set({
                 labelData: newLabelData,
                 datesData: newDatesData,
-              });
-            });
+              })
+            })
           }
 
           set({
             pageLoading: false,
-          });
+          })
         },
-      };
+      }
 
-      return methods;
+      return methods
     },
   ),
-);
+)

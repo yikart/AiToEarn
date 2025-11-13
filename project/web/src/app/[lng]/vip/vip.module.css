@@ -75,7 +75,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(to right, #2B2F36, #4E4C4D);
+  background: linear-gradient(to right, #2b2f36, #4e4c4d);
   z-index: 0;
   border-radius: 12px;
 }
@@ -243,4 +243,4 @@
   color: #666;
   margin-top: 8px;
   font-style: italic;
-} 
+}

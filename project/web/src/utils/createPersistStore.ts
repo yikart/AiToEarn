@@ -1,9 +1,9 @@
-import { create } from "zustand";
-import { combine, persist, createJSONStorage } from "zustand/middleware";
-import { indexedDBStorage } from "./storage";
-import lodash from "lodash";
+import lodash from 'lodash'
+import { create } from 'zustand'
+import { combine, createJSONStorage, persist } from 'zustand/middleware'
+import { indexedDBStorage } from './storage'
 
-type Updater<T> = (updater: (value: T) => void) => void;
+type Updater<T> = (updater: (value: T) => void) => void
 
 type SecondParam<T> = T extends (
   _f: infer _F,
@@ -11,21 +11,21 @@ type SecondParam<T> = T extends (
   ...args: infer _U
 ) => any
   ? S
-  : never;
+  : never
 
-type MakeUpdater<T> = {
-  lastUpdateTime: number;
-  _hasHydrated: boolean;
+interface MakeUpdater<T> {
+  lastUpdateTime: number
+  _hasHydrated: boolean
 
-  markUpdate: () => void;
-  update: Updater<T>;
-  setHasHydrated: (state: boolean) => void;
-};
+  markUpdate: () => void
+  update: Updater<T>
+  setHasHydrated: (state: boolean) => void
+}
 
 type SetStoreState<T> = (
   partial: T | Partial<T> | ((state: T) => T | Partial<T>),
   replace?: boolean | undefined,
-) => void;
+) => void
 
 /**
  * 创建一个数据持久化的 store
@@ -42,12 +42,12 @@ export function createPersistStore<T extends object, M>(
   ) => M,
   persistOptions: SecondParam<typeof persist<T & M & MakeUpdater<T>>>,
 ) {
-  persistOptions.storage = createJSONStorage(() => indexedDBStorage);
-  const oldOonRehydrateStorage = persistOptions?.onRehydrateStorage;
+  persistOptions.storage = createJSONStorage(() => indexedDBStorage)
+  const oldOonRehydrateStorage = persistOptions?.onRehydrateStorage
   persistOptions.onRehydrateStorage = (state) => {
-    oldOonRehydrateStorage?.(state);
-    return () => state.setHasHydrated(true);
-  };
+    oldOonRehydrateStorage?.(state)
+    return () => state.setHasHydrated(true)
+  }
 
   return create(
     persist(
@@ -64,23 +64,23 @@ export function createPersistStore<T extends object, M>(
             markUpdate() {
               set({ lastUpdateTime: Date.now() } as Partial<
                 T & M & MakeUpdater<T>
-              >);
+              >)
             },
             update(updater) {
-              const state = lodash.cloneDeep(get());
-              updater(state);
+              const state = lodash.cloneDeep(get())
+              updater(state)
               set({
                 ...state,
                 lastUpdateTime: Date.now(),
-              });
+              })
             },
             setHasHydrated: (state: boolean) => {
-              set({ _hasHydrated: state } as Partial<T & M & MakeUpdater<T>>);
+              set({ _hasHydrated: state } as Partial<T & M & MakeUpdater<T>>)
             },
-          } as M & MakeUpdater<T>;
+          } as M & MakeUpdater<T>
         },
       ),
       persistOptions as any,
     ),
-  );
+  )
 }

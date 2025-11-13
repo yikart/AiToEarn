@@ -15,7 +15,7 @@
   border-bottom: 1px solid #e0e0e0;
   flex-wrap: wrap;
   gap: 20px;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     text-align: center;
@@ -27,7 +27,7 @@
   font-weight: bold;
   color: #e60023;
   margin: 0;
-  
+
   @media (max-width: 768px) {
     font-size: 28px;
   }
@@ -38,7 +38,7 @@
   gap: 15px;
   align-items: center;
   flex-wrap: wrap;
-  
+
   @media (max-width: 768px) {
     justify-content: center;
     width: 100%;
@@ -47,7 +47,7 @@
 
 .tabs {
   margin-bottom: 30px;
-  
+
   :global(.ant-tabs-nav) {
     margin-bottom: 24px;
   }
@@ -58,7 +58,7 @@
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   @media (max-width: 768px) {
     padding: 15px;
   }
@@ -66,17 +66,17 @@
 
 .statsCard {
   margin-bottom: 24px;
-  
+
   :global(.ant-card-body) {
     padding: 24px;
   }
-  
+
   :global(.ant-statistic-title) {
     color: rgba(0, 0, 0, 0.65);
     font-size: 14px;
     margin-bottom: 4px;
   }
-  
+
   :global(.ant-statistic-content) {
     color: rgba(0, 0, 0, 0.85);
     font-size: 24px;
@@ -90,7 +90,7 @@
   margin-bottom: 24px;
   align-items: center;
   flex-wrap: wrap;
-  
+
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
@@ -102,7 +102,7 @@
   min-width: 200px;
   max-width: 320px;
   flex: 1;
-  
+
   @media (max-width: 768px) {
     min-width: unset;
     max-width: unset;
@@ -119,17 +119,17 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 24px;
   margin-top: 20px;
-  
+
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
   }
-  
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
   }
-  
+
   @media (max-width: 480px) {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -140,28 +140,28 @@
   height: 100%; // 确保所有卡片高度一致
   display: flex;
   flex-direction: column;
-  
+
   :global(.ant-card-body) {
     padding: 16px;
     flex: 1;
     display: flex;
     flex-direction: column;
   }
-  
+
   :global(.ant-card-actions) {
     border-top: 1px solid #f0f0f0;
     background: #fafafa;
-    
+
     li {
       margin: 8px 0;
-      
+
       button {
         height: auto;
         padding: 4px 8px;
       }
     }
   }
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -178,7 +178,7 @@
   font-size: 48px;
   color: #bbb;
   overflow: hidden;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -191,7 +191,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  
+
   :global(.ant-card-meta-title) {
     font-size: 16px;
     font-weight: 600;
@@ -200,7 +200,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
+
   :global(.ant-card-meta-description) {
     flex: 1;
     display: -webkit-box;
@@ -220,11 +220,11 @@
   gap: 16px;
   align-items: center;
   margin-top: auto;
-  
+
   :global(.ant-badge) {
     display: inline-flex;
     align-items: center;
-    
+
     :global(.ant-badge-count) {
       position: relative;
       transform: none;
@@ -239,7 +239,7 @@
       border-radius: 10px;
     }
   }
-  
+
   .badgeText {
     font-size: 14px;
     color: rgba(0, 0, 0, 0.65);
@@ -253,17 +253,17 @@
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 24px;
   margin-top: 20px;
-  
+
   @media (max-width: 1200px) {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
   }
-  
+
   @media (max-width: 768px) {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
     gap: 16px;
   }
-  
+
   @media (max-width: 480px) {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -274,21 +274,21 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  
+
   :global(.ant-card-body) {
     padding: 12px;
     flex: 1;
     display: flex;
     flex-direction: column;
   }
-  
+
   :global(.ant-card-actions) {
     border-top: 1px solid #f0f0f0;
     background: #fafafa;
-    
+
     li {
       margin: 6px 0;
-      
+
       button {
         height: auto;
         padding: 4px 8px;
@@ -296,7 +296,7 @@
       }
     }
   }
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
@@ -313,7 +313,7 @@
   font-size: 36px;
   color: #bbb;
   overflow: hidden;
-  
+
   img {
     width: 100%;
     height: 100%;
@@ -323,7 +323,7 @@
 
 .pinCardMeta {
   flex: 1;
-  
+
   :global(.ant-card-meta-title) {
     font-size: 14px;
     font-weight: 600;
@@ -332,7 +332,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
+
   :global(.ant-card-meta-description) {
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -350,10 +350,10 @@
   gap: 8px;
   flex-wrap: wrap;
   margin-top: 8px;
-  
+
   :global(.ant-badge) {
     font-size: 11px;
-    
+
     :global(.ant-badge-status-text) {
       font-size: 11px;
       color: rgba(0, 0, 0, 0.65);
@@ -364,11 +364,11 @@
 .loading {
   text-align: center;
   padding: 60px 20px;
-  
+
   :global(.ant-spin-lg .ant-spin-dot) {
     font-size: 32px;
   }
-  
+
   @media (max-width: 768px) {
     padding: 40px 20px;
   }
@@ -380,7 +380,7 @@
   margin-top: 32px;
   padding-top: 24px;
   border-top: 1px solid #f0f0f0;
-  
+
   :global(.ant-pagination) {
     @media (max-width: 768px) {
       :global(.ant-pagination-options) {
@@ -395,7 +395,7 @@
   :global(.ant-modal-content) {
     border-radius: 12px;
   }
-  
+
   :global(.ant-modal-header) {
     border-radius: 12px 12px 0 0;
   }
@@ -410,7 +410,7 @@
   transition: all 0.3s;
   background: #fafafa;
   position: relative;
-  
+
   &:hover {
     border-color: #e60023;
     background: #fff2f0;
@@ -494,7 +494,7 @@
   border-radius: 6px;
   cursor: pointer;
   outline: none;
-  
+
   &:focus {
     border-color: #e60023;
     box-shadow: 0 0 0 2px rgba(230, 0, 35, 0.2);
@@ -516,28 +516,28 @@
   cursor: pointer;
   outline: none;
   background: none;
-  
+
   &::-webkit-color-swatch-wrapper {
     padding: 0;
     border: none;
     border-radius: 5px;
   }
-  
+
   &::-webkit-color-swatch {
     border: none;
     border-radius: 5px;
   }
-  
+
   &::-moz-color-swatch {
     border: none;
     border-radius: 5px;
   }
-  
+
   &:focus {
     border-color: #e60023;
     box-shadow: 0 0 0 2px rgba(230, 0, 35, 0.2);
   }
-  
+
   &:hover {
     border-color: #e60023;
   }
@@ -562,4 +562,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-} 
+}

@@ -1,23 +1,25 @@
-import {
+import type {
+  CSSProperties,
   ForwardedRef,
+} from 'react'
+import {
   forwardRef,
   memo,
+  useLayoutEffect,
   useRef,
   useState,
-  useLayoutEffect,
-  CSSProperties,
-} from "react";
-import styles from "./hotContentLabel.module.scss";
-import { useTransClient } from "@/app/i18n/client";
+} from 'react'
+import { useTransClient } from '@/app/i18n/client'
+import styles from './hotContentLabel.module.scss'
 
 export interface IHotContentLabelRef {}
 
 export interface IHotContentLabelProps {
-  labels: string[];
-  icons?: string[];
-  value: string;
-  onChange: (label: string) => void;
-  style?: CSSProperties;
+  labels: string[]
+  icons?: string[]
+  value: string
+  onChange: (label: string) => void
+  style?: CSSProperties
 }
 
 const HotContentLabel = memo(
@@ -26,25 +28,25 @@ const HotContentLabel = memo(
       { labels, value, onChange, style, icons }: IHotContentLabelProps,
       ref: ForwardedRef<IHotContentLabelRef>,
     ) => {
-      const listRef = useRef<HTMLUListElement>(null);
-      const [expanded, setExpanded] = useState(false);
-      const [showToggle, setShowToggle] = useState(false);
-      const [collapsedHeight, setCollapsedHeight] = useState(0);
-      const [fullHeight, setFullHeight] = useState(0);
-      const { t } = useTransClient("hot-content");
+      const listRef = useRef<HTMLUListElement>(null)
+      const [expanded, setExpanded] = useState(false)
+      const [showToggle, setShowToggle] = useState(false)
+      const [collapsedHeight, setCollapsedHeight] = useState(0)
+      const [fullHeight, setFullHeight] = useState(0)
+      const { t } = useTransClient('hot-content')
 
       useLayoutEffect(() => {
-        const ul = listRef.current;
+        const ul = listRef.current
         if (ul) {
-          const firstLi = ul.querySelector("li");
+          const firstLi = ul.querySelector('li')
           if (firstLi) {
-            const lineHeight = firstLi.getBoundingClientRect().height;
-            setCollapsedHeight(lineHeight);
-            setFullHeight(ul.scrollHeight);
-            setShowToggle(ul.scrollHeight > lineHeight + 2);
+            const lineHeight = firstLi.getBoundingClientRect().height
+            setCollapsedHeight(lineHeight)
+            setFullHeight(ul.scrollHeight)
+            setShowToggle(ul.scrollHeight > lineHeight + 2)
           }
         }
-      }, [labels]);
+      }, [labels])
 
       return (
         <div className={styles.hotContentLabelWrapper} style={style}>
@@ -53,15 +55,15 @@ const HotContentLabel = memo(
             ref={listRef}
             style={{
               maxHeight: expanded ? fullHeight : collapsedHeight,
-              overflow: "hidden",
-              transition: "max-height 0.3s cubic-bezier(0.4,0,0.2,1)",
+              overflow: 'hidden',
+              transition: 'max-height 0.3s cubic-bezier(0.4,0,0.2,1)',
             }}
           >
             {labels.map((label, i) => (
               <li
                 key={label}
                 className={`hotContentLabel-item ${
-                  label === value ? "hotContentLabel-item--active" : ""
+                  label === value ? 'hotContentLabel-item--active' : ''
                 }`}
                 title={label}
                 onClick={() => onChange(label)}
@@ -81,17 +83,17 @@ const HotContentLabel = memo(
             <a
               className="hotContentLabel-toggle"
               onClick={(e) => {
-                e.preventDefault();
-                setExpanded((v) => !v);
+                e.preventDefault()
+                setExpanded(v => !v)
               }}
             >
-              {expanded ? t("collapse") : t("expand")}
+              {expanded ? t('collapse') : t('expand')}
             </a>
           )}
         </div>
-      );
+      )
     },
   ),
-);
+)
 
-export default HotContentLabel;
+export default HotContentLabel
