@@ -246,6 +246,7 @@ export const useDataStatisticsStore = create(
           // 初始化矩阵
           const chartData: Record<string, number[]> = {}
           platforms.forEach(
+            // @ts-ignore
             p => (chartData[p] = Array.from({ length: dates.length }).fill(0)),
           )
 

@@ -25,5 +25,6 @@ export default antfu({
     '@typescript-eslint/no-use-before-define': 'off',
     'ts/no-use-before-define': 'off',
     'no-empty-pattern': 'off',
+    'regexp/no-contradiction-with-assertion': 'off',
   },
 })
