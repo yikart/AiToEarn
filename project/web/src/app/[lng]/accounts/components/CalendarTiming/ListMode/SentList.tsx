@@ -5,7 +5,6 @@ import { useTransClient } from '@/app/i18n/client';
 import { getSentPosts } from '@/api/sent';
 import { SentPost } from '@/api/types/sent.types';
 import styles from './listMode.module.scss';
-import { PublishStatus } from '@/api/plat/types/publish.types';
 import dayjs from 'dayjs';
 import { useAccountStore } from '@/store/account';
 import { useShallow } from 'zustand/react/shallow';
@@ -32,14 +31,14 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
   const [hasMore, setHasMore] = useState(false);
   const [page, setPage] = useState(1);
 
-  // 获取账户列表用于映射
+  // Get account list for mapping
   const { accountList } = useAccountStore(
     useShallow((state) => ({
       accountList: state.accountList,
     })),
   );
 
-  // 创建 accountId 到账户信息的映射
+  // Create mapping from accountId to account information
   const accountMap = useMemo(() => {
     const map = new Map();
     accountList.forEach(account => {
@@ -51,13 +50,8 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
   const loadPosts = async (pageNum: number = 1, append: boolean = false) => {
     setLoading(true);
     try {
-      // 构建请求参数，如果没有 platform 和 uid 就不传
+      // Build request parameters, if platform and uid are not passed, don't pass
       const params: any = {
-        // page: pageNum,
-        // pageSize: 20
-
-        status: PublishStatus.RELEASED,
-        // 开始时间：一个月前；结束时间：现在
         time: [dayjs().subtract(1, 'month').utc().format(), dayjs().utc().format()],
       };
       
@@ -71,7 +65,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
       
       const response = await getSentPosts(params);
       
-      // 处理新的API响应格式
+      // Handle new API response format
       const responseData = (response as any)?.data || response;
       
       console.log('SentList API Response:', {
@@ -81,7 +75,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
         params
       });
       
-      // 处理响应数据，直接使用responseData作为数组
+      // Handle response data, directly use responseData as an array
       const postsData = Array.isArray(responseData) ? responseData : (responseData?.posts || responseData?.list || []);
       
       if (append) {
@@ -91,13 +85,13 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
       }
       setHasMore(responseData?.hasMore || false);
       
-      // 通知父组件数据变化
+      // Notify parent component of data change
       if (onDataChange) {
         onDataChange(responseData?.total || postsData.length);
       }
     } catch (error) {
       console.error('Failed to load sent posts:', error);
-      // 发生错误时重置数据
+      // When an error occurs, reset data
       if (!append) {
         setPosts([]);
         setHasMore(false);
@@ -111,7 +105,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
   };
 
   useEffect(() => {
-    // 进入页面就调用，不管有没有 platform 和 uid
+    // Enter the page and call it, regardless of whether there is platform and uid
     loadPosts(1, false);
   }, [platform, uid]);
 
@@ -139,7 +133,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
   };
 
   const renderPostItem = (post: SentPost) => {
-    // 根据 accountId 获取账户信息
+    // Get account information based on accountId
     const account = accountMap.get(post.accountId);
     const platInfo = AccountPlatInfoMap.get(post.accountType as any);
     
@@ -150,7 +144,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
     return (
       <div key={post.id} className={styles.sentPostItem}>
         <div className={styles.postCard}>
-          {/* 日期时间头部 */}
+          {/* Date time header */}
           <div className={styles.postDateHeader}>
             <div className={styles.dateTime}>
               <span className={styles.dateText}>{timeInfo.date}</span>
@@ -158,9 +152,9 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
             </div>
           </div>
 
-          {/* 帖子内容 */}
+          {/* Post content */}
           <div className={styles.postContent}>
-            {/* 用户信息 */}
+            {/* User information */}
             <div className={styles.userInfo}>
               <Avatar 
                 size={40} 
@@ -183,14 +177,14 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
               {/* <div className={styles.chatIcon}>💬</div> */}
             </div>
 
-            {/* 帖子文本 */}
+            {/* Post text */}
             <div className={styles.postText}>
               {post.desc}
             </div>
 
            
 
-            {/* 媒体内容 */}
+            {/* Media content */}
             {post.coverUrl && (
               <div className={styles.mediaContainer}>
                 <div className={styles.mediaWrapper}>
@@ -208,7 +202,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
               </div>
             )}
 
-            {/* 互动数据 */}
+            {/* Interactive data */}
             <div className={styles.engagementMetrics}>
               <div className={styles.metricsRow}>
                 <div className={styles.metricItem}>
@@ -250,7 +244,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
               </div>
             </div>
 
-            {/* 底部信息 */}
+            {/* Bottom information */}
             <div className={styles.postFooter}>
               <div className={styles.creationInfo}>
                 {t('listMode.createdDaysAgo' as any, { days: daysAgo })}
@@ -279,7 +273,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
     );
   };
 
-  // 过滤掉无法在账户列表中匹配到的数据
+  // Filter out data that cannot be matched in the account list
   const validPosts = useMemo(() => {
     return posts.filter(post => accountMap.has(post.accountId));
   }, [posts, accountMap]);
@@ -310,7 +304,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                 onClick={loadMore}
                 className={styles.loadMoreButton}
               >
-                加载更多
+                Load more...
               </Button>
             </div>
           )}
