@@ -26,20 +26,45 @@ jobs:
             let prBody = context.payload.pull_request.body || '';
             const prTitle = context.payload.pull_request.title || '';
             
-            // 移除注释内容（HTML/Markdown 注释格式：<!-- ... -->）
+            const conventionalCommitsPattern = /^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?: .+$/;
+            const validTypes = ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'chore', 'ci', 'build'];
+            
+            if (!conventionalCommitsPattern.test(prTitle)) {
+              const errorMessage = 
+                '❌ PR title does not follow Conventional Commits format.\n\n' +
+                'Required format: <type>(<scope>): <description>\n\n' +
+                'Valid types:\n' +
+                validTypes.map(t => `  - ${t}`).join('\n') + '\n\n' +
+                'Examples:\n' +
+                '  ✅ feat: add user authentication\n' +
+                '  ✅ fix(web): resolve login button issue\n' +
+                '  ✅ docs: update API documentation\n' +
+                '  ✅ refactor(backend): improve error handling\n' +
+                '  ✅ chore: update dependencies\n\n' +
+                'Common mistakes:\n' +
+                '  ❌ "Add new feature" (missing type and colon)\n' +
+                '  ❌ "feat add feature" (missing colon)\n' +
+                '  ❌ "feat: " (missing description)\n' +
+                '  ❌ "feature: add something" (invalid type)\n\n' +
+                `Current title: "${prTitle}"\n\n` +
+                'Please update your PR title to follow the Conventional Commits specification.';
+              
+              core.setFailed(errorMessage);
+              return;
+            }
+            
+            console.log(`✅ PR title follows Conventional Commits format: "${prTitle}"`);
+            
             prBody = prBody.replace(/<!--[\s\S]*?-->/g, '');
             
-            // 从 PR 描述和标题中提取 issue 编号
             const issuePattern = /(?:closes?|fixes?|resolves?|related to|refs?)\s*#(\d+)/gi;
             const matches = [];
             
-            // 从 body 中提取（已移除注释）
             const bodyMatches = prBody.matchAll(issuePattern);
             for (const match of bodyMatches) {
               matches.push(parseInt(match[1]));
             }
             
-            // 从 title 中提取（标题通常不包含注释，但为了安全也处理一下）
             const titleWithoutComments = prTitle.replace(/<!--[\s\S]*?-->/g, '');
             const titlePattern = /(?:closes?|fixes?|resolves?|related to|refs?)\s*#(\d+)/gi;
             const titleMatches = titleWithoutComments.matchAll(titlePattern);
@@ -47,7 +72,6 @@ jobs:
               matches.push(parseInt(match[1]));
             }
             
-            // 去重
             const issueNumbers = [...new Set(matches)];
             
             if (issueNumbers.length === 0) {
@@ -64,7 +88,6 @@ jobs:
               return;
             }
             
-            // 验证这些 issue 是否真实存在
             const owner = context.repo.owner;
             const repo = context.repo.repo;
             let validIssues = [];
@@ -78,7 +101,6 @@ jobs:
                   issue_number: issueNumber,
                 });
                 
-                // 确保是 issue 而不是 PR
                 if (!issue.pull_request) {
                   validIssues.push(issueNumber);
                   console.log(`✅ Found valid issue: #${issueNumber} - "${issue.title}"`);
@@ -93,8 +115,6 @@ jobs:
                 if (error.status) {
                   console.log(`HTTP status: ${error.status}`);
                 }
-                // 如果是 404，可能是 issue 不存在或已删除
-                // 如果是 403，可能是权限问题
                 if (error.status === 403) {
                   console.log(`⚠️  Permission denied. Make sure the workflow has 'issues: read' permission.`);
                 } else if (error.status === 404) {
