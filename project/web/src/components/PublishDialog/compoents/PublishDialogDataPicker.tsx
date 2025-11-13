@@ -16,7 +16,7 @@ export interface IPublishDialogDataPickerProps {}
 const PublishDialogDataPicker = memo(
   forwardRef(
     (
-      {}: IPublishDialogDataPickerProps,
+      _: IPublishDialogDataPickerProps,
       ref: ForwardedRef<IPublishDialogDataPickerRef>,
     ) => {
       const { pubTime, setPubTime } = usePublishDialog(

@@ -69,7 +69,7 @@ function parseChineseNumber(input: string): number {
     }
     else {
       const num = Number.parseInt(char, 10)
-      if (!isNaN(num)) {
+      if (!Number.isNaN(num)) {
         if (isDecimal) {
           decimalPart += num * decimalScale
           decimalScale *= 0.1

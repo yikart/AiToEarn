@@ -26,7 +26,7 @@ export interface ProxyInfo {
 
 export function parseProxyString(proxyString: string): ProxyInfo | false {
   const regex
-    = /^(?:(\w+):\/\/)?([\d.]+:\d+)(?::([^:]+):([^{}\s]+))?(?:\[(.*?)\])?(?:\{(.*?)\})?$/
+    = /^(?:(\w+):\/\/)?([\d.]+:\d+)(?::([^:]+):([^{}\s[\]]+))?(?:\[([^\]]+)\])?(?:\{([^}]+)\})?$/
 
   const match = proxyString.match(regex)
   if (!match) {

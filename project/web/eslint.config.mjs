@@ -16,6 +16,7 @@ export default antfu({
     'unused-imports/no-unused-imports': 'off',
     'style/multiline-ternary': 'off',
     'style/no-mixed-operators': 'off',
+    'style/max-statements-per-line': 'off',
     'eqeqeq': 'off',
     'no-useless-escape': 'off',
     '@typescript-eslint/prefer-regexp-exec': 'off',
@@ -23,5 +24,6 @@ export default antfu({
     'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     'ts/no-use-before-define': 'off',
+    'no-empty-pattern': 'off',
   },
 })

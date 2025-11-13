@@ -196,7 +196,6 @@ export default function InteractivePage() {
       setHasMore(true)
       fetchEngagementPosts()
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accountActive?.id, accountActive?.uid, platform])
 
   const PostCard = ({ item }: { item: EngagementPostItem }) => {

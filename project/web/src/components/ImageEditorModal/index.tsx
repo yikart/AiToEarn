@@ -78,7 +78,7 @@ const ImageEditorModal = memo(
         // 克隆节点并清除所有事件
         const cleanPreset = originPreset.cloneNode(true) as HTMLElement
         const newPreset = cleanPreset.cloneNode(true) as HTMLElement
-        newPreset.querySelector('label')!.innerText = label
+        newPreset.querySelector('label')!.textContent = label
         newPreset.classList.remove(originClass)
         newPreset.classList.add(newClass)
         cropCon.appendChild(newPreset)

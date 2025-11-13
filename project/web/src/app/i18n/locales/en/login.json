@@ -30,7 +30,6 @@
   "emailLabel": "Email",
   "emailRequired": "Please enter your email",
   "emailInvalid": "Please enter a valid email address",
-  "emailPlaceholder": "Please enter your registered email",
   "sendResetLink": "Send Reset Link",
   "newPassword": "New Password",
   "newPasswordRequired": "Please enter new password",

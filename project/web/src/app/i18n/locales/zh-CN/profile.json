@@ -162,7 +162,6 @@
   "inviteCode": "邀请码",
   "edit": "编辑",
   "copy": "复制",
-  "copySuccess": "已复制",
   "cancelAccount": "注销账户",
   "cancelAccountWarning": "注销账户是不可逆的操作，一旦注销，您的所有数据将被永久删除，包括：",
   "cancelAccountDataList": "个人资料和设置,所有发布的内容,积分和会员权益,订单和支付记录",

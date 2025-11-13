@@ -18,7 +18,7 @@ export interface IHomeHeaderRef { }
 export interface IHomeHeaderProps { }
 
 const HomeHeader = memo(
-  forwardRef(({ }: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
+  forwardRef((_: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
     const pathname = usePathname()
     const { t } = useTransClient('home')
     const router = useRouter()

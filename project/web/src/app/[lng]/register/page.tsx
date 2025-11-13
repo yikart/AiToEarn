@@ -12,7 +12,6 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (password !== confirmPassword) {
-      alert('两次输入的密码不一致')
       return
     }
     // TODO: 实现注册逻辑
