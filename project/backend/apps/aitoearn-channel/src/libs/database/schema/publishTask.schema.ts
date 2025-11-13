@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
 import mongoose from 'mongoose'
-import { PlatPulOption } from '../../../core/publish/common'
+import { PlatPulOption } from '../../../core/publishing/common'
 import { BaseTemp } from './time.tamp'
 
 export enum PublishType {
@@ -136,6 +136,12 @@ export class PublishTask extends BaseTemp {
     default: false,
   })
   inQueue: boolean
+
+  @Prop({
+    required: false,
+    default: false,
+  })
+  queued: boolean
 
   // 错误信息
   @Prop({

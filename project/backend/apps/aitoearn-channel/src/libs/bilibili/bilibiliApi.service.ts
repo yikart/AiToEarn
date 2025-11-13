@@ -11,29 +11,23 @@ import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { v4 as uuidv4 } from 'uuid'
 import { getRandomString } from '../../common'
 import { config } from '../../config'
+import { BilibiliError } from './bilibili.exception'
 import {
   AccessToken,
-  AccessTokenResponse,
   AddArchiveData,
-  ArchiveAddByUtokenResponse,
+  ArchiveAddByUtokenData,
   ArchiveListData,
-  ArchiveListResponse,
   ArchiveStatus,
   ArchiveTypeItem,
-  ArchiveTypeListResponse,
   ArcIncStatData,
-  ArcIncStatResponse,
   ArcStatData,
-  ArcStatResponse,
   BilibiliUser,
-  BilibiliUserInfoResponse,
-  DeleteVideoResponse,
-  EtagResponse,
-  GrantScopesResponse,
-  UploadCoverImgResponse,
+  CommonResponse,
+  DeleteVideoData,
+  etagData,
+  GrantScopes,
   UserStatData,
-  UserStatResponse,
-  VideoInitialResponse,
+  videoInitialData,
   VideoUTypes,
 } from './common'
 
@@ -42,6 +36,7 @@ export class BilibiliApiService {
   private readonly logger = new Logger(BilibiliApiService.name)
   private readonly appId: string
   private readonly appSecret: string
+  private readonly provider = 'bilibili'
   constructor() {
     const cfg = config.bilibili
     this.appId = cfg.id
@@ -55,23 +50,25 @@ export class BilibiliApiService {
     }
   }
 
-  private async request<CommonResponse>(url: string, config: AxiosRequestConfig = {}): Promise<CommonResponse> {
-    this.logger.debug(`Bilibili API Request: ${url}`)
+  private generateOperation(url: string, method: string) {
+    return `${method} ${url.split('?')?.[0]?.split('.com')?.[1] || 'unknown'}`
+  }
+
+  private async request<T>(url: string, config: AxiosRequestConfig = {}): Promise<CommonResponse<T>> {
+    const method = (config.method || 'GET').toUpperCase()
+    const operation = this.generateOperation(url, method)
+    this.logger.debug(`Bilibili API Request: ${operation}, params=${config.params ? JSON.stringify(config.params) : '{}'} `)
     try {
-      const response: AxiosResponse<CommonResponse> = await axios(url, config)
-      if (response.data['code'] !== 0) {
-        this.logger.error(`Bilibili API returned an error: ${url}, response: ${JSON.stringify(response.data)}`)
-        throw new Error(response.data['message'] || 'Bilibili API returned an error')
+      const response: AxiosResponse<CommonResponse<T>> = await axios(url, config)
+      if (response.data && response.data.code !== 0) {
+        throw BilibiliError.buildFromResponse(response.data, operation)
       }
       return response.data
     }
     catch (error) {
-      if (error.response) {
-        this.logger.error(`Bilibili API request failed: ${url}, status: ${error.response.status}, data: ${JSON.stringify(error.response.data)}`)
-        throw new Error(`Bilibili API request failed: ${error.response.data.error.message}`)
-      }
-      this.logger.error(`Bilibili API request failed: ${url}`, error)
-      throw new Error(`Bilibili API request failed: ${error.message}`)
+      const err = BilibiliError.buildFromError(error, operation)
+      this.logger.error(`Bilibili API Error: ${operation} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      throw err
     }
   }
 
@@ -110,7 +107,7 @@ export class BilibiliApiService {
       },
     }
 
-    const resp = await this.request<AccessTokenResponse>('https://api.bilibili.com/x/account-oauth2/v1/token', config)
+    const resp = await this.request<AccessToken>('https://api.bilibili.com/x/account-oauth2/v1/token', config)
     return resp.data
   }
 
@@ -130,7 +127,7 @@ export class BilibiliApiService {
         refresh_token: refreshToken,
       },
     }
-    const resp = await this.request<AccessTokenResponse>(url, config)
+    const resp = await this.request<AccessToken>(url, config)
     return resp.data
   }
 
@@ -193,7 +190,7 @@ export class BilibiliApiService {
       method: 'GET',
       headers: this.generateHeader({ accessToken }),
     }
-    const resp = await this.request<BilibiliUserInfoResponse>(url, config)
+    const resp = await this.request<BilibiliUser>(url, config)
     return resp.data
   }
 
@@ -209,7 +206,7 @@ export class BilibiliApiService {
       headers: this.generateHeader({ accessToken }),
     }
 
-    const resp = await this.request<GrantScopesResponse>(url, config)
+    const resp = await this.request<GrantScopes>(url, config)
     return resp.data
   }
 
@@ -235,7 +232,7 @@ export class BilibiliApiService {
       headers: this.generateHeader({ accessToken, body: data }),
       data,
     }
-    const resp = await this.request<VideoInitialResponse>(url, config)
+    const resp = await this.request<videoInitialData>(url, config)
     return resp.data.upload_token
   }
 
@@ -263,7 +260,7 @@ export class BilibiliApiService {
       },
       data: file,
     }
-    const result = await this.request<EtagResponse>(url, config)
+    const result = await this.request<etagData>(url, config)
     return result.data.etag
   }
 
@@ -282,7 +279,7 @@ export class BilibiliApiService {
         upload_token: uploadToken,
       },
     }
-    return await this.request<{ code: number, message: string }>(url, config)
+    return await this.request<unknown>(url, config)
   }
 
   /**
@@ -303,7 +300,7 @@ export class BilibiliApiService {
       headers: this.generateHeader({ accessToken }, true),
       data: formData,
     }
-    const resp = await this.request<UploadCoverImgResponse>(url, config)
+    const resp = await this.request<{ url: string }>(url, config)
     return resp.data.url
   }
 
@@ -315,20 +312,13 @@ export class BilibiliApiService {
    * @returns
    */
   async uploadLitVideo(accessToken: string, file: Buffer, uploadToken: string) {
-    const result = await axios.post<{
-      code: number // 0;
-      message: string // '0';
-    }>(
-      `https://https://openupos.bilivideo.com/video/v2/upload?upload_token=${uploadToken}`,
-      file,
-      {
-        headers: this.generateHeader({
-          accessToken,
-        }),
-      },
-    )
-
-    return result.data
+    const url = `https://openupos.bilivideo.com/video/v2/upload?upload_token=${uploadToken}`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      headers: this.generateHeader({ accessToken }),
+      data: file,
+    }
+    return await this.request<unknown>(url, config)
   }
 
   /**
@@ -350,10 +340,7 @@ export class BilibiliApiService {
       params: { upload_token: uploadToken },
       data: inData,
     }
-    const result = await this.request<ArchiveAddByUtokenResponse>(url, config)
-    if (result.code !== 0) {
-      throw new Error(result.message)
-    }
+    const result = await this.request<ArchiveAddByUtokenData>(url, config)
     return result.data.resource_id
   }
 
@@ -368,7 +355,7 @@ export class BilibiliApiService {
       method: 'GET',
       headers: this.generateHeader({ accessToken }),
     }
-    const result = await this.request<ArchiveTypeListResponse>(url, config)
+    const result = await this.request<ArchiveTypeItem[]>(url, config)
     return result.data
   }
 
@@ -393,7 +380,7 @@ export class BilibiliApiService {
       headers: this.generateHeader({ accessToken }),
       params,
     }
-    const result = await this.request<ArchiveListResponse>(url, config)
+    const result = await this.request<ArchiveListData>(url, config)
     return result.data
   }
 
@@ -408,7 +395,7 @@ export class BilibiliApiService {
       method: 'GET',
       headers: this.generateHeader({ accessToken }),
     }
-    const result = await this.request<UserStatResponse>(url, config)
+    const result = await this.request<UserStatData>(url, config)
     return result.data
   }
 
@@ -427,7 +414,7 @@ export class BilibiliApiService {
       method: 'GET',
       headers: this.generateHeader({ accessToken }),
     }
-    const result = await this.request<ArcStatResponse>(url, config)
+    const result = await this.request<ArcStatData>(url, config)
     return result.data
   }
 
@@ -442,11 +429,11 @@ export class BilibiliApiService {
       method: 'GET',
       headers: this.generateHeader({ accessToken }),
     }
-    const result = await this.request<ArcIncStatResponse>(url, config)
+    const result = await this.request<ArcIncStatData>(url, config)
     return result.data
   }
 
-  async deleteArchive(accessToken: string, videoId: string): Promise<DeleteVideoResponse> {
+  async deleteArchive(accessToken: string, videoId: string): Promise<CommonResponse<DeleteVideoData>> {
     const url = 'https://member.bilibili.com/arcopen/fn/archive/delete'
     const config: AxiosRequestConfig = {
       method: 'POST',
@@ -455,7 +442,7 @@ export class BilibiliApiService {
         resource_id: videoId,
       },
     }
-    const result = await this.request<DeleteVideoResponse>(url, config)
+    const result = await this.request<DeleteVideoData>(url, config)
     return result
   }
 }

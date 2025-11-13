@@ -20,8 +20,6 @@ export class YoutubeApiService {
   private oauth2Client: any
   private webClientSecret: string
   private webClientId: string
-  private webRenderBaseUrl: string
-  private youtubeClient = google.youtube('v3')
   private readonly logger = new Logger(YoutubeApiService.name)
 
   constructor() {
@@ -32,7 +30,6 @@ export class YoutubeApiService {
   private async initYoutubeSecrets() {
     this.webClientSecret = config.youtube.secret
     this.webClientId = config.youtube.id
-    this.webRenderBaseUrl = config.youtube.authBackHost
   }
 
   /**
@@ -252,88 +249,4 @@ export class YoutubeApiService {
       return error
     }
   }
-
-  // async publishVideo(
-  //   accountToken: string,
-  //   pubParams: YoutubeVideoPubParams,
-  // ): Promise<YoutubeVideoPubResult> {
-  //   return new Promise(async (resolve) => {
-  //     try {
-  //       const { coverUrl, videoUrl } = pubParams
-
-  //       // 发起上传
-  //       const startUploadInfo = await this.startUpload(accountToken)
-  //       if (startUploadInfo.result !== 1)
-  //         throw new Error('发起上传失败')
-
-  //       // 获取封面
-  //       const coverBase64
-  //         = await this.fileToolsService.fileUrlToBase64(coverUrl)
-
-  //       const buffer = Buffer.from(coverBase64, 'base64')
-  //       const coverBlob = new Blob([buffer], { type: 'image/jpeg' })
-
-  //       Logger.log('封面获取成功：', coverBlob)
-
-  //       // 视频URL分片上传
-  //       void this.fileToolsService.streamDownloadAndUpload(
-  //         videoUrl,
-  //         async (upData: Buffer, partNumber: number) => {
-  //           const res = await this.fragmentUploadVideo(
-  //             startUploadInfo.upload_token,
-  //             partNumber - 1,
-  //             startUploadInfo.endpoint,
-  //             upData,
-  //           )
-  //           Logger.log('分片：', partNumber, res)
-  //           if (res.result !== 1)
-  //             throw new Error('分片上传失败')
-  //         },
-  //         async (partCount) => {
-  //           // 合并
-  //           const res = await this.completeFragmentUpload(
-  //             startUploadInfo.upload_token,
-  //             partCount - 1,
-  //             startUploadInfo.endpoint,
-  //           )
-  //           if (res.result !== 1)
-  //             throw new Error('合并分片上传失败')
-
-  //           // 发布
-  //           const formData = new FormData()
-  //           formData.append('caption', this.getCaption(pubParams))
-  //           formData.append('cover', coverBlob)
-  //           const pubRes = await axios<{
-  //             video_info: KwaiPublishVideoInfo
-  //             result: number
-  //           }>({
-  //             url: `${this.kwaiHost}/openapi/photo/publish`,
-  //             method: 'POST',
-  //             params: {
-  //               upload_token: startUploadInfo.upload_token,
-  //               app_id: this.appId,
-  //               access_token: accountToken,
-  //             },
-  //             data: formData,
-  //           })
-  //           if (pubRes.data.result !== 1)
-  //             throw new Error('视频发布失败！')
-
-  //           resolve({
-  //             success: true,
-  //             worksId: pubRes.data.video_info.photo_id,
-  //           })
-  //         },
-  //         4194304,
-  //       )
-  //     }
-  //     catch (e) {
-  //       this.logger.error(e)
-  //       resolve({
-  //         success: false,
-  //         failMsg: e.message || '发布错误',
-  //       })
-  //     }
-  //   })
-  // }
 }

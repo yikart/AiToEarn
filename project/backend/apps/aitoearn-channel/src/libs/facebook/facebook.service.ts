@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../config'
-import { MetaOAuthLongLivedCredential } from '../../core/plat/meta/meta.interfaces'
+import { MetaOAuthLongLivedCredential } from '../../core/platforms/meta/meta.interfaces'
 import { FacebookOAuth2Config } from './constants'
-import { FacebookApiException, normalizeFacebookError } from './facebook-api.exception'
+import { FacebookError } from './facebook.exception'
 import {
   ChunkedVideoUploadRequest,
   ChunkedVideoUploadResponse,
@@ -70,12 +70,9 @@ export class FacebookService {
       return response.data
     }
     catch (error: unknown) {
-      const normalized = normalizeFacebookError(error)
-      const status = normalized.status
-      const code = normalized.raw?.code
-      const message = normalized.raw?.message || (error as Error)?.message
-      this.logger.error(`[FB:${operation}] Failed url=${url} status=${status} code=${code} msg=${message}`)
-      throw new FacebookApiException(operation, normalized, { url, method: config.method })
+      const err = FacebookError.buildFromError(error, operation)
+      this.logger.error(`[FB:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      throw err
     }
   }
 

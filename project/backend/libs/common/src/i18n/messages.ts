@@ -168,6 +168,14 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'publish record with flowId {{flowId}} not found.',
     'zh-CN': '发布记录未找到',
   },
+  [ResponseCode.PublishTaskAlreadyPublishing]: {
+    'en-US': 'Publish task is already publishing',
+    'zh-CN': '发布任务正在执行中',
+  },
+  [ResponseCode.PublishTaskAlreadyCompleted]: {
+    'en-US': 'Publish task is already completed',
+    'zh-CN': '发布任务已完成',
+  },
   [ResponseCode.ChannelAccountNotAuthorized]: {
     'en-US': 'Account not authorized',
     'zh-CN': '账号未授权',
@@ -263,5 +271,9 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
   [ResponseCode.DataCubeAccountTypeNotSupported]: {
     'en-US': 'Account type not supported for data cube',
     'zh-CN': '暂不支持该账户类型',
+  },
+  [ResponseCode.ChannelPublishTaskAlreadyExists]: {
+    'en-US': 'publish task with flowId {{flowId}} already exists',
+    'zh-CN': '发布任务已存在',
   },
 }

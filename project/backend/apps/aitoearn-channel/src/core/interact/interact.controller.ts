@@ -9,7 +9,7 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { AppException, ResponseCode } from '@yikart/common'
 import { AccountService } from '../account/account.service'
-import { PublishRecordService } from '../account/publishRecord.service'
+import { PublishRecordService } from '../account/publish-record.service'
 import {
   AddArcCommentDto,
   DelCommentDto,
@@ -17,7 +17,7 @@ import {
   ReplyCommentDto,
 } from './dto/interact.dto'
 import { InteracteBase } from './interact.base'
-import { WxGzhInteractService } from './wxGzhInteract.service'
+import { WxGzhInteractService } from './wx-gzh-interact.service'
 
 @Controller()
 export class InteracteController {

@@ -90,4 +90,7 @@ export enum ResponseCode {
   InteractAccountTypeNotSupported = 15022,
   InteractRecordNotFound = 15023,
   DataCubeAccountTypeNotSupported = 15024,
+  ChannelPublishTaskAlreadyExists = 15025,
+  PublishTaskAlreadyPublishing = 15026,
+  PublishTaskAlreadyCompleted = 15027,
 }

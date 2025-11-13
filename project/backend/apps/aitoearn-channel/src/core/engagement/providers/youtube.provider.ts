@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { PostsResponseVo } from '@yikart/common'
-import { YoutubeService } from '../../../core/plat/youtube/youtube.service'
+import { YoutubeService } from '../../../core/platforms/youtube/youtube.service'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'
 import { EngagementComment, EngagementProvider, FetchPostCommentsResponse, PublishCommentResponse } from '../engagement.interface'
 

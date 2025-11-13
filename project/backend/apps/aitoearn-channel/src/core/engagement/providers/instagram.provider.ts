@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { PostsResponseVo } from '@yikart/common'
-import { InstagramService } from '../../../core/plat/meta/instagram.service'
+import { InstagramService } from '../../../core/platforms/meta/instagram.service'
 import { InstagramMediaType } from '../../../libs/instagram/instagram.enum'
 import { IGPostCommentsRequest, InstagramUserPostRequest } from '../../../libs/instagram/instagram.interfaces'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'

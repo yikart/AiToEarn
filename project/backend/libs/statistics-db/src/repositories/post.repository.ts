@@ -109,6 +109,7 @@ export class PostRepository extends BaseRepository<PostModel> {
 
     const posts: PostData[] = (postDocs).map(doc => ({
       id: doc._id.toString(),
+      accountId: doc.accountId ?? '',
       postId: doc.postId ?? '',
       platform: doc.platform ?? platform,
       title: doc.title ?? '',
@@ -168,6 +169,7 @@ export class PostRepository extends BaseRepository<PostModel> {
 
     const posts: PostData[] = (postDocs).map(doc => ({
       id: doc._id.toString(),
+      accountId: doc.accountId ?? '',
       postId: doc.postId ?? '',
       platform: doc.platform ?? platform,
       title: doc.title ?? null,
@@ -369,6 +371,7 @@ export class PostRepository extends BaseRepository<PostModel> {
     })
     const posts: PostData[] = postDocs.map(doc => ({
       id: doc.id,
+      accountId: doc.accountId ?? '',
       postId: doc.postId ?? '',
       platform: doc.platform,
       title: doc.title ?? null,
@@ -430,6 +433,7 @@ export class PostRepository extends BaseRepository<PostModel> {
 
     const posts: PostData[] = postDocs.map(doc => ({
       id: doc._id.toString(),
+      accountId: doc.accountId ?? '',
       postId: doc.postId ?? '',
       platform: doc.platform ?? platform,
       title: doc.title ?? null,

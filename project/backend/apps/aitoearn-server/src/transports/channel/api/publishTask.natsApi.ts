@@ -19,4 +19,12 @@ export class PublishTaskNatsApi extends ChannelBaseApi {
     )
     return res
   }
+
+  async getPublishedPublishTasks(userId: string, query: PubRecordListFilterDto) {
+    const res = await this.sendMessage<any[]>(
+      `channel/status/published/tasks`,
+      { userId, ...query },
+    )
+    return res
+  }
 }

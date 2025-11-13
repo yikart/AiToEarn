@@ -11,7 +11,7 @@ import qs from 'qs'
 import { config } from '../../config'
 import { CreateBoardBody, CreatePinBody } from './common'
 import { PinterestAPIConfig } from './constants'
-import { normalizePinterestError, PinterestApiException } from './pinterest-api.exception'
+import { PinterestError } from './pinterest.exception'
 import { PinterestBoard, PinterestBoardsListResponse, PinterestInitMediaUploadResponse, PinterestOAuthCredential, PinterestPin, PinterestPinsListResponse, PinterestUserAccount } from './pinterest.interfaces'
 import { PinterestOperation } from './pinterest.operations'
 
@@ -40,11 +40,9 @@ export class PinterestApiService {
       return response.data
     }
     catch (error: unknown) {
-      const normalized = normalizePinterestError(error)
-      const status = normalized.status
-      const message = (normalized.raw as { message?: string } | undefined)?.message || (error as Error)?.message
-      this.logger.error(`[PIN:${operation}] Failed url=${url} status=${status} msg=${message}`)
-      throw new PinterestApiException(operation, normalized, { url, method: config.method })
+      const err = PinterestError.buildFromError(error, operation)
+      this.logger.error(`[PIN:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      throw err
     }
   }
 

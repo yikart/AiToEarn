@@ -88,6 +88,20 @@ export class PublishController {
     return this.publishService.getQueuedPublishingTasks(data, token.id)
   }
 
+  @ApiOperation({ summary: '获取指定平台的已经发布作品' })
+  @Post('/statuses/published/posts')
+  @ApiOkResponse({
+    type: PostHistoryItemDto,
+    isArray: true,
+    description: '获取指定平台的已经发布作品',
+  })
+  async getPublishedPosts(
+    @GetToken() token: TokenInfo,
+    @Body() data: PubRecordListFilterDto,
+  ) {
+    return this.publishService.getPublishedPosts(data, token.id)
+  }
+
   @ApiOperation({ summary: '修改发布任务时间' })
   @Post('updateTaskTime')
   async updatePublishRecordTime(

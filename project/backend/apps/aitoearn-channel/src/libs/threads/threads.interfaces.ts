@@ -26,6 +26,7 @@ export interface ThreadsPostResponse {
 export interface ThreadsObjectInfo {
   id: string
   status: string
+  permalink?: string
 }
 
 export interface ThreadsInsightsRequest {
