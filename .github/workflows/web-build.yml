@@ -64,7 +64,7 @@ jobs:
       - name: Build and push application
         uses: docker/build-push-action@v5
         with:
-          context: ${{ env.MONOREPO_DIR }}/web
+          context: ${{ env.MONOREPO_DIR }}/
           file: ${{ env.MONOREPO_DIR }}/Dockerfile
           platforms: linux/amd64
           push: true

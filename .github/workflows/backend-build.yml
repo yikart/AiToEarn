@@ -57,24 +57,8 @@ jobs:
         run: |
           APPS=""
           
-          if [ "${{ inputs.build_aitoearn_admin_server }}" = "true" ]; then
-            APPS="aitoearn-admin-server"
-          fi
-          
           if [ "${{ inputs.build_aitoearn_channel }}" = "true" ]; then
-            if [ -n "$APPS" ]; then
-              APPS="$APPS,aitoearn-channel"
-            else
-              APPS="aitoearn-channel"
-            fi
-          fi
-          
-          if [ "${{ inputs.build_aitoearn_payment }}" = "true" ]; then
-            if [ -n "$APPS" ]; then
-              APPS="$APPS,aitoearn-payment"
-            else
-              APPS="aitoearn-payment"
-            fi
+            APPS="aitoearn-channel"
           fi
           
           if [ "${{ inputs.build_aitoearn_server }}" = "true" ]; then
@@ -82,14 +66,6 @@ jobs:
               APPS="$APPS,aitoearn-server"
             else
               APPS="aitoearn-server"
-            fi
-          fi
-          
-          if [ "${{ inputs.build_aitoearn_task }}" = "true" ]; then
-            if [ -n "$APPS" ]; then
-              APPS="$APPS,aitoearn-task"
-            else
-              APPS="aitoearn-task"
             fi
           fi
           
