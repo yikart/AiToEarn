@@ -481,8 +481,9 @@ const PublishDialog = memo(
         setCreateLoading(true)
         const publishTime = getUtcDays(getDays()).format()
 
-        const flowId = generateUUID()
         for (const item of pubListChoosed) {
+          const flowId = generateUUID()
+
           const res = await apiCreatePublish({
             topics: [],
             flowId,
@@ -526,8 +527,8 @@ const PublishDialog = memo(
           pubTime || getDays().add(6, 'minute'),
         ).format()
 
-        const flowId = generateUUID()
         for (const item of pubListChoosed) {
+          const flowId = generateUUID()
           const res = await apiCreatePublish({
             topics: [],
             flowId,
