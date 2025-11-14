@@ -39,7 +39,7 @@ export default function NotFound() {
           e.currentTarget.style.color = 'var(--theColor5)'
         }}
       >
-        返回首页
+        Back to Home
       </Link>
     </div>
   )
