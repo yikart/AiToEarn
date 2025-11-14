@@ -9,6 +9,7 @@ import { ApiDoc, UserType } from '@yikart/common'
 import { AiService } from '../ai/ai.service'
 import { FireflycardResponseVo, ImageResponseVo, ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo } from '../ai/ai.vo'
 import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/core/chat'
+import { AsyncTaskResponseVo, TaskStatusResponseVo } from '../ai/core/image'
 import { ModelsConfigDto, ModelsConfigService, ModelsConfigVo } from '../ai/core/models-config'
 import { AdminFireflyCardDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto } from './dto/ai.dto'
 
@@ -59,6 +60,31 @@ export class AiController {
   ): Promise<ImageResponseVo> {
     const response = await this.aiService.userImageGeneration(body)
     return ImageResponseVo.create(response)
+  }
+
+  @ApiDoc({
+    summary: 'Generate AI Image Asynchronously',
+    body: AdminImageGenerationDto.schema,
+    response: AsyncTaskResponseVo,
+  })
+  @Post('ai/image/generate/async')
+  async generateImageAsync(
+    @Body() body: AdminImageGenerationDto,
+  ): Promise<AsyncTaskResponseVo> {
+    const response = await this.aiService.userImageGenerationAsync(body)
+    return AsyncTaskResponseVo.create(response)
+  }
+
+  @ApiDoc({
+    summary: 'Get Async Image Task Status',
+    response: TaskStatusResponseVo,
+  })
+  @Post('ai/image/task/status')
+  async getImageTaskStatus(
+    @Body() body: { logId: string },
+  ): Promise<TaskStatusResponseVo> {
+    const response = await this.aiService.getImageTaskStatus(body.logId)
+    return TaskStatusResponseVo.create(response)
   }
 
   @ApiDoc({

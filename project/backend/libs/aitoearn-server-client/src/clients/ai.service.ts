@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { AxiosRequestConfig } from 'axios'
 import {
+  AsyncTaskResponseVo,
   ChatCompletionVo,
   ChatModelConfigVo,
   FireflycardResponseVo,
@@ -9,6 +10,7 @@ import {
   ListVideoTasksResponseVo,
   ModelsConfigDto,
   ModelsConfigVo,
+  TaskStatusResponseVo,
   UserChatCompletionDto,
   UserImageGenerationDto,
   UserVideoGenerationRequestDto,
@@ -40,6 +42,32 @@ export class AiService extends BaseService {
       data,
     }
     const res = await this.request<ImageResponseVo>(
+      url,
+      config,
+    )
+    return res
+  }
+
+  async imageGenerateAsync(data: UserImageGenerationDto) {
+    const url = `/internal/ai/image/generate/async`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<AsyncTaskResponseVo>(
+      url,
+      config,
+    )
+    return res
+  }
+
+  async getImageTaskStatus(data: { logId: string }): Promise<TaskStatusResponseVo> {
+    const url = `/internal/ai/image/task/status`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<TaskStatusResponseVo>(
       url,
       config,
     )
