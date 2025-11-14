@@ -21,7 +21,7 @@ export const InteractionRecordFiltersSchema = z.object({
   accountId: z.string().optional(),
   type: z.enum(AccountType).optional(),
   worksId: z.string().optional(),
-  time: z.tuple([z.date(), z.date()]).optional(),
+  time: z.tuple([z.coerce.date(), z.coerce.date()]).optional(),
 })
 export class InteractionRecordFiltersDto extends createZodDto(InteractionRecordFiltersSchema) {}
 

@@ -1,9 +1,11 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common'
-import { ApiOperation } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { ChannelService } from './channel.service'
 import { BatchHistoryPostsRecordDto, NewChannelDto, searchTopicDto, SubmitChannelCrawlingDto } from './dto/channel.dto'
 
+@ApiTags('OpenSource/Home/Statistics/Channel')
 @Controller('statistics/channels')
 export class ChannelController {
   private readonly logger = new Logger(ChannelController.name)
@@ -16,9 +18,10 @@ export class ChannelController {
    * @param data
    * @returns
    */
-  @ApiOperation({
-    summary: 'Topic search',
-    description: 'Search topics on Douyin/TikTok',
+  @ApiDoc({
+    summary: 'Search Douyin Topics',
+    description: 'Search topics on Douyin/TikTok platforms.',
+    body: searchTopicDto.schema,
   })
   @Public()
   @Post('douyin/searchTopic')
@@ -33,6 +36,10 @@ export class ChannelController {
    * @param data
    * @returns
    */
+  @ApiDoc({
+    summary: 'Send History Posts to Draft',
+    body: BatchHistoryPostsRecordDto.schema,
+  })
   @Post('posts/postsRecord')
   async setHistoryPostsRecord(@Body() data: BatchHistoryPostsRecordDto) {
     return this.channelService.historyPostsRecord(data.records)
@@ -43,6 +50,9 @@ export class ChannelController {
    * @param token
    * @returns
    */
+  @ApiDoc({
+    summary: 'Get History Post Draft Status',
+  })
   @Post('posts/recordStatus')
   async getHistoryPostsRecordStatus(@GetToken() token: TokenInfo) {
     return this.channelService.historyPostsRecordStatus(token.id)
@@ -53,9 +63,10 @@ export class ChannelController {
    * @param data
    * @returns
    */
-  @ApiOperation({
-    summary: 'Submit channel for crawling',
-    description: 'Submit platform and uid to crawling queue; updateAt is set automatically',
+  @ApiDoc({
+    summary: 'Submit Channel for Crawling',
+    description: 'Submit platform and uid to the crawling queue; updatedAt is set automatically.',
+    body: SubmitChannelCrawlingDto.schema,
   })
   @Public()
   @Post('crawling/submit')
@@ -64,6 +75,9 @@ export class ChannelController {
   }
 
   // report new channel to crawler
+  @ApiDoc({
+    summary: 'Report New Channel to Crawler',
+  })
   @Post('channels/newChannelReport')
   setNewChannelReport(@Body() data: NewChannelDto) {
     const res = this.channelService.setNewChannels(data.platform, data.uid)

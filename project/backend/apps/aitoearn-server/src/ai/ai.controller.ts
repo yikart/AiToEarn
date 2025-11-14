@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { UserType } from '@yikart/common'
+import { ApiDoc, UserType } from '@yikart/common'
 import { AiService } from './ai.service'
 import {
   ChatCompletionVo,
@@ -42,12 +42,16 @@ import {
   VolcengineGenerationRequestDto,
 } from './dto'
 
-@ApiTags('AI')
+@ApiTags('OpenSource/Me/Ai')
 @Controller('ai')
 export class AiController {
   constructor(private readonly aiService: AiService) {}
 
-  @ApiOperation({ summary: 'AI聊天对话' })
+  @ApiDoc({
+    summary: 'AI Chat Conversation',
+    body: ChatCompletionDto.schema,
+    response: ChatCompletionVo,
+  })
   @Post('chat')
   async chat(@GetToken() token: TokenInfo, @Body() body: ChatCompletionDto): Promise<ChatCompletionVo> {
     const response = await this.aiService.userAiChat({
@@ -58,7 +62,11 @@ export class AiController {
     return ChatCompletionVo.create(response)
   }
 
-  @ApiOperation({ summary: '获取用户AI使用日志' })
+  @ApiDoc({
+    summary: 'Get User AI Activity Logs',
+    query: LogListQueryDto.schema,
+    response: LogListResponseVo,
+  })
   @Get('logs')
   async getLogs(
     @GetToken() token: TokenInfo,
@@ -72,7 +80,11 @@ export class AiController {
     return LogListResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'AI图片生成' })
+  @ApiDoc({
+    summary: 'Generate AI Image',
+    body: ImageGenerationDto.schema,
+    response: ImageResponseVo,
+  })
   @Post('image/generate')
   async generateImage(
     @GetToken() token: TokenInfo,
@@ -86,7 +98,11 @@ export class AiController {
     return ImageResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'AI图片编辑' })
+  @ApiDoc({
+    summary: 'Edit AI Image',
+    body: ImageEditDto.schema,
+    response: ImageResponseVo,
+  })
   @Post('image/edit')
   async editImage(
     @GetToken() token: TokenInfo,
@@ -100,7 +116,11 @@ export class AiController {
     return ImageResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '异步AI图片生成' })
+  @ApiDoc({
+    summary: 'Generate AI Image Asynchronously',
+    body: ImageGenerationDto.schema,
+    response: AsyncTaskResponseVo,
+  })
   @Post('image/generate/async')
   async generateImageAsync(
     @GetToken() token: TokenInfo,
@@ -114,7 +134,11 @@ export class AiController {
     return AsyncTaskResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '异步AI图片编辑' })
+  @ApiDoc({
+    summary: 'Edit AI Image Asynchronously',
+    body: ImageEditDto.schema,
+    response: AsyncTaskResponseVo,
+  })
   @Post('image/edit/async')
   async editImageAsync(
     @GetToken() token: TokenInfo,
@@ -128,7 +152,11 @@ export class AiController {
     return AsyncTaskResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '异步Markdown转卡片图片' })
+  @ApiDoc({
+    summary: 'Convert Markdown to Card Image Asynchronously',
+    body: Md2CardDto.schema,
+    response: AsyncTaskResponseVo,
+  })
   @Post('md2card/async')
   async generateMd2CardAsync(
     @GetToken() token: TokenInfo,
@@ -142,7 +170,11 @@ export class AiController {
     return AsyncTaskResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '异步Fireflycard生成卡片图片（免费）' })
+  @ApiDoc({
+    summary: 'Generate Firefly Card Image Asynchronously (Free)',
+    body: FireflyCardDto.schema,
+    response: AsyncTaskResponseVo,
+  })
   @Post('fireflycard/async')
   async generateFireflycardAsync(
     @GetToken() token: TokenInfo,
@@ -156,7 +188,10 @@ export class AiController {
     return AsyncTaskResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '查询图片任务状态' })
+  @ApiDoc({
+    summary: 'Get Image Task Status',
+    response: TaskStatusResponseVo,
+  })
   @Get('image/task/:logId')
   async getImageTaskStatus(
     @GetToken() token: TokenInfo,
@@ -166,7 +201,11 @@ export class AiController {
     return TaskStatusResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '通用视频生成' })
+  @ApiDoc({
+    summary: 'Generate Video',
+    body: VideoGenerationRequestDto.schema,
+    response: VideoGenerationResponseVo,
+  })
   @Post('video/generations')
   async videoGeneration(
     @GetToken() token: TokenInfo,
@@ -180,7 +219,10 @@ export class AiController {
     return VideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '查询视频任务状态' })
+  @ApiDoc({
+    summary: 'Get Video Task Status',
+    response: VideoTaskStatusResponseVo,
+  })
   @Get('video/generations/:taskId')
   async getVideoTaskStatus(
     @GetToken() token: TokenInfo,
@@ -194,7 +236,11 @@ export class AiController {
     return VideoTaskStatusResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '视频任务列表' })
+  @ApiDoc({
+    summary: 'List Video Tasks',
+    query: UserListVideoTasksQueryDto.schema,
+    response: ListVideoTasksResponseVo,
+  })
   @Get('video/generations')
   async listVideoTasks(
     @GetToken() token: TokenInfo,
@@ -208,7 +254,11 @@ export class AiController {
     return ListVideoTasksResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '火山视频生成' })
+  @ApiDoc({
+    summary: 'Generate Volcengine Video',
+    body: VolcengineGenerationRequestDto.schema,
+    response: VolcengineVideoGenerationResponseVo,
+  })
   @Post('volcengine/video')
   async volcVideoGeneration(
     @GetToken() token: TokenInfo,
@@ -222,7 +272,10 @@ export class AiController {
     return VolcengineVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '查询火山视频任务状态' })
+  @ApiDoc({
+    summary: 'Get Volcengine Video Task Status',
+    response: VolcengineTaskStatusResponseVo,
+  })
   @Get('volcengine/video/:taskId')
   async volcVideoTaskStatus(
     @GetToken() token: TokenInfo,
@@ -236,7 +289,11 @@ export class AiController {
     return VolcengineTaskStatusResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '可灵文本到视频生成' })
+  @ApiDoc({
+    summary: 'Generate Kling Video from Text',
+    body: KlingText2VideoRequestDto.schema,
+    response: KlingVideoGenerationResponseVo,
+  })
   @Post('kling/text2video')
   async klingVideoGeneration(
     @GetToken() token: TokenInfo,
@@ -250,7 +307,11 @@ export class AiController {
     return KlingVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '可灵图片到视频生成' })
+  @ApiDoc({
+    summary: 'Generate Kling Video from Image',
+    body: KlingImage2VideoRequestDto.schema,
+    response: KlingVideoGenerationResponseVo,
+  })
   @Post('kling/image2video')
   async klingImage2VideoGeneration(
     @GetToken() token: TokenInfo,
@@ -264,7 +325,11 @@ export class AiController {
     return KlingVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '可灵多图片到视频生成' })
+  @ApiDoc({
+    summary: 'Generate Kling Video from Multiple Images',
+    body: KlingMultiImage2VideoRequestDto.schema,
+    response: KlingVideoGenerationResponseVo,
+  })
   @Post('kling/multi-image2video')
   async klingMultiImage2VideoGeneration(
     @GetToken() token: TokenInfo,
@@ -278,7 +343,10 @@ export class AiController {
     return KlingVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '可灵查询任务状态' })
+  @ApiDoc({
+    summary: 'Get Kling Task Status',
+    response: KlingTaskStatusResponseVo,
+  })
   @Get('kling/:taskId')
   async getKlingTaskStatus(
     @GetToken() token: TokenInfo,
@@ -292,7 +360,11 @@ export class AiController {
     return KlingTaskStatusResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'Markdown转卡片图片' })
+  @ApiDoc({
+    summary: 'Convert Markdown to Card Image',
+    body: Md2CardDto.schema,
+    response: Md2CardResponseVo,
+  })
   @Post('md2card')
   async generateMd2Card(
     @GetToken() token: TokenInfo,
@@ -306,7 +378,11 @@ export class AiController {
     return Md2CardResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'Fireflycard生成卡片图片（免费）' })
+  @ApiDoc({
+    summary: 'Generate Firefly Card Image (Free)',
+    body: FireflyCardDto.schema,
+    response: FireflycardResponseVo,
+  })
   @Post('fireflycard')
   async generateFireflycard(
     @GetToken() token: TokenInfo,
@@ -320,7 +396,10 @@ export class AiController {
     return FireflycardResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '获取图片生成模型参数' })
+  @ApiDoc({
+    summary: 'Get Image Generation Model Parameters',
+    response: [ImageGenerationModelParamsVo],
+  })
   @Public()
   @Get('models/image/generation')
   async getImageGenerationModels(@GetToken() token?: TokenInfo): Promise<ImageGenerationModelParamsVo[]> {
@@ -331,7 +410,10 @@ export class AiController {
     return response.map((item: { name: string, description: string, sizes: string[], qualities: string[], styles: string[], pricing: string, summary?: string | undefined, logo?: string | undefined, tags?: string[] | undefined, mainTag?: string | undefined, discount?: string | undefined, originPrice?: string | undefined }) => ImageGenerationModelParamsVo.create(item))
   }
 
-  @ApiOperation({ summary: '获取图片编辑模型参数' })
+  @ApiDoc({
+    summary: 'Get Image Editing Model Parameters',
+    response: [ImageEditModelParamsVo],
+  })
   @Public()
   @Get('models/image/edit')
   async getImageEditModels(@GetToken() token?: TokenInfo): Promise<ImageEditModelParamsVo[]> {
@@ -342,7 +424,10 @@ export class AiController {
     return response.map((item: { name: string, description: string, sizes: string[], pricing: string, maxInputImages: number, summary?: string | undefined, logo?: string | undefined, tags?: string[] | undefined, mainTag?: string | undefined, discount?: string | undefined, originPrice?: string | undefined }) => ImageEditModelParamsVo.create(item))
   }
 
-  @ApiOperation({ summary: '获取视频生成模型参数' })
+  @ApiDoc({
+    summary: 'Get Video Generation Model Parameters',
+    response: [VideoGenerationModelParamsVo],
+  })
   @Public()
   @Get('models/video/generation')
   async getVideoGenerationModels(@GetToken() token?: TokenInfo): Promise<VideoGenerationModelParamsVo[]> {
@@ -353,7 +438,10 @@ export class AiController {
     return response.map((item: { name: string, description: string, modes: ('text2video' | 'image2video' | 'flf2video' | 'lf2video' | 'multi-image2video')[], channel: any, resolutions: string[], durations: number[], supportedParameters: string[], pricing: { price: number, resolution?: string | undefined, aspectRatio?: string | undefined, mode?: string | undefined, duration?: number | undefined, discount?: string | undefined, originPrice?: number | undefined }[], summary?: string | undefined, logo?: string | undefined, tags?: string[] | undefined, mainTag?: string | undefined, defaults?: { resolution?: string | undefined, aspectRatio?: string | undefined, mode?: string | undefined, duration?: number | undefined } | undefined }) => VideoGenerationModelParamsVo.create(item))
   }
 
-  @ApiOperation({ summary: '获取对话模型参数' })
+  @ApiDoc({
+    summary: 'Get Chat Model Parameters',
+    response: [ChatModelConfigVo],
+  })
   @Public()
   @Get('models/chat')
   async getChatModels(@GetToken() token?: TokenInfo): Promise<ChatModelConfigVo[]> {
@@ -364,7 +452,11 @@ export class AiController {
     return response.map((item: { name: string, description: string, inputModalities: ('image' | 'text' | 'video' | 'audio')[], outputModalities: ('image' | 'text' | 'video' | 'audio')[], pricing: { prompt: string, completion: string, discount?: string | undefined, originPrompt?: string | undefined, originCompletion?: string | undefined, image?: string | undefined, originImage?: string | undefined, audio?: string | undefined, originAudio?: string | undefined } | { price: string, discount?: string | undefined, originPrice?: string | undefined }, summary?: string | undefined, logo?: string | undefined, tags?: string[] | undefined, mainTag?: string | undefined }) => ChatModelConfigVo.create(item))
   }
 
-  @ApiOperation({ summary: 'Dashscope文本到视频生成' })
+  @ApiDoc({
+    summary: 'Generate Dashscope Video from Text',
+    body: DashscopeText2VideoRequestDto.schema,
+    response: DashscopeVideoGenerationResponseVo,
+  })
   @Post('dashscope/text2video')
   async dashscopeText2VideoGeneration(
     @GetToken() token: TokenInfo,
@@ -378,7 +470,11 @@ export class AiController {
     return DashscopeVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'Dashscope图片到视频生成' })
+  @ApiDoc({
+    summary: 'Generate Dashscope Video from Image',
+    body: DashscopeImage2VideoRequestDto.schema,
+    response: DashscopeVideoGenerationResponseVo,
+  })
   @Post('dashscope/image2video')
   async dashscopeImage2VideoGeneration(
     @GetToken() token: TokenInfo,
@@ -392,7 +488,11 @@ export class AiController {
     return DashscopeVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'Dashscope首尾帧到视频生成' })
+  @ApiDoc({
+    summary: 'Generate Dashscope Video from Key Frames',
+    body: DashscopeKeyFrame2VideoRequestDto.schema,
+    response: DashscopeVideoGenerationResponseVo,
+  })
   @Post('dashscope/keyframe2video')
   async dashscopeKeyFrame2VideoGeneration(
     @GetToken() token: TokenInfo,
@@ -406,7 +506,10 @@ export class AiController {
     return DashscopeVideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '查询Dashscope任务状态' })
+  @ApiDoc({
+    summary: 'Get Dashscope Task Status',
+    response: DashscopeTaskStatusResponseVo,
+  })
   @Get('dashscope/:taskId')
   async getDashscopeTaskStatus(
     @GetToken() token: TokenInfo,

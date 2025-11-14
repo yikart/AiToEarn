@@ -18,8 +18,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatTiktokNatsApi } from '../../transports/channel/api/tiktok.natsApi'
@@ -33,7 +34,7 @@ import {
 } from './dto/tiktok.dto'
 import { TiktokService } from './tiktok.service'
 
-@ApiTags('plat/tiktok - TikTok平台')
+@ApiTags('OpenSource/Platform/Tiktok')
 @Controller('plat/tiktok')
 export class TiktokController {
   constructor(
@@ -41,14 +42,19 @@ export class TiktokController {
     private readonly platTiktokNatsApi: PlatTiktokNatsApi,
   ) {}
 
-  @ApiOperation({ summary: '获取页面的认证URL' })
+  @ApiDoc({
+    summary: 'Get TikTok Authorization URL',
+    body: GetAuthUrlDto.schema,
+  })
   @Post('auth/url')
   async getAuthUrl(@GetToken() token: TokenInfo, @Body() data: GetAuthUrlDto) {
     const res = await this.platTiktokNatsApi.getAuthUrl(token.id, data.scopes, data.spaceId || '')
     return res
   }
 
-  @ApiOperation({ summary: '查询认证信息' })
+  @ApiDoc({
+    summary: 'Get Authorization Task Info',
+  })
   @Get('auth/info/:taskId')
   async getAuthInfo(
     @GetToken() token: TokenInfo,
@@ -59,7 +65,10 @@ export class TiktokController {
 
   @Public()
   @UseGuards(OrgGuard)
-  @ApiOperation({ summary: '创建账号并设置授权Token' })
+  @ApiDoc({
+    summary: 'Handle TikTok OAuth Callback',
+    query: CreateAccountAndSetAccessTokenDto.schema,
+  })
   @Get('auth/back')
   async createAccountAndSetAccessToken(
     @Query() data: CreateAccountAndSetAccessTokenDto,
@@ -72,7 +81,10 @@ export class TiktokController {
     return res.render('auth/back', result)
   }
 
-  @ApiOperation({ summary: '刷新访问令牌' })
+  @ApiDoc({
+    summary: 'Refresh Access Token',
+    body: RefreshTokenDto.schema,
+  })
   @Post('auth/refresh-token')
   async refreshAccessToken(
     @GetToken() token: TokenInfo,
@@ -84,7 +96,9 @@ export class TiktokController {
     )
   }
 
-  @ApiOperation({ summary: '撤销访问令牌' })
+  @ApiDoc({
+    summary: 'Revoke Access Token',
+  })
   @Post('auth/revoke-token/:accountId')
   async revokeAccessToken(
     @GetToken() token: TokenInfo,
@@ -93,7 +107,9 @@ export class TiktokController {
     return this.platTiktokNatsApi.revokeAccessToken(accountId)
   }
 
-  @ApiOperation({ summary: '获取创作者信息' })
+  @ApiDoc({
+    summary: 'Get Creator Information',
+  })
   @Get('creator/info/:accountId')
   async getCreatorInfo(
     @GetToken() token: TokenInfo,
@@ -102,7 +118,9 @@ export class TiktokController {
     return this.platTiktokNatsApi.getCreatorInfo(accountId)
   }
 
-  @ApiOperation({ summary: '检查账号状态' })
+  @ApiDoc({
+    summary: 'Check Account Status',
+  })
   @Get('account/status/:accountId')
   async checkAccountStatus(
     @GetToken() token: TokenInfo,
@@ -111,7 +129,10 @@ export class TiktokController {
     return await this.tiktokService.checkAccountStatus(accountId)
   }
 
-  @ApiOperation({ summary: '初始化视频发布' })
+  @ApiDoc({
+    summary: 'Initialize Video Publish',
+    body: VideoPublishDto.schema,
+  })
   @Post('publish/video/init')
   async initVideoPublish(
     @GetToken() token: TokenInfo,
@@ -124,7 +145,10 @@ export class TiktokController {
     )
   }
 
-  @ApiOperation({ summary: '初始化照片发布' })
+  @ApiDoc({
+    summary: 'Initialize Photo Publish',
+    body: PhotoPublishDto.schema,
+  })
   @Post('publish/photo/init')
   async initPhotoPublish(
     @GetToken() token: TokenInfo,
@@ -138,7 +162,9 @@ export class TiktokController {
     )
   }
 
-  @ApiOperation({ summary: '查询发布状态' })
+  @ApiDoc({
+    summary: 'Get Publish Status',
+  })
   @Get('publish/status/:accountId/:publishId')
   async getPublishStatus(
     @GetToken() token: TokenInfo,
@@ -148,9 +174,10 @@ export class TiktokController {
     return this.platTiktokNatsApi.getPublishStatus(accountId, publishId)
   }
 
-  @ApiOperation({
-    summary: '上传视频文件',
-    description: '上传视频文件到指定的上传URL',
+  @ApiDoc({
+    summary: 'Upload Video File',
+    description: 'Upload a video file to the specified upload URL.',
+    body: UploadVideoFileDto.schema,
   })
   @UseInterceptors(FileInterceptor('file'))
   @Post('upload/video')
@@ -166,7 +193,9 @@ export class TiktokController {
     )
   }
 
-  @ApiOperation({ summary: 'TikTok Webhook事件接收' })
+  @ApiDoc({
+    summary: 'Handle TikTok Webhook Event',
+  })
   @Public()
   @Post('webhook')
   async handleWebhookEvent(

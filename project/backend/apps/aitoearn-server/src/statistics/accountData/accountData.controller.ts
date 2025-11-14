@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import { ApiDoc } from '@yikart/common'
 import { AccountDataService } from './accountData.service'
 import {
   GetAccountDataByParamsDto,
@@ -11,7 +12,7 @@ import {
   GetChannelDataPeriodByUidsDto,
 } from './dto/accountData.dto'
 
-@ApiTags('统计')
+@ApiTags('OpenSource/Statistics/AccountData')
 @Controller('statistics')
 export class AccountDataController {
   constructor(private readonly accountDataService: AccountDataService) {}
@@ -98,7 +99,9 @@ export class AccountDataController {
   }
 
   // 根据platform和uid数组查询频道最新数据并汇总fansCount
-  @ApiOperation({ summary: '批量获取频道最新数据并汇总粉丝数' })
+  @ApiDoc({
+    summary: 'Batch Fetch Latest Channel Data',
+  })
   @Post('channels/latest-batch')
   getChannelDataLatestByUids(@Body() data: GetChannelDataLatestByUidsDto) {
     const res = this.accountDataService.getChannelDataLatestByUids(data.queries)
@@ -106,7 +109,9 @@ export class AccountDataController {
   }
 
   // 根据platform和uid数组查询频道一段时间增量数据
-  @ApiOperation({ summary: '批量获取频道一段时间数据' })
+  @ApiDoc({
+    summary: 'Batch Fetch Channel Period Data',
+  })
   @Post('channels/period-batch')
   getChannelDataPeriodByUids(@Body() data: GetChannelDataPeriodByUidsDto) {
     return this.accountDataService.getChannelDataPeriodByUids(data.queries, data?.startDate, data?.endDate)

@@ -1,12 +1,5 @@
-import { Expose, Transform, Type } from 'class-transformer'
-import {
-  IsBoolean,
-  IsEmail,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
 // 定义类型
 export interface YoutubePlaylistSnippet {
@@ -26,728 +19,277 @@ export interface YouTubeAuthTokens {
   expiresAt?: number
 }
 
-export class UserIdDto {
-  @IsString({ message: '用户ID' })
-  @Expose()
-  readonly userId: string
-}
+const UserIdSchema = z.object({
+  userId: z.string().describe('用户ID'),
+})
+export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-export class GetAuthUrlDto extends UserIdDto {
-  // @IsString({ message: '类型 pc h5' })
-  // @Expose()
-  // readonly type: 'h5' | 'pc'
+const GetAuthUrlSchema = UserIdSchema.extend({
+  spaceId: z.string().describe('空间ID'),
+  mail: z.email().describe('邮箱'),
+  prefix: z.string().optional().describe('前缀'),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @IsString({ message: '空间ID' })
-  @Expose()
-  readonly spaceId: string
+const GetAuthInfoSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-  @IsEmail({}, { message: '邮箱' })
-  @Expose()
-  readonly mail: string
+const AccountIdSchema = z.object({
+  accountId: z.string().describe('账号ID'),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-  @IsString({ message: '前缀' })
-  @IsOptional()
-  @Expose()
-  readonly prefix?: string
-}
+const VideoCategoriesSchema = AccountIdSchema.extend({
+  id: z.string().optional().describe('视频类别ID'),
+  regionCode: z.string().optional().describe('区域代码'),
+})
+export class VideoCategoriesDto extends createZodDto(VideoCategoriesSchema) {}
 
-export class GetAuthInfoDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
-}
+const VideosListSchema = AccountIdSchema.extend({
+  chart: z.string().optional().describe('图表'),
+  id: z.string().optional().describe('视频类别ID'),
+  myRating: z.coerce.boolean().optional().describe('是否喜欢'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  pageToken: z.string().optional().describe('分页令牌'),
+})
+export class VideosListDto extends createZodDto(VideosListSchema) {}
 
-export class AccountIdDto {
-  @IsString({ message: '账号ID' })
-  @Expose()
-  readonly accountId: string
-}
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+  code: z.string().describe('授权码'),
+  state: z.string().describe('状态'),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(
+  CreateAccountAndSetAccessTokenSchema,
+) {}
 
-export class VideoCategoriesDto extends AccountIdDto {
-  @IsString({ message: '视频类别id' })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
+const UploadVideoSchema = AccountIdSchema.extend({
+  fileBuffer: z.instanceof(Buffer).describe('视频文件 Buffer'),
+  fileName: z.string().describe('文件名'),
+  title: z.string().describe('标题'),
+  description: z.string().describe('描述'),
+  privacyStatus: z.string().describe('隐私状态'),
+  keywords: z.string().optional().describe('关键词'),
+  categoryId: z.string().optional().describe('分类 ID'),
+})
+export class UploadVideoDto extends createZodDto(UploadVideoSchema) {}
 
-  @IsString({ message: '区域代码' })
-  @IsOptional()
-  @Expose()
-  readonly regionCode?: string
-}
+const UploadLitVideoSchema = AccountIdSchema.extend({
+  file: z.string().describe('文件流 base64 编码'),
+  uploadToken: z.string().describe('上传 token'),
+})
+export class UploadLitVideoDto extends createZodDto(UploadLitVideoSchema) {}
 
-export class VideosListDto extends AccountIdDto {
-  @IsString({ message: '图表' })
-  @IsOptional()
-  @Expose()
-  readonly chart?: string
+const UploadVideoPartSchema = AccountIdSchema.extend({
+  fileBase64: z.string().describe('文件流 base64 编码'),
+  uploadToken: z.string().describe('上传 token'),
+  partNumber: z.coerce.number().describe('分片索引'),
+})
+export class UploadVideoPartDto extends createZodDto(UploadVideoPartSchema) {}
 
-  @IsString({ message: '视频类别id' })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
+const VideoCompleteSchema = AccountIdSchema.extend({
+  uploadToken: z.string().describe('上传 token'),
+  totalSize: z.coerce.number().describe('文件总大小'),
+})
+export class VideoCompleteDto extends createZodDto(VideoCompleteSchema) {}
 
-  @IsBoolean({ message: '是否喜欢' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly myRating?: boolean
-
-  @IsNumber({}, { message: '最大结果数' })
-  @IsOptional()
-  @Expose()
-  readonly maxResults?: number
-
-  @IsString({ message: '分页令牌' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-}
-
-export class CreateAccountAndSetAccessTokenDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
-
-  @IsString({ message: '授权码' })
-  @Expose()
-  readonly code: string
-
-  @IsString({ message: '状态' })
-  @Expose()
-  readonly state: string
-}
-
-export class UploadVideoDto extends AccountIdDto {
-  @IsObject({ message: '视频文件Buffer' })
-  @Expose()
-  readonly fileBuffer: Buffer
-
-  @IsString({ message: '文件名' })
-  @Expose()
-  readonly fileName: string
-
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
-
-  @IsString({ message: '描述' })
-  @Expose()
-  readonly description: string
-
-  @IsString({ message: '隐私状态' })
-  @Expose()
-  readonly privacyStatus: string
-
-  @IsString({ message: '关键词' })
-  @IsOptional()
-  @Expose()
-  readonly keywords?: string
-
-  @IsString({ message: '类别ID' })
-  @IsOptional()
-  @Expose()
-  readonly categoryId?: string
-
-  // @IsString({ message: '发布时间' })
-  // @IsOptional()
-  // @Expose()
-  // readonly publishAt?: string
-}
-
-export class UploadLitVideoDto extends AccountIdDto {
-  @IsString({ message: '文件流 base64编码' })
-  @Expose()
-  readonly file: string
-
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
-
-export class UploadVideoPartDto extends AccountIdDto {
-  @IsString({ message: '文件流 base64编码' })
-  @Expose()
-  readonly fileBase64: string
-
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-
-  @IsNumber({ allowNaN: false }, { message: '分片索引' })
-  @Type(() => Number) // 关键在这里，确保类型转换
-  @Expose()
-  readonly partNumber: number
-}
-
-export class VideoCompleteDto extends AccountIdDto {
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-
-  @IsNumber({ allowNaN: false }, { message: '文件总大小' })
-  @Type(() => Number)
-  @Expose()
-  readonly totalSize: number
-}
-
-export class InitUploadVideoDto extends AccountIdDto {
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
-
-  @IsString({ message: '描述' })
-  @Expose()
-  readonly description: string
-
-  @IsString({ message: '隐私状态' })
-  @Expose()
-  readonly privacyStatus: string
-
-  @IsString({ message: '关键词' })
-  @IsOptional()
-  @Expose()
-  readonly tag?: string
-
-  @IsString({ message: '类别ID' })
-  @IsOptional()
-  @Expose()
-  readonly categoryId?: string
-
-  // @IsString({ message: '发布时间' })
-  // @IsOptional()
-  // @Expose()
-  // readonly publishAt?: string
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  @Expose()
-  readonly contentLength?: number
-
-  @IsString({ message: '许可证' })
-  @IsOptional()
-  @Expose()
-  readonly license?: string
-
-  @IsBoolean({ message: '是否可嵌入' })
-  @IsOptional()
-  @Expose()
-  readonly embeddable?: boolean
-
-  @IsBoolean({ message: '是否通知订阅者' })
-  @IsOptional()
-  @Expose()
-  readonly notifySubscribers?: boolean
-
-  @IsBoolean({ message: '是否自认为适合儿童' })
-  @IsOptional()
-  @Expose()
-  readonly selfDeclaredMadeForKids?: boolean
-}
+const InitUploadVideoSchema = AccountIdSchema.extend({
+  title: z.string().describe('标题'),
+  description: z.string().describe('描述'),
+  privacyStatus: z.string().describe('隐私状态'),
+  tag: z.string().optional().describe('标签'),
+  categoryId: z.string().optional().describe('分类 ID'),
+  contentLength: z.coerce.number().optional().describe('内容长度'),
+  license: z.string().optional().describe('许可证'),
+  embeddable: z.boolean().optional().describe('是否可嵌入'),
+  notifySubscribers: z.boolean().optional().describe('是否通知订阅者'),
+  selfDeclaredMadeForKids: z.boolean().optional().describe('是否自认为适合儿童'),
+})
+export class InitUploadVideoDto extends createZodDto(InitUploadVideoSchema) {}
 
 // 获取频道列表
-export class GetChannelsListDto extends AccountIdDto {
-  @IsString({ message: '标识名,注意：forHandle、forUsername、id、mine 必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly forHandle?: string
+const GetChannelsListSchema = AccountIdSchema.extend({
+  forHandle: z.string().optional().describe('频道 handle, 注意：forHandle、forUsername、id、mine 必须有且只能有一个'),
+  forUsername: z.string().optional().describe('用户名'),
+  id: z.string().optional().describe('频道ID'),
+  mine: z.coerce.boolean().describe('是否查询当前频道'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  pageToken: z.string().optional().describe('分页令牌'),
+})
+export class GetChannelsListDto extends createZodDto(GetChannelsListSchema) {}
 
-  @IsString({ message: '用户名,注意：forHandle、forUsername、id、mine 必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly forUsername?: string
+const UpdateChannelsSchema = AccountIdSchema.extend({
+  id: z.string().describe('频道ID'),
+  handle: z.string().optional().describe('handle'),
+  userName: z.string().optional().describe('用户名'),
+  mine: z.coerce.boolean().describe('是否当前频道'),
+})
+export class UpdateChannelsDto extends createZodDto(UpdateChannelsSchema) {}
 
-  @IsString({ message: '频道ID,注意：forHandle、forUsername、id、mine 必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
+const GetCommentsListSchema = AccountIdSchema.extend({
+  id: z.string().optional().describe('评论ID（多个以逗号分隔）'),
+  parentId: z.string().optional().describe('顶级评论ID'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  pageToken: z.string().optional().describe('分页令牌'),
+})
+export class GetCommentsListDto extends createZodDto(GetCommentsListSchema) {}
 
-  @IsBoolean({ message: '我的频道,注意：forHandle、forUsername、id、mine 必须有且只能有一个' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly mine?: boolean
+const InsertCommentThreadsSchema = AccountIdSchema.extend({
+  channelId: z.string().describe('频道ID'),
+  videoId: z.string().describe('视频ID'),
+  textOriginal: z.string().describe('评论内容'),
+})
+export class InsertCommentThreadsDto extends createZodDto(InsertCommentThreadsSchema) {}
 
-  @IsNumber({ allowNaN: false }, { message: '最大结果数' })
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly maxResults?: number
+const GetCommentThreadsListSchema = AccountIdSchema.extend({
+  id: z.string().optional().describe('评论会话ID'),
+  allThreadsRelatedToChannelId: z.string().optional().describe('关联频道ID'),
+  videoId: z.string().optional().describe('视频ID'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  pageToken: z.string().optional().describe('分页令牌'),
+  order: z.string().optional().describe('排序方式'),
+  searchTerms: z.string().optional().describe('搜索关键词'),
+})
+export class GetCommentThreadsListDto extends createZodDto(GetCommentThreadsListSchema) {}
 
-  @IsString({ message: '分页令牌' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-}
+const InsertCommentSchema = AccountIdSchema.extend({
+  parentId: z.string().optional().describe('父评论ID'),
+  textOriginal: z.string().optional().describe('评论内容'),
+})
+export class InsertCommentDto extends createZodDto(InsertCommentSchema) {}
 
-export class UpdateChannelsDto extends AccountIdDto {
-  @IsString({ message: '频道ID' })
-  @Expose()
-  readonly id: string
+const UpdateCommentSchema = AccountIdSchema.extend({
+  id: z.string().optional().describe('评论ID'),
+  textOriginal: z.string().optional().describe('评论内容'),
+})
+export class UpdateCommentDto extends createZodDto(UpdateCommentSchema) {}
 
-  @IsString({ message: 'handle' })
-  @IsOptional()
-  @Expose()
-  readonly handle?: string
+const SetCommentThreadsModerationStatusSchema = AccountIdSchema.extend({
+  id: z.string().describe('评论ID'),
+  moderationStatus: z.string().describe('审核状态'),
+  banAuthor: z.coerce.boolean().describe('是否自动拒绝评论作者'),
+})
+export class SetCommentThreadsModerationStatusDto extends createZodDto(
+  SetCommentThreadsModerationStatusSchema,
+) {}
 
-  @IsString({ message: '用户名' })
-  @IsOptional()
-  @Expose()
-  readonly userName?: string
+const DeleteCommentSchema = AccountIdSchema.extend({
+  id: z.string().describe('评论ID'),
+})
+export class DeleteCommentDto extends createZodDto(DeleteCommentSchema) {}
 
-  @IsString({ message: 'mine' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly mine?: boolean
-}
-
-export class GetCommentsListDto extends AccountIdDto {
-  @IsString({ message: '评论ID，多个id用英文逗号分隔，注意：id、parentId,必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly id: string
-
-  @IsString({ message: '顶级评论ID。注意：id、parentId,必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly parentId?: string
-
-  @IsNumber({ allowNaN: false }, { message: '最大结果数' })
-  @Type(() => Number)
-  @Expose()
-  readonly maxResults?: number
-
-  @IsString({ message: '分页令牌' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-}
-
-// 创建顶级评论（评论会话）
-export class InsertCommentThreadsDto extends AccountIdDto {
-  @IsString({ message: '频道ID' })
-  @Expose()
-  readonly channelId: string
-
-  @IsString({ message: '视频ID' })
-  @Expose()
-  readonly videoId: string
-
-  @IsString({ message: '评论内容' })
-  @Expose()
-  readonly textOriginal: string
-}
-
-// 获取评论会话列表
-export class GetCommentThreadsListDto extends AccountIdDto {
-  @IsString({ message: '评论会话 ID（多个id以英文逗号分隔）注意：id、allThreadsRelatedToChannelId、videoId 必须有且只能有一个，不能同时使用' })
-  @Expose()
-  @IsOptional()
-  readonly id?: string
-
-  @IsString({ message: '关联的频道ID 注意：id、allThreadsRelatedToChannelId、videoId 必须有且只能有一个，不能同时使用' })
-  @Expose()
-  @IsOptional()
-  readonly allThreadsRelatedToChannelId?: string
-
-  @IsString({ message: '视频ID 注意：id、allThreadsRelatedToChannelId、videoId 必须有且只能有一个，不能同时使用' })
-  @Expose()
-  @IsOptional()
-  readonly videoId?: string
-
-  @IsNumber({ allowNaN: false }, { message: '最大结果数' })
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly maxResults?: number
-
-  @IsString({ message: '分页令牌，注意：此参数不能与 id 参数结合使用。' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-
-  @IsString({ message: '排序方式，注意：此参数不能与 id 参数结合使用。time - 默认，评论会话会按时间排序。relevance - 评论会话按相关性排序。' })
-  @IsOptional()
-  @Expose()
-  readonly order?: string
-
-  @IsString({ message: '搜索关键词，注意：此参数不能与 id 参数结合使用。' })
-  @IsOptional()
-  @Expose()
-  readonly searchTerms?: string
-}
-
-// 创建二级评论
-export class InsertCommentDto extends AccountIdDto {
-  @IsString({ message: '父评论ID' })
-  @IsOptional()
-  @Expose()
-  readonly parentId: string
-
-  @IsString({ message: '评论内容' })
-  @IsOptional()
-  @Expose()
-  readonly textOriginal: string
-}
-
-// 更新评论
-export class UpdateCommentDto extends AccountIdDto {
-  @IsString({ message: '评论ID' })
-  @IsOptional()
-  @Expose()
-  readonly id: string
-
-  @IsString({ message: '评论内容必须是字符串' })
-  @IsOptional()
-  @Expose()
-  readonly textOriginal: string
-}
-
-// 设置评论审核状态
-export class SetCommentThreadsModerationStatusDto extends AccountIdDto {
-  @IsString({ message: '评论ID' })
-  @Expose()
-  readonly id: string
-
-  @IsString({ message: '审核状态,heldForReview 等待管理员审核   published - 清除要公开显示的评论。 rejected - 不显示该评论' })
-  @Expose()
-  readonly moderationStatus: string
-
-  @IsBoolean({ message: '是否自动拒绝评论作者撰写的任何其他评论 将作者加入黑名单,' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly banAuthor?: boolean
-}
-
-// 删除评论
-export class DeleteCommentDto extends AccountIdDto {
-  @IsString({ message: '评论ID' })
-  @Expose()
-  readonly id: string
-}
-
-// 对视频的点赞、踩
-export class VideoRateDto extends AccountIdDto {
-  @IsString({ message: '视频ID' })
-  @Expose()
-  readonly id: string
-
-  @IsString({ message: '点赞、踩 like/dislike/none' })
-  @Expose()
-  readonly rating: string
-}
+const VideoRateSchema = AccountIdSchema.extend({
+  id: z.string().describe('视频ID'),
+  rating: z.string().describe('点赞、踩'),
+})
+export class VideoRateDto extends createZodDto(VideoRateSchema) {}
 
 // 获取视频的点赞、踩
-export class GetVideoRateDto extends AccountIdDto {
-  @IsString({ message: '视频ID，多个id用英文逗号分隔' })
-  @Expose()
-  readonly id: string
-}
+const GetVideoRateSchema = AccountIdSchema.extend({
+  id: z.string().describe('视频ID，多个id用英文逗号分隔'),
+})
+export class GetVideoRateDto extends createZodDto(GetVideoRateSchema) {}
 
 // 删除视频
-export class DeleteVideoDto extends AccountIdDto {
-  @IsString({ message: '视频ID' })
-  @Expose()
-  readonly id: string
-}
+const DeleteVideoSchema = AccountIdSchema.extend({
+  id: z.string().describe('视频ID'),
+})
+export class DeleteVideoDto extends createZodDto(DeleteVideoSchema) {}
 
 // 更新视频
-export class UpdateVideoDto extends AccountIdDto {
-  @IsString({ message: '视频ID' })
-  @Expose()
-  readonly id: string
+const UpdateVideoSchema = AccountIdSchema.extend({
+  id: z.string().describe('视频ID'),
+  title: z.string().describe('标题'),
+  categoryId: z.string().describe('类别ID'),
+  defaultLanguage: z.string().optional().describe('默认语言'),
+  description: z.string().optional().describe('描述'),
+  privacyStatus: z.string().optional().describe('隐私状态'),
+  tags: z.string().optional().describe('标签'),
+  publishAt: z.string().optional().describe('发布时间'),
+  recordingDate: z.string().optional().describe('录制日期'),
+})
+export class UpdateVideoDto extends createZodDto(UpdateVideoSchema) {}
 
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
+const InsertPlayListSchema = AccountIdSchema.extend({
+  title: z.string().describe('标题'),
+  description: z.string().optional().describe('描述'),
+  privacyStatus: z.string().optional().describe('隐私状态'),
+})
+export class InsertPlayListDto extends createZodDto(InsertPlayListSchema) {}
 
-  @IsString({ message: '类别ID' })
-  @Expose()
-  readonly categoryId: string
+const GetPlayListSchema = AccountIdSchema.extend({
+  channelId: z.string().optional().describe('频道ID'),
+  id: z.string().optional().describe('播放列表 ID, 注意：channelId、id、mine，必须有且只能有一个'),
+  mine: z.coerce.boolean().describe('是否查询我的播放列表'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  pageToken: z.string().optional().describe('分页令牌'),
+})
+export class GetPlayListDto extends createZodDto(GetPlayListSchema) {}
 
-  @IsString({ message: '默认语言' })
-  @IsOptional()
-  @Expose()
-  readonly defaultLanguage: string
+const UpdatePlayListSchema = AccountIdSchema.extend({
+  id: z.string().describe('播放列表 ID'),
+  title: z.string().optional().describe('标题'),
+  description: z.string().optional().describe('描述'),
+  privacyStatus: z.string().optional().describe('隐私状态'),
+  podcastStatus: z.string().optional().describe('播客状态'),
+})
+export class UpdatePlayListDto extends createZodDto(UpdatePlayListSchema) {}
 
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly description: string
+const DeletePlayListSchema = AccountIdSchema.extend({
+  id: z.string().describe('播放列表 ID'),
+})
+export class DeletePlayListDto extends createZodDto(DeletePlayListSchema) {}
 
-  @IsString({ message: '隐私状态' })
-  @IsOptional()
-  @Expose()
-  readonly privacyStatus: string
+const GetPlayItemsSchema = AccountIdSchema.extend({
+  id: z.string().optional().describe('播放列表项 ID 多个id用英文逗号分隔，注意：id、playlistId，必须有且只能有一个'),
+  playlistId: z.string().optional().describe('播放列表 ID'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  pageToken: z.string().optional().describe('分页令牌'),
+  videoId: z.string().optional().describe('视频 ID'),
+})
+export class GetPlayItemsDto extends createZodDto(GetPlayItemsSchema) {}
 
-  @IsString({ message: '标签' })
-  @IsOptional()
-  @Expose()
-  readonly tags?: string
+const InsertPlayItemsSchema = AccountIdSchema.extend({
+  playlistId: z.string().describe('播放列表 ID'),
+  resourceId: z.string().describe('资源 ID'),
+  position: z.coerce.number().optional().describe('位置'),
+  note: z.string().optional().describe('说明'),
+  startAt: z.string().optional().describe('开始时间'),
+  endAt: z.string().optional().describe('结束时间'),
+})
+export class InsertPlayItemsDto extends createZodDto(InsertPlayItemsSchema) {}
 
-  @IsString({ message: '发布时间' })
-  @IsOptional()
-  @Expose()
-  readonly publishAt?: string
+const UpdatePlayItemsSchema = InsertPlayItemsSchema.extend({
+  id: z.string().describe('播放列表项 ID'),
+})
+export class UpdatePlayItemsDto extends createZodDto(UpdatePlayItemsSchema) {}
 
-  @IsString({ message: '录制日期' })
-  @IsOptional()
-  @Expose()
-  readonly recordingDate?: string
-}
+const DeletePlayItemsSchema = AccountIdSchema.extend({
+  id: z.string().describe('播放列表项 ID'),
+})
+export class DeletePlayItemsDto extends createZodDto(DeletePlayItemsSchema) {}
 
-// 创建播放列表
-export class InsertPlayListDto extends AccountIdDto {
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
+const ChannelsSectionsListSchema = AccountIdSchema.extend({
+  channelId: z.string().optional().describe('频道 ID, 注意：channelId、id、mine，必须有且只能有一个'),
+  id: z.string().optional().describe('板块 ID'),
+  mine: z.coerce.boolean().describe('是否查询自己的板块'),
+})
+export class ChannelsSectionsListDto extends createZodDto(ChannelsSectionsListSchema) {}
 
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly description?: string
-
-  @IsString({ message: '隐私状态' })
-  @IsOptional()
-  @Expose()
-  readonly privacyStatus?: string
-}
-
-// 获取播放列表
-export class GetPlayListDto extends AccountIdDto {
-  @IsString({ message: '频道ID, 注意：channelId、id、mine，必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly channelId?: string
-
-  @IsString({ message: '播放列表ID, 多个id用英文逗号分隔，注意：channelId、id、mine，必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
-
-  @IsBoolean({ message: '我的播放列表, 注意：channelId、id、mine，必须有且只能有一个' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly mine?: boolean
-
-  @IsNumber({ allowNaN: false }, { message: '最大结果数' })
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly maxResults?: number
-
-  @IsString({ message: '分页令牌' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-}
-
-// 更新播放列表
-export class UpdatePlayListDto extends AccountIdDto {
-  @IsString({ message: '播放列表ID' })
-  @Expose()
-  readonly id: string
-
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
-
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly description?: string
-
-  @IsString({ message: '隐私状态' })
-  @IsOptional()
-  @Expose()
-  readonly privacyStatus?: string
-
-  @IsString({ message: '播客状态' })
-  @IsOptional()
-  @Expose()
-  readonly podcastStatus?: string
-}
-
-// 删除播放列表
-export class DeletePlayListDto extends AccountIdDto {
-  @IsString({ message: '播放列表ID' })
-  @Expose()
-  readonly id: string
-}
-
-// 获取播放列表项
-export class GetPlayItemsDto extends AccountIdDto {
-  @IsString({ message: '播放列表项ID, 多个id用英文逗号分隔，注意：id、playlistId，必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
-
-  @IsString({ message: '播放列表ID, 注意：id、playlistId，必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly playlistId?: string
-
-  @IsNumber({ allowNaN: false }, { message: '最大结果数' })
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly maxResults?: number
-
-  @IsString({ message: '分页令牌' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-
-  @IsString({ message: '视频ID' })
-  @IsOptional()
-  @Expose()
-  readonly videoId?: string
-}
-
-// 插入播放列表项
-export class InsertPlayItemsDto extends AccountIdDto {
-  @IsString({ message: '播放列表ID' })
-  @Expose()
-  readonly playlistId: string
-
-  @IsString({ message: '资源ID' })
-  @Expose()
-  readonly resourceId: string
-
-  @IsNumber({ allowNaN: false }, { message: '位置' })
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly position?: number
-
-  @IsString({ message: '说明' })
-  @IsOptional()
-  @Expose()
-  readonly note?: string
-
-  @IsString({ message: '开始时间' })
-  @IsOptional()
-  @Expose()
-  readonly startAt?: string
-
-  @IsString({ message: '结束时间' })
-  @IsOptional()
-  @Expose()
-  readonly endAt?: string
-}
-
-// 更新播放列表项
-export class UpdatePlayItemsDto extends AccountIdDto {
-  @IsString({ message: '播放列表项ID' })
-  @Expose()
-  readonly id: string
-
-  @IsString({ message: '播放列表ID' })
-  @Expose()
-  readonly playlistId: string
-
-  @IsString({ message: '资源ID' })
-  @Expose()
-  readonly resourceId: string
-
-  @IsNumber({ allowNaN: false }, { message: '位置' })
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly position?: number
-
-  @IsString({ message: '说明' })
-  @IsOptional()
-  @Expose()
-  readonly note?: string
-
-  @IsString({ message: '开始时间' })
-  @IsOptional()
-  @Expose()
-  readonly startAt?: string
-
-  @IsString({ message: '结束时间' })
-  @IsOptional()
-  @Expose()
-  readonly endAt?: string
-}
-
-// 删除播放列表项
-export class DeletePlayItemsDto extends AccountIdDto {
-  @IsString({ message: '播放列表项ID' })
-  @Expose()
-  readonly id: string
-}
-
-// 获取频道板块列表
-export class ChannelsSectionsListDto extends AccountIdDto {
-  @IsString({ message: '频道ID, 注意：channelId、id、mine，必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly channelId?: string
-
-  @IsString({ message: '板块ID, 多个id用英文逗号分隔，注意：channelId、id、mine，必须有且只能有一个' })
-  @IsOptional()
-  @Expose()
-  readonly id?: string
-
-  @IsBoolean({ message: '是否查询自己的板块, 注意：channelId、id、mine，必须有且只能有一个' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly mine?: boolean
-}
-
-/**
- * YouTube搜索接口DTO
- */
-export class SearchDto extends AccountIdDto {
-  @IsBoolean({ message: '是否搜索我的内容' })
-  @Transform(({ value }) => value === true || value === 'true' || value === 1 || value === '1')
-  @IsOptional()
-  @Expose()
-  readonly forMine?: boolean
-
-  @IsNumber({}, { message: '最大结果数' })
-  @IsOptional()
-  @Expose()
-  readonly maxResults?: number
-
-  @IsString({ message: '排序方法' })
-  @IsOptional()
-  @Expose()
-  readonly order?: 'relevance' | 'date' | 'rating' | 'title' | 'videoCount' | 'viewCount'
-
-  @IsString({ message: '分页令牌' })
-  @IsOptional()
-  @Expose()
-  readonly pageToken?: string
-
-  @IsString({ message: '发布时间之前' })
-  @IsOptional()
-  @Expose()
-  readonly publishedBefore?: string
-
-  @IsString({ message: '发布时间之后' })
-  @IsOptional()
-  @Expose()
-  readonly publishedAfter?: string
-
-  @IsString({ message: '搜索查询字词' })
-  @IsOptional()
-  @Expose()
-  readonly q?: string
-
-  @IsString({ message: '搜索类型' })
-  @IsOptional()
-  @Expose()
-  readonly type?: 'video' | 'channel' | 'playlist'
-
-  @IsString({ message: '视频类别ID' })
-  @IsOptional()
-  @Expose()
-  readonly videoCategoryId?: string
-}
+const SearchSchema = AccountIdSchema.extend({
+  forMine: z.coerce.boolean().describe('是否搜索我的内容'),
+  maxResults: z.coerce.number().optional().describe('最大结果数'),
+  order: z
+    .enum(['relevance', 'date', 'rating', 'title', 'videoCount', 'viewCount'])
+    .optional()
+    .describe('排序方法'),
+  pageToken: z.string().optional().describe('分页令牌'),
+  publishedBefore: z.string().optional().describe('发布时间之前'),
+  publishedAfter: z.string().optional().describe('发布时间之后'),
+  q: z.string().optional().describe('搜索查询字词'),
+  type: z.enum(['video', 'channel', 'playlist']).optional().describe('搜索类型'),
+  videoCategoryId: z.string().optional().describe('视频类别 ID'),
+})
+export class SearchDto extends createZodDto(SearchSchema) {}

@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Render } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { PlatMetaNatsApi } from '../../transports/channel/api/meta.natsApi'
 import {
   CreateAccountAndSetAccessTokenDto,
@@ -8,21 +9,26 @@ import {
   GetAuthUrlDto,
 } from './dto/meta.dto'
 
-@ApiTags('plat/meta - Meta平台')
+@ApiTags('OpenSource/Platform/Meta')
 @Controller('plat/meta')
 export class MetaController {
   constructor(
     private readonly platMetaNatsApi: PlatMetaNatsApi,
   ) {}
 
-  @ApiOperation({ summary: '获取Meta平台 oAuth2.0 用户授权页面URL' })
+  @ApiDoc({
+    summary: 'Get Meta OAuth URL',
+    body: GetAuthUrlDto.schema,
+  })
   @Post('auth/url')
   async getAuthUrl(@GetToken() token: TokenInfo, @Body() data: GetAuthUrlDto) {
     const res = await this.platMetaNatsApi.getAuthUrl(token.id, data.platform, data.spaceId || '')
     return res
   }
 
-  @ApiOperation({ summary: '查询用户oAuth2.0任务状态' })
+  @ApiDoc({
+    summary: 'Get OAuth Task Status',
+  })
   @Get('auth/info/:taskId')
   async getAuthInfo(
     @GetToken() token: TokenInfo,
@@ -32,7 +38,9 @@ export class MetaController {
     return res
   }
 
-  @ApiOperation({ summary: '查询Facebook用户Pages列表' })
+  @ApiDoc({
+    summary: 'List Facebook Pages',
+  })
   @Get('facebook/pages')
   async getFacebookPages(
     @GetToken() token: TokenInfo,
@@ -41,7 +49,10 @@ export class MetaController {
     return res
   }
 
-  @ApiOperation({ summary: '选择确认Facebook Pages' })
+  @ApiDoc({
+    summary: 'Select Facebook Pages',
+    body: FacebookPageSelectionDto.schema,
+  })
   @Post('facebook/pages')
   async selectFacebookPages(
     @GetToken() token: TokenInfo,
@@ -52,7 +63,10 @@ export class MetaController {
   }
 
   @Public()
-  @ApiOperation({ summary: 'oAuth认证回调后续操作, 保存AccessToken并创建用户' })
+  @ApiDoc({
+    summary: 'Handle Meta OAuth Callback',
+    query: CreateAccountAndSetAccessTokenDto.schema,
+  })
   @Get('auth/back')
   @Render('auth/meta')
   async createAccountAndSetAccessToken(
@@ -65,7 +79,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: '获取Facebook Page的已发布帖子列表' })
+  @ApiDoc({
+    summary: 'List Facebook Page Published Posts',
+  })
   @Get('facebook/:accountId/published_posts')
   async getFacebookPagePublishedPosts(
     @GetToken() token: TokenInfo,
@@ -80,7 +96,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: '获取Facebook Page的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Facebook Page Insights',
+  })
   @Get('facebook/:accountId/insights')
   async getFacebookPageInsights(
     @GetToken() token: TokenInfo,
@@ -90,7 +108,9 @@ export class MetaController {
     return await this.platMetaNatsApi.getFacebookPageInsights(accountId, query)
   }
 
-  @ApiOperation({ summary: '获取Facebook Page的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Facebook Post Insights',
+  })
   @Get('facebook/:accountId/:postId/insights')
   async getFacebookPostInsights(
     @GetToken() token: TokenInfo,
@@ -102,7 +122,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: '获取Instagram Account的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Instagram Account Info',
+  })
   @Get('instagram/:accountId')
   async getInstagramAccountInfo(
     @GetToken() token: TokenInfo,
@@ -113,7 +135,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: '获取Instagram Account的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Instagram Account Insights',
+  })
   @Get('instagram/:accountId/insights')
   async getInstagramAccountInsights(
     @GetToken() token: TokenInfo,
@@ -124,7 +148,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: 'Instagram Post的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Instagram Post Insights',
+  })
   @Get('instagram/:accountId/:postId/insights')
   async getInstagramPostInsights(
     @GetToken() token: TokenInfo,
@@ -136,7 +162,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: 'threads Account的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Threads Account Insights',
+  })
   @Get('threads/:accountId/insights')
   async getThreadsAccountInsights(
     @GetToken() token: TokenInfo,
@@ -147,7 +175,9 @@ export class MetaController {
   }
 
   // Todo: Only allow internal service access
-  @ApiOperation({ summary: '获取Facebook Page的Insights数据' })
+  @ApiDoc({
+    summary: 'Get Threads Post Insights',
+  })
   @Get('threads/:accountId/:postId/insights')
   async getThreadsPostInsights(
     @GetToken() token: TokenInfo,
@@ -158,7 +188,9 @@ export class MetaController {
     return await this.platMetaNatsApi.getThreadsPostInsights(accountId, postId, query)
   }
 
-  @ApiOperation({ summary: 'threads查找location' })
+  @ApiDoc({
+    summary: 'Search Threads Locations',
+  })
   @Get('threads/locations')
   async searchThreadsLocation(
     @GetToken() token: TokenInfo,

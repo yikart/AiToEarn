@@ -6,18 +6,21 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PublishingInternalService } from './provider/publishing.service'
 
-@ApiTags('内部服务接口')
+@ApiTags('OpenSource/Internal/Publishing')
 @Controller('internal')
 @Internal()
 export class PublishingController {
   constructor(private readonly publishingInternalService: PublishingInternalService) { }
 
-  @ApiOperation({ summary: 'create publish record' })
+  @ApiDoc({
+    summary: 'Create Publish Record',
+  })
   @Post('/publishing/records')
   async createPublishRecord(
     @Body() body: Partial<PublishRecord>,
@@ -27,7 +30,9 @@ export class PublishingController {
     )
   }
 
-  @ApiOperation({ summary: 'get publish record info' })
+  @ApiDoc({
+    summary: 'Get Publish Record Information',
+  })
   @Get('/publishing/records/:recordId')
   async getPublishRecordInfo(
     @Param('recordId') recordId: string,
@@ -37,7 +42,9 @@ export class PublishingController {
     )
   }
 
-  @ApiOperation({ summary: 'update publish record status' })
+  @ApiDoc({
+    summary: 'Update Publish Record Status',
+  })
   @Patch('/publishing/records/:recordId/status')
   async updatePublishRecordStatus(
     @Param('recordId') recordId: string,
@@ -50,7 +57,9 @@ export class PublishingController {
     )
   }
 
-  @ApiOperation({ summary: 'get publish record by dataId' })
+  @ApiDoc({
+    summary: 'Get Publish Record by Data ID',
+  })
   @Get('/:uid/publishing/records/:dataId')
   async getPublishRecordByDataId(
     @Param('uid') uid: string,
@@ -62,7 +71,9 @@ export class PublishingController {
     )
   }
 
-  @ApiOperation({ summary: 'complete publish task' })
+  @ApiDoc({
+    summary: 'Complete Publish Task',
+  })
   @Patch('/:uid/publishing/records/:dataId')
   async completePublishTask(
     @Param('uid') uid: string,

@@ -15,7 +15,7 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { Media } from '@yikart/mongodb'
@@ -23,7 +23,7 @@ import { fileUtil } from '../util/file.util'
 import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto, MediaFilterSchema, MediaIdsDto } from './dto/media.dto'
 import { MediaService } from './media.service'
 
-@ApiTags('媒体资源')
+@ApiTags('OpenSource/Me/Media')
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) { }
@@ -35,9 +35,10 @@ export class MediaController {
     })
   }
 
-  @ApiOperation({
-    description: '创建媒体资源',
-    summary: '创建媒体资源',
+  @ApiDoc({
+    summary: 'Create Media Asset',
+    description: 'Create a media asset with metadata and file URLs.',
+    body: CreateMediaDto.schema,
   })
   @Post()
   async create(
@@ -49,9 +50,10 @@ export class MediaController {
     return res
   }
 
-  @ApiOperation({
-    description: '根据ID列表',
-    summary: '批量删除媒体资源',
+  @ApiDoc({
+    summary: 'Delete Media Assets by IDs',
+    description: 'Delete media assets using a list of IDs.',
+    body: MediaIdsDto.schema,
   })
   @Delete('ids')
   async delByIds(@GetToken() token: TokenInfo, @Body() body: MediaIdsDto) {
@@ -59,9 +61,10 @@ export class MediaController {
     return res
   }
 
-  @ApiOperation({
-    description: 'Filter',
-    summary: 'Delete By Filter',
+  @ApiDoc({
+    summary: 'Delete Media Assets by Filter',
+    description: 'Delete media assets that match the filter criteria.',
+    body: MediaFilterDto.schema,
   })
   @Delete('filter')
   async delByFilter(@GetToken() token: TokenInfo, @Body() body: MediaFilterDto) {
@@ -69,9 +72,9 @@ export class MediaController {
     return res
   }
 
-  @ApiOperation({
-    description: '删除媒体资源',
-    summary: '删除媒体资源',
+  @ApiDoc({
+    summary: 'Delete Media Asset by ID',
+    description: 'Delete a media asset by its identifier.',
   })
   @Delete(':id')
   async del(@GetToken() token: TokenInfo, @Param('id') id: string) {
@@ -85,8 +88,8 @@ export class MediaController {
 
   @Get('list/:pageNo/:pageSize')
   @ApiDoc({
-    summary: '获取媒体列表',
-    description: '获取媒体列表',
+    summary: 'List Media Assets',
+    description: 'Retrieve a paginated list of media assets.',
     query: MediaFilterSchema,
   })
   async getList(
@@ -102,9 +105,10 @@ export class MediaController {
     return res
   }
 
-  @ApiOperation({
-    description: '批量更新素材的使用次数',
-    summary: '批量更新素材的使用次数',
+  @ApiDoc({
+    summary: 'Increase Media Usage Count',
+    description: 'Increase the usage count of multiple media assets.',
+    body: AddUseCountOfListDto.schema,
   })
   @Put('addUseCountOfList')
   async addUseCountOfList(

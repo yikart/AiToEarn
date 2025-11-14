@@ -1,16 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { createZodDto } from '@yikart/common'
-import { Expose, Transform } from 'class-transformer'
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsDate,
-  IsEnum,
-  IsOptional,
-  IsString,
-} from 'class-validator'
 import { ObjectId } from 'mongodb'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
@@ -19,12 +8,10 @@ import {
   PublishType,
 } from '../../../libs/database/schema/publishTask.schema'
 
-export class PublishRecordIdDto {
-  @ApiProperty({ title: 'ID', required: true })
-  @IsString({ message: 'ID' })
-  @Expose()
-  readonly id: string
-}
+export const PublishRecordIdSchema = z.object({
+  id: z.string().describe('ID'),
+})
+export class PublishRecordIdDto extends createZodDto(PublishRecordIdSchema) {}
 
 export const UpPublishTaskTimeSchema = z.object({
   id: z.string({ message: '任务ID' }),
@@ -151,7 +138,7 @@ export const CreatePublishSchema = z.object({
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),
   imgUrlList: z.array(z.string()).optional(),
-  publishTime: z.union([z.date(), z.string().datetime()]).transform(arg => new Date(arg)),
+  publishTime: z.coerce.date(),
   topics: z.array(z.string()),
   option: z.object({
     bilibili: BiliBiliPublishOptionSchema.optional(),
@@ -186,9 +173,7 @@ export const CreatePublishRecordSchema = z.object({
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),
   imgList: z.array(z.string()).optional(),
-  publishTime: z.union([z.date(), z.string()]).transform((arg) => {
-    return new Date(arg)
-  }),
+  publishTime: z.coerce.date(),
   topics: z.array(z.string()),
   option: z.object({
     bilibili: BiliBiliPublishOptionSchema.optional(),
@@ -202,66 +187,23 @@ export const CreatePublishRecordSchema = z.object({
 })
 export class CreatePublishRecordDto extends createZodDto(CreatePublishRecordSchema) {}
 
-export class PublishRecordListFilterDto {
-  @IsString({ message: '用户ID' })
-  @Expose()
-  readonly userId: string
-
-  @IsString({ message: '账户ID' })
-  @IsOptional()
-  @Expose()
-  readonly accountId?: string
-
-  @IsString({ message: '第三方平台用户id' })
-  @IsOptional()
-  @Expose()
-  readonly uid?: string
-
-  @ApiProperty({
-    title: '账户类型',
-    required: false,
-    enum: AccountType,
-    description: '账户类型',
-  })
-  @IsEnum(AccountType, { message: '账户类型' })
-  @IsOptional()
-  @Expose()
-  readonly accountType?: AccountType
-
-  @ApiProperty({
-    title: '类型',
-    required: false,
-    enum: PublishType,
-    description: '类型',
-  })
-  @IsEnum(PublishType, { message: '类型' })
-  @IsOptional()
-  @Expose()
-  readonly type?: PublishType
-
-  @ApiProperty({
-    title: '状态',
-    required: false,
-    enum: PublishStatus,
-    description: '状态',
-  })
-  @IsEnum(PublishStatus, { message: '状态' })
-  @IsOptional()
-  @Expose()
-  readonly status?: PublishStatus
-
-  @ApiProperty({ title: '创建时间区间', required: false })
-  @IsArray({ message: '创建时间区间必须是一个数组' })
-  @ArrayMinSize(2, { message: '创建时间区间必须包含两个日期' })
-  @ArrayMaxSize(2, { message: '创建时间区间必须包含两个日期' })
-  @IsDate({ each: true, message: '创建时间区间中的每个元素必须是有效的日期' })
-  @IsOptional()
-  @Expose()
-  @Transform(({ value }) =>
-    value ? value.map((v: string) => new Date(v)) : undefined,
-  )
-  readonly time?: [Date, Date]
-}
+export const PublishRecordListFilterSchema = z.object({
+  userId: z.string().describe('用户ID'),
+  accountId: z.string().optional().describe('账户ID'),
+  uid: z.string().optional().describe('第三方平台用户id'),
+  accountType: z.enum(AccountType).optional().describe('账户类型'),
+  type: z.enum(PublishType).optional().describe('类型'),
+  status: z.enum(PublishStatus).optional().describe('状态'),
+  time: z.tuple([
+    z.coerce.date(),
+    z.coerce.date(),
+  ])
+    .optional()
+    .describe('创建时间区间'),
+})
+export class PublishRecordListFilterDto extends createZodDto(
+  PublishRecordListFilterSchema,
+) {}
 
 // 立即发布 dto
 export const NowPubTaskSchema = z.object({
@@ -272,13 +214,10 @@ export class NowPubTaskDto extends createZodDto(NowPubTaskSchema) {}
 export const PublishDayInfoListFiltersSchema = z.object({
   userId: z.string().optional(),
   time: z.tuple([
-    z.union([z.date(), z.string()]).transform((arg) => {
-      return new Date(arg)
-    }),
-    z.union([z.date(), z.string()]).transform((arg) => {
-      return new Date(arg)
-    }),
-  ]).optional(),
+    z.coerce.date(),
+    z.coerce.date(),
+  ])
+    .optional(),
 })
 export class PublishDayInfoListFiltersDto extends createZodDto(PublishDayInfoListFiltersSchema) {}
 

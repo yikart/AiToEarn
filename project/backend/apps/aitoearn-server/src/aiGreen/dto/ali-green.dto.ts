@@ -1,40 +1,22 @@
-/*
- * @Author: nevin
- * @Date: 2024-06-17 20:12:31
- * @LastEditTime: 2025-05-06 15:49:03
- * @LastEditors: nevin
- * @Description: 用户
- */
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose } from 'class-transformer'
-import {
-  IsString,
-} from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
-export class TextBodyDto {
-  @ApiProperty({ title: '文本内容', required: true })
-  @IsString({ message: '文本内容' })
-  @Expose()
-  readonly content: string
-}
+const TextBodySchema = z.object({
+  content: z.string().describe('文本内容'),
+})
+export class TextBodyDto extends createZodDto(TextBodySchema) {}
 
-export class ImageBodyDto {
-  @ApiProperty({ title: '图片地址', required: true })
-  @IsString({ message: '图片地址' })
-  @Expose()
-  readonly imageUrl: string
-}
+const ImageBodySchema = z.object({
+  imageUrl: z.string().describe('图片地址'),
+})
+export class ImageBodyDto extends createZodDto(ImageBodySchema) {}
 
-export class VideoBodyDto {
-  @ApiProperty({ title: '视频地址', required: true })
-  @IsString({ message: '视频地址' })
-  @Expose()
-  readonly url: string
-}
+const VideoBodySchema = z.object({
+  url: z.string().describe('视频地址'),
+})
+export class VideoBodyDto extends createZodDto(VideoBodySchema) {}
 
-export class VideoResultBodyDto {
-  @ApiProperty({ title: '视频任务id', required: true })
-  @IsString({ message: '视频任务id' })
-  @Expose()
-  readonly taskId: string
-}
+const VideoResultBodySchema = z.object({
+  taskId: z.string().describe('视频任务id'),
+})
+export class VideoResultBodyDto extends createZodDto(VideoResultBodySchema) {}

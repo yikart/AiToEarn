@@ -14,9 +14,9 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode, TableDto } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { MediaGroup } from '@yikart/mongodb'
 import { fileUtil } from '../util/file.util'
 import {
@@ -27,7 +27,7 @@ import {
 import { MediaService } from './media.service'
 import { MediaGroupService } from './mediaGroup.service'
 
-@ApiTags('媒体资源组')
+@ApiTags('OpenSource/Me/MediaGroup')
 @Controller('media/group')
 export class MediaGroupController {
   constructor(
@@ -35,9 +35,10 @@ export class MediaGroupController {
     private readonly mediaService: MediaService,
   ) { }
 
-  @ApiOperation({
-    description: '创建发媒体资源组',
-    summary: '创建发媒体资源组',
+  @ApiDoc({
+    summary: 'Create Media Group',
+    description: 'Create a media group for organizing assets.',
+    body: CreateMediaGroupDto.schema,
   })
   @Post()
   async createGroup(
@@ -52,9 +53,9 @@ export class MediaGroupController {
     return res
   }
 
-  @ApiOperation({
-    description: '删除媒体资源组',
-    summary: '删除媒体资源',
+  @ApiDoc({
+    summary: 'Delete Media Group',
+    description: 'Delete a media group by its identifier.',
   })
   @Delete(':id')
   async delGroup(@GetToken() token: TokenInfo, @Param('id') id: string) {
@@ -66,9 +67,10 @@ export class MediaGroupController {
     return res
   }
 
-  @ApiOperation({
-    description: '更新资源组信息',
-    summary: '更新资源组信息',
+  @ApiDoc({
+    summary: 'Update Media Group Information',
+    description: 'Update attributes of a media group.',
+    body: UpdateMediaGroupDto.schema,
   })
   @Post('info/:id')
   async updateGroupInfo(
@@ -105,9 +107,10 @@ export class MediaGroupController {
     return { ...group, mediaList: res }
   }
 
-  @ApiOperation({
-    description: '获取媒体组列表',
-    summary: '获取媒体组列表',
+  @ApiDoc({
+    summary: 'List Media Groups',
+    description: 'Retrieve a paginated list of media groups.',
+    query: MediaGroupFilterDto.schema,
   })
   @Get('list/:pageNo/:pageSize')
   async getGroupList(

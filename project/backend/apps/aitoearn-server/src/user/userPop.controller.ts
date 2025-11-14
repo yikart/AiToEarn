@@ -6,17 +6,18 @@
  * @Description: 用户推广路由
  */
 import { Controller, Get } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { UserService } from './user.service'
 
-@ApiTags('用户推广')
+@ApiTags('OpenSource/User/UserPop')
 @Controller('user/pop')
 export class UserPopController {
   constructor(private readonly userService: UserService) {}
 
-  @ApiOperation({
-    summary: '生成并获取自己的推广码',
+  @ApiDoc({
+    summary: 'Generate Personal Promotion Code',
   })
   @Get('code')
   async generateUsePopularizeCode(@GetToken() token: TokenInfo) {

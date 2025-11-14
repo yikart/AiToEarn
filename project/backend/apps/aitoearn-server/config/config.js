@@ -21,7 +21,6 @@ const {
 
 const {
   CHANNEL_URL,
-  PAYMENT_URL,
 } = process.env
 
 const {
@@ -147,6 +146,16 @@ module.exports = {
     },
     models: {
       chat: [
+        {
+          name: 'gpt-5.1-all',
+          description: 'GPT 5.1',
+          inputModalities: ['text', 'image'],
+          outputModalities: ['text'],
+          pricing: {
+            prompt: '0.083',
+            completion: '0.666',
+          },
+        },
         {
           name: 'gpt-5',
           description: 'GPT 5',
@@ -978,9 +987,6 @@ module.exports = {
   mailBackHost: 'https://dev.aitoearn.ai',
   channelApi: {
     baseUrl: CHANNEL_URL,
-  },
-  paymentApi: {
-    baseUrl: PAYMENT_URL,
   },
   moreApi: {
     platApiUri: 'https://platapi.yikart.cn',

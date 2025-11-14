@@ -7,8 +7,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import {
   BatchDeleteDto,
   GetUnreadCountDto,
@@ -21,11 +22,15 @@ import {
   UnreadCountVo,
 } from './notification.vo'
 
-@ApiTags('notification - 通知')
+@ApiTags('OpenSource/Other/Notification')
 @Controller('notification')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) { }
-  @ApiOperation({ summary: '获取未读通知数量' })
+  @ApiDoc({
+    summary: 'Get Unread Notification Count',
+    query: GetUnreadCountDto.schema,
+    response: UnreadCountVo,
+  })
   @Get('unread-count')
   async getUnreadCount(
     @GetToken() token: TokenInfo,
@@ -40,7 +45,10 @@ export class NotificationController {
     return UnreadCountVo.create(result)
   }
 
-  @ApiOperation({ summary: '获取用户通知列表' })
+  @ApiDoc({
+    summary: 'List User Notifications',
+    query: QueryNotificationsDto.schema,
+  })
   @Get()
   async getUserNotifications(
     @GetToken() token: TokenInfo,
@@ -50,7 +58,9 @@ export class NotificationController {
     return result
   }
 
-  @ApiOperation({ summary: '获取通知详情' })
+  @ApiDoc({
+    summary: 'Get Notification Detail',
+  })
   @Get(':id')
   async getNotificationDetail(
     @GetToken() token: TokenInfo,
@@ -63,7 +73,11 @@ export class NotificationController {
     return result
   }
 
-  @ApiOperation({ summary: '标记通知已读' })
+  @ApiDoc({
+    summary: 'Mark Notifications as Read',
+    body: MarkAsReadDto.schema,
+    response: OperationResultVo,
+  })
   @Put('read')
   async markAsRead(
     @GetToken() token: TokenInfo,
@@ -73,7 +87,10 @@ export class NotificationController {
     return OperationResultVo.create(result)
   }
 
-  @ApiOperation({ summary: '标记全部通知已读' })
+  @ApiDoc({
+    summary: 'Mark All Notifications as Read',
+    response: OperationResultVo,
+  })
   @Put('read-all')
   async markAllAsRead(
     @GetToken() token: TokenInfo,
@@ -82,7 +99,11 @@ export class NotificationController {
     return OperationResultVo.create(result)
   }
 
-  @ApiOperation({ summary: '删除通知' })
+  @ApiDoc({
+    summary: 'Delete Notifications',
+    body: BatchDeleteDto.schema,
+    response: OperationResultVo,
+  })
   @Delete()
   async deleteNotifications(
     @GetToken() token: TokenInfo,

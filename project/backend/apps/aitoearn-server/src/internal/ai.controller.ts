@@ -3,16 +3,16 @@ import {
   Controller,
   Post,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
-import { UserType } from '@yikart/common'
+import { ApiDoc, UserType } from '@yikart/common'
 import { AiService } from '../ai/ai.service'
 import { FireflycardResponseVo, ImageResponseVo, ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo } from '../ai/ai.vo'
 import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/core/chat'
 import { ModelsConfigDto, ModelsConfigService, ModelsConfigVo } from '../ai/core/models-config'
 import { AdminFireflyCardDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto } from './dto/ai.dto'
 
-@ApiTags('内部服务接口')
+@ApiTags('OpenSource/Internal/Ai')
 @Controller('internal')
 @Internal()
 export class AiController {
@@ -22,14 +22,20 @@ export class AiController {
     private readonly modelsConfigService: ModelsConfigService,
   ) { }
 
-  @ApiOperation({ summary: 'create publish record' })
+  @ApiDoc({
+    summary: 'Create Chat Completion',
+    body: UserChatCompletionDto.schema,
+    response: ChatCompletionVo,
+  })
   @Post('ai/chat/completion')
   async chatCompletion(@Body() data: UserChatCompletionDto): Promise<ChatCompletionVo> {
     const response = await this.chatService.userChatCompletion(data)
     return ChatCompletionVo.create(response)
   }
 
-  @ApiOperation({ summary: '获取图片生成模型参数' })
+  @ApiDoc({
+    summary: 'Get Image Generation Models',
+  })
   @Post('ai/models/image/generation')
   async getImageGenerationModels(@Body() body: {
     userId: string
@@ -42,7 +48,11 @@ export class AiController {
     return response
   }
 
-  @ApiOperation({ summary: 'AI图片生成' })
+  @ApiDoc({
+    summary: 'Generate Image via AI',
+    body: AdminImageGenerationDto.schema,
+    response: ImageResponseVo,
+  })
   @Post('ai/image/generate')
   async generateImage(
     @Body() body: AdminImageGenerationDto,
@@ -51,7 +61,11 @@ export class AiController {
     return ImageResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '通用视频生成' })
+  @ApiDoc({
+    summary: 'Generate Video via AI',
+    body: AdminVideoGenerationRequestDto.schema,
+    response: VideoGenerationResponseVo,
+  })
   @Post('ai/video/generations')
   async videoGeneration(
     @Body() body: AdminVideoGenerationRequestDto,
@@ -60,7 +74,11 @@ export class AiController {
     return VideoGenerationResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '查询视频任务状态' })
+  @ApiDoc({
+    summary: 'Get Video Task Status',
+    body: AdminVideoGenerationStatusSchemaDto.schema,
+    response: VideoTaskStatusResponseVo,
+  })
   @Post('ai/video/status')
   async getVideoTaskStatus(@Body() body: AdminVideoGenerationStatusSchemaDto): Promise<VideoTaskStatusResponseVo> {
     const response = await this.aiService.getVideoTaskStatus({
@@ -71,14 +89,22 @@ export class AiController {
     return VideoTaskStatusResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '视频任务列表' })
+  @ApiDoc({
+    summary: 'List Video Tasks',
+    body: AdminUserListVideoTasksQueryDto.schema,
+    response: ListVideoTasksResponseVo,
+  })
   @Post('ai/video/list')
   async listVideoTasks(@Body() body: AdminUserListVideoTasksQueryDto): Promise<ListVideoTasksResponseVo> {
     const response = await this.aiService.listVideoTasks(body)
     return ListVideoTasksResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: 'Fireflycard生成卡片图片' })
+  @ApiDoc({
+    summary: 'Generate Firefly Card Image',
+    body: AdminFireflyCardDto.schema,
+    response: FireflycardResponseVo,
+  })
   @Post('ai/fireflycard')
   async generateFireflycard(
     @Body() body: AdminFireflyCardDto,
@@ -87,20 +113,28 @@ export class AiController {
     return FireflycardResponseVo.create(response)
   }
 
-  @ApiOperation({ summary: '保存AI模型配置' })
+  @ApiDoc({
+    summary: 'Save AI Models Configuration',
+    body: ModelsConfigDto.schema,
+  })
   @Post('ai/models/config')
   async saveModelsConfig(@Body() config: ModelsConfigDto): Promise<void> {
     await this.modelsConfigService.saveConfig(config)
   }
 
-  @ApiOperation({ summary: '获取AI模型配置' })
+  @ApiDoc({
+    summary: 'Get AI Models Configuration',
+    response: ModelsConfigVo,
+  })
   @Post('ai/models/config/get')
   async getModelsConfig(): Promise<ModelsConfigVo> {
     const config = this.modelsConfigService.config
     return ModelsConfigVo.create(config)
   }
 
-  @ApiOperation({ summary: '获取视频生成模型列表' })
+  @ApiDoc({
+    summary: 'Get Video Generation Models',
+  })
   @Post('ai/models/video/generation')
   async getVideoGenerationModels(@Body() body: {
     userId?: string
@@ -110,7 +144,9 @@ export class AiController {
     return response
   }
 
-  @ApiOperation({ summary: '获取对话模型列表' })
+  @ApiDoc({
+    summary: 'Get Chat Models',
+  })
   @Post('ai/models/chat')
   async getChatModels(@Body() body: {
     userId?: string

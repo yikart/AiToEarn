@@ -1,39 +1,43 @@
 import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common'
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode, TableDto } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { SetAiConfigDto, SetAiConfigItemDto, UpdateUserInfoDto } from './dto/user.dto'
 import { UserInfoVO } from './dto/user.vo'
 import { UserService } from './user.service'
 
-@ApiTags('用户')
+@ApiTags('OpenSource/User/User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) { }
 
-  @ApiOperation({
-    summary: '用户信息',
-    description: '用户信息',
+  @ApiDoc({
+    summary: 'Get User Information by Email',
+    description: 'Retrieve user information by specifying the email address.',
+    response: UserInfoVO,
   })
   @Public()
-  @ApiResponse({ status: 200, type: UserInfoVO })
   @Get('info/mail/:mail')
   async infoByMail(@Param('mail') mail: string) {
     const res = await this.userService.getUserInfoByMail(mail)
     return res
   }
 
-  @ApiOperation({
-    description: '获取自己的用户信息',
-    summary: '获取自己的用户信息',
+  @ApiDoc({
+    summary: 'Get Current User Information',
+    description: 'Retrieve the profile of the authenticated user.',
+    response: UserInfoVO,
   })
-  @ApiResponse({ status: 200, type: UserInfoVO })
   @Get('mine')
   getUserInfoById(@GetToken() token: TokenInfo) {
     return this.userService.getUserInfoById(token.id)
   }
 
-  @ApiOperation({ description: '更新用户信息', summary: '更新用户信息' })
+  @ApiDoc({
+    summary: 'Update User Information',
+    description: 'Update the profile of the authenticated user.',
+    body: UpdateUserInfoDto.schema,
+  })
   @Put('info/update')
   async updateInfo(
     @GetToken() token: TokenInfo,
@@ -48,7 +52,10 @@ export class UserController {
   }
 
   // 积分相关
-  @ApiOperation({ summary: '获取我的积分记录' })
+  @ApiDoc({
+    summary: 'Get My Points Records',
+    query: TableDto.schema,
+  })
   @Get('points/records')
   getMyPointsRecords(
     @GetToken() token: TokenInfo,
@@ -57,7 +64,10 @@ export class UserController {
     return this.userService.getMyPointsRecords(token.id, query.pageNo, query.pageSize)
   }
 
-  @ApiOperation({ summary: '设置AI配置' })
+  @ApiDoc({
+    summary: 'Set AI Configuration',
+    body: SetAiConfigDto.schema,
+  })
   @Put('ai/config/info')
   async setAiConfig(
     @GetToken() token: TokenInfo,
@@ -66,7 +76,10 @@ export class UserController {
     return this.userService.setAiConfig(token.id, body)
   }
 
-  @ApiOperation({ summary: '设置AI配置中的某项' })
+  @ApiDoc({
+    summary: 'Set AI Configuration Item',
+    body: SetAiConfigItemDto.schema,
+  })
   @Put('ai/config/item')
   async setAiConfigItem(
     @GetToken() token: TokenInfo,

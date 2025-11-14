@@ -1,19 +1,22 @@
 import { Body, Controller, Get, Post, Put } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import * as _ from 'lodash'
 import { AccountGroupService } from './accountGroup.service'
 import { CreateAccountGroupDto, DeleteAccountGroupDto, SortRankDto, UpdateAccountGroupDto } from './dto/accountGroup.dto'
 
-@ApiTags('Account Groups')
+@ApiTags('OpenSource/Home/AccountGroup')
 @Controller('accountGroup')
 export class AccountGroupController {
   constructor(
     private readonly accountGroupService: AccountGroupService,
   ) {}
 
-  @ApiOperation({ summary: 'Create Group' })
+  @ApiDoc({
+    summary: 'Create Account Group',
+    body: CreateAccountGroupDto.schema,
+  })
   @Post('create')
   async create(
     @GetToken() token: TokenInfo,
@@ -25,7 +28,10 @@ export class AccountGroupController {
     })
   }
 
-  @ApiOperation({ summary: 'Update Group' })
+  @ApiDoc({
+    summary: 'Update Account Group',
+    body: UpdateAccountGroupDto.schema,
+  })
   @Post('update')
   async updateGroup(
     @GetToken() token: TokenInfo,
@@ -43,7 +49,10 @@ export class AccountGroupController {
     return res
   }
 
-  @ApiOperation({ summary: 'Delete Account Group' })
+  @ApiDoc({
+    summary: 'Delete Account Groups',
+    body: DeleteAccountGroupDto.schema,
+  })
   @Post('deletes')
   async deletes(
     @GetToken() token: TokenInfo,
@@ -52,7 +61,9 @@ export class AccountGroupController {
     return this.accountGroupService.deleteAccountGroup(body.ids, token.id)
   }
 
-  @ApiOperation({ summary: 'Get All Account Groups for User' })
+  @ApiDoc({
+    summary: 'List Account Groups',
+  })
   @Get('getList')
   async getUserAccounts(@GetToken() token: TokenInfo) {
     const res = await this.accountGroupService.getAccountGroup(token.id)
@@ -60,7 +71,10 @@ export class AccountGroupController {
     return sortedRes
   }
 
-  @ApiOperation({ summary: 'Update Sorting' })
+  @ApiDoc({
+    summary: 'Update Account Group Sort Order',
+    body: SortRankDto.schema,
+  })
   @Put('sortRank')
   async sortRank(
     @GetToken() token: TokenInfo,

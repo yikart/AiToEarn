@@ -1,19 +1,23 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { PostsResponseVo } from '@yikart/common'
+import { ApiDoc, PostsResponseVo } from '@yikart/common'
 import { AIGenCommentDto, AIGenCommentResponseVo, FetchCommentRepliesDto, FetchMetaPostsRequestDto, FetchPostCommentsRequestDto, FetchPostCommentsResponseDto, FetchPostsRequestDto, FetchPostsResponseVo, LikePostRequestDto, LikePostResponseDto, PublishCommentReplyRequestDto, PublishCommentRequestDto, PublishCommentResponseDto, ReplyToCommentsDto, ReplyToCommentsResponseVo } from './dto/engagement.dto'
 import { EngagementService } from './engagement.service'
 
-@ApiTags('engagement - 用户互动(评论等)')
+@ApiTags('OpenSource/Engage/Engagement')
 @Controller('channel/engagement')
 export class EngagementController {
   constructor(
     private readonly engagementService: EngagementService,
   ) { }
 
-  @ApiOperation({ summary: '获取不同平台帖子列表' })
+  @ApiDoc({
+    summary: 'List Channel Posts',
+    body: FetchPostsRequestDto.schema,
+    response: FetchPostsResponseVo,
+  })
   @Post('posts')
   async fetchChannelPosts(
     @GetToken() token: TokenInfo,
@@ -22,7 +26,11 @@ export class EngagementController {
     return this.engagementService.fetchChannelPosts(data)
   }
 
-  @ApiOperation({ summary: '获取meta不同平台帖子列表' })
+  @ApiDoc({
+    summary: 'List Meta Posts',
+    body: FetchMetaPostsRequestDto.schema,
+    response: PostsResponseVo,
+  })
   @Post('meta/posts')
   async fetchMetaPosts(
     @GetToken() token: TokenInfo,
@@ -31,7 +39,11 @@ export class EngagementController {
     return this.engagementService.fetchMetaPosts(data)
   }
 
-  @ApiOperation({ summary: '获取作品一级评论列表' })
+  @ApiDoc({
+    summary: 'List Post Comments',
+    body: FetchPostCommentsRequestDto.schema,
+    response: FetchPostCommentsResponseDto,
+  })
   @Post('post/comments')
   async fetchPostComments(
     @GetToken() token: TokenInfo,
@@ -40,7 +52,11 @@ export class EngagementController {
     return this.engagementService.fetchPostComments(data)
   }
 
-  @ApiOperation({ summary: '获取评论回复列表' })
+  @ApiDoc({
+    summary: 'List Comment Replies',
+    body: FetchCommentRepliesDto.schema,
+    response: FetchPostCommentsResponseDto,
+  })
   @Post('comment/replies')
   async fetchCommentReplies(
     @GetToken() token: TokenInfo,
@@ -49,7 +65,11 @@ export class EngagementController {
     return this.engagementService.fetchCommentReplies(data)
   }
 
-  @ApiOperation({ summary: '在作品下发布评论' })
+  @ApiDoc({
+    summary: 'Publish Comment on Post',
+    body: PublishCommentRequestDto.schema,
+    response: PublishCommentResponseDto,
+  })
   @Post('post/comments/publish')
   async commentOnPost(
     @GetToken() token: TokenInfo,
@@ -58,7 +78,11 @@ export class EngagementController {
     return this.engagementService.commentOnPost(data)
   }
 
-  @ApiOperation({ summary: '回复评论' })
+  @ApiDoc({
+    summary: 'Publish Reply to Comment',
+    body: PublishCommentReplyRequestDto.schema,
+    response: PublishCommentResponseDto,
+  })
   @Post('comment/replies/publish')
   async replyToComment(
     @GetToken() token: TokenInfo,
@@ -67,7 +91,11 @@ export class EngagementController {
     return this.engagementService.replyToComment(data)
   }
 
-  @ApiOperation({ summary: 'AI生成回复' })
+  @ApiDoc({
+    summary: 'Generate Comment Replies with AI',
+    body: AIGenCommentDto.schema,
+    response: AIGenCommentResponseVo,
+  })
   @Post('comment/ai/replies')
   async generateRepliesByAI(
     @GetToken() token: TokenInfo,
@@ -76,7 +104,11 @@ export class EngagementController {
     return this.engagementService.generateRepliesByAI(token.id, data)
   }
 
-  @ApiOperation({ summary: 'AI自动回复评论' })
+  @ApiDoc({
+    summary: 'Reply to Comments with AI Task',
+    body: ReplyToCommentsDto.schema,
+    response: ReplyToCommentsResponseVo,
+  })
   @Post('comment/ai/replies/tasks')
   async replyToCommentsByAI(
     @GetToken() token: TokenInfo,
@@ -85,7 +117,11 @@ export class EngagementController {
     return this.engagementService.replyToCommentsByAI(token.id, data)
   }
 
-  @ApiOperation({ summary: '对作品点赞（facebook Page）' })
+  @ApiDoc({
+    summary: 'Like Post (Facebook Page)',
+    body: LikePostRequestDto.schema,
+    response: LikePostResponseDto,
+  })
   @Post('post/like')
   async likePost(
     @GetToken() token: TokenInfo,
@@ -94,7 +130,11 @@ export class EngagementController {
     return this.engagementService.likePost(data)
   }
 
-  @ApiOperation({ summary: '取消对作品点赞（facebook Page）' })
+  @ApiDoc({
+    summary: 'Unlike Post (Facebook Page)',
+    body: LikePostRequestDto.schema,
+    response: LikePostResponseDto,
+  })
   @Post('post/unlike')
   async unlikePost(
     @GetToken() token: TokenInfo,

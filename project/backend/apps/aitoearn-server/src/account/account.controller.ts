@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { fileUtil } from '../util/file.util'
 import { AccountService } from './account.service'
 import {
@@ -17,12 +17,15 @@ import {
   UpdateAccountStatusDto,
 } from './dto/account.dto'
 
-@ApiTags('账户')
+@ApiTags('OpenSource/Home/Account')
 @Controller('account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) { }
 
-  @ApiOperation({ summary: '创建账号' })
+  @ApiDoc({
+    summary: 'Create Account',
+    body: CreateAccountDto.schema,
+  })
   @Post('login')
   async createOrUpdateAccount(
     @GetToken() token: TokenInfo,
@@ -38,7 +41,10 @@ export class AccountController {
     return res
   }
 
-  @ApiOperation({ summary: '更新账号' })
+  @ApiDoc({
+    summary: 'Update Account',
+    body: UpdateAccountDto.schema,
+  })
   @Post('update')
   async updateAccountInfo(
     @GetToken() token: TokenInfo,
@@ -55,7 +61,10 @@ export class AccountController {
     return res
   }
 
-  @ApiOperation({ summary: '更新账号状态' })
+  @ApiDoc({
+    summary: 'Update Account Status',
+    body: UpdateAccountStatusDto.schema,
+  })
   @Post('status')
   async updateAccountStatus(
     @GetToken() token: TokenInfo,
@@ -68,13 +77,17 @@ export class AccountController {
     return this.accountService.updateAccountStatus(body.id, body.status)
   }
 
-  @ApiOperation({ summary: '获取账号信息' })
+  @ApiDoc({
+    summary: 'Get Account Detail',
+  })
   @Get(':id')
   async getAccountInfo(@Param() param: AccountIdDto) {
     return this.accountService.getAccountById(param.id)
   }
 
-  @ApiOperation({ summary: '获取用户所有账户' })
+  @ApiDoc({
+    summary: 'List All Accounts of Current User',
+  })
   @Get('list/all')
   async getUserAccounts(@GetToken() token: TokenInfo) {
     const res = await this.accountService.getUserAccounts(token.id)
@@ -84,7 +97,10 @@ export class AccountController {
     return res
   }
 
-  @ApiOperation({ summary: '删除多个账户' })
+  @ApiDoc({
+    summary: 'Delete Multiple Accounts',
+    body: DeleteAccountsDto.schema,
+  })
   @Post('deletes')
   async deletes(
     @GetToken() token: TokenInfo,
@@ -93,7 +109,10 @@ export class AccountController {
     return this.accountService.deleteUserAccounts(body.ids, token.id)
   }
 
-  @ApiOperation({ summary: '获取账户列表' })
+  @ApiDoc({
+    summary: 'Get Account List',
+    body: AccountListByIdsDto.schema,
+  })
   @Post('list/ids')
   async getAccountListByIds(
     @GetToken() token: TokenInfo,
@@ -106,13 +125,18 @@ export class AccountController {
     return res
   }
 
-  @ApiOperation({ summary: '获取账户总数' })
+  @ApiDoc({
+    summary: 'Get Account Count',
+  })
   @Get('count')
   async getAccountCount(@GetToken() token: TokenInfo) {
     return this.accountService.getUserAccountCount(token.id)
   }
 
-  @ApiOperation({ summary: '获取账户统计' })
+  @ApiDoc({
+    summary: 'Get Account Statistics',
+    query: AccountStatisticsDto.schema,
+  })
   @Get('statistics')
   async getAccountStatistics(
     @GetToken() token: TokenInfo,
@@ -121,7 +145,9 @@ export class AccountController {
     return this.accountService.getAccountStatistics(token.id, query.type)
   }
 
-  @ApiOperation({ summary: '删除账户' })
+  @ApiDoc({
+    summary: 'Delete Account',
+  })
   @Post('delete/:id')
   async deleteAccount(
     @GetToken() token: TokenInfo,
@@ -134,7 +160,10 @@ export class AccountController {
     return this.accountService.deleteUserAccount(param.id, token.id)
   }
 
-  @ApiOperation({ summary: '更新账户统计信息' })
+  @ApiDoc({
+    summary: 'Update Account Statistics',
+    body: UpdateAccountStatisticsDto.schema,
+  })
   @Post('statistics/update')
   async updateAccountStatistics(
     @GetToken() token: TokenInfo,
@@ -168,7 +197,10 @@ export class AccountController {
     )
   }
 
-  @ApiOperation({ summary: '获取账户列表（根据空间ids）' })
+  @ApiDoc({
+    summary: 'Get Account List by Space Ids',
+    query: AccountListBySpaceIdsDto.schema,
+  })
   @Post('list/spaceIds')
   async getAccountListBySpaceIds(
     @GetToken() token: TokenInfo,
@@ -181,7 +213,10 @@ export class AccountController {
     return res
   }
 
-  @ApiOperation({ summary: '更新排序' })
+  @ApiDoc({
+    summary: 'Update Sort Rank',
+    body: SortRankDto.schema,
+  })
   @Put('sortRank')
   async sortRank(
     @GetToken() token: TokenInfo,

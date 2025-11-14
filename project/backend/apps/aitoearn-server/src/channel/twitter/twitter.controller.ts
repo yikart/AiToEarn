@@ -1,6 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatTwitterNatsApi } from '../../transports/channel/api/twitter.natsApi'
@@ -9,21 +10,26 @@ import {
   GetAuthUrlDto,
 } from './dto/twitter.dto'
 
-@ApiTags('plat/twitter - Twitter平台')
+@ApiTags('OpenSource/Platform/Twitter')
 @Controller('plat/twitter')
 export class TwitterController {
   constructor(
     private readonly platTwitterNatsApi: PlatTwitterNatsApi,
   ) {}
 
-  @ApiOperation({ summary: '获取Twitter oAuth2.0 用户授权页面URL' })
+  @ApiDoc({
+    summary: 'Get Twitter OAuth URL',
+    body: GetAuthUrlDto.schema,
+  })
   @Post('auth/url')
   async getAuthUrl(@GetToken() token: TokenInfo, @Body() data: GetAuthUrlDto) {
     const res = await this.platTwitterNatsApi.getAuthUrl(token.id, data.scopes, data.spaceId || '')
     return res
   }
 
-  @ApiOperation({ summary: '查询用户oAuth2.0任务状态' })
+  @ApiDoc({
+    summary: 'Get OAuth Task Status',
+  })
   @Get('auth/info/:taskId')
   async getAuthInfo(
     @GetToken() token: TokenInfo,
@@ -35,7 +41,10 @@ export class TwitterController {
 
   @Public()
   @UseGuards(OrgGuard)
-  @ApiOperation({ summary: 'oAuth认证回调后续操作, 保存AccessToken并创建用户' })
+  @ApiDoc({
+    summary: 'Handle Twitter OAuth Callback',
+    query: CreateAccountAndSetAccessTokenDto.schema,
+  })
   @Get('auth/back')
   async createAccountAndSetAccessToken(
     @Query() data: CreateAccountAndSetAccessTokenDto,

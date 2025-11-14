@@ -6,15 +6,15 @@
  * @Description: 频道数据
  */
 import { Controller, Get, Param } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AccountType, AppException, ResponseCode } from '@yikart/common'
+import { AccountType, ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { AccountService } from '../../account/account.service'
 import { BilibiliDataService } from './bilibiliData.service'
 import { DataCubeBase } from './dataCube.base'
 import { YouTubeDataService } from './youtubeData.service'
 
-@ApiTags('渠道用户数据')
+@ApiTags('OpenSource/Data/DataCube')
 @Controller('channel/dataCube')
 export class DataCubeController {
   private readonly dataCubeMap = new Map<AccountType, DataCubeBase>()
@@ -37,7 +37,9 @@ export class DataCubeController {
     return dataCube
   }
 
-  @ApiOperation({ summary: '获取账号的统计数据' })
+  @ApiDoc({
+    summary: 'Get Account Data Cube',
+  })
   @Get('accountDataCube/:accountId')
   async getAccountDataCube(
     @GetToken() token: TokenInfo,
@@ -47,7 +49,9 @@ export class DataCubeController {
     return dataCube.getAccountDataCube(accountId)
   }
 
-  @ApiOperation({ summary: '获取账号的统计数据' })
+  @ApiDoc({
+    summary: 'Get Account Data Bulk',
+  })
   @Get('getAccountDataBulk/:accountId')
   async getAccountDataBulk(
     @GetToken() token: TokenInfo,
@@ -57,7 +61,9 @@ export class DataCubeController {
     return dataCube.getAccountDataBulk(accountId)
   }
 
-  @ApiOperation({ summary: '获取账号的统计数据' })
+  @ApiDoc({
+    summary: 'Get Post Data Cube',
+  })
   @Get('getArcDataCube/:accountId/:dataId')
   async getArcDataCube(
     @GetToken() token: TokenInfo,
@@ -68,7 +74,9 @@ export class DataCubeController {
     return dataCube.getArcDataCube(accountId, dataId)
   }
 
-  @ApiOperation({ summary: '获取账号的统计数据' })
+  @ApiDoc({
+    summary: 'Get Post Data Bulk',
+  })
   @Get('getArcDataBulk/:accountId/:dataId')
   async getArcDataBulk(
     @GetToken() token: TokenInfo,

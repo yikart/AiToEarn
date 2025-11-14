@@ -6,21 +6,22 @@
  * @Description: 应用配置
  */
 import { Controller, Get, Param } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { AppConfigService } from './app-config.service'
 import { GetAppConfigListDto } from './dto/app-config.dto'
 
-@ApiTags('应用配置')
+@ApiTags('OpenSource/Other/AppConfig')
 @Controller('appConfigs')
 export class AppConfigController {
   constructor(
     private readonly appConfigService: AppConfigService,
   ) {}
 
-  @ApiOperation({
-    description: '获取配置',
-    summary: '获取配置',
+  @ApiDoc({
+    summary: 'Get Application Configuration',
+    description: 'Retrieve configuration values by application ID.',
   })
   @Public()
   @Get('/:appId')

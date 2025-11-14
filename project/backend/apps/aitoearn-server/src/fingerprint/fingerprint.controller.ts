@@ -1,15 +1,16 @@
 import { Body, Controller } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
+import { ApiDoc } from '@yikart/common'
 import { GenerateFingerprintDto } from './dto/fingerprint.dto'
 import { FingerprintService } from './fingerprint.service'
 
-@ApiTags('浏览器指纹')
+@ApiTags('OpenSource/Fingerprint/Fingerprint')
 @Controller('fingerprint')
 export class FingerprintController {
   constructor(private readonly fingerprintService: FingerprintService) { }
 
-  @ApiOperation({
-    description: '生成随机浏览器指纹',
+  @ApiDoc({
+    summary: 'Generate Random Browser Fingerprint',
   })
   // @NatsMessagePattern('account.fingerprint.generateFingerprint')
 

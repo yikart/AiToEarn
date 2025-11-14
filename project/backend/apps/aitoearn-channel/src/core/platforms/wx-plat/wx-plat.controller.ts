@@ -1,12 +1,16 @@
 import { Body, Controller, Delete, Logger, Param, Post } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { ApiDoc } from '@yikart/common'
 import { PublishRecordService } from '../../../core/account/publish-record.service'
 import {
   DisposeAuthTaskDto,
+  GetAuthInfoDto,
   GetAuthUrlDto,
 } from './dto/wx-plat.dto'
 import { WxGzhService } from './wx-gzh.service'
 import { WxPlatService } from './wx-plat.service'
 
+@ApiTags('OpenSource/Core/Platforms/WxPlat')
 @Controller()
 export class WxPlatController {
   logger = new Logger(WxPlatController.name)
@@ -22,6 +26,9 @@ export class WxPlatController {
    * @returns
    */
   // @NatsMessagePattern('channel.wxPlat.updatePublishRecord')
+  @ApiDoc({
+    summary: 'Update Publish Record',
+  })
   @Post('channel/wxPlat/updatePublishRecord')
   async updatePublishRecord(@Body() data: {
     publish_id: string
@@ -48,6 +55,10 @@ export class WxPlatController {
    * @returns
    */
   // @NatsMessagePattern('plat.wxPlat.auth')
+  @ApiDoc({
+    summary: 'Create Authorization Task',
+    body: GetAuthUrlDto.schema,
+  })
   @Post('plat/wxPlat/auth')
   createAuthTask(@Body() data: GetAuthUrlDto) {
     const res = this.wxPlatService.createAuthTask(
@@ -68,8 +79,11 @@ export class WxPlatController {
    * 获取账号授权信息
    */
   // @NatsMessagePattern('plat.wxPlat.getAuthInfo')
+  @ApiDoc({
+    summary: 'Get Authorization Task Info',
+  })
   @Post('plat/wxPlat/getAuthInfo')
-  async getAuthInfo(@Body() data: { taskId: string }) {
+  async getAuthInfo(@Body() data: GetAuthInfoDto) {
     const res = await this.wxPlatService.getAuthTaskInfo(data.taskId)
     return res
   }
@@ -80,6 +94,10 @@ export class WxPlatController {
    * @returns
    */
   // @NatsMessagePattern('channel.wxPlat.createAccountAndSetAccessToken')
+  @ApiDoc({
+    summary: 'Create Account and Set Access Token',
+    body: DisposeAuthTaskDto.schema,
+  })
   @Post('channel/wxPlat/createAccountAndSetAccessToken')
   async disposeAuthTask(@Body() data: DisposeAuthTaskDto) {
     const res = await this.wxPlatService.createAccountAndSetAccessToken(
@@ -96,6 +114,9 @@ export class WxPlatController {
    * 获取累计用户数据
    */
   // @NatsMessagePattern('plat.wxPlat.getUserCumulate')
+  @ApiDoc({
+    summary: 'Get User Accumulated Metrics',
+  })
   @Post('plat/wxPlat/getUserCumulate')
   async getUserCumulate(@Body() data: { accountId: string, beginDate: string, endDate: string }) {
     const res = await this.wxGzhService.getusercumulate(data.accountId, data.beginDate, data.endDate)
@@ -106,12 +127,18 @@ export class WxPlatController {
    * 获取图文阅读概况数据
    */
   // @NatsMessagePattern('plat.wxPlat.getUserRead')
+  @ApiDoc({
+    summary: 'Get Article Reading Metrics',
+  })
   @Post('plat/wxPlat/getUserRead')
   async getUserRead(@Body() data: { accountId: string, beginDate: string, endDate: string }) {
     const res = await this.wxGzhService.getuserread(data.accountId, data.beginDate, data.endDate)
     return res
   }
 
+  @ApiDoc({
+    summary: 'Delete Article',
+  })
   @Delete(':accountId/articles/:articleId')
   async deleteArticle(@Param('accountId') accountId: string, @Param('articleId') articleId: string) {
     const res = await this.wxGzhService.deleteArticle(accountId, articleId)

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { MaterialType, MediaType } from '@yikart/mongodb'
 import { NewMaterial, NewMaterialGroup } from '../content/common'
 import { CreateMaterialTaskDto, MaterialIdsDto, MaterialListDto } from '../content/dto/material.dto'
@@ -15,7 +15,7 @@ export const MediaMaterialTypeMap = new Map<MediaType, MaterialType>([
   [MediaType.IMG, MaterialType.ARTICLE],
 ])
 
-@ApiTags('内部服务接口')
+@ApiTags('OpenSource/Internal/Material')
 @Controller('internal')
 @Internal()
 export class MaterialInternalController {
@@ -26,7 +26,10 @@ export class MaterialInternalController {
     private readonly mediaGroupService: MediaGroupService,
   ) { }
 
-  @ApiOperation({ summary: '根据ID列表获取素材列表' })
+  @ApiDoc({
+    summary: 'Get Materials by IDs',
+    body: MaterialIdsDto.schema,
+  })
   @Post('material/list/ids')
   async getList(
     @Body() body: MaterialIdsDto,
@@ -35,7 +38,10 @@ export class MaterialInternalController {
     return res
   }
 
-  @ApiOperation({ summary: '根据ID列表获取最优素材' })
+  @ApiDoc({
+    summary: 'Get Optimal Materials by IDs',
+    body: MaterialIdsDto.schema,
+  })
   @Post('material/optimalByIds')
   async optimalByIds(
     @Body() body: MaterialIdsDto,
@@ -44,21 +50,28 @@ export class MaterialInternalController {
     return res
   }
 
-  @ApiOperation({ summary: '获取素材组信息' })
+  @ApiDoc({
+    summary: 'Get Material Group Info',
+  })
   @Post('material/group/info')
   async groupInfo(@Body() body: { id: string }) {
     const res = await this.materialGroupService.getGroupInfo(body.id)
     return res
   }
 
-  @ApiOperation({ summary: '组内获取最优素材' })
+  @ApiDoc({
+    summary: 'Get Optimal Material in Group',
+  })
   @Post('material/group/optimal')
   async optimalInGroup(@Body() body: { groupId: string }) {
     const res = await this.materialService.optimalInGroup(body.groupId)
     return res
   }
 
-  @ApiOperation({ summary: '根据UserId获取草稿箱组列表' })
+  @ApiDoc({
+    summary: 'List Material Groups by User',
+    body: MaterialListDto.schema,
+  })
   @Post('material/group/list/userId')
   async getGroupListByUserId(@Body() body: MaterialListDto & { userId: string }) {
     const res = await this.materialGroupService.getGroupList(body.page, {
@@ -68,14 +81,18 @@ export class MaterialInternalController {
     return res
   }
 
-  @ApiOperation({ summary: '创建草稿箱组' })
+  @ApiDoc({
+    summary: 'Create Material Group',
+  })
   @Post('material/group/create')
   async createMaterialGroup(@Body() body: NewMaterialGroup) {
     const res = await this.materialGroupService.createGroup(body)
     return res
   }
 
-  @ApiOperation({ summary: '创建草稿' })
+  @ApiDoc({
+    summary: 'Create Material',
+  })
   @Post('content/material/create')
   async createMaterial(@Body() body: NewMaterial) {
     const getInfo = await this.materialGroupService.getGroupInfo(body.groupId)
@@ -86,7 +103,10 @@ export class MaterialInternalController {
     return res
   }
 
-  @ApiOperation({ summary: '创建批量生成草稿任务' })
+  @ApiDoc({
+    summary: 'Create Material Generation Task',
+    body: CreateMaterialTaskDto.schema,
+  })
   @Post('content/material/createTask')
   async createTask(@Body() body: CreateMaterialTaskDto) {
     const mediaGroupInfo = await this.mediaGroupService.getInfo(body.mediaGroups[0])
@@ -102,21 +122,27 @@ export class MaterialInternalController {
     return res
   }
 
-  @ApiOperation({ summary: '预览草稿生成任务' })
+  @ApiDoc({
+    summary: 'Preview Material Generation Task',
+  })
   @Get('content/material/preview/:id')
   async previewTask(@Param('id') id: string) {
     const res = await this.materialTaskService.previewTask(id)
     return res
   }
 
-  @ApiOperation({ summary: '开始草稿生成任务' })
+  @ApiDoc({
+    summary: 'Start Material Generation Task',
+  })
   @Get('content/material/start/:id')
   async startTask(@Param('id') id: string) {
     const res = await this.materialTaskService.startTask(id)
     return res
   }
 
-  @ApiOperation({ summary: '增加素材使用计数' })
+  @ApiDoc({
+    summary: 'Increase Material Usage Count',
+  })
   @Post('material/use/increase')
   async increaseMaterialUse(@Body() body: { id: string }) {
     await this.materialService.addUseCount(body.id)

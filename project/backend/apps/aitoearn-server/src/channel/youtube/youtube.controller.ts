@@ -16,8 +16,9 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatYoutubeNatsApi } from '../../transports/channel/api/youtube.natsApi'
@@ -50,7 +51,7 @@ import {
 } from './dto/youtube.dto'
 import { YoutubeService } from './youtube.service'
 
-@ApiTags('plat/youtube - YouTube平台')
+@ApiTags('OpenSource/Platform/Youtube')
 @Controller('plat/youtube')
 export class YoutubeController {
   private readonly logger = new Logger(YoutubeController.name)
@@ -60,7 +61,9 @@ export class YoutubeController {
     private readonly platYoutubeNatsApi: PlatYoutubeNatsApi,
   ) {}
 
-  @ApiOperation({ summary: '获取页面的认证URL' })
+  @ApiDoc({
+    summary: 'Get Authorization URL',
+  })
   @Get('auth/url')
   async getAuthUrl(
     @GetToken() token: TokenInfo,
@@ -79,7 +82,9 @@ export class YoutubeController {
     return res
   }
 
-  @ApiOperation({ summary: '获取账号授权状态回调' })
+  @ApiDoc({
+    summary: 'Get Authorization Task Status',
+  })
   @Post('auth/create-account/:taskId')
   /**
    * 获取账号授权异步任务的状态
@@ -114,7 +119,9 @@ export class YoutubeController {
     return res.render('auth/back', result)
   }
 
-  @ApiOperation({ summary: '检查账号是否已经授权' })
+  @ApiDoc({
+    summary: 'Check Account Authorization Status',
+  })
   @Get('auth/status/:accountId')
   async checkAccountAuthStatus(
     @GetToken() token: TokenInfo,
@@ -123,7 +130,9 @@ export class YoutubeController {
     return await this.youtubeService.checkAccountAuthStatus(accountId)
   }
 
-  @ApiOperation({ summary: '刷新令牌token' })
+  @ApiDoc({
+    summary: 'Refresh Channel Token',
+  })
   @Post('auth/refresh-token/:accountId')
   async refreshToken(
     @GetToken() token: TokenInfo,
@@ -132,7 +141,10 @@ export class YoutubeController {
     return this.youtubeService.refreshToken(accountId)
   }
 
-  @ApiOperation({ summary: '获取视频类别列表' })
+  @ApiDoc({
+    summary: 'Get Video Categories',
+    query: GetVideoCategoriesDto.schema,
+  })
   @Get('video/categories')
   async getVideoCategories(
     @GetToken() token: TokenInfo,
@@ -145,7 +157,10 @@ export class YoutubeController {
     )
   }
 
-  @ApiOperation({ summary: '获取视频列表' })
+  @ApiDoc({
+    summary: 'Get Video List',
+    query: GetVideosListDto.schema,
+  })
   @Get('video/list')
   async getVideosList(
     @GetToken() token: TokenInfo,
@@ -162,7 +177,10 @@ export class YoutubeController {
   }
 
   // 创建评论会话
-  @ApiOperation({ summary: '创建评论会话' })
+  @ApiDoc({
+    summary: 'Create Comment Thread',
+    body: InsertCommentThreadsDto.schema,
+  })
   @Post('comment/threads/insert')
   async insertCommentThreads(
     @GetToken() token: TokenInfo,
@@ -177,7 +195,10 @@ export class YoutubeController {
   }
 
   // 获取评论会话列表
-  @ApiOperation({ summary: '获取评论会话列表' })
+  @ApiDoc({
+    summary: 'List Comment Threads',
+    query: GetCommentThreadsListDto.schema,
+  })
   @Get('comment/threads/list')
   async getCommentThreadsList(
     @GetToken() token: TokenInfo,
@@ -196,7 +217,10 @@ export class YoutubeController {
   }
 
   // 设置评论会话的审核状态
-  @ApiOperation({ summary: '设置评论会话的审核状态' })
+  @ApiDoc({
+    summary: 'Set Comment Thread Moderation Status',
+    body: SetCommentThreadsModerationStatusDto.schema,
+  })
   @Post('comment/threads/moderation/set')
   async setCommentThreadsModerationStatus(
     @GetToken() token: TokenInfo,
@@ -211,7 +235,10 @@ export class YoutubeController {
   }
 
   // 创建二级评论
-  @ApiOperation({ summary: '创建二级评论' })
+  @ApiDoc({
+    summary: 'Create Reply Comment',
+    body: InsertCommentDto.schema,
+  })
   @Post('comment/insert')
   async insertComment(
     @GetToken() token: TokenInfo,
@@ -225,7 +252,10 @@ export class YoutubeController {
   }
 
   // 获取子评论列表
-  @ApiOperation({ summary: '获取子评论列表' })
+  @ApiDoc({
+    summary: 'List Reply Comments',
+    query: GetCommentsListDto.schema,
+  })
   @Get('comment/list')
   async getCommentsList(
     @GetToken() token: TokenInfo,
@@ -241,7 +271,10 @@ export class YoutubeController {
   }
 
   // 更新评论
-  @ApiOperation({ summary: '更新评论' })
+  @ApiDoc({
+    summary: 'Update Comment',
+    body: UpdateCommentDto.schema,
+  })
   @Post('comment/update')
   async updateComment(
     @GetToken() token: TokenInfo,
@@ -255,7 +288,10 @@ export class YoutubeController {
   }
 
   // 删除评论
-  @ApiOperation({ summary: '删除评论' })
+  @ApiDoc({
+    summary: 'Delete Comment',
+    body: DeleteCommentDto.schema,
+  })
   @Post('comment/delete')
   async deleteComment(
     @GetToken() token: TokenInfo,
@@ -265,7 +301,10 @@ export class YoutubeController {
   }
 
   // 设置视频的点赞、踩
-  @ApiOperation({ summary: '设置视频的点赞、踩' })
+  @ApiDoc({
+    summary: 'Set Video Rating',
+    body: VideoRateDto.schema,
+  })
   @Post('video/rating/set')
   async setVideoRate(@GetToken() token: TokenInfo, @Body() body: VideoRateDto) {
     return await this.youtubeService.setVideoRate(
@@ -276,7 +315,10 @@ export class YoutubeController {
   }
 
   // 获取视频的点赞、踩
-  @ApiOperation({ summary: '获取视频的点赞、踩' })
+  @ApiDoc({
+    summary: 'Get Video Rating',
+    query: GetVideoRateDto.schema,
+  })
   @Get('video/rating')
   async getVideoRate(
     @GetToken() token: TokenInfo,
@@ -286,7 +328,10 @@ export class YoutubeController {
   }
 
   // 删除视频
-  @ApiOperation({ summary: '删除视频' })
+  @ApiDoc({
+    summary: 'Delete Video',
+    body: DeleteVideoDto.schema,
+  })
   @Post('video/delete')
   async deleteVideo(
     @GetToken() token: TokenInfo,
@@ -296,7 +341,10 @@ export class YoutubeController {
   }
 
   // 更新视频
-  @ApiOperation({ summary: '更新视频' })
+  @ApiDoc({
+    summary: 'Update Video',
+    body: UpdateVideoDto.schema,
+  })
   @Post('video/update')
   async updateVideo(
     @GetToken() token: TokenInfo,
@@ -317,7 +365,10 @@ export class YoutubeController {
   }
 
   // 创建播放列表
-  @ApiOperation({ summary: '创建播放列表' })
+  @ApiDoc({
+    summary: 'Create Playlist',
+    body: InsertPlayListDto.schema,
+  })
   @Post('playlist/create')
   async createPlaylist(
     @GetToken() token: TokenInfo,
@@ -332,7 +383,10 @@ export class YoutubeController {
   }
 
   // 更新播放列表
-  @ApiOperation({ summary: '更新播放列表' })
+  @ApiDoc({
+    summary: 'Update Playlist',
+    body: UpdatePlayListDto.schema,
+  })
   @Post('playlist/update')
   async updatePlaylist(
     @GetToken() token: TokenInfo,
@@ -347,7 +401,10 @@ export class YoutubeController {
   }
 
   // 删除播放列表
-  @ApiOperation({ summary: '删除播放列表' })
+  @ApiDoc({
+    summary: 'Delete Playlist',
+    body: DeletePlayListDto.schema,
+  })
   @Post('playlist/delete')
   async deletePlaylist(
     @GetToken() token: TokenInfo,
@@ -357,7 +414,10 @@ export class YoutubeController {
   }
 
   // 获取播放列表
-  @ApiOperation({ summary: '获取播放列表' })
+  @ApiDoc({
+    summary: 'Get Playlist',
+    body: GetPlayListDto.schema,
+  })
   @Post('playlist/list')
   async getPlayList(
     @GetToken() token: TokenInfo,
@@ -374,7 +434,10 @@ export class YoutubeController {
   }
 
   // 插入播放列表项
-  @ApiOperation({ summary: '插入播放列表项' })
+  @ApiDoc({
+    summary: 'Insert Playlist Item',
+    body: InsertPlayItemsDto.schema,
+  })
   @Post('playlist/items/insert')
   async insertPlayListItems(
     @GetToken() token: TokenInfo,
@@ -392,7 +455,10 @@ export class YoutubeController {
   }
 
   // 更新播放列表项
-  @ApiOperation({ summary: '更新播放列表项' })
+  @ApiDoc({
+    summary: 'Update Playlist Item',
+    body: UpdatePlayItemsDto.schema,
+  })
   @Post('playlist/items/update')
   async updatePlayListItems(
     @GetToken() token: TokenInfo,
@@ -411,7 +477,10 @@ export class YoutubeController {
   }
 
   // 删除播放列表项
-  @ApiOperation({ summary: '删除播放列表项' })
+  @ApiDoc({
+    summary: 'Delete Playlist Item',
+    body: DeletePlayItemsDto.schema,
+  })
   @Post('playlist/items/delete')
   async deletePlayListItems(
     @GetToken() token: TokenInfo,
@@ -424,7 +493,10 @@ export class YoutubeController {
   }
 
   // 获取播放列表项
-  @ApiOperation({ summary: '获取播放列表项' })
+  @ApiDoc({
+    summary: 'Get Playlist Items',
+    body: GetPlayItemsDto.schema,
+  })
   @Post('playlist/items/list')
   async getPlayListItems(
     @GetToken() token: TokenInfo,
@@ -441,7 +513,10 @@ export class YoutubeController {
   }
 
   // 获取频道列表
-  @ApiOperation({ summary: '获取频道列表' })
+  @ApiDoc({
+    summary: 'Get Channel List',
+    query: GetChannelsListDto.schema,
+  })
   @Get('channel/list')
   async getChannelsList(
     @GetToken() token: TokenInfo,
@@ -459,7 +534,9 @@ export class YoutubeController {
   }
 
   // 更新账号频道ID
-  @ApiOperation({ summary: '更新账号频道ID' })
+  @ApiDoc({
+    summary: 'Update Channel ID',
+  })
   @Get('channel/update/channelId/:accountId')
   async updateChannelId(
     @GetToken() token: TokenInfo,
@@ -471,7 +548,10 @@ export class YoutubeController {
   }
 
   // 获取频道板块列表
-  @ApiOperation({ summary: '获取频道板块列表' })
+  @ApiDoc({
+    summary: 'Get Channel Sections',
+    body: GetChannelsSectionsListDto.schema,
+  })
   @Post('channel/sections/list')
   async getChannelsSectionsList(
     @GetToken() token: TokenInfo,
@@ -486,7 +566,9 @@ export class YoutubeController {
   }
 
   // 获取通用数据
-  @ApiOperation({ summary: '获取通用数据' })
+  @ApiDoc({
+    summary: 'Get Common Parameters',
+  })
   @Get('common/params')
   async getCommonParams() {
     return await this.youtubeService.getCommonParams()
@@ -496,7 +578,10 @@ export class YoutubeController {
    * YouTube搜索接口
    * 支持多种搜索条件和排序方式
    */
-  @ApiOperation({ summary: '搜索' })
+  @ApiDoc({
+    summary: 'Search Content',
+    body: SearchDto.schema,
+  })
   @Post('search')
   async search(
     @GetToken() token: TokenInfo,

@@ -16,8 +16,9 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
 import * as _ from 'lodash'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
@@ -28,18 +29,24 @@ import {
 } from './dto/pinterest.dto'
 import { PinterestService } from './pinterest.service'
 
-@ApiTags('plat/pinterest - PIN平台')
+@ApiTags('OpenSource/Platform/Pinterest')
 @Controller('plat/pinterest')
 export class PinterestController {
   constructor(private readonly pinterestService: PinterestService) {}
 
-  @ApiOperation({ summary: '创建board' })
+  @ApiDoc({
+    summary: 'Create Board',
+    body: CreateBoardBodyDto.schema,
+  })
   @Post('board/')
   async createBoard(@Body() body: CreateBoardBodyDto) {
     return await this.pinterestService.createBoard(body)
   }
 
-  @ApiOperation({ summary: '获取board列表信息' })
+  @ApiDoc({
+    summary: 'List Boards',
+    query: ListBodyDto.schema,
+  })
   @Get('board/')
   async getBoardList(
     @Query() query: ListBodyDto,
@@ -47,19 +54,26 @@ export class PinterestController {
     return await this.pinterestService.getBoardList(query)
   }
 
-  @ApiOperation({ summary: '获取单个board' })
+  @ApiDoc({
+    summary: 'Get Board Detail',
+  })
   @Get('board/:id')
   async getBoardById(@Param('id') id: string, @Query('accountId') accountId: string) {
     return await this.pinterestService.getBoardById(id, accountId)
   }
 
-  @ApiOperation({ summary: '删除单个board' })
+  @ApiDoc({
+    summary: 'Delete Board',
+  })
   @Delete('board/:id')
   delBoardById(@Param('id') id: string, @Body('accountId') accountId: string) {
     return this.pinterestService.delBoardById(id, accountId)
   }
 
-  @ApiOperation({ summary: '创建pin' })
+  @ApiDoc({
+    summary: 'Create Pin',
+    body: CreatePinBodyDto.schema,
+  })
   @Post('pin/')
   async createPin(@Body() body: CreatePinBodyDto) {
     if (_.has(body, 'desc') && _.isString(body.decs))
@@ -67,7 +81,10 @@ export class PinterestController {
     return await this.pinterestService.createPin(body)
   }
 
-  @ApiOperation({ summary: '获取pin列表' })
+  @ApiDoc({
+    summary: 'List Pins',
+    query: ListBodyDto.schema,
+  })
   @Get('pin/')
   async getPinList(
     @Query() query: ListBodyDto,
@@ -75,19 +92,25 @@ export class PinterestController {
     return await this.pinterestService.getPinList(query)
   }
 
-  @ApiOperation({ summary: '获取pin' })
+  @ApiDoc({
+    summary: 'Get Pin Detail',
+  })
   @Get('pin/:id')
   async getPinById(@Param('id') id: string, @Query('accountId') accountId: string) {
     return await this.pinterestService.getPinById(id, accountId)
   }
 
-  @ApiOperation({ summary: '删除单个pin' })
+  @ApiDoc({
+    summary: 'Delete Pin',
+  })
   @Delete('pin/:id')
   async delPinById(@Param('id') id: string, @Body('accountId') accountId: string) {
     return await this.pinterestService.delPinById(id, accountId)
   }
 
-  @ApiOperation({ summary: '获取授权登录页面' })
+  @ApiDoc({
+    summary: 'Get Authorization URL',
+  })
   @Get('getAuth/')
   async getAuth(
     @GetToken() token: TokenInfo,
@@ -97,7 +120,9 @@ export class PinterestController {
     return await this.pinterestService.getAuth(userId, spaceId || '')
   }
 
-  @ApiOperation({ summary: '查询授权结果' })
+  @ApiDoc({
+    summary: 'Check Authorization Result',
+  })
   @Get('checkAuth/')
   async checkAuth(@Query('taskId') taskId: string) {
     return await this.pinterestService.checkAuth(taskId)
@@ -105,6 +130,9 @@ export class PinterestController {
 
   @Public()
   @UseGuards(OrgGuard)
+  @ApiDoc({
+    summary: 'Handle Authorization Webhook',
+  })
   @Get('authWebhook')
   async authWebhook(@Query() query: any, @Res() res: Response) {
     const result = await this.pinterestService.authWebhook(query)

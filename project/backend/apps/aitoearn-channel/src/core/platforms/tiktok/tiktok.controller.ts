@@ -6,6 +6,8 @@
  * @Description: TikTok Controller
  */
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { ApiDoc } from '@yikart/common'
 import {
   AccountIdDto,
   CreateAccountAndSetAccessTokenDto,
@@ -22,12 +24,17 @@ import {
 } from './dto/tiktok.dto'
 import { TiktokService } from './tiktok.service'
 
+@ApiTags('OpenSource/Core/Platforms/Tiktok')
 @Controller()
 export class TiktokController {
   constructor(private readonly tiktokService: TiktokService) {}
 
   // 获取页面的认证URL
   // @NatsMessagePattern('plat.tiktok.authUrl')
+  @ApiDoc({
+    summary: 'Get TikTok Authorization URL',
+    body: GetAuthUrlDto.schema,
+  })
   @Post('plat/tiktok/authUrl')
   async getAuthUrl(@Body() data: GetAuthUrlDto) {
     return await this.tiktokService.getAuthUrl(data.userId, data.scopes, data.spaceId)
@@ -35,17 +42,27 @@ export class TiktokController {
 
   // 查询认证信息
   // @NatsMessagePattern('plat.tiktok.getAuthInfo')
+  @ApiDoc({
+    summary: 'Get Authorization Task Info',
+    body: GetAuthInfoDto.schema,
+  })
   @Post('plat/tiktok/getAuthInfo')
   async getAuthInfo(@Body() data: GetAuthInfoDto) {
     return await this.tiktokService.getAuthInfo(data.taskId)
   }
 
+  @ApiDoc({
+    summary: 'Get Public Authorization URL',
+  })
   @Get('auth/url')
   async getOAuthAuthUri(@Query() query: GetAuthUrlDto) {
     return await this.tiktokService.getAuthUrl(query.userId, query.scopes)
   }
 
   // 获取AccessToken,并记录到用户，给平台回调用
+  @ApiDoc({
+    summary: 'Handle Authorization Callback',
+  })
   @Get('auth/back/:prefix/:taskId')
   async getAccessToken(
     @Param('prefix') prefix: string,
@@ -62,6 +79,9 @@ export class TiktokController {
     })
   }
 
+  @ApiDoc({
+    summary: 'Handle OAuth Callback (REST)',
+  })
   @Get('auth/callback')
   async postOAuth2CallbackByRestFul(
     @Query()
@@ -78,6 +98,10 @@ export class TiktokController {
 
   // 创建账号并设置授权Token
   // @NatsMessagePattern('plat.tiktok.createAccountAndSetAccessToken')
+  @ApiDoc({
+    summary: 'Create Account and Set Access Token',
+    body: CreateAccountAndSetAccessTokenDto.schema,
+  })
   @Post('plat/tiktok/createAccountAndSetAccessToken')
   async createAccountAndSetAccessToken(
     @Body() data: CreateAccountAndSetAccessTokenDto,
@@ -93,6 +117,10 @@ export class TiktokController {
 
   // 刷新访问令牌
   // @NatsMessagePattern('plat.tiktok.refreshAccessToken')
+  @ApiDoc({
+    summary: 'Refresh Access Token',
+    body: RefreshTokenDto.schema,
+  })
   @Post('plat/tiktok/refreshAccessToken')
   async refreshAccessToken(@Body() data: RefreshTokenDto) {
     return await this.tiktokService.refreshAccessToken(
@@ -103,6 +131,10 @@ export class TiktokController {
 
   // 撤销访问令牌
   // @NatsMessagePattern('plat.tiktok.revokeAccessToken')
+  @ApiDoc({
+    summary: 'Revoke Access Token',
+    body: RevokeTokenDto.schema,
+  })
   @Post('plat/tiktok/revokeAccessToken')
   async revokeAccessToken(@Body() data: RevokeTokenDto) {
     return await this.tiktokService.revokeAccessToken(data.accountId)
@@ -110,6 +142,10 @@ export class TiktokController {
 
   // 获取创作者信息
   // @NatsMessagePattern('plat.tiktok.getCreatorInfo')
+  @ApiDoc({
+    summary: 'Get Creator Information',
+    body: AccountIdDto.schema,
+  })
   @Post('plat/tiktok/getCreatorInfo')
   async getCreatorInfo(@Body() data: AccountIdDto) {
     return await this.tiktokService.getCreatorInfo(data.accountId)
@@ -117,6 +153,10 @@ export class TiktokController {
 
   // 初始化视频发布
   // @NatsMessagePattern('plat.tiktok.initVideoPublish')
+  @ApiDoc({
+    summary: 'Initialize Video Publish',
+    body: VideoPublishDto.schema,
+  })
   @Post('plat/tiktok/initVideoPublish')
   async initVideoPublish(@Body() data: VideoPublishDto) {
     return await this.tiktokService.initVideoPublish(
@@ -128,6 +168,10 @@ export class TiktokController {
 
   // 初始化照片发布
   // @NatsMessagePattern('plat.tiktok.initPhotoPublish')
+  @ApiDoc({
+    summary: 'Initialize Photo Publish',
+    body: PhotoPublishDto.schema,
+  })
   @Post('plat/tiktok/initPhotoPublish')
   async initPhotoPublish(@Body() data: PhotoPublishDto) {
     return await this.tiktokService.initPhotoPublish(
@@ -140,6 +184,10 @@ export class TiktokController {
 
   // 查询发布状态
   // @NatsMessagePattern('plat.tiktok.getPublishStatus')
+  @ApiDoc({
+    summary: 'Get Publish Status',
+    body: GetPublishStatusDto.schema,
+  })
   @Post('plat/tiktok/getPublishStatus')
   async getPublishStatus(@Body() data: GetPublishStatusDto) {
     return await this.tiktokService.getPublishStatus(
@@ -150,6 +198,10 @@ export class TiktokController {
 
   // 上传视频文件
   // @NatsMessagePattern('plat.tiktok.uploadVideoFile')
+  @ApiDoc({
+    summary: 'Upload Video File',
+    body: UploadVideoFileDto.schema,
+  })
   @Post('plat/tiktok/uploadVideoFile')
   async uploadVideoFile(@Body() data: UploadVideoFileDto) {
     return await this.tiktokService.uploadVideoFile(
@@ -159,6 +211,9 @@ export class TiktokController {
     )
   }
 
+  @ApiDoc({
+    summary: 'Publish Video via URL',
+  })
   @Post('publish')
   async publish(
     @Body() data: { videoUrl: string, accountId: string },
@@ -167,12 +222,20 @@ export class TiktokController {
   }
 
   // @NatsMessagePattern('plat.tiktok.user.info')
+  @ApiDoc({
+    summary: 'Get User Info',
+    body: UserInfoDto.schema,
+  })
   @Post('plat/tiktok/user/info')
   async getUserInfo(@Body() data: UserInfoDto) {
     return await this.tiktokService.getUserInfo(data.accountId, data.fields)
   }
 
   // @NatsMessagePattern('plat.tiktok.user.videos')
+  @ApiDoc({
+    summary: 'List User Videos',
+    body: ListUserVideosDto.schema,
+  })
   @Post('plat/tiktok/user/videos')
   async listUserVideos(@Body() data: ListUserVideosDto) {
     return await this.tiktokService.getUserVideos(
@@ -184,6 +247,10 @@ export class TiktokController {
   }
 
   // @NatsMessagePattern('plat.tiktok.accessTokenStatus')
+  @ApiDoc({
+    summary: 'Get Access Token Status',
+    body: AccountIdDto.schema,
+  })
   @Post('plat/tiktok/accessTokenStatus')
   async getAccessTokenStatus(@Body() data: AccountIdDto) {
     return await this.tiktokService.getAccessTokenStatus(data.accountId)

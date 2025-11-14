@@ -21,7 +21,7 @@ export class DeductUsedStorageDto extends createZodDto(deductUsedStorageSchema) 
 export const setTotalStorageSchema = z.object({
   userId: z.string().min(1).describe('用户ID'),
   totalStorage: z.number().min(0).describe('总存储容量（Bytes）'),
-  expiredAt: z.date().optional().describe('过期时间'),
+  expiredAt: z.coerce.date().optional().describe('过期时间'),
 })
 
 export class SetTotalStorageDto extends createZodDto(setTotalStorageSchema) {}

@@ -6,18 +6,21 @@
  * @Description: 互动记录
  */
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { TableDto } from '@yikart/common'
+import { ApiDoc, TableDto } from '@yikart/common'
 import { InteractionRecordNatsApi } from '../../transports/channel/api/interact/interactionRecord.natsApi'
 import { AddInteractionRecordDto, InteractionRecordFiltersDto } from './dto/interactionRecord.dto'
 
-@ApiTags('渠道互动记录')
+@ApiTags('OpenSource/Engage/InteractionRecord')
 @Controller('channel/interactionRecord')
 export class InteractionRecordController {
   constructor(private readonly interactionRecordNatsApi: InteractionRecordNatsApi) {}
 
-  @ApiOperation({ summary: '添加渠道互动记录' })
+  @ApiDoc({
+    summary: 'Add Interaction Record',
+    body: AddInteractionRecordDto.schema,
+  })
   @Post()
   async add(
     @GetToken() token: TokenInfo,
@@ -29,7 +32,10 @@ export class InteractionRecordController {
     })
   }
 
-  @ApiOperation({ summary: '获取渠道互动记录列表' })
+  @ApiDoc({
+    summary: 'List Interaction Records',
+    query: InteractionRecordFiltersDto.schema,
+  })
   @Get('list/:pageNo/:pageSize')
   async getArcCommentList(
     @GetToken() token: TokenInfo,
@@ -39,7 +45,9 @@ export class InteractionRecordController {
     return this.interactionRecordNatsApi.list(token.id, query, param)
   }
 
-  @ApiOperation({ summary: '删除记录' })
+  @ApiDoc({
+    summary: 'Delete Interaction Record',
+  })
   @Delete(':id')
   async replyComment(
     @Param('id') id: string,

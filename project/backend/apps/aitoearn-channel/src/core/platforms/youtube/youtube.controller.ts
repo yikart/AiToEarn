@@ -1,6 +1,6 @@
 import { Body, Controller, Logger, Param, Post } from '@nestjs/common'
-
 import { ApiTags } from '@nestjs/swagger'
+import { ApiDoc } from '@yikart/common'
 
 import {
   AccountIdDto,
@@ -39,7 +39,7 @@ import {
 
 import { YoutubeService } from './youtube.service'
 
-@ApiTags('youtube - Youtube平台')
+@ApiTags('OpenSource/Core/Platforms/Youtube')
 @Controller()
 export class YoutubeController {
   private readonly logger = new Logger(YoutubeController.name)
@@ -73,6 +73,10 @@ export class YoutubeController {
 
   // 获取页面的认证URL
   // @NatsMessagePattern('plat.youtube.authUrl')
+  @ApiDoc({
+    summary: 'Get Authorization URL',
+    body: GetAuthUrlDto.schema,
+  })
   @Post('plat/youtube/authUrl')
   async getAuthUrl(@Body() data: GetAuthUrlDto) {
     const res = await this.youtubeService.getAuthUrl(
@@ -87,6 +91,10 @@ export class YoutubeController {
 
   // 查询用户的认证信息
   // @NatsMessagePattern('plat.youtube.getAuthInfo')
+  @ApiDoc({
+    summary: 'Get Authorization Task Info',
+    body: GetAuthInfoDto.schema,
+  })
   @Post('plat/youtube/getAuthInfo')
   async getAuthInfo(@Body() data: GetAuthInfoDto) {
     this.logger.log('taskId--', data.taskId)
@@ -96,6 +104,10 @@ export class YoutubeController {
 
   // 查询账号的认证信息
   // @NatsMessagePattern('plat.youtube.getAccountAuthInfo')
+  @ApiDoc({
+    summary: 'Get Account Authorization Info',
+    body: AccountIdDto.schema,
+  })
   @Post('plat/youtube/getAccountAuthInfo')
   async getAccountAuthInfo(@Body() data: AccountIdDto) {
     const res = await this.youtubeService.getUserAccessToken(data.accountId)
@@ -104,6 +116,10 @@ export class YoutubeController {
 
   // 设置授权Token
   // @NatsMessagePattern('plat.youtube.setAccessToken')
+  @ApiDoc({
+    summary: 'Set Access Token',
+    body: CreateAccountAndSetAccessTokenDto.schema,
+  })
   @Post('plat/youtube/setAccessToken')
   async setAccessToken(@Body() data: CreateAccountAndSetAccessTokenDto) {
     this.logger.log(`channel:--setAccessToken: ${data.taskId} , ${data.code}`)
@@ -113,6 +129,10 @@ export class YoutubeController {
 
   // 创建账号并设置授权Token
   // @NatsMessagePattern('plat.youtube.createAccountAndSetAccessToken')
+  @ApiDoc({
+    summary: 'Create Account and Set Access Token',
+    body: CreateAccountAndSetAccessTokenDto.schema,
+  })
   @Post('plat/youtube/createAccountAndSetAccessToken')
   async createAccountAndSetAccessToken(
     @Body() data: CreateAccountAndSetAccessTokenDto,
@@ -129,6 +149,10 @@ export class YoutubeController {
 
   // 查询账号是否授权
   // @NatsMessagePattern('plat.youtube.isAuthorized')
+  @ApiDoc({
+    summary: 'Check Authorization Status',
+    body: AccountIdDto.schema,
+  })
   @Post('plat/youtube/isAuthorized')
   async isAuthorized(@Body() data: AccountIdDto) {
     const res = await this.youtubeService.isAuthorized(data.accountId)
@@ -136,6 +160,9 @@ export class YoutubeController {
   }
 
   // 刷新令牌token
+  @ApiDoc({
+    summary: 'Refresh Token via Crawler Account',
+  })
   @Post('auth/crawler/refresh-token/:accountId')
   async PostRefreshToken(
     @Param('accountId') accountId: string,
@@ -146,6 +173,10 @@ export class YoutubeController {
 
   // 刷新令牌token
   // @NatsMessagePattern('plat.youtube.refreshToken')
+  @ApiDoc({
+    summary: 'Refresh Token',
+    body: AccountIdDto.schema,
+  })
   @Post('plat/youtube/refreshToken')
   async refreshToken(@Body() data: AccountIdDto) {
     const res = await this.youtubeService.getUserAccessToken(data.accountId)
@@ -154,6 +185,10 @@ export class YoutubeController {
 
   // 获取视频类别
   // @NatsMessagePattern('plat.youtube.getVideoCategories')
+  @ApiDoc({
+    summary: 'Get Video Categories',
+    body: VideoCategoriesDto.schema,
+  })
   @Post('plat/youtube/getVideoCategories')
   async getVideoCategories(@Body() data: VideoCategoriesDto) {
     const res = await this.youtubeService.getVideoCategoriesList(
@@ -166,6 +201,10 @@ export class YoutubeController {
 
   // 获取视频列表
   // @NatsMessagePattern('plat.youtube.getVideosList')
+  @ApiDoc({
+    summary: 'Get Video List',
+    body: VideosListDto.schema,
+  })
   @Post('plat/youtube/getVideosList')
   getVideosList(@Body() data: VideosListDto) {
     const res = this.youtubeService.getVideosList(
@@ -181,6 +220,10 @@ export class YoutubeController {
 
   // 视频上传(20M以下小视频)
   // @NatsMessagePattern('plat.youtube.uploadVideo')
+  @ApiDoc({
+    summary: 'Upload Small Video',
+    body: UploadVideoDto.schema,
+  })
   @Post('plat/youtube/uploadVideo')
   async uploadVideo(@Body() data: UploadVideoDto) {
     this.logger.log('接收到上传视频请求:', data.accountId, data.fileName)
@@ -201,6 +244,10 @@ export class YoutubeController {
 
   // 初始化分片上传会话
   // @NatsMessagePattern('plat.youtube.initVideoUpload')
+  @ApiDoc({
+    summary: 'Initialize Chunked Video Upload',
+    body: InitUploadVideoDto.schema,
+  })
   @Post('plat/youtube/initVideoUpload')
   async initVideoUpload(@Body() data: InitUploadVideoDto) {
     this.logger.log('接收到初始化视频上传请求:', {
@@ -226,6 +273,10 @@ export class YoutubeController {
 
   // 上传视频分片
   // @NatsMessagePattern('plat.youtube.uploadVideoPart')
+  @ApiDoc({
+    summary: 'Upload Video Chunk',
+    body: UploadVideoPartDto.schema,
+  })
   @Post('plat/youtube/uploadVideoPart')
   async uploadVideoPart(@Body() data: UploadVideoPartDto) {
     try {
@@ -267,6 +318,10 @@ export class YoutubeController {
 
   // 视频分片合并
   // @NatsMessagePattern('plat.youtube.videoComplete')
+  @ApiDoc({
+    summary: 'Complete Chunked Video Upload',
+    body: VideoCompleteDto.schema,
+  })
   @Post('plat/youtube/videoComplete')
   async videoComplete(@Body() data: VideoCompleteDto) {
     try {
@@ -291,6 +346,10 @@ export class YoutubeController {
 
   // 创建顶级评论（评论会话）
   // @NatsMessagePattern('plat.youtube.insertCommentThreads')
+  @ApiDoc({
+    summary: 'Create Comment Thread',
+    body: InsertCommentThreadsDto.schema,
+  })
   @Post('plat/youtube/insertCommentThreads')
   async createTopComment(@Body() data: InsertCommentThreadsDto) {
     try {
@@ -311,6 +370,10 @@ export class YoutubeController {
 
   // 获取评论会话列表
   // @NatsMessagePattern('plat.youtube.getCommentThreadsList')
+  @ApiDoc({
+    summary: 'Get Comment Thread List',
+    body: GetCommentThreadsListDto.schema,
+  })
   @Post('plat/youtube/getCommentThreadsList')
   async getCommentThreadsList(@Body() data: GetCommentThreadsListDto) {
     try {
@@ -335,6 +398,10 @@ export class YoutubeController {
 
   // 获取子评论列表
   // @NatsMessagePattern('plat.youtube.getCommentsList')
+  @ApiDoc({
+    summary: 'Get Comment Reply List',
+    body: GetCommentsListDto.schema,
+  })
   @Post('plat/youtube/getCommentsList')
   async getCommentsList(@Body() data: GetCommentsListDto) {
     try {
@@ -356,6 +423,10 @@ export class YoutubeController {
 
   // 创建二级评论
   // @NatsMessagePattern('plat.youtube.insertComment')
+  @ApiDoc({
+    summary: 'Create Reply Comment',
+    body: InsertCommentDto.schema,
+  })
   @Post('plat/youtube/insertComment')
   async createSubComment(@Body() data: InsertCommentDto) {
     try {
@@ -374,6 +445,10 @@ export class YoutubeController {
 
   // 更新评论
   // @NatsMessagePattern('plat.youtube.updateComment')
+  @ApiDoc({
+    summary: 'Update Reply Comment',
+    body: UpdateCommentDto.schema,
+  })
   @Post('plat/youtube/updateComment')
   async updateComment(@Body() data: UpdateCommentDto) {
     try {
@@ -392,6 +467,10 @@ export class YoutubeController {
 
   // 设置一条或多条评论的审核状态。
   // @NatsMessagePattern('plat.youtube.setModerationStatusComments')
+  @ApiDoc({
+    summary: 'Set Comment Moderation',
+    body: SetCommentThreadsModerationStatusDto.schema,
+  })
   @Post('plat/youtube/setModerationStatusComments')
   async setModerationStatusComments(@Body() data: SetCommentThreadsModerationStatusDto) {
     try {
@@ -411,6 +490,10 @@ export class YoutubeController {
 
   // 删除评论
   // @NatsMessagePattern('plat.youtube.deleteComment')
+  @ApiDoc({
+    summary: 'Delete Reply Comment',
+    body: DeleteCommentDto.schema,
+  })
   @Post('plat/youtube/deleteComment')
   async deleteComment(@Body() data: DeleteCommentDto) {
     try {
@@ -428,6 +511,10 @@ export class YoutubeController {
 
   // 对视频的点赞、踩
   // @NatsMessagePattern('plat.youtube.setVideoRate')
+  @ApiDoc({
+    summary: 'Set Video Rating',
+    body: VideoRateDto.schema,
+  })
   @Post('plat/youtube/setVideoRate')
   async rateVideo(@Body() data: VideoRateDto) {
     try {
@@ -446,6 +533,10 @@ export class YoutubeController {
 
   // 获取视频的点赞、踩
   // @NatsMessagePattern('plat.youtube.getVideoRate')
+  @ApiDoc({
+    summary: 'Get Video Rating',
+    body: GetVideoRateDto.schema,
+  })
   @Post('plat/youtube/getVideoRate')
   async getVideoRate(@Body() data: GetVideoRateDto) {
     try {
@@ -463,6 +554,10 @@ export class YoutubeController {
 
   // 删除视频
   // @NatsMessagePattern('plat.youtube.deleteVideo')
+  @ApiDoc({
+    summary: 'Delete Video',
+    body: DeleteVideoDto.schema,
+  })
   @Post('plat/youtube/deleteVideo')
   async deleteVideo(@Body() data: DeleteVideoDto) {
     try {
@@ -480,6 +575,10 @@ export class YoutubeController {
 
   // 更新视频
   // @NatsMessagePattern('plat.youtube.updateVideo')
+  @ApiDoc({
+    summary: 'Update Video Metadata',
+    body: UpdateVideoDto.schema,
+  })
   @Post('plat/youtube/updateVideo')
   async updateVideo(@Body() data: UpdateVideoDto) {
     try {
@@ -518,6 +617,10 @@ export class YoutubeController {
 
   // 创建播放列表
   // @NatsMessagePattern('plat.youtube.insertPlayList')
+  @ApiDoc({
+    summary: 'Create Playlist',
+    body: InsertPlayListDto.schema,
+  })
   @Post('plat/youtube/insertPlayList')
   async insertPlayList(@Body() data: InsertPlayListDto) {
     try {
@@ -545,6 +648,10 @@ export class YoutubeController {
 
   // 获取播放列表
   // @NatsMessagePattern('plat.youtube.getPlayList')
+  @ApiDoc({
+    summary: 'Get Playlist List',
+    body: GetPlayListDto.schema,
+  })
   @Post('plat/youtube/getPlayList')
   async getPlayList(@Body() data: GetPlayListDto) {
     try {
@@ -566,6 +673,10 @@ export class YoutubeController {
 
   // 更新播放列表
   // @NatsMessagePattern('plat.youtube.updatePlayList')
+  @ApiDoc({
+    summary: 'Update Playlist',
+    body: UpdatePlayListDto.schema,
+  })
   @Post('plat/youtube/updatePlayList')
   async updatePlayList(@Body() data: UpdatePlayListDto) {
     try {
@@ -587,6 +698,10 @@ export class YoutubeController {
 
   // 删除播放列表
   // @NatsMessagePattern('plat.youtube.deletePlayList')
+  @ApiDoc({
+    summary: 'Delete Playlist',
+    body: DeletePlayListDto.schema,
+  })
   @Post('plat/youtube/deletePlayList')
   async deletePlayList(@Body() data: DeletePlayListDto) {
     try {
@@ -604,6 +719,10 @@ export class YoutubeController {
 
   // 将视频添加到播放列表中
   // @NatsMessagePattern('plat.youtube.addVideoToPlaylist')
+  @ApiDoc({
+    summary: 'Add Video to Playlist',
+    body: InsertPlayItemsDto.schema,
+  })
   @Post('plat/youtube/addVideoToPlaylist')
   async addVideoToPlaylist(@Body() data: InsertPlayItemsDto) {
     const snippet = {
@@ -634,6 +753,10 @@ export class YoutubeController {
 
   // 获取播放列表项
   // @NatsMessagePattern('plat.youtube.getPlayItems')
+  @ApiDoc({
+    summary: 'Get Playlist Items',
+    body: GetPlayItemsDto.schema,
+  })
   @Post('plat/youtube/getPlayItems')
   async getPlayItems(@Body() data: GetPlayItemsDto) {
     try {
@@ -655,6 +778,10 @@ export class YoutubeController {
 
   // 插入播放列表项
   // @NatsMessagePattern('plat.youtube.insertPlayItems')
+  @ApiDoc({
+    summary: 'Insert Playlist Item',
+    body: InsertPlayItemsDto.schema,
+  })
   @Post('plat/youtube/insertPlayItems')
   async insertPlayItems(@Body() data: InsertPlayItemsDto) {
     try {
@@ -675,6 +802,10 @@ export class YoutubeController {
 
   // 更新播放列表项
   // @NatsMessagePattern('plat.youtube.updatePlayItems')
+  @ApiDoc({
+    summary: 'Update Playlist Item',
+    body: UpdatePlayItemsDto.schema,
+  })
   @Post('plat/youtube/updatePlayItems')
   async updatePlayItems(@Body() data: UpdatePlayItemsDto) {
     try {
@@ -706,6 +837,10 @@ export class YoutubeController {
 
   // 删除播放列表项
   // @NatsMessagePattern('plat.youtube.deletePlayItems')
+  @ApiDoc({
+    summary: 'Delete Playlist Item',
+    body: DeletePlayItemsDto.schema,
+  })
   @Post('plat/youtube/deletePlayItems')
   async deletePlayItems(@Body() data: DeletePlayItemsDto) {
     try {
@@ -723,6 +858,9 @@ export class YoutubeController {
 
   // 获取频道列表
   // @NatsMessagePattern('plat.youtube.getChannelsList')
+  @ApiDoc({
+    summary: 'Get Channel List',
+  })
   @Post('plat/youtube/getChannelsList')
   async getChannelsList(@Body() data: GetChannelsListDto) {
     try {
@@ -811,6 +949,10 @@ export class YoutubeController {
 
   // 获取频道板块列表
   // @NatsMessagePattern('plat.youtube.getChannelsSectionsList')
+  @ApiDoc({
+    summary: 'Get Channel Sections',
+    body: ChannelsSectionsListDto.schema,
+  })
   @Post('plat/youtube/getChannelsSectionsList')
   async getChannelsSectionsList(@Body() data: ChannelsSectionsListDto) {
     try {
@@ -880,6 +1022,10 @@ export class YoutubeController {
    * YouTube Search API
    * Supports multiple search criteria and sorting methods
    */
+  @ApiDoc({
+    summary: 'Search YouTube Resources',
+    body: SearchDto.schema,
+  })
   @Post('plat/youtube/search')
   async searchData(@Body() data: SearchDto) {
     try {

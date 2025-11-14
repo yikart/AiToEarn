@@ -39,9 +39,7 @@ export const CreatePublishRecordSchema = z.object({
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),
   imgUrlList: z.array(z.string()).optional(),
-  publishTime: z.union([z.date(), z.string()]).transform((arg) => {
-    return new Date(arg)
-  }),
+  publishTime: z.coerce.date(),
   topics: z.array(z.string()),
   workLink: z.string({ message: '作品链接' }).optional(),
   option: z.object().optional(),
@@ -56,8 +54,8 @@ export const PublishRecordListFilterSchema = z.object({
   type: z.enum(PublishType, { message: '类型' }).optional(),
   status: z.enum(PublishStatus, { message: '状态' }).optional(),
   time: z.tuple([
-    z.union([z.date(), z.string()]).transform(arg => new Date(arg)),
-    z.union([z.date(), z.string()]).transform(arg => new Date(arg)),
+    z.coerce.date(),
+    z.coerce.date(),
   ]).optional(),
 })
 export class PublishRecordListFilterDto extends createZodDto(PublishRecordListFilterSchema) {}
@@ -65,12 +63,8 @@ export class PublishRecordListFilterDto extends createZodDto(PublishRecordListFi
 export const PublishDayInfoListFiltersSchema = z.object({
   userId: z.string(),
   time: z.tuple([
-    z.union([z.date(), z.string()]).transform((arg) => {
-      return new Date(arg)
-    }),
-    z.union([z.date(), z.string()]).transform((arg) => {
-      return new Date(arg)
-    }),
+    z.coerce.date(),
+    z.coerce.date(),
   ]).optional(),
 })
 export class PublishDayInfoListFiltersDto extends createZodDto(PublishDayInfoListFiltersSchema) {}
