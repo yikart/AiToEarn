@@ -10,6 +10,7 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons'
 import { Input, message, Modal, Popconfirm, Select } from 'antd'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { createMediaGroup, deleteMediaGroup, getMediaGroupList, updateMediaGroupInfo } from '@/api/media'
@@ -97,7 +98,6 @@ export function MaterialPageCore() {
           if (mediaList && mediaList.list.length > 0) {
             // 优先查找视频，如果没有视频则使用图片
             previewMedia = mediaList.list.find(media => media.type === 'video') || mediaList.list[0]
-            console.log('Found preview media for group:', group.title, previewMedia)
           }
 
           const processedGroup = {
@@ -205,7 +205,6 @@ export function MaterialPageCore() {
   const getCoverDisplay = (group: MediaGroup) => {
     // 如果有预览媒体，优先显示预览媒体
     if (group.previewMedia) {
-      console.log('Using preview media:', group.previewMedia)
       if (group.previewMedia.type === 'video') {
         const videoUrl = getOssUrl(group.previewMedia.url)
         console.log('Video URL:', videoUrl)
@@ -224,10 +223,13 @@ export function MaterialPageCore() {
       else {
         return (
           <div className={styles.coverContent}>
-            <img
+            <Image
               alt={group.title}
               src={getOssUrl(group.previewMedia.url)}
               className={styles.coverImage}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: 'cover' }}
             />
             <div className={styles.imageTypeIcon}>
               <PictureOutlined />
@@ -260,10 +262,13 @@ export function MaterialPageCore() {
       else {
         return (
           <div className={styles.coverContent}>
-            <img
+            <Image
               alt={group.title}
               src={getOssUrl(firstMedia.url)}
               className={styles.coverImage}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: 'cover' }}
             />
             <div className={styles.imageTypeIcon}>
               <PictureOutlined />
@@ -288,10 +293,13 @@ export function MaterialPageCore() {
                 </div>
               )
             : (
-                <img
+                <Image
                   alt={group.title}
                   src={group.cover}
                   className={styles.coverImage}
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  style={{ objectFit: 'cover' }}
                 />
               )}
         </div>
@@ -318,10 +326,13 @@ export function MaterialPageCore() {
       else {
         return (
           <div className={styles.coverContent}>
-            <img
+            <Image
               alt={group.title}
               src={getOssUrl(firstMedia.url)}
               className={styles.coverImage}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ objectFit: 'cover' }}
             />
             <div className={styles.imageTypeIcon}>
               <PictureOutlined />

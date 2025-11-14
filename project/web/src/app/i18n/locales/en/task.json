@@ -99,6 +99,30 @@
     "title": "Select Account",
     "description": "Please select an account to use for publishing the task",
     "accountId": "Account ID",
-    "redirectingToAccounts": "Redirecting to accounts page, please add channel account"
-  }
+    "redirectingToAccounts": "Redirecting to accounts page, please add channel account",
+    "nickname": "Nickname"
+  },
+  "draft": {
+    "selectDraft": "Select Draft:",
+    "taskDraft": "Task Draft",
+    "myDraft": "My Draft",
+    "reselect": "Reselect",
+    "noTitle": "No Title",
+    "noDescription": "No Description",
+    "noDrafts": "No drafts available",
+    "pleaseSelectDraft": "Please select a draft",
+    "pleaseSelectDraftMaterial": "Please select a draft material first"
+  },
+  "progress": {
+    "acceptingTask": "Accepting task...",
+    "publishingTask": "Publishing task...",
+    "submittingTask": "Submitting task...",
+    "completingTask": "Completing task...",
+    "taskCompleted": "Task Completed"
+  },
+  "taskStatuses": {
+    "pending": "Task Pending",
+    "completed": "Task Completed"
+  },
+  "accountAvatar": "Account Avatar"
 }

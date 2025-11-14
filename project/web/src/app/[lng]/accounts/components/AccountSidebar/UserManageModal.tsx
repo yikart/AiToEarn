@@ -503,11 +503,11 @@ const UserManageModal = memo(
                   <Drawer
                     title={(
                       <>
-                        已选择
+                        {t('userManage.selected' as any)}
                         <span style={{ color: 'var(--successColor)' }}>
                           {selectedRows.length}
                         </span>
-                        个账号
+                        {t('userManage.accounts' as any)}
                       </>
                     )}
                     placement="bottom"
@@ -530,7 +530,7 @@ const UserManageModal = memo(
                         <div className="userManage-content-multiple-item-icon">
                           <DeleteOutlined />
                         </div>
-                        <span>删除账号</span>
+                        <span>{t('userManage.deleteAccount' as any)}</span>
                       </div>
                     </div>
                   </Drawer>
