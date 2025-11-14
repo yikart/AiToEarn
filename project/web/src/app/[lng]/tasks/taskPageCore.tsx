@@ -7,8 +7,8 @@ import type {
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
 import { CheckOutlined, ClockCircleOutlined, EyeOutlined, PlayCircleOutlined, UploadOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Empty, Image, Input, List, message, Modal, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
-
+import { Button, Card, Col, Empty, Input, List, message, Modal, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
+import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
@@ -43,7 +43,7 @@ export default function TaskPageCore() {
   const params = useParams()
   const lng = params.lng as string
 
-  // 如果未登录，显示登录提示
+  // Show login prompt if not logged in
   if (!token) {
     return (
       <div className={styles.taskPage}>
@@ -58,13 +58,13 @@ export default function TaskPageCore() {
     )
   }
 
-  // 状态管理
-  const [activeTab, setActiveTab] = useState('pending') // pending: 待接受, accepted: 已接受
+  // State management
+  const [activeTab, setActiveTab] = useState('pending') // pending: Pending tasks, accepted: Accepted tasks
   const [pendingTasks, setPendingTasks] = useState<TaskOpportunity[]>([])
   const [acceptedTasks, setAcceptedTasks] = useState<UserTask[]>([])
   const [loading, setLoading] = useState(false)
 
-  // 分页状态
+  // Pagination state
   const [pendingPagination, setPendingPagination] = useState({
     current: 1,
     pageSize: 15,
@@ -80,19 +80,19 @@ export default function TaskPageCore() {
   const [submissionUrl, setSubmissionUrl] = useState('')
   const [submittingTaskId, setSubmittingTaskId] = useState<string | null>(null)
 
-  // 新增状态
+  // Additional states
   const [accountList, setAccountList] = useState<SocialAccount[]>([])
   const [taskDetailModalVisible, setTaskDetailModalVisible] = useState(false)
   const [taskDetail, setTaskDetail] = useState<any>(null)
   const [taskDetailLoading, setTaskDetailLoading] = useState(false)
   const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
 
-  // 已接受任务详情弹窗状态
+  // Accepted task detail modal state
   const [acceptedTaskDetailModalVisible, setAcceptedTaskDetailModalVisible] = useState(false)
   const [acceptedTaskDetail, setAcceptedTaskDetail] = useState<any>(null)
   const [acceptedTaskDetailLoading, setAcceptedTaskDetailLoading] = useState(false)
 
-  // 媒体预览弹窗状态
+  // Media preview modal state
   const [mediaPreviewVisible, setMediaPreviewVisible] = useState(false)
   const [previewMedia, setPreviewMedia] = useState<{
     type: 'video' | 'image'
@@ -101,7 +101,7 @@ export default function TaskPageCore() {
   } | null>(null)
   const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null)
 
-  // 任务进度弹窗状态
+  // Task progress modal state
   const [taskProgressVisible, setTaskProgressVisible] = useState(false)
   const [taskProgress, setTaskProgress] = useState({
     currentStep: 0,
@@ -137,12 +137,16 @@ export default function TaskPageCore() {
   })
 
   // 草稿选择状态
-  const [draftSource, setDraftSource] = useState<'task' | 'own'>('task') // 'task': 任务草稿, 'own': 自己的草稿
-  const [selectedMaterial, setSelectedMaterial] = useState<any>(null) // 选中的任务素材
-  const [draftModalOpen, setDraftModalOpen] = useState(false) // 自己草稿选择弹窗
+  const [draftSource, setDraftSource] = useState<'task' | 'own'>('task') // 'task': Task draft, 'own': My draft
+  const [selectedMaterial, setSelectedMaterial] = useState<any>(null) // Selected task material
+  const [draftModalOpen, setDraftModalOpen] = useState(false) // My draft selection modal
   const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([])
 
-  // 获取待接受任务列表
+  // Accepted task detail material list state
+  const [acceptedTaskMaterialList, setAcceptedTaskMaterialList] = useState<any[]>([])
+  const [acceptedTaskMaterialLoading, setAcceptedTaskMaterialLoading] = useState(false)
+
+  // Fetch pending tasks list
   const fetchPendingTasks = async (page: number = 1, pageSize: number = 15) => {
     if (!token)
       return
@@ -163,7 +167,7 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('获取待接受任务失败:', error)
+      console.error('Failed to get pending tasks:', error)
       message.error(t('messages.getPendingTasksFailed'))
       setPendingTasks([])
     }
@@ -172,7 +176,7 @@ export default function TaskPageCore() {
     }
   }
 
-  // 获取已接受任务列表
+  // Fetch accepted tasks list
   const fetchAcceptedTasks = async (page: number = 1, pageSize: number = 15) => {
     if (!token)
       return
@@ -193,7 +197,7 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('获取已接受任务失败:', error)
+      console.error('Failed to get accepted tasks:', error)
       message.error(t('messages.getAcceptedTasksFailed'))
       setAcceptedTasks([])
     }
@@ -202,7 +206,7 @@ export default function TaskPageCore() {
     }
   }
 
-  // 获取账号列表
+  // Fetch account list
   const fetchAccountList = async () => {
     if (!token) {
       setAccountList([])
@@ -216,7 +220,7 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('获取账号列表失败:', error)
+      console.error('Failed to get account list:', error)
     }
   }
 
@@ -232,7 +236,7 @@ export default function TaskPageCore() {
     //   return;
     // }
 
-    // // 检查需要App操作的平台
+    // // Check platforms that require App operation
     // const appRequiredPlatforms = getTasksRequiringApp(task.accountTypes);
 
     // if (appRequiredPlatforms.length > 0) {
@@ -252,7 +256,7 @@ export default function TaskPageCore() {
     //   }
     // }
 
-    // // 其他任务类型正常接取
+    // // Other task types can be accepted normally
     // await doAcceptTask(task);
   }
 
@@ -636,7 +640,7 @@ export default function TaskPageCore() {
     }
   }
 
-  // 查看已接受任务详情
+  // View accepted task detail
   const handleViewAcceptedTaskDetail = async (taskId: string) => {
     try {
       setAcceptedTaskDetailLoading(true)
@@ -645,6 +649,11 @@ export default function TaskPageCore() {
       if (response && response.data && response.code === 0) {
         setAcceptedTaskDetail(response.data)
         setAcceptedTaskDetailModalVisible(true)
+
+        // If materialGroupId exists, fetch material list
+        if (response.data.task?.materialGroupId) {
+          fetchAcceptedTaskMaterialList(response.data.task.materialGroupId)
+        }
       }
       else {
         message.error(t('messages.getTaskDetailFailed'))
@@ -652,10 +661,27 @@ export default function TaskPageCore() {
     }
     catch (error) {
       message.error(t('messages.getTaskDetailFailed'))
-      console.error('获取任务详情失败:', error)
+      console.error('Failed to get task detail:', error)
     }
     finally {
       setAcceptedTaskDetailLoading(false)
+    }
+  }
+
+  // Fetch material list for accepted task detail
+  const fetchAcceptedTaskMaterialList = async (groupId: string) => {
+    try {
+      setAcceptedTaskMaterialLoading(true)
+      const response: any = await apiGetMaterialList(groupId, 1, 10)
+      if (response && response.data && response.code === 0) {
+        setAcceptedTaskMaterialList(response.data.list || [])
+      }
+    }
+    catch (error) {
+      console.error('Failed to get material list:', error)
+    }
+    finally {
+      setAcceptedTaskMaterialLoading(false)
     }
   }
 
@@ -800,6 +826,29 @@ export default function TaskPageCore() {
   const handleCompleteTask = async () => {
     if (!currentTaskId)
       return
+
+    // Check if the platform requires App operation
+    const publishAccount = getAccountById(acceptedTaskDetail.accountId)
+    if (publishAccount) {
+      const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type])
+
+      if (appRequiredPlatforms.length > 0) {
+        // Platform requires App operation, show download prompt
+        const firstPlatform = appRequiredPlatforms[0]
+        const config = getAppDownloadConfig(firstPlatform)
+
+        if (config) {
+          setDownloadAppConfig({
+            platform: config.platform,
+            appName: config.appName,
+            downloadUrl: config.downloadUrl,
+            qrCodeUrl: config.qrCodeUrl,
+          })
+          setDownloadAppVisible(true)
+          return
+        }
+      }
+    }
 
     // 显示进度弹窗
     setTaskProgressVisible(true)
@@ -1045,11 +1094,12 @@ export default function TaskPageCore() {
                             {/* 显示多个平台图标 */}
                             <div style={{ display: 'flex', gap: '4px' }}>
                               {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
-                                <img
+                                <Image
                                   key={platformType}
                                   src={getPlatformIcon(platformType)}
                                   alt="platform"
-                                  style={{ width: '20px', height: '20px' }}
+                                  width={20}
+                                  height={20}
                                 />
                               ))}
                             </div>
@@ -1118,17 +1168,17 @@ export default function TaskPageCore() {
                               marginBottom: '12px',
                             }}
                             >
-                              <img
+                              <Image
                                 src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
                                 alt="账号头像"
+                                width={32}
+                                height={32}
                                 style={{
-                                  width: '32px',
-                                  height: '32px',
                                   borderRadius: '50%',
                                   objectFit: 'cover',
                                 }}
-                                onError={(e) => {
-                                  e.currentTarget.src = '/default-avatar.png'
+                                onError={(e: any) => {
+                                  e.target.src = '/default-avatar.png'
                                 }}
                               />
                               <div>
@@ -1205,18 +1255,19 @@ export default function TaskPageCore() {
                             {/* 显示多个平台图标 */}
                             <div style={{ display: 'flex', gap: '4px' }}>
                               {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
-                                <img
+                                <Image
                                   key={platformType}
                                   src={getPlatformIcon(platformType)}
                                   alt="platform"
-                                  style={{ width: '20px', height: '20px' }}
+                                  width={20}
+                                  height={20}
                                 />
                               ))}
                             </div>
                             <h3 style={{ margin: 0, fontSize: '16px' }}>
                               {task.accountTypes && task.accountTypes.length > 0
-                                ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}任务`
-                                : `${getPlatformName(task.accountType)}任务`}
+                                ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}Task`
+                                : `${getPlatformName(task.accountType)}Task`}
                             </h3>
                           </div>
                           <Tag color={getTaskStatusTag(task.status).color}>
@@ -1236,16 +1287,31 @@ export default function TaskPageCore() {
                             <span> </span>
                           </div>
 
-                          <div style={{ marginBottom: '12px' }}>
-                            <strong>
-                              {t('taskInfo.reward' as any)}
-                              ：
-                            </strong>
-                            <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                              ¥
-                              {task.reward / 100}
-                            </span>
-                          </div>
+                          {task.reward > 0 && (
+                            <div style={{ marginBottom: '12px' }}>
+                              <strong>
+                                {t('taskInfo.reward' as any)}
+                                ：
+                              </strong>
+                              <span style={{ color: '#f50', fontWeight: 'bold' }}>
+                                ¥
+                                {task.reward / 100}
+                              </span>
+                            </div>
+                          )}
+
+                          {task.cpmReward > 0 && (
+                            <div style={{ marginBottom: '12px' }}>
+                              <strong>
+                                {t('taskInfo.CPM' as any)}
+                                ：
+                              </strong>
+                              <span style={{ color: '#f50', fontWeight: 'bold' }}>
+                                ¥
+                                {task.cpmReward / 100}
+                              </span>
+                            </div>
+                          )}
 
                           {/* 发布账号信息 */}
                           {publishAccount && (
@@ -1259,17 +1325,17 @@ export default function TaskPageCore() {
                               marginBottom: '12px',
                             }}
                             >
-                              <img
+                              <Image
                                 src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
                                 alt="账号头像"
+                                width={32}
+                                height={32}
                                 style={{
-                                  width: '32px',
-                                  height: '32px',
                                   borderRadius: '50%',
                                   objectFit: 'cover',
                                 }}
-                                onError={(e) => {
-                                  e.currentTarget.src = '/default-avatar.png'
+                                onError={(e: any) => {
+                                  e.target.src = '/default-avatar.png'
                                 }}
                               />
                               <div>
@@ -1477,7 +1543,7 @@ export default function TaskPageCore() {
                 }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <span style={{ fontSize: '16px', fontWeight: '600' }}>选择草稿：</span>
+                    <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.selectDraft')}</span>
                     <Radio.Group
                       value={draftSource}
                       onChange={(e) => {
@@ -1487,8 +1553,8 @@ export default function TaskPageCore() {
                         }
                       }}
                     >
-                      <Radio value="task">任务草稿</Radio>
-                      <Radio value="own">我的草稿</Radio>
+                      <Radio value="task">{t('draft.taskDraft')}</Radio>
+                      <Radio value="own">{t('draft.myDraft')}</Radio>
                     </Radio.Group>
                   </div>
                   {draftSource === 'own' && selectedMaterial && (
@@ -1496,7 +1562,7 @@ export default function TaskPageCore() {
                       type="link"
                       onClick={() => setDraftModalOpen(true)}
                     >
-                      重新选择
+                      {t('draft.reselect')}
                     </Button>
                   )}
                 </div>
@@ -1534,15 +1600,12 @@ export default function TaskPageCore() {
                               }}
                               >
                                 {material.coverUrl && (
-                                  <img
+                                  <Image
                                     src={getOssUrl(material.coverUrl)}
                                     alt={material.title}
+                                    fill
+                                    sizes="(max-width: 768px) 100vw, 33vw"
                                     style={{
-                                      position: 'absolute',
-                                      top: 0,
-                                      left: 0,
-                                      width: '100%',
-                                      height: '100%',
                                       objectFit: 'cover',
                                     }}
                                   />
@@ -1653,12 +1716,12 @@ export default function TaskPageCore() {
                           flexShrink: 0,
                         }}
                         >
-                          <img
+                          <Image
                             src={getOssUrl(selectedMaterial.coverUrl)}
                             alt={selectedMaterial.title}
+                            fill
+                            sizes="120px"
                             style={{
-                              width: '100%',
-                              height: '100%',
                               objectFit: 'cover',
                             }}
                           />
@@ -1666,10 +1729,10 @@ export default function TaskPageCore() {
                       )}
                       <div style={{ flex: 1 }}>
                         <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
-                          {selectedMaterial.title || '无标题'}
+                          {selectedMaterial.title || t('draft.noTitle')}
                         </div>
                         <div style={{ fontSize: '14px', color: '#666' }}>
-                          {selectedMaterial.desc || '无描述'}
+                          {selectedMaterial.desc || t('draft.noDescription')}
                         </div>
                       </div>
                     </div>
@@ -1677,7 +1740,7 @@ export default function TaskPageCore() {
                 )}
 
                 {draftSource === 'own' && !selectedMaterial && (
-                  <Empty description="请选择一个草稿" />
+                  <Empty description={t('draft.pleaseSelectDraft')} />
                 )}
               </div>
 
@@ -1699,7 +1762,7 @@ export default function TaskPageCore() {
                   </Button>
                   {!selectedMaterial && (
                     <div style={{ marginTop: '8px', color: '#ff4d4f', fontSize: '12px' }}>
-                      请先选择一个草稿素材
+                      {t('draft.pleaseSelectDraftMaterial')}
                     </div>
                   )}
                 </div>
@@ -1762,37 +1825,39 @@ export default function TaskPageCore() {
                 marginBottom: '24px',
               }}
               >
-                {/* 左侧：视频/媒体内容 */}
+                {/* Left side: Video/Media content */}
                 <div style={{ flex: '0 0 400px' }}>
-                  {acceptedTaskDetail.task?.materials && acceptedTaskDetail.task.materials.length > 0 && (
-                    <div style={{
-                      border: '1px solid #e8e8e8',
-                      borderRadius: '12px',
-                      overflow: 'hidden',
-                      backgroundColor: '#000',
-                    }}
-                    >
-                      {acceptedTaskDetail.task.materials[0].mediaList && acceptedTaskDetail.task.materials[0].mediaList.length > 0 && (
+                  <Spin spinning={acceptedTaskMaterialLoading}>
+                    {acceptedTaskMaterialList.length > 0 && acceptedTaskMaterialList[0].mediaList && acceptedTaskMaterialList[0].mediaList.length > 0 && (
+                      <div style={{
+                        border: '1px solid #e8e8e8',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        backgroundColor: '#000',
+                      }}
+                      >
                         <div style={{ position: 'relative', cursor: 'pointer' }}>
-                          {acceptedTaskDetail.task.materials[0].mediaList[0].type === 'video' ? (
+                          {acceptedTaskMaterialList[0].mediaList[0].type === 'video' ? (
                             <div
                               style={{
                                 position: 'relative',
                                 overflow: 'hidden',
                               }}
-                              onClick={() => handleVideoCoverClick(acceptedTaskDetail.task.materials[0].mediaList[0], acceptedTaskDetail.task.title)}
+                              onClick={() => handleVideoCoverClick(acceptedTaskMaterialList[0].mediaList[0], acceptedTaskDetail.task.title)}
                             >
-                              {/* 视频封面图片 */}
-                              <img
-                                src={acceptedTaskDetail.task.materials[0].coverUrl ? getOssUrl(acceptedTaskDetail.task.materials[0].coverUrl) : getOssUrl(acceptedTaskDetail.task.materials[0].mediaList[0].url)}
+                              {/* Video cover image */}
+                              <Image
+                                src={acceptedTaskMaterialList[0].coverUrl ? getOssUrl(acceptedTaskMaterialList[0].coverUrl) : getOssUrl(acceptedTaskMaterialList[0].mediaList[0].url)}
                                 alt="video cover"
+                                width={400}
+                                height={300}
                                 style={{
                                   width: '100%',
                                   height: 'auto',
                                   display: 'block',
                                 }}
                               />
-                              {/* 播放按钮 */}
+                              {/* Play button */}
                               <div style={{
                                 position: 'absolute',
                                 top: '50%',
@@ -1814,22 +1879,24 @@ export default function TaskPageCore() {
                                 ▶
                               </div>
                             </div>
-                          ) : (
-                            <img
-                              src={getOssUrl(acceptedTaskDetail.task.materials[0].mediaList[0].url)}
+                          ) : acceptedTaskMaterialList[0].mediaList[0].type === 'img' ? (
+                            <Image
+                              src={getOssUrl(acceptedTaskMaterialList[0].mediaList[0].url)}
                               alt="media"
+                              width={400}
+                              height={300}
                               style={{
                                 width: '100%',
                                 height: 'auto',
                                 display: 'block',
                               }}
-                              onClick={() => handleMediaClick(acceptedTaskDetail.task.materials[0].mediaList[0], acceptedTaskDetail.task.title)}
+                              onClick={() => handleMediaClick(acceptedTaskMaterialList[0].mediaList[0], acceptedTaskDetail.task.title)}
                             />
-                          )}
+                          ) : null}
                         </div>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    )}
+                  </Spin>
                 </div>
 
                 {/* 右侧：标题和描述 */}
@@ -1859,17 +1926,17 @@ export default function TaskPageCore() {
                               marginBottom: '12px',
                             }}
                             >
-                              <img
+                              <Image
                                 src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
                                 alt="账号头像"
+                                width={32}
+                                height={32}
                                 style={{
-                                  width: '32px',
-                                  height: '32px',
                                   borderRadius: '50%',
                                   objectFit: 'cover',
                                 }}
-                                onError={(e) => {
-                                  e.currentTarget.src = '/default-avatar.png'
+                                onError={(e: any) => {
+                                  e.target.src = '/default-avatar.png'
                                 }}
                               />
                               <div>
@@ -1921,34 +1988,67 @@ export default function TaskPageCore() {
                     marginBottom: '16px',
                   }}
                   >
-                    <div style={{
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#fff3cd',
-                      border: '1px solid #ffeaa7',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
+                    {acceptedTaskDetail.reward > 0 && (
                       <div style={{
-                        fontSize: '12px',
-                        color: '#856404',
-                        marginBottom: '4px',
+                        flex: '1',
+                        padding: '12px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffeaa7',
+                        borderRadius: '8px',
+                        textAlign: 'center',
                       }}
                       >
-                        {t('taskInfo.reward' as any)}
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#856404',
+                          marginBottom: '4px',
+                        }}
+                        >
+                          {t('taskInfo.reward' as any)}
+                        </div>
+                        <div style={{
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                          color: '#d63031',
+                        }}
+                        >
+                          ¥
+                          {' '}
+                          {acceptedTaskDetail.reward / 100}
+                        </div>
                       </div>
+                    )}
+
+                    {acceptedTaskDetail.cpmReward > 0 && (
                       <div style={{
-                        fontSize: '18px',
-                        fontWeight: 'bold',
-                        color: '#d63031',
+                        flex: '1',
+                        padding: '12px',
+                        backgroundColor: '#fff3cd',
+                        border: '1px solid #ffeaa7',
+                        borderRadius: '8px',
+                        textAlign: 'center',
                       }}
                       >
-                        ¥
-                        {' '}
-                        {acceptedTaskDetail.reward / 100}
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#856404',
+                          marginBottom: '4px',
+                        }}
+                        >
+                          {t('taskInfo.CPM' as any)}
+                        </div>
+                        <div style={{
+                          fontSize: '18px',
+                          fontWeight: 'bold',
+                          color: '#d63031',
+                        }}
+                        >
+                          ¥
+                          {' '}
+                          {acceptedTaskDetail.cpmReward / 100}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     <div style={{
                       flex: '1',
@@ -2157,9 +2257,11 @@ export default function TaskPageCore() {
                 }}
               />
             ) : (
-              <img
+              <Image
                 src={previewMedia.url}
                 alt="preview"
+                width={600}
+                height={500}
                 style={{
                   width: '100%',
                   maxHeight: '500px',
@@ -2251,17 +2353,17 @@ export default function TaskPageCore() {
             >
               <List.Item.Meta
                 avatar={(
-                  <img
+                  <Image
                     src={account.avatar ? getOssUrl(account.avatar) : '/default-avatar.png'}
                     alt="账号头像"
+                    width={48}
+                    height={48}
                     style={{
-                      width: '48px',
-                      height: '48px',
                       borderRadius: '50%',
                       objectFit: 'cover',
                     }}
-                    onError={(e) => {
-                      e.currentTarget.src = '/default-avatar.png'
+                    onError={(e: any) => {
+                      e.target.src = '/default-avatar.png'
                     }}
                   />
                 )}

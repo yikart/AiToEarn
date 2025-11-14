@@ -3,6 +3,7 @@
 import type { EngagementPostsParams } from '@/api/types/engagement'
 import { DeleteOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, ImportOutlined, PlusOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { Avatar, Button, Card, Form, Input, InputNumber, List, message, Modal, Select, Space, Spin } from 'antd'
+import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
@@ -178,9 +179,11 @@ export default function CgMaterialPageCore() {
                   />
                 )
               : (
-                  <img
+                  <Image
                     src={getOssUrl(media.url)}
                     alt={t('detail.materialImageAlt' as any)}
+                    width={400}
+                    height={320}
                     style={{ width: '100%', height: '320px', objectFit: 'cover', borderRadius: 8 }}
                   />
                 )}
@@ -1119,12 +1122,12 @@ export default function CgMaterialPageCore() {
                       </div>
                       {item.cover && (
                         <div style={{ marginTop: 8 }}>
-                          <img
+                          <Image
                             src={item.cover}
                             alt={t('import.cover' as any)}
+                            width={60}
+                            height={60}
                             style={{
-                              width: 60,
-                              height: 60,
                               objectFit: 'cover',
                               borderRadius: 4,
                               border: '1px solid #f0f0f0',
@@ -1415,16 +1418,22 @@ export default function CgMaterialPageCore() {
                               //   onMouseEnter={(e) => (e.target as HTMLVideoElement).play()}
                               //   onMouseLeave={(e) => (e.target as HTMLVideoElement).pause()}
                               // />
-                              <img
+                              <Image
                                 src={getOssUrl(item.coverUrl)}
                                 alt="cover"
                                 className={styles.cardCover}
+                                width={320}
+                                height={180}
+                                style={{ objectFit: 'cover' }}
                               />
                             ) : (
-                              <img
+                              <Image
                                 src={getOssUrl(item.coverUrl || item.mediaList[0].url)}
                                 alt="cover"
                                 className={styles.cardCover}
+                                width={320}
+                                height={180}
+                                style={{ objectFit: 'cover' }}
                               />
                             )
                           )}
@@ -1642,10 +1651,12 @@ export default function CgMaterialPageCore() {
                   >
                     <div style={{ display: 'flex', gap: 12, width: '100%' }}>
                       {item.thumbnail && (
-                        <img
+                        <Image
                           src={item.thumbnail}
                           alt="cover"
-                          style={{ width: 60, height: 60, objectFit: 'cover', borderRadius: 6 }}
+                          width={60}
+                          height={60}
+                          style={{ objectFit: 'cover', borderRadius: 6 }}
                         />
                       )}
                       <div style={{ flex: 1 }}>
@@ -2144,13 +2155,13 @@ export default function CgMaterialPageCore() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {mediaList.map((media: any) => (
-                  <img
+                  <Image
                     key={media._id}
                     src={getOssUrl(media.url)}
                     alt=""
+                    width={60}
+                    height={60}
                     style={{
-                      width: 60,
-                      height: 60,
                       border: selectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
                       borderRadius: 4,
                       cursor: 'pointer',
@@ -2167,13 +2178,13 @@ export default function CgMaterialPageCore() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {mediaList.map((media: any) => (
-                  <img
+                  <Image
                     key={media._id}
                     src={getOssUrl(media.url)}
                     alt=""
+                    width={60}
+                    height={60}
                     style={{
-                      width: 60,
-                      height: 60,
                       border: selectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
                       borderRadius: 4,
                       cursor: 'pointer',
@@ -2248,13 +2259,13 @@ export default function CgMaterialPageCore() {
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {coverList.map((media: any) => (
-                    <img
+                    <Image
                       key={media._id}
                       src={getOssUrl(media.url)}
                       alt=""
+                      width={60}
+                      height={60}
                       style={{
-                        width: 60,
-                        height: 60,
                         border: selectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
                         borderRadius: 4,
                         cursor: 'pointer',
@@ -2316,13 +2327,13 @@ export default function CgMaterialPageCore() {
                           />
                         )
                       : (
-                          <img
+                          <Image
                             key={media._id}
                             src={getOssUrl(media.url)}
                             alt=""
+                            width={60}
+                            height={60}
                             style={{
-                              width: 60,
-                              height: 60,
                               border: selectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
                               borderRadius: 4,
                               cursor: 'pointer',
@@ -2441,9 +2452,11 @@ export default function CgMaterialPageCore() {
                     <b>{t('detail.coverLabel' as any)}</b>
                     <div style={{ marginTop: 4 }}>
                       {previewData.coverUrl && (
-                        <img
+                        <Image
                           src={getOssUrl(previewData.coverUrl)}
                           alt="cover"
+                          width={320}
+                          height={120}
                           style={{ width: '100%', maxWidth: 320, height: 120, objectFit: 'cover', borderRadius: 8, display: 'block' }}
                         />
                       )}
@@ -2489,9 +2502,11 @@ export default function CgMaterialPageCore() {
               <div style={{ marginTop: 4 }}>
                 {detailData.coverUrl && (
 
-                  <img
+                  <Image
                     src={getOssUrl(detailData.coverUrl)}
                     alt="cover"
+                    width={320}
+                    height={180}
                     style={{ maxWidth: 320, objectFit: 'cover', borderRadius: 8, display: 'block' }}
                   />
 
@@ -2924,13 +2939,13 @@ export default function CgMaterialPageCore() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {editMaterialMediaList.map((media: any) => (
-                  <img
+                  <Image
                     key={media._id}
                     src={getOssUrl(media.url)}
                     alt=""
+                    width={60}
+                    height={60}
                     style={{
-                      width: 60,
-                      height: 60,
                       border: editMaterialSelectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
                       borderRadius: 4,
                       cursor: 'pointer',
@@ -2947,13 +2962,13 @@ export default function CgMaterialPageCore() {
               </div>
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                 {editMaterialMediaList.map((media: any) => (
-                  <img
+                  <Image
                     key={media._id}
                     src={getOssUrl(media.url)}
                     alt=""
+                    width={60}
+                    height={60}
                     style={{
-                      width: 60,
-                      height: 60,
                       border: editMaterialSelectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
                       borderRadius: 4,
                       cursor: 'pointer',
@@ -3028,13 +3043,13 @@ export default function CgMaterialPageCore() {
                 </div>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
                   {editMaterialCoverList.map((media: any) => (
-                    <img
+                    <Image
                       key={media._id}
                       src={getOssUrl(media.url)}
                       alt=""
+                      width={60}
+                      height={60}
                       style={{
-                        width: 60,
-                        height: 60,
                         border: editMaterialSelectedCover === media.url ? '2px solid #1677ff' : '1px solid #eee',
                         borderRadius: 4,
                         cursor: 'pointer',
@@ -3096,13 +3111,13 @@ export default function CgMaterialPageCore() {
                           />
                         )
                       : (
-                          <img
+                          <Image
                             key={media._id}
                             src={getOssUrl(media.url)}
                             alt=""
+                            width={60}
+                            height={60}
                             style={{
-                              width: 60,
-                              height: 60,
                               border: editMaterialSelectedMaterials.includes(media.url) ? '2px solid #1677ff' : '1px solid #eee',
                               borderRadius: 4,
                               cursor: 'pointer',

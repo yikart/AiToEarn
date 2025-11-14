@@ -19,6 +19,7 @@ import {
   UserOutlined,
   WarningOutlined,
 } from '@ant-design/icons'
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd'
 import {
   Avatar,
   Button,
@@ -30,6 +31,7 @@ import {
   Skeleton,
   Tooltip,
 } from 'antd'
+import Image from 'next/image'
 import {
   forwardRef,
   memo,
@@ -39,7 +41,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd'
 import { useShallow } from 'zustand/react/shallow'
 import { createAccountGroupApi, updateAccountApi } from '@/api/account'
 import { apiUpdateAccountGroupSortRank, apiUpdateAccountSortRank } from '@/api/accountSort'
@@ -928,7 +929,7 @@ const AccountSidebar = memo(
                                                 </div>
                                                 <div className="accountList-item-right-footer">
                                                   <p className="accountList-item-right-plat">
-                                                    <img src={platInfo?.icon} />
+                                                    <Image src={platInfo?.icon} alt={platInfo?.name || ''} width={16} height={16} />
                                                     <span>{platInfo?.name}</span>
                                                   </p>
                                                   <Popover

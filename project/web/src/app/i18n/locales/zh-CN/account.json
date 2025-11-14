@@ -147,5 +147,10 @@
     "title": "会话已过期",
     "content": "您的 {{platformName}} 账号 \"{{nickname}}\"（位于 {{spaceName}}）会话已过期。是否重新登录？",
     "loginAgain": "重新登录"
+  },
+  "userManage": {
+    "selected": "已选择",
+    "accounts": "个账号",
+    "deleteAccount": "删除账号"
   }
 }
