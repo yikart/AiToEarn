@@ -28,7 +28,7 @@ export const PubRecordListFilterSchema = z.object({
   type: z.enum(PublishType).optional().describe('类型'),
   status: z.enum(PublishStatus).optional().describe('状态'),
   time: z
-    .tuple([z.date(), z.date()])
+    .tuple([z.coerce.date(), z.coerce.date()])
     .optional()
     .describe('创建时间区间，必须为UTC时间'),
   publishingChannel: z.enum(PublishingChannel).optional().describe('发布渠道，通过我们内部系统发布的(internal)或平台原生端(native)'),

@@ -17,7 +17,7 @@ export const ReplyCommentRecordFiltersSchema = z.object({
   accountId: z.string().optional(),
   type: z.enum(AccountType).optional(),
   commentId: z.string().optional(),
-  time: z.tuple([z.date(), z.date()]).optional(),
+  time: z.tuple([z.coerce.date(), z.coerce.date()]).optional(),
 })
 
 export const ReplyCommentRecordListSchema = z.object({
