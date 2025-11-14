@@ -215,11 +215,12 @@ export class UpdateVideoDto extends createZodDto(UpdateVideoSchema) {}
 const InsertPlayListSchema = AccountIdSchema.extend({
   title: z.string().describe('标题'),
   description: z.string().optional().describe('描述'),
-  isPublic: z.coerce.boolean().describe('是否公开'),
+  privacyStatus: z.string().optional().describe('隐私状态'),
 })
 export class InsertPlayListDto extends createZodDto(InsertPlayListSchema) {}
 
 const GetPlayListSchema = AccountIdSchema.extend({
+  channelId: z.string().optional().describe('频道ID'),
   id: z.string().optional().describe('播放列表 ID, 注意：channelId、id、mine，必须有且只能有一个'),
   mine: z.coerce.boolean().describe('是否查询我的播放列表'),
   maxResults: z.coerce.number().optional().describe('最大结果数'),
@@ -231,7 +232,8 @@ const UpdatePlayListSchema = AccountIdSchema.extend({
   id: z.string().describe('播放列表 ID'),
   title: z.string().optional().describe('标题'),
   description: z.string().optional().describe('描述'),
-  isPublic: z.coerce.boolean().describe('是否公开'),
+  privacyStatus: z.string().optional().describe('隐私状态'),
+  podcastStatus: z.string().optional().describe('播客状态'),
 })
 export class UpdatePlayListDto extends createZodDto(UpdatePlayListSchema) {}
 
