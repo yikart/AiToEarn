@@ -1,15 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { AccountType, createZodDto } from '@yikart/common'
 import { AccountStatus } from '@yikart/mongodb'
-import { Expose } from 'class-transformer'
-import {
-  IsArray,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from 'class-validator'
-import dayjs from 'dayjs'
 import { z } from 'zod'
 
 const CreateAccountSchema = z.object({
@@ -17,15 +7,7 @@ const CreateAccountSchema = z.object({
   access_token: z.string().min(1).optional(),
   type: z.enum(AccountType),
   loginCookie: z.string().min(1).optional(),
-  loginTime: z.string().transform((val) => {
-    if (!val)
-      return undefined
-    const parsed = dayjs(val)
-    if (!parsed.isValid()) {
-      throw new Error(`Invalid date format: ${val}. Expected ISO 8601 format (e.g., "2025-09-04T10:30:00.000Z")`)
-    }
-    return parsed.toDate()
-  }).optional(),
+  loginTime: z.coerce.date().optional(),
   uid: z.string().min(1),
   account: z.string().min(1),
   avatar: z.string().optional(),
@@ -36,15 +18,7 @@ const CreateAccountSchema = z.object({
   collectCount: z.number().optional(),
   forwardCount: z.number().optional(),
   commentCount: z.number().optional(),
-  lastStatsTime: z.string().transform((val) => {
-    if (!val)
-      return undefined
-    const parsed = dayjs(val)
-    if (!parsed.isValid()) {
-      throw new Error(`Invalid date format: ${val}. Expected ISO 8601 format (e.g., "2025-09-04T10:30:00.000Z")`)
-    }
-    return parsed.toDate()
-  }).optional(),
+  lastStatsTime: z.coerce.date().optional(),
   workCount: z.number().optional(),
   income: z.number().optional(),
   groupId: z.string().optional(),
@@ -89,82 +63,39 @@ const AccountStatisticsSchema = z.object({
 })
 export class AccountStatisticsDto extends createZodDto(AccountStatisticsSchema) {}
 
-export class UpdateAccountStatisticsDto {
-  @ApiProperty({ description: '账号ID' })
-  @IsString()
-  @Expose()
-  id: string
+const UpdateAccountStatisticsSchema = z.object({
+  id: z.string().describe('账号ID'),
+  workCount: z.number().optional().describe('作品数'),
+  fansCount: z.number().optional().describe('粉丝数'),
+  readCount: z.number().optional().describe('阅读数'),
+  likeCount: z.number().optional().describe('点赞数'),
+  collectCount: z.number().optional().describe('收藏数'),
+  commentCount: z.number().optional().describe('评论数'),
+  income: z.number().optional().describe('收入'),
+})
+export class UpdateAccountStatisticsDto extends createZodDto(
+  UpdateAccountStatisticsSchema,
+) {}
 
-  @ApiProperty({ description: '作品数' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  workCount?: number
+const DeleteAccountsSchema = z.object({
+  ids: z.array(z.string()).min(1).describe('要删除的ID'),
+})
+export class DeleteAccountsDto extends createZodDto(DeleteAccountsSchema) {}
 
-  @ApiProperty({ description: '粉丝数' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  fansCount?: number
+const AccountListBySpaceIdsSchema = z.object({
+  spaceIds: z.array(z.string()).min(1).describe('空间ID数组'),
+})
+export class AccountListBySpaceIdsDto extends createZodDto(
+  AccountListBySpaceIdsSchema,
+) {}
 
-  @ApiProperty({ description: '阅读数' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  readCount?: number
-
-  @ApiProperty({ description: '点赞数' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  likeCount?: number
-
-  @ApiProperty({ description: '收藏数' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  collectCount?: number
-
-  @ApiProperty({ description: '评论数' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  commentCount?: number
-
-  @ApiProperty({ description: '收入' })
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  income?: number
-}
-
-export class DeleteAccountsDto {
-  @ApiProperty({ description: '要删除的ID' })
-  @IsArray()
-  @IsString({ each: true })
-  @Expose()
-  ids: string[]
-}
-
-export class AccountListBySpaceIdsDto {
-  @ApiProperty({ description: '空间ID数组' })
-  @IsArray()
-  @Expose()
-  spaceIds: string[]
-}
-
-export class AccountListByTypesDto {
-  @IsArray({ message: '账号类型必须是数组' })
-  @IsEnum(AccountType, { each: true, message: '账号类型值不合法' })
-  @Expose()
-  types: AccountType[]
-
-  @IsEnum(AccountStatus, { message: '状态' })
-  @IsOptional()
-  @Expose()
-
-  readonly status?: AccountStatus
-}
+const AccountListByTypesSchema = z.object({
+  types: z.array(z.enum(AccountType)).min(1).describe('账号类型数组'),
+  status: z.enum(AccountStatus).optional().describe('账号状态'),
+})
+export class AccountListByTypesDto extends createZodDto(
+  AccountListByTypesSchema,
+) {}
 
 export const AccountListByParamSchema = z.record(z.string(), z.any()).describe('Account query parameters')
 

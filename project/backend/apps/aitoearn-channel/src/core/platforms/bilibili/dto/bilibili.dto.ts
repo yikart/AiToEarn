@@ -1,204 +1,104 @@
-import { ApiProperty } from '@nestjs/swagger'
-import { Expose, Type } from 'class-transformer'
-import {
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-  ValidateNested,
-} from 'class-validator'
-/*
- * @Author: nevin
- * @Date: 2024-06-17 20:12:31
- * @LastEditTime: 2025-05-06 15:49:03
- * @LastEditors: nevin
- * @Description: b站
- */
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 import { TableDto } from '../../../../common/global/dto/table.dto'
-import { AddArchiveData, ArchiveStatus } from '../../../../libs/bilibili/common'
+import { ArchiveStatus } from '../../../../libs/bilibili/common'
 
-export class AccountIdDto {
-  @IsString({ message: '账号ID' })
-  @Expose()
-  readonly accountId: string
-}
-export class UserIdDto {
-  @IsString({ message: '用户ID' })
-  @Expose()
-  readonly userId: string
-}
+const AccountIdSchema = z.object({
+  accountId: z.string().describe('账号ID'),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-export class GetAuthUrlDto extends UserIdDto {
-  @IsString({ message: '空间ID' })
-  @Expose()
-  readonly spaceId: string
+const UserIdSchema = z.object({
+  userId: z.string().describe('用户ID'),
+})
+export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-  @IsString({ message: '类型 pc h5' })
-  @Expose()
-  readonly type: 'h5' | 'pc'
+const GetAuthUrlSchema = UserIdSchema.extend({
+  spaceId: z.string().describe('空间ID'),
+  type: z.enum(['h5', 'pc']).describe('授权类型'),
+  prefix: z.string().optional().describe('前缀'),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @IsString({ message: '前缀' })
-  @IsOptional()
-  @Expose()
-  readonly prefix?: string
-}
+const GetAuthInfoSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-export class GetAuthInfoDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
-}
+const GetHeaderSchema = AccountIdSchema.extend({
+  body: z.record(z.string(), z.any()).describe('请求数据'),
+  isForm: z.boolean().describe('是否表单提交'),
+})
+export class GetHeaderDto extends createZodDto(GetHeaderSchema) {}
 
-export class GetHeaderDto extends AccountIdDto {
-  @IsObject({ message: '数据' })
-  @Expose()
-  readonly body: { [key: string]: any }
+const VideoInitSchema = AccountIdSchema.extend({
+  utype: z.coerce
+    .number()
+    .describe('上传类型：0-多分片，1-单文件（不超过100M）。默认值为0'),
+  name: z.string().describe('文件名称'),
+})
+export class VideoInitDto extends createZodDto(VideoInitSchema) {}
 
-  @IsBoolean({ message: '是否是表单提交' })
-  @Expose()
-  readonly isForm: boolean
-}
+const UploadLitVideoSchema = AccountIdSchema.extend({
+  file: z.string().describe('文件流 base64编码'),
+  uploadToken: z.string().describe('上传token'),
+})
+export class UploadLitVideoDto extends createZodDto(UploadLitVideoSchema) {}
 
-export class VideoInitDto extends AccountIdDto {
-  @IsNumber(
-    { allowNaN: false },
-    {
-      message:
-        '上传类型：0，1。0-多分片，1-单个小文件（不超过100M）。默认值为0',
-    },
-  )
-  @Type(() => Number)
-  @Expose()
-  readonly utype: number // 0 1
+const UploadVideoPartSchema = UploadLitVideoSchema.extend({
+  partNumber: z.coerce.number().describe('分片索引'),
+})
+export class UploadVideoPartDto extends createZodDto(UploadVideoPartSchema) {}
 
-  @IsString({ message: '文件名称' })
-  @Expose()
-  readonly name: string
-}
+const VideoCompleteSchema = AccountIdSchema.extend({
+  uploadToken: z.string().describe('上传token'),
+})
+export class VideoCompleteDto extends createZodDto(VideoCompleteSchema) {}
 
-export class UploadLitVideoDto extends AccountIdDto {
-  @IsString({ message: '文件流 base64编码' })
-  @Expose()
-  readonly file: string
+const CoverUploadSchema = AccountIdSchema.extend({
+  file: z.string().describe('文件流 base64编码'),
+})
+export class CoverUploadDto extends createZodDto(CoverUploadSchema) {}
 
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
+const AddArchiveDataSchema = z.object({
+  title: z.string().describe('标题'),
+  cover: z.string().optional().describe('封面'),
+  tid: z.coerce.number().describe('分区ID'),
+  no_reprint: z.union([z.literal(0), z.literal(1)]).optional().describe('是否允许转载'),
+  desc: z.string().optional().describe('描述'),
+  tag: z.string().describe('标签'),
+  copyright: z.union([z.literal(1), z.literal(2)]).describe('版权类型,1-原创，2-转载'),
+  source: z.string().optional().describe('转载来源'),
+})
+export class AddArchiveDataDto extends createZodDto(AddArchiveDataSchema) {}
 
-export class UploadVideoPartDto extends UploadLitVideoDto {
-  @IsNumber(
-    { allowNaN: false },
-    {
-      message: '分片索引',
-    },
-  )
-  @Type(() => Number)
-  @Expose()
-  readonly partNumber: number
-}
+const AddArchiveSchema = AccountIdSchema.extend({
+  data: AddArchiveDataSchema.describe('稿件数据'),
+  uploadToken: z.string().describe('上传token'),
+})
+export class AddArchiveDto extends createZodDto(AddArchiveSchema) {}
 
-export class VideoCompleteDto extends AccountIdDto {
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+  code: z.string().describe('授权码'),
+  state: z.string().describe('状态'),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(
+  CreateAccountAndSetAccessTokenSchema,
+) {}
 
-export class CoverUploadDto extends AccountIdDto {
-  @IsString({ message: '文件流 base64编码' })
-  @Expose()
-  readonly file: string
-}
+const ArchiveListFilterSchema = z.object({
+  status: z.enum(ArchiveStatus).optional().describe('任务状态'),
+})
+export class ArchiveListFilterDto extends createZodDto(ArchiveListFilterSchema) {}
 
-export class AddArchiveDataDto implements AddArchiveData {
-  @IsString({ message: '标题' })
-  @Expose()
-  readonly title: string
+const ArchiveListSchema = AccountIdSchema.extend({
+  filter: ArchiveListFilterSchema.describe('筛选条件'),
+  page: TableDto.schema.describe('分页配置'),
+})
+export class ArchiveListDto extends createZodDto(ArchiveListSchema) {}
 
-  @IsString({ message: '封面' })
-  @IsOptional()
-  @Expose()
-  readonly cover?: string
-
-  @IsNumber({ allowNaN: false }, { message: '分区ID' })
-  @Expose()
-  readonly tid: number
-
-  @IsNumber({ allowNaN: false }, { message: '是否允许转载' })
-  @IsOptional()
-  @Expose()
-  readonly no_reprint?: 0 | 1
-
-  @IsString({ message: '描述' })
-  @IsOptional()
-  @Expose()
-  readonly desc?: string
-
-  @IsString({ message: '标签' })
-  @Expose()
-  readonly tag: string
-
-  @IsNumber({ allowNaN: false }, { message: '1-原创，2-转载' })
-  @Expose()
-  readonly copyright: 1 | 2
-
-  @IsString({ message: '转载来源' })
-  @IsOptional()
-  @Expose()
-  readonly source?: string
-}
-export class AddArchiveDto extends AccountIdDto {
-  @ValidateNested()
-  @Type(() => AddArchiveDataDto)
-  @Expose()
-  readonly data: AddArchiveDataDto
-
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
-
-export class CreateAccountAndSetAccessTokenDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
-
-  @IsString({ message: '授权码' })
-  @Expose()
-  readonly code: string
-
-  @IsString({ message: '状态' })
-  @Expose()
-  readonly state: string
-}
-
-export class ArchiveListFilterDto {
-  @ApiProperty({
-    description: '任务状态',
-    enum: ArchiveStatus,
-    required: false,
-  })
-  @IsEnum(ArchiveStatus, { message: '任务状态' })
-  @IsOptional()
-  status?: ArchiveStatus
-}
-
-export class ArchiveListDto extends AccountIdDto {
-  @ValidateNested()
-  @Type(() => ArchiveListFilterDto)
-  @Expose()
-  readonly filter: ArchiveListFilterDto
-
-  @ValidateNested()
-  @Type(() => TableDto)
-  @Expose()
-  readonly page: TableDto
-}
-
-export class GetArcStatDto extends AccountIdDto {
-  @IsString({ message: '稿件ID' })
-  @Expose()
-  readonly resourceId: string
-}
+const GetArcStatSchema = AccountIdSchema.extend({
+  resourceId: z.string().describe('稿件ID'),
+})
+export class GetArcStatDto extends createZodDto(GetArcStatSchema) {}

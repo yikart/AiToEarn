@@ -7,9 +7,9 @@ import {
   Render,
   UseGuards,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { TableDto } from '@yikart/common'
+import { ApiDoc, TableDto } from '@yikart/common'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatBilibiliNatsApi } from '../../transports/channel/api/bilibili.natsApi'
 import { BilibiliService } from './bilibili.service'
@@ -18,7 +18,7 @@ import {
   GetArcStatDto,
 } from './dto/bilibili.dto'
 
-@ApiTags('plat/bilibili - B站平台')
+@ApiTags('OpenSource/Platform/Bilibili')
 @Controller('plat/bilibili')
 export class BilibiliController {
   constructor(
@@ -45,7 +45,9 @@ export class BilibiliController {
     return res
   }
 
-  @ApiOperation({ summary: '获取页面的认证URL' })
+  @ApiDoc({
+    summary: 'Get Authorization URL',
+  })
   @Get('auth/url/:type')
   async getAuthUrl(
     @GetToken() token: TokenInfo,
@@ -56,7 +58,9 @@ export class BilibiliController {
     return res
   }
 
-  @ApiOperation({ summary: '获取账号授权状态回调' })
+  @ApiDoc({
+    summary: 'Get Authorization Callback Result',
+  })
   @Post('auth/create-account/:taskId')
   async getAuthInfo(
     @GetToken() token: TokenInfo,
@@ -65,7 +69,9 @@ export class BilibiliController {
     return this.platBilibiliApi.getAuthInfo(taskId)
   }
 
-  @ApiOperation({ summary: '获取账号授权状态回调' })
+  @ApiDoc({
+    summary: 'Check Account Authorization Status',
+  })
   @Get('auth/status/:accountId')
   async checkAccountAuthStatus(
     @GetToken() token: TokenInfo,
@@ -74,7 +80,9 @@ export class BilibiliController {
     return await this.bilibiliService.checkAccountAuthStatus(accountId)
   }
 
-  @ApiOperation({ summary: '分区查询' })
+  @ApiDoc({
+    summary: 'List Archive Categories',
+  })
   @Get('archive/type/list/:accountId')
   async archiveTypeList(
     @GetToken() token: TokenInfo,
@@ -83,7 +91,10 @@ export class BilibiliController {
     return this.platBilibiliApi.archiveTypeList(accountId)
   }
 
-  @ApiOperation({ summary: '获取稿件列表' })
+  @ApiDoc({
+    summary: 'List Archives',
+    query: GetArchiveListDto.schema,
+  })
   @Get('archive/list/:pageNo/:pageSize')
   async getArchiveList(
     @GetToken() token: TokenInfo,
@@ -95,7 +106,9 @@ export class BilibiliController {
     })
   }
 
-  @ApiOperation({ summary: '获取用户数据' })
+  @ApiDoc({
+    summary: 'Get User Statistics',
+  })
   @Get('stat/user/:accountId')
   async getUserStat(
     @GetToken() token: TokenInfo,
@@ -104,7 +117,10 @@ export class BilibiliController {
     return this.platBilibiliApi.getUserStat(accountId)
   }
 
-  @ApiOperation({ summary: '获取稿件数据' })
+  @ApiDoc({
+    summary: 'Get Archive Statistics',
+    query: GetArcStatDto.schema,
+  })
   @Get('stat/arc')
   async getArcStat(
     @GetToken() token: TokenInfo,
@@ -116,7 +132,9 @@ export class BilibiliController {
     )
   }
 
-  @ApiOperation({ summary: '获取稿件增量数据数据' })
+  @ApiDoc({
+    summary: 'Get Archive Increment Statistics',
+  })
   @Get('stat/inc/arc/:accountId')
   async getArcIncStat(
     @GetToken() token: TokenInfo,

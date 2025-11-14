@@ -1,62 +1,45 @@
 import { createZodDto } from '@yikart/common'
-import { Expose } from 'class-transformer'
-import { IsArray, IsOptional, IsString } from 'class-validator'
 import { z } from 'zod'
 
-export class AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly accountId: string
-}
+export const AccountIdSchema = z.object({
+  accountId: z.string(),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-export class UserIdDto {
-  @IsString()
-  @Expose()
-  readonly userId: string
-}
+export const UserIdSchema = z.object({
+  userId: z.string(),
+})
+export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-export class PagesSelectionDto extends UserIdDto {
-  @IsArray()
-  @Expose()
-  readonly pageIds: string[]
-}
+export const PagesSelectionSchema = UserIdSchema.extend({
+  pageIds: z.array(z.string()),
+})
+export class PagesSelectionDto extends createZodDto(PagesSelectionSchema) {}
 
-export class GetAuthUrlDto extends UserIdDto {
-  @IsString({ message: '空间ID' })
-  @Expose()
-  readonly spaceId: string
+export const GetAuthUrlSchema = UserIdSchema.extend({
+  spaceId: z.string().describe('空间ID'),
+  scopes: z.array(z.string()).optional().describe('授权 scopes'),
+  platform: z.string().describe('平台标识'),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @IsArray()
-  @IsOptional()
-  @Expose()
-  readonly scopes?: string[]
+export const GetAuthInfoSchema = z.object({
+  taskId: z.string(),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-  @IsString()
-  @Expose()
-  readonly platform: string // Optional, can be 'facebook', 'instagram', or 'thread'
-}
+export const CreateAccountAndSetAccessTokenSchema = z.object({
+  code: z.string(),
+  state: z.string(),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(
+  CreateAccountAndSetAccessTokenSchema,
+) {}
 
-export class GetAuthInfoDto {
-  @IsString()
-  @Expose()
-  readonly taskId: string
-}
-
-export class CreateAccountAndSetAccessTokenDto {
-  @IsString()
-  @Expose()
-  readonly code: string
-
-  @IsString()
-  @Expose()
-  readonly state: string
-}
-
-export class RefreshTokenDto extends AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly refreshToken: string
-}
+export const RefreshTokenSchema = AccountIdSchema.extend({
+  refreshToken: z.string(),
+})
+export class RefreshTokenDto extends createZodDto(RefreshTokenSchema) {}
 
 export const ListCommentsSchema = z.object({
   platform: z.enum(['facebook', 'instagram', 'threads']),

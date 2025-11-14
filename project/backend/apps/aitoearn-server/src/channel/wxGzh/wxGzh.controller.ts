@@ -6,17 +6,20 @@
  * @Description: wxgzh
  */
 import { Controller, Get, Param, Query } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { GetUserCumulateData } from './dto/wxGzh.dto'
 import { WxGzhService } from './wxGzh.service'
 
-@ApiTags('plat/wxGzh - 微信公众号')
+@ApiTags('OpenSource/Platform/WeChat Official')
 @Controller('plat/wxGzh')
 export class WxGzhController {
   constructor(private readonly wxGzhService: WxGzhService) {}
 
-  @ApiOperation({ summary: '发起微信授权登陆' })
+  @ApiDoc({
+    summary: 'Create WeChat Authorization Task',
+  })
   @Get('auth/url/:type')
   async createAuthTask(
     @GetToken() token: TokenInfo,
@@ -31,7 +34,9 @@ export class WxGzhController {
     }
   }
 
-  @ApiOperation({ summary: '获取账号授权状态回调' })
+  @ApiDoc({
+    summary: 'Get Authorization Task Info',
+  })
   @Get('auth/create-account/:taskId')
   async getAuthTaskInfo(
     @GetToken() token: TokenInfo,
@@ -40,7 +45,10 @@ export class WxGzhController {
     return this.wxGzhService.getAuthTaskInfo(taskId)
   }
 
-  @ApiOperation({ summary: '获取累计用户数据' })
+  @ApiDoc({
+    summary: 'Get Accumulated User Metrics',
+    query: GetUserCumulateData.schema,
+  })
   @Get('account/userCumulate')
   async getUserCumulate(
     @GetToken() token: TokenInfo,
@@ -49,7 +57,10 @@ export class WxGzhController {
     return this.wxGzhService.getUserCumulate(query.accountId, query.beginDate, query.endDate)
   }
 
-  @ApiOperation({ summary: '获取图文阅读概况数据' })
+  @ApiDoc({
+    summary: 'Get Article Reading Metrics',
+    query: GetUserCumulateData.schema,
+  })
   @Get('account/userRead')
   async getUserRead(
     @GetToken() token: TokenInfo,

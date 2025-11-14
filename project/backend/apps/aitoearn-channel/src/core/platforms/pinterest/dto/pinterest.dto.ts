@@ -1,149 +1,52 @@
-import { Expose } from 'class-transformer'
-import {
-  IsArray,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator'
-/*
- * @Author: white
- * @Date: 2024-06-17 20:12:31
- * @LastEditTime: 2025-05-06 15:49:03
- * @LastEditors: white
- * @Description: 用户
- */
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 import { Country, Currency, SourceType } from '../../../../libs/pinterest/common'
 
-export class CreateAccountBodyDto {
-  @IsString({ message: '国家' })
-  @IsOptional()
-  @Expose()
-  readonly country: Country
+const CreateAccountBodySchema = z.object({
+  country: z.nativeEnum(Country).optional().describe('国家'),
+  currency: z.nativeEnum(Currency).optional().describe('货币'),
+  name: z.string().optional().describe('名称'),
+  owner_user_id: z.string().optional().describe('所属用户'),
+})
+export class CreateAccountBodyDto extends createZodDto(CreateAccountBodySchema) {}
 
-  @IsString({ message: '货币' })
-  @IsOptional()
-  @Expose()
-  readonly currency: Currency
+const CreateBoardBodySchema = z.object({
+  name: z.string().describe('名称'),
+  accountId: z.string().optional().describe('用户ID'),
+})
+export class CreateBoardBodyDto extends createZodDto(CreateBoardBodySchema) {}
 
-  @IsString({ message: '名称' })
-  @IsOptional()
-  @Expose()
-  readonly name: string
+const MediaSourceSchema = z.object({
+  source_type: z.nativeEnum(SourceType).describe('媒体类型'),
+  cover_image_url: z.string().optional().describe('封面地址'),
+  url: z.string().optional().describe('图片或者视频地址'),
+})
+export class MediaSourceDto extends createZodDto(MediaSourceSchema) {}
 
-  @IsString({ message: '所属用户' })
-  @IsOptional()
-  @Expose()
-  readonly owner_user_id: string
-}
+const CreatePinBodyItemSchema = z.object({
+  url: z.string().optional().describe('地址'),
+  title: z.string().optional().describe('标题'),
+  description: z.string().optional().describe('描述'),
+  link: z.string().optional().describe('链接'),
+})
+export class CreatePinBodyItemDto extends createZodDto(CreatePinBodyItemSchema) {}
 
-export class CreateBoardBodyDto {
-  @IsString({ message: '名称' })
-  @Expose()
-  readonly name: string
+const CreatePinBodySchema = z.object({
+  board_id: z.string().describe('此 Pin 所属的板块'),
+  accountId: z.string().optional().describe('用户ID'),
+  link: z.string().optional().describe('点击链接'),
+  title: z.string().optional().describe('标题'),
+  description: z.string().optional().describe('描述'),
+  dominant_color: z.string().optional().describe('主引脚颜色'),
+  alt_text: z.string().optional().describe('alt_text'),
+  media_source: MediaSourceSchema.describe('媒体来源'),
+  url: z.string().optional().describe('地址'),
+  items: z.array(CreatePinBodyItemSchema).optional().describe('媒体来源列表'),
+})
+export class CreatePinBodyDto extends createZodDto(CreatePinBodySchema) {}
 
-  @IsString({ message: '用户id' })
-  @Expose()
-  @IsOptional()
-  readonly accountId?: string
-}
-
-export class MediaSource {
-  @IsString({ message: '媒体类型' })
-  @Expose()
-  readonly source_type: SourceType
-
-  @IsString({ message: '封面地址' })
-  @Expose()
-  @IsOptional()
-  readonly cover_image_url: string
-
-  @IsString({ message: '图片或者视频地址' })
-  @Expose()
-  @IsOptional()
-  readonly url: string
-}
-
-export class CreatePinBodyItemDto {
-  @IsString({ message: '地址' })
-  @Expose()
-  @IsOptional()
-  readonly url: string
-
-  @IsString({ message: '标题' })
-  @Expose()
-  @IsOptional()
-  readonly title: string
-
-  @IsString({ message: '描述' })
-  @Expose()
-  @IsOptional()
-  readonly description: string
-
-  @IsString({ message: '链接' })
-  @Expose()
-  @IsOptional()
-  readonly link: string
-}
-
-export class CreatePinBodyDto {
-  @IsString({ message: '此 Pin 所属的板块。' })
-  @Expose()
-  readonly board_id: string
-
-  @IsString({ message: '用户id' })
-  @Expose()
-  @IsOptional()
-  readonly accountId?: string
-
-  @IsString({ message: '点击连接' })
-  @IsOptional()
-  @Expose()
-  readonly link: string
-
-  @IsString({ message: '标题' })
-  @IsOptional()
-  @Expose()
-  readonly title: string
-
-  @IsString({ message: '描述' })
-  @Expose()
-  @IsOptional()
-  readonly description: string
-
-  @IsString({ message: 'RGB表示的颜色 主引脚颜色。十六进制数，例如“#6E7874"' })
-  @Expose()
-  @IsOptional()
-  readonly dominant_color: string
-
-  @IsString({ message: 'alt_text' })
-  @Expose()
-  @IsOptional()
-  readonly alt_text: string
-
-  @IsObject({ message: '媒体来源' })
-  @Expose()
-  @IsOptional()
-  readonly media_source: MediaSource
-
-  @IsString({ message: '地址' })
-  @Expose()
-  @IsOptional()
-  readonly url: string
-
-  @IsArray({ message: '媒体来源' })
-  @Expose()
-  @IsOptional()
-  readonly items: CreatePinBodyItemDto[]
-}
-
-export class WebhookDto {
-  @IsString({ message: 'code' })
-  @Expose()
-  @IsOptional()
-  readonly code: string
-
-  @IsString({ message: 'state' })
-  @Expose()
-  @IsOptional()
-  readonly state: string
-}
+const WebhookSchema = z.object({
+  code: z.string().optional().describe('code'),
+  state: z.string().optional().describe('state'),
+})
+export class WebhookDto extends createZodDto(WebhookSchema) {}

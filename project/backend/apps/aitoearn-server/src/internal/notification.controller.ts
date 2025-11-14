@@ -1,16 +1,20 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { CreateToUserDto } from '../notification/notification.dto'
 import { NotificationService } from '../notification/notification.service'
 
-@ApiTags('内部服务接口')
+@ApiTags('OpenSource/Internal/Notification')
 @Controller('internal')
 @Internal()
 export class NotificationInternalController {
   constructor(private readonly notificationService: NotificationService) { }
 
-  @ApiOperation({ summary: '创建到用户的通知' })
+  @ApiDoc({
+    summary: 'Create Notification for User',
+    body: CreateToUserDto.schema,
+  })
   @Post('notification/createForUser')
   async createToUser(
     @Body() body: CreateToUserDto,

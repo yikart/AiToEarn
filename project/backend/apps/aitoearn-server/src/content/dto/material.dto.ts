@@ -1,18 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { createZodDto, TableDto } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
-import { Expose } from 'class-transformer'
-import {
-  IsString,
-} from 'class-validator'
 import { z } from 'zod'
 
-export class MaterialIdDto {
-  @ApiProperty({ title: 'ID', required: true })
-  @IsString({ message: 'ID' })
-  @Expose()
-  readonly id: string
-}
+const MaterialIdSchema = z.object({
+  id: z.string().describe('素材ID'),
+})
+export class MaterialIdDto extends createZodDto(MaterialIdSchema) {}
 
 export const MaterialMediaSchema = z.object({
   url: z.string(),

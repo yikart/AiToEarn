@@ -1,19 +1,22 @@
 import { Body, Controller, Get, Param, Post, Query, Res, UseGuards } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
 import { OrgGuard } from '../../common/interceptor/transform.interceptor'
 import { PlatKwaiNatsApi } from '../../transports/channel/api/kwai.natsApi'
 import { AccountIdDto } from '../bilibili/dto/bilibili.dto'
 
-@ApiTags('plat/kwai - 快手平台')
+@ApiTags('OpenSource/Platform/Kwai')
 @Controller('plat/kwai')
 export class KwaiController {
   constructor(
     private readonly platKwaiNatsApi: PlatKwaiNatsApi,
   ) {}
 
-  @ApiOperation({ summary: '开始授权，创建任务' })
+  @ApiDoc({
+    summary: 'Create Authorization Task',
+  })
   @Get('auth/url/:type')
   async getAuth(
     @GetToken() token: TokenInfo,
@@ -27,7 +30,9 @@ export class KwaiController {
     })
   }
 
-  @ApiOperation({ summary: '获取账号授权状态回调' })
+  @ApiDoc({
+    summary: 'Get Authorization Task Info',
+  })
   @Post('auth/create-account/:taskId')
   async getAuthInfo(
     @GetToken() token: TokenInfo,
@@ -39,6 +44,9 @@ export class KwaiController {
   // 授权回调，创建账号
   @Public()
   @UseGuards(OrgGuard)
+  @ApiDoc({
+    summary: 'Handle Kwai OAuth Callback',
+  })
   @Get('auth/back/:taskId')
   async getAccessToken(
     @Param('taskId') taskId: string,
@@ -56,7 +64,10 @@ export class KwaiController {
     return res.render('auth/back', result)
   }
 
-  @ApiOperation({ summary: 'get author info' })
+  @ApiDoc({
+    summary: 'Get Author Information',
+    body: AccountIdDto.schema,
+  })
   @Post('auth/info')
   async getAuthorInfo(
     @Body() data: AccountIdDto,

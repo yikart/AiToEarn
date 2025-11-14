@@ -1,14 +1,6 @@
-import { Expose, Type } from 'class-transformer'
-import {
-  IsArray,
-  IsBoolean,
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  IsUrl,
-  ValidateNested,
-} from 'class-validator'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
+import { TiktokPostMode, TiktokPrivacyLevel, TiktokSourceType } from '../../../../libs/tiktok/tiktok.enum'
 /*
  * @Author: nevin
  * @Date: 2025-01-08 00:00:00
@@ -16,230 +8,111 @@ import {
  * @LastEditors: nevin
  * @Description: TikTok DTO
  */
-import { TiktokPostMode, TiktokPrivacyLevel, TiktokSourceType } from '../../../../libs/tiktok/tiktok.enum'
 
-// 发布信息DTO
-export class PostInfoDto {
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly title?: string
+const PostInfoSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  privacy_level: z.nativeEnum(TiktokPrivacyLevel),
+  disable_comment: z.boolean().optional(),
+  disable_duet: z.boolean().optional(),
+  disable_stitch: z.boolean().optional(),
+  auto_add_music: z.boolean().optional(),
+  brand_content_toggle: z.boolean().optional(),
+  brand_organic_toggle: z.boolean().optional(),
+  video_cover_timestamp_ms: z.number().optional(),
+})
+export class PostInfoDto extends createZodDto(PostInfoSchema) {}
 
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly description?: string
+const VideoFileUploadSourceSchema = z.object({
+  source: z.literal(TiktokSourceType.FILE_UPLOAD),
+  video_size: z.number(),
+  chunk_size: z.number(),
+  total_chunk_count: z.number(),
+})
+export class VideoFileUploadSourceDto extends createZodDto(VideoFileUploadSourceSchema) {}
 
-  @IsEnum(TiktokPrivacyLevel)
-  @Expose()
-  readonly privacy_level: TiktokPrivacyLevel
+const VideoPullUrlSourceSchema = z.object({
+  source: z.literal(TiktokSourceType.PULL_FROM_URL),
+  video_url: z.string().url(),
+})
+export class VideoPullUrlSourceDto extends createZodDto(VideoPullUrlSourceSchema) {}
 
-  @IsBoolean()
-  @IsOptional()
-  @Expose()
-  readonly disable_comment?: boolean
+const PhotoSourceInfoSchema = z.object({
+  source: z.literal(TiktokSourceType.PULL_FROM_URL),
+  photo_images: z.array(z.string().url()),
+  photo_cover_index: z.number(),
+})
+export class PhotoSourceInfoDto extends createZodDto(PhotoSourceInfoSchema) {}
 
-  @IsBoolean()
-  @IsOptional()
-  @Expose()
-  readonly disable_duet?: boolean
+const AccountIdSchema = z.object({
+  accountId: z.string(),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-  @IsBoolean()
-  @IsOptional()
-  @Expose()
-  readonly disable_stitch?: boolean
+const UserIdSchema = z.object({
+  userId: z.string(),
+})
+export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-  @IsBoolean()
-  @IsOptional()
-  @Expose()
-  readonly auto_add_music?: boolean
+const GetAuthUrlSchema = UserIdSchema.extend({
+  spaceId: z.string(),
+  scopes: z.array(z.string()).optional(),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @IsBoolean()
-  @IsOptional()
-  @Expose()
-  readonly brand_content_toggle?: boolean
+const GetAuthInfoSchema = z.object({
+  taskId: z.string(),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-  @IsBoolean()
-  @IsOptional()
-  @Expose()
-  readonly brand_organic_toggle?: boolean
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  code: z.string(),
+  state: z.string(),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(
+  CreateAccountAndSetAccessTokenSchema,
+) {}
 
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  readonly video_cover_timestamp_ms?: number
-}
+const RefreshTokenSchema = AccountIdSchema.extend({
+  refreshToken: z.string(),
+})
+export class RefreshTokenDto extends createZodDto(RefreshTokenSchema) {}
 
-// 视频源信息DTO - 文件上传方式
-export class VideoFileUploadSourceDto {
-  @IsEnum(TiktokSourceType)
-  @Expose()
-  readonly source: TiktokSourceType.FILE_UPLOAD
+const VideoPublishSchema = AccountIdSchema.extend({
+  postInfo: PostInfoSchema,
+  sourceInfo: z.union([VideoFileUploadSourceSchema, VideoPullUrlSourceSchema]),
+})
+export class VideoPublishDto extends createZodDto(VideoPublishSchema) {}
 
-  @IsNumber()
-  @Expose()
-  readonly video_size: number
+const PhotoPublishSchema = AccountIdSchema.extend({
+  postMode: z.nativeEnum(TiktokPostMode),
+  postInfo: PostInfoSchema,
+  sourceInfo: PhotoSourceInfoSchema,
+})
+export class PhotoPublishDto extends createZodDto(PhotoPublishSchema) {}
 
-  @IsNumber()
-  @Expose()
-  readonly chunk_size: number
+const GetPublishStatusSchema = AccountIdSchema.extend({
+  publishId: z.string(),
+})
+export class GetPublishStatusDto extends createZodDto(GetPublishStatusSchema) {}
 
-  @IsNumber()
-  @Expose()
-  readonly total_chunk_count: number
-}
+const UploadVideoFileSchema = z.object({
+  uploadUrl: z.string().url(),
+  videoBase64: z.string(),
+  contentType: z.string().optional(),
+})
+export class UploadVideoFileDto extends createZodDto(UploadVideoFileSchema) {}
 
-// 视频源信息DTO - URL拉取方式
-export class VideoPullUrlSourceDto {
-  @IsEnum(TiktokSourceType)
-  @Expose()
-  readonly source: TiktokSourceType.PULL_FROM_URL
+const UserInfoSchema = AccountIdSchema.extend({
+  fields: z.string().optional(),
+})
+export class UserInfoDto extends createZodDto(UserInfoSchema) {}
 
-  @IsUrl()
-  @Expose()
-  readonly video_url: string
-}
+const ListUserVideosSchema = AccountIdSchema.extend({
+  fields: z.string(),
+  cursor: z.coerce.number().optional(),
+  max_count: z.coerce.number().optional(),
+})
+export class ListUserVideosDto extends createZodDto(ListUserVideosSchema) {}
 
-// 照片源信息DTO
-export class PhotoSourceInfoDto {
-  @IsEnum(TiktokSourceType)
-  @Expose()
-  readonly source: TiktokSourceType.PULL_FROM_URL
-
-  @IsArray()
-  @IsUrl({}, { each: true })
-  @Expose()
-  readonly photo_images: string[]
-
-  @IsNumber()
-  @Expose()
-  readonly photo_cover_index: number
-}
-
-export class AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly accountId: string
-}
-
-export class UserIdDto {
-  @IsString()
-  @Expose()
-  readonly userId: string
-}
-
-export class GetAuthUrlDto extends UserIdDto {
-  @IsString()
-  @Expose()
-  readonly spaceId: string
-
-  @IsArray()
-  @IsOptional()
-  @Expose()
-  readonly scopes?: string[]
-}
-
-export class GetAuthInfoDto {
-  @IsString()
-  @Expose()
-  readonly taskId: string
-}
-
-export class CreateAccountAndSetAccessTokenDto {
-  @IsString()
-  @Expose()
-  readonly code: string
-
-  @IsString()
-  @Expose()
-  readonly state: string
-}
-
-export class RefreshTokenDto extends AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly refreshToken: string
-}
-
-export class VideoPublishDto extends AccountIdDto {
-  @ValidateNested()
-  @Type(() => PostInfoDto)
-  @Expose()
-  readonly postInfo: PostInfoDto
-
-  @ValidateNested()
-  @Type(() => Object, {
-    discriminator: {
-      property: 'source',
-      subTypes: [
-        { value: VideoFileUploadSourceDto, name: TiktokSourceType.FILE_UPLOAD },
-        { value: VideoPullUrlSourceDto, name: TiktokSourceType.PULL_FROM_URL },
-      ],
-    },
-    keepDiscriminatorProperty: true,
-  })
-  @Expose()
-  readonly sourceInfo: VideoFileUploadSourceDto | VideoPullUrlSourceDto
-}
-
-export class PhotoPublishDto extends AccountIdDto {
-  @IsEnum(TiktokPostMode)
-  @Expose()
-  readonly postMode: TiktokPostMode
-
-  @ValidateNested()
-  @Type(() => PostInfoDto)
-  @Expose()
-  readonly postInfo: PostInfoDto
-
-  @ValidateNested()
-  @Type(() => PhotoSourceInfoDto)
-  @Expose()
-  readonly sourceInfo: PhotoSourceInfoDto
-}
-
-export class GetPublishStatusDto extends AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly publishId: string
-}
-
-export class UploadVideoFileDto {
-  @IsString()
-  @Expose()
-  readonly uploadUrl: string
-
-  @IsString()
-  @Expose()
-  readonly videoBase64: string
-
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly contentType?: string
-}
-
-export class UserInfoDto extends AccountIdDto {
-  @IsString()
-  @IsOptional()
-  @Expose()
-  readonly fields?: string
-}
-
-export class ListUserVideosDto extends AccountIdDto {
-  @IsString()
-  @Expose()
-  readonly fields: string
-
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  readonly cursor?: number
-
-  @IsNumber()
-  @IsOptional()
-  @Expose()
-  readonly max_count?: number
-}
-
-export class RevokeTokenDto extends AccountIdDto {}
+export class RevokeTokenDto extends createZodDto(AccountIdSchema) {}

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Logger, Post, Put } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { AitoearnAuthService, GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { MailService } from '@yikart/mail'
 import { UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
@@ -22,7 +22,7 @@ interface UserMailRegistCache {
   status: 0 | 1
 }
 
-@ApiTags('User Login')
+@ApiTags('OpenSource/User/Login')
 @Controller('login')
 export class LoginController {
   private readonly logger = new Logger(LoginController.name)
@@ -33,9 +33,10 @@ export class LoginController {
     private readonly mailService: MailService,
   ) { }
 
-  @ApiOperation({
-    summary: 'Email login/registration',
-    description: 'Email login/registration',
+  @ApiDoc({
+    summary: 'Email Login or Registration',
+    description: 'Perform email login for existing users or trigger the registration flow for new users.',
+    body: MailLoginDto.schema,
   })
   @Public()
   @Post('mail')
@@ -99,9 +100,10 @@ export class LoginController {
     }
   }
 
-  @ApiOperation({
-    summary: 'Email registration',
-    description: 'Email registration',
+  @ApiDoc({
+    summary: 'Email Registration',
+    description: 'Register a new user by email using the verification code.',
+    body: RegistByMailDto.schema,
   })
   @Public()
   @Post('mail/regist')
@@ -149,9 +151,10 @@ export class LoginController {
     }
   }
 
-  @ApiOperation({
-    summary: 'Email reset password',
-    description: 'Email reset password',
+  @ApiDoc({
+    summary: 'Request Email Password Reset',
+    description: 'Send a reset code to the user via email.',
+    body: MailRepasswordDto.schema,
   })
   @Public()
   @Post('repassword/mail')
@@ -189,9 +192,10 @@ export class LoginController {
     return config.environment === 'production' ? '' : code
   }
 
-  @ApiOperation({
-    summary: 'Email set new password',
-    description: 'Email set new password',
+  @ApiDoc({
+    summary: 'Reset Password via Email',
+    description: 'Reset the password using the email verification code.',
+    body: RegistByMailDto.schema,
   })
   @Public()
   @Put('repassword/mail')
@@ -229,9 +233,10 @@ export class LoginController {
     }
   }
 
-  @ApiOperation({
-    summary: 'Google login',
-    description: 'Google login',
+  @ApiDoc({
+    summary: 'Google Login',
+    description: 'Login the user using Google credentials.',
+    body: GoogleLoginDto.schema,
   })
   @Public()
   @Post('google')
@@ -264,9 +269,9 @@ export class LoginController {
     }
   }
 
-  @ApiOperation({
-    summary: 'Get account cancellation code',
-    description: 'Get account cancellation code',
+  @ApiDoc({
+    summary: 'Get Account Cancellation Code',
+    description: 'Send a verification code for account cancellation to the user.',
   })
   @Get('cancel/code')
   async getCancelMailCode(@GetToken() token: TokenInfo) {
@@ -295,9 +300,10 @@ export class LoginController {
     return mailRes
   }
 
-  @ApiOperation({
-    summary: 'Account cancellation',
-    description: 'Account cancellation',
+  @ApiDoc({
+    summary: 'Cancel Account',
+    description: 'Cancel the user account with a verification code.',
+    body: UserCancelDto.schema,
   })
   @Delete('cancel')
   async cancelByMail(
@@ -315,9 +321,10 @@ export class LoginController {
     return res
   }
 
-  @ApiOperation({
-    summary: 'Google login cancellation',
-    description: 'Google login cancellation',
+  @ApiDoc({
+    summary: 'Cancel Google Login Binding',
+    description: 'Revoke Google login binding and delete the account.',
+    body: GoogleLoginDto.schema,
   })
   @Post('cancel/google')
   async cancelByGoogle(@GetToken() payload: TokenInfo, @Body() loginInfo: GoogleLoginDto) {

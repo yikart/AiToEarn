@@ -15,9 +15,9 @@ import {
   Put,
   Query,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { TableDto } from '@yikart/common'
+import { ApiDoc, TableDto } from '@yikart/common'
 import { ChannelSkKeyNatsApi } from '../../transports/channel/api/skKeyNatsApi.natsApi'
 import {
   CreateSkKeyDto,
@@ -26,23 +26,24 @@ import {
   SkKeyUpInfoDto,
 } from './dto/skKey.dto'
 
-@ApiTags('频道MCP的SkKey')
+@ApiTags('OpenSource/Home/SkKey')
 @Controller('channel/skKey')
 export class SkKeyController {
   constructor(private readonly platSkKeyatsApi: ChannelSkKeyNatsApi) {}
 
-  @ApiOperation({
-    summary: '创建skKey',
-    description: '创建skKey',
+  @ApiDoc({
+    summary: 'Create SkKey',
+    description: 'Create a new SkKey entry.',
+    body: CreateSkKeyDto.schema,
   })
   @Post()
   create(@GetToken() token: TokenInfo, @Body() body: CreateSkKeyDto) {
     return this.platSkKeyatsApi.create(token.id, body.desc)
   }
 
-  @ApiOperation({
-    summary: '删除关联',
-    description: '删除关联',
+  @ApiDoc({
+    summary: 'Remove SkKey Association',
+    description: 'Delete an account association from a SkKey.',
   })
   @Delete('ref')
   delRefAccount(
@@ -52,45 +53,47 @@ export class SkKeyController {
     return this.platSkKeyatsApi.delRefAccount(body.key, body.accountId)
   }
 
-  @ApiOperation({
-    summary: '删除skKey',
-    description: '删除skKey',
+  @ApiDoc({
+    summary: 'Delete SkKey',
+    description: 'Remove a SkKey entry.',
   })
   @Delete(':key')
   del(@GetToken() token: TokenInfo, @Param('key') key: string) {
     return this.platSkKeyatsApi.del(key)
   }
 
-  @ApiOperation({
-    summary: '更新skKey',
-    description: '更新skKey',
+  @ApiDoc({
+    summary: 'Update SkKey',
+    description: 'Update SkKey metadata.',
+    body: SkKeyUpInfoDto.schema,
   })
   @Put()
   upInfo(@GetToken() token: TokenInfo, @Body() body: SkKeyUpInfoDto) {
     return this.platSkKeyatsApi.upInfo(body.key, body.desc)
   }
 
-  @ApiOperation({
-    summary: '获取skKey',
-    description: '获取skKey',
+  @ApiDoc({
+    summary: 'Get SkKey Detail',
+    description: 'Retrieve SkKey details.',
   })
   @Get('info/:key')
   getInfo(@GetToken() token: TokenInfo, @Param('key') key: string) {
     return this.platSkKeyatsApi.getInfo(key)
   }
 
-  @ApiOperation({
-    summary: '获取skKey列表',
-    description: '获取skKey列表',
+  @ApiDoc({
+    summary: 'List SkKeys',
+    description: 'List SkKeys belonging to the current user.',
   })
   @Get('list/:pageNo/:pageSize')
   list(@GetToken() token: TokenInfo, @Param() page: TableDto) {
     return this.platSkKeyatsApi.list(page, { userId: token.id })
   }
 
-  @ApiOperation({
-    summary: '创建关联',
-    description: '创建关联',
+  @ApiDoc({
+    summary: 'Create SkKey Association',
+    description: 'Associate a SkKey with an account.',
+    body: SkKeyAddRefAccountDto.schema,
   })
   @Post('ref')
   addRefAccount(
@@ -100,9 +103,10 @@ export class SkKeyController {
     return this.platSkKeyatsApi.addRefAccount(body.key, body.accountId)
   }
 
-  @ApiOperation({
-    summary: '获取关联列表',
-    description: '获取关联列表',
+  @ApiDoc({
+    summary: 'List SkKey Associations',
+    description: 'Retrieve associated accounts for a SkKey.',
+    query: GetRefAccountListDto.schema,
   })
   @Get('ref/list/:pageNo/:pageSize')
   getRefAccountList(

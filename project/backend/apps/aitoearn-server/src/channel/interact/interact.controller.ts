@@ -6,18 +6,21 @@
  * @Description: 互动
  */
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { TableDto } from '@yikart/common'
+import { ApiDoc, TableDto } from '@yikart/common'
 import { InteractNatsApi } from '../../transports/channel/api/interact/interact.natsApi'
 import { AddArcCommentDto, DelCommentDto, ReplyCommentDto } from './dto/interact.dto'
 
-@ApiTags('渠道互动')
+@ApiTags('OpenSource/Engage/Interact')
 @Controller('channel/interact')
 export class InteractController {
   constructor(private readonly interactApi: InteractNatsApi) {}
 
-  @ApiOperation({ summary: '添加作品评论' })
+  @ApiDoc({
+    summary: 'Add Comment to Post',
+    body: AddArcCommentDto.schema,
+  })
   @Post('addArcComment')
   async addArcComment(
     @GetToken() token: TokenInfo,
@@ -30,7 +33,9 @@ export class InteractController {
     )
   }
 
-  @ApiOperation({ summary: '获取作品的评论列表' })
+  @ApiDoc({
+    summary: 'Get Comment List',
+  })
   @Get('getArcCommentList/:pageNo/:pageSize')
   async getArcCommentList(
     @GetToken() token: TokenInfo,
@@ -40,7 +45,10 @@ export class InteractController {
     return this.interactApi.getArcCommentList(recordId, query)
   }
 
-  @ApiOperation({ summary: '回复评论' })
+  @ApiDoc({
+    summary: 'Reply to Comment',
+    body: ReplyCommentDto.schema,
+  })
   @Post('replyComment')
   async replyComment(
     @GetToken() token: TokenInfo,
@@ -53,7 +61,10 @@ export class InteractController {
     )
   }
 
-  @ApiOperation({ summary: '删除评论' })
+  @ApiDoc({
+    summary: 'Delete Comment',
+    body: DelCommentDto.schema,
+  })
   @Delete('delComment')
   async delComment(
     @GetToken() token: TokenInfo,

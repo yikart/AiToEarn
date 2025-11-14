@@ -1,5 +1,6 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common'
-import { AppException, ResponseCode } from '@yikart/common'
+import { ApiTags } from '@nestjs/swagger'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { PublishStatus } from '../../libs/database/schema/publishTask.schema'
 import {
   CreatePublishDto,
@@ -7,10 +8,12 @@ import {
   NowPubTaskDto,
   PublishRecordListFilterDto,
   UpPublishTaskTimeDto,
+  UpPublishTaskTimeSchema,
 } from './dto/publish.dto'
 import { TiktokWebhookDto, TiktokWebhookSchema } from './dto/tiktok.webhook.dto'
 import { PublishingService } from './publishing.service'
 
+@ApiTags('OpenSource/Core/Publishing/Publishing')
 @Controller()
 export class PublishingController {
   private readonly logger = new Logger(PublishingController.name)
@@ -18,11 +21,18 @@ export class PublishingController {
     private readonly publishingService: PublishingService,
   ) {}
 
+  @ApiDoc({
+    summary: 'Create Publishing Task',
+  })
   @Post('plat/publish/create')
   async createPublishingTask(@Body() data: CreatePublishDto) {
     return await this.publishingService.createPublishingTask(data)
   }
 
+  @ApiDoc({
+    summary: 'Update Publishing Time',
+    body: UpPublishTaskTimeSchema,
+  })
   @Post('plat/publish/changeTime')
   async changeTaskTime(@Body() data: UpPublishTaskTimeDto) {
     data.publishTime = new Date(data.publishTime)
@@ -34,6 +44,9 @@ export class PublishingController {
     return res
   }
 
+  @ApiDoc({
+    summary: 'Delete Publishing Task',
+  })
   @Post('publish/task/delete')
   async deletePublishTask(@Body() data: DeletePublishTaskDto) {
     return await this.publishingService.deletePublishTaskById(
@@ -42,6 +55,9 @@ export class PublishingController {
     )
   }
 
+  @ApiDoc({
+    summary: 'Trigger Immediate Publishing Task',
+  })
   @Post('publish/task/run')
   async nowPubTask(@Body() data: NowPubTaskDto) {
     const info = await this.publishingService.getPublishTaskInfo(data.id)
@@ -58,6 +74,9 @@ export class PublishingController {
     return PublishStatus.PUBLISHING
   }
 
+  @ApiDoc({
+    summary: 'Handle TikTok Publishing Webhook',
+  })
   @Post('publish/tiktok/post/webhook')
   async handleTiktokWebhook(@Body() data: any) {
     this.logger.log(`Received TikTok webhook: ${JSON.stringify(data)}`)
@@ -72,30 +91,54 @@ export class PublishingController {
     return { status: 'success', message: 'Webhook processed' }
   }
 
+  @ApiDoc({
+    summary: 'List Publishing Tasks',
+    body: PublishRecordListFilterDto.schema,
+  })
   @Post('channel/publishTask/list')
   async getPublishTaskList(@Body() data: PublishRecordListFilterDto) {
     const res = await this.publishingService.getPublishTasks(data)
     return res
   }
 
+  @ApiDoc({
+    summary: 'List Queued Publishing Tasks',
+    body: PublishRecordListFilterDto.schema,
+  })
   @Post('channel/status/queued/tasks')
   async getQueuedPublishTaskList(@Body() data: PublishRecordListFilterDto) {
-    const res = await this.publishingService.getQueuedPublishTasks(data)
+    const res = await this.publishingService.getQueuedPublishTasks({
+      ...data,
+      time: data.time as [Date, Date] | undefined,
+    })
     return res
   }
 
+  @ApiDoc({
+    summary: 'List Published Tasks',
+    body: PublishRecordListFilterDto.schema,
+  })
   @Post('channel/status/published/tasks')
   async getPublishedPublishTaskList(@Body() data: PublishRecordListFilterDto) {
-    const res = await this.publishingService.getPublishedPublishTasks(data)
+    const res = await this.publishingService.getPublishedPublishTasks({
+      ...data,
+      time: data.time as [Date, Date] | undefined,
+    })
     return res
   }
 
+  @ApiDoc({
+    summary: 'Get Publishing Task Detail',
+  })
   @Post('channel/publishTask/detail')
   async getPublishingTaskDetail(@Body() data: { flowId: string, userId: string }) {
     const res = await this.publishingService.getPublishTaskInfoWithFlowId(data.flowId, data.userId)
     return res
   }
 
+  @ApiDoc({
+    summary: 'Get Publishing Task by User',
+  })
   @Post('channel/publishing/task/detail')
   async getPublishTaskInfoWithUserId(@Body() data: { taskId: string, userId: string }) {
     const res = await this.publishingService.getPublishTaskInfoWithUserId(data.taskId, data.userId)

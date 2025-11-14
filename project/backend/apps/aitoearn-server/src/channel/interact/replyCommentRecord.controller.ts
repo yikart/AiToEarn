@@ -6,18 +6,21 @@
  * @Description: 评论回复
  */
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { TableDto } from '@yikart/common'
+import { ApiDoc, TableDto } from '@yikart/common'
 import { ReplyCommentRecordNatsApi } from '../../transports/channel/api/interact/replyCommentRecord.natsApi'
 import { AddReplyCommentRecordDto, ReplyCommentRecordFiltersDto } from './dto/replyCommentRecord.dto'
 
-@ApiTags('评论回复记录')
+@ApiTags('OpenSource/Engage/ReplyCommentRecord')
 @Controller('channel/replyCommentRecord')
 export class ReplyCommentRecordController {
   constructor(private readonly replyCommentRecordNatsApi: ReplyCommentRecordNatsApi) {}
 
-  @ApiOperation({ summary: '添加评论回复记录' })
+  @ApiDoc({
+    summary: 'Add Reply Comment Record',
+    body: AddReplyCommentRecordDto.schema,
+  })
   @Post()
   async add(
     @GetToken() token: TokenInfo,
@@ -29,7 +32,10 @@ export class ReplyCommentRecordController {
     })
   }
 
-  @ApiOperation({ summary: '获取评论回复记录列表' })
+  @ApiDoc({
+    summary: 'List Reply Comment Records',
+    query: ReplyCommentRecordFiltersDto.schema,
+  })
   @Get('list/:pageNo/:pageSize')
   async getArcCommentList(
     @GetToken() token: TokenInfo,
@@ -39,7 +45,9 @@ export class ReplyCommentRecordController {
     return this.replyCommentRecordNatsApi.list(token.id, query, param)
   }
 
-  @ApiOperation({ summary: '删除评论回复记录' })
+  @ApiDoc({
+    summary: 'Delete Reply Comment Record',
+  })
   @Delete(':id')
   async replyComment(
     @Param('id') id: string,

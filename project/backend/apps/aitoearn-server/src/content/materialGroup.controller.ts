@@ -14,22 +14,23 @@ import {
   Post,
   Query,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { AppException, ResponseCode, TableDto } from '@yikart/common'
-import { CreateMaterialGroupDto, MaterialGroupFilterDto, UpdateMaterialGroupDto } from './dto/materialGroup.dto'
+import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
+import { CreateMaterialGroupDto, MaterialGroupFilterDto, MaterialGroupFilterSchema, UpdateMaterialGroupDto } from './dto/materialGroup.dto'
 import { MaterialGroupService } from './materialGroup.service'
 
-@ApiTags('草稿')
+@ApiTags('OpenSource/Me/MaterialGroup')
 @Controller('material/group')
 export class MaterialGroupController {
   constructor(
     private readonly materialGroupService: MaterialGroupService,
   ) { }
 
-  @ApiOperation({
-    description: '创建草稿组',
-    summary: '创建草稿组',
+  @ApiDoc({
+    summary: 'Create Material Group',
+    description: 'Create a new material group with the provided metadata.',
+    body: CreateMaterialGroupDto.schema,
   })
   @Post()
   async createGroup(
@@ -43,9 +44,9 @@ export class MaterialGroupController {
     return res
   }
 
-  @ApiOperation({
-    description: '删除素材组',
-    summary: '删除素材组',
+  @ApiDoc({
+    summary: 'Delete Material Group',
+    description: 'Delete a material group by ID.',
   })
   @Delete(':id')
   async delGroup(
@@ -60,9 +61,10 @@ export class MaterialGroupController {
     return res
   }
 
-  @ApiOperation({
-    description: '更新素材组信息',
-    summary: '更新素材组信息',
+  @ApiDoc({
+    summary: 'Update Material Group Information',
+    description: 'Update the details of a material group.',
+    body: UpdateMaterialGroupDto.schema,
   })
   @Post('info/:id')
   async updateGroupInfo(
@@ -78,9 +80,10 @@ export class MaterialGroupController {
     return res
   }
 
-  @ApiOperation({
-    description: '获取素材组列表',
-    summary: '获取素材组列表',
+  @ApiDoc({
+    summary: 'List Material Groups',
+    description: 'Retrieve a paginated list of material groups.',
+    query: MaterialGroupFilterSchema,
   })
   @Get('list/:pageNo/:pageSize')
   async getGroupList(

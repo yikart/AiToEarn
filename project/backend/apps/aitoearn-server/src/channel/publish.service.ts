@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { AccountType, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PostData } from '@yikart/statistics-db'
+import { z } from 'zod'
 import { PublishRecordService } from '../publishRecord/publishRecord.service'
 import { PostService } from '../statistics/post/post.service'
 import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
@@ -9,8 +10,10 @@ import { PublishTaskNatsApi } from '../transports/channel/api/publishTask.natsAp
 import { ChannelApi } from '../transports/channel/channel.api'
 import { PublishingChannel } from '../transports/channel/common'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
-import { PostHistoryItemDto } from './dto/publish-response.dto'
+import { PostHistoryItemVoSchema } from './dto/publish-response.vo'
 import { PublishDayInfoListFiltersDto, PubRecordListFilterDto } from './dto/publish.dto'
+
+type PostHistoryItem = z.infer<typeof PostHistoryItemVoSchema>
 
 @Injectable()
 export class PublishService {
@@ -48,7 +51,7 @@ export class PublishService {
   }
 
   private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
-    const result = new Map<string, PostHistoryItemDto>()
+    const result = new Map<string, PostHistoryItem>()
 
     // Create an index of postsHistory for easy lookup of engagement data by postId
     const postsHistoryMap = new Map<string, PostData>()

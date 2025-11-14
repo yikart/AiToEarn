@@ -6,8 +6,9 @@
  * @Description: 平台数据
  */
 import { Body, Controller, Post } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 import { AccountType } from '@yikart/aitoearn-server-client'
-import { AppException, ResponseCode } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { AccountService } from '../account/account.service'
 import { BilibiliDataService } from './bilibili-data.service'
 import { DataCubeBase } from './data.base'
@@ -15,6 +16,7 @@ import { AccountDto, ArcDto } from './dto/data-cube.dto'
 import { WxGzhDataService } from './wx-gzh-data.service'
 import { YoutubeDataService } from './youtube-data.service'
 
+@ApiTags('OpenSource/Core/DataCube/DataCube')
 @Controller()
 export class DataCubeController {
   private readonly dataCubeMap = new Map<AccountType, DataCubeBase>()
@@ -41,6 +43,9 @@ export class DataCubeController {
   }
 
   // @NatsMessagePattern('channel.dataCube.getAccountDataCube')
+  @ApiDoc({
+    summary: 'Get Account Data Cube',
+  })
   @Post('channel/dataCube/getAccountDataCube')
   async getAccountDataCube(@Body() data: AccountDto) {
     const dataCube = await this.getDataCube(data.accountId)
@@ -49,6 +54,9 @@ export class DataCubeController {
   }
 
   // @NatsMessagePattern('channel.dataCube.getAccountDataBulk')
+  @ApiDoc({
+    summary: 'Get Account Data Bulk',
+  })
   @Post('channel/dataCube/getAccountDataBulk')
   async getAccountDataBulk(@Body() data: AccountDto) {
     const dataCube = await this.getDataCube(data.accountId)
@@ -57,6 +65,9 @@ export class DataCubeController {
   }
 
   // @NatsMessagePattern('channel.dataCube.getArcDataCube')
+  @ApiDoc({
+    summary: 'Get Work Data Cube',
+  })
   @Post('channel/dataCube/getArcDataCube')
   async getArcDataCube(@Body() data: ArcDto) {
     const dataCube = await this.getDataCube(data.accountId)
@@ -65,6 +76,9 @@ export class DataCubeController {
   }
 
   // @NatsMessagePattern('channel.dataCube.getArcDataBulk')
+  @ApiDoc({
+    summary: 'Get Work Data Bulk',
+  })
   @Post('channel/dataCube/getArcDataBulk')
   async getArcDataBulk(@Body() data: ArcDto) {
     const dataCube = await this.getDataCube(data.accountId)

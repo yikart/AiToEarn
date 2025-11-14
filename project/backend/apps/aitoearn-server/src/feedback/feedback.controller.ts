@@ -6,13 +6,14 @@
  * @Description: 反馈
  */
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { UserService } from '../user/user.service'
 import { CreateFeedBackDto } from './dto/feedback.dto'
 import { FeedbackService } from './feedback.service'
 
-@ApiTags('反馈')
+@ApiTags('OpenSource/InBox/Feedback')
 @Controller('feedback')
 export class FeedbackController {
   constructor(
@@ -20,9 +21,10 @@ export class FeedbackController {
     private readonly userService: UserService,
   ) {}
 
-  @ApiOperation({
-    description: '提交反馈',
-    summary: '提交反馈',
+  @ApiDoc({
+    summary: 'Submit Feedback',
+    description: 'Submit user feedback with optional tags and attachments.',
+    body: CreateFeedBackDto.schema,
   })
   @Post()
   async createFeedback(

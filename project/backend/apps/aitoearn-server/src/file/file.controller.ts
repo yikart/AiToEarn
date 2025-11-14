@@ -16,8 +16,9 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import { FileInterceptor } from '@nestjs/platform-express'
-import { ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import {
   CompletePartDto,
   GetUploadUrlDto,
@@ -26,13 +27,17 @@ import {
 } from './dto/file.dto'
 import { FileService } from './file.service'
 
-@ApiTags('文件')
+@ApiTags('OpenSource/Home/File')
 @Public()
 @Controller('file')
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
-  @ApiOperation({ description: '获取上传的签名URL', summary: '获取上传的签名URL' })
+  @ApiDoc({
+    summary: 'Get Upload Signed URL',
+    description: 'Retrieve a signed URL for uploading a file.',
+    query: GetUploadUrlDto.schema,
+  })
   @Get('uploadUrl')
   async getUploadUrl(
     @Query() query: GetUploadUrlDto,
@@ -43,7 +48,10 @@ export class FileController {
     return url
   }
 
-  @ApiOperation({ description: '存入临时目录', summary: '上传文件' })
+  @ApiDoc({
+    summary: 'Upload File to Temporary Storage',
+    description: 'Upload a file to the temporary storage directory.',
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -66,9 +74,10 @@ export class FileController {
     return await this.fileService.upFileStream(file, secondPath)
   }
 
-  @ApiOperation({
-    description: '初始化文件分片上传',
-    summary: '初始化文件分片上传',
+  @ApiDoc({
+    summary: 'Initiate Multipart Upload',
+    description: 'Initialize a multipart upload session for large files.',
+    body: InitMultipartUploadDto.schema,
   })
   @Post('uploadPart/init')
   async initiateMultipartUpload(@Body() body: InitMultipartUploadDto) {
@@ -78,7 +87,7 @@ export class FileController {
     )
   }
 
-  // @ApiOperation({ description: '获取分片上传的签名URL', summary: '获取分片上传的签名URL' })
+  // Legacy implementation for fetching multipart upload signed URL
   // @Get('uploadUrl')
   // async getUploadPartUrl(
   //   @Query() query: GetUploadPartUrlUrlDto,
@@ -92,7 +101,11 @@ export class FileController {
   //   return { url, key: query.key }
   // }
 
-  @ApiOperation({ description: '上传文件分片', summary: '上传文件分片' })
+  @ApiDoc({
+    summary: 'Upload File Part',
+    description: 'Upload a single part of a multipart file.',
+    query: UploadPartDto.schema,
+  })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {
@@ -128,7 +141,11 @@ export class FileController {
     )
   }
 
-  @ApiOperation({ description: '合并文件分片', summary: '合并文件分片' })
+  @ApiDoc({
+    summary: 'Complete Multipart Upload',
+    description: 'Complete the multipart upload process by merging uploaded parts.',
+    body: CompletePartDto.schema,
+  })
   @Post('uploadPart/complete')
   async completeMultipartUpload(@Body() body: CompletePartDto) {
     return await this.fileService.completeMultipartUpload(

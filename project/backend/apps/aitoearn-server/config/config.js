@@ -148,6 +148,16 @@ module.exports = {
     models: {
       chat: [
         {
+          name: 'gpt-5.1-all',
+          description: 'GPT 5.1',
+          inputModalities: ['text', 'image'],
+          outputModalities: ['text'],
+          pricing: {
+            prompt: '0.083',
+            completion: '0.666',
+          },
+        },
+        {
           name: 'gpt-5',
           description: 'GPT 5',
           inputModalities: ['text', 'image'],

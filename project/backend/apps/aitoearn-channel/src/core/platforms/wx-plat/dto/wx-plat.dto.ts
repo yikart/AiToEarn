@@ -1,117 +1,62 @@
-import { Expose, Type } from 'class-transformer'
-import {
-  IsBoolean,
-  IsNumber,
-  IsObject,
-  IsOptional,
-  IsString,
-} from 'class-validator'
-import { AddArchiveData } from '../../../../libs/bilibili/common'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
+import { AddArchiveDataDto } from '../../bilibili/dto/bilibili.dto'
 
-export class AccountIdDto {
-  @IsNumber({ allowNaN: false }, { message: '账号ID' })
-  @Type(() => Number)
-  @Expose()
-  readonly accountId: number
-}
+const AccountIdSchema = z.object({
+  accountId: z.coerce.number().describe('账号ID'),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-export class UserIdDto {
-  @IsString({ message: '用户ID' })
-  @Expose()
-  readonly userId: string
-}
+const UserIdSchema = z.object({
+  userId: z.string().describe('用户ID'),
+})
+export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-export class GetAuthUrlDto extends UserIdDto {
-  @IsString({ message: '空间ID' })
-  @Expose()
-  readonly spaceId: string
+const GetAuthUrlSchema = UserIdSchema.extend({
+  spaceId: z.string().describe('空间ID'),
+  type: z.enum(['pc', 'h5']).describe('授权类型'),
+  prefix: z.string().optional().describe('前缀'),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-  @IsString({ message: '类型 pc h5' })
-  @Expose()
-  readonly type: 'pc' | 'h5'
+const DisposeAuthTaskSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+  auth_code: z.string().describe('授权码'),
+  expires_in: z.coerce.number().describe('过期时间'),
+})
+export class DisposeAuthTaskDto extends createZodDto(DisposeAuthTaskSchema) {}
 
-  @IsString({ message: '前缀' })
-  @IsOptional()
-  @Expose()
-  readonly prefix?: string
-}
+const AuthBackParamSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+  prefix: z.string().optional().describe('前缀'),
+})
+export class AuthBackParamDto extends createZodDto(AuthBackParamSchema) {}
 
-export class DisposeAuthTaskDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
+const AuthBackQuerySchema = z.object({
+  auth_code: z.string().describe('授权码'),
+  expires_in: z.coerce.number().describe('过期时间'),
+})
+export class AuthBackQueryDto extends createZodDto(AuthBackQuerySchema) {}
 
-  @IsString({ message: '授权码' })
-  @Expose()
-  readonly auth_code: string
+const GetAuthInfoSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-  @IsNumber({ allowNaN: false }, { message: '过期时间' })
-  @Type(() => Number)
-  @Expose()
-  readonly expires_in: number
-}
+const GetHeaderSchema = AccountIdSchema.extend({
+  body: z.record(z.string(), z.any()).describe('请求体'),
+  isForm: z.boolean().describe('是否表单提交'),
+})
+export class GetHeaderDto extends createZodDto(GetHeaderSchema) {}
 
-export class AuthBackParamDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
+const VideoInitSchema = AccountIdSchema.extend({
+  utype: z.coerce.number().describe('上传类型，0-多分片，1-单个小文件（不超过100M）。默认值为0'),
+  name: z.string().describe('文件名称'),
+})
+export class VideoInitDto extends createZodDto(VideoInitSchema) {}
 
-  @IsString({ message: '前缀' })
-  @IsOptional()
-  @Expose()
-  readonly prefix?: string
-}
-
-export class AuthBackQueryDto {
-  @IsString({ message: '授权码' })
-  @Expose()
-  readonly auth_code: string
-
-  @IsNumber({ allowNaN: false }, { message: '过期时间' })
-  @Type(() => Number)
-  @Expose()
-  readonly expires_in: number
-}
-
-export class GetAuthInfoDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
-}
-
-export class GetHeaderDto extends AccountIdDto {
-  @IsObject({ message: '数据' })
-  @Expose()
-  readonly body: { [key: string]: any }
-
-  @IsBoolean({ message: '是否是表单提交' })
-  @Expose()
-  readonly isForm: boolean
-}
-
-export class VideoInitDto extends AccountIdDto {
-  @IsNumber(
-    { allowNaN: false },
-    {
-      message:
-        '上传类型：0，1。0-多分片，1-单个小文件（不超过100M）。默认值为0',
-    },
-  )
-  @Type(() => Number)
-  @Expose()
-  readonly utype: number // 0 1
-
-  @IsString({ message: '文件名称' })
-  @Expose()
-  readonly name: string
-}
-
-export class AddArchiveDto extends AccountIdDto {
-  @IsObject({ message: '数据' })
-  @Expose()
-  readonly data: AddArchiveData
-
-  @IsString({ message: '上传token' })
-  @Expose()
-  readonly uploadToken: string
-}
+const AddArchiveSchema = AccountIdSchema.extend({
+  data: AddArchiveDataDto.schema,
+  uploadToken: z.string().describe('上传token'),
+})
+export class AddArchiveDto extends createZodDto(AddArchiveSchema) {}

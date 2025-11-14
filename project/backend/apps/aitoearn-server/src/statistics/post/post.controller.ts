@@ -1,10 +1,11 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { FetchAllPostsRequestDto, FetchPostRequestDto, FetchPostsRequestDto } from './post.dto'
 import { PostService } from './post.service'
 
-@ApiTags('社交媒体作品')
+@ApiTags('OpenSource/Home/Statistics/Post')
 @Controller('statistics/posts')
 export class PostController {
   constructor(
@@ -12,22 +13,38 @@ export class PostController {
   ) {}
 
   // 测试路由
+  @ApiDoc({
+    summary: 'Test Posts Endpoint',
+    description: 'Health check endpoint for post statistics.',
+  })
   @Public()
   @Post('test')
   async test() {
     return { message: 'PostController is working!' }
   }
 
+  @ApiDoc({
+    summary: 'List Channel Posts',
+    body: FetchPostsRequestDto.schema,
+  })
   @Post('list')
   async fetchChannelPosts(@Body() payload: FetchPostsRequestDto) {
     return await this.postService.getPostsByPlatform(payload)
   }
 
+  @ApiDoc({
+    summary: 'Get Post Detail',
+    body: FetchPostRequestDto.schema,
+  })
   @Post('detail')
   async fetchOnePostDetail(@Body() payload: FetchPostRequestDto) {
     return await this.postService.getPostsByPid(payload)
   }
 
+  @ApiDoc({
+    summary: 'List Channel Posts Without Pagination',
+    body: FetchAllPostsRequestDto.schema,
+  })
   @Post('withoutPagination')
   async fetchChannelAllPosts(@Body() payload: FetchAllPostsRequestDto) {
     return await this.postService.getUserAllPostsByPlatform(payload)
@@ -38,6 +55,11 @@ export class PostController {
    * @param payload
    * @returns
    */
+  @ApiDoc({
+    summary: 'Calculate Average Post Metrics',
+    description: 'Calculate average metrics for posts within an optional date range.',
+    body: FetchAllPostsRequestDto.schema,
+  })
   @Post('average')
   async userAverageSummaryMonthly(@Body() payload: FetchAllPostsRequestDto) {
     return this.postService.getAverageSummaryMonthly(payload)

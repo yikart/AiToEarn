@@ -11,8 +11,8 @@ import z from 'zod'
 import { createZodDto } from '../utils'
 
 export const TableDtoSchema = z.object({
-  pageNo: z.union([z.string(), z.number()]).transform(Number).default(1),
-  pageSize: z.union([z.string(), z.number()]).transform(Number).default(10),
+  pageNo: z.coerce.number().default(1),
+  pageSize: z.coerce.number().default(10),
 })
 export class TableDto extends createZodDto(TableDtoSchema) {}
 

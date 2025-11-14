@@ -1,64 +1,43 @@
-import { Expose, Type } from 'class-transformer'
-import { IsNumber, IsOptional, IsString } from 'class-validator'
-import { UserIdDto } from '../../bilibili/dto/bilibili.dto'
+import { createZodDto } from '@yikart/common'
+import { z } from 'zod'
 
-export class GetAuthUrlDto extends UserIdDto {
-  @IsString({ message: '类型 pc h5' })
-  @Expose()
-  readonly type: 'h5' | 'pc'
+const UserIdSchema = z.object({
+  userId: z.string().describe('用户ID'),
+})
+export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-  @IsString({ message: '空间ID' })
-  @Expose()
-  readonly spaceId: string
-}
+const GetAuthUrlSchema = UserIdSchema.extend({
+  type: z.enum(['h5', 'pc']).describe('授权类型'),
+  spaceId: z.string().describe('空间ID'),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
-export class AddKwaiAccountDto extends UserIdDto {
-  @IsString({ message: '授权成功后的获取的code' })
-  @Expose()
-  readonly code: string
-}
+const AddKwaiAccountSchema = UserIdSchema.extend({
+  code: z.string().describe('授权成功后获取的code'),
+})
+export class AddKwaiAccountDto extends createZodDto(AddKwaiAccountSchema) {}
 
-export class GetAuthInfoDto {
-  @IsString({ message: '任务ID' })
-  @Expose()
-  readonly taskId: string
-}
+const GetAuthInfoSchema = z.object({
+  taskId: z.string().describe('任务ID'),
+})
+export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-export class CreateAccountAndSetAccessTokenDto {
-  @IsString()
-  @Expose()
-  readonly taskId: string
+const CreateAccountAndSetAccessTokenSchema = z.object({
+  taskId: z.string(),
+  code: z.string(),
+  state: z.string(),
+})
+export class CreateAccountAndSetAccessTokenDto extends createZodDto(
+  CreateAccountAndSetAccessTokenSchema,
+) {}
 
-  @IsString()
-  @Expose()
-  readonly code: string
+const AccountIdSchema = z.object({
+  accountId: z.string().describe('账号ID'),
+})
+export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
-  @IsString()
-  @Expose()
-  readonly state: string
-}
-
-export class AccountIdDto {
-  @IsString({ message: '账号ID' })
-  @Expose()
-  readonly accountId: string
-}
-
-export class GetPohotListDto extends AccountIdDto {
-  @IsString({ message: '游标，用于分页，值为作品id。分页查询时，传上一页create_time最小的photo_id。第一页不传此参数。' })
-  @IsOptional()
-  @Expose()
-  readonly cursor?: string
-
-  @IsNumber(
-    { allowNaN: false },
-    {
-      message:
-        '数量，默认为20,最大不超过200',
-    },
-  )
-  @Type(() => Number)
-  @IsOptional()
-  @Expose()
-  readonly count?: number
-}
+const GetPohotListSchema = AccountIdSchema.extend({
+  cursor: z.string().optional().describe('分页游标'),
+  count: z.coerce.number().min(1).max(200).optional().describe('数量，默认20，最大200'),
+})
+export class GetPohotListDto extends createZodDto(GetPohotListSchema) {}

@@ -7,14 +7,15 @@ import {
   Patch,
   Post,
 } from '@nestjs/common'
-import { ApiOperation, ApiTags } from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
+import { ApiDoc } from '@yikart/common'
 import { AccountService } from '../account/account.service'
 import { AccountGroupService } from '../account/accountGroup.service'
 import { AccountIdDto, AccountListByIdsDto, AccountListByParamDto, AccountListByTypesDto, CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto, UpdateAccountStatusDto } from '../account/dto/account.dto'
 import { AccountInternalService } from './provider/account.service'
 
-@ApiTags('内部服务接口')
+@ApiTags('OpenSource/Internal/Account')
 @Controller('internal')
 @Internal()
 export class AccountController {
@@ -25,7 +26,10 @@ export class AccountController {
     private readonly accountGroupService: AccountGroupService,
   ) { }
 
-  @ApiOperation({ summary: 'create social media accounts' })
+  @ApiDoc({
+    summary: 'Create Social Media Account',
+    body: CreateAccountDto.schema,
+  })
   @Post('/:userId/socials/accounts')
   async createOrUpdateAccount(
     @Param('userId') userId: string,
@@ -40,7 +44,9 @@ export class AccountController {
     )
   }
 
-  @ApiOperation({ summary: 'get social media account detail' })
+  @ApiDoc({
+    summary: 'Get Social Media Account Detail',
+  })
   @Get('/:userId/socials/accounts/:accountId')
   async getAccountDetail(
     @Param('userId') userId: string,
@@ -52,7 +58,10 @@ export class AccountController {
     )
   }
 
-  @ApiOperation({ summary: 'update social media account' })
+  @ApiDoc({
+    summary: 'Update Social Media Account',
+    body: UpdateAccountDto.schema,
+  })
   @Patch('/:userId/socials/accounts/:accountId')
   async updateAccountInfo(
     @Param('userId') userId: string,
@@ -66,7 +75,9 @@ export class AccountController {
     return res
   }
 
-  @ApiOperation({ summary: 'update account insights' })
+  @ApiDoc({
+    summary: 'Update Account Insights',
+  })
   @Patch('/socials/accounts/:accountId/statistics')
   async updateAccountStatistics(
     @Param('accountId') accountId: string,
@@ -78,13 +89,19 @@ export class AccountController {
     )
   }
 
-  @ApiOperation({ summary: 'get channel info' })
+  @ApiDoc({
+    summary: 'Get Account Info for Task',
+    body: AccountIdDto.schema,
+  })
   @Post('account/info')
   async getAccountInfoToTask(@Body() body: AccountIdDto) {
     return this.accountService.getAccountById(body.id)
   }
 
-  @ApiOperation({ summary: 'get channel list（by ids）' })
+  @ApiDoc({
+    summary: 'Get Account List by IDs',
+    body: AccountListByIdsDto.schema,
+  })
   @Post('account/list/ids')
   async getAccountListByIds(
     @Body() body: AccountListByIdsDto,
@@ -92,7 +109,9 @@ export class AccountController {
     return this.accountService.getAccountListByIds(body.ids)
   }
 
-  @ApiOperation({ summary: 'get channel list（by types)' })
+  @ApiDoc({
+    summary: 'Get Account List by Types',
+  })
   @Post('account/list/types')
   async getAccountListByTypes(
     @Body() body: AccountListByTypesDto,
@@ -100,7 +119,10 @@ export class AccountController {
     return this.accountService.getAccountsByTypes(body.types, body.status)
   }
 
-  @ApiOperation({ summary: 'get channel list（by param)' })
+  @ApiDoc({
+    summary: 'Get Account List by Parameters',
+    body: AccountListByParamDto.schema,
+  })
   @Post('account/list/param')
   async getAccountListByParam(
     @Body() body: AccountListByParamDto,
@@ -108,7 +130,10 @@ export class AccountController {
     return this.accountService.getAccountByParam(body)
   }
 
-  @ApiOperation({ summary: 'update account status' })
+  @ApiDoc({
+    summary: 'Update Account Status',
+    body: UpdateAccountStatusDto.schema,
+  })
   @Post('account/update/status')
   async updateAccountStatus(
     @Body() body: UpdateAccountStatusDto,
@@ -116,7 +141,9 @@ export class AccountController {
     return this.accountService.updateAccountStatus(body.id, body.status)
   }
 
-  @ApiOperation({ summary: 'get account group info' })
+  @ApiDoc({
+    summary: 'Get Account Group Info',
+  })
   @Get('accountGroup/info/:id')
   async getAccountGroupInfo(
     @Param('id') id: string,
