@@ -21,7 +21,6 @@ const {
 
 const {
   CHANNEL_URL,
-  PAYMENT_URL,
 } = process.env
 
 const {
@@ -988,9 +987,6 @@ module.exports = {
   mailBackHost: 'https://dev.aitoearn.ai',
   channelApi: {
     baseUrl: CHANNEL_URL,
-  },
-  paymentApi: {
-    baseUrl: PAYMENT_URL,
   },
   moreApi: {
     platApiUri: 'https://platapi.yikart.cn',
