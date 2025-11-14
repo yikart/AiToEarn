@@ -43,7 +43,7 @@ export const createMaterialTaskSchema = z.object({
   coverGroup: z.string().describe('参考描述'),
   option: z.any().optional().describe('高级设置'),
   textMax: z.number().optional().describe('最大文字数量'),
-  language: z.enum(['中文', '英文']).optional().describe('语言'),
+  language: z.string().optional().describe('语言'),
   // type: z.enum([MaterialType.VIDEO, MaterialType.ARTICLE]).describe('草稿类型'),
   autoDeleteMedia: z.boolean().optional().describe('自动删除素材'),
 })
