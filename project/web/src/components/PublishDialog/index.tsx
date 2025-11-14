@@ -482,11 +482,9 @@ const PublishDialog = memo(
         const publishTime = getUtcDays(getDays()).format()
 
         for (const item of pubListChoosed) {
-          const flowId = generateUUID()
-
           const res = await apiCreatePublish({
             topics: [],
-            flowId,
+            flowId: generateUUID(),
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
               : PubType.ImageText,
@@ -528,10 +526,9 @@ const PublishDialog = memo(
         ).format()
 
         for (const item of pubListChoosed) {
-          const flowId = generateUUID()
           const res = await apiCreatePublish({
             topics: [],
-            flowId,
+            flowId: generateUUID(),
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
               : PubType.ImageText,
@@ -953,6 +950,7 @@ const PublishDialog = memo(
                               <Button
                                 type="primary"
                                 loading={createLoading}
+                                disabled={createLoading}
                                 icon={<SendOutlined />}
                                 style={{ margin: '0' }}
                                 onClick={() => {
@@ -976,6 +974,7 @@ const PublishDialog = memo(
                               <Button
                                 type="primary"
                                 loading={createLoading}
+                                disabled={createLoading}
                                 onClick={() => {
                                   for (const [key, errVideoItem] of errParamsMap) {
                                     if (errVideoItem) {
