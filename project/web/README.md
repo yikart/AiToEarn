@@ -1,9 +1,9 @@
-# 哎呦賺web端
+# Aitoearn-web
 
-## 地址
+## Address
 
 https://aitoearn.ai
 
-## 测试服文档
+## Test api fox
 
 https://app.apifox.com/project/6987843

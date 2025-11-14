@@ -30,8 +30,8 @@ import { useTransClient } from '@/app/i18n/client'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import DraftSelectionModal from '@/components/PublishDialog/compoents/DraftSelectionModal'
 import { useUserStore } from '@/store/user'
+import { generateUUID } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
-import http from '@/utils/request'
 import styles from './taskPageCore.module.scss'
 
 const { TabPane } = Tabs
@@ -712,7 +712,7 @@ export default function TaskPageCore() {
           const images = material.mediaList?.filter((m: any) => m.type !== 'video') || []
 
           const publishData = {
-            flowId: publishAccount.uid, // 使用账号的uid作为flowId
+            flowId: `${publishAccount.uid}_${generateUUID()}`, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
             accountId: publishAccount.id,
             title: material.title || task.title,
@@ -841,7 +841,7 @@ export default function TaskPageCore() {
         }))
 
         const publishData = {
-          flowId: publishAccount.uid, // 使用账号的uid作为flowId
+          flowId: `${publishAccount.uid}_${generateUUID()}`, // 使用账号的uid作为flowId
           accountType: publishAccount.type,
           accountId: publishAccount.id,
           title: acceptedTaskDetail.task?.title,

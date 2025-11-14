@@ -30,6 +30,7 @@ import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import { useUserStore } from '@/store/user'
+import { generateUUID } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
 
 import styles from './NotificationPanel.module.scss'
@@ -287,7 +288,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           }))
 
           const publishData = {
-            flowId: publishAccount.uid, // 使用账号的uid作为flowId
+            flowId: `${publishAccount.uid}_${generateUUID()}`, // 使用账号的uid作为flowId
             accountType: publishAccount.type,
             accountId: publishAccount.id,
             title: selectedTask.title,
