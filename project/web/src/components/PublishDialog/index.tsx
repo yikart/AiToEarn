@@ -4,8 +4,10 @@ import type {
 import type { SocialAccount } from '@/api/types/account.type'
 import {
   ArrowRightOutlined,
+  CloseOutlined,
   ExclamationCircleFilled,
   InfoCircleOutlined,
+  SendOutlined,
 } from '@ant-design/icons'
 import { Button, message, Modal, Tooltip } from 'antd'
 import {
@@ -472,6 +474,52 @@ const PublishDialog = memo(
         setWarningParamsMap(warningParamsMap)
       }, [warningParamsMap])
 
+      /**
+       * Publish content immediately (publishTime is set to current time)
+       */
+      const pubClickNow = useCallback(async () => {
+        setCreateLoading(true)
+        const publishTime = getUtcDays(getDays()).format()
+
+        const flowId = generateUUID()
+        for (const item of pubListChoosed) {
+          const res = await apiCreatePublish({
+            topics: [],
+            flowId,
+            type: item.params.video?.cover.ossUrl
+              ? PubType.VIDEO
+              : PubType.ImageText,
+            title: item.params.title || '',
+            desc: item.params.des,
+            accountId: item.account.id,
+            accountType: item.account.type,
+            videoUrl: item.params.video?.ossUrl,
+            coverUrl:
+              item.params.video?.cover.ossUrl
+              || (item.params.images && item.params.images.length > 0
+                ? item.params.images[0].ossUrl
+                : undefined),
+            imgUrlList:
+              item.params.images
+                ?.map(v => v.ossUrl)
+                .filter((url): url is string => url !== undefined) || [],
+            publishTime,
+            option: item.params.option,
+          })
+          if (res?.code !== 0) {
+            return setCreateLoading(false)
+          }
+        }
+        onClose()
+        setCreateLoading(false)
+
+        if (onPubSuccess)
+          onPubSuccess()
+      }, [pubListChoosed])
+
+      /**
+       * Publish content with scheduled time (from calendar picker)
+       */
       const pubClick = useCallback(async () => {
         setCreateLoading(true)
         const publishTime = getUtcDays(
@@ -553,6 +601,14 @@ const PublishDialog = memo(
                   <span className="publishDialog-con-head-title">
                     {t('title')}
                   </span>
+                  <CloseOutlined
+                    onClick={closeDialog}
+                    style={{
+                      fontSize: '16px',
+                      cursor: 'pointer',
+                      color: '#999',
+                    }}
+                  />
                 </div>
                 <div className="publishDialog-con-acconts">
                   {pubList.map((pubItem) => {
@@ -891,32 +947,53 @@ const PublishDialog = memo(
                               </Button>
                             )}
                           </div>
-                          <div style={{ display: 'flex', gap: 12 }}>
-                            <Button size="large" onClick={closeDialog}>
-                              {t('buttons.cancelPublish')}
-                            </Button>
-                            <Button
-                              size="large"
-                              type="primary"
-                              loading={createLoading}
-                              onClick={() => {
-                                for (const [key, errVideoItem] of errParamsMap) {
-                                  if (errVideoItem) {
-                                    const pubItem = pubListChoosed.find(
-                                      v => v.account.id === key,
-                                    )!
-                                    if (step === 1) {
-                                      setExpandedPubItem(pubItem)
+                          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                            <Button.Group size="large">
+                              <Button
+                                type="primary"
+                                loading={createLoading}
+                                icon={<SendOutlined />}
+                                style={{ margin: '0' }}
+                                onClick={() => {
+                                  for (const [key, errVideoItem] of errParamsMap) {
+                                    if (errVideoItem) {
+                                      const pubItem = pubListChoosed.find(
+                                        v => v.account.id === key,
+                                      )!
+                                      if (step === 1) {
+                                        setExpandedPubItem(pubItem)
+                                      }
+                                      message.warning(errVideoItem.parErrMsg)
+                                      return
                                     }
-                                    message.warning(errVideoItem.parErrMsg)
-                                    return
                                   }
-                                }
-                                pubClick()
-                              }}
-                            >
-                              {t('buttons.schedulePublish')}
-                            </Button>
+                                  pubClickNow()
+                                }}
+                              >
+                                {t('buttons.publishNow')}
+                              </Button>
+                              <Button
+                                type="primary"
+                                loading={createLoading}
+                                onClick={() => {
+                                  for (const [key, errVideoItem] of errParamsMap) {
+                                    if (errVideoItem) {
+                                      const pubItem = pubListChoosed.find(
+                                        v => v.account.id === key,
+                                      )!
+                                      if (step === 1) {
+                                        setExpandedPubItem(pubItem)
+                                      }
+                                      message.warning(errVideoItem.parErrMsg)
+                                      return
+                                    }
+                                  }
+                                  pubClick()
+                                }}
+                              >
+                                {t('buttons.schedulePublish')}
+                              </Button>
+                            </Button.Group>
                           </div>
                         </>
                       )}
