@@ -184,6 +184,25 @@ export interface FireflycardResponseVo {
   image: string
 }
 
+export interface AsyncTaskResponseVo {
+  logId: string
+  status: AiLogStatus
+}
+
+export interface TaskStatusResponseVo {
+  logId: string
+  status: AiLogStatus
+  startedAt: string
+  duration?: number
+  points: number
+  request: Record<string, unknown>
+  response?: Record<string, unknown>
+  images?: unknown[]
+  errorMessage?: string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ImageGenerationModelParamsVo {
   name: string
   description: string
