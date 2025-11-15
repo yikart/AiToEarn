@@ -1,0 +1,40 @@
+name: General Issue
+description: Report a bug, request a feature, or ask a question
+title: "[Issue] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### What happened?
+        (One short sentence)
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Describe the issue in one short sentence.
+      placeholder: Something happened...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: type
+    attributes:
+      label: Type
+      options:
+        - label: Bug
+        - label: Idea
+        - label: Improvement
+        - label: Question
+    validations:
+      required: true
+
+  - type: textarea
+    id: extra
+    attributes:
+      label: Extra (optional)
+      description: Screenshot / steps to reproduce / environment
+      placeholder: Attach screenshot / describe steps...
+    validations:
+      required: false
