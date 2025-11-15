@@ -16,22 +16,4 @@ Closes #
 
 <!-- Briefly describe the purpose of this PR and the main changes introduced. -->
 
-## 📋 Changes
 
-<!-- List the key changes included in this PR. -->
-
-- 
-- 
-
-## 🧪 Testing
-
-<!-- Describe what tests you performed to verify the changes. -->
-
-- [ ] Passed ESLint locally  
-- [ ] Local build succeeded  
-- [ ] Added/updated related tests  
-- [ ] All tests passed  
-
-## 📝 Notes
-
-<!-- Any additional information for reviewers. -->
