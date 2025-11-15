@@ -1,7 +1,7 @@
 name: Feishu Notify (Org-wide, No Relay)
 on:
   pull_request:
-    types: [opened, ready_for_review, closed]   
+    types: [ready_for_review, closed]   
   issues:
     types: [opened, closed, reopened]
 
