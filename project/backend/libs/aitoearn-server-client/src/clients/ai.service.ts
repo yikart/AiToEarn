@@ -5,6 +5,10 @@ import {
   AsyncTaskResponseVo,
   ChatCompletionVo,
   ChatModelConfigVo,
+  DashscopeStatusRequestDto,
+  DashscopeTaskStatusResponseVo,
+  DashscopeText2VideoRequestDto,
+  DashscopeVideoGenerationResponseVo,
   FireflycardResponseVo,
   ImageResponseVo,
   ListVideoTasksResponseVo,
@@ -35,19 +39,6 @@ export class AiService extends BaseService {
     return res
   }
 
-  async imageGenerate(data: UserImageGenerationDto) {
-    const url = `/internal/ai/image/generate`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data,
-    }
-    const res = await this.request<ImageResponseVo>(
-      url,
-      config,
-    )
-    return res
-  }
-
   async imageGenerateAsync(data: UserImageGenerationDto) {
     const url = `/internal/ai/image/generate/async`
     const config: AxiosRequestConfig = {
@@ -55,6 +46,19 @@ export class AiService extends BaseService {
       data,
     }
     const res = await this.request<AsyncTaskResponseVo>(
+      url,
+      config,
+    )
+    return res
+  }
+
+  async imageGenerate(data: UserImageGenerationDto) {
+    const url = `/internal/ai/image/generate`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<ImageResponseVo>(
       url,
       config,
     )
@@ -212,6 +216,32 @@ export class AiService extends BaseService {
       data,
     }
     const res = await this.request<ChatModelConfigVo[]>(
+      url,
+      config,
+    )
+    return res
+  }
+
+  async dashscopeText2VideoGeneration(data: DashscopeText2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
+    const url = `/internal/ai/dashscope/text2video`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<DashscopeVideoGenerationResponseVo>(
+      url,
+      config,
+    )
+    return res
+  }
+
+  async getDashscopeTaskStatus(data: DashscopeStatusRequestDto): Promise<DashscopeTaskStatusResponseVo> {
+    const url = `/internal/ai/dashscope/status`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<DashscopeTaskStatusResponseVo>(
       url,
       config,
     )

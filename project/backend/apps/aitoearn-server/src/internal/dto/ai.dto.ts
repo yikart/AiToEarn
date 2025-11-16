@@ -60,3 +60,26 @@ const adminFireflyCardSchema = z.object({
 })
 
 export class AdminFireflyCardDto extends createZodDto(adminFireflyCardSchema) {}
+
+const dashscopeText2VideoRequestSchema = z.object({
+  userId: z.string().describe('用户Id'),
+  userType: z.enum(UserType).describe('用户类型'),
+  model: z.string().min(1).describe('模型名称'),
+  input: z.object({
+    prompt: z.string().min(1).describe('正向文本提示词'),
+    negative_prompt: z.string().optional().describe('负向文本提示词'),
+  }),
+  parameters: z.object({
+    size: z.string().optional().describe('视频尺寸'),
+    duration: z.number().optional().describe('视频时长（秒）'),
+    prompt_extend: z.boolean().optional().describe('是否扩展提示词'),
+  }).optional(),
+})
+export class DashscopeText2VideoRequestDto extends createZodDto(dashscopeText2VideoRequestSchema) {}
+
+const dashscopeStatusRequestSchema = z.object({
+  userId: z.string().describe('用户Id'),
+  userType: z.enum(UserType).describe('用户类型'),
+  taskId: z.string().describe('任务ID'),
+})
+export class DashscopeStatusRequestDto extends createZodDto(dashscopeStatusRequestSchema) {}
