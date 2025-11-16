@@ -898,3 +898,9 @@ export interface LogDetailVo extends LogVo {
   request?: Record<string, unknown>
   response?: Record<string, unknown>
 }
+
+export interface DashscopeStatusRequestDto {
+  userId: string
+  userType: UserType
+  taskId: string
+}

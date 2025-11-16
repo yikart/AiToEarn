@@ -7,11 +7,11 @@ import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
 import { AiService } from '../ai/ai.service'
-import { FireflycardResponseVo, ImageResponseVo, ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo } from '../ai/ai.vo'
+import { DashscopeTaskStatusResponseVo, DashscopeVideoGenerationResponseVo, FireflycardResponseVo, ImageResponseVo, ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo } from '../ai/ai.vo'
 import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/core/chat'
 import { AsyncTaskResponseVo, TaskStatusResponseVo } from '../ai/core/image'
 import { ModelsConfigDto, ModelsConfigService, ModelsConfigVo } from '../ai/core/models-config'
-import { AdminFireflyCardDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto } from './dto/ai.dto'
+import { AdminFireflyCardDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto, DashscopeStatusRequestDto, DashscopeText2VideoRequestDto } from './dto/ai.dto'
 
 @ApiTags('OpenSource/Internal/Ai')
 @Controller('internal')
@@ -180,5 +180,17 @@ export class AiController {
   }) {
     const response = await this.aiService.getChatModels(body)
     return response
+  }
+
+  @Post('ai/dashscope/text2video')
+  async dashscopeText2VideoGeneration(@Body() body: DashscopeText2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
+    const response = await this.aiService.dashscopeText2Video(body)
+    return DashscopeVideoGenerationResponseVo.create(response)
+  }
+
+  @Post('ai/dashscope/status')
+  async getDashscopeTaskStatus(@Body() body: DashscopeStatusRequestDto): Promise<DashscopeTaskStatusResponseVo> {
+    const response = await this.aiService.getDashscopeTaskStatus(body)
+    return DashscopeTaskStatusResponseVo.create(response)
   }
 }
