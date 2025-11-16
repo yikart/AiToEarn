@@ -58,7 +58,7 @@ export enum YouTubePrivacyStatus {
 }
 
 export enum YouTubeLicense {
-  CreativeCommons = 'creativeCommons',
+  CreativeCommon = 'creativeCommon',
   YouTube = 'youtube',
 }
 
