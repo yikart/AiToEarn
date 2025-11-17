@@ -14,25 +14,11 @@ import {
 import { Avatar, Popover, Table, Tag, Tooltip } from 'antd'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { platformApi } from '@/api/hot'
+import { useTransClient } from '@/app/i18n/client'
 import Cycleselects, { CycleTypeEnum } from '../components/CycleSelects'
 import RankingTags from '../components/RankingTags'
 import styles from './aiRanking.module.scss'
 import initWeepPie from './echarts-weekPie'
-
-const optionsTags = [
-  {
-    label: '总榜',
-    value: '1',
-  },
-  {
-    label: '国内榜',
-    value: '2',
-  },
-  {
-    label: '国外榜',
-    value: '3',
-  },
-]
 
 function parseChineseNumber(input: string): number {
   if (!input)
@@ -88,6 +74,7 @@ function parseChineseNumber(input: string): number {
 }
 
 export default function Page() {
+  const { t } = useTransClient('aiRank')
   const [params, setParams] = useState<GetAiToolsRankingApiParams>({
     dateType: '',
     startDate: '',
@@ -96,6 +83,21 @@ export default function Page() {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<AiToolsRankingItemType[]>([])
   const aiRankingContentRef = useRef<HTMLDivElement>(null)
+
+  const optionsTags = [
+    {
+      label: t('ranking.allRanking'),
+      value: '1',
+    },
+    {
+      label: t('ranking.domesticRanking'),
+      value: '2',
+    },
+    {
+      label: t('ranking.foreignRanking'),
+      value: '3',
+    },
+  ]
 
   useEffect(() => {
     if (params.dateType === '' || params.startDate === '')
@@ -143,10 +145,10 @@ export default function Page() {
           )
         },
         width: '40px',
-        key: '序号',
+        key: 'rank',
       },
       {
-        title: '产品名',
+        title: t('table.productName'),
         render: (text, prm) => {
           return (
             <div className="aiRanking-productName">
@@ -169,7 +171,7 @@ export default function Page() {
         key: 'title',
       },
       {
-        title: '标签',
+        title: t('table.tags'),
         render: (text, prm) => {
           return (
             <div className="aiRanking-productName">
@@ -183,7 +185,7 @@ export default function Page() {
         key: 'title',
       },
       {
-        title: '月访问量',
+        title: t('table.monthlyVisits'),
         render: (text, prm) => {
           return prm.stats.viewCount
         },
@@ -194,23 +196,23 @@ export default function Page() {
         key: 'title',
       },
       {
-        title: '月下载量',
+        title: t('table.monthlyDownloads'),
         render: (text, prm) => {
           return prm.downCount
         },
         sorter: (a, b) =>
           parseChineseNumber(b.downCount) - parseChineseNumber(a.downCount),
         width: 80,
-        key: '月下载量',
+        key: 'monthlyDownloads',
       },
       {
         title: () => {
           return (
             <>
-              <Tooltip title="统计AI工具排行榜的周提及作品数">
+              <Tooltip title={t('table.weeklyMentionsTooltip')}>
                 <QuestionCircleOutlined />
               </Tooltip>
-              周提及量
+              {t('table.weeklyMentions')}
             </>
           )
         },
@@ -256,10 +258,10 @@ export default function Page() {
         title: () => {
           return (
             <>
-              <Tooltip title="统计AI工具排行榜的提及作品、传播范围等多维度数据分析做出的综合评分">
+              <Tooltip title={t('table.reputationTooltip')}>
                 <QuestionCircleOutlined />
               </Tooltip>
-              声望值
+              {t('table.reputation')}
             </>
           )
         },
@@ -274,10 +276,10 @@ export default function Page() {
         title: () => {
           return (
             <>
-              <Tooltip title="统计AI工具排行榜的用户使用情况等多维度数据分析做出的综合评分">
+              <Tooltip title={t('table.overallScoreTooltip')}>
                 <QuestionCircleOutlined />
               </Tooltip>
-              综合评分
+              {t('table.overallScore')}
             </>
           )
         },
@@ -294,21 +296,21 @@ export default function Page() {
       },
     ]
     return columns
-  }, [])
+  }, [t])
 
   return (
     <div className={styles.aiRanking}>
       <div className="aiRanking-title">
-        AI工具排行榜 ·
+        {t('ranking.title')} ·
         {' '}
         {optionsTags.find(v => v.value === params.area)?.label}
         {' '}
         ·
-        {params.dateType === CycleTypeEnum.Week ? '周榜' : '月榜'}
+        {params.dateType === CycleTypeEnum.Week ? t('ranking.weekRanking') : t('ranking.monthRanking')}
       </div>
       <div className="aiRanking-head">
         <div className="aiRanking-head-item">
-          <div className="aiRanking-head-title">类型</div>
+          <div className="aiRanking-head-title">{t('ranking.type')}</div>
           <RankingTags
             options={optionsTags}
             defaultValue={optionsTags[0].value}
@@ -322,7 +324,7 @@ export default function Page() {
           />
         </div>
         <div className="aiRanking-head-item">
-          <div className="aiRanking-head-title">周期</div>
+          <div className="aiRanking-head-title">{t('ranking.cycle')}</div>
           <div className="aiRanking-head-cycleselects">
             <Cycleselects
               defaultType={CycleTypeEnum.Week}

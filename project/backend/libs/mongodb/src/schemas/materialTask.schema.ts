@@ -70,7 +70,7 @@ export class MaterialTask extends WithTimestampSchema {
     required: true,
     index: true,
   })
-  groupId: string // 所属组ID
+  groupId: string // Group ID
 
   @Prop({
     required: true,
@@ -87,14 +87,14 @@ export class MaterialTask extends WithTimestampSchema {
   @Prop({
     required: true,
   })
-  prompt: string // 提示词
+  prompt: string // Prompt
 
   @Prop({
     required: false,
   })
   coverGroup?: string
 
-  // 使用的媒体组数组
+  // Array of media groups used
   @Prop({
     type: [String],
     default: [],
@@ -104,47 +104,26 @@ export class MaterialTask extends WithTimestampSchema {
   @Prop({
     required: false,
     default: {},
-    type: Object, // 明确指定类型为 Object
+    type: Object, // Explicitly specify type as Object
   })
-  option?: Record<string, unknown> // 高级设置
-
-  @Prop({
-    required: false,
-  })
-  title?: string
-
-  @Prop({
-    required: false,
-  })
-  desc?: string
+  option?: Record<string, unknown> // Advanced settings
 
   @Prop({
     required: true,
     type: [MediaUrlInfo],
   })
-  coverUrlList: MediaUrlInfo[] // 封面数组
+  coverUrlList: MediaUrlInfo[] // Cover array
 
   @Prop({
     required: true,
     type: SchemaTypes.Mixed,
   })
-  mediaUrlMap: MediaUrlInfo[][] // 媒体的二维数组
+  mediaUrlMap: MediaUrlInfo[][] // 2D array of media
 
   @Prop({
     required: true,
   })
   reNum: number
-
-  @Prop({
-    required: false,
-    type: Number,
-  })
-  textMax?: number
-
-  @Prop({
-    required: false,
-  })
-  language?: string
 
   @Prop({
     required: true,

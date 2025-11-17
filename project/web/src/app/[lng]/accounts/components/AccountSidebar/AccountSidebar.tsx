@@ -701,7 +701,7 @@ const AccountSidebar = memo(
                   }}
                   onClick={() => setMcpManagerModalOpen(true)}
                 >
-                  {t('mcpManager')}
+                  {t('mcpManagerTit')}
                 </Button>
               </div>
             </div>
@@ -783,7 +783,7 @@ const AccountSidebar = memo(
                                     <div className="accountSidebar-ipInfo">
                                       <span className="accountSidebar-ipType" data-type="proxy">{t('ipType.proxy')}</span>
                                       <Tooltip
-                                        title={`IP: ${v.ip}\n位置: ${v.location}`}
+                                        title={t('sidebar.ipLocationTooltip', { ip: v.ip, location: v.location })}
                                       >
                                         <span className="accountSidebar-ipText">
                                           {extractCountry(v.location)}
@@ -797,7 +797,7 @@ const AccountSidebar = memo(
                                 )}
                                 {/* 分组排序按钮 */}
                                 <div className="accountSidebar-groupSort">
-                                  <Tooltip title="上移">
+                                  <Tooltip title={t('sidebar.moveUp')}>
                                     <Button
                                       type="text"
                                       size="small"
@@ -808,7 +808,7 @@ const AccountSidebar = memo(
                                       }}
                                     />
                                   </Tooltip>
-                                  <Tooltip title="下移">
+                                  <Tooltip title={t('sidebar.moveDown')}>
                                     <Button
                                       type="text"
                                       size="small"
@@ -898,7 +898,7 @@ const AccountSidebar = memo(
                                                 onClick={async () => {
                                                   // 如果是移动端平台，显示下载提示
                                                   if (isMobileOnlyPlatform) {
-                                                    setMobileOnlyPlatform(account.type === PlatType.Douyin ? '抖音' : '小红书')
+                                                    setMobileOnlyPlatform(account.type === PlatType.Douyin ? t('platformNames.douyin') : t('platformNames.xiaohongshu'))
                                                     setShowAppDownloadModal(true)
                                                     return
                                                   }
@@ -908,7 +908,7 @@ const AccountSidebar = memo(
                                                   ) {
                                                     // 小红书平台即使是掉线状态也显示下载App弹窗
                                                     if (account.type === PlatType.Xhs) {
-                                                      setMobileOnlyPlatform('小红书')
+                                                      setMobileOnlyPlatform(t('platformNames.xiaohongshu'))
                                                       setShowAppDownloadModal(true)
                                                       return
                                                     }

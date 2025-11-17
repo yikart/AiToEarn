@@ -11,7 +11,7 @@ interface Resources {
     allPlatforms: '所有平台'
     accountManager: '账号管理器'
     addAccount: '添加频道'
-    mcpManager: 'MCP 管理器'
+    mcpManagerTit: 'MCP 管理器'
     online: '在线'
     offline: '离线'
     checkLoginStatus: '登录状态检测'
@@ -148,6 +148,128 @@ interface Resources {
       title: '会话已过期'
       content: '您的 {{platformName}} 账号 "{{nickname}}"（位于 {{spaceName}}）会话已过期。是否重新登录？'
       loginAgain: '重新登录'
+    }
+    userManage: {
+      selected: '已选择'
+      accounts: '个账号'
+      deleteAccount: '删除账号'
+    }
+    wechatBrowserTip: {
+      clickCorner: '点击右上角的'
+      dotsButton: '按钮'
+      selectBrowser: '选择'
+      openInBrowser: '在浏览器中打开'
+    }
+    mobileDownloadTip: {
+      welcomeTitle: '欢迎使用 AitoEarn'
+      description: '为了获得完整体验，请在设备上下载 App'
+      downloadButton: '下载 App'
+    }
+    browserTip: {
+      title: '请在浏览器中打开'
+      description: '请点击右上角，通过浏览器打开'
+      button: '我知道了'
+    }
+    platformNames: {
+      douyin: '抖音'
+      xiaohongshu: '小红书'
+    }
+    sidebar: {
+      noAccounts: '暂无账户'
+      noOnlineAccounts: '暂无在线账户'
+      ipLocationTooltip: 'IP: {{ip}}\n位置: {{location}}'
+      moveUp: '上移'
+      moveDown: '下移'
+    }
+    mcpManager: {
+      title: 'MCP 管理器'
+      fetchKeysFailed: '获取MCP Key列表失败'
+      createKeyFailed: '创建MCP Key失败'
+      createAssociationFailed: '创建关联失败: {{account}}'
+      createSuccess: 'MCP Key创建成功！'
+      keyCopied: 'Key已复制到剪贴板'
+      deleteSuccess: 'MCP Key已删除'
+      deleteFailed: '删除MCP Key失败'
+      createNewKey: '创建新Key'
+      noKeys: '暂无MCP Key'
+      noKeysDesc: '点击上方按钮创建您的第一个MCP Key'
+      copy: '复制'
+      detail: '详情'
+      delete: '删除'
+      available: '可用'
+      unavailable: '不可用'
+      createdAt: '创建时间: '
+      associatedAccounts: '关联账户: '
+      accountUnit: '个'
+      pagination: '第 {{start}}-{{end}} 条，共 {{total}} 条'
+      createModal: {
+        title: '创建MCP Key'
+        keyName: 'Key名称'
+        keyNamePlaceholder: '请输入Key名称'
+        keyNameRequired: '请输入Key名称'
+        selectAccounts: '选择账户'
+        selectAccountsPlaceholder: '请选择要关联的账户'
+        selectAccountsRequired: '请选择至少一个账户'
+        selectedCount: '已选择 {{count}} 个账户:'
+        selectAccountsButton: '选择账户'
+        create: '创建'
+        cancel: '取消'
+      }
+    }
+    mediaTypes: {
+      video: '视频'
+      image: '图片'
+      article: '文章'
+    }
+    calendar: {
+      showMore: '显示更多'
+      hideMore: '隐藏更多'
+    }
+    proxy: {
+      label: '代理地址'
+      placeholder: '请输入代理地址'
+      available: '代理地址可用'
+      unavailable: '代理地址不可用'
+      verify: '验证连接'
+      hint: {
+        line1: '1. 代理类型仅支持HTTP、HTTPS、Socks5；'
+        line2: '支持以下填写格式'
+        remark: '备注'
+        username: '代理账号'
+        password: '代理密码'
+      }
+    }
+  }
+  'aiRank': {
+    menu: {
+      aiToolRanking: 'AI工具排行榜'
+    }
+    ranking: {
+      title: 'AI工具排行榜'
+      allRanking: '总榜'
+      domesticRanking: '国内榜'
+      foreignRanking: '国外榜'
+      weekRanking: '周榜'
+      monthRanking: '月榜'
+      type: '类型'
+      cycle: '周期'
+    }
+    table: {
+      rank: '#'
+      productName: '产品名'
+      tags: '标签'
+      monthlyVisits: '月访问量'
+      monthlyDownloads: '月下载量'
+      weeklyMentions: '周提及量'
+      weeklyMentionsTooltip: '统计AI工具排行榜的周提及作品数'
+      reputation: '声望值'
+      reputationTooltip: '统计AI工具排行榜的提及作品、传播范围等多维度数据分析做出的综合评分'
+      overallScore: '综合评分'
+      overallScoreTooltip: '统计AI工具排行榜的用户使用情况等多维度数据分析做出的综合评分'
+    }
+    cycleSelect: {
+      weekRanking: '周榜'
+      monthRanking: '月榜'
     }
   }
   'cgmaterial': {

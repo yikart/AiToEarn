@@ -1,15 +1,15 @@
 import { UserType } from '@yikart/common'
 
 export enum PubStatus {
-  UNPUBLISH = 0, // 未发布/草稿
-  RELEASED = 1, // 已发布
-  FAIL = 2, // 发布失败
-  PartSuccess = 3, // 部分成功
+  UNPUBLISH = 0, // Unpublished/Draft
+  RELEASED = 1, // Published
+  FAIL = 2, // Publish failed
+  PartSuccess = 3, // Partially successful
 }
 
 export enum PubType {
-  VIDEO = 'video', // 视频
-  ARTICLE = 'article', // 文章
+  VIDEO = 'video', // Video
+  ARTICLE = 'article', // Article
 }
 
 export interface PubRecord {
@@ -28,8 +28,8 @@ export interface PubRecord {
 }
 
 export enum MaterialType {
-  VIDEO = 'video', // 视频
-  ARTICLE = 'article', // 文章
+  VIDEO = 'video', // Video
+  ARTICLE = 'article', // Article
 }
 
 export enum MaterialStatus {
@@ -41,7 +41,7 @@ export enum MaterialStatus {
 export interface Material {
   id: string
   userId: string
-  groupId?: string // 所属组ID
+  groupId?: string // Group ID
   type: MaterialType
   coverUrl?: string
   mediaList: MaterialMedia[]
@@ -65,7 +65,7 @@ export interface NewMaterial {
   userType?: UserType
   taskId?: string
   type: MaterialType
-  groupId: string // 所属组ID
+  groupId: string // Group ID
   coverUrl?: string
   mediaList: MaterialMedia[]
   title: string
@@ -82,9 +82,6 @@ export interface NewMaterialTask {
   aiModelTag: string
   prompt: string
   type: MaterialType
-  title?: string
-  desc?: string
-  location?: number[]
   mediaGroups: string[]
   coverGroup: string
   option?: Record<string, any>
@@ -109,23 +106,16 @@ export interface MaterialTask {
   id: string
   userId: string
   userType: UserType
-  groupId: string // 所属组ID
+  groupId: string // Group ID
   type: MaterialType
   aiModelTag: string
-  prompt: string // 提示词
+  prompt: string // Prompt
   coverGroup?: string
   mediaGroups: string[]
-  option?: Record<string, any> // 高级设置
-  title?: string
-  textMax?: number
-  desc?: string
-  location?: number[]
-  coverUrl?: string
-  coverUrlList: MediaUrlInfo[] // 封面数组
-  mediaUrlMap: MediaUrlInfo[][] // 媒体的二维数组
+  option?: Record<string, any> // Advanced settings
+  coverUrlList: MediaUrlInfo[] // Cover array
+  mediaUrlMap: MediaUrlInfo[][] // 2D array of media
   reNum: number
-  max?: number
-  language?: string
   status: MaterialTaskStatus
   autoDeleteMedia: boolean
 }
@@ -161,16 +151,16 @@ export interface MaterialGroup {
 }
 
 export enum MediaType {
-  VIDEO = 'video', // 视频
-  IMG = 'img', // 图片
+  VIDEO = 'video', // Video
+  IMG = 'img', // Image
 }
 
 export interface Media {
   id: string
   userId: string
   userType?: string
-  groupId?: string // 所属组ID
-  materialId?: string // 所属素材ID
+  groupId?: string // Group ID
+  materialId?: string // Material ID
   type: MaterialType
   url: string
   title?: string
@@ -182,8 +172,8 @@ export interface Media {
 export interface NewMedia {
   userId: string
   userType?: string
-  groupId?: string // 所属组ID
-  materialId?: string // 所属素材ID
+  groupId?: string // Group ID
+  materialId?: string // Material ID
   type: MediaType
   url: string
   thumbUrl?: string

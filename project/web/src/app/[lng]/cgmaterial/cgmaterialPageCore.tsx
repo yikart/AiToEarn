@@ -22,10 +22,7 @@ import {
   apiUpdateMaterialGroupInfo,
 } from '@/api/material'
 import { getMediaGroupList, getMediaList } from '@/api/media'
-import { PublishStatus } from '@/api/plat/types/publish.types'
 import { apiGetPostsRecordStatus, apiImportPostsRecord } from '@/api/statistics'
-import { EngagementPostsResponse } from '@/api/types/engagement'
-import { PlatType } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'

@@ -196,7 +196,7 @@ const CalendarTimingItem = memo(
                         ? (
                             <>
                               <UpOutlined style={{ marginRight: '8px' }} />
-                              隐藏更多
+                              {t('calendar.hideMore')}
                             </>
                           )
                         : (
@@ -204,7 +204,7 @@ const CalendarTimingItem = memo(
                               <DownOutlined style={{ marginRight: '8px' }} />
                               {records.length - recordsLast?.length}
                               {' '}
-                              更多
+                              {t('calendar.showMore')}
                             </>
                           )}
                     </Button>

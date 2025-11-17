@@ -111,7 +111,7 @@ export class MaterialInternalController {
   async createTask(@Body() body: CreateMaterialTaskDto) {
     const mediaGroupInfo = await this.mediaGroupService.getInfo(body.mediaGroups[0])
     if (!mediaGroupInfo) {
-      throw new Error('素材组不存在')
+      throw new AppException(ResponseCode.MediaGroupNotFound)
     }
 
     const type = mediaGroupInfo?.type as MediaType
