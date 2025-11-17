@@ -1419,31 +1419,75 @@ function Footer() {
               Earn
             </span>
           </div>
+        
+        <div className={styles.footerCopyright} style={{display: 'flex', flexDirection:'row', justifyContent: 'space-between', width: '100%'}}>
 
-          <div className={styles.footerCopyright}>
+       
+          <div >
             <div className={styles.copyright}>{t('footer.copyright')}</div>
             <div className={styles.tagline}>{t('footer.tagline')}</div>
           </div>
+        
+        <div>
 
-          {/* <div className={styles.dataDeletionDoc}>
-            <h1>{t('footer.dataDeletion.title')}</h1>
+       
+       <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <a 
+              href="https://x.com/0xDaoo" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ transition: 'opacity 0.2s', display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <Image src={TwitterIcon} alt="Twitter" width={35} height={35} />
+            </a>
+            <a 
+              href="https://www.instagram.com/harry_wang_1997/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ transition: 'opacity 0.2s', display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <Image src={InstagramIcon} alt="Instagram" width={35} height={35} />
+            </a>
+            <a 
+              href="https://www.threads.com/@harry_wang_1997" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ transition: 'opacity 0.2s', display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <Image src={ThreadsIcon} alt="Threads" width={35} height={35} />
+            </a>
+            <a 
+              href="https://www.linkedin.com/in/honghao-wang-489b88391/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ transition: 'opacity 0.2s', display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <Image src={LinkedInIcon} alt="LinkedIn" width={35} height={35} />
+            </a>
+            <a 
+              href="https://www.facebook.com/profile.php?id=61580112800985" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              style={{ transition: 'opacity 0.2s', display: 'flex' }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = '0.7'}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+            >
+              <Image src={FacebookIcon} alt="Facebook" width={35} height={35} />
+            </a>
+          </div>
 
-            <p><strong>Last Updated:</strong> 2025.6.27</p>
+          <div className={styles.tagline} style={{fontSize: '14px', color: '#9ca3af', textAlign:'left', marginTop:'10px'}}>Let's use AI to earn!</div>
+          </div>
 
-            <h2>For Pre-Launch Users:</h2>
-            <p>{t('footer.dataDeletion.prelaunch')}</p>
-
-            <h2>{t('footer.dataDeletion.standardTitle')}</h2>
-            <ol>
-                <li>{t('footer.dataDeletion.standardSteps.0')}</li>
-                <li>{t('footer.dataDeletion.standardSteps.1')}</li>
-                <li>{t('footer.dataDeletion.standardSteps.2')}</li>
-                <li>{t('footer.dataDeletion.standardSteps.3')}</li>
-            </ol>
-
-            <h2>{t('footer.dataDeletion.contactTitle')}</h2>
-            <p>{t('footer.dataDeletion.contactEmail')}</p>
-          </div> */}
+          </div>
         </div>
       </div>
     </footer>
