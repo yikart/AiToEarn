@@ -1,0 +1,33 @@
+{
+  "menu": {
+    "aiToolRanking": "AI Tools Ranking"
+  },
+  "ranking": {
+    "title": "AI Tools Ranking",
+    "allRanking": "All",
+    "domesticRanking": "Domestic",
+    "foreignRanking": "Foreign",
+    "weekRanking": "Weekly",
+    "monthRanking": "Monthly",
+    "type": "Type",
+    "cycle": "Cycle"
+  },
+  "table": {
+    "rank": "#",
+    "productName": "Product Name",
+    "tags": "Tags",
+    "monthlyVisits": "Monthly Visits",
+    "monthlyDownloads": "Monthly Downloads",
+    "weeklyMentions": "Weekly Mentions",
+    "weeklyMentionsTooltip": "Statistics of weekly mentioned works in AI tool rankings",
+    "reputation": "Reputation",
+    "reputationTooltip": "Comprehensive score based on multi-dimensional data analysis of mentioned works, dissemination scope, etc.",
+    "overallScore": "Overall Score",
+    "overallScoreTooltip": "Comprehensive score based on multi-dimensional data analysis of user usage, etc."
+  },
+  "cycleSelect": {
+    "weekRanking": "Weekly",
+    "monthRanking": "Monthly"
+  }
+}
+

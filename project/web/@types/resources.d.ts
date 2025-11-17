@@ -233,6 +233,38 @@ interface Resources {
       verify: '验证连接'
     }
   }
+  'aiRank': {
+    menu: {
+      aiToolRanking: 'AI工具排行榜'
+    }
+    ranking: {
+      title: 'AI工具排行榜'
+      allRanking: '总榜'
+      domesticRanking: '国内榜'
+      foreignRanking: '国外榜'
+      weekRanking: '周榜'
+      monthRanking: '月榜'
+      type: '类型'
+      cycle: '周期'
+    }
+    table: {
+      rank: '#'
+      productName: '产品名'
+      tags: '标签'
+      monthlyVisits: '月访问量'
+      monthlyDownloads: '月下载量'
+      weeklyMentions: '周提及量'
+      weeklyMentionsTooltip: '统计AI工具排行榜的周提及作品数'
+      reputation: '声望值'
+      reputationTooltip: '统计AI工具排行榜的提及作品、传播范围等多维度数据分析做出的综合评分'
+      overallScore: '综合评分'
+      overallScoreTooltip: '统计AI工具排行榜的用户使用情况等多维度数据分析做出的综合评分'
+    }
+    cycleSelect: {
+      weekRanking: '周榜'
+      monthRanking: '月榜'
+    }
+  }
   'cgmaterial': {
     header: {
       title: 'AI草稿箱'
@@ -1172,6 +1204,10 @@ interface Resources {
     verificationCodePlaceholder: '请输入邮箱中的验证码'
     resetEmailSent: '重置邮件已发送，请查收'
     sendEmailFailed: '发送邮件失败'
+    registerAccount: '注册账号'
+    register: '注册'
+    alreadyHaveAccount: '已有账号？去登录'
+    passwordMismatch: '两次输入的密码不一致'
   }
   'material': {
     mediaManagement: {
@@ -2105,6 +2141,7 @@ interface Resources {
     subscription: '订阅'
     quantity: '数量'
     orderExpired: '已过期'
+    unknownStatus: '状态'
     cancelTime: '取消时间'
     trialEndTime: '试用结束时间'
     willCancelAtPeriodEnd: '将于期末取消'

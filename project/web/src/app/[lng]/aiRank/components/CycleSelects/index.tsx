@@ -3,6 +3,7 @@ import { Button, Select } from 'antd'
 import dayjs from 'dayjs'
 import isoWeek from 'dayjs/plugin/isoWeek'
 import { forwardRef, memo, useEffect, useState } from 'react'
+import { useTransClient } from '@/app/i18n/client'
 import styles from './cycleSelects.module.scss'
 
 dayjs.extend(isoWeek)
@@ -126,6 +127,7 @@ const Cycleselects = memo(
       { onChange, defaultType, disable }: ICycleselectsProps,
       ref: ForwardedRef<ICycleselectsRef>,
     ) => {
+      const { t } = useTransClient('aiRank')
       // 1周榜 2=月榜
       const [active, setActive] = useState<CycleTypeEnum>(defaultType)
       const [value, setValue] = useState('')
@@ -176,7 +178,7 @@ const Cycleselects = memo(
               setActive(CycleTypeEnum.Week)
             }}
             onChange={setValue}
-            title="周榜"
+            title={t('cycleSelect.weekRanking')}
             options={weekOptions}
           />
 
@@ -189,7 +191,7 @@ const Cycleselects = memo(
               setActive(CycleTypeEnum.Month)
             }}
             onChange={setValue}
-            title="月榜"
+            title={t('cycleSelect.monthRanking')}
             options={monthsOptions}
           />
         </div>

@@ -2,9 +2,11 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { useTransClient } from '@/app/i18n/client'
 import styles from './register.module.css'
 
 export default function RegisterPage() {
+  const { t } = useTransClient('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -12,21 +14,22 @@ export default function RegisterPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (password !== confirmPassword) {
+      alert(t('passwordMismatch'))
       return
     }
-    // TODO: 实现注册逻辑
-    console.log('注册:', { email, password })
+    // TODO: Implement registration logic
+    console.log('Register:', { email, password })
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.box}>
-        <h1 className={styles.title}>注册账号</h1>
+        <h1 className={styles.title}>{t('registerAccount')}</h1>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
             <input
               type="email"
-              placeholder="邮箱"
+              placeholder={t('emailPlaceholder')}
               value={email}
               onChange={e => setEmail(e.target.value)}
               className={styles.input}
@@ -36,7 +39,7 @@ export default function RegisterPage() {
           <div className={styles.inputGroup}>
             <input
               type="password"
-              placeholder="密码"
+              placeholder={t('passwordPlaceholder')}
               value={password}
               onChange={e => setPassword(e.target.value)}
               className={styles.input}
@@ -46,7 +49,7 @@ export default function RegisterPage() {
           <div className={styles.inputGroup}>
             <input
               type="password"
-              placeholder="确认密码"
+              placeholder={t('confirmPassword')}
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
               className={styles.input}
@@ -54,12 +57,12 @@ export default function RegisterPage() {
             />
           </div>
           <button type="submit" className={styles.submitButton}>
-            注册
+            {t('register')}
           </button>
         </form>
         <div className={styles.links}>
           <Link href="/login" className={styles.link}>
-            已有账号？去登录
+            {t('alreadyHaveAccount')}
           </Link>
         </div>
       </div>

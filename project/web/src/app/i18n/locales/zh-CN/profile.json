@@ -80,6 +80,7 @@
   "subscription": "订阅",
   "quantity": "数量",
   "orderExpired": "已过期",
+  "unknownStatus": "状态",
   "cancelTime": "取消时间",
   "trialEndTime": "试用结束时间",
   "willCancelAtPeriodEnd": "将于期末取消",

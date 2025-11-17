@@ -51,5 +51,9 @@
   "verificationCodeRequired": "Please enter verification code",
   "verificationCodePlaceholder": "Please enter the verification code from your email",
   "resetEmailSent": "Reset email sent, please check your inbox",
-  "sendEmailFailed": "Failed to send email"
+  "sendEmailFailed": "Failed to send email",
+  "registerAccount": "Register Account",
+  "register": "Register",
+  "alreadyHaveAccount": "Already have an account? Sign in",
+  "passwordMismatch": "Passwords do not match"
 }

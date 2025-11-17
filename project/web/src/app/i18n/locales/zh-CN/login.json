@@ -51,5 +51,9 @@
   "verificationCodeRequired": "请输入验证码",
   "verificationCodePlaceholder": "请输入邮箱中的验证码",
   "resetEmailSent": "重置邮件已发送，请查收",
-  "sendEmailFailed": "发送邮件失败"
+  "sendEmailFailed": "发送邮件失败",
+  "registerAccount": "注册账号",
+  "register": "注册",
+  "alreadyHaveAccount": "已有账号？去登录",
+  "passwordMismatch": "两次输入的密码不一致"
 }
