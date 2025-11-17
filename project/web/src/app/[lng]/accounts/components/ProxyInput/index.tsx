@@ -1,6 +1,7 @@
 import type { ForwardedRef } from 'react'
 import { Button, Input, message } from 'antd'
 import { forwardRef, memo, useEffect, useState } from 'react'
+import { useTransClient } from '@/app/i18n/client'
 import styles from './proxyInput.module.scss'
 
 export interface IProxyInputRef {}
@@ -56,6 +57,7 @@ export async function verifyProxy(proxyName: string) {
 const ProxyInput = memo(
   forwardRef(
     ({ onChange }: IProxyInputProps, ref: ForwardedRef<IProxyInputRef>) => {
+      const { t } = useTransClient('account')
       const [proxyLoading, setProxyLoading] = useState(false)
       const [proxyName, setProxyName] = useState('')
 
