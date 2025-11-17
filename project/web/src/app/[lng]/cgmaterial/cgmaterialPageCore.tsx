@@ -961,18 +961,13 @@ export default function CgMaterialPageCore() {
         }
       }).filter((record): record is NonNullable<typeof record> => record !== null)
 
-      console.log('构造的导入记录:', records)
-      console.log('选中的账户:', selectedAccount)
-
       if (records.length === 0) {
         message.warning(t('import.noValidRecords' as any))
         return
       }
 
       // 调用导入接口
-      console.log('开始调用导入接口...')
       const res = await apiImportPostsRecord(records)
-      console.log('导入接口返回结果:', res)
 
       if (res?.code === 0) {
         message.success(t('import.importSuccess' as any, { count: records.length }))

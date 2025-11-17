@@ -273,10 +273,8 @@ const AddAccountModal = memo(
         setTimeout(async () => {
           try {
             await getAccountList()
-            console.log('账号列表已刷新')
           }
           catch (error) {
-            console.error('刷新账号列表失败:', error)
           }
         }, 2000) // 等待3秒让授权完成
       }

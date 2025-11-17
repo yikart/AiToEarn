@@ -59,14 +59,14 @@ export function linkedinLogin(taskId: any): Promise<any> {
         if (isSuccess) {
           clearInterval(interval)
           if (pollCount >= maxPollCount) {
-            reject(new Error('授权超时，已达到最大轮询次数'))
+            reject(new Error('timeout, max poll count reached'))
           }
         }
       }, 2000)
 
       setTimeout(() => {
         clearInterval(interval)
-        reject(new Error('授权超时'))
+        reject(new Error('timeout'))
       }, 5 * 60 * 1000)
     }
     catch (e) {

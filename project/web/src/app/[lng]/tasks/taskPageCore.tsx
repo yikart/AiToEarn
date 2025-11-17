@@ -1656,7 +1656,7 @@ export default function TaskPageCore() {
                                   whiteSpace: 'nowrap',
                                 }}
                                 >
-                                  {material.title || '无标题'}
+                                  {material.title || 'no title'}
                                 </div>
                                 <div style={{
                                   fontSize: '12px',
@@ -1666,7 +1666,7 @@ export default function TaskPageCore() {
                                   whiteSpace: 'nowrap',
                                 }}
                                 >
-                                  {material.desc || '无描述'}
+                                  {material.desc || 'no description'}
                                 </div>
                               </div>
                             </div>
@@ -1691,7 +1691,7 @@ export default function TaskPageCore() {
                         )}
                       </>
                     ) : (
-                      <Empty description="暂无草稿素材" />
+                      <Empty description="no draft material" />
                     )}
                   </Spin>
                 )}
@@ -1928,7 +1928,7 @@ export default function TaskPageCore() {
                             >
                               <Image
                                 src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                alt="账号头像"
+                                alt="account avatar"
                                 width={32}
                                 height={32}
                                 style={{
@@ -2168,10 +2168,10 @@ export default function TaskPageCore() {
                   }}
                   >
                     {acceptedTaskDetail.status === 'doing'
-                      ? '任务待完成'
+                      ? 'task pending'
                       : acceptedTaskDetail.status === 'pending'
-                        ? '任务已完成'
-                        : `任务状态：${acceptedTaskDetail.status}`}
+                        ? 'task completed'
+                        : `task status: ${acceptedTaskDetail.status}`}
                   </span>
                 </div>
 
@@ -2181,7 +2181,7 @@ export default function TaskPageCore() {
                 }}
                 >
                   {acceptedTaskDetail.isFirstTimeSubmission && (
-                    <span style={{ color: '#52c41a' }}>首次提交</span>
+                    <span style={{ color: '#52c41a' }}>first submission</span>
                   )}
                 </div>
               </div>
@@ -2383,7 +2383,7 @@ export default function TaskPageCore() {
                     </div>
                     {account.nickname && (
                       <div>
-                        昵称:
+                        nickname:
                         {account.nickname}
                       </div>
                     )}

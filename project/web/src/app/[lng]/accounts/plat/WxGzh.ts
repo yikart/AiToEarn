@@ -37,7 +37,6 @@ export function wxGzhLogin(taskId: any): Promise<any> {
           pollCount++
           const authRess: any = await checkWxGzAuthApi(taskId)
           const authRes = authRess
-          console.log('authRes', authRes)
           if (authRes?.code === 0 && authRes?.data.status == 1) {
             // message.success('授权成功');
             // useAccountStore
@@ -49,14 +48,14 @@ export function wxGzhLogin(taskId: any): Promise<any> {
 
           // 检查是否达到最大轮询次数
           if (pollCount >= maxPollCount) {
-            console.log('达到最大轮询次数，停止轮询')
+            
             return true
           }
 
           // return false;
         }
         catch (error) {
-          console.error('检查授权状态失败:', error)
+          console.error('check auth status failed:', error)
           return false
         }
       }
@@ -67,7 +66,7 @@ export function wxGzhLogin(taskId: any): Promise<any> {
         if (isSuccess) {
           clearInterval(interval)
           if (pollCount >= maxPollCount) {
-            reject(new Error('授权超时，已达到最大轮询次数'))
+            reject(new Error('timeout, max poll count reached'))
           }
         }
       }, 2000)
@@ -75,8 +74,7 @@ export function wxGzhLogin(taskId: any): Promise<any> {
       // 5分钟后自动停止轮询
       setTimeout(() => {
         clearInterval(interval)
-        // message.error('授权超时，请重试');
-        reject(new Error('授权超时'))
+        reject(new Error('timeout'))
       }, 5 * 60 * 1000)
     }
     catch (e) {

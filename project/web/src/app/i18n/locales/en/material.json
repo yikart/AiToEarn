@@ -201,6 +201,7 @@
     "estimatedCreditCost": "Estimated Credit Cost",
     "credits": "credits",
     "getImageModelsFailed": "Failed to get image generation models",
-    "getVideoModelsFailed": "Failed to get video generation models"
+    "getVideoModelsFailed": "Failed to get video generation models",
+    "videoLoadedSuccess": "Video loaded successfully"
   }
 }
