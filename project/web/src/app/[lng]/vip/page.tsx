@@ -103,7 +103,7 @@ export default function VipPage() {
       }
     }
     catch (error) {
-      console.error('创建支付订单失败:', error)
+      console.error('Create payment order error:', error)
       message.error(t('createPaymentOrderError'))
     }
     finally {

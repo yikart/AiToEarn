@@ -345,11 +345,11 @@ export default function TaskPageCore() {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
       if (minutes < 60)
-        return `${minutes}分钟后`
+        return t('timeRemaining.minutesLater', { minutes })
       if (hours < 24)
-        return `${hours}小时后`
+        return t('timeRemaining.hoursLater', { hours })
       if (days < 7)
-        return `${days}天后`
+        return t('timeRemaining.daysLater', { days })
     }
 
     // 显示具体日期时间
@@ -365,8 +365,8 @@ export default function TaskPageCore() {
   // 获取任务状态标签
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string, text: string }> = {
-      pending: { color: 'green', text: '已完成' }, // pending 是已完成
-      doing: { color: 'orange', text: '待完成' }, // doing 是待完成
+      pending: { color: 'green', text: t('taskStatuses.pendingComplete') }, // pending 是已完成
+      doing: { color: 'orange', text: t('taskStatuses.doingWait') }, // doing 是待完成
       accepted: { color: 'blue', text: t('taskStatus.accepted' as any) },
       completed: { color: 'green', text: t('taskStatus.completed' as any) },
       rejected: { color: 'red', text: t('taskStatus.rejected' as any) },
@@ -590,8 +590,8 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('获取素材列表失败:', error)
-      message.error('获取素材列表失败')
+      console.error('Failed to get material list:', error)
+      message.error(t('errors.getMaterialListFailed'))
     }
     finally {
       setMaterialLoading(false)
@@ -692,7 +692,7 @@ export default function TaskPageCore() {
 
     // 验证是否选择了素材
     if (!selectedMaterial) {
-      message.error('请选择一个草稿素材')
+      message.error(t('errors.pleaseSelectDraftMaterial'))
       return
     }
 
@@ -704,10 +704,10 @@ export default function TaskPageCore() {
     setTaskProgress({
       currentStep: 0,
       steps: [
-        { title: '正在接受任务...', status: 'processing' },
-        { title: '正在发布任务...', status: 'wait' },
-        { title: '正在提交任务...', status: 'wait' },
-        { title: '任务完成', status: 'wait' },
+        { title: t('steps.acceptingTask'), status: 'processing' },
+        { title: t('steps.publishingTask'), status: 'wait' },
+        { title: t('steps.submittingTask'), status: 'wait' },
+        { title: t('steps.taskCompleted'), status: 'wait' },
       ],
     })
 
@@ -816,8 +816,8 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('任务处理失败:', error)
-      message.error('任务处理失败')
+      console.error('Task processing failed:', error)
+      message.error(t('errors.taskProcessFailed'))
       setTaskProgressVisible(false)
     }
   }
@@ -868,10 +868,10 @@ export default function TaskPageCore() {
         ...prev,
         currentStep: 1,
         steps: [
-          { title: '正在完成任务...', status: 'finish' },
-          { title: '正在发布任务...', status: 'processing' },
-          { title: '正在提交任务...', status: 'wait' },
-          { title: '任务完成', status: 'wait' },
+          { title: t('steps.completingTask'), status: 'finish' },
+          { title: t('steps.publishingTask'), status: 'processing' },
+          { title: t('steps.submittingTask'), status: 'wait' },
+          { title: t('steps.taskCompleted'), status: 'wait' },
         ],
       }))
 
@@ -920,10 +920,10 @@ export default function TaskPageCore() {
             ...prev,
             currentStep: 2,
             steps: [
-              { title: '正在完成任务...', status: 'finish' },
-              { title: '正在发布任务...', status: 'finish' },
-              { title: '正在提交任务...', status: 'processing' },
-              { title: '任务完成', status: 'wait' },
+              { title: t('steps.completingTask'), status: 'finish' },
+              { title: t('steps.publishingTask'), status: 'finish' },
+              { title: t('steps.submittingTask'), status: 'processing' },
+              { title: t('steps.taskCompleted'), status: 'wait' },
             ],
           }))
 
@@ -937,10 +937,10 @@ export default function TaskPageCore() {
               ...prev,
               currentStep: 3,
               steps: [
-                { title: '正在完成任务...', status: 'finish' },
-                { title: '正在发布任务...', status: 'finish' },
-                { title: '正在提交任务...', status: 'finish' },
-                { title: '任务完成', status: 'finish' },
+              { title: t('steps.completingTask'), status: 'finish' },
+              { title: t('steps.publishingTask'), status: 'finish' },
+              { title: t('steps.submittingTask'), status: 'finish' },
+              { title: t('steps.taskCompleted'), status: 'finish' },
               ],
             }))
 
@@ -966,8 +966,8 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('任务处理失败:', error)
-      message.error('任务处理失败')
+      console.error('Task processing failed:', error)
+      message.error(t('errors.taskProcessFailed'))
       setTaskProgressVisible(false)
     }
   }

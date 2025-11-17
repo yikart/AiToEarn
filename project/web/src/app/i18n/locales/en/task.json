@@ -122,7 +122,26 @@
   },
   "taskStatuses": {
     "pending": "Task Pending",
-    "completed": "Task Completed"
+    "completed": "Task Completed",
+    "pendingComplete": "Completed",
+    "doingWait": "Pending"
   },
-  "accountAvatar": "Account Avatar"
+  "accountAvatar": "Account Avatar",
+  "timeRemaining": {
+    "minutesLater": "in {{minutes}} minutes",
+    "hoursLater": "in {{hours}} hours",
+    "daysLater": "in {{days}} days"
+  },
+  "errors": {
+    "getMaterialListFailed": "Failed to get material list",
+    "pleaseSelectDraftMaterial": "Please select a draft material",
+    "taskProcessFailed": "Task processing failed"
+  },
+  "steps": {
+    "acceptingTask": "Accepting task...",
+    "publishingTask": "Publishing task...",
+    "submittingTask": "Submitting task...",
+    "completingTask": "Completing task...",
+    "taskCompleted": "Task Completed"
+  }
 }

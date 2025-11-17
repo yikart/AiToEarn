@@ -122,7 +122,26 @@
   },
   "taskStatuses": {
     "pending": "任务待完成",
-    "completed": "任务已完成"
+    "completed": "任务已完成",
+    "pendingComplete": "已完成",
+    "doingWait": "待完成"
   },
-  "accountAvatar": "账号头像"
+  "accountAvatar": "账号头像",
+  "timeRemaining": {
+    "minutesLater": "{{minutes}}分钟后",
+    "hoursLater": "{{hours}}小时后",
+    "daysLater": "{{days}}天后"
+  },
+  "errors": {
+    "getMaterialListFailed": "获取素材列表失败",
+    "pleaseSelectDraftMaterial": "请选择一个草稿素材",
+    "taskProcessFailed": "任务处理失败"
+  },
+  "steps": {
+    "acceptingTask": "正在接受任务...",
+    "publishingTask": "正在发布任务...",
+    "submittingTask": "正在提交任务...",
+    "completingTask": "正在完成任务...",
+    "taskCompleted": "任务完成"
+  }
 }
