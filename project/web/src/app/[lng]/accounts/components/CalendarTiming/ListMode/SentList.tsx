@@ -121,9 +121,9 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
 
   const getMediaTypeTag = (mediaType: string) => {
     const typeMap = {
-      video: { color: 'red', text: '视频' },
-      image: { color: 'blue', text: '图片' },
-      article: { color: 'green', text: '文章' },
+      video: { color: 'red', text: t('mediaTypes.video') },
+      image: { color: 'blue', text: t('mediaTypes.image') },
+      article: { color: 'green', text: t('mediaTypes.article') },
     }
     return typeMap[mediaType as keyof typeof typeMap] || { color: 'default', text: mediaType }
   }
@@ -161,7 +161,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
               </Avatar>
               <div className={styles.userDetails}>
                 <div className={styles.username}>
-                  {account?.nickname || account?.account || post.title || '未知账户'}
+                  {account?.nickname || account?.account || post.title || t('unknownAccount')}
                 </div>
                 <div className={styles.userSubtitle} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                   {platInfo && (

@@ -69,10 +69,10 @@ const ProxyInput = memo(
             className={`${styles.createGroup} ${styles.proxyInput}`}
             style={{ marginBottom: '20px' }}
           >
-            <label>代理地址</label>
+            <label>{t('proxy.label')}</label>
             <Input
               value={proxyName}
-              placeholder="请输入代理地址"
+              placeholder={t('proxy.placeholder')}
               onChange={e => setProxyName(e.target.value)}
             />
             <Button
@@ -81,30 +81,30 @@ const ProxyInput = memo(
               onClick={async () => {
                 const verifyRes = await verifyProxy(proxyName)
                 if (verifyRes) {
-                  message.success('代理地址可用')
+                  message.success(t('proxy.available'))
                 }
                 else {
-                  message.error('代理地址不可用')
+                  message.error(t('proxy.unavailable'))
                 }
               }}
             >
-              验证连接
+              {t('proxy.verify')}
             </Button>
           </div>
           <div className={styles.proxyHint}>
-            <p>1. 代理类型仅支持HTTP、HTTPS、Socks5；</p>
-            <p>支持以下填写格式</p>
+            <p>{t('proxy.hint.line1')}</p>
+            <p>{t('proxy.hint.line2')}</p>
             <p>
               192.168.0.1:8000
-              {`{备注}`}
+              {`{${t('proxy.hint.remark')}}`}
             </p>
             <p>
-              192.168.0.1:8000:代理账号:代理密码
-              {`{备注}`}
+              192.168.0.1:8000:{t('proxy.hint.username')}:{t('proxy.hint.password')}
+              {`{${t('proxy.hint.remark')}}`}
             </p>
             <p>
-              socks5://192.168.0.1:8000:代理账号:代理密码
-              {`{备注}`}
+              socks5://192.168.0.1:8000:{t('proxy.hint.username')}:{t('proxy.hint.password')}
+              {`{${t('proxy.hint.remark')}}`}
             </p>
           </div>
         </>

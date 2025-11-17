@@ -219,11 +219,11 @@ const CalendarTiming = memo(
                     }}
                   >
                     {accountList.length === 0
-                      ? '暂无账户'
+                      ? t('sidebar.noAccounts')
                       : accountList.filter(
                         account => account.status === AccountStatus.USABLE,
                       ).length === 0
-                        ? '暂无在线账户'
+                        ? t('sidebar.noOnlineAccounts')
                         : t('listMode.noChannelsFound' as any)}
                   </div>
                 )}

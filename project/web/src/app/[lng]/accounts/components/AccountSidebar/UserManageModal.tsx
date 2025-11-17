@@ -146,7 +146,7 @@ function SpaceInfoCard({
             padding: '2px 8px',
             borderRadius: '12px'
           }}>
-            {currentSpace.children?.length || 0} 个账号
+            {currentSpace.children?.length || 0} {t('userManage.accounts')}
           </span>
         </div> */}
 

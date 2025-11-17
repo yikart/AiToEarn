@@ -10,7 +10,7 @@
   "allPlatforms": "所有平台",
   "accountManager": "账号管理器",
   "addAccount": "添加频道",
-  "mcpManager": "MCP 管理器",
+  "mcpManagerTit": "MCP 管理器",
   "online": "在线",
   "offline": "离线",
   "checkLoginStatus": "登录状态检测",
@@ -181,8 +181,61 @@
     "moveDown": "下移"
   },
   "mcpManager": {
+    "title": "MCP 管理器",
     "fetchKeysFailed": "获取MCP Key列表失败",
     "createKeyFailed": "创建MCP Key失败",
-    "createAssociationFailed": "创建关联失败: {{account}}"
+    "createAssociationFailed": "创建关联失败: {{account}}",
+    "createSuccess": "MCP Key创建成功！",
+    "keyCopied": "Key已复制到剪贴板",
+    "deleteSuccess": "MCP Key已删除",
+    "deleteFailed": "删除MCP Key失败",
+    "createNewKey": "创建新Key",
+    "noKeys": "暂无MCP Key",
+    "noKeysDesc": "点击上方按钮创建您的第一个MCP Key",
+    "copy": "复制",
+    "detail": "详情",
+    "delete": "删除",
+    "available": "可用",
+    "unavailable": "不可用",
+    "createdAt": "创建时间: ",
+    "associatedAccounts": "关联账户: ",
+    "accountUnit": "个",
+    "pagination": "第 {{start}}-{{end}} 条，共 {{total}} 条",
+    "createModal": {
+      "title": "创建MCP Key",
+      "keyName": "Key名称",
+      "keyNamePlaceholder": "请输入Key名称",
+      "keyNameRequired": "请输入Key名称",
+      "selectAccounts": "选择账户",
+      "selectAccountsPlaceholder": "请选择要关联的账户",
+      "selectAccountsRequired": "请选择至少一个账户",
+      "selectedCount": "已选择 {{count}} 个账户:",
+      "selectAccountsButton": "选择账户",
+      "create": "创建",
+      "cancel": "取消"
+    }
+  },
+  "mediaTypes": {
+    "video": "视频",
+    "image": "图片",
+    "article": "文章"
+  },
+  "calendar": {
+    "showMore": "显示更多",
+    "hideMore": "隐藏更多"
+  },
+  "proxy": {
+    "label": "代理地址",
+    "placeholder": "请输入代理地址",
+    "available": "代理地址可用",
+    "unavailable": "代理地址不可用",
+    "verify": "验证连接",
+    "hint": {
+      "line1": "1. 代理类型仅支持HTTP、HTTPS、Socks5；",
+      "line2": "支持以下填写格式",
+      "remark": "备注",
+      "username": "代理账号",
+      "password": "代理密码"
+    }
   }
 }

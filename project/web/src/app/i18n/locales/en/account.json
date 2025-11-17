@@ -10,7 +10,7 @@
   "allPlatforms": "All Platforms",
   "accountManager": "Acct Manager",
   "addAccount": "Add Channels",
-  "mcpManager": "MCP Manager",
+  "mcpManagerTit": "MCP Manager",
   "online": "Online",
   "offline": "Offline",
   "checkLoginStatus": "Check Login Status",
@@ -181,8 +181,61 @@
     "moveDown": "Move down"
   },
   "mcpManager": {
+    "title": "MCP Manager",
     "fetchKeysFailed": "Failed to fetch MCP keys",
     "createKeyFailed": "Failed to create MCP key",
-    "createAssociationFailed": "Failed to create association: {{account}}"
+    "createAssociationFailed": "Failed to create association: {{account}}",
+    "createSuccess": "MCP Key created successfully!",
+    "keyCopied": "Key copied to clipboard",
+    "deleteSuccess": "MCP Key deleted",
+    "deleteFailed": "Failed to delete MCP Key",
+    "createNewKey": "Create New Key",
+    "noKeys": "No MCP Keys",
+    "noKeysDesc": "Click the button above to create your first MCP Key",
+    "copy": "Copy",
+    "detail": "Detail",
+    "delete": "Delete",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "createdAt": "Created at: ",
+    "associatedAccounts": "Associated accounts: ",
+    "accountUnit": "",
+    "pagination": "{{start}}-{{end}} of {{total}} items",
+    "createModal": {
+      "title": "Create MCP Key",
+      "keyName": "Key Name",
+      "keyNamePlaceholder": "Enter key name",
+      "keyNameRequired": "Please enter key name",
+      "selectAccounts": "Select Accounts",
+      "selectAccountsPlaceholder": "Please select accounts to associate",
+      "selectAccountsRequired": "Please select at least one account",
+      "selectedCount": "{{count}} account(s) selected:",
+      "selectAccountsButton": "Select Accounts",
+      "create": "Create",
+      "cancel": "Cancel"
+    }
+  },
+  "mediaTypes": {
+    "video": "Video",
+    "image": "Image",
+    "article": "Article"
+  },
+  "calendar": {
+    "showMore": "Show more",
+    "hideMore": "Hide more"
+  },
+  "proxy": {
+    "label": "Proxy Address",
+    "placeholder": "Enter proxy address",
+    "available": "Proxy address is available",
+    "unavailable": "Proxy address is unavailable",
+    "verify": "Verify Connection",
+    "hint": {
+      "line1": "1. Proxy types supported: HTTP, HTTPS, Socks5;",
+      "line2": "Supported formats:",
+      "remark": "remark",
+      "username": "username",
+      "password": "password"
+    }
   }
 }

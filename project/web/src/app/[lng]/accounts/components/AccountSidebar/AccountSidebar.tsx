@@ -701,7 +701,7 @@ const AccountSidebar = memo(
                   }}
                   onClick={() => setMcpManagerModalOpen(true)}
                 >
-                  {t('mcpManager')}
+                  {t('mcpManagerTit')}
                 </Button>
               </div>
             </div>
