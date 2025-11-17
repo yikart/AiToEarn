@@ -237,6 +237,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      tslib:
+        specifier: ^2.3.0
+        version: 2.8.1
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
