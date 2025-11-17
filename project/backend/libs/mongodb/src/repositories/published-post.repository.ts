@@ -1,6 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { AccountType, Pagination, RangeFilter, UserType } from '@yikart/common'
+import { AccountType, Pagination, RangeFilter } from '@yikart/common'
 import { FilterQuery, Model } from 'mongoose'
+import { PublishStatus } from '../enums'
 import { PublishedPost } from '../schemas'
 import { BaseRepository } from './base.repository'
 
@@ -10,6 +11,7 @@ export interface ListPostsFilter {
   platform?: AccountType
   uid?: string
   period?: RangeFilter<Date>
+  status?: PublishStatus
 }
 
 export interface ListPostsWithPaginationFilter extends Pagination, ListPostsFilter {}

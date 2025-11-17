@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
 import { PublishModule } from '../publishRecord/publishRecord.module'
-import { PostModule } from '../statistics/post/post.module'
 import { ChannelApiModule } from '../transports/channel/channelApi.module'
 import { BilibiliModule } from './bilibili/bilibili.module'
 import { ChannelController } from './channel.controller'
@@ -14,6 +13,8 @@ import { InteractModule } from './interact/interact.module'
 import { KwaiModule } from './kwai/kwai.module'
 import { MetaModule } from './meta/meta.module'
 import { PinterestModule } from './pinterest/pinterest.module'
+import { PostModule } from './post/post.module'
+import { PostService } from './post/post.service'
 import { PublishController } from './publish.controller'
 import { PublishService } from './publish.service'
 import { SkKeyModule } from './skKey/skKey.module'
@@ -41,8 +42,9 @@ import { YoutubeModule } from './youtube/youtube.module'
     EngagementModule,
     PostModule,
     PublishModule,
+    PostModule,
   ],
-  providers: [ChannelService, PublishService],
+  providers: [ChannelService, PublishService, PostService],
   controllers: [
     PublishController,
     InteractController,

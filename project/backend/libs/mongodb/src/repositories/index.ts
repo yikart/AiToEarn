@@ -11,6 +11,7 @@ import { MediaRepository } from './media.repository'
 import { MediaGroupRepository } from './mediaGroup.repository'
 import { NotificationRepository } from './notification.repository'
 import { PointsRecordRepository } from './points-record.repository'
+import { PublishedPostRepository } from './published-post.repository'
 import { PublishRecordRepository } from './publishRecord.repository'
 import { UserRepository } from './user.repository'
 import { VipRepository } from './vip.repository'
@@ -29,6 +30,7 @@ export * from './media.repository'
 export * from './mediaGroup.repository'
 export * from './notification.repository'
 export * from './points-record.repository'
+export * from './published-post.repository'
 export * from './publishRecord.repository'
 export * from './user.repository'
 export * from './vip.repository'
@@ -50,4 +52,5 @@ export const repositories = [
   MaterialRepository,
   MaterialTaskRepository,
   PublishRecordRepository,
+  PublishedPostRepository,
 ] as const

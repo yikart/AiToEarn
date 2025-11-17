@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AccountType, AppException, ResponseCode, TableDto } from '@yikart/common'
-import { PublishRecord, PublishStatus } from '@yikart/mongodb'
-import { PostData } from '@yikart/statistics-db'
+import { PublishedPost, PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 import { PublishRecordService } from '../publishRecord/publishRecord.service'
-import { PostService } from '../statistics/post/post.service'
 import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
 import { PublishTaskNatsApi } from '../transports/channel/api/publishTask.natsApi'
 import { ChannelApi } from '../transports/channel/channel.api'
@@ -12,6 +10,7 @@ import { PublishingChannel } from '../transports/channel/common'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
 import { PostHistoryItemVoSchema } from './dto/publish-response.vo'
 import { PublishDayInfoListFiltersDto, PubRecordListFilterDto } from './dto/publish.dto'
+import { PostService } from './post/post.service'
 
 type PostHistoryItem = z.infer<typeof PostHistoryItemVoSchema>
 
@@ -50,31 +49,31 @@ export class PublishService {
     return [...list1, ...list2]
   }
 
-  private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
+  private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PublishedPost[]) {
     const result = new Map<string, PostHistoryItem>()
 
     // Create an index of postsHistory for easy lookup of engagement data by postId
-    const postsHistoryMap = new Map<string, PostData>()
+    const postsHistoryMap = new Map<string, PublishedPost>()
     for (const post of postsHistory) {
       postsHistoryMap.set(post.postId, post)
       result.set(post.postId, {
         id: post.id,
         dataId: post.postId,
         flowId: '',
-        type: post.mediaType,
+        type: '',
         title: post.title || '',
-        desc: post.content || '',
+        desc: post.desc || '',
         accountId: post.accountId || '',
         accountType: post.platform as AccountType,
         uid: '',
-        videoUrl: post.mediaType === 'video' ? post.permaLink || '' : undefined,
-        coverUrl: post.thumbnail || undefined,
-        imgUrlList: post.mediaType === 'image' ? [post.thumbnail || ''] : [],
+        videoUrl: post.medias.find(media => media.type === 'video')?.url || '',
+        coverUrl: post.medias.find(media => media.type === 'image')?.url || '',
+        imgUrlList: post.medias.filter(media => media.type === 'image').map(media => media.url),
         publishTime: new Date(post.publishTime),
         status: PublishStatus.PUBLISHED,
         errorMsg: '',
         publishingChannel: PublishingChannel.NATIVE,
-        workLink: post.permaLink || '',
+        workLink: post.permalink || '',
         engagement: {
           viewCount: post.viewCount,
           commentCount: post.commentCount,
@@ -191,18 +190,13 @@ export class PublishService {
       userId,
     })
     const publishTasks = await this.publishTaskNatsApi.getPublishTaskList(userId, data)
-    const range = { start: '', end: '' }
-    if (data.time) {
-      range.start = data.time[0].toISOString()
-      range.end = data.time[1].toISOString()
-    }
-    const postsHistory = await this.postService.getUserAllPostsByPlatform({
+    const publishedPosts = await this.postService.getUserAllPostsByPlatform({
       ...data,
-      range,
+      period: data.time,
       userId,
-      platform: data.accountType as any,
+      platform: data.accountType,
     })
-    const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
+    const posts = this.mergePostHistory(publishRecords, publishTasks, publishedPosts)
     if (data.publishingChannel) {
       return posts.filter(post => post.publishingChannel === data.publishingChannel)
     }
@@ -221,18 +215,13 @@ export class PublishService {
       userId,
     })
     const publishTasks = await this.publishTaskNatsApi.getPublishedPublishTasks(userId, data)
-    const range = { start: '', end: '' }
-    if (data.time) {
-      range.start = data.time[0].toISOString()
-      range.end = data.time[1].toISOString()
-    }
-    const postsHistory = await this.postService.getUserAllPostsByPlatform({
+    const publishedPosts = await this.postService.getUserAllPostsByPlatform({
       ...data,
-      range,
+      period: data.time,
       userId,
       platform: data.accountType as any,
     })
-    const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
+    const posts = this.mergePostHistory(publishRecords, publishTasks, publishedPosts)
     return posts
   }
 
