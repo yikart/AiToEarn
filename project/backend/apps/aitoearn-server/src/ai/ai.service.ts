@@ -409,7 +409,8 @@ export class AiService {
     if (!option.desc && !option.coverUrl)
       return ''
 
-    const systemContent = `Based on the cover image, refer to the title and the original content to generate beautiful copy. Reply in ${option.language || 'English'} and the content of your reply should not exceed ${option.max || 100} words. Just return the copy`
+    const systemContent = `Based on the cover image, refer to the title and the original content to generate beautiful copy and topics ,
+Topics are concatenated at the end of the content and identified with a # symbol, for example: #topic_1 #topic_2. Reply in ${option.language || 'English'} and the content of your reply should not exceed ${option.max || 100} words. Just return the copy`
 
     let text = `prompt${prompt}.`
     if (option.title)
