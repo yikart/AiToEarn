@@ -20,4 +20,7 @@ export enum QueueName {
 
   /** 评论回复任务队列 */
   EngagementReplyToComment = 'engagement_reply_to_comment_task',
+
+  /** dump social media avatar queue */
+  DumpSocialMediaAvatar = 'dump_social_media_avatar',
 }

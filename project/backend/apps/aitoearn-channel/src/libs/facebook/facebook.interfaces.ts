@@ -216,7 +216,7 @@ export interface FacebookPublishedPostResponse {
 }
 
 export interface FacebookPostDetailRequest {
-  field: string
+  fields: string
   summary?: boolean
 }
 

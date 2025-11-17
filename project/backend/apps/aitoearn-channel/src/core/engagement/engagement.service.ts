@@ -51,6 +51,11 @@ export class EngagementService {
     return provider.fetchUserPosts(data.accountId, pagination)
   }
 
+  async getMetaPostDetail(accountId: string, platform: string, postId: string) {
+    const provider = this.getProvider(platform)
+    return provider.getMetaPostDetail(accountId, postId)
+  }
+
   async fetchPostComments(data: FetchPostCommentsRequest) {
     const provider = this.getProvider(data.platform)
     return provider.fetchPostComments(data.accountId, data.postId, data.pagination || null)

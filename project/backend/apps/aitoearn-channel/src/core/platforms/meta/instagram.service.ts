@@ -12,6 +12,7 @@ import {
   InstagramObjectInfo,
   InstagramUserInfoRequest,
   InstagramUserInfoResponse,
+  InstagramUserPost,
   InstagramUserPostRequest,
   InstagramUserPostResponse,
 } from '../../../libs/instagram/instagram.interfaces'
@@ -173,6 +174,15 @@ export class InstagramService extends MetaBaseService {
       credential.user_id,
       query,
     )
+  }
+
+  async getPostDetail(
+    accountId: string,
+    postId: string,
+    query: InstagramUserPostRequest,
+  ): Promise<InstagramUserPost> {
+    const credential = await this.authorize(accountId)
+    return await this.instagramAPIService.getPostDetail(credential.access_token, postId, query)
   }
 
   async fetchPostComments(

@@ -5,7 +5,7 @@ import { PublishStatus, PublishTask } from '../../../libs/database/schema/publis
 import { TiktokPrivacyLevel, TiktokSourceType } from '../../../libs/tiktok/tiktok.enum'
 import { PostInfoDto, VideoFileUploadSourceDto, VideoPullUrlSourceDto } from '../../platforms/tiktok/dto/tiktok.dto'
 import { TiktokService } from '../../platforms/tiktok/tiktok.service'
-import { TiktokWebhookDto } from '../dto/tiktok.webhook.dto'
+import { TiktokWebhookDto } from '../dto/tiktok-webhook.dto'
 import { PublishingException } from '../publishing.exception'
 import { PublishingTaskResult } from '../publishing.interface'
 import { PublishService } from './base.service'

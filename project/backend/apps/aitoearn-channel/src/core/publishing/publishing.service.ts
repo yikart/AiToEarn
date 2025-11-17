@@ -10,7 +10,7 @@ import { AccountService } from '../account/account.service'
 import { PublishRecordService } from '../account/publish-record.service'
 import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS } from './constant'
 import { CreatePublishDto, PublishRecordListFilterDto } from './dto/publish.dto'
-import { TiktokWebhookDto } from './dto/tiktok.webhook.dto'
+import { TiktokWebhookDto } from './dto/tiktok-webhook.dto'
 import { TiktokPubService } from './providers/tiktok.service'
 
 @Injectable()
@@ -170,7 +170,7 @@ export class PublishingService implements OnModuleDestroy {
     userId: string
     accountId?: string
     accountType?: AccountType
-    time?: [Date, Date]
+    time?: [Date?, Date?, ...unknown[]]
   }): Promise<PublishTask[]> {
     const filters: RootFilterQuery<PublishTask> = {
       status: PublishStatus.WaitingForPublish,
@@ -194,7 +194,7 @@ export class PublishingService implements OnModuleDestroy {
     userId: string
     accountId?: string
     accountType?: AccountType
-    time?: [Date, Date]
+    time?: [Date?, Date?, ...unknown[]]
   }): Promise<PublishTask[]> {
     const filters: RootFilterQuery<PublishTask> = {
       status: PublishStatus.PUBLISHING,

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PostsResponseVo } from '@yikart/common'
+import { PostsResponseVo, PostVo } from '@yikart/common'
 import { InstagramService } from '../../../core/platforms/meta/instagram.service'
 import { InstagramMediaType } from '../../../libs/instagram/instagram.enum'
 import { IGPostCommentsRequest, InstagramUserPostRequest } from '../../../libs/instagram/instagram.interfaces'
@@ -14,7 +14,7 @@ export class InstagramEngagementProvider implements EngagementProvider {
 
   async fetchUserPosts(accountId: string, pagination: KeysetPagination | OffsetPagination | null): Promise<PostsResponseVo> {
     const req: InstagramUserPostRequest = {
-      fields: 'fields=id,caption,comments_count,like_count,media_type,media_url,permalink,thumbnail_url,timestamp,view_count,children\{media_url,thumbnail_url,media_type\}',
+      fields: 'id,caption,comments_count,like_count,media_type,media_url,permalink,thumbnail_url,timestamp,view_count,children\{media_url,thumbnail_url,media_type\}',
       limit: (pagination as KeysetPagination)?.limit || 50,
       before: (pagination as KeysetPagination)?.before,
       after: (pagination as KeysetPagination)?.after,
@@ -60,6 +60,46 @@ export class InstagramEngagementProvider implements EngagementProvider {
         before: resp.paging?.cursors?.before || '',
         after: resp.paging?.cursors?.after || '',
       } as KeysetPagination,
+    }
+  }
+
+  async getMetaPostDetail(accountId: string, postId: string): Promise<PostVo> {
+    const query = {
+      fields: 'id,caption,comments_count,like_count,media_type,media_url,permalink,thumbnail_url,timestamp,children\{media_url,thumbnail_url,media_type\}',
+    }
+    const postDetail = await this.instagramService.getPostDetail(accountId, postId, query)
+
+    const medias = []
+    if (postDetail.media_type === InstagramMediaType.CAROUSEL_ALBUM && postDetail.children?.data) {
+      for (const child of postDetail.children.data) {
+        medias.push({
+          url: child.media_url,
+          type: child.media_type === 'VIDEO' ? 'video' : 'image',
+        })
+      }
+    }
+    else {
+      medias.push({
+        url: postDetail.media_url,
+        type: postDetail.media_type === 'VIDEO' ? 'video' : 'image',
+        thumbnail: postDetail.thumbnail_url || '',
+      })
+    }
+    return {
+      id: postDetail.id,
+      platform: 'instagram',
+      title: '',
+      content: postDetail.caption || '',
+      medias,
+      permalink: postDetail.permalink || '',
+      publishTime: new Date(postDetail.timestamp).getTime(),
+      viewCount: postDetail.view_count || 0,
+      commentCount: postDetail.comments_count || 0,
+      likeCount: postDetail.like_count || 0,
+      shareCount: 0,
+      clickCount: 0,
+      impressionCount: 0,
+      favoriteCount: 0,
     }
   }
 

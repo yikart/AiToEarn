@@ -11,6 +11,7 @@ import {
   ThreadsObjectCommentsRequest,
   ThreadsObjectCommentsResponse,
   ThreadsObjectInfo,
+  ThreadsPostItem,
   ThreadsPostResponse,
   ThreadsPostsRequest,
   ThreadsPostsResponse,
@@ -188,6 +189,22 @@ export class ThreadsService {
       params: query,
     }
     return await this.request<ThreadsPostsResponse>(url, config, { operation: 'getAccountAllPosts' })
+  }
+
+  async getPostDetail(
+    accessToken: string,
+    postId: string,
+    query: ThreadsPostsRequest,
+  ): Promise<ThreadsPostItem> {
+    const url = `${this.apiBaseUrl}/${postId}`
+    const config: AxiosRequestConfig = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: query,
+    }
+    return await this.request<ThreadsPostItem>(url, config, { operation: 'getPostDetail' })
   }
 
   async fetchObjectComments(

@@ -28,6 +28,7 @@ export class MetaBaseService {
     }
     let credential = await this.redisService.getJson<MetaUserOAuthCredential>(key)
     if (!credential) {
+      this.logger.debug(`No access token found for accountId: ${accountId} in redis`)
       const oauth2Credential = await this.oAuth2CredentialModel.findOne(
         {
           accountId,

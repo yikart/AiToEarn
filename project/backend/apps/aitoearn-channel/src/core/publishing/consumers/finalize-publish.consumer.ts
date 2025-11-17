@@ -2,11 +2,10 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq'
 import { Inject, Logger, OnModuleDestroy } from '@nestjs/common'
 import { QueueName } from '@yikart/aitoearn-queue'
 import { AccountType } from '@yikart/common'
-import { Job, UnrecoverableError } from 'bullmq'
+import { Job } from 'bullmq'
 import { PublishStatus } from '../../../libs/database/schema/publishTask.schema'
-import { SocialMediaError } from '../../../libs/exception'
+import { PublishingErrorHandler } from '../error-handler.service'
 import { PublishService } from '../providers/base.service'
-import { PublishingException } from '../publishing.exception'
 import { PublishingService } from '../publishing.service'
 
 @Processor(QueueName.PostMediaTask, {
@@ -22,6 +21,7 @@ export class FinalizePublishPostConsumer extends WorkerHost implements OnModuleD
 
   constructor(
     readonly publishingService: PublishingService,
+    private readonly publishingErrorHandler: PublishingErrorHandler,
   ) {
     super()
   }
@@ -52,31 +52,7 @@ export class FinalizePublishPostConsumer extends WorkerHost implements OnModuleD
       }
     }
     catch (error) {
-      if (error instanceof PublishingException) {
-        if (error.retryable) {
-          throw error
-        }
-        await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
-          status: PublishStatus.FAILED,
-          errorMsg: error.message,
-        })
-        throw new UnrecoverableError(error.message)
-      }
-      if (error instanceof SocialMediaError) {
-        if (error.isNetworkError) {
-          throw error
-        }
-        await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
-          status: PublishStatus.FAILED,
-          errorMsg: error.message,
-        })
-        throw new UnrecoverableError(error.message)
-      }
-      await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
-        status: PublishStatus.FAILED,
-        errorMsg: error.toString(),
-      })
-      throw new UnrecoverableError(error.toString())
+      await this.publishingErrorHandler.handle(job.data.taskId, error, job)
     }
   }
 

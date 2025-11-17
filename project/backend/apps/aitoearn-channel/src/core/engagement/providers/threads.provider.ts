@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PostsResponseVo } from '@yikart/common'
+import { PostsResponseVo, PostVo } from '@yikart/common'
 import { ThreadsService } from '../../../core/platforms/meta/threads.service'
 import { ThreadsObjectCommentsRequest, ThreadsPostsRequest } from '../../../libs/threads/threads.interfaces'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'
@@ -68,6 +68,45 @@ export class ThreadsEngagementProvider implements EngagementProvider {
         before: resp.paging?.cursors?.before || '',
         after: resp.paging?.cursors?.after || '',
       } as KeysetPagination,
+    }
+  }
+
+  async getMetaPostDetail(accountId: string, postId: string): Promise<PostVo> {
+    const query = {
+      fields: 'id,text,children.media_url,media_product_type,media_type,media_url,permalink,text,timestamp,thumbnail_url,insights.metric(likes,views,replies,reposts,quotes,shares)',
+    }
+    const postDetail = await this.threadsService.getPostDetail(accountId, postId, query)
+    const medias = []
+    if (postDetail.media_type === 'CAROUSEL_ALBUM' && postDetail.children?.data) {
+      for (const child of postDetail.children.data) {
+        medias.push({
+          url: child.media_url,
+          type: child.media_type === 'VIDEO' ? 'video' : 'image',
+        })
+      }
+    }
+    else {
+      medias.push({
+        url: postDetail.media_url,
+        type: postDetail.media_type === 'VIDEO' ? 'video' : 'image',
+        thumbnail: postDetail.thumbnail_url || '',
+      })
+    }
+    return {
+      id: postDetail.id,
+      platform: 'threads',
+      title: '',
+      content: postDetail.text || '',
+      medias,
+      permalink: postDetail.permalink || '',
+      publishTime: new Date(postDetail.timestamp).getTime(),
+      viewCount: postDetail.insights?.data?.find(d => d.name === 'views')?.values[0]?.value || 0,
+      commentCount: postDetail.insights?.data?.find(d => d.name === 'replies')?.values[0]?.value || 0,
+      likeCount: postDetail.insights?.data?.find(d => d.name === 'likes')?.values[0]?.value || 0,
+      shareCount: postDetail.insights?.data?.find(d => d.name === 'reposts')?.values[0]?.value || 0,
+      clickCount: 0,
+      impressionCount: 0,
+      favoriteCount: 0,
     }
   }
 

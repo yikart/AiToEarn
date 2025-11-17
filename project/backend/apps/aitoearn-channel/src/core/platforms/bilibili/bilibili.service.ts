@@ -165,24 +165,6 @@ export class BilibiliService {
       = await this.bilibiliApiService.getAccountInfo(accessToken)
     if (!bilibiliUserInfo)
       return null
-
-    try {
-      const newPath = await this.fileService.upFileByUrl(
-        bilibiliUserInfo.face,
-        {
-          path: 'account/avatar',
-          permanent: true,
-        },
-      )
-
-      bilibiliUserInfo.face = newPath
-    }
-    catch (error) {
-      this.logger.log('---- bilibil getAccountInfo chage face error ', error)
-
-      bilibiliUserInfo.face = 'error'
-    }
-
     return bilibiliUserInfo
   }
 

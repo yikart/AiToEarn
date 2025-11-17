@@ -15,6 +15,7 @@ import {
   FacebookPostAttachmentsResponse,
   FacebookPostCommentsRequest,
   FacebookPostCommentsResponse,
+  FacebookPostDetail,
   FacebookPostDetailResponse,
   FacebookPostEdgesRequest,
   FacebookPostEdgesResponse,
@@ -276,6 +277,15 @@ export class FacebookService extends MetaBaseService {
     }
   }
 
+  async getPostDetail(
+    accountId: string,
+    postId: string,
+    fields: string,
+  ): Promise<FacebookPostDetail> {
+    const credential = await this.authorizePage(accountId)
+    return await this.facebookAPIService.getPagePostDetails(postId, credential.access_token, { fields })
+  }
+
   async getPostInsights(
     accountId: string,
     postId: string,
@@ -291,7 +301,7 @@ export class FacebookService extends MetaBaseService {
     const postDetail = await this.facebookAPIService.getPagePostDetails(
       objectId,
       credential.access_token,
-      { field: 'shares' },
+      { fields: 'shares' },
     )
     const comments = await this.facebookAPIService.getPostComments(
       objectId,

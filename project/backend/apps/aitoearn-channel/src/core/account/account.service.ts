@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
 import { InjectModel } from '@nestjs/mongoose'
+import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountStatus, AccountType, AitoearnServerClientService, NewAccount } from '@yikart/aitoearn-server-client'
-import { Model, UpdateQuery } from 'mongoose'
+import { Model } from 'mongoose'
 import { TableDto } from '../../common/global/dto/table.dto'
 import { Account } from '../../libs/database/schema/account.schema'
 
@@ -13,8 +13,8 @@ export class AccountService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<Account>,
     private readonly serverClient: AitoearnServerClientService,
-    private eventEmitter: EventEmitter2,
-  ) {}
+    private readonly queueService: QueueService,
+  ) { }
 
   /**
    * 创建账户
@@ -29,79 +29,44 @@ export class AccountService {
     },
     data: NewAccount,
   ) {
-    this.logger.log({
-      msg: '-------- ***** --------',
-      data: {
-        account,
-        data,
-      },
-    })
-    // 查询是否已存在相同账户
-    const existAccount = await this.accountModel.findOne({
+    this.logger.log(`createAccount: ${JSON.stringify({ account, data })}`)
+    const loginTime = new Date()
+    const accountData = { userId, ...data, loginTime }
+    const _id = `${account.type}_${account.uid}`
+    await this.accountModel.updateOne({
       type: account.type,
       uid: account.uid,
-    })
-    this.logger.log({
-      msg: '-------- 00000 --------',
-      data: existAccount,
-    })
-    let newOrUpdatedAccount: Account | null
-
-    const newData: UpdateQuery<Account> = { ...data, ...account, userId, loginTime: new Date() }
-    if (existAccount) {
-      // 已存在，执行更新
-      newOrUpdatedAccount = await this.accountModel.findOneAndUpdate(
-        { type: account.type, uid: account.uid },
-        newData,
-      )
-
-      this.logger.log({
-        msg: '-------- 111111 --------',
-        data: newOrUpdatedAccount,
-      })
-    }
-    else {
-      // 不存在，创建新账户
-      newData['_id'] = `${account.type}_${account.uid}`
-      newOrUpdatedAccount = await this.accountModel.create(newData)
-
-      this.logger.log({
-        msg: '-------- 222222 --------',
-        data: newOrUpdatedAccount,
-      })
-    }
+    }, {
+      _id,
+      ...accountData,
+    }, { upsert: true }).exec()
 
     try {
-      const ret = await this.serverClient.account.createAccount(newData)
-      this.logger.log({
-        msg: '-------- 333333 --------',
-        data: ret,
-      })
-      // 触发账户创建或更新事件
-      // this.eventEmitter.emit(`account.create.${newOrUpdatedAccount?.type}`, newOrUpdatedAccount?.id)
+      const result = await this.serverClient.account.createAccount(data)
+      this.logger.log(`create server account success: ${JSON.stringify(result)}`)
+      this.queueService.addDumpSocialMediaAvatarJob({ accountId: result.id })
+      return await this.accountModel.findById(result.id)
     }
     catch (error) {
-      this.logger.error(error)
+      this.logger.error(`create server account error: ${error}`)
       return null
     }
-    this.logger.log({
-      msg: '-------- 44444 --------',
-      data: newOrUpdatedAccount,
-    })
-    return newOrUpdatedAccount
   }
 
   /**
    * 更新账户
    * @returns
    */
-  async upAccount(accountId: string, data: NewAccount) {
+  async updateAccountInfo(userId: string, accountId: string, data: NewAccount) {
     const res = await this.accountModel.updateOne({ _id: accountId }, data)
 
     try {
       await this.serverClient.account.updateAccountInfo(
         accountId,
-        data,
+        {
+          userId,
+          ...data,
+        },
       )
     }
     catch (error) {

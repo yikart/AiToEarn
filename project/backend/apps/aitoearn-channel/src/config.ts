@@ -1,8 +1,8 @@
 import { aitoearnServerClientConfigSchema } from '@yikart/aitoearn-server-client'
+import { s3ConfigSchema } from '@yikart/aws-s3'
 import { baseConfig, createZodDto, selectConfig } from '@yikart/common'
 import { redisConfigSchema } from '@yikart/redis'
 import { z } from 'zod'
-import { s3ConfigSchema } from './libs/aws-s3/s3.config'
 
 // MongoDB配置
 const mongoConfigSchema = z.object({

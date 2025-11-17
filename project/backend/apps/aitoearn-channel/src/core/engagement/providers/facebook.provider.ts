@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { PostsResponseVo } from '@yikart/common'
+import { PostsResponseVo, PostVo } from '@yikart/common'
 import { FacebookService } from '../../../core/platforms/meta/facebook.service'
 import { FacebookPagePostRequest, FacebookPostCommentsRequest } from '../../../libs/facebook/facebook.interfaces'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'
@@ -57,6 +57,39 @@ export class FacebookEngagementProvider implements EngagementProvider {
         before: resp.paging?.cursors?.before || '',
         after: resp.paging?.cursors?.after || '',
       } as KeysetPagination,
+    }
+  }
+
+  async getMetaPostDetail(accountId: string, postId: string): Promise<PostVo> {
+    const fields = 'id,message,created_time,attachments,is_published,is_expired,permalink_url,shares,comments.summary(true),likes.summary(true),insights.metric(post_impressions,post_clicks,post_reactions_like_total,post_video_views).period(lifetime)'
+    const postDetail = await this.FacebookService.getPostDetail(accountId, postId, fields)
+    const medias = []
+    if (postDetail.attachments?.data) {
+      for (const attachment of postDetail.attachments.data) {
+        if (attachment.media?.image?.src) {
+          medias.push({
+            url: attachment.media.source || attachment.media.image.src,
+            type: attachment.type === 'video_autoplay' || attachment.type === 'video_inline' ? 'video' : 'image',
+            thumbnail: attachment.media.image.src,
+          })
+        }
+      }
+    }
+    return {
+      id: postDetail.id,
+      platform: 'facebook',
+      title: '',
+      content: postDetail.message || '',
+      medias,
+      permalink: postDetail.permalink_url || '',
+      publishTime: new Date(postDetail.created_time).getTime(),
+      viewCount: postDetail.insights?.data?.find(d => d.name === 'post_video_views')?.values[0]?.value || 0,
+      commentCount: postDetail.comments?.summary?.total_count || 0,
+      likeCount: postDetail.likes?.summary?.total_count || 0,
+      shareCount: postDetail.shares?.count || 0,
+      clickCount: postDetail.insights?.data?.find(d => d.name === 'post_clicks')?.values[0]?.value || 0,
+      impressionCount: postDetail.insights?.data?.find(d => d.name === 'post_impressions')?.values[0]?.value || 0,
+      favoriteCount: 0,
     }
   }
 

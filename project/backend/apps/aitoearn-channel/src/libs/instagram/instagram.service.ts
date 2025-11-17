@@ -17,6 +17,7 @@ import {
   InstagramObjectInfo,
   InstagramUserInfoRequest,
   InstagramUserInfoResponse,
+  InstagramUserPost,
   InstagramUserPostRequest,
   InstagramUserPostResponse,
 } from './instagram.interfaces'
@@ -286,6 +287,26 @@ export class InstagramService {
       url,
       config,
       { operation: InstagramOperation.GET_USER_POSTS },
+    )
+  }
+
+  async getPostDetail(
+    accessToken: string,
+    postId: string,
+    query: InstagramUserPostRequest,
+  ): Promise<InstagramUserPost> {
+    const url = `${this.apiBaseUrl}/${postId}`
+    const config: AxiosRequestConfig = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: query,
+    }
+    return await this.request<InstagramUserPost>(
+      url,
+      config,
+      { operation: InstagramOperation.GET_POST_DETAIL },
     )
   }
 

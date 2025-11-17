@@ -2,11 +2,10 @@ import { OnWorkerEvent, Processor, WorkerHost } from '@nestjs/bullmq'
 import { Inject, Logger, OnModuleDestroy } from '@nestjs/common'
 import { QueueName } from '@yikart/aitoearn-queue'
 import { AccountType } from '@yikart/common'
-import { Job, UnrecoverableError } from 'bullmq'
+import { Job } from 'bullmq'
 import { PublishStatus } from '../../../libs/database/schema/publishTask.schema'
-import { SocialMediaError } from '../../../libs/exception'
+import { PublishingErrorHandler } from '../error-handler.service'
 import { PublishService } from '../providers/base.service'
-import { PublishingException } from '../publishing.exception'
 import { PublishingTaskResult } from '../publishing.interface'
 import { PublishingService } from '../publishing.service'
 
@@ -20,7 +19,10 @@ export class ImmediatePublishPostConsumer extends WorkerHost implements OnModule
   @Inject('PUBLISHING_PROVIDERS')
   private readonly publishingProviders: Record<AccountType, PublishService>
 
-  constructor(readonly publishingService: PublishingService) {
+  constructor(
+    readonly publishingService: PublishingService,
+    private readonly publishingErrorHandler: PublishingErrorHandler,
+  ) {
     super()
   }
 
@@ -81,39 +83,7 @@ export class ImmediatePublishPostConsumer extends WorkerHost implements OnModule
       }
     }
     catch (error: unknown) {
-      if (error instanceof PublishingException) {
-        if (error.retryable) {
-          throw error
-        }
-        await this.publishingService.updatePublishTaskStatus(taskId, {
-          status: PublishStatus.FAILED,
-          errorMsg: error.message,
-          inQueue: false,
-          queued: false,
-        })
-        throw new UnrecoverableError(error.message)
-      }
-      if (error instanceof SocialMediaError) {
-        if (error.isNetworkError) {
-          if (job.opts.backoff) {
-            throw error
-          }
-        }
-        await this.publishingService.updatePublishTaskStatus(taskId, {
-          status: PublishStatus.FAILED,
-          errorMsg: error.message,
-          inQueue: false,
-          queued: false,
-        })
-        throw new UnrecoverableError(error.message)
-      }
-      await this.publishingService.updatePublishTaskStatus(taskId, {
-        status: PublishStatus.FAILED,
-        errorMsg: error.toString(),
-        inQueue: false,
-        queued: false,
-      })
-      throw new UnrecoverableError(error.toString())
+      await this.publishingErrorHandler.handle(taskId, error, job)
     }
   }
 
