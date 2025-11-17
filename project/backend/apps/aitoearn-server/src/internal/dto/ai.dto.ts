@@ -83,3 +83,18 @@ const dashscopeStatusRequestSchema = z.object({
   taskId: z.string().describe('任务ID'),
 })
 export class DashscopeStatusRequestDto extends createZodDto(dashscopeStatusRequestSchema) {}
+
+const imageEditSchema = z.object({
+  userId: z.string().describe('用户Id'),
+  userType: z.enum(UserType).describe('用户类型'),
+  model: z.string().describe('图片编辑模型'),
+  image: z.string().or(z.string().array()).describe('原始图片'),
+  prompt: z.string().min(1).max(4000).describe('编辑描述'),
+  mask: z.string().optional().describe('遮罩图片'),
+  n: z.int().min(1).max(100).optional().describe('生成图片数量'),
+  size: z.string().optional().describe('图片尺寸'),
+  response_format: z.enum(['url', 'b64_json']).optional().describe('返回格式'),
+  user: z.string().optional().describe('用户标识符'),
+})
+
+export class AdminImageEditDto extends createZodDto(imageEditSchema) {}
