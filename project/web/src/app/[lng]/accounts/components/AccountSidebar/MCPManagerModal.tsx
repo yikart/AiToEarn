@@ -9,6 +9,7 @@ import {
   apiDeleteMCPKey,
   apiGetMCPKeyList,
 } from '@/api/mcp'
+import { useTransClient } from '@/app/i18n/client'
 import ChooseAccountModule from '@/components/ChooseAccountModule/ChooseAccountModule'
 import MCPKeyDetailModal from './MCPKeyDetailModal'
 import styles from './MCPManagerModal.module.scss'
@@ -26,6 +27,7 @@ export interface IMCPManagerModalProps {
 const MCPManagerModal = memo(
   forwardRef<IMCPManagerModalRef, IMCPManagerModalProps>(
     ({ open, onClose }, ref) => {
+      const { t } = useTransClient('account')
       const [mcpKeys, setMcpKeys] = useState<any[]>([])
       const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
       const [selectedAccounts, setSelectedAccounts] = useState<SocialAccount[]>([])
@@ -50,7 +52,7 @@ const MCPManagerModal = memo(
           }
         }
         catch (error) {
-          message.error('获取MCP Key列表失败')
+          message.error(t('mcpManager.fetchKeysFailed'))
         }
         finally {
           setLoading(false)
@@ -80,7 +82,7 @@ const MCPManagerModal = memo(
 
           const createRes = await apiCreateMCPKey(createParams)
           if (createRes?.code !== 0) {
-            message.error('创建MCP Key失败')
+            message.error(t('mcpManager.createKeyFailed'))
             return
           }
 
@@ -95,7 +97,7 @@ const MCPManagerModal = memo(
                 })
               }
               catch (error) {
-                console.error(`创建关联失败: ${account.account}`, error)
+                console.error(t('mcpManager.createAssociationFailed', { account: account.account }), error)
               }
             }
           }
@@ -103,11 +105,11 @@ const MCPManagerModal = memo(
           setSelectedAccounts([])
           setIsCreateModalOpen(false)
           setNewKeyName('')
-          message.success('MCP Key创建成功！')
+          message.success(t('mcpManager.createSuccess'))
           fetchMCPKeys() // 刷新列表
         }
         catch (error) {
-          message.error('创建MCP Key失败')
+          message.error(t('mcpManager.createKeyFailed'))
         }
         finally {
           setLoading(false)
@@ -116,22 +118,22 @@ const MCPManagerModal = memo(
 
       const handleCopyKey = (key: string) => {
         navigator.clipboard.writeText(key)
-        message.success('Key已复制到剪贴板')
+        message.success(t('mcpManager.keyCopied'))
       }
 
       const handleDeleteKey = async (key: string) => {
         try {
           const res = await apiDeleteMCPKey(key)
           if (res?.code === 0) {
-            message.success('MCP Key已删除')
+            message.success(t('mcpManager.deleteSuccess'))
             fetchMCPKeys() // 刷新列表
           }
           else {
-            message.error('删除MCP Key失败')
+            message.error(t('mcpManager.deleteFailed'))
           }
         }
         catch (error) {
-          message.error('删除MCP Key失败')
+          message.error(t('mcpManager.deleteFailed'))
         }
       }
 
@@ -146,7 +148,7 @@ const MCPManagerModal = memo(
             title={(
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <KeyOutlined style={{ color: '#625BF2' }} />
-                MCP 管理器
+                {t('mcpManager.title')}
               </div>
             )}
             open={open}
@@ -163,7 +165,7 @@ const MCPManagerModal = memo(
                 className={styles.createButton}
                 loading={loading}
               >
-                创建新Key
+                {t('mcpManager.createNewKey')}
               </Button>
             </div>
 
@@ -173,8 +175,8 @@ const MCPManagerModal = memo(
                     <div className="emptyIcon">
                       <KeyOutlined />
                     </div>
-                    <div className="emptyText">暂无MCP Key</div>
-                    <div className="emptyDesc">点击上方按钮创建您的第一个MCP Key</div>
+                    <div className="emptyText">{t('mcpManager.noKeys')}</div>
+                    <div className="emptyDesc">{t('mcpManager.noKeysDesc')}</div>
                   </div>
                 )
               : (
@@ -192,7 +194,7 @@ const MCPManagerModal = memo(
                               icon={<CopyOutlined />}
                               onClick={() => handleCopyKey(item.key)}
                             >
-                              复制
+                              {t('mcpManager.copy')}
                             </Button>,
                             <Button
                               key="detail"
@@ -203,7 +205,7 @@ const MCPManagerModal = memo(
                                 setShowDetailModal(true)
                               }}
                             >
-                              详情
+                              {t('mcpManager.detail')}
                             </Button>,
                             <Button
                               key="delete"
@@ -213,7 +215,7 @@ const MCPManagerModal = memo(
                               onClick={() => handleDeleteKey(item.key)}
                               loading={loading}
                             >
-                              删除
+                              {t('mcpManager.delete')}
                             </Button>,
                           ]}
                         >
@@ -223,7 +225,7 @@ const MCPManagerModal = memo(
                               <Space>
                                 <span>{item.desc}</span>
                                 <Tag color={item.status === 1 ? 'green' : 'red'}>
-                                  {item.status === 1 ? '可用' : '不可用'}
+                                  {item.status === 1 ? t('mcpManager.available') : t('mcpManager.unavailable')}
                                 </Tag>
                               </Space>
                             )}
@@ -234,19 +236,19 @@ const MCPManagerModal = memo(
                                 </div>
                                 <div className="keyInfo">
                                   <div className="infoItem">
-                                    <span className="label">创建时间: </span>
+                                    <span className="label">{t('mcpManager.createdAt')}</span>
                                     <span>
                                       {' '}
                                       {dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                                     </span>
                                   </div>
                                   <div className="infoItem">
-                                    <span className="label">关联账户: </span>
+                                    <span className="label">{t('mcpManager.associatedAccounts')}</span>
                                     <span>
                                       {' '}
                                       {item.accountNum}
                                       {' '}
-                                      个
+                                      {t('mcpManager.accountUnit')}
                                     </span>
                                   </div>
                                 </div>
@@ -265,7 +267,7 @@ const MCPManagerModal = memo(
                           total={total}
                           showSizeChanger
                           showQuickJumper
-                          showTotal={(total, range) => `第 ${range[0]}-${range[1]} 条，共 ${total} 条`}
+                          showTotal={(total, range) => t('mcpManager.pagination', { start: range[0], end: range[1], total })}
                           onChange={(page, size) => {
                             setCurrentPage(page)
                             setPageSize(size)
@@ -278,7 +280,7 @@ const MCPManagerModal = memo(
           </Modal>
 
           <Modal
-            title="创建MCP Key"
+            title={t('mcpManager.createModal.title')}
             open={isCreateModalOpen}
             onCancel={() => {
               setIsCreateModalOpen(false)
@@ -294,39 +296,36 @@ const MCPManagerModal = memo(
               layout="vertical"
               onFinish={(values) => {
                 if (selectedAccounts.length === 0) {
-                  message.warning('请选择至少一个账户')
+                  message.warning(t('mcpManager.createModal.selectAccountsRequired'))
                   return
                 }
                 handleAccountConfirm(selectedAccounts)
               }}
             >
               <Form.Item
-                label="Key名称"
+                label={t('mcpManager.createModal.keyName')}
                 name="name"
-                rules={[{ required: true, message: '请输入Key名称' }]}
+                rules={[{ required: true, message: t('mcpManager.createModal.keyNameRequired') }]}
               >
                 <Input
-                  placeholder="请输入Key名称"
+                  placeholder={t('mcpManager.createModal.keyNamePlaceholder')}
                   value={newKeyName}
                   onChange={e => setNewKeyName(e.target.value)}
                 />
               </Form.Item>
 
-              <Form.Item label="选择账户">
+              <Form.Item label={t('mcpManager.createModal.selectAccounts')}>
                 <div style={{ minHeight: 100, border: '1px dashed #d9d9d9', padding: 16, borderRadius: 6 }}>
                   {selectedAccounts.length === 0
                     ? (
                         <div style={{ textAlign: 'center', color: '#999' }}>
-                          请选择要关联的账户
+                          {t('mcpManager.createModal.selectAccountsPlaceholder')}
                         </div>
                       )
                     : (
                         <div>
                           <div style={{ marginBottom: 8, fontWeight: 500 }}>
-                            已选择
-                            {selectedAccounts.length}
-                            {' '}
-                            个账户:
+                            {t('mcpManager.createModal.selectedCount', { count: selectedAccounts.length })}
                           </div>
                           {selectedAccounts.map(account => (
                             <Tag key={account.id} style={{ marginBottom: 4 }}>
@@ -342,7 +341,7 @@ const MCPManagerModal = memo(
                     }}
                     style={{ marginTop: 8 }}
                   >
-                    选择账户
+                    {t('mcpManager.createModal.selectAccountsButton')}
                   </Button>
                 </div>
               </Form.Item>
@@ -354,7 +353,7 @@ const MCPManagerModal = memo(
                     htmlType="submit"
                     loading={loading}
                   >
-                    创建
+                    {t('mcpManager.createModal.create')}
                   </Button>
                   <Button
                     onClick={() => {
@@ -364,7 +363,7 @@ const MCPManagerModal = memo(
                       createForm.resetFields()
                     }}
                   >
-                    取消
+                    {t('mcpManager.createModal.cancel')}
                   </Button>
                 </Space>
               </Form.Item>

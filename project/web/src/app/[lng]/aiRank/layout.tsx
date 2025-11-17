@@ -4,33 +4,31 @@ import Icon from '@ant-design/icons'
 import { Menu } from 'antd'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useTransClient } from '@/app/i18n/client'
 import { removeLocalePrefix } from '@/app/layout/layout.utils'
 import styles from './aiRank.module.scss'
 import Ranking from './svgs/ranking.svg'
 
 type MenuItem = Required<MenuProps>['items'][number]
 
-const items: MenuItem[] = [
-  {
-    key: '/aiRank/aiRanking',
-    label: 'AI工具排行榜',
-    icon: <Icon component={Ranking} />,
-  },
-].map((v) => {
-  // @ts-ignore
-  v.label = <span title={v.label}>{v.label}</span>
-  return v
-})
-
 export default function AiRankLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const { t } = useTransClient('aiRank')
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const [currChooseRoute, setCurrChooseRoute] = useState<string>()
+
+  const items: MenuItem[] = [
+    {
+      key: '/aiRank/aiRanking',
+      label: <span title={t('menu.aiToolRanking')}>{t('menu.aiToolRanking')}</span>,
+      icon: <Icon component={Ranking} />,
+    },
+  ]
 
   useEffect(() => {
     setCurrChooseRoute(removeLocalePrefix(pathname))
