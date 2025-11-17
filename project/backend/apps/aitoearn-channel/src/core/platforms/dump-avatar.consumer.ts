@@ -69,8 +69,8 @@ export class DumpAvatarConsumer extends WorkerHost implements OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    this.logger.log('PostPublishConsumer is being destroyed, closing worker...')
+    this.logger.log('DumpAvatarConsumer is being destroyed, closing worker...')
     await this.worker.close()
-    this.logger.log('PostPublishConsumer closed successfully')
+    this.logger.log('DumpAvatarConsumer closed successfully')
   }
 }
