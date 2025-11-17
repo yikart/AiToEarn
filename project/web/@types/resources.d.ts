@@ -1204,10 +1204,6 @@ interface Resources {
     verificationCodePlaceholder: '请输入邮箱中的验证码'
     resetEmailSent: '重置邮件已发送，请查收'
     sendEmailFailed: '发送邮件失败'
-    registerAccount: '注册账号'
-    register: '注册'
-    alreadyHaveAccount: '已有账号？去登录'
-    passwordMismatch: '两次输入的密码不一致'
   }
   'material': {
     mediaManagement: {
@@ -2141,7 +2137,6 @@ interface Resources {
     subscription: '订阅'
     quantity: '数量'
     orderExpired: '已过期'
-    unknownStatus: '状态'
     cancelTime: '取消时间'
     trialEndTime: '试用结束时间'
     willCancelAtPeriodEnd: '将于期末取消'
@@ -2606,49 +2601,6 @@ interface Resources {
       description: '请选择要用于发布任务的账号'
       accountId: '账号ID'
       redirectingToAccounts: '正在跳转到账户页面，请添加频道账号'
-      nickname: '昵称'
-    }
-    draft: {
-      selectDraft: '选择草稿：'
-      taskDraft: '任务草稿'
-      myDraft: '我的草稿'
-      reselect: '重新选择'
-      noTitle: '无标题'
-      noDescription: '无描述'
-      noDrafts: '暂无草稿素材'
-      pleaseSelectDraft: '请选择一个草稿'
-      pleaseSelectDraftMaterial: '请先选择一个草稿素材'
-    }
-    progress: {
-      acceptingTask: '正在接受任务...'
-      publishingTask: '正在发布任务...'
-      submittingTask: '正在提交任务...'
-      completingTask: '正在完成任务...'
-      taskCompleted: '任务完成'
-    }
-    taskStatuses: {
-      pending: '任务待完成'
-      completed: '任务已完成'
-      pendingComplete: '已完成'
-      doingWait: '待完成'
-    }
-    accountAvatar: '账号头像'
-    timeRemaining: {
-      minutesLater: '{{minutes}}分钟后'
-      hoursLater: '{{hours}}小时后'
-      daysLater: '{{days}}天后'
-    }
-    errors: {
-      getMaterialListFailed: '获取素材列表失败'
-      pleaseSelectDraftMaterial: '请选择一个草稿素材'
-      taskProcessFailed: '任务处理失败'
-    }
-    steps: {
-      acceptingTask: '正在接受任务...'
-      publishingTask: '正在发布任务...'
-      submittingTask: '正在提交任务...'
-      completingTask: '正在完成任务...'
-      taskCompleted: '任务完成'
     }
   }
   'translation': {

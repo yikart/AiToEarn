@@ -80,7 +80,6 @@
   "subscription": "Subscription",
   "quantity": "Quantity",
   "orderExpired": "Expired",
-  "unknownStatus": "Status",
   "cancelTime": "Cancel Time",
   "trialEndTime": "Trial End Time",
   "willCancelAtPeriodEnd": "Will cancel at period end",

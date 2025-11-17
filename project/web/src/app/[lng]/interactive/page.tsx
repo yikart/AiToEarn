@@ -526,11 +526,11 @@ export default function InteractivePage() {
         setTimeout(() => replyInputRef.current?.focus?.(), 0)
       }
       else {
-        message.warning(t('ui.noContent' as any))
+        message.warning(t('ui.noContent' as any) || '暂无AI建议')
       }
     }
     catch (e) {
-      message.error(t('ui.requestFailed' as any))
+      message.error(t('ui.requestFailed' as any) || '请求失败')
     }
     finally {
       setAiSuggestLoading(false)

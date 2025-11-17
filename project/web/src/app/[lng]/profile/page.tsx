@@ -936,7 +936,7 @@ export default function ProfilePage() {
                   [OrderStatus.OPEN]: { color: 'orange', text: t('waitingForPayment') },
                   [OrderStatus.EXPIRED]: { color: 'red', text: t('orderExpired' as any) },
                 }
-                const config = statusMap[currentOrderDetail.status] || { color: 'default', text: `${t('unknownStatus')}${currentOrderDetail.status}` }
+                const config = statusMap[currentOrderDetail.status] || { color: 'default', text: `状态${currentOrderDetail.status}` }
                 return <span style={{ color: config.color, fontWeight: 'bold' }}>{config.text}</span>
               })()}
             </Descriptions.Item>
