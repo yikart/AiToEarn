@@ -15,6 +15,7 @@ import {
   PointsRecordSchema,
 } from './points-record.schema'
 import { PublishDayInfo, PublishDayInfoSchema } from './publishDayInfo.schema'
+import { PublishedPost, PublishedPostSchema } from './published-post.schema'
 import { PublishInfo, PublishInfoSchema } from './publishInfo.schema'
 import { PublishRecord, PublishRecordSchema } from './publishRecord.schema'
 import {
@@ -37,6 +38,7 @@ export * from './notification.schema'
 export * from './points-record.schema'
 export * from './points-record.schema'
 export * from './publishDayInfo.schema'
+export * from './published-post.schema'
 export * from './publishInfo.schema'
 export * from './publishRecord.schema'
 export * from './user.schema'
@@ -59,4 +61,5 @@ export const schemas = [
   { name: PublishDayInfo.name, schema: PublishDayInfoSchema },
   { name: PublishInfo.name, schema: PublishInfoSchema },
   { name: PublishRecord.name, schema: PublishRecordSchema },
+  { name: PublishedPost.name, schema: PublishedPostSchema },
 ] as const
