@@ -1,4 +1,4 @@
-import { PostsResponseVo } from '@yikart/common'
+import { PostsResponseVo, PostVo } from '@yikart/common'
 import { KeysetPagination, OffsetPagination } from './engagement.dto'
 
 /**
@@ -56,6 +56,20 @@ export interface PublishCommentResponse {
  * @template T The type of comment data returned by the platform
  */
 export interface EngagementProvider {
+  /**
+   * Fetches meta post detail
+   * @param platform - The platform
+   * @param postId - The post ID
+   * @param userId - The user ID
+   * @returns Promise resolving to posts response
+   */
+  getMetaPostDetail: (accountId: string, postId: string) => Promise<PostVo>
+  /**
+   * Fetches user posts
+   * @param accountId - The account ID
+   * @param pagination - The pagination parameters
+   * @returns Promise resolving to posts response
+   */
   fetchUserPosts: (accountId: string, pagination: KeysetPagination | OffsetPagination | null) => Promise<PostsResponseVo>
   /**
    * Fetches comments on a specific post

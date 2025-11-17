@@ -34,6 +34,8 @@ export class QueueService {
     private engagementTaskDistributionQueue: Queue,
     @InjectQueue(QueueName.EngagementReplyToComment)
     private engagementReplyToCommentQueue: Queue,
+    @InjectQueue(QueueName.DumpSocialMediaAvatar)
+    private dumpSocialMediaAvatarQueue: Queue,
   ) {
     // 从配置中读取默认的 job options
     this.defaultOptions = config.jobOptions || {
@@ -178,5 +180,12 @@ export class QueueService {
     jobId: string,
   ): Promise<Job<EngagementReplyToCommentData> | undefined> {
     return await this.engagementReplyToCommentQueue.getJob(jobId)
+  }
+
+  async addDumpSocialMediaAvatarJob(data: { accountId: string }, options?: JobsOptions) {
+    return await this.dumpSocialMediaAvatarQueue.add('dump-social-avatar', data, {
+      ...this.defaultOptions,
+      ...options,
+    })
   }
 }

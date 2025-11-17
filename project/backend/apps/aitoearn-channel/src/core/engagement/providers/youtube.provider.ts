@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { PostsResponseVo } from '@yikart/common'
+import { PostsResponseVo, PostVo } from '@yikart/common'
 import { YoutubeService } from '../../../core/platforms/youtube/youtube.service'
 import { KeysetPagination, OffsetPagination } from '../engagement.dto'
 import { EngagementComment, EngagementProvider, FetchPostCommentsResponse, PublishCommentResponse } from '../engagement.interface'
@@ -19,6 +19,25 @@ export class YoutubeEngagementProvider implements EngagementProvider {
         before: '',
         after: '',
       },
+    }
+  }
+
+  async getMetaPostDetail(_accountId: string, _postId: string): Promise<PostVo> {
+    return {
+      id: '',
+      platform: '',
+      title: '',
+      content: '',
+      medias: [],
+      permalink: '',
+      publishTime: 0,
+      viewCount: 0,
+      commentCount: 0,
+      likeCount: 0,
+      shareCount: 0,
+      clickCount: 0,
+      impressionCount: 0,
+      favoriteCount: 0,
     }
   }
 

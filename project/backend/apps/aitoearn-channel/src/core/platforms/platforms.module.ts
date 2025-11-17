@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { BilibiliModule } from './bilibili/bilibili.module'
+import { DumpAvatarConsumer } from './dump-avatar.consumer'
 import { KwaiModule } from './kwai/kwai.module'
 import { MetaModule } from './meta/meta.module'
 import { PinterestModule } from './pinterest/pinterest.module'
@@ -22,7 +23,7 @@ import { YoutubeModule } from './youtube/youtube.module'
     YoutubeModule,
   ],
   controllers: [PlatformController],
-  providers: [PlatformService],
+  providers: [PlatformService, DumpAvatarConsumer],
   exports: [],
 })
 export class PlatModule {}

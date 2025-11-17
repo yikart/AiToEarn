@@ -2,7 +2,7 @@ import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 import { PostCategory, PostMediaStatus, PostSubCategory } from '../../../libs/database/schema/postMediaContainer.schema'
 
-export const PostMediaContainer = z.object({
+export const MediaContainer = z.object({
   publishId: z.string().describe('发布任务ID'),
   userId: z.string().describe('用户ID'),
   jobId: z.string().describe('任务ID'),
@@ -15,4 +15,4 @@ export const PostMediaContainer = z.object({
   option: z.any().optional(),
 })
 
-export class CreatePostMediaContainerDto extends createZodDto(PostMediaContainer) {}
+export class CreateMediaContainerDto extends createZodDto(MediaContainer) {}

@@ -6,8 +6,8 @@
  * @Description: 文件存储
  */
 import { Global, Module } from '@nestjs/common'
+import { S3Module } from '@yikart/aws-s3'
 import { config } from '../../config'
-import { S3Module } from '../../libs/aws-s3/s3.module'
 import { FileService } from './file.service'
 
 @Global()

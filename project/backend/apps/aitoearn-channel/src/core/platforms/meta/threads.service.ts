@@ -8,6 +8,7 @@ import {
   ThreadsObjectCommentsRequest,
   ThreadsObjectCommentsResponse,
   ThreadsObjectInfo,
+  ThreadsPostItem,
   ThreadsPostResponse,
   ThreadsPostsRequest,
   ThreadsPostsResponse,
@@ -171,6 +172,23 @@ export class ThreadsService extends MetaBaseService {
     return await this.threadsAPIService.getAccountAllPosts(
       credential.user_id,
       credential.access_token,
+      query,
+    )
+  }
+
+  async getPostDetail(
+    accountId: string,
+    postId: string,
+    query: ThreadsPostsRequest,
+  ): Promise<ThreadsPostItem | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.threadsAPIService.getPostDetail(
+      credential.access_token,
+      postId,
       query,
     )
   }

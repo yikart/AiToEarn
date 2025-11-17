@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
+import { S3Service } from '@yikart/aws-s3'
 import * as mime from 'mime-types'
 import moment from 'moment'
 import { v4 as uuidv4 } from 'uuid'
 import { config } from '../../config'
-import { S3Service } from '../../libs/aws-s3/s3.service'
 
 @Injectable()
 export class FileService {
@@ -46,10 +46,9 @@ export class FileService {
       permanent,
     })
     const filePath = `${newPath}/${newFileName}.${mime.extension(file.mimetype)}`
-    const res = await this.s3Service.uploadFile(
+    const res = await this.s3Service.putObject(
       filePath,
       file.buffer,
-      file.mimetype,
     )
 
     return res
@@ -73,13 +72,12 @@ export class FileService {
   ): Promise<string> {
     const { path, permanent, fileType } = option
     const objectName = `${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${moment().format('YYYYMM')}/${uuidv4()}.${fileType}`}`
-    const res = await this.s3Service.uploadFile(
+    const res = await this.s3Service.putObject(
       objectName,
       buffer,
-      `application/${fileType}`,
     )
 
-    return res.key
+    return res.path
   }
 
   /**
@@ -106,13 +104,12 @@ export class FileService {
     const fileType = mime.extension(contentType) || 'jpg'
     const objectName = `${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${moment().format('YYYYMM')}/${uuidv4()}.${fileType}`}`
 
-    const res = await this.s3Service.uploadFile(
+    const res = await this.s3Service.putObject(
       objectName,
       buffer,
-      contentType,
     )
 
-    return res.key
+    return res.path
   }
 
   /**
@@ -189,6 +186,6 @@ export class FileService {
   filePathToUrl(url: string): string {
     if (url.startsWith('http'))
       return url
-    return `${config.awsS3.hostUrl}/${url}`
+    return `${config.awsS3.endpoint}/${url}`
   }
 }

@@ -10,9 +10,9 @@ import {
   PublishTask,
 } from '../../../libs/database/schema/publishTask.schema'
 import { PublishRecordService } from '../../account/publish-record.service'
+import { MediaStagingService } from '../media-staging.service'
 import { PublishingException } from '../publishing.exception'
 import { MediaProcessingStatus, MediaProcessingStatusResult, PublishingTaskResult } from '../publishing.interface'
-import { PostMediaContainerService } from './container.service'
 
 @Injectable()
 export abstract class PublishService {
@@ -31,8 +31,8 @@ export abstract class PublishService {
   @Inject(PublishRecordService)
   protected readonly publishRecordService: PublishRecordService
 
-  @Inject(PostMediaContainerService)
-  protected readonly postMediaContainerService: PostMediaContainerService
+  @Inject(MediaStagingService)
+  protected readonly mediaStagingService: MediaStagingService
 
   constructor() {}
 
@@ -146,7 +146,7 @@ export abstract class PublishService {
     taskId: string,
     status: PostMediaStatus = PostMediaStatus.CREATED,
   ): Promise<void> {
-    await this.postMediaContainerService.createMetaPostMedia({
+    await this.mediaStagingService.createMediaContainer({
       jobId: publishTask.queueId,
       accountId: publishTask.accountId,
       publishId: publishTask.id,
@@ -183,7 +183,7 @@ export abstract class PublishService {
   ): Promise<MediaProcessingStatusResult> {
     const mediasStatus: MediaProcessingStatus[] = []
     let hasFailed = false
-    const medias = await this.postMediaContainerService.getContainers(
+    const medias = await this.mediaStagingService.getMediaContainers(
       task.id,
       task.queueId,
     )
@@ -210,7 +210,7 @@ export abstract class PublishService {
         status = PostMediaStatus.FINISHED
         completedCount++
       }
-      await this.postMediaContainerService.updateContainer(media.id, {
+      await this.mediaStagingService.updateMediaContainer(media.id, {
         status,
       })
       mediasStatus.push({ id: media.id, status, taskId: media.taskId, category: media.category })

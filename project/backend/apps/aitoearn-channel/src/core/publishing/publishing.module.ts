@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common'
 import { MongooseModule } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
 import { Account, AccountSchema } from '../../libs/database/schema/account.schema'
+import { OAuth2Credential, OAuth2CredentialSchema } from '../../libs/database/schema/oauth2Credential.schema'
 import {
   PostMediaContainer,
   PostMediaContainerSchema,
@@ -20,8 +21,10 @@ import { WxPlatModule } from '../platforms/wx-plat/wx-plat.module'
 import { YoutubeModule } from '../platforms/youtube/youtube.module'
 import { FinalizePublishPostConsumer } from './consumers/finalize-publish.consumer'
 import { ImmediatePublishPostConsumer } from './consumers/immediate-publish.consumer'
+import { CredentialInvalidationService } from './credential-invalidation.service'
+import { PublishingErrorHandler } from './error-handler.service'
+import { MediaStagingService } from './media-staging.service'
 import { BilibiliPubService } from './providers/bilibili.service'
-import { PostMediaContainerService } from './providers/container.service'
 import { FacebookPublishService } from './providers/facebook.service'
 import { InstagramPublishService } from './providers/instgram.service'
 import { kwaiPubService } from './providers/kwai.service'
@@ -42,6 +45,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
       { name: Account.name, schema: AccountSchema },
       { name: PublishTask.name, schema: PublishTaskSchema },
       { name: PostMediaContainer.name, schema: PostMediaContainerSchema },
+      { name: OAuth2Credential.name, schema: OAuth2CredentialSchema },
     ]),
     BilibiliModule,
     PinterestModule,
@@ -54,7 +58,9 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     PinterestModule,
   ],
   providers: [
-    PostMediaContainerService,
+    CredentialInvalidationService,
+    PublishingErrorHandler,
+    MediaStagingService,
     PublishingService,
     ImmediatePublishPostConsumer,
     FinalizePublishPostConsumer,
@@ -70,6 +76,8 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     LinkedinPublishService,
     TwitterPubService,
     EnqueuePublishingTaskScheduler,
+    CredentialInvalidationService,
+    PublishingErrorHandler,
     {
       provide: 'PUBLISHING_PROVIDERS',
       useFactory: (

@@ -10,6 +10,7 @@ export const InstagramOperation = {
   GET_ACCOUNT_INFO: 'get_account_info',
   GET_USER_PROFILE: 'get_user_profile',
   GET_USER_POSTS: 'get_user_posts',
+  GET_POST_DETAIL: 'get_post_detail',
   FETCH_POST_COMMENTS: 'fetch_post_comments',
   FETCH_COMMENT_REPLIES: 'fetch_comment_replies',
   PUBLISH_COMMENT: 'publish_comment',

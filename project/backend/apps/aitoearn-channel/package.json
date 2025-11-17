@@ -26,6 +26,7 @@
     "@yikart/aitoearn-server-client": "workspace:*",
     "@yikart/common": "workspace:*",
     "@yikart/redis": "workspace:*",
+    "@yikart/aws-s3": "workspace:*",
     "ali-oss": "^6.23.0",
     "axios": "^1.9.0",
     "bullmq": "^5.56.0",
