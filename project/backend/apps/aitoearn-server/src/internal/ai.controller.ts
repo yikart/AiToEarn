@@ -11,7 +11,7 @@ import { DashscopeTaskStatusResponseVo, DashscopeVideoGenerationResponseVo, Fire
 import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/core/chat'
 import { AsyncTaskResponseVo, TaskStatusResponseVo } from '../ai/core/image'
 import { ModelsConfigDto, ModelsConfigService, ModelsConfigVo } from '../ai/core/models-config'
-import { AdminFireflyCardDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto, DashscopeStatusRequestDto, DashscopeText2VideoRequestDto } from './dto/ai.dto'
+import { AdminFireflyCardDto, AdminImageEditDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto, DashscopeStatusRequestDto, DashscopeText2VideoRequestDto } from './dto/ai.dto'
 
 @ApiTags('OpenSource/Internal/Ai')
 @Controller('internal')
@@ -72,6 +72,29 @@ export class AiController {
     @Body() body: AdminImageGenerationDto,
   ): Promise<AsyncTaskResponseVo> {
     const response = await this.aiService.userImageGenerationAsync(body)
+    return AsyncTaskResponseVo.create(response)
+  }
+
+  @ApiDoc({
+    summary: 'Get Image Edit Models',
+  })
+  @Post('ai/models/image/edit')
+  async getImageEditModels(@Body() body: {
+    userId: string
+    userType: UserType
+  }) {
+    const response = await this.aiService.getImageEditModels(body)
+    return response
+  }
+
+  @ApiDoc({
+    summary: 'Edit AI Image Asynchronously',
+    body: AdminImageEditDto.schema,
+    response: AsyncTaskResponseVo,
+  })
+  @Post('ai/image/edit/async')
+  async editImageAsync(@Body() body: AdminImageEditDto): Promise<AsyncTaskResponseVo> {
+    const response = await this.aiService.userImageEditAsync(body)
     return AsyncTaskResponseVo.create(response)
   }
 

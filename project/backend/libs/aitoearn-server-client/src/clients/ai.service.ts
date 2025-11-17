@@ -10,12 +10,14 @@ import {
   DashscopeText2VideoRequestDto,
   DashscopeVideoGenerationResponseVo,
   FireflycardResponseVo,
+  ImageEditModelParamsVo,
   ImageResponseVo,
   ListVideoTasksResponseVo,
   ModelsConfigDto,
   ModelsConfigVo,
   TaskStatusResponseVo,
   UserChatCompletionDto,
+  UserImageEditDto,
   UserImageGenerationDto,
   UserVideoGenerationRequestDto,
   VideoGenerationModelParamsVo,
@@ -245,6 +247,36 @@ export class AiService extends BaseService {
       url,
       config,
     )
+    return res
+  }
+
+  async getImageEditModels(data: {
+    userId: string
+    userType: UserType
+  }): Promise<ImageEditModelParamsVo[]> {
+    const url = `/internal/ai/models/image/edit`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<ImageEditModelParamsVo[]>(
+      url,
+      config,
+    )
+    return res
+  }
+
+  async editImageAsync(data: UserImageEditDto): Promise<AsyncTaskResponseVo> {
+    const url = `/internal/ai/image/edit/async`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    const res = await this.request<AsyncTaskResponseVo>(
+      url,
+      config,
+    )
+
     return res
   }
 }
