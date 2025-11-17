@@ -18,9 +18,9 @@ export class AiService {
   ) { }
 
   /**
-   * 用户AI聊天
-   * @param request 聊天请求参数
-   * @returns AI聊天响应
+   * User AI chat
+   * @param request Chat request parameters
+   * @returns AI chat response
    */
   async userAiChat(request: UserChatCompletionDto) {
     const response = await this.chatService.userChatCompletion(request)
@@ -28,9 +28,9 @@ export class AiService {
   }
 
   /**
-   * 获取用户AI使用日志
-   * @param request 日志查询请求参数
-   * @returns 用户日志响应
+   * Get user AI usage logs
+   * @param request Log query request parameters
+   * @returns User log response
    */
   async getUserLogs(request: LogListQueryDto) {
     const [list, total] = await this.logsService.getLogList(request)
@@ -38,9 +38,9 @@ export class AiService {
   }
 
   /**
-   * 用户图片生成
-   * @param request 图片生成请求参数
-   * @returns 图片生成响应
+   * User image generation
+   * @param request Image generation request parameters
+   * @returns Image generation response
    */
   async userImageGeneration(request: UserImageGenerationDto) {
     const response = await this.imageService.userGeneration(request)
@@ -48,9 +48,9 @@ export class AiService {
   }
 
   /**
-   * 用户图片编辑
-   * @param request 图片编辑请求参数
-   * @returns 图片编辑响应
+   * User image editing
+   * @param request Image editing request parameters
+   * @returns Image editing response
    */
   async userImageEdit(request: UserImageEditDto) {
     const response = await this.imageService.userEdit(request)
@@ -58,9 +58,9 @@ export class AiService {
   }
 
   /**
-   * 异步用户图片生成
-   * @param request 图片生成请求参数
-   * @returns 异步任务响应
+   * Async user image generation
+   * @param request Image generation request parameters
+   * @returns Async task response
    */
   async userImageGenerationAsync(request: UserImageGenerationDto) {
     const response = await this.imageService.userGenerationAsync(request)
@@ -68,9 +68,9 @@ export class AiService {
   }
 
   /**
-   * 异步用户图片编辑
-   * @param request 图片编辑请求参数
-   * @returns 异步任务响应
+   * Async user image editing
+   * @param request Image editing request parameters
+   * @returns Async task response
    */
   async userImageEditAsync(request: UserImageEditDto) {
     const response = await this.imageService.userEditAsync(request)
@@ -78,9 +78,9 @@ export class AiService {
   }
 
   /**
-   * 异步Markdown转卡片图片
-   * @param request MD2Card请求参数
-   * @returns 异步任务响应
+   * Async Markdown to card image
+   * @param request MD2Card request parameters
+   * @returns Async task response
    */
   async generateMd2CardAsync(request: UserMd2CardDto) {
     const response = await this.imageService.userMd2CardAsync(request)
@@ -88,9 +88,9 @@ export class AiService {
   }
 
   /**
-   * 异步Fireflycard生成卡片图片
-   * @param request Fireflycard请求参数
-   * @returns 异步任务响应
+   * Async Fireflycard card image generation
+   * @param request Fireflycard request parameters
+   * @returns Async task response
    */
   async generateFireflycardAsync(request: UserFireflyCardDto) {
     const response = await this.imageService.userFireFlyCardAsync(request)
@@ -98,9 +98,9 @@ export class AiService {
   }
 
   /**
-   * 查询图片任务状态
-   * @param logId 任务日志ID
-   * @returns 任务状态响应
+   * Query image task status
+   * @param logId Task log ID
+   * @returns Task status response
    */
   async getImageTaskStatus(logId: string) {
     const response = await this.imageService.getTaskStatus(logId)
@@ -108,9 +108,9 @@ export class AiService {
   }
 
   /**
-   * 通用视频生成
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * General video generation
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async userVideoGeneration(request: UserVideoGenerationRequestDto) {
     const response = await this.videoService.userVideoGeneration(request)
@@ -118,9 +118,9 @@ export class AiService {
   }
 
   /**
-   * 查询视频任务状态
-   * @param request 视频任务查询请求参数
-   * @returns 视频任务状态响应
+   * Query video task status
+   * @param request Video task query request parameters
+   * @returns Video task status response
    */
   async getVideoTaskStatus(request: UserVideoTaskQueryDto) {
     const response = await this.videoService.getVideoTaskStatus(request)
@@ -128,9 +128,9 @@ export class AiService {
   }
 
   /**
-   * 查询视频任务状态
-   * @param request 视频任务查询请求参数
-   * @returns 视频任务状态响应
+   * Query video task status
+   * @param request Video task query request parameters
+   * @returns Video task status response
    */
   async listVideoTasks(request: UserListVideoTasksQueryDto) {
     const [list, total] = await this.videoService.listVideoTasks(request)
@@ -138,9 +138,9 @@ export class AiService {
   }
 
   /**
-   * 火山视频生成
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * Volcengine video generation
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async volcVideoGeneration(request: VolcengineGenerationRequestDto) {
     const response = await this.videoService.volcengineCreate(request)
@@ -148,9 +148,9 @@ export class AiService {
   }
 
   /**
-   * 火山视频生成
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * Volcengine video generation
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async volcVideoTaskStatus(request: VolcengineTaskQueryDto) {
     const response = await this.videoService.getVolcengineTask(request.userId, request.userType, request.taskId)
@@ -158,9 +158,9 @@ export class AiService {
   }
 
   /**
-   * 可灵文本到视频生成
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * Kling text to video generation
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async klingText2Video(request: KlingText2VideoRequestDto) {
     const response = await this.videoService.klingText2Video(request)
@@ -168,9 +168,9 @@ export class AiService {
   }
 
   /**
-   * 可灵图生视频
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * Kling image to video
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async klingImage2Video(request: KlingImage2VideoRequestDto) {
     const response = await this.videoService.klingImage2Video(request)
@@ -178,9 +178,9 @@ export class AiService {
   }
 
   /**
-   * 可灵多图生视频
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * Kling multi-image to video
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async klingMultiImage2Video(request: KlingMultiImage2VideoRequestDto) {
     const response = await this.videoService.klingMultiImage2Video(request)
@@ -188,9 +188,9 @@ export class AiService {
   }
 
   /**
-   * 可灵视频生成
-   * @param request 视频生成请求参数
-   * @returns 视频生成响应
+   * Kling video generation
+   * @param request Video generation request parameters
+   * @returns Video generation response
    */
   async getKlingTaskStatus(request: KlingTaskQueryDto) {
     const response = await this.videoService.getKlingTask(request.userId, request.userType, request.taskId)
@@ -198,9 +198,9 @@ export class AiService {
   }
 
   /**
-   * Markdown转卡片图片
-   * @param request MD2Card请求参数
-   * @returns MD2Card生成结果
+   * Markdown to card image
+   * @param request MD2Card request parameters
+   * @returns MD2Card generation result
    */
   async generateMd2Card(request: UserMd2CardDto) {
     const response = await this.imageService.userMd2Card(request)
@@ -208,9 +208,9 @@ export class AiService {
   }
 
   /**
-   * Fireflycard生成卡片图片
-   * @param request Fireflycard请求参数
-   * @returns Fireflycard生成结果
+   * Fireflycard card image generation
+   * @param request Fireflycard request parameters
+   * @returns Fireflycard generation result
    */
   async generateFireflycard(request: UserFireflyCardDto) {
     const response = await this.imageService.userFireFlyCard(request)
@@ -218,9 +218,9 @@ export class AiService {
   }
 
   /**
-   * 获取图片生成模型参数
-   * @param data 查询参数
-   * @returns 图片生成模型参数列表
+   * Get image generation model parameters
+   * @param data Query parameters
+   * @returns Image generation model parameters list
    */
   async getImageGenerationModels(data?: ImageGenerationModelsQueryDto) {
     const response = await this.imageService.generationModelConfig(data || {})
@@ -228,9 +228,9 @@ export class AiService {
   }
 
   /**
-   * 获取图片编辑模型参数
-   * @param data 查询参数
-   * @returns 图片编辑模型参数列表
+   * Get image editing model parameters
+   * @param data Query parameters
+   * @returns Image editing model parameters list
    */
   async getImageEditModels(data?: ImageEditModelsQueryDto) {
     const response = await this.imageService.editModelConfig(data || {})
@@ -238,9 +238,9 @@ export class AiService {
   }
 
   /**
-   * 获取视频生成模型参数
-   * @param data 查询参数
-   * @returns 视频生成模型参数列表
+   * Get video generation model parameters
+   * @param data Query parameters
+   * @returns Video generation model parameters list
    */
   async getVideoGenerationModels(data?: VideoGenerationModelsQueryDto) {
     const response = await this.videoService.getVideoGenerationModelParams(data || {})
@@ -248,9 +248,9 @@ export class AiService {
   }
 
   /**
-   * 获取对话模型参数
-   * @param data 查询参数
-   * @returns 对话模型参数列表
+   * Get chat model parameters
+   * @param data Query parameters
+   * @returns Chat model parameters list
    */
   async getChatModels(data?: ChatModelsQueryDto) {
     const response = await this.chatService.getChatModelConfig(data || {})
@@ -258,9 +258,9 @@ export class AiService {
   }
 
   /**
-   * Dashscope 文生视频
-   * @param request 文生视频请求参数
-   * @returns 视频生成响应
+   * Dashscope text to video
+   * @param request Text to video request parameters
+   * @returns Video generation response
    */
   async dashscopeText2Video(request: DashscopeText2VideoRequestDto) {
     const response = await this.videoService.dashscopeText2Video(request)
@@ -268,9 +268,9 @@ export class AiService {
   }
 
   /**
-   * Dashscope 图生视频
-   * @param request 图生视频请求参数
-   * @returns 视频生成响应
+   * Dashscope image to video
+   * @param request Image to video request parameters
+   * @returns Video generation response
    */
   async dashscopeImage2Video(request: DashscopeImage2VideoRequestDto) {
     const response = await this.videoService.dashscopeImage2Video(request)
@@ -278,9 +278,9 @@ export class AiService {
   }
 
   /**
-   * Dashscope 首尾帧生视频
-   * @param request 首尾帧生视频请求参数
-   * @returns 视频生成响应
+   * Dashscope key frame to video
+   * @param request Key frame to video request parameters
+   * @returns Video generation response
    */
   async dashscopeKeyFrame2Video(request: DashscopeKeyFrame2VideoRequestDto) {
     const response = await this.videoService.dashscopeKeyFrame2Video(request)
@@ -288,31 +288,20 @@ export class AiService {
   }
 
   /**
-   * 查询 Dashscope 任务状态
-   * @param request 任务查询请求参数
-   * @returns 任务状态响应
+   * Query Dashscope task status
+   * @param request Task query request parameters
+   * @returns Task status response
    */
   async getDashscopeTaskStatus(request: DashscopeTaskQueryDto) {
     const response = await this.videoService.getDashscopeTask(request.userId, request.userType, request.taskId)
     return DashscopeTaskStatusResponseVo.create(response)
   }
 
-  // 智能图片文案
-  async imgContentByAi(user: { userId: string, userType: UserType }, model: string, imgUrl: string, prompt: string, option: {
-    title?: string
-    desc?: string
-    max?: number
-    language?: string
-  }): Promise<string> {
+  // Intelligent image content generation
+  async imgContentByAi(user: { userId: string, userType: UserType }, model: string, imgUrl: string, prompt: string): Promise<string> {
     const { userId, userType } = user
 
-    const systemContent = `Generate copy based on the pictures and prompt words, as well as the reference titles and contents. Reply in ${option.language || 'English'}. The reply should not exceed ${option.max || 100} characters. Just return the copy.`
-    let text = `prompt${prompt}.`
-    if (option.title)
-      text += `Reference Title: ${option.title}`
-    if (option.desc)
-      text += `Reference description: ${option.desc}`
-
+    const systemContent = `Generate copy based on the pictures and prompt words, as well as the reference titles and contents. Just return the copy.`
     const request: UserChatCompletionDto = {
       userId,
       userType,
@@ -333,7 +322,7 @@ export class AiService {
             },
             {
               type: 'text',
-              text,
+              text: prompt,
             },
           ],
         },
@@ -350,21 +339,11 @@ export class AiService {
     }
   }
 
-  // 智能视频文案
-  async videoContentByAi(user: { userId: string, userType: UserType }, model: string, videoUrl: string, prompt: string, option: {
-    title?: string
-    desc?: string
-    max?: number
-    language?: string
-  }): Promise<string> {
+  // Intelligent video content generation
+  async videoContentByAi(user: { userId: string, userType: UserType }, model: string, videoUrl: string, prompt: string): Promise<string> {
     const { userId, userType } = user
 
-    const systemContent = `Generate copy based on the video and prompt words, as well as the reference titles and contents. Reply in ${option.language || 'English'}. The reply should not exceed ${option.max || 100} characters. Just return the copy.`
-    let text = `prompt${prompt}.`
-    if (option.title)
-      text += `Reference Title: ${option.title}`
-    if (option.desc)
-      text += `Reference description: ${option.desc}`
+    const systemContent = `Generate copy based on the video and prompt words, as well as the reference titles and contents. Just return the copy.`
 
     const request: UserChatCompletionDto = {
       userId,
@@ -386,7 +365,7 @@ export class AiService {
             },
             {
               type: 'text',
-              text,
+              text: prompt,
             },
           ],
         },
@@ -397,7 +376,7 @@ export class AiService {
     return res.content as string || ''
   }
 
-  // 根据图片返回文字内容
+  // Return text content based on image
   async getContentByAi(user: { userId: string, userType: UserType }, model: string, prompt: string, option: {
     coverUrl?: string
     title?: string
@@ -452,7 +431,7 @@ export class AiService {
     return res.content as string || ''
   }
 
-  // 根据图片返回文字内容
+  // Return text content based on image
   async getTitleByAi(user: { userId: string, userType: UserType }, model: string, desc: string, option: {
     title?: string
     max?: number

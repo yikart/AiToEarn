@@ -30,13 +30,9 @@ export const createMaterialTaskSchema = z.object({
   num: z.number().describe('生成数量'),
   aiModelTag: z.string().describe('AI模型tag'),
   prompt: z.string().describe('提示词'),
-  title: z.string().optional().describe('参考标题'),
-  desc: z.string().optional().describe('参考描述'),
   mediaGroups: z.array(z.string()).min(1).max(5).describe('媒体组ID列表'),
   coverGroup: z.string().describe('参考描述'),
   option: z.any().optional().describe('高级设置'),
-  textMax: z.number().optional().describe('最大文字数量'),
-  language: z.string().optional().describe('语言'),
   // type: z.enum([MaterialType.VIDEO, MaterialType.ARTICLE]).describe('草稿类型'),
   autoDeleteMedia: z.boolean().optional().describe('自动删除素材'),
 })

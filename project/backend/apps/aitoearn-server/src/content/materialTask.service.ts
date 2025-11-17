@@ -91,7 +91,7 @@ export class MaterialTaskService {
     const taskInfo = await this.getInfo(id)
     if (!taskInfo)
       throw new AppException(ResponseCode.MaterialTaskNotFound)
-    // 开始任务
+    // Start task
     await this.queueService.addMaterialGenerateJob({
       taskId: taskInfo.id,
     })
@@ -138,11 +138,7 @@ export class MaterialTaskService {
       coverGroup: inData.coverGroup,
       mediaGroups: inData.mediaGroups,
       option: inData.option,
-      title: inData.title,
-      desc: inData.desc,
       reNum: inData.num,
-      textMax: inData.textMax,
-      language: inData.language,
       autoDeleteMedia: inData.autoDeleteMedia,
     }
 
@@ -171,12 +167,6 @@ export class MaterialTaskService {
     type: MediaType,
     fileUrl: string,
     prompt: string,
-    option: {
-      title?: string
-      desc?: string
-      max?: number
-      language?: string
-    },
   ) {
     if (type === MediaType.IMG) {
       const res = await this.aiService.imgContentByAi(
@@ -184,7 +174,6 @@ export class MaterialTaskService {
         model,
         fileUrl,
         prompt,
-        option,
       )
       return res
     }
@@ -195,7 +184,6 @@ export class MaterialTaskService {
         model,
         fileUrl,
         prompt,
-        option,
       )
       return res
     }
@@ -287,12 +275,6 @@ export class MaterialTaskService {
         theOne.type,
         await buildUrl(config.awsS3.endpoint, theOne.url),
         taskInfo.aiModelTag,
-        {
-          title: taskInfo.title,
-          desc: taskInfo.desc,
-          max: taskInfo.textMax,
-          language: taskInfo.language,
-        },
       )
       if (!content) {
         res.status = -1
@@ -433,13 +415,10 @@ export class MaterialTaskService {
           taskInfo.prompt,
           {
             coverUrl: theOneCover.url,
-            title: taskInfo.title,
             desc: dbDesc,
-            max: taskInfo.textMax,
-            language: taskInfo.language,
           },
           theOneCover.url
-            ? await buildUrl(config.awsS3.endpoint, theOneCover.url)
+            ? buildUrl(config.awsS3.endpoint, theOneCover.url)
             : undefined,
         )
 
@@ -468,7 +447,7 @@ export class MaterialTaskService {
           return res
         }
 
-        // 更新数据库
+        // Update database
         const upDbRes = await this.materialService.updateInfo(
           newMaterial.id,
           updateData,
@@ -490,7 +469,7 @@ export class MaterialTaskService {
         const upRes = await this.update(taskInfo.id, taskInfo)
         if (!upRes) {
           res.status = -1
-          res.message = '更新内容失败'
+          res.message = 'Failed to update content'
           return res
         }
 
@@ -505,7 +484,7 @@ export class MaterialTaskService {
       }
     })()
 
-    // 使用Promise.race来实现超时控制
+    // Use Promise.race to implement timeout control
     try {
       const result = await Promise.race([mainTaskPromise, timeoutPromise])
       return result
