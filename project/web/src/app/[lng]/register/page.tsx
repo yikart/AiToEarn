@@ -15,18 +15,17 @@ export default function RegisterPage() {
       return
     }
     // TODO: 实现注册逻辑
-    console.log('注册:', { email, password })
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.box}>
-        <h1 className={styles.title}>注册账号</h1>
+        <h1 className={styles.title}>register account</h1>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
             <input
               type="email"
-              placeholder="邮箱"
+              placeholder="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               className={styles.input}
@@ -36,7 +35,7 @@ export default function RegisterPage() {
           <div className={styles.inputGroup}>
             <input
               type="password"
-              placeholder="密码"
+              placeholder="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               className={styles.input}
@@ -46,7 +45,7 @@ export default function RegisterPage() {
           <div className={styles.inputGroup}>
             <input
               type="password"
-              placeholder="确认密码"
+              placeholder="confirm password"
               value={confirmPassword}
               onChange={e => setConfirmPassword(e.target.value)}
               className={styles.input}
@@ -54,12 +53,12 @@ export default function RegisterPage() {
             />
           </div>
           <button type="submit" className={styles.submitButton}>
-            注册
+            register
           </button>
         </form>
         <div className={styles.links}>
           <Link href="/login" className={styles.link}>
-            已有账号？去登录
+            already have an account? login
           </Link>
         </div>
       </div>

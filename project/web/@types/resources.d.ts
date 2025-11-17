@@ -1416,6 +1416,7 @@ interface Resources {
       credits: '积分'
       getImageModelsFailed: '获取图片生成模型失败'
       getVideoModelsFailed: '获取视频生成模型失败'
+      videoLoadedSuccess: '视频已加载'
     }
   }
   'notification': {

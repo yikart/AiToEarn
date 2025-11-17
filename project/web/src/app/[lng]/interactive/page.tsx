@@ -672,7 +672,7 @@ export default function InteractivePage() {
                   //   key="ai-reply"
                   //   onClick={() => openAiModal(commentPost!.id, c.id)}
                   // >
-                  //   AI回复
+                  //   AI
                   // </a>,
                   ].filter(Boolean)}
                 >

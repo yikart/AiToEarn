@@ -18,6 +18,57 @@ import { defaultMarkdown, md2CardTemplates } from './md2card'
 const { TextArea } = Input
 const { Option } = Select
 
+// Helper function to determine if resolution is landscape or portrait
+const getResolutionOrientation = (resolution: string): 'landscape' | 'portrait' | 'square' => {
+  const match = resolution.match(/(\d+)[x*×](\d+)/)
+  if (!match)
+    return 'square'
+  const width = Number.parseInt(match[1])
+  const height = Number.parseInt(match[2])
+  if (width > height)
+    return 'landscape'
+  if (height > width)
+    return 'portrait'
+  return 'square'
+}
+
+// Resolution icon component
+const ResolutionIcon = ({ orientation }: { orientation: 'landscape' | 'portrait' | 'square' }) => {
+  const containerStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '28px',
+    marginRight: '8px',
+    verticalAlign: 'middle',
+  }
+
+  const iconStyle: React.CSSProperties = {
+    border: '2px solid currentColor',
+    borderRadius: '2px',
+  }
+
+  if (orientation === 'landscape') {
+    return (
+      <span style={containerStyle}>
+        <span style={{ ...iconStyle, width: '20px', height: '14px' }}></span>
+      </span>
+    )
+  }
+  if (orientation === 'portrait') {
+    return (
+      <span style={containerStyle}>
+        <span style={{ ...iconStyle, width: '14px', height: '20px' }}></span>
+      </span>
+    )
+  }
+  return (
+    <span style={containerStyle}>
+      <span style={{ ...iconStyle, width: '16px', height: '16px' }}></span>
+    </span>
+  )
+}
+
 // Sample image URL constants
 const SAMPLE_IMAGE_URLS = {
   shili21: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/shili/image-ai-sample-2-1.webp',
@@ -386,8 +437,6 @@ export default function AIGeneratePage() {
       const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
       const uploadTitle = modelName ? `${modelName} ${timeStr}` : timeStr
 
-      console.log('开始上传到默认组:', defaultGroupId, mediaUrl)
-
       const uploadRes: any = await createMedia({
         groupId: defaultGroupId,
         url: mediaUrl,
@@ -400,11 +449,9 @@ export default function AIGeneratePage() {
         // Mark as uploaded
         setUploadedContent(prev => new Set([...prev, mediaUrl]))
         message.success(mediaType === 'video' ? t('aiGenerate.videoUploadSuccess') : t('aiGenerate.uploadSuccess'))
-        console.log('上传成功')
       }
       else {
         message.error(mediaType === 'video' ? t('aiGenerate.videoUploadFailed') : t('aiGenerate.uploadFailed'))
-        console.log('上传失败:', uploadRes)
       }
     }
     catch (error) {
@@ -544,7 +591,7 @@ export default function AIGeneratePage() {
             percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100)
           }
           if (normalized === 'completed') {
-            const videoUrl = res.data?.data?.video_url
+            const videoUrl = video_url || res.data?.data?.video_url || res.data?.video_url
             setVideoResult(videoUrl)
             setVideoProgress(100)
             message.success(t('aiGenerate.videoGenerationSuccess'))
@@ -735,14 +782,12 @@ export default function AIGeneratePage() {
   }
 
   // Handle history item click
-  const handleHistoryItemClick = async (item: any) => {
+  const handleHistoryItemClick = (item: any) => {
     if (item.status === 'SUCCESS' && item.data?.video_url) {
       setVideoResult(item.data.video_url)
       setVideoStatus('completed')
       setVideoProgress(100)
-
-      // Auto upload to default media group
-      await autoUploadToDefaultGroup(item.data.video_url, 'video', item.model || 'Unknown Model', item.prompt || '')
+      message.success(t('aiGenerate.videoLoadedSuccess' as any) || 'Video loaded successfully')
     }
     else if (item.status === 'PROCESSING') {
       setVideoTaskId(item.task_id)
@@ -1283,7 +1328,10 @@ export default function AIGeneratePage() {
                                 const selectedModel = imageModels.find((m: any) => m.name === model)
                                 const sizes = selectedModel?.sizes || ['1024x1024']
                                 return sizes.map((sizeOption: string) => (
-                                  <Option key={sizeOption} value={sizeOption}>{sizeOption}</Option>
+                                  <Option key={sizeOption} value={sizeOption}>
+                                    <ResolutionIcon orientation={getResolutionOrientation(sizeOption)} />
+                                    {sizeOption}
+                                  </Option>
                                 ))
                               })()}
                             </Select>
@@ -1557,7 +1605,10 @@ export default function AIGeneratePage() {
                                 const selectedModel = imageEditModels.find((m: any) => m.name === imageEditModel)
                                 const sizes = selectedModel?.sizes || ['1024x1024']
                                 return sizes.map((size: string) => (
-                                  <Option key={size} value={size}>{size}</Option>
+                                  <Option key={size} value={size}>
+                                    <ResolutionIcon orientation={getResolutionOrientation(size)} />
+                                    {size}
+                                  </Option>
                                 ))
                               })()}
                             </Select>
@@ -1862,13 +1913,21 @@ export default function AIGeneratePage() {
                             if (selected?.channel === 'kling' && selected?.pricing) {
                               const modes = [...new Set(selected.pricing.map((p: any) => p.mode))] as string[]
                               return modes.map((mode: string) => (
-                                <Option key={mode} value={mode}>{mode}</Option>
+                                <Option key={mode} value={mode}>
+                                  <ResolutionIcon orientation={getResolutionOrientation(mode)} />
+                                  {mode}
+                                </Option>
                               ))
                             }
 
                             // Other models get from resolutions field
                             const sizes: string[] = selected?.resolutions || []
-                            return sizes.map(s => (<Option key={s} value={s}>{s}</Option>))
+                            return sizes.map(s => (
+                              <Option key={s} value={s}>
+                                <ResolutionIcon orientation={getResolutionOrientation(s)} />
+                                {s}
+                              </Option>
+                            ))
                           })()}
                         </Select>
 
@@ -2068,12 +2127,12 @@ export default function AIGeneratePage() {
                                   {videoProgress > 0 && videoProgress < 100 && (<Progress percent={videoProgress} status="active" />)}
                                 </div>
                               )}
-                              {/* {videoResult && (
+                              {videoResult && (
                         <div style={{ display:'flex', flexDirection:'column', gap:10 }}>
-                          <video src={getOssUrl(videoResult)} controls style={{ maxWidth:'100%', borderRadius:8 }} />
-                          <Button type="primary" onClick={()=>handleUploadToMediaGroup('video')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t('aiGenerate.uploadToMediaGroup')}</Button>
+                          <video src={getOssUrl(videoResult)} controls style={{ maxWidth:'100%', maxHeight:'400px', borderRadius:8 }} />
+                          {/* <Button type="primary" onClick={()=>handleUploadToMediaGroup('video')} icon={<UploadOutlined />} style={{ padding:'1px' }}>{t('aiGenerate.uploadToMediaGroup')}</Button> */}
                         </div>
-                      )} */}
+                      )}
                             </div>
                           )
                         : (
@@ -2215,7 +2274,6 @@ export default function AIGeneratePage() {
                                     width: '100%',
                                     borderRadius: 8,
                                     maxHeight: '200px',
-                                    objectFit: 'cover',
                                   }}
                                 />
                               </div>
