@@ -43,17 +43,18 @@ interface MediaGroup {
 }
 
 // 视频预览组件 - 由于 CORS 问题，直接显示预览框
-function VideoThumbnail({ videoUrl, className, onLoad }: {
+function VideoThumbnail({ videoUrl, className, onLoad, t }: {
   videoUrl: string
   className?: string
   onLoad?: (thumbnail: string) => void
+  t: (key: string) => string
 }) {
   // 直接显示视频预览框，不尝试加载视频（避免 CORS 问题）
   return (
     <div className={`${className} ${styles.videoPreview}`}>
       <div className={styles.videoPreviewContent}>
         <VideoCameraOutlined className={styles.videoPreviewIcon} />
-        <div className={styles.videoPreviewText}>视频预览</div>
+        <div className={styles.videoPreviewText}>{t('mediaManagement.videoPreview')}</div>
         <div className={styles.videoPreviewPlayButton}>
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
             <path d="M8 5v14l11-7z" fill="currentColor" />
@@ -213,6 +214,7 @@ export function MaterialPageCore() {
             <VideoThumbnail
               videoUrl={videoUrl}
               className={styles.coverImage}
+              t={t}
             />
             <div className={styles.videoTypeIcon}>
               <VideoCameraOutlined />
@@ -252,6 +254,7 @@ export function MaterialPageCore() {
             <VideoThumbnail
               videoUrl={videoUrl}
               className={styles.coverImage}
+              t={t}
             />
             <div className={styles.videoTypeIcon}>
               <VideoCameraOutlined />
@@ -289,6 +292,7 @@ export function MaterialPageCore() {
                   <VideoThumbnail
                     videoUrl={group.cover}
                     className={styles.coverImage}
+                    t={t}
                   />
                 </div>
               )
@@ -316,6 +320,7 @@ export function MaterialPageCore() {
             <VideoThumbnail
               videoUrl={getOssUrl(firstMedia.url)}
               className={styles.coverImage}
+              t={t}
             />
             <div className={styles.videoTypeIcon}>
               <VideoCameraOutlined />
