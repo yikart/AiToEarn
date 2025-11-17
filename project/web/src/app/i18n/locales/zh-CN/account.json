@@ -152,5 +152,37 @@
     "selected": "已选择",
     "accounts": "个账号",
     "deleteAccount": "删除账号"
+  },
+  "wechatBrowserTip": {
+    "clickCorner": "点击右上角的",
+    "dotsButton": "按钮",
+    "selectBrowser": "选择",
+    "openInBrowser": "在浏览器中打开"
+  },
+  "mobileDownloadTip": {
+    "welcomeTitle": "欢迎使用 AitoEarn",
+    "description": "为了获得完整体验，请在设备上下载 App",
+    "downloadButton": "下载 App"
+  },
+  "browserTip": {
+    "title": "请在浏览器中打开",
+    "description": "请点击右上角，通过浏览器打开",
+    "button": "我知道了"
+  },
+  "platformNames": {
+    "douyin": "抖音",
+    "xiaohongshu": "小红书"
+  },
+  "sidebar": {
+    "noAccounts": "暂无账户",
+    "noOnlineAccounts": "暂无在线账户",
+    "ipLocationTooltip": "IP: {{ip}}\n位置: {{location}}",
+    "moveUp": "上移",
+    "moveDown": "下移"
+  },
+  "mcpManager": {
+    "fetchKeysFailed": "获取MCP Key列表失败",
+    "createKeyFailed": "创建MCP Key失败",
+    "createAssociationFailed": "创建关联失败: {{account}}"
   }
 }

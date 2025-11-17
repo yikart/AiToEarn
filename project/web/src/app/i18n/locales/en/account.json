@@ -152,5 +152,37 @@
     "selected": "Selected",
     "accounts": "accounts",
     "deleteAccount": "Delete Accounts"
+  },
+  "wechatBrowserTip": {
+    "clickCorner": "Click the top-right corner's",
+    "dotsButton": "button",
+    "selectBrowser": "Select",
+    "openInBrowser": "Open in browser"
+  },
+  "mobileDownloadTip": {
+    "welcomeTitle": "Welcome to AitoEarn",
+    "description": "For a complete experience, please download the App on your device",
+    "downloadButton": "Download App"
+  },
+  "browserTip": {
+    "title": "Please open in browser",
+    "description": "Please click the top right corner to open with browser",
+    "button": "Got it"
+  },
+  "platformNames": {
+    "douyin": "Douyin",
+    "xiaohongshu": "Xiaohongshu"
+  },
+  "sidebar": {
+    "noAccounts": "No accounts",
+    "noOnlineAccounts": "No online accounts",
+    "ipLocationTooltip": "IP: {{ip}}\nLocation: {{location}}",
+    "moveUp": "Move up",
+    "moveDown": "Move down"
+  },
+  "mcpManager": {
+    "fetchKeysFailed": "Failed to fetch MCP keys",
+    "createKeyFailed": "Failed to create MCP key",
+    "createAssociationFailed": "Failed to create association: {{account}}"
   }
 }

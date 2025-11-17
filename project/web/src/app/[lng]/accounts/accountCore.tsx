@@ -157,15 +157,15 @@ export default function AccountPageCore({
     const lang = userStore.lang
     if (lang === 'zh-CN') {
       return {
-        title: '欢迎使用 AitoEarn',
-        desc: '为了获得完整体验，请在设备上下载 App',
-        cta: '下载 App',
+        title: t('mobileDownloadTip.welcomeTitle'),
+        desc: t('mobileDownloadTip.description'),
+        cta: t('mobileDownloadTip.downloadButton'),
       }
     }
     return {
-      title: 'Welcome to AitoEarn',
-      desc: 'To enjoy the full experience, please download the app on your device',
-      cta: 'Download App',
+      title: t('mobileDownloadTip.welcomeTitle'),
+      desc: t('mobileDownloadTip.description'),
+      cta: t('mobileDownloadTip.downloadButton'),
     }
   })()
 
@@ -173,15 +173,15 @@ export default function AccountPageCore({
     const lang = userStore.lang
     if (lang === 'zh-CN') {
       return {
-        title: '请在浏览器中打开',
-        desc: '请点击右上角，通过浏览器打开',
-        cta: '我知道了',
+        title: t('browserTip.title'),
+        desc: t('browserTip.description'),
+        cta: t('browserTip.button'),
       }
     }
     return {
-      title: 'Please open in browser',
-      desc: 'Please click the top-right corner to open via browser',
-      cta: 'I understand',
+      title: t('browserTip.title'),
+      desc: t('browserTip.description'),
+      cta: t('browserTip.button'),
     }
   })()
 
@@ -259,17 +259,17 @@ export default function AccountPageCore({
                   <div className={styles.wechatTipStep}>
                     <span className={styles.stepNumber}>1</span>
                     <span className={styles.stepText}>
-                      {userStore.lang === 'zh-CN' ? '点击右上角的' : 'Click the top-right corner\'s'}
+                      {t('wechatBrowserTip.clickCorner')}
                       <span className={styles.dotsButton}>⋯</span>
-                      {userStore.lang === 'zh-CN' ? '按钮' : 'button'}
+                      {t('wechatBrowserTip.dotsButton')}
                     </span>
                   </div>
                   <div className={styles.wechatTipStep}>
                     <span className={styles.stepNumber}>2</span>
                     <span className={styles.stepText}>
-                      {userStore.lang === 'zh-CN' ? '选择' : 'Select'}
+                      {t('wechatBrowserTip.selectBrowser')}
                       <span className={styles.browserButton}>🌐</span>
-                      {userStore.lang === 'zh-CN' ? '在浏览器中打开' : 'Open in browser'}
+                      {t('wechatBrowserTip.openInBrowser')}
                     </span>
                   </div>
                 </div>
