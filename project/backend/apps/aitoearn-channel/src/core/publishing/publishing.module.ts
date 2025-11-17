@@ -76,8 +76,6 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     LinkedinPublishService,
     TwitterPubService,
     EnqueuePublishingTaskScheduler,
-    CredentialInvalidationService,
-    PublishingErrorHandler,
     {
       provide: 'PUBLISHING_PROVIDERS',
       useFactory: (

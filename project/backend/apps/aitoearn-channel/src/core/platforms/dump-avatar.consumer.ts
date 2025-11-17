@@ -22,7 +22,7 @@ export class DumpAvatarConsumer extends WorkerHost implements OnModuleDestroy {
 
   private async uploadImageToS3(accountId: string, platform: string, imageUrl: string): Promise<string> {
     const filename = `${Date.now().toString(36)}-${path.basename(imageUrl.split('?')[0])}`
-    const fullPath = path.join('socia/avatar', platform, accountId, filename)
+    const fullPath = path.join('social/avatar', platform, accountId, filename)
     const result = await this.s3Service.putObjectFromUrl(imageUrl, fullPath)
     return result.path
   }
@@ -57,12 +57,10 @@ export class DumpAvatarConsumer extends WorkerHost implements OnModuleDestroy {
 
   @OnWorkerEvent('completed')
   async onCompleted(job: Job<{
-    taskId: string
-    attempts: number
-    jobId?: string
+    accountId: string
   }>) {
-    const { taskId, attempts, jobId } = job.data
-    this.logger.log(`[task-${taskId}] Processing completed for job ${jobId}, taskId: ${taskId}, Attempts: ${attempts}`)
+    const { accountId } = job.data
+    this.logger.log(`[account-${accountId}] Processing completed for job ${job.id}, Attempts: ${job.attemptsMade}`)
   }
 
   @OnWorkerEvent('stalled')

@@ -30,23 +30,19 @@ export class AccountService {
     data: NewAccount,
   ) {
     this.logger.log(`createAccount: ${JSON.stringify({ account, data })}`)
+    const loginTime = new Date()
+    const accountData = { userId, ...data, loginTime }
+    const _id = `${account.type}_${account.uid}`
     await this.accountModel.updateOne({
       type: account.type,
       uid: account.uid,
     }, {
-      _id: `${account.type}_${account.uid}`,
-      userId,
-      ...data,
-      loginTime: new Date(),
+      _id,
+      ...accountData,
     }, { upsert: true }).exec()
 
     try {
-      const result = await this.serverClient.account.createAccount({
-        userId,
-        ...data,
-        ...account,
-        loginTime: new Date(),
-      })
+      const result = await this.serverClient.account.createAccount(data)
       this.logger.log(`create server account success: ${JSON.stringify(result)}`)
       this.queueService.addDumpSocialMediaAvatarJob({ accountId: result.id })
       return await this.accountModel.findById(result.id)
