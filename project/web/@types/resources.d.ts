@@ -231,13 +231,6 @@ interface Resources {
       available: '代理地址可用'
       unavailable: '代理地址不可用'
       verify: '验证连接'
-      hint: {
-        line1: '1. 代理类型仅支持HTTP、HTTPS、Socks5；'
-        line2: '支持以下填写格式'
-        remark: '备注'
-        username: '代理账号'
-        password: '代理密码'
-      }
     }
   }
   'aiRank': {
