@@ -252,7 +252,7 @@ const PublishDialogAi = memo(
         }
         
         apiMessages.push(
-          { role: 'user', content: systemPrompt },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: messageContent },
         )
 
@@ -532,7 +532,7 @@ const PublishDialogAi = memo(
             </div>
 
             {/* 输入区域 */}
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
               <Input.TextArea
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
