@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { AccountType } from '@yikart/common'
 import { AccountStatus } from '@yikart/mongodb'
 import { ChannelBaseApi } from '../channelBase.api'
 
@@ -26,6 +27,18 @@ export class ChannelApi extends ChannelBaseApi {
   async getPublishTaskInfoWithFlowId(payload: { flowId: string, userId: string }) {
     const res = await this.sendMessage<any>(
       `channel/publishTask/detail`,
+      payload,
+    )
+    return res
+  }
+
+  async deletePost(payload: {
+    accountId: string
+    platform: AccountType
+    postId: string
+  }) {
+    const res = await this.sendMessage<any>(
+      `platform/post/delete`,
       payload,
     )
     return res

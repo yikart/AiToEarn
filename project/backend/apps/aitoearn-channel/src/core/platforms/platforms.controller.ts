@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { AccountStatus } from '@yikart/aitoearn-server-client'
-import { ApiDoc } from '@yikart/common'
+import { AccountType, ApiDoc } from '@yikart/common'
 import { PlatformService } from './platforms.service'
 
 @ApiTags('OpenSource/Core/Platforms/Platforms')
@@ -33,5 +33,13 @@ export class PlatformController {
   @Post('platform/accounts/updateStatus')
   async updateChannelStatus(@Body() data: { accountId: string, status: AccountStatus }) {
     return await this.platformService.updateAccountStatus(data.accountId, data.status)
+  }
+
+  @ApiDoc({
+    summary: 'Delete Post',
+  })
+  @Post('platform/post/delete')
+  async deletePost(@Body() data: { accountId: string, platform: AccountType, postId: string }) {
+    return await this.platformService.deletePost(data.accountId, data.platform, data.postId)
   }
 }
