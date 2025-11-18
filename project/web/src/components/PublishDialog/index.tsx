@@ -19,6 +19,7 @@ import {
   useMemo,
   useState,
 } from 'react'
+
 import { CSSTransition } from 'react-transition-group'
 import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
@@ -49,6 +50,7 @@ import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
+import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
 import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
 import PublishDialogDataPicker from '@/components/PublishDialog/compoents/PublishDialogDataPicker'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
@@ -840,7 +842,6 @@ const PublishDialog = memo(
 
                 <div
                   className="publishDialog-footer-btns"
-                  style={{ display: 'flex', flexDirection: 'row', gap: 12 }}
                 >
                   {step === 0 && pubListChoosed.length >= 2
                     ? (
@@ -945,56 +946,24 @@ const PublishDialog = memo(
                               </Button>
                             )}
                           </div>
-                          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-                            <Button.Group size="large">
-                              <Button
-                                type="primary"
-                                loading={createLoading}
-                                disabled={createLoading}
-                                icon={<SendOutlined />}
-                                style={{ margin: '0' }}
-                                onClick={() => {
-                                  for (const [key, errVideoItem] of errParamsMap) {
-                                    if (errVideoItem) {
-                                      const pubItem = pubListChoosed.find(
-                                        v => v.account.id === key,
-                                      )!
-                                      if (step === 1) {
-                                        setExpandedPubItem(pubItem)
-                                      }
-                                      message.warning(errVideoItem.parErrMsg)
-                                      return
-                                    }
+                          <PublishDatePicker
+                            loading={createLoading}
+                            onClick={() => {
+                              for (const [key, errVideoItem] of errParamsMap) {
+                                if (errVideoItem) {
+                                  const pubItem = pubListChoosed.find(
+                                    v => v.account.id === key,
+                                  )!
+                                  if (step === 1) {
+                                    setExpandedPubItem(pubItem)
                                   }
-                                  pubClickNow()
-                                }}
-                              >
-                                {t('buttons.publishNow')}
-                              </Button>
-                              <Button
-                                type="primary"
-                                loading={createLoading}
-                                disabled={createLoading}
-                                onClick={() => {
-                                  for (const [key, errVideoItem] of errParamsMap) {
-                                    if (errVideoItem) {
-                                      const pubItem = pubListChoosed.find(
-                                        v => v.account.id === key,
-                                      )!
-                                      if (step === 1) {
-                                        setExpandedPubItem(pubItem)
-                                      }
-                                      message.warning(errVideoItem.parErrMsg)
-                                      return
-                                    }
-                                  }
-                                  pubClick()
-                                }}
-                              >
-                                {t('buttons.schedulePublish')}
-                              </Button>
-                            </Button.Group>
-                          </div>
+                                  message.warning(errVideoItem.parErrMsg)
+                                  return
+                                }
+                              }
+                              pubClick()
+                            }}
+                          />
                         </>
                       )}
                 </div>
