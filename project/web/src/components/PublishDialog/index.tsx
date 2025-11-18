@@ -17,6 +17,7 @@ import {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 import { CSSTransition } from 'react-transition-group'
@@ -49,7 +50,8 @@ import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
-import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
+import PublishDialogAi, { type AIAction, type IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
+import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import PublishDialogDataPicker from '@/components/PublishDialog/compoents/PublishDialogDataPicker'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
@@ -151,6 +153,10 @@ const PublishDialog = memo(
       const [showFacebookPagesModal, setShowFacebookPagesModal]
         = useState(false)
       const { t } = useTransClient('publish')
+      // AI助手ref
+      const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
+      // 中间内容区域ref，用于划词功能
+      const contentAreaRef = useRef<HTMLDivElement>(null)
       const { tasks, md5Cache } = usePublishManageUpload(
         useShallow(state => ({
           tasks: state.tasks,
@@ -560,6 +566,32 @@ const PublishDialog = memo(
           onPubSuccess()
       }, [pubListChoosed])
 
+      // 处理划词操作
+      const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
+        // 打开左侧AI助手面板
+        setOpenLeft(true)
+        // 等待面板打开后调用AI处理
+        setTimeout(() => {
+          aiAssistantRef.current?.processText(selectedText, action)
+        }, 300)
+      }, [setOpenLeft])
+
+      // AI内容同步到编辑器
+      const handleSyncToEditor = useCallback((content: string) => {
+        // 如果只有一个账号，直接更新
+        if (pubListChoosed.length === 1) {
+          setOnePubParams({ des: content }, pubListChoosed[0].account.id)
+        } 
+        // 如果是多账号且在第一步，更新公共参数
+        else if (pubListChoosed.length >= 2 && step === 0) {
+          setAccountAllParams({ des: content })
+        }
+        // 如果在第二步且有展开的项，更新该项
+        else if (step === 1 && expandedPubItem) {
+          setOnePubParams({ des: content }, expandedPubItem.account.id)
+        }
+      }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams])
+
       const imperativeHandle: IPublishDialogRef = {
         setPubTime,
       }
@@ -582,7 +614,11 @@ const PublishDialog = memo(
                 classNames="left"
                 unmountOnExit
               >
-                <PublishDialogAi onClose={() => setOpenLeft(false)} />
+                <PublishDialogAi 
+                  ref={aiAssistantRef}
+                  onClose={() => setOpenLeft(false)}
+                  onSyncToEditor={handleSyncToEditor}
+                />
               </CSSTransition>
             )}
 
@@ -594,7 +630,13 @@ const PublishDialog = memo(
                 }
               }}
             >
-              <div className="publishDialog-con">
+              {/* 划词工具栏 */}
+              <TextSelectionToolbar
+                containerRef={contentAreaRef}
+                onAction={handleTextSelection}
+              />
+              
+              <div className="publishDialog-con" ref={contentAreaRef}>
                 <div className="publishDialog-con-head">
                   <span className="publishDialog-con-head-title">
                     {t('title')}
@@ -1009,7 +1051,11 @@ const PublishDialog = memo(
                   classNames="left"
                   unmountOnExit
                 >
-                  <PublishDialogAi onClose={() => setOpenLeft(false)} />
+                  <PublishDialogAi 
+                    ref={aiAssistantRef}
+                    onClose={() => setOpenLeft(false)}
+                    onSyncToEditor={handleSyncToEditor}
+                  />
                 </CSSTransition>
               )}
               <CSSTransition

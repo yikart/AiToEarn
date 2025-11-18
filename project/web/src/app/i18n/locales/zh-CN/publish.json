@@ -63,6 +63,28 @@
     "descriptionPlaceholder": "开始写"
   },
   "writingAssistant": "写作助手",
+  "aiAssistant": "AI助手",
+  "aiFeatures": {
+    "shorten": "缩写",
+    "expand": "扩写",
+    "polish": "润色",
+    "translate": "翻译",
+    "generateImage": "制图",
+    "generateVideo": "创作视频",
+    "syncToEditor": "同步到编辑器",
+    "targetLanguage": "目标语言",
+    "targetLanguagePlaceholder": "请输入目标语言，如：英文、日文、法文",
+    "inputPrompt": "请输入提示词...",
+    "send": "发送",
+    "defaultPrompts": {
+      "shorten": "请将以下文本缩短，保持核心信息：",
+      "expand": "请将以下文本扩写，增加更多细节和描述：",
+      "polish": "请润色以下文本，使其更加流畅和专业："
+    },
+    "processing": "处理中...",
+    "selectText": "请选择要处理的文本",
+    "syncSuccess": "已同步到编辑器"
+  },
   "upload": {
     "finishingUp": "正在完成...",
     "uploadImageOrVideo": "上传图片或视频",
