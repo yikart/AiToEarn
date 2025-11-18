@@ -2,7 +2,17 @@ import type { Dayjs } from 'dayjs'
 import type {
   ForwardedRef,
 } from 'react'
-import { ArrowLeftOutlined, CheckOutlined, ClockCircleOutlined, DownOutlined, SendOutlined, StarFilled, StarOutlined, ThunderboltOutlined } from '@ant-design/icons'
+import {
+  ArrowLeftOutlined,
+  CheckOutlined,
+  ClockCircleOutlined,
+  DownOutlined,
+  PushpinOutlined,
+  SendOutlined,
+  StarFilled,
+  StarOutlined,
+  ThunderboltOutlined,
+} from '@ant-design/icons'
 import { Button, DatePicker, message, Popover, Space } from 'antd'
 import dayjs from 'dayjs'
 import {
@@ -172,7 +182,7 @@ const PublishDatePicker = memo(
             onClick={() => handleSelectPublishType(PublishDatePickerType.Now)}
           >
             <div className={styles.menuItemLeft}>
-              <ThunderboltOutlined className={styles.menuIcon} />
+              <SendOutlined className={styles.menuIcon} />
               <div className={styles.menuItemText}>
                 <div className={styles.menuItemTitle}>{t('buttons.publishNow')}</div>
                 <div className={styles.menuItemDesc}>{t('buttons.publishNowDesc')}</div>
@@ -268,24 +278,29 @@ const PublishDatePicker = memo(
             styles={{ body: { padding: 0 } }}
           >
             <Button
-              style={{ margin: '0' }}
+              style={{ margin: '0', display: 'flex', alignItems: 'center', gap: '10px' }}
               onClick={() => {
                 setMenuOpen(true)
               }}
-              icon={<DownOutlined />}
-              iconPosition="end"
             >
-              {currentDatePickerType === PublishDatePickerType.Now
-                ? t('buttons.publishNow')
-                : pubTimeValue
-                  ? pubTimeValue.format('YYYY-MM-DD HH:mm')
-                  : t('buttons.schedulePublish')}
+              {
+                currentDatePickerType === PublishDatePickerType.Now
+                  ? <SendOutlined style={{ fontSize: '16px' }} />
+                  : <ClockCircleOutlined style={{ fontSize: '16px' }} />
+              }
+              <span style={{ flex: 1, textAlign: 'left' }}>
+                {currentDatePickerType === PublishDatePickerType.Now
+                  ? t('buttons.publishNow')
+                  : pubTimeValue
+                    ? pubTimeValue.format('YYYY-MM-DD HH:mm')
+                    : t('buttons.schedulePublish')}
+              </span>
+              <DownOutlined style={{ fontSize: '16px' }} />
             </Button>
           </Popover>
           <Button
             size="large"
             type="primary"
-            icon={<SendOutlined />}
             loading={loading}
             onClick={() => {
               onClick()
