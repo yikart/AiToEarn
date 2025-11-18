@@ -249,7 +249,7 @@ const PublishDialogAi = memo(
         if (currentAction === 'generateImage') {
           apiMessages.push({
             role: 'system',
-            content: '当需要提供图片时，使用 pollinations.ai 生成图片（推荐）：![描述](https://image.pollinations.ai/prompt/你的图片描述?nologo=true&width=720&height=720)，URL中的空格等符号需要用%20等编码替换 ',
+            content: '当需要提供图片时，必须使用该格式返回图片：![描述](https://image.pollinations.ai/prompt/你的图片描述?nologo=true&width=720&height=720)，URL中的空格等符号需要用%20等编码替换 ',
           })
         }
         
