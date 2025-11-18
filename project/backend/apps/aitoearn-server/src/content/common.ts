@@ -110,6 +110,7 @@ export interface MaterialTask {
   type: MaterialType
   aiModelTag: string
   prompt: string // Prompt
+  systemPrompt?: string // System prompt
   coverGroup?: string
   mediaGroups: string[]
   option?: Record<string, any> // Advanced settings
