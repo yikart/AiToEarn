@@ -6,6 +6,7 @@ import {
   DeletePublishTaskDto,
   NowPubTaskDto,
   PublishRecordListFilterDto,
+  UpdatePublishTaskDto,
   UpPublishTaskTimeDto,
 } from './dto/publish.dto'
 import { TiktokWebhookDto, TiktokWebhookSchema } from './dto/tiktok-webhook.dto'
@@ -21,6 +22,11 @@ export class PublishingController {
   @Post('plat/publish/create')
   async createPublishingTask(@Body() data: CreatePublishDto) {
     return await this.publishingService.createPublishingTask(data)
+  }
+
+  @Post('plat/publish/update')
+  async updatePublishingTask(@Body() data: UpdatePublishTaskDto) {
+    return await this.publishingService.updatePublishingTask(data)
   }
 
   @Post('plat/publish/changeTime')

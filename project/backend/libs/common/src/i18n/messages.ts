@@ -276,4 +276,24 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'publish task with flowId {{flowId}} already exists',
     'zh-CN': '发布任务已存在',
   },
+  [ResponseCode.PublishTaskNotPublished]: {
+    'en-US': 'Publish task not published',
+    'zh-CN': '发布任务未发布',
+  },
+  [ResponseCode.PublishTaskAlreadyUpdating]: {
+    'en-US': 'Publish task is already updating',
+    'zh-CN': '发布任务正在更新中',
+  },
+  [ResponseCode.PlatformNotSupported]: {
+    'en-US': 'Platform not supported for update published post',
+    'zh-CN': '暂不支持该平台',
+  },
+  [ResponseCode.PostCategoryNotSupported]: {
+    'en-US': 'Post category not supported for update published post',
+    'zh-CN': '暂不支持该帖子类型',
+  },
+  [ResponseCode.PublishTaskAlreadyWaitingForUpdate]: {
+    'en-US': 'Publish task is already waiting for update',
+    'zh-CN': '发布任务已等待更新',
+  },
 }

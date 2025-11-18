@@ -387,4 +387,83 @@ export class FacebookPublishService
       status: PublishStatus.PUBLISHED,
     }
   }
+
+  async updateTextPost(publishTask: PublishTask): Promise<PublishingTaskResult> {
+    const { desc, dataId } = publishTask
+    if (!desc) {
+      throw PublishingException.nonRetryable('Invalid publish task: no description')
+    }
+    if (!dataId) {
+      throw PublishingException.nonRetryable('Invalid publish task: no postId')
+    }
+    const message = this.generatePostMessage(publishTask)
+    await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, {
+      message,
+    })
+    return {
+      status: PublishStatus.PUBLISHED,
+    }
+  }
+
+  async updateVideoPost(publishTask: PublishTask): Promise<PublishingTaskResult> {
+    const { videoUrl, dataId } = publishTask
+    if (!videoUrl) {
+      throw PublishingException.nonRetryable('Invalid publish task: no video URL')
+    }
+    if (!dataId) {
+      throw PublishingException.nonRetryable('Invalid publish task: no postId')
+    }
+    const videoId = await this.uploadVideo(publishTask.accountId, videoUrl)
+    await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, {
+      attachments: [{
+        media_fbid: videoId,
+      }],
+    })
+    return {
+      status: PublishStatus.PUBLISHED,
+    }
+  }
+
+  async updatePhotosPost(publishTask: PublishTask): Promise<PublishingTaskResult> {
+    const { imgUrlList, dataId } = publishTask
+    if (!imgUrlList) {
+      throw PublishingException.nonRetryable('Invalid publish task: no images')
+    }
+    if (!dataId) {
+      throw PublishingException.nonRetryable('Invalid publish task: no postId')
+    }
+    const medias: string[] = []
+    for (const imgUrl of imgUrlList) {
+      const mediaId = await this.uploadImage(publishTask.accountId, imgUrl)
+      medias.push(mediaId)
+    }
+    if (medias.length === 0) {
+      throw PublishingException.nonRetryable('Image upload failed')
+    }
+    await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, {
+      attachments: medias.map(mediaId => ({
+        media_fbid: mediaId,
+      })),
+    })
+    return {
+      status: PublishStatus.PUBLISHED,
+    }
+  }
+
+  override async updatePublishedPost(publishTask: PublishTask, updatedContentType: string): Promise<PublishingTaskResult> {
+    const contentCategory = publishTask.option?.facebook?.content_category
+    if (!contentCategory) {
+      throw PublishingException.nonRetryable('Invalid publish task: no Facebook page contentCategory specified')
+    }
+    switch (updatedContentType) {
+      case 'text':
+        return await this.updateTextPost(publishTask)
+      case 'video':
+        return await this.updateVideoPost(publishTask)
+      case 'image':
+        return await this.updatePhotosPost(publishTask)
+      default:
+        throw PublishingException.nonRetryable(`Unsupported content category: ${contentCategory} for update`)
+    }
+  }
 }

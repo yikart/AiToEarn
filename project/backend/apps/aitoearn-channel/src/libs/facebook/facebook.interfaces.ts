@@ -408,7 +408,6 @@ export interface MetaPostAttachment {
   media_fbid: string
   message?: string
   link?: string
-  published: boolean
 }
 
 export interface UpdatePostRequest {

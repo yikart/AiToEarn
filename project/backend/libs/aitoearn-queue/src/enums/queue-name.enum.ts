@@ -23,4 +23,7 @@ export enum QueueName {
 
   /** dump social media avatar queue */
   DumpSocialMediaAvatar = 'dump_social_media_avatar',
+
+  /** 更新发布任务队列 */
+  UpdatePublishedPost = 'update_published_post',
 }

@@ -43,6 +43,13 @@ export abstract class PublishService {
   ): Promise<PublishingTaskResult | void> {
   }
 
+  async updatePublishedPost(
+    publishTask: PublishTask,
+    _updatedContentType: string,
+  ): Promise<PublishingTaskResult> {
+    throw new Error(`${publishTask.accountType} does not support update published post`)
+  }
+
   protected async getMediaProcessingStatus(
     _accountId: string,
     _mediaId: string,
