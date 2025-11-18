@@ -1,0 +1,205 @@
+.milestoneProgress {
+  :global {
+    .ant-modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 24px 32px;
+      border-bottom: none;
+      
+      .ant-modal-title {
+        color: #fff;
+        font-size: 20px;
+        font-weight: 600;
+      }
+    }
+
+    .ant-modal-close {
+      color: #fff;
+      
+      &:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+    }
+
+    .ant-modal-body {
+      padding: 40px 32px;
+      background: #f8f9ff;
+    }
+
+    .milestoneProgress_content {
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    .milestoneProgress_metric {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+
+      &:hover {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+
+      &-title {
+        margin-bottom: 40px;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1a1a1a;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        &::before {
+          content: '';
+          width: 4px;
+          height: 24px;
+          background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+          border-radius: 2px;
+        }
+      }
+
+      &-track {
+        position: relative;
+        height: 80px;
+        padding: 0 10px;
+
+        &-bg {
+          position: absolute;
+          top: 50%;
+          left: 10px;
+          right: 10px;
+          height: 12px;
+          transform: translateY(-50%);
+          background: linear-gradient(90deg, #e8e9f3 0%, #ecedf5 100%);
+          border-radius: 20px;
+          overflow: visible;
+          box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        &-fill {
+          height: 100%;
+          background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+          border-radius: 20px;
+          transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          overflow: hidden;
+
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+              90deg,
+              rgba(255, 255, 255, 0) 0%,
+              rgba(255, 255, 255, 0.3) 50%,
+              rgba(255, 255, 255, 0) 100%
+            );
+            animation: shimmer 2s infinite;
+          }
+        }
+      }
+
+      &-nodes {
+        position: relative;
+        height: 100%;
+      }
+
+      &-node {
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        cursor: not-allowed;
+        user-select: none;
+        transition: all 0.3s ease;
+
+        &--reached {
+          cursor: pointer;
+
+          .milestoneProgress_metric-node-circle {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #fff;
+            color: #fff;
+            box-shadow: 
+              0 4px 12px rgba(102, 126, 234, 0.4),
+              0 0 0 4px rgba(102, 126, 234, 0.1);
+
+            &::before {
+              content: '';
+              position: absolute;
+              inset: -8px;
+              border-radius: 50%;
+              background: radial-gradient(circle, rgba(102, 126, 234, 0.2) 0%, transparent 70%);
+              z-index: -1;
+            }
+
+            &:hover {
+              transform: scale(1.2);
+              box-shadow: 
+                0 6px 16px rgba(102, 126, 234, 0.5),
+                0 0 0 6px rgba(102, 126, 234, 0.15);
+            }
+
+            &:active {
+              transform: scale(1.1);
+            }
+          }
+
+          .milestoneProgress_metric-node-label {
+            color: #667eea;
+            font-weight: 700;
+          }
+        }
+
+        &-circle {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #fff;
+          border: 4px solid #e0e0e0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 16px;
+          color: #bbb;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          position: relative;
+          z-index: 2;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        &-label {
+          position: absolute;
+          top: 100%;
+          left: 50%;
+          transform: translateX(-50%);
+          margin-top: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          color: #888;
+          white-space: nowrap;
+          transition: all 0.3s ease;
+          padding: 4px 8px;
+          border-radius: 6px;
+          background: rgba(255, 255, 255, 0.8);
+          backdrop-filter: blur(4px);
+        }
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(100%);
+      }
+    }
+  }
+}
+

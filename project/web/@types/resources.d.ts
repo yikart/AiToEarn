@@ -622,7 +622,17 @@ interface Resources {
     "commentCount": "评论数",
     "likeCount": "点赞数",
     "collectCount": "收藏数",
-    "forwardCount": "分享数"
+    "forwardCount": "分享数",
+    "congratulations": "恭喜你！",
+    "achieveMilestone": "达成数据里程碑",
+    "newHigh": "新高",
+    "tenThousand": "万",
+    "savePoster": "保存海报",
+    "appName": "爱团团AiToEarn",
+    "keepGoing": "继续加油，再创佳绩！",
+    "viewMilestone": "查看里程碑",
+    "milestone": "里程碑",
+    "milestoneProgress": "里程碑进度"
   },
   "engagement": {
     "title": "互动数据",

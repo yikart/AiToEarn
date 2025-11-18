@@ -1,6 +1,7 @@
 import type { Dayjs } from 'dayjs'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { StatisticsPeriodModel } from '@/api/types/dataStatistics'
+import type { IMilestone } from '@/app/[lng]/dataStatistics/components/MilestonePoster'
 import type { PlatType } from '@/app/config/platConfig'
 import {
   HeartFilled,
@@ -33,6 +34,8 @@ export interface IDataStatisticsStore {
     total: number
     // 昨日数
     yesterday: number
+    // 历史最高值
+    historyMax: number
   }[]
   // 当前选择的明细类型
   currentDetailType: string
@@ -54,6 +57,10 @@ export interface IDataStatisticsStore {
       data: number[]
     }[]
   }
+  // 里程碑数据
+  milestones: IMilestone[]
+  // 是否显示里程碑海报
+  showMilestonePoster: boolean
 }
 
 const state: IDataStatisticsStore = {
@@ -70,6 +77,8 @@ const state: IDataStatisticsStore = {
     xAxis: [],
     series: [],
   },
+  milestones: [],
+  showMilestonePoster: false,
 }
 
 export const useDataStatisticsStore = create(
@@ -87,6 +96,7 @@ export const useDataStatisticsStore = create(
               icon: FansCount,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'readCount'),
@@ -94,6 +104,7 @@ export const useDataStatisticsStore = create(
               icon: VideoCameraFilled,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'commentCount'),
@@ -101,6 +112,7 @@ export const useDataStatisticsStore = create(
               icon: MessageFilled,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'likeCount'),
@@ -108,6 +120,7 @@ export const useDataStatisticsStore = create(
               icon: HeartFilled,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'collectCount'),
@@ -115,6 +128,7 @@ export const useDataStatisticsStore = create(
               icon: CollectCount,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'forwardCount'),
@@ -122,6 +136,7 @@ export const useDataStatisticsStore = create(
               icon: ForwardCount,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
           ]
 
@@ -215,7 +230,29 @@ export const useDataStatisticsStore = create(
             })
           }
 
-          // 3. 更新 dataDetails
+          // 3. 计算历史最高值（昨天之前的最高值）
+          const historyMaxTotals: Record<string, number> = {}
+          metrics.forEach(m => (historyMaxTotals[m] = 0))
+
+          data.groupedByDate.forEach((day) => {
+            // 只计算昨天之前的数据作为历史最高值
+            if (day.date < prevDay) {
+              const dayTotals: Record<string, number> = {}
+              metrics.forEach(m => (dayTotals[m] = 0))
+              day.records.forEach((rec) => {
+                metrics.forEach((m) => {
+                  // @ts-ignore
+                  dayTotals[m] += rec[m] ?? 0
+                })
+              })
+              // 更新历史最高值
+              metrics.forEach((m) => {
+                historyMaxTotals[m] = Math.max(historyMaxTotals[m], dayTotals[m])
+              })
+            }
+          })
+
+          // 4. 更新 dataDetails
           set({
             dataDetails: get().dataDetails.map(item => ({
               ...item,
@@ -223,8 +260,12 @@ export const useDataStatisticsStore = create(
                 prevDayData && typeof yesterdayTotals[item.value] === 'number'
                   ? yesterdayTotals[item.value]
                   : item.yesterday,
+              historyMax: historyMaxTotals[item.value] ?? 0,
             })),
           })
+
+          // 5. 检测里程碑
+          methods.detectMilestones()
 
           // 4. 生成 ECharts 适配数据
           const currentField = get().currentDetailType
@@ -312,6 +353,66 @@ export const useDataStatisticsStore = create(
         setAccountSearchValue(accountSearchValue: string) {
           set({
             accountSearchValue,
+          })
+        },
+
+        // 检测里程碑
+        detectMilestones() {
+          const milestones: IMilestone[] = []
+          const dataDetails = get().dataDetails
+
+          // 里程碑阈值
+          const thresholds = [50, 100, 500, 1000, 5000, 10000, 50000]
+
+          // 需要统计的指标类型（涨粉数、阅读量、点赞数）
+          const targetMetrics = ['fansCount', 'readCount', 'likeCount']
+
+          // 检测各个指标是否突破阈值
+          targetMetrics.forEach((metric) => {
+            const detail = dataDetails.find(d => d.value === metric)
+            if (!detail)
+              return
+
+            const yesterday = detail.yesterday
+            const weekTotal = detail.total // 最近一周总和
+            const historyMax = detail.historyMax
+
+            // 检查是否突破里程碑阈值
+            thresholds.forEach((threshold) => {
+              // 昨日新增达到阈值，且历史最高值小于阈值（首次突破）
+              if (yesterday >= threshold && historyMax < threshold) {
+                milestones.push({
+                  type: metric,
+                  title: detail.title,
+                  value: yesterday,
+                  milestone: threshold,
+                  isNewHigh: false,
+                })
+              }
+              // 或者最近一周总和达到阈值，且历史最高值小于阈值（首次突破）
+              else if (weekTotal >= threshold && historyMax < threshold) {
+                milestones.push({
+                  type: metric,
+                  title: detail.title,
+                  value: weekTotal,
+                  milestone: threshold,
+                  isNewHigh: false,
+                })
+              }
+            })
+          })
+
+          set({
+            milestones,
+            // 如果有里程碑，自动显示海报
+            showMilestonePoster: milestones.length > 0,
+          })
+        },
+
+        // 设置是否显示里程碑海报
+        setShowMilestonePoster(showMilestonePoster: boolean) {
+          set({
+            showMilestonePoster,
           })
         },
       }

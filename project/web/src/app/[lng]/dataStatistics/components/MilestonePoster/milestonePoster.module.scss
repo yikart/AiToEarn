@@ -1,0 +1,33 @@
+.milestonePoster {
+  :global {
+    .ant-modal-body {
+      padding: 24px;
+    }
+
+    .milestonePoster_content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .milestonePoster_canvas {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      
+      canvas {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+    }
+
+    .milestonePoster_actions {
+      width: 100%;
+      max-width: 400px;
+    }
+  }
+}
+
