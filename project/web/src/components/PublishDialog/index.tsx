@@ -570,10 +570,10 @@ const PublishDialog = memo(
       const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
         // 打开左侧AI助手面板
         setOpenLeft(true)
-        // 等待面板打开后调用AI处理
+        // 等待面板打开动画完成后调用AI处理并自动发送
         setTimeout(() => {
           aiAssistantRef.current?.processText(selectedText, action)
-        }, 300)
+        }, 500) // 增加延迟确保面板完全打开和渲染完成
       }, [setOpenLeft])
 
       // AI内容同步到编辑器

@@ -14,6 +14,7 @@ import {
 } from '@ant-design/icons'
 import { Button, Collapse, Input, message, Modal, Spin, Tooltip } from 'antd'
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream } from '@/api/ai'
 import styles from '../publishDialog.module.scss'
@@ -55,10 +56,12 @@ const PublishDialogAi = memo(
       const [activeAction, setActiveAction] = useState<AIAction | null>(null)
       const [messages, setMessages] = useState<Message[]>([])
       const [inputValue, setInputValue] = useState('')
-      const [targetLanguage, setTargetLanguage] = useState('')
       const [customPrompts, setCustomPrompts] = useState<Record<string, string>>({
         expand: t('aiFeatures.defaultPrompts.expand' as any),
         polish: t('aiFeatures.defaultPrompts.polish' as any),
+        translate: t('aiFeatures.defaultPrompts.translate' as any),
+        generateImage: t('aiFeatures.defaultPrompts.generateImage' as any),
+        generateVideo: t('aiFeatures.defaultPrompts.generateVideo' as any),
       })
       const [isProcessing, setIsProcessing] = useState(false)
       const [settingsVisible, setSettingsVisible] = useState(false)
@@ -120,22 +123,20 @@ const PublishDialogAi = memo(
 
       // 处理功能按钮点击
       const handleActionClick = useCallback((action: AIAction) => {
-        if (action === 'translate' && !targetLanguage) {
-          message.warning(t('aiFeatures.targetLanguagePlaceholder' as any))
-          return
-        }
         setActiveAction(action)
-      }, [targetLanguage, t])
+      }, [])
 
       // 发送消息
-      const sendMessage = useCallback(async (content?: string) => {
+      const sendMessage = useCallback(async (content?: string, forceAction?: AIAction) => {
         const messageContent = content || inputValue
         if (!messageContent.trim()) {
           message.warning(t('aiFeatures.selectText' as any))
           return
         }
 
-        if (!activeAction) {
+        // 使用传入的 action 或当前状态的 action
+        const currentAction = forceAction || activeAction
+        if (!currentAction) {
           message.warning('请先选择一个AI功能')
           return
         }
@@ -143,7 +144,7 @@ const PublishDialogAi = memo(
         let systemPrompt = ''
 
         // 根据不同功能生成提示词
-        switch (activeAction) {
+        switch (currentAction) {
           case 'shorten':
             systemPrompt = t('aiFeatures.defaultPrompts.shorten' as any)
             break
@@ -154,18 +155,18 @@ const PublishDialogAi = memo(
             systemPrompt = customPrompts.polish || t('aiFeatures.defaultPrompts.polish' as any)
             break
           case 'translate':
-            systemPrompt = `请将以下文本翻译成${targetLanguage}：`
+            systemPrompt = customPrompts.translate || t('aiFeatures.defaultPrompts.translate' as any)
             break
           case 'generateImage':
-            systemPrompt = '根据以下描述生成图片提示词：'
+            systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
             break
           case 'generateVideo':
-            systemPrompt = '根据以下描述生成视频创作提示词：'
+            systemPrompt = customPrompts.generateVideo || t('aiFeatures.defaultPrompts.generateVideo' as any)
             break
         }
 
         // 添加用户消息
-        const userMessage: Message = { role: 'user', content: messageContent, action: activeAction }
+        const userMessage: Message = { role: 'user', content: messageContent, action: currentAction }
         setMessages(prev => [...prev, userMessage])
 
         // 准备API消息
@@ -175,11 +176,11 @@ const PublishDialogAi = memo(
         ]
 
         // 调用AI接口
-        await handleAIResponse(activeAction, apiMessages)
+        await handleAIResponse(currentAction, apiMessages)
 
         // 清空输入
         setInputValue('')
-      }, [activeAction, inputValue, targetLanguage, customPrompts, handleAIResponse, t])
+      }, [activeAction, inputValue, customPrompts, handleAIResponse, t])
 
       // 同步到编辑器
       const syncToEditor = useCallback((content: string) => {
@@ -194,17 +195,12 @@ const PublishDialogAi = memo(
         processText: (text: string, action: AIAction) => {
           setActiveAction(action)
           setInputValue(text)
-          // 如果是翻译且没有目标语言，不自动发送
-          if (action === 'translate' && !targetLanguage) {
-            message.info('请先输入目标语言')
-            return
-          }
-          // 自动发送
+          // 立即自动发送，直接传入 action 参数避免状态异步问题
           setTimeout(() => {
-            sendMessage(text)
-          }, 100)
+            sendMessage(text, action) // 传入 action 参数
+          }, 50)
         },
-      }))
+      }), [sendMessage])
 
       const actionButtons = [
         { action: 'shorten', icon: <CompressOutlined />, label: t('aiFeatures.shorten' as any) },
@@ -221,21 +217,10 @@ const PublishDialogAi = memo(
             <span>{t('aiAssistant' as any)}</span>
             <CloseCircleFilled onClick={onClose} />
           </h1>
-          <div className="publishDialogAi-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            {/* 翻译需要输入目标语言 */}
-            {activeAction === 'translate' && (
-              <Input
-                placeholder={t('aiFeatures.targetLanguagePlaceholder' as any)}
-                value={targetLanguage}
-                onChange={e => setTargetLanguage(e.target.value)}
-                style={{ marginBottom: 12 }}
-                size="small"
-              />
-            )}
-
-            {/* 扩写和润色显示可编辑的默认提示词 */}
-            {(activeAction === 'expand' || activeAction === 'polish') && (
-              <Collapse
+          <div className="publishDialogAi-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '0 12px', marginTop: '12px' }}>
+            {/* 显示可编辑的默认提示词（缩写和扩写不可编辑） */}
+            {activeAction && activeAction !== 'shorten' && activeAction !== 'expand' && (
+             <Collapse
                 size="small"
                 items={[
                   {
@@ -256,7 +241,7 @@ const PublishDialogAi = memo(
                   },
                 ]}
                 style={{ marginBottom: 12 }}
-              />
+              /> 
             )}
 
             {/* 聊天消息区域 */}
@@ -270,7 +255,7 @@ const PublishDialogAi = memo(
                 padding: '12px',
                 background: '#f5f5f5',
                 borderRadius: '8px',
-                minHeight: '300px',
+                maxHeight: '644px',
               }}
             >
               {messages.length === 0 ? (
@@ -301,10 +286,54 @@ const PublishDialogAi = memo(
                         color: msg.role === 'user' ? '#fff' : '#000',
                         wordBreak: 'break-word',
                         boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                        whiteSpace: 'pre-wrap',
                       }}
+                      className="ai-message-content"
                     >
-                      {msg.content || <Spin size="small" />}
+                      {msg.content ? (
+                        msg.role === 'assistant' ? (
+                          <ReactMarkdown
+                            components={{
+                              img: ({ node, ...props }) => (
+                                <img
+                                  {...props}
+                                  style={{
+                                    maxWidth: '100%',
+                                    height: 'auto',
+                                    borderRadius: '4px',
+                                    marginTop: '8px',
+                                    display: 'block',
+                                  }}
+                                  alt={props.alt || 'image'}
+                                />
+                              ),
+                              p: ({ node, ...props }) => <p style={{ margin: '4px 0', lineHeight: '1.6' }} {...props} />,
+                              code: ({ node, inline, className, children, ...props }: any) => {
+                                return inline
+                                  ? <code style={{ background: '#f0f0f0', padding: '2px 6px', borderRadius: '3px', fontSize: '0.9em' }} {...props}>{children}</code>
+                                  : <code style={{ display: 'block', background: '#f0f0f0', padding: '12px', borderRadius: '4px', overflowX: 'auto', fontSize: '0.9em', lineHeight: '1.5' }} {...props}>{children}</code>
+                              },
+                              a: ({ node, ...props }) => (
+                                <a {...props} style={{ color: '#1890ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer" />
+                              ),
+                              ul: ({ node, ...props }) => <ul style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
+                              ol: ({ node, ...props }) => <ol style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
+                              li: ({ node, ...props }) => <li style={{ margin: '4px 0' }} {...props} />,
+                              h1: ({ node, ...props }) => <h1 style={{ fontSize: '1.5em', fontWeight: 'bold', margin: '12px 0 8px' }} {...props} />,
+                              h2: ({ node, ...props }) => <h2 style={{ fontSize: '1.3em', fontWeight: 'bold', margin: '12px 0 8px' }} {...props} />,
+                              h3: ({ node, ...props }) => <h3 style={{ fontSize: '1.1em', fontWeight: 'bold', margin: '8px 0 6px' }} {...props} />,
+                              blockquote: ({ node, ...props }) => (
+                                <blockquote style={{ borderLeft: '3px solid #e0e0e0', paddingLeft: '12px', margin: '8px 0', color: '#666' }} {...props} />
+                              ),
+                            }}
+                          >
+                            {msg.content}
+                          </ReactMarkdown>
+                        ) : (
+                          <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+                        )
+                      ) : (
+                        <Spin size="small" />
+                      )}
                     </div>
                     {msg.role === 'assistant' && msg.content && (
                       <div style={{ marginTop: 4, display: 'flex', gap: 8 }}>

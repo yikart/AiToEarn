@@ -215,7 +215,7 @@ export async function aiChatStream(data: {
       'Accept-Language': lang || 'zh-CN',
     },
     body: JSON.stringify({
-      stream: false, // 使用非流式响应
+      stream: false, // 使用非流式响应 
       model: 'gemini-2.5-flash-image',
       temperature: 1,
       presence_penalty: 0,
