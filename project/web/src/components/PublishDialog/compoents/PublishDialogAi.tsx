@@ -65,6 +65,7 @@ const PublishDialogAi = memo(
       })
       const [isProcessing, setIsProcessing] = useState(false)
       const [settingsVisible, setSettingsVisible] = useState(false)
+      const [showRawContent, setShowRawContent] = useState<number | null>(null)
       const chatContainerRef = useRef<HTMLDivElement>(null)
 
       // 自动滚动到底部
@@ -170,10 +171,20 @@ const PublishDialogAi = memo(
         setMessages(prev => [...prev, userMessage])
 
         // 准备API消息
-        const apiMessages = [
+        const apiMessages: Array<{ role: string, content: string }> = []
+        
+        // 如果是图片生成功能，添加特殊的系统提示词
+        if (currentAction === 'generateImage') {
+          apiMessages.push({
+            role: 'system',
+            content: '当需要提供图片时，你可以使用以下两种格式之一：\n1. 使用 pollinations.ai 生成图片（推荐）：![描述](https://image.pollinations.ai/prompt/你的图片描述?nologo=true&width=1024&height=1024)，URL中的空格等符号需要用%20等编码替换。\n2. 如果生成base64图片，必须输出完整的base64数据：![image](data:image/png;base64,完整的base64数据)。\n\n重要：不要用代码块包围markdown图片语法，直接输出markdown格式即可。',
+          })
+        }
+        
+        apiMessages.push(
           { role: 'user', content: systemPrompt },
           { role: 'user', content: messageContent },
-        ]
+        )
 
         // 调用AI接口
         await handleAIResponse(currentAction, apiMessages)
@@ -291,21 +302,88 @@ const PublishDialogAi = memo(
                     >
                       {msg.content ? (
                         msg.role === 'assistant' ? (
-                          <ReactMarkdown
+                          <>
+                            {/* 调试：显示图片信息 */}
+                            {msg.content.includes('![') && (() => {
+                              const allImageMatches = msg.content.match(/!\[.*?\]\([^)]+\)/g) || []
+                              const base64Images = msg.content.match(/!\[.*?\]\((data:image\/[^)]+)\)/g) || []
+                              const urlImages = allImageMatches.length - base64Images.length
+                              
+                              const base64Lengths = base64Images.map(match => {
+                                const base64Match = match.match(/base64,([^)]+)/)
+                                return base64Match ? base64Match[1].length : 0
+                              })
+                              
+                              return (
+                                <div style={{ fontSize: '10px', color: '#999', marginBottom: '4px', padding: '4px', background: '#fff3cd', borderRadius: '3px' }}>
+                                  📸 检测到 {allImageMatches.length} 张图片
+                                  {urlImages > 0 && <span style={{ marginLeft: '8px', color: 'green' }}>🌐 URL图片: {urlImages}张</span>}
+                                  {base64Images.length > 0 && base64Lengths.map((len, idx) => (
+                                    <div key={idx} style={{ marginLeft: '8px' }}>
+                                      Base64图片{idx + 1}: {len} 字符 
+                                      {len < 100 && <span style={{ color: 'red' }}> ⚠️ 数据太短，可能不完整</span>}
+                                      {len >= 100 && len < 1000 && <span style={{ color: 'orange' }}> ⚠️ 数据偏短</span>}
+                                      {len >= 1000 && <span style={{ color: 'green' }}> ✓ 长度正常</span>}
+                                    </div>
+                                  ))}
+                                </div>
+                              )
+                            })()}
+                            <ReactMarkdown
                             components={{
-                              img: ({ node, ...props }) => (
-                                <img
-                                  {...props}
-                                  style={{
-                                    maxWidth: '100%',
-                                    height: 'auto',
-                                    borderRadius: '4px',
-                                    marginTop: '8px',
-                                    display: 'block',
-                                  }}
-                                  alt={props.alt || 'image'}
-                                />
-                              ),
+                              img: ({ node, ...props }) => {
+                                const src = props.src || ''
+                                const isBase64 = src.startsWith('data:image/')
+                                const isPollinationsUrl = src.includes('pollinations.ai')
+                                const base64Length = isBase64 && src.includes('base64,') 
+                                  ? src.split('base64,')[1]?.length || 0 
+                                  : 0
+                                
+                                console.log('🖼️ Image detected:', {
+                                  alt: props.alt,
+                                  srcType: isBase64 ? 'Base64' : (isPollinationsUrl ? 'Pollinations URL' : 'Other URL'),
+                                  srcLength: src.length,
+                                  base64DataLength: base64Length,
+                                  srcPreview: src.substring(0, 100) + '...'
+                                })
+
+                                return (
+                                  <div style={{ margin: '8px 0' }}>
+                                    <img
+                                      {...props}
+                                      style={{
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        borderRadius: '4px',
+                                        display: 'block',
+                                      }}
+                                      alt={props.alt || 'AI生成的图片'}
+                                      crossOrigin={isPollinationsUrl ? 'anonymous' : undefined}
+                                      onError={(e) => {
+                                        const target = e.target as HTMLImageElement
+                                        console.error('❌ Image load failed:', {
+                                          src: src.substring(0, 100) + '...',
+                                          srcType: isBase64 ? 'Base64' : 'URL',
+                                          base64Length,
+                                        })
+                                        // 显示错误提示而不是隐藏
+                                        target.style.display = 'none'
+                                        const errorDiv = document.createElement('div')
+                                        errorDiv.style.cssText = 'padding: 8px; background: #fee; border: 1px solid #fcc; border-radius: 4px; font-size: 12px; color: #c00;'
+                                        if (isBase64) {
+                                          errorDiv.innerHTML = `⚠️ Base64图片加载失败<br/>数据长度: ${base64Length} 字符${base64Length < 1000 ? ' (数据不完整，可能被截断)' : ''}`
+                                        } else {
+                                          errorDiv.innerHTML = `⚠️ 图片加载失败<br/>URL: ${src.substring(0, 50)}...`
+                                        }
+                                        target.parentElement?.appendChild(errorDiv)
+                                      }}
+                                      onLoad={() => {
+                                        console.log('✅ Image loaded successfully:', isBase64 ? `Base64 (${base64Length} chars)` : 'URL')
+                                      }}
+                                    />
+                                  </div>
+                                )
+                              },
                               p: ({ node, ...props }) => <p style={{ margin: '4px 0', lineHeight: '1.6' }} {...props} />,
                               code: ({ node, inline, className, children, ...props }: any) => {
                                 return inline
@@ -326,8 +404,13 @@ const PublishDialogAi = memo(
                               ),
                             }}
                           >
-                            {msg.content}
+                            {/* 清理内容：移除多余的反引号，确保图片正确渲染 */}
+                            {msg.content
+                              .replace(/^`+|`+$/g, '') // 移除开头和结尾的反引号
+                              .replace(/`(!\[.*?\]\(data:image\/.*?\))`/g, '$1') // 移除图片周围的反引号
+                            }
                           </ReactMarkdown>
+                          </>
                         ) : (
                           <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
                         )
@@ -336,22 +419,43 @@ const PublishDialogAi = memo(
                       )}
                     </div>
                     {msg.role === 'assistant' && msg.content && (
-                      <div style={{ marginTop: 4, display: 'flex', gap: 8 }}>
-                        <Button
-                          size="small"
-                          icon={<SyncOutlined />}
-                          onClick={() => syncToEditor(msg.content)}
-                        >
-                          {t('aiFeatures.syncToEditor' as any)}
-                        </Button>
-                        <Button
-                          size="small"
-                          icon={<CopyOutlined />}
-                          onClick={() => {
-                            navigator.clipboard.writeText(msg.content)
-                            message.success('已复制到剪贴板')
-                          }}
-                        />
+                      <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                          <Button
+                            size="small"
+                            icon={<SyncOutlined />}
+                            onClick={() => syncToEditor(msg.content)}
+                          >
+                            {t('aiFeatures.syncToEditor' as any)}
+                          </Button>
+                          <Button
+                            size="small"
+                            icon={<CopyOutlined />}
+                            onClick={() => {
+                              navigator.clipboard.writeText(msg.content)
+                              message.success('已复制到剪贴板')
+                            }}
+                          />
+                          <Button
+                            size="small"
+                            onClick={() => setShowRawContent(showRawContent === index ? null : index)}
+                          >
+                            {showRawContent === index ? '隐藏原始' : '查看原始'}
+                          </Button>
+                        </div>
+                        {showRawContent === index && (
+                          <div style={{ 
+                            background: '#f0f0f0', 
+                            padding: '8px', 
+                            borderRadius: '4px',
+                            fontSize: '12px',
+                            maxHeight: '200px',
+                            overflowY: 'auto',
+                            wordBreak: 'break-all',
+                          }}>
+                            <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.content}</pre>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -397,7 +501,7 @@ const PublishDialogAi = memo(
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
                 placeholder={activeAction ? t('aiFeatures.inputPrompt' as any) : '请先选择一个AI功能'}
-                rows={3}
+                rows={1}
                 disabled={isProcessing || !activeAction}
                 onPressEnter={(e) => {
                   if (e.shiftKey) return // Shift+Enter换行

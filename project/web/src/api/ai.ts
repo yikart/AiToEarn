@@ -221,7 +221,7 @@ export async function aiChatStream(data: {
       presence_penalty: 0,
       frequency_penalty: 0,
       top_p: 1,
-      max_tokens: 4000,
+      max_tokens: 8000, // 增加到8000以支持更长的响应（包括base64图片）
       ...data,
     }),
   })
