@@ -26,6 +26,15 @@ export class AccountController {
     private readonly accountGroupService: AccountGroupService,
   ) { }
 
+  @Get('socials/account/:accountId')
+  async getAccountInfo(
+    @Param('accountId') accountId: string,
+  ) {
+    return await this.accountInternalService.getAccountInfo(
+      accountId,
+    )
+  }
+
   @ApiDoc({
     summary: 'Create Social Media Account',
     body: CreateAccountDto.schema,

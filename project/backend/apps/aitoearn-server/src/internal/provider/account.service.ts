@@ -9,6 +9,10 @@ export class AccountInternalService {
     private readonly accountService: AccountService,
   ) { }
 
+  async getAccountInfo(accountId: string) {
+    return await this.accountService.getAccountById(accountId)
+  }
+
   async createSocialMediaAccount(userId: string, body: CreateAccountDto) {
     return await this.accountService.addAccount(userId, {
       ...body,
