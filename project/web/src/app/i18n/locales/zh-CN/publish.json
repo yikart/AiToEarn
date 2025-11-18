@@ -10,7 +10,14 @@
     "schedulePublish": "定时发布",
     "publishNow": "立即发布",
     "copyLink": "复制链接",
-    "delete": "删除"
+    "delete": "删除",
+    "confirm": "确认",
+    "morePublishOptions": "更多发布操作",
+    "morePostingActions": "更多发布操作",
+    "defaultPublishAction": "默认发布操作",
+    "setDateTime": "设置日期和时间",
+    "publishNowDesc": "立即发布您的帖子。",
+    "schedulePublishDesc": "选择特定时间发布。"
   },
   "tips": {
     "workSaved": "你的工作被保存了，请选择账号，继续发布",

@@ -10,7 +10,14 @@
     "schedulePublish": "Schedule Publish",
     "publishNow": "Now",
     "copyLink": "Copy link",
-    "delete": "Delete"
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "morePublishOptions": "More Options",
+    "morePostingActions": "More Posting Actions",
+    "defaultPublishAction": "Default Publish Action",
+    "setDateTime": "Set Date and Time",
+    "publishNowDesc": "Publish your post right away.",
+    "schedulePublishDesc": "Choose a specific time to post."
   },
   "tips": {
     "workSaved": "Your work has been saved. Select a Channel to create a post",

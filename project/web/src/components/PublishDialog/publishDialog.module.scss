@@ -107,7 +107,8 @@ $assistantWidth: 380px;
       padding: 20px;
       &-btns {
         display: flex;
-        flex-direction: row;
+        width: 100%;
+        justify-content: right;
         gap: 12px;
         button {
           margin-right: 10px;

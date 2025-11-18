@@ -52,7 +52,6 @@ import DownloadAppModal from '@/components/common/DownloadAppModal'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
 import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
 import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
-import PublishDialogDataPicker from '@/components/PublishDialog/compoents/PublishDialogDataPicker'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
@@ -838,8 +837,6 @@ const PublishDialog = memo(
                 className="publishDialog-footer"
                 onClick={e => e.stopPropagation()}
               >
-                <PublishDialogDataPicker />
-
                 <div
                   className="publishDialog-footer-btns"
                 >
@@ -946,6 +943,7 @@ const PublishDialog = memo(
                               </Button>
                             )}
                           </div>
+
                           <PublishDatePicker
                             loading={createLoading}
                             onClick={() => {
