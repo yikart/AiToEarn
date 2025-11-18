@@ -57,6 +57,7 @@ const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
       {imageLoading && !imageError && (
         <div style={{
           width: '100%',
+          minWidth: '200px',
           height: '200px',
           background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
           backgroundSize: '200% 100%',
@@ -106,6 +107,9 @@ const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
       )}
     </div>
   )
+}, (prevProps, nextProps) => {
+  // 只有当 src 和 alt 都相同时才不重新渲染
+  return prevProps.src === nextProps.src && prevProps.alt === nextProps.alt
 })
 
 interface ChatSession {
@@ -207,37 +211,35 @@ const PublishDialogAi = memo(
 
         // 使用传入的 action 或当前状态的 action
         const currentAction = forceAction || activeAction
-        if (!currentAction) {
-          message.warning('请先选择一个AI功能')
-          return
-        }
 
         let systemPrompt = ''
 
-        // 根据不同功能生成提示词
-        switch (currentAction) {
-          case 'shorten':
-            systemPrompt = t('aiFeatures.defaultPrompts.shorten' as any)
-            break
-          case 'expand':
-            systemPrompt = customPrompts.expand || t('aiFeatures.defaultPrompts.expand' as any)
-            break
-          case 'polish':
-            systemPrompt = customPrompts.polish || t('aiFeatures.defaultPrompts.polish' as any)
-            break
-          case 'translate':
-            systemPrompt = customPrompts.translate || t('aiFeatures.defaultPrompts.translate' as any)
-            break
-          case 'generateImage':
-            systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
-            break
-          case 'generateVideo':
-            systemPrompt = customPrompts.generateVideo || t('aiFeatures.defaultPrompts.generateVideo' as any)
-            break
+        // 如果选择了功能，根据不同功能生成提示词
+        if (currentAction) {
+          switch (currentAction) {
+            case 'shorten':
+              systemPrompt = t('aiFeatures.defaultPrompts.shorten' as any)
+              break
+            case 'expand':
+              systemPrompt = customPrompts.expand || t('aiFeatures.defaultPrompts.expand' as any)
+              break
+            case 'polish':
+              systemPrompt = customPrompts.polish || t('aiFeatures.defaultPrompts.polish' as any)
+              break
+            case 'translate':
+              systemPrompt = customPrompts.translate || t('aiFeatures.defaultPrompts.translate' as any)
+              break
+            case 'generateImage':
+              systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
+              break
+            case 'generateVideo':
+              systemPrompt = customPrompts.generateVideo || t('aiFeatures.defaultPrompts.generateVideo' as any)
+              break
+          }
         }
 
         // 添加用户消息
-        const userMessage: Message = { role: 'user', content: messageContent, action: currentAction }
+        const userMessage: Message = { role: 'user', content: messageContent, action: currentAction || undefined }
         setMessages(prev => [...prev, userMessage])
 
         // 准备API消息
@@ -251,13 +253,15 @@ const PublishDialogAi = memo(
           })
         }
         
-        apiMessages.push(
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: messageContent },
-        )
+        // 只有在有系统提示词时才添加
+        if (systemPrompt) {
+          apiMessages.push({ role: 'system', content: systemPrompt })
+        }
+        
+        apiMessages.push({ role: 'user', content: messageContent })
 
         // 调用AI接口
-        await handleAIResponse(currentAction, apiMessages)
+        await handleAIResponse(currentAction || 'polish', apiMessages)
 
         // 清空输入
         setInputValue('')
@@ -340,7 +344,7 @@ const PublishDialogAi = memo(
             <span>{t('aiAssistant' as any)}</span>
             <CloseCircleFilled onClick={onClose} />
           </h1>
-          <div className="publishDialogAi-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '0 12px', marginTop: '12px' }}>
+          <div className="publishDialogAi-wrapper" style={{ padding: '0 12px', marginTop: '12px' }}>
             {/* 显示可编辑的默认提示词（缩写和扩写不可编辑） */}
             {/* {activeAction && activeAction !== 'shorten' && activeAction !== 'expand' && (
              <Collapse
@@ -372,13 +376,12 @@ const PublishDialogAi = memo(
               ref={chatContainerRef}
               className="publishDialogAi-chat" 
               style={{ 
-                flex: 1, 
+                flex: '1 1 0',
                 overflowY: 'auto', 
                 marginBottom: 12,
                 padding: '12px',
                 background: '#f5f5f5',
                 borderRadius: '8px',
-                maxHeight: '650px',
               }}
             >
               {messages.length === 0 ? (
@@ -387,7 +390,7 @@ const PublishDialogAi = memo(
                   color: '#999', 
                   padding: '40px 20px',
                 }}>
-                  请选择功能并输入内容开始对话
+                  输入内容开始对话，或选择功能快速处理文本
                 </div>
               ) : (
                 messages.map((msg, index) => (
@@ -536,9 +539,9 @@ const PublishDialogAi = memo(
               <Input.TextArea
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
-                placeholder={activeAction ? t('aiFeatures.inputPrompt' as any) : '请先选择一个AI功能'}
+                placeholder={activeAction ? t('aiFeatures.inputPrompt' as any) : '输入内容开始对话...'}
                 rows={1}
-                disabled={isProcessing || !activeAction}
+                disabled={isProcessing}
                 onPressEnter={(e) => {
                   if (e.shiftKey) return // Shift+Enter换行
                   e.preventDefault()
@@ -550,7 +553,7 @@ const PublishDialogAi = memo(
                 icon={<SendOutlined />}
                 onClick={() => sendMessage()}
                 loading={isProcessing}
-                disabled={isProcessing || !activeAction}
+                disabled={isProcessing}
               >
                 {t('aiFeatures.send' as any)}
               </Button>
