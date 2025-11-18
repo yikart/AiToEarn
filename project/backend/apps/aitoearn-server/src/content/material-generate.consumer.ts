@@ -1,10 +1,3 @@
-/*
- * @Author: nevin
- * @Date: 2024-07-03 15:16:12
- * @LastEditTime: 2025-02-10 17:18:50
- * @LastEditors: nevin
- * @Description: 素材生成队列
- */
 import {
   OnWorkerEvent,
   Processor,
@@ -44,7 +37,7 @@ export class MaterialGenerateConsumer extends WorkerHost {
     const taskInfo = await this.materialTaskService.getInfo(job.data.taskId)
     this.logger.log({
       data: taskInfo,
-      message: '任务开始执行',
+      message: 'Task execution started',
       path: 'process --------- 0',
     })
     if (
@@ -56,7 +49,7 @@ export class MaterialGenerateConsumer extends WorkerHost {
     ) {
       this.logger.log({
         data: 0,
-        message: '任务退出执行',
+        message: 'Task execution skipped',
         path: 'process --------- 1',
       })
       void job.isCompleted()
@@ -67,7 +60,7 @@ export class MaterialGenerateConsumer extends WorkerHost {
       = await this.materialTaskService.doCreateTask(taskInfo)
     this.logger.log({
       data: { status, message },
-      message: '任务执行结果',
+      message: 'Task execution result',
       path: 'process --------- 2',
     })
     if (status === -1) {

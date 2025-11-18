@@ -32,6 +32,7 @@ const chatMessageSchema = z.object({
   role: z.string().describe('消息角色'),
   content: z.union([z.string(), z.array(messageContentComplexSchema)]).describe('消息内容'),
 })
+export class ChatMessageDto extends createZodDto(chatMessageSchema) {}
 
 const chatCompletionDtoSchema = z.object({
   messages: z.array(chatMessageSchema).min(1).describe('消息列表'),

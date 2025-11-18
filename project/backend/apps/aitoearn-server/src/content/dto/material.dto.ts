@@ -30,6 +30,7 @@ export const createMaterialTaskSchema = z.object({
   num: z.number().describe('生成数量'),
   aiModelTag: z.string().describe('AI模型tag'),
   prompt: z.string().describe('提示词'),
+  systemPrompt: z.string().optional().describe('系统提示词'),
   mediaGroups: z.array(z.string()).min(1).max(5).describe('媒体组ID列表'),
   coverGroup: z.string().describe('参考描述'),
   option: z.any().optional().describe('高级设置'),

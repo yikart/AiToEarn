@@ -135,6 +135,7 @@ export class MaterialTaskService {
       type: groupInfo.type,
       aiModelTag: inData.aiModelTag,
       prompt: inData.prompt,
+      systemPrompt: inData.systemPrompt,
       coverGroup: inData.coverGroup,
       mediaGroups: inData.mediaGroups,
       option: inData.option,
@@ -167,6 +168,9 @@ export class MaterialTaskService {
     type: MediaType,
     fileUrl: string,
     prompt: string,
+    option?: {
+      systemPrompt?: string
+    },
   ) {
     if (type === MediaType.IMG) {
       const res = await this.aiService.imgContentByAi(
@@ -174,6 +178,7 @@ export class MaterialTaskService {
         model,
         fileUrl,
         prompt,
+        option,
       )
       return res
     }
@@ -184,6 +189,7 @@ export class MaterialTaskService {
         model,
         fileUrl,
         prompt,
+        option,
       )
       return res
     }
@@ -200,29 +206,20 @@ export class MaterialTaskService {
     prompt: string,
     option: {
       coverUrl?: string
-      title?: string
-      desc?: string
-      max?: number
-      language?: string
+      systemPrompt?: string
     },
-    coverUrl?: string,
   ) {
     const res = {
-      title: option.title,
-      content: option.desc,
+      title: '',
+      content: '',
     }
 
-    const content = await this.aiService.getContentByAi(user, model, prompt, {
-      ...option,
-      coverUrl,
-    })
+    const content = await this.aiService.getContentByAi(user, model, prompt, option)
     if (!content)
       return res
     res.content = content
 
-    const title = await this.aiService.getTitleByAi(user, model, content, {
-      ...option,
-    })
+    const title = await this.aiService.getTitleByAi(user, model, content)
     if (!title)
       return res
     res.title = title
@@ -233,16 +230,7 @@ export class MaterialTaskService {
    * Get content sections
    */
   async getContentItems(
-    taskInfo: {
-      mediaUrlMap: MediaUrlInfo[][]
-      title?: string
-      desc?: string
-      textMax?: number
-      language?: string
-      userId: string
-      userType: UserType
-      aiModelTag: string
-    },
+    taskInfo: MaterialTask,
   ) {
     const res: {
       status: -1 | 0 | 1
@@ -273,8 +261,11 @@ export class MaterialTaskService {
         { userId: taskInfo.userId, userType: taskInfo.userType },
         taskInfo.aiModelTag,
         theOne.type,
-        await buildUrl(config.awsS3.endpoint, theOne.url),
-        taskInfo.aiModelTag,
+        buildUrl(config.awsS3.endpoint, theOne.url),
+        taskInfo.prompt,
+        {
+          systemPrompt: taskInfo.systemPrompt,
+        },
       )
       if (!content) {
         res.status = -1
@@ -378,7 +369,7 @@ export class MaterialTaskService {
         const {
           status,
           message,
-          data: { content: dbDesc, mediaList },
+          data: { mediaList },
         } = await this.getContentItems(taskInfo)
         if (status === -1) {
           if (!preview) {
@@ -414,12 +405,11 @@ export class MaterialTaskService {
           taskInfo.aiModelTag,
           taskInfo.prompt,
           {
-            coverUrl: theOneCover.url,
-            desc: dbDesc,
+            coverUrl: theOneCover.url
+              ? buildUrl(config.awsS3.endpoint, theOneCover.url)
+              : undefined,
+            systemPrompt: taskInfo.systemPrompt,
           },
-          theOneCover.url
-            ? buildUrl(config.awsS3.endpoint, theOneCover.url)
-            : undefined,
         )
 
         // Update draft information

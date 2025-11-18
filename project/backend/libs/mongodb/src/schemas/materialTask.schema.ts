@@ -92,6 +92,11 @@ export class MaterialTask extends WithTimestampSchema {
   @Prop({
     required: false,
   })
+  systemPrompt?: string // System prompt
+
+  @Prop({
+    required: false,
+  })
   coverGroup?: string
 
   // Array of media groups used
