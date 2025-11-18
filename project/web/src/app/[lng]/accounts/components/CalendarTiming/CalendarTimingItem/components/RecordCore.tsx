@@ -104,9 +104,9 @@ const RecordCore = memo(
             getPubRecord: state.getPubRecord,
           })),
         )
-      const { accountAccountMap } = useAccountStore(
+      const { accountMap } = useAccountStore(
         useShallow(state => ({
-          accountAccountMap: state.accountAccountMap,
+          accountMap: state.accountMap,
         })),
       )
       const [popoverOpen, setPopoverOpen] = useState(false)
@@ -151,8 +151,8 @@ const RecordCore = memo(
       }, [publishRecord])
 
       const account = useMemo(() => {
-        return accountAccountMap.get(publishRecord?.accountId ?? '')
-      }, [accountAccountMap, publishRecord.accountId])
+        return accountMap.get(publishRecord?.accountId ?? '')
+      }, [accountMap, publishRecord.accountId])
 
       const platIcon = useMemo(() => {
         return AccountPlatInfoMap.get(
