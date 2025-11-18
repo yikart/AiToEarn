@@ -52,12 +52,67 @@ export class FacebookPublishService
     return uploadReq.id
   }
 
+  async uploadVideo(accountId: string, videoUrl: string): Promise<string> {
+    if (!videoUrl) {
+      throw PublishingException.nonRetryable('Video requires a video URL')
+    }
+    const contentLength = await getRemoteFileSize(videoUrl)
+    if (!contentLength) {
+      throw PublishingException.nonRetryable('get video meta failed')
+    }
+    const initUploadReq: FacebookInitialVideoUploadRequest = {
+      upload_phase: 'start',
+      file_size: contentLength,
+      published: false,
+    }
+    const initUploadRes = await this.facebookService.initVideoUpload(
+      accountId,
+      initUploadReq,
+    )
+    let startOffset = initUploadRes.start_offset
+    let endOffset = initUploadRes.end_offset
+
+    while (startOffset < contentLength - 1) {
+      const range: [number, number] = [startOffset, endOffset - 1]
+      const videoBlob = await chunkedDownloadFile(videoUrl, range)
+      const chunkedUploadReq: ChunkedVideoUploadRequest = {
+        upload_phase: 'transfer',
+        upload_session_id: initUploadRes.upload_session_id,
+        start_offset: startOffset,
+        end_offset: endOffset,
+        video_file_chunk: videoBlob,
+        published: false,
+      }
+      this.logger.log(`Chunked upload request: start_offset=${startOffset}, end_offset=${endOffset}`)
+      const chunkedUploadRes
+        = await this.facebookService.chunkedMediaUpload(
+          accountId,
+          chunkedUploadReq,
+        )
+      startOffset = chunkedUploadRes.start_offset
+      endOffset = chunkedUploadRes.end_offset
+    }
+    const finalizeReq: finalizeVideoUploadRequest = {
+      upload_phase: 'finish',
+      upload_session_id: initUploadRes.upload_session_id,
+      published: false,
+    }
+    const finalizeRes = await this.facebookService.finalizeMediaUpload(
+      accountId,
+      finalizeReq,
+    )
+    if (!finalizeRes.success) {
+      throw new Error('Video upload finalization failed')
+    }
+    return initUploadRes.video_id
+  }
+
   async uploadReelVideo(accountId: string, videoUrl: string): Promise<string> {
     const contentLength = await getRemoteFileSize(videoUrl)
     const initUploadReq: FacebookReelRequest = {
       upload_phase: 'start',
     }
-    const initUploadRes = await this.facebookService.initReelUpload(
+    const initUploadRes = await this.facebookService.initReelVideoUpload(
       accountId,
       initUploadReq,
     )
@@ -67,7 +122,7 @@ export class FacebookPublishService
     }
 
     const videoFile = await chunkedDownloadFile(videoUrl, [0, contentLength - 1])
-    const uploadRes = await this.facebookService.uploadReel(
+    const uploadRes = await this.facebookService.uploadReelVideo(
       accountId,
       initUploadRes.upload_url,
       {
@@ -82,12 +137,12 @@ export class FacebookPublishService
     return initUploadRes.video_id
   }
 
-  async uploadVideoStory(accountId: string, videoUrl: string): Promise<string> {
+  async uploadStoryVideo(accountId: string, videoUrl: string): Promise<string> {
     const contentLength = await getRemoteFileSize(videoUrl)
     const initUploadReq: FacebookReelRequest = {
       upload_phase: 'start',
     }
-    const initUploadRes = await this.facebookService.initVideoStoryUpload(
+    const initUploadRes = await this.facebookService.initStoryVideoUpload(
       accountId,
       initUploadReq,
     )
@@ -96,7 +151,7 @@ export class FacebookPublishService
       throw new Error('Video initialization upload failed')
     }
     const videoFile = await chunkedDownloadFile(videoUrl, [0, contentLength - 1])
-    await this.facebookService.uploadVideoStory(
+    await this.facebookService.uploadStoryVideo(
       accountId,
       initUploadRes.upload_url,
       {
@@ -108,7 +163,7 @@ export class FacebookPublishService
     return initUploadRes.video_id
   }
 
-  async publishFeedPost(publishTask: PublishTask): Promise<PublishingTaskResult> {
+  async publishFeed(publishTask: PublishTask): Promise<PublishingTaskResult> {
     this.logger.log(`Received publish task: ${publishTask.id} for Facebook Feed Post`)
     if (!publishTask.desc) {
       throw PublishingException.nonRetryable('Feed Post requires a description')
@@ -129,7 +184,7 @@ export class FacebookPublishService
     }
   }
 
-  async publishReelPost(publishTask: PublishTask): Promise<PublishingTaskResult> {
+  async publishReel(publishTask: PublishTask): Promise<PublishingTaskResult> {
     this.logger.log(`Received publish task: ${publishTask.id} for Facebook Reel`)
     const { imgUrlList, accountId, videoUrl } = publishTask
     if (imgUrlList && imgUrlList.length > 0) {
@@ -176,7 +231,7 @@ export class FacebookPublishService
     if (!publishTask.videoUrl) {
       throw PublishingException.nonRetryable('Story requires a video URL')
     }
-    const videoId = await this.uploadVideoStory(publishTask.accountId, publishTask.videoUrl)
+    const videoId = await this.uploadStoryVideo(publishTask.accountId, publishTask.videoUrl)
     await this.processUploadMedia(publishTask, 'facebook', PostCategory.STORY, PostSubCategory.VIDEO, videoId)
     return {
       status: PublishStatus.PUBLISHING,
@@ -196,101 +251,49 @@ export class FacebookPublishService
     return await this.publishVideoStory(publishTask)
   }
 
+  async publishPhotos(publishTask: PublishTask): Promise<PublishingTaskResult> {
+    const { imgUrlList, accountId } = publishTask
+    if (!imgUrlList) {
+      throw PublishingException.nonRetryable('Photos requires images')
+    }
+    const medias: string[] = []
+    for (const imgUrl of imgUrlList) {
+      const mediaId = await this.uploadImage(accountId, imgUrl)
+      medias.push(mediaId)
+    }
+    if (medias.length === 0) {
+      throw PublishingException.nonRetryable('Image upload failed')
+    }
+    const publishPost = await this.facebookService.publicPhotos(
+      accountId,
+      medias,
+      this.generatePostMessage(publishTask),
+    )
+    const permalink = `https://www.facebook.com/${publishTask.uid}_${publishPost.id}`
+    return {
+      postId: publishPost.id,
+      permalink,
+      status: PublishStatus.PUBLISHED,
+    }
+  }
+
   async publishVideo(publishTask: PublishTask): Promise<PublishingTaskResult> {
-    this.logger.log(`Received publish task: ${publishTask.id} for Facebook`)
-    const { imgUrlList, accountId, videoUrl } = publishTask
-    const facebookMediaIdList: string[] = []
-    if (imgUrlList && imgUrlList.length > 0) {
-      for (const imgUrl of imgUrlList) {
-        const imgBlob = await fileUrlToBlob(imgUrl)
-        const uploadReq = await this.facebookService.uploadImage(
-          accountId,
-          imgBlob.blob,
-        )
-        facebookMediaIdList.push(uploadReq.id)
-      }
-      if (facebookMediaIdList.length === 0) {
-        throw PublishingException.nonRetryable('Image upload failed')
-      }
-      const publishPost = await this.facebookService.publicPhotoPost(
-        accountId,
-        facebookMediaIdList,
-        this.generatePostMessage(publishTask),
-      )
-      const permalink = `https://www.facebook.com/${publishTask.uid}_${publishPost.id}`
-      const result = {
-        postId: publishPost.id,
-        permalink,
-        status: PublishStatus.PUBLISHED,
-      }
-      return result
+    const videoId = await this.uploadVideo(publishTask.accountId, publishTask.videoUrl)
+    const videoPostReq: PublishVideoPostRequest = {
+      description: this.generatePostMessage(publishTask),
+      crossposted_video_id: videoId,
+      published: true,
     }
-
-    if (videoUrl) {
-      const contentLength = await getRemoteFileSize(videoUrl)
-
-      const initUploadReq: FacebookInitialVideoUploadRequest = {
-        upload_phase: 'start',
-        file_size: contentLength,
-        published: false,
-      }
-      const initUploadRes = await this.facebookService.initVideoUpload(
-        accountId,
-        initUploadReq,
-      )
-      let startOffset = initUploadRes.start_offset
-      let endOffset = initUploadRes.end_offset
-
-      while (startOffset < contentLength - 1) {
-        const range: [number, number] = [startOffset, endOffset - 1]
-        const videoBlob = await chunkedDownloadFile(videoUrl, range)
-        const chunkedUploadReq: ChunkedVideoUploadRequest = {
-          upload_phase: 'transfer',
-          upload_session_id: initUploadRes.upload_session_id,
-          start_offset: startOffset,
-          end_offset: endOffset,
-          video_file_chunk: videoBlob,
-          published: false,
-        }
-        this.logger.log(`Chunked upload request: start_offset=${startOffset}, end_offset=${endOffset}`)
-        const chunkedUploadRes
-          = await this.facebookService.chunkedMediaUpload(
-            accountId,
-            chunkedUploadReq,
-          )
-        startOffset = chunkedUploadRes.start_offset
-        endOffset = chunkedUploadRes.end_offset
-      }
-      const finalizeReq: finalizeVideoUploadRequest = {
-        upload_phase: 'finish',
-        upload_session_id: initUploadRes.upload_session_id,
-        published: false,
-      }
-      const finalizeRes = await this.facebookService.finalizeMediaUpload(
-        accountId,
-        finalizeReq,
-      )
-      if (!finalizeRes.success) {
-        throw new Error('Video upload finalization failed')
-      }
-      const videoPostReq: PublishVideoPostRequest = {
-        description: this.generatePostMessage(publishTask),
-        crossposted_video_id: initUploadRes.video_id,
-        published: true,
-      }
-      const postRes = await this.facebookService.publishVideoPost(
-        accountId,
-        videoPostReq,
-      )
-      const permalink = `https://www.facebook.com/${publishTask.uid}_${postRes.id}`
-      const result = {
-        postId: postRes.id,
-        permalink,
-        status: PublishStatus.PUBLISHED,
-      }
-      return result
+    const postRes = await this.facebookService.publishVideo(
+      publishTask.accountId,
+      videoPostReq,
+    )
+    const permalink = `https://www.facebook.com/${publishTask.uid}_${postRes.id}`
+    return {
+      postId: postRes.id,
+      permalink,
+      status: PublishStatus.PUBLISHED,
     }
-    throw PublishingException.nonRetryable('Invalid publish task: no media and no description')
   }
 
   async immediatePublish(publishTask: PublishTask): Promise<PublishingTaskResult> {
@@ -305,13 +308,16 @@ export class FacebookPublishService
     switch (contentCategory) {
       case 'post':
         if (!imgUrlList && !videoUrl) {
-          return await this.publishFeedPost(publishTask)
+          return await this.publishFeed(publishTask)
         }
-        else {
+        else if (videoUrl) {
           return await this.publishVideo(publishTask)
         }
+        else {
+          return await this.publishPhotos(publishTask)
+        }
       case 'reel':
-        return await this.publishReelPost(publishTask)
+        return await this.publishReel(publishTask)
       case 'story':
         return await this.publishStory(publishTask)
       default:
