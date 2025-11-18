@@ -13,7 +13,7 @@ import {
   SettingOutlined,
 } from '@ant-design/icons'
 import { Button, Collapse, Input, message, Modal, Spin, Tooltip } from 'antd'
-import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState } from 'react'
+import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream } from '@/api/ai'
@@ -338,6 +338,31 @@ const PublishDialogAi = memo(
         { action: 'generateVideo', icon: <VideoCameraOutlined />, label: t('aiFeatures.generateVideo' as any) },
       ]
 
+      // 缓存 Markdown 组件配置，避免每次渲染都创建新对象
+      const markdownComponents = useMemo(() => ({
+        img: ({ node, ...props }: any) => (
+          <AIGeneratedImage src={props.src || ''} alt={props.alt} />
+        ),
+        p: ({ node, ...props }: any) => <p style={{ margin: '4px 0', lineHeight: '1.6' }} {...props} />,
+        code: ({ node, inline, className, children, ...props }: any) => {
+          return inline
+            ? <code style={{ background: '#f0f0f0', padding: '2px 6px', borderRadius: '3px', fontSize: '0.9em' }} {...props}>{children}</code>
+            : <code style={{ display: 'block', background: '#f0f0f0', padding: '12px', borderRadius: '4px', overflowX: 'auto', fontSize: '0.9em', lineHeight: '1.5' }} {...props}>{children}</code>
+        },
+        a: ({ node, ...props }: any) => (
+          <a {...props} style={{ color: '#1890ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer" />
+        ),
+        ul: ({ node, ...props }: any) => <ul style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
+        ol: ({ node, ...props }: any) => <ol style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
+        li: ({ node, ...props }: any) => <li style={{ margin: '4px 0' }} {...props} />,
+        h1: ({ node, ...props }: any) => <h1 style={{ fontSize: '1.5em', fontWeight: 'bold', margin: '12px 0 8px' }} {...props} />,
+        h2: ({ node, ...props }: any) => <h2 style={{ fontSize: '1.3em', fontWeight: 'bold', margin: '12px 0 8px' }} {...props} />,
+        h3: ({ node, ...props }: any) => <h3 style={{ fontSize: '1.1em', fontWeight: 'bold', margin: '8px 0 6px' }} {...props} />,
+        blockquote: ({ node, ...props }: any) => (
+          <blockquote style={{ borderLeft: '3px solid #e0e0e0', paddingLeft: '12px', margin: '8px 0', color: '#666' }} {...props} />
+        ),
+      }), [])
+
       return (
         <div className={styles.publishDialogAi} id="publishDialogAi">
           <h1>
@@ -393,63 +418,38 @@ const PublishDialogAi = memo(
                   输入内容开始对话，或选择功能快速处理文本
                 </div>
               ) : (
-                messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      marginBottom: 12,
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                    }}
-                  >
+                messages.map((msg, index) => {
+                  const isUser = msg.role === 'user'
+                  return (
                     <div
+                      key={`${index}-${msg.content.substring(0, 20)}`}
                       style={{
-                        maxWidth: '80%',
-                        padding: '8px 12px',
-                        borderRadius: '8px',
-                        background: msg.role === 'user' ? '#1890ff' : '#fff',
-                        color: msg.role === 'user' ? '#fff' : '#000',
-                        wordBreak: 'break-word',
-                        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                        marginBottom: 12,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: isUser ? 'flex-end' : 'flex-start',
                       }}
-                      className="ai-message-content"
                     >
+                      <div
+                        style={{
+                          maxWidth: '80%',
+                          padding: '8px 12px',
+                          borderRadius: '8px',
+                          background: isUser ? '#1890ff' : '#fff',
+                          color: isUser ? '#fff' : '#000',
+                          wordBreak: 'break-word',
+                          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                        }}
+                        className="ai-message-content"
+                      >
                       {msg.content ? (
                         msg.role === 'assistant' ? (
-                          <>
-                            <ReactMarkdown
-                            components={{
-                              img: ({ node, ...props }) => (
-                                <AIGeneratedImage src={props.src || ''} alt={props.alt} />
-                              ),
-                              p: ({ node, ...props }) => <p style={{ margin: '4px 0', lineHeight: '1.6' }} {...props} />,
-                              code: ({ node, inline, className, children, ...props }: any) => {
-                                return inline
-                                  ? <code style={{ background: '#f0f0f0', padding: '2px 6px', borderRadius: '3px', fontSize: '0.9em' }} {...props}>{children}</code>
-                                  : <code style={{ display: 'block', background: '#f0f0f0', padding: '12px', borderRadius: '4px', overflowX: 'auto', fontSize: '0.9em', lineHeight: '1.5' }} {...props}>{children}</code>
-                              },
-                              a: ({ node, ...props }) => (
-                                <a {...props} style={{ color: '#1890ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer" />
-                              ),
-                              ul: ({ node, ...props }) => <ul style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
-                              ol: ({ node, ...props }) => <ol style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
-                              li: ({ node, ...props }) => <li style={{ margin: '4px 0' }} {...props} />,
-                              h1: ({ node, ...props }) => <h1 style={{ fontSize: '1.5em', fontWeight: 'bold', margin: '12px 0 8px' }} {...props} />,
-                              h2: ({ node, ...props }) => <h2 style={{ fontSize: '1.3em', fontWeight: 'bold', margin: '12px 0 8px' }} {...props} />,
-                              h3: ({ node, ...props }) => <h3 style={{ fontSize: '1.1em', fontWeight: 'bold', margin: '8px 0 6px' }} {...props} />,
-                              blockquote: ({ node, ...props }) => (
-                                <blockquote style={{ borderLeft: '3px solid #e0e0e0', paddingLeft: '12px', margin: '8px 0', color: '#666' }} {...props} />
-                              ),
-                            }}
-                          >
-                            {/* 清理内容：移除多余的反引号，确保图片正确渲染 */}
+                          <ReactMarkdown components={markdownComponents}>
                             {msg.content
-                              .replace(/^`+|`+$/g, '') // 移除开头和结尾的反引号
-                              .replace(/`(!\[.*?\]\(data:image\/.*?\))`/g, '$1') // 移除图片周围的反引号
+                              .replace(/^`+|`+$/g, '')
+                              .replace(/`(!\[.*?\]\(data:image\/.*?\))`/g, '$1')
                             }
                           </ReactMarkdown>
-                          </>
                         ) : (
                           <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
                         )
@@ -497,8 +497,9 @@ const PublishDialogAi = memo(
                         )}
                       </div>
                     )}
-                  </div>
-                ))
+                    </div>
+                  )
+                })
               )}
             </div>
 
