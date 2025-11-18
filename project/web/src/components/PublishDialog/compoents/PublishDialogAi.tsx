@@ -17,6 +17,8 @@ import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, 
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream } from '@/api/ai'
+import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
+import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
 import styles from '../publishDialog.module.scss'
 
 export interface IPublishDialogAiRef {
@@ -27,7 +29,7 @@ export interface IPublishDialogAiRef {
 export interface IPublishDialogAiProps {
   onClose: () => void
   // 同步内容到编辑器的回调
-  onSyncToEditor?: (content: string) => void
+  onSyncToEditor?: (content: string, images?: IImgFile[]) => void
 }
 
 export type AIAction = 'shorten' | 'expand' | 'polish' | 'translate' | 'generateImage' | 'generateVideo'
@@ -37,6 +39,74 @@ interface Message {
   content: string
   action?: AIAction
 }
+
+// AI生成的图片组件
+const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
+  const isBase64 = src.startsWith('data:image/')
+  const isPollinationsUrl = src.includes('pollinations.ai')
+  const base64Length = isBase64 && src.includes('base64,') 
+    ? src.split('base64,')[1]?.length || 0 
+    : 0
+  
+  const [imageLoading, setImageLoading] = useState(true)
+  const [imageError, setImageError] = useState(false)
+
+  return (
+    <div style={{ margin: '8px 0', position: 'relative' }}>
+      {/* 加载占位符 */}
+      {imageLoading && !imageError && (
+        <div style={{
+          width: '100%',
+          height: '200px',
+          background: 'linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'loading 1.5s ease-in-out infinite',
+          borderRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#999',
+          fontSize: '14px',
+        }}>
+          <Spin />
+        </div>
+      )}
+      <img
+        src={src}
+        alt={alt || 'AI生成的图片'}
+        style={{
+          maxWidth: '100%',
+          height: 'auto',
+          borderRadius: '4px',
+          display: imageLoading ? 'none' : 'block',
+        }}
+        crossOrigin={isPollinationsUrl ? 'anonymous' : undefined}
+        onError={() => {
+          setImageLoading(false)
+          setImageError(true)
+        }}
+        onLoad={() => {
+          setImageLoading(false)
+          setImageError(false)
+        }}
+      />
+      {/* 错误提示 */}
+      {imageError && (
+        <div style={{
+          padding: '8px',
+          background: '#fee',
+          border: '1px solid #fcc',
+          borderRadius: '4px',
+          fontSize: '12px',
+          color: '#c00',
+        }}>
+          ⚠️ 图片加载失败
+          {isBase64 && base64Length < 1000 && <><br/>数据不完整，可能被截断</>}
+        </div>
+      )}
+    </div>
+  )
+})
 
 interface ChatSession {
   id: string
@@ -177,7 +247,7 @@ const PublishDialogAi = memo(
         if (currentAction === 'generateImage') {
           apiMessages.push({
             role: 'system',
-            content: '当需要提供图片时，你可以使用以下两种格式之一：\n1. 使用 pollinations.ai 生成图片（推荐）：![描述](https://image.pollinations.ai/prompt/你的图片描述?nologo=true&width=1024&height=1024)，URL中的空格等符号需要用%20等编码替换。\n2. 如果生成base64图片，必须输出完整的base64数据：![image](data:image/png;base64,完整的base64数据)。\n\n重要：不要用代码块包围markdown图片语法，直接输出markdown格式即可。',
+            content: '当需要提供图片时，使用 pollinations.ai 生成图片（推荐）：![描述](https://image.pollinations.ai/prompt/你的图片描述?nologo=true&width=720&height=720)，URL中的空格等符号需要用%20等编码替换 ',
           })
         }
         
@@ -193,10 +263,52 @@ const PublishDialogAi = memo(
         setInputValue('')
       }, [activeAction, inputValue, customPrompts, handleAIResponse, t])
 
+      // 从URL下载图片并转换为IImgFile对象
+      const downloadImageAsImgFile = async (url: string, index: number): Promise<IImgFile | null> => {
+        try {
+          const response = await fetch(url)
+          const blob = await response.blob()
+          const filename = `ai-generated-image-${index + 1}.png`
+          
+          // 使用 formatImg 函数正确处理图片
+          const imgFile = await formatImg({
+            blob,
+            path: filename,
+          })
+          
+          return imgFile
+        } catch (error) {
+          console.error('下载图片失败:', error)
+          return null
+        }
+      }
+
       // 同步到编辑器
-      const syncToEditor = useCallback((content: string) => {
+      const syncToEditor = useCallback(async (content: string) => {
         if (onSyncToEditor) {
-          onSyncToEditor(content)
+          // 提取所有图片URL
+          const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || []
+          const imageUrls = imageMatches.map(match => {
+            const urlMatch = match.match(/!\[.*?\]\(([^)]+)\)/)
+            return urlMatch ? urlMatch[1] : null
+          }).filter((url): url is string => url !== null && !url.startsWith('data:'))
+
+          // 下载所有图片并转换为IImgFile
+          let imageFiles: IImgFile[] = []
+          if (imageUrls.length > 0) {
+            message.loading({ content: '正在下载图片...', key: 'downloadImages' })
+            const downloadPromises = imageUrls.map((url, index) => 
+              downloadImageAsImgFile(url, index)
+            )
+            const results = await Promise.all(downloadPromises)
+            imageFiles = results.filter((file): file is IImgFile => file !== null)
+            message.destroy('downloadImages')
+          }
+
+          // 移除markdown中的图片，只保留文本内容
+          const textContent = content.replace(/!\[.*?\]\([^)]+\)/g, '').trim()
+
+          onSyncToEditor(textContent, imageFiles)
           message.success(t('aiFeatures.syncSuccess' as any))
         }
       }, [onSyncToEditor, t])
@@ -230,7 +342,7 @@ const PublishDialogAi = memo(
           </h1>
           <div className="publishDialogAi-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%', padding: '0 12px', marginTop: '12px' }}>
             {/* 显示可编辑的默认提示词（缩写和扩写不可编辑） */}
-            {activeAction && activeAction !== 'shorten' && activeAction !== 'expand' && (
+            {/* {activeAction && activeAction !== 'shorten' && activeAction !== 'expand' && (
              <Collapse
                 size="small"
                 items={[
@@ -253,7 +365,7 @@ const PublishDialogAi = memo(
                 ]}
                 style={{ marginBottom: 12 }}
               /> 
-            )}
+            )} */}
 
             {/* 聊天消息区域 */}
             <div 
@@ -266,7 +378,7 @@ const PublishDialogAi = memo(
                 padding: '12px',
                 background: '#f5f5f5',
                 borderRadius: '8px',
-                maxHeight: '644px',
+                maxHeight: '650px',
               }}
             >
               {messages.length === 0 ? (
@@ -303,87 +415,11 @@ const PublishDialogAi = memo(
                       {msg.content ? (
                         msg.role === 'assistant' ? (
                           <>
-                            {/* 调试：显示图片信息 */}
-                            {msg.content.includes('![') && (() => {
-                              const allImageMatches = msg.content.match(/!\[.*?\]\([^)]+\)/g) || []
-                              const base64Images = msg.content.match(/!\[.*?\]\((data:image\/[^)]+)\)/g) || []
-                              const urlImages = allImageMatches.length - base64Images.length
-                              
-                              const base64Lengths = base64Images.map(match => {
-                                const base64Match = match.match(/base64,([^)]+)/)
-                                return base64Match ? base64Match[1].length : 0
-                              })
-                              
-                              return (
-                                <div style={{ fontSize: '10px', color: '#999', marginBottom: '4px', padding: '4px', background: '#fff3cd', borderRadius: '3px' }}>
-                                  📸 检测到 {allImageMatches.length} 张图片
-                                  {urlImages > 0 && <span style={{ marginLeft: '8px', color: 'green' }}>🌐 URL图片: {urlImages}张</span>}
-                                  {base64Images.length > 0 && base64Lengths.map((len, idx) => (
-                                    <div key={idx} style={{ marginLeft: '8px' }}>
-                                      Base64图片{idx + 1}: {len} 字符 
-                                      {len < 100 && <span style={{ color: 'red' }}> ⚠️ 数据太短，可能不完整</span>}
-                                      {len >= 100 && len < 1000 && <span style={{ color: 'orange' }}> ⚠️ 数据偏短</span>}
-                                      {len >= 1000 && <span style={{ color: 'green' }}> ✓ 长度正常</span>}
-                                    </div>
-                                  ))}
-                                </div>
-                              )
-                            })()}
                             <ReactMarkdown
                             components={{
-                              img: ({ node, ...props }) => {
-                                const src = props.src || ''
-                                const isBase64 = src.startsWith('data:image/')
-                                const isPollinationsUrl = src.includes('pollinations.ai')
-                                const base64Length = isBase64 && src.includes('base64,') 
-                                  ? src.split('base64,')[1]?.length || 0 
-                                  : 0
-                                
-                                console.log('🖼️ Image detected:', {
-                                  alt: props.alt,
-                                  srcType: isBase64 ? 'Base64' : (isPollinationsUrl ? 'Pollinations URL' : 'Other URL'),
-                                  srcLength: src.length,
-                                  base64DataLength: base64Length,
-                                  srcPreview: src.substring(0, 100) + '...'
-                                })
-
-                                return (
-                                  <div style={{ margin: '8px 0' }}>
-                                    <img
-                                      {...props}
-                                      style={{
-                                        maxWidth: '100%',
-                                        height: 'auto',
-                                        borderRadius: '4px',
-                                        display: 'block',
-                                      }}
-                                      alt={props.alt || 'AI生成的图片'}
-                                      crossOrigin={isPollinationsUrl ? 'anonymous' : undefined}
-                                      onError={(e) => {
-                                        const target = e.target as HTMLImageElement
-                                        console.error('❌ Image load failed:', {
-                                          src: src.substring(0, 100) + '...',
-                                          srcType: isBase64 ? 'Base64' : 'URL',
-                                          base64Length,
-                                        })
-                                        // 显示错误提示而不是隐藏
-                                        target.style.display = 'none'
-                                        const errorDiv = document.createElement('div')
-                                        errorDiv.style.cssText = 'padding: 8px; background: #fee; border: 1px solid #fcc; border-radius: 4px; font-size: 12px; color: #c00;'
-                                        if (isBase64) {
-                                          errorDiv.innerHTML = `⚠️ Base64图片加载失败<br/>数据长度: ${base64Length} 字符${base64Length < 1000 ? ' (数据不完整，可能被截断)' : ''}`
-                                        } else {
-                                          errorDiv.innerHTML = `⚠️ 图片加载失败<br/>URL: ${src.substring(0, 50)}...`
-                                        }
-                                        target.parentElement?.appendChild(errorDiv)
-                                      }}
-                                      onLoad={() => {
-                                        console.log('✅ Image loaded successfully:', isBase64 ? `Base64 (${base64Length} chars)` : 'URL')
-                                      }}
-                                    />
-                                  </div>
-                                )
-                              },
+                              img: ({ node, ...props }) => (
+                                <AIGeneratedImage src={props.src || ''} alt={props.alt} />
+                              ),
                               p: ({ node, ...props }) => <p style={{ margin: '4px 0', lineHeight: '1.6' }} {...props} />,
                               code: ({ node, inline, className, children, ...props }: any) => {
                                 return inline

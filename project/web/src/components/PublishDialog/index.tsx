@@ -577,18 +577,30 @@ const PublishDialog = memo(
       }, [setOpenLeft])
 
       // AI内容同步到编辑器
-      const handleSyncToEditor = useCallback((content: string) => {
+      const handleSyncToEditor = useCallback(async (content: string, images?: import('@/components/PublishDialog/publishDialog.type').IImgFile[]) => {
         // 如果只有一个账号，直接更新
         if (pubListChoosed.length === 1) {
-          setOnePubParams({ des: content }, pubListChoosed[0].account.id)
+          const params: any = { des: content }
+          if (images && images.length > 0) {
+            params.images = images
+          }
+          setOnePubParams(params, pubListChoosed[0].account.id)
         } 
         // 如果是多账号且在第一步，更新公共参数
         else if (pubListChoosed.length >= 2 && step === 0) {
-          setAccountAllParams({ des: content })
+          const params: any = { des: content }
+          if (images && images.length > 0) {
+            params.images = images
+          }
+          setAccountAllParams(params)
         }
         // 如果在第二步且有展开的项，更新该项
         else if (step === 1 && expandedPubItem) {
-          setOnePubParams({ des: content }, expandedPubItem.account.id)
+          const params: any = { des: content }
+          if (images && images.length > 0) {
+            params.images = images
+          }
+          setOnePubParams(params, expandedPubItem.account.id)
         }
       }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams])
 
