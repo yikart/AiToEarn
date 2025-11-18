@@ -193,7 +193,7 @@ export function getImageEditTaskStatus(logId: string) {
   return http.get(`ai/image/task/${logId}`)
 }
 
-// AI聊天接口 - 流式响应
+// AI聊天接口 - 支持流式和非流式响应
 export async function aiChatStream(data: {
   messages: Array<{ role: string, content: string }>
   stream?: boolean
@@ -215,7 +215,7 @@ export async function aiChatStream(data: {
       'Accept-Language': lang || 'zh-CN',
     },
     body: JSON.stringify({
-      stream: true,
+      stream: false, // 使用非流式响应
       model: 'gemini-2.5-flash-image',
       temperature: 1,
       presence_penalty: 0,

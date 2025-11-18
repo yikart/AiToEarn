@@ -1,7 +1,19 @@
 import type { ForwardedRef } from 'react'
-import { CloseCircleFilled, CopyOutlined, SendOutlined, SyncOutlined } from '@ant-design/icons'
-import { Button, Collapse, Input, message, Spin, Tabs } from 'antd'
-import { forwardRef, memo, useCallback, useImperativeHandle, useState } from 'react'
+import { 
+  CloseCircleFilled, 
+  CopyOutlined, 
+  SendOutlined, 
+  SyncOutlined,
+  CompressOutlined,
+  ExpandOutlined,
+  EditOutlined,
+  TranslationOutlined,
+  PictureOutlined,
+  VideoCameraOutlined,
+  SettingOutlined,
+} from '@ant-design/icons'
+import { Button, Collapse, Input, message, Modal, Spin, Tooltip } from 'antd'
+import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream } from '@/api/ai'
 import styles from '../publishDialog.module.scss'
@@ -40,15 +52,8 @@ const PublishDialogAi = memo(
       ref: ForwardedRef<IPublishDialogAiRef>,
     ) => {
       const { t } = useTransClient('publish')
-      const [activeTab, setActiveTab] = useState<AIAction>('expand')
-      const [chatSessions, setChatSessions] = useState<Record<AIAction, ChatSession>>({
-        shorten: { id: 'shorten', messages: [] },
-        expand: { id: 'expand', messages: [] },
-        polish: { id: 'polish', messages: [] },
-        translate: { id: 'translate', messages: [] },
-        generateImage: { id: 'generateImage', messages: [] },
-        generateVideo: { id: 'generateVideo', messages: [] },
-      })
+      const [activeAction, setActiveAction] = useState<AIAction | null>(null)
+      const [messages, setMessages] = useState<Message[]>([])
       const [inputValue, setInputValue] = useState('')
       const [targetLanguage, setTargetLanguage] = useState('')
       const [customPrompts, setCustomPrompts] = useState<Record<string, string>>({
@@ -56,110 +61,89 @@ const PublishDialogAi = memo(
         polish: t('aiFeatures.defaultPrompts.polish' as any),
       })
       const [isProcessing, setIsProcessing] = useState(false)
+      const [settingsVisible, setSettingsVisible] = useState(false)
+      const chatContainerRef = useRef<HTMLDivElement>(null)
 
-      // 获取当前会话
-      const currentSession = chatSessions[activeTab]
+      // 自动滚动到底部
+      useEffect(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+        }
+      }, [messages])
 
-      // 处理AI响应流
-      const handleAIStream = useCallback(async (
+      // 处理AI响应
+      const handleAIResponse = useCallback(async (
         action: AIAction,
-        messages: Array<{ role: string, content: string }>,
+        apiMessages: Array<{ role: string, content: string }>,
       ) => {
         try {
           setIsProcessing(true)
-          const response = await aiChatStream({ messages })
           
-          if (!response.body) {
-            throw new Error('No response body')
-          }
-
-          const reader = response.body.getReader()
-          const decoder = new TextDecoder()
-          let accumulatedResponse = ''
-
           // 添加助手消息占位
-          setChatSessions(prev => ({
-            ...prev,
-            [action]: {
-              ...prev[action],
-              messages: [...prev[action].messages, { role: 'assistant', content: '', action }],
-              isStreaming: true,
-              currentResponse: '',
-            },
-          }))
+          const placeholderMsg: Message = { role: 'assistant', content: '', action }
+          setMessages(prev => [...prev, placeholderMsg])
 
-          while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-
-            const chunk = decoder.decode(value, { stream: true })
-            const lines = chunk.split('\n').filter(line => line.trim())
-
-            for (const line of lines) {
-              if (line.startsWith('data: ')) {
-                const data = line.slice(6)
-                if (data === '[DONE]') continue
-
-                try {
-                  const parsed = JSON.parse(data)
-                  const content = parsed.choices?.[0]?.delta?.content || ''
-                  if (content) {
-                    accumulatedResponse += content
-                    // 更新流式响应
-                    setChatSessions(prev => {
-                      const newMessages = [...prev[action].messages]
-                      newMessages[newMessages.length - 1] = {
-                        role: 'assistant',
-                        content: accumulatedResponse,
-                        action,
-                      }
-                      return {
-                        ...prev,
-                        [action]: {
-                          ...prev[action],
-                          messages: newMessages,
-                          currentResponse: accumulatedResponse,
-                        },
-                      }
-                    })
-                  }
-                } catch (e) {
-                  console.error('Parse error:', e)
-                }
-              }
-            }
+          const response = await aiChatStream({ messages: apiMessages })
+          
+          // 检查响应状态
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
           }
 
-          // 完成流式传输
-          setChatSessions(prev => ({
-            ...prev,
-            [action]: {
-              ...prev[action],
-              isStreaming: false,
-            },
-          }))
+          // 尝试读取JSON响应
+          const result = await response.json()
+          
+          if (result.code === 0 && result.data?.content) {
+            // 更新最后一条消息
+            setMessages(prev => {
+              const newMessages = [...prev]
+              newMessages[newMessages.length - 1] = {
+                role: 'assistant',
+                content: result.data.content,
+                action,
+              }
+              return newMessages
+            })
+          } else {
+            throw new Error(result.message || 'AI响应失败')
+          }
 
           setIsProcessing(false)
-        } catch (error) {
-          console.error('AI Stream Error:', error)
-          message.error('AI处理失败，请重试')
+        } catch (error: any) {
+          console.error('AI Response Error:', error)
+          // 移除占位消息
+          setMessages(prev => prev.slice(0, -1))
+          message.error(error.message || 'AI处理失败，请重试')
           setIsProcessing(false)
         }
       }, [])
 
+      // 处理功能按钮点击
+      const handleActionClick = useCallback((action: AIAction) => {
+        if (action === 'translate' && !targetLanguage) {
+          message.warning(t('aiFeatures.targetLanguagePlaceholder' as any))
+          return
+        }
+        setActiveAction(action)
+      }, [targetLanguage, t])
+
       // 发送消息
-      const sendMessage = useCallback(async (content?: string, targetLang?: string) => {
+      const sendMessage = useCallback(async (content?: string) => {
         const messageContent = content || inputValue
         if (!messageContent.trim()) {
           message.warning(t('aiFeatures.selectText' as any))
           return
         }
 
+        if (!activeAction) {
+          message.warning('请先选择一个AI功能')
+          return
+        }
+
         let systemPrompt = ''
-        const action = activeTab
 
         // 根据不同功能生成提示词
-        switch (action) {
+        switch (activeAction) {
           case 'shorten':
             systemPrompt = t('aiFeatures.defaultPrompts.shorten' as any)
             break
@@ -170,31 +154,19 @@ const PublishDialogAi = memo(
             systemPrompt = customPrompts.polish || t('aiFeatures.defaultPrompts.polish' as any)
             break
           case 'translate':
-            if (!targetLang && !targetLanguage) {
-              message.warning(t('aiFeatures.targetLanguagePlaceholder' as any))
-              return
-            }
-            systemPrompt = `请将以下文本翻译成${targetLang || targetLanguage}：`
+            systemPrompt = `请将以下文本翻译成${targetLanguage}：`
             break
           case 'generateImage':
-            // 制图功能暂时使用提示词
             systemPrompt = '根据以下描述生成图片提示词：'
             break
           case 'generateVideo':
-            // 视频生成功能暂时使用提示词
             systemPrompt = '根据以下描述生成视频创作提示词：'
             break
         }
 
         // 添加用户消息
-        const userMessage: Message = { role: 'user', content: messageContent, action }
-        setChatSessions(prev => ({
-          ...prev,
-          [action]: {
-            ...prev[action],
-            messages: [...prev[action].messages, userMessage],
-          },
-        }))
+        const userMessage: Message = { role: 'user', content: messageContent, action: activeAction }
+        setMessages(prev => [...prev, userMessage])
 
         // 准备API消息
         const apiMessages = [
@@ -203,11 +175,11 @@ const PublishDialogAi = memo(
         ]
 
         // 调用AI接口
-        await handleAIStream(action, apiMessages)
+        await handleAIResponse(activeAction, apiMessages)
 
         // 清空输入
         setInputValue('')
-      }, [activeTab, inputValue, targetLanguage, customPrompts, handleAIStream, t])
+      }, [activeAction, inputValue, targetLanguage, customPrompts, handleAIResponse, t])
 
       // 同步到编辑器
       const syncToEditor = useCallback((content: string) => {
@@ -220,45 +192,27 @@ const PublishDialogAi = memo(
       // 暴露给父组件的方法
       useImperativeHandle(ref, () => ({
         processText: (text: string, action: AIAction) => {
-          setActiveTab(action)
-          // 如果是翻译，先切换tab再发送
+          setActiveAction(action)
+          setInputValue(text)
+          // 如果是翻译且没有目标语言，不自动发送
+          if (action === 'translate' && !targetLanguage) {
+            message.info('请先输入目标语言')
+            return
+          }
+          // 自动发送
           setTimeout(() => {
             sendMessage(text)
           }, 100)
         },
       }))
 
-      const tabItems = [
-        {
-          key: 'shorten',
-          label: t('aiFeatures.shorten' as any),
-          children: null,
-        },
-        {
-          key: 'expand',
-          label: t('aiFeatures.expand' as any),
-          children: null,
-        },
-        {
-          key: 'polish',
-          label: t('aiFeatures.polish' as any),
-          children: null,
-        },
-        {
-          key: 'translate',
-          label: t('aiFeatures.translate' as any),
-          children: null,
-        },
-        {
-          key: 'generateImage',
-          label: t('aiFeatures.generateImage' as any),
-          children: null,
-        },
-        {
-          key: 'generateVideo',
-          label: t('aiFeatures.generateVideo' as any),
-          children: null,
-        },
+      const actionButtons = [
+        { action: 'shorten', icon: <CompressOutlined />, label: t('aiFeatures.shorten' as any) },
+        { action: 'expand', icon: <ExpandOutlined />, label: t('aiFeatures.expand' as any) },
+        { action: 'polish', icon: <EditOutlined />, label: t('aiFeatures.polish' as any) },
+        { action: 'translate', icon: <TranslationOutlined />, label: t('aiFeatures.translate' as any) },
+        { action: 'generateImage', icon: <PictureOutlined />, label: t('aiFeatures.generateImage' as any) },
+        { action: 'generateVideo', icon: <VideoCameraOutlined />, label: t('aiFeatures.generateVideo' as any) },
       ]
 
       return (
@@ -267,16 +221,20 @@ const PublishDialogAi = memo(
             <span>{t('aiAssistant' as any)}</span>
             <CloseCircleFilled onClick={onClose} />
           </h1>
-          <div className="publishDialogAi-wrapper">
-            <Tabs
-              activeKey={activeTab}
-              onChange={key => setActiveTab(key as AIAction)}
-              items={tabItems}
-              size="small"
-            />
+          <div className="publishDialogAi-wrapper" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            {/* 翻译需要输入目标语言 */}
+            {activeAction === 'translate' && (
+              <Input
+                placeholder={t('aiFeatures.targetLanguagePlaceholder' as any)}
+                value={targetLanguage}
+                onChange={e => setTargetLanguage(e.target.value)}
+                style={{ marginBottom: 12 }}
+                size="small"
+              />
+            )}
 
             {/* 扩写和润色显示可编辑的默认提示词 */}
-            {(activeTab === 'expand' || activeTab === 'polish') && (
+            {(activeAction === 'expand' || activeAction === 'polish') && (
               <Collapse
                 size="small"
                 items={[
@@ -285,13 +243,13 @@ const PublishDialogAi = memo(
                     label: '默认提示词',
                     children: (
                       <Input.TextArea
-                        value={customPrompts[activeTab]}
+                        value={customPrompts[activeAction]}
                         onChange={e =>
                           setCustomPrompts(prev => ({
                             ...prev,
-                            [activeTab]: e.target.value,
+                            [activeAction]: e.target.value,
                           }))}
-                        rows={3}
+                        rows={2}
                         placeholder={t('aiFeatures.inputPrompt' as any)}
                       />
                     ),
@@ -301,37 +259,30 @@ const PublishDialogAi = memo(
               />
             )}
 
-            {/* 翻译需要输入目标语言 */}
-            {activeTab === 'translate' && (
-              <Input
-                placeholder={t('aiFeatures.targetLanguagePlaceholder' as any)}
-                value={targetLanguage}
-                onChange={e => setTargetLanguage(e.target.value)}
-                style={{ marginBottom: 12 }}
-              />
-            )}
-
             {/* 聊天消息区域 */}
-            <div className="publishDialogAi-chat" style={{ 
-              flex: 1, 
-              overflowY: 'auto', 
-              marginBottom: 12,
-              padding: '12px',
-              background: '#f5f5f5',
-              borderRadius: '8px',
-              minHeight: '300px',
-              maxHeight: '500px',
-            }}>
-              {currentSession.messages.length === 0 ? (
+            <div 
+              ref={chatContainerRef}
+              className="publishDialogAi-chat" 
+              style={{ 
+                flex: 1, 
+                overflowY: 'auto', 
+                marginBottom: 12,
+                padding: '12px',
+                background: '#f5f5f5',
+                borderRadius: '8px',
+                minHeight: '300px',
+              }}
+            >
+              {messages.length === 0 ? (
                 <div style={{ 
                   textAlign: 'center', 
                   color: '#999', 
                   padding: '40px 20px',
                 }}>
-                  请输入内容开始对话
+                  请选择功能并输入内容开始对话
                 </div>
               ) : (
-                currentSession.messages.map((msg, index) => (
+                messages.map((msg, index) => (
                   <div
                     key={index}
                     style={{
@@ -350,12 +301,10 @@ const PublishDialogAi = memo(
                         color: msg.role === 'user' ? '#fff' : '#000',
                         wordBreak: 'break-word',
                         boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+                        whiteSpace: 'pre-wrap',
                       }}
                     >
-                      {msg.content}
-                      {currentSession.isStreaming && index === currentSession.messages.length - 1 && (
-                        <Spin size="small" style={{ marginLeft: 8 }} />
-                      )}
+                      {msg.content || <Spin size="small" />}
                     </div>
                     {msg.role === 'assistant' && msg.content && (
                       <div style={{ marginTop: 4, display: 'flex', gap: 8 }}>
@@ -381,14 +330,46 @@ const PublishDialogAi = memo(
               )}
             </div>
 
+            {/* 功能按钮区域 */}
+            <div style={{ 
+              display: 'flex', 
+              gap: 8, 
+              marginBottom: 8,
+              padding: '8px',
+              background: '#fafafa',
+              borderRadius: '8px',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
+                {actionButtons.map(({ action, icon, label }) => (
+                  <Tooltip key={action} title={label}>
+                    <Button
+                      type={activeAction === action ? 'primary' : 'default'}
+                      icon={icon}
+                      onClick={() => handleActionClick(action as AIAction)}
+                      size="small"
+                    />
+                  </Tooltip>
+                ))}
+              </div>
+              <Tooltip title="设置">
+                <Button
+                  icon={<SettingOutlined />}
+                  onClick={() => setSettingsVisible(true)}
+                  size="small"
+                />
+              </Tooltip>
+            </div>
+
             {/* 输入区域 */}
             <div style={{ display: 'flex', gap: 8 }}>
               <Input.TextArea
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
-                placeholder={t('aiFeatures.inputPrompt' as any)}
+                placeholder={activeAction ? t('aiFeatures.inputPrompt' as any) : '请先选择一个AI功能'}
                 rows={3}
-                disabled={isProcessing}
+                disabled={isProcessing || !activeAction}
                 onPressEnter={(e) => {
                   if (e.shiftKey) return // Shift+Enter换行
                   e.preventDefault()
@@ -400,12 +381,26 @@ const PublishDialogAi = memo(
                 icon={<SendOutlined />}
                 onClick={() => sendMessage()}
                 loading={isProcessing}
-                disabled={isProcessing}
+                disabled={isProcessing || !activeAction}
               >
                 {t('aiFeatures.send' as any)}
               </Button>
             </div>
           </div>
+
+          {/* 设置弹窗 */}
+          <Modal
+            title="AI设置"
+            open={settingsVisible}
+            onCancel={() => setSettingsVisible(false)}
+            footer={[
+              <Button key="close" onClick={() => setSettingsVisible(false)}>
+                关闭
+              </Button>,
+            ]}
+          >
+            <p>模型设置功能开发中...</p>
+          </Modal>
         </div>
       )
     },
