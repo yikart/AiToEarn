@@ -142,3 +142,7 @@ export interface ThreadsLocation {
 export interface ThreadsSearchLocationResponse {
   data: ThreadsLocation[]
 }
+
+export interface ThreadsDeletePostResponse {
+  success: boolean
+}

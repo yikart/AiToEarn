@@ -561,7 +561,7 @@ export class YoutubeController {
   @Post('plat/youtube/deleteVideo')
   async deleteVideo(@Body() data: DeleteVideoDto) {
     try {
-      const res = await this.youtubeService.deleteVideo(
+      const res = await this.youtubeService.deletePost(
         data.accountId,
         data.id,
       )

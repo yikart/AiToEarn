@@ -269,10 +269,16 @@ export class ThreadsService extends MetaBaseService {
     return result
   }
 
-  async deletePost(
+  override async deletePost(
+    accountId: string,
     postId: string,
-    accessToken: string,
-  ): Promise<void> {
-    return await this.threadsAPIService.deletePost(postId, accessToken)
+  ): Promise<boolean> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.error(`No valid access token found for accountId: ${accountId}`)
+      return false
+    }
+    const result = await this.threadsAPIService.deletePost(postId, credential.access_token)
+    return result.success
   }
 }

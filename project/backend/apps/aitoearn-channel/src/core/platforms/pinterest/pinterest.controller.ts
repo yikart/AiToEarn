@@ -92,7 +92,7 @@ export class PinterestController {
   })
   @Post('plat/pinterest/delPinById')
   delPinById(@Body() data: { id: string, accountId: string }) {
-    return this.pinterestService.delPinById(data.id, data.accountId)
+    return this.pinterestService.deletePost(data.accountId, data.id)
   }
 
   // 上传视频获取视频id
