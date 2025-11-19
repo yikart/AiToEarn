@@ -20,7 +20,9 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 <details>
   <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
+  
   <br/>
+  
   1. [Quick Start for Creators (Apps & Web)](#quick-start-for-creators-apps--web)
   2. [Quick Start for Developers (Docker, Recommended)](#quick-start-for-developers-docker-recommended)
   3. [Key Features](#key-features)
@@ -41,9 +43,9 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 OS | Download
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.0-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.0/Aitoearn-1.3.0.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.0-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.0/AiToEarnSetup-1.3.0.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.0-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.0/AiToEarn+1.3.0.dmg)
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.2-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-1.3.2-internal-arm64-v8a.apk)
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.2-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-Setup-1.3.2.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.2-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn+1.3.2.dmg)
 iOS |  **Coming soon!**
 Web | [Use on Web](https://aitoearn.ai/en/accounts)
 
@@ -62,7 +64,6 @@ cp env.example .env
 docker compose up -d
 ````
 
----
 
 ### 🌐 Access Applications
 
@@ -79,7 +80,6 @@ After Docker starts successfully, you can access services at:
 > ℹ️ MongoDB & Redis are both started by `docker compose`.
 > You only need to configure their passwords in `.env`; no extra local installation is required.
 
----
 
 ### 🧩 Advanced Configuration (.env)
 
@@ -99,7 +99,7 @@ APP_DOMAIN=your-domain.com
 
 > ✅ In production, please use strong, random passwords and secrets.
 
----
+
 
 <details>
 <summary>🧪 Optional: Run backend & frontend manually (dev mode)</summary>
@@ -126,7 +126,7 @@ pnpm run dev
 
 </details>
 
----
+
 
 <details>
 <summary>🖥️ Optional: Start Electron desktop project</summary>
@@ -151,7 +151,7 @@ npm run dev
 The Electron project provides a desktop client for AiToEarn.
 
 </details>
-```
+
 
 
 
