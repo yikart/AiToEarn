@@ -408,7 +408,10 @@ const PublishDialogAi = memo(
               }
               
               if (normalized === 'completed') {
-                const videoUrl = res.data?.data?.video_url || res.data?.video_url
+                let videoUrl = res.data?.data?.video_url || res.data?.video_url
+                if (videoUrl) {
+                  videoUrl = getOssUrl(videoUrl)
+                }
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
                 

@@ -474,13 +474,10 @@ const PublishDialog = memo(
       const openLeftSide = useMemo(() => {
         if (!openLeft)
           return false
-        if (step === 0) {
-          return pubListChoosed.length !== 0
-        }
-        else {
-          return expandedPubItem !== undefined
-        }
-      }, [openLeft, step, pubListChoosed.length, expandedPubItem])
+        // 如果用户主动打开了AI助手（openLeft=true），就保持打开状态
+        // 不再依赖于 pubListChoosed 或 expandedPubItem 的状态
+        return true
+      }, [openLeft])
 
       useEffect(() => {
         setErrParamsMap(errParamsMap)
@@ -577,13 +574,15 @@ const PublishDialog = memo(
 
       // 处理划词操作
       const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
-        // 打开左侧AI助手面板
-        setOpenLeft(true)
+        // 只有当面板未打开时才设置，避免重复触发导致状态混乱
+        if (!openLeft) {
+          setOpenLeft(true)
+        }
         // 等待面板打开动画完成后调用AI处理并自动发送
         setTimeout(() => {
           aiAssistantRef.current?.processText(selectedText, action)
-        }, 500) // 增加延迟确保面板完全打开和渲染完成
-      }, [setOpenLeft])
+        }, openLeft ? 100 : 500) // 如果已打开，减少延迟
+      }, [openLeft, setOpenLeft])
 
       // AI内容同步到编辑器
       const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile) => {
