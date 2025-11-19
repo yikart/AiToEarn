@@ -394,7 +394,7 @@ const PublishDialogAi = memo(
           try {
             const res: any = await getVideoTaskStatus(taskId)
             if (res.data) {
-              const { status, fail_reason, progress } : any = res.dataz
+              const { status, fail_reason, progress } : any = res.data
             //   {
             //     "task_id": "691d59a0cf8f85110ff2538d",
             //     "action": "",
