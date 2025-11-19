@@ -88,7 +88,7 @@ export class PublishingService implements OnModuleDestroy {
       now - IMMEDIATE_PUBLISH_TOLERANCE_SECONDS,
       now + IMMEDIATE_PUBLISH_TOLERANCE_SECONDS,
     ]
-    const publishImmediately = publishTime.getTime() >= immediatePublishWindow[0] && publishTime.getTime() <= immediatePublishWindow[1]
+    const publishImmediately = publishTime.getTime() <= immediatePublishWindow[1]
     if (!publishImmediately) {
       this.logger.log(`Publish task ${newTask.id} created, scheduled for ${publishTime.toISOString()}`)
       return newTask
@@ -185,11 +185,10 @@ export class PublishingService implements OnModuleDestroy {
   }
 
   async getPublishTaskListByTime(
-    start: Date,
     end: Date,
   ): Promise<PublishTask[]> {
     const filters: RootFilterQuery<PublishTask> = {
-      publishTime: { $gte: start, $lte: end },
+      publishTime: { $lte: end },
       status: PublishStatus.WaitingForPublish,
     }
     const list = await this.publishTaskModel.find(filters).sort({
