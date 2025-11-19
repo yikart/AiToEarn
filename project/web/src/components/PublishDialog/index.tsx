@@ -580,7 +580,11 @@ const PublishDialog = memo(
       const handleSyncToEditor = useCallback(async (content: string, images?: import('@/components/PublishDialog/publishDialog.type').IImgFile[]) => {
         // 如果只有一个账号，直接更新
         if (pubListChoosed.length === 1) {
-          const params: any = { des: content }
+          const params: any = {}
+          // 只有当 content 不为空字符串时才更新文案
+          if (content) {
+            params.des = content
+          }
           if (images && images.length > 0) {
             params.images = images
           }
@@ -588,7 +592,11 @@ const PublishDialog = memo(
         } 
         // 如果是多账号且在第一步，更新公共参数
         else if (pubListChoosed.length >= 2 && step === 0) {
-          const params: any = { des: content }
+          const params: any = {}
+          // 只有当 content 不为空字符串时才更新文案
+          if (content) {
+            params.des = content
+          }
           if (images && images.length > 0) {
             params.images = images
           }
@@ -596,7 +604,11 @@ const PublishDialog = memo(
         }
         // 如果在第二步且有展开的项，更新该项
         else if (step === 1 && expandedPubItem) {
-          const params: any = { des: content }
+          const params: any = {}
+          // 只有当 content 不为空字符串时才更新文案
+          if (content) {
+            params.des = content
+          }
           if (images && images.length > 0) {
             params.images = images
           }

@@ -312,8 +312,15 @@ const PublishDialogAi = memo(
           // 移除markdown中的图片，只保留文本内容
           const textContent = content.replace(/!\[.*?\]\([^)]+\)/g, '').trim()
 
-          onSyncToEditor(textContent, imageFiles)
-          message.success(t('aiFeatures.syncSuccess' as any))
+          // 如果有图片，只同步图片不更新文本（传递空字符串）
+          // 如果没有图片，同步文本内容
+          if (imageFiles.length > 0) {
+            onSyncToEditor('', imageFiles)
+            message.success('图片同步成功')
+          } else {
+            onSyncToEditor(textContent, imageFiles)
+            message.success(t('aiFeatures.syncSuccess' as any))
+          }
         }
       }, [onSyncToEditor, t])
 
