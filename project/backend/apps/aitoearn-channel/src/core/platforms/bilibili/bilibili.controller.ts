@@ -185,6 +185,6 @@ export class BilibiliController {
   })
   @Delete(':accountId/archives/:archiveId')
   async deleteArchive(@Param() accountId: string, @Param() archiveId: string) {
-    return await this.bilibiliService.deleteArchive(accountId, archiveId)
+    return await this.bilibiliService.deletePost(accountId, archiveId)
   }
 }
