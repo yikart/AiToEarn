@@ -4,7 +4,7 @@ import { Controller, OnModuleInit } from '@nestjs/common'
 // import { VipService } from './vip.service'
 
 // const VipAddPointsLockKey = 'vip:add:points:lock:'
-import { TemplatesService, TransactionalService } from '@yikart/listmonk'
+import { SubscribersService, SubscriberStatus, TemplatesService, TransactionalService } from '@yikart/listmonk'
 
 @Controller()
 export class VipController implements OnModuleInit {
@@ -13,11 +13,13 @@ export class VipController implements OnModuleInit {
     // private readonly redisService: RedisService,
     private readonly transactionalService: TransactionalService,
     private readonly templatesService: TemplatesService,
+    private readonly subscribersService: SubscribersService,
   ) {}
 
   onModuleInit() {
     // this.testListmonk()
     // this.test2()
+    // this.test3()
   }
   // @Cron('0 30 0 * * *')
   // async dispatchVipIntegral() {
@@ -36,7 +38,7 @@ export class VipController implements OnModuleInit {
 
   testListmonk() {
     return this.transactionalService.sendTransactionalMessage({
-      template_id: 2,
+      template_id: 3,
       subscriber_email: '861796052@qq.com',
       subject: 'Test',
       data: {
@@ -49,6 +51,15 @@ export class VipController implements OnModuleInit {
 
   async test2() {
     const res = await this.templatesService.retrieveAllTemplates()
+    return res
+  }
+
+  async test3() {
+    const res = await this.subscribersService.create({
+      email: '861796052@qq.com',
+      name: 'Nevin',
+      status: SubscriberStatus.ENABLED,
+    })
     return res
   }
 }
