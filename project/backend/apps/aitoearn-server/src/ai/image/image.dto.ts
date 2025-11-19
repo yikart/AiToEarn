@@ -45,10 +45,10 @@ const md2CardSchema = z.object({
 export class Md2CardDto extends createZodDto(md2CardSchema) {}
 
 // Fireflycard模板类型枚举
-const fireflycardTempSchema = z.enum(FireflycardTempTypes)
+export const fireflycardTempSchema = z.enum(FireflycardTempTypes)
 
 // Fireflycard样式配置
-const fireflycardStyleSchema = z.object({
+export const fireflycardStyleSchema = z.object({
   align: z.string().optional().describe('对齐方式'),
   backgroundName: z.string().optional().describe('背景名称'),
   backShadow: z.string().optional().describe('背景阴影'),
@@ -72,7 +72,7 @@ const fireflycardStyleSchema = z.object({
 }).optional()
 
 // Fireflycard开关配置
-const fireflycardSwitchConfigSchema = z.object({
+export const fireflycardSwitchConfigSchema = z.object({
   showIcon: z.boolean().optional().describe('显示图标'),
   showDate: z.boolean().optional().describe('显示日期'),
   showTitle: z.boolean().optional().describe('显示标题'),

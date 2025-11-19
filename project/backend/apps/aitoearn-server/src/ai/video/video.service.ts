@@ -46,9 +46,9 @@ import {
   KlingCallbackDto,
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
-  KlingText2VideoRequestDto,
   Sora2CallbackDto,
   Sora2GenerationRequestDto,
+  UserKlingText2VideoRequestDto,
   UserListVideoTasksQueryDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
@@ -180,7 +180,7 @@ export class VideoService {
       return createTaskResponse(result.task_id)
     }
     else {
-      const klingRequest: KlingText2VideoRequestDto = {
+      const klingRequest: UserKlingText2VideoRequestDto = {
         userId,
         userType,
         model_name: model,
@@ -523,7 +523,7 @@ export class VideoService {
     }
   }
 
-  async klingText2Video(request: KlingText2VideoRequestDto) {
+  async klingText2Video(request: UserKlingText2VideoRequestDto) {
     const { userId, userType, model_name, duration, mode, ...params } = request
     const pricing = await this.calculateVideoGenerationPrice({
       userId,

@@ -7,9 +7,9 @@ import { BigNumber } from 'bignumber.js'
 import dayjs from 'dayjs'
 import _ from 'lodash'
 import OpenAI from 'openai'
-import { PointsService } from '../../../user/points.service'
-import { UserService } from '../../../user/user.service'
-import { OpenaiService } from '../../libs/openai'
+import { PointsService } from '../../user/points.service'
+import { UserService } from '../../user/user.service'
+import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
 import { ChatCompletionDto, ChatModelsQueryDto, UserChatCompletionDto } from './chat.dto'
 
@@ -176,19 +176,20 @@ export class ChatService {
   }
 
   // 智能图片文案
-  async imgContentByAi(user: { userId: string, userType: UserType }, model: string, imgUrl: string, prompt: string, option: {
+  async imgContentByAi(user: { userId: string, userType: UserType }, model: string, imgUrl: string, prompt: string, option?: {
     title?: string
     desc?: string
     max?: number
     language?: string
+    systemPrompt?: string
   }): Promise<string> {
     const { userId, userType } = user
 
-    const systemContent = `Generate copy based on the pictures and prompt words, as well as the reference titles and contents. Reply in ${option.language || 'English'}. The reply should not exceed ${option.max || 100} characters. Just return the copy.`
+    const systemContent = option?.systemPrompt || `Generate copy based on the pictures and prompt words, as well as the reference titles and contents. Reply in ${option?.language || 'English'}. The reply should not exceed ${option?.max || 100} characters. Just return the copy.`
     let text = `prompt${prompt}.`
-    if (option.title)
+    if (option?.title)
       text += `Reference Title: ${option.title}`
-    if (option.desc)
+    if (option?.desc)
       text += `Reference description: ${option.desc}`
 
     const request: UserChatCompletionDto = {
@@ -229,19 +230,20 @@ export class ChatService {
   }
 
   // 智能视频文案
-  async videoContentByAi(user: { userId: string, userType: UserType }, model: string, videoUrl: string, prompt: string, option: {
+  async videoContentByAi(user: { userId: string, userType: UserType }, model: string, videoUrl: string, prompt: string, option?: {
     title?: string
     desc?: string
     max?: number
     language?: string
+    systemPrompt?: string
   }): Promise<string> {
     const { userId, userType } = user
 
-    const systemContent = `Generate copy based on the video and prompt words, as well as the reference titles and contents. Reply in ${option.language || 'English'}. The reply should not exceed ${option.max || 100} characters. Just return the copy.`
+    const systemContent = option?.systemPrompt || `Generate copy based on the video and prompt words, as well as the reference titles and contents. Reply in ${option?.language || 'English'}. The reply should not exceed ${option?.max || 100} characters. Just return the copy.`
     let text = `prompt${prompt}.`
-    if (option.title)
+    if (option?.title)
       text += `Reference Title: ${option.title}`
-    if (option.desc)
+    if (option?.desc)
       text += `Reference description: ${option.desc}`
 
     const request: UserChatCompletionDto = {

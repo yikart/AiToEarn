@@ -2,10 +2,9 @@ import { Controller, Get } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
-import { ChatService } from '../chat'
-import { ImageService } from '../image'
-import { VideoService } from '../video'
-import { ChatModelConfigVo, ImageEditModelParamsVo, ImageGenerationModelParamsVo, VideoGenerationModelParamsVo } from './models-config.vo'
+import { ChatModelConfigVo, ChatService } from '../chat'
+import { ImageEditModelParamsVo, ImageGenerationModelParamsVo, ImageService } from '../image'
+import { VideoGenerationModelParamsVo, VideoService } from '../video'
 
 @ApiTags('OpenSource/Me/Ai')
 @Controller('ai')
