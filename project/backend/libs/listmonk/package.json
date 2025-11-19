@@ -13,7 +13,6 @@
   },
   "peerDependencies": {
     "@nestjs/common": "^11.0.0",
-    "@yikart/common": "workspace:*",
     "tslib": "^2.3.0",
     "zod": "^4.0.0"
   },
