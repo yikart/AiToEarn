@@ -161,6 +161,13 @@ const moreApiConfigSchema = z.object({
   xhsCreatorUri: z.string().default(''),
 })
 
+/** Listmonk配置 */
+const listmonkConfigSchema = z.object({
+  host: z.string().default(''),
+  apiKey: z.string().default(''),
+  apiSecret: z.string().default(''),
+})
+
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
   auth: aitoearnAuthConfigSchema,
@@ -181,6 +188,7 @@ export const appConfigSchema = z.object({
   }),
   moreApi: moreApiConfigSchema,
   statisticsDb: mongodbConfigSchema,
+  listmonk: listmonkConfigSchema,
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }
