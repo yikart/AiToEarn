@@ -21,6 +21,7 @@ import { WxPlatModule } from '../platforms/wx-plat/wx-plat.module'
 import { YoutubeModule } from '../platforms/youtube/youtube.module'
 import { FinalizePublishPostConsumer } from './consumers/finalize-publish.consumer'
 import { ImmediatePublishPostConsumer } from './consumers/immediate-publish.consumer'
+import { UpdatePublishedPostConsumer } from './consumers/update-published-post.consumer'
 import { CredentialInvalidationService } from './credential-invalidation.service'
 import { PublishingErrorHandler } from './error-handler.service'
 import { MediaStagingService } from './media-staging.service'
@@ -64,6 +65,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     PublishingService,
     ImmediatePublishPostConsumer,
     FinalizePublishPostConsumer,
+    UpdatePublishedPostConsumer,
     BilibiliPubService,
     kwaiPubService,
     PinterestPubService,

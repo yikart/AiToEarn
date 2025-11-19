@@ -411,6 +411,7 @@ export interface MetaPostAttachment {
 }
 
 export interface UpdatePostRequest {
+  is_published?: boolean
   attachments?: MetaPostAttachment[]
   message?: string
 }

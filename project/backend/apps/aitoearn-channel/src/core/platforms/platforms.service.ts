@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { AccountType } from '@yikart/aitoearn-server-client'
+import { AccountType } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { AccountService } from '../account/account.service'
 import { PlatformBaseService } from './base.service'
