@@ -12,14 +12,18 @@ import {
   VideoCameraOutlined,
   SettingOutlined,
 } from '@ant-design/icons'
-import { Button, Collapse, Input, message, Modal, Spin, Tooltip } from 'antd'
+import { Button, Collapse, Input, message, Modal, Spin, Tooltip, Select, Progress } from 'antd'
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
-import { aiChatStream } from '@/api/ai'
+import { aiChatStream, getVideoGenerationModels, generateVideo, getVideoTaskStatus } from '@/api/ai'
 import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
 import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
+import { OSS_URL } from '@/constant'
+import { getOssUrl } from '@/utils/oss'
 import styles from '../publishDialog.module.scss'
+
+const { Option } = Select
 
 export interface IPublishDialogAiRef {
   // AI处理文本
@@ -142,12 +146,188 @@ const PublishDialogAi = memo(
       const [showRawContent, setShowRawContent] = useState<number | null>(null)
       const chatContainerRef = useRef<HTMLDivElement>(null)
 
+      // 视频生成相关状态
+      const [videoModels, setVideoModels] = useState<any[]>([])
+      const [selectedVideoModel, setSelectedVideoModel] = useState('')
+      const [videoTaskId, setVideoTaskId] = useState<string | null>(null)
+      const [videoStatus, setVideoStatus] = useState<string>('')
+      const [videoProgress, setVideoProgress] = useState(0)
+      const [videoResult, setVideoResult] = useState<string | null>(null)
+
       // 自动滚动到底部
       useEffect(() => {
         if (chatContainerRef.current) {
           chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
         }
       }, [messages])
+
+      // 初始化视频模型
+      useEffect(() => {
+        const fetchVideoModels = async () => {
+          try {
+            const res: any = await getVideoGenerationModels()
+            if (res.data && Array.isArray(res.data)) {
+              setVideoModels(res.data)
+              
+              // 从 localStorage 读取保存的模型
+              const savedModel = localStorage.getItem('ai_video_model')
+              
+              // 尝试找到 sora2 模型
+              const sora2Model = res.data.find((m: any) => m.name?.toLowerCase().includes('sora'))
+              
+              if (savedModel && res.data.find((m: any) => m.name === savedModel)) {
+                // 如果有保存的模型且存在于列表中，使用保存的模型
+                setSelectedVideoModel(savedModel)
+              } else if (sora2Model) {
+                // 否则优先使用 sora2
+                setSelectedVideoModel(sora2Model.name)
+                localStorage.setItem('ai_video_model', sora2Model.name)
+              } else if (res.data.length > 0) {
+                // 都没有则使用第一个
+                setSelectedVideoModel(res.data[0].name)
+                localStorage.setItem('ai_video_model', res.data[0].name)
+              }
+            }
+          } catch (error) {
+            console.error('Failed to fetch video models:', error)
+          }
+        }
+        
+        fetchVideoModels()
+      }, [])
+
+      // 视频任务轮询
+      const pollVideoTaskStatus = useCallback(async (taskId: string) => {
+        const checkStatus = async () => {
+          try {
+            const res: any = await getVideoTaskStatus(taskId)
+            if (res.data) {
+              const { status, fail_reason, video_url, progress } = res.data
+              const up = typeof status === 'string' ? status.toUpperCase() : ''
+              const normalized = up === 'SUCCESS' ? 'completed' : up === 'FAILED' ? 'failed' : up === 'PROCESSING' ? 'processing' : up === 'NOT_START' || up === 'NOT_STARTED' || up === 'QUEUED' || up === 'PENDING' ? 'submitted' : (status || '').toString().toLowerCase()
+              setVideoStatus(normalized)
+              
+              let percent = 0
+              if (typeof progress === 'string') {
+                const m = progress.match(/(\d+)/)
+                percent = m ? Number(m[1]) : 0
+              } else if (typeof progress === 'number') {
+                percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100)
+              }
+              
+              if (normalized === 'completed') {
+                const videoUrl = video_url || res.data?.data?.video_url || res.data?.video_url
+                setVideoResult(videoUrl)
+                setVideoProgress(100)
+                
+                // 更新最后一条消息，添加视频
+                setMessages(prev => {
+                  const newMessages = [...prev]
+                  if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
+                    newMessages[newMessages.length - 1] = {
+                      ...newMessages[newMessages.length - 1],
+                      content: `视频生成完成！\n\n[视频链接](${videoUrl})`,
+                    }
+                  }
+                  return newMessages
+                })
+                
+                message.success('视频生成成功')
+                setIsProcessing(false)
+                return true
+              }
+              if (normalized === 'failed') {
+                setVideoProgress(0)
+                message.error(fail_reason || '视频生成失败')
+                setMessages(prev => prev.slice(0, -1))
+                setIsProcessing(false)
+                return true
+              }
+              setVideoProgress(percent)
+              return false
+            }
+            return false
+          } catch {
+            return false
+          }
+        }
+        
+        const poll = async () => {
+          const done = await checkStatus()
+          if (!done) {
+            setTimeout(poll, 5000)
+          }
+        }
+        poll()
+      }, [])
+
+      // 处理视频生成
+      const handleVideoGeneration = useCallback(async (prompt: string) => {
+        if (!selectedVideoModel) {
+          message.error('请先在设置中选择视频模型')
+          return
+        }
+
+        const selectedModel = videoModels.find((m: any) => m.name === selectedVideoModel)
+        if (!selectedModel) {
+          message.error('选中的视频模型不可用')
+          return
+        }
+
+        try {
+          setIsProcessing(true)
+          setVideoStatus('submitted')
+          setVideoProgress(10)
+
+          // 添加助手消息占位
+          const placeholderMsg: Message = { role: 'assistant', content: '正在生成视频...', action: 'generateVideo' }
+          setMessages(prev => [...prev, placeholderMsg])
+
+          // 获取第一个可用的分辨率和时长
+          let duration = 5
+          let size = '720p'
+          
+          if (selectedModel?.channel === 'kling' && selectedModel?.pricing) {
+            const durations = [...new Set(selectedModel.pricing.map((p: any) => p.duration))] as number[]
+            const modes = [...new Set(selectedModel.pricing.map((p: any) => p.mode))] as string[]
+            if (durations.length > 0) duration = durations[0]
+            if (modes.length > 0) size = modes[0]
+          } else {
+            if (selectedModel?.durations?.length > 0) duration = selectedModel.durations[0]
+            if (selectedModel?.resolutions?.length > 0) size = selectedModel.resolutions[0]
+          }
+
+          const data: any = {
+            model: selectedVideoModel,
+            prompt,
+            duration,
+          }
+
+          // 如果是 kling 模型，传 mode 参数
+          if (selectedModel?.channel === 'kling') {
+            data.mode = size
+          } else {
+            data.size = size
+          }
+
+          const res: any = await generateVideo(data)
+          
+          if (res?.data?.task_id) {
+            setVideoTaskId(res.data.task_id)
+            setVideoStatus(res.data.status)
+            message.success('视频生成任务已提交')
+            pollVideoTaskStatus(res.data.task_id)
+          } else {
+            throw new Error('视频生成失败')
+          }
+        } catch (error: any) {
+          console.error('Video Generation Error:', error)
+          setMessages(prev => prev.slice(0, -1))
+          message.error(error.message || '视频生成失败，请重试')
+          setVideoStatus('')
+          setIsProcessing(false)
+        }
+      }, [selectedVideoModel, videoModels, pollVideoTaskStatus])
 
       // 处理AI响应
       const handleAIResponse = useCallback(async (
@@ -212,6 +392,17 @@ const PublishDialogAi = memo(
         // 使用传入的 action 或当前状态的 action
         const currentAction = forceAction || activeAction
 
+        // 添加用户消息
+        const userMessage: Message = { role: 'user', content: messageContent, action: currentAction || undefined }
+        setMessages(prev => [...prev, userMessage])
+
+        // 如果是视频生成功能，直接调用视频生成
+        if (currentAction === 'generateVideo') {
+          await handleVideoGeneration(messageContent)
+          setInputValue('')
+          return
+        }
+
         let systemPrompt = ''
 
         // 如果选择了功能，根据不同功能生成提示词
@@ -232,15 +423,8 @@ const PublishDialogAi = memo(
             case 'generateImage':
               systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
               break
-            case 'generateVideo':
-              systemPrompt = customPrompts.generateVideo || t('aiFeatures.defaultPrompts.generateVideo' as any)
-              break
           }
         }
-
-        // 添加用户消息
-        const userMessage: Message = { role: 'user', content: messageContent, action: currentAction || undefined }
-        setMessages(prev => [...prev, userMessage])
 
         // 准备API消息
         const apiMessages: Array<{ role: string, content: string }> = []
@@ -265,7 +449,7 @@ const PublishDialogAi = memo(
 
         // 清空输入
         setInputValue('')
-      }, [activeAction, inputValue, customPrompts, handleAIResponse, t])
+      }, [activeAction, inputValue, customPrompts, handleAIResponse, handleVideoGeneration, t])
 
       // 从URL下载图片并转换为IImgFile对象
       const downloadImageAsImgFile = async (url: string, index: number): Promise<IImgFile | null> => {
@@ -356,9 +540,32 @@ const PublishDialogAi = memo(
             ? <code style={{ background: '#f0f0f0', padding: '2px 6px', borderRadius: '3px', fontSize: '0.9em' }} {...props}>{children}</code>
             : <code style={{ display: 'block', background: '#f0f0f0', padding: '12px', borderRadius: '4px', overflowX: 'auto', fontSize: '0.9em', lineHeight: '1.5' }} {...props}>{children}</code>
         },
-        a: ({ node, ...props }: any) => (
-          <a {...props} style={{ color: '#1890ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer" />
-        ),
+        a: ({ node, ...props }: any) => {
+          // 检查是否是视频链接
+          const href = props.href || ''
+          const isVideo = href.includes('.mp4') || href.includes('.webm') || href.includes('video')
+          
+          if (isVideo) {
+            return (
+              <div style={{ margin: '8px 0' }}>
+                <video 
+                  src={getOssUrl(href)} 
+                  controls 
+                  style={{ 
+                    maxWidth: '100%', 
+                    maxHeight: '400px', 
+                    borderRadius: '8px',
+                    display: 'block'
+                  }} 
+                />
+              </div>
+            )
+          }
+          
+          return (
+            <a {...props} style={{ color: '#1890ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer" />
+          )
+        },
         ul: ({ node, ...props }: any) => <ul style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
         ol: ({ node, ...props }: any) => <ol style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
         li: ({ node, ...props }: any) => <li style={{ margin: '4px 0' }} {...props} />,
@@ -451,12 +658,25 @@ const PublishDialogAi = memo(
                       >
                       {msg.content ? (
                         msg.role === 'assistant' ? (
-                          <ReactMarkdown components={markdownComponents}>
-                            {msg.content
-                              .replace(/^`+|`+$/g, '')
-                              .replace(/`(!\[.*?\]\(data:image\/.*?\))`/g, '$1')
-                            }
-                          </ReactMarkdown>
+                          <>
+                            <ReactMarkdown components={markdownComponents}>
+                              {msg.content
+                                .replace(/^`+|`+$/g, '')
+                                .replace(/`(!\[.*?\]\(data:image\/.*?\))`/g, '$1')
+                              }
+                            </ReactMarkdown>
+                            {/* 如果是视频生成消息且有进度，显示进度条 */}
+                            {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messages.length - 1 && (
+                              <div style={{ marginTop: 8 }}>
+                                <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
+                                <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
+                                  {videoStatus === 'submitted' && '任务已提交，等待处理...'}
+                                  {videoStatus === 'processing' && '正在生成视频...'}
+                                  {videoStatus === 'failed' && '视频生成失败'}
+                                </div>
+                              </div>
+                            )}
+                          </>
                         ) : (
                           <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
                         )
@@ -579,7 +799,57 @@ const PublishDialogAi = memo(
               </Button>,
             ]}
           >
-            <p>模型设置功能开发中...</p>
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
+                <VideoCameraOutlined style={{ marginRight: 8 }} />
+                视频生成模型
+              </div>
+              <Select
+                value={selectedVideoModel}
+                onChange={(value) => {
+                  setSelectedVideoModel(value)
+                  localStorage.setItem('ai_video_model', value)
+                  message.success('视频模型设置已保存')
+                }}
+                style={{ width: '100%' }}
+                placeholder="选择视频模型"
+              >
+                {videoModels.map((model: any) => (
+                  <Option key={model.name} value={model.name}>
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <span style={{ fontWeight: 'bold' }}>{model.name}</span>
+                      {model.description && (
+                        <span style={{ fontSize: '12px', color: '#999' }}>{model.description}</span>
+                      )}
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+              {selectedVideoModel && (() => {
+                const model = videoModels.find((m: any) => m.name === selectedVideoModel)
+                if (!model) return null
+                
+                let duration = 5
+                let size = '720p'
+                
+                if (model?.channel === 'kling' && model?.pricing) {
+                  const durations = [...new Set(model.pricing.map((p: any) => p.duration))] as number[]
+                  const modes = [...new Set(model.pricing.map((p: any) => p.mode))] as string[]
+                  if (durations.length > 0) duration = durations[0]
+                  if (modes.length > 0) size = modes[0]
+                } else {
+                  if (model?.durations?.length > 0) duration = model.durations[0]
+                  if (model?.resolutions?.length > 0) size = model.resolutions[0]
+                }
+                
+                return (
+                  <div style={{ marginTop: 8, padding: '8px', background: '#f5f5f5', borderRadius: '4px', fontSize: '12px', color: '#666' }}>
+                    <div>默认时长: {duration}秒</div>
+                    <div>默认分辨率: {size}</div>
+                  </div>
+                )
+              })()}
+            </div>
           </Modal>
         </div>
       )
