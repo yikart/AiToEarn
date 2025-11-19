@@ -229,34 +229,39 @@ const RecordCore = memo(
                       {publishRecord.errorMsg}
                     </div>
                   </div>
-                  <div className="recordDetails-center-right">
-                    {publishRecord.videoUrl
-                      ? (
-                          <>
-                            <Image
-                              src={getOssUrl(publishRecord.coverUrl || '')}
-                              preview={{
-                                destroyOnHidden: true,
-                                imageRender: () => (
-                                  <video
-                                    muted
-                                    width="80%"
-                                    height={500}
-                                    controls
-                                    src={publishRecord.videoUrl}
-                                  />
-                                ),
-                                toolbarRender: () => null,
-                              }}
-                            />
-                          </>
-                        )
-                      : (
-                          <Image.PreviewGroup items={publishRecord.imgUrlList}>
-                            <Image src={getOssUrl(publishRecord.coverUrl || '')} />
-                          </Image.PreviewGroup>
-                        )}
-                  </div>
+                  {
+                    (publishRecord.videoUrl && publishRecord.imgUrlList.length !== 0)
+                    && (
+                      <div className="recordDetails-center-right">
+                        {publishRecord.videoUrl
+                          ? (
+                              <>
+                                <Image
+                                  src={getOssUrl(publishRecord.coverUrl || '')}
+                                  preview={{
+                                    destroyOnHidden: true,
+                                    imageRender: () => (
+                                      <video
+                                        muted
+                                        width="80%"
+                                        height={500}
+                                        controls
+                                        src={publishRecord.videoUrl}
+                                      />
+                                    ),
+                                    toolbarRender: () => null,
+                                  }}
+                                />
+                              </>
+                            )
+                          : (
+                              <Image.PreviewGroup items={publishRecord.imgUrlList}>
+                                <Image src={getOssUrl(publishRecord.coverUrl || '')} />
+                              </Image.PreviewGroup>
+                            )}
+                      </div>
+                    )
+                  }
                 </div>
                 <ScrollButtonContainer>
                   <div className="recordDetails-info">
@@ -325,9 +330,14 @@ const RecordCore = memo(
               <img src={platIcon} style={{ width: '25px', height: '25px' }} />
               <div className="recordCore-left-date">{days.format('HH:mm')}</div>
             </div>
-            <div className="recordCore-right">
-              <img src={getOssUrl(publishRecord.coverUrl || '')} />
-            </div>
+            {
+              publishRecord.coverUrl
+              && (
+                <div className="recordCore-right">
+                  <img src={getOssUrl(publishRecord.coverUrl || '')} />
+                </div>
+              )
+            }
           </Button>
         </Popover>
       )

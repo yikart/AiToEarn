@@ -550,8 +550,10 @@ const PublishDialog = memo(
         onClose()
         setCreateLoading(false)
 
-        if (onPubSuccess)
+        if (onPubSuccess) {
           onPubSuccess()
+        }
+        usePublishDialogStorageStore.getState().clearPubData()
       }, [pubListChoosed])
 
       const imperativeHandle: IPublishDialogRef = {
