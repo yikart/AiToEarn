@@ -379,6 +379,9 @@ importers:
       '@yikart/common':
         specifier: workspace:*
         version: link:../../libs/common
+      '@yikart/listmonk':
+        specifier: workspace:*
+        version: link:../../libs/listmonk
       '@yikart/mail':
         specifier: workspace:*
         version: link:../../libs/mail

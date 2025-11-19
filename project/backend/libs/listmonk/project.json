@@ -17,7 +17,7 @@
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/listmonk",
-        "tsConfig": "libs/aitoearn-server-client/tsconfig.lib.json",
+        "tsConfig": "libs/listmonk/tsconfig.lib.json",
         "packageJson": "libs/listmonk/package.json",
         "main": "libs/listmonk/src/index.ts",
         "assets": ["libs/listmonk/*.md"]
