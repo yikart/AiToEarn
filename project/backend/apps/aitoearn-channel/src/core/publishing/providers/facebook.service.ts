@@ -414,9 +414,13 @@ export class FacebookPublishService
       throw PublishingException.nonRetryable('Invalid publish task: no postId')
     }
     const videoId = await this.uploadVideo(publishTask.accountId, videoUrl)
+    const message = this.generatePostMessage(publishTask)
     await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, {
+      is_published: true,
+      message,
       attachments: [{
         media_fbid: videoId,
+        message,
       }],
     })
     return {
@@ -440,11 +444,17 @@ export class FacebookPublishService
     if (medias.length === 0) {
       throw PublishingException.nonRetryable('Image upload failed')
     }
-    await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, {
+    const message = this.generatePostMessage(publishTask)
+    const data = {
+      message,
+      is_published: true,
       attachments: medias.map(mediaId => ({
         media_fbid: mediaId,
+        message,
       })),
-    })
+    }
+    this.logger.log(`Updating photos post: ${publishTask.dataId}, message: ${message}, data: ${JSON.stringify(data)}`)
+    await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, data)
     return {
       status: PublishStatus.PUBLISHED,
     }
