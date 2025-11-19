@@ -9,6 +9,7 @@ import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
+import {useEffect} from "react";
 
 export interface IPublishDialogStore {
   // 选择的发布列表

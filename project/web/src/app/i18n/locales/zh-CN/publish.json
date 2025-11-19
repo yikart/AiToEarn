@@ -2,7 +2,7 @@
   "title": "发布作品",
   "confirmClose": {
     "title": "确认关闭",
-    "content": "关闭后，已填写的内容将丢失，是否确认关闭？"
+    "content": "关闭后，已填写的内容将被保存，您下次打开可以恢复，是否确认关闭？"
   },
   "buttons": {
     "customizePerAccount": "自定义每个账户",

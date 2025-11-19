@@ -213,7 +213,7 @@ const RecordCore = memo(
                     title={publishRecord.desc}
                     className="recordDetails-center-left-desc"
                   >
-                    {publishRecord.desc}
+                    {`${publishRecord.desc} ${publishRecord.topics?.map(v => `#${v}`).join(' ')}`}
                   </div>
                   <div className="recordDetails-center-left-status">
                     {publishRecord && (

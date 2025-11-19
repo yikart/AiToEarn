@@ -17,6 +17,7 @@ import {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from 'react'
 
@@ -57,6 +58,7 @@ import { usePublishManageUpload } from '@/components/PublishDialog/compoents/Pub
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { useAccountStore } from '@/store/account'
 import { generateUUID } from '@/utils'
 import styles from './publishDialog.module.scss'
@@ -92,6 +94,17 @@ const PublishDialog = memo(
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const { width } = useWindowSize()
+      const {
+        setPubData,
+        restorePubData,
+        _hasHydrated,
+      } = usePublishDialogStorageStore(
+        useShallow(state => ({
+          setPubData: state.setPubData,
+          restorePubData: state.restorePubData,
+          _hasHydrated: state._hasHydrated,
+        })),
+      )
       const {
         pubListChoosed,
         setPubListChoosed,
@@ -158,6 +171,8 @@ const PublishDialog = memo(
           md5Cache: state.md5Cache,
         })),
       )
+      // 是否clear
+      const isClear = useRef(false)
 
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
@@ -194,6 +209,12 @@ const PublishDialog = memo(
         })
         setPubListChoosed(newPubList)
       }, [md5Cache, tasks])
+
+      useEffect(() => {
+        if (open && _hasHydrated) {
+          restorePubData()
+        }
+      }, [open, _hasHydrated])
 
       // 处理Facebook授权成功后的页面选择
       const handleFacebookAuthSuccess = () => {
@@ -370,6 +391,19 @@ const PublishDialog = memo(
         return false
       }, [step, pubListChoosed, commonPubParams, expandedPubItem])
 
+      useEffect(() => {
+        isClear.current = true
+      }, [])
+
+      // 实时保存数据
+      useEffect(() => {
+        if (isClear.current) {
+          isClear.current = false
+          return
+        }
+        setPubData(pubListChoosed)
+      }, [pubListChoosed])
+
       // 检查选中的平台是否需要内容安全检测
       const needsContentModeration = useMemo(() => {
         if (pubListChoosed.length === 0)
@@ -409,6 +443,7 @@ const PublishDialog = memo(
           init(accounts, defaultAccountId)
         }
         else {
+          isClear.current = true
           setPubListChoosed([])
           clear()
         }
@@ -476,48 +511,6 @@ const PublishDialog = memo(
       }, [warningParamsMap])
 
       /**
-       * Publish content immediately (publishTime is set to current time)
-       */
-      const pubClickNow = useCallback(async () => {
-        setCreateLoading(true)
-        const publishTime = getUtcDays(getDays()).format()
-
-        for (const item of pubListChoosed) {
-          const res = await apiCreatePublish({
-            topics: [],
-            flowId: generateUUID(),
-            type: item.params.video?.cover.ossUrl
-              ? PubType.VIDEO
-              : PubType.ImageText,
-            title: item.params.title || '',
-            desc: item.params.des,
-            accountId: item.account.id,
-            accountType: item.account.type,
-            videoUrl: item.params.video?.ossUrl,
-            coverUrl:
-              item.params.video?.cover.ossUrl
-              || (item.params.images && item.params.images.length > 0
-                ? item.params.images[0].ossUrl
-                : undefined),
-            imgUrlList:
-              item.params.images
-                ?.map(v => v.ossUrl)
-                .filter((url): url is string => url !== undefined) || [],
-            publishTime,
-            option: item.params.option,
-          })
-          if (res?.code !== 0) {
-            return setCreateLoading(false)
-          }
-        }
-        onClose()
-        setCreateLoading(false)
-
-        if (onPubSuccess)
-          onPubSuccess()
-      }, [pubListChoosed])
-
-      /**
        * Publish content with scheduled time (from calendar picker)
        */
       const pubClick = useCallback(async () => {
@@ -528,7 +521,7 @@ const PublishDialog = memo(
 
         for (const item of pubListChoosed) {
           const res = await apiCreatePublish({
-            topics: [],
+            topics: item.params.topics ?? [],
             flowId: generateUUID(),
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
