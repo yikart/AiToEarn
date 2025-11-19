@@ -11,60 +11,112 @@
 AiToEarn 通过**AI 自动化**，帮助创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
 
 支持渠道：  
-抖音（Douyin）、小红书（Rednote）、视频号（WeChat Channels）、快手（Kuaishou）、哔哩哔哩（Bilibili）、微信公众号（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest
+抖音、小红书（Rednote）、视频号、快手、哔哩哔哩、微信公众号，
+TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
 
 <details>
   <summary><h2 style="display:inline;margin:0">目录</h2></summary>
 
   <br/>
 
-1. [快速开始](#quick-start)
-2. [启动 Web 项目](#start-web-project)
-3. [启动 Electron 项目](#start-electron-project)
-4. [核心功能](#key-features)
-5. [MCP 服务](#mcp-service)
-6. [高级设置](#advanced-setup)
-7. [贡献指南](#contribution-guide)
-8. [联系](#contact)
-9. [里程碑](#milestones)
-10. [常见问题](#faq)
-11. [推荐](#recommended)
+  1. [创作者快速开始（应用程序与网页版）](#quick-start-for-creators)
+  2. [开发者快速开始（Docker，推荐）](#quick-start-for-developers)
+  3. [核心功能](#key-features)
+  4. [MCP 服务](#mcp-service)
+  5. [高级设置](#advanced-setup)
+  6. [贡献指南](#contribution-guide)
+  7. [联系](#contact)
+  8. [里程碑](#milestones)
+  9. [常见问题](#faq)
+  10. [推荐](#recommended)
 </details>
 
-<h2 id="quick-start">快速开始</h2>
+## 创作者快速开始（应用程序与网页版）
 
-| 操作系统 | 下载                                                                                                                                                                                          |
-| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Android  | [![Download Android](https://img.shields.io/badge/APK-Android1.1.0-green?logo=android&logoColor=white)](<(https://github.com/yikart/AiToEarn/releases/download/v1.1.0/aitoearn-1.1.0.apk)>)   |
-| Windows  | [![Download Windows](https://img.shields.io/badge/Setup-Windows1.1.0-blue?logo=windows&logoColor=white)](https://github.com/yikart/AiToEarn/releases/download/v1.1.0/AiToEarnSetup-1.1.0.exe) |
-| macOS    | [![Download macOS](https://img.shields.io/badge/DMG-macOS1.1.0-black?logo=apple&logoColor=white)](https://github.com/yikart/AiToEarn/releases/download/v1.1.0/AiToEarn.1.1.0.dmg)             |
-| iOS      | **Coming soon!**                                                                                                                                                                              |
-| Web      | [Use on Web](https://aitoearn.ai/en/accounts)                                                                                                                                                 |
+| 操作系统 | 下载 |
+| -- | -- |
+| Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.2-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-1.3.2-internal-arm64-v8a.apk) |
+| Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.2-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-Setup-1.3.2.exe) |
+| macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.2-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn+1.3.2.dmg) |
+| iOS |  **即将推出！** |
+| Web | [网页版使用](https://aitoearn.ai/en/accounts) |
 
 [Google Play 下载](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
-<h2 id="start-web-project">启动 Web 项目</h2>
+## 开发者快速开始（Docker，推荐）
 
-### 1. 启动后端服务
-
-用于本地开发：  
-在 `config` 目录下创建 `local.config.js`（可从 `./aitoearn_web/server/aitoearn-user/config/dev.config.js` 复制并按需修改）。
+这是运行 AiToEarn 最简单的方式。它将通过一条命令启动**前端、后端、MongoDB 和 Redis**。  
+您**无需**在机器上手动安装 MongoDB 或 Redis。
 
 ```bash
-pnpm install
-pnpm run dev:local
+git clone https://github.com/yikart/AiToEarn.git
+cd AiToEarn
+cp env.example .env
+docker compose up -d
 ```
 
-### 2. 启动前端 `aitoearn-web`
+### 🌐 访问应用
+
+Docker 成功启动后，您可以通过以下地址访问服务：
+
+| 服务                 | URL                                            | 描述                                                 |
+| ----------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
+| **Web 前端**        | [http://localhost:3000](http://localhost:3000) | Web 用户界面                                          |
+| **主后端 API**    | [http://localhost:3002](http://localhost:3002) | AiToEarn 主服务器 API                                    |
+| **渠道服务 API** | [http://localhost:7001](http://localhost:7001) | AiToEarn 渠道服务 API                                |
+| **MongoDB**             | localhost:27017                                | MongoDB（在 Docker 内部，使用 `.env` 中的用户名/密码） |
+| **Redis**               | localhost:6379                                 | Redis（在 Docker 内部，使用 `.env` 中的密码）            |
+
+> ℹ️ MongoDB 和 Redis 都由 `docker compose` 启动。
+> 您只需在 `.env` 中配置它们的密码；无需额外的本地安装。
+
+### 🧩 高级配置（.env）
+
+编辑 `.env` 文件以设置安全值并自定义您的部署：
+
+```bash
+# 必需的安全配置
+MONGODB_PASSWORD=your-secure-mongodb-password
+REDIS_PASSWORD=your-secure-redis-password
+JWT_SECRET=your-jwt-secret-key
+INTERNAL_TOKEN=your-internal-token
+
+# 如果需要外部访问，请设置您的公共 API/域名
+NEXT_PUBLIC_API_URL=http://your-domain.com:3002/api
+APP_DOMAIN=your-domain.com
+```
+
+> ✅ 在生产环境中，请使用强随机密码和密钥。
+
+<details>
+<summary>🧪 可选：手动运行后端和前端（开发模式）</summary>
+
+此模式主要用于本地开发和调试。
+您仍然可以使用 Docker 运行 MongoDB/Redis，或通过 `.env` 指向您自己的服务。
+
+#### 1. 启动后端服务
+
+```bash
+cd project/aitoearn-monorepo
+pnpm install
+npx nx serve aitoearn-channel
+# 在另一个终端
+npx nx serve aitoearn-server
+```
+
+#### 2. 启动前端 `aitoearn-web`
 
 ```bash
 pnpm install
 pnpm run dev
 ```
 
-<h2 id="start-electron-project">启动 Electron 项目</h2>
+</details>
 
-```sh
+<details>
+<summary>🖥️ 可选：启动 Electron 桌面项目</summary>
+
+```bash
 # 克隆仓库
 git clone https://github.com/yikart/AttAiToEarn.git
 
@@ -74,12 +126,16 @@ cd AttAiToEarn
 # 安装依赖
 npm i
 
-# 编译 sqlite（better-sqlite3 依赖 node-gyp，本地需安装 Python）
+# 编译 sqlite（better-sqlite3 需要 node-gyp 和本地 Python）
 npm run rebuild
 
 # 启动开发
 npm run dev
 ```
+
+Electron 项目为 AiToEarn 提供桌面客户端。
+
+</details>
 
 <h2 id="key-features">核心功能</h2>
 
@@ -169,8 +225,9 @@ npm run dev
 
 <h2 id="mcp-service">MCP 服务</h2>
 
-[https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn](https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn)
-[https://www.npmjs.com/\~aitoearn?activeTab=packages](https://www.npmjs.com/~aitoearn?activeTab=packages)
+https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn
+
+https://www.npmjs.com/~aitoearn?activeTab=packages
 
 <h2 id="advanced-setup">高级设置</h2>
 
@@ -197,10 +254,12 @@ AiToEarn 集成了多种官方 API。以下是开发者密钥配置指南：
 - 2025.08.08 — [发布 web-0.1-beta](./aitoearn_web/README.md)
 - 2025.09.16 — [发布 v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
 - 2025.10.01 — [发布 v1.0.27](https://github.com/yikart/AiToEarn/releases/tag/v1.0.27)
+- 2025.11.01 — [首个可用版本：v1.2.2](https://github.com/yikart/AiToEarn/releases/tag/v1.2.2)
+- 2025.11.12 — [首个开源、完全可用的版本。发布：v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 
 ---
 
-## [常见问题](https://docs.aitoearn.ai)
+## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
 <h2 id="recommended">推荐</h2>
 
