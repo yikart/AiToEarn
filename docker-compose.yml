@@ -1,7 +1,6 @@
 version: '3.8'
 
 services:
-  # MongoDB 数据库服务
   mongodb:
     image: mongo:7.0
     container_name: aitoearn-mongodb
@@ -23,7 +22,6 @@ services:
       retries: 5
       start_period: 40s
 
-  # Redis 缓存服务
   redis:
     image: redis:7-alpine
     container_name: aitoearn-redis
@@ -42,7 +40,6 @@ services:
       retries: 5
       start_period: 30s
 
-  # AiToEarn Channel 服务 - 频道管理服务
   aitoearn-channel:
     image: aitoearn/aitoearn-channel:latest
     container_name: aitoearn-channel
@@ -55,34 +52,27 @@ services:
     ports:
       - "7001:7001"
     environment:
-      # 应用配置
       NODE_ENV: ${NODE_ENV:-production}
       APP_ENV: ${APP_ENV:-production}
       APP_NAME: aitoearn-channel
       APP_DOMAIN: ${APP_DOMAIN:-localhost}
       
-      # MongoDB 配置
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
       MONGODB_USERNAME: ${MONGODB_USERNAME:-admin}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD:-password}
       
-      # Redis 配置
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
       
-      # 服务间通信
       SERVER_URL: http://aitoearn-server:3002
       
-      # 认证配置
       INTERNAL_TOKEN: ${INTERNAL_TOKEN:-change-this-secret-token}
       
-      # 飞书 Webhook (可选)
       FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
       FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET:-}
       
-      # 第三方平台 OAuth 配置
       BILIBILI_CLIENT_ID: ${BILIBILI_CLIENT_ID:-}
       BILIBILI_CLIENT_SECRET: ${BILIBILI_CLIENT_SECRET:-}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
@@ -117,13 +107,12 @@ services:
     networks:
       - aitoearn-network
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:7001', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:7001/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 60s
 
-  # AiToEarn Server 服务 - 主后端服务
   aitoearn-server:
     image: aitoearn/aitoearn-server:latest
     container_name: aitoearn-server
@@ -143,13 +132,11 @@ services:
       APP_ENV: ${APP_ENV:-production}
       APP_NAME: aitoearn-server
       
-      # MongoDB 配置
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
       MONGODB_USERNAME: ${MONGODB_USERNAME:-admin}
       MONGODB_PASSWORD: ${MONGODB_PASSWORD:-password}
       
-      # 统计数据库配置（可使用同一个 MongoDB）
       STATISTICS_DB_HOST: mongodb
       STATISTICS_DB_PORT: 27017
       STATISTICS_DB_USERNAME: ${MONGODB_USERNAME:-admin}
@@ -160,22 +147,18 @@ services:
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
       
-      # 服务间通信
       CHANNEL_URL: http://aitoearn-channel:7001
       
       # 认证配置
       JWT_SECRET: ${JWT_SECRET:-change-this-jwt-secret}
       INTERNAL_TOKEN: ${INTERNAL_TOKEN:-change-this-secret-token}
       
-      # 邮件配置
       MAIL_USER: ${MAIL_USER:-}
       MAIL_PASS: ${MAIL_PASS:-}
       
-      # 飞书 Webhook (可选)
       FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
       FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET:-}
       
-      # AI 服务配置
       KLING_ACCESS_KEY: ${KLING_ACCESS_KEY:-}
       KLING_BASE_URL: ${KLING_BASE_URL:-}
       VOLCENGINE_API_KEY: ${VOLCENGINE_API_KEY:-}
@@ -187,13 +170,12 @@ services:
       SORA2_BASE_URL: ${SORA2_BASE_URL:-}
       MD2CARD_API_KEY: ${MD2CARD_API_KEY:-}
       
-      # 阿里云绿网配置
       ALI_GREEN_ACCESS_KEY_ID: ${ALI_GREEN_ACCESS_KEY_ID:-}
       ALI_GREEN_ACCESS_KEY_SECRET: ${ALI_GREEN_ACCESS_KEY_SECRET:-}
     networks:
       - aitoearn-network
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -212,16 +194,9 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV:-production}
       NEXT_TELEMETRY_DISABLED: 1
-      # API 地址 - 客户端访问
       NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3002/api}
     networks:
       - aitoearn-network
-    healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 40s
 
 networks:
   aitoearn-network:
