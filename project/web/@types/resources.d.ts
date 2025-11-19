@@ -632,7 +632,8 @@ interface Resources {
     "keepGoing": "继续加油，再创佳绩！",
     "viewMilestone": "查看里程碑",
     "milestone": "里程碑",
-    "milestoneProgress": "里程碑进度"
+    "milestoneProgress": "里程碑进度",
+    "recentWeek": "最近一周"
   },
   "engagement": {
     "title": "互动数据",

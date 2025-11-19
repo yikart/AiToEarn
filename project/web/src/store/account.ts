@@ -3,6 +3,7 @@ import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
 import { getAccountGroupApi, getAccountListApi } from '@/api/account'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { directTrans } from '@/app/i18n/client'
 import { useUserStore } from '@/store/user'
 
@@ -99,6 +100,13 @@ export const useAccountStore = create(
               accountMap,
               accountAccountMap,
             })
+
+            void useDataStatisticsStore
+              .getState()
+              .init()
+            void useDataStatisticsStore
+              .getState()
+              .initStatisticsForAllAccounts(accountList)
 
             // 后续分组数据获取不阻塞调用方
             methods.getAccountGroup()

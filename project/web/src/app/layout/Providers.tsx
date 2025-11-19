@@ -7,6 +7,7 @@ import { App, ConfigProvider, notification } from 'antd'
 import en_US from 'antd/es/locale/en_US'
 import zh_CN from 'antd/es/locale/zh_CN'
 import { Suspense, useEffect } from 'react'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import useCssVariables from '@/app/hooks/useCssVariables'
 import { fallbackLng } from '@/app/i18n/settings'
 import { useAccountStore } from '@/store/account'
@@ -43,6 +44,7 @@ export function Providers({
       useUserStore.getState().setToken(queryToken)
     }
     if (useUserStore.getState().token) {
+      useDataStatisticsStore.getState().init()
       useUserStore.getState().getUserInfo()
       useAccountStore.getState().accountInit()
     }

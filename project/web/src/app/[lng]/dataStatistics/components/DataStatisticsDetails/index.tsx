@@ -3,10 +3,9 @@ import type { ForwardedRef } from 'react'
 import { TrophyOutlined } from '@ant-design/icons'
 import Icon from '@ant-design/icons'
 import { Badge, Button, DatePicker } from 'antd'
-import { forwardRef, memo, useState } from 'react'
+import { forwardRef, memo, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import MilestonePoster from '@/app/[lng]/dataStatistics/components/MilestonePoster'
-import MilestoneProgress from '@/app/[lng]/dataStatistics/components/MilestoneProgress'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { useTransClient } from '@/app/i18n/client'
 import styles from './dataStatisticsDetails.module.scss'
@@ -30,6 +29,8 @@ const DataStatisticsDetails = memo(
         milestones,
         showMilestonePoster,
         setShowMilestonePoster,
+        hasUnreadMilestone,
+        autoShowPosterIfNeeded,
       } = useDataStatisticsStore(
         useShallow(state => ({
           dataDetails: state.dataDetails,
@@ -40,12 +41,16 @@ const DataStatisticsDetails = memo(
           milestones: state.milestones,
           showMilestonePoster: state.showMilestonePoster,
           setShowMilestonePoster: state.setShowMilestonePoster,
+          hasUnreadMilestone: state.hasUnreadMilestone,
+          autoShowPosterIfNeeded: state.autoShowPosterIfNeeded,
         })),
       )
       const { t } = useTransClient('dataStatistics')
 
-      // 里程碑进度弹窗状态
-      const [showMilestoneProgress, setShowMilestoneProgress] = useState(false)
+      // 进入页面时自动弹出海报（如果满足条件）
+      useEffect(() => {
+        autoShowPosterIfNeeded()
+      }, [autoShowPosterIfNeeded])
 
       return (
         <>
@@ -62,24 +67,16 @@ const DataStatisticsDetails = memo(
                     setTimeRangeValue(dates)
                   }}
                 />
+              <Badge dot={hasUnreadMilestone} offset={[-4, 4]} color="#ff4d4f">
                 <Button
-                  type="default"
+                  type="primary"
                   icon={<TrophyOutlined />}
-                  onClick={() => setShowMilestoneProgress(true)}
+                  disabled={milestones.length === 0}
+                  onClick={() => setShowMilestonePoster(true)}
                 >
-                  {t('milestone')}
+                  {t('viewMilestone')}
                 </Button>
-                {milestones.length > 0 && (
-                  <Badge count={milestones.length}>
-                    <Button
-                      type="primary"
-                      icon={<TrophyOutlined />}
-                      onClick={() => setShowMilestonePoster(true)}
-                    >
-                      {t('viewMilestone')}
-                    </Button>
-                  </Badge>
-                )}
+              </Badge>
               </div>
             </div>
 
@@ -116,13 +113,7 @@ const DataStatisticsDetails = memo(
             <div id="dataStatisticsEchartLine" />
           </div>
 
-          {/* 里程碑进度弹窗 */}
-          <MilestoneProgress
-            visible={showMilestoneProgress}
-            onClose={() => setShowMilestoneProgress(false)}
-          />
-
-          {/* 里程碑海报弹窗（自动弹出） */}
+          {/* 里程碑海报弹窗 */}
           <MilestonePoster
             milestones={milestones}
             visible={showMilestonePoster}
