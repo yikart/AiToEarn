@@ -215,7 +215,7 @@ docker rmi aitoearn/aitoearn-channel:latest
 
 备份 MongoDB 数据：
 ```bash
-docker compose exec mongodb mongodump --username admin --password your-password --authenticationDatabase admin --out /backup
+docker compose exec mongodb mongodump --username admin --password --authenticationDatabase admin --out /backup
 docker cp aitoearn-mongodb:/backup ./mongodb-backup-$(date +%Y%m%d)
 ```
 
