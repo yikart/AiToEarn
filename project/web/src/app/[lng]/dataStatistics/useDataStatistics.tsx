@@ -110,17 +110,17 @@ export const useDataStatisticsStore = create(
         async init() {
           const dataDetails = [
             {
-              title: directTrans('dataStatistics', 'growthFansCount'),
-              value: 'fansCount',
-              icon: FansCount,
+              title: directTrans('dataStatistics', 'readCount'),
+              value: 'readCount',
+              icon: VideoCameraFilled,
               total: 0,
               yesterday: 0,
               historyMax: 0,
             },
             {
-              title: directTrans('dataStatistics', 'readCount'),
-              value: 'readCount',
-              icon: VideoCameraFilled,
+              title: directTrans('dataStatistics', 'growthFansCount'),
+              value: 'fansCount',
+              icon: FansCount,
               total: 0,
               yesterday: 0,
               historyMax: 0,
