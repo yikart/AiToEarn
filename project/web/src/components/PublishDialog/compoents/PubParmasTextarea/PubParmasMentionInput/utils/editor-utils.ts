@@ -34,8 +34,6 @@ export function InitialValuePlugin({ value }: { value: string }) {
       // 按原顺序拆分：话题片段形如 "#xxx"
       const parts = value.split(/(#\S+)/g).filter(Boolean)
 
-      console.log(parts)
-
       parts.forEach((part) => {
         if (part.startsWith('#')) {
           const topic = part.slice(1)

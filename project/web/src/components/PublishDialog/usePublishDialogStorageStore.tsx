@@ -3,15 +3,19 @@ import { ExclamationCircleFilled } from '@ant-design/icons'
 import { Modal } from 'antd'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { useAccountStore } from '@/store/account'
+import { modalApi, useConfigStore } from '@/store/config'
 import { createPersistStore } from '@/utils/createPersistStore'
 
 export interface IPublishDialogStorageStore {
   pubData?: PubItem[]
+  expandedPubItem?: PubItem
 }
 
 const state: IPublishDialogStorageStore = {
   // 实时保存的发布数据
   pubData: undefined,
+  // 保存当前展开的数据
+  expandedPubItem: undefined,
 }
 
 export const usePublishDialogStorageStore = createPersistStore(
@@ -20,12 +24,17 @@ export const usePublishDialogStorageStore = createPersistStore(
   },
   (set, _get) => {
     const methods = {
+      setExpandedPubItem(expandedPubItem: PubItem | undefined) {
+        set({
+          expandedPubItem,
+        })
+      },
       setPubData(pubData: PubItem[] | undefined) {
         set({ pubData })
       },
 
       clearPubData() {
-        set({ pubData: undefined })
+        set({ pubData: undefined, expandedPubItem: undefined })
       },
 
       // 恢复发布记录
@@ -35,7 +44,7 @@ export const usePublishDialogStorageStore = createPersistStore(
           return
         }
         // 提示用户是否恢复
-        Modal.confirm({
+        modalApi.value.confirm({
           title: '温馨提示',
           icon: <ExclamationCircleFilled />,
           content: '系统检测到您有未完成的发布记录，是否要恢复？',
@@ -60,7 +69,7 @@ export const usePublishDialogStorageStore = createPersistStore(
       },
 
       async restorePubDataCore() {
-        let { pubData } = _get()
+        let { pubData, expandedPubItem } = _get()
         const accountMap = useAccountStore.getState().accountMap
         // 更新成最新的账户信息
         pubData = pubData?.map((v) => {
@@ -71,6 +80,16 @@ export const usePublishDialogStorageStore = createPersistStore(
           if (v.params.video && (!v.params.video.ossUrl || !v.params.video.cover.ossUrl)) {
             v.params.video = undefined
           }
+
+          if (v.params.video) {
+            v.params.video.videoUrl = v.params.video.ossUrl!
+            v.params.video.cover.imgUrl = v.params.video.cover.ossUrl!
+          }
+
+          v.params.images = v.params.images?.map((img) => {
+            img.imgUrl = img.ossUrl!
+            return img
+          })
 
           if (account) {
             v.account = account
@@ -83,6 +102,8 @@ export const usePublishDialogStorageStore = createPersistStore(
 
         // 恢复数据
         usePublishDialog.getState().setPubListChoosed(pubData)
+        usePublishDialog.getState().setStep(2)
+        usePublishDialog.getState().setExpandedPubItem(expandedPubItem)
       },
     }
 
