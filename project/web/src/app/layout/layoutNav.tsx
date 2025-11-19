@@ -10,6 +10,10 @@ import Link from 'next/link'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 import { apiGetNotViewCount } from '@/api/task'
+import {
+  MILESTONE_STATUS_EVENT,
+  MILESTONE_UNREAD_STORAGE_KEY,
+} from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { useTransClient } from '@/app/i18n/client'
 import {
   peRouterData,
@@ -19,13 +23,24 @@ import styles from '@/app/layout/styles/layoutNav.module.scss'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useUserStore } from '@/store/user'
 
+function getMilestoneNotifyFromStorage() {
+  if (typeof window === 'undefined')
+    return false
+  return window.localStorage.getItem(MILESTONE_UNREAD_STORAGE_KEY) === 'true'
+}
+
 /**
  *
  * @param child
  * @param iconLoca 0=上，1=右
  * @param unreadCount 未读任务数量
  */
-function getNameTag(child: IRouterDataItem, iconLoca: number = 1, unreadCount?: number) {
+function getNameTag(
+  child: IRouterDataItem,
+  iconLoca: number = 1,
+  unreadCount?: number,
+  milestoneNotify?: boolean,
+) {
   const { t } = useTransClient('route')
   const lng = useGetClientLng()
   const path = child.path || '/'
@@ -36,6 +51,17 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1, unreadCount?: 
   // 判断是否是任务中心
   const isTasksRoute = child.path === '/tasks'
   const showBadge = isTasksRoute && unreadCount && unreadCount > 0
+  const isDataStatisticsRoute = child.path === '/dataStatistics'
+  const showMilestoneDot = isDataStatisticsRoute && milestoneNotify
+
+  const baseLabel = <span>{t(child.translationKey as any)}</span>
+  const labelWithMilestone = showMilestoneDot
+    ? (
+        <Badge dot offset={[4, 0]} color="#ff4d4f">
+          {baseLabel}
+        </Badge>
+      )
+    : baseLabel
 
   return (
     <>
@@ -48,7 +74,7 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1, unreadCount?: 
                 </Badge>
               )
             : (
-                t(child.translationKey as any)
+                labelWithMilestone
               )}
         </Link>
       ) : (
@@ -58,7 +84,7 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1, unreadCount?: 
               {/* <span>{t(child.translationKey as any)}</span> */}
             </Badge>
           ) : (
-            t(child.translationKey as any)
+            labelWithMilestone
           )}
           {child.children
             && (iconLoca === 0 ? <UpOutlined /> : <RightOutlined />)}
@@ -73,15 +99,29 @@ function getNameTag(child: IRouterDataItem, iconLoca: number = 1, unreadCount?: 
  * @param child
  * @param unreadCount 未读任务数量
  */
-function RecursionNav({ child, unreadCount }: { child: IRouterDataItem, unreadCount?: number }) {
+function RecursionNav({
+  child,
+  unreadCount,
+  milestoneNotify,
+}: {
+  child: IRouterDataItem
+  unreadCount?: number
+  milestoneNotify?: boolean
+}) {
   return (
     child.children && (
       <ul className={styles.recursionNav}>
         {child.children.map((v) => {
           return (
             <li key={v.name}>
-              {getNameTag(v, 1, unreadCount)}
-              {v.children && <RecursionNav child={v} unreadCount={unreadCount} />}
+              {getNameTag(v, 1, unreadCount, milestoneNotify)}
+              {v.children && (
+                <RecursionNav
+                  child={v}
+                  unreadCount={unreadCount}
+                  milestoneNotify={milestoneNotify}
+                />
+              )}
             </li>
           )
         })}
@@ -118,10 +158,12 @@ function ChildNav({
   child,
   visible,
   unreadCount,
+  milestoneNotify,
 }: {
   child: IRouterDataItem
   visible: boolean
   unreadCount?: number
+  milestoneNotify?: boolean
 }) {
   const elRef = useRef<HTMLUListElement | null>(null)
   const [height, setHeight] = useState('auto')
@@ -195,7 +237,11 @@ function ChildNav({
                   {v1.children && <RightOutlined />}
                 </ParcelTag>
               </div>
-              <RecursionNav child={v1} unreadCount={unreadCount} />
+              <RecursionNav
+                child={v1}
+                unreadCount={unreadCount}
+                milestoneNotify={milestoneNotify}
+              />
             </li>
           )
         })}
@@ -204,7 +250,7 @@ function ChildNav({
   )
 }
 
-function NavPC() {
+function NavPC({ milestoneNotify }: { milestoneNotify: boolean }) {
   const [activeNav, setActiveNav] = useState('')
   const [unreadCount, setUnreadCount] = useState(0)
   const timer = useRef<NodeJS.Timeout>()
@@ -266,12 +312,13 @@ function NavPC() {
               }, 300)
             }}
           >
-            {getNameTag(v1, 0, unreadCount)}
+            {getNameTag(v1, 0, unreadCount, milestoneNotify)}
             <ChildNav
               key={v1.name}
               child={v1}
               visible={activeNav === v1.name}
               unreadCount={unreadCount}
+              milestoneNotify={milestoneNotify}
             />
           </li>
         )
@@ -280,7 +327,7 @@ function NavPC() {
   )
 }
 
-function NavPE() {
+function NavPE({ milestoneNotify }: { milestoneNotify: boolean }) {
   const [open, setOpen] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
   const router = useRouter()
@@ -316,6 +363,16 @@ function NavPE() {
     // 判断是否是任务中心，需要显示徽章
     const isTasksRoute = item.path === '/tasks'
     const showBadge = isTasksRoute && unreadCount > 0
+    const isDataStatisticsRoute = item.path === '/dataStatistics'
+    const showMilestoneDot = isDataStatisticsRoute && milestoneNotify
+    const baseLabel = <span style={{ marginRight: '20px' }}>{t(item.translationKey as any)}</span>
+    const labelWithMilestone = showMilestoneDot
+      ? (
+          <Badge dot color="#ff4d4f">
+            {baseLabel}
+          </Badge>
+        )
+      : baseLabel
 
     return {
       key: item.path || item.name,
@@ -326,7 +383,7 @@ function NavPE() {
             </Badge>
           )
         : (
-            t(item.translationKey as any)
+            labelWithMilestone
           ),
       children: item.children?.map(child => ({
         key: child.path || child.name,
@@ -383,10 +440,28 @@ function NavPE() {
 }
 
 function LayoutNav() {
+  const [milestoneNotify, setMilestoneNotify] = useState(false)
+
+  useEffect(() => {
+    const updateNotify = () => {
+      setMilestoneNotify(getMilestoneNotifyFromStorage())
+    }
+
+    updateNotify()
+
+    window.addEventListener('storage', updateNotify)
+    window.addEventListener(MILESTONE_STATUS_EVENT, updateNotify)
+
+    return () => {
+      window.removeEventListener('storage', updateNotify)
+      window.removeEventListener(MILESTONE_STATUS_EVENT, updateNotify)
+    }
+  }, [])
+
   return (
     <div className={styles.navContainer}>
-      <NavPC />
-      <NavPE />
+      <NavPC milestoneNotify={milestoneNotify} />
+      <NavPE milestoneNotify={milestoneNotify} />
     </div>
   )
 }

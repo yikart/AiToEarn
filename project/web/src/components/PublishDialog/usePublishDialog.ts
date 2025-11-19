@@ -5,10 +5,12 @@ import type {
   PubItem,
 } from '@/components/PublishDialog/publishDialog.type'
 import lodash from 'lodash'
+import { useEffect } from 'react'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
+import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 
 export interface IPublishDialogStore {
   // 选择的发布列表
@@ -81,6 +83,7 @@ export const usePublishDialog = create(
           })
         },
         setExpandedPubItem(expandedPubItem: PubItem | undefined) {
+          usePublishDialogStorageStore.getState().setExpandedPubItem(expandedPubItem)
           set({
             expandedPubItem,
           })

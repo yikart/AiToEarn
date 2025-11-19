@@ -104,9 +104,9 @@ const RecordCore = memo(
             getPubRecord: state.getPubRecord,
           })),
         )
-      const { accountAccountMap } = useAccountStore(
+      const { accountMap } = useAccountStore(
         useShallow(state => ({
-          accountAccountMap: state.accountAccountMap,
+          accountMap: state.accountMap,
         })),
       )
       const [popoverOpen, setPopoverOpen] = useState(false)
@@ -151,8 +151,8 @@ const RecordCore = memo(
       }, [publishRecord])
 
       const account = useMemo(() => {
-        return accountAccountMap.get(publishRecord?.accountId ?? '')
-      }, [accountAccountMap, publishRecord.accountId])
+        return accountMap.get(publishRecord?.accountId ?? '')
+      }, [accountMap, publishRecord.accountId])
 
       const platIcon = useMemo(() => {
         return AccountPlatInfoMap.get(
@@ -192,126 +192,129 @@ const RecordCore = memo(
           rootClassName={styles.recordPopover}
           open={popoverOpen}
           onOpenChange={e => setPopoverOpen(e)}
-          content={(
-            <div className={styles.recordDetails}>
-              <div className="recordDetails-top">
-                <div className="recordDetails-top-left">
-                  {days.format('YYYY-MM-DD HH:mm')}
-                  <FieldTimeOutlined />
+          content={() => {
+            const desc = `${publishRecord.desc} ${publishRecord.topics ? publishRecord.topics?.map(v => `#${v}`).join(' ') : ''}`
+            return (
+              <div className={styles.recordDetails}>
+                <div className="recordDetails-top">
+                  <div className="recordDetails-top-left">
+                    {days.format('YYYY-MM-DD HH:mm')}
+                    <FieldTimeOutlined />
+                  </div>
+                  <Button icon={<FullscreenOutlined />} size="small" />
                 </div>
-                <Button icon={<FullscreenOutlined />} size="small" />
-              </div>
-              <div className="recordDetails-center">
-                <div className="recordDetails-center-left">
-                  <div className="recordDetails-center-left-user">
-                    <AvatarPlat account={account} size="large" />
-                    <span className="recordDetails-center-title">
-                      {account?.nickname}
-                    </span>
-                  </div>
-                  <div
-                    title={publishRecord.desc}
-                    className="recordDetails-center-left-desc"
-                  >
-                    {publishRecord.desc}
-                  </div>
-                  <div className="recordDetails-center-left-status">
-                    {publishRecord && (
-                      <PubStatus status={publishRecord.status} />
-                    )}
-                  </div>
-                  <div
-                    title={publishRecord.errorMsg}
-                    className="recordDetails-center-left-failMsg"
-                  >
-                    {publishRecord.errorMsg}
-                  </div>
-                </div>
-                <div className="recordDetails-center-right">
-                  {publishRecord.videoUrl
-                    ? (
-                        <>
-                          <Image
-                            src={getOssUrl(publishRecord.coverUrl || '')}
-                            preview={{
-                              destroyOnHidden: true,
-                              imageRender: () => (
-                                <video
-                                  muted
-                                  width="80%"
-                                  height={500}
-                                  controls
-                                  src={publishRecord.videoUrl}
-                                />
-                              ),
-                              toolbarRender: () => null,
-                            }}
-                          />
-                        </>
-                      )
-                    : (
-                        <Image.PreviewGroup items={publishRecord.imgUrlList}>
-                          <Image src={getOssUrl(publishRecord.coverUrl || '')} />
-                        </Image.PreviewGroup>
-                      )}
-                </div>
-              </div>
-              <ScrollButtonContainer>
-                <div className="recordDetails-info">
-                  {recordInfo.map(v => (
-                    <div key={v.label} className="recordDetails-info-item">
-                      <div className="recordDetails-info-item-top">
-                        {v.icon}
-                        <span>{v.label}</span>
-                      </div>
-                      {publishRecord.engagement && (
-                        <div className="recordDetails-info-item-num">
-                          {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
-                        </div>
+                <div className="recordDetails-center">
+                  <div className="recordDetails-center-left">
+                    <div className="recordDetails-center-left-user">
+                      <AvatarPlat account={account} size="large" />
+                      <span className="recordDetails-center-title">
+                        {account?.nickname}
+                      </span>
+                    </div>
+                    <div
+                      title={desc}
+                      className="recordDetails-center-left-desc"
+                    >
+                      {desc}
+                    </div>
+                    <div className="recordDetails-center-left-status">
+                      {publishRecord && (
+                        <PubStatus status={publishRecord.status} />
                       )}
                     </div>
-                  ))}
+                    <div
+                      title={publishRecord.errorMsg}
+                      className="recordDetails-center-left-failMsg"
+                    >
+                      {publishRecord.errorMsg}
+                    </div>
+                  </div>
+                  <div className="recordDetails-center-right">
+                    {publishRecord.videoUrl
+                      ? (
+                          <>
+                            <Image
+                              src={getOssUrl(publishRecord.coverUrl || '')}
+                              preview={{
+                                destroyOnHidden: true,
+                                imageRender: () => (
+                                  <video
+                                    muted
+                                    width="80%"
+                                    height={500}
+                                    controls
+                                    src={publishRecord.videoUrl}
+                                  />
+                                ),
+                                toolbarRender: () => null,
+                              }}
+                            />
+                          </>
+                        )
+                      : (
+                          <Image.PreviewGroup items={publishRecord.imgUrlList}>
+                            <Image src={getOssUrl(publishRecord.coverUrl || '')} />
+                          </Image.PreviewGroup>
+                        )}
+                  </div>
                 </div>
-              </ScrollButtonContainer>
-              <div className="recordDetails-bottom">
-                {publishRecord.workLink && (
-                  <Button
-                    icon={<ExportOutlined />}
-                    onClick={() => {
-                      window.open(publishRecord.workLink, '_blank')
-                    }}
-                  >
-                    {t('record.viewWork')}
-                  </Button>
-                )}
+                <ScrollButtonContainer>
+                  <div className="recordDetails-info">
+                    {recordInfo.map(v => (
+                      <div key={v.label} className="recordDetails-info-item">
+                        <div className="recordDetails-info-item-top">
+                          {v.icon}
+                          <span>{v.label}</span>
+                        </div>
+                        {publishRecord.engagement && (
+                          <div className="recordDetails-info-item-num">
+                            {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollButtonContainer>
+                <div className="recordDetails-bottom">
+                  {publishRecord.workLink && (
+                    <Button
+                      icon={<ExportOutlined />}
+                      onClick={() => {
+                        window.open(publishRecord.workLink, '_blank')
+                      }}
+                    >
+                      {t('record.viewWork')}
+                    </Button>
+                  )}
 
-                {publishRecord.status !== PublishStatus.RELEASED
-                  && publishRecord.status !== PublishStatus.PUB_LOADING
-                  ? (
-                      <Button
-                        loading={nowPubLoading}
-                        icon={<SendOutlined />}
-                        onClick={async () => {
-                          setNowPubLoading(true)
-                          await nowPubTaskApi(publishRecord.id)
-                          getPubRecord()
-                          setNowPubLoading(false)
-                        }}
-                      >
-                        {t('buttons.publishNow')}
-                      </Button>
-                    )
-                  : (
-                      <></>
-                    )}
-                {dropdownItems && dropdownItems.length > 0 && (
-                  <Dropdown menu={{ items: dropdownItems }} placement="top">
-                    <Button icon={<MoreOutlined />} />
-                  </Dropdown>
-                )}
+                  {publishRecord.status !== PublishStatus.RELEASED
+                    && publishRecord.status !== PublishStatus.PUB_LOADING
+                    ? (
+                        <Button
+                          loading={nowPubLoading}
+                          icon={<SendOutlined />}
+                          onClick={async () => {
+                            setNowPubLoading(true)
+                            await nowPubTaskApi(publishRecord.id)
+                            getPubRecord()
+                            setNowPubLoading(false)
+                          }}
+                        >
+                          {t('buttons.publishNow')}
+                        </Button>
+                      )
+                    : (
+                        <></>
+                      )}
+                  {dropdownItems && dropdownItems.length > 0 && (
+                    <Dropdown menu={{ items: dropdownItems }} placement="top">
+                      <Button icon={<MoreOutlined />} />
+                    </Dropdown>
+                  )}
+                </div>
               </div>
-            </div>
-          )}
+            )
+          }}
           trigger="click"
         >
           <Button

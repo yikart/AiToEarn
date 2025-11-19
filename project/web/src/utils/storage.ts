@@ -1,6 +1,6 @@
 import type { StateStorage } from 'zustand/middleware'
 
-class IndexedDBStorage implements StateStorage {
+class AppLocalStorage implements StateStorage {
   public async getItem(name: string): Promise<string | null> {
     if (typeof window === 'undefined')
       return null
@@ -28,4 +28,4 @@ class IndexedDBStorage implements StateStorage {
   }
 }
 
-export const indexedDBStorage = new IndexedDBStorage()
+export const appLocalStorage = new AppLocalStorage()

@@ -15,9 +15,20 @@
   "dataDetails": "Data Details",
   "timeRange": "Time Range：",
   "yesterdayIncrease": "Yesterday Increase",
-  "readCount": "Reads",
+  "readCount": "Views",
   "commentCount": "Comments",
   "likeCount": "Likes",
   "collectCount": "Collections",
-  "forwardCount": "Shares"
+  "forwardCount": "Shares",
+  "congratulations": "Congratulations!",
+  "achieveMilestone": "Achievement Unlocked",
+  "newHigh": "New High",
+  "tenThousand": "0K",
+  "savePoster": "Save Poster",
+  "appName": "AiToEarn",
+  "keepGoing": "Keep Going!",
+  "viewMilestone": "View Milestone",
+  "milestone": "Milestone",
+  "milestoneProgress": "Milestone Progress",
+  "recentWeek": "Recent Week"
 }

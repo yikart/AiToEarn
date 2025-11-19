@@ -1,0 +1,112 @@
+.publishDatePicker {
+  :global {
+    .ant-popover-inner {
+      padding: 0;
+    }
+  }
+}
+
+.menuContent {
+  min-width: 280px;
+  padding: 12px;
+  gap: 3px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  border-radius: 6px;
+
+  &:hover {
+    background-color: var(--grayColor1);
+  }
+
+  &.menuItemActive {
+    background-color: var(--primary-light);
+
+    .menuIcon {
+      color: var(--primary-color);
+    }
+
+    .menuItemTitle {
+      color: var(--primary-color);
+    }
+  }
+}
+
+.menuItemLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+
+  span {
+    font-size: var(--fs-sm);
+  }
+}
+
+.menuItemText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuItemTitle {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.menuItemDesc {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.menuItemRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.menuIcon {
+  font-size: 18px;
+  color: var(--text-secondary);
+}
+
+.datePickerContent {
+  :global {
+    .ant-picker {
+      display: none;
+      .ant-picker-panel-container {
+        box-shadow: none;
+      }
+    }
+
+    .ant-picker-dropdown {
+      position: static !important;
+    }
+
+    .ant-picker-ranges {
+      display: none !important;
+    }
+  }
+}
+
+.datePickerFooter {
+  justify-content: space-between;
+  padding: 10px 0;
+  display: flex;
+  :global {
+    .ant-btn {
+      padding: 15px 10px;
+    }
+  }
+}
