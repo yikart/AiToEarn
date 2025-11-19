@@ -20,7 +20,7 @@ docker compose version
 ### 1. 克隆仓库
 
 ```bash
-git clone https://github.com/yourusername/AiToEarn.git
+git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
 ```
 
