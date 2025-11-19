@@ -183,11 +183,17 @@ const PublishDialog = memo(
           const images = newPubItem.params.images
 
           // 视频匹配
-          if (video && !video.ossUrl) {
-            newPubItem.params.video!.ossUrl
-              = md5Cache[tasks[video.uploadTaskIds!.video!].md5!]?.ossUrl
-            newPubItem.params.video!.cover.ossUrl
-              = md5Cache[tasks[video.uploadTaskIds!.cover!].md5!]?.ossUrl
+          if (video) {
+            // 如果视频本身没有ossUrl，从上传任务中获取
+            if (!video.ossUrl && video.uploadTaskIds?.video) {
+              newPubItem.params.video!.ossUrl
+                = md5Cache[tasks[video.uploadTaskIds.video].md5!]?.ossUrl
+            }
+            // 如果封面没有ossUrl，从上传任务中获取
+            if (!video.cover.ossUrl && video.uploadTaskIds?.cover) {
+              newPubItem.params.video!.cover.ossUrl
+                = md5Cache[tasks[video.uploadTaskIds.cover].md5!]?.ossUrl
+            }
             return newPubItem
           }
           // 图片匹配
@@ -612,29 +618,50 @@ const PublishDialog = memo(
           console.log('图片上传任务已创建:', images)
         }
         
-        // 处理视频上传
+        // 处理视频上传（AI生成的视频已经有ossUrl，只需要上传封面）
         if (video) {
-          console.log('开始上传AI同步的视频')
-          const videoHandle = enqueueUpload({
-            file: video.file,
-            fileName: video.filename,
-            type: UploadTaskTypeEnum.Video,
-          })
+          console.log('处理AI同步的视频，ossUrl:', video.ossUrl)
           
-          const coverHandle = enqueueUpload({
-            file: video.cover.file,
-            fileName: video.cover.filename,
-            type: UploadTaskTypeEnum.Image,
-          })
-          
-          video = {
-            ...video,
-            uploadTaskIds: {
-              video: videoHandle.taskId,
-              cover: coverHandle.taskId,
-            },
+          // 如果视频已经有ossUrl（AI生成的），只需要上传封面
+          if (video.ossUrl && !video.cover.ossUrl) {
+            console.log('视频已有OSS地址，只上传封面')
+            const coverHandle = enqueueUpload({
+              file: video.cover.file,
+              fileName: video.cover.filename,
+              type: UploadTaskTypeEnum.Image,
+            })
+            
+            video = {
+              ...video,
+              uploadTaskIds: {
+                cover: coverHandle.taskId,
+              },
+            }
+          } 
+          // 如果视频没有ossUrl（用户上传的），需要上传视频和封面
+          else if (!video.ossUrl) {
+            console.log('上传视频和封面')
+            const videoHandle = enqueueUpload({
+              file: video.file,
+              fileName: video.filename,
+              type: UploadTaskTypeEnum.Video,
+            })
+            
+            const coverHandle = enqueueUpload({
+              file: video.cover.file,
+              fileName: video.cover.filename,
+              type: UploadTaskTypeEnum.Image,
+            })
+            
+            video = {
+              ...video,
+              uploadTaskIds: {
+                video: videoHandle.taskId,
+                cover: coverHandle.taskId,
+              },
+            }
           }
-          console.log('视频上传任务已创建:', video)
+          console.log('视频处理完成:', video)
         }
         
         // 如果只有一个账号，直接更新

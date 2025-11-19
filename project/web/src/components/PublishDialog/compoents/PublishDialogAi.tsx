@@ -86,6 +86,33 @@ interface Message {
     t: any
     markdownComponents: any
   }) => {
+    // 处理视频标记
+    const processVideoContent = (content: string) => {
+      const videoMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
+      if (videoMatch) {
+        const videoUrl = videoMatch[1]
+        const fullVideoUrl = getOssUrl(videoUrl)
+        const textPart = content.replace(/__VIDEO__.*?__VIDEO__/, '').trim()
+        
+        return (
+          <>
+            {textPart && <div style={{ marginBottom: '12px' }}>{textPart}</div>}
+            <video 
+              src={fullVideoUrl}
+              controls 
+              style={{ 
+                maxWidth: '100%', 
+                maxHeight: '400px', 
+                borderRadius: '8px',
+                display: 'block'
+              }} 
+            />
+          </>
+        )
+      }
+      return null
+    }
+    
     return (
       <div
         key={index}
@@ -110,12 +137,16 @@ interface Message {
           {msg.content ? (
             msg.role === 'assistant' ? (
               <>
-                <ReactMarkdown 
-                  urlTransform={urlTransform}
-                  components={markdownComponents}
-                >
-                  {msg.content}
-                </ReactMarkdown>
+                {msg.content.includes('__VIDEO__') ? (
+                  processVideoContent(msg.content)
+                ) : (
+                  <ReactMarkdown 
+                    urlTransform={urlTransform}
+                    components={markdownComponents}
+                  >
+                    {msg.content}
+                  </ReactMarkdown>
+                )}
                 {/* 如果是视频生成消息且有进度，显示进度条 */}
                 {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messagesLength - 1 && (
                   <div style={{ marginTop: 8 }}>
@@ -342,7 +373,28 @@ const PublishDialogAi = memo(
           try {
             const res: any = await getVideoTaskStatus(taskId)
             if (res.data) {
-              const { status, fail_reason, video_url, progress } = res.data
+              const { status, fail_reason, progress } : any = {
+                "task_id": "691d59a0cf8f85110ff2538d",
+                "action": "",
+                "status": "SUCCESS",
+                "fail_reason": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
+                "submit_time": 1763531161,
+                "start_time": 1763531161,
+                "finish_time": 1763531405,
+                "progress": "100%",
+                "data": {
+                    "id": "video_1459b06c-e279-4765-8465-3040eec4e10a",
+                    "size": "720x1280",
+                    "model": "sora-2",
+                    "object": "video",
+                    "status": "completed",
+                    "seconds": "10",
+                    "progress": 100,
+                    "video_url": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
+                    "created_at": 1763531162,
+                    "completed_at": 1763531339
+                }
+            }
               const up = typeof status === 'string' ? status.toUpperCase() : ''
               const normalized = up === 'SUCCESS' ? 'completed' : up === 'FAILED' ? 'failed' : up === 'PROCESSING' ? 'processing' : up === 'NOT_START' || up === 'NOT_STARTED' || up === 'QUEUED' || up === 'PENDING' ? 'submitted' : (status || '').toString().toLowerCase()
               setVideoStatus(normalized)
@@ -356,17 +408,18 @@ const PublishDialogAi = memo(
               }
               
               if (normalized === 'completed') {
-                const videoUrl = video_url || res.data?.data?.video_url || res.data?.video_url
+                const videoUrl = res.data?.data?.video_url || res.data?.video_url
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
                 
-                // 更新最后一条消息，添加视频链接（用于同步到编辑器）
+                // 更新最后一条消息，嵌入视频（使用自定义标记）
                 setMessages(prev => {
                   const newMessages = [...prev]
                   if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
+                    // 保存原始视频URL到消息中，用于同步
                     newMessages[newMessages.length - 1] = {
                       ...newMessages[newMessages.length - 1],
-                      content: `✅ 视频生成完成！点击下方"同步到编辑器"按钮将视频添加到发布内容中。\n\n[视频链接](${videoUrl})`,
+                      content: `✅ 视频生成完成！\n\n__VIDEO__${videoUrl}__VIDEO__`,
                     }
                   }
                   return newMessages
@@ -704,44 +757,35 @@ const PublishDialogAi = memo(
         }
       }
 
-      // 从URL下载视频并转换为IVideoFile对象
+      // 从URL创建IVideoFile对象（不下载，直接使用生成的URL）
       const downloadVideoAsVideoFile = async (url: string): Promise<IVideoFile | null> => {
         try {
-          console.log('开始下载视频，原始URL:', url)
+          console.log('处理视频URL:', url)
           const ossUrl = getOssUrl(url)
           console.log('转换后的OSS URL:', ossUrl)
           
-          const response = await fetch(ossUrl)
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`)
-          }
-          
-          const blob = await response.blob()
-          console.log('视频下载完成，大小:', blob.size)
-          
           const filename = `ai-generated-video.mp4`
           
-          // 创建临时 URL 用于获取视频信息
-          const videoUrl = URL.createObjectURL(blob)
-          console.log('创建临时URL:', videoUrl)
-          
-          const videoInfo = await VideoGrabFrame(videoUrl, 0)
+          // 直接使用OSS URL提取视频信息（不下载到本地）
+          console.log('从URL提取视频信息...')
+          const videoInfo = await VideoGrabFrame(ossUrl, 0)
           console.log('视频信息:', videoInfo)
           
+          // 注意：这里我们不创建本地blob，而是直接使用网络URL
           const videoFile: IVideoFile = {
             filename,
-            videoUrl,
-            size: blob.size,
-            file: blob,
-            ossUrl: ossUrl, // 保存转换后的完整 OSS URL
+            videoUrl: ossUrl, // 直接使用OSS URL作为videoUrl
+            size: 0, // 不下载就没有size，设置为0
+            file: new Blob(), // 占位，实际不使用
+            ossUrl: ossUrl, // 生成的URL就是最终的OSS URL
             ...videoInfo,
           }
           
-          console.log('视频文件对象创建成功:', videoFile)
+          console.log('视频文件对象创建成功（使用网络URL）:', videoFile)
           return videoFile
         } catch (error) {
-          console.error('下载视频失败，URL:', url, '错误:', error)
-          message.error('视频下载失败，请重试')
+          console.error('处理视频失败，URL:', url, '错误:', error)
+          message.error('视频处理失败，请重试')
           return null
         }
       }
@@ -772,7 +816,7 @@ const PublishDialogAi = memo(
             }
           })
           
-          // 检查是否有视频链接
+          // 检查是否有视频链接（支持Markdown格式和纯URL格式）
           linkMatches.forEach(match => {
             const urlMatch = match.match(/\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
@@ -782,6 +826,25 @@ const PublishDialogAi = memo(
               videoUrl = url
             }
           })
+          
+          // 如果没有找到Markdown格式的视频链接，尝试匹配自定义标记
+          if (!videoUrl) {
+            const videoTagMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
+            if (videoTagMatch) {
+              videoUrl = videoTagMatch[1]
+              console.log('识别到自定义标记视频:', videoUrl)
+            }
+          }
+          
+          // 如果还是没找到，尝试匹配纯URL
+          if (!videoUrl) {
+            const urlRegex = /(https?:\/\/[^\s]+\.(mp4|webm)|https?:\/\/[^\s]*video[^\s]*)/gi
+            const urlMatches = content.match(urlRegex)
+            if (urlMatches && urlMatches.length > 0) {
+              videoUrl = urlMatches[0]
+              console.log('识别到纯URL视频:', videoUrl)
+            }
+          }
 
           console.log('最终识别 - 图片URLs:', imageUrls, '视频URL:', videoUrl)
 
@@ -809,11 +872,18 @@ const PublishDialogAi = memo(
           }
 
           // 移除markdown中的图片和视频链接，只保留文本内容
-          const textContent = content
-            .replace(/!\[.*?\]\([^)]+\)/g, '')
-            .replace(/\[视频链接\]\([^)]+\)/g, '')
-            .replace(/\[.*?\]\([^)]+\.(mp4|webm)[^)]*\)/gi, '')
-            .trim()
+          let textContent = content
+            .replace(/!\[.*?\]\([^)]+\)/g, '') // 移除图片
+            .replace(/\[视频链接\]\([^)]+\)/g, '') // 移除Markdown视频链接
+            .replace(/\[.*?\]\([^)]+\.(mp4|webm)[^)]*\)/gi, '') // 移除Markdown格式视频
+            .replace(/__VIDEO__.*?__VIDEO__/g, '') // 移除自定义视频标记
+          
+          // 移除纯URL格式的视频链接
+          if (videoUrl) {
+            textContent = textContent.replace(videoUrl, '')
+          }
+          
+          textContent = textContent.trim()
 
           // 如果有视频，只同步视频（不更新文本）
           // 如果有图片，只同步图片（不更新文本）
