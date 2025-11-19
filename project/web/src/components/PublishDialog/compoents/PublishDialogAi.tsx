@@ -19,9 +19,27 @@ import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream, getVideoGenerationModels, generateVideo, getVideoTaskStatus } from '@/api/ai'
 import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
-import { OSS_URL } from '@/constant'
 import { getOssUrl } from '@/utils/oss'
 import styles from '../publishDialog.module.scss'
+
+
+// 自定义 urlTransform 以允许 data: URLs（base64 图片）
+const urlTransform = (url: string) => {
+  // 允许 data: 协议（base64 图片）
+  if (url.startsWith('data:image/')) {
+    return url
+  }
+  // 允许 blob: 协议
+  if (url.startsWith('blob:')) {
+    return url
+  }
+  // 允许 http 和 https
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+  // 其他协议返回空字符串（安全处理）
+  return ''
+}
 
 const { Option } = Select
 
@@ -46,14 +64,18 @@ interface Message {
 
 // AI生成的图片组件
 const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
-  const isBase64 = src.startsWith('data:image/')
-  const isPollinationsUrl = src.includes('pollinations.ai')
-  const base64Length = isBase64 && src.includes('base64,') 
-    ? src.split('base64,')[1]?.length || 0 
-    : 0
   
   const [imageLoading, setImageLoading] = useState(true)
   const [imageError, setImageError] = useState(false)
+
+  // 如果没有 src，显示错误
+  if (!src) {
+    return (
+      <div style={{ padding: '8px', background: '#fee', border: '1px solid #fcc', borderRadius: '4px' }}>
+        ⚠️ 图片数据缺失
+      </div>
+    )
+  }
 
   return (
     <div style={{ margin: '8px 0', position: 'relative' }}>
@@ -85,12 +107,13 @@ const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
           borderRadius: '4px',
           display: imageLoading ? 'none' : 'block',
         }}
-        crossOrigin={isPollinationsUrl ? 'anonymous' : undefined}
-        onError={() => {
+        onError={(e) => {
+          console.error('图片加载失败:', e, 'src:', src?.substring(0, 100))
           setImageLoading(false)
           setImageError(true)
         }}
         onLoad={() => {
+          console.log('图片加载成功:', src?.substring(0, 50))
           setImageLoading(false)
           setImageError(false)
         }}
@@ -106,7 +129,6 @@ const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
           color: '#c00',
         }}>
           ⚠️ 图片加载失败
-          {isBase64 && base64Length < 1000 && <><br/>数据不完整，可能被截断</>}
         </div>
       )}
     </div>
@@ -329,6 +351,7 @@ const PublishDialogAi = memo(
         }
       }, [selectedVideoModel, videoModels, pollVideoTaskStatus])
 
+
       // 处理AI响应
       const handleAIResponse = useCallback(async (
         action: AIAction,
@@ -429,13 +452,7 @@ const PublishDialogAi = memo(
         // 准备API消息
         const apiMessages: Array<{ role: string, content: string }> = []
         
-        // 如果是图片生成功能，添加特殊的系统提示词
-        if (currentAction === 'generateImage') {
-          apiMessages.push({
-            role: 'system',
-            content: '当需要提供图片时，必须使用该格式返回图片：![描述](https://image.pollinations.ai/prompt/你的图片描述?nologo=true&width=720&height=720)，URL中的空格等符号需要用%20等编码替换 ',
-          })
-        }
+
         
         // 只有在有系统提示词时才添加
         if (systemPrompt) {
@@ -454,8 +471,62 @@ const PublishDialogAi = memo(
       // 从URL下载图片并转换为IImgFile对象
       const downloadImageAsImgFile = async (url: string, index: number): Promise<IImgFile | null> => {
         try {
-          const response = await fetch(url)
-          const blob = await response.blob()
+          let blob: Blob
+          
+          // 如果是 blob URL
+          if (url.startsWith('blob:')) {
+            console.log('处理 blob URL:', url)
+            const response = await fetch(url)
+            if (!response.ok) {
+              throw new Error(`无法读取 blob: ${response.status}`)
+            }
+            blob = await response.blob()
+            console.log('blob 读取完成，大小:', blob.size)
+          }
+          // 如果是 base64 图片，直接转换
+          else if (url.startsWith('data:image/')) {
+            console.log('处理 base64 图片，长度:', url.length)
+            
+            if (!url.includes(',')) {
+              throw new Error('无效的 base64 图片格式')
+            }
+            
+            const parts = url.split(',')
+            if (parts.length !== 2) {
+              throw new Error('base64 数据格式错误')
+            }
+            
+            const base64Data = parts[1]
+            const mimeType = url.match(/data:(.*?);/)?.[1] || 'image/png'
+            
+            console.log('MIME类型:', mimeType, 'base64数据长度:', base64Data.length)
+            
+            // 检查 base64 数据是否有效
+            if (!base64Data || base64Data.length < 100) {
+              throw new Error('base64 数据太短或为空')
+            }
+            
+            const byteCharacters = atob(base64Data)
+            const byteNumbers = new Array(byteCharacters.length)
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i)
+            }
+            const byteArray = new Uint8Array(byteNumbers)
+            blob = new Blob([byteArray], { type: mimeType })
+            
+            console.log('base64 转换完成，Blob大小:', blob.size)
+          } 
+          // 普通 URL，需要下载
+          else {
+            console.log('下载图片:', url)
+            const response = await fetch(url)
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`)
+            }
+            blob = await response.blob()
+            console.log('图片下载完成，大小:', blob.size)
+          }
+          
           const filename = `ai-generated-image-${index + 1}.png`
           
           // 使用 formatImg 函数正确处理图片
@@ -464,9 +535,11 @@ const PublishDialogAi = memo(
             path: filename,
           })
           
+          console.log('图片处理成功:', imgFile)
           return imgFile
         } catch (error) {
-          console.error('下载图片失败:', error)
+          console.error('图片处理失败:', error)
+          message.error(`图片 ${index + 1} 处理失败: ${error instanceof Error ? error.message : '未知错误'}`)
           return null
         }
       }
@@ -532,8 +605,10 @@ const PublishDialogAi = memo(
           imageMatches.forEach(match => {
             const urlMatch = match.match(/!\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
-            if (url && !url.startsWith('data:')) {
+            if (url) {
+              // 支持普通URL和base64格式的图片
               imageUrls.push(url)
+              console.log('提取到图片URL:', url.substring(0, 50) + (url.length > 50 ? '...' : ''))
             }
           })
           
@@ -622,40 +697,51 @@ const PublishDialogAi = memo(
 
       // 缓存 Markdown 组件配置，避免每次渲染都创建新对象
       const markdownComponents = useMemo(() => ({
-        img: ({ node, ...props }: any) => (
-          <AIGeneratedImage src={props.src || ''} alt={props.alt} />
-        ),
-        p: ({ node, ...props }: any) => <p style={{ margin: '4px 0', lineHeight: '1.6' }} {...props} />,
+        img: ({ node, ...props }: any) => {
+          console.log('img 组件 props:', { src: props.src?.substring(0, 100), alt: props.alt })
+          return <AIGeneratedImage src={props.src || ''} alt={props.alt} />
+        },
+        p: ({ node, ...props }: any) => <p {...props} style={{ margin: '4px 0', lineHeight: '1.6' }} dir="auto" />,
         code: ({ node, inline, className, children, ...props }: any) => {
           return inline
             ? <code style={{ background: '#f0f0f0', padding: '2px 6px', borderRadius: '3px', fontSize: '0.9em' }} {...props}>{children}</code>
             : <code style={{ display: 'block', background: '#f0f0f0', padding: '12px', borderRadius: '4px', overflowX: 'auto', fontSize: '0.9em', lineHeight: '1.5' }} {...props}>{children}</code>
         },
         a: ({ node, ...props }: any) => {
-          // 检查是否是视频链接
           const href = props.href || ''
-          const isVideo = href.includes('.mp4') || href.includes('.webm') || href.includes('video')
           
-          if (isVideo) {
+          // 检查是否是音频文件
+          if (/\.(aac|mp3|opus|wav)$/.test(href)) {
+            return (
+              <figure style={{ margin: '8px 0' }}>
+                <audio controls src={href}></audio>
+              </figure>
+            )
+          }
+          
+          // 检查是否是视频文件
+          if (/\.(3gp|3g2|webm|ogv|mpeg|mp4|avi)$/.test(href) || href.includes('video')) {
             return (
               <div style={{ margin: '8px 0' }}>
                 <video 
-                  src={getOssUrl(href)} 
                   controls 
                   style={{ 
                     maxWidth: '100%', 
                     maxHeight: '400px', 
                     borderRadius: '8px',
                     display: 'block'
-                  }} 
-                />
+                  }}
+                >
+                  <source src={getOssUrl(href)} />
+                </video>
               </div>
             )
           }
           
-          return (
-            <a {...props} style={{ color: '#1890ff', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer" />
-          )
+          // 普通链接
+          const isInternal = /^\/#/i.test(href)
+          const target = isInternal ? '_self' : props.target ?? '_blank'
+          return <a {...props} target={target} style={{ color: '#1890ff', textDecoration: 'underline' }} rel="noopener noreferrer" />
         },
         ul: ({ node, ...props }: any) => <ul style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
         ol: ({ node, ...props }: any) => <ol style={{ margin: '8px 0', paddingLeft: '20px' }} {...props} />,
@@ -714,6 +800,7 @@ const PublishDialogAi = memo(
                 borderRadius: '8px',
               }}
             >
+
               {messages.length === 0 ? (
                 <div style={{ 
                   textAlign: 'center', 
@@ -747,33 +834,35 @@ const PublishDialogAi = memo(
                         }}
                         className="ai-message-content"
                       >
-                      {msg.content ? (
-                        msg.role === 'assistant' ? (
-                          <>
-                            <ReactMarkdown components={markdownComponents}>
-                              {msg.content
-                                .replace(/^`+|`+$/g, '')
-                                .replace(/`(!\[.*?\]\(data:image\/.*?\))`/g, '$1')
-                              }
-                            </ReactMarkdown>
-                            {/* 如果是视频生成消息且有进度，显示进度条 */}
-                            {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messages.length - 1 && (
-                              <div style={{ marginTop: 8 }}>
-                                <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
-                                <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
-                                  {videoStatus === 'submitted' && '任务已提交，等待处理...'}
-                                  {videoStatus === 'processing' && '正在生成视频...'}
-                                  {videoStatus === 'failed' && '视频生成失败'}
+
+                        
+                        {msg.content ? (
+                          msg.role === 'assistant' ? (
+                            <>
+                              <ReactMarkdown 
+                                urlTransform={urlTransform}
+                                components={markdownComponents}
+                              >
+                                {msg.content}
+                              </ReactMarkdown>
+                              {/* 如果是视频生成消息且有进度，显示进度条 */}
+                              {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messages.length - 1 && (
+                                <div style={{ marginTop: 8 }}>
+                                  <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
+                                  <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
+                                    {videoStatus === 'submitted' && '任务已提交，等待处理...'}
+                                    {videoStatus === 'processing' && '正在生成视频...'}
+                                    {videoStatus === 'failed' && '视频生成失败'}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </>
+                              )}
+                            </>
+                          ) : (
+                            <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+                          )
                         ) : (
-                          <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
-                        )
-                      ) : (
-                        <Spin size="small" />
-                      )}
+                          <Spin size="small" />
+                        )}
                     </div>
                     {msg.role === 'assistant' && msg.content && (
                       <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
