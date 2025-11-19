@@ -1,7 +1,7 @@
 import type { Dayjs } from 'dayjs'
 import type { ForwardedRef } from 'react'
-import { TrophyOutlined } from '@ant-design/icons'
-import Icon from '@ant-design/icons'
+import Icon, { TrophyOutlined } from '@ant-design/icons'
+
 import { Badge, Button, DatePicker } from 'antd'
 import { forwardRef, memo, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
@@ -67,16 +67,16 @@ const DataStatisticsDetails = memo(
                     setTimeRangeValue(dates)
                   }}
                 />
-              <Badge dot={hasUnreadMilestone} offset={[-4, 4]} color="#ff4d4f">
-                <Button
-                  type="primary"
-                  icon={<TrophyOutlined />}
-                  disabled={milestones.length === 0}
-                  onClick={() => setShowMilestonePoster(true)}
-                >
-                  {t('viewMilestone')}
-                </Button>
-              </Badge>
+                <Badge dot={hasUnreadMilestone} offset={[-4, 4]} color="#ff4d4f">
+                  <Button
+                    type="primary"
+                    icon={<TrophyOutlined />}
+                    disabled={milestones.length === 0}
+                    onClick={() => setShowMilestonePoster(true)}
+                  >
+                    {t('viewMilestone')}
+                  </Button>
+                </Badge>
               </div>
             </div>
 
