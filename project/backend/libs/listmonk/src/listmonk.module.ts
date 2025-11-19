@@ -1,4 +1,5 @@
 import { DynamicModule, Module } from '@nestjs/common'
+import { TemplatesService } from './api/templates.service'
 import { TransactionalService } from './api/transactional.service'
 import { ListmonkConfig } from './interfaces'
 
@@ -16,9 +17,11 @@ export class ListmonkModule {
           useValue: options,
         },
         TransactionalService,
+        TemplatesService,
       ],
       exports: [
         TransactionalService,
+        TemplatesService,
       ],
     }
   }
