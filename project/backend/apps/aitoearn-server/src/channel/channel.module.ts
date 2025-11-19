@@ -45,7 +45,7 @@ import { YoutubeModule } from './youtube/youtube.module'
     PublishModule,
     forwardRef(() => AccountModule),
   ],
-  providers: [ChannelService, PublishService, AccountService],
+  providers: [ChannelService, PublishService],
   controllers: [
     PublishController,
     InteractController,

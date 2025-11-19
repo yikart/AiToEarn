@@ -65,7 +65,12 @@ export class UpdatePublishedPostConsumer extends WorkerHost implements OnModuleD
       }
       const result = await publishingProvider.updatePublishedPost(taskInfo, updatedContentType)
       if (result.status === PublishStatus.PUBLISHED) {
-        await this.publishingService.completePublishTask(taskInfo, taskInfo.dataId)
+        await this.publishingService.updatePublishTaskStatus(taskId, {
+          status: PublishStatus.PUBLISHED,
+          errorMsg: '',
+          inQueue: false,
+          queued: false,
+        })
       }
       else {
         await this.publishingService.updatePublishTaskStatus(taskId, {
@@ -101,7 +106,7 @@ export class UpdatePublishedPostConsumer extends WorkerHost implements OnModuleD
     if (job.opts.attempts && job.attemptsMade >= job.opts.attempts) {
       this.logger.error(`[task-${job.data.taskId}] Update published post task failed after ${job.attemptsMade} attempts, error: ${error.toString()}`)
       await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
-        status: PublishStatus.FAILED,
+        status: PublishStatus.UPDATED_FAILED,
         errorMsg: error.toString(),
       })
     }
@@ -109,7 +114,7 @@ export class UpdatePublishedPostConsumer extends WorkerHost implements OnModuleD
 
   @OnWorkerEvent('stalled')
   onStalled(job: Job) {
-    this.logger.error(`Job ${job.id}] is stalled, data ${job.data}`)
+    this.logger.error(`Job ${job.id} is stalled, data ${job.data}`)
   }
 
   async onModuleDestroy() {

@@ -116,16 +116,16 @@ export class PublishingService implements OnModuleDestroy {
     }
 
     if (task.option && task.option.facebook) {
-      if (task.option?.facebook?.content_category !== 'post') {
+      if (task.option.facebook.content_category !== 'post') {
         throw new AppException(ResponseCode.PostCategoryNotSupported, 'only post category is supported for Facebook')
       }
     }
-    let UpdatedContentType = 'text'
+    let updatedContentType = 'text'
     if (data.videoUrl) {
-      UpdatedContentType = 'video'
+      updatedContentType = 'video'
     }
     else if (data.imgUrlList) {
-      UpdatedContentType = 'image'
+      updatedContentType = 'image'
     }
 
     await this.publishTaskModel.updateOne({ _id: data.id }, {
@@ -135,7 +135,7 @@ export class PublishingService implements OnModuleDestroy {
       topics: data.topics,
       status: PublishStatus.WAITING_FOR_UPDATE,
     }).exec()
-    await this.enqueueUpdatePublishedPostTask(task, UpdatedContentType)
+    await this.enqueueUpdatePublishedPostTask(task, updatedContentType)
     return true
   }
 

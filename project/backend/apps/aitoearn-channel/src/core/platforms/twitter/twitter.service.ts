@@ -9,7 +9,7 @@ import { chunkedDownloadFile, fileUrlToBlob, getCurrentTimestamp, getFileSizeFro
 import { AccountService } from '../../../core/account/account.service'
 import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential.schema'
 import { XMediaCategory, XMediaType } from '../../../libs/twitter/twitter.enum'
-import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XDeletePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../../libs/twitter/twitter.interfaces'
+import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../../libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '../../../libs/twitter/twitter.service'
 import { PlatformBaseService } from '../base.service'
 import { TWITTER_TIME_CONSTANTS, TwitterRedisKeys } from './constants'
