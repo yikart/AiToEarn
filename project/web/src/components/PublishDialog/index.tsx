@@ -55,9 +55,11 @@ import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelec
 import PublishDialogDataPicker from '@/components/PublishDialog/compoents/PublishDialogDataPicker'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
+import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { useAccountStore } from '@/store/account'
 import { generateUUID } from '@/utils'
 import styles from './publishDialog.module.scss'
@@ -157,10 +159,11 @@ const PublishDialog = memo(
       const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
       // 中间内容区域ref，用于划词功能
       const contentAreaRef = useRef<HTMLDivElement>(null)
-      const { tasks, md5Cache } = usePublishManageUpload(
+      const { tasks, md5Cache, enqueueUpload } = usePublishManageUpload(
         useShallow(state => ({
           tasks: state.tasks,
           md5Cache: state.md5Cache,
+          enqueueUpload: state.enqueueUpload,
         })),
       )
 
@@ -577,8 +580,62 @@ const PublishDialog = memo(
       }, [setOpenLeft])
 
       // AI内容同步到编辑器
-      const handleSyncToEditor = useCallback(async (content: string, images?: import('@/components/PublishDialog/publishDialog.type').IImgFile[], video?: import('@/components/PublishDialog/publishDialog.type').IVideoFile) => {
+      const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile) => {
         console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无')
+        
+        // 处理图片上传
+        if (images && images.length > 0) {
+          console.log('开始上传AI同步的图片')
+          const uploadsWithImages: Array<{ image: IImgFile, promise: Promise<any>, cancel: () => void }> = []
+          
+          for (const image of images) {
+            const handle = enqueueUpload({
+              file: image.file,
+              fileName: image.filename,
+              type: UploadTaskTypeEnum.Image,
+            })
+            
+            const imageWithTask: IImgFile = {
+              ...image,
+              uploadTaskId: handle.taskId,
+            }
+            
+            uploadsWithImages.push({
+              image: imageWithTask,
+              promise: handle.promise,
+              cancel: handle.cancel,
+            })
+          }
+          
+          // 使用带有 uploadTaskId 的图片
+          images = uploadsWithImages.map(item => item.image)
+          console.log('图片上传任务已创建:', images)
+        }
+        
+        // 处理视频上传
+        if (video) {
+          console.log('开始上传AI同步的视频')
+          const videoHandle = enqueueUpload({
+            file: video.file,
+            fileName: video.filename,
+            type: UploadTaskTypeEnum.Video,
+          })
+          
+          const coverHandle = enqueueUpload({
+            file: video.cover.file,
+            fileName: video.cover.filename,
+            type: UploadTaskTypeEnum.Image,
+          })
+          
+          video = {
+            ...video,
+            uploadTaskIds: {
+              video: videoHandle.taskId,
+              cover: coverHandle.taskId,
+            },
+          }
+          console.log('视频上传任务已创建:', video)
+        }
         
         // 如果只有一个账号，直接更新
         if (pubListChoosed.length === 1) {
@@ -640,7 +697,7 @@ const PublishDialog = memo(
           console.log('更新展开项参数:', params)
           setOnePubParams(params, expandedPubItem.account.id)
         }
-      }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams])
+      }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams, enqueueUpload])
 
       const imperativeHandle: IPublishDialogRef = {
         setPubTime,

@@ -62,11 +62,136 @@ interface Message {
   action?: AIAction
 }
 
-// AI生成的图片组件
-const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
-  
-  const [imageLoading, setImageLoading] = useState(true)
-  const [imageError, setImageError] = useState(false)
+  // 消息项组件 - 使用 memo 避免不必要的重新渲染
+  const MessageItem = memo(({ 
+    msg, 
+    index, 
+    showRawContent,
+    setShowRawContent,
+    syncToEditor,
+    videoStatus,
+    videoProgress,
+    messagesLength,
+    t,
+    markdownComponents
+  }: {
+    msg: Message
+    index: number
+    showRawContent: number | null
+    setShowRawContent: (index: number | null) => void
+    syncToEditor: (content: string) => void
+    videoStatus: string
+    videoProgress: number
+    messagesLength: number
+    t: any
+    markdownComponents: any
+  }) => {
+    return (
+      <div
+        key={index}
+        style={{
+          marginBottom: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '85%',
+            padding: '12px',
+            background: msg.role === 'user' ? '#1890ff' : '#f5f5f5',
+            color: msg.role === 'user' ? '#fff' : '#000',
+            borderRadius: '8px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+          }}
+          className="ai-message-content"
+        >
+          {msg.content ? (
+            msg.role === 'assistant' ? (
+              <>
+                <ReactMarkdown 
+                  urlTransform={urlTransform}
+                  components={markdownComponents}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+                {/* 如果是视频生成消息且有进度，显示进度条 */}
+                {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messagesLength - 1 && (
+                  <div style={{ marginTop: 8 }}>
+                    <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
+                    <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
+                      {videoStatus === 'submitted' && '任务已提交，等待处理...'}
+                      {videoStatus === 'processing' && '正在生成视频...'}
+                      {videoStatus === 'failed' && '视频生成失败'}
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+            )
+          ) : (
+            <Spin size="small" />
+          )}
+        </div>
+        {msg.role === 'assistant' && msg.content && (
+          <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Button
+                size="small"
+                icon={<SyncOutlined />}
+                onClick={() => syncToEditor(msg.content)}
+              >
+                {t('aiFeatures.syncToEditor' as any)}
+              </Button>
+              <Button
+                size="small"
+                icon={<CopyOutlined />}
+                onClick={() => {
+                  navigator.clipboard.writeText(msg.content)
+                  message.success('已复制到剪贴板')
+                }}
+              />
+              <Button
+                size="small"
+                onClick={() => setShowRawContent(showRawContent === index ? null : index)}
+              >
+                {showRawContent === index ? '隐藏原始' : '查看原始'}
+              </Button>
+            </div>
+            {showRawContent === index && (
+              <div style={{ 
+                background: '#f0f0f0', 
+                padding: '8px', 
+                borderRadius: '4px',
+                fontSize: '12px',
+                maxHeight: '200px',
+                overflowY: 'auto',
+                wordBreak: 'break-all',
+              }}>
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.content}</pre>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }, (prevProps, nextProps) => {
+    // 只有当这些属性变化时才重新渲染
+    return (
+      prevProps.msg.content === nextProps.msg.content &&
+      prevProps.showRawContent === nextProps.showRawContent &&
+      prevProps.videoStatus === nextProps.videoStatus &&
+      prevProps.videoProgress === nextProps.videoProgress
+    )
+  })
+
+  // AI生成的图片组件
+  const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
+    
+    const [imageLoading, setImageLoading] = useState(true)
+    const [imageError, setImageError] = useState(false)
 
   // 如果没有 src，显示错误
   if (!src) {
@@ -137,13 +262,6 @@ const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
   // 只有当 src 和 alt 都相同时才不重新渲染
   return prevProps.src === nextProps.src && prevProps.alt === nextProps.alt
 })
-
-interface ChatSession {
-  id: string
-  messages: Message[]
-  currentResponse?: string
-  isStreaming?: boolean
-}
 
 // AI功能助手
 const PublishDialogAi = memo(
@@ -375,12 +493,54 @@ const PublishDialogAi = memo(
           const result = await response.json()
           
           if (result.code === 0 && result.data?.content) {
+            // 优化：将 base64 图片转换为 blob URL 以避免存储大量数据导致输入框卡顿
+            let processedContent = result.data.content
+            
+            // 查找所有 base64 图片并转换为 blob URL
+            const base64Regex = /!\[([^\]]*)\]\((data:image\/[^;]+;base64,[^)]+)\)/g
+            let match
+            const replacements: Array<{ original: string; blobUrl: string }> = []
+            
+            while ((match = base64Regex.exec(result.data.content)) !== null) {
+              const [fullMatch, alt, base64Url] = match
+              try {
+                // 提取 base64 数据
+                const parts = base64Url.split(',')
+                if (parts.length === 2) {
+                  const mimeType = base64Url.match(/data:(.*?);/)?.[1] || 'image/png'
+                  const base64Data = parts[1]
+                  
+                  // 转换为 blob
+                  const byteCharacters = atob(base64Data)
+                  const byteNumbers = new Array(byteCharacters.length)
+                  for (let i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers[i] = byteCharacters.charCodeAt(i)
+                  }
+                  const byteArray = new Uint8Array(byteNumbers)
+                  const blob = new Blob([byteArray], { type: mimeType })
+                  const blobUrl = URL.createObjectURL(blob)
+                  
+                  replacements.push({
+                    original: fullMatch,
+                    blobUrl: `![${alt}](${blobUrl})`
+                  })
+                }
+              } catch (error) {
+                console.error('base64 转 blob 失败:', error)
+              }
+            }
+            
+            // 执行所有替换
+            replacements.forEach(({ original, blobUrl }) => {
+              processedContent = processedContent.replace(original, blobUrl)
+            })
+            
             // 更新最后一条消息
             setMessages(prev => {
               const newMessages = [...prev]
               newMessages[newMessages.length - 1] = {
                 role: 'assistant',
-                content: result.data.content,
+                content: processedContent,
                 action,
               }
               return newMessages
@@ -810,103 +970,21 @@ const PublishDialogAi = memo(
                   输入内容开始对话，或选择功能快速处理文本
                 </div>
               ) : (
-                messages.map((msg, index) => {
-                  const isUser = msg.role === 'user'
-                  return (
-                    <div
-                      key={`${index}-${msg.content.substring(0, 20)}`}
-                      style={{
-                        marginBottom: 12,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: isUser ? 'flex-end' : 'flex-start',
-                      }}
-                    >
-                      <div
-                        style={{
-                          maxWidth: '80%',
-                          padding: '8px 12px',
-                          borderRadius: '8px',
-                          background: isUser ? '#1890ff' : '#fff',
-                          color: isUser ? '#fff' : '#000',
-                          wordBreak: 'break-word',
-                          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-                        }}
-                        className="ai-message-content"
-                      >
-
-                        
-                        {msg.content ? (
-                          msg.role === 'assistant' ? (
-                            <>
-                              <ReactMarkdown 
-                                urlTransform={urlTransform}
-                                components={markdownComponents}
-                              >
-                                {msg.content}
-                              </ReactMarkdown>
-                              {/* 如果是视频生成消息且有进度，显示进度条 */}
-                              {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messages.length - 1 && (
-                                <div style={{ marginTop: 8 }}>
-                                  <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
-                                  <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
-                                    {videoStatus === 'submitted' && '任务已提交，等待处理...'}
-                                    {videoStatus === 'processing' && '正在生成视频...'}
-                                    {videoStatus === 'failed' && '视频生成失败'}
-                                  </div>
-                                </div>
-                              )}
-                            </>
-                          ) : (
-                            <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
-                          )
-                        ) : (
-                          <Spin size="small" />
-                        )}
-                    </div>
-                    {msg.role === 'assistant' && msg.content && (
-                      <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        <div style={{ display: 'flex', gap: 8 }}>
-                          <Button
-                            size="small"
-                            icon={<SyncOutlined />}
-                            onClick={() => syncToEditor(msg.content)}
-                          >
-                            {t('aiFeatures.syncToEditor' as any)}
-                          </Button>
-                          <Button
-                            size="small"
-                            icon={<CopyOutlined />}
-                            onClick={() => {
-                              navigator.clipboard.writeText(msg.content)
-                              message.success('已复制到剪贴板')
-                            }}
-                          />
-                          <Button
-                            size="small"
-                            onClick={() => setShowRawContent(showRawContent === index ? null : index)}
-                          >
-                            {showRawContent === index ? '隐藏原始' : '查看原始'}
-                          </Button>
-                        </div>
-                        {showRawContent === index && (
-                          <div style={{ 
-                            background: '#f0f0f0', 
-                            padding: '8px', 
-                            borderRadius: '4px',
-                            fontSize: '12px',
-                            maxHeight: '200px',
-                            overflowY: 'auto',
-                            wordBreak: 'break-all',
-                          }}>
-                            <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.content}</pre>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                    </div>
-                  )
-                })
+                messages.map((msg, index) => (
+                  <MessageItem
+                    key={`${index}-${msg.content.substring(0, 20)}`}
+                    msg={msg}
+                    index={index}
+                    showRawContent={showRawContent}
+                    setShowRawContent={setShowRawContent}
+                    syncToEditor={syncToEditor}
+                    videoStatus={videoStatus}
+                    videoProgress={videoProgress}
+                    messagesLength={messages.length}
+                    t={t}
+                    markdownComponents={markdownComponents}
+                  />
+                ))
               )}
             </div>
 
