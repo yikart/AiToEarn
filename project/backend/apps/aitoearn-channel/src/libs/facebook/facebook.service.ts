@@ -7,6 +7,7 @@ import { FacebookError } from './facebook.exception'
 import {
   ChunkedVideoUploadRequest,
   ChunkedVideoUploadResponse,
+  FacebookDeletePostResponse,
   FacebookInitialVideoUploadRequest,
   FacebookInitialVideoUploadResponse,
   FacebookInsightsRequest,
@@ -41,6 +42,8 @@ import {
   PublishVideoForPageResponse,
   PublishVideoPostRequest,
   publishVideoPostResponse,
+  UpdatePostRequest,
+  UpdatePostResponse,
   UploadPhotoResponse,
 } from './facebook.interfaces'
 import { FacebookOperation } from './facebook.operations'
@@ -170,7 +173,7 @@ export class FacebookService {
   // see https://developers.facebook.com/docs/graph-api/reference/page/videos/?locale=en_US#Creating
   // https://developers.facebook.com/docs/pages-api/posts#publish-a-video
   // https://stackoverflow.com/questions/47284140/facebook-graph-api-publish-post-with-multiple-videos-and-photos
-  async publishVideoPost(
+  async publishVideo(
     pageId: string,
     pageAccessToken: string,
     req: PublishVideoPostRequest,
@@ -274,7 +277,7 @@ export class FacebookService {
   // immediately publish multiple photos as a single post
   // first upload the photos to get their IDs, then use those IDs to create a post
   // see https://developers.facebook.com/docs/graph-api/reference/page/photos/#upload
-  async publishMultiplePhotoPost(
+  async publishPhotos(
     pageId: string,
     pageAccessToken: string,
     imageIDList: string[],
@@ -451,7 +454,7 @@ export class FacebookService {
     return this.request<FacebookInsightsResponse>(url, config, { operation: FacebookOperation.GET_OBJECT_INSIGHTS })
   }
 
-  async initReelUpload(
+  async initReelVideoUpload(
     pageId: string,
     pageAccessToken: string,
     req: FacebookReelRequest,
@@ -471,7 +474,7 @@ export class FacebookService {
     return this.request<FacebookReelResponse>(url, config, { operation: FacebookOperation.INIT_REEL_UPLOAD })
   }
 
-  async uploadReel(
+  async uploadReelVideo(
     pageAccessToken: string,
     uploadURL: string,
     req: FacebookReelUploadRequest,
@@ -505,7 +508,7 @@ export class FacebookService {
     return this.request<FacebookReelResponse>(url, config, { operation: FacebookOperation.PUBLISH_REEL_POST })
   }
 
-  async initVideoStoryUpload(
+  async initStoryVideoUpload(
     pageId: string,
     pageAccessToken: string,
     req: FacebookReelRequest,
@@ -523,7 +526,7 @@ export class FacebookService {
     return this.request<FacebookReelResponse>(url, config, { operation: FacebookOperation.INIT_VIDEO_STORY_UPLOAD })
   }
 
-  async uploadVideoStory(
+  async uploadStoryVideo(
     pageAccessToken: string,
     uploadURL: string,
     req: FacebookReelUploadRequest,
@@ -652,7 +655,7 @@ export class FacebookService {
   async deletePost(
     postId: string,
     pageAccessToken: string,
-  ): Promise<void> {
+  ): Promise<FacebookDeletePostResponse> {
     const url = `${this.apiBaseUrl}/${postId}`
     const config: AxiosRequestConfig = {
       method: 'DELETE',
@@ -660,7 +663,7 @@ export class FacebookService {
         Authorization: `Bearer ${pageAccessToken}`,
       },
     }
-    await this.request<void>(url, config, { operation: FacebookOperation.DELETE_POST })
+    return await this.request<FacebookDeletePostResponse>(url, config, { operation: FacebookOperation.DELETE_POST })
   }
 
   async likeObject(
@@ -689,5 +692,21 @@ export class FacebookService {
       },
     }
     return this.request<FacebookLikeResponse>(url, config, { operation: 'UNLIKE_OBJECT' })
+  }
+
+  async updatePost(
+    postId: string,
+    pageAccessToken: string,
+    req: UpdatePostRequest,
+  ): Promise<UpdatePostResponse> {
+    const url = `${this.apiBaseUrl}/${postId}`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${pageAccessToken}`,
+      },
+      data: req,
+    }
+    return this.request<UpdatePostResponse>(url, config, { operation: 'UPDATE_POST' })
   }
 }

@@ -78,4 +78,18 @@ export class YoutubePubService extends PublishService {
       throw PublishingException.nonRetryable('error publishing video', error)
     }
   }
+
+  override async updatePublishedPost(publishTask: PublishTask, _updatedContentType: string): Promise<PublishingTaskResult> {
+    if (!publishTask.dataId) {
+      throw PublishingException.nonRetryable('Invalid publish task: no postId')
+    }
+    await this.youtubeService.updateVideo(publishTask.accountId, publishTask.dataId, {
+      title: publishTask.title,
+      description: publishTask.desc,
+      tags: publishTask.topics,
+    }, publishTask.option?.youtube?.privacyStatus, {})
+    return {
+      status: PublishStatus.PUBLISHED,
+    }
+  }
 }

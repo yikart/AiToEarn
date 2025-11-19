@@ -161,11 +161,12 @@ export class LinkedinService extends MetaBaseService {
     return await this.linkedinAPIService.createShare(credential.access_token, createShareReq)
   }
 
-  async deletePost(accountId: string, shareId: string) {
+  override async deletePost(accountId: string, shareId: string) {
     const credential = await this.authorize(accountId)
     if (!credential) {
       throw new Error('Failed to authorize')
     }
-    return await this.linkedinAPIService.deletePost(credential.access_token, shareId)
+    await this.linkedinAPIService.deletePost(credential.access_token, shareId)
+    return true
   }
 }

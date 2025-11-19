@@ -9,7 +9,7 @@ import { PublishTask } from '../../libs/database/schema/publishTask.schema'
 import { AccountService } from '../account/account.service'
 import { PublishRecordService } from '../account/publish-record.service'
 import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS } from './constant'
-import { CreatePublishDto, PublishRecordListFilterDto } from './dto/publish.dto'
+import { CreatePublishDto, PublishRecordListFilterDto, UpdatePublishTaskDto } from './dto/publish.dto'
 import { TiktokWebhookDto } from './dto/tiktok-webhook.dto'
 import { TiktokPubService } from './providers/tiktok.service'
 
@@ -88,7 +88,7 @@ export class PublishingService implements OnModuleDestroy {
       now - IMMEDIATE_PUBLISH_TOLERANCE_SECONDS,
       now + IMMEDIATE_PUBLISH_TOLERANCE_SECONDS,
     ]
-    const publishImmediately = publishTime.getTime() >= immediatePublishWindow[0] && publishTime.getTime() <= immediatePublishWindow[1]
+    const publishImmediately = publishTime.getTime() <= immediatePublishWindow[1]
     if (!publishImmediately) {
       this.logger.log(`Publish task ${newTask.id} created, scheduled for ${publishTime.toISOString()}`)
       return newTask
@@ -99,6 +99,44 @@ export class PublishingService implements OnModuleDestroy {
       throw new AppException(ResponseCode.PublishTaskFailed, { accountType })
     this.logger.log(`Publish task ${newTask.id} created and pushed to queue immediately`)
     return newTask
+  }
+
+  async updatePublishingTask(data: UpdatePublishTaskDto) {
+    const supportPlatforms = [AccountType.FACEBOOK, AccountType.YOUTUBE]
+    const task = await this.publishTaskModel.findById(data.id).exec()
+    if (!task || task.userId !== data.userId) {
+      throw new AppException(ResponseCode.PublishTaskNotFound)
+    }
+    if (task.status !== PublishStatus.PUBLISHED) {
+      throw new AppException(ResponseCode.PublishTaskNotPublished)
+    }
+
+    if (!supportPlatforms.includes(task.accountType)) {
+      throw new AppException(ResponseCode.PlatformNotSupported, 'Facebook and Youtube are supported for update')
+    }
+
+    if (task.option && task.option.facebook) {
+      if (task.option.facebook.content_category !== 'post') {
+        throw new AppException(ResponseCode.PostCategoryNotSupported, 'only post category is supported for Facebook')
+      }
+    }
+    let updatedContentType = 'text'
+    if (data.videoUrl) {
+      updatedContentType = 'video'
+    }
+    else if (data.imgUrlList) {
+      updatedContentType = 'image'
+    }
+
+    await this.publishTaskModel.updateOne({ _id: data.id }, {
+      desc: data.desc,
+      videoUrl: data.videoUrl,
+      imgUrlList: data.imgUrlList,
+      topics: data.topics,
+      status: PublishStatus.WAITING_FOR_UPDATE,
+    }).exec()
+    await this.enqueueUpdatePublishedPostTask(task, updatedContentType)
+    return true
   }
 
   async enqueuePublishingTask(task: PublishTask): Promise<boolean> {
@@ -124,12 +162,33 @@ export class PublishingService implements OnModuleDestroy {
     return jobRes.id === jobId
   }
 
+  async enqueueUpdatePublishedPostTask(task: PublishTask, updatedContentType: string): Promise<boolean> {
+    const jobId = uuidv4().toString()
+    await this.publishTaskModel.updateOne({ _id: task.id }, { queueId: jobId })
+    const jobRes = await this.queueService.addUpdatePublishedPostJob(
+      {
+        taskId: task.id,
+        updatedContentType,
+      },
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 5,
+        },
+        removeOnComplete: true,
+        removeOnFail: true,
+        jobId,
+      },
+    )
+    return jobRes.id === jobId
+  }
+
   async getPublishTaskListByTime(
-    start: Date,
     end: Date,
   ): Promise<PublishTask[]> {
     const filters: RootFilterQuery<PublishTask> = {
-      publishTime: { $gte: start, $lte: end },
+      publishTime: { $lte: end },
       status: PublishStatus.WaitingForPublish,
     }
     const list = await this.publishTaskModel.find(filters).sort({

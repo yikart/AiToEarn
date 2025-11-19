@@ -18,6 +18,7 @@ import {
   PublishDayInfoListFiltersDto,
   PubRecordListFilterDto,
   UpdatePublishRecordTimeDto,
+  UpdatePublishTaskDto,
 } from './dto/publish.dto'
 import { PublishService } from './publish.service'
 
@@ -166,5 +167,14 @@ export class PublishController {
   @Get('records/:flowId')
   async getPublishRecordDetail(@GetToken() token: TokenInfo, @Param('flowId') flowId: string) {
     return this.publishService.getPublishRecordDetail(flowId, token.id)
+  }
+
+  @ApiDoc({
+    summary: 'Update Publish Task',
+    body: UpdatePublishTaskDto.schema,
+  })
+  @Post('updateTask')
+  async updatePublishTask(@GetToken() token: TokenInfo, @Body() data: UpdatePublishTaskDto) {
+    return this.publishService.updatePublishTask(data, token.id)
   }
 }

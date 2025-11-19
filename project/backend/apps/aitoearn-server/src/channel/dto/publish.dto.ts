@@ -79,3 +79,12 @@ export const listPostHistorySchema = z.object({
   accountType: z.enum(AccountType),
 })
 export class ListPostHistoryDto extends createZodDto(listPostHistorySchema) {}
+
+export const UpdatePublishTaskSchema = z.object({
+  id: z.string({ message: '任务ID' }),
+  desc: z.string().optional(),
+  videoUrl: z.string().optional(),
+  imgUrlList: z.array(z.string()).optional(),
+  topics: z.array(z.string()).optional(),
+})
+export class UpdatePublishTaskDto extends createZodDto(UpdatePublishTaskSchema) {}

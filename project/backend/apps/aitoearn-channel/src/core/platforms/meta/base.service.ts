@@ -5,13 +5,14 @@ import { Model } from 'mongoose'
 import { getCurrentTimestamp } from '../../../common'
 
 import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential.schema'
+import { PlatformBaseService } from '../base.service'
 import { META_TIME_CONSTANTS, MetaRedisKeys } from './constants'
 import { MetaUserOAuthCredential } from './meta.interfaces'
 
 @Injectable()
-export class MetaBaseService {
-  protected readonly platform: string = 'meta'
-  protected readonly logger = new Logger(MetaBaseService.name)
+export class MetaBaseService extends PlatformBaseService {
+  protected override readonly platform: string = 'meta'
+  protected override readonly logger = new Logger(MetaBaseService.name)
 
   @InjectModel(OAuth2Credential.name)
   protected readonly oAuth2CredentialModel: Model<OAuth2Credential>
@@ -19,7 +20,9 @@ export class MetaBaseService {
   @Inject(RedisService)
   protected readonly redisService: RedisService
 
-  constructor() { }
+  constructor() {
+    super()
+  }
 
   protected async getOAuth2Credential(accountId: string): Promise<MetaUserOAuthCredential | null> {
     let key = MetaRedisKeys.getAccessTokenKey(this.platform, accountId)
@@ -70,5 +73,15 @@ export class MetaBaseService {
     })
     const saved = cached && (persistResult.modifiedCount > 0 || persistResult.upsertedCount > 0)
     return saved
+  }
+
+  override async getAccessTokenStatus(
+    accountId: string,
+  ): Promise<number> {
+    const credential = await this.getOAuth2Credential(accountId)
+    if (!credential) {
+      return 0
+    }
+    return credential.expires_in > getCurrentTimestamp() ? 1 : 0
   }
 }

@@ -6,6 +6,7 @@ import { ThreadsError } from './threads.exception'
 import {
   publicProfileResponse,
   ThreadsContainerRequest,
+  ThreadsDeletePostResponse,
   ThreadsInsightsRequest,
   ThreadsInsightsResponse,
   ThreadsObjectCommentsRequest,
@@ -243,7 +244,7 @@ export class ThreadsService {
   async deletePost(
     postId: string,
     accessToken: string,
-  ): Promise<void> {
+  ): Promise<ThreadsDeletePostResponse> {
     const url = `${this.apiBaseUrl}/${postId}`
     const config: AxiosRequestConfig = {
       method: 'DELETE',
@@ -251,6 +252,6 @@ export class ThreadsService {
         Authorization: `Bearer ${accessToken}`,
       },
     }
-    await this.request<void>(url, config, { operation: 'deletePost' })
+    return await this.request<ThreadsDeletePostResponse>(url, config, { operation: 'deletePost' })
   }
 }
