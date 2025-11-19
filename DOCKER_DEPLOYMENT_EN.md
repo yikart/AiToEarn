@@ -20,7 +20,7 @@ docker compose version
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/AiToEarn.git
+git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
 ```
 
