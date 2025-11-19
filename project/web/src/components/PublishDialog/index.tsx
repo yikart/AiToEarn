@@ -578,6 +578,8 @@ const PublishDialog = memo(
 
       // AI内容同步到编辑器
       const handleSyncToEditor = useCallback(async (content: string, images?: import('@/components/PublishDialog/publishDialog.type').IImgFile[], video?: import('@/components/PublishDialog/publishDialog.type').IVideoFile) => {
+        console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无')
+        
         // 如果只有一个账号，直接更新
         if (pubListChoosed.length === 1) {
           const params: any = {}
@@ -587,12 +589,15 @@ const PublishDialog = memo(
           }
           // 视频和图片不能同时存在
           if (video) {
+            console.log('设置视频到单账号参数')
             params.video = video
             // 如果有视频，清空图片
             params.images = []
           } else if (images && images.length > 0) {
+            console.log('设置图片到单账号参数')
             params.images = images
           }
+          console.log('更新单账号参数:', params)
           setOnePubParams(params, pubListChoosed[0].account.id)
         } 
         // 如果是多账号且在第一步，更新公共参数
@@ -604,12 +609,15 @@ const PublishDialog = memo(
           }
           // 视频和图片不能同时存在
           if (video) {
+            console.log('设置视频到多账号公共参数')
             params.video = video
             // 如果有视频，清空图片
             params.images = []
           } else if (images && images.length > 0) {
+            console.log('设置图片到多账号公共参数')
             params.images = images
           }
+          console.log('更新多账号公共参数:', params)
           setAccountAllParams(params)
         }
         // 如果在第二步且有展开的项，更新该项
@@ -621,12 +629,15 @@ const PublishDialog = memo(
           }
           // 视频和图片不能同时存在
           if (video) {
+            console.log('设置视频到展开项参数')
             params.video = video
             // 如果有视频，清空图片
             params.images = []
           } else if (images && images.length > 0) {
+            console.log('设置图片到展开项参数')
             params.images = images
           }
+          console.log('更新展开项参数:', params)
           setOnePubParams(params, expandedPubItem.account.id)
         }
       }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams])

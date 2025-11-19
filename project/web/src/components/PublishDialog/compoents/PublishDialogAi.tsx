@@ -474,27 +474,41 @@ const PublishDialogAi = memo(
       // 从URL下载视频并转换为IVideoFile对象
       const downloadVideoAsVideoFile = async (url: string): Promise<IVideoFile | null> => {
         try {
+          console.log('开始下载视频，原始URL:', url)
           const ossUrl = getOssUrl(url)
+          console.log('转换后的OSS URL:', ossUrl)
+          
           const response = await fetch(ossUrl)
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          
           const blob = await response.blob()
+          console.log('视频下载完成，大小:', blob.size)
+          
           const filename = `ai-generated-video.mp4`
           
           // 创建临时 URL 用于获取视频信息
           const videoUrl = URL.createObjectURL(blob)
+          console.log('创建临时URL:', videoUrl)
+          
           const videoInfo = await VideoGrabFrame(videoUrl, 0)
+          console.log('视频信息:', videoInfo)
           
           const videoFile: IVideoFile = {
             filename,
             videoUrl,
             size: blob.size,
             file: blob,
-            ossUrl: url, // 保存原始OSS URL
+            ossUrl: ossUrl, // 保存转换后的完整 OSS URL
             ...videoInfo,
           }
           
+          console.log('视频文件对象创建成功:', videoFile)
           return videoFile
         } catch (error) {
-          console.error('下载视频失败:', error)
+          console.error('下载视频失败，URL:', url, '错误:', error)
+          message.error('视频下载失败，请重试')
           return null
         }
       }
@@ -502,9 +516,14 @@ const PublishDialogAi = memo(
       // 同步到编辑器
       const syncToEditor = useCallback(async (content: string) => {
         if (onSyncToEditor) {
+          console.log('开始同步到编辑器，内容:', content)
+          
           // 提取所有图片URL和视频链接
           const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || []
           const linkMatches = content.match(/\[.*?\]\(([^)]+)\)/g) || []
+          
+          console.log('图片匹配:', imageMatches)
+          console.log('链接匹配:', linkMatches)
           
           // 分离图片和视频链接
           const imageUrls: string[] = []
@@ -522,10 +541,14 @@ const PublishDialogAi = memo(
           linkMatches.forEach(match => {
             const urlMatch = match.match(/\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
+            console.log('检查链接是否为视频:', url)
             if (url && (url.includes('.mp4') || url.includes('.webm') || url.includes('video'))) {
+              console.log('识别到视频链接:', url)
               videoUrl = url
             }
           })
+
+          console.log('最终识别 - 图片URLs:', imageUrls, '视频URL:', videoUrl)
 
           // 下载图片
           let imageFiles: IImgFile[] = []
@@ -543,6 +566,7 @@ const PublishDialogAi = memo(
           if (videoUrl) {
             message.loading({ content: '正在下载视频...', key: 'downloadMedia' })
             videoFile = await downloadVideoAsVideoFile(videoUrl) || undefined
+            console.log('视频下载结果:', videoFile ? '成功' : '失败')
           }
           
           if (imageUrls.length > 0 || videoUrl) {
@@ -560,12 +584,15 @@ const PublishDialogAi = memo(
           // 如果有图片，只同步图片（不更新文本）
           // 如果两者都没有，同步文本内容
           if (videoFile) {
+            console.log('同步视频到编辑器')
             onSyncToEditor('', [], videoFile)
             message.success('视频同步成功')
           } else if (imageFiles.length > 0) {
+            console.log('同步图片到编辑器')
             onSyncToEditor('', imageFiles)
             message.success('图片同步成功')
           } else {
+            console.log('同步文本到编辑器')
             onSyncToEditor(textContent)
             message.success(t('aiFeatures.syncSuccess' as any))
           }
@@ -877,13 +904,20 @@ const PublishDialogAi = memo(
                 }}
                 style={{ width: '100%' }}
                 placeholder="选择视频模型"
+                optionLabelProp="label"
               >
                 {videoModels.map((model: any) => (
-                  <Option key={model.name} value={model.name}>
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      <span style={{ fontWeight: 'bold' }}>{model.name}</span>
+                  <Option 
+                    key={model.name} 
+                    value={model.name}
+                    label={model.name}
+                  >
+                    <div style={{ padding: '4px 0' }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.name}</div>
                       {model.description && (
-                        <span style={{ fontSize: '12px', color: '#999' }}>{model.description}</span>
+                        <div style={{ fontSize: '12px', color: '#999', whiteSpace: 'normal', lineHeight: '1.4' }}>
+                          {model.description}
+                        </div>
                       )}
                     </div>
                   </Option>
