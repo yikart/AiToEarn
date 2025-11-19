@@ -319,7 +319,12 @@ const PublishDialogAi = memo(
 
       // 视频生成相关状态
       const [videoModels, setVideoModels] = useState<any[]>([])
-      const [selectedVideoModel, setSelectedVideoModel] = useState('')
+      const videoModelsLoadingRef = useRef(true) // 用 ref 跟踪加载状态
+      // 初始化时从 localStorage 读取，或使用默认值 'sora-2'
+      const [selectedVideoModel, setSelectedVideoModel] = useState(() => {
+        const savedModel = localStorage.getItem('ai_video_model')
+        return savedModel || 'sora-2'
+      })
       const [videoTaskId, setVideoTaskId] = useState<string | null>(null)
       const [videoStatus, setVideoStatus] = useState<string>('')
       const [videoProgress, setVideoProgress] = useState(0)
@@ -336,6 +341,7 @@ const PublishDialogAi = memo(
       useEffect(() => {
         const fetchVideoModels = async () => {
           try {
+            videoModelsLoadingRef.current = true
             const res: any = await getVideoGenerationModels()
             if (res.data && Array.isArray(res.data)) {
               setVideoModels(res.data)
@@ -343,29 +349,44 @@ const PublishDialogAi = memo(
               // 从 localStorage 读取保存的模型
               const savedModel = localStorage.getItem('ai_video_model')
               
-              // 尝试找到 sora2 模型
-              const sora2Model = res.data.find((m: any) => m.name?.toLowerCase().includes('sora'))
+              // 检查当前选中的模型是否在列表中
+              const currentModelExists = res.data.find((m: any) => m.name === selectedVideoModel)
               
-              if (savedModel && res.data.find((m: any) => m.name === savedModel)) {
+              if (currentModelExists) {
+                // 如果当前模型有效，不需要更新
+                console.log('当前视频模型有效:', selectedVideoModel)
+              } else if (savedModel && res.data.find((m: any) => m.name === savedModel)) {
                 // 如果有保存的模型且存在于列表中，使用保存的模型
+                console.log('使用保存的视频模型:', savedModel)
                 setSelectedVideoModel(savedModel)
-              } else if (sora2Model) {
-                // 否则优先使用 sora2
-                setSelectedVideoModel(sora2Model.name)
-                localStorage.setItem('ai_video_model', sora2Model.name)
-              } else if (res.data.length > 0) {
-                // 都没有则使用第一个
-                setSelectedVideoModel(res.data[0].name)
-                localStorage.setItem('ai_video_model', res.data[0].name)
+              } else {
+                // 尝试找到 sora 相关模型
+                const soraModel = res.data.find((m: any) => 
+                  m.name?.toLowerCase().includes('sora') || m.name === 'sora-2'
+                )
+                
+                if (soraModel) {
+                  // 优先使用 sora 模型
+                  console.log('使用默认 sora 模型:', soraModel.name)
+                  setSelectedVideoModel(soraModel.name)
+                  localStorage.setItem('ai_video_model', soraModel.name)
+                } else if (res.data.length > 0) {
+                  // 都没有则使用第一个
+                  console.log('使用第一个可用模型:', res.data[0].name)
+                  setSelectedVideoModel(res.data[0].name)
+                  localStorage.setItem('ai_video_model', res.data[0].name)
+                }
               }
             }
           } catch (error) {
             console.error('Failed to fetch video models:', error)
+          } finally {
+            videoModelsLoadingRef.current = false
           }
         }
         
         fetchVideoModels()
-      }, [])
+      }, []) // 只在组件挂载时执行一次
 
       // 视频任务轮询
       const pollVideoTaskStatus = useCallback(async (taskId: string) => {
@@ -373,28 +394,29 @@ const PublishDialogAi = memo(
           try {
             const res: any = await getVideoTaskStatus(taskId)
             if (res.data) {
-              const { status, fail_reason, progress } : any = {
-                "task_id": "691d59a0cf8f85110ff2538d",
-                "action": "",
-                "status": "SUCCESS",
-                "fail_reason": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
-                "submit_time": 1763531161,
-                "start_time": 1763531161,
-                "finish_time": 1763531405,
-                "progress": "100%",
-                "data": {
-                    "id": "video_1459b06c-e279-4765-8465-3040eec4e10a",
-                    "size": "720x1280",
-                    "model": "sora-2",
-                    "object": "video",
-                    "status": "completed",
-                    "seconds": "10",
-                    "progress": 100,
-                    "video_url": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
-                    "created_at": 1763531162,
-                    "completed_at": 1763531339
-                }
-            }
+              const { status, fail_reason, progress } : any = res.dataz
+            //   {
+            //     "task_id": "691d59a0cf8f85110ff2538d",
+            //     "action": "",
+            //     "status": "SUCCESS",
+            //     "fail_reason": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
+            //     "submit_time": 1763531161,
+            //     "start_time": 1763531161,
+            //     "finish_time": 1763531405,
+            //     "progress": "100%",
+            //     "data": {
+            //         "id": "video_1459b06c-e279-4765-8465-3040eec4e10a",
+            //         "size": "720x1280",
+            //         "model": "sora-2",
+            //         "object": "video",
+            //         "status": "completed",
+            //         "seconds": "10",
+            //         "progress": 100,
+            //         "video_url": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
+            //         "created_at": 1763531162,
+            //         "completed_at": 1763531339
+            //     }
+            // }
               const up = typeof status === 'string' ? status.toUpperCase() : ''
               const normalized = up === 'SUCCESS' ? 'completed' : up === 'FAILED' ? 'failed' : up === 'PROCESSING' ? 'processing' : up === 'NOT_START' || up === 'NOT_STARTED' || up === 'QUEUED' || up === 'PENDING' ? 'submitted' : (status || '').toString().toLowerCase()
               setVideoStatus(normalized)
@@ -459,14 +481,38 @@ const PublishDialogAi = memo(
 
       // 处理视频生成
       const handleVideoGeneration = useCallback(async (prompt: string) => {
+        // 如果模型列表还在加载中，等待加载完成
+        if (videoModelsLoadingRef.current) {
+          message.loading({ content: '正在加载视频模型...', key: 'loadingModels', duration: 0 })
+          
+          // 轮询检查模型是否加载完成，最多等待 30 秒
+          const maxWaitTime = 30000
+          const checkInterval = 200
+          let waited = 0
+          
+          while (videoModelsLoadingRef.current && waited < maxWaitTime) {
+            await new Promise(resolve => setTimeout(resolve, checkInterval))
+            waited += checkInterval
+          }
+          
+          message.destroy('loadingModels')
+          
+          if (videoModelsLoadingRef.current) {
+            message.error('视频模型加载超时，请稍后重试')
+            return
+          }
+        }
+
         if (!selectedVideoModel) {
-          message.error('请先在设置中选择视频模型')
+          message.error('请先选择视频模型')
           return
         }
 
         const selectedModel = videoModels.find((m: any) => m.name === selectedVideoModel)
+        console.log('selectedModel', selectedModel)
         if (!selectedModel) {
-          message.error('选中的视频模型不可用')
+          console.error('视频模型不可用:', selectedVideoModel, '可用模型:', videoModels.map(m => m.name))
+          message.error(`视频模型 ${selectedVideoModel} 不可用，请在设置中重新选择`)
           return
         }
 
