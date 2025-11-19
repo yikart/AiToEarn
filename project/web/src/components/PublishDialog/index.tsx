@@ -577,7 +577,7 @@ const PublishDialog = memo(
       }, [setOpenLeft])
 
       // AI内容同步到编辑器
-      const handleSyncToEditor = useCallback(async (content: string, images?: import('@/components/PublishDialog/publishDialog.type').IImgFile[]) => {
+      const handleSyncToEditor = useCallback(async (content: string, images?: import('@/components/PublishDialog/publishDialog.type').IImgFile[], video?: import('@/components/PublishDialog/publishDialog.type').IVideoFile) => {
         // 如果只有一个账号，直接更新
         if (pubListChoosed.length === 1) {
           const params: any = {}
@@ -585,7 +585,12 @@ const PublishDialog = memo(
           if (content) {
             params.des = content
           }
-          if (images && images.length > 0) {
+          // 视频和图片不能同时存在
+          if (video) {
+            params.video = video
+            // 如果有视频，清空图片
+            params.images = []
+          } else if (images && images.length > 0) {
             params.images = images
           }
           setOnePubParams(params, pubListChoosed[0].account.id)
@@ -597,7 +602,12 @@ const PublishDialog = memo(
           if (content) {
             params.des = content
           }
-          if (images && images.length > 0) {
+          // 视频和图片不能同时存在
+          if (video) {
+            params.video = video
+            // 如果有视频，清空图片
+            params.images = []
+          } else if (images && images.length > 0) {
             params.images = images
           }
           setAccountAllParams(params)
@@ -609,7 +619,12 @@ const PublishDialog = memo(
           if (content) {
             params.des = content
           }
-          if (images && images.length > 0) {
+          // 视频和图片不能同时存在
+          if (video) {
+            params.video = video
+            // 如果有视频，清空图片
+            params.images = []
+          } else if (images && images.length > 0) {
             params.images = images
           }
           setOnePubParams(params, expandedPubItem.account.id)

@@ -17,8 +17,8 @@ import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, 
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream, getVideoGenerationModels, generateVideo, getVideoTaskStatus } from '@/api/ai'
-import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
-import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
+import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
+import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { OSS_URL } from '@/constant'
 import { getOssUrl } from '@/utils/oss'
 import styles from '../publishDialog.module.scss'
@@ -33,7 +33,7 @@ export interface IPublishDialogAiRef {
 export interface IPublishDialogAiProps {
   onClose: () => void
   // 同步内容到编辑器的回调
-  onSyncToEditor?: (content: string, images?: IImgFile[]) => void
+  onSyncToEditor?: (content: string, images?: IImgFile[], video?: IVideoFile) => void
 }
 
 export type AIAction = 'shorten' | 'expand' | 'polish' | 'translate' | 'generateImage' | 'generateVideo'
@@ -220,13 +220,13 @@ const PublishDialogAi = memo(
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
                 
-                // 更新最后一条消息，添加视频
+                // 更新最后一条消息，添加视频链接（用于同步到编辑器）
                 setMessages(prev => {
                   const newMessages = [...prev]
                   if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
                     newMessages[newMessages.length - 1] = {
                       ...newMessages[newMessages.length - 1],
-                      content: `视频生成完成！\n\n[视频链接](${videoUrl})`,
+                      content: `✅ 视频生成完成！点击下方"同步到编辑器"按钮将视频添加到发布内容中。\n\n[视频链接](${videoUrl})`,
                     }
                   }
                   return newMessages
@@ -471,42 +471,106 @@ const PublishDialogAi = memo(
         }
       }
 
+      // 从URL下载视频并转换为IVideoFile对象
+      const downloadVideoAsVideoFile = async (url: string): Promise<IVideoFile | null> => {
+        try {
+          const ossUrl = getOssUrl(url)
+          const response = await fetch(ossUrl)
+          const blob = await response.blob()
+          const filename = `ai-generated-video.mp4`
+          
+          // 创建临时 URL 用于获取视频信息
+          const videoUrl = URL.createObjectURL(blob)
+          const videoInfo = await VideoGrabFrame(videoUrl, 0)
+          
+          const videoFile: IVideoFile = {
+            filename,
+            videoUrl,
+            size: blob.size,
+            file: blob,
+            ossUrl: url, // 保存原始OSS URL
+            ...videoInfo,
+          }
+          
+          return videoFile
+        } catch (error) {
+          console.error('下载视频失败:', error)
+          return null
+        }
+      }
+
       // 同步到编辑器
       const syncToEditor = useCallback(async (content: string) => {
         if (onSyncToEditor) {
-          // 提取所有图片URL
+          // 提取所有图片URL和视频链接
           const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || []
-          const imageUrls = imageMatches.map(match => {
+          const linkMatches = content.match(/\[.*?\]\(([^)]+)\)/g) || []
+          
+          // 分离图片和视频链接
+          const imageUrls: string[] = []
+          let videoUrl: string | null = null
+          
+          imageMatches.forEach(match => {
             const urlMatch = match.match(/!\[.*?\]\(([^)]+)\)/)
-            return urlMatch ? urlMatch[1] : null
-          }).filter((url): url is string => url !== null && !url.startsWith('data:'))
+            const url = urlMatch ? urlMatch[1] : null
+            if (url && !url.startsWith('data:')) {
+              imageUrls.push(url)
+            }
+          })
+          
+          // 检查是否有视频链接
+          linkMatches.forEach(match => {
+            const urlMatch = match.match(/\[.*?\]\(([^)]+)\)/)
+            const url = urlMatch ? urlMatch[1] : null
+            if (url && (url.includes('.mp4') || url.includes('.webm') || url.includes('video'))) {
+              videoUrl = url
+            }
+          })
 
-          // 下载所有图片并转换为IImgFile
+          // 下载图片
           let imageFiles: IImgFile[] = []
           if (imageUrls.length > 0) {
-            message.loading({ content: '正在下载图片...', key: 'downloadImages' })
+            message.loading({ content: '正在下载图片...', key: 'downloadMedia' })
             const downloadPromises = imageUrls.map((url, index) => 
               downloadImageAsImgFile(url, index)
             )
             const results = await Promise.all(downloadPromises)
             imageFiles = results.filter((file): file is IImgFile => file !== null)
-            message.destroy('downloadImages')
           }
 
-          // 移除markdown中的图片，只保留文本内容
-          const textContent = content.replace(/!\[.*?\]\([^)]+\)/g, '').trim()
+          // 下载视频
+          let videoFile: IVideoFile | undefined
+          if (videoUrl) {
+            message.loading({ content: '正在下载视频...', key: 'downloadMedia' })
+            videoFile = await downloadVideoAsVideoFile(videoUrl) || undefined
+          }
+          
+          if (imageUrls.length > 0 || videoUrl) {
+            message.destroy('downloadMedia')
+          }
 
-          // 如果有图片，只同步图片不更新文本（传递空字符串）
-          // 如果没有图片，同步文本内容
-          if (imageFiles.length > 0) {
+          // 移除markdown中的图片和视频链接，只保留文本内容
+          const textContent = content
+            .replace(/!\[.*?\]\([^)]+\)/g, '')
+            .replace(/\[视频链接\]\([^)]+\)/g, '')
+            .replace(/\[.*?\]\([^)]+\.(mp4|webm)[^)]*\)/gi, '')
+            .trim()
+
+          // 如果有视频，只同步视频（不更新文本）
+          // 如果有图片，只同步图片（不更新文本）
+          // 如果两者都没有，同步文本内容
+          if (videoFile) {
+            onSyncToEditor('', [], videoFile)
+            message.success('视频同步成功')
+          } else if (imageFiles.length > 0) {
             onSyncToEditor('', imageFiles)
             message.success('图片同步成功')
           } else {
-            onSyncToEditor(textContent, imageFiles)
+            onSyncToEditor(textContent)
             message.success(t('aiFeatures.syncSuccess' as any))
           }
         }
-      }, [onSyncToEditor, t])
+      }, [onSyncToEditor, t, downloadImageAsImgFile, downloadVideoAsVideoFile])
 
       // 暴露给父组件的方法
       useImperativeHandle(ref, () => ({
