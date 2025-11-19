@@ -1,0 +1,24 @@
+{
+  "name": "@yikart/listmonk",
+  "type": "commonjs",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@yikart/common": "workspace:*",
+    "tslib": "^2.3.0",
+    "zod": "^4.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.13.0",
+    "rxjs": "^7.8.0"
+  }
+}
