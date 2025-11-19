@@ -1,7 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import { forwardRef, Global, Module } from '@nestjs/common'
 import { AccountModule } from '../account/account.module'
-import { AccountService } from '../account/account.service'
 import { PublishModule } from '../publishRecord/publishRecord.module'
 import { PostModule } from '../statistics/post/post.module'
 import { ChannelApiModule } from '../transports/channel/channelApi.module'
