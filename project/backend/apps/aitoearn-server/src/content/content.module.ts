@@ -22,6 +22,6 @@ import { ContentAiUtil } from './util/ai.util'
   ],
   controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController],
   providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, MaterialGenerateConsumer, ContentAiUtil],
-  exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService],
+  exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, ContentAiUtil],
 })
 export class ContentModule { }
