@@ -28,7 +28,6 @@ import {
   UpdateCommentDto,
   UpdatePlayItemsDto,
   UpdatePlayListDto,
-  UpdateVideoDto,
   UploadVideoDto,
   UploadVideoPartDto,
   VideoCategoriesDto,
