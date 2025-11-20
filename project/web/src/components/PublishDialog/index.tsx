@@ -431,7 +431,7 @@ const PublishDialog = memo(
             try {
               setChatModels(JSON.parse(cachedModels))
             } catch (error) {
-              console.error('解析缓存的聊天模型失败:', error)
+              console.error(t('messages.parseCachedChatModelsFailed' as any), error)
             }
           } else {
             // 如果没有缓存，则请求
@@ -441,7 +441,7 @@ const PublishDialog = memo(
                 sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
               }
             }).catch(error => {
-              console.error('获取聊天模型失败:', error)
+              console.error(t('messages.getChatModelsFailed' as any), error)
             })
           }
         }
