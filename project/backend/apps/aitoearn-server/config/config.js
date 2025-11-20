@@ -65,6 +65,12 @@ const {
   INTERNAL_TOKEN,
 } = process.env
 
+const {
+  LISTMONK_HOST,
+  LISTMONK_API_KEY,
+  LISTMONK_API_SECRET,
+} = process.env
+
 module.exports = {
   port: 3002,
   environment: NODE_ENV,
@@ -999,5 +1005,10 @@ module.exports = {
   auth: {
     secret: JWT_SECRET,
     internalToken: INTERNAL_TOKEN,
+  },
+  listmonk: {
+    host: LISTMONK_HOST,
+    apiKey: LISTMONK_API_KEY,
+    apiSecret: LISTMONK_API_SECRET,
   },
 }

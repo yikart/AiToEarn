@@ -3,10 +3,11 @@ import { Module } from '@nestjs/common'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { AitoearnAuthModule } from '@yikart/aitoearn-auth'
 import { AitoearnQueueModule } from '@yikart/aitoearn-queue'
+import { ListmonkModule } from '@yikart/listmonk'
 import { MailModule } from '@yikart/mail'
 import { MongodbModule } from '@yikart/mongodb'
 import { AccountModule } from './account/account.module'
-import { LogsModule } from './ai/core/logs'
+import { LogsModule } from './ai/logs'
 import { AppConfigModule } from './app-configs/app-config.module'
 import { ChannelModule } from './channel/channel.module'
 import { config } from './config'
@@ -35,6 +36,7 @@ import { UserModule } from './user/user.module'
       },
     }),
     AitoearnAuthModule.forRoot(config.auth),
+    ListmonkModule.forRoot(config.listmonk),
     FileModule,
     LogsModule,
     TransportsModule,

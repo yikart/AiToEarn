@@ -262,6 +262,13 @@ export class PublishService {
   }
 
   async updatePublishTask(data: UpdatePublishTaskDto, userId: string) {
-    return await this.platPublishNatsApi.updatePublishTask(data, userId)
+    try {
+      const success = await this.platPublishNatsApi.updatePublishTask(data, userId)
+      return { success }
+    }
+    catch (error: any) {
+      this.logger.error(`Failed to update publish task for userId ${userId}: ${error.message}`, error.stack)
+      throw new AppException(ResponseCode.PublishTaskUpdateFailed, error.message)
+    }
   }
 }

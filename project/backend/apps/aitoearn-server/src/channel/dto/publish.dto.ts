@@ -80,11 +80,37 @@ export const listPostHistorySchema = z.object({
 })
 export class ListPostHistoryDto extends createZodDto(listPostHistorySchema) {}
 
+export enum YouTubePrivacyStatus {
+  Public = 'public',
+  Unlisted = 'unlisted',
+  Private = 'private',
+}
+
+export enum YouTubeLicense {
+  CreativeCommon = 'creativeCommon',
+  YouTube = 'youtube',
+}
+
+export const YouTubePublishOptionSchema = z.object({
+  privacyStatus: z.enum([
+    YouTubePrivacyStatus.Public,
+    YouTubePrivacyStatus.Unlisted,
+    YouTubePrivacyStatus.Private,
+  ]),
+  license: z.enum(YouTubeLicense).optional(),
+  categoryId: z.string(),
+  embeddable: z.boolean().optional().default(false),
+  selfDeclaredMadeForKids: z.boolean().optional().default(false),
+})
+
 export const UpdatePublishTaskSchema = z.object({
   id: z.string({ message: '任务ID' }),
   desc: z.string().optional(),
   videoUrl: z.string().optional(),
   imgUrlList: z.array(z.string()).optional(),
   topics: z.array(z.string()).optional(),
+  option: z.object({
+    youtube: YouTubePublishOptionSchema.optional(),
+  }).optional(),
 })
 export class UpdatePublishTaskDto extends createZodDto(UpdatePublishTaskSchema) {}

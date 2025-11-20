@@ -3,15 +3,19 @@ import { InjectModel } from '@nestjs/mongoose'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountType, PublishRecord, PublishStatus } from '@yikart/aitoearn-server-client'
 import { AppException, ResponseCode } from '@yikart/common'
+import { youtube_v3 } from 'googleapis'
 import { Model, RootFilterQuery } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { PublishTask } from '../../libs/database/schema/publishTask.schema'
 import { AccountService } from '../account/account.service'
 import { PublishRecordService } from '../account/publish-record.service'
+import { FacebookService } from '../platforms/meta/facebook.service'
+import { YoutubeService } from '../platforms/youtube/youtube.service'
 import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS } from './constant'
 import { CreatePublishDto, PublishRecordListFilterDto, UpdatePublishTaskDto } from './dto/publish.dto'
 import { TiktokWebhookDto } from './dto/tiktok-webhook.dto'
 import { TiktokPubService } from './providers/tiktok.service'
+import { generatePostMessage } from './util'
 
 @Injectable()
 export class PublishingService implements OnModuleDestroy {
@@ -24,6 +28,8 @@ export class PublishingService implements OnModuleDestroy {
     @InjectModel(PublishTask.name)
     private readonly publishTaskModel: Model<PublishTask>,
     private readonly publishRecordService: PublishRecordService,
+    private readonly youtubeService: YoutubeService,
+    private readonly facebookService: FacebookService,
   ) {}
 
   private determineMetaPostCategory(data: CreatePublishDto) {
@@ -101,6 +107,41 @@ export class PublishingService implements OnModuleDestroy {
     return newTask
   }
 
+  async updatePublishedFacebookTask(publishTask: PublishTask) {
+    const message = generatePostMessage(publishTask.desc, publishTask.topics)
+    const result = await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, { message })
+    return result.success
+  }
+
+  async updatePublishedYoutubePost(publishTask: PublishTask) {
+    const videoSchema: youtube_v3.Schema$Video = {
+      id: publishTask.dataId,
+      snippet: {
+        title: publishTask.title,
+        description: publishTask.desc,
+        tags: publishTask.topics,
+        categoryId: publishTask.option?.youtube?.categoryId,
+      },
+      status: {
+        privacyStatus: publishTask.option?.youtube?.privacyStatus,
+        selfDeclaredMadeForKids: publishTask.option?.youtube?.selfDeclaredMadeForKids,
+        embeddable: publishTask.option?.youtube?.embeddable,
+        license: publishTask.option?.youtube?.license,
+      },
+    }
+    return await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
+  }
+
+  async updatePublishedTextTask(publishTask: PublishTask) {
+    if (publishTask.accountType === AccountType.YOUTUBE) {
+      return await this.updatePublishedYoutubePost(publishTask)
+    }
+    else if (publishTask.accountType === AccountType.FACEBOOK) {
+      return await this.updatePublishedFacebookTask(publishTask)
+    }
+    throw new AppException(ResponseCode.PlatformNotSupported, 'only Facebook and Youtube are supported for update')
+  }
+
   async updatePublishingTask(data: UpdatePublishTaskDto) {
     const supportPlatforms = [AccountType.FACEBOOK, AccountType.YOUTUBE]
     const task = await this.publishTaskModel.findById(data.id).exec()
@@ -127,16 +168,24 @@ export class PublishingService implements OnModuleDestroy {
     else if (data.imgUrlList) {
       updatedContentType = 'image'
     }
-
-    await this.publishTaskModel.updateOne({ _id: data.id }, {
-      desc: data.desc,
-      videoUrl: data.videoUrl,
-      imgUrlList: data.imgUrlList,
-      topics: data.topics,
-      status: PublishStatus.WAITING_FOR_UPDATE,
-    }).exec()
-    await this.enqueueUpdatePublishedPostTask(task, updatedContentType)
-    return true
+    try {
+      if (updatedContentType === 'text') {
+        return await this.updatePublishedTextTask(task)
+      }
+      await this.publishTaskModel.updateOne({ _id: data.id }, {
+        desc: data.desc,
+        videoUrl: data.videoUrl,
+        imgUrlList: data.imgUrlList,
+        topics: data.topics,
+        status: PublishStatus.WAITING_FOR_UPDATE,
+        option: data.option,
+      }).exec()
+      await this.enqueueUpdatePublishedPostTask(task, updatedContentType)
+      return true
+    }
+    catch (error) {
+      throw new AppException(ResponseCode.PublishTaskUpdateFailed, error.message)
+    }
   }
 
   async enqueuePublishingTask(task: PublishTask): Promise<boolean> {

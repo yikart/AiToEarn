@@ -11,7 +11,7 @@ import { buildUrl } from '@yikart/aws-s3'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialTaskRepository, MaterialType } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
-import { AiService } from '../ai/ai.service'
+import { ChatService } from '../ai/chat'
 import { config } from '../config'
 import { MaterialMedia, MaterialTask, MediaType, MediaUrlInfo, NewMaterial, NewMaterialTask } from './common'
 import { CreateMaterialTaskDto } from './dto/material.dto'
@@ -31,7 +31,7 @@ export class MaterialTaskService {
   constructor(
     readonly redisService: RedisService,
     private readonly materialTaskRepository: MaterialTaskRepository,
-    readonly aiService: AiService,
+    readonly chatService: ChatService,
     readonly mediaService: MediaService,
     readonly materialService: MaterialService,
     private readonly materialGroupService: MaterialGroupService,
@@ -173,7 +173,7 @@ export class MaterialTaskService {
     },
   ) {
     if (type === MediaType.IMG) {
-      const res = await this.aiService.imgContentByAi(
+      const res = await this.chatService.imgContentByAi(
         user,
         model,
         fileUrl,
@@ -184,7 +184,7 @@ export class MaterialTaskService {
     }
 
     if (type === MediaType.VIDEO) {
-      const res = await this.aiService.videoContentByAi(
+      const res = await this.chatService.videoContentByAi(
         user,
         model,
         fileUrl,
@@ -214,12 +214,12 @@ export class MaterialTaskService {
       content: '',
     }
 
-    const content = await this.aiService.getContentByAi(user, model, prompt, option)
+    const content = await this.chatService.getContentByAi(user, model, prompt, option)
     if (!content)
       return res
     res.content = content
 
-    const title = await this.aiService.getTitleByAi(user, model, content)
+    const title = await this.chatService.getTitleByAi(user, model, content, {})
     if (!title)
       return res
     res.title = title

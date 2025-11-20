@@ -12,19 +12,22 @@ import { AuthTaskInfo } from '../../../core/platforms/common'
 import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential.schema'
 import { KwaiOAuthCredentialsResponse } from '../../../libs/kwai/kwai.interfaces'
 import { KwaiApiService } from '../../../libs/kwai/kwai.service'
+import { PlatformBaseService } from '../base.service'
 import { KWAI_TIME_CONSTANTS } from './constants'
 
 @Injectable()
-export class KwaiService {
-  private readonly platform = AccountType.KWAI
-  private readonly logger = new Logger(KwaiService.name)
+export class KwaiService extends PlatformBaseService {
+  protected override readonly platform: string = AccountType.KWAI
+  protected override readonly logger = new Logger(KwaiService.name)
   constructor(
     private readonly kwaiApiService: KwaiApiService,
     private readonly redisService: RedisService,
     private readonly accountService: AccountService,
     @InjectModel(OAuth2Credential.name)
     private OAuth2CredentialModel: Model<OAuth2Credential>,
-  ) { }
+  ) {
+    super()
+  }
 
   private async getOAuth2Credential(accountId: string): Promise<KwaiOAuthCredentialsResponse | null> {
     let credential = await this.redisService.getJson<KwaiOAuthCredentialsResponse>(
@@ -334,12 +337,13 @@ export class KwaiService {
     return tokenInfo.refresh_token_expires_in > getCurrentTimestamp() ? 1 : 0
   }
 
-  async deleteVideo(accountId: string, videoId: string) {
+  override async deletePost(accountId: string, postId: string): Promise<boolean> {
     const accountToken = await this.getAccessTokenAndRefresh(accountId)
     if (accountToken === null) {
       this.logger.warn(`Kwai account ${accountId} access_token is expired or invalid`)
       throw new Error('kwai account access_token is expired or invalid')
     }
-    return await this.kwaiApiService.deleteVideo(accountToken, videoId)
+    const res = await this.kwaiApiService.deleteVideo(accountToken, postId)
+    return res === 1
   }
 }

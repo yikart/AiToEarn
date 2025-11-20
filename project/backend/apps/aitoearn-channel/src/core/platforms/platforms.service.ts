@@ -1,5 +1,5 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { AccountType } from '@yikart/aitoearn-server-client'
+import { AccountType } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { AccountService } from '../account/account.service'
 import { PlatformBaseService } from './base.service'
@@ -24,7 +24,9 @@ export class PlatformService {
     for (const account of accounts) {
       const svc = this.platformServices[account.type]
       if (svc) {
-        account.status = await svc.getAccessTokenStatus(account._id.toString())
+        const status = await svc.getAccessTokenStatus(account._id.toString())
+        this.logger.log(`${account.type} access token status: ${status}`)
+        account.status = status
       }
     }
     return accounts

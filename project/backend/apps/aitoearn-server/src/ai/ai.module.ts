@@ -1,25 +1,25 @@
 import { Module } from '@nestjs/common'
 import { config } from '../config'
-import { AiController } from './ai.controller'
-import { AiService } from './ai.service'
-import { ChatModule } from './core/chat'
-import { ImageModule } from './core/image'
-import { ModelsConfigModule } from './core/models-config'
-import { VideoModule } from './core/video'
+import { ChatModule } from './chat'
+import { ImageModule } from './image'
 import { OpenaiModule } from './libs/openai'
+import { LogsModule } from './logs'
+import { ModelsConfigModule } from './models-config'
 import { SchedulerModule } from './scheduler'
+import { VideoModule } from './video'
 
 @Module({
   imports: [
     OpenaiModule.forRoot(config.ai.openai),
     SchedulerModule,
     ChatModule,
+    LogsModule,
     ImageModule,
     VideoModule,
     ModelsConfigModule,
   ],
-  controllers: [AiController],
-  providers: [AiService],
-  exports: [AiService],
+  controllers: [],
+  providers: [],
+  exports: [ChatModule, LogsModule, ImageModule, VideoModule, ModelsConfigModule],
 })
 export class AiModule { }

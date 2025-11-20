@@ -31,7 +31,7 @@ export class MetaBaseService extends PlatformBaseService {
     }
     let credential = await this.redisService.getJson<MetaUserOAuthCredential>(key)
     if (!credential) {
-      this.logger.debug(`No access token found for accountId: ${accountId} in redis`)
+      this.logger.error(`No access token found for accountId: ${this.platform} ${accountId} in redis`)
       const oauth2Credential = await this.oAuth2CredentialModel.findOne(
         {
           accountId,
@@ -39,6 +39,7 @@ export class MetaBaseService extends PlatformBaseService {
         },
       )
       if (!oauth2Credential) {
+        this.logger.error(`No access token found for accountId: ${this.platform} ${accountId} in database`)
         return null
       }
       credential = JSON.parse(oauth2Credential.raw) as MetaUserOAuthCredential

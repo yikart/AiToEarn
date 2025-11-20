@@ -21,6 +21,7 @@
     "@yikart/ali-green": "workspace:*",
     "@yikart/aws-s3": "workspace:*",
     "@yikart/common": "workspace:*",
+    "@yikart/listmonk": "workspace:*",
     "@yikart/mail": "workspace:*",
     "@yikart/mongodb": "workspace:*",
     "@yikart/redis": "workspace:*",
