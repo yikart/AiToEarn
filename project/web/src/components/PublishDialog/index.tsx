@@ -550,7 +550,7 @@ const PublishDialog = memo(
       const pubClick = useCallback(async () => {
         setCreateLoading(true)
         const publishTime = getUtcDays(
-          pubTime || getDays().add(6, 'minute'),
+          pubTime || getDays().add(5, 'second'),
         ).format()
 
         for (const item of pubListChoosed) {

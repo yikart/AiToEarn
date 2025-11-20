@@ -43,6 +43,7 @@ export interface GetPublishListParams {
 
 // 发布记录item数据
 export interface PublishRecordItem {
+  option: any
   userId: string
   flowId: string
   userTaskId: string
