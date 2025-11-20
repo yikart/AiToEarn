@@ -49,13 +49,13 @@ export class InstagramService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in
       const saved = await this.saveOAuth2Credential(accountId, credential, this.platform)
       if (!saved) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       return credential
     }
@@ -66,8 +66,7 @@ export class InstagramService extends MetaBaseService {
     const credential
       = await this.instagramAPIService.refreshOAuthCredential(refresh_token)
     if (!credential) {
-      this.logger.error(`Failed to refresh access token`)
-      return null
+      throw new PlatformAuthExpiredException(this.platform)
     }
     return credential
   }

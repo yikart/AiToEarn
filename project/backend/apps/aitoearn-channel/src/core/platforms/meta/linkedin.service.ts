@@ -34,13 +34,13 @@ export class LinkedinService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in
       const saved = await this.saveOAuth2Credential(accountId, credential, 'linkedin')
       if (!saved) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       return credential
     }

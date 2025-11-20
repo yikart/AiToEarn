@@ -345,7 +345,7 @@ export class BilibiliService extends PlatformBaseService {
   async getAccountAccessToken(accountId: string): Promise<string> {
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential || !credential.access_token) {
-      throw new PlatformAuthExpiredException(this.platform)
+      throw new PlatformAuthExpiredException(this.platform, accountId)
     }
 
     // 剩余时间
@@ -359,7 +359,7 @@ export class BilibiliService extends PlatformBaseService {
 
   /**
    * 刷新AccessToken
-   * @param userId
+   * @param accountId
    * @param refreshToken
    * @returns
    */
@@ -370,11 +370,11 @@ export class BilibiliService extends PlatformBaseService {
     const accessTokenInfo
       = await this.bilibiliApiService.refreshAccessToken(refreshToken)
     if (!accessTokenInfo)
-      return ''
+      throw new PlatformAuthExpiredException(this.platform, accountId)
 
     const res = await this.saveOAuthCredential(accountId, accessTokenInfo)
     if (!res)
-      return ''
+      throw new PlatformAuthExpiredException(this.platform, accountId)
 
     return accessTokenInfo.access_token
   }

@@ -43,7 +43,7 @@ export class ThreadsService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in
@@ -52,7 +52,7 @@ export class ThreadsService extends MetaBaseService {
         this.logger.error(
           `Failed to save refreshed access token for accountId: ${accountId}`,
         )
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       return credential
     }

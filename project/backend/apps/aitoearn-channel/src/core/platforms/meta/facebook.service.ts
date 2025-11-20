@@ -70,7 +70,7 @@ export class FacebookService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in || META_TIME_CONSTANTS.FACEBOOK_LONG_LIVED_TOKEN_DEFAULT_EXPIRE
@@ -79,7 +79,7 @@ export class FacebookService extends MetaBaseService {
         this.logger.error(
           `Failed to save refreshed access token for accountId: ${accountId}`,
         )
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       return credential
     }

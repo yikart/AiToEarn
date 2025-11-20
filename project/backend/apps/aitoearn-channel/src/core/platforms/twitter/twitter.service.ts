@@ -90,7 +90,7 @@ export class TwitterService extends PlatformBaseService {
         platform: this.platform,
       })
       if (!oauth2Credential) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential = {
         access_token: oauth2Credential.accessToken,
@@ -114,14 +114,14 @@ export class TwitterService extends PlatformBaseService {
         credential.refresh_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential.access_token = refreshedToken.access_token
       credential.refresh_token = refreshedToken.refresh_token
       credential.expires_in = refreshedToken.expires_in
       const saved = await this.saveOAuthCredential(accountId, credential)
       if (!saved) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       return credential
     }
