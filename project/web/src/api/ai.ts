@@ -1,5 +1,6 @@
 import { getOssUrl } from '@/utils/oss'
 import http from '@/utils/request'
+import { useUserStore } from '@/store/user'
 
 // 获取聊天大模型列表
 export function getChatModels() {
@@ -190,4 +191,44 @@ export function editImage(data: {
 // 查询图片编辑任务状态
 export function getImageEditTaskStatus(logId: string) {
   return http.get(`ai/image/task/${logId}`)
+}
+
+// AI聊天接口 - 支持流式和非流式响应
+export async function aiChatStream(data: {
+  messages: Array<{ role: string, content: string }>
+  stream?: boolean
+  model?: string
+  temperature?: number
+  presence_penalty?: number
+  frequency_penalty?: number
+  top_p?: number
+  max_tokens?: number
+}) {
+  const token = useUserStore.getState().token
+  const lang = useUserStore.getState().lang
+  
+  const response = await fetch('https://aitoearn.ai/api/ai/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': token ? `Bearer ${token}` : '',
+      'Accept-Language': lang || 'zh-CN',
+    },
+    body: JSON.stringify({
+      stream: false, // 使用非流式响应 
+      model: 'gpt-5.1-all',
+      temperature: 1,
+      presence_penalty: 0,
+      frequency_penalty: 0,
+      top_p: 1,
+      max_tokens: 8000, // 增加到8000以支持更长的响应（包括base64图片）
+      ...data,
+    }),
+  })
+  
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+  
+  return response
 }

@@ -168,15 +168,19 @@ $assistantWidth: 380px;
       padding: 15px 15px 0 15px;
       display: flex;
       justify-content: space-between;
+      flex-shrink: 0;
       .anticon {
         cursor: pointer;
         font-size: 20px;
       }
     }
     .publishDialogAi-wrapper {
-      min-width: $assistantWidth;
-      height: 100%;
+      min-width: 330px;
+      flex: 1;
       min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
   }
 }

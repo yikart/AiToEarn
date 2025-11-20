@@ -58,6 +58,7 @@
     "react-i18next": "15.4.1",
     "react-icons": "^5.5.0",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-markdown": "^10.1.0",
     "react-qrcode-logo": "^4.0.0",
     "react-sortablejs": "^6.1.4",
     "react-transition-group": "^4.4.5",
