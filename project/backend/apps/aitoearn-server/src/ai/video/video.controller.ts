@@ -42,9 +42,8 @@ export class VideoController {
       userId: token?.id,
       userType: UserType.User,
     })
-    return response.map((item) => VideoGenerationModelParamsVo.create(item))
+    return response.map(item => VideoGenerationModelParamsVo.create(item))
   }
-
 
   // 通用视频接口
   @ApiDoc({

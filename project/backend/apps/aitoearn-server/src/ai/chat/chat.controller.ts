@@ -22,7 +22,7 @@ export class ChatController {
       userId: token?.id,
       userType: UserType.User,
     })
-    return response.map((item) => ChatModelConfigVo.create(item))
+    return response.map(item => ChatModelConfigVo.create(item))
   }
 
   @ApiDoc({
