@@ -26,6 +26,7 @@ import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 import { apiCreatePublish } from '@/api/plat/publish'
 import { toolsApi } from '@/api/tools'
+import { getChatModels } from '@/api/ai'
 import {
   getDays,
   getUtcDays,
@@ -51,13 +52,16 @@ import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
+import PublishDialogAi, { type AIAction, type IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
+import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
-import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
+import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { useAccountStore } from '@/store/account'
 import { generateUUID } from '@/utils'
@@ -165,10 +169,17 @@ const PublishDialog = memo(
       const [showFacebookPagesModal, setShowFacebookPagesModal]
         = useState(false)
       const { t } = useTransClient('publish')
-      const { tasks, md5Cache } = usePublishManageUpload(
+      // AI助手ref
+      const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
+      // 聊天模型列表
+      const [chatModels, setChatModels] = useState<any[]>([])
+      // 中间内容区域ref，用于划词功能
+      const contentAreaRef = useRef<HTMLDivElement>(null)
+      const { tasks, md5Cache, enqueueUpload } = usePublishManageUpload(
         useShallow(state => ({
           tasks: state.tasks,
           md5Cache: state.md5Cache,
+          enqueueUpload: state.enqueueUpload,
         })),
       )
       // 是否clear
@@ -190,11 +201,17 @@ const PublishDialog = memo(
           const images = newPubItem.params.images
 
           // 视频匹配
-          if (video && !video.ossUrl) {
-            newPubItem.params.video!.ossUrl
-              = md5Cache[tasks[video.uploadTaskIds!.video!].md5!]?.ossUrl
-            newPubItem.params.video!.cover.ossUrl
-              = md5Cache[tasks[video.uploadTaskIds!.cover!].md5!]?.ossUrl
+          if (video) {
+            // 如果视频本身没有ossUrl，从上传任务中获取
+            if (!video.ossUrl && video.uploadTaskIds?.video) {
+              newPubItem.params.video!.ossUrl
+                = md5Cache[tasks[video.uploadTaskIds.video].md5!]?.ossUrl
+            }
+            // 如果封面没有ossUrl，从上传任务中获取
+            if (!video.cover.ossUrl && video.uploadTaskIds?.cover) {
+              newPubItem.params.video!.cover.ossUrl
+                = md5Cache[tasks[video.uploadTaskIds.cover].md5!]?.ossUrl
+            }
             return newPubItem
           }
           // 图片匹配
@@ -441,6 +458,26 @@ const PublishDialog = memo(
       useEffect(() => {
         if (open) {
           init(accounts, defaultAccountId)
+          
+          // 获取聊天模型列表（使用 sessionStorage 缓存）
+          const cachedModels = sessionStorage.getItem('ai_chat_models')
+          if (cachedModels) {
+            try {
+              setChatModels(JSON.parse(cachedModels))
+            } catch (error) {
+              console.error(t('messages.parseCachedChatModelsFailed' as any), error)
+            }
+          } else {
+            // 如果没有缓存，则请求
+            getChatModels().then((res: any) => {
+              if (res?.code === 0 && res.data && Array.isArray(res.data)) {
+                setChatModels(res.data)
+                sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
+              }
+            }).catch(error => {
+              console.error(t('messages.getChatModelsFailed' as any), error)
+            })
+          }
         }
         else {
           isClear.current = true
@@ -495,13 +532,10 @@ const PublishDialog = memo(
       const openLeftSide = useMemo(() => {
         if (!openLeft)
           return false
-        if (step === 0) {
-          return pubListChoosed.length !== 0
-        }
-        else {
-          return expandedPubItem !== undefined
-        }
-      }, [openLeft, step, pubListChoosed.length, expandedPubItem])
+        // 如果用户主动打开了AI助手（openLeft=true），就保持打开状态
+        // 不再依赖于 pubListChoosed 或 expandedPubItem 的状态
+        return true
+      }, [openLeft])
 
       useEffect(() => {
         setErrParamsMap(errParamsMap)
@@ -556,6 +590,174 @@ const PublishDialog = memo(
         usePublishDialogStorageStore.getState().clearPubData()
       }, [pubListChoosed])
 
+      // 处理划词操作
+      const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
+        // 只有当面板未打开时才设置，避免重复触发导致状态混乱
+        if (!openLeft) {
+          setOpenLeft(true)
+        }
+        // 等待面板打开动画完成后调用AI处理并自动发送
+        setTimeout(() => {
+          aiAssistantRef.current?.processText(selectedText, action)
+        }, openLeft ? 100 : 500) // 如果已打开，减少延迟
+      }, [openLeft, setOpenLeft])
+
+      // AI内容同步到编辑器
+      const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
+        console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无', '追加模式:', append)
+        
+        // 处理图片上传
+        if (images && images.length > 0) {
+          console.log('开始上传AI同步的图片')
+          const uploadsWithImages: Array<{ image: IImgFile, promise: Promise<any>, cancel: () => void }> = []
+          
+          for (const image of images) {
+            const handle = enqueueUpload({
+              file: image.file,
+              fileName: image.filename,
+              type: UploadTaskTypeEnum.Image,
+            })
+            
+            const imageWithTask: IImgFile = {
+              ...image,
+              uploadTaskId: handle.taskId,
+            }
+            
+            uploadsWithImages.push({
+              image: imageWithTask,
+              promise: handle.promise,
+              cancel: handle.cancel,
+            })
+          }
+          
+          // 使用带有 uploadTaskId 的图片
+          images = uploadsWithImages.map(item => item.image)
+          console.log('图片上传任务已创建:', images)
+        }
+        
+        // 处理视频上传（AI生成的视频已经有ossUrl，只需要上传封面）
+        if (video) {
+          console.log('处理AI同步的视频，ossUrl:', video.ossUrl)
+          
+          // 如果视频已经有ossUrl（AI生成的），只需要上传封面
+          if (video.ossUrl && !video.cover.ossUrl) {
+            console.log('视频已有OSS地址，只上传封面')
+            const coverHandle = enqueueUpload({
+              file: video.cover.file,
+              fileName: video.cover.filename,
+              type: UploadTaskTypeEnum.Image,
+            })
+            
+            video = {
+              ...video,
+              uploadTaskIds: {
+                cover: coverHandle.taskId,
+              },
+            }
+          } 
+          // 如果视频没有ossUrl（用户上传的），需要上传视频和封面
+          else if (!video.ossUrl) {
+            console.log('上传视频和封面')
+            const videoHandle = enqueueUpload({
+              file: video.file,
+              fileName: video.filename,
+              type: UploadTaskTypeEnum.Video,
+            })
+            
+            const coverHandle = enqueueUpload({
+              file: video.cover.file,
+              fileName: video.cover.filename,
+              type: UploadTaskTypeEnum.Image,
+            })
+            
+            video = {
+              ...video,
+              uploadTaskIds: {
+                video: videoHandle.taskId,
+                cover: coverHandle.taskId,
+              },
+            }
+          }
+          console.log('视频处理完成:', video)
+        }
+        
+        // 如果只有一个账号，直接更新
+        if (pubListChoosed.length === 1) {
+          const params: any = {}
+          // 只有当 content 不为空字符串时才更新文案
+          if (content) {
+            // 如果是追加模式，将内容追加到现有文案后面
+            if (append && pubListChoosed[0].params.des) {
+              params.des = pubListChoosed[0].params.des + '\n' + content
+            } else {
+              params.des = content
+            }
+          }
+          // 视频和图片不能同时存在
+          if (video) {
+            console.log('设置视频到单账号参数')
+            params.video = video
+            // 如果有视频，清空图片
+            params.images = []
+          } else if (images && images.length > 0) {
+            console.log('设置图片到单账号参数')
+            params.images = images
+          }
+          console.log('更新单账号参数:', params)
+          setOnePubParams(params, pubListChoosed[0].account.id)
+        } 
+        // 如果是多账号且在第一步，更新公共参数
+        else if (pubListChoosed.length >= 2 && step === 0) {
+          const params: any = {}
+          // 只有当 content 不为空字符串时才更新文案
+          if (content) {
+            // 如果是追加模式，将内容追加到现有文案后面
+            if (append && commonPubParams.des) {
+              params.des = commonPubParams.des + '\n' + content
+            } else {
+              params.des = content
+            }
+          }
+          // 视频和图片不能同时存在
+          if (video) {
+            console.log('设置视频到多账号公共参数')
+            params.video = video
+            // 如果有视频，清空图片
+            params.images = []
+          } else if (images && images.length > 0) {
+            console.log('设置图片到多账号公共参数')
+            params.images = images
+          }
+          console.log('更新多账号公共参数:', params)
+          setAccountAllParams(params)
+        }
+        // 如果在第二步且有展开的项，更新该项
+        else if (step === 1 && expandedPubItem) {
+          const params: any = {}
+          // 只有当 content 不为空字符串时才更新文案
+          if (content) {
+            // 如果是追加模式，将内容追加到现有文案后面
+            if (append && expandedPubItem.params.des) {
+              params.des = expandedPubItem.params.des + '\n' + content
+            } else {
+              params.des = content
+            }
+          }
+          // 视频和图片不能同时存在
+          if (video) {
+            console.log('设置视频到展开项参数')
+            params.video = video
+            // 如果有视频，清空图片
+            params.images = []
+          } else if (images && images.length > 0) {
+            console.log('设置图片到展开项参数')
+            params.images = images
+          }
+          console.log('更新展开项参数:', params)
+          setOnePubParams(params, expandedPubItem.account.id)
+        }
+      }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams, enqueueUpload])
+
       const imperativeHandle: IPublishDialogRef = {
         setPubTime,
       }
@@ -578,7 +780,12 @@ const PublishDialog = memo(
                 classNames="left"
                 unmountOnExit
               >
-                <PublishDialogAi onClose={() => setOpenLeft(false)} />
+                <PublishDialogAi 
+                  ref={aiAssistantRef}
+                  onClose={() => setOpenLeft(false)}
+                  onSyncToEditor={handleSyncToEditor}
+                  chatModels={chatModels}
+                />
               </CSSTransition>
             )}
 
@@ -590,7 +797,13 @@ const PublishDialog = memo(
                 }
               }}
             >
-              <div className="publishDialog-con">
+              {/* 划词工具栏 */}
+              <TextSelectionToolbar
+                containerRef={contentAreaRef}
+                onAction={handleTextSelection}
+              />
+              
+              <div className="publishDialog-con" ref={contentAreaRef}>
                 <div className="publishDialog-con-head">
                   <span className="publishDialog-con-head-title">
                     {t('title')}
@@ -971,7 +1184,12 @@ const PublishDialog = memo(
                   classNames="left"
                   unmountOnExit
                 >
-                  <PublishDialogAi onClose={() => setOpenLeft(false)} />
+                  <PublishDialogAi 
+                    ref={aiAssistantRef}
+                    onClose={() => setOpenLeft(false)}
+                    onSyncToEditor={handleSyncToEditor}
+                    chatModels={chatModels}
+                  />
                 </CSSTransition>
               )}
               <CSSTransition
