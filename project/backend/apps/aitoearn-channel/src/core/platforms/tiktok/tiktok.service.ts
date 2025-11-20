@@ -29,6 +29,7 @@ import {
   TikTokUserInfoResponse,
 } from '../../../libs/tiktok/tiktok.interfaces'
 import { TiktokService as TiktokApiService } from '../../../libs/tiktok/tiktok.service'
+import { PlatformBaseService } from '../base.service'
 import { TIKTOK_DEFAULT_SCOPES, TIKTOK_TIME_CONSTANTS, TiktokRedisKeys } from './constants'
 import {
   PhotoSourceInfoDto,
@@ -46,10 +47,10 @@ export interface AuthTaskInfo {
 }
 
 @Injectable()
-export class TiktokService {
-  private readonly platform = AccountType.TIKTOK
+export class TiktokService extends PlatformBaseService {
+  protected override readonly platform: string = AccountType.TIKTOK
   private readonly defaultScopes: string[]
-  private readonly logger = new Logger(TiktokService.name)
+  protected override readonly logger = new Logger(TiktokService.name)
 
   constructor(
     private readonly redisService: RedisService,
@@ -58,6 +59,7 @@ export class TiktokService {
     @InjectModel(OAuth2Credential.name)
     private OAuth2CredentialModel: Model<OAuth2Credential>,
   ) {
+    super()
     this.defaultScopes = config.tiktok.scopes.length > 0
       ? config.tiktok.scopes
       : TIKTOK_DEFAULT_SCOPES

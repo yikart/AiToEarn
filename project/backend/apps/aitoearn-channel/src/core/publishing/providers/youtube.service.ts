@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
+import { youtube_v3 } from 'googleapis'
 import { chunkedDownloadFile, getFileSizeFromUrl } from '../../../common'
 import {
   PublishStatus,
@@ -83,11 +84,22 @@ export class YoutubePubService extends PublishService {
     if (!publishTask.dataId) {
       throw PublishingException.nonRetryable('Invalid publish task: no postId')
     }
-    await this.youtubeService.updateVideo(publishTask.accountId, publishTask.dataId, {
-      title: publishTask.title,
-      description: publishTask.desc,
-      tags: publishTask.topics,
-    }, publishTask.option?.youtube?.privacyStatus, {})
+    const videoSchema: youtube_v3.Schema$Video = {
+      id: publishTask.dataId,
+      snippet: {
+        title: publishTask.title,
+        description: publishTask.desc,
+        tags: publishTask.topics,
+        categoryId: publishTask.option?.youtube?.categoryId,
+      },
+      status: {
+        privacyStatus: publishTask.option?.youtube?.privacyStatus,
+        selfDeclaredMadeForKids: publishTask.option?.youtube?.selfDeclaredMadeForKids,
+        embeddable: publishTask.option?.youtube?.embeddable,
+        license: publishTask.option?.youtube?.license,
+      },
+    }
+    await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
     return {
       status: PublishStatus.PUBLISHED,
     }

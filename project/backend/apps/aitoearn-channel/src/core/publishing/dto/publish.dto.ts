@@ -160,6 +160,9 @@ export const UpdatePublishTaskSchema = z.object({
   videoUrl: z.string().optional(),
   imgUrlList: z.array(z.string()).optional(),
   topics: z.array(z.string()).optional(),
+  option: z.object({
+    youtube: YouTubePublishOptionSchema.optional(),
+  }).optional(),
 })
 export class UpdatePublishTaskDto extends createZodDto(UpdatePublishTaskSchema) {}
 

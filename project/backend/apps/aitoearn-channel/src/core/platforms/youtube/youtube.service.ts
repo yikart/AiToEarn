@@ -13,7 +13,7 @@ import { AccountStatus, AccountType, AitoearnServerClientService, NewAccount } f
 import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
-import { Auth, google } from 'googleapis'
+import { Auth, google, youtube_v3 } from 'googleapis'
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../common'
@@ -1406,38 +1406,20 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 更新视频。
    */
-  async updateVideo(accountId: string, videoId: string, snippet: any, status: any, recordingDetails: any) {
-    try {
-      // 使用封装的辅助方法
-      if (!(await this.ensureValidAccessToken(accountId))) {
-        this.logger.log(`get youtube access token error. accountId" ${accountId}`)
-        return new AppException(ResponseCode.ChannelAccessTokenFailed)
-      }
-
-      const requestBody: any = {
-        id: videoId,
-        snippet,
-        status,
-        recordingDetails,
-      }
-      this.logger.log(requestBody)
-
-      // 调用 YouTube API 上传视频
-      const response = await this.youtubeClient.videos.update(
-        {
-          auth: this.oauth2Client,
-          part: ['snippet', 'status', 'id'],
-          requestBody,
-        },
-      )
-      this.logger.log('Playlist insert successfully:', response.data)
-
-      return response
+  async updateVideo(accountId: string, videoSchema: youtube_v3.Schema$Video) {
+    if (!(await this.ensureValidAccessToken(accountId))) {
+      this.logger.log(`get youtube access token error. accountId" ${accountId}`)
+      throw new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
-    catch (error) {
-      this.logger.error('Error uploading video:', error)
-      return error
-    }
+    const response = await this.youtubeClient.videos.update(
+      {
+        auth: this.oauth2Client,
+        part: ['snippet', 'status', 'id'],
+        requestBody: videoSchema,
+      },
+    )
+    this.logger.log('Video updated successfully:', response.data)
+    return true
   }
 
   /**

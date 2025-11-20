@@ -28,7 +28,6 @@ import {
   UpdateCommentDto,
   UpdatePlayItemsDto,
   UpdatePlayListDto,
-  UpdateVideoDto,
   UploadVideoDto,
   UploadVideoPartDto,
   VideoCategoriesDto,
@@ -569,48 +568,6 @@ export class YoutubeController {
     }
     catch (error) {
       this.logger.error('删除视频失败:', error)
-      return error
-    }
-  }
-
-  // 更新视频
-  // @NatsMessagePattern('plat.youtube.updateVideo')
-  @ApiDoc({
-    summary: 'Update Video Metadata',
-    body: UpdateVideoDto.schema,
-  })
-  @Post('plat/youtube/updateVideo')
-  async updateVideo(@Body() data: UpdateVideoDto) {
-    try {
-      const snippet = {
-        title: data.title,
-        categoryId: data.categoryId,
-        description: data?.description,
-        tags: data?.tags?.split(','),
-        defaultLanguage: data?.defaultLanguage,
-
-      }
-
-      const recordingDetails = {
-        recordingDate: data?.recordingDate,
-      }
-
-      const status = {
-        privacyStatus: data?.privacyStatus,
-        publishAt: data?.publishAt,
-      }
-
-      const res = await this.youtubeService.updateVideo(
-        data.accountId,
-        data.id,
-        snippet,
-        status,
-        recordingDetails,
-      )
-      return res
-    }
-    catch (error) {
-      this.logger.error('更新视频失败:', error)
       return error
     }
   }

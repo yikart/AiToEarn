@@ -296,4 +296,8 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Publish task is already waiting for update',
     'zh-CN': '发布任务已等待更新',
   },
+  [ResponseCode.PublishTaskUpdateFailed]: {
+    'en-US': 'Failed to update publish task',
+    'zh-CN': '更新发布任务失败',
+  },
 }

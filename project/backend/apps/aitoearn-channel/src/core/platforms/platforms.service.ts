@@ -24,7 +24,9 @@ export class PlatformService {
     for (const account of accounts) {
       const svc = this.platformServices[account.type]
       if (svc) {
-        account.status = await svc.getAccessTokenStatus(account._id.toString())
+        const status = await svc.getAccessTokenStatus(account._id.toString())
+        this.logger.log(`${account.type} access token status: ${status}`)
+        account.status = status
       }
     }
     return accounts
