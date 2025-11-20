@@ -21,6 +21,7 @@ import { aiChatStream, getVideoGenerationModels, generateVideo, getVideoTaskStat
 import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { getOssUrl } from '@/utils/oss'
+import { OSS_URL } from '@/constant'
 import styles from '../publishDialog.module.scss'
 
 
@@ -444,7 +445,7 @@ const PublishDialogAi = memo(
           try {
             const res: any = await getVideoTaskStatus(taskId)
             if (res.data) {
-              const { status, fail_reason, progress } : any = res.data
+              const { status, fail_reason, progress, data } : any = res.data;
             //   {
             //     "task_id": "691d59a0cf8f85110ff2538d",
             //     "action": "",
@@ -480,10 +481,8 @@ const PublishDialogAi = memo(
               }
               
               if (normalized === 'completed') {
-                let videoUrl = res.data?.data?.video_url || res.data?.video_url
-                if (videoUrl) {
-                  videoUrl = getOssUrl(videoUrl)
-                }
+                let videoUrl = res.data?.data?.video_url || data?.video_url
+                console.log('videoUrl', videoUrl)
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
                 
@@ -866,19 +865,23 @@ const PublishDialogAi = memo(
       // Create IVideoFile object from URL (no download, use generated URL directly)
       const downloadVideoAsVideoFile = async (url: string): Promise<IVideoFile | null> => {
         try {
-          const ossUrl = getOssUrl(url)
+          // Convert relative path to full S3 URL for publishing
+          // API returns: ai/video/sora-2/...
+          // Publishing expects: https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/video/...
+          const ossUrl = `${OSS_URL}${url}`
           const filename = `ai-generated-video.mp4`
           
-          // Extract video info from OSS URL directly (no local download)
-          const videoInfo = await VideoGrabFrame(ossUrl, 0)
+          // Extract video info using proxy URL for preview (only for VideoGrabFrame)
+          const proxyUrl = getOssUrl(url)
+          const videoInfo = await VideoGrabFrame(proxyUrl, 0)
           
           // Note: we don't create local blob, just use network URL
           const videoFile: IVideoFile = {
             filename,
-            videoUrl: ossUrl, // Use OSS URL as videoUrl directly
+            videoUrl: ossUrl, // Full S3 URL
             size: 0, // No download means no size, set to 0
             file: new Blob(), // Placeholder, not actually used
-            ossUrl: ossUrl, // Generated URL is the final OSS URL
+            ossUrl: ossUrl, // Full S3 URL for publishing API
             ...videoInfo,
           }
           
