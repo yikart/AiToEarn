@@ -98,4 +98,5 @@ export enum ResponseCode {
   PublishTaskAlreadyWaitingForUpdate = 15030,
   PostCategoryNotSupported = 15031,
   PlatformNotSupported = 15032,
+  PublishTaskUpdateFailed = 15033,
 }
