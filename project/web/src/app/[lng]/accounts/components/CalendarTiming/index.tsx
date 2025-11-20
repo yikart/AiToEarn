@@ -42,9 +42,11 @@ import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import PublishDialog from '@/components/PublishDialog'
+import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useAccountStore } from '@/store/account'
+import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
 import styles from './calendarTiming.module.scss'
 
@@ -488,6 +490,7 @@ const CalendarTiming = memo(
                     .setPubTime(
                       dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
                     )
+                  useUserStore.getState().setCurrentDatePickerType()
                 }}
               >
                 {t('newWork')}
@@ -582,6 +585,7 @@ const CalendarTiming = memo(
                               loading={listLoading}
                               arg={arg}
                               onClickPub={(date) => {
+                                useUserStore.getState().setCurrentDatePickerType(PublishDatePickerType.DATE)
                                 publishDialogRef.current!.setPubTime(date)
                                 setPublishDialogOpen(true)
                               }}

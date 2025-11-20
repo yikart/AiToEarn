@@ -6,11 +6,10 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
-import { AiService } from '../ai/ai.service'
-import { DashscopeTaskStatusResponseVo, DashscopeVideoGenerationResponseVo, FireflycardResponseVo, ImageResponseVo, ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoTaskStatusResponseVo } from '../ai/ai.vo'
-import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/core/chat'
-import { AsyncTaskResponseVo, TaskStatusResponseVo } from '../ai/core/image'
-import { ModelsConfigDto, ModelsConfigService, ModelsConfigVo } from '../ai/core/models-config'
+import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/chat'
+import { AsyncTaskResponseVo, FireflycardResponseVo, ImageResponseVo, ImageService, TaskStatusResponseVo } from '../ai/image'
+import { ModelsConfigDto, ModelsConfigService, ModelsConfigVo } from '../ai/models-config'
+import { DashscopeTaskStatusResponseVo, DashscopeVideoGenerationResponseVo, ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoService, VideoTaskStatusResponseVo } from '../ai/video'
 import { AdminFireflyCardDto, AdminImageEditDto, AdminImageGenerationDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto, DashscopeStatusRequestDto, DashscopeText2VideoRequestDto } from './dto/ai.dto'
 
 @ApiTags('OpenSource/Internal/Ai')
@@ -19,7 +18,8 @@ import { AdminFireflyCardDto, AdminImageEditDto, AdminImageGenerationDto, AdminU
 export class AiController {
   constructor(
     private readonly chatService: ChatService,
-    private readonly aiService: AiService,
+    private readonly imageService: ImageService,
+    private readonly videoService: VideoService,
     private readonly modelsConfigService: ModelsConfigService,
   ) { }
 
@@ -42,7 +42,7 @@ export class AiController {
     userId: string
     userType: UserType
   }) {
-    const response = await this.aiService.getImageGenerationModels({
+    const response = await this.imageService.generationModelConfig({
       userId: body.userId,
       userType: body.userType,
     })
@@ -58,7 +58,7 @@ export class AiController {
   async generateImage(
     @Body() body: AdminImageGenerationDto,
   ): Promise<ImageResponseVo> {
-    const response = await this.aiService.userImageGeneration(body)
+    const response = await this.imageService.userGeneration(body)
     return ImageResponseVo.create(response)
   }
 
@@ -71,7 +71,7 @@ export class AiController {
   async generateImageAsync(
     @Body() body: AdminImageGenerationDto,
   ): Promise<AsyncTaskResponseVo> {
-    const response = await this.aiService.userImageGenerationAsync(body)
+    const response = await this.imageService.userGenerationAsync(body)
     return AsyncTaskResponseVo.create(response)
   }
 
@@ -83,7 +83,7 @@ export class AiController {
     userId: string
     userType: UserType
   }) {
-    const response = await this.aiService.getImageEditModels(body)
+    const response = await this.imageService.editModelConfig(body)
     return response
   }
 
@@ -94,7 +94,7 @@ export class AiController {
   })
   @Post('ai/image/edit/async')
   async editImageAsync(@Body() body: AdminImageEditDto): Promise<AsyncTaskResponseVo> {
-    const response = await this.aiService.userImageEditAsync(body)
+    const response = await this.imageService.userEditAsync(body)
     return AsyncTaskResponseVo.create(response)
   }
 
@@ -106,7 +106,7 @@ export class AiController {
   async getImageTaskStatus(
     @Body() body: { logId: string },
   ): Promise<TaskStatusResponseVo> {
-    const response = await this.aiService.getImageTaskStatus(body.logId)
+    const response = await this.imageService.getTaskStatus(body.logId)
     return TaskStatusResponseVo.create(response)
   }
 
@@ -119,7 +119,7 @@ export class AiController {
   async videoGeneration(
     @Body() body: AdminVideoGenerationRequestDto,
   ): Promise<VideoGenerationResponseVo> {
-    const response = await this.aiService.userVideoGeneration(body)
+    const response = await this.videoService.userVideoGeneration(body)
     return VideoGenerationResponseVo.create(response)
   }
 
@@ -130,7 +130,7 @@ export class AiController {
   })
   @Post('ai/video/status')
   async getVideoTaskStatus(@Body() body: AdminVideoGenerationStatusSchemaDto): Promise<VideoTaskStatusResponseVo> {
-    const response = await this.aiService.getVideoTaskStatus({
+    const response = await this.videoService.getVideoTaskStatus({
       userId: body.userId,
       userType: body.userType,
       taskId: body.taskId,
@@ -145,8 +145,8 @@ export class AiController {
   })
   @Post('ai/video/list')
   async listVideoTasks(@Body() body: AdminUserListVideoTasksQueryDto): Promise<ListVideoTasksResponseVo> {
-    const response = await this.aiService.listVideoTasks(body)
-    return ListVideoTasksResponseVo.create(response)
+    const [list, total] = await this.videoService.listVideoTasks(body)
+    return new ListVideoTasksResponseVo(list, total, body)
   }
 
   @ApiDoc({
@@ -158,7 +158,7 @@ export class AiController {
   async generateFireflycard(
     @Body() body: AdminFireflyCardDto,
   ): Promise<FireflycardResponseVo> {
-    const response = await this.aiService.generateFireflycard(body)
+    const response = await this.imageService.userFireFlyCard(body)
     return FireflycardResponseVo.create(response)
   }
 
@@ -189,7 +189,7 @@ export class AiController {
     userId?: string
     userType?: UserType
   }) {
-    const response = await this.aiService.getVideoGenerationModels(body)
+    const response = await this.videoService.getVideoGenerationModelParams(body)
     return response
   }
 
@@ -201,19 +201,19 @@ export class AiController {
     userId?: string
     userType?: UserType
   }) {
-    const response = await this.aiService.getChatModels(body)
+    const response = await this.chatService.getChatModelConfig(body)
     return response
   }
 
   @Post('ai/dashscope/text2video')
   async dashscopeText2VideoGeneration(@Body() body: DashscopeText2VideoRequestDto): Promise<DashscopeVideoGenerationResponseVo> {
-    const response = await this.aiService.dashscopeText2Video(body)
+    const response = await this.videoService.dashscopeText2Video(body)
     return DashscopeVideoGenerationResponseVo.create(response)
   }
 
   @Post('ai/dashscope/status')
   async getDashscopeTaskStatus(@Body() body: DashscopeStatusRequestDto): Promise<DashscopeTaskStatusResponseVo> {
-    const response = await this.aiService.getDashscopeTaskStatus(body)
+    const response = await this.videoService.getDashscopeTask(body.userId, body.userType, body.taskId)
     return DashscopeTaskStatusResponseVo.create(response)
   }
 }

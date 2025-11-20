@@ -20,6 +20,7 @@ import {
   useRef,
   useState,
 } from 'react'
+
 import { CSSTransition } from 'react-transition-group'
 import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
@@ -54,6 +55,7 @@ import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSe
 import PublishDialogAi, { type AIAction, type IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
 import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import PublishDialogDataPicker from '@/components/PublishDialog/compoents/PublishDialogDataPicker'
+import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
@@ -61,6 +63,7 @@ import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTex
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
+import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { useAccountStore } from '@/store/account'
 import { generateUUID } from '@/utils'
 import styles from './publishDialog.module.scss'
@@ -96,6 +99,17 @@ const PublishDialog = memo(
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const { width } = useWindowSize()
+      const {
+        setPubData,
+        restorePubData,
+        _hasHydrated,
+      } = usePublishDialogStorageStore(
+        useShallow(state => ({
+          setPubData: state.setPubData,
+          restorePubData: state.restorePubData,
+          _hasHydrated: state._hasHydrated,
+        })),
+      )
       const {
         pubListChoosed,
         setPubListChoosed,
@@ -169,6 +183,8 @@ const PublishDialog = memo(
           enqueueUpload: state.enqueueUpload,
         })),
       )
+      // 是否clear
+      const isClear = useRef(false)
 
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
@@ -211,6 +227,12 @@ const PublishDialog = memo(
         })
         setPubListChoosed(newPubList)
       }, [md5Cache, tasks])
+
+      useEffect(() => {
+        if (open && _hasHydrated) {
+          restorePubData()
+        }
+      }, [open, _hasHydrated])
 
       // 处理Facebook授权成功后的页面选择
       const handleFacebookAuthSuccess = () => {
@@ -387,6 +409,19 @@ const PublishDialog = memo(
         return false
       }, [step, pubListChoosed, commonPubParams, expandedPubItem])
 
+      useEffect(() => {
+        isClear.current = true
+      }, [])
+
+      // 实时保存数据
+      useEffect(() => {
+        if (isClear.current) {
+          isClear.current = false
+          return
+        }
+        setPubData(pubListChoosed)
+      }, [pubListChoosed])
+
       // 检查选中的平台是否需要内容安全检测
       const needsContentModeration = useMemo(() => {
         if (pubListChoosed.length === 0)
@@ -446,6 +481,7 @@ const PublishDialog = memo(
           }
         }
         else {
+          isClear.current = true
           setPubListChoosed([])
           clear()
         }
@@ -510,48 +546,6 @@ const PublishDialog = memo(
       }, [warningParamsMap])
 
       /**
-       * Publish content immediately (publishTime is set to current time)
-       */
-      const pubClickNow = useCallback(async () => {
-        setCreateLoading(true)
-        const publishTime = getUtcDays(getDays()).format()
-
-        for (const item of pubListChoosed) {
-          const res = await apiCreatePublish({
-            topics: [],
-            flowId: generateUUID(),
-            type: item.params.video?.cover.ossUrl
-              ? PubType.VIDEO
-              : PubType.ImageText,
-            title: item.params.title || '',
-            desc: item.params.des,
-            accountId: item.account.id,
-            accountType: item.account.type,
-            videoUrl: item.params.video?.ossUrl,
-            coverUrl:
-              item.params.video?.cover.ossUrl
-              || (item.params.images && item.params.images.length > 0
-                ? item.params.images[0].ossUrl
-                : undefined),
-            imgUrlList:
-              item.params.images
-                ?.map(v => v.ossUrl)
-                .filter((url): url is string => url !== undefined) || [],
-            publishTime,
-            option: item.params.option,
-          })
-          if (res?.code !== 0) {
-            return setCreateLoading(false)
-          }
-        }
-        onClose()
-        setCreateLoading(false)
-
-        if (onPubSuccess)
-          onPubSuccess()
-      }, [pubListChoosed])
-
-      /**
        * Publish content with scheduled time (from calendar picker)
        */
       const pubClick = useCallback(async () => {
@@ -562,7 +556,7 @@ const PublishDialog = memo(
 
         for (const item of pubListChoosed) {
           const res = await apiCreatePublish({
-            topics: [],
+            topics: item.params.topics ?? [],
             flowId: generateUUID(),
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
@@ -591,8 +585,10 @@ const PublishDialog = memo(
         onClose()
         setCreateLoading(false)
 
-        if (onPubSuccess)
+        if (onPubSuccess) {
           onPubSuccess()
+        }
+        usePublishDialogStorageStore.getState().clearPubData()
       }, [pubListChoosed])
 
       // 处理划词操作
@@ -1050,11 +1046,8 @@ const PublishDialog = memo(
                 className="publishDialog-footer"
                 onClick={e => e.stopPropagation()}
               >
-                <PublishDialogDataPicker />
-
                 <div
                   className="publishDialog-footer-btns"
-                  style={{ display: 'flex', flexDirection: 'row', gap: 12 }}
                 >
                   {step === 0 && pubListChoosed.length >= 2
                     ? (
@@ -1159,56 +1152,25 @@ const PublishDialog = memo(
                               </Button>
                             )}
                           </div>
-                          <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
-                            <Button.Group size="large">
-                              <Button
-                                type="primary"
-                                loading={createLoading}
-                                disabled={createLoading}
-                                icon={<SendOutlined />}
-                                style={{ margin: '0' }}
-                                onClick={() => {
-                                  for (const [key, errVideoItem] of errParamsMap) {
-                                    if (errVideoItem) {
-                                      const pubItem = pubListChoosed.find(
-                                        v => v.account.id === key,
-                                      )!
-                                      if (step === 1) {
-                                        setExpandedPubItem(pubItem)
-                                      }
-                                      message.warning(errVideoItem.parErrMsg)
-                                      return
-                                    }
+
+                          <PublishDatePicker
+                            loading={createLoading}
+                            onClick={() => {
+                              for (const [key, errVideoItem] of errParamsMap) {
+                                if (errVideoItem) {
+                                  const pubItem = pubListChoosed.find(
+                                    v => v.account.id === key,
+                                  )!
+                                  if (step === 1) {
+                                    setExpandedPubItem(pubItem)
                                   }
-                                  pubClickNow()
-                                }}
-                              >
-                                {t('buttons.publishNow')}
-                              </Button>
-                              <Button
-                                type="primary"
-                                loading={createLoading}
-                                disabled={createLoading}
-                                onClick={() => {
-                                  for (const [key, errVideoItem] of errParamsMap) {
-                                    if (errVideoItem) {
-                                      const pubItem = pubListChoosed.find(
-                                        v => v.account.id === key,
-                                      )!
-                                      if (step === 1) {
-                                        setExpandedPubItem(pubItem)
-                                      }
-                                      message.warning(errVideoItem.parErrMsg)
-                                      return
-                                    }
-                                  }
-                                  pubClick()
-                                }}
-                              >
-                                {t('buttons.schedulePublish')}
-                              </Button>
-                            </Button.Group>
-                          </div>
+                                  message.warning(errVideoItem.parErrMsg)
+                                  return
+                                }
+                              }
+                              pubClick()
+                            }}
+                          />
                         </>
                       )}
                 </div>

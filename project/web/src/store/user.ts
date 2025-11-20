@@ -1,5 +1,6 @@
 import i18next from 'i18next'
 import { getUserInfoApi } from '@/api/apiReq'
+import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
 import { createPersistStore } from '@/utils/createPersistStore'
 
 export interface UserInfo {
@@ -37,17 +38,25 @@ export interface UserInfo {
 
 export interface IUserStore {
   token?: string
+  // 用户信息
   userInfo?: Partial<UserInfo>
+  // 添加账户是否默认开启代理
   isAddAccountPorxy: boolean
+  // 语言
   lang: string
+  // 当前日期的选择类型 -- 默认
+  currentDatePickerType: PublishDatePickerType
+  // 当前日期的选择类型
+  defaultCurrentDatePickerType: PublishDatePickerType
 }
 
 const state: IUserStore = {
   token: undefined,
   userInfo: {},
-  // 添加账户是否默认开启代理
   isAddAccountPorxy: false,
   lang: i18next.language || 'en',
+  defaultCurrentDatePickerType: PublishDatePickerType.DATE,
+  currentDatePickerType: PublishDatePickerType.DATE,
 }
 
 export const useUserStore = createPersistStore(
@@ -56,6 +65,14 @@ export const useUserStore = createPersistStore(
   },
   (set, _get) => {
     const methods = {
+      // 设置 currentDatePickerType
+      setCurrentDatePickerType(type?: PublishDatePickerType) {
+        set({ currentDatePickerType: type || _get().defaultCurrentDatePickerType })
+      },
+      // 设置 defaultCurrentDatePickerType
+      setDefaultCurrentDatePickerType(type: PublishDatePickerType) {
+        set({ defaultCurrentDatePickerType: type })
+      },
       // 设置语言
       setLang(lang: string) {
         set({

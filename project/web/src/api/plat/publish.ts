@@ -78,3 +78,11 @@ export function nowPubTaskApi(id: string) {
     method: 'POST',
   })
 }
+
+// 获取发布记录详情
+export function getPublishRecordDetail(flowId: string) {
+  return request<PublishRecordItem>({
+    url: `plat/publish/records/${flowId}`,
+    method: 'GET',
+  })
+}

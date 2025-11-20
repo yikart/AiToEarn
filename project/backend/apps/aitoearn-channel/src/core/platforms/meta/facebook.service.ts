@@ -33,6 +33,8 @@ import {
   PublishMediaPostResponse,
   PublishVideoPostRequest,
   publishVideoPostResponse,
+  UpdatePostRequest,
+  UpdatePostResponse,
   UploadPhotoResponse,
 } from '../../../libs/facebook/facebook.interfaces'
 import { FacebookService as FacebookAPIService } from '../../../libs/facebook/facebook.service'
@@ -205,12 +207,12 @@ export class FacebookService extends MetaBaseService {
     return await this.facebookAPIService.publishFeedPost(credential.id, credential.access_token, req)
   }
 
-  async publishVideoPost(
+  async publishVideo(
     accountId: string,
     req: PublishVideoPostRequest,
   ): Promise<publishVideoPostResponse> {
     const credential = await this.authorizePage(accountId)
-    return await this.facebookAPIService.publishVideoPost(credential.id, credential.access_token, req)
+    return await this.facebookAPIService.publishVideo(credential.id, credential.access_token, req)
   }
 
   async uploadImage(
@@ -221,13 +223,13 @@ export class FacebookService extends MetaBaseService {
     return await this.facebookAPIService.uploadPostPhotoByFile(credential.id, credential.access_token, file)
   }
 
-  async publicPhotoPost(
+  async publicPhotos(
     accountId: string,
     imageUrlList: string[],
     caption?: string,
   ): Promise<PublishMediaPostResponse> {
     const credential = await this.authorizePage(accountId)
-    return await this.facebookAPIService.publishMultiplePhotoPost(credential.id, credential.access_token, imageUrlList, caption)
+    return await this.facebookAPIService.publishPhotos(credential.id, credential.access_token, imageUrlList, caption)
   }
 
   async getObjectInfo(accountId: string, objectId: string, fields?: string): Promise<FacebookObjectInfo> {
@@ -335,21 +337,21 @@ export class FacebookService extends MetaBaseService {
     }
   }
 
-  async initReelUpload(
+  async initReelVideoUpload(
     accountId: string,
     req: FacebookReelRequest,
   ): Promise<FacebookReelResponse> {
     const credential = await this.authorizePage(accountId)
-    return await this.facebookAPIService.initReelUpload(credential.id, credential.access_token, req)
+    return await this.facebookAPIService.initReelVideoUpload(credential.id, credential.access_token, req)
   }
 
-  async uploadReel(
+  async uploadReelVideo(
     accountId: string,
     uploadURL: string,
     req: FacebookReelUploadRequest,
   ): Promise<FacebookReelUploadResponse> {
     const credential = await this.authorizePage(accountId)
-    return await this.facebookAPIService.uploadReel(credential.access_token, uploadURL, req)
+    return await this.facebookAPIService.uploadReelVideo(credential.access_token, uploadURL, req)
   }
 
   async publishReel(
@@ -360,21 +362,21 @@ export class FacebookService extends MetaBaseService {
     return await this.facebookAPIService.publishReelPost(credential.id, credential.access_token, req)
   }
 
-  async initVideoStoryUpload(
+  async initStoryVideoUpload(
     accountId: string,
     req: FacebookReelRequest,
   ): Promise<FacebookReelResponse> {
     const credential = await this.authorizePage(accountId)
-    return await this.facebookAPIService.initVideoStoryUpload(credential.id, credential.access_token, req)
+    return await this.facebookAPIService.initStoryVideoUpload(credential.id, credential.access_token, req)
   }
 
-  async uploadVideoStory(
+  async uploadStoryVideo(
     accountId: string,
     uploadURL: string,
     req: FacebookReelUploadRequest,
   ): Promise<FacebookReelUploadResponse> {
     const credential = await this.authorizePage(accountId)
-    return await this.facebookAPIService.uploadVideoStory(credential.access_token, uploadURL, req)
+    return await this.facebookAPIService.uploadStoryVideo(credential.access_token, uploadURL, req)
   }
 
   async publishVideoStory(
@@ -457,12 +459,13 @@ export class FacebookService extends MetaBaseService {
     return await this.facebookAPIService.fetchPostAttachments(postId, credential.access_token)
   }
 
-  async deletePost(
+  override async deletePost(
     accountId: string,
     postId: string,
-  ): Promise<void> {
+  ): Promise<boolean> {
     const credential = await this.authorizePage(accountId)
-    await this.facebookAPIService.deletePost(postId, credential.access_token)
+    const result = await this.facebookAPIService.deletePost(postId, credential.access_token)
+    return result.success
   }
 
   async likePost(
@@ -481,5 +484,14 @@ export class FacebookService extends MetaBaseService {
     const credential = await this.authorizePage(accountId)
     const objectId = postId.includes('_') ? postId : `${credential.id}_${postId}`
     return await this.facebookAPIService.unlikeObject(objectId, credential.access_token)
+  }
+
+  async updatePost(
+    accountId: string,
+    postId: string,
+    req: UpdatePostRequest,
+  ): Promise<UpdatePostResponse> {
+    const credential = await this.authorizePage(accountId)
+    return await this.facebookAPIService.updatePost(postId, credential.access_token, req)
   }
 }

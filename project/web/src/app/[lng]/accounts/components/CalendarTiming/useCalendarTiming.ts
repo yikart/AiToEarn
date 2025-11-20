@@ -3,7 +3,7 @@ import type { PublishRecordItem } from '@/api/plat/types/publish.types'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { getPublishList, getPublishQueue } from '@/api/plat/publish'
+import { getPublishList, getPublishQueue, getPublishRecordDetail } from '@/api/plat/publish'
 import { getDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useAccountStore } from '@/store/account'
 
@@ -16,6 +16,8 @@ export interface ICalendarTimingStore {
   listLoading: boolean
   // 当前日历ref
   calendarRef?: FullCalendar
+  // 是否正在轮询
+  polling: boolean
 }
 
 const store: ICalendarTimingStore = {
@@ -23,6 +25,7 @@ const store: ICalendarTimingStore = {
   recordMap: new Map(),
   listLoading: false,
   calendarRef: undefined,
+  polling: false,
 }
 
 function getStore() {
@@ -47,6 +50,9 @@ export const useCalendarTiming = create(
         },
         setCalendarRef(calendarRef: FullCalendar) {
           set({ calendarRef })
+        },
+        setPolling(polling: boolean) {
+          set({ polling })
         },
 
         // 获取发布记录数据
@@ -101,6 +107,8 @@ export const useCalendarTiming = create(
               }
             })
             methods.setRecordMap(recordMap)
+            // 获取完数据后，启动轮询检查
+            methods.queryPubTask()
           }
           catch (error) {
             console.error('获取发布记录数据时发生错误:', error)
@@ -138,11 +146,90 @@ export const useCalendarTiming = create(
               list.push(v)
             })
             methods.setRecordMap(recordMap)
+            // 获取完数据后，启动轮询检查
+            methods.queryPubTask()
           }
           catch (error) {
             console.error('获取发布队列时发生错误:', error)
             methods.setListLoading(false)
             methods.setRecordMap(new Map())
+          }
+        },
+
+        // 查询列表是否有在发布中的数据，如果有则轮询查询详情，直到状态不为发布中
+        async queryPubTask() {
+          if (get().polling) {
+            return
+          }
+          methods.setPolling(true)
+
+          let pollRecord: PublishRecordItem | null = null
+          const recordMap = get().recordMap
+
+          // 遍历 recordMap 查找状态为 2（发布中）的记录
+          for (const [_dayKey, recordList] of recordMap.entries()) {
+            if (pollRecord !== null) {
+              break
+            }
+            for (const item of recordList) {
+              if (item.status === 2) {
+                pollRecord = item
+                break
+              }
+            }
+          }
+
+          if (pollRecord === null) {
+            methods.setPolling(false)
+            return
+          }
+
+          methods._pollQueryPubTask(pollRecord)
+        },
+
+        // 轮询查询发布任务详情
+        async _pollQueryPubTask(pubRecord: PublishRecordItem) {
+          // 延迟 5 秒
+          await new Promise(resolve => setTimeout(resolve, 5000))
+
+          console.log('轮询任务中：', pubRecord)
+          try {
+            const res = await getPublishRecordDetail(pubRecord.flowId!)
+            if (!res || !res.data) {
+              methods.setPolling(false)
+              return
+            }
+
+            const newPubRecord = res.data
+
+            if (newPubRecord.status === 2) {
+              // 状态仍为发布中，继续轮询
+              methods._pollQueryPubTask(newPubRecord)
+            }
+            else {
+              // 状态已改变，更新 recordMap 中的数据
+              const recordMap = new Map(get().recordMap)
+              const publishTime = getDays(newPubRecord.publishTime)
+              const timeStr = publishTime.format('YYYY-MM-DD')
+
+              const list = recordMap.get(timeStr)
+              if (list) {
+                const index = list.findIndex(item => item.id === newPubRecord.id)
+                if (index !== -1) {
+                  list[index] = newPubRecord
+                  recordMap.set(timeStr, [...list])
+                  methods.setRecordMap(recordMap)
+                }
+              }
+
+              methods.setPolling(false)
+              // 继续查询是否有其他发布中的任务
+              methods.queryPubTask()
+            }
+          }
+          catch (error) {
+            console.error('轮询查询发布任务详情时发生错误:', error)
+            methods.setPolling(false)
           }
         },
 

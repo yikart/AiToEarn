@@ -575,6 +575,7 @@ const PubParmasTextarea = memo(
             <DraftSelectionModal
               draftModalOpen={draftModalOpen}
               onCancel={() => setDraftModalOpen(false)}
+              zIndex={10000}
             />
           </div>
         </>

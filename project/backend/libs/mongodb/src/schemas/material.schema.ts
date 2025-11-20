@@ -26,6 +26,11 @@ export class MaterialMedia {
   url: string
 
   @Prop({
+    required: false,
+  })
+  thumbUrl?: string // 缩略图
+
+  @Prop({
     type: Object,
   })
   metadata?: FileMetadata

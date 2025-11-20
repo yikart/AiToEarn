@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { AccountType, TableDto } from '@yikart/common'
 import { PublishStatus, PublishType } from '@yikart/mongodb'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from '../../../channel/common'
-import { PublishDayInfoListFiltersDto } from '../../../channel/dto/publish.dto'
+import { PublishDayInfoListFiltersDto, UpdatePublishTaskDto } from '../../../channel/dto/publish.dto'
 import { ChannelBaseApi } from '../../channelBase.api'
 import { PublishRecordItem } from './types/publish.interfaces'
 
@@ -142,6 +142,14 @@ export class PlatPublishNatsApi extends ChannelBaseApi {
         flowId,
         userId,
       },
+    )
+    return res
+  }
+
+  async updatePublishTask(data: UpdatePublishTaskDto, userId: string) {
+    const res = await this.sendMessage<boolean>(
+      `plat/publish/update`,
+      { ...data, userId },
     )
     return res
   }

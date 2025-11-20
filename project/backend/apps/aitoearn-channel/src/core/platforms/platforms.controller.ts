@@ -1,8 +1,7 @@
 import { Body, Controller, Logger, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { AccountStatus } from '@yikart/aitoearn-server-client'
-import { ApiDoc } from '@yikart/common'
-import { GenAuthURLDto } from './platforms.dto'
+import { AccountType, ApiDoc } from '@yikart/common'
 import { PlatformService } from './platforms.service'
 
 @ApiTags('OpenSource/Core/Platforms/Platforms')
@@ -28,7 +27,6 @@ export class PlatformController {
     return await this.platformService.getUserAccounts(userId)
   }
 
-  // @NatsMessagePattern('platform.accounts.updateStatus')
   @ApiDoc({
     summary: 'Update Account Status',
   })
@@ -37,13 +35,11 @@ export class PlatformController {
     return await this.platformService.updateAccountStatus(data.accountId, data.status)
   }
 
-  // @NatsMessagePattern('platform.oauth.authorization.url')
   @ApiDoc({
-    summary: 'Generate Authorization URL',
+    summary: 'Delete Post',
   })
-  @Post('platform/oauth/authorization/url')
-  async getAuthorizationUrl(@Body() data: GenAuthURLDto) {
-    this.logger.debug(`Getting authorization URL for platform: ${data.platform}`)
-    return await this.platformService.generateAuthorizationUrl(data)
+  @Post('platform/post/delete')
+  async deletePost(@Body() data: { accountId: string, platform: AccountType, postId: string }) {
+    return await this.platformService.deletePost(data.accountId, data.platform, data.postId)
   }
 }

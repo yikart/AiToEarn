@@ -1,6 +1,7 @@
 import type { Dayjs } from 'dayjs'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { StatisticsPeriodModel } from '@/api/types/dataStatistics'
+import type { IMilestone } from '@/app/[lng]/dataStatistics/components/MilestonePoster'
 import type { PlatType } from '@/app/config/platConfig'
 import {
   HeartFilled,
@@ -19,6 +20,19 @@ import CollectCount from './svgs/collectCount.svg'
 import FansCount from './svgs/fansCount.svg'
 import ForwardCount from './svgs/forwardCount.svg'
 
+export const MILESTONE_UNREAD_STORAGE_KEY = 'dataStatisticsMilestoneUnread'
+export const MILESTONE_LAST_HASH_STORAGE_KEY = 'dataStatisticsMilestoneLastHash'
+export const MILESTONE_LAST_SHOW_TIME_KEY = 'dataStatisticsMilestoneLastShowTime'
+export const MILESTONE_STATUS_EVENT = 'milestone-status-change'
+
+function getMilestonesHash(milestones: IMilestone[]) {
+  return JSON.stringify(
+    milestones.map(
+      item => `${item.type}-${item.milestone}-${item.sourceType}-${item.value}`,
+    ),
+  )
+}
+
 export interface IDataStatisticsStore {
   // 当前选择的账户组IDs
   choosedGroupIds: string[]
@@ -33,6 +47,8 @@ export interface IDataStatisticsStore {
     total: number
     // 昨日数
     yesterday: number
+    // 历史最高值
+    historyMax: number
   }[]
   // 当前选择的明细类型
   currentDetailType: string
@@ -54,6 +70,14 @@ export interface IDataStatisticsStore {
       data: number[]
     }[]
   }
+  // 里程碑数据
+  milestones: IMilestone[]
+  // 是否显示里程碑海报
+  showMilestonePoster: boolean
+  // 是否存在未读的里程碑
+  hasUnreadMilestone: boolean
+  // 当前里程碑hash
+  milestonesHash: string
 }
 
 const state: IDataStatisticsStore = {
@@ -70,6 +94,10 @@ const state: IDataStatisticsStore = {
     xAxis: [],
     series: [],
   },
+  milestones: [],
+  showMilestonePoster: false,
+  hasUnreadMilestone: false,
+  milestonesHash: '',
 }
 
 export const useDataStatisticsStore = create(
@@ -82,18 +110,20 @@ export const useDataStatisticsStore = create(
         async init() {
           const dataDetails = [
             {
-              title: directTrans('dataStatistics', 'growthFansCount'),
-              value: 'fansCount',
-              icon: FansCount,
-              total: 0,
-              yesterday: 0,
-            },
-            {
               title: directTrans('dataStatistics', 'readCount'),
               value: 'readCount',
               icon: VideoCameraFilled,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
+            },
+            {
+              title: directTrans('dataStatistics', 'growthFansCount'),
+              value: 'fansCount',
+              icon: FansCount,
+              total: 0,
+              yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'commentCount'),
@@ -101,6 +131,7 @@ export const useDataStatisticsStore = create(
               icon: MessageFilled,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'likeCount'),
@@ -108,6 +139,7 @@ export const useDataStatisticsStore = create(
               icon: HeartFilled,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'collectCount'),
@@ -115,6 +147,7 @@ export const useDataStatisticsStore = create(
               icon: CollectCount,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
             {
               title: directTrans('dataStatistics', 'forwardCount'),
@@ -122,6 +155,7 @@ export const useDataStatisticsStore = create(
               icon: ForwardCount,
               total: 0,
               yesterday: 0,
+              historyMax: 0,
             },
           ]
 
@@ -132,39 +166,111 @@ export const useDataStatisticsStore = create(
         },
 
         // 获取数据统计
-        async getStatistics() {
-          if (get().filteredAccountList.length === 0) {
+        async fetchStatistics({
+          accounts,
+          startDate,
+          endDate,
+          detectMilestones = false,
+          withLoading = true,
+        }: {
+          accounts: SocialAccount[]
+          startDate: Dayjs
+          endDate: Dayjs
+          detectMilestones?: boolean
+          withLoading?: boolean
+        }) {
+          if (!accounts || accounts.length === 0)
             return
+
+          if (withLoading) {
+            set({
+              loading: true,
+            })
           }
 
-          set({
-            loading: true,
-          })
-          // 过滤掉无效的account和account.type
-          const validAccounts = get().filteredAccountList.filter(
+          const validAccounts = accounts.filter(
             account => account && account.type && account.uid,
           )
-          const res = await getStatisticsPeriodApi({
-            startDate: get().timeRangeValue[0].format('YYYY-MM-DD'),
-            endDate: get().timeRangeValue[1].format('YYYY-MM-DD'),
-            queries: validAccounts.map(account => ({
-              platform: account.type,
-              uid: account.uid,
-            })),
-          })
-          set({
-            loading: false,
-          })
 
-          if (!res || !res.data) {
-            message.error('获取数据统计失败，请稍后重试')
-            return
+          const runDetection = () => {
+            methods.sortingData()
+            if (detectMilestones)
+              methods.detectMilestones()
           }
-          set({
-            originData: res.data,
-          })
 
-          methods.sortingData()
+          try {
+            if (validAccounts.length === 0) {
+              message.error('没有有效的账号数据')
+              return
+            }
+
+            const res = await getStatisticsPeriodApi({
+              startDate: startDate.format('YYYY-MM-DD'),
+              endDate: endDate.format('YYYY-MM-DD'),
+              queries: validAccounts.map(account => ({
+                platform: account.type,
+                uid: account.uid,
+              })),
+            })
+
+            const result = res?.data
+
+            if (!result) {
+              message.error('获取数据统计失败，请稍后重试')
+              return
+            }
+
+            set({
+              originData: result,
+            })
+            runDetection()
+          }
+          catch (error) {
+            console.error('获取数据统计失败', error)
+            message.error('获取数据统计失败，请稍后重试')
+          }
+          finally {
+            if (withLoading) {
+              set({
+                loading: false,
+              })
+            }
+          }
+        },
+
+        // 获取数据统计（仅用于页面查询，不触发里程碑检测）
+        async getStatistics() {
+          const filteredAccounts = get().filteredAccountList
+          if (filteredAccounts.length === 0)
+            return
+
+          await methods.fetchStatistics({
+            accounts: filteredAccounts,
+            startDate: get().timeRangeValue[0],
+            endDate: get().timeRangeValue[1],
+            detectMilestones: false,
+            withLoading: true,
+          })
+        },
+
+        // 初始化全量账户的最近一周统计，并触发里程碑检测
+        async initStatisticsForAllAccounts(accounts: SocialAccount[]) {
+          if (!accounts || accounts.length === 0)
+            return
+
+          if (get().dataDetails.length === 0)
+            await methods.init()
+
+          const endDate = dayjs()
+          const startDate = endDate.subtract(6, 'day')
+
+          await methods.fetchStatistics({
+            accounts,
+            startDate,
+            endDate,
+            detectMilestones: true,
+            withLoading: false,
+          })
         },
 
         // 分拣数据
@@ -215,7 +321,29 @@ export const useDataStatisticsStore = create(
             })
           }
 
-          // 3. 更新 dataDetails
+          // 3. 计算历史最高值（昨天之前的最高值）
+          const historyMaxTotals: Record<string, number> = {}
+          metrics.forEach(m => (historyMaxTotals[m] = 0))
+
+          data.groupedByDate.forEach((day) => {
+            // 只计算昨天之前的数据作为历史最高值
+            if (day.date < prevDay) {
+              const dayTotals: Record<string, number> = {}
+              metrics.forEach(m => (dayTotals[m] = 0))
+              day.records.forEach((rec) => {
+                metrics.forEach((m) => {
+                  // @ts-ignore
+                  dayTotals[m] += rec[m] ?? 0
+                })
+              })
+              // 更新历史最高值
+              metrics.forEach((m) => {
+                historyMaxTotals[m] = Math.max(historyMaxTotals[m], dayTotals[m])
+              })
+            }
+          })
+
+          // 4. 更新 dataDetails
           set({
             dataDetails: get().dataDetails.map(item => ({
               ...item,
@@ -223,6 +351,7 @@ export const useDataStatisticsStore = create(
                 prevDayData && typeof yesterdayTotals[item.value] === 'number'
                   ? yesterdayTotals[item.value]
                   : item.yesterday,
+              historyMax: historyMaxTotals[item.value] ?? 0,
             })),
           })
 
@@ -313,6 +442,153 @@ export const useDataStatisticsStore = create(
           set({
             accountSearchValue,
           })
+        },
+
+        // 检测里程碑
+        detectMilestones() {
+          const dataDetails = get().dataDetails
+
+          // 里程碑阈值（从小到大排序）
+          const thresholds = [50, 100, 500, 1000, 5000, 10000, 50000]
+
+          // 需要统计的指标类型（涨粉数、阅读量、点赞数）
+          const targetMetrics = ['fansCount', 'readCount', 'likeCount']
+
+          // 每个指标只保留最高的里程碑
+          const highestMilestones: Map<string, IMilestone> = new Map()
+
+          // 检测各个指标是否突破阈值
+          targetMetrics.forEach((metric) => {
+            const detail = dataDetails.find(d => d.value === metric)
+            if (!detail)
+              return
+
+            const yesterday = detail.yesterday
+            const weekTotal = detail.total // 最近一周总和
+            const historyMax = detail.historyMax
+
+            let highestThreshold = 0
+            let sourceType: 'yesterday' | 'week' = 'yesterday'
+            let achievedValue = 0
+
+            // 找出该指标达到的最高阈值
+            thresholds.forEach((threshold) => {
+              // 优先检查昨日新增
+              if (yesterday >= threshold && historyMax < threshold && threshold > highestThreshold) {
+                highestThreshold = threshold
+                sourceType = 'yesterday'
+                achievedValue = yesterday
+              }
+              // 其次检查最近一周总和
+              else if (weekTotal >= threshold && historyMax < threshold && threshold > highestThreshold) {
+                highestThreshold = threshold
+                sourceType = 'week'
+                achievedValue = weekTotal
+              }
+            })
+
+            // 如果该指标达到了至少一个阈值，记录最高的那个
+            if (highestThreshold > 0) {
+              highestMilestones.set(metric, {
+                type: metric,
+                title: detail.title,
+                value: achievedValue,
+                milestone: highestThreshold,
+                isNewHigh: false,
+                sourceType,
+              })
+            }
+          })
+
+          // 转换为数组
+          const milestones = Array.from(highestMilestones.values())
+
+          const milestoneHash = getMilestonesHash(milestones)
+          let hasUnreadMilestone = false
+
+          if (typeof window !== 'undefined') {
+            const lastReadHash = window.localStorage.getItem(
+              MILESTONE_LAST_HASH_STORAGE_KEY,
+            ) || ''
+            hasUnreadMilestone
+              = milestones.length > 0 && milestoneHash !== lastReadHash
+
+            window.localStorage.setItem(
+              MILESTONE_UNREAD_STORAGE_KEY,
+              hasUnreadMilestone ? 'true' : 'false',
+            )
+            window.dispatchEvent(new Event(MILESTONE_STATUS_EVENT))
+          }
+
+          set({
+            milestones,
+            showMilestonePoster: false,
+            hasUnreadMilestone,
+            milestonesHash: milestoneHash,
+          })
+        },
+
+        // 设置是否显示里程碑海报
+        setShowMilestonePoster(showMilestonePoster: boolean) {
+          set({
+            showMilestonePoster,
+          })
+
+          if (showMilestonePoster) {
+            methods.markMilestonesAsRead()
+          }
+        },
+
+        // 标记里程碑已读
+        markMilestonesAsRead() {
+          set({
+            hasUnreadMilestone: false,
+          })
+
+          if (typeof window !== 'undefined') {
+            const hash = get().milestonesHash
+            const now = Date.now()
+            window.localStorage.setItem(
+              MILESTONE_LAST_HASH_STORAGE_KEY,
+              hash,
+            )
+            window.localStorage.setItem(MILESTONE_UNREAD_STORAGE_KEY, 'false')
+            window.localStorage.setItem(
+              MILESTONE_LAST_SHOW_TIME_KEY,
+              now.toString(),
+            )
+            window.dispatchEvent(new Event(MILESTONE_STATUS_EVENT))
+          }
+        },
+
+        // 检查是否应该自动弹出海报（24小时冷却）
+        shouldAutoShowPoster(): boolean {
+          if (typeof window === 'undefined')
+            return false
+
+          const milestones = get().milestones
+          if (milestones.length === 0)
+            return false
+
+          const lastShowTime = window.localStorage.getItem(
+            MILESTONE_LAST_SHOW_TIME_KEY,
+          )
+          if (!lastShowTime)
+            return true
+
+          const now = Date.now()
+          const lastTime = Number.parseInt(lastShowTime, 10)
+          const cooldownMs = 24 * 60 * 60 * 1000 // 24小时
+
+          return now - lastTime >= cooldownMs
+        },
+
+        // 自动显示海报（如果满足条件）
+        autoShowPosterIfNeeded() {
+          if (methods.shouldAutoShowPoster()) {
+            set({ showMilestonePoster: true })
+            methods.markMilestonesAsRead()
+          }
         },
       }
 

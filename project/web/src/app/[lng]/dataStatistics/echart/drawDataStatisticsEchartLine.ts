@@ -6,6 +6,8 @@ type EChartsOption = echarts.EChartsOption
 
 export default function drawDataStatisticsEchartLine(elId: string) {
   const chartDom = document.getElementById(elId)!
+  if (!chartDom)
+    return
   const chartDomAny = chartDom as any
   // 先销毁已有实例，防止重复初始化报错
   if (echarts.getInstanceByDom(chartDom)) {

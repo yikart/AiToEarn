@@ -1,7 +1,8 @@
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine, createJSONStorage, persist } from 'zustand/middleware'
-import { indexedDBStorage } from './storage'
+import { appLocalStorage } from '@/utils/storage'
+import { indexedDBStorage } from '@/utils/storageIndexedDb'
 
 type Updater<T> = (updater: (value: T) => void) => void
 
@@ -33,6 +34,7 @@ type SetStoreState<T> = (
  * @param state
  * @param methods
  * @param persistOptions
+ * @param type
  */
 export function createPersistStore<T extends object, M>(
   state: T,
@@ -41,8 +43,9 @@ export function createPersistStore<T extends object, M>(
     get: () => T & MakeUpdater<T>,
   ) => M,
   persistOptions: SecondParam<typeof persist<T & M & MakeUpdater<T>>>,
+  type: 'localStorage' | 'indexedDB' = 'localStorage',
 ) {
-  persistOptions.storage = createJSONStorage(() => indexedDBStorage)
+  persistOptions.storage = createJSONStorage(() => type === 'localStorage' ? appLocalStorage : indexedDBStorage)
   const oldOonRehydrateStorage = persistOptions?.onRehydrateStorage
   persistOptions.onRehydrateStorage = (state) => {
     oldOonRehydrateStorage?.(state)

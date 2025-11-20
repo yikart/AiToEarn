@@ -21,11 +21,13 @@ import {
   ILoginStatus,
 } from '../../../libs/pinterest/common'
 import { PinterestApiService } from '../../../libs/pinterest/pinterestApi.service'
+import { PlatformBaseService } from '../base.service'
 import { META_TIME_CONSTANTS } from '../meta/constants'
 
 @Injectable()
-export class PinterestService {
-  private readonly logger = new Logger(PinterestService.name)
+export class PinterestService extends PlatformBaseService {
+  protected override readonly platform: string = AccountType.PINTEREST
+  protected override readonly logger = new Logger(PinterestService.name)
   private readonly redirectURL = config.pinterest.authBackHost
   private readonly client_id = config.pinterest.id
 
@@ -36,7 +38,9 @@ export class PinterestService {
     private readonly accountService: AccountService,
     @InjectModel(OAuth2Credential.name)
     private readonly oAuth2CredentialModel: Model<OAuth2Credential>,
-  ) {}
+  ) {
+    super()
+  }
 
   private getAuthDataCacheKey(taskId: string) {
     return `channel:pinterest:authTask:${taskId}`
@@ -243,10 +247,11 @@ export class PinterestService {
    * @param accountId
    * @returns
    */
-  async delPinById(id: string, accountId: string) {
+  override async deletePost(accountId: string, postId: string): Promise<boolean> {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
-    return await this.pinterestApiService.deletePin(id, accessToken)
+    await this.pinterestApiService.deletePin(postId, accessToken)
+    return true
   }
 
   /**

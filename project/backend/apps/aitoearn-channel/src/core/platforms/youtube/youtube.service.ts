@@ -13,7 +13,7 @@ import { AccountStatus, AccountType, AitoearnServerClientService, NewAccount } f
 import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
-import { Auth, google } from 'googleapis'
+import { Auth, google, youtube_v3 } from 'googleapis'
 import { Model } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../common'
@@ -25,6 +25,7 @@ import {
   TokenStatus,
 } from '../../../libs/database/schema/oauth2Credential.schema'
 import { YoutubeApiService } from '../../../libs/youtube/youtubeApi.service'
+import { PlatformBaseService } from '../base.service'
 
 interface AuthTaskInfo {
   state: string
@@ -41,14 +42,14 @@ interface AuthTaskInfo {
 }
 
 @Injectable()
-export class YoutubeService {
+export class YoutubeService extends PlatformBaseService {
   private youtubeClient = google.youtube('v3')
   private webClientSecret: string
   private webClientId: string
   private webRenderBaseUrl: string
   private oauth2Client: Auth.OAuth2Client
-  private readonly platform = AccountType.YOUTUBE
-  private readonly logger = new Logger(YoutubeService.name)
+  protected override readonly platform: string = AccountType.YOUTUBE
+  protected override readonly logger = new Logger(YoutubeService.name)
 
   constructor(
     private readonly redisService: RedisService,
@@ -59,6 +60,7 @@ export class YoutubeService {
     @InjectModel(OAuth2Credential.name)
     private OAuth2CredentialModel: Model<OAuth2Credential>,
   ) {
+    super()
     this.webClientSecret = config.youtube.secret
     this.webClientId = config.youtube.id
     this.webRenderBaseUrl = config.youtube.authBackHost
@@ -1379,63 +1381,45 @@ export class YoutubeService {
   /**
    * 删除视频
    */
-  async deleteVideo(accountId: string, videoId: string) {
+  override async deletePost(accountId: string, postId: string): Promise<boolean> {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
       this.logger.log(`get youtube access token error. accountId" ${accountId}`)
-      return new AppException(ResponseCode.ChannelAccessTokenFailed)
+      throw new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
 
     try {
       const response = await this.youtubeClient.videos.delete({
         auth: this.oauth2Client,
-        id: videoId,
+        id: postId,
       })
 
       this.logger.log('Video deleted:', response.data)
-      return response
+      return true
     }
     catch (error) {
       this.logger.error('Error deleting video:', error)
-      return error
+      throw new Error(error.message)
     }
   }
 
   /**
    * 更新视频。
    */
-  async updateVideo(accountId: string, videoId: string, snippet: any, status: any, recordingDetails: any) {
-    try {
-      // 使用封装的辅助方法
-      if (!(await this.ensureValidAccessToken(accountId))) {
-        this.logger.log(`get youtube access token error. accountId" ${accountId}`)
-        return new AppException(ResponseCode.ChannelAccessTokenFailed)
-      }
-
-      const requestBody: any = {
-        id: videoId,
-        snippet,
-        status,
-        recordingDetails,
-      }
-      this.logger.log(requestBody)
-
-      // 调用 YouTube API 上传视频
-      const response = await this.youtubeClient.videos.update(
-        {
-          auth: this.oauth2Client,
-          part: ['snippet', 'status', 'id'],
-          requestBody,
-        },
-      )
-      this.logger.log('Playlist insert successfully:', response.data)
-
-      return response
+  async updateVideo(accountId: string, videoSchema: youtube_v3.Schema$Video) {
+    if (!(await this.ensureValidAccessToken(accountId))) {
+      this.logger.log(`get youtube access token error. accountId" ${accountId}`)
+      throw new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
-    catch (error) {
-      this.logger.error('Error uploading video:', error)
-      return error
-    }
+    const response = await this.youtubeClient.videos.update(
+      {
+        auth: this.oauth2Client,
+        part: ['snippet', 'status', 'id'],
+        requestBody: videoSchema,
+      },
+    )
+    this.logger.log('Video updated successfully:', response.data)
+    return true
   }
 
   /**

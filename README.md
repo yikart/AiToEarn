@@ -16,64 +16,122 @@ AiToEarn helps creators, brands, and businesses build, distribute, and monetize 
 
 Supported Channels:
 Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts,
-TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest
+TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 <details>
   <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
-
+  
   <br/>
-
-  1. [Quick Start](#quick-start)
-  2. [Start Web Project](#start-web-project)
-  3. [Start Electron Project](#start-electron-project)
-  4. [Key Features](#key-features)
-  5. [MCP Service](#mcp-service)
-  6. [Advanced Setup](#advanced-setup)
-  7. [Contribution Guide](#contribution-guide)
-  8. [Contact](#contact)
-  9. [Milestones](#milestones)
-  10. [FAQ](#faq)
-  11. [Recommended](#recommended)
+  
+  1. [Quick Start for Creators (Apps & Web)](#quick-start-for-creators-apps--web)
+  2. [Quick Start for Developers (Docker, Recommended)](#quick-start-for-developers-docker-recommended)
+  3. [Key Features](#key-features)
+  4. [MCP Service](#mcp-service)
+  5. [Advanced Setup](#advanced-setup)
+  6. [Contribution Guide](#contribution-guide)
+  7. [Contact](#contact)
+  8. [Milestones](#milestones)
+  9. [FAQ](#faq)
+  10. [Recommended](#recommended)
 </details>
 
 
-## Quick Start
+
+
+
+## Quick Start for Creators (Apps & Web)
 
 OS | Download
 -- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.2.2-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.2.2/Aitoearn-1.2.2.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.2.2-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.2.2/AiToEarnSetup-1.2.2.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.2.2-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.2.2/AiToEarn+1.2.2.dmg)
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.2-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-1.3.2-internal-arm64-v8a.apk)
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.2-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-Setup-1.3.2.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.2-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn+1.3.2.dmg)
 iOS |  **Coming soon!**
 Web | [Use on Web](https://aitoearn.ai/en/accounts)
 
 [Google Play Download](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
 
+## Quick Start for Developers (Docker, Recommended)
 
-
-## Start Web Project
-### 1. Start the backend service
-
-For local setup:
-Create a `local.config.js` file under the `config` directory (copy from `./aitoearn_web/server/aitoearn-user/config/dev.config.js` and adjust configs).
+This is the easiest way to run AiToEarn. It will start the **frontend, backend, MongoDB and Redis** with one command.  
+You **do NOT** need to install MongoDB or Redis on your machine manually.
 
 ```bash
-pnpm install
-pnpm run dev:local
+git clone https://github.com/yikart/AiToEarn.git
+cd AiToEarn
+cp env.example .env
+docker compose up -d
+````
+
+
+### 🌐 Access Applications
+
+After Docker starts successfully, you can access services at:
+
+| Service                 | URL                                            | Description                                                 |
+| ----------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
+| **Web Frontend**        | [http://localhost:3000](http://localhost:3000) | Web user interface                                          |
+| **Main Backend API**    | [http://localhost:3002](http://localhost:3002) | AiToEarn main server API                                    |
+| **Channel Service API** | [http://localhost:7001](http://localhost:7001) | AiToEarn channel service API                                |
+| **MongoDB**             | localhost:27017                                | MongoDB (inside Docker, uses username/password from `.env`) |
+| **Redis**               | localhost:6379                                 | Redis (inside Docker, uses password from `.env`)            |
+
+> ℹ️ MongoDB & Redis are both started by `docker compose`.
+> You only need to configure their passwords in `.env`; no extra local installation is required.
+
+
+### 🧩 Advanced Configuration (.env)
+
+Edit the `.env` file to set secure values and customize your deployment:
+
+```bash
+# Required security configurations
+MONGODB_PASSWORD=your-secure-mongodb-password
+REDIS_PASSWORD=your-secure-redis-password
+JWT_SECRET=your-jwt-secret-key
+INTERNAL_TOKEN=your-internal-token
+
+# If external access is needed, set your public API/domain
+NEXT_PUBLIC_API_URL=http://your-domain.com:3002/api
+APP_DOMAIN=your-domain.com
 ```
 
-### 2. Start the frontend `aitoearn-web`
+> ✅ In production, please use strong, random passwords and secrets.
+
+
+
+<details>
+<summary>🧪 Optional: Run backend & frontend manually (dev mode)</summary>
+
+This mode is mainly for local development & debugging.
+You can still use Docker for MongoDB/Redis or point to your own services via `.env`.
+
+#### 1. Start the backend services
+
+```bash
+cd project/aitoearn-monorepo
+pnpm install
+npx nx serve aitoearn-channel
+# in another terminal
+npx nx serve aitoearn-server
+```
+
+#### 2. Start the frontend `aitoearn-web`
 
 ```bash
 pnpm install
 pnpm run dev
 ```
 
+</details>
 
-## Start Electron Project
 
-```sh
+
+<details>
+<summary>🖥️ Optional: Start Electron desktop project</summary>
+
+```bash
 # Clone the repo
 git clone https://github.com/yikart/AttAiToEarn.git
 
@@ -83,12 +141,18 @@ cd AttAiToEarn
 # Install dependencies
 npm i
 
-# Compile sqlite (better-sqlite3 requires node-gyp, Python must be installed locally)
+# Compile sqlite (better-sqlite3 requires node-gyp and local Python)
 npm run rebuild
 
 # Start development
 npm run dev
 ```
+
+The Electron project provides a desktop client for AiToEarn.
+
+</details>
+
+
 
 
 ## Key Features
@@ -209,7 +273,8 @@ https://t.me/harryyyy2025
 * 2025.08.08 — [Released web-0.1-beta](./aitoearn_web/README.md)
 * 2025.09.16 — [Released v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
 * 2025.10.01 — [Released v1.0.27](https://github.com/yikart/AiToEarn/releases/tag/v1.0.27)
-
+* 2025.11.01 — [First Usable Version: v1.2.2](https://github.com/yikart/AiToEarn/releases/tag/v1.2.2)
+* 2025.11.12 — [The first open-source, fully usable release. Released: v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 ---
 
 ## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)

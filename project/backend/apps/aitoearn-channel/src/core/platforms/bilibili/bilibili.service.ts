@@ -21,13 +21,14 @@ import {
   VideoUTypes,
 } from '../../../libs/bilibili/common'
 import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential.schema'
+import { PlatformBaseService } from '../base.service'
 import { AuthTaskInfo } from '../common'
 import { BilibiliAuthInfo } from './common'
 
 @Injectable()
-export class BilibiliService {
-  private readonly platform = AccountType.BILIBILI
-  private readonly logger = new Logger(BilibiliService.name)
+export class BilibiliService extends PlatformBaseService {
+  protected override readonly platform: string = AccountType.BILIBILI
+  protected override readonly logger = new Logger(BilibiliService.name)
   constructor(
     private readonly redisService: RedisService,
     private readonly bilibiliApiService: BilibiliApiService,
@@ -35,7 +36,9 @@ export class BilibiliService {
     private readonly fileService: FileService,
     @InjectModel(OAuth2Credential.name)
     private OAuth2CredentialModel: Model<OAuth2Credential>,
-  ) {}
+  ) {
+    super()
+  }
 
   async getBilibiliConfig() {
     return config.bilibili
@@ -574,11 +577,12 @@ export class BilibiliService {
   /**
    * 删除稿件
    * @param accountId
-   * @param resourceId
+   * @param postId
    * @returns
    */
-  async deleteArchive(accountId: string, resourceId: string) {
+  override async deletePost(accountId: string, postId: string): Promise<boolean> {
     const accessToken = await this.getAccountAccessToken(accountId)
-    return await this.bilibiliApiService.deleteArchive(accessToken, resourceId)
+    const res = await this.bilibiliApiService.deleteArchive(accessToken, postId)
+    return res.code === 0
   }
 }

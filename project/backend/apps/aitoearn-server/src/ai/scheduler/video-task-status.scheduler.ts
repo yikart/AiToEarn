@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
-import { VideoService } from '../core/video'
 import { DashscopeService } from '../libs/dashscope'
 import { Sora2Service } from '../libs/sora2'
 import { VolcengineService } from '../libs/volcengine'
+import { VideoService } from '../video'
 
 @Injectable()
 export class VideoTaskStatusScheduler {

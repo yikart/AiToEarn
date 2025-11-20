@@ -9,19 +9,20 @@ import { chunkedDownloadFile, fileUrlToBlob, getCurrentTimestamp, getFileSizeFro
 import { AccountService } from '../../../core/account/account.service'
 import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential.schema'
 import { XMediaCategory, XMediaType } from '../../../libs/twitter/twitter.enum'
-import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XDeletePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../../libs/twitter/twitter.interfaces'
+import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../../libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '../../../libs/twitter/twitter.service'
+import { PlatformBaseService } from '../base.service'
 import { TWITTER_TIME_CONSTANTS, TwitterRedisKeys } from './constants'
 import { UserTimelineDto } from './dto/twitter.dto'
 import { TwitterOAuthTaskInfo } from './twitter.interfaces'
 
 @Injectable()
-export class TwitterService {
-  private readonly platform = AccountType.TWITTER
+export class TwitterService extends PlatformBaseService {
+  protected override readonly platform: string = AccountType.TWITTER
+  protected override readonly logger = new Logger(TwitterService.name)
   private readonly redisService: RedisService
   private readonly twitterApiService: TwitterApiService
   private readonly accountService: AccountService
-  private readonly logger = new Logger(TwitterService.name)
   private readonly defaultScopes = [
     'tweet.read', // All the Tweets you can view, including Tweets from protected accounts.
     'tweet.write', // Tweet and Retweet for you.
@@ -52,6 +53,7 @@ export class TwitterService {
     @InjectModel(OAuth2Credential.name)
     private OAuth2CredentialModel: Model<OAuth2Credential>,
   ) {
+    super()
     this.redisService = redisService
     this.twitterApiService = twitterApiService
     this.accountService = accountService
@@ -377,16 +379,13 @@ export class TwitterService {
     return await this.twitterApiService.createPost(credential.access_token, post)
   }
 
-  public async deletePost(userId: string, tweetId: string): Promise<XDeletePostResponse | null> {
+  override async deletePost(userId: string, tweetId: string): Promise<boolean> {
     const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.deletePost(
+    const result = await this.twitterApiService.deletePost(
       credential.access_token,
       tweetId,
     )
+    return result.data.deleted
   }
 
   public async getMediaUploadStatus(

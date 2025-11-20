@@ -25,12 +25,13 @@ export interface IDraftSelectionModalProps {
   draftModalOpen: boolean
   onCancel: () => void
   onSelectDraft?: (draft: any) => void // 新增：选择草稿后的回调函数
+  zIndex?: number
 }
 
 const DraftSelectionModal = memo(
   forwardRef(
     (
-      { draftModalOpen, onCancel, onSelectDraft }: IDraftSelectionModalProps,
+      { draftModalOpen, onCancel, onSelectDraft, zIndex = 20 }: IDraftSelectionModalProps,
       ref: ForwardedRef<IDraftSelectionModalRef>,
     ) => {
       const {
@@ -213,7 +214,7 @@ const DraftSelectionModal = memo(
               : t('draft.selectDraftGroup')
           }
           width={720}
-          zIndex={20}
+          zIndex={zIndex}
         >
           {!selectedGroup
             ? (

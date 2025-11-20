@@ -93,4 +93,10 @@ export enum ResponseCode {
   ChannelPublishTaskAlreadyExists = 15025,
   PublishTaskAlreadyPublishing = 15026,
   PublishTaskAlreadyCompleted = 15027,
+  PublishTaskNotPublished = 15028,
+  PublishTaskAlreadyUpdating = 15029,
+  PublishTaskAlreadyWaitingForUpdate = 15030,
+  PostCategoryNotSupported = 15031,
+  PlatformNotSupported = 15032,
+  PublishTaskUpdateFailed = 15033,
 }

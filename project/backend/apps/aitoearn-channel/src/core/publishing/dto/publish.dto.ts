@@ -153,6 +153,19 @@ export const CreatePublishSchema = z.object({
 })
 export class CreatePublishDto extends createZodDto(CreatePublishSchema) {}
 
+export const UpdatePublishTaskSchema = z.object({
+  id: z.string({ message: '任务ID' }),
+  userId: z.string({ message: '用户ID' }),
+  desc: z.string().optional(),
+  videoUrl: z.string().optional(),
+  imgUrlList: z.array(z.string()).optional(),
+  topics: z.array(z.string()).optional(),
+  option: z.object({
+    youtube: YouTubePublishOptionSchema.optional(),
+  }).optional(),
+})
+export class UpdatePublishTaskDto extends createZodDto(UpdatePublishTaskSchema) {}
+
 /**
  * 创建发布记录
  */

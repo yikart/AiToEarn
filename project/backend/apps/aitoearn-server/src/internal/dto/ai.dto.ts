@@ -1,6 +1,6 @@
 import { createZodDto, PaginationDtoSchema, UserType } from '@yikart/common'
 import { z } from 'zod'
-import { fireflycardStyleSchema, fireflycardSwitchConfigSchema, fireflycardTempSchema } from '../../ai/dto'
+import { fireflycardStyleSchema, fireflycardSwitchConfigSchema, fireflycardTempSchema } from '../../ai/image/image.dto'
 import { FireflycardTempTypes } from '../../ai/libs/fireflycard'
 
 // 图片生成请求

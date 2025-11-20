@@ -3,14 +3,16 @@
 import type { Locale } from 'antd/es/locale'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { App, ConfigProvider, notification } from 'antd'
+import { App, ConfigProvider, message, Modal, notification } from 'antd'
 import en_US from 'antd/es/locale/en_US'
 import zh_CN from 'antd/es/locale/zh_CN'
 import { Suspense, useEffect } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import useCssVariables from '@/app/hooks/useCssVariables'
 import { fallbackLng } from '@/app/i18n/settings'
 import { useAccountStore } from '@/store/account'
-import { useCommontStore } from '@/store/commont'
+import { useConfigStore } from '@/store/config'
 import { useUserStore } from '@/store/user'
 
 // antd 语言获取
@@ -32,9 +34,15 @@ export function Providers({
   lng: string
 }) {
   const cssVariables = useCssVariables()
-  const [api, contextHolder] = notification.useNotification({
-    top: 74,
-  })
+  const { setGlobal } = useConfigStore(
+    useShallow(state => ({
+      setGlobal: state.setGlobal,
+    })),
+  )
+  const [notificationApi, contextHolderNotification]
+    = notification.useNotification()
+  const [messageApi, contextHolderMessage] = message.useMessage()
+  const [modal, contextHolderModal] = Modal.useModal()
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -43,14 +51,13 @@ export function Providers({
       useUserStore.getState().setToken(queryToken)
     }
     if (useUserStore.getState().token) {
+      useDataStatisticsStore.getState().init()
       useUserStore.getState().getUserInfo()
       useAccountStore.getState().accountInit()
     }
-  }, [])
 
-  useEffect(() => {
-    useCommontStore.getState().setNotification(api)
-  }, [api])
+    setGlobal(modal, notificationApi, messageApi)
+  }, [])
 
   useEffect(() => {
     useUserStore.getState().setLang(lng)
@@ -69,7 +76,9 @@ export function Providers({
         <App component={false}>
           <Suspense>
             <AntdRegistry>
-              {contextHolder}
+              {contextHolderNotification}
+              {contextHolderMessage}
+              {contextHolderModal}
               {children}
             </AntdRegistry>
           </Suspense>

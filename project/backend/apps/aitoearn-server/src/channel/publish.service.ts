@@ -11,7 +11,7 @@ import { ChannelApi } from '../transports/channel/channel.api'
 import { PublishingChannel } from '../transports/channel/common'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
 import { PostHistoryItemVoSchema } from './dto/publish-response.vo'
-import { PublishDayInfoListFiltersDto, PubRecordListFilterDto } from './dto/publish.dto'
+import { PublishDayInfoListFiltersDto, PubRecordListFilterDto, UpdatePublishTaskDto } from './dto/publish.dto'
 
 type PostHistoryItem = z.infer<typeof PostHistoryItemVoSchema>
 
@@ -254,10 +254,21 @@ export class PublishService {
       this.logger.error(`Failed to get publish record detail for flowId ${flowId} and userId ${userId}: ${error.message}`, error.stack)
     }
 
-    const task = await this.channelApi.getPublishTaskInfoWithFlowId({ flowId, userId })
+    const task = await this.platPublishNatsApi.getPublishTaskDetail(flowId, userId)
     if (!task) {
       throw new AppException(ResponseCode.PublishRecordNotFound, { flowId })
     }
     return task
+  }
+
+  async updatePublishTask(data: UpdatePublishTaskDto, userId: string) {
+    try {
+      const success = await this.platPublishNatsApi.updatePublishTask(data, userId)
+      return { success }
+    }
+    catch (error: any) {
+      this.logger.error(`Failed to update publish task for userId ${userId}: ${error.message}`, error.stack)
+      throw new AppException(ResponseCode.PublishTaskUpdateFailed, error.message)
+    }
   }
 }

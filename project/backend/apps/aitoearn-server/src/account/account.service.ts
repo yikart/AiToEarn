@@ -17,6 +17,7 @@ export class AccountService {
     private readonly accountRepository: AccountRepository,
     @Inject(forwardRef(() => AccountGroupService))
     private readonly accountGroupService: AccountGroupService,
+    @Inject(forwardRef(() => ChannelService))
     private readonly channelService: ChannelService,
     private readonly statisticsService: StatisticsService,
     private readonly queueService: QueueService,

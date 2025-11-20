@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ScheduleModule } from '@nestjs/schedule'
-import { VideoModule } from '../core/video'
+import { VideoModule } from '../video'
 import { VideoTaskStatusScheduler } from './video-task-status.scheduler'
 
 @Module({

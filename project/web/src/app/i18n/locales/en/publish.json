@@ -2,7 +2,7 @@
   "title": "Publish Work",
   "confirmClose": {
     "title": "Confirm Close",
-    "content": "After closing, the filled content will be lost. Are you sure to close?"
+    "content": "After closing, the filled content will be saved. You can restore it next time you open it. Do you confirm that it has been closed?"
   },
   "buttons": {
     "customizePerAccount": "Customize per account",
@@ -10,7 +10,14 @@
     "schedulePublish": "Schedule Publish",
     "publishNow": "Now",
     "copyLink": "Copy link",
-    "delete": "Delete"
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "morePublishOptions": "More Options",
+    "morePostingActions": "More Posting Actions",
+    "defaultPublishAction": "Default Publish Action",
+    "setDateTime": "Set Date and Time",
+    "publishNowDesc": "Publish your post right away.",
+    "schedulePublishDesc": "Choose a specific time to post."
   },
   "tips": {
     "workSaved": "Your work has been saved. Select a Channel to create a post",

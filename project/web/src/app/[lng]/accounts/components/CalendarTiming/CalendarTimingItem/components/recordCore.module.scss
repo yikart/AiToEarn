@@ -80,6 +80,7 @@
       border-bottom: 1px solid var(--grayColor2);
       &-left {
         width: 100%;
+        min-height: 150px;
         &-status {
           margin-top: 15px;
         }

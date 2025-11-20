@@ -1,0 +1,213 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:7.0
+    container_name: aitoearn-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+    networks:
+      - aitoearn-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  redis:
+    image: redis:7-alpine
+    container_name: aitoearn-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${REDIS_PASSWORD:-password}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - aitoearn-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+
+  aitoearn-channel:
+    image: aitoearn/aitoearn-channel:latest
+    container_name: aitoearn-channel
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "7001:7001"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      APP_ENV: ${APP_ENV:-production}
+      APP_NAME: aitoearn-channel
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
+      
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_USERNAME: ${MONGODB_USERNAME:-admin}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-password}
+      
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      
+      SERVER_URL: http://aitoearn-server:3002
+      
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN:-change-this-secret-token}
+      
+      FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
+      FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET:-}
+      
+      BILIBILI_CLIENT_ID: ${BILIBILI_CLIENT_ID:-}
+      BILIBILI_CLIENT_SECRET: ${BILIBILI_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      KWAI_CLIENT_ID: ${KWAI_CLIENT_ID:-}
+      KWAI_CLIENT_SECRET: ${KWAI_CLIENT_SECRET:-}
+      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID:-}
+      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET:-}
+      PINTEREST_TEST_AUTHORIZATION: ${PINTEREST_TEST_AUTHORIZATION:-}
+      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID:-}
+      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
+      TWITTER_CLIENT_ID: ${TWITTER_CLIENT_ID:-}
+      TWITTER_CLIENT_SECRET: ${TWITTER_CLIENT_SECRET:-}
+      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID:-}
+      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET:-}
+      FACEBOOK_CONFIG_ID: ${FACEBOOK_CONFIG_ID:-}
+      THREADS_CLIENT_ID: ${THREADS_CLIENT_ID:-}
+      THREADS_CLIENT_SECRET: ${THREADS_CLIENT_SECRET:-}
+      INSTAGRAM_CLIENT_ID: ${INSTAGRAM_CLIENT_ID:-}
+      INSTAGRAM_CLIENT_SECRET: ${INSTAGRAM_CLIENT_SECRET:-}
+      LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID:-}
+      LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET:-}
+      YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID:-}
+      YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET:-}
+      WXPLAT_APP_ID: ${WXPLAT_APP_ID:-}
+      WXPLAT_APP_SECRET: ${WXPLAT_APP_SECRET:-}
+      WXPLAT_ENCODING_AES_KEY: ${WXPLAT_ENCODING_AES_KEY:-}
+      
+      # 阿里云绿网配置
+      ALI_GREEN_ACCESS_KEY_ID: ${ALI_GREEN_ACCESS_KEY_ID:-}
+      ALI_GREEN_ACCESS_KEY_SECRET: ${ALI_GREEN_ACCESS_KEY_SECRET:-}
+    networks:
+      - aitoearn-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:7001/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  aitoearn-server:
+    image: aitoearn/aitoearn-server:latest
+    container_name: aitoearn-server
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      aitoearn-channel:
+        condition: service_healthy
+    ports:
+      - "3002:3002"
+    environment:
+      # 应用配置
+      NODE_ENV: ${NODE_ENV:-production}
+      APP_ENV: ${APP_ENV:-production}
+      APP_NAME: aitoearn-server
+      
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_USERNAME: ${MONGODB_USERNAME:-admin}
+      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-password}
+      
+      STATISTICS_DB_HOST: mongodb
+      STATISTICS_DB_PORT: 27017
+      STATISTICS_DB_USERNAME: ${MONGODB_USERNAME:-admin}
+      STATISTICS_DB_PASSWORD: ${MONGODB_PASSWORD:-password}
+      
+      # Redis 配置
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
+      
+      CHANNEL_URL: http://aitoearn-channel:7001
+      
+      # 认证配置
+      JWT_SECRET: ${JWT_SECRET:-change-this-jwt-secret}
+      INTERNAL_TOKEN: ${INTERNAL_TOKEN:-change-this-secret-token}
+      
+      MAIL_USER: ${MAIL_USER:-}
+      MAIL_PASS: ${MAIL_PASS:-}
+      
+      FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
+      FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET:-}
+      
+      KLING_ACCESS_KEY: ${KLING_ACCESS_KEY:-}
+      KLING_BASE_URL: ${KLING_BASE_URL:-}
+      VOLCENGINE_API_KEY: ${VOLCENGINE_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      DASHSCOPE_BASE_URL: ${DASHSCOPE_BASE_URL:-}
+      SORA2_API_KEY: ${SORA2_API_KEY:-}
+      SORA2_BASE_URL: ${SORA2_BASE_URL:-}
+      MD2CARD_API_KEY: ${MD2CARD_API_KEY:-}
+      
+      ALI_GREEN_ACCESS_KEY_ID: ${ALI_GREEN_ACCESS_KEY_ID:-}
+      ALI_GREEN_ACCESS_KEY_SECRET: ${ALI_GREEN_ACCESS_KEY_SECRET:-}
+    networks:
+      - aitoearn-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # AiToEarn Web 服务 - 前端应用
+  aitoearn-web:
+    image: aitoearn/aitoearn-web:latest
+    container_name: aitoearn-web
+    restart: unless-stopped
+    depends_on:
+      aitoearn-server:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3002/api}
+    networks:
+      - aitoearn-network
+
+networks:
+  aitoearn-network:
+    driver: bridge
+    name: aitoearn-network
+
+volumes:
+  mongodb-data:
+    driver: local
+  mongodb-config:
+    driver: local
+  redis-data:
+    driver: local
+

@@ -403,3 +403,25 @@ export interface FacebookPostAttachmentsResponse {
 export interface FacebookLikeResponse {
   success: boolean
 }
+
+export interface MetaPostAttachment {
+  media_fbid: string
+  message?: string
+  link?: string
+}
+
+export interface UpdatePostRequest {
+  is_published?: boolean
+  attachments?: MetaPostAttachment[]
+  message?: string
+}
+
+export interface UpdatePostResponse {
+  id?: string
+  success: boolean
+  message?: string
+}
+
+export interface FacebookDeletePostResponse {
+  success: boolean
+}

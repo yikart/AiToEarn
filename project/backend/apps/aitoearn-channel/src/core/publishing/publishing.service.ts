@@ -3,15 +3,19 @@ import { InjectModel } from '@nestjs/mongoose'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountType, PublishRecord, PublishStatus } from '@yikart/aitoearn-server-client'
 import { AppException, ResponseCode } from '@yikart/common'
+import { youtube_v3 } from 'googleapis'
 import { Model, RootFilterQuery } from 'mongoose'
 import { v4 as uuidv4 } from 'uuid'
 import { PublishTask } from '../../libs/database/schema/publishTask.schema'
 import { AccountService } from '../account/account.service'
 import { PublishRecordService } from '../account/publish-record.service'
+import { FacebookService } from '../platforms/meta/facebook.service'
+import { YoutubeService } from '../platforms/youtube/youtube.service'
 import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS } from './constant'
-import { CreatePublishDto, PublishRecordListFilterDto } from './dto/publish.dto'
+import { CreatePublishDto, PublishRecordListFilterDto, UpdatePublishTaskDto } from './dto/publish.dto'
 import { TiktokWebhookDto } from './dto/tiktok-webhook.dto'
 import { TiktokPubService } from './providers/tiktok.service'
+import { generatePostMessage } from './util'
 
 @Injectable()
 export class PublishingService implements OnModuleDestroy {
@@ -24,6 +28,8 @@ export class PublishingService implements OnModuleDestroy {
     @InjectModel(PublishTask.name)
     private readonly publishTaskModel: Model<PublishTask>,
     private readonly publishRecordService: PublishRecordService,
+    private readonly youtubeService: YoutubeService,
+    private readonly facebookService: FacebookService,
   ) {}
 
   private determineMetaPostCategory(data: CreatePublishDto) {
@@ -88,7 +94,7 @@ export class PublishingService implements OnModuleDestroy {
       now - IMMEDIATE_PUBLISH_TOLERANCE_SECONDS,
       now + IMMEDIATE_PUBLISH_TOLERANCE_SECONDS,
     ]
-    const publishImmediately = publishTime.getTime() >= immediatePublishWindow[0] && publishTime.getTime() <= immediatePublishWindow[1]
+    const publishImmediately = publishTime.getTime() <= immediatePublishWindow[1]
     if (!publishImmediately) {
       this.logger.log(`Publish task ${newTask.id} created, scheduled for ${publishTime.toISOString()}`)
       return newTask
@@ -99,6 +105,87 @@ export class PublishingService implements OnModuleDestroy {
       throw new AppException(ResponseCode.PublishTaskFailed, { accountType })
     this.logger.log(`Publish task ${newTask.id} created and pushed to queue immediately`)
     return newTask
+  }
+
+  async updatePublishedFacebookTask(publishTask: PublishTask) {
+    const message = generatePostMessage(publishTask.desc, publishTask.topics)
+    const result = await this.facebookService.updatePost(publishTask.accountId, publishTask.dataId, { message })
+    return result.success
+  }
+
+  async updatePublishedYoutubePost(publishTask: PublishTask) {
+    const videoSchema: youtube_v3.Schema$Video = {
+      id: publishTask.dataId,
+      snippet: {
+        title: publishTask.title,
+        description: publishTask.desc,
+        tags: publishTask.topics,
+        categoryId: publishTask.option?.youtube?.categoryId,
+      },
+      status: {
+        privacyStatus: publishTask.option?.youtube?.privacyStatus,
+        selfDeclaredMadeForKids: publishTask.option?.youtube?.selfDeclaredMadeForKids,
+        embeddable: publishTask.option?.youtube?.embeddable,
+        license: publishTask.option?.youtube?.license,
+      },
+    }
+    return await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
+  }
+
+  async updatePublishedTextTask(publishTask: PublishTask) {
+    if (publishTask.accountType === AccountType.YOUTUBE) {
+      return await this.updatePublishedYoutubePost(publishTask)
+    }
+    else if (publishTask.accountType === AccountType.FACEBOOK) {
+      return await this.updatePublishedFacebookTask(publishTask)
+    }
+    throw new AppException(ResponseCode.PlatformNotSupported, 'only Facebook and Youtube are supported for update')
+  }
+
+  async updatePublishingTask(data: UpdatePublishTaskDto) {
+    const supportPlatforms = [AccountType.FACEBOOK, AccountType.YOUTUBE]
+    const task = await this.publishTaskModel.findById(data.id).exec()
+    if (!task || task.userId !== data.userId) {
+      throw new AppException(ResponseCode.PublishTaskNotFound)
+    }
+    if (task.status !== PublishStatus.PUBLISHED) {
+      throw new AppException(ResponseCode.PublishTaskNotPublished)
+    }
+
+    if (!supportPlatforms.includes(task.accountType)) {
+      throw new AppException(ResponseCode.PlatformNotSupported, 'Facebook and Youtube are supported for update')
+    }
+
+    if (task.option && task.option.facebook) {
+      if (task.option.facebook.content_category !== 'post') {
+        throw new AppException(ResponseCode.PostCategoryNotSupported, 'only post category is supported for Facebook')
+      }
+    }
+    let updatedContentType = 'text'
+    if (data.videoUrl) {
+      updatedContentType = 'video'
+    }
+    else if (data.imgUrlList) {
+      updatedContentType = 'image'
+    }
+    try {
+      if (updatedContentType === 'text') {
+        return await this.updatePublishedTextTask(task)
+      }
+      await this.publishTaskModel.updateOne({ _id: data.id }, {
+        desc: data.desc,
+        videoUrl: data.videoUrl,
+        imgUrlList: data.imgUrlList,
+        topics: data.topics,
+        status: PublishStatus.WAITING_FOR_UPDATE,
+        option: data.option,
+      }).exec()
+      await this.enqueueUpdatePublishedPostTask(task, updatedContentType)
+      return true
+    }
+    catch (error) {
+      throw new AppException(ResponseCode.PublishTaskUpdateFailed, error.message)
+    }
   }
 
   async enqueuePublishingTask(task: PublishTask): Promise<boolean> {
@@ -124,12 +211,33 @@ export class PublishingService implements OnModuleDestroy {
     return jobRes.id === jobId
   }
 
+  async enqueueUpdatePublishedPostTask(task: PublishTask, updatedContentType: string): Promise<boolean> {
+    const jobId = uuidv4().toString()
+    await this.publishTaskModel.updateOne({ _id: task.id }, { queueId: jobId })
+    const jobRes = await this.queueService.addUpdatePublishedPostJob(
+      {
+        taskId: task.id,
+        updatedContentType,
+      },
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 5,
+        },
+        removeOnComplete: true,
+        removeOnFail: true,
+        jobId,
+      },
+    )
+    return jobRes.id === jobId
+  }
+
   async getPublishTaskListByTime(
-    start: Date,
     end: Date,
   ): Promise<PublishTask[]> {
     const filters: RootFilterQuery<PublishTask> = {
-      publishTime: { $gte: start, $lte: end },
+      publishTime: { $lte: end },
       status: PublishStatus.WaitingForPublish,
     }
     const list = await this.publishTaskModel.find(filters).sort({
