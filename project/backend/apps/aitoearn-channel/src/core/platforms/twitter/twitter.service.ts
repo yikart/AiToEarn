@@ -12,6 +12,7 @@ import { XMediaCategory, XMediaType } from '../../../libs/twitter/twitter.enum'
 import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../../libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '../../../libs/twitter/twitter.service'
 import { PlatformBaseService } from '../base.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { TWITTER_TIME_CONSTANTS, TwitterRedisKeys } from './constants'
 import { UserTimelineDto } from './dto/twitter.dto'
 import { TwitterOAuthTaskInfo } from './twitter.interfaces'
@@ -89,7 +90,7 @@ export class TwitterService extends PlatformBaseService {
         platform: this.platform,
       })
       if (!oauth2Credential) {
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential = {
         access_token: oauth2Credential.accessToken,
@@ -104,10 +105,6 @@ export class TwitterService extends PlatformBaseService {
     accountId: string,
   ): Promise<TwitterOAuthCredential> {
     const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      throw new Error(`No access token found for accountId: ${accountId}`)
-    }
     const now = getCurrentTimestamp()
     if (now >= credential.expires_in) {
       this.logger.debug(
@@ -117,20 +114,14 @@ export class TwitterService extends PlatformBaseService {
         credential.refresh_token,
       )
       if (!refreshedToken) {
-        this.logger.error(
-          `Failed to refresh access token for accountId: ${accountId}`,
-        )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential.access_token = refreshedToken.access_token
       credential.refresh_token = refreshedToken.refresh_token
       credential.expires_in = refreshedToken.expires_in
       const saved = await this.saveOAuthCredential(accountId, credential)
       if (!saved) {
-        this.logger.error(
-          `Failed to save refreshed access token for accountId: ${accountId}`,
-        )
-        throw new Error(`Failed to save refreshed access token for accountId: ${accountId}`)
+        throw new PlatformAuthExpiredException(this.platform)
       }
       return credential
     }

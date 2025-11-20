@@ -38,6 +38,7 @@ import {
   UploadPhotoResponse,
 } from '../../../libs/facebook/facebook.interfaces'
 import { FacebookService as FacebookAPIService } from '../../../libs/facebook/facebook.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { MetaBaseService } from './base.service'
 import { META_TIME_CONSTANTS, metaOAuth2ConfigMap, MetaRedisKeys } from './constants'
 import { FacebookAccountResponse, FacebookPageCredentials, MetaFacebookPageResponse, MetaUserOAuthCredential } from './meta.interfaces'
@@ -57,10 +58,6 @@ export class FacebookService extends MetaBaseService {
     accountId: string,
   ): Promise<MetaUserOAuthCredential | null> {
     const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      return null
-    }
     const now = getCurrentTimestamp()
     const tokenExpiredAt = now + credential.expires_in
     const requestTime
@@ -73,10 +70,7 @@ export class FacebookService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        this.logger.error(
-          `Failed to refresh access token for accountId: ${accountId}`,
-        )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in || META_TIME_CONSTANTS.FACEBOOK_LONG_LIVED_TOKEN_DEFAULT_EXPIRE
@@ -85,7 +79,7 @@ export class FacebookService extends MetaBaseService {
         this.logger.error(
           `Failed to save refreshed access token for accountId: ${accountId}`,
         )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       return credential
     }

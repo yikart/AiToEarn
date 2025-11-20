@@ -15,6 +15,7 @@ import {
   ThreadsSearchLocationRequest,
 } from '../../../libs/threads/threads.interfaces'
 import { ThreadsService as ThreadsAPIService } from '../../../libs/threads/threads.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { MetaBaseService } from './base.service'
 import { MetaLocation, MetaUserOAuthCredential } from './meta.interfaces'
 
@@ -33,10 +34,6 @@ export class ThreadsService extends MetaBaseService {
     accountId: string,
   ): Promise<MetaUserOAuthCredential> {
     const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      throw new Error(`No access token found for accountId: ${accountId}`)
-    }
     const now = getCurrentTimestamp()
     if (now >= credential.expires_in) {
       this.logger.debug(
@@ -46,10 +43,7 @@ export class ThreadsService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        this.logger.error(
-          `Failed to refresh access token for accountId: ${accountId}`,
-        )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in
@@ -58,7 +52,7 @@ export class ThreadsService extends MetaBaseService {
         this.logger.error(
           `Failed to save refreshed access token for accountId: ${accountId}`,
         )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       return credential
     }

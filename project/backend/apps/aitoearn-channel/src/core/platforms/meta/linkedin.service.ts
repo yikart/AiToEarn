@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { getCurrentTimestamp } from '../../../common'
 import { LinkedInShareRequest, LinkedInUploadRequest, MemberNetworkVisibility, ShareMediaCategory, UploadRecipe } from '../../../libs/linkedin/linkedin.interface'
 import { LinkedinService as LinkedinAPIService } from '../../../libs/linkedin/linkedin.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { MetaBaseService } from './base.service'
 import { META_TIME_CONSTANTS } from './constants'
 import { MetaUserOAuthCredential } from './meta.interfaces'
@@ -21,10 +22,6 @@ export class LinkedinService extends MetaBaseService {
     accountId: string,
   ): Promise<MetaUserOAuthCredential | null> {
     const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      return null
-    }
     const now = getCurrentTimestamp()
     const tokenExpiredAt = now + credential.expires_in
     const requestTime
@@ -37,19 +34,13 @@ export class LinkedinService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        this.logger.error(
-          `Failed to refresh access token for accountId: ${accountId}`,
-        )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in
       const saved = await this.saveOAuth2Credential(accountId, credential, 'linkedin')
       if (!saved) {
-        this.logger.error(
-          `Failed to save refreshed access token for accountId: ${accountId}`,
-        )
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       return credential
     }

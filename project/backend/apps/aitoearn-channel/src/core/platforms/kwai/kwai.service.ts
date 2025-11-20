@@ -13,6 +13,7 @@ import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential
 import { KwaiOAuthCredentialsResponse } from '../../../libs/kwai/kwai.interfaces'
 import { KwaiApiService } from '../../../libs/kwai/kwai.service'
 import { PlatformBaseService } from '../base.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { KWAI_TIME_CONSTANTS } from './constants'
 
 @Injectable()
@@ -40,7 +41,7 @@ export class KwaiService extends PlatformBaseService {
           platform: this.platform,
         })
       if (!oauth2Credential) {
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential = {
         result: 0,
@@ -75,15 +76,11 @@ export class KwaiService extends PlatformBaseService {
    */
   async getAccessTokenAndRefresh(accountId: string) {
     const accessTokenInfo = await this.getOAuth2Credential(accountId)
-    if (!accessTokenInfo)
-      return null
-
     // 判断 refresh_token 是否过期
     const isRefreshTokenExpired
       = getCurrentTimestamp() >= accessTokenInfo.refresh_token_expires_in
     if (isRefreshTokenExpired) {
-      this.logger.warn(`Kwai account ${accountId} refresh_token is expired, expired at: ${accessTokenInfo.refresh_token_expires_in}`)
-      return null
+      throw new PlatformAuthExpiredException(this.platform)
     }
 
     // 判断 access_token 是否过期
@@ -96,8 +93,7 @@ export class KwaiService extends PlatformBaseService {
       accessTokenInfo.refresh_token,
     )
     if (!newAccountToken) {
-      this.logger.warn(`Kwai account ${accountId} access_token refresh failed`)
-      return null
+      throw new PlatformAuthExpiredException(this.platform)
     }
 
     const success = await this.saveOAuthCredential(accountId, newAccountToken)
