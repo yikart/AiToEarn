@@ -1,15 +1,42 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
 import { FireflyCardDto, ImageEditDto, ImageGenerationDto, Md2CardDto } from './image.dto'
 import { ImageService } from './image.service'
-import { AsyncTaskResponseVo, FireflycardResponseVo, ImageResponseVo, Md2CardResponseVo, TaskStatusResponseVo } from './image.vo'
+import { AsyncTaskResponseVo, FireflycardResponseVo, ImageEditModelParamsVo, ImageGenerationModelParamsVo, ImageResponseVo, Md2CardResponseVo, TaskStatusResponseVo } from './image.vo'
 
 @ApiTags('OpenSource/Me/Ai')
 @Controller('ai')
 export class ImageController {
   constructor(private readonly imageService: ImageService) {}
+  @ApiDoc({
+    summary: 'Get Image Generation Model Parameters',
+    response: [ImageGenerationModelParamsVo],
+  })
+  @Public()
+  @Get('/models/image/generation')
+  async getImageGenerationModels(@GetToken() token?: TokenInfo): Promise<ImageGenerationModelParamsVo[]> {
+    const response = await this.imageService.generationModelConfig({
+      userId: token?.id,
+      userType: UserType.User,
+    })
+    return response.map(item => ImageGenerationModelParamsVo.create(item))
+  }
+
+  @ApiDoc({
+    summary: 'Get Image Editing Model Parameters',
+    response: [ImageEditModelParamsVo],
+  })
+  @Public()
+  @Get('/models/image/edit')
+  async getImageEditModels(@GetToken() token?: TokenInfo): Promise<ImageEditModelParamsVo[]> {
+    const response = await this.imageService.editModelConfig({
+      userId: token?.id,
+      userType: UserType.User,
+    })
+    return response.map(item => ImageEditModelParamsVo.create(item))
+  }
 
   @ApiDoc({
     summary: 'Generate AI Image',

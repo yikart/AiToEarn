@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
 import {
   DashscopeImage2VideoRequestDto,
@@ -20,6 +20,7 @@ import {
   KlingTaskStatusResponseVo,
   KlingVideoGenerationResponseVo,
   ListVideoTasksResponseVo,
+  VideoGenerationModelParamsVo,
   VideoGenerationResponseVo,
   VideoTaskStatusResponseVo,
   VolcengineTaskStatusResponseVo,
@@ -30,6 +31,19 @@ import {
 @Controller('ai')
 export class VideoController {
   constructor(private readonly videoService: VideoService) {}
+  @ApiDoc({
+    summary: 'Get Video Generation Model Parameters',
+    response: [VideoGenerationModelParamsVo],
+  })
+  @Public()
+  @Get('/models/video/generation')
+  async getVideoGenerationModels(@GetToken() token?: TokenInfo): Promise<VideoGenerationModelParamsVo[]> {
+    const response = await this.videoService.getVideoGenerationModelParams({
+      userId: token?.id,
+      userType: UserType.User,
+    })
+    return response.map(item => VideoGenerationModelParamsVo.create(item))
+  }
 
   // 通用视频接口
   @ApiDoc({
