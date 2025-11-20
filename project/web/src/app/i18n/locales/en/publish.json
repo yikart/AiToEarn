@@ -81,7 +81,7 @@
       "expand": "Please expand the following text with more details and descriptions suitable for publishing. Double the content but don't make it too long, and don't include images in response.",
       "polish": "Please polish the following text to make it more fluent and professional:",
       "translate": "You are a translator. If the content below is in Chinese, translate it to English. If it's in English, translate it to Chinese. Only output the translation result without other explanations.",
-      "generateImage": "Generate an image based on the content I provide below. Must generate one image related to the content.",
+      "generateImage": "Please generate an image based on the content provided below. The image must be relevant to the content, small, and generated quickly.",
       "generateVideo": "Generate video creation prompts based on the content I provide below. Ensure the content is suitable for publishing and contains no violations.",
       "generateHashtags": "Generate 3-6 hashtags with # based on the content provided below. If it's Chinese content, reply with Chinese hashtags; if English content, reply with English hashtags. If indistinguishable, prefer English hashtags. Only reply with hashtags, no other text."
     },

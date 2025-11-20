@@ -162,6 +162,8 @@ const PublishDialog = memo(
       const [chatModels, setChatModels] = useState<any[]>([])
       // 中间内容区域ref，用于划词功能
       const contentAreaRef = useRef<HTMLDivElement>(null)
+      // 刷新key，用于强制输入框组件重新渲染
+      const [refreshKey, setRefreshKey] = useState(0)
       const { tasks, md5Cache, enqueueUpload } = usePublishManageUpload(
         useShallow(state => ({
           tasks: state.tasks,
@@ -611,6 +613,9 @@ const PublishDialog = memo(
       const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
         console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无', '追加模式:', append)
         
+        // Force refresh input components after sync
+        setRefreshKey(prev => prev + 1)
+        
         // 处理图片上传
         if (images && images.length > 0) {
           console.log('开始上传AI同步的图片')
@@ -985,11 +990,14 @@ const PublishDialog = memo(
                     ? (
                         <>
                           {pubListChoosed.length == 1 && (
-                            <PlatParamsSetting pubItem={pubListChoosed[0]} />
+                            <PlatParamsSetting 
+                              pubItem={pubListChoosed[0]} 
+                              key={`${pubListChoosed[0].account.id}-${refreshKey}`}
+                            />
                           )}
                           {pubListChoosed.length >= 2 && (
                             <PubParmasTextarea
-                              key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? 'video' : 'no-video'}`}
+                              key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? 'video' : 'no-video'}-${refreshKey}`}
                               platType={PlatType.Instagram}
                               rows={16}
                               desValue={commonPubParams.des}
@@ -1012,7 +1020,7 @@ const PublishDialog = memo(
                             return (
                               <PlatParamsSetting
                                 pubItem={v}
-                                key={v.account.id}
+                                key={`${v.account.id}-${refreshKey}`}
                                 style={{ marginBottom: '12px' }}
                               />
                             )

@@ -24,37 +24,37 @@ import { getOssUrl } from '@/utils/oss'
 import styles from '../publishDialog.module.scss'
 
 
-// 自定义 urlTransform 以允许 data: URLs（base64 图片）
+// Custom urlTransform to allow data: URLs (base64 images)
 const urlTransform = (url: string) => {
-  // 允许 data: 协议（base64 图片）
+  // Allow data: protocol (base64 images)
   if (url.startsWith('data:image/')) {
     return url
   }
-  // 允许 blob: 协议
+  // Allow blob: protocol
   if (url.startsWith('blob:')) {
     return url
   }
-  // 允许 http 和 https
+  // Allow http and https
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
   }
-  // 其他协议返回空字符串（安全处理）
+  // Return empty string for other protocols (security handling)
   return ''
 }
 
 const { Option } = Select
 
 export interface IPublishDialogAiRef {
-  // AI处理文本
+  // AI text processing
   processText: (text: string, action: AIAction) => void
 }
 
 export interface IPublishDialogAiProps {
   onClose: () => void
-  // 同步内容到编辑器的回调
-  // append: true 表示追加内容，false 表示替换内容
+  // Callback to sync content to editor
+  // append: true means append content, false means replace content
   onSyncToEditor?: (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => void
-  // 聊天模型列表
+  // Chat model list
   chatModels?: any[]
 }
 
@@ -66,7 +66,7 @@ interface Message {
   action?: AIAction
 }
 
-  // 消息项组件 - 使用 memo 避免不必要的重新渲染
+  // Message item component - use memo to avoid unnecessary re-renders
   const MessageItem = memo(({ 
     msg, 
     index, 
@@ -90,7 +90,7 @@ interface Message {
     t: any
     markdownComponents: any
   }) => {
-    // 处理视频标记
+    // Process video markers
     const processVideoContent = (content: string) => {
       const videoMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
       if (videoMatch) {
@@ -151,14 +151,14 @@ interface Message {
                     {msg.content}
                   </ReactMarkdown>
                 )}
-                {/* 如果是视频生成消息且有进度，显示进度条 */}
+                {/* Show progress bar if it's a video generation message with progress */}
                 {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messagesLength - 1 && (
                   <div style={{ marginTop: 8 }}>
                     <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
                     <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
-                      {videoStatus === 'submitted' && '任务已提交，等待处理...'}
-                      {videoStatus === 'processing' && '正在生成视频...'}
-                      {videoStatus === 'failed' && '视频生成失败'}
+                      {videoStatus === 'submitted' && t('aiFeatures.taskSubmitted' as any)}
+                      {videoStatus === 'processing' && t('aiFeatures.generatingStatus' as any)}
+                      {videoStatus === 'failed' && t('aiFeatures.videoFailed' as any)}
                     </div>
                   </div>
                 )}
@@ -185,14 +185,14 @@ interface Message {
                 icon={<CopyOutlined />}
                 onClick={() => {
                   navigator.clipboard.writeText(msg.content)
-                  message.success('已复制到剪贴板')
+                  message.success(t('aiFeatures.copied' as any))
                 }}
               />
               <Button
                 size="small"
                 onClick={() => setShowRawContent(showRawContent === index ? null : index)}
               >
-                {showRawContent === index ? '隐藏原始' : '查看原始'}
+                {showRawContent === index ? t('aiFeatures.hideRaw' as any) : t('aiFeatures.showRaw' as any)}
               </Button>
             </div>
             {showRawContent === index && (
@@ -213,7 +213,7 @@ interface Message {
       </div>
     )
   }, (prevProps, nextProps) => {
-    // 只有当这些属性变化时才重新渲染
+    // Only re-render when these properties change
     return (
       prevProps.msg.content === nextProps.msg.content &&
       prevProps.showRawContent === nextProps.showRawContent &&
@@ -222,24 +222,25 @@ interface Message {
     )
   })
 
-  // AI生成的图片组件
+  // AI-generated image component
   const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
-    
+    const { t } = useTransClient('publish')
     const [imageLoading, setImageLoading] = useState(true)
     const [imageError, setImageError] = useState(false)
 
-  // 如果没有 src，显示错误
+  // Show error if no src
   if (!src) {
+    const { t } = useTransClient('publish')
     return (
       <div style={{ padding: '8px', background: '#fee', border: '1px solid #fcc', borderRadius: '4px' }}>
-        ⚠️ 图片数据缺失
+        {t('aiFeatures.imageMissing' as any)}
       </div>
     )
   }
 
   return (
     <div style={{ margin: '8px 0', position: 'relative' }}>
-      {/* 加载占位符 */}
+      {/* Loading placeholder */}
       {imageLoading && !imageError && (
         <div style={{
           width: '100%',
@@ -260,7 +261,7 @@ interface Message {
       )}
       <img
         src={src}
-        alt={alt || 'AI生成的图片'}
+        alt={alt || 'AI-generated image'}
         style={{
           maxWidth: '100%',
           height: 'auto',
@@ -268,17 +269,16 @@ interface Message {
           display: imageLoading ? 'none' : 'block',
         }}
         onError={(e) => {
-          console.error('图片加载失败:', e, 'src:', src?.substring(0, 100))
+          console.error('Image load failed:', e)
           setImageLoading(false)
           setImageError(true)
         }}
         onLoad={() => {
-          console.log('图片加载成功:', src?.substring(0, 50))
           setImageLoading(false)
           setImageError(false)
         }}
       />
-      {/* 错误提示 */}
+      {/* Error message */}
       {imageError && (
         <div style={{
           padding: '8px',
@@ -288,17 +288,17 @@ interface Message {
           fontSize: '12px',
           color: '#c00',
         }}>
-          ⚠️ 图片加载失败
+          {t('aiFeatures.imageLoadFailed' as any)}
         </div>
       )}
     </div>
   )
 }, (prevProps, nextProps) => {
-  // 只有当 src 和 alt 都相同时才不重新渲染
+  // Only re-render when src or alt changes
   return prevProps.src === nextProps.src && prevProps.alt === nextProps.alt
 })
 
-// AI功能助手
+// AI Feature Assistant
 const PublishDialogAi = memo(
   forwardRef(
     (
@@ -315,31 +315,31 @@ const PublishDialogAi = memo(
         translate: t('aiFeatures.defaultPrompts.translate' as any),
         generateImage: t('aiFeatures.defaultPrompts.generateImage' as any),
         generateVideo: t('aiFeatures.defaultPrompts.generateVideo' as any),
-        generateHashtags: '请按照下面给的内容生成带#的话题生成3-6个，只要回复话题不要其他任何回复',
+        generateHashtags: t('aiFeatures.defaultPrompts.generateHashtags' as any),
       })
       const [isProcessing, setIsProcessing] = useState(false)
       const [settingsVisible, setSettingsVisible] = useState(false)
       const [showRawContent, setShowRawContent] = useState<number | null>(null)
       const chatContainerRef = useRef<HTMLDivElement>(null)
-      // 用于保存 syncToEditor 的引用，避免循环依赖
+      // Save syncToEditor reference to avoid circular dependencies
       const syncToEditorRef = useRef<((content: string, action?: AIAction) => Promise<void>) | null>(null)
 
-      // 聊天模型相关状态（用于缩写、扩写、润色、翻译、话题）
+      // Chat model state (for shorten/expand/polish/translate/hashtags)
       const [selectedChatModel, setSelectedChatModel] = useState(() => {
         const savedModel = localStorage.getItem('ai_chat_model')
-        return savedModel || 'gemini-3-pro-preview'
+        return savedModel || 'gpt-5.1-all'
       })
 
-      // 图片生成模型相关状态
+      // Image generation model state
       const [selectedImageModel, setSelectedImageModel] = useState(() => {
         const savedModel = localStorage.getItem('ai_image_model')
         return savedModel || 'gemini-2.5-flash-image'
       })
 
-      // 视频生成相关状态
+      // Video generation state
       const [videoModels, setVideoModels] = useState<any[]>([])
-      const videoModelsLoadingRef = useRef(true) // 用 ref 跟踪加载状态
-      // 初始化时从 localStorage 读取，或使用默认值 'sora-2'
+      const videoModelsLoadingRef = useRef(true) // Use ref to track loading state
+      // Initialize from localStorage or use default 'sora-2'
       const [selectedVideoModel, setSelectedVideoModel] = useState(() => {
         const savedModel = localStorage.getItem('ai_video_model')
         return savedModel || 'sora-2'
@@ -349,41 +349,41 @@ const PublishDialogAi = memo(
       const [videoProgress, setVideoProgress] = useState(0)
       const [videoResult, setVideoResult] = useState<string | null>(null)
 
-      // 自动滚动到底部
+      // Auto-scroll to bottom
       useEffect(() => {
         if (chatContainerRef.current) {
           chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
         }
       }, [messages])
 
-      // 初始化聊天模型和图片模型
+      // Initialize chat and image models
       useEffect(() => {
         if (chatModels.length > 0) {
-          // 检查当前选中的聊天模型是否在列表中
+          // Check if current chat model exists in list
           const chatModelExists = chatModels.find((m: any) => m.name === selectedChatModel)
           if (!chatModelExists) {
-            // 尝试找到默认模型
-            const defaultModel = chatModels.find((m: any) => m.name === 'gemini-3-pro-preview')
+            // Try to find default model
+            const defaultModel = chatModels.find((m: any) => m.name === 'gpt-5.1-all')
             if (defaultModel) {
               setSelectedChatModel(defaultModel.name)
               localStorage.setItem('ai_chat_model', defaultModel.name)
             } else if (chatModels.length > 0) {
-              // 如果没有默认模型，使用第一个
+              // Use first model if default not found
               setSelectedChatModel(chatModels[0].name)
               localStorage.setItem('ai_chat_model', chatModels[0].name)
             }
           }
 
-          // 检查当前选中的图片模型是否在列表中
+          // Check if current image model exists in list
           const imageModelExists = chatModels.find((m: any) => m.name === selectedImageModel)
           if (!imageModelExists) {
-            // 尝试找到默认模型
+            // Try to find default model
             const defaultModel = chatModels.find((m: any) => m.name === 'gemini-2.5-flash-image')
             if (defaultModel) {
               setSelectedImageModel(defaultModel.name)
               localStorage.setItem('ai_image_model', defaultModel.name)
             } else if (chatModels.length > 0) {
-              // 如果没有默认模型，使用第一个
+              // Use first model if default not found
               setSelectedImageModel(chatModels[0].name)
               localStorage.setItem('ai_image_model', chatModels[0].name)
             }
@@ -391,7 +391,7 @@ const PublishDialogAi = memo(
         }
       }, [chatModels])
 
-      // 初始化视频模型
+      // Initialize video models
       useEffect(() => {
         const fetchVideoModels = async () => {
           try {
@@ -400,33 +400,29 @@ const PublishDialogAi = memo(
             if (res.data && Array.isArray(res.data)) {
               setVideoModels(res.data)
               
-              // 从 localStorage 读取保存的模型
+              // Read saved model from localStorage
               const savedModel = localStorage.getItem('ai_video_model')
               
-              // 检查当前选中的模型是否在列表中
+              // Check if current model exists in list
               const currentModelExists = res.data.find((m: any) => m.name === selectedVideoModel)
               
               if (currentModelExists) {
-                // 如果当前模型有效，不需要更新
-                console.log('当前视频模型有效:', selectedVideoModel)
+                // Current model is valid, no update needed
               } else if (savedModel && res.data.find((m: any) => m.name === savedModel)) {
-                // 如果有保存的模型且存在于列表中，使用保存的模型
-                console.log('使用保存的视频模型:', savedModel)
+                // Use saved model if it exists in list
                 setSelectedVideoModel(savedModel)
               } else {
-                // 尝试找到 sora 相关模型
+                // Try to find sora-related model
                 const soraModel = res.data.find((m: any) => 
                   m.name?.toLowerCase().includes('sora') || m.name === 'sora-2'
                 )
                 
                 if (soraModel) {
-                  // 优先使用 sora 模型
-                  console.log('使用默认 sora 模型:', soraModel.name)
+                  // Prefer sora model
                   setSelectedVideoModel(soraModel.name)
                   localStorage.setItem('ai_video_model', soraModel.name)
                 } else if (res.data.length > 0) {
-                  // 都没有则使用第一个
-                  console.log('使用第一个可用模型:', res.data[0].name)
+                  // Use first model if no sora found
                   setSelectedVideoModel(res.data[0].name)
                   localStorage.setItem('ai_video_model', res.data[0].name)
                 }
@@ -440,9 +436,9 @@ const PublishDialogAi = memo(
         }
         
         fetchVideoModels()
-      }, []) // 只在组件挂载时执行一次
+      }, []) // Only execute once on component mount
 
-      // 视频任务轮询
+      // Poll video task status
       const pollVideoTaskStatus = useCallback(async (taskId: string) => {
         const checkStatus = async () => {
           try {
@@ -491,26 +487,26 @@ const PublishDialogAi = memo(
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
                 
-                // 更新最后一条消息，嵌入视频（使用自定义标记）
+                // Update last message, embed video (using custom marker)
                 setMessages(prev => {
                   const newMessages = [...prev]
                   if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
-                    // 保存原始视频URL到消息中，用于同步
+                    // Save original video URL to message for syncing
                     newMessages[newMessages.length - 1] = {
                       ...newMessages[newMessages.length - 1],
-                      content: `✅ 视频生成完成！\n\n__VIDEO__${videoUrl}__VIDEO__`,
+                      content: `${t('aiFeatures.videoReady' as any)}\n\n__VIDEO__${videoUrl}__VIDEO__`,
                     }
                   }
                   return newMessages
                 })
                 
-                message.success('视频生成成功')
+                message.success(t('aiFeatures.videoGenerated' as any))
                 setIsProcessing(false)
                 return true
               }
               if (normalized === 'failed') {
                 setVideoProgress(0)
-                message.error(fail_reason || '视频生成失败')
+                message.error(fail_reason || t('aiFeatures.videoFailed' as any))
                 setMessages(prev => prev.slice(0, -1))
                 setIsProcessing(false)
                 return true
@@ -533,13 +529,13 @@ const PublishDialogAi = memo(
         poll()
       }, [])
 
-      // 处理视频生成
+      // Handle video generation
       const handleVideoGeneration = useCallback(async (prompt: string) => {
-        // 如果模型列表还在加载中，等待加载完成
+        // Wait for model list to load if still loading
         if (videoModelsLoadingRef.current) {
-          message.loading({ content: '正在加载视频模型...', key: 'loadingModels', duration: 0 })
+          message.loading({ content: t('aiFeatures.loadingVideoModels' as any), key: 'loadingModels', duration: 0 })
           
-          // 轮询检查模型是否加载完成，最多等待 30 秒
+          // Poll to check if models loaded, max wait 30 seconds
           const maxWaitTime = 30000
           const checkInterval = 200
           let waited = 0
@@ -552,21 +548,20 @@ const PublishDialogAi = memo(
           message.destroy('loadingModels')
           
           if (videoModelsLoadingRef.current) {
-            message.error('视频模型加载超时，请稍后重试')
+            message.error(t('aiFeatures.videoModelLoadTimeout' as any))
             return
           }
         }
 
         if (!selectedVideoModel) {
-          message.error('请先选择视频模型')
+          message.error(t('aiFeatures.selectVideoModelFirst' as any))
           return
         }
 
         const selectedModel = videoModels.find((m: any) => m.name === selectedVideoModel)
-        console.log('selectedModel', selectedModel)
         if (!selectedModel) {
-          console.error('视频模型不可用:', selectedVideoModel, '可用模型:', videoModels.map(m => m.name))
-          message.error(`视频模型 ${selectedVideoModel} 不可用，请在设置中重新选择`)
+          console.error('Video model unavailable:', selectedVideoModel, 'Available models:', videoModels.map(m => m.name))
+          message.error(t('aiFeatures.videoModelUnavailable' as any, { model: selectedVideoModel }))
           return
         }
 
@@ -575,11 +570,11 @@ const PublishDialogAi = memo(
           setVideoStatus('submitted')
           setVideoProgress(10)
 
-          // 添加助手消息占位
-          const placeholderMsg: Message = { role: 'assistant', content: '正在生成视频...', action: 'generateVideo' }
+          // Add assistant message placeholder
+          const placeholderMsg: Message = { role: 'assistant', content: t('aiFeatures.generatingVideo' as any), action: 'generateVideo' }
           setMessages(prev => [...prev, placeholderMsg])
 
-          // 获取第一个可用的分辨率和时长
+          // Get first available resolution and duration
           let duration = 5
           let size = '720p'
           
@@ -599,7 +594,7 @@ const PublishDialogAi = memo(
             duration,
           }
 
-          // 如果是 kling 模型，传 mode 参数
+          // Use mode parameter for kling model
           if (selectedModel?.channel === 'kling') {
             data.mode = size
           } else {
@@ -611,22 +606,22 @@ const PublishDialogAi = memo(
           if (res?.data?.task_id) {
             setVideoTaskId(res.data.task_id)
             setVideoStatus(res.data.status)
-            message.success('视频生成任务已提交')
+            message.success(t('aiFeatures.videoTaskSubmitted' as any))
             pollVideoTaskStatus(res.data.task_id)
           } else {
-            throw new Error('视频生成失败')
+            throw new Error(t('aiFeatures.videoGenerationFailed' as any))
           }
         } catch (error: any) {
           console.error('Video Generation Error:', error)
           setMessages(prev => prev.slice(0, -1))
-          message.error(error.message || '视频生成失败，请重试')
+          message.error(error.message || t('aiFeatures.videoGenerationFailed' as any))
           setVideoStatus('')
           setIsProcessing(false)
         }
-      }, [selectedVideoModel, videoModels, pollVideoTaskStatus])
+      }, [selectedVideoModel, videoModels, pollVideoTaskStatus, t])
 
 
-      // 处理AI响应
+      // Handle AI response
       const handleAIResponse = useCallback(async (
         action: AIAction,
         apiMessages: Array<{ role: string, content: string }>,
@@ -634,11 +629,11 @@ const PublishDialogAi = memo(
         try {
           setIsProcessing(true)
           
-          // 添加助手消息占位
+          // Add assistant message placeholder
           const placeholderMsg: Message = { role: 'assistant', content: '', action }
           setMessages(prev => [...prev, placeholderMsg])
 
-          // 根据 action 选择模型
+          // Select model based on action
           const modelToUse = action === 'generateImage' ? selectedImageModel : selectedChatModel
           
           const response = await aiChatStream({ 
@@ -646,19 +641,19 @@ const PublishDialogAi = memo(
             model: modelToUse
           })
           
-          // 检查响应状态
+          // Check response status
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
           }
 
-          // 尝试读取JSON响应
+          // Try to read JSON response
           const result = await response.json()
           
           if (result.code === 0 && result.data?.content) {
-            // 优化：将 base64 图片转换为 blob URL 以避免存储大量数据导致输入框卡顿
+            // Optimize: convert base64 images to blob URLs to avoid storing large data causing input lag
             let processedContent = result.data.content
             
-            // 查找所有 base64 图片并转换为 blob URL
+            // Find all base64 images and convert to blob URLs
             const base64Regex = /!\[([^\]]*)\]\((data:image\/[^;]+;base64,[^)]+)\)/g
             let match
             const replacements: Array<{ original: string; blobUrl: string }> = []
@@ -666,13 +661,13 @@ const PublishDialogAi = memo(
             while ((match = base64Regex.exec(result.data.content)) !== null) {
               const [fullMatch, alt, base64Url] = match
               try {
-                // 提取 base64 数据
+                // Extract base64 data
                 const parts = base64Url.split(',')
                 if (parts.length === 2) {
                   const mimeType = base64Url.match(/data:(.*?);/)?.[1] || 'image/png'
                   const base64Data = parts[1]
                   
-                  // 转换为 blob
+                  // Convert to blob
                   const byteCharacters = atob(base64Data)
                   const byteNumbers = new Array(byteCharacters.length)
                   for (let i = 0; i < byteCharacters.length; i++) {
@@ -688,16 +683,16 @@ const PublishDialogAi = memo(
                   })
                 }
               } catch (error) {
-                console.error('base64 转 blob 失败:', error)
+                console.error('Base64 to blob conversion failed:', error)
               }
             }
             
-            // 执行所有替换
+            // Execute all replacements
             replacements.forEach(({ original, blobUrl }) => {
               processedContent = processedContent.replace(original, blobUrl)
             })
             
-            // 更新最后一条消息
+            // Update last message
             setMessages(prev => {
               const newMessages = [...prev]
               newMessages[newMessages.length - 1] = {
@@ -708,9 +703,9 @@ const PublishDialogAi = memo(
               return newMessages
             })
             
-            // 如果是话题生成，自动同步到编辑器（追加模式）
+            // Auto-sync to editor if hashtags generation (append mode)
             if (action === 'generateHashtags') {
-              // 延迟一下让用户看到生成结果
+              // Delay to let user see the result
               setTimeout(() => {
                 if (syncToEditorRef.current) {
                   syncToEditorRef.current(processedContent, action)
@@ -718,20 +713,20 @@ const PublishDialogAi = memo(
               }, 500)
             }
           } else {
-            throw new Error(result.message || 'AI响应失败')
+            throw new Error(result.message || 'AI response failed')
           }
 
           setIsProcessing(false)
         } catch (error: any) {
           console.error('AI Response Error:', error)
-          // 移除占位消息
+          // Remove placeholder message
           setMessages(prev => prev.slice(0, -1))
-          message.error(error.message || 'AI处理失败，请重试')
+          message.error(error.message || 'AI processing failed, please retry')
           setIsProcessing(false)
         }
       }, [selectedChatModel, selectedImageModel])
 
-      // 处理功能按钮点击
+      // Handle action button click
       const handleActionClick = useCallback((action: AIAction) => {
         setActiveAction(action)
       }, [])
@@ -744,14 +739,14 @@ const PublishDialogAi = memo(
           return
         }
 
-        // 使用传入的 action 或当前状态的 action
+        // Use passed action or current state action
         const currentAction = forceAction || activeAction
 
-        // 添加用户消息
+        // Add user message
         const userMessage: Message = { role: 'user', content: messageContent, action: currentAction || undefined }
         setMessages(prev => [...prev, userMessage])
 
-        // 如果是视频生成功能，直接调用视频生成
+        // Call video generation directly if it's video generation
         if (currentAction === 'generateVideo') {
           await handleVideoGeneration(messageContent)
           setInputValue('')
@@ -760,7 +755,7 @@ const PublishDialogAi = memo(
 
         let systemPrompt = ''
 
-        // 如果选择了功能，根据不同功能生成提示词
+        // Generate prompt based on selected action
         if (currentAction) {
           switch (currentAction) {
             case 'shorten':
@@ -779,66 +774,60 @@ const PublishDialogAi = memo(
               systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
               break
             case 'generateHashtags':
-              systemPrompt = customPrompts.generateHashtags || '请按照下面给的内容生成带#的话题生成3-6个，只要回复话题不要其他任何回复'
+              systemPrompt = customPrompts.generateHashtags || t('aiFeatures.defaultPrompts.generateHashtags' as any)
               break
           }
         }
 
-        // 准备API消息
+        // Prepare API messages
         const apiMessages: Array<{ role: string, content: string }> = []
         
 
         
-        // 只有在有系统提示词时才添加
+        // Only add system prompt if exists
         if (systemPrompt) {
           apiMessages.push({ role: 'system', content: systemPrompt })
         }
         
         apiMessages.push({ role: 'user', content: messageContent })
 
-        // 调用AI接口
+        // Call AI interface
         await handleAIResponse(currentAction || 'polish', apiMessages)
 
-        // 清空输入
+        // Clear input
         setInputValue('')
       }, [activeAction, inputValue, customPrompts, handleAIResponse, handleVideoGeneration, t])
 
-      // 从URL下载图片并转换为IImgFile对象
+      // Download image from URL and convert to IImgFile object
       const downloadImageAsImgFile = async (url: string, index: number): Promise<IImgFile | null> => {
         try {
           let blob: Blob
           
-          // 如果是 blob URL
+          // If it's a blob URL
           if (url.startsWith('blob:')) {
-            console.log('处理 blob URL:', url)
             const response = await fetch(url)
             if (!response.ok) {
-              throw new Error(`无法读取 blob: ${response.status}`)
+              throw new Error(`Cannot read blob: ${response.status}`)
             }
             blob = await response.blob()
-            console.log('blob 读取完成，大小:', blob.size)
           }
-          // 如果是 base64 图片，直接转换
+          // If it's base64 image, convert directly
           else if (url.startsWith('data:image/')) {
-            console.log('处理 base64 图片，长度:', url.length)
-            
             if (!url.includes(',')) {
-              throw new Error('无效的 base64 图片格式')
+              throw new Error('Invalid base64 image format')
             }
             
             const parts = url.split(',')
             if (parts.length !== 2) {
-              throw new Error('base64 数据格式错误')
+              throw new Error('Base64 data format error')
             }
             
             const base64Data = parts[1]
             const mimeType = url.match(/data:(.*?);/)?.[1] || 'image/png'
             
-            console.log('MIME类型:', mimeType, 'base64数据长度:', base64Data.length)
-            
-            // 检查 base64 数据是否有效
+            // Check if base64 data is valid
             if (!base64Data || base64Data.length < 100) {
-              throw new Error('base64 数据太短或为空')
+              throw new Error('Base64 data too short or empty')
             }
             
             const byteCharacters = atob(base64Data)
@@ -848,83 +837,67 @@ const PublishDialogAi = memo(
             }
             const byteArray = new Uint8Array(byteNumbers)
             blob = new Blob([byteArray], { type: mimeType })
-            
-            console.log('base64 转换完成，Blob大小:', blob.size)
           } 
-          // 普通 URL，需要下载
+          // Regular URL, need to download
           else {
-            console.log('下载图片:', url)
             const response = await fetch(url)
             if (!response.ok) {
               throw new Error(`HTTP ${response.status}`)
             }
             blob = await response.blob()
-            console.log('图片下载完成，大小:', blob.size)
           }
           
           const filename = `ai-generated-image-${index + 1}.png`
           
-          // 使用 formatImg 函数正确处理图片
+          // Use formatImg function to properly process image
           const imgFile = await formatImg({
             blob,
             path: filename,
           })
           
-          console.log('图片处理成功:', imgFile)
           return imgFile
         } catch (error) {
-          console.error('图片处理失败:', error)
-          message.error(`图片 ${index + 1} 处理失败: ${error instanceof Error ? error.message : '未知错误'}`)
+          console.error('Image processing failed:', error)
+          message.error(t('aiFeatures.imageProcessingFailed' as any, { index: index + 1, error: error instanceof Error ? error.message : 'Unknown' }))
           return null
         }
       }
 
-      // 从URL创建IVideoFile对象（不下载，直接使用生成的URL）
+      // Create IVideoFile object from URL (no download, use generated URL directly)
       const downloadVideoAsVideoFile = async (url: string): Promise<IVideoFile | null> => {
         try {
-          console.log('处理视频URL:', url)
           const ossUrl = getOssUrl(url)
-          console.log('转换后的OSS URL:', ossUrl)
-          
           const filename = `ai-generated-video.mp4`
           
-          // 直接使用OSS URL提取视频信息（不下载到本地）
-          console.log('从URL提取视频信息...')
+          // Extract video info from OSS URL directly (no local download)
           const videoInfo = await VideoGrabFrame(ossUrl, 0)
-          console.log('视频信息:', videoInfo)
           
-          // 注意：这里我们不创建本地blob，而是直接使用网络URL
+          // Note: we don't create local blob, just use network URL
           const videoFile: IVideoFile = {
             filename,
-            videoUrl: ossUrl, // 直接使用OSS URL作为videoUrl
-            size: 0, // 不下载就没有size，设置为0
-            file: new Blob(), // 占位，实际不使用
-            ossUrl: ossUrl, // 生成的URL就是最终的OSS URL
+            videoUrl: ossUrl, // Use OSS URL as videoUrl directly
+            size: 0, // No download means no size, set to 0
+            file: new Blob(), // Placeholder, not actually used
+            ossUrl: ossUrl, // Generated URL is the final OSS URL
             ...videoInfo,
           }
           
-          console.log('视频文件对象创建成功（使用网络URL）:', videoFile)
           return videoFile
         } catch (error) {
-          console.error('处理视频失败，URL:', url, '错误:', error)
-          message.error('视频处理失败，请重试')
+          console.error('Video processing failed:', error)
+          message.error(t('aiFeatures.videoProcessingFailed' as any))
           return null
         }
       }
 
-      // 同步到编辑器
+      // Sync to editor
       const syncToEditor = useCallback(async (content: string, action?: AIAction) => {
         if (onSyncToEditor) {
-          console.log('开始同步到编辑器，内容:', content, 'action:', action)
-          
-          // 提取所有图片URL和视频链接
+          // Extract all image URLs and video links
           const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || []
           const linkMatches = content.match(/\[.*?\]\(([^)]+)\)/g) || []
           
-          console.log('图片匹配:', imageMatches)
-          console.log('链接匹配:', linkMatches)
-          
-          // 分离图片和视频链接
+          // Separate image and video links
           const imageUrls: string[] = []
           let videoUrl: string | null = null
           
@@ -932,48 +905,41 @@ const PublishDialogAi = memo(
             const urlMatch = match.match(/!\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
             if (url) {
-              // 支持普通URL和base64格式的图片
+              // Support regular URLs and base64 format images
               imageUrls.push(url)
-              console.log('提取到图片URL:', url.substring(0, 50) + (url.length > 50 ? '...' : ''))
             }
           })
           
-          // 检查是否有视频链接（支持Markdown格式和纯URL格式）
+          // Check for video links (support Markdown and pure URL formats)
           linkMatches.forEach(match => {
             const urlMatch = match.match(/\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
-            console.log('检查链接是否为视频:', url)
             if (url && (url.includes('.mp4') || url.includes('.webm') || url.includes('video'))) {
-              console.log('识别到视频链接:', url)
               videoUrl = url
             }
           })
           
-          // 如果没有找到Markdown格式的视频链接，尝试匹配自定义标记
+          // If no Markdown video link found, try to match custom marker
           if (!videoUrl) {
             const videoTagMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
             if (videoTagMatch) {
               videoUrl = videoTagMatch[1]
-              console.log('识别到自定义标记视频:', videoUrl)
             }
           }
           
-          // 如果还是没找到，尝试匹配纯URL
+          // If still not found, try to match pure URL
           if (!videoUrl) {
             const urlRegex = /(https?:\/\/[^\s]+\.(mp4|webm)|https?:\/\/[^\s]*video[^\s]*)/gi
             const urlMatches = content.match(urlRegex)
             if (urlMatches && urlMatches.length > 0) {
               videoUrl = urlMatches[0]
-              console.log('识别到纯URL视频:', videoUrl)
             }
           }
 
-          console.log('最终识别 - 图片URLs:', imageUrls, '视频URL:', videoUrl)
-
-          // 下载图片
+          // Download images
           let imageFiles: IImgFile[] = []
           if (imageUrls.length > 0) {
-            message.loading({ content: '正在下载图片...', key: 'downloadMedia' })
+            message.loading({ content: t('aiFeatures.downloadingImages' as any), key: 'downloadMedia' })
             const downloadPromises = imageUrls.map((url, index) => 
               downloadImageAsImgFile(url, index)
             )
@@ -981,67 +947,63 @@ const PublishDialogAi = memo(
             imageFiles = results.filter((file): file is IImgFile => file !== null)
           }
 
-          // 下载视频
+          // Download video
           let videoFile: IVideoFile | undefined
           if (videoUrl) {
-            message.loading({ content: '正在下载视频...', key: 'downloadMedia' })
+            message.loading({ content: t('aiFeatures.downloadingVideo' as any), key: 'downloadMedia' })
             videoFile = await downloadVideoAsVideoFile(videoUrl) || undefined
-            console.log('视频下载结果:', videoFile ? '成功' : '失败')
           }
           
           if (imageUrls.length > 0 || videoUrl) {
             message.destroy('downloadMedia')
           }
 
-          // 移除markdown中的图片和视频链接，只保留文本内容
+          // Remove images and video links from markdown, keep only text content
           let textContent = content
-            .replace(/!\[.*?\]\([^)]+\)/g, '') // 移除图片
-            .replace(/\[视频链接\]\([^)]+\)/g, '') // 移除Markdown视频链接
-            .replace(/\[.*?\]\([^)]+\.(mp4|webm)[^)]*\)/gi, '') // 移除Markdown格式视频
-            .replace(/__VIDEO__.*?__VIDEO__/g, '') // 移除自定义视频标记
+            .replace(/!\[.*?\]\([^)]+\)/g, '') // Remove images
+            .replace(/\[视频链接\]\([^)]+\)/g, '') // Remove Markdown video links
+            .replace(/\[.*?\]\([^)]+\.(mp4|webm)[^)]*\)/gi, '') // Remove Markdown format videos
+            .replace(/__VIDEO__.*?__VIDEO__/g, '') // Remove custom video markers
           
-          // 移除纯URL格式的视频链接
+          // Remove pure URL format video links
           if (videoUrl) {
             textContent = textContent.replace(videoUrl, '')
           }
           
           textContent = textContent.trim()
 
-          // 判断是否需要追加内容（话题生成功能）
+          // Determine if content should be appended (hashtags generation)
           const shouldAppend = action === 'generateHashtags'
           
-          // 如果有视频，只同步视频（不更新文本）
-          // 如果有图片，只同步图片（不更新文本）
-          // 如果两者都没有，同步文本内容
+          // If there's video, only sync video (don't update text)
+          // If there are images, only sync images (don't update text)
+          // If neither, sync text content
           if (videoFile) {
-            console.log('同步视频到编辑器')
             onSyncToEditor('', [], videoFile, shouldAppend)
-            message.success('视频同步成功')
+            message.success(t('aiFeatures.videoSynced' as any))
           } else if (imageFiles.length > 0) {
-            console.log('同步图片到编辑器')
             onSyncToEditor('', imageFiles, undefined, shouldAppend)
-            message.success('图片同步成功')
+            message.success(t('aiFeatures.imagesSynced' as any))
           } else {
-            console.log('同步文本到编辑器, 追加模式:', shouldAppend)
             onSyncToEditor(textContent, [], undefined, shouldAppend)
-            message.success(shouldAppend ? '话题追加成功' : t('aiFeatures.syncSuccess' as any))
+            message.success(shouldAppend ? t('aiFeatures.hashtagsAppended' as any) : t('aiFeatures.syncSuccess' as any))
           }
         }
       }, [onSyncToEditor, t, downloadImageAsImgFile, downloadVideoAsVideoFile])
 
-      // 更新 syncToEditor 的 ref
+      // Update syncToEditor ref
       useEffect(() => {
         syncToEditorRef.current = syncToEditor
       }, [syncToEditor])
 
-      // 暴露给父组件的方法
+      // Expose methods to parent component
       useImperativeHandle(ref, () => ({
         processText: (text: string, action: AIAction) => {
           setActiveAction(action)
           setInputValue(text)
-          // 立即自动发送，直接传入 action 参数避免状态异步问题
+          // Auto-send immediately, pass action parameter to avoid async state issues
           setTimeout(() => {
-            sendMessage(text, action) // 传入 action 参数
+            sendMessage(text, action) // Pass action parameter
           }, 50)
         },
       }), [sendMessage])
@@ -1053,13 +1015,12 @@ const PublishDialogAi = memo(
         { action: 'translate', icon: <TranslationOutlined />, label: t('aiFeatures.translate' as any) },
         { action: 'generateImage', icon: <PictureOutlined />, label: t('aiFeatures.generateImage' as any) },
         { action: 'generateVideo', icon: <VideoCameraOutlined />, label: t('aiFeatures.generateVideo' as any) },
-        { action: 'generateHashtags', icon: <TagsOutlined />, label: '生成话题' },
+        { action: 'generateHashtags', icon: <TagsOutlined />, label: t('aiFeatures.generateHashtags' as any) },
       ]
 
-      // 缓存 Markdown 组件配置，避免每次渲染都创建新对象
+      // Cache Markdown component config to avoid creating new objects on every render
       const markdownComponents = useMemo(() => ({
         img: ({ node, ...props }: any) => {
-          console.log('img 组件 props:', { src: props.src?.substring(0, 100), alt: props.alt })
           return <AIGeneratedImage src={props.src || ''} alt={props.alt} />
         },
         p: ({ node, ...props }: any) => <p {...props} style={{ margin: '4px 0', lineHeight: '1.6' }} dir="auto" />,
@@ -1071,7 +1032,7 @@ const PublishDialogAi = memo(
         a: ({ node, ...props }: any) => {
           const href = props.href || ''
           
-          // 检查是否是音频文件
+          // Check if it's an audio file
           if (/\.(aac|mp3|opus|wav)$/.test(href)) {
             return (
               <figure style={{ margin: '8px 0' }}>
@@ -1080,7 +1041,7 @@ const PublishDialogAi = memo(
             )
           }
           
-          // 检查是否是视频文件
+          // Check if it's a video file
           if (/\.(3gp|3g2|webm|ogv|mpeg|mp4|avi)$/.test(href) || href.includes('video')) {
             return (
               <div style={{ margin: '8px 0' }}>
@@ -1099,7 +1060,7 @@ const PublishDialogAi = memo(
             )
           }
           
-          // 普通链接
+          // Regular link
           const isInternal = /^\/#/i.test(href)
           const target = isInternal ? '_self' : props.target ?? '_blank'
           return <a {...props} target={target} style={{ color: '#1890ff', textDecoration: 'underline' }} rel="noopener noreferrer" />
@@ -1122,33 +1083,7 @@ const PublishDialogAi = memo(
             <CloseCircleFilled onClick={onClose} />
           </h1>
           <div className="publishDialogAi-wrapper" style={{ padding: '0 12px', marginTop: '12px' }}>
-            {/* 显示可编辑的默认提示词（缩写和扩写不可编辑） */}
-            {/* {activeAction && activeAction !== 'shorten' && activeAction !== 'expand' && (
-             <Collapse
-                size="small"
-                items={[
-                  {
-                    key: '1',
-                    label: '默认提示词',
-                    children: (
-                      <Input.TextArea
-                        value={customPrompts[activeAction]}
-                        onChange={e =>
-                          setCustomPrompts(prev => ({
-                            ...prev,
-                            [activeAction]: e.target.value,
-                          }))}
-                        rows={2}
-                        placeholder={t('aiFeatures.inputPrompt' as any)}
-                      />
-                    ),
-                  },
-                ]}
-                style={{ marginBottom: 12 }}
-              /> 
-            )} */}
-
-            {/* 聊天消息区域 */}
+            {/* Chat messages area */}
             <div 
               ref={chatContainerRef}
               className="publishDialogAi-chat" 
@@ -1168,7 +1103,7 @@ const PublishDialogAi = memo(
                   color: '#999', 
                   padding: '40px 20px',
                 }}>
-                  输入内容开始对话，或选择功能快速处理文本
+                  {t('aiFeatures.emptyChat' as any)}
                 </div>
               ) : (
                 messages.map((msg, index) => (
@@ -1189,7 +1124,7 @@ const PublishDialogAi = memo(
               )}
             </div>
 
-            {/* 功能按钮区域 */}
+            {/* Action buttons area */}
             <div style={{ 
               display: 'flex', 
               gap: 8, 
@@ -1212,7 +1147,7 @@ const PublishDialogAi = memo(
                   </Tooltip>
                 ))}
               </div>
-              <Tooltip title="设置">
+              <Tooltip title={t('aiFeatures.settings' as any)}>
                 <Button
                   icon={<SettingOutlined />}
                   onClick={() => setSettingsVisible(true)}
@@ -1221,16 +1156,16 @@ const PublishDialogAi = memo(
               </Tooltip>
             </div>
 
-            {/* 输入区域 */}
+            {/* Input area */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
               <Input.TextArea
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
-                placeholder={activeAction ? t('aiFeatures.inputPrompt' as any) : '输入内容开始对话...'}
+                placeholder={activeAction ? t('aiFeatures.inputPrompt' as any) : t('aiFeatures.emptyChat' as any)}
                 rows={1}
                 disabled={isProcessing}
                 onPressEnter={(e) => {
-                  if (e.shiftKey) return // Shift+Enter换行
+                  if (e.shiftKey) return // Shift+Enter for new line
                   e.preventDefault()
                   sendMessage()
                 }}
@@ -1247,32 +1182,32 @@ const PublishDialogAi = memo(
             </div>
           </div>
 
-          {/* 设置弹窗 */}
+          {/* Settings modal */}
           <Modal
-            title="AI设置"
+            title={t('aiFeatures.settings' as any)}
             open={settingsVisible}
             onCancel={() => setSettingsVisible(false)}
             footer={[
               <Button key="close" onClick={() => setSettingsVisible(false)}>
-                关闭
+                {t('aiFeatures.close' as any)}
               </Button>,
             ]}
           >
-            {/* 聊天模型选择 */}
+            {/* Chat model selection */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
                 <EditOutlined style={{ marginRight: 8 }} />
-                聊天模型（缩写/扩写/润色/翻译/话题）
+                {t('aiFeatures.chatModel' as any)}
               </div>
               <Select
                 value={selectedChatModel}
                 onChange={(value) => {
                   setSelectedChatModel(value)
                   localStorage.setItem('ai_chat_model', value)
-                  message.success('聊天模型设置已保存')
+                  message.success(t('aiFeatures.chatModelSaved' as any))
                 }}
                 style={{ width: '100%' }}
-                placeholder="选择聊天模型"
+                placeholder={t('aiFeatures.selectChatModel' as any)}
                 optionLabelProp="label"
               >
                 {chatModels.map((model: any) => (
@@ -1294,21 +1229,21 @@ const PublishDialogAi = memo(
               </Select>
             </div>
 
-            {/* 图片生成模型选择 */}
+            {/* Image generation model selection */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
                 <PictureOutlined style={{ marginRight: 8 }} />
-                图片生成模型
+                {t('aiFeatures.imageModel' as any)}
               </div>
               <Select
                 value={selectedImageModel}
                 onChange={(value) => {
                   setSelectedImageModel(value)
                   localStorage.setItem('ai_image_model', value)
-                  message.success('图片生成模型设置已保存')
+                  message.success(t('aiFeatures.imageModelSaved' as any))
                 }}
                 style={{ width: '100%' }}
-                placeholder="选择图片生成模型"
+                placeholder={t('aiFeatures.selectImageModel' as any)}
                 optionLabelProp="label"
               >
                 {chatModels.map((model: any) => (
@@ -1330,21 +1265,21 @@ const PublishDialogAi = memo(
               </Select>
             </div>
 
-            {/* 视频生成模型选择 */}
+            {/* Video generation model selection */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
                 <VideoCameraOutlined style={{ marginRight: 8 }} />
-                视频生成模型
+                {t('aiFeatures.videoModel' as any)}
               </div>
               <Select
                 value={selectedVideoModel}
                 onChange={(value) => {
                   setSelectedVideoModel(value)
                   localStorage.setItem('ai_video_model', value)
-                  message.success('视频模型设置已保存')
+                  message.success(t('aiFeatures.videoModelSaved' as any))
                 }}
                 style={{ width: '100%' }}
-                placeholder="选择视频模型"
+                placeholder={t('aiFeatures.selectVideoModel' as any)}
                 optionLabelProp="label"
               >
                 {videoModels.map((model: any) => (
@@ -1383,8 +1318,8 @@ const PublishDialogAi = memo(
                 
                 return (
                   <div style={{ marginTop: 8, padding: '8px', background: '#f5f5f5', borderRadius: '4px', fontSize: '12px', color: '#666' }}>
-                    <div>默认时长: {duration}秒</div>
-                    <div>默认分辨率: {size}</div>
+                    <div>{t('aiFeatures.defaultDuration' as any)}: {duration}{t('aiFeatures.seconds' as any)}</div>
+                    <div>{t('aiFeatures.defaultResolution' as any)}: {size}</div>
                   </div>
                 )
               })()}

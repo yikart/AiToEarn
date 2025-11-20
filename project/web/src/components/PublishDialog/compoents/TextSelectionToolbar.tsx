@@ -15,9 +15,9 @@ import type { AIAction } from './PublishDialogAi'
 import styles from './TextSelectionToolbar.module.scss'
 
 export interface TextSelectionToolbarProps {
-  // 容器ref，用于限定选择范围
+  // Container ref to limit selection range
   containerRef: React.RefObject<HTMLElement>
-  // 选择文本后的回调
+  // Callback after text selection
   onAction: (action: AIAction, selectedText: string) => void
 }
 
@@ -37,7 +37,7 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
       return
     }
 
-    // 检查选中的文本是否在指定容器内
+    // Check if selected text is within specified container
     if (containerRef.current && selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0)
       const container = containerRef.current
@@ -47,13 +47,13 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
         return
       }
 
-      // 获取选区的位置
+      // Get selection position
       const rect = range.getBoundingClientRect()
       const containerRect = container.getBoundingClientRect()
 
-      // 计算工具栏位置（相对于视口）
-      const top = rect.top - 50 // 工具栏显示在选中文本上方
-      const left = rect.left + rect.width / 2 // 居中显示
+      // Calculate toolbar position (relative to viewport)
+      const top = rect.top - 50 // Show toolbar above selected text
+      const left = rect.left + rect.width / 2 // Center align
 
       setPosition({ top, left })
       setSelectedText(text)
@@ -65,7 +65,7 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
     if (selectedText) {
       onAction(action, selectedText)
       setVisible(false)
-      // 清除选择
+      // Clear selection
       window.getSelection()?.removeAllRanges()
     }
   }, [selectedText, onAction])
@@ -138,9 +138,9 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
         <Button
           icon={<TagsOutlined />}
           onClick={() => handleAction('generateHashtags')}
-          title="生成话题"
+          title={t('aiFeatures.generateHashtags' as any)}
         >
-          生成话题
+          {t('aiFeatures.generateHashtags' as any)}
         </Button>
         <Button
           icon={<PictureOutlined />}
