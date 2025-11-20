@@ -12,6 +12,7 @@ import { MediaController } from './media.controller'
 import { MediaService } from './media.service'
 import { MediaGroupController } from './mediaGroup.controller'
 import { MediaGroupService } from './mediaGroup.service'
+import { ContentAiUtil } from './util/ai.util'
 
 @Global()
 @Module({
@@ -20,7 +21,7 @@ import { MediaGroupService } from './mediaGroup.service'
     AiModule,
   ],
   controllers: [MediaController, MediaGroupController, MaterialGroupController, MaterialController],
-  providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, MaterialGenerateConsumer],
+  providers: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService, MaterialGenerateConsumer, ContentAiUtil],
   exports: [MediaService, MediaGroupService, MaterialGroupService, MaterialService, MaterialTaskService],
 })
 export class ContentModule { }
