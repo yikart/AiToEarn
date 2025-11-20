@@ -185,6 +185,7 @@ const RecordCore = memo(
               if (publishRecord.status === PublishStatus.RELEASED) {
                 const res = await deletePlatWorkApi(publishRecord.accountId!, publishRecord.dataId)
                 if (!res) {
+                  setListLoading(false)
                   return
                 }
               }
