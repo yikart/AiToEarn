@@ -30,7 +30,7 @@ import {
   useState,
 } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { deletePublishRecordApi, nowPubTaskApi } from '@/api/plat/publish'
+import { deletePlatWorkApi, deletePublishRecordApi, nowPubTaskApi } from '@/api/plat/publish'
 import {
   PublishStatus,
 } from '@/api/plat/types/publish.types'
@@ -115,36 +115,87 @@ const RecordCore = memo(
       const [nowPubLoading, setNowPubLoading] = useState(false)
 
       const dropdownItems: MenuProps['items'] = useMemo(() => {
+        const dropdownItemsArr: MenuProps['items'] = []
+
         if (publishRecord.workLink) {
-          return [
-            {
-              key: '2',
-              label: t('buttons.copyLink'),
-              onClick: async () => {
-                await navigator.clipboard.writeText(
-                  publishRecord?.workLink ?? '',
-                )
-              },
+          dropdownItemsArr.push({
+            key: '2',
+            label: t('buttons.copyLink'),
+            onClick: async () => {
+              await navigator.clipboard.writeText(
+                publishRecord?.workLink ?? '',
+              )
             },
-          ]
+          })
         }
 
-        if (publishRecord.status === PublishStatus.UNPUBLISH) {
-          return [
-            {
-              key: '3',
-              danger: true,
-              label: t('buttons.delete'),
-              onClick: async () => {
-                setPopoverOpen(false)
-                setListLoading(true)
-                await deletePublishRecordApi(publishRecord.id)
-                getPubRecord()
-              },
+        /**
+         * 删除按钮显示逻辑：
+         * 1. 未发布的、发布失败的，直接显示删除按钮。
+         * 2. 已发布的，除了小红书、抖音、视频号、ins、tiktok之外，其他平台均显示删除按钮。
+         *    注意：Facebook 只有post类型显示删除按钮。
+         */
+        const shouldShowDelete = (() => {
+          // 规则1：未发布或发布失败的，显示删除按钮
+          if (
+            publishRecord.status === PublishStatus.UNPUBLISH
+            || publishRecord.status === PublishStatus.FAIL
+          ) {
+            return true
+          }
+
+          // 规则2：已发布的，根据平台判断
+          if (publishRecord.status === PublishStatus.RELEASED) {
+            // 不允许删除的平台列表
+            const noDeletablePlats = [
+              PlatType.Xhs, // 小红书
+              PlatType.Douyin, // 抖音
+              PlatType.WxSph, // 视频号
+              PlatType.Instagram, // ins
+              PlatType.Tiktok, // tiktok
+            ]
+
+            // 如果是不允许删除的平台，不显示删除按钮
+            if (noDeletablePlats.includes(publishRecord.accountType)) {
+              return false
+            }
+
+            // Facebook特殊处理：post类型不显示删除按钮
+            if (publishRecord.accountType === PlatType.Facebook) {
+              // 如果是post类型，不显示删除按钮
+              return publishRecord.option.facebook.content_category === 'post'
+            }
+
+            // 其他已发布的平台，显示删除按钮
+            return true
+          }
+
+          // 发布中的状态，不显示删除按钮
+          return false
+        })()
+
+        if (shouldShowDelete) {
+          dropdownItemsArr.push({
+            key: '3',
+            danger: true,
+            label: t('buttons.delete'),
+            onClick: async () => {
+              setPopoverOpen(false)
+              setListLoading(true)
+              if (publishRecord.status === PublishStatus.RELEASED) {
+                const res = await deletePlatWorkApi(publishRecord.accountId!, publishRecord.dataId)
+                if (!res) {
+                  return
+                }
+              }
+              await deletePublishRecordApi(publishRecord.id)
+              getPubRecord()
             },
-          ]
+          })
         }
-      }, [publishRecord])
+
+        return dropdownItemsArr
+      }, [publishRecord, t, setListLoading, getPubRecord])
 
       const days = useMemo(() => {
         return getDays(publishRecord.publishTime)

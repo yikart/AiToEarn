@@ -71,6 +71,14 @@ export function deletePublishRecordApi(id: string) {
   })
 }
 
+// 删除平台的作品
+export function deletePlatWorkApi(accountId: string, dataId: string) {
+  return request({
+    url: `channel/${accountId}/post/${dataId}`,
+    method: 'DELETE',
+  })
+}
+
 // 立即发布任务
 export function nowPubTaskApi(id: string) {
   return request({

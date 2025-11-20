@@ -26,7 +26,7 @@ export interface IPublishDialogStore {
   // 错误提示
   errParamsMap?: ErrPubParamsMapType
   warningParamsMap?: ErrPubParamsMapType
-  // 发布时间
+  // 发布时间，为空则为立即发布
   pubTime?: string
   openLeft: boolean
 }
