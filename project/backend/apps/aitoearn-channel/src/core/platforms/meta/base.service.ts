@@ -6,6 +6,7 @@ import { getCurrentTimestamp } from '../../../common'
 
 import { OAuth2Credential } from '../../../libs/database/schema/oauth2Credential.schema'
 import { PlatformBaseService } from '../base.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { META_TIME_CONSTANTS, MetaRedisKeys } from './constants'
 import { MetaUserOAuthCredential } from './meta.interfaces'
 
@@ -39,8 +40,7 @@ export class MetaBaseService extends PlatformBaseService {
         },
       )
       if (!oauth2Credential) {
-        this.logger.error(`No access token found for accountId: ${this.platform} ${accountId} in database`)
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential = JSON.parse(oauth2Credential.raw) as MetaUserOAuthCredential
     }

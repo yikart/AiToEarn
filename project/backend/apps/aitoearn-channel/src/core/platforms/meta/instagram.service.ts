@@ -17,6 +17,7 @@ import {
   InstagramUserPostResponse,
 } from '../../../libs/instagram/instagram.interfaces'
 import { InstagramService as InstagramAPIService } from '../../../libs/instagram/instagram.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { MetaBaseService } from './base.service'
 import { META_TIME_CONSTANTS } from './constants'
 import { MetaPublishPlaintextCommentResponse, MetaUserOAuthCredential } from './meta.interfaces'
@@ -36,10 +37,6 @@ export class InstagramService extends MetaBaseService {
     accountId: string,
   ): Promise<MetaUserOAuthCredential> {
     const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.error(`No access token found for accountId: ${accountId}`)
-      throw new Error(`No access token found for accountId: ${accountId}`)
-    }
     const now = getCurrentTimestamp()
     const tokenExpiredAt = now + credential.expires_in
     const requestTime
@@ -52,19 +49,13 @@ export class InstagramService extends MetaBaseService {
         credential.access_token,
       )
       if (!refreshedToken) {
-        this.logger.error(
-          `Failed to refresh access token for accountId: ${accountId}`,
-        )
-        throw new Error(`Failed to refresh access token for accountId: ${accountId}`)
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in
       const saved = await this.saveOAuth2Credential(accountId, credential, this.platform)
       if (!saved) {
-        this.logger.error(
-          `Failed to save refreshed access token for accountId: ${accountId}`,
-        )
-        throw new Error(`Failed to save refreshed access token for accountId: ${accountId}`)
+        throw new PlatformAuthExpiredException(this.platform)
       }
       return credential
     }

@@ -26,6 +26,7 @@ import {
 } from '../../../libs/database/schema/oauth2Credential.schema'
 import { YoutubeApiService } from '../../../libs/youtube/youtubeApi.service'
 import { PlatformBaseService } from '../base.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 
 interface AuthTaskInfo {
   state: string
@@ -480,7 +481,7 @@ export class YoutubeService extends PlatformBaseService {
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential || !credential.access_token) {
       this.logger.error(`youtube credential not found for accountId: ${accountId}`)
-      throw new AppException(ResponseCode.ChannelCredentialNotFound, { channel: 'youtube', accountId })
+      throw new PlatformAuthExpiredException(this.platform)
     }
 
     const isTokenExpired = credential.expires_in <= getCurrentTimestamp()
@@ -490,14 +491,12 @@ export class YoutubeService extends PlatformBaseService {
 
     if (!credential.refresh_token) {
       this.logger.error(`refresh Token not found for accountId: ${accountId}`)
-      throw new AppException(ResponseCode.ChannelRefreshTokenNotFound, { channel: 'youtube', accountId })
+      throw new PlatformAuthExpiredException(this.platform)
     }
 
     const isRefreshTokenExpired = credential.refresh_expires_in && credential.refresh_expires_in <= getCurrentTimestamp()
     if (isRefreshTokenExpired) {
-      const errMsg = `youtube refresh Token expired for accountId: ${accountId}, expired at: ${credential.refresh_expires_in}, please re-authorize`
-      this.logger.error(errMsg)
-      throw new AppException(ResponseCode.ChannelRefreshTokenExpired, { channel: 'youtube', accountId, credential })
+      throw new PlatformAuthExpiredException(this.platform)
     }
 
     // 刷新并获取新令牌
@@ -508,7 +507,7 @@ export class YoutubeService extends PlatformBaseService {
 
     if (!accessToken) {
       this.logger.error(`refresh Token failed for accountId: ${accountId}`)
-      throw new AppException(ResponseCode.ChannelRefreshTokenFailed, { accountId })
+      throw new PlatformAuthExpiredException(this.platform)
     }
 
     return accessToken
@@ -2076,7 +2075,7 @@ export class YoutubeService extends PlatformBaseService {
     const accessToken = await this.getUserAccessToken(accountId)
 
     if (!accessToken) {
-      return false
+      throw new PlatformAuthExpiredException(this.platform)
     }
     this.initializeYouTubeClient(accessToken)
     return true

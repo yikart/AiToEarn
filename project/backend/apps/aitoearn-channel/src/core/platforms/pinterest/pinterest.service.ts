@@ -23,6 +23,7 @@ import {
 import { PinterestApiService } from '../../../libs/pinterest/pinterestApi.service'
 import { PlatformBaseService } from '../base.service'
 import { META_TIME_CONSTANTS } from '../meta/constants'
+import { PlatformAuthExpiredException } from '../platform.exception'
 
 @Injectable()
 export class PinterestService extends PlatformBaseService {
@@ -93,7 +94,7 @@ export class PinterestService extends PlatformBaseService {
         platform: AccountType.PINTEREST,
       })
       if (!oauth2Credential) {
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       credential = {
         status: ILoginStatus.success,
@@ -124,10 +125,6 @@ export class PinterestService extends PlatformBaseService {
 
   private async authorize(accountId: string): Promise<AuthInfo | null> {
     const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      return null
-    }
     const now = getCurrentTimestamp()
     if (credential.expires_in && now >= credential.expires_in) {
       // attempt refresh using DB-stored refresh token
@@ -139,8 +136,7 @@ export class PinterestService extends PlatformBaseService {
       }
       const refreshed = await this.refreshOAuthCredential(refreshToken)
       if (!refreshed) {
-        this.logger.error(`Failed to refresh access token for accountId: ${accountId}`)
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       const saved = await this.saveOAuthCredential(accountId, {
         access_token: refreshed.access_token,
@@ -149,8 +145,7 @@ export class PinterestService extends PlatformBaseService {
         refresh_token_expires_in: refreshed.refresh_token_expires_in,
       }, refreshed)
       if (!saved) {
-        this.logger.error(`Failed to save refreshed access token for accountId: ${accountId}`)
-        return null
+        throw new PlatformAuthExpiredException(this.platform)
       }
       const updated = await this.getOAuth2Credential(accountId)
       return updated
