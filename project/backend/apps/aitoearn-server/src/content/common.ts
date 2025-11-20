@@ -1,4 +1,5 @@
 import { UserType } from '@yikart/common'
+import { FileMetadata } from '@yikart/mongodb'
 
 export enum PubStatus {
   UNPUBLISH = 0, // Unpublished/Draft
@@ -54,8 +55,11 @@ export interface Material {
 }
 
 export interface MaterialMedia {
+  id?: string
   url: string
   type: MediaType
+  thumbUrl?: string
+  metadata?: FileMetadata
   content?: string
 }
 

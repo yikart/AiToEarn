@@ -3,7 +3,7 @@
  * @Date: 2024-06-17 19:19:20
  * @LastEditTime: 2024-12-23 12:45:22
  * @LastEditors: nevin
- * @Description: 草稿
+ * @Description: Material Controller
  */
 import {
   Body,
@@ -19,6 +19,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode, TableDto, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
+import { fileUtil } from '../util/file.util'
 import {
   CreateMaterialDto,
   CreateMaterialTaskDto,
@@ -61,6 +62,7 @@ export class MaterialController {
     if (!getInfo) {
       throw new AppException(ResponseCode.MaterialGroupNotFound)
     }
+
     const res = await this.materialService.create({
       ...body,
       userId: token.id,
@@ -197,6 +199,14 @@ export class MaterialController {
         ...(!query.groupId && { userId: token.id, userType: UserType.User }),
       },
     )
+
+    for (const item of res.list) {
+      item.coverUrl = fileUtil.buildUrl(item.coverUrl)
+      for (const media of item.mediaList) {
+        media.url = fileUtil.buildUrl(media.url)
+        media.thumbUrl = fileUtil.buildUrl(media.thumbUrl)
+      }
+    }
     return res
   }
 }

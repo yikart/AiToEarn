@@ -8,8 +8,10 @@ const MaterialIdSchema = z.object({
 export class MaterialIdDto extends createZodDto(MaterialIdSchema) {}
 
 export const MaterialMediaSchema = z.object({
+  id: z.string().optional().describe('资源ID'),
   url: z.string(),
   type: z.enum(MediaType).describe('资源类型'),
+  thumbUrl: z.string().optional().describe('缩略图'),
   content: z.string().optional().describe('文本内容'),
   mediaId: z.string().optional().describe('资源ID'),
 })
