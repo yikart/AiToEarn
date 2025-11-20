@@ -109,49 +109,77 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
       <Button.Group size="small">
         <Button
           icon={<CompressOutlined />}
-          onClick={() => handleAction('shorten')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('shorten')
+          }}
           title={t('aiFeatures.shorten' as any)}
         >
           {t('aiFeatures.shorten' as any)}
         </Button>
         <Button
           icon={<ExpandOutlined />}
-          onClick={() => handleAction('expand')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('expand')
+          }}
           title={t('aiFeatures.expand' as any)}
         >
           {t('aiFeatures.expand' as any)}
         </Button>
         <Button
           icon={<EditOutlined />}
-          onClick={() => handleAction('polish')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('polish')
+          }}
           title={t('aiFeatures.polish' as any)}
         >
           {t('aiFeatures.polish' as any)}
         </Button>
         <Button
           icon={<TranslationOutlined />}
-          onClick={() => handleAction('translate')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('translate')
+          }}
           title={t('aiFeatures.translate' as any)}
         >
           {t('aiFeatures.translate' as any)}
         </Button>
         <Button
           icon={<TagsOutlined />}
-          onClick={() => handleAction('generateHashtags')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('generateHashtags')
+          }}
           title={t('aiFeatures.generateHashtags' as any)}
         >
           {t('aiFeatures.generateHashtags' as any)}
         </Button>
         <Button
           icon={<PictureOutlined />}
-          onClick={() => handleAction('generateImage')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('generateImage')
+          }}
           title={t('aiFeatures.generateImage' as any)}
         >
           {t('aiFeatures.generateImage' as any)}
         </Button>
         <Button
           icon={<VideoCameraOutlined />}
-          onClick={() => handleAction('generateVideo')}
+          onClick={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('generateVideo')
+          }}
           title={t('aiFeatures.generateVideo' as any)}
         >
           {t('aiFeatures.generateVideo' as any)}
