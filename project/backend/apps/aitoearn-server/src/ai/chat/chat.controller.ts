@@ -1,6 +1,6 @@
-import { Body, Controller, Post, Get } from '@nestjs/common'
+import { Body, Controller, Get, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, TokenInfo,Public } from '@yikart/aitoearn-auth'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
 import { ChatCompletionDto } from './chat.dto'
 import { ChatService } from './chat.service'
