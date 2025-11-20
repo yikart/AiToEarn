@@ -40,7 +40,7 @@ export class MetaBaseService extends PlatformBaseService {
         },
       )
       if (!oauth2Credential) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential = JSON.parse(oauth2Credential.raw) as MetaUserOAuthCredential
     }

@@ -115,7 +115,7 @@ export class TiktokService extends PlatformBaseService {
           platform: this.platform,
       })
       if (!oauth2Credential) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential = {
         access_token: oauth2Credential.accessToken,
@@ -260,7 +260,7 @@ export class TiktokService extends PlatformBaseService {
         tokenInfo.refresh_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       tokenInfo = refreshedToken
     }

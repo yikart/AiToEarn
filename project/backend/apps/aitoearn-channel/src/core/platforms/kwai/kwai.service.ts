@@ -41,7 +41,7 @@ export class KwaiService extends PlatformBaseService {
           platform: this.platform,
         })
       if (!oauth2Credential) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential = {
         result: 0,
@@ -80,7 +80,7 @@ export class KwaiService extends PlatformBaseService {
     const isRefreshTokenExpired
       = getCurrentTimestamp() >= accessTokenInfo.refresh_token_expires_in
     if (isRefreshTokenExpired) {
-      throw new PlatformAuthExpiredException(this.platform)
+      throw new PlatformAuthExpiredException(this.platform, accountId)
     }
 
     // 判断 access_token 是否过期
@@ -93,7 +93,7 @@ export class KwaiService extends PlatformBaseService {
       accessTokenInfo.refresh_token,
     )
     if (!newAccountToken) {
-      throw new PlatformAuthExpiredException(this.platform)
+      throw new PlatformAuthExpiredException(this.platform, accountId)
     }
 
     const success = await this.saveOAuthCredential(accountId, newAccountToken)

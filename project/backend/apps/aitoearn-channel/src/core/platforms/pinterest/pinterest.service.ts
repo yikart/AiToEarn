@@ -94,7 +94,7 @@ export class PinterestService extends PlatformBaseService {
         platform: AccountType.PINTEREST,
       })
       if (!oauth2Credential) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential = {
         status: ILoginStatus.success,
@@ -136,7 +136,7 @@ export class PinterestService extends PlatformBaseService {
       }
       const refreshed = await this.refreshOAuthCredential(refreshToken)
       if (!refreshed) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       const saved = await this.saveOAuthCredential(accountId, {
         access_token: refreshed.access_token,
@@ -145,7 +145,7 @@ export class PinterestService extends PlatformBaseService {
         refresh_token_expires_in: refreshed.refresh_token_expires_in,
       }, refreshed)
       if (!saved) {
-        throw new PlatformAuthExpiredException(this.platform)
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       const updated = await this.getOAuth2Credential(accountId)
       return updated
