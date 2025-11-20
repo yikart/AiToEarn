@@ -20,6 +20,6 @@ import { VideoModule } from './video'
   ],
   controllers: [],
   providers: [],
-  exports: [ChatModule],
+  exports: [ChatModule, LogsModule, ImageModule, VideoModule, ModelsConfigModule],
 })
 export class AiModule { }
