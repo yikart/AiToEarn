@@ -163,7 +163,7 @@ const RecordCore = memo(
             // Facebook特殊处理：post类型不显示删除按钮
             if (publishRecord.accountType === PlatType.Facebook) {
               // 如果是post类型，不显示删除按钮
-              return publishRecord.option.facebook.content_category === 'post'
+              return publishRecord.option?.facebook?.content_category === 'post'
             }
 
             // 其他已发布的平台，显示删除按钮
