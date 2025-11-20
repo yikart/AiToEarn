@@ -6,6 +6,7 @@ import {
   ExpandOutlined, 
   EditOutlined, 
   TranslationOutlined,
+  TagsOutlined,
   PictureOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons'
@@ -133,6 +134,13 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
           title={t('aiFeatures.translate' as any)}
         >
           {t('aiFeatures.translate' as any)}
+        </Button>
+        <Button
+          icon={<TagsOutlined />}
+          onClick={() => handleAction('generateHashtags')}
+          title="生成话题"
+        >
+          生成话题
         </Button>
         <Button
           icon={<PictureOutlined />}

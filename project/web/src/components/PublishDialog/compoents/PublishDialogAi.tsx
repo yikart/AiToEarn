@@ -11,6 +11,7 @@ import {
   PictureOutlined,
   VideoCameraOutlined,
   SettingOutlined,
+  TagsOutlined,
 } from '@ant-design/icons'
 import { Button, Collapse, Input, message, Modal, Spin, Tooltip, Select, Progress } from 'antd'
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState, useMemo } from 'react'
@@ -51,10 +52,13 @@ export interface IPublishDialogAiRef {
 export interface IPublishDialogAiProps {
   onClose: () => void
   // 同步内容到编辑器的回调
-  onSyncToEditor?: (content: string, images?: IImgFile[], video?: IVideoFile) => void
+  // append: true 表示追加内容，false 表示替换内容
+  onSyncToEditor?: (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => void
+  // 聊天模型列表
+  chatModels?: any[]
 }
 
-export type AIAction = 'shorten' | 'expand' | 'polish' | 'translate' | 'generateImage' | 'generateVideo'
+export type AIAction = 'shorten' | 'expand' | 'polish' | 'translate' | 'generateImage' | 'generateVideo' | 'generateHashtags'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -79,7 +83,7 @@ interface Message {
     index: number
     showRawContent: number | null
     setShowRawContent: (index: number | null) => void
-    syncToEditor: (content: string) => void
+    syncToEditor: (content: string, action?: AIAction) => void
     videoStatus: string
     videoProgress: number
     messagesLength: number
@@ -172,7 +176,7 @@ interface Message {
               <Button
                 size="small"
                 icon={<SyncOutlined />}
-                onClick={() => syncToEditor(msg.content)}
+                onClick={() => syncToEditor(msg.content, msg.action)}
               >
                 {t('aiFeatures.syncToEditor' as any)}
               </Button>
@@ -298,7 +302,7 @@ interface Message {
 const PublishDialogAi = memo(
   forwardRef(
     (
-      { onClose, onSyncToEditor }: IPublishDialogAiProps,
+      { onClose, onSyncToEditor, chatModels = [] }: IPublishDialogAiProps,
       ref: ForwardedRef<IPublishDialogAiRef>,
     ) => {
       const { t } = useTransClient('publish')
@@ -311,11 +315,26 @@ const PublishDialogAi = memo(
         translate: t('aiFeatures.defaultPrompts.translate' as any),
         generateImage: t('aiFeatures.defaultPrompts.generateImage' as any),
         generateVideo: t('aiFeatures.defaultPrompts.generateVideo' as any),
+        generateHashtags: '请按照下面给的内容生成带#的话题生成3-6个，只要回复话题不要其他任何回复',
       })
       const [isProcessing, setIsProcessing] = useState(false)
       const [settingsVisible, setSettingsVisible] = useState(false)
       const [showRawContent, setShowRawContent] = useState<number | null>(null)
       const chatContainerRef = useRef<HTMLDivElement>(null)
+      // 用于保存 syncToEditor 的引用，避免循环依赖
+      const syncToEditorRef = useRef<((content: string, action?: AIAction) => Promise<void>) | null>(null)
+
+      // 聊天模型相关状态（用于缩写、扩写、润色、翻译、话题）
+      const [selectedChatModel, setSelectedChatModel] = useState(() => {
+        const savedModel = localStorage.getItem('ai_chat_model')
+        return savedModel || 'gemini-3-pro-preview'
+      })
+
+      // 图片生成模型相关状态
+      const [selectedImageModel, setSelectedImageModel] = useState(() => {
+        const savedModel = localStorage.getItem('ai_image_model')
+        return savedModel || 'gemini-2.5-flash-image'
+      })
 
       // 视频生成相关状态
       const [videoModels, setVideoModels] = useState<any[]>([])
@@ -336,6 +355,41 @@ const PublishDialogAi = memo(
           chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
         }
       }, [messages])
+
+      // 初始化聊天模型和图片模型
+      useEffect(() => {
+        if (chatModels.length > 0) {
+          // 检查当前选中的聊天模型是否在列表中
+          const chatModelExists = chatModels.find((m: any) => m.name === selectedChatModel)
+          if (!chatModelExists) {
+            // 尝试找到默认模型
+            const defaultModel = chatModels.find((m: any) => m.name === 'gemini-3-pro-preview')
+            if (defaultModel) {
+              setSelectedChatModel(defaultModel.name)
+              localStorage.setItem('ai_chat_model', defaultModel.name)
+            } else if (chatModels.length > 0) {
+              // 如果没有默认模型，使用第一个
+              setSelectedChatModel(chatModels[0].name)
+              localStorage.setItem('ai_chat_model', chatModels[0].name)
+            }
+          }
+
+          // 检查当前选中的图片模型是否在列表中
+          const imageModelExists = chatModels.find((m: any) => m.name === selectedImageModel)
+          if (!imageModelExists) {
+            // 尝试找到默认模型
+            const defaultModel = chatModels.find((m: any) => m.name === 'gemini-2.5-flash-image')
+            if (defaultModel) {
+              setSelectedImageModel(defaultModel.name)
+              localStorage.setItem('ai_image_model', defaultModel.name)
+            } else if (chatModels.length > 0) {
+              // 如果没有默认模型，使用第一个
+              setSelectedImageModel(chatModels[0].name)
+              localStorage.setItem('ai_image_model', chatModels[0].name)
+            }
+          }
+        }
+      }, [chatModels])
 
       // 初始化视频模型
       useEffect(() => {
@@ -584,7 +638,13 @@ const PublishDialogAi = memo(
           const placeholderMsg: Message = { role: 'assistant', content: '', action }
           setMessages(prev => [...prev, placeholderMsg])
 
-          const response = await aiChatStream({ messages: apiMessages })
+          // 根据 action 选择模型
+          const modelToUse = action === 'generateImage' ? selectedImageModel : selectedChatModel
+          
+          const response = await aiChatStream({ 
+            messages: apiMessages,
+            model: modelToUse
+          })
           
           // 检查响应状态
           if (!response.ok) {
@@ -647,6 +707,16 @@ const PublishDialogAi = memo(
               }
               return newMessages
             })
+            
+            // 如果是话题生成，自动同步到编辑器（追加模式）
+            if (action === 'generateHashtags') {
+              // 延迟一下让用户看到生成结果
+              setTimeout(() => {
+                if (syncToEditorRef.current) {
+                  syncToEditorRef.current(processedContent, action)
+                }
+              }, 500)
+            }
           } else {
             throw new Error(result.message || 'AI响应失败')
           }
@@ -659,7 +729,7 @@ const PublishDialogAi = memo(
           message.error(error.message || 'AI处理失败，请重试')
           setIsProcessing(false)
         }
-      }, [])
+      }, [selectedChatModel, selectedImageModel])
 
       // 处理功能按钮点击
       const handleActionClick = useCallback((action: AIAction) => {
@@ -707,6 +777,9 @@ const PublishDialogAi = memo(
               break
             case 'generateImage':
               systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
+              break
+            case 'generateHashtags':
+              systemPrompt = customPrompts.generateHashtags || '请按照下面给的内容生成带#的话题生成3-6个，只要回复话题不要其他任何回复'
               break
           }
         }
@@ -840,9 +913,9 @@ const PublishDialogAi = memo(
       }
 
       // 同步到编辑器
-      const syncToEditor = useCallback(async (content: string) => {
+      const syncToEditor = useCallback(async (content: string, action?: AIAction) => {
         if (onSyncToEditor) {
-          console.log('开始同步到编辑器，内容:', content)
+          console.log('开始同步到编辑器，内容:', content, 'action:', action)
           
           // 提取所有图片URL和视频链接
           const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || []
@@ -934,24 +1007,32 @@ const PublishDialogAi = memo(
           
           textContent = textContent.trim()
 
+          // 判断是否需要追加内容（话题生成功能）
+          const shouldAppend = action === 'generateHashtags'
+          
           // 如果有视频，只同步视频（不更新文本）
           // 如果有图片，只同步图片（不更新文本）
           // 如果两者都没有，同步文本内容
           if (videoFile) {
             console.log('同步视频到编辑器')
-            onSyncToEditor('', [], videoFile)
+            onSyncToEditor('', [], videoFile, shouldAppend)
             message.success('视频同步成功')
           } else if (imageFiles.length > 0) {
             console.log('同步图片到编辑器')
-            onSyncToEditor('', imageFiles)
+            onSyncToEditor('', imageFiles, undefined, shouldAppend)
             message.success('图片同步成功')
           } else {
-            console.log('同步文本到编辑器')
-            onSyncToEditor(textContent)
-            message.success(t('aiFeatures.syncSuccess' as any))
+            console.log('同步文本到编辑器, 追加模式:', shouldAppend)
+            onSyncToEditor(textContent, [], undefined, shouldAppend)
+            message.success(shouldAppend ? '话题追加成功' : t('aiFeatures.syncSuccess' as any))
           }
         }
       }, [onSyncToEditor, t, downloadImageAsImgFile, downloadVideoAsVideoFile])
+
+      // 更新 syncToEditor 的 ref
+      useEffect(() => {
+        syncToEditorRef.current = syncToEditor
+      }, [syncToEditor])
 
       // 暴露给父组件的方法
       useImperativeHandle(ref, () => ({
@@ -972,6 +1053,7 @@ const PublishDialogAi = memo(
         { action: 'translate', icon: <TranslationOutlined />, label: t('aiFeatures.translate' as any) },
         { action: 'generateImage', icon: <PictureOutlined />, label: t('aiFeatures.generateImage' as any) },
         { action: 'generateVideo', icon: <VideoCameraOutlined />, label: t('aiFeatures.generateVideo' as any) },
+        { action: 'generateHashtags', icon: <TagsOutlined />, label: '生成话题' },
       ]
 
       // 缓存 Markdown 组件配置，避免每次渲染都创建新对象
@@ -1176,6 +1258,79 @@ const PublishDialogAi = memo(
               </Button>,
             ]}
           >
+            {/* 聊天模型选择 */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
+                <EditOutlined style={{ marginRight: 8 }} />
+                聊天模型（缩写/扩写/润色/翻译/话题）
+              </div>
+              <Select
+                value={selectedChatModel}
+                onChange={(value) => {
+                  setSelectedChatModel(value)
+                  localStorage.setItem('ai_chat_model', value)
+                  message.success('聊天模型设置已保存')
+                }}
+                style={{ width: '100%' }}
+                placeholder="选择聊天模型"
+                optionLabelProp="label"
+              >
+                {chatModels.map((model: any) => (
+                  <Option 
+                    key={model.name} 
+                    value={model.name}
+                    label={model.name}
+                  >
+                    <div style={{ padding: '4px 0' }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.name}</div>
+                      {model.description && (
+                        <div style={{ fontSize: '12px', color: '#999', whiteSpace: 'normal', lineHeight: '1.4' }}>
+                          {model.description}
+                        </div>
+                      )}
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            </div>
+
+            {/* 图片生成模型选择 */}
+            <div style={{ marginBottom: 16 }}>
+              <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
+                <PictureOutlined style={{ marginRight: 8 }} />
+                图片生成模型
+              </div>
+              <Select
+                value={selectedImageModel}
+                onChange={(value) => {
+                  setSelectedImageModel(value)
+                  localStorage.setItem('ai_image_model', value)
+                  message.success('图片生成模型设置已保存')
+                }}
+                style={{ width: '100%' }}
+                placeholder="选择图片生成模型"
+                optionLabelProp="label"
+              >
+                {chatModels.map((model: any) => (
+                  <Option 
+                    key={model.name} 
+                    value={model.name}
+                    label={model.name}
+                  >
+                    <div style={{ padding: '4px 0' }}>
+                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.name}</div>
+                      {model.description && (
+                        <div style={{ fontSize: '12px', color: '#999', whiteSpace: 'normal', lineHeight: '1.4' }}>
+                          {model.description}
+                        </div>
+                      )}
+                    </div>
+                  </Option>
+                ))}
+              </Select>
+            </div>
+
+            {/* 视频生成模型选择 */}
             <div style={{ marginBottom: 16 }}>
               <div style={{ marginBottom: 8, fontWeight: 'bold' }}>
                 <VideoCameraOutlined style={{ marginRight: 8 }} />

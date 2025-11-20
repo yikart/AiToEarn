@@ -216,7 +216,7 @@ export async function aiChatStream(data: {
     },
     body: JSON.stringify({
       stream: false, // 使用非流式响应 
-      model: 'gemini-2.5-flash-image',
+      model: 'gemini-3-pro-preview',
       temperature: 1,
       presence_penalty: 0,
       frequency_penalty: 0,

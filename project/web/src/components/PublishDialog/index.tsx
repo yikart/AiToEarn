@@ -25,6 +25,7 @@ import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 import { apiCreatePublish } from '@/api/plat/publish'
 import { toolsApi } from '@/api/tools'
+import { getChatModels } from '@/api/ai'
 import {
   getDays,
   getUtcDays,
@@ -157,6 +158,8 @@ const PublishDialog = memo(
       const { t } = useTransClient('publish')
       // AI助手ref
       const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
+      // 聊天模型列表
+      const [chatModels, setChatModels] = useState<any[]>([])
       // 中间内容区域ref，用于划词功能
       const contentAreaRef = useRef<HTMLDivElement>(null)
       const { tasks, md5Cache, enqueueUpload } = usePublishManageUpload(
@@ -421,6 +424,26 @@ const PublishDialog = memo(
       useEffect(() => {
         if (open) {
           init(accounts, defaultAccountId)
+          
+          // 获取聊天模型列表（使用 sessionStorage 缓存）
+          const cachedModels = sessionStorage.getItem('ai_chat_models')
+          if (cachedModels) {
+            try {
+              setChatModels(JSON.parse(cachedModels))
+            } catch (error) {
+              console.error('解析缓存的聊天模型失败:', error)
+            }
+          } else {
+            // 如果没有缓存，则请求
+            getChatModels().then((res: any) => {
+              if (res?.code === 0 && res.data && Array.isArray(res.data)) {
+                setChatModels(res.data)
+                sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
+              }
+            }).catch(error => {
+              console.error('获取聊天模型失败:', error)
+            })
+          }
         }
         else {
           setPubListChoosed([])
@@ -585,8 +608,8 @@ const PublishDialog = memo(
       }, [openLeft, setOpenLeft])
 
       // AI内容同步到编辑器
-      const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile) => {
-        console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无')
+      const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
+        console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无', '追加模式:', append)
         
         // 处理图片上传
         if (images && images.length > 0) {
@@ -668,7 +691,12 @@ const PublishDialog = memo(
           const params: any = {}
           // 只有当 content 不为空字符串时才更新文案
           if (content) {
-            params.des = content
+            // 如果是追加模式，将内容追加到现有文案后面
+            if (append && pubListChoosed[0].params.des) {
+              params.des = pubListChoosed[0].params.des + '\n' + content
+            } else {
+              params.des = content
+            }
           }
           // 视频和图片不能同时存在
           if (video) {
@@ -688,7 +716,12 @@ const PublishDialog = memo(
           const params: any = {}
           // 只有当 content 不为空字符串时才更新文案
           if (content) {
-            params.des = content
+            // 如果是追加模式，将内容追加到现有文案后面
+            if (append && commonPubParams.des) {
+              params.des = commonPubParams.des + '\n' + content
+            } else {
+              params.des = content
+            }
           }
           // 视频和图片不能同时存在
           if (video) {
@@ -708,7 +741,12 @@ const PublishDialog = memo(
           const params: any = {}
           // 只有当 content 不为空字符串时才更新文案
           if (content) {
-            params.des = content
+            // 如果是追加模式，将内容追加到现有文案后面
+            if (append && expandedPubItem.params.des) {
+              params.des = expandedPubItem.params.des + '\n' + content
+            } else {
+              params.des = content
+            }
           }
           // 视频和图片不能同时存在
           if (video) {
@@ -751,6 +789,7 @@ const PublishDialog = memo(
                   ref={aiAssistantRef}
                   onClose={() => setOpenLeft(false)}
                   onSyncToEditor={handleSyncToEditor}
+                  chatModels={chatModels}
                 />
               </CSSTransition>
             )}
@@ -1188,6 +1227,7 @@ const PublishDialog = memo(
                     ref={aiAssistantRef}
                     onClose={() => setOpenLeft(false)}
                     onSyncToEditor={handleSyncToEditor}
+                    chatModels={chatModels}
                   />
                 </CSSTransition>
               )}
