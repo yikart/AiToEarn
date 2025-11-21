@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { AppException, ResponseCode } from '@yikart/common'
+import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { NotificationRepository, NotificationStatus, NotificationType } from '@yikart/mongodb'
 import {
   BatchDeleteDto,
@@ -32,6 +32,26 @@ export class NotificationService {
       status: NotificationStatus.Unread,
     })
 
+    return saved
+  }
+
+  async createForAdmin(data: {
+    title: string
+    content: string
+    type: NotificationType
+    relatedId: string
+    data?: Record<string, unknown>
+  }) {
+    const { title, content, type, relatedId } = data
+    const saved = await this.notificationRepository.create({
+      userId: 'admin',
+      userType: UserType.Admin,
+      title,
+      content,
+      type,
+      relatedId,
+      data,
+    })
     return saved
   }
 
