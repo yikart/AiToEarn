@@ -39,13 +39,16 @@ export class PlatformService {
       if (svc) {
         return await svc.deletePost(accountId, postId)
       }
-      return new AppException(ResponseCode.PlatformNotSupported)
+      throw new AppException(ResponseCode.PlatformNotSupported)
     }
     catch (error) {
       if (error instanceof SocialMediaError) {
-        return new AppException(ResponseCode.DeletePostFailed, error.message)
+        throw new AppException(ResponseCode.DeletePostFailed, error.message)
       }
-      return new AppException(ResponseCode.DeletePostFailed, 'Unknown error')
+      if (error instanceof AppException) {
+        throw error
+      }
+      throw new AppException(ResponseCode.DeletePostFailed, 'Unknown error')
     }
   }
 
