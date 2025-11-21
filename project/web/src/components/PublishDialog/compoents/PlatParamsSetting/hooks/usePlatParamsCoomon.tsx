@@ -2,14 +2,14 @@ import type {
   IChangeParams,
   IPubParmasTextareaProps,
 } from '@/components/PublishDialog/compoents/PubParmasTextarea'
-import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
+import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { Alert } from 'antd'
 import { useCallback, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { PubParamsVerifyInfo } from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 
-export default function usePlatParamsCommon(pubItem: PubItem) {
+export default function usePlatParamsCommon(pubItem: PubItem, onImageToImage?: (imageFile: IImgFile) => void) {
   const { setOnePubParams, errParamsMap, pubListChoosed, warningParamsMap }
     = usePublishDialog(
       useShallow(state => ({
@@ -52,6 +52,7 @@ export default function usePlatParamsCommon(pubItem: PubItem) {
       desValue: pubItem.params.des,
       imageFileListValue: pubItem.params.images,
       videoFileValue: pubItem.params.video,
+      onImageToImage,
       beforeExtend: (
         <>
           <PubParamsVerifyInfo errItem={currErrItem} />
@@ -73,7 +74,7 @@ export default function usePlatParamsCommon(pubItem: PubItem) {
       ),
     }
     return props
-  }, [currErrItem, onChange, pubItem, currWarningItem])
+  }, [currErrItem, onChange, pubItem, currWarningItem, onImageToImage])
 
   return { pubParmasTextareaCommonParams, setOnePubParams }
 }

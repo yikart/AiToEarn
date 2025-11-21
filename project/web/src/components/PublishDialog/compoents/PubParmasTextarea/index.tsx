@@ -68,6 +68,8 @@ export interface IPubParmasTextareaProps {
   imageFileListValue?: IImgFile[]
   videoFileValue?: IVideoFile
   desValue?: string
+  // 图生图回调
+  onImageToImage?: (imageFile: IImgFile) => void
 }
 
 const ImageEditorModal = dynamic(
@@ -90,6 +92,7 @@ const PubParmasTextarea = memo(
         desValue = '',
         beforeExtend,
         platType,
+        onImageToImage,
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
@@ -397,6 +400,9 @@ const PubParmasTextarea = memo(
                             return newState
                           })
                         }}
+                        onImageToImageClick={onImageToImage ? () => {
+                          onImageToImage(v)
+                        } : undefined}
                       />
                     </CSSTransition>
                   ))}

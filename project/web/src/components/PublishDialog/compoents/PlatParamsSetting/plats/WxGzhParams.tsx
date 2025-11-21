@@ -12,9 +12,9 @@ import styles from '../platParamsSetting.module.scss'
  * - 独立参数：title（与通用 title 区分，使用 option.wxGzh.title 保存）
  */
 const WxGzhParams = memo(
-  forwardRef(({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+  forwardRef(({ pubItem, onImageToImage }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
     const { t } = useTransClient('publish')
-    const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(pubItem)
+    const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(pubItem, onImageToImage)
 
     // 初始化 wxGzh 参数对象
     // useEffect(() => {

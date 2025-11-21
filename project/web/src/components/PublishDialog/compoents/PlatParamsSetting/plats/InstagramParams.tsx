@@ -13,10 +13,10 @@ import styles from '../platParamsSetting.module.scss'
 
 const InstagramParams = memo(
   forwardRef(
-    ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+    ({ pubItem, onImageToImage }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams }
-        = usePlatParamsCommon(pubItem)
+        = usePlatParamsCommon(pubItem, onImageToImage)
 
       // 初始化Instagram参数
       useEffect(() => {

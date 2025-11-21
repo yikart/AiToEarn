@@ -18,10 +18,10 @@ const { Search } = Input
 
 const ThreadsParams = memo(
   forwardRef(
-    ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+    ({ pubItem, onImageToImage }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams }
-        = usePlatParamsCommon(pubItem)
+        = usePlatParamsCommon(pubItem, onImageToImage)
 
       const [locations, setLocations] = useState<ThreadsLocationItem[]>([])
       const [loading, setLoading] = useState(false)

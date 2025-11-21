@@ -26,10 +26,10 @@ interface TikTokCreatorInfo {
 
 const TikTokParams = memo(
   forwardRef(
-    ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+    ({ pubItem, onImageToImage }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams }
-        = usePlatParamsCommon(pubItem)
+        = usePlatParamsCommon(pubItem, onImageToImage)
 
       const [creatorInfo, setCreatorInfo] = useState<TikTokCreatorInfo | null>(null)
       const [loading, setLoading] = useState(false)
