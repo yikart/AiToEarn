@@ -233,6 +233,17 @@ module.exports = {
           },
         },
         {
+          name: 'gemini-3-pro-image-preview',
+          description: 'Nano Banana Pro',
+          tags: ['VIP Free'],
+          inputModalities: ['text', 'image'],
+          outputModalities: ['image'],
+          pricing: {
+            price: '2',
+          },
+          freeForVip: true,
+        },
+        {
           name: 'gemini-2.5-flash-image',
           description: 'Nano Banana',
           tags: ['VIP Free'],
