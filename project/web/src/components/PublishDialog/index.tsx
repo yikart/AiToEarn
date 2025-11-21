@@ -423,7 +423,19 @@ const PublishDialog = memo(
           isClear.current = false
           return
         }
-        setPubData(pubListChoosed)
+
+        // pubListChoosed 任意一个item存在 视频或图片或描述 才能保存
+        const hasContent = pubListChoosed.some((item) => {
+          return (
+            item.params.des
+            || item.params.video
+            || (item.params.images && item.params.images.length > 0)
+          )
+        })
+
+        if (hasContent) {
+          setPubData(pubListChoosed)
+        }
       }, [pubListChoosed])
       useEffect(() => {
         if (isInit.current) {
