@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common'
+import { Template } from '../interfaces'
 import { BaseService } from './base.service'
 
 @Injectable()
 export class TemplatesService extends BaseService {
-  async retrieveAllTemplates(): Promise<any> {
-    const res = await this.request<any>(
-      '/api/templates',
-      {
-        method: 'GET',
-      },
-    )
-    return res
+  async retrieveAllTemplates(): Promise<Template[]> {
+    return this.request<Template[]>('/api/templates', {
+      method: 'GET',
+    })
   }
 }
