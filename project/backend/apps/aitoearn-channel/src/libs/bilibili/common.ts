@@ -133,20 +133,8 @@ export interface etagData {
   etag: string
 }
 
-export interface DeleteVideoData {}
-
-export interface DeleteVideoResponse extends CommonResponse<DeleteVideoData> { }
-
-export interface ArchiveTypeListResponse extends CommonResponse<ArchiveTypeItem[]> { }
-export interface ArchiveListResponse extends CommonResponse<ArchiveListData> { }
-export interface UserStatResponse extends CommonResponse<UserStatData> { }
-export interface ArcStatResponse extends CommonResponse<ArcStatData> { }
-export interface ArcIncStatResponse extends CommonResponse<ArcIncStatData> { }
-export interface ArchiveAddByUtokenResponse extends CommonResponse<ArchiveAddByUtokenData> { }
-export interface AccessTokenResponse extends CommonResponse<AccessToken> { }
-export interface BilibiliUserInfoResponse extends CommonResponse<BilibiliUser> { }
-export interface AddArchiveResponse extends CommonResponse<AddArchiveData> { }
-export interface GrantScopesResponse extends CommonResponse<GrantScopes> { }
-export interface VideoInitialResponse extends CommonResponse<videoInitialData> { }
-export interface EtagResponse extends CommonResponse<etagData> { }
-export interface UploadCoverImgResponse extends CommonResponse<{ url: string }> { }
+export interface DeleteVideoData {
+  code: number
+  message: string
+  ttl: number
+}

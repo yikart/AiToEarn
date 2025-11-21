@@ -437,10 +437,8 @@ export class BilibiliApiService {
     const url = 'https://member.bilibili.com/arcopen/fn/archive/delete'
     const config: AxiosRequestConfig = {
       method: 'POST',
-      headers: this.generateHeader({ accessToken }),
-      data: {
-        resource_id: videoId,
-      },
+      headers: this.generateHeader({ accessToken, body: { resource_id: videoId } }),
+      data: { resource_id: videoId },
     }
     const result = await this.request<DeleteVideoData>(url, config)
     return result
