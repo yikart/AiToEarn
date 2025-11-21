@@ -300,4 +300,8 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Failed to update publish task',
     'zh-CN': '更新发布任务失败',
   },
+  [ResponseCode.DeletePostFailed]: {
+    'en-US': 'Failed to delete post',
+    'zh-CN': '删除作品失败',
+  },
 }

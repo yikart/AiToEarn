@@ -99,4 +99,5 @@ export enum ResponseCode {
   PostCategoryNotSupported = 15031,
   PlatformNotSupported = 15032,
   PublishTaskUpdateFailed = 15033,
+  DeletePostFailed = 15034,
 }
