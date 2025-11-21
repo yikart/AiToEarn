@@ -139,7 +139,14 @@
     "videoModelLoadTimeout": "Video model load timeout, please retry",
     "videoProcessingFailed": "Video processing failed, please retry",
     "imageProcessingFailed": "Image {{index}} processing failed: {{error}}",
-    "videoReady": "✅ Video ready!"
+    "videoReady": "✅ Video ready!",
+    "customPrompts": {
+      "title": "Custom Prompts",
+      "description": "Configure custom prompts for each feature. Leave empty to use default behavior (no additional prompts).",
+      "placeholder": "Leave empty to use default",
+      "clearAll": "Clear All Custom Prompts",
+      "clearSuccess": "All custom prompts cleared"
+    }
   },
   "upload": {
     "finishingUp": "Finishing up...",

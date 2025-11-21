@@ -140,7 +140,14 @@
     "videoModelLoadTimeout": "视频模型加载超时，请稍后重试",
     "videoProcessingFailed": "视频处理失败，请重试",
     "imageProcessingFailed": "图片 {{index}} 处理失败: {{error}}",
-    "videoReady": "✅ 视频生成完成！"
+    "videoReady": "✅ 视频生成完成！",
+    "customPrompts": {
+      "title": "自定义提示词",
+      "description": "为每个功能配置自定义提示词。留空则使用默认行为（不添加额外提示词）。",
+      "placeholder": "留空使用默认行为",
+      "clearAll": "清空所有自定义提示词",
+      "clearSuccess": "已清空所有自定义提示词"
+    }
   },
   "upload": {
     "finishingUp": "正在完成...",
