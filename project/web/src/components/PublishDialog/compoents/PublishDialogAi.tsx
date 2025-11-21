@@ -310,13 +310,10 @@ const PublishDialogAi = memo(
       const [activeAction, setActiveAction] = useState<AIAction | null>(null)
       const [messages, setMessages] = useState<Message[]>([])
       const [inputValue, setInputValue] = useState('')
-      const [customPrompts, setCustomPrompts] = useState<Record<string, string>>({
-        expand: t('aiFeatures.defaultPrompts.expand' as any),
-        polish: t('aiFeatures.defaultPrompts.polish' as any),
-        translate: t('aiFeatures.defaultPrompts.translate' as any),
-        generateImage: t('aiFeatures.defaultPrompts.generateImage' as any),
-        generateVideo: t('aiFeatures.defaultPrompts.generateVideo' as any),
-        generateHashtags: t('aiFeatures.defaultPrompts.generateHashtags' as any),
+      // Load custom prompts from localStorage
+      const [customPrompts, setCustomPrompts] = useState<Record<string, string>>(() => {
+        const saved = localStorage.getItem('ai_custom_prompts')
+        return saved ? JSON.parse(saved) : {}
       })
       const [isProcessing, setIsProcessing] = useState(false)
       const [settingsVisible, setSettingsVisible] = useState(false)
@@ -754,26 +751,26 @@ const PublishDialogAi = memo(
 
         let systemPrompt = ''
 
-        // Generate prompt based on selected action
+        // Generate default system prompt based on selected action
         if (currentAction) {
           switch (currentAction) {
             case 'shorten':
               systemPrompt = t('aiFeatures.defaultPrompts.shorten' as any)
               break
             case 'expand':
-              systemPrompt = customPrompts.expand || t('aiFeatures.defaultPrompts.expand' as any)
+              systemPrompt = t('aiFeatures.defaultPrompts.expand' as any)
               break
             case 'polish':
-              systemPrompt = customPrompts.polish || t('aiFeatures.defaultPrompts.polish' as any)
+              systemPrompt = t('aiFeatures.defaultPrompts.polish' as any)
               break
             case 'translate':
-              systemPrompt = customPrompts.translate || t('aiFeatures.defaultPrompts.translate' as any)
+              systemPrompt = t('aiFeatures.defaultPrompts.translate' as any)
               break
             case 'generateImage':
-              systemPrompt = customPrompts.generateImage || t('aiFeatures.defaultPrompts.generateImage' as any)
+              systemPrompt = t('aiFeatures.defaultPrompts.generateImage' as any)
               break
             case 'generateHashtags':
-              systemPrompt = customPrompts.generateHashtags || t('aiFeatures.defaultPrompts.generateHashtags' as any)
+              systemPrompt = t('aiFeatures.defaultPrompts.generateHashtags' as any)
               break
           }
         }
@@ -781,11 +778,15 @@ const PublishDialogAi = memo(
         // Prepare API messages
         const apiMessages: Array<{ role: string, content: string }> = []
         
-
-        
-        // Only add system prompt if exists
+        // Add default system prompt if exists
         if (systemPrompt) {
           apiMessages.push({ role: 'system', content: systemPrompt })
+        }
+        
+        // Add user custom system prompt if configured
+        const userCustomPrompt = currentAction ? (customPrompts[currentAction] || '') : ''
+        if (userCustomPrompt) {
+          apiMessages.push({ role: 'system', content: userCustomPrompt })
         }
         
         apiMessages.push({ role: 'user', content: messageContent })
@@ -1195,6 +1196,7 @@ const PublishDialogAi = memo(
                 {t('aiFeatures.close' as any)}
               </Button>,
             ]}
+            width={700}
           >
             {/* Chat model selection */}
             <div style={{ marginBottom: 16 }}>
@@ -1217,13 +1219,13 @@ const PublishDialogAi = memo(
                   <Option 
                     key={model.name} 
                     value={model.name}
-                    label={model.name}
+                    label={model.description || model.name}
                   >
                     <div style={{ padding: '4px 0' }}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.name}</div>
+                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.description}</div>
                       {model.description && (
                         <div style={{ fontSize: '12px', color: '#999', whiteSpace: 'normal', lineHeight: '1.4' }}>
-                          {model.description}
+                          {model.name}
                         </div>
                       )}
                     </div>
@@ -1253,13 +1255,13 @@ const PublishDialogAi = memo(
                   <Option 
                     key={model.name} 
                     value={model.name}
-                    label={model.name}
+                    label={model.description || model.name}
                   >
                     <div style={{ padding: '4px 0' }}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.name}</div>
+                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.description}</div>
                       {model.description && (
                         <div style={{ fontSize: '12px', color: '#999', whiteSpace: 'normal', lineHeight: '1.4' }}>
-                          {model.description}
+                          {model.name}
                         </div>
                       )}
                     </div>
@@ -1289,13 +1291,13 @@ const PublishDialogAi = memo(
                   <Option 
                     key={model.name} 
                     value={model.name}
-                    label={model.name}
+                    label={model.description || model.name}
                   >
                     <div style={{ padding: '4px 0' }}>
-                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.name}</div>
+                      <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>{model.description}</div>
                       {model.description && (
                         <div style={{ fontSize: '12px', color: '#999', whiteSpace: 'normal', lineHeight: '1.4' }}>
-                          {model.description}
+                          {model.name}
                         </div>
                       )}
                     </div>
@@ -1326,6 +1328,176 @@ const PublishDialogAi = memo(
                   </div>
                 )
               })()}
+            </div>
+
+            {/* Custom prompts editor */}
+            <div style={{ marginTop: 24, borderTop: '1px solid #e8e8e8', paddingTop: 16 }}>
+              <Collapse
+                items={[
+                  {
+                    key: '1',
+                    label: (
+                      <div style={{ fontWeight: 'bold' }}>
+                        <EditOutlined style={{ marginRight: 8 }} />
+                        {t('aiFeatures.customPrompts.title' as any)}
+                      </div>
+                    ),
+                    children: (
+                      <div>
+                        <div style={{ marginBottom: 12, fontSize: '12px', color: '#666' }}>
+                          {t('aiFeatures.customPrompts.description' as any)}
+                        </div>
+                        
+                        {/* Shorten */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <CompressOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.shorten' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.shorten || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, shorten: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Expand */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <ExpandOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.expand' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.expand || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, expand: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Polish */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <EditOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.polish' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.polish || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, polish: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Translate */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <TranslationOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.translate' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.translate || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, translate: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Generate Image */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <PictureOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.generateImage' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.generateImage || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, generateImage: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Generate Video */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <VideoCameraOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.generateVideo' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.generateVideo || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, generateVideo: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Generate Hashtags */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <TagsOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.generateHashtags' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.generateHashtags || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, generateHashtags: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        <Button
+                          type="link"
+                          danger
+                          size="small"
+                          onClick={() => {
+                            setCustomPrompts({})
+                            localStorage.removeItem('ai_custom_prompts')
+                            message.success(t('aiFeatures.customPrompts.clearSuccess' as any))
+                          }}
+                        >
+                          {t('aiFeatures.customPrompts.clearAll' as any)}
+                        </Button>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             </div>
           </Modal>
         </div>

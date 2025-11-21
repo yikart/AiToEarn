@@ -160,7 +160,7 @@ export default function PricingPage() {
       type: '图片生成',
       duration: '',
       resolution: '',
-      notes: '又名nano banana，支持多图像输入',
+      notes: '又名Nano Banana Pro，支持多图像输入',
       credits: '1',
       price: '0.27',
       channel: 'yun',

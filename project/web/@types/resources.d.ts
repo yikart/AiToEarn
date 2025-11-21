@@ -1782,7 +1782,7 @@ interface Resources {
               "type": "图片生成",
               "duration": "",
               "resolution": "",
-              "notes": "又名nano banana，支持多图像输入",
+              "notes": "又名Nano Banana Pro，支持多图像输入",
               "credits": "1",
               "price": "0.27元",
               "channel": "yun"
@@ -2222,7 +2222,7 @@ interface Resources {
       "congratulations": "恭喜您获得3天免费会员体验！",
       "description": "作为新用户，您可以享受7天的免费会员权益，体验所有高级功能，包括：",
       "unlimitedAI": "✓ Sora-2：免费且无限",
-      "priorityProcessing": "✓ Nano Banana：免费且无限",
+      "priorityProcessing": "✓ Nano Banana Pro：免费且无限",
       "advancedModels": "✓ 历史内容导入",
       "dedicatedSupport": "✓ 免费计划的所有功能",
       "noAds": "✓ 无广告体验",
@@ -2775,7 +2775,7 @@ interface Resources {
           "dailyPoints": "发布：抖音、小红书、视频号、快手、哔哩哔哩、微信公众号、TikTok、YouTube、Facebook、Instagram、Threads、X (Twitter)、Pinterest",
           "maxPoints": "互动：抖音、小红书、Facebook、Instagram、Threads",
           "videos": "AI工具：核心模型池（gpt-5系列、gemini-2.5-pro/flash、qwen-vl-max、gpt-image-1、FLUX.1 Kontext、seedream/seededit、md2card、萤火卡等）",
-          "images": "Sora-2 & Nano Banana: 有限使用（按积分/限额）",
+          "images": "Sora-2 & Nano Banana Pro: 有限使用（按积分/限额）",
           "storage": "内容和评论搜索、智能互动"
         }
       },
@@ -2792,7 +2792,7 @@ interface Resources {
           "description": "每月最多150+次视频生成",
           "features": {
             "contentReview": "Sora-2：免费且无限",
-            "dailyPoints": "Nano Banana：免费且无限",
+            "dailyPoints": "Nano Banana Pro：免费且无限",
             "multiModel": "历史内容导入",
             "textToVideo": "免费计划的所有功能",
             "aiGeneration": "无限频道连接",

@@ -2,6 +2,7 @@
 
 import { ArrowLeftOutlined, DownloadOutlined, FileTextOutlined, FireOutlined, MessageOutlined, PictureOutlined, RobotOutlined, UploadOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { Button, Col, Input, message, Modal, Progress, Row, Select } from 'antd'
+import Image from 'next/image'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { editImage, generateFireflyCard, generateImage, generateMd2Card, generateVideo, getImageEditModels, getImageEditTaskStatus, getImageGenerationModels, getImageTaskStatus, getVideoGenerationModels, getVideoGenerations, getVideoTaskStatus } from '@/api/ai'
@@ -1218,8 +1219,12 @@ export default function AIGeneratePage() {
                 <div className={styles.subTabLabel}>{t('aiGenerate.markdownToCard')}</div>
               </button>
               <button className={`${styles.subTab} ${activeImageTab === 'chat' ? styles.subTabActive : ''}`} onClick={() => setActiveImageTab('chat')}>
-                <div className="subTabIcon"><MessageOutlined /></div>
-                <div className={styles.subTabLabel}>Nano Banana</div>
+                <div className="subTabIcon" style={{ position: 'relative' }}>
+                <span style={{ color: '#a66ae4', fontSize: '10px', fontWeight: 'bold', padding: '0 5px', fontStyle: 'italic', position: 'absolute', top: 2, left: -38 }}> 
+                    NEW
+                  </span>
+                  <MessageOutlined /></div>
+                <div className={styles.subTabLabel}>Nano Banana Pro</div>
               </button>
             </div>
           )}
@@ -1251,7 +1256,18 @@ export default function AIGeneratePage() {
                           <div className={styles.blockTitle} style={{ marginTop: 12 }}>{t('aiGenerate.selectModelPlaceholder')}</div>
                           <div className={styles.modelSelect}>
                             <button className={styles.modelSelectBtn} onClick={() => setShowModelDropdown(s => !s)}>
-                              <div className={styles.modelIconSelect}><PictureOutlined style={{ fontSize: '24px' }} /></div>
+                              <div className={styles.modelIconSelect}>
+                                {(() => {
+                                  const m: any = imageModels.find((x: any) => x.name === model)
+                                  return m?.logo
+                                    ? (
+                                        <Image src={m.logo} alt={m.name} width={24} height={24} style={{ borderRadius: 4, objectFit: 'cover' }} />
+                                      )
+                                    : (
+                                        <PictureOutlined style={{ fontSize: '24px' }} />
+                                      )
+                                })()}
+                              </div>
                               <div className={styles.modelMain}>
                                 <div className={styles.modelHeader}>
                                   <span className={styles.modelName}>{model || t('aiGenerate.selectModelPlaceholder')}</span>
@@ -1284,7 +1300,15 @@ export default function AIGeneratePage() {
 
                                         <div className={styles.modelMain}>
                                           <div className={styles.modelHeader}>
-                                            <div className={styles.modelIcon}><PictureOutlined /></div>
+                                            <div className={styles.modelIcon}>
+                                              {m?.logo
+                                                ? (
+                                                    <Image src={m.logo} alt={m.name} width={20} height={20} style={{ borderRadius: 4, objectFit: 'cover' }} />
+                                                  )
+                                                : (
+                                                    <PictureOutlined />
+                                                  )}
+                                            </div>
                                             <span className={styles.modelName}>{m.name || ''}</span>
                                             {m.mainTag ? <span className={styles.modelTag}>New</span> : null}
                                           </div>
@@ -1846,7 +1870,18 @@ export default function AIGeneratePage() {
                       <div className={styles.blockTitle} style={{ marginTop: 12 }}>{t('aiGenerate.selectModelPlaceholder')}</div>
                       <div className={styles.modelSelect}>
                         <button className={styles.modelSelectBtn} onClick={() => setShowVideoModelDropdown(s => !s)}>
-                          <div className={styles.modelIconSelect}><VideoCameraOutlined style={{ fontSize: '24px' }} /></div>
+                          <div className={styles.modelIconSelect}>
+                            {(() => {
+                              const m: any = (filteredVideoModels as any[]).find((x: any) => x.name === videoModel)
+                              return m?.logo
+                                ? (
+                                    <Image src={m.logo} alt={m.name} width={24} height={24} style={{ borderRadius: 4, objectFit: 'cover' }} />
+                                  )
+                                : (
+                                    <VideoCameraOutlined style={{ fontSize: '24px' }} />
+                                  )
+                            })()}
+                          </div>
                           <div className={styles.modelMain}>
                             <div className={styles.modelHeader}>
                               <span className={styles.modelName}>{videoModel || t('aiGenerate.selectModelPlaceholder')}</span>
@@ -1879,7 +1914,15 @@ export default function AIGeneratePage() {
 
                                     <div className={styles.modelMain}>
                                       <div className={styles.modelHeader}>
-                                        <div className={styles.modelIcon}><VideoCameraOutlined /></div>
+                                        <div className={styles.modelIcon}>
+                                          {m?.logo
+                                            ? (
+                                                <Image src={m.logo} alt={m.name} width={20} height={20} style={{ borderRadius: 4, objectFit: 'cover' }} />
+                                              )
+                                            : (
+                                                <VideoCameraOutlined />
+                                              )}
+                                        </div>
                                         <span className={styles.modelName}>{m.name || ''}</span>
                                         {m.mainTag || m.name.includes('sora') ? <span className={styles.modelTag}>New</span> : null}
                                       </div>
