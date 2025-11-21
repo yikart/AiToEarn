@@ -248,15 +248,19 @@ export class PublishService {
   async getPublishRecordDetail(flowId: string, userId: string) {
     try {
       const record = await this.publishRecordService.getPublishRecordDetail({ flowId, userId })
-      return record
+      this.logger.log(`Publish record detail for flowId ${flowId} and userId ${userId}: ${JSON.stringify(record)}`)
+      if (record) {
+        return record
+      }
     }
     catch (error: any) {
       this.logger.error(`Failed to get publish record detail for flowId ${flowId} and userId ${userId}: ${error.message}`, error.stack)
     }
 
     const task = await this.platPublishNatsApi.getPublishTaskDetail(flowId, userId)
+    this.logger.log(`Publish task detail for flowId ${flowId} and userId ${userId}: ${JSON.stringify(task)}`)
     if (!task) {
-      throw new AppException(ResponseCode.PublishRecordNotFound, { flowId })
+      throw new AppException(ResponseCode.PublishRecordNotFound)
     }
     return task
   }

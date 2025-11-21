@@ -137,7 +137,7 @@ export class PlatPublishNatsApi extends ChannelBaseApi {
 
   async getPublishTaskDetail(flowId: string, userId: string) {
     const res = await this.sendMessage<PublishRecordItem | null>(
-      `channel/publishing/task/detail`,
+      `channel/publishTask/detail`,
       {
         flowId,
         userId,

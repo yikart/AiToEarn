@@ -133,8 +133,4 @@ export interface etagData {
   etag: string
 }
 
-export interface DeleteVideoData {
-  code: number
-  message: string
-  ttl: number
-}
+export interface DeleteVideoData {}
