@@ -6,5 +6,6 @@ export enum NotificationStatus {
 
 // 通知类型枚举
 export enum NotificationType {
-  TaskReminder = 'task_reminder', // 任务提醒
+  TaskReminder = 'task_reminder',
+  UserWithdraw = 'user_withdraw',
 }
