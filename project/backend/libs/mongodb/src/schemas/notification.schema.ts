@@ -25,10 +25,10 @@ export class Notification extends WithTimestampSchema {
   @Prop({
     enum: UserType,
     index: true,
-    required: false,
+    required: true,
     default: UserType.User,
   })
-  userType?: UserType
+  userType: UserType
 
   @Prop({
     type: String,
