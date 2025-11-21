@@ -800,6 +800,9 @@ const PublishDialogAi = memo(
         const userMessage: Message = { role: 'user', content: messageContent, action: currentAction || undefined }
         setMessages(prev => [...prev, userMessage])
 
+        // Save uploaded image reference before clearing
+        const savedUploadedImage = uploadedImage
+
         // Call video generation directly if it's video generation
         if (currentAction === 'generateVideo') {
           await handleVideoGeneration(messageContent)
@@ -850,15 +853,15 @@ const PublishDialogAi = memo(
           apiMessages.push({ role: 'system', content: userCustomPrompt })
         }
         
-        // For imageToImage, add image data to user message
-        if (currentAction === 'imageToImage' && uploadedImage && uploadedImage.ossUrl) {
+        // For imageToImage, add image data to user message (use saved reference)
+        if (currentAction === 'imageToImage' && savedUploadedImage && savedUploadedImage.ossUrl) {
           apiMessages.push({ 
             role: 'user', 
             content: [
               {
                 type: 'image_url',
                 image_url: {
-                  url: uploadedImage.ossUrl
+                  url: savedUploadedImage.ossUrl
                 }
               },
               {
@@ -871,14 +874,15 @@ const PublishDialogAi = memo(
           apiMessages.push({ role: 'user', content: messageContent })
         }
 
-        // Call AI interface
-        await handleAIResponse(currentAction || 'polish', apiMessages)
-
-        // Clear input and uploaded image after successful processing
+        // Clear input and uploaded image immediately
         setInputValue('')
         if (currentAction === 'imageToImage') {
           setUploadedImage(null)
+          setActiveAction(null) // Clear active action after sending imageToImage
         }
+
+        // Call AI interface
+        await handleAIResponse(currentAction || 'polish', apiMessages)
       }, [activeAction, inputValue, customPrompts, uploadedImage, handleAIResponse, handleVideoGeneration, t])
 
       // Download image from URL and convert to IImgFile object
