@@ -123,7 +123,8 @@ export class FireflycardService {
     })
 
     if (!response.ok) {
-      throw new AppException(ResponseCode.AiCallFailed)
+      const errorText = await response.text().catch(() => 'Unknown error')
+      throw new AppException(ResponseCode.AiCallFailed, { error: `HTTP ${response.status}: ${errorText}` })
     }
 
     return response

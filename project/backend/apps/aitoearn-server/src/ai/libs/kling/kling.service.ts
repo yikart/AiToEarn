@@ -108,7 +108,7 @@ export class KlingService {
           data: response.data,
           msg: '可灵 api 调用失败',
         })
-        throw new AppException(ResponseCode.AiCallFailed, klingResponse.message)
+        throw new AppException(ResponseCode.AiCallFailed, { error: klingResponse.message || 'Unknown error' })
       }
       return response
     }

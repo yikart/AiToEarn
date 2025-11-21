@@ -373,7 +373,40 @@ export class VideoService {
     return createTaskResponse(result.id)
   }
 
+  /**
+   * 从请求数据中提取 prompt
+   */
+  private extractPromptFromRequest(aiLog: AiLog): string | undefined {
+    const request = aiLog.request as any
+    if (!request) {
+      return undefined
+    }
+
+    switch (aiLog.channel) {
+      case AiLogChannel.Kling:
+        return request.prompt
+      case AiLogChannel.Volcengine:
+        if (request.content && Array.isArray(request.content)) {
+          const textContent = request.content.find((c: any) => c.type === ContentType.Text)
+          if (textContent && 'text' in textContent) {
+            // 使用 parseModelTextCommand 解析出纯 prompt
+            const { prompt } = parseModelTextCommand(textContent.text)
+            return prompt
+          }
+        }
+        return undefined
+      case AiLogChannel.Dashscope:
+        return request.input?.prompt
+      case AiLogChannel.Sora2:
+        return request.prompt
+      default:
+        return undefined
+    }
+  }
+
   async transformToCommonResponse(aiLog: AiLog) {
+    const prompt = this.extractPromptFromRequest(aiLog)
+
     if (aiLog.status === AiLogStatus.Generating) {
       return {
         task_id: aiLog.id,
@@ -384,6 +417,7 @@ export class VideoService {
         start_time: Math.floor(aiLog.startedAt.getTime() / 1000),
         finish_time: 0,
         progress: '30%',
+        prompt,
         data: {},
       }
     }
@@ -401,6 +435,7 @@ export class VideoService {
       start_time: Math.floor(aiLog.startedAt.getTime() / 1000),
       finish_time: Math.floor((aiLog.startedAt.getTime() + (aiLog.duration || 0)) / 1000),
       progress: '100%',
+      prompt,
       data: {},
     }
 
@@ -765,7 +800,8 @@ export class VideoService {
   async volcengineCreate(request: VolcengineGenerationRequestDto) {
     const { userId, userType, model, content, ...params } = request
 
-    const prompt = content.find(c => c.type === ContentType.Text)?.text
+    const textContent = content.find(c => c.type === ContentType.Text)
+    const prompt = textContent && 'text' in textContent ? textContent.text : undefined
 
     if (!prompt) {
       throw new BadRequestException('prompt is required')

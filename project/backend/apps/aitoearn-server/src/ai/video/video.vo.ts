@@ -94,6 +94,7 @@ const videoTaskStatusResponseSchema = z.object({
   start_time: z.number().describe('开始时间'),
   finish_time: z.number().describe('完成时间'),
   progress: z.string().describe('任务进度'),
+  prompt: z.string().optional().describe('提示词'),
   data: z.any(),
 })
 

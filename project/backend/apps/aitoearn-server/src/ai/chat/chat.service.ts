@@ -40,7 +40,7 @@ export class ChatService {
 
     const usage = result.usage_metadata
     if (!usage) {
-      throw new AppException(ResponseCode.AiCallFailed)
+      throw new AppException(ResponseCode.AiCallFailed, { error: 'Missing usage metadata' })
     }
 
     return {
