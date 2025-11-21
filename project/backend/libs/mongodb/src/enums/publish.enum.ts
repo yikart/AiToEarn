@@ -12,3 +12,8 @@ export enum PublishStatus {
   UPDATING = 4, // 更新中
   UPDATED_FAILED = 5, // 更新失败
 }
+
+export enum PublishingTaskType {
+  VIDEO = 'video', // 视频
+  ARTICLE = 'article',
+}
