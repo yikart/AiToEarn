@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Logger, Post, Put } from '@nestjs/common
 import { ApiTags } from '@nestjs/swagger'
 import { AitoearnAuthService, GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
-import { MailService } from '@yikart/mail'
 import { UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
 import { getRandomString } from '../common/utils'
@@ -15,6 +14,7 @@ import {
   RegistByMailDto,
   UserCancelDto,
 } from './dto/login.dto'
+import { LoginService } from './login.service'
 import { UserService } from './user.service'
 
 interface UserMailRegistCache {
@@ -30,7 +30,7 @@ export class LoginController {
     private readonly authService: AitoearnAuthService,
     private readonly userService: UserService,
     private readonly redisService: RedisService,
-    private readonly mailService: MailService,
+    private readonly loginService: LoginService,
   ) { }
 
   @ApiDoc({
@@ -72,15 +72,10 @@ export class LoginController {
 
     // No existing account, proceed with registration code flow
     const code = getRandomString(6, true)
-    const mailRes = await this.mailService.sendEmail({
-      to: mail,
-      subject: 'aitoearn regist',
-      template: 'mail/regist',
-      context: {
-        code,
-        mail,
-      },
-    })
+    const mailRes = await this.loginService.sendRegisterMail(
+      mail,
+      code,
+    )
 
     if (!mailRes)
       throw new AppException(ResponseCode.MailSendFail, 'Mail sending failed')
@@ -177,15 +172,10 @@ export class LoginController {
       throw new AppException(ResponseCode.MailSendFail, 'Mail code add failed')
 
     // Send verification email with email and code
-    const mailRes = await this.mailService.sendEmail({
-      to: mail,
-      subject: 'aitoearn repassword',
-      template: 'mail/repassword',
-      context: {
-        code,
-        mail,
-      },
-    })
+    const mailRes = await this.loginService.sendRepasswordMail(
+      mail,
+      code,
+    )
     if (!mailRes)
       throw new AppException(ResponseCode.MailSendFail, 'Mail sending failed')
 
@@ -282,14 +272,10 @@ export class LoginController {
     const code = getRandomString(6, true)
 
     // Send verification email with code
-    const mailRes = await this.mailService.sendEmail({
-      to: userInfo.mail,
-      subject: 'aitoearn cancel',
-      template: 'mail/cancel',
-      context: {
-        code,
-      },
-    })
+    const mailRes = await this.loginService.sendCancelMail(
+      userInfo.mail,
+      code,
+    )
 
     void this.redisService.set(
       `userCancelCode:${userInfo.mail}`,
