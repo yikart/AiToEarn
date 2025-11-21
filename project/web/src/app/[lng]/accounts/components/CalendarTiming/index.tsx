@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import FullCalendar from '@fullcalendar/react'
-import { Avatar, Button, Dropdown, Input, Tabs } from 'antd'
+import { Avatar, Button, Dropdown, Input, Modal, Tabs } from 'antd'
 import dayjs from 'dayjs'
 import { useSearchParams } from 'next/navigation'
 import {
@@ -484,13 +484,44 @@ const CalendarTiming = memo(
                 size="large"
                 icon={<PlusOutlined />}
                 onClick={() => {
-                  setPublishDialogOpen(true)
-                  usePublishDialog
-                    .getState()
-                    .setPubTime(
-                      dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
-                    )
-                  useUserStore.getState().setCurrentDatePickerType()
+                  // 检查是否有可用账户
+                  const hasAccounts = accountList.some(
+                    account => account.status === AccountStatus.USABLE
+                  )
+                  
+                  if (!hasAccounts) {
+                    // 显示提示对话框
+                    Modal.confirm({
+                      title: t('noAccountWarning.title' as any),
+                      content: t('noAccountWarning.content' as any),
+                      okText: t('noAccountWarning.addAccount' as any),
+                      cancelText: t('noAccountWarning.continuePublish' as any),
+                      centered: true,
+                      onOk: () => {
+                        // 触发自定义事件，调用 AccountSidebar 的添加账户流程
+                        window.dispatchEvent(new CustomEvent('openAddAccountFlow'))
+                      },
+                      onCancel: () => {
+                        // 继续发布
+                        setPublishDialogOpen(true)
+                        usePublishDialog
+                          .getState()
+                          .setPubTime(
+                            dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+                          )
+                        useUserStore.getState().setCurrentDatePickerType()
+                      },
+                    })
+                  } else {
+                    // 有账户，直接打开发布对话框
+                    setPublishDialogOpen(true)
+                    usePublishDialog
+                      .getState()
+                      .setPubTime(
+                        dayjs(Date.now()).format('YYYY-MM-DD HH:mm:ss'),
+                      )
+                    useUserStore.getState().setCurrentDatePickerType()
+                  }
                 }}
               >
                 {t('newWork')}

@@ -524,6 +524,38 @@ const AccountSidebar = memo(
         setIsAddAccountOpen(true)
       }
 
+      // 监听自定义事件，打开添加账号流程
+      useEffect(() => {
+        const handleOpenAddAccount = async () => {
+          // 先获取最新的空间列表
+          // await getAccountGroup()
+          
+          // 从 store 获取最新的 accountGroupList
+          const latestAccountGroupList = useAccountStore.getState().accountGroupList
+          
+          if (latestAccountGroupList.length === 0) {
+            message.error(t('messages.createSpaceFirst' as any))
+            return
+          }
+
+          // 直接打开AddAccountModal
+          if ((useAccountStore.getState().accountList || []).length === 0) {
+            await getAccountList()
+          }
+          preAccountIds.current = new Set(
+            (useAccountStore.getState().accountList || []).map(v => v.id),
+          )
+          snapshotReadyRef.current = true
+          setIsAddAccountOpen(true)
+        }
+
+        window.addEventListener('openAddAccountFlow', handleOpenAddAccount as EventListener)
+
+        return () => {
+          window.removeEventListener('openAddAccountFlow', handleOpenAddAccount as EventListener)
+        }
+      }, [])
+
       // 监听账号列表变化，自动分配新账号到当前空间
       useEffect(() => {
         const maybeAssign = async () => {
