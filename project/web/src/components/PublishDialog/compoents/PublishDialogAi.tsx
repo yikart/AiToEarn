@@ -1220,51 +1220,36 @@ const PublishDialogAi = memo(
             </div>
 
             {/* Action buttons area */}
-            <div style={{ 
-              display: 'flex', 
-              gap: 8, 
-              marginBottom: 8,
-              padding: '8px',
-              background: '#fafafa',
-              borderRadius: '8px',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
-                {actionButtons.map(({ action, icon, label }) => (
-                  <Tooltip key={action} title={label}>
-                    <Button
-                      type={activeAction === action ? 'primary' : 'default'}
-                      icon={icon}
-                      onClick={() => handleActionClick(action as AIAction)}
-                      size="small"
-                    />
-                  </Tooltip>
-                ))}
-              </div>
-              <Tooltip title={t('aiFeatures.settings' as any)}>
-                <Button
-                  icon={<SettingOutlined />}
-                  onClick={() => setSettingsVisible(true)}
-                  size="small"
-                />
-              </Tooltip>
-            </div>
-
-            {/* Image upload area for imageToImage */}
-            {activeAction === 'imageToImage' && (
-              <div style={{ marginBottom: 12, padding: '12px', background: '#fafafa', borderRadius: '8px' }}>
-                {uploadedImage ? (
-                  <div style={{ position: 'relative' }}>
-                    <div style={{ position: 'relative', display: 'inline-block' }}>
+            <div style={{ position: 'relative' }}>
+              {/* Image upload area for imageToImage - positioned above buttons */}
+              {activeAction === 'imageToImage' && (
+                <div style={{ 
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: '120px',
+                  right: 0,
+                  marginBottom: 10,
+                  display: 'flex',
+                  gap: 8,
+                  flexWrap: 'wrap'
+                }}>
+                  {/* Uploaded image preview */}
+                  {uploadedImage && (
+                    <div style={{ 
+                      position: 'relative', 
+                      display: 'inline-block',
+                      borderRadius: '8px',
+                      overflow: 'hidden'
+                    }}>
                       <img 
                         src={uploadedImage.preview} 
                         alt="Uploaded" 
                         style={{ 
-                          maxWidth: '100%', 
-                          maxHeight: '100px', 
+                          width: '120px',
+                          height: '80px', 
                           borderRadius: '8px',
                           display: 'block',
+                          objectFit: 'cover',
                           opacity: uploadedImage.uploading ? 0.5 : 1
                         }} 
                       />
@@ -1278,54 +1263,117 @@ const PublishDialogAi = memo(
                           <Spin />
                         </div>
                       )}
-                    </div>
-                    <div style={{ marginTop: 8, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      {/* Close button */}
                       <Button
-                        size="small"
+                        type="text"
                         danger
+                        size="small"
+                        icon={<CloseCircleFilled />}
                         onClick={() => setUploadedImage(null)}
                         disabled={uploadedImage.uploading}
-                      >
-                        {t('aiFeatures.removeImage' as any)}
-                      </Button>
-                      {uploadedImage.uploading && (
-                        <span style={{ fontSize: '12px', color: '#666' }}>
-                          {t('aiFeatures.uploading' as any)}
-                        </span>
-                      )}
-                      {uploadedImage.ossUrl && !uploadedImage.uploading && (
-                        <span style={{ fontSize: '12px', color: '#52c41a' }}>
-                          ✓ {t('aiFeatures.uploadSuccess' as any)}
-                        </span>
-                      )}
+                        style={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 4,
+                          minWidth: 'auto',
+                          padding: 0,
+                          width: 20,
+                          height: 20,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'rgba(0, 0, 0, 0.5)',
+                          color: '#fff',
+                          border: 'none'
+                        }}
+                      />
                     </div>
-                  </div>
-                ) : (
-                  <div>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          handleImageUpload(file)
-                        }
-                      }}
-                      style={{ display: 'none' }}
-                      id="imageToImageUpload"
-                    />
-                    <label htmlFor="imageToImageUpload">
-                      <Button
-                        icon={<PictureOutlined />}
-                        onClick={() => document.getElementById('imageToImageUpload')?.click()}
+                  )}
+                  
+                  {/* Upload box - show when no image */}
+                  {!uploadedImage && (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            handleImageUpload(file)
+                          }
+                        }}
+                        style={{ display: 'none' }}
+                        id="imageToImageUpload"
+                      />
+                      <label 
+                        htmlFor="imageToImageUpload" 
+                        style={{ 
+                          margin: 0,
+                          cursor: 'pointer'
+                        }}
                       >
-                        {t('aiFeatures.uploadImage' as any)}
-                      </Button>
-                    </label>
-                  </div>
-                )}
+                        <div style={{
+                          width: '120px',
+                          height: '80px',
+                          border: '2px dashed #d9d9d9',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#fafafa',
+                          transition: 'all 0.3s',
+                          color: '#999'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = '#1890ff'
+                          e.currentTarget.style.color = '#1890ff'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '#d9d9d9'
+                          e.currentTarget.style.color = '#999'
+                        }}
+                        >
+                          <PictureOutlined style={{ fontSize: '24px', marginBottom: '4px' }} />
+                          <span style={{ fontSize: '12px' }}>{t('aiFeatures.uploadImage' as any)}</span>
+                        </div>
+                      </label>
+                    </>
+                  )}
+                </div>
+              )}
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: 8, 
+                marginBottom: 8,
+                padding: '8px',
+                background: '#fafafa',
+                borderRadius: '8px',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+                <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
+                  {actionButtons.map(({ action, icon, label }) => (
+                    <Tooltip key={action} title={label}>
+                      <Button
+                        type={activeAction === action ? 'primary' : 'default'}
+                        icon={icon}
+                        onClick={() => handleActionClick(action as AIAction)}
+                        size="small"
+                      />
+                    </Tooltip>
+                  ))}
+                </div>
+                <Tooltip title={t('aiFeatures.settings' as any)}>
+                  <Button
+                    icon={<SettingOutlined />}
+                    onClick={() => setSettingsVisible(true)}
+                    size="small"
+                  />
+                </Tooltip>
               </div>
-            )}
+            </div>
 
             {/* Input area */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
