@@ -4,8 +4,8 @@ import { BaseService } from './base.service'
 
 @Injectable()
 export class TransactionalService extends BaseService {
-  async sendTransactionalMessage(data: TransactionalMessage): Promise<any> {
-    const res = await this.request<any>(
+  async sendTransactionalMessage(data: TransactionalMessage): Promise<boolean> {
+    const res = await this.request<boolean>(
       '/api/tx',
       {
         method: 'POST',
