@@ -31,6 +31,12 @@
     "pleaseChooseSpaceFirst": "Please choose a space first",
     "addTo": "Add to:"
   },
+  "noAccountWarning": {
+    "title": "Notice",
+    "content": "You haven't added any channel accounts yet. It's recommended to add channels first before creating content for publishing.",
+    "addAccount": "Add Channel",
+    "continuePublish": "Continue Publishing"
+  },
   "facebookPages": {
     "title": "Select Facebook Pages",
     "selectAll": "Select All",
