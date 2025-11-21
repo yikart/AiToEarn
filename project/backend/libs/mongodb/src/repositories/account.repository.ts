@@ -313,4 +313,10 @@ export class AccountRepository extends BaseRepository<Account> {
     const cursor = this.accountModel.find({ ...(filter.groupId && { groupId: filter.groupId }), ...(filter.userId && { userId: filter.userId }) }).cursor()
     return cursor
   }
+
+  async getUserAccountList(accountIds: string[]) {
+    return this.accountModel.find({
+      _id: { $in: accountIds },
+    }).lean()
+  }
 }
