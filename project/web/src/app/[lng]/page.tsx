@@ -60,7 +60,13 @@ function ReleaseBanner() {
         }}
       >
         {/* <span className={styles.releaseTag}>{t('releaseBanner.tag')}</span> */}
-        <span className={styles.releaseText}>Join Plus — Enjoy Unlimited Free Sora-2, Nano Banana!</span>
+        <span className={styles.releaseText}>Join Plus —
+          
+           Enjoy Unlimited Free Sora-2,
+           <span style={{ color: '#FFD700', fontSize: '14px', fontWeight: 'bold', padding: '0 5px', fontStyle: 'italic' }}> 
+            NEW
+           </span>
+            Nano Banana Pro !</span>
         {/* <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
           <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg> */}

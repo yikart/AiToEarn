@@ -1275,3 +1275,11 @@
   background-color: #e2e8f0;
   color: #8b5cf6;
 }
+
+/* Model logo 样式 */
+.modelLogo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+}

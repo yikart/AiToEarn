@@ -118,7 +118,7 @@
         "dailyPoints": "✓ Publishing: Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts, TikTok, YouTube, Facebook, Instagram, Threads, X (Twitter), Pinterest",
         "maxPoints": "✓ Engage: Douyin, Xiaohongshu (Rednote), Facebook, Instagram, Threads",
         "videos": "✓ AI Access: Core model pool (gpt-5 family, gemini-2.5-pro/flash, qwen-vl-max, gpt-image-1, FLUX.1 Kontext, seedream/seededit, md2card, firefly card, etc.)",
-        "images": "✓ Sora-2 & Nano Banana: Limited usage (credit-based / capped)",
+        "images": "✓ Sora-2 & Nano Banana Pro: Limited usage (credit-based / capped)",
         "storage": "✓ Content & comment search, smart engage"
       }
     },
@@ -135,7 +135,7 @@
         "description": "Up to 150+ video gens/month",
         "features": {
           "contentReview": "✓ Sora-2: Free & Unlimited  ",
-          "dailyPoints": "Nano Banana: Free & Unlimited ",
+          "dailyPoints": "Nano Banana Pro: Free & Unlimited ",
           "multiModel": "✓ Historical Content Import",
           "textToVideo": "✓ Everything in Free",
           "aiGeneration": "✓ Unlimited channel links",

@@ -302,7 +302,13 @@ const LyaoutHeader = memo(
           <div className={styles.bannerContent} onClick={() => setVipModalVisible(true)}>
             {' '}
             {/* 点击横幅打开VIP弹窗，而不是跳转 */}
-            <span className={styles.releaseText}>Join Plus — Enjoy Unlimited Free Sora-2, Nano Banana!</span>
+            <span className={styles.releaseText}>Join Plus — 
+            Enjoy Unlimited Free Sora-2,
+           <span style={{ color: '#FFD700', fontSize: '14px', fontWeight: 'bold', padding: '0 5px', fontStyle: 'italic' }}> 
+            NEW
+           </span>
+            Nano Banana Pro !
+              </span>
           </div>
           <button
             className={styles.closeButton}

@@ -701,7 +701,12 @@ export default function ProfilePage() {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10, overflow: 'hidden', flex: 1 }}>
-                    <div style={{ width: 28, height: 28, borderRadius: 6, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', fontSize: 14 }}>AI</div>
+                    {
+                      (() => {
+                        const m: any = (chatModels || []).find((x: any) => x.name === defaultModel)
+                        return m?.logo ? <Image src={m?.logo} alt={m?.name} width={28} height={28} className={styles.modelLogo} /> : <div style={{ width: 28, height: 28, borderRadius: 6, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', fontSize: 14 }}>AI</div>
+                      })()
+                    }
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
                       <div style={{ fontWeight: 600, color: '#111827', fontSize: 14, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {(() => {
@@ -739,13 +744,16 @@ export default function ProfilePage() {
                               background: isActive ? '#F3E8FF' : 'transparent',
                             }}
                           >
-                            <div style={{ width: 28, height: 28, borderRadius: 6, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', fontSize: 14 }}>AI</div>
+                            {
+                              m?.logo ? <Image src={m?.logo} alt={m?.name} width={28} height={28} className={styles.modelLogo} /> : 
+                              <div style={{ width: 28, height: 28, borderRadius: 6, background: '#F3F4F6', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#6B7280', fontSize: 14 }}>AI</div>
+                            }
                             <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flex: 1, minWidth: 0 }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                <span style={{ fontWeight: 600, color: '#111827', fontSize: 14 }}>{m.name || ''}</span>
+                                <span style={{ fontWeight: 600, color: '#111827', fontSize: 14 }}>{m.description || ''}</span>
                                 {m?.mainTag ? <span style={{ fontSize: 10, background: '#EDE9FE', color: '#7C3AED', padding: '2px 6px', borderRadius: 10 }}>New</span> : null}
                               </div>
-                              <div style={{ color: '#6B7280', fontSize: 12 }}>{m.description || ''}</div>
+                              {/* <div style={{ color: '#6B7280', fontSize: 12 }}>{m.description || ''}</div> */}
                               <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                                 {(m?.tags || []).map((tag: string) => (
                                   <span key={tag} style={{ fontSize: 10, background: '#F3F4F6', color: '#6B7280', padding: '2px 6px', borderRadius: 10 }}>{tag}</span>
@@ -755,10 +763,9 @@ export default function ProfilePage() {
                                 ? (
                                     <div style={{ color: '#374151', fontSize: 12, marginTop: 0 }}>
                                       <span>
-                                        prompt
-                                        {m.pricing.prompt}
+                                        input { ' '+m.pricing.prompt}
                                       </span>
-                                      {m.pricing.completion ? <span>{` · completion ${m.pricing.completion}`}</span> : null}
+                                      {m.pricing.completion ? <span>{` · output ${m.pricing.completion}`}</span> : null}
                                     </div>
                                   )
                                 : null}
