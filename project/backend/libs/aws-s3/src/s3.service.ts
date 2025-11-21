@@ -28,6 +28,7 @@ export class S3Service {
   async putObject(
     objectPath: string,
     file: PutObjectCommandInput['Body'],
+    contentType?: string,
   ) {
     const upload = new Upload({
       client: this.client,
@@ -35,6 +36,7 @@ export class S3Service {
         Bucket: this.config.bucketName,
         Key: objectPath,
         Body: file,
+        ContentType: contentType,
       },
     })
     await upload.done()
@@ -67,25 +69,30 @@ export class S3Service {
   }
 
   // 生成预签名上传 URL
-  getUploadSign(objectPath: string) {
+  getUploadSign(objectPath: string, contentType?: string) {
     return createPresignedPost(this.client, {
       Bucket: this.config.bucketName,
       Key: objectPath,
       Expires: this.config.signExpires,
+      Conditions: contentType ? [['eq', '$Content-Type', contentType]] : undefined,
+      Fields: contentType ? { 'Content-Type': contentType } : undefined,
     })
   }
 
   /**
    * 开始分片上传
    * @param {string} objectPath - 文件键
+   * @param {string} contentType - 文件MIME类型
    * @returns {Promise<string>} - 返回上传ID
    */
   async initiateMultipartUpload(
     objectPath: string,
+    contentType?: string,
   ): Promise<string> {
     const command = new CreateMultipartUploadCommand({
       Bucket: this.config.bucketName,
       Key: objectPath,
+      ContentType: contentType,
     })
 
     const response = await this.client.send(command)
