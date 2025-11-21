@@ -32,6 +32,9 @@ export interface ISocialMediaError {
  * Error context information.
  */
 export interface IErrorContext {
+  /** Account ID. */
+  accountId?: string
+
   /** Request URL. */
   url?: string
 
