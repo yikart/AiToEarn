@@ -1,0 +1,76 @@
+{
+  "name": "aitoearn-mcp",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/aitoearn-mcp/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/apps/aitoearn-mcp",
+        "tsConfig": "apps/aitoearn-mcp/tsconfig.app.json",
+        "packageJson": "apps/aitoearn-mcp/package.json",
+        "main": "apps/aitoearn-mcp/src/main.ts",
+        "assets": [],
+        "generatePackageJson": true,
+        "clean": true
+      }
+    },
+    "prune-lockfile": {
+      "dependsOn": ["build"],
+      "cache": true,
+      "executor": "@nx/js:prune-lockfile",
+      "outputs": [
+        "{workspaceRoot}/dist/apps/aitoearn-mcp/package.json",
+        "{workspaceRoot}/dist/apps/aitoearn-mcp/pnpm-lock.yaml"
+      ],
+      "options": {
+        "buildTarget": "build"
+      }
+    },
+    "serve": {
+      "continuous": true,
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "local",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "aitoearn-mcp:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "local": {
+          "buildTarget": "aitoearn-mcp:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/aitoearn-mcp/config/local.config.js"
+          ]
+        },
+        "dev": {
+          "buildTarget": "aitoearn-mcp:build:development",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/aitoearn-mcp/config/dev.config.js"
+          ]
+        },
+        "prod": {
+          "buildTarget": "aitoearn-mcp:build:production",
+          "args": [
+            "-c",
+            "{workspaceRoot}/apps/aitoearn-mcp/config/prod.config.js"
+          ]
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "fix": true
+      }
+    },
+    "docker-context": {},
+    "docker-build": {}
+  }
+}
