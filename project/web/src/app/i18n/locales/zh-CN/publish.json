@@ -4,6 +4,12 @@
     "title": "确认关闭",
     "content": "关闭后，已填写的内容将被保存，您下次打开可以恢复，是否确认关闭？"
   },
+  "restoreData": {
+    "title": "温馨提示",
+    "content": "系统检测到您有未完成的发布记录，是否要恢复？",
+    "okText": "恢复",
+    "cancelText": "不恢复"
+  },
   "buttons": {
     "customizePerAccount": "自定义每个账户",
     "cancelPublish": "取消发布",

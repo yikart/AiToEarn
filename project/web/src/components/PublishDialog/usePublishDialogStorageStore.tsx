@@ -5,6 +5,7 @@ import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { useAccountStore } from '@/store/account'
 import { modalApi, useConfigStore } from '@/store/config'
 import { createPersistStore } from '@/utils/createPersistStore'
+import { directTrans } from '@/app/i18n/client'
 
 export interface IPublishDialogStorageStore {
   pubData?: PubItem[]
@@ -45,11 +46,11 @@ export const usePublishDialogStorageStore = createPersistStore(
         }
         // 提示用户是否恢复
         modalApi.value.confirm({
-          title: '温馨提示',
+          title: directTrans('publish', 'restoreData.title'),
           icon: <ExclamationCircleFilled />,
-          content: '系统检测到您有未完成的发布记录，是否要恢复？',
-          okText: '恢复',
-          cancelText: '不恢复',
+          content: directTrans('publish', 'restoreData.content'),
+          okText: directTrans('publish', 'restoreData.okText'),
+          cancelText: directTrans('publish', 'restoreData.cancelText'),
           okButtonProps: {
             type: 'primary',
           },
