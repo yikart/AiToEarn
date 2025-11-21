@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { Pagination } from '@yikart/common'
+import { Pagination, UserType } from '@yikart/common'
 import { FilterQuery, Model, Types } from 'mongoose'
 import { NotificationStatus, NotificationType } from '../enums'
 import { Notification } from '../schemas'
@@ -7,6 +7,7 @@ import { BaseRepository } from './base.repository'
 
 export interface ListNotificationParams extends Pagination {
   userId?: string
+  userType?: UserType
   type?: NotificationType
   status?: NotificationStatus
   relatedId?: string
@@ -22,32 +23,21 @@ export class NotificationRepository extends BaseRepository<Notification> {
   }
 
   async listWithPagination(params: ListNotificationParams) {
-    const { page, pageSize, userId, type, status, relatedId, createdAt, keyword } = params
+    const { page, pageSize, userId, userType, type, status, relatedId, createdAt, keyword } = params
 
-    const filter: FilterQuery<Notification> = {}
-    if (userId)
-      filter.userId = new Types.ObjectId(userId)
-    if (type)
-      filter.type = type
-    if (status)
-      filter.status = status
-    if (relatedId)
-      filter.relatedId = relatedId
-    if (createdAt) {
-      filter.createdAt = {
-        $gte: createdAt[0],
-        $lte: createdAt[1],
-      }
-    }
-    if (keyword) {
-      filter.$or = [
+    const filter: FilterQuery<Notification> = {
+      deletedAt: { $exists: false },
+      ...(userType && { userType }),
+      ...(userId && { userId: new Types.ObjectId(userId) }),
+      ...(type && { type }),
+      ...(status && { status }),
+      ...(relatedId && { relatedId }),
+      ...(createdAt && { createdAt: { $gte: createdAt[0], $lte: createdAt[1] } }),
+      ...(keyword && { $or: [
         { title: { $regex: keyword, $options: 'i' } },
         { content: { $regex: keyword, $options: 'i' } },
-      ]
+      ] }),
     }
-
-    // 排除已删除的通知
-    filter.deletedAt = { $exists: false }
 
     return await this.findWithPagination({
       page,
@@ -142,6 +132,15 @@ export class NotificationRepository extends BaseRepository<Notification> {
       ...filter,
     })
 
+    return { count }
+  }
+
+  async countByUserTypeUnreadAdmin() {
+    const count = await this.model.countDocuments({
+      userType: UserType.Admin,
+      status: NotificationStatus.Unread,
+      deletedAt: { $exists: false },
+    })
     return { count }
   }
 
