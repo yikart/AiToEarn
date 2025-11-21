@@ -18,6 +18,7 @@ import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, 
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
 import { aiChatStream, getVideoGenerationModels, generateVideo, getVideoTaskStatus } from '@/api/ai'
+import { uploadToOss } from '@/api/oss'
 import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { getOssUrl } from '@/utils/oss'
@@ -48,6 +49,8 @@ const { Option } = Select
 export interface IPublishDialogAiRef {
   // AI text processing
   processText: (text: string, action: AIAction) => void
+  // Image to image processing
+  processImageToImage: (imageFile: File, prompt?: string) => void
 }
 
 export interface IPublishDialogAiProps {
@@ -59,7 +62,7 @@ export interface IPublishDialogAiProps {
   chatModels?: any[]
 }
 
-export type AIAction = 'shorten' | 'expand' | 'polish' | 'translate' | 'generateImage' | 'generateVideo' | 'generateHashtags'
+export type AIAction = 'shorten' | 'expand' | 'polish' | 'translate' | 'generateImage' | 'generateVideo' | 'generateHashtags' | 'imageToImage'
 
 interface Message {
   role: 'user' | 'assistant'
@@ -346,6 +349,9 @@ const PublishDialogAi = memo(
       const [videoStatus, setVideoStatus] = useState<string>('')
       const [videoProgress, setVideoProgress] = useState(0)
       const [videoResult, setVideoResult] = useState<string | null>(null)
+      
+      // Image to image state
+      const [uploadedImage, setUploadedImage] = useState<{ file: File; preview: string; ossUrl?: string; uploading?: boolean } | null>(null)
 
       // Auto-scroll to bottom
       useEffect(() => {
@@ -620,7 +626,7 @@ const PublishDialogAi = memo(
       // Handle AI response
       const handleAIResponse = useCallback(async (
         action: AIAction,
-        apiMessages: Array<{ role: string, content: string }>,
+        apiMessages: Array<{ role: string, content: string | Array<any> }>,
       ) => {
         try {
           setIsProcessing(true)
@@ -629,11 +635,11 @@ const PublishDialogAi = memo(
           const placeholderMsg: Message = { role: 'assistant', content: '', action }
           setMessages(prev => [...prev, placeholderMsg])
 
-          // Select model based on action
-          const modelToUse = action === 'generateImage' ? selectedImageModel : selectedChatModel
+          // Select model based on action (use image model for both generateImage and imageToImage)
+          const modelToUse = (action === 'generateImage' || action === 'imageToImage') ? selectedImageModel : selectedChatModel
           
           const response = await aiChatStream({ 
-            messages: apiMessages,
+            messages: apiMessages as any,
             model: modelToUse
           })
           
@@ -725,7 +731,41 @@ const PublishDialogAi = memo(
       // Handle action button click
       const handleActionClick = useCallback((action: AIAction) => {
         setActiveAction(action)
+        // Clear uploaded image when switching to non-imageToImage actions
+        if (action !== 'imageToImage') {
+          setUploadedImage(null)
+        }
       }, [])
+      
+      // Handle image upload for image-to-image
+      const handleImageUpload = useCallback(async (file: File) => {
+        try {
+          // First create preview for display
+          const reader = new FileReader()
+          reader.onload = async (e) => {
+            const preview = e.target?.result as string
+            setUploadedImage({ file, preview, uploading: true })
+            
+            try {
+              // Upload to OSS
+              const ossKey = await uploadToOss(file)
+              const ossUrl = `${OSS_URL}${ossKey}`
+              
+              // Update with OSS URL
+              setUploadedImage({ file, preview, ossUrl, uploading: false })
+              message.success(t('aiFeatures.imageUploadSuccess' as any))
+            } catch (error) {
+              console.error('Upload to OSS failed:', error)
+              message.error(t('aiFeatures.imageUploadFailed' as any))
+              setUploadedImage(null)
+            }
+          }
+          reader.readAsDataURL(file)
+        } catch (error) {
+          console.error('Failed to read image:', error)
+          message.error(t('aiFeatures.imageUploadFailed' as any))
+        }
+      }, [t])
 
       // 发送消息
       const sendMessage = useCallback(async (content?: string, forceAction?: AIAction) => {
@@ -738,9 +778,30 @@ const PublishDialogAi = memo(
         // Use passed action or current state action
         const currentAction = forceAction || activeAction
 
+        // Check if image is required for imageToImage action
+        if (currentAction === 'imageToImage' && !uploadedImage) {
+          message.warning(t('aiFeatures.uploadImageFirst' as any))
+          return
+        }
+        
+        // Check if image is still uploading
+        if (currentAction === 'imageToImage' && uploadedImage?.uploading) {
+          message.warning(t('aiFeatures.imageUploading' as any))
+          return
+        }
+        
+        // Check if image has OSS URL
+        if (currentAction === 'imageToImage' && uploadedImage && !uploadedImage.ossUrl) {
+          message.error(t('aiFeatures.imageUploadFailed' as any))
+          return
+        }
+
         // Add user message
         const userMessage: Message = { role: 'user', content: messageContent, action: currentAction || undefined }
         setMessages(prev => [...prev, userMessage])
+
+        // Save uploaded image reference before clearing
+        const savedUploadedImage = uploadedImage
 
         // Call video generation directly if it's video generation
         if (currentAction === 'generateVideo') {
@@ -769,6 +830,9 @@ const PublishDialogAi = memo(
             case 'generateImage':
               systemPrompt = t('aiFeatures.defaultPrompts.generateImage' as any)
               break
+            case 'imageToImage':
+              systemPrompt = t('aiFeatures.defaultPrompts.imageToImage' as any)
+              break
             case 'generateHashtags':
               systemPrompt = t('aiFeatures.defaultPrompts.generateHashtags' as any)
               break
@@ -776,7 +840,7 @@ const PublishDialogAi = memo(
         }
 
         // Prepare API messages
-        const apiMessages: Array<{ role: string, content: string }> = []
+        const apiMessages: Array<{ role: string, content: string | Array<any> }> = []
         
         // Add default system prompt if exists
         if (systemPrompt) {
@@ -789,14 +853,37 @@ const PublishDialogAi = memo(
           apiMessages.push({ role: 'system', content: userCustomPrompt })
         }
         
-        apiMessages.push({ role: 'user', content: messageContent })
+        // For imageToImage, add image data to user message (use saved reference)
+        if (currentAction === 'imageToImage' && savedUploadedImage && savedUploadedImage.ossUrl) {
+          apiMessages.push({ 
+            role: 'user', 
+            content: [
+              {
+                type: 'image_url',
+                image_url: {
+                  url: savedUploadedImage.ossUrl
+                }
+              },
+              {
+                type: 'text',
+                text: messageContent
+              }
+            ]
+          })
+        } else {
+          apiMessages.push({ role: 'user', content: messageContent })
+        }
+
+        // Clear input and uploaded image immediately
+        setInputValue('')
+        if (currentAction === 'imageToImage') {
+          setUploadedImage(null)
+          setActiveAction(null) // Clear active action after sending imageToImage
+        }
 
         // Call AI interface
         await handleAIResponse(currentAction || 'polish', apiMessages)
-
-        // Clear input
-        setInputValue('')
-      }, [activeAction, inputValue, customPrompts, handleAIResponse, handleVideoGeneration, t])
+      }, [activeAction, inputValue, customPrompts, uploadedImage, handleAIResponse, handleVideoGeneration, t])
 
       // Download image from URL and convert to IImgFile object
       const downloadImageAsImgFile = async (url: string, index: number): Promise<IImgFile | null> => {
@@ -1010,7 +1097,14 @@ const PublishDialogAi = memo(
             sendMessage(text, action) // Pass action parameter
           }, 50)
         },
-      }), [sendMessage])
+        processImageToImage: (imageFile: File, prompt?: string) => {
+          setActiveAction('imageToImage')
+          handleImageUpload(imageFile)
+          if (prompt) {
+            setInputValue(prompt)
+          }
+        },
+      }), [sendMessage, handleImageUpload])
 
       const actionButtons = [
         { action: 'shorten', icon: <CompressOutlined />, label: t('aiFeatures.shorten' as any) },
@@ -1018,6 +1112,7 @@ const PublishDialogAi = memo(
         { action: 'polish', icon: <EditOutlined />, label: t('aiFeatures.polish' as any) },
         { action: 'translate', icon: <TranslationOutlined />, label: t('aiFeatures.translate' as any) },
         { action: 'generateImage', icon: <PictureOutlined />, label: t('aiFeatures.generateImage' as any) },
+        { action: 'imageToImage', icon: <PictureOutlined />, label: t('aiFeatures.imageToImage' as any) },
         { action: 'generateVideo', icon: <VideoCameraOutlined />, label: t('aiFeatures.generateVideo' as any) },
         { action: 'generateHashtags', icon: <TagsOutlined />, label: t('aiFeatures.generateHashtags' as any) },
       ]
@@ -1129,35 +1224,159 @@ const PublishDialogAi = memo(
             </div>
 
             {/* Action buttons area */}
-            <div style={{ 
-              display: 'flex', 
-              gap: 8, 
-              marginBottom: 8,
-              padding: '8px',
-              background: '#fafafa',
-              borderRadius: '8px',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
-                {actionButtons.map(({ action, icon, label }) => (
-                  <Tooltip key={action} title={label}>
-                    <Button
-                      type={activeAction === action ? 'primary' : 'default'}
-                      icon={icon}
-                      onClick={() => handleActionClick(action as AIAction)}
-                      size="small"
-                    />
-                  </Tooltip>
-                ))}
+            <div style={{ position: 'relative' }}>
+              {/* Image upload area for imageToImage - positioned above buttons */}
+              {activeAction === 'imageToImage' && (
+                <div style={{ 
+                  position: 'absolute',
+                  bottom: '100%',
+                  left: '120px',
+                  right: 0,
+                  marginBottom: 10,
+                  display: 'flex',
+                  gap: 8,
+                  flexWrap: 'wrap'
+                }}>
+                  {/* Uploaded image preview */}
+                  {uploadedImage && (
+                    <div style={{ 
+                      position: 'relative', 
+                      display: 'inline-block',
+                      borderRadius: '8px',
+                      overflow: 'hidden'
+                    }}>
+                      <img 
+                        src={uploadedImage.preview} 
+                        alt="Uploaded" 
+                        style={{ 
+                          width: '120px',
+                          height: '80px', 
+                          borderRadius: '8px',
+                          display: 'block',
+                          objectFit: 'cover',
+                          opacity: uploadedImage.uploading ? 0.5 : 1
+                        }} 
+                      />
+                      {uploadedImage.uploading && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          transform: 'translate(-50%, -50%)'
+                        }}>
+                          <Spin />
+                        </div>
+                      )}
+                      {/* Close button */}
+                      <Button
+                        type="text"
+                        danger
+                        size="small"
+                        icon={<CloseCircleFilled />}
+                        onClick={() => setUploadedImage(null)}
+                        disabled={uploadedImage.uploading}
+                        style={{
+                          position: 'absolute',
+                          top: 4,
+                          right: 4,
+                          minWidth: 'auto',
+                          padding: 0,
+                          width: 20,
+                          height: 20,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'rgba(0, 0, 0, 0.5)',
+                          color: '#fff',
+                          border: 'none'
+                        }}
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Upload box - show when no image */}
+                  {!uploadedImage && (
+                    <>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0]
+                          if (file) {
+                            handleImageUpload(file)
+                          }
+                        }}
+                        style={{ display: 'none' }}
+                        id="imageToImageUpload"
+                      />
+                      <label 
+                        htmlFor="imageToImageUpload" 
+                        style={{ 
+                          margin: 0,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <div style={{
+                          width: '120px',
+                          height: '80px',
+                          border: '2px dashed #d9d9d9',
+                          borderRadius: '8px',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: '#fafafa',
+                          transition: 'all 0.3s',
+                          color: '#999'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.borderColor = '#1890ff'
+                          e.currentTarget.style.color = '#1890ff'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.borderColor = '#d9d9d9'
+                          e.currentTarget.style.color = '#999'
+                        }}
+                        >
+                          <PictureOutlined style={{ fontSize: '24px', marginBottom: '4px' }} />
+                          <span style={{ fontSize: '12px' }}>{t('aiFeatures.uploadImage' as any)}</span>
+                        </div>
+                      </label>
+                    </>
+                  )}
+                </div>
+              )}
+              
+              <div style={{ 
+                display: 'flex', 
+                gap: 8, 
+                marginBottom: 8,
+                padding: '8px',
+                background: '#fafafa',
+                borderRadius: '8px',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+                <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
+                  {actionButtons.map(({ action, icon, label }) => (
+                    <Tooltip key={action} title={label}>
+                      <Button
+                        type={activeAction === action ? 'primary' : 'default'}
+                        icon={icon}
+                        onClick={() => handleActionClick(action as AIAction)}
+                        size="small"
+                      />
+                    </Tooltip>
+                  ))}
+                </div>
+                <Tooltip title={t('aiFeatures.settings' as any)}>
+                  <Button
+                    icon={<SettingOutlined />}
+                    onClick={() => setSettingsVisible(true)}
+                    size="small"
+                  />
+                </Tooltip>
               </div>
-              <Tooltip title={t('aiFeatures.settings' as any)}>
-                <Button
-                  icon={<SettingOutlined />}
-                  onClick={() => setSettingsVisible(true)}
-                  size="small"
-                />
-              </Tooltip>
             </div>
 
             {/* Input area */}
@@ -1434,6 +1653,25 @@ const PublishDialogAi = memo(
                             value={customPrompts.generateImage || ''}
                             onChange={(e) => {
                               const newPrompts = { ...customPrompts, generateImage: e.target.value }
+                              setCustomPrompts(newPrompts)
+                              localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
+                            }}
+                            placeholder={t('aiFeatures.customPrompts.placeholder' as any)}
+                            rows={2}
+                            style={{ fontSize: '12px' }}
+                          />
+                        </div>
+
+                        {/* Image to Image */}
+                        <div style={{ marginBottom: 16 }}>
+                          <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>
+                            <PictureOutlined style={{ marginRight: 4 }} />
+                            {t('aiFeatures.imageToImage' as any)}
+                          </div>
+                          <Input.TextArea
+                            value={customPrompts.imageToImage || ''}
+                            onChange={(e) => {
+                              const newPrompts = { ...customPrompts, imageToImage: e.target.value }
                               setCustomPrompts(newPrompts)
                               localStorage.setItem('ai_custom_prompts', JSON.stringify(newPrompts))
                             }}

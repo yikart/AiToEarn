@@ -32,10 +32,10 @@ const tooltipStyles = `
 
 const PinterestParams = memo(
   forwardRef(
-    ({ pubItem }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
+    ({ pubItem, onImageToImage }: IPlatsParamsProps, ref: ForwardedRef<IPlatsParamsRef>) => {
       const { t } = useTransClient('pinterest')
       const { pubParmasTextareaCommonParams, setOnePubParams }
-        = usePlatParamsCommon(pubItem)
+        = usePlatParamsCommon(pubItem, onImageToImage)
       const { getPinterestBoards, pinterestBoards }
         = usePublishDialogData(
           useShallow(state => ({

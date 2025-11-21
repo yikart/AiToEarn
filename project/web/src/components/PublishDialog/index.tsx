@@ -601,6 +601,18 @@ const PublishDialog = memo(
           aiAssistantRef.current?.processText(selectedText, action)
         }, openLeft ? 100 : 500) // 如果已打开，减少延迟
       }, [openLeft, setOpenLeft])
+      
+      // 处理图生图
+      const handleImageToImage = useCallback((imageFile: IImgFile) => {
+        // 打开AI面板
+        if (!openLeft) {
+          setOpenLeft(true)
+        }
+        // 等待面板打开动画完成后调用图生图功能
+        setTimeout(() => {
+          aiAssistantRef.current?.processImageToImage(imageFile.file, '')
+        }, openLeft ? 100 : 500)
+      }, [openLeft, setOpenLeft])
 
       // AI内容同步到编辑器
       const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
@@ -980,7 +992,7 @@ const PublishDialog = memo(
                     ? (
                         <>
                           {pubListChoosed.length == 1 && (
-                            <PlatParamsSetting pubItem={pubListChoosed[0]} />
+                            <PlatParamsSetting pubItem={pubListChoosed[0]} onImageToImage={handleImageToImage} />
                           )}
                           {pubListChoosed.length >= 2 && (
                             <PubParmasTextarea
@@ -997,6 +1009,7 @@ const PublishDialog = memo(
                                   video: values.video,
                                 })
                               }}
+                              onImageToImage={handleImageToImage}
                             />
                           )}
                         </>
@@ -1009,6 +1022,7 @@ const PublishDialog = memo(
                                 pubItem={v}
                                 key={v.account.id}
                                 style={{ marginBottom: '12px' }}
+                                onImageToImage={handleImageToImage}
                               />
                             )
                           })}

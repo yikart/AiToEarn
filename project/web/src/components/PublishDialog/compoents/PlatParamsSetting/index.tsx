@@ -1,5 +1,5 @@
 import type { CSSProperties, ForwardedRef } from 'react'
-import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
+import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { forwardRef, memo, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
@@ -21,12 +21,13 @@ export interface IPlatParamsSettingRef {}
 export interface IPlatParamsSettingProps {
   pubItem: PubItem
   style?: CSSProperties
+  onImageToImage?: (imageFile: IImgFile) => void
 }
 
 const PlatParamsSetting = memo(
   forwardRef(
     (
-      { pubItem, style }: IPlatParamsSettingProps,
+      { pubItem, style, onImageToImage }: IPlatParamsSettingProps,
       ref: ForwardedRef<IPlatParamsSettingRef>,
     ) => {
       const { expandedPubItem, step, setExpandedPubItem } = usePublishDialog(
@@ -45,27 +46,27 @@ const PlatParamsSetting = memo(
       const PlatItemComp = useMemo(() => {
         switch (pubItem.account.type) {
           case PlatType.KWAI:
-            return <KwaiParams pubItem={pubItem} />
+            return <KwaiParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.BILIBILI:
-            return <BilibParams pubItem={pubItem} />
+            return <BilibParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.WxGzh:
-            return <WxGzhParams pubItem={pubItem} />
+            return <WxGzhParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.Facebook:
-            return <FacebookParams pubItem={pubItem} />
+            return <FacebookParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.Instagram:
-            return <InstagramParams pubItem={pubItem} />
+            return <InstagramParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.YouTube:
-            return <YouTubeParams pubItem={pubItem} />
+            return <YouTubeParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.Pinterest:
-            return <PinterestParams pubItem={pubItem} />
+            return <PinterestParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.Tiktok:
-            return <TikTokParams pubItem={pubItem} />
+            return <TikTokParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.Threads:
-            return <ThreadsParams pubItem={pubItem} />
+            return <ThreadsParams pubItem={pubItem} onImageToImage={onImageToImage} />
           default:
-            return <KwaiParams pubItem={pubItem} />
+            return <KwaiParams pubItem={pubItem} onImageToImage={onImageToImage} />
         }
-      }, [pubItem])
+      }, [pubItem, onImageToImage])
 
       // true=展开当前账号的参数设置 false=不展开
       const isExpand = useMemo(() => {
