@@ -29,7 +29,7 @@ export class FileService {
   /**
    * 文件上传
    * @param {Express.Multer.File} file 文件buffer流对象
-   * @param {string | undefined} path 路径，不传就会使用‘nopath’前缀
+   * @param {string | undefined} path 路径，不传就会使用'nopath'前缀
    * @param {string | undefined} newName 新的文件名
    * @param {string | undefined} permanent 是否为永久目录，默认临时
    * @returns
@@ -49,6 +49,7 @@ export class FileService {
     const res = await this.s3Service.putObject(
       filePath,
       file.buffer,
+      file.mimetype,
     )
     return { key: res.path }
   }
@@ -71,9 +72,11 @@ export class FileService {
   ): Promise<string> {
     const { path, permanent, fileType } = option
     const objectName = `${config.environment}/${permanent ? '' : 'temp/'}${path || 'nopath'}${`/${dayjs().format('YYYYMM')}/${uuidv4()}.${fileType}`}`
+    const contentType = mime.lookup(fileType) || 'application/octet-stream'
     const res = await this.s3Service.putObject(
       objectName,
       buffer,
+      contentType,
     )
 
     return res.path
@@ -90,7 +93,7 @@ export class FileService {
       path,
     })
     const filePath = `${newPath}/${newFileName}.${mime.extension(fileType)}`
-    const res = await this.s3Service.initiateMultipartUpload(filePath)
+    const res = await this.s3Service.initiateMultipartUpload(filePath, fileType)
     return {
       uploadId: res,
       fileId: filePath,
@@ -148,15 +151,15 @@ export class FileService {
   /**
    * 获取分片上传的签名URL
    * @param key
-   * @param contentType
-   * @param expiresIn
    * @returns
    */
   async getUploadUrl(
     key: string,
   ) {
+    const contentType = mime.lookup(key) || 'application/octet-stream'
     const presigned = await this.s3Service.getUploadSign(
       key,
+      contentType,
     )
     return presigned
   }
