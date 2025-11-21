@@ -16,58 +16,92 @@ export class LoginService implements OnModuleInit {
   ) { }
 
   async sendRegisterMail(mail: string, code: string, name?: string): Promise<boolean> {
-    let subscriber = await this.subscribersService.findByEmail(mail)
-    if (!subscriber) {
-      subscriber = await this.subscribersService.create({
-        email: mail,
-        status: SubscriberStatus.ENABLED,
-        name: name || mail,
-      })
-    }
+    try {
+      let subscriber = await this.subscribersService.findByEmail(mail)
+      if (!subscriber) {
+        subscriber = await this.subscribersService.create({
+          email: mail,
+          status: SubscriberStatus.ENABLED,
+          name: name || mail,
+        })
+      }
 
-    const res = await this.transactionalService.sendTransactionalMessage({
-      subscriber_id: subscriber.id,
-      template_id: 5,
-      data:
-      {
+      const res = await this.transactionalService.sendTransactionalMessage({
+        subscriber_id: subscriber.id,
+        template_id: 5,
+        data:
+        {
+          code,
+        },
+        subject: 'AiToEarn Verification Code',
+      })
+      return res
+    }
+    catch (error) {
+      this.logger.error({
+        path: 'sendRegisterMail',
+        mail,
         code,
-      },
-      subject: 'AiToEarn Verification Code',
-    })
-    return res.data
+        name,
+        error,
+      })
+      return false
+    }
   }
 
   async sendRepasswordMail(mail: string, code: string): Promise<boolean> {
-    const subscriber = await this.subscribersService.findByEmail(mail)
-    if (!subscriber) {
-      throw new AppException(ResponseCode.UserStatusError, 'The account does not exist')
-    }
-    const res = await this.transactionalService.sendTransactionalMessage({
-      subscriber_id: subscriber.id,
-      template_id: 6,
-      data:
+    try {
+      const subscriber = await this.subscribersService.findByEmail(mail)
+      if (!subscriber) {
+        throw new AppException(ResponseCode.UserStatusError, 'The account does not exist')
+      }
+      const res = await this.transactionalService.sendTransactionalMessage({
+        subscriber_id: subscriber.id,
+        template_id: 6,
+        data:
       {
         code,
       },
-      subject: 'AiToEarn Verification Code',
-    })
-    return res.data
+        subject: 'AiToEarn Verification Code',
+      })
+      return res
+    }
+    catch (error) {
+      this.logger.error({
+        path: 'sendRepasswordMail',
+        mail,
+        code,
+        error,
+      })
+      return false
+    }
   }
 
   async sendCancelMail(mail: string, code: string): Promise<boolean> {
-    const subscriber = await this.subscribersService.findByEmail(mail)
-    if (!subscriber) {
-      throw new AppException(ResponseCode.UserStatusError, 'The account does not exist')
-    }
-    const res = await this.transactionalService.sendTransactionalMessage({
-      subscriber_id: subscriber.id,
-      template_id: 7,
-      data:
+    try {
+      const subscriber = await this.subscribersService.findByEmail(mail)
+      if (!subscriber) {
+        throw new AppException(ResponseCode.UserStatusError, 'The account does not exist')
+      }
+      const res = await this.transactionalService.sendTransactionalMessage({
+        subscriber_id: subscriber.id,
+        template_id: 7,
+        data:
       {
         code,
       },
-      subject: 'AiToEarn Verification Code',
-    })
-    return res.data
+        subject: 'AiToEarn Verification Code',
+      })
+      return res
+    }
+    catch (error) {
+      this.logger.error({
+        path: 'sendCancelMail',
+        mail,
+        code,
+        error,
+      })
+      return false
+    }
   }
 }
