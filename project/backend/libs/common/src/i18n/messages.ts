@@ -85,8 +85,8 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'zh-CN': '无效的 AI 模型',
   },
   [ResponseCode.AiCallFailed]: {
-    'en-US': 'AI call failed',
-    'zh-CN': 'AI 调用失败',
+    'en-US': template.compile('AI call failed: {{error}}'),
+    'zh-CN': template.compile('AI 调用失败：{{error}}'),
   },
   [ResponseCode.InvalidAiTaskId]: {
     'en-US': 'Invalid AI task ID',

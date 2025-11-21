@@ -37,7 +37,7 @@ export class Md2cardService {
     }
     catch (error: any) {
       this.logger.error(`MD2Card API 调用失败: ${error.message}`)
-      throw new AppException(ResponseCode.AiCallFailed)
+      throw new AppException(ResponseCode.AiCallFailed, { error: error.message || 'Unknown error' })
     }
   }
 }
