@@ -35,9 +35,17 @@ export class ChannelService {
     if (!account || account.userId !== userId) {
       throw new AppException(ResponseCode.AccountNotFound)
     }
-    const res = await this.channelApi.deletePost(
-      { accountId, platform: account.type, postId },
-    )
-    return res
+    try {
+      const res = await this.channelApi.deletePost(
+        { accountId, platform: account.type, postId },
+      )
+      return res
+    }
+    catch (error) {
+      if (error instanceof AppException) {
+        throw error
+      }
+      throw new AppException(ResponseCode.DeletePostFailed, 'Unknown error')
+    }
   }
 }

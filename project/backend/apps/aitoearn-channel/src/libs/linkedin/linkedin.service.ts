@@ -121,7 +121,7 @@ export class LinkedinService {
     }
   }
 
-  async deletePost(shareId: string, accessToken: string) {
+  async deletePost(accessToken: string, shareId: string) {
     const url = `${this.apiBaseUrl}/ugcPosts/${encodeURIComponent(shareId)}`
     const config: AxiosRequestConfig = {
       headers: {

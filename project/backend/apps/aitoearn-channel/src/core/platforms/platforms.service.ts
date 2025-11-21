@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { AccountType } from '@yikart/common'
+import { AccountType, AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
+import { SocialMediaError } from '../../libs/exception/base'
 import { AccountService } from '../account/account.service'
 import { PlatformBaseService } from './base.service'
 
@@ -33,11 +34,22 @@ export class PlatformService {
   }
 
   async deletePost(accountId: string, platform: AccountType, postId: string) {
-    const svc = this.platformServices[platform]
-    if (svc) {
-      return await svc.deletePost(accountId, postId)
+    try {
+      const svc = this.platformServices[platform]
+      if (svc) {
+        return await svc.deletePost(accountId, postId)
+      }
+      throw new AppException(ResponseCode.PlatformNotSupported)
     }
-    return false
+    catch (error) {
+      if (error instanceof SocialMediaError) {
+        throw new AppException(ResponseCode.DeletePostFailed, error.message)
+      }
+      if (error instanceof AppException) {
+        throw error
+      }
+      throw new AppException(ResponseCode.DeletePostFailed, 'Unknown error')
+    }
   }
 
   async updateAccountStatus(accountId: string, status: number) {
