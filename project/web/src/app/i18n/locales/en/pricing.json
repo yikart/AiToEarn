@@ -76,7 +76,7 @@
             "resolution": "",
             "notes": "Large model pricing follows official pricing",
             "credits": "Per million tokens",
-            "price": "Input ¥9, Output ¥72",
+            "price": "Input CNY9, Output CNY72",
             "channel": "yun"
           },
           {
@@ -86,7 +86,7 @@
             "resolution": "",
             "notes": "",
             "credits": "",
-            "price": "Input ¥1.8, Output ¥14.4",
+            "price": "Input CNY1.8, Output CNY14.4",
             "channel": "yun"
           },
           {
@@ -96,7 +96,7 @@
             "resolution": "",
             "notes": "",
             "credits": "",
-            "price": "Input ¥0.36, Output ¥2.88",
+            "price": "Input CNY0.36, Output CNY2.88",
             "channel": "yun"
           },
           {
@@ -106,7 +106,7 @@
             "resolution": "Video Support",
             "notes": "",
             "credits": "",
-            "price": "Input ¥9, Output ¥72",
+            "price": "Input CNY9, Output CNY72",
             "channel": "yun"
           },
           {
@@ -116,7 +116,7 @@
             "resolution": "",
             "notes": "",
             "credits": "",
-            "price": "Input ¥36, Output ¥108",
+            "price": "Input CNY36, Output CNY108",
             "channel": "yun"
           },
           {
@@ -126,7 +126,7 @@
             "resolution": "Video Support",
             "notes": "",
             "credits": "",
-            "price": "Input ¥2.16, Output ¥18",
+            "price": "Input CNY2.16, Output CNY18",
             "channel": "yun"
           },
           {
@@ -136,7 +136,7 @@
             "resolution": "",
             "notes": "",
             "credits": "",
-            "price": "Input ¥1.6, Output ¥4",
+            "price": "Input CNY1.6, Output CNY4",
             "channel": "yun"
           },
           {
@@ -146,7 +146,7 @@
             "resolution": "",
             "notes": "Also known as Nano Banana Pro, supports multi-image input",
             "credits": "1 credit",
-            "price": "¥0.27",
+            "price": "CNY0.27",
             "channel": "yun"
           },
           {
@@ -156,7 +156,7 @@
             "resolution": "",
             "notes": "",
             "credits": "2.6 credits",
-            "price": "¥0.26",
+            "price": "CNY0.26",
             "channel": "Official"
           },
           {
@@ -166,7 +166,7 @@
             "resolution": "",
             "notes": "Image editing, supports jpeg, png formats",
             "credits": "3 credits",
-            "price": "¥0.3",
+            "price": "CNY0.3",
             "channel": "Official"
           },
           {
@@ -186,7 +186,7 @@
             "resolution": "Image editing support",
             "notes": "",
             "credits": "1.5 credits",
-            "price": "¥0.6",
+            "price": "CNY0.6",
             "channel": "yun"
           },
           {
@@ -196,7 +196,7 @@
             "resolution": "Image editing support",
             "notes": "",
             "credits": "1 credit",
-            "price": "¥0.3",
+            "price": "CNY0.3",
             "channel": "yun"
           },
           {
@@ -206,7 +206,7 @@
             "resolution": "",
             "notes": "",
             "credits": "4.5 credits",
-            "price": "¥0.45",
+            "price": "CNY0.45",
             "channel": "Official"
           },
           {
@@ -216,7 +216,7 @@
             "resolution": "",
             "notes": "",
             "credits": "3 credits",
-            "price": "¥0.3",
+            "price": "CNY0.3",
             "channel": "Official"
           },
           {
@@ -246,7 +246,7 @@
             "resolution": "720p",
             "notes": "",
             "credits": "20 credits",
-            "price": "¥2",
+            "price": "CNY2",
             "channel": "yun"
           },
           {
@@ -256,7 +256,7 @@
             "resolution": "720p",
             "notes": "",
             "credits": "40 credits",
-            "price": "¥4",
+            "price": "CNY4",
             "channel": "yun"
           },
           {
@@ -266,7 +266,7 @@
             "resolution": "1080p",
             "notes": "",
             "credits": "35 credits",
-            "price": "¥3.5",
+            "price": "CNY3.5",
             "channel": "yun"
           },
           {
@@ -276,7 +276,7 @@
             "resolution": "1080p",
             "notes": "",
             "credits": "70 credits",
-            "price": "¥7",
+            "price": "CNY7",
             "channel": "yun"
           },
           {
@@ -286,7 +286,7 @@
             "resolution": "1080p",
             "notes": "",
             "credits": "100 credits",
-            "price": "¥10",
+            "price": "CNY10",
             "channel": "yun"
           },
           {
@@ -296,7 +296,7 @@
             "resolution": "1080p",
             "notes": "",
             "credits": "200 credits",
-            "price": "¥20",
+            "price": "CNY20",
             "channel": "yun"
           },
           {
@@ -306,7 +306,7 @@
             "resolution": "480p",
             "notes": "",
             "credits": "70 credits",
-            "price": "¥0.7",
+            "price": "CNY0.7",
             "channel": "yun"
           },
           {
@@ -316,7 +316,7 @@
             "resolution": "1080p",
             "notes": "",
             "credits": "35 credits",
-            "price": "¥3.5",
+            "price": "CNY3.5",
             "channel": "yun"
           },
           {
@@ -326,7 +326,7 @@
             "resolution": "720p",
             "notes": "Do not use volcano channel",
             "credits": "12 credits",
-            "price": "¥1.2",
+            "price": "CNY1.2",
             "channel": "yun"
           },
           {
@@ -336,7 +336,7 @@
             "resolution": "720p",
             "notes": "Supports first and last frames",
             "credits": "35 credits",
-            "price": "¥3.5",
+            "price": "CNY3.5",
             "channel": "yun"
           },
           {
@@ -346,7 +346,7 @@
             "resolution": "720p",
             "notes": "Video editing",
             "credits": "35 credits",
-            "price": "¥3.5",
+            "price": "CNY3.5",
             "channel": "yun"
           },
           {
@@ -356,7 +356,7 @@
             "resolution": "480p",
             "notes": "Supports 10s",
             "credits": "7.2 credits",
-            "price": "¥0.72",
+            "price": "CNY0.72",
             "channel": "yun"
           },
           {
@@ -366,7 +366,7 @@
             "resolution": "720p",
             "notes": "10s price doubles",
             "credits": "16.4 credits",
-            "price": "¥1.64",
+            "price": "CNY1.64",
             "channel": "yun"
           },
           {
@@ -376,7 +376,7 @@
             "resolution": "1080p",
             "notes": "",
             "credits": "36.7 credits",
-            "price": "¥3.67",
+            "price": "CNY3.67",
             "channel": "yun"
           },
           {
@@ -386,7 +386,7 @@
             "resolution": "480p",
             "notes": "Supports first and last frames",
             "credits": "5 credits",
-            "price": "¥0.5",
+            "price": "CNY0.5",
             "channel": "yun"
           },
           {
@@ -396,7 +396,7 @@
             "resolution": "720p",
             "notes": "Supports 10s",
             "credits": "11 credits",
-            "price": "¥1.1",
+            "price": "CNY1.1",
             "channel": "yun"
           },
           {
@@ -406,7 +406,7 @@
             "resolution": "1080p",
             "notes": "10s price doubles",
             "credits": "25 credits",
-            "price": "¥2.5",
+            "price": "CNY2.5",
             "channel": "yun"
           }
         ]

@@ -1020,7 +1020,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
                                 {t('taskInfo.reward' as any)}
                                 ：
                               </strong>
-                              ¥
+                              CNY
                               {selectedTask.reward / 100}
                             </p>
                             {/* <p><strong>招募人数：</strong>{selectedTask.currentRecruits}/{selectedTask.maxRecruits}</p> */}

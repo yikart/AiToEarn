@@ -920,7 +920,7 @@ export default function ProfilePage() {
                 const symbol = currentOrderDetail.currency === 'usd'
                   ? '$'
                   : currentOrderDetail.currency === 'cny'
-                    ? '¥'
+                    ? 'CNY'
                     : currentOrderDetail.currency?.toUpperCase()
                 return `${symbol}${displayAmount}`
               })()}
@@ -931,7 +931,7 @@ export default function ProfilePage() {
                 const symbol = currentOrderDetail.currency === 'usd'
                   ? '$'
                   : currentOrderDetail.currency === 'cny'
-                    ? '¥'
+                    ? 'CNY'
                     : currentOrderDetail.currency?.toUpperCase()
                 return `${symbol}${displayAmount}`
               })()}
