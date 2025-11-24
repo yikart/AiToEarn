@@ -1,4 +1,5 @@
 export * from './account-type.enum'
+export * from './currency.enum'
 export * from './filter-set.enum'
 export * from './mime-type.enum'
 export * from './response-code.enum'

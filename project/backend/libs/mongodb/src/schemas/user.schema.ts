@@ -82,7 +82,7 @@ export class UserEarnInfo {
   cycleInterval: number
 }
 
-// 用户会员信息
+// User VIP Info
 @Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
@@ -98,7 +98,7 @@ export class UserVipInfo {
   })
   status: VipStatus
 
-  // 开通时间
+  // Start Time
   @Prop({ required: true })
   startTime: Date
 }
@@ -108,7 +108,7 @@ export class UserStorage {
     required: true,
     default: 500 * 1024 * 1024,
   })
-  total: number // 总存储（Bytes）
+  total: number // Total Storage (Bytes)
 
   @Prop({ required: false })
   expiredAt?: Date
@@ -165,7 +165,7 @@ export class User extends WithTimestampSchema {
   })
   status: UserStatus
 
-  // 是否删除
+  // Is Deleted
   @Prop({
     required: true,
     default: false,
@@ -180,13 +180,13 @@ export class User extends WithTimestampSchema {
   wxUnionid?: string
 
   @Prop({ required: false })
-  popularizeCode?: string // 我的推广码
+  popularizeCode?: string // My Promotion Code
 
   @Prop({ required: false })
-  inviteUserId?: string // 邀请人用户ID
+  inviteUserId?: string // Inviter User ID
 
   @Prop({ required: false })
-  inviteCode?: string // 我填写的邀请码
+  inviteCode?: string // Invite Code Entered
 
   @Prop({ type: Object, required: false, default: {} })
   backData?: UserBackData
@@ -195,9 +195,8 @@ export class User extends WithTimestampSchema {
   earnInfo?: UserEarnInfo
 
   @Prop({ type: Object, required: false })
-  googleAccount?: Record<string, unknown> // Google账号信息
+  googleAccount?: Record<string, unknown> // Google Account Info
 
-  // 用户VIP会员信息
   @Prop({ type: UserVipInfo, required: false })
   vipInfo?: UserVipInfo
 
@@ -205,15 +204,14 @@ export class User extends WithTimestampSchema {
     required: true,
     default: 0,
   })
-  score: number // 积分
+  score: number // Score
 
   @Prop({
     required: true,
     default: 0,
   })
-  income: number // 收入（分）
+  income: number // Income (cents)
 
-  // 累计收入
   @Prop({
     required: true,
     default: 0,
@@ -224,7 +222,19 @@ export class User extends WithTimestampSchema {
     required: true,
     default: 0,
   })
-  usedStorage: number // 已用存储（Bytes）
+  incomeUSD: number // Income (USD cents)
+
+  @Prop({
+    required: true,
+    default: 0,
+  })
+  totalIncomeUSD: number // Total Income (USD cents)
+
+  @Prop({
+    required: true,
+    default: 0,
+  })
+  usedStorage: number // Used Storage (Bytes)
 
   @Prop({
     type: UserStorage,
@@ -235,7 +245,6 @@ export class User extends WithTimestampSchema {
   })
   storage: UserStorage
 
-  // 累计收入
   @Prop({
     required: false,
     default: 0,
