@@ -722,7 +722,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
             </Descriptions.Item>
             <Descriptions.Item label={tProfile('subscriptionMode')}>{currentOrderDetail.mode}</Descriptions.Item>
             <Descriptions.Item label={tProfile('amount')}>
-              ¥
+              CNY
               {(currentOrderDetail.amount / 100).toFixed(2)}
             </Descriptions.Item>
             <Descriptions.Item label={tProfile('status')}>

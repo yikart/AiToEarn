@@ -1137,7 +1137,7 @@ export default function TaskPageCore() {
                                 ：
                               </strong>
                               <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                ¥
+                                CNY
                                 {task.reward / 100}
                               </span>
                             </div>
@@ -1150,7 +1150,7 @@ export default function TaskPageCore() {
                                 ：
                               </strong>
                               <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                ¥
+                                CNY
                                 {task.cpmReward / 100}
                               </span>
                             </div>
@@ -1294,7 +1294,7 @@ export default function TaskPageCore() {
                                 ：
                               </strong>
                               <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                ¥
+                                CNY
                                 {task.reward / 100}
                               </span>
                             </div>
@@ -1307,7 +1307,7 @@ export default function TaskPageCore() {
                                 ：
                               </strong>
                               <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                ¥
+                                CNY
                                 {task.cpmReward / 100}
                               </span>
                             </div>
@@ -1483,7 +1483,7 @@ export default function TaskPageCore() {
                           {t('taskInfo.reward' as any)}
                         </div>
                         <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#d63031' }}>
-                          ¥
+                          CNY
                           {' '}
                           {taskDetail.reward / 100}
                         </div>
@@ -1505,7 +1505,7 @@ export default function TaskPageCore() {
                           {t('taskInfo.CPM' as any)}
                         </div>
                         <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#d63031' }}>
-                          ¥
+                          CNY
                           {' '}
                           {taskDetail.cpmReward / 100}
                         </div>
@@ -2012,7 +2012,7 @@ export default function TaskPageCore() {
                           color: '#d63031',
                         }}
                         >
-                          ¥
+                          CNY
                           {' '}
                           {acceptedTaskDetail.reward / 100}
                         </div>
@@ -2043,7 +2043,7 @@ export default function TaskPageCore() {
                           color: '#d63031',
                         }}
                         >
-                          ¥
+                          CNY
                           {' '}
                           {acceptedTaskDetail.cpmReward / 100}
                         </div>
