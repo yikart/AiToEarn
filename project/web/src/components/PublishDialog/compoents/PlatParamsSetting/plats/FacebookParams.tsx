@@ -20,7 +20,7 @@ const FacebookParams = memo(
       // 初始化Facebook参数
       useEffect(() => {
         const option = pubItem.params.option
-        if (!option.facebook || !option.facebook.content_category) {
+        if (!option.facebook?.content_category) {
           setOnePubParams(
             {
               option: {
