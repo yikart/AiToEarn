@@ -2,39 +2,41 @@ import type { Request } from 'express'
 import { Injectable } from '@nestjs/common'
 import { Context, Tool } from '@rekog/mcp-nest'
 import { z } from 'zod'
-import { CreatePublishingTaskDto, CreatePublishingTaskSchema } from '../publishing/dto/publishing.dto'
 import { PublishingService } from '../publishing/publishing.service'
-import { CreatePublishingTaskRespSchema, McpAuthedAccountsResponseSchema } from './dto/mcp.dto'
 
 @Injectable()
 export class PublishingTool {
   constructor(private readonly publishingService: PublishingService) {}
   @Tool({
-    name: 'list_linked_accounts',
+    name: 'list-linked-accounts',
     description: 'List linked accounts',
-    parameters: z.object({}).describe('无参数'),
-    outputSchema: McpAuthedAccountsResponseSchema,
+    parameters: z.object({}),
+    outputSchema: z.object({}),
   })
-  async listLinkedAccounts(_data: unknown, _ctx: Context, request: Request) {
-    const apiKey = request.headers['api-key'] || request.query['api-key']
+  async listLinkedAccounts({ name }: { name: string }, _ctx: Context, request: Request) {
+    const apiKey = request.headers['x-api-key'] || request.query['x-api-key']
     if (!apiKey || typeof apiKey !== 'string') {
-      throw new Error('apiKey is required in header or query')
+      throw new Error(`apiKey is required in header or query ${name}`)
     }
-    return await this.publishingService.listLinkedAccounts(apiKey)
+    const accounts = await this.publishingService.listLinkedAccounts(apiKey)
+    return {
+      accounts: accounts.map(account => ({
+        accountId: account._id.toString(),
+        userId: account.userId,
+        platform: account.type,
+        nickname: account.nickname,
+      })),
+    }
   }
 
   @Tool({
-    name: 'create_publishing_task',
+    name: 'create-publishing-task',
     description: 'Create a publishing task',
-    parameters: CreatePublishingTaskSchema,
-    outputSchema: CreatePublishingTaskRespSchema,
+    parameters: z.object({}),
+    outputSchema: z.object({}),
   })
-  async createPublishingTask(data: CreatePublishingTaskDto, request: Request) {
-    const apiKey = request.headers['api-key'] || request.query['api-key']
-    if (!apiKey || typeof apiKey !== 'string') {
-      throw new Error('apiKey is required in header or query')
-    }
-    return await this.publishingService.batchCreatePublishingTask(apiKey, data)
+  async createPublishingTask(data: any, _ctx: Context, _request: Request) {
+    return await this.publishingService.batchCreatePublishingTask('', data)
   }
 
 //   @Tool({

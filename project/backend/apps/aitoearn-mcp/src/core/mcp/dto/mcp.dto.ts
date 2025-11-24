@@ -1,8 +1,8 @@
-import { AccountType } from '@yikart/common'
 import { z } from 'zod'
+import { AccountType } from '../../../libs/common/enums'
 
 export const GetAuthPageSchema = z.object({
-  accountType: z.enum(AccountType).describe('平台类型'),
+  accountType: z.nativeEnum(AccountType).describe('平台类型'),
 })
 
 export const McpPublishSchema = z.object({
@@ -30,7 +30,7 @@ export const UpdatePublishTaskTimeSchema = z.object({
 export const McpAuthedAccountSchema = z.object({
   accountId: z.string().describe('accountId'),
   userId: z.string().describe('userId'),
-  platform: z.enum(AccountType).describe('平台类型'),
+  platform: z.nativeEnum(AccountType).describe('平台类型'),
   nickname: z.string().nullable().optional().describe('昵称'),
 })
 

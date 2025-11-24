@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
+import { APIKeyStatus } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
@@ -12,12 +13,6 @@ import { WithTimestampSchema } from './timestamp.schema'
 })
 export class ApiKeyAccount extends WithTimestampSchema {
   id: string
-
-  @Prop({
-    required: true,
-    index: true,
-  })
-  apiKeyId: string
 
   @Prop({
     required: true,
@@ -39,9 +34,10 @@ export class ApiKeyAccount extends WithTimestampSchema {
 
   @Prop({
     required: false,
-    type: String,
+    enum: APIKeyStatus,
+    default: APIKeyStatus.Active,
   })
-  status?: string
+  status: APIKeyStatus
 
   static get indexes() {
     return [{ apiKeyId: 1, accountId: 1 }]

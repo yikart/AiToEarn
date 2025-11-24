@@ -26,11 +26,11 @@ export class PublishingController {
     return this.publishingService.batchCreatePublishingTask(apiKey, body)
   }
 
-  @HttpCode(200)
-  @Post(':accountId/tasks')
-  async createPublishingTime(@Param() accountId: string, @Body() body: CreatePublishingTasksDto) {
-    return this.publishingService.createPublishingTask(accountId, body)
-  }
+  // @HttpCode(200)
+  // @Post(':accountId/tasks')
+  // async createPublishingTime(@Param() accountId: string, @Body() body: CreatePublishingTasksDto) {
+  //   return this.publishingService.createPublishingTask(accountId, body)
+  // }
 
   @HttpCode(200)
   @Get('tasks/:taskId/status')

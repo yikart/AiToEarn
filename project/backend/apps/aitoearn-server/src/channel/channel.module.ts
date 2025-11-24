@@ -17,7 +17,6 @@ import { MetaModule } from './meta/meta.module'
 import { PinterestModule } from './pinterest/pinterest.module'
 import { PublishController } from './publish.controller'
 import { PublishService } from './publish.service'
-import { SkKeyModule } from './skKey/skKey.module'
 import { TiktokModule } from './tiktok/tiktok.module'
 import { TwitterModule } from './twitter/twitter.module'
 import { WxGzhModule } from './wxGzh/wxGzh.module'
@@ -30,7 +29,6 @@ import { YoutubeModule } from './youtube/youtube.module'
     ChannelApiModule,
     InteractModule,
     DataCubeModule,
-    SkKeyModule,
     BilibiliModule,
     WxGzhModule,
     YoutubeModule,

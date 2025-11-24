@@ -1,9 +1,20 @@
-import { s3ConfigSchema } from '@yikart/aws-s3'
-import { createZodDto, selectConfig } from '@yikart/common'
-import { mongodbConfigSchema } from '@yikart/mongodb'
-import { redisConfigSchema } from '@yikart/redis'
-import { redlockConfigSchema } from '@yikart/redlock'
+import { resolve } from 'node:path'
+import { program } from 'commander'
+import { fileLoader, selectConfig, TypedConfigModule } from 'nest-typed-config'
+import { createZodDto } from 'nestjs-zod'
 import { z } from 'zod'
+import { mongodbConfigSchema } from './libs/mongodb/mongodb.config'
+
+export const s3ConfigSchema = z.object({
+  region: z.string(),
+  accessKeyId: z.string().optional(),
+  secretAccessKey: z.string().optional(),
+  bucketName: z.string(),
+  endpoint: z.string(),
+  signExpires: z.number().default(5 * 60).describe('sign expires in seconds'),
+})
+
+export class S3Config extends createZodDto(s3ConfigSchema) {}
 
 const logLevel = z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace'])
 
@@ -42,14 +53,32 @@ export const baseConfig = z.object({
 
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
-  redis: redisConfigSchema,
   mongodb: mongodbConfigSchema,
-  redlock: redlockConfigSchema,
   awsS3: s3ConfigSchema,
   environment: z.string().default('development'),
   enableConfigLogging: z.boolean().default(false),
 })
 
-export class AppConfig extends createZodDto(appConfigSchema) { }
+export class ServiceConfig extends createZodDto(appConfigSchema) {}
+export const configModule = TypedConfigModule.forRoot({
+  schema: ServiceConfig,
+  validate(config) {
+    const result = appConfigSchema.safeParse(config)
+    return result.success
+      ? result.data
+      : (() => {
+          throw new Error(`Configuration is not valid:\n${result.error.message}\n`)
+        })()
+  },
+  load: fileLoader({
+    absolutePath: resolve(
+      process.cwd(),
+      program
+        .requiredOption('-c --config <config>', 'config path')
+        .parse(process.argv)
+        .opts()['config'],
+    ),
+  }),
+})
 
-export const config = selectConfig(AppConfig)
+export const config = selectConfig(configModule, ServiceConfig)

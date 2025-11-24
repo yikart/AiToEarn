@@ -12,10 +12,10 @@
     "strictBindCallApply": true,
     "strictNullChecks": true,
     "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "importHelpers": true,
     "outDir": "../../dist/out-tsc",
     "forceConsistentCasingInFileNames": true

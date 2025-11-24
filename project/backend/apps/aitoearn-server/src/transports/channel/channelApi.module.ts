@@ -10,7 +10,6 @@ import { PlatMetaNatsApi } from './api/meta.natsApi'
 import { PlatPinterestNatsApi } from './api/pinterest.natsApi'
 import { PlatPublishNatsApi } from './api/publish.natsApi'
 import { PublishTaskNatsApi } from './api/publishTask.natsApi'
-import { ChannelSkKeyNatsApi } from './api/skKeyNatsApi.natsApi'
 import { PlatTiktokNatsApi } from './api/tiktok.natsApi'
 import { PlatTwitterNatsApi } from './api/twitter.natsApi'
 import { PlatWxGzhNatsApi } from './api/wxGzh.natsApi'
@@ -32,7 +31,6 @@ import { ChannelApi } from './channel.api'
     PlatPinterestNatsApi,
     PlatPublishNatsApi,
     PublishTaskNatsApi,
-    ChannelSkKeyNatsApi,
     PlatTiktokNatsApi,
     PlatTwitterNatsApi,
     PlatWxGzhNatsApi,
@@ -50,7 +48,6 @@ import { ChannelApi } from './channel.api'
     PlatPinterestNatsApi,
     PlatPublishNatsApi,
     PublishTaskNatsApi,
-    ChannelSkKeyNatsApi,
     PlatTiktokNatsApi,
     PlatTwitterNatsApi,
     PlatWxGzhNatsApi,

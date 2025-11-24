@@ -1,4 +1,4 @@
-import { APIKeyStatus } from '@yikart/mongodb'
+import { APIKeyStatus } from '../../libs/mongodb/enums'
 
 export interface ApiKeyInfo {
   readonly userId: string

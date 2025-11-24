@@ -6,13 +6,6 @@ const {
 } = process.env
 
 const {
-  MONGODB_HOST,
-  MONGODB_PORT,
-  MONGODB_USERNAME,
-  MONGODB_PASSWORD,
-} = process.env
-
-const {
   JWT_SECRET,
 } = process.env
 
@@ -65,7 +58,7 @@ module.exports = {
     },
   },
   mongodb: {
-    uri: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGODB_HOST}:${MONGODB_PORT}/?tls=true&tlsCAFile=global-bundle.pem&retryWrites=false`,
+    uri: `mongodb://root:nofucksgiven@127.0.0.1:27017/aitoearn?authSource=admin&directConnection=true`,
     dbName: 'aitoearn',
   },
   awsS3: {

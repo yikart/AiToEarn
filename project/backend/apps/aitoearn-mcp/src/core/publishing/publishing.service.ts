@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AppException, ResponseCode } from '@yikart/common'
-import { Account, ApiKeyAccountRepository, PublishingTaskType, PublishStatus, PublishTaskRepository } from '@yikart/mongodb'
+import { ResponseCode } from '../../libs/common/enums'
+import { AppException } from '../../libs/common/exceptions/app.exception'
+import { Account, ApiKeyAccountRepository, PublishingTaskType, PublishStatus, PublishTaskRepository } from '../../libs/mongodb'
 import { AccountService } from '../account/account.service'
 import { CreatePublishingTaskDto } from './dto/publishing.dto'
 
@@ -44,7 +45,7 @@ export class PublishingService {
   }
 
   async batchCreatePublishingTask(apiKey: string, data: CreatePublishingTaskDto): Promise<{ success: boolean }> {
-    const apiKeyAccounts = await this.apiKeyAccountRepository.list(apiKey)
+    const apiKeyAccounts = await this.apiKeyAccountRepository.list({ apiKey })
     if (!apiKeyAccounts || apiKeyAccounts.length === 0) {
       throw new Error('Api key not found')
     }
@@ -55,7 +56,7 @@ export class PublishingService {
   }
 
   async listLinkedAccounts(apiKey: string): Promise<Account[]> {
-    const apiKeyAccounts = await this.apiKeyAccountRepository.list(apiKey)
+    const apiKeyAccounts = await this.apiKeyAccountRepository.list({ apiKey })
     const accounts = await this.accountService.getAccountListByIds(apiKeyAccounts.map(apiKeyAccount => apiKeyAccount.accountId))
     if (!accounts || accounts.length === 0) {
       return []

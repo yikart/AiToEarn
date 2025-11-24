@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountRepository } from '@yikart/mongodb'
+import { AccountRepository } from '../../libs/mongodb/repositories'
 
 @Injectable()
 export class AccountService {

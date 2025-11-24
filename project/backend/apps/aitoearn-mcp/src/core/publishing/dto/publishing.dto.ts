@@ -1,4 +1,4 @@
-import { createZodDto } from '@yikart/common'
+import { createZodDto } from 'nestjs-zod'
 import { z } from 'zod'
 
 export const BiliBiliPublishTaskMetaSchema = z.object({
