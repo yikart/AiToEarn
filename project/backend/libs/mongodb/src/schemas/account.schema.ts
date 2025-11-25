@@ -5,8 +5,8 @@ import { Schema as MongooseSchema } from 'mongoose'
 import { WithTimestampSchema } from './timestamp.schema'
 
 export enum AccountStatus {
-  NORMAL = 1, // 可用
-  ABNORMAL = 0, // 不可用
+  NORMAL = 1,
+  ABNORMAL = 0,
 }
 
 @Schema({
@@ -36,13 +36,13 @@ export class Account extends WithTimestampSchema {
   type: AccountType
 
   @Prop({
-    required: true, // 平台账户的唯一ID˝
+    required: true,
     index: true,
   })
   uid: string
 
   @Prop({
-    required: false, // 部分平台的补充ID
+    required: false,
     index: true,
   })
   account: string
@@ -70,7 +70,7 @@ export class Account extends WithTimestampSchema {
     type: String,
     default: '',
   })
-  token: string // 其他token 目前抖音用
+  token: string
 
   @Prop({
     required: false,
@@ -143,7 +143,6 @@ export class Account extends WithTimestampSchema {
   })
   income: number
 
-  // 账户关联组，与 accountGroup.id 关联
   @Prop({ type: String, required: true })
   groupId: string
 
@@ -152,12 +151,11 @@ export class Account extends WithTimestampSchema {
     default: AccountStatus.NORMAL,
     index: true,
   })
-  status: AccountStatus // 登录状态，用于判断是否失效
+  status: AccountStatus
 
   @Prop({ type: String, required: false })
   channelId: string
 
-  // 排序
   @Prop({
     required: true,
     type: Number,
