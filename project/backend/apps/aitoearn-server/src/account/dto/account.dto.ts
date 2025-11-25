@@ -10,6 +10,7 @@ const CreateAccountSchema = z.object({
   loginTime: z.coerce.date().optional(),
   uid: z.string().min(1),
   account: z.string().min(1),
+  token: z.string().optional(),
   avatar: z.string().optional(),
   nickname: z.string().min(1),
   fansCount: z.number().optional(),
@@ -22,7 +23,6 @@ const CreateAccountSchema = z.object({
   workCount: z.number().optional(),
   income: z.number().optional(),
   groupId: z.string().optional(),
-  _id: z.string().optional(),
 })
 export class CreateAccountDto extends createZodDto(
   CreateAccountSchema,
@@ -30,9 +30,25 @@ export class CreateAccountDto extends createZodDto(
 
 const UpdateAccountSchema = z.object({
   id: z.string({ message: 'ID' }),
-  name: z.string({ message: '昵称' }).optional(),
-  avatar: z.string({ message: '头像' }).optional(),
-  desc: z.string({ message: '简介' }).optional(),
+  refresh_token: z.string().min(1).optional(),
+  access_token: z.string().min(1).optional(),
+  type: z.enum(AccountType).optional(),
+  loginCookie: z.string().min(1).optional(),
+  loginTime: z.coerce.date().optional(),
+  uid: z.string().min(1).optional(),
+  account: z.string().min(1).optional(),
+  token: z.string().optional(),
+  avatar: z.string().optional(),
+  nickname: z.string().min(1).optional(),
+  fansCount: z.number().optional(),
+  readCount: z.number().optional(),
+  likeCount: z.number().optional(),
+  collectCount: z.number().optional(),
+  forwardCount: z.number().optional(),
+  commentCount: z.number().optional(),
+  lastStatsTime: z.coerce.date().optional(),
+  workCount: z.number().optional(),
+  income: z.number().optional(),
   groupId: z.string().optional(),
 })
 export class UpdateAccountDto extends createZodDto(
