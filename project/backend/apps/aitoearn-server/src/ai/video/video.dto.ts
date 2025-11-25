@@ -45,13 +45,20 @@ const userVideoTaskQuerySchema = z.object({
 export class UserVideoTaskQueryDto extends createZodDto(userVideoTaskQuerySchema) {}
 
 // 通用视频任务状态查询
-const listUserVideoTasksQuerySchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
+const listVideoTasksQuerySchema = z.object({
   ...PaginationDtoSchema.shape,
 })
 
-export class UserListVideoTasksQueryDto extends createZodDto(listUserVideoTasksQuerySchema) {}
+export class ListVideoTasksQueryDto extends createZodDto(listVideoTasksQuerySchema) {}
+
+// 通用视频任务状态查询
+const userListVideoTasksQuerySchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  ...listVideoTasksQuerySchema.shape,
+})
+
+export class UserListVideoTasksQueryDto extends createZodDto(userListVideoTasksQuerySchema) {}
 
 // Kling文生视频请求
 const klingText2VideoBaseSchema = z.object({
@@ -66,18 +73,16 @@ const klingText2VideoBaseSchema = z.object({
 
 export class KlingText2VideoRequestDto extends createZodDto(klingText2VideoBaseSchema) {}
 
-const klingText2VideoRequestSchema = z.object({
+const userKlingText2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...klingText2VideoBaseSchema.shape,
 })
 
-export class UserKlingText2VideoRequestDto extends createZodDto(klingText2VideoRequestSchema) {}
+export class UserKlingText2VideoRequestDto extends createZodDto(userKlingText2VideoRequestSchema) {}
 
 // Volcengine视频生成请求
 const volcengineGenerationRequestSchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
   model: z.string().describe('模型ID或Endpoint ID'),
   content: z.array(z.union([
     z.object({
@@ -96,6 +101,14 @@ const volcengineGenerationRequestSchema = z.object({
 })
 
 export class VolcengineGenerationRequestDto extends createZodDto(volcengineGenerationRequestSchema) {}
+
+// Volcengine视频生成请求
+const userVolcengineGenerationRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  ...volcengineGenerationRequestSchema.shape,
+})
+export class UserVolcengineGenerationRequestDto extends createZodDto(userVolcengineGenerationRequestSchema) {}
 
 // Kling回调接口DTO
 const klingCallbackSchema = z.object({
@@ -158,9 +171,7 @@ export class VolcengineCallbackDto extends createZodDto(volcengineCallbackSchema
 // ==================== Kling API 其他接口 DTO ====================
 
 // 图生视频请求DTO
-const klingImage2VideoRequestSchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
+const klingImage2VideoBaseSchema = z.object({
   model_name: z.string().min(1).describe('模型名称'),
   image: z.string().optional().describe('参考图像'),
   image_tail: z.string().optional().describe('参考图像 - 尾帧控制'),
@@ -190,12 +201,18 @@ const klingImage2VideoRequestSchema = z.object({
   duration: z.enum(['5', '10']).optional().describe('生成视频时长'),
 })
 
-export class KlingImage2VideoRequestDto extends createZodDto(klingImage2VideoRequestSchema) {}
+export class KlingImage2VideoRequestDto extends createZodDto(klingImage2VideoBaseSchema) {}
 
-// 多图生视频请求DTO
-const klingMultiImage2VideoRequestSchema = z.object({
+const userKlingImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
+  ...klingImage2VideoBaseSchema.shape,
+})
+
+export class UserKlingImage2VideoRequestDto extends createZodDto(userKlingImage2VideoRequestSchema) {}
+
+// 多图生视频请求DTO
+const klingMultiImage2VideoBaseSchema = z.object({
   model_name: z.string().min(1).describe('模型名称'),
   image_list: z.array(z.object({
     image: z.string(),
@@ -207,32 +224,20 @@ const klingMultiImage2VideoRequestSchema = z.object({
   aspect_ratio: z.enum(AspectRatio).optional().describe('生成图片的画面纵横比'),
 })
 
-export class KlingMultiImage2VideoRequestDto extends createZodDto(klingMultiImage2VideoRequestSchema) {}
+export class KlingMultiImage2VideoRequestDto extends createZodDto(klingMultiImage2VideoBaseSchema) {}
 
-// Kling任务查询DTO
-const klingTaskQuerySchema = z.object({
+const userKlingMultiImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
-  taskId: z.string().min(1).describe('任务ID'),
+  ...klingMultiImage2VideoBaseSchema.shape,
 })
 
-export class KlingTaskQueryDto extends createZodDto(klingTaskQuerySchema) {}
-
-// Volcengine任务查询DTO
-const volcengineTaskQuerySchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
-  taskId: z.string().min(1).describe('任务ID'),
-})
-
-export class VolcengineTaskQueryDto extends createZodDto(volcengineTaskQuerySchema) {}
+export class UserKlingMultiImage2VideoRequestDto extends createZodDto(userKlingMultiImage2VideoRequestSchema) {}
 
 // ==================== Dashscope API DTO ====================
 
 // Dashscope文生视频请求DTO
-const dashscopeText2VideoRequestSchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
+const dashscopeText2VideoBaseSchema = z.object({
   model: z.string().min(1).describe('模型名称'),
   input: z.object({
     prompt: z.string().min(1).describe('正向文本提示词'),
@@ -245,12 +250,18 @@ const dashscopeText2VideoRequestSchema = z.object({
   }).optional(),
 })
 
-export class DashscopeText2VideoRequestDto extends createZodDto(dashscopeText2VideoRequestSchema) {}
+export class DashscopeText2VideoRequestDto extends createZodDto(dashscopeText2VideoBaseSchema) {}
 
-// Dashscope图生视频请求DTO
-const dashscopeImage2VideoRequestSchema = z.object({
+const userDashscopeText2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
+  ...dashscopeText2VideoBaseSchema.shape,
+})
+
+export class UserDashscopeText2VideoRequestDto extends createZodDto(userDashscopeText2VideoRequestSchema) {}
+
+// Dashscope图生视频请求DTO
+const dashscopeImage2VideoBaseSchema = z.object({
   model: z.string().min(1).describe('模型名称'),
   input: z.object({
     image_url: z.string().min(1).describe('图片URL'),
@@ -263,12 +274,18 @@ const dashscopeImage2VideoRequestSchema = z.object({
   }).optional(),
 })
 
-export class DashscopeImage2VideoRequestDto extends createZodDto(dashscopeImage2VideoRequestSchema) {}
+export class DashscopeImage2VideoRequestDto extends createZodDto(dashscopeImage2VideoBaseSchema) {}
 
-// Dashscope首尾帧生视频请求DTO
-const dashscopeKeyFrame2VideoRequestSchema = z.object({
+const userDashscopeImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
+  ...dashscopeImage2VideoBaseSchema.shape,
+})
+
+export class UserDashscopeImage2VideoRequestDto extends createZodDto(userDashscopeImage2VideoRequestSchema) {}
+
+// Dashscope首尾帧生视频请求DTO
+const dashscopeKeyFrame2VideoBaseSchema = z.object({
   model: z.string().min(1).describe('模型名称'),
   input: z.object({
     first_frame_url: z.string().min(1).describe('首帧图片URL'),
@@ -284,7 +301,15 @@ const dashscopeKeyFrame2VideoRequestSchema = z.object({
   }).optional(),
 })
 
-export class DashscopeKeyFrame2VideoRequestDto extends createZodDto(dashscopeKeyFrame2VideoRequestSchema) {}
+export class DashscopeKeyFrame2VideoRequestDto extends createZodDto(dashscopeKeyFrame2VideoBaseSchema) {}
+
+const userDashscopeKeyFrame2VideoRequestSchema = z.object({
+  userId: z.string(),
+  userType: z.enum(UserType),
+  ...dashscopeKeyFrame2VideoBaseSchema.shape,
+})
+
+export class UserDashscopeKeyFrame2VideoRequestDto extends createZodDto(userDashscopeKeyFrame2VideoRequestSchema) {}
 
 // Dashscope回调DTO
 const dashscopeCallbackSchema = z.object({
@@ -311,19 +336,8 @@ const dashscopeCallbackSchema = z.object({
 
 export class DashscopeCallbackDto extends createZodDto(dashscopeCallbackSchema) {}
 
-// Dashscope任务查询DTO
-const dashscopeTaskQuerySchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
-  taskId: z.string().min(1).describe('任务ID'),
-})
-
-export class DashscopeTaskQueryDto extends createZodDto(dashscopeTaskQuerySchema) {}
-
 // Sora2视频生成请求
-const sora2GenerationRequestSchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
+const sora2GenerationBaseSchema = z.object({
   model: z.string().describe('模型'),
   enhance_prompt: z.boolean().optional(),
   images: z.string().array().optional(),
@@ -334,16 +348,15 @@ const sora2GenerationRequestSchema = z.object({
   aspect_ratio: z.string().optional(),
 })
 
-export class Sora2GenerationRequestDto extends createZodDto(sora2GenerationRequestSchema) {}
+export class Sora2GenerationRequestDto extends createZodDto(sora2GenerationBaseSchema) {}
 
-// Sora2任务查询DTO
-const sora2TaskQuerySchema = z.object({
+const userSora2GenerationRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
-  taskId: z.string().min(1).describe('任务ID'),
+  ...sora2GenerationBaseSchema.shape,
 })
 
-export class Sora2TaskQueryDto extends createZodDto(sora2TaskQuerySchema) {}
+export class UserSora2GenerationRequestDto extends createZodDto(userSora2GenerationRequestSchema) {}
 
 // 视频生成模型查询DTO
 const videoGenerationModelsQuerySchema = z.object({
@@ -353,7 +366,7 @@ const videoGenerationModelsQuerySchema = z.object({
 
 export class VideoGenerationModelsQueryDto extends createZodDto(videoGenerationModelsQuerySchema) {}
 
-// Sora2回调接口DTO（与查询API返回格式一致）
+// Sora2回调接口DTO
 const sora2CallbackSchema = z.object({
   id: z.string(),
   status: z.enum(Sora2TaskStatus),

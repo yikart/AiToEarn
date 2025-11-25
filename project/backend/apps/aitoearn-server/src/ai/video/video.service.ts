@@ -40,21 +40,21 @@ import {
 import { ModelsConfigService } from '../models-config'
 import {
   DashscopeCallbackDto,
-  DashscopeImage2VideoRequestDto,
-  DashscopeKeyFrame2VideoRequestDto,
-  DashscopeText2VideoRequestDto,
   KlingCallbackDto,
-  KlingImage2VideoRequestDto,
-  KlingMultiImage2VideoRequestDto,
   Sora2CallbackDto,
-  Sora2GenerationRequestDto,
+  UserDashscopeImage2VideoRequestDto,
+  UserDashscopeKeyFrame2VideoRequestDto,
+  UserDashscopeText2VideoRequestDto,
+  UserKlingImage2VideoRequestDto,
+  UserKlingMultiImage2VideoRequestDto,
   UserKlingText2VideoRequestDto,
   UserListVideoTasksQueryDto,
+  UserSora2GenerationRequestDto,
   UserVideoGenerationRequestDto,
   UserVideoTaskQueryDto,
+  UserVolcengineGenerationRequestDto,
   VideoGenerationModelsQueryDto,
   VolcengineCallbackDto,
-  VolcengineGenerationRequestDto,
 } from './video.dto'
 
 @Injectable()
@@ -166,7 +166,7 @@ export class VideoService {
     const klingDuration = duration ? duration.toString() as '5' | '10' : undefined
 
     if (image) {
-      const klingRequest: KlingImage2VideoRequestDto = {
+      const klingRequest: UserKlingImage2VideoRequestDto = {
         userId,
         userType,
         model_name: model,
@@ -236,7 +236,7 @@ export class VideoService {
       })}`,
     })
 
-    const volcengineRequest: VolcengineGenerationRequestDto = {
+    const volcengineRequest: UserVolcengineGenerationRequestDto = {
       userId,
       userType,
       model,
@@ -260,7 +260,7 @@ export class VideoService {
     }
 
     if (image && image_tail) {
-      const dashscopeRequest: DashscopeKeyFrame2VideoRequestDto = {
+      const dashscopeRequest: UserDashscopeKeyFrame2VideoRequestDto = {
         userId,
         userType,
         model,
@@ -278,7 +278,7 @@ export class VideoService {
       return createTaskResponse(result.task_id)
     }
     else if (image && !image_tail) {
-      const dashscopeRequest: DashscopeImage2VideoRequestDto = {
+      const dashscopeRequest: UserDashscopeImage2VideoRequestDto = {
         userId,
         userType,
         model,
@@ -294,7 +294,7 @@ export class VideoService {
       return createTaskResponse(result.task_id)
     }
     else {
-      const dashscopeRequest: DashscopeText2VideoRequestDto = {
+      const dashscopeRequest: UserDashscopeText2VideoRequestDto = {
         userId,
         userType,
         model,
@@ -357,7 +357,7 @@ export class VideoService {
 
     const { aspectRatio, orientation } = this.parseSizeToAspectRatio(size)
 
-    const sora2Request: Sora2GenerationRequestDto = {
+    const sora2Request: UserSora2GenerationRequestDto = {
       userId,
       userType,
       model,
@@ -513,7 +513,7 @@ export class VideoService {
   /**
    * Dashscope文生视频
    */
-  async dashscopeText2Video(request: DashscopeText2VideoRequestDto) {
+  async dashscopeText2Video(request: UserDashscopeText2VideoRequestDto) {
     const { userId, userType, model, parameters, ...restParams } = request
     const pricing = await this.calculateVideoGenerationPrice({
       userId,
@@ -797,7 +797,7 @@ export class VideoService {
   /**
    * Volcengine视频生成
    */
-  async volcengineCreate(request: VolcengineGenerationRequestDto) {
+  async volcengineCreate(request: UserVolcengineGenerationRequestDto) {
     const { userId, userType, model, content, ...params } = request
 
     const textContent = content.find(c => c.type === ContentType.Text)
@@ -901,7 +901,7 @@ export class VideoService {
   /**
    * Kling图生视频
    */
-  async klingImage2Video(request: KlingImage2VideoRequestDto) {
+  async klingImage2Video(request: UserKlingImage2VideoRequestDto) {
     const { userId, userType, model_name, duration, mode, ...params } = request
     const pricing = await this.calculateVideoGenerationPrice({
       userId,
@@ -956,7 +956,7 @@ export class VideoService {
   /**
    * Kling多图生视频
    */
-  async klingMultiImage2Video(request: KlingMultiImage2VideoRequestDto) {
+  async klingMultiImage2Video(request: UserKlingMultiImage2VideoRequestDto) {
     const { userId, userType, model_name, duration, mode, ...params } = request
     const pricing = await this.calculateVideoGenerationPrice({
       userId,
@@ -1011,7 +1011,7 @@ export class VideoService {
   /**
    * Dashscope图生视频
    */
-  async dashscopeImage2Video(request: DashscopeImage2VideoRequestDto) {
+  async dashscopeImage2Video(request: UserDashscopeImage2VideoRequestDto) {
     const { userId, userType, model, parameters, ...restParams } = request
     const pricing = await this.calculateVideoGenerationPrice({
       userId,
@@ -1157,7 +1157,7 @@ export class VideoService {
   /**
    * Dashscope首尾帧生视频
    */
-  async dashscopeKeyFrame2Video(request: DashscopeKeyFrame2VideoRequestDto) {
+  async dashscopeKeyFrame2Video(request: UserDashscopeKeyFrame2VideoRequestDto) {
     const { userId, userType, model, parameters, ...restParams } = request
     const pricing = await this.calculateVideoGenerationPrice({
       userId,
@@ -1206,7 +1206,7 @@ export class VideoService {
   /**
    * Sora2视频生成
    */
-  async sora2Create(request: Sora2GenerationRequestDto) {
+  async sora2Create(request: UserSora2GenerationRequestDto) {
     const { userId, userType, model, prompt, ...params } = request
 
     const pricing = await this.calculateVideoGenerationPrice({
