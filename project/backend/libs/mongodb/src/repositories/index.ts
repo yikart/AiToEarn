@@ -1,6 +1,8 @@
 import { AccountRepository } from './account.repository'
 import { AccountGroupRepository } from './accountGroup.repository'
 import { AiLogRepository } from './ai-log.repository'
+import { ApiKeyAccountRepository } from './api-key-account.repository'
+import { ApiKeyRepository } from './api-key.repository'
 import { AppConfigRepository } from './app-config.repository'
 import { BlogRepository } from './blog.repository'
 import { FeedbackRepository } from './feedback.repository'
@@ -10,7 +12,9 @@ import { MaterialTaskRepository } from './materialTask.repository'
 import { MediaRepository } from './media.repository'
 import { MediaGroupRepository } from './mediaGroup.repository'
 import { NotificationRepository } from './notification.repository'
+import { OAuth2CredentialRepository } from './oauth2-credential.repository'
 import { PointsRecordRepository } from './points-record.repository'
+import { PublishTaskRepository } from './publish-task.repository'
 import { PublishRecordRepository } from './publishRecord.repository'
 import { UserRepository } from './user.repository'
 import { VipRepository } from './vip.repository'
@@ -18,6 +22,8 @@ import { VipRepository } from './vip.repository'
 export * from './account.repository'
 export * from './accountGroup.repository'
 export * from './ai-log.repository'
+export * from './api-key-account.repository'
+export * from './api-key.repository'
 export * from './app-config.repository'
 export * from './base.repository'
 export * from './blog.repository'
@@ -28,7 +34,9 @@ export * from './materialTask.repository'
 export * from './media.repository'
 export * from './mediaGroup.repository'
 export * from './notification.repository'
+export * from './oauth2-credential.repository'
 export * from './points-record.repository'
+export * from './publish-task.repository'
 export * from './publishRecord.repository'
 export * from './user.repository'
 export * from './vip.repository'
@@ -50,4 +58,8 @@ export const repositories = [
   MaterialRepository,
   MaterialTaskRepository,
   PublishRecordRepository,
+  ApiKeyRepository,
+  ApiKeyAccountRepository,
+  OAuth2CredentialRepository,
+  PublishTaskRepository,
 ] as const

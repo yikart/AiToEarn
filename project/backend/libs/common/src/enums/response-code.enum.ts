@@ -100,4 +100,7 @@ export enum ResponseCode {
   PlatformNotSupported = 15032,
   PublishTaskUpdateFailed = 15033,
   DeletePostFailed = 15034,
+
+  // 16000-16099: aitoearn-mcp（MCP 服务）
+  ApiKeyNotFound = 16000,
 }

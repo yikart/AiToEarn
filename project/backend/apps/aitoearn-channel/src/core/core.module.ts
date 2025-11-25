@@ -13,11 +13,9 @@ import { WxPlatModule } from './platforms/wx-plat/wx-plat.module'
 import { YoutubeModule } from './platforms/youtube/youtube.module'
 import { PublishModule } from './publishing/publishing.module'
 import { SkKeyModule } from './sk-key/sk-key.module'
-import { TestModule } from './test/test.module'
 
 @Module({
   imports: [
-    TestModule,
     FileModule,
     SkKeyModule,
     AccountModule,

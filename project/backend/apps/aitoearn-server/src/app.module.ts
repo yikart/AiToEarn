@@ -15,6 +15,7 @@ import { ContentModule } from './content/content.module'
 import { FeedbackModule } from './feedback/feedback.module'
 import { FileModule } from './file/file.module'
 import { InternalModule } from './internal/internal.module'
+import { McpModule } from './mcp/mcp.module'
 import { NotificationModule } from './notification/notification.module'
 import { PublishModule } from './publishRecord/publishRecord.module'
 import { StatisticsModule } from './statistics/statistics.module'
@@ -50,6 +51,7 @@ import { UserModule } from './user/user.module'
     StatisticsModule,
     PublishModule,
     InternalModule,
+    McpModule,
   ],
   controllers: [],
   providers: [],
