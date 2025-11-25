@@ -117,7 +117,7 @@ export function getVideoGenerations(params?: {
   page?: number
   pageSize?: number
 }) {
-  return http.get('ai/video/generations', { params })
+  return http.get('ai/video/generations', params)
 }
 
 // 保留旧的接口以保持向后兼容性（可选）
