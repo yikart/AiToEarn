@@ -1,6 +1,6 @@
 import { createPaginationVo, createZodDto } from '@yikart/common'
 import { APIKeyStatus, APIKeyType } from '@yikart/mongodb'
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 const mcpApiKeyItemSchema = z.object({
   id: z.string().describe('API Key ID'),

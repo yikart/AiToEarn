@@ -1,5 +1,5 @@
 import { AccountType, createZodDto, PaginationDtoSchema } from '@yikart/common'
-import { z } from 'zod/v3'
+import { z } from 'zod'
 
 export const createMcpApiKeySchema = z.object({
   desc: z.string().optional().describe('描述'),
