@@ -1,3 +1,4 @@
+import type { MutableRefObject } from 'react'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import {
   $createParagraphNode,
@@ -11,17 +12,36 @@ import {
 import { BeautifulMentionNode } from 'lexical-beautiful-mentions'
 import { useEffect, useRef } from 'react'
 
-export function InitialValuePlugin({ value }: { value: string }) {
+/**
+ * 插件：根据外部 value 同步更新编辑器内容
+ * @param value - 外部传入的文本值
+ * @param isInternalChangeRef - 标记是否为内部变化，避免循环更新
+ */
+export function InitialValuePlugin({
+  value,
+  isInternalChangeRef,
+}: {
+  value: string
+  isInternalChangeRef?: MutableRefObject<boolean>
+}) {
   const [editor] = useLexicalComposerContext()
   const lastAppliedRef = useRef<string>('')
 
   useEffect(() => {
+    // 如果是内部变化触发的，跳过同步，避免循环更新
+    if (isInternalChangeRef?.current) {
+      return
+    }
+
     editor.update(() => {
       const root = $getRoot()
       const currentText = root.getTextContent()
-      if (value === currentText || value === lastAppliedRef.current)
+
+      // 只有当 value 真正不同时才更新
+      if (value === currentText && value === lastAppliedRef.current)
         return
 
+      // 清空并重建内容
       root.clear()
       const paragraph = $createParagraphNode()
       root.append(paragraph)
@@ -52,7 +72,7 @@ export function InitialValuePlugin({ value }: { value: string }) {
 
       lastAppliedRef.current = value
     })
-  }, [editor, value])
+  }, [editor, value, isInternalChangeRef])
 
   return null
 }

@@ -4,7 +4,7 @@ import type {
 } from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { Alert } from 'antd'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { PubParamsVerifyInfo } from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'

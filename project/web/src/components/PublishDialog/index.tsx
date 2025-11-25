@@ -1020,7 +1020,6 @@ const PublishDialog = memo(
                             return (
                               <PlatParamsSetting
                                 pubItem={v}
-                                key={v.account.id}
                                 style={{ marginBottom: '12px' }}
                                 onImageToImage={handleImageToImage}
                               />
