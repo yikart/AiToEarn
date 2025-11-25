@@ -73,13 +73,13 @@ const klingText2VideoBaseSchema = z.object({
 
 export class KlingText2VideoRequestDto extends createZodDto(klingText2VideoBaseSchema) {}
 
-const klingText2VideoRequestSchema = z.object({
+const userKlingText2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...klingText2VideoBaseSchema.shape,
 })
 
-export class UserKlingText2VideoRequestDto extends createZodDto(klingText2VideoRequestSchema) {}
+export class UserKlingText2VideoRequestDto extends createZodDto(userKlingText2VideoRequestSchema) {}
 
 // Volcengine视频生成请求
 const volcengineGenerationRequestSchema = z.object({
@@ -203,13 +203,13 @@ const klingImage2VideoBaseSchema = z.object({
 
 export class KlingImage2VideoRequestDto extends createZodDto(klingImage2VideoBaseSchema) {}
 
-const klingImage2VideoRequestSchema = z.object({
+const userKlingImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...klingImage2VideoBaseSchema.shape,
 })
 
-export class UserKlingImage2VideoRequestDto extends createZodDto(klingImage2VideoRequestSchema) {}
+export class UserKlingImage2VideoRequestDto extends createZodDto(userKlingImage2VideoRequestSchema) {}
 
 // 多图生视频请求DTO
 const klingMultiImage2VideoBaseSchema = z.object({
@@ -226,13 +226,13 @@ const klingMultiImage2VideoBaseSchema = z.object({
 
 export class KlingMultiImage2VideoRequestDto extends createZodDto(klingMultiImage2VideoBaseSchema) {}
 
-const klingMultiImage2VideoRequestSchema = z.object({
+const userKlingMultiImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...klingMultiImage2VideoBaseSchema.shape,
 })
 
-export class UserKlingMultiImage2VideoRequestDto extends createZodDto(klingMultiImage2VideoRequestSchema) {}
+export class UserKlingMultiImage2VideoRequestDto extends createZodDto(userKlingMultiImage2VideoRequestSchema) {}
 
 // ==================== Dashscope API DTO ====================
 
@@ -252,13 +252,13 @@ const dashscopeText2VideoBaseSchema = z.object({
 
 export class DashscopeText2VideoRequestDto extends createZodDto(dashscopeText2VideoBaseSchema) {}
 
-const dashscopeText2VideoRequestSchema = z.object({
+const userDashscopeText2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...dashscopeText2VideoBaseSchema.shape,
 })
 
-export class UserDashscopeText2VideoRequestDto extends createZodDto(dashscopeText2VideoRequestSchema) {}
+export class UserDashscopeText2VideoRequestDto extends createZodDto(userDashscopeText2VideoRequestSchema) {}
 
 // Dashscope图生视频请求DTO
 const dashscopeImage2VideoBaseSchema = z.object({
@@ -276,13 +276,13 @@ const dashscopeImage2VideoBaseSchema = z.object({
 
 export class DashscopeImage2VideoRequestDto extends createZodDto(dashscopeImage2VideoBaseSchema) {}
 
-const dashscopeImage2VideoRequestSchema = z.object({
+const userDashscopeImage2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...dashscopeImage2VideoBaseSchema.shape,
 })
 
-export class UserDashscopeImage2VideoRequestDto extends createZodDto(dashscopeImage2VideoRequestSchema) {}
+export class UserDashscopeImage2VideoRequestDto extends createZodDto(userDashscopeImage2VideoRequestSchema) {}
 
 // Dashscope首尾帧生视频请求DTO
 const dashscopeKeyFrame2VideoBaseSchema = z.object({
@@ -303,13 +303,13 @@ const dashscopeKeyFrame2VideoBaseSchema = z.object({
 
 export class DashscopeKeyFrame2VideoRequestDto extends createZodDto(dashscopeKeyFrame2VideoBaseSchema) {}
 
-const dashscopeKeyFrame2VideoRequestSchema = z.object({
+const userDashscopeKeyFrame2VideoRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...dashscopeKeyFrame2VideoBaseSchema.shape,
 })
 
-export class UserDashscopeKeyFrame2VideoRequestDto extends createZodDto(dashscopeKeyFrame2VideoRequestSchema) {}
+export class UserDashscopeKeyFrame2VideoRequestDto extends createZodDto(userDashscopeKeyFrame2VideoRequestSchema) {}
 
 // Dashscope回调DTO
 const dashscopeCallbackSchema = z.object({
@@ -350,13 +350,13 @@ const sora2GenerationBaseSchema = z.object({
 
 export class Sora2GenerationRequestDto extends createZodDto(sora2GenerationBaseSchema) {}
 
-const sora2GenerationRequestSchema = z.object({
+const userSora2GenerationRequestSchema = z.object({
   userId: z.string(),
   userType: z.enum(UserType),
   ...sora2GenerationBaseSchema.shape,
 })
 
-export class UserSora2GenerationRequestDto extends createZodDto(sora2GenerationRequestSchema) {}
+export class UserSora2GenerationRequestDto extends createZodDto(userSora2GenerationRequestSchema) {}
 
 // 视频生成模型查询DTO
 const videoGenerationModelsQuerySchema = z.object({
