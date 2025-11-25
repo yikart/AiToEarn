@@ -21,7 +21,7 @@ export class PublishTaskRepository extends BaseRepository<PublishTask> {
     return await this.publishTaskModel.updateOne({ _id: id }, data)
   }
 
-  async getPublishTask(userId: string, id: string) {
+  async getPublishTask(id: string) {
     return await this.publishTaskModel.findOne({ _id: id })
   }
 

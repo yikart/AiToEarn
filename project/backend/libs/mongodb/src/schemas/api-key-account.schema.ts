@@ -40,7 +40,7 @@ export class ApiKeyAccount extends WithTimestampSchema {
   status: APIKeyStatus
 
   static get indexes() {
-    return [{ apiKeyId: 1, accountId: 1 }]
+    return [{ apiKey: 1, accountId: 1 }]
   }
 }
 

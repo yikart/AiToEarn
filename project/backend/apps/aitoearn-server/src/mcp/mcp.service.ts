@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { AppException, generateApiKey, ResponseCode } from '@yikart/common'
-import { ApiKeyAccountRepository, ApiKeyRepository, APIKeyStatus, APIKeyType } from '@yikart/mongodb'
+import { ApiKeyAccountRepository, ApiKeyRepository, APIKeyStatus, APIKeyType, Transactional } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
 import { AccountService } from '../account/account.service'
 import { CreateApiKeyAccountDto, CreateMcpApiKeyDto, DeleteApiKeyAccountDto, McpListApiKeyAccountsQueryDto, McpListApiKeysQueryDto } from './mcp.dto'
@@ -14,6 +14,7 @@ export class McpService {
     private readonly redisService: RedisService,
   ) {}
 
+  @Transactional()
   async createApiKey(userId: string, data: CreateMcpApiKeyDto) {
     const key = generateApiKey('sk', 'mcp')
     for (const accountId of data.accounts) {
@@ -36,14 +37,14 @@ export class McpService {
     })
   }
 
-  async deleteByApiKey(userId: string, key: string): Promise<boolean> {
+  @Transactional()
+  async deleteByApiKey(userId: string, key: string): Promise<void> {
     const mcpApiKey = await this.apiKeyRepository.getByKey(userId, key)
     if (!mcpApiKey) {
       throw new AppException(ResponseCode.ApiKeyNotFound)
     }
-    const delApiKey = await this.apiKeyRepository.deleteByApiKey(key)
-    const delApiKeyAccounts = await this.apiKeyAccountRepository.deleteByApiKey(key)
-    return delApiKey !== null && delApiKeyAccounts !== null
+    await this.apiKeyRepository.deleteByApiKey(key)
+    await this.apiKeyAccountRepository.deleteByApiKey(key)
   }
 
   async updateApiKeyDesc(userId: string, key: string, desc: string) {
@@ -63,8 +64,7 @@ export class McpService {
     userId: string,
     query: McpListApiKeysQueryDto,
   ) {
-    query.userId = userId
-    return await this.apiKeyRepository.listWithPagination(query)
+    return await this.apiKeyRepository.listWithPagination({ ...query, userId })
   }
 
   async createApiKeyAccount(account: CreateApiKeyAccountDto) {
@@ -81,7 +81,7 @@ export class McpService {
 
   async getApiKeyAccountsCount(key: string): Promise<number> {
     return await this.apiKeyAccountRepository.countApiKeyAccounts({
-      key,
+      apiKey: key,
     })
   }
 

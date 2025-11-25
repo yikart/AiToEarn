@@ -12,7 +12,7 @@ import { MaterialTask, MaterialTaskSchema } from './materialTask.schema'
 import { Media, MediaSchema } from './media.schema'
 import { MediaGroup, MediaGroupSchema } from './mediaGroup.schema'
 import { Notification, NotificationSchema } from './notification.schema'
-import { OAuth2Credential, OAuth2CredentialSchema } from './oauth2-credential.scheam'
+import { OAuth2Credential, OAuth2CredentialSchema } from './oauth2-credential.schema'
 import {
   PointsRecord,
   PointsRecordSchema,
@@ -40,7 +40,7 @@ export * from './materialTask.schema'
 export * from './media.schema'
 export * from './mediaGroup.schema'
 export * from './notification.schema'
-export * from './oauth2-credential.scheam'
+export * from './oauth2-credential.schema'
 export * from './points-record.schema'
 export * from './points-record.schema'
 export * from './publishDayInfo.schema'
