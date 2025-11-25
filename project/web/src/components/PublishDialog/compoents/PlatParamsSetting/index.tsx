@@ -1,6 +1,7 @@
 import type { CSSProperties, ForwardedRef } from 'react'
 import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
-import { forwardRef, memo, useMemo } from 'react'
+import { forwardRef, memo, useEffect, useMemo } from 'react'
+
 import { useShallow } from 'zustand/react/shallow'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
@@ -67,6 +68,10 @@ const PlatParamsSetting = memo(
             return <KwaiParams pubItem={pubItem} onImageToImage={onImageToImage} />
         }
       }, [pubItem, onImageToImage])
+
+      useEffect(() => {
+        console.log(pubItem, 1111)
+      }, [pubItem])
 
       // true=展开当前账号的参数设置 false=不展开
       const isExpand = useMemo(() => {

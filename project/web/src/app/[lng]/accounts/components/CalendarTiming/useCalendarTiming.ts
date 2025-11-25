@@ -192,7 +192,6 @@ export const useCalendarTiming = create(
           // 延迟 5 秒
           await new Promise(resolve => setTimeout(resolve, 5000))
 
-          console.log('轮询任务中：', pubRecord)
           try {
             const res = await getPublishRecordDetail(pubRecord.flowId!)
             if (!res || !res.data) {

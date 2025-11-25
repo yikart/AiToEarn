@@ -4,8 +4,8 @@ import type {
   InitialConfigType,
 } from '@lexical/react/LexicalComposer'
 import type { EditorState, LexicalEditor } from 'lexical'
-import type {
-  ForwardedRef,
+import {
+  ForwardedRef, useEffect,
 } from 'react'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import {
@@ -73,15 +73,24 @@ const PubParmasMentionInput = memo(
       ref: ForwardedRef<IPubParmasMentionInputRef>,
     ) => {
       const comboboxAnchor = useRef<HTMLDivElement>(null)
+      // 用于防止循环更新：当编辑器内容变化时，记录最新值
+      const isInternalChangeRef = useRef(false)
+
       const handleChange = useCallback(
         (editorState: EditorState, editor: LexicalEditor) => {
           editorState.read(() => {
             const root = $getRoot()
             const text = root.getTextContent()
+            // 标记这是内部变化，避免触发外部value同步回来
+            isInternalChangeRef.current = true
             onChange(text)
+            // 使用 setTimeout 确保外部状态更新后再重置标记
+            setTimeout(() => {
+              isInternalChangeRef.current = false
+            }, 0)
           })
         },
-        [],
+        [onChange],
       )
 
       const handleSearch = useCallback(
@@ -131,7 +140,7 @@ const PubParmasMentionInput = memo(
             <HistoryPlugin />
             <AutoFocusPlugin defaultSelection="rootStart" />
 
-            <InitialValuePlugin value={value} />
+            <InitialValuePlugin value={value} isInternalChangeRef={isInternalChangeRef} />
 
             <PasteTopicsPlugin />
 
