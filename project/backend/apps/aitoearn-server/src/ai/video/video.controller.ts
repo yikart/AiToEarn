@@ -9,7 +9,7 @@ import {
   KlingImage2VideoRequestDto,
   KlingMultiImage2VideoRequestDto,
   KlingText2VideoRequestDto,
-  UserListVideoTasksQueryDto,
+  ListVideoTasksQueryDto,
   VideoGenerationRequestDto,
   VolcengineGenerationRequestDto,
 } from './video.dto'
@@ -83,13 +83,13 @@ export class VideoController {
 
   @ApiDoc({
     summary: 'List Video Tasks',
-    query: UserListVideoTasksQueryDto.schema,
+    query: ListVideoTasksQueryDto.schema,
     response: ListVideoTasksResponseVo,
   })
   @Get('/video/generations')
   async listVideoTasks(
     @GetToken() token: TokenInfo,
-    @Query() query: UserListVideoTasksQueryDto,
+    @Query() query: ListVideoTasksQueryDto,
   ): Promise<ListVideoTasksResponseVo> {
     const [list, total] = await this.videoService.listVideoTasks({
       ...query,
@@ -146,7 +146,7 @@ export class VideoController {
       ...body,
       userId: token.id,
       userType: UserType.User,
-    } as KlingText2VideoRequestDto & { userId: string, userType: UserType })
+    })
     return KlingVideoGenerationResponseVo.create(response)
   }
 
