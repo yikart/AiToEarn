@@ -19,7 +19,7 @@ export const PublishRecordItemVoSchema = z.object({
   publishTime: z.date().describe('发布时间'),
   status: z.enum(PublishStatus).describe('发布状态'),
   errorMsg: z.string().optional().describe('错误信息'),
-  publishingChannel: z.nativeEnum(PublishingChannel).optional().describe('发布渠道'),
+  publishingChannel: z.enum(PublishingChannel).optional().describe('发布渠道'),
   workLink: z.string().optional().describe('作品链接'),
 })
 export class PublishRecordItemVo extends createZodDto(PublishRecordItemVoSchema) {}

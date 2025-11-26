@@ -94,8 +94,9 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
   // 获取列表
   async getList(inFilter: {
     userId?: string
-    title?: string
     userType?: UserType
+    title?: string
+    type?: MaterialType
   }, pageInfo: {
     pageNo: number
     pageSize: number
@@ -104,6 +105,7 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
     const filter: RootFilterQuery<MaterialGroup> = {
       ...(inFilter.userId && { userId: inFilter.userId }),
       ...(inFilter.userType && { userType: inFilter.userType }),
+      ...(inFilter.type && { type: inFilter.type }),
       ...(inFilter.title && { title: { $regex: inFilter.title, $options: 'i' } }),
     }
 
