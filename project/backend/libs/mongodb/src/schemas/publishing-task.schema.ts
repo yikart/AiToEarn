@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
-import { PublishingTaskType, PublishStatus } from '..'
+import { PublishingTaskType, PublishStatus } from '../enums'
 import { PublishingTaskMeta } from './publishing-task-meta.schema'
 import { WithTimestampSchema } from './timestamp.schema'
 

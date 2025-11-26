@@ -210,31 +210,7 @@ export class User extends WithTimestampSchema {
     required: true,
     default: 0,
   })
-  income: number // Income (cents)
-
-  @Prop({
-    required: true,
-    default: 0,
-  })
-  totalIncome: number
-
-  @Prop({
-    required: true,
-    default: 0,
-  })
-  incomeUSD: number // Income (USD cents)
-
-  @Prop({
-    required: true,
-    default: 0,
-  })
-  totalIncomeUSD: number // Total Income (USD cents)
-
-  @Prop({
-    required: true,
-    default: 0,
-  })
-  usedStorage: number // Used Storage (Bytes)
+  usedStorage: number // 已用存储（Bytes）
 
   @Prop({
     type: UserStorage,

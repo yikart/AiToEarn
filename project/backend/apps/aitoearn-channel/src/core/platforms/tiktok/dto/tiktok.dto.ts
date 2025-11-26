@@ -12,7 +12,7 @@ import { TiktokPostMode, TiktokPrivacyLevel, TiktokSourceType } from '../../../.
 const PostInfoSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
-  privacy_level: z.nativeEnum(TiktokPrivacyLevel),
+  privacy_level: z.enum(TiktokPrivacyLevel),
   disable_comment: z.boolean().optional(),
   disable_duet: z.boolean().optional(),
   disable_stitch: z.boolean().optional(),
@@ -85,7 +85,7 @@ const VideoPublishSchema = AccountIdSchema.extend({
 export class VideoPublishDto extends createZodDto(VideoPublishSchema) {}
 
 const PhotoPublishSchema = AccountIdSchema.extend({
-  postMode: z.nativeEnum(TiktokPostMode),
+  postMode: z.enum(TiktokPostMode),
   postInfo: PostInfoSchema,
   sourceInfo: PhotoSourceInfoSchema,
 })

@@ -3,8 +3,8 @@ import { z } from 'zod'
 import { Country, Currency, SourceType } from '../../../../libs/pinterest/common'
 
 const CreateAccountBodySchema = z.object({
-  country: z.nativeEnum(Country).optional().describe('国家'),
-  currency: z.nativeEnum(Currency).optional().describe('货币'),
+  country: z.enum(Country).optional().describe('国家'),
+  currency: z.enum(Currency).optional().describe('货币'),
   name: z.string().optional().describe('名称'),
   owner_user_id: z.string().optional().describe('所属用户'),
 })
@@ -17,7 +17,7 @@ const CreateBoardBodySchema = z.object({
 export class CreateBoardBodyDto extends createZodDto(CreateBoardBodySchema) {}
 
 const MediaSourceSchema = z.object({
-  source_type: z.nativeEnum(SourceType).describe('媒体类型'),
+  source_type: z.enum(SourceType).describe('媒体类型'),
   cover_image_url: z.string().optional().describe('封面地址'),
   url: z.string().optional().describe('图片或者视频地址'),
 })
