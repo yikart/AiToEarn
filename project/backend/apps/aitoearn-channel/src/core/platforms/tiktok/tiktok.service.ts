@@ -10,7 +10,6 @@ import { randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
-import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { Model } from 'mongoose'
 import { getCurrentTimestamp } from '../../../common'
@@ -30,6 +29,7 @@ import {
 } from '../../../libs/tiktok/tiktok.interfaces'
 import { TiktokService as TiktokApiService } from '../../../libs/tiktok/tiktok.service'
 import { PlatformBaseService } from '../base.service'
+import { PlatformAuthExpiredException } from '../platform.exception'
 import { TIKTOK_DEFAULT_SCOPES, TIKTOK_TIME_CONSTANTS, TiktokRedisKeys } from './constants'
 import {
   PhotoSourceInfoDto,
@@ -115,7 +115,7 @@ export class TiktokService extends PlatformBaseService {
           platform: this.platform,
       })
       if (!oauth2Credential) {
-        return null
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       credential = {
         access_token: oauth2Credential.accessToken,
@@ -250,10 +250,6 @@ export class TiktokService extends PlatformBaseService {
    */
   private async getValidAccessToken(accountId: string): Promise<string> {
     let tokenInfo = await this.getOAuth2Credential(accountId)
-    if (!tokenInfo) {
-      throw new AppException(ResponseCode.ChannelAccountNotAuthorized)
-    }
-
     // 检查是否需要刷新令牌
     const currentTime = getCurrentTimestamp()
     if (
@@ -263,9 +259,10 @@ export class TiktokService extends PlatformBaseService {
         accountId,
         tokenInfo.refresh_token,
       )
-      if (refreshedToken) {
-        tokenInfo = refreshedToken
+      if (!refreshedToken) {
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
+      tokenInfo = refreshedToken
     }
     return tokenInfo.access_token
   }
