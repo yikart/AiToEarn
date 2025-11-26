@@ -1,0 +1,84 @@
+{
+  "title": "Note Propagation Monitoring",
+  "description": "Monitor note likes, favorites, comments, shares and other propagation data at minute-level frequency, effectively verify note propagation effect",
+  "tabs": {
+    "byLink": "By Note Link",
+    "byAccount": "By Xiaohongshu"
+  },
+  "actions": {
+    "add": "Add",
+    "comingSoon": "Coming Soon"
+  },
+  "addModal": {
+    "title": "Add Note Monitoring",
+    "inputPlaceholder": "Please enter Xiaohongshu note link",
+    "linkPlaceholder": "https://www.xiaohongshu.com/explore/...",
+    "linkRequired": "Please enter note link",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "addSuccess": "Added successfully",
+    "addFailed": "Failed to add"
+  },
+  "list": {
+    "empty": "No monitoring data yet, click the button above to add a note link",
+    "untitled": "Untitled Note",
+    "createdAt": "Created at"
+  },
+  "stats": {
+    "views": "Views",
+    "likes": "Likes",
+    "comments": "Comments",
+    "favorites": "Favorites"
+  },
+  "detail": {
+    "back": "Back",
+    "backToList": "Back to List",
+    "notFound": "Monitoring data not found",
+    "pause": "Pause",
+    "resume": "Resume",
+    "paused": "Paused",
+    "resumed": "Resumed",
+    "export": "Export",
+    "exportSuccess": "Exported successfully",
+    "viewNote": "View Note",
+    "taskId": "Task ID",
+    "createdTime": "Task Created",
+    "publishTime": "Published",
+    "firstMonitoring": "First Monitored",
+    "monitoringDuration": "Duration",
+    "duration": "{{count}} day(s)",
+    "monitoringFrequency": "Frequency",
+    "minutesPerTime": " min/time",
+    "lastMonitoring": "Last Monitored",
+    "completionRate": "Completion Rate",
+    "monitoringComplete": " Monitoring Complete",
+    "dataDetail": "Data Detail",
+    "downloadRecord": "Download Record",
+    "exportResult": "Export Result",
+    "status": {
+      "active": "Active",
+      "paused": "Paused"
+    },
+    "tabs": {
+      "chart": "Cumulative View",
+      "table": "Incremental View"
+    },
+    "table": {
+      "time": "Time",
+      "totalLikes": "Total Favorites",
+      "newLikes": "New Favorites",
+      "totalComments": "Total Comments",
+      "newComments": "New Comments",
+      "totalFavorites": "Total Likes",
+      "newFavorites": "New Likes",
+      "total": "Total {{count}} items"
+    }
+  },
+  "error": {
+    "loadFailed": "Failed to load",
+    "addFailed": "Failed to add",
+    "toggleFailed": "Operation failed",
+    "exportFailed": "Export failed"
+  }
+}
+

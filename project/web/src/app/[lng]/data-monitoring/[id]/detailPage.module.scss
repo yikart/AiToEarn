@@ -1,0 +1,349 @@
+.loadingContainer,
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 64px);
+  gap: 16px;
+}
+
+.detailPage {
+  padding: 24px;
+  background-color: #f5f5f5;
+  min-height: calc(100vh - 64px);
+
+  .topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+
+    .backButton {
+      font-size: 14px;
+      border-radius: 8px;
+
+      &:hover {
+        color: #667eea;
+        border-color: #667eea;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+
+      button {
+        border-radius: 8px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .infoCard {
+    margin-bottom: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    .noteInfo {
+      .noteHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 16px;
+        margin-bottom: 16px;
+        border-bottom: 1px solid #f0f0f0;
+
+        .noteMeta {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          .noteTitle {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+          }
+
+          :global {
+            .ant-tag {
+              margin: 0;
+              padding: 4px 12px;
+              border-radius: 12px;
+            }
+          }
+        }
+
+        .noteLink {
+          a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 14px;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+      .monitoringInfo {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+
+        .infoItem {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+
+          .infoLabel {
+            font-size: 14px;
+            color: #999;
+          }
+
+          .infoValue {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+  }
+
+  .progressCard {
+    margin-bottom: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    .progressHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+
+      h3 {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .progressText {
+        font-size: 14px;
+        color: #999;
+      }
+    }
+
+    :global {
+      .ant-progress {
+        margin: 0;
+      }
+
+      .ant-progress-bg {
+        height: 8px !important;
+      }
+    }
+  }
+
+  .statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+
+    .statCard {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+      overflow: hidden;
+
+      :global {
+        .ant-card-body {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 20px;
+        }
+      }
+
+      .statIcon {
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        border-radius: 12px;
+      }
+
+      .statContent {
+        flex: 1;
+
+        .statValue {
+          font-size: 28px;
+          font-weight: 600;
+          color: #333;
+          line-height: 1;
+          margin-bottom: 8px;
+        }
+
+        .statLabel {
+          font-size: 14px;
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .dataCard {
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    .dataTitle {
+      margin: 0 0 16px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .actionBar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+
+      .exportButton,
+      .exportResultButton {
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .exportButton {
+        background: #fff;
+        color: #667eea;
+        border-color: #667eea;
+
+        &:hover {
+          background: #667eea;
+          color: #fff;
+        }
+      }
+
+      .exportResultButton {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+
+        &:hover {
+          background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+        }
+      }
+    }
+
+    .dataTabs {
+      margin-bottom: 24px;
+
+      :global {
+        .ant-tabs-nav {
+          margin-bottom: 0;
+        }
+
+        .ant-tabs-tab {
+          font-size: 15px;
+          padding: 10px 20px;
+
+          &.ant-tabs-tab-active {
+            .ant-tabs-tab-btn {
+              color: #667eea;
+              font-weight: 600;
+            }
+          }
+        }
+
+        .ant-tabs-ink-bar {
+          background: #667eea;
+        }
+      }
+    }
+
+    .dataContent {
+      .chartContainer {
+        padding: 24px;
+        background: #fafafa;
+        border-radius: 8px;
+        min-height: 400px;
+      }
+
+      .tableContainer {
+        :global {
+          .ant-table {
+            font-size: 14px;
+          }
+
+          .ant-table-thead > tr > th {
+            background: #fafafa;
+            font-weight: 600;
+          }
+
+          .ant-table-tbody > tr:hover > td {
+            background: #f0f2ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 响应式设计
+@media (max-width: 768px) {
+  .detailPage {
+    padding: 16px;
+
+    .topBar {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      .actions {
+        width: 100%;
+
+        button {
+          flex: 1;
+        }
+      }
+    }
+
+    .infoCard {
+      .noteInfo {
+        .noteHeader {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+
+          .noteMeta {
+            flex-wrap: wrap;
+          }
+        }
+
+        .monitoringInfo {
+          grid-template-columns: 1fr;
+        }
+      }
+    }
+
+    .statsGrid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dataCard {
+      .actionBar {
+        flex-direction: column;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
