@@ -228,16 +228,29 @@
         }
       }
 
+      .errorMessage {
+        margin: 12px 0;
+      }
+
       .cardFooter {
+        display: flex;
+        justify-content: space-between;
         padding-top: 12px;
         border-top: 1px solid #f0f0f0;
 
-        .createTime {
+        .createTime,
+        .updateTime {
           font-size: 12px;
           color: #999;
         }
       }
     }
+  }
+
+  .paginationWrapper {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
   }
 
   .empty {

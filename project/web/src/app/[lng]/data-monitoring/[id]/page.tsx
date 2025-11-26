@@ -16,11 +16,10 @@ import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import {
-  apiDeleteNoteMonitoring,
   apiExportNoteMonitoringData,
   apiGetNoteMonitoringDetail,
   apiToggleNoteMonitoring,
-  type NoteMonitoringDetail,
+  type NoteMonitoringItem,
 } from '@/api/monitoring'
 import styles from './detailPage.module.scss'
 
@@ -33,16 +32,17 @@ interface HistoryDataRecord {
   newCommentCount: number
   favoriteCount: number
   newFavoriteCount: number
+  viewCount: number
+  newViewCount: number
 }
 
 export default function MonitoringDetailPage() {
-  const { t } = useTransClient('dataMonitoring')
   const router = useRouter()
   const params = useParams()
   const id = params.id as string
 
   const [loading, setLoading] = useState(true)
-  const [detail, setDetail] = useState<NoteMonitoringDetail | null>(null)
+  const [detail, setDetail] = useState<NoteMonitoringItem | null>(null)
   const [activeTab, setActiveTab] = useState<'chart' | 'table'>('chart')
   const [exporting, setExporting] = useState(false)
 
@@ -51,10 +51,10 @@ export default function MonitoringDetailPage() {
     setLoading(true)
     try {
       const data = await apiGetNoteMonitoringDetail(id)
-      setDetail(data)
+      setDetail(data || null)
     }
     catch (error: any) {
-      message.error(error.message || t('error.loadFailed'))
+      message.error(error.message || '加载失败')
     }
     finally {
       setLoading(false)
@@ -72,14 +72,14 @@ export default function MonitoringDetailPage() {
     if (!detail)
       return
 
-    const newStatus = detail.monitoringStatus === 'active' ? 'paused' : 'active'
+    const newEnabled = !detail.enabled
     try {
-      await apiToggleNoteMonitoring(id, newStatus)
-      message.success(newStatus === 'active' ? t('detail.resumed') : t('detail.paused'))
+      await apiToggleNoteMonitoring(id, newEnabled)
+      message.success(newEnabled ? '已恢复监测' : '已暂停监测')
       loadDetail()
     }
     catch (error: any) {
-      message.error(error.message || t('error.toggleFailed'))
+      message.error(error.message || '操作失败')
     }
   }
 
@@ -88,26 +88,40 @@ export default function MonitoringDetailPage() {
     setExporting(true)
     try {
       const blob = await apiExportNoteMonitoringData(id)
-      const url = window.URL.createObjectURL(blob!)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `monitoring-data-${id}.xlsx`
-      a.click()
-      window.URL.revokeObjectURL(url)
-      message.success(t('detail.exportSuccess'))
+      if (blob) {
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `monitoring-data-${id}.xlsx`
+        a.click()
+        window.URL.revokeObjectURL(url)
+        message.success('导出成功')
+      }
     }
     catch (error: any) {
-      message.error(error.message || t('error.exportFailed'))
+      message.error(error.message || '导出失败')
     }
     finally {
       setExporting(false)
     }
   }
 
+  // 格式化数字
+  const formatNumber = (num: number) => {
+    if (num >= 10000) {
+      return `${(num / 10000).toFixed(1)}万`
+    }
+    return num.toLocaleString()
+  }
+
   // 准备图表数据
   const getChartOption = (): EChartsOption => {
-    if (!detail)
+    if (!detail || !detail.insights || detail.insights.length === 0)
       return {}
+
+    const sortedInsights = [...detail.insights].sort((a, b) => 
+      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
 
     return {
       tooltip: {
@@ -117,7 +131,7 @@ export default function MonitoringDetailPage() {
         },
       },
       legend: {
-        data: [t('stats.favorites'), t('stats.likes'), t('stats.comments')],
+        data: ['收藏数', '点赞数', '评论数'],
         top: 0,
       },
       grid: {
@@ -130,8 +144,8 @@ export default function MonitoringDetailPage() {
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        data: detail.history.map(item =>
-          new Date(item.time).toLocaleString('zh-CN', {
+        data: sortedInsights.map(item =>
+          new Date(item.createdAt).toLocaleString('zh-CN', {
             month: '2-digit',
             day: '2-digit',
             hour: '2-digit',
@@ -140,7 +154,7 @@ export default function MonitoringDetailPage() {
         ),
         axisLabel: {
           rotate: 45,
-          interval: Math.floor(detail.history.length / 10) || 0,
+          interval: Math.floor(sortedInsights.length / 10) || 0,
         },
       },
       yAxis: {
@@ -148,10 +162,10 @@ export default function MonitoringDetailPage() {
       },
       series: [
         {
-          name: t('stats.favorites'),
+          name: '收藏数',
           type: 'line',
           smooth: true,
-          data: detail.history.map(item => item.favoriteCount),
+          data: sortedInsights.map(item => item.favoriteCount),
           itemStyle: {
             color: '#ff6384',
           },
@@ -170,10 +184,10 @@ export default function MonitoringDetailPage() {
           },
         },
         {
-          name: t('stats.likes'),
+          name: '点赞数',
           type: 'line',
           smooth: true,
-          data: detail.history.map(item => item.likeCount),
+          data: sortedInsights.map(item => item.likeCount),
           itemStyle: {
             color: '#36a2eb',
           },
@@ -192,10 +206,10 @@ export default function MonitoringDetailPage() {
           },
         },
         {
-          name: t('stats.comments'),
+          name: '评论数',
           type: 'line',
           smooth: true,
-          data: detail.history.map(item => item.commentCount),
+          data: sortedInsights.map(item => item.commentCount),
           itemStyle: {
             color: '#ffce56',
           },
@@ -218,40 +232,44 @@ export default function MonitoringDetailPage() {
   }
 
   // 准备表格数据
-  const tableData: HistoryDataRecord[] = detail
-    ? detail.history.map((item, index) => {
-      const prevItem = index > 0 ? detail.history[index - 1] : null
-      return {
-        key: item.time,
-        time: new Date(item.time).toLocaleString(),
-        likeCount: item.likeCount,
-        newLikeCount: prevItem ? item.likeCount - prevItem.likeCount : 0,
-        commentCount: item.commentCount,
-        newCommentCount: prevItem ? item.commentCount - prevItem.commentCount : 0,
-        favoriteCount: item.favoriteCount,
-        newFavoriteCount: prevItem ? item.favoriteCount - prevItem.favoriteCount : 0,
-      }
-    })
+  const tableData: HistoryDataRecord[] = detail && detail.insights
+    ? [...detail.insights]
+        .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+        .map((item, index, array) => {
+          const prevItem = index > 0 ? array[index - 1] : null
+          return {
+            key: item._id,
+            time: new Date(item.createdAt).toLocaleString('zh-CN'),
+            likeCount: item.likeCount,
+            newLikeCount: prevItem ? item.likeCount - prevItem.likeCount : 0,
+            commentCount: item.commentCount,
+            newCommentCount: prevItem ? item.commentCount - prevItem.commentCount : 0,
+            favoriteCount: item.favoriteCount,
+            newFavoriteCount: prevItem ? item.favoriteCount - prevItem.favoriteCount : 0,
+            viewCount: item.viewCount,
+            newViewCount: prevItem ? item.viewCount - prevItem.viewCount : 0,
+          }
+        })
     : []
 
   const tableColumns: ColumnsType<HistoryDataRecord> = [
     {
-      title: t('detail.table.time'),
+      title: '时间',
       dataIndex: 'time',
       key: 'time',
       width: 180,
       fixed: 'left',
     },
     {
-      title: t('detail.table.totalLikes'),
-      dataIndex: 'likeCount',
-      key: 'likeCount',
+      title: '即时收藏',
+      dataIndex: 'favoriteCount',
+      key: 'favoriteCount',
       align: 'right',
     },
     {
-      title: t('detail.table.newLikes'),
-      dataIndex: 'newLikeCount',
-      key: 'newLikeCount',
+      title: '新增收藏',
+      dataIndex: 'newFavoriteCount',
+      key: 'newFavoriteCount',
       align: 'right',
       render: (value: number) => (
         <span style={{ color: value > 0 ? '#52c41a' : '#999' }}>
@@ -260,13 +278,13 @@ export default function MonitoringDetailPage() {
       ),
     },
     {
-      title: t('detail.table.totalComments'),
+      title: '即时评论',
       dataIndex: 'commentCount',
       key: 'commentCount',
       align: 'right',
     },
     {
-      title: t('detail.table.newComments'),
+      title: '新增评论',
       dataIndex: 'newCommentCount',
       key: 'newCommentCount',
       align: 'right',
@@ -277,15 +295,15 @@ export default function MonitoringDetailPage() {
       ),
     },
     {
-      title: t('detail.table.totalFavorites'),
-      dataIndex: 'favoriteCount',
-      key: 'favoriteCount',
+      title: '即时点赞',
+      dataIndex: 'likeCount',
+      key: 'likeCount',
       align: 'right',
     },
     {
-      title: t('detail.table.newFavorites'),
-      dataIndex: 'newFavoriteCount',
-      key: 'newFavoriteCount',
+      title: '新增点赞',
+      dataIndex: 'newLikeCount',
+      key: 'newLikeCount',
       align: 'right',
       render: (value: number) => (
         <span style={{ color: value > 0 ? '#52c41a' : '#999' }}>
@@ -301,7 +319,7 @@ export default function MonitoringDetailPage() {
       label: (
         <span>
           <LineChartOutlined />
-          {t('detail.tabs.chart')}
+          累计视图
         </span>
       ),
     },
@@ -310,7 +328,7 @@ export default function MonitoringDetailPage() {
       label: (
         <span>
           <TableOutlined />
-          {t('detail.tabs.table')}
+          增量视图
         </span>
       ),
     },
@@ -327,9 +345,9 @@ export default function MonitoringDetailPage() {
   if (!detail) {
     return (
       <div className={styles.errorContainer}>
-        <p>{t('detail.notFound')}</p>
+        <p>未找到监测数据</p>
         <Button type="primary" onClick={() => router.back()}>
-          {t('detail.backToList')}
+          返回列表
         </Button>
       </div>
     )
@@ -344,21 +362,21 @@ export default function MonitoringDetailPage() {
           onClick={() => router.back()}
           className={styles.backButton}
         >
-          {t('detail.back')}
+          返回
         </Button>
         <div className={styles.actions}>
           <Button
-            icon={detail.monitoringStatus === 'active' ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
+            icon={detail.enabled ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
             onClick={handleToggleMonitoring}
           >
-            {detail.monitoringStatus === 'active' ? t('detail.pause') : t('detail.resume')}
+            {detail.enabled ? '暂停监测' : '恢复监测'}
           </Button>
           <Button
             icon={<DownloadOutlined />}
             onClick={handleExport}
             loading={exporting}
           >
-            {t('detail.export')}
+            导出数据
           </Button>
         </div>
       </div>
@@ -368,16 +386,29 @@ export default function MonitoringDetailPage() {
         <div className={styles.noteInfo}>
           <div className={styles.noteHeader}>
             <div className={styles.noteMeta}>
-              <h2 className={styles.noteTitle}>{detail.title || t('list.untitled')}</h2>
-              <Tag color="blue">{detail.platform}</Tag>
-              <Tag color={detail.monitoringStatus === 'active' ? 'green' : 'orange'}>
-                {detail.monitoringStatus === 'active' ? t('detail.status.active') : t('detail.status.paused')}
+              <h2 className={styles.noteTitle}>
+                {detail.postDetail?.title || detail.postDetail?.desc || '未命名笔记'}
+              </h2>
+              <Tag color="blue">{detail.platform.toUpperCase()}</Tag>
+              <Tag color={detail.enabled ? 'green' : 'orange'}>
+                {detail.enabled ? '监测中' : '已暂停'}
               </Tag>
+              {detail.status && (
+                <Tag color={
+                  detail.status === 'completed' ? 'success' :
+                  detail.status === 'failed' ? 'error' :
+                  detail.status === 'processing' ? 'processing' : 'default'
+                }>
+                  {detail.status === 'completed' ? '已完成' :
+                   detail.status === 'failed' ? '失败' :
+                   detail.status === 'processing' ? '处理中' : '等待中'}
+                </Tag>
+              )}
             </div>
             <div className={styles.noteLink}>
-              {detail.url && (
-                <a href={detail.url} target="_blank" rel="noopener noreferrer">
-                  {t('detail.viewNote')}
+              {detail.link && (
+                <a href={detail.link} target="_blank" rel="noopener noreferrer">
+                  查看笔记
                 </a>
               )}
             </div>
@@ -385,36 +416,46 @@ export default function MonitoringDetailPage() {
           
           <div className={styles.monitoringInfo}>
             <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.taskId')}:</span>
-              <span className={styles.infoValue}>{detail.id.substring(0, 8)}</span>
+              <span className={styles.infoLabel}>任务编号:</span>
+              <span className={styles.infoValue}>{detail._id.substring(0, 8)}</span>
             </div>
             <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.createdTime')}:</span>
-              <span className={styles.infoValue}>{new Date(detail.createdAt).toLocaleString()}</span>
+              <span className={styles.infoLabel}>任务提交时间:</span>
+              <span className={styles.infoValue}>{new Date(detail.createdAt).toLocaleString('zh-CN')}</span>
             </div>
             <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.publishTime')}:</span>
-              <span className={styles.infoValue}>{new Date(detail.updatedAt).toLocaleString()}</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.firstMonitoring')}:</span>
+              <span className={styles.infoLabel}>发布时间:</span>
               <span className={styles.infoValue}>
-                {detail.history.length > 0 ? new Date(detail.history[0].time).toLocaleString() : '-'}
+                {detail.postDetail?.publishTime 
+                  ? new Date(detail.postDetail.publishTime).toLocaleString('zh-CN')
+                  : '-'}
               </span>
             </div>
             <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.monitoringDuration')}:</span>
-              <span className={styles.infoValue}>{t('detail.duration', { count: 1 })}</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.monitoringFrequency')}:</span>
-              <span className={styles.infoValue}>{detail.monitoringFrequency}{t('detail.minutesPerTime')}</span>
-            </div>
-            <div className={styles.infoItem}>
-              <span className={styles.infoLabel}>{t('detail.lastMonitoring')}:</span>
+              <span className={styles.infoLabel}>首次监测时间:</span>
               <span className={styles.infoValue}>
-                {detail.history.length > 0
-                  ? new Date(detail.history[detail.history.length - 1].time).toLocaleString()
+                {detail.insights && detail.insights.length > 0 
+                  ? new Date(detail.insights[0].createdAt).toLocaleString('zh-CN') 
+                  : '-'}
+              </span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>监测时长:</span>
+              <span className={styles.infoValue}>
+                {detail.insights && detail.insights.length > 0
+                  ? `${Math.ceil((new Date().getTime() - new Date(detail.createdAt).getTime()) / (1000 * 60 * 60 * 24))}天`
+                  : '-'}
+              </span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>监测频率:</span>
+              <span className={styles.infoValue}>5分钟/次</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.infoLabel}>最近一次监测:</span>
+              <span className={styles.infoValue}>
+                {detail.insights && detail.insights.length > 0
+                  ? new Date(detail.insights[detail.insights.length - 1].createdAt).toLocaleString('zh-CN')
                   : '-'}
               </span>
             </div>
@@ -425,11 +466,13 @@ export default function MonitoringDetailPage() {
       {/* 监测完成度 */}
       <Card className={styles.progressCard}>
         <div className={styles.progressHeader}>
-          <h3>{t('detail.completionRate')}</h3>
-          <span className={styles.progressText}>100%{t('detail.monitoringComplete')}</span>
+          <h3>监测完成度</h3>
+          <span className={styles.progressText}>
+            {detail.status === 'completed' ? '100% 监测已完成' : '监测中'}
+          </span>
         </div>
         <Progress
-          percent={100}
+          percent={detail.status === 'completed' ? 100 : 80}
           strokeColor={{
             '0%': '#667eea',
             '100%': '#764ba2',
@@ -445,8 +488,10 @@ export default function MonitoringDetailPage() {
             ⭐
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statValue}>{detail.stats.favoriteCount}</div>
-            <div className={styles.statLabel}>{t('stats.favorites')}</div>
+            <div className={styles.statValue}>
+              {formatNumber(detail.postDetail?.collectCount || 0)}
+            </div>
+            <div className={styles.statLabel}>收藏数</div>
           </div>
         </Card>
 
@@ -455,8 +500,10 @@ export default function MonitoringDetailPage() {
             👍
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statValue}>{detail.stats.likeCount}</div>
-            <div className={styles.statLabel}>{t('stats.likes')}</div>
+            <div className={styles.statValue}>
+              {formatNumber(detail.postDetail?.likeCount || 0)}
+            </div>
+            <div className={styles.statLabel}>点赞数</div>
           </div>
         </Card>
 
@@ -465,8 +512,10 @@ export default function MonitoringDetailPage() {
             💬
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statValue}>{detail.stats.commentCount}</div>
-            <div className={styles.statLabel}>{t('stats.comments')}</div>
+            <div className={styles.statValue}>
+              {formatNumber(detail.postDetail?.commentCount || 0)}
+            </div>
+            <div className={styles.statLabel}>评论数</div>
           </div>
         </Card>
 
@@ -475,15 +524,17 @@ export default function MonitoringDetailPage() {
             📊
           </div>
           <div className={styles.statContent}>
-            <div className={styles.statValue}>{detail.stats.viewCount}</div>
-            <div className={styles.statLabel}>{t('stats.views')}</div>
+            <div className={styles.statValue}>
+              {formatNumber(detail.postDetail?.readCount || 0)}
+            </div>
+            <div className={styles.statLabel}>阅读数</div>
           </div>
         </Card>
       </div>
 
       {/* 数据详情 */}
       <Card className={styles.dataCard}>
-        <h3 className={styles.dataTitle}>📊 {t('detail.dataDetail')}</h3>
+        <h3 className={styles.dataTitle}>📊 数据详情</h3>
 
         <div className={styles.actionBar}>
           <Button
@@ -493,7 +544,7 @@ export default function MonitoringDetailPage() {
             loading={exporting}
             className={styles.exportButton}
           >
-            {t('detail.downloadRecord')}
+            下载记录
           </Button>
           <Button
             type="primary"
@@ -501,7 +552,7 @@ export default function MonitoringDetailPage() {
             loading={exporting}
             className={styles.exportResultButton}
           >
-            {t('detail.exportResult')}
+            导出结果
           </Button>
         </div>
 
@@ -513,7 +564,7 @@ export default function MonitoringDetailPage() {
         />
 
         <div className={styles.dataContent}>
-          {activeTab === 'chart' && detail && (
+          {activeTab === 'chart' && detail && detail.insights && detail.insights.length > 0 && (
             <div className={styles.chartContainer}>
               <ReactECharts option={getChartOption()} style={{ height: '400px' }} />
             </div>
@@ -527,7 +578,7 @@ export default function MonitoringDetailPage() {
                 pagination={{
                   pageSize: 10,
                   showSizeChanger: true,
-                  showTotal: total => t('detail.table.total', { count: total }),
+                  showTotal: total => `共 ${total} 条`,
                 }}
                 scroll={{ x: 'max-content' }}
               />

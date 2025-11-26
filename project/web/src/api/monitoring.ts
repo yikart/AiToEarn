@@ -69,8 +69,8 @@ export interface Insight {
   snapshotDateAsDate: string
 }
 
-// 监控项目
-export interface NoteMonitoringItem {
+// 监控列表项（简单信息）
+export interface NoteMonitoringListItem {
   _id: string
   platform: string
   userId: string
@@ -80,25 +80,24 @@ export interface NoteMonitoringItem {
   createdAt: string
   updatedAt: string
   error?: string
-  uploadMediaList: MediaItem[]
-  postId: string
-  uid: string
-  postDetail: PostDetail
-  insights: Insight[]
 }
 
-// 统计信息（用于列表展示）
-export interface NoteMonitoringStats {
-  id: string
-  title: string
-  platform: string
-  stats: {
-    viewCount: number
-    likeCount: number
-    commentCount: number
-    favoriteCount: number
-  }
-  createdAt: string
+// 监控详情（包含完整信息）
+export interface NoteMonitoringItem extends NoteMonitoringListItem {
+  uploadMediaList?: MediaItem[]
+  postId?: string
+  uid?: string
+  postDetail?: PostDetail
+  insights?: Insight[]
+}
+
+// 列表返回数据
+export interface NoteMonitoringListResponse {
+  items: NoteMonitoringListItem[]
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
 }
 
 export interface GetNoteMonitoringListParams {
@@ -116,8 +115,8 @@ export interface AddNoteMonitoringParams {
  * 获取笔记监测列表
  */
 export async function apiGetNoteMonitoringList(params: GetNoteMonitoringListParams) {
-  const res = await http.post<NoteMonitoringItem[]>('statistics/posts/monitor/list', params)
-  return res?.data || []
+  const res = await http.post<NoteMonitoringListResponse>('statistics/posts/monitor/list', params)
+  return res?.data || { items: [], page: 1, pageSize: 20, total: 0, totalPages: 0 }
 }
 
 /**
@@ -133,6 +132,32 @@ export async function apiAddNoteMonitoring(params: AddNoteMonitoringParams) {
  */
 export async function apiGetNoteMonitoringDetail(id: string) {
   const res = await http.get<NoteMonitoringItem>(`statistics/posts/monitor/${id}`)
+  return res?.data
+}
+
+/**
+ * 暂停/恢复笔记监测（暂未实现）
+ */
+export async function apiToggleNoteMonitoring(id: string, enabled: boolean) {
+  const res = await http.post<boolean>(`statistics/posts/monitor/${id}/toggle`, { enabled })
+  return res?.data
+}
+
+/**
+ * 删除笔记监测（暂未实现）
+ */
+export async function apiDeleteNoteMonitoring(id: string) {
+  const res = await http.delete<boolean>(`statistics/posts/monitor/${id}`)
+  return res?.data
+}
+
+/**
+ * 导出监测数据（暂未实现）
+ */
+export async function apiExportNoteMonitoringData(id: string) {
+  const res = await http.get<Blob>(`statistics/posts/monitor/${id}/export`, {
+    responseType: 'blob',
+  } as any)
   return res?.data
 }
 
