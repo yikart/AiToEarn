@@ -3,102 +3,136 @@
  */
 import http from '@/utils/request'
 
-export interface NoteMonitoringItem {
-  id: string
-  userId: string
-  type: 'link' | 'account' // 监测类型：链接或账号
-  platform: string // 平台名称
-  url?: string // 笔记链接
-  accountId?: string // 账号ID
-  noteId: string // 笔记ID
-  title?: string // 笔记标题
-  coverUrl?: string // 封面图
-  stats: {
-    viewCount: number // 阅读数
-    likeCount: number // 点赞数
-    commentCount: number // 评论数
-    favoriteCount: number // 收藏数
-    shareCount: number // 分享数
-  }
-  monitoringStatus: 'active' | 'paused' | 'stopped' // 监测状态
-  monitoringFrequency: number // 监测频率（分钟）
-  lastUpdateTime: string // 最后更新时间
-  createdAt: string // 创建时间
-  updatedAt: string // 更新时间
+// 媒体类型
+export interface MediaItem {
+  type: 'img' | 'video'
+  url: string
+  live_photo?: number
+  imageUrl?: string
 }
 
-export interface NoteMonitoringDetail extends NoteMonitoringItem {
-  history: {
-    time: string
+// 图片列表项
+export interface ImageListItem {
+  live_photo: number
+  imageUrl: string
+}
+
+// 帖子详情
+export interface PostDetail {
+  id: string
+  postId: string
+  platform: string
+  title: string
+  desc: string
+  cover: string
+  mediaType: 'image' | 'video'
+  url: string
+  publishTime: number
+  readCount: number
+  commentCount: number
+  likeCount: number
+  forwardCount: number
+  collectCount: number
+}
+
+// 数据洞察
+export interface Insight {
+  _id: string
+  uid: string
+  userId: string
+  accountId: string
+  categoryId: string
+  platform: string
+  postId: string
+  title: string
+  desc: string
+  cover: string
+  mediaType: 'image' | 'video'
+  url: string
+  duration: string
+  viewCount: number
+  commentCount: number
+  likeCount: number
+  shareCount: number
+  clickCount: number
+  impressionCount: number
+  favoriteCount: number
+  publishTime: string
+  tags: string[]
+  videoUrl: string
+  snapshotDate: string
+  createdAt: string
+  updatedAt: string
+  imageList: ImageListItem[]
+  medias: any[]
+  downloadUrl: any[]
+  snapshotDateAsDate: string
+}
+
+// 监控项目
+export interface NoteMonitoringItem {
+  _id: string
+  platform: string
+  userId: string
+  link: string
+  status: 'pending' | 'processing' | 'completed' | 'failed'
+  enabled: boolean
+  createdAt: string
+  updatedAt: string
+  error?: string
+  uploadMediaList: MediaItem[]
+  postId: string
+  uid: string
+  postDetail: PostDetail
+  insights: Insight[]
+}
+
+// 统计信息（用于列表展示）
+export interface NoteMonitoringStats {
+  id: string
+  title: string
+  platform: string
+  stats: {
     viewCount: number
     likeCount: number
     commentCount: number
     favoriteCount: number
-    shareCount: number
-  }[]
+  }
+  createdAt: string
 }
 
 export interface GetNoteMonitoringListParams {
-  type?: 'link' | 'account'
+  platform: string
   page?: number
   pageSize?: number
 }
 
 export interface AddNoteMonitoringParams {
-  type: 'link' | 'account'
-  url?: string // 笔记链接
-  accountId?: string // 账号ID
+  platform: string
+  link: string
 }
 
 /**
  * 获取笔记监测列表
  */
 export async function apiGetNoteMonitoringList(params: GetNoteMonitoringListParams) {
-  const res = await http.get<{ data: NoteMonitoringItem[], total: number }>('/monitoring/note/list', {
-    params,
-  })
-  return res?.data?.data || []
+  const res = await http.post<NoteMonitoringItem[]>('statistics/posts/monitor/list', params)
+  return res?.data || []
 }
 
 /**
  * 添加笔记监测
  */
 export async function apiAddNoteMonitoring(params: AddNoteMonitoringParams) {
-  const res = await http.post<{ data: NoteMonitoringItem }>('/monitoring/note/add', params)
-  return res?.data?.data
+  const res = await http.post<NoteMonitoringItem>('statistics/posts/monitor/create', params)
+  return res?.data
 }
 
 /**
  * 获取笔记监测详情
  */
 export async function apiGetNoteMonitoringDetail(id: string) {
-  const res = await http.get<{ data: NoteMonitoringDetail }>(`/monitoring/note/detail/${id}`)
-  return res?.data?.data
-}
-
-/**
- * 暂停/恢复笔记监测
- */
-export async function apiToggleNoteMonitoring(id: string, status: 'active' | 'paused') {
-  const res = await http.post<{ data: boolean }>(`/monitoring/note/toggle/${id}`, { status })
-  return res?.data?.data
-}
-
-/**
- * 删除笔记监测
- */
-export async function apiDeleteNoteMonitoring(id: string) {
-  const res = await http.delete<{ data: boolean }>(`/monitoring/note/delete/${id}`)
-  return res?.data?.data
-}
-
-/**
- * 导出监测数据
- */
-export async function apiExportNoteMonitoringData(id: string) {
-  const res = await http.get<Blob>(`/monitoring/note/export/${id}`, {
-    responseType: 'blob',
-  })
+  const res = await http.get<NoteMonitoringItem>(`statistics/posts/monitor/${id}`)
   return res?.data
 }
 
