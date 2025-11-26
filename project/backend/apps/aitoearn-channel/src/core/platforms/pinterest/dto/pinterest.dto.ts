@@ -29,9 +29,7 @@ const CreatePinBodyItemSchema = z.object({
   description: z.string().optional().describe('描述'),
   link: z.string().optional().describe('链接'),
 })
-export class CreatePinBodyItemDto extends createZodDto(
-  CreatePinBodyItemSchema,
-) {}
+export class CreatePinBodyItemDto extends createZodDto(CreatePinBodyItemSchema) {}
 
 const CreatePinBodySchema = z.object({
   board_id: z.string().describe('此 Pin 所属的板块'),
