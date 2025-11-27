@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common'
-import { AppException, ResponseCode, UserType } from '@yikart/common'
-import { NotificationRepository, NotificationStatus, NotificationType } from '@yikart/mongodb'
+import { AppException, NotificationType, ResponseCode, UserType } from '@yikart/common'
+import { NotificationRepository, NotificationStatus } from '@yikart/mongodb'
 import {
   BatchDeleteDto,
   MarkAsReadDto,
