@@ -89,6 +89,7 @@ export default function DataMonitoringPage() {
       pending: { color: 'default' },
       processing: { color: 'processing' },
       completed: { color: 'success' },
+      success: { color: 'success' },
       failed: { color: 'error' },
     }
     const statusInfo = statusMap[status] || statusMap.pending
@@ -112,8 +113,8 @@ export default function DataMonitoringPage() {
       {/* 页面标题 */}
       <div className={styles.pageHeader}>
         <div className={styles.headerContent}>
-          <h1 className={styles.pageTitle}>笔记传播监测</h1>
-          <p className={styles.pageDesc}>按分钟级频率监测笔记的点赞、收藏、评论、转发等传播数据，有效验证笔记传播效果</p>
+          <h1 className={styles.pageTitle}>{t('title')}</h1>
+          <p className={styles.pageDesc}>{t('description')}</p>
         </div>
       </div>
 
@@ -133,13 +134,13 @@ export default function DataMonitoringPage() {
               <div className={styles.addSection}>
                 <div className={styles.addCard}>
                   <LinkOutlined className={styles.addIcon} />
-                  <h3 className={styles.addTitle}>按笔记链接</h3>
+                  <h3 className={styles.addTitle}>{t('tabs.byLink')}</h3>
                   <Button
                     type="primary"
                     onClick={() => setAddModalVisible(true)}
                     className={styles.addButton}
                   >
-                    去添加
+                    {t('actions.add')}
                   </Button>
                 </div>
               </div>
@@ -164,7 +165,7 @@ export default function DataMonitoringPage() {
                             icon={<EyeOutlined />}
                             onClick={() => handleViewDetail(item)}
                           >
-                            查看详情
+                            {t('actions.viewDetail')}
                           </Button>,
                         ]}
                       >
@@ -172,25 +173,26 @@ export default function DataMonitoringPage() {
                           <h4 className={styles.noteTitle}>
                             {item.link}
                           </h4>
-                          <div className={styles.headerRight}>
+                          <div className={styles.headerRight} style={{ marginRight: '0' }}>
                             {getStatusTag(item.status)}
                             <Badge
+                            
                               status={item.enabled ? 'success' : 'default'}
-                              text={item.enabled ? '已启用' : '已禁用'}
+                              text={item.enabled ? t('status.enabled') : t('status.disabled')}
                             />
                           </div>
                         </div>
                         {item.error && (
                           <div className={styles.errorMessage}>
-                            <Tag color="error">错误: {item.error}</Tag>
+                            <Tag color="error">{t('list.error')}: {item.error}</Tag>
                           </div>
                         )}
                         <div className={styles.cardFooter}>
                           <span className={styles.createTime}>
-                            创建时间: {new Date(item.createdAt).toLocaleString('zh-CN')}
+                            {t('list.createdAt')}: {new Date(item.createdAt).toLocaleString('zh-CN')}
                           </span>
                           <span className={styles.updateTime}>
-                            更新时间: {new Date(item.updatedAt).toLocaleString('zh-CN')}
+                            {t('list.updatedAt')}: {new Date(item.updatedAt).toLocaleString('zh-CN')}
                           </span>
                         </div>
                       </Card>
@@ -204,13 +206,13 @@ export default function DataMonitoringPage() {
                       total={pagination.total}
                       onChange={handlePageChange}
                       showSizeChanger={false}
-                      showTotal={total => `共 ${total} 条记录`}
+                      showTotal={total => t('list.totalRecords', { count: total })}
                     />
                   </div>
                 </>
               ) : (
                 <Empty
-                  description="暂无监测数据，点击上方按钮添加笔记链接"
+                  description={t('list.empty')}
                   className={styles.empty}
                 />
               )}
@@ -223,13 +225,13 @@ export default function DataMonitoringPage() {
               <div className={styles.addSection}>
                 <div className={styles.addCard}>
                   <UserOutlined className={styles.addIcon} />
-                  <h3 className={styles.addTitle}>按小红书账号</h3>
+                  <h3 className={styles.addTitle}>{t('tabs.byAccount')}</h3>
                   <Button
                     type="primary"
                     disabled
                     className={styles.addButton}
                   >
-                    即将开放
+                    {t('actions.comingSoon')}
                   </Button>
                 </div>
               </div>
@@ -240,7 +242,7 @@ export default function DataMonitoringPage() {
 
       {/* 添加笔记链接弹窗 */}
       <Modal
-        title="添加笔记监测"
+        title={t('addModal.title')}
         open={addModalVisible}
         onOk={handleAddNote}
         onCancel={() => {
@@ -248,13 +250,13 @@ export default function DataMonitoringPage() {
           setNoteLink('')
         }}
         confirmLoading={addLoading}
-        okText="确定"
-        cancelText="取消"
+        okText={t('addModal.confirm')}
+        cancelText={t('addModal.cancel')}
       >
         <div className={styles.addModalContent}>
-          <p className={styles.modalDesc}>请输入小红书笔记链接</p>
+          <p className={styles.modalDesc}>{t('addModal.inputPlaceholder')}</p>
           <Input
-            placeholder="https://www.xiaohongshu.com/explore/..."
+            placeholder={t('addModal.linkPlaceholder')}
             value={noteLink}
             onChange={e => setNoteLink(e.target.value)}
             prefix={<LinkOutlined />}

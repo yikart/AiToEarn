@@ -657,11 +657,14 @@ interface Resources {
       "addSuccess": "添加成功",
       "addFailed": "添加失败"
     },
-    "list": {
-      "empty": "暂无监测数据，点击上方按钮添加笔记链接",
-      "untitled": "未命名笔记",
-      "createdAt": "创建时间"
-    },
+        "list": {
+          "empty": "暂无监测数据，点击上方按钮添加笔记链接",
+          "untitled": "未命名笔记",
+          "createdAt": "创建时间",
+          "updatedAt": "更新时间",
+          "error": "错误",
+          "totalRecords": "共 {{count}} 条记录"
+        },
     "stats": {
       "views": "阅读数",
       "likes": "点赞数",
@@ -669,14 +672,15 @@ interface Resources {
       "favorites": "收藏数",
       "shares": "分享数"
     },
-    "status": {
-      "pending": "等待中",
-      "processing": "处理中",
-      "completed": "已完成",
-      "failed": "失败",
-      "enabled": "已启用",
-      "disabled": "已禁用"
-    },
+        "status": {
+          "pending": "等待中",
+          "processing": "处理中",
+          "completed": "已完成",
+          "success": "成功",
+          "failed": "失败",
+          "enabled": "已启用",
+          "disabled": "已禁用"
+        },
         "detail": {
           "back": "返回",
           "backToList": "返回列表",

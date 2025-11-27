@@ -7,7 +7,8 @@
   },
   "actions": {
     "add": "Add",
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "viewDetail": "View Details"
   },
   "addModal": {
     "title": "Add Note Monitoring",
@@ -22,13 +23,26 @@
   "list": {
     "empty": "No monitoring data yet, click the button above to add a note link",
     "untitled": "Untitled Note",
-    "createdAt": "Created at"
+    "createdAt": "Created at",
+    "updatedAt": "Updated at",
+    "error": "Error",
+    "totalRecords": "Total {{count}} records"
   },
   "stats": {
     "views": "Views",
     "likes": "Likes",
     "comments": "Comments",
-    "favorites": "Favorites"
+    "favorites": "Favorites",
+    "shares": "Shares"
+  },
+  "status": {
+    "pending": "Pending",
+    "processing": "Processing",
+    "completed": "Completed",
+    "success": "Success",
+    "failed": "Failed",
+    "enabled": "Enabled",
+    "disabled": "Disabled"
   },
   "detail": {
     "back": "Back",
@@ -41,6 +55,13 @@
     "export": "Export",
     "exportSuccess": "Exported successfully",
     "viewNote": "View Note",
+    "pageTitle": "Note Monitoring Details",
+    "startTime": "Start Time",
+    "updateTime": "Update Time",
+    "noteCover": "Note Cover",
+    "viewOriginal": "View Original",
+    "dailyIncrement": "Daily Data Increment",
+    "noData": "No Data",
     "taskId": "Task ID",
     "createdTime": "Task Created",
     "publishTime": "Published",
