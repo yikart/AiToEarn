@@ -131,7 +131,7 @@ export async function apiAddNoteMonitoring(params: AddNoteMonitoringParams) {
  * 获取笔记监测详情
  */
 export async function apiGetNoteMonitoringDetail(id: string) {
-  const res = await http.get<NoteMonitoringItem>(`statistics/posts/monitor/${id}`)
+  const res = await http.post<NoteMonitoringItem>(`statistics/posts/monitor/${id}`)
   return res?.data
 }
 

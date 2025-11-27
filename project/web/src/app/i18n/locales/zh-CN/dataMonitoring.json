@@ -51,6 +51,13 @@
     "export": "导出数据",
     "exportSuccess": "导出成功",
     "viewNote": "查看笔记",
+    "pageTitle": "笔记监测详情",
+    "startTime": "开始时间",
+    "updateTime": "更新时间",
+    "noteCover": "笔记封面",
+    "viewOriginal": "查看原文",
+    "dailyIncrement": "每日数据增量",
+    "noData": "暂无数据",
     "taskId": "任务编号",
     "createdTime": "任务提交时间",
     "publishTime": "发布时间",
@@ -79,13 +86,18 @@
     },
     "table": {
       "time": "时间",
+      "date": "日期",
+      "likeIncrement": "点赞增量",
+      "favoriteIncrement": "收藏增量",
+      "commentIncrement": "评论增量",
       "totalLikes": "即时点赞",
       "newLikes": "新增点赞",
       "totalComments": "即时评论",
       "newComments": "新增评论",
       "totalFavorites": "即时收藏",
       "newFavorites": "新增收藏",
-      "total": "共 {{count}} 条"
+      "total": "共 {{count}} 条",
+      "totalDays": "共 {{count}} 天"
     }
   },
   "error": {

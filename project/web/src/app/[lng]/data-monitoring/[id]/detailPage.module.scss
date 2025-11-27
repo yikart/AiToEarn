@@ -10,285 +10,181 @@
 
 .detailPage {
   padding: 24px;
-  background-color: #f5f5f5;
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: calc(100vh - 64px);
 
-  .topBar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  .pageHeader {
     margin-bottom: 24px;
-
-    .backButton {
-      font-size: 14px;
-      border-radius: 8px;
-
-      &:hover {
-        color: #667eea;
-        border-color: #667eea;
-      }
-    }
-
-    .actions {
+    
+    .pageTitle {
+      font-size: 24px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0;
       display: flex;
+      align-items: center;
       gap: 12px;
-
-      button {
-        border-radius: 8px;
-        font-size: 14px;
+      
+      .backIcon {
+        cursor: pointer;
+        font-size: 20px;
+        color: #8c8c8c;
+        transition: color 0.2s;
+        
+        &:hover {
+          color: #1890ff;
+        }
       }
     }
   }
 
-  .infoCard {
-    margin-bottom: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-    .noteInfo {
-      .noteHeader {
+  .taskInfoCard {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    
+    :global(.ant-card-body) {
+      padding: 16px 24px;
+    }
+    
+    .taskInfo {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      
+      .infoItem {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        padding-bottom: 16px;
-        margin-bottom: 16px;
-        border-bottom: 1px solid #f0f0f0;
+        gap: 8px;
+        
+        .label {
+          font-size: 14px;
+          color: #8c8c8c;
+        }
+        
+        .value {
+          font-size: 14px;
+          color: #262626;
+          font-weight: 500;
+        }
+      }
+    }
+  }
 
-        .noteMeta {
+  .noteCard {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    
+    .noteContent {
+      display: flex;
+      gap: 24px;
+      
+      .noteImage {
+        flex-shrink: 0;
+        
+        :global(.ant-image) {
+          display: block;
+        }
+      }
+      
+      .noteDetails {
+        flex: 1;
+        min-width: 0;
+        
+        .noteTitle {
+          font-size: 20px;
+          font-weight: 600;
+          color: #1a1a1a;
+          margin: 0 0 12px 0;
+          line-height: 1.4;
+        }
+        
+        .noteTags {
           display: flex;
           align-items: center;
           gap: 12px;
-
-          .noteTitle {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            color: #333;
-          }
-
-          :global {
-            .ant-tag {
-              margin: 0;
-              padding: 4px 12px;
-              border-radius: 12px;
-            }
-          }
-        }
-
-        .noteLink {
-          a {
-            color: #667eea;
-            text-decoration: none;
+          margin-bottom: 16px;
+          
+          .viewLink {
+            color: #1890ff;
             font-size: 14px;
-
+            text-decoration: none;
+            
             &:hover {
               text-decoration: underline;
             }
           }
         }
-      }
-
-      .monitoringInfo {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 16px;
-
-        .infoItem {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-
-          .infoLabel {
-            font-size: 14px;
-            color: #999;
-          }
-
-          .infoValue {
-            font-size: 14px;
-            color: #333;
-            font-weight: 500;
-          }
-        }
-      }
-    }
-  }
-
-  .progressCard {
-    margin-bottom: 24px;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-    .progressHeader {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-
-      h3 {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: #333;
-      }
-
-      .progressText {
-        font-size: 14px;
-        color: #999;
-      }
-    }
-
-    :global {
-      .ant-progress {
-        margin: 0;
-      }
-
-      .ant-progress-bg {
-        height: 8px !important;
-      }
-    }
-  }
-
-  .statsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 24px;
-
-    .statCard {
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      overflow: hidden;
-
-      :global {
-        .ant-card-body {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          padding: 20px;
-        }
-      }
-
-      .statIcon {
-        width: 56px;
-        height: 56px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 28px;
-        border-radius: 12px;
-      }
-
-      .statContent {
-        flex: 1;
-
-        .statValue {
-          font-size: 28px;
-          font-weight: 600;
-          color: #333;
-          line-height: 1;
-          margin-bottom: 8px;
-        }
-
-        .statLabel {
+        
+        .noteDesc {
           font-size: 14px;
-          color: #999;
+          color: #595959;
+          line-height: 1.6;
+          margin-bottom: 20px;
+          white-space: pre-wrap;
+          word-break: break-word;
+          overflow: auto;
+        }
+        
+        .noteStats {
+          display: flex;
+          gap: 32px;
+          padding-top: 16px;
+          border-top: 1px solid #f0f0f0;
+          
+        .statItem {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          
+          .statIcon {
+            font-size: 16px;
+            color: #1890ff;
+          }
+          
+          .statLabel {
+            font-size: 14px;
+            color: #8c8c8c;
+          }
+          
+          .statValue {
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+          }
+        }
         }
       }
     }
   }
 
-  .dataCard {
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-
-    .dataTitle {
-      margin: 0 0 16px;
+  .incrementCard {
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    
+    .cardTitle {
       font-size: 18px;
       font-weight: 600;
-      color: #333;
+      color: #1a1a1a;
+      margin: 0 0 20px 0;
     }
-
-    .actionBar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
-
-      .exportButton,
-      .exportResultButton {
-        border-radius: 8px;
+    
+    :global {
+      .ant-table {
         font-size: 14px;
       }
-
-      .exportButton {
-        background: #fff;
-        color: #667eea;
-        border-color: #667eea;
-
-        &:hover {
-          background: #667eea;
-          color: #fff;
-        }
+      
+      .ant-table-thead > tr > th {
+        background-color: #fafafa;
+        font-weight: 600;
+        color: #262626;
       }
-
-      .exportResultButton {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-
-        &:hover {
-          background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
-        }
-      }
-    }
-
-    .dataTabs {
-      margin-bottom: 24px;
-
-      :global {
-        .ant-tabs-nav {
-          margin-bottom: 0;
-        }
-
-        .ant-tabs-tab {
-          font-size: 15px;
-          padding: 10px 20px;
-
-          &.ant-tabs-tab-active {
-            .ant-tabs-tab-btn {
-              color: #667eea;
-              font-weight: 600;
-            }
-          }
-        }
-
-        .ant-tabs-ink-bar {
-          background: #667eea;
-        }
-      }
-    }
-
-    .dataContent {
-      .chartContainer {
-        padding: 24px;
-        background: #fafafa;
-        border-radius: 8px;
-        min-height: 400px;
-      }
-
-      .tableContainer {
-        :global {
-          .ant-table {
-            font-size: 14px;
-          }
-
-          .ant-table-thead > tr > th {
-            background: #fafafa;
-            font-weight: 600;
-          }
-
-          .ant-table-tbody > tr:hover > td {
-            background: #f0f2ff;
-          }
-        }
+      
+      .ant-table-tbody > tr:hover > td {
+        background-color: #f5f7fa;
       }
     }
   }
@@ -298,52 +194,29 @@
 @media (max-width: 768px) {
   .detailPage {
     padding: 16px;
-
-    .topBar {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 12px;
-
-      .actions {
-        width: 100%;
-
-        button {
-          flex: 1;
-        }
-      }
-    }
-
-    .infoCard {
-      .noteInfo {
-        .noteHeader {
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 12px;
-
-          .noteMeta {
-            flex-wrap: wrap;
+    
+    .noteCard {
+      .noteContent {
+        flex-direction: column;
+        
+        .noteImage {
+          width: 100%;
+          
+          :global(.ant-image) {
+            width: 100%;
           }
         }
-
-        .monitoringInfo {
-          grid-template-columns: 1fr;
-        }
       }
     }
-
-    .statsGrid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-
-    .dataCard {
-      .actionBar {
-        flex-direction: column;
-
-        button {
-          width: 100%;
+    
+    .taskInfoCard {
+      .taskInfo {
+        gap: 16px;
+        
+        .infoItem {
+          flex: 1 1 100%;
         }
       }
     }
   }
 }
-
