@@ -1,5 +1,5 @@
-import { createZodDto } from '@yikart/common'
-import { NotificationStatus, NotificationType } from '@yikart/mongodb'
+import { createZodDto, NotificationType } from '@yikart/common'
+import { NotificationStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 
 const queryNotificationsDtoSchema = z.object({

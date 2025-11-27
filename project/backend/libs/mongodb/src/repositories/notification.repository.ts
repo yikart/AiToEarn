@@ -1,7 +1,7 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { Pagination, UserType } from '@yikart/common'
+import { NotificationType, Pagination, UserType } from '@yikart/common'
 import { FilterQuery, Model, Types } from 'mongoose'
-import { NotificationStatus, NotificationType } from '../enums'
+import { NotificationStatus } from '../enums'
 import { Notification } from '../schemas'
 import { BaseRepository } from './base.repository'
 

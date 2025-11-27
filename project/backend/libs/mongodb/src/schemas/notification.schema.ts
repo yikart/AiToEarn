@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { UserType } from '@yikart/common'
+import { NotificationType, UserType } from '@yikart/common'
 import { Types } from 'mongoose'
 import * as mongoose from 'mongoose'
-import { NotificationStatus, NotificationType } from '../enums'
+import { NotificationStatus } from '../enums'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
