@@ -35,38 +35,29 @@ export interface PostDetail {
   collectCount: number
 }
 
+// 增量数据
+export interface DeltaData {
+  followerCountIncrease: number
+  followingCountIncrease: number
+  viewCountIncrease: number
+  likeCountIncrease: number
+  commentCountIncrease: number
+  favoriteCountIncrease: number
+  shareCountIncrease: number
+}
+
 // 数据洞察
 export interface Insight {
   _id: string
-  uid: string
-  userId: string
-  accountId: string
-  categoryId: string
   platform: string
+  businessDate: string
   postId: string
-  title: string
-  desc: string
-  cover: string
-  mediaType: 'image' | 'video'
-  url: string
-  duration: string
-  viewCount: number
-  commentCount: number
-  likeCount: number
-  shareCount: number
-  clickCount: number
-  impressionCount: number
-  favoriteCount: number
-  publishTime: string
-  tags: string[]
-  videoUrl: string
-  snapshotDate: string
+  uid: string
   createdAt: string
   updatedAt: string
-  imageList: ImageListItem[]
-  medias: any[]
-  downloadUrl: any[]
-  snapshotDateAsDate: string
+  dailyDelta: DeltaData
+  weeklyDelta: DeltaData
+  monthlyDelta: DeltaData
 }
 
 // 监控列表项（简单信息）

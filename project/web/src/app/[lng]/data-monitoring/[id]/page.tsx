@@ -20,12 +20,9 @@ import styles from './detailPage.module.scss'
 interface HistoryDataRecord {
   key: string
   date: string
-  likeCount: number
-  newLikeCount: number
-  commentCount: number
-  newCommentCount: number
-  favoriteCount: number
-  newFavoriteCount: number
+  likeIncrement: number
+  favoriteIncrement: number
+  commentIncrement: number
 }
 
 export default function MonitoringDetailPage() {
@@ -58,37 +55,23 @@ export default function MonitoringDetailPage() {
     }
   }, [id])
 
-  // 按日期分组计算每日增量
+  // 获取每日增量数据
   const getDailyIncrements = () => {
     if (!detail?.insights || detail.insights.length === 0) return []
 
+    // 按业务日期排序
     const sortedInsights = [...detail.insights].sort((a, b) => 
-      new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+      new Date(a.businessDate).getTime() - new Date(b.businessDate).getTime()
     )
 
-    // 按日期分组，每天取最后一条数据
-    const dailyDataMap = new Map<string, typeof sortedInsights[0]>()
-    sortedInsights.forEach(item => {
-      const date = new Date(item.createdAt).toLocaleDateString('zh-CN')
-      dailyDataMap.set(date, item)
-    })
-
-    const dailyData = Array.from(dailyDataMap.entries()).map(([date, data]) => ({ date, data }))
-
-    // 计算每日增量
-    return dailyData.map((item, index) => {
-      const prevItem = index > 0 ? dailyData[index - 1].data : null
-      return {
-        key: item.data._id,
-        date: item.date,
-        likeCount: item.data.likeCount,
-        newLikeCount: prevItem ? item.data.likeCount - prevItem.likeCount : item.data.likeCount,
-        commentCount: item.data.commentCount,
-        newCommentCount: prevItem ? item.data.commentCount - prevItem.commentCount : item.data.commentCount,
-        favoriteCount: item.data.favoriteCount,
-        newFavoriteCount: prevItem ? item.data.favoriteCount - prevItem.favoriteCount : item.data.favoriteCount,
-      }
-    })
+    // 直接使用 dailyDelta 数据
+    return sortedInsights.map(item => ({
+      key: item._id,
+      date: item.businessDate,
+      likeIncrement: item.dailyDelta.likeCountIncrease,
+      favoriteIncrement: item.dailyDelta.favoriteCountIncrease,
+      commentIncrement: item.dailyDelta.commentCountIncrease,
+    }))
   }
 
   const tableColumns: ColumnsType<HistoryDataRecord> = [
@@ -96,13 +79,18 @@ export default function MonitoringDetailPage() {
       title: t('detail.table.date'),
       dataIndex: 'date',
       key: 'date',
-      width: 120,
+      width: 150,
       fixed: 'left',
     },
     {
-      title: t('detail.table.likeIncrement'),
-      dataIndex: 'newLikeCount',
-      key: 'newLikeCount',
+      title: (
+        <span>
+          <LikeOutlined style={{ marginRight: 4 }} />
+          {t('detail.table.likeIncrement')}
+        </span>
+      ),
+      dataIndex: 'likeIncrement',
+      key: 'likeIncrement',
       align: 'right',
       render: (value: number) => (
         <span style={{ color: value > 0 ? '#52c41a' : '#999', fontWeight: 'bold' }}>
@@ -111,9 +99,14 @@ export default function MonitoringDetailPage() {
       ),
     },
     {
-      title: t('detail.table.favoriteIncrement'),
-      dataIndex: 'newFavoriteCount',
-      key: 'newFavoriteCount',
+      title: (
+        <span>
+          <StarOutlined style={{ marginRight: 4 }} />
+          {t('detail.table.favoriteIncrement')}
+        </span>
+      ),
+      dataIndex: 'favoriteIncrement',
+      key: 'favoriteIncrement',
       align: 'right',
       render: (value: number) => (
         <span style={{ color: value > 0 ? '#52c41a' : '#999', fontWeight: 'bold' }}>
@@ -122,9 +115,14 @@ export default function MonitoringDetailPage() {
       ),
     },
     {
-      title: t('detail.table.commentIncrement'),
-      dataIndex: 'newCommentCount',
-      key: 'newCommentCount',
+      title: (
+        <span>
+          <CommentOutlined style={{ marginRight: 4 }} />
+          {t('detail.table.commentIncrement')}
+        </span>
+      ),
+      dataIndex: 'commentIncrement',
+      key: 'commentIncrement',
       align: 'right',
       render: (value: number) => (
         <span style={{ color: value > 0 ? '#52c41a' : '#999', fontWeight: 'bold' }}>

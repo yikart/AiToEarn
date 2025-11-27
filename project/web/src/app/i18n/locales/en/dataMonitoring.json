@@ -76,6 +76,10 @@
     "dataDetail": "Data Detail",
     "downloadRecord": "Download Record",
     "exportResult": "Export Result",
+    "postInfo": "Note Information",
+    "mediaPreview": "Media Preview",
+    "dataHistory": "Data History",
+    "noHistory": "No history data",
     "status": {
       "active": "Active",
       "paused": "Paused"
@@ -86,20 +90,26 @@
     },
     "table": {
       "time": "Time",
-      "totalLikes": "Total Favorites",
-      "newLikes": "New Favorites",
+      "date": "Date",
+      "likeIncrement": "Like Increment",
+      "favoriteIncrement": "Favorite Increment",
+      "commentIncrement": "Comment Increment",
+      "totalLikes": "Total Likes",
+      "newLikes": "New Likes",
       "totalComments": "Total Comments",
       "newComments": "New Comments",
-      "totalFavorites": "Total Likes",
-      "newFavorites": "New Likes",
-      "total": "Total {{count}} items"
+      "totalFavorites": "Total Favorites",
+      "newFavorites": "New Favorites",
+      "total": "Total {{count}} items",
+      "totalDays": "Total {{count}} days"
     }
   },
   "error": {
     "loadFailed": "Failed to load",
     "addFailed": "Failed to add",
     "toggleFailed": "Operation failed",
-    "exportFailed": "Export failed"
+    "exportFailed": "Export failed",
+    "getDetailFailed": "Failed to get details"
   }
 }
 
