@@ -19,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode, TableDto, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
-import { fileUtil } from '../util/file.util'
+import { fileUtil } from '../common/utils/file.util'
 import {
   CreateMaterialDto,
   CreateMaterialTaskDto,

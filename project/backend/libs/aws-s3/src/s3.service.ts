@@ -19,10 +19,13 @@ import { buildUrl } from './s3.util'
 @Injectable()
 export class S3Service {
   private readonly logger = new Logger(S3Service.name)
+  private readonly publicEndpoint: string
+
   constructor(
     private readonly config: S3Config,
     private readonly client: S3Client,
   ) {
+    this.publicEndpoint = config.cdnEndpoint || config.endpoint
   }
 
   async putObject(
@@ -69,14 +72,21 @@ export class S3Service {
   }
 
   // 生成预签名上传 URL
-  getUploadSign(objectPath: string, contentType?: string) {
-    return createPresignedPost(this.client, {
+  async getUploadSign(objectPath: string, contentType?: string) {
+    const result = await createPresignedPost(this.client, {
       Bucket: this.config.bucketName,
       Key: objectPath,
       Expires: this.config.signExpires,
       Conditions: contentType ? [['eq', '$Content-Type', contentType]] : undefined,
       Fields: contentType ? { 'Content-Type': contentType } : undefined,
     })
+
+    // 如果配置了 CDN 端点，替换返回的 URL
+    if (this.config.cdnEndpoint) {
+      result.url = result.url.replace(this.config.endpoint, this.config.cdnEndpoint)
+    }
+
+    return result
   }
 
   /**
@@ -155,6 +165,6 @@ export class S3Service {
   }
 
   buildUrl(objectPath: string) {
-    return buildUrl(this.config.endpoint, objectPath)
+    return buildUrl(this.publicEndpoint, objectPath)
   }
 }
