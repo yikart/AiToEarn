@@ -34,13 +34,10 @@ export class MediaService {
     }
     catch (error) {
       this.logger.error('处理媒体URL失败', error)
+      throw error
     }
 
-    const objectPath = path.startsWith('http://') || path.startsWith('https://')
-      ? fileUtil.trimHost(path)
-      : path
-
-    const metadata = await this.s3Service.headObject(objectPath)
+    const metadata = await this.s3Service.headObject(path)
 
     await this.storageService.addUsedStorage({
       userId,
@@ -51,7 +48,7 @@ export class MediaService {
       ...newData,
       userId,
       userType: UserType.User,
-      url: objectPath,
+      url: path,
       metadata: {
         size: metadata.ContentLength!,
         mimeType: metadata.ContentType!,
