@@ -2706,18 +2706,18 @@
   padding: 16px 32px;
   font-size: 16px;
   font-weight: 600;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
   color: #fff;
   border: none;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 4px 15px rgba(166, 106, 228, 0.4);
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    box-shadow: 0 6px 20px rgba(166, 106, 228, 0.5);
   }
 
   &:active:not(:disabled) {
@@ -2737,6 +2737,14 @@
   }
 }
 
+// AI生成进度区域外层包装
+.aiProgressWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 // AI生成进度框
 .aiProgressContainer {
   max-height: 350px;
@@ -2744,7 +2752,6 @@
   padding: 20px;
   background: rgba(255, 255, 255, 0.95);
   border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
   position: relative;
   scroll-behavior: smooth;
@@ -2754,7 +2761,6 @@
   @media (max-width: 768px) {
     max-height: 300px;
     padding: 16px;
-    border-radius: 10px;
   }
 
   // 滚动条样式
@@ -2768,12 +2774,62 @@
   }
 
   &::-webkit-scrollbar-thumb {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
     border-radius: 3px;
     
     &:hover {
-      background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+      background: linear-gradient(135deg, #9558de 0%, #7a3fc9 100%);
     }
+  }
+}
+
+// 进度条容器
+.aiProgressBarContainer {
+  width: 100%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  
+  @media (max-width: 768px) {
+    height: 20px;
+    padding: 3px;
+  }
+}
+
+// 进度条
+.aiProgressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #a66ae4 0%, #8b4fd9 100%);
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); // 更平滑的过渡
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+  min-width: 35px;
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding-right: 4px;
+    min-width: 30px;
+  }
+}
+
+// 进度文字
+.aiProgressText {
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    font-size: 9px;
   }
 }
 
@@ -2783,7 +2839,7 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #667eea, transparent);
+  background: linear-gradient(90deg, transparent, #a66ae4, transparent);
   animation: slideRight 2s infinite;
 }
 
@@ -2829,4 +2885,52 @@
 .aiProgressCursor {
   animation: blink 1s infinite;
   margin-left: 2px;
+  display: inline-block;
+  transform: scaleX(0.5); // 将宽度缩小到50%
+  transform-origin: center;
+  color: #a66ae4; // 主题色
+}
+
+// 加载动画点（...）
+.loadingDots {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+
+  .dot {
+    animation: dotPulse 1.4s infinite ease-in-out;
+    opacity: 0;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+// 进度条闪光动画
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// 点动画
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
 }

@@ -29,9 +29,23 @@ export function VideoGrabFrame(
   // 视频首帧
   cover: IImgFile
 }> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const video = document.createElement('video')
     video.src = videoUrl
+    video.crossOrigin = 'anonymous' // 尝试跨域访问
+
+    // 设置超时
+    const timeout = setTimeout(() => {
+      video.remove()
+      reject(new Error('视频加载超时'))
+    }, 30000) // 30秒超时
+
+    // 错误处理
+    video.addEventListener('error', (e) => {
+      clearTimeout(timeout)
+      video.remove()
+      reject(new Error(`视频加载失败: ${video.error?.message || '未知错误'}`))
+    })
 
     // 当视频元数据加载完毕时执行回调
     video.addEventListener('loadedmetadata', () => {
@@ -53,19 +67,41 @@ export function VideoGrabFrame(
       context.fillStyle = 'white'
       context.fillRect(0, 0, width, height)
       context.drawImage(video, 0, 0)
-      canvas.toBlob(async (blob) => {
-        const cover = await formatImg({
-          blob: blob!,
-          path: `cover.${blob!.type.split('/')[1]}`,
+      
+      // 尝试导出canvas，可能因为CORS失败
+      try {
+        canvas.toBlob(async (blob) => {
+          if (!blob) {
+            clearTimeout(timeout)
+            video.remove()
+            reject(new Error('Canvas转换为Blob失败'))
+            return
+          }
+          
+          try {
+            const cover = await formatImg({
+              blob: blob,
+              path: `cover.${blob.type.split('/')[1]}`,
+            })
+            clearTimeout(timeout)
+            resolve({
+              width,
+              height,
+              duration: Math.floor(duration),
+              cover,
+            })
+            video.remove()
+          } catch (formatError) {
+            clearTimeout(timeout)
+            video.remove()
+            reject(new Error(`格式化封面失败: ${formatError}`))
+          }
         })
-        resolve({
-          width,
-          height,
-          duration: Math.floor(duration),
-          cover,
-        })
+      } catch (canvasError) {
+        clearTimeout(timeout)
         video.remove()
-      })
+        reject(new Error(`Canvas操作失败（可能是CORS问题）: ${canvasError}`))
+      }
     })
 
     // 加载视频

@@ -87,6 +87,17 @@ function ReleaseBanner() {
   )
 }
 
+// 加载动画组件（...动画）
+function LoadingDots() {
+  return (
+    <span className={styles.loadingDots}>
+      <span className={styles.dot}>.</span>
+      <span className={styles.dot}>.</span>
+      <span className={styles.dot}>.</span>
+    </span>
+  )
+}
+
 // Hero main title section
 function Hero() {
   const { t } = useTransClient('home')
@@ -103,6 +114,7 @@ function Hero() {
     type: 'status' | 'description' | 'error' | 'text'
     content: string
     status?: string // 状态类型，用于渲染对应图标
+    loading?: boolean // 是否显示加载动画（用于媒体生成状态）
   }
   
   const [completedMessages, setCompletedMessages] = useState<MessageItem[]>([]) // 已完成显示的消息
@@ -110,39 +122,40 @@ function Hero() {
   const [displayedText, setDisplayedText] = useState('') // 当前已显示的文字
   const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // 待显示的消息队列
   const progressContainerRef = useRef<HTMLDivElement>(null) // 进度容器引用
+  const [progress, setProgress] = useState(0) // 进度百分比 0-100
 
   // 状态对应的图标和文案
   const getStatusDisplay = (status: string) => {
     const statusConfig: Record<string, { icon: React.ReactNode; text: string; color?: string }> = {
       'THINKING': { 
-        icon: <BulbOutlined style={{ marginRight: '8px', color: '#1890ff' }} />, 
+        icon: <BulbOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
         text: 'AI思考中...',
-        color: '#1890ff'
+        color: '#a66ae4'
       },
       'WAITING': { 
-        icon: <ClockCircleOutlined style={{ marginRight: '8px', color: '#faad14' }} />, 
+        icon: <ClockCircleOutlined style={{ marginRight: '8px', color: '#b78ae9' }} />, 
         text: '等待处理...',
-        color: '#faad14'
+        color: '#b78ae9'
       },
       'GENERATING_CONTENT': { 
-        icon: <FileTextOutlined style={{ marginRight: '8px', color: '#1890ff' }} />, 
-        text: '内容生成中...',
-        color: '#1890ff'
+        icon: <FileTextOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
+        text: '内容生成中',
+        color: '#a66ae4'
       },
       'GENERATING_IMAGE': { 
-        icon: <PictureOutlined style={{ marginRight: '8px', color: '#722ed1' }} />, 
-        text: '图片生成中...',
-        color: '#722ed1'
+        icon: <PictureOutlined style={{ marginRight: '8px', color: '#8b4fd9' }} />, 
+        text: '图片生成中',
+        color: '#8b4fd9'
       },
       'GENERATING_VIDEO': { 
-        icon: <VideoCameraOutlined style={{ marginRight: '8px', color: '#eb2f96' }} />, 
-        text: '视频生成中...',
-        color: '#eb2f96'
+        icon: <VideoCameraOutlined style={{ marginRight: '8px', color: '#9558de' }} />, 
+        text: '视频生成中',
+        color: '#9558de'
       },
       'GENERATING_TEXT': { 
-        icon: <EditOutlined style={{ marginRight: '8px', color: '#1890ff' }} />, 
-        text: '文本生成中...',
-        color: '#1890ff'
+        icon: <EditOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
+        text: '文本生成中',
+        color: '#a66ae4'
       },
       'COMPLETED': { 
         icon: <CheckCircleOutlined style={{ marginRight: '8px', color: '#52c41a' }} />, 
@@ -161,6 +174,37 @@ function Hero() {
       },
     }
     return statusConfig[status] || { icon: null, text: status, color: '#333' }
+  }
+
+  // 计算进度（接收当前进度作为参数，避免闭包问题）
+  const calculateProgress = (status: string, isNewStatus: boolean, currentProgress: number) => {
+    const baseProgress: Record<string, number> = {
+      'THINKING': 10,
+      'WAITING': 20,
+      'GENERATING_CONTENT': 30,
+      'GENERATING_TEXT': 40,
+      'GENERATING_IMAGE': 50,
+      'GENERATING_VIDEO': 60,
+      'COMPLETED': 100,
+    }
+
+    // 如果是生成中的状态（非首次），增加5%
+    const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
+    
+    if (generatingStatuses.includes(status) && !isNewStatus) {
+      // 每次轮询增加5%，但不超过99%
+      return Math.min(currentProgress + 5, 99)
+    }
+
+    // 新状态时，取当前进度和基础进度的较大值（确保进度只增不减）
+    if (isNewStatus) {
+      const targetProgress = baseProgress[status]
+      if (targetProgress !== undefined) {
+        return Math.max(currentProgress, targetProgress)
+      }
+    }
+
+    return currentProgress
   }
 
   // 添加新消息到队列
@@ -184,7 +228,7 @@ function Hero() {
     if (currentTypingMsg && displayedText.length < currentTypingMsg.content.length) {
       const timer = setTimeout(() => {
         setDisplayedText(currentTypingMsg.content.slice(0, displayedText.length + 1))
-      }, 50) // 打字速度 50ms/字符
+      }, 80) // 打字速度 80ms/字符
 
       return () => clearTimeout(timer)
     } 
@@ -221,6 +265,23 @@ function Hero() {
       setPendingMessages([])
       setCurrentTypingMsg(null)
       setDisplayedText('')
+      setProgress(0) // 重置进度
+
+      // 第一步：固定显示 THINKING
+      addMessageToQueue({
+        type: 'status',
+        content: 'AI思考中...',
+        status: 'THINKING'
+      })
+
+      // 第二步：显示用户的提示词
+      addMessageToQueue({
+        type: 'text',
+        content: `📝 创作主题：${prompt}`
+      })
+
+      // 设置初始进度为10%
+      setProgress(10)
 
       // 动态导入API
       const { agentApi } = await import('@/api/agent')
@@ -240,6 +301,7 @@ function Hero() {
       console.error('创建任务失败:', error)
       alert(`创建任务失败: ${error.message || '未知错误'}`)
       setIsGenerating(false)
+      setProgress(0) // 进度归零
     }
   }
 
@@ -247,6 +309,7 @@ function Hero() {
   const pollTaskStatus = async (taskId: string) => {
     const { agentApi } = await import('@/api/agent')
     let lastStatus = ''
+    let hasShownTitle = false
     let hasShownDescription = false
 
     const poll = async () => {
@@ -256,24 +319,54 @@ function Hero() {
         if (res?.code === 0 && res.data) {
           const taskData = res.data
 
-          // 状态变化时添加新消息到队列
-          if (taskData.status !== lastStatus) {
-            const statusDisplay = getStatusDisplay(taskData.status)
+          // 如果有title且还没显示过，显示一次
+          if (taskData.title && !hasShownTitle) {
             addMessageToQueue({
-              type: 'status',
-              content: statusDisplay.text,
-              status: taskData.status
+              type: 'text',
+              content: `✨ 生成主题：${taskData.title}`
             })
-            lastStatus = taskData.status
+            hasShownTitle = true
           }
 
-          // 如果有description且还没显示过，显示一次
+          // 如果有description且还没显示过，优先显示（在状态之前）
           if (taskData.description && !hasShownDescription) {
             addMessageToQueue({
               type: 'description',
-              content: taskData.description
+              content: `📄 ${taskData.description}`
             })
             hasShownDescription = true
+          }
+
+          // 状态变化时添加新消息到队列（跳过THINKING，因为已经在第一步显示）
+          if (taskData.status !== lastStatus && taskData.status !== 'THINKING') {
+            const statusDisplay = getStatusDisplay(taskData.status)
+            // 对于媒体生成状态，标记需要加载动画
+            const needsLoadingAnimation = taskData.status === 'GENERATING_VIDEO' || 
+                                         taskData.status === 'GENERATING_IMAGE' ||
+                                         taskData.status === 'GENERATING_CONTENT' ||
+                                         taskData.status === 'GENERATING_TEXT'
+            
+            addMessageToQueue({
+              type: 'status',
+              content: statusDisplay.text,
+              status: taskData.status,
+              loading: needsLoadingAnimation
+            } as any)
+            
+            // 更新进度（新状态）- 使用函数式更新避免闭包问题
+            setProgress(prev => calculateProgress(taskData.status, true, prev))
+            
+            lastStatus = taskData.status
+          } else if (taskData.status === 'THINKING') {
+            // 只记录状态，不显示消息
+            lastStatus = taskData.status
+          } else if (taskData.status === lastStatus) {
+            // 相同状态下，如果是生成中状态，增加进度
+            const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
+            if (generatingStatuses.includes(taskData.status)) {
+              // 使用函数式更新避免闭包问题
+              setProgress(prev => calculateProgress(taskData.status, false, prev))
+            }
           }
 
           // 如果任务完成
@@ -304,11 +397,13 @@ function Hero() {
               content: `失败原因: ${taskData.errorMessage || '未知错误'}`
             })
             setIsGenerating(false)
+            setProgress(0) // 进度归零
             return
           }
           // 如果任务取消
           else if (taskData.status === 'CANCELLED') {
             setIsGenerating(false)
+            setProgress(0) // 进度归零
             return
           }
 
@@ -328,6 +423,7 @@ function Hero() {
     setTimeout(() => {
       if (isGenerating) {
         setIsGenerating(false)
+        setProgress(0) // 进度归零
         addMessageToQueue({
           type: 'error',
           content: '任务超时，请稍后重试'
@@ -377,57 +473,95 @@ function Hero() {
 
           {/* 进度显示区域 */}
           {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
-            <div 
-              ref={progressContainerRef}
-              className={styles.aiProgressContainer}
-            >
-              {/* 顶部加载指示器 */}
-              {isGenerating && (
-                <div className={styles.aiProgressLoader} />
-              )}
-              
-              {/* 连续文本流显示 */}
-              <div className={styles.aiProgressContent}>
-                {/* 已完成的消息 - 连续文本 */}
-                {completedMessages.map((msg, index) => {
-                  const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
-                  const isDescription = msg.type === 'description'
-                  const isError = msg.type === 'error'
+            <div className={styles.aiProgressWrapper}>
+              <div 
+                ref={progressContainerRef}
+                className={styles.aiProgressContainer}
+                style={{
+                  borderBottom: progress > 0 ? 'none' : '1px solid rgba(0, 0, 0, 0.08)',
+                  borderRadius: progress > 0 ? '12px 12px 0 0' : '12px',
+                }}
+              >
+                {/* 顶部加载指示器 - 只在生成时显示 */}
+                {isGenerating && (
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, #a66ae4, transparent)',
+                    animation: 'slideRight 2s infinite',
+                    zIndex: 10,
+                  }} />
+                )}
+                
+                {/* 连续文本流显示 */}
+                <div className={styles.aiProgressContent}>
+                  {/* 已完成的消息 - 连续文本 */}
+                  {completedMessages.map((msg, index) => {
+                    const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
+                    const isDescription = msg.type === 'description'
+                    const isError = msg.type === 'error'
+                    const isText = msg.type === 'text'
+                    
+                    return (
+                      <div 
+                        key={`completed-${index}`}
+                        className={styles.aiProgressMessage}
+                        style={{
+                          color: isError ? '#ff4d4f' : statusDisplay?.color || '#333',
+                        }}
+                      >
+                        {statusDisplay && statusDisplay.icon}
+                        {isDescription && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
+                        {isError && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
+                        {isText && !statusDisplay && <span style={{ marginRight: '8px' }}></span>}
+                        <span style={{ textAlign: 'left', flex: 1 }}>
+                          {msg.content}
+                          {msg.loading && <LoadingDots />}
+                        </span>
+                      </div>
+                    )
+                  })}
                   
-                  return (
+                  {/* 当前正在打字的消息 */}
+                  {currentTypingMsg && displayedText && (
                     <div 
-                      key={`completed-${index}`}
                       className={styles.aiProgressMessage}
-                      style={{
-                        color: isError ? '#ff4d4f' : statusDisplay?.color || '#333',
+                      style={{ 
+                        color: currentTypingMsg.type === 'error' 
+                          ? '#ff4d4f' 
+                          : currentTypingMsg.status 
+                            ? getStatusDisplay(currentTypingMsg.status).color 
+                            : '#333',
                       }}
                     >
-                      {statusDisplay && statusDisplay.icon}
-                      {isDescription && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
-                      {isError && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
-                      <span style={{ textAlign: 'left', flex: 1 }}>{msg.content}</span>
+                      {currentTypingMsg.status && getStatusDisplay(currentTypingMsg.status).icon}
+                      {currentTypingMsg.type === 'description' && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
+                      {currentTypingMsg.type === 'error' && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
+                      {currentTypingMsg.type === 'text' && !currentTypingMsg.status && <span style={{ marginRight: '8px' }}></span>}
+                      <span style={{ textAlign: 'left', flex: 1 }}>
+                        {displayedText}
+                        {currentTypingMsg.loading && <LoadingDots />}
+                        <span className={styles.aiProgressCursor}>|</span>
+                      </span>
                     </div>
-                  )
-                })}
-                
-                {/* 当前正在打字的消息 */}
-                {currentTypingMsg && displayedText && (
-                  <div 
-                    className={styles.aiProgressMessage}
-                    style={{ 
-                      color: currentTypingMsg.status ? getStatusDisplay(currentTypingMsg.status).color : '#667eea',
-                    }}
-                  >
-                    {currentTypingMsg.status && getStatusDisplay(currentTypingMsg.status).icon}
-                    {currentTypingMsg.type === 'description' && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
-                    {currentTypingMsg.type === 'error' && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
-                    <span style={{ textAlign: 'left', flex: 1 }}>
-                      {displayedText}
-                      <span className={styles.aiProgressCursor}>|</span>
-                    </span>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
+              
+              {/* 进度条 - 进度大于0时才显示 */}
+              {progress > 0 && (
+                <div className={styles.aiProgressBarContainer}>
+                  <div 
+                    className={styles.aiProgressBar}
+                    style={{ width: `${progress}%` }}
+                  >
+                    <span className={styles.aiProgressText}>{progress}%</span>
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

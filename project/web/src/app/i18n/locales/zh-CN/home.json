@@ -25,6 +25,31 @@
     "getStarted": "立即开始",
     "useMobilePhone": "使用移动设备"
   },
+  "aiGeneration": {
+    "inputPlaceholder": "输入你想创作的内容，AI将为你生成完整的作品...",
+    "generateButton": "生成作品",
+    "generating": "生成中...",
+    "emptyPromptAlert": "请输入生成内容的提示词",
+    "createTaskFailed": "创建任务失败",
+    "thinking": "AI思考中...",
+    "topicPrefix": "创作主题：",
+    "generatedTitlePrefix": "生成主题：",
+    "descriptionPrefix": "📄 ",
+    "failedReasonPrefix": "失败原因: ",
+    "taskTimeout": "任务超时，请稍后重试",
+    "unknownError": "未知错误",
+    "status": {
+      "thinking": "AI思考中...",
+      "waiting": "等待处理...",
+      "generatingContent": "内容生成中",
+      "generatingImage": "图片生成中",
+      "generatingVideo": "视频生成中",
+      "generatingText": "文本生成中",
+      "completed": "生成完成！",
+      "failed": "生成失败",
+      "cancelled": "已取消"
+    }
+  },
   "brandBar": {
     "title": "支持的社交媒体平台"
   },

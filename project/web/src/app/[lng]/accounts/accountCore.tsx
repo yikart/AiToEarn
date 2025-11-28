@@ -300,9 +300,10 @@ export default function AccountPageCore({
       }, 1000)
 
       // 填充数据的辅助函数
-      const fillAIData = (store: any) => {
-        // 动态导入generateUUID
+      const fillAIData = async (store: any) => {
+        // 动态导入generateUUID和VideoGrabFrame
         const { generateUUID } = require('@/utils')
+        const { VideoGrabFrame } = require('@/components/PublishDialog/PublishDialog.util')
 
         // 构建参数 - tags追加到description后面
         let description = aiGeneratedData.description || ''
@@ -323,33 +324,201 @@ export default function AccountPageCore({
           // 检查是否有视频
           const videoMedia = medias.find((m: any) => m.type === 'VIDEO')
           if (videoMedia) {
-            console.log('发现视频媒体:', videoMedia.url)
+            console.log('发现视频媒体:', videoMedia.url, '封面URL:', videoMedia.coverUrl)
             
-            // 创建视频封面对象
-            const coverImg: any = {
-              id: generateUUID(),
-              size: 0,
-              file: null as any,
-              imgUrl: videoMedia.url, // 使用视频URL作为临时封面
-              filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
-              imgPath: '',
-              width: 1920,
-              height: 1080,
-              ossUrl: '', // 封面暂时为空
-            }
+            try {
+              let coverInfo
+              
+              // 如果API返回了封面URL，直接使用
+              if (videoMedia.coverUrl) {
+                console.log('使用API返回的封面URL')
+                const { formatImg } = require('@/components/PublishDialog/PublishDialog.util')
+                
+                // 加载封面图片获取尺寸信息
+                coverInfo = await new Promise((resolve) => {
+                  const img = document.createElement('img')
+                  img.crossOrigin = 'anonymous'
+                  img.onload = () => {
+                    resolve({
+                      id: generateUUID(),
+                      width: img.width,
+                      height: img.height,
+                      imgUrl: videoMedia.coverUrl,
+                      ossUrl: videoMedia.coverUrl,
+                      filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
+                      imgPath: '',
+                      size: 0,
+                      file: null as any,
+                    })
+                  }
+                  img.onerror = () => {
+                    console.warn('封面图片加载失败，将尝试从视频提取')
+                    resolve(null)
+                  }
+                  img.src = videoMedia.coverUrl
+                })
+              }
+              
+              // 如果没有封面URL或封面加载失败，尝试从视频提取
+              if (!coverInfo) {
+                console.log('尝试从视频URL提取封面和元数据...')
+                try {
+                  const videoInfo = await VideoGrabFrame(videoMedia.url, 0)
+                  console.log('视频封面提取成功:', videoInfo)
+                  
+                  params.video = {
+                    size: 0,
+                    file: null as any,
+                    videoUrl: videoMedia.url,
+                    ossUrl: videoMedia.url,
+                    filename: `ai_${aiGeneratedData.taskId}.mp4`,
+                    width: videoInfo.width,
+                    height: videoInfo.height,
+                    duration: videoInfo.duration,
+                    cover: videoInfo.cover,
+                  }
+                } catch (extractError) {
+                  console.warn('视频封面提取失败（可能是跨域问题）:', extractError)
+                  console.info('💡 提示：如果视频来自外部URL，建议后端API在返回时提供coverUrl字段')
+                  // 跨域视频无法提取封面，使用占位符
+                  // 创建一个使用视频URL作为imgUrl的封面（浏览器会自动显示第一帧）
+                  const video = document.createElement('video')
+                  video.src = videoMedia.url
+                  video.crossOrigin = 'anonymous'
+                  
+                  await new Promise((resolve) => {
+                    video.addEventListener('loadedmetadata', () => {
+                      // 使用视频URL作为封面的imgUrl，浏览器video标签的poster会自动处理
+                      const placeholderCover: any = {
+                        id: generateUUID(),
+                        size: 0,
+                        file: null as any,
+                        imgUrl: videoMedia.url, // 使用视频URL，video标签会显示第一帧
+                        filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
+                        imgPath: '',
+                        width: video.videoWidth,
+                        height: video.videoHeight,
+                        ossUrl: '', // 没有单独的封面URL
+                      }
+                      
+                      params.video = {
+                        size: 0,
+                        file: null as any,
+                        videoUrl: videoMedia.url,
+                        ossUrl: videoMedia.url,
+                        filename: `ai_${aiGeneratedData.taskId}.mp4`,
+                        width: video.videoWidth,
+                        height: video.videoHeight,
+                        duration: Math.floor(video.duration),
+                        cover: placeholderCover,
+                      }
+                      video.remove()
+                      resolve(null)
+                    })
+                    video.addEventListener('error', () => {
+                      console.warn('视频元数据加载失败')
+                      // 完全失败的情况，使用默认值
+                      const defaultCover: any = {
+                        id: generateUUID(),
+                        size: 0,
+                        file: null as any,
+                        imgUrl: videoMedia.url,
+                        filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
+                        imgPath: '',
+                        width: 1920,
+                        height: 1080,
+                        ossUrl: '',
+                      }
+                      
+                      params.video = {
+                        size: 0,
+                        file: null as any,
+                        videoUrl: videoMedia.url,
+                        ossUrl: videoMedia.url,
+                        filename: `ai_${aiGeneratedData.taskId}.mp4`,
+                        width: 1920,
+                        height: 1080,
+                        duration: 0,
+                        cover: defaultCover,
+                      }
+                      video.remove()
+                      resolve(null)
+                    })
+                    video.load()
+                  })
+                }
+              } else {
+                // 使用API返回的封面，但仍需要从视频获取宽高和时长
+                console.log('加载视频元数据...')
+                const video = document.createElement('video')
+                video.src = videoMedia.url
+                video.crossOrigin = 'anonymous'
+                
+                await new Promise((resolve) => {
+                  video.addEventListener('loadedmetadata', () => {
+                    params.video = {
+                      size: 0,
+                      file: null as any,
+                      videoUrl: videoMedia.url,
+                      ossUrl: videoMedia.url,
+                      filename: `ai_${aiGeneratedData.taskId}.mp4`,
+                      width: video.videoWidth,
+                      height: video.videoHeight,
+                      duration: Math.floor(video.duration),
+                      cover: coverInfo,
+                    }
+                    video.remove()
+                    resolve(null)
+                  })
+                  video.addEventListener('error', () => {
+                    // 如果视频元数据加载失败，使用默认尺寸
+                    params.video = {
+                      size: 0,
+                      file: null as any,
+                      videoUrl: videoMedia.url,
+                      ossUrl: videoMedia.url,
+                      filename: `ai_${aiGeneratedData.taskId}.mp4`,
+                      width: 1920,
+                      height: 1080,
+                      duration: 0,
+                      cover: coverInfo,
+                    }
+                    video.remove()
+                    resolve(null)
+                  })
+                  video.load()
+                })
+              }
+              
+              params.images = []
+            } catch (error) {
+              console.error('处理视频失败:', error)
+              // 如果所有方法都失败，使用默认封面
+              const defaultCover: any = {
+                id: generateUUID(),
+                size: 0,
+                file: null as any,
+                imgUrl: '', // 空的，会显示默认图标
+                filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
+                imgPath: '',
+                width: 1920,
+                height: 1080,
+                ossUrl: '',
+              }
 
-            params.video = {
-              size: 0,
-              file: null as any,
-              videoUrl: videoMedia.url, // 使用ossUrl作为预览URL
-              ossUrl: videoMedia.url,
-              filename: `ai_${aiGeneratedData.taskId}.mp4`,
-              width: 1920,
-              height: 1080,
-              duration: 0,
-              cover: coverImg,
+              params.video = {
+                size: 0,
+                file: null as any,
+                videoUrl: videoMedia.url,
+                ossUrl: videoMedia.url,
+                filename: `ai_${aiGeneratedData.taskId}.mp4`,
+                width: 1920,
+                height: 1080,
+                duration: 0,
+                cover: defaultCover,
+              }
+              params.images = []
             }
-            params.images = []
           } else {
             // 处理所有图片
             const imageMedias = medias.filter((m: any) => m.type === 'IMAGE')
