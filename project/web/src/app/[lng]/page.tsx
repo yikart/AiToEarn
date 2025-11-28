@@ -78,72 +78,169 @@ function ReleaseBanner() {
 // Hero main title section
 function Hero() {
   const { t } = useTransClient('home')
-  const [displayedText, setDisplayedText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isTypingComplete, setIsTypingComplete] = useState(false)
-  const [hideCursor, setHideCursor] = useState(false)
-  const [startTyping, setStartTyping] = useState(false)
   const router = useRouter()
+  const { lng } = useParams()
 
-  // Full text to display
-  const fullText = t('hero.title')
-  const typingSpeed = 120 // Typing speed (milliseconds)
-  const initialDelay = 800 // Initial delay (milliseconds)
-  const cursorHideDelay = 2000 // Delay before hiding cursor after typing completes
+  // AI生成相关状态
+  const [prompt, setPrompt] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [taskId, setTaskId] = useState('')
+  const [progressMessages, setProgressMessages] = useState<string[]>([])
+  const [currentMessage, setCurrentMessage] = useState('')
+  const [messageIndex, setMessageIndex] = useState(0)
+  const [charIndex, setCharIndex] = useState(0)
 
-  useEffect(() => {
-    // Start typing after initial delay
-    const startTimer = setTimeout(() => {
-      setStartTyping(true)
-    }, initialDelay)
-
-    return () => clearTimeout(startTimer)
-  }, [])
-
-  useEffect(() => {
-    if (startTyping && currentIndex < fullText.length) {
-      const currentChar = fullText[currentIndex]
-
-      // Adjust typing speed based on character type
-      let currentSpeed = typingSpeed
-      if (currentChar === '\n') {
-        currentSpeed = typingSpeed * 2 // Pause slightly on line break
-      }
-      else if (currentChar === ' ') {
-        currentSpeed = typingSpeed * 0.5 // Space is faster
-      }
-      else if (/[，。！？；：]/.test(currentChar)) {
-        currentSpeed = typingSpeed * 1.5 // Pause slightly on punctuation
-      }
-      else {
-        // Add some randomness to make typing more natural
-        currentSpeed = typingSpeed + Math.random() * 50 - 25
-      }
-
-      const timer = setTimeout(() => {
-        setDisplayedText(prev => prev + fullText[currentIndex])
-        setCurrentIndex(prev => prev + 1)
-      }, currentSpeed)
-
-      return () => clearTimeout(timer)
+  // 状态对应的中文文案
+  const getStatusText = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'THINKING': '💭 AI思考中...',
+      'WAITING': '⏳ 等待处理...',
+      'GENERATING_CONTENT': '📝 内容生成中...',
+      'GENERATING_IMAGE': '🖼️ 图片生成中...',
+      'GENERATING_VIDEO': '🎬 视频生成中...',
+      'GENERATING_TEXT': '✍️ 文本生成中...',
+      'COMPLETED': '✅ 生成完成！',
+      'FAILED': '❌ 生成失败',
+      'CANCELLED': '🚫 已取消',
     }
-    else if (currentIndex >= fullText.length && !isTypingComplete) {
-      setIsTypingComplete(true)
-      // Delay hiding cursor after typing completes
-      setTimeout(() => {
-        setHideCursor(true)
-      }, cursorHideDelay)
-    }
-  }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay])
+    return statusMap[status] || status
+  }
 
-  // Convert text to JSX, handle line breaks
-  const renderText = () => {
-    return displayedText.split('\n').map((line, index, array) => (
-      <span key={index}>
-        {line}
-        {index < array.length - 1 && <br />}
-      </span>
-    ))
+  // 打字机效果 - 显示当前消息
+  useEffect(() => {
+    if (messageIndex < progressMessages.length) {
+      const currentMsg = progressMessages[messageIndex]
+      
+      if (charIndex < currentMsg.length) {
+        const timer = setTimeout(() => {
+          setCurrentMessage(prev => prev + currentMsg[charIndex])
+          setCharIndex(prev => prev + 1)
+        }, 30) // 打字速度
+
+        return () => clearTimeout(timer)
+      } else {
+        // 当前消息打完，等待一下再显示下一条
+        const timer = setTimeout(() => {
+          setMessageIndex(prev => prev + 1)
+          setCharIndex(0)
+          setCurrentMessage('')
+        }, 500)
+
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [messageIndex, charIndex, progressMessages])
+
+  // 创建任务
+  const handleCreateTask = async () => {
+    if (!prompt.trim()) {
+      alert('请输入生成内容的提示词')
+      return
+    }
+
+    try {
+      setIsGenerating(true)
+      setProgressMessages([])
+      setMessageIndex(0)
+      setCharIndex(0)
+      setCurrentMessage('')
+
+      // 动态导入API
+      const { agentApi } = await import('@/api/agent')
+
+      // 创建任务
+      const createRes = await agentApi.createTask({ prompt })
+      if (createRes?.code === 0 && createRes.data?.id) {
+        const newTaskId = createRes.data.id
+        setTaskId(newTaskId)
+        
+        // 开始轮询任务状态
+        pollTaskStatus(newTaskId)
+      } else {
+        throw new Error('创建任务失败')
+      }
+    } catch (error: any) {
+      console.error('创建任务失败:', error)
+      alert(`创建任务失败: ${error.message || '未知错误'}`)
+      setIsGenerating(false)
+    }
+  }
+
+  // 轮询任务状态
+  const pollTaskStatus = async (taskId: string) => {
+    const { agentApi } = await import('@/api/agent')
+    let lastStatus = ''
+    let hasShownDescription = false
+
+    const poll = async () => {
+      try {
+        const res = await agentApi.getTaskDetail(taskId)
+        
+        if (res?.code === 0 && res.data) {
+          const taskData = res.data
+
+          // 状态变化时添加新消息
+          if (taskData.status !== lastStatus) {
+            const statusText = getStatusText(taskData.status)
+            setProgressMessages(prev => [...prev, statusText])
+            lastStatus = taskData.status
+          }
+
+          // 如果有description且还没显示过，显示一次
+          if (taskData.description && !hasShownDescription) {
+            setProgressMessages(prev => [...prev, `📄 ${taskData.description}`])
+            hasShownDescription = true
+          }
+
+          // 如果任务完成
+          if (taskData.status === 'COMPLETED') {
+            setIsGenerating(false)
+            
+            // 构建跳转参数
+            const queryParams = new URLSearchParams({
+              aiGenerated: 'true',
+              taskId: taskData.id,
+              title: taskData.title || '',
+              description: taskData.description || '',
+              tags: JSON.stringify(taskData.tags || []),
+              medias: JSON.stringify(taskData.medias || []),
+            })
+            
+            // 跳转到accounts页面
+            router.push(`/${lng}/accounts?${queryParams.toString()}`)
+            return
+          }
+          // 如果任务失败
+          else if (taskData.status === 'FAILED') {
+            setProgressMessages(prev => [...prev, `❌ 失败原因: ${taskData.errorMessage || '未知错误'}`])
+            setIsGenerating(false)
+            return
+          }
+          // 如果任务取消
+          else if (taskData.status === 'CANCELLED') {
+            setIsGenerating(false)
+            return
+          }
+
+          // 继续轮询
+          setTimeout(poll, 2000)
+        }
+      } catch (error) {
+        console.error('查询任务状态失败:', error)
+        setTimeout(poll, 2000)
+      }
+    }
+
+    // 开始轮询
+    poll()
+
+    // 设置最大轮询时间为10分钟
+    setTimeout(() => {
+      if (isGenerating) {
+        setIsGenerating(false)
+        setProgressMessages(prev => [...prev, '⏱️ 任务超时，请稍后重试'])
+      }
+    }, 600000)
   }
 
   return (
@@ -160,10 +257,105 @@ function Hero() {
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
 
-        <h1 className={styles.heroTitle}>
-          {renderText()}
-          <span className={`${styles.cursor} ${hideCursor ? styles.cursorHidden : styles.cursorVisible}`}>|</span>
-        </h1>
+        {/* AI生成输入框 */}
+        <div style={{ 
+          width: '100%', 
+          maxWidth: '800px', 
+          margin: '40px auto 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '16px',
+        }}>
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '16px',
+            padding: '8px',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(10px)',
+          }}>
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !isGenerating) {
+                  handleCreateTask()
+                }
+              }}
+              placeholder="输入你想创作的内容，AI将为你生成完整的作品..."
+              disabled={isGenerating}
+              style={{
+                flex: 1,
+                padding: '16px 20px',
+                fontSize: '16px',
+                border: 'none',
+                outline: 'none',
+                background: 'transparent',
+                color: '#1a1a1a',
+                fontFamily: 'inherit',
+              }}
+            />
+            <button
+              onClick={handleCreateTask}
+              disabled={isGenerating || !prompt.trim()}
+              style={{
+                padding: '16px 32px',
+                fontSize: '16px',
+                fontWeight: '600',
+                background: isGenerating || !prompt.trim() 
+                  ? '#e0e0e0' 
+                  : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: isGenerating || !prompt.trim() ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap',
+                boxShadow: isGenerating || !prompt.trim() 
+                  ? 'none' 
+                  : '0 4px 15px rgba(102, 126, 234, 0.4)',
+              }}
+            >
+              {isGenerating ? '生成中...' : '生成作品'}
+            </button>
+          </div>
+
+          {/* 进度显示区域 */}
+          {isGenerating && (
+            <div style={{
+              maxHeight: '200px',
+              overflowY: 'auto',
+              padding: '16px',
+              background: 'rgba(255, 255, 255, 0.95)',
+              borderRadius: '12px',
+              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+              fontSize: '14px',
+              lineHeight: '1.6',
+            }}>
+              {progressMessages.map((msg, index) => (
+                <div 
+                  key={index}
+                  style={{
+                    marginBottom: '8px',
+                    color: '#333',
+                    opacity: index === messageIndex ? 0.7 : 1,
+                  }}
+                >
+                  {msg}
+                </div>
+              ))}
+              {currentMessage && (
+                <div style={{ color: '#667eea', fontWeight: '500' }}>
+                  {currentMessage}
+                  <span style={{ animation: 'blink 1s infinite' }}>|</span>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Mobile button */}
         <button
@@ -171,6 +363,7 @@ function Hero() {
             router.push('/accounts')
           }}
           className={`${styles.heroBtn} ${styles.heroBtnMobile}`}
+          style={{ marginTop: '20px' }}
         >
           {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
