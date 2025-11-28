@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { S3Service } from '@yikart/aws-s3'
 import { TableDto, UserType } from '@yikart/common'
 import { Media, MediaRepository, MediaType } from '@yikart/mongodb'
+import { fileUtil } from '../common/utils/file.util'
 import { config } from '../config'
 import { StorageService } from '../user/storage.service'
 import { CreateMediaDto } from './dto/media.dto'
@@ -20,7 +21,10 @@ export class MediaService {
     let path = newData.url
     try {
       const url = new URL(newData.url)
-      if (url.origin === config.awsS3.endpoint) {
+      const s3Endpoint = config.awsS3.endpoint
+      const cdnEndpoint = config.awsS3.cdnEndpoint
+
+      if (url.origin === s3Endpoint || (cdnEndpoint && url.origin === cdnEndpoint)) {
         path = url.pathname.substring(1)
       }
       else {
@@ -30,6 +34,7 @@ export class MediaService {
     }
     catch (error) {
       this.logger.error('处理媒体URL失败', error)
+      throw error
     }
 
     const metadata = await this.s3Service.headObject(path)
@@ -182,7 +187,12 @@ export class MediaService {
   async updateInfo(id: string, newData: Partial<Media>) {
     const oldMedia = await this.mediaRepository.getInfo(id)
     if (oldMedia?.url !== newData.url) {
-      const metadata = await this.s3Service.headObject(newData.url!)
+      // 如果 newData.url 是完整 URL，先提取路径
+      const objectPath = newData.url && (newData.url.startsWith('http://') || newData.url.startsWith('https://'))
+        ? fileUtil.trimHost(newData.url)
+        : newData.url!
+
+      const metadata = await this.s3Service.headObject(objectPath)
       newData.metadata = {
         size: metadata.ContentLength!,
         mimeType: metadata.ContentType!,
@@ -197,6 +207,11 @@ export class MediaService {
           userId: newData.userId!,
           amount: metadata.ContentLength!,
         })
+      }
+
+      // 如果 newData.url 是完整 URL，保存时只保存路径
+      if (newData.url && (newData.url.startsWith('http://') || newData.url.startsWith('https://'))) {
+        newData.url = objectPath
       }
     }
 
