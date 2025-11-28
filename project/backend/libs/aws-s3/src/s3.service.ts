@@ -80,12 +80,6 @@ export class S3Service {
       Conditions: contentType ? [['eq', '$Content-Type', contentType]] : undefined,
       Fields: contentType ? { 'Content-Type': contentType } : undefined,
     })
-
-    // 如果配置了 CDN 端点，替换返回的 URL
-    if (this.config.cdnEndpoint) {
-      result.url = result.url.replace(this.config.endpoint, this.config.cdnEndpoint)
-    }
-
     return result
   }
 
