@@ -2607,3 +2607,330 @@
     }
   }
 }
+
+// AI生成进度动画
+:global {
+  @keyframes blink {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slideRight {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100vw);
+    }
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+}
+
+// AI生成输入和进度展示区域
+.aiGenerationWrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0 20px;
+
+  @media (max-width: 768px) {
+    margin: 20px auto 16px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+}
+
+.aiInputContainer {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    border-radius: 12px;
+  }
+}
+
+.aiInput {
+  flex: 1;
+  padding: 16px 20px;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1a1a1a;
+  font-family: inherit;
+  width: 100%;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+}
+
+.aiGenerateBtn {
+  padding: 16px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(166, 106, 228, 0.4);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(166, 106, 228, 0.5);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    background: #e0e0e0;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 15px;
+  }
+}
+
+// AI生成进度区域外层包装
+.aiProgressWrapper {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+// AI生成进度框
+.aiProgressContainer {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  position: relative;
+  scroll-behavior: smooth;
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  @media (max-width: 768px) {
+    max-height: 300px;
+    padding: 16px;
+  }
+
+  // 滚动条样式
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
+    border-radius: 3px;
+    
+    &:hover {
+      background: linear-gradient(135deg, #9558de 0%, #7a3fc9 100%);
+    }
+  }
+}
+
+// 进度条容器
+.aiProgressBarContainer {
+  width: 100%;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: none;
+  border-radius: 0 0 12px 12px;
+  padding: 4px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  
+  @media (max-width: 768px) {
+    height: 20px;
+    padding: 3px;
+  }
+}
+
+// 进度条
+.aiProgressBar {
+  height: 100%;
+  background: linear-gradient(90deg, #a66ae4 0%, #8b4fd9 100%);
+  border-radius: 6px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); // 更平滑的过渡
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 6px;
+  min-width: 35px;
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding-right: 4px;
+    min-width: 30px;
+  }
+}
+
+// 进度文字
+.aiProgressText {
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    font-size: 9px;
+  }
+}
+
+.aiProgressLoader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #a66ae4, transparent);
+  animation: slideRight 2s infinite;
+}
+
+.aiProgressContent {
+  position: relative;
+  z-index: 1;
+  font-size: 14px;
+  line-height: 2;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+    line-height: 1.8;
+  }
+}
+
+.aiProgressMessage {
+  margin-bottom: 8px;
+  display: flex;
+  text-align: left;
+
+  :global(.anticon) {
+    margin-right: 8px;
+    flex-shrink: 0;
+    margin-top: 2px;
+
+    @media (max-width: 768px) {
+      margin-right: 6px;
+    }
+  }
+
+  span {
+    text-align: left;
+    word-break: break-word;
+  }
+
+  @media (max-width: 768px) {
+    margin-bottom: 6px;
+  }
+}
+
+.aiProgressCursor {
+  animation: blink 1s infinite;
+  margin-left: 2px;
+  display: inline-block;
+  transform: scaleX(0.5); // 将宽度缩小到50%
+  transform-origin: center;
+  color: #a66ae4; // 主题色
+}
+
+// 加载动画点（...）
+.loadingDots {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+
+  .dot {
+    animation: dotPulse 1.4s infinite ease-in-out;
+    opacity: 0;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+// 进度条闪光动画
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+// 点动画
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}

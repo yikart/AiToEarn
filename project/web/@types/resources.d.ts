@@ -635,6 +635,120 @@ interface Resources {
     "milestoneProgress": "里程碑进度",
     "recentWeek": "最近一周"
   },
+  "dataMonitoring": {
+    "title": "笔记传播监测",
+    "description": "按分钟级频率监测笔记的点赞、收藏、评论、转发等传播数据，有效验证笔记传播效果",
+    "tabs": {
+      "byLink": "按笔记链接",
+      "byAccount": "按小红书账号"
+    },
+    "actions": {
+      "add": "去添加",
+      "comingSoon": "即将开放",
+      "viewDetail": "查看详情"
+    },
+    "addModal": {
+      "title": "添加笔记监测",
+      "inputPlaceholder": "请输入小红书笔记链接",
+      "linkPlaceholder": "https://www.xiaohongshu.com/explore/...",
+      "linkRequired": "请输入笔记链接",
+      "confirm": "确定",
+      "cancel": "取消",
+      "addSuccess": "添加成功",
+      "addFailed": "添加失败"
+    },
+        "list": {
+          "empty": "暂无监测数据，点击上方按钮添加笔记链接",
+          "untitled": "未命名笔记",
+          "createdAt": "创建时间",
+          "updatedAt": "更新时间",
+          "error": "错误",
+          "totalRecords": "共 {{count}} 条记录"
+        },
+    "stats": {
+      "views": "阅读数",
+      "likes": "点赞数",
+      "comments": "评论数",
+      "favorites": "收藏数",
+      "shares": "分享数"
+    },
+        "status": {
+          "pending": "等待中",
+          "processing": "处理中",
+          "completed": "已完成",
+          "success": "成功",
+          "failed": "失败",
+          "enabled": "已启用",
+          "disabled": "已禁用"
+        },
+        "detail": {
+          "back": "返回",
+          "backToList": "返回列表",
+          "notFound": "未找到监测数据",
+          "pause": "暂停监测",
+          "resume": "恢复监测",
+          "paused": "已暂停",
+          "resumed": "已恢复",
+          "export": "导出数据",
+          "exportSuccess": "导出成功",
+          "viewNote": "查看笔记",
+          "pageTitle": "笔记监测详情",
+          "startTime": "开始时间",
+          "updateTime": "更新时间",
+          "noteCover": "笔记封面",
+          "viewOriginal": "查看原文",
+          "dailyIncrement": "每日数据增量",
+          "noData": "暂无数据",
+          "taskId": "任务编号",
+          "createdTime": "任务提交时间",
+          "publishTime": "发布时间",
+          "firstMonitoring": "首次监测时间",
+          "monitoringDuration": "监测时长",
+          "duration": "{{count}}天",
+          "monitoringFrequency": "监测频率",
+          "minutesPerTime": "分钟/次",
+          "lastMonitoring": "最近一次监测",
+          "completionRate": "监测完成度",
+          "monitoringComplete": "监测已完成",
+          "dataDetail": "数据详情",
+          "downloadRecord": "下载记录",
+          "exportResult": "导出结果",
+          "postInfo": "笔记信息",
+          "mediaPreview": "媒体预览",
+          "dataHistory": "数据历史",
+          "noHistory": "暂无历史数据",
+          "status": {
+            "active": "监测中",
+            "paused": "已暂停"
+          },
+          "tabs": {
+            "chart": "累计视图",
+            "table": "增量视图"
+          },
+          "table": {
+            "time": "时间",
+            "date": "日期",
+            "likeIncrement": "点赞增量",
+            "favoriteIncrement": "收藏增量",
+            "commentIncrement": "评论增量",
+            "totalLikes": "即时点赞",
+            "newLikes": "新增点赞",
+            "totalComments": "即时评论",
+            "newComments": "新增评论",
+            "totalFavorites": "即时收藏",
+            "newFavorites": "新增收藏",
+            "total": "共 {{count}} 条",
+            "totalDays": "共 {{count}} 天"
+          }
+        },
+    "error": {
+      "loadFailed": "加载失败",
+      "addFailed": "添加失败",
+      "toggleFailed": "操作失败",
+      "exportFailed": "导出失败",
+      "getDetailFailed": "获取详情失败"
+    }
+  },
   "engagement": {
     "title": "互动数据",
     "columns": {

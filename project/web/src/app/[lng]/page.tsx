@@ -1,6 +1,18 @@
 'use client'
 
-import { AndroidOutlined } from '@ant-design/icons'
+import { 
+  AndroidOutlined,
+  BulbOutlined,
+  ClockCircleOutlined,
+  FileTextOutlined,
+  PictureOutlined,
+  VideoCameraOutlined,
+  EditOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  StopOutlined,
+  FieldTimeOutlined,
+} from '@ant-design/icons'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -75,75 +87,347 @@ function ReleaseBanner() {
   )
 }
 
+// 加载动画组件（...动画）
+function LoadingDots() {
+  return (
+    <span className={styles.loadingDots}>
+      <span className={styles.dot}>.</span>
+      <span className={styles.dot}>.</span>
+      <span className={styles.dot}>.</span>
+    </span>
+  )
+}
+
 // Hero main title section
 function Hero() {
   const { t } = useTransClient('home')
-  const [displayedText, setDisplayedText] = useState('')
-  const [currentIndex, setCurrentIndex] = useState(0)
-  const [isTypingComplete, setIsTypingComplete] = useState(false)
-  const [hideCursor, setHideCursor] = useState(false)
-  const [startTyping, setStartTyping] = useState(false)
   const router = useRouter()
+  const { lng } = useParams()
 
-  // Full text to display
-  const fullText = t('hero.title')
-  const typingSpeed = 120 // Typing speed (milliseconds)
-  const initialDelay = 800 // Initial delay (milliseconds)
-  const cursorHideDelay = 2000 // Delay before hiding cursor after typing completes
+  // AI generation related states
+  const [prompt, setPrompt] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [taskId, setTaskId] = useState('')
+  
+  // Message type definition
+  type MessageItem = {
+    type: 'status' | 'description' | 'error' | 'text'
+    content: string
+    status?: string // Status type for rendering corresponding icon
+    loading?: boolean // Whether to show loading animation (for media generation status)
+  }
+  
+  const [completedMessages, setCompletedMessages] = useState<MessageItem[]>([]) // Completed messages
+  const [currentTypingMsg, setCurrentTypingMsg] = useState<MessageItem | null>(null) // Current typing message
+  const [displayedText, setDisplayedText] = useState('') // Currently displayed text
+  const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // Pending message queue
+  const progressContainerRef = useRef<HTMLDivElement>(null) // Progress container reference
+  const [progress, setProgress] = useState(0) // Progress percentage 0-100
 
+  // Status display configuration (icons and text)
+  const getStatusDisplay = (status: string) => {
+    const statusConfig: Record<string, { icon: React.ReactNode; text: string; color?: string }> = {
+      'THINKING': { 
+        icon: <BulbOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
+        text: t('aiGeneration.status.thinking' as any),
+        color: '#a66ae4'
+      },
+      'WAITING': { 
+        icon: <ClockCircleOutlined style={{ marginRight: '8px', color: '#b78ae9' }} />, 
+        text: t('aiGeneration.status.waiting' as any),
+        color: '#b78ae9'
+      },
+      'GENERATING_CONTENT': { 
+        icon: <FileTextOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
+        text: t('aiGeneration.status.generatingContent' as any),
+        color: '#a66ae4'
+      },
+      'GENERATING_IMAGE': { 
+        icon: <PictureOutlined style={{ marginRight: '8px', color: '#8b4fd9' }} />, 
+        text: t('aiGeneration.status.generatingImage' as any),
+        color: '#8b4fd9'
+      },
+      'GENERATING_VIDEO': { 
+        icon: <VideoCameraOutlined style={{ marginRight: '8px', color: '#9558de' }} />, 
+        text: t('aiGeneration.status.generatingVideo' as any),
+        color: '#9558de'
+      },
+      'GENERATING_TEXT': { 
+        icon: <EditOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
+        text: t('aiGeneration.status.generatingText' as any),
+        color: '#a66ae4'
+      },
+      'COMPLETED': { 
+        icon: <CheckCircleOutlined style={{ marginRight: '8px', color: '#52c41a' }} />, 
+        text: t('aiGeneration.status.completed' as any),
+        color: '#52c41a'
+      },
+      'FAILED': { 
+        icon: <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f' }} />, 
+        text: t('aiGeneration.status.failed' as any),
+        color: '#ff4d4f'
+      },
+      'CANCELLED': { 
+        icon: <StopOutlined style={{ marginRight: '8px', color: '#8c8c8c' }} />, 
+        text: t('aiGeneration.status.cancelled' as any),
+        color: '#8c8c8c'
+      },
+    }
+    return statusConfig[status] || { icon: null, text: status, color: '#333' }
+  }
+
+  // Calculate progress (receives current progress as parameter to avoid closure issues)
+  const calculateProgress = (status: string, isNewStatus: boolean, currentProgress: number) => {
+    const baseProgress: Record<string, number> = {
+      'THINKING': 10,
+      'WAITING': 20,
+      'GENERATING_CONTENT': 30,
+      'GENERATING_TEXT': 40,
+      'GENERATING_IMAGE': 50,
+      'GENERATING_VIDEO': 60,
+      'COMPLETED': 100,
+    }
+
+    // If in generating status (not first time), increase by 5%
+    const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
+    
+    if (generatingStatuses.includes(status) && !isNewStatus) {
+      // Increase 5% each polling, but not exceed 99%
+      return Math.min(currentProgress + 5, 99)
+    }
+
+    // For new status, take max of current progress and base progress (ensure progress only increases)
+    if (isNewStatus) {
+      const targetProgress = baseProgress[status]
+      if (targetProgress !== undefined) {
+        return Math.max(currentProgress, targetProgress)
+      }
+    }
+
+    return currentProgress
+  }
+
+  // Add new message to queue
+  const addMessageToQueue = (msg: MessageItem) => {
+    setPendingMessages(prev => [...prev, msg])
+  }
+
+  // Typewriter effect - process message queue
   useEffect(() => {
-    // Start typing after initial delay
-    const startTimer = setTimeout(() => {
-      setStartTyping(true)
-    }, initialDelay)
+    // If no current typing message and queue has pending messages
+    if (!currentTypingMsg && pendingMessages.length > 0) {
+      const nextMsg = pendingMessages[0]
+      setCurrentTypingMsg(nextMsg)
+      setDisplayedText('')
+      setPendingMessages(prev => prev.slice(1))
+    }
+  }, [currentTypingMsg, pendingMessages])
 
-    return () => clearTimeout(startTimer)
-  }, [])
-
+  // Typewriter effect - display character by character
   useEffect(() => {
-    if (startTyping && currentIndex < fullText.length) {
-      const currentChar = fullText[currentIndex]
-
-      // Adjust typing speed based on character type
-      let currentSpeed = typingSpeed
-      if (currentChar === '\n') {
-        currentSpeed = typingSpeed * 2 // Pause slightly on line break
-      }
-      else if (currentChar === ' ') {
-        currentSpeed = typingSpeed * 0.5 // Space is faster
-      }
-      else if (/[，。！？；：]/.test(currentChar)) {
-        currentSpeed = typingSpeed * 1.5 // Pause slightly on punctuation
-      }
-      else {
-        // Add some randomness to make typing more natural
-        currentSpeed = typingSpeed + Math.random() * 50 - 25
-      }
-
+    if (currentTypingMsg && displayedText.length < currentTypingMsg.content.length) {
       const timer = setTimeout(() => {
-        setDisplayedText(prev => prev + fullText[currentIndex])
-        setCurrentIndex(prev => prev + 1)
-      }, currentSpeed)
+        setDisplayedText(currentTypingMsg.content.slice(0, displayedText.length + 1))
+      }, 80) // Typing speed 80ms per character
+
+      return () => clearTimeout(timer)
+    } 
+    // Current message finished typing
+    else if (currentTypingMsg && displayedText.length >= currentTypingMsg.content.length) {
+      const timer = setTimeout(() => {
+        // Move current message to completed list
+        setCompletedMessages(prev => [...prev, currentTypingMsg])
+        setCurrentTypingMsg(null)
+        setDisplayedText('')
+      }, 200) // Wait 200ms before next message
 
       return () => clearTimeout(timer)
     }
-    else if (currentIndex >= fullText.length && !isTypingComplete) {
-      setIsTypingComplete(true)
-      // Delay hiding cursor after typing completes
-      setTimeout(() => {
-        setHideCursor(true)
-      }, cursorHideDelay)
-    }
-  }, [startTyping, currentIndex, fullText, typingSpeed, isTypingComplete, cursorHideDelay])
+  }, [currentTypingMsg, displayedText])
 
-  // Convert text to JSX, handle line breaks
-  const renderText = () => {
-    return displayedText.split('\n').map((line, index, array) => (
-      <span key={index}>
-        {line}
-        {index < array.length - 1 && <br />}
-      </span>
-    ))
+  // Auto scroll to bottom
+  useEffect(() => {
+    if (progressContainerRef.current) {
+      progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight
+    }
+  }, [completedMessages, displayedText])
+
+  // Create AI generation task
+  const handleCreateTask = async () => {
+    if (!prompt.trim()) {
+      alert(t('aiGeneration.emptyPromptAlert' as any))
+      return
+    }
+
+    try {
+      setIsGenerating(true)
+      setCompletedMessages([])
+      setPendingMessages([])
+      setCurrentTypingMsg(null)
+      setDisplayedText('')
+      setProgress(0) // Reset progress
+
+      // Step 1: Show THINKING status
+      addMessageToQueue({
+        type: 'status',
+        content: t('aiGeneration.thinking' as any),
+        status: 'THINKING'
+      })
+
+      // Step 2: Show user's prompt
+      addMessageToQueue({
+        type: 'text',
+        content: `📝 ${t('aiGeneration.topicPrefix' as any)}${prompt}`
+      })
+
+      // Set initial progress to 10%
+      setProgress(10)
+
+      // Dynamic import API
+      const { agentApi } = await import('@/api/agent')
+
+      // Create task
+      const createRes = await agentApi.createTask({ prompt })
+      if (createRes?.code === 0 && createRes.data?.id) {
+        const newTaskId = createRes.data.id
+        setTaskId(newTaskId)
+        
+        // Start polling task status
+        pollTaskStatus(newTaskId)
+      } else {
+        throw new Error(t('aiGeneration.createTaskFailed' as any))
+      }
+    } catch (error: any) {
+      alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      setIsGenerating(false)
+      setProgress(0) // Reset progress
+    }
+  }
+
+  // Poll task status
+  const pollTaskStatus = async (taskId: string) => {
+    const { agentApi } = await import('@/api/agent')
+    let lastStatus = ''
+    let hasShownTitle = false
+    let hasShownDescription = false
+
+    const poll = async () => {
+      try {
+        const res = await agentApi.getTaskDetail(taskId)
+        
+        if (res?.code === 0 && res.data) {
+          const taskData = res.data
+
+          // Show title if available and not shown yet
+          if (taskData.title && !hasShownTitle) {
+            addMessageToQueue({
+              type: 'text',
+              content: `✨ ${t('aiGeneration.generatedTitlePrefix' as any)}${taskData.title}`
+            })
+            hasShownTitle = true
+          }
+
+          // Show description if available and not shown yet (before status)
+          if (taskData.description && !hasShownDescription) {
+            addMessageToQueue({
+              type: 'description',
+              content: `${t('aiGeneration.descriptionPrefix' as any)}${taskData.description}`
+            })
+            hasShownDescription = true
+          }
+
+          // Add new message when status changes (skip THINKING as it's already shown in step 1)
+          if (taskData.status !== lastStatus && taskData.status !== 'THINKING') {
+            const statusDisplay = getStatusDisplay(taskData.status)
+            // Mark media generation statuses to need loading animation
+            const needsLoadingAnimation = taskData.status === 'GENERATING_VIDEO' || 
+                                         taskData.status === 'GENERATING_IMAGE' ||
+                                         taskData.status === 'GENERATING_CONTENT' ||
+                                         taskData.status === 'GENERATING_TEXT'
+            
+            addMessageToQueue({
+              type: 'status',
+              content: statusDisplay.text,
+              status: taskData.status,
+              loading: needsLoadingAnimation
+            } as any)
+            
+            // Update progress (new status) - use functional update to avoid closure issues
+            setProgress(prev => calculateProgress(taskData.status, true, prev))
+            
+            lastStatus = taskData.status
+          } else if (taskData.status === 'THINKING') {
+            // Only record status, don't show message
+            lastStatus = taskData.status
+          } else if (taskData.status === lastStatus) {
+            // For same status, if it's generating status, increase progress
+            const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
+            if (generatingStatuses.includes(taskData.status)) {
+              // Use functional update to avoid closure issues
+              setProgress(prev => calculateProgress(taskData.status, false, prev))
+            }
+          }
+
+          // If task completed
+          if (taskData.status === 'COMPLETED') {
+            setIsGenerating(false)
+            
+            // Delay navigation to ensure last message is displayed
+            setTimeout(() => {
+              // Build navigation params
+              const queryParams = new URLSearchParams({
+                aiGenerated: 'true',
+                taskId: taskData.id,
+                title: taskData.title || '',
+                description: taskData.description || '',
+                tags: JSON.stringify(taskData.tags || []),
+                medias: JSON.stringify(taskData.medias || []),
+              })
+              
+              // Navigate to accounts page
+              router.push(`/${lng}/accounts?${queryParams.toString()}`)
+            }, 1500)
+            return
+          }
+          // If task failed
+          else if (taskData.status === 'FAILED') {
+            addMessageToQueue({
+              type: 'error',
+              content: `${t('aiGeneration.failedReasonPrefix' as any)}${taskData.errorMessage || t('aiGeneration.unknownError' as any)}`
+            })
+            setIsGenerating(false)
+            setProgress(0) // Reset progress
+            return
+          }
+          // If task cancelled
+          else if (taskData.status === 'CANCELLED') {
+            setIsGenerating(false)
+            setProgress(0) // Reset progress
+            return
+          }
+
+          // Continue polling
+          setTimeout(poll, 2000)
+        }
+      } catch (error) {
+        setTimeout(poll, 2000)
+      }
+    }
+
+    // Start polling
+    poll()
+
+    // Set maximum polling time to 10 minutes
+    setTimeout(() => {
+      if (isGenerating) {
+        setIsGenerating(false)
+        setProgress(0) // Reset progress
+        addMessageToQueue({
+          type: 'error',
+          content: t('aiGeneration.taskTimeout' as any)
+        })
+      }
+    }, 600000)
   }
 
   return (
@@ -160,10 +444,125 @@ function Hero() {
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
 
-        <h1 className={styles.heroTitle}>
-          {renderText()}
-          <span className={`${styles.cursor} ${hideCursor ? styles.cursorHidden : styles.cursorVisible}`}>|</span>
-        </h1>
+        {/* AI Generation Input */}
+        <div className={styles.aiGenerationWrapper}>
+          <div className={styles.aiInputContainer}>
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !isGenerating) {
+                  handleCreateTask()
+                }
+              }}
+              placeholder={t('aiGeneration.inputPlaceholder' as any)}
+              disabled={isGenerating}
+              className={styles.aiInput}
+            />
+            <button
+              onClick={handleCreateTask}
+              disabled={isGenerating || !prompt.trim()}
+              className={styles.aiGenerateBtn}
+            >
+              {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
+            </button>
+          </div>
+
+          {/* Progress Display Area */}
+          {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
+            <div className={styles.aiProgressWrapper}>
+              <div 
+                ref={progressContainerRef}
+                className={styles.aiProgressContainer}
+                style={{
+                  borderBottom: progress > 0 ? 'none' : '1px solid rgba(0, 0, 0, 0.08)',
+                  borderRadius: progress > 0 ? '12px 12px 0 0' : '12px',
+                }}
+              >
+                {/* Top loading indicator - only shown when generating */}
+                {isGenerating && (
+                  <div style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent, #a66ae4, transparent)',
+                    animation: 'slideRight 2s infinite',
+                    zIndex: 10,
+                  }} />
+                )}
+                
+                {/* Continuous text stream display */}
+                <div className={styles.aiProgressContent}>
+                  {/* Completed messages - continuous text */}
+                  {completedMessages.map((msg, index) => {
+                    const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
+                    const isDescription = msg.type === 'description'
+                    const isError = msg.type === 'error'
+                    const isText = msg.type === 'text'
+                    
+                    return (
+                      <div 
+                        key={`completed-${index}`}
+                        className={styles.aiProgressMessage}
+                        style={{
+                          color: isError ? '#ff4d4f' : statusDisplay?.color || '#333',
+                        }}
+                      >
+                        {statusDisplay && statusDisplay.icon}
+                        {isDescription && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
+                        {isError && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
+                        {isText && !statusDisplay && <span style={{ marginRight: '8px' }}></span>}
+                        <span style={{ textAlign: 'left', flex: 1 }}>
+                          {msg.content}
+                          {msg.loading && <LoadingDots />}
+                        </span>
+                      </div>
+                    )
+                  })}
+                  
+                  {/* Current typing message */}
+                  {currentTypingMsg && displayedText && (
+                    <div 
+                      className={styles.aiProgressMessage}
+                      style={{ 
+                        color: currentTypingMsg.type === 'error' 
+                          ? '#ff4d4f' 
+                          : currentTypingMsg.status 
+                            ? getStatusDisplay(currentTypingMsg.status).color 
+                            : '#333',
+                      }}
+                    >
+                      {currentTypingMsg.status && getStatusDisplay(currentTypingMsg.status).icon}
+                      {currentTypingMsg.type === 'description' && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
+                      {currentTypingMsg.type === 'error' && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
+                      {currentTypingMsg.type === 'text' && !currentTypingMsg.status && <span style={{ marginRight: '8px' }}></span>}
+                      <span style={{ textAlign: 'left', flex: 1 }}>
+                        {displayedText}
+                        {currentTypingMsg.loading && <LoadingDots />}
+                        <span className={styles.aiProgressCursor}>|</span>
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Progress bar - only shown when progress > 0 */}
+              {progress > 0 && (
+                <div className={styles.aiProgressBarContainer}>
+                  <div 
+                    className={styles.aiProgressBar}
+                    style={{ width: `${progress}%` }}
+                  >
+                    <span className={styles.aiProgressText}>{progress}%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Mobile button */}
         <button
@@ -171,6 +570,7 @@ function Hero() {
             router.push('/accounts')
           }}
           className={`${styles.heroBtn} ${styles.heroBtnMobile}`}
+          style={{ marginTop: '20px' }}
         >
           {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">

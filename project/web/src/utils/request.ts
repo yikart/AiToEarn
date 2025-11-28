@@ -18,7 +18,7 @@ const fetchService = new FetchService({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/`,
   requestInterceptor(requestParams) {
     const token = useUserStore.getState().token
-
+    // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsIjoiemlqdWUyMDI1QG91dGxvb2suY29tIiwiaWQiOiI2OGI1MDM0ZDIxYjE1YTQwZTUxMWRmOWIiLCJuYW1lIjoi55So5oi3X1dYeVMzb0N3IiwiaWF0IjoxNzY0MDM1NTQzLCJleHAiOjE3NjQ2NDAzNDN9.ylPhoyWW5zPV2Y92lxR8OP0z55pWrY7aZ_kZlMRd0_s'
     requestParams.headers = {
       ...(requestParams.headers || {}),
       Authorization: token ? `Bearer ${token}` : '',
