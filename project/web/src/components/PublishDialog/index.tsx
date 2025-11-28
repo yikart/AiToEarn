@@ -217,7 +217,14 @@ const PublishDialog = memo(
           // 图片匹配
           if (images) {
             newPubItem.params.images = images.map((img) => {
-              img.ossUrl = md5Cache[tasks[img.uploadTaskId!].md5!]?.ossUrl
+              // 只有当图片没有ossUrl且有uploadTaskId时，才从上传任务中获取
+              // AI生成的图片已经有ossUrl，不需要从上传任务获取
+              if (!img.ossUrl && img.uploadTaskId && tasks[img.uploadTaskId]) {
+                const taskMd5 = tasks[img.uploadTaskId].md5
+                if (taskMd5 && md5Cache[taskMd5]) {
+                  img.ossUrl = md5Cache[taskMd5].ossUrl
+                }
+              }
               return img
             })
             return newPubItem
@@ -480,9 +487,12 @@ const PublishDialog = memo(
           }
         }
         else {
+          // 弹窗关闭时只清除选中状态和步骤，保留pubList以便下次打开
           isClear.current = true
           setPubListChoosed([])
-          clear()
+          setStep(0)
+          setExpandedPubItem(undefined)
+          // 注意：不要调用clear()，否则会清空pubList导致无法选择账户
         }
       }, [accounts, open])
 
