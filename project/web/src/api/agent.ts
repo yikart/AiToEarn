@@ -26,6 +26,7 @@ export enum MediaType {
 export interface Media {
   type: MediaType
   url: string
+  coverUrl?: string // 视频封面URL（可选）
 }
 
 // 任务详情
