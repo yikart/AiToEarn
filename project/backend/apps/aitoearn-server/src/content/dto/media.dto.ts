@@ -8,7 +8,7 @@
 import { createZodDto, TableDtoSchema } from '@yikart/common'
 import { MediaType } from '@yikart/mongodb'
 import { z } from 'zod'
-import { fileUtil } from '../../util/file.util'
+import { fileUtil } from '../../common/utils/file.util'
 
 export const MediaIdSchema = z.object({
   id: z.string().describe('ID'),

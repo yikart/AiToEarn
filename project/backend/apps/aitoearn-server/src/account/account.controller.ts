@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
-import { fileUtil } from '../util/file.util'
+import { fileUtil } from '../common/utils/file.util'
 import { AccountService } from './account.service'
 import {
   AccountIdDto,

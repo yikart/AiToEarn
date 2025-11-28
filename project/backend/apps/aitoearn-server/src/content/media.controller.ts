@@ -19,7 +19,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { Media } from '@yikart/mongodb'
-import { fileUtil } from '../util/file.util'
+import { fileUtil } from '../common/utils/file.util'
 import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto, MediaFilterSchema, MediaIdsDto } from './dto/media.dto'
 import { MediaService } from './media.service'
 
