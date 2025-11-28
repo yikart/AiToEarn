@@ -19,7 +19,7 @@ export class MediaService {
 
   async create(userId: string, newData: CreateMediaDto) {
     let path = newData.url
-    try {
+    if (newData.url.startsWith('http://') || newData.url.startsWith('https://')) {
       const url = new URL(newData.url)
       const s3Endpoint = config.awsS3.endpoint
       const cdnEndpoint = config.awsS3.cdnEndpoint
@@ -32,11 +32,6 @@ export class MediaService {
         await this.s3Service.putObjectFromUrl(url.href, path)
       }
     }
-    catch (error) {
-      this.logger.error('处理媒体URL失败', error)
-      throw error
-    }
-
     const metadata = await this.s3Service.headObject(path)
 
     await this.storageService.addUsedStorage({
