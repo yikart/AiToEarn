@@ -1,10 +1,14 @@
 import * as fs from 'node:fs'
 import path from 'node:path'
-import { buildUrl, zodBuildUrl, zodTrimHost } from '@yikart/aws-s3'
+import { buildUrl, zodBuildUrl } from '@yikart/aws-s3'
+import { z } from 'zod'
 import { config } from '../../config'
 
 class FileUtil {
-  private hostUrl = config.awsS3.cdnEndpoint || config.awsS3.endpoint
+  private cdnEndpoint = config.awsS3.cdnEndpoint
+  private s3Endpoint = config.awsS3.endpoint
+  private hostUrl = this.cdnEndpoint || this.s3Endpoint
+
   public buildUrl(path = '') {
     if (!path)
       return path
@@ -17,17 +21,37 @@ class FileUtil {
 
   /**
    * 去除host部分，保留path部分
+   * 支持同时处理 CDN 端点和 S3 端点的 URL
    * @param url
    * @returns
    */
   public trimHost(url: string) {
     if (!url)
       return url
-    return url.replace(this.hostUrl, '')
+
+    // 优先尝试移除 CDN 端点
+    if (this.cdnEndpoint && url.startsWith(this.cdnEndpoint)) {
+      return url.replace(this.cdnEndpoint, '').replace(/^\/+/, '')
+    }
+
+    // 再尝试移除 S3 端点
+    if (url.startsWith(this.s3Endpoint)) {
+      return url.replace(this.s3Endpoint, '').replace(/^\/+/, '')
+    }
+
+    return url
   }
 
+  /**
+   * Zod schema 用于去除 URL 中的 host 部分
+   * 支持同时处理 CDN 端点和 S3 端点的 URL
+   */
   zodTrimHost() {
-    return zodTrimHost(this.hostUrl)
+    return z.string().transform((url) => {
+      if (!url)
+        return url
+      return this.trimHost(url)
+    })
   }
 }
 export const fileUtil = new FileUtil()
