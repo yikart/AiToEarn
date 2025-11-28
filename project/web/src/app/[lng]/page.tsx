@@ -104,79 +104,79 @@ function Hero() {
   const router = useRouter()
   const { lng } = useParams()
 
-  // AI生成相关状态
+  // AI generation related states
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [taskId, setTaskId] = useState('')
   
-  // 消息类型定义
+  // Message type definition
   type MessageItem = {
     type: 'status' | 'description' | 'error' | 'text'
     content: string
-    status?: string // 状态类型，用于渲染对应图标
-    loading?: boolean // 是否显示加载动画（用于媒体生成状态）
+    status?: string // Status type for rendering corresponding icon
+    loading?: boolean // Whether to show loading animation (for media generation status)
   }
   
-  const [completedMessages, setCompletedMessages] = useState<MessageItem[]>([]) // 已完成显示的消息
-  const [currentTypingMsg, setCurrentTypingMsg] = useState<MessageItem | null>(null) // 正在打字显示的完整消息
-  const [displayedText, setDisplayedText] = useState('') // 当前已显示的文字
-  const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // 待显示的消息队列
-  const progressContainerRef = useRef<HTMLDivElement>(null) // 进度容器引用
-  const [progress, setProgress] = useState(0) // 进度百分比 0-100
+  const [completedMessages, setCompletedMessages] = useState<MessageItem[]>([]) // Completed messages
+  const [currentTypingMsg, setCurrentTypingMsg] = useState<MessageItem | null>(null) // Current typing message
+  const [displayedText, setDisplayedText] = useState('') // Currently displayed text
+  const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // Pending message queue
+  const progressContainerRef = useRef<HTMLDivElement>(null) // Progress container reference
+  const [progress, setProgress] = useState(0) // Progress percentage 0-100
 
-  // 状态对应的图标和文案
+  // Status display configuration (icons and text)
   const getStatusDisplay = (status: string) => {
     const statusConfig: Record<string, { icon: React.ReactNode; text: string; color?: string }> = {
       'THINKING': { 
         icon: <BulbOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
-        text: 'AI思考中...',
+        text: t('aiGeneration.status.thinking' as any),
         color: '#a66ae4'
       },
       'WAITING': { 
         icon: <ClockCircleOutlined style={{ marginRight: '8px', color: '#b78ae9' }} />, 
-        text: '等待处理...',
+        text: t('aiGeneration.status.waiting' as any),
         color: '#b78ae9'
       },
       'GENERATING_CONTENT': { 
         icon: <FileTextOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
-        text: '内容生成中',
+        text: t('aiGeneration.status.generatingContent' as any),
         color: '#a66ae4'
       },
       'GENERATING_IMAGE': { 
         icon: <PictureOutlined style={{ marginRight: '8px', color: '#8b4fd9' }} />, 
-        text: '图片生成中',
+        text: t('aiGeneration.status.generatingImage' as any),
         color: '#8b4fd9'
       },
       'GENERATING_VIDEO': { 
         icon: <VideoCameraOutlined style={{ marginRight: '8px', color: '#9558de' }} />, 
-        text: '视频生成中',
+        text: t('aiGeneration.status.generatingVideo' as any),
         color: '#9558de'
       },
       'GENERATING_TEXT': { 
         icon: <EditOutlined style={{ marginRight: '8px', color: '#a66ae4' }} />, 
-        text: '文本生成中',
+        text: t('aiGeneration.status.generatingText' as any),
         color: '#a66ae4'
       },
       'COMPLETED': { 
         icon: <CheckCircleOutlined style={{ marginRight: '8px', color: '#52c41a' }} />, 
-        text: '生成完成！',
+        text: t('aiGeneration.status.completed' as any),
         color: '#52c41a'
       },
       'FAILED': { 
         icon: <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f' }} />, 
-        text: '生成失败',
+        text: t('aiGeneration.status.failed' as any),
         color: '#ff4d4f'
       },
       'CANCELLED': { 
         icon: <StopOutlined style={{ marginRight: '8px', color: '#8c8c8c' }} />, 
-        text: '已取消',
+        text: t('aiGeneration.status.cancelled' as any),
         color: '#8c8c8c'
       },
     }
     return statusConfig[status] || { icon: null, text: status, color: '#333' }
   }
 
-  // 计算进度（接收当前进度作为参数，避免闭包问题）
+  // Calculate progress (receives current progress as parameter to avoid closure issues)
   const calculateProgress = (status: string, isNewStatus: boolean, currentProgress: number) => {
     const baseProgress: Record<string, number> = {
       'THINKING': 10,
@@ -188,15 +188,15 @@ function Hero() {
       'COMPLETED': 100,
     }
 
-    // 如果是生成中的状态（非首次），增加5%
+    // If in generating status (not first time), increase by 5%
     const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
     
     if (generatingStatuses.includes(status) && !isNewStatus) {
-      // 每次轮询增加5%，但不超过99%
+      // Increase 5% each polling, but not exceed 99%
       return Math.min(currentProgress + 5, 99)
     }
 
-    // 新状态时，取当前进度和基础进度的较大值（确保进度只增不减）
+    // For new status, take max of current progress and base progress (ensure progress only increases)
     if (isNewStatus) {
       const targetProgress = baseProgress[status]
       if (targetProgress !== undefined) {
@@ -207,14 +207,14 @@ function Hero() {
     return currentProgress
   }
 
-  // 添加新消息到队列
+  // Add new message to queue
   const addMessageToQueue = (msg: MessageItem) => {
     setPendingMessages(prev => [...prev, msg])
   }
 
-  // 打字机效果 - 处理消息队列
+  // Typewriter effect - process message queue
   useEffect(() => {
-    // 如果当前没有正在打字的消息，且队列中有待显示的消息
+    // If no current typing message and queue has pending messages
     if (!currentTypingMsg && pendingMessages.length > 0) {
       const nextMsg = pendingMessages[0]
       setCurrentTypingMsg(nextMsg)
@@ -223,39 +223,39 @@ function Hero() {
     }
   }, [currentTypingMsg, pendingMessages])
 
-  // 打字机效果 - 逐字显示
+  // Typewriter effect - display character by character
   useEffect(() => {
     if (currentTypingMsg && displayedText.length < currentTypingMsg.content.length) {
       const timer = setTimeout(() => {
         setDisplayedText(currentTypingMsg.content.slice(0, displayedText.length + 1))
-      }, 80) // 打字速度 80ms/字符
+      }, 80) // Typing speed 80ms per character
 
       return () => clearTimeout(timer)
     } 
-    // 当前消息打完了
+    // Current message finished typing
     else if (currentTypingMsg && displayedText.length >= currentTypingMsg.content.length) {
       const timer = setTimeout(() => {
-        // 将当前消息移到已完成列表
+        // Move current message to completed list
         setCompletedMessages(prev => [...prev, currentTypingMsg])
         setCurrentTypingMsg(null)
         setDisplayedText('')
-      }, 200) // 等待200ms后开始下一条
+      }, 200) // Wait 200ms before next message
 
       return () => clearTimeout(timer)
     }
   }, [currentTypingMsg, displayedText])
 
-  // 自动滚动到底部
+  // Auto scroll to bottom
   useEffect(() => {
     if (progressContainerRef.current) {
       progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight
     }
   }, [completedMessages, displayedText])
 
-  // 创建任务
+  // Create AI generation task
   const handleCreateTask = async () => {
     if (!prompt.trim()) {
-      alert('请输入生成内容的提示词')
+      alert(t('aiGeneration.emptyPromptAlert' as any))
       return
     }
 
@@ -265,47 +265,46 @@ function Hero() {
       setPendingMessages([])
       setCurrentTypingMsg(null)
       setDisplayedText('')
-      setProgress(0) // 重置进度
+      setProgress(0) // Reset progress
 
-      // 第一步：固定显示 THINKING
+      // Step 1: Show THINKING status
       addMessageToQueue({
         type: 'status',
-        content: 'AI思考中...',
+        content: t('aiGeneration.thinking' as any),
         status: 'THINKING'
       })
 
-      // 第二步：显示用户的提示词
+      // Step 2: Show user's prompt
       addMessageToQueue({
         type: 'text',
-        content: `📝 创作主题：${prompt}`
+        content: `📝 ${t('aiGeneration.topicPrefix' as any)}${prompt}`
       })
 
-      // 设置初始进度为10%
+      // Set initial progress to 10%
       setProgress(10)
 
-      // 动态导入API
+      // Dynamic import API
       const { agentApi } = await import('@/api/agent')
 
-      // 创建任务
+      // Create task
       const createRes = await agentApi.createTask({ prompt })
       if (createRes?.code === 0 && createRes.data?.id) {
         const newTaskId = createRes.data.id
         setTaskId(newTaskId)
         
-        // 开始轮询任务状态
+        // Start polling task status
         pollTaskStatus(newTaskId)
       } else {
-        throw new Error('创建任务失败')
+        throw new Error(t('aiGeneration.createTaskFailed' as any))
       }
     } catch (error: any) {
-      console.error('创建任务失败:', error)
-      alert(`创建任务失败: ${error.message || '未知错误'}`)
+      alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
-      setProgress(0) // 进度归零
+      setProgress(0) // Reset progress
     }
   }
 
-  // 轮询任务状态
+  // Poll task status
   const pollTaskStatus = async (taskId: string) => {
     const { agentApi } = await import('@/api/agent')
     let lastStatus = ''
@@ -319,28 +318,28 @@ function Hero() {
         if (res?.code === 0 && res.data) {
           const taskData = res.data
 
-          // 如果有title且还没显示过，显示一次
+          // Show title if available and not shown yet
           if (taskData.title && !hasShownTitle) {
             addMessageToQueue({
               type: 'text',
-              content: `✨ 生成主题：${taskData.title}`
+              content: `✨ ${t('aiGeneration.generatedTitlePrefix' as any)}${taskData.title}`
             })
             hasShownTitle = true
           }
 
-          // 如果有description且还没显示过，优先显示（在状态之前）
+          // Show description if available and not shown yet (before status)
           if (taskData.description && !hasShownDescription) {
             addMessageToQueue({
               type: 'description',
-              content: `📄 ${taskData.description}`
+              content: `${t('aiGeneration.descriptionPrefix' as any)}${taskData.description}`
             })
             hasShownDescription = true
           }
 
-          // 状态变化时添加新消息到队列（跳过THINKING，因为已经在第一步显示）
+          // Add new message when status changes (skip THINKING as it's already shown in step 1)
           if (taskData.status !== lastStatus && taskData.status !== 'THINKING') {
             const statusDisplay = getStatusDisplay(taskData.status)
-            // 对于媒体生成状态，标记需要加载动画
+            // Mark media generation statuses to need loading animation
             const needsLoadingAnimation = taskData.status === 'GENERATING_VIDEO' || 
                                          taskData.status === 'GENERATING_IMAGE' ||
                                          taskData.status === 'GENERATING_CONTENT' ||
@@ -353,29 +352,29 @@ function Hero() {
               loading: needsLoadingAnimation
             } as any)
             
-            // 更新进度（新状态）- 使用函数式更新避免闭包问题
+            // Update progress (new status) - use functional update to avoid closure issues
             setProgress(prev => calculateProgress(taskData.status, true, prev))
             
             lastStatus = taskData.status
           } else if (taskData.status === 'THINKING') {
-            // 只记录状态，不显示消息
+            // Only record status, don't show message
             lastStatus = taskData.status
           } else if (taskData.status === lastStatus) {
-            // 相同状态下，如果是生成中状态，增加进度
+            // For same status, if it's generating status, increase progress
             const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
             if (generatingStatuses.includes(taskData.status)) {
-              // 使用函数式更新避免闭包问题
+              // Use functional update to avoid closure issues
               setProgress(prev => calculateProgress(taskData.status, false, prev))
             }
           }
 
-          // 如果任务完成
+          // If task completed
           if (taskData.status === 'COMPLETED') {
             setIsGenerating(false)
             
-            // 延迟跳转，确保最后的消息显示完成
+            // Delay navigation to ensure last message is displayed
             setTimeout(() => {
-              // 构建跳转参数
+              // Build navigation params
               const queryParams = new URLSearchParams({
                 aiGenerated: 'true',
                 taskId: taskData.id,
@@ -385,48 +384,47 @@ function Hero() {
                 medias: JSON.stringify(taskData.medias || []),
               })
               
-              // 跳转到accounts页面
+              // Navigate to accounts page
               router.push(`/${lng}/accounts?${queryParams.toString()}`)
             }, 1500)
             return
           }
-          // 如果任务失败
+          // If task failed
           else if (taskData.status === 'FAILED') {
             addMessageToQueue({
               type: 'error',
-              content: `失败原因: ${taskData.errorMessage || '未知错误'}`
+              content: `${t('aiGeneration.failedReasonPrefix' as any)}${taskData.errorMessage || t('aiGeneration.unknownError' as any)}`
             })
             setIsGenerating(false)
-            setProgress(0) // 进度归零
+            setProgress(0) // Reset progress
             return
           }
-          // 如果任务取消
+          // If task cancelled
           else if (taskData.status === 'CANCELLED') {
             setIsGenerating(false)
-            setProgress(0) // 进度归零
+            setProgress(0) // Reset progress
             return
           }
 
-          // 继续轮询
+          // Continue polling
           setTimeout(poll, 2000)
         }
       } catch (error) {
-        console.error('查询任务状态失败:', error)
         setTimeout(poll, 2000)
       }
     }
 
-    // 开始轮询
+    // Start polling
     poll()
 
-    // 设置最大轮询时间为10分钟
+    // Set maximum polling time to 10 minutes
     setTimeout(() => {
       if (isGenerating) {
         setIsGenerating(false)
-        setProgress(0) // 进度归零
+        setProgress(0) // Reset progress
         addMessageToQueue({
           type: 'error',
-          content: '任务超时，请稍后重试'
+          content: t('aiGeneration.taskTimeout' as any)
         })
       }
     }, 600000)
@@ -446,7 +444,7 @@ function Hero() {
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
 
-        {/* AI生成输入框 */}
+        {/* AI Generation Input */}
         <div className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
             <input
@@ -458,7 +456,7 @@ function Hero() {
                   handleCreateTask()
                 }
               }}
-              placeholder="输入你想创作的内容，AI将为你生成完整的作品..."
+              placeholder={t('aiGeneration.inputPlaceholder' as any)}
               disabled={isGenerating}
               className={styles.aiInput}
             />
@@ -467,11 +465,11 @@ function Hero() {
               disabled={isGenerating || !prompt.trim()}
               className={styles.aiGenerateBtn}
             >
-              {isGenerating ? '生成中...' : '生成作品'}
+              {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
             </button>
           </div>
 
-          {/* 进度显示区域 */}
+          {/* Progress Display Area */}
           {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
             <div className={styles.aiProgressWrapper}>
               <div 
@@ -482,7 +480,7 @@ function Hero() {
                   borderRadius: progress > 0 ? '12px 12px 0 0' : '12px',
                 }}
               >
-                {/* 顶部加载指示器 - 只在生成时显示 */}
+                {/* Top loading indicator - only shown when generating */}
                 {isGenerating && (
                   <div style={{
                     position: 'absolute',
@@ -496,9 +494,9 @@ function Hero() {
                   }} />
                 )}
                 
-                {/* 连续文本流显示 */}
+                {/* Continuous text stream display */}
                 <div className={styles.aiProgressContent}>
-                  {/* 已完成的消息 - 连续文本 */}
+                  {/* Completed messages - continuous text */}
                   {completedMessages.map((msg, index) => {
                     const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
                     const isDescription = msg.type === 'description'
@@ -525,7 +523,7 @@ function Hero() {
                     )
                   })}
                   
-                  {/* 当前正在打字的消息 */}
+                  {/* Current typing message */}
                   {currentTypingMsg && displayedText && (
                     <div 
                       className={styles.aiProgressMessage}
@@ -551,7 +549,7 @@ function Hero() {
                 </div>
               </div>
               
-              {/* 进度条 - 进度大于0时才显示 */}
+              {/* Progress bar - only shown when progress > 0 */}
               {progress > 0 && (
                 <div className={styles.aiProgressBarContainer}>
                   <div 

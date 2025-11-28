@@ -89,7 +89,7 @@ export default function AccountPageCore({
       }
     }
 
-    // 处理AI生成的内容参数
+    // Handle AI-generated content params
     if (searchParams?.aiGenerated === 'true' && searchParams?.taskId && allAccounts.length > 0) {
       try {
         const medias = searchParams.medias ? JSON.parse(decodeURIComponent(searchParams.medias)) : []
@@ -103,22 +103,19 @@ export default function AccountPageCore({
           medias: medias,
         }
         
-        console.log('收到AI生成数据:', data)
         setAiGeneratedData(data)
         
-        // 设置默认选择第一个账户
+        // Set default to first account
         if (allAccounts[0]) {
           setDefaultAccountId(allAccounts[0].id)
-          console.log('设置默认账户:', allAccounts[0].id)
         }
         
-        // 打开发布弹窗
+        // Open publish dialog
         setTimeout(() => {
-          console.log('打开发布弹窗，账户数量:', allAccounts.length)
           setPublishDialogOpen(true)
         }, 500)
 
-        // 清除URL参数
+        // Clear URL params
         if (typeof window !== 'undefined') {
           const url = new URL(window.location.href)
           url.searchParams.delete('aiGenerated')
@@ -130,7 +127,7 @@ export default function AccountPageCore({
           window.history.replaceState({}, '', url.toString())
         }
       } catch (error) {
-        console.error('解析AI生成数据失败:', error)
+        console.error('Failed to parse AI generated data:', error)
       }
     }
 
@@ -265,25 +262,18 @@ export default function AccountPageCore({
     }
   }
 
-  // 处理发布弹窗打开后填充AI生成的数据
+  // Fill AI-generated data after publish dialog opens
   useEffect(() => {
     if (aiGeneratedData && publishDialogOpen && allAccounts.length > 0) {
-      console.log('开始填充AI数据到发布弹窗...')
       
-      // 延迟填充，确保PublishDialog完全初始化
+      // Delay filling to ensure PublishDialog is fully initialized
       const timeoutId = setTimeout(() => {
         try {
           const { usePublishDialog } = require('@/components/PublishDialog/usePublishDialog')
           const store = usePublishDialog.getState()
 
-          console.log('PublishDialog状态:', {
-            pubList: store.pubList?.length,
-            pubListChoosed: store.pubListChoosed?.length
-          })
-
-          // 如果pubList还没初始化，再等待一下
+          // If pubList is not initialized yet, retry after delay
           if (!store.pubList || store.pubList.length === 0) {
-            console.log('pubList未初始化，1秒后重试')
             setTimeout(() => {
               const retryStore = usePublishDialog.getState()
               if (retryStore.pubList && retryStore.pubList.length > 0) {
@@ -295,17 +285,17 @@ export default function AccountPageCore({
 
           fillAIData(store)
         } catch (error) {
-          console.error('❌ 填充AI数据失败:', error)
+          console.error('Failed to fill AI data:', error)
         }
       }, 1000)
 
-      // 填充数据的辅助函数
+      // Helper function to fill data
       const fillAIData = async (store: any) => {
-        // 动态导入generateUUID和VideoGrabFrame
+        // Dynamic import generateUUID and VideoGrabFrame
         const { generateUUID } = require('@/utils')
         const { VideoGrabFrame } = require('@/components/PublishDialog/PublishDialog.util')
 
-        // 构建参数 - tags追加到description后面
+        // Build params - append tags to description
         let description = aiGeneratedData.description || ''
         if (aiGeneratedData.tags && aiGeneratedData.tags.length > 0) {
           const tagsText = aiGeneratedData.tags.map((tag: string) => `#${tag}`).join(' ')
@@ -317,24 +307,22 @@ export default function AccountPageCore({
           title: aiGeneratedData.title || '',
         }
 
-        // 处理媒体文件 - 支持多个媒体
+        // Handle media files - support multiple medias
         const medias = aiGeneratedData.medias || []
         
         if (medias.length > 0) {
-          // 检查是否有视频
+          // Check if there's a video
           const videoMedia = medias.find((m: any) => m.type === 'VIDEO')
           if (videoMedia) {
-            console.log('发现视频媒体:', videoMedia.url, '封面URL:', videoMedia.coverUrl)
             
             try {
               let coverInfo
               
-              // 如果API返回了封面URL，直接使用
+              // If API returned cover URL, use it directly
               if (videoMedia.coverUrl) {
-                console.log('使用API返回的封面URL')
                 const { formatImg } = require('@/components/PublishDialog/PublishDialog.util')
                 
-                // 加载封面图片获取尺寸信息
+                // Load cover image to get dimension info
                 coverInfo = await new Promise((resolve) => {
                   const img = document.createElement('img')
                   img.crossOrigin = 'anonymous'
@@ -352,19 +340,16 @@ export default function AccountPageCore({
                     })
                   }
                   img.onerror = () => {
-                    console.warn('封面图片加载失败，将尝试从视频提取')
                     resolve(null)
                   }
                   img.src = videoMedia.coverUrl
                 })
               }
               
-              // 如果没有封面URL或封面加载失败，尝试从视频提取
+              // If no cover URL or cover load failed, try to extract from video
               if (!coverInfo) {
-                console.log('尝试从视频URL提取封面和元数据...')
                 try {
                   const videoInfo = await VideoGrabFrame(videoMedia.url, 0)
-                  console.log('视频封面提取成功:', videoInfo)
                   
                   params.video = {
                     size: 0,
@@ -378,27 +363,25 @@ export default function AccountPageCore({
                     cover: videoInfo.cover,
                   }
                 } catch (extractError) {
-                  console.warn('视频封面提取失败（可能是跨域问题）:', extractError)
-                  console.info('💡 提示：如果视频来自外部URL，建议后端API在返回时提供coverUrl字段')
-                  // 跨域视频无法提取封面，使用占位符
-                  // 创建一个使用视频URL作为imgUrl的封面（浏览器会自动显示第一帧）
+                  // Cross-origin video cannot extract cover, use placeholder
+                  // Create a cover using video URL as imgUrl (browser will auto-display first frame)
                   const video = document.createElement('video')
                   video.src = videoMedia.url
                   video.crossOrigin = 'anonymous'
                   
                   await new Promise((resolve) => {
                     video.addEventListener('loadedmetadata', () => {
-                      // 使用视频URL作为封面的imgUrl，浏览器video标签的poster会自动处理
+                      // Use video URL as cover imgUrl, browser video tag's poster will handle it automatically
                       const placeholderCover: any = {
                         id: generateUUID(),
                         size: 0,
                         file: null as any,
-                        imgUrl: videoMedia.url, // 使用视频URL，video标签会显示第一帧
+                        imgUrl: videoMedia.url, // Use video URL, video tag will show first frame
                         filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
                         imgPath: '',
                         width: video.videoWidth,
                         height: video.videoHeight,
-                        ossUrl: '', // 没有单独的封面URL
+                        ossUrl: '', // No separate cover URL
                       }
                       
                       params.video = {
@@ -416,8 +399,7 @@ export default function AccountPageCore({
                       resolve(null)
                     })
                     video.addEventListener('error', () => {
-                      console.warn('视频元数据加载失败')
-                      // 完全失败的情况，使用默认值
+                      // Complete failure, use default values
                       const defaultCover: any = {
                         id: generateUUID(),
                         size: 0,
@@ -448,8 +430,7 @@ export default function AccountPageCore({
                   })
                 }
               } else {
-                // 使用API返回的封面，但仍需要从视频获取宽高和时长
-                console.log('加载视频元数据...')
+                // Use API-returned cover, but still need to get width/height/duration from video
                 const video = document.createElement('video')
                 video.src = videoMedia.url
                 video.crossOrigin = 'anonymous'
@@ -471,7 +452,7 @@ export default function AccountPageCore({
                     resolve(null)
                   })
                   video.addEventListener('error', () => {
-                    // 如果视频元数据加载失败，使用默认尺寸
+                    // If video metadata loading fails, use default dimensions
                     params.video = {
                       size: 0,
                       file: null as any,
@@ -492,13 +473,13 @@ export default function AccountPageCore({
               
               params.images = []
             } catch (error) {
-              console.error('处理视频失败:', error)
-              // 如果所有方法都失败，使用默认封面
+              console.error('Failed to process video:', error)
+              // If all methods fail, use default cover
               const defaultCover: any = {
                 id: generateUUID(),
                 size: 0,
                 file: null as any,
-                imgUrl: '', // 空的，会显示默认图标
+                imgUrl: '', // Empty, will show default icon
                 filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
                 imgPath: '',
                 width: 1920,
@@ -520,35 +501,28 @@ export default function AccountPageCore({
               params.images = []
             }
           } else {
-            // 处理所有图片
+            // Process all images
             const imageMedias = medias.filter((m: any) => m.type === 'IMAGE')
             if (imageMedias.length > 0) {
-              console.log('发现图片媒体数量:', imageMedias.length)
               params.images = imageMedias.map((media: any, index: number) => ({
                 id: generateUUID(),
                 size: 0,
                 file: null as any,
-                imgUrl: media.url, // 使用ossUrl作为预览URL
+                imgUrl: media.url, // Use ossUrl as preview URL
                 filename: `ai_${aiGeneratedData.taskId}_${index + 1}.jpg`,
                 imgPath: '',
                 width: 1920,
                 height: 1080,
-                ossUrl: media.url, // AI生成的图片已经有ossUrl
+                ossUrl: media.url, // AI-generated images already have ossUrl
               }))
               params.video = undefined
             }
           }
         }
 
-        console.log('准备填充的参数:', params)
-
-        // 填充到第一个选中的账号
+        // Fill data to first selected account
         if (store.pubListChoosed && store.pubListChoosed.length > 0) {
-          console.log('填充到选中账号:', store.pubListChoosed[0].account.id)
           store.setOnePubParams(params, store.pubListChoosed[0].account.id)
-          console.log('✅ 数据填充成功')
-        } else {
-          console.warn('没有选中的账号')
         }
       }
 

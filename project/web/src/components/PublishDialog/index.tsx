@@ -310,11 +310,10 @@ const PublishDialog = memo(
                 return
             }
 
-            // 授权完成后刷新账号列表
+            // Refresh account list after authorization
             setTimeout(async () => {
               try {
                 await getAccountList()
-                console.log(t('messages.accountListRefreshed' as any))
               }
               catch (error) {
                 console.error(
@@ -322,7 +321,7 @@ const PublishDialog = memo(
                   error,
                 )
               }
-            }, 3000) // 等待3秒让授权完成
+            }, 3000) // Wait 3 seconds for authorization to complete
           }
           catch (error) {
             console.error(t('messages.authFailed' as any), error)
@@ -363,7 +362,6 @@ const PublishDialog = memo(
           setModerationDesc('')
           setModerationLevel(null)
           const result = await toolsApi.textModeration(contentToCheck)
-          console.log('result', result)
 
           if (result?.code === 0) {
             const data: any = result?.data || ({} as any)
@@ -624,13 +622,11 @@ const PublishDialog = memo(
         }, openLeft ? 100 : 500)
       }, [openLeft, setOpenLeft])
 
-      // AI内容同步到编辑器
+      // Sync AI content to editor
       const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
-        console.log('父组件收到同步请求 - 内容:', content, '图片数量:', images?.length || 0, '视频:', video ? '有' : '无', '追加模式:', append)
         
-        // 处理图片上传
+        // Handle image upload
         if (images && images.length > 0) {
-          console.log('开始上传AI同步的图片')
           const uploadsWithImages: Array<{ image: IImgFile, promise: Promise<any>, cancel: () => void }> = []
           
           for (const image of images) {
@@ -652,18 +648,15 @@ const PublishDialog = memo(
             })
           }
           
-          // 使用带有 uploadTaskId 的图片
+          // Use images with uploadTaskId
           images = uploadsWithImages.map(item => item.image)
-          console.log('图片上传任务已创建:', images)
         }
         
-        // 处理视频上传（AI生成的视频已经有ossUrl，只需要上传封面）
+        // Handle video upload (AI-generated videos already have ossUrl, only need to upload cover)
         if (video) {
-          console.log('处理AI同步的视频，ossUrl:', video.ossUrl)
           
-          // 如果视频已经有ossUrl（AI生成的），只需要上传封面
+          // If video already has ossUrl (AI-generated), only upload cover
           if (video.ossUrl && !video.cover.ossUrl) {
-            console.log('视频已有OSS地址，只上传封面')
             const coverHandle = enqueueUpload({
               file: video.cover.file,
               fileName: video.cover.filename,
@@ -677,9 +670,8 @@ const PublishDialog = memo(
               },
             }
           } 
-          // 如果视频没有ossUrl（用户上传的），需要上传视频和封面
+          // If video doesn't have ossUrl (user uploaded), need to upload both video and cover
           else if (!video.ossUrl) {
-            console.log('上传视频和封面')
             const videoHandle = enqueueUpload({
               file: video.file,
               fileName: video.filename,
@@ -700,82 +692,72 @@ const PublishDialog = memo(
               },
             }
           }
-          console.log('视频处理完成:', video)
         }
         
-        // 如果只有一个账号，直接更新
+        // If only one account, update directly
         if (pubListChoosed.length === 1) {
           const params: any = {}
-          // 只有当 content 不为空字符串时才更新文案
+          // Only update content if not empty string
           if (content) {
-            // 如果是追加模式，将内容追加到现有文案后面
+            // If append mode, append content to existing text
             if (append && pubListChoosed[0].params.des) {
               params.des = pubListChoosed[0].params.des + '\n' + content
             } else {
               params.des = content
             }
           }
-          // 视频和图片不能同时存在
+          // Video and images cannot exist simultaneously
           if (video) {
-            console.log('设置视频到单账号参数')
             params.video = video
-            // 如果有视频，清空图片
+            // If has video, clear images
             params.images = []
           } else if (images && images.length > 0) {
-            console.log('设置图片到单账号参数')
             params.images = images
           }
-          console.log('更新单账号参数:', params)
           setOnePubParams(params, pubListChoosed[0].account.id)
         } 
-        // 如果是多账号且在第一步，更新公共参数
+        // If multiple accounts and in step 0, update common params
         else if (pubListChoosed.length >= 2 && step === 0) {
           const params: any = {}
-          // 只有当 content 不为空字符串时才更新文案
+          // Only update content if not empty string
           if (content) {
-            // 如果是追加模式，将内容追加到现有文案后面
+            // If append mode, append content to existing text
             if (append && commonPubParams.des) {
               params.des = commonPubParams.des + '\n' + content
             } else {
               params.des = content
             }
           }
-          // 视频和图片不能同时存在
+          // Video and images cannot exist simultaneously
           if (video) {
-            console.log('设置视频到多账号公共参数')
             params.video = video
-            // 如果有视频，清空图片
+            // If has video, clear images
             params.images = []
           } else if (images && images.length > 0) {
-            console.log('设置图片到多账号公共参数')
             params.images = images
           }
-          console.log('更新多账号公共参数:', params)
           setAccountAllParams(params)
         }
-        // 如果在第二步且有展开的项，更新该项
+        // If in step 1 and has expanded item, update that item
         else if (step === 1 && expandedPubItem) {
           const params: any = {}
-          // 只有当 content 不为空字符串时才更新文案
+          // Only update content if not empty string
           if (content) {
-            // 如果是追加模式，将内容追加到现有文案后面
+            // If append mode, append content to existing text
             if (append && expandedPubItem.params.des) {
               params.des = expandedPubItem.params.des + '\n' + content
             } else {
               params.des = content
             }
           }
-          // 视频和图片不能同时存在
+          // Video and images cannot exist simultaneously
           if (video) {
-            console.log('设置视频到展开项参数')
             params.video = video
-            // 如果有视频，清空图片
+            // If has video, clear images
             params.images = []
           } else if (images && images.length > 0) {
-            console.log('设置图片到展开项参数')
             params.images = images
           }
-          console.log('更新展开项参数:', params)
           setOnePubParams(params, expandedPubItem.account.id)
         }
       }, [pubListChoosed, step, expandedPubItem, setOnePubParams, setAccountAllParams, enqueueUpload])

@@ -26,6 +26,31 @@
     "getStarted": "Get Started",
     "useMobilePhone": "use on mobile phone"
   },
+  "aiGeneration": {
+    "inputPlaceholder": "Enter your content idea, AI will generate a complete work for you...",
+    "generateButton": "Generate",
+    "generating": "Generating...",
+    "emptyPromptAlert": "Please enter a prompt for content generation",
+    "createTaskFailed": "Failed to create task",
+    "thinking": "AI Thinking...",
+    "topicPrefix": "Creation Topic: ",
+    "generatedTitlePrefix": "Generated Title: ",
+    "descriptionPrefix": "📄 ",
+    "failedReasonPrefix": "Failure Reason: ",
+    "taskTimeout": "Task timeout, please try again later",
+    "unknownError": "Unknown error",
+    "status": {
+      "thinking": "AI Thinking...",
+      "waiting": "Waiting...",
+      "generatingContent": "Generating Content",
+      "generatingImage": "Generating Image",
+      "generatingVideo": "Generating Video",
+      "generatingText": "Generating Text",
+      "completed": "Completed!",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    }
+  },
   "brandBar": {
     "title": "Supported Social Media Platforms"
   },
