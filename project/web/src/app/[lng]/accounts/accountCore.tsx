@@ -3,7 +3,7 @@
 import type { SocialAccount } from '@/api/types/account.type'
 import { NoSSR } from '@kwooshung/react-no-ssr'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import AccountSidebar from '@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
@@ -13,6 +13,8 @@ import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import rightArrow from '@/assets/images/jiantou.png'
 import VipContentModal from '@/components/modals/VipContentModal'
+import PublishDialog from '@/components/PublishDialog'
+import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
 
@@ -23,6 +25,14 @@ interface AccountPageCoreProps {
     platform?: string
     spaceId?: string
     showVip?: string
+    // AI生成的内容参数
+    generatedContent?: string
+    taskId?: string
+    title?: string
+    description?: string
+    tags?: string
+    mediaType?: string
+    mediaUrl?: string
   }
 }
 
@@ -52,6 +62,10 @@ export default function AccountPageCore({
   const [showWechatBrowserTip, setShowWechatBrowserTip] = useState(false)
   // VIP弹窗状态
   const [vipModalOpen, setVipModalOpen] = useState(false)
+  // 发布弹窗状态
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false)
+  // AI生成的内容数据
+  const [generatedData, setGeneratedData] = useState<any>(null)
 
   useEffect(() => {
     accountInit()
@@ -66,6 +80,37 @@ export default function AccountPageCore({
       if (typeof window !== 'undefined') {
         const url = new URL(window.location.href)
         url.searchParams.delete('showVip')
+        window.history.replaceState({}, '', url.toString())
+      }
+    }
+
+    // 处理AI生成内容的参数 - 等待账户列表加载完成
+    if (searchParams?.generatedContent === 'true' && searchParams?.taskId && accountGroupList.length > 0) {
+      const data = {
+        taskId: searchParams.taskId,
+        title: searchParams.title || '',
+        description: searchParams.description || '',
+        tags: searchParams.tags ? JSON.parse(decodeURIComponent(searchParams.tags)) : [],
+        mediaType: searchParams.mediaType || '',
+        mediaUrl: searchParams.mediaUrl || '',
+      }
+      setGeneratedData(data)
+      
+      // 延迟打开发布弹窗，确保数据已完全初始化
+      setTimeout(() => {
+        setPublishDialogOpen(true)
+      }, 500)
+
+      // 清除URL参数
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href)
+        url.searchParams.delete('generatedContent')
+        url.searchParams.delete('taskId')
+        url.searchParams.delete('title')
+        url.searchParams.delete('description')
+        url.searchParams.delete('tags')
+        url.searchParams.delete('mediaType')
+        url.searchParams.delete('mediaUrl')
         window.history.replaceState({}, '', url.toString())
       }
     }
@@ -86,7 +131,7 @@ export default function AccountPageCore({
       // 打开添加账号弹窗
       setAddAccountModalOpen(true)
     }
-  }, [searchParams])
+  }, [searchParams, accountGroupList.length])
 
   /**
    * 检测是否为微信浏览器
@@ -200,6 +245,113 @@ export default function AccountPageCore({
       window.history.replaceState({}, '', url.toString())
     }
   }
+
+  // 发布弹窗ref
+  const publishDialogRef = useRef<IPublishDialogRef>(null)
+
+  // 获取所有账号列表（扁平化）
+  const allAccounts = accountGroupList.reduce<SocialAccount[]>((acc, group) => {
+    return [...acc, ...group.children]
+  }, [])
+
+  // 调试：监控账户数据变化
+  useEffect(() => {
+    console.log('账户数据更新 - accountGroupList:', accountGroupList.length, '组')
+    console.log('账户数据更新 - allAccounts:', allAccounts.length, '个账户')
+  }, [accountGroupList.length, allAccounts.length])
+
+  // 处理AI生成内容填充到发布弹窗
+  useEffect(() => {
+    if (generatedData && publishDialogOpen && allAccounts.length > 0) {
+      console.log('开始填充AI生成的内容，账户数量:', allAccounts.length)
+      
+      // 延迟填充，确保弹窗已完全打开并初始化
+      const timeoutId = setTimeout(() => {
+        try {
+          // 从PublishDialog的store中获取和设置数据的方法
+          const { usePublishDialog } = require('@/components/PublishDialog/usePublishDialog')
+          const store = usePublishDialog.getState()
+
+          console.log('PublishDialog状态:', {
+            pubList: store.pubList?.length || 0,
+            pubListChoosed: store.pubListChoosed?.length || 0,
+          })
+
+          // 确保store已经初始化
+          if (!store.pubList || store.pubList.length === 0) {
+            console.warn('PublishDialog的pubList未初始化，等待下一次尝试')
+            // 如果pubList未初始化，再等待一段时间后重试
+            setTimeout(() => {
+              const retryStore = usePublishDialog.getState()
+              if (retryStore.pubList && retryStore.pubList.length > 0) {
+                fillGeneratedContent(retryStore)
+              }
+            }, 1000)
+            return
+          }
+
+          fillGeneratedContent(store)
+        } catch (error) {
+          console.error('填充AI生成内容失败:', error)
+        }
+      }, 800) // 延迟800ms，给PublishDialog足够的初始化时间
+
+      // 填充内容的辅助函数
+      const fillGeneratedContent = (store: any) => {
+        // 构建发布参数
+        const params: any = {
+          des: generatedData.description || '',
+          title: generatedData.title || '',
+        }
+
+        // 处理媒体文件
+        if (generatedData.mediaType === 'VIDEO' && generatedData.mediaUrl) {
+          // 如果是视频，构建视频对象
+          params.video = {
+            ossUrl: generatedData.mediaUrl,
+            file: null as any,
+            filename: `ai_generated_${generatedData.taskId}.mp4`,
+            duration: 0,
+            cover: {
+              ossUrl: '',
+              file: null as any,
+              filename: '',
+              url: '',
+            },
+            url: generatedData.mediaUrl,
+          }
+          params.images = []
+        } else if (generatedData.mediaType === 'IMAGE' && generatedData.mediaUrl) {
+          // 如果是图片
+          params.images = [{
+            ossUrl: generatedData.mediaUrl,
+            file: null as any,
+            filename: `ai_generated_${generatedData.taskId}.jpg`,
+            url: generatedData.mediaUrl,
+          }]
+          params.video = undefined
+        }
+
+        // 如果有选中的账号，设置参数
+        if (store.pubListChoosed && store.pubListChoosed.length >= 2) {
+          console.log('设置多账号公共参数:', params)
+          store.setAccountAllParams(params)
+        } else if (store.pubListChoosed && store.pubListChoosed.length === 1) {
+          console.log('设置单账号参数:', params)
+          store.setOnePubParams(params, store.pubListChoosed[0].account.id)
+        } else {
+          // 如果没有选中账号，设置公共参数（会应用到所有账号）
+          console.log('设置公共参数到所有账号:', params)
+          store.setAccountAllParams(params)
+        }
+
+        console.log('AI生成内容已成功填充到发布弹窗')
+      }
+
+      // 清理定时器
+      return () => clearTimeout(timeoutId)
+    }
+  }, [generatedData, publishDialogOpen, allAccounts.length])
 
   return (
     <NoSSR>
@@ -320,6 +472,23 @@ export default function AccountPageCore({
           open={vipModalOpen}
           onClose={() => setVipModalOpen(false)}
         />
+
+        {/* 发布作品弹窗 - 只在有账户数据时渲染 */}
+        {allAccounts.length > 0 && (
+          <PublishDialog
+            ref={publishDialogRef}
+            open={publishDialogOpen}
+            onClose={() => {
+              setPublishDialogOpen(false)
+              setGeneratedData(null)
+            }}
+            accounts={allAccounts}
+            onPubSuccess={() => {
+              setPublishDialogOpen(false)
+              setGeneratedData(null)
+            }}
+          />
+        )}
       </div>
     </NoSSR>
   )

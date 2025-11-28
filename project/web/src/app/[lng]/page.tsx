@@ -4,6 +4,8 @@ import { AndroidOutlined } from '@ant-design/icons'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { agentApi, TaskStatus } from '@/api/agent'
+import type { TaskDetail } from '@/api/agent'
 
 // Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
@@ -84,6 +86,13 @@ function Hero() {
   const [hideCursor, setHideCursor] = useState(false)
   const [startTyping, setStartTyping] = useState(false)
   const router = useRouter()
+  const { lng } = useParams()
+
+  // AI生成任务相关状态
+  const [prompt, setPrompt] = useState('')
+  const [isGenerating, setIsGenerating] = useState(false)
+  const [taskStatus, setTaskStatus] = useState<string>('')
+  const [taskId, setTaskId] = useState<string>('')
 
   // Full text to display
   const fullText = t('hero.title')
@@ -146,6 +155,111 @@ function Hero() {
     ))
   }
 
+
+  // 获取状态对应的中文文案
+  const getStatusText = (status: string) => {
+    const statusMap: Record<string, string> = {
+      'THINKING': '思考中...',
+      'WAITING': '等待中...',
+      'GENERATING_CONTENT': '内容生成中...',
+      'GENERATING_IMAGE': '图片生成中...',
+      'GENERATING_VIDEO': '视频生成中...',
+      'GENERATING_TEXT': '文本生成中...',
+      'COMPLETED': '生成完成',
+      'FAILED': '生成失败',
+      'CANCELLED': '已取消',
+    }
+    return statusMap[status] || status
+  }
+
+  // 处理任务创建
+  const handleCreateTask = async () => {
+    if (!prompt.trim()) {
+      alert('请输入生成内容的提示词')
+      return
+    }
+
+    try {
+      setIsGenerating(true)
+      setTaskStatus('创建任务中...')
+
+      // 创建任务
+      const createRes = await agentApi.createTask({ prompt })
+      if (createRes?.code === 0 && createRes.data?.id) {
+        const newTaskId = createRes.data.id
+        setTaskId(newTaskId)
+        
+        // 开始轮询任务状态
+        pollTaskStatus(newTaskId)
+      } else {
+        throw new Error('创建任务失败')
+      }
+    } catch (error: any) {
+      console.error('创建任务失败:', error)
+      alert(`创建任务失败: ${error.message || '未知错误'}`)
+      setIsGenerating(false)
+      setTaskStatus('')
+    }
+  }
+
+  // 轮询任务状态
+  const pollTaskStatus = async (taskId: string) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const res = await agentApi.getTaskDetail(taskId)
+        
+        if (res?.code === 0 && res.data) {
+          const taskData = res.data
+          setTaskStatus(getStatusText(taskData.status))
+
+          // 如果任务完成
+          if (taskData.status === 'COMPLETED') {
+            clearInterval(pollInterval)
+            setIsGenerating(false)
+            
+            // 跳转到accounts页面并携带生成的数据
+            const queryParams = new URLSearchParams({
+              generatedContent: 'true',
+              taskId: taskData.id,
+              title: taskData.title || '',
+              description: taskData.description || '',
+              tags: JSON.stringify(taskData.tags || []),
+              mediaType: taskData.medias?.[0]?.type || '',
+              mediaUrl: taskData.medias?.[0]?.url || '',
+            })
+            
+            router.push(`/${lng}/accounts?${queryParams.toString()}`)
+          }
+          // 如果任务失败
+          else if (taskData.status === 'FAILED') {
+            clearInterval(pollInterval)
+            setIsGenerating(false)
+            alert(`生成失败: ${taskData.errorMessage || '未知错误'}`)
+            setTaskStatus('')
+          }
+          // 如果任务取消
+          else if (taskData.status === 'CANCELLED') {
+            clearInterval(pollInterval)
+            setIsGenerating(false)
+            setTaskStatus('')
+          }
+        }
+      } catch (error) {
+        console.error('查询任务状态失败:', error)
+      }
+    }, 2000) // 每2秒轮询一次
+
+    // 设置最大轮询时间为10分钟
+    setTimeout(() => {
+      clearInterval(pollInterval)
+      if (isGenerating) {
+        setIsGenerating(false)
+        alert('任务超时，请稍后重试')
+        setTaskStatus('')
+      }
+    }, 600000)
+  }
+
   return (
     <section className={styles.hero}>
       <div className={styles.heroContainer}>
@@ -160,10 +274,89 @@ function Hero() {
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
 
-        <h1 className={styles.heroTitle}>
-          {renderText()}
-          <span className={`${styles.cursor} ${hideCursor ? styles.cursorHidden : styles.cursorVisible}`}>|</span>
-        </h1>
+        {/* AI生成输入框 */}
+        <div style={{ 
+          width: '100%', 
+          maxWidth: '800px', 
+          margin: '0 auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          padding: '0 20px'
+        }}>
+          <div style={{
+            display: 'flex',
+            gap: '12px',
+            alignItems: 'center',
+            background: 'rgba(255, 255, 255, 0.95)',
+            borderRadius: '16px',
+            padding: '8px',
+            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+            backdropFilter: 'blur(10px)',
+          }}>
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !isGenerating) {
+                  handleCreateTask()
+                }
+              }}
+              placeholder="输入你想创作的内容，AI将为你生成完整的作品..."
+              disabled={isGenerating}
+              style={{
+                flex: 1,
+                padding: '16px 20px',
+                fontSize: '16px',
+                border: 'none',
+                outline: 'none',
+                background: 'transparent',
+                color: '#1a1a1a',
+                fontFamily: 'inherit',
+              }}
+            />
+            <button
+              onClick={handleCreateTask}
+              disabled={isGenerating || !prompt.trim()}
+              style={{
+                padding: '16px 32px',
+                fontSize: '16px',
+                fontWeight: '600',
+                background: isGenerating || !prompt.trim() 
+                  ? '#e0e0e0' 
+                  : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '12px',
+                cursor: isGenerating || !prompt.trim() ? 'not-allowed' : 'pointer',
+                transition: 'all 0.3s ease',
+                whiteSpace: 'nowrap',
+                boxShadow: isGenerating || !prompt.trim() 
+                  ? 'none' 
+                  : '0 4px 15px rgba(102, 126, 234, 0.4)',
+              }}
+            >
+              {isGenerating ? '生成中...' : '生成作品'}
+            </button>
+          </div>
+          
+          {/* 状态显示 */}
+          {taskStatus && (
+            <div style={{
+              textAlign: 'center',
+              padding: '12px 24px',
+              background: 'rgba(102, 126, 234, 0.1)',
+              borderRadius: '12px',
+              color: '#667eea',
+              fontSize: '14px',
+              fontWeight: '500',
+              animation: 'pulse 2s ease-in-out infinite',
+            }}>
+              {taskStatus}
+            </div>
+          )}
+        </div>
 
         {/* Mobile button */}
         <button
@@ -171,6 +364,7 @@ function Hero() {
             router.push('/accounts')
           }}
           className={`${styles.heroBtn} ${styles.heroBtnMobile}`}
+          style={{ marginTop: '40px' }}
         >
           {t('hero.getStarted')}
           <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
