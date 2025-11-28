@@ -219,6 +219,25 @@
       "selectAccountsButton": "Select Accounts",
       "create": "Create",
       "cancel": "Cancel"
+    },
+    "keyDetail": {
+      "title": "MCP Key Details",
+      "keyName": "Key Name:",
+      "keyValue": "Key Value:",
+      "createdTime": "Created Time:",
+      "associatedAccounts": "Associated Accounts:",
+      "accountsCount": "{{count}} account(s)",
+      "associatedAccountsList": "Associated Accounts List",
+      "noAccounts": "No associated accounts",
+      "fetchAccountsFailed": "Failed to fetch associated accounts",
+      "unlinkSuccess": "Unlinked successfully",
+      "unlinkFailed": "Failed to unlink",
+      "unlinkConfirm": "Are you sure to unlink this account?",
+      "unlinkButton": "Unlink",
+      "copyKey": "Copy Key",
+      "ok": "OK",
+      "cancel": "Cancel",
+      "paginationText": "{{start}}-{{end}} of {{total}} items"
     }
   },
   "mediaTypes": {

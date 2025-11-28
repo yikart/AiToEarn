@@ -87,20 +87,20 @@ const MCPManagerModal = memo(
           }
 
           // 创建关联（如果选择了多个账户，需要多次请求）
-          const createdKey = (createRes.data as any)?.key
-          if (createdKey) {
-            for (const account of accounts) {
-              try {
-                await apiCreateMCPRef({
-                  key: createdKey,
-                  accountId: account.id,
-                })
-              }
-              catch (error) {
-                console.error(t('mcpManager.createAssociationFailed', { account: account.account }), error)
-              }
-            }
-          }
+          // const createdKey = (createRes.data as any)?.key
+          // if (createdKey) {
+          //   for (const account of accounts) {
+          //     try {
+          //       await apiCreateMCPRef({
+          //         key: createdKey,
+          //         accountId: account.id,
+          //       })
+          //     }
+          //     catch (error) {
+          //       console.error(t('mcpManager.createAssociationFailed', { account: account.account }), error)
+          //     }
+          //   }
+          // }
 
           setSelectedAccounts([])
           setIsCreateModalOpen(false)
@@ -224,8 +224,8 @@ const MCPManagerModal = memo(
                             title={(
                               <Space>
                                 <span>{item.desc}</span>
-                                <Tag color={item.status === 1 ? 'green' : 'red'}>
-                                  {item.status === 1 ? t('mcpManager.available') : t('mcpManager.unavailable')}
+                                <Tag color={item.status === 'ACTIVE' ? 'green' : 'red'}>
+                                  {item.status}
                                 </Tag>
                               </Space>
                             )}

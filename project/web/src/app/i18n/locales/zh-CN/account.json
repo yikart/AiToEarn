@@ -219,6 +219,25 @@
       "selectAccountsButton": "选择账户",
       "create": "创建",
       "cancel": "取消"
+    },
+    "keyDetail": {
+      "title": "MCP Key 详情",
+      "keyName": "Key名称:",
+      "keyValue": "Key值:",
+      "createdTime": "创建时间:",
+      "associatedAccounts": "关联账户:",
+      "accountsCount": "{{count}} 个",
+      "associatedAccountsList": "关联账户列表",
+      "noAccounts": "暂无关联账户",
+      "fetchAccountsFailed": "获取关联账户列表失败",
+      "unlinkSuccess": "解除关联成功",
+      "unlinkFailed": "解除关联失败",
+      "unlinkConfirm": "确定要解除关联吗？",
+      "unlinkButton": "解除关联",
+      "copyKey": "复制Key",
+      "ok": "确定",
+      "cancel": "取消",
+      "paginationText": "第 {{start}}-{{end}} 条，共 {{total}} 条"
     }
   },
   "mediaTypes": {

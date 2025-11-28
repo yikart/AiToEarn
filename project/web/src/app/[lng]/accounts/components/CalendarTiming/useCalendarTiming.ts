@@ -190,7 +190,7 @@ export const useCalendarTiming = create(
         // 轮询查询发布任务详情
         async _pollQueryPubTask(pubRecord: PublishRecordItem) {
           // 延迟 5 秒
-          await new Promise(resolve => setTimeout(resolve, 5000))
+          await new Promise(resolve => setTimeout(resolve, 20000))
 
           try {
             const res = await getPublishRecordDetail(pubRecord.flowId!)
