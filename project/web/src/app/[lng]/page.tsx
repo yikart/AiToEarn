@@ -1,6 +1,18 @@
 'use client'
 
-import { AndroidOutlined } from '@ant-design/icons'
+import { 
+  AndroidOutlined,
+  BulbOutlined,
+  ClockCircleOutlined,
+  FileTextOutlined,
+  PictureOutlined,
+  VideoCameraOutlined,
+  EditOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  StopOutlined,
+  FieldTimeOutlined,
+} from '@ant-design/icons'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -85,51 +97,116 @@ function Hero() {
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [taskId, setTaskId] = useState('')
-  const [progressMessages, setProgressMessages] = useState<string[]>([])
-  const [currentMessage, setCurrentMessage] = useState('')
-  const [messageIndex, setMessageIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
+  
+  // 消息类型定义
+  type MessageItem = {
+    type: 'status' | 'description' | 'error' | 'text'
+    content: string
+    status?: string // 状态类型，用于渲染对应图标
+  }
+  
+  const [completedMessages, setCompletedMessages] = useState<MessageItem[]>([]) // 已完成显示的消息
+  const [currentTypingMsg, setCurrentTypingMsg] = useState<MessageItem | null>(null) // 正在打字显示的完整消息
+  const [displayedText, setDisplayedText] = useState('') // 当前已显示的文字
+  const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // 待显示的消息队列
+  const progressContainerRef = useRef<HTMLDivElement>(null) // 进度容器引用
 
-  // 状态对应的中文文案
-  const getStatusText = (status: string) => {
-    const statusMap: Record<string, string> = {
-      'THINKING': '💭 AI思考中...',
-      'WAITING': '⏳ 等待处理...',
-      'GENERATING_CONTENT': '📝 内容生成中...',
-      'GENERATING_IMAGE': '🖼️ 图片生成中...',
-      'GENERATING_VIDEO': '🎬 视频生成中...',
-      'GENERATING_TEXT': '✍️ 文本生成中...',
-      'COMPLETED': '✅ 生成完成！',
-      'FAILED': '❌ 生成失败',
-      'CANCELLED': '🚫 已取消',
+  // 状态对应的图标和文案
+  const getStatusDisplay = (status: string) => {
+    const statusConfig: Record<string, { icon: React.ReactNode; text: string; color?: string }> = {
+      'THINKING': { 
+        icon: <BulbOutlined style={{ marginRight: '8px', color: '#1890ff' }} />, 
+        text: 'AI思考中...',
+        color: '#1890ff'
+      },
+      'WAITING': { 
+        icon: <ClockCircleOutlined style={{ marginRight: '8px', color: '#faad14' }} />, 
+        text: '等待处理...',
+        color: '#faad14'
+      },
+      'GENERATING_CONTENT': { 
+        icon: <FileTextOutlined style={{ marginRight: '8px', color: '#1890ff' }} />, 
+        text: '内容生成中...',
+        color: '#1890ff'
+      },
+      'GENERATING_IMAGE': { 
+        icon: <PictureOutlined style={{ marginRight: '8px', color: '#722ed1' }} />, 
+        text: '图片生成中...',
+        color: '#722ed1'
+      },
+      'GENERATING_VIDEO': { 
+        icon: <VideoCameraOutlined style={{ marginRight: '8px', color: '#eb2f96' }} />, 
+        text: '视频生成中...',
+        color: '#eb2f96'
+      },
+      'GENERATING_TEXT': { 
+        icon: <EditOutlined style={{ marginRight: '8px', color: '#1890ff' }} />, 
+        text: '文本生成中...',
+        color: '#1890ff'
+      },
+      'COMPLETED': { 
+        icon: <CheckCircleOutlined style={{ marginRight: '8px', color: '#52c41a' }} />, 
+        text: '生成完成！',
+        color: '#52c41a'
+      },
+      'FAILED': { 
+        icon: <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f' }} />, 
+        text: '生成失败',
+        color: '#ff4d4f'
+      },
+      'CANCELLED': { 
+        icon: <StopOutlined style={{ marginRight: '8px', color: '#8c8c8c' }} />, 
+        text: '已取消',
+        color: '#8c8c8c'
+      },
     }
-    return statusMap[status] || status
+    return statusConfig[status] || { icon: null, text: status, color: '#333' }
   }
 
-  // 打字机效果 - 显示当前消息
+  // 添加新消息到队列
+  const addMessageToQueue = (msg: MessageItem) => {
+    setPendingMessages(prev => [...prev, msg])
+  }
+
+  // 打字机效果 - 处理消息队列
   useEffect(() => {
-    if (messageIndex < progressMessages.length) {
-      const currentMsg = progressMessages[messageIndex]
-      
-      if (charIndex < currentMsg.length) {
-        const timer = setTimeout(() => {
-          setCurrentMessage(prev => prev + currentMsg[charIndex])
-          setCharIndex(prev => prev + 1)
-        }, 30) // 打字速度
-
-        return () => clearTimeout(timer)
-      } else {
-        // 当前消息打完，等待一下再显示下一条
-        const timer = setTimeout(() => {
-          setMessageIndex(prev => prev + 1)
-          setCharIndex(0)
-          setCurrentMessage('')
-        }, 500)
-
-        return () => clearTimeout(timer)
-      }
+    // 如果当前没有正在打字的消息，且队列中有待显示的消息
+    if (!currentTypingMsg && pendingMessages.length > 0) {
+      const nextMsg = pendingMessages[0]
+      setCurrentTypingMsg(nextMsg)
+      setDisplayedText('')
+      setPendingMessages(prev => prev.slice(1))
     }
-  }, [messageIndex, charIndex, progressMessages])
+  }, [currentTypingMsg, pendingMessages])
+
+  // 打字机效果 - 逐字显示
+  useEffect(() => {
+    if (currentTypingMsg && displayedText.length < currentTypingMsg.content.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(currentTypingMsg.content.slice(0, displayedText.length + 1))
+      }, 50) // 打字速度 50ms/字符
+
+      return () => clearTimeout(timer)
+    } 
+    // 当前消息打完了
+    else if (currentTypingMsg && displayedText.length >= currentTypingMsg.content.length) {
+      const timer = setTimeout(() => {
+        // 将当前消息移到已完成列表
+        setCompletedMessages(prev => [...prev, currentTypingMsg])
+        setCurrentTypingMsg(null)
+        setDisplayedText('')
+      }, 200) // 等待200ms后开始下一条
+
+      return () => clearTimeout(timer)
+    }
+  }, [currentTypingMsg, displayedText])
+
+  // 自动滚动到底部
+  useEffect(() => {
+    if (progressContainerRef.current) {
+      progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight
+    }
+  }, [completedMessages, displayedText])
 
   // 创建任务
   const handleCreateTask = async () => {
@@ -140,10 +217,10 @@ function Hero() {
 
     try {
       setIsGenerating(true)
-      setProgressMessages([])
-      setMessageIndex(0)
-      setCharIndex(0)
-      setCurrentMessage('')
+      setCompletedMessages([])
+      setPendingMessages([])
+      setCurrentTypingMsg(null)
+      setDisplayedText('')
 
       // 动态导入API
       const { agentApi } = await import('@/api/agent')
@@ -179,16 +256,23 @@ function Hero() {
         if (res?.code === 0 && res.data) {
           const taskData = res.data
 
-          // 状态变化时添加新消息
+          // 状态变化时添加新消息到队列
           if (taskData.status !== lastStatus) {
-            const statusText = getStatusText(taskData.status)
-            setProgressMessages(prev => [...prev, statusText])
+            const statusDisplay = getStatusDisplay(taskData.status)
+            addMessageToQueue({
+              type: 'status',
+              content: statusDisplay.text,
+              status: taskData.status
+            })
             lastStatus = taskData.status
           }
 
           // 如果有description且还没显示过，显示一次
           if (taskData.description && !hasShownDescription) {
-            setProgressMessages(prev => [...prev, `📄 ${taskData.description}`])
+            addMessageToQueue({
+              type: 'description',
+              content: taskData.description
+            })
             hasShownDescription = true
           }
 
@@ -196,23 +280,29 @@ function Hero() {
           if (taskData.status === 'COMPLETED') {
             setIsGenerating(false)
             
-            // 构建跳转参数
-            const queryParams = new URLSearchParams({
-              aiGenerated: 'true',
-              taskId: taskData.id,
-              title: taskData.title || '',
-              description: taskData.description || '',
-              tags: JSON.stringify(taskData.tags || []),
-              medias: JSON.stringify(taskData.medias || []),
-            })
-            
-            // 跳转到accounts页面
-            router.push(`/${lng}/accounts?${queryParams.toString()}`)
+            // 延迟跳转，确保最后的消息显示完成
+            setTimeout(() => {
+              // 构建跳转参数
+              const queryParams = new URLSearchParams({
+                aiGenerated: 'true',
+                taskId: taskData.id,
+                title: taskData.title || '',
+                description: taskData.description || '',
+                tags: JSON.stringify(taskData.tags || []),
+                medias: JSON.stringify(taskData.medias || []),
+              })
+              
+              // 跳转到accounts页面
+              router.push(`/${lng}/accounts?${queryParams.toString()}`)
+            }, 1500)
             return
           }
           // 如果任务失败
           else if (taskData.status === 'FAILED') {
-            setProgressMessages(prev => [...prev, `❌ 失败原因: ${taskData.errorMessage || '未知错误'}`])
+            addMessageToQueue({
+              type: 'error',
+              content: `失败原因: ${taskData.errorMessage || '未知错误'}`
+            })
             setIsGenerating(false)
             return
           }
@@ -238,7 +328,10 @@ function Hero() {
     setTimeout(() => {
       if (isGenerating) {
         setIsGenerating(false)
-        setProgressMessages(prev => [...prev, '⏱️ 任务超时，请稍后重试'])
+        addMessageToQueue({
+          type: 'error',
+          content: '任务超时，请稍后重试'
+        })
       }
     }, 600000)
   }
@@ -258,24 +351,8 @@ function Hero() {
         </div>
 
         {/* AI生成输入框 */}
-        <div style={{ 
-          width: '100%', 
-          maxWidth: '800px', 
-          margin: '40px auto 20px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '16px',
-        }}>
-          <div style={{
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center',
-            background: 'rgba(255, 255, 255, 0.95)',
-            borderRadius: '16px',
-            padding: '8px',
-            boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
-            backdropFilter: 'blur(10px)',
-          }}>
+        <div className={styles.aiGenerationWrapper}>
+          <div className={styles.aiInputContainer}>
             <input
               type="text"
               value={prompt}
@@ -287,72 +364,70 @@ function Hero() {
               }}
               placeholder="输入你想创作的内容，AI将为你生成完整的作品..."
               disabled={isGenerating}
-              style={{
-                flex: 1,
-                padding: '16px 20px',
-                fontSize: '16px',
-                border: 'none',
-                outline: 'none',
-                background: 'transparent',
-                color: '#1a1a1a',
-                fontFamily: 'inherit',
-              }}
+              className={styles.aiInput}
             />
             <button
               onClick={handleCreateTask}
               disabled={isGenerating || !prompt.trim()}
-              style={{
-                padding: '16px 32px',
-                fontSize: '16px',
-                fontWeight: '600',
-                background: isGenerating || !prompt.trim() 
-                  ? '#e0e0e0' 
-                  : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '12px',
-                cursor: isGenerating || !prompt.trim() ? 'not-allowed' : 'pointer',
-                transition: 'all 0.3s ease',
-                whiteSpace: 'nowrap',
-                boxShadow: isGenerating || !prompt.trim() 
-                  ? 'none' 
-                  : '0 4px 15px rgba(102, 126, 234, 0.4)',
-              }}
+              className={styles.aiGenerateBtn}
             >
               {isGenerating ? '生成中...' : '生成作品'}
             </button>
           </div>
 
           {/* 进度显示区域 */}
-          {isGenerating && (
-            <div style={{
-              maxHeight: '200px',
-              overflowY: 'auto',
-              padding: '16px',
-              background: 'rgba(255, 255, 255, 0.95)',
-              borderRadius: '12px',
-              boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              fontSize: '14px',
-              lineHeight: '1.6',
-            }}>
-              {progressMessages.map((msg, index) => (
-                <div 
-                  key={index}
-                  style={{
-                    marginBottom: '8px',
-                    color: '#333',
-                    opacity: index === messageIndex ? 0.7 : 1,
-                  }}
-                >
-                  {msg}
-                </div>
-              ))}
-              {currentMessage && (
-                <div style={{ color: '#667eea', fontWeight: '500' }}>
-                  {currentMessage}
-                  <span style={{ animation: 'blink 1s infinite' }}>|</span>
-                </div>
+          {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
+            <div 
+              ref={progressContainerRef}
+              className={styles.aiProgressContainer}
+            >
+              {/* 顶部加载指示器 */}
+              {isGenerating && (
+                <div className={styles.aiProgressLoader} />
               )}
+              
+              {/* 连续文本流显示 */}
+              <div className={styles.aiProgressContent}>
+                {/* 已完成的消息 - 连续文本 */}
+                {completedMessages.map((msg, index) => {
+                  const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
+                  const isDescription = msg.type === 'description'
+                  const isError = msg.type === 'error'
+                  
+                  return (
+                    <div 
+                      key={`completed-${index}`}
+                      className={styles.aiProgressMessage}
+                      style={{
+                        color: isError ? '#ff4d4f' : statusDisplay?.color || '#333',
+                      }}
+                    >
+                      {statusDisplay && statusDisplay.icon}
+                      {isDescription && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
+                      {isError && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
+                      <span style={{ textAlign: 'left', flex: 1 }}>{msg.content}</span>
+                    </div>
+                  )
+                })}
+                
+                {/* 当前正在打字的消息 */}
+                {currentTypingMsg && displayedText && (
+                  <div 
+                    className={styles.aiProgressMessage}
+                    style={{ 
+                      color: currentTypingMsg.status ? getStatusDisplay(currentTypingMsg.status).color : '#667eea',
+                    }}
+                  >
+                    {currentTypingMsg.status && getStatusDisplay(currentTypingMsg.status).icon}
+                    {currentTypingMsg.type === 'description' && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
+                    {currentTypingMsg.type === 'error' && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
+                    <span style={{ textAlign: 'left', flex: 1 }}>
+                      {displayedText}
+                      <span className={styles.aiProgressCursor}>|</span>
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
