@@ -33,6 +33,8 @@ export interface PostDetail {
   likeCount: number
   forwardCount: number
   collectCount: number
+  author?: string
+  avatar?: string
 }
 
 // 增量数据
@@ -71,6 +73,7 @@ export interface NoteMonitoringListItem {
   createdAt: string
   updatedAt: string
   error?: string
+  postDetail?: PostDetail
 }
 
 // 监控详情（包含完整信息）
