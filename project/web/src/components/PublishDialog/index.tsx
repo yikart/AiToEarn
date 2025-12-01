@@ -557,6 +557,7 @@ const PublishDialog = memo(
        */
       const pubClick = useCallback(async () => {
         setCreateLoading(true)
+
         const publishTime = getUtcDays(
           pubTime || getDays().add(5, 'second'),
         ).format()
@@ -596,7 +597,7 @@ const PublishDialog = memo(
           onPubSuccess()
         }
         usePublishDialogStorageStore.getState().clearPubData()
-      }, [pubListChoosed])
+      }, [pubListChoosed, pubTime])
 
       // 处理划词操作
       const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
