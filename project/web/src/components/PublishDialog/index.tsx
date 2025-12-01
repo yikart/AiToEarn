@@ -2,6 +2,8 @@ import type {
   ForwardedRef,
 } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { AIAction, IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
+import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import {
   ArrowRightOutlined,
   CloseOutlined,
@@ -9,6 +11,7 @@ import {
   InfoCircleOutlined,
   SendOutlined,
 } from '@ant-design/icons'
+
 import { Button, message, Modal, Tooltip } from 'antd'
 import {
   forwardRef,
@@ -20,13 +23,12 @@ import {
   useRef,
   useState,
 } from 'react'
-
 import { CSSTransition } from 'react-transition-group'
 import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
+import { getChatModels } from '@/api/ai'
 import { apiCreatePublish } from '@/api/plat/publish'
 import { toolsApi } from '@/api/tools'
-import { getChatModels } from '@/api/ai'
 import {
   getDays,
   getUtcDays,
@@ -52,16 +54,15 @@ import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
-import PublishDialogAi, { type AIAction, type IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
-import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
+import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
-import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
+import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
+import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { useAccountStore } from '@/store/account'
 import { generateUUID } from '@/utils'
@@ -102,11 +103,13 @@ const PublishDialog = memo(
         setPubData,
         restorePubData,
         _hasHydrated,
+        setPubListData,
       } = usePublishDialogStorageStore(
         useShallow(state => ({
           setPubData: state.setPubData,
           restorePubData: state.restorePubData,
           _hasHydrated: state._hasHydrated,
+          setPubListData: state.setPubListData,
         })),
       )
       const {
@@ -183,7 +186,9 @@ const PublishDialog = memo(
         })),
       )
       // 是否clear
-      const isClear = useRef(false)
+      const isClear = useRef(true)
+      // 是否init
+      const isInit = useRef(false)
 
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
@@ -413,18 +418,26 @@ const PublishDialog = memo(
         return false
       }, [step, pubListChoosed, commonPubParams, expandedPubItem])
 
-      useEffect(() => {
-        isClear.current = true
-      }, [])
-
       // 实时保存数据
       useEffect(() => {
+        if (!open)
+          return
         if (isClear.current) {
           isClear.current = false
           return
         }
         setPubData(pubListChoosed)
       }, [pubListChoosed])
+      useEffect(() => {
+        console.log(expandedPubItem)
+        if (!expandedPubItem || pubList.length === 0)
+          return
+        if (isInit.current) {
+          isInit.current = false
+          return
+        }
+        setPubListData(pubList)
+      }, [pubList])
 
       // 检查选中的平台是否需要内容安全检测
       const needsContentModeration = useMemo(() => {
@@ -462,24 +475,27 @@ const PublishDialog = memo(
 
       useEffect(() => {
         if (open) {
+          isInit.current = true
           init(accounts, defaultAccountId)
-          
+
           // 获取聊天模型列表（使用 sessionStorage 缓存）
           const cachedModels = sessionStorage.getItem('ai_chat_models')
           if (cachedModels) {
             try {
               setChatModels(JSON.parse(cachedModels))
-            } catch (error) {
+            }
+            catch (error) {
               console.error(t('messages.parseCachedChatModelsFailed' as any), error)
             }
-          } else {
+          }
+          else {
             // 如果没有缓存，则请求
             getChatModels().then((res: any) => {
               if (res?.code === 0 && res.data && Array.isArray(res.data)) {
                 setChatModels(res.data)
                 sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
               }
-            }).catch(error => {
+            }).catch((error) => {
               console.error(t('messages.getChatModelsFailed' as any), error)
             })
           }
@@ -490,7 +506,7 @@ const PublishDialog = memo(
           setPubListChoosed([])
           setStep(0)
           setExpandedPubItem(undefined)
-          // 注意：不要调用clear()，否则会清空pubList导致无法选择账户
+          clear()
         }
       }, [open])
 
@@ -610,7 +626,7 @@ const PublishDialog = memo(
           aiAssistantRef.current?.processText(selectedText, action)
         }, openLeft ? 100 : 500) // 如果已打开，减少延迟
       }, [openLeft, setOpenLeft])
-      
+
       // 处理图生图
       const handleImageToImage = useCallback((imageFile: IImgFile) => {
         // 打开AI面板
@@ -625,37 +641,35 @@ const PublishDialog = memo(
 
       // Sync AI content to editor
       const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
-        
         // Handle image upload
         if (images && images.length > 0) {
           const uploadsWithImages: Array<{ image: IImgFile, promise: Promise<any>, cancel: () => void }> = []
-          
+
           for (const image of images) {
             const handle = enqueueUpload({
               file: image.file,
               fileName: image.filename,
               type: UploadTaskTypeEnum.Image,
             })
-            
+
             const imageWithTask: IImgFile = {
               ...image,
               uploadTaskId: handle.taskId,
             }
-            
+
             uploadsWithImages.push({
               image: imageWithTask,
               promise: handle.promise,
               cancel: handle.cancel,
             })
           }
-          
+
           // Use images with uploadTaskId
           images = uploadsWithImages.map(item => item.image)
         }
-        
+
         // Handle video upload (AI-generated videos already have ossUrl, only need to upload cover)
         if (video) {
-          
           // If video already has ossUrl (AI-generated), only upload cover
           if (video.ossUrl && !video.cover.ossUrl) {
             const coverHandle = enqueueUpload({
@@ -663,14 +677,14 @@ const PublishDialog = memo(
               fileName: video.cover.filename,
               type: UploadTaskTypeEnum.Image,
             })
-            
+
             video = {
               ...video,
               uploadTaskIds: {
                 cover: coverHandle.taskId,
               },
             }
-          } 
+          }
           // If video doesn't have ossUrl (user uploaded), need to upload both video and cover
           else if (!video.ossUrl) {
             const videoHandle = enqueueUpload({
@@ -678,13 +692,13 @@ const PublishDialog = memo(
               fileName: video.filename,
               type: UploadTaskTypeEnum.Video,
             })
-            
+
             const coverHandle = enqueueUpload({
               file: video.cover.file,
               fileName: video.cover.filename,
               type: UploadTaskTypeEnum.Image,
             })
-            
+
             video = {
               ...video,
               uploadTaskIds: {
@@ -694,7 +708,7 @@ const PublishDialog = memo(
             }
           }
         }
-        
+
         // If only one account, update directly
         if (pubListChoosed.length === 1) {
           const params: any = {}
@@ -702,8 +716,9 @@ const PublishDialog = memo(
           if (content) {
             // If append mode, append content to existing text
             if (append && pubListChoosed[0].params.des) {
-              params.des = pubListChoosed[0].params.des + '\n' + content
-            } else {
+              params.des = `${pubListChoosed[0].params.des}\n${content}`
+            }
+            else {
               params.des = content
             }
           }
@@ -712,11 +727,12 @@ const PublishDialog = memo(
             params.video = video
             // If has video, clear images
             params.images = []
-          } else if (images && images.length > 0) {
+          }
+          else if (images && images.length > 0) {
             params.images = images
           }
           setOnePubParams(params, pubListChoosed[0].account.id)
-        } 
+        }
         // If multiple accounts and in step 0, update common params
         else if (pubListChoosed.length >= 2 && step === 0) {
           const params: any = {}
@@ -724,8 +740,9 @@ const PublishDialog = memo(
           if (content) {
             // If append mode, append content to existing text
             if (append && commonPubParams.des) {
-              params.des = commonPubParams.des + '\n' + content
-            } else {
+              params.des = `${commonPubParams.des}\n${content}`
+            }
+            else {
               params.des = content
             }
           }
@@ -734,7 +751,8 @@ const PublishDialog = memo(
             params.video = video
             // If has video, clear images
             params.images = []
-          } else if (images && images.length > 0) {
+          }
+          else if (images && images.length > 0) {
             params.images = images
           }
           setAccountAllParams(params)
@@ -746,8 +764,9 @@ const PublishDialog = memo(
           if (content) {
             // If append mode, append content to existing text
             if (append && expandedPubItem.params.des) {
-              params.des = expandedPubItem.params.des + '\n' + content
-            } else {
+              params.des = `${expandedPubItem.params.des}\n${content}`
+            }
+            else {
               params.des = content
             }
           }
@@ -756,7 +775,8 @@ const PublishDialog = memo(
             params.video = video
             // If has video, clear images
             params.images = []
-          } else if (images && images.length > 0) {
+          }
+          else if (images && images.length > 0) {
             params.images = images
           }
           setOnePubParams(params, expandedPubItem.account.id)
@@ -785,7 +805,7 @@ const PublishDialog = memo(
                 classNames="left"
                 unmountOnExit
               >
-                <PublishDialogAi 
+                <PublishDialogAi
                   ref={aiAssistantRef}
                   onClose={() => setOpenLeft(false)}
                   onSyncToEditor={handleSyncToEditor}
@@ -807,7 +827,7 @@ const PublishDialog = memo(
                 containerRef={contentAreaRef}
                 onAction={handleTextSelection}
               />
-              
+
               <div className="publishDialog-con" ref={contentAreaRef}>
                 <div className="publishDialog-con-head">
                   <span className="publishDialog-con-head-title">
@@ -1190,7 +1210,7 @@ const PublishDialog = memo(
                   classNames="left"
                   unmountOnExit
                 >
-                  <PublishDialogAi 
+                  <PublishDialogAi
                     ref={aiAssistantRef}
                     onClose={() => setOpenLeft(false)}
                     onSyncToEditor={handleSyncToEditor}

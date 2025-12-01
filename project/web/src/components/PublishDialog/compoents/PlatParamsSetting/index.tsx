@@ -69,10 +69,6 @@ const PlatParamsSetting = memo(
         }
       }, [pubItem, onImageToImage])
 
-      useEffect(() => {
-        console.log(pubItem, 1111)
-      }, [pubItem])
-
       // true=展开当前账号的参数设置 false=不展开
       const isExpand = useMemo(() => {
         if (step === 0)

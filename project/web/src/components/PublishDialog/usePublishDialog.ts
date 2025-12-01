@@ -83,6 +83,8 @@ export const usePublishDialog = create(
           })
         },
         setExpandedPubItem(expandedPubItem: PubItem | undefined) {
+          if (!expandedPubItem)
+            return
           usePublishDialogStorageStore.getState().setExpandedPubItem(expandedPubItem)
           set({
             expandedPubItem,
