@@ -88,11 +88,38 @@
         :global(.ant-image) {
           display: block;
         }
+
+        .mediaContent {
+          width: 500px;
+          // width: 100%;
+          height: auto;
+          min-height: 500px;
+          display: block;
+        }
       }
       
       .noteDetails {
         flex: 1;
         min-width: 0;
+        
+        .authorInfo {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 16px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid #f0f0f0;
+
+          .authorAvatar {
+            flex-shrink: 0;
+          }
+
+          .authorName {
+            font-size: 16px;
+            font-weight: 500;
+            color: #262626;
+          }
+        }
         
         .noteTitle {
           font-size: 20px;
@@ -100,6 +127,7 @@
           color: #1a1a1a;
           margin: 0 0 12px 0;
           line-height: 1.4;
+          word-break: break-word;
         }
         
         .noteTags {
