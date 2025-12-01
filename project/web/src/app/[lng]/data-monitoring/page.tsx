@@ -34,6 +34,7 @@ export default function DataMonitoringPage() {
   const [monitoringList, setMonitoringList] = useState<NoteMonitoringListItem[]>([])
   const [pagination, setPagination] = useState({ page: 1, pageSize: 20, total: 0, totalPages: 0 })
   const [selectedPlatform, setSelectedPlatform] = useState<PlatType>(PlatType.Xhs)
+  const [filterPlatform, setFilterPlatform] = useState<PlatType | 'all'>('all')
   const [noteLink, setNoteLink] = useState('')
   const [addLoading, setAddLoading] = useState(false)
 
@@ -41,8 +42,11 @@ export default function DataMonitoringPage() {
   const loadMonitoringList = async (page: number = 1, platform?: string) => {
     setLoading(true)
     try {
-      const platformToUse = platform || selectedPlatform
-      const data = await apiGetNoteMonitoringList({ platform: platformToUse, page, pageSize: 20 })
+      const params: any = { page, pageSize: 20 }
+      if (platform && platform !== 'all') {
+        params.platform = platform
+      }
+      const data = await apiGetNoteMonitoringList(params)
       setMonitoringList(data.items)
       setPagination({
         page: data.page,
@@ -61,13 +65,13 @@ export default function DataMonitoringPage() {
 
   useEffect(() => {
     if (activeTab === 'link') {
-      loadMonitoringList(1, selectedPlatform)
+      loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
     }
-  }, [activeTab, selectedPlatform])
+  }, [activeTab, filterPlatform])
 
   // Handle pagination change
   const handlePageChange = (page: number) => {
-    loadMonitoringList(page, selectedPlatform)
+    loadMonitoringList(page, filterPlatform === 'all' ? undefined : filterPlatform)
   }
 
   // Add note monitoring
@@ -82,7 +86,7 @@ export default function DataMonitoringPage() {
       await apiAddNoteMonitoring({ link: noteLink, platform: selectedPlatform })
       message.success(t('addModal.addSuccess'))
       setNoteLink('')
-      loadMonitoringList(1, selectedPlatform)
+      loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
     }
     catch (error: any) {
       message.error(error.message || t('error.addFailed'))
@@ -202,7 +206,46 @@ export default function DataMonitoringPage() {
                 </Card>
               </div>
 
-              {/* 监控列表 */}
+              {/* Filter section */}
+              <div className={styles.filterSection}>
+                <Card className={styles.filterCard}>
+                  <div className={styles.filterContent}>
+                    <span className={styles.filterLabel}>{t('list.filterByPlatform' as any)}:</span>
+                    <Select
+                      value={filterPlatform}
+                      onChange={(value) => setFilterPlatform(value)}
+                      style={{ width: 200 }}
+                      size="large"
+                      className={styles.filterSelect}
+                    >
+                      <Select.Option value="all">{t('list.allPlatforms' as any)}</Select.Option>
+                      {SUPPORTED_PLATFORMS.map(platform => {
+                        const platInfo = AccountPlatInfoMap.get(platform)
+                        if (!platInfo) return null
+                        const iconSrc = typeof platInfo.icon === 'string' 
+                          ? platInfo.icon 
+                          : (platInfo.icon as any)?.src || String(platInfo.icon)
+                        return (
+                          <Select.Option key={platform} value={platform}>
+                            <div className={styles.platformOption}>
+                              <img
+                                src={iconSrc}
+                                alt={platInfo.name}
+                                width={20}
+                                height={20}
+                                style={{ marginRight: 8, objectFit: 'contain' }}
+                              />
+                              <span>{platInfo.name}</span>
+                            </div>
+                          </Select.Option>
+                        )
+                      })}
+                    </Select>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Monitoring list */}
               {loading ? (
                 <div className={styles.loading}>
                   <Spin size="large" />
@@ -257,7 +300,7 @@ export default function DataMonitoringPage() {
                             <Tag color="error">{t('list.error')}: {item.error}</Tag>
                           </div>
                         )}
-                        <div className={styles.cardFooter}>
+                        <div className={`${styles.cardFooter} ${!item.error ? styles.cardFooterNoError : ''}`}>
                           <span className={styles.createTime}>
                             {t('list.createdAt')}: {new Date(item.createdAt).toLocaleString('zh-CN')}
                           </span>

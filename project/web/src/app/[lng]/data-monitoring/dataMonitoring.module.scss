@@ -71,6 +71,45 @@
     }
   }
 
+  .filterSection {
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .filterCard {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(166, 106, 228, 0.1);
+      border: 1px solid rgba(166, 106, 228, 0.1);
+    }
+
+    .filterContent {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .filterLabel {
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+        white-space: nowrap;
+      }
+
+      .filterSelect {
+        :global(.ant-select-selector) {
+          border-color: rgba(166, 106, 228, 0.3);
+          
+          &:hover {
+            border-color: #a66ae4;
+          }
+        }
+
+        :global(.ant-select-focused .ant-select-selector) {
+          border-color: #a66ae4;
+          box-shadow: 0 0 0 2px rgba(166, 106, 228, 0.1);
+        }
+      }
+    }
+  }
+
   .addFormSection {
     margin-bottom: 24px;
     padding: 0 24px;
@@ -214,10 +253,26 @@
       border-radius: 12px;
       overflow: hidden;
       transition: all 0.3s ease;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
 
       &:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(166, 106, 228, 0.15);
+      }
+
+      :global(.ant-card-body) {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        overflow: hidden;
+      }
+
+      :global(.ant-card-actions) {
+        margin-top: auto;
+        flex-shrink: 0;
       }
 
       .coverWrapper {
@@ -236,15 +291,17 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         padding-bottom: 12px;
         border-bottom: 1px solid #f0f0f0;
+        flex-shrink: 0;
 
         .cardHeaderLeft {
-          flex: 1;
+          flex: 1 1 auto;
           display: flex;
           flex-direction: column;
           gap: 8px;
+          min-width: 0;
 
           .authorInfo {
             display: flex;
@@ -273,10 +330,13 @@
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           line-height: 1.5;
-          max-height: 3em;
+          word-break: break-word;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          min-height: 0;
         }
 
         .headerRight {
@@ -326,13 +386,33 @@
 
       .errorMessage {
         margin: 12px 0;
+        padding: 12px 0;
+        word-break: break-word;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        flex-shrink: 0;
+        
+        :global(.ant-tag) {
+          max-width: 100%;
+          white-space: normal;
+          word-break: break-word;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
       }
 
       .cardFooter {
         display: flex;
         justify-content: space-between;
         padding-top: 12px;
-        border-top: 1px solid #f0f0f0;
+        margin-top: auto;
+        flex-shrink: 0;
+
+        &.cardFooterNoError {
+          margin-top: auto;
+          padding-top: 12px;
+        }
 
         .createTime,
         .updateTime {
@@ -556,7 +636,8 @@
       padding: 16px;
     }
 
-    .addFormSection {
+    .addFormSection,
+    .filterSection {
       padding: 0 16px;
 
       .addForm {
@@ -565,6 +646,15 @@
         .platformSelect,
         .linkInput,
         .addButton {
+          width: 100%;
+        }
+      }
+
+      .filterContent {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .filterSelect {
           width: 100%;
         }
       }

@@ -26,7 +26,9 @@
     "createdAt": "Created at",
     "updatedAt": "Updated at",
     "error": "Error",
-    "totalRecords": "Total {{count}} records"
+    "totalRecords": "Total {{count}} records",
+    "filterByPlatform": "Filter by Platform",
+    "allPlatforms": "All Platforms"
   },
   "stats": {
     "views": "Views",

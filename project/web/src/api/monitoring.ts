@@ -95,7 +95,7 @@ export interface NoteMonitoringListResponse {
 }
 
 export interface GetNoteMonitoringListParams {
-  platform: string
+  platform?: string
   page?: number
   pageSize?: number
 }
