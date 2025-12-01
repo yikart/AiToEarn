@@ -1,7 +1,9 @@
 .dataMonitoringPage {
   padding: 24px;
-  background-color: #f5f5f5;
+  width: 100%;
   min-height: calc(100vh - 64px);
+  max-width: 1920px;
+  margin: 0 auto;
 
   .pageHeader {
     display: flex;
@@ -9,9 +11,9 @@
     gap: 16px;
     margin-bottom: 24px;
     padding: 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #a66ae4 0%, #814dbd 100%);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+    box-shadow: 0 4px 12px rgba(166, 106, 228, 0.15);
 
     .headerIcon {
       font-size: 48px;
@@ -53,14 +55,14 @@
           
           &.ant-tabs-tab-active {
             .ant-tabs-tab-btn {
-              color: #667eea;
+              color: #a66ae4;
               font-weight: 600;
             }
           }
         }
 
         .ant-tabs-ink-bar {
-          background: #667eea;
+          background: #a66ae4;
         }
       }
     }
@@ -68,6 +70,117 @@
     .tabContent {
       padding: 24px 0;
       min-height: 400px;
+    }
+  }
+
+  .filterSection {
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .filterCard {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(166, 106, 228, 0.1);
+      border: 1px solid rgba(166, 106, 228, 0.1);
+    }
+
+    .filterContent {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      .filterLabel {
+        font-size: 14px;
+        font-weight: 500;
+        color: #666;
+        white-space: nowrap;
+      }
+
+      .filterSelect {
+        :global(.ant-select-selector) {
+          border-color: rgba(166, 106, 228, 0.3);
+          
+          &:hover {
+            border-color: #a66ae4;
+          }
+        }
+
+        :global(.ant-select-focused .ant-select-selector) {
+          border-color: #a66ae4;
+          box-shadow: 0 0 0 2px rgba(166, 106, 228, 0.1);
+        }
+      }
+    }
+  }
+
+  .addFormSection {
+    margin-bottom: 24px;
+    padding: 0 24px;
+
+    .addFormCard {
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(166, 106, 228, 0.1);
+      border: 1px solid rgba(166, 106, 228, 0.1);
+    }
+
+    .addForm {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+
+      .platformSelect {
+        flex-shrink: 0;
+
+        .platformSelectInput {
+          :global(.ant-select-selector) {
+            border-color: rgba(166, 106, 228, 0.3);
+            
+            &:hover {
+              border-color: #a66ae4;
+            }
+          }
+
+          :global(.ant-select-focused .ant-select-selector) {
+            border-color: #a66ae4;
+            box-shadow: 0 0 0 2px rgba(166, 106, 228, 0.1);
+          }
+        }
+
+        .platformOption {
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .linkInput {
+        flex: 1;
+
+        :global(.ant-input-affix-wrapper) {
+          border-color: rgba(166, 106, 228, 0.3);
+          
+          &:hover {
+            border-color: #a66ae4;
+          }
+        }
+
+        :global(.ant-input-affix-wrapper-focused) {
+          border-color: #a66ae4;
+          box-shadow: 0 0 0 2px rgba(166, 106, 228, 0.1);
+        }
+      }
+
+      .addButton {
+        flex-shrink: 0;
+        min-width: 100px;
+        height: 40px;
+        background: linear-gradient(135deg, #a66ae4 0%, #814dbd 100%);
+        border: none;
+        border-radius: 8px;
+        font-weight: 500;
+
+        &:hover {
+          background: linear-gradient(135deg, #9556d3 0%, #7239a8 100%);
+        }
+      }
     }
   }
 
@@ -89,13 +202,13 @@
       transition: all 0.3s ease;
 
       &:hover {
-        border-color: #667eea;
-        background: #f0f2ff;
+        border-color: #a66ae4;
+        background: #faf0ff;
       }
 
       .addIcon {
         font-size: 48px;
-        color: #667eea;
+        color: #a66ae4;
       }
 
       .addTitle {
@@ -109,12 +222,12 @@
         min-width: 120px;
         height: 40px;
         font-size: 16px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #a66ae4 0%, #814dbd 100%);
         border: none;
         border-radius: 8px;
 
         &:hover {
-          background: linear-gradient(135deg, #5568d3 0%, #6a3f8f 100%);
+          background: linear-gradient(135deg, #9556d3 0%, #7239a8 100%);
         }
 
         &:disabled {
@@ -142,10 +255,26 @@
       border-radius: 12px;
       overflow: hidden;
       transition: all 0.3s ease;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
 
       &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+        box-shadow: 0 8px 24px rgba(166, 106, 228, 0.15);
+      }
+
+      :global(.ant-card-body) {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 16px;
+        overflow: hidden;
+      }
+
+      :global(.ant-card-actions) {
+        margin-top: auto;
+        flex-shrink: 0;
       }
 
       .coverWrapper {
@@ -164,9 +293,35 @@
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         padding-bottom: 12px;
         border-bottom: 1px solid #f0f0f0;
+        flex-shrink: 0;
+
+        .cardHeaderLeft {
+          flex: 1 1 auto;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-width: 0;
+
+          .authorInfo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+
+            .authorAvatar {
+              flex-shrink: 0;
+            }
+
+            .authorName {
+              font-size: 14px;
+              font-weight: 500;
+              color: #666;
+            }
+          }
+        }
 
         .noteTitle {
           margin: 0;
@@ -177,10 +332,13 @@
           overflow: hidden;
           text-overflow: ellipsis;
           display: -webkit-box;
-          -webkit-line-clamp: 2;
+          -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           line-height: 1.5;
-          max-height: 3em;
+          word-break: break-word;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+          min-height: 0;
         }
 
         .headerRight {
@@ -194,7 +352,7 @@
 
         .platform {
           padding: 4px 12px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #a66ae4 0%, #814dbd 100%);
           color: #fff;
           font-size: 12px;
           border-radius: 12px;
@@ -230,13 +388,33 @@
 
       .errorMessage {
         margin: 12px 0;
+        padding: 12px 0;
+        word-break: break-word;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        max-width: 100%;
+        flex-shrink: 0;
+        
+        :global(.ant-tag) {
+          max-width: 100%;
+          white-space: normal;
+          word-break: break-word;
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
       }
 
       .cardFooter {
         display: flex;
         justify-content: space-between;
         padding-top: 12px;
-        border-top: 1px solid #f0f0f0;
+        margin-top: auto;
+        flex-shrink: 0;
+
+        &.cardFooterNoError {
+          margin-top: auto;
+          padding-top: 12px;
+        }
 
         .createTime,
         .updateTime {
@@ -262,29 +440,6 @@
     min-height: 400px;
   }
 
-  .addModalContent {
-    padding: 16px 0;
-
-    .modalDesc {
-      margin-bottom: 16px;
-      font-size: 14px;
-      color: #666;
-    }
-
-    :global {
-      .ant-input-affix-wrapper {
-        border-radius: 8px;
-        padding: 12px 16px;
-
-        &:hover,
-        &:focus,
-        &.ant-input-affix-wrapper-focused {
-          border-color: #667eea;
-          box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
-        }
-      }
-    }
-  }
 
   // 详情弹窗样式
   .detailLoading {
@@ -343,17 +498,17 @@
       }
     }
 
-    .statsSection {
+      .statsSection {
       margin-bottom: 24px;
       padding: 20px;
-      background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+      background: linear-gradient(135deg, rgba(166, 106, 228, 0.08) 0%, rgba(129, 77, 189, 0.08) 100%);
       border-radius: 12px;
 
       h4 {
         margin: 0 0 16px;
         font-size: 18px;
         font-weight: 600;
-        color: #667eea;
+        color: #a66ae4;
       }
 
       .statsGrid {
@@ -378,7 +533,7 @@
             font-size: 24px;
             font-weight: 700;
             color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #a66ae4 0%, #814dbd 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -418,12 +573,12 @@
           }
         }
 
-        .historyItem {
+          .historyItem {
           padding: 16px;
           margin-bottom: 12px;
           background: #fafafa;
           border-radius: 8px;
-          border-left: 3px solid #667eea;
+          border-left: 3px solid #a66ae4;
 
           &:last-child {
             margin-bottom: 0;
@@ -431,7 +586,7 @@
 
           .historyTime {
             font-size: 13px;
-            color: #667eea;
+            color: #a66ae4;
             font-weight: 600;
             margin-bottom: 8px;
           }
@@ -455,7 +610,7 @@
   }
 }
 
-// 响应式设计
+// Responsive design
 @media (max-width: 768px) {
   .dataMonitoringPage {
     padding: 16px;
@@ -481,6 +636,30 @@
     .monitoringList {
       grid-template-columns: 1fr;
       padding: 16px;
+    }
+
+    .addFormSection,
+    .filterSection {
+      padding: 0 16px;
+
+      .addForm {
+        flex-direction: column;
+
+        .platformSelect,
+        .linkInput,
+        .addButton {
+          width: 100%;
+        }
+      }
+
+      .filterContent {
+        flex-direction: column;
+        align-items: flex-start;
+
+        .filterSelect {
+          width: 100%;
+        }
+      }
     }
 
     .addSection {

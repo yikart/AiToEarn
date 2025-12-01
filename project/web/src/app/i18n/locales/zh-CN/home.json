@@ -12,7 +12,9 @@
       "status": "状态",
       "docs": "文档",
       "blog": "博客",
-      "download": "下载"
+      "download": "下载",
+      "brand": "品牌",
+      "resources": "资源"
     },
     "getStarted": "立即开始"
   },

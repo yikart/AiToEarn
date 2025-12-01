@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 // Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
@@ -45,18 +45,18 @@ import styles from './styles/difyHome.module.scss'
 
 // External image URL constants
 const IMAGE_URLS = {
-  calendar: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1.%20content%20publish/calendar.jpeg',
-  supportChannels: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/1.%20content%20publish/support_channels.jpeg',
-  hotspot: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot.jpg',
-  hotspot2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot2.jpeg',
-  hotspot3: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot3.jpeg',
-  hotspot4: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/2.%20content%20hotspot/hotspot4.jpeg',
-  contentSearch: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch.gif',
-  contentSearch1: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch1.jpeg',
-  contentSearch2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch2.jpeg',
-  contentSearch4: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/3.%20content%20search/contentsearch4.jpeg',
-  commentFilter: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/4.%20comments%20search/commentfilter.jpeg',
-  commentFilter2: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
+  calendar: 'https://assets.aitoearn.ai/common/web/app-screenshot/1.%20content%20publish/calendar.jpeg',
+  supportChannels: 'https://assets.aitoearn.ai/common/web/app-screenshot/1.%20content%20publish/support_channels.jpeg',
+  hotspot: 'https://assets.aitoearn.ai/common/web/app-screenshot/2.%20content%20hotspot/hotspot.jpg',
+  hotspot2: 'https://assets.aitoearn.ai/common/web/app-screenshot/2.%20content%20hotspot/hotspot2.jpeg',
+  hotspot3: 'https://assets.aitoearn.ai/common/web/app-screenshot/2.%20content%20hotspot/hotspot3.jpeg',
+  hotspot4: 'https://assets.aitoearn.ai/common/web/app-screenshot/2.%20content%20hotspot/hotspot4.jpeg',
+  contentSearch: 'https://assets.aitoearn.ai/common/web/app-screenshot/3.%20content%20search/contentsearch.gif',
+  contentSearch1: 'https://assets.aitoearn.ai/common/web/app-screenshot/3.%20content%20search/contentsearch1.jpeg',
+  contentSearch2: 'https://assets.aitoearn.ai/common/web/app-screenshot/3.%20content%20search/contentsearch2.jpeg',
+  contentSearch4: 'https://assets.aitoearn.ai/common/web/app-screenshot/3.%20content%20search/contentsearch4.jpeg',
+  commentFilter: 'https://assets.aitoearn.ai/common/web/app-screenshot/4.%20comments%20search/commentfilter.jpeg',
+  commentFilter2: 'https://assets.aitoearn.ai/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
 }
 
 // Release banner
@@ -95,6 +95,43 @@ function LoadingDots() {
       <span className={styles.dot}>.</span>
       <span className={styles.dot}>.</span>
     </span>
+  )
+}
+
+// 懒加载组件 - 当元素进入视口时才开始加载
+function LazyLoadSection({ children }: { children: ReactNode }) {
+  const [shouldLoad, setShouldLoad] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoad(true)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        // 当元素距离视口 200px 时开始加载
+        rootMargin: '200px',
+      },
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  return (
+    <div ref={sectionRef}>
+      {shouldLoad ? children : <div style={{ minHeight: '400px' }} />}
+    </div>
   )
 }
 
@@ -1434,7 +1471,7 @@ function UpcomingFeaturesSection() {
               <div className={styles.carouselContainer}>
                 <div className={`${styles.carouselSlide} ${styles.active}`}>
                   <video
-                    src="https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4"
+                    src="https://assets.aitoearn.ai/production/temp/uploads/890044ad-c3a3-4a4c-8981-0eb72abff538.mp4"
                     controls
                     className={styles.desktopCarouselImage}
                     style={{ borderRadius: '16px', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.2)' }}
@@ -1905,14 +1942,30 @@ export default function Home() {
     <div className={styles.difyHome}>
       <ReleaseBanner />
       <Hero />
-      <BrandBar />
-      <ContentPublishingSection />
-      <ContentHotspotSection />
-      <ContentSearchSection />
-      <CommentsSearchSection />
-      <ContentEngagementSection />
-      <UpcomingFeaturesSection />
-      <DownloadSection />
+      <LazyLoadSection>
+        <BrandBar />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentPublishingSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentHotspotSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentSearchSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <CommentsSearchSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentEngagementSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <UpcomingFeaturesSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <DownloadSection />
+      </LazyLoadSection>
       {/* <EnterpriseSection />
       <StatsSection /> */}
       {/* <CommunitySection /> */}

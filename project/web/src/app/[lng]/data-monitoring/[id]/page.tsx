@@ -6,7 +6,7 @@ import {
   StarOutlined,
   CommentOutlined,
 } from '@ant-design/icons'
-import { Card, Image, message, Spin, Table, Tag } from 'antd'
+import { Avatar, Card, Image, message, Spin, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -33,6 +33,7 @@ export default function MonitoringDetailPage() {
 
   const [loading, setLoading] = useState(true)
   const [detail, setDetail] = useState<NoteMonitoringItem | null>(null)
+  const [coverError, setCoverError] = useState(false)
 
   // 加载监测详情
   const loadDetail = async () => {
@@ -187,20 +188,53 @@ export default function MonitoringDetailPage() {
       {/* 笔记信息 */}
       <Card className={styles.noteCard}>
         <div className={styles.noteContent}>
-          {detail.postDetail?.cover && (
+          {(detail.postDetail?.cover || detail.postDetail?.url) && (
             <div className={styles.noteImage}>
-              <Image
-                src={detail.postDetail.cover}
-                alt={detail.postDetail.title || t('detail.noteCover')}
-                width={500}
-                height={500}
-                style={{ objectFit: 'cover', borderRadius: '8px' }}
-              />
+              {coverError && detail.postDetail?.url ? (
+                detail.postDetail.mediaType === 'video' ? (
+                  <video
+                    src={detail.postDetail.url}
+                    controls
+                    className={styles.mediaContent}
+                    style={{ borderRadius: '8px' }}
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <img
+                    src={detail.postDetail.url}
+                    alt={detail.postDetail.title || t('detail.noteCover')}
+                    className={styles.mediaContent}
+                    style={{ objectFit: 'cover', borderRadius: '8px', width: '100%', height: 'auto' }}
+                  />
+                )
+              ) : detail.postDetail?.cover ? (
+                <Image
+                  src={detail.postDetail.cover}
+                  alt={detail.postDetail.title || t('detail.noteCover')}
+                  width={500}
+                  height={500}
+                  style={{ objectFit: 'cover', borderRadius: '8px' }}
+                  onError={() => setCoverError(true)}
+                />
+              ) : null}
             </div>
           )}
           <div className={styles.noteDetails}>
+            {detail.postDetail?.author && (
+              <div className={styles.authorInfo}>
+                <Avatar
+                  src={detail.postDetail.avatar}
+                  size={40}
+                  className={styles.authorAvatar}
+                >
+                  {detail.postDetail.author.charAt(0)}
+                </Avatar>
+                <span className={styles.authorName}>{detail.postDetail.author}</span>
+              </div>
+            )}
             <h2 className={styles.noteTitle}>
-              {detail.postDetail?.title || t('list.untitled')}
+              {detail.postDetail?.title || detail.postDetail?.desc || t('list.untitled')}
             </h2>
             <div className={styles.noteTags}>
               {detail.link && (

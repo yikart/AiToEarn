@@ -1,5 +1,6 @@
 import Icon from '@ant-design/icons'
 import { Avatar, Popover } from 'antd'
+import { useState } from 'react'
 import styles from '@/app/[lng]/hotContent/components/HotContent/hotContent.module.scss'
 import Uparrow from '@/app/[lng]/hotContent/svgs/uparrow.svg'
 import { useTransClient } from '@/app/i18n/client'
@@ -81,10 +82,26 @@ export function HotContentBaseInfo({
   onClick?: () => void
 }) {
   const { t } = useTransClient('hot-content')
+  const [imageError, setImageError] = useState(false)
+  const displayText = title || nickname
+
   return (
     <div className={styles.baseInfo}>
       <Popover placement="right" content={coverPopoverContent}>
-        <img className="baseInfo-cover" src={cover} />
+        {imageError ? (
+          <div className={`${styles.baseInfoCoverPlaceholder} baseInfo-cover`}>
+            <span className={styles.placeholderText}>
+              {displayText.length > 10 ? `${displayText.substring(0, 10)}...` : displayText}
+            </span>
+          </div>
+        ) : (
+          <img 
+            className="baseInfo-cover" 
+            src={cover} 
+            onError={() => setImageError(true)}
+            alt={title || nickname}
+          />
+        )}
       </Popover>
       <div className="baseInfo-right">
         {title
