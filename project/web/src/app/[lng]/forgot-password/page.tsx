@@ -16,13 +16,13 @@ export default function ForgotPasswordPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [resetForm] = Form.useForm()
 
-  // 处理Modal关闭
+  // Handle modal close
   const handleModalClose = () => {
     setIsModalOpen(false)
     resetForm.resetFields()
   }
 
-  // 处理发送重置密码邮件
+  // Handle send reset password email
   const handleSubmit = async (values: { mail: string }) => {
     try {
       setLoading(true)
@@ -41,7 +41,7 @@ export default function ForgotPasswordPage() {
     }
   }
 
-  // 处理重置密码
+  // Handle reset password
   const handleResetPassword = async (values: { code: string, password: string }) => {
     try {
       setLoading(true)
