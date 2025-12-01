@@ -57,12 +57,6 @@ export const routerData: IRouterDataItem[] = [
   },
 
   {
-    name: '数据监控',
-    translationKey: 'dataMonitoring',
-    path: '/data-monitoring',
-  },
-
-  {
     name: '素材库',
     translationKey: 'header.materialLibrary',
     path: '/material',
@@ -132,6 +126,10 @@ export const homeHeaderRouterData = {
       {
         href: '/aiRank',
         title: directTrans('route', 'aiRank'),
+      },
+      {
+        href: '/data-monitoring',
+        title: directTrans('route', 'dataMonitoring'),
       },
     ]
   },
