@@ -15,7 +15,7 @@ import {
 } from '@ant-design/icons'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 
 // Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
@@ -95,6 +95,43 @@ function LoadingDots() {
       <span className={styles.dot}>.</span>
       <span className={styles.dot}>.</span>
     </span>
+  )
+}
+
+// 懒加载组件 - 当元素进入视口时才开始加载
+function LazyLoadSection({ children }: { children: ReactNode }) {
+  const [shouldLoad, setShouldLoad] = useState(false)
+  const sectionRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setShouldLoad(true)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        // 当元素距离视口 200px 时开始加载
+        rootMargin: '200px',
+      },
+    )
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current)
+    }
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  return (
+    <div ref={sectionRef}>
+      {shouldLoad ? children : <div style={{ minHeight: '400px' }} />}
+    </div>
   )
 }
 
@@ -1905,14 +1942,30 @@ export default function Home() {
     <div className={styles.difyHome}>
       <ReleaseBanner />
       <Hero />
-      <BrandBar />
-      <ContentPublishingSection />
-      <ContentHotspotSection />
-      <ContentSearchSection />
-      <CommentsSearchSection />
-      <ContentEngagementSection />
-      <UpcomingFeaturesSection />
-      <DownloadSection />
+      <LazyLoadSection>
+        <BrandBar />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentPublishingSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentHotspotSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentSearchSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <CommentsSearchSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <ContentEngagementSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <UpcomingFeaturesSection />
+      </LazyLoadSection>
+      <LazyLoadSection>
+        <DownloadSection />
+      </LazyLoadSection>
       {/* <EnterpriseSection />
       <StatsSection /> */}
       {/* <CommunitySection /> */}

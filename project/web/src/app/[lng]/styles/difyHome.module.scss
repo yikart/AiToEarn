@@ -336,7 +336,10 @@
   padding: 80px 0 120px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   text-align: center;
-  min-height: 600px; // 确保整个hero区域有稳定的最小高度
+  min-height: 100vh; // 占满一屏
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .heroContainer {
