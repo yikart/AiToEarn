@@ -492,7 +492,7 @@ const PublishDialog = memo(
           setExpandedPubItem(undefined)
           // 注意：不要调用clear()，否则会清空pubList导致无法选择账户
         }
-      }, [accounts, open])
+      }, [open])
 
       // 离线账号（status === 0）不可参与发布：如被默认选中则自动移除
       useEffect(() => {
