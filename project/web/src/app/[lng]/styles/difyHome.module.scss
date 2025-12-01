@@ -124,6 +124,8 @@
   cursor: pointer;
   font-family: inherit;
   padding: 0;
+  display: inline-flex;
+  align-items: center;
 
   &:hover {
     color: #4f46e5;
@@ -143,6 +145,12 @@
       height: 2px;
       background: #4f46e5;
       border-radius: 1px;
+    }
+  }
+
+  &.navLinkWithDropdown {
+    &:hover {
+      color: #4f46e5;
     }
   }
 }
@@ -289,6 +297,12 @@
     color: #4f46e5;
     border-left-color: #4f46e5;
     font-weight: 600;
+  }
+
+  &.mobileNavSubLink {
+    padding-left: 40px;
+    font-size: 14px;
+    font-weight: 400;
   }
 }
 
