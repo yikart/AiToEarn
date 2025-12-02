@@ -39,6 +39,7 @@ import {
   getDays,
   getUtcDays,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
+import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import { bilibiliSkip } from '@/app/[lng]/accounts/plat/BilibiliLogin'
 import {
   FacebookPagesModal,
@@ -612,11 +613,12 @@ const PublishDialog = memo(
         // 检查插件状态
         if (status !== PluginStatus.READY) {
           console.warn('插件未就绪，无法执行插件发布')
+          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
           // 将所有插件任务标记为失败
           for (const item of pluginItems) {
-            const platformTaskId = platformTaskIdMap.get(item.account.id)
-            if (platformTaskId) {
-              updatePlatformTask(taskId, platformTaskId, {
+            const requestId = platformTaskIdMap.get(item.account.id)
+            if (requestId) {
+              updatePlatformTaskByRequestId(requestId, {
                 status: PlatformTaskStatus.ERROR,
                 error: '浏览器插件未就绪，请先安装并授权插件',
                 endTime: Date.now(),
@@ -630,11 +632,12 @@ const PublishDialog = memo(
         const publishTasks = pluginItems.map(async (item) => {
           const platform = item.account.type as PluginPlatformType
           const accountId = item.account.id
-          // 获取该账号对应的平台任务ID（用于精确更新）
-          const platformTaskId = platformTaskIdMap.get(accountId)!
+          // 获取该账号对应的 requestId（用于进度匹配）
+          const requestId = platformTaskIdMap.get(accountId)!
+          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
 
           // 更新任务状态为发布中
-          updatePlatformTask(taskId, platformTaskId, {
+          updatePlatformTaskByRequestId(requestId, {
             status: PlatformTaskStatus.PUBLISHING,
             startTime: Date.now(),
           })
@@ -645,6 +648,7 @@ const PublishDialog = memo(
             const publishParams: PluginPublishParams = {
               platform,
               accountId, // 传入账号ID，用于区分同一平台的多个账号
+              requestId, // 传入 requestId，插件回调时带回用于匹配
               type: item.params.video ? 'video' : 'image',
               title: item.params.title || '',
               desc: item.params.des || '',
@@ -653,7 +657,7 @@ const PublishDialog = memo(
 
             // 视频发布 - 优先传 file，没有 file 才传 URL
             if (item.params.video) {
-              // 视频：优先传 file（转换 Blob 为 File），没有则传 ossUrl 浏览器插件对接90%
+              // 视频：优先传 file（转换 Blob 为 File），没有则传 ossUrl
               if (item.params.video.file) {
                 // 将 Blob 转换为 File
                 const videoFile = new File(
@@ -686,26 +690,16 @@ const PublishDialog = memo(
               }).filter(item => item !== '')
             }
 
-            // 执行发布
-            const { updatePlatformTaskByRequestId } = usePluginStore.getState()
+            // 执行发布，通过 requestId 匹配进度
             const result = await publish(publishParams, (progress) => {
-              // 优先使用 requestId 匹配（插件返回的唯一标识）
-              if (progress.requestId) {
-                updatePlatformTaskByRequestId(progress.requestId, {
-                  progress,
-                  requestId: progress.requestId, // 首次设置时保存 requestId
-                })
-              }
-              else {
-                // 降级使用平台任务ID精确更新进度
-                updatePlatformTask(taskId, platformTaskId, {
-                  progress,
-                })
-              }
+              // 使用 requestId 精确更新进度
+              updatePlatformTaskByRequestId(requestId, {
+                progress,
+              })
             })
 
             // 发布成功，更新任务状态
-            updatePlatformTask(taskId, platformTaskId, {
+            updatePlatformTaskByRequestId(requestId, {
               status: PlatformTaskStatus.COMPLETED,
               result: {
                 success: true,
@@ -747,7 +741,7 @@ const PublishDialog = memo(
           }
           catch (error) {
             // 发布失败
-            updatePlatformTask(taskId, platformTaskId, {
+            updatePlatformTaskByRequestId(requestId, {
               status: PlatformTaskStatus.ERROR,
               error: error instanceof Error ? error.message : '发布失败',
               result: {
@@ -761,6 +755,8 @@ const PublishDialog = memo(
 
         // 并行执行所有发布任务
         await Promise.all(publishTasks)
+
+        useCalendarTiming.getState().getPubRecord()
       }, [])
 
       /**
@@ -792,15 +788,18 @@ const PublishDialog = memo(
         if (pluginPublishItems.length > 0) {
           const { addPublishTask, getPublishTask } = usePluginStore.getState()
 
-          // 创建平台任务列表，为每个任务生成唯一ID
+          // 创建平台任务列表，为每个任务生成唯一ID和requestId
           const platformTasks: PlatformPublishTask[] = pluginPublishItems.map((item) => {
             // 使用账号ID生成唯一的平台任务ID
             const platformTaskId = `${item.account.type}-${item.account.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-            // 保存映射关系，用于后续更新
-            platformTaskIdMap.set(item.account.id, platformTaskId)
+            // 生成唯一的 requestId，用于插件回调匹配
+            const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+            // 保存映射关系，用于后续更新（保存 requestId 而非 platformTaskId）
+            platformTaskIdMap.set(item.account.id, requestId)
 
             return {
               id: platformTaskId,
+              requestId, // 创建时就指定，传给插件后回调时匹配
               platform: item.account.type as PluginPlatformType,
               accountId: item.account.id,
               params: {

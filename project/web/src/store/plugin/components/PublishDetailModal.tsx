@@ -10,7 +10,6 @@ import { CloseOutlined, LinkOutlined } from '@ant-design/icons'
 import { Avatar, Button, Modal, Progress, Tag } from 'antd'
 import dayjs from 'dayjs'
 import Image from 'next/image'
-import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useAccountStore } from '@/store/account'
@@ -241,15 +240,13 @@ export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDe
   const { t } = useTranslation('plugin')
 
   // 订阅 store 中的任务列表，实现实时更新
-  const publishTasks = usePluginStore(state => state.publishTasks)
-
-  // 根据 taskId 或 task 获取当前任务
-  const currentTask = useMemo(() => {
+  // 使用选择器直接获取目标任务，确保每次状态更新都能触发重新渲染
+  const currentTask = usePluginStore((state) => {
     if (taskId) {
-      return publishTasks.find(t => t.id === taskId)
+      return state.publishTasks.find(t => t.id === taskId)
     }
     return task
-  }, [taskId, task, publishTasks])
+  })
 
   if (!currentTask) {
     return null

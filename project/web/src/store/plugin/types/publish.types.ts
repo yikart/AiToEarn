@@ -52,6 +52,9 @@ export interface PublishParams {
   /** 账号ID（用于区分同一平台的多个账号） */
   accountId?: string
 
+  /** 请求ID（用于进度回调匹配，由调用方生成） */
+  requestId?: string
+
   /** 标题 */
   title?: string
 

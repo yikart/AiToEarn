@@ -521,6 +521,7 @@ export const usePluginStore = create(
             const tasks = state.publishTasks.map((task) => {
               // 在该任务的所有平台任务中查找匹配的 requestId
               const hasMatch = task.platformTasks.some(pt => pt.requestId === requestId)
+
               if (!hasMatch)
                 return task
 
