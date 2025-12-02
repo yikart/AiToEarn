@@ -30,15 +30,16 @@ export class AccountRepository extends BaseRepository<Account> {
   }
 
   async addAccount(data: Partial<Account>): Promise<Account> {
+    const { clientType, type, uid } = data
     const info: Account | null = await this.accountModel.findOne({
-      type: data.type,
-      uid: data.uid,
+      type,
+      uid,
     })
 
     if (info) {
       await this.accountModel.updateOne({
-        type: data.type,
-        uid: data.uid,
+        type,
+        uid,
       }, {
         ...data,
         status: AccountStatus.NORMAL,
@@ -46,13 +47,20 @@ export class AccountRepository extends BaseRepository<Account> {
       })
     }
     else {
-      data['_id'] = `${data.type}_${data.uid}`
+      let newId = `${type}_${uid}`
+      if (
+        [AccountType.Xhs, AccountType.Douyin].includes(type as AccountType)
+      ) {
+        newId += `_${clientType}`
+        data.clientType = clientType
+      }
+      data['_id'] = newId
       await this.accountModel.create({ ...data })
     }
 
     return (await this.accountModel.findOne({
-      type: data.type,
-      uid: data.uid,
+      type,
+      uid,
     }))!
   }
 

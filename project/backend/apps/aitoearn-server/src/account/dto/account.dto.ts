@@ -1,11 +1,12 @@
 import { AccountType, createZodDto } from '@yikart/common'
-import { AccountStatus } from '@yikart/mongodb'
+import { AccountStatus, ClientType } from '@yikart/mongodb'
 import { z } from 'zod'
 
 const CreateAccountSchema = z.object({
   refresh_token: z.string().min(1).optional(),
   access_token: z.string().min(1).optional(),
   type: z.enum(AccountType),
+  clientType: z.enum(ClientType).optional(),
   loginCookie: z.string().min(1).optional(),
   loginTime: z.coerce.date().optional(),
   uid: z.string().min(1),
@@ -33,6 +34,7 @@ const UpdateAccountSchema = z.object({
   refresh_token: z.string().min(1).optional(),
   access_token: z.string().min(1).optional(),
   type: z.enum(AccountType).optional(),
+  clientType: z.enum(ClientType).optional(),
   loginCookie: z.string().min(1).optional(),
   loginTime: z.coerce.date().optional(),
   uid: z.string().min(1).optional(),

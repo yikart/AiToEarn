@@ -9,6 +9,11 @@ export enum AccountStatus {
   ABNORMAL = 0,
 }
 
+export enum ClientType {
+  WEB = 'web',
+  APP = 'app',
+}
+
 @Schema({
   collection: 'account',
   versionKey: false,
@@ -34,6 +39,12 @@ export class Account extends WithTimestampSchema {
     index: true,
   })
   type: AccountType
+
+  @Prop({
+    required: false,
+    enum: ClientType,
+  })
+  clientType?: ClientType
 
   @Prop({
     required: true,
