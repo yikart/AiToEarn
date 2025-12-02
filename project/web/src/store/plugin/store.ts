@@ -35,12 +35,30 @@ const ERROR_MESSAGES = {
   PUBLISHING_IN_PROGRESS: '当前正在发布中，请稍后再试',
 } as const
 
+/**
+ * 生成发布标识key（用于区分不同账号的发布）
+ * @param platform 平台类型
+ * @param accountId 账号ID（可选）
+ */
+function getPublishKey(platform: PluginPlatformType, accountId?: string): string {
+  return accountId ? `${platform}-${accountId}` : platform
+}
+
+/** 平台发布进度映射，key 为 platform 或 platform-accountId */
+export type PlatformProgressMap = Map<string, ProgressEvent>
+
 /** 插件 Store 状态接口（只定义属性） */
 export interface IPluginStore {
   status: Status
   pollingTimer: NodeJS.Timeout | null
+  /** @deprecated 使用 publishingPlatforms 代替 */
   isPublishing: boolean
+  /** 正在发布的集合，key 为 platform 或 platform-accountId，支持同一平台多账号同时发布 */
+  publishingPlatforms: Set<string>
+  /** @deprecated 使用 platformProgress 代替 */
   publishProgress: ProgressEvent | null
+  /** 各平台发布进度，key 为 platform 或 platform-accountId */
+  platformProgress: PlatformProgressMap
   publishTasks: PublishTask[]
   taskListConfig: PublishTaskListConfig
   platformAccounts: PlatformAccountsMap
@@ -50,7 +68,9 @@ const store: IPluginStore = {
   status: Status.UNKNOWN,
   pollingTimer: null,
   isPublishing: false,
+  publishingPlatforms: new Set(),
   publishProgress: null,
+  platformProgress: new Map(),
   publishTasks: [],
   taskListConfig: {
     maxTasks: 100,
@@ -324,7 +344,11 @@ export const usePluginStore = create(
 
         /** 发布内容到指定平台 */
         async publish(params: PublishParams, onProgress?: ProgressCallback) {
-          const { status, isPublishing } = get()
+          const { status, publishingPlatforms, platformProgress } = get()
+          const platform = params.platform
+          const accountId = params.accountId
+          // 使用 platform + accountId 作为唯一标识，支持同一平台多账号同时发布
+          const publishKey = getPublishKey(platform, accountId)
 
           if (status === Status.NOT_INSTALLED)
             throw new Error(ERROR_MESSAGES.PLUGIN_NOT_INSTALLED)
@@ -332,36 +356,70 @@ export const usePluginStore = create(
           if (status !== Status.READY)
             throw new Error(ERROR_MESSAGES.PLUGIN_NOT_READY)
 
-          if (isPublishing)
-            throw new Error(ERROR_MESSAGES.PUBLISHING_IN_PROGRESS)
+          // 检查该账号是否正在发布（同一平台不同账号可以同时发布）
+          if (publishingPlatforms.has(publishKey))
+            throw new Error(`${platform} ${ERROR_MESSAGES.PUBLISHING_IN_PROGRESS}`)
+
+          // 标记该账号正在发布，并初始化进度
+          const newPublishingPlatforms = new Set(publishingPlatforms)
+          newPublishingPlatforms.add(publishKey)
+          const newPlatformProgress = new Map(platformProgress)
+          const initialProgress: ProgressEvent = { stage: 'download', progress: 0, message: '准备发布...', timestamp: Date.now() }
+          newPlatformProgress.set(publishKey, initialProgress)
 
           set({
-            isPublishing: true,
-            publishProgress: { stage: 'download', progress: 0, message: '准备发布...', timestamp: Date.now() },
+            isPublishing: newPublishingPlatforms.size > 0,
+            publishingPlatforms: newPublishingPlatforms,
+            publishProgress: initialProgress, // 兼容旧代码
+            platformProgress: newPlatformProgress,
           })
 
           try {
             const result = await window.AIToEarnPlugin!.publish(params, (progress) => {
-              set({ publishProgress: progress })
+              // 更新该账号的进度
+              const updatedProgress = new Map(get().platformProgress)
+              updatedProgress.set(publishKey, progress)
+              set({
+                publishProgress: progress, // 兼容旧代码
+                platformProgress: updatedProgress,
+              })
               onProgress?.(progress)
             })
 
+            // 发布完成，移除该账号的发布状态，更新进度为完成
+            const updatedPlatforms = new Set(get().publishingPlatforms)
+            updatedPlatforms.delete(publishKey)
+            const completedProgress: ProgressEvent = { stage: 'complete', progress: 100, message: '发布成功', timestamp: Date.now() }
+            const updatedPlatformProgress = new Map(get().platformProgress)
+            updatedPlatformProgress.set(publishKey, completedProgress)
+
             set({
-              isPublishing: false,
-              publishProgress: { stage: 'complete', progress: 100, message: '发布成功', timestamp: Date.now() },
+              isPublishing: updatedPlatforms.size > 0,
+              publishingPlatforms: updatedPlatforms,
+              publishProgress: completedProgress, // 兼容旧代码
+              platformProgress: updatedPlatformProgress,
             })
 
             return result
           }
           catch (error) {
+            // 发布失败，移除该账号的发布状态，更新进度为错误
+            const updatedPlatforms = new Set(get().publishingPlatforms)
+            updatedPlatforms.delete(publishKey)
+            const errorProgress: ProgressEvent = {
+              stage: 'error',
+              progress: 0,
+              message: error instanceof Error ? error.message : '发布失败',
+              timestamp: Date.now(),
+            }
+            const updatedPlatformProgress = new Map(get().platformProgress)
+            updatedPlatformProgress.set(publishKey, errorProgress)
+
             set({
-              isPublishing: false,
-              publishProgress: {
-                stage: 'error',
-                progress: 0,
-                message: error instanceof Error ? error.message : '发布失败',
-                timestamp: Date.now(),
-              },
+              isPublishing: updatedPlatforms.size > 0,
+              publishingPlatforms: updatedPlatforms,
+              publishProgress: errorProgress, // 兼容旧代码
+              platformProgress: updatedPlatformProgress,
             })
             console.error('发布失败:', error)
             throw error
@@ -370,7 +428,26 @@ export const usePluginStore = create(
 
         /** 重置发布状态 */
         resetPublishState() {
-          set({ isPublishing: false, publishProgress: null })
+          set({
+            isPublishing: false,
+            publishingPlatforms: new Set(),
+            publishProgress: null,
+            platformProgress: new Map(),
+          })
+        },
+
+        /** 获取指定平台/账号的发布进度 */
+        getPlatformProgress(platform: PluginPlatformType, accountId?: string) {
+          const publishKey = getPublishKey(platform, accountId)
+          return get().platformProgress.get(publishKey) || null
+        },
+
+        /** 清除指定平台/账号的发布进度 */
+        clearPlatformProgress(platform: PluginPlatformType, accountId?: string) {
+          const publishKey = getPublishKey(platform, accountId)
+          const updatedProgress = new Map(get().platformProgress)
+          updatedProgress.delete(publishKey)
+          set({ platformProgress: updatedProgress })
         },
 
         /** 添加发布任务 */
@@ -397,15 +474,59 @@ export const usePluginStore = create(
           return id
         },
 
-        /** 更新平台任务 */
-        updatePlatformTask(taskId: string, platform: PluginPlatformType, updates: Partial<PlatformPublishTask>) {
+        /**
+         * 更新平台任务（使用平台任务ID精确匹配）
+         * @param taskId 发布任务ID
+         * @param platformTaskId 平台任务ID（精确匹配）
+         * @param updates 更新内容
+         */
+        updatePlatformTask(
+          taskId: string,
+          platformTaskId: string,
+          updates: Partial<PlatformPublishTask>,
+        ) {
           set((state) => {
             const tasks = state.publishTasks.map((task) => {
               if (task.id !== taskId)
                 return task
 
               const platformTasks = task.platformTasks.map((pt: PlatformPublishTask) => {
-                if (pt.platform !== platform)
+                // 使用平台任务ID精确匹配
+                if (pt.id !== platformTaskId)
+                  return pt
+                return { ...pt, ...updates }
+              })
+
+              return {
+                ...task,
+                platformTasks,
+                updatedAt: Date.now(),
+                overallStatus: calculateOverallStatus(platformTasks),
+              }
+            })
+            return { publishTasks: tasks }
+          })
+        },
+
+        /**
+         * 通过 requestId 更新平台任务进度（插件回调使用）
+         * @param requestId 插件返回的请求ID
+         * @param updates 更新内容
+         */
+        updatePlatformTaskByRequestId(
+          requestId: string,
+          updates: Partial<PlatformPublishTask>,
+        ) {
+          set((state) => {
+            const tasks = state.publishTasks.map((task) => {
+              // 在该任务的所有平台任务中查找匹配的 requestId
+              const hasMatch = task.platformTasks.some(pt => pt.requestId === requestId)
+              if (!hasMatch)
+                return task
+
+              const platformTasks = task.platformTasks.map((pt: PlatformPublishTask) => {
+                // 使用 requestId 精确匹配
+                if (pt.requestId !== requestId)
                   return pt
                 return { ...pt, ...updates }
               })

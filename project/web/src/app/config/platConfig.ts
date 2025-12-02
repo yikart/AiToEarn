@@ -81,7 +81,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       icon: xhsSvg,
       url: 'https://www.xiaohongshu.com/',
       themeColor: 'red',
-      pubTypes: new Set([]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
         titleMax: 100,
         topicMax: 100,
@@ -144,7 +144,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: 'douyin',
       icon: douyinSvg,
       url: 'https://www.douyin.com/',
-      pubTypes: new Set([]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
         titleMax: 30,
         topicMax: 5,

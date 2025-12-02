@@ -25,7 +25,7 @@ export {
 
 // Store
 export { usePluginStore } from './store'
-export type { PlatformAccountsMap } from './store'
+export type { PlatformAccountsMap, PlatformProgressMap } from './store'
 
 // Types
 export type {

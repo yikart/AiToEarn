@@ -38,7 +38,8 @@
     "workId": "Work ID",
     "shareLink": "Share Link",
     "failReason": "Fail Reason",
-    "close": "Close"
+    "close": "Close",
+    "unknownAccount": "Unknown Account"
   },
   "common": {
     "confirm": "Confirm",

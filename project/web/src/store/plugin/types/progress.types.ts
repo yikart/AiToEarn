@@ -25,6 +25,9 @@ export interface ProgressEvent {
   /** 进度消息 */
   message?: string
 
+  /** 请求ID（用于区分不同的发布任务） */
+  requestId?: string
+
   /** 附加数据 */
   data?: any
 

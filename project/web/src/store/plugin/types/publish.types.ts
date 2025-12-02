@@ -49,6 +49,9 @@ export interface PublishParams {
   /** 发布类型 */
   type: PublishType
 
+  /** 账号ID（用于区分同一平台的多个账号） */
+  accountId?: string
+
   /** 标题 */
   title?: string
 

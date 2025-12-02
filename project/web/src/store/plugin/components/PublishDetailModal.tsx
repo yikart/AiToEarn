@@ -7,11 +7,14 @@
 
 import type { PlatformPublishTask, PluginPlatformType, PublishTask } from '../types/baseTypes'
 import { CloseOutlined, LinkOutlined } from '@ant-design/icons'
-import { Button, Modal, Progress, Tag } from 'antd'
+import { Avatar, Button, Modal, Progress, Tag } from 'antd'
 import dayjs from 'dayjs'
-import { useEffect, useState } from 'react'
+import Image from 'next/image'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { useAccountStore } from '@/store/account'
+import { getOssUrl } from '@/utils/oss'
 import { usePluginStore } from '../store'
 import { PlatformTaskStatus } from '../types/baseTypes'
 import styles from './PublishDetailModal.module.scss'
@@ -82,15 +85,45 @@ function getPlatformName(platform: PluginPlatformType): string {
  */
 function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask }) {
   const { t } = useTranslation('plugin')
+  const accountMap = useAccountStore(state => state.accountMap)
+
+  // 获取账号信息
+  const account = platformTask.accountId ? accountMap.get(platformTask.accountId) : null
+  const platInfo = AccountPlatInfoMap.get(platformTask.platform)
 
   return (
     <div className={styles.platformCard}>
-      {/* 平台信息 */}
+      {/* 平台信息 - 包含账号头像 */}
       <div className={styles.platformCard_header}>
         <div className={styles.platform}>
-          <span className={styles.platformName}>
-            {getPlatformName(platformTask.platform as PluginPlatformType)}
-          </span>
+          {/* 账号头像（带平台角标） */}
+          <div className={styles.accountAvatar}>
+            <Avatar
+              src={account?.avatar ? getOssUrl(account.avatar) : undefined}
+              size={40}
+              style={{ backgroundColor: '#f0f0f0' }}
+            >
+              {account?.nickname?.charAt(0) || '?'}
+            </Avatar>
+            {/* 平台角标 */}
+            {platInfo?.icon && (
+              <div className={styles.platformBadge}>
+                <Image src={platInfo.icon} alt={platInfo.name} width={16} height={16} />
+              </div>
+            )}
+          </div>
+
+          {/* 账号信息 */}
+          <div className={styles.accountInfo}>
+            <span className={styles.accountName} title={account?.nickname}>
+              {account?.nickname || t('publishDetail.unknownAccount' as any)}
+            </span>
+            <span className={styles.platformName}>
+              {getPlatformName(platformTask.platform as PluginPlatformType)}
+            </span>
+          </div>
+
+          {/* 状态标签 */}
           <Tag color={getStatusColor(platformTask.status)}>
             {t(`common.${platformTask.status}`)}
           </Tag>
@@ -206,19 +239,17 @@ function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask 
  */
 export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDetailModalProps) {
   const { t } = useTranslation('plugin')
-  const getPublishTask = usePluginStore(state => state.getPublishTask)
-  const [currentTask, setCurrentTask] = useState<PublishTask | undefined>(task)
 
-  // 如果传入 taskId，从 store 中获取任务
-  useEffect(() => {
-    if (taskId && getPublishTask) {
-      const foundTask = getPublishTask(taskId)
-      setCurrentTask(foundTask)
+  // 订阅 store 中的任务列表，实现实时更新
+  const publishTasks = usePluginStore(state => state.publishTasks)
+
+  // 根据 taskId 或 task 获取当前任务
+  const currentTask = useMemo(() => {
+    if (taskId) {
+      return publishTasks.find(t => t.id === taskId)
     }
-    else if (task) {
-      setCurrentTask(task)
-    }
-  }, [taskId, task, getPublishTask])
+    return task
+  }, [taskId, task, publishTasks])
 
   if (!currentTask) {
     return null
@@ -274,7 +305,7 @@ export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDe
           <div className={styles.taskList}>
             {currentTask.platformTasks.map(platformTask => (
               <PlatformTaskCard
-                key={platformTask.platform}
+                key={platformTask.id}
                 platformTask={platformTask}
               />
             ))}

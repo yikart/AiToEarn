@@ -22,8 +22,17 @@ export enum PlatformTaskStatus {
  * 单个平台的发布任务
  */
 export interface PlatformPublishTask {
+  /** 任务唯一ID（用于精确匹配更新） */
+  id: string
+
+  /** 插件返回的请求ID（用于匹配进度回调） */
+  requestId?: string
+
   /** 平台类型 */
   platform: PluginPlatformType
+
+  /** 账号ID，用于关联账号信息 */
+  accountId?: string
 
   /** 发布参数 */
   params: PublishParams

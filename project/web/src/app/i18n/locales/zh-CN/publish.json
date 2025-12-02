@@ -73,7 +73,8 @@
     "searchLocation": "搜索位置",
     "selectLocation": "请选择位置",
     "description": "描述",
-    "descriptionPlaceholder": "开始写"
+    "descriptionPlaceholder": "开始写",
+    "fans": "粉丝"
   },
   "writingAssistant": "写作助手",
   "aiAssistant": "AI助手",
@@ -331,5 +332,9 @@
     "label": "来源",
     "web": "网页端",
     "app": "App端"
+  },
+  "pluginPublish": {
+    "ready": "插件发布",
+    "notReady": "插件未就绪"
   }
 }

@@ -38,7 +38,8 @@
     "workId": "作品ID",
     "shareLink": "分享链接",
     "failReason": "失败原因",
-    "close": "关闭"
+    "close": "关闭",
+    "unknownAccount": "未知账号"
   },
   "common": {
     "confirm": "确定",
