@@ -8,32 +8,45 @@
 export const DEFAULT_POLLING_INTERVAL = 2000
 
 /**
- * 插件状态文本映射
+ * 插件状态国际化 key 映射
  */
-export const PLUGIN_STATUS_TEXT = {
-  UNKNOWN: '未检测',
-  CHECKING: '检测中...',
-  CONNECTED: '已连接',
-  NOT_INSTALLED: '未安装',
+export const PLUGIN_STATUS_I18N_KEY = {
+  UNKNOWN: 'plugin:status.unknown',
+  CHECKING: 'plugin:status.checking',
+  READY: 'plugin:status.ready',
+  INSTALLED_NO_PERMISSION: 'plugin:status.installedNoPermission',
+  NOT_INSTALLED: 'plugin:status.notInstalled',
+  // 兼容旧代码
+  CONNECTED: 'plugin:status.ready',
 } as const
 
 /**
- * 发布阶段文本映射
+ * 发布阶段国际化 key 映射
  */
-export const PUBLISH_STAGE_TEXT = {
-  download: '下载资源',
-  upload: '上传文件',
-  publish: '发布中',
-  complete: '完成',
-  error: '错误',
+export const PUBLISH_STAGE_I18N_KEY = {
+  download: 'plugin:stage.download',
+  upload: 'plugin:stage.upload',
+  publish: 'plugin:stage.publish',
+  complete: 'plugin:stage.complete',
+  error: 'plugin:stage.error',
 } as const
 
 /**
- * 错误消息
+ * 错误消息国际化 key
  */
-export const ERROR_MESSAGES = {
-  PLUGIN_NOT_INSTALLED: '请先安装 AIToEarn 浏览器插件',
-  PUBLISHING_IN_PROGRESS: '当前正在发布中，请稍后再试',
-  LOGIN_FAILED: '登录失败',
-  PUBLISH_FAILED: '发布失败',
+export const ERROR_MESSAGE_I18N_KEY = {
+  PLUGIN_NOT_INSTALLED: 'plugin:error.pluginNotInstalled',
+  PUBLISHING_IN_PROGRESS: 'plugin:error.publishingInProgress',
+  LOGIN_FAILED: 'plugin:error.loginFailed',
+  PUBLISH_FAILED: 'plugin:error.publishFailed',
+} as const
+
+/**
+ * 任务状态国际化 key 映射
+ */
+export const TASK_STATUS_I18N_KEY = {
+  pending: 'plugin:common.pending',
+  publishing: 'plugin:common.publishing',
+  completed: 'plugin:common.completed',
+  error: 'plugin:common.error',
 } as const

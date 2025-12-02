@@ -83,7 +83,7 @@ Web页面 (接收结果)
 |------|------|
 | `src/homeInject/WebAPI.ts` | Web API SDK实现 |
 | `src/homeInject/content_script_home.tsx` | Content Script通信层 |
-| `src/homeInject/types.ts` | 类型定义 |
+| `src/homeInject/baseTypes.ts` | 类型定义 |
 | `docs/WEB_API.md` | 完整API文档 |
 | `public/demo.html` | 交互式Demo |
 

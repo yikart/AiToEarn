@@ -356,6 +356,9 @@
         <div id="pluginStatus">
           <span class="status-badge error">检测中...</span>
         </div>
+        <div id="permissionStatus" style="margin-top: 10px;">
+          <span class="status-badge error">权限检测中...</span>
+        </div>
       </div>
 
       <!-- 登录功能 -->
@@ -483,19 +486,69 @@
   </div>
 
   <script>
+    // 定时器ID
+    let pluginCheckTimer = null;
+    let permissionCheckTimer = null;
+    
     // 检测插件是否安装
     function checkPlugin() {
       const statusEl = document.getElementById('pluginStatus');
       if (window.AIToEarnPlugin) {
         statusEl.innerHTML = '<span class="status-badge ready">✓ 插件已就绪</span>';
         console.log('AIToEarn插件已加载');
+        
+        // 清除插件检测定时器
+        if (pluginCheckTimer) {
+          clearTimeout(pluginCheckTimer);
+          pluginCheckTimer = null;
+        }
+        
+        // 插件已就绪，检查权限
+        checkPermission();
       } else {
         statusEl.innerHTML = '<span class="status-badge error">✗ 插件未安装</span>';
-        setTimeout(checkPlugin, 500); // 继续检测
+        document.getElementById('permissionStatus').innerHTML = '<span class="status-badge error">✗ 请先安装插件</span>';
+        
+        // 继续定时检测插件
+        pluginCheckTimer = setTimeout(checkPlugin, 500);
       }
     }
 
-    // 初始化
+    // 检测插件权限
+    async function checkPermission() {
+      const permissionEl = document.getElementById('permissionStatus');
+      
+      try {
+        const result = await window.AIToEarnPlugin.checkPermission();
+        
+        if (result.granted) {
+          permissionEl.innerHTML = '<span class="status-badge ready">✓ 已授权必需权限</span>';
+          console.log('插件权限已授予:', result.permissions);
+          
+          // 清除权限检测定时器（权限检查通过，停止检测）
+          if (permissionCheckTimer) {
+            clearTimeout(permissionCheckTimer);
+            permissionCheckTimer = null;
+          }
+        } else {
+          const missingPerms = result.permissions ? 
+            `(已授权: ${result.permissions.join(', ')})` : '';
+          permissionEl.innerHTML = `<span class="status-badge error">✗ 权限未完全授予 ${missingPerms}</span>`;
+          console.warn('插件权限未完全授予:', result);
+          
+          // 继续定时检测权限（可能用户会授予权限）
+          permissionCheckTimer = setTimeout(checkPermission, 2000);
+        }
+      } catch (error) {
+        console.error('权限检查失败:', error);
+        permissionEl.innerHTML = '<span class="status-badge error">✗ 权限检查失败</span>';
+        
+        // 权限检查失败，继续重试
+        permissionCheckTimer = setTimeout(checkPermission, 2000);
+      }
+    }
+
+    // 页面加载完成后开始检查
     checkPlugin();
 
     // 切换内容类型

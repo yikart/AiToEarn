@@ -1,0 +1,82 @@
+{
+  "status": {
+    "unknown": "未检测",
+    "checking": "检测中...",
+    "ready": "插件已就绪",
+    "installedNoPermission": "插件已安装，待授权",
+    "notInstalled": "插件未安装",
+    "connected": "已连接"
+  },
+  "stage": {
+    "download": "下载资源",
+    "upload": "上传文件",
+    "publish": "发布中",
+    "complete": "完成",
+    "error": "错误"
+  },
+  "error": {
+    "pluginNotInstalled": "请先安装 AIToEarn 浏览器插件",
+    "publishingInProgress": "当前正在发布中，请稍后再试",
+    "loginFailed": "登录失败",
+    "publishFailed": "发布失败"
+  },
+  "publishList": {
+    "title": "发布列表",
+    "empty": "暂无发布记录",
+    "platforms": "平台",
+    "status": "状态",
+    "time": "时间",
+    "viewDetail": "查看详情"
+  },
+  "publishDetail": {
+    "title": "发布详情",
+    "platform": "平台",
+    "progress": "进度",
+    "status": "状态",
+    "message": "消息",
+    "result": "结果",
+    "workId": "作品ID",
+    "shareLink": "分享链接",
+    "failReason": "失败原因",
+    "close": "关闭"
+  },
+  "common": {
+    "confirm": "确定",
+    "cancel": "取消",
+    "loading": "加载中...",
+    "success": "成功",
+    "failed": "失败",
+    "pending": "待发布",
+    "publishing": "发布中",
+    "completed": "已完成",
+    "error": "失败",
+    "action": "操作",
+    "total": "共",
+    "items": "条",
+    "viewLink": "查看链接",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "createdAt": "创建时间",
+    "PENDING": "待发布",
+    "PUBLISHING": "发布中",
+    "COMPLETED": "已完成",
+    "ERROR": "失败"
+  },
+  "header": {
+    "pluginActive": "插件已激活",
+    "pluginInactive": "插件未激活",
+    "downloadPlugin": "下载插件",
+    "downloadDescription": "AIToEarn 浏览器插件可以帮助您快速发布内容到各大平台。请点击下方按钮下载安装。",
+    "downloadButton": "立即下载",
+    "chromeWebStore": "Chrome 应用商店",
+    "githubRelease": "GitHub 下载",
+    "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
+    "platformAccounts": "平台账号",
+    "notLoggedIn": "未登录",
+    "loginNow": "立即登录",
+    "viewPublishList": "查看发布列表",
+    "permissionRequired": "需要授权",
+    "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
+    "checkPermission": "重新检查权限"
+  }
+}

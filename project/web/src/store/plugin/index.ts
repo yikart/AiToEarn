@@ -2,12 +2,16 @@
  * 浏览器插件模块统一导出
  */
 
+// Components
+export * from './components'
+
 // Constants
 export {
   DEFAULT_POLLING_INTERVAL,
-  ERROR_MESSAGES,
-  PLUGIN_STATUS_TEXT,
-  PUBLISH_STAGE_TEXT,
+  ERROR_MESSAGE_I18N_KEY,
+  PLUGIN_STATUS_I18N_KEY,
+  PUBLISH_STAGE_I18N_KEY,
+  TASK_STATUS_I18N_KEY,
 } from './constants'
 
 // Hooks
@@ -20,30 +24,41 @@ export {
 
 // Store
 export { usePluginStore } from './store'
+export type { PlatformAccountsMap } from './store'
 
 // Types
 export type {
   AIToEarnPluginAPI,
   OperationResult,
+  PermissionCheckResult,
   PlatAccountInfo,
-  PlatformType,
+  PlatformPublishTask,
+  PluginPlatformType,
   PluginStore,
   ProgressCallback,
   ProgressEvent,
   PublishParams,
   PublishResult,
-} from './types/types'
+  PublishTask,
+  PublishTaskListConfig,
+} from './types/baseTypes'
 
-export { PluginStatus } from './types/types'
+export {
+  PlatformTaskStatus,
+  PLUGIN_SUPPORTED_PLATFORMS,
+  PluginStatus,
+} from './types/baseTypes'
 
 // Utils
 export {
   formatFileSize,
   formatProgress,
-  getPluginStatusText,
-  getPublishStageText,
+  getPluginStatusI18nKey,
+  getPublishStageI18nKey,
   isPluginConnected,
+  isPluginInstalledNoPermission,
   isPluginNotInstalled,
+  isPluginReady,
   isValidImageFile,
   isValidVideoFile,
   validateFileSize,

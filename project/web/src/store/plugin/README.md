@@ -7,7 +7,7 @@ src/store/plugin/
 ├── index.ts              # 统一导出
 ├── store.ts              # Zustand Store 状态管理
 ├── hooks.ts              # 自定义 Hooks
-├── types.ts              # TypeScript 类型定义
+├── baseTypes.ts              # TypeScript 类型定义
 ├── constants.ts          # 常量定义
 ├── utils.ts              # 工具函数
 ├── README.md             # 本文档

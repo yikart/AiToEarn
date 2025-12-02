@@ -4,6 +4,7 @@ import type {
   ForwardedRef,
 } from 'react'
 import {
+  ApiOutlined,
   ArrowLeftOutlined,
   BellOutlined,
   BookOutlined,
@@ -15,13 +16,14 @@ import {
   UserOutlined,
 } from '@ant-design/icons'
 import { NoSSR } from '@kwooshung/react-no-ssr'
-import { Badge, Button, Popover } from 'antd'
+import { Badge, Button, Popover, Tooltip } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
   forwardRef,
   memo,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -36,6 +38,8 @@ import NotificationPanel from '@/components/notification/NotificationPanel'
 import SignInCalendar from '@/components/SignInCalendar'
 import { useNotification } from '@/hooks/useNotification'
 import { useGetClientLng } from '@/hooks/useSystem'
+import { PluginStatusModal, usePluginStore } from '@/store/plugin'
+import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { useUserStore } from '@/store/user'
 
 import styles from './styles/lyaoutHeader.module.scss'
@@ -172,11 +176,52 @@ const LyaoutHeader = memo(
     const router = useRouter()
     const { t } = useTransClient('common')
     const { t: tVip } = useTransClient('vip')
+    const { t: tPlugin } = useTransClient('plugin')
     const lng = useGetClientLng()
     const [notificationVisible, setNotificationVisible] = useState(false)
     const [vipModalVisible, setVipModalVisible] = useState(false)
     const [pointsModalVisible, setPointsModalVisible] = useState(false)
+    const [pluginModalVisible, setPluginModalVisible] = useState(false)
     const { unreadCount } = useNotification()
+
+    // 插件状态
+    const pluginStatus = usePluginStore(state => state.status)
+    const init = usePluginStore(state => state.init)
+
+    // 判断插件状态
+    const isPluginReady = pluginStatus === PluginStatus.READY
+    const isPluginInstalled = pluginStatus === PluginStatus.INSTALLED_NO_PERMISSION
+    const isPluginNotInstalled = pluginStatus === PluginStatus.NOT_INSTALLED || pluginStatus === PluginStatus.UNKNOWN
+
+    /**
+     * 获取插件图标颜色
+     * 未安装：灰色 #bfbfbf
+     * 已安装未授权：警告色 #f59e0b
+     * 已就绪：主题色 #a66ae4
+     */
+    const getPluginIconColor = () => {
+      if (isPluginReady)
+        return '#a66ae4' // 主题色 theColor5
+      if (isPluginInstalled)
+        return '#f59e0b' // 警告色
+      return '#bfbfbf' // 灰色（明显一点）
+    }
+
+    /**
+     * 获取插件状态提示文字
+     */
+    const getPluginTooltip = () => {
+      if (isPluginReady)
+        return tPlugin('status.ready')
+      if (isPluginInstalled)
+        return tPlugin('status.installedNoPermission')
+      return tPlugin('status.notInstalled')
+    }
+
+    // 初始化插件检测
+    useEffect(() => {
+      init()
+    }, [init])
 
     const [isVisible, setIsVisible] = useState(true)
     const [isClosing, setIsClosing] = useState(false)
@@ -217,6 +262,22 @@ const LyaoutHeader = memo(
                   fontSize: '12px',
                 }}
               />
+              {/* 插件状态图标 */}
+              <Tooltip title={getPluginTooltip()}>
+                <Button
+                  type="text"
+                  icon={(
+                    <ApiOutlined
+                      style={{
+                        fontSize: 18,
+                        color: getPluginIconColor(),
+                      }}
+                    />
+                  )}
+                  onClick={() => setPluginModalVisible(true)}
+                  className={styles.pluginButton}
+                />
+              </Tooltip>
               <NoSSR>
                 {userStore.token && (
                   <SignInCalendar className={styles.signInCalendarButton} />
@@ -302,13 +363,14 @@ const LyaoutHeader = memo(
           <div className={styles.bannerContent} onClick={() => setVipModalVisible(true)}>
             {' '}
             {/* 点击横幅打开VIP弹窗，而不是跳转 */}
-            <span className={styles.releaseText}>Join Plus — 
-            Enjoy Unlimited Free Sora-2,
-           <span style={{ color: '#FFD700', fontSize: '14px', fontWeight: 'bold', padding: '0 5px', fontStyle: 'italic' }}> 
-            NEW
-           </span>
-            Nano Banana Pro !
+            <span className={styles.releaseText}>
+              Join Plus —
+              Enjoy Unlimited Free Sora-2,
+              <span style={{ color: '#FFD700', fontSize: '14px', fontWeight: 'bold', padding: '0 5px', fontStyle: 'italic' }}>
+                NEW
               </span>
+              Nano Banana Pro !
+            </span>
           </div>
           <button
             className={styles.closeButton}
@@ -335,6 +397,11 @@ const LyaoutHeader = memo(
         <PointsDetailModal
           open={pointsModalVisible}
           onClose={() => setPointsModalVisible(false)}
+        />
+        {/* 插件状态弹窗 */}
+        <PluginStatusModal
+          visible={pluginModalVisible}
+          onClose={() => setPluginModalVisible(false)}
         />
       </>
     )

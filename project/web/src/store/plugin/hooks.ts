@@ -6,14 +6,14 @@
 
 import type {
   OperationResult,
-  PlatformType,
+  PluginPlatformType,
   ProgressCallback,
   PublishParams,
-} from './types/types'
+} from './types/baseTypes'
 import { useCallback, useEffect } from 'react'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { usePluginStore } from './store'
-import { PluginStatus } from './types/types'
+import { PluginStatus } from './types/baseTypes'
 
 /**
  * 使用插件状态和方法的 Hook
@@ -46,8 +46,11 @@ export function usePlugin(
     }
   }, [autoPolling, pollingInterval, startPolling, stopPolling])
 
-  // 判断插件是否已连接
-  const isConnected = status === PluginStatus.CONNECTED
+  // 判断插件是否已就绪
+  const isReady = status === PluginStatus.READY
+
+  // 判断插件是否已连接（兼容旧代码）
+  const isConnected = isReady
 
   // 判断插件是否未安装
   const isNotInstalled = status === PluginStatus.NOT_INSTALLED
@@ -55,12 +58,17 @@ export function usePlugin(
   // 判断是否正在检测
   const isChecking = status === PluginStatus.CHECKING
 
+  // 判断插件是否已安装但未授权
+  const isInstalledNoPermission = status === PluginStatus.INSTALLED_NO_PERMISSION
+
   return {
     // 状态
     status,
+    isReady,
     isConnected,
     isNotInstalled,
     isChecking,
+    isInstalledNoPermission,
     isPublishing,
     publishProgress,
 
@@ -86,7 +94,7 @@ export function usePluginLogin() {
    * @returns Promise<账号信息>
    */
   const loginToPlatform = useCallback(
-    async (platform: PlatformType) => {
+    async (platform: PluginPlatformType) => {
       try {
         const accountInfo = await login(platform)
         return { success: true, data: accountInfo } as OperationResult
@@ -140,7 +148,7 @@ export function usePluginPublish() {
    */
   const publishVideo = useCallback(
     async (
-      platform: PlatformType,
+      platform: PluginPlatformType,
       video: File | string,
       cover: File | string,
       options: {
@@ -170,7 +178,7 @@ export function usePluginPublish() {
    */
   const publishImages = useCallback(
     async (
-      platform: PlatformType,
+      platform: PluginPlatformType,
       images: (File | string)[],
       options: {
         title?: string
@@ -207,7 +215,7 @@ export function usePluginPublish() {
  * 完整的插件工作流 Hook（登录 + 发布）
  */
 export function usePluginWorkflow() {
-  const { isConnected } = usePlugin()
+  const { isReady } = usePlugin()
   const { login } = usePluginLogin()
   const { publishVideo, publishImages } = usePluginPublish()
 
@@ -216,7 +224,7 @@ export function usePluginWorkflow() {
    */
   const loginAndPublishVideo = useCallback(
     async (
-      platform: PlatformType,
+      platform: PluginPlatformType,
       video: File | string,
       cover: File | string,
       options: {
@@ -243,7 +251,7 @@ export function usePluginWorkflow() {
    */
   const loginAndPublishImages = useCallback(
     async (
-      platform: PlatformType,
+      platform: PluginPlatformType,
       images: (File | string)[],
       options: {
         title?: string
@@ -265,7 +273,7 @@ export function usePluginWorkflow() {
   )
 
   return {
-    isConnected,
+    isReady,
     loginAndPublishVideo,
     loginAndPublishImages,
   }

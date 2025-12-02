@@ -4,35 +4,53 @@
 
 import type { ProgressEvent } from '@/store'
 import { PluginStatus } from '@/store'
-import { PLUGIN_STATUS_TEXT, PUBLISH_STAGE_TEXT } from './constants'
+import { PLUGIN_STATUS_I18N_KEY, PUBLISH_STAGE_I18N_KEY } from './constants'
 
 /**
- * 获取插件状态文本
+ * 获取插件状态的国际化 key
  * @param status 插件状态
- * @returns 状态文本
+ * @returns i18n key
  */
-export function getPluginStatusText(status: PluginStatus): string {
-  return PLUGIN_STATUS_TEXT[status] || '未知状态'
+export function getPluginStatusI18nKey(status: PluginStatus): string {
+  return PLUGIN_STATUS_I18N_KEY[status] || 'plugin:status.unknown'
 }
 
 /**
- * 获取发布阶段文本
+ * 获取发布阶段的国际化 key
  * @param stage 发布阶段
- * @returns 阶段文本
+ * @returns i18n key
  */
-export function getPublishStageText(
+export function getPublishStageI18nKey(
   stage: ProgressEvent['stage'],
 ): string {
-  return PUBLISH_STAGE_TEXT[stage] || stage
+  return PUBLISH_STAGE_I18N_KEY[stage] || stage
 }
 
 /**
- * 判断插件是否已连接
+ * 判断插件是否已就绪（已安装且已授权）
+ * @param status 插件状态
+ * @returns 是否已就绪
+ */
+export function isPluginReady(status: PluginStatus): boolean {
+  return status === PluginStatus.READY
+}
+
+/**
+ * 判断插件是否已连接（兼容旧代码，等同于 isPluginReady）
  * @param status 插件状态
  * @returns 是否已连接
  */
 export function isPluginConnected(status: PluginStatus): boolean {
-  return status === PluginStatus.CONNECTED
+  return status === PluginStatus.READY
+}
+
+/**
+ * 判断插件是否已安装但未授权
+ * @param status 插件状态
+ * @returns 是否已安装未授权
+ */
+export function isPluginInstalledNoPermission(status: PluginStatus): boolean {
+  return status === PluginStatus.INSTALLED_NO_PERMISSION
 }
 
 /**
@@ -41,7 +59,7 @@ export function isPluginConnected(status: PluginStatus): boolean {
  * @returns 是否未安装
  */
 export function isPluginNotInstalled(status: PluginStatus): boolean {
-  return status === PluginStatus.NOT_INSTALLED
+  return status === PluginStatus.NOT_INSTALLED || status === PluginStatus.UNKNOWN
 }
 
 /**

@@ -422,6 +422,9 @@ const PublishDialog = memo(
       useEffect(() => {
         if (!open)
           return
+        if (!expandedPubItem?.params.des && expandedPubItem?.params.images?.length === 0 && !expandedPubItem?.params.video) {
+          return
+        }
         if (isClear.current) {
           isClear.current = false
           return
@@ -429,7 +432,6 @@ const PublishDialog = memo(
         setPubData(pubListChoosed)
       }, [pubListChoosed])
       useEffect(() => {
-        console.log(expandedPubItem)
         if (!expandedPubItem || pubList.length === 0)
           return
         if (isInit.current) {

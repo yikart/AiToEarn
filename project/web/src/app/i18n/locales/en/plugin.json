@@ -1,0 +1,82 @@
+{
+  "status": {
+    "unknown": "Unknown",
+    "checking": "Checking...",
+    "ready": "Plugin Ready",
+    "installedNoPermission": "Plugin Installed, Pending Authorization",
+    "notInstalled": "Plugin Not Installed",
+    "connected": "Connected"
+  },
+  "stage": {
+    "download": "Downloading",
+    "upload": "Uploading",
+    "publish": "Publishing",
+    "complete": "Complete",
+    "error": "Error"
+  },
+  "error": {
+    "pluginNotInstalled": "Please install AIToEarn browser plugin first",
+    "publishingInProgress": "Publishing in progress, please try again later",
+    "loginFailed": "Login failed",
+    "publishFailed": "Publish failed"
+  },
+  "publishList": {
+    "title": "Publish List",
+    "empty": "No publish records",
+    "platforms": "Platforms",
+    "status": "Status",
+    "time": "Time",
+    "viewDetail": "View Detail"
+  },
+  "publishDetail": {
+    "title": "Publish Detail",
+    "platform": "Platform",
+    "progress": "Progress",
+    "status": "Status",
+    "message": "Message",
+    "result": "Result",
+    "workId": "Work ID",
+    "shareLink": "Share Link",
+    "failReason": "Fail Reason",
+    "close": "Close"
+  },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "success": "Success",
+    "failed": "Failed",
+    "pending": "Pending",
+    "publishing": "Publishing",
+    "completed": "Completed",
+    "error": "Error",
+    "action": "Action",
+    "total": "Total",
+    "items": "items",
+    "viewLink": "View Link",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "createdAt": "Created At",
+    "PENDING": "Pending",
+    "PUBLISHING": "Publishing",
+    "COMPLETED": "Completed",
+    "ERROR": "Error"
+  },
+  "header": {
+    "pluginActive": "Plugin Active",
+    "pluginInactive": "Plugin Inactive",
+    "downloadPlugin": "Download Plugin",
+    "downloadDescription": "AIToEarn browser plugin helps you quickly publish content to various platforms. Click the button below to download and install.",
+    "downloadButton": "Download Now",
+    "chromeWebStore": "Chrome Web Store",
+    "githubRelease": "GitHub Release",
+    "activeDescription": "Your browser plugin is activated. You can start using the publish feature!",
+    "platformAccounts": "Platform Accounts",
+    "notLoggedIn": "Not Logged In",
+    "loginNow": "Login Now",
+    "viewPublishList": "View Publish List",
+    "permissionRequired": "Permission Required",
+    "permissionDescription": "Plugin is installed but requires necessary permissions to work properly. Please grant the required permissions in your browser extension settings.",
+    "checkPermission": "Check Permission Again"
+  }
+}

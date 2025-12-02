@@ -1,7 +1,7 @@
-import type { PlatformType } from '@/store/plugin/types/types'
+import type { PluginPlatformType } from '@/store/plugin/types/baseTypes'
 
 export interface PlatAccountInfo {
-  type: PlatformType
+  type: PluginPlatformType
   loginCookie: string
   uid: string
   account: string

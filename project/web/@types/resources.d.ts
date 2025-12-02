@@ -32,6 +32,12 @@ interface Resources {
       "pleaseChooseSpaceFirst": "请先选择空间",
       "addTo": "添加到："
     },
+    "noAccountWarning": {
+      "title": "提示",
+      "content": "您还没有添加任何频道账户，建议先添加频道后再创建作品以便发布。",
+      "addAccount": "添加频道",
+      "continuePublish": "继续发布"
+    },
     "facebookPages": {
       "title": "选择Facebook页面",
       "selectAll": "全选",
@@ -214,6 +220,25 @@ interface Resources {
         "selectAccountsButton": "选择账户",
         "create": "创建",
         "cancel": "取消"
+      },
+      "keyDetail": {
+        "title": "MCP Key 详情",
+        "keyName": "Key名称:",
+        "keyValue": "Key值:",
+        "createdTime": "创建时间:",
+        "associatedAccounts": "关联账户:",
+        "accountsCount": "{{count}} 个",
+        "associatedAccountsList": "关联账户列表",
+        "noAccounts": "暂无关联账户",
+        "fetchAccountsFailed": "获取关联账户列表失败",
+        "unlinkSuccess": "解除关联成功",
+        "unlinkFailed": "解除关联失败",
+        "unlinkConfirm": "确定要解除关联吗？",
+        "unlinkButton": "解除关联",
+        "copyKey": "复制Key",
+        "ok": "确定",
+        "cancel": "取消",
+        "paginationText": "第 {{start}}-{{end}} 条，共 {{total}} 条"
       }
     },
     "mediaTypes": {
@@ -601,6 +626,120 @@ interface Resources {
       }
     }
   },
+  "dataMonitoring": {
+    "title": "笔记传播监测",
+    "description": "按分钟级频率监测笔记的点赞、收藏、评论、转发等传播数据，有效验证笔记传播效果",
+    "tabs": {
+      "byLink": "按笔记链接",
+      "byAccount": "按小红书账号"
+    },
+    "actions": {
+      "add": "去添加",
+      "comingSoon": "即将开放",
+      "viewDetail": "查看详情"
+    },
+    "addModal": {
+      "title": "添加笔记监测",
+      "inputPlaceholder": "请输入小红书笔记链接",
+      "linkPlaceholder": "https://www.xiaohongshu.com/explore/...",
+      "linkRequired": "请输入笔记链接",
+      "confirm": "确定",
+      "cancel": "取消",
+      "addSuccess": "添加成功",
+      "addFailed": "添加失败"
+    },
+    "list": {
+      "empty": "暂无监测数据，点击上方按钮添加笔记链接",
+      "untitled": "未命名笔记",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间",
+      "error": "错误",
+      "totalRecords": "共 {{count}} 条记录"
+    },
+    "stats": {
+      "views": "阅读数",
+      "likes": "点赞数",
+      "comments": "评论数",
+      "favorites": "收藏数",
+      "shares": "分享数"
+    },
+    "status": {
+      "pending": "等待中",
+      "processing": "处理中",
+      "completed": "已完成",
+      "success": "成功",
+      "failed": "失败",
+      "enabled": "已启用",
+      "disabled": "已禁用"
+    },
+    "detail": {
+      "back": "返回",
+      "backToList": "返回列表",
+      "notFound": "未找到监测数据",
+      "pause": "暂停监测",
+      "resume": "恢复监测",
+      "paused": "已暂停",
+      "resumed": "已恢复",
+      "export": "导出数据",
+      "exportSuccess": "导出成功",
+      "viewNote": "查看笔记",
+      "pageTitle": "笔记监测详情",
+      "startTime": "开始时间",
+      "updateTime": "更新时间",
+      "noteCover": "笔记封面",
+      "viewOriginal": "查看原文",
+      "dailyIncrement": "每日数据增量",
+      "noData": "暂无数据",
+      "taskId": "任务编号",
+      "createdTime": "任务提交时间",
+      "publishTime": "发布时间",
+      "firstMonitoring": "首次监测时间",
+      "monitoringDuration": "监测时长",
+      "duration": "{{count}}天",
+      "monitoringFrequency": "监测频率",
+      "minutesPerTime": "分钟/次",
+      "lastMonitoring": "最近一次监测",
+      "completionRate": "监测完成度",
+      "monitoringComplete": "监测已完成",
+      "dataDetail": "数据详情",
+      "downloadRecord": "下载记录",
+      "exportResult": "导出结果",
+      "postInfo": "笔记信息",
+      "mediaPreview": "媒体预览",
+      "dataHistory": "数据历史",
+      "noHistory": "暂无历史数据",
+      "status": {
+        "active": "监测中",
+        "paused": "已暂停"
+      },
+      "tabs": {
+        "chart": "累计视图",
+        "table": "增量视图"
+      },
+      "table": {
+        "time": "时间",
+        "date": "日期",
+        "likeIncrement": "点赞增量",
+        "favoriteIncrement": "收藏增量",
+        "commentIncrement": "评论增量",
+        "totalLikes": "即时点赞",
+        "newLikes": "新增点赞",
+        "totalComments": "即时评论",
+        "newComments": "新增评论",
+        "totalFavorites": "即时收藏",
+        "newFavorites": "新增收藏",
+        "total": "共 {{count}} 条",
+        "totalDays": "共 {{count}} 天"
+      }
+    },
+    "error": {
+      "loadFailed": "加载失败",
+      "addFailed": "添加失败",
+      "toggleFailed": "操作失败",
+      "exportFailed": "导出失败",
+      "getDetailFailed": "获取详情失败"
+    }
+  },
   "dataStatistics": {
     "title": "数据统计",
     "description": "在这里查看和分析您的数据统计信息。",
@@ -634,120 +773,6 @@ interface Resources {
     "milestone": "里程碑",
     "milestoneProgress": "里程碑进度",
     "recentWeek": "最近一周"
-  },
-  "dataMonitoring": {
-    "title": "笔记传播监测",
-    "description": "按分钟级频率监测笔记的点赞、收藏、评论、转发等传播数据，有效验证笔记传播效果",
-    "tabs": {
-      "byLink": "按笔记链接",
-      "byAccount": "按小红书账号"
-    },
-    "actions": {
-      "add": "去添加",
-      "comingSoon": "即将开放",
-      "viewDetail": "查看详情"
-    },
-    "addModal": {
-      "title": "添加笔记监测",
-      "inputPlaceholder": "请输入小红书笔记链接",
-      "linkPlaceholder": "https://www.xiaohongshu.com/explore/...",
-      "linkRequired": "请输入笔记链接",
-      "confirm": "确定",
-      "cancel": "取消",
-      "addSuccess": "添加成功",
-      "addFailed": "添加失败"
-    },
-        "list": {
-          "empty": "暂无监测数据，点击上方按钮添加笔记链接",
-          "untitled": "未命名笔记",
-          "createdAt": "创建时间",
-          "updatedAt": "更新时间",
-          "error": "错误",
-          "totalRecords": "共 {{count}} 条记录"
-        },
-    "stats": {
-      "views": "阅读数",
-      "likes": "点赞数",
-      "comments": "评论数",
-      "favorites": "收藏数",
-      "shares": "分享数"
-    },
-        "status": {
-          "pending": "等待中",
-          "processing": "处理中",
-          "completed": "已完成",
-          "success": "成功",
-          "failed": "失败",
-          "enabled": "已启用",
-          "disabled": "已禁用"
-        },
-        "detail": {
-          "back": "返回",
-          "backToList": "返回列表",
-          "notFound": "未找到监测数据",
-          "pause": "暂停监测",
-          "resume": "恢复监测",
-          "paused": "已暂停",
-          "resumed": "已恢复",
-          "export": "导出数据",
-          "exportSuccess": "导出成功",
-          "viewNote": "查看笔记",
-          "pageTitle": "笔记监测详情",
-          "startTime": "开始时间",
-          "updateTime": "更新时间",
-          "noteCover": "笔记封面",
-          "viewOriginal": "查看原文",
-          "dailyIncrement": "每日数据增量",
-          "noData": "暂无数据",
-          "taskId": "任务编号",
-          "createdTime": "任务提交时间",
-          "publishTime": "发布时间",
-          "firstMonitoring": "首次监测时间",
-          "monitoringDuration": "监测时长",
-          "duration": "{{count}}天",
-          "monitoringFrequency": "监测频率",
-          "minutesPerTime": "分钟/次",
-          "lastMonitoring": "最近一次监测",
-          "completionRate": "监测完成度",
-          "monitoringComplete": "监测已完成",
-          "dataDetail": "数据详情",
-          "downloadRecord": "下载记录",
-          "exportResult": "导出结果",
-          "postInfo": "笔记信息",
-          "mediaPreview": "媒体预览",
-          "dataHistory": "数据历史",
-          "noHistory": "暂无历史数据",
-          "status": {
-            "active": "监测中",
-            "paused": "已暂停"
-          },
-          "tabs": {
-            "chart": "累计视图",
-            "table": "增量视图"
-          },
-          "table": {
-            "time": "时间",
-            "date": "日期",
-            "likeIncrement": "点赞增量",
-            "favoriteIncrement": "收藏增量",
-            "commentIncrement": "评论增量",
-            "totalLikes": "即时点赞",
-            "newLikes": "新增点赞",
-            "totalComments": "即时评论",
-            "newComments": "新增评论",
-            "totalFavorites": "即时收藏",
-            "newFavorites": "新增收藏",
-            "total": "共 {{count}} 条",
-            "totalDays": "共 {{count}} 天"
-          }
-        },
-    "error": {
-      "loadFailed": "加载失败",
-      "addFailed": "添加失败",
-      "toggleFailed": "操作失败",
-      "exportFailed": "导出失败",
-      "getDetailFailed": "获取详情失败"
-    }
   },
   "engagement": {
     "title": "互动数据",
@@ -801,6 +826,31 @@ interface Resources {
       "subtitle": "从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。",
       "getStarted": "立即开始",
       "useMobilePhone": "使用移动设备"
+    },
+    "aiGeneration": {
+      "inputPlaceholder": "输入你想创作的内容，AI将为你生成完整的作品...",
+      "generateButton": "生成作品",
+      "generating": "生成中...",
+      "emptyPromptAlert": "请输入生成内容的提示词",
+      "createTaskFailed": "创建任务失败",
+      "thinking": "AI思考中...",
+      "topicPrefix": "创作主题：",
+      "generatedTitlePrefix": "生成主题：",
+      "descriptionPrefix": "📄 ",
+      "failedReasonPrefix": "失败原因: ",
+      "taskTimeout": "任务超时，请稍后重试",
+      "unknownError": "未知错误",
+      "status": {
+        "thinking": "AI思考中...",
+        "waiting": "等待处理...",
+        "generatingContent": "内容生成中",
+        "generatingImage": "图片生成中",
+        "generatingVideo": "视频生成中",
+        "generatingText": "文本生成中",
+        "completed": "生成完成！",
+        "failed": "生成失败",
+        "cancelled": "已取消"
+      }
     },
     "brandBar": {
       "title": "支持的社交媒体平台"
@@ -1751,6 +1801,88 @@ interface Resources {
       "cancel": "取消"
     }
   },
+  "plugin": {
+    "status": {
+      "unknown": "未检测",
+      "checking": "检测中...",
+      "ready": "插件已就绪",
+      "installedNoPermission": "插件已安装，待授权",
+      "notInstalled": "插件未安装",
+      "connected": "已连接"
+    },
+    "stage": {
+      "download": "下载资源",
+      "upload": "上传文件",
+      "publish": "发布中",
+      "complete": "完成",
+      "error": "错误"
+    },
+    "error": {
+      "pluginNotInstalled": "请先安装 AIToEarn 浏览器插件",
+      "publishingInProgress": "当前正在发布中，请稍后再试",
+      "loginFailed": "登录失败",
+      "publishFailed": "发布失败"
+    },
+    "publishList": {
+      "title": "发布列表",
+      "empty": "暂无发布记录",
+      "platforms": "平台",
+      "status": "状态",
+      "time": "时间",
+      "viewDetail": "查看详情"
+    },
+    "publishDetail": {
+      "title": "发布详情",
+      "platform": "平台",
+      "progress": "进度",
+      "status": "状态",
+      "message": "消息",
+      "result": "结果",
+      "workId": "作品ID",
+      "shareLink": "分享链接",
+      "failReason": "失败原因",
+      "close": "关闭"
+    },
+    "common": {
+      "confirm": "确定",
+      "cancel": "取消",
+      "loading": "加载中...",
+      "success": "成功",
+      "failed": "失败",
+      "pending": "待发布",
+      "publishing": "发布中",
+      "completed": "已完成",
+      "error": "失败",
+      "action": "操作",
+      "total": "共",
+      "items": "条",
+      "viewLink": "查看链接",
+      "startTime": "开始时间",
+      "endTime": "结束时间",
+      "createdAt": "创建时间",
+      "PENDING": "待发布",
+      "PUBLISHING": "发布中",
+      "COMPLETED": "已完成",
+      "ERROR": "失败"
+    },
+    "header": {
+      "pluginActive": "插件已激活",
+      "pluginInactive": "插件未激活",
+      "downloadPlugin": "下载插件",
+      "downloadDescription": "AIToEarn 浏览器插件可以帮助您快速发布内容到各大平台。请点击下方按钮下载安装。",
+      "downloadButton": "立即下载",
+      "chromeWebStore": "Chrome 应用商店",
+      "githubRelease": "GitHub 下载",
+      "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
+      "platformAccounts": "平台账号",
+      "notLoggedIn": "未登录",
+      "loginNow": "立即登录",
+      "viewPublishList": "查看发布列表",
+      "permissionRequired": "需要授权",
+      "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
+      "checkPermission": "重新检查权限"
+    }
+  },
   "pricing": {
     "title": "套餐与定价",
     "subtitle": "选择最适合您需求的套餐，开始您的AI创作之旅",
@@ -2387,7 +2519,13 @@ interface Resources {
     "title": "发布作品",
     "confirmClose": {
       "title": "确认关闭",
-      "content": "关闭后，已填写的内容将丢失，是否确认关闭？"
+      "content": "关闭后，已填写的内容将被保存，您下次打开可以恢复，是否确认关闭？"
+    },
+    "restoreData": {
+      "title": "温馨提示",
+      "content": "系统检测到您有未完成的发布记录，是否要恢复？",
+      "okText": "恢复",
+      "cancelText": "不恢复"
     },
     "buttons": {
       "customizePerAccount": "自定义每个账户",
@@ -2455,6 +2593,89 @@ interface Resources {
       "descriptionPlaceholder": "开始写"
     },
     "writingAssistant": "写作助手",
+    "aiAssistant": "AI助手",
+    "aiFeatures": {
+      "shorten": "缩写",
+      "expand": "扩写",
+      "polish": "润色",
+      "translate": "翻译",
+      "generateImage": "制图",
+      "imageToImage": "图生图",
+      "generateVideo": "创作视频",
+      "generateHashtags": "生成话题",
+      "syncToEditor": "同步到编辑器",
+      "targetLanguage": "目标语言",
+      "targetLanguagePlaceholder": "请输入目标语言，如：英文、日文、法文",
+      "inputPrompt": "请输入提示词...",
+      "send": "发送",
+      "defaultPrompts": {
+        "shorten": "请将以下文本缩短，保持核心信息：",
+        "expand": "请将以下文本增加更多细节和描述扩写成适合发布使用的内容，内容翻倍即可不要写的太多，并且回复不要带图片。",
+        "polish": "请润色以下文本，使其更加流畅和专业：",
+        "translate": "你现在是个翻译。如果下面内容是中文，请翻译成英文。如果下面内容是英文，请翻译成中文。只输出翻译结果，不要有其他解释。",
+        "generateImage": "根据我下面提供的内容生成图片，必须生成一张与内容相关的图片。",
+        "imageToImage": "根据用户给出的图片和用户要求生成新的图片。",
+        "generateVideo": "根据我下面提供的内容生成视频创作提示词，确保内容适合发布且不含违规内容。",
+        "generateHashtags": "请按照下面给的内容生成带#的话题生成3-6个，如果是中文内容回复中文话题如果是英文内容回复英文话题，无法区分的优先英文话题，只要回复话题不要其他任何回复"
+      },
+      "processing": "处理中...",
+      "selectText": "请选择要处理的文本",
+      "syncSuccess": "已同步到编辑器",
+      "settings": "设置",
+      "close": "关闭",
+      "chatModel": "聊天模型（缩写/扩写/润色/翻译/话题）",
+      "imageModel": "图片生成模型",
+      "videoModel": "视频生成模型",
+      "selectChatModel": "选择聊天模型",
+      "selectImageModel": "选择图片生成模型",
+      "selectVideoModel": "选择视频模型",
+      "chatModelSaved": "聊天模型设置已保存",
+      "imageModelSaved": "图片生成模型设置已保存",
+      "videoModelSaved": "视频模型设置已保存",
+      "defaultDuration": "默认时长",
+      "defaultResolution": "默认分辨率",
+      "seconds": "秒",
+      "emptyChat": "输入内容开始对话，或选择功能快速处理文本",
+      "copied": "已复制到剪贴板",
+      "hideRaw": "隐藏原始",
+      "showRaw": "查看原始",
+      "imageMissing": "⚠️ 图片数据缺失",
+      "imageLoadFailed": "⚠️ 图片加载失败",
+      "downloadingImages": "正在下载图片...",
+      "downloadingVideo": "正在下载视频...",
+      "imagesSynced": "图片同步成功",
+      "videoSynced": "视频同步成功",
+      "hashtagsAppended": "话题追加成功",
+      "selectVideoModelFirst": "请先选择视频模型",
+      "videoModelUnavailable": "视频模型 {{model}} 不可用，请在设置中重新选择",
+      "generatingVideo": "正在生成视频...",
+      "taskSubmitted": "任务已提交，等待处理...",
+      "generatingStatus": "正在生成视频...",
+      "videoFailed": "视频生成失败",
+      "videoTaskSubmitted": "视频生成任务已提交",
+      "videoGenerationFailed": "视频生成失败，请重试",
+      "videoGenerated": "视频生成成功",
+      "loadingVideoModels": "正在加载视频模型...",
+      "videoModelLoadTimeout": "视频模型加载超时，请稍后重试",
+      "videoProcessingFailed": "视频处理失败，请重试",
+      "imageProcessingFailed": "图片 {{index}} 处理失败: {{error}}",
+      "videoReady": "✅ 视频生成完成！",
+      "uploadImage": "上传图片",
+      "removeImage": "移除图片",
+      "uploadImageFirst": "请先上传图片",
+      "imageUploading": "图片上传中，请稍候...",
+      "imageUploadFailed": "图片上传失败，请重试",
+      "imageUploadSuccess": "图片上传成功",
+      "uploading": "上传中...",
+      "uploadSuccess": "上传成功",
+      "customPrompts": {
+        "title": "自定义提示词",
+        "description": "为每个功能配置自定义提示词。留空则使用默认行为（不添加额外提示词）。",
+        "placeholder": "留空使用默认行为",
+        "clearAll": "清空所有自定义提示词",
+        "clearSuccess": "已清空所有自定义提示词"
+      }
+    },
     "upload": {
       "finishingUp": "正在完成...",
       "uploadImageOrVideo": "上传图片或视频",
@@ -2577,7 +2798,9 @@ interface Resources {
       "facebookAuthFailed": "Facebook授权失败",
       "accountListRefreshed": "账号列表已刷新",
       "refreshAccountListFailed": "刷新账号列表失败",
-      "authFailed": "授权失败"
+      "authFailed": "授权失败",
+      "parseCachedChatModelsFailed": "解析缓存的聊天模型失败",
+      "getChatModelsFailed": "获取聊天模型失败"
     },
     "badges": {
       "offline": "已离线",
@@ -2634,6 +2857,7 @@ interface Resources {
     "interactive": "作品互动",
     "engagement": "互动数据",
     "dataStatistics": "数据统计",
+    "dataMonitoring": "数据监控",
     "navigation": "导航",
     "aiRank": "AI热榜"
   },
