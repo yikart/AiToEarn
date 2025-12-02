@@ -8,6 +8,14 @@
 export const DEFAULT_POLLING_INTERVAL = 2000
 
 /**
+ * 插件下载链接配置
+ */
+export const PLUGIN_DOWNLOAD_LINKS = {
+  chrome: 'https://chromewebstore.google.com/detail/aitoearn',
+  github: 'https://github.com/yikart/AiToEarn/releases',
+} as const
+
+/**
  * 插件状态国际化 key 映射
  */
 export const PLUGIN_STATUS_I18N_KEY = {

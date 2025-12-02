@@ -126,70 +126,21 @@ declare global {
 }
 
 /**
- * 插件 Store 状态接口
+ * 插件 Store 状态接口（只定义属性，方法在 store 中实现）
  */
 export interface PluginStore {
   /** 插件连接状态 */
   status: PluginStatus
-
   /** 轮询定时器 ID */
   pollingTimer: NodeJS.Timeout | null
-
   /** 是否正在发布 */
   isPublishing: boolean
-
   /** 当前发布进度 */
   publishProgress: ProgressEvent | null
-
   /** 发布任务列表 */
   publishTasks?: PublishTask[]
-
   /** 任务列表配置 */
   taskListConfig?: PublishTaskListConfig
-
-  /** 检查插件是否可用 */
-  checkPlugin: () => boolean
-
-  /** 开始轮询插件状态 */
-  startPolling: (interval?: number) => void
-
-  /** 停止轮询插件状态 */
-  stopPolling: () => void
-
-  /** 登录到指定平台 */
-  login: (platform: PluginPlatformType) => Promise<PlatAccountInfo>
-
-  /**
-   * 发布内容到指定平台
-   * @param params 发布参数
-   * @param onProgress 进度回调函数
-   * @returns Promise<发布结果>
-   */
-  publish: (
-    params: PublishParams,
-    onProgress?: ProgressCallback,
-  ) => Promise<PublishResult>
-
-  /** 重置发布状态 */
-  resetPublishState: () => void
-
-  /** 添加发布任务 */
-  addPublishTask?: (task: Omit<PublishTask, 'id' | 'createdAt' | 'updatedAt' | 'overallStatus'>) => string
-
-  /** 更新平台任务 */
-  updatePlatformTask?: (taskId: string, platform: PluginPlatformType, updates: Partial<PlatformPublishTask>) => void
-
-  /** 删除发布任务 */
-  deletePublishTask?: (taskId: string) => void
-
-  /** 清空所有任务 */
-  clearPublishTasks?: () => void
-
-  /** 获取任务详情 */
-  getPublishTask?: (taskId: string) => PublishTask | undefined
-
-  /** 更新任务列表配置 */
-  updateTaskListConfig?: (config: Partial<PublishTaskListConfig>) => void
 }
 
 /**

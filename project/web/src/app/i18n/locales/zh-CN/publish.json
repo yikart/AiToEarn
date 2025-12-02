@@ -326,5 +326,10 @@
       "shares": "分享数"
     },
     "viewWork": "查看作品"
+  },
+  "clientType": {
+    "label": "来源",
+    "web": "网页端",
+    "app": "App端"
   }
 }

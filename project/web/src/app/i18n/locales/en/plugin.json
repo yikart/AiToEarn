@@ -77,6 +77,10 @@
     "viewPublishList": "View Publish List",
     "permissionRequired": "Permission Required",
     "permissionDescription": "Plugin is installed but requires necessary permissions to work properly. Please grant the required permissions in your browser extension settings.",
-    "checkPermission": "Check Permission Again"
+    "checkPermission": "Check Permission Again",
+    "sync": "Sync",
+    "syncToAccount": "Sync to Account Manager",
+    "syncSuccess": "Account synced successfully",
+    "syncFailed": "Account sync failed"
   }
 }

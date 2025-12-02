@@ -7,21 +7,21 @@
 
 import type { PluginPlatformType, PublishTask } from '../types/baseTypes'
 import {
-  ApiOutlined,
   CheckCircleOutlined,
-  ChromeOutlined,
-  ExclamationCircleOutlined,
-  GithubOutlined,
   LoginOutlined,
+  SyncOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Button, Card, Divider, Empty, Modal, Space, Spin, Tag, Tooltip } from 'antd'
+import { Avatar, Button, Card, Divider, Empty, message, Modal, Space, Spin, Tag, Tooltip } from 'antd'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import AvatarPlat from '@/components/AvatarPlat'
+import { useAccountStore } from '@/store/account'
+import { PLUGIN_DOWNLOAD_LINKS } from '../constants'
 import { usePluginStore } from '../store'
 import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus } from '../types/baseTypes'
+import { PluginDownloadContent } from './PluginDownloadContent'
 import styles from './PluginStatusModal.module.scss'
 import { PublishDetailModal } from './PublishDetailModal'
 import { PublishListModal } from './PublishListModal'
@@ -35,14 +35,6 @@ export interface PluginStatusModalProps {
 
   /** 关闭回调 */
   onClose: () => void
-}
-
-/**
- * 插件下载链接配置
- */
-const DOWNLOAD_LINKS = {
-  chrome: 'https://chromewebstore.google.com/detail/aitoearn',
-  github: 'https://github.com/yikart/AiToEarn/releases',
 }
 
 /**
@@ -65,9 +57,12 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
   const publishTasks = usePluginStore(state => state.publishTasks)
   const init = usePluginStore(state => state.init)
   const login = usePluginStore(state => state.login)
+  const syncAccountToDatabase = usePluginStore(state => state.syncAccountToDatabase)
+  const accountGroupList = useAccountStore(state => state.accountGroupList)
 
   const [loading, setLoading] = useState(false)
   const [loginLoading, setLoginLoading] = useState<PluginPlatformType | null>(null)
+  const [syncLoading, setSyncLoading] = useState<PluginPlatformType | null>(null)
   const [showPublishList, setShowPublishList] = useState(false)
   const [showPublishDetail, setShowPublishDetail] = useState(false)
   const [selectedTask, setSelectedTask] = useState<PublishTask | null>(null)
@@ -94,6 +89,32 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
   }
 
   /**
+   * 处理同步账号到数据库
+   */
+  const handleSyncAccount = async (platform: PluginPlatformType) => {
+    setSyncLoading(platform)
+    try {
+      // 使用默认分组
+      const defaultGroup = accountGroupList.find(g => g.isDefault)
+      const result = await syncAccountToDatabase(platform, defaultGroup?.id)
+
+      if (result) {
+        message.success(t('header.syncSuccess' as any))
+      }
+      else {
+        message.error(t('header.syncFailed' as any))
+      }
+    }
+    catch (error) {
+      console.error('同步账号失败:', error)
+      message.error(t('header.syncFailed' as any))
+    }
+    finally {
+      setSyncLoading(null)
+    }
+  }
+
+  /**
    * 处理查看发布详情
    */
   const handleViewDetail = (task: PublishTask) => {
@@ -113,62 +134,20 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
   }
 
   /**
-   * 渲染未安装状态内容
+   * 渲染插件未就绪状态内容（未安装或未授权）
    */
-  const renderNotInstalledContent = () => (
-    <div className={styles.inactiveContent}>
-      <div className={styles.iconWrapper}>
-        <ApiOutlined className={styles.downloadIcon} />
-      </div>
-      <h3 className={styles.title}>{t('header.downloadPlugin')}</h3>
-      <p className={styles.description}>{t('header.downloadDescription')}</p>
-      <div className={styles.downloadButtons}>
-        <Button
-          type="primary"
-          size="large"
-          icon={<ChromeOutlined />}
-          href={DOWNLOAD_LINKS.chrome}
-          target="_blank"
-        >
-          {t('header.chromeWebStore')}
-        </Button>
-        <Button
-          size="large"
-          icon={<GithubOutlined />}
-          href={DOWNLOAD_LINKS.github}
-          target="_blank"
-        >
-          {t('header.githubRelease')}
-        </Button>
-      </div>
-    </div>
-  )
+  const renderPluginNotReadyContent = () => {
+    const pluginStatusType = isInstalledNoPermission ? 'no_permission' : 'not_installed'
 
-  /**
-   * 渲染已安装但未授权状态内容
-   */
-  const renderNoPermissionContent = () => (
-    <div className={styles.inactiveContent}>
-      <div className={`${styles.iconWrapper} ${styles.warningIcon}`}>
-        <ExclamationCircleOutlined className={styles.downloadIcon} />
+    return (
+      <div className={styles.inactiveContent}>
+        <PluginDownloadContent
+          pluginStatus={pluginStatusType}
+          onCheckPermission={init}
+        />
       </div>
-      <h3 className={styles.title}>{t('header.permissionRequired')}</h3>
-      <p className={styles.description}>{t('header.permissionDescription')}</p>
-      <div className={styles.downloadButtons}>
-        <Button
-          type="primary"
-          size="large"
-          onClick={() => {
-            // 重新初始化以检查权限
-            setLoading(true)
-            init().finally(() => setLoading(false))
-          }}
-        >
-          {t('header.checkPermission')}
-        </Button>
-      </div>
-    </div>
-  )
+    )
+  }
 
   /**
    * 渲染已就绪状态内容
@@ -241,7 +220,20 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
                     <div className={styles.platformRight}>
                       {account
                         ? (
-                            <Tag color="success">{t('status.connected')}</Tag>
+                            <Space size={4}>
+                              <Tag color="success">{t('status.connected')}</Tag>
+                              <Tooltip title={t('header.syncToAccount' as any)}>
+                                <Button
+                                  type="link"
+                                  size="small"
+                                  loading={syncLoading === platform}
+                                  icon={<SyncOutlined />}
+                                  onClick={() => handleSyncAccount(platform)}
+                                >
+                                  {t('header.sync' as any)}
+                                </Button>
+                              </Tooltip>
+                            </Space>
                           )
                         : (
                             <Tooltip title={t('header.loginNow')}>
@@ -250,7 +242,9 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
                                 size="small"
                                 loading={isLogging}
                                 icon={<LoginOutlined />}
-                                onClick={() => handleLogin(platform)}
+                                onClick={() => {
+                                  window.open(AccountPlatInfoMap.get(platform)?.url || '')
+                                }}
                               >
                                 {t('header.loginNow')}
                               </Button>
@@ -323,10 +317,7 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
     if (isReady) {
       return renderReadyContent()
     }
-    if (isInstalledNoPermission) {
-      return renderNoPermissionContent()
-    }
-    return renderNotInstalledContent()
+    return renderPluginNotReadyContent()
   }
 
   return (

@@ -5,3 +5,4 @@
 export * from './PublishListModal'
 export * from './PublishDetailModal'
 export * from './PluginStatusModal'
+export * from './PluginDownloadContent'

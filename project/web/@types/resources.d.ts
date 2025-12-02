@@ -30,7 +30,11 @@ interface Resources {
       "subtitle": "选择平台添加账号",
       "currentSpace": "当前空间",
       "pleaseChooseSpaceFirst": "请先选择空间",
-      "addTo": "添加到："
+      "addTo": "添加到：",
+      "pluginNotReady": "浏览器插件未就绪，请先安装并授权插件",
+      "platformNotLoggedIn": "{{platform}} 未登录，请先在插件中登录",
+      "syncSuccess": "账号同步成功",
+      "syncFailed": "账号同步失败"
     },
     "noAccountWarning": {
       "title": "提示",
@@ -1880,7 +1884,11 @@ interface Resources {
       "viewPublishList": "查看发布列表",
       "permissionRequired": "需要授权",
       "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
-      "checkPermission": "重新检查权限"
+      "checkPermission": "重新检查权限",
+      "sync": "同步",
+      "syncToAccount": "同步到账号管理",
+      "syncSuccess": "账号同步成功",
+      "syncFailed": "账号同步失败"
     }
   },
   "pricing": {

@@ -77,6 +77,10 @@
     "viewPublishList": "查看发布列表",
     "permissionRequired": "需要授权",
     "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
-    "checkPermission": "重新检查权限"
+    "checkPermission": "重新检查权限",
+    "sync": "同步",
+    "syncToAccount": "同步到账号管理",
+    "syncSuccess": "账号同步成功",
+    "syncFailed": "账号同步失败"
   }
 }

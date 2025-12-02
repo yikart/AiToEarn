@@ -29,7 +29,11 @@
     "subtitle": "Select Platform",
     "currentSpace": "Current Space",
     "pleaseChooseSpaceFirst": "Please choose a space first",
-    "addTo": "Add to:"
+    "addTo": "Add to:",
+    "pluginNotReady": "Browser plugin is not ready. Please install and authorize the plugin first.",
+    "platformNotLoggedIn": "{{platform}} is not logged in. Please log in via the plugin first.",
+    "syncSuccess": "Account synced successfully",
+    "syncFailed": "Account sync failed"
   },
   "noAccountWarning": {
     "title": "Notice",
@@ -262,5 +266,10 @@
       "username": "username",
       "password": "password"
     }
+  },
+  "clientType": {
+    "label": "Source",
+    "web": "Web",
+    "app": "App"
   }
 }

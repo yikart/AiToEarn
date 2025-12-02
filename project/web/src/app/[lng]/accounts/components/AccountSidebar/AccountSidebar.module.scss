@@ -333,6 +333,29 @@
         }
       }
     }
+
+    // 客户端来源标签样式
+    .accountPopoverInfo-clientType {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+
+      // Web 来源标签 - 蓝色调
+      &[data-type='web'] {
+        background-color: #e6f7ff;
+        color: #1890ff;
+        border: 1px solid #91d5ff;
+      }
+
+      // App/Flutter 来源标签 - 绿色调
+      &[data-type='app'] {
+        background-color: #f6ffed;
+        color: #52c41a;
+        border: 1px solid #b7eb8f;
+      }
+    }
   }
 }
 

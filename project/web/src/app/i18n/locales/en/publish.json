@@ -325,5 +325,10 @@
       "shares": "Shares"
     },
     "viewWork": "View Work"
+  },
+  "clientType": {
+    "label": "Source",
+    "web": "Web",
+    "app": "App"
   }
 }

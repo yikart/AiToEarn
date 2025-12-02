@@ -186,7 +186,6 @@ const LyaoutHeader = memo(
 
     // 插件状态
     const pluginStatus = usePluginStore(state => state.status)
-    const init = usePluginStore(state => state.init)
 
     // 判断插件状态
     const isPluginReady = pluginStatus === PluginStatus.READY
@@ -217,11 +216,6 @@ const LyaoutHeader = memo(
         return tPlugin('status.installedNoPermission')
       return tPlugin('status.notInstalled')
     }
-
-    // 初始化插件检测
-    useEffect(() => {
-      init()
-    }, [init])
 
     const [isVisible, setIsVisible] = useState(true)
     const [isClosing, setIsClosing] = useState(false)
