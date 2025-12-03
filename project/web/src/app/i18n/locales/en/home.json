@@ -12,7 +12,9 @@
       "status": "Status",
       "docs": "Docs",
       "blog": "Blog",
-      "download": "Downloads"
+      "download": "Downloads",
+      "brand": "Brand",
+      "resources": "Resources"
 
     },
     "getStarted": "Get Started"

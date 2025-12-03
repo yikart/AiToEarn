@@ -71,6 +71,11 @@
         width: 110px !important;
         height: 75px !important;
       }
+
+      .baseInfoCoverPlaceholder {
+        width: 110px !important;
+        height: 75px !important;
+      }
     }
   }
 }
@@ -93,6 +98,32 @@
     flex-shrink: 0;
     border-radius: 4px;
     margin-right: 15px;
+  }
+
+  .baseInfoCoverPlaceholder {
+    width: 74px;
+    height: 86px;
+    flex-shrink: 0;
+    border-radius: 4px;
+    margin-right: 15px;
+    background: linear-gradient(135deg, #a66ae4 0%, #814dbd 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+    padding: 4px;
+    box-sizing: border-box;
+
+    .placeholderText {
+      word-break: break-word;
+      line-height: 1.2;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+    }
   }
 
   :global {

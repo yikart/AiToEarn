@@ -57,12 +57,6 @@ export const routerData: IRouterDataItem[] = [
   },
 
   {
-    name: '数据监控',
-    translationKey: 'dataMonitoring',
-    path: '/data-monitoring',
-  },
-
-  {
     name: '素材库',
     translationKey: 'header.materialLibrary',
     path: '/material',
@@ -94,8 +88,14 @@ export const peRouterData = recursion(routerData)
  * - 英文语言跳转英文下载页：https://docs.aitoearn.ai/en/downloads
  * - 中文语言跳转中文下载页：https://docs.aitoearn.ai/zh/downloads
  */
+export interface HomeHeaderRouterItem {
+  href: string
+  title: string
+  children?: HomeHeaderRouterItem[]
+}
+
 export const homeHeaderRouterData = {
-  get value() {
+  get value(): HomeHeaderRouterItem[] {
     const lang = useUserStore.getState().lang
     const downloadHref = lang === 'en'
       ? 'https://docs.aitoearn.ai/en/downloads'
@@ -105,25 +105,32 @@ export const homeHeaderRouterData = {
         href: '/',
         title: directTrans('home', 'header.nav.home'),
       },
+      
+      {
+        href: '#',
+        title: directTrans('home', 'header.nav.resources'),
+        children: [
+          {
+            href: 'https://status.aitoearn.ai/',
+            title: directTrans('home', 'header.nav.status'),
+          },
+          {
+            href: 'https://docs.aitoearn.ai/',
+            title: directTrans('home', 'header.nav.docs'),
+          },
+          {
+            href: 'https://blog.aitoearn.ai/',
+            title: directTrans('home', 'header.nav.blog'),
+          },
+          {
+            href: downloadHref,
+            title: directTrans('home', 'header.nav.download'),
+          },
+        ],
+      },
       {
         href: '/pricing',
         title: directTrans('home', 'header.nav.pricing'),
-      },
-      {
-        href: 'https://status.aitoearn.ai/',
-        title: directTrans('home', 'header.nav.status'),
-      },
-      {
-        href: 'https://docs.aitoearn.ai/',
-        title: directTrans('home', 'header.nav.docs'),
-      },
-      {
-        href: 'https://blog.aitoearn.ai/',
-        title: directTrans('home', 'header.nav.blog'),
-      },
-      {
-        href: downloadHref,
-        title: directTrans('home', 'header.nav.download'),
       },
       {
         href: '/hotContent',
@@ -132,6 +139,10 @@ export const homeHeaderRouterData = {
       {
         href: '/aiRank',
         title: directTrans('route', 'aiRank'),
+      },
+      {
+        href: '/data-monitoring',
+        title: directTrans('route', 'dataMonitoring'),
       },
     ]
   },
