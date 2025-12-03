@@ -2911,9 +2911,32 @@
   border: 1px solid rgba(166, 106, 228, 0.2);
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(166, 106, 228, 0.1);
+  max-height: 500px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
 
   @media (max-width: 768px) {
     padding: 16px;
+    max-height: 400px;
+  }
+
+  // 滚动条样式
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
+    border-radius: 3px;
+    
+    &:hover {
+      background: linear-gradient(135deg, #9558de 0%, #7a3fc9 100%);
+    }
   }
 
   .markdownTitle {
@@ -2937,6 +2960,7 @@
     background: #fafafa;
     border-radius: 8px;
     border-left: 3px solid #a66ae4;
+    position: relative;
 
     &:last-child {
       margin-bottom: 0;
@@ -2945,6 +2969,15 @@
     @media (max-width: 768px) {
       padding: 12px;
       margin-bottom: 12px;
+    }
+
+    .markdownIndex {
+      font-size: 12px;
+      font-weight: 600;
+      color: #a66ae4;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(166, 106, 228, 0.2);
     }
 
     // Markdown styling

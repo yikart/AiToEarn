@@ -161,6 +161,7 @@ function Hero() {
   const [displayedText, setDisplayedText] = useState('') // Currently displayed text
   const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // Pending message queue
   const progressContainerRef = useRef<HTMLDivElement>(null) // Progress container reference
+  const markdownContainerRef = useRef<HTMLDivElement>(null) // Markdown container reference
   const [progress, setProgress] = useState(0) // Progress percentage 0-100
   const [markdownMessages, setMarkdownMessages] = useState<string[]>([]) // SSE markdown messages
 
@@ -285,12 +286,19 @@ function Hero() {
     }
   }, [currentTypingMsg, displayedText])
 
-  // Auto scroll to bottom
+  // Auto scroll to bottom - progress container
   useEffect(() => {
     if (progressContainerRef.current) {
       progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight
     }
   }, [completedMessages, displayedText])
+
+  // Auto scroll to bottom - markdown container
+  useEffect(() => {
+    if (markdownContainerRef.current && markdownMessages.length > 0) {
+      markdownContainerRef.current.scrollTop = markdownContainerRef.current.scrollHeight
+    }
+  }, [markdownMessages])
 
   // Create AI generation task with SSE
   const handleCreateTask = async () => {
@@ -343,7 +351,12 @@ function Hero() {
           // Handle different message types
           if (sseMessage.type === 'message' && sseMessage.message) {
             // Add markdown message
-            setMarkdownMessages(prev => [...prev, sseMessage.message!])
+            console.log('[UI] Adding markdown message:', sseMessage.message)
+            setMarkdownMessages(prev => {
+              const newMessages = [...prev, sseMessage.message!]
+              console.log('[UI] Total markdown messages:', newMessages.length)
+              return newMessages
+            })
           }
           else if (sseMessage.type === 'status' && sseMessage.status) {
             // Update status
@@ -694,10 +707,16 @@ function Hero() {
           {/* Markdown Messages Display */}
           {markdownMessages.length > 0 && (
             <div className={styles.markdownMessagesWrapper}>
-              <div className={styles.markdownMessagesContainer}>
-                <h3 className={styles.markdownTitle}>📄 {t('aiGeneration.sseMessages' as any) || 'AI 生成过程'}</h3>
+              <div 
+                ref={markdownContainerRef}
+                className={styles.markdownMessagesContainer}
+              >
+                <h3 className={styles.markdownTitle}>
+                  📄 {t('aiGeneration.sseMessages' as any) || 'AI 生成过程'} ({markdownMessages.length})
+                </h3>
                 {markdownMessages.map((msg, index) => (
                   <div key={`markdown-${index}`} className={styles.markdownMessage}>
+                    <div className={styles.markdownIndex}>消息 #{index + 1}</div>
                     <ReactMarkdown>{msg}</ReactMarkdown>
                   </div>
                 ))}
