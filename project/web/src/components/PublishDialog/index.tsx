@@ -76,7 +76,6 @@ import { useAccountStore } from '@/store/account'
 import {
   PlatformTaskStatus,
   PLUGIN_SUPPORTED_PLATFORMS,
-  PluginStatus,
   PublishDetailModal,
   usePluginStore,
 } from '@/store/plugin'
@@ -600,34 +599,15 @@ const PublishDialog = memo(
 
       /**
        * 执行插件发布
+       * 插件状态检查已在 store.publish 方法中处理，异常会被 catch 块捕获
        * @param pluginItems 需要通过插件发布的项目列表
-       * @param taskId 任务ID
-       * @param platformTaskIdMap 账号ID到平台任务ID的映射
+       * @param platformTaskIdMap 账号ID到 requestId 的映射
        */
       const executePluginPublish = useCallback(async (
         pluginItems: typeof pubListChoosed,
-        taskId: string,
         platformTaskIdMap: Map<string, string>,
       ) => {
-        const { status, publish, updatePlatformTask } = usePluginStore.getState()
-
-        // 检查插件状态
-        if (status !== PluginStatus.READY) {
-          console.warn('插件未就绪，无法执行插件发布')
-          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
-          // 将所有插件任务标记为失败
-          for (const item of pluginItems) {
-            const requestId = platformTaskIdMap.get(item.account.id)
-            if (requestId) {
-              updatePlatformTaskByRequestId(requestId, {
-                status: PlatformTaskStatus.ERROR,
-                error: '浏览器插件未就绪，请先安装并授权插件',
-                endTime: Date.now(),
-              })
-            }
-          }
-          return
-        }
+        const { publish } = usePluginStore.getState()
 
         // 并行执行插件发布（不等待，同时发布多个平台）
         const publishTasks = pluginItems.map(async (item) => {
@@ -863,9 +843,9 @@ const PublishDialog = memo(
         }
 
         // 2. 再执行插件发布（插件支持平台）
-        if (pluginPublishItems.length > 0 && taskId) {
+        if (pluginPublishItems.length > 0) {
           // 异步执行插件发布，不阻塞主流程
-          executePluginPublish(pluginPublishItems, taskId, platformTaskIdMap)
+          executePluginPublish(pluginPublishItems, platformTaskIdMap)
         }
 
         // 关闭发布弹框

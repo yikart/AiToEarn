@@ -24,6 +24,7 @@ import { useAccountStore } from '@/store/account'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
 import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus as Status } from './types/baseTypes'
+import { parseTopicString } from '@/utils'
 
 /** 平台账号信息映射 */
 export type PlatformAccountsMap = Record<PluginPlatformType, PlatAccountInfo | null>
@@ -51,11 +52,11 @@ export type PlatformProgressMap = Map<string, ProgressEvent>
 export interface IPluginStore {
   status: Status
   pollingTimer: NodeJS.Timeout | null
-  /** @deprecated 使用 publishingPlatforms 代替 */
+  /** 是否正在发布（任意平台） */
   isPublishing: boolean
   /** 正在发布的集合，key 为 platform 或 platform-accountId，支持同一平台多账号同时发布 */
   publishingPlatforms: Set<string>
-  /** @deprecated 使用 platformProgress 代替 */
+  /** 当前发布进度（最新一个） */
   publishProgress: ProgressEvent | null
   /** 各平台发布进度，key 为 platform 或 platform-accountId */
   platformProgress: PlatformProgressMap
@@ -356,6 +357,12 @@ export const usePluginStore = create(
         /** 发布内容到指定平台 */
         async publish(params: PublishParams, onProgress?: ProgressCallback) {
           const { status, publishingPlatforms, platformProgress } = get()
+
+          // 解析话题
+          const { topics, cleanedString } = parseTopicString(params.desc || '')
+          params.topics = [...new Set(params.topics?.concat(topics))]
+          params.desc = cleanedString
+
           const platform = params.platform
           const accountId = params.accountId
           // 使用 platform + accountId 作为唯一标识，支持同一平台多账号同时发布
@@ -381,7 +388,7 @@ export const usePluginStore = create(
           set({
             isPublishing: newPublishingPlatforms.size > 0,
             publishingPlatforms: newPublishingPlatforms,
-            publishProgress: initialProgress, // 兼容旧代码
+            publishProgress: initialProgress,
             platformProgress: newPlatformProgress,
           })
 
@@ -391,7 +398,7 @@ export const usePluginStore = create(
               const updatedProgress = new Map(get().platformProgress)
               updatedProgress.set(publishKey, progress)
               set({
-                publishProgress: progress, // 兼容旧代码
+                publishProgress: progress,
                 platformProgress: updatedProgress,
               })
               onProgress?.(progress)
@@ -407,7 +414,7 @@ export const usePluginStore = create(
             set({
               isPublishing: updatedPlatforms.size > 0,
               publishingPlatforms: updatedPlatforms,
-              publishProgress: completedProgress, // 兼容旧代码
+              publishProgress: completedProgress,
               platformProgress: updatedPlatformProgress,
             })
 
@@ -429,7 +436,7 @@ export const usePluginStore = create(
             set({
               isPublishing: updatedPlatforms.size > 0,
               publishingPlatforms: updatedPlatforms,
-              publishProgress: errorProgress, // 兼容旧代码
+              publishProgress: errorProgress,
               platformProgress: updatedPlatformProgress,
             })
             console.error('发布失败:', error)
