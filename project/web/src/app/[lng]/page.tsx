@@ -16,6 +16,7 @@ import {
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 // Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
@@ -145,10 +146,11 @@ function Hero() {
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [taskId, setTaskId] = useState('')
+  const [sessionId, setSessionId] = useState('')
   
   // Message type definition
   type MessageItem = {
-    type: 'status' | 'description' | 'error' | 'text'
+    type: 'status' | 'description' | 'error' | 'text' | 'markdown'
     content: string
     status?: string // Status type for rendering corresponding icon
     loading?: boolean // Whether to show loading animation (for media generation status)
@@ -160,6 +162,7 @@ function Hero() {
   const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // Pending message queue
   const progressContainerRef = useRef<HTMLDivElement>(null) // Progress container reference
   const [progress, setProgress] = useState(0) // Progress percentage 0-100
+  const [markdownMessages, setMarkdownMessages] = useState<string[]>([]) // SSE markdown messages
 
   // Status display configuration (icons and text)
   const getStatusDisplay = (status: string) => {
@@ -289,7 +292,7 @@ function Hero() {
     }
   }, [completedMessages, displayedText])
 
-  // Create AI generation task
+  // Create AI generation task with SSE
   const handleCreateTask = async () => {
     if (!prompt.trim()) {
       alert(t('aiGeneration.emptyPromptAlert' as any))
@@ -302,7 +305,9 @@ function Hero() {
       setPendingMessages([])
       setCurrentTypingMsg(null)
       setDisplayedText('')
-      setProgress(0) // Reset progress
+      setProgress(0)
+      setMarkdownMessages([])
+      setSessionId('')
 
       // Step 1: Show THINKING status
       addMessageToQueue({
@@ -323,26 +328,112 @@ function Hero() {
       // Dynamic import API
       const { agentApi } = await import('@/api/agent')
 
-      // Create task
-      const createRes = await agentApi.createTask({ prompt })
-      if (createRes?.code === 0 && createRes.data?.id) {
-        const newTaskId = createRes.data.id
-        setTaskId(newTaskId)
-        
-        // Start polling task status
-        pollTaskStatus(newTaskId)
-      } else {
-        throw new Error(t('aiGeneration.createTaskFailed' as any))
-      }
-    } catch (error: any) {
+      // Create task with SSE
+      await agentApi.createTaskWithSSE(
+        { prompt },
+        // onMessage callback
+        (sseMessage) => {
+          console.log('SSE Message:', sseMessage)
+
+          // Save sessionId
+          if (sseMessage.sessionId) {
+            setSessionId(sseMessage.sessionId)
+          }
+
+          // Handle different message types
+          if (sseMessage.type === 'message' && sseMessage.message) {
+            // Add markdown message
+            setMarkdownMessages(prev => [...prev, sseMessage.message!])
+          }
+          else if (sseMessage.type === 'status' && sseMessage.status) {
+            // Update status
+            const statusDisplay = getStatusDisplay(sseMessage.status)
+            const needsLoadingAnimation = ['GENERATING_VIDEO', 'GENERATING_IMAGE', 'GENERATING_CONTENT', 'GENERATING_TEXT'].includes(sseMessage.status)
+            
+            addMessageToQueue({
+              type: 'status',
+              content: statusDisplay.text,
+              status: sseMessage.status,
+              loading: needsLoadingAnimation
+            })
+
+            // Update progress
+            setProgress(prev => calculateProgress(sseMessage.status!, true, prev))
+          }
+          else if (sseMessage.type === 'error') {
+            addMessageToQueue({
+              type: 'error',
+              content: `${t('aiGeneration.failedReasonPrefix' as any)}${sseMessage.message || t('aiGeneration.unknownError' as any)}`
+            })
+            setIsGenerating(false)
+            setProgress(0)
+          }
+        },
+        // onError callback
+        (error) => {
+          console.error('SSE Error:', error)
+          alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+          setIsGenerating(false)
+          setProgress(0)
+        },
+        // onDone callback
+        async (finalSessionId) => {
+          console.log('SSE Done, sessionId:', finalSessionId)
+          
+          // SSE completed, fetch final result
+          if (finalSessionId) {
+            try {
+              const res = await agentApi.getTaskDetail(finalSessionId)
+              
+              if (res?.code === 0 && res.data) {
+                const taskData = res.data
+
+                // Show completion status
+                addMessageToQueue({
+                  type: 'status',
+                  content: t('aiGeneration.status.completed' as any),
+                  status: 'COMPLETED'
+                })
+
+                setProgress(100)
+                setIsGenerating(false)
+
+                // Navigate to accounts page after delay
+                setTimeout(() => {
+                  const queryParams = new URLSearchParams({
+                    aiGenerated: 'true',
+                    taskId: taskData.id,
+                    title: taskData.title || '',
+                    description: taskData.description || '',
+                    tags: JSON.stringify(taskData.tags || []),
+                    medias: JSON.stringify(taskData.medias || []),
+                  })
+                  
+                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                }, 1500)
+              }
+            }
+            catch (error) {
+              console.error('Failed to fetch task detail:', error)
+              setIsGenerating(false)
+            }
+          }
+          else {
+            setIsGenerating(false)
+          }
+        }
+      )
+    }
+    catch (error: any) {
+      console.error('Create task error:', error)
       alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
-      setProgress(0) // Reset progress
+      setProgress(0)
     }
   }
 
-  // Poll task status
-  const pollTaskStatus = async (taskId: string) => {
+  // Removed pollTaskStatus function - now using SSE instead
+  /* const pollTaskStatus = async (taskId: string) => {
     const { agentApi } = await import('@/api/agent')
     let lastStatus = ''
     let hasShownTitle = false
@@ -465,7 +556,7 @@ function Hero() {
         })
       }
     }, 600000)
-  }
+  } */
 
   return (
     <section className={styles.hero}>
@@ -597,6 +688,20 @@ function Hero() {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Markdown Messages Display */}
+          {markdownMessages.length > 0 && (
+            <div className={styles.markdownMessagesWrapper}>
+              <div className={styles.markdownMessagesContainer}>
+                <h3 className={styles.markdownTitle}>📄 {t('aiGeneration.sseMessages' as any) || 'AI 生成过程'}</h3>
+                {markdownMessages.map((msg, index) => (
+                  <div key={`markdown-${index}`} className={styles.markdownMessage}>
+                    <ReactMarkdown>{msg}</ReactMarkdown>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
