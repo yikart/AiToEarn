@@ -5,7 +5,6 @@ import { Button, Form, Input, message, Modal } from 'antd'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { FcGoogle } from 'react-icons/fc'
 import {
   checkRegistStatusApi,
   getRegistUrlApi,
@@ -42,14 +41,14 @@ export default function LoginPage() {
 
       if (response.code === 0) {
         if (response.data.type === 'regist') {
-          // 用户未注册，显示弹窗提示，并设置表单的默认密码值
+          // User not registered, show modal prompt and set default password value for form
           setRegistCode(response.data.code || '')
-          form.setFieldsValue({ password }) // 设置密码字段的默认值
+          form.setFieldsValue({ password }) // Set default value for password field
           setIsModalOpen(true)
           setIsChecking(true)
         }
         else if (response.data.token) {
-          // 登录成功
+          // Login successful
           setToken(response.data.token)
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo)
@@ -85,10 +84,10 @@ export default function LoginPage() {
       }
 
       if (response.code === 0 && response.data.token) {
-        // 注册成功
+        // Registration successful
         setIsActivating(false)
         setIsModalOpen(false)
-        form.resetFields() // 重置表单
+        form.resetFields() // Reset form
         setToken(response.data.token)
         if (response.data.userInfo) {
           setUserInfo(response.data.userInfo)
@@ -107,7 +106,7 @@ export default function LoginPage() {
     }
   }
 
-  // 组件卸载时清除定时器
+  // Clear timer when component unmounts
   useEffect(() => {
     return () => {
       if (activationTimer) {
@@ -135,7 +134,7 @@ export default function LoginPage() {
 
       if (response.code === 0) {
         if (response.data.type === 'login') {
-          // 直接登录成功
+          // Direct login successful
           setToken(response.data.token)
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo)
@@ -219,7 +218,7 @@ export default function LoginPage() {
           setIsModalOpen(false)
           setIsChecking(false)
           setIsActivating(false)
-          form.resetFields() // 重置表单
+          form.resetFields() // Reset form
           if (activationTimer) {
             clearInterval(activationTimer)
           }

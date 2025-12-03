@@ -34,6 +34,7 @@ import { deletePlatWorkApi, deletePublishRecordApi, nowPubTaskApi } from '@/api/
 import {
   PublishStatus,
 } from '@/api/plat/types/publish.types'
+import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
 import { getDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
@@ -212,6 +213,22 @@ const RecordCore = memo(
         )?.icon
       }, [publishRecord])
 
+      /**
+       * 根据 clientType 获取显示的标签文本
+       * @param clientType 客户端类型（web/app）
+       * @returns 标签显示文本
+       */
+      const getClientTypeLabel = (clientType?: ClientType) => {
+        if (!clientType) return null
+        if (clientType === ClientType.WEB) {
+          return t('clientType.web' as any)
+        }
+        if (clientType === ClientType.APP) {
+          return t('clientType.app' as any)
+        }
+        return null
+      }
+
       const recordInfo = useMemo(() => {
         return [
           {
@@ -262,6 +279,15 @@ const RecordCore = memo(
                       <span className="recordDetails-center-title">
                         {account?.nickname}
                       </span>
+                      {/* 客户端来源标签（web/flutter app），为空不显示 */}
+                      {account?.clientType && (
+                        <span
+                          className="recordDetails-center-clientType"
+                          data-type={account.clientType}
+                        >
+                          {getClientTypeLabel(account.clientType)}
+                        </span>
+                      )}
                     </div>
                     <div
                       title={desc}

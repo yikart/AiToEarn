@@ -1,6 +1,7 @@
 import type { ForwardedRef } from 'react'
-import { CloseOutlined, MenuOutlined } from '@ant-design/icons'
-import { Button } from 'antd'
+import { CloseOutlined, DownOutlined, MenuOutlined } from '@ant-design/icons'
+import { Button, Dropdown } from 'antd'
+import type { MenuProps } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
@@ -8,7 +9,7 @@ import { forwardRef, memo, useState } from 'react'
 import styles from '@/app/[lng]/styles/difyHome.module.scss'
 import { useTransClient } from '@/app/i18n/client'
 import { removeLocalePrefix } from '@/app/layout/layout.utils'
-import { homeHeaderRouterData } from '@/app/layout/routerData'
+import { homeHeaderRouterData, type HomeHeaderRouterItem } from '@/app/layout/routerData'
 import logo from '@/assets/images/logo.png'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher'
 import { useUserStore } from '@/store/user'
@@ -44,7 +45,7 @@ const HomeHeader = memo(
      * 判断链接是否为当前激活状态
      */
     const isActive = (href: string) => {
-      if (!href.startsWith('/'))
+      if (!href.startsWith('/') || href === '#')
         return false
       const normalizedHref = href.replace(/\/+$/, '') || '/'
       if (normalizedHref === '/')
@@ -52,6 +53,25 @@ const HomeHeader = memo(
       if (currentPath === normalizedHref)
         return true
       return currentPath.startsWith(`${normalizedHref}/`)
+    }
+
+    /**
+     * 生成下拉菜单项
+     */
+    const getDropdownItems = (children: HomeHeaderRouterItem[]): MenuProps['items'] => {
+      return children.map((child) => ({
+        key: child.href,
+        label: (
+          <Link
+            href={child.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={closeMobileMenu}
+          >
+            {child.title}
+          </Link>
+        ),
+      }))
     }
 
     return (
@@ -73,6 +93,25 @@ const HomeHeader = memo(
                 if (v.href === '/') {
                   return null
                 }
+                // 如果有子菜单，显示下拉菜单
+                if (v.children && v.children.length > 0) {
+                  return (
+                    <Dropdown
+                      key={v.title}
+                      menu={{ items: getDropdownItems(v.children) }}
+                      placement="bottomLeft"
+                    >
+                      <span
+                        className={`${styles.navLink} ${styles.navLinkWithDropdown}`}
+                        style={{ paddingTop: '3px', cursor: 'pointer' }}
+                      >
+                        {v.title}
+                        <DownOutlined style={{ marginLeft: '4px', fontSize: '10px', marginTop: '4px' }} />
+                      </span>
+                    </Dropdown>
+                  )
+                }
+                // 普通链接
                 return (
                   <Link
                     key={v.title}
@@ -139,6 +178,29 @@ const HomeHeader = memo(
               if (v.href === '/') {
                 return null
               }
+              // 如果有子菜单，显示子菜单项
+              if (v.children && v.children.length > 0) {
+                return (
+                  <div key={v.title}>
+                    <div className={styles.mobileNavLink} style={{ fontWeight: 600, color: '#4f46e5' }}>
+                      {v.title}
+                    </div>
+                    {v.children.map((child) => (
+                      <Link
+                        key={child.href}
+                        className={`${styles.mobileNavLink} ${styles.mobileNavSubLink} ${isActive(child.href) ? styles.active : ''}`}
+                        href={child.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={closeMobileMenu}
+                      >
+                        {child.title}
+                      </Link>
+                    ))}
+                  </div>
+                )
+              }
+              // 普通链接
               return (
                 <Link
                   key={v.title}

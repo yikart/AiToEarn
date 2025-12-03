@@ -2,6 +2,14 @@ import type {
   ForwardedRef,
 } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { AIAction, IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
+import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
+import type {
+  PlatformPublishTask,
+  PluginPlatformType,
+  PublishParams as PluginPublishParams,
+} from '@/store/plugin'
+
 import {
   ArrowRightOutlined,
   CloseOutlined,
@@ -9,7 +17,9 @@ import {
   InfoCircleOutlined,
   SendOutlined,
 } from '@ant-design/icons'
+
 import { Button, message, Modal, Tooltip } from 'antd'
+import dayjs from 'dayjs'
 import {
   forwardRef,
   memo,
@@ -20,17 +30,17 @@ import {
   useRef,
   useState,
 } from 'react'
-
 import { CSSTransition } from 'react-transition-group'
 import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
-import { apiCreatePublish } from '@/api/plat/publish'
-import { toolsApi } from '@/api/tools'
 import { getChatModels } from '@/api/ai'
+import { apiCreatePublish, apiCreatePublishRecord } from '@/api/plat/publish'
+import { toolsApi } from '@/api/tools'
 import {
   getDays,
   getUtcDays,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
+import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import { bilibiliSkip } from '@/app/[lng]/accounts/plat/BilibiliLogin'
 import {
   FacebookPagesModal,
@@ -52,19 +62,26 @@ import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
-import PublishDialogAi, { type AIAction, type IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
-import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
+import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
 import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
-import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
+import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
+import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { useAccountStore } from '@/store/account'
+import {
+  PlatformTaskStatus,
+  PLUGIN_SUPPORTED_PLATFORMS,
+  PluginStatus,
+  PublishDetailModal,
+  usePluginStore,
+} from '@/store/plugin'
 import { generateUUID } from '@/utils'
+import { getOssUrl } from '@/utils/oss'
 import styles from './publishDialog.module.scss'
 
 export interface IPublishDialogRef {
@@ -102,11 +119,13 @@ const PublishDialog = memo(
         setPubData,
         restorePubData,
         _hasHydrated,
+        setPubListData,
       } = usePublishDialogStorageStore(
         useShallow(state => ({
           setPubData: state.setPubData,
           restorePubData: state.restorePubData,
           _hasHydrated: state._hasHydrated,
+          setPubListData: state.setPubListData,
         })),
       )
       const {
@@ -168,6 +187,9 @@ const PublishDialog = memo(
       // Facebook页面选择弹窗状态
       const [showFacebookPagesModal, setShowFacebookPagesModal]
         = useState(false)
+      // 发布详情弹框状态
+      const [publishDetailVisible, setPublishDetailVisible] = useState(false)
+      const [currentPublishTaskId, setCurrentPublishTaskId] = useState<string | undefined>(undefined)
       const { t } = useTransClient('publish')
       // AI助手ref
       const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
@@ -183,7 +205,9 @@ const PublishDialog = memo(
         })),
       )
       // 是否clear
-      const isClear = useRef(false)
+      const isClear = useRef(true)
+      // 是否init
+      const isInit = useRef(false)
 
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
@@ -413,18 +437,28 @@ const PublishDialog = memo(
         return false
       }, [step, pubListChoosed, commonPubParams, expandedPubItem])
 
-      useEffect(() => {
-        isClear.current = true
-      }, [])
-
       // 实时保存数据
       useEffect(() => {
+        if (!open)
+          return
+        if (!expandedPubItem?.params.des && expandedPubItem?.params.images?.length === 0 && !expandedPubItem?.params.video) {
+          return
+        }
         if (isClear.current) {
           isClear.current = false
           return
         }
         setPubData(pubListChoosed)
       }, [pubListChoosed])
+      useEffect(() => {
+        if (!expandedPubItem || pubList.length === 0)
+          return
+        if (isInit.current) {
+          isInit.current = false
+          return
+        }
+        setPubListData(pubList)
+      }, [pubList])
 
       // 检查选中的平台是否需要内容安全检测
       const needsContentModeration = useMemo(() => {
@@ -462,24 +496,27 @@ const PublishDialog = memo(
 
       useEffect(() => {
         if (open) {
+          isInit.current = true
           init(accounts, defaultAccountId)
-          
+
           // 获取聊天模型列表（使用 sessionStorage 缓存）
           const cachedModels = sessionStorage.getItem('ai_chat_models')
           if (cachedModels) {
             try {
               setChatModels(JSON.parse(cachedModels))
-            } catch (error) {
+            }
+            catch (error) {
               console.error(t('messages.parseCachedChatModelsFailed' as any), error)
             }
-          } else {
+          }
+          else {
             // 如果没有缓存，则请求
             getChatModels().then((res: any) => {
               if (res?.code === 0 && res.data && Array.isArray(res.data)) {
                 setChatModels(res.data)
                 sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
               }
-            }).catch(error => {
+            }).catch((error) => {
               console.error(t('messages.getChatModelsFailed' as any), error)
             })
           }
@@ -490,7 +527,7 @@ const PublishDialog = memo(
           setPubListChoosed([])
           setStep(0)
           setExpandedPubItem(undefined)
-          // 注意：不要调用clear()，否则会清空pubList导致无法选择账户
+          clear()
         }
       }, [open])
 
@@ -553,15 +590,249 @@ const PublishDialog = memo(
       }, [warningParamsMap])
 
       /**
+       * 检查平台是否由插件支持
+       * @param platType 平台类型
+       * @returns 是否由插件支持
+       */
+      const isPluginSupportedPlatform = useCallback((platType: PlatType): boolean => {
+        return PLUGIN_SUPPORTED_PLATFORMS.includes(platType as PluginPlatformType)
+      }, [])
+
+      /**
+       * 执行插件发布
+       * @param pluginItems 需要通过插件发布的项目列表
+       * @param taskId 任务ID
+       * @param platformTaskIdMap 账号ID到平台任务ID的映射
+       */
+      const executePluginPublish = useCallback(async (
+        pluginItems: typeof pubListChoosed,
+        taskId: string,
+        platformTaskIdMap: Map<string, string>,
+      ) => {
+        const { status, publish, updatePlatformTask } = usePluginStore.getState()
+
+        // 检查插件状态
+        if (status !== PluginStatus.READY) {
+          console.warn('插件未就绪，无法执行插件发布')
+          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
+          // 将所有插件任务标记为失败
+          for (const item of pluginItems) {
+            const requestId = platformTaskIdMap.get(item.account.id)
+            if (requestId) {
+              updatePlatformTaskByRequestId(requestId, {
+                status: PlatformTaskStatus.ERROR,
+                error: '浏览器插件未就绪，请先安装并授权插件',
+                endTime: Date.now(),
+              })
+            }
+          }
+          return
+        }
+
+        // 并行执行插件发布（不等待，同时发布多个平台）
+        const publishTasks = pluginItems.map(async (item) => {
+          const platform = item.account.type as PluginPlatformType
+          const accountId = item.account.id
+          // 获取该账号对应的 requestId（用于进度匹配）
+          const requestId = platformTaskIdMap.get(accountId)!
+          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
+
+          // 更新任务状态为发布中
+          updatePlatformTaskByRequestId(requestId, {
+            status: PlatformTaskStatus.PUBLISHING,
+            startTime: Date.now(),
+          })
+
+          try {
+            // 构建插件发布参数
+            // 优先传递 File 对象，避免插件需要重新下载
+            const publishParams: PluginPublishParams = {
+              platform,
+              accountId, // 传入账号ID，用于区分同一平台的多个账号
+              requestId, // 传入 requestId，插件回调时带回用于匹配
+              type: item.params.video ? 'video' : 'image',
+              title: item.params.title || '',
+              desc: item.params.des || '',
+              topics: item.params.topics || [],
+            }
+
+            // 视频发布 - 优先传 file，没有 file 才传 URL
+            if (item.params.video) {
+              // 视频：优先传 file（转换 Blob 为 File），没有则传 ossUrl
+              if (item.params.video.file) {
+                // 将 Blob 转换为 File
+                const videoFile = new File(
+                  [item.params.video.file],
+                  item.params.video.filename || 'video.mp4',
+                  { type: item.params.video.file.type },
+                )
+                publishParams.video = videoFile
+              }
+              else if (item.params.video.ossUrl) {
+                publishParams.video = getOssUrl(item.params.video.ossUrl)
+              }
+
+              // 封面：优先传 file，没有则传 ossUrl
+              if (item.params.video.cover?.file) {
+                publishParams.cover = item.params.video.cover.file
+              }
+              else if (item.params.video.cover?.ossUrl) {
+                publishParams.cover = getOssUrl(item.params.video.cover.ossUrl)
+              }
+            }
+            // 图文发布 - 优先传 file，没有 file 才传 URL
+            else if (item.params.images && item.params.images.length > 0) {
+              publishParams.images = item.params.images.map((img) => {
+                // 优先传 file，没有则传 ossUrl
+                if (img.file) {
+                  return img.file
+                }
+                return img.ossUrl ? getOssUrl(img.ossUrl) : ''
+              }).filter(item => item !== '')
+            }
+
+            // 执行发布，通过 requestId 匹配进度
+            const result = await publish(publishParams, (progress) => {
+              // 使用 requestId 精确更新进度
+              updatePlatformTaskByRequestId(requestId, {
+                progress,
+              })
+            })
+
+            // 发布成功，更新任务状态
+            updatePlatformTaskByRequestId(requestId, {
+              status: PlatformTaskStatus.COMPLETED,
+              result: {
+                success: true,
+                workId: result.workId,
+                shareLink: result.shareLink,
+              },
+              endTime: Date.now(),
+            })
+
+            // 发布成功后，创建发布记录
+            try {
+              await apiCreatePublishRecord({
+                flowId: generateUUID(),
+                type: item.params.video ? 'video' : 'article',
+                title: item.params.title || '',
+                desc: item.params.des || '',
+                accountId: item.account.id,
+                accountType: item.account.type,
+                videoUrl: item.params.video?.ossUrl,
+                coverUrl: item.params.video?.cover?.ossUrl
+                  || (item.params.images && item.params.images.length > 0
+                    ? item.params.images[0].ossUrl
+                    : undefined),
+                imgUrlList: item.params.images
+                  ?.map(v => v.ossUrl)
+                  .filter((url): url is string => url !== undefined) || [],
+                topics: item.params.topics || [],
+                status: 1, // 已发布
+                dataId: `${result.workId}`,
+                workLink: result.shareLink,
+                uid: item.account.uid,
+                // @ts-ignore
+                publishTime: dayjs(Date.now()).utc().format(),
+              })
+            }
+            catch (recordError) {
+              console.error('创建发布记录失败:', recordError)
+            }
+          }
+          catch (error) {
+            // 发布失败
+            updatePlatformTaskByRequestId(requestId, {
+              status: PlatformTaskStatus.ERROR,
+              error: error instanceof Error ? error.message : '发布失败',
+              result: {
+                success: false,
+                failReason: error instanceof Error ? error.message : '发布失败',
+              },
+              endTime: Date.now(),
+            })
+          }
+        })
+
+        // 并行执行所有发布任务
+        await Promise.all(publishTasks)
+
+        useCalendarTiming.getState().getPubRecord()
+      }, [])
+
+      /**
        * Publish content with scheduled time (from calendar picker)
+       * 1. 先执行 API 发布（非插件支持平台）
+       * 2. 再执行插件发布（插件支持平台）
+       * 3. 显示发布详情弹框
        */
       const pubClick = useCallback(async () => {
         setCreateLoading(true)
+
         const publishTime = getUtcDays(
           pubTime || getDays().add(5, 'second'),
         ).format()
 
-        for (const item of pubListChoosed) {
+        // 分离 API 发布列表和插件发布列表
+        const apiPublishItems = pubListChoosed.filter(
+          item => !isPluginSupportedPlatform(item.account.type),
+        )
+        const pluginPublishItems = pubListChoosed.filter(
+          item => isPluginSupportedPlatform(item.account.type),
+        )
+
+        // 如果有插件发布项，创建发布任务并显示详情弹框
+        let taskId: string | null = null
+        // 存储每个发布项对应的平台任务ID，用于后续精确更新
+        const platformTaskIdMap = new Map<string, string>()
+
+        if (pluginPublishItems.length > 0) {
+          const { addPublishTask, getPublishTask } = usePluginStore.getState()
+
+          // 创建平台任务列表，为每个任务生成唯一ID和requestId
+          const platformTasks: PlatformPublishTask[] = pluginPublishItems.map((item) => {
+            // 使用账号ID生成唯一的平台任务ID
+            const platformTaskId = `${item.account.type}-${item.account.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+            // 生成唯一的 requestId，用于插件回调匹配
+            const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+            // 保存映射关系，用于后续更新（保存 requestId 而非 platformTaskId）
+            platformTaskIdMap.set(item.account.id, requestId)
+
+            return {
+              id: platformTaskId,
+              requestId, // 创建时就指定，传给插件后回调时匹配
+              platform: item.account.type as PluginPlatformType,
+              accountId: item.account.id,
+              params: {
+                platform: item.account.type as PluginPlatformType,
+                type: item.params.video?.ossUrl ? 'video' : 'image',
+                title: item.params.title || '',
+                desc: item.params.des || '',
+                topics: item.params.topics || [],
+              } as PluginPublishParams,
+              status: PlatformTaskStatus.PENDING,
+              progress: null,
+              result: null,
+              startTime: null,
+              endTime: null,
+              error: null,
+            }
+          })
+
+          // 添加发布任务
+          taskId = addPublishTask({
+            title: pubListChoosed[0]?.params.title || pubListChoosed[0]?.params.des?.slice(0, 20) || t('title'),
+            description: pubListChoosed[0]?.params.des?.slice(0, 100),
+            platformTasks,
+          })
+
+          // 设置任务ID并显示弹框
+          setCurrentPublishTaskId(taskId)
+          setPublishDetailVisible(true)
+        }
+
+        // 1. 先执行 API 发布（非插件支持平台）
+        for (const item of apiPublishItems) {
           const res = await apiCreatePublish({
             topics: item.params.topics ?? [],
             flowId: generateUUID(),
@@ -586,9 +857,18 @@ const PublishDialog = memo(
             option: item.params.option,
           })
           if (res?.code !== 0) {
-            return setCreateLoading(false)
+            setCreateLoading(false)
+            return
           }
         }
+
+        // 2. 再执行插件发布（插件支持平台）
+        if (pluginPublishItems.length > 0 && taskId) {
+          // 异步执行插件发布，不阻塞主流程
+          executePluginPublish(pluginPublishItems, taskId, platformTaskIdMap)
+        }
+
+        // 关闭发布弹框
         onClose()
         setCreateLoading(false)
 
@@ -596,7 +876,7 @@ const PublishDialog = memo(
           onPubSuccess()
         }
         usePublishDialogStorageStore.getState().clearPubData()
-      }, [pubListChoosed])
+      }, [pubListChoosed, pubTime, isPluginSupportedPlatform, executePluginPublish, t])
 
       // 处理划词操作
       const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
@@ -609,7 +889,7 @@ const PublishDialog = memo(
           aiAssistantRef.current?.processText(selectedText, action)
         }, openLeft ? 100 : 500) // 如果已打开，减少延迟
       }, [openLeft, setOpenLeft])
-      
+
       // 处理图生图
       const handleImageToImage = useCallback((imageFile: IImgFile) => {
         // 打开AI面板
@@ -624,37 +904,35 @@ const PublishDialog = memo(
 
       // Sync AI content to editor
       const handleSyncToEditor = useCallback(async (content: string, images?: IImgFile[], video?: IVideoFile, append?: boolean) => {
-        
         // Handle image upload
         if (images && images.length > 0) {
           const uploadsWithImages: Array<{ image: IImgFile, promise: Promise<any>, cancel: () => void }> = []
-          
+
           for (const image of images) {
             const handle = enqueueUpload({
               file: image.file,
               fileName: image.filename,
               type: UploadTaskTypeEnum.Image,
             })
-            
+
             const imageWithTask: IImgFile = {
               ...image,
               uploadTaskId: handle.taskId,
             }
-            
+
             uploadsWithImages.push({
               image: imageWithTask,
               promise: handle.promise,
               cancel: handle.cancel,
             })
           }
-          
+
           // Use images with uploadTaskId
           images = uploadsWithImages.map(item => item.image)
         }
-        
+
         // Handle video upload (AI-generated videos already have ossUrl, only need to upload cover)
         if (video) {
-          
           // If video already has ossUrl (AI-generated), only upload cover
           if (video.ossUrl && !video.cover.ossUrl) {
             const coverHandle = enqueueUpload({
@@ -662,14 +940,14 @@ const PublishDialog = memo(
               fileName: video.cover.filename,
               type: UploadTaskTypeEnum.Image,
             })
-            
+
             video = {
               ...video,
               uploadTaskIds: {
                 cover: coverHandle.taskId,
               },
             }
-          } 
+          }
           // If video doesn't have ossUrl (user uploaded), need to upload both video and cover
           else if (!video.ossUrl) {
             const videoHandle = enqueueUpload({
@@ -677,13 +955,13 @@ const PublishDialog = memo(
               fileName: video.filename,
               type: UploadTaskTypeEnum.Video,
             })
-            
+
             const coverHandle = enqueueUpload({
               file: video.cover.file,
               fileName: video.cover.filename,
               type: UploadTaskTypeEnum.Image,
             })
-            
+
             video = {
               ...video,
               uploadTaskIds: {
@@ -693,7 +971,7 @@ const PublishDialog = memo(
             }
           }
         }
-        
+
         // If only one account, update directly
         if (pubListChoosed.length === 1) {
           const params: any = {}
@@ -701,8 +979,9 @@ const PublishDialog = memo(
           if (content) {
             // If append mode, append content to existing text
             if (append && pubListChoosed[0].params.des) {
-              params.des = pubListChoosed[0].params.des + '\n' + content
-            } else {
+              params.des = `${pubListChoosed[0].params.des}\n${content}`
+            }
+            else {
               params.des = content
             }
           }
@@ -711,11 +990,12 @@ const PublishDialog = memo(
             params.video = video
             // If has video, clear images
             params.images = []
-          } else if (images && images.length > 0) {
+          }
+          else if (images && images.length > 0) {
             params.images = images
           }
           setOnePubParams(params, pubListChoosed[0].account.id)
-        } 
+        }
         // If multiple accounts and in step 0, update common params
         else if (pubListChoosed.length >= 2 && step === 0) {
           const params: any = {}
@@ -723,8 +1003,9 @@ const PublishDialog = memo(
           if (content) {
             // If append mode, append content to existing text
             if (append && commonPubParams.des) {
-              params.des = commonPubParams.des + '\n' + content
-            } else {
+              params.des = `${commonPubParams.des}\n${content}`
+            }
+            else {
               params.des = content
             }
           }
@@ -733,7 +1014,8 @@ const PublishDialog = memo(
             params.video = video
             // If has video, clear images
             params.images = []
-          } else if (images && images.length > 0) {
+          }
+          else if (images && images.length > 0) {
             params.images = images
           }
           setAccountAllParams(params)
@@ -745,8 +1027,9 @@ const PublishDialog = memo(
           if (content) {
             // If append mode, append content to existing text
             if (append && expandedPubItem.params.des) {
-              params.des = expandedPubItem.params.des + '\n' + content
-            } else {
+              params.des = `${expandedPubItem.params.des}\n${content}`
+            }
+            else {
               params.des = content
             }
           }
@@ -755,7 +1038,8 @@ const PublishDialog = memo(
             params.video = video
             // If has video, clear images
             params.images = []
-          } else if (images && images.length > 0) {
+          }
+          else if (images && images.length > 0) {
             params.images = images
           }
           setOnePubParams(params, expandedPubItem.account.id)
@@ -784,7 +1068,7 @@ const PublishDialog = memo(
                 classNames="left"
                 unmountOnExit
               >
-                <PublishDialogAi 
+                <PublishDialogAi
                   ref={aiAssistantRef}
                   onClose={() => setOpenLeft(false)}
                   onSyncToEditor={handleSyncToEditor}
@@ -806,7 +1090,7 @@ const PublishDialog = memo(
                 containerRef={contentAreaRef}
                 onAction={handleTextSelection}
               />
-              
+
               <div className="publishDialog-con" ref={contentAreaRef}>
                 <div className="publishDialog-con-head">
                   <span className="publishDialog-con-head-title">
@@ -1189,7 +1473,7 @@ const PublishDialog = memo(
                   classNames="left"
                   unmountOnExit
                 >
-                  <PublishDialogAi 
+                  <PublishDialogAi
                     ref={aiAssistantRef}
                     onClose={() => setOpenLeft(false)}
                     onSyncToEditor={handleSyncToEditor}
@@ -1221,6 +1505,16 @@ const PublishDialog = memo(
             open={showFacebookPagesModal}
             onClose={() => setShowFacebookPagesModal(false)}
             onSuccess={handleFacebookPagesSuccess}
+          />
+
+          {/* 发布详情弹框 - 显示插件发布进度 */}
+          <PublishDetailModal
+            visible={publishDetailVisible}
+            onClose={() => {
+              setPublishDetailVisible(false)
+              setCurrentPublishTaskId(undefined)
+            }}
+            taskId={currentPublishTaskId}
           />
         </>
       )

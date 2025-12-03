@@ -1,7 +1,7 @@
 'use client'
 
 import { EyeOutlined, LinkOutlined, UserOutlined } from '@ant-design/icons'
-import { Badge, Button, Card, Empty, Input, message, Modal, Pagination, Spin, Tabs, Tag } from 'antd'
+import { Avatar, Badge, Button, Card, Empty, Input, message, Pagination, Select, Spin, Tabs, Tag } from 'antd'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -10,7 +10,21 @@ import {
   apiGetNoteMonitoringList,
   type NoteMonitoringListItem,
 } from '@/api/monitoring'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import styles from './dataMonitoring.module.scss'
+
+// Supported platforms for monitoring
+const SUPPORTED_PLATFORMS = [
+  PlatType.Tiktok,
+  PlatType.BILIBILI,
+  PlatType.Douyin,
+  PlatType.Facebook,
+  PlatType.Instagram,
+  PlatType.Xhs,
+  PlatType.KWAI,
+  PlatType.YouTube,
+  PlatType.Twitter,
+]
 
 export default function DataMonitoringPage() {
   const { t } = useTransClient('dataMonitoring')
@@ -19,15 +33,20 @@ export default function DataMonitoringPage() {
   const [loading, setLoading] = useState(false)
   const [monitoringList, setMonitoringList] = useState<NoteMonitoringListItem[]>([])
   const [pagination, setPagination] = useState({ page: 1, pageSize: 20, total: 0, totalPages: 0 })
-  const [addModalVisible, setAddModalVisible] = useState(false)
+  const [selectedPlatform, setSelectedPlatform] = useState<PlatType>(PlatType.Xhs)
+  const [filterPlatform, setFilterPlatform] = useState<PlatType | 'all'>('all')
   const [noteLink, setNoteLink] = useState('')
   const [addLoading, setAddLoading] = useState(false)
 
-  // 加载监控列表
-  const loadMonitoringList = async (page: number = 1) => {
+  // Load monitoring list
+  const loadMonitoringList = async (page: number = 1, platform?: string) => {
     setLoading(true)
     try {
-      const data = await apiGetNoteMonitoringList({ platform: 'xhs', page, pageSize: 20 })
+      const params: any = { page, pageSize: 20 }
+      if (platform && platform !== 'all') {
+        params.platform = platform
+      }
+      const data = await apiGetNoteMonitoringList(params)
       setMonitoringList(data.items)
       setPagination({
         page: data.page,
@@ -46,16 +65,16 @@ export default function DataMonitoringPage() {
 
   useEffect(() => {
     if (activeTab === 'link') {
-      loadMonitoringList(1)
+      loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
     }
-  }, [activeTab])
+  }, [activeTab, filterPlatform])
 
-  // 分页变化
+  // Handle pagination change
   const handlePageChange = (page: number) => {
-    loadMonitoringList(page)
+    loadMonitoringList(page, filterPlatform === 'all' ? undefined : filterPlatform)
   }
 
-  // 添加笔记监控
+  // Add note monitoring
   const handleAddNote = async () => {
     if (!noteLink.trim()) {
       message.warning(t('addModal.linkRequired'))
@@ -64,11 +83,10 @@ export default function DataMonitoringPage() {
 
     setAddLoading(true)
     try {
-      await apiAddNoteMonitoring({ link: noteLink, platform: 'xhs' })
+      await apiAddNoteMonitoring({ link: noteLink, platform: selectedPlatform })
       message.success(t('addModal.addSuccess'))
-      setAddModalVisible(false)
       setNoteLink('')
-      loadMonitoringList(1)
+      loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
     }
     catch (error: any) {
       message.error(error.message || t('error.addFailed'))
@@ -128,24 +146,106 @@ export default function DataMonitoringPage() {
         />
 
         <div className={styles.tabContent}>
-          {/* 按笔记链接 */}
+          {/* By note link */}
           {activeTab === 'link' && (
             <div className={styles.linkMonitoring}>
-              <div className={styles.addSection}>
-                <div className={styles.addCard}>
-                  <LinkOutlined className={styles.addIcon} />
-                  <h3 className={styles.addTitle}>{t('tabs.byLink')}</h3>
-                  <Button
-                    type="primary"
-                    onClick={() => setAddModalVisible(true)}
-                    className={styles.addButton}
-                  >
-                    {t('actions.add')}
-                  </Button>
-                </div>
+              {/* Add note form */}
+              <div className={styles.addFormSection}>
+                <Card className={styles.addFormCard}>
+                  <div className={styles.addForm}>
+                    <div className={styles.platformSelect}>
+                      <Select
+                        value={selectedPlatform}
+                        onChange={setSelectedPlatform}
+                        style={{ width: 180 }}
+                        size="large"
+                        className={styles.platformSelectInput}
+                      >
+                        {SUPPORTED_PLATFORMS.map(platform => {
+                          const platInfo = AccountPlatInfoMap.get(platform)
+                          if (!platInfo) return null
+                          const iconSrc = typeof platInfo.icon === 'string' 
+                            ? platInfo.icon 
+                            : (platInfo.icon as any)?.src || String(platInfo.icon)
+                          return (
+                            <Select.Option key={platform} value={platform}>
+                              <div className={styles.platformOption}>
+                                <img
+                                  src={iconSrc}
+                                  alt={platInfo.name}
+                                  width={20}
+                                  height={20}
+                                  style={{ marginRight: 8, objectFit: 'contain' }}
+                                />
+                                <span>{platInfo.name}</span>
+                              </div>
+                            </Select.Option>
+                          )
+                        })}
+                      </Select>
+                    </div>
+                    <Input
+                      placeholder={t('addModal.linkPlaceholder')}
+                      value={noteLink}
+                      onChange={e => setNoteLink(e.target.value)}
+                      onPressEnter={handleAddNote}
+                      prefix={<LinkOutlined />}
+                      size="large"
+                      className={styles.linkInput}
+                    />
+                    <Button
+                      type="primary"
+                      onClick={handleAddNote}
+                      loading={addLoading}
+                      size="large"
+                      className={styles.addButton}
+                    >
+                      {t('actions.add')}
+                    </Button>
+                  </div>
+                </Card>
               </div>
 
-              {/* 监控列表 */}
+              {/* Filter section */}
+              <div className={styles.filterSection}>
+                <Card className={styles.filterCard}>
+                  <div className={styles.filterContent}>
+                    <span className={styles.filterLabel}>{t('list.filterByPlatform' as any)}:</span>
+                    <Select
+                      value={filterPlatform}
+                      onChange={(value) => setFilterPlatform(value)}
+                      style={{ width: 200 }}
+                      size="large"
+                      className={styles.filterSelect}
+                    >
+                      <Select.Option value="all">{t('list.allPlatforms' as any)}</Select.Option>
+                      {SUPPORTED_PLATFORMS.map(platform => {
+                        const platInfo = AccountPlatInfoMap.get(platform)
+                        if (!platInfo) return null
+                        const iconSrc = typeof platInfo.icon === 'string' 
+                          ? platInfo.icon 
+                          : (platInfo.icon as any)?.src || String(platInfo.icon)
+                        return (
+                          <Select.Option key={platform} value={platform}>
+                            <div className={styles.platformOption}>
+                              <img
+                                src={iconSrc}
+                                alt={platInfo.name}
+                                width={20}
+                                height={20}
+                                style={{ marginRight: 8, objectFit: 'contain' }}
+                              />
+                              <span>{platInfo.name}</span>
+                            </div>
+                          </Select.Option>
+                        )
+                      })}
+                    </Select>
+                  </div>
+                </Card>
+              </div>
+
+              {/* Monitoring list */}
               {loading ? (
                 <div className={styles.loading}>
                   <Spin size="large" />
@@ -170,13 +270,26 @@ export default function DataMonitoringPage() {
                         ]}
                       >
                         <div className={styles.cardHeader}>
-                          <h4 className={styles.noteTitle}>
-                            {item.link}
-                          </h4>
+                          <div className={styles.cardHeaderLeft}>
+                            {item.postDetail?.author && (
+                              <div className={styles.authorInfo}>
+                                <Avatar
+                                  src={item.postDetail.avatar}
+                                  size={32}
+                                  className={styles.authorAvatar}
+                                >
+                                  {item.postDetail.author.charAt(0)}
+                                </Avatar>
+                                <span className={styles.authorName}>{item.postDetail.author}</span>
+                              </div>
+                            )}
+                            <h4 className={styles.noteTitle}>
+                              {item.postDetail?.title || item.link}
+                            </h4>
+                          </div>
                           <div className={styles.headerRight} style={{ marginRight: '0' }}>
                             {getStatusTag(item.status)}
                             <Badge
-                            
                               status={item.enabled ? 'success' : 'default'}
                               text={item.enabled ? t('status.enabled') : t('status.disabled')}
                             />
@@ -187,7 +300,7 @@ export default function DataMonitoringPage() {
                             <Tag color="error">{t('list.error')}: {item.error}</Tag>
                           </div>
                         )}
-                        <div className={styles.cardFooter}>
+                        <div className={`${styles.cardFooter} ${!item.error ? styles.cardFooterNoError : ''}`}>
                           <span className={styles.createTime}>
                             {t('list.createdAt')}: {new Date(item.createdAt).toLocaleString('zh-CN')}
                           </span>
@@ -219,7 +332,7 @@ export default function DataMonitoringPage() {
             </div>
           )}
 
-          {/* 按小红书账号 - 暂未开放 */}
+          {/* By account - not yet available */}
           {activeTab === 'account' && (
             <div className={styles.accountMonitoring}>
               <div className={styles.addSection}>
@@ -239,31 +352,6 @@ export default function DataMonitoringPage() {
           )}
         </div>
       </Card>
-
-      {/* 添加笔记链接弹窗 */}
-      <Modal
-        title={t('addModal.title')}
-        open={addModalVisible}
-        onOk={handleAddNote}
-        onCancel={() => {
-          setAddModalVisible(false)
-          setNoteLink('')
-        }}
-        confirmLoading={addLoading}
-        okText={t('addModal.confirm')}
-        cancelText={t('addModal.cancel')}
-      >
-        <div className={styles.addModalContent}>
-          <p className={styles.modalDesc}>{t('addModal.inputPlaceholder')}</p>
-          <Input
-            placeholder={t('addModal.linkPlaceholder')}
-            value={noteLink}
-            onChange={e => setNoteLink(e.target.value)}
-            prefix={<LinkOutlined />}
-            size="large"
-          />
-        </div>
-      </Modal>
     </div>
   )
 }

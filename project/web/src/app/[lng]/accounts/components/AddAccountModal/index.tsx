@@ -1,14 +1,16 @@
 import type { ForwardedRef } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IpLocationInfo } from '@/utils/ipLocation'
-import { Button, Modal, Select, Space, Tooltip, Typography } from 'antd'
+import { Button, message, Modal, Select, Space, Tooltip, Typography } from 'antd'
 import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'
-import { AccountPlatInfoArr, PlatType } from '@/app/config/platConfig'
+import { AccountPlatInfoArr, AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import { useAccountStore } from '@/store/account'
+import type { PluginPlatformType } from '@/store/plugin'
+import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus, usePluginStore } from '@/store/plugin'
 import { getIpLocation } from '@/utils/ipLocation'
 import { bilibiliSkip } from '../../plat/BilibiliLogin'
 import { FacebookPagesModal, facebookSkip } from '../../plat/FacebookLogin'
@@ -55,6 +57,13 @@ const AddAccountModal = memo(
       const [downloadVisible, setDownloadVisible] = useState(false)
       const [downloadPlatform, setDownloadPlatform] = useState<string>('')
       const aitoearnDownloadUrl = process.env.NEXT_PUBLIC_AITOEARN_APP_DOWNLOAD_URL || ''
+
+      // 插件相关状态
+      const pluginStatus = usePluginStore(state => state.status)
+      const platformAccounts = usePluginStore(state => state.platformAccounts)
+      const syncAccountToDatabase = usePluginStore(state => state.syncAccountToDatabase)
+      const init = usePluginStore(state => state.init)
+      const [syncLoadingPlatform, setSyncLoadingPlatform] = useState<PlatType | null>(null)
 
       // 空间选择相关状态
       const [selectedSpaceId, setSelectedSpaceId] = useState<string | undefined>(targetGroupId)
@@ -204,6 +213,56 @@ const AddAccountModal = memo(
         // 可以在这里添加成功提示或其他逻辑
       }
 
+      /**
+       * 检查平台是否为插件支持的平台
+       */
+      const isPluginSupportedPlatform = (platform: PlatType): platform is PluginPlatformType => {
+        return PLUGIN_SUPPORTED_PLATFORMS.includes(platform as PluginPlatformType)
+      }
+
+      /**
+       * 处理从插件同步账号
+       * @param platform 平台类型（必须是插件支持的平台）
+       */
+      const handlePluginPlatformSync = async (platform: PluginPlatformType) => {
+        const platformName = AccountPlatInfoMap.get(platform)?.name || platform
+
+        // 检查插件是否就绪
+        if (pluginStatus !== PluginStatus.READY) {
+          // 插件未就绪，显示下载弹框（带插件Tab）
+          setDownloadPlatform(platformName)
+          setDownloadVisible(true)
+          return
+        }
+
+        // 检查是否有账号
+        const account = platformAccounts[platform]
+        if (!account) {
+          message.warning(t('addAccountModal.platformNotLoggedIn' as any, { platform: platformName }))
+          return
+        }
+
+        setSyncLoadingPlatform(platform)
+        try {
+          const result = await syncAccountToDatabase(platform, selectedSpaceId)
+          if (result) {
+            message.success(t('addAccountModal.syncSuccess' as any))
+            onAddSuccess(result)
+            onClose()
+          }
+          else {
+            message.error(t('addAccountModal.syncFailed' as any))
+          }
+        }
+        catch (error) {
+          console.error('同步账号失败:', error)
+          message.error(t('addAccountModal.syncFailed' as any))
+        }
+        finally {
+          setSyncLoadingPlatform(null)
+        }
+      }
+
       // 处理平台点击
       const handlePlatformClick = async (key: PlatType, value: any) => {
         // 如果需要选择空间但未选择，提示用户
@@ -220,6 +279,12 @@ const AddAccountModal = memo(
         if (value.pcNoThis) {
           setDownloadPlatform(value.name)
           setDownloadVisible(true)
+          return
+        }
+
+        // 检查是否为插件支持的平台
+        if (isPluginSupportedPlatform(key)) {
+          await handlePluginPlatformSync(key)
           return
         }
 
@@ -337,6 +402,7 @@ const AddAccountModal = memo(
               <div className="addAccountModal_plats">
                 {AccountPlatInfoArr.map(([key, value]) => {
                   const isAvailable = isPlatformAvailable(key as PlatType)
+                  const isLoading = syncLoadingPlatform === key
                   return (
                     <Tooltip title={value.tips?.account} key={key}>
                       <Button
@@ -344,8 +410,8 @@ const AddAccountModal = memo(
                         style={{ width: '84px' }}
                         className={`addAccountModal_plats-item ${!isAvailable ? 'disabled' : ''}`}
                         disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId)}
+                        loading={isLoading}
                         onClick={() => handlePlatformClick(key as PlatType, value)}
-
                       >
                         <div className="addAccountModal_plats-item-con">
                           <img
@@ -410,6 +476,17 @@ const AddAccountModal = memo(
             platform={downloadPlatform}
             appName="Aitoearn App"
             downloadUrl={aitoearnDownloadUrl}
+            // 如果是插件支持的平台且插件未就绪，显示插件Tab
+            showPluginTab={pluginStatus !== PluginStatus.READY}
+            defaultTab="plugin"
+            pluginStatus={
+              pluginStatus === PluginStatus.INSTALLED_NO_PERMISSION
+                ? 'no_permission'
+                : pluginStatus === PluginStatus.NOT_INSTALLED || pluginStatus === PluginStatus.UNKNOWN
+                  ? 'not_installed'
+                  : 'ready'
+            }
+            onCheckPermission={() => init()}
           />
         </>
       )

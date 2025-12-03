@@ -25,7 +25,7 @@ const InstagramParams = memo(
         console.log('InstagramParams - Current option:', option)
         console.log('InstagramParams - Current instagram:', option.instagram)
 
-        if (!option.instagram || !option.instagram.content_category) {
+        if (!option.instagram?.content_category) {
           console.log('InstagramParams - Setting default instagram option')
           setOnePubParams(
             {

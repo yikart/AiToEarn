@@ -4,6 +4,7 @@ import type {
 import type { IMCPManagerModalRef } from './MCPManagerModal'
 import type { IUserManageModalRef } from './UserManageModal'
 import type { SocialAccount } from '@/api/types/account.type'
+import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
 import type {
   IpLocationInfo,
 } from '@/utils/ipLocation'
@@ -132,6 +133,22 @@ function AccountPopoverInfo({
   const platInfo = AccountPlatInfoMap.get(accountInfo.type)!
   const [detLoading, setDetLoading] = useState(false)
 
+  /**
+   * 根据 clientType 获取显示的标签文本
+   * @param clientType 客户端类型（web/app）
+   * @returns 标签显示文本
+   */
+  const getClientTypeLabel = (clientType?: ClientType) => {
+    if (!clientType) return null
+    if (clientType === ClientType.WEB) {
+      return t('clientType.web' as any)
+    }
+    if (clientType === ClientType.APP) {
+      return t('clientType.app' as any)
+    }
+    return null
+  }
+
   return (
     <div
       className={styles.accountPopoverInfo}
@@ -185,6 +202,24 @@ function AccountPopoverInfo({
           </Button>
         </p>
       </div>
+
+      {/* 客户端来源标签（web/flutter app），为空不显示 */}
+      {accountInfo.clientType && (
+        <div className="accountPopoverInfo-item">
+          <p>
+            {t('clientType.label' as any)}
+            ：
+          </p>
+          <p>
+            <span
+              className="accountPopoverInfo-clientType"
+              data-type={accountInfo.clientType}
+            >
+              {getClientTypeLabel(accountInfo.clientType)}
+            </span>
+          </p>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,3 +1,4 @@
+import type { ClientType } from '@/app/[lng]/accounts/accounts.enums'
 import type { PlatType } from '@/app/config/platConfig'
 
 export enum AccountType {
@@ -41,6 +42,7 @@ export interface SocialAccount {
   updateTime: string
   rank: number
   groupId: string
+  clientType?: ClientType
 }
 
 // 更新账户统计数据

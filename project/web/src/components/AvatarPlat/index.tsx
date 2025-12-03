@@ -10,7 +10,7 @@ import styles from './avatarPlat.module.scss'
 export interface IAvatarPlatRef {}
 
 export interface IAvatarPlatProps {
-  account?: SocialAccount
+  account?: Partial<SocialAccount>
   size?: AvatarSize
   className?: string
   width?: number
@@ -56,7 +56,7 @@ const AvatarPlat = memo(
         <>
           <div className={`${styles.avatarPlat} ${className} ${disabled ? styles.disabled : ''}`}>
             <Avatar
-              src={getAvatar(account.avatar)}
+              src={getAvatar(account!.avatar!)}
               size={avatarWidth || size}
               style={disabled ? { opacity: 0.5 } : undefined}
             />
