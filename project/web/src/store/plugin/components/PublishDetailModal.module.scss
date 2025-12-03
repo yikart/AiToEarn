@@ -1,0 +1,234 @@
+.publishDetailModal {
+  :global {
+    .ant-modal-body {
+      padding: 20px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+  }
+
+  .modalHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &_content {
+    .taskInfo {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color, #e8e8e8);
+
+      .title {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text-primary);
+      }
+
+      .description {
+        font-size: 14px;
+        color: var(--text-secondary);
+        margin-bottom: 12px;
+      }
+
+      .meta {
+        font-size: 12px;
+        color: var(--text-tertiary);
+      }
+    }
+
+    .platformTasks {
+      .sectionTitle {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: var(--text-primary);
+      }
+
+      .taskList {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+    }
+  }
+}
+
+.platformCard {
+  padding: 16px;
+  background: var(--bg-secondary, #f9f9f9);
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #e8e8e8);
+
+  &_header {
+    margin-bottom: 12px;
+
+    .platform {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      // 账号头像容器（带平台角标）
+      .accountAvatar {
+        position: relative;
+        flex-shrink: 0;
+
+        // 平台角标
+        .platformBadge {
+          position: absolute;
+          right: -4px;
+          bottom: -4px;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          background: #fff;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+          border: 1px solid #eee;
+
+          img {
+            border-radius: 50%;
+          }
+        }
+      }
+
+      // 账号信息
+      .accountInfo {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .accountName {
+          font-size: 14px;
+          font-weight: 600;
+          color: var(--text-primary, #1a1a1a);
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .platformName {
+          font-size: 12px;
+          color: var(--text-secondary, #666);
+        }
+      }
+    }
+  }
+
+  &_progress {
+    margin-bottom: 16px;
+
+    .progressInfo {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+      font-size: 13px;
+
+      .stage {
+        color: var(--text-primary);
+        font-weight: 500;
+      }
+
+      .message {
+        color: var(--text-secondary);
+      }
+    }
+  }
+
+  &_result {
+    padding: 12px;
+    background: var(--bg-primary, #fff);
+    border-radius: 6px;
+    margin-bottom: 12px;
+
+    .resultTitle {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+    }
+
+    .resultItem {
+      display: flex;
+      align-items: center;
+      margin-bottom: 6px;
+      font-size: 13px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .label {
+        color: var(--text-secondary);
+        margin-right: 8px;
+        min-width: 80px;
+      }
+
+      .value {
+        color: var(--text-primary);
+        word-break: break-all;
+      }
+
+      .link {
+        color: var(--primary-color, #667eea);
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        :global {
+          .anticon {
+            margin-right: 4px;
+          }
+        }
+      }
+
+      .error {
+        color: var(--error-color, #f44336);
+      }
+    }
+  }
+
+  &_error {
+    padding: 12px;
+    background: var(--error-bg, #ffebee);
+    border-radius: 6px;
+    margin-bottom: 12px;
+
+    .errorTitle {
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--error-color, #f44336);
+    }
+
+    .errorMessage {
+      font-size: 13px;
+      color: var(--error-color-dark, #c62828);
+    }
+  }
+
+  &_time {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12px;
+
+    .timeItem {
+      .label {
+        color: var(--text-secondary);
+        margin-right: 4px;
+      }
+
+      .value {
+        color: var(--text-tertiary);
+      }
+    }
+  }
+}
+

@@ -72,7 +72,8 @@
     "location": "Location",
     "searchLocation": "Search location",
     "selectLocation": "Select location",
-    "descriptionPlaceholder": "Start writing"
+    "descriptionPlaceholder": "Start writing",
+    "fans": "Fans"
   },
   "writingAssistant": "AI Assistant",
   "aiAssistant": "AI Assistant",
@@ -325,5 +326,14 @@
       "shares": "Shares"
     },
     "viewWork": "View Work"
+  },
+  "clientType": {
+    "label": "Source",
+    "web": "Web",
+    "app": "App"
+  },
+  "pluginPublish": {
+    "ready": "Plugin",
+    "notReady": "Plugin Not Ready"
   }
 }

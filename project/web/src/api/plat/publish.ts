@@ -6,7 +6,6 @@ import type {
 import type { PlatType } from '@/app/config/platConfig'
 import type { IPlatOption } from '@/components/PublishDialog/publishDialog.type'
 import { parseTopicString } from '@/utils'
-// 创建发布
 import { request } from '@/utils/request'
 
 // 根据平台类型过滤option参数
@@ -17,7 +16,16 @@ function filterOptionByPlatform(option: IPlatOption, accountType: PlatType): IPl
   return option[key] ? ({ [key]: option[key] } as IPlatOption) : {}
 }
 
-// 创建发布
+// 创建发布记录
+export function apiCreatePublishRecord(data: Partial<PublishRecordItem>) {
+  return request({
+    url: 'plat/publish/createRecord',
+    method: 'POST',
+    data,
+  })
+}
+
+// 创建发布任务
 export function apiCreatePublish(data: PublishParams) {
   const { topics, cleanedString } = parseTopicString(data.desc || '')
   data.topics = [...new Set(data.topics?.concat(topics))]

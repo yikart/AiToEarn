@@ -5,6 +5,7 @@ import { combine } from 'zustand/middleware'
 import { getAccountGroupApi, getAccountListApi } from '@/api/account'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { directTrans } from '@/app/i18n/client'
+import { usePluginStore } from '@/store/plugin'
 import { useUserStore } from '@/store/user'
 
 export interface AccountGroup extends AccountGroupItem {
@@ -66,7 +67,7 @@ export const useAccountStore = create(
         /**
          * 异步获取账户列表（含稳健的loading与错误处理），避免阻塞UI
          */
-        async getAccountList() {
+        async getAccountList(isBackground = false) {
           if (get().accountLoading)
             return
           set({ accountLoading: true })
@@ -101,6 +102,10 @@ export const useAccountStore = create(
               accountAccountMap,
             })
 
+            if (isBackground) {
+              await usePluginStore.getState().init()
+            }
+
             void useDataStatisticsStore
               .getState()
               .init()
@@ -119,9 +124,8 @@ export const useAccountStore = create(
         /**
          * 后台异步启动账户列表加载（不等待，不阻塞首屏/刷新渲染）
          */
-        getAccountListInBackground() {
-          // fire-and-forget，内部自行处理loading与错误
-          void methods.getAccountList()
+        async getAccountListInBackground() {
+          await methods.getAccountList(true)
         },
 
         // 获取用户组的数据并且将用户放到对应组下
