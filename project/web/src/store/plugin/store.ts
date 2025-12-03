@@ -223,6 +223,17 @@ export const usePluginStore = create(
           }
         },
 
+        /**
+         * 同步账号状态（仅当插件已就绪时执行）
+         * 用于刷新账号列表后，不重新授权，只同步在线/离线状态
+         */
+        async syncAccountStatus() {
+          const { status } = get()
+          if (status === Status.READY) {
+            await methods.refreshAllPlatformAccounts()
+          }
+        },
+
         /** 刷新所有平台账号信息，并同步更新 accountList 中的在线/离线状态 */
         async refreshAllPlatformAccounts() {
           const { status } = get()

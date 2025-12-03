@@ -1295,6 +1295,7 @@ const PublishDialog = memo(
                           {pubListChoosed.map((v) => {
                             return (
                               <PlatParamsSetting
+                                key={v.account.id}
                                 pubItem={v}
                                 style={{ marginBottom: '12px' }}
                                 onImageToImage={handleImageToImage}
