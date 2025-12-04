@@ -41,6 +41,8 @@ import youtubeIcon from '@/assets/svgs/plat/youtube.png'
 import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 
 import { useTransClient } from '../i18n/client'
+import { getOssUrl } from '@/utils/oss'
+import { message } from 'antd'
 
 import styles from './styles/difyHome.module.scss'
 import PromptGallerySection from './components/PromptGallery'
@@ -138,7 +140,7 @@ function LazyLoadSection({ children }: { children: ReactNode }) {
 }
 
 // Hero main title section
-function Hero() {
+function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: string} | null }) {
   const { t } = useTransClient('home')
   const router = useRouter()
   const { lng } = useParams()
@@ -151,6 +153,16 @@ function Hero() {
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
+
+  // 应用提示词（从 PromptGallery 触发）
+  useEffect(() => {
+    if (promptToApply) {
+      setPrompt(promptToApply.prompt)
+      if (promptToApply.image) {
+        setUploadedImages(prev => [...prev, promptToApply.image!])
+      }
+    }
+  }, [promptToApply])
   
   // Message type definition
   type MessageItem = {
@@ -311,34 +323,33 @@ function Hero() {
 
     setIsUploading(true)
     try {
-      // 动态导入 OSS 上传函数
+      // 动态导入
       const { uploadToOss } = await import('@/api/oss')
+      const { OSS_URL } = await import('@/constant')
       
-      // 将 FileList 转换为数组，然后对每个文件调用 uploadToOss
-      // Promise.all 会并行上传所有图片
-      const uploadPromises = Array.from(files).map(file => 
-        uploadToOss(file, {
-          onProgress: (progress) => {
-            console.log(`上传进度: ${progress}%`)
-          }
-        })
-      )
+      // 并行上传所有图片
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const ossKey = await uploadToOss(file)
+        const ossUrl = `${OSS_URL}${ossKey}`
+        return ossUrl
+      })
       
-      // 等待所有上传完成
-      const results = await Promise.all(uploadPromises)
+      // 等待所有上传完成，得到完整的OSS URL
+      const imageUrls = await Promise.all(uploadPromises)
       
-      // 提取所有图片的 URL
-      const imageUrls = results.map(result => result.url)
+      console.log('上传成功的完整URLs:', imageUrls)
       
       // 添加到已上传图片列表
       setUploadedImages(prev => [...prev, ...imageUrls])
+      message.success(t('aiGeneration.uploadSuccess' as any))
       
     } catch (error) {
       console.error('Image upload failed:', error)
+      message.error(t('aiGeneration.uploadFailed' as any))
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) {
-        fileInputRef.current.value = '' // 清空文件输入框
+        fileInputRef.current.value = ''
       }
     }
   }
@@ -351,7 +362,6 @@ function Hero() {
   // Create AI generation task with SSE
   const handleCreateTask = async () => {
     if (!prompt.trim()) {
-      alert(t('aiGeneration.emptyPromptAlert' as any))
       return
     }
 
@@ -440,7 +450,7 @@ function Hero() {
         // onError callback
         (error) => {
           console.error('SSE Error:', error)
-          alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+          message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
           setIsGenerating(false)
           setProgress(0)
         },
@@ -494,7 +504,7 @@ function Hero() {
     }
     catch (error: any) {
       console.error('Create task error:', error)
-      alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
       setProgress(0)
     }
@@ -643,6 +653,36 @@ function Hero() {
         {/* AI Generation Input */}
         <div className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
+             {/* 已上传图片预览 */}
+          {uploadedImages.length > 0 && (
+            <div className={styles.uploadedImagesPreview}>
+              <div className={styles.imagesRow}>
+                {uploadedImages.map((imageUrl, index) => (
+                  <div key={index} className={styles.imageItem}>
+                    <img 
+                      src={imageUrl} 
+                      alt={`图 ${index + 1}`} 
+                      className={styles.imageThumb}
+                    />
+                    {!isGenerating && (
+                      <span
+                        className={styles.removeImageBtn}
+                        onClick={() => handleRemoveImage(index)}
+                        title="删除"
+                      >
+                        <CloseCircleOutlined />
+                      </span>
+                    )}
+                  </div>
+                ))}
+                
+              </div>
+            </div>
+          )}
+
+          <div className={styles.aiInputContainer1}>
+
+          
             <input
               type="text"
               value={prompt}
@@ -686,37 +726,11 @@ function Hero() {
             >
               {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
             </button>
+
+            </div>
           </div>
 
-          {/* 已上传图片预览（显示小图） */}
-          {uploadedImages.length > 0 && (
-            <div className={styles.uploadedImagesPreview}>
-              <div className={styles.imagesList}>
-                {uploadedImages.map((imageUrl, index) => (
-                  <div key={index} className={styles.imageItem}>
-                    <img src={imageUrl} alt={`上传图片 ${index + 1}`} className={styles.imageThumb} />
-                    <button
-                      className={styles.removeImageBtn}
-                      onClick={() => handleRemoveImage(index)}
-                      disabled={isGenerating}
-                      title="删除图片"
-                    >
-                      <CloseCircleOutlined />
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button 
-                className={styles.clearAllBtn}
-                onClick={() => setUploadedImages([])}
-                disabled={isGenerating}
-                title="清除所有图片"
-              >
-                <CloseCircleOutlined style={{ marginRight: '4px' }} />
-                清除全部
-              </button>
-            </div>
-          )}
+         
 
           {/* Progress Display Area - COMMENTED OUT, KEPT FOR REFERENCE */}
           {/* {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
@@ -2168,11 +2182,18 @@ function Footer() {
 }
 
 export default function Home() {
+  // 状态提升：用于从 PromptGallery 应用提示词
+  const [promptToApply, setPromptToApply] = useState<{prompt: string; image?: string} | null>(null)
+
   return (
     <div className={styles.difyHome}>
       <ReleaseBanner />
-      <Hero />
-      <PromptGallerySection />
+      <Hero promptToApply={promptToApply} />
+      <PromptGallerySection 
+        onApplyPrompt={(prompt, imageUrl) => {
+          setPromptToApply({ prompt, image: imageUrl })
+        }}
+      />
       <LazyLoadSection>
         <BrandBar />
       </LazyLoadSection>
