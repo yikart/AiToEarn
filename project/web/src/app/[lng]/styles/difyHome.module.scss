@@ -3142,6 +3142,15 @@
     display: flex;
     flex-direction: column;
     gap: 0;
+    
+    // 限制图片最大宽度
+    :global {
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+    }
   }
 
   .markdownMessage {

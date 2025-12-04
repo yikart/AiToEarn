@@ -42,9 +42,17 @@ import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 
 import { useTransClient } from '../i18n/client'
 import { getOssUrl } from '@/utils/oss'
-import { message } from 'antd'
+import { message, Modal, Form, Input, Button } from 'antd'
+import { GoogleLogin } from '@react-oauth/google'
+import { useUserStore } from '@/store/user'
+import { 
+  loginWithMailApi, 
+  mailRegistApi,
+  googleLoginApi,
+} from '@/api/apiReq'
 
 import styles from './styles/difyHome.module.scss'
+import loginStyles from './login/login.module.css'
 import PromptGallerySection from './components/PromptGallery'
 
 // External image URL constants
@@ -142,8 +150,10 @@ function LazyLoadSection({ children }: { children: ReactNode }) {
 // Hero main title section
 function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: string} | null }) {
   const { t } = useTransClient('home')
+  const { t: tLogin } = useTransClient('login')
   const router = useRouter()
   const { lng } = useParams()
+  const { token, setToken, setUserInfo } = useUserStore()
 
   // AI generation related states
   const [prompt, setPrompt] = useState('')
@@ -153,14 +163,21 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
+  
+  // Login modal states
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [registCode, setRegistCode] = useState('')
+  const [loginForm] = Form.useForm()
+  const [isActivating, setIsActivating] = useState(false)
 
   // 应用提示词（从 PromptGallery 触发）
   useEffect(() => {
     if (promptToApply) {
       setPrompt(promptToApply.prompt)
-      if (promptToApply.image) {
-        setUploadedImages(prev => [...prev, promptToApply.image!])
-      }
+      // 不再自动添加图片
     }
   }, [promptToApply])
   
@@ -359,9 +376,116 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     setUploadedImages(prev => prev.filter((_, i) => i !== index))
   }
 
+  // Login handlers
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await loginWithMailApi({ mail: loginEmail, password: loginPassword })
+      if (!response) return
+
+      if (response.code === 0) {
+        if (response.data.type === 'regist') {
+          // User not registered, show registration modal
+          setRegistCode(response.data.code || '')
+          loginForm.setFieldsValue({ password: loginPassword })
+          setIsModalOpen(true)
+        } else if (response.data.token) {
+          // Login successful
+          setToken(response.data.token)
+          if (response.data.userInfo) {
+            setUserInfo(response.data.userInfo)
+          }
+          message.success(tLogin('loginSuccess'))
+          setLoginModalOpen(false)
+          // Continue with task creation
+          handleCreateTask()
+        }
+      } else {
+        message.error(response.message || tLogin('loginFailed'))
+      }
+    } catch (error) {
+      message.error(tLogin('loginError'))
+    }
+  }
+
+  const handleRegistSubmit = async (values: { password: string, code: string, inviteCode?: string }) => {
+    try {
+      setIsActivating(true)
+      const response = await mailRegistApi({
+        mail: loginEmail,
+        code: values.code,
+        password: values.password,
+        inviteCode: values.inviteCode || '',
+      })
+
+      if (!response) {
+        message.error(tLogin('registerError'))
+        setIsActivating(false)
+        return
+      }
+
+      if (response.code === 0 && response.data.token) {
+        setIsActivating(false)
+        setIsModalOpen(false)
+        setLoginModalOpen(false)
+        loginForm.resetFields()
+        setToken(response.data.token)
+        if (response.data.userInfo) {
+          setUserInfo(response.data.userInfo)
+        }
+        message.success(tLogin('registerSuccess'))
+        // Continue with task creation
+        handleCreateTask()
+      } else {
+        message.error(response.message || tLogin('registerError'))
+        setIsActivating(false)
+      }
+    } catch (error) {
+      message.error(tLogin('registerError'))
+      setIsActivating(false)
+    }
+  }
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const params: any = {
+        platform: 'google',
+        clientId: credentialResponse.clientId,
+        credential: credentialResponse.credential,
+      }
+
+      const response: any = await googleLoginApi(params)
+      if (!response) {
+        message.error(tLogin('googleLoginFailed'))
+        return
+      }
+
+      if (response.code === 0 && response.data.type === 'login') {
+        setToken(response.data.token)
+        if (response.data.userInfo) {
+          setUserInfo(response.data.userInfo)
+        }
+        message.success(tLogin('loginSuccess'))
+        setLoginModalOpen(false)
+        // Continue with task creation
+        handleCreateTask()
+      } else {
+        message.error(response.message || tLogin('googleLoginFailed'))
+      }
+    } catch (error) {
+      message.error(tLogin('googleLoginFailed'))
+    }
+  }
+
   // Create AI generation task with SSE
   const handleCreateTask = async () => {
     if (!prompt.trim()) {
+      return
+    }
+    
+    // Check if user is logged in
+    if (!token) {
+      setLoginModalOpen(true)
       return
     }
 
@@ -394,7 +518,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       // 构建完整的提示词（包含图片链接，但不在前端显示）
       let fullPrompt = prompt
       if (uploadedImages.length > 0) {
-        fullPrompt = `${prompt}\n\n[参考图片]:\n${uploadedImages.join('\n')}`
+        fullPrompt = `${prompt}\n\n[图片]:\n${uploadedImages.join('\n ')}`
       }
 
       // Dynamic import API
@@ -404,7 +528,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       await agentApi.createTaskWithSSE(
         { prompt: fullPrompt },
         // onMessage callback
-        (sseMessage) => {
+        (sseMessage: any) => {
           console.log('SSE Message:', sseMessage)
 
           // Save sessionId
@@ -413,8 +537,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           }
 
           // Handle different message types
-          // 只要有 message 字段就添加（支持 type: 'text', 'message' 等）
-          if (sseMessage.message) {
+          // 只有 type === 'text' 才在 markdown 中显示
+          if (sseMessage.type === 'text' && sseMessage.message) {
             console.log('[UI] Adding markdown message:', sseMessage.message)
             setMarkdownMessages(prev => {
               const newMessages = [...prev, sseMessage.message!]
@@ -834,7 +958,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 <div className={styles.markdownContent}>
                   <ReactMarkdown>
                     {markdownMessages.length > 0 
-                      ? markdownMessages.join('\n\n---\n\n') 
+                      ? markdownMessages.join('\n\n') 
                       : '等待 AI 响应...'}
                   </ReactMarkdown>
                 </div>
@@ -889,6 +1013,124 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           {t('hero.useMobilePhone' as any)}
         </p>
       </div>
+
+      {/* Login Modal */}
+      <Modal
+        open={loginModalOpen}
+        onCancel={() => setLoginModalOpen(false)}
+        footer={null}
+        width={460}
+        centered
+        destroyOnClose
+      >
+        <div className={loginStyles.loginBox} style={{ boxShadow: 'none', padding: '24px 0' }}>
+          <h1 className={loginStyles.title}>{tLogin('welcomeBack')}</h1>
+          <form onSubmit={handleLoginSubmit} className={loginStyles.form}>
+            <div className={loginStyles.inputGroup}>
+              <input
+                type="email"
+                placeholder={tLogin('emailPlaceholder')}
+                value={loginEmail}
+                onChange={e => setLoginEmail(e.target.value)}
+                className={loginStyles.input}
+                required
+              />
+            </div>
+            <div className={loginStyles.inputGroup}>
+              <input
+                type="password"
+                placeholder={tLogin('passwordPlaceholder')}
+                value={loginPassword}
+                onChange={e => setLoginPassword(e.target.value)}
+                className={loginStyles.input}
+                required
+              />
+            </div>
+            <Button type="primary" htmlType="submit" block className={loginStyles.submitButton}>
+              {tLogin('login')}
+            </Button>
+          </form>
+
+          <div className={loginStyles.divider}>
+            <span>{tLogin('or')}</span>
+          </div>
+
+          <div className={loginStyles.googleButtonWrapper}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => message.error(tLogin('googleLoginFailed'))}
+              useOneTap={false}
+              theme="outline"
+              shape="rectangular"
+              text="signin_with"
+              locale={lng === 'zh-CN' ? 'zh_CN' : 'en'}
+              width="100%"
+              size="large"
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Registration Modal */}
+      <Modal
+        title={tLogin('completeRegistration')}
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false)
+          setIsActivating(false)
+          loginForm.resetFields()
+        }}
+        maskClosable={false}
+        keyboard={false}
+        closable={true}
+        footer={null}
+      >
+        <Form
+          form={loginForm}
+          onFinish={handleRegistSubmit}
+          layout="vertical"
+        >
+          <Form.Item
+            label={tLogin('emailCode')}
+            name="code"
+            rules={[
+              { required: true, message: tLogin('emailCodeRequired') },
+              { len: 6, message: tLogin('emailCodeLength') },
+            ]}
+          >
+            <Input placeholder={tLogin('enterEmailCode')} maxLength={6} />
+          </Form.Item>
+
+          <Form.Item
+            label={tLogin('setPassword')}
+            name="password"
+            rules={[
+              { required: true, message: tLogin('passwordRequired') },
+              { min: 6, message: tLogin('passwordMinLength') },
+            ]}
+          >
+            <Input.Password placeholder={tLogin('enterPassword')} />
+          </Form.Item>
+
+          <Form.Item
+            label={tLogin('inviteCode')}
+            name="inviteCode"
+          >
+            <Input placeholder={tLogin('enterInviteCode')} />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={isActivating}
+            >
+              {isActivating ? tLogin('registering') : tLogin('completeRegistration')}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </section>
   )
 }
@@ -2190,8 +2432,8 @@ export default function Home() {
       <ReleaseBanner />
       <Hero promptToApply={promptToApply} />
       <PromptGallerySection 
-        onApplyPrompt={(prompt, imageUrl) => {
-          setPromptToApply({ prompt, image: imageUrl })
+        onApplyPrompt={(prompt) => {
+          setPromptToApply({ prompt })
         }}
       />
       <LazyLoadSection>
