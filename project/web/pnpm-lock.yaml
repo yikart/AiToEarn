@@ -35,6 +35,9 @@ importers:
       '@lexical/react':
         specifier: ^0.37.0
         version: 0.37.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(yjs@13.6.27)
+      '@microsoft/fetch-event-source':
+        specifier: ^2.0.1
+        version: 2.0.1
       '@react-oauth/google':
         specifier: ^0.12.2
         version: 0.12.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -1349,6 +1352,9 @@ packages:
   '@mapbox/node-pre-gyp@1.0.11':
     resolution: {integrity: sha512-Yhlar6v9WQgUp/He7BdgzOz8lqMQ8sU+jkCq7Wx8Myc5YFJLbEe7lgui/V7G1qB1DJykHSGwreceSaD60Y0PUQ==}
     hasBin: true
+
+  '@microsoft/fetch-event-source@2.0.1':
+    resolution: {integrity: sha512-W6CLUJ2eBMw3Rec70qrsEW0jOm/3twwJv21mrmj2yORiaVmVYGS4sSS5yUwvQc1ZlDLYGPnClVWmUUMagKNsfA==}
 
   '@next/env@13.5.11':
     resolution: {integrity: sha512-fbb2C7HChgM7CemdCY+y3N1n8pcTKdqtQLbC7/EQtPdLvlMUT9JX/dBYl8MMZAtYG4uVMyPFHXckb68q/NRwqg==}
@@ -7019,6 +7025,8 @@ snapshots:
       - encoding
       - supports-color
     optional: true
+
+  '@microsoft/fetch-event-source@2.0.1': {}
 
   '@next/env@13.5.11': {}
 

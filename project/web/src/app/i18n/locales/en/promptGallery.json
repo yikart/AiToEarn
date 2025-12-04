@@ -1,0 +1,20 @@
+{
+  "badge": "🎨 Prompt Inspiration Library",
+  "title": "Explore Featured Prompts",
+  "titleHighlight": "Start Creating Quickly",
+  "subtitle": "Selected high-quality prompt templates, one-click apply to use",
+  "applyButton": "Apply Now",
+  "collapseButton": "Collapse",
+  "expandButton": "View More",
+  "expandCount": "items",
+  "appliedToast": "✓ Prompt Applied",
+  "modal": {
+    "promptLabel": "Prompt:",
+    "applyButton": "Apply Now"
+  },
+  "badges": {
+    "edit": "Edit",
+    "generate": "Text to Image"
+  }
+}
+

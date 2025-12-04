@@ -27,6 +27,7 @@
     "@hello-pangea/dnd": "^16.6.0",
     "@kwooshung/react-no-ssr": "^1.1.4",
     "@lexical/react": "^0.37.0",
+    "@microsoft/fetch-event-source": "^2.0.1",
     "@react-oauth/google": "^0.12.2",
     "@svgr/webpack": "^6.5.1",
     "@szhsin/react-menu": "^4.4.1",
