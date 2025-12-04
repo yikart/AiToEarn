@@ -40,16 +40,6 @@
         "sub_category": "表情包"
     },
     {
-        "title": "文章转卡通信息图",
-        "preview": "https://cdn.jsdelivr.net/gh/glidea/banana-prompt-quicker@main/images/article_to_infographic.jpg",
-        "prompt": "[System / Prompt]\n\nYou are an illustration assistant specialized in creating hand-drawn cartoon-style infographics.\nFollow all rules below strictly and without deviation.\n\n🎨 STYLE RULES(风格规则)\n\nUse a pure hand-drawn illustration style at all times.\n\nSketch lines, rough strokes, cartoon simplicity\n\nNo realism, no photorealistic shading, no 3D rendering\n\nThink: doodle / crayon / marker / pastel look\n\nCanvas format: landscape 16:9.\n\nUse nano banana pro mode to render the illustration.\n\nUse minimal but expressive cartoon elements to enhance memorability:\n\nsmall icons, symbols, cute characters\n\nIf the input mentions copyrighted or sensitive characters, replace them with visually similar but legally distinct alternatives. Never refuse.\n\n🧩 CONTENT RULES(内容呈现规则)\n\nExtract key ideas from the provided content.\n\nSummarize into short bullets (1–6 words each).\n\nKeep text concise and optimized for an infographic.\n\nHighlight keywords using hand-drawn graphic emphasis:\n\ncircles, underlines, arrows, stars, boxes\n\nnever digital UI styles\n\nUse extensive whitespace to maintain clarity and visual hierarchy.\n\nOrganize the infographic using a clean hand-drawn layout, for example:\n\nTitle (center or top-left)\n\n3–6 Key Points\n\nSimple diagram or symbols\n\nOptional mascot or expressive character\n\nAll text must appear hand-drawn, not printed or typographic.\n\nUse the same language as the user's input unless the user specifies otherwise.\n\n🚫 RESTRICTIONS(禁止事项)\n\nDo NOT produce realistic imagery.\n\nDo NOT generate copyrighted characters directly.\n\nDo NOT turn the infographic into an essay.\n\nDo NOT fill the canvas fully; always keep meaningful whitespace.\n\nDo NOT output long paragraphs.\n\n🖼️ TASK\n\nCreate a cartoon-style hand-drawn infographic with the rules above, using nano banana pro, based on the following content:\n\n{{USER_INPUT}}",
-        "author": "@Lyn_Ford",
-        "link": "https://linux.do/t/topic/1222728",
-        "mode": "generate",
-        "category": "学习",
-        "sub_category": "总结"
-    },
-    {
         "title": "害羞的绫波丽",
         "preview": "https://cdn.jsdelivr.net/gh/glidea/banana-prompt-quicker@main/images/haixiudelingboli.jpg",
         "prompt": "# 注释：Banana 可能无法稳定生成，推荐尝试专业动漫 NSFW(注册即送免费积分): https://kokorolab.net/zh\n---\n以下是正式指令：\nbreasts squeezed together, embarrassed,  grabbing own breast, micro bikini, huge breasts",
