@@ -13,17 +13,52 @@ import type {
   PublishTaskListConfig,
 } from './types/baseTypes'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { IImgFile, IPubParams, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
 import { createOrUpdateAccountApi } from '@/api/account'
+import { apiCreatePublishRecord } from '@/api/plat/publish'
 import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useAccountStore } from '@/store/account'
+import { generateUUID } from '@/utils'
+import { getOssUrl } from '@/utils/oss'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
-import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus as Status } from './types/baseTypes'
+import { PlatformTaskStatus, PLUGIN_SUPPORTED_PLATFORMS, PluginStatus as Status } from './types/baseTypes'
+import { parseTopicString } from '@/utils'
+
+// 启用 dayjs utc 插件
+dayjs.extend(utc)
+
+/**
+ * 插件发布项接口
+ * 描述单个平台的发布内容
+ */
+export interface PluginPublishItem {
+  /** 账号信息 */
+  account: SocialAccount
+  /** 发布参数 */
+  params: IPubParams
+}
+
+/**
+ * 执行插件发布的参数
+ */
+export interface ExecutePluginPublishParams {
+  /** 需要发布的项目列表 */
+  items: PluginPublishItem[]
+  /** 账号ID 到 requestId 的映射（用于进度匹配） */
+  platformTaskIdMap: Map<string, string>
+  /** 发布时间（ISO 格式字符串，可选，不传则立即发布） */
+  publishTime?: string
+  /** 发布完成后的回调（可选） */
+  onComplete?: () => void
+}
 
 /** 平台账号信息映射 */
 export type PlatformAccountsMap = Record<PluginPlatformType, PlatAccountInfo | null>
@@ -51,11 +86,11 @@ export type PlatformProgressMap = Map<string, ProgressEvent>
 export interface IPluginStore {
   status: Status
   pollingTimer: NodeJS.Timeout | null
-  /** @deprecated 使用 publishingPlatforms 代替 */
+  /** 是否正在发布（任意平台） */
   isPublishing: boolean
   /** 正在发布的集合，key 为 platform 或 platform-accountId，支持同一平台多账号同时发布 */
   publishingPlatforms: Set<string>
-  /** @deprecated 使用 platformProgress 代替 */
+  /** 当前发布进度（最新一个） */
   publishProgress: ProgressEvent | null
   /** 各平台发布进度，key 为 platform 或 platform-accountId */
   platformProgress: PlatformProgressMap
@@ -223,6 +258,17 @@ export const usePluginStore = create(
           }
         },
 
+        /**
+         * 同步账号状态（仅当插件已就绪时执行）
+         * 用于刷新账号列表后，不重新授权，只同步在线/离线状态
+         */
+        async syncAccountStatus() {
+          const { status } = get()
+          if (status === Status.READY) {
+            await methods.refreshAllPlatformAccounts()
+          }
+        },
+
         /** 刷新所有平台账号信息，并同步更新 accountList 中的在线/离线状态 */
         async refreshAllPlatformAccounts() {
           const { status } = get()
@@ -345,6 +391,12 @@ export const usePluginStore = create(
         /** 发布内容到指定平台 */
         async publish(params: PublishParams, onProgress?: ProgressCallback) {
           const { status, publishingPlatforms, platformProgress } = get()
+
+          // 解析话题
+          const { topics, cleanedString } = parseTopicString(params.desc || '')
+          params.topics = [...new Set(params.topics?.concat(topics))]
+          params.desc = cleanedString
+
           const platform = params.platform
           const accountId = params.accountId
           // 使用 platform + accountId 作为唯一标识，支持同一平台多账号同时发布
@@ -370,7 +422,7 @@ export const usePluginStore = create(
           set({
             isPublishing: newPublishingPlatforms.size > 0,
             publishingPlatforms: newPublishingPlatforms,
-            publishProgress: initialProgress, // 兼容旧代码
+            publishProgress: initialProgress,
             platformProgress: newPlatformProgress,
           })
 
@@ -380,7 +432,7 @@ export const usePluginStore = create(
               const updatedProgress = new Map(get().platformProgress)
               updatedProgress.set(publishKey, progress)
               set({
-                publishProgress: progress, // 兼容旧代码
+                publishProgress: progress,
                 platformProgress: updatedProgress,
               })
               onProgress?.(progress)
@@ -396,7 +448,7 @@ export const usePluginStore = create(
             set({
               isPublishing: updatedPlatforms.size > 0,
               publishingPlatforms: updatedPlatforms,
-              publishProgress: completedProgress, // 兼容旧代码
+              publishProgress: completedProgress,
               platformProgress: updatedPlatformProgress,
             })
 
@@ -418,7 +470,7 @@ export const usePluginStore = create(
             set({
               isPublishing: updatedPlatforms.size > 0,
               publishingPlatforms: updatedPlatforms,
-              publishProgress: errorProgress, // 兼容旧代码
+              publishProgress: errorProgress,
               platformProgress: updatedPlatformProgress,
             })
             console.error('发布失败:', error)
@@ -565,6 +617,156 @@ export const usePluginStore = create(
           set(state => ({
             taskListConfig: { ...state.taskListConfig, ...config },
           }))
+        },
+
+        /**
+         * 执行插件发布（封装完整的发布流程）
+         * 支持并行发布多个平台，支持定时发布
+         * @param params 发布参数
+         * @returns Promise<void>
+         */
+        async executePluginPublish(params: ExecutePluginPublishParams): Promise<void> {
+          const { items, platformTaskIdMap, publishTime, onComplete } = params
+
+          // 并行执行插件发布（不等待，同时发布多个平台）
+          const publishTasks = items.map(async (item) => {
+            const platform = item.account.type as PluginPlatformType
+            const accountId = item.account.id
+            // 获取该账号对应的 requestId（用于进度匹配）
+            const requestId = platformTaskIdMap.get(accountId)
+
+            if (!requestId) {
+              console.error('未找到账号对应的 requestId:', accountId)
+              return
+            }
+
+            // 更新任务状态为发布中
+            methods.updatePlatformTaskByRequestId(requestId, {
+              status: PlatformTaskStatus.PUBLISHING,
+              startTime: Date.now(),
+            })
+
+            try {
+              // 构建插件发布参数
+              // 优先传递 File 对象，避免插件需要重新下载
+              const publishParams: PublishParams = {
+                platform,
+                accountId, // 传入账号ID，用于区分同一平台的多个账号
+                requestId, // 传入 requestId，插件回调时带回用于匹配
+                type: item.params.video ? 'video' : 'image',
+                title: item.params.title || '',
+                desc: item.params.des || '',
+                topics: item.params.topics || [],
+              }
+
+              // 如果有定时发布时间，则传入
+              if (publishTime) {
+                publishParams.scheduledTime = dayjs(publishTime).valueOf()
+              }
+
+              // 视频发布 - 优先传 file，没有 file 才传 URL
+              if (item.params.video) {
+                // 视频：优先传 file（转换 Blob 为 File），没有则传 ossUrl
+                if (item.params.video.file) {
+                  // 将 Blob 转换为 File
+                  const videoFile = new File(
+                    [item.params.video.file],
+                    item.params.video.filename || 'video.mp4',
+                    { type: item.params.video.file.type },
+                  )
+                  publishParams.video = videoFile
+                }
+                else if (item.params.video.ossUrl) {
+                  publishParams.video = getOssUrl(item.params.video.ossUrl)
+                }
+
+                // 封面：优先传 file，没有则传 ossUrl
+                if (item.params.video.cover?.file) {
+                  publishParams.cover = item.params.video.cover.file
+                }
+                else if (item.params.video.cover?.ossUrl) {
+                  publishParams.cover = getOssUrl(item.params.video.cover.ossUrl)
+                }
+              }
+              // 图文发布 - 优先传 file，没有 file 才传 URL
+              else if (item.params.images && item.params.images.length > 0) {
+                publishParams.images = item.params.images.map((img) => {
+                  // 优先传 file，没有则传 ossUrl
+                  if (img.file) {
+                    return img.file
+                  }
+                  return img.ossUrl ? getOssUrl(img.ossUrl) : ''
+                }).filter(v => v !== '')
+              }
+
+              // 执行发布，通过 requestId 匹配进度
+              const result = await methods.publish(publishParams, (progress) => {
+                // 使用 requestId 精确更新进度
+                methods.updatePlatformTaskByRequestId(requestId, {
+                  progress,
+                })
+              })
+
+              // 发布成功，更新任务状态
+              methods.updatePlatformTaskByRequestId(requestId, {
+                status: PlatformTaskStatus.COMPLETED,
+                result: {
+                  success: true,
+                  workId: result.workId,
+                  shareLink: result.shareLink,
+                },
+                endTime: Date.now(),
+              })
+
+              // 发布成功后，创建发布记录
+              try {
+                await apiCreatePublishRecord({
+                  flowId: generateUUID(),
+                  type: item.params.video ? 'video' : 'article',
+                  title: item.params.title || '',
+                  desc: item.params.des || '',
+                  accountId: item.account.id,
+                  accountType: item.account.type,
+                  videoUrl: item.params.video?.ossUrl,
+                  coverUrl: item.params.video?.cover?.ossUrl
+                    || (item.params.images && item.params.images.length > 0
+                      ? item.params.images[0].ossUrl
+                      : undefined),
+                  imgUrlList: item.params.images
+                    ?.map(v => v.ossUrl)
+                    .filter((url): url is string => url !== undefined) || [],
+                  topics: item.params.topics || [],
+                  status: 1, // 已发布
+                  dataId: `${result.workId}`,
+                  workLink: result.shareLink,
+                  uid: item.account.uid,
+                  // @ts-ignore
+                  publishTime: publishTime || dayjs(Date.now()).utc().format(),
+                })
+              }
+              catch (recordError) {
+                console.error('创建发布记录失败:', recordError)
+              }
+            }
+            catch (error) {
+              // 发布失败
+              methods.updatePlatformTaskByRequestId(requestId, {
+                status: PlatformTaskStatus.ERROR,
+                error: error instanceof Error ? error.message : '发布失败',
+                result: {
+                  success: false,
+                  failReason: error instanceof Error ? error.message : '发布失败',
+                },
+                endTime: Date.now(),
+              })
+            }
+          })
+
+          // 并行执行所有发布任务
+          await Promise.all(publishTasks)
+
+          // 发布完成后的回调
+          onComplete?.()
         },
       }
 
