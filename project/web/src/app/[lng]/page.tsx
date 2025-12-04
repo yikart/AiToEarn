@@ -333,11 +333,8 @@ function Hero() {
       // 添加到已上传图片列表
       setUploadedImages(prev => [...prev, ...imageUrls])
       
-      // 显示成功消息
-      alert(`✅ 成功上传 ${imageUrls.length} 张图片！`)
     } catch (error) {
       console.error('Image upload failed:', error)
-      alert('❌ 图片上传失败，请重试')
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) {
