@@ -349,8 +349,8 @@ function Hero() {
           }
 
           // Handle different message types
-          if (sseMessage.type === 'message' && sseMessage.message) {
-            // Add markdown message
+          // 只要有 message 字段就添加（支持 type: 'text', 'message' 等）
+          if (sseMessage.message) {
             console.log('[UI] Adding markdown message:', sseMessage.message)
             setMarkdownMessages(prev => {
               const newMessages = [...prev, sseMessage.message!]
@@ -358,7 +358,8 @@ function Hero() {
               return newMessages
             })
           }
-          else if (sseMessage.type === 'status' && sseMessage.status) {
+          
+          if (sseMessage.type === 'status' && sseMessage.status) {
             // Update status
             const statusDisplay = getStatusDisplay(sseMessage.status)
             const needsLoadingAnimation = ['GENERATING_VIDEO', 'GENERATING_IMAGE', 'GENERATING_CONTENT', 'GENERATING_TEXT'].includes(sseMessage.status)
@@ -610,8 +611,8 @@ function Hero() {
             </button>
           </div>
 
-          {/* Progress Display Area */}
-          {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
+          {/* Progress Display Area - COMMENTED OUT, KEPT FOR REFERENCE */}
+          {/* {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
             <div className={styles.aiProgressWrapper}>
               <div 
                 ref={progressContainerRef}
@@ -621,7 +622,6 @@ function Hero() {
                   borderRadius: progress > 0 ? '12px 12px 0 0' : '12px',
                 }}
               >
-                {/* Top loading indicator - only shown when generating */}
                 {isGenerating && (
                   <div style={{
                     position: 'absolute',
@@ -635,9 +635,7 @@ function Hero() {
                   }} />
                 )}
                 
-                {/* Continuous text stream display */}
                 <div className={styles.aiProgressContent}>
-                  {/* Completed messages - continuous text */}
                   {completedMessages.map((msg, index) => {
                     const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
                     const isDescription = msg.type === 'description'
@@ -664,7 +662,6 @@ function Hero() {
                     )
                   })}
                   
-                  {/* Current typing message */}
                   {currentTypingMsg && displayedText && (
                     <div 
                       className={styles.aiProgressMessage}
@@ -690,7 +687,6 @@ function Hero() {
                 </div>
               </div>
               
-              {/* Progress bar - only shown when progress > 0 */}
               {progress > 0 && (
                 <div className={styles.aiProgressBarContainer}>
                   <div 
@@ -702,27 +698,30 @@ function Hero() {
                 </div>
               )}
             </div>
-          )}
+          )} */}
 
-          {/* Markdown Messages Display */}
-          {markdownMessages.length > 0 && (
+          {/* SSE Message Display - Always Visible */}
+          {/* {isGenerating && ( */}
             <div className={styles.markdownMessagesWrapper}>
               <div 
                 ref={markdownContainerRef}
                 className={styles.markdownMessagesContainer}
               >
                 <h3 className={styles.markdownTitle}>
-                  📄 {t('aiGeneration.sseMessages' as any) || 'AI 生成过程'} ({markdownMessages.length})
+                  🤖 AI 生成过程 {isGenerating && <LoadingDots />}
                 </h3>
-                {markdownMessages.map((msg, index) => (
-                  <div key={`markdown-${index}`} className={styles.markdownMessage}>
-                    <div className={styles.markdownIndex}>消息 #{index + 1}</div>
-                    <ReactMarkdown>{msg}</ReactMarkdown>
-                  </div>
-                ))}
+                <div className={styles.markdownContent}>
+                  <ReactMarkdown>
+                    {markdownMessages.length > 0 
+                      ? markdownMessages.join('\n\n---\n\n') 
+                      : '等待 AI 响应...'}
+                  </ReactMarkdown>
+                </div>
               </div>
             </div>
-          )}
+          {/* )} */}
+
+          
         </div>
 
         {/* Mobile button */}

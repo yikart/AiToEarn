@@ -2954,21 +2954,33 @@
     }
   }
 
+  .markdownContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
   .markdownMessage {
-    margin-bottom: 16px;
     padding: 16px;
     background: #fafafa;
-    border-radius: 8px;
+    border-radius: 0;
     border-left: 3px solid #a66ae4;
     position: relative;
+    border-bottom: 1px solid rgba(166, 106, 228, 0.1);
+
+    &:first-child {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
 
     &:last-child {
-      margin-bottom: 0;
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border-bottom: none;
     }
 
     @media (max-width: 768px) {
       padding: 12px;
-      margin-bottom: 12px;
     }
 
     .markdownIndex {
