@@ -17,7 +17,7 @@ interface PromptItem {
 }
 
 interface PromptGallerySectionProps {
-  onApplyPrompt?: (prompt: string, imageUrl?: string) => void
+  onApplyPrompt?: (prompt: string) => void
 }
 
 // 使用导入的提示词数据
@@ -60,7 +60,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   const handleApplyPrompt = (item: PromptItem, e: React.MouseEvent) => {
     e.stopPropagation()
     if (onApplyPrompt) {
-      onApplyPrompt(item.prompt, item.preview)
+      onApplyPrompt(item.prompt) // 只应用提示词，不配置图片
       setApplied(true)
       setTimeout(() => setApplied(false), 2000)
       
@@ -189,7 +189,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
                 className={styles.modalCopyBtn}
                 onClick={() => {
                   if (onApplyPrompt) {
-                    onApplyPrompt(selectedPrompt.prompt, selectedPrompt.preview)
+                    onApplyPrompt(selectedPrompt.prompt) // 只应用提示词，不配置图片
                     setSelectedPrompt(null)
                     setApplied(true)
                     setTimeout(() => setApplied(false), 2000)

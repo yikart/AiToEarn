@@ -200,7 +200,7 @@ export const agentApi = {
    * @param taskId 任务ID
    */
   async getTaskDetail(taskId: string) {
-    const res = await http.get<TaskDetail>(`agent/tasks/${taskId}`)
+    const res = await http.get<TaskDetail>(`${'https://pr-211.preview.aitoearn.ai/api/'}agent/tasks/${taskId}`)
     return res
   },
 }
