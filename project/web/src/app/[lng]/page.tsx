@@ -43,6 +43,7 @@ import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 import { useTransClient } from '../i18n/client'
 
 import styles from './styles/difyHome.module.scss'
+import PromptGallerySection from './components/PromptGallery'
 
 // External image URL constants
 const IMAGE_URLS = {
@@ -147,6 +148,9 @@ function Hero() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [taskId, setTaskId] = useState('')
   const [sessionId, setSessionId] = useState('')
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
+  const [isUploading, setIsUploading] = useState(false) // 上传状态
+  const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
   
   // Message type definition
   type MessageItem = {
@@ -300,6 +304,53 @@ function Hero() {
     }
   }, [markdownMessages])
 
+  // Handle image upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setIsUploading(true)
+    try {
+      // 动态导入 OSS 上传函数
+      const { uploadToOss } = await import('@/api/oss')
+      
+      // 将 FileList 转换为数组，然后对每个文件调用 uploadToOss
+      // Promise.all 会并行上传所有图片
+      const uploadPromises = Array.from(files).map(file => 
+        uploadToOss(file, {
+          onProgress: (progress) => {
+            console.log(`上传进度: ${progress}%`)
+          }
+        })
+      )
+      
+      // 等待所有上传完成
+      const results = await Promise.all(uploadPromises)
+      
+      // 提取所有图片的 URL
+      const imageUrls = results.map(result => result.url)
+      
+      // 添加到已上传图片列表
+      setUploadedImages(prev => [...prev, ...imageUrls])
+      
+      // 显示成功消息
+      alert(`✅ 成功上传 ${imageUrls.length} 张图片！`)
+    } catch (error) {
+      console.error('Image upload failed:', error)
+      alert('❌ 图片上传失败，请重试')
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '' // 清空文件输入框
+      }
+    }
+  }
+
+  // Remove uploaded image
+  const handleRemoveImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index))
+  }
+
   // Create AI generation task with SSE
   const handleCreateTask = async () => {
     if (!prompt.trim()) {
@@ -333,12 +384,18 @@ function Hero() {
       // Set initial progress to 10%
       setProgress(10)
 
+      // 构建完整的提示词（包含图片链接，但不在前端显示）
+      let fullPrompt = prompt
+      if (uploadedImages.length > 0) {
+        fullPrompt = `${prompt}\n\n[参考图片]:\n${uploadedImages.join('\n')}`
+      }
+
       // Dynamic import API
       const { agentApi } = await import('@/api/agent')
 
-      // Create task with SSE
+      // Create task with SSE (使用包含图片链接的完整提示词)
       await agentApi.createTaskWithSSE(
-        { prompt },
+        { prompt: fullPrompt },
         // onMessage callback
         (sseMessage) => {
           console.log('SSE Message:', sseMessage)
@@ -594,22 +651,75 @@ function Hero() {
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyPress={(e) => {
-                if (e.key === 'Enter' && !isGenerating) {
+                if (e.key === 'Enter' && !isGenerating && !isUploading) {
                   handleCreateTask()
                 }
               }}
               placeholder={t('aiGeneration.inputPlaceholder' as any)}
-              disabled={isGenerating}
+              disabled={isGenerating || isUploading}
               className={styles.aiInput}
             />
+            
+            {/* 图片上传按钮 */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isGenerating || isUploading}
+              className={styles.aiUploadBtn}
+              title="上传图片"
+            >
+              {isUploading ? (
+                <span>⏳</span>
+              ) : (
+                <PictureOutlined style={{ fontSize: '20px' }} />
+              )}
+            </button>
+            
             <button
               onClick={handleCreateTask}
-              disabled={isGenerating || !prompt.trim()}
+              disabled={isGenerating || !prompt.trim() || isUploading}
               className={styles.aiGenerateBtn}
             >
               {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
             </button>
           </div>
+
+          {/* 已上传图片预览（显示小图） */}
+          {uploadedImages.length > 0 && (
+            <div className={styles.uploadedImagesPreview}>
+              <div className={styles.imagesList}>
+                {uploadedImages.map((imageUrl, index) => (
+                  <div key={index} className={styles.imageItem}>
+                    <img src={imageUrl} alt={`上传图片 ${index + 1}`} className={styles.imageThumb} />
+                    <button
+                      className={styles.removeImageBtn}
+                      onClick={() => handleRemoveImage(index)}
+                      disabled={isGenerating}
+                      title="删除图片"
+                    >
+                      <CloseCircleOutlined />
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <button 
+                className={styles.clearAllBtn}
+                onClick={() => setUploadedImages([])}
+                disabled={isGenerating}
+                title="清除所有图片"
+              >
+                <CloseCircleOutlined style={{ marginRight: '4px' }} />
+                清除全部
+              </button>
+            </div>
+          )}
 
           {/* Progress Display Area - COMMENTED OUT, KEPT FOR REFERENCE */}
           {/* {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
@@ -701,7 +811,7 @@ function Hero() {
           )} */}
 
           {/* SSE Message Display - Always Visible */}
-          {/* {isGenerating && ( */}
+          {isGenerating && (
             <div className={styles.markdownMessagesWrapper}>
               <div 
                 ref={markdownContainerRef}
@@ -719,7 +829,7 @@ function Hero() {
                 </div>
               </div>
             </div>
-          {/* )} */}
+          )}
 
           
         </div>
@@ -2065,6 +2175,7 @@ export default function Home() {
     <div className={styles.difyHome}>
       <ReleaseBanner />
       <Hero />
+      <PromptGallerySection />
       <LazyLoadSection>
         <BrandBar />
       </LazyLoadSection>
