@@ -518,7 +518,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       // 构建完整的提示词（包含图片链接，但不在前端显示）
       let fullPrompt = prompt
       if (uploadedImages.length > 0) {
-        fullPrompt = `${prompt}\n\n[图片]:\n${uploadedImages.join('\n ')}`
+        fullPrompt = `${prompt}\n\n[image]:\n${uploadedImages.join('\n ')}`
       }
 
       // Dynamic import API
@@ -537,7 +537,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           }
 
           // Handle different message types
-          // 只有 type === 'text' 才在 markdown 中显示
+          // type === 'text' 或 'error' 都在 markdown 中显示
           if (sseMessage.type === 'text' && sseMessage.message) {
             console.log('[UI] Adding markdown message:', sseMessage.message)
             setMarkdownMessages(prev => {
@@ -546,9 +546,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               return newMessages
             })
           }
+          else if (sseMessage.type === 'error' && sseMessage.message) {
+            console.log('[UI] Adding error message to markdown:', sseMessage.message)
+            const errorMsg = `❌ : ${sseMessage.message || t('aiGeneration.unknownError' as any)}`
+            setMarkdownMessages(prev => [...prev, errorMsg])
+          }
           
           if (sseMessage.type === 'status' && sseMessage.status) {
-            // Update status
+            // Update statu
             const statusDisplay = getStatusDisplay(sseMessage.status)
             const needsLoadingAnimation = ['GENERATING_VIDEO', 'GENERATING_IMAGE', 'GENERATING_CONTENT', 'GENERATING_TEXT'].includes(sseMessage.status)
             
@@ -562,12 +567,13 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             // Update progress
             setProgress(prev => calculateProgress(sseMessage.status!, true, prev))
           }
-          else if (sseMessage.type === 'error') {
-            addMessageToQueue({
-              type: 'error',
-              content: `${t('aiGeneration.failedReasonPrefix' as any)}${sseMessage.message || t('aiGeneration.unknownError' as any)}`
-            })
-            setIsGenerating(false)
+          // 注意：error 消息已经在上面添加到 markdownMessages 中了
+          // 这里只需要更新状态
+          if (sseMessage.type === 'error') {
+            // 延迟关闭 isGenerating，让用户能看到错误消息
+            setTimeout(() => {
+              setIsGenerating(false)
+            }, 100)
             setProgress(0)
           }
         },
@@ -945,8 +951,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             </div>
           )} */}
 
-          {/* SSE Message Display - Always Visible */}
-          {isGenerating && (
+          {/* SSE Message Display - Visible when generating or has messages */}
+          {(isGenerating || markdownMessages.length > 0) && (
             <div className={styles.markdownMessagesWrapper}>
               <div 
                 ref={markdownContainerRef}
