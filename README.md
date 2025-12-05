@@ -47,15 +47,11 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## Quick Start for Creators (Apps & Web)
 
-OS | Download
--- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.4.0-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.4.0-internal-arm64-v8a.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.4.0-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-Setup-1.4.0.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.4.0-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.4.0.dmg)
-iOS |  **Coming soon!**
-Web | [Use on Web](https://aitoearn.ai/en/accounts)
+[![Download](https://img.shields.io/badge/Client%20Download-Get%20Started-blue?style=for-the-badge&logo=github)](https://github.com/yikart/AiToEarn/releases)
+[![Web App](https://img.shields.io/badge/Web-Use%20Online-green?style=for-the-badge&logo=googlechrome)](https://aitoearn.ai/en/accounts)
+[![Google Play](https://img.shields.io/badge/Google%20Play-Get%20Started-black?style=for-the-badge&logo=googleplay)](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
-[Google Play Download](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+> 📥 **Supports**: Windows, macOS, Android, iOS (coming soon)
 
 
 ## Quick Start for Developers (Docker, Recommended)
