@@ -44,15 +44,11 @@ TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest�
 
 ## 创作者快速开始（应用程序与网页版）
 
-| 操作系统 | 下载 |
-| -- | -- |
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.4.0-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.4.0-internal-arm64-v8a.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.4.0-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-Setup-1.4.0.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.4.0-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.4.0.dmg)
-| iOS |  **即将推出！** |
-| Web | [网页版使用](https://aitoearn.ai/en/accounts) |
+[![下载](https://img.shields.io/badge/客户端下载-前往-blue?style=for-the-badge&logo=github)](https://github.com/yikart/AiToEarn/releases)
+[![网页版](https://img.shields.io/badge/网页版-在线使用-green?style=for-the-badge&logo=googlechrome)](https://aitoearn.ai/en/accounts)
+[![Google Play](https://img.shields.io/badge/Google%20Play-前往-black?style=for-the-badge&logo=googleplay)](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
-[Google Play 下载](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+> 📥 **支持平台**: Windows、macOS、Android、iOS（即将推出）
 
 ## 开发者快速开始（Docker，推荐）
 
