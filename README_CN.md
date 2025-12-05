@@ -4,7 +4,7 @@
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
-[简体中文](README_CN.md) | English
+[English](README.md) | 简体中文
 
 **Create · Publish · Engage · Monetize —— 一站式平台。**
 
@@ -13,6 +13,17 @@ AiToEarn 通过**AI 自动化**，帮助创作者、品牌与企业在全球主�
 支持渠道：  
 抖音、小红书（Rednote）、视频号、快手、哔哩哔哩、微信公众号，
 TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
+
+## 🎥 Demo Video
+
+[![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
+
+## 最新动态:
+
+* **2025.11.28**：支持应用内自动更新。在创作界面新增大量 AI 功能，例如：缩写、扩写、图片生成、视频生成、标签生成等，并支持 Nano Banana Pro。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
+* **2025.11.12**：首个开源且可完全使用的版本。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+
+
 
 <details>
   <summary><h2 style="display:inline;margin:0">目录</h2></summary>
@@ -35,9 +46,9 @@ TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest�
 
 | 操作系统 | 下载 |
 | -- | -- |
-| Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.2-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-1.3.2-internal-arm64-v8a.apk) |
-| Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.2-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn-Setup-1.3.2.exe) |
-| macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.2-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.2/AiToEarn+1.3.2.dmg) |
+Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.4.0-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.4.0-internal-arm64-v8a.apk)
+Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.4.0-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-Setup-1.4.0.exe)
+macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.4.0-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.4.0.dmg)
 | iOS |  **即将推出！** |
 | Web | [网页版使用](https://aitoearn.ai/en/accounts) |
 
