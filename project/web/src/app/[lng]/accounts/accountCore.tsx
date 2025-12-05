@@ -9,7 +9,8 @@ import AccountSidebar from '@/app/[lng]/accounts/components/AccountSidebar/Accou
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import CalendarTiming from '@/app/[lng]/accounts/components/CalendarTiming'
 import AllPlatIcon from '@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon'
-import { PlatType } from '@/app/config/platConfig'
+import { PlatType, AccountPlatInfoMap } from '@/app/config/platConfig'
+import { AccountStatus } from '@/app/config/accountConfig'
 import { useTransClient } from '@/app/i18n/client'
 import rightArrow from '@/assets/images/jiantou.png'
 import VipContentModal from '@/components/modals/VipContentModal'
@@ -105,8 +106,21 @@ export default function AccountPageCore({
         
         setAiGeneratedData(data)
         
-        // Set default to first account
-        if (allAccounts[0]) {
+        // 选择第一个在线且PC端支持的账户
+        const firstAvailableAccount = allAccounts.find(account => {
+          // 检查账户是否在线
+          const isOnline = account.status === AccountStatus.USABLE
+          // 检查平台是否支持PC端
+          const platConfig = AccountPlatInfoMap.get(account.type)
+          const isPcSupported = !platConfig?.pcNoThis
+          
+          return isOnline && isPcSupported
+        })
+        
+        if (firstAvailableAccount) {
+          setDefaultAccountId(firstAvailableAccount.id)
+        } else if (allAccounts[0]) {
+          // 如果没有找到符合条件的账户，退而求其次选择第一个账户
           setDefaultAccountId(allAccounts[0].id)
         }
         

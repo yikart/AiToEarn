@@ -34,7 +34,7 @@ import { CSSTransition } from 'react-transition-group'
 import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 import { getChatModels } from '@/api/ai'
-import { apiCreatePublish, apiCreatePublishRecord } from '@/api/plat/publish'
+import { apiCreatePublish } from '@/api/plat/publish'
 import { toolsApi } from '@/api/tools'
 import {
   getDays,
@@ -76,12 +76,10 @@ import { useAccountStore } from '@/store/account'
 import {
   PlatformTaskStatus,
   PLUGIN_SUPPORTED_PLATFORMS,
-  PluginStatus,
   PublishDetailModal,
   usePluginStore,
 } from '@/store/plugin'
 import { generateUUID } from '@/utils'
-import { getOssUrl } from '@/utils/oss'
 import styles from './publishDialog.module.scss'
 
 export interface IPublishDialogRef {
@@ -598,167 +596,6 @@ const PublishDialog = memo(
         return PLUGIN_SUPPORTED_PLATFORMS.includes(platType as PluginPlatformType)
       }, [])
 
-      /**
-       * 执行插件发布
-       * @param pluginItems 需要通过插件发布的项目列表
-       * @param taskId 任务ID
-       * @param platformTaskIdMap 账号ID到平台任务ID的映射
-       */
-      const executePluginPublish = useCallback(async (
-        pluginItems: typeof pubListChoosed,
-        taskId: string,
-        platformTaskIdMap: Map<string, string>,
-      ) => {
-        const { status, publish, updatePlatformTask } = usePluginStore.getState()
-
-        // 检查插件状态
-        if (status !== PluginStatus.READY) {
-          console.warn('插件未就绪，无法执行插件发布')
-          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
-          // 将所有插件任务标记为失败
-          for (const item of pluginItems) {
-            const requestId = platformTaskIdMap.get(item.account.id)
-            if (requestId) {
-              updatePlatformTaskByRequestId(requestId, {
-                status: PlatformTaskStatus.ERROR,
-                error: '浏览器插件未就绪，请先安装并授权插件',
-                endTime: Date.now(),
-              })
-            }
-          }
-          return
-        }
-
-        // 并行执行插件发布（不等待，同时发布多个平台）
-        const publishTasks = pluginItems.map(async (item) => {
-          const platform = item.account.type as PluginPlatformType
-          const accountId = item.account.id
-          // 获取该账号对应的 requestId（用于进度匹配）
-          const requestId = platformTaskIdMap.get(accountId)!
-          const { updatePlatformTaskByRequestId } = usePluginStore.getState()
-
-          // 更新任务状态为发布中
-          updatePlatformTaskByRequestId(requestId, {
-            status: PlatformTaskStatus.PUBLISHING,
-            startTime: Date.now(),
-          })
-
-          try {
-            // 构建插件发布参数
-            // 优先传递 File 对象，避免插件需要重新下载
-            const publishParams: PluginPublishParams = {
-              platform,
-              accountId, // 传入账号ID，用于区分同一平台的多个账号
-              requestId, // 传入 requestId，插件回调时带回用于匹配
-              type: item.params.video ? 'video' : 'image',
-              title: item.params.title || '',
-              desc: item.params.des || '',
-              topics: item.params.topics || [],
-            }
-
-            // 视频发布 - 优先传 file，没有 file 才传 URL
-            if (item.params.video) {
-              // 视频：优先传 file（转换 Blob 为 File），没有则传 ossUrl
-              if (item.params.video.file) {
-                // 将 Blob 转换为 File
-                const videoFile = new File(
-                  [item.params.video.file],
-                  item.params.video.filename || 'video.mp4',
-                  { type: item.params.video.file.type },
-                )
-                publishParams.video = videoFile
-              }
-              else if (item.params.video.ossUrl) {
-                publishParams.video = getOssUrl(item.params.video.ossUrl)
-              }
-
-              // 封面：优先传 file，没有则传 ossUrl
-              if (item.params.video.cover?.file) {
-                publishParams.cover = item.params.video.cover.file
-              }
-              else if (item.params.video.cover?.ossUrl) {
-                publishParams.cover = getOssUrl(item.params.video.cover.ossUrl)
-              }
-            }
-            // 图文发布 - 优先传 file，没有 file 才传 URL
-            else if (item.params.images && item.params.images.length > 0) {
-              publishParams.images = item.params.images.map((img) => {
-                // 优先传 file，没有则传 ossUrl
-                if (img.file) {
-                  return img.file
-                }
-                return img.ossUrl ? getOssUrl(img.ossUrl) : ''
-              }).filter(item => item !== '')
-            }
-
-            // 执行发布，通过 requestId 匹配进度
-            const result = await publish(publishParams, (progress) => {
-              // 使用 requestId 精确更新进度
-              updatePlatformTaskByRequestId(requestId, {
-                progress,
-              })
-            })
-
-            // 发布成功，更新任务状态
-            updatePlatformTaskByRequestId(requestId, {
-              status: PlatformTaskStatus.COMPLETED,
-              result: {
-                success: true,
-                workId: result.workId,
-                shareLink: result.shareLink,
-              },
-              endTime: Date.now(),
-            })
-
-            // 发布成功后，创建发布记录
-            try {
-              await apiCreatePublishRecord({
-                flowId: generateUUID(),
-                type: item.params.video ? 'video' : 'article',
-                title: item.params.title || '',
-                desc: item.params.des || '',
-                accountId: item.account.id,
-                accountType: item.account.type,
-                videoUrl: item.params.video?.ossUrl,
-                coverUrl: item.params.video?.cover?.ossUrl
-                  || (item.params.images && item.params.images.length > 0
-                    ? item.params.images[0].ossUrl
-                    : undefined),
-                imgUrlList: item.params.images
-                  ?.map(v => v.ossUrl)
-                  .filter((url): url is string => url !== undefined) || [],
-                topics: item.params.topics || [],
-                status: 1, // 已发布
-                dataId: `${result.workId}`,
-                workLink: result.shareLink,
-                uid: item.account.uid,
-                // @ts-ignore
-                publishTime: dayjs(Date.now()).utc().format(),
-              })
-            }
-            catch (recordError) {
-              console.error('创建发布记录失败:', recordError)
-            }
-          }
-          catch (error) {
-            // 发布失败
-            updatePlatformTaskByRequestId(requestId, {
-              status: PlatformTaskStatus.ERROR,
-              error: error instanceof Error ? error.message : '发布失败',
-              result: {
-                success: false,
-                failReason: error instanceof Error ? error.message : '发布失败',
-              },
-              endTime: Date.now(),
-            })
-          }
-        })
-
-        // 并行执行所有发布任务
-        await Promise.all(publishTasks)
-
-        useCalendarTiming.getState().getPubRecord()
-      }, [])
 
       /**
        * Publish content with scheduled time (from calendar picker)
@@ -863,9 +700,18 @@ const PublishDialog = memo(
         }
 
         // 2. 再执行插件发布（插件支持平台）
-        if (pluginPublishItems.length > 0 && taskId) {
+        if (pluginPublishItems.length > 0) {
           // 异步执行插件发布，不阻塞主流程
-          executePluginPublish(pluginPublishItems, taskId, platformTaskIdMap)
+          // 使用 store 中封装的方法，支持定时发布
+          usePluginStore.getState().executePluginPublish({
+            items: pluginPublishItems,
+            platformTaskIdMap,
+            publishTime,
+            onComplete: () => {
+              // 发布完成后刷新发布记录
+              useCalendarTiming.getState().getPubRecord()
+            },
+          })
         }
 
         // 关闭发布弹框
@@ -876,7 +722,7 @@ const PublishDialog = memo(
           onPubSuccess()
         }
         usePublishDialogStorageStore.getState().clearPubData()
-      }, [pubListChoosed, pubTime, isPluginSupportedPlatform, executePluginPublish, t])
+      }, [pubListChoosed, pubTime, isPluginSupportedPlatform, t])
 
       // 处理划词操作
       const handleTextSelection = useCallback((action: AIAction, selectedText: string) => {
@@ -1295,6 +1141,7 @@ const PublishDialog = memo(
                           {pubListChoosed.map((v) => {
                             return (
                               <PlatParamsSetting
+                                key={v.account.id}
                                 pubItem={v}
                                 style={{ marginBottom: '12px' }}
                                 onImageToImage={handleImageToImage}

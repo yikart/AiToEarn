@@ -103,7 +103,12 @@ export const useAccountStore = create(
             })
 
             if (isBackground) {
+              // 初始化时：执行完整的插件初始化（包括授权检查）
               await usePluginStore.getState().init()
+            }
+            else {
+              // 刷新时：只同步账号状态，不重新授权
+              await usePluginStore.getState().syncAccountStatus()
             }
 
             void useDataStatisticsStore

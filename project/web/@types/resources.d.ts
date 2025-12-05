@@ -3272,6 +3272,25 @@ interface Resources {
     "uploadSuccess": "上传成功",
     "checkFailed": "检查失败",
     "alreadyAuthorized": "已授权"
+  },
+  "promptGallery": {
+    "badge": "🎨 提示词灵感库",
+    "title": "探索精选提示词",
+    "titleHighlight": "快速开始创作",
+    "subtitle": "精选优质提示词模板，一键应用即可使用",
+    "applyButton": "一键应用",
+    "collapseButton": "收起",
+    "expandButton": "查看更多",
+    "expandCount": "个",
+    "appliedToast": "✓ 已应用提示词",
+    "modal": {
+      "promptLabel": "提示词：",
+      "applyButton": "一键应用"
+    },
+    "badges": {
+      "edit": "编辑",
+      "generate": "文生图"
+    }
   }
 }
 

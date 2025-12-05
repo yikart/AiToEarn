@@ -16,6 +16,7 @@ import {
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 // Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
@@ -40,8 +41,19 @@ import youtubeIcon from '@/assets/svgs/plat/youtube.png'
 import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 
 import { useTransClient } from '../i18n/client'
+import { getOssUrl } from '@/utils/oss'
+import { message, Modal, Form, Input, Button } from 'antd'
+import { GoogleLogin } from '@react-oauth/google'
+import { useUserStore } from '@/store/user'
+import { 
+  loginWithMailApi, 
+  mailRegistApi,
+  googleLoginApi,
+} from '@/api/apiReq'
 
 import styles from './styles/difyHome.module.scss'
+import loginStyles from './login/login.module.css'
+import PromptGallerySection from './components/PromptGallery'
 
 // External image URL constants
 const IMAGE_URLS = {
@@ -136,19 +148,42 @@ function LazyLoadSection({ children }: { children: ReactNode }) {
 }
 
 // Hero main title section
-function Hero() {
+function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: string} | null }) {
   const { t } = useTransClient('home')
+  const { t: tLogin } = useTransClient('login')
   const router = useRouter()
   const { lng } = useParams()
+  const { token, setToken, setUserInfo } = useUserStore()
 
   // AI generation related states
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [taskId, setTaskId] = useState('')
+  const [sessionId, setSessionId] = useState('')
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
+  const [isUploading, setIsUploading] = useState(false) // 上传状态
+  const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
+  
+  // Login modal states
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [registCode, setRegistCode] = useState('')
+  const [loginForm] = Form.useForm()
+  const [isActivating, setIsActivating] = useState(false)
+
+  // 应用提示词（从 PromptGallery 触发）
+  useEffect(() => {
+    if (promptToApply) {
+      setPrompt(promptToApply.prompt)
+      // 不再自动添加图片
+    }
+  }, [promptToApply])
   
   // Message type definition
   type MessageItem = {
-    type: 'status' | 'description' | 'error' | 'text'
+    type: 'status' | 'description' | 'error' | 'text' | 'markdown'
     content: string
     status?: string // Status type for rendering corresponding icon
     loading?: boolean // Whether to show loading animation (for media generation status)
@@ -159,7 +194,9 @@ function Hero() {
   const [displayedText, setDisplayedText] = useState('') // Currently displayed text
   const [pendingMessages, setPendingMessages] = useState<MessageItem[]>([]) // Pending message queue
   const progressContainerRef = useRef<HTMLDivElement>(null) // Progress container reference
+  const markdownContainerRef = useRef<HTMLDivElement>(null) // Markdown container reference
   const [progress, setProgress] = useState(0) // Progress percentage 0-100
+  const [markdownMessages, setMarkdownMessages] = useState<string[]>([]) // SSE markdown messages
 
   // Status display configuration (icons and text)
   const getStatusDisplay = (status: string) => {
@@ -282,17 +319,173 @@ function Hero() {
     }
   }, [currentTypingMsg, displayedText])
 
-  // Auto scroll to bottom
+  // Auto scroll to bottom - progress container
   useEffect(() => {
     if (progressContainerRef.current) {
       progressContainerRef.current.scrollTop = progressContainerRef.current.scrollHeight
     }
   }, [completedMessages, displayedText])
 
-  // Create AI generation task
+  // Auto scroll to bottom - markdown container
+  useEffect(() => {
+    if (markdownContainerRef.current && markdownMessages.length > 0) {
+      markdownContainerRef.current.scrollTop = markdownContainerRef.current.scrollHeight
+    }
+  }, [markdownMessages])
+
+  // Handle image upload
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setIsUploading(true)
+    try {
+      // 动态导入
+      const { uploadToOss } = await import('@/api/oss')
+      const { OSS_URL } = await import('@/constant')
+      
+      // 并行上传所有图片
+      const uploadPromises = Array.from(files).map(async (file) => {
+        const ossKey = await uploadToOss(file)
+        const ossUrl = `${OSS_URL}${ossKey}`
+        return ossUrl
+      })
+      
+      // 等待所有上传完成，得到完整的OSS URL
+      const imageUrls = await Promise.all(uploadPromises)
+      
+      console.log('上传成功的完整URLs:', imageUrls)
+      
+      // 添加到已上传图片列表
+      setUploadedImages(prev => [...prev, ...imageUrls])
+      message.success(t('aiGeneration.uploadSuccess' as any))
+      
+    } catch (error) {
+      console.error('Image upload failed:', error)
+      message.error(t('aiGeneration.uploadFailed' as any))
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  // Remove uploaded image
+  const handleRemoveImage = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index))
+  }
+
+  // Login handlers
+  const handleLoginSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    try {
+      const response = await loginWithMailApi({ mail: loginEmail, password: loginPassword })
+      if (!response) return
+
+      if (response.code === 0) {
+        if (response.data.type === 'regist') {
+          // User not registered, show registration modal
+          setRegistCode(response.data.code || '')
+          loginForm.setFieldsValue({ password: loginPassword })
+          setIsModalOpen(true)
+        } else if (response.data.token) {
+          // Login successful
+          setToken(response.data.token)
+          if (response.data.userInfo) {
+            setUserInfo(response.data.userInfo)
+          }
+          message.success(tLogin('loginSuccess'))
+          setLoginModalOpen(false)
+          // Continue with task creation
+          handleCreateTask()
+        }
+      } else {
+        message.error(response.message || tLogin('loginFailed'))
+      }
+    } catch (error) {
+      message.error(tLogin('loginError'))
+    }
+  }
+
+  const handleRegistSubmit = async (values: { password: string, code: string, inviteCode?: string }) => {
+    try {
+      setIsActivating(true)
+      const response = await mailRegistApi({
+        mail: loginEmail,
+        code: values.code,
+        password: values.password,
+        inviteCode: values.inviteCode || '',
+      })
+
+      if (!response) {
+        message.error(tLogin('registerError'))
+        setIsActivating(false)
+        return
+      }
+
+      if (response.code === 0 && response.data.token) {
+        setIsActivating(false)
+        setIsModalOpen(false)
+        setLoginModalOpen(false)
+        loginForm.resetFields()
+        setToken(response.data.token)
+        if (response.data.userInfo) {
+          setUserInfo(response.data.userInfo)
+        }
+        message.success(tLogin('registerSuccess'))
+        // Continue with task creation
+        handleCreateTask()
+      } else {
+        message.error(response.message || tLogin('registerError'))
+        setIsActivating(false)
+      }
+    } catch (error) {
+      message.error(tLogin('registerError'))
+      setIsActivating(false)
+    }
+  }
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    try {
+      const params: any = {
+        platform: 'google',
+        clientId: credentialResponse.clientId,
+        credential: credentialResponse.credential,
+      }
+
+      const response: any = await googleLoginApi(params)
+      if (!response) {
+        message.error(tLogin('googleLoginFailed'))
+        return
+      }
+
+      if (response.code === 0 && response.data.type === 'login') {
+        setToken(response.data.token)
+        if (response.data.userInfo) {
+          setUserInfo(response.data.userInfo)
+        }
+        message.success(tLogin('loginSuccess'))
+        setLoginModalOpen(false)
+        // Continue with task creation
+        handleCreateTask()
+      } else {
+        message.error(response.message || tLogin('googleLoginFailed'))
+      }
+    } catch (error) {
+      message.error(tLogin('googleLoginFailed'))
+    }
+  }
+
+  // Create AI generation task with SSE
   const handleCreateTask = async () => {
     if (!prompt.trim()) {
-      alert(t('aiGeneration.emptyPromptAlert' as any))
+      return
+    }
+    
+    // Check if user is logged in
+    if (!token) {
+      setLoginModalOpen(true)
       return
     }
 
@@ -302,7 +495,9 @@ function Hero() {
       setPendingMessages([])
       setCurrentTypingMsg(null)
       setDisplayedText('')
-      setProgress(0) // Reset progress
+      setProgress(0)
+      setMarkdownMessages([])
+      setSessionId('')
 
       // Step 1: Show THINKING status
       addMessageToQueue({
@@ -320,29 +515,133 @@ function Hero() {
       // Set initial progress to 10%
       setProgress(10)
 
+      // 构建完整的提示词（包含图片链接，但不在前端显示）
+      let fullPrompt = prompt
+      if (uploadedImages.length > 0) {
+        fullPrompt = `${prompt}\n\n[image]:\n${uploadedImages.join('\n ')}`
+      }
+
       // Dynamic import API
       const { agentApi } = await import('@/api/agent')
 
-      // Create task
-      const createRes = await agentApi.createTask({ prompt })
-      if (createRes?.code === 0 && createRes.data?.id) {
-        const newTaskId = createRes.data.id
-        setTaskId(newTaskId)
-        
-        // Start polling task status
-        pollTaskStatus(newTaskId)
-      } else {
-        throw new Error(t('aiGeneration.createTaskFailed' as any))
-      }
-    } catch (error: any) {
-      alert(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      // Create task with SSE (使用包含图片链接的完整提示词)
+      await agentApi.createTaskWithSSE(
+        { prompt: fullPrompt },
+        // onMessage callback
+        (sseMessage: any) => {
+          console.log('SSE Message:', sseMessage)
+
+          // Save sessionId
+          if (sseMessage.sessionId) {
+            setSessionId(sseMessage.sessionId)
+          }
+
+          // Handle different message types
+          // type === 'text' 或 'error' 都在 markdown 中显示
+          if (sseMessage.type === 'text' && sseMessage.message) {
+            console.log('[UI] Adding markdown message:', sseMessage.message)
+            setMarkdownMessages(prev => {
+              const newMessages = [...prev, sseMessage.message!]
+              console.log('[UI] Total markdown messages:', newMessages.length)
+              return newMessages
+            })
+          }
+          else if (sseMessage.type === 'error' && sseMessage.message) {
+            console.log('[UI] Adding error message to markdown:', sseMessage.message)
+            const errorMsg = `❌ : ${sseMessage.message || t('aiGeneration.unknownError' as any)}`
+            setMarkdownMessages(prev => [...prev, errorMsg])
+          }
+          
+          if (sseMessage.type === 'status' && sseMessage.status) {
+            // Update statu
+            const statusDisplay = getStatusDisplay(sseMessage.status)
+            const needsLoadingAnimation = ['GENERATING_VIDEO', 'GENERATING_IMAGE', 'GENERATING_CONTENT', 'GENERATING_TEXT'].includes(sseMessage.status)
+            
+            addMessageToQueue({
+              type: 'status',
+              content: statusDisplay.text,
+              status: sseMessage.status,
+              loading: needsLoadingAnimation
+            })
+
+            // Update progress
+            setProgress(prev => calculateProgress(sseMessage.status!, true, prev))
+          }
+          // 注意：error 消息已经在上面添加到 markdownMessages 中了
+          // 这里只需要更新状态
+          if (sseMessage.type === 'error') {
+            // 延迟关闭 isGenerating，让用户能看到错误消息
+            setTimeout(() => {
+              setIsGenerating(false)
+            }, 100)
+            setProgress(0)
+          }
+        },
+        // onError callback
+        (error) => {
+          console.error('SSE Error:', error)
+          message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+          setIsGenerating(false)
+          setProgress(0)
+        },
+        // onDone callback
+        async (finalSessionId) => {
+          console.log('SSE Done, sessionId:', finalSessionId)
+          
+          // SSE completed, fetch final result
+          if (finalSessionId) {
+            try {
+              const res = await agentApi.getTaskDetail(finalSessionId)
+              
+              if (res?.code === 0 && res.data) {
+                const taskData = res.data
+
+                // Show completion status
+                addMessageToQueue({
+                  type: 'status',
+                  content: t('aiGeneration.status.completed' as any),
+                  status: 'COMPLETED'
+                })
+
+                setProgress(100)
+                setIsGenerating(false)
+
+                // Navigate to accounts page after delay
+                setTimeout(() => {
+                  const queryParams = new URLSearchParams({
+                    aiGenerated: 'true',
+                    taskId: taskData.id,
+                    title: taskData.title || '',
+                    description: taskData.description || '',
+                    tags: JSON.stringify(taskData.tags || []),
+                    medias: JSON.stringify(taskData.medias || []),
+                  })
+                  
+                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                }, 1500)
+              }
+            }
+            catch (error) {
+              console.error('Failed to fetch task detail:', error)
+              setIsGenerating(false)
+            }
+          }
+          else {
+            setIsGenerating(false)
+          }
+        }
+      )
+    }
+    catch (error: any) {
+      console.error('Create task error:', error)
+      message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
-      setProgress(0) // Reset progress
+      setProgress(0)
     }
   }
 
-  // Poll task status
-  const pollTaskStatus = async (taskId: string) => {
+  // Removed pollTaskStatus function - now using SSE instead
+  /* const pollTaskStatus = async (taskId: string) => {
     const { agentApi } = await import('@/api/agent')
     let lastStatus = ''
     let hasShownTitle = false
@@ -465,7 +764,7 @@ function Hero() {
         })
       }
     }, 600000)
-  }
+  } */
 
   return (
     <section className={styles.hero}>
@@ -484,30 +783,87 @@ function Hero() {
         {/* AI Generation Input */}
         <div className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
+             {/* 已上传图片预览 */}
+          {uploadedImages.length > 0 && (
+            <div className={styles.uploadedImagesPreview}>
+              <div className={styles.imagesRow}>
+                {uploadedImages.map((imageUrl, index) => (
+                  <div key={index} className={styles.imageItem}>
+                    <img 
+                      src={imageUrl} 
+                      alt={`图 ${index + 1}`} 
+                      className={styles.imageThumb}
+                    />
+                    {!isGenerating && (
+                      <span
+                        className={styles.removeImageBtn}
+                        onClick={() => handleRemoveImage(index)}
+                        title="删除"
+                      >
+                        <CloseCircleOutlined />
+                      </span>
+                    )}
+                  </div>
+                ))}
+                
+              </div>
+            </div>
+          )}
+
+          <div className={styles.aiInputContainer1}>
+
+          
             <input
               type="text"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyPress={(e) => {
-                if (e.key === 'Enter' && !isGenerating) {
+                if (e.key === 'Enter' && !isGenerating && !isUploading) {
                   handleCreateTask()
                 }
               }}
               placeholder={t('aiGeneration.inputPlaceholder' as any)}
-              disabled={isGenerating}
+              disabled={isGenerating || isUploading}
               className={styles.aiInput}
             />
+            
+            {/* 图片上传按钮 */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
+            />
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isGenerating || isUploading}
+              className={styles.aiUploadBtn}
+              title="上传图片"
+            >
+              {isUploading ? (
+                <span>⏳</span>
+              ) : (
+                <PictureOutlined style={{ fontSize: '20px' }} />
+              )}
+            </button>
+            
             <button
               onClick={handleCreateTask}
-              disabled={isGenerating || !prompt.trim()}
+              disabled={isGenerating || !prompt.trim() || isUploading}
               className={styles.aiGenerateBtn}
             >
               {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
             </button>
+
+            </div>
           </div>
 
-          {/* Progress Display Area */}
-          {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
+         
+
+          {/* Progress Display Area - COMMENTED OUT, KEPT FOR REFERENCE */}
+          {/* {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
             <div className={styles.aiProgressWrapper}>
               <div 
                 ref={progressContainerRef}
@@ -517,7 +873,6 @@ function Hero() {
                   borderRadius: progress > 0 ? '12px 12px 0 0' : '12px',
                 }}
               >
-                {/* Top loading indicator - only shown when generating */}
                 {isGenerating && (
                   <div style={{
                     position: 'absolute',
@@ -531,9 +886,7 @@ function Hero() {
                   }} />
                 )}
                 
-                {/* Continuous text stream display */}
                 <div className={styles.aiProgressContent}>
-                  {/* Completed messages - continuous text */}
                   {completedMessages.map((msg, index) => {
                     const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
                     const isDescription = msg.type === 'description'
@@ -560,7 +913,6 @@ function Hero() {
                     )
                   })}
                   
-                  {/* Current typing message */}
                   {currentTypingMsg && displayedText && (
                     <div 
                       className={styles.aiProgressMessage}
@@ -586,7 +938,6 @@ function Hero() {
                 </div>
               </div>
               
-              {/* Progress bar - only shown when progress > 0 */}
               {progress > 0 && (
                 <div className={styles.aiProgressBarContainer}>
                   <div 
@@ -598,7 +949,30 @@ function Hero() {
                 </div>
               )}
             </div>
+          )} */}
+
+          {/* SSE Message Display - Visible when generating or has messages */}
+          {(isGenerating || markdownMessages.length > 0) && (
+            <div className={styles.markdownMessagesWrapper}>
+              <div 
+                ref={markdownContainerRef}
+                className={styles.markdownMessagesContainer}
+              >
+                <h3 className={styles.markdownTitle}>
+                  🤖 AI 生成过程 {isGenerating && <LoadingDots />}
+                </h3>
+                <div className={styles.markdownContent}>
+                  <ReactMarkdown>
+                    {markdownMessages.length > 0 
+                      ? markdownMessages.join('\n\n') 
+                      : '等待 AI 响应...'}
+                  </ReactMarkdown>
+                </div>
+              </div>
+            </div>
           )}
+
+          
         </div>
 
         {/* Mobile button */}
@@ -645,6 +1019,124 @@ function Hero() {
           {t('hero.useMobilePhone' as any)}
         </p>
       </div>
+
+      {/* Login Modal */}
+      <Modal
+        open={loginModalOpen}
+        onCancel={() => setLoginModalOpen(false)}
+        footer={null}
+        width={460}
+        centered
+        destroyOnClose
+      >
+        <div className={loginStyles.loginBox} style={{ boxShadow: 'none', padding: '24px 0' }}>
+          <h1 className={loginStyles.title}>{tLogin('welcomeBack')}</h1>
+          <form onSubmit={handleLoginSubmit} className={loginStyles.form}>
+            <div className={loginStyles.inputGroup}>
+              <input
+                type="email"
+                placeholder={tLogin('emailPlaceholder')}
+                value={loginEmail}
+                onChange={e => setLoginEmail(e.target.value)}
+                className={loginStyles.input}
+                required
+              />
+            </div>
+            <div className={loginStyles.inputGroup}>
+              <input
+                type="password"
+                placeholder={tLogin('passwordPlaceholder')}
+                value={loginPassword}
+                onChange={e => setLoginPassword(e.target.value)}
+                className={loginStyles.input}
+                required
+              />
+            </div>
+            <Button type="primary" htmlType="submit" block className={loginStyles.submitButton}>
+              {tLogin('login')}
+            </Button>
+          </form>
+
+          <div className={loginStyles.divider}>
+            <span>{tLogin('or')}</span>
+          </div>
+
+          <div className={loginStyles.googleButtonWrapper}>
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={() => message.error(tLogin('googleLoginFailed'))}
+              useOneTap={false}
+              theme="outline"
+              shape="rectangular"
+              text="signin_with"
+              locale={lng === 'zh-CN' ? 'zh_CN' : 'en'}
+              width="100%"
+              size="large"
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Registration Modal */}
+      <Modal
+        title={tLogin('completeRegistration')}
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false)
+          setIsActivating(false)
+          loginForm.resetFields()
+        }}
+        maskClosable={false}
+        keyboard={false}
+        closable={true}
+        footer={null}
+      >
+        <Form
+          form={loginForm}
+          onFinish={handleRegistSubmit}
+          layout="vertical"
+        >
+          <Form.Item
+            label={tLogin('emailCode')}
+            name="code"
+            rules={[
+              { required: true, message: tLogin('emailCodeRequired') },
+              { len: 6, message: tLogin('emailCodeLength') },
+            ]}
+          >
+            <Input placeholder={tLogin('enterEmailCode')} maxLength={6} />
+          </Form.Item>
+
+          <Form.Item
+            label={tLogin('setPassword')}
+            name="password"
+            rules={[
+              { required: true, message: tLogin('passwordRequired') },
+              { min: 6, message: tLogin('passwordMinLength') },
+            ]}
+          >
+            <Input.Password placeholder={tLogin('enterPassword')} />
+          </Form.Item>
+
+          <Form.Item
+            label={tLogin('inviteCode')}
+            name="inviteCode"
+          >
+            <Input placeholder={tLogin('enterInviteCode')} />
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              block
+              loading={isActivating}
+            >
+              {isActivating ? tLogin('registering') : tLogin('completeRegistration')}
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </section>
   )
 }
@@ -1938,10 +2430,18 @@ function Footer() {
 }
 
 export default function Home() {
+  // 状态提升：用于从 PromptGallery 应用提示词
+  const [promptToApply, setPromptToApply] = useState<{prompt: string; image?: string} | null>(null)
+
   return (
     <div className={styles.difyHome}>
       <ReleaseBanner />
-      <Hero />
+      <Hero promptToApply={promptToApply} />
+      <PromptGallerySection 
+        onApplyPrompt={(prompt) => {
+          setPromptToApply({ prompt })
+        }}
+      />
       <LazyLoadSection>
         <BrandBar />
       </LazyLoadSection>

@@ -1,7 +1,9 @@
 /*
  * @Description: AI Agent 内容生成任务接口
  */
+import { fetchEventSource } from '@microsoft/fetch-event-source'
 import http from '@/utils/request'
+import { useUserStore } from '@/store/user'
 
 // 任务状态枚举
 export enum TaskStatus {
@@ -53,9 +55,139 @@ export interface CreateTaskResponse {
   id: string
 }
 
+// SSE 消息类型
+export interface SSEMessage {
+  type: 'message' | 'status' | 'error' | 'done'
+  message?: string
+  sessionId?: string
+  status?: TaskStatus
+  data?: any
+}
+
 export const agentApi = {
   /**
-   * 创建AI生成任务
+   * 创建AI生成任务并通过 SSE 接收实时消息
+   * @param params 
+   * @param onMessage SSE 消息回调
+   * @param onError 错误回调
+   * @param onDone 完成回调
+   */
+  async createTaskWithSSE(
+    params: CreateTaskParams,
+    onMessage: (message: SSEMessage) => void,
+    onError: (error: Error) => void,
+    onDone: (sessionId?: string) => void,
+  ) {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
+    const url = `${'https://pr-211.preview.aitoearn.ai/api'}/agent/tasks`
+    
+    let sessionId: string | undefined
+    let abortController = new AbortController()
+
+    console.log('[SSE] Starting fetchEventSource...')
+
+    try {
+      await fetchEventSource(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${useUserStore.getState().token || ''}`,
+        },
+        body: JSON.stringify(params),
+        signal: abortController.signal,
+        
+        // 当连接打开时
+        async onopen(response) {
+          console.log('[SSE] Connection opened, status:', response.status)
+          
+          if (response.ok) {
+            return // 一切正常，继续处理消息
+          }
+          
+          // 处理错误响应
+          if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+            // 客户端错误，不重试
+            const errorText = await response.text()
+            console.error('[SSE] Client error:', response.status, errorText)
+            throw new Error(`HTTP ${response.status}: ${errorText}`)
+          }
+          else {
+            // 服务器错误或其他问题，会自动重试
+            console.error('[SSE] Server error:', response.status)
+            throw new Error(`HTTP ${response.status}`)
+          }
+        },
+        
+        // 当收到消息时
+        onmessage(event) {
+          console.log('[SSE] Received message:', event)
+          
+          // 如果没有数据，跳过
+          if (!event.data) {
+            console.log('[SSE] Empty message, skipping')
+            return
+          }
+          
+          try {
+            const data = JSON.parse(event.data)
+            console.log('[SSE] Parsed data:', data)
+            
+            // 保存 sessionId
+            if (data.sessionId) {
+              sessionId = data.sessionId
+              console.log('[SSE] Got sessionId:', sessionId)
+            }
+            
+            // 调用消息回调
+            onMessage(data)
+            
+            // 如果收到结束信号，关闭连接
+            if (data.type === 'done' || data.type === 'error') {
+              console.log('[SSE] Received end signal:', data.type)
+              abortController.abort()
+            }
+          }
+          catch (error) {
+            console.error('[SSE] Failed to parse message:', event.data, error)
+          }
+        },
+        
+        // 当连接关闭时
+        onclose() {
+          console.log('[SSE] Connection closed')
+          onDone(sessionId)
+        },
+        
+        // 当发生错误时
+        onerror(error) {
+          console.error('[SSE] Error occurred:', error)
+          
+          // 如果是手动中止，不抛出错误
+          if (abortController.signal.aborted) {
+            console.log('[SSE] Connection aborted by user')
+            return
+          }
+          
+          // 其他错误，调用错误回调
+          onError(error instanceof Error ? error : new Error(String(error)))
+          
+          // 抛出错误以停止重试
+          throw error
+        },
+      })
+    }
+    catch (error) {
+      console.error('[SSE] fetchEventSource failed:', error)
+      
+      // 如果不是手动中止的错误，调用错误回调
+      if (!abortController.signal.aborted) {
+        onError(error instanceof Error ? error : new Error(String(error)))
+      }
+    }
+  },
+
+  /**
+   * 创建AI生成任务（旧方法，保留兼容性）
    * @param params 
    */
   async createTask(params: CreateTaskParams) {
@@ -68,7 +200,7 @@ export const agentApi = {
    * @param taskId 任务ID
    */
   async getTaskDetail(taskId: string) {
-    const res = await http.get<TaskDetail>(`agent/tasks/${taskId}`)
+    const res = await http.get<TaskDetail>(`${'https://pr-211.preview.aitoearn.ai/api/'}agent/tasks/${taskId}`)
     return res
   },
 }
