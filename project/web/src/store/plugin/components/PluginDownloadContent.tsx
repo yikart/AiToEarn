@@ -96,16 +96,16 @@ export function PluginDownloadContent({
         {t('header.downloadDescription')}
       </Paragraph>
       <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-        {/* <Button */}
-        {/*  type="primary" */}
-        {/*  size="large" */}
-        {/*  icon={<ChromeOutlined />} */}
-        {/*  href={PLUGIN_DOWNLOAD_LINKS.chrome} */}
-        {/*  target="_blank" */}
-        {/*  block */}
-        {/* > */}
-        {/*  {t('header.chromeWebStore')} */}
-        {/* </Button> */}
+        <Button
+          type="primary"
+          size="large"
+          icon={<ChromeOutlined />}
+          href={PLUGIN_DOWNLOAD_LINKS.chrome}
+          target="_blank"
+          block
+        >
+          {t('header.chromeWebStore')}
+        </Button>
         <Button
           size="large"
           icon={<GithubOutlined />}
