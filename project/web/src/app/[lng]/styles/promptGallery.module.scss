@@ -156,6 +156,45 @@
   }
 }
 
+.collapseBtn {
+  width: 44px;
+  height: 44px;
+  background: white;
+  color: #666;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: #666;
+    transition: transform 0.3s ease;
+  }
+
+  &:hover {
+    border-color: #733dec;
+    color: #733dec;
+    background: #f8f9ff;
+    transform: translateY(-2px);
+
+    svg {
+      stroke: #733dec;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+  }
+}
+
 .searchBox {
   display: flex;
   align-items: center;

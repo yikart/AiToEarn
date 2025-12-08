@@ -31,6 +31,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   const [itemsToShow, setItemsToShow] = useState(8) // 默认显示8个（假设每行4个，显示2行）
   const [selectedMode, setSelectedMode] = useState<'all' | 'generate' | 'edit'>('all')
   const [titleFilter, setTitleFilter] = useState('')
+  const [isGalleryCollapsed, setIsGalleryCollapsed] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
 
   // 根据屏幕宽度计算每列显示的卡片数量，然后显示5行
@@ -121,6 +122,19 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
             >
               {t('filters.edit' as any)}
             </button>
+            <button
+              className={styles.collapseBtn}
+              onClick={() => setIsGalleryCollapsed(!isGalleryCollapsed)}
+              title={isGalleryCollapsed ? t('expandButton') : t('collapseButton')}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                {isGalleryCollapsed ? (
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                ) : (
+                  <polyline points="18 15 12 9 6 15"></polyline>
+                )}
+              </svg>
+            </button>
           </div>
           <div className={styles.searchBox}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -149,7 +163,9 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
         </div>
 
         {/* 提示词瀑布流 */}
-        <div className={styles.masonry} ref={gridRef}>
+        {!isGalleryCollapsed && (
+          <>
+            <div className={styles.masonry} ref={gridRef}>
           {displayedPrompts.map((item, index) => {
             // 获取描述（prompt的前150个字符）
             const description = item.prompt.length > 150 
@@ -196,30 +212,32 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
           })}
         </div>
 
-        {/* 展开/收起按钮 */}
-        {filteredPrompts.length > itemsToShow && (
-          <div className={styles.expandSection}>
-            <button 
-              className={styles.expandBtn}
-              onClick={() => setIsExpanded(!isExpanded)}
-            >
-              {isExpanded ? (
-                <>
-                  {t('collapseButton')}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="18 15 12 9 6 15"></polyline>
-                  </svg>
-                </>
-              ) : (
-                <>
-                  {t('expandButton')} ({filteredPrompts.length - itemsToShow} {t('expandCount')})
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                  </svg>
-                </>
-              )}
-            </button>
-          </div>
+            {/* 展开/收起按钮 */}
+            {filteredPrompts.length > itemsToShow && (
+              <div className={styles.expandSection}>
+                <button 
+                  className={styles.expandBtn}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  {isExpanded ? (
+                    <>
+                      {t('collapseButton')}
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="18 15 12 9 6 15"></polyline>
+                      </svg>
+                    </>
+                  ) : (
+                    <>
+                      {t('expandButton')} ({filteredPrompts.length - itemsToShow} {t('expandCount')})
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+          </>
         )}
 
         {/* 应用成功提示 */}
