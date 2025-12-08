@@ -93,6 +93,136 @@
   }
 }
 
+.filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 30px;
+  }
+}
+
+.filterButtons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.filterBtn {
+  padding: 10px 20px;
+  background: white;
+  color: #666;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    border-color: #733dec;
+    color: #733dec;
+    transform: translateY(-2px);
+  }
+
+  &.filterBtnActive {
+    background: linear-gradient(135deg, #733dec 0%, #a66ae4 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(115, 61, 236, 0.3);
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(115, 61, 236, 0.4);
+    }
+  }
+
+  @media (max-width: 768px) {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  flex: 1;
+  max-width: 400px;
+  transition: all 0.3s ease;
+
+  &:focus-within {
+    border-color: #733dec;
+    box-shadow: 0 0 0 3px rgba(115, 61, 236, 0.1);
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    color: #999;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+.searchInput {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: #333;
+  background: transparent;
+
+  &::placeholder {
+    color: #999;
+  }
+}
+
+.clearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #999;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    color: #733dec;
+  }
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));

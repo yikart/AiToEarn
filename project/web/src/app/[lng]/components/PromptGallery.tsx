@@ -29,6 +29,8 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null)
   const [applied, setApplied] = useState(false)
   const [itemsToShow, setItemsToShow] = useState(8) // 默认显示8个（假设每行4个，显示2行）
+  const [selectedMode, setSelectedMode] = useState<'all' | 'generate' | 'edit'>('all')
+  const [titleFilter, setTitleFilter] = useState('')
   const gridRef = useRef<HTMLDivElement>(null)
 
   // 根据屏幕宽度计算每行显示的卡片数量，然后显示2行
@@ -54,8 +56,21 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
     return () => window.removeEventListener('resize', calculateItemsToShow)
   }, [])
 
+  // 根据筛选条件过滤提示词
+  const filteredPrompts = SAMPLE_PROMPTS.filter((item) => {
+    // 模式筛选
+    if (selectedMode !== 'all' && item.mode !== selectedMode) {
+      return false
+    }
+    // 标题筛选
+    if (titleFilter.trim() && !item.title.toLowerCase().includes(titleFilter.toLowerCase())) {
+      return false
+    }
+    return true
+  })
+
   // 根据展开状态决定显示的提示词
-  const displayedPrompts = isExpanded ? SAMPLE_PROMPTS : SAMPLE_PROMPTS.slice(0, itemsToShow)
+  const displayedPrompts = isExpanded ? filteredPrompts : filteredPrompts.slice(0, itemsToShow)
 
   const handleApplyPrompt = (item: PromptItem, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -85,6 +100,54 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
           <p className={styles.subtitle}>
             {t('subtitle')}
           </p>
+        </div>
+
+        {/* 筛选区域 */}
+        <div className={styles.filters}>
+          <div className={styles.filterButtons}>
+            <button
+              className={`${styles.filterBtn} ${selectedMode === 'all' ? styles.filterBtnActive : ''}`}
+              onClick={() => setSelectedMode('all')}
+            >
+              {t('filters.all' as any)}
+            </button>
+            <button
+              className={`${styles.filterBtn} ${selectedMode === 'generate' ? styles.filterBtnActive : ''}`}
+              onClick={() => setSelectedMode('generate')}
+            >
+              {t('filters.generate' as any)}
+            </button>
+            <button
+              className={`${styles.filterBtn} ${selectedMode === 'edit' ? styles.filterBtnActive : ''}`}
+              onClick={() => setSelectedMode('edit')}
+            >
+              {t('filters.edit' as any)}
+            </button>
+          </div>
+          <div className={styles.searchBox}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <input
+              type="text"
+              placeholder={t('filters.searchPlaceholder' as any)}
+              value={titleFilter}
+              onChange={(e) => setTitleFilter(e.target.value)}
+              className={styles.searchInput}
+            />
+            {titleFilter && (
+              <button
+                className={styles.clearBtn}
+                onClick={() => setTitleFilter('')}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            )}
+          </div>
         </div>
 
         {/* 提示词网格 */}
@@ -128,7 +191,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
         </div>
 
         {/* 展开/收起按钮 */}
-        {SAMPLE_PROMPTS.length > itemsToShow && (
+        {filteredPrompts.length > itemsToShow && (
           <div className={styles.expandSection}>
             <button 
               className={styles.expandBtn}
@@ -143,7 +206,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
                 </>
               ) : (
                 <>
-                  {t('expandButton')} ({SAMPLE_PROMPTS.length - itemsToShow} {t('expandCount')})
+                  {t('expandButton')} ({filteredPrompts.length - itemsToShow} {t('expandCount')})
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
