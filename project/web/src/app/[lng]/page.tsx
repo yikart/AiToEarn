@@ -13,13 +13,19 @@ import {
   StopOutlined,
   FieldTimeOutlined,
 } from '@ant-design/icons'
+
+
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { GoogleLogin } from '@react-oauth/google'
+import { useUserStore } from '@/store/user'
 import ReactMarkdown from 'react-markdown'
-
-// Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
+
+import { message, Modal, Form, Input, Button } from 'antd'
+
+
 // Import SVG icons
 import gongzhonghao from '@/assets/images/gongzhonghao.jpg'
 import publish1 from '@/assets/images/publish1.png'
@@ -36,15 +42,13 @@ import tiktokIcon from '@/assets/svgs/plat/tiktok.svg'
 import TwitterIcon from '@/assets/svgs/plat/twitter.png'
 import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg'
 import xhsIcon from '@/assets/svgs/plat/xhs.svg'
-
 import youtubeIcon from '@/assets/svgs/plat/youtube.png'
-import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 
+import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 import { useTransClient } from '../i18n/client'
 import { getOssUrl } from '@/utils/oss'
-import { message, Modal, Form, Input, Button } from 'antd'
-import { GoogleLogin } from '@react-oauth/google'
-import { useUserStore } from '@/store/user'
+
+
 import { 
   loginWithMailApi, 
   mailRegistApi,
@@ -53,6 +57,8 @@ import {
 
 import styles from './styles/difyHome.module.scss'
 import loginStyles from './login/login.module.css'
+
+
 import PromptGallerySection from './components/PromptGallery'
 
 // External image URL constants
@@ -71,9 +77,15 @@ const IMAGE_URLS = {
   commentFilter2: 'https://assets.aitoearn.ai/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
 }
 
+import jimengangent from '@/assets/images/jimengangent.jpeg'
+import jimengshengtu from '@/assets/images/jimengshengtu.jpeg'
+import jimengshengshipin from '@/assets/images/jimengshengshipin.jpeg'
+import jimengshuziren from '@/assets/images/jimengshuziren.jpeg'
+import jimengdongzuo from '@/assets/images/jimengdongzuo.jpeg'
+
+
 // Release banner
 function ReleaseBanner() {
-  const { t } = useTransClient('home')
 
   return (
     <div className={styles.releaseBanner}>
@@ -91,9 +103,6 @@ function ReleaseBanner() {
             NEW
            </span>
             Nano Banana Pro !</span>
-        {/* <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg> */}
       </div>
     </div>
   )
@@ -163,6 +172,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
+  const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'digital' | 'action'>('agent') // 选中的模式
   
   // Login modal states
   const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -780,10 +790,83 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
 
+        {/* Mode Selection Navigation */}
+        <div className={styles.modeNavigation}>
+          <div 
+            className={`${styles.modeItem} ${selectedMode === 'agent' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('agent')}
+            style={{ backgroundImage: `url(${jimengangent})` }}
+          >
+            <div className={styles.modeContent}>
+              <div className={styles.modeTitle}>Agent 模式</div>
+              {selectedMode === 'agent' && (
+                <div className={styles.modeDescription}>灵感来了?一句话帮你开始创作</div>
+              )}
+              {selectedMode !== 'agent' && <span className={styles.modeArrow}>→</span>}
+            </div>
+          </div>
+          
+          <div 
+            className={`${styles.modeItem} ${selectedMode === 'image' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('image')}
+            style={{ backgroundImage: `url(${jimengshengtu})` }}
+          >
+            <div className={styles.modeContent}>
+              <div className={styles.modeTitle}>图片生成</div>
+              {selectedMode === 'image' && (
+                <div className={styles.modeDescription}>支持多图参考 · 生成系列组图</div>
+              )}
+              {selectedMode !== 'image' && <span className={styles.modeArrow}>→</span>}
+            </div>
+          </div>
+          
+          <div 
+            className={`${styles.modeItem} ${selectedMode === 'video' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('video')}
+            style={{ backgroundImage: `url(${jimengshengshipin})` }}
+          >
+            <div className={styles.modeContent}>
+              <div className={styles.modeTitle}>视频生成</div>
+              {selectedMode === 'video' && (
+                <div className={styles.modeDescription}>智能多帧 · 超长镜头轻松生成</div>
+              )}
+              {selectedMode !== 'video' && <span className={styles.modeArrow}>→</span>}
+            </div>
+          </div>
+          
+          <div 
+            className={`${styles.modeItem} ${selectedMode === 'digital' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('digital')}
+            style={{ backgroundImage: `url(${jimengshuziren})` }}
+          >
+            <div className={styles.modeContent}>
+              <div className={styles.modeTitle}>数字人</div>
+              {selectedMode === 'digital' && (
+                <div className={styles.modeDescription}>智能数字人 · 无限创造可能</div>
+              )}
+              {selectedMode !== 'digital' && <span className={styles.modeArrow}>→</span>}
+            </div>
+          </div>
+          
+          <div 
+            className={`${styles.modeItem} ${selectedMode === 'action' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('action')}
+            style={{ backgroundImage: `url(${jimengdongzuo})` }}
+          >
+            <div className={styles.modeContent}>
+              <div className={styles.modeTitle}>动作模仿</div>
+              {selectedMode === 'action' && (
+                <div className={styles.modeDescription}>响应更灵动 跟随质量高</div>
+              )}
+              {selectedMode !== 'action' && <span className={styles.modeArrow}>→</span>}
+            </div>
+          </div>
+        </div>
+
         {/* AI Generation Input */}
         <div className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
-             {/* 已上传图片预览 */}
+           
           {uploadedImages.length > 0 && (
             <div className={styles.uploadedImagesPreview}>
               <div className={styles.imagesRow}>

@@ -64,7 +64,7 @@
 }
 
 .headerContainer {
-  max-width: 1200px;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 0 24px;
   display: flex;
@@ -336,14 +336,12 @@
   padding: 80px 0 120px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   text-align: center;
-  min-height: 100vh; // 占满一屏
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  min-height: calc(100vh - 80px); // 占满一屏
+
 }
 
 .heroContainer {
-  max-width: 1200px;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 0 24px;
   position: relative;
@@ -1766,11 +1764,6 @@
     font-size: 56px;
   }
 
-  .buildContent,
-  .connectContent {
-    //grid-template-columns: 1fr;
-    //gap: 40px;
-  }
 
   .productionFeatures {
     grid-template-columns: 1fr;
@@ -2658,18 +2651,177 @@
 
 }
 
+// 模式选择导航栏
+.modeNavigation {
+  display: flex;
+  width: 100%;
+  max-width: 1920px;
+  margin: 40px auto 20px;
+  padding: 0 20px;
+  gap: 0;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin: 20px auto 16px;
+    padding: 0 16px;
+    gap: 0;
+    border-radius: 16px;
+  }
+}
+
+.modeItem {
+  flex: 1;
+  position: relative;
+  min-height: 120px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+    transition: opacity 0.4s ease;
+    z-index: 1;
+  }
+
+  &:hover {
+    flex: 1.2;
+    z-index: 2;
+
+    &::before {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
+    }
+  }
+
+  &.modeItemActive {
+    flex: 2;
+    z-index: 3;
+
+    &::before {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%);
+    }
+
+    .modeContent {
+      .modeTitle {
+        font-size: 24px;
+        margin-bottom: 8px;
+      }
+
+      .modeDescription {
+        opacity: 1;
+        max-height: 50px;
+        margin-top: 8px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    min-height: 100px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.modeItemActive {
+      flex: 1;
+    }
+  }
+}
+
+.modeContent {
+  position: relative;
+  z-index: 2;
+  padding: 24px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+
+  @media (max-width: 768px) {
+    padding: 20px 16px;
+  }
+}
+
+.modeTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  transition: font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.modeDescription {
+  font-size: 14px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.95);
+
+  @media (max-width: 768px) {
+    font-size: 13px;
+  }
+}
+
+.modeArrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 20px;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+
+  @media (max-width: 768px) {
+    right: 16px;
+    font-size: 18px;
+  }
+}
+
+.modeItem:hover .modeArrow {
+  opacity: 1;
+}
+
+.modeItemActive .modeArrow {
+  display: none;
+}
+
 // AI生成输入和进度展示区域
 .aiGenerationWrapper {
   width: 100%;
-  max-width: 800px;
-  margin: 40px auto 20px;
+  max-width: 1920px;
+  margin: 0 auto 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
   padding: 0 20px;
 
   @media (max-width: 768px) {
-    margin: 20px auto 16px;
+    margin: 0 auto 16px;
     padding: 0 16px;
     gap: 12px;
   }
@@ -2678,23 +2830,23 @@
 .aiInputContainer {
   background: #fff;
   border-radius: 16px;
-  padding: 8px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  padding: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 
+  @media (max-width: 768px) {
+    padding: 10px;
+    border-radius: 12px;
+  }
 }
 
 .aiInputContainer1 {
   display: flex;
-  gap: 8px;
+  gap: 12px;
   align-items: center;
-  
-  padding: 8px;
-  backdrop-filter: blur(10px);
+  padding: 0;
 
   @media (max-width: 768px) {
     gap: 8px;
-    padding: 10px;
-    border-radius: 12px;
   }
 }
 
@@ -2706,6 +2858,7 @@
   background: transparent;
   color: #1a1a1a;
   font-family: inherit;
+  padding: 12px 16px;
   width: 100%;
 
   &::placeholder {
@@ -2718,27 +2871,28 @@
   }
 
   @media (max-width: 768px) {
-    padding: 12px 16px;
+    padding: 10px 12px;
     font-size: 15px;
   }
 }
 
 // 图片上传按钮
 .aiUploadBtn {
-  padding: 0 12px;
-  height: 40px;
-  background: linear-gradient(135deg, #a66ae4 0%, #9558de 100%);
-  color: white;
+  padding: 0;
+  width: 48px;
+  height: 48px;
+  background: #f5f5f5;
+  color: #666;
   border: none;
-  border-radius: 10px;
-  font-size: 18px;
+  border-radius: 12px;
+  font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  box-shadow: 0 2px 8px rgba(166, 106, 228, 0.25);
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: relative;
   overflow: hidden;
 
@@ -2754,13 +2908,9 @@
   }
 
   &:hover:not(:disabled) {
-    background: linear-gradient(135deg, #9558de 0%, #8b4fd9 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(166, 106, 228, 0.4);
-
-    &::before {
-      left: 100%;
-    }
+    background: #e8e8e8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
 
   &:active:not(:disabled) {
@@ -2768,32 +2918,32 @@
   }
 
   &:disabled {
-    opacity: 0.6;
+    opacity: 0.5;
     cursor: not-allowed;
-    background: #d3d3d3;
+    background: #f0f0f0;
     box-shadow: none;
   }
 
   @media (max-width: 768px) {
-    min-width: 40px;
-    padding: 0 10px;
-    height: 38px;
-    font-size: 16px;
+    width: 44px;
+    height: 44px;
+    font-size: 20px;
   }
 }
 
 .aiGenerateBtn {
-  padding: 12px 24px;
-  font-size: 15px;
+  padding: 12px 32px;
+  font-size: 16px;
   font-weight: 600;
   background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(166, 106, 228, 0.4);
+  box-shadow: 0 4px 15px rgba(166, 106, 228, 0.3);
+  flex-shrink: 0;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);

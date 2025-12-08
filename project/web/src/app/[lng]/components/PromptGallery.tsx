@@ -25,7 +25,7 @@ const SAMPLE_PROMPTS: PromptItem[] = promptsData as PromptItem[]
 
 export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySectionProps) {
   const { t } = useTransClient('promptGallery')
-  const [isExpanded, setIsExpanded] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(true)
   const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null)
   const [applied, setApplied] = useState(false)
   const [itemsToShow, setItemsToShow] = useState(8) // 默认显示8个（假设每行4个，显示2行）
@@ -33,21 +33,21 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   const [titleFilter, setTitleFilter] = useState('')
   const gridRef = useRef<HTMLDivElement>(null)
 
-  // 根据屏幕宽度计算每行显示的卡片数量，然后显示2行
+  // 根据屏幕宽度计算每列显示的卡片数量，然后显示5行
   useEffect(() => {
     const calculateItemsToShow = () => {
       if (!gridRef.current) return
       
       const gridWidth = gridRef.current.offsetWidth
-      const cardMinWidth = 280 // 卡片最小宽度（参考 CSS）
-      const gap = 24 // 网格间距
+      const cardMinWidth = 380 // 卡片最小宽度（参考 CSS）
+      const gap = 16 // 网格间距
       
-      // 计算每行可以放几个卡片
-      const itemsPerRow = Math.floor((gridWidth + gap) / (cardMinWidth + gap))
+      // 计算可以放几列
+      const columns = Math.floor((gridWidth + gap) / (cardMinWidth + gap))
       
-      // 显示2行
-      const newItemsToShow = itemsPerRow * 2
-      setItemsToShow(Math.max(newItemsToShow, 4)) // 至少显示4个
+      // 显示5行
+      const newItemsToShow = columns * 5
+      setItemsToShow(Math.max(newItemsToShow, 5)) // 至少显示5个
     }
 
     calculateItemsToShow()
@@ -150,44 +150,52 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
           </div>
         </div>
 
-        {/* 提示词网格 */}
-        <div className={styles.grid} ref={gridRef}>
-          {displayedPrompts.map((item, index) => (
-            <div 
-              key={index} 
-              className={styles.card}
-              onClick={() => setSelectedPrompt(item)}
-            >
-              <div className={styles.cardImage}>
-                <img src={item.preview} alt={item.title} loading="lazy" />
-                <div className={styles.cardOverlay}>
-                  <button 
-                    className={styles.actionBtn}
-                    onClick={(e) => handleApplyPrompt(item, e)}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M9 11l3 3L22 4"></path>
-                      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
-                    </svg>
-                    {t('applyButton')}
-                  </button>
-                </div>
-              </div>
-              <div className={styles.cardContent}>
-                <div className={styles.cardTitle}>{item.title}</div>
-                <div className={styles.cardMeta}>
-                  <div className={styles.badges}>
-                    {item.sub_category && (
-                      <span className={styles.badge}>{item.sub_category}</span>
-                    )}
-                    <span className={`${styles.badge} ${item.mode === 'edit' ? styles.badgeEdit : styles.badgeGenerate}`}>
-                      {t(`badges.${item.mode === 'edit' ? 'edit' : 'generate'}` as any)}
-                    </span>
+        {/* 提示词瀑布流 */}
+        <div className={styles.masonry} ref={gridRef}>
+          {displayedPrompts.map((item, index) => {
+            // 获取描述（prompt的前150个字符）
+            const description = item.prompt.length > 150 
+              ? item.prompt.substring(0, 150) + '...' 
+              : item.prompt
+            
+            return (
+              <div 
+                key={index} 
+                className={styles.card}
+                onClick={() => setSelectedPrompt(item)}
+              >
+                <div className={styles.cardImage}>
+                  <img src={item.preview} alt={item.title} loading="lazy" />
+                  <div className={styles.cardOverlay}>
+                    <div className={styles.cardContent}>
+                      <div className={styles.cardTitle}>{item.title}</div>
+                      <div className={styles.cardDescription}>{description}</div>
+                      <div className={styles.cardMeta}>
+                        <div className={styles.badges}>
+                          {item.sub_category && (
+                            <span className={styles.badge}>{item.sub_category}</span>
+                          )}
+                          <span className={`${styles.badge} ${item.mode === 'edit' ? styles.badgeEdit : styles.badgeGenerate}`}>
+                            {t(`badges.${item.mode === 'edit' ? 'edit' : 'generate'}` as any)}
+                          </span>
+                        </div>
+                      </div>
+                      <button 
+                        className={styles.actionBtn}
+                        onClick={(e) => handleApplyPrompt(item, e)}
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M9 11l3 3L22 4"></path>
+                          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                        </svg>
+                        {t('applyButton')}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
         {/* 展开/收起按钮 */}
