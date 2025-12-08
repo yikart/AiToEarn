@@ -57,6 +57,24 @@
 | 非核心功能和小幅增强 | 低优先级 (Low Priority) |
 | 有价值但不紧急 | 未来特性 (Future-Feature) |
 
+## 开发环境设置
+
+1. Fork 项目到你的 GitHub 账号
+2. 创建特性分支：
+  ```bash
+  git checkout -b feature/your-feature-name
+  ```
+3. 提交你的更改：
+  ```bash
+  git add .
+  git commit -m "feat: add new feature"
+  ```
+4. 推送到你的 Fork 仓库：
+  ```bash
+  git push origin feature/your-feature-name
+  ```
+5. 在 GitHub 上创建 Pull Request
+
 ## 提交你的 PR
 
 ### Pull Request 流程

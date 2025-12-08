@@ -57,6 +57,24 @@ How we prioritize:
 | Non-core features and minor enhancements | Low Priority |
 | Valuable but not immediate | Future-Feature |
 
+## Development Environment Setup
+
+1. Fork the project to your own GitHub account
+2. Create a feature branch:
+  ```bash
+  git checkout -b feature/your-feature-name
+  ```
+3. Commit your changes:
+  ```bash
+  git add .
+  git commit -m "feat: add new feature"
+  ```
+4. Push to your forked repository:
+  ```bash
+  git push origin feature/your-feature-name
+  ```
+5. Create a Pull Request on GitHub
+
 ## Submitting your PR
 
 ### Pull Request Process
