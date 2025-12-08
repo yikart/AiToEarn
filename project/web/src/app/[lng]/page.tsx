@@ -77,11 +77,13 @@ const IMAGE_URLS = {
   commentFilter2: 'https://assets.aitoearn.ai/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
 }
 
+import logo from '@/assets/images/logo.png'
 import jimengangent from '@/assets/images/jimengangent.jpeg'
 import jimengshengtu from '@/assets/images/jimengshengtu.jpeg'
 import jimengshengshipin from '@/assets/images/jimengshengshipin.jpeg'
 import jimengshuziren from '@/assets/images/jimengshuziren.jpeg'
 import jimengdongzuo from '@/assets/images/jimengdongzuo.jpeg'
+
 
 
 // Release banner
@@ -980,7 +982,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             </div>
             <button 
               className={styles.scrollTopBtn}
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              onClick={handleCreateTask}
+              disabled={isGenerating || !prompt.trim() || isUploading}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
@@ -1088,7 +1091,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 className={styles.markdownMessagesContainer}
               >
                 <h3 className={styles.markdownTitle}>
-                  🤖 AI 生成过程 {isGenerating && <LoadingDots />}
+                  <Image src={logo} alt="Logo" className={styles.logoAi} />
+                   AI 生成过程 {isGenerating && <LoadingDots />}
                 </h3>
                 <div className={styles.markdownContent}>
                   <ReactMarkdown>
