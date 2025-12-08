@@ -164,6 +164,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const { lng } = useParams()
   const { token, setToken, setUserInfo } = useUserStore()
 
+  // Helper function to get image URL
+  const getImageUrl = (img: any): string => {
+    if (typeof img === 'string') return img
+    if (img?.src) return img.src
+    if (img?.default) return img.default
+    return String(img)
+  }
+
   // AI generation related states
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
@@ -172,7 +180,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
-  const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'digital' | 'action'>('agent') // 选中的模式
+  const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'draft' | 'publishbatch'>('agent') // 选中的模式
   
   // Login modal states
   const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -795,70 +803,90 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           <div 
             className={`${styles.modeItem} ${selectedMode === 'agent' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('agent')}
-            style={{ backgroundImage: `url(${jimengangent})` }}
+            style={{ backgroundImage: `url(${getImageUrl(jimengangent)})` }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>Agent 模式</div>
               {selectedMode === 'agent' && (
                 <div className={styles.modeDescription}>灵感来了?一句话帮你开始创作</div>
               )}
-              {selectedMode !== 'agent' && <span className={styles.modeArrow}>→</span>}
+              {selectedMode !== 'agent' && (
+                <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
+                  <path d="M3.253 1.172a.604.604 0 0 1 .854.005l3.359 3.398a.604.604 0 0 1 0 .85L4.107 8.823a.604.604 0 0 1-.859-.85L6.187 5 3.248 2.026a.604.604 0 0 1 .005-.854Z" fill="currentColor"/>
+                </svg>
+              )}
             </div>
           </div>
           
-          <div 
+          {/* <div 
             className={`${styles.modeItem} ${selectedMode === 'image' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('image')}
-            style={{ backgroundImage: `url(${jimengshengtu})` }}
+            style={{ backgroundImage: `url(${getImageUrl(jimengshengtu)})` }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>图片生成</div>
               {selectedMode === 'image' && (
                 <div className={styles.modeDescription}>支持多图参考 · 生成系列组图</div>
               )}
-              {selectedMode !== 'image' && <span className={styles.modeArrow}>→</span>}
+              {selectedMode !== 'image' && (
+                <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
+                  <path d="M3.253 1.172a.604.604 0 0 1 .854.005l3.359 3.398a.604.604 0 0 1 0 .85L4.107 8.823a.604.604 0 0 1-.859-.85L6.187 5 3.248 2.026a.604.604 0 0 1 .005-.854Z" fill="currentColor"/>
+                </svg>
+              )}
             </div>
           </div>
           
           <div 
             className={`${styles.modeItem} ${selectedMode === 'video' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('video')}
-            style={{ backgroundImage: `url(${jimengshengshipin})` }}
+            style={{ backgroundImage: `url(${getImageUrl(jimengshengshipin)})` }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>视频生成</div>
               {selectedMode === 'video' && (
                 <div className={styles.modeDescription}>智能多帧 · 超长镜头轻松生成</div>
               )}
-              {selectedMode !== 'video' && <span className={styles.modeArrow}>→</span>}
+              {selectedMode !== 'video' && (
+                <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
+                  <path d="M3.253 1.172a.604.604 0 0 1 .854.005l3.359 3.398a.604.604 0 0 1 0 .85L4.107 8.823a.604.604 0 0 1-.859-.85L6.187 5 3.248 2.026a.604.604 0 0 1 .005-.854Z" fill="currentColor"/>
+                </svg>
+              )}
             </div>
-          </div>
+          </div> */}
           
           <div 
-            className={`${styles.modeItem} ${selectedMode === 'digital' ? styles.modeItemActive : ''}`}
-            onClick={() => setSelectedMode('digital')}
-            style={{ backgroundImage: `url(${jimengshuziren})` }}
+            className={`${styles.modeItem} ${selectedMode === 'draft' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('draft')}
+            style={{ backgroundImage: `url(${getImageUrl(jimengshuziren)})` }}
           >
             <div className={styles.modeContent}>
-              <div className={styles.modeTitle}>数字人</div>
-              {selectedMode === 'digital' && (
+              <div className={styles.modeTitle}>草稿箱</div>
+              {selectedMode === 'draft' && (
                 <div className={styles.modeDescription}>智能数字人 · 无限创造可能</div>
               )}
-              {selectedMode !== 'digital' && <span className={styles.modeArrow}>→</span>}
+              {selectedMode !== 'draft' && (
+                <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
+                  <path d="M3.253 1.172a.604.604 0 0 1 .854.005l3.359 3.398a.604.604 0 0 1 0 .85L4.107 8.823a.604.604 0 0 1-.859-.85L6.187 5 3.248 2.026a.604.604 0 0 1 .005-.854Z" fill="currentColor"/>
+                </svg>
+              )}
             </div>
           </div>
           
           <div 
-            className={`${styles.modeItem} ${selectedMode === 'action' ? styles.modeItemActive : ''}`}
-            onClick={() => setSelectedMode('action')}
-            style={{ backgroundImage: `url(${jimengdongzuo})` }}
+            className={`${styles.modeItem} ${selectedMode === 'publishbatch' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('publishbatch')}
+            style={{ backgroundImage: `url(${getImageUrl(jimengdongzuo)})` }}
           >
             <div className={styles.modeContent}>
-              <div className={styles.modeTitle}>动作模仿</div>
-              {selectedMode === 'action' && (
+              <div className={styles.modeTitle}>批次发布</div>
+              {selectedMode === 'publishbatch' && (
                 <div className={styles.modeDescription}>响应更灵动 跟随质量高</div>
               )}
-              {selectedMode !== 'action' && <span className={styles.modeArrow}>→</span>}
+              {selectedMode !== 'publishbatch' && (
+                <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
+                  <path d="M3.253 1.172a.604.604 0 0 1 .854.005l3.359 3.398a.604.604 0 0 1 0 .85L4.107 8.823a.604.604 0 0 1-.859-.85L6.187 5 3.248 2.026a.604.604 0 0 1 .005-.854Z" fill="currentColor"/>
+                </svg>
+              )}
             </div>
           </div>
         </div>
@@ -867,80 +895,98 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         <div className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
            
-          {uploadedImages.length > 0 && (
             <div className={styles.uploadedImagesPreview}>
               <div className={styles.imagesRow}>
-                {uploadedImages.map((imageUrl, index) => (
+                {uploadedImages.length > 0 && uploadedImages.map((imageUrl, index) => (
                   <div key={index} className={styles.imageItem}>
                     <img 
                       src={imageUrl} 
-                      alt={`图 ${index + 1}`} 
+                      alt={`pic ${index + 1}`} 
                       className={styles.imageThumb}
                     />
                     {!isGenerating && (
                       <span
                         className={styles.removeImageBtn}
                         onClick={() => handleRemoveImage(index)}
-                        title="删除"
+                        title="remove image"
                       >
                         <CloseCircleOutlined />
                       </span>
                     )}
                   </div>
                 ))}
+
+                {/* 图片上传按钮 */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isGenerating || isUploading}
+                    className={styles.aiUploadBtn}
+                    title="上传图片"
+                  >
+                    {isUploading ? (
+                      <span>⏳</span>
+                    ) : (
+                      <span className={styles.plusIcon}>+</span>
+                    )}
+                  </button>
                 
               </div>
             </div>
-          )}
+
+           
 
           <div className={styles.aiInputContainer1}>
-
-          
-            <input
-              type="text"
+            <textarea
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && !isGenerating && !isUploading) {
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !isGenerating && !isUploading) {
+                  e.preventDefault()
                   handleCreateTask()
                 }
               }}
               placeholder={t('aiGeneration.inputPlaceholder' as any)}
               disabled={isGenerating || isUploading}
               className={styles.aiInput}
+              rows={4}
             />
             
-            {/* 图片上传按钮 */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isGenerating || isUploading}
-              className={styles.aiUploadBtn}
-              title="上传图片"
-            >
-              {isUploading ? (
-                <span>⏳</span>
-              ) : (
-                <PictureOutlined style={{ fontSize: '20px' }} />
-              )}
-            </button>
-            
-            <button
-              onClick={handleCreateTask}
-              disabled={isGenerating || !prompt.trim() || isUploading}
-              className={styles.aiGenerateBtn}
-            >
-              {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
-            </button>
+          </div>
 
+          {/* 底部控制栏 */}
+          <div className={styles.aiInputBottomBar}>
+            <div className={styles.bottomLeft}>
+              <button className={styles.modeSelectBtn}>
+                <span>
+                  {selectedMode === 'agent' && 'Agent 模式'}
+                  {selectedMode === 'image' && '图片生成'}
+                  {selectedMode === 'video' && '视频生成'}
+                  {selectedMode === 'draft' && '草稿箱'}
+                  {selectedMode === 'publishbatch' && '批次发布'}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
+              
             </div>
+            <button 
+              className={styles.scrollTopBtn}
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
+              </svg>
+            </button>
+          </div>
           </div>
 
          
@@ -1072,24 +1118,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           </svg>
         </button>
 
-        <p className={styles.heroSubtitle}>
-          {t('hero.subtitle')}
-        </p>
 
-        {/* Desktop button */}
-        <button
-          onClick={() => {
-            router.push('/accounts')
-          }}
-          className={`${styles.heroBtn} ${styles.heroBtnDesktop}`}
-        >
-          {t('hero.getStarted')}
-          <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
 
-        <p
+        {/* <p
           className={styles.heroMobileLink}
           style={{ marginTop: '10px' }}
           onClick={() => {
@@ -1100,7 +1131,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           }}
         >
           {t('hero.useMobilePhone' as any)}
-        </p>
+        </p> */}
       </div>
 
       {/* Login Modal */}

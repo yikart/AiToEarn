@@ -333,17 +333,17 @@
 }
 
 .hero {
-  padding: 80px 0 120px;
+  padding: 80px 20px 30px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   text-align: center;
-  min-height: calc(100vh - 80px); // 占满一屏
+  // min-height: calc(100vh - 80px); // 占满一屏
 
 }
 
 .heroContainer {
   max-width: 1920px;
   margin: 0 auto;
-  padding: 0 24px;
+  padding: 0;
   position: relative;
 }
 
@@ -2656,12 +2656,15 @@
   display: flex;
   width: 100%;
   max-width: 1920px;
-  margin: 40px auto 20px;
-  padding: 0 20px;
+  margin: 40px auto 0px;
+  padding: 0px;
   gap: 0;
-  border-radius: 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   overflow: hidden;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  will-change: contents;
+  height: 80px; // 固定高度，避免切换时抖动
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -2669,70 +2672,69 @@
     padding: 0 16px;
     gap: 0;
     border-radius: 16px;
+    height: auto; // 移动端允许自适应高度
   }
 }
 
 .modeItem {
   flex: 1;
   position: relative;
-  min-height: 120px;
-  background-size: cover;
-  background-position: center;
+  height: 80px; // 固定高度，与父容器一致
+  background-size: 1200px auto;
+  background-position: right top;
   background-repeat: no-repeat;
   cursor: pointer;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: flex-grow;
+  transition: flex-grow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:last-child {
     border-right: none;
   }
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
-    transition: opacity 0.4s ease;
-    z-index: 1;
-  }
+  // 移除蒙层，让背景图更清晰
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.6) 100%);
+  //   transition: background 0.3s ease;
+  //   z-index: 1;
+  //   will-change: background;
+  // }
 
-  &:hover {
-    flex: 1.2;
+  &:hover:not(.modeItemActive) {
+    flex-grow: 1.2;
     z-index: 2;
-
-    &::before {
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.5) 100%);
-    }
   }
 
   &.modeItemActive {
-    flex: 2;
+    flex-grow: 3;
     z-index: 3;
-
-    &::before {
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.4) 0%, rgba(0, 0, 0, 0.7) 100%);
-    }
 
     .modeContent {
       .modeTitle {
-        font-size: 24px;
-        margin-bottom: 8px;
+        font-size: 20px;
+        margin-bottom: 4px;
+        transition: font-size 0.3s ease, margin-bottom 0.3s ease;
       }
 
       .modeDescription {
         opacity: 1;
-        max-height: 50px;
-        margin-top: 8px;
+        max-height: 20px;
+        margin-top: 2px;
       }
     }
   }
 
   @media (max-width: 768px) {
-    min-height: 100px;
+    height: 80px; // 移动端固定高度
+    min-height: 80px;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 
@@ -2741,7 +2743,7 @@
     }
 
     &.modeItemActive {
-      flex: 1;
+      flex-grow: 1;
     }
   }
 }
@@ -2749,24 +2751,30 @@
 .modeContent {
   position: relative;
   z-index: 2;
-  padding: 24px 20px;
+  padding: 8px 20px;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   color: white;
+  transform: translateZ(0);
+  min-height: 80px; // 确保内容区域有足够高度
 
   @media (max-width: 768px) {
-    padding: 20px 16px;
+    padding: 6px 16px;
+    min-height: 80px;
   }
 }
 
 .modeTitle {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 4px;
-  transition: font-size 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 0;
+  transition: font-size 0.3s ease, margin-bottom 0.3s ease;
   white-space: nowrap;
+  will-change: font-size;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); // 添加文字阴影，确保在背景图上可见
+  line-height: 1.2;
 
   @media (max-width: 768px) {
     font-size: 16px;
@@ -2774,16 +2782,21 @@
 }
 
 .modeDescription {
-  font-size: 14px;
+  font-size: 13px;
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  line-height: 1.5;
+  transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease;
+  line-height: 1.4;
   color: rgba(255, 255, 255, 0.95);
+  will-change: opacity, max-height;
+  margin: 0; // 确保没有额外的margin影响布局
+  padding: 0; // 确保没有额外的padding影响布局
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); // 添加文字阴影，确保在背景图上可见
+  white-space: nowrap; // 单行显示，避免换行
 
   @media (max-width: 768px) {
-    font-size: 13px;
+    font-size: 12px;
   }
 }
 
@@ -2792,13 +2805,17 @@
   right: 20px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
+  width: 16px;
+  height: 16px;
+  color: white;
   opacity: 0.8;
   transition: opacity 0.3s ease;
+  flex-shrink: 0;
 
   @media (max-width: 768px) {
     right: 16px;
-    font-size: 18px;
+    width: 14px;
+    height: 14px;
   }
 }
 
@@ -2818,7 +2835,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: 0 20px;
+  padding: 0;
 
   @media (max-width: 768px) {
     margin: 0 auto 16px;
@@ -2829,12 +2846,14 @@
 
 .aiInputContainer {
   background: #fff;
-  border-radius: 16px;
-  padding: 12px;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  padding: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
 
   @media (max-width: 768px) {
-    padding: 10px;
+    padding: 12px;
     border-radius: 12px;
   }
 }
@@ -2844,9 +2863,11 @@
   gap: 12px;
   align-items: center;
   padding: 0;
+  margin-bottom: 12px;
 
   @media (max-width: 768px) {
     gap: 8px;
+    margin-bottom: 10px;
   }
 }
 
@@ -2858,8 +2879,12 @@
   background: transparent;
   color: #1a1a1a;
   font-family: inherit;
-  padding: 12px 16px;
+  padding: 12px 0px;
   width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+  overflow-y: auto;
 
   &::placeholder {
     color: #999;
@@ -2873,19 +2898,19 @@
   @media (max-width: 768px) {
     padding: 10px 12px;
     font-size: 15px;
+    min-height: 80px;
   }
 }
 
 // 图片上传按钮
 .aiUploadBtn {
   padding: 0;
-  width: 48px;
-  height: 48px;
+  width: 50px;
+  height: 50px;
   background: #f5f5f5;
-  color: #666;
+  color: #333;
   border: none;
   border-radius: 12px;
-  font-size: 24px;
   cursor: pointer;
   transition: all 0.3s ease;
   display: flex;
@@ -2893,18 +2918,12 @@
   justify-content: center;
   flex-shrink: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: relative;
-  overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    transition: left 0.5s ease;
+  .plusIcon {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    color: #666;
   }
 
   &:hover:not(:disabled) {
@@ -2927,23 +2946,174 @@
   @media (max-width: 768px) {
     width: 44px;
     height: 44px;
-    font-size: 20px;
+  }
+}
+
+// 自动按钮
+.autoBtn {
+  padding: 12px 20px;
+  height: 48px;
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  white-space: nowrap;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: #666;
+  }
+
+  &:hover:not(:disabled) {
+    background: #e8e8e8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f0f0f0;
+    box-shadow: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+    height: 44px;
+    font-size: 14px;
+  }
+}
+
+// 底部控制栏
+.aiInputBottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 12px;
+
+  @media (max-width: 768px) {
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+}
+
+.bottomLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modeSelectBtn {
+  padding: 6px 12px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    stroke: #1976d2;
+  }
+
+  &:hover {
+    background: #bbdefb;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+.autoBtnSmall {
+  padding: 6px 12px;
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+
+  &:hover {
+    background: #e8e8e8;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+.scrollTopBtn {
+  width: 40px;
+  height: 40px;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: #666;
+  }
+
+  &:hover {
+    background: #e8e8e8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
   }
 }
 
 .aiGenerateBtn {
-  padding: 12px 32px;
-  font-size: 16px;
-  font-weight: 600;
-  background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
-  color: #fff;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(166, 106, 228, 0.3);
-  flex-shrink: 0;
+  display: none; // 隐藏生成按钮，因为现在使用自动按钮
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
@@ -2980,8 +3150,8 @@
 
   .imageItem {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 50px;
+    height: 50px;
     border-radius: 6px;
     overflow: hidden;
     border: 1.5px solid rgba(166, 106, 228, 0.25);

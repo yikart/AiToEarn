@@ -88,7 +88,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
     <section className={styles.promptGallery}>
       <div className={styles.container}>
         {/* 标题区域 */}
-        <div className={styles.header}>
+        {/* <div className={styles.header}>
           <div className={styles.badge}>
             <div className={styles.badgeIcon}></div>
             <span>{t('badge')}</span>
@@ -97,10 +97,8 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
             {t('title')}
             <span className={styles.titleHighlight}>{t('titleHighlight')}</span>
           </h2>
-          <p className={styles.subtitle}>
-            {t('subtitle')}
-          </p>
-        </div>
+
+        </div> */}
 
         {/* 筛选区域 */}
         <div className={styles.filters}>
