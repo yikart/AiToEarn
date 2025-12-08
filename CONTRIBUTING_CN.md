@@ -89,10 +89,6 @@
 
 ### 项目设置
 
-#### 前端
-
-关于设置前端服务，请参考 [project/web/README.md](./project/web/README.md) 中的指南。该文档提供了帮助你正确设置前端环境的详细说明。
-
 #### 后端
 
 关于设置后端服务，请参考 [project/backend/README.md](./project/backend/README.md) 中的详细说明。该文档包含逐步指导，帮助你顺利运行后端。

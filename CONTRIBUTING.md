@@ -89,13 +89,9 @@ How we prioritize:
 
 ### Setup the project
 
-#### Frontend
-
-For setting up the frontend service, please refer to our guide in [project/web/README.md](./project/web/README.md). This document provides detailed instructions to help you set up the frontend environment properly.
-
 #### Backend
 
-For setting up the backend service, kindly refer to our detailed instructions in [project/backend/README.md](./project/backend/README.md). This document contains step-by-step guidance to help you get the backend up and running smoothly.
+For setting up the backend service, kindly refer to our detailed instructions in [project/backend/DEVELOPER_GUIDE.md](./project/backend/DEVELOPER_GUIDE.md). This document contains step-by-step guidance to help you get the backend up and running smoothly.
 
 #### Other things to note
 
