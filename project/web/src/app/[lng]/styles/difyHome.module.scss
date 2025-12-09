@@ -2869,6 +2869,7 @@
   align-items: center;
   padding: 0;
   margin-bottom: 12px;
+  position: relative;
 
   @media (max-width: 768px) {
     gap: 8px;
@@ -3005,6 +3006,7 @@
 }
 
 // 底部控制栏
+
 .aiInputBottomBar {
   display: flex;
   align-items: center;

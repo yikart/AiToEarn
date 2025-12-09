@@ -17,7 +17,9 @@ import {
 
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 import { GoogleLogin } from '@react-oauth/google'
 import { useUserStore } from '@/store/user'
 import ReactMarkdown from 'react-markdown'
@@ -192,6 +194,87 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const [registCode, setRegistCode] = useState('')
   const [loginForm] = Form.useForm()
   const [isActivating, setIsActivating] = useState(false)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
+
+  // 初始化新手引导
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding')
+    // if (hasSeenOnboarding) return
+
+    // 延迟一下显示，确保页面已完全加载且 textarea 已经渲染
+    const timer = setTimeout(() => {
+      const textarea = document.getElementById('ai-input-textarea')
+      if (!textarea) return
+
+      const driverObj = driver({
+        showProgress: false,
+        showButtons: ['next'],
+        nextBtnText: '知道了1',
+        doneBtnText: '知道了2',
+        popoverOffset: 10,
+        stagePadding: 4,
+        stageRadius: 12,
+        allowClose: true,
+        smoothScroll: true,
+        steps: [
+          {
+            element: '#ai-input-textarea',
+            popover: {
+              title: '想要创作不知道如何下手？',
+              description: '一句话帮你创作',
+              side: 'top',
+              align: 'start',
+            },
+          },
+        ],
+        onDestroyStarted: () => {
+          localStorage.setItem('hasSeenOnboarding', 'true')
+        },
+        onDestroyed: () => {
+          localStorage.setItem('hasSeenOnboarding', 'true')
+        },
+      })
+
+      driverObjRef.current = driverObj
+      
+      // 启动引导后，监听按钮点击事件并修改文本
+      setTimeout(() => {
+        const updateButtonText = () => {
+          const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+          const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+          const btn = nextBtn || doneBtn
+          if (btn) {
+            btn.textContent = '知道了3'
+            // 确保点击后关闭
+            btn.addEventListener('click', () => {
+              setTimeout(() => {
+                driverObj.destroy()
+                localStorage.setItem('hasSeenOnboarding', 'true')
+              }, 100)
+            }, { once: true })
+          }
+        }
+        updateButtonText()
+        // 使用 MutationObserver 监听 DOM 变化，确保按钮文本更新
+        const observer = new MutationObserver(updateButtonText)
+        observer.observe(document.body, { childList: true, subtree: true })
+        
+        // 3秒后停止观察
+        setTimeout(() => observer.disconnect(), 3000)
+      }, 200)
+
+      driverObj.drive()
+    }, 1000)
+
+    return () => {
+      clearTimeout(timer)
+      if (driverObjRef.current) {
+        driverObjRef.current.destroy()
+      }
+    }
+  }, [])
+
 
   // 应用提示词（从 PromptGallery 触发）
   useEffect(() => {
@@ -947,6 +1030,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
 
           <div className={styles.aiInputContainer1}>
             <textarea
+              ref={textareaRef}
+              id="ai-input-textarea"
+              data-driver-target="ai-input"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
@@ -960,7 +1046,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               className={styles.aiInput}
               rows={4}
             />
-            
           </div>
 
           {/* 底部控制栏 */}
