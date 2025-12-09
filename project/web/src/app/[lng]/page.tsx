@@ -946,7 +946,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>草稿箱</div>
               {selectedMode === 'draft' && (
-                <div className={styles.modeDescription}>智能数字人 · 无限创造可能</div>
+                <div className={styles.modeDescription}>创建更多内容草稿，随时随地创作</div>
               )}
               {selectedMode !== 'draft' && (
                 <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
@@ -964,7 +964,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>批次发布</div>
               {selectedMode === 'publishbatch' && (
-                <div className={styles.modeDescription}>响应更灵动 跟随质量高</div>
+                <div className={styles.modeDescription}>一键制定优质作品发布计划</div>
               )}
               {selectedMode !== 'publishbatch' && (
                 <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
