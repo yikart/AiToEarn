@@ -10,13 +10,13 @@
 
 正在寻找可以解决的问题？浏览我们的 [issues](https://github.com/AiToEarn/AiToEarn/issues) 并挑选一个开始吧！
 
-### 招聘
+### 友好的第一次开始
 
-标题包含 **【招聘】** 的 issues，是我们的招聘题目。如果想加入我们的团队，请提交关联该 issues 的 PR。
+标题包含 **【good frist】** 的 issues，是我们为新的贡献者提供的issues。如果想加入我们的团队，请提交关联该 issues 的 PR。
 
 加入我们，通过贡献代码，让我们一起构建一些很棒的东西！💡✨
 
-别忘了在 PR 描述中链接现有的 issue 或开启一个新的 issue。
+别忘了在 PR 描述中链接现有的 issue
 
 ### 错误报告 (Bug Reports)
 

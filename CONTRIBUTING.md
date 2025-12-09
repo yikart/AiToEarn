@@ -10,13 +10,13 @@ This guide is a constant work in progress. We highly appreciate your understandi
 
 Looking for something to tackle? Browse our [issues](https://github.com/AiToEarn/AiToEarn/issues) and pick one to get started!
 
-### Recruitment
+### Good first issue
 
-Issues with titles containing **【招聘】** are our recruitment tasks. If you want to join our team, please submit a PR linked to such an issue.
+Issues with titles containing **【good frist】** are issues we provide for new contributors. If you want to join our team, please submit a PR linked to such an issue.
 
-Join the fun, contribute, and let's build something awesome together! 💡✨
+Join us, contribute code, and let's build something awesome together! 💡✨
 
-Don't forget to link an existing issue or open a new issue in the PR's description.
+Don't forget to link an existing issue in the PR's description.
 
 ### Bug reports
 
