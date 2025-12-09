@@ -7,7 +7,6 @@ import { PublishRecordService } from '../publishRecord/publishRecord.service'
 import { PostService } from '../statistics/post/post.service'
 import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
 import { PublishTaskNatsApi } from '../transports/channel/api/publishTask.natsApi'
-import { ChannelApi } from '../transports/channel/channel.api'
 import { PublishingChannel } from '../transports/channel/common'
 import { NewPublishData, NewPublishRecordData, PlatOptions } from './common'
 import { PostHistoryItemVoSchema } from './dto/publish-response.vo'
@@ -23,7 +22,6 @@ export class PublishService {
     private readonly publishRecordService: PublishRecordService,
     private readonly postService: PostService,
     private readonly platPublishNatsApi: PlatPublishNatsApi,
-    private readonly channelApi: ChannelApi,
   ) { }
 
   async create(newData: NewPublishData<PlatOptions>) {
@@ -39,15 +37,6 @@ export class PublishService {
   async run(id: string) {
     const res = await this.platPublishNatsApi.run(id)
     return res
-  }
-
-  async getList(data: PubRecordListFilterDto, userId: string) {
-    const list1 = await this.publishRecordService.getPublishRecordList({
-      ...data,
-      userId,
-    })
-    const list2 = await this.publishTaskNatsApi.getPublishTaskList(userId, data)
-    return [...list1, ...list2]
   }
 
   private mergePostHistory(publishRecords: PublishRecord[], publishTasks: any[], postsHistory: PostData[]) {
@@ -200,7 +189,7 @@ export class PublishService {
       ...data,
       range,
       userId,
-      platform: data.accountType as any,
+      platform: data.accountType,
     })
     const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
     if (data.publishingChannel) {
