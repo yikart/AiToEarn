@@ -1,21 +1,61 @@
-# Contribution Guide
+# CONTRIBUTING
 
-Thank you for your interest in the AiToEarn project! We welcome all forms of contributions, including but not limited to bug reports, feature requests, code improvements, and documentation enhancements.
+So you're looking to contribute to AiToEarn - that's awesome! We can't wait to see what you do. We have grand ambitions to build the best platform for AI-driven earning. Any help from the community counts, truly.
 
-## Table of Contents
+We need to be nimble and ship fast, but we also want to make sure that contributors like you get as smooth an experience as possible. We've assembled this contribution guide for that purpose, aiming at getting you familiarized with the codebase & how we work with contributors, so you could quickly jump to the fun part.
 
-- [Contribution Guide](#contribution-guide)
-  - [Table of Contents](#table-of-contents)
-  - [Code of Conduct](#code-of-conduct)
-  - [Development Environment Setup](#development-environment-setup)
-  - [Submitting Pull Requests](#submitting-pull-requests)
-  - [Reporting Bugs](#reporting-bugs)
-  - [Suggesting New Features](#suggesting-new-features)
-  - [Code Review](#code-review)
+This guide is a constant work in progress. We highly appreciate your understanding if at times it lags behind the actual project, and welcome any feedback for us to improve.
 
-## Code of Conduct
+## Before you jump in
 
-Please follow our code of conduct to ensure all participants can communicate in an open and friendly environment.
+Looking for something to tackle? Browse our [issues](https://github.com/AiToEarn/AiToEarn/issues) and pick one to get started!
+
+### Good first issue
+
+Issues with titles containing **【good frist】** are issues we provide for new contributors. If you want to join our team, please submit a PR linked to such an issue.
+
+Join us, contribute code, and let's build something awesome together! 💡✨
+
+Don't forget to link an existing issue in the PR's description.
+
+### Bug reports
+
+> [!IMPORTANT]
+> Please make sure to include the following information when submitting a bug report:
+
+- A clear and descriptive title
+- A detailed description of the bug, including any error messages
+- Steps to reproduce the bug
+- Expected behavior
+- **Logs**, if available (really important for backend issues)
+- Screenshots or videos, if applicable
+
+How we prioritize:
+
+| Issue Type | Priority |
+| ------------------------------------------------------------ | --------------- |
+| Bugs in core functions (cannot login, applications not working, security loopholes) | Critical |
+| Non-critical bugs, performance boosts | Medium Priority |
+| Minor fixes (typos, confusing but working UI) | Low Priority |
+
+### Feature requests
+
+> [!NOTE]
+> Please make sure to include the following information when submitting a feature request:
+
+- A clear and descriptive title
+- A detailed description of the feature
+- A use case for the feature
+- Any other context or screenshots about the feature request
+
+How we prioritize:
+
+| Feature Type | Priority |
+| ------------------------------------------------------------ | --------------- |
+| High-Priority Features as being labeled by a team member | High Priority |
+| Popular feature requests from our community | Medium Priority |
+| Non-core features and minor enhancements | Low Priority |
+| Valuable but not immediate | Future-Feature |
 
 ## Development Environment Setup
 
@@ -26,7 +66,7 @@ Please follow our code of conduct to ensure all participants can communicate in 
   ```
 3. Commit your changes:
   ```bash
-  git add . 
+  git add .
   git commit -m "feat: add new feature"
   ```
 4. Push to your forked repository:
@@ -35,23 +75,28 @@ Please follow our code of conduct to ensure all participants can communicate in 
   ```
 5. Create a Pull Request on GitHub
 
-## Reporting Bugs
-1. Ensure the bug has not been reported in other issues
-2. Create a new issue and include the following information:
-  - Title describing the bug
-  - Detailed description of the bug
-  - Steps to reproduce the bug
-  - Screenshots (if available)
-  - Other information (such as error logs, stack traces, etc.)
-## Suggesting New Features
-1. Ensure the feature has not been requested in other issues
-2. Create a new issue and include the following information:
-  - Title describing the new feature
-  - Detailed description of the new feature
-  - Screenshots (if available)
-## Code Review
-1. Create a pull request
-2. Wait for other contributors to review the code
-3. Modify the code and commit the new changes
-4. Push the new commits to your forked repository
-5. Ensure the pull request is merged into the main repository
+## Submitting your PR
+
+### Pull Request Process
+
+1. Fork the repository
+2. Before you draft a PR, please create an issue to discuss the changes you want to make
+3. Create a new branch for your changes
+4. Please add tests for your changes accordingly
+5. Ensure your code passes the existing tests
+6. Please link the issue in the PR description, `fixes #<issue_number>`
+7. Get merged!
+
+### Setup the project
+
+#### Backend
+
+For setting up the backend service, kindly refer to our detailed instructions in [project/backend/DEVELOPER_GUIDE.md](./project/backend/DEVELOPER_GUIDE.md). This document contains step-by-step guidance to help you get the backend up and running smoothly.
+
+#### Other things to note
+
+We recommend reviewing these documents carefully before proceeding with the setup.
+
+## Getting Help
+
+If you ever get stuck or get a burning question while contributing, simply shoot your queries our way via the related GitHub issue.
