@@ -210,8 +210,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       const driverObj = driver({
         showProgress: false,
         showButtons: ['next'],
-        nextBtnText: '知道了1',
-        doneBtnText: '知道了2',
+        nextBtnText: '知道了',
+        doneBtnText: '知道了',
         popoverOffset: 10,
         stagePadding: 4,
         stageRadius: 12,
@@ -225,9 +225,35 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               description: '一句话帮你创作',
               side: 'top',
               align: 'start',
+              onPopoverRender: () => {
+                // Popover 渲染后，更新按钮文本并添加点击事件
+                setTimeout(() => {
+                  const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                  const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                  const btn = nextBtn || doneBtn
+                  if (btn) {
+                    btn.textContent = '知道了'
+                    // 添加点击事件监听器
+                    const handleClick = (e: MouseEvent) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      driverObj.destroy()
+                      localStorage.setItem('hasSeenOnboarding', 'true')
+                      btn.removeEventListener('click', handleClick)
+                    }
+                    btn.addEventListener('click', handleClick)
+                  }
+                }, 50)
+              },
             },
           },
         ],
+        onNextClick: () => {
+          // 点击按钮时关闭引导
+          driverObj.destroy()
+          localStorage.setItem('hasSeenOnboarding', 'true')
+          return false // 阻止默认行为
+        },
         onDestroyStarted: () => {
           localStorage.setItem('hasSeenOnboarding', 'true')
         },
@@ -237,33 +263,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       })
 
       driverObjRef.current = driverObj
-      
-      // 启动引导后，监听按钮点击事件并修改文本
-      setTimeout(() => {
-        const updateButtonText = () => {
-          const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-          const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-          const btn = nextBtn || doneBtn
-          if (btn) {
-            btn.textContent = '知道了3'
-            // 确保点击后关闭
-            btn.addEventListener('click', () => {
-              setTimeout(() => {
-                driverObj.destroy()
-                localStorage.setItem('hasSeenOnboarding', 'true')
-              }, 100)
-            }, { once: true })
-          }
-        }
-        updateButtonText()
-        // 使用 MutationObserver 监听 DOM 变化，确保按钮文本更新
-        const observer = new MutationObserver(updateButtonText)
-        observer.observe(document.body, { childList: true, subtree: true })
-        
-        // 3秒后停止观察
-        setTimeout(() => observer.disconnect(), 3000)
-      }, 200)
-
       driverObj.drive()
     }, 1000)
 
