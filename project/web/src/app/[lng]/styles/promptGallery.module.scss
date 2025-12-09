@@ -316,6 +316,7 @@
   width: 100%;
   overflow: hidden;
   background: #f5f5f5;
+  min-height: 200px;
 
   img {
     width: 100%;
@@ -323,6 +324,48 @@
     display: block;
     transition: transform 0.3s ease;
   }
+}
+
+.imageLoading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  z-index: 1;
+}
+
+.imageSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e0e0e0;
+  border-top: 3px solid #733dec;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.imageError {
+  padding: 40px 20px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cardOverlay {

@@ -5,6 +5,87 @@ import { useTransClient } from '@/app/i18n/client'
 import styles from '../styles/promptGallery.module.scss'
 import promptsData from './prompt.json'
 
+// 懒加载图片组件
+function LazyImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+  const [imageSrc, setImageSrc] = useState<string | null>(null)
+  const [isLoaded, setIsLoaded] = useState(false)
+  const [isError, setIsError] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!containerRef.current || imageSrc) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setImageSrc(src)
+            observer.disconnect()
+          }
+        })
+      },
+      {
+        rootMargin: '100px', // 提前100px开始加载
+        threshold: 0.01
+      }
+    )
+
+    observer.observe(containerRef.current)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [src, imageSrc])
+
+  return (
+    <div 
+      ref={containerRef}
+      className={className} 
+      style={{ 
+        position: 'relative', 
+        width: '100%'
+      }}
+    >
+      {!isLoaded && !isError && imageSrc === null && (
+        <div className={styles.imageLoading}>
+          <div className={styles.imageSpinner} />
+        </div>
+      )}
+      {imageSrc && (
+        <>
+          <img
+            src={imageSrc}
+            alt={alt}
+            onLoad={() => setIsLoaded(true)}
+            onError={() => setIsError(true)}
+            style={{
+              width: '100%',
+              height: 'auto',
+              display: 'block',
+              opacity: isLoaded ? 1 : 0,
+              transition: 'opacity 0.3s ease',
+              position: isLoaded ? 'relative' : 'absolute',
+              top: isLoaded ? 'auto' : 0,
+              left: isLoaded ? 'auto' : 0
+            }}
+            loading="lazy"
+          />
+          {!isLoaded && !isError && (
+            <div className={styles.imageLoading}>
+              <div className={styles.imageSpinner} />
+            </div>
+          )}
+        </>
+      )}
+      {isError && (
+        <div className={styles.imageError}>
+          图片加载失败
+        </div>
+      )}
+    </div>
+  )
+}
+
 interface PromptItem {
   title: string
   preview: string
@@ -179,7 +260,7 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
                 onClick={() => setSelectedPrompt(item)}
               >
                 <div className={styles.cardImage}>
-                  <img src={item.preview} alt={item.title} loading="lazy" />
+                  <LazyImage src={item.preview} alt={item.title} />
                   <div className={styles.cardOverlay}>
                     <div className={styles.cardContent}>
                       <div className={styles.cardTitle}>{item.title}</div>
