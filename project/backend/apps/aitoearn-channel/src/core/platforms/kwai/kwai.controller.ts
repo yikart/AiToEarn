@@ -9,8 +9,6 @@ import { KwaiService } from './kwai.service'
 export class KwaiController {
   constructor(private readonly kwaiService: KwaiService) {}
 
-  // 获取页面的认证URL
-  // @NatsMessagePattern('plat.kwai.auth')
   @ApiDoc({
     summary: 'Create Authorization Task',
     body: GetAuthUrlDto.schema,
@@ -20,8 +18,6 @@ export class KwaiController {
     return this.kwaiService.createAuthTask(data)
   }
 
-  // 查询认证信息
-  // @NatsMessagePattern('plat.kwai.getAuthInfo')
   @ApiDoc({
     summary: 'Get Authorization Task Info',
     body: GetAuthInfoDto.schema,
@@ -31,8 +27,6 @@ export class KwaiController {
     return this.kwaiService.getAuthInfo(data.taskId)
   }
 
-  // 创建账号并设置授权Token
-  // @NatsMessagePattern('plat.kwai.createAccountAndSetAccessToken')
   @ApiDoc({
     summary: 'Create Account and Set Access Token',
     body: CreateAccountAndSetAccessTokenDto.schema,
@@ -51,8 +45,6 @@ export class KwaiController {
     return res
   }
 
-  // 获取用户公开信息
-  // @NatsMessagePattern('plat.kwai.getAuthorInfo')
   @ApiDoc({
     summary: 'Get Author Information',
     body: AccountIdDto.schema,
@@ -62,8 +54,6 @@ export class KwaiController {
     return this.kwaiService.getAuthorInfo(data.accountId)
   }
 
-  // 获取视频列表
-  // @NatsMessagePattern('plat.kwai.getPhotoList')
   @ApiDoc({
     summary: 'List Published Videos',
     body: GetPohotListDto.schema,
@@ -73,7 +63,6 @@ export class KwaiController {
     return this.kwaiService.fetchVideoList(data.accountId, data?.cursor, data?.count)
   }
 
-  // @NatsMessagePattern('plat.kwai.accessTokenStatus')
   @ApiDoc({
     summary: 'Get Access Token Status',
     body: AccountIdDto.schema,

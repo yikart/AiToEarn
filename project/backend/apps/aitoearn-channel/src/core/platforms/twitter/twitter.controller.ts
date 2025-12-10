@@ -95,9 +95,6 @@ export class TwitterController {
     return await this.twitterService.publishPost(data.accountId, data.imgUrlList, data.videoUrl, data.desc)
   }
 
-  // NATS message pattern for post oauth callback
-  // get access token and create account
-  // @NatsMessagePattern('plat.twitter.createAccountAndSetAccessToken')
   @ApiDoc({
     summary: 'Create Account and Set Access Token',
   })

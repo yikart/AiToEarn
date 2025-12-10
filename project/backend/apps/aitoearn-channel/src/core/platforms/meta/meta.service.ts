@@ -446,6 +446,12 @@ export class MetaService {
         credential.access_token,
         authTaskInfo.platform,
       )
+      if (!userProfile) {
+        return {
+          status: 0,
+          message: 'get user profile failed',
+        }
+      }
       userProfile.groupId = authTaskInfo.spaceId
 
       if (metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL) {

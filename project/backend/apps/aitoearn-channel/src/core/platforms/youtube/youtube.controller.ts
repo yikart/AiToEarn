@@ -113,8 +113,6 @@ export class YoutubeController {
     return res
   }
 
-  // 设置授权Token
-  // @NatsMessagePattern('plat.youtube.setAccessToken')
   @ApiDoc({
     summary: 'Set Access Token',
     body: CreateAccountAndSetAccessTokenDto.schema,
@@ -126,8 +124,6 @@ export class YoutubeController {
     return res
   }
 
-  // 创建账号并设置授权Token
-  // @NatsMessagePattern('plat.youtube.createAccountAndSetAccessToken')
   @ApiDoc({
     summary: 'Create Account and Set Access Token',
     body: CreateAccountAndSetAccessTokenDto.schema,
@@ -146,8 +142,6 @@ export class YoutubeController {
     return res
   }
 
-  // 查询账号是否授权
-  // @NatsMessagePattern('plat.youtube.isAuthorized')
   @ApiDoc({
     summary: 'Check Authorization Status',
     body: AccountIdDto.schema,
@@ -158,7 +152,6 @@ export class YoutubeController {
     return res
   }
 
-  // 刷新令牌token
   @ApiDoc({
     summary: 'Refresh Token via Crawler Account',
   })
@@ -170,8 +163,6 @@ export class YoutubeController {
     return res
   }
 
-  // 刷新令牌token
-  // @NatsMessagePattern('plat.youtube.refreshToken')
   @ApiDoc({
     summary: 'Refresh Token',
     body: AccountIdDto.schema,
@@ -182,8 +173,6 @@ export class YoutubeController {
     return res
   }
 
-  // 获取视频类别
-  // @NatsMessagePattern('plat.youtube.getVideoCategories')
   @ApiDoc({
     summary: 'Get Video Categories',
     body: VideoCategoriesDto.schema,
@@ -198,8 +187,6 @@ export class YoutubeController {
     return res
   }
 
-  // 获取视频列表
-  // @NatsMessagePattern('plat.youtube.getVideosList')
   @ApiDoc({
     summary: 'Get Video List',
     body: VideosListDto.schema,

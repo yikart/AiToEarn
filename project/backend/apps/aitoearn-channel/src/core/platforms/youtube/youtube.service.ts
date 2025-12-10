@@ -9,7 +9,7 @@ import { Readable } from 'node:stream'
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 
-import { AccountStatus, AccountType, AitoearnServerClientService, NewAccount } from '@yikart/aitoearn-server-client'
+import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
 import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import axios from 'axios'
@@ -56,7 +56,6 @@ export class YoutubeService extends PlatformBaseService {
     private readonly redisService: RedisService,
     private readonly youtubeApiService: YoutubeApiService,
     private readonly accountService: AccountService,
-    private readonly serverClient: AitoearnServerClientService,
 
     @InjectModel(OAuth2Credential.name)
     private OAuth2CredentialModel: Model<OAuth2Credential>,
@@ -77,59 +76,50 @@ export class YoutubeService extends PlatformBaseService {
    * 创建账号+设置授权Token
    * @param taskId
    * @param data
+   * @param data.code 授权码
+   * @param data.state 状态码
    * @returns
    */
   async createAccountAndSetAccessToken(
     taskId: string,
     data: { code: string, state: string },
-  ) {
+  ): Promise<{ status: number, message: string, accountId?: string }> {
     const { code } = data
 
     const authTask = await this.redisService.getJson<AuthTaskInfo>(
       `youtube:authTask:${taskId}`,
     )
-
     if (!authTask || authTask?.state !== taskId) {
       this.logger.error(`无效的任务ID: ${taskId}`)
       return { status: 0, message: '无效的任务ID' }
     }
-    try {
-      // 使用授权码获取访问令牌和刷新令牌
-      const params = new URLSearchParams({
-        code,
-        redirect_uri: `${this.webRenderBaseUrl}`,
-        client_id: this.webClientId,
-        grant_type: 'authorization_code',
-        client_secret: this.webClientSecret,
-      })
 
-      const response = await axios.post(
-        'https://oauth2.googleapis.com/token',
-        params.toString(),
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        },
-      )
+    try {
+      const accessTokenRes = await this.youtubeApiService.getAccessToken(code, `${this.webRenderBaseUrl}`)
+      if (!accessTokenRes) {
+        return { status: 0, message: '获取访问令牌失败' }
+      }
       const { access_token, refresh_token, expires_in, id_token }
-        = response.data
+        = accessTokenRes
 
       // 验证ID令牌以获取用户信息
-      // const oauth2Client = new google.auth.OAuth2();
-      // this.oauth2Client.setCredentials({ access_token });
       this.initializeYouTubeClient(access_token)
+
       const ticket = await this.oauth2Client.verifyIdToken({
         idToken: id_token,
         audience: this.webClientId,
       })
 
+      if (!ticket) {
+        return { status: 0, message: '验证ID令牌失败' }
+      }
       const payload = ticket.getPayload()
       if (!payload) {
-        throw new Error('Invalid ID token')
+        return { status: 0, message: 'Invalid ID token' }
       }
       const googleId = payload.sub
       const email = payload.email || ''
       const userId = authTask.userId
-      // console.log('-----userId:----', userId)
       // 获取YouTube频道信息，用于更新账号数据库
       const accountInfo = await this.updateYouTubeAccountInfo(
         userId,
@@ -192,8 +182,6 @@ export class YoutubeService extends PlatformBaseService {
         60 * 3,
       )
 
-      // // 返回系统令牌
-      this.logger.log('最终返回', res)
       if (!res)
         return { status: 0, message: '更新任务信息失败' }
       return { status: 1, message: '添加账号成功', accountId: accountInfo.id }
@@ -253,7 +241,7 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 设置授权Token
    * @param taskId
-   * @param data
+   * @param code
    * @returns
    */
   async setAccessToken(taskId: string, code: string) {
@@ -286,7 +274,6 @@ export class YoutubeService extends PlatformBaseService {
       const refresh_token = accessTokenInfo.refresh_token
       const expires_in = accessTokenInfo.expires_in
       const id_token = accessTokenInfo.id_token
-      this.logger.log(`Youtube OAuth2 response: ${JSON.stringify(response.data)}`)
       // 验证ID令牌以获取用户信息
       this.initializeYouTubeClient(access_token)
       const ticket = await this.oauth2Client.verifyIdToken({
@@ -349,6 +336,7 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 获取YouTube频道信息并更新账号数据库
    * @param userId 用户ID
+   * @param email 邮箱
    * @param googleId Google ID
    * @param accessToken 访问令牌
    * @param refreshToken 刷新令牌
@@ -453,7 +441,6 @@ export class YoutubeService extends PlatformBaseService {
     accountId: string,
     refreshToken: string,
   ): Promise<string> {
-    // console.log(accountId, refreshToken)
     const accessTokenInfo
       = await this.youtubeApiService.refreshAccessToken(refreshToken)
     if (!accessTokenInfo)

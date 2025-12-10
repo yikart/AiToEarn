@@ -6,7 +6,6 @@ import {
   TwitterFollowingResponse,
   TwitterOAuthCredential,
   TwitterRevokeAccessResponse,
-  TwitterUserInfo,
   TwitterUserInfoResponse,
   XChunkedMediaUploadRequest,
   XCreatePostRequest,
@@ -146,7 +145,7 @@ export class TwitterService {
     return await this.request<TwitterRevokeAccessResponse>(url, config, { operation: 'revokeOAuthCredential' })
   }
 
-  async getUserInfo(accessToken: string): Promise<TwitterUserInfo> {
+  async getUserInfo(accessToken: string): Promise<TwitterUserInfoResponse> {
     const url = `${this.apiBaseUrl}/users/me`
     const config: AxiosRequestConfig = {
       method: 'GET',
@@ -159,7 +158,7 @@ export class TwitterService {
       },
     }
     const response = await this.request<TwitterUserInfoResponse>(url, config, { operation: 'getUserInfo' })
-    return response.data
+    return response
   }
 
   async followUser(
