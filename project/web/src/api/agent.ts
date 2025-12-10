@@ -58,8 +58,14 @@ export interface CreateTaskResponse {
   id: string
 }
 
-// Result subtype 类型
-export type ResultSubtype = 'success' | 'jump_draft' | 'channel_auth_required' | 'channel_auth_expired' | 'channel_not_supported'
+// Result type 类型
+export type ResultType = 'imageOnly' | 'videoOnly' | 'fullContent'
+
+// Result action 类型
+export type ResultAction = 'draft' | 'publish' | 'createChannel' | 'updateChannel' | 'loginChannel' | 'platformNotSupported'
+
+// Platform 枚举
+export type Platform = 'douyin' | 'xhs' | 'wxSph' | 'KWAI' | 'youtube' | 'wxGzh' | 'bilibili' | 'twitter' | 'tiktok' | 'facebook' | 'instagram' | 'threads' | 'pinterest' | 'linkedin'
 
 // Result 消息数据
 export interface ResultData {
@@ -68,12 +74,16 @@ export interface ResultData {
   description: string
   tags: string[]
   medias: Media[]
+  type?: ResultType // 结果类型
+  action?: ResultAction // 操作类型
+  platform?: Platform // 平台类型
+  accountType?: string[] // 账户类型数组，如 ['douyin', 'xhs']
 }
 
 // Result 消息
 export interface ResultMessage {
   type: 'result'
-  subtype: ResultSubtype
+  subtype?: string // 保留兼容性
   uuid: string
   duration_ms: number
   duration_api_ms: number
@@ -252,6 +262,15 @@ export const agentApi = {
    */
   async getTaskDetail(taskId: string) {
     const res = await http.get<TaskDetail>(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 停止/取消任务
+   * @param taskId 任务ID
+   */
+  async stopTask(taskId: string) {
+    const res = await http.delete(`agent/tasks/${taskId}`)
     return res
   },
 }
