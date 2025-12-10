@@ -56,7 +56,8 @@
     },
     "channelAuthRequired": "请先添加并授权频道",
     "channelAuthExpired": "频道授权已过期，请重新授权",
-    "channelNotSupported": "该平台暂不支持直接发布"
+    "channelNotSupported": "该平台暂不支持直接发布",
+    "taskStopped": "已停止生成"
   },
   "brandBar": {
     "title": "支持的社交媒体平台"
