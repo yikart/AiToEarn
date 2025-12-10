@@ -1,5 +1,9 @@
 /**
  * 抖音平台交互实现
+ *
+ * 实现策略：
+ * - 点赞、收藏：使用自动化方案（避免 API 风控）
+ * - 评论：使用 API 方案
  */
 
 import { PlatType } from '@/app/config/platConfig'
@@ -27,32 +31,30 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   }
 
   /**
-   * 点赞/取消点赞作品
+   * 点赞/取消点赞作品（自动化方案）
+   * 使用自动化方案避免 API 风控
+   * @param workId 作品ID
+   * @param isLike true=点赞，false=取消点赞
    */
   async likeWork(workId: string, isLike: boolean): Promise<LikeResult> {
     this.checkPlugin()
 
-    const response = await window.AIToEarnPlugin!.douyinRequest<{
-      status_code: number
-      status_msg?: string
-    }>({
-      path: '/web/api/media/aweme/favorite/',
-      method: 'POST',
-      data: {
-        aweme_id: workId,
-        action: isLike ? 1 : 0,
-      },
+    const response = await window.AIToEarnPlugin!.douyinInteraction({
+      action: 'like',
+      workId,
+      targetState: isLike,
     })
 
     return {
-      success: response.status_code === 0,
-      message: response.status_msg,
+      success: response.success,
+      message: response.message || response.error,
       rawData: response,
     }
   }
 
   /**
-   * 评论作品
+   * 评论作品（API 方案）
+   * 评论使用 API 方案，风控相对较低
    */
   async commentWork(params: CommentParams): Promise<CommentResult> {
     this.checkPlugin()
@@ -92,26 +94,23 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   }
 
   /**
-   * 收藏/取消收藏作品
+   * 收藏/取消收藏作品（自动化方案）
+   * 使用自动化方案避免 API 风控
+   * @param workId 作品ID
+   * @param isFavorite true=收藏，false=取消收藏
    */
   async favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult> {
     this.checkPlugin()
 
-    const response = await window.AIToEarnPlugin!.douyinRequest<{
-      status_code: number
-      status_msg?: string
-    }>({
-      path: '/web/api/media/aweme/collect/',
-      method: 'POST',
-      data: {
-        aweme_id: workId,
-        action: isFavorite ? 1 : 0,
-      },
+    const response = await window.AIToEarnPlugin!.douyinInteraction({
+      action: 'favorite',
+      workId,
+      targetState: isFavorite,
     })
 
     return {
-      success: response.status_code === 0,
-      message: response.status_msg,
+      success: response.success,
+      message: response.message || response.error,
       rawData: response,
     }
   }
@@ -121,4 +120,3 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
  * 抖音平台交互实例
  */
 export const douyinInteraction = new DouyinPlatformInteraction()
-
