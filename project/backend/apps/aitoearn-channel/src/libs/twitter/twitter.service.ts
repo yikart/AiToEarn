@@ -6,7 +6,6 @@ import {
   TwitterFollowingResponse,
   TwitterOAuthCredential,
   TwitterRevokeAccessResponse,
-  TwitterUserInfo,
   TwitterUserInfoResponse,
   XChunkedMediaUploadRequest,
   XCreatePostRequest,
