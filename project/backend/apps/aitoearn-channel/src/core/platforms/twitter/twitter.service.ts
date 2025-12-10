@@ -209,19 +209,24 @@ export class TwitterService extends PlatformBaseService {
     }
 
     // fetch twitter user profile
-    const userProfile = await this.twitterApiService.getUserInfo(
+    const userRes = await this.twitterApiService.getUserInfo(
       credential.access_token,
     )
-    this.logger.log(userProfile)
+    if (!userRes.data) {
+      this.logger.error(`Failed to get user profile for state: ${state}`)
+      return {
+        status: 0,
+        message: `获取用户信息失败: ${JSON.stringify(userRes.errors)}`,
+      }
+    }
 
-    // 创建账号数据
     const newAccountData = new NewAccount({
       userId: authTaskInfo.userId,
       type: AccountType.TWITTER,
-      uid: userProfile.id,
-      account: userProfile.username,
-      avatar: userProfile.profile_image_url,
-      nickname: userProfile.name,
+      uid: userRes.data.id,
+      account: userRes.data.username,
+      avatar: userRes.data.profile_image_url,
+      nickname: userRes.data.name,
       lastStatsTime: new Date(),
       loginTime: new Date(),
       groupId: authTaskInfo.spaceId,
@@ -232,13 +237,13 @@ export class TwitterService extends PlatformBaseService {
       authTaskInfo.userId,
       {
         type: AccountType.TWITTER,
-        uid: userProfile.id,
+        uid: userRes.data.id,
       },
       newAccountData,
     )
     if (!accountInfo) {
       this.logger.error(
-        `Failed to create account for userId: ${authTaskInfo.userId}, twitterId: ${userProfile.id}`,
+        `Failed to create account for userId: ${authTaskInfo.userId}, twitterId: ${userRes.data.id}`,
       )
       return {
         status: 0,

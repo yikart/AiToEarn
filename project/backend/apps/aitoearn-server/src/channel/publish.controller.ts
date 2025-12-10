@@ -10,8 +10,9 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, TableDto } from '@yikart/common'
 import { plainToInstance } from 'class-transformer'
+import { PublishRecordService } from '../publishRecord/publishRecord.service'
 import { PlatPublishNatsApi } from '../transports/channel/api/publish.natsApi'
-import { PostHistoryItemVo, PublishRecordItemVo } from './dto/publish-response.vo'
+import { PostHistoryItemVo } from './dto/publish-response.vo'
 import {
   CreatePublishDto,
   CreatePublishRecordDto,
@@ -28,6 +29,8 @@ export class PublishController {
   constructor(
     private readonly publishService: PublishService,
     private readonly platPublishNatsApi: PlatPublishNatsApi,
+    private readonly publishRecordService: PublishRecordService,
+
   ) {}
 
   @ApiDoc({
@@ -51,19 +54,6 @@ export class PublishController {
       userId: token.id,
       ...data,
     })
-  }
-
-  @ApiDoc({
-    summary: 'Get Publish Records',
-    body: PubRecordListFilterDto.schema,
-    response: [PublishRecordItemVo],
-  })
-  @Post('getList')
-  async getList(
-    @GetToken() token: TokenInfo,
-    @Body() data: PubRecordListFilterDto,
-  ) {
-    return this.publishService.getList(data, token.id)
   }
 
   @ApiDoc({
@@ -126,10 +116,13 @@ export class PublishController {
   })
   @Delete('delete/:id')
   async delete(@GetToken() token: TokenInfo, @Param('id') id: string) {
-    return this.platPublishNatsApi.deletePublishRecord({
+    const res = await this.platPublishNatsApi.deletePublishRecord({
       userId: token.id,
       id,
     })
+
+    this.publishRecordService.deletePublishRecordById(id)
+    return res
   }
 
   @ApiDoc({

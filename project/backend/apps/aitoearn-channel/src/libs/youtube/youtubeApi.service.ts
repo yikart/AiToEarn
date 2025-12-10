@@ -10,6 +10,7 @@ import axios from 'axios'
 import { google } from 'googleapis'
 import { config } from '../../config'
 import {
+  AccessToken,
   ChannelsList,
   CommentsList,
   VideosList,
@@ -51,6 +52,36 @@ export class YoutubeApiService {
     const auth = new google.auth.OAuth2()
     auth.setCredentials({ access_token: accessToken })
     return google.youtube({ version: 'v3', auth })
+  }
+
+  /**
+   * 使用授权码获取访问令牌和刷新令牌
+   * @param code 授权码
+   * @param redirectUri 重定向URI
+   * @returns 访问令牌和刷新令牌
+   */
+  async getAccessToken(code: string, redirectUri: string): Promise<AccessToken> {
+    try {
+      const params = new URLSearchParams({
+        code,
+        redirect_uri: redirectUri,
+        client_id: this.webClientId,
+        grant_type: 'authorization_code',
+        client_secret: this.webClientSecret,
+      })
+
+      const response = await axios.post('https://oauth2.googleapis.com/token', params.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      })
+      const { access_token, refresh_token, expires_in, id_token }
+        = response.data
+
+      return { access_token, refresh_token, expires_in, id_token }
+    }
+    catch (err) {
+      this.logger.error(err)
+      return null
+    }
   }
 
   /**
@@ -108,11 +139,12 @@ export class YoutubeApiService {
 
   /**
    * 获取频道列表
-   * @param userId 用户ID
-   * @param handle 频道handle
-   * @param userName 用户名
-   * @param id 频道ID
-   * @param mine 是否查询自己的频道
+   * @param requestParams
+   * @param requestParams.userId 用户ID
+   * @param requestParams.handle 频道handle
+   * @param requestParams.userName 用户名
+   * @param requestParams.id 频道ID
+   * @param requestParams.mine 是否查询自己的频道
    * @returns 频道列表
    */
   async getChannelsList(requestParams: ChannelsList) {

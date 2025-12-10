@@ -6,7 +6,7 @@
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node\&message=20.18.x%20\&logo=node.js\&color=3f893e)](https://nodejs.org/about/releases)
 
-[简体中文](README_CN.md) | English
+English | [简体中文](README_CN.md)
 
 **Create · Publish · Engage · Monetize — all in one platform.**
 
@@ -20,6 +20,9 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
+## What's new:
+* 2025.11.28 : Support automatic updates within the application. Add a large number of AI functions to the creation interface, such as abbreviation, expansion, image creation, video creation, tag generation, etc., supporting Nano Banana Pro.[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
+* 2025.11.12 : The first open-source, fully usable version,[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 
 <details>
   <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
@@ -44,15 +47,11 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## Quick Start for Creators (Apps & Web)
 
-OS | Download
--- | --
-Android |  [![Download Android](https://img.shields.io/badge/APK-Android1.3.3-green?logo=android&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.3.3-internal-arm64-v8a.apk)
-Windows |  [![Download Windows](https://img.shields.io/badge/Setup-Windows1.3.3-blue?logo=windows&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-Setup-1.3.3.exe)
-macOS |  [![Download macOS](https://img.shields.io/badge/DMG-macOS1.3.3-black?logo=apple&logoColor=white)](https://aitoearn-download.s3.ap-southeast-1.amazonaws.com/aitoearn-download/1.3.3/AiToEarn-1.3.3.dmg)
-iOS |  **Coming soon!**
-Web | [Use on Web](https://aitoearn.ai/en/accounts)
+[![Download](https://img.shields.io/badge/Client%20Download-Get%20Started-blue?style=for-the-badge&logo=github)](https://github.com/yikart/AiToEarn/releases)
+[![Web App](https://img.shields.io/badge/Web-Use%20Online-green?style=for-the-badge&logo=googlechrome)](https://aitoearn.ai/en/accounts)
+[![Google Play](https://img.shields.io/badge/Google%20Play-Get%20Started-black?style=for-the-badge&logo=googleplay)](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
-[Google Play Download](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+> 📥 **Supports**: Windows, macOS, Android, iOS (coming soon)
 
 
 ## Quick Start for Developers (Docker, Recommended)

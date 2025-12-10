@@ -25,8 +25,6 @@ export class BilibiliController {
     return this.bilibiliService.getBilibiliConfig()
   }
 
-  // 创建授权任务
-  // @NatsMessagePattern('plat.bilibili.auth')
   @ApiDoc({
     summary: 'Create Authorization Task',
     body: GetAuthUrlDto.schema,
@@ -41,8 +39,6 @@ export class BilibiliController {
     return res
   }
 
-  // 查询认证信息
-  // @NatsMessagePattern('plat.bilibili.getAuthInfo')
   @ApiDoc({
     summary: 'Get Authorization Task Info',
     body: GetAuthInfoDto.schema,
@@ -53,8 +49,6 @@ export class BilibiliController {
     return res
   }
 
-  // 查询账号的认证信息
-  // @NatsMessagePattern('plat.bilibili.getAccountAuthInfo')
   @ApiDoc({
     summary: 'Get Account Authorization Info',
     body: AccountIdDto.schema,
@@ -65,8 +59,6 @@ export class BilibiliController {
     return res
   }
 
-  // 获取鉴权头
-  // @NatsMessagePattern('plat.bilibili.getHeader')
   @ApiDoc({
     summary: 'Generate Authorization Header',
     body: GetHeaderDto.schema,
@@ -80,8 +72,6 @@ export class BilibiliController {
     return res
   }
 
-  // 创建账号并设置授权Token
-  // @NatsMessagePattern('plat.bilibili.createAccountAndSetAccessToken')
   @ApiDoc({
     summary: 'Create Account and Set Access Token',
     body: CreateAccountAndSetAccessTokenDto.schema,
@@ -100,8 +90,6 @@ export class BilibiliController {
     return res
   }
 
-  // 查询账号已授权权限列表
-  // @NatsMessagePattern('bilibili.account.scopes')
   @ApiDoc({
     summary: 'Get Authorized Scopes',
     body: AccountIdDto.schema,
@@ -112,8 +100,6 @@ export class BilibiliController {
     return res
   }
 
-  // 获取分区列表
-  // @NatsMessagePattern('plat.bilibili.archiveTypeList')
   @ApiDoc({
     summary: 'List Archive Categories',
     body: AccountIdDto.schema,
@@ -123,7 +109,6 @@ export class BilibiliController {
     return await this.bilibiliService.archiveTypeList(data.accountId)
   }
 
-  // @NatsMessagePattern('plat.bilibili.archiveList')
   @ApiDoc({
     summary: 'Get Archive List',
     body: ArchiveListDto.schema,
@@ -137,7 +122,6 @@ export class BilibiliController {
     })
   }
 
-  // @NatsMessagePattern('plat.bilibili.userStat')
   @ApiDoc({
     summary: 'Get User Statistics',
     body: AccountIdDto.schema,
@@ -147,7 +131,6 @@ export class BilibiliController {
     return await this.bilibiliService.getUserStat(data.accountId)
   }
 
-  // @NatsMessagePattern('plat.bilibili.arcStat')
   @ApiDoc({
     summary: 'Get Archive Statistics',
     body: GetArcStatDto.schema,
@@ -160,7 +143,6 @@ export class BilibiliController {
     )
   }
 
-  // @NatsMessagePattern('plat.bilibili.arcIncStat')
   @ApiDoc({
     summary: 'Get Archive Increment Stats',
     body: AccountIdDto.schema,
@@ -170,7 +152,6 @@ export class BilibiliController {
     return await this.bilibiliService.getArcIncStat(data.accountId)
   }
 
-  // @NatsMessagePattern('plat.bilibili.accessTokenStatus')
   @ApiDoc({
     summary: 'Get Access Token Status',
     body: AccountIdDto.schema,

@@ -109,9 +109,6 @@ export class MetaController {
     })
   }
 
-  // NATS message pattern for post oauth callback
-  // get access token and create account
-  // @NatsMessagePattern('plat.meta.createAccountAndSetAccessToken')
   @ApiDoc({
     summary: 'Create Account and Set Access Token',
   })
@@ -123,7 +120,6 @@ export class MetaController {
     })
   }
 
-  // @NatsMessagePattern('plat.meta.facebook.page.insights')
   @ApiDoc({
     summary: 'Get Facebook Page Insights',
   })
@@ -137,7 +133,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.facebook.post.insights')
   @ApiDoc({
     summary: 'Get Facebook Post Insights',
   })
@@ -151,7 +146,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.facebook.page.published_posts')
   @ApiDoc({
     summary: 'Get Facebook Published Posts',
   })
@@ -165,7 +159,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.instagram.account.info')
   @ApiDoc({
     summary: 'Get Instagram Account Info',
   })
@@ -179,7 +172,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.instagram.account.insights')
   @ApiDoc({
     summary: 'Get Instagram Account Insights',
   })
@@ -193,7 +185,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.instagram.post.insights')
   @ApiDoc({
     summary: 'Get Instagram Post Insights',
   })
@@ -208,7 +199,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.threads.account.insights')
   @ApiDoc({
     summary: 'Get Threads Account Insights',
   })
@@ -222,7 +212,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.threads.post.insights')
   @ApiDoc({
     summary: 'Get Threads Post Insights',
   })
@@ -237,7 +226,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.facebook.page.posts')
   @ApiDoc({
     summary: 'Get Facebook Page Posts',
   })
@@ -251,7 +239,6 @@ export class MetaController {
     )
   }
 
-  // @NatsMessagePattern('plat.meta.facebook.page.post.comments')
   @ApiDoc({
     summary: 'Get Facebook Post Comments',
   })

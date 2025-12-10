@@ -157,16 +157,15 @@ export class KwaiService extends PlatformBaseService {
     const taskInfo = await this.redisService.getJson<AuthTaskInfo<BilibiliAuthInfo>>(
       cacheKey,
     )
-    if (!taskInfo || taskInfo.status !== 0 || !taskInfo.data)
+    if (!taskInfo || taskInfo.status !== 0 || !taskInfo.data) {
       return { status: 0, message: '任务不存在或已完成' }
+    }
 
-    // 延长授权时间
     void this.redisService.expire(cacheKey, 60 * 3)
 
     try {
       const account = await this.addKwaiAccount(code, taskInfo.data.userId, taskInfo.spaceId)
       if (account) {
-        // 更新任务信息
         taskInfo.status = 1
         taskInfo.data['accountId'] = account.id
         await this.redisService.setJson(
