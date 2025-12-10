@@ -57,6 +57,11 @@ export class MaterialGroupController {
     if (!materialGroup || materialGroup.userId !== token.id) {
       throw new AppException(ResponseCode.MaterialGroupNotFound, 'Material Group not found')
     }
+    if (
+      materialGroup.isDefault
+    ) {
+      throw new AppException(ResponseCode.MaterialGroupDefaultNotAllowed, 'Default material group cannot be deleted')
+    }
     const res = await this.materialGroupService.delGroup(id)
     return res
   }
