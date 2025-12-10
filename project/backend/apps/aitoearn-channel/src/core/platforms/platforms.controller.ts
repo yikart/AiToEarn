@@ -10,7 +10,6 @@ export class PlatformController {
   private readonly logger = new Logger(PlatformController.name)
   constructor(private readonly platformService: PlatformService) {}
 
-  // @NatsMessagePattern('platform.user.accounts')
   @ApiDoc({
     summary: 'List User Accounts',
   })

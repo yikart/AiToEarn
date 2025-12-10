@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
+import { AccountStatus } from '../../libs/database/schema/account.schema'
 import { SocialMediaError } from '../../libs/exception/base'
 import { AccountService } from '../account/account.service'
 import { PlatformBaseService } from './base.service'
@@ -25,9 +26,14 @@ export class PlatformService {
     for (const account of accounts) {
       const svc = this.platformServices[account.type]
       if (svc) {
-        const status = await svc.getAccessTokenStatus(account._id.toString())
-        this.logger.log(`${account.type} access token status: ${status}`)
-        account.status = status
+        try {
+          const status = await svc.getAccessTokenStatus(account._id.toString())
+          account.status = status
+        }
+        catch (error) {
+          this.logger.error(`user:[${userId}] -- ${account.type} get access token status failed: ${error}`)
+          account.status = AccountStatus.ABNORMAL
+        }
       }
     }
     return accounts

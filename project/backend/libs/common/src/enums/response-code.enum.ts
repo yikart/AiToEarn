@@ -48,11 +48,13 @@ export enum ResponseCode {
   // 12700-12799: media（媒体文件）
   MediaNotFound = 12700,
   MediaGroupNotFound = 12701,
+  MediaGroupDefaultNotAllowed = 12702,
 
   // 12800-12899: material（素材）
   MaterialNotFound = 12800,
   MaterialGroupNotFound = 12801,
   MaterialTaskNotFound = 12802,
+  MaterialGroupDefaultNotAllowed = 12803,
 
   // 12900-12999: content（内容组合）
   MaterialGroupEmpty = 12900,
