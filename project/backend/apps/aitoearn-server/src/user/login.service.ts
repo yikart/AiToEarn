@@ -34,6 +34,7 @@ export class LoginService implements OnModuleInit {
           code,
         },
         subject: 'AiToEarn Verification Code',
+        from_email: 'noreply@tx.aitoearn.ai',
       })
       return res
     }
@@ -59,10 +60,11 @@ export class LoginService implements OnModuleInit {
         subscriber_id: subscriber.id,
         template_id: 6,
         data:
-      {
-        code,
-      },
+        {
+          code,
+        },
         subject: 'AiToEarn Verification Code',
+        from_email: 'noreply@tx.aitoearn.ai',
       })
       return res
     }
@@ -87,10 +89,11 @@ export class LoginService implements OnModuleInit {
         subscriber_id: subscriber.id,
         template_id: 7,
         data:
-      {
-        code,
-      },
+        {
+          code,
+        },
         subject: 'AiToEarn Verification Code',
+        from_email: 'noreply@tx.aitoearn.ai',
       })
       return res
     }

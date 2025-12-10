@@ -29,8 +29,6 @@ import { TiktokService } from './tiktok.service'
 export class TiktokController {
   constructor(private readonly tiktokService: TiktokService) {}
 
-  // 获取页面的认证URL
-  // @NatsMessagePattern('plat.tiktok.authUrl')
   @ApiDoc({
     summary: 'Get TikTok Authorization URL',
     body: GetAuthUrlDto.schema,
@@ -40,8 +38,6 @@ export class TiktokController {
     return await this.tiktokService.getAuthUrl(data.userId, data.scopes, data.spaceId)
   }
 
-  // 查询认证信息
-  // @NatsMessagePattern('plat.tiktok.getAuthInfo')
   @ApiDoc({
     summary: 'Get Authorization Task Info',
     body: GetAuthInfoDto.schema,
@@ -59,13 +55,11 @@ export class TiktokController {
     return await this.tiktokService.getAuthUrl(query.userId, query.scopes)
   }
 
-  // 获取AccessToken,并记录到用户，给平台回调用
   @ApiDoc({
     summary: 'Handle Authorization Callback',
   })
   @Get('auth/back/:prefix/:taskId')
   async getAccessToken(
-    @Param('prefix') prefix: string,
     @Param('taskId') taskId: string,
     @Query()
     query: {
@@ -96,8 +90,6 @@ export class TiktokController {
     })
   }
 
-  // 创建账号并设置授权Token
-  // @NatsMessagePattern('plat.tiktok.createAccountAndSetAccessToken')
   @ApiDoc({
     summary: 'Create Account and Set Access Token',
     body: CreateAccountAndSetAccessTokenDto.schema,
@@ -115,8 +107,6 @@ export class TiktokController {
     )
   }
 
-  // 刷新访问令牌
-  // @NatsMessagePattern('plat.tiktok.refreshAccessToken')
   @ApiDoc({
     summary: 'Refresh Access Token',
     body: RefreshTokenDto.schema,
@@ -129,8 +119,6 @@ export class TiktokController {
     )
   }
 
-  // 撤销访问令牌
-  // @NatsMessagePattern('plat.tiktok.revokeAccessToken')
   @ApiDoc({
     summary: 'Revoke Access Token',
     body: RevokeTokenDto.schema,
@@ -140,8 +128,6 @@ export class TiktokController {
     return await this.tiktokService.revokeAccessToken(data.accountId)
   }
 
-  // 获取创作者信息
-  // @NatsMessagePattern('plat.tiktok.getCreatorInfo')
   @ApiDoc({
     summary: 'Get Creator Information',
     body: AccountIdDto.schema,
@@ -151,8 +137,6 @@ export class TiktokController {
     return await this.tiktokService.getCreatorInfo(data.accountId)
   }
 
-  // 初始化视频发布
-  // @NatsMessagePattern('plat.tiktok.initVideoPublish')
   @ApiDoc({
     summary: 'Initialize Video Publish',
     body: VideoPublishDto.schema,
@@ -166,8 +150,6 @@ export class TiktokController {
     )
   }
 
-  // 初始化照片发布
-  // @NatsMessagePattern('plat.tiktok.initPhotoPublish')
   @ApiDoc({
     summary: 'Initialize Photo Publish',
     body: PhotoPublishDto.schema,
@@ -182,8 +164,6 @@ export class TiktokController {
     )
   }
 
-  // 查询发布状态
-  // @NatsMessagePattern('plat.tiktok.getPublishStatus')
   @ApiDoc({
     summary: 'Get Publish Status',
     body: GetPublishStatusDto.schema,
@@ -196,8 +176,6 @@ export class TiktokController {
     )
   }
 
-  // 上传视频文件
-  // @NatsMessagePattern('plat.tiktok.uploadVideoFile')
   @ApiDoc({
     summary: 'Upload Video File',
     body: UploadVideoFileDto.schema,
@@ -221,7 +199,6 @@ export class TiktokController {
     return await this.tiktokService.publishVideoViaURL(data.accountId, data.videoUrl)
   }
 
-  // @NatsMessagePattern('plat.tiktok.user.info')
   @ApiDoc({
     summary: 'Get User Info',
     body: UserInfoDto.schema,
@@ -231,7 +208,6 @@ export class TiktokController {
     return await this.tiktokService.getUserInfo(data.accountId, data.fields)
   }
 
-  // @NatsMessagePattern('plat.tiktok.user.videos')
   @ApiDoc({
     summary: 'List User Videos',
     body: ListUserVideosDto.schema,
@@ -246,7 +222,6 @@ export class TiktokController {
     )
   }
 
-  // @NatsMessagePattern('plat.tiktok.accessTokenStatus')
   @ApiDoc({
     summary: 'Get Access Token Status',
     body: AccountIdDto.schema,
