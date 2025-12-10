@@ -32,6 +32,7 @@ interface PublishResult {
  * 导出基础类型
  */
 export type { PlatAccountInfo, ProgressEvent, PublishResult }
+export type { HttpMethod, PlatformRequestParams }
 
 /**
  * 插件连接状态
@@ -87,6 +88,25 @@ export interface PermissionCheckResult {
 }
 
 /**
+ * HTTP 请求方法类型
+ */
+export type HttpMethod = 'GET' | 'POST' | 'DELETE'
+
+/**
+ * 平台通用请求参数
+ */
+export interface PlatformRequestParams {
+  /** API 路径 */
+  path: string
+  /** HTTP 方法，默认 POST */
+  method?: HttpMethod
+  /** 请求数据 */
+  data?: any
+  /** 额外请求头 */
+  headers?: Record<string, string>
+}
+
+/**
  * 插件 API 接口定义
  */
 export interface AIToEarnPluginAPI {
@@ -113,6 +133,22 @@ export interface AIToEarnPluginAPI {
     params: PublishParams,
     onProgress?: ProgressCallback,
   ) => Promise<PublishResult>
+
+  /**
+   * 小红书通用请求
+   * 自动处理签名，返回原始响应
+   * @param params 请求参数
+   * @returns Promise<响应数据>
+   */
+  xhsRequest: <T = any>(params: PlatformRequestParams) => Promise<T>
+
+  /**
+   * 抖音通用请求
+   * 返回原始响应
+   * @param params 请求参数
+   * @returns Promise<响应数据>
+   */
+  douyinRequest: <T = any>(params: PlatformRequestParams) => Promise<T>
 }
 
 /**

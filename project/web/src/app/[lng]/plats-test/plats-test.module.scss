@@ -1,0 +1,344 @@
+/**
+ * 平台交互测试页面样式
+ */
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  margin: 0 0 8px;
+  letter-spacing: 1px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #8892b0;
+  text-align: center;
+  margin: 0 0 32px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e6f1ff;
+  margin: 0 0 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+// 表单
+.formGroup {
+  margin-bottom: 20px;
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #a8b2d1;
+    margin-bottom: 8px;
+  }
+}
+
+.radioGroup {
+  display: flex;
+  gap: 20px;
+}
+
+.radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  input {
+    width: 18px;
+    height: 18px;
+    accent-color: #64ffda;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+.radioXhs {
+  color: #ff2442;
+}
+
+.radioDouyin {
+  color: #00f2ea;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #e6f1ff;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: #5a6a8a;
+  }
+
+  &:focus {
+    border-color: #64ffda;
+    box-shadow: 0 0 0 3px rgba(100, 255, 218, 0.1);
+  }
+}
+
+.textarea {
+  @extend .input;
+  resize: vertical;
+  min-height: 80px;
+  font-family: inherit;
+}
+
+// 操作区
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  &:last-of-type {
+    border-bottom: none;
+  }
+}
+
+.actionLabel {
+  font-size: 14px;
+  font-weight: 500;
+  color: #a8b2d1;
+  min-width: 60px;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.commentSection {
+  padding-top: 16px;
+}
+
+.commentInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+// 按钮
+.btn {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btnPrimary {
+  background: linear-gradient(135deg, #64ffda 0%, #48d1cc 100%);
+  color: #0a192f;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(100, 255, 218, 0.3);
+  }
+}
+
+.btnSecondary {
+  background: rgba(255, 255, 255, 0.08);
+  color: #a8b2d1;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.btnSmall {
+  padding: 6px 12px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #8892b0;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+.btnFull {
+  width: 100%;
+}
+
+// 日志
+.logHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .cardTitle {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.emptyLog {
+  text-align: center;
+  color: #5a6a8a;
+  font-size: 14px;
+  padding: 40px 0;
+}
+
+.logList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+  }
+}
+
+.logItem {
+  padding: 16px;
+  border-radius: 10px;
+  border-left: 3px solid;
+}
+
+.logSuccess {
+  background: rgba(100, 255, 218, 0.05);
+  border-left-color: #64ffda;
+}
+
+.logError {
+  background: rgba(255, 107, 129, 0.05);
+  border-left-color: #ff6b81;
+}
+
+.logMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.logTime {
+  font-size: 12px;
+  color: #5a6a8a;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.logPlatform {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64ffda;
+  background: rgba(100, 255, 218, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.logAction {
+  font-size: 12px;
+  font-weight: 500;
+  color: #a8b2d1;
+}
+
+.logStatusSuccess {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64ffda;
+}
+
+.logStatusError {
+  font-size: 12px;
+  font-weight: 600;
+  color: #ff6b81;
+}
+
+.logWorkId {
+  font-size: 12px;
+  color: #8892b0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.logMessage {
+  font-size: 13px;
+  color: #a8b2d1;
+  margin-top: 8px;
+}
+
+.logDetails {
+  margin-top: 12px;
+
+  summary {
+    font-size: 12px;
+    color: #64ffda;
+    cursor: pointer;
+    outline: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  pre {
+    margin: 8px 0 0;
+    padding: 12px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    font-size: 11px;
+    color: #8892b0;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+

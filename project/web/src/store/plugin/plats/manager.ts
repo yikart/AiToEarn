@@ -17,24 +17,26 @@ import { douyinInteraction } from './douyin'
 
 /**
  * 平台交互管理器
- * 提供统一的接口来调用不同平台的交互功能
  */
 class PlatformInteractionManager {
-  /** 平台实例映射 */
-  private platforms: Map<SupportedPlatformType, IPlatformInteraction>
+  private platforms = new Map<SupportedPlatformType, IPlatformInteraction>()
 
   constructor() {
-    this.platforms = new Map()
-    // 注册平台
-    this.platforms.set(PlatType.Xhs, xhsInteraction)
-    this.platforms.set(PlatType.Douyin, douyinInteraction)
+    this.register(xhsInteraction)
+    this.register(douyinInteraction)
   }
 
   /**
-   * 获取平台交互实例
-   * @param platform 平台类型
+   * 注册平台
    */
-  getPlatform(platform: SupportedPlatformType): IPlatformInteraction {
+  register(platform: IPlatformInteraction): void {
+    this.platforms.set(platform.platformType as SupportedPlatformType, platform)
+  }
+
+  /**
+   * 获取平台实例
+   */
+  get(platform: SupportedPlatformType): IPlatformInteraction {
     const instance = this.platforms.get(platform)
     if (!instance) {
       throw new Error(`不支持的平台: ${platform}`)
@@ -43,8 +45,7 @@ class PlatformInteractionManager {
   }
 
   /**
-   * 检查平台是否支持
-   * @param platform 平台类型
+   * 检查是否支持该平台
    */
   isSupported(platform: PlatType): platform is SupportedPlatformType {
     return this.platforms.has(platform as SupportedPlatformType)
@@ -58,48 +59,39 @@ class PlatformInteractionManager {
   }
 
   /**
-   * 点赞/取消点赞作品
-   * @param platform 平台类型
-   * @param workId 作品ID
-   * @param isLike true 点赞，false 取消点赞
+   * 点赞/取消点赞
    */
-  async likeWork(
+  likeWork(
     platform: SupportedPlatformType,
     workId: string,
     isLike: boolean,
   ): Promise<LikeResult> {
-    return this.getPlatform(platform).likeWork(workId, isLike)
+    return this.get(platform).likeWork(workId, isLike)
   }
 
   /**
    * 评论作品
-   * @param platform 平台类型
-   * @param params 评论参数
    */
-  async commentWork(
+  commentWork(
     platform: SupportedPlatformType,
     params: CommentParams,
   ): Promise<CommentResult> {
-    return this.getPlatform(platform).commentWork(params)
+    return this.get(platform).commentWork(params)
   }
 
   /**
-   * 收藏/取消收藏作品
-   * @param platform 平台类型
-   * @param workId 作品ID
-   * @param isFavorite true 收藏，false 取消收藏
+   * 收藏/取消收藏
    */
-  async favoriteWork(
+  favoriteWork(
     platform: SupportedPlatformType,
     workId: string,
     isFavorite: boolean,
   ): Promise<FavoriteResult> {
-    return this.getPlatform(platform).favoriteWork(workId, isFavorite)
+    return this.get(platform).favoriteWork(workId, isFavorite)
   }
 }
 
 /**
- * 平台交互管理器实例（单例）
+ * 管理器实例
  */
 export const platformManager = new PlatformInteractionManager()
-
