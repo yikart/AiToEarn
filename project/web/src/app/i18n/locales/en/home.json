@@ -54,7 +54,10 @@
       "completed": "Completed!",
       "failed": "Failed",
       "cancelled": "Cancelled"
-    }
+    },
+    "channelAuthRequired": "Please add and authorize a channel first",
+    "channelAuthExpired": "Channel authorization has expired, please reauthorize",
+    "channelNotSupported": "Direct publishing is not supported for this platform"
   },
   "brandBar": {
     "title": "Supported Social Media Platforms"

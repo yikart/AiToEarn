@@ -48,6 +48,9 @@ export interface TaskDetail {
 // 创建任务请求参数
 export interface CreateTaskParams {
   prompt: string
+  taskId?: string // 可选，传入则继续上一次对话
+  messageUuid?: string // 可选，重置到对应的消息继续
+  includePartialMessages?: boolean // 使用流式消息
 }
 
 // 创建任务响应
@@ -55,10 +58,58 @@ export interface CreateTaskResponse {
   id: string
 }
 
+// Result subtype 类型
+export type ResultSubtype = 'success' | 'jump_draft' | 'channel_auth_required' | 'channel_auth_expired' | 'channel_not_supported'
+
+// Result 消息数据
+export interface ResultData {
+  taskId: string
+  title: string
+  description: string
+  tags: string[]
+  medias: Media[]
+}
+
+// Result 消息
+export interface ResultMessage {
+  type: 'result'
+  subtype: ResultSubtype
+  uuid: string
+  duration_ms: number
+  duration_api_ms: number
+  is_error: boolean
+  num_turns: number
+  message: string
+  result: ResultData
+  total_cost_usd: number
+  usage: any
+  permission_denials: any[]
+}
+
+// Stream Event 类型
+export interface StreamEvent {
+  type: 'stream_event'
+  uuid: string
+  event: {
+    type: 'message_start' | 'content_block_start' | 'content_block_delta' | 'content_block_stop' | 'message_delta' | 'message_stop'
+    index?: number
+    content_block?: any
+    delta?: {
+      type: 'text_delta' | 'input_json_delta'
+      text?: string
+      partial_json?: string
+    }
+    message?: any
+    usage?: any
+  }
+  parent_tool_use_id?: string | null
+}
+
 // SSE 消息类型
 export interface SSEMessage {
-  type: 'message' | 'status' | 'error' | 'done'
-  message?: string
+  type: 'init' | 'keep_alive' | 'stream_event' | 'message' | 'status' | 'error' | 'done' | 'text' | 'result'
+  taskId?: string
+  message?: string | ResultMessage | StreamEvent
   sessionId?: string
   status?: TaskStatus
   data?: any
@@ -200,7 +251,7 @@ export const agentApi = {
    * @param taskId 任务ID
    */
   async getTaskDetail(taskId: string) {
-    const res = await http.get<TaskDetail>(`${'https://pr-211.preview.aitoearn.ai/api/'}agent/tasks/${taskId}`)
+    const res = await http.get<TaskDetail>(`agent/tasks/${taskId}`)
     return res
   },
 }

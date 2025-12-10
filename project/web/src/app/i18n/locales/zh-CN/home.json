@@ -53,7 +53,10 @@
       "completed": "生成完成！",
       "failed": "生成失败",
       "cancelled": "已取消"
-    }
+    },
+    "channelAuthRequired": "请先添加并授权频道",
+    "channelAuthExpired": "频道授权已过期，请重新授权",
+    "channelNotSupported": "该平台暂不支持直接发布"
   },
   "brandBar": {
     "title": "支持的社交媒体平台"

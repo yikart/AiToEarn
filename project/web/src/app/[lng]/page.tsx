@@ -185,6 +185,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
   const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'draft' | 'publishbatch'>('agent') // 选中的模式
+  const [streamingText, setStreamingText] = useState('') // 累积的流式文本
+  const streamingTextRef = useRef('') // 流式文本的引用（避免闭包问题）
   
   // Login modal states
   const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -580,7 +582,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   }
 
   // Create AI generation task with SSE
-  const handleCreateTask = async () => {
+  const handleCreateTask = async () => { 
     if (!prompt.trim()) {
       return
     }
@@ -600,6 +602,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       setProgress(0)
       setMarkdownMessages([])
       setSessionId('')
+      setStreamingText('')
+      streamingTextRef.current = ''
 
       // Step 1: Show THINKING status
       addMessageToQueue({
@@ -628,10 +632,69 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
 
       // Create task with SSE (使用包含图片链接的完整提示词)
       await agentApi.createTaskWithSSE(
-        { prompt: fullPrompt },
+        { 
+          prompt: fullPrompt,
+          includePartialMessages: true // 使用流式消息
+        },
         // onMessage callback
         (sseMessage: any) => {
           console.log('SSE Message:', sseMessage)
+
+          // 处理 init 消息 - 保存 taskId
+          if (sseMessage.type === 'init' && sseMessage.taskId) {
+            console.log('[UI] Received taskId:', sseMessage.taskId)
+            setTaskId(sseMessage.taskId)
+            setSessionId(sseMessage.taskId)
+            return
+          }
+
+          // 处理 keep_alive 消息 - 无需特别处理
+          if (sseMessage.type === 'keep_alive') {
+            console.log('[UI] Keep alive')
+            return
+          }
+
+          // 处理流式事件
+          if (sseMessage.type === 'stream_event' && sseMessage.message) {
+            const streamEvent = sseMessage.message as any
+            const event = streamEvent.event
+
+            console.log('[UI] Stream event:', event.type)
+
+            // 处理消息开始
+            if (event.type === 'message_start') {
+              // 清空之前的流式文本
+              streamingTextRef.current = ''
+              setStreamingText('')
+            }
+            // 处理内容块增量更新
+            else if (event.type === 'content_block_delta' && event.delta) {
+              if (event.delta.type === 'text_delta' && event.delta.text) {
+                // 累积文本
+                streamingTextRef.current += event.delta.text
+                setStreamingText(streamingTextRef.current)
+                
+                // 实时更新到 markdown 消息（替换最后一条消息或添加新消息）
+                setMarkdownMessages(prev => {
+                  const newMessages = [...prev]
+                  // 如果最后一条消息是流式文本，则更新它
+                  if (newMessages.length > 0 && newMessages[newMessages.length - 1].startsWith('🤖 ')) {
+                    newMessages[newMessages.length - 1] = `🤖 ${streamingTextRef.current}`
+                  } else {
+                    // 否则添加新消息
+                    newMessages.push(`🤖 ${streamingTextRef.current}`)
+                  }
+                  return newMessages
+                })
+              }
+            }
+            // 处理消息结束
+            else if (event.type === 'message_stop') {
+              console.log('[UI] Stream completed, final text length:', streamingTextRef.current.length)
+              // 流式结束，文本已经完整显示在 markdown 中
+            }
+            return
+          }
 
           // Save sessionId
           if (sseMessage.sessionId) {
@@ -653,9 +716,98 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             const errorMsg = `❌ : ${sseMessage.message || t('aiGeneration.unknownError' as any)}`
             setMarkdownMessages(prev => [...prev, errorMsg])
           }
+          // 处理最终结果
+          else if (sseMessage.type === 'result' && sseMessage.message) {
+            console.log('[UI] Received result:', sseMessage.message)
+            const resultMsg = sseMessage.message as any
+            
+            // 显示结果消息
+            if (resultMsg.message) {
+              setMarkdownMessages(prev => [...prev, resultMsg.message])
+            }
+
+            // Show completion status
+            addMessageToQueue({
+              type: 'status',
+              content: t('aiGeneration.status.completed' as any),
+              status: 'COMPLETED'
+            })
+
+            setProgress(100)
+            setIsGenerating(false)
+
+            // 根据 subtype 做不同处理
+            if (resultMsg.result) {
+              const taskData = resultMsg.result
+              const subtype = resultMsg.subtype
+
+              // 处理不同的 subtype
+              if (subtype === 'success') {
+                // 跳转到发布页
+                setTimeout(() => {
+                  const queryParams = new URLSearchParams({
+                    aiGenerated: 'true',
+                    taskId: taskData.taskId || '',
+                    title: taskData.title || '',
+                    description: taskData.description || '',
+                    tags: JSON.stringify(taskData.tags || []),
+                    medias: JSON.stringify(taskData.medias || []),
+                  })
+                  
+                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                }, 1500)
+              }
+              else if (subtype === 'jump_draft') {
+                // 跳转到草稿页
+                setTimeout(() => {
+                  // const queryParams = new URLSearchParams({
+                  //   aiGenerated: 'true',
+                  //   taskId: taskData.taskId || '',
+                  //   title: taskData.title || '',
+                  //   description: taskData.description || '',
+                  //   tags: JSON.stringify(taskData.tags || []),
+                  //   medias: JSON.stringify(taskData.medias || []),
+                  //   draft: 'true',
+                  // })
+                  
+                  router.push(`/${lng}/accounts`)
+                }, 1500)
+              }
+              else if (subtype === 'channel_auth_required') {
+                // 频道授权 - 没有频道
+                message.warning(t('aiGeneration.channelAuthRequired' as any) || '请先添加并授权频道')
+                setTimeout(() => {
+                  router.push(`/${lng}/accounts`)
+                }, 1500)
+              }
+              else if (subtype === 'channel_auth_expired') {
+                // 频道授权过期
+                message.warning(t('aiGeneration.channelAuthExpired' as any) || '频道授权已过期，请重新授权')
+                setTimeout(() => {
+                  router.push(`/${lng}/accounts`)
+                }, 1500)
+              }
+              else if (subtype === 'channel_not_supported') {
+                // 后端不支持频道
+                message.info(t('aiGeneration.channelNotSupported' as any) || '该平台暂不支持直接发布')
+                setTimeout(() => {
+                  const queryParams = new URLSearchParams({
+                    aiGenerated: 'true',
+                    taskId: taskData.taskId || '',
+                    title: taskData.title || '',
+                    description: taskData.description || '',
+                    tags: JSON.stringify(taskData.tags || []),
+                    medias: JSON.stringify(taskData.medias || []),
+                  })
+                  
+                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                }, 1500)
+              }
+            }
+          }
           
           if (sseMessage.type === 'status' && sseMessage.status) {
-            // Update statu
+            // Update status
             const statusDisplay = getStatusDisplay(sseMessage.status)
             const needsLoadingAnimation = ['GENERATING_VIDEO', 'GENERATING_IMAGE', 'GENERATING_CONTENT', 'GENERATING_TEXT'].includes(sseMessage.status)
             
@@ -689,48 +841,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         // onDone callback
         async (finalSessionId) => {
           console.log('SSE Done, sessionId:', finalSessionId)
-          
-          // SSE completed, fetch final result
-          if (finalSessionId) {
-            try {
-              const res = await agentApi.getTaskDetail(finalSessionId)
-              
-              if (res?.code === 0 && res.data) {
-                const taskData = res.data
-
-                // Show completion status
-                addMessageToQueue({
-                  type: 'status',
-                  content: t('aiGeneration.status.completed' as any),
-                  status: 'COMPLETED'
-                })
-
-                setProgress(100)
-                setIsGenerating(false)
-
-                // Navigate to accounts page after delay
-                setTimeout(() => {
-                  const queryParams = new URLSearchParams({
-                    aiGenerated: 'true',
-                    taskId: taskData.id,
-                    title: taskData.title || '',
-                    description: taskData.description || '',
-                    tags: JSON.stringify(taskData.tags || []),
-                    medias: JSON.stringify(taskData.medias || []),
-                  })
-                  
-                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
-                }, 1500)
-              }
-            }
-            catch (error) {
-              console.error('Failed to fetch task detail:', error)
-              setIsGenerating(false)
-            }
-          }
-          else {
-            setIsGenerating(false)
-          }
+          // 不再需要调用 getTaskDetail，结果已通过 SSE 返回
+          setIsGenerating(false)
         }
       )
     }

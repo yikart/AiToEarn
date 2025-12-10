@@ -7,7 +7,11 @@
         "link": "https://x.com/op7418/status/1994640215160287637",
         "mode": "generate",
         "category": "工作",
-        "sub_category": "PPT"
+        "sub_category": "PPT",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work",
+        "sub_category_en": "PPT"
     },
     {
         "title": "根据已有食材做菜",
@@ -17,7 +21,11 @@
         "link": "https://x.com/AmirMushich/status/1993003026119114928",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "美食"
+        "sub_category": "美食",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Food"
     },
     {
         "title": "手绘食谱烹饪流程图生成",
@@ -27,7 +35,11 @@
         "link": "https://x.com/LufzzLiz/status/1994987095933481152",
         "mode": "generate",
         "category": "生活",
-        "sub_category": "美食"
+        "sub_category": "美食",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Food"
     },
     {
         "title": "Q版角色LINE风格表情包生成",
@@ -37,7 +49,11 @@
         "link": "https://linux.do/t/topic/1209913",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "表情包"
+        "sub_category": "表情包",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Stickers"
     },
     {
         "title": "害羞的绫波丽",
@@ -47,7 +63,11 @@
         "link": "https://kokorolab.net/zh/home?referral=JBM9AGUV",
         "mode": "edit",
         "category": "NSFW",
-        "sub_category": "金主"
+        "sub_category": "金主",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW",
+        "sub_category_en": "Sponsor"
     },
     {
         "title": "拍照解题",
@@ -56,7 +76,10 @@
         "author": "LinuxDO@poyo",
         "link": "https://linux.do/t/topic/1205627",
         "mode": "edit",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "思维导图",
@@ -66,7 +89,11 @@
         "link": "https://x.com/chatgpt_kazlily/status/1992125113337274857",
         "mode": "generate",
         "category": "学习",
-        "sub_category": "总结"
+        "sub_category": "总结",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study",
+        "sub_category_en": "Summary"
     },
     {
         "title": "文章排版成精美杂志",
@@ -76,7 +103,11 @@
         "link": "https://x.com/op7418/status/1991702565579563166",
         "mode": "generate",
         "category": "工作",
-        "sub_category": "封面"
+        "sub_category": "封面",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work",
+        "sub_category_en": "Cover"
     },
     {
         "title": "旅行手账图",
@@ -86,7 +117,11 @@
         "link": "https://x.com/canghecode/status/1991618641335578739",
         "mode": "generate",
         "category": "生活",
-        "sub_category": "旅游"
+        "sub_category": "旅游",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Travel"
     },
     {
         "title": "瑞克和莫蒂风格科普",
@@ -95,7 +130,10 @@
         "author": "@oran_ge",
         "link": "https://x.com/oran_ge/status/1991677670778892600",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "生物标本展示图",
@@ -104,7 +142,10 @@
         "author": "@berryxia_ai",
         "link": "https://x.com/berryxia_ai/status/1991474410939940867",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "商务照",
@@ -113,7 +154,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "复刻90年代末宝丽来派对氛围感照片",
@@ -123,7 +167,11 @@
         "link": "https://x.com/Arminn_Ai/status/1988968257949180131",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "滤镜"
+        "sub_category": "滤镜",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "滤镜"
     },
     {
         "title": "'自己画自己'的自画像",
@@ -133,7 +181,11 @@
         "link": "https://x.com/ZaraIrahh/status/1988547753270550992",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "想象"
+        "sub_category": "想象",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "想象"
     },
     {
         "title": "胶片感写真",
@@ -143,7 +195,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "滤镜"
+        "sub_category": "滤镜",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "滤镜"
     },
     {
         "title": "论文转教授白板板书（中英转换）",
@@ -153,7 +209,11 @@
         "link": "https://x.com/op7418/status/1991806419948253508",
         "mode": "generate",
         "category": "学习",
-        "sub_category": "总结"
+        "sub_category": "总结",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study",
+        "sub_category_en": "Summary"
     },
     {
         "title": "文章转漫画风格总结图",
@@ -163,7 +223,11 @@
         "link": "https://x.com/LufzzLiz/status/1991534738599997654",
         "mode": "generate",
         "category": "学习",
-        "sub_category": "总结"
+        "sub_category": "总结",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study",
+        "sub_category_en": "Summary"
     },
     {
         "title": "与动漫人物的鱼眼自拍",
@@ -172,7 +236,10 @@
         "author": "@MehdiSharifi",
         "link": "https://x.com/MehdiSharifi/status/1991559962334482772",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "概念可视化/知识地图",
@@ -181,7 +248,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "提高分辨率",
@@ -190,7 +260,10 @@
         "author": "@MehdiSharifi",
         "link": "https://x.com/MehdiSharifi/status/1992195283174719980",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "换装",
@@ -199,7 +272,11 @@
         "author": "@skirano",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "穿搭"
+        "sub_category": "穿搭",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "穿搭"
     },
     {
         "title": "换发型",
@@ -208,7 +285,11 @@
         "author": "Official",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "穿搭"
+        "sub_category": "穿搭",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "穿搭"
     },
     {
         "title": "时空复现",
@@ -217,9 +298,11 @@
         "author": "@MehdiSharifi",
         "link": "https://x.com/MehdiSharifi/status/1992320756995530757",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
-
     {
         "title": "汽车发动机工作原理3D剖面图",
         "preview": "https://pbs.twimg.com/media/GzdC8K0b0AEzvVP?format=jpg&name=small",
@@ -227,7 +310,10 @@
         "author": "@berryxia_ai",
         "link": "https://x.com/berryxia_ai/status/1991474410939940867",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "电商模特试穿",
@@ -237,7 +323,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "工作",
-        "sub_category": "电商"
+        "sub_category": "电商",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work",
+        "sub_category_en": "电商"
     },
     {
         "title": "专业电商商品图",
@@ -247,7 +337,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "工作",
-        "sub_category": "电商"
+        "sub_category": "电商",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work",
+        "sub_category_en": "电商"
     },
     {
         "title": "手绘草图转专业流程图",
@@ -256,7 +350,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "UI 手绘稿转高保真原型",
@@ -265,7 +362,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "智能扩图/拯救构图",
@@ -274,7 +374,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "鸟山明风格",
@@ -283,7 +386,11 @@
         "author": "Official",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "滤镜"
+        "sub_category": "滤镜",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "滤镜"
     },
     {
         "title": "中国神话角色Q版组合插画",
@@ -292,7 +399,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1994981774758195442",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "旅行手账插画生成",
@@ -302,7 +412,11 @@
         "link": "https://x.com/dotey/status/1994908525072429190",
         "mode": "generate",
         "category": "省略",
-        "sub_category": "旅游"
+        "sub_category": "旅游",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "省略",
+        "sub_category_en": "Travel"
     },
     {
         "title": "3D Q版迷你概念店",
@@ -311,7 +425,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1995190286775881780",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "天气应用3D卡通界面",
@@ -320,7 +437,10 @@
         "author": "@ttmouse",
         "link": "https://x.com/ttmouse/status/1995243880326029556",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "城市天气蛋糕3D场景",
@@ -329,7 +449,10 @@
         "author": "@lxfater",
         "link": "https://x.com/lxfater/status/1995341321343815694",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "一生全貌",
@@ -338,7 +461,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991765684297035867",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "智能消除路人/清场",
@@ -347,7 +473,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "家具软装预览",
@@ -357,7 +486,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "装修"
+        "sub_category": "装修",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "装修"
     },
     {
         "title": "户型图生成全屋设计方案",
@@ -367,7 +500,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "装修"
+        "sub_category": "装修",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "装修"
     },
     {
         "title": "生成自媒体爆款封面",
@@ -377,7 +514,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "工作",
-        "sub_category": "封面"
+        "sub_category": "封面",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work",
+        "sub_category_en": "Cover"
     },
     {
         "title": "24格Q版人物表情包制作器",
@@ -386,7 +527,11 @@
         "author": "@Moeary",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "表情包"
+        "sub_category": "表情包",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Stickers"
     },
     {
         "title": "生成商业促销海报",
@@ -396,7 +541,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "generate",
         "category": "工作",
-        "sub_category": "封面"
+        "sub_category": "封面",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work",
+        "sub_category_en": "Cover"
     },
     {
         "title": "原生感菜单翻译",
@@ -406,7 +555,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "旅游"
+        "sub_category": "旅游",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Travel"
     },
     {
         "title": "漫画/梗图汉化",
@@ -415,7 +568,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "餐饮过敏警示卡",
@@ -424,7 +580,10 @@
         "author": "Wechat@01Founder",
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "地标问路/打车卡",
@@ -434,7 +593,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "generate",
         "category": "生活",
-        "sub_category": "旅游"
+        "sub_category": "旅游",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Travel"
     },
     {
         "title": "生成 3D 盲盒风格头像",
@@ -444,7 +607,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "头像"
+        "sub_category": "头像",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "头像"
     },
     {
         "title": "制作宠物表情包",
@@ -454,7 +621,11 @@
         "link": "https://mp.weixin.qq.com/s/lrYNbs4rGs3KOqewoZ6aNQ",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "表情包"
+        "sub_category": "表情包",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "Stickers"
     },
     {
         "title": "各年龄段的样子",
@@ -463,7 +634,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1992471573266395565",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "明星合照的幕后花絮",
@@ -472,7 +646,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1992456465173692800",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "治愈系，宇航员坐在弯弯的月亮边钓星星",
@@ -481,7 +658,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991875496817070245",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "月亮不睡我不睡，我是秃头小宝贝",
@@ -490,7 +670,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991871219600400445",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "社恐模式：请勿靠近，内有恶犬",
@@ -499,7 +682,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991844291618938970",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "照片变插画并附带绘画过程",
@@ -508,7 +694,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1961772524611768452",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "生成人物A-pose设计图",
@@ -517,7 +706,10 @@
         "author": "LinuxDO@TheSmallHanCat",
         "link": "https://linux.do/t/topic/1204197",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "人物姿势参考替换",
@@ -526,7 +718,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1961024423596872184",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "包装贴合效果",
@@ -535,7 +730,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1962763864875167971",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "虚拟试妆",
@@ -544,7 +742,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1962778069242126824",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "写实Cosplay角色设定图",
@@ -553,7 +754,11 @@
         "author": "Unknown",
         "mode": "edit",
         "category": "NSFW",
-        "sub_category": "Cosplay"
+        "sub_category": "Cosplay",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW",
+        "sub_category_en": "Cosplay"
     },
     {
         "title": "登山照",
@@ -562,7 +767,10 @@
         "author": "@MANISH1027512",
         "link": "https://x.com/MANISH1027512/status/1984610333831414061",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "生成人物[NSFW]素体设计图",
@@ -571,7 +779,10 @@
         "author": "LinuxDO@TheSmallHanCat",
         "link": "https://linux.do/t/topic/1204197",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "东京街头",
@@ -580,7 +791,10 @@
         "author": "@MANISH1027512",
         "link": "https://x.com/MANISH1027512/status/1984456357752250749",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "创建自己的超真实微型版本",
@@ -589,7 +803,10 @@
         "author": "@Samann_ai",
         "link": "https://x.com/Samann_ai/status/1982774584198991988",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "汽车三视图",
@@ -598,7 +815,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1983425570596892858",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "时尚编辑黑白肖像",
@@ -607,7 +827,10 @@
         "author": "@eyishazyer",
         "link": "https://x.com/eyishazyer/status/1982402114413596850",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "坐在巨型可爱卡通怪物旁",
@@ -616,7 +839,10 @@
         "author": "@eyishazyer",
         "link": "https://x.com/eyishazyer/status/1982402145535373486",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "金属硬币肖像",
@@ -625,7 +851,10 @@
         "author": "@eyishazyer",
         "link": "https://x.com/eyishazyer/status/1982402158176972945",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "岩石上休闲肖像",
@@ -634,7 +863,10 @@
         "author": "@eyishazyer",
         "link": "https://x.com/eyishazyer/status/1982402164212597061",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "国家一级摆烂许可证",
@@ -643,7 +875,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991813589078778313",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "卧室时代对比图像",
@@ -652,7 +887,10 @@
         "author": "@fofrAI",
         "link": "https://x.com/fofrAI/status/1964818395381248397",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "东京巨型雕像照片",
@@ -661,7 +899,10 @@
         "author": "@riddi0908",
         "link": "https://x.com/riddi0908/status/1963758463135412699",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "时尚心情板拼贴",
@@ -670,7 +911,10 @@
         "author": "@tetumemo",
         "link": "https://x.com/tetumemo/status/1962480699904282861",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "提取主体并放置透明背景",
@@ -679,7 +923,10 @@
         "author": "@nglprz",
         "link": "https://x.com/nglprz/status/1961494974555394068",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "餐食热量密度标注",
@@ -688,7 +935,10 @@
         "author": "@icreatelife",
         "link": "https://x.com/icreatelife/status/1963646757222715516",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "光影人偶打光参考",
@@ -697,7 +947,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1961779457372602725",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "表情准确参考转换",
@@ -706,7 +959,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1963156830458085674",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "惊险火车之旅时刻",
@@ -716,7 +972,11 @@
         "link": "https://x.com/NanoBanana_labs/status/1992514840456319342",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "想象"
+        "sub_category": "想象",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "想象"
     },
     {
         "title": "水边安静下午",
@@ -726,7 +986,11 @@
         "link": "https://x.com/NanoBanana_labs/status/1992503579261673779",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "想象"
+        "sub_category": "想象",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "想象"
     },
     {
         "title": "掌控迪拜夜晚",
@@ -736,7 +1000,11 @@
         "link": "https://x.com/NanoBanana_labs/status/1992491624576786731",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "想象"
+        "sub_category": "想象",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "想象"
     },
     {
         "title": "优雅房间举杯",
@@ -746,7 +1014,11 @@
         "link": "https://x.com/NanoBanana_labs/status/1992480993047912698",
         "mode": "edit",
         "category": "生活",
-        "sub_category": "想象"
+        "sub_category": "想象",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life",
+        "sub_category_en": "想象"
     },
     {
         "title": "1990年代风格肖像转换",
@@ -755,7 +1027,10 @@
         "author": "@ZaraIrahh",
         "link": "https://x.com/ZaraIrahh/status/1982268011416592593",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "超现实主义哥特兔子工作室肖像",
@@ -764,7 +1039,10 @@
         "author": "@IqraSaifiii",
         "link": "https://x.com/IqraSaifiii/status/1982469385156489563",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "派大星和海绵宝宝穿唐朝服饰",
@@ -773,7 +1051,10 @@
         "author": "@op7418",
         "link": "https://x.com/op7418/status/1980296606382780794",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "角色NSFW细节解构",
@@ -782,7 +1063,10 @@
         "author": "Unkown",
         "link": "https://linux.do/t/topic/1209384/40",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "居家光影三联画",
@@ -791,7 +1075,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1987128220030992892",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "权游角色护照",
@@ -800,7 +1087,10 @@
         "author": "@ProperPrompter",
         "link": "https://x.com/ProperPrompter/status/1992248716443402662",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "奇怪角度",
@@ -809,7 +1099,10 @@
         "author": "LinuxDO@godboss",
         "link": "https://linux.do/t/topic/1209539/8",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "磨砂厕所",
@@ -817,7 +1110,10 @@
         "prompt": "根据给出图片中的人物，生成一张场景细节丰富画风精美的二次元图片。\n前景与主体（床铺）：\n画面下方和中心是一张铺着粉红色床单的大床。床单看起来非常凌乱，布满褶皱，并且布满湿痕和黏液。\n床上分布散落着图中人物的各种衣服和饰品（上衣，下衣，内衣，袜子/裤袜，腿环，choker，手套等全身衣着），需要分开零散放置，衣服也潮湿且褶皱。\n床上还放置了撕开的避孕套袋子，装满的避孕套\n后景（磨砂玻璃）：\n画面的上方是一面巨大的半透明磨砂玻璃\n透过磨砂玻璃可以极端模糊看到图中人物无衣物无身体细节的外轮廓的面向镜头，趴在玻璃上，背后有一个身材健硕的男人，站在角色正后方，双手扶着角色的腰部，角色完全放弃身体重心的维持，由男人手握住腰部托举",
         "author": "类脑",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "宫殿跪地",
@@ -826,7 +1122,10 @@
         "author": "Unknown",
         "link": "https://linux.do/t/topic/1207749",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "古风拍摄",
@@ -835,7 +1134,10 @@
         "author": "Unknown",
         "link": "https://linux.do/t/topic/1207749",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "热带海滩放松",
@@ -844,7 +1146,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991956252730015832",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "维多利亚的秘密华丽拍摄",
@@ -853,7 +1158,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991947916479762788",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "街头风格肖像",
@@ -862,7 +1170,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991941899196805556",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "黄金时段肖像",
@@ -871,7 +1182,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991930490698281193",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "穿搭拆分",
@@ -880,7 +1194,10 @@
         "author": "LinuxDO@zlbzhf",
         "link": "https://linux.do/t/topic/1209295",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "冬季锐利肖像",
@@ -889,7 +1206,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991924811442897037",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "调皮猫街头时刻",
@@ -898,7 +1218,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991846934844174440",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "电影森林时刻",
@@ -907,7 +1230,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991832224354680891",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "出浴",
@@ -916,7 +1242,10 @@
         "author": "LinuxDO@648998672",
         "link": "https://linux.do/t/topic/1203308",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "写实风高叉紧身衣美女",
@@ -925,7 +1254,10 @@
         "author": "LinuxDO@648998672",
         "link": "https://linux.do/t/topic/1201010",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "里约站立",
@@ -934,7 +1266,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991758087770796084",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "沙漠战士",
@@ -943,7 +1278,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991736924285943839",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "沙漠骑行",
@@ -952,7 +1290,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991721027198398715",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "登山时刻",
@@ -961,7 +1302,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991625215189700903",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "与狮子幼崽放松",
@@ -970,7 +1314,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991617624023691644",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "东京地铁楼梯模糊快照",
@@ -979,7 +1326,10 @@
         "author": "@cheerselflin",
         "link": "https://x.com/cheerselflin/status/1979203277553307820",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "中秋月下秋千照片",
@@ -988,7 +1338,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1975198365932769599",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "马赛克风格头像",
@@ -997,7 +1350,10 @@
         "author": "@fy360593",
         "link": "https://x.com/fy360593/status/1945118291703284152",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "Gorillaz风格插图",
@@ -1006,7 +1362,10 @@
         "author": "@azed_ai",
         "link": "https://x.com/azed_ai/status/1942586412920103180",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "1920年代童话插图",
@@ -1015,7 +1374,10 @@
         "author": "@vkuoo",
         "link": "https://x.com/vkuoo/status/1929708611208728874",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "糖果粉碎传奇风格城市地图",
@@ -1024,7 +1386,10 @@
         "author": "@miilesus",
         "link": "https://x.com/miilesus/status/1939690110418833592",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "高端编辑产品摄影",
@@ -1033,7 +1398,10 @@
         "author": "@Kerroudjm",
         "link": "https://x.com/Kerroudjm/status/1944730614323671129",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "1950年代海报",
@@ -1042,7 +1410,10 @@
         "author": "@vkuoo",
         "link": "https://x.com/vkuoo/status/1930564137526137166",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "NeoGradient标志设计",
@@ -1051,7 +1422,10 @@
         "author": "@aziz4ai",
         "link": "https://x.com/aziz4ai/status/1936744152366288926",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "云上放松",
@@ -1060,7 +1434,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991603211896254822",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "马里奥、路易吉给碧奇公主修理厨房",
@@ -1069,7 +1446,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991807393538478513",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "师父别念了",
@@ -1078,7 +1458,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991806384057532435",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "马斯克教爱因斯坦拍照",
@@ -1087,7 +1470,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991805840685453495",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "李小龙与尤达大师以武会友",
@@ -1096,7 +1482,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991802097483014569",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "游戏角色试图从电视屏幕爬到客厅",
@@ -1105,7 +1494,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991801077092733297",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "你好地球人！",
@@ -1114,7 +1506,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991800151204307071",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "粉红色的星之卡吐泡泡",
@@ -1123,7 +1518,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991795708308189668",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "哈利波特的魔法",
@@ -1132,7 +1530,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991795287489401255",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "小黄人建造金字塔",
@@ -1141,7 +1542,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991794655932154047",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "破旧的船长航海日志",
@@ -1150,7 +1554,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991794231263072737",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "咸鱼翻身还是咸鱼",
@@ -1159,7 +1566,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991786544286642625",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "何以解忧，唯有暴富",
@@ -1168,7 +1578,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991775440244277370",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "游泳晒太阳，西瓜汁畅饮",
@@ -1177,7 +1590,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991770878154272790",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "拿去当壁纸吧，这大鲸鱼，这彩虹",
@@ -1186,7 +1602,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991768984195400068",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "两条锦鲤形成的太极图",
@@ -1195,7 +1614,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991768051654762799",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "这个跳舞的妹子，裙摆好特别，金黄金黄的",
@@ -1204,7 +1626,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991765512871899306",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "戴珍珠耳环的猫猫",
@@ -1213,7 +1638,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991764039823769640",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "孤独的宇航员坐在普通城市公交站,等去火星的42路车",
@@ -1222,7 +1650,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991763539468632087",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "这这这，川剧的变脸绝技什么时候泄露的？",
@@ -1231,7 +1662,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991685064569266240",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "使用图像参考创建漫画",
@@ -1240,7 +1674,10 @@
         "author": "@MehdiSharifi",
         "link": "https://x.com/MehdiSharifi/status/1992008462650257537",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "拥挤的北京地铁车厢，但乘客全是神话人物",
@@ -1249,7 +1686,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991681971529908358",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "温暖的日式居酒屋暖黄灯光",
@@ -1258,7 +1698,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991533617403818429",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "巨物恐惧症风格，好莱坞灾难片质感",
@@ -1267,7 +1710,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991530558992859379",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "3D皮克斯风格渲染",
@@ -1276,7 +1722,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991529211392323991",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "水墨画风格与写实摄影的结合",
@@ -1285,7 +1734,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991529000519496037",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "广角镜头拍摄荒凉的废土世界",
@@ -1294,7 +1746,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991528688345837701",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "一张极具电影感的画面",
@@ -1303,7 +1758,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991528391062003866",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "真实摄影风格，一只肥胖的狸花猫",
@@ -1312,7 +1770,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991526230122983894",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "北极光下孤独女子三联画",
@@ -1321,7 +1782,10 @@
         "author": "@YaseenK7212",
         "link": "https://x.com/YaseenK7212/status/1986747235862790574",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "老照片恢复与现代化",
@@ -1330,7 +1794,10 @@
         "author": "@marryevan999",
         "link": "https://x.com/marryevan999/status/1971499622926618846",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "照片转皮克斯风格头像",
@@ -1339,7 +1806,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1969824645743587519",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "与童年自我疗愈对话",
@@ -1348,7 +1818,10 @@
         "author": "@samann_ai",
         "link": "https://x.com/samann_ai/status/1969743981157265867",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "模拟着色作业过程",
@@ -1357,7 +1830,10 @@
         "author": "@AI_Kei75",
         "link": "https://x.com/AI_Kei75/status/1968607362576708042",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "文本转图标式图示",
@@ -1366,7 +1842,10 @@
         "author": "@nobisiro_2023",
         "link": "https://x.com/nobisiro_2023/status/1968677481486914022",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "生成角色游戏状态屏",
@@ -1375,7 +1854,10 @@
         "author": "@AI_Kei75",
         "link": "https://x.com/AI_Kei75/status/1969358521356742756",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "潮流插画风格，一个穿着国潮服饰的少年",
@@ -1384,7 +1866,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991525972584329438",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "一张极其逼真的重庆火锅特写",
@@ -1393,7 +1878,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991525263478518021",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "乐高风格的微缩摄影",
@@ -1402,7 +1890,10 @@
         "author": "@songguoxiansen",
         "link": "https://x.com/songguoxiansen/status/1991524919033884929",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "伪造抖音截图",
@@ -1411,7 +1902,10 @@
         "author": "@tuzi_ai",
         "link": "https://x.com/tuzi_ai/status/1991523528295014822",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "清明上河图芝加哥版",
@@ -1420,7 +1914,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992469134232219972",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "仙女站扫地机器人",
@@ -1429,7 +1926,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992452377522176175",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "贵妇与小黄人",
@@ -1438,7 +1938,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992366309288595681",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "骡马假日海报",
@@ -1447,7 +1950,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992377407366676955",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "和尚道长师太三格漫画",
@@ -1456,7 +1962,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992433730972197305",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "Q版人物Instagram相框",
@@ -1465,7 +1974,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992294960708890729",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "NSFW - 透明比基尼",
@@ -1474,7 +1986,10 @@
         "author": "@pakar_ai",
         "link": "https://x.com/pakar_ai/status/1959856371102535792",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "NSFW - 枕头遮挡",
@@ -1483,7 +1998,10 @@
         "author": "@pakar_ai",
         "link": "https://x.com/pakar_ai/status/1959846721556717728",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "NSFW - 隐秘小便",
@@ -1492,7 +2010,10 @@
         "author": "@pakar_ai",
         "link": "https://x.com/pakar_ai/status/1959799883063566726",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "特朗普壁画",
@@ -1501,7 +2022,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992117164451430439",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "蔷薇少女墙绘",
@@ -1510,7 +2034,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1991958132419919975",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "橙白锦鲤插画",
@@ -1519,7 +2046,10 @@
         "author": "@dotey",
         "link": "https://x.com/dotey/status/1992105581868466381",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "伪造微信聊天记录",
@@ -1528,7 +2058,10 @@
         "author": "@tuzi_ai",
         "link": "https://x.com/tuzi_ai/status/1991520003536068717",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "Nano Banana梗图",
@@ -1537,7 +2070,10 @@
         "author": "@tuzi_ai",
         "link": "https://x.com/tuzi_ai/status/1991486859697090654",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "生成可爱K-pop风格女友照片",
@@ -1546,7 +2082,10 @@
         "author": "@bozhou_ai",
         "link": "https://x.com/bozhou_ai/status/1991848234722165035",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "名人名言金句卡",
@@ -1555,7 +2094,10 @@
         "author": "@stark_nico99",
         "link": "https://x.com/stark_nico99/status/1991718646570426763",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "将你的任何文字变成发布会现场",
@@ -1564,7 +2106,10 @@
         "author": "@stark_nico99",
         "link": "https://x.com/stark_nico99/status/1991760674435780778",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "动漫图转真人 Cosplay",
@@ -1573,7 +2118,10 @@
         "author": "@ZHO_ZHO_ZHO",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1991573512713347181",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "图片转真人风格电影海报",
@@ -1582,7 +2130,10 @@
         "author": "@SVD_Studio_Q",
         "link": "https://x.com/ZHO_ZHO_ZHO/status/1991573512713347181",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "串场漫画",
@@ -1591,7 +2142,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618611493105859",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "科普插画",
@@ -1600,7 +2154,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618616299778151",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "产品原型图",
@@ -1609,7 +2166,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618628064776655",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "连环画",
@@ -1618,7 +2178,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618632439460208",
         "mode": "generate",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "古诗句配图",
@@ -1627,7 +2190,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618645123035609",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "人物关系图",
@@ -1636,7 +2202,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618649380294760",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "手稿页",
@@ -1645,7 +2214,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618658842603626",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "条漫",
@@ -1654,7 +2226,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618662697210154",
         "mode": "generate",
-        "category": "学习"
+        "category": "学习",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Study"
     },
     {
         "title": "PPT",
@@ -1663,7 +2238,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618667310944477",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "海报",
@@ -1672,7 +2250,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618671316463650",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "在车后备箱吸烟",
@@ -1681,7 +2262,10 @@
         "author": "@xmliisu",
         "link": "https://x.com/xmliisu/status/1991846916586438678",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "新古典高时尚女性肖像",
@@ -1690,7 +2274,10 @@
         "author": "@xmliisu",
         "link": "https://x.com/xmliisu/status/1991791415223853218",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "楼梯时尚女性拼贴",
@@ -1699,7 +2286,10 @@
         "author": "@xmliisu",
         "link": "https://x.com/xmliisu/status/1991418636083290446",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "艺术画廊女性凝视肖像",
@@ -1708,7 +2298,10 @@
         "author": "@xmliisu",
         "link": "https://x.com/xmliisu/status/1991340722621149256",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "动漫与现实：分裂肖像画",
@@ -1717,7 +2310,10 @@
         "author": "@_MehdiSharifi_",
         "link": "https://x.com/_MehdiSharifi_/status/1992018970078065032",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "颜值打分",
@@ -1726,7 +2322,10 @@
         "author": "@Samann_ai",
         "link": "https://x.com/Samann_ai/status/1992171138730885618",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "换装越南奥黛风艺术照",
@@ -1735,7 +2334,10 @@
         "author": "@ShreyaYadav___",
         "link": "https://x.com/ShreyaYadav___/status/1987778015917645963",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "游戏界面",
@@ -1744,7 +2346,10 @@
         "author": "@canghecode",
         "link": "https://x.com/canghecode/status/1991618675552711147",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "设计宣传画",
@@ -1753,7 +2358,10 @@
         "author": "@tuzi_ai",
         "link": "https://x.com/tuzi_ai/status/1991507269079691413",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "短片图文故事",
@@ -1762,7 +2370,10 @@
         "author": "@tuzi_ai",
         "link": "https://x.com/tuzi_ai/status/1960371520183701808",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "分离3D模型",
@@ -1770,7 +2381,10 @@
         "prompt": "将图像制作成白天和等距视图仅限[建筑]",
         "author": "@Zieeett",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "一键智能修图",
@@ -1778,7 +2392,10 @@
         "prompt": "这张照片很无聊很平淡。增强它！增加对比度，提升色彩，改善光线使其更丰富，你可以裁剪和删除影响构图的细节",
         "author": "@op7418",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "切换俯视角度",
@@ -1786,7 +2403,10 @@
         "prompt": "将照片转换为俯视角度并标记摄影师的位置",
         "author": "@op7418",
         "mode": "edit",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "二次元表情",
@@ -1794,7 +2414,10 @@
         "prompt": "Character emotions sheet, multiple expressions of the provided character, featuring happy, sad, angry, surprised, shy, confused, playful, disgusted, thoughtful, crying, and embarrassed. Full set of emotions, clear and distinct expressions, clean background",
         "author": "@Gorden_Sun",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": " 批量换发型",
@@ -1802,7 +2425,10 @@
         "prompt": "以九宫格的方式生成这个人不同发型的头像",
         "author": "@balconychy",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "时光滤镜",
@@ -1810,7 +2436,10 @@
         "prompt": "请重新构想照片中的人物，使其完全符合某个特定年代的风格。这包括人物的服装、发型、照片的整体画质和滤镜和构图，以及该年代所特有的整体美学风格。最终输出必须是高度逼真的图像，并清晰地展现人物。\n \n目标年代为： 1900",
         "author": "Official",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "黑白装逼肖像",
@@ -1818,7 +2447,10 @@
         "prompt": "高分辨率的黑白肖像摄影作品，采用编辑类与艺术摄影风格。保持人物面部特征一致，仅改变姿态与构图。背景为柔和渐变，从中灰过渡到近乎纯白，配合细腻的胶片颗粒质感，营造经典黑白影像的氛围。\n主体穿着 黑色 T 恤，以不同随机姿态出现：抬手触脸、手指交叠于胸前、用手部分遮挡面容、轻触下颌等，强调自然、优雅的手部动作。面部依旧保留原有神态，只在角度和光线中体现变化，局部捕捉眼神、颧骨或唇角的细节。\n光线为温柔的定向光，柔和地勾勒出脸部、手部与 T 恤的纹理；画面简洁，留有大面积负空间。没有文字或标志，只有光影、姿态与情绪交织。\n整体氛围亲密、永恒，像呼吸或思索间的停顿，被捕捉为诗意的瞬间。",
         "author": "LinuxDO@Bensong",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "3D模型手办 (复杂背景)",
@@ -1826,7 +2458,10 @@
         "prompt": "将用户提供的2D图片生成一张高品质、照片级的3D模型手办图片。手办应制作精良，细致入微地捕捉2D角色插画中的精髓和设计。\n \n**手办细节：**\n \n-   **姿势：** 手办的姿势应动态化，反映2D图片中原始角色的动作或标志性姿态。\n-   **服饰与配件：** 忠实地以三维形式再现2D角色的所有服饰、盔甲、配饰（如武器、首饰、头饰）以及复杂的图案，并赋予其逼真的纹理（如布料的褶皱、金属的光泽、皮革的纹理）。\n-   **头发：** 头发应塑造成具有流动感和真实感的造型，与角色的发型和长度相匹配。\n-   **面部特征：** 手办的面部应准确呈现角色的表情和五官。\n-   **材质外观：** 手办应呈现出制作精良的塑料或树脂模型的质感，带有微妙的反光和适当的材质光泽。\n \n**场景与展示：**\n \n-   **环境：** 手办摆放在一个整洁有序的桌面上，使用圆形透明丙烯酸基座，类似一个模型爱好者的工作室。\n-   **背景屏幕：** 在手办后方的背景中，有一个电脑显示器，上面显示着该角色的3D模型Blender建模过程，展示其数字模型。屏幕应散发出柔和的光芒，照亮桌面的一部分。\n-   **包装盒：** 在手办旁边，稍微面向观察者倾斜放置着手办的零售包装盒。包装盒的艺术设计应以与手办姿态相似的同一角色为特色，并带有风格化的品牌名称（例如：“Good Smile Company”或类似的虚构品牌），可能还有角色名称。包装盒应看起来专业设计。\n-   **桌面物品：** 桌面上手办和包装盒周围，散落着各种模型工具和用品，可以包括：\n    -   小罐颜料或油漆瓶\n    -   精细的画笔\n    -   模型工具（如镊子、小型切割刀、雕刻工具）\n    -   带有网格线的切割垫\n    -   参考书或画册\n    -   其他一些暗示创意工作区的小型艺术相关杂物。\n-   **灯光：** 场景应采用柔和的自然光或类似工作室的灯光照明，突出手办的细节，并产生柔和的阴影，营造出深度和真实感。\n \n**整体美感：** 图像应传达出一种已完成的、专业制作的收藏级手办的感觉，并将其置于其创作和开发背景中进行展示。焦点是手办本身，但周围的元素增强了其创作和展示的故事性。\n",
         "author": "LinuxDO@DT2025",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "复古宣传海报",
@@ -1834,7 +2469,10 @@
         "prompt": "复古宣传海报风格，突出中文文字，背景为红黄放射状图案。画面中心位置有一位美丽的年轻女性，以精致复古风格绘制，面带微笑，气质优雅，具有亲和力。主题是GPT最新AI绘画服务的广告促销，强调'惊爆价9.9/张'、'适用各种场景、图像融合、局部重绘'、'每张提交3次修改'、'AI直出效果，无需修改'，底部醒目标注'有意向点右下\"我想要\"'，右下角绘制一个手指点击按钮动作，左下角展示OpenAI标志。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "定制动漫手办",
@@ -1842,7 +2480,10 @@
         "prompt": "生成一张摆放于桌面上的动漫风格手办照片，以日常随手用手机拍摄的轻松休闲视角呈现。手办模型以附件中人物照片为基础，精确还原照片中人物的全身姿势、面部表情以及服装造型，确保手办全身完整呈现。整体设计精致细腻，头发与服饰采用自然柔和的渐变色彩与细腻质感，风格偏向日系动漫风，细节丰富，质感真实，观感精美。",
         "author": "@dotey",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "定制Q版钥匙串",
@@ -1850,7 +2491,10 @@
         "prompt": "一张特写照片，展示一个被人手握住的可爱多彩钥匙串。钥匙串的造型为 [参考图片] 的 Q 版风格。钥匙串由柔软橡胶材质制成，带有粗黑描边，连接在一个小巧的银色钥匙圈上，背景为中性色调。",
         "author": "@azed_ai",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "原创宝可梦生成",
@@ -1858,7 +2502,10 @@
         "prompt": "根据此物体（提供的照片）创作一个原创生物。该生物应看起来像是属于一个奇幻怪物捕捉宇宙，具有受复古日式RPG怪物艺术影响的可爱或酷炫设计。图像必须包含：\n  – 生物的全身视图，灵感来自物体的形状、材料或用途。\n  – 在其脚边有一个小球体或胶囊（类似于精灵球），其设计图案和颜色与物体的外观相匹配——不是标准的精灵球，而是自定义设计。\n  – 为生物发明的名字，显示在其旁边或下方。 – 其元素类型（例如火、水、金属、自然、电……），基于物体的核心属性。插图应看起来像是来自奇幻生物百科全书，线条清晰，阴影柔和，设计富有表现力且以角色为驱动。",
         "author": "@Anima_Labs",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "3D Q版大学拟人化形象",
@@ -1866,7 +2513,10 @@
         "prompt": "给 {西北工业大学} 画一个拟人化的3D Q版美少女形象，体现学校 {航空航天航海三航} 特色",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "剪影艺术",
@@ -1874,7 +2524,10 @@
         "prompt": "一个 [东方巨龙] 的基础轮廓剪影。背景为亮黄色，剪影为纯黑色实心填充。",
         "author": "@umesh_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "磨砂玻璃后的虚实对比剪影",
@@ -1882,7 +2535,10 @@
         "prompt": "一张黑白照片，展示了一个[主体]在磨砂或半透明表面后的模糊剪影。其[部分]轮廓清晰，紧贴表面，与其余朦胧、模糊的身影形成鲜明对比。背景是柔和的灰色渐变色调，增强了神秘和艺术的氛围。",
         "author": "@umesh_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "自拍生成摇头娃娃",
@@ -1890,7 +2546,10 @@
         "prompt": "将这张照片变成一个摇头娃娃：头部稍微放大，保持面部准确，身体卡通化。[把它放在书架上]。",
         "author": "@thisdudelikesAI",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "欧洲花店工作",
@@ -1899,7 +2558,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992470800595579328",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "复古传奇",
@@ -1908,7 +2570,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992459412233945253",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "金字塔前站立",
@@ -1917,7 +2582,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992446519350268141",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "卡帕多西亚醒来",
@@ -1926,7 +2594,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992435112206635347",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "狗狗耳语秘密",
@@ -1935,7 +2606,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992425766781407363",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "激流漂流",
@@ -1944,7 +2618,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992322957616845287",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "自信坐姿",
@@ -1953,7 +2630,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992313782568129000",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "科洛塞姆开始一天",
@@ -1962,7 +2642,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992297705427665047",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "人体科普图",
@@ -1970,7 +2653,10 @@
         "prompt": "创作如图人物的科普图片（不要照搬图中的动作），类似人体科普图但是因为你讲解的不只是人的外貌器官而还有内在器官，所以： 1不可以露出骨头肌肉。 2不能血腥。 3可以漏出内脏。 4保持原图画风 5内脏不要以透视的方式在人物身上体现。 6必要的话可以在人物身上开口展示内部。 角色：保持图像主体的现有特征，例如脸型、发色、身材等归属于人体特征的内容，主体衣着只有超细系带内衣，一条带子类型的丁字裤勒入臀缝的着装、图片的构成。 按照以下要求： 对人物着装细节的提取以及图片各部分内容详解，整张 设计图如下设计： 先将原图人物主体放在正中央周围环绕表情差分。 逐渐从人物主体上用局部放大手法使用简体中文进行如下标注: 1左侧：发型分析:下半身臀部三视图并标注数字 2右侧：各个部位拆分与列出：双足脚底、腋下、肛门、外阴，胸部，乳晕。 3下方：内脏的设计拆分：大脑、眼球、子宫以及肾脏之类的小部件拆分列出。 4占用较大面积的合适部位：细节特写与结构分析与注明：详细分析并注明外阴与乳头结构以及具体肛门特写 人物原图放在左上角钉住 按照以下要求一步步思考： Step1:提取角色的人体特征 Step2:确保有绘制出任何解剖和人体剖面图 Step3: 规划着装细节 Step4: 思考特点要求 Step5:进行符合图片分区内容格式的图片生成 Step6:是否还原原图画风 Step7:思考用户的潜在目的并绘制 Step8:标注文字是否正确",
         "author": "Unknown",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "18-22岁亚洲女生",
@@ -1978,7 +2664,10 @@
         "prompt": "18-22岁亚洲女生站在寝室里，黑色长发戴眼镜，奶油色迷你丝带松松系在辫尾、稍显歪斜。她衣服还未穿好，双手举着还未穿上的运动运动泳衣挡在身前，露出线条柔和的肩颈与腰腹；眼尾微垂看向地面，嘴角抿着一丝软乎乎的羞涩，嘴角和身上沾有些许白色透明的牛奶，左脚轻轻踮起、踩在床边的灰色拖鞋边缘。背景是典型的寝室乱态：身后书桌堆着翻开的专业课课本上面放着打湿的内裤，半杯剩了吸管的珍珠奶茶，床头挂着皱巴巴的卡通印花挂布，地上散落着两只白袜子，上铺床沿还垂着件粉色T恤。手机竖屏（9: 25）拍摄的画面有点晃，人物偏左站，右上角多拍进了半块沾着污渍的墙皮，整体是没刻意整理的平庸日常快照感，头发梢还沾了根细绒毛，却透着自然的生活气。",
         "author": "Unknown",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "堕落过程",
@@ -1986,7 +2675,10 @@
         "prompt": "根据此张角色图设计概念展示图\n生成图片比例应该为：横图 2K 16: 9\n每个阶段需要用不同颜色做背景，每个阶段都是角色一个节点的表示\n最左侧的将是主角和其原本状态，最右侧则是最彻底堕落的状态，从左到右，服装露出度和情趣度越来越高，角色会根据服装和堕落程度不同做出不同的动作和反应。全程不改变发色\n从左到右，角色会逐渐堕落（bimbofication）\n- 出于个人喜好，中间应该有职业装，最后一幕前应该采用各类情趣服装，最后几幕则是兔女郎或星条旗比基尼\n- 使用中文解析该角色的色色之处，并用大量的中文文字解释\n- 风格应当采用ANIME+lineart\n应当遵循以下流程：\nStep-1 确保理解堕落的核心要素\nStep-2 设计合适的服装\nStep-3 设计合适的动作和神态\nStep-4 进行符合图片分区内容格式的图片生成",
         "author": "Unknown",
         "mode": "edit",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "破烂护士服",
@@ -1994,7 +2686,10 @@
         "prompt": "给我一张xxx的图片，画风偏写实，肚脐眼下方有淫纹，淫纹是粉红色的，动作是半蹲，服装是护士服，衣服被撕破，黑色丝袜有磨损，翻白眼，吐舌头，大腿根部写正号，脸色潮红",
         "author": "Unknown",
         "mode": "generate",
-        "category": "NSFW"
+        "category": "NSFW",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "NSFW"
     },
     {
         "title": "一级方程式赛车手",
@@ -2003,7 +2698,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992123700234031470",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "冬季工作室拍摄",
@@ -2012,7 +2710,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992108412390289802",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "领导哈士奇队伍",
@@ -2021,7 +2722,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992099420897153391",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "迪拜VIP俱乐部放松",
@@ -2030,7 +2734,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992072361516953847",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "与海豚自拍",
@@ -2039,7 +2746,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992035494922686891",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "捕蟹船上",
@@ -2048,7 +2758,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992013533773431076",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "欧洲晨间例行",
@@ -2057,7 +2770,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1992000326610690362",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "遛六只斑点狗",
@@ -2066,7 +2782,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991990178680860955",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "掌控整个派对",
@@ -2075,7 +2794,10 @@
         "author": "@NanoBanana_labs",
         "link": "https://x.com/NanoBanana_labs/status/1991977750807072818",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "三只动物与地标自拍",
@@ -2083,7 +2805,10 @@
         "prompt": "三只[动物类型]在标志性[地标]前的特写自拍照，它们表情各异，拍摄于黄金时刻，采用电影般的灯光。动物们靠近镜头，头挨着头，模仿自拍姿势，展现出喜悦、惊讶和平静的表情。背景展示了[地标]完整的建筑细节，光线柔和，氛围温暖。采用摄影感、写实卡通风格拍摄，高细节，1:1 宽高比。",
         "author": "@berryxia_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "透视3D出屏效果",
@@ -2091,7 +2816,10 @@
         "prompt": "超写实，从上往下俯视角拍摄，一个美丽的ins模特【安妮海瑟薇 / 见参考图片】，有着精致美丽的妆容和时尚的造型，站在一部被人托起的智能手机屏幕上，画面营造出强烈的透视错觉。强调女孩从手机中站出来的三维效果。她戴着黑框眼镜，穿着高街风，俏皮地摆着可爱的pose。手机屏幕被处理成深色地板，像是一个小舞台。场景使用强烈的强制透视（forced perspective）表现手掌、手机与女孩之间的比例差异。背景为干净的灰色，使用柔和室内光，浅景深，整体风格为超现实写实合成。透视特别强",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "谷歌地图变身古代藏宝图",
@@ -2099,7 +2827,10 @@
         "prompt": "将图像转换为绘制在古老羊皮纸上的古代藏宝图。地图包含详细的元素，如海洋上的帆船、海岸线上的古老港口或城堡、通向标记宝藏地点的大\"X\"的虚线路径、山脉、棕榈树和装饰性的罗盘玫瑰。整体风格让人联想到旧时的海盗冒险电影。",
         "author": "@umesh_ai",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "品牌化键盘键帽",
@@ -2107,7 +2838,10 @@
         "prompt": "一个超逼真的3D渲染图，展示了四个机械键盘键帽，排列成紧密的2x2网格，所有键帽相互接触。从等轴测角度观察。一个键帽是透明的，上面用红色印刷着\"{just}\"字样。另外三个键帽采用颜色：{黑色、紫色和白色}。一个键帽上带有Github的Logo。另外两个键帽上分别写着\"{fork}\"和\"{it}\"。逼真的塑料纹理，圆润的雕刻键帽，柔和的阴影，干净的浅灰色背景。",
         "author": "@egeberkina",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "微型立体场景移轴摄影",
@@ -2115,7 +2849,10 @@
         "prompt": "从上方俯瞰的超高细节迷你【Cyberpunk】景观，采用倾斜移轴鏡頭效果。场景中充满如玩具般的元素，全部以高解析度 CG 呈现。光线戏剧化，营造出大片的氛围，色彩鲜明，对比强烈，强调景深效果与拟真微观视角，使观者仿佛俯瞰一个玩具世界般的迷你现实，画面中包含大量视觉笑点与极具重复观看价值的细节设计",
         "author": "@terry623",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "镀铬emoji徽章",
@@ -2123,7 +2860,10 @@
         "prompt": "高精度的 3D 渲染图，按照 emoji 图标 {👍} 展示一个金属质感的徽章，固定在竖直的商品卡片上，具有超光滑的镀铬质感和圆润的 3D 图标造型，风格化的未来主义设计，带有柔和的反光与干净的阴影。纸质卡片顶部中央带有一个冲切的欧式挂孔，徽章上方是醒目的标题 \"{Awesome}\"，下方配有趣味标语 \"{Smash that ⭐ if you like it!}\"。背景为柔和的灰色，使用柔光摄影棚灯光，整体风格极简。",
         "author": "@egeberkina",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "儿童涂色页插画",
@@ -2131,7 +2871,10 @@
         "prompt": "一张黑白线描涂色插画，适合直接打印在标准尺寸（8.5x11英寸）的纸张上，无纸张边框。整体插画风格清新简洁，使用清晰流畅的黑色轮廓线条，无阴影、无灰阶、无颜色填充，背景纯白，便于涂色。\n【同时为了方便不会涂色的用户，请在右下角用小图生成一个完整的彩色版本供参考】\n适合人群：【6-9岁小朋友】\n画面描述：\n【一只独角兽在森林的草地上漫步，阳光明媚，蓝天白云】",
         "author": "@dotey",
         "mode": "generate",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "字母与单词含义融合",
@@ -2139,7 +2882,10 @@
         "prompt": "在字母中融入单词的含义，将图形和字母巧妙融合在一起。\n单词：{ beautify }\n下面加上单词的简要说明",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "双重曝光",
@@ -2147,7 +2893,10 @@
         "prompt": "双重曝光，Midjourney 风格，融合、混合、叠加的双重曝光图像，双重曝光风格。一幅由 Yukisakura 创作的杰出杰作，展现了一个奇妙的双重曝光构图，将阿拉贡·阿拉松之子的剪影与生机勃勃春季里中土世界视觉上引人注目、崎岖的地貌和谐地交织在一起。沐浴阳光的松树林、山峰和一匹孤独的马穿过小径的景象从他身形的纹理中向外回响，增添了叙事和孤独的层次感。当简洁分明的单色背景保持着锐利的对比度时，美妙的张力逐渐形成，将所有焦点吸引到层次丰富的双重曝光上。其特点是阿拉贡剪影内部充满活力的全彩色方案，以及用情感的精确性描摹每个轮廓的清晰、刻意的线条。(Detailed:1.45). (Detailed background:1.4).",
         "author": "rezzycheck",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "超现实交互场景",
@@ -2155,7 +2904,10 @@
         "prompt": "一幅铅笔素描画，描绘了 [Subject 1] 与 [Subject 2] 互动的场景，其中 [Subject 2] 以逼真的全彩风格呈现，与 [Subject 1] 及背景的手绘素描风格形成超现实的对比。",
         "author": "@umesh_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "动物硅胶腕托",
@@ -2163,7 +2915,10 @@
         "prompt": "创建图片 一个可爱Q版的硅胶护腕托，外形基于【🐼】表情，采用柔软的食品级硅胶材质，表面为亲肤哑光质感，内部填充慢回弹棉，拟人化卡通风格，表情生动，双手张开趴在桌面上，呈现出拥抱手腕的姿势，整体造型圆润软萌，颜色为【🐼】配色，风格治愈可爱，适合办公使用，背景为白色纯色，柔和布光，产品摄影风格，前视角或45度俯视，高清细节，突出硅胶质感与舒适功能",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "发光线条解剖图",
@@ -2171,7 +2926,10 @@
         "prompt": "一幅数字插画，描绘了一个 [SUBJECT]，其结构由一组发光、干净且纯净的蓝色线条勾勒而成。画面设定在深色背景之上，以突出 [SUBJECT] 的形态与特征。某个特定部位，如 [PART]，通过红色光晕加以强调，以表示该区域的重要性或特殊意义。整体风格兼具教育性与视觉吸引力，设计上仿佛是一种先进的成像技术。",
         "author": "@umesh_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "特色城市天气预报",
@@ -2179,7 +2937,10 @@
         "prompt": "以清晰的45°俯视角度，展示一个等距微缩模型场景，内容为[上海东方明珠塔、外滩]等城市特色建筑，天气效果巧妙融入场景中，柔和的多云天气与城市轻柔互动。使用基于物理的真实渲染（PBR）和逼真的光照效果，纯色背景，清晰简洁。画面采用居中构图，凸显出三维模型精准而细腻的美感。在图片上方展示\"[上海 多云 20°C]\"，并附有多云天气图标。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "乐高城市景观",
@@ -2187,7 +2948,10 @@
         "prompt": "创建一幅高度精细且色彩鲜艳的乐高版上海外滩景象。前景呈现经典的外滩历史建筑群，用乐高砖块精致还原西式与新古典主义风格的建筑立面，包括钟楼、穹顶、柱廊等细节。乐高小人们正在沿江漫步、拍照、观光，街道两旁停靠着经典样式的乐高汽车。背景是壮观的黄浦江，以蓝色半透明乐高砖拼接，江面上有乐高渡轮和游览船。对岸的浦东陆家嘴高楼林立，包括东方明珠塔、上海中心、金茂大厦和环球金融中心，这些超现代乐高摩天大楼色彩丰富、造型逼真。天空为乐高明亮蓝色，点缀少量白色乐高积木云朵，整体呈现充满活力与现代感的视觉效果。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "创意绿植花盆",
@@ -2195,7 +2959,10 @@
         "prompt": "一张高质量的照片，展示一个可爱的陶瓷[物体/动物]形状的花盆，表面光滑，里面装满了各种生机勃勃的多肉植物和绿色植物，包括尖刺的十二卷、莲座状的石莲花和精致的白色小花。花盆带有一个友好的面孔，放置在柔和的中性背景上，采用漫射自然光照明，展示了细腻的纹理和色彩对比，构图简洁、极具简约风格。",
         "author": "@azed_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "“极其平凡”的iPhone自拍",
@@ -2203,7 +2970,10 @@
         "prompt": "请画一张极其平凡无奇的iPhone 自拍照，没有明确的主体或构图感，就像是随手一拍的快照。照片略带运动模糊，阳光或店内灯光不均导致轻微曝光过度。角度尴尬、构图混乱，整体呈现出一种刻意的平庸感-就像是从口袋里拿手机时不小心拍到的一张自拍。主角是陈奕迅和谢霆锋，晚上，旁边是香港会展中心，在香港维多利亚港旁边。",
         "author": "@jiamimaodashu",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "玻璃材质重塑",
@@ -2211,7 +2981,10 @@
         "prompt": "retexture the image attached based on the json below:\n\n{\n  \"style\": \"photorealistic\",\n  \"material\": \"glass\",\n  \"background\": \"plain white\",\n  \"object_position\": \"centered\",\n  \"lighting\": \"soft, diffused studio lighting\",\n  \"camera_angle\": \"eye-level, straight-on\",\n  \"resolution\": \"high\",\n  \"aspect_ratio\": \"2:3\",\n  \"details\": {\n    \"reflections\": true,\n    \"shadows\": false,\n    \"transparency\": true\n  }\n}",
         "author": "@egeberkina",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "水晶球故事场景",
@@ -2219,7 +2992,10 @@
         "prompt": "一枚精致的水晶球静静摆放在窗户旁温暖柔和的桌面上，背景虚化而朦胧，暖色调的阳光轻柔地穿透水晶球，折射出点点金光，温暖地照亮了四周的微暗空间。水晶球内部自然地呈现出一个以 {嫦娥奔月} 为主题的迷你立体世界，细腻精美而梦幻的3D景观，人物与物体皆是可爱的Q版造型，精致而美观，彼此之间充满灵动的情感互动。整体氛围充满了东亚奇幻色彩，细节极为丰富，呈现出魔幻现实主义般的奇妙质感。整个场景如诗如梦，华美而典雅，散发着温馨柔和的光芒，仿佛在温暖的光影中被赋予了生命。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "怀旧动漫风格电影海报",
@@ -2227,7 +3003,10 @@
         "prompt": "{The Lord of the Rings} 风格的动漫电影海报，动漫画风为《恶魔高中 DXD（High School DXD）》风格。海报上可见明显的折痕痕迹，因长时间反复折叠，造成部分区域出现褶皱处的物理性损伤和擦痕，颜色也在某些地方出现了褪色。表面遍布无规律的折痕、翻折印记与划痕，这些都是在不断搬动过程中逐渐积累的微小损耗，如同熵增不可逆的过程在不断扩展。\n然而，留存在我们心中的美好记忆却始终完整无缺。当你凝视这张充满怀旧氛围的海报时，所感受到的，正是那些随时间累积、变得无比珍贵的收藏品所承载的情感本质。",
         "author": "photis (Sora)",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "社交媒体相框融合",
@@ -2235,7 +3014,10 @@
         "prompt": "根据所附照片创建一个风格化的3D Q版人物角色，准确保留人物的面部特征和服装细节。角色的左手比心（手指上方有红色爱心元素），姿势俏皮地坐在一个巨大的Instagram相框边缘，双腿悬挂在框外。相框顶部显示用户名『Beauty』，四周漂浮着社交媒体图标（点赞、评论、转发）。",
         "author": "@dotey",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "云彩艺术",
@@ -2243,7 +3025,10 @@
         "prompt": "生成一张照片：捕捉了白天的场景，天空中散落的云彩组成了 [主体/物体] 的形状，位于 [地点] 的上方。",
         "author": "@umesh_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "8位像素图标",
@@ -2251,7 +3036,10 @@
         "prompt": "创建一个极简主义的 8 位像素风格的 [🍔] 标志，居中放置在纯白背景上。使用有限的复古调色板，搭配像素化细节、锐利边缘和干净的块状形态。标志应简洁、具有标志性，并能在像素艺术风格中清晰识别——灵感来自经典街机游戏美学。",
         "author": "@egeberkina",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "纸艺风格 Emoji 图标",
@@ -2259,7 +3047,10 @@
         "prompt": "一个纸艺风格的\"🔥\"图标，漂浮在纯白背景上。这个表情符号由彩色剪纸手工制作而成，具有可见的纸张纹理、折痕和分层形状。它在下方投下柔和的阴影，营造出轻盈感和立体感。整体设计简洁、有趣、干净，图像居中，周围留有大量留白。使用柔和的影棚光照以突出纸张的质感与边缘。",
         "author": "@egeberkina",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "时尚杂志封面风格",
@@ -2267,7 +3058,10 @@
         "prompt": "一位美丽的女子身穿粉色旗袍，头戴精致的花饰，秀发中点缀着色彩缤纷的花朵，颈间装饰着优雅的白色蕾丝领子。她的一只手轻托着几只大型蝴蝶。整体拍摄风格呈现高清细节质感，类似时尚杂志封面设计，照片上方中央位置标有文字「FASHION DESIGN」。画面背景采用简约的纯浅灰色，以突出人物主体。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "RPG 风格角色卡片制作",
@@ -2275,7 +3069,10 @@
         "prompt": "创建一张 RPG 收藏风格的数字角色卡。角色设定为 {Programmer}，自信地站立，配有与其职业相关的工具或符号。以 3D 卡通风格呈现，采用柔和光照，展现鲜明的个性。添加技能条或属性数值，例如 [技能1 +x]、[技能2 +x]，如 Creativity +10、UI/UX +8。卡片顶部添加标题横幅，底部放置角色名牌。卡片边框应干净利落，如同真实的收藏公仔包装盒。背景需与职业主题相匹配。配色方面使用温暖的高光与符合职业特征的色调。",
         "author": "@berryxia_ai",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "Q版可爱俄罗斯套娃",
@@ -2283,7 +3080,10 @@
         "prompt": "把图片人物生成变成 Q 版可爱俄罗斯套娃🪆，大到小一共五个，放在精致的木桌上，横幅3:2比例",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "3D 全家福婚纱照",
@@ -2291,7 +3091,10 @@
         "prompt": "将照片里的转换成Q版 3D人物，父母婚礼服饰，孩子是美丽的花童。 父母，西式婚礼服饰，父亲礼服，母亲婚纱。孩子手捧鲜花。 背景是五彩鲜花做的拱门。 除了人物是3D Q版，环境其他都是写实。整体放在一个相框里。",
         "author": "@balconychy",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "3D Q版情侣水晶球",
@@ -2299,7 +3102,10 @@
         "prompt": "将附图中的人物转换成水晶球场景。整体环境：水晶球放在窗户旁桌面上，背景模糊，暖色调。阳光透过球体，洒下点点金光，照亮了周围的黑暗。水晶球内部：人物是可爱Q版3D造型，相互之间满眼的爱意。",
         "author": "@balconychy",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "微型立体场景（孙悟空三打白骨精）",
@@ -2307,7 +3113,10 @@
         "prompt": "微型立体场景呈现，运用移轴摄影的技法，呈现出Q版【孙悟空三打白骨精】场景",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "实物与手绘涂鸦创意广告",
@@ -2315,7 +3124,10 @@
         "prompt": "一则简约且富有创意的广告，设置在纯白背景上。\n一个真实的 [真实物体] 与手绘黑色墨水涂鸦相结合，线条松散而俏皮。涂鸦描绘了：[涂鸦概念及交互：以巧妙、富有想象力的方式与物体互动]。在顶部或中部加入粗体黑色 [广告文案] 文字。在底部清晰放置 [品牌标志]。视觉效果应简洁、有趣、高对比度且构思巧妙。",
         "author": "@azed_ai",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "日系双格漫画",
@@ -2323,7 +3135,10 @@
         "prompt": "创建一张日系萌系双格漫画，上下排列，主题：少女总统的工作日常。角色形象: 将上传的附件转换为日系萌系卡通女生形象的风格，保留原图所有细节，如服饰（西装）、发型（明亮的金黄色）、五官等。第一格:- 表情: 委屈巴巴，沮丧的表情，单手托腮- 文字框: \"肿么办嘛！他不跟我通话！(；´д｀)\"- 场景: 暖色调办公室，背后美国国旗，桌上放着一堆汉堡，一个复古红色转盘电话，人物在画面左边，电话在右边。第二格:- 表情: 咬牙切齿，暴怒，脸涨红- 动作: 猛拍桌子，汉堡震得跳起来- 文字泡: \"哼！关税加倍！不理我是他们的损失！( `д´ )\" - 场景: 和第一格相同，但一片狼藉。其他说明:- 文字采用简洁可爱的手写体，整体风格可爱而有趣。- 构图饱满生动，请保留足够空间用于文字显示，适当留白。- 图片比例 2:3。- 画面整体色彩鲜艳，突出卡通风格。",
         "author": "@hellokaton",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "奇幻卡通插画",
@@ -2331,7 +3146,10 @@
         "prompt": "一个卡通风格的角色，头部是一个带笑脸的电脑显示器，穿着手套和靴子，正开心地跳跃穿过一个发光的蓝色圆形传送门，背景是一片郁郁葱葱的奇幻森林景观。森林中细节丰富，有高大的树木、蘑菇、鲜花、宁静的河流、漂浮的岛屿，以及一个充满氛围的星夜天空，天空中有多个月亮。整体采用明亮鲜艳的色彩搭配柔和光效，风格为奇幻插画风。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "手绘信息图卡片（IP版）",
@@ -2339,7 +3157,10 @@
         "prompt": "创作一张手绘风格的信息图卡片，比例为9:16竖版。卡片主题鲜明，背景为带有纸质肌理的米色或米白色，整体设计体现质朴、亲切的手绘美感。卡片上方以红黑相间、对比鲜明的大号毛笔草书字体突出标题，吸引视觉焦点。文字内容均采用中文草书，整体布局分为2至4个清晰的小节，每节以简短、精炼的中文短语表达核心要点。字体保持草书流畅的韵律感，既清晰可读又富有艺术气息。周边适当留白。卡片中点缀简单、有趣的手绘插画或图标，例如人物或象征符号，以增强视觉吸引力，引发读者思考与共鸣。整体布局注意视觉平衡，预留足够的空白空间，确保画面简洁明了，易于阅读和理解。\"做 IP 是长期复利坚持每日更新，肯定会有结果，因为 99% 都坚持不了的！\"",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "柔和风格3D广告",
@@ -2347,7 +3168,10 @@
         "prompt": "一个柔和的3D卡通风格[品牌产品]雕塑，由光滑的粘土般纹理和鲜艳的柔和色彩制成，放置在简约的等距场景中，该场景与产品特性相得益彰，构图简洁，光线柔和，阴影微妙，产品徽标和三个词的口号清晰显示在下方。",
         "author": "@op7418",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "极简主义3D插画",
@@ -2355,7 +3179,10 @@
         "prompt": "画一个马桶：## 艺术风格简介：极简主义3D插画（Minimalist 3D Illustration）### 🎨 视觉元素（Visual Elements）#### 🟢 造型语言（Shape Language）- 圆润的边缘、平滑柔和的外形，采用简化几何造型。#### 🎨 色彩（Colors）- **主色调：** 柔和米色、浅灰色、暖橙色。- **强调色：** 暖橙色用于焦点元素。- **明暗处理：** 柔和渐变，平滑过渡，避免强烈的阴影和高光。#### 💡 光照（Lighting）- **类型：** 柔和、漫反射光照。- **光源方向：** 上方稍偏右。- **阴影风格：** 微妙且漫射，无锐利或高对比度的阴影。#### 🧱 材质（Materials）- **表面纹理：** 哑光、平滑的表面，带有微妙的明暗变化。- **反射性：** 低或无，避免明显的光泽。#### 🖼️ 构图（Composition）- **对象呈现：** 单一、居中的物体，周围留出大量负空间。- **视角：** 轻微倾斜视角，呈现适度的三维感，但无明显的景深效果。- **背景：** 纯色、低饱和度，与主体协调且不干扰视线。#### ✒️ 字体排版（Typography）- **字体风格：** 极简、无衬线字体。- **文字位置：** 左下角，尺寸小巧且不突出。- **字体颜色：** 灰色，与背景形成低对比度。#### 🖥️ 渲染风格（Rendering Style）- **技术手法：** 3D渲染，采用简化的低多边形风格。- **细节程度：** 中等细节，以形状和色彩为主，避免复杂纹理和细节。### 🎯 风格目标（Purpose）> 创建干净、美观的视觉效果，强调简洁、亲和和现代感。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "毛茸茸emoji物体",
@@ -2363,7 +3190,10 @@
         "prompt": "将一个简单平面的矢量图标 [🎃] 转化为柔软、立体、毛茸茸的可爱物体。整体造型被浓密的毛发完全覆盖，毛发质感极其真实，带有柔和的阴影。物体居中悬浮于干净的浅灰色背景中，轻盈漂浮。整体风格超现实，富有触感和现代感，带来舒适和俏皮的视觉感受。采用摄影棚级灯光，高分辨率渲染，比例为1:1。",
         "author": "@gizakdag",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "全家福婚纱照Q版转换",
@@ -2371,7 +3201,10 @@
         "prompt": "将照片里的转换成Q版 3D人物，父母婚礼服饰，孩子是美丽的花童。父母，西式婚礼服饰，父亲礼服，母亲婚纱。孩子手捧鲜花。背景是五彩鲜花做的拱门。除了人物是3D Q版，环境其他都是写实。整体放在一个相框里。",
         "author": "@balconychy",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "《泰坦尼克号》模仿",
@@ -2379,7 +3212,10 @@
         "prompt": "将附图中的人物转换成可爱Q版3D造型\n场景：在豪华游轮最顶尖的船头，船头是尖的。\n男士带着女士站在泰坦尼克号船头，男士双手搂着女士的腰，女士双臂伸展穿着连衣裙，迎着风，脸上洋溢着自由与畅快。\n此时天色呈现出黄昏的暖色调，大海在船下延展。\n除了人物用Q版3D造型以外，其他环境都是实物。",
         "author": "@balconychy",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "折叠式纸雕立体绘本",
@@ -2387,7 +3223,10 @@
         "prompt": "多层折叠式纸雕立体绘本，放在一张书桌上，背景纯净突出主题，绘本呈现出立体翻页书般的风格，比例为3:2横版。翻开的书页呈现【魔童版哪吒大战敖丙】的场景，所有元素皆可精细折叠组合，呈现出逼真细腻的纸张折叠质感；构图统一采用正面视角，整体视觉风格梦幻唯美，色彩缤纷绚丽，充满奇幻而生动的故事氛围。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "动漫贴纸集合",
@@ -2395,7 +3234,10 @@
         "prompt": "创建一套动漫风格的贴纸集合，包含多个不同表情和姿势的卡通角色，每个贴纸都有白色边框，色彩鲜艳，风格统一。",
         "author": "@richardchang",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "35mm胶片风格飞岛",
@@ -2403,7 +3245,10 @@
         "prompt": "35 毫米胶片风格的照片：莫斯科漂浮在天空中的飞行岛屿上。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "名画人物OOTD",
@@ -2411,7 +3256,10 @@
         "prompt": "为图片人物生成不同职业风的OOTD，时尚穿搭和配饰，和人物色系一致的纯色背景，Q版 3d，c4d渲染，保持人脸特征，姿势都要保持一致，人物的比例腿很修长。构图：9:16。顶部文字：OOTD，左侧为人物ootd q版形象，右侧为穿搭的单件展示。先来第一个职业：时尚设计师",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "扁平贴纸设计",
@@ -2419,7 +3267,10 @@
         "prompt": "把这张照片设计成一个极简扁平插画风格的Q版贴纸，厚白边，保留人物特征，风格要可爱一些，人物要超出圆形区域边框，圆形区域要为纯色不要3d感，透明背景。",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "Q版表情包制作",
@@ -2427,7 +3278,10 @@
         "prompt": "创作一套全新的 chibi sticker，共六个独特姿势，以用户形象为主角：\n1. 双手比出剪刀手，俏皮地眨眼；\n2. 泪眼汪汪、嘴唇微微颤动，呈现可爱哭泣的表情；\n3. 张开双臂，做出热情的大大拥抱姿势；\n4. 侧卧入睡，靠着迷你枕头，带着甜甜的微笑；\n5. 自信满满地向前方伸手指，周围点缀闪亮特效；\n6. 手势飞吻，周围飘散出爱心表情。\n保留 chibi 美学风格：夸张有神的大眼睛、柔和的面部线条、活泼俏皮的短款黑色发型、配以大胆领口设计的白色服饰，背景使用充满活力的红色，并搭配星星或彩色纸屑元素进行装饰。周边适当留白。\nAspect ratio: 9:16",
         "author": "@dotey",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "名画人物麦片广告",
@@ -2435,7 +3289,10 @@
         "prompt": "《大师麦片》：根据我上传的照片的人物特征判断，为他生成一个符合他特质的燕麦片搭配（比如蔬菜、水果、酸奶、粗粮等等）和包装设计，然后生成他作为麦片包装盒封面人物 加 相应麦片搭配的广告封面，人物要保持特征、可爱Q版3d、c4d渲染风格，麦片所放置的地方的风格也要符合设定，比如放在厨房、超市 极简主义的设计台上等等，先做好设定，再生成图像。",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "极简主义3D插画（JSON配置版）",
@@ -2443,7 +3300,10 @@
         "prompt": "使用以下 JSON 配置文件生成一个马桶：\n{\n  \"art_style_profile\": {\n    \"style_name\": \"Minimalist 3D Illustration\",\n    \"visual_elements\": {\n      \"shape_language\": \"Rounded edges, smooth and soft forms with simplified geometry\",\n      \"colors\": {\n        \"primary_palette\": [\"Soft beige, light gray, warm orange\"],\n        \"accent_colors\": [\"Warm orange for focal elements\"],\n        \"shading\": \"Soft gradients with smooth transitions, avoiding harsh shadows or highlights\"\n      },\n      \"lighting\": {\n        \"type\": \"Soft, diffused lighting\",\n        \"source_direction\": \"Above and slightly to the right\",\n        \"shadow_style\": \"Subtle and diffused, no sharp or high-contrast shadows\"\n      },\n      \"materials\": {\n        \"surface_texture\": \"Matte, smooth surfaces with subtle shading\",\n        \"reflectivity\": \"Low to none, avoiding glossiness\"\n      },\n      \"composition\": {\n        \"object_presentation\": \"Single, central object displayed in isolation with ample negative space\",\n        \"perspective\": \"Slightly angled, giving a three-dimensional feel without extreme depth\",\n        \"background\": \"Solid, muted color that complements the object without distraction\"\n      },\n      \"typography\": {\n        \"font_style\": \"Minimalistic, sans-serif\",\n        \"text_placement\": \"Bottom-left corner with small, subtle text\",\n        \"color\": \"Gray, low-contrast against the background\"\n      },\n      \"rendering_style\": {\n        \"technique\": \"3D render with simplified, low-poly aesthetics\",\n        \"detail_level\": \"Medium detail, focusing on form and color over texture or intricacy\"\n      }\n    },\n    \"purpose\": \"To create clean, aesthetically pleasing visuals that emphasize simplicity, approachability, and modernity.\"\n  }\n}",
         "author": "@0xdlk",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "Funko Pop公仔制作",
@@ -2451,7 +3311,10 @@
         "prompt": "把照片中的人物变成 Funko Pop 公仔包装盒的风格，以等距视角（isometric）呈现，并在包装盒上标注标题为\"JAMES BOND\"。包装盒内展示的是照片中人物形象，旁边搭配有人物的必备物品（手枪、手表、西装、其他）同时，在包装盒旁边还应呈现该公仔本体的实物效果，采用逼真的、具有真实感的渲染风格。",
         "author": "@dotey",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "小红书封面设计",
@@ -2459,7 +3322,10 @@
         "prompt": "画图：画一个小红书封面。\n要求：\n有足够的吸引力吸引用户点击；\n字体醒目，选择有个性的字体；\n文字大小按重要度分级，体现文案的逻辑结构；\n标题是普通文字的至少2倍；\n文字段落之间留白。\n只对要强调的文字用醒目色吸引用户注意；\n背景使用吸引眼球的图案（包括不限于纸张，记事本，微信聊天窗口，选择一种）\n使用合适的图标或图片增加视觉层次，但要减少干扰。\n \n文案：重磅！ChatGPT又变强了！\n多任务处理更牛✨\n编程能力更强💪\n创造力爆表🎨\n快来试试！\n \n图像9:16比例",
         "author": "@balconychy",
         "mode": "generate",
-        "category": "工作"
+        "category": "工作",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Work"
     },
     {
         "title": "Q版角色表情包制作",
@@ -2467,7 +3333,10 @@
         "prompt": "请创作一套以 [参考图片中的角色] 为主角的Q版表情包，共9个，排列成3x3网格。\n设计要求：\n- 透明背景。\n- 1:1正方形构图。\n- 统一的Q版吉卜力卡通风格，色彩鲜艳。\n- 每个表情的动作、神态、内容各不相同，需要体现\"骚、贱、萌、抓狂\"等多样情绪，例如：翻白眼、捶地狂笑、灵魂出窍、原地石化、撒钱、干饭状态、社交恐惧发作等。可融入打工人和网络热梗元素。\n- 每个表情形象完整，无残缺。\n- 每个表情均带有统一的白色描边，呈现贴纸效果。\n- 画面中无多余、分离的元素。\n- 严格禁止出现任何文字，或确保文字内容准确无误（优先选择无文字）。",
         "author": "@leon_yuan2001",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "手办真人同框合影",
@@ -2475,7 +3344,10 @@
         "prompt": "以手机随手拍摄的日常风格，桌面上摆放着一款 【成龙】动漫手办，动作夸张帅气，装备齐全。同时，真实世界的对应人物也出现在镜头中，与手办摆出相似的姿势，形成手办与真实人物同框的有趣对比效果。整体构图和谐自然，传递温暖且富有生活气息的视觉体验。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "玩具盒中的国家立体模型",
@@ -2483,7 +3355,10 @@
         "prompt": "一张超写实的俯拍摄影作品，展示了一个米色纸板盒内的3D打印立体模型，盒盖由两只人手撑开。盒子内部展现了[国家名称]的微缩景观，包含标志性地标、地形、建筑、河流、植被以及大量微小精细的人物模型。该立体模型充满了鲜活且符合地理特征的元素，全部采用触感舒适、玩具般的风格，使用哑光3D打印纹理制作，并带有可见的打印层纹。在顶部，盒盖内侧用大号、色彩鲜艳的凸起塑料字母显示\"[国家名称]\"字样——每个字母颜色各异，均为亮色。光线温暖且具有电影感，突出了纹理和阴影，营造出一种真实感和魅力，仿佛观看者正在打开一个神奇的国家微缩版本。",
         "author": "@TheRelianceAI",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "复古CRT电脑启动屏幕",
@@ -2491,7 +3366,10 @@
         "prompt": "复古CRT电脑启动屏幕，最终显示为[形状或标志]的ASCII艺术。",
         "author": "@Gdgtify",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "二次元风格徽章",
@@ -2499,7 +3377,10 @@
         "prompt": "基于附件中的人物，生成一个二次元风格的徽章的照片，要求：\n材质：流苏\n形状：圆形\n画面主体：一只手手持徽章",
         "author": "@Alittlefatwhale",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "3D Q版中式婚礼图",
@@ -2507,7 +3388,10 @@
         "prompt": "将照片里的两个人转换成Q版 3D人物，中式古装婚礼，大红颜色，背景“囍”字剪纸风格图案。 服饰要求：写实，男士身着长袍马褂，主体为红色，上面以金色绣龙纹图案，彰显尊贵大气 ，胸前系着大红花，寓意喜庆吉祥。女士所穿是秀禾服，同样以红色为基调，饰有精美的金色花纹与凤凰刺绣，展现出典雅华丽之感 ，头上搭配花朵发饰，增添柔美温婉气质。二者皆为中式婚礼中经典着装，蕴含着对新人婚姻美满的祝福。 头饰要求： 男士：中式状元帽，主体红色，饰有金色纹样，帽顶有精致金饰，尽显传统儒雅庄重。 女士：凤冠造型，以红色花朵为中心，搭配金色立体装饰与垂坠流苏，华丽富贵，古典韵味十足。",
         "author": "@balconychy",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "讽刺海报生成",
@@ -2515,7 +3399,10 @@
         "prompt": "为我生成讽刺海报：GPT 4o 狂卷，都别干图像AI了 还是送外卖吧",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "3D Q版风格转换",
@@ -2523,7 +3410,10 @@
         "prompt": "将场景中的角色转化为3D Q版风格，同时保持原本的场景布置和服装造型不变。",
         "author": "@dotey",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "3D情侣珠宝盒摆件",
@@ -2531,7 +3421,10 @@
         "prompt": "根据照片上的内容打造一款细致精美、萌趣可爱的3D渲染收藏摆件，装置在柔和粉彩色调、温馨浪漫的展示盒中。展示盒为浅奶油色搭配柔和的金色装饰，形似精致的便携珠宝盒。打开盒盖，呈现出一幕温暖浪漫的场景：两位Q版角色正甜蜜相望。盒顶雕刻着\"FOREVER TOGETHER\"（永远在一起）的字样，周围点缀着小巧精致的星星与爱心图案。盒内站着照片上的女性，手中捧着一束小巧的白色花束。她的身旁是她的伴侣，照片上的男性。两人都拥有大而闪亮、充满表现力的眼睛，以及柔和、温暖的微笑，传递出浓浓的爱意和迷人的气质。他们身后有一扇圆形窗户，透过窗户能看到阳光明媚的中国古典小镇天际线和轻柔飘浮的云朵。盒内以温暖的柔和光线进行照明，背景中漂浮着花瓣点缀气氛。整个展示盒和角色的色调优雅和谐，营造出一个奢华而梦幻的迷你纪念品场景。尺寸：9:16",
         "author": "@dotey",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "讽刺漫画海报",
@@ -2539,7 +3432,10 @@
         "prompt": "一幅讽刺漫画风格的插画，采用复古美式漫画风格，背景是一个多层货架，货架上都是一样的红色棒球帽，帽子正面印有大字标语\"MAKE AMERICA GREAT AGAIN\"，帽侧贴着白色标签写着\"MADE IN CHINA\"，特写视角聚焦其中一顶红色棒球帽。画面下方有价格牌，原价\"$50.00\"被粗黑线X划掉，改为\"$77.00\"，色调为怀旧的土黄与暗红色调，阴影处理带有90年代复古印刷质感。整体构图风格夸张讽刺，具讽刺政治消费主义的意味。",
         "author": "@dotey",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "乐高人偶收藏展示",
@@ -2547,7 +3443,10 @@
         "prompt": "根据我上传的照片，生成一张纵向比例的照片，使用以下提示词：经典乐高人偶风格，一个微缩场景 —— 一只动物站在我身旁。这只动物的配色与我相匹配。请根据你对我的理解来创造这只动物（你可以选择任何你认为适合我的动物，不论是真实存在的，还是超现实的、幻想的，只要你觉得符合我的气质即可）。整个场景设定在一个透明玻璃立方体内，布景极简。微缩场景的底座是哑光黑色，配以银色装饰，风格简约且时尚。底座上有一块优雅雕刻的标签牌，字体为精致的衬线体，上面写着该动物的名称。底部设计中还巧妙融入了类似自然历史博物馆展示的生物学分类信息，以精细蚀刻的方式呈现。整体构图像是一件高端收藏艺术品：精心打造、策展般呈现、灯光细致。构图重在平衡。背景为渐变色，从深色到浅色过渡（颜色基于主色调进行选择）。",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "证件照",
@@ -2555,7 +3454,10 @@
         "prompt": "截取图片人像头部，帮我做成 2 寸证件照，要求： 1、白底 2、职业正装 3、正脸 4、完全保持人物面部特征一致，仅改变姿态与构图，面部依旧保留原有神态，只在角度和光线中体现变化，局部捕捉颧骨、眉毛、眼神、鼻子、嘴唇的细节 5、保留面部皮肤轻微瑕疵，不要过度磨皮",
         "author": "LinuxDO@synbio",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "个性化房间设计",
@@ -2563,7 +3465,10 @@
         "prompt": "为我生成我的房间设计（床、书架、沙发、绿植、电脑桌和电脑），墙上挂着绘画，窗外是城市夜景。可爱 3d 风格，c4d 渲染，轴测图。",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     },
     {
         "title": "角色穿越传送门",
@@ -2571,7 +3476,10 @@
         "prompt": "照片中的角色的 3D Q 版形象穿过传送门，牵着观众的手，在将观众拉向前时动态地回头一看。传送门外的背景是观众的现实世界，一个典型的程序员的书房，有书桌，显示器和笔记本电脑，传送门内是角色所处的3D Q 版世界，细节可以参考照片，整体呈蓝色调，和现实世界形成鲜明对比。传送门散发着神秘的蓝色和紫色色调，是两个世界之间的完美椭圆形框架处在画面中间。从第三人称视角拍摄的摄像机角度，显示观看者的手被拉入角色世界。2：3 的宽高比。",
         "author": "@dotey",
         "mode": "edit",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "键盘ESC键帽微型立体模型",
@@ -2579,7 +3487,10 @@
         "prompt": "一个超写实的等距视角 3D 渲染图，展示了一个微型电脑工作空间，置于一个半透明的机械键盘键帽内，键帽特别放置在一块真实哑光表面的机械键盘的 ESC 键上。键帽内部，一个穿着舒适、有纹理连帽衫的小人坐在现代人体工学椅上，正专注地面对一块发光的超写实电脑屏幕工作。整个空间布满了逼真的微型科技配件：真实材质的台灯、带有反射效果的显示器、微小的扬声器格栅、缠绕的电缆以及陶瓷杯子。场景底部由土壤、岩石和苔藓构成，拥有照片级的材质质感和自然瑕疵。键帽内的光照模拟清晨自然阳光，投下柔和阴影与温暖光调；而键帽外部则受周围键盘环境的冷色调反射影响。\"ESC\"字样以微弱的磨砂玻璃效果蚀刻在半透明键帽顶部——根据视角不同，仅隐约可见。周围的按键如 F1、Q、Shift 和 CTRL均清晰可见，拥有真实材质纹理与光照。整体画面仿佛由高端手机相机拍摄，具备浅景深、完美白平衡与电影感细节。",
         "author": "@egeberkina",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "创意丝绸宇宙",
@@ -2587,7 +3498,10 @@
         "prompt": "将 {❄️} 变成一个柔软的 3D 丝绸质感物体。整个物体表面包裹着顺滑流动的丝绸面料，带有超现实的褶皱细节、柔和的高光与阴影。该物体轻轻漂浮在干净的浅灰色背景中央，营造出轻盈优雅的氛围。整体风格超现实、触感十足且现代，传递出舒适与精致趣味的感觉。工作室灯光，高分辨率渲染。",
         "author": "@ZHO_ZHO_ZHO",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "奇幻水下场景冰棒",
@@ -2595,7 +3509,10 @@
         "prompt": "倾斜的第一人称视角拍摄，一只手握着一支超现实的冰棒。冰棒有着透明的蓝色外壳，里面展现了一个水下场景：一个小潜水员、几条小鱼和漂浮的气泡，还有翻滚的海浪，一根绿色的冰棒棍贯穿中心。冰棒略微融化，底部是一根木棍，手正握着这根木棍。背景是柔焦的纽约街景，采用高端产品摄影风格。",
         "author": "@madpencil_",
         "mode": "generate",
-        "category": "有趣"
+        "category": "有趣",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Fun"
     },
     {
         "title": "拍立得照片出框效果",
@@ -2603,6 +3520,9 @@
         "prompt": "将场景中的角色转化为3D Q版风格，放在一张拍立得照片上，相纸被一只手拿着，照片中的角色正从拍立得照片中走出，呈现出突破二维相片边框、进入二维现实空间的视觉效果。",
         "author": "@dotey",
         "mode": "edit",
-        "category": "生活"
+        "category": "生活",
+        "title_en": "",
+        "prompt_en": "",
+        "category_en": "Life"
     }
 ]
