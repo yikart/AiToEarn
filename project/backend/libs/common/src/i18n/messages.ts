@@ -130,7 +130,10 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Media group not found',
     'zh-CN': '媒体分组未找到',
   },
-
+  [ResponseCode.MediaGroupDefaultNotAllowed]: {
+    'en-US': 'Default media group cannot be deleted',
+    'zh-CN': '默认媒体组不能删除',
+  },
   // 12800 (material)
   [ResponseCode.MaterialNotFound]: {
     'en-US': 'Material not found',
