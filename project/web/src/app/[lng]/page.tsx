@@ -848,9 +848,23 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   }, 1500)
                 }
                 // action: draft - 跳转草稿箱
-                else if (action === 'draft' || action === 'saveDarft') {
+                else if (action === 'draft') {
                   setTimeout(() => {
-                    router.push(`/${lng}/accounts`)
+                    router.push(`/${lng}/cgmaterial`)
+                  }, 1500)
+                }
+                // action: saveDraft - 保存草稿再跳转草稿箱
+                else if (action === 'saveDraft') {
+                  // 保存草稿
+                  const draftData = {
+                    title: taskData.title || '',
+                    description: taskData.description || '',
+                    tags: JSON.stringify(taskData.tags || []),
+                    medias: JSON.stringify(taskData.medias || []),
+                  }
+                  localStorage.setItem('draft', JSON.stringify(draftData))
+                  setTimeout(() => {
+                    router.push(`/${lng}/cgmaterial`)
                   }, 1500)
                 }
                 // action: publish - 选中指定平台账户并填充内容
@@ -933,7 +947,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   })
                 }
                 // action: platformNotSupported - 平台不支持
-                else if (action === 'platformNotSupported') {
+                else if (action === 'platformNotSupported' || action === 'navigateToPublish') {
                   message.info(t('aiGeneration.channelNotSupported' as any) || '该平台暂不支持直接发布')
                   setTimeout(() => {
                     const queryParams = new URLSearchParams({
