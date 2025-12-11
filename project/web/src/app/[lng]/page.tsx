@@ -12,6 +12,7 @@ import {
   CloseCircleOutlined,
   StopOutlined,
   FieldTimeOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons'
 
 
@@ -26,6 +27,10 @@ import ReactMarkdown from 'react-markdown'
 import { QRCode } from 'react-qrcode-logo'
 
 import { message, Modal, Form, Input, Button } from 'antd'
+import { usePluginStore } from '@/store/plugin'
+import { PluginStatus } from '@/store/plugin/types/baseTypes'
+import type { PluginPublishItem } from '@/store/plugin/store'
+import { useAccountStore } from '@/store/account'
 
 
 // Import SVG icons
@@ -182,8 +187,19 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // AI generation related states
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [taskId, setTaskId] = useState('')
-  const [sessionId, setSessionId] = useState('')
+  // 从 localStorage 恢复 taskId，确保页面跳转后不丢失
+  const [taskId, setTaskId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('aiAgentTaskId') || ''
+    }
+    return ''
+  })
+  const [sessionId, setSessionId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('aiAgentSessionId') || ''
+    }
+    return ''
+  })
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
@@ -622,8 +638,13 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       return
     }
     
+    // 清除 state 和 localStorage 中的 taskId
     setTaskId('')
     setSessionId('')
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('aiAgentTaskId')
+      localStorage.removeItem('aiAgentSessionId')
+    }
     setMarkdownMessages([])
     setStreamingText('')
     streamingTextRef.current = ''
@@ -661,6 +682,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         setMarkdownMessages([])
         setSessionId('')
         setTaskId('')
+        // 清除 localStorage 中的旧 taskId
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('aiAgentTaskId')
+          localStorage.removeItem('aiAgentSessionId')
+        }
       }
       
       setStreamingText('')
@@ -727,8 +753,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               console.log('[UI] Continuing conversation with taskId:', receivedTaskId)
             }
             
+            // 保存到 state 和 localStorage，确保页面跳转后不丢失
             setTaskId(receivedTaskId)
             setSessionId(receivedTaskId)
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('aiAgentTaskId', receivedTaskId)
+              localStorage.setItem('aiAgentSessionId', receivedTaskId)
+            }
+            
             // 清空流式文本（新消息开始）
             streamingTextRef.current = ''
             setStreamingText('')
@@ -784,6 +816,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           // Save sessionId
           if (sseMessage.sessionId) {
             setSessionId(sseMessage.sessionId)
+            // 同步到 localStorage
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('aiAgentSessionId', sseMessage.sessionId)
+            }
           }
 
           // Handle different message types
@@ -1053,21 +1089,164 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     },
                   })
                 }
-                // action: platformNotSupported - 平台不支持
+                // action: platformNotSupported - 平台不支持，使用插件发布
                 else if (action === 'platformNotSupported' || action === 'navigateToPublish') {
-                  message.info(t('aiGeneration.channelNotSupported' as any) || '该平台暂不支持直接发布')
-                  setTimeout(() => {
-                    const queryParams = new URLSearchParams({
-                      aiGenerated: 'true',
-                      taskId: taskData.taskId || '',
-                      title: taskData.title || '',
-                      description: taskData.description || '',
-                      tags: JSON.stringify(taskData.tags || []),
-                      medias: JSON.stringify(taskData.medias || []),
-                    })
+                  // 检查插件状态
+                  const pluginStatus = usePluginStore.getState().status
+                  const isPluginReady = pluginStatus === PluginStatus.READY
+                  
+                  if (!isPluginReady) {
+                    // 插件未准备就绪，显示引导授权插件
+                    message.warning('该平台需要使用插件发布，请先授权插件')
                     
-                    router.push(`/${lng}/accounts?${queryParams.toString()}`)
-                  }, 1500)
+                    // 延迟显示引导，确保页面已加载
+                    setTimeout(() => {
+                      const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+                      if (!pluginButton) {
+                        console.warn('Plugin button not found')
+                        return
+                      }
+
+                      const driverObj = driver({
+                        showProgress: false,
+                        showButtons: ['next'],
+                        nextBtnText: '知道了',
+                        doneBtnText: '知道了',
+                        popoverOffset: 10,
+                        stagePadding: 4,
+                        stageRadius: 12,
+                        allowClose: true,
+                        smoothScroll: true,
+                        steps: [
+                          {
+                            element: '[data-driver-target="plugin-button"]',
+                            popover: {
+                              title: '需要授权插件',
+                              description: '该平台需要使用插件发布，请点击这里授权插件',
+                              side: 'bottom',
+                              align: 'start',
+                              onPopoverRender: () => {
+                                setTimeout(() => {
+                                  const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                                  const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                                  const btn = nextBtn || doneBtn
+                                  if (btn) {
+                                    btn.textContent = '知道了'
+                                    const handleClick = (e: MouseEvent) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      driverObj.destroy()
+                                      btn.removeEventListener('click', handleClick)
+                                    }
+                                    btn.addEventListener('click', handleClick)
+                                  }
+                                }, 50)
+                              },
+                            },
+                          },
+                        ],
+                        onNextClick: () => {
+                          driverObj.destroy()
+                          return false
+                        },
+                      })
+
+                      driverObj.drive()
+                    }, 1500)
+                  } else {
+                    // 插件已准备就绪，直接调用插件发布方法
+                    try {
+                      // 获取账号列表
+                      const accountGroupList = useAccountStore.getState().accountGroupList
+                      const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+                        return [...acc, ...group.children]
+                      }, [])
+                      
+                      // 根据 taskData 中的平台类型查找账号
+                      const platform = taskData.platform
+                      const targetAccounts = allAccounts.filter(account => account.type === platform)
+                      
+                      if (targetAccounts.length === 0) {
+                        message.warning('未找到该平台的账号，请先添加账号')
+                        return
+                      }
+                      
+                      // 构建发布数据
+                      const medias = taskData.medias || []
+                      const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+                      const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+                      // 创建空的 File 对象作为占位符
+                      const createEmptyFile = () => {
+                        return new File([], '', { type: 'image/jpeg' })
+                      }
+                      
+                      const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+                        id: '',
+                        imgPath: m.url,
+                        ossUrl: m.url,
+                        size: 0,
+                        file: createEmptyFile(),
+                        imgUrl: m.url,
+                        filename: '',
+                        width: 0,
+                        height: 0,
+                      }))
+                      
+                      // 为每个账号创建发布项
+                      const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
+                        account,
+                        params: {
+                          title: taskData.title || '',
+                          des: taskData.description || '',
+                          topics: taskData.tags || [],
+                          video: video ? {
+                            size: 0,
+                            file: new Blob(),
+                            videoUrl: video.url,
+                            ossUrl: video.url,
+                            filename: '',
+                            width: 0,
+                            height: 0,
+                            duration: 0,
+                            cover: {
+                              id: '',
+                              imgPath: video.coverUrl || '',
+                              ossUrl: video.coverUrl,
+                              size: 0,
+                              file: createEmptyFile(),
+                              imgUrl: video.coverUrl || '',
+                              filename: '',
+                              width: 0,
+                              height: 0,
+                            },
+                          } : undefined,
+                          images: images.length > 0 ? images : undefined,
+                          option: {},
+                        },
+                      }))
+                      
+                      // 创建平台任务ID映射
+                      const platformTaskIdMap = new Map<string, string>()
+                      pluginPublishItems.forEach((item) => {
+                        const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+                        platformTaskIdMap.set(item.account.id, requestId)
+                      })
+                      
+                      // 调用插件发布方法
+                      usePluginStore.getState().executePluginPublish({
+                        items: pluginPublishItems,
+                        platformTaskIdMap,
+                        onComplete: () => {
+                          message.success('发布任务已提交到插件')
+                        },
+                      })
+                      
+                      message.success('正在通过插件发布...')
+                    } catch (error: any) {
+                      console.error('Plugin publish error:', error)
+                      message.error(`插件发布失败: ${error.message || '未知错误'}`)
+                    }
+                  }
                 }
               }
             }
@@ -1297,10 +1476,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 title="开启新对话"
                 disabled={isGenerating}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <line x1="12" y1="5" x2="12" y2="19"></line>
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                </svg>
+                <ReloadOutlined />
               </button>
             </div>
           )}
