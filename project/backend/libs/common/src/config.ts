@@ -45,10 +45,25 @@ export const feishuLoggerConfig = z.object({
   secret: z.string(),
 })
 
+export const mongodbLoggerConfig = z.object({
+  enable: z.boolean().default(false),
+  level: logLevel.default('fatal'),
+  db: z.string(),
+  collection: z.string().optional(),
+  storeHost: z.boolean().default(true),
+  metaKey: z.string().optional(),
+  expireAfterSeconds: z.number().optional(),
+  useUnifiedTopology: z.boolean().default(true),
+  capped: z.boolean().default(false),
+  cappedSize: z.number().optional(),
+  cappedMax: z.number().optional(),
+})
+
 export const loggerConfig = z.object({
   cloudWatch: cloudWatchLoggerConfig.optional(),
   console: consoleLoggerConfig.optional(),
   feishu: feishuLoggerConfig.optional(),
+  mongodb: mongodbLoggerConfig.optional(),
 })
 
 export const baseConfig = z.object({
