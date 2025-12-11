@@ -2,8 +2,8 @@
  * 抖音平台交互实现
  *
  * 实现策略：
- * - 点赞、收藏：使用自动化方案（避免 API 风控）
- * - 评论：使用 API 方案
+ * - 点赞、收藏、评论：统一使用自动化方案（避免 API 风控）
+ * - 评论：不支持二级评论
  */
 
 import { PlatType } from '@/app/config/platConfig'
@@ -53,42 +53,32 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   }
 
   /**
-   * 评论作品（API 方案）
-   * 评论使用 API 方案，风控相对较低
+   * 评论作品（自动化方案）
+   * 使用自动化方案避免 API 风控
+   * 注意：不支持二级评论
+   * @param params 评论参数
    */
   async commentWork(params: CommentParams): Promise<CommentResult> {
     this.checkPlugin()
 
-    const data: {
-      aweme_id: string
-      text: string
-      reply_id?: string
-    } = {
-      aweme_id: params.workId,
-      text: params.content,
-    }
-
+    // 不支持二级评论
     if (params.replyToCommentId) {
-      data.reply_id = params.replyToCommentId
+      return {
+        success: false,
+        message: '抖音评论暂不支持二级评论',
+      }
     }
 
-    const response = await window.AIToEarnPlugin!.douyinRequest<{
-      status_code: number
-      status_msg?: string
-      comment?: {
-        cid: string
-        [key: string]: any
-      }
-    }>({
-      path: '/web/api/media/aweme/comment/post/',
-      method: 'POST',
-      data,
+    const response = await window.AIToEarnPlugin!.douyinInteraction({
+      action: 'comment',
+      workId: params.workId,
+      targetState: true,
+      content: params.content,
     })
 
     return {
-      success: response.status_code === 0,
-      commentId: response.comment?.cid,
-      message: response.status_msg,
+      success: response.success,
+      message: response.message || response.error,
       rawData: response,
     }
   }
