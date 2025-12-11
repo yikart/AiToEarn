@@ -612,6 +612,22 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     }
   }
 
+  // 开启新对话
+  const handleNewConversation = () => {
+    if (isGenerating) {
+      message.warning('正在生成中，请先停止当前任务')
+      return
+    }
+    
+    setTaskId('')
+    setSessionId('')
+    setMarkdownMessages([])
+    setStreamingText('')
+    streamingTextRef.current = ''
+    setPrompt('')
+    message.success('已开启新对话')
+  }
+
   // Create AI generation task with SSE
   const handleCreateTask = async () => { 
 
@@ -633,8 +649,17 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       setCurrentTypingMsg(null)
       setDisplayedText('')
       setProgress(0)
-      setMarkdownMessages([])
-      setSessionId('')
+      
+      // 判断是否是新对话：如果没有 taskId，就是新对话，需要清空消息
+      const isNewConversation = !taskId
+      
+      if (isNewConversation) {
+        // 新对话：清空所有消息和状态
+        setMarkdownMessages([])
+        setSessionId('')
+        setTaskId('')
+      }
+      
       setStreamingText('')
       streamingTextRef.current = ''
 
@@ -651,6 +676,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         content: `📝 ${t('aiGeneration.topicPrefix' as any)}${prompt}`
       })
 
+      // 将用户消息添加到对话历史中
+      setMarkdownMessages(prev => [...prev, `👤 ${prompt}`])
+
       // Set initial progress to 10%
       setProgress(10)
 
@@ -663,22 +691,42 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       // Dynamic import API
       const { agentApi } = await import('@/api/agent')
 
+      // 构建请求参数：如果有 taskId，就传递它继续对话
+      const requestParams: any = {
+        prompt: fullPrompt,
+        includePartialMessages: true // 使用流式消息
+      }
+      
+      // 如果有 taskId，就传递它继续当前对话
+      if (taskId) {
+        requestParams.taskId = taskId
+        console.log('[UI] Continuing conversation with taskId:', taskId)
+      } else {
+        console.log('[UI] Creating new conversation')
+      }
+
       // Create task with SSE (使用包含图片链接的完整提示词)
       await agentApi.createTaskWithSSE(
-        { 
-          prompt: fullPrompt,
-          includePartialMessages: true // 使用流式消息
-        },
+        requestParams,
         // onMessage callback
         (sseMessage: any) => {
           console.log('SSE Message:', sseMessage)
 
-          // 处理 init 消息 - 保存 taskId 并清空流式文本（新消息开始）
+          // 处理 init 消息 - 保存 taskId
           if (sseMessage.type === 'init' && sseMessage.taskId) {
             console.log('[UI] Received taskId:', sseMessage.taskId)
-            setTaskId(sseMessage.taskId)
-            setSessionId(sseMessage.taskId)
-            // 清空之前的流式文本 - 这是一个全新的消息
+            const receivedTaskId = sseMessage.taskId
+            
+            // 如果没有当前 taskId，说明是新对话
+            if (!taskId) {
+              console.log('[UI] New conversation started with taskId:', receivedTaskId)
+            } else {
+              console.log('[UI] Continuing conversation with taskId:', receivedTaskId)
+            }
+            
+            setTaskId(receivedTaskId)
+            setSessionId(receivedTaskId)
+            // 清空流式文本（新消息开始）
             streamingTextRef.current = ''
             setStreamingText('')
             return
@@ -1116,7 +1164,48 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             </div>
           </div>
           
+          {/* 对话信息和新对话按钮 */}
+          {selectedMode === 'agent' && (taskId || sessionId) && (
+            <div className={styles.conversationInfo}>
+              <span className={styles.conversationId}>
+                对话ID: {(taskId || sessionId).slice(-6)}
+              </span>
+              <button
+                className={styles.newConversationBtn}
+                onClick={handleNewConversation}
+                title="开启新对话"
+                disabled={isGenerating}
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* SSE Message Display - Visible when generating or has messages */}
+        {(isGenerating || markdownMessages.length > 0) && (
+          <div className={styles.markdownMessagesWrapper}>
+            <div 
+              ref={markdownContainerRef}
+              className={styles.markdownMessagesContainer}
+            >
+              <h3 className={styles.markdownTitle}>
+                <Image src={logo} alt="Logo" className={styles.logoAi} />
+                 AI 生成过程 {isGenerating && <LoadingDots />}
+              </h3>
+              <div className={styles.markdownContent}>
+                <ReactMarkdown>
+                  {markdownMessages.length > 0 
+                    ? markdownMessages.join('\n\n') 
+                    : '等待 AI 响应...'}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* AI Generation Input */}
         <div className={styles.aiGenerationWrapper}>
@@ -1227,31 +1316,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             </button>
           </div>
           </div>
-
-         
-          {/* SSE Message Display - Visible when generating or has messages */}
-          {(isGenerating || markdownMessages.length > 0) && (
-            <div className={styles.markdownMessagesWrapper}>
-              <div 
-                ref={markdownContainerRef}
-                className={styles.markdownMessagesContainer}
-              >
-                <h3 className={styles.markdownTitle}>
-                  <Image src={logo} alt="Logo" className={styles.logoAi} />
-                   AI 生成过程 {isGenerating && <LoadingDots />}
-                </h3>
-                <div className={styles.markdownContent}>
-                  <ReactMarkdown>
-                    {markdownMessages.length > 0 
-                      ? markdownMessages.join('\n\n') 
-                      : '等待 AI 响应...'}
-                  </ReactMarkdown>
-                </div>
-              </div>
-            </div>
-          )}
-
-          
         </div>
 
         {/* <p

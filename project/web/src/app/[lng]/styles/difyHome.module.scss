@@ -2805,6 +2805,96 @@
   }
 }
 
+.conversationInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  height: 80px; // 固定高度，与 modeItem 一致
+  flex-shrink: 0; // 不收缩
+  background: linear-gradient(135deg, rgba(166, 106, 228, 0.6) 0%, rgba(139, 90, 214, 0.6) 100%);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+    gap: 8px;
+    height: auto;
+    min-height: 60px;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+  }
+}
+
+.conversationId {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 11px;
+    max-width: 150px;
+  }
+}
+
+.newConversationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+
+  @media (max-width: 768px) {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
 .modeArrow {
   position: absolute;
   right: 20px;
@@ -3413,14 +3503,12 @@
 // Markdown messages wrapper
 .markdownMessagesWrapper {
   width: 100%;
-  margin-top: 16px;
 }
 
 .markdownMessagesContainer {
   padding: 20px;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(166, 106, 228, 0.2);
-  border-radius: 12px;
+  border-bottom: 1px solid rgba(166, 106, 228, 0.2);
   box-shadow: 0 4px 16px rgba(166, 106, 228, 0.1);
   max-height: 500px;
   overflow-y: auto;
