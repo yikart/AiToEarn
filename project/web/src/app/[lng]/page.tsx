@@ -581,8 +581,41 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     }
   }
 
+  // Stop AI generation task
+  const handleStopTask = async () => {
+    if (!taskId) {
+      console.warn('No taskId to stop')
+      return
+    }
+
+    try {
+      console.log('[UI] Stopping task:', taskId)
+      const { agentApi } = await import('@/api/agent')
+      await agentApi.stopTask(taskId)
+      
+      // 设置为非生成状态，但不清空已生成的内容
+      setIsGenerating(false)
+      setProgress(0)
+      
+      // 添加停止消息提示
+      addMessageToQueue({
+        type: 'status',
+        content: t('aiGeneration.status.cancelled' as any),
+        status: 'CANCELLED'
+      })
+      
+      message.info(t('aiGeneration.taskStopped' as any) || '已停止生成')
+    } catch (error: any) {
+      console.error('Stop task error:', error)
+      message.error(`停止任务失败: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      setIsGenerating(false)
+    }
+  }
+
   // Create AI generation task with SSE
   const handleCreateTask = async () => { 
+
+
     if (!prompt.trim()) {
       return
     }
@@ -640,11 +673,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         (sseMessage: any) => {
           console.log('SSE Message:', sseMessage)
 
-          // 处理 init 消息 - 保存 taskId
+          // 处理 init 消息 - 保存 taskId 并清空流式文本（新消息开始）
           if (sseMessage.type === 'init' && sseMessage.taskId) {
             console.log('[UI] Received taskId:', sseMessage.taskId)
             setTaskId(sseMessage.taskId)
             setSessionId(sseMessage.taskId)
+            // 清空之前的流式文本 - 这是一个全新的消息
+            streamingTextRef.current = ''
+            setStreamingText('')
             return
           }
 
@@ -661,11 +697,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
 
             console.log('[UI] Stream event:', event.type)
 
-            // 处理消息开始
+            // 处理消息开始 - 不清空文本，因为同一个消息里可能多次出现 message_start
             if (event.type === 'message_start') {
-              // 清空之前的流式文本
-              streamingTextRef.current = ''
-              setStreamingText('')
+              console.log('[UI] Message start within same conversation')
             }
             // 处理内容块增量更新
             else if (event.type === 'content_block_delta' && event.delta) {
@@ -736,72 +770,136 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             setProgress(100)
             setIsGenerating(false)
 
-            // 根据 subtype 做不同处理
+            // 根据 type 和 action 做不同处理
             if (resultMsg.result) {
               const taskData = resultMsg.result
-              const subtype = resultMsg.subtype
+              const resultType = taskData.type
+              const action = taskData.action
 
-              // 处理不同的 subtype
-              if (subtype === 'success') {
-                // 跳转到发布页
-                setTimeout(() => {
-                  const queryParams = new URLSearchParams({
-                    aiGenerated: 'true',
-                    taskId: taskData.taskId || '',
-                    title: taskData.title || '',
-                    description: taskData.description || '',
-                    tags: JSON.stringify(taskData.tags || []),
-                    medias: JSON.stringify(taskData.medias || []),
+              // 处理 imageOnly 或 videoOnly - 不做跳转操作
+              if (resultType === 'imageOnly' || resultType === 'videoOnly' || resultType === 'mediaOnly') {
+                console.log('[UI] Result type is imageOnly/videoOnly, no navigation needed')
+                return
+              }
+
+              // 处理 fullContent 类型
+              if (resultType === 'fullContent') {
+                // 如果没有 action，默认跳转到发布页面
+                if (!action) {
+                  setTimeout(() => {
+                    const queryParams = new URLSearchParams({
+                      aiGenerated: 'true',
+                      taskId: taskData.taskId || '',
+                      title: taskData.title || '',
+                      description: taskData.description || '',
+                      tags: JSON.stringify(taskData.tags || []),
+                      medias: JSON.stringify(taskData.medias || []),
+                    })
+                    
+                    router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                  }, 1500)
+                }
+                // action: draft - 跳转草稿箱
+                else if (action === 'draft' || action === 'saveDarft') {
+                  setTimeout(() => {
+                    router.push(`/${lng}/accounts`)
+                  }, 1500)
+                }
+                // action: publish - 选中指定平台账户并填充内容
+                else if (action === 'publish') {
+                  setTimeout(() => {
+                    const queryParams = new URLSearchParams({
+                      aiGenerated: 'true',
+                      taskId: taskData.taskId || '',
+                      title: taskData.title || '',
+                      description: taskData.description || '',
+                      tags: JSON.stringify(taskData.tags || []),
+                      medias: JSON.stringify(taskData.medias || []),
+                      accountType: JSON.stringify(taskData.accountType || []), // 传递账户类型
+                    })
+                    
+                    router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                  }, 1500)
+                }
+                // action: createChannel - 用户没有频道，弹出提示并引导授权
+                else if (action === 'createChannel') {
+                  const platform = taskData.platform
+                  const platformNames: Record<string, string> = {
+                    douyin: '抖音',
+                    xhs: '小红书',
+                    wxSph: '微信视频号',
+                    KWAI: '快手',
+                    youtube: 'YouTube',
+                    wxGzh: '微信公众号',
+                    bilibili: 'B站',
+                    twitter: 'Twitter',
+                    tiktok: 'TikTok',
+                    facebook: 'Facebook',
+                    instagram: 'Instagram',
+                    threads: 'Threads',
+                    pinterest: 'Pinterest',
+                    linkedin: 'LinkedIn',
+                  }
+                  
+                  const platformName = platform ? platformNames[platform] : '该平台'
+                  
+                  Modal.confirm({
+                    title: '需要添加频道',
+                    content: `检测到您还没有添加${platformName}频道，是否前往添加？`,
+                    okText: '去添加',
+                    cancelText: '取消',
+                    onOk: () => {
+                      // 跳转到账号页面，自动打开对应平台的授权
+                      router.push(`/${lng}/accounts?addChannel=${platform}`)
+                    },
                   })
+                }
+                // action: updateChannel - 更新频道授权
+                else if (action === 'updateChannel') {
+                  const platform = taskData.platform
+                  message.warning(t('aiGeneration.channelAuthExpired' as any) || '频道授权已过期')
                   
-                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
-                }, 1500)
-              }
-              else if (subtype === 'jump_draft') {
-                // 跳转到草稿页
-                setTimeout(() => {
-                  // const queryParams = new URLSearchParams({
-                  //   aiGenerated: 'true',
-                  //   taskId: taskData.taskId || '',
-                  //   title: taskData.title || '',
-                  //   description: taskData.description || '',
-                  //   tags: JSON.stringify(taskData.tags || []),
-                  //   medias: JSON.stringify(taskData.medias || []),
-                  //   draft: 'true',
-                  // })
-                  
-                  router.push(`/${lng}/accounts`)
-                }, 1500)
-              }
-              else if (subtype === 'channel_auth_required') {
-                // 频道授权 - 没有频道
-                message.warning(t('aiGeneration.channelAuthRequired' as any) || '请先添加并授权频道')
-                setTimeout(() => {
-                  router.push(`/${lng}/accounts`)
-                }, 1500)
-              }
-              else if (subtype === 'channel_auth_expired') {
-                // 频道授权过期
-                message.warning(t('aiGeneration.channelAuthExpired' as any) || '频道授权已过期，请重新授权')
-                setTimeout(() => {
-                  router.push(`/${lng}/accounts`)
-                }, 1500)
-              }
-              else if (subtype === 'channel_not_supported') {
-                // 后端不支持频道
-                message.info(t('aiGeneration.channelNotSupported' as any) || '该平台暂不支持直接发布')
-                setTimeout(() => {
-                  const queryParams = new URLSearchParams({
-                    aiGenerated: 'true',
-                    taskId: taskData.taskId || '',
-                    title: taskData.title || '',
-                    description: taskData.description || '',
-                    tags: JSON.stringify(taskData.tags || []),
-                    medias: JSON.stringify(taskData.medias || []),
+                  Modal.confirm({
+                    title: '频道授权已过期',
+                    content: '您的频道授权已过期，是否重新授权？',
+                    okText: '重新授权',
+                    cancelText: '取消',
+                    onOk: () => {
+                      router.push(`/${lng}/accounts?updateChannel=${platform}`)
+                    },
                   })
+                }
+                // action: loginChannel - 登录频道
+                else if (action === 'loginChannel') {
+                  const platform = taskData.platform
+                  message.info('需要登录频道')
                   
-                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
-                }, 1500)
+                  Modal.confirm({
+                    title: '需要登录',
+                    content: '请先登录该频道账号',
+                    okText: '去登录',
+                    cancelText: '取消',
+                    onOk: () => {
+                      router.push(`/${lng}/accounts?loginChannel=${platform}`)
+                    },
+                  })
+                }
+                // action: platformNotSupported - 平台不支持
+                else if (action === 'platformNotSupported') {
+                  message.info(t('aiGeneration.channelNotSupported' as any) || '该平台暂不支持直接发布')
+                  setTimeout(() => {
+                    const queryParams = new URLSearchParams({
+                      aiGenerated: 'true',
+                      taskId: taskData.taskId || '',
+                      title: taskData.title || '',
+                      description: taskData.description || '',
+                      tags: JSON.stringify(taskData.tags || []),
+                      medias: JSON.stringify(taskData.medias || []),
+                    })
+                    
+                    router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                  }, 1500)
+                }
               }
             }
           }
@@ -999,7 +1097,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           <div 
             className={`${styles.modeItem} ${selectedMode === 'agent' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('agent')}
-            style={{ backgroundImage: `url(${getImageUrl(jimengangent)})` }}
+            style={{ 
+              background: selectedMode === 'agent' 
+                ? 'linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%)' 
+                : 'linear-gradient(135deg, rgba(166, 106, 228, 0.8) 0%, rgba(139, 90, 214, 0.8) 100%)'
+            }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>Agent 模式</div>
@@ -1017,7 +1119,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           {/* <div 
             className={`${styles.modeItem} ${selectedMode === 'image' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('image')}
-            style={{ backgroundImage: `url(${getImageUrl(jimengshengtu)})` }}
+            style={{ 
+              background: selectedMode === 'image' 
+                ? 'linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%)' 
+                : 'linear-gradient(135deg, rgba(166, 106, 228, 0.8) 0%, rgba(139, 90, 214, 0.8) 100%)'
+            }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>图片生成</div>
@@ -1035,7 +1141,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           <div 
             className={`${styles.modeItem} ${selectedMode === 'video' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('video')}
-            style={{ backgroundImage: `url(${getImageUrl(jimengshengshipin)})` }}
+            style={{ 
+              background: selectedMode === 'video' 
+                ? 'linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%)' 
+                : 'linear-gradient(135deg, rgba(166, 106, 228, 0.8) 0%, rgba(139, 90, 214, 0.8) 100%)'
+            }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>视频生成</div>
@@ -1050,10 +1160,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             </div>
           </div> */}
           
-          <div 
+          {/* <div 
             className={`${styles.modeItem} ${selectedMode === 'draft' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('draft')}
-            style={{ backgroundImage: `url(${getImageUrl(jimengshuziren)})` }}
+            style={{ 
+              background: selectedMode === 'draft' 
+                ? 'linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%)' 
+                : 'linear-gradient(135deg, rgba(166, 106, 228, 0.8) 0%, rgba(139, 90, 214, 0.8) 100%)'
+            }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>草稿箱</div>
@@ -1071,7 +1185,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           <div 
             className={`${styles.modeItem} ${selectedMode === 'publishbatch' ? styles.modeItemActive : ''}`}
             onClick={() => setSelectedMode('publishbatch')}
-            style={{ backgroundImage: `url(${getImageUrl(jimengdongzuo)})` }}
+            style={{ 
+              background: selectedMode === 'publishbatch' 
+                ? 'linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%)' 
+                : 'linear-gradient(135deg, rgba(166, 106, 228, 0.8) 0%, rgba(139, 90, 214, 0.8) 100%)'
+            }}
           >
             <div className={styles.modeContent}>
               <div className={styles.modeTitle}>批次发布</div>
@@ -1084,7 +1202,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 </svg>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* AI Generation Input */}
@@ -1178,12 +1296,21 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             </div>
             <button 
               className={styles.scrollTopBtn}
-              onClick={handleCreateTask}
-              disabled={isGenerating || !prompt.trim() || isUploading}
+              onClick={isGenerating ? handleStopTask : handleCreateTask}
+              disabled={!isGenerating && (!prompt.trim() || isUploading)}
+              title={isGenerating ? '停止生成' : '发送消息'}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
-              </svg>
+              {isGenerating ? (
+                // 停止按钮 - 显示方块
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="6" width="12" height="12" rx="2" />
+                </svg>
+              ) : (
+                // 发送按钮 - 显示向上箭头
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
+                </svg>
+              )}
             </button>
           </div>
           </div>
@@ -1303,22 +1430,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
 
           
         </div>
-
-        {/* Mobile button */}
-        <button
-          onClick={() => {
-            router.push('/accounts')
-          }}
-          className={`${styles.heroBtn} ${styles.heroBtnMobile}`}
-          style={{ marginTop: '20px' }}
-        >
-          {t('hero.getStarted')}
-          <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-
-
 
         {/* <p
           className={styles.heroMobileLink}
