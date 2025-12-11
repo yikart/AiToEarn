@@ -21,6 +21,8 @@ export const COMMON_PROPAGATION_HEADERS = [
   'traceparent',
   'x-cloud-trace-context',
   'x-amzn-trace-id',
+  'x-client-version',
+  'x-client-type',
 ]
 
 @Injectable()

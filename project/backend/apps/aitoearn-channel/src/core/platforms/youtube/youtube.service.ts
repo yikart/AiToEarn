@@ -1,14 +1,6 @@
 import { Readable } from 'node:stream'
-/*
- * @Author: zhangwei
- * @Date: 2025-05-15 20:59:55
- * @LastEditTime: 2025-04-27 17:58:21
- * @LastEditors: zhangwei
- * @Description: youtube
- */
 import { Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
 import { AccountStatus, AccountType, NewAccount } from '@yikart/aitoearn-server-client'
 import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
@@ -581,7 +573,7 @@ export class YoutubeService extends PlatformBaseService {
 
   /**
    * 获取用户的授权信息
-   * @param userId
+   * @param taskId
    * @returns
    */
   async getAuthInfo(taskId: string) {
@@ -1031,6 +1023,7 @@ export class YoutubeService extends PlatformBaseService {
 
   /**
    * 获取子评论列表。
+   * @param accountId 父评论ID
    * @param parentId 父评论ID
    * @param id 评论ID
    * @param maxResults 最大结果数
@@ -1073,7 +1066,8 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 创建对现有评论的回复
    * @param accountId 账号ID
-   * @param snippet 元数据
+   * @param parentId 元数据
+   * @param textOriginal
    * @returns 创建结果
    */
   async insertComment(accountId: string, parentId: string, textOriginal: string) {

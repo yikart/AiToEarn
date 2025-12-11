@@ -5,7 +5,7 @@
  * @LastEditors: nevin
  * @Description: 反馈
  */
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Logger, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
@@ -16,10 +16,11 @@ import { FeedbackService } from './feedback.service'
 @ApiTags('OpenSource/InBox/Feedback')
 @Controller('feedback')
 export class FeedbackController {
+  logger = new Logger(FeedbackController.name)
   constructor(
     private readonly feedbackService: FeedbackService,
     private readonly userService: UserService,
-  ) {}
+  ) { }
 
   @ApiDoc({
     summary: 'Submit Feedback',
