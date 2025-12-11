@@ -231,8 +231,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       const driverObj = driver({
         showProgress: false,
         showButtons: ['next'],
-        nextBtnText: '知道了',
-        doneBtnText: '知道了',
+        nextBtnText: t('aiGeneration.gotIt' as any),
+        doneBtnText: t('aiGeneration.gotIt' as any),
         popoverOffset: 10,
         stagePadding: 4,
         stageRadius: 12,
@@ -242,8 +242,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           {
             element: '#ai-input-textarea',
             popover: {
-              title: '想要创作不知道如何下手？',
-              description: '一句话帮你创作',
+              title: t('aiGeneration.onboardingTitle' as any),
+              description: t('aiGeneration.onboardingDescription' as any),
               side: 'top',
               align: 'start',
               onPopoverRender: () => {
@@ -253,7 +253,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
                   const btn = nextBtn || doneBtn
                   if (btn) {
-                    btn.textContent = '知道了'
+                    btn.textContent = t('aiGeneration.gotIt' as any)
                     // 添加点击事件监听器
                     const handleClick = (e: MouseEvent) => {
                       e.preventDefault()
@@ -623,10 +623,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         status: 'CANCELLED'
       })
       
-      message.info(t('aiGeneration.taskStopped' as any) || '已停止生成')
+      message.info(t('aiGeneration.taskStopped' as any))
     } catch (error: any) {
       console.error('Stop task error:', error)
-      message.error(`停止任务失败: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      message.error(`${t('aiGeneration.stopTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
     }
   }
@@ -634,7 +634,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // 开启新对话
   const handleNewConversation = () => {
     if (isGenerating) {
-      message.warning('正在生成中，请先停止当前任务')
+      message.warning(t('aiGeneration.generatingWarning' as any))
       return
     }
     
@@ -649,7 +649,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     setStreamingText('')
     streamingTextRef.current = ''
     setPrompt('')
-    message.success('已开启新对话')
+    message.success(t('aiGeneration.newConversation' as any))
   }
 
   // Create AI generation task with SSE
@@ -965,7 +965,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         const groups = groupListRes?.data?.list || []
 
                         if (groups.length === 0) {
-                          message.warning('未找到可用的草稿分组，请先创建分组')
+                          message.warning(t('aiGeneration.noDraftGroupFound' as any))
                           return
                         }
 
@@ -987,26 +987,26 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                             })
                           } catch (error) {
                             console.error('Create material with groupId error:', error)
-                            message.error('保存草稿失败')
+                            message.error(t('aiGeneration.saveDraftFailed' as any))
                             return
                           }
                         } else {
-                          message.warning('未找到可用的草稿分组')
+                          message.warning(t('aiGeneration.noDraftGroup' as any))
                           return
                         }
                       }
 
                       if (createResult) {
-                        message.success('草稿保存成功')
+                        message.success(t('aiGeneration.saveDraftSuccess' as any))
                         setTimeout(() => {
                           router.push(`/${lng}/cgmaterial`)
                         }, 1500)
                       } else {
-                        message.error('保存草稿失败')
+                        message.error(t('aiGeneration.saveDraftFailed' as any))
                       }
                     } catch (error: any) {
                       console.error('Save draft error:', error)
-                      message.error(`保存草稿失败: ${error.message || '未知错误'}`)
+                      message.error(`${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
                     }
                   })()
                 }
@@ -1030,29 +1030,29 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 else if (action === 'createChannel') {
                   const platform = taskData.platform
                   const platformNames: Record<string, string> = {
-                    douyin: '抖音',
-                    xhs: '小红书',
-                    wxSph: '微信视频号',
-                    KWAI: '快手',
-                    youtube: 'YouTube',
-                    wxGzh: '微信公众号',
-                    bilibili: 'B站',
-                    twitter: 'Twitter',
-                    tiktok: 'TikTok',
-                    facebook: 'Facebook',
-                    instagram: 'Instagram',
-                    threads: 'Threads',
-                    pinterest: 'Pinterest',
-                    linkedin: 'LinkedIn',
+                    douyin: t('platformNames.douyin' as any),
+                    xhs: t('platformNames.xhs' as any),
+                    wxSph: t('platformNames.wxSph' as any),
+                    KWAI: t('platformNames.KWAI' as any),
+                    youtube: t('platformNames.youtube' as any),
+                    wxGzh: t('platformNames.wxGzh' as any),
+                    bilibili: t('platformNames.bilibili' as any),
+                    twitter: t('platformNames.twitter' as any),
+                    tiktok: t('platformNames.tiktok' as any),
+                    facebook: t('platformNames.facebook' as any),
+                    instagram: t('platformNames.instagram' as any),
+                    threads: t('platformNames.threads' as any),
+                    pinterest: t('platformNames.pinterest' as any),
+                    linkedin: t('platformNames.linkedin' as any),
                   }
                   
-                  const platformName = platform ? platformNames[platform] : '该平台'
+                  const platformName = platform ? platformNames[platform] : t('platformNames.douyin' as any)
                   
                   Modal.confirm({
-                    title: '需要添加频道',
-                    content: `检测到您还没有添加${platformName}频道，是否前往添加？`,
-                    okText: '去添加',
-                    cancelText: '取消',
+                    title: t('aiGeneration.needAddChannel' as any),
+                    content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
+                    okText: t('aiGeneration.goAdd' as any),
+                    cancelText: t('aiGeneration.cancel' as any),
                     onOk: () => {
                       // 跳转到账号页面，自动打开对应平台的授权
                       router.push(`/${lng}/accounts?addChannel=${platform}`)
@@ -1062,13 +1062,13 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 // action: updateChannel - 更新频道授权
                 else if (action === 'updateChannel') {
                   const platform = taskData.platform
-                  message.warning(t('aiGeneration.channelAuthExpired' as any) || '频道授权已过期')
+                  message.warning(t('aiGeneration.channelAuthExpired' as any))
                   
                   Modal.confirm({
-                    title: '频道授权已过期',
-                    content: '您的频道授权已过期，是否重新授权？',
-                    okText: '重新授权',
-                    cancelText: '取消',
+                    title: t('aiGeneration.channelAuthExpiredTitle' as any),
+                    content: t('aiGeneration.channelAuthExpiredContent' as any),
+                    okText: t('aiGeneration.reauthorize' as any),
+                    cancelText: t('aiGeneration.cancel' as any),
                     onOk: () => {
                       router.push(`/${lng}/accounts?updateChannel=${platform}`)
                     },
@@ -1077,13 +1077,13 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 // action: loginChannel - 登录频道
                 else if (action === 'loginChannel') {
                   const platform = taskData.platform
-                  message.info('需要登录频道')
+                  message.info(t('aiGeneration.needLoginChannel' as any))
                   
                   Modal.confirm({
-                    title: '需要登录',
-                    content: '请先登录该频道账号',
-                    okText: '去登录',
-                    cancelText: '取消',
+                    title: t('aiGeneration.needLogin' as any),
+                    content: t('aiGeneration.pleaseLoginChannel' as any),
+                    okText: t('aiGeneration.goLogin' as any),
+                    cancelText: t('aiGeneration.cancel' as any),
                     onOk: () => {
                       router.push(`/${lng}/accounts?loginChannel=${platform}`)
                     },
@@ -1097,7 +1097,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   
                   if (!isPluginReady) {
                     // 插件未准备就绪，显示引导授权插件
-                    message.warning('该平台需要使用插件发布，请先授权插件')
+                    message.warning(t('plugin.platformNeedsPlugin' as any))
                     
                     // 延迟显示引导，确保页面已加载
                     setTimeout(() => {
@@ -1110,8 +1110,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                       const driverObj = driver({
                         showProgress: false,
                         showButtons: ['next'],
-                        nextBtnText: '知道了',
-                        doneBtnText: '知道了',
+                        nextBtnText: t('aiGeneration.gotIt' as any),
+                        doneBtnText: t('aiGeneration.gotIt' as any),
                         popoverOffset: 10,
                         stagePadding: 4,
                         stageRadius: 12,
@@ -1121,8 +1121,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                           {
                             element: '[data-driver-target="plugin-button"]',
                             popover: {
-                              title: '需要授权插件',
-                              description: '该平台需要使用插件发布，请点击这里授权插件',
+                              title: t('plugin.authorizePluginTitle' as any),
+                              description: t('plugin.authorizePluginDescription' as any),
                               side: 'bottom',
                               align: 'start',
                               onPopoverRender: () => {
@@ -1131,7 +1131,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                                   const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
                                   const btn = nextBtn || doneBtn
                                   if (btn) {
-                                    btn.textContent = '知道了'
+                                    btn.textContent = t('aiGeneration.gotIt' as any)
                                     const handleClick = (e: MouseEvent) => {
                                       e.preventDefault()
                                       e.stopPropagation()
@@ -1167,7 +1167,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                       const targetAccounts = allAccounts.filter(account => account.type === platform)
                       
                       if (targetAccounts.length === 0) {
-                        message.warning('未找到该平台的账号，请先添加账号')
+                        message.warning(t('plugin.noAccountFound' as any))
                         return
                       }
                       
@@ -1237,14 +1237,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         items: pluginPublishItems,
                         platformTaskIdMap,
                         onComplete: () => {
-                          message.success('发布任务已提交到插件')
+                          message.success(t('plugin.publishTaskSubmitted' as any))
                         },
                       })
                       
-                      message.success('正在通过插件发布...')
+                      message.success(t('plugin.publishingViaPlugin' as any))
                     } catch (error: any) {
                       console.error('Plugin publish error:', error)
-                      message.error(`插件发布失败: ${error.message || '未知错误'}`)
+                      message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
                     }
                   }
                 }
@@ -1452,9 +1452,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             }}
           >
             <div className={styles.modeContent}>
-              <div className={styles.modeTitle}>Agent 模式</div>
+              <div className={styles.modeTitle}>{t('aiGeneration.agentMode' as any)}</div>
               {selectedMode === 'agent' && (
-                <div className={styles.modeDescription}>灵感来了?一句话帮你开始创作</div>
+                <div className={styles.modeDescription}>{t('aiGeneration.inspirationPrompt' as any)}</div>
               )}
               {selectedMode !== 'agent' && (
                 <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
@@ -1468,12 +1468,12 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           {selectedMode === 'agent' && (taskId || sessionId) && (
             <div className={styles.conversationInfo}>
               <span className={styles.conversationId}>
-                对话ID: {(taskId || sessionId).slice(-6)}
+                {t('aiGeneration.conversationId' as any)}: {(taskId || sessionId).slice(-6)}
               </span>
               <button
                 className={styles.newConversationBtn}
                 onClick={handleNewConversation}
-                title="开启新对话"
+                title={t('aiGeneration.startNewConversation' as any)}
                 disabled={isGenerating}
               >
                 <ReloadOutlined />
@@ -1491,13 +1491,13 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             >
               <h3 className={styles.markdownTitle}>
                 <Image src={logo} alt="Logo" className={styles.logoAi} />
-                 AI 生成过程 {isGenerating && <LoadingDots />}
+                 {t('aiGeneration.aiGenerationProcess' as any)} {isGenerating && <LoadingDots />}
               </h3>
               <div className={styles.markdownContent}>
                 <ReactMarkdown>
                   {markdownMessages.length > 0 
                     ? markdownMessages.join('\n\n') 
-                    : '等待 AI 响应...'}
+                    : t('aiGeneration.waitingAiResponse' as any)}
                 </ReactMarkdown>
               </div>
             </div>
@@ -1542,7 +1542,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isGenerating || isUploading}
                     className={styles.aiUploadBtn}
-                    title="上传图片"
+                    title={t('aiGeneration.uploadImage' as any)}
                   >
                     {isUploading ? (
                       <span>⏳</span>
@@ -1581,11 +1581,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             <div className={styles.bottomLeft}>
               <button className={styles.modeSelectBtn}>
                 <span>
-                  {selectedMode === 'agent' && 'Agent 模式'}
-                  {selectedMode === 'image' && '图片生成'}
-                  {selectedMode === 'video' && '视频生成'}
-                  {selectedMode === 'draft' && '草稿箱'}
-                  {selectedMode === 'publishbatch' && '批次发布'}
+                  {selectedMode === 'agent' && t('aiGeneration.agentMode' as any)}
+                  {selectedMode === 'image' && t('aiGeneration.imageGeneration' as any)}
+                  {selectedMode === 'video' && t('aiGeneration.videoGeneration' as any)}
+                  {selectedMode === 'draft' && t('aiGeneration.draftBox' as any)}
+                  {selectedMode === 'publishbatch' && t('aiGeneration.batchPublish' as any)}
                 </span>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <polyline points="6 9 12 15 18 9"></polyline>
@@ -1597,7 +1597,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               className={styles.scrollTopBtn}
               onClick={isGenerating ? handleStopTask : handleCreateTask}
               disabled={!isGenerating && (!prompt.trim() || isUploading)}
-              title={isGenerating ? '停止生成' : '发送消息'}
+              title={isGenerating ? t('status.stopGenerating' as any) : t('status.sendMessage' as any)}
             >
               {isGenerating ? (
                 // 停止按钮 - 显示方块
@@ -2610,7 +2610,7 @@ function DownloadSection() {
                 <div className={styles.downloadBtnContent}>
                   <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>立即下载</span>
+                    <span className={styles.downloadOn}>{t('download.downloadNow' as any)}</span>
                     <span className={styles.downloadStore}>Android APK</span>
                   </div>
                 </div>
@@ -2800,7 +2800,7 @@ function CommunitySection() {
             </button>
             {hoveredButton === 'wechat' && (
               <div className={styles.qrCodePopup}>
-                <Image src={gongzhonghao} alt="微信公众号" width={200} height={200} className={styles.qrCodeImage} />
+                <Image src={gongzhonghao} alt={t('wechat.officialAccount' as any)} width={200} height={200} className={styles.qrCodeImage} />
                 <p className={styles.qrCodeText}>{t('communitySection.wechatPopup' as any)}</p>
               </div>
             )}
@@ -2819,7 +2819,7 @@ function CommunitySection() {
             </button>
             {hoveredButton === 'community' && (
               <div className={styles.qrCodePopup}>
-                <Image src={gongzhonghao} alt="社区公众号" width={200} height={200} className={styles.qrCodeImage} />
+                <Image src={gongzhonghao} alt={t('wechat.communityOfficialAccount' as any)} width={200} height={200} className={styles.qrCodeImage} />
                 <p className={styles.qrCodeText}>{t('communitySection.communityPopup' as any)}</p>
               </div>
             )}
