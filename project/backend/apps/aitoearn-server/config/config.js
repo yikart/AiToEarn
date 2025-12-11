@@ -93,7 +93,8 @@ module.exports = {
     mongodb: {
       enable: true,
       db: `mongodb://${MONGODB_USERNAME}:${encodeURIComponent(MONGODB_PASSWORD)}@${MONGODB_HOST}:${MONGODB_PORT}/?authSource=admin&directConnection=true`,
-      collection: 'aitoearn-logs',
+      collection: 'logs',
+      level: 'error',
     },
   },
   enableBadRequestDetails: true,
