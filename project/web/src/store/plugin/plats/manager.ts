@@ -7,6 +7,8 @@ import { PlatType } from '@/app/config/platConfig'
 import type {
   CommentParams,
   CommentResult,
+  DirectMessageParams,
+  DirectMessageResult,
   FavoriteResult,
   IPlatformInteraction,
   LikeResult,
@@ -88,6 +90,32 @@ class PlatformInteractionManager {
     isFavorite: boolean,
   ): Promise<FavoriteResult> {
     return this.get(platform).favoriteWork(workId, isFavorite)
+  }
+
+  /**
+   * 检查平台是否支持私信功能
+   */
+  supportsDirectMessage(platform: SupportedPlatformType): boolean {
+    const instance = this.get(platform)
+    return typeof instance.sendDirectMessage === 'function'
+  }
+
+  /**
+   * 发送私信
+   * 注意：只有抖音支持私信，小红书不支持
+   */
+  async sendDirectMessage(
+    platform: SupportedPlatformType,
+    params: DirectMessageParams,
+  ): Promise<DirectMessageResult> {
+    const instance = this.get(platform)
+    if (!instance.sendDirectMessage) {
+      return {
+        success: false,
+        message: `${platform} 平台不支持私信功能`,
+      }
+    }
+    return instance.sendDirectMessage(params)
   }
 }
 

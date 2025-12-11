@@ -54,6 +54,23 @@ export interface CommentResult extends BaseResult {
  */
 export interface FavoriteResult extends BaseResult {}
 
+/**
+ * 私信参数
+ */
+export interface DirectMessageParams {
+  /** 作品ID（二选一） */
+  workId?: string
+  /** 作者链接（二选一） */
+  authorUrl?: string
+  /** 私信内容 */
+  content: string
+}
+
+/**
+ * 私信结果
+ */
+export interface DirectMessageResult extends BaseResult {}
+
 // ============================================================================
 // 平台接口定义
 // ============================================================================
@@ -85,6 +102,12 @@ export interface IPlatformInteraction {
    * @param isFavorite true 收藏，false 取消收藏
    */
   favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult>
+
+  /**
+   * 发送私信（可选方法，不是所有平台都支持）
+   * @param params 私信参数
+   */
+  sendDirectMessage?(params: DirectMessageParams): Promise<DirectMessageResult>
 }
 
 // ============================================================================

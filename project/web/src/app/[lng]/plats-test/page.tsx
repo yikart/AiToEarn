@@ -8,10 +8,10 @@
 import { useState } from 'react'
 import { PlatType } from '@/app/config/platConfig'
 import { platformManager } from '@/store/plugin/plats'
-import type { BaseResult, CommentResult } from '@/store/plugin/plats'
+import type { BaseResult, CommentResult, DirectMessageResult } from '@/store/plugin/plats'
 import styles from './plats-test.module.scss'
 
-type ActionType = 'like' | 'unlike' | 'comment' | 'favorite' | 'unfavorite'
+type ActionType = 'like' | 'unlike' | 'comment' | 'favorite' | 'unfavorite' | 'directMessage'
 
 interface TestLog {
   id: number
@@ -30,6 +30,9 @@ export default function PlatsTestPage() {
   const [workId, setWorkId] = useState('')
   const [commentContent, setCommentContent] = useState('')
   const [replyToCommentId, setReplyToCommentId] = useState('')
+  // 私信相关状态
+  const [dmContent, setDmContent] = useState('')
+  const [dmAuthorUrl, setDmAuthorUrl] = useState('')
 
   // 加载状态
   const [loading, setLoading] = useState<ActionType | null>(null)
@@ -42,7 +45,7 @@ export default function PlatsTestPage() {
    */
   const addLog = (
     action: ActionType,
-    result: BaseResult | CommentResult,
+    result: BaseResult | CommentResult | DirectMessageResult,
     extraData?: any,
   ) => {
     const log: TestLog = {
@@ -145,6 +148,44 @@ export default function PlatsTestPage() {
   }
 
   /**
+   * 私信
+   */
+  const handleDirectMessage = async () => {
+    if (!dmContent) {
+      alert('请输入私信内容')
+      return
+    }
+
+    if (!workId && !dmAuthorUrl) {
+      alert('请输入作品ID或作者链接')
+      return
+    }
+
+    // 只有抖音支持私信
+    if (platform !== PlatType.Douyin) {
+      alert('小红书不支持私信功能')
+      return
+    }
+
+    setLoading('directMessage')
+
+    try {
+      const result = await platformManager.sendDirectMessage(platform, {
+        workId: workId || undefined,
+        authorUrl: dmAuthorUrl || undefined,
+        content: dmContent,
+      })
+      addLog('directMessage', result, { authorUrl: dmAuthorUrl })
+    }
+    catch (error: any) {
+      addLog('directMessage', { success: false, message: error.message })
+    }
+    finally {
+      setLoading(null)
+    }
+  }
+
+  /**
    * 获取操作名称
    */
   const getActionName = (action: ActionType): string => {
@@ -154,6 +195,7 @@ export default function PlatsTestPage() {
       comment: '评论',
       favorite: '收藏',
       unfavorite: '取消收藏',
+      directMessage: '私信',
     }
     return names[action]
   }
@@ -274,6 +316,39 @@ export default function PlatsTestPage() {
             </button>
           </div>
         </div>
+
+        {/* 私信（仅抖音支持） */}
+        {platform === PlatType.Douyin && (
+          <div className={styles.commentSection}>
+            <span className={styles.actionLabel}>私信</span>
+            <div className={styles.commentInputs}>
+              <textarea
+                value={dmContent}
+                onChange={e => setDmContent(e.target.value)}
+                placeholder="输入私信内容..."
+                className={styles.textarea}
+                rows={3}
+              />
+              <input
+                type="text"
+                value={dmAuthorUrl}
+                onChange={e => setDmAuthorUrl(e.target.value)}
+                placeholder="作者链接（可选，如果填写了作品ID则可不填）"
+                className={styles.input}
+              />
+              <p className={styles.hint}>
+                提示：可以通过作品ID或作者链接发送私信。如果两者都填写，优先使用作品ID。
+              </p>
+              <button
+                onClick={handleDirectMessage}
+                disabled={loading !== null}
+                className={`${styles.btn} ${styles.btnPrimary} ${styles.btnFull}`}
+              >
+                {loading === 'directMessage' ? '处理中...' : '✉️ 发送私信'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* 日志区域 */}

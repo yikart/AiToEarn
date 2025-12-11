@@ -33,6 +33,8 @@ export type {
   BaseResult,
   CommentParams,
   CommentResult,
+  DirectMessageParams,
+  DirectMessageResult,
   FavoriteResult,
   IPlatformInteraction,
   LikeResult,

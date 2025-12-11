@@ -10,6 +10,8 @@ import { PlatType } from '@/app/config/platConfig'
 import type {
   CommentParams,
   CommentResult,
+  DirectMessageParams,
+  DirectMessageResult,
   FavoriteResult,
   IPlatformInteraction,
   LikeResult,
@@ -96,6 +98,43 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       action: 'favorite',
       workId,
       targetState: isFavorite,
+    })
+
+    return {
+      success: response.success,
+      message: response.message || response.error,
+      rawData: response,
+    }
+  }
+
+  /**
+   * 发送私信（自动化方案）
+   * 根据作品ID或作者链接发送私信
+   * 注意：小红书不支持私信
+   * @param params 私信参数
+   */
+  async sendDirectMessage(params: DirectMessageParams): Promise<DirectMessageResult> {
+    this.checkPlugin()
+
+    // 验证参数
+    if (!params.workId && !params.authorUrl) {
+      return {
+        success: false,
+        message: '必须提供作品ID或作者链接',
+      }
+    }
+
+    if (!params.content) {
+      return {
+        success: false,
+        message: '私信内容不能为空',
+      }
+    }
+
+    const response = await window.AIToEarnPlugin!.douyinDirectMessage({
+      workId: params.workId,
+      authorUrl: params.authorUrl,
+      content: params.content,
     })
 
     return {

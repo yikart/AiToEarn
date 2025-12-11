@@ -6,7 +6,6 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 40px 20px;
-  min-height: 100vh;
   background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
 }
 
@@ -151,6 +150,63 @@
   flex-direction: column;
   gap: 12px;
   margin-top: 12px;
+}
+
+.hint {
+  font-size: 12px;
+  color: #5a6a8a;
+  margin: 0;
+  padding: 0 4px;
+}
+
+// 示例区域
+.exampleSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.exampleLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: #8892b0;
+}
+
+.exampleTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exampleTag {
+  padding: 6px 12px;
+  font-size: 12px;
+  color: #64ffda;
+  background: rgba(100, 255, 218, 0.08);
+  border: 1px solid rgba(100, 255, 218, 0.2);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(100, 255, 218, 0.15);
+    border-color: rgba(100, 255, 218, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 // 按钮
