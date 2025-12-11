@@ -49,6 +49,9 @@ import youtubeIcon from '@/assets/svgs/plat/youtube.png'
 import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
 import { useTransClient } from '../i18n/client'
 import { getOssUrl } from '@/utils/oss'
+import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
+import { PubType } from '@/app/config/publishConfig'
+import { MediaType } from '@/api/agent'
 
 
 import { 
@@ -848,24 +851,128 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   }, 1500)
                 }
                 // action: draft - 跳转草稿箱
-                else if (action === 'draft') {
+                else if (action === 'navigateToDraft') {
                   setTimeout(() => {
                     router.push(`/${lng}/cgmaterial`)
                   }, 1500)
                 }
                 // action: saveDraft - 保存草稿再跳转草稿箱
                 else if (action === 'saveDraft') {
-                  // 保存草稿
-                  const draftData = {
-                    title: taskData.title || '',
-                    description: taskData.description || '',
-                    tags: JSON.stringify(taskData.tags || []),
-                    medias: JSON.stringify(taskData.medias || []),
-                  }
-                  localStorage.setItem('draft', JSON.stringify(draftData))
-                  setTimeout(() => {
-                    router.push(`/${lng}/cgmaterial`)
-                  }, 1500)
+                  // 保存草稿 - 使用立即执行的 async 函数
+                  ;(async () => {
+                    try {
+                      // 转换 medias 格式：从 Media[] 转换为 MaterialMedia[]
+                      const medias = taskData.medias || []
+                      const materialMediaList = medias.map((media: any) => {
+                        // MediaType.VIDEO -> PubType.VIDEO, MediaType.IMAGE -> PubType.ImageText
+                        const pubType = media.type === MediaType.Video 
+                          ? PubType.VIDEO 
+                          : PubType.ImageText
+                        return {
+                          url: media.url,
+                          type: pubType,
+                          content: media.coverUrl || undefined, // 视频封面作为 content
+                        }
+                      })
+
+                      // 确定封面URL（优先使用第一个视频的封面，否则使用第一张图片）
+                      const coverUrl = medias.find((m: any) => m.coverUrl)?.coverUrl 
+                        || medias.find((m: any) => m.type === MediaType.Image)?.url
+                        || undefined
+
+                      // 第一次调用：创建草稿（先尝试调用，看后端是否返回 groupId）
+                      let createResult: any = null
+                      let finalGroupId: string | null = null
+                      
+                      try {
+                        // 先获取分组列表，选择一个默认分组用于第一次调用
+                        const groupListRes = await apiGetMaterialGroupList(1, 100)
+                        const groups = groupListRes?.data?.list || []
+                        
+                        if (groups.length > 0) {
+                          // 根据 medias 类型选择默认分组
+                          const hasVideo = medias.some((m: any) => m.type === MediaType.Video)
+                          const targetGroupType = hasVideo ? PubType.VIDEO : PubType.ImageText
+                          const defaultGroup = groups.find((g: any) => g.type === targetGroupType) || groups[0]
+                          finalGroupId = defaultGroup._id || defaultGroup.id
+                        }
+                        
+                        // 如果有分组，尝试创建草稿
+                        if (finalGroupId) {
+                          createResult = await apiCreateMaterial({
+                            groupId: finalGroupId,
+                            coverUrl,
+                            mediaList: materialMediaList,
+                            title: taskData.title || '',
+                            desc: taskData.description || '',
+                          })
+                          
+                          // 检查返回结果是否有新的 groupId（可能后端返回了不同的 groupId）
+                          const returnedGroupId = createResult?.data?.groupId 
+                            || createResult?.data?.group?._id 
+                            || createResult?.data?.group?.id
+                            || null
+                          
+                          // 如果返回了 groupId，使用返回的
+                          if (returnedGroupId) {
+                            finalGroupId = returnedGroupId
+                          }
+                        }
+                      } catch (error: any) {
+                        // 如果调用失败，记录错误但继续处理
+                        console.error('Create material error:', error)
+                      }
+
+                      // 如果没有成功创建（没有 groupId 或创建失败），需要重新获取分组并创建
+                      if (!createResult || !finalGroupId) {
+                        const groupListRes = await apiGetMaterialGroupList(1, 100)
+                        const groups = groupListRes?.data?.list || []
+
+                        if (groups.length === 0) {
+                          message.warning('未找到可用的草稿分组，请先创建分组')
+                          return
+                        }
+
+                        // 根据 medias 类型选择默认分组
+                        const hasVideo = medias.some((m: any) => m.type === MediaType.Video)
+                        const targetGroupType = hasVideo ? PubType.VIDEO : PubType.ImageText
+                        const defaultGroup = groups.find((g: any) => g.type === targetGroupType) || groups[0]
+                        finalGroupId = defaultGroup._id || defaultGroup.id
+
+                        // 使用找到的分组ID创建草稿
+                        if (finalGroupId) {
+                          try {
+                            createResult = await apiCreateMaterial({
+                              groupId: finalGroupId,
+                              coverUrl,
+                              mediaList: materialMediaList,
+                              title: taskData.title || '',
+                              desc: taskData.description || '',
+                            })
+                          } catch (error) {
+                            console.error('Create material with groupId error:', error)
+                            message.error('保存草稿失败')
+                            return
+                          }
+                        } else {
+                          message.warning('未找到可用的草稿分组')
+                          return
+                        }
+                      }
+
+                      if (createResult) {
+                        message.success('草稿保存成功')
+                        setTimeout(() => {
+                          router.push(`/${lng}/cgmaterial`)
+                        }, 1500)
+                      } else {
+                        message.error('保存草稿失败')
+                      }
+                    } catch (error: any) {
+                      console.error('Save draft error:', error)
+                      message.error(`保存草稿失败: ${error.message || '未知错误'}`)
+                    }
+                  })()
                 }
                 // action: publish - 选中指定平台账户并填充内容
                 else if (action === 'publish') {
