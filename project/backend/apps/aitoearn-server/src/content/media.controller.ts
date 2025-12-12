@@ -86,6 +86,16 @@ export class MediaController {
     return res
   }
 
+  @ApiDoc({
+    summary: 'Get Media by ID',
+    description: 'Get a media asset by its identifier.',
+  })
+  @Get('info/:id')
+  async getInfo(@Param('id') id: string) {
+    const res = await this.mediaService.getInfo(id)
+    return res
+  }
+
   @Get('list/:pageNo/:pageSize')
   @ApiDoc({
     summary: 'List Media Assets',

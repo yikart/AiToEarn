@@ -91,6 +91,16 @@ export class MediaGroupController {
     return res
   }
 
+  @ApiDoc({
+    summary: 'Get Media Group by ID',
+    description: 'Get a media group by its identifier.',
+  })
+  @Get('info/:id')
+  async getGroupInfo(@Param('id') id: string) {
+    const res = await this.mediaGroupService.getInfo(id)
+    return res
+  }
+
   /**
    * 获取资源组的简略图列表
    * @param userId
