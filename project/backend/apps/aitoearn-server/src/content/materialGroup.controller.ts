@@ -86,6 +86,16 @@ export class MaterialGroupController {
   }
 
   @ApiDoc({
+    summary: 'Get Material Group by ID',
+    description: 'Get a material group by its identifier.',
+  })
+  @Get('info/:id')
+  async getGroupInfo(@Param('id') id: string) {
+    const res = await this.materialGroupService.getGroupInfo(id)
+    return res
+  }
+
+  @ApiDoc({
     summary: 'List Material Groups',
     description: 'Retrieve a paginated list of material groups.',
     query: MaterialGroupFilterSchema,

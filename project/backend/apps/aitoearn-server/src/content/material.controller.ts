@@ -182,6 +182,16 @@ export class MaterialController {
   }
 
   @ApiDoc({
+    summary: 'Get Draft by ID',
+    description: 'Get a draft by its identifier.',
+  })
+  @Get('info/:id')
+  async getInfo(@Param('id') id: string) {
+    const res = await this.materialService.getInfo(id)
+    return res
+  }
+
+  @ApiDoc({
     summary: 'List Drafts',
     description: 'Retrieve a paginated list of drafts with optional filters.',
     query: MaterialFilterSchema,
