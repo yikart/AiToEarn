@@ -12,7 +12,7 @@ import { Spin } from 'antd'
 import { MasonryInfiniteGrid } from '@egjs/react-infinitegrid'
 import Masonry from 'react-masonry-css'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
-import FeedCard, { FeedCardSkeleton } from '../FeedCard'
+import FeedCard, { FeedCardSkeleton, type ClickRect } from '../FeedCard'
 import styles from './WaterfallList.module.scss'
 
 /**
@@ -59,14 +59,12 @@ interface WaterfallListProps {
   hasMore: boolean
   /** 错误信息 */
   error: string | null
-  /** 当前选中的作品 ID（用于共享元素动画） */
-  selectedId?: string | null
   /** 加载更多回调 */
   onLoadMore: () => void
   /** 刷新回调 */
   onRefresh: () => void
-  /** 卡片点击回调 */
-  onCardClick?: (item: HomeFeedItem) => void
+  /** 卡片点击回调，包含点击位置 */
+  onCardClick?: (item: HomeFeedItem, rect: ClickRect) => void
 }
 
 /** 骨架屏瀑布流响应式断点配置 */
@@ -100,7 +98,6 @@ function WaterfallList({
   loading,
   loadingMore,
   error,
-  selectedId,
   onLoadMore,
   onRefresh,
   onCardClick,
@@ -112,8 +109,8 @@ function WaterfallList({
   /**
    * 处理卡片点击
    */
-  const handleCardClick = useCallback((item: HomeFeedItem) => {
-    onCardClick?.(item)
+  const handleCardClick = useCallback((item: HomeFeedItem, rect: ClickRect) => {
+    onCardClick?.(item, rect)
   }, [onCardClick])
 
   /**
@@ -196,7 +193,6 @@ function WaterfallList({
           >
             <FeedCard
               item={item}
-              selectedId={selectedId}
               onClick={handleCardClick}
             />
           </div>

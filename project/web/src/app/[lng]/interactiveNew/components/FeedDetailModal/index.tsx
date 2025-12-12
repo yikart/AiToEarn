@@ -2,39 +2,80 @@
 
 /**
  * 作品详情弹框组件
- * 使用 Framer Motion 的 layoutId 实现共享元素过渡动画
+ * 弹框从卡片位置放大展开到屏幕中央（类似小红书效果）
  */
 
-import { memo, useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
+import type { ClickRect } from '../FeedCard'
 import styles from './FeedDetailModal.module.scss'
 
 interface FeedDetailModalProps {
   /** 当前选中的作品 */
   item: HomeFeedItem | null
+  /** 点击位置 */
+  clickRect?: ClickRect | null
   /** 关闭回调 */
   onClose: () => void
-}
-
-/** 动画时长配置 */
-const ANIMATION_DURATION = 0.5
-
-/** 共享元素过渡配置 */
-const layoutTransition = {
-  type: 'spring',
-  stiffness: 200,
-  damping: 28,
-  mass: 1,
 }
 
 /**
  * 作品详情弹框
  */
-function FeedDetailModal({ item, onClose }: FeedDetailModalProps) {
+function FeedDetailModal({ item, clickRect, onClose }: FeedDetailModalProps) {
   const { t } = useTranslation('interactiveNew')
+
+  /**
+   * 计算弹框的最终尺寸和位置
+   */
+  const finalRect = useMemo(() => {
+    const modalWidth = Math.min(window.innerWidth * 0.9, 1100)
+    const modalHeight = Math.min(window.innerHeight * 0.85, 700)
+    return {
+      width: modalWidth,
+      height: modalHeight,
+      x: (window.innerWidth - modalWidth) / 2,
+      y: (window.innerHeight - modalHeight) / 2,
+    }
+  }, [])
+
+  /**
+   * 初始状态（卡片位置）- 不使用透明度变化
+   */
+  const initialState = useMemo(() => {
+    if (!clickRect) {
+      return {
+        x: finalRect.x,
+        y: finalRect.y,
+        width: finalRect.width,
+        height: finalRect.height,
+        borderRadius: 12,
+      }
+    }
+    return {
+      x: clickRect.x,
+      y: clickRect.y,
+      width: clickRect.width,
+      height: clickRect.height,
+      borderRadius: 12,
+    }
+  }, [clickRect, finalRect])
+
+  /**
+   * 最终状态（居中放大）
+   */
+  const animateState = useMemo(() => {
+    return {
+      x: finalRect.x,
+      y: finalRect.y,
+      width: finalRect.width,
+      height: finalRect.height,
+      borderRadius: 20,
+    }
+  }, [finalRect])
 
   /**
    * 处理点击遮罩关闭
@@ -85,57 +126,45 @@ function FeedDetailModal({ item, onClose }: FeedDetailModalProps) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: ANIMATION_DURATION, ease: 'easeOut' }}
+      transition={{ duration: 0.4 }}
       onClick={handleBackdropClick}
     >
+      {/* 弹框主体 - 从卡片位置放大到中央，不使用透明度变化 */}
       <motion.div 
         className="feedDetailModal_wrapper"
-        initial={{ opacity: 0, scale: 0.92 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.96 }}
+        initial={initialState}
+        animate={animateState}
+        exit={initialState}
         transition={{ 
-          duration: ANIMATION_DURATION,
-          ease: [0.32, 0.72, 0, 1], // iOS 风格缓动
+          type: 'spring',
+          stiffness: 350,
+          damping: 35,
+          mass: 1,
+        }}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
         }}
       >
-        {/* 左侧：封面预览 - 使用 layoutId 实现共享元素过渡 */}
-        <motion.div 
-          className="feedDetailModal_preview"
-          layoutId={`feed-cover-${item.workId}`}
-          transition={layoutTransition}
-        >
+        {/* 左侧：封面预览 */}
+        <div className="feedDetailModal_preview">
           <img
             src={item.thumbnail}
             alt={item.title}
             className="feedDetailModal_preview_img"
           />
           {item.isVideo && (
-            <motion.div 
-              className="feedDetailModal_preview_badge"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: ANIMATION_DURATION * 0.6, delay: ANIMATION_DURATION * 0.4 }}
-            >
+            <div className="feedDetailModal_preview_badge">
               <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M8 5v14l11-7z" />
               </svg>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
 
         {/* 右侧：信息和操作区 */}
-        <motion.div 
-          className="feedDetailModal_info"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20 }}
-          transition={{ 
-            duration: ANIMATION_DURATION,
-            ease: [0.32, 0.72, 0, 1],
-            delay: 0.08,
-          }}
-        >
+        <div className="feedDetailModal_info">
           {/* 关闭按钮 */}
           <button className="feedDetailModal_close" onClick={onClose}>
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -176,7 +205,7 @@ function FeedDetailModal({ item, onClose }: FeedDetailModalProps) {
               <span className="feedDetailModal_todo_text">TODO: 互动操作功能开发中...</span>
             </div>
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   )

@@ -8,17 +8,22 @@
 
 import { memo, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { motion } from 'framer-motion'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
 import styles from './FeedCard.module.scss'
+
+/** 点击位置信息 */
+export interface ClickRect {
+  x: number
+  y: number
+  width: number
+  height: number
+}
 
 interface FeedCardProps {
   /** 作品数据 */
   item: HomeFeedItem
-  /** 当前选中的作品 ID（用于控制 layoutId） */
-  selectedId?: string | null
-  /** 点击回调 */
-  onClick?: (item: HomeFeedItem) => void
+  /** 点击回调，包含点击位置 */
+  onClick?: (item: HomeFeedItem, rect: ClickRect) => void
 }
 
 /** 默认宽高比（3:4） */
@@ -50,13 +55,19 @@ function formatDuration(seconds?: number): string {
 /**
  * 作品卡片组件
  */
-function FeedCard({ item, selectedId, onClick }: FeedCardProps) {
+function FeedCard({ item, onClick }: FeedCardProps) {
   const { t } = useTranslation('interactiveNew')
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
 
-  const handleClick = () => {
-    onClick?.(item)
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    onClick?.(item, {
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height,
+    })
   }
 
   /** 计算封面区域的宽高比 */
@@ -80,9 +91,6 @@ function FeedCard({ item, selectedId, onClick }: FeedCardProps) {
     setImageLoaded(true)
   }
 
-  // 当前卡片是否被选中（用于隐藏图片，避免 layoutId 冲突）
-  const isSelected = selectedId === item.workId
-
   return (
     <article className={styles.feedCard} onClick={handleClick}>
       {/* 封面区域 - 使用 padding-bottom 预设高度 */}
@@ -93,10 +101,9 @@ function FeedCard({ item, selectedId, onClick }: FeedCardProps) {
         {/* 占位背景 */}
         {!imageLoaded && <div className="feedCard_cover_placeholder" />}
 
-        {/* 图片 - 使用 motion.img 支持共享元素过渡 */}
-        {!imageError && !isSelected && (
-          <motion.img
-            layoutId={`feed-cover-${item.workId}`}
+        {/* 图片 */}
+        {!imageError && (
+          <img
             src={item.thumbnail}
             alt={item.title}
             className={`feedCard_cover_img ${imageLoaded ? 'feedCard_cover_img-loaded' : ''}`}
@@ -104,19 +111,6 @@ function FeedCard({ item, selectedId, onClick }: FeedCardProps) {
             decoding="async"
             onLoad={handleImageLoad}
             onError={handleImageError}
-            transition={{
-              type: 'spring',
-              stiffness: 300,
-              damping: 30,
-            }}
-          />
-        )}
-
-        {/* 选中时的占位（防止布局跳动） */}
-        {isSelected && (
-          <div 
-            className="feedCard_cover_placeholder" 
-            style={{ opacity: 0.5 }}
           />
         )}
 
