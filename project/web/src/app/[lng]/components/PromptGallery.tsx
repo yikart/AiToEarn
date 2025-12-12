@@ -98,7 +98,7 @@ interface PromptItem {
 }
 
 interface PromptGallerySectionProps {
-  onApplyPrompt?: (prompt: string) => void
+  onApplyPrompt?: (data: { prompt: string; image?: string; mode: 'edit' | 'generate' }) => void
 }
 
 // 使用导入的提示词数据
@@ -157,7 +157,13 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   const handleApplyPrompt = (item: PromptItem, e: React.MouseEvent) => {
     e.stopPropagation()
     if (onApplyPrompt) {
-      onApplyPrompt(item.prompt) // 只应用提示词，不配置图片
+      // 如果是 edit 模式，传递图片；如果是 generate 模式，只传递提示词
+      const applyData = {
+        prompt: item.prompt,
+        mode: item.mode,
+        ...(item.mode === 'edit' && { image: item.preview })
+      }
+      onApplyPrompt(applyData)
       setApplied(true)
       setTimeout(() => setApplied(false), 2000)
       
@@ -357,7 +363,13 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
                 className={styles.modalCopyBtn}
                 onClick={() => {
                   if (onApplyPrompt) {
-                    onApplyPrompt(selectedPrompt.prompt) // 只应用提示词，不配置图片
+                    // 如果是 edit 模式，传递图片；如果是 generate 模式，只传递提示词
+                    const applyData = {
+                      prompt: selectedPrompt.prompt,
+                      mode: selectedPrompt.mode,
+                      ...(selectedPrompt.mode === 'edit' && { image: selectedPrompt.preview })
+                    }
+                    onApplyPrompt(applyData)
                     setSelectedPrompt(null)
                     setApplied(true)
                     setTimeout(() => setApplied(false), 2000)

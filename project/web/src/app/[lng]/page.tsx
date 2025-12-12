@@ -291,7 +291,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   useEffect(() => {
     if (promptToApply) {
       setPrompt(promptToApply.prompt)
-      // 不再自动添加图片
+      // 如果有图片，添加到 uploadedImages
+      if (promptToApply.image) {
+        setUploadedImages([promptToApply.image])
+      }
     }
   }, [promptToApply])
   
@@ -2691,8 +2694,15 @@ export default function Home() {
       <ReleaseBanner />
       <Hero promptToApply={promptToApply} />
       <PromptGallerySection 
-        onApplyPrompt={(prompt) => {
-          setPromptToApply({ prompt })
+        onApplyPrompt={(data) => {
+          // 根据 mode 决定如何处理
+          if (data.mode === 'edit' && data.image) {
+            // edit 模式：设置提示词和图片
+            setPromptToApply({ prompt: data.prompt, image: data.image })
+          } else {
+            // generate 模式：只设置提示词
+            setPromptToApply({ prompt: data.prompt })
+          }
         }}
       />
       <LazyLoadSection>
