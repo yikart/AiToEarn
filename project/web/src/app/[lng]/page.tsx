@@ -1477,7 +1477,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   })
                 }
                 // action: platformNotSupported - 平台不支持，使用插件发布（已取消 navigateToPublish）
-                else if (action === 'platformNotSupported') {
+                else if (action === 'platformNotSupported' || action === 'navigateToPublish') {
                   // 检查插件状态
                   const pluginStatus = usePluginStore.getState().status
                   const isPluginReady = pluginStatus === PluginStatus.READY
