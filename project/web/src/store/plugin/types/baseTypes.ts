@@ -32,7 +32,6 @@ interface PublishResult {
  * 导出基础类型
  */
 export type { PlatAccountInfo, ProgressEvent, PublishResult }
-export type { HttpMethod, PlatformRequestParams }
 
 /**
  * 插件连接状态
@@ -107,6 +106,44 @@ export interface PlatformRequestParams {
 }
 
 /**
+ * 抖音交互操作参数
+ */
+export interface DouyinInteractionParams {
+  /** 操作类型：点赞、收藏、评论 */
+  action: 'like' | 'favorite' | 'comment'
+  /** 作品ID */
+  workId: string
+  /** 目标状态：true=执行操作，false=取消操作 */
+  targetState: boolean
+  /** 评论内容（action 为 comment 时必填） */
+  content?: string
+}
+
+/**
+ * 抖音私信参数
+ */
+export interface DouyinDirectMessageParams {
+  /** 作品ID（二选一） */
+  workId?: string
+  /** 作者链接（二选一） */
+  authorUrl?: string
+  /** 私信内容 */
+  content: string
+}
+
+/**
+ * 抖音交互操作结果
+ */
+export interface DouyinInteractionResult {
+  /** 是否成功 */
+  success: boolean
+  /** 提示信息 */
+  message?: string
+  /** 错误信息 */
+  error?: string
+}
+
+/**
  * 插件 API 接口定义
  */
 export interface AIToEarnPluginAPI {
@@ -149,6 +186,22 @@ export interface AIToEarnPluginAPI {
    * @returns Promise<响应数据>
    */
   douyinRequest: <T = any>(params: PlatformRequestParams) => Promise<T>
+
+  /**
+   * 抖音交互操作（自动化方案）
+   * 支持点赞、收藏、评论
+   * @param params 交互参数
+   * @returns Promise<交互结果>
+   */
+  douyinInteraction: (params: DouyinInteractionParams) => Promise<DouyinInteractionResult>
+
+  /**
+   * 抖音私信（自动化方案）
+   * 根据作品ID或作者链接发送私信
+   * @param params 私信参数
+   * @returns Promise<私信结果>
+   */
+  douyinDirectMessage: (params: DouyinDirectMessageParams) => Promise<DouyinInteractionResult>
 }
 
 /**
