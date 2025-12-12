@@ -7,6 +7,8 @@ import type { EditorState, LexicalEditor } from 'lexical'
 import {
   ForwardedRef, useEffect,
 } from 'react'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import {
   LexicalComposer,
@@ -73,6 +75,7 @@ const PubParmasMentionInput = memo(
       ref: ForwardedRef<IPubParmasMentionInputRef>,
     ) => {
       const comboboxAnchor = useRef<HTMLDivElement>(null)
+      const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
       // 用于防止循环更新：当编辑器内容变化时，记录最新值
       const isInternalChangeRef = useRef(false)
 
@@ -103,6 +106,87 @@ const PubParmasMentionInput = memo(
         [],
       )
 
+      // 初始化新手引导 - 提示用户可以划词选择AI功能
+      useEffect(() => {
+        const hasSeenTextSelectionGuide = localStorage.getItem('hasSeenTextSelectionGuide')
+        if (hasSeenTextSelectionGuide) return
+
+        // 延迟显示，确保编辑器已渲染
+        const timer = setTimeout(() => {
+          // 查找编辑器元素，优先使用 ID，如果没有则通过类名查找
+          let editorElement = document.getElementById('mention-input-editor') as HTMLElement
+          if (!editorElement) {
+            editorElement = document.querySelector('.mentionsContentEditable[contenteditable="true"]') as HTMLElement
+            if (editorElement && !editorElement.id) {
+              editorElement.id = 'mention-input-editor'
+            }
+          }
+          if (!editorElement) return
+
+          const driverObj = driver({
+            showProgress: false,
+            showButtons: ['next'],
+            nextBtnText: '知道了',
+            doneBtnText: '知道了',
+            popoverOffset: 10,
+            stagePadding: 4,
+            stageRadius: 12,
+            allowClose: true,
+            smoothScroll: true,
+            steps: [
+              {
+                element: '#mention-input-editor',
+                popover: {
+                  title: '文本选择功能',
+                  description: '输入文案后可以划词选择文案选择AI功能',
+                  side: 'top',
+                  align: 'start',
+                  onPopoverRender: () => {
+                    setTimeout(() => {
+                      const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                      const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                      const btn = nextBtn || doneBtn
+                      if (btn) {
+                        btn.textContent = '知道了'
+                        const handleClick = (e: MouseEvent) => {
+                          e.preventDefault()
+                          e.stopPropagation()
+                          driverObj.destroy()
+                          localStorage.setItem('hasSeenTextSelectionGuide', 'true')
+                          btn.removeEventListener('click', handleClick)
+                        }
+                        btn.addEventListener('click', handleClick)
+                      }
+                    }, 50)
+                  },
+                },
+              },
+            ],
+            onNextClick: () => {
+              driverObj.destroy()
+              localStorage.setItem('hasSeenTextSelectionGuide', 'true')
+              return false
+            },
+            onDestroyStarted: () => {
+              localStorage.setItem('hasSeenTextSelectionGuide', 'true')
+            },
+            onDestroyed: () => {
+              localStorage.setItem('hasSeenTextSelectionGuide', 'true')
+            },
+          })
+
+          driverObjRef.current = driverObj
+          driverObj.drive()
+        }, 1500)
+
+        return () => {
+          clearTimeout(timer)
+          if (driverObjRef.current) {
+            driverObjRef.current.destroy()
+          }
+        }
+      }, [])
+
       // @ts-ignore
       const beautifulMentionsProps: any = {
         comboboxAnchor: comboboxAnchor.current,
@@ -127,6 +211,7 @@ const PubParmasMentionInput = memo(
             <RichTextPlugin
               contentEditable={(
                 <ContentEditable
+                  id="mention-input-editor"
                   className={styles.mentionsContentEditable}
                   style={{ tabSize: 1 }}
                 />

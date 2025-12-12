@@ -3290,6 +3290,12 @@ interface Resources {
     "badges": {
       "edit": "编辑",
       "generate": "文生图"
+    },
+    "filters": {
+      "all": "全部",
+      "generate": "文生图",
+      "edit": "图片编辑",
+      "searchPlaceholder": "搜索标题..."
     }
   }
 }

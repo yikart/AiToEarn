@@ -15,6 +15,12 @@
   "badges": {
     "edit": "Edit",
     "generate": "Text to Image"
+  },
+  "filters": {
+    "all": "All",
+    "generate": "Text to Image",
+    "edit": "Image Edit",
+    "searchPlaceholder": "Search title..."
   }
 }
 

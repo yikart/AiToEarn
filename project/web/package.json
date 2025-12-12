@@ -40,6 +40,7 @@
     "cropperjs": "^1.6.2",
     "crypto-js": "^4.2.0",
     "dayjs": "^1.11.13",
+    "driver.js": "^1.4.0",
     "echarts": "^6.0.0",
     "echarts-for-react": "^3.0.5",
     "glob": "^11.0.3",

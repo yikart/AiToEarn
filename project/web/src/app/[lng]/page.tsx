@@ -12,15 +12,45 @@ import {
   CloseCircleOutlined,
   StopOutlined,
   FieldTimeOutlined,
+  ReloadOutlined,
 } from '@ant-design/icons'
+
+// next
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+// react
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
+// npm
 import ReactMarkdown from 'react-markdown'
-
-// Mobile app download section
 import { QRCode } from 'react-qrcode-logo'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+// store
+import { useUserStore } from '@/store/user'
+import { useAccountStore } from '@/store/account'
+import { usePluginStore, PluginStatusModal } from '@/store/plugin'
+import { PluginStatus } from '@/store/plugin/types/baseTypes'
+import type { PluginPublishItem } from '@/store/plugin/store'
+// ui
+import { message, Button, Modal, Progress } from 'antd'
+// config
+import { PubType } from '@/app/config/publishConfig'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
+// components
+import LoginModal from '@/components/LoginModal'
+import PromptGallerySection from './components/PromptGallery'
+// api
+import { MediaType } from '@/api/agent'
+import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
+// i18n
+import { useTransClient } from '../i18n/client'
+// utils
+import { getOssUrl } from '@/utils/oss'
+
 // Import SVG icons
+import styles from './styles/difyHome.module.scss'
+
 import gongzhonghao from '@/assets/images/gongzhonghao.jpg'
 import publish1 from '@/assets/images/publish1.png'
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg'
@@ -36,24 +66,7 @@ import tiktokIcon from '@/assets/svgs/plat/tiktok.svg'
 import TwitterIcon from '@/assets/svgs/plat/twitter.png'
 import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg'
 import xhsIcon from '@/assets/svgs/plat/xhs.svg'
-
 import youtubeIcon from '@/assets/svgs/plat/youtube.png'
-import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
-
-import { useTransClient } from '../i18n/client'
-import { getOssUrl } from '@/utils/oss'
-import { message, Modal, Form, Input, Button } from 'antd'
-import { GoogleLogin } from '@react-oauth/google'
-import { useUserStore } from '@/store/user'
-import { 
-  loginWithMailApi, 
-  mailRegistApi,
-  googleLoginApi,
-} from '@/api/apiReq'
-
-import styles from './styles/difyHome.module.scss'
-import loginStyles from './login/login.module.css'
-import PromptGallerySection from './components/PromptGallery'
 
 // External image URL constants
 const IMAGE_URLS = {
@@ -71,10 +84,17 @@ const IMAGE_URLS = {
   commentFilter2: 'https://assets.aitoearn.ai/common/web/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg',
 }
 
+import logo from '@/assets/images/logo.png'
+import jimengangent from '@/assets/images/jimengangent.jpeg'
+import jimengshengtu from '@/assets/images/jimengshengtu.jpeg'
+import jimengshengshipin from '@/assets/images/jimengshengshipin.jpeg'
+import jimengshuziren from '@/assets/images/jimengshuziren.jpeg'
+import jimengdongzuo from '@/assets/images/jimengdongzuo.jpeg'
+
+
+
 // Release banner
 function ReleaseBanner() {
-  const { t } = useTransClient('home')
-
   return (
     <div className={styles.releaseBanner}>
       <div
@@ -91,9 +111,6 @@ function ReleaseBanner() {
             NEW
            </span>
             Nano Banana Pro !</span>
-        {/* <svg className={styles.arrowIcon} width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg> */}
       </div>
     </div>
   )
@@ -155,29 +172,133 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const { lng } = useParams()
   const { token, setToken, setUserInfo } = useUserStore()
 
+  // Helper function to get image URL
+  const getImageUrl = (img: any): string => {
+    if (typeof img === 'string') return img
+    if (img?.src) return img.src
+    if (img?.default) return img.default
+    return String(img)
+  }
+
   // AI generation related states
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  const [taskId, setTaskId] = useState('')
-  const [sessionId, setSessionId] = useState('')
+  // 从 sessionStorage 恢复 taskId，仅在当前会话中保存
+  const [taskId, setTaskId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('aiAgentTaskId') || ''
+    }
+    return ''
+  })
+  const [sessionId, setSessionId] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('aiAgentSessionId') || ''
+    }
+    return ''
+  })
   const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
+  const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'draft' | 'publishbatch'>('agent') // 选中的模式
+  const [streamingText, setStreamingText] = useState('') // 累积的流式文本
+  const streamingTextRef = useRef('') // 流式文本的引用（避免闭包问题）
+  const sseAbortRef = useRef<(() => void) | null>(null) // SSE 连接的 abort 函数引用
   
-  // Login modal states
+  // Login modal state
   const [loginModalOpen, setLoginModalOpen] = useState(false)
-  const [loginEmail, setLoginEmail] = useState('')
-  const [loginPassword, setLoginPassword] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [registCode, setRegistCode] = useState('')
-  const [loginForm] = Form.useForm()
-  const [isActivating, setIsActivating] = useState(false)
+  
+  // Plugin modal state
+  const [pluginModalOpen, setPluginModalOpen] = useState(false)
+  const [highlightPlatform, setHighlightPlatform] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
+
+  // 初始化新手引导
+  useEffect(() => {
+    const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding')
+    // if (hasSeenOnboarding) return
+
+    // 延迟一下显示，确保页面已完全加载且 textarea 已经渲染
+    const timer = setTimeout(() => {
+      const textarea = document.getElementById('ai-input-textarea')
+      if (!textarea) return
+
+      const driverObj = driver({
+        showProgress: false,
+        showButtons: ['next'],
+        nextBtnText: t('aiGeneration.gotIt' as any),
+        doneBtnText: t('aiGeneration.gotIt' as any),
+        popoverOffset: 10,
+        stagePadding: 4,
+        stageRadius: 12,
+        allowClose: true,
+        smoothScroll: true,
+        steps: [
+          {
+            element: '#ai-input-textarea',
+            popover: {
+              title: t('aiGeneration.onboardingTitle' as any),
+              description: t('aiGeneration.onboardingDescription' as any),
+              side: 'top',
+              align: 'start',
+              onPopoverRender: () => {
+                // Popover 渲染后，更新按钮文本并添加点击事件
+                setTimeout(() => {
+                  const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                  const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                  const btn = nextBtn || doneBtn
+                  if (btn) {
+                    btn.textContent = t('aiGeneration.gotIt' as any)
+                    // 添加点击事件监听器
+                    const handleClick = (e: MouseEvent) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      driverObj.destroy()
+                      localStorage.setItem('hasSeenOnboarding', 'true')
+                      btn.removeEventListener('click', handleClick)
+                    }
+                    btn.addEventListener('click', handleClick)
+                  }
+                }, 50)
+              },
+            },
+          },
+        ],
+        onNextClick: () => {
+          // 点击按钮时关闭引导
+          driverObj.destroy()
+          localStorage.setItem('hasSeenOnboarding', 'true')
+          return false // 阻止默认行为
+        },
+        onDestroyStarted: () => {
+          localStorage.setItem('hasSeenOnboarding', 'true')
+        },
+        onDestroyed: () => {
+          localStorage.setItem('hasSeenOnboarding', 'true')
+        },
+      })
+
+      driverObjRef.current = driverObj
+      driverObj.drive()
+    }, 1000)
+
+    return () => {
+      clearTimeout(timer)
+      if (driverObjRef.current) {
+        driverObjRef.current.destroy()
+      }
+    }
+  }, [])
+
 
   // 应用提示词（从 PromptGallery 触发）
   useEffect(() => {
     if (promptToApply) {
       setPrompt(promptToApply.prompt)
-      // 不再自动添加图片
+      // 如果有图片，添加到 uploadedImages
+      if (promptToApply.image) {
+        setUploadedImages([promptToApply.image])
+      }
     }
   }, [promptToApply])
   
@@ -376,115 +497,344 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     setUploadedImages(prev => prev.filter((_, i) => i !== index))
   }
 
-  // Login handlers
-  const handleLoginSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const response = await loginWithMailApi({ mail: loginEmail, password: loginPassword })
-      if (!response) return
-
-      if (response.code === 0) {
-        if (response.data.type === 'regist') {
-          // User not registered, show registration modal
-          setRegistCode(response.data.code || '')
-          loginForm.setFieldsValue({ password: loginPassword })
-          setIsModalOpen(true)
-        } else if (response.data.token) {
-          // Login successful
-          setToken(response.data.token)
-          if (response.data.userInfo) {
-            setUserInfo(response.data.userInfo)
-          }
-          message.success(tLogin('loginSuccess'))
-          setLoginModalOpen(false)
-          // Continue with task creation
-          handleCreateTask()
-        }
-      } else {
-        message.error(response.message || tLogin('loginFailed'))
-      }
-    } catch (error) {
-      message.error(tLogin('loginError'))
-    }
+  // Handle login success - continue with task creation
+  const handleLoginSuccess = () => {
+    handleCreateTask()
   }
 
-  const handleRegistSubmit = async (values: { password: string, code: string, inviteCode?: string }) => {
-    try {
-      setIsActivating(true)
-      const response = await mailRegistApi({
-        mail: loginEmail,
-        code: values.code,
-        password: values.password,
-        inviteCode: values.inviteCode || '',
-      })
-
-      if (!response) {
-        message.error(tLogin('registerError'))
-        setIsActivating(false)
-        return
-      }
-
-      if (response.code === 0 && response.data.token) {
-        setIsActivating(false)
-        setIsModalOpen(false)
-        setLoginModalOpen(false)
-        loginForm.resetFields()
-        setToken(response.data.token)
-        if (response.data.userInfo) {
-          setUserInfo(response.data.userInfo)
-        }
-        message.success(tLogin('registerSuccess'))
-        // Continue with task creation
-        handleCreateTask()
-      } else {
-        message.error(response.message || tLogin('registerError'))
-        setIsActivating(false)
-      }
-    } catch (error) {
-      message.error(tLogin('registerError'))
-      setIsActivating(false)
+  // Stop AI generation task - 前端打断，不调用后台接口
+  const handleStopTask = () => {
+    // 调用保存的 abort 函数来中断 SSE 连接
+    if (sseAbortRef.current) {
+      console.log('[UI] Aborting SSE connection')
+      sseAbortRef.current()
+      sseAbortRef.current = null
     }
+    
+    // 设置为非生成状态，但不清空已生成的内容
+    setIsGenerating(false)
+    setProgress(0)
+    
+    // 添加停止消息提示
+    addMessageToQueue({
+      type: 'status',
+      content: t('aiGeneration.status.cancelled' as any),
+      status: 'CANCELLED'
+    })
+    
+    message.info(t('aiGeneration.taskStopped' as any))
   }
 
-  const handleGoogleSuccess = async (credentialResponse: any) => {
-    try {
-      const params: any = {
-        platform: 'google',
-        clientId: credentialResponse.clientId,
-        credential: credentialResponse.credential,
-      }
-
-      const response: any = await googleLoginApi(params)
-      if (!response) {
-        message.error(tLogin('googleLoginFailed'))
-        return
-      }
-
-      if (response.code === 0 && response.data.type === 'login') {
-        setToken(response.data.token)
-        if (response.data.userInfo) {
-          setUserInfo(response.data.userInfo)
-        }
-        message.success(tLogin('loginSuccess'))
-        setLoginModalOpen(false)
-        // Continue with task creation
-        handleCreateTask()
-      } else {
-        message.error(response.message || tLogin('googleLoginFailed'))
-      }
-    } catch (error) {
-      message.error(tLogin('googleLoginFailed'))
+  // 开启新对话
+  const handleNewConversation = () => {
+    if (isGenerating) {
+      message.warning(t('aiGeneration.generatingWarning' as any))
+      return
     }
+    
+    // 清除 state 和 sessionStorage 中的 taskId
+    setTaskId('')
+    setSessionId('')
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('aiAgentTaskId')
+      sessionStorage.removeItem('aiAgentSessionId')
+    }
+    setMarkdownMessages([])
+    setStreamingText('')
+    streamingTextRef.current = ''
+    setPrompt('')
+    message.success(t('aiGeneration.newConversation' as any))
   }
 
   // Create AI generation task with SSE
-  const handleCreateTask = async () => {
+  const handleCreateTask = async () => { 
+    console.log('handleCreateTask')
+    // test 00.00
+    // let resultMsg = {"type":"result","message":{"type":"result","subtype":"success","uuid":"64e76d3a-e9f4-492d-84b2-cb196adb4fec","duration_ms":20935,"duration_api_ms":34158,"is_error":false,"num_turns":2,"message":"完成！✅\n\n系统现在会引导您：\n\n1️⃣ **绑定小红书账号** - 请按照页面提示完成小红书账号的绑定授权\n\n2️⃣ **确认发布信息** - 绑定成功后，您会看到已经为您准备好的：\n - 📸 复古宣传海报图片\n - 📝 标题：🔥惊爆价9.9元！GPT最新AI绘画服务震撼来袭\n - ✍️ 完整的推广文案\n - 🏷️ 话题标签：#AI绘画 #设计神器 #限时优惠 等\n\n3️⃣ **一键发布** - 确认无误后即可发布到小红书！\n\n所有内容都已经为您准备就绪，只需完成账号绑定就可以发布了！🎉",
+    //   "result":{
+    //     "taskId":"693b97aa6259a321fae5f9ff",
+    //     "medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj2cyn9w.jpg","prompt":"Retro propaganda poster style GPT AI image generation service advertisement with beautiful young woman, red and yellow radiating background, Chinese text promoting 9.9 yuan service"}],
+    //     "type":"fullContent",
+    //     "title":"GPT最新AI绘画服务震撼来袭",
+    //     "description":"💥超值福利来啦！GPT最新AI绘画服务，惊爆价仅需9.9元/张！\n\n✨服务亮点：\n📌 适用各种场景 - 海报、插画、产品图，想画就画\n📌 图像融合 + 局部重绘 - 专业级效果随心调整\n📌 每张提交3次修改 - 直到您满意为止\n📌 AI直出效果 - 无需修改即可使用\n\n🎯 有意向的宝子们，点击右下角\"我想要\"立即体验！\n\n机会难得，名额有限，快来抢购吧！💖",
+    //     "tags":["AI绘画","设计神器","限时优惠","平面设计","创意工具"],"action":"createChannel",
+    //     "platform":"xhs",
+    //     "errorMessage":"需要先绑定小红书账号才能发布内容"},"total_cost_usd":0.2353334,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":57188},"cache_creation_input_tokens":57188,"cache_read_input_tokens":3708,"input_tokens":8,"output_tokens":883,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}    
+    //     const taskData = resultMsg.message.result
+    //     const action = taskData.action
+
+    //     if (action === 'createChannel') {
+    //       const platform = taskData.platform
+          
+    //       // 对于 xhs 和 douyin，使用插件授权逻辑
+    //       if (platform === 'xhs' || platform === 'douyin') {
+    //         console.log('createChannel xhs or douyin')
+    //         // 检查插件状态
+    //         const pluginStatus = usePluginStore.getState().status
+    //         const isPluginReady = pluginStatus === PluginStatus.READY
+            
+    //         if (!isPluginReady) {
+    //           // 插件未准备就绪，显示引导授权插件
+    //           message.warning(t('plugin.platformNeedsPlugin' as any))
+              
+    //           // 延迟显示引导，确保页面已加载
+    //           setTimeout(() => {
+    //             const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+    //             if (!pluginButton) {
+    //               console.warn('Plugin button not found')
+    //               return
+    //             }
+
+    //             const driverObj = driver({
+    //               showProgress: false,
+    //               showButtons: ['next'],
+    //               nextBtnText: t('aiGeneration.gotIt' as any),
+    //               doneBtnText: t('aiGeneration.gotIt' as any),
+    //               popoverOffset: 10,
+    //               stagePadding: 4,
+    //               stageRadius: 12,
+    //               allowClose: true,
+    //               smoothScroll: true,
+    //               steps: [
+    //                 {
+    //                   element: '[data-driver-target="plugin-button"]',
+    //                   popover: {
+    //                     title: t('plugin.authorizePluginTitle' as any),
+    //                     description: t('plugin.authorizePluginDescription' as any),
+    //                     side: 'bottom',
+    //                     align: 'start',
+    //                     onPopoverRender: () => {
+    //                       setTimeout(() => {
+    //                         const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+    //                         const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+    //                         const btn = nextBtn || doneBtn
+    //                         if (btn) {
+    //                           btn.textContent = t('aiGeneration.gotIt' as any)
+    //                           const handleClick = (e: MouseEvent) => {
+    //                             e.preventDefault()
+    //                             e.stopPropagation()
+    //                             driverObj.destroy()
+    //                             btn.removeEventListener('click', handleClick)
+    //                           }
+    //                           btn.addEventListener('click', handleClick)
+    //                         }
+    //                       }, 50)
+    //                     },
+    //                   },
+    //                 },
+    //               ],
+    //               onNextClick: () => {
+    //                 driverObj.destroy()
+    //                 return false
+    //               },
+    //             })
+
+    //             driverObj.drive()
+    //           }, 1500)
+    //         } else {
+    //           // 插件已准备就绪，直接调用插件发布方法
+    //           try {
+    //             // 获取账号列表
+    //             const accountGroupList = useAccountStore.getState().accountGroupList
+    //             const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+    //               return [...acc, ...group.children]
+    //             }, [])
+                
+    //             // 根据 taskData 中的平台类型查找账号
+    //             const targetAccounts = allAccounts.filter(account => account.type === platform)
+                
+    //             if (targetAccounts.length === 0) {
+    //               // 未找到账号，弹出确认框并引导用户添加账号
+    //               Modal.confirm({
+    //                 title: t('plugin.noAccountFound' as any),
+    //                 content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
+    //                 okText: '去处理',
+    //                 cancelText: '取消',
+    //                 onOk: () => {
+    //                   // 延迟显示引导，确保页面已加载
+    //                   setTimeout(() => {
+    //                     const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+    //                     if (!pluginButton) {
+    //                       console.warn('Plugin button not found')
+    //                       return
+    //                     }
+
+    //                     const driverObj = driver({
+    //                       showProgress: false,
+    //                       showButtons: ['next'],
+    //                       nextBtnText: t('aiGeneration.gotIt' as any),
+    //                       doneBtnText: t('aiGeneration.gotIt' as any),
+    //                       popoverOffset: 10,
+    //                       stagePadding: 4,
+    //                       stageRadius: 12,
+    //                       allowClose: true,
+    //                       smoothScroll: true,
+    //                       steps: [
+    //                         {
+    //                           element: '[data-driver-target="plugin-button"]',
+    //                           popover: {
+    //                             title: '点击打开插件管理',
+    //                             description: '在插件管理中添加您的账号',
+    //                             side: 'bottom',
+    //                             align: 'start',
+    //                             onPopoverRender: () => {
+    //                               setTimeout(() => {
+    //                                 const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+    //                                 const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+    //                                 const btn = nextBtn || doneBtn
+    //                                 if (btn) {
+    //                                   btn.textContent = t('aiGeneration.gotIt' as any)
+    //                                   const handleClick = (e: MouseEvent) => {
+    //                                     e.preventDefault()
+    //                                     e.stopPropagation()
+    //                                     driverObj.destroy()
+    //                                     btn.removeEventListener('click', handleClick)
+    //                                     // 点击后打开插件弹窗，并高亮对应平台
+    //                                     pluginButton.click()
+    //                                     // 设置高亮平台
+    //                                     setTimeout(() => {
+    //                                       setHighlightPlatform(platform)
+    //                                     }, 300)
+    //                                   }
+    //                                   btn.addEventListener('click', handleClick)
+    //                                 }
+    //                               }, 50)
+    //                             },
+    //                           },
+    //                         },
+    //                       ],
+    //                       onNextClick: () => {
+    //                         driverObj.destroy()
+    //                         return false
+    //                       },
+    //                     })
+
+    //                     driverObj.drive()
+    //                   }, 500)
+    //                 },
+    //               })
+    //               return
+    //             }
+                
+    //             // 构建发布数据
+    //             const medias = taskData.medias || []
+    //             const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+    //             const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+    //             // 创建空的 File 对象作为占位符
+    //             const createEmptyFile = () => {
+    //               return new File([], '', { type: 'image/jpeg' })
+    //             }
+                
+    //             const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+    //               id: '',
+    //               imgPath: m.url,
+    //               ossUrl: m.url,
+    //               size: 0,
+    //               // file: createEmptyFile(),
+    //               imgUrl: m.url,
+    //               filename: '',
+    //               width: 0,
+    //               height: 0,
+    //             }))
+                
+    //             // 为每个账号创建发布项
+    //             // @ts-ignore
+    //             const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
+    //               account,
+    //               params: {
+    //                 title: taskData.title || '',
+    //                 des: taskData.description || '',
+    //                 topics: taskData.tags || [],
+    //                 video: video ? {
+    //                   size: 0,
+    //                   videoUrl: video.url,
+    //                   ossUrl: video.url,
+    //                   filename: '',
+    //                   width: 0,
+    //                   height: 0,
+    //                   duration: 0,
+    //                   cover: {
+    //                     id: '',
+    //                     imgPath: (video as any).coverUrl || '',
+    //                     ossUrl: (video as any).coverUrl,
+    //                     size: 0,
+    //                     imgUrl: (video as any).coverUrl || '',
+    //                     filename: '',
+    //                     width: 0,
+    //                     height: 0,
+    //                   },
+    //                 } : undefined,
+    //                 images: images.length > 0 ? images : undefined,
+    //                 option: {},
+    //               },
+    //             }))
+                
+    //             // 创建平台任务ID映射
+    //             const platformTaskIdMap = new Map<string, string>()
+    //             pluginPublishItems.forEach((item) => {
+    //               const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+    //               platformTaskIdMap.set(item.account.id, requestId)
+    //             })
+                
+    //             // 调用插件发布方法
+    //             usePluginStore.getState().executePluginPublish({
+    //               items: pluginPublishItems,
+    //               platformTaskIdMap,
+    //               onProgress: (event) => {
+    //                 // 监听各平台发布进度
+    //                 const { stage, progress, message: progressMessage, accountId, platform } = event
+    //                 console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
+
+    //                 // 根据进度阶段显示不同提示
+    //                 if (stage === 'error') {
+    //                   message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
+    //                 }
+    //               },
+    //               onComplete: () => {
+    //                 message.success(t('plugin.publishTaskSubmitted' as any))
+    //               },
+    //             })
+                
+    //             message.success(t('plugin.publishingViaPlugin' as any))
+    //           } catch (error: any) {
+    //             console.error('Plugin publish error:', error)
+    //             message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+    //           }
+    //         }
+    //       } else {
+    //         // 其他平台使用原有的跳转逻辑
+    //         // 获取平台名称（支持不同大小写）
+    //         let platformName = platform
+    //         // 尝试从 AccountPlatInfoMap 获取显示名称
+    //         for (const [key, value] of AccountPlatInfoMap.entries()) {
+    //           if (key.toLowerCase() === platform.toLowerCase()) {
+    //             platformName = value.name
+    //             break
+    //           }
+    //         }
+            
+    //         Modal.confirm({
+    //           title: t('aiGeneration.needAddChannel' as any),
+    //           content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
+    //           okText: t('aiGeneration.goAdd' as any),
+    //           cancelText: t('aiGeneration.cancel' as any),
+    //           onOk: () => {
+    //             // 跳转到账号页面，自动打开对应平台的授权
+    //             router.push(`/${lng}/accounts?addChannel=${platform}`)
+    //           },
+    //         })
+    //       }
+    //     }
+
+    // return
+
     if (!prompt.trim()) {
       return
     }
     
-    // Check if user is logged in
-    if (!token) {
+    // Check if user is logged in - use getState() to get latest token value
+    const currentToken = useUserStore.getState().token
+    if (!currentToken) {
       setLoginModalOpen(true)
       return
     }
@@ -496,8 +846,24 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       setCurrentTypingMsg(null)
       setDisplayedText('')
       setProgress(0)
-      setMarkdownMessages([])
-      setSessionId('')
+      
+      // 判断是否是新对话：如果没有 taskId，就是新对话，需要清空消息
+      const isNewConversation = !taskId
+      
+      if (isNewConversation) {
+        // 新对话：清空所有消息和状态
+        setMarkdownMessages([])
+        setSessionId('')
+        setTaskId('')
+        // 清除 sessionStorage 中的旧 taskId
+        if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('aiAgentTaskId')
+          sessionStorage.removeItem('aiAgentSessionId')
+        }
+      }
+      
+      setStreamingText('')
+      streamingTextRef.current = ''
 
       // Step 1: Show THINKING status
       addMessageToQueue({
@@ -512,6 +878,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         content: `📝 ${t('aiGeneration.topicPrefix' as any)}${prompt}`
       })
 
+      // 将用户消息添加到对话历史中
+      setMarkdownMessages(prev => [...prev, `👤 ${prompt}`])
+
       // Set initial progress to 10%
       setProgress(10)
 
@@ -524,16 +893,106 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       // Dynamic import API
       const { agentApi } = await import('@/api/agent')
 
+      // 构建请求参数：如果有 taskId，就传递它继续对话
+      const requestParams: any = {
+        prompt: fullPrompt,
+        includePartialMessages: true // 使用流式消息
+      }
+      
+      // 如果有 taskId，就传递它继续当前对话
+      if (taskId) {
+        requestParams.taskId = taskId
+        console.log('[UI] Continuing conversation with taskId:', taskId)
+      } else {
+        console.log('[UI] Creating new conversation')
+      }
+
       // Create task with SSE (使用包含图片链接的完整提示词)
-      await agentApi.createTaskWithSSE(
-        { prompt: fullPrompt },
+      const abortFn = await agentApi.createTaskWithSSE(
+        requestParams,
         // onMessage callback
         (sseMessage: any) => {
           console.log('SSE Message:', sseMessage)
 
+          // 处理 init 消息 - 保存 taskId
+          if (sseMessage.type === 'init' && sseMessage.taskId) {
+            console.log('[UI] Received taskId:', sseMessage.taskId)
+            const receivedTaskId = sseMessage.taskId
+            
+            // 如果没有当前 taskId，说明是新对话
+            if (!taskId) {
+              console.log('[UI] New conversation started with taskId:', receivedTaskId)
+            } else {
+              console.log('[UI] Continuing conversation with taskId:', receivedTaskId)
+            }
+            
+            // 保存到 state 和 sessionStorage，仅在当前会话中保存
+            setTaskId(receivedTaskId)
+            setSessionId(receivedTaskId)
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('aiAgentTaskId', receivedTaskId)
+              sessionStorage.setItem('aiAgentSessionId', receivedTaskId)
+            }
+            
+            // 清空流式文本（新消息开始）
+            streamingTextRef.current = ''
+            setStreamingText('')
+            return
+          }
+
+          // 处理 keep_alive 消息 - 无需特别处理
+          if (sseMessage.type === 'keep_alive') {
+            console.log('[UI] Keep alive')
+            return
+          }
+
+          // 处理流式事件
+          if (sseMessage.type === 'stream_event' && sseMessage.message) {
+            const streamEvent = sseMessage.message as any
+            const event = streamEvent.event
+
+            console.log('[UI] Stream event:', event.type)
+
+            // 处理消息开始 - 不清空文本，因为同一个消息里可能多次出现 message_start
+            if (event.type === 'message_start') {
+              console.log('[UI] Message start within same conversation')
+            }
+            // 处理内容块增量更新
+            else if (event.type === 'content_block_delta' && event.delta) {
+              if (event.delta.type === 'text_delta' && event.delta.text) {
+                // 累积文本
+                streamingTextRef.current += event.delta.text
+                setStreamingText(streamingTextRef.current)
+                
+                // 实时更新到 markdown 消息（替换最后一条消息或添加新消息）
+                setMarkdownMessages(prev => {
+                  const newMessages = [...prev]
+                  // 如果最后一条消息是流式文本，则更新它
+                  if (newMessages.length > 0 && newMessages[newMessages.length - 1].startsWith('🤖 ')) {
+                    newMessages[newMessages.length - 1] = `🤖 ${streamingTextRef.current}`
+                  } else {
+                    // 否则添加新消息
+                    newMessages.push(`🤖 ${streamingTextRef.current}`)
+                  }
+                  return newMessages
+                })
+              }
+            }
+            // 处理消息结束
+            else if (event.type === 'message_stop') {
+              console.log('[UI] Stream completed, final text length:', streamingTextRef.current.length)
+              // 流式结束，文本已经完整显示在 markdown 中
+            }
+            return
+          }
+
           // Save sessionId
           if (sseMessage.sessionId) {
             setSessionId(sseMessage.sessionId)
+            // 同步到 sessionStorage
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('aiAgentSessionId', sseMessage.sessionId)
+            }
           }
 
           // Handle different message types
@@ -551,9 +1010,637 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             const errorMsg = `❌ : ${sseMessage.message || t('aiGeneration.unknownError' as any)}`
             setMarkdownMessages(prev => [...prev, errorMsg])
           }
+          // 处理最终结果
+          else if (sseMessage.type === 'result' && sseMessage.message) {
+            console.log('[UI] Received result:', sseMessage.message)
+            const resultMsg = sseMessage.message as any
+            
+            // 显示结果消息
+            if (resultMsg.message) {
+              setMarkdownMessages(prev => [...prev, resultMsg.message])
+            }
+
+            // Show completion status
+            addMessageToQueue({
+              type: 'status',
+              content: t('aiGeneration.status.completed' as any),
+              status: 'COMPLETED'
+            })
+
+            setProgress(100)
+            setIsGenerating(false)
+
+            // 根据 type 和 action 做不同处理
+            if (resultMsg.result) {
+              const taskData = resultMsg.result
+              const resultType = taskData.type
+              const action = taskData.action
+
+              // 处理 imageOnly 或 videoOnly - 不做跳转操作
+              if (resultType === 'imageOnly' || resultType === 'videoOnly' || resultType === 'mediaOnly') {
+                console.log('[UI] Result type is imageOnly/videoOnly, no navigation needed')
+                return
+              }
+
+              // 处理 fullContent 类型
+              if (resultType === 'fullContent') {
+                // 如果没有 action，默认跳转到发布页面
+                if (!action) {
+                  setTimeout(() => {
+                    const queryParams = new URLSearchParams({
+                      aiGenerated: 'true',
+                      taskId: taskData.taskId || '',
+                      title: taskData.title || '',
+                      description: taskData.description || '',
+                      tags: JSON.stringify(taskData.tags || []),
+                      medias: JSON.stringify(taskData.medias || []),
+                    })
+                    
+                    router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                  }, 1500)
+                }
+                // action: draft - 跳转草稿箱
+                else if (action === 'navigateToDraft') {
+                  setTimeout(() => {
+                    router.push(`/${lng}/cgmaterial`)
+                  }, 1500)
+                }
+                // action: saveDraft - 保存草稿再跳转草稿箱
+                else if (action === 'saveDraft') {
+                  // 保存草稿 - 使用立即执行的 async 函数
+                  ;(async () => {
+                    try {
+                      // 转换 medias 格式：从 Media[] 转换为 MaterialMedia[]
+                      const medias = taskData.medias || []
+                      const materialMediaList = medias.map((media: any) => {
+                        // MediaType.VIDEO -> PubType.VIDEO, MediaType.IMAGE -> PubType.ImageText
+                        const pubType = media.type === MediaType.Video 
+                          ? PubType.VIDEO 
+                          : PubType.ImageText
+                        return {
+                          url: media.url,
+                          type: pubType,
+                          content: media.coverUrl || undefined, // 视频封面作为 content
+                        }
+                      })
+
+                      // 确定封面URL（优先使用第一个视频的封面，否则使用第一张图片）
+                      const coverUrl = medias.find((m: any) => m.coverUrl)?.coverUrl 
+                        || medias.find((m: any) => m.type === MediaType.Image)?.url
+                        || undefined
+
+                      // 第一次调用：创建草稿（先尝试调用，看后端是否返回 groupId）
+                      let createResult: any = null
+                      let finalGroupId: string | null = null
+                      
+                      try {
+                        // 先获取分组列表，选择一个默认分组用于第一次调用
+                        const groupListRes = await apiGetMaterialGroupList(1, 100)
+                        const groups = groupListRes?.data?.list || []
+                        
+                        if (groups.length > 0) {
+                          // 根据 medias 类型选择默认分组
+                          const hasVideo = medias.some((m: any) => m.type === MediaType.Video)
+                          const targetGroupType = hasVideo ? PubType.VIDEO : PubType.ImageText
+                          const defaultGroup = groups.find((g: any) => g.type === targetGroupType) || groups[0]
+                          finalGroupId = defaultGroup._id || defaultGroup.id
+                        }
+                        
+                        // 如果有分组，尝试创建草稿
+                        if (finalGroupId) {
+                          createResult = await apiCreateMaterial({
+                            groupId: finalGroupId,
+                            coverUrl,
+                            mediaList: materialMediaList,
+                            title: taskData.title || '',
+                            desc: taskData.description || '',
+                          })
+                          
+                          // 检查返回结果是否有新的 groupId（可能后端返回了不同的 groupId）
+                          const returnedGroupId = createResult?.data?.groupId 
+                            || createResult?.data?.group?._id 
+                            || createResult?.data?.group?.id
+                            || null
+                          
+                          // 如果返回了 groupId，使用返回的
+                          if (returnedGroupId) {
+                            finalGroupId = returnedGroupId
+                          }
+                        }
+                      } catch (error: any) {
+                        // 如果调用失败，记录错误但继续处理
+                        console.error('Create material error:', error)
+                      }
+
+                      // 如果没有成功创建（没有 groupId 或创建失败），需要重新获取分组并创建
+                      if (!createResult || !finalGroupId) {
+                        const groupListRes = await apiGetMaterialGroupList(1, 100)
+                        const groups = groupListRes?.data?.list || []
+
+                        if (groups.length === 0) {
+                          message.warning(t('aiGeneration.noDraftGroupFound' as any))
+                          return
+                        }
+
+                        // 根据 medias 类型选择默认分组
+                        const hasVideo = medias.some((m: any) => m.type === MediaType.Video)
+                        const targetGroupType = hasVideo ? PubType.VIDEO : PubType.ImageText
+                        const defaultGroup = groups.find((g: any) => g.type === targetGroupType) || groups[0]
+                        finalGroupId = defaultGroup._id || defaultGroup.id
+
+                        // 使用找到的分组ID创建草稿
+                        if (finalGroupId) {
+                          try {
+                            createResult = await apiCreateMaterial({
+                              groupId: finalGroupId,
+                              coverUrl,
+                              mediaList: materialMediaList,
+                              title: taskData.title || '',
+                              desc: taskData.description || '',
+                            })
+                          } catch (error) {
+                            console.error('Create material with groupId error:', error)
+                            message.error(t('aiGeneration.saveDraftFailed' as any))
+                            return
+                          }
+                        } else {
+                          message.warning(t('aiGeneration.noDraftGroup' as any))
+                          return
+                        }
+                      }
+
+                      if (createResult) {
+                        message.success(t('aiGeneration.saveDraftSuccess' as any))
+                        setTimeout(() => {
+                          router.push(`/${lng}/cgmaterial`)
+                        }, 1500)
+                      } else {
+                        message.error(t('aiGeneration.saveDraftFailed' as any))
+                      }
+                    } catch (error: any) {
+                      console.error('Save draft error:', error)
+                      message.error(`${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+                    }
+                  })()
+                }
+                // action: publish - 选中指定平台账户并填充内容
+                else if (action === 'publish') {
+                  const platform = taskData.platform
+                  
+                  // 对于 xhs 和 douyin，使用插件授权逻辑
+                  if (platform === 'xhs' || platform === 'douyin') {
+                    console.log('createChannel xhs or douyin')
+                    // 检查插件状态
+                    const pluginStatus = usePluginStore.getState().status
+                    const isPluginReady = pluginStatus === PluginStatus.READY
+                    
+                    if (!isPluginReady) {
+                      // 插件未准备就绪，显示引导授权插件
+                      message.warning(t('plugin.platformNeedsPlugin' as any))
+                      
+                      // 延迟显示引导，确保页面已加载
+                      setTimeout(() => {
+                        const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+                        if (!pluginButton) {
+                          console.warn('Plugin button not found')
+                          return
+                        }
+        
+                        const driverObj = driver({
+                          showProgress: false,
+                          showButtons: ['next'],
+                          nextBtnText: t('aiGeneration.gotIt' as any),
+                          doneBtnText: t('aiGeneration.gotIt' as any),
+                          popoverOffset: 10,
+                          stagePadding: 4,
+                          stageRadius: 12,
+                          allowClose: true,
+                          smoothScroll: true,
+                          steps: [
+                            {
+                              element: '[data-driver-target="plugin-button"]',
+                              popover: {
+                                title: t('plugin.authorizePluginTitle' as any),
+                                description: t('plugin.authorizePluginDescription' as any),
+                                side: 'bottom',
+                                align: 'start',
+                                onPopoverRender: () => {
+                                  setTimeout(() => {
+                                    const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                                    const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                                    const btn = nextBtn || doneBtn
+                                    if (btn) {
+                                      btn.textContent = t('aiGeneration.gotIt' as any)
+                                      const handleClick = (e: MouseEvent) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        driverObj.destroy()
+                                        btn.removeEventListener('click', handleClick)
+                                      }
+                                      btn.addEventListener('click', handleClick)
+                                    }
+                                  }, 50)
+                                },
+                              },
+                            },
+                          ],
+                          onNextClick: () => {
+                            driverObj.destroy()
+                            return false
+                          },
+                        })
+        
+                        driverObj.drive()
+                      }, 1500)
+                    } else {
+                      // 插件已准备就绪，直接调用插件发布方法
+                      try {
+                        // 获取账号列表
+                        const accountGroupList = useAccountStore.getState().accountGroupList
+                        const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+                          return [...acc, ...group.children]
+                        }, [])
+                        
+                        // 根据 taskData 中的平台类型查找账号
+                        const targetAccounts = allAccounts.filter(account => account.type === platform)
+                        
+                        if (targetAccounts.length === 0) {
+                          // 未找到账号，弹出确认框并引导用户添加账号
+                          Modal.confirm({
+                            title: t('plugin.noAccountFound' as any),
+                            content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
+                            okText: '去处理',
+                            cancelText: '取消',
+                            onOk: () => {
+                              // 延迟显示引导，确保页面已加载
+                              setTimeout(() => {
+                                const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+                                if (!pluginButton) {
+                                  console.warn('Plugin button not found')
+                                  return
+                                }
+        
+                                const driverObj = driver({
+                                  showProgress: false,
+                                  showButtons: ['next'],
+                                  nextBtnText: t('aiGeneration.gotIt' as any),
+                                  doneBtnText: t('aiGeneration.gotIt' as any),
+                                  popoverOffset: 10,
+                                  stagePadding: 4,
+                                  stageRadius: 12,
+                                  allowClose: true,
+                                  smoothScroll: true,
+                                  steps: [
+                                    {
+                                      element: '[data-driver-target="plugin-button"]',
+                                      popover: {
+                                        title: '点击打开插件管理',
+                                        description: '在插件管理中添加您的账号',
+                                        side: 'bottom',
+                                        align: 'start',
+                                        onPopoverRender: () => {
+                                          setTimeout(() => {
+                                            const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                                            const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                                            const btn = nextBtn || doneBtn
+                                            if (btn) {
+                                              btn.textContent = t('aiGeneration.gotIt' as any)
+                                              const handleClick = (e: MouseEvent) => {
+                                                e.preventDefault()
+                                                e.stopPropagation()
+                                                driverObj.destroy()
+                                                btn.removeEventListener('click', handleClick)
+                                                // 点击后打开插件弹窗，并高亮对应平台
+                                                pluginButton.click()
+                                                // 设置高亮平台
+                                                setTimeout(() => {
+                                                  setHighlightPlatform(platform)
+                                                }, 300)
+                                              }
+                                              btn.addEventListener('click', handleClick)
+                                            }
+                                          }, 50)
+                                        },
+                                      },
+                                    },
+                                  ],
+                                  onNextClick: () => {
+                                    driverObj.destroy()
+                                    return false
+                                  },
+                                })
+        
+                                driverObj.drive()
+                              }, 500)
+                            },
+                          })
+                          return
+                        }
+                        
+                        // 构建发布数据
+                        const medias = taskData.medias || []
+                        const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+                        const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+                        // 创建空的 File 对象作为占位符
+                        const createEmptyFile = () => {
+                          return new File([], '', { type: 'image/jpeg' })
+                        }
+                        
+                        const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+                          id: '',
+                          imgPath: m.url,
+                          ossUrl: m.url,
+                          size: 0,
+                          // file: createEmptyFile(),
+                          imgUrl: m.url,
+                          filename: '',
+                          width: 0,
+                          height: 0,
+                        }))
+                        
+                        // 为每个账号创建发布项
+                        // @ts-ignore
+                        const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
+                          account,
+                          params: {
+                            title: taskData.title || '',
+                            des: taskData.description || '',
+                            topics: taskData.tags || [],
+                            video: video ? {
+                              size: 0,
+                              videoUrl: video.url,
+                              ossUrl: video.url,
+                              filename: '',
+                              width: 0,
+                              height: 0,
+                              duration: 0,
+                              cover: {
+                                id: '',
+                                imgPath: (video as any).coverUrl || '',
+                                ossUrl: (video as any).coverUrl,
+                                size: 0,
+                                imgUrl: (video as any).coverUrl || '',
+                                filename: '',
+                                width: 0,
+                                height: 0,
+                              },
+                            } : undefined,
+                            images: images.length > 0 ? images : undefined,
+                            option: {},
+                          },
+                        }))
+                        
+                        // 创建平台任务ID映射
+                        const platformTaskIdMap = new Map<string, string>()
+                        pluginPublishItems.forEach((item) => {
+                          const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+                          platformTaskIdMap.set(item.account.id, requestId)
+                        })
+                        
+                        // 调用插件发布方法
+                        usePluginStore.getState().executePluginPublish({
+                          items: pluginPublishItems,
+                          platformTaskIdMap,
+                          onProgress: (event) => {
+                            // 监听各平台发布进度
+                            const { stage, progress, message: progressMessage, accountId, platform } = event
+                            console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
+        
+                            // 根据进度阶段显示不同提示
+                            if (stage === 'error') {
+                              message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
+                            }
+                          },
+                          onComplete: () => {
+                            message.success(t('plugin.publishTaskSubmitted' as any))
+                          },
+                        })
+                        
+                        message.success(t('plugin.publishingViaPlugin' as any))
+                      } catch (error: any) {
+                        console.error('Plugin publish error:', error)
+                        message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+                      }
+                    }
+                  } else {
+                    // 其他平台使用原有的跳转逻辑
+                    // 获取平台名称（支持不同大小写）
+                    let platformName = platform
+                    // 尝试从 AccountPlatInfoMap 获取显示名称
+                    for (const [key, value] of AccountPlatInfoMap.entries()) {
+                      if (key.toLowerCase() === platform.toLowerCase()) {
+                        platformName = value.name
+                        break
+                      }
+                    }
+                    
+                    Modal.confirm({
+                      title: t('aiGeneration.needAddChannel' as any),
+                      content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
+                      okText: t('aiGeneration.goAdd' as any),
+                      cancelText: t('aiGeneration.cancel' as any),
+                      onOk: () => {
+                        // 跳转到账号页面，自动打开对应平台的授权
+                        router.push(`/${lng}/accounts?addChannel=${platform}`)
+                      },
+                    })
+                  }
+                }
+                // action: updateChannel - 更新频道授权
+                else if (action === 'updateChannel') {
+                  const platform = taskData.platform
+                  message.warning(t('aiGeneration.channelAuthExpired' as any))
+                  
+                  Modal.confirm({
+                    title: t('aiGeneration.channelAuthExpiredTitle' as any),
+                    content: t('aiGeneration.channelAuthExpiredContent' as any),
+                    okText: t('aiGeneration.reauthorize' as any),
+                    cancelText: t('aiGeneration.cancel' as any),
+                    onOk: () => {
+                      router.push(`/${lng}/accounts?updateChannel=${platform}`)
+                    },
+                  })
+                }
+                // action: loginChannel - 登录频道
+                else if (action === 'loginChannel') {
+                  const platform = taskData.platform
+                  message.info(t('aiGeneration.needLoginChannel' as any))
+                  
+                  Modal.confirm({
+                    title: t('aiGeneration.needLogin' as any),
+                    content: t('aiGeneration.pleaseLoginChannel' as any),
+                    okText: t('aiGeneration.goLogin' as any),
+                    cancelText: t('aiGeneration.cancel' as any),
+                    onOk: () => {
+                      router.push(`/${lng}/accounts?loginChannel=${platform}`)
+                    },
+                  })
+                }
+                // action: platformNotSupported - 平台不支持，使用插件发布（已取消 navigateToPublish）
+                else if (action === 'platformNotSupported') {
+                  // 检查插件状态
+                  const pluginStatus = usePluginStore.getState().status
+                  const isPluginReady = pluginStatus === PluginStatus.READY
+                  
+                  if (!isPluginReady) {
+                    // 插件未准备就绪，显示引导授权插件
+                    message.warning(t('plugin.platformNeedsPlugin' as any))
+                    
+                    // 延迟显示引导，确保页面已加载
+                    setTimeout(() => {
+                      const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+                      if (!pluginButton) {
+                        console.warn('Plugin button not found')
+                        return
+                      }
+
+                      const driverObj = driver({
+                        showProgress: false,
+                        showButtons: ['next'],
+                        nextBtnText: t('aiGeneration.gotIt' as any),
+                        doneBtnText: t('aiGeneration.gotIt' as any),
+                        popoverOffset: 10,
+                        stagePadding: 4,
+                        stageRadius: 12,
+                        allowClose: true,
+                        smoothScroll: true,
+                        steps: [
+                          {
+                            element: '[data-driver-target="plugin-button"]',
+                            popover: {
+                              title: t('plugin.authorizePluginTitle' as any),
+                              description: t('plugin.authorizePluginDescription' as any),
+                              side: 'bottom',
+                              align: 'start',
+                              onPopoverRender: () => {
+                                setTimeout(() => {
+                                  const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                                  const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                                  const btn = nextBtn || doneBtn
+                                  if (btn) {
+                                    btn.textContent = t('aiGeneration.gotIt' as any)
+                                    const handleClick = (e: MouseEvent) => {
+                                      e.preventDefault()
+                                      e.stopPropagation()
+                                      driverObj.destroy()
+                                      btn.removeEventListener('click', handleClick)
+                                    }
+                                    btn.addEventListener('click', handleClick)
+                                  }
+                                }, 50)
+                              },
+                            },
+                          },
+                        ],
+                        onNextClick: () => {
+                          driverObj.destroy()
+                          return false
+                        },
+                      })
+
+                      driverObj.drive()
+                    }, 1500)
+                  } else {
+                    // 插件已准备就绪，直接调用插件发布方法
+                    try {
+                      // 获取账号列表
+                      const accountGroupList = useAccountStore.getState().accountGroupList
+                      const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+                        return [...acc, ...group.children]
+                      }, [])
+                      
+                      // 根据 taskData 中的平台类型查找账号
+                      const platform = taskData.platform
+                      const targetAccounts = allAccounts.filter(account => account.type === platform)
+                      
+                      if (targetAccounts.length === 0) {
+                        message.warning(t('plugin.noAccountFound' as any))
+                        return
+                      }
+                      
+                      // 构建发布数据
+                      const medias = taskData.medias || []
+                      const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+                      const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+                      // 创建空的 File 对象作为占位符
+                      const createEmptyFile = () => {
+                        return new File([], '', { type: 'image/jpeg' })
+                      }
+                      
+                      const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+                        id: '',
+                        imgPath: m.url,
+                        ossUrl: m.url,
+                        size: 0,
+                        file: createEmptyFile(),
+                        imgUrl: m.url,
+                        filename: '',
+                        width: 0,
+                        height: 0,
+                      }))
+                      
+                      // 为每个账号创建发布项
+                      const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
+                        account,
+                        params: {
+                          title: taskData.title || '',
+                          des: taskData.description || '',
+                          topics: taskData.tags || [],
+                          video: video ? {
+                            size: 0,
+                            file: new Blob(),
+                            videoUrl: video.url,
+                            ossUrl: video.url,
+                            filename: '',
+                            width: 0,
+                            height: 0,
+                            duration: 0,
+                            cover: {
+                              id: '',
+                              imgPath: video.coverUrl || '',
+                              ossUrl: video.coverUrl,
+                              size: 0,
+                              file: createEmptyFile(),
+                              imgUrl: video.coverUrl || '',
+                              filename: '',
+                              width: 0,
+                              height: 0,
+                            },
+                          } : undefined,
+                          images: images.length > 0 ? images : undefined,
+                          option: {},
+                        },
+                      }))
+                      
+                      // 创建平台任务ID映射
+                      const platformTaskIdMap = new Map<string, string>()
+                      pluginPublishItems.forEach((item) => {
+                        const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+                        platformTaskIdMap.set(item.account.id, requestId)
+                      })
+                      
+                      // 调用插件发布方法
+                      usePluginStore.getState().executePluginPublish({
+                        items: pluginPublishItems,
+                        platformTaskIdMap,
+                        onComplete: () => {
+                          message.success(t('plugin.publishTaskSubmitted' as any))
+                        },
+                      })
+                      
+                      message.success(t('plugin.publishingViaPlugin' as any))
+                    } catch (error: any) {
+                      console.error('Plugin publish error:', error)
+                      message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+                    }
+                  }
+                }
+              }
+            }
+          }
           
           if (sseMessage.type === 'status' && sseMessage.status) {
-            // Update statu
+            // Update status
             const statusDisplay = getStatusDisplay(sseMessage.status)
             const needsLoadingAnimation = ['GENERATING_VIDEO', 'GENERATING_IMAGE', 'GENERATING_CONTENT', 'GENERATING_TEXT'].includes(sseMessage.status)
             
@@ -587,184 +1674,26 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         // onDone callback
         async (finalSessionId) => {
           console.log('SSE Done, sessionId:', finalSessionId)
-          
-          // SSE completed, fetch final result
-          if (finalSessionId) {
-            try {
-              const res = await agentApi.getTaskDetail(finalSessionId)
-              
-              if (res?.code === 0 && res.data) {
-                const taskData = res.data
-
-                // Show completion status
-                addMessageToQueue({
-                  type: 'status',
-                  content: t('aiGeneration.status.completed' as any),
-                  status: 'COMPLETED'
-                })
-
-                setProgress(100)
-                setIsGenerating(false)
-
-                // Navigate to accounts page after delay
-                setTimeout(() => {
-                  const queryParams = new URLSearchParams({
-                    aiGenerated: 'true',
-                    taskId: taskData.id,
-                    title: taskData.title || '',
-                    description: taskData.description || '',
-                    tags: JSON.stringify(taskData.tags || []),
-                    medias: JSON.stringify(taskData.medias || []),
-                  })
-                  
-                  router.push(`/${lng}/accounts?${queryParams.toString()}`)
-                }, 1500)
-              }
-            }
-            catch (error) {
-              console.error('Failed to fetch task detail:', error)
-              setIsGenerating(false)
-            }
-          }
-          else {
-            setIsGenerating(false)
-          }
+          // 不再需要调用 getTaskDetail，结果已通过 SSE 返回
+          setIsGenerating(false)
+          // 清除 abort 函数引用
+          sseAbortRef.current = null
         }
       )
+      
+      // 保存 abort 函数引用
+      sseAbortRef.current = abortFn
     }
     catch (error: any) {
       console.error('Create task error:', error)
       message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
       setProgress(0)
+      // 清除 abort 函数引用
+      sseAbortRef.current = null
     }
   }
 
-  // Removed pollTaskStatus function - now using SSE instead
-  /* const pollTaskStatus = async (taskId: string) => {
-    const { agentApi } = await import('@/api/agent')
-    let lastStatus = ''
-    let hasShownTitle = false
-    let hasShownDescription = false
-
-    const poll = async () => {
-      try {
-        const res = await agentApi.getTaskDetail(taskId)
-        
-        if (res?.code === 0 && res.data) {
-          const taskData = res.data
-
-          // Show title if available and not shown yet
-          if (taskData.title && !hasShownTitle) {
-            addMessageToQueue({
-              type: 'text',
-              content: `✨ ${t('aiGeneration.generatedTitlePrefix' as any)}${taskData.title}`
-            })
-            hasShownTitle = true
-          }
-
-          // Show description if available and not shown yet (before status)
-          if (taskData.description && !hasShownDescription) {
-            addMessageToQueue({
-              type: 'description',
-              content: `${t('aiGeneration.descriptionPrefix' as any)}${taskData.description}`
-            })
-            hasShownDescription = true
-          }
-
-          // Add new message when status changes (skip THINKING as it's already shown in step 1)
-          if (taskData.status !== lastStatus && taskData.status !== 'THINKING') {
-            const statusDisplay = getStatusDisplay(taskData.status)
-            // Mark media generation statuses to need loading animation
-            const needsLoadingAnimation = taskData.status === 'GENERATING_VIDEO' || 
-                                         taskData.status === 'GENERATING_IMAGE' ||
-                                         taskData.status === 'GENERATING_CONTENT' ||
-                                         taskData.status === 'GENERATING_TEXT'
-            
-            addMessageToQueue({
-              type: 'status',
-              content: statusDisplay.text,
-              status: taskData.status,
-              loading: needsLoadingAnimation
-            } as any)
-            
-            // Update progress (new status) - use functional update to avoid closure issues
-            setProgress(prev => calculateProgress(taskData.status, true, prev))
-            
-            lastStatus = taskData.status
-          } else if (taskData.status === 'THINKING') {
-            // Only record status, don't show message
-            lastStatus = taskData.status
-          } else if (taskData.status === lastStatus) {
-            // For same status, if it's generating status, increase progress
-            const generatingStatuses = ['GENERATING_CONTENT', 'GENERATING_IMAGE', 'GENERATING_VIDEO', 'GENERATING_TEXT']
-            if (generatingStatuses.includes(taskData.status)) {
-              // Use functional update to avoid closure issues
-              setProgress(prev => calculateProgress(taskData.status, false, prev))
-            }
-          }
-
-          // If task completed
-          if (taskData.status === 'COMPLETED') {
-            setIsGenerating(false)
-            
-            // Delay navigation to ensure last message is displayed
-            setTimeout(() => {
-              // Build navigation params
-              const queryParams = new URLSearchParams({
-                aiGenerated: 'true',
-                taskId: taskData.id,
-                title: taskData.title || '',
-                description: taskData.description || '',
-                tags: JSON.stringify(taskData.tags || []),
-                medias: JSON.stringify(taskData.medias || []),
-              })
-              
-              // Navigate to accounts page
-              router.push(`/${lng}/accounts?${queryParams.toString()}`)
-            }, 1500)
-            return
-          }
-          // If task failed
-          else if (taskData.status === 'FAILED') {
-            addMessageToQueue({
-              type: 'error',
-              content: `${t('aiGeneration.failedReasonPrefix' as any)}${taskData.errorMessage || t('aiGeneration.unknownError' as any)}`
-            })
-            setIsGenerating(false)
-            setProgress(0) // Reset progress
-            return
-          }
-          // If task cancelled
-          else if (taskData.status === 'CANCELLED') {
-            setIsGenerating(false)
-            setProgress(0) // Reset progress
-            return
-          }
-
-          // Continue polling
-          setTimeout(poll, 2000)
-        }
-      } catch (error) {
-        setTimeout(poll, 2000)
-      }
-    }
-
-    // Start polling
-    poll()
-
-    // Set maximum polling time to 10 minutes
-    setTimeout(() => {
-      if (isGenerating) {
-        setIsGenerating(false)
-        setProgress(0) // Reset progress
-        addMessageToQueue({
-          type: 'error',
-          content: t('aiGeneration.taskTimeout' as any)
-        })
-      }
-    }, 600000)
-  } */
 
   return (
     <section className={styles.hero}>
@@ -780,233 +1709,182 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           <span className={styles.githubText}>{t('hero.github')}</span>
         </div>
 
+        {/* Mode Selection Navigation */}
+        <div className={styles.modeNavigation}>
+          <div 
+            className={`${styles.modeItem} ${selectedMode === 'agent' ? styles.modeItemActive : ''}`}
+            onClick={() => setSelectedMode('agent')}
+            style={{ 
+              background: selectedMode === 'agent' 
+                ? 'linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%)' 
+                : 'linear-gradient(135deg, rgba(166, 106, 228, 0.8) 0%, rgba(139, 90, 214, 0.8) 100%)'
+            }}
+          >
+            <div className={styles.modeContent}>
+              <div className={styles.modeTitle}>{t('aiGeneration.agentMode' as any)}</div>
+              {selectedMode === 'agent' && (
+                <div className={styles.modeDescription}>{t('aiGeneration.inspirationPrompt' as any)}</div>
+              )}
+              {selectedMode !== 'agent' && (
+                <svg className={styles.modeArrow} width="16" height="16" viewBox="0 0 10 10" fill="none">
+                  <path d="M3.253 1.172a.604.604 0 0 1 .854.005l3.359 3.398a.604.604 0 0 1 0 .85L4.107 8.823a.604.604 0 0 1-.859-.85L6.187 5 3.248 2.026a.604.604 0 0 1 .005-.854Z" fill="currentColor"/>
+                </svg>
+              )}
+            </div>
+          </div>
+          
+          {/* 对话信息和新对话按钮 */}
+          {selectedMode === 'agent' && (taskId || sessionId) && (
+            <div className={styles.conversationInfo}>
+              <span className={styles.conversationId}>
+                {t('aiGeneration.conversationId' as any)}: {(taskId || sessionId).slice(-6)}
+              </span>
+              <button
+                className={styles.newConversationBtn}
+                onClick={handleNewConversation}
+                title={t('aiGeneration.startNewConversation' as any)}
+                disabled={isGenerating}
+              >
+                <ReloadOutlined />
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* SSE Message Display - Visible when generating or has messages */}
+        {(isGenerating || markdownMessages.length > 0) && (
+          <div className={styles.markdownMessagesWrapper}>
+            <div 
+              ref={markdownContainerRef}
+              className={styles.markdownMessagesContainer}
+            >
+              <h3 className={styles.markdownTitle}>
+                <Image src={logo} alt="Logo" className={styles.logoAi} />
+                 {t('aiGeneration.aiGenerationProcess' as any)} {isGenerating && <LoadingDots />}
+              </h3>
+              <div className={styles.markdownContent}>
+                <ReactMarkdown>
+                  {markdownMessages.length > 0 
+                    ? markdownMessages.join('\n\n') 
+                    : t('aiGeneration.waitingAiResponse' as any)}
+                </ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* AI Generation Input */}
         <div className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
-             {/* 已上传图片预览 */}
-          {uploadedImages.length > 0 && (
+           
             <div className={styles.uploadedImagesPreview}>
               <div className={styles.imagesRow}>
-                {uploadedImages.map((imageUrl, index) => (
+                {uploadedImages.length > 0 && uploadedImages.map((imageUrl, index) => (
                   <div key={index} className={styles.imageItem}>
                     <img 
                       src={imageUrl} 
-                      alt={`图 ${index + 1}`} 
+                      alt={`pic ${index + 1}`} 
                       className={styles.imageThumb}
                     />
                     {!isGenerating && (
                       <span
                         className={styles.removeImageBtn}
                         onClick={() => handleRemoveImage(index)}
-                        title="删除"
+                        title="remove image"
                       >
                         <CloseCircleOutlined />
                       </span>
                     )}
                   </div>
                 ))}
+
+                {/* 图片上传按钮 */}
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageUpload}
+                    style={{ display: 'none' }}
+                  />
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isGenerating || isUploading}
+                    className={styles.aiUploadBtn}
+                    title={t('aiGeneration.uploadImage' as any)}
+                  >
+                    {isUploading ? (
+                      <span>⏳</span>
+                    ) : (
+                      <span className={styles.plusIcon}>+</span>
+                    )}
+                  </button>
                 
               </div>
             </div>
-          )}
+
+           
 
           <div className={styles.aiInputContainer1}>
-
-          
-            <input
-              type="text"
+            <textarea
+              ref={textareaRef}
+              id="ai-input-textarea"
+              data-driver-target="ai-input"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              onKeyPress={(e) => {
-                if (e.key === 'Enter' && !isGenerating && !isUploading) {
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !isGenerating && !isUploading) {
+                  e.preventDefault()
                   handleCreateTask()
                 }
               }}
               placeholder={t('aiGeneration.inputPlaceholder' as any)}
               disabled={isGenerating || isUploading}
               className={styles.aiInput}
+              rows={4}
             />
-            
-            {/* 图片上传按钮 */}
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleImageUpload}
-              style={{ display: 'none' }}
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isGenerating || isUploading}
-              className={styles.aiUploadBtn}
-              title="上传图片"
-            >
-              {isUploading ? (
-                <span>⏳</span>
-              ) : (
-                <PictureOutlined style={{ fontSize: '20px' }} />
-              )}
-            </button>
-            
-            <button
-              onClick={handleCreateTask}
-              disabled={isGenerating || !prompt.trim() || isUploading}
-              className={styles.aiGenerateBtn}
-            >
-              {isGenerating ? t('aiGeneration.generating' as any) : t('aiGeneration.generateButton' as any)}
-            </button>
-
-            </div>
           </div>
 
-         
-
-          {/* Progress Display Area - COMMENTED OUT, KEPT FOR REFERENCE */}
-          {/* {(isGenerating || completedMessages.length > 0 || currentTypingMsg) && (
-            <div className={styles.aiProgressWrapper}>
-              <div 
-                ref={progressContainerRef}
-                className={styles.aiProgressContainer}
-                style={{
-                  borderBottom: progress > 0 ? 'none' : '1px solid rgba(0, 0, 0, 0.08)',
-                  borderRadius: progress > 0 ? '12px 12px 0 0' : '12px',
-                }}
-              >
-                {isGenerating && (
-                  <div style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: 'linear-gradient(90deg, transparent, #a66ae4, transparent)',
-                    animation: 'slideRight 2s infinite',
-                    zIndex: 10,
-                  }} />
-                )}
-                
-                <div className={styles.aiProgressContent}>
-                  {completedMessages.map((msg, index) => {
-                    const statusDisplay = msg.status ? getStatusDisplay(msg.status) : null
-                    const isDescription = msg.type === 'description'
-                    const isError = msg.type === 'error'
-                    const isText = msg.type === 'text'
-                    
-                    return (
-                      <div 
-                        key={`completed-${index}`}
-                        className={styles.aiProgressMessage}
-                        style={{
-                          color: isError ? '#ff4d4f' : statusDisplay?.color || '#333',
-                        }}
-                      >
-                        {statusDisplay && statusDisplay.icon}
-                        {isDescription && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
-                        {isError && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
-                        {isText && !statusDisplay && <span style={{ marginRight: '8px' }}></span>}
-                        <span style={{ textAlign: 'left', flex: 1 }}>
-                          {msg.content}
-                          {msg.loading && <LoadingDots />}
-                        </span>
-                      </div>
-                    )
-                  })}
-                  
-                  {currentTypingMsg && displayedText && (
-                    <div 
-                      className={styles.aiProgressMessage}
-                      style={{ 
-                        color: currentTypingMsg.type === 'error' 
-                          ? '#ff4d4f' 
-                          : currentTypingMsg.status 
-                            ? getStatusDisplay(currentTypingMsg.status).color 
-                            : '#333',
-                      }}
-                    >
-                      {currentTypingMsg.status && getStatusDisplay(currentTypingMsg.status).icon}
-                      {currentTypingMsg.type === 'description' && <FileTextOutlined style={{ marginRight: '8px', color: '#52c41a', flexShrink: 0 }} />}
-                      {currentTypingMsg.type === 'error' && <CloseCircleOutlined style={{ marginRight: '8px', color: '#ff4d4f', flexShrink: 0 }} />}
-                      {currentTypingMsg.type === 'text' && !currentTypingMsg.status && <span style={{ marginRight: '8px' }}></span>}
-                      <span style={{ textAlign: 'left', flex: 1 }}>
-                        {displayedText}
-                        {currentTypingMsg.loading && <LoadingDots />}
-                        <span className={styles.aiProgressCursor}>|</span>
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </div>
+          {/* 底部控制栏 */}
+          <div className={styles.aiInputBottomBar}>
+            <div className={styles.bottomLeft}>
+              <button className={styles.modeSelectBtn}>
+                <span>
+                  {selectedMode === 'agent' && t('aiGeneration.agentMode' as any)}
+                  {selectedMode === 'image' && t('aiGeneration.imageGeneration' as any)}
+                  {selectedMode === 'video' && t('aiGeneration.videoGeneration' as any)}
+                  {selectedMode === 'draft' && t('aiGeneration.draftBox' as any)}
+                  {selectedMode === 'publishbatch' && t('aiGeneration.batchPublish' as any)}
+                </span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </button>
               
-              {progress > 0 && (
-                <div className={styles.aiProgressBarContainer}>
-                  <div 
-                    className={styles.aiProgressBar}
-                    style={{ width: `${progress}%` }}
-                  >
-                    <span className={styles.aiProgressText}>{progress}%</span>
-                  </div>
-                </div>
+            </div>
+            <button 
+              className={styles.scrollTopBtn}
+              onClick={isGenerating ? handleStopTask : handleCreateTask}
+              disabled={!isGenerating && (!prompt.trim() || isUploading)}
+              title={isGenerating ? t('status.stopGenerating' as any) : t('status.sendMessage' as any)}
+            >
+              {isGenerating ? (
+                // 停止按钮 - 显示方块
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="6" width="12" height="12" rx="2" />
+                </svg>
+              ) : (
+                // 发送按钮 - 显示向上箭头
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
+                </svg>
               )}
-            </div>
-          )} */}
-
-          {/* SSE Message Display - Visible when generating or has messages */}
-          {(isGenerating || markdownMessages.length > 0) && (
-            <div className={styles.markdownMessagesWrapper}>
-              <div 
-                ref={markdownContainerRef}
-                className={styles.markdownMessagesContainer}
-              >
-                <h3 className={styles.markdownTitle}>
-                  🤖 AI 生成过程 {isGenerating && <LoadingDots />}
-                </h3>
-                <div className={styles.markdownContent}>
-                  <ReactMarkdown>
-                    {markdownMessages.length > 0 
-                      ? markdownMessages.join('\n\n') 
-                      : '等待 AI 响应...'}
-                  </ReactMarkdown>
-                </div>
-              </div>
-            </div>
-          )}
-
-          
+            </button>
+          </div>
+          </div>
         </div>
 
-        {/* Mobile button */}
-        <button
-          onClick={() => {
-            router.push('/accounts')
-          }}
-          className={`${styles.heroBtn} ${styles.heroBtnMobile}`}
-          style={{ marginTop: '20px' }}
-        >
-          {t('hero.getStarted')}
-          <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-
-        <p className={styles.heroSubtitle}>
-          {t('hero.subtitle')}
-        </p>
-
-        {/* Desktop button */}
-        <button
-          onClick={() => {
-            router.push('/accounts')
-          }}
-          className={`${styles.heroBtn} ${styles.heroBtnDesktop}`}
-        >
-          {t('hero.getStarted')}
-          <svg className={styles.btnArrow} width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="m6 12 4-4-4-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
-        </button>
-
-        <p
+        {/* <p
           className={styles.heroMobileLink}
           style={{ marginTop: '10px' }}
           onClick={() => {
@@ -1017,126 +1895,35 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           }}
         >
           {t('hero.useMobilePhone' as any)}
-        </p>
+        </p> */}
       </div>
 
       {/* Login Modal */}
-      <Modal
+      <LoginModal
         open={loginModalOpen}
         onCancel={() => setLoginModalOpen(false)}
-        footer={null}
-        width={460}
-        centered
-        destroyOnClose
-      >
-        <div className={loginStyles.loginBox} style={{ boxShadow: 'none', padding: '24px 0' }}>
-          <h1 className={loginStyles.title}>{tLogin('welcomeBack')}</h1>
-          <form onSubmit={handleLoginSubmit} className={loginStyles.form}>
-            <div className={loginStyles.inputGroup}>
-              <input
-                type="email"
-                placeholder={tLogin('emailPlaceholder')}
-                value={loginEmail}
-                onChange={e => setLoginEmail(e.target.value)}
-                className={loginStyles.input}
-                required
-              />
-            </div>
-            <div className={loginStyles.inputGroup}>
-              <input
-                type="password"
-                placeholder={tLogin('passwordPlaceholder')}
-                value={loginPassword}
-                onChange={e => setLoginPassword(e.target.value)}
-                className={loginStyles.input}
-                required
-              />
-            </div>
-            <Button type="primary" htmlType="submit" block className={loginStyles.submitButton}>
-              {tLogin('login')}
-            </Button>
-          </form>
+        onSuccess={handleLoginSuccess}
+      />
 
-          <div className={loginStyles.divider}>
-            <span>{tLogin('or')}</span>
-          </div>
-
-          <div className={loginStyles.googleButtonWrapper}>
-            <GoogleLogin
-              onSuccess={handleGoogleSuccess}
-              onError={() => message.error(tLogin('googleLoginFailed'))}
-              useOneTap={false}
-              theme="outline"
-              shape="rectangular"
-              text="signin_with"
-              locale={lng === 'zh-CN' ? 'zh_CN' : 'en'}
-              width="100%"
-              size="large"
-            />
-          </div>
-        </div>
-      </Modal>
-
-      {/* Registration Modal */}
-      <Modal
-        title={tLogin('completeRegistration')}
-        open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false)
-          setIsActivating(false)
-          loginForm.resetFields()
+      {/* Plugin Status Modal */}
+      <PluginStatusModal
+        visible={pluginModalOpen}
+        onClose={() => {
+          setPluginModalOpen(false)
+          setHighlightPlatform(null)
         }}
-        maskClosable={false}
-        keyboard={false}
-        closable={true}
-        footer={null}
-      >
-        <Form
-          form={loginForm}
-          onFinish={handleRegistSubmit}
-          layout="vertical"
-        >
-          <Form.Item
-            label={tLogin('emailCode')}
-            name="code"
-            rules={[
-              { required: true, message: tLogin('emailCodeRequired') },
-              { len: 6, message: tLogin('emailCodeLength') },
-            ]}
-          >
-            <Input placeholder={tLogin('enterEmailCode')} maxLength={6} />
-          </Form.Item>
+        highlightPlatform={highlightPlatform}
+      />
 
-          <Form.Item
-            label={tLogin('setPassword')}
-            name="password"
-            rules={[
-              { required: true, message: tLogin('passwordRequired') },
-              { min: 6, message: tLogin('passwordMinLength') },
-            ]}
-          >
-            <Input.Password placeholder={tLogin('enterPassword')} />
-          </Form.Item>
-
-          <Form.Item
-            label={tLogin('inviteCode')}
-            name="inviteCode"
-          >
-            <Input placeholder={tLogin('enterInviteCode')} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={isActivating}
-            >
-              {isActivating ? tLogin('registering') : tLogin('completeRegistration')}
-            </Button>
-          </Form.Item>
-        </Form>
-      </Modal>
+      {/* Plugin Status Modal */}
+      <PluginStatusModal
+        visible={pluginModalOpen}
+        onClose={() => {
+          setPluginModalOpen(false)
+          setHighlightPlatform(null)
+        }}
+        highlightPlatform={highlightPlatform}
+      />
     </section>
   )
 }
@@ -2001,7 +2788,7 @@ function DownloadSection() {
                 <div className={styles.downloadBtnContent}>
                   <AndroidOutlined className={styles.downloadIcon} style={{ fontSize: '24px' }} />
                   <div className={styles.downloadBtnText}>
-                    <span className={styles.downloadOn}>立即下载</span>
+                    <span className={styles.downloadOn}>{t('download.downloadNow' as any)}</span>
                     <span className={styles.downloadStore}>Android APK</span>
                   </div>
                 </div>
@@ -2191,7 +2978,7 @@ function CommunitySection() {
             </button>
             {hoveredButton === 'wechat' && (
               <div className={styles.qrCodePopup}>
-                <Image src={gongzhonghao} alt="微信公众号" width={200} height={200} className={styles.qrCodeImage} />
+                <Image src={gongzhonghao} alt={t('wechat.officialAccount' as any)} width={200} height={200} className={styles.qrCodeImage} />
                 <p className={styles.qrCodeText}>{t('communitySection.wechatPopup' as any)}</p>
               </div>
             )}
@@ -2210,7 +2997,7 @@ function CommunitySection() {
             </button>
             {hoveredButton === 'community' && (
               <div className={styles.qrCodePopup}>
-                <Image src={gongzhonghao} alt="社区公众号" width={200} height={200} className={styles.qrCodeImage} />
+                <Image src={gongzhonghao} alt={t('wechat.communityOfficialAccount' as any)} width={200} height={200} className={styles.qrCodeImage} />
                 <p className={styles.qrCodeText}>{t('communitySection.communityPopup' as any)}</p>
               </div>
             )}
@@ -2438,8 +3225,15 @@ export default function Home() {
       <ReleaseBanner />
       <Hero promptToApply={promptToApply} />
       <PromptGallerySection 
-        onApplyPrompt={(prompt) => {
-          setPromptToApply({ prompt })
+        onApplyPrompt={(data) => {
+          // 根据 mode 决定如何处理
+          if (data.mode === 'edit' && data.image) {
+            // edit 模式：设置提示词和图片
+            setPromptToApply({ prompt: data.prompt, image: data.image })
+          } else {
+            // generate 模式：只设置提示词
+            setPromptToApply({ prompt: data.prompt })
+          }
         }}
       />
       <LazyLoadSection>
