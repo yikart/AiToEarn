@@ -182,16 +182,16 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // AI generation related states
   const [prompt, setPrompt] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
-  // 从 localStorage 恢复 taskId，确保页面跳转后不丢失
+  // 从 sessionStorage 恢复 taskId，仅在当前会话中保存
   const [taskId, setTaskId] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('aiAgentTaskId') || ''
+      return sessionStorage.getItem('aiAgentTaskId') || ''
     }
     return ''
   })
   const [sessionId, setSessionId] = useState(() => {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('aiAgentSessionId') || ''
+      return sessionStorage.getItem('aiAgentSessionId') || ''
     }
     return ''
   })
@@ -524,12 +524,12 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       return
     }
     
-    // 清除 state 和 localStorage 中的 taskId
+    // 清除 state 和 sessionStorage 中的 taskId
     setTaskId('')
     setSessionId('')
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('aiAgentTaskId')
-      localStorage.removeItem('aiAgentSessionId')
+      sessionStorage.removeItem('aiAgentTaskId')
+      sessionStorage.removeItem('aiAgentSessionId')
     }
     setMarkdownMessages([])
     setStreamingText('')
@@ -569,10 +569,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         setMarkdownMessages([])
         setSessionId('')
         setTaskId('')
-        // 清除 localStorage 中的旧 taskId
+        // 清除 sessionStorage 中的旧 taskId
         if (typeof window !== 'undefined') {
-          localStorage.removeItem('aiAgentTaskId')
-          localStorage.removeItem('aiAgentSessionId')
+          sessionStorage.removeItem('aiAgentTaskId')
+          sessionStorage.removeItem('aiAgentSessionId')
         }
       }
       
@@ -640,12 +640,12 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               console.log('[UI] Continuing conversation with taskId:', receivedTaskId)
             }
             
-            // 保存到 state 和 localStorage，确保页面跳转后不丢失
+            // 保存到 state 和 sessionStorage，仅在当前会话中保存
             setTaskId(receivedTaskId)
             setSessionId(receivedTaskId)
             if (typeof window !== 'undefined') {
-              localStorage.setItem('aiAgentTaskId', receivedTaskId)
-              localStorage.setItem('aiAgentSessionId', receivedTaskId)
+              sessionStorage.setItem('aiAgentTaskId', receivedTaskId)
+              sessionStorage.setItem('aiAgentSessionId', receivedTaskId)
             }
             
             // 清空流式文本（新消息开始）
@@ -703,9 +703,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           // Save sessionId
           if (sseMessage.sessionId) {
             setSessionId(sseMessage.sessionId)
-            // 同步到 localStorage
+            // 同步到 sessionStorage
             if (typeof window !== 'undefined') {
-              localStorage.setItem('aiAgentSessionId', sseMessage.sessionId)
+              sessionStorage.setItem('aiAgentSessionId', sseMessage.sessionId)
             }
           }
 
