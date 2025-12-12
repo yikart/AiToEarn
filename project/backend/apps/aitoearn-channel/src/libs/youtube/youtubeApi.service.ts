@@ -70,13 +70,10 @@ export class YoutubeApiService {
         client_secret: this.webClientSecret,
       })
 
-      const response = await axios.post('https://oauth2.googleapis.com/token', params.toString(), {
+      const response = await axios.post<AccessToken>('https://oauth2.googleapis.com/token', params.toString(), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       })
-      const { access_token, refresh_token, expires_in, id_token }
-        = response.data
-
-      return { access_token, refresh_token, expires_in, id_token }
+      return response.data
     }
     catch (err) {
       this.logger.error(err)
@@ -111,6 +108,7 @@ export class YoutubeApiService {
     catch (err) {
       // this.logger.error('Failed to refresh access token')
       this.logger.error(err)
+      return null
     }
   }
 
