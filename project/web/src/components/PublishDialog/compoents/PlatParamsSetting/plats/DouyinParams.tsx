@@ -6,6 +6,7 @@ import type {
 import { forwardRef, memo } from 'react'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
+import CommonTitleInput from '../common/CommonTitleInput'
 
 const DouyinParams = memo(
   forwardRef(
@@ -14,8 +15,13 @@ const DouyinParams = memo(
 
       return (
         <>
-          <PubParmasTextarea {...pubParmasTextareaCommonParams}
-            
+          <PubParmasTextarea 
+            {...pubParmasTextareaCommonParams}
+            extend={(
+              <>
+                <CommonTitleInput pubItem={pubItem} />
+              </>
+            )}
           />
         </>
       )

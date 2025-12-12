@@ -1027,7 +1027,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         footer={null}
         width={460}
         centered
-        destroyOnClose
+        destroyOnHidden
       >
         <div className={loginStyles.loginBox} style={{ boxShadow: 'none', padding: '24px 0' }}>
           <h1 className={loginStyles.title}>{tLogin('welcomeBack')}</h1>

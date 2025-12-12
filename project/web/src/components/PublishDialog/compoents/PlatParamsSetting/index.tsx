@@ -16,6 +16,8 @@ import WxGzhParams from '@/components/PublishDialog/compoents/PlatParamsSetting/
 import YouTubeParams from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/YouTubeParams'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import styles from './platParamsSetting.module.scss'
+import DouyinParams from './plats/DouyinParams'
+import XhsParams from './plats/XhsParams'
 
 export interface IPlatParamsSettingRef {}
 
@@ -64,6 +66,10 @@ const PlatParamsSetting = memo(
             return <TikTokParams pubItem={pubItem} onImageToImage={onImageToImage} />
           case PlatType.Threads:
             return <ThreadsParams pubItem={pubItem} onImageToImage={onImageToImage} />
+          case PlatType.Douyin:
+            return <DouyinParams pubItem={pubItem} onImageToImage={onImageToImage} />
+          case PlatType.Xhs:
+            return <XhsParams pubItem={pubItem} onImageToImage={onImageToImage} />
           default:
             return <KwaiParams pubItem={pubItem} onImageToImage={onImageToImage} />
         }
