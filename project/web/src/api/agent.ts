@@ -132,18 +132,24 @@ export const agentApi = {
    * @param onMessage SSE 消息回调
    * @param onError 错误回调
    * @param onDone 完成回调
+   * @returns 返回一个 abort 函数，用于中断 SSE 连接
    */
   async createTaskWithSSE(
     params: CreateTaskParams,
     onMessage: (message: SSEMessage) => void,
     onError: (error: Error) => void,
     onDone: (sessionId?: string) => void,
-  ) {
+  ): Promise<() => void> {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
     const url = `${'https://pr-211.preview.aitoearn.ai/api'}/agent/tasks`
     
     let sessionId: string | undefined
     let abortController = new AbortController()
+    
+    // 返回 abort 函数
+    const abort = () => {
+      abortController.abort()
+    }
 
     console.log('[SSE] Starting fetchEventSource...')
 
@@ -245,6 +251,9 @@ export const agentApi = {
         onError(error instanceof Error ? error : new Error(String(error)))
       }
     }
+    
+    // 返回 abort 函数
+    return abort
   },
 
   /**

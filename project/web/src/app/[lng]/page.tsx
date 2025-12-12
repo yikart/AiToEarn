@@ -206,6 +206,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'draft' | 'publishbatch'>('agent') // 选中的模式
   const [streamingText, setStreamingText] = useState('') // 累积的流式文本
   const streamingTextRef = useRef('') // 流式文本的引用（避免闭包问题）
+  const sseAbortRef = useRef<(() => void) | null>(null) // SSE 连接的 abort 函数引用
   
   // Login modal states
   const [loginModalOpen, setLoginModalOpen] = useState(false)
@@ -600,35 +601,27 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     }
   }
 
-  // Stop AI generation task
-  const handleStopTask = async () => {
-    if (!taskId) {
-      console.warn('No taskId to stop')
-      return
+  // Stop AI generation task - 前端打断，不调用后台接口
+  const handleStopTask = () => {
+    // 调用保存的 abort 函数来中断 SSE 连接
+    if (sseAbortRef.current) {
+      console.log('[UI] Aborting SSE connection')
+      sseAbortRef.current()
+      sseAbortRef.current = null
     }
-
-    try {
-      console.log('[UI] Stopping task:', taskId)
-      const { agentApi } = await import('@/api/agent')
-      await agentApi.stopTask(taskId)
-      
-      // 设置为非生成状态，但不清空已生成的内容
-      setIsGenerating(false)
-      setProgress(0)
-      
-      // 添加停止消息提示
-      addMessageToQueue({
-        type: 'status',
-        content: t('aiGeneration.status.cancelled' as any),
-        status: 'CANCELLED'
-      })
-      
-      message.info(t('aiGeneration.taskStopped' as any))
-    } catch (error: any) {
-      console.error('Stop task error:', error)
-      message.error(`${t('aiGeneration.stopTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
-      setIsGenerating(false)
-    }
+    
+    // 设置为非生成状态，但不清空已生成的内容
+    setIsGenerating(false)
+    setProgress(0)
+    
+    // 添加停止消息提示
+    addMessageToQueue({
+      type: 'status',
+      content: t('aiGeneration.status.cancelled' as any),
+      status: 'CANCELLED'
+    })
+    
+    message.info(t('aiGeneration.taskStopped' as any))
   }
 
   // 开启新对话
@@ -735,7 +728,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       }
 
       // Create task with SSE (使用包含图片链接的完整提示词)
-      await agentApi.createTaskWithSSE(
+      const abortFn = await agentApi.createTaskWithSSE(
         requestParams,
         // onMessage callback
         (sseMessage: any) => {
@@ -1289,14 +1282,21 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           console.log('SSE Done, sessionId:', finalSessionId)
           // 不再需要调用 getTaskDetail，结果已通过 SSE 返回
           setIsGenerating(false)
+          // 清除 abort 函数引用
+          sseAbortRef.current = null
         }
       )
+      
+      // 保存 abort 函数引用
+      sseAbortRef.current = abortFn
     }
     catch (error: any) {
       console.error('Create task error:', error)
       message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
       setProgress(0)
+      // 清除 abort 函数引用
+      sseAbortRef.current = null
     }
   }
 
