@@ -134,7 +134,7 @@ export class LinkedinPublishService extends PublishService {
       specificContent: {
         'com.linkedin.ugc.ShareContent': {
           shareCommentary: { text: this.generatePostMessage(publishTask) || '' },
-          shareMediaCategory: ShareMediaCategory.IMAGE,
+          shareMediaCategory: ShareMediaCategory.VIDEO,
           media: [
             {
               status: 'READY',
