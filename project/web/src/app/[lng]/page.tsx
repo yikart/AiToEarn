@@ -729,7 +729,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   imgPath: m.url,
                   ossUrl: m.url,
                   size: 0,
-                  file: createEmptyFile(),
+                  // file: createEmptyFile(),
                   imgUrl: m.url,
                   filename: '',
                   width: 0,
@@ -737,6 +737,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 }))
                 
                 // 为每个账号创建发布项
+                // @ts-ignore
                 const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
                   account,
                   params: {
@@ -745,7 +746,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     topics: taskData.tags || [],
                     video: video ? {
                       size: 0,
-                      file: new Blob(),
                       videoUrl: video.url,
                       ossUrl: video.url,
                       filename: '',
@@ -757,7 +757,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         imgPath: (video as any).coverUrl || '',
                         ossUrl: (video as any).coverUrl,
                         size: 0,
-                        file: createEmptyFile(),
                         imgUrl: (video as any).coverUrl || '',
                         filename: '',
                         width: 0,
@@ -780,6 +779,19 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 usePluginStore.getState().executePluginPublish({
                   items: pluginPublishItems,
                   platformTaskIdMap,
+                  onProgress: (event) => {
+                    // 监听各平台发布进度
+                    const { stage, progress, message: progressMessage, accountId, platform } = event
+                    console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
+
+                    // 根据进度阶段显示不同提示
+                    if (stage === 'complete') {
+                      message.success(t('plugin.publishSuccess' as any, { platform }) || `${platform} 发布成功`)
+                    }
+                    else if (stage === 'error') {
+                      message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
+                    }
+                  },
                   onComplete: () => {
                     message.success(t('plugin.publishTaskSubmitted' as any))
                   },

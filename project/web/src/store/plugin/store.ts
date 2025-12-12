@@ -47,6 +47,23 @@ export interface PluginPublishItem {
 }
 
 /**
+ * 单个平台发布进度事件（扩展 ProgressEvent，附带账号信息）
+ */
+export interface PlatformProgressEvent extends ProgressEvent {
+  /** 账号ID */
+  accountId: string
+  /** 平台类型 */
+  platform: PluginPlatformType
+  /** 请求ID */
+  requestId: string
+}
+
+/**
+ * 发布进度回调类型
+ */
+export type ExecuteProgressCallback = (event: PlatformProgressEvent) => void
+
+/**
  * 执行插件发布的参数
  */
 export interface ExecutePluginPublishParams {
@@ -56,6 +73,8 @@ export interface ExecutePluginPublishParams {
   platformTaskIdMap: Map<string, string>
   /** 发布时间（ISO 格式字符串，可选，不传则立即发布） */
   publishTime?: string
+  /** 发布进度回调（可选，每个平台发布时都会触发） */
+  onProgress?: ExecuteProgressCallback
   /** 发布完成后的回调（可选） */
   onComplete?: () => void
 }
@@ -626,7 +645,7 @@ export const usePluginStore = create(
          * @returns Promise<void>
          */
         async executePluginPublish(params: ExecutePluginPublishParams): Promise<void> {
-          const { items, platformTaskIdMap, publishTime, onComplete } = params
+          const { items, platformTaskIdMap, publishTime, onProgress, onComplete } = params
 
           // 并行执行插件发布（不等待，同时发布多个平台）
           const publishTasks = items.map(async (item) => {
@@ -639,6 +658,17 @@ export const usePluginStore = create(
               console.error('未找到账号对应的 requestId:', accountId)
               return
             }
+
+            // 触发初始进度回调
+            onProgress?.({
+              stage: 'download',
+              progress: 0,
+              message: '准备发布...',
+              timestamp: Date.now(),
+              accountId,
+              platform,
+              requestId,
+            })
 
             // 更新任务状态为发布中
             methods.updatePlatformTaskByRequestId(requestId, {
@@ -705,6 +735,14 @@ export const usePluginStore = create(
                 methods.updatePlatformTaskByRequestId(requestId, {
                   progress,
                 })
+
+                // 触发外部进度回调
+                onProgress?.({
+                  ...progress,
+                  accountId,
+                  platform,
+                  requestId,
+                })
               })
 
               // 发布成功，更新任务状态
@@ -716,6 +754,21 @@ export const usePluginStore = create(
                   shareLink: result.shareLink,
                 },
                 endTime: Date.now(),
+              })
+
+              // 触发成功进度回调
+              onProgress?.({
+                stage: 'complete',
+                progress: 100,
+                message: '发布成功',
+                timestamp: Date.now(),
+                accountId,
+                platform,
+                requestId,
+                data: {
+                  workId: result.workId,
+                  shareLink: result.shareLink,
+                },
               })
 
               // 发布成功后，创建发布记录
@@ -750,14 +803,30 @@ export const usePluginStore = create(
             }
             catch (error) {
               // 发布失败
+              const errorMessage = error instanceof Error ? error.message : '发布失败'
+
               methods.updatePlatformTaskByRequestId(requestId, {
                 status: PlatformTaskStatus.ERROR,
-                error: error instanceof Error ? error.message : '发布失败',
+                error: errorMessage,
                 result: {
                   success: false,
-                  failReason: error instanceof Error ? error.message : '发布失败',
+                  failReason: errorMessage,
                 },
                 endTime: Date.now(),
+              })
+
+              // 触发失败进度回调
+              onProgress?.({
+                stage: 'error',
+                progress: 0,
+                message: errorMessage,
+                timestamp: Date.now(),
+                accountId,
+                platform,
+                requestId,
+                data: {
+                  error: error instanceof Error ? error : new Error(errorMessage),
+                },
               })
             }
           })
