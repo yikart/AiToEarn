@@ -4,6 +4,12 @@
  * 实现策略：
  * - 点赞、收藏、评论：统一使用自动化方案（避免 API 风控）
  * - 评论：不支持二级评论
+ *
+ * 目录结构:
+ * douyin/
+ *   ├── index.ts      # 主类和导出入口
+ *   ├── types.ts      # 抖音特定类型定义
+ *   └── homeFeed.ts   # 首页列表功能模块（待实现）
  */
 
 import { PlatType } from '@/app/config/platConfig'
@@ -13,9 +19,13 @@ import type {
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  HomeFeedListParams,
+  HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
 } from '../types'
+import type { DouyinDirectMessageResponse, DouyinInteractionResponse } from './types'
+import { getHomeFeedList, homeFeedCursor } from './homeFeed'
 
 /**
  * 抖音平台交互类
@@ -33,6 +43,14 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   }
 
   /**
+   * 重置首页列表游标缓存
+   * 用于刷新列表时清除缓存
+   */
+  resetHomeFeedCursor(): void {
+    homeFeedCursor.reset()
+  }
+
+  /**
    * 点赞/取消点赞作品（自动化方案）
    * 使用自动化方案避免 API 风控
    * @param workId 作品ID
@@ -45,7 +63,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       action: 'like',
       workId,
       targetState: isLike,
-    })
+    }) as DouyinInteractionResponse
 
     return {
       success: response.success,
@@ -76,7 +94,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       workId: params.workId,
       targetState: true,
       content: params.content,
-    })
+    }) as DouyinInteractionResponse
 
     return {
       success: response.success,
@@ -98,7 +116,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       action: 'favorite',
       workId,
       targetState: isFavorite,
-    })
+    }) as DouyinInteractionResponse
 
     return {
       success: response.success,
@@ -110,7 +128,6 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   /**
    * 发送私信（自动化方案）
    * 根据作品ID或作者链接发送私信
-   * 注意：小红书不支持私信
    * @param params 私信参数
    */
   async sendDirectMessage(params: DirectMessageParams): Promise<DirectMessageResult> {
@@ -135,7 +152,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       workId: params.workId,
       authorUrl: params.authorUrl,
       content: params.content,
-    })
+    }) as DouyinDirectMessageResponse
 
     return {
       success: response.success,
@@ -143,9 +160,20 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       rawData: response,
     }
   }
+
+  /**
+   * 获取首页作品列表
+   * @param params 分页参数
+   */
+  async getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
+    return getHomeFeedList(params)
+  }
 }
 
 /**
  * 抖音平台交互实例
  */
 export const douyinInteraction = new DouyinPlatformInteraction()
+
+// 导出类型（方便外部使用）
+export type { DouyinHomeFeedItem, DouyinHomeFeedResponse } from './types'

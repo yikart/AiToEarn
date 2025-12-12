@@ -10,6 +10,8 @@ import type {
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  HomeFeedListParams,
+  HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
   SupportedPlatformType,
@@ -116,6 +118,18 @@ class PlatformInteractionManager {
       }
     }
     return instance.sendDirectMessage(params)
+  }
+
+  /**
+   * 获取首页作品列表
+   * @param platform 平台类型
+   * @param params 分页参数
+   */
+  getHomeFeedList(
+    platform: SupportedPlatformType,
+    params: HomeFeedListParams,
+  ): Promise<HomeFeedListResult> {
+    return this.get(platform).getHomeFeedList(params)
   }
 }
 

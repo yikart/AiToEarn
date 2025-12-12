@@ -72,6 +72,58 @@ export interface DirectMessageParams {
 export interface DirectMessageResult extends BaseResult {}
 
 // ============================================================================
+// 首页列表类型
+// ============================================================================
+
+/**
+ * 首页作品列表项
+ */
+export interface HomeFeedItem {
+  /** 作品ID */
+  workId: string
+  /** 缩略图URL */
+  thumbnail: string
+  /** 作品标题 */
+  title: string
+  /** 作者头像 */
+  authorAvatar: string
+  /** 作者名称 */
+  authorName: string
+  /** 作者ID */
+  authorId: string
+  /** 点赞数（字符串，可能含"万"） */
+  likeCount: string
+  /** 是否为视频 */
+  isVideo: boolean
+  /** 视频时长（秒），非视频为 undefined */
+  videoDuration?: number
+  /** 平台原始数据 */
+  origin: any
+}
+
+/**
+ * 首页列表请求参数
+ */
+export interface HomeFeedListParams {
+  /** 页码，从1开始 */
+  page: number
+  /** 每页数量 */
+  size: number
+}
+
+/**
+ * 首页列表返回结果
+ */
+export interface HomeFeedListResult extends BaseResult {
+  /** 作品列表 */
+  items: HomeFeedItem[]
+  /** 是否有更多数据 */
+  hasMore: boolean
+  /** 总数（可选，部分平台不提供） */
+  total?: number
+}
+
+// ============================================================================
 // 平台接口定义
 // ============================================================================
 
@@ -108,6 +160,12 @@ export interface IPlatformInteraction {
    * @param params 私信参数
    */
   sendDirectMessage?(params: DirectMessageParams): Promise<DirectMessageResult>
+
+  /**
+   * 获取首页作品列表
+   * @param params 分页参数
+   */
+  getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult>
 }
 
 // ============================================================================

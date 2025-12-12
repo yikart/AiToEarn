@@ -29,11 +29,11 @@ export const routerData: IRouterDataItem[] = [
     translationKey: 'interactive',
     path: '/interactive',
   },
-  // {
-  //   name: '作品互动',
-  //   translationKey: 'interactiveNew',
-  //   path: '/interactiveNew',
-  // },
+  {
+    name: '作品互动',
+    translationKey: 'interactiveNew',
+    path: '/interactiveNew',
+  },
   {
     name: 'AI工具',
     translationKey: 'aiTools',

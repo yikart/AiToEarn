@@ -11,7 +11,7 @@ import { platformManager } from '@/store/plugin/plats'
 import type { BaseResult, CommentResult, DirectMessageResult } from '@/store/plugin/plats'
 import styles from './plats-test.module.scss'
 
-type ActionType = 'like' | 'unlike' | 'comment' | 'favorite' | 'unfavorite' | 'directMessage'
+type ActionType = 'like' | 'unlike' | 'comment' | 'favorite' | 'unfavorite' | 'directMessage' | 'homeFeed'
 
 interface TestLog {
   id: number
@@ -186,6 +186,39 @@ export default function PlatsTestPage() {
   }
 
   /**
+   * 获取首页列表（仅打印到控制台）
+   */
+  const handleGetHomeFeed = async () => {
+    setLoading('homeFeed')
+
+    try {
+      const result = await platformManager.getHomeFeedList(platform, {
+        page: 1,
+        size: 20,
+      })
+
+      console.log('[首页列表测试]', {
+        platform: platform === PlatType.Xhs ? '小红书' : '抖音',
+        success: result.success,
+        message: result.message,
+        hasMore: result.hasMore,
+        itemCount: result.items.length,
+        items: result.items,
+        rawData: result.rawData,
+      })
+
+      addLog('homeFeed', result, { itemCount: result.items.length })
+    }
+    catch (error: any) {
+      console.error('[首页列表测试] 错误:', error)
+      addLog('homeFeed', { success: false, message: error.message })
+    }
+    finally {
+      setLoading(null)
+    }
+  }
+
+  /**
    * 获取操作名称
    */
   const getActionName = (action: ActionType): string => {
@@ -196,6 +229,7 @@ export default function PlatsTestPage() {
       favorite: '收藏',
       unfavorite: '取消收藏',
       directMessage: '私信',
+      homeFeed: '首页列表',
     }
     return names[action]
   }
@@ -285,6 +319,20 @@ export default function PlatsTestPage() {
               className={`${styles.btn} ${styles.btnSecondary}`}
             >
               {loading === 'unfavorite' ? '处理中...' : '✖ 取消收藏'}
+            </button>
+          </div>
+        </div>
+
+        {/* 首页列表 */}
+        <div className={styles.actionRow}>
+          <span className={styles.actionLabel}>首页列表</span>
+          <div className={styles.actionButtons}>
+            <button
+              onClick={handleGetHomeFeed}
+              disabled={loading !== null}
+              className={`${styles.btn} ${styles.btnPrimary}`}
+            >
+              {loading === 'homeFeed' ? '获取中...' : '📋 获取首页列表（控制台）'}
             </button>
           </div>
         </div>

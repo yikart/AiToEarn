@@ -1,5 +1,11 @@
 /**
  * 小红书平台交互实现
+ *
+ * 目录结构:
+ * xhs/
+ *   ├── index.ts      # 主类和导出入口
+ *   ├── types.ts      # 小红书特定类型定义
+ *   └── homeFeed.ts   # 首页列表功能模块
  */
 
 import { PlatType } from '@/app/config/platConfig'
@@ -7,9 +13,13 @@ import type {
   CommentParams,
   CommentResult,
   FavoriteResult,
+  HomeFeedListParams,
+  HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
 } from '../types'
+import type { XhsBaseResponse, XhsCommentResponse } from './types'
+import { getHomeFeedList, homeFeedCursor } from './homeFeed'
 
 /**
  * 小红书平台交互类
@@ -27,6 +37,14 @@ class XhsPlatformInteraction implements IPlatformInteraction {
   }
 
   /**
+   * 重置首页列表游标缓存
+   * 用于刷新列表时清除缓存
+   */
+  resetHomeFeedCursor(): void {
+    homeFeedCursor.reset()
+  }
+
+  /**
    * 点赞/取消点赞作品
    */
   async likeWork(workId: string, isLike: boolean): Promise<LikeResult> {
@@ -36,11 +54,7 @@ class XhsPlatformInteraction implements IPlatformInteraction {
       ? '/api/sns/web/v1/note/like'
       : '/api/sns/web/v1/note/dislike'
 
-    const response = await window.AIToEarnPlugin!.xhsRequest<{
-      success: boolean
-      code: number
-      msg?: string
-    }>({
+    const response = await window.AIToEarnPlugin!.xhsRequest<XhsBaseResponse>({
       path,
       method: 'POST',
       data: { note_oid: workId },
@@ -74,17 +88,7 @@ class XhsPlatformInteraction implements IPlatformInteraction {
       data.target_comment_id = params.replyToCommentId
     }
 
-    const response = await window.AIToEarnPlugin!.xhsRequest<{
-      success: boolean
-      code: number
-      msg?: string
-      data?: {
-        comment: {
-          id: string
-          [key: string]: any
-        }
-      }
-    }>({
+    const response = await window.AIToEarnPlugin!.xhsRequest<XhsCommentResponse>({
       path: '/api/sns/web/v1/comment/post',
       method: 'POST',
       data,
@@ -112,11 +116,7 @@ class XhsPlatformInteraction implements IPlatformInteraction {
       ? { note_id: workId }
       : { note_ids: workId }
 
-    const response = await window.AIToEarnPlugin!.xhsRequest<{
-      success: boolean
-      code: number
-      msg?: string
-    }>({
+    const response = await window.AIToEarnPlugin!.xhsRequest<XhsBaseResponse>({
       path,
       method: 'POST',
       data,
@@ -128,6 +128,14 @@ class XhsPlatformInteraction implements IPlatformInteraction {
       rawData: response,
     }
   }
+
+  /**
+   * 获取首页作品列表
+   * @param params 分页参数
+   */
+  async getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
+    return getHomeFeedList(params)
+  }
 }
 
 /**
@@ -135,3 +143,5 @@ class XhsPlatformInteraction implements IPlatformInteraction {
  */
 export const xhsInteraction = new XhsPlatformInteraction()
 
+// 导出类型（方便外部使用）
+export type { XhsHomeFeedItem, XhsHomeFeedResponse } from './types'
