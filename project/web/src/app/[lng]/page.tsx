@@ -1184,26 +1184,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 }
                 // action: publish - 选中指定平台账户并填充内容
                 else if (action === 'publish') {
-                  setTimeout(() => {
-                    const queryParams = new URLSearchParams({
-                      aiGenerated: 'true',
-                      taskId: taskData.taskId || '',
-                      title: taskData.title || '',
-                      description: taskData.description || '',
-                      tags: JSON.stringify(taskData.tags || []),
-                      medias: JSON.stringify(taskData.medias || []),
-                      accountType: JSON.stringify(taskData.accountType || []), // 传递账户类型
-                    })
-                    
-                    router.push(`/${lng}/accounts?${queryParams.toString()}`)
-                  }, 1500)
-                }
-                // action: createChannel - 用户没有频道，弹出提示并引导授权
-                else if (action === 'createChannel') {
                   const platform = taskData.platform
                   
                   // 对于 xhs 和 douyin，使用插件授权逻辑
                   if (platform === 'xhs' || platform === 'douyin') {
+                    console.log('createChannel xhs or douyin')
                     // 检查插件状态
                     const pluginStatus = usePluginStore.getState().status
                     const isPluginReady = pluginStatus === PluginStatus.READY
@@ -1219,7 +1204,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                           console.warn('Plugin button not found')
                           return
                         }
-
+        
                         const driverObj = driver({
                           showProgress: false,
                           showButtons: ['next'],
@@ -1263,7 +1248,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                             return false
                           },
                         })
-
+        
                         driverObj.drive()
                       }, 1500)
                     } else {
@@ -1279,24 +1264,21 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         const targetAccounts = allAccounts.filter(account => account.type === platform)
                         
                         if (targetAccounts.length === 0) {
-                          // 显示确认弹窗，引导用户添加账号
+                          // 未找到账号，弹出确认框并引导用户添加账号
                           Modal.confirm({
                             title: t('plugin.noAccountFound' as any),
-                            content: t('plugin.pleaseAddAccountFirst' as any),
-                            okText: t('plugin.goAddAccount' as any),
-                            cancelText: t('aiGeneration.cancel' as any),
+                            content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
+                            okText: '去处理',
+                            cancelText: '取消',
                             onOk: () => {
                               // 延迟显示引导，确保页面已加载
                               setTimeout(() => {
                                 const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
                                 if (!pluginButton) {
                                   console.warn('Plugin button not found')
-                                  // 直接打开插件弹窗并高亮平台
-                                  setHighlightPlatform(platform)
-                                  setPluginModalOpen(true)
                                   return
                                 }
-
+        
                                 const driverObj = driver({
                                   showProgress: false,
                                   showButtons: ['next'],
@@ -1311,8 +1293,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                                     {
                                       element: '[data-driver-target="plugin-button"]',
                                       popover: {
-                                        title: t('plugin.clickToOpenPlugin' as any),
-                                        description: t('plugin.clickToAddAccount' as any),
+                                        title: '点击打开插件管理',
+                                        description: '在插件管理中添加您的账号',
                                         side: 'bottom',
                                         align: 'start',
                                         onPopoverRender: () => {
@@ -1327,9 +1309,12 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                                                 e.stopPropagation()
                                                 driverObj.destroy()
                                                 btn.removeEventListener('click', handleClick)
-                                                // 打开插件弹窗并高亮平台
-                                                setHighlightPlatform(platform)
-                                                setPluginModalOpen(true)
+                                                // 点击后打开插件弹窗，并高亮对应平台
+                                                pluginButton.click()
+                                                // 设置高亮平台
+                                                setTimeout(() => {
+                                                  setHighlightPlatform(platform)
+                                                }, 300)
                                               }
                                               btn.addEventListener('click', handleClick)
                                             }
@@ -1340,13 +1325,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                                   ],
                                   onNextClick: () => {
                                     driverObj.destroy()
-                                    // 打开插件弹窗并高亮平台
-                                    setHighlightPlatform(platform)
-                                    setPluginModalOpen(true)
                                     return false
                                   },
                                 })
-
+        
                                 driverObj.drive()
                               }, 500)
                             },
@@ -1368,7 +1350,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                           imgPath: m.url,
                           ossUrl: m.url,
                           size: 0,
-                          file: createEmptyFile(),
+                          // file: createEmptyFile(),
                           imgUrl: m.url,
                           filename: '',
                           width: 0,
@@ -1376,6 +1358,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         }))
                         
                         // 为每个账号创建发布项
+                        // @ts-ignore
                         const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
                           account,
                           params: {
@@ -1384,7 +1367,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                             topics: taskData.tags || [],
                             video: video ? {
                               size: 0,
-                              file: new Blob(),
                               videoUrl: video.url,
                               ossUrl: video.url,
                               filename: '',
@@ -1393,11 +1375,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                               duration: 0,
                               cover: {
                                 id: '',
-                                imgPath: video.coverUrl || '',
-                                ossUrl: video.coverUrl,
+                                imgPath: (video as any).coverUrl || '',
+                                ossUrl: (video as any).coverUrl,
                                 size: 0,
-                                file: createEmptyFile(),
-                                imgUrl: video.coverUrl || '',
+                                imgUrl: (video as any).coverUrl || '',
                                 filename: '',
                                 width: 0,
                                 height: 0,
@@ -1419,6 +1400,16 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         usePluginStore.getState().executePluginPublish({
                           items: pluginPublishItems,
                           platformTaskIdMap,
+                          onProgress: (event) => {
+                            // 监听各平台发布进度
+                            const { stage, progress, message: progressMessage, accountId, platform } = event
+                            console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
+        
+                            // 根据进度阶段显示不同提示
+                            if (stage === 'error') {
+                              message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
+                            }
+                          },
                           onComplete: () => {
                             message.success(t('plugin.publishTaskSubmitted' as any))
                           },
