@@ -57,6 +57,7 @@ import { getOssUrl } from '@/utils/oss'
 import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
 import { PubType } from '@/app/config/publishConfig'
 import { MediaType } from '@/api/agent'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 
 
 import { 
@@ -1022,24 +1023,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 // action: createChannel - 用户没有频道，弹出提示并引导授权
                 else if (action === 'createChannel') {
                   const platform = taskData.platform
-                  const platformNames: Record<string, string> = {
-                    douyin: t('platformNames.douyin' as any),
-                    xhs: t('platformNames.xhs' as any),
-                    wxSph: t('platformNames.wxSph' as any),
-                    KWAI: t('platformNames.KWAI' as any),
-                    youtube: t('platformNames.youtube' as any),
-                    wxGzh: t('platformNames.wxGzh' as any),
-                    bilibili: t('platformNames.bilibili' as any),
-                    twitter: t('platformNames.twitter' as any),
-                    tiktok: t('platformNames.tiktok' as any),
-                    facebook: t('platformNames.facebook' as any),
-                    instagram: t('platformNames.instagram' as any),
-                    threads: t('platformNames.threads' as any),
-                    pinterest: t('platformNames.pinterest' as any),
-                    linkedin: t('platformNames.linkedin' as any),
-                  }
-                  
-                  const platformName = platform ? platformNames[platform] : t('platformNames.douyin' as any)
+                  const platformName = platform 
+                    ? AccountPlatInfoMap.get(platform as PlatType)?.name || platform
+                    : AccountPlatInfoMap.get(PlatType.Douyin)?.name || 'douyin'
                   
                   Modal.confirm({
                     title: t('aiGeneration.needAddChannel' as any),
