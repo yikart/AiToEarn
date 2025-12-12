@@ -13,6 +13,7 @@ import {
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import LoginModal from '@/components/LoginModal'
 import http from '@/utils/request'
+import { urlReg } from '@/utils/regulars'
 import styles from './dataMonitoring.module.scss'
 
 // Supported platforms for monitoring
@@ -81,6 +82,20 @@ export default function DataMonitoringPage() {
   const handleAddNote = async () => {
     if (!noteLink.trim()) {
       message.warning(t('addModal.linkRequired'))
+      return
+    }
+
+    // 验证链接格式
+    const trimmedLink = noteLink.trim()
+    // 检查是否是有效的 URL
+    // 1. 以 http:// 或 https:// 开头
+    // 2. 或者是有效的域名格式（包含点号，如 example.com）
+    const hasProtocol = /^https?:\/\//i.test(trimmedLink)
+    const hasDomain = /^([\da-z\.-]+)\.([a-z\.]{2,6})/i.test(trimmedLink)
+    const isValidUrl = urlReg.test(trimmedLink) || (hasProtocol && hasDomain)
+    
+    if (!isValidUrl) {
+      message.warning('请输入有效的链接地址（例如：https://example.com 或 example.com）')
       return
     }
 
