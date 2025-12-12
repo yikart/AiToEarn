@@ -555,9 +555,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         "taskId":"693b97aa6259a321fae5f9ff",
         "medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj2cyn9w.jpg","prompt":"Retro propaganda poster style GPT AI image generation service advertisement with beautiful young woman, red and yellow radiating background, Chinese text promoting 9.9 yuan service"}],
         "type":"fullContent",
-        "title":"🔥惊爆价9.9元！GPT最新AI绘画服务震撼来袭",
+        "title":"GPT最新AI绘画服务震撼来袭",
         "description":"💥超值福利来啦！GPT最新AI绘画服务，惊爆价仅需9.9元/张！\n\n✨服务亮点：\n📌 适用各种场景 - 海报、插画、产品图，想画就画\n📌 图像融合 + 局部重绘 - 专业级效果随心调整\n📌 每张提交3次修改 - 直到您满意为止\n📌 AI直出效果 - 无需修改即可使用\n\n🎯 有意向的宝子们，点击右下角\"我想要\"立即体验！\n\n机会难得，名额有限，快来抢购吧！💖","tags":["AI绘画","设计神器","限时优惠","平面设计","创意工具"],"action":"createChannel",
-        "platform":"douyin",
+        "platform":"xhs",
         "errorMessage":"需要先绑定小红书账号才能发布内容"},"total_cost_usd":0.2353334,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":57188},"cache_creation_input_tokens":57188,"cache_read_input_tokens":3708,"input_tokens":8,"output_tokens":883,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}    
         const taskData = resultMsg.message.result
         const action = taskData.action
@@ -646,8 +646,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   // 未找到账号，弹出确认框并引导用户添加账号
                   Modal.confirm({
                     title: t('plugin.noAccountFound' as any),
-                    content: '未找到该平台的账号，请先添加账号',
-                    okText: '去添加',
+                    content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
+                    okText: '去处理',
                     cancelText: '取消',
                     onOk: () => {
                       // 延迟显示引导，确保页面已加载
@@ -785,10 +785,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
 
                     // 根据进度阶段显示不同提示
-                    if (stage === 'complete') {
-                      message.success(t('plugin.publishSuccess' as any, { platform }) || `${platform} 发布成功`)
-                    }
-                    else if (stage === 'error') {
+                    if (stage === 'error') {
                       message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
                     }
                   },
