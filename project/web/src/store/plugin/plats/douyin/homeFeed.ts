@@ -152,9 +152,14 @@ export function transformToHomeFeedItem(item: any): HomeFeedItem {
     return String(count || 0)
   }
 
+  // 提取封面尺寸
+  const cover = video.cover || {}
+
   return {
     workId: item.aweme_id || '',
     thumbnail: coverList[0] || '',
+    thumbnailWidth: cover.width,
+    thumbnailHeight: cover.height,
     title: item.desc || item.preview_title || '',
     authorAvatar: authorAvatarList[0] || '',
     authorName: author.nickname || '',

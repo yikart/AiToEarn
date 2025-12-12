@@ -3,6 +3,7 @@
  */
 
 import { PlatType } from '@/app/config/platConfig'
+import { PLUGIN_SUPPORTED_PLATFORMS } from '../types/baseTypes'
 
 // ============================================================================
 // 通用参数类型
@@ -83,6 +84,10 @@ export interface HomeFeedItem {
   workId: string
   /** 缩略图URL */
   thumbnail: string
+  /** 缩略图宽度 */
+  thumbnailWidth?: number;
+  /** 缩略图高度 */
+  thumbnailHeight?: number;
   /** 作品标题 */
   title: string
   /** 作者头像 */
@@ -175,4 +180,4 @@ export interface IPlatformInteraction {
 /**
  * 支持交互功能的平台类型
  */
-export type SupportedPlatformType = PlatType.Xhs | PlatType.Douyin
+export type SupportedPlatformType = typeof PLUGIN_SUPPORTED_PLATFORMS[number]

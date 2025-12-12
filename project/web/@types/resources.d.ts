@@ -267,6 +267,11 @@ interface Resources {
         "username": "代理账号",
         "password": "代理密码"
       }
+    },
+    "clientType": {
+      "label": "来源",
+      "web": "网页端",
+      "app": "App端"
     }
   },
   "aiRank": {
@@ -658,7 +663,9 @@ interface Resources {
       "createdAt": "创建时间",
       "updatedAt": "更新时间",
       "error": "错误",
-      "totalRecords": "共 {{count}} 条记录"
+      "totalRecords": "共 {{count}} 条记录",
+      "filterByPlatform": "按平台筛选",
+      "allPlatforms": "全部平台"
     },
     "stats": {
       "views": "阅读数",
@@ -818,7 +825,9 @@ interface Resources {
         "status": "状态",
         "docs": "文档",
         "blog": "博客",
-        "download": "下载"
+        "download": "下载",
+        "brand": "品牌",
+        "resources": "资源"
       },
       "getStarted": "立即开始"
     },
@@ -833,10 +842,13 @@ interface Resources {
     },
     "aiGeneration": {
       "inputPlaceholder": "输入你想创作的内容，AI将为你生成完整的作品...",
-      "generateButton": "生成作品",
-      "generating": "生成中...",
+      "generateButton": "开始创作",
+      "generating": "创作中...",
       "emptyPromptAlert": "请输入生成内容的提示词",
       "createTaskFailed": "创建任务失败",
+      "uploadSuccess": "图片上传成功",
+      "uploadFailed": "图片上传失败，请重试",
+      "taskCreatedSuccess": "任务创建成功",
       "thinking": "AI思考中...",
       "topicPrefix": "创作主题：",
       "generatedTitlePrefix": "生成主题：",
@@ -1332,6 +1344,29 @@ interface Resources {
       "image": "图片",
       "article": "文章"
     }
+  },
+  "interactiveNew": {
+    "title": "互动",
+    "describe": "浏览各平台热门内容，进行互动操作",
+    "selectPlatform": "选择平台",
+    "loginRequired": "请先登录该平台",
+    "allPlatformNotLogin": "所有平台均未登录，请先登录任意平台",
+    "goLogin": "去登录",
+    "loading": "加载中...",
+    "loadMore": "加载更多",
+    "noMore": "没有更多了",
+    "empty": "暂无数据",
+    "emptyDesc": "当前平台暂无推荐内容",
+    "loadFailed": "加载失败",
+    "retry": "重试",
+    "refresh": "刷新",
+    "backTop": "返回顶部",
+    "likes": "赞",
+    "video": "视频",
+    "noTitle": "无标题",
+    "pluginNotReady": "插件未就绪",
+    "pluginNotReadyDesc": "请先安装并授权 AIToEarn 浏览器插件",
+    "installPlugin": "安装插件"
   },
   "login": {
     "welcomeBack": "哎呦赚",
@@ -1845,7 +1880,8 @@ interface Resources {
       "workId": "作品ID",
       "shareLink": "分享链接",
       "failReason": "失败原因",
-      "close": "关闭"
+      "close": "关闭",
+      "unknownAccount": "未知账号"
     },
     "common": {
       "confirm": "确定",
@@ -2523,6 +2559,25 @@ interface Resources {
       "trial": "试用"
     }
   },
+  "promptGallery": {
+    "badge": "🎨 提示词灵感库",
+    "title": "探索精选提示词",
+    "titleHighlight": "快速开始创作",
+    "subtitle": "精选优质提示词模板，一键应用即可使用",
+    "applyButton": "一键应用",
+    "collapseButton": "收起",
+    "expandButton": "查看更多",
+    "expandCount": "个",
+    "appliedToast": "✓ 已应用提示词",
+    "modal": {
+      "promptLabel": "提示词：",
+      "applyButton": "一键应用"
+    },
+    "badges": {
+      "edit": "编辑",
+      "generate": "文生图"
+    }
+  },
   "publish": {
     "title": "发布作品",
     "confirmClose": {
@@ -2598,7 +2653,8 @@ interface Resources {
       "searchLocation": "搜索位置",
       "selectLocation": "请选择位置",
       "description": "描述",
-      "descriptionPlaceholder": "开始写"
+      "descriptionPlaceholder": "开始写",
+      "fans": "粉丝"
     },
     "writingAssistant": "写作助手",
     "aiAssistant": "AI助手",
@@ -2851,6 +2907,15 @@ interface Resources {
         "shares": "分享数"
       },
       "viewWork": "查看作品"
+    },
+    "clientType": {
+      "label": "来源",
+      "web": "网页端",
+      "app": "App端"
+    },
+    "pluginPublish": {
+      "ready": "插件发布",
+      "notReady": "插件未就绪"
     }
   },
   "route": {
@@ -2865,6 +2930,7 @@ interface Resources {
     "interactive": "作品互动",
     "engagement": "互动数据",
     "dataStatistics": "数据统计",
+    "interactiveNew": "作品互动 new",
     "dataMonitoring": "数据监控",
     "navigation": "导航",
     "aiRank": "AI热榜"
@@ -3272,25 +3338,6 @@ interface Resources {
     "uploadSuccess": "上传成功",
     "checkFailed": "检查失败",
     "alreadyAuthorized": "已授权"
-  },
-  "promptGallery": {
-    "badge": "🎨 提示词灵感库",
-    "title": "探索精选提示词",
-    "titleHighlight": "快速开始创作",
-    "subtitle": "精选优质提示词模板，一键应用即可使用",
-    "applyButton": "一键应用",
-    "collapseButton": "收起",
-    "expandButton": "查看更多",
-    "expandCount": "个",
-    "appliedToast": "✓ 已应用提示词",
-    "modal": {
-      "promptLabel": "提示词：",
-      "applyButton": "一键应用"
-    },
-    "badges": {
-      "edit": "编辑",
-      "generate": "文生图"
-    }
   }
 }
 

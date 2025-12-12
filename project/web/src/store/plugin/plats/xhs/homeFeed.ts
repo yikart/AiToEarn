@@ -95,6 +95,8 @@ export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
     isVideo: note_card.type === 'video',
     videoDuration: note_card.video?.capa?.duration,
     origin: item,
+    thumbnailWidth: note_card.cover.width,
+    thumbnailHeight: note_card.cover.height,
   }
 }
 

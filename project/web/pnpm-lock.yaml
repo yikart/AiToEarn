@@ -17,6 +17,9 @@ importers:
       '@ant-design/nextjs-registry':
         specifier: ^1.0.2
         version: 1.0.2(@ant-design/cssinjs@1.23.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(antd@5.25.4(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(next@14.2.29(@babel/core@7.28.4)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.89.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@egjs/react-infinitegrid':
+        specifier: ^4.12.0
+        version: 4.12.0
       '@fullcalendar/core':
         specifier: ^6.1.17
         version: 6.1.17
@@ -137,6 +140,9 @@ importers:
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@18.3.23)(react@18.3.1)
+      react-masonry-css:
+        specifier: ^1.0.16
+        version: 1.0.16(react@18.3.1)
       react-qrcode-logo:
         specifier: ^4.0.0
         version: 4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -914,6 +920,12 @@ packages:
     resolution: {integrity: sha512-qQ5m48eI/MFLQ5PxQj4PFaprjyCTLI37ElWMmNs0K8Lk3dVeOdNpB3ks8jc7yM5CDmVC73eMVk/trk3fgmrUpA==}
     engines: {node: '>=6.9.0'}
 
+  '@cfcs/core@0.0.24':
+    resolution: {integrity: sha512-feB38qu+eDk0Pggh/yR7gjaNmvUYA2uCxHP3Pz2MLE4LZ/9jPdtu8bzCSI47yTEhWyZCF5Pk698hdz8IN2mTjA==}
+
+  '@cfcs/core@0.0.5':
+    resolution: {integrity: sha512-TZ/RXKV7MUrqFpiX+16uaaptv5jgChWNsuE6w8Rn3eJbO1PFd4Wpn25zeJbii7ch46ck8/ZIIYCcW3pHiYtm4Q==}
+
   '@clack/core@0.5.0':
     resolution: {integrity: sha512-p3y0FIOwaYRUPRcMO7+dlmLh8PSRcrjuTndsiA0WAFbWES0mLZlrjVoBRZ9DzkPFJZG6KGkJmoEAY0ZcVWTkow==}
 
@@ -931,6 +943,27 @@ packages:
 
   '@dprint/toml@0.6.4':
     resolution: {integrity: sha512-bZXIUjxr0LIuHWshZr/5mtUkOrnh0NKVZEF6ACojW5z7zkJu7s9sV2mMXm8XQDqN4cJzdHYUYzUyEGdfciaLJA==}
+
+  '@egjs/children-differ@1.0.1':
+    resolution: {integrity: sha512-DRvyqMf+CPCOzAopQKHtW+X8iN6Hy6SFol+/7zCUiE5y4P/OB8JP8FtU4NxtZwtafvSL4faD5KoQYPj3JHzPFQ==}
+
+  '@egjs/component@3.0.5':
+    resolution: {integrity: sha512-cLcGizTrrUNA2EYE3MBmEDt2tQv1joVP1Q3oDisZ5nw0MZDx2kcgEXM+/kZpfa/PAkFvYVhRUZwytIQWoN3V/w==}
+
+  '@egjs/grid@1.16.0':
+    resolution: {integrity: sha512-w344hL2HNwmOHu379EG9I8ULkWF4A0cVf1XDn5nGlLXc+8c/rMvQadMBkGPOcdWMEKvFZpEiOPI7tWlXLOCloQ==}
+
+  '@egjs/imready@1.4.2':
+    resolution: {integrity: sha512-ckV7KlBa23Bw6iZP59W2cMZfAmV5q0BtMoOz7ZkzIvjoOtkxfLZkqVJROSgDP5Ha0hsnskyL4vtom9Bt7FZSRQ==}
+
+  '@egjs/infinitegrid@4.12.0':
+    resolution: {integrity: sha512-zoDz+mag7DAropcgmxW0Bx3JQ5ID19lk+AUN9rf9U7diwmO8IBfddX44jOVc9+ya5yZ+Goj95Fkm5S3GqCOrZQ==}
+
+  '@egjs/list-differ@1.0.1':
+    resolution: {integrity: sha512-OTFTDQcWS+1ZREOdCWuk5hCBgYO4OsD30lXcOCyVOAjXMhgL5rBRDnt/otb6Nz8CzU0L/igdcaQBDLWc4t9gvg==}
+
+  '@egjs/react-infinitegrid@4.12.0':
+    resolution: {integrity: sha512-V661KH1nka13wgy73N0IGBazZGe7LiECml1JDqB5DP6axTERUVCs8KRHadHu6oQihDeXwJIHe1YRhhMN9eAnUw==}
 
   '@emnapi/runtime@1.7.0':
     resolution: {integrity: sha512-oAYoQnCYaQZKVS53Fq23ceWMRxq5EhQsE0x0RdQ55jT7wagMu5k+fS39v1fiSLrtrLQlXwVINenqhLMtTrV/1Q==}
@@ -4614,6 +4647,11 @@ packages:
       '@types/react': '>=18'
       react: '>=18'
 
+  react-masonry-css@1.0.16:
+    resolution: {integrity: sha512-KSW0hR2VQmltt/qAa3eXOctQDyOu7+ZBevtKgpNDSzT7k5LA/0XntNa9z9HKCdz3QlxmJHglTZ18e4sX4V8zZQ==}
+    peerDependencies:
+      react: '>=16.0.0'
+
   react-qrcode-logo@4.0.0:
     resolution: {integrity: sha512-TcDdsJQe7P0OY7uA7Do4Z0DfIIjjqx81RbBGQY+90T2Ba42pUCx/cSI2UTwPPoH9WwE0StLb8A98mFgKIAI4JQ==}
     peerDependencies:
@@ -6443,6 +6481,14 @@ snapshots:
       '@babel/helper-string-parser': 7.27.1
       '@babel/helper-validator-identifier': 7.28.5
 
+  '@cfcs/core@0.0.24':
+    dependencies:
+      '@egjs/component': 3.0.5
+
+  '@cfcs/core@0.0.5':
+    dependencies:
+      '@egjs/component': 3.0.5
+
   '@clack/core@0.5.0':
     dependencies:
       picocolors: 1.1.1
@@ -6461,6 +6507,37 @@ snapshots:
   '@dprint/markdown@0.17.8': {}
 
   '@dprint/toml@0.6.4': {}
+
+  '@egjs/children-differ@1.0.1':
+    dependencies:
+      '@egjs/list-differ': 1.0.1
+
+  '@egjs/component@3.0.5': {}
+
+  '@egjs/grid@1.16.0':
+    dependencies:
+      '@egjs/children-differ': 1.0.1
+      '@egjs/component': 3.0.5
+      '@egjs/imready': 1.4.2
+
+  '@egjs/imready@1.4.2':
+    dependencies:
+      '@cfcs/core': 0.0.24
+      '@egjs/component': 3.0.5
+
+  '@egjs/infinitegrid@4.12.0':
+    dependencies:
+      '@cfcs/core': 0.0.5
+      '@egjs/children-differ': 1.0.1
+      '@egjs/component': 3.0.5
+      '@egjs/grid': 1.16.0
+      '@egjs/list-differ': 1.0.1
+
+  '@egjs/list-differ@1.0.1': {}
+
+  '@egjs/react-infinitegrid@4.12.0':
+    dependencies:
+      '@egjs/infinitegrid': 4.12.0
 
   '@emnapi/runtime@1.7.0':
     dependencies:
@@ -11071,6 +11148,10 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
+
+  react-masonry-css@1.0.16(react@18.3.1):
+    dependencies:
+      react: 18.3.1
 
   react-qrcode-logo@4.0.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
     dependencies:

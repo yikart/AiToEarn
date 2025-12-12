@@ -86,6 +86,8 @@ export type PlatformProgressMap = Map<string, ProgressEvent>
 export interface IPluginStore {
   status: Status
   pollingTimer: NodeJS.Timeout | null
+  /** 插件是否正在初始化（检测插件、权限、账号登录状态） */
+  isInitializing: boolean
   /** 是否正在发布（任意平台） */
   isPublishing: boolean
   /** 正在发布的集合，key 为 platform 或 platform-accountId，支持同一平台多账号同时发布 */
@@ -102,6 +104,7 @@ export interface IPluginStore {
 const store: IPluginStore = {
   status: Status.UNKNOWN,
   pollingTimer: null,
+  isInitializing: true, // 初始状态为正在初始化
   isPublishing: false,
   publishingPlatforms: new Set(),
   publishProgress: null,
@@ -210,25 +213,32 @@ export const usePluginStore = create(
          * 2. 检查插件状态，未安装或未授权则轮询，已就绪则刷新账号
          */
         async init() {
+          // 设置初始化状态
+          set({ isInitializing: true })
+
           // 先将所有插件支持的平台账号设为离线
           methods.setAllPluginAccountsOffline()
 
           const isInstalled = methods.checkPlugin()
           if (!isInstalled) {
-            // 未安装，开始轮询
+            // 未安装，开始轮询，初始化完成
+            set({ isInitializing: false })
             methods.startPolling()
             return
           }
 
           const hasPermission = await methods.checkPermission()
           if (!hasPermission) {
-            // 未授权，开始轮询
+            // 未授权，开始轮询，初始化完成
+            set({ isInitializing: false })
             methods.startPolling()
             return
           }
 
           // 已就绪，刷新账号信息
           await methods.refreshAllPlatformAccounts()
+          // 初始化完成
+          set({ isInitializing: false })
         },
 
         /** 将所有插件支持的平台账号设为离线 */
