@@ -5,6 +5,8 @@ import { NoSSR } from '@kwooshung/react-no-ssr'
 import Image from 'next/image'
 import { useEffect, useState, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
 import AccountSidebar from '@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import CalendarTiming from '@/app/[lng]/accounts/components/CalendarTiming'
@@ -26,6 +28,7 @@ interface AccountPageCoreProps {
     platform?: string
     spaceId?: string
     showVip?: string
+    addChannel?: string // 添加频道引导参数
     // AI生成的内容参数
     aiGenerated?: string
     taskId?: string
@@ -67,6 +70,7 @@ export default function AccountPageCore({
   const [defaultAccountId, setDefaultAccountId] = useState<string>()
   const [aiGeneratedData, setAiGeneratedData] = useState<any>(null)
   const publishDialogRef = useRef<IPublishDialogRef>(null)
+  const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
 
   useEffect(() => {
     accountInit()
@@ -79,6 +83,129 @@ export default function AccountPageCore({
 
   // 处理URL参数
   useEffect(() => {
+    // 处理添加频道引导
+    if (searchParams?.addChannel) {
+      const platform = searchParams.addChannel
+      const platformNames: Record<string, string> = {
+        douyin: '抖音',
+        xhs: '小红书',
+        wxSph: '微信视频号',
+        KWAI: '快手',
+        youtube: 'YouTube',
+        wxGzh: '微信公众号',
+        bilibili: 'B站',
+        twitter: 'Twitter',
+        tiktok: 'TikTok',
+        facebook: 'Facebook',
+        instagram: 'Instagram',
+        threads: 'Threads',
+        pinterest: 'Pinterest',
+        linkedin: 'LinkedIn',
+      }
+      const platformName = platformNames[platform] || '该平台'
+      
+      // 延迟一下，确保页面已完全加载
+      const timer = setTimeout(() => {
+        const addChannelBtn = document.querySelector('[data-driver-target="add-channel-btn"]') as HTMLElement
+        if (!addChannelBtn) {
+          console.warn('Add channel button not found')
+          return
+        }
+
+        // 设置目标平台
+        setTargetPlatform(platform as PlatType)
+
+        const driverObj = driver({
+          showProgress: false,
+          showButtons: ['next'],
+          nextBtnText: '知道了',
+          doneBtnText: '知道了',
+          popoverOffset: 10,
+          stagePadding: 4,
+          stageRadius: 12,
+          allowClose: true,
+          smoothScroll: true,
+          steps: [
+            {
+              element: '[data-driver-target="add-channel-btn"]',
+              popover: {
+                title: '需要添加频道',
+                description: `检测到您还没有添加${platformName}频道，点击这里添加频道`,
+                side: 'top',
+                align: 'start',
+                onPopoverRender: () => {
+                  // Popover 渲染后，更新按钮文本并添加点击事件
+                  setTimeout(() => {
+                    const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                    const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                    const btn = nextBtn || doneBtn
+                    if (btn) {
+                      btn.textContent = '知道了'
+                      // 添加点击事件监听器
+                      const handleClick = (e: MouseEvent) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        driverObj.destroy()
+                        // 清除URL参数
+                        if (typeof window !== 'undefined') {
+                          const url = new URL(window.location.href)
+                          url.searchParams.delete('addChannel')
+                          window.history.replaceState({}, '', url.toString())
+                        }
+                        btn.removeEventListener('click', handleClick)
+                      }
+                      btn.addEventListener('click', handleClick)
+                    }
+                  }, 50)
+                },
+              },
+            },
+          ],
+          onNextClick: () => {
+            // 点击按钮时关闭引导并打开添加账号弹窗
+            driverObj.destroy()
+            // 清除URL参数
+            if (typeof window !== 'undefined') {
+              const url = new URL(window.location.href)
+              url.searchParams.delete('addChannel')
+              window.history.replaceState({}, '', url.toString())
+            }
+            // 打开添加账号弹窗
+            setTimeout(() => {
+              setAddAccountModalOpen(true)
+            }, 300)
+            return false // 阻止默认行为
+          },
+          onDestroyStarted: () => {
+            // 清除URL参数
+            if (typeof window !== 'undefined') {
+              const url = new URL(window.location.href)
+              url.searchParams.delete('addChannel')
+              window.history.replaceState({}, '', url.toString())
+            }
+          },
+          onDestroyed: () => {
+            // 清除URL参数
+            if (typeof window !== 'undefined') {
+              const url = new URL(window.location.href)
+              url.searchParams.delete('addChannel')
+              window.history.replaceState({}, '', url.toString())
+            }
+          },
+        })
+
+        driverObjRef.current = driverObj
+        driverObj.drive()
+      }, 1000)
+
+      return () => {
+        clearTimeout(timer)
+        if (driverObjRef.current) {
+          driverObjRef.current.destroy()
+        }
+      }
+    }
+
     // 处理显示VIP弹窗的参数
     if (searchParams?.showVip === 'true') {
       setVipModalOpen(true)

@@ -1,6 +1,6 @@
 import type { ForwardedRef } from 'react'
-import { CloseOutlined, DownOutlined, MenuOutlined } from '@ant-design/icons'
-import { Button, Dropdown } from 'antd'
+import { ApiOutlined, CloseOutlined, DownOutlined, MenuOutlined } from '@ant-design/icons'
+import { Button, Dropdown, Tooltip } from 'antd'
 import type { MenuProps } from 'antd'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -12,6 +12,8 @@ import { removeLocalePrefix } from '@/app/layout/layout.utils'
 import { homeHeaderRouterData, type HomeHeaderRouterItem } from '@/app/layout/routerData'
 import logo from '@/assets/images/logo.png'
 import LanguageSwitcher from '@/components/common/LanguageSwitcher'
+import { PluginStatusModal, usePluginStore } from '@/store/plugin'
+import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { useUserStore } from '@/store/user'
 
 export interface IHomeHeaderRef { }
@@ -22,10 +24,39 @@ const HomeHeader = memo(
   forwardRef((_: IHomeHeaderProps, ref: ForwardedRef<IHomeHeaderRef>) => {
     const pathname = usePathname()
     const { t } = useTransClient('home')
+    const { t: tPlugin } = useTransClient('plugin')
     const router = useRouter()
     const userStore = useUserStore()
     const currentPath = removeLocalePrefix(pathname).replace(/\/+$/, '') || '/'
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [pluginModalVisible, setPluginModalVisible] = useState(false)
+    
+    // 插件状态
+    const pluginStatus = usePluginStore(state => state.status)
+    const isPluginReady = pluginStatus === PluginStatus.READY
+    const isPluginInstalled = pluginStatus === PluginStatus.INSTALLED_NO_PERMISSION
+
+    /**
+     * 获取插件图标颜色
+     */
+    const getPluginIconColor = () => {
+      if (isPluginReady)
+        return '#a66ae4' // 主题色
+      if (isPluginInstalled)
+        return '#f59e0b' // 警告色
+      return '#bfbfbf' // 灰色
+    }
+
+    /**
+     * 获取插件状态提示文字
+     */
+    const getPluginTooltip = () => {
+      if (isPluginReady)
+        return tPlugin('status.ready')
+      if (isPluginInstalled)
+        return tPlugin('status.installedNoPermission')
+      return tPlugin('status.notInstalled')
+    }
 
     /**
      * 切换移动端菜单显示状态
@@ -133,6 +164,24 @@ const HomeHeader = memo(
                 size="small"
               />
 
+              {/* 插件状态图标 */}
+              <Tooltip title={getPluginTooltip()}>
+                <Button
+                  type="text"
+                  icon={(
+                    <ApiOutlined
+                      style={{
+                        fontSize: 18,
+                        color: getPluginIconColor(),
+                      }}
+                    />
+                  )}
+                  onClick={() => setPluginModalVisible(true)}
+                  style={{ padding: '4px 8px' }}
+                  data-driver-target="plugin-button"
+                />
+              </Tooltip>
+
               {/* 移动端菜单按钮 */}
               <button
                 className={styles.mobileMenuButton}
@@ -223,6 +272,12 @@ const HomeHeader = memo(
             />
           </div>
         </div>
+
+        {/* 插件状态弹窗 */}
+        <PluginStatusModal
+          visible={pluginModalVisible}
+          onClose={() => setPluginModalVisible(false)}
+        />
       </>
     )
   }),

@@ -111,8 +111,8 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
                 src={qrCodeUrl}
                 alt="QR Code"
                 style={{
-                  width: 120,
-                  height: 120,
+                  width: 200,
+                  height: 200,
                   borderRadius: '8px',
                   boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
                 }}
@@ -121,12 +121,14 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
           : (
               <QRCode
                 value={downloadUrl || getMainAppDownloadUrlSync()}
-                size={120}
+                size={200}
                 logoImage={logo.src}
-                logoWidth={30}
-                logoHeight={30}
-                logoOpacity={0.8}
-                qrStyle="squares"
+                logoWidth={20}
+                logoHeight={20}
+                logoPadding={5}
+                logoPaddingStyle="square"
+                logoOpacity={0.95}
+                qrStyle="dots"
                 eyeRadius={0}
                 style={{ borderRadius: '8px' }}
               />

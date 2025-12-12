@@ -11,6 +11,7 @@ export enum ShareMediaCategory {
   NONE = 'NONE',
   IMAGE = 'IMAGE',
   ARTICLE = 'ARTICLE',
+  VIDEO = 'VIDEO',
 }
 
 export enum MemberNetworkVisibility {

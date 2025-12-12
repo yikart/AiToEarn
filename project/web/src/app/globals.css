@@ -63,3 +63,112 @@ a {
 *::-webkit-scrollbar-thumb:hover {
   background: #a2a2a2;
 }
+
+/* driver.js 自定义样式（覆盖默认样式以匹配项目主题） */
+.driver-popover {
+  border-radius: 12px !important;
+  box-shadow: 0 8px 24px rgba(115, 61, 236, 0.3) !important;
+  border: none !important;
+  padding: 20px !important;
+}
+
+.driver-popover-title {
+  color: #733dec !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  margin-bottom: 8px !important;
+}
+
+.driver-popover-description {
+  color: #666 !important;
+  font-size: 15px !important;
+  line-height: 1.6 !important;
+  margin-bottom: 16px !important;
+}
+
+.driver-popover-footer {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 8px !important;
+  margin-top: 0 !important;
+}
+
+.driver-popover-footer button {
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  transition: all 0.3s ease !important;
+  cursor: pointer !important;
+  text-shadow: none !important;
+}
+
+.driver-popover-footer .driver-popover-next-btn,
+.driver-popover-footer .driver-popover-done-btn {
+  background: linear-gradient(135deg, #733dec 0%, #a66ae4 100%) !important;
+  border: none !important;
+  color: white !important;
+}
+
+.driver-popover-footer .driver-popover-next-btn:hover,
+.driver-popover-footer .driver-popover-done-btn:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(115, 61, 236, 0.4) !important;
+}
+
+.driver-popover-footer .driver-popover-next-btn:active,
+.driver-popover-footer .driver-popover-done-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* 修复最后一个步骤时，next 按钮应该显示 done 的文本 */
+.driver-popover-footer .driver-popover-next-btn:last-child {
+  /* 当是最后一步时，按钮文本应该显示为"知道了" */
+}
+
+.driver-popover-footer .driver-popover-prev-btn {
+  background: #f5f5f5 !important;
+  border: 1px solid #e0e0e0 !important;
+  color: #666 !important;
+}
+
+.driver-popover-footer .driver-popover-prev-btn:hover {
+  background: #e8e8e8 !important;
+}
+
+.driver-popover-footer .driver-popover-close-btn {
+  background: transparent !important;
+  border: none !important;
+  color: #999 !important;
+  padding: 4px !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+.driver-popover-footer .driver-popover-close-btn:hover {
+  color: #666 !important;
+}
+
+/* 确保最后一步时，next 按钮显示为"知道了" */
+.driver-popover-footer .driver-popover-next-btn:last-child {
+  /* 按钮文本已经在 JS 中动态更新 */
+}
+
+.driver-highlighted-element {
+  border: 3px solid #733dec !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 0 4px rgba(115, 61, 236, 0.2), 0 0 20px rgba(115, 61, 236, 0.3) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+/* 确保 textarea 能够被正确高亮 */
+#ai-input-textarea.driver-highlighted-element {
+  border: 3px solid #733dec !important;
+  background-color: rgba(115, 61, 236, 0.05) !important;
+}
+
+.driver-overlay {
+  background: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(2px) !important;
+}

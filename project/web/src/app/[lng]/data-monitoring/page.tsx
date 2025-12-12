@@ -11,6 +11,9 @@ import {
   type NoteMonitoringListItem,
 } from '@/api/monitoring'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import LoginModal from '@/components/LoginModal'
+import http from '@/utils/request'
+import { urlReg } from '@/utils/regulars'
 import styles from './dataMonitoring.module.scss'
 
 // Supported platforms for monitoring
@@ -37,6 +40,7 @@ export default function DataMonitoringPage() {
   const [filterPlatform, setFilterPlatform] = useState<PlatType | 'all'>('all')
   const [noteLink, setNoteLink] = useState('')
   const [addLoading, setAddLoading] = useState(false)
+  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Load monitoring list
   const loadMonitoringList = async (page: number = 1, platform?: string) => {
@@ -81,18 +85,59 @@ export default function DataMonitoringPage() {
       return
     }
 
+    // 验证链接格式
+    const trimmedLink = noteLink.trim()
+    // 检查是否是有效的 URL
+    // 1. 以 http:// 或 https:// 开头
+    // 2. 或者是有效的域名格式（包含点号，如 example.com）
+    const hasProtocol = /^https?:\/\//i.test(trimmedLink)
+    const hasDomain = /^([\da-z\.-]+)\.([a-z\.]{2,6})/i.test(trimmedLink)
+    const isValidUrl = urlReg.test(trimmedLink) || (hasProtocol && hasDomain)
+    
+    if (!isValidUrl) {
+      message.warning('请输入有效的链接地址（例如：https://example.com 或 example.com）')
+      return
+    }
+
     setAddLoading(true)
     try {
-      await apiAddNoteMonitoring({ link: noteLink, platform: selectedPlatform })
-      message.success(t('addModal.addSuccess'))
-      setNoteLink('')
-      loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
+      // 使用 silent 参数避免自动显示错误提示，手动处理 401
+      const response = await http.post('statistics/posts/monitor/create', {
+        link: noteLink,
+        platform: selectedPlatform,
+      }, true) // silent = true
+      
+      // 检查响应 code
+      if (response && response.code === 0) {
+        message.success(t('addModal.addSuccess'))
+        setNoteLink('')
+        loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
+      } else if (response && response.code === 401) {
+        // 未登录，弹出登录弹窗
+        setLoginModalOpen(true)
+      } else if (response) {
+        // 其他错误
+        message.error(response.message || t('error.addFailed'))
+      } else {
+        message.error(t('error.addFailed'))
+      }
     }
     catch (error: any) {
-      message.error(error.message || t('error.addFailed'))
+      message.error(error?.message || t('error.addFailed'))
     }
     finally {
       setAddLoading(false)
+    }
+  }
+
+  // Handle login success - reload the list
+  const handleLoginSuccess = () => {
+    // 登录成功后，重新尝试添加监控
+    if (noteLink.trim()) {
+      handleAddNote()
+    } else {
+      // 如果没有待添加的链接，重新加载列表
+      loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
     }
   }
 
@@ -352,6 +397,13 @@ export default function DataMonitoringPage() {
           )}
         </div>
       </Card>
+
+      {/* Login Modal */}
+      <LoginModal
+        open={loginModalOpen}
+        onCancel={() => setLoginModalOpen(false)}
+        onSuccess={handleLoginSuccess}
+      />
     </div>
   )
 }

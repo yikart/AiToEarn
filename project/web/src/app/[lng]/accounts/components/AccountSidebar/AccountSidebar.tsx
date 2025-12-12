@@ -1048,6 +1048,7 @@ const AccountSidebar = memo(
                 icon={<PlusOutlined />}
                 onClick={openAddAccountFlow}
                 style={{ width: '100%', marginBottom: '10px' }}
+                data-driver-target="add-channel-btn"
               >
                 {t('addAccount')}
               </Button>

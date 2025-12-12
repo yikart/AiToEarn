@@ -204,16 +204,12 @@ export class YoutubeController {
     return res
   }
 
-  // 视频上传(20M以下小视频)
-  // @NatsMessagePattern('plat.youtube.uploadVideo')
   @ApiDoc({
     summary: 'Upload Small Video',
     body: UploadVideoDto.schema,
   })
   @Post('plat/youtube/uploadVideo')
   async uploadVideo(@Body() data: UploadVideoDto) {
-    this.logger.log('接收到上传视频请求:', data.accountId, data.fileName)
-
     const res = this.youtubeService.uploadVideo(
       data.accountId,
       data.fileBuffer,
