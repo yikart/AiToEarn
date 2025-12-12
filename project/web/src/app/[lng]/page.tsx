@@ -545,6 +545,17 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // Create AI generation task with SSE
   const handleCreateTask = async () => { 
 
+    // test 00.00
+    // let testobj = {"type":"result","message":{"type":"result","subtype":"success","uuid":"64e76d3a-e9f4-492d-84b2-cb196adb4fec","duration_ms":20935,"duration_api_ms":34158,"is_error":false,"num_turns":2,"message":"完成！✅\n\n系统现在会引导您：\n\n1️⃣ **绑定小红书账号** - 请按照页面提示完成小红书账号的绑定授权\n\n2️⃣ **确认发布信息** - 绑定成功后，您会看到已经为您准备好的：\n - 📸 复古宣传海报图片\n - 📝 标题：🔥惊爆价9.9元！GPT最新AI绘画服务震撼来袭\n - ✍️ 完整的推广文案\n - 🏷️ 话题标签：#AI绘画 #设计神器 #限时优惠 等\n\n3️⃣ **一键发布** - 确认无误后即可发布到小红书！\n\n所有内容都已经为您准备就绪，只需完成账号绑定就可以发布了！🎉",
+    //   "result":{
+    //     "taskId":"693b97aa6259a321fae5f9ff",
+    //     "medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj2cyn9w.jpg","prompt":"Retro propaganda poster style GPT AI image generation service advertisement with beautiful young woman, red and yellow radiating background, Chinese text promoting 9.9 yuan service"}],
+    //     "type":"fullContent",
+    //     "title":"🔥惊爆价9.9元！GPT最新AI绘画服务震撼来袭",
+    //     "description":"💥超值福利来啦！GPT最新AI绘画服务，惊爆价仅需9.9元/张！\n\n✨服务亮点：\n📌 适用各种场景 - 海报、插画、产品图，想画就画\n📌 图像融合 + 局部重绘 - 专业级效果随心调整\n📌 每张提交3次修改 - 直到您满意为止\n📌 AI直出效果 - 无需修改即可使用\n\n🎯 有意向的宝子们，点击右下角\"我想要\"立即体验！\n\n机会难得，名额有限，快来抢购吧！💖","tags":["AI绘画","设计神器","限时优惠","平面设计","创意工具"],"action":"createChannel",
+    //     "platform":"xhs","errorMessage":"需要先绑定小红书账号才能发布内容"},"total_cost_usd":0.2353334,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":57188},"cache_creation_input_tokens":57188,"cache_read_input_tokens":3708,"input_tokens":8,"output_tokens":883,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}    
+
+    // return
 
     if (!prompt.trim()) {
       return
@@ -920,20 +931,187 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 // action: createChannel - 用户没有频道，弹出提示并引导授权
                 else if (action === 'createChannel') {
                   const platform = taskData.platform
-                  const platformName = platform 
-                    ? AccountPlatInfoMap.get(platform as PlatType)?.name || platform
-                    : AccountPlatInfoMap.get(PlatType.Douyin)?.name || 'douyin'
                   
-                  Modal.confirm({
-                    title: t('aiGeneration.needAddChannel' as any),
-                    content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
-                    okText: t('aiGeneration.goAdd' as any),
-                    cancelText: t('aiGeneration.cancel' as any),
-                    onOk: () => {
-                      // 跳转到账号页面，自动打开对应平台的授权
-                      router.push(`/${lng}/accounts?addChannel=${platform}`)
-                    },
-                  })
+                  // 对于 xhs 和 douyin，使用插件授权逻辑
+                  if (platform === 'xhs' || platform === 'douyin') {
+                    // 检查插件状态
+                    const pluginStatus = usePluginStore.getState().status
+                    const isPluginReady = pluginStatus === PluginStatus.READY
+                    
+                    if (!isPluginReady) {
+                      // 插件未准备就绪，显示引导授权插件
+                      message.warning(t('plugin.platformNeedsPlugin' as any))
+                      
+                      // 延迟显示引导，确保页面已加载
+                      setTimeout(() => {
+                        const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+                        if (!pluginButton) {
+                          console.warn('Plugin button not found')
+                          return
+                        }
+
+                        const driverObj = driver({
+                          showProgress: false,
+                          showButtons: ['next'],
+                          nextBtnText: t('aiGeneration.gotIt' as any),
+                          doneBtnText: t('aiGeneration.gotIt' as any),
+                          popoverOffset: 10,
+                          stagePadding: 4,
+                          stageRadius: 12,
+                          allowClose: true,
+                          smoothScroll: true,
+                          steps: [
+                            {
+                              element: '[data-driver-target="plugin-button"]',
+                              popover: {
+                                title: t('plugin.authorizePluginTitle' as any),
+                                description: t('plugin.authorizePluginDescription' as any),
+                                side: 'bottom',
+                                align: 'start',
+                                onPopoverRender: () => {
+                                  setTimeout(() => {
+                                    const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                                    const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                                    const btn = nextBtn || doneBtn
+                                    if (btn) {
+                                      btn.textContent = t('aiGeneration.gotIt' as any)
+                                      const handleClick = (e: MouseEvent) => {
+                                        e.preventDefault()
+                                        e.stopPropagation()
+                                        driverObj.destroy()
+                                        btn.removeEventListener('click', handleClick)
+                                      }
+                                      btn.addEventListener('click', handleClick)
+                                    }
+                                  }, 50)
+                                },
+                              },
+                            },
+                          ],
+                          onNextClick: () => {
+                            driverObj.destroy()
+                            return false
+                          },
+                        })
+
+                        driverObj.drive()
+                      }, 1500)
+                    } else {
+                      // 插件已准备就绪，直接调用插件发布方法
+                      try {
+                        // 获取账号列表
+                        const accountGroupList = useAccountStore.getState().accountGroupList
+                        const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+                          return [...acc, ...group.children]
+                        }, [])
+                        
+                        // 根据 taskData 中的平台类型查找账号
+                        const targetAccounts = allAccounts.filter(account => account.type === platform)
+                        
+                        if (targetAccounts.length === 0) {
+                          message.warning(t('plugin.noAccountFound' as any))
+                          return
+                        }
+                        
+                        // 构建发布数据
+                        const medias = taskData.medias || []
+                        const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+                        const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+                        // 创建空的 File 对象作为占位符
+                        const createEmptyFile = () => {
+                          return new File([], '', { type: 'image/jpeg' })
+                        }
+                        
+                        const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+                          id: '',
+                          imgPath: m.url,
+                          ossUrl: m.url,
+                          size: 0,
+                          file: createEmptyFile(),
+                          imgUrl: m.url,
+                          filename: '',
+                          width: 0,
+                          height: 0,
+                        }))
+                        
+                        // 为每个账号创建发布项
+                        const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
+                          account,
+                          params: {
+                            title: taskData.title || '',
+                            des: taskData.description || '',
+                            topics: taskData.tags || [],
+                            video: video ? {
+                              size: 0,
+                              file: new Blob(),
+                              videoUrl: video.url,
+                              ossUrl: video.url,
+                              filename: '',
+                              width: 0,
+                              height: 0,
+                              duration: 0,
+                              cover: {
+                                id: '',
+                                imgPath: video.coverUrl || '',
+                                ossUrl: video.coverUrl,
+                                size: 0,
+                                file: createEmptyFile(),
+                                imgUrl: video.coverUrl || '',
+                                filename: '',
+                                width: 0,
+                                height: 0,
+                              },
+                            } : undefined,
+                            images: images.length > 0 ? images : undefined,
+                            option: {},
+                          },
+                        }))
+                        
+                        // 创建平台任务ID映射
+                        const platformTaskIdMap = new Map<string, string>()
+                        pluginPublishItems.forEach((item) => {
+                          const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+                          platformTaskIdMap.set(item.account.id, requestId)
+                        })
+                        
+                        // 调用插件发布方法
+                        usePluginStore.getState().executePluginPublish({
+                          items: pluginPublishItems,
+                          platformTaskIdMap,
+                          onComplete: () => {
+                            message.success(t('plugin.publishTaskSubmitted' as any))
+                          },
+                        })
+                        
+                        message.success(t('plugin.publishingViaPlugin' as any))
+                      } catch (error: any) {
+                        console.error('Plugin publish error:', error)
+                        message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+                      }
+                    }
+                  } else {
+                    // 其他平台使用原有的跳转逻辑
+                    // 获取平台名称（支持不同大小写）
+                    let platformName = platform
+                    // 尝试从 AccountPlatInfoMap 获取显示名称
+                    for (const [key, value] of AccountPlatInfoMap.entries()) {
+                      if (key.toLowerCase() === platform.toLowerCase()) {
+                        platformName = value.name
+                        break
+                      }
+                    }
+                    
+                    Modal.confirm({
+                      title: t('aiGeneration.needAddChannel' as any),
+                      content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
+                      okText: t('aiGeneration.goAdd' as any),
+                      cancelText: t('aiGeneration.cancel' as any),
+                      onOk: () => {
+                        // 跳转到账号页面，自动打开对应平台的授权
+                        router.push(`/${lng}/accounts?addChannel=${platform}`)
+                      },
+                    })
+                  }
                 }
                 // action: updateChannel - 更新频道授权
                 else if (action === 'updateChannel') {
@@ -965,8 +1143,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     },
                   })
                 }
-                // action: platformNotSupported - 平台不支持，使用插件发布
-                else if (action === 'platformNotSupported' || action === 'navigateToPublish') {
+                // action: platformNotSupported - 平台不支持，使用插件发布（已取消 navigateToPublish）
+                else if (action === 'platformNotSupported') {
                   // 检查插件状态
                   const pluginStatus = usePluginStore.getState().status
                   const isPluginReady = pluginStatus === PluginStatus.READY
