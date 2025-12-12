@@ -79,10 +79,7 @@ export class LinkedinService extends MetaBaseService {
         ],
       },
     }
-    this.logger.log(`Init upload request: ${JSON.stringify(initMediaUploadReq)}, accessToken: ${credential.access_token}`)
-
     const initUploadResp = await this.linkedinAPIService.initMediaUpload(credential.access_token, initMediaUploadReq)
-    this.logger.log(`Init upload response: ${JSON.stringify(initUploadResp)}`)
     const dest = initUploadResp.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl
     await this.linkedinAPIService.streamUpload(credential.access_token, src, dest)
     return initUploadResp.value.asset
@@ -122,10 +119,7 @@ export class LinkedinService extends MetaBaseService {
         ],
       },
     }
-    this.logger.log(`Init upload request: ${JSON.stringify(initMediaUploadReq)}, accessToken: ${credential.access_token}`)
-
     const initUploadResp = await this.linkedinAPIService.initMediaUpload(credential.access_token, initMediaUploadReq)
-    this.logger.log(`Init upload response: ${JSON.stringify(initUploadResp)}`)
     const uploadURL = initUploadResp.value.uploadMechanism['com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest'].uploadUrl
 
     await this.linkedinAPIService.streamUpload(credential.access_token, uploadURL, 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/production/temp/uploads/9287ddb9-2180-4a3a-9cb2-91fadc1e50be.mp4')
@@ -148,7 +142,6 @@ export class LinkedinService extends MetaBaseService {
       },
       visibility: { 'com.linkedin.ugc.MemberNetworkVisibility': MemberNetworkVisibility.PUBLIC },
     }
-    this.logger.log(`Create share request: ${JSON.stringify(createShareReq)}`)
     return await this.linkedinAPIService.createShare(credential.access_token, createShareReq)
   }
 

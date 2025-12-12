@@ -210,13 +210,11 @@ export class YoutubeService extends PlatformBaseService {
     let credential = await this.redisService.getJson<any>(
       `youtube:accessToken:${accountId}`,
     )
-    this.logger.log(`getOAuth2Credential from redis: ${JSON.stringify(credential)}`)
     if (!credential || !credential.refresh_token) {
       const oauth2Credential = await this.OAuth2CredentialModel.findOne({
         accountId,
         platform: this.platform,
       })
-      this.logger.log(`getOAuth2Credential from db: ${JSON.stringify(oauth2Credential)}`)
       if (!oauth2Credential) {
         return null
       }
@@ -241,31 +239,15 @@ export class YoutubeService extends PlatformBaseService {
       `youtube:authTask:${taskId}`,
     )
     if (!authTaskState || authTaskState.state !== taskId)
-      return null
+      return { status: 0, message: '无效的任务ID' }
 
     try {
       // 使用授权码获取访问令牌和刷新令牌
-      const params = new URLSearchParams({
-        code,
-        redirect_uri: `${this.webRenderBaseUrl}`,
-        client_id: this.webClientId,
-        grant_type: 'authorization_code',
-        client_secret: this.webClientSecret,
-      })
-
-      const response = await axios.post(
-        'https://oauth2.googleapis.com/token',
-        params.toString(),
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        },
-      )
-
-      const accessTokenInfo = response.data
-      const access_token = accessTokenInfo.access_token
-      const refresh_token = accessTokenInfo.refresh_token
-      const expires_in = accessTokenInfo.expires_in
-      const id_token = accessTokenInfo.id_token
+      const accessTokenInfo = await this.youtubeApiService.getAccessToken(code, `${this.webRenderBaseUrl}`)
+      if (!accessTokenInfo) {
+        return { status: 0, message: '获取访问令牌失败' }
+      }
+      const { access_token, refresh_token, expires_in, id_token } = accessTokenInfo
       // 验证ID令牌以获取用户信息
       this.initializeYouTubeClient(access_token)
       const ticket = await this.oauth2Client.verifyIdToken({
@@ -275,7 +257,7 @@ export class YoutubeService extends PlatformBaseService {
 
       const payload = ticket.getPayload()
       if (!payload) {
-        throw new Error('Invalid ID token')
+        return { status: 0, message: '验证ID令牌失败' }
       }
       const googleId = payload.sub
       const email = payload.email || ''
@@ -319,8 +301,7 @@ export class YoutubeService extends PlatformBaseService {
       this.logger.error(`处理授权码失败: ${error}`)
       return {
         status: 0,
-        message: '处理授权码失败',
-        accountId: error,
+        message: `处理授权码失败: ${error.message}`,
       }
     }
   }
@@ -357,22 +338,15 @@ export class YoutubeService extends PlatformBaseService {
       if (!response.data.items || response.data.items.length === 0) {
         this.logger.log(`无法获取YouTube频道信息，将从Google用户信息获取`)
         try {
-          const responseGoogle = await axios.get(
-            'https://www.googleapis.com/oauth2/v3/userinfo',
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-              },
-            },
-          )
-
-          const userInfoData = responseGoogle.data
+          const userInfoData = await this.youtubeApiService.getUserInfoFromGoogle(accessToken)
+          if (!userInfoData) {
+            throw new Error('获取Google用户信息失败')
+          }
 
           // 使用Google用户信息更新账号数据
           newAccount = googleId || userInfoData.email
           newNickname = userInfoData.name || ''
           newAvatar = userInfoData.picture || ''
-          this.logger.log('成功获取Google用户信息:', userInfoData)
         }
         catch (error) {
           this.logger.error('获取Google用户信息失败:', error)
@@ -386,7 +360,6 @@ export class YoutubeService extends PlatformBaseService {
         newAccount = channel.id || ''
         newNickname = channel.snippet?.title || ''
         newAvatar = channel.snippet?.thumbnails?.default?.url || ''
-        this.logger.log(`成功获取YouTube频道信息: ${channel.snippet?.title}`)
       }
 
       const channelInfo = new NewAccount({
@@ -455,8 +428,6 @@ export class YoutubeService extends PlatformBaseService {
    * @returns 访问令牌
    */
   async getUserAccessToken(accountId: string) {
-    this.logger.log(`getUserAccessToken accountId: ${accountId}`)
-
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential || !credential.access_token) {
       this.logger.error(`youtube credential not found for accountId: ${accountId}`)
@@ -511,14 +482,12 @@ export class YoutubeService extends PlatformBaseService {
    * 获取授权URL
    * @param userId
    * @param mail
-   * @param type
    * @param prefix
    * @returns
    */
   async getAuthUrl(
     userId: string,
     mail: string,
-    // type: 'h5' | 'pc',
     prefix?: string,
     spaceId?: string,
   ) {
@@ -593,22 +562,17 @@ export class YoutubeService extends PlatformBaseService {
     id?: string,
     regionCode?: string,
   ) {
-    this.logger.log(`youtubeService getVideoCategoriesList: ${accountId}, ${id}, ${regionCode}}`)
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
-      this.logger.log(`get youtube access token error. accountId" ${accountId}`)
       throw new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
     try {
-      // this.logger.log(requestBody)
       const response = await this.youtubeClient.videoCategories.list({
         part: ['snippet'],
         ...(id && { id: [id] }),
         ...(regionCode && { regionCode }),
         auth: this.oauth2Client,
       })
-
-      // this.logger.log(response.data)
       return response
     }
     catch (err) {
@@ -619,11 +583,6 @@ export class YoutubeService extends PlatformBaseService {
 
   /**
    * 获取视频列表。
-   * @param id 视频ID
-   * @param chart 图表类型
-   * @param maxResults 最大结果数
-   * @param pageToken 分页令牌
-   * @returns 视频列表
    */
   async getVideosList(
     accountId: string,
@@ -632,11 +591,9 @@ export class YoutubeService extends PlatformBaseService {
     myRating?: boolean,
     maxResults?: number,
     pageToken?: string,
-    // params: GetVideosListParams,
   ) {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
-      this.logger.log(`get youtube access token error. accountId" ${accountId}`)
       return new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
 
@@ -667,10 +624,8 @@ export class YoutubeService extends PlatformBaseService {
       requestParams.pageToken = pageToken // 如果提供了 handle, 使用 handle
     }
 
-    this.logger.log(requestParams)
     try {
       const response = await this.youtubeClient.videos.list(requestParams)
-      // const response = await this.youtubeApiService.getVideosList(requestParams)
       return response
     }
     catch (err) {
@@ -724,10 +679,8 @@ export class YoutubeService extends PlatformBaseService {
         bufferInstance = Buffer.from(Object.values(fileBuffer))
       }
       else {
-        this.logger.log('无效的文件Buffer格式')
         return '无效的文件Buffer格式'
       }
-      this.logger.log('文件大小:', bufferInstance.length, '字节')
 
       // 客户端已经在 ensureValidAccessToken 中初始化了
 

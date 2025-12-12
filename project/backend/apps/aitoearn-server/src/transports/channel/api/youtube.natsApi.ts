@@ -30,12 +30,6 @@ export class PlatYoutubeNatsApi extends ChannelBaseApi {
     return res
   }
 
-  /**
-   * 创建账号
-   * @param data
-   * @param prefix
-   * @returns
-   */
   async setAccessToken(
     data: {
       taskId: string
@@ -46,7 +40,7 @@ export class PlatYoutubeNatsApi extends ChannelBaseApi {
     const res = await this.sendMessage<{
       status: number
       message: string
-      accountId: any
+      accountId: string
     }>(
       `plat/youtube/setAccessToken`,
       data,
