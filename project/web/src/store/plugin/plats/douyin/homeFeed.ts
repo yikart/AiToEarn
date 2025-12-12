@@ -7,6 +7,33 @@
 import type { HomeFeedItem, HomeFeedListParams, HomeFeedListResult } from '../types'
 
 /**
+ * 深度过滤对象中的 null 值字段
+ * @param obj 要过滤的对象
+ * @returns 过滤后的对象
+ */
+function filterNullValues<T>(obj: T): T {
+  if (obj === null || obj === undefined) {
+    return obj
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => filterNullValues(item)) as T
+  }
+
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {}
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== null) {
+        result[key] = filterNullValues(value)
+      }
+    }
+    return result as T
+  }
+
+  return obj
+}
+
+/**
  * 抖音首页列表 API 基础 URL
  */
 const DOUYIN_FEED_API = 'https://www.douyin.com/aweme/v2/web/module/feed/'
@@ -167,7 +194,7 @@ export function transformToHomeFeedItem(item: any): HomeFeedItem {
     likeCount: formatLikeCount(statistics.digg_count || 0),
     isVideo: true, // 抖音主要是视频
     videoDuration: video.duration ? Math.floor(video.duration / 1000) : undefined,
-    origin: item,
+    origin: filterNullValues(item),
   }
 }
 

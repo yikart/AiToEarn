@@ -3,16 +3,20 @@
 /**
  * 作品卡片组件
  * 展示封面、标题、作者信息、点赞数等
+ * 使用 Framer Motion 实现共享元素过渡动画
  */
 
 import { memo, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { motion } from 'framer-motion'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
 import styles from './FeedCard.module.scss'
 
 interface FeedCardProps {
   /** 作品数据 */
   item: HomeFeedItem
+  /** 当前选中的作品 ID（用于控制 layoutId） */
+  selectedId?: string | null
   /** 点击回调 */
   onClick?: (item: HomeFeedItem) => void
 }
@@ -46,7 +50,7 @@ function formatDuration(seconds?: number): string {
 /**
  * 作品卡片组件
  */
-function FeedCard({ item, onClick }: FeedCardProps) {
+function FeedCard({ item, selectedId, onClick }: FeedCardProps) {
   const { t } = useTranslation('interactiveNew')
   const [imageLoaded, setImageLoaded] = useState(false)
   const [imageError, setImageError] = useState(false)
@@ -76,6 +80,9 @@ function FeedCard({ item, onClick }: FeedCardProps) {
     setImageLoaded(true)
   }
 
+  // 当前卡片是否被选中（用于隐藏图片，避免 layoutId 冲突）
+  const isSelected = selectedId === item.workId
+
   return (
     <article className={styles.feedCard} onClick={handleClick}>
       {/* 封面区域 - 使用 padding-bottom 预设高度 */}
@@ -86,9 +93,10 @@ function FeedCard({ item, onClick }: FeedCardProps) {
         {/* 占位背景 */}
         {!imageLoaded && <div className="feedCard_cover_placeholder" />}
 
-        {/* 图片 - 使用懒加载 */}
-        {!imageError && (
-          <img
+        {/* 图片 - 使用 motion.img 支持共享元素过渡 */}
+        {!imageError && !isSelected && (
+          <motion.img
+            layoutId={`feed-cover-${item.workId}`}
             src={item.thumbnail}
             alt={item.title}
             className={`feedCard_cover_img ${imageLoaded ? 'feedCard_cover_img-loaded' : ''}`}
@@ -96,6 +104,19 @@ function FeedCard({ item, onClick }: FeedCardProps) {
             decoding="async"
             onLoad={handleImageLoad}
             onError={handleImageError}
+            transition={{
+              type: 'spring',
+              stiffness: 300,
+              damping: 30,
+            }}
+          />
+        )}
+
+        {/* 选中时的占位（防止布局跳动） */}
+        {isSelected && (
+          <div 
+            className="feedCard_cover_placeholder" 
+            style={{ opacity: 0.5 }}
           />
         )}
 
@@ -175,4 +196,3 @@ export function FeedCardSkeleton() {
 }
 
 export default memo(FeedCard)
-

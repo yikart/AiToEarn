@@ -7,12 +7,14 @@
 
 import { useCallback, useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { AnimatePresence, LayoutGroup } from 'framer-motion'
 import Masonry from 'react-masonry-css'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
 import { PluginStatus } from '@/store/plugin'
 import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
 import PlatformSelector from './components/PlatformSelector'
 import WaterfallList from './components/WaterfallList'
+import FeedDetailModal from './components/FeedDetailModal'
 import { FeedCardSkeleton } from './components/FeedCard'
 import { useInteractive } from './useInteractive'
 import styles from './InteractiveNew.module.scss'
@@ -53,11 +55,17 @@ export default function InteractiveNewCore() {
   } = useInteractive()
 
   /**
-   * 处理卡片点击
+   * 处理卡片点击 - 打开详情弹框
    */
   const handleCardClick = useCallback((item: HomeFeedItem) => {
-    // TODO: 打开作品详情或互动面板
-    console.log('Card clicked:', item)
+    setSelectedItem(item)
+  }, [])
+
+  /**
+   * 关闭弹框
+   */
+  const handleCloseModal = useCallback(() => {
+    setSelectedItem(null)
   }, [])
 
   /**
@@ -77,6 +85,9 @@ export default function InteractiveNewCore() {
 
   // 是否显示返回顶部按钮
   const [showBackTop, setShowBackTop] = useState(false)
+
+  // 弹框状态 - 选中的作品
+  const [selectedItem, setSelectedItem] = useState<HomeFeedItem | null>(null)
 
   /**
    * 监听滚动，控制返回顶部按钮显示
@@ -173,16 +184,30 @@ export default function InteractiveNewCore() {
 
           {/* 瀑布流列表 */}
           {currentPlatform && (
-            <WaterfallList
-              feedList={feedList}
-              loading={loading}
-              loadingMore={loadingMore}
-              hasMore={hasMore}
-              error={error}
-              onLoadMore={loadMore}
-              onRefresh={refresh}
-              onCardClick={handleCardClick}
-            />
+            <LayoutGroup>
+              <WaterfallList
+                feedList={feedList}
+                loading={loading}
+                loadingMore={loadingMore}
+                hasMore={hasMore}
+                error={error}
+                selectedId={selectedItem?.workId}
+                onLoadMore={loadMore}
+                onRefresh={refresh}
+                onCardClick={handleCardClick}
+              />
+
+              {/* 作品详情弹框 - 使用 AnimatePresence 处理进出动画 */}
+              <AnimatePresence>
+                {selectedItem && (
+                  <FeedDetailModal
+                    key={selectedItem.workId}
+                    item={selectedItem}
+                    onClose={handleCloseModal}
+                  />
+                )}
+              </AnimatePresence>
+            </LayoutGroup>
           )}
 
           {/* 未选择平台时的提示 */}

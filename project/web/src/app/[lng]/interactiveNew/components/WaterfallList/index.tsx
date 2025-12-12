@@ -59,6 +59,8 @@ interface WaterfallListProps {
   hasMore: boolean
   /** 错误信息 */
   error: string | null
+  /** 当前选中的作品 ID（用于共享元素动画） */
+  selectedId?: string | null
   /** 加载更多回调 */
   onLoadMore: () => void
   /** 刷新回调 */
@@ -98,6 +100,7 @@ function WaterfallList({
   loading,
   loadingMore,
   error,
+  selectedId,
   onLoadMore,
   onRefresh,
   onCardClick,
@@ -193,6 +196,7 @@ function WaterfallList({
           >
             <FeedCard
               item={item}
+              selectedId={selectedId}
               onClick={handleCardClick}
             />
           </div>
