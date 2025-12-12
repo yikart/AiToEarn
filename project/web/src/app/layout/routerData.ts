@@ -19,11 +19,6 @@ export interface IRouterDataItem {
 }
 
 export const routerData: IRouterDataItem[] = [
-  // {
-  //   name: "首页",
-  //   translationKey: "home",
-  //   path: "/",
-  // },
   {
     name: '发布',
     translationKey: 'accounts',
@@ -35,9 +30,9 @@ export const routerData: IRouterDataItem[] = [
     path: '/interactive',
   },
   // {
-  //   name: "热门内容",
-  //   translationKey: "hotContent",
-  //   path: "/hotContent",
+  //   name: '作品互动',
+  //   translationKey: 'interactiveNew',
+  //   path: '/interactiveNew',
   // },
   {
     name: 'AI工具',
@@ -118,10 +113,10 @@ export const homeHeaderRouterData = {
             href: 'https://docs.aitoearn.ai/',
             title: directTrans('home', 'header.nav.docs'),
           },
-          {
-            href: 'https://blog.aitoearn.ai/',
-            title: directTrans('home', 'header.nav.blog'),
-          },
+          // {
+          //   href: 'https://blog.aitoearn.ai/',
+          //   title: directTrans('home', 'header.nav.blog'),
+          // },
           {
             href: downloadHref,
             title: directTrans('home', 'header.nav.download'),
