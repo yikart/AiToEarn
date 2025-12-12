@@ -63,6 +63,11 @@ export class MediaGroupController {
     if (!mediaGroup || mediaGroup.userId !== token.id) {
       throw new AppException(ResponseCode.MediaGroupNotFound, 'Media Group not found')
     }
+    if (
+      mediaGroup.isDefault
+    ) {
+      throw new AppException(ResponseCode.MediaGroupDefaultNotAllowed, 'Default media group cannot be deleted')
+    }
     const res = await this.mediaGroupService.del(id)
     return res
   }

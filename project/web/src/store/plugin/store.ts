@@ -132,6 +132,7 @@ export const usePluginStore = create(
         /** 检查插件是否安装 */
         checkPlugin() {
           const isAvailable = typeof window !== 'undefined' && !!window.AIToEarnPlugin
+          
           if (!isAvailable) {
             set({ status: Status.NOT_INSTALLED })
             return false

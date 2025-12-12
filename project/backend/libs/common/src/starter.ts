@@ -14,7 +14,7 @@ import pino from 'pino'
 import { z } from 'zod'
 import { GlobalExceptionFilter } from './filters'
 import { PropagationInterceptor, RequestContextInterceptor, ResponseInterceptor } from './interceptors'
-import { CloudWatchLogger, ConsoleLogger, FeishuLogger } from './loggers'
+import { CloudWatchLogger, ConsoleLogger, FeishuLogger, MongoDBLogger } from './loggers'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, zodToJsonSchemaOptions } from './utils'
 import './utils/load-file-from-env.util'
@@ -63,6 +63,13 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     loggers.push({
       level: config.logger.feishu.level,
       stream: new FeishuLogger(config.logger.feishu),
+    })
+  }
+
+  if (config.logger?.mongodb?.enable) {
+    loggers.push({
+      level: config.logger.mongodb.level,
+      stream: new MongoDBLogger(config.logger.mongodb),
     })
   }
 

@@ -91,10 +91,10 @@ module.exports = {
 
   // 关键：把子站 sitemap 挂到索引
   additionalSitemaps: [
-    'https://blog.aitoearn.ai/sitemap.xml',
+    // 'https://blog.aitoearn.ai/sitemap.xml',
     'https://docs.aitoearn.ai/sitemap.xml',
-    'https://hotinfo.aitoearn.ai/sitemap.xml',
-    'https://rank.aitoearn.ai/sitemap.xml',
+    // 'https://hotinfo.aitoearn.ai/sitemap.xml',
+    // 'https://rank.aitoearn.ai/sitemap.xml',
   ],
 
   // 让 robots.txt 也列出
@@ -106,10 +106,10 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      'https://blog.aitoearn.ai/sitemap.xml',
+      // 'https://blog.aitoearn.ai/sitemap.xml',
       'https://docs.aitoearn.ai/sitemap.xml',
-      'https://hotinfo.aitoearn.ai/sitemap.xml',
-      'https://rank.aitoearn.ai/sitemap.xml',
+      // 'https://hotinfo.aitoearn.ai/sitemap.xml',
+      // 'https://rank.aitoearn.ai/sitemap.xml',
     ],
   },
 }

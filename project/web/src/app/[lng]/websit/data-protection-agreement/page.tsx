@@ -17,7 +17,7 @@ function Header() {
           <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
           <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
           <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
-          <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a>
+          {/* <a href="#blog" className={styles.navLink}>{t('header.nav.blog')}</a> */}
         </nav>
         <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
       </div>

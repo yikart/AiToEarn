@@ -130,7 +130,10 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Media group not found',
     'zh-CN': '媒体分组未找到',
   },
-
+  [ResponseCode.MediaGroupDefaultNotAllowed]: {
+    'en-US': 'Default media group cannot be deleted',
+    'zh-CN': '默认媒体组不能删除',
+  },
   // 12800 (material)
   [ResponseCode.MaterialNotFound]: {
     'en-US': 'Material not found',
@@ -144,7 +147,10 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Material task not found',
     'zh-CN': '素材任务不存在',
   },
-
+  [ResponseCode.MaterialGroupDefaultNotAllowed]: {
+    'en-US': 'Default material group cannot be deleted',
+    'zh-CN': '默认素材组不能删除',
+  },
   // 12900 (content/material)
   [ResponseCode.MaterialGroupEmpty]: {
     'en-US': 'Material group cannot be empty',
