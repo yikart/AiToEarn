@@ -140,8 +140,8 @@ export const agentApi = {
     onError: (error: Error) => void,
     onDone: (sessionId?: string) => void,
   ): Promise<() => void> {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || ''
-    const url = `${'https://pr-211.preview.aitoearn.ai/api'}/agent/tasks`
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL
+    const url = `${apiUrl}/agent/tasks`
     
     let sessionId: string | undefined
     let abortController = new AbortController()

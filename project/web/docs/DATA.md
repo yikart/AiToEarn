@@ -20,7 +20,7 @@ UI体验的用户调查功能
     测试发现app下载国内缓慢，建议增加备用下载渠道 -- 蓝奏云
 
 现有功能，测试问题：
-    https://aitoearn.ai/api/ai/chat 图生图情况偶发性超时。 -- 永生 -- 待处理。
+    /api/ai/chat 图生图情况偶发性超时。 -- 永生 -- 待处理。
     小红书数据监控图片资源链接失效 -- 张伟 -- 待处理。
     AI工具排行榜无数据 -- 张伟 -- 待处理。
     测试下载二维码扫描问题，二维码小内容密集容错率低，进行大小和样式修改。 -- 已处理，待发布。  
@@ -68,6 +68,6 @@ UI体验的用户调查功能
 
 12.10
 
-https://aitoearn.ai/api/task/opportunity/getNotViewCount
+/api/task/opportunity/getNotViewCount
 Referrer Policy
 no-referrer
