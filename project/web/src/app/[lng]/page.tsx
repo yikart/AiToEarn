@@ -15,25 +15,42 @@ import {
   ReloadOutlined,
 } from '@ant-design/icons'
 
-
+// next
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
+// react
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
-import { driver } from 'driver.js'
-import 'driver.js/dist/driver.css'
-import { useUserStore } from '@/store/user'
-import LoginModal from '@/components/LoginModal'
+// npm
 import ReactMarkdown from 'react-markdown'
 import { QRCode } from 'react-qrcode-logo'
-
-import { message, Button, Modal } from 'antd'
+import { driver } from 'driver.js'
+import 'driver.js/dist/driver.css'
+// store
+import { useUserStore } from '@/store/user'
+import { useAccountStore } from '@/store/account'
 import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import type { PluginPublishItem } from '@/store/plugin/store'
-import { useAccountStore } from '@/store/account'
-
+// ui
+import { message, Button, Modal, Progress } from 'antd'
+// config
+import { PubType } from '@/app/config/publishConfig'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
+// components
+import LoginModal from '@/components/LoginModal'
+import PromptGallerySection from './components/PromptGallery'
+// api
+import { MediaType } from '@/api/agent'
+import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
+// i18n
+import { useTransClient } from '../i18n/client'
+// utils
+import { getOssUrl } from '@/utils/oss'
 
 // Import SVG icons
+import styles from './styles/difyHome.module.scss'
+
 import gongzhonghao from '@/assets/images/gongzhonghao.jpg'
 import publish1 from '@/assets/images/publish1.png'
 import bilibiliIcon from '@/assets/svgs/plat/bilibili.svg'
@@ -50,21 +67,6 @@ import TwitterIcon from '@/assets/svgs/plat/twitter.png'
 import wxSphIcon from '@/assets/svgs/plat/wx-sph.svg'
 import xhsIcon from '@/assets/svgs/plat/xhs.svg'
 import youtubeIcon from '@/assets/svgs/plat/youtube.png'
-
-import { getMainAppDownloadUrlSync } from '../config/appDownloadConfig'
-import { useTransClient } from '../i18n/client'
-import { getOssUrl } from '@/utils/oss'
-import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
-import { PubType } from '@/app/config/publishConfig'
-import { MediaType } from '@/api/agent'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
-
-
-
-import styles from './styles/difyHome.module.scss'
-
-
-import PromptGallerySection from './components/PromptGallery'
 
 // External image URL constants
 const IMAGE_URLS = {
@@ -93,7 +95,6 @@ import jimengdongzuo from '@/assets/images/jimengdongzuo.jpeg'
 
 // Release banner
 function ReleaseBanner() {
-
   return (
     <div className={styles.releaseBanner}>
       <div
