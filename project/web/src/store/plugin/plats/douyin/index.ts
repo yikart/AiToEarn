@@ -3,13 +3,14 @@
  *
  * 实现策略：
  * - 点赞、收藏、评论：统一使用自动化方案（避免 API 风控）
+ * - 首页列表：使用 API 方案获取推荐作品
  * - 评论：不支持二级评论
  *
  * 目录结构:
  * douyin/
  *   ├── index.ts      # 主类和导出入口
  *   ├── types.ts      # 抖音特定类型定义
- *   └── homeFeed.ts   # 首页列表功能模块（待实现）
+ *   └── homeFeed.ts   # 首页列表功能模块
  */
 
 import { PlatType } from '@/app/config/platConfig'
