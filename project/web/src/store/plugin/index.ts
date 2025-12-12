@@ -71,3 +71,15 @@ export {
   validateFileType,
   withRetry,
 } from './utils'
+
+// Platform Interaction (平台交互模块 - 点赞、评论、收藏等)
+export { platformManager, xhsInteraction, douyinInteraction } from './plats'
+export type {
+  BaseResult,
+  CommentParams,
+  CommentResult,
+  FavoriteResult,
+  IPlatformInteraction,
+  LikeResult,
+  SupportedPlatformType,
+} from './plats'
