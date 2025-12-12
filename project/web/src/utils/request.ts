@@ -59,12 +59,20 @@ export async function request<T>(params: RequestParamsWithSilent) {
 
     // 未登录拦截
     if (data.code === 401 && !useUserStore.getState().token) {
+      // 如果是 silent 模式，返回完整响应以便调用方处理
+      if (params.silent) {
+        return data
+      }
       return null
     }
 
     // 已登录、但是登录过期
     if (data.code === 401) {
       useUserStore.getState().logout()
+      // 如果是 silent 模式，返回完整响应以便调用方处理
+      if (params.silent) {
+        return data
+      }
     }
 
     if (data.code !== 0) {
@@ -74,6 +82,10 @@ export async function request<T>(params: RequestParamsWithSilent) {
           key: 'apiErrorMessage',
           duration: 6,
         })
+      }
+      // 如果是 silent 模式，返回完整响应以便调用方处理
+      if (params.silent) {
+        return data
       }
       return null
     }

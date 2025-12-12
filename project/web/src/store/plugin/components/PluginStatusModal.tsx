@@ -35,6 +35,9 @@ export interface PluginStatusModalProps {
 
   /** 关闭回调 */
   onClose: () => void
+
+  /** 需要高亮的平台 */
+  highlightPlatform?: string | null
 }
 
 /**
@@ -50,7 +53,7 @@ function getPlatformName(platform: PluginPlatformType): string {
 /**
  * 插件状态弹框组件
  */
-export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) {
+export function PluginStatusModal({ visible, onClose, highlightPlatform }: PluginStatusModalProps) {
   const { t } = useTranslation('plugin')
   const status = usePluginStore(state => state.status)
   const platformAccounts = usePluginStore(state => state.platformAccounts)
@@ -169,11 +172,19 @@ export function PluginStatusModal({ visible, onClose }: PluginStatusModalProps) 
               const account = platformAccounts[platform]
               const isLogging = loginLoading === platform
 
+              // 判断是否需要高亮
+              const shouldHighlight = highlightPlatform && highlightPlatform.toLowerCase() === platform.toLowerCase()
+
               return (
                 <Card
                   key={platform}
                   size="small"
-                  className={styles.platformCard}
+                  className={`${styles.platformCard} ${shouldHighlight ? styles.platformCardHighlight : ''}`}
+                  style={shouldHighlight ? {
+                    border: '2px solid #a66ae4',
+                    boxShadow: '0 0 12px rgba(166, 106, 228, 0.3)',
+                    animation: 'pulse 2s ease-in-out infinite'
+                  } : undefined}
                 >
                   <div className={styles.platformInfo}>
                     <div className={styles.platformLeft}>
