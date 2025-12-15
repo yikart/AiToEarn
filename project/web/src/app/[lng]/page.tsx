@@ -196,7 +196,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     }
     return ''
   })
-  const [uploadedImages, setUploadedImages] = useState<string[]>([]) // 上传的图片链接
+  const [uploadedImages, setUploadedImages] = useState<Array<{url: string, type: 'image' | 'video'}>>([]) // 上传的图片/视频
   const [isUploading, setIsUploading] = useState(false) // 上传状态
   const fileInputRef = useRef<HTMLInputElement>(null) // 文件输入框引用
   const [selectedMode, setSelectedMode] = useState<'agent' | 'image' | 'video' | 'draft' | 'publishbatch'>('agent') // 选中的模式
@@ -221,29 +221,37 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
 
-  // 监听主输入框是否在视口内
+  // 监听主输入框是否在视口内 - 使用 IntersectionObserver 更可靠
   useEffect(() => {
-    const handleScroll = () => {
-      if (!mainInputContainerRef.current) {
-        return
-      }
-      
-      const rect = mainInputContainerRef.current.getBoundingClientRect()
-      // 元素在视口内的条件：顶部在视口底部之上，且底部在视口顶部之下
-      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
-      
-      setShowFixedInput(!isVisible)
+    if (!mainInputContainerRef.current) {
+      return
     }
-    
-    // 监听滚动事件
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    
-    // 延迟初始检查，确保元素已渲染
-    const timer = setTimeout(handleScroll, 100)
-    
+
+    // 使用 IntersectionObserver 监听元素是否在视口内
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // entry.isIntersecting 为 true 表示元素在视口内，应该隐藏固定输入框
+          // entry.isIntersecting 为 false 表示元素不在视口内，应该显示固定输入框
+          const shouldShowFixed = !entry.isIntersecting
+          
+          console.log('[FixedInput] IntersectionObserver 触发 - isIntersecting:', entry.isIntersecting, 'shouldShowFixed:', shouldShowFixed)
+          
+          setShowFixedInput(shouldShowFixed)
+        })
+      },
+      {
+        // threshold: 0 表示元素任何部分进入或离开视口都会触发
+        // rootMargin 可以扩展触发区域，负值表示提前触发
+        threshold: 0,
+        rootMargin: '0px',
+      }
+    )
+
+    observer.observe(mainInputContainerRef.current)
+
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      clearTimeout(timer)
+      observer.disconnect()
     }
   }, [])
 
@@ -331,7 +339,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       setPrompt(promptToApply.prompt)
       // 如果有图片，添加到 uploadedImages
       if (promptToApply.image) {
-        setUploadedImages([promptToApply.image])
+        setUploadedImages([{ url: promptToApply.image, type: 'image' }])
       }
     }
   }, [promptToApply])
@@ -488,7 +496,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     }
   }, [markdownMessages])
 
-  // Handle image upload
+  // Handle image/video upload
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
@@ -499,24 +507,28 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       const { uploadToOss } = await import('@/api/oss')
       const { OSS_URL } = await import('@/constant')
       
-      // 并行上传所有图片
+      // 并行上传所有文件
       const uploadPromises = Array.from(files).map(async (file) => {
         const ossKey = await uploadToOss(file)
         const ossUrl = `${OSS_URL}${ossKey}`
-        return ossUrl
+        
+        // 判断文件类型
+        const fileType = file.type.startsWith('video/') ? 'video' : 'image'
+        
+        return { url: ossUrl, type: fileType as 'image' | 'video' }
       })
       
       // 等待所有上传完成，得到完整的OSS URL
-      const imageUrls = await Promise.all(uploadPromises)
+      const uploadedFiles = await Promise.all(uploadPromises)
       
-      console.log('上传成功的完整URLs:', imageUrls)
+      console.log('上传成功的文件:', uploadedFiles)
       
-      // 添加到已上传图片列表
-      setUploadedImages(prev => [...prev, ...imageUrls])
+      // 添加到已上传文件列表
+      setUploadedImages(prev => [...prev, ...uploadedFiles])
       message.success(t('aiGeneration.uploadSuccess' as any))
       
     } catch (error) {
-      console.error('Image upload failed:', error)
+      console.error('File upload failed:', error)
       message.error(t('aiGeneration.uploadFailed' as any))
     } finally {
       setIsUploading(false)
@@ -919,7 +931,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
 
       // 保存当前的 prompt 和 uploadedImages，用于发送请求
       const currentPrompt = prompt
-      const currentImages = [...uploadedImages]
+      const currentFiles = [...uploadedImages]
 
       // 发送成功后立即清空输入框、图片和消费显示
       setPrompt('')
@@ -929,10 +941,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       // Set initial progress to 10%
       setProgress(10)
 
-      // 构建完整的提示词（包含图片链接，但不在前端显示）
+      // 构建完整的提示词（包含图片/视频链接，但不在前端显示）
       let fullPrompt = currentPrompt
-      if (currentImages.length > 0) {
-        fullPrompt = `${currentPrompt}\n\n[image]:\n${currentImages.join('\n ')}`
+      if (currentFiles.length > 0) {
+        const fileLinks = currentFiles.map(f => `[${f.type}]: ${f.url}`).join('\n ')
+        fullPrompt = `${currentPrompt}\n\n${fileLinks}`
       }
 
       // Dynamic import API
@@ -1670,18 +1683,27 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
            
             <div className={styles.uploadedImagesPreview}>
               <div className={styles.imagesRow}>
-                {uploadedImages.length > 0 && uploadedImages.map((imageUrl, index) => (
+                {uploadedImages.length > 0 && uploadedImages.map((file, index) => (
                   <div key={index} className={styles.imageItem}>
-                    <img 
-                      src={imageUrl} 
-                      alt={`pic ${index + 1}`} 
-                      className={styles.imageThumb}
-                    />
+                    {file.type === 'video' ? (
+                      <video 
+                        src={file.url} 
+                        className={styles.imageThumb}
+                        controls
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img 
+                        src={file.url} 
+                        alt={`pic ${index + 1}`} 
+                        className={styles.imageThumb}
+                      />
+                    )}
                     {!isGenerating && (
                       <span
                         className={styles.removeImageBtn}
                         onClick={() => handleRemoveImage(index)}
-                        title="remove image"
+                        title="remove file"
                       >
                         <CloseCircleOutlined />
                       </span>
@@ -1689,11 +1711,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   </div>
                 ))}
 
-                {/* 图片上传按钮 */}
+                {/* 图片/视频上传按钮 */}
                 <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/*"
+                    accept="image/*,video/*"
                     multiple
                     onChange={handleImageUpload}
                     style={{ display: 'none' }}
@@ -1702,7 +1724,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isGenerating || isUploading}
                     className={styles.aiUploadBtn}
-                    title={t('aiGeneration.uploadImage' as any)}
+                    title="上传图片/视频"
                   >
                     {isUploading ? (
                       <span>⏳</span>
@@ -1838,6 +1860,50 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       {showFixedInput && (
         <div className={styles.fixedInputWrapper}>
           <div className={styles.fixedInputContainer}>
+            {/* 已上传图片/视频预览 */}
+            {uploadedImages.length > 0 && (
+              <div className={styles.fixedUploadedImages}>
+                {uploadedImages.map((file, index) => (
+                  <div key={index} style={{ position: 'relative' }}>
+                    {file.type === 'video' ? (
+                      <video 
+                        src={file.url} 
+                        className={styles.fixedImageThumb}
+                        controls
+                        preload="metadata"
+                      />
+                    ) : (
+                      <img 
+                        src={file.url} 
+                        alt={`pic ${index + 1}`} 
+                        className={styles.fixedImageThumb}
+                      />
+                    )}
+                    {!isGenerating && (
+                      <span
+                        className={styles.fixedRemoveImageBtn}
+                        onClick={() => handleRemoveImage(index)}
+                        title="移除文件"
+                      >
+                        ×
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            {/* 图片上传按钮 */}
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isGenerating || isUploading}
+              className={styles.fixedUploadBtn}
+              title="上传图片/视频"
+            >
+              {isUploading ? '⏳' : '+'}
+            </button>
+            
+            {/* 输入框 */}
             <input
               type="text"
               value={prompt}
@@ -1855,6 +1921,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               disabled={isGenerating || isUploading}
               className={styles.fixedInput}
             />
+            
+            {/* 发送按钮 */}
             <button 
               className={styles.fixedSendBtn}
               onClick={() => {
@@ -1866,11 +1934,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               disabled={!prompt.trim() || isGenerating || isUploading}
             >
               {isGenerating ? (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                   <rect x="6" y="6" width="12" height="12" rx="2" />
                 </svg>
               ) : (
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
                 </svg>
               )}
