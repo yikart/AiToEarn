@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
 import { PublishingTaskType, PublishStatus } from '../enums'
-import { PublishingTaskMeta } from './publishing-task-meta.schema'
+import { PublishErrorData, PublishingTaskMeta } from './publishing-task-meta.schema'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
@@ -127,6 +127,12 @@ export class PublishTask extends WithTimestampSchema {
     default: false,
   })
   queued: boolean
+
+  @Prop({
+    required: false,
+    type: PublishErrorData,
+  })
+  errorData?: PublishErrorData
 
   @Prop({
     required: false,

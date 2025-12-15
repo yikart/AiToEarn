@@ -342,6 +342,7 @@ export class PublishingService implements OnModuleDestroy {
       publishTime?: Date
       queued?: boolean
       inQueue?: boolean
+      // errorData?: PublishErrorData
     },
   ): Promise<boolean> {
     const res = await this.publishTaskModel.updateOne({ _id: id }, newData)
