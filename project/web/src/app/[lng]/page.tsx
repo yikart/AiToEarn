@@ -210,13 +210,17 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // Plugin modal state
   const [pluginModalOpen, setPluginModalOpen] = useState(false)
   const [highlightPlatform, setHighlightPlatform] = useState<string | null>(null)
+  
+  // 本次消费状态
+  const [currentCost, setCurrentCost] = useState<number>(0)
+  
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
 
   // 初始化新手引导
   useEffect(() => {
     const hasSeenOnboarding = localStorage.getItem('hasSeenOnboarding')
-    // if (hasSeenOnboarding) return
+    if (hasSeenOnboarding) return
 
     // 延迟一下显示，确保页面已完全加载且 textarea 已经渲染
     const timer = setTimeout(() => {
@@ -557,274 +561,276 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     //     "type":"fullContent",
     //     "title":"GPT最新AI绘画服务震撼来袭",
     //     "description":"💥超值福利来啦！GPT最新AI绘画服务，惊爆价仅需9.9元/张！\n\n✨服务亮点：\n📌 适用各种场景 - 海报、插画、产品图，想画就画\n📌 图像融合 + 局部重绘 - 专业级效果随心调整\n📌 每张提交3次修改 - 直到您满意为止\n📌 AI直出效果 - 无需修改即可使用\n\n🎯 有意向的宝子们，点击右下角\"我想要\"立即体验！\n\n机会难得，名额有限，快来抢购吧！💖",
-    //     "tags":["AI绘画","设计神器","限时优惠","平面设计","创意工具"],"action":"createChannel",
-    //     "platform":"xhs",
-    //     "errorMessage":"需要先绑定小红书账号才能发布内容"},"total_cost_usd":0.2353334,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":57188},"cache_creation_input_tokens":57188,"cache_read_input_tokens":3708,"input_tokens":8,"output_tokens":883,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}    
+    //     "tags":["AI绘画","设计神器","限时优惠","平面设计","创意工具"],
+    //     "action":"navigateToPublish",
+    //     "platform":"douyin",
+    //     "errorMessage":"需要先绑定小红书账号才能发布内容"},
+    //     "total_cost_usd":0.2353334,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":57188},"cache_creation_input_tokens":57188,"cache_read_input_tokens":3708,"input_tokens":8,"output_tokens":883,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}    
     //     const taskData = resultMsg.message.result
     //     const action = taskData.action
 
-    //     if (action === 'createChannel') {
-    //       const platform = taskData.platform
+    // if (action === 'navigateToPublish') {
+    //   const platform = taskData.platform
+      
+    //   // 对于 xhs 和 douyin，使用插件授权逻辑
+    //   if (platform === 'xhs' || platform === 'douyin') {
+    //     console.log('createChannel xhs or douyin')
+    //     // 检查插件状态
+    //     const pluginStatus = usePluginStore.getState().status
+    //     const isPluginReady = pluginStatus === PluginStatus.READY
+        
+    //     if (!isPluginReady) {
+    //       // 插件未准备就绪，显示引导授权插件
+    //       message.warning(t('plugin.platformNeedsPlugin' as any))
           
-    //       // 对于 xhs 和 douyin，使用插件授权逻辑
-    //       if (platform === 'xhs' || platform === 'douyin') {
-    //         console.log('createChannel xhs or douyin')
-    //         // 检查插件状态
-    //         const pluginStatus = usePluginStore.getState().status
-    //         const isPluginReady = pluginStatus === PluginStatus.READY
-            
-    //         if (!isPluginReady) {
-    //           // 插件未准备就绪，显示引导授权插件
-    //           message.warning(t('plugin.platformNeedsPlugin' as any))
-              
-    //           // 延迟显示引导，确保页面已加载
-    //           setTimeout(() => {
-    //             const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-    //             if (!pluginButton) {
-    //               console.warn('Plugin button not found')
-    //               return
-    //             }
+    //       // 延迟显示引导，确保页面已加载
+    //       setTimeout(() => {
+    //         const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+    //         if (!pluginButton) {
+    //           console.warn('Plugin button not found')
+    //           return
+    //         }
 
-    //             const driverObj = driver({
-    //               showProgress: false,
-    //               showButtons: ['next'],
-    //               nextBtnText: t('aiGeneration.gotIt' as any),
-    //               doneBtnText: t('aiGeneration.gotIt' as any),
-    //               popoverOffset: 10,
-    //               stagePadding: 4,
-    //               stageRadius: 12,
-    //               allowClose: true,
-    //               smoothScroll: true,
-    //               steps: [
-    //                 {
-    //                   element: '[data-driver-target="plugin-button"]',
-    //                   popover: {
-    //                     title: t('plugin.authorizePluginTitle' as any),
-    //                     description: t('plugin.authorizePluginDescription' as any),
-    //                     side: 'bottom',
-    //                     align: 'start',
-    //                     onPopoverRender: () => {
-    //                       setTimeout(() => {
-    //                         const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-    //                         const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-    //                         const btn = nextBtn || doneBtn
-    //                         if (btn) {
-    //                           btn.textContent = t('aiGeneration.gotIt' as any)
-    //                           const handleClick = (e: MouseEvent) => {
-    //                             e.preventDefault()
-    //                             e.stopPropagation()
-    //                             driverObj.destroy()
-    //                             btn.removeEventListener('click', handleClick)
-    //                           }
-    //                           btn.addEventListener('click', handleClick)
-    //                         }
-    //                       }, 50)
-    //                     },
-    //                   },
-    //                 },
-    //               ],
-    //               onNextClick: () => {
-    //                 driverObj.destroy()
-    //                 return false
-    //               },
-    //             })
-
-    //             driverObj.drive()
-    //           }, 1500)
-    //         } else {
-    //           // 插件已准备就绪，直接调用插件发布方法
-    //           try {
-    //             // 获取账号列表
-    //             const accountGroupList = useAccountStore.getState().accountGroupList
-    //             const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
-    //               return [...acc, ...group.children]
-    //             }, [])
-                
-    //             // 根据 taskData 中的平台类型查找账号
-    //             const targetAccounts = allAccounts.filter(account => account.type === platform)
-                
-    //             if (targetAccounts.length === 0) {
-    //               // 未找到账号，弹出确认框并引导用户添加账号
-    //               Modal.confirm({
-    //                 title: t('plugin.noAccountFound' as any),
-    //                 content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
-    //                 okText: '去处理',
-    //                 cancelText: '取消',
-    //                 onOk: () => {
-    //                   // 延迟显示引导，确保页面已加载
+    //         const driverObj = driver({
+    //           showProgress: false,
+    //           showButtons: ['next'],
+    //           nextBtnText: t('aiGeneration.gotIt' as any),
+    //           doneBtnText: t('aiGeneration.gotIt' as any),
+    //           popoverOffset: 10,
+    //           stagePadding: 4,
+    //           stageRadius: 12,
+    //           allowClose: true,
+    //           smoothScroll: true,
+    //           steps: [
+    //             {
+    //               element: '[data-driver-target="plugin-button"]',
+    //               popover: {
+    //                 title: t('plugin.authorizePluginTitle' as any),
+    //                 description: t('plugin.authorizePluginDescription' as any),
+    //                 side: 'bottom',
+    //                 align: 'start',
+    //                 onPopoverRender: () => {
     //                   setTimeout(() => {
-    //                     const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-    //                     if (!pluginButton) {
-    //                       console.warn('Plugin button not found')
-    //                       return
-    //                     }
-
-    //                     const driverObj = driver({
-    //                       showProgress: false,
-    //                       showButtons: ['next'],
-    //                       nextBtnText: t('aiGeneration.gotIt' as any),
-    //                       doneBtnText: t('aiGeneration.gotIt' as any),
-    //                       popoverOffset: 10,
-    //                       stagePadding: 4,
-    //                       stageRadius: 12,
-    //                       allowClose: true,
-    //                       smoothScroll: true,
-    //                       steps: [
-    //                         {
-    //                           element: '[data-driver-target="plugin-button"]',
-    //                           popover: {
-    //                             title: '点击打开插件管理',
-    //                             description: '在插件管理中添加您的账号',
-    //                             side: 'bottom',
-    //                             align: 'start',
-    //                             onPopoverRender: () => {
-    //                               setTimeout(() => {
-    //                                 const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-    //                                 const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-    //                                 const btn = nextBtn || doneBtn
-    //                                 if (btn) {
-    //                                   btn.textContent = t('aiGeneration.gotIt' as any)
-    //                                   const handleClick = (e: MouseEvent) => {
-    //                                     e.preventDefault()
-    //                                     e.stopPropagation()
-    //                                     driverObj.destroy()
-    //                                     btn.removeEventListener('click', handleClick)
-    //                                     // 点击后打开插件弹窗，并高亮对应平台
-    //                                     pluginButton.click()
-    //                                     // 设置高亮平台
-    //                                     setTimeout(() => {
-    //                                       setHighlightPlatform(platform)
-    //                                     }, 300)
-    //                                   }
-    //                                   btn.addEventListener('click', handleClick)
-    //                                 }
-    //                               }, 50)
-    //                             },
-    //                           },
-    //                         },
-    //                       ],
-    //                       onNextClick: () => {
+    //                     const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+    //                     const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+    //                     const btn = nextBtn || doneBtn
+    //                     if (btn) {
+    //                       btn.textContent = t('aiGeneration.gotIt' as any)
+    //                       const handleClick = (e: MouseEvent) => {
+    //                         e.preventDefault()
+    //                         e.stopPropagation()
     //                         driverObj.destroy()
-    //                         return false
-    //                       },
-    //                     })
-
-    //                     driverObj.drive()
-    //                   }, 500)
+    //                         btn.removeEventListener('click', handleClick)
+    //                       }
+    //                       btn.addEventListener('click', handleClick)
+    //                     }
+    //                   }, 50)
     //                 },
-    //               })
-    //               return
-    //             }
-                
-    //             // 构建发布数据
-    //             const medias = taskData.medias || []
-    //             const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
-    //             const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
-    //             // 创建空的 File 对象作为占位符
-    //             const createEmptyFile = () => {
-    //               return new File([], '', { type: 'image/jpeg' })
-    //             }
-                
-    //             const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
-    //               id: '',
-    //               imgPath: m.url,
-    //               ossUrl: m.url,
+    //               },
+    //             },
+    //           ],
+    //           onNextClick: () => {
+    //             driverObj.destroy()
+    //             return false
+    //           },
+    //         })
+
+    //         driverObj.drive()
+    //       }, 1500)
+    //     } else {
+    //       // 插件已准备就绪，直接调用插件发布方法
+    //       try {
+    //         // 获取账号列表
+    //         const accountGroupList = useAccountStore.getState().accountGroupList
+    //         const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+    //           return [...acc, ...group.children]
+    //         }, [])
+            
+    //         // 根据 taskData 中的平台类型查找账号
+    //         const targetAccounts = allAccounts.filter(account => account.type === platform)
+            
+    //         if (targetAccounts.length === 0) {
+    //           // 未找到账号，弹出确认框并引导用户添加账号
+    //           Modal.confirm({
+    //             title: t('plugin.noAccountFound' as any),
+    //             content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
+    //             okText: '去处理',
+    //             cancelText: '取消',
+    //             onOk: () => {
+    //               // 延迟显示引导，确保页面已加载
+    //               setTimeout(() => {
+    //                 const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+    //                 if (!pluginButton) {
+    //                   console.warn('Plugin button not found')
+    //                   return
+    //                 }
+
+    //                 const driverObj = driver({
+    //                   showProgress: false,
+    //                   showButtons: ['next'],
+    //                   nextBtnText: t('aiGeneration.gotIt' as any),
+    //                   doneBtnText: t('aiGeneration.gotIt' as any),
+    //                   popoverOffset: 10,
+    //                   stagePadding: 4,
+    //                   stageRadius: 12,
+    //                   allowClose: true,
+    //                   smoothScroll: true,
+    //                   steps: [
+    //                     {
+    //                       element: '[data-driver-target="plugin-button"]',
+    //                       popover: {
+    //                         title: '点击打开插件管理',
+    //                         description: '在插件管理中添加您的账号',
+    //                         side: 'bottom',
+    //                         align: 'start',
+    //                         onPopoverRender: () => {
+    //                           setTimeout(() => {
+    //                             const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+    //                             const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+    //                             const btn = nextBtn || doneBtn
+    //                             if (btn) {
+    //                               btn.textContent = t('aiGeneration.gotIt' as any)
+    //                               const handleClick = (e: MouseEvent) => {
+    //                                 e.preventDefault()
+    //                                 e.stopPropagation()
+    //                                 driverObj.destroy()
+    //                                 btn.removeEventListener('click', handleClick)
+    //                                 // 点击后打开插件弹窗，并高亮对应平台
+    //                                 pluginButton.click()
+    //                                 // 设置高亮平台
+    //                                 setTimeout(() => {
+    //                                   setHighlightPlatform(platform)
+    //                                 }, 300)
+    //                               }
+    //                               btn.addEventListener('click', handleClick)
+    //                             }
+    //                           }, 50)
+    //                         },
+    //                       },
+    //                     },
+    //                   ],
+    //                   onNextClick: () => {
+    //                     driverObj.destroy()
+    //                     return false
+    //                   },
+    //                 })
+
+    //                 driverObj.drive()
+    //               }, 500)
+    //             },
+    //           })
+    //           return
+    //         }
+            
+    //         // 构建发布数据
+    //         const medias = taskData.medias || []
+    //         const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+    //         const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+    //         // 创建空的 File 对象作为占位符
+    //         const createEmptyFile = () => {
+    //           return new File([], '', { type: 'image/jpeg' })
+    //         }
+            
+    //         const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+    //           id: '',
+    //           imgPath: m.url,
+    //           ossUrl: m.url,
+    //           size: 0,
+    //           // file: createEmptyFile(),
+    //           imgUrl: m.url,
+    //           filename: '',
+    //           width: 0,
+    //           height: 0,
+    //         }))
+            
+    //         // 为每个账号创建发布项
+    //         // @ts-ignore
+    //         const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
+    //           account,
+    //           params: {
+    //             title: taskData.title || '',
+    //             des: taskData.description || '',
+    //             topics: taskData.tags || [],
+    //             video: video ? {
     //               size: 0,
-    //               // file: createEmptyFile(),
-    //               imgUrl: m.url,
+    //               videoUrl: video.url,
+    //               ossUrl: video.url,
     //               filename: '',
     //               width: 0,
     //               height: 0,
-    //             }))
-                
-    //             // 为每个账号创建发布项
-    //             // @ts-ignore
-    //             const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
-    //               account,
-    //               params: {
-    //                 title: taskData.title || '',
-    //                 des: taskData.description || '',
-    //                 topics: taskData.tags || [],
-    //                 video: video ? {
-    //                   size: 0,
-    //                   videoUrl: video.url,
-    //                   ossUrl: video.url,
-    //                   filename: '',
-    //                   width: 0,
-    //                   height: 0,
-    //                   duration: 0,
-    //                   cover: {
-    //                     id: '',
-    //                     imgPath: (video as any).coverUrl || '',
-    //                     ossUrl: (video as any).coverUrl,
-    //                     size: 0,
-    //                     imgUrl: (video as any).coverUrl || '',
-    //                     filename: '',
-    //                     width: 0,
-    //                     height: 0,
-    //                   },
-    //                 } : undefined,
-    //                 images: images.length > 0 ? images : undefined,
-    //                 option: {},
+    //               duration: 0,
+    //               cover: {
+    //                 id: '',
+    //                 imgPath: (video as any).coverUrl || '',
+    //                 ossUrl: (video as any).coverUrl,
+    //                 size: 0,
+    //                 imgUrl: (video as any).coverUrl || '',
+    //                 filename: '',
+    //                 width: 0,
+    //                 height: 0,
     //               },
-    //             }))
-                
-    //             // 创建平台任务ID映射
-    //             const platformTaskIdMap = new Map<string, string>()
-    //             pluginPublishItems.forEach((item) => {
-    //               const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-    //               platformTaskIdMap.set(item.account.id, requestId)
-    //             })
-                
-    //             // 调用插件发布方法
-    //             usePluginStore.getState().executePluginPublish({
-    //               items: pluginPublishItems,
-    //               platformTaskIdMap,
-    //               onProgress: (event) => {
-    //                 // 监听各平台发布进度
-    //                 const { stage, progress, message: progressMessage, accountId, platform } = event
-    //                 console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
-
-    //                 // 根据进度阶段显示不同提示
-    //                 if (stage === 'error') {
-    //                   message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
-    //                 }
-    //               },
-    //               onComplete: () => {
-    //                 message.success(t('plugin.publishTaskSubmitted' as any))
-    //               },
-    //             })
-                
-    //             message.success(t('plugin.publishingViaPlugin' as any))
-    //           } catch (error: any) {
-    //             console.error('Plugin publish error:', error)
-    //             message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
-    //           }
-    //         }
-    //       } else {
-    //         // 其他平台使用原有的跳转逻辑
-    //         // 获取平台名称（支持不同大小写）
-    //         let platformName = platform
-    //         // 尝试从 AccountPlatInfoMap 获取显示名称
-    //         for (const [key, value] of AccountPlatInfoMap.entries()) {
-    //           if (key.toLowerCase() === platform.toLowerCase()) {
-    //             platformName = value.name
-    //             break
-    //           }
-    //         }
+    //             } : undefined,
+    //             images: images.length > 0 ? images : undefined,
+    //             option: {},
+    //           },
+    //         }))
             
-    //         Modal.confirm({
-    //           title: t('aiGeneration.needAddChannel' as any),
-    //           content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
-    //           okText: t('aiGeneration.goAdd' as any),
-    //           cancelText: t('aiGeneration.cancel' as any),
-    //           onOk: () => {
-    //             // 跳转到账号页面，自动打开对应平台的授权
-    //             router.push(`/${lng}/accounts?addChannel=${platform}`)
+    //         // 创建平台任务ID映射
+    //         const platformTaskIdMap = new Map<string, string>()
+    //         pluginPublishItems.forEach((item) => {
+    //           const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+    //           platformTaskIdMap.set(item.account.id, requestId)
+    //         })
+            
+    //         // 调用插件发布方法
+    //         usePluginStore.getState().executePluginPublish({
+    //           items: pluginPublishItems,
+    //           platformTaskIdMap,
+    //           onProgress: (event) => {
+    //             // 监听各平台发布进度
+    //             const { stage, progress, message: progressMessage, accountId, platform } = event
+    //             console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
+
+    //             // 根据进度阶段显示不同提示
+    //             if (stage === 'error') {
+    //               message.error(progressMessage)
+    //             }
+    //           },
+    //           onComplete: () => {
+    //             message.info(t('plugin.publishTaskSubmitted' as any))
     //           },
     //         })
+            
+    //         // message.success(t('plugin.publishingViaPlugin' as any))
+    //       } catch (error: any) {
+    //         console.error('Plugin publish error:', error)
+    //         message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
     //       }
     //     }
+    //   } else {
+    //     // 其他平台使用原有的跳转逻辑
+    //     // 获取平台名称（支持不同大小写）
+    //     let platformName = platform
+    //     // 尝试从 AccountPlatInfoMap 获取显示名称
+    //     for (const [key, value] of AccountPlatInfoMap.entries()) {
+    //       if (key.toLowerCase() === platform.toLowerCase()) {
+    //         platformName = value.name
+    //         break
+    //       }
+    //     }
+        
+    //     Modal.confirm({
+    //       title: t('aiGeneration.needAddChannel' as any),
+    //       content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
+    //       okText: t('aiGeneration.goAdd' as any),
+    //       cancelText: t('aiGeneration.cancel' as any),
+    //       onOk: () => {
+    //         // 跳转到账号页面，自动打开对应平台的授权
+    //         router.push(`/${lng}/accounts?addChannel=${platform}`)
+    //       },
+    //     })
+    //   }
+    // }
 
     // return
 
@@ -881,13 +887,22 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       // 将用户消息添加到对话历史中
       setMarkdownMessages(prev => [...prev, `👤 ${prompt}`])
 
+      // 保存当前的 prompt 和 uploadedImages，用于发送请求
+      const currentPrompt = prompt
+      const currentImages = [...uploadedImages]
+
+      // 发送成功后立即清空输入框、图片和消费显示
+      setPrompt('')
+      setUploadedImages([])
+      setCurrentCost(0)
+
       // Set initial progress to 10%
       setProgress(10)
 
       // 构建完整的提示词（包含图片链接，但不在前端显示）
-      let fullPrompt = prompt
-      if (uploadedImages.length > 0) {
-        fullPrompt = `${prompt}\n\n[image]:\n${uploadedImages.join('\n ')}`
+      let fullPrompt = currentPrompt
+      if (currentImages.length > 0) {
+        fullPrompt = `${currentPrompt}\n\n[image]:\n${currentImages.join('\n ')}`
       }
 
       // Dynamic import API
@@ -1014,6 +1029,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           else if (sseMessage.type === 'result' && sseMessage.message) {
             console.log('[UI] Received result:', sseMessage.message)
             const resultMsg = sseMessage.message as any
+            
+            // 保存本次消费
+            if (resultMsg.total_cost_usd !== undefined) {
+              setCurrentCost(resultMsg.total_cost_usd)
+            }
             
             // 显示结果消息
             if (resultMsg.message) {
@@ -1184,7 +1204,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                   })()
                 }
                 // action: publish - 选中指定平台账户并填充内容
-                else if (action === 'publish') {
+                else if (action === 'navigateToPublish') {
                   const platform = taskData.platform
                   
                   // 对于 xhs 和 douyin，使用插件授权逻辑
@@ -1205,7 +1225,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                           console.warn('Plugin button not found')
                           return
                         }
-        
+            
                         const driverObj = driver({
                           showProgress: false,
                           showButtons: ['next'],
@@ -1249,7 +1269,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                             return false
                           },
                         })
-        
+            
                         driverObj.drive()
                       }, 1500)
                     } else {
@@ -1279,7 +1299,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                                   console.warn('Plugin button not found')
                                   return
                                 }
-        
+            
                                 const driverObj = driver({
                                   showProgress: false,
                                   showButtons: ['next'],
@@ -1329,7 +1349,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                                     return false
                                   },
                                 })
-        
+            
                                 driverObj.drive()
                               }, 500)
                             },
@@ -1405,18 +1425,18 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                             // 监听各平台发布进度
                             const { stage, progress, message: progressMessage, accountId, platform } = event
                             console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
-        
+            
                             // 根据进度阶段显示不同提示
                             if (stage === 'error') {
-                              message.error(t('plugin.publishError' as any, { platform, error: progressMessage }) || `${platform} 发布失败: ${progressMessage}`)
+                              message.error(progressMessage)
                             }
                           },
                           onComplete: () => {
-                            message.success(t('plugin.publishTaskSubmitted' as any))
+                            message.info(t('plugin.publishTaskSubmitted' as any))
                           },
                         })
                         
-                        message.success(t('plugin.publishingViaPlugin' as any))
+                        // message.success(t('plugin.publishingViaPlugin' as any))
                       } catch (error: any) {
                         console.error('Plugin publish error:', error)
                         message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
@@ -1475,165 +1495,6 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                       router.push(`/${lng}/accounts?loginChannel=${platform}`)
                     },
                   })
-                }
-                // action: platformNotSupported - 平台不支持，使用插件发布（已取消 navigateToPublish）
-                else if (action === 'platformNotSupported' || action === 'navigateToPublish') {
-                  // 检查插件状态
-                  const pluginStatus = usePluginStore.getState().status
-                  const isPluginReady = pluginStatus === PluginStatus.READY
-                  
-                  if (!isPluginReady) {
-                    // 插件未准备就绪，显示引导授权插件
-                    message.warning(t('plugin.platformNeedsPlugin' as any))
-                    
-                    // 延迟显示引导，确保页面已加载
-                    setTimeout(() => {
-                      const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-                      if (!pluginButton) {
-                        console.warn('Plugin button not found')
-                        return
-                      }
-
-                      const driverObj = driver({
-                        showProgress: false,
-                        showButtons: ['next'],
-                        nextBtnText: t('aiGeneration.gotIt' as any),
-                        doneBtnText: t('aiGeneration.gotIt' as any),
-                        popoverOffset: 10,
-                        stagePadding: 4,
-                        stageRadius: 12,
-                        allowClose: true,
-                        smoothScroll: true,
-                        steps: [
-                          {
-                            element: '[data-driver-target="plugin-button"]',
-                            popover: {
-                              title: t('plugin.authorizePluginTitle' as any),
-                              description: t('plugin.authorizePluginDescription' as any),
-                              side: 'bottom',
-                              align: 'start',
-                              onPopoverRender: () => {
-                                setTimeout(() => {
-                                  const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-                                  const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-                                  const btn = nextBtn || doneBtn
-                                  if (btn) {
-                                    btn.textContent = t('aiGeneration.gotIt' as any)
-                                    const handleClick = (e: MouseEvent) => {
-                                      e.preventDefault()
-                                      e.stopPropagation()
-                                      driverObj.destroy()
-                                      btn.removeEventListener('click', handleClick)
-                                    }
-                                    btn.addEventListener('click', handleClick)
-                                  }
-                                }, 50)
-                              },
-                            },
-                          },
-                        ],
-                        onNextClick: () => {
-                          driverObj.destroy()
-                          return false
-                        },
-                      })
-
-                      driverObj.drive()
-                    }, 1500)
-                  } else {
-                    // 插件已准备就绪，直接调用插件发布方法
-                    try {
-                      // 获取账号列表
-                      const accountGroupList = useAccountStore.getState().accountGroupList
-                      const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
-                        return [...acc, ...group.children]
-                      }, [])
-                      
-                      // 根据 taskData 中的平台类型查找账号
-                      const platform = taskData.platform
-                      const targetAccounts = allAccounts.filter(account => account.type === platform)
-                      
-                      if (targetAccounts.length === 0) {
-                        message.warning(t('plugin.noAccountFound' as any))
-                        return
-                      }
-                      
-                      // 构建发布数据
-                      const medias = taskData.medias || []
-                      const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
-                      const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
-                      // 创建空的 File 对象作为占位符
-                      const createEmptyFile = () => {
-                        return new File([], '', { type: 'image/jpeg' })
-                      }
-                      
-                      const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
-                        id: '',
-                        imgPath: m.url,
-                        ossUrl: m.url,
-                        size: 0,
-                        file: createEmptyFile(),
-                        imgUrl: m.url,
-                        filename: '',
-                        width: 0,
-                        height: 0,
-                      }))
-                      
-                      // 为每个账号创建发布项
-                      const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
-                        account,
-                        params: {
-                          title: taskData.title || '',
-                          des: taskData.description || '',
-                          topics: taskData.tags || [],
-                          video: video ? {
-                            size: 0,
-                            file: new Blob(),
-                            videoUrl: video.url,
-                            ossUrl: video.url,
-                            filename: '',
-                            width: 0,
-                            height: 0,
-                            duration: 0,
-                            cover: {
-                              id: '',
-                              imgPath: video.coverUrl || '',
-                              ossUrl: video.coverUrl,
-                              size: 0,
-                              file: createEmptyFile(),
-                              imgUrl: video.coverUrl || '',
-                              filename: '',
-                              width: 0,
-                              height: 0,
-                            },
-                          } : undefined,
-                          images: images.length > 0 ? images : undefined,
-                          option: {},
-                        },
-                      }))
-                      
-                      // 创建平台任务ID映射
-                      const platformTaskIdMap = new Map<string, string>()
-                      pluginPublishItems.forEach((item) => {
-                        const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-                        platformTaskIdMap.set(item.account.id, requestId)
-                      })
-                      
-                      // 调用插件发布方法
-                      usePluginStore.getState().executePluginPublish({
-                        items: pluginPublishItems,
-                        platformTaskIdMap,
-                        onComplete: () => {
-                          message.success(t('plugin.publishTaskSubmitted' as any))
-                        },
-                      })
-                      
-                      message.success(t('plugin.publishingViaPlugin' as any))
-                    } catch (error: any) {
-                      console.error('Plugin publish error:', error)
-                      message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
-                    }
-                  }
                 }
               }
             }
@@ -1833,7 +1694,8 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !isGenerating && !isUploading) {
+                // 回车键触发发送（Shift+Enter 换行）
+                if (e.key === 'Enter' && !e.shiftKey && !isGenerating && !isUploading) {
                   e.preventDefault()
                   handleCreateTask()
                 }
@@ -1861,6 +1723,23 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 </svg>
               </button>
               
+              {/* 显示本次消费 */}
+              {currentCost > 0 && (
+                <span style={{ 
+                  fontSize: '12px', 
+                  color: '#666', 
+                  marginLeft: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M12 6v6l4 2"></path>
+                  </svg>
+                  {t('aiGeneration.currentCost' as any)}: ${currentCost.toFixed(4)}
+                </span>
+              )}
             </div>
             <button 
               className={styles.scrollTopBtn}
