@@ -586,6 +586,12 @@
     font-size: 14px;
   }
 
+  :global(.commentList_loading-inline) {
+    padding: 16px 20px;
+    flex-direction: row;
+    gap: 8px;
+  }
+
   :global(.commentList_error) {
     display: flex;
     flex-direction: column;

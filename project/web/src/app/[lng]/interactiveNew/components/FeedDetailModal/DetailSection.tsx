@@ -161,7 +161,7 @@ function DetailSection() {
       </div>
 
       {/* 中间：可滚动内容区域 */}
-      <div className="feedDetailModal_content">
+      <div className="feedDetailModal_content" id="feedDetailModal_content">
         {/* 标题和描述 */}
         <div className="feedDetailModal_desc">
           <h2 className="feedDetailModal_desc_title">{displayData.title || t('noTitle')}</h2>

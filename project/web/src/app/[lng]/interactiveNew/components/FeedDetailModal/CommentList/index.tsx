@@ -3,7 +3,7 @@
 /**
  * 评论列表组件
  * 支持：
- * - 分页加载评论
+ * - 上拉无限滚动加载评论
  * - 展开/收起回复
  * - 加载更多回复
  */
@@ -12,6 +12,7 @@ import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Spin } from 'antd'
 import { LoadingOutlined } from '@ant-design/icons'
+import InfiniteScroll from 'react-infinite-scroll-component'
 import type { CommentItem as CommentItemType, SupportedPlatformType } from '@/store/plugin/plats/types'
 import { platformManager } from '@/store/plugin/plats'
 import CommentItem from './CommentItem'
@@ -197,44 +198,37 @@ function CommentList({ workId, platform, commentCount, xsecToken }: CommentListP
 
   return (
     <div className="commentList">
-      {/* 评论列表 */}
-      <div className="commentList_items">
-        {comments.map(comment => (
-          <CommentItem
-            key={comment.id}
-            comment={comment}
-            onLoadMoreReplies={handleLoadMoreReplies}
-            loadingReplyId={loadingReplyId || undefined}
-          />
-        ))}
-      </div>
-
-      {/* 加载更多 */}
-      {hasMore && (
-        <div className="commentList_loadMore">
-          <button
-            className="commentList_loadMoreBtn"
-            onClick={handleLoadMore}
-            disabled={loadingMore}
-          >
-            {loadingMore ? (
-              <>
-                <LoadingOutlined />
-                加载中...
-              </>
-            ) : (
-              '加载更多评论'
-            )}
-          </button>
+      <InfiniteScroll
+        dataLength={comments.length}
+        next={handleLoadMore}
+        hasMore={hasMore}
+        loader={
+          <div className="commentList_loading commentList_loading-inline">
+            <Spin indicator={<LoadingOutlined style={{ fontSize: 20 }} spin />} />
+            <span>加载更多评论...</span>
+          </div>
+        }
+        endMessage={
+          comments.length > 0 ? (
+            <div className="commentList_noMore">
+              没有更多评论了
+            </div>
+          ) : null
+        }
+        scrollableTarget="feedDetailModal_content"
+      >
+        {/* 评论列表 */}
+        <div className="commentList_items">
+          {comments.map(comment => (
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              onLoadMoreReplies={handleLoadMoreReplies}
+              loadingReplyId={loadingReplyId || undefined}
+            />
+          ))}
         </div>
-      )}
-
-      {/* 没有更多了 */}
-      {!hasMore && comments.length > 0 && (
-        <div className="commentList_noMore">
-          没有更多评论了
-        </div>
-      )}
+      </InfiniteScroll>
     </div>
   )
 }
