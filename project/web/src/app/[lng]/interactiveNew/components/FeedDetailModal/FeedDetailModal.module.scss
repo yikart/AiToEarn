@@ -58,50 +58,170 @@
     overflow: hidden;
   }
 
+  // 底层占位图（防止闪烁）
+  :global(.feedDetailModal_media_placeholder) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  // 上层内容区域（带淡入效果）
+  :global(.feedDetailModal_media_content) {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  :global(.feedDetailModal_media_content-loaded) {
+    opacity: 1;
+  }
+
+  // 图片样式
   :global(.feedDetailModal_media_img) {
     width: 100%;
     height: 100%;
     object-fit: contain;
+    cursor: zoom-in;
   }
 
-  :global(.feedDetailModal_media_playBtn) {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 72px;
-    height: 72px;
+  // 单图片容器
+  :global(.feedDetailModal_media_imageWrapper) {
+    width: 100%;
+    height: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.6);
-    border-radius: 50%;
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  }
 
-    svg {
-      width: 32px;
-      height: 32px;
-      margin-left: 4px;
+  // Swiper 轮播样式
+  :global {
+    .feedDetailModal_media_swiper {
+      width: 100%;
+      height: 100%;
+
+      .swiper-slide {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      // 导航箭头 - 默认隐藏
+      .swiper-button-prev,
+      .swiper-button-next {
+        width: 36px;
+        height: 36px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 50%;
+        color: #fff;
+        opacity: 0;
+        transition: all 0.25s ease;
+
+        &::after {
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        &:hover {
+          background: rgba(0, 0, 0, 0.5);
+          transform: scale(1.1);
+        }
+
+        // 禁用状态（到达边界）
+        &.swiper-button-disabled {
+          opacity: 0.3 !important;
+          cursor: not-allowed;
+          pointer-events: none;
+          transform: none !important;
+        }
+      }
+
+      .swiper-button-prev {
+        left: 12px;
+      }
+
+      .swiper-button-next {
+        right: 12px;
+      }
+
+      // 分页器 - 小圆点样式
+      .swiper-pagination {
+        position: absolute;
+        bottom: 16px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        width: auto !important;
+        background: transparent;
+        border-radius: 12px;
+        transition: background 0.25s ease;
+
+        .swiper-pagination-bullet {
+          width: 8px;
+          height: 8px;
+          background: rgba(255, 255, 255, 0.5);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+          opacity: 1;
+          margin: 0 !important;
+          border-radius: 50%;
+          flex-shrink: 0;
+
+          &.swiper-pagination-bullet-active {
+            background: #fff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+          }
+        }
+
+        // 分页器 hover 样式 - 只加背景
+        &:hover {
+          background: rgba(0, 0, 0, 0.5);
+        }
+      }
     }
 
-    &:hover {
-      background: rgba(0, 0, 0, 0.8);
-      transform: translate(-50%, -50%) scale(1.1);
+    // 媒体区域 hover 时显示导航箭头
+    .feedDetailModal_media:hover {
+      .swiper-button-prev,
+      .swiper-button-next {
+        opacity: 1;
+      }
     }
   }
 
-  :global(.feedDetailModal_media_indicator) {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    padding: 4px 12px;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 12px;
-    color: #fff;
-    font-size: 13px;
-    backdrop-filter: blur(4px);
+  // 图片 Slide 包装器
+  :global(.feedDetailModal_media_slideWrapper) {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: zoom-in;
+  }
+
+  // 视频播放器
+  :global(.feedDetailModal_media_video) {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background: #000;
   }
 
   // ============================================================================

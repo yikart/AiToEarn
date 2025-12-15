@@ -46,6 +46,14 @@ interface DetailModalState {
   platform: SupportedPlatformType | null
   /** 原始列表数据（用于请求详情） */
   originData: any
+
+  // ============================================================================
+  // 媒体区域状态
+  // ============================================================================
+  /** 当前图片索引 */
+  currentImageIndex: number
+  /** 是否显示图片预览 */
+  imagePreviewVisible: boolean
 }
 
 /**
@@ -65,6 +73,18 @@ interface DetailModalActions {
   
   /** 重置状态 */
   reset: () => void
+
+  // ============================================================================
+  // 媒体区域操作
+  // ============================================================================
+  /** 设置当前图片索引 */
+  setCurrentImageIndex: (index: number) => void
+  
+  /** 打开图片预览 */
+  openImagePreview: (index?: number) => void
+  
+  /** 关闭图片预览 */
+  closeImagePreview: () => void
 }
 
 type DetailModalStore = DetailModalState & DetailModalActions
@@ -100,6 +120,8 @@ const initialState: DetailModalState = {
   error: null,
   platform: null,
   originData: null,
+  currentImageIndex: 0,
+  imagePreviewVisible: false,
 }
 
 /**
@@ -121,6 +143,8 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
       error: null,
       platform,
       originData: item.origin,
+      currentImageIndex: 0,
+      imagePreviewVisible: false,
     })
 
     // 异步请求详情
@@ -164,7 +188,7 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
   },
 
   close: () => {
-    set({ isOpen: false })
+    set({ isOpen: false, imagePreviewVisible: false })
     // 延迟清理其他状态，让关闭动画完成
     setTimeout(() => {
       const state = get()
@@ -175,6 +199,7 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
           error: null,
           clickRect: null,
           loading: false,
+          currentImageIndex: 0,
         })
       }
     }, 500)
@@ -183,5 +208,48 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
   reset: () => {
     set(initialState)
   },
+
+  // ============================================================================
+  // 媒体区域操作
+  // ============================================================================
+  setCurrentImageIndex: (index) => {
+    set({ currentImageIndex: index })
+  },
+
+  openImagePreview: (index) => {
+    set({
+      imagePreviewVisible: true,
+      currentImageIndex: index ?? get().currentImageIndex,
+    })
+  },
+
+  closeImagePreview: () => {
+    set({ imagePreviewVisible: false })
+  },
 }))
 
+/**
+ * 获取图片列表（从详情或预览数据中提取）
+ */
+export function getImageList(detail: WorkDetail | null, preview: PreviewData | null): string[] {
+  if (detail?.imageList && detail.imageList.length > 0) {
+    return detail.imageList.map(img => img.url)
+  }
+  if (detail?.coverUrl) {
+    return [detail.coverUrl]
+  }
+  if (preview?.thumbnail) {
+    return [preview.thumbnail]
+  }
+  return []
+}
+
+/**
+ * 获取视频信息
+ */
+export function getVideoInfo(detail: WorkDetail | null) {
+  if (detail?.type === 'video' && detail.video?.url) {
+    return detail.video
+  }
+  return null
+}
