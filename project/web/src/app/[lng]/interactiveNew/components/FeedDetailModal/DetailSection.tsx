@@ -55,8 +55,11 @@ function removeTopicsFromDescription(text: string, platform: SupportedPlatformTy
       break
   }
 
-  // 清理多余空白
-  return result.replace(/\s+/g, ' ').trim()
+  // 清理多余空格（保留换行符）
+  return result
+    .replace(/[^\S\n]+/g, ' ')  // 将非换行的空白字符替换为单个空格
+    .replace(/\n{3,}/g, '\n\n') // 将连续3个及以上换行替换为2个
+    .trim()
 }
 
 /**
