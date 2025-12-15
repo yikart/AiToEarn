@@ -79,10 +79,48 @@ export function buildHomeFeedRequestData(params: HomeFeedListParams, cursorScore
 }
 
 /**
+ * 构建小红书作者主页链接
+ * @param userId 用户ID
+ * @param xsecToken 用户的 xsec_token
+ */
+function buildAuthorUrl(userId: string, xsecToken: string): string {
+  const params = new URLSearchParams({
+    xsec_token: xsecToken,
+    xsec_source: 'pc_feed',
+  })
+  return `https://www.xiaohongshu.com/user/profile/${userId}?${params.toString()}`
+}
+
+/**
+ * 构建小红书话题搜索链接
+ * @param keyword 话题关键词
+ */
+function buildTopicUrl(keyword: string): string {
+  const params = new URLSearchParams({
+    keyword,
+    type: '54',
+    source: 'web_note_detail_r10',
+  })
+  return `https://www.xiaohongshu.com/search_result/?${params.toString()}`
+}
+
+/**
  * 将小红书原始数据转换为统一格式
  */
 export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
   const { note_card } = item
+
+  // 构建作者主页链接
+  const authorUrl = buildAuthorUrl(
+    note_card.user?.user_id || '',
+    note_card.user?.xsec_token || ''
+  )
+
+  // 解析话题列表
+  const topics = (note_card.tag_list || []).map(tag => ({
+    name: tag.name,
+    url: buildTopicUrl(tag.name),
+  }))
 
   return {
     workId: item.id,
@@ -91,9 +129,14 @@ export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
     authorAvatar: note_card.user?.avatar || '',
     authorName: note_card.user?.nickname || note_card.user?.nick_name || '',
     authorId: note_card.user?.user_id || '',
+    authorUrl,
     likeCount: note_card.interact_info?.liked_count || '0',
+    isFollowed: note_card.interact_info?.followed ?? false,
+    isLiked: note_card.interact_info?.liked ?? false,
+    isCollected: note_card.interact_info?.collected ?? false,
     isVideo: note_card.type === 'video',
     videoDuration: note_card.video?.capa?.duration,
+    topics,
     origin: item,
     thumbnailWidth: note_card.cover.width,
     thumbnailHeight: note_card.cover.height,

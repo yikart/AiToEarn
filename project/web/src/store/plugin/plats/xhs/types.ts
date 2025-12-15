@@ -43,9 +43,21 @@ export interface XhsHomeFeedItem {
       xsec_token: string
     }
     interact_info: {
+      /** 是否已点赞 */
       liked: boolean
+      /** 点赞数 */
       liked_count: string
+      /** 是否已收藏 */
+      collected?: boolean
+      /** 是否已关注 */
+      followed?: boolean
     }
+    /** 话题标签列表 */
+    tag_list?: Array<{
+      id: string
+      name: string
+      type: string
+    }>
     video?: {
       capa?: {
         duration: number

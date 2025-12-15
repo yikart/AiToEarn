@@ -274,6 +274,7 @@ export const usePluginStore = create(
          * 用于刷新账号列表后，不重新授权，只同步在线/离线状态
          */
         async syncAccountStatus() {
+          methods.setAllPluginAccountsOffline()
           const { status } = get()
           if (status === Status.READY) {
             await methods.refreshAllPlatformAccounts()

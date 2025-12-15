@@ -77,6 +77,16 @@ export interface DirectMessageResult extends BaseResult {}
 // ============================================================================
 
 /**
+ * 话题信息
+ */
+export interface TopicInfo {
+  /** 话题名称 */
+  name: string
+  /** 话题跳转链接 */
+  url: string
+}
+
+/**
  * 首页作品列表项
  */
 export interface HomeFeedItem {
@@ -96,12 +106,22 @@ export interface HomeFeedItem {
   authorName: string
   /** 作者ID */
   authorId: string
+  /** 作者主页链接 */
+  authorUrl: string
   /** 点赞数（字符串，可能含"万"） */
   likeCount: string
+  /** 是否已关注作者 */
+  isFollowed: boolean
+  /** 是否已点赞 */
+  isLiked: boolean
+  /** 是否已收藏 */
+  isCollected: boolean
   /** 是否为视频 */
   isVideo: boolean
   /** 视频时长（秒），非视频为 undefined */
   videoDuration?: number
+  /** 话题列表 */
+  topics: TopicInfo[]
   /** 平台原始数据 */
   origin: any
 }

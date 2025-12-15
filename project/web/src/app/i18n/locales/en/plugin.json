@@ -74,6 +74,7 @@
     "activeDescription": "Your browser plugin is activated. You can start using the publish feature!",
     "platformAccounts": "Platform Accounts",
     "notLoggedIn": "Not Logged In",
+    "xhsNotLoggedInTip": "Xiaohongshu requires login to Creator Center",
     "loginNow": "Login Now",
     "viewPublishList": "View Publish List",
     "permissionRequired": "Permission Required",
@@ -82,6 +83,10 @@
     "sync": "Sync",
     "syncToAccount": "Sync to Account Manager",
     "syncSuccess": "Account synced successfully",
-    "syncFailed": "Account sync failed"
+    "syncFailed": "Account sync failed",
+    "xhsHome": "Home",
+    "xhsCreator": "Creator",
+    "xhsLoginHomeTip": "Login to Xiaohongshu Homepage",
+    "xhsLoginCreatorTip": "Login to Xiaohongshu Creator Center"
   }
 }

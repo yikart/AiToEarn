@@ -52,17 +52,34 @@ export interface DouyinHomeFeedResponse {
 export interface DouyinHomeFeedItem {
   /** 作品 ID */
   aweme_id: string
-  /** 作品描述 */
+  /** 作品描述（可能包含 #话题 标签） */
   desc: string
   /** 预览标题 */
   preview_title?: string
   /** 创建时间戳 */
   create_time?: number
+  /** 用户是否已点赞：0-未点赞，1-已点赞 */
+  user_digged?: number
+  /** 话题列表（从 cha_list 获取） */
+  cha_list?: Array<{
+    cid: string
+    cha_name: string
+  }>
+  /** 文本扩展信息（包含话题等） */
+  text_extra?: Array<{
+    hashtag_name?: string
+    hashtag_id?: string
+    type?: number
+  }>
+  /** 收藏状态 */
+  collect_stat?: number
   /** 作者信息 */
   author: {
     uid: string
     sec_uid?: string
     nickname: string
+    /** 关注状态：0-未关注，1-已关注 */
+    follow_status?: number
     avatar_thumb?: {
       url_list: string[]
     }
