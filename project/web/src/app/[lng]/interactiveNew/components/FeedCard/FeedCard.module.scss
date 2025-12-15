@@ -192,6 +192,41 @@
       height: 14px;
       color: var(--grayColor6);
     }
+
+    // 已点赞状态
+    .feedCard_likes-active {
+      color: #ff4757;
+
+      .feedCard_likes_icon {
+        color: #ff4757;
+      }
+    }
+
+    // 话题标签区域
+    .feedCard_topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .feedCard_topic {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--colorPrimary1);
+      color: var(--colorPrimary5);
+      font-size: 11px;
+      border-radius: 10px;
+      white-space: nowrap;
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feedCard_topic-more {
+      background: var(--grayColor2);
+      color: var(--text-secondary);
+    }
   }
 }
 

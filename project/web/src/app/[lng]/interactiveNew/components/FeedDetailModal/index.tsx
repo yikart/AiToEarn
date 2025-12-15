@@ -9,6 +9,13 @@ import { memo, useCallback, useEffect, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
+import {
+  CaretRightOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  HeartFilled,
+  StarFilled,
+} from '@ant-design/icons'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
 import type { ClickRect } from '../FeedCard'
 import styles from './FeedDetailModal.module.scss'
@@ -156,9 +163,7 @@ function FeedDetailModal({ item, clickRect, onClose }: FeedDetailModalProps) {
           />
           {item.isVideo && (
             <div className="feedDetailModal_preview_badge">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M8 5v14l11-7z" />
-              </svg>
+              <CaretRightOutlined />
             </div>
           )}
         </div>
@@ -167,34 +172,78 @@ function FeedDetailModal({ item, clickRect, onClose }: FeedDetailModalProps) {
         <div className="feedDetailModal_info">
           {/* 关闭按钮 */}
           <button className="feedDetailModal_close" onClick={onClose}>
-            <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
-            </svg>
+            <CloseOutlined />
           </button>
 
           {/* 作者信息 */}
           <div className="feedDetailModal_author">
-            <img
-              src={item.authorAvatar || '/images/default-avatar.png'}
-              alt={item.authorName}
-              className="feedDetailModal_author_avatar"
-            />
+            <a
+              href={item.authorUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="feedDetailModal_author_link"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img
+                src={item.authorAvatar || '/images/default-avatar.png'}
+                alt={item.authorName}
+                className="feedDetailModal_author_avatar"
+              />
+            </a>
             <div className="feedDetailModal_author_info">
-              <span className="feedDetailModal_author_name">{item.authorName}</span>
+              <a
+                href={item.authorUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="feedDetailModal_author_name_link"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {item.authorName}
+              </a>
               <span className="feedDetailModal_author_id">@{item.authorId}</span>
             </div>
+            {/* 关注状态 */}
+            {item.isFollowed && (
+              <span className="feedDetailModal_author_followed">
+                <CheckOutlined />
+                {t('followed')}
+              </span>
+            )}
           </div>
 
           {/* 标题 */}
           <h2 className="feedDetailModal_title">{item.title || t('noTitle')}</h2>
 
+          {/* 话题标签 - 放在标题后面 */}
+          {item.topics && item.topics.length > 0 && (
+            <div className="feedDetailModal_topics">
+              {item.topics.map((topic, index) => (
+                <a
+                  key={index}
+                  href={topic.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="feedDetailModal_topic"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  #{topic.name}
+                </a>
+              ))}
+            </div>
+          )}
+
           {/* 统计数据 */}
           <div className="feedDetailModal_stats">
-            <div className="feedDetailModal_stats_item">
-              <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-              </svg>
+            {/* 点赞 */}
+            <div className={`feedDetailModal_stats_item ${item.isLiked ? 'feedDetailModal_stats_item-active' : ''}`}>
+              <HeartFilled />
               <span>{item.likeCount}</span>
+              {item.isLiked && <span className="feedDetailModal_stats_label">{t('liked')}</span>}
+            </div>
+            {/* 收藏 */}
+            <div className={`feedDetailModal_stats_item ${item.isCollected ? 'feedDetailModal_stats_item-collected' : ''}`}>
+              <StarFilled />
+              <span>{item.isCollected ? t('collected') : t('collect')}</span>
             </div>
           </div>
 

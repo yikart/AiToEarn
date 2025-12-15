@@ -8,6 +8,11 @@
 
 import { memo, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import {
+  CaretRightOutlined,
+  HeartFilled,
+  PictureOutlined,
+} from '@ant-design/icons'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
 import styles from './FeedCard.module.scss'
 
@@ -117,9 +122,7 @@ function FeedCard({ item, onClick }: FeedCardProps) {
         {/* 图片加载失败时显示占位 */}
         {imageError && (
           <div className="feedCard_cover_error">
-            <svg className="feedCard_cover_error_icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z" />
-            </svg>
+            <PictureOutlined className="feedCard_cover_error_icon" />
           </div>
         )}
 
@@ -128,9 +131,7 @@ function FeedCard({ item, onClick }: FeedCardProps) {
         {/* 视频标识 */}
         {item.isVideo && (
           <div className="feedCard_video_badge">
-            <svg className="feedCard_video_icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M8 5v14l11-7z" />
-            </svg>
+            <CaretRightOutlined className="feedCard_video_icon" />
             {item.videoDuration ? formatDuration(item.videoDuration) : t('video')}
           </div>
         )}
@@ -155,10 +156,8 @@ function FeedCard({ item, onClick }: FeedCardProps) {
           </div>
 
           {/* 点赞数 */}
-          <div className="feedCard_likes">
-            <svg className="feedCard_likes_icon" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-            </svg>
+          <div className={`feedCard_likes ${item.isLiked ? 'feedCard_likes-active' : ''}`}>
+            <HeartFilled className="feedCard_likes_icon" />
             <span>{item.likeCount}</span>
           </div>
         </div>

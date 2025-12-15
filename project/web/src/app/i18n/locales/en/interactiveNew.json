@@ -19,5 +19,10 @@
   "noTitle": "Untitled",
   "pluginNotReady": "Plugin not ready",
   "pluginNotReadyDesc": "Please install and authorize the AIToEarn browser extension first",
-  "installPlugin": "Install Plugin"
+  "installPlugin": "Install Plugin",
+  "followed": "Followed",
+  "liked": "Liked",
+  "collected": "Collected",
+  "collect": "Collect",
+  "topics": "Topics"
 }

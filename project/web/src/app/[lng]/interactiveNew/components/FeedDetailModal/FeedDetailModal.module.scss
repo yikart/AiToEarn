@@ -114,6 +114,10 @@
     padding-right: 60px;
   }
 
+  :global(.feedDetailModal_author_link) {
+    flex-shrink: 0;
+  }
+
   :global(.feedDetailModal_author_avatar) {
     width: 52px;
     height: 52px;
@@ -121,23 +125,55 @@
     object-fit: cover;
     border: 3px solid var(--border-color, #eee);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
   }
 
   :global(.feedDetailModal_author_info) {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex: 1;
+    min-width: 0;
   }
 
-  :global(.feedDetailModal_author_name) {
+  :global(.feedDetailModal_author_name_link) {
     font-size: 17px;
     font-weight: 600;
     color: var(--text-color, #333);
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: var(--colorPrimary5);
+    }
   }
 
   :global(.feedDetailModal_author_id) {
     font-size: 13px;
     color: var(--text-color-secondary, #999);
+  }
+
+  :global(.feedDetailModal_author_followed) {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: var(--colorPrimary1);
+    color: var(--colorPrimary5);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 16px;
+    flex-shrink: 0;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
   }
 
   // 标题
@@ -170,8 +206,47 @@
     svg {
       width: 20px;
       height: 20px;
-      color: #ff6b6b;
+      color: var(--grayColor5);
     }
+  }
+
+  :global(.feedDetailModal_stats_item-active) {
+    color: #ff4757;
+
+    svg {
+      color: #ff4757;
+    }
+  }
+
+  :global(.feedDetailModal_stats_item-collected) {
+    color: #ffa502;
+
+    svg {
+      color: #ffa502;
+    }
+  }
+
+  :global(.feedDetailModal_stats_label) {
+    font-size: 12px;
+    padding: 2px 8px;
+    background: #fff0f0;
+    border-radius: 10px;
+    color: #ff4757;
+  }
+
+  // 话题标签区域 - 类似小红书风格，直接在标题后面展示
+  :global(.feedDetailModal_topics) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  :global(.feedDetailModal_topic) {
+    display: inline-block;
+    color: #13386c;
+    font-size: 14px;
+    text-decoration: none;
   }
 
   // 操作区
