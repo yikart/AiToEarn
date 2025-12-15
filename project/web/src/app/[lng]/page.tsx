@@ -214,8 +214,38 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // 本次消费状态
   const [currentCost, setCurrentCost] = useState<number>(0)
   
+  // 固定输入框状态
+  const [showFixedInput, setShowFixedInput] = useState(false)
+  const mainInputContainerRef = useRef<HTMLDivElement>(null)
+  
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const driverObjRef = useRef<ReturnType<typeof driver> | null>(null)
+
+  // 监听主输入框是否在视口内
+  useEffect(() => {
+    const handleScroll = () => {
+      if (!mainInputContainerRef.current) {
+        return
+      }
+      
+      const rect = mainInputContainerRef.current.getBoundingClientRect()
+      // 元素在视口内的条件：顶部在视口底部之上，且底部在视口顶部之下
+      const isVisible = rect.top < window.innerHeight && rect.bottom > 0
+      
+      setShowFixedInput(!isVisible)
+    }
+    
+    // 监听滚动事件
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    
+    // 延迟初始检查，确保元素已渲染
+    const timer = setTimeout(handleScroll, 100)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      clearTimeout(timer)
+    }
+  }, [])
 
   // 初始化新手引导
   useEffect(() => {
@@ -1635,7 +1665,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         )}
 
         {/* AI Generation Input */}
-        <div className={styles.aiGenerationWrapper}>
+        <div ref={mainInputContainerRef} className={styles.aiGenerationWrapper}>
           <div className={styles.aiInputContainer}>
            
             <div className={styles.uploadedImagesPreview}>
@@ -1795,7 +1825,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       />
 
       {/* Plugin Status Modal */}
-      <PluginStatusModal
+      <PluginStatusModal 
         visible={pluginModalOpen}
         onClose={() => {
           setPluginModalOpen(false)
@@ -1803,6 +1833,51 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         }}
         highlightPlatform={highlightPlatform}
       />
+      
+      {/* 固定在底部的简化输入框 */}
+      {showFixedInput && (
+        <div className={styles.fixedInputWrapper}>
+          <div className={styles.fixedInputContainer}>
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey && !isGenerating && !isUploading) {
+                  e.preventDefault()
+                  handleCreateTask().then(() => {
+                    // 发送后滚动到主输入框
+                    mainInputContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                  })
+                }
+              }}
+              placeholder={t('aiGeneration.inputPlaceholder' as any)}
+              disabled={isGenerating || isUploading}
+              className={styles.fixedInput}
+            />
+            <button 
+              className={styles.fixedSendBtn}
+              onClick={() => {
+                handleCreateTask().then(() => {
+                  // 发送后滚动到主输入框
+                  mainInputContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+                })
+              }}
+              disabled={!prompt.trim() || isGenerating || isUploading}
+            >
+              {isGenerating ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <rect x="6" y="6" width="12" height="12" rx="2" />
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M12.002 3c.424 0 .806.177 1.079.46l5.98 5.98.103.114a1.5 1.5 0 0 1-2.225 2.006l-3.437-3.436V19.5l-.008.153a1.5 1.5 0 0 1-2.985 0l-.007-.153V8.122l-3.44 3.438a1.5 1.5 0 0 1-2.225-2.006l.103-.115 6-5.999.025-.025.059-.052.044-.037c.029-.023.06-.044.09-.065l.014-.01a1.43 1.43 0 0 1 .101-.062l.03-.017c.209-.11.447-.172.699-.172Z" fill="currentColor"/>
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
