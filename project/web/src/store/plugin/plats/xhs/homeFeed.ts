@@ -92,20 +92,8 @@ function buildAuthorUrl(userId: string, xsecToken: string): string {
 }
 
 /**
- * 构建小红书话题搜索链接
- * @param keyword 话题关键词
- */
-function buildTopicUrl(keyword: string): string {
-  const params = new URLSearchParams({
-    keyword,
-    type: '54',
-    source: 'web_note_detail_r10',
-  })
-  return `https://www.xiaohongshu.com/search_result/?${params.toString()}`
-}
-
-/**
  * 将小红书原始数据转换为统一格式
+ * 注：list不包含收藏数和话题，这些在详情中获取
  */
 export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
   const { note_card } = item
@@ -115,12 +103,6 @@ export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
     note_card.user?.user_id || '',
     note_card.user?.xsec_token || ''
   )
-
-  // 解析话题列表
-  const topics = (note_card.tag_list || []).map(tag => ({
-    name: tag.name,
-    url: buildTopicUrl(tag.name),
-  }))
 
   return {
     workId: item.id,
@@ -133,10 +115,8 @@ export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
     likeCount: note_card.interact_info?.liked_count || '0',
     isFollowed: note_card.interact_info?.followed ?? false,
     isLiked: note_card.interact_info?.liked ?? false,
-    isCollected: note_card.interact_info?.collected ?? false,
     isVideo: note_card.type === 'video',
     videoDuration: note_card.video?.capa?.duration,
-    topics,
     origin: item,
     thumbnailWidth: note_card.cover.width,
     thumbnailHeight: note_card.cover.height,

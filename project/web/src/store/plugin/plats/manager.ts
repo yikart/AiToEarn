@@ -10,6 +10,8 @@ import type {
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
   HomeFeedListParams,
   HomeFeedListResult,
   IPlatformInteraction,
@@ -130,6 +132,18 @@ class PlatformInteractionManager {
     params: HomeFeedListParams,
   ): Promise<HomeFeedListResult> {
     return this.get(platform).getHomeFeedList(params)
+  }
+
+  /**
+   * 获取作品详情
+   * @param platform 平台类型
+   * @param params 详情请求参数
+   */
+  getWorkDetail(
+    platform: SupportedPlatformType,
+    params: GetWorkDetailParams,
+  ): Promise<GetWorkDetailResult> {
+    return this.get(platform).getWorkDetail(params)
   }
 }
 

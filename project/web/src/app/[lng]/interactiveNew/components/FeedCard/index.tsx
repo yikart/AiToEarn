@@ -144,8 +144,14 @@ function FeedCard({ item, onClick }: FeedCardProps) {
 
         {/* 底部信息 */}
         <div className="feedCard_footer">
-          {/* 作者信息 */}
-          <div className="feedCard_author">
+          {/* 作者信息 - 点击跳转作者主页 */}
+          <a
+            href={item.authorUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="feedCard_author"
+            onClick={(e) => e.stopPropagation()}
+          >
             <img
               src={item.authorAvatar || '/images/default-avatar.png'}
               alt={item.authorName}
@@ -153,7 +159,7 @@ function FeedCard({ item, onClick }: FeedCardProps) {
               loading="lazy"
             />
             <span className="feedCard_author_name">{item.authorName}</span>
-          </div>
+          </a>
 
           {/* 点赞数 */}
           <div className={`feedCard_likes ${item.isLiked ? 'feedCard_likes-active' : ''}`}>

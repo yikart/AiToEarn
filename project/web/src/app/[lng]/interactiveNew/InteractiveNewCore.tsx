@@ -17,6 +17,7 @@ import WaterfallList from './components/WaterfallList'
 import FeedDetailModal from './components/FeedDetailModal'
 import { FeedCardSkeleton, type ClickRect } from './components/FeedCard'
 import { useInteractive } from './useInteractive'
+import { useDetailModalStore } from './store/detailStore'
 import styles from './InteractiveNew.module.scss'
 
 /** 瀑布流响应式断点配置 */
@@ -54,20 +55,26 @@ export default function InteractiveNewCore() {
     refresh,
   } = useInteractive()
 
+  // 详情弹框状态（使用 store）
+  const { isOpen: isDetailOpen, open: openDetail, close: closeDetail } = useDetailModalStore()
+
+  // 是否显示返回顶部按钮
+  const [showBackTop, setShowBackTop] = useState(false)
+
   /**
-   * 处理卡片点击 - 打开详情弹框
+   * 处理卡片点击 - 打开弹框并请求详情
    */
   const handleCardClick = useCallback((item: HomeFeedItem, rect: ClickRect) => {
-    setClickRect(rect)
-    setSelectedItem(item)
-  }, [])
+    if (!currentPlatform) return
+    openDetail(item, rect, currentPlatform)
+  }, [currentPlatform, openDetail])
 
   /**
    * 关闭弹框
    */
   const handleCloseModal = useCallback(() => {
-    setSelectedItem(null)
-  }, [])
+    closeDetail()
+  }, [closeDetail])
 
   /**
    * 处理去登录
@@ -83,13 +90,6 @@ export default function InteractiveNewCore() {
   const handleInstallPlugin = useCallback(() => {
     window.open(PLUGIN_DOWNLOAD_LINKS.chrome, '_blank')
   }, [])
-
-  // 是否显示返回顶部按钮
-  const [showBackTop, setShowBackTop] = useState(false)
-
-  // 弹框状态 - 选中的作品和点击位置
-  const [selectedItem, setSelectedItem] = useState<HomeFeedItem | null>(null)
-  const [clickRect, setClickRect] = useState<ClickRect | null>(null)
 
   /**
    * 监听滚动，控制返回顶部按钮显示
@@ -200,13 +200,8 @@ export default function InteractiveNewCore() {
 
               {/* 作品详情弹框 - 使用 AnimatePresence 处理进出动画 */}
               <AnimatePresence>
-                {selectedItem && (
-                  <FeedDetailModal
-                    key={selectedItem.workId}
-                    item={selectedItem}
-                    clickRect={clickRect}
-                    onClose={handleCloseModal}
-                  />
+                {isDetailOpen && (
+                  <FeedDetailModal onClose={handleCloseModal} />
                 )}
               </AnimatePresence>
             </>

@@ -13,6 +13,8 @@ import type {
   CommentParams,
   CommentResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
   HomeFeedListParams,
   HomeFeedListResult,
   IPlatformInteraction,
@@ -20,6 +22,7 @@ import type {
 } from '../types'
 import type { XhsBaseResponse, XhsCommentResponse } from './types'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
+import { getWorkDetail } from './workDetail'
 
 /**
  * 小红书平台交互类
@@ -135,6 +138,14 @@ class XhsPlatformInteraction implements IPlatformInteraction {
    */
   async getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
     return getHomeFeedList(params)
+  }
+
+  /**
+   * 获取作品详情
+   * @param params 详情请求参数
+   */
+  async getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
+    return getWorkDetail(params)
   }
 }
 

@@ -36,12 +36,16 @@ export type {
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
   HomeFeedItem,
   HomeFeedListParams,
   HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
   SupportedPlatformType,
+  TopicInfo,
+  WorkDetail,
 } from './types'
 
 // 管理器

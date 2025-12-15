@@ -167,32 +167,8 @@ function buildAuthorUrl(secUid: string): string {
 }
 
 /**
- * 构建抖音话题搜索链接
- * @param keyword 话题关键词
- */
-function buildTopicUrl(keyword: string): string {
-  return `https://www.douyin.com/jingxuan/search/${encodeURIComponent(keyword)}?type=general`
-}
-
-/**
- * 从描述中提取话题标签
- * @param desc 作品描述
- * @returns 话题名称数组
- */
-function extractTopicsFromDesc(desc: string): string[] {
-  if (!desc) return []
-  // 匹配 #话题 格式的标签（中文、英文、数字）
-  const regex = /#([^\s#]+)/g
-  const topics: string[] = []
-  let match
-  while ((match = regex.exec(desc)) !== null) {
-    topics.push(match[1])
-  }
-  return topics
-}
-
-/**
  * 将抖音原始数据转换为统一格式
+ * 注：list不包含收藏数和话题，这些在详情中获取
  * @param item 抖音原始作品数据（any 类型，字段太多不写类型）
  */
 export function transformToHomeFeedItem(item: any): HomeFeedItem {
@@ -222,38 +198,6 @@ export function transformToHomeFeedItem(item: any): HomeFeedItem {
   // 构建作者主页链接
   const authorUrl = buildAuthorUrl(authorSecUid)
 
-  // 解析话题列表
-  // 优先从 cha_list 获取，其次从 text_extra 获取，最后从 desc 中解析
-  const topicNames: string[] = []
-  
-  if (item.cha_list && Array.isArray(item.cha_list)) {
-    item.cha_list.forEach((cha: any) => {
-      if (cha.cha_name) {
-        topicNames.push(cha.cha_name)
-      }
-    })
-  }
-  
-  if (topicNames.length === 0 && item.text_extra && Array.isArray(item.text_extra)) {
-    item.text_extra.forEach((extra: any) => {
-      if (extra.hashtag_name) {
-        topicNames.push(extra.hashtag_name)
-      }
-    })
-  }
-  
-  if (topicNames.length === 0) {
-    // 从描述中解析话题
-    topicNames.push(...extractTopicsFromDesc(item.desc || ''))
-  }
-
-  // 去重并构建话题对象
-  const uniqueTopics = [...new Set(topicNames)]
-  const topics = uniqueTopics.map(name => ({
-    name,
-    url: buildTopicUrl(name),
-  }))
-
   return {
     workId: item.aweme_id || '',
     thumbnail: coverList[0] || '',
@@ -267,10 +211,8 @@ export function transformToHomeFeedItem(item: any): HomeFeedItem {
     likeCount: formatLikeCount(statistics.digg_count || 0),
     isFollowed: author.follow_status === 1,
     isLiked: item.user_digged === 1,
-    isCollected: item.collect_stat === 1,
     isVideo: true, // 抖音主要是视频
     videoDuration: video.duration ? Math.floor(video.duration / 1000) : undefined,
-    topics,
     origin: filterNullValues(item),
   }
 }

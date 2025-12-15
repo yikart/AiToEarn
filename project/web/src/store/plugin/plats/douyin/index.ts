@@ -20,6 +20,8 @@ import type {
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
   HomeFeedListParams,
   HomeFeedListResult,
   IPlatformInteraction,
@@ -27,6 +29,7 @@ import type {
 } from '../types'
 import type { DouyinDirectMessageResponse, DouyinInteractionResponse } from './types'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
+import { getWorkDetail, getWorkDetailFromListItem } from './workDetail'
 
 /**
  * 抖音平台交互类
@@ -169,6 +172,24 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   async getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
     return getHomeFeedList(params)
   }
+
+  /**
+   * 获取作品详情
+   * 抖音直接从list的item数据获取详情，不需要额外请求API
+   * @param params 详情请求参数
+   */
+  async getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
+    return getWorkDetail(params)
+  }
+
+  /**
+   * 从列表项获取作品详情
+   * 这是抖音特有的方法，直接从 HomeFeedItem.origin 获取详情
+   * @param listItemOrigin HomeFeedItem.origin 原始数据
+   */
+  getWorkDetailFromListItem(listItemOrigin: any): GetWorkDetailResult {
+    return getWorkDetailFromListItem(listItemOrigin)
+  }
 }
 
 /**
@@ -178,3 +199,6 @@ export const douyinInteraction = new DouyinPlatformInteraction()
 
 // 导出类型（方便外部使用）
 export type { DouyinHomeFeedItem, DouyinHomeFeedResponse } from './types'
+
+// 导出工具方法
+export { getWorkDetailFromListItem } from './workDetail'

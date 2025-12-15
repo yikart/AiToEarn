@@ -1366,7 +1366,12 @@ interface Resources {
     "noTitle": "无标题",
     "pluginNotReady": "插件未就绪",
     "pluginNotReadyDesc": "请先安装并授权 AIToEarn 浏览器插件",
-    "installPlugin": "安装插件"
+    "installPlugin": "安装插件",
+    "followed": "已关注",
+    "liked": "已赞",
+    "collected": "已收藏",
+    "collect": "收藏",
+    "topics": "话题"
   },
   "login": {
     "welcomeBack": "哎呦赚",

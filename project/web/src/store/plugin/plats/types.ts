@@ -88,6 +88,7 @@ export interface TopicInfo {
 
 /**
  * 首页作品列表项
+ * 注：list不包含收藏数和话题，这些在详情中获取
  */
 export interface HomeFeedItem {
   /** 作品ID */
@@ -95,9 +96,9 @@ export interface HomeFeedItem {
   /** 缩略图URL */
   thumbnail: string
   /** 缩略图宽度 */
-  thumbnailWidth?: number;
+  thumbnailWidth?: number
   /** 缩略图高度 */
-  thumbnailHeight?: number;
+  thumbnailHeight?: number
   /** 作品标题 */
   title: string
   /** 作者头像 */
@@ -114,16 +115,99 @@ export interface HomeFeedItem {
   isFollowed: boolean
   /** 是否已点赞 */
   isLiked: boolean
-  /** 是否已收藏 */
-  isCollected: boolean
   /** 是否为视频 */
   isVideo: boolean
   /** 视频时长（秒），非视频为 undefined */
   videoDuration?: number
-  /** 话题列表 */
-  topics: TopicInfo[]
   /** 平台原始数据 */
   origin: any
+}
+
+/**
+ * 作品详情
+ */
+export interface WorkDetail {
+  /** 作品ID */
+  workId: string
+  /** 作品类型：视频/图文 */
+  type: 'video' | 'normal'
+  /** 作品标题 */
+  title: string
+  /** 作品描述/正文 */
+  description: string
+  /** 封面图URL */
+  coverUrl: string
+  /** 图片列表（图文类型） */
+  imageList: Array<{
+    url: string
+    width?: number
+    height?: number
+  }>
+  /** 视频信息（视频类型） */
+  video?: {
+    /** 视频URL */
+    url: string
+    /** 时长（秒） */
+    duration?: number
+    /** 宽度 */
+    width?: number
+    /** 高度 */
+    height?: number
+  }
+  /** 作者信息 */
+  author: {
+    id: string
+    name: string
+    avatar: string
+    url: string
+  }
+  /** 互动数据 */
+  interactInfo: {
+    /** 点赞数 */
+    likeCount: string
+    /** 收藏数 */
+    collectCount: string
+    /** 评论数 */
+    commentCount: string
+    /** 分享数 */
+    shareCount: string
+    /** 是否已点赞 */
+    isLiked: boolean
+    /** 是否已收藏 */
+    isCollected: boolean
+    /** 是否已关注作者 */
+    isFollowed: boolean
+  }
+  /** 话题列表 */
+  topics: TopicInfo[]
+  /** 发布时间（时间戳） */
+  publishTime?: number
+  /** IP位置 */
+  ipLocation?: string
+  /** 平台原始数据 */
+  origin: any
+}
+
+/**
+ * 获取作品详情请求参数
+ */
+export interface GetWorkDetailParams {
+  /** 作品ID */
+  workId: string
+  /** 安全token（小红书需要） */
+  xsecToken?: string
+  /** 来源（小红书需要） */
+  xsecSource?: string
+  /** 列表项原始数据（抖音需要，直接从 HomeFeedItem.origin 获取详情） */
+  origin?: any
+}
+
+/**
+ * 获取作品详情返回结果
+ */
+export interface GetWorkDetailResult extends BaseResult {
+  /** 作品详情 */
+  detail?: WorkDetail
 }
 
 /**
@@ -191,6 +275,12 @@ export interface IPlatformInteraction {
    * @param params 分页参数
    */
   getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult>
+
+  /**
+   * 获取作品详情
+   * @param params 作品详情请求参数
+   */
+  getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult>
 }
 
 // ============================================================================
