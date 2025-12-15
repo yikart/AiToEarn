@@ -595,282 +595,173 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
   // Create AI generation task with SSE
   const handleCreateTask = async () => { 
     console.log('handleCreateTask')
-    // test 00.00
-    // let resultMsg = {"type":"result","message":{"type":"result","subtype":"success","uuid":"5090d6ac-bd17-4137-b1e4-1419722ea709","duration_ms":39508,"duration_api_ms":51529,"is_error":false,"num_turns":5,"message":"✅ **北京旅行手账插画已准备完成！**\n\n我已为您准备好两个平台的发布内容，系统会自动引导您到发布页面：\n\n---\n\n### 📱 **抖音版**\n**标题：** 北京旅行手账插画·童趣冒险日记\n\n**文案：**\n🎨 用蜡笔画下北京的美好时光！\n\n📍 一日精华路线：\n第1站：天安门广场 - 从中国的心脏开始冒险！\n第2站：故宫 - 探索皇帝住过的宫殿！\n第3站：景山公园 - 爬上山顶看最美北京！\n第4站：南锣鼓巷 - 穿越古老胡同寻找宝藏！\n最终站：北京烤鸭+冰糖葫芦 - 好吃！尝尝北京味道！\n\n✨ 原来北京这么好玩！我要再来一次！\n\n**话题：** #北京旅行 #旅行手账 #手绘插画\n\n---\n\n### 📕 **小红书版**\n**标题：** 北京一日游手账｜蜡笔风童趣路线图\n\n**文案：**\n🎨 像孩子一样用蜡笔记录北京的美好～\n\n📍 一日精华路线：\n✅ 天安门广场 - 从中国的心脏开始冒险\n✅ 故宫 - 探索皇帝住过的宫殿\n✅ 景山公园 - 爬上山顶看最美北京\n✅ 南锣鼓巷 - 穿越古老胡同寻找宝藏\n✅ 北京烤鸭+冰糖葫芦 - 尝尝正宗北京味道\n\n原来北京这么好玩！我要再来一次🎉\n\n**话题：** #北京旅行 #手绘插画 #旅行手账\n\n---\n\n系统会自动跳转到对应平台的发布页面，所有内容已为您预填好（包括图片、标题、文案、话题），您只需确认发布即可！🚀",
-    // "result":[
-    // {"platform":"douyin","type":"fullContent","title":"北京旅行手账插画·童趣冒险日记","description":"🎨 用蜡笔画下北京的美好时光！\n\n📍 一日精华路线：\n第1站：天安门广场 - 从中国的心脏开始冒险！\n第2站：故宫 - 探索皇帝住过的宫殿！\n第3站：景山公园 - 爬上山顶看最美北京！\n第4站：南锣鼓巷 - 穿越古老胡同寻找宝藏！\n最终站：北京烤鸭+冰糖葫芦 - 好吃！尝尝北京味道！\n\n✨ 原来北京这么好玩！我要再来一次！","tags":["北京旅行","旅行手账","手绘插画"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj715iyb.jpg"}],
-    // "action":"navigateToPublish","accountId":"douyin_MS4wLjABAAAATHE9sjNjL2xUmIvoGev3Q1wNVZCAsEzwX06VlzyCZztj0jBV-dMdN6cETZghdV3y_web","errorMessage":"Platform does not support MCP publishing tool"},
-    // {"platform":"xhs","type":"fullContent","title":"北京一日游手账｜蜡笔风童趣路线图","description":"🎨 像孩子一样用蜡笔记录北京的美好～\n\n📍 一日精华路线：\n✅ 天安门广场 - 从中国的心脏开始冒险\n✅ 故宫 - 探索皇帝住过的宫殿\n✅ 景山公园 - 爬上山顶看最美北京\n✅ 南锣鼓巷 - 穿越古老胡同寻找宝藏\n✅ 北京烤鸭+冰糖葫芦 - 尝尝正宗北京味道\n\n原来北京这么好玩！我要再来一次🎉","tags":["北京旅行","手绘插画","旅行手账"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj715iyb.jpg"}],
-    // "action":"navigateToPublish","accountId":"xhs_681b9361000000000801588b_web","errorMessage":"Platform does not support MCP publishing tool"}],
-    // "total_cost_usd":0.8000690500000001,
-    // "usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":202823},"cache_creation_input_tokens":202823,"cache_read_input_tokens":7236,"input_tokens":23,"output_tokens":1928,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
-    //     const taskData = resultMsg.message.result
-    //     const action = taskData.action
+    // 测试模式：直接使用模拟数据
+    const USE_TEST_DATA = false
+    const testResultMsg = {"type":"result","message":{"type":"result","subtype":"success","uuid":"5090d6ac-bd17-4137-b1e4-1419722ea709","duration_ms":39508,"duration_api_ms":51529,"is_error":false,"num_turns":5,"message":"✅ **北京旅行手账插画已准备完成！**\n\n我已为您准备好两个平台的发布内容，系统会自动引导您到发布页面：\n\n---\n\n### 📱 **抖音版**\n**标题：** 北京旅行手账插画·童趣冒险日记\n\n**文案：**\n🎨 用蜡笔画下北京的美好时光！\n\n📍 一日精华路线：\n第1站：天安门广场 - 从中国的心脏开始冒险！\n第2站：故宫 - 探索皇帝住过的宫殿！\n第3站：景山公园 - 爬上山顶看最美北京！\n第4站：南锣鼓巷 - 穿越古老胡同寻找宝藏！\n最终站：北京烤鸭+冰糖葫芦 - 好吃！尝尝北京味道！\n\n✨ 原来北京这么好玩！我要再来一次！\n\n**话题：** #北京旅行 #旅行手账 #手绘插画\n\n---\n\n### 📕 **小红书版**\n**标题：** 北京一日游手账｜蜡笔风童趣路线图\n\n**文案：**\n🎨 像孩子一样用蜡笔记录北京的美好～\n\n📍 一日精华路线：\n✅ 天安门广场 - 从中国的心脏开始冒险\n✅ 故宫 - 探索皇帝住过的宫殿\n✅ 景山公园 - 爬上山顶看最美北京\n✅ 南锣鼓巷 - 穿越古老胡同寻找宝藏\n✅ 北京烤鸭+冰糖葫芦 - 尝尝正宗北京味道\n\n原来北京这么好玩！我要再来一次🎉\n\n**话题：** #北京旅行 #手绘插画 #旅行手账\n\n---\n\n系统会自动跳转到对应平台的发布页面，所有内容已为您预填好（包括图片、标题、文案、话题），您只需确认发布即可！🚀",
+    "result":[
+    {"platform":"douyin","type":"fullContent","title":"北京旅行手账插画·童趣冒险日记","description":"🎨 用蜡笔画下北京的美好时光！\n\n📍 一日精华路线：\n第1站：天安门广场 - 从中国的心脏开始冒险！\n第2站：故宫 - 探索皇帝住过的宫殿！\n第3站：景山公园 - 爬上山顶看最美北京！\n第4站：南锣鼓巷 - 穿越古老胡同寻找宝藏！\n最终站：北京烤鸭+冰糖葫芦 - 好吃！尝尝北京味道！\n\n✨ 原来北京这么好玩！我要再来一次！","tags":["北京旅行","旅行手账","手绘插画"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj715iyb.jpg"}],
+    "action":"navigateToPublish","accountId":"douyin_MS4wLjABAAAATHE9sjNjL2xUmIvoGev3Q1wNVZCAsEzwX06VlzyCZztj0jBV-dMdN6cETZghdV3y_web","errorMessage":"Platform does not support MCP publishing tool"},
+    {"platform":"xhs","type":"fullContent","title":"北京一日游手账｜蜡笔风童趣路线图","description":"🎨 像孩子一样用蜡笔记录北京的美好～\n\n📍 一日精华路线：\n✅ 天安门广场 - 从中国的心脏开始冒险\n✅ 故宫 - 探索皇帝住过的宫殿\n✅ 景山公园 - 爬上山顶看最美北京\n✅ 南锣鼓巷 - 穿越古老胡同寻找宝藏\n✅ 北京烤鸭+冰糖葫芦 - 尝尝正宗北京味道\n\n原来北京这么好玩！我要再来一次🎉","tags":["北京旅行","手绘插画","旅行手账"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj715iyb.jpg"}],
+    "action":"navigateToPublish","accountId":"xhs_681b9361000000000801588b_web","errorMessage":"Platform does not support MCP publishing tool"}],
+    "total_cost_usd":0.8000690500000001,
+    "usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":202823},"cache_creation_input_tokens":202823,"cache_read_input_tokens":7236,"input_tokens":23,"output_tokens":1928,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
 
-    // if (action === 'navigateToPublish') {
-    //   const platform = taskData.platform
+    // 测试模式：直接处理结果
+    if (USE_TEST_DATA) {
+      console.log('[TEST MODE] Using mock data')
+      setIsGenerating(true)
+      setProgress(100)
       
-    //   // 对于 xhs 和 douyin，使用插件授权逻辑
-    //   if (platform === 'xhs' || platform === 'douyin') {
-    //     console.log('createChannel xhs or douyin')
-    //     // 检查插件状态
-    //     const pluginStatus = usePluginStore.getState().status
-    //     const isPluginReady = pluginStatus === PluginStatus.READY
-        
-    //     if (!isPluginReady) {
-    //       // 插件未准备就绪，显示引导授权插件
-    //       message.warning(t('plugin.platformNeedsPlugin' as any))
+      // 模拟 markdown 消息
+      const sseMessage = testResultMsg.message as any
+      if (sseMessage.message) {
+        setMarkdownMessages([sseMessage.message])
+      }
+      
+      // 处理结果
+      setTimeout(() => {
+        if (sseMessage.result) {
+          // 兼容数组和对象格式
+          const resultArray = Array.isArray(sseMessage.result) ? sseMessage.result : [sseMessage.result]
           
-    //       // 延迟显示引导，确保页面已加载
-    //       setTimeout(() => {
-    //         const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-    //         if (!pluginButton) {
-    //           console.warn('Plugin button not found')
-    //           return
-    //         }
+          console.log('[TEST MODE] Processing results, count:', resultArray.length)
+          
+          // 收集所有需要通过插件发布的任务
+          const pluginTasks: any[] = []
+          
+          resultArray.forEach((taskData: any) => {
+            const resultType = taskData.type
+            const action = taskData.action
+            const platform = taskData.platform
 
-    //         const driverObj = driver({
-    //           showProgress: false,
-    //           showButtons: ['next'],
-    //           nextBtnText: t('aiGeneration.gotIt' as any),
-    //           doneBtnText: t('aiGeneration.gotIt' as any),
-    //           popoverOffset: 10,
-    //           stagePadding: 4,
-    //           stageRadius: 12,
-    //           allowClose: true,
-    //           smoothScroll: true,
-    //           steps: [
-    //             {
-    //               element: '[data-driver-target="plugin-button"]',
-    //               popover: {
-    //                 title: t('plugin.authorizePluginTitle' as any),
-    //                 description: t('plugin.authorizePluginDescription' as any),
-    //                 side: 'bottom',
-    //                 align: 'start',
-    //                 onPopoverRender: () => {
-    //                   setTimeout(() => {
-    //                     const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-    //                     const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-    //                     const btn = nextBtn || doneBtn
-    //                     if (btn) {
-    //                       btn.textContent = t('aiGeneration.gotIt' as any)
-    //                       const handleClick = (e: MouseEvent) => {
-    //                         e.preventDefault()
-    //                         e.stopPropagation()
-    //                         driverObj.destroy()
-    //                         btn.removeEventListener('click', handleClick)
-    //                       }
-    //                       btn.addEventListener('click', handleClick)
-    //                     }
-    //                   }, 50)
-    //                 },
-    //               },
-    //             },
-    //           ],
-    //           onNextClick: () => {
-    //             driverObj.destroy()
-    //             return false
-    //           },
-    //         })
-
-    //         driverObj.drive()
-    //       }, 1500)
-    //     } else {
-    //       // 插件已准备就绪，直接调用插件发布方法
-    //       try {
-    //         // 获取账号列表
-    //         const accountGroupList = useAccountStore.getState().accountGroupList
-    //         const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
-    //           return [...acc, ...group.children]
-    //         }, [])
+            if (resultType === 'fullContent' && action === 'navigateToPublish') {
+              if (platform === 'xhs' || platform === 'douyin') {
+                pluginTasks.push(taskData)
+              }
+            }
+          })
+          
+          console.log('[TEST MODE] Plugin tasks:', pluginTasks.length)
+          
+          // 处理插件平台任务
+          if (pluginTasks.length > 0) {
+            const pluginStatus = usePluginStore.getState().status
+            const isPluginReady = pluginStatus === PluginStatus.READY
             
-    //         // 根据 taskData 中的平台类型查找账号
-    //         const targetAccounts = allAccounts.filter(account => account.type === platform)
-            
-    //         if (targetAccounts.length === 0) {
-    //           // 未找到账号，弹出确认框并引导用户添加账号
-    //           Modal.confirm({
-    //             title: t('plugin.noAccountFound' as any),
-    //             content: '未查询到该平台的有效账号，请打开插件添加账号并完成同步',
-    //             okText: '去处理',
-    //             cancelText: '取消',
-    //             onOk: () => {
-    //               // 延迟显示引导，确保页面已加载
-    //               setTimeout(() => {
-    //                 const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-    //                 if (!pluginButton) {
-    //                   console.warn('Plugin button not found')
-    //                   return
-    //                 }
-
-    //                 const driverObj = driver({
-    //                   showProgress: false,
-    //                   showButtons: ['next'],
-    //                   nextBtnText: t('aiGeneration.gotIt' as any),
-    //                   doneBtnText: t('aiGeneration.gotIt' as any),
-    //                   popoverOffset: 10,
-    //                   stagePadding: 4,
-    //                   stageRadius: 12,
-    //                   allowClose: true,
-    //                   smoothScroll: true,
-    //                   steps: [
-    //                     {
-    //                       element: '[data-driver-target="plugin-button"]',
-    //                       popover: {
-    //                         title: '点击打开插件管理',
-    //                         description: '在插件管理中添加您的账号',
-    //                         side: 'bottom',
-    //                         align: 'start',
-    //                         onPopoverRender: () => {
-    //                           setTimeout(() => {
-    //                             const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-    //                             const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-    //                             const btn = nextBtn || doneBtn
-    //                             if (btn) {
-    //                               btn.textContent = t('aiGeneration.gotIt' as any)
-    //                               const handleClick = (e: MouseEvent) => {
-    //                                 e.preventDefault()
-    //                                 e.stopPropagation()
-    //                                 driverObj.destroy()
-    //                                 btn.removeEventListener('click', handleClick)
-    //                                 // 点击后打开插件弹窗，并高亮对应平台
-    //                                 pluginButton.click()
-    //                                 // 设置高亮平台
-    //                                 setTimeout(() => {
-    //                                   setHighlightPlatform(platform)
-    //                                 }, 300)
-    //                               }
-    //                               btn.addEventListener('click', handleClick)
-    //                             }
-    //                           }, 50)
-    //                         },
-    //                       },
-    //                     },
-    //                   ],
-    //                   onNextClick: () => {
-    //                     driverObj.destroy()
-    //                     return false
-    //                   },
-    //                 })
-
-    //                 driverObj.drive()
-    //               }, 500)
-    //             },
-    //           })
-    //           return
-    //         }
-            
-    //         // 构建发布数据
-    //         const medias = taskData.medias || []
-    //         const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
-    //         const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
-    //         // 创建空的 File 对象作为占位符
-    //         const createEmptyFile = () => {
-    //           return new File([], '', { type: 'image/jpeg' })
-    //         }
-            
-    //         const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
-    //           id: '',
-    //           imgPath: m.url,
-    //           ossUrl: m.url,
-    //           size: 0,
-    //           // file: createEmptyFile(),
-    //           imgUrl: m.url,
-    //           filename: '',
-    //           width: 0,
-    //           height: 0,
-    //         }))
-            
-    //         // 为每个账号创建发布项
-    //         // @ts-ignore
-    //         const pluginPublishItems: PluginPublishItem[] = targetAccounts.map(account => ({
-    //           account,
-    //           params: {
-    //             title: taskData.title || '',
-    //             des: taskData.description || '',
-    //             topics: taskData.tags || [],
-    //             video: video ? {
-    //               size: 0,
-    //               videoUrl: video.url,
-    //               ossUrl: video.url,
-    //               filename: '',
-    //               width: 0,
-    //               height: 0,
-    //               duration: 0,
-    //               cover: {
-    //                 id: '',
-    //                 imgPath: (video as any).coverUrl || '',
-    //                 ossUrl: (video as any).coverUrl,
-    //                 size: 0,
-    //                 imgUrl: (video as any).coverUrl || '',
-    //                 filename: '',
-    //                 width: 0,
-    //                 height: 0,
-    //               },
-    //             } : undefined,
-    //             images: images.length > 0 ? images : undefined,
-    //             option: {},
-    //           },
-    //         }))
-            
-    //         // 创建平台任务ID映射
-    //         const platformTaskIdMap = new Map<string, string>()
-    //         pluginPublishItems.forEach((item) => {
-    //           const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-    //           platformTaskIdMap.set(item.account.id, requestId)
-    //         })
-            
-    //         // 调用插件发布方法
-    //         usePluginStore.getState().executePluginPublish({
-    //           items: pluginPublishItems,
-    //           platformTaskIdMap,
-    //           onProgress: (event) => {
-    //             // 监听各平台发布进度
-    //             const { stage, progress, message: progressMessage, accountId, platform } = event
-    //             console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
-
-    //             // 根据进度阶段显示不同提示
-    //             if (stage === 'error') {
-    //               message.error(progressMessage)
-    //             }
-    //           },
-    //           onComplete: () => {
-    //             message.info(t('plugin.publishTaskSubmitted' as any))
-    //           },
-    //         })
-            
-    //         // message.success(t('plugin.publishingViaPlugin' as any))
-    //       } catch (error: any) {
-    //         console.error('Plugin publish error:', error)
-    //         message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
-    //       }
-    //     }
-    //   } else {
-    //     // 其他平台使用原有的跳转逻辑
-    //     // 获取平台名称（支持不同大小写）
-    //     let platformName = platform
-    //     // 尝试从 AccountPlatInfoMap 获取显示名称
-    //     for (const [key, value] of AccountPlatInfoMap.entries()) {
-    //       if (key.toLowerCase() === platform.toLowerCase()) {
-    //         platformName = value.name
-    //         break
-    //       }
-    //     }
+            if (!isPluginReady) {
+              message.warning('请先授权插件')
+            } else {
+              try {
+                const accountGroupList = useAccountStore.getState().accountGroupList
+                const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
+                  return [...acc, ...group.children]
+                }, [])
+                
+                const allPluginPublishItems: PluginPublishItem[] = []
+                const platformTaskIdMap = new Map<string, string>()
+                
+                pluginTasks.forEach((taskData) => {
+                  const platform = taskData.platform
+                  const medias = taskData.medias || []
+                  const hasVideo = medias.some((m: any) => m.type === 'VIDEO')
+                  const video = hasVideo ? medias.find((m: any) => m.type === 'VIDEO') : null
+                  
+                  const images = medias.filter((m: any) => m.type === 'IMAGE').map((m: any) => ({ 
+                    id: '',
+                    imgPath: m.url,
+                    ossUrl: m.url,
+                    size: 0,
+                    imgUrl: m.url,
+                    filename: '',
+                    width: 0,
+                    height: 0,
+                  }))
+                  
+                  let targetAccounts: any[] = []
+                  if (taskData.accountId) {
+                    const targetAccount = allAccounts.find(account => account.id === taskData.accountId)
+                    if (targetAccount) {
+                      targetAccounts = [targetAccount]
+                    }
+                  } else {
+                    targetAccounts = allAccounts.filter(account => account.type === platform)
+                  }
+                  
+                  if (targetAccounts.length === 0) {
+                    console.warn(`[TEST MODE] No accounts found for platform: ${platform}`)
+                    return
+                  }
+                  
+                  targetAccounts.forEach(account => {
+                    const publishItem: PluginPublishItem = {
+                      account,
+                      params: {
+                        title: taskData.title || '',
+                        des: taskData.description || '',
+                        topics: taskData.tags || [],
+                        video: (video ? {
+                          size: 0,
+                          videoUrl: video.url,
+                          ossUrl: video.url,
+                          filename: '',
+                          width: 0,
+                          height: 0,
+                          duration: 0,
+                          cover: {
+                            id: '',
+                            imgPath: (video as any).coverUrl || '',
+                            ossUrl: (video as any).coverUrl,
+                            size: 0,
+                            imgUrl: (video as any).coverUrl || '',
+                            filename: '',
+                            width: 0,
+                            height: 0,
+                          },
+                        } : undefined) as any,
+                        images: images.length > 0 ? images : undefined,
+                        option: {},
+                      },
+                    }
+                    // @ts-ignore
+                    allPluginPublishItems.push(publishItem)
+                    
+                    const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+                    platformTaskIdMap.set(account.id, requestId)
+                  })
+                })
+                
+                console.log(`[TEST MODE] Total plugin publish items: ${allPluginPublishItems.length}`)
+                
+                if (allPluginPublishItems.length > 0) {
+                  usePluginStore.getState().executePluginPublish({
+                    items: allPluginPublishItems,
+                    platformTaskIdMap,
+                    onProgress: (event) => {
+                      const { stage, progress, message: progressMessage, accountId, platform } = event
+                      console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
+                      
+                      if (stage === 'error') {
+                        message.error(progressMessage)
+                      }
+                    },
+                    onComplete: () => {
+                      message.success('发布任务已提交')
+                    },
+                  })
+                }
+              } catch (error: any) {
+                console.error('[TEST MODE] Plugin publish error:', error)
+                message.error(`发布失败: ${error.message}`)
+              }
+            }
+          }
+        }
         
-    //     Modal.confirm({
-    //       title: t('aiGeneration.needAddChannel' as any),
-    //       content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
-    //       okText: t('aiGeneration.goAdd' as any),
-    //       cancelText: t('aiGeneration.cancel' as any),
-    //       onOk: () => {
-    //         // 跳转到账号页面，自动打开对应平台的授权
-    //         router.push(`/${lng}/accounts?addChannel=${platform}`)
-    //       },
-    //     })
-    //   }
-    // }
-
-    // return
+        setIsGenerating(false)
+      }, 1000)
+      
+      return
+    }
 
     if (!prompt.trim()) {
       return
