@@ -31,8 +31,12 @@
 // 类型导出
 export type {
   BaseResult,
+  CommentItem,
+  CommentListParams,
+  CommentListResult,
   CommentParams,
   CommentResult,
+  CommentUser,
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
@@ -43,6 +47,7 @@ export type {
   HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
+  SubCommentListParams,
   SupportedPlatformType,
   TopicInfo,
   WorkDetail,

@@ -281,6 +281,18 @@ export interface IPlatformInteraction {
    * @param params 作品详情请求参数
    */
   getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult>
+
+  /**
+   * 获取评论列表
+   * @param params 评论列表请求参数
+   */
+  getCommentList(params: CommentListParams): Promise<CommentListResult>
+
+  /**
+   * 获取子评论列表（查看更多回复）
+   * @param params 子评论列表请求参数
+   */
+  getSubCommentList(params: SubCommentListParams): Promise<CommentListResult>
 }
 
 // ============================================================================
@@ -291,3 +303,96 @@ export interface IPlatformInteraction {
  * 支持交互功能的平台类型
  */
 export type SupportedPlatformType = typeof PLUGIN_SUPPORTED_PLATFORMS[number]
+
+// ============================================================================
+// 评论列表相关类型
+// ============================================================================
+
+/**
+ * 评论用户信息
+ */
+export interface CommentUser {
+  /** 用户ID */
+  id: string
+  /** 用户昵称 */
+  nickname: string
+  /** 用户头像 */
+  avatar: string
+  /** 安全token（小红书需要） */
+  xsecToken?: string
+}
+
+/**
+ * 统一评论项
+ */
+export interface CommentItem {
+  /** 评论ID */
+  id: string
+  /** 评论内容 */
+  content: string
+  /** 创建时间（毫秒级时间戳） */
+  createTime: number
+  /** 点赞数 */
+  likeCount: number
+  /** 用户信息 */
+  user: CommentUser
+  /** IP属地 */
+  ipLocation?: string
+  /** 是否为作者 */
+  isAuthor: boolean
+  /** 是否已点赞 */
+  isLiked: boolean
+  /** 子评论/回复数量 */
+  replyCount: number
+  /** 子评论列表（首次加载时可能包含部分回复） */
+  replies: CommentItem[]
+  /** 子评论分页游标 */
+  replyCursor?: string
+  /** 是否有更多子评论 */
+  hasMoreReplies: boolean
+  /** 回复目标（二级评论时存在） */
+  replyTo?: {
+    /** 被回复的评论ID */
+    id: string
+    /** 被回复的用户信息 */
+    user: CommentUser
+  }
+  /** 原始数据 */
+  origin: unknown
+}
+
+/**
+ * 评论列表请求参数
+ */
+export interface CommentListParams {
+  /** 作品ID */
+  workId: string
+  /** 分页游标（首次请求不传或传空） */
+  cursor?: string
+  /** 每页数量 */
+  count?: number
+  /** 安全token（小红书需要） */
+  xsecToken?: string
+}
+
+/**
+ * 子评论列表请求参数
+ */
+export interface SubCommentListParams extends CommentListParams {
+  /** 根评论ID */
+  rootCommentId: string
+}
+
+/**
+ * 评论列表返回结果
+ */
+export interface CommentListResult extends BaseResult {
+  /** 评论列表 */
+  comments: CommentItem[]
+  /** 下一页游标 */
+  cursor: string
+  /** 是否有更多数据 */
+  hasMore: boolean
+  /** 评论总数（可选，部分平台不提供） */
+  total?: number
+}

@@ -10,6 +10,8 @@
 
 import { PlatType } from '@/app/config/platConfig'
 import type {
+  CommentListParams,
+  CommentListResult,
   CommentParams,
   CommentResult,
   FavoriteResult,
@@ -19,8 +21,10 @@ import type {
   HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
+  SubCommentListParams,
 } from '../types'
 import type { XhsBaseResponse, XhsCommentResponse } from './types'
+import { getCommentList, getSubCommentList } from './comment'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
 import { getWorkDetail } from './workDetail'
 
@@ -147,6 +151,22 @@ class XhsPlatformInteraction implements IPlatformInteraction {
   async getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
     return getWorkDetail(params)
   }
+
+  /**
+   * 获取评论列表
+   * @param params 评论列表请求参数
+   */
+  async getCommentList(params: CommentListParams): Promise<CommentListResult> {
+    return getCommentList(params)
+  }
+
+  /**
+   * 获取子评论列表（查看更多回复）
+   * @param params 子评论列表请求参数
+   */
+  async getSubCommentList(params: SubCommentListParams): Promise<CommentListResult> {
+    return getSubCommentList(params)
+  }
 }
 
 /**
@@ -155,4 +175,12 @@ class XhsPlatformInteraction implements IPlatformInteraction {
 export const xhsInteraction = new XhsPlatformInteraction()
 
 // 导出类型（方便外部使用）
-export type { XhsHomeFeedItem, XhsHomeFeedResponse } from './types'
+export type {
+  XhsCommentItem,
+  XhsCommentListResponse,
+  XhsCommentUserInfo,
+  XhsHomeFeedItem,
+  XhsHomeFeedResponse,
+  XhsSubCommentItem,
+  XhsSubCommentListResponse,
+} from './types'

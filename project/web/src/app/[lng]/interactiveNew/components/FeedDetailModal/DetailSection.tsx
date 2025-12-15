@@ -22,6 +22,7 @@ import {
 import { PlatType } from '@/app/config/platConfig'
 import type { SupportedPlatformType } from '@/store/plugin/plats/types'
 import { useDetailModalStore } from '../../store/detailStore'
+import CommentList from './CommentList'
 
 /**
  * 从描述中移除话题标签（因为话题会单独显示）
@@ -67,7 +68,7 @@ function removeTopicsFromDescription(text: string, platform: SupportedPlatformTy
  */
 function DetailSection() {
   const { t } = useTranslation('interactiveNew')
-  const { detail, preview, loading, error, platform } = useDetailModalStore()
+  const { detail, preview, loading, error, platform, originData } = useDetailModalStore()
 
   // 合并详情和预览数据
   const displayData = useMemo(() => {
@@ -223,12 +224,16 @@ function DetailSection() {
             条评论
           </div>
 
-          {/* 评论列表 - TODO */}
+          {/* 评论列表 */}
           <div className="feedDetailModal_comments_list">
-            <div className="feedDetailModal_comments_empty">
-              <span>🚧</span>
-              <p>评论功能开发中...</p>
-            </div>
+            {platform && detail?.workId && (
+              <CommentList
+                workId={detail.workId}
+                platform={platform}
+                commentCount={displayData.commentCount}
+                xsecToken={originData?.xsec_token}
+              />
+            )}
           </div>
         </div>
 

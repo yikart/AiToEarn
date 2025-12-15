@@ -15,6 +15,8 @@
 
 import { PlatType } from '@/app/config/platConfig'
 import type {
+  CommentListParams,
+  CommentListResult,
   CommentParams,
   CommentResult,
   DirectMessageParams,
@@ -26,6 +28,7 @@ import type {
   HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
+  SubCommentListParams,
 } from '../types'
 import type { DouyinDirectMessageResponse, DouyinInteractionResponse } from './types'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
@@ -187,8 +190,40 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    * 这是抖音特有的方法，直接从 HomeFeedItem.origin 获取详情
    * @param listItemOrigin HomeFeedItem.origin 原始数据
    */
-  getWorkDetailFromListItem(listItemOrigin: any): GetWorkDetailResult {
+  getWorkDetailFromListItem(listItemOrigin: unknown): GetWorkDetailResult {
     return getWorkDetailFromListItem(listItemOrigin)
+  }
+
+  /**
+   * 获取评论列表
+   * TODO: 待实现抖音评论列表功能
+   * @param params 评论列表请求参数
+   */
+  async getCommentList(params: CommentListParams): Promise<CommentListResult> {
+    // TODO: 实现抖音评论列表
+    return {
+      success: false,
+      message: '抖音评论列表功能开发中',
+      comments: [],
+      cursor: '',
+      hasMore: false,
+    }
+  }
+
+  /**
+   * 获取子评论列表（查看更多回复）
+   * TODO: 待实现抖音子评论列表功能
+   * @param params 子评论列表请求参数
+   */
+  async getSubCommentList(params: SubCommentListParams): Promise<CommentListResult> {
+    // TODO: 实现抖音子评论列表
+    return {
+      success: false,
+      message: '抖音子评论列表功能开发中',
+      comments: [],
+      cursor: '',
+      hasMore: false,
+    }
   }
 }
 
