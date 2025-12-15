@@ -19,7 +19,7 @@ TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest�
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
 ## 最新动态:
-
+* **2025.12.15**： "All In Agent" 的开始！我们加入了能够自动内容生成和发布以及一些帮助你操作Aitoearn的超级Ai智能agent。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
 * **2025.11.28**：支持应用内自动更新。在创作界面新增大量 AI 功能，例如：缩写、扩写、图片生成、视频生成、标签生成等，并支持 Nano Banana Pro。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 * **2025.11.12**：首个开源且可完全使用的版本。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 
@@ -149,10 +149,17 @@ Electron 项目为 AiToEarn 提供桌面客户端。
 🚀 **AiToEarn 是一个全链条的 AI 驱动内容增长与变现平台。**
 从创意灵感，到多平台分发，再到数据分析与变现——AiToEarn 让你真正实现 **Create · Publish · Engage · Monetize**。
 
+### Agent —— 智能体
+- **All In Agent**：让智能体帮你创作和发布，辅助你使用我们的Aitiearn
+
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/agent_0.png" width="100%">
+</div>
+
 ### 1. 内容发布 —— 一键多平台
 
 - **全网分发**：覆盖最广的平台矩阵（Douyin、Kwai、WeChat Channels、WeChat Offical Accounts、 Bilibili、Rednote、Facebook、Instagram、TikTok、LinkedIn、Threads、YouTube、Pinterest、X（Twitter））。
-- **（即将推出）智能导入**：导入历史内容，快速二次编辑与再分发。
+- **智能导入**：导入历史内容，快速二次编辑与再分发。
 
   - 例如：一键将你的小红书内容同步到 YouTube。
 
@@ -207,7 +214,7 @@ Electron 项目为 AiToEarn 提供桌面客户端。
   <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
 </div>
 
-### 6.（即将推出）数据分析 —— 全链路漏斗
+### 6. 数据分析 —— 全链路漏斗
 
 - **跨平台对比**：某个平台限流？其他平台一样能打。
 - **端到端监控**：追踪表现，构建通往 100 万＋粉丝的路线图。
@@ -263,6 +270,7 @@ AiToEarn 集成了多种官方 API。以下是开发者密钥配置指南：
 - 2025.10.01 — [发布 v1.0.27](https://github.com/yikart/AiToEarn/releases/tag/v1.0.27)
 - 2025.11.01 — [首个可用版本：v1.2.2](https://github.com/yikart/AiToEarn/releases/tag/v1.2.2)
 - 2025.11.12 — [首个开源、完全可用的版本。发布：v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+- 2025.12.15 — [首个Agent版本发布。v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
 
 ---
 

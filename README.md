@@ -21,6 +21,8 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
 ## What's new:
+* 2025.12.15 : "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content, and help you operate AiToEarn. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+
 * 2025.11.28 : Support automatic updates within the application. Add a large number of AI functions to the creation interface, such as abbreviation, expansion, image creation, video creation, tag generation, etc., supporting Nano Banana Pro.[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 * 2025.11.12 : The first open-source, fully usable version,[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 
@@ -162,11 +164,18 @@ The Electron project provides a desktop client for AiToEarn.
 🚀 **AiToEarn is a full-stack AI-powered content growth & monetization platform.**
 From creative ideas, to multi-channel publishing, to analytics & monetization — AiToEarn helps you truly **Create · Publish · Engage · Monetize.**
 
+### Agent — AI Assistant
+- **All In Agent**: Let the AI agent help you create and publish content, assisting you in operating AiToEarn.
+
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/agent_0.png" width="100%">
+</div>
+
 
 ### 1. Content Publishing — One-Click Multi-Platform
 
 * **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat Channels, WeChat Offical Account, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, x(Twitter)).
-* **(Coming soon) Smart Import**: Import historical content for fast re-editing & redistribution.
+* **Smart Import**: Import historical content for fast re-editing & redistribution.
 
   * Example: Sync your Xiaohongshu posts to YouTube in one click.
 * **Calendar Scheduler**: Plan & coordinate content like a calendar across all platforms.
@@ -218,7 +227,7 @@ From creative ideas, to multi-channel publishing, to analytics & monetization �
   <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
 </div>
 
-### 6. (Coming Soon) Content Analytics — Full-Funnel Data
+### 6. Content Analytics — Full-Funnel Data
 
 * **Cross-Platform Comparison**: One platform may block traffic, but others won’t.
 * **End-to-End Monitoring**: Track performance and build your path to 1M+ followers.
@@ -277,6 +286,8 @@ https://t.me/harryyyy2025
 * 2025.10.01 — [Released v1.0.27](https://github.com/yikart/AiToEarn/releases/tag/v1.0.27)
 * 2025.11.01 — [First Usable Version: v1.2.2](https://github.com/yikart/AiToEarn/releases/tag/v1.2.2)
 * 2025.11.12 — [The first open-source, fully usable release. Released: v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+* 2025.12.15 — [First Agent Version Released: v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+
 ---
 
 ## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
