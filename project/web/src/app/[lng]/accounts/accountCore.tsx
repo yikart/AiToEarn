@@ -29,8 +29,10 @@ interface AccountPageCoreProps {
     spaceId?: string
     showVip?: string
     addChannel?: string // 添加频道引导参数
+    action?: string // 动作类型：publish 等
     // AI生成的内容参数
     aiGenerated?: string
+    accountId?: string
     taskId?: string
     title?: string
     description?: string
@@ -233,19 +235,45 @@ export default function AccountPageCore({
         
         setAiGeneratedData(data)
         
-        // 选择第一个在线且PC端支持的账户
-        const firstAvailableAccount = allAccounts.find(account => {
-          // 检查账户是否在线
-          const isOnline = account.status === AccountStatus.USABLE
-          // 检查平台是否支持PC端
-          const platConfig = AccountPlatInfoMap.get(account.type)
-          const isPcSupported = !platConfig?.pcNoThis
-          
-          return isOnline && isPcSupported
-        })
+        // 如果有 platform 参数，设置目标平台
+        if (searchParams.platform) {
+          const platform = searchParams.platform as PlatType
+          const validPlatforms = Object.values(PlatType)
+          if (validPlatforms.includes(platform)) {
+            setTargetPlatform(platform)
+          }
+        }
         
-        if (firstAvailableAccount) {
-          setDefaultAccountId(firstAvailableAccount.id)
+        // 选择账号：优先使用 accountId，其次选择对应平台的账号
+        let targetAccount = null
+        
+        if (searchParams.accountId) {
+          // 如果指定了 accountId，查找该账号
+          targetAccount = allAccounts.find(account => account.id === searchParams.accountId)
+        } else if (searchParams.platform) {
+          // 如果指定了 platform，选择该平台的第一个在线账号
+          const platform = searchParams.platform as PlatType
+          targetAccount = allAccounts.find(account => {
+            const isOnline = account.status === AccountStatus.USABLE
+            const isPlatformMatch = account.type === platform
+            return isOnline && isPlatformMatch
+          })
+          // 如果没有在线账号，选择该平台的第一个账号
+          if (!targetAccount) {
+            targetAccount = allAccounts.find(account => account.type === platform)
+          }
+        } else {
+          // 没有指定平台，选择第一个在线且PC端支持的账户
+          targetAccount = allAccounts.find(account => {
+            const isOnline = account.status === AccountStatus.USABLE
+            const platConfig = AccountPlatInfoMap.get(account.type)
+            const isPcSupported = !platConfig?.pcNoThis
+            return isOnline && isPcSupported
+          })
+        }
+        
+        if (targetAccount) {
+          setDefaultAccountId(targetAccount.id)
         } else if (allAccounts[0]) {
           // 如果没有找到符合条件的账户，退而求其次选择第一个账户
           setDefaultAccountId(allAccounts[0].id)
@@ -259,7 +287,10 @@ export default function AccountPageCore({
         // Clear URL params
         if (typeof window !== 'undefined') {
           const url = new URL(window.location.href)
+          url.searchParams.delete('action')
           url.searchParams.delete('aiGenerated')
+          url.searchParams.delete('platform')
+          url.searchParams.delete('accountId')
           url.searchParams.delete('taskId')
           url.searchParams.delete('title')
           url.searchParams.delete('description')
@@ -272,7 +303,10 @@ export default function AccountPageCore({
       }
     }
 
-    if (searchParams?.platform || searchParams?.spaceId) {
+    // 注意：只有在不是 AI 发布场景时才处理 platform 参数打开添加账号弹窗
+    if ((searchParams?.platform || searchParams?.spaceId) && 
+        searchParams?.action !== 'publish' && 
+        searchParams?.aiGenerated !== 'true') {
       // 验证平台类型是否有效
       const platform = searchParams.platform as PlatType
       const validPlatforms = Object.values(PlatType)
@@ -459,8 +493,9 @@ export default function AccountPageCore({
             try {
               let coverInfo
               
-              // If API returned cover URL, use it directly
-              if (videoMedia.coverUrl) {
+              // If API returned cover URL, use it directly (support both coverUrl and thumbUrl)
+              const coverUrl = videoMedia.coverUrl || videoMedia.thumbUrl
+              if (coverUrl) {
                 const { formatImg } = require('@/components/PublishDialog/PublishDialog.util')
                 
                 // Load cover image to get dimension info
@@ -472,8 +507,8 @@ export default function AccountPageCore({
                       id: generateUUID(),
                       width: img.width,
                       height: img.height,
-                      imgUrl: videoMedia.coverUrl,
-                      ossUrl: videoMedia.coverUrl,
+                      imgUrl: coverUrl,
+                      ossUrl: coverUrl,
                       filename: `ai_${aiGeneratedData.taskId}_cover.jpg`,
                       imgPath: '',
                       size: 0,
@@ -483,7 +518,7 @@ export default function AccountPageCore({
                   img.onerror = () => {
                     resolve(null)
                   }
-                  img.src = videoMedia.coverUrl
+                  img.src = coverUrl
                 })
               }
               
