@@ -36,6 +36,8 @@
     "antd": "^5.25.2",
     "axios": "^1.9.0",
     "blueimp-md5": "^2.19.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "cookies-next": "^4.3.0",
     "cropperjs": "^1.6.2",
     "crypto-js": "^4.2.0",
@@ -51,6 +53,7 @@
     "lexical": "^0.37.0",
     "lexical-beautiful-mentions": "^0.1.48",
     "lodash": "^4.17.21",
+    "lucide-react": "^0.561.0",
     "next": "14.2.29",
     "next-sitemap": "^4.2.3",
     "qs": "^6.14.0",
@@ -70,6 +73,7 @@
     "sharp": "^0.34.4",
     "sortablejs": "^1.15.6",
     "swiper": "^11.2.8",
+    "tailwind-merge": "^3.4.0",
     "tui-image-editor": "^3.15.3",
     "zustand": "^5.0.5"
   },
@@ -78,6 +82,7 @@
     "@eslint/eslintrc": "^3",
     "@hello-pangea/dnd": "^16.6.0",
     "@next/eslint-plugin-next": "^15.5.3",
+    "@tailwindcss/postcss": "^4.1.18",
     "@types/blueimp-md5": "^2.18.2",
     "@types/crypto-js": "^4.2.2",
     "@types/echarts": "^5.0.0",
@@ -87,6 +92,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-transition-group": "^4.4.12",
+    "autoprefixer": "^10.4.23",
     "eslint": "^9.39.1",
     "eslint-plugin-format": "^1.0.2",
     "eslint-plugin-react": "^7.37.4",
@@ -94,6 +100,9 @@
     "file-loader": "^6.2.0",
     "i18next-resources-for-ts": "1.5.0",
     "locize-cli": "9.0.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.18",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3"
   }
 }
