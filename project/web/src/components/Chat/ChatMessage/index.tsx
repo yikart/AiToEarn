@@ -53,6 +53,9 @@ interface IWorkflowStepItemProps {
 }
 
 function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
+  // 判断步骤是否完成：不活跃状态即为完成
+  const isCompleted = !step.isActive
+
   return (
     <div
       className={cn(
@@ -64,7 +67,7 @@ function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
       <div className="shrink-0 mt-0.5">
         {step.isActive ? (
           <Loader2 className="w-3 h-3 text-purple-500 animate-spin" />
-        ) : step.type === 'tool_result' ? (
+        ) : isCompleted ? (
           <CheckCircle2 className="w-3 h-3 text-green-500" />
         ) : (
           <Wrench className="w-3 h-3 text-gray-400" />
@@ -74,11 +77,13 @@ function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
       <div className="flex-1 min-w-0">
         <div className={cn(
           'font-medium truncate',
-          step.isActive ? 'text-purple-600' : 'text-gray-600',
+          step.isActive ? 'text-purple-600' : isCompleted ? 'text-green-600' : 'text-gray-600',
         )}>
-          {step.type === 'tool_result'
-            ? `${formatToolName(step.toolName || 'Tool')} ✓`
-            : formatToolName(step.toolName || 'Processing')}
+          {step.type === 'tool_call'
+            ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
+            : step.type === 'tool_result'
+              ? `${formatToolName(step.toolName || 'Tool')} 返回结果`
+              : formatToolName(step.toolName || 'Processing')}
         </div>
         {step.content && (
           <pre className="text-[10px] text-gray-400 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -116,9 +121,15 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
     }
   }, [isActive])
 
-  // 计算已完成的步骤数
-  const completedSteps = workflowSteps.filter((s) => !s.isActive && s.type === 'tool_result').length
+  // 统计工具调用数
   const totalToolCalls = workflowSteps.filter((s) => s.type === 'tool_call').length
+  // 已完成的工具调用数 = 有对应 tool_result 的数量，或者 isActive 为 false 的 tool_call 数量
+  const toolResultCount = workflowSteps.filter((s) => s.type === 'tool_result').length
+  // 使用两者中的较大值，因为可能存在 tool_call 完成但还没返回结果的情况
+  const completedSteps = Math.max(
+    toolResultCount,
+    workflowSteps.filter((s) => !s.isActive && s.type === 'tool_call').length
+  )
 
   // 当前活跃的步骤
   const activeStep = workflowSteps.find((s) => s.isActive)
@@ -282,7 +293,7 @@ export function ChatMessage({
       <div
         className={cn(
           'shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden',
-          isUser ? 'bg-purple-500' : 'bg-gradient-to-br from-purple-500 to-pink-500',
+          isUser ? 'bg-purple-500' : 'bg-linear-to-br from-purple-500 to-pink-500',
         )}
       >
         {isUser ? (

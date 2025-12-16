@@ -118,10 +118,13 @@ function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
       }
 
       // 处理工具结果（添加到工作流）
+      // 支持两种数据路径：msg.message.content 和 msg.message.message.content
       if ((msg as any).message) {
         const userMsg = (msg as any).message as any
-        if (userMsg?.content && Array.isArray(userMsg.content)) {
-          userMsg.content.forEach((item: any) => {
+        // 尝试两种数据路径
+        const contentArray = userMsg?.content || userMsg?.message?.content
+        if (contentArray && Array.isArray(contentArray)) {
+          contentArray.forEach((item: any) => {
             if (item.type === 'tool_result' && item.tool_use_id) {
               const toolName = toolCallMap.get(item.tool_use_id) || 'Tool'
               let resultText = ''
@@ -516,7 +519,7 @@ export default function ChatDetailPage() {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
+          <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
             <Image
               src={logo}
               alt="AiToEarn"

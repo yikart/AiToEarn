@@ -208,8 +208,10 @@ export const userMessageHandler: ISSEHandler = {
   canHandle: (msg) => msg.type === 'user' && !!msg.message,
   handle: (msg, ctx) => {
     const userMsg = msg.message as any
-    if (userMsg?.message?.content && Array.isArray(userMsg.message.content)) {
-      userMsg.message.content.forEach((item: any) => {
+    // 支持两种数据路径：userMsg.content 和 userMsg.message.content
+    const contentArray = userMsg?.content || userMsg?.message?.content
+    if (contentArray && Array.isArray(contentArray)) {
+      contentArray.forEach((item: any) => {
         if (item.type === 'tool_result') {
           let resultText = ''
           if (Array.isArray(item.content)) {
