@@ -1,0 +1,37 @@
+{
+  "title": "设置",
+  "tabs": {
+    "profile": "个人资料",
+    "subscription": "订阅",
+    "general": "通用"
+  },
+  "profile": {
+    "totalIncome": "累计收入",
+    "currentBalance": "当前余额",
+    "logout": "退出登录",
+    "edit": "编辑",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "取消",
+    "nameRequired": "请输入用户名",
+    "nameLengthError": "用户名长度需要在 2-20 个字符之间",
+    "nameUpdateSuccess": "用户名更新成功",
+    "nameUpdateFailed": "用户名更新失败",
+    "avatarTypeError": "请选择图片文件",
+    "avatarSizeError": "图片大小不能超过 5MB",
+    "avatarUpdateSuccess": "头像更新成功",
+    "avatarUpdateFailed": "头像更新失败"
+  },
+  "subscription": {
+    "currentPlan": "当前套餐",
+    "upgrade": "升级",
+    "manage": "管理订阅"
+  },
+  "general": {
+    "language": "网站语言",
+    "languageDesc": "此更改不影响内容生成所使用的语言",
+    "theme": "主题",
+    "themeDesc": "选择您偏好的主题模式"
+  }
+}
+

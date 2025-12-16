@@ -1,0 +1,37 @@
+{
+  "title": "Settings",
+  "tabs": {
+    "profile": "Profile",
+    "subscription": "Subscription",
+    "general": "General"
+  },
+  "profile": {
+    "totalIncome": "Total Income",
+    "currentBalance": "Current Balance",
+    "logout": "Logout",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "nameRequired": "Please enter a username",
+    "nameLengthError": "Username must be between 2-20 characters",
+    "nameUpdateSuccess": "Username updated successfully",
+    "nameUpdateFailed": "Failed to update username",
+    "avatarTypeError": "Please select an image file",
+    "avatarSizeError": "Image size cannot exceed 5MB",
+    "avatarUpdateSuccess": "Avatar updated successfully",
+    "avatarUpdateFailed": "Failed to update avatar"
+  },
+  "subscription": {
+    "currentPlan": "Current Plan",
+    "upgrade": "Upgrade",
+    "manage": "Manage Subscription"
+  },
+  "general": {
+    "language": "Website Language",
+    "languageDesc": "This change does not affect the language used for content generation",
+    "theme": "Theme",
+    "themeDesc": "Choose your preferred theme mode"
+  }
+}
+

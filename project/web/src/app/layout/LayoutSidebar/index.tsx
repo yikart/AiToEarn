@@ -23,6 +23,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { routerData } from '@/app/layout/routerData'
 import logo from '@/assets/images/logo.png'
 import NotificationPanel from '@/components/notification/NotificationPanel'
+import SettingsModal from '@/components/SettingsModal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -159,6 +160,7 @@ const LayoutSidebar = () => {
   const { unreadCount } = useNotification()
   const [notificationVisible, setNotificationVisible] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
+  const [settingsVisible, setSettingsVisible] = useState(false)
 
   // 获取当前路由
   let currRouter = '/'
@@ -277,16 +279,16 @@ const LayoutSidebar = () => {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Link
-                  href={`/${lng}/profile`}
+                <button
+                  onClick={() => setSettingsVisible(true)}
                   className={cn(
-                    'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
+                    'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900 border-none bg-transparent cursor-pointer',
                     collapsed ? 'h-9 w-9 justify-center' : 'gap-2 px-3 py-2',
                   )}
                 >
                   <Settings size={18} />
                   {!collapsed && <span className="text-sm">{t('settings')}</span>}
-                </Link>
+                </button>
               </TooltipTrigger>
               {collapsed && (
                 <TooltipContent side="right">
@@ -413,6 +415,12 @@ const LayoutSidebar = () => {
       <NotificationPanel
         visible={notificationVisible}
         onClose={() => setNotificationVisible(false)}
+      />
+
+      {/* 设置弹框 */}
+      <SettingsModal
+        open={settingsVisible}
+        onClose={() => setSettingsVisible(false)}
       />
     </>
   )

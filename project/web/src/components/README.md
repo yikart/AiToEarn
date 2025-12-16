@@ -19,6 +19,7 @@
 | `LoginModal/` | 登录弹窗 |
 | `notification/` | 通知相关组件 |
 | `PublishDialog/` | 发布对话框（复杂） |
+| `SettingsModal/` | 设置弹框组件 |
 | `ScrollButtonContainer/` | 滚动按钮容器 |
 | `SignInCalendar/` | 签到日历组件 |
 | `VideoPreviewModal.tsx` | 视频预览弹窗 |
@@ -35,6 +36,7 @@ shadcn/ui 组件库，新增组件请使用 `npx shadcn@latest add <component>` 
 | `dialog.tsx` | 对话框基础组件 |
 | `alert-dialog.tsx` | 警告对话框组件 |
 | `modal.tsx` | 通用 Modal 弹窗封装（基于 dialog） |
+| `select.tsx` | 选择器组件 |
 | `sonner.tsx` | Toast 通知组件（配合 `@/lib/toast` 使用） |
 
 ### Modal - 通用弹窗组件
@@ -237,22 +239,6 @@ import LoginModal from '@/components/LoginModal'
 />
 ```
 
-### GetCode - 获取验证码
-
-带倒计时的获取验证码按钮。
-
-```tsx
-import GetCode from '@/components/GetCode/GetCode'
-
-<GetCode
-  onGetCode={(unlock) => {
-    // 发送验证码
-    // unlock() 可用于提前解锁按钮
-  }}
-  codeSendTime={60}  // 倒计时秒数，默认60
-/>
-```
-
 ### WalletAccountSelect - 钱包账户选择器
 
 支持分页加载的钱包账户下拉选择器。
@@ -299,6 +285,33 @@ Facebook 主页选择弹窗。
 ### PublishDialog - 发布对话框
 
 复杂的内容发布对话框，包含多平台发布、素材上传、AI 生成等功能。
+
+### SettingsModal - 设置弹框
+
+用户设置弹框组件，包含个人资料、通用设置等功能。
+
+```tsx
+import SettingsModal from '@/components/SettingsModal'
+
+<SettingsModal
+  open={boolean}
+  onClose={() => void}
+/>
+```
+
+**Props：**
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 是否显示弹框 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+
+**特性：**
+- 📋 左侧侧边栏导航（个人资料、通用设置）
+- 👤 个人资料：头像上传、用户名修改、邮箱显示、退出登录
+- 💰 显示累计收入和当前余额
+- 🌐 通用设置：网站语言切换
+- 🎨 使用 shadcn/ui + Tailwind CSS 实现
 
 ---
 

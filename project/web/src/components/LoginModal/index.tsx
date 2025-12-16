@@ -185,7 +185,6 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
               shape="rectangular"
               text="signin_with"
               locale={lng === 'zh-CN' ? 'zh_CN' : 'en'}
-              width="100%"
               size="large"
             />
           </div>
