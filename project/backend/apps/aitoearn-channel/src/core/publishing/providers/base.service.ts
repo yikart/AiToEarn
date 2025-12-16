@@ -10,6 +10,7 @@ import {
   PublishTask,
 } from '../../../libs/database/schema/publishTask.schema'
 import { PublishRecordService } from '../../account/publish-record.service'
+import { CreatePublishDto } from '../dto/publish.dto'
 import { MediaStagingService } from '../media-staging.service'
 import { PublishingException } from '../publishing.exception'
 import { MediaProcessingStatus, MediaProcessingStatusResult, PublishingTaskResult } from '../publishing.interface'
@@ -259,5 +260,21 @@ export abstract class PublishService {
       { _id: id },
       { status, errorMsg: errMsg },
     ).exec()
+  }
+
+  async validatePublishParams(publishTask: CreatePublishDto): Promise<{
+    success: boolean
+    message?: string
+  }> {
+    if (!publishTask.accountType) {
+      return {
+        success: false,
+        message: 'Account type is required',
+      }
+    }
+    return {
+      success: true,
+      message: 'Publish params are valid',
+    }
   }
 }

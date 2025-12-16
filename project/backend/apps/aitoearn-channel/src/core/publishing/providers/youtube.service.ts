@@ -6,6 +6,7 @@ import {
   PublishTask,
 } from '../../../libs/database/schema/publishTask.schema'
 import { YoutubeService } from '../../platforms/youtube/youtube.service'
+import { CreatePublishDto } from '../dto/publish.dto'
 import { PublishingException } from '../publishing.exception'
 import { PublishingTaskResult } from '../publishing.interface'
 import { PublishService } from './base.service'
@@ -102,6 +103,28 @@ export class YoutubePubService extends PublishService {
     await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
     return {
       status: PublishStatus.PUBLISHED,
+    }
+  }
+
+  override async validatePublishParams(publishTask: CreatePublishDto): Promise<{
+    success: boolean
+    message?: string
+  }> {
+    if (!publishTask.title) {
+      return {
+        success: false,
+        message: 'Title is required',
+      }
+    }
+    if (!publishTask.desc) {
+      return {
+        success: false,
+        message: 'Description is required',
+      }
+    }
+    return {
+      success: true,
+      message: 'Publish params are valid',
     }
   }
 }

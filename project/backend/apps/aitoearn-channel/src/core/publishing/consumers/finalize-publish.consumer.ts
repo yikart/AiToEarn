@@ -78,12 +78,6 @@ export class FinalizePublishPostConsumer extends WorkerHost implements OnModuleD
       await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
         status: PublishStatus.FAILED,
         errorMsg: error.toString(),
-        errorData: {
-          type: 'PUBLISH_FAILED',
-          code: 'UNKNOWN_ERROR',
-          message: error.toString(),
-          originalData: error,
-        },
       })
     }
   }
