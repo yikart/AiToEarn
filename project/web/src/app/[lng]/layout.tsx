@@ -1,11 +1,11 @@
 import { dir } from 'i18next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import ConditionalHeader from '../layout/ConditionalHeader'
+import LayoutSidebar from '@/app/layout/LayoutSidebar'
+import MobileNav from '@/app/layout/MobileNav'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
-import LyaoutHeader from "@/app/layout/LyaoutHeader";
 
 export async function generateMetadata({
   params,
@@ -35,16 +35,15 @@ export default async function RootLayout({
     <html lang={lng} dir={dir(lng)}>
       <body>
         <Providers lng={lng}>
-          <div
-            style={{
-              height: '100vh',
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '0',
-            }}
-          >
-            <LyaoutHeader />;
-            {children}
+          {/* 移动端顶部导航 - fixed 定位，独立于 flex 布局 */}
+          <MobileNav />
+          <div className="flex h-screen w-full">
+            {/* 桌面端侧边栏 */}
+            <LayoutSidebar />
+            {/* 主内容区域 */}
+            <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
+              {children}
+            </main>
           </div>
         </Providers>
       </body>
