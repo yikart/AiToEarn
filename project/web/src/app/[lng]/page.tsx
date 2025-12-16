@@ -597,14 +597,12 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     console.log('handleCreateTask')
     // 测试模式：直接使用模拟数据
     const USE_TEST_DATA = false
-    const testResultMsg = {"type":"result","message":{"type":"result","subtype":"success","uuid":"5090d6ac-bd17-4137-b1e4-1419722ea709","duration_ms":39508,"duration_api_ms":51529,"is_error":false,"num_turns":5,"message":"✅ **北京旅行手账插画已准备完成！**\n\n我已为您准备好两个平台的发布内容，系统会自动引导您到发布页面：\n\n---\n\n### 📱 **抖音版**\n**标题：** 北京旅行手账插画·童趣冒险日记\n\n**文案：**\n🎨 用蜡笔画下北京的美好时光！\n\n📍 一日精华路线：\n第1站：天安门广场 - 从中国的心脏开始冒险！\n第2站：故宫 - 探索皇帝住过的宫殿！\n第3站：景山公园 - 爬上山顶看最美北京！\n第4站：南锣鼓巷 - 穿越古老胡同寻找宝藏！\n最终站：北京烤鸭+冰糖葫芦 - 好吃！尝尝北京味道！\n\n✨ 原来北京这么好玩！我要再来一次！\n\n**话题：** #北京旅行 #旅行手账 #手绘插画\n\n---\n\n### 📕 **小红书版**\n**标题：** 北京一日游手账｜蜡笔风童趣路线图\n\n**文案：**\n🎨 像孩子一样用蜡笔记录北京的美好～\n\n📍 一日精华路线：\n✅ 天安门广场 - 从中国的心脏开始冒险\n✅ 故宫 - 探索皇帝住过的宫殿\n✅ 景山公园 - 爬上山顶看最美北京\n✅ 南锣鼓巷 - 穿越古老胡同寻找宝藏\n✅ 北京烤鸭+冰糖葫芦 - 尝尝正宗北京味道\n\n原来北京这么好玩！我要再来一次🎉\n\n**话题：** #北京旅行 #手绘插画 #旅行手账\n\n---\n\n系统会自动跳转到对应平台的发布页面，所有内容已为您预填好（包括图片、标题、文案、话题），您只需确认发布即可！🚀",
-    "result":[
-    {"platform":"douyin","type":"fullContent","title":"北京旅行手账插画·童趣冒险日记","description":"🎨 用蜡笔画下北京的美好时光！\n\n📍 一日精华路线：\n第1站：天安门广场 - 从中国的心脏开始冒险！\n第2站：故宫 - 探索皇帝住过的宫殿！\n第3站：景山公园 - 爬上山顶看最美北京！\n第4站：南锣鼓巷 - 穿越古老胡同寻找宝藏！\n最终站：北京烤鸭+冰糖葫芦 - 好吃！尝尝北京味道！\n\n✨ 原来北京这么好玩！我要再来一次！","tags":["北京旅行","旅行手账","手绘插画"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj715iyb.jpg"}],
-    "action":"navigateToPublish","accountId":"douyin_MS4wLjABAAAATHE9sjNjL2xUmIvoGev3Q1wNVZCAsEzwX06VlzyCZztj0jBV-dMdN6cETZghdV3y_web","errorMessage":"Platform does not support MCP publishing tool"},
-    {"platform":"xhs","type":"fullContent","title":"北京一日游手账｜蜡笔风童趣路线图","description":"🎨 像孩子一样用蜡笔记录北京的美好～\n\n📍 一日精华路线：\n✅ 天安门广场 - 从中国的心脏开始冒险\n✅ 故宫 - 探索皇帝住过的宫殿\n✅ 景山公园 - 爬上山顶看最美北京\n✅ 南锣鼓巷 - 穿越古老胡同寻找宝藏\n✅ 北京烤鸭+冰糖葫芦 - 尝尝正宗北京味道\n\n原来北京这么好玩！我要再来一次🎉","tags":["北京旅行","手绘插画","旅行手账"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj715iyb.jpg"}],
-    "action":"navigateToPublish","accountId":"xhs_681b9361000000000801588b_web","errorMessage":"Platform does not support MCP publishing tool"}],
-    "total_cost_usd":0.8000690500000001,
-    "usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":202823},"cache_creation_input_tokens":202823,"cache_read_input_tokens":7236,"input_tokens":23,"output_tokens":1928,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+    const testResultMsg = {"type":"result","message":{"type":"result","subtype":"success","uuid":"834be153-3476-4458-93b8-978bdc6fabbf","duration_ms":436939,"duration_api_ms":386127,"is_error":false,"num_turns":52,"message":"完成！✅\n\n我已经为您完成了以下任务：\n\n1. **✅ 生成教学视频** - 创建了一个15秒的适合三岁以下儿童的英语教学视频，内容包括：\n - 介绍\"Banana\"（香蕉）这个单词\n - 重复单词加深记忆\n - 描述颜色（黄色）\n - 描述形状（弯弯的）\n - 展示小、中、大三种尺寸的香蕉\n - 中英文双语字幕\n\n2. **✅ 生成封面图** - 为视频创建了一个色彩鲜艳、适合儿童的封面图\n\n3. **✅ 保存到草稿箱** - 内容已成功保存到您的草稿箱，包含完整的标题、描述、标签和媒体文件\n\n4. **✅ 准备发布到快手** - 由于MCP工具验证问题，系统将引导您到快手发布页面，所有内容（标题、描述、标签、视频、封面）都已预填充好，您只需确认并点击发布即可。\n\n**视频链接**：\nhttps://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/video/sora-2/68af1bd086d40b6d30173e43/694037a80a2355b4bf87de37.mp4\n\n**封面图链接**：\nhttps://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj7dlpy6.png\n\n**草稿箱ID**: 694039220a2355b4bf87e999",
+      "result":{"taskId":"694034a00a2355b4bf87cd49","medias":[{"type":"VIDEO","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/video/sora-2/68af1bd086d40b6d30173e43/694037a80a2355b4bf87de37.mp4",
+        "thumbUrl":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68af1bd086d40b6d30173e43/mj7dlpy6.png"}],
+        "type":"fullContent","title":"🍌 学习香蕉 - 幼儿英语教学视频","description":"🍌 教小朋友学英语单词\"Banana\"（香蕉）！\n\n视频内容：\n✅ 英文单词介绍和重复\n✅ 颜色描述（黄色）\n✅ 形状描述（弯弯的）\n✅ 大小对比：小、中、大三种香蕉\n✅ 中英文双语字幕\n\n完美适合三岁以下儿童的英语启蒙教育！\n\n#英语学习 #幼儿教育 #儿童英语 #早教 #启蒙教育","tags":["英语学习","幼儿教育","儿童英语","早教","启蒙教育"],
+      "action":"navigateToPublish","platform":"xhs","errorMessage":"MCP publishing tool validation failed. Content has been saved to draft box successfully. Please complete publishing through the web interface."},"total_cost_usd":6.176993949999999,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":1472745},
+      "cache_creation_input_tokens":1472745,"cache_read_input_tokens":1731334,"input_tokens":239,"output_tokens":8468,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
 
     // 测试模式：直接处理结果
     if (USE_TEST_DATA) {
@@ -626,8 +624,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
           
           console.log('[TEST MODE] Processing results, count:', resultArray.length)
           
-          // 收集所有需要通过插件发布的任务
+          // 收集所有需要通过插件发布的任务和其他平台任务
           const pluginTasks: any[] = []
+          const otherPlatformTasks: any[] = []
           
           resultArray.forEach((taskData: any) => {
             const resultType = taskData.type
@@ -637,11 +636,14 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             if (resultType === 'fullContent' && action === 'navigateToPublish') {
               if (platform === 'xhs' || platform === 'douyin') {
                 pluginTasks.push(taskData)
+              } else {
+                // 快手等其他平台
+                otherPlatformTasks.push(taskData)
               }
             }
           })
           
-          console.log('[TEST MODE] Plugin tasks:', pluginTasks.length)
+          console.log('[TEST MODE] Plugin tasks:', pluginTasks.length, 'Other platform tasks:', otherPlatformTasks.length)
           
           // 处理插件平台任务
           if (pluginTasks.length > 0) {
@@ -751,9 +753,45 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 }
               } catch (error: any) {
                 console.error('[TEST MODE] Plugin publish error:', error)
-                message.error(`发布失败: ${error.message}`)
+                message.error(`${error.message}`)
               }
             }
+          }
+          
+          // 处理其他平台任务（快手等）
+          if (otherPlatformTasks.length > 0) {
+            console.log('[TEST MODE] Processing other platform tasks')
+            
+            // 取第一个任务（如果有多个，也只处理第一个）
+            const taskData = otherPlatformTasks[0]
+            const platform = taskData.platform
+            
+            setTimeout(() => {
+              // 跳转到 /accounts 页面，并传递发布参数
+              console.log('[TEST MODE] taskData:', taskData)
+              console.log('[TEST MODE] taskData.taskId:', taskData.taskId)
+              console.log('[TEST MODE] taskData.platform:', taskData.platform)
+              console.log('[TEST MODE] taskData.accountId:', taskData.accountId)
+              
+              const queryParams = new URLSearchParams({
+                action: 'publish',  // 明确标记为发布动作
+                aiGenerated: 'true',
+                platform: platform,
+                accountId: taskData.accountId || '',  // 如果有指定账号
+                taskId: taskData.taskId || '',
+                title: taskData.title || '',
+                description: taskData.description || '',
+                tags: JSON.stringify(taskData.tags || []),
+                medias: JSON.stringify(taskData.medias || []),
+              })
+              
+              console.log('[TEST MODE] Query params:')
+              queryParams.forEach((value, key) => {
+                console.log(`  ${key}:`, value.length > 100 ? value.substring(0, 100) + '...' : value)
+              })
+              console.log('[TEST MODE] Full URL:', `/${lng}/accounts?${queryParams.toString()}`)
+              router.push(`/${lng}/accounts?${queryParams.toString()}`)
+            }, 1500)
           }
         }
         
@@ -1153,10 +1191,10 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                               duration: 0,
                               cover: {
                                 id: '',
-                                imgPath: (video as any).coverUrl || '',
-                                ossUrl: (video as any).coverUrl,
+                                imgPath: (video as any).coverUrl || (video as any).thumbUrl || '',
+                                ossUrl: (video as any).coverUrl || (video as any).thumbUrl,
                                 size: 0,
-                                imgUrl: (video as any).coverUrl || '',
+                                imgUrl: (video as any).coverUrl || (video as any).thumbUrl || '',
                                 filename: '',
                                 width: 0,
                                 height: 0,
@@ -1217,7 +1255,9 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 if (!action) {
                   setTimeout(() => {
                     const queryParams = new URLSearchParams({
+                      action: 'publish',  // 明确标记为发布动作
                       aiGenerated: 'true',
+                      platform: taskData.platform || '',
                       taskId: taskData.taskId || '',
                       title: taskData.title || '',
                       description: taskData.description || '',
@@ -1352,33 +1392,29 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                     }
                   })()
                 }
-                // action: publish - 选中指定平台账户并填充内容
+                // action: navigateToPublish - 直接跳转发布页面
                 else if (action === 'navigateToPublish') {
                   const platform = taskData.platform
                   
-                  // 注意：xhs 和 douyin 已经在前面统一处理了，这里只处理其他平台
+                  // 注意：xhs 和 douyin 已经在前面统一处理了，这里只处理其他平台（快手等）
                   if (platform !== 'xhs' && platform !== 'douyin') {
-                    // 其他平台使用原有的跳转逻辑
-                    // 获取平台名称（支持不同大小写）
-                    let platformName = platform
-                    // 尝试从 AccountPlatInfoMap 获取显示名称
-                    for (const [key, value] of AccountPlatInfoMap.entries()) {
-                      if (key.toLowerCase() === platform.toLowerCase()) {
-                        platformName = value.name
-                        break
-                      }
-                    }
-                    
-                    Modal.confirm({
-                      title: t('aiGeneration.needAddChannel' as any),
-                      content: t('aiGeneration.channelNotAdded' as any, { platform: platformName }),
-                      okText: t('aiGeneration.goAdd' as any),
-                      cancelText: t('aiGeneration.cancel' as any),
-                      onOk: () => {
-                        // 跳转到账号页面，自动打开对应平台的授权
-                        router.push(`/${lng}/accounts?addChannel=${platform}`)
-                      },
-                    })
+                    // 其他平台：跳转到 /accounts 页面并自动打开发布弹窗
+                    setTimeout(() => {
+                      const queryParams = new URLSearchParams({
+                        action: 'publish',  // 明确标记为发布动作
+                        aiGenerated: 'true',
+                        platform: platform,
+                        accountId: taskData.accountId || '',  // 如果有指定账号
+                        taskId: taskData.taskId || '',
+                        title: taskData.title || '',
+                        description: taskData.description || '',
+                        tags: JSON.stringify(taskData.tags || []),
+                        medias: JSON.stringify(taskData.medias || []),
+                      })
+                      
+                      console.log('[UI] Navigating to /accounts for publishing, platform:', platform)
+                      router.push(`/${lng}/accounts?${queryParams.toString()}`)
+                    }, 1500)
                   }
                 }
                 // action: updateChannel - 更新频道授权
