@@ -220,7 +220,7 @@ export default function AccountPageCore({
     }
 
     // Handle AI-generated content params
-    if (searchParams?.aiGenerated === 'true' && searchParams?.taskId && allAccounts.length > 0) {
+    if (searchParams?.aiGenerated === 'true' && allAccounts.length > 0) {
       try {
         const medias = searchParams.medias ? JSON.parse(decodeURIComponent(searchParams.medias)) : []
         const tags = searchParams.tags ? JSON.parse(decodeURIComponent(searchParams.tags)) : []
