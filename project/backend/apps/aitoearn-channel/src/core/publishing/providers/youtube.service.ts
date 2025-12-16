@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { youtube_v3 } from 'googleapis'
+import { z } from 'zod'
 import { chunkedDownloadFile, getFileSizeFromUrl } from '../../../common'
 import {
   PublishStatus,
@@ -10,6 +11,24 @@ import { CreatePublishDto } from '../dto/publish.dto'
 import { PublishingException } from '../publishing.exception'
 import { PublishingTaskResult } from '../publishing.interface'
 import { PublishService } from './base.service'
+
+// YouTube 发布参数验证 Schema
+const youtubePublishSchema = z.object({
+  title: z.string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be 100 characters or less'),
+  desc: z.string()
+    .min(1, 'Description is required')
+    .max(5000, 'Description must be 5000 characters or less'),
+  videoUrl: z.string()
+    .min(1, 'Video URL is required')
+    .url('Video URL must be a valid URL'),
+  option: z.object({
+    youtube: z.object({
+      categoryId: z.string().min(1, 'Category is required'),
+    }).passthrough(),
+  }).passthrough(),
+}).passthrough()
 
 @Injectable()
 export class YoutubePubService extends PublishService {
@@ -110,45 +129,21 @@ export class YoutubePubService extends PublishService {
     success: boolean
     message?: string
   }> {
-    if (!publishTask.title) {
+    const result = youtubePublishSchema.safeParse(publishTask)
+
+    if (result.success) {
       return {
-        success: false,
-        message: 'Title is required',
+        success: true,
+        message: 'Publish params are valid',
       }
     }
-    if (publishTask.title.length > 100) {
-      return {
-        success: false,
-        message: 'Title must be 100 characters or less',
-      }
-    }
-    if (!publishTask.desc) {
-      return {
-        success: false,
-        message: 'Description is required',
-      }
-    }
-    if (publishTask.desc.length > 5000) {
-      return {
-        success: false,
-        message: 'Description must be 5000 characters or less',
-      }
-    }
-    if (!publishTask.videoUrl) {
-      return {
-        success: false,
-        message: 'Video URL is required',
-      }
-    }
-    if (!publishTask.option?.youtube?.categoryId) {
-      return {
-        success: false,
-        message: 'Category is required',
-      }
-    }
+
+    // 返回第一个验证错误
+    const errors = result.error.issues
+    const { message, path } = errors[0]
     return {
-      success: true,
-      message: 'Publish params are valid',
+      success: false,
+      message: message ? `${message} ${path.join('.')}` : 'Validation failed',
     }
   }
 }

@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-
 import { QueueService } from '@yikart/aitoearn-queue'
 import { PublishRecord } from '@yikart/aitoearn-server-client'
 import { Model } from 'mongoose'
