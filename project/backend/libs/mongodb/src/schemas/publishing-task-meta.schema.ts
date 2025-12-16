@@ -1,4 +1,5 @@
 import { Prop, Schema } from '@nestjs/mongoose'
+import mongoose from 'mongoose'
 
 @Schema({})
 export class BiliBiliPublishTaskMeta {
@@ -134,6 +135,6 @@ export class PublishErrorData {
   @Prop({ required: true, default: '' })
   message: string
 
-  @Prop({ required: false })
+  @Prop({ required: false, type: mongoose.Schema.Types.Mixed })
   originalData?: any
 }
