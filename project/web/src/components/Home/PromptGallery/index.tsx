@@ -1,11 +1,18 @@
+/**
+ * PromptGallery - 提示词画廊组件
+ * 功能描述：展示提示词列表，支持筛选、搜索、应用提示词到 AI 生成器
+ */
+
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import styles from '../styles/promptGallery.module.scss'
+import styles from './PromptGallery.module.scss'
 import promptsData from './prompt.json'
 
-// 懒加载图片组件
+/**
+ * 懒加载图片组件
+ */
 function LazyImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
   const [imageSrc, setImageSrc] = useState<string | null>(null)
   const [isLoaded, setIsLoaded] = useState(false)
@@ -86,6 +93,7 @@ function LazyImage({ src, alt, className }: { src: string; alt: string; classNam
   )
 }
 
+/** 提示词项接口定义 */
 interface PromptItem {
   title: string
   preview: string
@@ -97,14 +105,19 @@ interface PromptItem {
   sub_category?: string
 }
 
-interface PromptGallerySectionProps {
+/** 组件属性接口定义 */
+export interface IPromptGalleryProps {
+  /** 应用提示词的回调函数 */
   onApplyPrompt?: (data: { prompt: string; image?: string; mode: 'edit' | 'generate' }) => void
 }
 
 // 使用导入的提示词数据
 const SAMPLE_PROMPTS: PromptItem[] = promptsData as PromptItem[]
 
-export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySectionProps) {
+/**
+ * PromptGallery - 提示词画廊组件
+ */
+export default function PromptGallery({ onApplyPrompt }: IPromptGalleryProps) {
   const { t } = useTransClient('promptGallery')
   const [isExpanded, setIsExpanded] = useState(false)
   const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null)
@@ -154,6 +167,9 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   // 根据展开状态决定显示的提示词
   const displayedPrompts = isExpanded ? filteredPrompts : filteredPrompts.slice(0, itemsToShow)
 
+  /**
+   * 处理应用提示词
+   */
   const handleApplyPrompt = (item: PromptItem, e: React.MouseEvent) => {
     e.stopPropagation()
     if (onApplyPrompt) {
@@ -175,19 +191,6 @@ export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySec
   return (
     <section className={styles.promptGallery}>
       <div className={styles.container}>
-        {/* 标题区域 */}
-        {/* <div className={styles.header}>
-          <div className={styles.badge}>
-            <div className={styles.badgeIcon}></div>
-            <span>{t('badge')}</span>
-          </div>
-          <h2 className={styles.title}>
-            {t('title')}
-            <span className={styles.titleHighlight}>{t('titleHighlight')}</span>
-          </h2>
-
-        </div> */}
-
         {/* 筛选区域 */}
         <div className={styles.filters}>
           <div className={styles.filterButtons}>

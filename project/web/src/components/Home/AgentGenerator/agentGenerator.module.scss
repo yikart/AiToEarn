@@ -1,0 +1,919 @@
+/**
+ * AgentGenerator - 样式文件
+ * AI Agent 内容生成组件样式
+ */
+
+.agentGenerator {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto;
+}
+
+// ============ 模式选择导航栏 ============
+
+.modeNavigation {
+  display: flex;
+  width: 100%;
+  max-width: 1920px;
+  margin: 40px auto 0;
+  padding: 0;
+  gap: 0;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  will-change: contents;
+  height: 80px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    margin: 20px auto 16px;
+    padding: 0 16px;
+    gap: 0;
+    border-radius: 16px;
+    height: auto;
+  }
+}
+
+.modeItem {
+  flex: 1;
+  position: relative;
+  height: 80px;
+  background-size: 1920px auto;
+  background-position: right top;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  overflow: hidden;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: flex-grow;
+  transition: flex-grow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:last-child {
+    border-right: none;
+  }
+
+  &:hover:not(.modeItemActive) {
+    flex-grow: 1.2;
+    z-index: 2;
+  }
+
+  &.modeItemActive {
+    flex-grow: 3;
+    z-index: 3;
+
+    .modeContent {
+      .modeTitle {
+        font-size: 20px;
+        margin-bottom: 4px;
+        transition: font-size 0.3s ease, margin-bottom 0.3s ease;
+      }
+
+      .modeDescription {
+        opacity: 1;
+        max-height: 20px;
+        margin-top: 2px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    height: 80px;
+    min-height: 80px;
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.modeItemActive {
+      flex-grow: 1;
+    }
+  }
+}
+
+.modeContent {
+  position: relative;
+  z-index: 2;
+  padding: 8px 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: white;
+  transform: translateZ(0);
+  min-height: 80px;
+
+  @media (max-width: 768px) {
+    padding: 6px 16px;
+    min-height: 80px;
+  }
+}
+
+.modeTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 0;
+  transition: font-size 0.3s ease, margin-bottom 0.3s ease;
+  white-space: nowrap;
+  will-change: font-size;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  line-height: 1.2;
+
+  @media (max-width: 768px) {
+    font-size: 16px;
+  }
+}
+
+.modeDescription {
+  font-size: 13px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.95);
+  will-change: opacity, max-height;
+  margin: 0;
+  padding: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
+}
+
+.modeArrow {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: white;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    right: 16px;
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.modeItem:hover .modeArrow {
+  opacity: 1;
+}
+
+.modeItemActive .modeArrow {
+  display: none;
+}
+
+// ============ 对话信息 ============
+
+.conversationInfo {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 20px;
+  height: 80px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(166, 106, 228, 0.6) 0%, rgba(139, 90, 214, 0.6) 100%);
+  backdrop-filter: blur(10px);
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+  z-index: 9;
+  right: 0;
+  border-top-right-radius: 20px;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+    gap: 8px;
+    height: auto;
+    min-height: 60px;
+    border-left: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+  }
+}
+
+.conversationId {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 11px;
+    max-width: 150px;
+  }
+}
+
+.newConversationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+
+  @media (max-width: 768px) {
+    width: 28px;
+    height: 28px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
+// ============ Markdown 消息展示 ============
+
+.markdownMessagesWrapper {
+  width: 100%;
+}
+
+.markdownMessagesContainer {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(166, 106, 228, 0.2);
+  box-shadow: 0 4px 16px rgba(166, 106, 228, 0.1);
+  max-height: 500px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+    max-height: 400px;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a66ae4 0%, #8b4fd9 100%);
+    border-radius: 3px;
+
+    &:hover {
+      background: linear-gradient(135deg, #9558de 0%, #7a3fc9 100%);
+    }
+  }
+}
+
+.markdownTitle {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #a66ae4;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  @media (max-width: 768px) {
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+}
+
+.logoAi {
+  width: 30px;
+  height: 30px;
+}
+
+.markdownContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+
+  :global {
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin: 0 0 12px 0;
+      color: #333;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0 0 12px 0;
+      line-height: 1.6;
+      color: #333;
+      font-size: 14px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    ul, ol {
+      margin: 0 0 12px 0;
+      padding-left: 24px;
+
+      li {
+        margin-bottom: 4px;
+        line-height: 1.6;
+        color: #333;
+        font-size: 14px;
+      }
+    }
+
+    code {
+      padding: 2px 6px;
+      background: rgba(166, 106, 228, 0.1);
+      border-radius: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 13px;
+      color: #a66ae4;
+    }
+
+    pre {
+      margin: 0 0 12px 0;
+      padding: 12px;
+      background: #2d2d2d;
+      border-radius: 6px;
+      overflow-x: auto;
+
+      code {
+        padding: 0;
+        background: transparent;
+        color: #f8f8f2;
+        font-size: 13px;
+      }
+    }
+
+    a {
+      color: #a66ae4;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    strong {
+      font-weight: 600;
+      color: #333;
+    }
+  }
+}
+
+// ============ AI 输入区域 ============
+
+.aiGenerationWrapper {
+  width: 100%;
+  max-width: 1920px;
+  margin: 0 auto 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 0;
+
+  @media (max-width: 768px) {
+    margin: 0 auto 16px;
+    padding: 0 16px;
+    gap: 12px;
+  }
+}
+
+.aiInputContainer {
+  background: #fff;
+  border-bottom-left-radius: 16px;
+  border-bottom-right-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+
+  @media (max-width: 768px) {
+    padding: 12px;
+    border-radius: 12px;
+  }
+}
+
+.aiInputContainer1 {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 0;
+  margin-bottom: 12px;
+  position: relative;
+
+  @media (max-width: 768px) {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+}
+
+.aiInput {
+  flex: 1;
+  font-size: 16px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #1a1a1a;
+  font-family: inherit;
+  padding: 12px 0;
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+  overflow-y: auto;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 12px;
+    font-size: 15px;
+    min-height: 80px;
+  }
+}
+
+// ============ 上传按钮 ============
+
+.aiUploadBtn {
+  padding: 0;
+  width: 50px;
+  height: 50px;
+  background: #f5f5f5;
+  color: #333;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  .plusIcon {
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    color: #666;
+  }
+
+  &:hover:not(:disabled) {
+    background: #e8e8e8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f0f0f0;
+    box-shadow: none;
+  }
+
+  @media (max-width: 768px) {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+// ============ 已上传图片预览 ============
+
+.uploadedImagesPreview {
+  display: flex;
+  margin-top: 6px;
+
+  .imagesRow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .imageItem {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1.5px solid rgba(166, 106, 228, 0.25);
+    background: white;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      border-color: #a66ae4;
+      box-shadow: 0 2px 8px rgba(166, 106, 228, 0.3);
+
+      .removeImageBtn {
+        opacity: 1;
+      }
+    }
+  }
+
+  .imageThumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .removeImageBtn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    border-radius: 50%;
+    background: rgba(255, 77, 79, 0.95);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    opacity: 0;
+    transition: all 0.2s ease;
+    padding: 0;
+    line-height: 1;
+
+    &:hover:not(:disabled) {
+      background: #ff4d4f;
+      transform: scale(1.15);
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .imagesRow {
+      gap: 5px;
+    }
+
+    .imageItem {
+      width: 36px;
+      height: 36px;
+    }
+
+    .removeImageBtn {
+      width: 14px;
+      height: 14px;
+      font-size: 9px;
+      opacity: 1;
+    }
+  }
+}
+
+// ============ 底部控制栏 ============
+
+.aiInputBottomBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 12px;
+
+  @media (max-width: 768px) {
+    padding-top: 10px;
+    margin-top: 10px;
+  }
+}
+
+.bottomLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modeSelectBtn {
+  padding: 6px 12px;
+  background: #e3f2fd;
+  color: #1976d2;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+
+  svg {
+    width: 14px;
+    height: 14px;
+    stroke: #1976d2;
+  }
+
+  &:hover {
+    background: #bbdefb;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 768px) {
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+}
+
+.scrollTopBtn {
+  width: 40px;
+  height: 40px;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: #666;
+  }
+
+  &:hover:not(:disabled) {
+    background: #e8e8e8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// ============ 加载动画 ============
+
+.loadingDots {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+
+  .dot {
+    animation: dotPulse 1.4s infinite ease-in-out;
+    opacity: 0;
+
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+// ============ 固定底部输入框 ============
+
+.fixedInputWrapper {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 12px 20px;
+  animation: slideUp 0.3s ease-out;
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.fixedInputContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  gap: 0;
+  align-items: center;
+  background: white;
+  border-radius: 18px;
+  padding: 8px 8px 8px 12px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: border-color 0.3s ease;
+
+  &:focus-within {
+    border-color: #a66ae4;
+  }
+}
+
+.fixedUploadedImages {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-right: 8px;
+}
+
+.fixedImageThumb {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #e0e0e0;
+  position: relative;
+}
+
+.fixedRemoveImageBtn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ff4d4f;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  border: 2px solid white;
+
+  &:hover {
+    background: #ff7875;
+  }
+}
+
+.fixedUploadBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  border: 2px dashed #d0d0d0;
+  background: #fafafa;
+  color: #999;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    border-color: #a66ae4;
+    color: #a66ae4;
+    background: #f5f0ff;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.fixedInput {
+  flex: 1;
+  padding: 20px 12px;
+  border: none;
+  font-size: 16px;
+  outline: none;
+  background: transparent;
+  min-width: 0;
+
+  &::placeholder {
+    color: #999;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
+.fixedSendBtn {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #a66ae4 0%, #8b5ad6 100%);
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  margin-left: 8px;
+
+  &:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(166, 106, 228, 0.4);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #ccc;
+  }
+
+  @media (max-width: 768px) {
+    width: 32px;
+    height: 32px;
+  }
+}
+

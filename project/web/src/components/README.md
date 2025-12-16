@@ -9,6 +9,7 @@
 | `ui/` | shadcn/ui 基础组件 |
 | `common/` | 通用功能组件 |
 | `modals/` | 弹窗组件集合 |
+| `Home/` | **首页相关组件集合**（包含 AgentGenerator、PromptGallery 等） |
 | `AvatarPlat/` | 带平台标识的头像组件 |
 | `Chat/` | 聊天组件 |
 | `ChooseAccountModule/` | 账号选择模块 |
@@ -85,7 +86,59 @@ VIP 内容展示弹窗，显示会员特权信息。
 
 ---
 
+## Home/ - 首页相关组件
+
+首页专用组件集合，用于构建首页各个模块。
+
+### AgentGenerator - AI Agent 内容生成
+
+AI 驱动的内容生成组件，支持 SSE 流式对话、多媒体上传、多平台发布。
+
+```tsx
+import AgentGenerator from '@/components/Home/AgentGenerator'
+
+<AgentGenerator
+  onLoginRequired={() => setLoginModalOpen(true)}
+  promptToApply={promptData}  // 可选：外部传入的提示词
+/>
+```
+
+**特性：**
+- 🤖 SSE 实时流式对话
+- 📷 图片/视频上传
+- 🚀 支持小红书、抖音、快手等多平台发布
+- 💾 草稿管理
+
+详细文档：[Home/AgentGenerator/README.md](./Home/AgentGenerator/README.md)
+
+### PromptGallery - 提示词画廊
+
+展示提示词列表的瀑布流组件，支持筛选、搜索、应用提示词到 AI 生成器。
+
+```tsx
+import PromptGallery from '@/components/Home/PromptGallery'
+
+<PromptGallery
+  onApplyPrompt={(data) => {
+    // data: { prompt: string; image?: string; mode: 'edit' | 'generate' }
+    console.log('应用提示词:', data)
+  }}
+/>
+```
+
+**特性：**
+- 📷 瀑布流布局展示提示词卡片
+- 🔍 支持按模式筛选（全部/生成/编辑）
+- 🔎 支持标题搜索
+- 📱 响应式设计，自适应屏幕宽度
+- 🖼️ 懒加载图片，优化性能
+- 🎨 卡片悬停显示详情和应用按钮
+
+---
+
 ## 独立组件
+
+---
 
 ### AvatarPlat - 带平台标识的头像
 

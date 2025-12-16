@@ -5,6 +5,7 @@ import ConditionalHeader from '../layout/ConditionalHeader'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
+import LyaoutHeader from "@/app/layout/LyaoutHeader";
 
 export async function generateMetadata({
   params,
@@ -42,7 +43,7 @@ export default async function RootLayout({
               minHeight: '0',
             }}
           >
-            <ConditionalHeader />
+            <LyaoutHeader />;
             {children}
           </div>
         </Providers>
