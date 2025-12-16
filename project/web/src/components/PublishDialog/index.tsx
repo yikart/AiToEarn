@@ -20,6 +20,7 @@ import {
 
 import { Button, Tooltip } from 'antd'
 import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { Modal } from '@/components/ui/modal'
 import dayjs from 'dayjs'
 import {
@@ -98,8 +99,6 @@ export interface IPublishDialogProps {
   // 默认选中的账户Id
   defaultAccountId?: string
 }
-
-const { confirm } = Modal
 
 // 发布作品弹框
 const PublishDialog = memo(
@@ -549,13 +548,7 @@ const PublishDialog = memo(
           title: t('confirmClose.title'),
           icon: <ExclamationCircleFilled />,
           content: t('confirmClose.content'),
-          okType: 'danger',
-          okButtonProps: {
-            type: 'primary',
-          },
-          cancelButtonProps: {
-            type: 'text',
-          },
+          okType: 'destructive',
           centered: true,
           onOk() {
             onClose()

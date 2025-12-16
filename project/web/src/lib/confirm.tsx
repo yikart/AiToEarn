@@ -102,7 +102,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
             onClick={handleOk}
             disabled={loading}
             className={cn(
-              okType === 'destructive' && 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
+              okType === 'destructive' && 'bg-destructive text-white hover:bg-destructive/90',
             )}
           >
             {loading ? '处理中...' : okText}
