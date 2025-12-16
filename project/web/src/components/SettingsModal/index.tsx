@@ -12,6 +12,7 @@ import { useShallow } from 'zustand/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { updateUserInfoApi } from '@/api/apiReq'
 import { uploadToOss } from '@/api/oss'
+import { AvatarCropModal } from '@/components/AvatarCropModal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -151,7 +152,11 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false)
 
-  // 获取用户头像
+  // 裁剪弹窗状态
+  const [cropModalOpen, setCropModalOpen] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+
+  // 获取用户头像（头像已存储为完整地址，但兼容旧数据）
   const avatarUrl = userInfo?.avatar ? getOssUrl(userInfo.avatar) : ''
 
   // 处理头像点击
@@ -159,8 +164,8 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
     fileInputRef.current?.click()
   }
 
-  // 处理头像上传
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // 处理文件选择，打开裁剪弹窗
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
@@ -176,20 +181,37 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
       return
     }
 
+    // 设置选中的文件并打开裁剪弹窗
+    setSelectedFile(file)
+    setCropModalOpen(true)
+
+    // 清空 input 以便可以重复选择同一文件
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+  }
+
+  // 处理裁剪完成，上传头像
+  const handleCropComplete = async (blob: Blob) => {
     setIsUploadingAvatar(true)
     try {
+      // 将 Blob 转换为 File
+      const file = new File([blob], `avatar_${Date.now()}.png`, { type: 'image/png' })
+
       // 上传到 OSS
       const ossPath = await uploadToOss(file)
 
-      // 更新用户信息
+      // 更新用户信息，存储完整地址
       const response: any = await updateUserInfoApi({
         name: userInfo?.name || '',
-        avatar: ossPath as string,
+        avatar: ossPath,
       })
 
       if (response?.code === 0 && response.data) {
         setUserInfo(response.data)
         toast.success(t('profile.avatarUpdateSuccess'))
+        setCropModalOpen(false)
+        setSelectedFile(null)
       } else {
         toast.error(response?.message || t('profile.avatarUpdateFailed'))
       }
@@ -198,11 +220,13 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
       toast.error(t('profile.avatarUpdateFailed'))
     } finally {
       setIsUploadingAvatar(false)
-      // 清空 input 以便可以重复选择同一文件
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
     }
+  }
+
+  // 关闭裁剪弹窗
+  const handleCropModalClose = () => {
+    setCropModalOpen(false)
+    setSelectedFile(null)
   }
 
   // 保存用户名
@@ -284,7 +308,7 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={handleAvatarChange}
+            onChange={handleFileSelect}
           />
         </div>
 
@@ -374,6 +398,15 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
         <LogOut size={18} />
         <span>{t('profile.logout')}</span>
       </Button>
+
+      {/* 头像裁剪弹窗 */}
+      <AvatarCropModal
+        open={cropModalOpen}
+        onClose={handleCropModalClose}
+        imageFile={selectedFile}
+        onCropComplete={handleCropComplete}
+        isUploading={isUploadingAvatar}
+      />
     </div>
   )
 }

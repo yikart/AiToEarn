@@ -8,6 +8,7 @@
 import { useRef } from 'react'
 import { Loader2, Plus, X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { getOssUrl } from '@/utils/oss'
 
 /** 上传的媒体文件类型 */
 export interface IUploadedMedia {
@@ -74,7 +75,7 @@ export function MediaUpload({
     if (media.file) {
       return URL.createObjectURL(media.file)
     }
-    return media.url
+    return getOssUrl(media.url)
   }
 
   const canUploadMore = medias.length < maxCount

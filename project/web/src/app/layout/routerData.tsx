@@ -6,6 +6,7 @@ import {
   BarChart3,
   FileText,
   FolderOpen,
+  History,
   Home,
   ListTodo,
   MessageCircle,
@@ -31,6 +32,12 @@ export const routerData: IRouterDataItem[] = [
     translationKey: 'home',
     path: '/',
     icon: <Home size={20} />,
+  },
+  {
+    name: '任务记录',
+    translationKey: 'tasksHistory',
+    path: '/tasks-history',
+    icon: <History size={20} />,
   },
   {
     name: '发布',

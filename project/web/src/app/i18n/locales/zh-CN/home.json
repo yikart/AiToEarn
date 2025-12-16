@@ -27,6 +27,10 @@
     "getStarted": "立即开始",
     "useMobilePhone": "使用移动设备"
   },
+  "agentGenerator": {
+    "title": "有什么可以帮你的？",
+    "subtitle": "描述你想创作的内容，AI 将帮助你生成"
+  },
   "aiGeneration": {
     "inputPlaceholder": "输入你想创作的内容，AI将为你生成完整的作品...",
     "generateButton": "开始创作",

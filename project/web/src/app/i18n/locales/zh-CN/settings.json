@@ -13,6 +13,8 @@
     "save": "保存",
     "saving": "保存中...",
     "cancel": "取消",
+    "confirm": "确认",
+    "uploading": "上传中...",
     "nameRequired": "请输入用户名",
     "nameLengthError": "用户名长度需要在 2-20 个字符之间",
     "nameUpdateSuccess": "用户名更新成功",
@@ -20,7 +22,14 @@
     "avatarTypeError": "请选择图片文件",
     "avatarSizeError": "图片大小不能超过 5MB",
     "avatarUpdateSuccess": "头像更新成功",
-    "avatarUpdateFailed": "头像更新失败"
+    "avatarUpdateFailed": "头像更新失败",
+    "cropAvatar": "裁剪头像",
+    "rotateLeft": "向左旋转",
+    "rotateRight": "向右旋转",
+    "zoomIn": "放大",
+    "zoomOut": "缩小",
+    "imageLoading": "图片加载中...",
+    "processing": "处理中..."
   },
   "subscription": {
     "currentPlan": "当前套餐",

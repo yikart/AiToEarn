@@ -37,6 +37,7 @@ import { useNotification } from '@/hooks/useNotification'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
+import { getOssUrl } from '@/utils/oss'
 
 /**
  * 用户信息组件 - 底部用户头像
@@ -62,7 +63,7 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
             )}
           >
             <Avatar className="h-8 w-8 shrink-0 border-2 border-purple-200">
-              <AvatarImage src={userInfo.avatar || ''} alt={userInfo.name || t('unknownUser')} />
+              <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
               <AvatarFallback className="bg-purple-400 font-semibold text-white">
                 {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
               </AvatarFallback>

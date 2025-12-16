@@ -195,6 +195,42 @@ cn('px-4', 'px-6')
 
 #### 为什么使用 cn？
 
+### formatRelativeTime - 相对时间格式化
+
+格式化相对时间，如"刚刚"、"5分钟前"、"3天前"等。
+
+#### 导入方式
+
+```typescript
+import { formatRelativeTime } from '@/lib/utils'
+```
+
+#### 使用示例
+
+```typescript
+// 传入 Date 对象
+formatRelativeTime(new Date())
+// => '刚刚'
+
+// 传入时间戳
+formatRelativeTime(Date.now() - 60000)
+// => '1分钟前'
+
+// 超过 7 天显示具体日期
+formatRelativeTime(new Date('2024-01-01'))
+// => '2024-01-01'
+```
+
+#### 返回值
+
+| 时间差 | 返回值 |
+|--------|--------|
+| < 1 分钟 | "刚刚" |
+| < 1 小时 | "X分钟前" |
+| < 24 小时 | "X小时前" |
+| < 7 天 | "X天前" |
+| >= 7 天 | "YYYY-MM-DD" |
+
 1. **解决类名冲突**：`tailwind-merge` 会智能合并冲突的 Tailwind 类
 2. **条件类名**：`clsx` 支持条件表达式、数组、对象等多种语法
 3. **类型安全**：完整的 TypeScript 支持

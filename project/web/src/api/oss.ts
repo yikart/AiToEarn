@@ -116,7 +116,9 @@ export async function uploadToOss(file: File | Blob, options?: UploadToOssOption
         xhr.addEventListener('load', () => {
           opts.signal?.removeEventListener('abort', handleAbort)
           if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(presignedData.fields.key)
+            // 返回全路径: url + key
+            const fullUrl = presignedData.url + presignedData.fields.key
+            resolve(fullUrl)
           }
           else {
             reject(new Error(`上传失败: ${xhr.statusText}`))
@@ -146,7 +148,8 @@ export async function uploadToOss(file: File | Blob, options?: UploadToOssOption
         throw new Error(`上传失败: ${uploadResponse.statusText}`)
       }
 
-      return presignedData.fields.key
+      // 返回全路径: url + key
+      return presignedData.url + presignedData.fields.key
     }
   }
   catch (error) {

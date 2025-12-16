@@ -28,6 +28,10 @@
     "getStarted": "Get Started",
     "useMobilePhone": "use on mobile phone"
   },
+  "agentGenerator": {
+    "title": "How can I help you?",
+    "subtitle": "Describe what you want to create, AI will help you generate"
+  },
   "aiGeneration": {
     "inputPlaceholder": "Enter your content idea, AI will generate a complete work for you...",
     "generateButton": "Start Creating",

@@ -13,6 +13,8 @@
     "save": "Save",
     "saving": "Saving...",
     "cancel": "Cancel",
+    "confirm": "Confirm",
+    "uploading": "Uploading...",
     "nameRequired": "Please enter a username",
     "nameLengthError": "Username must be between 2-20 characters",
     "nameUpdateSuccess": "Username updated successfully",
@@ -20,7 +22,14 @@
     "avatarTypeError": "Please select an image file",
     "avatarSizeError": "Image size cannot exceed 5MB",
     "avatarUpdateSuccess": "Avatar updated successfully",
-    "avatarUpdateFailed": "Failed to update avatar"
+    "avatarUpdateFailed": "Failed to update avatar",
+    "cropAvatar": "Crop Avatar",
+    "rotateLeft": "Rotate Left",
+    "rotateRight": "Rotate Right",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "imageLoading": "Loading image...",
+    "processing": "Processing..."
   },
   "subscription": {
     "currentPlan": "Current Plan",

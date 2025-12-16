@@ -1,19 +1,18 @@
 /**
  * HomeChat - 首页Chat组件
- * 功能：大尺寸聊天输入框，提交后跳转到对话详情页
+ * 功能：大尺寸聊天输入框，使用全局 AgentStore 发起 SSE 任务，获取 taskId 后跳转到对话详情页
  */
 
 'use client'
 
-import { useRef, useState, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import { Sparkles } from 'lucide-react'
 import { ChatInput } from '@/components/Chat/ChatInput'
-import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
 import { useTransClient } from '@/app/i18n/client'
-import { uploadToOss } from '@/api/oss'
-import { agentApi } from '@/api/agent'
+import { useAgentStore } from '@/store/agent'
+import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/images/logo.png'
@@ -36,113 +35,58 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
 
   // 状态
   const [inputValue, setInputValue] = useState('')
-  const [medias, setMedias] = useState<IUploadedMedia[]>([])
-  const [isUploading, setIsUploading] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  // AbortController 用于取消上传
-  const uploadAbortRef = useRef<AbortController | null>(null)
+  // 使用媒体上传 Hook
+  const {
+    medias,
+    isUploading,
+    handleMediasChange,
+    handleMediaRemove,
+    clearMedias,
+  } = useMediaUpload({
+    onError: () => toast.error(t('media.uploadFailed' as any)),
+  })
 
-  /** 处理媒体文件上传 */
-  const handleMediasChange = useCallback(async (files: FileList) => {
-    if (!files.length) return
-
-    setIsUploading(true)
-    uploadAbortRef.current = new AbortController()
-
-    try {
-      const newMedias: IUploadedMedia[] = []
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        const isVideo = file.type.startsWith('video/')
-
-        // 添加到列表，显示上传进度
-        const mediaIndex = medias.length + newMedias.length
-        const tempMedia: IUploadedMedia = {
-          url: '',
-          type: isVideo ? 'video' : 'image',
-          progress: 0,
-          file,
-        }
-        newMedias.push(tempMedia)
-        setMedias((prev) => [...prev, tempMedia])
-
-        // 上传文件
-        const key = await uploadToOss(file, {
-          onProgress: (progress) => {
-            setMedias((prev) =>
-              prev.map((m, idx) =>
-                idx === mediaIndex ? { ...m, progress } : m,
-              ),
-            )
-          },
-          signal: uploadAbortRef.current?.signal,
-        })
-
-        // 上传完成，更新URL并移除进度
-        setMedias((prev) =>
-          prev.map((m, idx) =>
-            idx === mediaIndex
-              ? { ...m, url: key as string, progress: undefined }
-              : m,
-          ),
-        )
-      }
-    } catch (error: any) {
-      if (error.name === 'AbortError') {
-        console.log('Upload cancelled')
-      } else {
-        toast.error(t('media.uploadFailed' as any))
-        console.error('Upload failed:', error)
-      }
-    } finally {
-      setIsUploading(false)
-      uploadAbortRef.current = null
-    }
-  }, [medias.length])
-
-  /** 处理移除媒体 */
-  const handleMediaRemove = useCallback((index: number) => {
-    setMedias((prev) => prev.filter((_, i) => i !== index))
-  }, [])
+  // 全局 Store
+  const { createTask } = useAgentStore()
 
   /** 处理发送消息 */
   const handleSend = useCallback(async () => {
     if (!inputValue.trim()) return
 
-    // 检查登录状态
-    if (onLoginRequired) {
-      onLoginRequired()
-      return
-    }
-
     setIsSubmitting(true)
 
+    // 保存当前输入（因为下面会清空）
+    const currentPrompt = inputValue
+    const currentMedias = [...medias]
+
+    // 清空输入
+    setInputValue('')
+    clearMedias()
+
     try {
-      // 准备媒体附件
-      const mediaUrls = medias
-        .filter((m) => m.url && !m.progress)
-        .map((m) => m.url)
-
-      // 调用创建任务接口
-      const result = await agentApi.createTask({
-        prompt: inputValue,
+      // 使用全局 Store 创建任务
+      await createTask({
+        prompt: currentPrompt,
+        medias: currentMedias,
+        t: t as (key: string) => string,
+        onLoginRequired,
+        onTaskIdReady: (taskId) => {
+          console.log('[HomeChat] Task ID ready:', taskId)
+          // 收到 taskId 后立即跳转到对话详情页
+          router.push(`/${lng}/chat/${taskId}`)
+        },
       })
-
-      if (result.code === 0 && result.data?.id) {
-        // 跳转到对话详情页
-        router.push(`/${lng}/chat/${result.data.id}`)
-      } else {
-        toast.error(result.msg || t('message.error' as any))
-      }
     } catch (error: any) {
       toast.error(error.message || t('message.error' as any))
       console.error('Create task failed:', error)
+      // 恢复输入
+      setInputValue(currentPrompt)
     } finally {
       setIsSubmitting(false)
     }
-  }, [inputValue, medias, onLoginRequired, router, lng])
+  }, [inputValue, medias, onLoginRequired, router, lng, t, createTask, clearMedias])
 
   return (
     <div className={cn('w-full max-w-3xl mx-auto', className)}>
@@ -197,4 +141,3 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
 }
 
 export default HomeChat
-

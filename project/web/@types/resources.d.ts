@@ -267,6 +267,11 @@ interface Resources {
         "username": "代理账号",
         "password": "代理密码"
       }
+    },
+    "clientType": {
+      "label": "来源",
+      "web": "网页端",
+      "app": "App端"
     }
   },
   "aiRank": {
@@ -500,6 +505,56 @@ interface Resources {
     "mediaCount": "个资源",
     "pleaseCompleteForm": "请完善表单信息"
   },
+  "chat": {
+    "input": {
+      "placeholder": "输入你想创作的内容...",
+      "send": "发送",
+      "stop": "停止",
+      "uploading": "上传中..."
+    },
+    "message": {
+      "thinking": "思考中...",
+      "error": "操作失败，请重试",
+      "loadFailed": "加载失败",
+      "connectionInterrupted": "连接中断"
+    },
+    "task": {
+      "newChat": "新对话",
+      "delete": "删除",
+      "deleteConfirm": "确定要删除这个对话吗？",
+      "deleteSuccess": "删除成功",
+      "deleteFailed": "删除失败"
+    },
+    "home": {
+      "title": "有什么可以帮你的？",
+      "subtitle": "描述你想创作的内容，AI 将帮助你生成",
+      "recentTasks": "最近任务",
+      "viewAll": "浏览全部",
+      "noTasks": "暂无任务记录",
+      "startChat": "开始创作",
+      "aiCreation": "AI 智能创作",
+      "supportUpload": "支持图片/视频上传",
+      "enterToSend": "按 Enter 发送"
+    },
+    "history": {
+      "title": "任务记录",
+      "empty": "暂无任务记录",
+      "loadMore": "加载更多",
+      "loading": "加载中..."
+    },
+    "detail": {
+      "title": "对话详情",
+      "continuePlaceholder": "继续对话...",
+      "back": "返回",
+      "workflowProcess": "AI 工作流程",
+      "waitingResponse": "等待 AI 响应..."
+    },
+    "media": {
+      "video": "视频",
+      "uploadFailed": "上传失败，请重试",
+      "uploadCancelled": "上传已取消"
+    }
+  },
   "common": {
     "profile": "个人中心",
     "logout": "退出登录",
@@ -508,6 +563,25 @@ interface Resources {
     "login": "登录",
     "support": "支持",
     "notifications": "消息通知",
+    "settings": "设置",
+    "vip": "会员",
+    "subscribe": "开通订阅",
+    "contactUs": "联系我们",
+    "downloadApp": {
+      "title": "下载{{appName}}",
+      "operationInApp": "请在{{appName}}中操作添加",
+      "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+      "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
+      "scanQrCode": "扫描二维码下载",
+      "downloadLink": "下载链接：",
+      "copy": "复制",
+      "copySuccess": "复制成功",
+      "copyFailed": "复制失败，请手动复制",
+      "copied": "已复制",
+      "close": "关闭",
+      "downloadNow": "立即下载",
+      "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
+    },
     "noNotifications": "暂无消息",
     "markAllAsRead": "全部标记为已读",
     "markAsRead": "标记为已读",
@@ -553,21 +627,6 @@ interface Resources {
       "alreadySignedIn": "今日已签到",
       "consecutiveDays": "连续签到天数",
       "totalPoints": "总积分"
-    },
-    "downloadApp": {
-      "title": "下载{{appName}}",
-      "operationInApp": "请在{{appName}}中操作添加",
-      "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
-      "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
-      "scanQrCode": "扫描二维码下载",
-      "downloadLink": "下载链接：",
-      "copy": "复制",
-      "copySuccess": "复制成功",
-      "copyFailed": "复制失败，请手动复制",
-      "copied": "已复制",
-      "close": "关闭",
-      "downloadNow": "立即下载",
-      "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
     },
     "websit": {
       "termsOfService": {
@@ -658,7 +717,9 @@ interface Resources {
       "createdAt": "创建时间",
       "updatedAt": "更新时间",
       "error": "错误",
-      "totalRecords": "共 {{count}} 条记录"
+      "totalRecords": "共 {{count}} 条记录",
+      "filterByPlatform": "按平台筛选",
+      "allPlatforms": "全部平台"
     },
     "stats": {
       "views": "阅读数",
@@ -818,7 +879,9 @@ interface Resources {
         "status": "状态",
         "docs": "文档",
         "blog": "博客",
-        "download": "下载"
+        "download": "下载",
+        "brand": "品牌",
+        "resources": "资源"
       },
       "getStarted": "立即开始"
     },
@@ -831,12 +894,19 @@ interface Resources {
       "getStarted": "立即开始",
       "useMobilePhone": "使用移动设备"
     },
+    "agentGenerator": {
+      "title": "有什么可以帮你的？",
+      "subtitle": "描述你想创作的内容，AI 将帮助你生成"
+    },
     "aiGeneration": {
       "inputPlaceholder": "输入你想创作的内容，AI将为你生成完整的作品...",
-      "generateButton": "生成作品",
-      "generating": "生成中...",
+      "generateButton": "开始创作",
+      "generating": "创作中...",
       "emptyPromptAlert": "请输入生成内容的提示词",
       "createTaskFailed": "创建任务失败",
+      "uploadSuccess": "图片上传成功",
+      "uploadFailed": "图片上传失败，请重试",
+      "taskCreatedSuccess": "任务创建成功",
       "thinking": "AI思考中...",
       "topicPrefix": "创作主题：",
       "generatedTitlePrefix": "生成主题：",
@@ -854,7 +924,114 @@ interface Resources {
         "completed": "生成完成！",
         "failed": "生成失败",
         "cancelled": "已取消"
-      }
+      },
+      "channelAuthRequired": "请先添加并授权频道",
+      "channelAuthExpired": "频道授权已过期，请重新授权",
+      "channelNotSupported": "该平台暂不支持直接发布",
+      "taskStopped": "已停止生成",
+      "stopTaskFailed": "停止任务失败",
+      "newConversation": "已开启新对话",
+      "generatingWarning": "正在生成中，请先停止当前任务",
+      "conversationId": "对话ID",
+      "startNewConversation": "开启新对话",
+      "currentCost": "本次耗费",
+      "aiGenerationProcess": "AI 生成过程",
+      "waitingAiResponse": "等待 AI 响应...",
+      "uploadImage": "上传图片",
+      "removeImage": "移除图片",
+      "agentMode": "Agent 模式",
+      "imageGeneration": "图片生成",
+      "videoGeneration": "视频生成",
+      "draftBox": "草稿箱",
+      "batchPublish": "批次发布",
+      "stopGeneration": "停止生成",
+      "sendMessage": "发送消息",
+      "inspirationPrompt": "灵感来了?一句话帮你开始创作",
+      "onboardingTitle": "想要创作不知道如何下手？",
+      "onboardingDescription": "一句话帮你创作",
+      "gotIt": "知道了",
+      "saveDraftFailed": "保存草稿失败",
+      "saveDraftSuccess": "草稿保存成功",
+      "noDraftGroupFound": "未找到可用的草稿分组，请先创建分组",
+      "noDraftGroup": "未找到可用的草稿分组",
+      "needAddChannel": "需要添加频道",
+      "channelNotAdded": "检测到您还没有添加{platform}频道，是否前往添加？",
+      "goAdd": "去添加",
+      "cancel": "取消",
+      "channelAuthExpiredTitle": "频道授权已过期",
+      "channelAuthExpiredContent": "您的频道授权已过期，是否重新授权？",
+      "reauthorize": "重新授权",
+      "needLoginChannel": "需要登录频道",
+      "needLogin": "需要登录",
+      "pleaseLoginChannel": "请先登录该频道账号",
+      "goLogin": "去登录",
+      "platformRequiresPlugin": "该平台需要使用插件发布，请先授权插件",
+      "needAuthorizePlugin": "需要授权插件",
+      "pluginAuthorizeDescription": "该平台需要使用插件发布，请点击这里授权插件",
+      "noAccountFound": "未找到该平台的账号，请先添加账号",
+      "publishTaskSubmitted": "发布任务已提交到插件",
+      "publishingViaPlugin": "正在通过插件发布...",
+      "pluginPublishFailed": "插件发布失败"
+    },
+    "plugin": {
+      "platformNeedsPlugin": "该平台需要使用插件发布，请先授权插件",
+      "authorizePluginTitle": "需要授权插件",
+      "authorizePluginDescription": "该平台需要使用插件发布，请点击这里授权插件",
+      "noAccountFound": "未找到该平台的账号，请先添加账号",
+      "publishTaskSubmitted": "发布任务已提交到插件",
+      "publishingViaPlugin": "正在通过插件发布...",
+      "publishFailed": "插件发布失败"
+    },
+    "status": {
+      "generatingInProcess": "正在生成中，请先停止当前任务",
+      "stopGenerating": "停止生成",
+      "sendMessage": "发送消息"
+    },
+    "messages": {
+      "generatingInProcessStopFirst": "正在生成中，请先停止当前任务",
+      "newConversationStarted": "已开启新对话",
+      "draftSavedSuccessfully": "草稿保存成功",
+      "saveDraftFailed": "保存草稿失败",
+      "noDraftGroupFound": "未找到可用的草稿分组，请先创建分组",
+      "createDraftGroupFirst": "未找到可用的草稿分组"
+    },
+    "platformNames": {
+      "douyin": "抖音",
+      "xhs": "小红书",
+      "wxSph": "微信视频号",
+      "KWAI": "快手",
+      "youtube": "YouTube",
+      "wxGzh": "微信公众号",
+      "bilibili": "B站",
+      "twitter": "Twitter",
+      "tiktok": "TikTok",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "threads": "Threads",
+      "pinterest": "Pinterest",
+      "linkedin": "LinkedIn"
+    },
+    "channel": {
+      "addChannelRequiredTitle": "需要添加频道",
+      "addChannelRequiredContent": "检测到您还没有添加{platform}频道，是否前往添加？",
+      "goToAdd": "去添加",
+      "authExpiredTitle": "频道授权已过期",
+      "authExpiredContent": "您的频道授权已过期，是否重新授权？",
+      "reauthorize": "重新授权",
+      "loginRequiredTitle": "需要登录频道",
+      "loginRequiredContent": "请先登录该频道账号",
+      "goToLogin": "去登录"
+    },
+    "guide": {
+      "aiInputTitle": "想要创作不知道如何下手？",
+      "aiInputDescription": "一句话帮你创作"
+    },
+    "download": {
+      "downloadNow": "立即下载"
+    },
+    "wechat": {
+      "officialAccount": "微信公众号",
+      "communityOfficialAccount": "社区公众号"
     },
     "brandBar": {
       "title": "支持的社交媒体平台"
@@ -1845,7 +2022,8 @@ interface Resources {
       "workId": "作品ID",
       "shareLink": "分享链接",
       "failReason": "失败原因",
-      "close": "关闭"
+      "close": "关闭",
+      "unknownAccount": "未知账号"
     },
     "common": {
       "confirm": "确定",
@@ -2523,6 +2701,31 @@ interface Resources {
       "trial": "试用"
     }
   },
+  "promptGallery": {
+    "badge": "🎨 提示词灵感库",
+    "title": "探索精选提示词",
+    "titleHighlight": "快速开始创作",
+    "subtitle": "精选优质提示词模板，一键应用即可使用",
+    "applyButton": "一键应用",
+    "collapseButton": "收起",
+    "expandButton": "查看更多",
+    "expandCount": "个",
+    "appliedToast": "✓ 已应用提示词",
+    "modal": {
+      "promptLabel": "提示词：",
+      "applyButton": "一键应用"
+    },
+    "badges": {
+      "edit": "编辑",
+      "generate": "文生图"
+    },
+    "filters": {
+      "all": "全部",
+      "generate": "文生图",
+      "edit": "图片编辑",
+      "searchPlaceholder": "搜索标题..."
+    }
+  },
   "publish": {
     "title": "发布作品",
     "confirmClose": {
@@ -2598,7 +2801,8 @@ interface Resources {
       "searchLocation": "搜索位置",
       "selectLocation": "请选择位置",
       "description": "描述",
-      "descriptionPlaceholder": "开始写"
+      "descriptionPlaceholder": "开始写",
+      "fans": "粉丝"
     },
     "writingAssistant": "写作助手",
     "aiAssistant": "AI助手",
@@ -2851,10 +3055,20 @@ interface Resources {
         "shares": "分享数"
       },
       "viewWork": "查看作品"
+    },
+    "clientType": {
+      "label": "来源",
+      "web": "网页端",
+      "app": "App端"
+    },
+    "pluginPublish": {
+      "ready": "插件发布",
+      "notReady": "插件未就绪"
     }
   },
   "route": {
     "home": "首页",
+    "tasksHistory": "任务记录",
     "accounts": "账户",
     "publish": "发布",
     "hotContent": "热门内容",
@@ -2865,6 +3079,7 @@ interface Resources {
     "interactive": "作品互动",
     "engagement": "互动数据",
     "dataStatistics": "数据统计",
+    "interactiveNew": "作品互动 new",
     "dataMonitoring": "数据监控",
     "navigation": "导航",
     "aiRank": "AI热榜"
@@ -2884,6 +3099,8 @@ interface Resources {
       "save": "保存",
       "saving": "保存中...",
       "cancel": "取消",
+      "confirm": "确认",
+      "uploading": "上传中...",
       "nameRequired": "请输入用户名",
       "nameLengthError": "用户名长度需要在 2-20 个字符之间",
       "nameUpdateSuccess": "用户名更新成功",
@@ -2891,7 +3108,14 @@ interface Resources {
       "avatarTypeError": "请选择图片文件",
       "avatarSizeError": "图片大小不能超过 5MB",
       "avatarUpdateSuccess": "头像更新成功",
-      "avatarUpdateFailed": "头像更新失败"
+      "avatarUpdateFailed": "头像更新失败",
+      "cropAvatar": "裁剪头像",
+      "rotateLeft": "向左旋转",
+      "rotateRight": "向右旋转",
+      "zoomIn": "放大",
+      "zoomOut": "缩小",
+      "imageLoading": "图片加载中...",
+      "processing": "处理中..."
     },
     "subscription": {
       "currentPlan": "当前套餐",
@@ -3308,31 +3532,6 @@ interface Resources {
     "uploadSuccess": "上传成功",
     "checkFailed": "检查失败",
     "alreadyAuthorized": "已授权"
-  },
-  "promptGallery": {
-    "badge": "🎨 提示词灵感库",
-    "title": "探索精选提示词",
-    "titleHighlight": "快速开始创作",
-    "subtitle": "精选优质提示词模板，一键应用即可使用",
-    "applyButton": "一键应用",
-    "collapseButton": "收起",
-    "expandButton": "查看更多",
-    "expandCount": "个",
-    "appliedToast": "✓ 已应用提示词",
-    "modal": {
-      "promptLabel": "提示词：",
-      "applyButton": "一键应用"
-    },
-    "badges": {
-      "edit": "编辑",
-      "generate": "文生图"
-    },
-    "filters": {
-      "all": "全部",
-      "generate": "文生图",
-      "edit": "图片编辑",
-      "searchPlaceholder": "搜索标题..."
-    }
   }
 }
 

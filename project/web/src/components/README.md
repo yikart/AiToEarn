@@ -11,7 +11,7 @@
 | `modals/` | 弹窗组件集合 |
 | `Home/` | **首页相关组件集合**（包含 AgentGenerator、PromptGallery 等） |
 | `AvatarPlat/` | 带平台标识的头像组件 |
-| `Chat/` | 聊天组件 |
+| `Chat/` | 聊天组件（ChatInput、ChatMessage、MediaUpload、TaskCard） |
 | `ChooseAccountModule/` | 账号选择模块 |
 | `FacebookPagesModal/` | Facebook 页面选择弹窗 |
 | `GetCode/` | 获取验证码组件 |
@@ -176,6 +176,106 @@ import PromptGallery from '@/components/Home/PromptGallery'
 - 🖼️ 懒加载图片，优化性能
 - 🎨 卡片悬停显示详情和应用按钮
 
+### HomeChat - 首页聊天输入
+
+首页大尺寸聊天输入组件，支持媒体上传，提交后跳转到对话详情页。
+
+```tsx
+import { HomeChat } from '@/components/Home/HomeChat'
+
+<HomeChat
+  onLoginRequired={() => setLoginModalOpen(true)}
+/>
+```
+
+### TaskPreview - 任务预览
+
+显示最近任务卡片列表，支持"浏览全部"跳转到任务记录页。
+
+```tsx
+import { TaskPreview } from '@/components/Home/TaskPreview'
+
+<TaskPreview limit={4} />
+```
+
+---
+
+## Chat/ - 聊天相关组件
+
+### ChatInput - 聊天输入框
+
+聊天输入组件，支持文本输入、媒体上传、发送消息。
+
+```tsx
+import { ChatInput } from '@/components/Chat'
+
+<ChatInput
+  value={inputValue}
+  onChange={setInputValue}
+  onSend={handleSend}
+  onStop={handleStop}
+  medias={medias}
+  onMediasChange={handleMediasChange}
+  onMediaRemove={handleMediaRemove}
+  isGenerating={isGenerating}
+  isUploading={isUploading}
+  placeholder="输入内容..."
+  mode="large"  // 'large' | 'compact'
+/>
+```
+
+### ChatMessage - 消息气泡
+
+聊天消息气泡组件，显示用户消息或 AI 回复。
+
+```tsx
+import { ChatMessage } from '@/components/Chat'
+
+<ChatMessage
+  role="user"  // 'user' | 'assistant'
+  content="消息内容"
+  medias={[{ url: '...', type: 'image' }]}
+  status="done"  // 'pending' | 'streaming' | 'done' | 'error'
+  errorMessage="错误信息"
+/>
+```
+
+### MediaUpload - 媒体上传
+
+媒体上传预览组件，支持图片/视频上传和进度显示。
+
+```tsx
+import { MediaUpload } from '@/components/Chat'
+
+<MediaUpload
+  medias={medias}
+  isUploading={isUploading}
+  disabled={false}
+  onFilesChange={handleFilesChange}
+  onRemove={handleRemove}
+  maxCount={9}
+/>
+```
+
+### TaskCard - 任务卡片
+
+任务卡片组件，显示任务简要信息，支持点击跳转和删除。
+
+```tsx
+import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
+
+<TaskCard
+  id="task-id"
+  title="任务标题"
+  createdAt="2024-01-01"
+  updatedAt="2024-01-02"
+  onDelete={handleDelete}
+/>
+
+// 骨架屏
+<TaskCardSkeleton />
+```
+
 ---
 
 ## 独立组件
@@ -195,6 +295,39 @@ import AvatarPlat from '@/components/AvatarPlat'
   disabled={false}         // 禁用状态
 />
 ```
+
+### AvatarCropModal - 头像裁剪弹窗
+
+基于 cropperjs 实现的圆形头像裁剪弹窗，支持旋转、缩放等操作。
+
+```tsx
+import { AvatarCropModal } from '@/components/AvatarCropModal'
+
+<AvatarCropModal
+  open={boolean}
+  onClose={() => void}
+  imageFile={File | null}
+  onCropComplete={(blob: Blob) => void}
+  isUploading={boolean}  // 可选，是否正在上传
+/>
+```
+
+**Props：**
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 是否显示弹窗 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+| `imageFile` | 待裁剪的图片文件 | `File \| null` | - |
+| `onCropComplete` | 裁剪完成回调，返回裁剪后的 Blob | `(blob: Blob) => void` | - |
+| `isUploading` | 是否正在上传（禁用确认按钮） | `boolean` | `false` |
+
+**特性：**
+- 🔲 1:1 正方形裁剪（适合头像）
+- 🔄 支持旋转（向左/向右 90°）
+- 🔍 支持缩放（放大/缩小）
+- 🖱️ 支持拖拽移动图片
+- 💾 输出 400x400 PNG 格式
 
 ### VideoPreviewModal - 视频预览弹窗
 

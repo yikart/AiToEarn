@@ -1,6 +1,7 @@
 /**
  * 对话详情页 - Chat Detail
- * 功能：显示对话历史，支持继续对话
+ * 功能：支持实时模式（从 HomeChat 跳转）和历史模式（刷新或从任务列表进入）
+ * 工作流状态实时显示在对应消息上
  */
 'use client'
 
@@ -8,40 +9,82 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { ArrowLeft, Loader2 } from 'lucide-react'
+import { useShallow } from 'zustand/react/shallow'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { ChatMessage } from '@/components/Chat/ChatMessage'
 import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
+import type { IWorkflowStep, IMessageStep } from '@/store/agent'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { agentApi, type TaskDetail, type TaskMessage } from '@/api/agent'
-import { uploadToOss } from '@/api/oss'
+import { useAgentStore, type IDisplayMessage } from '@/store/agent'
+import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { useTransClient } from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/images/logo.png'
 
-/** 转换后端消息为前端消息格式 */
-interface IDisplayMessage {
-  id: string
-  role: 'user' | 'assistant'
-  content: string
-  medias?: IUploadedMedia[]
-  status?: 'pending' | 'streaming' | 'done' | 'error'
-  errorMessage?: string
-  createdAt?: number
-}
-
 /**
  * 将后端消息转换为显示格式
+ * 数据结构说明：
+ * - user: { type: 'user', content: [{ type: 'text', text: '...' }] }
+ * - assistant: { type: 'assistant', uuid: '...', message: { content: [{ type: 'text', text: '...' }] } }
+ * - stream_event: 流式事件，用于提取工具调用信息
+ * - result: { type: 'result', message: { message: '...' } }
+ *
+ * 改进：解析多步骤和工作流步骤
+ * - message_start 事件标识新步骤开始
+ * - tool_use 事件标识工具调用
+ * - tool_result 事件标识工具结果
  */
 function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
   const displayMessages: IDisplayMessage[] = []
 
+  // 临时存储当前 assistant 消息的步骤
+  let currentSteps: IMessageStep[] = []
+  let currentStepContent = ''
+  let currentStepWorkflow: IWorkflowStep[] = []
+  let stepIndex = 0
+  let lastAssistantMsgIndex = -1
+
+  // 用于追踪工具调用的 Map
+  const toolCallMap = new Map<string, string>()
+
+  /** 保存当前步骤到步骤列表 */
+  const saveCurrentStep = () => {
+    if (currentStepContent.trim() || currentStepWorkflow.length > 0) {
+      currentSteps.push({
+        id: `step-${stepIndex}`,
+        content: currentStepContent.trim(),
+        workflowSteps: [...currentStepWorkflow],
+        isActive: false,
+        timestamp: Date.now(),
+      })
+      stepIndex++
+    }
+    currentStepContent = ''
+    currentStepWorkflow = []
+  }
+
+  /** 将步骤保存到最后一个 assistant 消息 */
+  const saveStepsToMessage = () => {
+    saveCurrentStep()
+    if (currentSteps.length > 0 && lastAssistantMsgIndex >= 0) {
+      const lastMsg = displayMessages[lastAssistantMsgIndex]
+      if (lastMsg && lastMsg.role === 'assistant') {
+        lastMsg.steps = [...currentSteps]
+      }
+    }
+    currentSteps = []
+    stepIndex = 0
+  }
+
   messages.forEach((msg, index) => {
     if (msg.type === 'user') {
-      // 用户消息
+      // 用户消息处理
       let content = ''
       const medias: IUploadedMedia[] = []
+      let isToolResult = false
 
       if (Array.isArray(msg.content)) {
         msg.content.forEach((item: any) => {
@@ -52,40 +95,208 @@ function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
               url: item.source?.url || '',
               type: 'image',
             })
+          } else if (item.type === 'tool_result') {
+            isToolResult = true
           }
         })
       } else if (typeof msg.content === 'string') {
         content = msg.content
       }
 
-      displayMessages.push({
-        id: msg.uuid || `user-${index}`,
-        role: 'user',
-        content,
-        medias: medias.length > 0 ? medias : undefined,
-        status: 'done',
-      })
-    } else if (msg.type === 'assistant' || msg.type === 'result') {
-      // AI 回复
-      let content = ''
+      // 只有非工具结果的用户消息才显示
+      if (content && !isToolResult) {
+        // 保存之前的 assistant 步骤
+        saveStepsToMessage()
 
-      if (Array.isArray(msg.content)) {
-        msg.content.forEach((item: any) => {
-          if (item.type === 'text') {
-            content += item.text || ''
-          }
-        })
-      } else if (typeof msg.content === 'string') {
-        content = msg.content
-      }
-
-      if (content) {
         displayMessages.push({
-          id: msg.uuid || `assistant-${index}`,
-          role: 'assistant',
+          id: msg.uuid || `user-${index}`,
+          role: 'user',
           content,
+          medias: medias.length > 0 ? medias : undefined,
           status: 'done',
         })
+      }
+
+      // 处理工具结果（添加到工作流）
+      if ((msg as any).message) {
+        const userMsg = (msg as any).message as any
+        if (userMsg?.content && Array.isArray(userMsg.content)) {
+          userMsg.content.forEach((item: any) => {
+            if (item.type === 'tool_result' && item.tool_use_id) {
+              const toolName = toolCallMap.get(item.tool_use_id) || 'Tool'
+              let resultText = ''
+              if (Array.isArray(item.content)) {
+                item.content.forEach((rc: any) => {
+                  if (rc.type === 'text') {
+                    resultText = rc.text || ''
+                  }
+                })
+              } else if (typeof item.content === 'string') {
+                resultText = item.content
+              }
+
+              if (resultText) {
+                currentStepWorkflow.push({
+                  id: `result-${item.tool_use_id}`,
+                  type: 'tool_result',
+                  toolName,
+                  content: resultText,
+                  isActive: false,
+                  timestamp: Date.now(),
+                })
+              }
+            }
+          })
+        }
+      }
+
+      // 从 tool_use_result 字段获取工具结果
+      if ((msg as any).tool_use_result) {
+        const results = (msg as any).tool_use_result
+        if (Array.isArray(results)) {
+          results.forEach((result: any) => {
+            if (result.type === 'text' && result.text) {
+              // 查找最近的工具调用名称
+              const lastToolCall = [...currentStepWorkflow].reverse().find(s => s.type === 'tool_call')
+              const toolName = lastToolCall?.toolName || 'Tool'
+
+              currentStepWorkflow.push({
+                id: `result-${Date.now()}-${Math.random()}`,
+                type: 'tool_result',
+                toolName,
+                content: result.text,
+                isActive: false,
+                timestamp: Date.now(),
+              })
+            }
+          })
+        }
+      }
+    } else if (msg.type === 'stream_event') {
+      // 流式事件处理：提取工具调用和步骤信息
+      const streamEvent = msg as any
+      const event = streamEvent.event
+
+      // message_start 表示新的一轮消息开始（新步骤）
+      if (event?.type === 'message_start') {
+        saveCurrentStep()
+      }
+
+      // 工具调用开始
+      if (event?.type === 'content_block_start' && event.content_block?.type === 'tool_use') {
+        const toolName = event.content_block.name || 'Unknown Tool'
+        const toolId = event.content_block.id || `tool-${Date.now()}`
+
+        // 记录工具调用 ID 和名称的映射
+        toolCallMap.set(toolId, toolName)
+
+        currentStepWorkflow.push({
+          id: toolId,
+          type: 'tool_call',
+          toolName,
+          content: '',
+          isActive: false,
+          timestamp: Date.now(),
+        })
+      }
+
+      // 工具调用参数
+      if (event?.type === 'content_block_delta' && event.delta?.type === 'input_json_delta') {
+        const lastToolCall = currentStepWorkflow.findLast(s => s.type === 'tool_call')
+        if (lastToolCall) {
+          lastToolCall.content = (lastToolCall.content || '') + (event.delta.partial_json || '')
+        }
+      }
+    } else if (msg.type === 'assistant') {
+      // AI 回复消息
+      let content = ''
+      const messageData = (msg as any).message as any
+
+      if (messageData?.content && Array.isArray(messageData.content)) {
+        messageData.content.forEach((item: any) => {
+          if (item.type === 'text') {
+            content += item.text || ''
+          } else if (item.type === 'tool_use') {
+            // 工具调用信息（完整的）
+            const toolName = item.name || 'Unknown Tool'
+            const toolId = item.id || `tool-${Date.now()}`
+            const toolInput = item.input ? JSON.stringify(item.input, null, 2) : ''
+
+            toolCallMap.set(toolId, toolName)
+
+            // 检查是否已存在该工具调用
+            const existingCall = currentStepWorkflow.find(s => s.id === toolId)
+            if (existingCall) {
+              existingCall.content = toolInput
+              existingCall.isActive = false
+            } else {
+              currentStepWorkflow.push({
+                id: toolId,
+                type: 'tool_call',
+                toolName,
+                content: toolInput,
+                isActive: false,
+                timestamp: Date.now(),
+              })
+            }
+          }
+        })
+      }
+
+      // 累积当前步骤的文本内容
+      if (content) {
+        currentStepContent += (currentStepContent ? '\n\n' : '') + content
+      }
+
+      // 检查是否需要创建新的 assistant 消息
+      const lastMsg = displayMessages[displayMessages.length - 1]
+      if (!lastMsg || lastMsg.role !== 'assistant') {
+        // 创建新的 assistant 消息
+        displayMessages.push({
+          id: (msg as any).uuid || `assistant-${index}`,
+          role: 'assistant',
+          content: '',
+          status: 'done',
+          steps: [],
+        })
+        lastAssistantMsgIndex = displayMessages.length - 1
+      }
+    } else if (msg.type === 'result') {
+      // 结果消息
+      const messageData = (msg as any).message as any
+      const content = messageData?.message || ''
+
+      if (content && typeof content === 'string') {
+        // 检查上一条是否也是 assistant 消息
+        const lastMsg = displayMessages[displayMessages.length - 1]
+        if (lastMsg && lastMsg.role === 'assistant') {
+          // 添加到当前步骤内容（避免重复）
+          if (!currentStepContent.includes(content)) {
+            currentStepContent += (currentStepContent ? '\n\n' : '') + content
+          }
+        } else {
+          displayMessages.push({
+            id: (msg as any).uuid || `result-${index}`,
+            role: 'assistant',
+            content,
+            status: 'done',
+          })
+          lastAssistantMsgIndex = displayMessages.length - 1
+        }
+      }
+    }
+  })
+
+  // 保存最后的步骤
+  saveStepsToMessage()
+
+  // 后处理：确保每条 assistant 消息都有正确的 content
+  displayMessages.forEach(msg => {
+    if (msg.role === 'assistant' && msg.steps && msg.steps.length > 0) {
+      // 用所有步骤的内容拼接作为总内容
+      const totalContent = msg.steps.map(s => s.content).filter(Boolean).join('\n\n')
+      if (totalContent && !msg.content) {
+        msg.content = totalContent
       }
     }
   })
@@ -100,42 +311,113 @@ export default function ChatDetailPage() {
   const taskId = params.taskId as string
   const lng = params.lng as string
 
-  // 状态
+  // 全局 Store 状态
+  const {
+    currentTaskId,
+    isGenerating: storeIsGenerating,
+    messages: storeMessages,
+    workflowSteps: storeWorkflowSteps,
+    progress,
+  } = useAgentStore(
+    useShallow((state) => ({
+      currentTaskId: state.currentTaskId,
+      isGenerating: state.isGenerating,
+      messages: state.messages,
+      workflowSteps: state.workflowSteps,
+      progress: state.progress,
+    })),
+  )
+
+  // Store 方法
+  const { continueTask, stopTask, setMessages } = useAgentStore()
+
+  // 判断是否为活跃任务：Store 中的 taskId 匹配当前页面
+  // 一旦在此页面发起对话，就一直使用 Store 消息（避免切换导致消息丢失）
+  const isActiveTask = currentTaskId === taskId
+
+  // 判断是否正在实时生成
+  const isRealtimeGenerating = isActiveTask && storeIsGenerating
+
+  // 本地状态
   const [task, setTask] = useState<TaskDetail | null>(null)
-  const [messages, setMessages] = useState<IDisplayMessage[]>([])
+  const [localMessages, setLocalMessages] = useState<IDisplayMessage[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [inputValue, setInputValue] = useState('')
-  const [medias, setMedias] = useState<IUploadedMedia[]>([])
-  const [isUploading, setIsUploading] = useState(false)
-  const [isGenerating, setIsGenerating] = useState(false)
-  const [streamContent, setStreamContent] = useState('')
+  const [localIsGenerating, setLocalIsGenerating] = useState(false)
+
+  // 使用媒体上传 Hook
+  const {
+    medias,
+    setMedias,
+    isUploading,
+    handleMediasChange,
+    handleMediaRemove,
+    clearMedias,
+  } = useMediaUpload({
+    onError: () => toast.error(t('media.uploadFailed' as any)),
+  })
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
-  const uploadAbortRef = useRef<AbortController | null>(null)
-  const eventSourceRef = useRef<EventSource | null>(null)
+  const hasLoadedRef = useRef(false)
 
-  /** 滚动到底部 */
+  // 当前显示的消息：
+  // - 活跃任务（已在此页面发起过对话）→ 使用 Store 消息
+  // - 非活跃任务（刷新或从历史进入）→ 使用本地消息
+  const displayMessages = isActiveTask ? storeMessages : localMessages
+
+  // 是否正在生成
+  const isGenerating = isRealtimeGenerating || localIsGenerating
+
+  // 当前工作流步骤列表（仅在实时生成时有效）
+  const workflowSteps: IWorkflowStep[] = isActiveTask ? storeWorkflowSteps : []
+
+  /** 滚动消息列表到底部 */
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
 
-  /** 加载任务详情 */
+  /**
+   * 加载任务详情（仅在初始加载时）
+   * - 只在页面首次加载或刷新时从 API 获取历史消息
+   * - 对话过程中不会重新加载（避免覆盖新消息）
+   */
   useEffect(() => {
+    // 如果已经加载过，不再重复加载
+    if (hasLoadedRef.current) {
+      setIsLoading(false)
+      return
+    }
+
+    // 如果是活跃任务（Store 中已有消息），不需要从 API 加载
+    if (isActiveTask && storeMessages.length > 0) {
+      setIsLoading(false)
+      hasLoadedRef.current = true
+      return
+    }
+
     const loadTask = async () => {
       if (!taskId) return
 
       setIsLoading(true)
       try {
         const result = await agentApi.getTaskDetail(taskId)
+        if (!result) {
+          toast.error(t('message.error' as any))
+          return
+        }
         if (result.code === 0 && result.data) {
           setTask(result.data)
           // 转换消息格式
           if (result.data.messages) {
-            setMessages(convertMessages(result.data.messages))
+            const converted = convertMessages(result.data.messages)
+            setLocalMessages(converted)
+            // 同步到 Store（用于后续继续对话）
+            setMessages(converted)
           }
+          hasLoadedRef.current = true
         } else {
-          toast.error(result.msg || t('message.error' as any))
+          toast.error(result.message || t('message.error' as any))
         }
       } catch (error) {
         console.error('Load task detail failed:', error)
@@ -146,205 +428,58 @@ export default function ChatDetailPage() {
     }
 
     loadTask()
-  }, [taskId])
+  }, [taskId, isActiveTask, storeMessages.length, t, setMessages])
 
-  /** 滚动到底部 */
+  /** 滚动消息列表到底部 */
   useEffect(() => {
     scrollToBottom()
-  }, [messages, streamContent, scrollToBottom])
-
-  /** 处理媒体文件上传 */
-  const handleMediasChange = useCallback(async (files: FileList) => {
-    if (!files.length) return
-
-    setIsUploading(true)
-    uploadAbortRef.current = new AbortController()
-
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        const isVideo = file.type.startsWith('video/')
-
-        const mediaIndex = medias.length + i
-        const tempMedia: IUploadedMedia = {
-          url: '',
-          type: isVideo ? 'video' : 'image',
-          progress: 0,
-          file,
-        }
-        setMedias((prev) => [...prev, tempMedia])
-
-        const key = await uploadToOss(file, {
-          onProgress: (progress) => {
-            setMedias((prev) =>
-              prev.map((m, idx) =>
-                idx === mediaIndex ? { ...m, progress } : m,
-              ),
-            )
-          },
-          signal: uploadAbortRef.current?.signal,
-        })
-
-        setMedias((prev) =>
-          prev.map((m, idx) =>
-            idx === mediaIndex
-              ? { ...m, url: key as string, progress: undefined }
-              : m,
-          ),
-        )
-      }
-    } catch (error: any) {
-      if (error.name !== 'AbortError') {
-        toast.error(t('media.uploadFailed' as any))
-      }
-    } finally {
-      setIsUploading(false)
-    }
-  }, [medias.length])
-
-  /** 处理移除媒体 */
-  const handleMediaRemove = useCallback((index: number) => {
-    setMedias((prev) => prev.filter((_, i) => i !== index))
-  }, [])
+  }, [displayMessages, workflowSteps, scrollToBottom])
 
   /** 处理发送消息（继续对话） */
   const handleSend = useCallback(async () => {
     if (!inputValue.trim() || isGenerating) return
 
-    const userMessage: IDisplayMessage = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: inputValue,
-      medias: medias.filter((m) => m.url && !m.progress),
-      status: 'done',
-      createdAt: Date.now(),
-    }
+    // 保存当前输入
+    const currentPrompt = inputValue
+    const currentMedias = [...medias]
 
-    // 添加用户消息
-    setMessages((prev) => [...prev, userMessage])
+    // 清空输入
     setInputValue('')
-    setMedias([])
-    setIsGenerating(true)
-    setStreamContent('')
-
-    // 添加 AI 待回复消息
-    const assistantMessage: IDisplayMessage = {
-      id: `assistant-${Date.now()}`,
-      role: 'assistant',
-      content: '',
-      status: 'pending',
-      createdAt: Date.now(),
-    }
-    setMessages((prev) => [...prev, assistantMessage])
+    clearMedias()
+    setLocalIsGenerating(true)
 
     try {
-      // 调用 SSE 接口继续对话
-      const mediaUrls = userMessage.medias?.map((m) => m.url) || []
-      
-      // 使用 EventSource 连接 SSE
-      const sseUrl = `/api/agent/tasks?prompt=${encodeURIComponent(inputValue)}&taskId=${taskId}${mediaUrls.length ? `&medias=${encodeURIComponent(JSON.stringify(mediaUrls))}` : ''}`
-      
-      const eventSource = new EventSource(sseUrl)
-      eventSourceRef.current = eventSource
-
-      let fullContent = ''
-
-      eventSource.onmessage = (event) => {
-        try {
-          const data = JSON.parse(event.data)
-          
-          if (data.type === 'text' || data.type === 'content_block_delta') {
-            const text = data.text || data.delta?.text || ''
-            fullContent += text
-            setStreamContent(fullContent)
-            
-            // 更新消息
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === assistantMessage.id
-                  ? { ...m, content: fullContent, status: 'streaming' }
-                  : m,
-              ),
-            )
-          } else if (data.type === 'message_stop' || data.type === 'done') {
-            // 完成
-            setMessages((prev) =>
-              prev.map((m) =>
-                m.id === assistantMessage.id
-                  ? { ...m, content: fullContent, status: 'done' }
-                  : m,
-              ),
-            )
-            eventSource.close()
-            setIsGenerating(false)
-          } else if (data.type === 'error') {
-            throw new Error(data.error || 'Generation failed')
-          }
-        } catch (e) {
-          // 非 JSON 数据，可能是纯文本
-          fullContent += event.data
-          setStreamContent(fullContent)
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantMessage.id
-                ? { ...m, content: fullContent, status: 'streaming' }
-                : m,
-            ),
-          )
-        }
-      }
-
-      eventSource.onerror = () => {
-        if (fullContent) {
-          // 如果已经有内容，标记为完成
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantMessage.id
-                ? { ...m, content: fullContent, status: 'done' }
-                : m,
-            ),
-          )
-        } else {
-          // 标记为错误
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantMessage.id
-                ? { ...m, status: 'error', errorMessage: 'Connection interrupted' }
-                : m,
-            ),
-          )
-        }
-        eventSource.close()
-        setIsGenerating(false)
-      }
+      // 使用全局 Store 继续对话
+      await continueTask({
+        prompt: currentPrompt,
+        medias: currentMedias,
+        t: t as (key: string) => string,
+        taskId,
+      })
     } catch (error: any) {
-      setMessages((prev) =>
-        prev.map((m) =>
-          m.id === assistantMessage.id
-            ? { ...m, status: 'error', errorMessage: error.message }
-            : m,
-        ),
-      )
-      setIsGenerating(false)
+      console.error('Continue task failed:', error)
+      toast.error(error.message || t('message.error' as any))
+      // 恢复输入
+      setInputValue(currentPrompt)
+      setMedias(currentMedias)
+    } finally {
+      setLocalIsGenerating(false)
     }
-  }, [inputValue, medias, isGenerating, taskId])
+  }, [inputValue, medias, isGenerating, taskId, t, continueTask, clearMedias, setMedias])
 
   /** 停止生成 */
   const handleStop = useCallback(() => {
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close()
-      eventSourceRef.current = null
-    }
-    setIsGenerating(false)
-  }, [])
+    stopTask()
+    setLocalIsGenerating(false)
+  }, [stopTask])
 
   /** 返回 */
   const handleBack = () => {
     router.push(`/${lng}`)
   }
 
-  // 加载骨架屏
-  if (isLoading) {
+  // 加载骨架屏（仅在初始加载时显示，活跃任务不显示）
+  if (isLoading && !isActiveTask) {
     return (
       <div className="flex flex-col h-screen bg-gray-50">
         {/* 顶部导航 */}
@@ -377,12 +512,7 @@ export default function ChatDetailPage() {
     <div className="flex flex-col h-screen bg-gray-50">
       {/* 顶部导航 */}
       <header className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 shrink-0">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={handleBack}
-          className="w-8 h-8"
-        >
+        <Button variant="ghost" size="icon" onClick={handleBack} className="w-8 h-8">
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex items-center gap-2">
@@ -399,27 +529,56 @@ export default function ChatDetailPage() {
             {task?.title || t('task.newChat' as any)}
           </h1>
         </div>
+
+        {/* 实时模式显示进度 */}
         {isGenerating && (
-          <div className="ml-auto flex items-center gap-1 text-sm text-purple-600">
+          <div className="ml-auto flex items-center gap-2 text-sm text-purple-600">
             <Loader2 className="w-4 h-4 animate-spin" />
             <span>{t('message.thinking' as any)}</span>
+            {progress > 0 && progress < 100 && (
+              <span className="text-xs text-gray-500">({progress}%)</span>
+            )}
           </div>
         )}
       </header>
 
       {/* 消息列表 */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
+        {displayMessages
+          .filter((message): message is IDisplayMessage & { role: 'user' | 'assistant' } =>
+            message.role === 'user' || message.role === 'assistant')
+          .map((message, index, filteredMessages) => {
+          // 判断是否为最后一条 assistant 消息（用于显示工作流）
+          const isLastAssistant = message.role === 'assistant' &&
+            index === filteredMessages.length - 1
+
+          return (
+            <ChatMessage
+              key={message.id}
+              role={message.role}
+              content={message.content}
+              medias={message.medias}
+              status={message.status}
+              errorMessage={message.errorMessage}
+              createdAt={message.createdAt}
+              // 传递消息步骤（优先使用 steps）
+              steps={message.steps}
+              // 只在最后一条 AI 消息上显示工作流步骤（兼容无 steps 的情况）
+              workflowSteps={isLastAssistant && isGenerating ? workflowSteps : undefined}
+            />
+          )
+        })}
+
+        {/* 如果正在生成但还没有 assistant 消息，显示一个空的 AI 消息 */}
+        {isGenerating && displayMessages.every(m => m.role === 'user') && (
           <ChatMessage
-            key={message.id}
-            role={message.role}
-            content={message.content}
-            medias={message.medias}
-            status={message.status}
-            errorMessage={message.errorMessage}
-            createdAt={message.createdAt}
+            role="assistant"
+            content=""
+            status="streaming"
+            workflowSteps={workflowSteps}
           />
-        ))}
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -442,4 +601,3 @@ export default function ChatDetailPage() {
     </div>
   )
 }
-

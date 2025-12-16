@@ -38,7 +38,9 @@
   "detail": {
     "title": "Chat Details",
     "continuePlaceholder": "Continue the conversation...",
-    "back": "Back"
+    "back": "Back",
+    "workflowProcess": "AI Workflow",
+    "waitingResponse": "Waiting for AI response..."
   },
   "media": {
     "video": "Video",

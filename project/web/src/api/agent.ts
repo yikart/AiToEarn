@@ -43,6 +43,36 @@ export interface TaskDetail {
   medias: Media[]
   errorMessage: string
   createdAt: string
+  updatedAt: string
+  messages?: TaskMessage[]
+}
+
+// 任务消息类型
+export interface TaskMessage {
+  type: 'user' | 'assistant' | 'result' | 'system' | 'stream_event'
+  uuid?: string
+  message?: any
+  content?: string | any[]
+  parent_tool_use_id?: string | null
+  subtype?: string
+}
+
+// 任务列表项
+export interface TaskListItem {
+  id: string
+  userId: string
+  title?: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 任务列表响应
+export interface TaskListResponse {
+  page: number
+  pageSize: number
+  totalPages: number
+  total: number
+  list: TaskListItem[]
 }
 
 // 创建任务请求参数
@@ -280,6 +310,35 @@ export const agentApi = {
    */
   async stopTask(taskId: string) {
     const res = await http.delete(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 获取任务列表
+   * @param page 页码，默认1
+   * @param pageSize 每页数量，默认10
+   */
+  async getTaskList(page = 1, pageSize = 10) {
+    const res = await http.get<TaskListResponse>('agent/tasks', { page, pageSize })
+    return res
+  },
+
+  /**
+   * 删除任务
+   * @param taskId 任务ID
+   */
+  async deleteTask(taskId: string) {
+    const res = await http.delete(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 更新任务标题
+   * @param taskId 任务ID
+   * @param title 新标题
+   */
+  async updateTaskTitle(taskId: string, title: string) {
+    const res = await http.patch(`agent/tasks/${taskId}`, { title })
     return res
   },
 }
