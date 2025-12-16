@@ -106,7 +106,7 @@ const SAMPLE_PROMPTS: PromptItem[] = promptsData as PromptItem[]
 
 export default function PromptGallerySection({ onApplyPrompt }: PromptGallerySectionProps) {
   const { t } = useTransClient('promptGallery')
-  const [isExpanded, setIsExpanded] = useState(true)
+  const [isExpanded, setIsExpanded] = useState(false)
   const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null)
   const [applied, setApplied] = useState(false)
   const [itemsToShow, setItemsToShow] = useState(8) // 默认显示8个（假设每行4个，显示2行）

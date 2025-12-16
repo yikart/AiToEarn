@@ -63,6 +63,7 @@
     "generatingWarning": "正在生成中，请先停止当前任务",
     "conversationId": "对话ID",
     "startNewConversation": "开启新对话",
+    "currentCost": "本次耗费",
     "aiGenerationProcess": "AI 生成过程",
     "waitingAiResponse": "等待 AI 响应...",
     "uploadImage": "上传图片",

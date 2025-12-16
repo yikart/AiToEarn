@@ -64,6 +64,7 @@
     "generatingWarning": "Generation in progress, please stop the current task first",
     "conversationId": "Conversation ID",
     "startNewConversation": "Start New Conversation",
+    "currentCost": "Current Cost",
     "aiGenerationProcess": "AI Generation Process",
     "waitingAiResponse": "Waiting for AI response...",
     "uploadImage": "Upload Image",
