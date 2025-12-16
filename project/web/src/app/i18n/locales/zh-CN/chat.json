@@ -1,0 +1,49 @@
+{
+  "input": {
+    "placeholder": "输入你想创作的内容...",
+    "send": "发送",
+    "stop": "停止",
+    "uploading": "上传中..."
+  },
+  "message": {
+    "thinking": "思考中...",
+    "error": "操作失败，请重试",
+    "loadFailed": "加载失败",
+    "connectionInterrupted": "连接中断"
+  },
+  "task": {
+    "newChat": "新对话",
+    "delete": "删除",
+    "deleteConfirm": "确定要删除这个对话吗？",
+    "deleteSuccess": "删除成功",
+    "deleteFailed": "删除失败"
+  },
+  "home": {
+    "title": "有什么可以帮你的？",
+    "subtitle": "描述你想创作的内容，AI 将帮助你生成",
+    "recentTasks": "最近任务",
+    "viewAll": "浏览全部",
+    "noTasks": "暂无任务记录",
+    "startChat": "开始创作",
+    "aiCreation": "AI 智能创作",
+    "supportUpload": "支持图片/视频上传",
+    "enterToSend": "按 Enter 发送"
+  },
+  "history": {
+    "title": "任务记录",
+    "empty": "暂无任务记录",
+    "loadMore": "加载更多",
+    "loading": "加载中..."
+  },
+  "detail": {
+    "title": "对话详情",
+    "continuePlaceholder": "继续对话...",
+    "back": "返回"
+  },
+  "media": {
+    "video": "视频",
+    "uploadFailed": "上传失败，请重试",
+    "uploadCancelled": "上传已取消"
+  }
+}
+

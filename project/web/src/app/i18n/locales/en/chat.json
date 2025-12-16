@@ -1,0 +1,49 @@
+{
+  "input": {
+    "placeholder": "Describe what you want to create...",
+    "send": "Send",
+    "stop": "Stop",
+    "uploading": "Uploading..."
+  },
+  "message": {
+    "thinking": "Thinking...",
+    "error": "Operation failed, please try again",
+    "loadFailed": "Load failed",
+    "connectionInterrupted": "Connection interrupted"
+  },
+  "task": {
+    "newChat": "New Chat",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this chat?",
+    "deleteSuccess": "Deleted successfully",
+    "deleteFailed": "Delete failed"
+  },
+  "home": {
+    "title": "How can I help you?",
+    "subtitle": "Describe what you want to create, AI will help you generate",
+    "recentTasks": "Recent Tasks",
+    "viewAll": "View All",
+    "noTasks": "No task records",
+    "startChat": "Start Creating",
+    "aiCreation": "AI Creation",
+    "supportUpload": "Support image/video upload",
+    "enterToSend": "Press Enter to send"
+  },
+  "history": {
+    "title": "Task History",
+    "empty": "No task records",
+    "loadMore": "Load More",
+    "loading": "Loading..."
+  },
+  "detail": {
+    "title": "Chat Details",
+    "continuePlaceholder": "Continue the conversation...",
+    "back": "Back"
+  },
+  "media": {
+    "video": "Video",
+    "uploadFailed": "Upload failed, please try again",
+    "uploadCancelled": "Upload cancelled"
+  }
+}
+
