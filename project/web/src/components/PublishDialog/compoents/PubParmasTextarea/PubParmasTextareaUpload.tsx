@@ -288,7 +288,12 @@ const PubParmasTextareaUpload = memo(
           />
 
           <Dropdown menu={{ items: dropdownItems }} placement="top">
-            <div className="pubParmasTextarea-uploads-upload-blocker">
+            <div className="pubParmasTextarea-uploads-upload-blocker" onClick={() => {
+                  // 触发上传
+                  uploadRef
+                    .current!.nativeElement?.querySelector('input')!
+                    .click()
+                }}>
               <PlusOutlined style={{ fontSize: '20px' }} />
               {t('upload.selectFile')}
             </div>
