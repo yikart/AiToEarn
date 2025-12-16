@@ -1,12 +1,18 @@
+/**
+ * NotificationPanel - 通知面板
+ * 通知列表弹窗，包含通知的增删改查、任务接受等功能
+ */
+
 'use client'
 
 import type { NotificationItem, TaskItem } from '@/api/notification'
 import type { SocialAccount } from '@/api/types/account.type'
 // 平台配置（图标等）
 import type { PlatType } from '@/app/config/platConfig'
-import { CheckOutlined, ClockCircleOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons'
-import { Badge, Button, Empty, List, Modal, Popconfirm, Spin, Steps, Tag, Tooltip } from 'antd'
+import { CheckOutlined, ClockCircleOutlined, DeleteOutlined } from '@ant-design/icons'
+import { Badge, Button, Empty, List, Popconfirm, Spin, Steps, Tag } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
@@ -738,25 +744,18 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         )}
         open={visible}
         onCancel={onClose}
-        footer={[
-          <Button key="markAll" onClick={handleMarkAllAsRead} disabled={unreadCount === 0} type="primary">
-            {t('markAllAsRead')}
-          </Button>,
-          <Button key="close" onClick={onClose}>
-            {t('cancel')}
-          </Button>,
-        ]}
+        footer={(
+          <>
+            <Button onClick={handleMarkAllAsRead} disabled={unreadCount === 0} type="primary">
+              {t('markAllAsRead')}
+            </Button>
+            <Button onClick={onClose}>
+              {t('cancel')}
+            </Button>
+          </>
+        )}
         width={700}
-        destroyOnHidden
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '6px',
-          },
-        }}
+        destroyOnClose
       >
         <Spin spinning={loading}>
           {notifications.length > 0
@@ -869,9 +868,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           setDetailModalVisible(false)
           setSelectedTask(null)
         }}
-        footer={[
+        footer={(
           <Button
-            key="close"
             onClick={() => {
               setDetailModalVisible(false)
               setSelectedTask(null)
@@ -879,18 +877,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
             type="primary"
           >
             {t('close')}
-          </Button>,
-        ]}
+          </Button>
+        )}
         width={800}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         {selectedNotification && (
           <div className={styles.notificationDetail}>
@@ -1242,21 +1231,14 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         title={previewMedia?.title || t('mediaPreview')}
         open={mediaPreviewVisible}
         onCancel={handleCloseMediaPreview}
-        afterClose={handleCloseMediaPreview}
-        footer={[
-          <Button key="close" onClick={handleCloseMediaPreview}>
+        footer={(
+          <Button onClick={handleCloseMediaPreview}>
             {t('close')}
-          </Button>,
-        ]}
+          </Button>
+        )}
         width={previewMedia?.type === 'video' ? 800 : 600}
         zIndex={3000}
-        destroyOnHidden={true}
-        styles={{
-          body: {
-            padding: '24px',
-            textAlign: 'center',
-          },
-        }}
+        destroyOnClose={true}
       >
         {previewMedia && (
           <div>
@@ -1305,11 +1287,6 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         footer={null}
         width={500}
         zIndex={3000}
-        styles={{
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Steps
           direction="vertical"
@@ -1336,15 +1313,6 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         footer={null}
         width={600}
         zIndex={2000}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <div style={{ marginBottom: '16px' }}>
           <p style={{ margin: 0, color: '#666' }}>

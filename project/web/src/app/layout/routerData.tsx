@@ -9,7 +9,6 @@ import {
   Home,
   ListTodo,
   MessageCircle,
-  Sparkles,
   Upload,
 } from 'lucide-react'
 
@@ -44,12 +43,6 @@ export const routerData: IRouterDataItem[] = [
     translationKey: 'interactive',
     path: '/interactive',
     icon: <MessageCircle size={20} />,
-  },
-  {
-    name: 'AI工具',
-    translationKey: 'aiTools',
-    path: '/material/ai-generate',
-    icon: <Sparkles size={20} />,
   },
   {
     name: '任务中心',

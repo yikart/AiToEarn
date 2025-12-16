@@ -7,6 +7,7 @@
 | 文件 | 描述 |
 |------|------|
 | `toast.ts` | Toast 消息提示工具，替代 antd message |
+| `confirm.tsx` | 命令式确认弹窗工具，替代 antd Modal.confirm |
 | `utils.ts` | 通用工具函数 |
 
 ---
@@ -79,6 +80,80 @@ toast.open({
 - ⚠️ **禁止使用 antd 的 `message` 组件**，统一使用此工具
 - `duration` 参数单位为**秒**（内部会转换为毫秒）
 - `loading` 类型默认不会自动关闭，需手动调用 `dismiss`
+
+---
+
+## confirm.tsx - 命令式确认弹窗
+
+基于 [shadcn/ui AlertDialog](https://ui.shadcn.com/docs/components/alert-dialog) 封装的命令式确认弹窗，**用于替代 antd 的 `Modal.confirm` 方法**。
+
+### 导入方式
+
+```typescript
+import { confirm } from '@/lib/confirm'
+```
+
+### API
+
+| 参数 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `title` | 标题 | `React.ReactNode` | `"Confirm"` |
+| `content` | 内容描述 | `React.ReactNode` | - |
+| `okText` | 确认按钮文本 | `React.ReactNode` | `"Confirm"` |
+| `cancelText` | 取消按钮文本 | `React.ReactNode` | `"Cancel"` |
+| `onOk` | 确认回调（支持异步） | `() => Promise<any> \| any` | - |
+| `onCancel` | 取消回调（支持异步） | `() => Promise<any> \| any` | - |
+| `okButtonProps` | 确认按钮属性 | `ButtonProps` | - |
+| `cancelButtonProps` | 取消按钮属性 | `ButtonProps` | - |
+| `icon` | 自定义图标 | `React.ReactNode` | 黄色警告图标 |
+
+### 返回值
+
+返回 `Promise<boolean>`：
+- `true`：用户点击确认
+- `false`：用户点击取消
+
+### 使用示例
+
+```typescript
+// 基本用法
+const result = await confirm({
+  title: '删除确认',
+  content: '确定要删除此项吗？此操作不可恢复。',
+})
+
+if (result) {
+  // 用户确认
+  await deleteItem()
+}
+
+// 带异步回调
+await confirm({
+  title: '提交确认',
+  content: '确定要提交吗？',
+  okText: '提交',
+  cancelText: '取消',
+  onOk: async () => {
+    await submitData()
+  },
+})
+
+// 自定义按钮样式
+await confirm({
+  title: '危险操作',
+  content: '此操作将永久删除数据',
+  okButtonProps: {
+    className: 'bg-red-500 hover:bg-red-600',
+  },
+})
+```
+
+### 注意事项
+
+- ⚠️ **禁止使用 antd 的 `Modal.confirm`**，统一使用此工具
+- 此组件为命令式调用，会自动创建和销毁 DOM 节点
+- `onOk` 回调执行期间会显示 loading 状态
+- 如果 `onOk` 抛出异常，Promise 会 reject
 
 ---
 

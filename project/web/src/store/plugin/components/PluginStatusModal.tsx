@@ -12,8 +12,9 @@ import {
   SyncOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Button, Card, Divider, Empty, Modal, Space, Spin, Tag, Tooltip } from 'antd'
+import { Avatar, Button, Card, Divider, Empty, Space, Spin, Tag, Tooltip } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'

@@ -1,6 +1,12 @@
+/**
+ * FacebookPagesModal - Facebook 页面选择弹窗
+ * 用于选择要管理的 Facebook 主页
+ */
+
 import { ReloadOutlined } from '@ant-design/icons'
-import { Avatar, Button, Checkbox, List, Modal, Spin, Typography } from 'antd'
+import { Avatar, Button, Checkbox, List, Spin, Typography } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { apiGetFacebookPages, apiSubmitFacebookPages } from '@/api/plat/facebook'
@@ -116,19 +122,20 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
       title={t('facebookPages.title' as any)}
       open={open}
       onCancel={onClose}
-      footer={[
-        <Button key="cancel" onClick={onClose}>
-          {t('facebookPages.cancel' as any)}
-        </Button>,
-        <Button
-          key="submit"
-          type="primary"
-          loading={submitting}
-          onClick={handleSubmit}
-        >
-          {t('facebookPages.confirm' as any)}
-        </Button>,
-      ]}
+      footer={(
+        <>
+          <Button onClick={onClose}>
+            {t('facebookPages.cancel' as any)}
+          </Button>
+          <Button
+            type="primary"
+            loading={submitting}
+            onClick={handleSubmit}
+          >
+            {t('facebookPages.confirm' as any)}
+          </Button>
+        </>
+      )}
       width={600}
       className={styles.facebookPagesModal}
     >

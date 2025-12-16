@@ -1,10 +1,16 @@
+/**
+ * ProfilePage - 个人中心页面
+ * 用户信息管理、VIP 订阅、积分管理等功能
+ */
+
 'use client'
 
 import type { Order } from '@/api/types/payment'
 import { CopyOutlined, CrownOutlined, DollarOutlined, EditOutlined, GiftFilled, GiftOutlined, HistoryOutlined, RocketOutlined, StarOutlined, ThunderboltOutlined, TrophyOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons'
 
-import { Button, Card, Descriptions, Form, Input, Modal, Select } from 'antd'
+import { Button, Card, Descriptions, Form, Input, Select } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'

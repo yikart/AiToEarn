@@ -1,3 +1,8 @@
+/**
+ * TaskPageCore - 任务中心核心页面
+ * 任务接取、发布、提交的核心功能页面
+ */
+
 'use client'
 
 import type {
@@ -7,8 +12,9 @@ import type {
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
 import { CheckOutlined, ClockCircleOutlined, EyeOutlined, PlayCircleOutlined, UploadOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Empty, Input, List, Modal, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
+import { Button, Card, Col, Empty, Input, List, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'

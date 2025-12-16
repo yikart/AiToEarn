@@ -3,7 +3,7 @@
  * 使用策略模式处理不同的任务结果操作
  */
 
-import { Modal } from 'antd'
+import { confirm } from '@/lib/confirm'
 import { toast } from '@/lib/toast'
 import { PubType } from '@/app/config/publishConfig'
 import { MediaType } from '@/api/agent'
@@ -369,7 +369,7 @@ const updateChannelHandler: IActionHandler = {
     
     toast.warning(t('aiGeneration.channelAuthExpired' as any))
     
-    Modal.confirm({
+    confirm({
       title: t('aiGeneration.channelAuthExpiredTitle' as any),
       content: t('aiGeneration.channelAuthExpiredContent' as any),
       okText: t('aiGeneration.reauthorize' as any),
@@ -397,7 +397,7 @@ const loginChannelHandler: IActionHandler = {
     
     toast.info(t('aiGeneration.needLoginChannel' as any))
     
-    Modal.confirm({
+    confirm({
       title: t('aiGeneration.needLogin' as any),
       content: t('aiGeneration.pleaseLoginChannel' as any),
       okText: t('aiGeneration.goLogin' as any),

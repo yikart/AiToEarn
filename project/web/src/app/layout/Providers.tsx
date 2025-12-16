@@ -1,19 +1,22 @@
+/**
+ * Providers - 全局 Provider 组件
+ * 包含 Google OAuth、Ant Design 配置、Toast 等全局配置
+ */
+
 'use client'
 
 import type { Locale } from 'antd/es/locale'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { App, ConfigProvider, Modal, notification } from 'antd'
+import { App, ConfigProvider } from 'antd'
 import en_US from 'antd/es/locale/en_US'
 import zh_CN from 'antd/es/locale/zh_CN'
 import { Suspense, useEffect } from 'react'
-import { useShallow } from 'zustand/react/shallow'
 import { Toaster } from '@/components/ui/sonner'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import useCssVariables from '@/app/hooks/useCssVariables'
 import { fallbackLng } from '@/app/i18n/settings'
 import { useAccountStore } from '@/store/account'
-import { useConfigStore } from '@/store/config'
 import { useUserStore } from '@/store/user'
 
 // antd 语言获取
@@ -35,14 +38,6 @@ export function Providers({
   lng: string
 }) {
   const cssVariables = useCssVariables()
-  const { setGlobal } = useConfigStore(
-    useShallow(state => ({
-      setGlobal: state.setGlobal,
-    })),
-  )
-  const [notificationApi, contextHolderNotification]
-    = notification.useNotification()
-  const [modal, contextHolderModal] = Modal.useModal()
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -55,8 +50,6 @@ export function Providers({
       useUserStore.getState().getUserInfo()
       useAccountStore.getState().accountInit()
     }
-
-    setGlobal(modal, notificationApi)
   }, [])
 
   useEffect(() => {
@@ -76,8 +69,6 @@ export function Providers({
         <App component={false}>
           <Suspense>
             <AntdRegistry>
-              {contextHolderNotification}
-              {contextHolderModal}
               <Toaster position="top-center" richColors />
               {children}
             </AntdRegistry>

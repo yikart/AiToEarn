@@ -171,10 +171,6 @@ export default function AlbumPage() {
     }
   }
 
-  const handleAIGenerate = () => {
-    router.push(`/material/ai-generate`)
-  }
-
   // 获取资源类型显示文本
   const getTypeText = () => {
     if (!groupInfo)
@@ -192,10 +188,6 @@ export default function AlbumPage() {
       <div className={styles.header}>
         <h2>{groupInfo ? `${groupInfo.title} - ${getTypeText()}` : '媒体资源'}</h2>
         <div className={styles.headerActions}>
-          <label className={styles.uploadButton} onClick={handleAIGenerate}>
-            AI生成素材
-          </label>
-
           <label className={styles.uploadButton}>
             <input
               type="file"

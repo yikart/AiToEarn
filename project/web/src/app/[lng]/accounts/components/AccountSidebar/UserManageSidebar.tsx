@@ -1,13 +1,19 @@
+/**
+ * UserManageSidebar - 用户管理侧边栏
+ * 账号分组管理侧边栏
+ */
+
 import type { ForwardedRef } from 'react'
 import type { AccountGroupItem } from '@/api/types/account.type'
 import {
-  ExclamationCircleFilled,
   PlusOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import { ControlledMenu, MenuItem } from '@szhsin/react-menu'
-import { Button, Input, Modal } from 'antd'
+import { Button, Input } from 'antd'
 import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
+import { Modal } from '@/components/ui/modal'
 import { forwardRef, memo, useRef, useState } from 'react'
 import { ReactSortable } from 'react-sortablejs'
 import { useShallow } from 'zustand/react/shallow'
@@ -29,8 +35,6 @@ export interface IUserManageSidebarProps {
   onChange: (id: string) => void
   onSortEnd: () => void
 }
-
-const { confirm } = Modal
 
 const MENU_ID = 'userManageSidebar'
 
@@ -94,7 +98,6 @@ const UserManageSidebar = memo(
               onClick={() => {
                 confirm({
                   title: t('userManageSidebar.confirmDelete'),
-                  icon: <ExclamationCircleFilled />,
                   content: (
                     <>
                       {t('userManageSidebar.confirmDeleteContent')}
@@ -108,6 +111,7 @@ const UserManageSidebar = memo(
                       ？
                     </>
                   ),
+                  okType: 'destructive',
                   onOk: async () => {
                     await deleteAccountGroupApi([rightClickOperateData!.id])
                     await getAccountGroup()

@@ -1,8 +1,14 @@
+/**
+ * PointsDetailModal - 积分明细弹窗
+ * 展示用户积分记录
+ */
+
 'use client'
 
 import { InfoCircleOutlined } from '@ant-design/icons'
-import { Modal, Popover, Spin, Tabs } from 'antd'
+import { Popover, Spin, Tabs } from 'antd'
 import { memo, useEffect, useState } from 'react'
+import { Modal } from '@/components/ui/modal'
 import { getPointsRecordsApi } from '@/api/apiReq'
 import { useTransClient } from '@/app/i18n/client'
 import { useUserStore } from '@/store/user'
@@ -78,8 +84,7 @@ const PointsDetailModal = memo(({ open, onClose }: PointsDetailModalProps) => {
       footer={null}
       width={980}
       className={styles.outsideCloseModal}
-      destroyOnHidden
-      centered
+      destroyOnClose
     >
       <div style={{ background: '#fff', borderRadius: 12 }}>
         {/* 头部汇总 */}

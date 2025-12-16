@@ -1,3 +1,8 @@
+/**
+ * SubscriptionManagementModal - 订阅管理弹窗
+ * 管理用户订阅状态、购买记录等
+ */
+
 'use client'
 
 import type {
@@ -7,8 +12,9 @@ import type {
   Subscription,
   SubscriptionListParams,
 } from '@/api/types/payment'
-import { Button, Card, Descriptions, Modal, Table, Tabs, Tag } from 'antd'
+import { Button, Descriptions, Tabs, Tag } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { memo, useEffect, useState } from 'react'
 import {
@@ -273,10 +279,8 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
         onCancel={onClose}
         footer={null}
         width={1000}
-
         className={styles.subscriptionModal}
-        destroyOnHidden
-        centered
+        destroyOnClose
       >
         <div className={styles.modalContent}>
           <Tabs defaultActiveKey="subscriptions">
@@ -706,13 +710,13 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
         open={orderDetailVisible}
         onCancel={() => setOrderDetailVisible(false)}
         className={styles.orderDetailModal}
-        footer={[
-          <Button key="close" onClick={() => setOrderDetailVisible(false)}>
+        footer={(
+          <Button onClick={() => setOrderDetailVisible(false)}>
             {tProfile('close')}
-          </Button>,
-        ]}
+          </Button>
+        )}
         width={600}
-        loading={orderDetailLoading}
+        confirmLoading={orderDetailLoading}
       >
         {currentOrderDetail && (
           <Descriptions bordered column={1} size="small">

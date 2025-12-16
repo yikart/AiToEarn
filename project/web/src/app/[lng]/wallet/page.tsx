@@ -1,11 +1,17 @@
+/**
+ * WalletPage - 钱包管理页面
+ * 管理用户钱包账户的增删改查功能
+ */
+
 'use client'
 
 import type {
   UserWalletAccount,
   UserWalletAccountCreateDto,
 } from '@/api/userWalletAccount'
-import { Button, Card, Form, Input, Modal, Popconfirm, Select, Table } from 'antd'
+import { Button, Card, Form, Input, Popconfirm, Select, Table } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import {

@@ -1,8 +1,14 @@
+/**
+ * LoginModal - 登录弹窗组件
+ * 支持邮箱登录和 Google 登录
+ */
+
 'use client'
 
 import { GoogleLogin } from '@react-oauth/google'
-import { Button, Form, Input, Modal } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
 import {
@@ -136,7 +142,6 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
         onCancel={onCancel}
         footer={null}
         width={460}
-        centered
         destroyOnClose
       >
         <div className={loginStyles.loginBox} style={{ boxShadow: 'none', padding: '24px 0' }}>
@@ -197,7 +202,6 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
           loginForm.resetFields()
         }}
         maskClosable={false}
-        keyboard={false}
         closable={true}
         footer={null}
         className={loginStyles.modalWrapper}

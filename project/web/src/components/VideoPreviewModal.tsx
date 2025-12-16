@@ -1,7 +1,12 @@
+/**
+ * VideoPreviewModal - 视频预览弹窗
+ * 用于在弹窗中预览视频内容
+ */
+
 import type { ForwardedRef } from 'react'
-import { Modal } from 'antd'
 import { forwardRef, memo, useRef } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { Modal } from '@/components/ui/modal'
 
 export interface IVideoPreviewModalRef {}
 

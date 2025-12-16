@@ -1,10 +1,16 @@
+/**
+ * IncomePage - 收入管理页面
+ * 收入记录、提现申请、提现记录的管理页面
+ */
+
 'use client'
 
 import type { IncomeRecord } from '@/api/types/income'
 import type { WithdrawRecord } from '@/api/types/withdraw'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DollarOutlined, HistoryOutlined, WalletOutlined } from '@ant-design/icons'
-import { Button, Card, Descriptions, Form, Input, Modal, Popconfirm, Select, Space, Table, Tabs, Tag } from 'antd'
+import { Button, Card, Descriptions, Form, Input, Popconfirm, Select, Space, Table, Tabs, Tag } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { apiGetIncomeList, apiSubmitWithdraw } from '@/api/income'

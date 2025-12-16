@@ -1,7 +1,13 @@
+/**
+ * ForgotPasswordPage - 忘记密码页面
+ * 发送重置密码邮件和重置密码功能
+ */
+
 'use client'
 
-import { Button, Form, Input, Modal } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'

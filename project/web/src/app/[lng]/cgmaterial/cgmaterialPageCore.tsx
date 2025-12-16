@@ -2,8 +2,10 @@
 
 import type { EngagementPostsParams } from '@/api/types/engagement'
 import { DeleteOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, ImportOutlined, PlusOutlined, VideoCameraOutlined } from '@ant-design/icons'
-import { Avatar, Button, Card, Form, Input, InputNumber, List, Modal, Select, Space, Spin } from 'antd'
+import { Avatar, Button, Card, Form, Input, InputNumber, List, Select, Space, Spin } from 'antd'
+import { confirm } from '@/lib/confirm'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -829,7 +831,7 @@ export default function CgMaterialPageCore() {
 
     if (!isVip) {
       // 如果不是VIP，显示确认对话框
-      Modal.confirm({
+      confirm({
         title: t('import.vipRequired' as any),
         content: t('import.vipRequiredDesc' as any),
         okText: t('import.upgradeNow' as any),
@@ -1314,11 +1316,11 @@ export default function CgMaterialPageCore() {
                               className={styles.groupActionBtn}
                               onClick={(e) => {
                                 e.stopPropagation()
-                                Modal.confirm({
+                                confirm({
                                   title: t('sidebar.deleteConfirm'),
                                   content: t('sidebar.deleteConfirmDesc', { name: item.name || item.title }),
                                   okText: t('sidebar.delete'),
-                                  okType: 'danger',
+                                  okType: 'destructive',
                                   cancelText: t('batchGenerate.cancel'),
                                   onOk: async () => {
                                     try {

@@ -32,7 +32,47 @@ shadcn/ui 组件库，新增组件请使用 `npx shadcn@latest add <component>` 
 
 | 组件 | 说明 |
 |------|------|
+| `dialog.tsx` | 对话框基础组件 |
+| `alert-dialog.tsx` | 警告对话框组件 |
+| `modal.tsx` | 通用 Modal 弹窗封装（基于 dialog） |
 | `sonner.tsx` | Toast 通知组件（配合 `@/lib/toast` 使用） |
+
+### Modal - 通用弹窗组件
+
+基于 [shadcn/ui Dialog](https://ui.shadcn.com/docs/components/dialog) 封装的通用弹窗组件，**用于替代 antd 的 `Modal` 组件**。
+
+```tsx
+import { Modal } from '@/components/ui/modal'
+
+<Modal
+  open={boolean}
+  onClose={() => void}
+  title="弹窗标题"
+  description="弹窗描述（可选）"
+  footer={<Button>确定</Button>}  // 可选
+  contentClassName="sm:max-w-[600px]"  // 可选，自定义内容宽度
+  hideCloseButton={false}  // 可选，隐藏关闭按钮
+>
+  {/* 弹窗内容 */}
+</Modal>
+```
+
+**Props：**
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 是否显示 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+| `title` | 标题 | `React.ReactNode` | - |
+| `description` | 描述 | `React.ReactNode` | - |
+| `footer` | 底部内容 | `React.ReactNode` | - |
+| `contentClassName` | 内容区域样式 | `string` | `"sm:max-w-[425px]"` |
+| `hideCloseButton` | 隐藏关闭按钮 | `boolean` | `false` |
+
+**注意事项：**
+
+- ⚠️ **新代码禁止使用 antd 的 `Modal` 组件**，统一使用此组件
+- 如需命令式确认弹窗，请使用 `@/lib/confirm`
 
 ---
 

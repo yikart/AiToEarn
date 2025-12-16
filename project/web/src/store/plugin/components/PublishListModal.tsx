@@ -6,8 +6,9 @@
 
 import type { ColumnsType } from 'antd/es/table'
 import type { PluginPlatformType, PublishTask } from '../types/baseTypes'
-import { Modal, Table, Tag } from 'antd'
+import { Table, Tag } from 'antd'
 import dayjs from 'dayjs'
+import { Modal } from '@/components/ui/modal'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { usePluginStore } from '../store'

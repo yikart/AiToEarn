@@ -1,6 +1,12 @@
-import { ApiOutlined, CheckOutlined, CopyOutlined, DownloadOutlined, MobileOutlined, QrcodeOutlined } from '@ant-design/icons'
-import { Button, Modal, Space, Tabs, Typography } from 'antd'
+/**
+ * DownloadAppModal - App 下载提示弹窗组件
+ * 用于提示用户下载对应的移动端应用，支持显示插件下载 Tab
+ */
+
+import { ApiOutlined, CheckOutlined, CopyOutlined, DownloadOutlined, MobileOutlined } from '@ant-design/icons'
+import { Button, Space, Tabs, Typography } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { QRCode } from 'react-qrcode-logo'
@@ -240,8 +246,7 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
         onCancel={onClose}
         footer={null}
         width={520}
-        centered
-        destroyOnHidden
+        destroyOnClose
         zIndex={zIndex}
       >
         <Tabs
@@ -265,22 +270,22 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
       )}
       open={visible}
       onCancel={onClose}
-      footer={[
-        <Button key="close" onClick={onClose}>
-          {t('downloadApp.close')}
-        </Button>,
-        <Button
-          key="download"
-          type="primary"
-          icon={<DownloadOutlined />}
-          onClick={handleDownload}
-        >
-          {t('downloadApp.downloadNow' as any)}
-        </Button>,
-      ]}
+      footer={(
+        <>
+          <Button onClick={onClose}>
+            {t('downloadApp.close')}
+          </Button>
+          <Button
+            type="primary"
+            icon={<DownloadOutlined />}
+            onClick={handleDownload}
+          >
+            {t('downloadApp.downloadNow' as any)}
+          </Button>
+        </>
+      )}
       width={520}
-      centered
-      destroyOnHidden
+      destroyOnClose
       zIndex={zIndex}
     >
       {renderAppContent()}

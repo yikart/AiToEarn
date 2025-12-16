@@ -1,7 +1,13 @@
+/**
+ * PointsRechargeModal - 积分充值弹窗
+ * 用于购买积分
+ */
+
 'use client'
 
-import { Button, InputNumber, Modal, Space, Typography } from 'antd'
+import { Button, InputNumber, Space, Typography } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
 import { useTransClient } from '@/app/i18n/client'
@@ -69,9 +75,8 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
       onCancel={onClose}
       footer={null}
       width={modalWidth}
-      centered
       className={styles.outsideCloseModal}
-      destroyOnHidden
+      destroyOnClose
     >
       <Space direction="vertical" size={16} style={{ width: '100%' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 18 }}>

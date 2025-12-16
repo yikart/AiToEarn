@@ -1,3 +1,8 @@
+/**
+ * ChooseAccountModule - 账号选择模块
+ * 社交账号选择模块，支持平台筛选
+ */
+
 import type {
   ForwardedRef,
 } from 'react'
@@ -6,7 +11,6 @@ import type {
   ISimpleAccountChooseProps,
   ISimpleAccountChooseRef,
 } from '@/components/ChooseAccountModule/components/SimpleAccountChoose'
-import { Modal } from 'antd'
 import {
   forwardRef,
   memo,
@@ -15,6 +19,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Modal } from '@/components/ui/modal'
 import SimpleAccountChoose from '@/components/ChooseAccountModule/components/SimpleAccountChoose'
 
 export interface IChooseAccountModuleRef {

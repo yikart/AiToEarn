@@ -7,8 +7,9 @@
 
 import type { PlatformPublishTask, PluginPlatformType, PublishTask } from '../types/baseTypes'
 import { CloseOutlined, LinkOutlined } from '@ant-design/icons'
-import { Avatar, Button, Modal, Progress, Tag } from 'antd'
+import { Avatar, Button, Progress, Tag } from 'antd'
 import dayjs from 'dayjs'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'

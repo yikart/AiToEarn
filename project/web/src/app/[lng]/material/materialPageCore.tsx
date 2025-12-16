@@ -1,3 +1,8 @@
+/**
+ * MaterialPageCore - 素材库核心页面
+ * 素材分组和管理的核心功能页面
+ */
+
 'use client'
 
 import {
@@ -6,11 +11,11 @@ import {
   FolderOutlined,
   PictureOutlined,
   PlusOutlined,
-  RobotOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons'
-import { Input, Modal, Popconfirm, Select } from 'antd'
+import { Input, Popconfirm, Select } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -362,13 +367,6 @@ export function MaterialPageCore() {
       <div className={styles.header}>
         <h3>{t('mediaManagement.title')}</h3>
         <div className={styles.headerActions}>
-          <button
-            className={styles.aiGenerateButton}
-            onClick={() => router.push('/material/ai-generate?tab=videoGeneration')}
-          >
-            <RobotOutlined />
-            <span>{t('mediaManagement.aiVideoGenerate')}</span>
-          </button>
           <button
             className={styles.createButton}
             onClick={() => setIsModalVisible(true)}

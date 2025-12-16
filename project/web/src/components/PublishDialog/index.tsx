@@ -18,8 +18,9 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 
-import { Button, Modal, Tooltip } from 'antd'
+import { Button, Tooltip } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import dayjs from 'dayjs'
 import {
   forwardRef,
@@ -902,11 +903,11 @@ const PublishDialog = memo(
         <>
           <Modal
             className={styles.publishDialog}
-            closeIcon={false}
+            closable={false}
             open={open}
             onCancel={closeDialog}
             footer={null}
-            styles={{ wrapper: { textAlign: 'center' } }}
+            width="auto"
           >
             {width >= 1400 && (
               <CSSTransition

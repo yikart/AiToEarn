@@ -7,11 +7,13 @@
 
 import {
   Bell,
+  Crown,
   FileText,
   Mail,
   PanelLeftClose,
   PanelLeftOpen,
   Settings,
+  Smartphone,
 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -243,72 +245,132 @@ const LayoutSidebar = () => {
           collapsed && 'items-center',
         )}
         >
-          {/* 邮箱链接 */}
+          {/* VIP 会员入口 */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <a
-                  href="mailto:agent@aiearn.ai"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-black/5 hover:text-gray-900"
+                <Link
+                  href={`/${lng}/vip`}
+                  className={cn(
+                    'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
+                    collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
+                  )}
                 >
-                  <Mail size={20} />
-                </a>
+                  <div className="flex items-center gap-2">
+                    <Crown size={18} className="text-amber-500" />
+                    {!collapsed && <span className="text-sm">{t('vip')}</span>}
+                  </div>
+                  {!collapsed && (
+                    <span className="text-xs text-purple-500">{t('subscribe')}</span>
+                  )}
+                </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>agent@aiearn.ai</p>
-              </TooltipContent>
+              {collapsed && (
+                <TooltipContent side="right">
+                  <p>{t('vip')}</p>
+                </TooltipContent>
+              )}
             </Tooltip>
           </TooltipProvider>
 
-          {/* 设置 */}
+          {/* 设置入口 */}
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
                   href={`/${lng}/profile`}
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-black/5 hover:text-gray-900"
+                  className={cn(
+                    'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
+                    collapsed ? 'h-9 w-9 justify-center' : 'gap-2 px-3 py-2',
+                  )}
                 >
-                  <Settings size={20} />
+                  <Settings size={18} />
+                  {!collapsed && <span className="text-sm">{t('settings')}</span>}
                 </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>{t('settings')}</p>
-              </TooltipContent>
+              {collapsed && (
+                <TooltipContent side="right">
+                  <p>{t('settings')}</p>
+                </TooltipContent>
+              )}
             </Tooltip>
           </TooltipProvider>
 
-          {/* 通知 - 仅登录后显示 */}
-          {token && (
-            <TooltipProvider>
+          {/* 底部图标栏 - 邮箱、下载APP、通知 */}
+          <div className={cn(
+            'mt-2 flex items-center justify-center border-t border-gray-200 pt-2',
+            collapsed ? 'flex-col gap-1' : 'flex-row gap-0',
+          )}
+          >
+            {/* 邮箱 - 联系我们 */}
+            <TooltipProvider delayDuration={0}>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <button
-                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-gray-500 transition-colors hover:bg-black/5 hover:text-gray-900"
-                    onClick={() => setNotificationVisible(true)}
+                  <a
+                    href="mailto:agent@aiearn.ai"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
                   >
-                    {unreadCount > 0
-                      ? (
-                          <div className="relative flex items-center justify-center">
-                            <Bell size={20} />
-                            <Badge
-                              variant="destructive"
-                              className="absolute -right-2 -top-2 h-[18px] min-w-[18px] px-1 text-[10px] leading-[18px]"
-                            >
-                              {unreadCount > 99 ? '99+' : unreadCount}
-                            </Badge>
-                          </div>
-                        )
-                      : (
-                          <Bell size={20} />
-                        )}
-                  </button>
+                    <Mail size={18} />
+                  </a>
                 </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>{t('notifications')}</p>
+                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
+                  <p>{t('contactUs')}: agent@aiearn.ai</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-          )}
+
+            {/* 手机 - 下载APP */}
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
+                    onClick={() => {
+                      // TODO: 打开下载APP弹窗
+                    }}
+                  >
+                    <Smartphone size={18} />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
+                  <p>{t('downloadApp')}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            {/* 通知 - 仅登录后显示 */}
+            {token && (
+              <TooltipProvider delayDuration={0}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
+                      onClick={() => setNotificationVisible(true)}
+                    >
+                      {unreadCount > 0
+                        ? (
+                            <div className="relative flex items-center justify-center">
+                              <Bell size={18} />
+                              <Badge
+                                variant="destructive"
+                                className="absolute -right-2 -top-2 h-[18px] min-w-[18px] px-1 text-[10px] leading-[18px]"
+                              >
+                                {unreadCount > 99 ? '99+' : unreadCount}
+                              </Badge>
+                            </div>
+                          )
+                        : (
+                            <Bell size={18} />
+                          )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
+                    <p>{t('notifications')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
 
           {/* 用户头像 / 登录按钮 */}
           {token

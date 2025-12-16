@@ -1,8 +1,14 @@
+/**
+ * AddAccountModal - 添加账号弹窗
+ * 支持添加各平台社交媒体账号
+ */
+
 import type { ForwardedRef } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IpLocationInfo } from '@/utils/ipLocation'
-import { Button, Modal, Select, Space, Tooltip, Typography } from 'antd'
+import { Button, Select, Space, Tooltip, Typography } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'

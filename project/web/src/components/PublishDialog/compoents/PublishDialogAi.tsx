@@ -1,4 +1,9 @@
 import type { ForwardedRef } from 'react'
+/**
+ * PublishDialogAi - 发布对话框 AI 助手
+ * 提供 AI 文本处理、图片生成、视频生成等功能
+ */
+
 import { 
   CloseCircleFilled, 
   CopyOutlined, 
@@ -13,8 +18,9 @@ import {
   SettingOutlined,
   TagsOutlined,
 } from '@ant-design/icons'
-import { Button, Collapse, Input, Modal, Spin, Tooltip, Select, Progress } from 'antd'
+import { Button, Collapse, Input, Spin, Tooltip, Select, Progress } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
@@ -1411,11 +1417,11 @@ const PublishDialogAi = memo(
             title={t('aiFeatures.settings' as any)}
             open={settingsVisible}
             onCancel={() => setSettingsVisible(false)}
-            footer={[
-              <Button key="close" onClick={() => setSettingsVisible(false)}>
+            footer={(
+              <Button onClick={() => setSettingsVisible(false)}>
                 {t('aiFeatures.close' as any)}
-              </Button>,
-            ]}
+              </Button>
+            )}
             width={700}
           >
             {/* Chat model selection */}

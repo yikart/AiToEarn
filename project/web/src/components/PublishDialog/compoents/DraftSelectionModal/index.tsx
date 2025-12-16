@@ -1,9 +1,15 @@
+/**
+ * DraftSelectionModal - 草稿选择弹窗
+ * 用于从草稿箱中选择已保存的内容草稿
+ */
+
 import type {
   ForwardedRef,
 } from 'react'
 import { FolderOpenOutlined } from '@ant-design/icons'
-import { Button, List, Modal, Spin } from 'antd'
+import { Button, List, Spin } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import {
   forwardRef,
   memo,

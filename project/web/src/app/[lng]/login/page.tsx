@@ -1,8 +1,14 @@
+/**
+ * LoginPage - 登录页面
+ * 支持邮箱登录、Google 登录、注册功能
+ */
+
 'use client'
 
 import { GoogleLogin } from '@react-oauth/google'
-import { Button, Form, Input, Modal } from 'antd'
+import { Button, Form, Input } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'

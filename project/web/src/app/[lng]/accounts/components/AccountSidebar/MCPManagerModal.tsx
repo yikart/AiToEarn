@@ -1,7 +1,13 @@
+/**
+ * MCPManagerModal - MCP 密钥管理弹窗
+ * 管理 MCP (Multi-Channel Platform) 密钥
+ */
+
 import type { SocialAccount } from '@/api/types/account.type'
 import { CopyOutlined, DeleteOutlined, EditOutlined, KeyOutlined, PlusOutlined } from '@ant-design/icons'
-import { Avatar, Button, Empty, Form, Input, List, Modal, Pagination, Space, Tag } from 'antd'
+import { Avatar, Button, Empty, Form, Input, List, Pagination, Space, Tag } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import dayjs from 'dayjs'
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import {

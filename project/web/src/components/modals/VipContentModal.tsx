@@ -1,7 +1,13 @@
+/**
+ * VipContentModal - VIP 内容展示弹窗
+ * 显示会员特权信息和订阅计划
+ */
+
 'use client'
 
-import { Button, Modal, Tag } from 'antd'
+import { Button, Tag } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -192,8 +198,7 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       footer={null}
       width={modalWidth}
       className={styles.outsideCloseModal}
-      destroyOnHidden
-      centered
+      destroyOnClose
     >
       <div className={vipStyles.wrapper}>
         {/* 非会员顶部区域 */}

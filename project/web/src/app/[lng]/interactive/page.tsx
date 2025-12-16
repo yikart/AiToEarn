@@ -1,9 +1,15 @@
+/**
+ * InteractivePage - 互动管理页面
+ * 帖子评论、AI 回复、互动管理功能
+ */
+
 'use client'
 
 import type { EngagementPlatform, EngagementPostItem } from '@/api/types/engagement'
 import { CommentOutlined, DollarOutlined, EyeOutlined, HistoryOutlined, LikeOutlined, PlayCircleOutlined, RobotOutlined, WalletOutlined } from '@ant-design/icons'
-import { Avatar, Button, Card, Input, List, Modal, Select, Space, Tag } from 'antd'
+import { Avatar, Button, Card, Input, List, Select, Space, Tag } from 'antd'
 import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
