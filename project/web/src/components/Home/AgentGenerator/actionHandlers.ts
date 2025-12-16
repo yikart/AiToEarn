@@ -26,17 +26,25 @@ import type {
  * 构建发布 URL 参数
  */
 function buildPublishQueryParams(taskData: ITaskData): URLSearchParams {
-  return new URLSearchParams({
-    action: 'publish',
-    aiGenerated: 'true',
-    platform: taskData.platform || '',
-    accountId: taskData.accountId || '',
-    taskId: taskData.taskId || '',
-    title: taskData.title || '',
-    description: taskData.description || '',
-    tags: JSON.stringify(taskData.tags || []),
-    medias: JSON.stringify(taskData.medias || []),
-  })
+  const params = new URLSearchParams()
+  
+  params.set('action', 'publish')
+  params.set('aiGenerated', 'true')
+  
+  // 只添加非空值
+  if (taskData.platform) params.set('platform', taskData.platform)
+  if (taskData.accountId) params.set('accountId', taskData.accountId)
+  if (taskData.taskId) params.set('taskId', taskData.taskId)
+  if (taskData.title) params.set('title', taskData.title)
+  if (taskData.description) params.set('description', taskData.description)
+  if (taskData.tags && taskData.tags.length > 0) {
+    params.set('tags', JSON.stringify(taskData.tags))
+  }
+  if (taskData.medias && taskData.medias.length > 0) {
+    params.set('medias', JSON.stringify(taskData.medias))
+  }
+  
+  return params
 }
 
 /**
