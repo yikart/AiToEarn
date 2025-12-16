@@ -168,9 +168,19 @@ export interface IActionContext {
   t: TFunction
 }
 
+/** Action Handler 接口 */
+export interface IActionHandler {
+  /** Action 类型 */
+  type: ActionType
+  /** 判断是否能处理该任务 */
+  canHandle: (taskData: ITaskData) => boolean
+  /** 执行 Action */
+  execute: (taskData: ITaskData, context: IActionContext) => Promise<void>
+}
+
 /** SSE 消息类型 */
 export interface ISSEMessage {
-  type: 'init' | 'keep_alive' | 'stream_event' | 'message' | 'status' | 'error' | 'done' | 'text' | 'result'
+  type: 'init' | 'keep_alive' | 'stream_event' | 'message' | 'status' | 'error' | 'done' | 'text' | 'result' | 'assistant' | 'user'
   taskId?: string
   message?: string | any
   sessionId?: string

@@ -1,6 +1,8 @@
 /**
- * AgentGenerator - Action 处理器
+ * Agent Store - Action 处理器模块
  * 使用策略模式处理不同的任务结果操作
+ * 
+ * 从 public/AgentGenerator/actionHandlers.ts 移植并增强
  */
 
 import { confirm } from '@/lib/confirm'
@@ -13,12 +15,19 @@ import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import type { PluginPublishItem } from '@/store/plugin/store'
 import { driver } from 'driver.js'
-import type { 
-  ITaskData, 
-  IActionContext, 
-  IActionHandler,
-  ActionType,
-} from './agentStore.types'
+import type { ITaskData, IActionContext, ActionType, IMediaItem } from '../agent.types'
+
+// ============ Action Handler 接口 ============
+
+/** Action Handler 接口 */
+export interface IActionHandler {
+  /** Action 类型 */
+  type: ActionType
+  /** 判断是否能处理该任务 */
+  canHandle: (taskData: ITaskData) => boolean
+  /** 执行 Action */
+  execute: (taskData: ITaskData, context: IActionContext) => Promise<void>
+}
 
 // ============ 工具函数 ============
 
@@ -27,10 +36,10 @@ import type {
  */
 function buildPublishQueryParams(taskData: ITaskData): URLSearchParams {
   const params = new URLSearchParams()
-  
+
   params.set('action', 'publish')
   params.set('aiGenerated', 'true')
-  
+
   // 只添加非空值
   if (taskData.platform) params.set('platform', taskData.platform)
   if (taskData.accountId) params.set('accountId', taskData.accountId)
@@ -43,7 +52,7 @@ function buildPublishQueryParams(taskData: ITaskData): URLSearchParams {
   if (taskData.medias && taskData.medias.length > 0) {
     params.set('medias', JSON.stringify(taskData.medias))
   }
-  
+
   return params
 }
 
@@ -52,19 +61,21 @@ function buildPublishQueryParams(taskData: ITaskData): URLSearchParams {
  */
 function buildPluginPublishItem(taskData: ITaskData, account: any): PluginPublishItem {
   const medias = taskData.medias || []
-  const hasVideo = medias.some((m) => m.type === 'VIDEO')
-  const video = hasVideo ? medias.find((m) => m.type === 'VIDEO') : null
-  
-  const images = medias.filter((m) => m.type === 'IMAGE').map((m) => ({ 
-    id: '',
-    imgPath: m.url,
-    ossUrl: m.url,
-    size: 0,
-    imgUrl: m.url,
-    filename: '',
-    width: 0,
-    height: 0,
-  }))
+  const hasVideo = medias.some((m: IMediaItem) => m.type === 'VIDEO')
+  const video = hasVideo ? medias.find((m: IMediaItem) => m.type === 'VIDEO') : null
+
+  const images = medias
+    .filter((m: IMediaItem) => m.type === 'IMAGE')
+    .map((m: IMediaItem) => ({
+      id: '',
+      imgPath: m.url,
+      ossUrl: m.url,
+      size: 0,
+      imgUrl: m.url,
+      filename: '',
+      width: 0,
+      height: 0,
+    }))
 
   return {
     account,
@@ -72,151 +83,160 @@ function buildPluginPublishItem(taskData: ITaskData, account: any): PluginPublis
       title: taskData.title || '',
       des: taskData.description || '',
       topics: taskData.tags || [],
-      video: (video ? {
-        size: 0,
-        videoUrl: video.url,
-        ossUrl: video.url,
-        filename: '',
-        width: 0,
-        height: 0,
-        duration: 0,
-        cover: {
-          id: '',
-          imgPath: video.coverUrl || video.thumbUrl || '',
-          ossUrl: video.coverUrl || video.thumbUrl,
-          size: 0,
-          imgUrl: video.coverUrl || video.thumbUrl || '',
-          filename: '',
-          width: 0,
-          height: 0,
-        },
-      } : undefined) as any,
+      video: video
+        ? ({
+            size: 0,
+            videoUrl: video.url,
+            ossUrl: video.url,
+            filename: '',
+            width: 0,
+            height: 0,
+            duration: 0,
+            cover: {
+              id: '',
+              imgPath: video.coverUrl || video.thumbUrl || '',
+              ossUrl: video.coverUrl || video.thumbUrl,
+              size: 0,
+              imgUrl: video.coverUrl || video.thumbUrl || '',
+              filename: '',
+              width: 0,
+              height: 0,
+            },
+          } as any)
+        : undefined,
       images: images.length > 0 ? images : undefined,
       option: {},
     },
   }
 }
 
-// ============ Action Handlers ============
+/**
+ * 显示插件引导
+ */
+function showPluginGuide(t: (key: string) => string) {
+  setTimeout(() => {
+    const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
+    if (!pluginButton) {
+      console.warn('[ActionHandler] Plugin button not found')
+      return
+    }
+
+    const driverObj = driver({
+      showProgress: false,
+      showButtons: ['next'],
+      nextBtnText: t('aiGeneration.gotIt' as any),
+      doneBtnText: t('aiGeneration.gotIt' as any),
+      popoverOffset: 10,
+      stagePadding: 4,
+      stageRadius: 12,
+      allowClose: true,
+      smoothScroll: true,
+      steps: [
+        {
+          element: '[data-driver-target="plugin-button"]',
+          popover: {
+            title: t('plugin.authorizePluginTitle' as any),
+            description: t('plugin.authorizePluginDescription' as any),
+            side: 'bottom',
+            align: 'start',
+            onPopoverRender: () => {
+              setTimeout(() => {
+                const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
+                const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
+                const btn = nextBtn || doneBtn
+                if (btn) {
+                  btn.textContent = t('aiGeneration.gotIt' as any)
+                  const handleClick = (e: MouseEvent) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    driverObj.destroy()
+                    btn.removeEventListener('click', handleClick)
+                  }
+                  btn.addEventListener('click', handleClick)
+                }
+              }, 50)
+            },
+          },
+        },
+      ],
+      onNextClick: () => {
+        driverObj.destroy()
+        return false
+      },
+    })
+
+    driverObj.drive()
+  }, 1500)
+}
+
+// ============ Action Handlers 实现 ============
 
 /**
  * 导航到发布页面 - 处理插件平台（xhs, douyin）
  */
 const navigateToPublishPluginHandler: IActionHandler = {
   type: 'navigateToPublish',
-  
+
   canHandle: (taskData) => {
-    return taskData.type === 'fullContent' 
-      && taskData.action === 'navigateToPublish'
-      && (taskData.platform === 'xhs' || taskData.platform === 'douyin')
+    return (
+      taskData.type === 'fullContent' &&
+      taskData.action === 'navigateToPublish' &&
+      (taskData.platform === 'xhs' || taskData.platform === 'douyin')
+    )
   },
-  
+
   async execute(taskData, context) {
     const { t } = context
     const pluginStatus = usePluginStore.getState().status
     const isPluginReady = pluginStatus === PluginStatus.READY
-    
+
     if (!isPluginReady) {
-      // 插件未准备就绪，显示引导
       toast.warning(t('plugin.platformNeedsPlugin' as any))
-      
-      setTimeout(() => {
-        const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-        if (!pluginButton) {
-          console.warn('[ActionHandler] Plugin button not found')
-          return
-        }
-
-        const driverObj = driver({
-          showProgress: false,
-          showButtons: ['next'],
-          nextBtnText: t('aiGeneration.gotIt' as any),
-          doneBtnText: t('aiGeneration.gotIt' as any),
-          popoverOffset: 10,
-          stagePadding: 4,
-          stageRadius: 12,
-          allowClose: true,
-          smoothScroll: true,
-          steps: [
-            {
-              element: '[data-driver-target="plugin-button"]',
-              popover: {
-                title: t('plugin.authorizePluginTitle' as any),
-                description: t('plugin.authorizePluginDescription' as any),
-                side: 'bottom',
-                align: 'start',
-                onPopoverRender: () => {
-                  setTimeout(() => {
-                    const nextBtn = document.querySelector('.driver-popover-next-btn') as HTMLButtonElement
-                    const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
-                    const btn = nextBtn || doneBtn
-                    if (btn) {
-                      btn.textContent = t('aiGeneration.gotIt' as any)
-                      const handleClick = (e: MouseEvent) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        driverObj.destroy()
-                        btn.removeEventListener('click', handleClick)
-                      }
-                      btn.addEventListener('click', handleClick)
-                    }
-                  }, 50)
-                },
-              },
-            },
-          ],
-          onNextClick: () => {
-            driverObj.destroy()
-            return false
-          },
-        })
-
-        driverObj.drive()
-      }, 1500)
+      showPluginGuide(t)
       return
     }
-    
+
     // 插件已就绪，执行发布
     try {
       const accountGroupList = useAccountStore.getState().accountGroupList
       const allAccounts = accountGroupList.reduce<any[]>((acc, group) => {
         return [...acc, ...group.children]
       }, [])
-      
+
       // 根据 accountId 或 platform 查找目标账号
       let targetAccounts: any[] = []
       if (taskData.accountId) {
-        const targetAccount = allAccounts.find(account => account.id === taskData.accountId)
+        const targetAccount = allAccounts.find((account) => account.id === taskData.accountId)
         if (targetAccount) {
           targetAccounts = [targetAccount]
         } else {
           console.warn(`[ActionHandler] Account not found: ${taskData.accountId}`)
         }
       } else {
-        targetAccounts = allAccounts.filter(account => account.type === taskData.platform)
+        targetAccounts = allAccounts.filter((account) => account.type === taskData.platform)
       }
-      
+
       if (targetAccounts.length === 0) {
         console.warn(`[ActionHandler] No accounts found for platform: ${taskData.platform}`)
         toast.warning(t('aiGeneration.noAccountFound' as any) || '未找到可发布的账号')
         return
       }
-      
+
       // 构建发布项
       const allPluginPublishItems: PluginPublishItem[] = []
       const platformTaskIdMap = new Map<string, string>()
-      
-      targetAccounts.forEach(account => {
+
+      targetAccounts.forEach((account) => {
         const publishItem = buildPluginPublishItem(taskData, account)
         // @ts-ignore
         allPluginPublishItems.push(publishItem)
-        
+
         const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
         platformTaskIdMap.set(account.id, requestId)
       })
-      
+
       console.log(`[ActionHandler] Total plugin publish items: ${allPluginPublishItems.length}`)
-      
+
       if (allPluginPublishItems.length > 0) {
         usePluginStore.getState().executePluginPublish({
           items: allPluginPublishItems,
@@ -236,7 +256,9 @@ const navigateToPublishPluginHandler: IActionHandler = {
       }
     } catch (error: any) {
       console.error('[ActionHandler] Plugin publish error:', error)
-      toast.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      toast.error(
+        `${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`,
+      )
     }
   },
 }
@@ -246,20 +268,22 @@ const navigateToPublishPluginHandler: IActionHandler = {
  */
 const navigateToPublishOtherHandler: IActionHandler = {
   type: 'navigateToPublish',
-  
+
   canHandle: (taskData) => {
-    return taskData.type === 'fullContent' 
-      && taskData.action === 'navigateToPublish'
-      && taskData.platform !== 'xhs' 
-      && taskData.platform !== 'douyin'
+    return (
+      taskData.type === 'fullContent' &&
+      taskData.action === 'navigateToPublish' &&
+      taskData.platform !== 'xhs' &&
+      taskData.platform !== 'douyin'
+    )
   },
-  
+
   async execute(taskData, context) {
     const { router, lng } = context
     const queryParams = buildPublishQueryParams(taskData)
-    
+
     console.log('[ActionHandler] Navigating to /accounts for publishing, platform:', taskData.platform)
-    
+
     setTimeout(() => {
       router.push(`/${lng}/accounts?${queryParams.toString()}`)
     }, 1500)
@@ -271,14 +295,14 @@ const navigateToPublishOtherHandler: IActionHandler = {
  */
 const navigateToDraftHandler: IActionHandler = {
   type: 'navigateToDraft',
-  
+
   canHandle: (taskData) => {
     return taskData.type === 'fullContent' && taskData.action === 'navigateToDraft'
   },
-  
+
   async execute(_taskData, context) {
     const { router, lng } = context
-    
+
     setTimeout(() => {
       router.push(`/${lng}/cgmaterial`)
     }, 1500)
@@ -290,21 +314,19 @@ const navigateToDraftHandler: IActionHandler = {
  */
 const saveDraftHandler: IActionHandler = {
   type: 'saveDraft',
-  
+
   canHandle: (taskData) => {
     return taskData.type === 'fullContent' && taskData.action === 'saveDraft'
   },
-  
+
   async execute(taskData, context) {
     const { router, lng, t } = context
-    
+
     try {
       // 转换 medias 格式
       const medias = taskData.medias || []
-      const materialMediaList = medias.map((media) => {
-        const pubType = media.type === MediaType.Video 
-          ? PubType.VIDEO 
-          : PubType.ImageText
+      const materialMediaList = medias.map((media: IMediaItem) => {
+        const pubType = media.type === MediaType.Video ? PubType.VIDEO : PubType.ImageText
         return {
           url: media.url,
           type: pubType,
@@ -313,9 +335,10 @@ const saveDraftHandler: IActionHandler = {
       })
 
       // 确定封面URL
-      const coverUrl = medias.find((m) => m.coverUrl)?.coverUrl 
-        || medias.find((m) => m.type === 'IMAGE')?.url
-        || undefined
+      const coverUrl =
+        medias.find((m: IMediaItem) => m.coverUrl)?.coverUrl ||
+        medias.find((m: IMediaItem) => m.type === 'IMAGE')?.url ||
+        undefined
 
       // 获取分组列表
       const groupListRes = await apiGetMaterialGroupList(1, 100)
@@ -327,7 +350,7 @@ const saveDraftHandler: IActionHandler = {
       }
 
       // 根据 medias 类型选择默认分组
-      const hasVideo = medias.some((m) => m.type === 'VIDEO')
+      const hasVideo = medias.some((m: IMediaItem) => m.type === 'VIDEO')
       const targetGroupType = hasVideo ? PubType.VIDEO : PubType.ImageText
       const defaultGroup = groups.find((g: any) => g.type === targetGroupType) || groups[0]
       const finalGroupId = defaultGroup._id || defaultGroup.id
@@ -356,7 +379,9 @@ const saveDraftHandler: IActionHandler = {
       }
     } catch (error: any) {
       console.error('[ActionHandler] Save draft error:', error)
-      toast.error(`${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      toast.error(
+        `${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`,
+      )
     }
   },
 }
@@ -366,17 +391,17 @@ const saveDraftHandler: IActionHandler = {
  */
 const updateChannelHandler: IActionHandler = {
   type: 'updateChannel',
-  
+
   canHandle: (taskData) => {
     return taskData.type === 'fullContent' && taskData.action === 'updateChannel'
   },
-  
+
   async execute(taskData, context) {
     const { router, lng, t } = context
     const platform = taskData.platform
-    
+
     toast.warning(t('aiGeneration.channelAuthExpired' as any))
-    
+
     confirm({
       title: t('aiGeneration.channelAuthExpiredTitle' as any),
       content: t('aiGeneration.channelAuthExpiredContent' as any),
@@ -394,17 +419,17 @@ const updateChannelHandler: IActionHandler = {
  */
 const loginChannelHandler: IActionHandler = {
   type: 'loginChannel',
-  
+
   canHandle: (taskData) => {
     return taskData.type === 'fullContent' && taskData.action === 'loginChannel'
   },
-  
+
   async execute(taskData, context) {
     const { router, lng, t } = context
     const platform = taskData.platform
-    
+
     toast.info(t('aiGeneration.needLoginChannel' as any))
-    
+
     confirm({
       title: t('aiGeneration.needLogin' as any),
       content: t('aiGeneration.pleaseLoginChannel' as any),
@@ -422,15 +447,15 @@ const loginChannelHandler: IActionHandler = {
  */
 const defaultPublishHandler: IActionHandler = {
   type: 'navigateToPublish',
-  
+
   canHandle: (taskData) => {
     return taskData.type === 'fullContent' && !taskData.action
   },
-  
+
   async execute(taskData, context) {
     const { router, lng } = context
     const queryParams = buildPublishQueryParams(taskData)
-    
+
     setTimeout(() => {
       router.push(`/${lng}/accounts?${queryParams.toString()}`)
     }, 1500)
@@ -478,14 +503,14 @@ export const ActionRegistry = {
     }
 
     // 查找匹配的 Handler
-    const handler = actionHandlers.find(h => h.canHandle(taskData))
-    
+    const handler = actionHandlers.find((h) => h.canHandle(taskData))
+
     if (handler) {
       console.log(`[ActionRegistry] Executing handler: ${handler.type} for platform: ${taskData.platform}`)
       await handler.execute(taskData, context)
       return true
     }
-    
+
     console.warn('[ActionRegistry] No handler found for task:', taskData)
     return false
   },
@@ -500,7 +525,7 @@ export const ActionRegistry = {
     const pluginTasks: ITaskData[] = []
     const otherTasks: ITaskData[] = []
 
-    taskDataList.forEach(taskData => {
+    taskDataList.forEach((taskData) => {
       // 跳过纯媒体类型
       if (taskData.type === 'imageOnly' || taskData.type === 'videoOnly' || taskData.type === 'mediaOnly') {
         return
@@ -521,12 +546,12 @@ export const ActionRegistry = {
 
     // 批量处理插件平台任务
     if (pluginTasks.length > 0) {
-      await this.executePluginBatch(pluginTasks, context)
+      await ActionRegistry.executePluginBatch(pluginTasks, context)
     }
 
     // 逐个处理其他任务
     for (const taskData of otherTasks) {
-      await this.execute(taskData, context)
+      await ActionRegistry.execute(taskData, context)
     }
   },
 
@@ -542,40 +567,7 @@ export const ActionRegistry = {
 
     if (!isPluginReady) {
       toast.warning(t('plugin.platformNeedsPlugin' as any))
-      // 显示插件引导（与单个任务相同逻辑）
-      setTimeout(() => {
-        const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
-        if (!pluginButton) return
-
-        const driverObj = driver({
-          showProgress: false,
-          showButtons: ['next'],
-          nextBtnText: t('aiGeneration.gotIt' as any),
-          doneBtnText: t('aiGeneration.gotIt' as any),
-          popoverOffset: 10,
-          stagePadding: 4,
-          stageRadius: 12,
-          allowClose: true,
-          smoothScroll: true,
-          steps: [
-            {
-              element: '[data-driver-target="plugin-button"]',
-              popover: {
-                title: t('plugin.authorizePluginTitle' as any),
-                description: t('plugin.authorizePluginDescription' as any),
-                side: 'bottom',
-                align: 'start',
-              },
-            },
-          ],
-          onNextClick: () => {
-            driverObj.destroy()
-            return false
-          },
-        })
-
-        driverObj.drive()
-      }, 1500)
+      showPluginGuide(t)
       return
     }
 
@@ -588,15 +580,15 @@ export const ActionRegistry = {
       const allPluginPublishItems: PluginPublishItem[] = []
       const platformTaskIdMap = new Map<string, string>()
 
-      pluginTasks.forEach(taskData => {
+      pluginTasks.forEach((taskData) => {
         let targetAccounts: any[] = []
         if (taskData.accountId) {
-          const targetAccount = allAccounts.find(account => account.id === taskData.accountId)
+          const targetAccount = allAccounts.find((account) => account.id === taskData.accountId)
           if (targetAccount) {
             targetAccounts = [targetAccount]
           }
         } else {
-          targetAccounts = allAccounts.filter(account => account.type === taskData.platform)
+          targetAccounts = allAccounts.filter((account) => account.type === taskData.platform)
         }
 
         if (targetAccounts.length === 0) {
@@ -604,7 +596,7 @@ export const ActionRegistry = {
           return
         }
 
-        targetAccounts.forEach(account => {
+        targetAccounts.forEach((account) => {
           const publishItem = buildPluginPublishItem(taskData, account)
           // @ts-ignore
           allPluginPublishItems.push(publishItem)
@@ -637,8 +629,17 @@ export const ActionRegistry = {
       }
     } catch (error: any) {
       console.error('[ActionRegistry] Plugin batch publish error:', error)
-      toast.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      toast.error(
+        `${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`,
+      )
     }
+  },
+
+  /**
+   * 获取所有已注册的 Action 类型
+   */
+  getRegisteredTypes(): ActionType[] {
+    return [...new Set(actionHandlers.map((h) => h.type))]
   },
 }
 
