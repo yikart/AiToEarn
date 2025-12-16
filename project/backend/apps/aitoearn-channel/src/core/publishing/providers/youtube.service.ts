@@ -35,7 +35,7 @@ export class YoutubePubService extends PublishService {
         publishTask.topics,
         publishTask?.option?.youtube?.license || 'youtube',
         publishTask?.option?.youtube?.categoryId || '22',
-        publishTask?.option?.youtube?.privacyStatus || 'private',
+        publishTask?.option?.youtube?.privacyStatus || 'public',
         publishTask?.option?.youtube?.notifySubscribers || false,
         publishTask?.option?.youtube?.embeddable || false,
         publishTask?.option?.youtube?.selfDeclaredMadeForKids || false,
@@ -116,10 +116,34 @@ export class YoutubePubService extends PublishService {
         message: 'Title is required',
       }
     }
+    if (publishTask.title.length > 100) {
+      return {
+        success: false,
+        message: 'Title must be 100 characters or less',
+      }
+    }
     if (!publishTask.desc) {
       return {
         success: false,
         message: 'Description is required',
+      }
+    }
+    if (publishTask.desc.length > 5000) {
+      return {
+        success: false,
+        message: 'Description must be 5000 characters or less',
+      }
+    }
+    if (!publishTask.videoUrl) {
+      return {
+        success: false,
+        message: 'Video URL is required',
+      }
+    }
+    if (!publishTask.option?.youtube?.categoryId) {
+      return {
+        success: false,
+        message: 'Category is required',
       }
     }
     return {
