@@ -2,7 +2,8 @@ import type {
   ForwardedRef,
 } from 'react'
 import { FolderOpenOutlined } from '@ant-design/icons'
-import { Button, List, message, Modal, Spin } from 'antd'
+import { Button, List, Modal, Spin } from 'antd'
+import { toast } from '@/lib/toast'
 import {
   forwardRef,
   memo,
@@ -130,7 +131,7 @@ const DraftSelectionModal = memo(
           if (onSelectDraft) {
             onSelectDraft(draft)
             onCancel()
-            message.success(t('draft.selectDraftSuccess'))
+            toast.success(t('draft.selectDraftSuccess'))
             return
           }
 
@@ -184,7 +185,7 @@ const DraftSelectionModal = memo(
             setAccountAllParams(nextParams)
           }
           onCancel()
-          message.success(t('draft.selectDraftSuccess'))
+          toast.success(t('draft.selectDraftSuccess'))
         },
         [setAccountAllParams, setOnePubParams, step, expandedPubItem, onSelectDraft, onCancel, t],
       )

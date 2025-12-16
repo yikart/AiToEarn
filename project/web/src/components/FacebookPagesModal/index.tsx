@@ -1,5 +1,6 @@
 import { ReloadOutlined } from '@ant-design/icons'
-import { Avatar, Button, Checkbox, List, message, Modal, Spin, Typography } from 'antd'
+import { Avatar, Button, Checkbox, List, Modal, Spin, Typography } from 'antd'
+import { toast } from '@/lib/toast'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { apiGetFacebookPages, apiSubmitFacebookPages } from '@/api/plat/facebook'
@@ -41,12 +42,12 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
         setPages(res.data || [])
       }
       else {
-        message.error(t('facebookPages.fetchError' as any))
+        toast.error(t('facebookPages.fetchError' as any))
       }
     }
     catch (error) {
       console.error('获取Facebook页面列表失败:', error)
-      message.error(t('facebookPages.fetchError' as any))
+      toast.error(t('facebookPages.fetchError' as any))
     }
     finally {
       setLoading(false)
@@ -56,7 +57,7 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
   // 提交选择的页面
   const handleSubmit = async () => {
     if (selectedPageIds.length === 0) {
-      message.warning(t('facebookPages.selectAtLeastOne' as any))
+      toast.warning(t('facebookPages.selectAtLeastOne' as any))
       return
     }
 
@@ -64,19 +65,19 @@ const FacebookPagesModal: React.FC<FacebookPagesModalProps> = ({
     try {
       const res = await apiSubmitFacebookPages(selectedPageIds)
       if (res?.code === 0) {
-        message.success(t('facebookPages.submitSuccess' as any))
+        toast.success(t('facebookPages.submitSuccess' as any))
         // 刷新账户列表
         await accountStore.getAccountList()
         onSuccess()
         onClose()
       }
       else {
-        message.error(t('facebookPages.submitError' as any))
+        toast.error(t('facebookPages.submitError' as any))
       }
     }
     catch (error) {
       console.error('提交页面选择失败:', error)
-      message.error(t('facebookPages.submitError' as any))
+      toast.error(t('facebookPages.submitError' as any))
     }
     finally {
       setSubmitting(false)

@@ -1,6 +1,7 @@
 import type { PlatType } from '@/app/config/platConfig'
 import { CopyOutlined, DeleteOutlined, KeyOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Button, Empty, List, message, Modal, Pagination, Popconfirm, Space, Tag } from 'antd'
+import { Avatar, Button, Empty, List, Modal, Pagination, Popconfirm, Space, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useState } from 'react'
 import { apiDeleteMCPRef, apiGetMCPRefList } from '@/api/mcp'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
@@ -55,7 +56,7 @@ const MCPKeyDetailModal = memo(
           }
         }
         catch (error) {
-          message.error(t('mcpManager.keyDetail.fetchAccountsFailed' as any))
+          toast.error(t('mcpManager.keyDetail.fetchAccountsFailed' as any))
         }
         finally {
           setLoading(false)
@@ -70,7 +71,7 @@ const MCPKeyDetailModal = memo(
 
       const handleCopyKey = (key: string) => {
         navigator.clipboard.writeText(key)
-        message.success(t('mcpManager.keyCopied' as any))
+        toast.success(t('mcpManager.keyCopied' as any))
       }
 
       const handleUnlinkAccount = async (accountId: string) => {
@@ -80,15 +81,15 @@ const MCPKeyDetailModal = memo(
             accountId,
           })
           if (res?.code === 0) {
-            message.success(t('mcpManager.keyDetail.unlinkSuccess' as any))
+            toast.success(t('mcpManager.keyDetail.unlinkSuccess' as any))
             fetchRefList() // Refresh list
           }
           else {
-            message.error(t('mcpManager.keyDetail.unlinkFailed' as any))
+            toast.error(t('mcpManager.keyDetail.unlinkFailed' as any))
           }
         }
         catch (error) {
-          message.error(t('mcpManager.keyDetail.unlinkFailed' as any))
+          toast.error(t('mcpManager.keyDetail.unlinkFailed' as any))
         }
       }
 

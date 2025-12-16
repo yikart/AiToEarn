@@ -6,7 +6,8 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import { ControlledMenu, MenuItem } from '@szhsin/react-menu'
-import { Button, Input, message, Modal } from 'antd'
+import { Button, Input, Modal } from 'antd'
+import { toast } from '@/lib/toast'
 import { forwardRef, memo, useRef, useState } from 'react'
 import { ReactSortable } from 'react-sortablejs'
 import { useShallow } from 'zustand/react/shallow'
@@ -110,7 +111,7 @@ const UserManageSidebar = memo(
                   onOk: async () => {
                     await deleteAccountGroupApi([rightClickOperateData!.id])
                     await getAccountGroup()
-                    message.success(t('userManageSidebar.deleteSuccess'))
+                    toast.success(t('userManageSidebar.deleteSuccess'))
                   },
                 })
               }}
@@ -210,7 +211,7 @@ const UserManageSidebar = memo(
                         onContextMenu={(e) => {
                           e.preventDefault()
                           if (v.isDefault) {
-                            return message.error(t('userManageSidebar.cannotOperateDefault'))
+                            return toast.error(t('userManageSidebar.cannotOperateDefault'))
                           }
                           setAnchorPoint({ x: e.clientX, y: e.clientY })
                           setOpen(true)

@@ -1,5 +1,6 @@
 import { ApiOutlined, CheckOutlined, CopyOutlined, DownloadOutlined, MobileOutlined, QrcodeOutlined } from '@ant-design/icons'
-import { Button, message, Modal, Space, Tabs, Typography } from 'antd'
+import { Button, Modal, Space, Tabs, Typography } from 'antd'
+import { toast } from '@/lib/toast'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { QRCode } from 'react-qrcode-logo'
@@ -58,11 +59,11 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     try {
       await navigator.clipboard.writeText(linkToCopy)
       setCopySuccess(true)
-      message.success(t('downloadApp.copySuccess' as any))
+      toast.success(t('downloadApp.copySuccess' as any))
       setTimeout(() => setCopySuccess(false), 2000)
     }
     catch (error) {
-      message.error(t('downloadApp.copyFailed' as any))
+      toast.error(t('downloadApp.copyFailed' as any))
     }
   }
 

@@ -1,6 +1,7 @@
 import type { SocialAccount } from '@/api/types/account.type'
 import { CopyOutlined, DeleteOutlined, EditOutlined, KeyOutlined, PlusOutlined } from '@ant-design/icons'
-import { Avatar, Button, Empty, Form, Input, List, message, Modal, Pagination, Space, Tag } from 'antd'
+import { Avatar, Button, Empty, Form, Input, List, Modal, Pagination, Space, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import dayjs from 'dayjs'
 import React, { forwardRef, memo, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import {
@@ -52,7 +53,7 @@ const MCPManagerModal = memo(
           }
         }
         catch (error) {
-          message.error(t('mcpManager.fetchKeysFailed'))
+          toast.error(t('mcpManager.fetchKeysFailed'))
         }
         finally {
           setLoading(false)
@@ -82,7 +83,7 @@ const MCPManagerModal = memo(
 
           const createRes = await apiCreateMCPKey(createParams)
           if (createRes?.code !== 0) {
-            message.error(t('mcpManager.createKeyFailed'))
+            toast.error(t('mcpManager.createKeyFailed'))
             return
           }
 
@@ -105,11 +106,11 @@ const MCPManagerModal = memo(
           setSelectedAccounts([])
           setIsCreateModalOpen(false)
           setNewKeyName('')
-          message.success(t('mcpManager.createSuccess'))
+          toast.success(t('mcpManager.createSuccess'))
           fetchMCPKeys() // 刷新列表
         }
         catch (error) {
-          message.error(t('mcpManager.createKeyFailed'))
+          toast.error(t('mcpManager.createKeyFailed'))
         }
         finally {
           setLoading(false)
@@ -118,22 +119,22 @@ const MCPManagerModal = memo(
 
       const handleCopyKey = (key: string) => {
         navigator.clipboard.writeText(key)
-        message.success(t('mcpManager.keyCopied'))
+        toast.success(t('mcpManager.keyCopied'))
       }
 
       const handleDeleteKey = async (key: string) => {
         try {
           const res = await apiDeleteMCPKey(key)
           if (res?.code === 0) {
-            message.success(t('mcpManager.deleteSuccess'))
+            toast.success(t('mcpManager.deleteSuccess'))
             fetchMCPKeys() // 刷新列表
           }
           else {
-            message.error(t('mcpManager.deleteFailed'))
+            toast.error(t('mcpManager.deleteFailed'))
           }
         }
         catch (error) {
-          message.error(t('mcpManager.deleteFailed'))
+          toast.error(t('mcpManager.deleteFailed'))
         }
       }
 
@@ -296,7 +297,7 @@ const MCPManagerModal = memo(
               layout="vertical"
               onFinish={(values) => {
                 if (selectedAccounts.length === 0) {
-                  message.warning(t('mcpManager.createModal.selectAccountsRequired'))
+                  toast.warning(t('mcpManager.createModal.selectAccountsRequired'))
                   return
                 }
                 handleAccountConfirm(selectedAccounts)

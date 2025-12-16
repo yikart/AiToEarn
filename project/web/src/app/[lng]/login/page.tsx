@@ -1,7 +1,8 @@
 'use client'
 
 import { GoogleLogin } from '@react-oauth/google'
-import { Button, Form, Input, message, Modal } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
+import { toast } from '@/lib/toast'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -53,16 +54,16 @@ export default function LoginPage() {
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo)
           }
-          message.success(t('loginSuccess'))
+          toast.success(t('loginSuccess'))
           router.push('/accounts')
         }
       }
       else {
-        message.error(response.message || t('loginFailed'))
+        toast.error(response.message || t('loginFailed'))
       }
     }
     catch (error) {
-      message.error(t('loginError'))
+      toast.error(t('loginError'))
     }
   }
 
@@ -78,7 +79,7 @@ export default function LoginPage() {
       })
 
       if (!response) {
-        message.error(t('registerError'))
+        toast.error(t('registerError'))
         setIsActivating(false)
         return
       }
@@ -92,16 +93,16 @@ export default function LoginPage() {
         if (response.data.userInfo) {
           setUserInfo(response.data.userInfo)
         }
-        message.success(t('registerSuccess'))
+        toast.success(t('registerSuccess'))
         router.push('/accounts')
       }
       else {
-        message.error(response.message || t('registerError'))
+        toast.error(response.message || t('registerError'))
         setIsActivating(false)
       }
     }
     catch (error) {
-      message.error(t('registerError'))
+      toast.error(t('registerError'))
       setIsActivating(false)
     }
   }
@@ -128,7 +129,7 @@ export default function LoginPage() {
       const response: any = await googleLoginApi(params)
       console.log('login response', response)
       if (!response) {
-        message.error(t('googleLoginFailed'))
+        toast.error(t('googleLoginFailed'))
         return
       }
 
@@ -139,16 +140,16 @@ export default function LoginPage() {
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo)
           }
-          message.success(t('loginSuccess'))
+          toast.success(t('loginSuccess'))
           router.push('/accounts')
         }
       }
       else {
-        message.error(response.message || t('googleLoginFailed'))
+        toast.error(response.message || t('googleLoginFailed'))
       }
     }
     catch (error) {
-      message.error(t('googleLoginFailed'))
+      toast.error(t('googleLoginFailed'))
     }
   }
 

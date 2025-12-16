@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, message, Modal, Tag } from 'antd'
+import { Button, Modal, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { memo, useEffect, useMemo, useState } from 'react'
@@ -111,14 +112,14 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
 
       // 检查用户是否已登录
       if (!userStore.userInfo?.id) {
-        message.error(t('pleaseLoginFirst'))
+        toast.error(t('pleaseLoginFirst'))
         router.push('/login')
         return
       }
 
       // 检查用户是否已经是相同类型的会员且未过期
       if (isCurrentPlan[planType]) {
-        message.warning(translate('currentPlan'))
+        toast.warning(translate('currentPlan'))
         setLoading(false)
         return
       }
@@ -162,22 +163,22 @@ const VipContentModal = memo(({ open, onClose }: VipContentModalProps) => {
       })
 
       if (response?.code === 0) {
-        message.success(t('paymentOrderCreated'))
+        toast.success(t('paymentOrderCreated'))
         // 直接跳转到支付页面
         if (response.data?.url) {
           window.open(response.data.url, '_blank')
         }
         else {
-          message.error(t('paymentLinkNotFound'))
+          toast.error(t('paymentLinkNotFound'))
         }
       }
       else {
-        message.error(response?.message || response?.msg || t('createPaymentOrderFailed'))
+        toast.error(response?.message || response?.msg || t('createPaymentOrderFailed'))
       }
     }
     catch (error) {
       console.error('Create payment order failed:', error)
-      message.error(t('createPaymentOrderError'))
+      toast.error(t('createPaymentOrderError'))
     }
     finally {
       setLoading(false)

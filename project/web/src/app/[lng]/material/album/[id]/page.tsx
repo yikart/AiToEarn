@@ -1,6 +1,7 @@
 'use client'
 
-import { message, Popconfirm } from 'antd'
+import { Popconfirm } from 'antd'
+import { toast } from '@/lib/toast'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createMedia, deleteMedia, getMediaList } from '@/api/media'
@@ -70,7 +71,7 @@ export default function AlbumPage() {
       }
     }
     catch (error) {
-      message.error('获取媒体资源列表失败')
+      toast.error('获取媒体资源列表失败')
       setMediaList([])
     }
     finally {
@@ -120,7 +121,7 @@ export default function AlbumPage() {
         video: '视频',
         img: '图片',
       }
-      message.error(`此资源组只允许上传${typeMap[groupInfo!.type]}文件`)
+      toast.error(`此资源组只允许上传${typeMap[groupInfo!.type]}文件`)
       event.target.value = '' // 清空文件选择
       return
     }
@@ -151,22 +152,22 @@ export default function AlbumPage() {
         thumbUrl,
       })
 
-      message.success('上传成功')
+      toast.success('上传成功')
       fetchMediaList()
     }
     catch (error) {
-      message.error('上传失败')
+      toast.error('上传失败')
     }
   }
 
   const handleDelete = async (mediaId: string) => {
     try {
       await deleteMedia(mediaId)
-      message.success('删除成功')
+      toast.success('删除成功')
       fetchMediaList()
     }
     catch (error) {
-      message.error('删除失败')
+      toast.error('删除失败')
     }
   }
 

@@ -18,7 +18,8 @@ import {
   SendOutlined,
 } from '@ant-design/icons'
 
-import { Button, message, Modal, Tooltip } from 'antd'
+import { Button, Modal, Tooltip } from 'antd'
+import { toast } from '@/lib/toast'
 import dayjs from 'dayjs'
 import {
   forwardRef,
@@ -326,7 +327,7 @@ const PublishDialog = memo(
                 console.warn(
                   `${t('messages.unsupportedPlatformType' as any)}: ${platform}`,
                 )
-                message.warning(
+                toast.warning(
                   t('messages.platformNotSupportedDirect' as any, { platform }),
                 )
                 return
@@ -347,7 +348,7 @@ const PublishDialog = memo(
           }
           catch (error) {
             console.error(t('messages.authFailed' as any), error)
-            message.error(t('messages.authFailedRetry' as any))
+            toast.error(t('messages.authFailedRetry' as any))
           }
         },
         [accountGroupList, getAccountList],
@@ -374,7 +375,7 @@ const PublishDialog = memo(
         }
 
         if (!contentToCheck.trim()) {
-          message.warning(t('messages.pleaseInputContent' as any))
+          toast.warning(t('messages.pleaseInputContent' as any))
           return
         }
 
@@ -401,16 +402,16 @@ const PublishDialog = memo(
                 : descriptions || reason || t('actions.contentUnsafe' as any),
             )
             if (isSafe) {
-              message.success(t('actions.contentSafe' as any))
+              toast.success(t('actions.contentSafe' as any))
             }
             else {
-              message.error(t('actions.contentUnsafe' as any))
+              toast.error(t('actions.contentUnsafe' as any))
             }
           }
         }
         catch (error) {
           console.error(t('messages.contentModerationError' as any), error)
-          message.error(t('messages.contentModerationFailed' as any))
+          toast.error(t('messages.contentModerationFailed' as any))
         }
         finally {
           setModerationLoading(false)
@@ -1299,7 +1300,7 @@ const PublishDialog = memo(
                                   if (step === 1) {
                                     setExpandedPubItem(pubItem)
                                   }
-                                  message.warning(errVideoItem.parErrMsg)
+                                  toast.warning(errVideoItem.parErrMsg)
                                   return
                                 }
                               }

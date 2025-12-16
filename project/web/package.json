@@ -71,6 +71,7 @@
     "react-use": "^17.6.0",
     "sass": "^1.59.2",
     "sharp": "^0.34.4",
+    "sonner": "^2.0.7",
     "sortablejs": "^1.15.6",
     "swiper": "^11.2.8",
     "tailwind-merge": "^3.4.0",

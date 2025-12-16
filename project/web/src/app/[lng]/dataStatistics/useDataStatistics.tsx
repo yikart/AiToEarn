@@ -8,7 +8,7 @@ import {
   MessageFilled,
   VideoCameraFilled,
 } from '@ant-design/icons'
-import { message } from 'antd'
+import { toast } from '@/lib/toast'
 import dayjs from 'dayjs'
 import { create } from 'zustand/index'
 import { combine } from 'zustand/middleware'
@@ -200,7 +200,7 @@ export const useDataStatisticsStore = create(
 
           try {
             if (validAccounts.length === 0) {
-              message.error('没有有效的账号数据')
+              toast.error('没有有效的账号数据')
               return
             }
 
@@ -216,7 +216,7 @@ export const useDataStatisticsStore = create(
             const result = res?.data
 
             if (!result) {
-              message.error('获取数据统计失败，请稍后重试')
+              toast.error('获取数据统计失败，请稍后重试')
               return
             }
 
@@ -227,7 +227,7 @@ export const useDataStatisticsStore = create(
           }
           catch (error) {
             console.error('获取数据统计失败', error)
-            message.error('获取数据统计失败，请稍后重试')
+            toast.error('获取数据统计失败，请稍后重试')
           }
           finally {
             if (withLoading) {

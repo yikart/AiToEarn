@@ -9,7 +9,8 @@ import {
   RobotOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons'
-import { Input, message, Modal, Popconfirm, Select } from 'antd'
+import { Input, Modal, Popconfirm, Select } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -122,7 +123,7 @@ export function MaterialPageCore() {
       }
     }
     catch (error) {
-      message.error(t('mediaManagement.getListFailed'))
+      toast.error(t('mediaManagement.getListFailed'))
     }
     finally {
       setLoading(false)
@@ -149,25 +150,25 @@ export function MaterialPageCore() {
         desc: newGroupDesc,
         type: newGroupType,
       })
-      message.success(t('mediaManagement.createSuccess'))
+      toast.success(t('mediaManagement.createSuccess'))
       fetchGroups()
       setIsModalVisible(false)
       setNewGroupTitle('')
       setNewGroupDesc('')
     }
     catch (error) {
-      message.error(t('mediaManagement.createFailed'))
+      toast.error(t('mediaManagement.createFailed'))
     }
   }
 
   const handleDeleteGroup = async (groupId: string) => {
     try {
       await deleteMediaGroup(groupId)
-      message.success(t('mediaManagement.deleteSuccess'))
+      toast.success(t('mediaManagement.deleteSuccess'))
       fetchGroups()
     }
     catch (error) {
-      message.error(t('mediaManagement.deleteFailed'))
+      toast.error(t('mediaManagement.deleteFailed'))
     }
   }
 
@@ -181,7 +182,7 @@ export function MaterialPageCore() {
         desc: newGroupDesc,
         type: newGroupType,
       })
-      message.success(t('mediaManagement.updateSuccess'))
+      toast.success(t('mediaManagement.updateSuccess'))
       fetchGroups()
       setIsEditModalVisible(false)
       setEditingGroup(null)
@@ -189,7 +190,7 @@ export function MaterialPageCore() {
       setNewGroupDesc('')
     }
     catch (error) {
-      message.error(t('mediaManagement.updateFailed'))
+      toast.error(t('mediaManagement.updateFailed'))
     }
   }
 

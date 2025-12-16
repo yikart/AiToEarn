@@ -1,7 +1,8 @@
 'use client'
 
 import { ArrowLeftOutlined, DownloadOutlined, FileTextOutlined, FireOutlined, MessageOutlined, PictureOutlined, RobotOutlined, UploadOutlined, VideoCameraOutlined } from '@ant-design/icons'
-import { Button, Col, Input, message, Modal, Progress, Row, Select } from 'antd'
+import { Button, Col, Input, Modal, Progress, Row, Select } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -167,7 +168,7 @@ export default function AIGeneratePage() {
   const MAX_IMAGE_SIZE = 30 * 1024 * 1024
   const checkFileSize = (file: File) => {
     if (file.size > MAX_IMAGE_SIZE) {
-      message.error(`${t('aiGenerate.imageSizeLimit' as any)}: 30MB`)
+      toast.error(`${t('aiGenerate.imageSizeLimit' as any)}: 30MB`)
       return false
     }
     return true
@@ -175,7 +176,7 @@ export default function AIGeneratePage() {
   const checkImageFormat = (file: File) => {
     const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
     if (!allowed.includes(file.type)) {
-      message.error(`${t('aiGenerate.imageFormatSupport' as any)}: JPG, PNG, WEBP`)
+      toast.error(`${t('aiGenerate.imageFormatSupport' as any)}: JPG, PNG, WEBP`)
       return false
     }
     return true
@@ -195,9 +196,9 @@ export default function AIGeneratePage() {
       setUploadingFirstFrame(true)
       const key = await uploadToOss(file)
       setVideoImage(getOssUrl(key))
-      message.success(t('aiGenerate.uploadSuccess'))
+      toast.success(t('aiGenerate.uploadSuccess'))
     }
-    catch { message.error(t('aiGenerate.uploadFailed')) }
+    catch { toast.error(t('aiGenerate.uploadFailed')) }
     finally {
       setUploadingFirstFrame(false)
       if (e.target)
@@ -217,9 +218,9 @@ export default function AIGeneratePage() {
       setUploadingTailFrame(true)
       const key = await uploadToOss(file)
       setVideoImageTail(getOssUrl(key))
-      message.success(t('aiGenerate.uploadSuccess'))
+      toast.success(t('aiGenerate.uploadSuccess'))
     }
-    catch { message.error(t('aiGenerate.uploadFailed')) }
+    catch { toast.error(t('aiGenerate.uploadFailed')) }
     finally {
       setUploadingTailFrame(false)
       if (e.target)
@@ -253,10 +254,10 @@ export default function AIGeneratePage() {
       const keys = await Promise.all(uploadPromises)
       const urls = keys.map(key => getOssUrl(key))
       setVideoImages(prev => [...prev, ...urls])
-      message.success(`成功上传 ${validFiles.length} 张图片`)
+      toast.success(`成功上传 ${validFiles.length} 张图片`)
     }
     catch (error) {
-      message.error(t('aiGenerate.uploadFailed'))
+      toast.error(t('aiGenerate.uploadFailed'))
     }
     finally {
       setUploadingFirstFrame(false)
@@ -346,7 +347,7 @@ export default function AIGeneratePage() {
     // Calculate number of images that can be uploaded
     const remainingSlots = maxImages - sourceImages.length
     if (remainingSlots <= 0) {
-      message.warning(t('aiGenerate.maxUploadLimitReached' as any, { count: maxImages }))
+      toast.warning(t('aiGenerate.maxUploadLimitReached' as any, { count: maxImages }))
       if (e.target)
         e.target.value = ''
       return
@@ -369,7 +370,7 @@ export default function AIGeneratePage() {
     }
 
     if (filesToProcess.length < files.length) {
-      message.warning(t('aiGenerate.autoSelectImages' as any, { count: remainingSlots }))
+      toast.warning(t('aiGenerate.autoSelectImages' as any, { count: remainingSlots }))
     }
 
     try {
@@ -378,10 +379,10 @@ export default function AIGeneratePage() {
       const keys = await Promise.all(uploadPromises)
       const urls = keys.map(key => getOssUrl(key))
       setSourceImages(prev => [...prev, ...urls])
-      message.success(t('aiGenerate.uploadSuccessCount' as any, { count: validFiles.length }))
+      toast.success(t('aiGenerate.uploadSuccessCount' as any, { count: validFiles.length }))
     }
     catch (error) {
-      message.error(t('aiGenerate.uploadFailed'))
+      toast.error(t('aiGenerate.uploadFailed'))
     }
     finally {
       setUploadingSourceImage(false)
@@ -430,7 +431,7 @@ export default function AIGeneratePage() {
 
       if (!defaultGroupId) {
         console.warn('No default media group found')
-        message.error(t('aiGenerate.noDefaultMediaGroup' as any))
+        toast.error(t('aiGenerate.noDefaultMediaGroup' as any))
         return
       }
 
@@ -449,15 +450,15 @@ export default function AIGeneratePage() {
       if (uploadRes.data) {
         // Mark as uploaded
         setUploadedContent(prev => new Set([...prev, mediaUrl]))
-        message.success(mediaType === 'video' ? t('aiGenerate.videoUploadSuccess') : t('aiGenerate.uploadSuccess'))
+        toast.success(mediaType === 'video' ? t('aiGenerate.videoUploadSuccess') : t('aiGenerate.uploadSuccess'))
       }
       else {
-        message.error(mediaType === 'video' ? t('aiGenerate.videoUploadFailed') : t('aiGenerate.uploadFailed'))
+        toast.error(mediaType === 'video' ? t('aiGenerate.videoUploadFailed') : t('aiGenerate.uploadFailed'))
       }
     }
     catch (error) {
       console.error('Auto upload failed:', error)
-      message.error(mediaType === 'video' ? t('aiGenerate.videoUploadFailed') : t('aiGenerate.uploadFailed'))
+      toast.error(mediaType === 'video' ? t('aiGenerate.videoUploadFailed') : t('aiGenerate.uploadFailed'))
     }
   }
 
@@ -486,7 +487,7 @@ export default function AIGeneratePage() {
             const imageUrls = (images || response?.list || []).map((i: any) => i.url) || []
             setImageEditResult(imageUrls)
             setImageEditProgress(100)
-            message.success(t('aiGenerate.imageEditCompleted' as any))
+            toast.success(t('aiGenerate.imageEditCompleted' as any))
 
             // Auto upload first image to default media group
             if (imageUrls.length > 0) {
@@ -496,7 +497,7 @@ export default function AIGeneratePage() {
           }
           if (normalized === 'failed') {
             setImageEditProgress(0)
-            message.error(fail_reason || t('aiGenerate.imageGenerationFailed'))
+            toast.error(fail_reason || t('aiGenerate.imageGenerationFailed'))
             return true
           }
           setImageEditProgress(percent)
@@ -517,15 +518,15 @@ export default function AIGeneratePage() {
 
   const handleImageEdit = async () => {
     if (!imageEditPrompt) {
-      message.error(t('aiGenerate.pleaseEnterPrompt'))
+      toast.error(t('aiGenerate.pleaseEnterPrompt'))
       return
     }
     if (!sourceImages.length) {
-      message.error(t('aiGenerate.pleaseUploadFirstFrame'))
+      toast.error(t('aiGenerate.pleaseUploadFirstFrame'))
       return
     }
     if (!imageEditModel) {
-      message.error(t('aiGenerate.pleaseSelectVideoModel'))
+      toast.error(t('aiGenerate.pleaseSelectVideoModel'))
       return
     }
 
@@ -545,7 +546,7 @@ export default function AIGeneratePage() {
       if (res?.data?.logId) {
         setImageEditTaskId(res.data.logId)
         setImageEditStatus(res.data.status)
-        message.success(t('aiGenerate.taskSubmittedSuccess'))
+        toast.success(t('aiGenerate.taskSubmittedSuccess'))
         pollImageEditTaskStatus(res.data.logId)
       }
       else {
@@ -595,7 +596,7 @@ export default function AIGeneratePage() {
             const videoUrl = video_url || res.data?.data?.video_url || res.data?.video_url
             setVideoResult(videoUrl)
             setVideoProgress(100)
-            message.success(t('aiGenerate.videoGenerationSuccess'))
+            toast.success(t('aiGenerate.videoGenerationSuccess'))
 
             // Auto upload to default media group
             if (videoUrl) {
@@ -605,7 +606,7 @@ export default function AIGeneratePage() {
           }
           if (normalized === 'failed') {
             setVideoProgress(0)
-            message.error(fail_reason || t('aiGenerate.videoGenerationFailed'))
+            toast.error(fail_reason || t('aiGenerate.videoGenerationFailed'))
             return true
           }
           setVideoProgress(percent)
@@ -651,7 +652,7 @@ export default function AIGeneratePage() {
             const imageUrls = (images || response?.list || []).map((i: any) => i.url) || []
             setResult(imageUrls)
             setImageProgress(100)
-            message.success(t('aiGenerate.imageGenerationCompleted' as any))
+            toast.success(t('aiGenerate.imageGenerationCompleted' as any))
 
             // Auto upload first image to default media group
             if (imageUrls.length > 0) {
@@ -661,7 +662,7 @@ export default function AIGeneratePage() {
           }
           if (normalized === 'failed') {
             setImageProgress(0)
-            message.error(fail_reason || t('aiGenerate.imageGenerationFailed'))
+            toast.error(fail_reason || t('aiGenerate.imageGenerationFailed'))
             return true
           }
           setImageProgress(percent)
@@ -749,7 +750,7 @@ export default function AIGeneratePage() {
     }
     catch (e) {
       console.error(e)
-      message.error(t('aiGenerate.taskFailed'))
+      toast.error(t('aiGenerate.taskFailed'))
     }
     finally {
       setLoadingHistory(false)
@@ -788,7 +789,7 @@ export default function AIGeneratePage() {
       setVideoResult(item.data.video_url)
       setVideoStatus('completed')
       setVideoProgress(100)
-      message.success(t('aiGenerate.videoLoadedSuccess' as any) || 'Video loaded successfully')
+      toast.success(t('aiGenerate.videoLoadedSuccess' as any) || 'Video loaded successfully')
     }
     else if (item.status === 'PROCESSING') {
       setVideoTaskId(item.task_id)
@@ -853,7 +854,7 @@ export default function AIGeneratePage() {
     if (sourceImages.length > maxImages) {
       const removedCount = sourceImages.length - maxImages
       setSourceImages(prev => prev.slice(0, maxImages))
-      message.warning(t('aiGenerate.autoRemoveExcessImages' as any, { maxCount: maxImages, removedCount }))
+      toast.warning(t('aiGenerate.autoRemoveExcessImages' as any, { maxCount: maxImages, removedCount }))
     }
   }, [imageEditModel, imageEditModels, imageEditSize, sourceImages.length])
 
@@ -941,13 +942,13 @@ export default function AIGeneratePage() {
         }
       }
     }
-    catch { message.error(t('aiGenerate.getMediaGroupListFailed')) }
+    catch { toast.error(t('aiGenerate.getMediaGroupListFailed')) }
     finally { setLoadingMediaGroups(false) }
   }
 
   const handleTextToImage = async () => {
     if (!prompt) {
-      message.error(t('aiGenerate.pleaseEnterPrompt'))
+      toast.error(t('aiGenerate.pleaseEnterPrompt'))
       return
     }
     try {
@@ -959,7 +960,7 @@ export default function AIGeneratePage() {
       if (res?.data?.logId) {
         setImageTaskId(res.data.logId)
         setImageStatus(res.data.status)
-        message.success(t('aiGenerate.taskSubmittedSuccess'))
+        toast.success(t('aiGenerate.taskSubmittedSuccess'))
         pollImageTaskStatus(res.data.logId)
       }
       else {
@@ -975,7 +976,7 @@ export default function AIGeneratePage() {
 
   const handleTextToFireflyCard = async () => {
     if (!content || !title) {
-      message.error(t('aiGenerate.pleaseEnterContentAndTitle'))
+      toast.error(t('aiGenerate.pleaseEnterContentAndTitle'))
       return
     }
     try {
@@ -988,20 +989,20 @@ export default function AIGeneratePage() {
         await autoUploadToDefaultGroup(res.data.image, 'img', 'Firefly Card', `${title}: ${content}`)
       }
       else {
-        message.error(t('aiGenerate.fireflyCardGenerationFailed'))
+        toast.error(t('aiGenerate.fireflyCardGenerationFailed'))
       }
     }
-    catch { message.error(t('aiGenerate.fireflyCardGenerationFailed')) }
+    catch { toast.error(t('aiGenerate.fireflyCardGenerationFailed')) }
     finally { setLoadingFirefly(false) }
   }
 
   const handleVideoGeneration = async () => {
     if (!videoPrompt) {
-      message.error(t('aiGenerate.pleaseEnterVideoDescription'))
+      toast.error(t('aiGenerate.pleaseEnterVideoDescription'))
       return
     }
     if (!videoModel) {
-      message.error(t('aiGenerate.pleaseSelectVideoModel'))
+      toast.error(t('aiGenerate.pleaseSelectVideoModel'))
       return
     }
     if (videoMode === 'image2video') {
@@ -1011,29 +1012,29 @@ export default function AIGeneratePage() {
 
       // Check multi-image video
       if (modes.includes('multi-image2video') && supported.includes('image') && videoImages.length === 0) {
-        message.error(t('aiGenerate.pleaseUploadAtLeastOneImage' as any))
+        toast.error(t('aiGenerate.pleaseUploadAtLeastOneImage' as any))
         return
       }
 
       // Check single image video
       if (modes.includes('image2video') && !modes.includes('multi-image2video') && supported.includes('image') && !videoImage) {
-        message.error(t('aiGenerate.pleaseUploadFirstFrame'))
+        toast.error(t('aiGenerate.pleaseUploadFirstFrame'))
         return
       }
 
       // Check first and tail frame video
       if (modes.includes('flf2video') && supported.includes('image') && !videoImage) {
-        message.error(t('aiGenerate.pleaseUploadFirstFrame'))
+        toast.error(t('aiGenerate.pleaseUploadFirstFrame'))
         return
       }
       if (modes.includes('flf2video') && supported.includes('image_tail') && !videoImageTail) {
-        message.error(t('aiGenerate.pleaseUploadTailFrame'))
+        toast.error(t('aiGenerate.pleaseUploadTailFrame'))
         return
       }
 
       // Check tail frame only video
       if (modes.includes('lf2video') && supported.includes('image_tail') && !videoImageTail) {
-        message.error(t('aiGenerate.pleaseUploadTailFrame'))
+        toast.error(t('aiGenerate.pleaseUploadTailFrame'))
         return
       }
     }
@@ -1080,7 +1081,7 @@ export default function AIGeneratePage() {
       if (res?.data?.task_id) {
         setVideoTaskId(res.data.task_id)
         setVideoStatus(res.data.status)
-        message.success(t('aiGenerate.taskSubmittedSuccess'))
+        toast.success(t('aiGenerate.taskSubmittedSuccess'))
         pollVideoTaskStatus(res.data.task_id)
       }
       else {
@@ -1094,7 +1095,7 @@ export default function AIGeneratePage() {
 
   const handleMd2CardGeneration = async () => {
     if (!markdownContent) {
-      message.error(t('aiGenerate.pleaseEnterMarkdown'))
+      toast.error(t('aiGenerate.pleaseEnterMarkdown'))
       return
     }
     try {
@@ -1125,7 +1126,7 @@ export default function AIGeneratePage() {
   }
   const handleUploadConfirm = async () => {
     if (!selectedMediaGroup) {
-      message.error(t('aiGenerate.pleaseSelectMediaGroup'))
+      toast.error(t('aiGenerate.pleaseSelectMediaGroup'))
       return
     }
     try {
@@ -1139,7 +1140,7 @@ export default function AIGeneratePage() {
       const uploadDesc = videoResult ? (videoPrompt || '') : (prompt || content || '')
       const res: any = await createMedia({ groupId: selectedMediaGroup, url: mediaUrl, type: mediaType, title: uploadTitle, desc: uploadDesc })
       if (res.data) {
-        message.success(
+        toast.success(
           videoResult
             ? t('aiGenerate.videoUploadSuccess')
             : md2CardResult
@@ -1149,7 +1150,7 @@ export default function AIGeneratePage() {
         setUploadModalVisible(false)
       }
       else {
-        message.error(
+        toast.error(
           videoResult
             ? t('aiGenerate.videoUploadFailed')
             : md2CardResult
@@ -1159,7 +1160,7 @@ export default function AIGeneratePage() {
       }
     }
     catch {
-      message.error(
+      toast.error(
         videoResult
           ? t('aiGenerate.videoUploadFailed')
           : md2CardResult

@@ -7,7 +7,8 @@ import type {
   Subscription,
   SubscriptionListParams,
 } from '@/api/types/payment'
-import { Button, Card, Descriptions, message, Modal, Table, Tabs, Tag } from 'antd'
+import { Button, Card, Descriptions, Modal, Table, Tabs, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import { memo, useEffect, useState } from 'react'
 import {
@@ -156,16 +157,16 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
       }
       const response = await refundOrderApi(params)
       if (response?.code === 0) {
-        message.success(tProfile('refundSubmitted'))
+        toast.success(tProfile('refundSubmitted'))
         fetchOrders({ page: ordersPagination.current - 1, size: ordersPagination.pageSize })
       }
       else {
-        message.error(response?.message || tProfile('refundFailed'))
+        toast.error(response?.message || tProfile('refundFailed'))
       }
     }
     catch (error) {
       console.error('退款失败:', error)
-      message.error(tProfile('refundFailed'))
+      toast.error(tProfile('refundFailed'))
     }
   }
 
@@ -177,7 +178,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
       }
       const response = await unsubscribeApi(params)
       if (response?.code === 0) {
-        message.success(tProfile('unsubscribeSuccess'))
+        toast.success(tProfile('unsubscribeSuccess'))
         fetchSubscriptions({ page: subscriptionsPagination.current - 1, size: subscriptionsPagination.pageSize })
       }
     }
@@ -193,7 +194,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
       }
       const response = await cancelSubscriptionApi(params)
       if (response?.code === 0) {
-        message.success(tProfile('resumeSuccess' as any))
+        toast.success(tProfile('resumeSuccess' as any))
         fetchSubscriptions({ page: subscriptionsPagination.current, size: subscriptionsPagination.pageSize })
       }
     }
@@ -212,12 +213,12 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
         setOrderDetailVisible(true)
       }
       else {
-        message.error(tProfile('getOrderDetailFailed'))
+        toast.error(tProfile('getOrderDetailFailed'))
       }
     }
     catch (error) {
       console.error('获取订单详情失败:', error)
-      message.error(tProfile('getOrderDetailFailed'))
+      toast.error(tProfile('getOrderDetailFailed'))
     }
     finally {
       setOrderDetailLoading(false)
@@ -434,7 +435,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                         className={styles.copyBtn}
                                         onClick={() => {
                                           navigator.clipboard.writeText(subscription.id)
-                                          message.success(tProfile('copySuccess'))
+                                          toast.success(tProfile('copySuccess'))
                                         }}
                                       >
                                         📋
@@ -635,7 +636,7 @@ const SubscriptionManagementModal = memo(({ open, onClose }: SubscriptionManagem
                                 className={styles.copyBtn}
                                 onClick={() => {
                                   navigator.clipboard.writeText(order.id)
-                                  message.success(tProfile('copySuccess'))
+                                  toast.success(tProfile('copySuccess'))
                                 }}
                               >
                                 📋

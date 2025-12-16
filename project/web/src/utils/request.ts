@@ -1,5 +1,5 @@
 import type { RequestParams } from '@/utils/FetchService/types'
-import { message } from 'antd'
+import { toast } from '@/lib/toast'
 import { useUserStore } from '@/store/user'
 import FetchService from '@/utils/FetchService/FetchService'
 
@@ -77,7 +77,7 @@ export async function request<T>(params: RequestParamsWithSilent) {
 
     if (data.code !== 0) {
       if (!params.silent && typeof window !== 'undefined') {
-        message.warning({
+        toast.warning({
           content: `${data.message || i18nText.networkBusy} ${i18nText.contact} https://t.me/harryyyy2025`,
           key: 'apiErrorMessage',
           duration: 6,
@@ -95,7 +95,7 @@ export async function request<T>(params: RequestParamsWithSilent) {
   catch (e) {
     console.warn(e)
     if (!params.silent && typeof window !== 'undefined') {
-      message.error({
+      toast.error({
         content: `${(useUserStore.getState().lang || 'zh-CN').toLowerCase().startsWith('zh') ? '网络异常，请稍后重试！' : 'Network error, please try again later!'} ${(useUserStore.getState().lang || 'zh-CN').toLowerCase().startsWith('zh') ? '如需帮助请联系客服：' : 'Need help? Contact support:'} https://t.me/harryyyy2025`,
         key: 'apiErrorMessage',
         duration: 6,

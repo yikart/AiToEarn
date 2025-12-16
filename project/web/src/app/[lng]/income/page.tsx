@@ -3,7 +3,8 @@
 import type { IncomeRecord } from '@/api/types/income'
 import type { WithdrawRecord } from '@/api/types/withdraw'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DollarOutlined, HistoryOutlined, WalletOutlined } from '@ant-design/icons'
-import { Button, Card, Descriptions, Form, Input, message, Modal, Popconfirm, Select, Space, Table, Tabs, Tag } from 'antd'
+import { Button, Card, Descriptions, Form, Input, Modal, Popconfirm, Select, Space, Table, Tabs, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { apiGetIncomeList, apiSubmitWithdraw } from '@/api/income'
@@ -60,11 +61,11 @@ export default function IncomePage() {
         })
       }
       else {
-        message.error(t('messages.getIncomeRecordsFailed'))
+        toast.error(t('messages.getIncomeRecordsFailed'))
       }
     }
     catch (error) {
-      message.error(t('messages.getIncomeRecordsFailed'))
+      toast.error(t('messages.getIncomeRecordsFailed'))
     }
     finally {
       setIncomeLoading(false)
@@ -85,11 +86,11 @@ export default function IncomePage() {
         })
       }
       else {
-        message.error(t('messages.getWithdrawRecordsFailed'))
+        toast.error(t('messages.getWithdrawRecordsFailed'))
       }
     }
     catch (error) {
-      message.error(t('messages.getWithdrawRecordsFailed'))
+      toast.error(t('messages.getWithdrawRecordsFailed'))
     }
     finally {
       setWithdrawLoading(false)
@@ -116,18 +117,18 @@ export default function IncomePage() {
       const values = await form.validateFields()
       const response = await apiSubmitWithdraw(selectedIncomeRecord._id, values.userWalletAccountId)
       if (response) {
-        message.success(t('messages.withdrawSubmitted'))
+        toast.success(t('messages.withdrawSubmitted'))
         setWithdrawModalVisible(false)
         setSelectedIncomeRecord(null)
         // 刷新提现记录
         fetchWithdrawRecords(withdrawPagination.current, withdrawPagination.pageSize)
       }
       else {
-        message.error(t('messages.withdrawFailed'))
+        toast.error(t('messages.withdrawFailed'))
       }
     }
     catch (error) {
-      message.error(t('messages.withdrawFailed'))
+      toast.error(t('messages.withdrawFailed'))
     }
     finally {
       setWithdrawSubmitting(false)
@@ -271,7 +272,7 @@ export default function IncomePage() {
 
   useEffect(() => {
     if (!token) {
-      message.error(t('messages.pleaseLoginFirst'))
+      toast.error(t('messages.pleaseLoginFirst'))
       router.push('/login')
       return
     }

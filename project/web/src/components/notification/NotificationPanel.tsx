@@ -5,7 +5,8 @@ import type { SocialAccount } from '@/api/types/account.type'
 // 平台配置（图标等）
 import type { PlatType } from '@/app/config/platConfig'
 import { CheckOutlined, ClockCircleOutlined, DeleteOutlined, EyeOutlined } from '@ant-design/icons'
-import { Badge, Button, Empty, List, message, Modal, Popconfirm, Spin, Steps, Tag, Tooltip } from 'antd'
+import { Badge, Button, Empty, List, Modal, Popconfirm, Spin, Steps, Tag, Tooltip } from 'antd'
+import { toast } from '@/lib/toast'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
@@ -116,7 +117,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       }
     }
     catch (error) {
-      message.error(t('getNotificationListFailed'))
+      toast.error(t('getNotificationListFailed'))
     }
     finally {
       setLoading(false)
@@ -164,12 +165,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const handleMarkAsRead = async (id: string) => {
     try {
       await markNotificationAsRead([id])
-      message.success(t('markSuccess'))
+      toast.success(t('markSuccess'))
       fetchNotifications()
       fetchUnreadCount()
     }
     catch (error) {
-      message.error(t('markFailed'))
+      toast.error(t('markFailed'))
     }
   }
 
@@ -177,12 +178,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const handleMarkAllAsRead = async () => {
     try {
       await markAllNotificationsAsRead()
-      message.success(t('markAllSuccess'))
+      toast.success(t('markAllSuccess'))
       fetchNotifications()
       fetchUnreadCount()
     }
     catch (error) {
-      message.error(t('markFailed'))
+      toast.error(t('markFailed'))
     }
   }
 
@@ -226,11 +227,11 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         }
       }
       else {
-        message.error(t('getNotificationDetailFailed'))
+        toast.error(t('getNotificationDetailFailed'))
       }
     }
     catch (error) {
-      message.error(t('getNotificationDetailFailed'))
+      toast.error(t('getNotificationDetailFailed'))
       console.error('获取通知详情失败:', error)
     }
   }
@@ -368,7 +369,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
     }
     catch (error) {
       console.error('任务处理失败:', error)
-      message.error(t('taskProcessFailed'))
+      toast.error(t('taskProcessFailed'))
       setTaskProgressVisible(false)
     }
   }
@@ -441,7 +442,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
       // 没有符合条件的账号，跳转到账户界面并弹出授权界面
       setRequiredAccountTypes(task.accountTypes || [])
       setDetailModalVisible(false) // 关闭任务详情弹窗
-      message.info(t('accountSelect.redirectingToAccounts' as any))
+      toast.info(t('accountSelect.redirectingToAccounts' as any))
 
       // 构建跳转URL，包含需要的平台类型参数
       const accountTypes = task.accountTypes || []
@@ -534,12 +535,12 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
   const handleDeleteNotification = async (id: string) => {
     try {
       await deleteNotifications([id])
-      message.success(t('deleteSuccess'))
+      toast.success(t('deleteSuccess'))
       fetchNotifications()
       fetchUnreadCount()
     }
     catch (error) {
-      message.error(t('deleteFailed'))
+      toast.error(t('deleteFailed'))
     }
   }
 

@@ -1,7 +1,8 @@
 'use client'
 
 import { EyeOutlined, LinkOutlined, UserOutlined } from '@ant-design/icons'
-import { Avatar, Badge, Button, Card, Empty, Input, message, Pagination, Select, Spin, Tabs, Tag } from 'antd'
+import { Avatar, Badge, Button, Card, Empty, Input, Pagination, Select, Spin, Tabs, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -60,7 +61,7 @@ export default function DataMonitoringPage() {
       })
     }
     catch (error: any) {
-      message.error(error.message || t('error.loadFailed'))
+      toast.error(error.message || t('error.loadFailed'))
     }
     finally {
       setLoading(false)
@@ -81,7 +82,7 @@ export default function DataMonitoringPage() {
   // Add note monitoring
   const handleAddNote = async () => {
     if (!noteLink.trim()) {
-      message.warning(t('addModal.linkRequired'))
+      toast.warning(t('addModal.linkRequired'))
       return
     }
 
@@ -95,7 +96,7 @@ export default function DataMonitoringPage() {
     const isValidUrl = urlReg.test(trimmedLink) || (hasProtocol && hasDomain)
     
     if (!isValidUrl) {
-      message.warning('请输入有效的链接地址（例如：https://example.com 或 example.com）')
+      toast.warning('请输入有效的链接地址（例如：https://example.com 或 example.com）')
       return
     }
 
@@ -109,7 +110,7 @@ export default function DataMonitoringPage() {
       
       // 检查响应 code
       if (response && response.code === 0) {
-        message.success(t('addModal.addSuccess'))
+        toast.success(t('addModal.addSuccess'))
         setNoteLink('')
         loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
       } else if (response && response.code === 401) {
@@ -117,13 +118,13 @@ export default function DataMonitoringPage() {
         setLoginModalOpen(true)
       } else if (response) {
         // 其他错误
-        message.error(response.message || t('error.addFailed'))
+        toast.error(response.message || t('error.addFailed'))
       } else {
-        message.error(t('error.addFailed'))
+        toast.error(t('error.addFailed'))
       }
     }
     catch (error: any) {
-      message.error(error?.message || t('error.addFailed'))
+      toast.error(error?.message || t('error.addFailed'))
     }
     finally {
       setAddLoading(false)

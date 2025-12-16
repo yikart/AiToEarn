@@ -32,7 +32,8 @@ import { usePluginStore, PluginStatusModal } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import type { PluginPublishItem } from '@/store/plugin/store'
 // ui
-import { message, Button, Modal, Progress } from 'antd'
+import { Button, Modal, Progress } from 'antd'
+import { toast } from '@/lib/toast'
 // config
 import { PubType } from '@/app/config/publishConfig'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
@@ -525,11 +526,11 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       
       // 添加到已上传文件列表
       setUploadedImages(prev => [...prev, ...uploadedFiles])
-      message.success(t('aiGeneration.uploadSuccess' as any))
+      toast.success(t('aiGeneration.uploadSuccess' as any))
       
     } catch (error) {
       console.error('File upload failed:', error)
-      message.error(t('aiGeneration.uploadFailed' as any))
+      toast.error(t('aiGeneration.uploadFailed' as any))
     } finally {
       setIsUploading(false)
       if (fileInputRef.current) {
@@ -568,13 +569,13 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
       status: 'CANCELLED'
     })
     
-    message.info(t('aiGeneration.taskStopped' as any))
+    toast.info(t('aiGeneration.taskStopped' as any))
   }
 
   // 开启新对话
   const handleNewConversation = () => {
     if (isGenerating) {
-      message.warning(t('aiGeneration.generatingWarning' as any))
+      toast.warning(t('aiGeneration.generatingWarning' as any))
       return
     }
     
@@ -589,7 +590,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     setStreamingText('')
     streamingTextRef.current = ''
     setPrompt('')
-    message.success(t('aiGeneration.newConversation' as any))
+    toast.success(t('aiGeneration.newConversation' as any))
   }
 
   // Create AI generation task with SSE
@@ -651,7 +652,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
             const isPluginReady = pluginStatus === PluginStatus.READY
             
             if (!isPluginReady) {
-              message.warning('请先授权插件')
+              toast.warning('请先授权插件')
             } else {
               try {
                 const accountGroupList = useAccountStore.getState().accountGroupList
@@ -743,17 +744,17 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                       console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
                       
                       if (stage === 'error') {
-                        message.error(progressMessage)
+                        toast.error(progressMessage)
                       }
                     },
                     onComplete: () => {
-                      message.success('发布任务已提交')
+                      toast.success('发布任务已提交')
                     },
                   })
                 }
               } catch (error: any) {
                 console.error('[TEST MODE] Plugin publish error:', error)
-                message.error(`${error.message}`)
+                toast.error(`${error.message}`)
               }
             }
           }
@@ -1069,7 +1070,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 
                 if (!isPluginReady) {
                   // 插件未准备就绪，显示引导
-                  message.warning(t('plugin.platformNeedsPlugin' as any))
+                  toast.warning(t('plugin.platformNeedsPlugin' as any))
                   
                   setTimeout(() => {
                     const pluginButton = document.querySelector('[data-driver-target="plugin-button"]') as HTMLElement
@@ -1225,19 +1226,19 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                           console.log(`[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`)
           
                           if (stage === 'error') {
-                            message.error(progressMessage)
+                            toast.error(progressMessage)
                           }
                         },
                         onComplete: () => {
-                          message.info(t('plugin.publishTaskSubmitted' as any))
+                          toast.info(t('plugin.publishTaskSubmitted' as any))
                         },
                       })
                     } else {
-                      message.warning('未找到可发布的账号')
+                      toast.warning('未找到可发布的账号')
                     }
                   } catch (error: any) {
                     console.error('Plugin publish error:', error)
-                    message.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+                    toast.error(`${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
                   }
                 }
               }
@@ -1347,7 +1348,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                         const groups = groupListRes?.data?.list || []
 
                         if (groups.length === 0) {
-                          message.warning(t('aiGeneration.noDraftGroupFound' as any))
+                          toast.warning(t('aiGeneration.noDraftGroupFound' as any))
                           return
                         }
 
@@ -1369,26 +1370,26 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                             })
                           } catch (error) {
                             console.error('Create material with groupId error:', error)
-                            message.error(t('aiGeneration.saveDraftFailed' as any))
+                            toast.error(t('aiGeneration.saveDraftFailed' as any))
                             return
                           }
                         } else {
-                          message.warning(t('aiGeneration.noDraftGroup' as any))
+                          toast.warning(t('aiGeneration.noDraftGroup' as any))
                           return
                         }
                       }
 
                       if (createResult) {
-                        message.success(t('aiGeneration.saveDraftSuccess' as any))
+                        toast.success(t('aiGeneration.saveDraftSuccess' as any))
                         setTimeout(() => {
                           router.push(`/${lng}/cgmaterial`)
                         }, 1500)
                       } else {
-                        message.error(t('aiGeneration.saveDraftFailed' as any))
+                        toast.error(t('aiGeneration.saveDraftFailed' as any))
                       }
                     } catch (error: any) {
                       console.error('Save draft error:', error)
-                      message.error(`${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+                      toast.error(`${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
                     }
                   })()
                 }
@@ -1420,7 +1421,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 // action: updateChannel - 更新频道授权
                 else if (action === 'updateChannel') {
                   const platform = taskData.platform
-                  message.warning(t('aiGeneration.channelAuthExpired' as any))
+                  toast.warning(t('aiGeneration.channelAuthExpired' as any))
                   
                   Modal.confirm({
                     title: t('aiGeneration.channelAuthExpiredTitle' as any),
@@ -1435,7 +1436,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
                 // action: loginChannel - 登录频道
                 else if (action === 'loginChannel') {
                   const platform = taskData.platform
-                  message.info(t('aiGeneration.needLoginChannel' as any))
+                  toast.info(t('aiGeneration.needLoginChannel' as any))
                   
                   Modal.confirm({
                     title: t('aiGeneration.needLogin' as any),
@@ -1480,7 +1481,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
         // onError callback
         (error) => {
           console.error('SSE Error:', error)
-          message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+          toast.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
           setIsGenerating(false)
           setProgress(0)
         },
@@ -1499,7 +1500,7 @@ function Hero({ promptToApply }: { promptToApply?: {prompt: string; image?: stri
     }
     catch (error: any) {
       console.error('Create task error:', error)
-      message.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
+      toast.error(`${t('aiGeneration.createTaskFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`)
       setIsGenerating(false)
       setProgress(0)
       // 清除 abort 函数引用

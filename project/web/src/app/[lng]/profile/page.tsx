@@ -3,7 +3,8 @@
 import type { Order } from '@/api/types/payment'
 import { CopyOutlined, CrownOutlined, DollarOutlined, EditOutlined, GiftFilled, GiftOutlined, HistoryOutlined, RocketOutlined, StarOutlined, ThunderboltOutlined, TrophyOutlined, UserOutlined, WalletOutlined } from '@ant-design/icons'
 
-import { Button, Card, Descriptions, Form, Input, message, Modal, Select } from 'antd'
+import { Button, Card, Descriptions, Form, Input, Modal, Select } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
@@ -179,7 +180,7 @@ export default function ProfilePage() {
     try {
       const response: any = await getUserInfoApi()
       if (!response) {
-        message.error(t('getUserInfoFailed'))
+        toast.error(t('getUserInfoFailed'))
         return
       }
 
@@ -206,11 +207,11 @@ export default function ProfilePage() {
         }
       }
       else {
-        message.error(response.message || t('getUserInfoFailed'))
+        toast.error(response.message || t('getUserInfoFailed'))
       }
     }
     catch (error) {
-      message.error(t('getUserInfoFailed'))
+      toast.error(t('getUserInfoFailed'))
     }
     finally {
       setLoading(false)
@@ -238,7 +239,7 @@ export default function ProfilePage() {
     }
     catch (e) {
       // Ignore specific errors, only show prompt
-      message.error(t('getUserInfoFailed'))
+      toast.error(t('getUserInfoFailed'))
     }
     finally {
       setChatModelsLoading(false)
@@ -260,11 +261,11 @@ export default function ProfilePage() {
         })
       }
       else {
-        message.error(response?.message || t('messages.getPointsRecordsFailed' as any))
+        toast.error(response?.message || t('messages.getPointsRecordsFailed' as any))
       }
     }
     catch (error) {
-      message.error(t('messages.getPointsRecordsFailed' as any))
+      toast.error(t('messages.getPointsRecordsFailed' as any))
     }
     finally {
       setPointsLoading(false)
@@ -281,11 +282,11 @@ export default function ProfilePage() {
         setOrderDetailVisible(true)
       }
       else {
-        message.error(response?.message || t('getOrderDetailFailed'))
+        toast.error(response?.message || t('getOrderDetailFailed'))
       }
     }
     catch (error) {
-      message.error(t('getOrderDetailFailed'))
+      toast.error(t('getOrderDetailFailed'))
     }
     finally {
       setOrderDetailLoading(false)
@@ -302,17 +303,17 @@ export default function ProfilePage() {
 
       if (response && response.code === 0) {
         setCancelCode(response.data?.code || '')
-        message.success(t('messages.verificationCodeSent' as any))
+        toast.success(t('messages.verificationCodeSent' as any))
         // Start countdown
         setCodeCountdown(60)
       }
       else {
-        message.error(response?.message || t('messages.getVerificationCodeFailed' as any))
+        toast.error(response?.message || t('messages.getVerificationCodeFailed' as any))
       }
     }
     catch (error) {
       console.error('Get verification code error:', error)
-      message.error(t('messages.getVerificationCodeFailed' as any))
+      toast.error(t('messages.getVerificationCodeFailed' as any))
     }
   }
 
@@ -331,7 +332,7 @@ export default function ProfilePage() {
       })
 
       if (response && response.code === 0) {
-        message.success(t('messages.accountCancelledSuccess' as any))
+        toast.success(t('messages.accountCancelledSuccess' as any))
         setCancelModalVisible(false)
         // Clear login status and redirect to login page
         clearLoginStatus()
@@ -373,7 +374,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!token) {
-      message.error(t('pleaseLoginFirst'))
+      toast.error(t('pleaseLoginFirst'))
       router.push('/login')
       return
     }
@@ -391,7 +392,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     clearLoginStatus()
-    message.success(t('logoutSuccess'))
+    toast.success(t('logoutSuccess'))
     router.push('/login')
   }
 
@@ -399,21 +400,21 @@ export default function ProfilePage() {
     try {
       const response: any = await updateUserInfoApi(values)
       if (!response) {
-        message.error(t('updateFailed'))
+        toast.error(t('updateFailed'))
         return
       }
 
       if (response.code === 0 && response.data) {
         fetchUserInfo()
-        message.success(t('updateSuccess'))
+        toast.success(t('updateSuccess'))
         setIsModalOpen(false)
       }
       else {
-        message.error(response.message || t('updateFailed'))
+        toast.error(response.message || t('updateFailed'))
       }
     }
     catch (error) {
-      message.error(t('updateFailed'))
+      toast.error(t('updateFailed'))
     }
   }
 
@@ -468,14 +469,14 @@ export default function ProfilePage() {
         // Redirect to payment page
         window.open((response.data as any).url, '_blank')
         // setPointsRechargeVisible(false);
-        message.success(t('pointsPurchase.redirectingToPayment' as any))
+        toast.success(t('pointsPurchase.redirectingToPayment' as any))
       }
       else {
-        message.error(response?.message || t('pointsPurchase.createOrderFailed' as any))
+        toast.error(response?.message || t('pointsPurchase.createOrderFailed' as any))
       }
     }
     catch (error) {
-      message.error(t('pointsPurchase.createOrderFailed' as any))
+      toast.error(t('pointsPurchase.createOrderFailed' as any))
     }
   }
 
@@ -496,7 +497,7 @@ export default function ProfilePage() {
         const order = Array.isArray(response.data) ? response.data[0] : response.data
         // Check order status: 1=payment success, 2=waiting for payment, 3=refunded, 4=cancelled
         if (order.status === 1) {
-          message.success(t('pointsPurchase.purchaseSuccess' as any))
+          toast.success(t('pointsPurchase.purchaseSuccess' as any))
           setShowPaymentSuccess(false)
           setPaymentOrderId(null)
           setPointsRechargeVisible(false)
@@ -504,28 +505,28 @@ export default function ProfilePage() {
           fetchUserInfo()
         }
         else if (order.status === 2) {
-          message.warning(t('pointsPurchase.paymentPending' as any))
+          toast.warning(t('pointsPurchase.paymentPending' as any))
         }
         else if (order.status === 3) {
-          message.warning(t('pointsPurchase.orderRefunded' as any))
+          toast.warning(t('pointsPurchase.orderRefunded' as any))
           setShowPaymentSuccess(false)
           setPaymentOrderId(null)
         }
         else if (order.status === 4) {
-          message.warning(t('pointsPurchase.orderCancelled' as any))
+          toast.warning(t('pointsPurchase.orderCancelled' as any))
           setShowPaymentSuccess(false)
           setPaymentOrderId(null)
         }
         else {
-          message.warning(t('pointsPurchase.orderUnknown' as any))
+          toast.warning(t('pointsPurchase.orderUnknown' as any))
         }
       }
       else {
-        message.error(t('pointsPurchase.queryFailed' as any))
+        toast.error(t('pointsPurchase.queryFailed' as any))
       }
     }
     catch (error) {
-      message.error(t('pointsPurchase.queryFailed' as any))
+      toast.error(t('pointsPurchase.queryFailed' as any))
     }
   }
 
@@ -669,9 +670,9 @@ export default function ProfilePage() {
                 if (!code)
                   return
                 navigator.clipboard?.writeText(code).then(() => {
-                  message.success(t('copySuccess' as any))
+                  toast.success(t('copySuccess' as any))
                 }).catch(() => {
-                  message.success(t('copySuccess' as any))
+                  toast.success(t('copySuccess' as any))
                 })
               }}
             >
@@ -782,7 +783,7 @@ export default function ProfilePage() {
               className={styles.fieldButton}
               onClick={async () => {
                 if (!defaultModel) {
-                  message.warning(t('pleaseSelect' as any))
+                  toast.warning(t('pleaseSelect' as any))
                   return
                 }
                 try {
@@ -794,15 +795,15 @@ export default function ProfilePage() {
                     },
                   })
                   if (res && res.code === 0) {
-                    message.success(t('updateSuccess'))
+                    toast.success(t('updateSuccess'))
                     fetchUserInfo()
                   }
                   else {
-                    message.error(res?.message || t('updateFailed'))
+                    toast.error(res?.message || t('updateFailed'))
                   }
                 }
                 catch (e) {
-                  message.error(t('updateFailed'))
+                  toast.error(t('updateFailed'))
                 }
               }}
             >

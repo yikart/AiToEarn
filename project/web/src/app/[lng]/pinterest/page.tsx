@@ -24,7 +24,6 @@ import {
   Empty,
   Form,
   Input,
-  message,
   Modal,
   Pagination,
   Popconfirm,
@@ -36,6 +35,7 @@ import {
   Typography,
   Upload,
 } from 'antd'
+import { toast } from '@/lib/toast'
 import { useEffect, useRef, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
 import { uploadToOss } from '@/api/oss'
@@ -151,7 +151,7 @@ export default function PinterestPage() {
       }
     }
     catch (error) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
     }
     finally {
       setLoading(false)
@@ -172,7 +172,7 @@ export default function PinterestPage() {
       }
     }
     catch (error) {
-      message.error(t('messages.loadBoardsFailed'))
+      toast.error(t('messages.loadBoardsFailed'))
     }
     finally {
       setLoading(false)
@@ -195,7 +195,7 @@ export default function PinterestPage() {
       }
     }
     catch (error) {
-      message.error(t('messages.loadPinsFailed'))
+      toast.error(t('messages.loadPinsFailed'))
     }
     finally {
       setLoading(false)
@@ -205,7 +205,7 @@ export default function PinterestPage() {
   // 创建Board
   const handleCreateBoard = async (values: any) => {
     if (!selectedAccount?.id) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
       return
     }
 
@@ -213,14 +213,14 @@ export default function PinterestPage() {
       setLoading(true)
       const response = await createPinterestBoardApi(values, selectedAccount.id)
       if (response?.code === 0) {
-        message.success(t('messages.boardCreateSuccess'))
+        toast.success(t('messages.boardCreateSuccess'))
         setBoardModalVisible(false)
         boardForm.resetFields()
         loadBoards(1, 20)
       }
     }
     catch (error) {
-      message.error(t('messages.boardCreateFailed'))
+      toast.error(t('messages.boardCreateFailed'))
     }
     finally {
       setLoading(false)
@@ -230,7 +230,7 @@ export default function PinterestPage() {
   // 删除Board
   const handleDeleteBoard = async (boardId: string) => {
     if (!selectedAccount?.id) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
       return
     }
 
@@ -238,12 +238,12 @@ export default function PinterestPage() {
       setLoading(true)
       const response = await deletePinterestBoardApi(boardId, selectedAccount.id)
       if (response?.code === 0) {
-        message.success(t('messages.boardDeleteSuccess'))
+        toast.success(t('messages.boardDeleteSuccess'))
         loadBoards(1, 20)
       }
     }
     catch (error) {
-      message.error(t('messages.boardDeleteFailed'))
+      toast.error(t('messages.boardDeleteFailed'))
     }
     finally {
       setLoading(false)
@@ -253,12 +253,12 @@ export default function PinterestPage() {
   // 创建Pin
   const handleCreatePin = async (values: any) => {
     if (!imageUrl) {
-      message.error(t('messages.uploadImageFirst'))
+      toast.error(t('messages.uploadImageFirst'))
       return
     }
 
     if (!selectedAccount?.id) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
       return
     }
 
@@ -279,7 +279,7 @@ export default function PinterestPage() {
 
       const response = await createPinterestPinApi(pinData, selectedAccount.id)
       if (response?.code === 0) {
-        message.success(t('messages.pinCreateSuccess'))
+        toast.success(t('messages.pinCreateSuccess'))
         setPinModalVisible(false)
         pinForm.resetFields()
         resetImageUpload()
@@ -287,7 +287,7 @@ export default function PinterestPage() {
       }
     }
     catch (error) {
-      message.error(t('messages.pinCreateFailed'))
+      toast.error(t('messages.pinCreateFailed'))
     }
     finally {
       setLoading(false)
@@ -297,7 +297,7 @@ export default function PinterestPage() {
   // 删除Pin
   const handleDeletePin = async (pinId: string) => {
     if (!selectedAccount?.id) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
       return
     }
 
@@ -305,12 +305,12 @@ export default function PinterestPage() {
       setLoading(true)
       const response = await deletePinterestPinApi(pinId, selectedAccount.id)
       if (response?.code === 0) {
-        message.success(t('messages.pinDeleteSuccess'))
+        toast.success(t('messages.pinDeleteSuccess'))
         loadPins(currentPage, pageSize)
       }
     }
     catch (error) {
-      message.error(t('messages.pinDeleteFailed'))
+      toast.error(t('messages.pinDeleteFailed'))
     }
     finally {
       setLoading(false)
@@ -332,13 +332,13 @@ export default function PinterestPage() {
       return
 
     if (!file.type.startsWith('image/')) {
-      message.error(t('messages.selectImageFile'))
+      toast.error(t('messages.selectImageFile'))
       return
     }
 
     // 检查文件大小 (限制10MB)
     if (file.size > 10 * 1024 * 1024) {
-      message.error(t('messages.imageSizeLimit'))
+      toast.error(t('messages.imageSizeLimit'))
       return
     }
 
@@ -358,11 +358,11 @@ export default function PinterestPage() {
       const fullImageUrl = getOssUrl(ossFileName)
 
       setImageUrl(fullImageUrl)
-      message.success(t('messages.imageUploadSuccess'))
+      toast.success(t('messages.imageUploadSuccess'))
     }
     catch (error) {
       console.error('图片上传失败:', error)
-      message.error(t('messages.imageUploadFailed'))
+      toast.error(t('messages.imageUploadFailed'))
       resetImageUpload()
     }
     finally {
@@ -373,7 +373,7 @@ export default function PinterestPage() {
   // 查看Board详情
   const handleViewBoard = async (board: any) => {
     if (!selectedAccount?.id) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
       return
     }
 
@@ -386,7 +386,7 @@ export default function PinterestPage() {
       }
     }
     catch (error) {
-      message.error(t('messages.getBoardDetailFailed'))
+      toast.error(t('messages.getBoardDetailFailed'))
     }
     finally {
       setLoading(false)
@@ -396,7 +396,7 @@ export default function PinterestPage() {
   // 查看Pin详情
   const handleViewPin = async (pin: any) => {
     if (!selectedAccount?.id) {
-      message.error(t('messages.loadAccountsFailed'))
+      toast.error(t('messages.loadAccountsFailed'))
       return
     }
 
@@ -409,7 +409,7 @@ export default function PinterestPage() {
       }
     }
     catch (error) {
-      message.error(t('messages.getPinDetailFailed'))
+      toast.error(t('messages.getPinDetailFailed'))
     }
     finally {
       setLoading(false)

@@ -1,7 +1,7 @@
 'use client'
 
 import { CrownOutlined, DollarOutlined, GiftOutlined, HistoryOutlined, RocketOutlined, StarOutlined, ThunderboltOutlined, TrophyOutlined } from '@ant-design/icons'
-import { message } from 'antd'
+import { toast } from '@/lib/toast'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
@@ -44,7 +44,7 @@ export default function VipPage() {
 
       // 检查用户是否已登录
       if (!userInfo?.id) {
-        message.error(t('pleaseLoginFirst'))
+        toast.error(t('pleaseLoginFirst'))
         router.push('/login')
         return
       }
@@ -88,23 +88,23 @@ export default function VipPage() {
       })
 
       if (response?.code === 0) {
-        message.success(t('paymentOrderCreated'))
+        toast.success(t('paymentOrderCreated'))
         // 直接跳转到支付页面
         if (response.data?.url) {
           // window.location.href = response.data.url;
           window.open(response.data.url, '_blank')
         }
         else {
-          message.error(t('paymentLinkNotFound'))
+          toast.error(t('paymentLinkNotFound'))
         }
       }
       else {
-        message.error(response?.message || response?.msg || t('createPaymentOrderFailed'))
+        toast.error(response?.message || response?.msg || t('createPaymentOrderFailed'))
       }
     }
     catch (error) {
       console.error('创建支付订单失败:', error)
-      message.error(t('createPaymentOrderError'))
+      toast.error(t('createPaymentOrderError'))
     }
     finally {
       setLoading(false)

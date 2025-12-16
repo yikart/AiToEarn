@@ -1,7 +1,8 @@
 import type { RcFile } from 'antd/es/upload'
 import type { FC } from 'react'
 import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
-import { Button, message, Upload } from 'antd'
+import { Button, Upload } from 'antd'
+import { toast } from '@/lib/toast'
 import { useRef } from 'react'
 import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
 
@@ -46,7 +47,7 @@ const ImgChoose: FC<ImgChooseProps> = ({
       }
     }
     catch (e) {
-      message.error('选择图片失败')
+      toast.error('选择图片失败')
       console.error(e)
     }
   }

@@ -12,7 +12,8 @@ import {
   SyncOutlined,
   UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Button, Card, Divider, Empty, message, Modal, Space, Spin, Tag, Tooltip } from 'antd'
+import { Avatar, Button, Card, Divider, Empty, Modal, Space, Spin, Tag, Tooltip } from 'antd'
+import { toast } from '@/lib/toast'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
@@ -102,15 +103,15 @@ export function PluginStatusModal({ visible, onClose, highlightPlatform }: Plugi
       const result = await syncAccountToDatabase(platform, defaultGroup?.id)
 
       if (result) {
-        message.success(t('header.syncSuccess' as any))
+        toast.success(t('header.syncSuccess' as any))
       }
       else {
-        message.error(t('header.syncFailed' as any))
+        toast.error(t('header.syncFailed' as any))
       }
     }
     catch (error) {
       console.error('同步账号失败:', error)
-      message.error(t('header.syncFailed' as any))
+      toast.error(t('header.syncFailed' as any))
     }
     finally {
       setSyncLoading(null)

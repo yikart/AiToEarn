@@ -4,7 +4,8 @@ import type {
   UserWalletAccount,
   UserWalletAccountCreateDto,
 } from '@/api/userWalletAccount'
-import { Button, Card, Form, Input, message, Modal, Popconfirm, Select, Table } from 'antd'
+import { Button, Card, Form, Input, Modal, Popconfirm, Select, Table } from 'antd'
+import { toast } from '@/lib/toast'
 import { useParams } from 'next/navigation'
 import { useEffect, useMemo, useState } from 'react'
 import {
@@ -159,7 +160,7 @@ export default function WalletPage() {
   async function onDelete(record: UserWalletAccount) {
     const res = await deleteUserWalletAccount(record._id)
     if (res) {
-      message.success(t('messages.deleteSuccess'))
+      toast.success(t('messages.deleteSuccess'))
       fetchList(pagination.current, pagination.pageSize)
     }
   }
@@ -171,12 +172,12 @@ export default function WalletPage() {
       if (editing) {
         const res = await updateUserWalletAccount(editing._id, values)
         if (res)
-          message.success(t('messages.updateSuccess'))
+          toast.success(t('messages.updateSuccess'))
       }
       else {
         const res = await createUserWalletAccount(values)
         if (res)
-          message.success(t('messages.createSuccess'))
+          toast.success(t('messages.createSuccess'))
       }
       setModalOpen(false)
       fetchList(pagination.current, pagination.pageSize)

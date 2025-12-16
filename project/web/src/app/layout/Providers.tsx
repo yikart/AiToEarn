@@ -3,11 +3,12 @@
 import type { Locale } from 'antd/es/locale'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { GoogleOAuthProvider } from '@react-oauth/google'
-import { App, ConfigProvider, message, Modal, notification } from 'antd'
+import { App, ConfigProvider, Modal, notification } from 'antd'
 import en_US from 'antd/es/locale/en_US'
 import zh_CN from 'antd/es/locale/zh_CN'
 import { Suspense, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { Toaster } from '@/components/ui/sonner'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import useCssVariables from '@/app/hooks/useCssVariables'
 import { fallbackLng } from '@/app/i18n/settings'
@@ -41,7 +42,6 @@ export function Providers({
   )
   const [notificationApi, contextHolderNotification]
     = notification.useNotification()
-  const [messageApi, contextHolderMessage] = message.useMessage()
   const [modal, contextHolderModal] = Modal.useModal()
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function Providers({
       useAccountStore.getState().accountInit()
     }
 
-    setGlobal(modal, notificationApi, messageApi)
+    setGlobal(modal, notificationApi)
   }, [])
 
   useEffect(() => {
@@ -77,8 +77,8 @@ export function Providers({
           <Suspense>
             <AntdRegistry>
               {contextHolderNotification}
-              {contextHolderMessage}
               {contextHolderModal}
+              <Toaster position="top-center" richColors />
               {children}
             </AntdRegistry>
           </Suspense>

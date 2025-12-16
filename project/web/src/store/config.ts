@@ -1,4 +1,3 @@
-import type { MessageInstance } from 'antd/es/message/interface'
 import type { HookAPI } from 'antd/es/modal/useModal'
 import type { NotificationInstance } from 'antd/es/notification/interface'
 import { create } from 'zustand'
@@ -9,13 +8,10 @@ interface IUseConfigStore {
   globalModal?: HookAPI
   // 全局 通知
   globalNotificationApi?: NotificationInstance
-  // 全局 消息提示
-  globalMessageApi?: MessageInstance
 }
 
 const store: IUseConfigStore = {
   globalModal: undefined,
-  globalMessageApi: undefined,
   globalNotificationApi: undefined,
 }
 
@@ -24,23 +20,16 @@ export const useConfigStore = create(
     {
       ...store,
     },
-    (set, getState) => ({
+    (set, _getState) => ({
       setGlobal: (
         globalModal: HookAPI,
         globalNotificationApi: NotificationInstance,
-        globalMessageApi: MessageInstance,
       ) => {
-        set({ globalModal, globalNotificationApi, globalMessageApi })
+        set({ globalModal, globalNotificationApi })
       },
     }),
   ),
 )
-
-export const messageApi = {
-  get value() {
-    return useConfigStore.getState().globalMessageApi!
-  },
-}
 
 export const notificationApi = {
   get value() {

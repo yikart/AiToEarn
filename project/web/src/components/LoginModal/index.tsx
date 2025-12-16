@@ -1,7 +1,8 @@
 'use client'
 
 import { GoogleLogin } from '@react-oauth/google'
-import { Button, Form, Input, message, Modal } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
+import { toast } from '@/lib/toast'
 import { useParams } from 'next/navigation'
 import { useState } from 'react'
 import {
@@ -49,15 +50,15 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
           if (response.data.userInfo) {
             setUserInfo(response.data.userInfo)
           }
-          message.success(tLogin('loginSuccess'))
+          toast.success(tLogin('loginSuccess'))
           onCancel()
           onSuccess?.()
         }
       } else {
-        message.error(response.message || tLogin('loginFailed'))
+        toast.error(response.message || tLogin('loginFailed'))
       }
     } catch (error) {
-      message.error(tLogin('loginError'))
+      toast.error(tLogin('loginError'))
     }
   }
 
@@ -72,7 +73,7 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
       })
 
       if (!response) {
-        message.error(tLogin('registerError'))
+        toast.error(tLogin('registerError'))
         setIsActivating(false)
         return
       }
@@ -85,15 +86,15 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
         if (response.data.userInfo) {
           setUserInfo(response.data.userInfo)
         }
-        message.success(tLogin('registerSuccess'))
+        toast.success(tLogin('registerSuccess'))
         onCancel()
         onSuccess?.()
       } else {
-        message.error(response.message || tLogin('registerError'))
+        toast.error(response.message || tLogin('registerError'))
         setIsActivating(false)
       }
     } catch (error) {
-      message.error(tLogin('registerError'))
+      toast.error(tLogin('registerError'))
       setIsActivating(false)
     }
   }
@@ -108,7 +109,7 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
 
       const response: any = await googleLoginApi(params)
       if (!response) {
-        message.error(tLogin('googleLoginFailed'))
+        toast.error(tLogin('googleLoginFailed'))
         return
       }
 
@@ -117,14 +118,14 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
         if (response.data.userInfo) {
           setUserInfo(response.data.userInfo)
         }
-        message.success(tLogin('loginSuccess'))
+        toast.success(tLogin('loginSuccess'))
         onCancel()
         onSuccess?.()
       } else {
-        message.error(response.message || tLogin('googleLoginFailed'))
+        toast.error(response.message || tLogin('googleLoginFailed'))
       }
     } catch (error) {
-      message.error(tLogin('googleLoginFailed'))
+      toast.error(tLogin('googleLoginFailed'))
     }
   }
 
@@ -173,7 +174,7 @@ export default function LoginModal({ open, onCancel, onSuccess }: LoginModalProp
           <div className={loginStyles.googleButtonWrapper}>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
-              onError={() => message.error(tLogin('googleLoginFailed'))}
+              onError={() => toast.error(tLogin('googleLoginFailed'))}
               useOneTap={false}
               theme="outline"
               shape="rectangular"

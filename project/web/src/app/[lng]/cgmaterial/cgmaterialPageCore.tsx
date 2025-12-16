@@ -2,7 +2,8 @@
 
 import type { EngagementPostsParams } from '@/api/types/engagement'
 import { DeleteOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, ImportOutlined, PlusOutlined, VideoCameraOutlined } from '@ant-design/icons'
-import { Avatar, Button, Card, Form, Input, InputNumber, List, message, Modal, Select, Space, Spin } from 'antd'
+import { Avatar, Button, Card, Form, Input, InputNumber, List, Modal, Select, Space, Spin } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -231,7 +232,7 @@ export default function CgMaterialPageCore() {
       }
     }
     catch (e) {
-      message.error(t('createGroup.getGroupsFailed'))
+      toast.error(t('createGroup.getGroupsFailed'))
     }
     finally {
       setGroupLoading(false)
@@ -253,7 +254,7 @@ export default function CgMaterialPageCore() {
       setMaterialList(res?.data?.list || [])
     }
     catch (e) {
-      message.error(t('createGroup.getMaterialsFailed'))
+      toast.error(t('createGroup.getMaterialsFailed'))
     }
     finally {
       setMaterialLoading(false)
@@ -270,17 +271,17 @@ export default function CgMaterialPageCore() {
         name: values.name,
         desc: values.desc || '',
       })
-      message.success(t('createGroup.createSuccess'))
+      toast.success(t('createGroup.createSuccess'))
       setCreateGroupModal(false)
       createGroupForm.resetFields()
       fetchGroupList()
     }
     catch (e: any) {
       if (e?.errorFields) {
-        message.warning(t('pleaseCompleteForm'))
+        toast.warning(t('pleaseCompleteForm'))
       }
       else {
-        message.error(t('createGroup.createFailed'))
+        toast.error(t('createGroup.createFailed'))
       }
     }
     finally {
@@ -386,11 +387,11 @@ export default function CgMaterialPageCore() {
     if (selectedGroup.type === PubType.ImageText) {
       // 图文组：必须有媒体组、封面和素材，且都是图片
       if (!selectedMediaGroup) {
-        message.warning(t('createMaterial.selectMediaGroup'))
+        toast.warning(t('createMaterial.selectMediaGroup'))
         return
       }
       if (!selectedCover || selectedMaterials.length === 0) {
-        message.warning(t('createMaterial.selectCoverAndMaterials'))
+        toast.warning(t('createMaterial.selectCoverAndMaterials'))
         return
       }
       // 检查是否都是图片类型
@@ -399,39 +400,39 @@ export default function CgMaterialPageCore() {
       )
       const hasVideo = selectedMediaItems.some((m: any) => m.type === 'video')
       if (hasVideo) {
-        message.warning(t('createMaterial.imageGroupOnly'))
+        toast.warning(t('createMaterial.imageGroupOnly'))
         return
       }
     }
     else if (selectedGroup.type === PubType.VIDEO) {
       // 视频组：必须有封面组、视频组、封面和视频素材
       if (!selectedCoverGroup) {
-        message.warning(t('createMaterial.selectCoverGroupRequired'))
+        toast.warning(t('createMaterial.selectCoverGroupRequired'))
         return
       }
       if (!selectedVideoGroup) {
-        message.warning(t('createMaterial.selectVideoGroupRequired'))
+        toast.warning(t('createMaterial.selectVideoGroupRequired'))
         return
       }
       if (!selectedCover) {
-        message.warning(t('createMaterial.selectCoverRequired'))
+        toast.warning(t('createMaterial.selectCoverRequired'))
         return
       }
       if (selectedMaterials.length === 0) {
-        message.warning(t('createMaterial.selectVideoRequired'))
+        toast.warning(t('createMaterial.selectVideoRequired'))
         return
       }
       // 检查封面是否为图片
       const coverItem = coverList.find((m: any) => m.url === selectedCover)
       if (coverItem && coverItem.type !== 'img') {
-        message.warning(t('createMaterial.coverMustBeImage'))
+        toast.warning(t('createMaterial.coverMustBeImage'))
         return
       }
       // 检查素材是否都是视频
       const selectedMediaItems = videoList.filter((m: any) => selectedMaterials.includes(m.url))
       const hasImage = selectedMediaItems.some((m: any) => m.type === 'img')
       if (hasImage) {
-        message.warning(t('createMaterial.videoGroupOnly'))
+        toast.warning(t('createMaterial.videoGroupOnly'))
         return
       }
     }
@@ -456,7 +457,7 @@ export default function CgMaterialPageCore() {
         option: {},
         location: singleLocation,
       })
-      message.success(t('createMaterial.createSuccess'))
+      toast.success(t('createMaterial.createSuccess'))
       setCreateModal(false)
       // 重置创建素材相关状态
       setSelectedMediaGroup(null)
@@ -474,7 +475,7 @@ export default function CgMaterialPageCore() {
       fetchMaterialList(selectedGroup._id)
     }
     catch (e) {
-      message.error(t('createMaterial.createFailed'))
+      toast.error(t('createMaterial.createFailed'))
     }
     finally {
       setCreating(false)
@@ -561,11 +562,11 @@ export default function CgMaterialPageCore() {
         setPreviewModal(true)
       }
       else {
-        message.error(t('batchGenerate.previewFailed'))
+        toast.error(t('batchGenerate.previewFailed'))
       }
     }
     catch (e) {
-      message.error(t('batchGenerate.previewFailed'))
+      toast.error(t('batchGenerate.previewFailed'))
     }
     finally {
       setPreviewLoading(false)
@@ -588,7 +589,7 @@ export default function CgMaterialPageCore() {
       }
       if (taskId) {
         await apiStartMaterialTask(taskId)
-        message.success(t('batchGenerate.taskStarted'))
+        toast.success(t('batchGenerate.taskStarted'))
         setBatchModal(false)
         batchForm.resetFields()
         fetchMaterialList(selectedGroup._id)
@@ -597,7 +598,7 @@ export default function CgMaterialPageCore() {
       }
     }
     catch (e) {
-      message.error(t('batchGenerate.generateFailed'))
+      toast.error(t('batchGenerate.generateFailed'))
     }
     finally {
       setBatchTaskLoading(false)
@@ -607,18 +608,18 @@ export default function CgMaterialPageCore() {
   // 处理编辑组
   async function handleEditGroup() {
     if (!editGroupName)
-      return message.warning(t('editGroup.enterName' as any))
+      return toast.warning(t('editGroup.enterName' as any))
     setEditLoading(true)
     try {
       await apiUpdateMaterialGroupInfo(editingGroup._id, { name: editGroupName })
-      message.success(t('sidebar.updateSuccess'))
+      toast.success(t('sidebar.updateSuccess'))
       setEditGroupModal(false)
       setEditGroupName('')
       setEditingGroup(null)
       fetchGroupList()
     }
     catch {
-      message.error(t('sidebar.updateFailed'))
+      toast.error(t('sidebar.updateFailed'))
     }
     finally {
       setEditLoading(false)
@@ -723,11 +724,11 @@ export default function CgMaterialPageCore() {
     if (selectedGroup.type === PubType.ImageText) {
       // 图文组：必须有媒体组、封面和素材，且都是图片
       if (!editMaterialSelectedGroup) {
-        message.warning(t('createMaterial.selectMediaGroup'))
+        toast.warning(t('createMaterial.selectMediaGroup'))
         return
       }
       if (!editMaterialSelectedCover || editMaterialSelectedMaterials.length === 0) {
-        message.warning(t('createMaterial.selectCoverAndMaterials'))
+        toast.warning(t('createMaterial.selectCoverAndMaterials'))
         return
       }
       // 检查是否都是图片类型
@@ -736,39 +737,39 @@ export default function CgMaterialPageCore() {
       )
       const hasVideo = selectedMediaItems.some((m: any) => m.type === 'video')
       if (hasVideo) {
-        message.warning(t('createMaterial.imageGroupOnly'))
+        toast.warning(t('createMaterial.imageGroupOnly'))
         return
       }
     }
     else if (selectedGroup.type === PubType.VIDEO) {
       // 视频组：必须有封面组、视频组、封面和视频素材
       if (!editMaterialSelectedCoverGroup) {
-        message.warning(t('createMaterial.selectCoverGroupRequired'))
+        toast.warning(t('createMaterial.selectCoverGroupRequired'))
         return
       }
       if (!editMaterialSelectedVideoGroup) {
-        message.warning(t('createMaterial.selectVideoGroupRequired'))
+        toast.warning(t('createMaterial.selectVideoGroupRequired'))
         return
       }
       if (!editMaterialSelectedCover) {
-        message.warning(t('createMaterial.selectCoverRequired'))
+        toast.warning(t('createMaterial.selectCoverRequired'))
         return
       }
       if (editMaterialSelectedMaterials.length === 0) {
-        message.warning(t('createMaterial.selectVideoRequired'))
+        toast.warning(t('createMaterial.selectVideoRequired'))
         return
       }
       // 检查封面是否为图片
       const coverItem = editMaterialCoverList.find((m: any) => m.url === editMaterialSelectedCover)
       if (coverItem && coverItem.type !== 'img') {
-        message.warning(t('createMaterial.coverMustBeImage'))
+        toast.warning(t('createMaterial.coverMustBeImage'))
         return
       }
       // 检查素材是否都是视频
       const selectedMediaItems = editMaterialVideoList.filter((m: any) => editMaterialSelectedMaterials.includes(m.url))
       const hasImage = selectedMediaItems.some((m: any) => m.type === 'img')
       if (hasImage) {
-        message.warning(t('createMaterial.videoGroupOnly'))
+        toast.warning(t('createMaterial.videoGroupOnly'))
         return
       }
     }
@@ -793,7 +794,7 @@ export default function CgMaterialPageCore() {
         option: editingMaterial.option || {},
       })
 
-      message.success(t('editMaterial.updateSuccess'))
+      toast.success(t('editMaterial.updateSuccess'))
       setEditMaterialModal(false)
       setEditingMaterial(null)
       // 重置编辑素材相关状态
@@ -811,7 +812,7 @@ export default function CgMaterialPageCore() {
       fetchMaterialList(selectedGroup._id)
     }
     catch (e) {
-      message.error(t('editMaterial.updateFailed'))
+      toast.error(t('editMaterial.updateFailed'))
     }
     finally {
       setEditMaterialLoading(false)
@@ -860,7 +861,7 @@ export default function CgMaterialPageCore() {
       setAccountList(availableAccounts)
     }
     catch (e) {
-      message.error(t('import.getAccountsFailed' as any))
+      toast.error(t('import.getAccountsFailed' as any))
     }
   }
 
@@ -913,7 +914,7 @@ export default function CgMaterialPageCore() {
       }
     }
     catch (e) {
-      message.error(t('import.getPublishListFailed'))
+      toast.error(t('import.getPublishListFailed'))
       if (page === 1) {
         setPublishList([])
       }
@@ -935,12 +936,12 @@ export default function CgMaterialPageCore() {
   // 导入选中的发布内容到草稿箱
   async function handleImportPublishItems() {
     if (!selectedAccount || selectedPublishItems.length === 0) {
-      message.warning(t('import.selectToImport' as any))
+      toast.warning(t('import.selectToImport' as any))
       return
     }
 
     if (!selectedGroup) {
-      message.warning(t('import.selectGroupFirst' as any))
+      toast.warning(t('import.selectGroupFirst' as any))
       return
     }
 
@@ -962,7 +963,7 @@ export default function CgMaterialPageCore() {
       }).filter((record): record is NonNullable<typeof record> => record !== null)
 
       if (records.length === 0) {
-        message.warning(t('import.noValidRecords' as any))
+        toast.warning(t('import.noValidRecords' as any))
         return
       }
 
@@ -970,7 +971,7 @@ export default function CgMaterialPageCore() {
       const res = await apiImportPostsRecord(records)
 
       if (res?.code === 0) {
-        message.success(t('import.importSuccess' as any, { count: records.length }))
+        toast.success(t('import.importSuccess' as any, { count: records.length }))
 
         setImportModal(false)
         setSelectedPublishItems([])
@@ -979,12 +980,12 @@ export default function CgMaterialPageCore() {
         fetchMaterialList(selectedGroup._id)
       }
       else {
-        message.error(res?.message || t('import.importFailed' as any))
+        toast.error(res?.message || t('import.importFailed' as any))
       }
     }
     catch (e: any) {
       console.error('导入失败详情:', e)
-      message.error(t('import.importFailedWithReason' as any, { reason: e?.message || e || t('import.unknownError' as any) }))
+      toast.error(t('import.importFailedWithReason' as any, { reason: e?.message || e || t('import.unknownError' as any) }))
     }
     finally {
       setImportLoading(false)
@@ -1137,13 +1138,13 @@ export default function CgMaterialPageCore() {
           })
         }
         else {
-          message.info(t('import.noRecords' as any))
+          toast.info(t('import.noRecords' as any))
         }
       }
     }
     catch (e) {
       console.error('查询导入状态失败:', e)
-      message.error(t('import.checkStatusFailed' as any))
+      toast.error(t('import.checkStatusFailed' as any))
     }
   }
 
@@ -1322,11 +1323,11 @@ export default function CgMaterialPageCore() {
                                   onOk: async () => {
                                     try {
                                       await apiDeleteMaterialGroup(item._id)
-                                      message.success(t('sidebar.deleteSuccess'))
+                                      toast.success(t('sidebar.deleteSuccess'))
                                       fetchGroupList()
                                     }
                                     catch {
-                                      message.error(t('sidebar.deleteFailed'))
+                                      toast.error(t('sidebar.deleteFailed'))
                                     }
                                   },
                                 })
@@ -2266,7 +2267,7 @@ export default function CgMaterialPageCore() {
                       }}
                       onClick={() => {
                         if (media.type !== 'img') {
-                          message.warning(t('createMaterial.coverMustBeImage'))
+                          toast.warning(t('createMaterial.coverMustBeImage'))
                           return
                         }
                         setSelectedCover(media.url)
@@ -2333,7 +2334,7 @@ export default function CgMaterialPageCore() {
                               opacity: 0.3,
                             }}
                             onClick={() => {
-                              message.warning(t('createMaterial.videoGroupOnly'))
+                              toast.warning(t('createMaterial.videoGroupOnly'))
                             }}
                           />
                         )
@@ -3050,7 +3051,7 @@ export default function CgMaterialPageCore() {
                       }}
                       onClick={() => {
                         if (media.type !== 'img') {
-                          message.warning(t('createMaterial.coverMustBeImage'))
+                          toast.warning(t('createMaterial.coverMustBeImage'))
                           return
                         }
                         setEditMaterialSelectedCover(media.url)
@@ -3117,7 +3118,7 @@ export default function CgMaterialPageCore() {
                               opacity: 0.3,
                             }}
                             onClick={() => {
-                              message.warning(t('createMaterial.videoGroupOnly'))
+                              toast.warning(t('createMaterial.videoGroupOnly'))
                             }}
                           />
                         )

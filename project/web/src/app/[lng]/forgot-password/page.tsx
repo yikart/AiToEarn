@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, Form, Input, message, Modal } from 'antd'
+import { Button, Form, Input, Modal } from 'antd'
+import { toast } from '@/lib/toast'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -29,12 +30,12 @@ export default function ForgotPasswordPage() {
       const response: any = await sendResetPasswordMailApi(values)
 
       if (response.code === 0) {
-        message.success(t('resetEmailSent' as any))
+        toast.success(t('resetEmailSent' as any))
         setIsModalOpen(true)
       }
     }
     catch (error) {
-      message.error(t('sendEmailFailed' as any))
+      toast.error(t('sendEmailFailed' as any))
     }
     finally {
       setLoading(false)
@@ -52,13 +53,13 @@ export default function ForgotPasswordPage() {
       })
 
       if (response.code === 0) {
-        message.success(t('resetSuccess' as any))
+        toast.success(t('resetSuccess' as any))
         setIsModalOpen(false)
         router.push('/login')
       }
     }
     catch (error) {
-      message.error(t('resetFailed' as any))
+      toast.error(t('resetFailed' as any))
     }
     finally {
       setLoading(false)

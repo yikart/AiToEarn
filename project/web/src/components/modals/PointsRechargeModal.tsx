@@ -1,6 +1,7 @@
 'use client'
 
-import { Button, InputNumber, message, Modal, Space, Typography } from 'antd'
+import { Button, InputNumber, Modal, Space, Typography } from 'antd'
+import { toast } from '@/lib/toast'
 import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
 import { useTransClient } from '@/app/i18n/client'
@@ -152,7 +153,7 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
             try {
               setBuyLoading(true)
               if (!userStore.userInfo?.id) {
-                message.error(translate('pleaseLoginFirst'))
+                toast.error(translate('pleaseLoginFirst'))
                 return
               }
               const res: any = await createPaymentOrderApi({
@@ -166,11 +167,11 @@ const PointsRechargeModal = memo(({ open, onClose }: PointsRechargeModalProps) =
                 window.open(res.data.url, '_blank')
               }
               else {
-                message.error(res?.message || res?.msg || translate('createPaymentOrderFailed'))
+                toast.error(res?.message || res?.msg || translate('createPaymentOrderFailed'))
               }
             }
             catch (e) {
-              message.error(translate('createPaymentOrderError'))
+              toast.error(translate('createPaymentOrderError'))
             }
             finally {
               setBuyLoading(false)
