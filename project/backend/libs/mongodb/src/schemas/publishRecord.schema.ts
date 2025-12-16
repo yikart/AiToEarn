@@ -9,6 +9,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
 import mongoose from 'mongoose'
 import { PublishStatus, PublishType } from '../enums'
+import { PublishErrorData } from './publishing-task-meta.schema'
 import { WithTimestampSchema } from './timestamp.schema'
 
 @Schema({
@@ -119,33 +120,28 @@ export class PublishRecord extends WithTimestampSchema {
   })
   status: PublishStatus
 
-  // 错误信息
+  @Prop({
+    required: false,
+    type: PublishErrorData,
+  })
+  errorData?: PublishErrorData
+
   @Prop({
     required: false,
   })
   errorMsg?: string
 
-  // 队列 ID
   @Prop({
     required: false,
   })
   queueId?: string
 
-  // 此任务是否进入队列
   @Prop({
     required: true,
     default: false,
   })
   inQueue: boolean
 
-  /**
-   * 任意对象值
-   * bilibili: {
-   *  tid: number; 分区
-   *  copyright: number; 1-原创，2-转载(转载时source必填)
-   *  source: string; 如果copyright为转载，则此字段表示转载来源;
-   * }
-   */
   @Prop({
     required: false,
     type: mongoose.Schema.Types.Mixed,
@@ -158,15 +154,14 @@ export class PublishRecord extends WithTimestampSchema {
     type: String,
     default: '',
   })
-  dataId: string // 微信公众号-publish_id
+  dataId: string
 
   @Prop({
     required: false,
     type: String,
   })
-  workLink?: string // 作品链接
+  workLink?: string
 
-  // 数据补充内容
   @Prop({
     required: false,
     type: mongoose.Schema.Types.Mixed,

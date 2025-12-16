@@ -310,6 +310,10 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Failed to delete post',
     'zh-CN': '删除作品失败',
   },
+  [ResponseCode.PublishTaskInvalid]: {
+    'en-US': 'Publish task invalid',
+    'zh-CN': '发布任务无效',
+  },
   [ResponseCode.ApiKeyNotFound]: {
     'en-US': 'API key not found',
     'zh-CN': 'API 密钥未找到',

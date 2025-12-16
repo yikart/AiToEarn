@@ -122,3 +122,18 @@ export class PublishingTaskMeta {
   @Prop({ required: false })
   wxGzh?: WxGzhPublishTaskMeta
 }
+
+@Schema({})
+export class PublishErrorData {
+  @Prop({ required: true })
+  type: string
+
+  @Prop({ required: true })
+  code: string
+
+  @Prop({ required: true, default: '' })
+  message: string
+
+  @Prop({ required: false })
+  originalData?: any
+}
