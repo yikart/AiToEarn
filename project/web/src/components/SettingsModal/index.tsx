@@ -86,25 +86,25 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DialogContent className="max-w-[640px] p-0 gap-0 overflow-hidden" aria-describedby={undefined}>
+      <DialogContent className="max-w-[720px] p-0 gap-0 overflow-hidden" aria-describedby={undefined}>
         {/* 无障碍标题（视觉隐藏） */}
         <DialogTitle className="sr-only">{t('title')}</DialogTitle>
 
         {/* 顶部标题栏 */}
-        <div className="flex items-center px-5 py-3 border-b border-gray-100">
-          <h2 className="text-base font-medium text-gray-900">{t('title')}</h2>
+        <div className="flex items-center px-6 py-4 border-b border-gray-100">
+          <h2 className="text-lg font-medium text-gray-900">{t('title')}</h2>
         </div>
 
-        <div className="flex min-h-[320px]">
+        <div className="flex min-h-[400px]">
           {/* 左侧侧边栏 */}
-          <div className="w-[160px] border-r border-gray-100 py-3 bg-gray-50/50">
-            <nav className="flex flex-col gap-0.5 px-2">
+          <div className="w-[180px] border-r border-gray-100 py-4 bg-gray-50/50">
+            <nav className="flex flex-col gap-1 px-3">
               {sidebarItems.map((item) => (
                 <button
                   key={item.key}
                   onClick={() => setActiveTab(item.key)}
                   className={cn(
-                    'flex items-center gap-2.5 px-3 py-2 rounded-md text-sm transition-colors text-left',
+                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors text-left',
                     activeTab === item.key
                       ? 'bg-white text-gray-900 shadow-sm'
                       : 'text-gray-600 hover:bg-white/60 hover:text-gray-800',
@@ -118,7 +118,7 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
           </div>
 
           {/* 右侧内容区域 */}
-          <div className="flex-1 p-5 overflow-auto">
+          <div className="flex-1 p-6 overflow-auto">
             {renderContent()}
           </div>
         </div>
@@ -257,14 +257,14 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
   const currentBalance = (userInfo?.income || 0) / 100
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* 用户信息卡片 */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         {/* 头像 */}
         <div className="relative group cursor-pointer shrink-0" onClick={handleAvatarClick}>
-          <Avatar className="h-12 w-12">
+          <Avatar className="h-14 w-14">
             <AvatarImage src={avatarUrl} alt={userInfo?.name || ''} />
-            <AvatarFallback className="bg-gray-200 text-gray-600 text-base font-medium">
+            <AvatarFallback className="bg-gray-200 text-gray-600 text-lg font-medium">
               {userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
@@ -274,9 +274,9 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
             isUploadingAvatar ? 'opacity-100' : 'opacity-0 group-hover:opacity-100',
           )}>
             {isUploadingAvatar ? (
-              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Camera size={16} className="text-white" />
+              <Camera size={18} className="text-white" />
             )}
           </div>
           <input
@@ -296,7 +296,7 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
                 type="text"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
-                className="flex-1 px-2 py-1 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-gray-400"
+                className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400"
                 autoFocus
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleSaveName()
@@ -311,7 +311,7 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
                 variant="outline"
                 onClick={handleSaveName}
                 disabled={isSaving}
-                className="h-7 px-2 text-xs"
+                className="h-8 px-3 text-sm"
               >
                 {isSaving ? t('profile.saving') : t('profile.save')}
               </Button>
@@ -322,20 +322,20 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
                   setIsEditingName(false)
                   setEditName(userInfo?.name || '')
                 }}
-                className="h-7 px-2 text-xs"
+                className="h-8 px-3 text-sm"
               >
                 {t('profile.cancel')}
               </Button>
             </div>
           ) : (
             <div
-              className="text-sm font-medium text-gray-900 cursor-pointer hover:text-gray-600 transition-colors"
+              className="text-base font-medium text-gray-900 cursor-pointer hover:text-gray-600 transition-colors"
               onClick={() => setIsEditingName(true)}
             >
               {userInfo?.name || tCommon('unknownUser')}
             </div>
           )}
-          <p className="text-xs text-gray-500 mt-0.5 truncate">{userInfo?.mail || '-'}</p>
+          <p className="text-sm text-gray-500 mt-1 truncate">{userInfo?.mail || '-'}</p>
         </div>
 
         {/* 跳转按钮 */}
@@ -343,23 +343,23 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
           variant="ghost"
           size="sm"
           onClick={handleGoToProfile}
-          className="text-gray-400 hover:text-gray-600 h-8 px-2"
+          className="text-gray-400 hover:text-gray-600 h-9 px-2"
         >
-          <ExternalLink size={16} />
+          <ExternalLink size={18} />
         </Button>
       </div>
 
       {/* 收入信息 */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 mb-0.5">{t('profile.totalIncome')}</p>
-          <p className="text-lg font-semibold text-gray-900">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="p-4 bg-gray-50 rounded-lg">
+          <p className="text-sm text-gray-500 mb-1">{t('profile.totalIncome')}</p>
+          <p className="text-xl font-semibold text-gray-900">
             ¥{totalIncome.toFixed(2)}
           </p>
         </div>
-        <div className="p-3 bg-gray-50 rounded-lg">
-          <p className="text-xs text-gray-500 mb-0.5">{t('profile.currentBalance')}</p>
-          <p className="text-lg font-semibold text-gray-900">
+        <div className="p-4 bg-gray-50 rounded-lg">
+          <p className="text-sm text-gray-500 mb-1">{t('profile.currentBalance')}</p>
+          <p className="text-xl font-semibold text-gray-900">
             ¥{currentBalance.toFixed(2)}
           </p>
         </div>
@@ -368,11 +368,11 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
       {/* 退出登录按钮 */}
       <Button
         variant="ghost"
-        className="w-full justify-center gap-2 text-gray-500 hover:text-red-600 hover:bg-red-50 h-9"
+        className="w-full justify-center gap-2 text-gray-500 hover:text-red-600 hover:bg-red-50 h-10"
         onClick={handleLogout}
       >
-        <LogOut size={16} />
-        <span className="text-sm">{t('profile.logout')}</span>
+        <LogOut size={18} />
+        <span>{t('profile.logout')}</span>
       </Button>
     </div>
   )
@@ -401,15 +401,15 @@ function GeneralContent() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* 网站语言 */}
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm text-gray-700">{t('general.language')}</h4>
-          <p className="text-xs text-gray-400 mt-0.5">{t('general.languageDesc')}</p>
+          <h4 className="text-sm font-medium text-gray-700">{t('general.language')}</h4>
+          <p className="text-sm text-gray-400 mt-1">{t('general.languageDesc')}</p>
         </div>
         <Select value={lng} onValueChange={handleLanguageChange}>
-          <SelectTrigger className="w-[120px] h-8 text-sm">
+          <SelectTrigger className="w-[140px] h-9">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
