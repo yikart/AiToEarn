@@ -40,7 +40,8 @@
     "continuePlaceholder": "Continue the conversation...",
     "back": "Back",
     "workflowProcess": "AI Workflow",
-    "waitingResponse": "Waiting for AI response..."
+    "waitingResponse": "Waiting for AI response...",
+    "scrollToBottom": "Back to bottom"
   },
   "media": {
     "video": "Video",

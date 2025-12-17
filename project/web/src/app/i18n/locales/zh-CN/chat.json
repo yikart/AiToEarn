@@ -40,7 +40,8 @@
     "continuePlaceholder": "继续对话...",
     "back": "返回",
     "workflowProcess": "AI 工作流程",
-    "waitingResponse": "等待 AI 响应..."
+    "waitingResponse": "等待 AI 响应...",
+    "scrollToBottom": "回到底部"
   },
   "media": {
     "video": "视频",

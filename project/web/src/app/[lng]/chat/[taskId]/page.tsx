@@ -8,7 +8,7 @@
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { ArrowLeft, Loader2 } from 'lucide-react'
+import { ArrowLeft, Loader2, ArrowDown } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { ChatMessage } from '@/components/Chat/ChatMessage'
@@ -362,7 +362,14 @@ export default function ChatDetailPage() {
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const messagesContainerRef = useRef<HTMLDivElement>(null)
   const hasLoadedRef = useRef(false)
+  
+  // 滚动相关状态
+  const [isNearBottom, setIsNearBottom] = useState(true) // 用户是否在底部附近
+  const [showScrollButton, setShowScrollButton] = useState(false) // 是否显示回到底部按钮
+  const isUserScrollingRef = useRef(false) // 用户是否正在手动滚动
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // 当前显示的消息：
   // - 活跃任务（已在此页面发起过对话）→ 使用 Store 消息
@@ -376,9 +383,53 @@ export default function ChatDetailPage() {
   const workflowSteps: IWorkflowStep[] = isActiveTask ? storeWorkflowSteps : []
 
   /** 滚动消息列表到底部 */
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = useCallback((force = false) => {
+    if (force) {
+      // 强制滚动，重置用户滚动状态
+      isUserScrollingRef.current = false
+      setIsNearBottom(true)
+      setShowScrollButton(false)
+    }
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [])
+
+  /** 检查是否在底部附近 */
+  const checkIfNearBottom = useCallback(() => {
+    const container = messagesContainerRef.current
+    if (!container) return true
+    
+    const { scrollTop, scrollHeight, clientHeight } = container
+    // 距离底部 150px 以内认为在底部附近
+    const threshold = 150
+    return scrollHeight - scrollTop - clientHeight < threshold
+  }, [])
+
+  /** 处理滚动事件 */
+  const handleScroll = useCallback(() => {
+    // 标记用户正在滚动
+    isUserScrollingRef.current = true
+    
+    // 清除之前的定时器
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current)
+    }
+    
+    // 延迟重置滚动状态
+    scrollTimeoutRef.current = setTimeout(() => {
+      isUserScrollingRef.current = false
+    }, 150)
+    
+    const nearBottom = checkIfNearBottom()
+    setIsNearBottom(nearBottom)
+    
+    // 距离底部超过 300px 时显示回到底部按钮
+    const container = messagesContainerRef.current
+    if (container) {
+      const { scrollTop, scrollHeight, clientHeight } = container
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight
+      setShowScrollButton(distanceFromBottom > 300)
+    }
+  }, [checkIfNearBottom])
 
   /**
    * 加载任务详情（仅在初始加载时）
@@ -433,10 +484,26 @@ export default function ChatDetailPage() {
     loadTask()
   }, [taskId, isActiveTask, storeMessages.length, t, setMessages])
 
-  /** 滚动消息列表到底部 */
+  /** 
+   * 智能滚动到底部
+   * - 只有当用户在底部附近且不是手动滚动时才自动滚动
+   * - 新消息发送时强制滚动到底部
+   */
   useEffect(() => {
-    scrollToBottom()
-  }, [displayMessages, workflowSteps, scrollToBottom])
+    // 如果用户在底部附近，自动滚动到底部
+    if (isNearBottom && !isUserScrollingRef.current) {
+      scrollToBottom()
+    }
+  }, [displayMessages, workflowSteps, isNearBottom, scrollToBottom])
+
+  /** 清理定时器 */
+  useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [])
 
   /** 处理发送消息（继续对话） */
   const handleSend = useCallback(async () => {
@@ -450,6 +517,9 @@ export default function ChatDetailPage() {
     setInputValue('')
     clearMedias()
     setLocalIsGenerating(true)
+    
+    // 发送消息时强制滚动到底部
+    scrollToBottom(true)
 
     try {
       // 使用全局 Store 继续对话
@@ -545,44 +615,66 @@ export default function ChatDetailPage() {
         )}
       </header>
 
-      {/* 消息列表 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {displayMessages
-          .filter((message): message is IDisplayMessage & { role: 'user' | 'assistant' } =>
-            message.role === 'user' || message.role === 'assistant')
-          .map((message, index, filteredMessages) => {
-          // 判断是否为最后一条 assistant 消息（用于显示工作流）
-          const isLastAssistant = message.role === 'assistant' &&
-            index === filteredMessages.length - 1
+      {/* 消息列表区域 */}
+      <div className="flex-1 relative overflow-hidden">
+        {/* 消息列表 */}
+        <div 
+          ref={messagesContainerRef}
+          onScroll={handleScroll}
+          className="h-full overflow-y-auto p-4 space-y-4"
+        >
+          {displayMessages
+            .filter((message): message is IDisplayMessage & { role: 'user' | 'assistant' } =>
+              message.role === 'user' || message.role === 'assistant')
+            .map((message, index, filteredMessages) => {
+            // 判断是否为最后一条 assistant 消息（用于显示工作流）
+            const isLastAssistant = message.role === 'assistant' &&
+              index === filteredMessages.length - 1
 
-          return (
+            return (
+              <ChatMessage
+                key={message.id}
+                role={message.role}
+                content={message.content}
+                medias={message.medias}
+                status={message.status}
+                errorMessage={message.errorMessage}
+                createdAt={message.createdAt}
+                // 传递消息步骤（优先使用 steps）
+                steps={message.steps}
+                // 只在最后一条 AI 消息上显示工作流步骤（兼容无 steps 的情况）
+                workflowSteps={isLastAssistant && isGenerating ? workflowSteps : undefined}
+              />
+            )
+          })}
+
+          {/* 如果正在生成但还没有 assistant 消息，显示一个空的 AI 消息 */}
+          {isGenerating && displayMessages.every(m => m.role === 'user') && (
             <ChatMessage
-              key={message.id}
-              role={message.role}
-              content={message.content}
-              medias={message.medias}
-              status={message.status}
-              errorMessage={message.errorMessage}
-              createdAt={message.createdAt}
-              // 传递消息步骤（优先使用 steps）
-              steps={message.steps}
-              // 只在最后一条 AI 消息上显示工作流步骤（兼容无 steps 的情况）
-              workflowSteps={isLastAssistant && isGenerating ? workflowSteps : undefined}
+              role="assistant"
+              content=""
+              status="streaming"
+              workflowSteps={workflowSteps}
             />
-          )
-        })}
+          )}
 
-        {/* 如果正在生成但还没有 assistant 消息，显示一个空的 AI 消息 */}
-        {isGenerating && displayMessages.every(m => m.role === 'user') && (
-          <ChatMessage
-            role="assistant"
-            content=""
-            status="streaming"
-            workflowSteps={workflowSteps}
-          />
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* 回到底部按钮 - 浮动在消息列表底部 */}
+        {showScrollButton && (
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 animate-in fade-in slide-in-from-bottom-2 duration-200">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => scrollToBottom(true)}
+              className="rounded-full shadow-lg bg-white/95 backdrop-blur-sm hover:bg-white border border-gray-200 gap-1.5 px-4 transition-all hover:shadow-xl"
+            >
+              <ArrowDown className="w-4 h-4" />
+              <span className="text-sm">{t('detail.scrollToBottom')}</span>
+            </Button>
+          </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
       {/* 底部输入区域 */}
