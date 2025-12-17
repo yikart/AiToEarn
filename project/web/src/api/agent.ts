@@ -184,11 +184,15 @@ export const agentApi = {
     console.log('[SSE] Starting fetchEventSource...')
 
     try {
+      // 获取语言设置
+      const lng = useUserStore.getState().lang || 'zh-CN'
+      
       await fetchEventSource(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${useUserStore.getState().token || ''}`,
+          'Accept-Language': lng,
         },
         body: JSON.stringify(params),
         signal: abortController.signal,
