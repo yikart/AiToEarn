@@ -171,6 +171,12 @@ const LayoutSidebar = () => {
     currRouter = `/${route.slice(0, 2).join('/')}`
   }
 
+  // auth 页面不显示侧边栏
+  const isAuthPage = route[0] === 'auth'
+  if (isAuthPage) {
+    return null
+  }
+
   // 处理登录跳转
   const handleLogin = () => {
     router.push(`/auth/login`)
@@ -387,7 +393,7 @@ const LayoutSidebar = () => {
                             <Button
                               onClick={handleLogin}
                               size="icon"
-                              className="h-9 w-9 bg-purple-500 text-white hover:bg-purple-600"
+                              className="h-9 w-9"
                             >
                               <span className="text-sm font-semibold">登</span>
                             </Button>
@@ -401,7 +407,7 @@ const LayoutSidebar = () => {
                   : (
                       <Button
                         onClick={handleLogin}
-                        className="mt-1 w-full bg-purple-500 text-white hover:bg-purple-600"
+                        className="mt-1 w-full"
                       >
                         {t('login')}
                       </Button>
