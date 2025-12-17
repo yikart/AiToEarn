@@ -138,4 +138,12 @@ export default {
       silent,
     })
   },
+  patch<T>(url: string, data?: any, silent?: boolean) {
+    return request<T>({
+      url,
+      data,
+      method: 'PATCH',
+      silent,
+    })
+  },
 }

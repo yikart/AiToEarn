@@ -336,7 +336,7 @@ const LayoutSidebar = () => {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
-                  <p>{t('downloadApp')}</p>
+                  <p>{t('downloadAppButton')}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>

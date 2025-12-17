@@ -230,7 +230,6 @@ export default function LoginPage() {
           }
         }}
         maskClosable={false}
-        keyboard={false}
         closable={true}
         footer={null}
         className={styles.modalWrapper}

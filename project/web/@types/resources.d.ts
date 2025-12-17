@@ -547,7 +547,8 @@ interface Resources {
       "continuePlaceholder": "继续对话...",
       "back": "返回",
       "workflowProcess": "AI 工作流程",
-      "waitingResponse": "等待 AI 响应..."
+      "waitingResponse": "等待 AI 响应...",
+      "scrollToBottom": "回到底部"
     },
     "media": {
       "video": "视频",
@@ -567,6 +568,7 @@ interface Resources {
     "vip": "会员",
     "subscribe": "开通订阅",
     "contactUs": "联系我们",
+    "downloadAppButton": "下载手机APP",
     "downloadApp": {
       "title": "下载{{appName}}",
       "operationInApp": "请在{{appName}}中操作添加",

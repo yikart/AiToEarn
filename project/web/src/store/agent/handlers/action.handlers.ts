@@ -75,7 +75,7 @@ function buildPluginPublishItem(taskData: ITaskData, account: any): PluginPublis
       filename: '',
       width: 0,
       height: 0,
-    }))
+    })) as any[]
 
   return {
     account,
@@ -192,7 +192,7 @@ const navigateToPublishPluginHandler: IActionHandler = {
 
     if (!isPluginReady) {
       toast.warning(t('plugin.platformNeedsPlugin' as any))
-      showPluginGuide(t)
+      showPluginGuide(t as (key: string) => string)
       return
     }
 
@@ -567,7 +567,7 @@ export const ActionRegistry = {
 
     if (!isPluginReady) {
       toast.warning(t('plugin.platformNeedsPlugin' as any))
-      showPluginGuide(t)
+      showPluginGuide(t as (key: string) => string)
       return
     }
 
