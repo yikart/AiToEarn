@@ -123,13 +123,10 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
 
   // 统计工具调用数
   const totalToolCalls = workflowSteps.filter((s) => s.type === 'tool_call').length
-  // 已完成的工具调用数 = 有对应 tool_result 的数量，或者 isActive 为 false 的 tool_call 数量
+  // 已完成的工具调用数 = tool_result 的数量
   const toolResultCount = workflowSteps.filter((s) => s.type === 'tool_result').length
-  // 使用两者中的较大值，因为可能存在 tool_call 完成但还没返回结果的情况
-  const completedSteps = Math.max(
-    toolResultCount,
-    workflowSteps.filter((s) => !s.isActive && s.type === 'tool_call').length
-  )
+  // 完成数不能超过总数，取较小值
+  const completedSteps = Math.min(toolResultCount, totalToolCalls)
 
   // 当前活跃的步骤
   const activeStep = workflowSteps.find((s) => s.isActive)
