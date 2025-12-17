@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import Image from 'next/image'
 import { Sparkles } from 'lucide-react'
@@ -49,7 +49,18 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
   })
 
   // 全局 Store
-  const { createTask } = useAgentStore()
+  const { createTask, setActionContext } = useAgentStore()
+
+  /**
+   * 设置 Action 上下文（用于处理任务结果的 action）
+   */
+  useEffect(() => {
+    setActionContext({
+      router,
+      lng: lng as string,
+      t: t as any,
+    })
+  }, [router, lng, t, setActionContext])
 
   /** 处理发送消息 */
   const handleSend = useCallback(async () => {
