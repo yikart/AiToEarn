@@ -45,7 +45,6 @@ import { getOssUrl } from '@/utils/oss'
 function UserAvatar({ collapsed }: { collapsed: boolean }) {
   const userInfo = useUserStore(state => state.userInfo)
   const { t } = useTransClient('common')
-  const lng = useGetClientLng()
 
   if (!userInfo) {
     return null
@@ -55,10 +54,9 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <Link
-            href={`/${lng}/profile`}
+          <div
             className={cn(
-              'flex items-center rounded-lg transition-colors hover:bg-black/5',
+              'flex items-center rounded-lg',
               collapsed ? 'justify-center p-1' : 'gap-2 px-2 py-1.5',
             )}
           >
@@ -73,7 +71,7 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
                 {userInfo.name || t('unknownUser')}
               </span>
             )}
-          </Link>
+          </div>
         </TooltipTrigger>
         {collapsed && (
           <TooltipContent side="right">
@@ -253,7 +251,7 @@ const LayoutSidebar = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  href={`/${lng}/vip`}
+                  href={`/${lng}/pricing`}
                   className={cn(
                     'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
                     collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
