@@ -3,4 +3,5 @@
  */
 export { isTaskCompleted } from './taskStatus'
 export { convertMessages } from './convertMessages'
+export { parseUserMessageContent, formatMediaTypeName } from './parseMessageContent'
 

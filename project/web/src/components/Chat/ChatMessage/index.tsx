@@ -9,9 +9,10 @@
 import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2 } from 'lucide-react'
+import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
+import { useTransClient } from '@/app/i18n/client'
 import type { IUploadedMedia } from '../MediaUpload'
 import type { IMessageStep, IWorkflowStep } from '@/store/agent'
 import logo from '@/assets/images/logo.png'
@@ -53,6 +54,7 @@ interface IWorkflowStepItemProps {
 }
 
 function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
+  const { t } = useTransClient('chat')
   // 判断步骤是否完成：不活跃状态即为完成
   const isCompleted = !step.isActive
 
@@ -82,8 +84,8 @@ function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
           {step.type === 'tool_call'
             ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
             : step.type === 'tool_result'
-              ? `${formatToolName(step.toolName || 'Tool')} 返回结果`
-              : formatToolName(step.toolName || 'Processing')}
+              ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
+              : formatToolName(step.toolName || t('workflow.processing' as any))}
         </div>
         {step.content && (
           <pre className="text-[10px] text-gray-400 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -110,6 +112,7 @@ interface IWorkflowSectionProps {
 }
 
 function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflowSectionProps) {
+  const { t } = useTransClient('chat')
   // 默认展开，如果传了 defaultExpanded 则使用它，否则使用 isActive 或默认 true（历史消息默认展开）
   const initialExpanded = defaultExpanded !== undefined ? defaultExpanded : (isActive !== undefined ? isActive : true)
   const [expanded, setExpanded] = useState(initialExpanded)
@@ -123,13 +126,10 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
 
   // 统计工具调用数
   const totalToolCalls = workflowSteps.filter((s) => s.type === 'tool_call').length
-  // 已完成的工具调用数 = 有对应 tool_result 的数量，或者 isActive 为 false 的 tool_call 数量
+  // 已完成的工具调用数 = tool_result 的数量
   const toolResultCount = workflowSteps.filter((s) => s.type === 'tool_result').length
-  // 使用两者中的较大值，因为可能存在 tool_call 完成但还没返回结果的情况
-  const completedSteps = Math.max(
-    toolResultCount,
-    workflowSteps.filter((s) => !s.isActive && s.type === 'tool_call').length
-  )
+  // 完成数不能超过总数，取较小值
+  const completedSteps = Math.min(toolResultCount, totalToolCalls)
 
   // 当前活跃的步骤
   const activeStep = workflowSteps.find((s) => s.isActive)
@@ -154,7 +154,7 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
           <>
             <Wrench className="w-3.5 h-3.5 animate-pulse" />
             <span className="font-medium truncate flex-1 text-left">
-              {formatToolName(activeStep.toolName || 'Processing')}
+              {formatToolName(activeStep.toolName || t('workflow.processing' as any))}
             </span>
             <Loader2 className="w-3 h-3 animate-spin" />
           </>
@@ -162,7 +162,7 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
           <>
             <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
             <span className="font-medium flex-1 text-left">
-              {completedSteps}/{totalToolCalls} 工具调用完成
+              {completedSteps}/{totalToolCalls} {t('workflow.toolCallCompleted' as any)}
             </span>
           </>
         )}
@@ -249,6 +249,7 @@ export function ChatMessage({
   workflowSteps = [],
   className,
 }: IChatMessageProps) {
+  const { t } = useTransClient('chat')
   const isUser = role === 'user'
   const isStreaming = status === 'streaming' || status === 'pending'
 
@@ -314,27 +315,47 @@ export function ChatMessage({
         {/* 媒体附件 */}
         {medias.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {medias.map((media, index) => (
-              <div
-                key={index}
-                className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
-              >
-                {media.type === 'video' ? (
-                  <video
-                    src={getOssUrl(media.url)}
-                    className="w-full h-full object-cover"
-                    muted
-                    controls
-                  />
-                ) : (
-                  <img
-                    src={getOssUrl(media.url)}
-                    alt={`attachment-${index}`}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-            ))}
+            {medias.map((media, index) => {
+              if (media.type === 'document') {
+                // 文档类型显示
+                return (
+                  <a
+                    key={index}
+                    href={getOssUrl(media.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <FileText className="w-4 h-4 text-gray-600" />
+                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
+                      {media.name || t('media.document' as any)}
+                    </span>
+                  </a>
+                )
+              }
+
+              return (
+                <div
+                  key={index}
+                  className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
+                >
+                  {media.type === 'video' ? (
+                    <video
+                      src={getOssUrl(media.url)}
+                      className="w-full h-full object-cover"
+                      muted
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={getOssUrl(media.url)}
+                      alt={`attachment-${index}`}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
 

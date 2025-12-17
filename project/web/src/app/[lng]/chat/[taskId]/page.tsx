@@ -26,7 +26,7 @@ export default function ChatDetailPage() {
   const lng = params.lng as string
 
   // Store 方法
-  const { continueTask, stopTask } = useAgentStore()
+  const { continueTask, stopTask, setActionContext } = useAgentStore()
 
   // 聊天状态管理
   const {
@@ -67,6 +67,17 @@ export default function ChatDetailPage() {
   } = useMediaUpload({
     onError: () => toast.error(t('media.uploadFailed' as any)),
   })
+
+  /**
+   * 设置 Action 上下文（用于处理任务结果的 action）
+   */
+  useEffect(() => {
+    setActionContext({
+      router,
+      lng,
+      t: t as any,
+    })
+  }, [router, lng, t, setActionContext])
 
   /**
    * 智能滚动：用户在底部附近时自动滚动

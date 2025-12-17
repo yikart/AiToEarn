@@ -45,8 +45,15 @@
   },
   "media": {
     "video": "Video",
+    "image": "Image",
+    "document": "Document",
     "uploadFailed": "Upload failed, please try again",
     "uploadCancelled": "Upload cancelled"
+  },
+  "workflow": {
+    "toolCallCompleted": "Tool Calls Completed",
+    "toolResult": "Result Returned",
+    "processing": "Processing..."
   }
 }
 

@@ -60,6 +60,7 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
         for (let i = 0; i < files.length; i++) {
           const file = files[i]
           const isVideo = file.type.startsWith('video/')
+          const isDocument = !file.type.startsWith('image/') && !file.type.startsWith('video/')
 
           // 计算当前媒体在列表中的索引
           const mediaIndex = medias.length + i
@@ -67,9 +68,10 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
           // 添加到列表，显示上传进度
           const tempMedia: IUploadedMedia = {
             url: '',
-            type: isVideo ? 'video' : 'image',
+            type: isDocument ? 'document' : isVideo ? 'video' : 'image',
             progress: 0,
             file,
+            name: isDocument ? file.name : undefined,
           }
           setMedias((prev) => [...prev, tempMedia])
 

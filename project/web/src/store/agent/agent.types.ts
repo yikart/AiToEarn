@@ -11,11 +11,45 @@ import type { TFunction } from 'i18next'
 /** 上传的媒体文件类型 */
 export interface IUploadedMedia {
   url: string
-  type: 'image' | 'video'
+  type: 'image' | 'video' | 'document'
   /** 上传进度 (0-100) */
   progress?: number
   /** 原始文件（上传中时使用） */
   file?: File
+  /** 文档名称（document 类型使用） */
+  name?: string
+  /** 缓存控制（可选） */
+  cache_control?: {
+    type: 'ephemeral'
+  }
+}
+
+/** Claude Prompt 内容项类型 */
+export type PromptContentType = 'text' | 'image' | 'video' | 'document'
+
+/** Claude Prompt 内容项 */
+export interface IPromptContentItem {
+  type: PromptContentType
+  text?: string
+  source?: {
+    type: 'url' | 'base64'
+    url?: string
+    data?: string
+    media_type?: string
+  }
+  cache_control?: {
+    type: 'ephemeral'
+  }
+}
+
+/** 解析后的用户消息内容 */
+export interface IParsedUserContent {
+  /** 纯文本内容 */
+  text: string
+  /** 媒体文件列表 */
+  medias: IUploadedMedia[]
+  /** 是否包含特殊格式 */
+  hasSpecialFormat: boolean
 }
 
 // ============ 消息相关类型 ============

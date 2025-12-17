@@ -29,7 +29,6 @@ import { apiGetPostsRecordStatus, apiImportPostsRecord } from '@/api/statistics'
 import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
-import VipContentModal from '@/components/modals/VipContentModal'
 import publishDialogStyles from '@/components/PublishDialog/publishDialog.module.scss'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
@@ -151,6 +150,10 @@ export default function CgMaterialPageCore() {
     hasMore: false,
   })
   const [publishListLoading, setPublishListLoading] = useState(false)
+
+  // 导入状态弹窗
+  const [importStatusModal, setImportStatusModal] = useState(false)
+  const [importStatusData, setImportStatusData] = useState<any[]>([])
 
   const renderMediaContent = (mediaList?: any[]) => {
     if (!Array.isArray(mediaList) || mediaList.length === 0) {
@@ -986,7 +989,7 @@ export default function CgMaterialPageCore() {
       }
     }
     catch (e: any) {
-      console.error('导入失败详情:', e)
+      console.error(t('import.importFailed' as any), e)
       toast.error(t('import.importFailedWithReason' as any, { reason: e?.message || e || t('import.unknownError' as any) }))
     }
     finally {
@@ -1001,143 +1004,11 @@ export default function CgMaterialPageCore() {
 
       if (res?.code === 0 && res?.data && Array.isArray(res.data)) {
         const statusData: any[] = res.data
-        const successCount = statusData.filter((item: any) => item.status === 'success').length
-        const failedCount = statusData.filter((item: any) => item.status === 'failed').length
-        const runningCount = statusData.filter((item: any) => item.status === 'running').length
-        const pendingCount = statusData.filter((item: any) => item.status === 'pending').length
-
-        let statusMessage = t('import.importStatus' as any)
-        if (successCount > 0)
-          statusMessage += `${t('import.successCount' as any, { count: successCount })} `
-        if (failedCount > 0)
-          statusMessage += `${t('import.failedCount' as any, { count: failedCount })} `
-        if (runningCount > 0)
-          statusMessage += `${t('import.runningCount' as any, { count: runningCount })} `
-        if (pendingCount > 0)
-          statusMessage += `${t('import.pendingCount' as any, { count: pendingCount })} `
 
         // 显示详细记录信息
         if (statusData.length > 0) {
-          const detailInfo = statusData.map((item: any) => {
-            const platformName = getPlatformName(item.platform)
-            const statusText = getImportStatusText(item.status)
-            return `${platformName} - ${item.title || t('import.noTitle' as any)} - ${statusText}`
-          }).join('\n')
-
-          Modal.info({
-            title: t('import.importRecords' as any),
-            content: (
-              <div>
-                <div style={{ marginBottom: 16, fontWeight: 600 }}>
-                  {statusMessage}
-                </div>
-                <div style={{ maxHeight: 400, overflow: 'auto' }}>
-                  {statusData.map((item: any, index: number) => (
-                    <div
-                      key={index}
-                      style={{
-                        marginBottom: 12,
-                        padding: 12,
-                        border: '1px solid #f0f0f0',
-                        borderRadius: 6,
-                        backgroundColor: item.status === 'success'
-                          ? '#f6ffed'
-                          : item.status === 'failed' ? '#fff2f0' : '#f0f9ff',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                        <span style={{ fontWeight: 600 }}>
-                          {getPlatformName(item.platform)}
-                          {' '}
-                          -
-                          {item.title || t('import.noTitle' as any)}
-                        </span>
-                        <span style={{
-                          padding: '2px 8px',
-                          borderRadius: 4,
-                          fontSize: 12,
-                          color: item.status === 'success'
-                            ? '#52c41a'
-                            : item.status === 'failed' ? '#ff4d4f' : '#1890ff',
-                          backgroundColor: item.status === 'success'
-                            ? '#f6ffed'
-                            : item.status === 'failed' ? '#fff2f0' : '#f0f9ff',
-                        }}
-                        >
-                          {getImportStatusText(item.status)}
-                        </span>
-                      </div>
-                      <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
-                        <div>
-                          {t('import.publishTime' as any)}
-                          :
-                          {' '}
-                          {new Date(item.publishTime).toLocaleString()}
-                        </div>
-                        <div>
-                          {t('import.mediaType' as any)}
-                          :
-                          {' '}
-                          {item.mediaType === 'image' ? t('import.image' as any) : item.mediaType === 'video' ? t('import.video' as any) : t('import.article' as any)}
-                        </div>
-                        {item.desc && (
-                          <div>
-                            {t('import.desc' as any)}
-                            :
-                            {' '}
-                            {item.desc}
-                          </div>
-                        )}
-                        <div>
-                          {t('import.interactionData' as any)}
-                          :
-                          {' '}
-                          {t('import.views' as any)}
-                          {' '}
-                          {item.viewCount}
-                          {' '}
-                          |
-                          {' '}
-                          {t('import.likes' as any)}
-                          {' '}
-                          {item.likeCount}
-                          {' '}
-                          |
-                          {' '}
-                          {t('import.comments' as any)}
-                          {' '}
-                          {item.commentCount}
-                          {' '}
-                          |
-                          {' '}
-                          {t('import.shares' as any)}
-                          {' '}
-                          {item.shareCount}
-                        </div>
-                      </div>
-                      {item.cover && (
-                        <div style={{ marginTop: 8 }}>
-                          <Image
-                            src={item.cover}
-                            alt={t('import.cover' as any)}
-                            width={60}
-                            height={60}
-                            style={{
-                              objectFit: 'cover',
-                              borderRadius: 4,
-                              border: '1px solid #f0f0f0',
-                            }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ),
-            width: 800,
-            okText: t('import.close' as any),
-          })
+          setImportStatusData(statusData)
+          setImportStatusModal(true)
         }
         else {
           toast.info(t('import.noRecords' as any))
@@ -1145,7 +1016,7 @@ export default function CgMaterialPageCore() {
       }
     }
     catch (e) {
-      console.error('查询导入状态失败:', e)
+      console.error(t('import.checkStatusFailed' as any), e)
       toast.error(t('import.checkStatusFailed' as any))
     }
   }
@@ -3151,11 +3022,147 @@ export default function CgMaterialPageCore() {
         </Form>
       </Modal>
 
-      {/* VIP 弹窗 */}
-      <VipContentModal
-        open={vipModalVisible}
-        onClose={() => setVipModalVisible(false)}
-      />
+      {/* 导入状态弹窗 */}
+      <Modal
+        open={importStatusModal}
+        title={t('import.importRecords' as any)}
+        onCancel={() => setImportStatusModal(false)}
+        footer={[
+          <Button key="close" type="primary" onClick={() => setImportStatusModal(false)}>
+            {t('import.close' as any)}
+          </Button>,
+        ]}
+        width={800}
+      >
+        {importStatusData.length > 0 && (
+          <div>
+            <div style={{ marginBottom: 16, fontWeight: 600 }}>
+              {(() => {
+                const successCount = importStatusData.filter((item: any) => item.status === 'success').length
+                const failedCount = importStatusData.filter((item: any) => item.status === 'failed').length
+                const runningCount = importStatusData.filter((item: any) => item.status === 'running').length
+                const pendingCount = importStatusData.filter((item: any) => item.status === 'pending').length
+
+                let statusMessage = t('import.importStatus' as any)
+                if (successCount > 0)
+                  statusMessage += ` ${t('import.successCount' as any, { count: successCount })}`
+                if (failedCount > 0)
+                  statusMessage += ` ${t('import.failedCount' as any, { count: failedCount })}`
+                if (runningCount > 0)
+                  statusMessage += ` ${t('import.runningCount' as any, { count: runningCount })}`
+                if (pendingCount > 0)
+                  statusMessage += ` ${t('import.pendingCount' as any, { count: pendingCount })}`
+
+                return statusMessage
+              })()}
+            </div>
+            <div style={{ maxHeight: 400, overflow: 'auto' }}>
+              {importStatusData.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  style={{
+                    marginBottom: 12,
+                    padding: 12,
+                    border: '1px solid #f0f0f0',
+                    borderRadius: 6,
+                    backgroundColor: item.status === 'success'
+                      ? '#f6ffed'
+                      : item.status === 'failed' ? '#fff2f0' : '#f0f9ff',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ fontWeight: 600 }}>
+                      {getPlatformName(item.platform)}
+                      {' '}
+                      -
+                      {' '}
+                      {item.title || t('import.noTitle' as any)}
+                    </span>
+                    <span style={{
+                      padding: '2px 8px',
+                      borderRadius: 4,
+                      fontSize: 12,
+                      color: item.status === 'success'
+                        ? '#52c41a'
+                        : item.status === 'failed' ? '#ff4d4f' : '#1890ff',
+                      backgroundColor: item.status === 'success'
+                        ? '#f6ffed'
+                        : item.status === 'failed' ? '#fff2f0' : '#f0f9ff',
+                    }}
+                    >
+                      {getImportStatusText(item.status)}
+                    </span>
+                  </div>
+                  <div style={{ fontSize: 12, color: '#666', marginBottom: 4 }}>
+                    <div>
+                      {t('import.publishTime' as any)}
+                      :
+                      {' '}
+                      {new Date(item.publishTime).toLocaleString()}
+                    </div>
+                    <div>
+                      {t('import.mediaType' as any)}
+                      :
+                      {' '}
+                      {item.mediaType === 'image' ? t('import.image' as any) : item.mediaType === 'video' ? t('import.video' as any) : t('import.article' as any)}
+                    </div>
+                    {item.desc && (
+                      <div>
+                        {t('import.desc' as any)}
+                        :
+                        {' '}
+                        {item.desc}
+                      </div>
+                    )}
+                    <div>
+                      {t('import.interactionData' as any)}
+                      :
+                      {' '}
+                      {t('import.views' as any)}
+                      {' '}
+                      {item.viewCount}
+                      {' '}
+                      |
+                      {' '}
+                      {t('import.likes' as any)}
+                      {' '}
+                      {item.likeCount}
+                      {' '}
+                      |
+                      {' '}
+                      {t('import.comments' as any)}
+                      {' '}
+                      {item.commentCount}
+                      {' '}
+                      |
+                      {' '}
+                      {t('import.shares' as any)}
+                      {' '}
+                      {item.shareCount}
+                    </div>
+                  </div>
+                  {item.cover && (
+                    <div style={{ marginTop: 8 }}>
+                      <Image
+                        src={item.cover}
+                        alt={t('import.cover' as any)}
+                        width={60}
+                        height={60}
+                        style={{
+                          objectFit: 'cover',
+                          borderRadius: 4,
+                          border: '1px solid #f0f0f0',
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </Modal>
+      
     </div>
   )
 }
