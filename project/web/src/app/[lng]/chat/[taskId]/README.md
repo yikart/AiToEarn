@@ -1,308 +1,200 @@
 # Chat 对话详情页
 
-对话详情页模块，支持实时模式（从首页跳转）和历史模式（刷新或从任务列表进入）。
+## 功能说明
 
-## 目录结构
+对话详情页支持实时模式和历史模式，可以显示 AI 生成任务的完整对话历史。
 
-```text
-src/app/[lng]/chat/[taskId]/
-├── page.tsx                        # 主页面，负责组装组件
-├── components/                     # 页面私有组件
-│   ├── ChatHeader/                 # 顶部导航栏
-│   │   └── index.tsx
-│   ├── ChatMessageList/            # 消息列表
-│   │   └── index.tsx
-│   ├── ChatLoadingSkeleton/        # 加载骨架屏
-│   │   └── index.tsx
-│   └── index.ts                    # 组件统一导出
-├── hooks/                          # 页面私有 Hooks
-│   ├── useScrollControl.ts         # 滚动控制
-│   ├── useTaskPolling.ts           # 任务轮询
-│   ├── useChatState.ts             # 聊天状态管理
-│   └── index.ts                    # Hooks 统一导出
-├── utils/                          # 页面私有工具函数
-│   ├── taskStatus.ts               # 任务状态检测
-│   ├── convertMessages.ts          # 消息格式转换
-│   └── index.ts                    # 工具统一导出
-└── README.md                       # 本文档
+## 消息格式支持
+
+### 1. 普通文本消息
+
+```
+将图片换成红色风格生成图文内容发布到抖音小红书推特
 ```
 
-## 模块说明
+### 2. Markdown 引用格式
 
-### page.tsx - 主页面
+支持在消息中使用 Markdown 引用格式来附加媒体文件：
 
-主页面只负责组装组件和处理用户交互，不包含复杂的业务逻辑。
+```
+将图片换成红色风格生成图文内容发布到抖音小红书推特
 
-```tsx
-import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
-import { useScrollControl, useChatState } from './hooks'
+[image]: https://aitoearn.s3.ap-southeast-1.amazonaws.com/68abbe6af812ccb3e1a53d68/f646899220b7f9b0cc9bfe2b27ad0d571671121320.jpeg
 ```
 
-### components/ - 页面私有组件
+支持的媒体类型：
+- `[image]: url` - 图片
+- `[video]: url` - 视频
+- `[document]: url` - 文档
 
-#### ChatHeader - 顶部导航栏
+### 3. Claude Prompt 格式
 
-显示返回按钮、标题、生成状态指示器。
+支持 Claude API 的标准 prompt 格式（JSON 数组）：
 
-```tsx
-import { ChatHeader } from './components'
-
-<ChatHeader
-  title={task?.title}
-  defaultTitle="新对话"
-  isGenerating={isGenerating}
-  progress={progress}
-  thinkingText="思考中..."
-  onBack={handleBack}
-/>
+```json
+[
+  {
+    "type": "text",
+    "text": "将图片换成红色风格生成图文内容发布到抖音小红书推特"
+  },
+  {
+    "type": "image",
+    "source": {
+      "type": "url",
+      "url": "https://aitoearn.s3.ap-southeast-1.amazonaws.com/68abbe6af812ccb3e1a53d68/f646899220b7f9b0cc9bfe2b27ad0d571671121320.jpeg"
+    }
+  },
+  {
+    "type": "video",
+    "source": {
+      "type": "url",
+      "url": "https://example.com/video.mp4"
+    }
+  },
+  {
+    "type": "document",
+    "source": {
+      "type": "url",
+      "url": "https://example.com/document.pdf"
+    },
+    "cache_control": {
+      "type": "ephemeral"
+    }
+  }
+]
 ```
 
-**Props：**
+支持的内容类型：
+- `text` - 文本内容
+- `image` - 图片（需要 source.url）
+- `video` - 视频（需要 source.url）
+- `document` - 文档（需要 source.url）
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `title` | `string?` | 任务标题 |
-| `defaultTitle` | `string` | 默认标题（标题为空时显示） |
-| `isGenerating` | `boolean` | 是否正在生成 |
-| `progress` | `number` | 生成进度 (0-100) |
-| `thinkingText` | `string` | 思考中文案 |
-| `onBack` | `() => void` | 返回按钮点击回调 |
+可选字段：
+- `cache_control` - 缓存控制配置
 
-#### ChatMessageList - 消息列表
+## 工作流展示
 
-渲染消息气泡列表，包含回到底部按钮。
+每条 AI 消息都可以包含多个步骤（steps），每个步骤可以有自己的工作流（workflowSteps）：
 
-```tsx
-import { ChatMessageList } from './components'
+- 工具调用（tool_call）
+- 工具结果（tool_result）
+- 思考过程（thinking）
 
-<ChatMessageList
-  messages={displayMessages}
-  workflowSteps={workflowSteps}
-  isGenerating={isGenerating}
-  containerRef={containerRef}
-  bottomRef={bottomRef}
-  showScrollButton={showScrollButton}
-  onScroll={handleScroll}
-  onScrollToBottom={() => scrollToBottom(true)}
-  scrollToBottomText="回到底部"
-/>
-```
+工作流会自动展开/收起，活跃步骤默认展开，非活跃步骤默认收起。
 
-**Props：**
+## 技术实现
 
-| 属性 | 类型 | 说明 |
-|------|------|------|
-| `messages` | `IDisplayMessage[]` | 消息列表 |
-| `workflowSteps` | `IWorkflowStep[]` | 工作流步骤 |
-| `isGenerating` | `boolean` | 是否正在生成 |
-| `containerRef` | `RefObject<HTMLDivElement>` | 消息容器 ref |
-| `bottomRef` | `RefObject<HTMLDivElement>` | 底部占位 ref |
-| `showScrollButton` | `boolean` | 是否显示回到底部按钮 |
-| `onScroll` | `() => void` | 滚动事件回调 |
-| `onScrollToBottom` | `() => void` | 点击回到底部回调 |
-| `scrollToBottomText` | `string` | 按钮文案 |
+### 核心文件
 
-#### ChatLoadingSkeleton - 加载骨架屏
+1. **page.tsx** - 页面主文件
+2. **components/** - 页面私有组件
+   - ChatHeader - 顶部导航栏
+   - ChatMessageList - 消息列表
+   - ChatLoadingSkeleton - 加载骨架屏
+3. **hooks/** - 页面私有 hooks
+   - useChatState - 聊天状态管理
+   - useScrollControl - 滚动控制
+   - useTaskPolling - 任务轮询
+4. **utils/** - 工具函数
+   - convertMessages - 消息格式转换
+   - parseMessageContent - 消息内容解析（支持多种格式）
+   - taskStatus - 任务状态判断
 
-页面初始加载时显示的骨架屏。
+### 消息解析流程
 
-```tsx
-import { ChatLoadingSkeleton } from './components'
+1. 接收后端消息（TaskMessage[]）
+2. 使用 `parseUserMessageContent` 解析用户消息内容
+   - 自动识别格式（普通文本/Markdown引用/Claude Prompt）
+   - 提取文本和媒体文件
+3. 使用 `convertMessages` 转换为显示格式（IDisplayMessage[]）
+4. 在 ChatMessage 组件中渲染
 
-if (isLoading) {
-  return <ChatLoadingSkeleton />
+### 类型定义
+
+核心类型定义在 `src/store/agent/agent.types.ts`：
+
+```typescript
+// 媒体文件
+interface IUploadedMedia {
+  url: string
+  type: 'image' | 'video' | 'document'
+  progress?: number
+  file?: File
+  name?: string
+  cache_control?: { type: 'ephemeral' }
+}
+
+// Claude Prompt 内容项
+interface IPromptContentItem {
+  type: 'text' | 'image' | 'video' | 'document'
+  text?: string
+  source?: {
+    type: 'url' | 'base64'
+    url?: string
+    data?: string
+    media_type?: string
+  }
+  cache_control?: { type: 'ephemeral' }
+}
+
+// 解析后的内容
+interface IParsedUserContent {
+  text: string
+  medias: IUploadedMedia[]
+  hasSpecialFormat: boolean
 }
 ```
 
-### hooks/ - 页面私有 Hooks
+## 使用示例
 
-#### useScrollControl - 滚动控制
+### 发送普通消息
 
-管理消息列表的智能滚动行为。
-
-```tsx
-import { useScrollControl } from './hooks'
-
-const {
-  containerRef,      // 消息容器 ref
-  bottomRef,         // 底部占位 ref
-  isNearBottom,      // 用户是否在底部附近
-  showScrollButton,  // 是否显示回到底部按钮
-  scrollToBottom,    // 滚动到底部函数
-  handleScroll,      // 滚动事件处理函数
-} = useScrollControl({
-  nearBottomThreshold: 150,   // 可选，底部附近阈值
-  showButtonThreshold: 300,   // 可选，显示按钮阈值
-  scrollResetDelay: 150,      // 可选，滚动状态重置延迟
+```typescript
+await continueTask({
+  prompt: '生成一篇关于AI的文章',
+  medias: [],
+  t,
+  taskId,
 })
 ```
 
-#### useTaskPolling - 任务轮询
+### 发送带图片的消息（Markdown 格式）
 
-在页面刷新后任务未完成时，通过轮询获取最新状态。
+```typescript
+await continueTask({
+  prompt: `将图片换成红色风格
 
-```tsx
-import { useTaskPolling } from './hooks'
-
-const { isPolling, startPolling, stopPolling } = useTaskPolling({
-  taskId: 'xxx',
-  isActiveTask: false,
-  pollingInterval: 3000,  // 可选，轮询间隔
-  onMessagesUpdate: (messages, rawMessages) => { ... },
-  onTaskUpdate: (task) => { ... },
+[image]: https://example.com/image.jpg`,
+  medias: [],
+  t,
+  taskId,
 })
 ```
 
-#### useChatState - 聊天状态管理
+### 发送带多媒体的消息（Claude 格式）
 
-整合 Store 状态和本地状态，统一对外提供。
+```typescript
+const promptArray = [
+  { type: 'text', text: '分析这个视频和文档' },
+  { type: 'video', source: { type: 'url', url: 'https://example.com/video.mp4' } },
+  { type: 'document', source: { type: 'url', url: 'https://example.com/doc.pdf' } },
+]
 
-```tsx
-import { useChatState } from './hooks'
-
-const {
-  task,                 // 任务详情
-  displayMessages,      // 当前显示的消息列表
-  workflowSteps,        // 工作流步骤
-  isLoading,            // 是否正在加载
-  isGenerating,         // 是否正在生成
-  progress,             // 进度百分比
-  isActiveTask,         // 是否为活跃任务
-  setLocalMessages,     // 更新本地消息
-  setLocalIsGenerating, // 设置本地生成状态
-} = useChatState({
-  taskId: 'xxx',
-  t: t,  // 翻译函数
+await continueTask({
+  prompt: JSON.stringify(promptArray),
+  medias: [],
+  t,
+  taskId,
 })
-```
-
-### utils/ - 页面私有工具函数
-
-#### isTaskCompleted - 任务状态检测
-
-检测任务是否已完成。
-
-```tsx
-import { isTaskCompleted } from './utils'
-
-if (isTaskCompleted(messages)) {
-  console.log('任务已完成')
-}
-```
-
-#### convertMessages - 消息格式转换
-
-将后端消息格式转换为前端显示格式。
-
-```tsx
-import { convertMessages } from './utils'
-
-const displayMessages = convertMessages(rawMessages)
-```
-
-## 扩展指南
-
-### 添加新组件
-
-1. 在 `components/` 目录下创建组件目录：
-
-```bash
-components/
-├── NewComponent/
-│   └── index.tsx
-```
-
-2. 在 `components/index.ts` 中导出：
-
-```tsx
-export { NewComponent } from './NewComponent'
-```
-
-3. 在 `page.tsx` 中使用：
-
-```tsx
-import { NewComponent } from './components'
-```
-
-### 添加新 Hook
-
-1. 在 `hooks/` 目录下创建文件：
-
-```bash
-hooks/
-├── useNewFeature.ts
-```
-
-2. 在 `hooks/index.ts` 中导出：
-
-```tsx
-export { useNewFeature } from './useNewFeature'
-```
-
-3. 在 `page.tsx` 中使用：
-
-```tsx
-import { useNewFeature } from './hooks'
-```
-
-### 添加新工具函数
-
-1. 在 `utils/` 目录下创建文件：
-
-```bash
-utils/
-├── newUtil.ts
-```
-
-2. 在 `utils/index.ts` 中导出：
-
-```tsx
-export { newUtilFunction } from './newUtil'
-```
-
-## 数据流
-
-```text
-┌─────────────────────────────────────────────────────────────┐
-│                        page.tsx                              │
-│  ┌─────────────────┐  ┌─────────────────┐                   │
-│  │  useChatState   │  │ useScrollControl│                   │
-│  │                 │  │                 │                   │
-│  │ - Store 状态    │  │ - 滚动状态      │                   │
-│  │ - 本地状态      │  │ - Refs          │                   │
-│  │ - 轮询管理      │  │                 │                   │
-│  └────────┬────────┘  └────────┬────────┘                   │
-│           │                    │                             │
-│           ▼                    ▼                             │
-│  ┌─────────────────────────────────────────────┐            │
-│  │              Components                      │            │
-│  │  ┌──────────┐ ┌──────────────┐ ┌──────────┐ │            │
-│  │  │ChatHeader│ │ChatMessageList│ │ChatInput │ │            │
-│  │  └──────────┘ └──────────────┘ └──────────┘ │            │
-│  └─────────────────────────────────────────────┘            │
-└─────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-              ┌────────────────────────┐
-              │     Agent Store        │
-              │  (全局状态管理)         │
-              └────────────────────────┘
 ```
 
 ## 注意事项
 
-1. **组件职责单一**：每个组件只负责一件事，避免组件过于臃肿。
-
-2. **状态管理**：
-   - 全局状态使用 `useAgentStore`
-   - 页面级状态使用 `useChatState` 封装
-   - 临时状态使用 `useState`
-
-3. **国际化**：所有文案都使用 `t()` 函数，key 格式为 `chat.xxx`。
-
-4. **类型安全**：所有 Props 和返回值都有完整的 TypeScript 类型定义。
-
-5. **公共组件**：
-   - `ChatInput`、`ChatMessage` 等通用组件位于 `@/components/Chat/`
-   - 页面私有组件位于 `./components/`
-
+1. **格式自动识别**：系统会自动识别消息格式，无需手动指定
+2. **媒体文件显示**：
+   - 图片和视频：显示为缩略图
+   - 文档：显示为文件图标 + 文件名
+3. **工作流展示**：活跃步骤自动展开，非活跃步骤自动收起
+4. **滚动行为**：用户在底部附近时，新消息会自动滚动到底部
+5. **错误处理**：解析失败时会回退到普通文本显示

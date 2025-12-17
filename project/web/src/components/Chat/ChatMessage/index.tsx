@@ -9,7 +9,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import ReactMarkdown from 'react-markdown'
-import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2 } from 'lucide-react'
+import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
 import type { IUploadedMedia } from '../MediaUpload'
@@ -314,27 +314,47 @@ export function ChatMessage({
         {/* 媒体附件 */}
         {medias.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {medias.map((media, index) => (
-              <div
-                key={index}
-                className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
-              >
-                {media.type === 'video' ? (
-                  <video
-                    src={getOssUrl(media.url)}
-                    className="w-full h-full object-cover"
-                    muted
-                    controls
-                  />
-                ) : (
-                  <img
-                    src={getOssUrl(media.url)}
-                    alt={`attachment-${index}`}
-                    className="w-full h-full object-cover"
-                  />
-                )}
-              </div>
-            ))}
+            {medias.map((media, index) => {
+              if (media.type === 'document') {
+                // 文档类型显示
+                return (
+                  <a
+                    key={index}
+                    href={getOssUrl(media.url)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition-colors"
+                  >
+                    <FileText className="w-4 h-4 text-gray-600" />
+                    <span className="text-sm text-gray-700 truncate max-w-[200px]">
+                      {media.name || '文档'}
+                    </span>
+                  </a>
+                )
+              }
+
+              return (
+                <div
+                  key={index}
+                  className="w-24 h-24 rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
+                >
+                  {media.type === 'video' ? (
+                    <video
+                      src={getOssUrl(media.url)}
+                      className="w-full h-full object-cover"
+                      muted
+                      controls
+                    />
+                  ) : (
+                    <img
+                      src={getOssUrl(media.url)}
+                      alt={`attachment-${index}`}
+                      className="w-full h-full object-cover"
+                    />
+                  )}
+                </div>
+              )
+            })}
           </div>
         )}
 

@@ -9,6 +9,7 @@ import { agentApi } from '@/api/agent'
 import { getInitialState } from './agent.state'
 import { calculateProgress as calcProgress, getStatusConfig } from './utils/progress'
 import { SSEHandlerRegistry, ActionRegistry } from './handlers'
+import { buildPromptForAPI } from './utils/buildPrompt'
 import type { ISSEHandlerContext, ISSECallbacks } from './handlers'
 import type { IAgentRefs } from './utils/refs'
 import type { WorkflowUtils } from './utils/workflow'
@@ -173,15 +174,10 @@ export function createStoreMethods(ctx: IMethodsContext) {
         set({ messages: [userMessage] })
         messageUtils.addMarkdownMessage(`👤 ${prompt}`)
 
-        // 构建完整提示词
-        let fullPrompt = prompt
-        const validMedias = medias.filter((m) => m.url && !m.progress)
-        if (validMedias.length > 0) {
-          const fileLinks = validMedias.map((f) => `[${f.type}]: ${f.url}`).join('\n ')
-          fullPrompt = `${prompt}\n\n${fileLinks}`
-        }
+        // 构建 Claude Prompt 格式
+        const apiPrompt = buildPromptForAPI(prompt, medias)
 
-        console.log('[AgentStore] Creating new task with prompt:', prompt)
+        console.log('[AgentStore] Creating new task with prompt:', apiPrompt)
 
         // 添加 AI 待回复消息
         const assistantMessage = messageUtils.createAssistantMessage()
@@ -192,7 +188,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
 
         // 创建任务（SSE）- 使用闭包引用 handleSSEMessage
         const abortFn = await agentApi.createTaskWithSSE(
-          { prompt: fullPrompt, includePartialMessages: true },
+          { prompt: apiPrompt, includePartialMessages: true },
           (sseMessage: ISSEMessage) => {
             console.log('[AgentStore] SSE Message:', sseMessage)
             handleSSEMessage(sseMessage, sseCallbacks)
@@ -267,13 +263,8 @@ export function createStoreMethods(ctx: IMethodsContext) {
         }))
         messageUtils.addMarkdownMessage(`👤 ${prompt}`)
 
-        // 构建完整提示词
-        let fullPrompt = prompt
-        const validMedias = medias.filter((m) => m.url && !m.progress)
-        if (validMedias.length > 0) {
-          const fileLinks = validMedias.map((f) => `[${f.type}]: ${f.url}`).join('\n ')
-          fullPrompt = `${prompt}\n\n${fileLinks}`
-        }
+        // 构建 Claude Prompt 格式
+        const apiPrompt = buildPromptForAPI(prompt, medias)
 
         // 添加 AI 待回复消息
         const assistantMessage = messageUtils.createAssistantMessage()
@@ -283,7 +274,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
 
         // 创建任务（SSE）- 使用闭包引用 handleSSEMessage
         const abortFn = await agentApi.createTaskWithSSE(
-          { prompt: fullPrompt, taskId, includePartialMessages: true },
+          { prompt: apiPrompt, taskId, includePartialMessages: true },
           (sseMessage: ISSEMessage) => {
             console.log('[AgentStore] SSE Message:', sseMessage)
             handleSSEMessage(sseMessage)

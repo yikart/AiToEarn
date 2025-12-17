@@ -5,6 +5,7 @@
 import type { TaskMessage } from '@/api/agent'
 import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
 import type { IDisplayMessage, IWorkflowStep, IMessageStep } from '@/store/agent'
+import { parseUserMessageContent } from './parseMessageContent'
 
 /**
  * 将后端消息转换为显示格式
@@ -119,20 +120,43 @@ function processUserMessage(
   let isToolResult = false
 
   if (Array.isArray(msg.content)) {
-    msg.content.forEach((item: any) => {
-      if (item.type === 'text') {
-        content = item.text || ''
-      } else if (item.type === 'image') {
-        medias.push({
-          url: item.source?.url || '',
-          type: 'image',
-        })
-      } else if (item.type === 'tool_result') {
-        isToolResult = true
-      }
-    })
+    // 尝试使用新的解析器解析数组格式
+    const parsed = parseUserMessageContent(msg.content)
+    if (parsed.hasSpecialFormat || parsed.medias.length > 0) {
+      content = parsed.text
+      medias.push(...parsed.medias)
+    } else {
+      // 使用原有逻辑
+      msg.content.forEach((item: any) => {
+        if (item.type === 'text') {
+          content = item.text || ''
+        } else if (item.type === 'image') {
+          medias.push({
+            url: item.source?.url || '',
+            type: 'image',
+          })
+        } else if (item.type === 'video') {
+          medias.push({
+            url: item.source?.url || '',
+            type: 'video',
+          })
+        } else if (item.type === 'document') {
+          medias.push({
+            url: item.source?.url || '',
+            type: 'document',
+          })
+        } else if (item.type === 'tool_result') {
+          isToolResult = true
+        }
+      })
+    }
   } else if (typeof msg.content === 'string') {
-    content = msg.content
+    // 尝试使用新的解析器解析字符串格式
+    const parsed = parseUserMessageContent(msg.content)
+    content = parsed.text
+    if (parsed.medias.length > 0) {
+      medias.push(...parsed.medias)
+    }
   }
 
   // 只有非工具结果的用户消息才显示

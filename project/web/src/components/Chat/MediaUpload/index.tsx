@@ -6,18 +6,20 @@
 'use client'
 
 import { useRef } from 'react'
-import { Loader2, Plus, X } from 'lucide-react'
+import { Loader2, Plus, X, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
 
 /** 上传的媒体文件类型 */
 export interface IUploadedMedia {
   url: string
-  type: 'image' | 'video'
+  type: 'image' | 'video' | 'document'
   /** 上传进度 0-100，undefined 表示上传完成 */
   progress?: number
   /** 本地文件对象，用于预览 */
   file?: File
+  /** 文档名称（document 类型使用） */
+  name?: string
 }
 
 export interface IMediaUploadProps {
@@ -86,10 +88,20 @@ export function MediaUpload({
       {medias.map((media, index) => (
         <div
           key={index}
-          className="relative group w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-50"
+          className={cn(
+            'relative group rounded-lg overflow-hidden border border-gray-200 bg-gray-50',
+            media.type === 'document' ? 'w-auto min-w-[120px] h-14 px-3' : 'w-14 h-14',
+          )}
         >
           {/* 媒体预览 */}
-          {media.type === 'video' ? (
+          {media.type === 'document' ? (
+            <div className="flex items-center gap-2 h-full">
+              <FileText className="w-4 h-4 text-gray-600 shrink-0" />
+              <span className="text-xs text-gray-700 truncate max-w-[80px]">
+                {media.name || media.file?.name || '文档'}
+              </span>
+            </div>
+          ) : media.type === 'video' ? (
             <video
               src={getPreviewUrl(media)}
               className="w-full h-full object-cover"
@@ -159,7 +171,7 @@ export function MediaUpload({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/*,video/*"
+            accept="image/*,video/*,.pdf,.doc,.docx,.txt"
             multiple
             onChange={handleFileChange}
             className="hidden"

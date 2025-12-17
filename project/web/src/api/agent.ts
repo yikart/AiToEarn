@@ -77,7 +77,7 @@ export interface TaskListResponse {
 
 // 创建任务请求参数
 export interface CreateTaskParams {
-  prompt: string
+  prompt: string | any[] // 支持字符串或 Claude Prompt 格式数组
   taskId?: string // 可选，传入则继续上一次对话
   messageUuid?: string // 可选，重置到对应的消息继续
   includePartialMessages?: boolean // 使用流式消息
