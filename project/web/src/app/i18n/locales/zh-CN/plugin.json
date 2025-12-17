@@ -74,6 +74,7 @@
     "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
     "platformAccounts": "平台账号",
     "notLoggedIn": "未登录",
+    "xhsNotLoggedInTip": "小红书需要登录创作者中心",
     "loginNow": "立即登录",
     "viewPublishList": "查看发布列表",
     "permissionRequired": "需要授权",
@@ -82,6 +83,10 @@
     "sync": "同步",
     "syncToAccount": "同步到账号管理",
     "syncSuccess": "账号同步成功",
-    "syncFailed": "账号同步失败"
+    "syncFailed": "账号同步失败",
+    "xhsHome": "主页",
+    "xhsCreator": "创作者",
+    "xhsLoginHomeTip": "登录小红书主页",
+    "xhsLoginCreatorTip": "登录小红书创作者后台"
   }
 }

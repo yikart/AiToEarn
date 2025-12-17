@@ -27,6 +27,12 @@
   text-align: center;
 }
 
+.guideEntryWrapper {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color-base, #f0f0f0);
+}
+
 .iconWrapper {
   width: 80px;
   height: 80px;
@@ -94,6 +100,11 @@
   background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
   border-radius: 8px;
   margin-bottom: 20px;
+
+  .guideLink {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
 }
 
 .checkIcon {
@@ -171,6 +182,12 @@
 .notLoggedIn {
   font-size: 12px;
   color: var(--text-color-quaternary, #999);
+}
+
+.xhsNotLoggedInTip {
+  font-size: 11px;
+  color: var(--warning-color, #faad14);
+  margin-top: 2px;
 }
 
 .platformRight {

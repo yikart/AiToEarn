@@ -1,0 +1,342 @@
+/**
+ * 浏览器插件教程页面样式
+ */
+
+.pluginGuidePage {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+}
+
+/* ==================== Header ==================== */
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.headerContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+.logoText {
+  font-size: 24px;
+  font-weight: bold;
+  color: #733dec;
+}
+
+.nav {
+  display: flex;
+  gap: 32px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+}
+
+.navLink {
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #111827;
+  }
+}
+
+.getStartedBtn {
+  background: #733dec;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #5b2bc7;
+  }
+}
+
+/* ==================== Main Content ==================== */
+
+.main {
+  padding-top: 70px;
+  min-height: calc(100vh - 70px);
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ==================== Page Header ==================== */
+
+.pageHeader {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.title {
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #733dec 0%, #9f7aea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
+}
+
+.lastUpdated {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ==================== Introduction ==================== */
+
+.introduction {
+  background: linear-gradient(135deg, #f3e8ff 0%, #e0e7ff 100%);
+  border-radius: 16px;
+  padding: 24px 32px;
+  margin-bottom: 48px;
+  border-left: 4px solid #733dec;
+
+  p {
+    color: #4b5563;
+    font-size: 16px;
+    line-height: 1.8;
+    margin: 0;
+  }
+}
+
+/* ==================== Steps Container ==================== */
+
+.stepsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+/* ==================== Guide Step ==================== */
+
+.guideStep {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.stepHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #733dec 0%, #9f7aea 100%);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.stepTitle {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.stepContent {
+  color: #4b5563;
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+/* ==================== Note Box ==================== */
+
+.noteBox {
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.noteTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 8px;
+}
+
+.noteList {
+  margin: 0;
+  padding-left: 20px;
+
+  li {
+    color: #78350f;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 4px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+/* ==================== Image Wrapper ==================== */
+
+.imageWrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+}
+
+.guideImage {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==================== Complete Section ==================== */
+
+.completeSection {
+  text-align: center;
+  background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+  border-radius: 16px;
+  padding: 48px 32px;
+}
+
+.completeIcon {
+  font-size: 64px;
+  margin-bottom: 16px;
+}
+
+.completeTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #065f46;
+  margin-bottom: 12px;
+}
+
+.completeContent {
+  font-size: 18px;
+  color: #047857;
+  margin: 0;
+}
+
+/* ==================== FAQ Section ==================== */
+
+.faqSection {
+  margin-top: 64px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+.faqTitle {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.faqItem {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.faqQuestion {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.questionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #733dec;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.faqAnswer {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.answerIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: #10b981;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+

@@ -3,19 +3,36 @@
  *
  * 实现策略：
  * - 点赞、收藏、评论：统一使用自动化方案（避免 API 风控）
+ * - 首页列表：使用 API 方案获取推荐作品
  * - 评论：不支持二级评论
+ *
+ * 目录结构:
+ * douyin/
+ *   ├── index.ts      # 主类和导出入口
+ *   ├── types.ts      # 抖音特定类型定义
+ *   └── homeFeed.ts   # 首页列表功能模块
  */
 
 import { PlatType } from '@/app/config/platConfig'
 import type {
+  CommentListParams,
+  CommentListResult,
   CommentParams,
   CommentResult,
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
+  HomeFeedListParams,
+  HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
+  SubCommentListParams,
 } from '../types'
+import type { DouyinDirectMessageResponse, DouyinInteractionResponse } from './types'
+import { getHomeFeedList, homeFeedCursor } from './homeFeed'
+import { getWorkDetail, getWorkDetailFromListItem } from './workDetail'
 
 /**
  * 抖音平台交互类
@@ -33,6 +50,14 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   }
 
   /**
+   * 重置首页列表游标缓存
+   * 用于刷新列表时清除缓存
+   */
+  resetHomeFeedCursor(): void {
+    homeFeedCursor.reset()
+  }
+
+  /**
    * 点赞/取消点赞作品（自动化方案）
    * 使用自动化方案避免 API 风控
    * @param workId 作品ID
@@ -45,7 +70,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       action: 'like',
       workId,
       targetState: isLike,
-    })
+    }) as DouyinInteractionResponse
 
     return {
       success: response.success,
@@ -76,7 +101,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       workId: params.workId,
       targetState: true,
       content: params.content,
-    })
+    }) as DouyinInteractionResponse
 
     return {
       success: response.success,
@@ -98,7 +123,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       action: 'favorite',
       workId,
       targetState: isFavorite,
-    })
+    }) as DouyinInteractionResponse
 
     return {
       success: response.success,
@@ -110,7 +135,6 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   /**
    * 发送私信（自动化方案）
    * 根据作品ID或作者链接发送私信
-   * 注意：小红书不支持私信
    * @param params 私信参数
    */
   async sendDirectMessage(params: DirectMessageParams): Promise<DirectMessageResult> {
@@ -135,12 +159,70 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       workId: params.workId,
       authorUrl: params.authorUrl,
       content: params.content,
-    })
+    }) as DouyinDirectMessageResponse
 
     return {
       success: response.success,
       message: response.message || response.error,
       rawData: response,
+    }
+  }
+
+  /**
+   * 获取首页作品列表
+   * @param params 分页参数
+   */
+  async getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
+    return getHomeFeedList(params)
+  }
+
+  /**
+   * 获取作品详情
+   * 抖音直接从list的item数据获取详情，不需要额外请求API
+   * @param params 详情请求参数
+   */
+  async getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
+    return getWorkDetail(params)
+  }
+
+  /**
+   * 从列表项获取作品详情
+   * 这是抖音特有的方法，直接从 HomeFeedItem.origin 获取详情
+   * @param listItemOrigin HomeFeedItem.origin 原始数据
+   */
+  getWorkDetailFromListItem(listItemOrigin: unknown): GetWorkDetailResult {
+    return getWorkDetailFromListItem(listItemOrigin)
+  }
+
+  /**
+   * 获取评论列表
+   * TODO: 待实现抖音评论列表功能
+   * @param params 评论列表请求参数
+   */
+  async getCommentList(params: CommentListParams): Promise<CommentListResult> {
+    // TODO: 实现抖音评论列表
+    return {
+      success: false,
+      message: '抖音评论列表功能开发中',
+      comments: [],
+      cursor: '',
+      hasMore: false,
+    }
+  }
+
+  /**
+   * 获取子评论列表（查看更多回复）
+   * TODO: 待实现抖音子评论列表功能
+   * @param params 子评论列表请求参数
+   */
+  async getSubCommentList(params: SubCommentListParams): Promise<CommentListResult> {
+    // TODO: 实现抖音子评论列表
+    return {
+      success: false,
+      message: '抖音子评论列表功能开发中',
+      comments: [],
+      cursor: '',
+      hasMore: false,
     }
   }
 }
@@ -149,3 +231,9 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
  * 抖音平台交互实例
  */
 export const douyinInteraction = new DouyinPlatformInteraction()
+
+// 导出类型（方便外部使用）
+export type { DouyinHomeFeedItem, DouyinHomeFeedResponse } from './types'
+
+// 导出工具方法
+export { getWorkDetailFromListItem } from './workDetail'

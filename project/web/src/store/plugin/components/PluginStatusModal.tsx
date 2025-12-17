@@ -7,6 +7,7 @@
 
 import type { PluginPlatformType, PublishTask } from '../types/baseTypes'
 import {
+  BookOutlined,
   CheckCircleOutlined,
   LoginOutlined,
   SyncOutlined,
@@ -17,7 +18,8 @@ import { toast } from '@/lib/toast'
 import { Modal } from '@/components/ui/modal'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { useParams } from 'next/navigation'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import AvatarPlat from '@/components/AvatarPlat'
 import { useAccountStore } from '@/store/account'
 import { PLUGIN_DOWNLOAD_LINKS } from '../constants'
@@ -57,6 +59,9 @@ function getPlatformName(platform: PluginPlatformType): string {
  */
 export function PluginStatusModal({ visible, onClose, highlightPlatform }: PluginStatusModalProps) {
   const { t } = useTranslation('plugin')
+  const { t: tGuide } = useTranslation('pluginGuide')
+  const params = useParams()
+  const lng = params?.lng || 'en'
   const status = usePluginStore(state => state.status)
   const platformAccounts = usePluginStore(state => state.platformAccounts)
   const publishTasks = usePluginStore(state => state.publishTasks)
@@ -150,6 +155,18 @@ export function PluginStatusModal({ visible, onClose, highlightPlatform }: Plugi
           pluginStatus={pluginStatusType}
           onCheckPermission={init}
         />
+        {/* 教程入口 */}
+        <div className={styles.guideEntryWrapper}>
+          <Button
+            type="link"
+            icon={<BookOutlined />}
+            onClick={() => {
+              window.open(`/${lng}/websit/plugin-guide`, '_blank')
+            }}
+          >
+            {tGuide('viewGuide')}
+          </Button>
+        </div>
       </div>
     )
   }
@@ -164,6 +181,17 @@ export function PluginStatusModal({ visible, onClose, highlightPlatform }: Plugi
         <div className={styles.statusBanner}>
           <CheckCircleOutlined className={styles.checkIcon} />
           <span>{t('header.activeDescription')}</span>
+          <Button
+            type="link"
+            size="small"
+            icon={<BookOutlined />}
+            className={styles.guideLink}
+            onClick={() => {
+              window.open(`/${lng}/websit/plugin-guide`, '_blank')
+            }}
+          >
+            {tGuide('viewGuide')}
+          </Button>
         </div>
 
         {/* 平台账号列表 */}
@@ -226,6 +254,12 @@ export function PluginStatusModal({ visible, onClose, highlightPlatform }: Plugi
                           : (
                               <div className={styles.notLoggedIn}>
                                 {t('header.notLoggedIn')}
+                                {/* 小红书未登录时显示特殊提示 */}
+                                {platform === PlatType.Xhs && (
+                                  <div className={styles.xhsNotLoggedInTip}>
+                                    {t('header.xhsNotLoggedInTip' as any)}
+                                  </div>
+                                )}
                               </div>
                             )}
                       </div>
@@ -250,18 +284,18 @@ export function PluginStatusModal({ visible, onClose, highlightPlatform }: Plugi
                           )
                         : (
                             <Tooltip title={t('header.loginNow')}>
-                              <Button
-                                type="link"
-                                size="small"
-                                loading={isLogging}
-                                icon={<LoginOutlined />}
-                                onClick={() => {
-                                  window.open(AccountPlatInfoMap.get(platform)?.url || '')
-                                }}
-                              >
-                                {t('header.loginNow')}
-                              </Button>
-                            </Tooltip>
+                                    <Button
+                                      type="link"
+                                      size="small"
+                                      loading={isLogging}
+                                      icon={<LoginOutlined />}
+                                      onClick={() => {
+                                        window.open(AccountPlatInfoMap.get(platform)?.url || '')
+                                      }}
+                                    >
+                                      {t('header.loginNow')}
+                                    </Button>
+                                  </Tooltip>
                           )}
                     </div>
                   </div>

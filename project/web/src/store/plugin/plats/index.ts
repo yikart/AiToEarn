@@ -31,14 +31,26 @@
 // 类型导出
 export type {
   BaseResult,
+  CommentItem,
+  CommentListParams,
+  CommentListResult,
   CommentParams,
   CommentResult,
+  CommentUser,
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
+  HomeFeedItem,
+  HomeFeedListParams,
+  HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
+  SubCommentListParams,
   SupportedPlatformType,
+  TopicInfo,
+  WorkDetail,
 } from './types'
 
 // 管理器
