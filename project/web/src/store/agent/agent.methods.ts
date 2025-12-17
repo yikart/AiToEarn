@@ -95,6 +95,9 @@ export function createStoreMethods(ctx: IMethodsContext) {
       return
     }
 
+    console.log("00000000000000");
+    console.log(sseMessage, sseContext, callbacks);
+
     // 处理 result 消息（需要特殊处理）
     if (sseMessage.type === 'result' && sseMessage.message) {
       handleResult(sseMessage.message)
