@@ -77,7 +77,8 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
   }
 
   return (
-    <div className={cn('w-full max-w-5xl mx-auto', className)}>
+    <section className={className}>
+      <div className="w-full max-w-5xl mx-auto">
       {/* 标题栏 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
@@ -88,7 +89,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
         </div>
         <button
           onClick={handleViewAll}
-          className="flex items-center gap-1 text-sm text-purple-600 hover:text-purple-700 transition-colors"
+          className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
         >
           {t('home.viewAll' as any)}
           <ArrowRight className="w-4 h-4" />
@@ -112,7 +113,8 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
               />
             ))}
       </div>
-    </div>
+      </div>
+    </section>
   )
 }
 

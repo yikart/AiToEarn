@@ -64,9 +64,9 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
               collapsed ? 'justify-center p-1' : 'gap-2 px-2 py-1.5',
             )}
           >
-            <Avatar className="h-8 w-8 shrink-0 border-2 border-purple-200">
+            <Avatar className="h-8 w-8 shrink-0 border-2 border-gray-200">
               <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
-              <AvatarFallback className="bg-purple-400 font-semibold text-white">
+              <AvatarFallback className="bg-gray-500 font-semibold text-white">
                 {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
@@ -119,9 +119,9 @@ function NavItem({
     >
       {/* 激活状态左边框指示器 */}
       {isActive && (
-        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-purple-500" />
+        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-gray-900" />
       )}
-      <span className={cn('flex shrink-0 items-center justify-center', isActive && 'text-purple-500')}>
+      <span className={cn('flex shrink-0 items-center justify-center', isActive && 'text-gray-900')}>
         {icon || <FileText size={20} />}
       </span>
       {!collapsed && (
@@ -378,7 +378,7 @@ const LayoutSidebar = () => {
                     {!collapsed && <span className="text-sm">{t('vip')}</span>}
                   </div>
                   {!collapsed && (
-                    <span className="text-xs text-purple-500">{t('subscribe')}</span>
+                    <span className="text-xs text-gray-500">{t('subscribe')}</span>
                   )}
                 </Link>
               </TooltipTrigger>

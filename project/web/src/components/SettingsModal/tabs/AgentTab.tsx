@@ -139,10 +139,10 @@ export function AgentTab() {
       {/* 模型选择 */}
       <div>
         <label className="mb-2 block text-sm font-medium text-gray-900">
-          Default Model
+          {t('agent.defaultModel')}
         </label>
         <p className="mb-4 text-sm text-gray-500">
-          Select the default AI model for Agent conversations
+          {t('agent.defaultModelDesc')}
         </p>
 
         <div className="space-y-4">
@@ -191,7 +191,7 @@ export function AgentTab() {
                             </div>
                           )
                         : (
-                            <span className="text-gray-400">Select a model...</span>
+                            <span className="text-gray-400">{t('agent.selectModel')}</span>
                           )}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -205,7 +205,7 @@ export function AgentTab() {
                         type="text"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
-                        placeholder="Search models..."
+                        placeholder={t('agent.searchModels')}
                         className="h-10 flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
                       />
                       {searchQuery && (
@@ -229,7 +229,7 @@ export function AgentTab() {
                       {filteredModels.length === 0
                         ? (
                             <div className="py-6 text-center text-sm text-gray-500">
-                              No model found.
+                              {t('agent.noModelFound')}
                             </div>
                           )
                         : (
@@ -305,7 +305,7 @@ export function AgentTab() {
 
           {/* 保存按钮 */}
           <Button onClick={handleSave} disabled={saving || loading}>
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('agent.saving') : t('agent.save')}
           </Button>
         </div>
       </div>

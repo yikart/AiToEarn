@@ -2,6 +2,7 @@
   "title": "设置",
   "tabs": {
     "profile": "个人资料",
+    "agent": "Agent",
     "subscription": "订阅",
     "general": "通用"
   },
@@ -39,11 +40,22 @@
   "general": {
     "language": "网站语言",
     "languageDesc": "此更改不影响内容生成所使用的语言",
-    "theme": "主题",
-    "themeDesc": "选择您偏好的主题模式"
+    "theme": "外观",
+    "themeDesc": "选择您偏好的主题模式",
+    "themeLight": "浅色",
+    "themeDark": "深色",
+    "themeSystem": "跟随系统"
   },
   "agent": {
+    "title": "Agent",
+    "defaultModel": "默认模型",
+    "defaultModelDesc": "选择 Agent 对话的默认 AI 模型",
+    "selectModel": "选择模型...",
+    "searchModels": "搜索模型...",
+    "noModelFound": "未找到模型",
     "pleaseSelectModel": "请选择模型",
+    "save": "保存",
+    "saving": "保存中...",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败"
   }

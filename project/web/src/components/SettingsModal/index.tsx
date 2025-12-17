@@ -60,7 +60,7 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   // Tab 配置列表（易于扩展）
   const tabConfigs: TabConfig[] = [
     { key: 'profile', icon: <User className="h-4 w-4" />, label: t('tabs.profile'), requireAuth: true },
-    { key: 'agent', icon: <Bot className="h-4 w-4" />, label: 'Agent', requireAuth: true },
+    { key: 'agent', icon: <Bot className="h-4 w-4" />, label: t('tabs.agent'), requireAuth: true },
     { key: 'general', icon: <Globe className="h-4 w-4" />, label: t('tabs.general') },
   ]
 
@@ -107,7 +107,7 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
                     className={cn(
                       'flex items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm transition-all',
                       isActive
-                        ? 'bg-purple-50 font-medium text-purple-600'
+                        ? 'bg-gray-100 font-medium text-gray-900'
                         : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
                     )}
                   >

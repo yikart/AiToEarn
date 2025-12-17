@@ -2,6 +2,7 @@
   "title": "Settings",
   "tabs": {
     "profile": "Profile",
+    "agent": "Agent",
     "subscription": "Subscription",
     "general": "General"
   },
@@ -39,11 +40,22 @@
   "general": {
     "language": "Website Language",
     "languageDesc": "This change does not affect the language used for content generation",
-    "theme": "Theme",
-    "themeDesc": "Choose your preferred theme mode"
+    "theme": "Appearance",
+    "themeDesc": "Choose your preferred theme mode",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
   },
   "agent": {
+    "title": "Agent",
+    "defaultModel": "Default Model",
+    "defaultModelDesc": "Select the default AI model for Agent conversations",
+    "selectModel": "Select a model...",
+    "searchModels": "Search models...",
+    "noModelFound": "No model found",
     "pleaseSelectModel": "Please select a model",
+    "save": "Save",
+    "saving": "Saving...",
     "saveSuccess": "Saved successfully",
     "saveFailed": "Failed to save"
   }

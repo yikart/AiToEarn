@@ -61,19 +61,19 @@ export function TaskCard({
       onClick={handleClick}
       className={cn(
         'group relative flex flex-col p-4 rounded-xl border border-gray-200 bg-white cursor-pointer transition-all',
-        'hover:border-purple-300 hover:shadow-md hover:shadow-purple-50',
+        'hover:border-gray-300 hover:shadow-md',
         className,
       )}
     >
-      {/* 图标 */}
-      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3">
-        <MessageSquare className="w-5 h-5 text-white" />
+      {/* 图标 + 标题 */}
+      <div className="flex items-start gap-3 mb-2">
+        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
+          <MessageSquare className="w-4 h-4 text-gray-600" />
+        </div>
+        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 flex-1 pt-1">
+          {title || 'New Chat'}
+        </h4>
       </div>
-
-      {/* 标题 */}
-      <h4 className="text-sm font-medium text-gray-900 line-clamp-2 mb-2 min-h-[40px]">
-        {title || 'New Chat'}
-      </h4>
 
       {/* 时间 */}
       <span className="text-xs text-gray-400">

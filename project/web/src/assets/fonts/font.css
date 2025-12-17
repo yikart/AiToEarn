@@ -4,3 +4,11 @@
   font-weight: normal;
   font-style: normal;
 }
+
+// 思源常规字体
+@font-face {
+  font-family: "SourceHanSansCN-Regular";
+  src: url("./SourceHanSansCN-Regular.ttf");
+  font-weight: normal;
+  font-style: normal;
+}

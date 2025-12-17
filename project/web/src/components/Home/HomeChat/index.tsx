@@ -1,6 +1,7 @@
 /**
  * HomeChat - 首页Chat组件
  * 功能：大尺寸聊天输入框，使用全局 AgentStore 发起 SSE 任务，获取 taskId 后跳转到对话详情页
+ * 支持外部传入提示词和图片（如从 PromptGallery 一键应用）
  */
 
 'use client'
@@ -17,17 +18,33 @@ import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import logo from '@/assets/images/logo.png'
 
+/** 应用的提示词数据 */
+export interface IAppliedPrompt {
+  prompt: string
+  image?: string
+  mode: 'edit' | 'generate'
+}
+
 export interface IHomeChatProps {
   /** 登录检查回调 */
   onLoginRequired?: () => void
   /** 自定义类名 */
   className?: string
+  /** 外部应用的提示词（从 PromptGallery 一键应用） */
+  appliedPrompt?: IAppliedPrompt | null
+  /** 提示词已处理完成的回调 */
+  onAppliedPromptHandled?: () => void
 }
 
 /**
  * HomeChat - 首页Chat组件
  */
-export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
+export function HomeChat({
+  onLoginRequired,
+  className,
+  appliedPrompt,
+  onAppliedPromptHandled,
+}: IHomeChatProps) {
   const { t } = useTransClient('chat')
   const { t: tHome } = useTransClient('home')
   const router = useRouter()
@@ -40,6 +57,7 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
   // 使用媒体上传 Hook
   const {
     medias,
+    setMedias,
     isUploading,
     handleMediasChange,
     handleMediaRemove,
@@ -47,6 +65,32 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
   } = useMediaUpload({
     onError: () => toast.error(t('media.uploadFailed' as any)),
   })
+
+  /**
+   * 处理外部应用的提示词（从 PromptGallery 一键应用）
+   */
+  useEffect(() => {
+    if (appliedPrompt) {
+      // 设置提示词到输入框
+      setInputValue(appliedPrompt.prompt)
+
+      // 如果是编辑模式且有图片，添加到媒体列表
+      if (appliedPrompt.mode === 'edit' && appliedPrompt.image) {
+        setMedias([
+          {
+            url: appliedPrompt.image,
+            type: 'image',
+          },
+        ])
+      }
+
+      // 通知父组件已处理完成
+      onAppliedPromptHandled?.()
+
+      // 显示提示
+      toast.success('提示词已应用，可直接发送或修改后发送')
+    }
+  }, [appliedPrompt, setMedias, onAppliedPromptHandled])
 
   // 全局 Store
   const { createTask, setActionContext } = useAgentStore()
@@ -103,18 +147,16 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
     <div className={cn('w-full max-w-3xl mx-auto', className)}>
       {/* 标题区域 */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 shadow-lg shadow-purple-200 mb-4">
+        <div className="inline-flex items-center gap-3 mb-4">
           <Image
             src={logo}
             alt="AiToEarn"
-            width={40}
-            height={40}
-            className="w-10 h-10 object-contain"
+            width={56}
+            height={56}
+            className="w-14 h-14 object-contain"
           />
+          <span className="text-gray-900 font-bold text-3xl">AiToEarn</span>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          {tHome('agentGenerator.title' as any) || t('home.title' as any)}
-        </h1>
         <p className="text-sm text-gray-500">
           {tHome('agentGenerator.subtitle' as any) || t('home.subtitle' as any)}
         </p>
@@ -136,7 +178,7 @@ export function HomeChat({ onLoginRequired, className }: IHomeChatProps) {
 
       {/* 提示标签 */}
       <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-purple-50 text-purple-600 text-xs font-medium">
+        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
           <Sparkles className="w-3 h-3" />
           {t('home.aiCreation' as any)}
         </span>
