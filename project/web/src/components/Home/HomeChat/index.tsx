@@ -146,8 +146,8 @@ export function HomeChat({
   return (
     <div className={cn('w-full max-w-3xl mx-auto', className)}>
       {/* 标题区域 */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-3 mb-4">
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center gap-3 mb-3">
           <Image
             src={logo}
             alt="AiToEarn"
@@ -157,7 +157,7 @@ export function HomeChat({
           />
           <span className="text-foreground font-bold text-3xl">AiToEarn</span>
         </div>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {tHome('agentGenerator.subtitle' as any) || t('home.subtitle' as any)}
         </p>
       </div>

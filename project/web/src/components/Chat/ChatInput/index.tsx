@@ -95,8 +95,10 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        'rounded-2xl border bg-card shadow-lg transition-all',
-        isFocused ? 'border-primary shadow-primary/10' : 'border-border',
+        'rounded-2xl border bg-card transition-all duration-300',
+        isFocused
+          ? 'border-primary/60 shadow-[0_0_0_3px_hsl(var(--primary)/0.1),0_4px_20px_-4px_hsl(var(--primary)/0.25)]'
+          : 'border-border shadow-sm hover:border-border/80 hover:shadow-md',
         mode === 'large' ? 'p-4' : 'p-3',
         className,
       )}
@@ -139,7 +141,7 @@ export function ChatInput({
           disabled={disabled || isGenerating}
           rows={mode === 'large' ? 3 : 1}
           className={cn(
-            'flex-1 resize-none border-none outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
+            'flex-1 resize-none border-none outline-none focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             mode === 'large' ? 'text-base min-h-[80px]' : 'text-sm min-h-[24px]',
           )}
