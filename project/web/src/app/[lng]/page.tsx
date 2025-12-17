@@ -86,7 +86,7 @@ export default function Home() {
   )
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[70vh] flex items-center justify-center px-4 py-12">
         <HomeChat
@@ -97,10 +97,10 @@ export default function Home() {
       </section>
 
       {/* 任务预览区域 - 无数据时自动隐藏 */}
-      <TaskPreview limit={4} className="px-4 py-8 border-t border-gray-100" />
+      <TaskPreview limit={4} className="px-4 py-8 border-t border-border" />
 
       {/* 提示词画廊区域 */}
-      <section className="border-t border-gray-100">
+      <section className="border-t border-border">
         <PromptGallery onApplyPrompt={handleApplyPrompt} />
       </section>
 

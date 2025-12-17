@@ -104,15 +104,15 @@ export function MediaUpload({
         <div
           key={`${media.url}-${index}`}
           className={cn(
-            'relative group rounded-lg overflow-hidden border border-gray-200 bg-gray-50',
+            'relative group rounded-lg overflow-hidden border border-border bg-muted',
             media.type === 'document' ? 'w-auto min-w-[120px] h-14 px-3' : 'w-14 h-14',
           )}
         >
           {/* 媒体预览 */}
           {media.type === 'document' ? (
             <div className="flex items-center gap-2 h-full">
-              <FileText className="w-4 h-4 text-gray-600 shrink-0" />
-              <span className="text-xs text-gray-700 truncate max-w-[80px]">
+              <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+              <span className="text-xs text-foreground truncate max-w-[80px]">
                 {media.name || media.file?.name || t('media.document' as any)}
               </span>
             </div>
@@ -172,7 +172,7 @@ export function MediaUpload({
           {!disabled && media.progress === undefined && (
             <button
               onClick={() => onRemove?.(index)}
-              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-red-600"
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm hover:bg-destructive/90"
             >
               <X className="w-3 h-3" />
             </button>
@@ -195,15 +195,15 @@ export function MediaUpload({
             onClick={handleUploadClick}
             disabled={disabled || isUploading}
             className={cn(
-              'w-14 h-14 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center transition-all',
-              'hover:border-purple-400 hover:bg-purple-50',
-              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:bg-transparent',
+              'w-14 h-14 rounded-lg border-2 border-dashed border-border flex items-center justify-center transition-all',
+              'hover:border-primary hover:bg-primary/10',
+              'disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:bg-transparent',
             )}
           >
             {isUploading ? (
-              <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+              <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />
             ) : (
-              <Plus className="w-5 h-5 text-gray-400" />
+              <Plus className="w-5 h-5 text-muted-foreground" />
             )}
           </button>
         </>

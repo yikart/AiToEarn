@@ -96,7 +96,7 @@ export function ChatMessageList({
             variant="secondary"
             size="sm"
             onClick={onScrollToBottom}
-            className="rounded-full shadow-lg bg-white/95 backdrop-blur-sm hover:bg-white border border-gray-200 gap-1.5 px-4 transition-all hover:shadow-xl"
+            className="rounded-full shadow-lg bg-background/95 backdrop-blur-sm hover:bg-background border border-border gap-1.5 px-4 transition-all hover:shadow-xl"
           >
             <ArrowDown className="w-4 h-4" />
             <span className="text-sm">{scrollToBottomText}</span>

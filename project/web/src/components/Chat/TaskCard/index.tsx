@@ -60,23 +60,23 @@ export function TaskCard({
     <div
       onClick={handleClick}
       className={cn(
-        'group relative flex flex-col p-4 rounded-xl border border-gray-200 bg-white cursor-pointer transition-all',
-        'hover:border-gray-300 hover:shadow-md',
+        'group relative flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
+        'hover:border-border hover:shadow-md',
         className,
       )}
     >
       {/* 图标 + 标题 */}
       <div className="flex items-start gap-3 mb-2">
-        <div className="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center shrink-0">
-          <MessageSquare className="w-4 h-4 text-gray-600" />
+        <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center shrink-0">
+          <MessageSquare className="w-4 h-4 text-muted-foreground" />
         </div>
-        <h4 className="text-sm font-medium text-gray-900 line-clamp-2 flex-1 pt-1">
+        <h4 className="text-sm font-medium text-foreground line-clamp-2 flex-1 pt-1">
           {title || 'New Chat'}
         </h4>
       </div>
 
       {/* 时间 */}
-      <span className="text-xs text-gray-400">
+      <span className="text-xs text-muted-foreground">
         {formatRelativeTime(new Date(updatedAt || createdAt))}
       </span>
 
@@ -88,7 +88,7 @@ export function TaskCard({
             className={cn(
               'absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center',
               'opacity-0 group-hover:opacity-100 transition-opacity',
-              'hover:bg-gray-100 text-gray-400 hover:text-gray-600',
+              'hover:bg-muted text-muted-foreground hover:text-foreground',
             )}
           >
             <MoreHorizontal className="w-4 h-4" />
@@ -97,7 +97,7 @@ export function TaskCard({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             onClick={handleDelete}
-            className="text-red-600 focus:text-red-600 focus:bg-red-50"
+            className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Delete

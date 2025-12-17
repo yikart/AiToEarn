@@ -82,9 +82,9 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
   return (
     <div className="flex flex-col gap-4">
       {/* 顶部状态栏 */}
-      <div className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-3">
-        <CheckCircle className="h-5 w-5 text-green-500" />
-        <span className="text-sm text-green-700">
+      <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-3">
+        <CheckCircle className="h-5 w-5 text-success" />
+        <span className="text-sm text-success">
           {t('header.activeDescription')}
         </span>
       </div>
@@ -101,8 +101,8 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
               className={cn(
                 'flex items-center justify-between rounded-lg border p-4 transition-all',
                 shouldHighlight
-                  ? 'border-purple-400 bg-purple-50 shadow-md shadow-purple-100'
-                  : 'border-gray-200 bg-white hover:border-gray-300',
+                  ? 'border-primary bg-primary/10 shadow-md shadow-primary/10'
+                  : 'border-border bg-card hover:border-border',
               )}
             >
               {/* 左侧：账号信息 */}
@@ -124,27 +124,27 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
                     )
                   : (
                       <Avatar className="h-11 w-11">
-                        <AvatarFallback className="bg-gray-100 text-gray-400">
+                        <AvatarFallback className="bg-muted text-muted-foreground">
                           {getPlatformName(platform).charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                     )}
 
                 <div className="flex flex-col">
-                  <span className="font-medium text-gray-900">
+                  <span className="font-medium text-foreground">
                     {getPlatformName(platform)}
                   </span>
                   {account
                     ? (
-                        <span className="text-sm text-gray-500">
+                        <span className="text-sm text-muted-foreground">
                           {account.nickname || account.uid}
                         </span>
                       )
                     : (
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-muted-foreground">
                           {t('header.notLoggedIn')}
                           {platform === PlatType.Xhs && (
-                            <span className="ml-1 text-xs text-amber-500">
+                            <span className="ml-1 text-xs text-warning">
                               {t('header.xhsNotLoggedInTip' as any)}
                             </span>
                           )}
@@ -158,13 +158,13 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
                 {account
                   ? (
                       <>
-                        <Badge variant="outline" className="border-green-200 bg-green-50 text-green-600">
+                        <Badge variant="outline" className="border-success/20 bg-success/10 text-success">
                           {t('status.connected')}
                         </Badge>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="gap-1 text-gray-500 hover:text-gray-700"
+                          className="gap-1 text-muted-foreground hover:text-foreground"
                           onClick={() => handleSyncAccount(platform)}
                           disabled={syncLoading === platform}
                         >

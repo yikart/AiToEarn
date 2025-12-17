@@ -26,13 +26,13 @@ export function FeaturedCard({ item, onApply, onClick, t }: FeaturedCardProps) {
       className="group cursor-pointer h-full"
       onClick={() => onClick(item)}
     >
-      <div className="relative bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-gray-200 transition-all duration-500 transform hover:-translate-y-1 h-full flex flex-col">
+      <div className="relative bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-border/50 transition-all duration-500 transform hover:-translate-y-1 h-full flex flex-col">
         {/* 图片区域 - 固定高度 */}
         <div className="relative overflow-hidden h-48 flex-shrink-0">
           <LazyImage src={item.preview} alt={item.title} fixedHeight />
 
           {/* 悬浮遮罩层 */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4">
+          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-4">
             <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
               <h3 className="text-white font-bold text-base mb-1 line-clamp-1">
                 {item.title}
@@ -45,7 +45,7 @@ export function FeaturedCard({ item, onApply, onClick, t }: FeaturedCardProps) {
               <Button
                 size="sm"
                 onClick={(e) => onApply(item, e)}
-                className="w-full bg-white text-gray-900 hover:bg-gray-100 rounded-lg font-medium shadow-lg text-xs h-8"
+                className="w-full bg-card text-foreground hover:bg-muted rounded-lg font-medium shadow-lg text-xs h-8"
               >
                 <Check className="w-3 h-3 mr-1" />
                 {t('applyButton')}
@@ -55,13 +55,13 @@ export function FeaturedCard({ item, onApply, onClick, t }: FeaturedCardProps) {
         </div>
 
         {/* 底部信息栏（固定高度） */}
-        <div className="p-3 bg-white group-hover:opacity-0 transition-opacity duration-300 flex-1 flex flex-col justify-between">
-          <h3 className="font-semibold text-gray-900 text-sm line-clamp-1 mb-2">
+        <div className="p-3 bg-card group-hover:opacity-0 transition-opacity duration-300 flex-1 flex flex-col justify-between">
+          <h3 className="font-semibold text-foreground text-sm line-clamp-1 mb-2">
             {item.title}
           </h3>
           <div className="flex items-center gap-2 flex-wrap">
             {item.sub_category && (
-              <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+              <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
                 {item.sub_category}
               </span>
             )}
@@ -69,8 +69,8 @@ export function FeaturedCard({ item, onApply, onClick, t }: FeaturedCardProps) {
               className={cn(
                 'text-xs px-2 py-0.5 rounded-full',
                 item.mode === 'edit'
-                  ? 'bg-blue-50 text-blue-600'
-                  : 'bg-gray-100 text-gray-600'
+                  ? 'bg-info/10 text-info'
+                  : 'bg-muted text-muted-foreground'
               )}
             >
               {t(`badges.${item.mode === 'edit' ? 'edit' : 'generate'}` as any)}

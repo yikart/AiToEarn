@@ -62,8 +62,8 @@ export function LazyImage({
     >
       {/* 骨架屏加载状态 */}
       {!isLoaded && !isError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <Loader2 className="w-8 h-8 text-gray-400 animate-spin" />
+        <div className="absolute inset-0 flex items-center justify-center bg-muted">
+          <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
         </div>
       )}
 
@@ -84,7 +84,7 @@ export function LazyImage({
 
       {/* 错误状态 */}
       {isError && (
-        <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm bg-gray-100">
+        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground text-sm bg-muted">
           <ImageIcon className="w-6 h-6 mr-2 opacity-50" />
           加载失败
         </div>

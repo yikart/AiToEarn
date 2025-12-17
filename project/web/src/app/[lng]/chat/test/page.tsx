@@ -368,39 +368,39 @@ export default function SSEMessageTestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
+        <h1 className="text-2xl font-bold text-foreground mb-6">
           🧪 SSE 消息处理测试
         </h1>
 
         {/* 状态面板 */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           {/* Agent 状态 */}
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-card rounded-lg shadow p-4">
             <h2 className="text-lg font-semibold mb-3">📊 Agent 状态</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">生成中:</span>
-                <span className={isGenerating ? 'text-yellow-600' : 'text-gray-600'}>
+                <span className="text-muted-foreground">生成中:</span>
+                <span className={isGenerating ? 'text-warning' : 'text-muted-foreground'}>
                   {isGenerating ? '是' : '否'}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">进度:</span>
+                <span className="text-muted-foreground">进度:</span>
                 <span>{progress}%</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">消费:</span>
+                <span className="text-muted-foreground">消费:</span>
                 <span>${currentCost.toFixed(4)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">消息数:</span>
+                <span className="text-muted-foreground">消息数:</span>
                 <span>{messages.length}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">Action 上下文:</span>
-                <span className={isContextSet ? 'text-green-600' : 'text-red-600'}>
+                <span className="text-muted-foreground">Action 上下文:</span>
+                <span className={isContextSet ? 'text-success' : 'text-destructive'}>
                   {isContextSet ? '已设置' : '未设置'}
                 </span>
               </div>
@@ -408,37 +408,37 @@ export default function SSEMessageTestPage() {
           </div>
 
           {/* 插件状态 */}
-          <div className="bg-white rounded-lg shadow p-4">
+          <div className="bg-card rounded-lg shadow p-4">
             <h2 className="text-lg font-semibold mb-3">🔌 插件状态</h2>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-gray-500">插件状态:</span>
+                <span className="text-muted-foreground">插件状态:</span>
                 <span
                   className={
                     pluginStatus === PluginStatus.READY
-                      ? 'text-green-600'
+                      ? 'text-success'
                       : pluginStatus === PluginStatus.NOT_INSTALLED
-                        ? 'text-red-600'
-                        : 'text-yellow-600'
+                        ? 'text-destructive'
+                        : 'text-warning'
                   }
                 >
                   {pluginStatus}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">发布中:</span>
+                <span className="text-muted-foreground">发布中:</span>
                 <span>{isPublishing ? '是' : '否'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">小红书:</span>
+                <span className="text-muted-foreground">小红书:</span>
                 <span>{platformAccounts.xhs?.nickname || '未登录'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">抖音:</span>
+                <span className="text-muted-foreground">抖音:</span>
                 <span>{platformAccounts.douyin?.nickname || '未登录'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-500">账号总数:</span>
+                <span className="text-muted-foreground">账号总数:</span>
                 <span>{allAccounts.length}</span>
               </div>
             </div>
@@ -446,7 +446,7 @@ export default function SSEMessageTestPage() {
         </div>
 
         {/* 测试数据选择 */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-card rounded-lg shadow p-4 mb-6">
           <h2 className="text-lg font-semibold mb-3">📝 测试数据选择</h2>
           <div className="flex gap-2 mb-4">
             <Button
@@ -468,15 +468,15 @@ export default function SSEMessageTestPage() {
               全部平台
             </Button>
           </div>
-          <div className="text-sm text-gray-500">
-            当前选择: <span className="font-medium text-gray-700">{selectedTest}</span>
+          <div className="text-sm text-muted-foreground">
+            当前选择: <span className="font-medium text-foreground">{selectedTest}</span>
             {' | '}
-            结果数量: <span className="font-medium text-gray-700">{getTestData().message?.result?.length || 0}</span>
+            结果数量: <span className="font-medium text-foreground">{getTestData().message?.result?.length || 0}</span>
           </div>
         </div>
 
         {/* 操作按钮 */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-card rounded-lg shadow p-4 mb-6">
           <h2 className="text-lg font-semibold mb-3">🎮 操作</h2>
           <div className="flex flex-wrap gap-3">
             <Button onClick={handleSetContext} variant="outline">
@@ -496,14 +496,14 @@ export default function SSEMessageTestPage() {
             <Button
               onClick={handleTestSSEMessage}
               disabled={!isContextSet}
-              className="bg-blue-500 hover:bg-blue-600"
+              className="bg-info hover:bg-info/90"
             >
               📨 测试 handleSSEMessage
             </Button>
             <Button
               onClick={handleTestResult}
               disabled={!isContextSet}
-              className="bg-red-500 hover:bg-red-600"
+              className="bg-destructive hover:bg-destructive/90"
             >
               🚀 测试 handleResult (直接调用)
             </Button>
@@ -514,19 +514,19 @@ export default function SSEMessageTestPage() {
         </div>
 
         {/* 测试数据预览 */}
-        <div className="bg-white rounded-lg shadow p-4 mb-6">
+        <div className="bg-card rounded-lg shadow p-4 mb-6">
           <h2 className="text-lg font-semibold mb-3">📋 测试数据预览</h2>
-          <div className="bg-gray-100 p-3 rounded text-xs font-mono overflow-auto max-h-48">
+          <div className="bg-muted p-3 rounded text-xs font-mono overflow-auto max-h-48">
             <pre>{JSON.stringify(getTestData().message?.result, null, 2)}</pre>
           </div>
         </div>
 
         {/* 日志输出 */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-card rounded-lg shadow p-4">
           <h2 className="text-lg font-semibold mb-3">📋 日志输出</h2>
-          <div className="bg-gray-900 text-green-400 p-4 rounded font-mono text-xs h-80 overflow-auto">
+          <div className="bg-zinc-900 text-success p-4 rounded font-mono text-xs h-80 overflow-auto dark:bg-zinc-950">
             {logs.length === 0 ? (
-              <p className="text-gray-500">等待操作...</p>
+              <p className="text-zinc-500">等待操作...</p>
             ) : (
               logs.map((log, index) => (
                 <p key={index} className="mb-1">
@@ -538,7 +538,7 @@ export default function SSEMessageTestPage() {
         </div>
 
         {/* 使用说明 */}
-        <div className="mt-6 text-sm text-gray-500">
+        <div className="mt-6 text-sm text-muted-foreground">
           <h3 className="font-semibold mb-2">📖 使用说明:</h3>
           <ol className="list-decimal list-inside space-y-1">
             <li>页面加载后会自动设置 Action 上下文（router, lng, t）</li>
@@ -552,8 +552,8 @@ export default function SSEMessageTestPage() {
             </li>
             <li>观察日志和控制台输出</li>
           </ol>
-          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded">
-            <p className="text-yellow-800">
+          <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded">
+            <p className="text-warning-foreground">
               <strong>关键点：</strong> handleResult 需要 actionContext 才能执行 ActionRegistry.executeBatch。
               本页面会在挂载时自动设置上下文，也可以手动点击「设置 Action 上下文」按钮。
             </p>

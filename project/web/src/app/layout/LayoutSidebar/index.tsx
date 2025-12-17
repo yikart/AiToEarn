@@ -64,14 +64,14 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
               collapsed ? 'justify-center p-1' : 'gap-2 px-2 py-1.5',
             )}
           >
-            <Avatar className="h-8 w-8 shrink-0 border-2 border-gray-200">
+            <Avatar className="h-8 w-8 shrink-0 border-2 border-border">
               <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
-              <AvatarFallback className="bg-gray-500 font-semibold text-white">
+              <AvatarFallback className="bg-muted-foreground font-semibold text-background">
                 {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
             {!collapsed && (
-              <span className="truncate text-sm font-medium text-gray-700">
+              <span className="truncate text-sm font-medium text-foreground">
                 {userInfo.name || t('unknownUser')}
               </span>
             )}
@@ -112,16 +112,16 @@ function NavItem({
       href={fullPath}
       className={cn(
         'relative flex items-center rounded-lg text-sm font-medium transition-all',
-        'text-gray-500 hover:bg-black/5 hover:text-gray-900',
-        isActive && 'bg-white text-gray-900 shadow-sm',
+        'text-muted-foreground hover:bg-accent hover:text-foreground',
+        isActive && 'bg-background text-foreground shadow-sm',
         collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
       )}
     >
       {/* 激活状态左边框指示器 */}
       {isActive && (
-        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-gray-900" />
+        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-foreground" />
       )}
-      <span className={cn('flex shrink-0 items-center justify-center', isActive && 'text-gray-900')}>
+      <span className={cn('flex shrink-0 items-center justify-center', isActive && 'text-foreground')}>
         {icon || <FileText size={20} />}
       </span>
       {!collapsed && (
@@ -168,33 +168,33 @@ function PluginEntry({ collapsed }: { collapsed: boolean }) {
     switch (pluginStatus) {
       case PluginStatus.READY:
         return {
-          iconColor: 'text-green-500',
-          dotColor: 'bg-green-500',
+          iconColor: 'text-success',
+          dotColor: 'bg-success',
           statusText: t('pluginStatus.ready'),
-          statusColor: 'text-green-500',
+          statusColor: 'text-success',
         }
       case PluginStatus.INSTALLED_NO_PERMISSION:
         return {
-          iconColor: 'text-orange-500',
-          dotColor: 'bg-orange-500',
+          iconColor: 'text-warning',
+          dotColor: 'bg-warning',
           statusText: t('pluginStatus.noPermission'),
-          statusColor: 'text-orange-500',
+          statusColor: 'text-warning',
         }
       case PluginStatus.CHECKING:
         return {
-          iconColor: 'text-blue-500',
-          dotColor: 'bg-blue-500 animate-pulse',
+          iconColor: 'text-info',
+          dotColor: 'bg-info animate-pulse',
           statusText: t('pluginStatus.checking'),
-          statusColor: 'text-blue-500',
+          statusColor: 'text-info',
         }
       case PluginStatus.NOT_INSTALLED:
       case PluginStatus.UNKNOWN:
       default:
         return {
-          iconColor: 'text-gray-400',
-          dotColor: 'bg-gray-400',
+          iconColor: 'text-muted-foreground/70',
+          dotColor: 'bg-muted-foreground/70',
           statusText: t('pluginStatus.notInstalled'),
-          statusColor: 'text-gray-400',
+          statusColor: 'text-muted-foreground/70',
         }
     }
   }
@@ -205,7 +205,7 @@ function PluginEntry({ collapsed }: { collapsed: boolean }) {
     <button
       onClick={() => setPluginModalVisible(true)}
       className={cn(
-        'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
+        'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
         collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
       )}
     >
@@ -215,7 +215,7 @@ function PluginEntry({ collapsed }: { collapsed: boolean }) {
           {/* 状态指示点 */}
           <span
             className={cn(
-              'absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-white',
+              'absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-background',
               dotColor,
             )}
           />
@@ -293,7 +293,7 @@ const LayoutSidebar = () => {
     <>
       <aside
         className={cn(
-          'group sticky left-0 top-0 hidden h-screen flex-col border-r border-gray-200 bg-[#f7f8f8] p-3 transition-all duration-300 md:flex',
+          'group sticky left-0 top-0 hidden h-screen flex-col border-r border-sidebar-border bg-sidebar p-3 transition-all duration-300 md:flex',
           collapsed ? 'w-[68px] min-w-[68px]' : 'w-[220px] min-w-[220px]',
         )}
       >
@@ -317,7 +317,7 @@ const LayoutSidebar = () => {
                   {/* 展开按钮 - 默认隐藏，hover 时显示 */}
                   <button
                     onClick={() => setCollapsed(false)}
-                    className="absolute inset-0 flex items-center justify-center rounded-md border-none bg-transparent text-gray-400 opacity-0 transition-opacity hover:bg-black/5 hover:text-gray-600 group-hover:opacity-100"
+                    className="absolute inset-0 flex items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 opacity-0 transition-opacity hover:bg-accent hover:text-muted-foreground group-hover:opacity-100"
                   >
                     <PanelLeftOpen size={18} />
                   </button>
@@ -325,13 +325,13 @@ const LayoutSidebar = () => {
               )
             : (
                 <>
-                  <Link href={`/${lng}`} className="flex items-center gap-2 text-gray-800 no-underline hover:opacity-85">
+                  <Link href={`/${lng}`} className="flex items-center gap-2 text-foreground no-underline hover:opacity-85">
                     <Image src={logo} alt="AIToEarn" width={32} height={32} />
                     <span className="text-base font-semibold tracking-tight">AIToEarn</span>
                   </Link>
                   <button
                     onClick={() => setCollapsed(true)}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
+                    className="flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
                   >
                     <PanelLeftClose size={18} />
                   </button>
@@ -355,7 +355,7 @@ const LayoutSidebar = () => {
 
         {/* 底部区域 */}
         <div className={cn(
-          'mt-auto flex flex-col gap-1 border-t border-gray-200 pt-3',
+          'mt-auto flex flex-col gap-1 border-t border-sidebar-border pt-3',
           collapsed && 'items-center',
         )}
         >
@@ -369,16 +369,16 @@ const LayoutSidebar = () => {
                 <Link
                   href={`/${lng}/pricing`}
                   className={cn(
-                    'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
+                    'flex items-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
                     collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
                   )}
                 >
                   <div className="flex items-center gap-2">
-                    <Crown size={18} className="text-amber-500" />
+                    <Crown size={18} className="text-warning" />
                     {!collapsed && <span className="text-sm">{t('vip')}</span>}
                   </div>
                   {!collapsed && (
-                    <span className="text-xs text-gray-500">{t('subscribe')}</span>
+                    <span className="text-xs text-muted-foreground">{t('subscribe')}</span>
                   )}
                 </Link>
               </TooltipTrigger>
@@ -397,7 +397,7 @@ const LayoutSidebar = () => {
                 <button
                   onClick={() => setSettingsVisible(true)}
                   className={cn(
-                    'flex items-center rounded-lg text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900 border-none bg-transparent cursor-pointer',
+                    'flex items-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground border-none bg-transparent cursor-pointer',
                     collapsed ? 'h-9 w-9 justify-center' : 'gap-2 px-3 py-2',
                   )}
                 >
@@ -415,7 +415,7 @@ const LayoutSidebar = () => {
 
           {/* 底部图标栏 - 邮箱、下载APP、通知 */}
           <div className={cn(
-            'mt-2 flex items-center justify-center border-t border-gray-200 pt-2',
+            'mt-2 flex items-center justify-center border-t border-sidebar-border pt-2',
             collapsed ? 'flex-col gap-1' : 'flex-row gap-0',
           )}
           >
@@ -425,12 +425,12 @@ const LayoutSidebar = () => {
                 <TooltipTrigger asChild>
                   <a
                     href="mailto:agent@aiearn.ai"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
                   >
                     <Mail size={18} />
                   </a>
                 </TooltipTrigger>
-                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
+                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-popover text-popover-foreground">
                   <p>{t('contactUs')}: agent@aiearn.ai</p>
                 </TooltipContent>
               </Tooltip>
@@ -441,7 +441,7 @@ const LayoutSidebar = () => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <button
-                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
+                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
                     onClick={() => {
                       // TODO: 打开下载APP弹窗
                     }}
@@ -449,7 +449,7 @@ const LayoutSidebar = () => {
                     <Smartphone size={18} />
                   </button>
                 </TooltipTrigger>
-                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
+                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-popover text-popover-foreground">
                   <p>{t('downloadAppButton')}</p>
                 </TooltipContent>
               </Tooltip>
@@ -461,7 +461,7 @@ const LayoutSidebar = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-gray-400 transition-colors hover:bg-black/5 hover:text-gray-600"
+                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
                       onClick={() => setNotificationVisible(true)}
                     >
                       {unreadCount > 0
@@ -481,7 +481,7 @@ const LayoutSidebar = () => {
                           )}
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-gray-900 text-white">
+                  <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-popover text-popover-foreground">
                     <p>{t('notifications')}</p>
                   </TooltipContent>
                 </Tooltip>

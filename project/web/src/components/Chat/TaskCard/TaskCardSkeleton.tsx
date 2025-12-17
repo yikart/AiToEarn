@@ -18,7 +18,7 @@ export function TaskCardSkeleton({ className }: ITaskCardSkeletonProps) {
   return (
     <div
       className={cn(
-        'flex flex-col p-4 rounded-xl border border-gray-100 bg-white',
+        'flex flex-col p-4 rounded-xl border border-border bg-card',
         className,
       )}
     >

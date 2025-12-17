@@ -71,17 +71,17 @@ export default function PromptGallery({
       <div className="max-w-[1920px] mx-auto">
         {/* 标题区域 */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-full text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted text-foreground rounded-full text-sm font-medium mb-4">
             <Sparkles className="w-4 h-4" />
             {t('badge')}
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
             {t('title')}{' '}
-            <span className="text-gray-700">
+            <span className="text-muted-foreground">
               {t('titleHighlight')}
             </span>
           </h2>
-          <p className="text-gray-500 text-lg max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
             {t('subtitle')}
           </p>
         </div>
@@ -115,8 +115,8 @@ export default function PromptGallery({
         {/* 应用成功提示 */}
         {applied && (
           <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-            <div className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white rounded-full shadow-2xl">
-              <Check className="w-4 h-4 text-green-400" />
+            <div className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full shadow-2xl">
+              <Check className="w-4 h-4 text-success" />
               <span className="font-medium">{t('appliedToast')}</span>
             </div>
           </div>

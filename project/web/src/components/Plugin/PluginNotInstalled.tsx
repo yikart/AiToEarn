@@ -19,17 +19,17 @@ export function PluginNotInstalled() {
   return (
     <div className="flex flex-col items-center py-8 px-4">
       {/* 图标 */}
-      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-purple-50">
-        <Puzzle className="h-10 w-10 text-purple-500" />
+      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
+        <Puzzle className="h-10 w-10 text-primary" />
       </div>
 
       {/* 标题 */}
-      <h3 className="mb-2 text-lg font-semibold text-gray-900">
+      <h3 className="mb-2 text-lg font-semibold text-foreground">
         {t('header.downloadPlugin')}
       </h3>
 
       {/* 描述 */}
-      <p className="mb-8 max-w-sm text-center text-sm text-gray-500">
+      <p className="mb-8 max-w-sm text-center text-sm text-muted-foreground">
         {t('header.downloadDescription')}
       </p>
 

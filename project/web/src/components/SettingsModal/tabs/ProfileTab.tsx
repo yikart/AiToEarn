@@ -160,7 +160,7 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
         <div className="group relative shrink-0 cursor-pointer" onClick={handleAvatarClick}>
           <Avatar className="h-16 w-16">
             <AvatarImage src={avatarUrl} alt={userInfo?.name || ''} />
-            <AvatarFallback className="bg-purple-100 text-lg font-semibold text-purple-600">
+            <AvatarFallback className="bg-primary/10 text-lg font-semibold text-primary">
               {userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
@@ -190,7 +190,7 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
                     type="text"
                     value={editName}
                     onChange={e => setEditName(e.target.value)}
-                    className="flex-1 rounded-md border border-gray-200 px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="flex-1 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
                     autoFocus
                     onKeyDown={(e) => {
                       if (e.key === 'Enter')
@@ -219,32 +219,32 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
               )
             : (
                 <div
-                  className="cursor-pointer text-lg font-semibold text-gray-900 transition-colors hover:text-purple-600"
+                  className="cursor-pointer text-lg font-semibold text-foreground transition-colors hover:text-primary"
                   onClick={() => setIsEditingName(true)}
                 >
                   {userInfo?.name || tCommon('unknownUser')}
                 </div>
               )}
-          <p className="mt-1 truncate text-sm text-gray-500">{userInfo?.mail || '-'}</p>
+          <p className="mt-1 truncate text-sm text-muted-foreground">{userInfo?.mail || '-'}</p>
         </div>
       </div>
 
       {/* 收入信息 */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-xl border border-gray-100 bg-gray-50 p-4">
-          <p className="mb-1 text-sm text-gray-500">{t('profile.totalIncome')}</p>
-          <p className="text-2xl font-bold text-gray-900">¥{totalIncome.toFixed(2)}</p>
+        <div className="rounded-xl border border-border bg-muted p-4">
+          <p className="mb-1 text-sm text-muted-foreground">{t('profile.totalIncome')}</p>
+          <p className="text-2xl font-bold text-foreground">¥{totalIncome.toFixed(2)}</p>
         </div>
-        <div className="rounded-xl border border-purple-100 bg-purple-50 p-4">
-          <p className="mb-1 text-sm text-gray-500">{t('profile.currentBalance')}</p>
-          <p className="text-2xl font-bold text-purple-600">¥{currentBalance.toFixed(2)}</p>
+        <div className="rounded-xl border border-primary/10 bg-primary/10 p-4">
+          <p className="mb-1 text-sm text-muted-foreground">{t('profile.currentBalance')}</p>
+          <p className="text-2xl font-bold text-primary">¥{currentBalance.toFixed(2)}</p>
         </div>
       </div>
 
       {/* 退出登录按钮 */}
       <Button
         variant="ghost"
-        className="h-11 w-full justify-center gap-2 text-gray-500 hover:bg-red-50 hover:text-red-600"
+        className="h-11 w-full justify-center gap-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
         onClick={handleLogout}
       >
         <LogOut size={18} />

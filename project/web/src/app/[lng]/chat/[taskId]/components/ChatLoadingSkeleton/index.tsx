@@ -9,9 +9,9 @@ import { cn } from '@/lib/utils'
 
 export function ChatLoadingSkeleton() {
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-muted">
       {/* 顶部导航骨架 */}
-      <header className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200">
+      <header className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border">
         <Skeleton className="w-8 h-8 rounded-full" />
         <Skeleton className="w-32 h-5" />
       </header>
@@ -32,7 +32,7 @@ export function ChatLoadingSkeleton() {
       </div>
 
       {/* 底部输入区域骨架 */}
-      <div className="p-4 bg-white border-t border-gray-200">
+      <div className="p-4 bg-background border-t border-border">
         <Skeleton className="w-full h-14 rounded-2xl" />
       </div>
     </div>

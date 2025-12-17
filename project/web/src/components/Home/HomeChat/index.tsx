@@ -155,9 +155,9 @@ export function HomeChat({
             height={56}
             className="w-14 h-14 object-contain"
           />
-          <span className="text-gray-900 font-bold text-3xl">AiToEarn</span>
+          <span className="text-foreground font-bold text-3xl">AiToEarn</span>
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           {tHome('agentGenerator.subtitle' as any) || t('home.subtitle' as any)}
         </p>
       </div>
@@ -178,14 +178,14 @@ export function HomeChat({
 
       {/* 提示标签 */}
       <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
-        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-gray-700 text-xs font-medium">
+        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-medium">
           <Sparkles className="w-3 h-3" />
           {t('home.aiCreation' as any)}
         </span>
-        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs">
+        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs">
           {t('home.supportUpload' as any)}
         </span>
-        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-gray-600 text-xs">
+        <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs">
           {t('home.enterToSend' as any)}
         </span>
       </div>

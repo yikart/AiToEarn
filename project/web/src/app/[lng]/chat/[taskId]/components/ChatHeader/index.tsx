@@ -33,7 +33,7 @@ export function ChatHeader({
   onBack,
 }: IChatHeaderProps) {
   return (
-    <header className="flex items-center gap-3 px-4 py-3 bg-white border-b border-gray-200 shrink-0">
+    <header className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border shrink-0">
       {/* 返回按钮 */}
       <Button variant="ghost" size="icon" onClick={onBack} className="w-8 h-8">
         <ArrowLeft className="w-5 h-5" />
@@ -41,7 +41,7 @@ export function ChatHeader({
 
       {/* Logo 和标题 */}
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center overflow-hidden">
+        <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary to-primary/70 flex items-center justify-center overflow-hidden">
           <Image
             src={logo}
             alt="AiToEarn"
@@ -50,18 +50,18 @@ export function ChatHeader({
             className="w-full h-full object-cover"
           />
         </div>
-        <h1 className="text-base font-medium text-gray-900 line-clamp-1">
+        <h1 className="text-base font-medium text-foreground line-clamp-1">
           {title || defaultTitle}
         </h1>
       </div>
 
       {/* 生成状态指示器 */}
       {isGenerating && (
-        <div className="ml-auto flex items-center gap-2 text-sm text-purple-600">
+        <div className="ml-auto flex items-center gap-2 text-sm text-primary">
           <Loader2 className="w-4 h-4 animate-spin" />
           <span>{thinkingText}</span>
           {progress > 0 && progress < 100 && (
-            <span className="text-xs text-gray-500">({progress}%)</span>
+            <span className="text-xs text-muted-foreground">({progress}%)</span>
           )}
         </div>
       )}

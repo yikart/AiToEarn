@@ -30,11 +30,11 @@ export function PromptDetailModal({
 }: PromptDetailModalProps) {
   return (
     <Dialog open={!!item} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 overflow-hidden bg-white rounded-2xl flex flex-col">
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 overflow-hidden bg-card rounded-2xl flex flex-col">
         {item && (
           <>
             {/* 图片区域 - 自适应高度，最大 400px */}
-            <div className="relative flex-shrink-0 max-h-[400px] overflow-hidden bg-gray-100">
+            <div className="relative flex-shrink-0 max-h-[400px] overflow-hidden bg-muted">
               <img
                 src={item.preview}
                 alt={item.title}
@@ -45,7 +45,7 @@ export function PromptDetailModal({
             {/* 内容区域 - 可滚动 */}
             <div className="p-6 flex-1 overflow-y-auto">
               <DialogHeader className="mb-4">
-                <DialogTitle className="text-2xl font-bold text-gray-900">
+                <DialogTitle className="text-2xl font-bold text-foreground">
                   {item.title}
                 </DialogTitle>
               </DialogHeader>
@@ -55,14 +55,14 @@ export function PromptDetailModal({
                 {item.sub_category && (
                   <Badge
                     variant="secondary"
-                    className="bg-gray-100 text-gray-700"
+                    className="bg-muted text-muted-foreground"
                   >
                     {item.sub_category}
                   </Badge>
                 )}
                 <Badge
                   variant="secondary"
-                  className="bg-gray-100 text-gray-700"
+                  className="bg-muted text-muted-foreground"
                 >
                   {item.category}
                 </Badge>
@@ -70,11 +70,11 @@ export function PromptDetailModal({
 
               {/* 提示词内容 */}
               <div className="mb-6">
-                <label className="block text-sm font-semibold text-gray-900 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   {t('modal.promptLabel')}
                 </label>
-                <div className="bg-gray-50 rounded-xl p-4 max-h-48 overflow-y-auto border border-gray-100">
-                  <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">
+                <div className="bg-muted rounded-xl p-4 max-h-48 overflow-y-auto border border-border">
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
                     {item.prompt}
                   </p>
                 </div>

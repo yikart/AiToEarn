@@ -1,6 +1,6 @@
 /**
  * Providers - 全局 Provider 组件
- * 包含 Google OAuth、Ant Design 配置、Toast 等全局配置
+ * 包含 Google OAuth、Ant Design 配置、Toast、主题等全局配置
  */
 
 'use client'
@@ -8,6 +8,7 @@
 import type { Locale } from 'antd/es/locale'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { GoogleOAuthProvider } from '@react-oauth/google'
+import { ThemeProvider } from 'next-themes'
 import { App, ConfigProvider } from 'antd'
 import en_US from 'antd/es/locale/en_US'
 import zh_CN from 'antd/es/locale/zh_CN'
@@ -57,24 +58,31 @@ export function Providers({
   }, [lng])
 
   return (
-    <GoogleOAuthProvider clientId="1094109734611-flskoscgp609mecqk9ablvc6i3205vqk.apps.googleusercontent.com">
-      <ConfigProvider
-        locale={getAntdLang(lng)}
-        theme={{
-          token: {
-            colorPrimary: cssVariables['--theColor5'],
-          },
-        }}
-      >
-        <App component={false}>
-          <Suspense>
-            <AntdRegistry>
-              <Toaster position="top-center" richColors />
-              {children}
-            </AntdRegistry>
-          </Suspense>
-        </App>
-      </ConfigProvider>
-    </GoogleOAuthProvider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <GoogleOAuthProvider clientId="1094109734611-flskoscgp609mecqk9ablvc6i3205vqk.apps.googleusercontent.com">
+        <ConfigProvider
+          locale={getAntdLang(lng)}
+          theme={{
+            token: {
+              colorPrimary: cssVariables['--theColor5'],
+            },
+          }}
+        >
+          <App component={false}>
+            <Suspense>
+              <AntdRegistry>
+                <Toaster position="top-center" richColors />
+                {children}
+              </AntdRegistry>
+            </Suspense>
+          </App>
+        </ConfigProvider>
+      </GoogleOAuthProvider>
+    </ThemeProvider>
   )
 }

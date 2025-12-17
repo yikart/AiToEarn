@@ -82,14 +82,14 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
       {/* 标题栏 */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <History className="w-5 h-5 text-gray-400" />
-          <h3 className="text-base font-medium text-gray-900">
+          <History className="w-5 h-5 text-muted-foreground" />
+          <h3 className="text-base font-medium text-foreground">
             {t('home.recentTasks' as any)}
           </h3>
         </div>
         <button
           onClick={handleViewAll}
-          className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           {t('home.viewAll' as any)}
           <ArrowRight className="w-4 h-4" />

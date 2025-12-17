@@ -95,8 +95,8 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        'rounded-2xl border bg-white shadow-lg transition-all',
-        isFocused ? 'border-purple-400 shadow-purple-100' : 'border-gray-200',
+        'rounded-2xl border bg-card shadow-lg transition-all',
+        isFocused ? 'border-primary shadow-primary/10' : 'border-border',
         mode === 'large' ? 'p-4' : 'p-3',
         className,
       )}
@@ -139,7 +139,7 @@ export function ChatInput({
           disabled={disabled || isGenerating}
           rows={mode === 'large' ? 3 : 1}
           className={cn(
-            'flex-1 resize-none border-none outline-none bg-transparent text-gray-900 placeholder:text-gray-400',
+            'flex-1 resize-none border-none outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
             'disabled:opacity-50 disabled:cursor-not-allowed',
             mode === 'large' ? 'text-base min-h-[80px]' : 'text-sm min-h-[24px]',
           )}
@@ -153,10 +153,10 @@ export function ChatInput({
             'shrink-0 flex items-center justify-center rounded-full transition-all',
             mode === 'large' ? 'w-10 h-10' : 'w-8 h-8',
             isGenerating
-              ? 'bg-red-500 hover:bg-red-600 text-white'
+              ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
               : canSend
-                ? 'bg-purple-500 hover:bg-purple-600 text-white'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed',
+                ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                : 'bg-muted text-muted-foreground cursor-not-allowed',
           )}
         >
           {isGenerating ? (

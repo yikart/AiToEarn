@@ -43,11 +43,11 @@ function MobileNavItem({
       onClick={onClose}
       className={cn(
         'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all',
-        'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
-        isActive && 'bg-purple-50 text-purple-600',
+        'text-muted-foreground hover:bg-muted hover:text-foreground',
+        isActive && 'bg-primary/10 text-primary',
       )}
     >
-      <span className={cn('flex items-center justify-center', isActive && 'text-purple-500')}>
+      <span className={cn('flex items-center justify-center', isActive && 'text-primary')}>
         {icon || <FileText size={20} />}
       </span>
       <span>{t(translationKey as any)}</span>
@@ -86,14 +86,14 @@ const MobileNav = () => {
   return (
     <>
       {/* 移动端顶部栏 */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 px-4 bg-white border-b border-gray-200">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 px-4 bg-background border-b border-border">
         <Link href={`/${lng}`} className="flex items-center gap-2">
           <Image src={logo} alt="AIToEarn" width={32} height={32} />
-          <span className="text-base font-semibold">AIToEarn</span>
+          <span className="text-base font-semibold text-foreground">AIToEarn</span>
         </Link>
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          className="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
         >
           <Menu size={24} />
         </button>
@@ -110,16 +110,16 @@ const MobileNav = () => {
       {/* 抽屉导航 */}
       <div
         className={cn(
-          'md:hidden fixed top-0 right-0 z-50 w-[280px] h-full bg-white shadow-xl transition-transform duration-300 ease-in-out',
+          'md:hidden fixed top-0 right-0 z-50 w-[280px] h-full bg-background shadow-xl transition-transform duration-300 ease-in-out',
           isOpen ? 'translate-x-0' : 'translate-x-full',
         )}
       >
         {/* 抽屉头部 */}
-        <div className="flex items-center justify-between h-14 px-4 border-b border-gray-200">
-          <span className="text-base font-semibold">Menu</span>
+        <div className="flex items-center justify-between h-14 px-4 border-b border-border">
+          <span className="text-base font-semibold text-foreground">Menu</span>
           <button
             onClick={handleClose}
-            className="flex items-center justify-center w-10 h-10 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+            className="flex items-center justify-center w-10 h-10 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
           >
             <X size={24} />
           </button>
@@ -141,10 +141,10 @@ const MobileNav = () => {
 
         {/* 底部登录按钮 */}
         {!token && (
-          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200">
+          <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border">
             <Button
               onClick={handleLogin}
-              className="w-full bg-purple-500 hover:bg-purple-600 text-white"
+              className="w-full"
             >
               {t('login')}
             </Button>

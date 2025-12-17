@@ -32,7 +32,7 @@ export default async function RootLayout({
 }>) {
   const { lng } = await params
   return (
-    <html lang={lng} dir={dir(lng)}>
+    <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
       <body>
         <Providers lng={lng}>
           {/* 移动端顶部导航 - fixed 定位，独立于 flex 布局 */}

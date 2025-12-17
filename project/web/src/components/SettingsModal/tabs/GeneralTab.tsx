@@ -6,6 +6,7 @@
 
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 import { useTransClient } from '@/app/i18n/client'
 import {
   Select,
@@ -16,8 +17,6 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
-import { useSystemStore, type ThemeType } from '@/store/system'
-import { useShallow } from 'zustand/react/shallow'
 
 // 主题图片
 import lightColorImg from '../images/lightColor.png'
@@ -30,7 +29,7 @@ const languageOptions = [
 ]
 
 /** 主题选项配置 */
-const themeOptions: { value: ThemeType; labelKey: string; image: typeof lightColorImg }[] = [
+const themeOptions: { value: string; labelKey: string; image: typeof lightColorImg }[] = [
   { value: 'light', labelKey: 'general.themeLight', image: lightColorImg },
   { value: 'dark', labelKey: 'general.themeDark', image: darkColorImg },
   { value: 'system', labelKey: 'general.themeSystem', image: followSystemImg },
@@ -41,12 +40,8 @@ export function GeneralTab() {
   const router = useRouter()
   const lng = useGetClientLng()
 
-  const { theme, setTheme } = useSystemStore(
-    useShallow(state => ({
-      theme: state.theme,
-      setTheme: state.setTheme,
-    }))
-  )
+  // 使用 next-themes 管理主题
+  const { theme, setTheme } = useTheme()
 
   const handleLanguageChange = (newLng: string) => {
     const currentPath = location.pathname
@@ -59,8 +54,8 @@ export function GeneralTab() {
     <div className="space-y-8">
       {/* 外观主题 */}
       <div>
-        <h4 className="text-sm font-medium text-gray-900 mb-1">{t('general.theme')}</h4>
-        <p className="text-sm text-gray-500 mb-4">{t('general.themeDesc')}</p>
+        <h4 className="text-sm font-medium text-foreground mb-1">{t('general.theme')}</h4>
+        <p className="text-sm text-muted-foreground mb-4">{t('general.themeDesc')}</p>
         <div className="flex gap-4">
           {themeOptions.map(option => {
             const isActive = theme === option.value
@@ -75,8 +70,8 @@ export function GeneralTab() {
                   className={cn(
                     'relative w-20 h-14 rounded-lg overflow-hidden border-2 transition-all',
                     isActive
-                      ? 'border-(--primary-color) shadow-sm'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-primary shadow-sm'
+                      : 'border-border hover:border-muted-foreground'
                   )}
                 >
                   <Image
@@ -90,7 +85,7 @@ export function GeneralTab() {
                 <span
                   className={cn(
                     'text-xs transition-colors',
-                    isActive ? 'text-(--primary-color) font-medium' : 'text-gray-600'
+                    isActive ? 'text-primary font-medium' : 'text-muted-foreground'
                   )}
                 >
                   {t(option.labelKey)}
@@ -104,8 +99,8 @@ export function GeneralTab() {
       {/* 网站语言 */}
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-medium text-gray-900">{t('general.language')}</h4>
-          <p className="mt-0.5 text-sm text-gray-500">{t('general.languageDesc')}</p>
+          <h4 className="text-sm font-medium text-foreground">{t('general.language')}</h4>
+          <p className="mt-0.5 text-sm text-muted-foreground">{t('general.languageDesc')}</p>
         </div>
         <Select value={lng} onValueChange={handleLanguageChange}>
           <SelectTrigger className="h-9 w-[140px]">

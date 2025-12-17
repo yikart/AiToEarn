@@ -88,11 +88,11 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
 
         <div className="flex min-h-[560px]">
           {/* 左侧侧边栏 */}
-          <div className="flex w-52 shrink-0 flex-col border-r border-gray-200">
+          <div className="flex w-52 shrink-0 flex-col border-r border-border">
             {/* 侧边栏头部 - Logo + 项目名称 */}
             <div className="flex shrink-0 items-center gap-2 px-5 py-4">
               <Image src={logo} alt="AIToEarn" width={28} height={28} />
-              <span className="text-base font-semibold tracking-tight text-gray-800">AIToEarn</span>
+              <span className="text-base font-semibold tracking-tight text-foreground">AIToEarn</span>
             </div>
 
             {/* Tab 列表 */}
@@ -107,8 +107,8 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
                     className={cn(
                       'flex items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm transition-all',
                       isActive
-                        ? 'bg-gray-100 font-medium text-gray-900'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900',
+                        ? 'bg-muted font-medium text-foreground'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                     )}
                   >
                     {tab.icon}
@@ -122,8 +122,8 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
           {/* 右侧内容区域 */}
           <div className="flex flex-1 flex-col overflow-hidden">
             {/* 右侧头部 - 设置标题 */}
-            <div className="flex shrink-0 items-center border-b border-gray-200 px-8 py-4">
-              <h2 className="text-lg font-semibold text-gray-900">{t('title')}</h2>
+            <div className="flex shrink-0 items-center border-b border-border px-8 py-4">
+              <h2 className="text-lg font-semibold text-foreground">{t('title')}</h2>
             </div>
 
             {/* 右侧内容 */}

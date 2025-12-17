@@ -121,16 +121,16 @@ export function PromptGalleryModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full h-[90vh] p-0 overflow-hidden bg-gray-50 rounded-2xl flex flex-col">
+      <DialogContent className="max-w-[95vw] w-full h-[90vh] p-0 overflow-hidden bg-background rounded-2xl flex flex-col">
         {/* 头部 */}
-        <div className="flex-shrink-0 px-6 pt-6 pb-4 bg-white/80 backdrop-blur-md border-b border-gray-100">
+        <div className="flex-shrink-0 px-6 pt-6 pb-4 bg-card/80 backdrop-blur-md border-b border-border">
           <DialogHeader className="mb-4">
-            <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gray-900 flex items-center justify-center shadow-lg">
-                <Grid3X3 className="w-5 h-5 text-white" />
+            <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg">
+                <Grid3X3 className="w-5 h-5 text-primary-foreground" />
               </div>
               {t('title')}
-              <Badge variant="secondary" className="ml-2 bg-gray-100 text-gray-700">
+              <Badge variant="secondary" className="ml-2 bg-muted text-muted-foreground">
                 {filteredPrompts.length} {t('expandCount')}
               </Badge>
             </DialogTitle>
@@ -156,20 +156,20 @@ export function PromptGalleryModal({
 
             {/* 搜索框 */}
             <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 type="text"
                 placeholder={t('filters.searchPlaceholder' as any)}
                 value={titleFilter}
                 onChange={(e) => setTitleFilter(e.target.value)}
-                className="pl-10 pr-10 rounded-full bg-white border-gray-200"
+                className="pl-10 pr-10 rounded-full bg-card border-border"
               />
               {titleFilter && (
                 <button
                   onClick={() => setTitleFilter('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 transition-colors"
                 >
-                  <X className="w-3 h-3 text-gray-600" />
+                  <X className="w-3 h-3 text-muted-foreground" />
                 </button>
               )}
             </div>
@@ -190,11 +190,11 @@ export function PromptGalleryModal({
               hasMore={hasMore}
               loader={
                 <div className="flex justify-center py-8">
-                  <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+                  <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
                 </div>
               }
               endMessage={
-                <div className="flex justify-center py-8 text-gray-400 text-sm">
+                <div className="flex justify-center py-8 text-muted-foreground text-sm">
                   已加载全部 {filteredPrompts.length} 个提示词
                 </div>
               }
@@ -219,7 +219,7 @@ export function PromptGalleryModal({
             </InfiniteScroll>
           ) : (
             /* 空状态 */
-            <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+            <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
               <Search className="w-12 h-12 mb-4 opacity-50" />
               <p className="text-lg font-medium">未找到匹配的提示词</p>
               <p className="text-sm mt-1">尝试使用其他关键词搜索</p>

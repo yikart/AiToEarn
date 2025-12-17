@@ -96,9 +96,9 @@ export default function TasksHistoryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* 顶部导航 */}
-      <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
+      <header className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 bg-card border-b border-border">
         <div className="flex items-center gap-3">
           <Button
             variant="ghost"
@@ -109,13 +109,13 @@ export default function TasksHistoryPage() {
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-purple-500" />
-            <h1 className="text-lg font-semibold text-gray-900">
+            <History className="w-5 h-5 text-primary" />
+            <h1 className="text-lg font-semibold text-foreground">
               {t('history.title' as any)}
             </h1>
           </div>
           {total > 0 && (
-            <span className="text-sm text-gray-500">({total})</span>
+            <span className="text-sm text-muted-foreground">({total})</span>
           )}
         </div>
         <Button
@@ -141,8 +141,8 @@ export default function TasksHistoryPage() {
         ) : tasks.length === 0 ? (
           // 空状态
           <div className="flex flex-col items-center justify-center py-16">
-            <History className="w-16 h-16 text-gray-300 mb-4" />
-            <p className="text-gray-500 mb-4">{t('history.empty' as any)}</p>
+            <History className="w-16 h-16 text-muted-foreground/30 mb-4" />
+            <p className="text-muted-foreground mb-4">{t('history.empty' as any)}</p>
             <Button onClick={handleBack}>
               {t('home.startChat' as any)}
             </Button>

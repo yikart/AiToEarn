@@ -155,7 +155,7 @@ export default function ChatDetailPage() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-muted">
       {/* 顶部导航 */}
       <ChatHeader
         title={task?.title}
@@ -180,7 +180,7 @@ export default function ChatDetailPage() {
       />
 
       {/* 底部输入区域 */}
-      <div className="p-4 bg-white border-t border-gray-200 shrink-0">
+      <div className="p-4 bg-background border-t border-border shrink-0">
         <ChatInput
           value={inputValue}
           onChange={setInputValue}

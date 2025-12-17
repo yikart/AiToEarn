@@ -33,17 +33,17 @@ export function PluginNoPermission() {
   return (
     <div className="flex flex-col items-center py-8 px-4">
       {/* 图标 */}
-      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-amber-50">
-        <AlertTriangle className="h-10 w-10 text-amber-500" />
+      <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-warning/10">
+        <AlertTriangle className="h-10 w-10 text-warning" />
       </div>
 
       {/* 标题 */}
-      <h3 className="mb-2 text-lg font-semibold text-gray-900">
+      <h3 className="mb-2 text-lg font-semibold text-foreground">
         {t('header.permissionRequired')}
       </h3>
 
       {/* 描述 */}
-      <p className="mb-8 max-w-sm text-center text-sm text-gray-500">
+      <p className="mb-8 max-w-sm text-center text-sm text-muted-foreground">
         {t('header.permissionDescription')}
       </p>
 

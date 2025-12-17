@@ -138,10 +138,10 @@ export function AgentTab() {
     <div className="space-y-6">
       {/* 模型选择 */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-900">
+        <label className="mb-2 block text-sm font-medium text-foreground">
           {t('agent.defaultModel')}
         </label>
-        <p className="mb-4 text-sm text-gray-500">
+        <p className="mb-4 text-sm text-muted-foreground">
           {t('agent.defaultModelDesc')}
         </p>
 
@@ -173,16 +173,16 @@ export function AgentTab() {
                                     />
                                   )
                                 : (
-                                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-purple-100 text-xs font-medium text-purple-600">
+                                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-primary/10 text-xs font-medium text-primary">
                                       AI
                                     </div>
                                   )}
                               <div className="flex flex-col items-start text-left">
-                                <span className="font-medium text-gray-900">
+                                <span className="font-medium text-foreground">
                                   {currentModel.description || currentModel.name}
                                 </span>
                                 {currentModel.pricing && (
-                                  <span className="text-xs font-normal text-gray-400">
+                                  <span className="text-xs font-normal text-muted-foreground">
                                     Input: {currentModel.pricing.prompt}
                                     {currentModel.pricing.completion && ` · Output: ${currentModel.pricing.completion}`}
                                   </span>
@@ -191,7 +191,7 @@ export function AgentTab() {
                             </div>
                           )
                         : (
-                            <span className="text-gray-400">{t('agent.selectModel')}</span>
+                            <span className="text-muted-foreground">{t('agent.selectModel')}</span>
                           )}
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -199,21 +199,21 @@ export function AgentTab() {
                   <PopoverContent className="w-[500px] p-0" align="start">
                     {/* 搜索框 */}
                     <div className="flex items-center border-b px-3">
-                      <Search className="mr-2 h-4 w-4 shrink-0 text-gray-400" />
+                      <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
                       <input
                         ref={inputRef}
                         type="text"
                         value={searchQuery}
                         onChange={e => setSearchQuery(e.target.value)}
                         placeholder={t('agent.searchModels')}
-                        className="h-10 flex-1 bg-transparent text-sm outline-none placeholder:text-gray-400"
+                        className="h-10 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
                       />
                       {searchQuery && (
                         <button
                           onClick={() => setSearchQuery('')}
-                          className="ml-2 rounded p-1 hover:bg-gray-100"
+                          className="ml-2 rounded p-1 hover:bg-muted"
                         >
-                          <X className="h-3.5 w-3.5 text-gray-400" />
+                          <X className="h-3.5 w-3.5 text-muted-foreground" />
                         </button>
                       )}
                     </div>
@@ -228,7 +228,7 @@ export function AgentTab() {
                     >
                       {filteredModels.length === 0
                         ? (
-                            <div className="py-6 text-center text-sm text-gray-500">
+                            <div className="py-6 text-center text-sm text-muted-foreground">
                               {t('agent.noModelFound')}
                             </div>
                           )
@@ -243,8 +243,8 @@ export function AgentTab() {
                                 className={cn(
                                   'flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-3 text-left transition-colors',
                                   selectedModel === model.name
-                                    ? 'bg-purple-50'
-                                    : 'hover:bg-gray-100',
+                                    ? 'bg-primary/10'
+                                    : 'hover:bg-muted',
                                 )}
                               >
                                 <div className="flex flex-1 items-center gap-3">
@@ -259,30 +259,30 @@ export function AgentTab() {
                                         />
                                       )
                                     : (
-                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-gray-100 text-xs font-medium text-gray-500">
+                                        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-muted text-xs font-medium text-muted-foreground">
                                           AI
                                         </div>
                                       )}
                                   <div className="flex min-w-0 flex-1 flex-col">
                                     <div className="flex items-center gap-2">
-                                      <span className="truncate font-medium text-gray-900">
+                                      <span className="truncate font-medium text-foreground">
                                         {model.description || model.name}
                                       </span>
                                       {model.mainTag && (
-                                        <span className="shrink-0 rounded-full bg-purple-100 px-1.5 py-0.5 text-[10px] font-medium text-purple-600">
+                                        <span className="shrink-0 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-medium text-primary">
                                           New
                                         </span>
                                       )}
                                     </div>
                                     <div className="mt-0.5 flex flex-wrap gap-1">
                                       {(model.tags || []).slice(0, 3).map(tag => (
-                                        <span key={tag} className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">
+                                        <span key={tag} className="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                                           {tag}
                                         </span>
                                       ))}
                                     </div>
                                     {model.pricing && (
-                                      <span className="mt-1 text-xs text-gray-400">
+                                      <span className="mt-1 text-xs text-muted-foreground">
                                         Input: {model.pricing.prompt}
                                         {model.pricing.completion && ` · Output: ${model.pricing.completion}`}
                                       </span>
@@ -291,7 +291,7 @@ export function AgentTab() {
                                 </div>
                                 <Check
                                   className={cn(
-                                    'ml-2 h-4 w-4 shrink-0 text-purple-600',
+                                    'ml-2 h-4 w-4 shrink-0 text-primary',
                                     selectedModel === model.name ? 'opacity-100' : 'opacity-0',
                                   )}
                                 />
