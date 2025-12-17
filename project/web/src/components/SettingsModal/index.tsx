@@ -138,10 +138,10 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
   const lng = useGetClientLng()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { userInfo, setUserInfo, clearLoginStatus } = useUserStore(
+  const { userInfo, getUserInfo, clearLoginStatus } = useUserStore(
     useShallow((state) => ({
       userInfo: state.userInfo,
-      setUserInfo: state.setUserInfo,
+      getUserInfo: state.getUserInfo,
       clearLoginStatus: state.clearLoginStatus,
     })),
   )
@@ -202,13 +202,13 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
       const ossPath = await uploadToOss(file)
 
       // 更新用户信息，存储完整地址
-      const response: any = await updateUserInfoApi({
+      const response = await updateUserInfoApi({
         name: userInfo?.name || '',
         avatar: ossPath,
       })
 
       if (response?.code === 0 && response.data) {
-        setUserInfo(response.data)
+        await getUserInfo()
         toast.success(t('profile.avatarUpdateSuccess'))
         setCropModalOpen(false)
         setSelectedFile(null)
@@ -243,13 +243,13 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
 
     setIsSaving(true)
     try {
-      const response: any = await updateUserInfoApi({
+      const response = await updateUserInfoApi({
         name: editName.trim(),
         avatar: userInfo?.avatar,
       })
 
       if (response?.code === 0 && response.data) {
-        setUserInfo(response.data)
+        await getUserInfo();
         toast.success(t('profile.nameUpdateSuccess'))
         setIsEditingName(false)
       } else {
@@ -361,16 +361,6 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
           )}
           <p className="text-sm text-gray-500 mt-1 truncate">{userInfo?.mail || '-'}</p>
         </div>
-
-        {/* 跳转按钮 */}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleGoToProfile}
-          className="text-gray-400 hover:text-gray-600 h-9 px-2"
-        >
-          <ExternalLink size={18} />
-        </Button>
       </div>
 
       {/* 收入信息 */}
