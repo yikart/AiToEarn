@@ -41,6 +41,11 @@
     "languageDesc": "此更改不影响内容生成所使用的语言",
     "theme": "主题",
     "themeDesc": "选择您偏好的主题模式"
+  },
+  "agent": {
+    "pleaseSelectModel": "请选择模型",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败"
   }
 }
 

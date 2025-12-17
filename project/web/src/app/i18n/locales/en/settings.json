@@ -41,6 +41,11 @@
     "languageDesc": "This change does not affect the language used for content generation",
     "theme": "Theme",
     "themeDesc": "Choose your preferred theme mode"
+  },
+  "agent": {
+    "pleaseSelectModel": "Please select a model",
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Failed to save"
   }
 }
 
