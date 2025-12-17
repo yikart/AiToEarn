@@ -358,20 +358,6 @@ import ImageEditorModal from '@/components/ImageEditorModal'
 />
 ```
 
-### LoginModal - 登录弹窗
-
-支持邮箱登录和 Google 登录的弹窗组件。
-
-```tsx
-import LoginModal from '@/components/LoginModal'
-
-<LoginModal
-  open={boolean}
-  onCancel={() => void}
-  onSuccess={() => void}  // 登录成功回调
-/>
-```
-
 ### WalletAccountSelect - 钱包账户选择器
 
 支持分页加载的钱包账户下拉选择器。

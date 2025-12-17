@@ -4,27 +4,21 @@
  */
 'use client'
 
-import { useState } from 'react'
-
-// components
-import LoginModal from '@/components/LoginModal'
 import { HomeChat } from '@/components/Home/HomeChat'
 import { TaskPreview } from '@/components/Home/TaskPreview'
-
+import { useRouter } from 'next/navigation'
 // store
 import { useUserStore } from '@/store/user'
 
 export default function Home() {
-  // 登录弹窗状态
-  const [loginModalOpen, setLoginModalOpen] = useState(false)
-
   // 获取登录状态
   const token = useUserStore((state) => state.token)
+  const router = useRouter()
 
   /** 检查登录状态 */
   const handleLoginRequired = () => {
     if (!token) {
-      setLoginModalOpen(true)
+      router.push('/auth/login')
     }
   }
 
@@ -41,13 +35,6 @@ export default function Home() {
       <section className="px-4 py-8 bg-white border-t border-gray-100">
         <TaskPreview limit={4} />
       </section>
-
-      {/* 登录弹窗 */}
-      <LoginModal
-        open={loginModalOpen}
-        onCancel={() => setLoginModalOpen(false)}
-        onSuccess={() => setLoginModalOpen(false)}
-      />
     </div>
   )
 }

@@ -549,7 +549,7 @@ export default function InteractivePage() {
   useEffect(() => {
     if (!token) {
       toast.error(t('messages.pleaseLoginFirst'))
-      router.push('/login')
+      router.push('/auth/login')
       return
     }
 

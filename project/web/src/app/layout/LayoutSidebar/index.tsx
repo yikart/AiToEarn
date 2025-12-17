@@ -173,7 +173,7 @@ const LayoutSidebar = () => {
 
   // 处理登录跳转
   const handleLogin = () => {
-    router.push(`/${lng}/login`)
+    router.push(`/auth/login`)
   }
 
   return (

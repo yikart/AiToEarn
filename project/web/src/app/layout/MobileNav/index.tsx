@@ -80,7 +80,7 @@ const MobileNav = () => {
 
   const handleLogin = () => {
     handleClose()
-    router.push(`/${lng}/login`)
+    router.push(`/auth/login`)
   }
 
   return (

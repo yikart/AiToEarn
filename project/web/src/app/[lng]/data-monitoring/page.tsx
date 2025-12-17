@@ -41,7 +41,6 @@ export default function DataMonitoringPage() {
   const [filterPlatform, setFilterPlatform] = useState<PlatType | 'all'>('all')
   const [noteLink, setNoteLink] = useState('')
   const [addLoading, setAddLoading] = useState(false)
-  const [loginModalOpen, setLoginModalOpen] = useState(false)
 
   // Load monitoring list
   const loadMonitoringList = async (page: number = 1, platform?: string) => {
@@ -114,8 +113,7 @@ export default function DataMonitoringPage() {
         setNoteLink('')
         loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
       } else if (response && response.code === 401) {
-        // 未登录，弹出登录弹窗
-        setLoginModalOpen(true)
+        router.push('/auth/login')
       } else if (response) {
         // 其他错误
         toast.error(response.message || t('error.addFailed'))
@@ -398,13 +396,6 @@ export default function DataMonitoringPage() {
           )}
         </div>
       </Card>
-
-      {/* Login Modal */}
-      <LoginModal
-        open={loginModalOpen}
-        onCancel={() => setLoginModalOpen(false)}
-        onSuccess={handleLoginSuccess}
-      />
     </div>
   )
 }

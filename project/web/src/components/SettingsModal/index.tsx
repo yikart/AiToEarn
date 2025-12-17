@@ -267,13 +267,7 @@ function ProfileContent({ onClose }: { onClose: () => void }) {
     clearLoginStatus()
     toast.success(tCommon('logout'))
     onClose()
-    router.push(`/${lng}/login`)
-  }
-
-  // 跳转到个人中心
-  const handleGoToProfile = () => {
-    onClose()
-    router.push(`/${lng}/profile`)
+    router.push(`/auth/login`)
   }
 
   // 计算累计收入和当前余额（分转元）
