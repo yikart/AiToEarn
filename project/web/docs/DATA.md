@@ -84,7 +84,7 @@ no-referrer
 
 {"type":"fullContent","title":"🔴红色美学｜热情活力的视觉盛宴","description":"🔴 红色美学来袭！\n\n感受红色带来的热情与力量，每一帧都充满艺术感染力💫\n\n这组红色调色让整个画面都充满了温暖和活力，红色不仅是一种颜色，更是一种态度和表达✨\n\n你最喜欢哪种风格的调色呢？评论区告诉我～","tags":["红色美学","色彩艺术","摄影调色","视觉设计","艺术分享"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/68abbe6af812ccb3e1a53d68/mj9tg7gz.png"}],"action":"navigateToPublish","platform":"xhs","accountId":"xhs_681b9361000000000801588b_web","errorMessage":"小红书平台发布工具暂不支持，请前往发布页面手动发布"}],"total_cost_usd":1.26249485,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":299859},"cache_creation_input_tokens":299859,"cache_read_input_tokens":246602,"input_tokens":75,"output_tokens":3697,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
 
-
+将今天修改写一个日报 要简洁明了 12345 这种  每条都要表达清楚 不要追加描述
 
 
 推特：图文内容成功；

@@ -13,7 +13,7 @@ import { parseUserMessageContent } from './parseMessageContent'
  * - user: { type: 'user', content: [{ type: 'text', text: '...' }] }
  * - assistant: { type: 'assistant', uuid: '...', message: { content: [{ type: 'text', text: '...' }] } }
  * - stream_event: 流式事件，用于提取工具调用信息
- * - result: { type: 'result', message: { message: '...' } }
+ * - result: { type: 'result', message: '...' } - message 字段直接包含文本内容
  *
  * 改进：解析多步骤和工作流步骤
  * - message_start 事件标识新步骤开始
@@ -335,8 +335,8 @@ function processResultMessage(
   index: number,
   displayMessages: IDisplayMessage[],
 ): { contentToAdd?: string; newAssistantMsgIndex?: number } {
-  const messageData = (msg as any).message as any
-  const content = messageData?.message || ''
+  // result 消息的 message 字段直接在第一层
+  const content = (msg as any).message || ''
 
   if (content && typeof content === 'string') {
     const lastMsg = displayMessages[displayMessages.length - 1]
