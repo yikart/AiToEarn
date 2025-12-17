@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useMemo, useEffect } from 'react'
 import { Loader2, Plus, X, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
@@ -53,6 +53,27 @@ export function MediaUpload({
 }: IMediaUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  /** 缓存的 ObjectURL 集合 */
+  const previewUrls = useMemo(() => {
+    return medias.map((media) => {
+      if (media.file) {
+        return URL.createObjectURL(media.file)
+      }
+      return getOssUrl(media.url)
+    })
+  }, [medias])
+
+  /** 清理 ObjectURL，防止内存泄漏 */
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => {
+        if (url.startsWith('blob:')) {
+          URL.revokeObjectURL(url)
+        }
+      })
+    }
+  }, [previewUrls])
+
   /** 处理文件选择 */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -72,14 +93,6 @@ export function MediaUpload({
     }
   }
 
-  /** 获取媒体预览 URL */
-  const getPreviewUrl = (media: IUploadedMedia) => {
-    if (media.file) {
-      return URL.createObjectURL(media.file)
-    }
-    return getOssUrl(media.url)
-  }
-
   const canUploadMore = medias.length < maxCount
 
   return (
@@ -87,7 +100,7 @@ export function MediaUpload({
       {/* 已上传的媒体列表 */}
       {medias.map((media, index) => (
         <div
-          key={index}
+          key={`${media.url}-${index}`}
           className={cn(
             'relative group rounded-lg overflow-hidden border border-gray-200 bg-gray-50',
             media.type === 'document' ? 'w-auto min-w-[120px] h-14 px-3' : 'w-14 h-14',
@@ -103,13 +116,13 @@ export function MediaUpload({
             </div>
           ) : media.type === 'video' ? (
             <video
-              src={getPreviewUrl(media)}
+              src={previewUrls[index]}
               className="w-full h-full object-cover"
               muted
             />
           ) : (
             <img
-              src={getPreviewUrl(media)}
+              src={previewUrls[index]}
               alt={`media-${index}`}
               className="w-full h-full object-cover"
             />
