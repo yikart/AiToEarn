@@ -12,6 +12,7 @@ import {
   Mail,
   PanelLeftClose,
   PanelLeftOpen,
+  Puzzle,
   Settings,
   Smartphone,
 } from 'lucide-react'
@@ -36,6 +37,9 @@ import {
 import { useNotification } from '@/hooks/useNotification'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
+import { usePluginStore } from '@/store/plugin'
+import { PluginStatusModal } from '@/store/plugin/components'
+import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
 
@@ -148,6 +152,109 @@ function NavItem({
 }
 
 /**
+ * 插件入口组件
+ * 根据插件状态显示不同颜色：
+ * - 未安装：灰色
+ * - 未授权：橙色
+ * - 已授权：绿色
+ */
+function PluginEntry({ collapsed }: { collapsed: boolean }) {
+  const { t } = useTransClient('common')
+  const pluginStatus = usePluginStore(state => state.status)
+  const [pluginModalVisible, setPluginModalVisible] = useState(false)
+
+  // 根据插件状态返回对应的颜色和状态文本
+  const getStatusInfo = () => {
+    switch (pluginStatus) {
+      case PluginStatus.READY:
+        return {
+          iconColor: 'text-green-500',
+          dotColor: 'bg-green-500',
+          statusText: t('pluginStatus.ready'),
+          statusColor: 'text-green-500',
+        }
+      case PluginStatus.INSTALLED_NO_PERMISSION:
+        return {
+          iconColor: 'text-orange-500',
+          dotColor: 'bg-orange-500',
+          statusText: t('pluginStatus.noPermission'),
+          statusColor: 'text-orange-500',
+        }
+      case PluginStatus.CHECKING:
+        return {
+          iconColor: 'text-blue-500',
+          dotColor: 'bg-blue-500 animate-pulse',
+          statusText: t('pluginStatus.checking'),
+          statusColor: 'text-blue-500',
+        }
+      case PluginStatus.NOT_INSTALLED:
+      case PluginStatus.UNKNOWN:
+      default:
+        return {
+          iconColor: 'text-gray-400',
+          dotColor: 'bg-gray-400',
+          statusText: t('pluginStatus.notInstalled'),
+          statusColor: 'text-gray-400',
+        }
+    }
+  }
+
+  const { iconColor, dotColor, statusText, statusColor } = getStatusInfo()
+
+  const content = (
+    <button
+      onClick={() => setPluginModalVisible(true)}
+      className={cn(
+        'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-gray-600 transition-colors hover:bg-black/5 hover:text-gray-900',
+        collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <div className="relative">
+          <Puzzle size={18} className={iconColor} />
+          {/* 状态指示点 */}
+          <span
+            className={cn(
+              'absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-white',
+              dotColor,
+            )}
+          />
+        </div>
+        {!collapsed && <span className="text-sm">{t('plugin')}</span>}
+      </div>
+      {!collapsed && (
+        <span className={cn('text-xs', statusColor)}>{statusText}</span>
+      )}
+    </button>
+  )
+
+  return (
+    <>
+      {collapsed
+        ? (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  {content}
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <p>{t('plugin')} - {statusText}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )
+        : content}
+
+      {/* 插件状态弹框 */}
+      <PluginStatusModal
+        visible={pluginModalVisible}
+        onClose={() => setPluginModalVisible(false)}
+      />
+    </>
+  )
+}
+
+/**
  * 侧边栏主组件
  */
 const LayoutSidebar = () => {
@@ -252,6 +359,9 @@ const LayoutSidebar = () => {
           collapsed && 'items-center',
         )}
         >
+          {/* 浏览器插件入口 */}
+          <PluginEntry collapsed={collapsed} />
+
           {/* VIP 会员入口 */}
           <TooltipProvider>
             <Tooltip>

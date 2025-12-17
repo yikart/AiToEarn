@@ -9,6 +9,13 @@
   "settings": "Settings",
   "vip": "VIP",
   "subscribe": "Subscribe",
+  "plugin": "Browser Plugin",
+  "pluginStatus": {
+    "notInstalled": "Not Installed",
+    "noPermission": "Not Authorized",
+    "ready": "Ready",
+    "checking": "Checking"
+  },
   "contactUs": "Contact Us",
   "downloadAppButton": "Download App",
   "noNotifications": "No notifications",
