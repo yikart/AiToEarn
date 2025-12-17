@@ -37,8 +37,8 @@ import {
 import { useNotification } from '@/hooks/useNotification'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
+import { PluginModal } from '@/components/Plugin'
 import { usePluginStore } from '@/store/plugin'
-import { PluginStatusModal } from '@/store/plugin/components'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
@@ -246,7 +246,7 @@ function PluginEntry({ collapsed }: { collapsed: boolean }) {
         : content}
 
       {/* 插件状态弹框 */}
-      <PluginStatusModal
+      <PluginModal
         visible={pluginModalVisible}
         onClose={() => setPluginModalVisible(false)}
       />

@@ -9,6 +9,7 @@
 | `ui/` | shadcn/ui 基础组件 |
 | `common/` | 通用功能组件 |
 | `modals/` | 弹窗组件集合 |
+| `Plugin/` | 浏览器插件相关组件 |
 | `Home/` | **首页相关组件集合**（包含 AgentGenerator、PromptGallery 等） |
 | `AvatarPlat/` | 带平台标识的头像组件 |
 | `Chat/` | 聊天组件（ChatInput、ChatMessage、MediaUpload、TaskCard） |
@@ -125,6 +126,56 @@ VIP 内容展示弹窗，显示会员特权信息。
 ### PointsRechargeModal
 
 积分充值弹窗。
+
+---
+
+## Plugin/ - 浏览器插件组件
+
+浏览器插件相关组件，用于管理插件状态、平台账号和发布任务。
+
+### PluginModal - 插件状态弹框
+
+根据插件状态显示不同内容的主弹框组件。
+
+```tsx
+import { PluginModal } from '@/components/Plugin'
+
+<PluginModal
+  visible={boolean}
+  onClose={() => void}
+  highlightPlatform="douyin"  // 可选，高亮显示的平台
+/>
+```
+
+**状态显示：**
+- 未安装：显示下载引导（Chrome 商店 / GitHub）
+- 未授权：显示授权引导和检查权限按钮
+- 已就绪：显示平台账号和发布列表的 Tab 布局
+
+### PublishDetailModal - 发布详情弹框
+
+显示单次发布任务的详细进度信息。
+
+```tsx
+import { PublishDetailModal } from '@/components/Plugin'
+
+<PublishDetailModal
+  visible={boolean}
+  onClose={() => void}
+  task={PublishTask}  // 任务对象
+  taskId="task-id"    // 或传入任务ID
+/>
+```
+
+### 子组件
+
+| 组件 | 说明 |
+|------|------|
+| `PluginNotInstalled` | 插件未安装状态内容 |
+| `PluginNoPermission` | 插件未授权状态内容 |
+| `PluginReady` | 插件已就绪状态（Tab 布局） |
+| `PluginReady/AccountsTab` | 平台账号列表 Tab |
+| `PluginReady/PublishListTab` | 发布任务列表 Tab |
 
 ---
 

@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next'
 import { QRCode } from 'react-qrcode-logo'
 import { getMainAppDownloadUrlSync, MAIN_APP_DOWNLOAD_URL } from '@/app/config/appDownloadConfig'
 import { useTransClient } from '@/app/i18n/client'
-import { PluginDownloadContent } from '@/store/plugin/components/PluginDownloadContent'
+import { PluginDownloadContent } from '@/components/Plugin'
 import logo from '@/assets/images/logo.png'
 
 const { Text, Paragraph } = Typography
