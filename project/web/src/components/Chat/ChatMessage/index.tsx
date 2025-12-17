@@ -12,6 +12,7 @@ import ReactMarkdown from 'react-markdown'
 import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
+import { useTransClient } from '@/app/i18n/client'
 import type { IUploadedMedia } from '../MediaUpload'
 import type { IMessageStep, IWorkflowStep } from '@/store/agent'
 import logo from '@/assets/images/logo.png'
@@ -53,6 +54,7 @@ interface IWorkflowStepItemProps {
 }
 
 function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
+  const { t } = useTransClient('chat')
   // 判断步骤是否完成：不活跃状态即为完成
   const isCompleted = !step.isActive
 
@@ -82,8 +84,8 @@ function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
           {step.type === 'tool_call'
             ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
             : step.type === 'tool_result'
-              ? `${formatToolName(step.toolName || 'Tool')} 返回结果`
-              : formatToolName(step.toolName || 'Processing')}
+              ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
+              : formatToolName(step.toolName || t('workflow.processing' as any))}
         </div>
         {step.content && (
           <pre className="text-[10px] text-gray-400 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
@@ -110,6 +112,7 @@ interface IWorkflowSectionProps {
 }
 
 function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflowSectionProps) {
+  const { t } = useTransClient('chat')
   // 默认展开，如果传了 defaultExpanded 则使用它，否则使用 isActive 或默认 true（历史消息默认展开）
   const initialExpanded = defaultExpanded !== undefined ? defaultExpanded : (isActive !== undefined ? isActive : true)
   const [expanded, setExpanded] = useState(initialExpanded)
@@ -151,7 +154,7 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
           <>
             <Wrench className="w-3.5 h-3.5 animate-pulse" />
             <span className="font-medium truncate flex-1 text-left">
-              {formatToolName(activeStep.toolName || 'Processing')}
+              {formatToolName(activeStep.toolName || t('workflow.processing' as any))}
             </span>
             <Loader2 className="w-3 h-3 animate-spin" />
           </>
@@ -159,7 +162,7 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
           <>
             <CheckCircle2 className="w-3.5 h-3.5 text-green-500" />
             <span className="font-medium flex-1 text-left">
-              {completedSteps}/{totalToolCalls} 工具调用完成
+              {completedSteps}/{totalToolCalls} {t('workflow.toolCallCompleted' as any)}
             </span>
           </>
         )}
@@ -246,6 +249,7 @@ export function ChatMessage({
   workflowSteps = [],
   className,
 }: IChatMessageProps) {
+  const { t } = useTransClient('chat')
   const isUser = role === 'user'
   const isStreaming = status === 'streaming' || status === 'pending'
 
@@ -324,7 +328,7 @@ export function ChatMessage({
                   >
                     <FileText className="w-4 h-4 text-gray-600" />
                     <span className="text-sm text-gray-700 truncate max-w-[200px]">
-                      {media.name || '文档'}
+                      {media.name || t('media.document' as any)}
                     </span>
                   </a>
                 )

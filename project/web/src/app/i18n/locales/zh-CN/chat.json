@@ -45,8 +45,15 @@
   },
   "media": {
     "video": "视频",
+    "image": "图片",
+    "document": "文档",
     "uploadFailed": "上传失败，请重试",
     "uploadCancelled": "上传已取消"
+  },
+  "workflow": {
+    "toolCallCompleted": "工具调用完成",
+    "toolResult": "返回结果",
+    "processing": "处理中..."
   }
 }
 

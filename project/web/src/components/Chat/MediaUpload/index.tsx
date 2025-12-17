@@ -9,6 +9,7 @@ import { useRef, useMemo, useEffect } from 'react'
 import { Loader2, Plus, X, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
+import { useTransClient } from '@/app/i18n/client'
 
 /** 上传的媒体文件类型 */
 export interface IUploadedMedia {
@@ -51,6 +52,7 @@ export function MediaUpload({
   maxCount = 9,
   className,
 }: IMediaUploadProps) {
+  const { t } = useTransClient('chat')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   /** 缓存的 ObjectURL 集合 */
@@ -111,7 +113,7 @@ export function MediaUpload({
             <div className="flex items-center gap-2 h-full">
               <FileText className="w-4 h-4 text-gray-600 shrink-0" />
               <span className="text-xs text-gray-700 truncate max-w-[80px]">
-                {media.name || media.file?.name || '文档'}
+                {media.name || media.file?.name || t('media.document' as any)}
               </span>
             </div>
           ) : media.type === 'video' ? (
