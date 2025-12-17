@@ -25,6 +25,43 @@ import { cn } from '@/lib/utils'
 import logo from '@/assets/images/logo.png'
 
 /**
+ * 检测任务是否已完成
+ * 根据消息列表判断任务状态：
+ * - 存在 stream_event 且 event.type === 'message_stop' 表示任务完成
+ * - 存在 message_delta 且 stop_reason === 'end_turn' 表示任务完成
+ * @param messages 任务消息列表
+ * @returns 是否已完成
+ */
+function isTaskCompleted(messages: TaskMessage[]): boolean {
+  if (!messages || messages.length === 0) {
+    return false
+  }
+
+  // 从后往前遍历消息，检查是否有完成标志
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i]
+
+    // 检查 stream_event 类型的消息
+    if (msg.type === 'stream_event') {
+      const streamEvent = msg as any
+      const event = streamEvent.event
+
+      // message_stop 表示任务完成
+      if (event?.type === 'message_stop') {
+        return true
+      }
+
+      // message_delta 中 stop_reason === 'end_turn' 表示任务完成
+      if (event?.type === 'message_delta' && event?.delta?.stop_reason === 'end_turn') {
+        return true
+      }
+    }
+  }
+
+  return false
+}
+
+/**
  * 将后端消息转换为显示格式
  * 数据结构说明：
  * - user: { type: 'user', content: [{ type: 'text', text: '...' }] }
@@ -364,6 +401,12 @@ export default function ChatDetailPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const messagesContainerRef = useRef<HTMLDivElement>(null)
   const hasLoadedRef = useRef(false)
+  /** 存储原始消息用于检测任务完成状态 */
+  const rawMessagesRef = useRef<TaskMessage[]>([])
+  /** 轮询定时器 ref */
+  const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
+  /** 是否正在轮询 */
+  const [isPolling, setIsPolling] = useState(false)
   
   // 滚动相关状态
   const [isNearBottom, setIsNearBottom] = useState(true) // 用户是否在底部附近
@@ -376,8 +419,8 @@ export default function ChatDetailPage() {
   // - 非活跃任务（刷新或从历史进入）→ 使用本地消息
   const displayMessages = isActiveTask ? storeMessages : localMessages
 
-  // 是否正在生成
-  const isGenerating = isRealtimeGenerating || localIsGenerating
+  // 是否正在生成（包含轮询状态）
+  const isGenerating = isRealtimeGenerating || localIsGenerating || isPolling
 
   // 当前工作流步骤列表（仅在实时生成时有效）
   const workflowSteps: IWorkflowStep[] = isActiveTask ? storeWorkflowSteps : []
@@ -435,6 +478,7 @@ export default function ChatDetailPage() {
    * 加载任务详情（仅在初始加载时）
    * - 只在页面首次加载或刷新时从 API 获取历史消息
    * - 对话过程中不会重新加载（避免覆盖新消息）
+   * - 如果任务未完成，启动轮询继续获取最新状态
    */
   useEffect(() => {
     // 如果已经加载过，不再重复加载
@@ -464,10 +508,18 @@ export default function ChatDetailPage() {
           setTask(result.data)
           // 转换消息格式
           if (result.data.messages) {
+            // 保存原始消息用于检测任务完成状态
+            rawMessagesRef.current = result.data.messages
             const converted = convertMessages(result.data.messages)
             setLocalMessages(converted)
             // 同步到 Store（用于后续继续对话）
             setMessages(converted)
+
+            // 检测任务是否完成，如果未完成则启动轮询
+            if (!isTaskCompleted(result.data.messages)) {
+              console.log('[ChatDetail] Task not completed, starting polling...')
+              setIsPolling(true)
+            }
           }
           hasLoadedRef.current = true
         } else {
@@ -483,6 +535,55 @@ export default function ChatDetailPage() {
 
     loadTask()
   }, [taskId, isActiveTask, storeMessages.length, t, setMessages])
+
+  /**
+   * 轮询任务详情
+   * - 仅在页面刷新后任务未完成时触发
+   * - 每 3 秒轮询一次获取最新状态
+   * - 任务完成后自动停止轮询
+   */
+  useEffect(() => {
+    if (!isPolling || !taskId || isActiveTask) {
+      return
+    }
+
+    console.log('[ChatDetail] Starting polling for task:', taskId)
+
+    const pollTask = async () => {
+      try {
+        const result = await agentApi.getTaskDetail(taskId)
+        if (result?.code === 0 && result.data?.messages) {
+          // 保存原始消息
+          rawMessagesRef.current = result.data.messages
+          // 更新显示消息
+          const converted = convertMessages(result.data.messages)
+          setLocalMessages(converted)
+          setMessages(converted)
+          // 更新任务信息
+          setTask(result.data)
+
+          // 检测任务是否完成
+          if (isTaskCompleted(result.data.messages)) {
+            console.log('[ChatDetail] Task completed, stopping polling')
+            setIsPolling(false)
+          }
+        }
+      } catch (error) {
+        console.error('[ChatDetail] Polling failed:', error)
+        // 轮询失败不停止，继续尝试
+      }
+    }
+
+    // 每 3 秒轮询一次（初始加载时已经获取过一次数据了）
+    pollingTimerRef.current = setInterval(pollTask, 3000)
+
+    return () => {
+      if (pollingTimerRef.current) {
+        clearInterval(pollingTimerRef.current)
+        pollingTimerRef.current = null
+      }
+    }
+  }, [isPolling, taskId, isActiveTask, setMessages])
 
   /** 
    * 智能滚动到底部
@@ -501,6 +602,11 @@ export default function ChatDetailPage() {
     return () => {
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
+      }
+      // 清理轮询定时器
+      if (pollingTimerRef.current) {
+        clearInterval(pollingTimerRef.current)
+        pollingTimerRef.current = null
       }
     }
   }, [])

@@ -192,6 +192,7 @@ export const agentApi = {
         },
         body: JSON.stringify(params),
         signal: abortController.signal,
+        openWhenHidden: true,
         
         // 当连接打开时
         async onopen(response) {
