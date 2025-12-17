@@ -1,5 +1,73 @@
 {
   "title": "PLUS Member",
+  "pricing": {
+    "pageTitle": "Upgrade Your Plan",
+    "pageDescription": "Choose the plan that works for you",
+    "supportAlipay": "Supported by",
+    "alipay": "Alipay",
+    "payment": "Payment",
+    "monthlyBilling": "Monthly Billing",
+    "mostPopular": "Most Popular",
+    "perMonth": "/mo",
+    "customPrice": "Custom Price",
+    "contactUs": "Contact Us",
+    "pointsGuide": "ListenHub Points Guide",
+    "plans": {
+      "creator": {
+        "name": "Creator",
+        "price": "12",
+        "button": "Upgrade to Creator",
+        "features": [
+          "1,300 points per month",
+          "Nano Banana Pro image generation",
+          "Script editing",
+          "Audio & video export",
+          "Remove ListenHub branding"
+        ]
+      },
+      "professional": {
+        "name": "Professional",
+        "price": "24",
+        "button": "Upgrade to Professional",
+        "features": [
+          "2,700 points per month",
+          "2 voice clones supported",
+          "Nano Banana Pro image generation",
+          "Script editing",
+          "Audio & video export",
+          "Audio API & MCP access",
+          "Remove ListenHub branding"
+        ]
+      },
+      "business": {
+        "name": "Business",
+        "price": "49",
+        "button": "Upgrade to Business",
+        "features": [
+          "6,300 points per month",
+          "5 voice clones supported",
+          "Nano Banana Pro image generation",
+          "Script editing",
+          "Audio & video export",
+          "Audio API & MCP access",
+          "Remove ListenHub branding"
+        ]
+      },
+      "enterprise": {
+        "name": "Enterprise",
+        "button": "Contact Us",
+        "features": [
+          "All Business benefits",
+          "Unlimited voice clones",
+          "Custom points allocation",
+          "Custom audio formats",
+          "Enterprise compliance support",
+          "Priority customer support",
+          "Advanced API access"
+        ]
+      }
+    }
+  },
   "description": "Upgrade to unlock all features with 8 benefits",
   "activateNow": "Activate Now",
   "upgrade": "Upgrade",

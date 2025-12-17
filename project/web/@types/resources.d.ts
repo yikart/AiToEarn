@@ -569,21 +569,6 @@ interface Resources {
     "subscribe": "开通订阅",
     "contactUs": "联系我们",
     "downloadAppButton": "下载手机APP",
-    "downloadApp": {
-      "title": "下载{{appName}}",
-      "operationInApp": "请在{{appName}}中操作添加",
-      "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
-      "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
-      "scanQrCode": "扫描二维码下载",
-      "downloadLink": "下载链接：",
-      "copy": "复制",
-      "copySuccess": "复制成功",
-      "copyFailed": "复制失败，请手动复制",
-      "copied": "已复制",
-      "close": "关闭",
-      "downloadNow": "立即下载",
-      "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
-    },
     "noNotifications": "暂无消息",
     "markAllAsRead": "全部标记为已读",
     "markAsRead": "标记为已读",
@@ -629,6 +614,21 @@ interface Resources {
       "alreadySignedIn": "今日已签到",
       "consecutiveDays": "连续签到天数",
       "totalPoints": "总积分"
+    },
+    "downloadApp": {
+      "title": "下载{{appName}}",
+      "operationInApp": "请在{{appName}}中操作添加",
+      "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+      "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
+      "scanQrCode": "扫描二维码下载",
+      "downloadLink": "下载链接：",
+      "copy": "复制",
+      "copySuccess": "复制成功",
+      "copyFailed": "复制失败，请手动复制",
+      "copied": "已复制",
+      "close": "关闭",
+      "downloadNow": "立即下载",
+      "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
     },
     "websit": {
       "termsOfService": {
@@ -1512,6 +1512,34 @@ interface Resources {
       "article": "文章"
     }
   },
+  "interactiveNew": {
+    "title": "互动",
+    "describe": "浏览各平台热门内容，进行互动操作",
+    "selectPlatform": "选择平台",
+    "loginRequired": "请先登录该平台",
+    "allPlatformNotLogin": "所有平台均未登录，请先登录任意平台",
+    "goLogin": "去登录",
+    "loading": "加载中...",
+    "loadMore": "加载更多",
+    "noMore": "没有更多了",
+    "empty": "暂无数据",
+    "emptyDesc": "当前平台暂无推荐内容",
+    "loadFailed": "加载失败",
+    "retry": "重试",
+    "refresh": "刷新",
+    "backTop": "返回顶部",
+    "likes": "赞",
+    "video": "视频",
+    "noTitle": "无标题",
+    "pluginNotReady": "插件未就绪",
+    "pluginNotReadyDesc": "请先安装并授权 AIToEarn 浏览器插件",
+    "installPlugin": "安装插件",
+    "followed": "已关注",
+    "liked": "已赞",
+    "collected": "已收藏",
+    "collect": "收藏",
+    "topics": "话题"
+  },
   "login": {
     "welcomeBack": "哎呦赚",
     "emailPlaceholder": "邮箱",
@@ -2060,6 +2088,7 @@ interface Resources {
       "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
       "platformAccounts": "平台账号",
       "notLoggedIn": "未登录",
+      "xhsNotLoggedInTip": "小红书需要登录创作者中心",
       "loginNow": "立即登录",
       "viewPublishList": "查看发布列表",
       "permissionRequired": "需要授权",
@@ -2068,8 +2097,66 @@ interface Resources {
       "sync": "同步",
       "syncToAccount": "同步到账号管理",
       "syncSuccess": "账号同步成功",
-      "syncFailed": "账号同步失败"
+      "syncFailed": "账号同步失败",
+      "xhsHome": "主页",
+      "xhsCreator": "创作者",
+      "xhsLoginHomeTip": "登录小红书主页",
+      "xhsLoginCreatorTip": "登录小红书创作者后台"
     }
+  },
+  "pluginGuide": {
+    "title": "浏览器插件使用教程",
+    "lastUpdated": "最后更新",
+    "introduction": "本教程将指导您如何安装和使用 AiToEarn 浏览器插件，让您能够更便捷地管理社交媒体账号和发布内容。",
+    "steps": {
+      "step1": {
+        "title": "第一步：打开插件管理弹框",
+        "content": "在 AiToEarn 平台页面，点击右上角的插件图标，打开浏览器插件管理弹框。"
+      },
+      "step2": {
+        "title": "第二步：下载插件",
+        "content": "在弹框中选择下载方式，点击下载插件。",
+        "note": "Chrome Web Store 和 GitHub Release 安装区别：",
+        "noteItem1": "GitHub Release 下载的插件您需要浏览器打开开发者模式安装，但是此处安装的资源是最新的插件。",
+        "noteItem2": "Chrome Web Store 下载的插件您可以直接安装。"
+      },
+      "step3": {
+        "title": "第三步：检查安装状态",
+        "content": "安装完成后我们点击浏览器的扩展程序按钮，查看是否安装成功。"
+      },
+      "step4": {
+        "title": "第四步：进入插件详情页",
+        "content": "如果安装成功，我们点击插件，进入插件详情页。"
+      },
+      "step5": {
+        "title": "第五步：授权插件",
+        "content": "点击按钮 \"Authorize Now\" 授权插件。"
+      },
+      "step6": {
+        "title": "第六步：确认插件就绪",
+        "content": "权限已授予成功，下一步打开 AiToEarn 平台，刷新页面，此时可以看到插件已经就绪，点击它查看详情。"
+      },
+      "step7": {
+        "title": "第七步：查看账号信息",
+        "content": "如果您已经登录插件支持的平台，会看到插件已经获取到对应的账号。"
+      },
+      "step8": {
+        "title": "第八步：同步账号",
+        "content": "可以在此处将账号同步到账号管理，点击 [Sync] 按钮，账号会被同步到我们的数据库中。"
+      },
+      "complete": {
+        "title": "完成",
+        "content": "此时您可以正常使用 AiToEarn 平台了！"
+      }
+    },
+    "faq": {
+      "title": "常见问题",
+      "q1": {
+        "question": "为什么我登录了小红书，但是插件还是显示未登录？",
+        "answer": "可能是未登录小红书创作者中心，在小红书主页，右上角按钮，点击可以快速登录小红书创作者中心。"
+      }
+    },
+    "viewGuide": "查看教程"
   },
   "pricing": {
     "title": "套餐与定价",
@@ -3265,6 +3352,74 @@ interface Resources {
   },
   "vip": {
     "title": "PLUS会员",
+    "pricing": {
+      "pageTitle": "升级你的计划",
+      "pageDescription": "选择适合您的计划，解锁更多功能",
+      "supportAlipay": "支持",
+      "alipay": "支付宝",
+      "payment": "付款",
+      "monthlyBilling": "连续包月",
+      "mostPopular": "最受欢迎",
+      "perMonth": "/月",
+      "customPrice": "定制价格",
+      "contactUs": "联系我们",
+      "pointsGuide": "ListenHub 积分指南",
+      "plans": {
+        "creator": {
+          "name": "创作者",
+          "price": "12",
+          "button": "升级至创作者",
+          "features": [
+            "每月 1300 积分",
+            "支持 Nano Banana Pro 生成图片",
+            "脚本编辑",
+            "音频 & 视频导出",
+            "移除 ListenHub 品牌元素"
+          ]
+        },
+        "professional": {
+          "name": "专业版",
+          "price": "24",
+          "button": "升级至专业版",
+          "features": [
+            "每月 2700 积分",
+            "支持 2 个声音克隆",
+            "支持 Nano Banana Pro 生成图片",
+            "脚本编辑",
+            "音频 & 视频导出",
+            "音频 API 接口 & MCP 使用权限",
+            "移除 ListenHub 品牌元素"
+          ]
+        },
+        "business": {
+          "name": "商业版",
+          "price": "49",
+          "button": "升级至商业版",
+          "features": [
+            "每月 6300 积分",
+            "支持 5 个声音克隆",
+            "支持 Nano Banana Pro 生成图片",
+            "脚本编辑",
+            "音频 & 视频导出",
+            "音频 API 接口 & MCP 使用权限",
+            "移除 ListenHub 品牌元素"
+          ]
+        },
+        "enterprise": {
+          "name": "企业版",
+          "button": "联系我们",
+          "features": [
+            "商业版的所有权益",
+            "无限声音克隆",
+            "自定义积分数量",
+            "自定义音频格式",
+            "企业合规支持",
+            "高优客户支持",
+            "高级 API 接口访问"
+          ]
+        }
+      }
+    },
     "description": "开通会员解锁全部功能，立享8种权益",
     "activateNow": "立即开通",
     "upgrade": "开通会员",
