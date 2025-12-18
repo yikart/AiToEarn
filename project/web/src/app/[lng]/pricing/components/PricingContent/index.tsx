@@ -188,7 +188,9 @@ const PricingCard = memo(({
               <Button
                 onClick={onSelect}
                 disabled={isLoading}
-                className="w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200 bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                className={cn(
+                  'w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200',
+                )}
               >
                 {buttonText}
               </Button>
@@ -204,9 +206,6 @@ const PricingCard = memo(({
           disabled={isLoading}
           className={cn(
             'w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200',
-            isHighlight
-              ? 'bg-purple-500 hover:bg-purple-600 text-white shadow-lg shadow-purple-200 dark:shadow-purple-900/30'
-              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
           )}
         >
           {isLoading ? (
