@@ -449,19 +449,19 @@ const createChannelHandler: IActionHandler = {
   type: 'createChannel',
 
   canHandle: (taskData) => {
-    return taskData.type === 'fullContent' && taskData.action === 'createChannel' && taskData.errorMessage
+    return !!(taskData.type === 'fullContent' && taskData.action === 'createChannel' && taskData.errorMessage)
   },
 
   async execute(taskData, context) {
     const { router, lng, t } = context
     const platform = taskData.platform
 
-    toast.warning(taskData.errorMessage || t('aiGeneration.needBindChannel' as any))
+    toast.warning(taskData.errorMessage || (t('aiGeneration.needBindChannel' as any) as string))
 
     confirm({
-      title: t('aiGeneration.needBindChannelTitle' as any) || '需要绑定账号',
-      content: taskData.errorMessage || t('aiGeneration.needBindChannelContent' as any) || '请先绑定账号才能发布内容',
-      okText: t('aiGeneration.goBind' as any) || '去绑定',
+      title: t('aiGeneration.needBindChannelTitle' as any) as string,
+      content: taskData.errorMessage || (t('aiGeneration.needBindChannelContent' as any) as string),
+      okText: t('aiGeneration.goBind' as any) as string,
       cancelText: undefined, // 不显示取消按钮
       onOk: () => {
         router.push(`/${lng}/accounts?addChannel=${platform}`)
