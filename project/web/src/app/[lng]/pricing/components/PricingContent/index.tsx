@@ -157,8 +157,8 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
 
       // 创建支付订单
       const returnTo = userStore.lang === 'zh-CN' 
-        ? `${window.location.origin}/zh-CN/profile` 
-        : `${window.location.origin}/en/profile`
+        ? `${window.location.origin}/zh-CN/pricing` 
+        : `${window.location.origin}/en/pricing`
       
       const response: any = await createPaymentOrderApi({
         returnTo,
@@ -173,7 +173,7 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
         toast.success(t('paymentOrderCreated'))
         // 直接跳转到支付页面
         if (response.data?.url) {
-          window.open(response.data.url)
+          window.location.href = response.data.url
         } else {
           toast.error(t('paymentLinkNotFound'))
         }
