@@ -95,10 +95,7 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        'rounded-2xl border bg-card transition-all duration-300',
-        isFocused
-          ? 'border-primary/60 shadow-[0_0_0_3px_hsl(var(--primary)/0.1),0_4px_20px_-4px_hsl(var(--primary)/0.25)]'
-          : 'border-border shadow-sm hover:border-border/80 hover:shadow-md',
+        'rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
         mode === 'large' ? 'p-4' : 'p-3',
         className,
       )}
