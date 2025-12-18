@@ -8,63 +8,44 @@
     "payment": "付款",
     "monthlyBilling": "连续包月",
     "mostPopular": "最受欢迎",
+    "respectedCreator": "尊敬的创作者",
     "perMonth": "/月",
     "customPrice": "定制价格",
     "contactUs": "联系我们",
-    "pointsGuide": "ListenHub 积分指南",
+    "currentPlan": "当前计划",
     "plans": {
+      "free": {
+        "name": "免费",
+        "price": "0",
+        "button": "当前计划",
+        "features": {
+          "0": "发布：抖音、小红书、视频号、快手、哔哩哔哩、微信公众号、TikTok、YouTube、Facebook、Instagram、Threads、X (Twitter)、Pinterest",
+          "1": "一次性 3$ Agent 额度"
+        }
+      },
       "creator": {
         "name": "创作者",
-        "price": "12",
+        "price": "19",
         "button": "升级至创作者",
-        "features": [
-          "每月 1300 积分",
-          "支持 Nano Banana Pro 生成图片",
-          "脚本编辑",
-          "音频 & 视频导出",
-          "移除 ListenHub 品牌元素"
-        ]
-      },
-      "professional": {
-        "name": "专业版",
-        "price": "24",
-        "button": "升级至专业版",
-        "features": [
-          "每月 2700 积分",
-          "支持 2 个声音克隆",
-          "支持 Nano Banana Pro 生成图片",
-          "脚本编辑",
-          "音频 & 视频导出",
-          "音频 API 接口 & MCP 使用权限",
-          "移除 ListenHub 品牌元素"
-        ]
-      },
-      "business": {
-        "name": "商业版",
-        "price": "49",
-        "button": "升级至商业版",
-        "features": [
-          "每月 6300 积分",
-          "支持 5 个声音克隆",
-          "支持 Nano Banana Pro 生成图片",
-          "脚本编辑",
-          "音频 & 视频导出",
-          "音频 API 接口 & MCP 使用权限",
-          "移除 ListenHub 品牌元素"
-        ]
+        "features": {
+          "0": "每月 50$ Agent 额度",
+          "1": "Sora-2：免费且无限",
+          "2": "Nano Banana Pro：免费且无限",
+          "3": "免费计划的所有功能"
+        }
       },
       "enterprise": {
         "name": "企业版",
         "button": "联系我们",
-        "features": [
-          "商业版的所有权益",
-          "无限声音克隆",
-          "自定义积分数量",
-          "自定义音频格式",
-          "企业合规支持",
-          "高优客户支持",
-          "高级 API 接口访问"
-        ]
+        "features": {
+          "0": "创作者的所有权益",
+          "1": "无限AI模型调用",
+          "2": "自定义功能开发",
+          "3": "企业合规支持",
+          "4": "专属客户经理",
+          "5": "高级 API 接口访问",
+          "6": "优先技术支持"
+        }
       }
     }
   },

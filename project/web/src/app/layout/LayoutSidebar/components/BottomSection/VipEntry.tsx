@@ -15,11 +15,16 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import { useUserStore } from '@/store/user'
 import type { SidebarCommonProps } from '../../types'
 
 export function VipEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
   const lng = useGetClientLng()
+  const userInfo = useUserStore(state => state.userInfo)
+
+  // 判断用户是否是有效会员
+  const isVip = userInfo?.vipInfo?.expireTime && new Date(userInfo.vipInfo.expireTime) > new Date()
 
   return (
     <TooltipProvider>
@@ -36,7 +41,9 @@ export function VipEntry({ collapsed }: SidebarCommonProps) {
               <Crown size={18} className="text-warning" />
               {!collapsed && <span className="text-sm">{t('vip')}</span>}
             </div>
-            {!collapsed && <span className="text-xs text-muted-foreground">{t('subscribe')}</span>}
+            {!collapsed && !isVip && (
+              <span className="text-xs text-muted-foreground">{t('subscribe')}</span>
+            )}
           </Link>
         </TooltipTrigger>
         {collapsed && (

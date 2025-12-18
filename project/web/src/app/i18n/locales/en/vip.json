@@ -8,63 +8,44 @@
     "payment": "Payment",
     "monthlyBilling": "Monthly Billing",
     "mostPopular": "Most Popular",
+    "respectedCreator": "Respected Creator",
     "perMonth": "/mo",
     "customPrice": "Custom Price",
     "contactUs": "Contact Us",
-    "pointsGuide": "ListenHub Points Guide",
+    "currentPlan": "Current Plan",
     "plans": {
+      "free": {
+        "name": "Free",
+        "price": "0",
+        "button": "Current Plan",
+        "features": {
+          "0": "Publishing: Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts, TikTok, YouTube, Facebook, Instagram, Threads, X (Twitter), Pinterest",
+          "1": "One-time $3 Agent Credits"
+        }
+      },
       "creator": {
         "name": "Creator",
-        "price": "12",
+        "price": "19",
         "button": "Upgrade to Creator",
-        "features": [
-          "1,300 points per month",
-          "Nano Banana Pro image generation",
-          "Script editing",
-          "Audio & video export",
-          "Remove ListenHub branding"
-        ]
-      },
-      "professional": {
-        "name": "Professional",
-        "price": "24",
-        "button": "Upgrade to Professional",
-        "features": [
-          "2,700 points per month",
-          "2 voice clones supported",
-          "Nano Banana Pro image generation",
-          "Script editing",
-          "Audio & video export",
-          "Audio API & MCP access",
-          "Remove ListenHub branding"
-        ]
-      },
-      "business": {
-        "name": "Business",
-        "price": "49",
-        "button": "Upgrade to Business",
-        "features": [
-          "6,300 points per month",
-          "5 voice clones supported",
-          "Nano Banana Pro image generation",
-          "Script editing",
-          "Audio & video export",
-          "Audio API & MCP access",
-          "Remove ListenHub branding"
-        ]
+        "features": {
+          "0": "$50 Agent Credits per Month",
+          "1": "Sora-2: Free & Unlimited",
+          "2": "Nano Banana Pro: Free & Unlimited",
+          "3": "Everything in Free"
+        }
       },
       "enterprise": {
         "name": "Enterprise",
         "button": "Contact Us",
-        "features": [
-          "All Business benefits",
-          "Unlimited voice clones",
-          "Custom points allocation",
-          "Custom audio formats",
-          "Enterprise compliance support",
-          "Priority customer support",
-          "Advanced API access"
-        ]
+        "features": {
+          "0": "All Creator benefits",
+          "1": "Unlimited AI model calls",
+          "2": "Custom feature development",
+          "3": "Enterprise compliance support",
+          "4": "Dedicated account manager",
+          "5": "Advanced API access",
+          "6": "Priority technical support"
+        }
       }
     }
   },
