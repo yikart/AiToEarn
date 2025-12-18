@@ -24,8 +24,8 @@ export interface ConfirmOptions {
   content?: React.ReactNode
   /** 确认按钮文字，默认 "确定" */
   okText?: string
-  /** 取消按钮文字，默认 "取消"。如果为 undefined，则不显示取消按钮 */
-  cancelText?: string
+  /** 取消按钮文字，默认 "取消"。如果为 undefined 或 null，则不显示取消按钮 */
+  cancelText?: string | null
   /** 确认按钮类型 */
   okType?: 'default' | 'destructive'
   /** 点击确认回调 */
@@ -54,7 +54,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   title,
   content,
   okText = '确定',
-  cancelText = '取消',
+  cancelText,
   okType = 'default',
   onOk,
   onCancel,
@@ -80,6 +80,11 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
     onOpenChange(false)
   }
 
+  // 如果 cancelText 为 undefined 或 null，则不显示取消按钮
+  // 否则使用传入的值，如果没有传入则使用默认值 "取消"
+  const showCancel = cancelText !== undefined && cancelText !== null
+  const cancelButtonText = cancelText ?? '取消'
+
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent className={cn('max-w-[420px]', className)}>
@@ -95,9 +100,9 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {cancelText !== undefined && (
+          {showCancel && (
             <AlertDialogCancel onClick={handleCancel} disabled={loading}>
-              {cancelText}
+              {cancelButtonText}
             </AlertDialogCancel>
           )}
           <AlertDialogAction
