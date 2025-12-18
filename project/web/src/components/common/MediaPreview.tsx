@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Dialog, DialogContent } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -50,6 +50,12 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
           '[&>button]:hidden flex items-center justify-center',
         )}
       >
+        {/* 无障碍：为 Dialog 提供隐藏的标题和描述 */}
+        <DialogTitle className="sr-only">Media preview</DialogTitle>
+        <DialogDescription className="sr-only">
+          Preview of uploaded image or video.
+        </DialogDescription>
+
         <div className="relative w-full flex items-center justify-center">
           {/* 内容卡片 */}
           <div className="relative max-h-[80vh] max-w-[90vw] overflow-hidden rounded-xl bg-background shadow-2xl">

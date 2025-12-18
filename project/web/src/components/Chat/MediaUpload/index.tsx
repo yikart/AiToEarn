@@ -66,7 +66,7 @@ export function MediaUpload({
   disabled = false,
   onFilesChange,
   onRemove,
-  maxCount = 9,
+  maxCount = 5,
   showList = true,
   showUploadButton = true,
   buttonVariant = 'grid',
@@ -101,7 +101,19 @@ export function MediaUpload({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files && files.length > 0) {
-      onFilesChange?.(files)
+      const remaining = Math.max(0, maxCount - medias.length)
+      if (remaining <= 0) {
+        // 已达到最大数量，直接忽略本次选择
+      } else if (files.length > remaining) {
+        // 只取前 remaining 个文件
+        const dt = new DataTransfer()
+        for (let i = 0; i < remaining; i++) {
+          dt.items.add(files[i])
+        }
+        onFilesChange?.(dt.files)
+      } else {
+        onFilesChange?.(files)
+      }
     }
     // 重置 input，允许重复选择同一文件
     if (fileInputRef.current) {

@@ -222,25 +222,6 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
               {t('pricing.pageTitle')}
             </h1>
-            {userStore.userInfo && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setSubscriptionDialogOpen(true)}
-                      className="h-10 w-10"
-                    >
-                      <Settings className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{t('subscriptionManagement')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
           </div>
         </header>
 
