@@ -235,10 +235,6 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
           <p className="mb-1 text-sm text-muted-foreground">{t('profile.totalIncome')}</p>
           <p className="text-2xl font-bold text-foreground">¥{totalIncome.toFixed(2)}</p>
         </div>
-        <div className="rounded-xl border border-primary/10 bg-primary/10 p-4">
-          <p className="mb-1 text-sm text-muted-foreground">{t('profile.currentBalance')}</p>
-          <p className="text-2xl font-bold text-primary">¥{currentBalance.toFixed(2)}</p>
-        </div>
       </div>
 
       {/* 退出登录按钮 */}
