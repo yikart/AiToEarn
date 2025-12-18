@@ -24,9 +24,9 @@
         }
       },
       "creator": {
-        "name": "Creator",
+        "name": "Monthly PLUS Member",
         "price": "19",
-        "button": "Upgrade to Creator",
+        "button": "Upgrade to Monthly PLUS Member",
         "features": {
           "0": "$50 Agent Credits per Month",
           "1": "Sora-2: Free & Unlimited",

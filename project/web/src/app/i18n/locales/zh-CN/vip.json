@@ -8,7 +8,7 @@
     "payment": "付款",
     "monthlyBilling": "连续包月",
     "mostPopular": "最受欢迎",
-    "respectedCreator": "尊敬的创作者",
+    "respectedCreator": "尊敬的PLUS会员",
     "perMonth": "/月",
     "customPrice": "定制价格",
     "contactUs": "联系我们",
@@ -24,9 +24,9 @@
         }
       },
       "creator": {
-        "name": "创作者",
+        "name": "月度PLUS会员",
         "price": "19",
-        "button": "升级至创作者",
+        "button": "升级至月度PLUS会员",
         "features": {
           "0": "每月 50$ Agent 额度",
           "1": "Sora-2：免费且无限",
