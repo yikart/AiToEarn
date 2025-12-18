@@ -61,12 +61,20 @@ export function ChatInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
 
-  /** 自动调整高度 */
+  /** 自动调整高度
+   * - large 模式：根据内容自适应高度（最多 200px）
+   * - compact 模式：强制占满父容器高度，避免浏览器默认行高产生的 inline height 覆盖 h-full
+   */
   useEffect(() => {
-    if (textareaRef.current) {
+    if (!textareaRef.current) return
+
+    if (mode === 'large') {
       textareaRef.current.style.height = 'auto'
-      const maxHeight = mode === 'large' ? 200 : 120
+      const maxHeight = 200
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, maxHeight)}px`
+    } else {
+      // 详情页：高度交给父容器，清理/覆盖掉浏览器默认的 inline height
+      textareaRef.current.style.height = '100%'
     }
   }, [value, mode])
 
@@ -95,8 +103,10 @@ export function ChatInput({
   return (
     <div
       className={cn(
-        'rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
+        'w-full rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
         mode === 'large' ? 'p-4' : 'p-3',
+        // 详情页（compact 模式）默认撑满父容器高度
+        mode === 'compact' && 'h-full',
         className,
       )}
     >
@@ -114,7 +124,7 @@ export function ChatInput({
       )}
 
       {/* 输入区域 */}
-      <div className="flex items-end gap-3">
+      <div className="flex items-stretch gap-3 h-full">
         {/* 上传按钮 - 仅在 compact 模式且无媒体时显示 */}
         {mode === 'compact' && medias.length === 0 && (
           <MediaUpload
@@ -140,7 +150,10 @@ export function ChatInput({
           className={cn(
             'flex-1 resize-none border-none outline-none focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            mode === 'large' ? 'text-base min-h-[80px]' : 'text-sm min-h-[24px]',
+            mode === 'large'
+              ? 'text-base min-h-[80px]'
+              : // 详情页：高度跟随父容器，尽量占满
+                'text-sm h-full min-h-[40px]',
           )}
         />
 
