@@ -81,6 +81,17 @@ export function createStoreMethods(ctx: IMethodsContext) {
         ActionRegistry.executeBatch(resultArray, refs.actionContext.value)
       }
     }
+
+    // 刷新用户 Credits 余额
+    // 使用 getState() 在非 React 组件中访问 store 方法
+    try {
+      const userStore = useUserStore.getState()
+      if (userStore?.fetchCreditsBalance) {
+        userStore.fetchCreditsBalance()
+      }
+    } catch (error) {
+      console.warn('[AgentStore] Failed to refresh credits balance:', error)
+    }
   }
 
   /** 处理 SSE 消息 */
