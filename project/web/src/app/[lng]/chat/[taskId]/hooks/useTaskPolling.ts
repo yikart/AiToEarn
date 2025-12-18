@@ -13,6 +13,8 @@ export interface ITaskPollingOptions {
   taskId: string
   /** 是否为活跃任务（Store 中有对应的实时消息） */
   isActiveTask: boolean
+  /** 获取当前原始消息列表（用于增量轮询） */
+  getCurrentRawMessages?: () => TaskMessage[]
   /** 轮询间隔（ms） */
   pollingInterval?: number
   /** 消息更新回调 */
@@ -37,6 +39,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
   const {
     taskId,
     isActiveTask,
+    getCurrentRawMessages,
     pollingInterval = 3000,
     onMessagesUpdate,
     onTaskUpdate,
@@ -68,11 +71,31 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
     const pollTask = async () => {
       try {
-        const result = await agentApi.getTaskDetail(taskId)
+        // 获取当前已有的原始消息列表
+        const currentRawMessages = getCurrentRawMessages ? getCurrentRawMessages() : []
+        // 计算最后一条消息的 UUID（用于增量拉取）
+        let lastMessageId: string | undefined
+        for (let i = currentRawMessages.length - 1; i >= 0; i--) {
+          const uuid = currentRawMessages[i]?.uuid
+          if (uuid) {
+            lastMessageId = uuid
+            break
+          }
+        }
+
+        // 调用增量消息接口，仅获取 lastMessageId 之后的新消息
+        const result = await agentApi.getTaskMessages(taskId, lastMessageId)
         if (result?.code === 0 && result.data?.messages) {
+          const newMessages = result.data.messages
+          if (!newMessages.length) {
+            return
+          }
+
+          const mergedMessages = [...currentRawMessages, ...newMessages]
+
           // 更新消息
-          const converted = convertMessages(result.data.messages)
-          onMessagesUpdate(converted, result.data.messages)
+          const converted = convertMessages(mergedMessages)
+          onMessagesUpdate(converted, mergedMessages)
 
           // 更新任务信息
           if (onTaskUpdate) {
@@ -80,7 +103,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           }
 
           // 检测任务是否完成
-          if (isTaskCompleted(result.data.messages)) {
+          if (isTaskCompleted(mergedMessages)) {
             console.log('[TaskPolling] Task completed, stopping polling')
             setIsPolling(false)
             // 任务完成时刷新 Credits 余额

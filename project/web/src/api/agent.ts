@@ -155,6 +155,11 @@ export interface SSEMessage {
   data?: any
 }
 
+// 任务增量消息响应
+export interface TaskMessagesVo {
+  messages: TaskMessage[]
+}
+
 export const agentApi = {
   /**
    * 创建AI生成任务并通过 SSE 接收实时消息
@@ -238,18 +243,18 @@ export const agentApi = {
             if (data.sessionId) {
               sessionId = data.sessionId
               console.log('[SSE] Got sessionId:', sessionId)
-            }
-            
-            // 调用消息回调
-            onMessage(data)
-            
-            // 如果收到结束信号，关闭连接
-            if (data.type === 'done' || data.type === 'error') {
-              console.log('[SSE] Received end signal:', data.type)
-              abortController.abort()
-            }
           }
-          catch (error) {
+          
+          // 调用消息回调
+          onMessage(data)
+          
+          // 如果收到结束信号，关闭连接
+          if (data.type === 'done' || data.type === 'error') {
+            console.log('[SSE] Received end signal:', data.type)
+            abortController.abort()
+          }
+        }
+        catch (error) {
             console.error('[SSE] Failed to parse message:', event.data, error)
           }
         },
@@ -306,6 +311,17 @@ export const agentApi = {
    */
   async getTaskDetail(taskId: string) {
     const res = await http.get<TaskDetail>(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 获取任务消息（增量）
+   * @param taskId 任务ID
+   * @param lastMessageId 上次获取的最后一条消息 UUID，可选
+   */
+  async getTaskMessages(taskId: string, lastMessageId?: string) {
+    const params = lastMessageId ? { lastMessageId } : undefined
+    const res = await http.get<TaskMessagesVo>(`agent/tasks/${taskId}/messages`, params)
     return res
   },
 

@@ -85,6 +85,7 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
   const { isPolling, startPolling } = useTaskPolling({
     taskId,
     isActiveTask,
+    getCurrentRawMessages: useCallback(() => rawMessagesRef.current, []),
     onMessagesUpdate: useCallback((messages, rawMessages) => {
       rawMessagesRef.current = rawMessages
       setLocalMessages(messages)
