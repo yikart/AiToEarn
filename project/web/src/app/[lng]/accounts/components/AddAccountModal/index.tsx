@@ -8,6 +8,7 @@ import type { SocialAccount } from '@/api/types/account.type'
 import type { IpLocationInfo } from '@/utils/ipLocation'
 import { Button, Select, Space, Tooltip, Typography } from 'antd'
 import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
 import { Modal } from '@/components/ui/modal'
 import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
@@ -300,7 +301,20 @@ const AddAccountModal = memo(
 
         switch (key) {
           case PlatType.KWAI:
-            await kwaiSkip(key, selectedSpaceId)
+            // 快手授权前先显示提示
+            // 在 onOk 回调中直接执行授权，确保 window.open 在用户交互上下文中
+            await confirm({
+              title: t('addAccountModal.kwaiAuthWarning.title' as any),
+              content: t('addAccountModal.kwaiAuthWarning.content' as any),
+              okText: t('addAccountModal.kwaiAuthWarning.okText' as any),
+              cancelText: undefined, // 不显示取消按钮
+              onOk: () => {
+                // 在用户点击"我知道了"时立即执行授权，确保 window.open 在用户交互上下文中
+                kwaiSkip(key, selectedSpaceId).catch((error) => {
+                  console.error('快手授权失败:', error)
+                })
+              },
+            })
             break
           case PlatType.BILIBILI:
             await bilibiliSkip(key, selectedSpaceId)
