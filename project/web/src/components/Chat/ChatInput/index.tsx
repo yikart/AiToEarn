@@ -63,7 +63,7 @@ export function ChatInput({
 
   /** 自动调整高度
    * - large 模式：根据内容自适应高度（最多 200px）
-   * - compact 模式：强制占满父容器高度，避免浏览器默认行高产生的 inline height 覆盖 h-full
+   * - compact 模式：保持单行起步，允许根据内容适度增高
    */
   useEffect(() => {
     if (!textareaRef.current) return
@@ -73,8 +73,7 @@ export function ChatInput({
       const maxHeight = 200
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, maxHeight)}px`
     } else {
-      // 详情页：高度交给父容器，清理/覆盖掉浏览器默认的 inline height
-      textareaRef.current.style.height = '100%'
+      textareaRef.current.style.height = 'auto'
     }
   }, [value, mode])
 
@@ -105,38 +104,27 @@ export function ChatInput({
       className={cn(
         'w-full rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
         mode === 'large' ? 'p-4' : 'p-3',
-        // 详情页（compact 模式）默认撑满父容器高度
-        mode === 'compact' && 'h-full',
+        // 详情页（compact 模式）允许输入区域根据父容器拉伸
+        mode === 'compact' && 'h-full flex flex-col',
         className,
       )}
     >
-      {/* 媒体预览区域 */}
-      {(medias.length > 0 || mode === 'large') && (
-        <div className={cn('mb-3', mode === 'compact' && medias.length === 0 && 'hidden')}>
+      {/* 第一层：媒体预览区域（只有有媒体时展示） */}
+      {medias.length > 0 && (
+        <div className="mb-3">
           <MediaUpload
             medias={medias}
             isUploading={isUploading}
             disabled={disabled || isGenerating}
             onFilesChange={onMediasChange}
             onRemove={onMediaRemove}
+            showUploadButton={false}
           />
         </div>
       )}
 
-      {/* 输入区域 */}
-      <div className="flex items-stretch gap-3 h-full">
-        {/* 上传按钮 - 仅在 compact 模式且无媒体时显示 */}
-        {mode === 'compact' && medias.length === 0 && (
-          <MediaUpload
-            medias={[]}
-            isUploading={isUploading}
-            disabled={disabled || isGenerating}
-            onFilesChange={onMediasChange}
-            className="shrink-0"
-          />
-        )}
-
-        {/* 文本输入框 */}
+      {/* 第二层：文本输入区域 */}
+      <div className={cn('flex-1', mode === 'compact' && 'w-full')}>
         <textarea
           ref={textareaRef}
           value={value}
@@ -148,16 +136,29 @@ export function ChatInput({
           disabled={disabled || isGenerating}
           rows={mode === 'large' ? 3 : 1}
           className={cn(
-            'flex-1 resize-none border-none outline-none focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
+            'w-full resize-none border-none outline-none focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
             'disabled:opacity-50 disabled:cursor-not-allowed',
-            mode === 'large'
-              ? 'text-base min-h-[80px]'
-              : // 详情页：高度跟随父容器，尽量占满
-                'text-sm h-full min-h-[40px]',
+            mode === 'large' ? 'text-base min-h-[80px]' : 'text-sm min-h-[40px]',
           )}
         />
+      </div>
 
-        {/* 发送/停止按钮 */}
+      {/* 第三层：操作栏（左侧其他操作，右侧发送按钮） */}
+      <div className="mt-3 flex items-center justify-between gap-2">
+        {/* 左侧：其它操作（当前仅上传按钮） */}
+        <div className="flex items-center gap-2">
+          <MediaUpload
+            medias={medias}
+            isUploading={isUploading}
+            disabled={disabled || isGenerating}
+            onFilesChange={onMediasChange}
+            onRemove={onMediaRemove}
+            showList={false}
+            buttonVariant="icon"
+          />
+        </div>
+
+        {/* 右侧：发送/停止按钮 */}
         <button
           onClick={handleButtonClick}
           disabled={!isGenerating && !canSend}
