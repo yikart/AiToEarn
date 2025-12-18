@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { agentApi, type TaskDetail, type TaskMessage } from '@/api/agent'
 import type { IDisplayMessage } from '@/store/agent'
+import { useUserStore } from '@/store/user'
 import { isTaskCompleted, convertMessages } from '../utils'
 
 export interface ITaskPollingOptions {
@@ -43,6 +44,9 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
   const [isPolling, setIsPolling] = useState(false)
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
+  
+  // 获取 Credits 余额
+  const fetchCreditsBalance = useUserStore(state => state.fetchCreditsBalance)
 
   /** 开始轮询 */
   const startPolling = useCallback(() => {
@@ -79,6 +83,8 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           if (isTaskCompleted(result.data.messages)) {
             console.log('[TaskPolling] Task completed, stopping polling')
             setIsPolling(false)
+            // 任务完成时刷新 Credits 余额
+            fetchCreditsBalance()
           }
         }
       } catch (error) {
@@ -96,7 +102,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         pollingTimerRef.current = null
       }
     }
-  }, [isPolling, taskId, isActiveTask, pollingInterval, onMessagesUpdate, onTaskUpdate])
+  }, [isPolling, taskId, isActiveTask, pollingInterval, onMessagesUpdate, onTaskUpdate, fetchCreditsBalance])
 
   /** 清理定时器 */
   useEffect(() => {

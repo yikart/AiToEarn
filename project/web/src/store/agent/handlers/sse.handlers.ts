@@ -247,12 +247,44 @@ export const textHandler: ISSEHandler = {
 export const errorHandler: ISSEHandler = {
   name: 'error',
   canHandle: (msg) => msg.type === 'error',
-  handle: (msg, ctx) => {
-    if (msg.message) {
-      const errorMsg = `❌ : ${msg.message || 'Unknown error'}`
-      ctx.set((state: any) => ({
-        markdownMessages: [...state.markdownMessages, errorMsg],
-      }))
+  handle: async (msg, ctx) => {
+    // 检查错误码 12001（额度不足）
+    const errorCode = (msg as any).code
+    const errorMessage = typeof msg.message === 'string' ? msg.message : (msg.message as any)?.message || 'Unknown error'
+    
+    if (errorCode === 12001) {
+      // 额度不足，显示确认对话框并跳转到定价页面
+      const { confirm } = await import('@/lib/confirm')
+      const actionContext = ctx.refs.actionContext.value
+      
+      if (actionContext) {
+        // 使用国际化文本
+        const title = actionContext.t('error.insufficientCredits.title') || 'Agent 额度不足'
+        const content = actionContext.t('error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
+        const okText = actionContext.t('error.insufficientCredits.okText') || '确定'
+        
+        confirm({
+          title,
+          content,
+          okText,
+          cancelText: undefined, // 不显示取消按钮
+          onOk: () => {
+            actionContext.router.push(`/${actionContext.lng}/pricing`)
+          },
+        })
+      } else {
+        // 如果没有 actionContext，使用 window.location 跳转
+        const lng = window.location.pathname.split('/')[1] || 'zh-CN'
+        window.location.href = `/${lng}/pricing`
+      }
+    } else {
+      // 其他错误，正常显示错误消息
+      if (errorMessage) {
+        const errorMsg = `❌ : ${errorMessage}`
+        ctx.set((state: any) => ({
+          markdownMessages: [...state.markdownMessages, errorMsg],
+        }))
+      }
     }
 
     setTimeout(() => {

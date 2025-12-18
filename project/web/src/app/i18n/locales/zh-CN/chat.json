@@ -11,6 +11,13 @@
     "loadFailed": "加载失败",
     "connectionInterrupted": "连接中断"
   },
+  "error": {
+    "insufficientCredits": {
+      "title": "Agent 额度不足",
+      "content": "您的 Agent 额度不足，请开通会员",
+      "okText": "确定"
+    }
+  },
   "task": {
     "newChat": "新对话",
     "delete": "删除",

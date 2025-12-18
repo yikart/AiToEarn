@@ -24,7 +24,7 @@ export interface ConfirmOptions {
   content?: React.ReactNode
   /** 确认按钮文字，默认 "确定" */
   okText?: string
-  /** 取消按钮文字，默认 "取消" */
+  /** 取消按钮文字，默认 "取消"。如果为 undefined，则不显示取消按钮 */
   cancelText?: string
   /** 确认按钮类型 */
   okType?: 'default' | 'destructive'
@@ -95,9 +95,11 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel} disabled={loading}>
-            {cancelText}
-          </AlertDialogCancel>
+          {cancelText !== undefined && (
+            <AlertDialogCancel onClick={handleCancel} disabled={loading}>
+              {cancelText}
+            </AlertDialogCancel>
+          )}
           <AlertDialogAction
             onClick={handleOk}
             disabled={loading}

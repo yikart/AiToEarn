@@ -11,6 +11,13 @@
     "loadFailed": "Load failed",
     "connectionInterrupted": "Connection interrupted"
   },
+  "error": {
+    "insufficientCredits": {
+      "title": "Insufficient Agent Credits",
+      "content": "Your Agent credits are insufficient, please subscribe to a membership",
+      "okText": "OK"
+    }
+  },
   "task": {
     "newChat": "New Chat",
     "delete": "Delete",

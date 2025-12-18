@@ -6,6 +6,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { agentApi, type TaskDetail, type TaskMessage } from '@/api/agent'
 import { useAgentStore, type IDisplayMessage, type IWorkflowStep } from '@/store/agent'
+import { useUserStore } from '@/store/user'
 import { toast } from '@/lib/toast'
 import { isTaskCompleted, convertMessages } from '../utils'
 import { useTaskPolling } from './useTaskPolling'
@@ -62,6 +63,9 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
       setMessages: state.setMessages,
     })),
   )
+
+  // 获取 Credits 余额
+  const fetchCreditsBalance = useUserStore(state => state.fetchCreditsBalance)
 
   // 判断是否为活跃任务
   const isActiveTask = currentTaskId === taskId
@@ -133,6 +137,10 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
               startPolling()
             }
           }
+          
+          // 获取到 result 后，刷新 Credits 余额
+          fetchCreditsBalance()
+          
           hasLoadedRef.current = true
         } else {
           toast.error(result.message || t('message.error'))
@@ -146,7 +154,7 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
     }
 
     loadTask()
-  }, [taskId, isActiveTask, storeMessages.length, t, setMessages, startPolling])
+  }, [taskId, isActiveTask, storeMessages.length, t, setMessages, startPolling, fetchCreditsBalance])
 
   // 计算最终显示的消息和状态
   const displayMessages = isActiveTask ? storeMessages : localMessages
