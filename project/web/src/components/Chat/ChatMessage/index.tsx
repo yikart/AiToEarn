@@ -51,12 +51,26 @@ const formatToolName = (name: string) => {
  */
 interface IWorkflowStepItemProps {
   step: IWorkflowStep
+  /** 所有工作流步骤（用于判断是否有多个不同的 toolName） */
+  allSteps: IWorkflowStep[]
 }
 
-function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
+function WorkflowStepItem({ step, allSteps }: IWorkflowStepItemProps) {
   const { t } = useTransClient('chat')
-  // 判断步骤是否完成：不活跃状态即为完成
-  const isCompleted = !step.isActive
+  // 判断步骤是否完成：tool_result 类型即为完成，或者不活跃状态
+  const isCompleted = step.type === 'tool_result' || !step.isActive
+
+  // 检查是否有多个不同的 toolName（排除空值）
+  const uniqueToolNames = new Set(
+    allSteps
+      .map(s => s.toolName)
+      .filter((name): name is string => !!name)
+      .map(name => formatToolName(name))
+  )
+  const hasMultipleToolNames = uniqueToolNames.size > 1
+
+  // 如果有多个不同的 toolName，不显示具体的 toolName
+  const shouldShowToolName = !hasMultipleToolNames
 
   return (
     <div
@@ -67,11 +81,17 @@ function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
     >
       {/* 步骤图标 */}
       <div className="shrink-0 mt-0.5">
-        {step.isActive ? (
+        {step.type === 'tool_result' ? (
+          // tool_result 类型显示完成图标
+          <CheckCircle2 className="w-3 h-3 text-success" />
+        ) : step.isActive ? (
+          // 正在执行显示转圈图标
           <Loader2 className="w-3 h-3 text-primary animate-spin" />
         ) : isCompleted ? (
+          // 已完成显示完成图标
           <CheckCircle2 className="w-3 h-3 text-success" />
         ) : (
+          // 其他情况显示工具图标
           <Wrench className="w-3 h-3 text-muted-foreground/70" />
         )}
       </div>
@@ -82,9 +102,13 @@ function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
           step.isActive ? 'text-primary' : isCompleted ? 'text-success' : 'text-muted-foreground',
         )}>
           {step.type === 'tool_call'
-            ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
+            ? shouldShowToolName
+              ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
+              : `${t('workflow.processing' as any)}${isCompleted ? '' : '...'}`
             : step.type === 'tool_result'
-              ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
+              ? shouldShowToolName
+                ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
+                : t('workflow.toolResult' as any)
               : formatToolName(step.toolName || t('workflow.processing' as any))}
         </div>
         {step.content && (
@@ -183,7 +207,7 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
           styles.workflowDetailList,
         )}>
           {workflowSteps.map((step, index) => (
-            <WorkflowStepItem key={step.id || index} step={step} />
+            <WorkflowStepItem key={step.id || index} step={step} allSteps={workflowSteps} />
           ))}
         </div>
       )}
