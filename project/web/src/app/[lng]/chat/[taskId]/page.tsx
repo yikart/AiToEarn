@@ -18,6 +18,56 @@ import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
 // 页面私有 hooks
 import { useScrollControl, useChatState } from './hooks'
 
+// 测试数据 - 用于测试 createChannel action
+const TEST_RESULT_DATA = {
+  type: 'result',
+  message: {
+    type: 'result',
+    subtype: 'success',
+    uuid: 'aee2c247-5e9d-4864-a7b7-0c9ad1832648',
+    duration_ms: 24585,
+    duration_api_ms: 32986,
+    is_error: false,
+    num_turns: 3,
+    message: '好的!我已经为您准备好发布流程了!\n\n**当前状态**:\n- ✅ 图片已生成\n- ✅ 推特文案已准备\n- ⚠️ 需要先绑定推特账号\n\n**接下来的步骤**:\n系统会引导您完成推特账号绑定,绑定完成后,您的内容就可以立即发布了!\n\n**准备发布的内容**:\n- 📸 **图片**: 高质量8K室内人像摄影\n- 📝 **文案**: \n > ✨ 室内私房人像摄影 | Indoor Portrait Photography\n > \n > 追求极致细节与真实质感的艺术表达\n > Pursuing ultimate detail and authentic texture in artistic expression\n > \n > #PortraitPhotography #AsianBeauty #IndoorPhotography #8K #Photography #ArtisticPortrait\n\n请按照系统提示完成推特账号绑定,然后您的精美图文作品就可以成功发布到推特了! 🚀',
+    result: [
+      {
+        type: 'fullContent',
+        title: '✨ 室内私房人像摄影 | Indoor Portrait Photography',
+        description: '追求极致细节与真实质感的艺术表达\nPursuing ultimate detail and authentic texture in artistic expression\n\n#PortraitPhotography #AsianBeauty #IndoorPhotography #8K #Photography #ArtisticPortrait',
+        tags: [],
+        medias: [
+          {
+            type: 'IMAGE',
+            url: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjb2gsx3.jpg',
+          },
+        ],
+        action: 'createChannel',
+        platform: 'twitter',
+        errorMessage: '需要先绑定推特账号才能发布内容',
+      },
+    ],
+    total_cost_usd: 0.4688474,
+    usage: {
+      cache_creation: {
+        ephemeral_1h_input_tokens: 0,
+        ephemeral_5m_input_tokens: 114598,
+      },
+      cache_creation_input_tokens: 114598,
+      cache_read_input_tokens: 61443,
+      input_tokens: 13,
+      output_tokens: 905,
+      server_tool_use: {
+        web_search_requests: 0,
+      },
+    },
+    permission_denials: [],
+  },
+}
+
+// 测试模式：设置为 true 时，点击发送不发送请求，直接返回测试数据 00.00
+const TEST_MODE = false
+
 export default function ChatDetailPage() {
   const { t } = useTransClient('chat')
   const router = useRouter()
@@ -26,7 +76,7 @@ export default function ChatDetailPage() {
   const lng = params.lng as string
 
   // Store 方法
-  const { continueTask, stopTask, setActionContext } = useAgentStore()
+  const { continueTask, stopTask, setActionContext, handleSSEMessage } = useAgentStore()
 
   // 聊天状态管理
   const {
@@ -106,6 +156,49 @@ export default function ChatDetailPage() {
     scrollToBottom(true)
 
     try {
+      // 测试模式：直接返回测试数据，不发送真实请求
+      if (TEST_MODE) {
+        // 先正常调用 continueTask 来添加消息和设置状态
+        // 但我们需要拦截 API 调用，所以先设置状态，然后立即模拟返回
+        const store = useAgentStore.getState()
+        
+        // 添加用户消息
+        const userMessage = {
+          id: `user-${Date.now()}`,
+          role: 'user' as const,
+          content: currentPrompt,
+          medias: currentMedias,
+          createdAt: Date.now(),
+        }
+        store.setMessages([...store.messages, userMessage])
+        
+        // 添加 AI 待回复消息
+        const assistantMessage = {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant' as const,
+          content: '',
+          status: 'streaming' as const,
+          createdAt: Date.now(),
+        }
+        store.setMessages([...store.messages, assistantMessage])
+        
+        // 设置生成状态（通过 set 方法）
+        useAgentStore.setState({
+          isGenerating: true,
+          progress: 10,
+          currentTaskId: taskId,
+        })
+        
+        // 模拟 SSE 消息处理（延迟一点以模拟真实请求）
+        setTimeout(() => {
+          if (handleSSEMessage) {
+            handleSSEMessage(TEST_RESULT_DATA as any)
+          }
+        }, 500)
+        
+        return
+      }
+
       await continueTask({
         prompt: currentPrompt,
         medias: currentMedias,

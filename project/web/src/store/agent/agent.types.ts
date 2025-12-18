@@ -99,6 +99,7 @@ export type ActionType =
   | 'saveDraft'
   | 'updateChannel'
   | 'loginChannel'
+  | 'createChannel'
   | 'platformNotSupported'
 
 /** 平台类型 */
