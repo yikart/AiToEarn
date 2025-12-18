@@ -39,7 +39,7 @@ export default function TasksHistoryPage() {
 
     try {
       const result = await agentApi.getTaskList(pageNum, pageSize)
-      if (result.code === 0 && result.data) {
+      if (result && result.code === 0 && result.data) {
         const newTasks = result.data.list || []
         setTasks((prev) => (append ? [...prev, ...newTasks] : newTasks))
         setTotal(result.data.total || 0)
@@ -78,12 +78,12 @@ export default function TasksHistoryPage() {
   const handleDelete = async (id: string) => {
     try {
       const result = await agentApi.deleteTask(id)
-      if (result.code === 0) {
+      if (result && result.code === 0) {
         setTasks((prev) => prev.filter((task) => task.id !== id))
         setTotal((prev) => prev - 1)
         toast.success(t('task.deleteSuccess' as any))
       } else {
-        toast.error(result.msg || t('task.deleteFailed' as any))
+        toast.error(result?.message || t('task.deleteFailed' as any))
       }
     } catch (error) {
       toast.error(t('task.deleteFailed' as any))

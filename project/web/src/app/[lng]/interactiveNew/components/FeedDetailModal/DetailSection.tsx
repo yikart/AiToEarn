@@ -39,7 +39,7 @@ function removeTopicsFromDescription(text: string, platform: SupportedPlatformTy
   let result = text
 
   switch (platform) {
-    case PlatType.XiaoHongShu:
+    case PlatType.Xhs:
       // 小红书格式：#话题名[话题]#
       result = result.replace(/#[^#\[\]]+\[话题\]#/g, '')
       break

@@ -97,10 +97,9 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           const converted = convertMessages(mergedMessages)
           onMessagesUpdate(converted, mergedMessages)
 
-          // 更新任务信息
-          if (onTaskUpdate) {
-            onTaskUpdate(result.data)
-          }
+          // 注意：轮询接口 getTaskMessages 只返回消息列表（TaskMessagesVo），不返回完整任务详情（TaskDetail）
+          // 如果需要更新任务详情，应该调用 getTaskDetail 接口
+          // 这里不调用 onTaskUpdate，因为类型不匹配
 
           // 检测任务是否完成
           if (isTaskCompleted(mergedMessages)) {

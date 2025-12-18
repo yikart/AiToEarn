@@ -12,7 +12,6 @@ import {
   type NoteMonitoringListItem,
 } from '@/api/monitoring'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
-import LoginModal from '@/components/LoginModal'
 import http from '@/utils/request'
 import { urlReg } from '@/utils/regulars'
 import styles from './dataMonitoring.module.scss'

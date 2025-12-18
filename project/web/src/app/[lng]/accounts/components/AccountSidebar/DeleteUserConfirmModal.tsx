@@ -43,7 +43,7 @@ const DeleteUserConfirmModal = memo(
           width={500}
           zIndex={1002}
           onCancel={() => onClose()}
-          rootClassName={styles.userManageDeleteHitModal}
+          className={styles.userManageDeleteHitModal}
           footer={(
             <>
               <Button onClick={() => onClose()}>{t('deleteConfirm.cancel' as any)}</Button>
