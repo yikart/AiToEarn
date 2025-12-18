@@ -71,8 +71,10 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
     const pollTask = async () => {
       try {
+        console.log('[TaskPolling] pollTask tick, taskId:', taskId)
         // 获取当前已有的原始消息列表
         const currentRawMessages = getCurrentRawMessages ? getCurrentRawMessages() : []
+        console.log('[TaskPolling] currentRawMessages length:', currentRawMessages.length)
         // 计算最后一条消息的 UUID（用于增量拉取）
         let lastMessageId: string | undefined
         for (let i = currentRawMessages.length - 1; i >= 0; i--) {
@@ -87,6 +89,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         const result = await agentApi.getTaskMessages(taskId, lastMessageId)
         if (result?.code === 0 && result.data?.messages) {
           const newMessages = result.data.messages
+          console.log('[TaskPolling] fetched newMessages length:', newMessages.length, 'lastMessageId:', lastMessageId)
           if (!newMessages.length) {
             return
           }
@@ -101,7 +104,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           // 如果需要更新任务详情，应该调用 getTaskDetail 接口
           // 这里不调用 onTaskUpdate，因为类型不匹配
 
-          // 检测任务是否完成
+          // 检测任务是否完成（此处没有最新的 TaskDetail，只能基于消息做兜底判断）
           if (isTaskCompleted(mergedMessages)) {
             console.log('[TaskPolling] Task completed, stopping polling')
             setIsPolling(false)
@@ -124,7 +127,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         pollingTimerRef.current = null
       }
     }
-  }, [isPolling, taskId, isActiveTask, pollingInterval, onMessagesUpdate, onTaskUpdate, fetchCreditsBalance])
+  }, [isPolling, taskId, isActiveTask, pollingInterval, onMessagesUpdate, fetchCreditsBalance, getCurrentRawMessages])
 
   /** 清理定时器 */
   useEffect(() => {

@@ -85,6 +85,8 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
   const { isPolling, startPolling } = useTaskPolling({
     taskId,
     isActiveTask,
+    // 轮询间隔（ms）：历史任务用稍快一点的轮询，避免等待时间过长
+    pollingInterval: 1000,
     getCurrentRawMessages: useCallback(() => rawMessagesRef.current, []),
     onMessagesUpdate: useCallback((messages, rawMessages) => {
       rawMessagesRef.current = rawMessages
@@ -133,7 +135,7 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
             setMessages(converted)
 
             // 检测任务是否完成，如果未完成则启动轮询
-            if (!isTaskCompleted(result.data.messages)) {
+            if (!isTaskCompleted(result.data.messages, result.data)) {
               console.log('[ChatState] Task not completed, starting polling...')
               startPolling()
             }
