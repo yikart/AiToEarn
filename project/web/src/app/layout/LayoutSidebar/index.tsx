@@ -1,272 +1,40 @@
 /**
  * LayoutSidebar - 左侧侧边栏布局组件
- * 包含 Logo、主导航、底部功能区（邮箱、设置、通知、用户头像/登录按钮）
+ * 包含 Logo、主导航、底部功能区（余额、插件、VIP、设置）、图标栏、用户头像/登录按钮
  * 支持展开/收缩两种状态
  */
 'use client'
 
-import {
-  Bell,
-  Crown,
-  FileText,
-  Mail,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Puzzle,
-  Settings,
-  Smartphone,
-} from 'lucide-react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { useState } from 'react'
-import { useTransClient } from '@/app/i18n/client'
-import { routerData } from '@/app/layout/routerData'
-import logo from '@/assets/images/logo.png'
-import NotificationPanel from '@/components/notification/NotificationPanel'
-import SettingsModal from '@/components/SettingsModal'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { useNotification } from '@/hooks/useNotification'
-import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
-import { PluginModal } from '@/components/Plugin'
-import { usePluginStore } from '@/store/plugin'
-import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { useUserStore } from '@/store/user'
-import { getOssUrl } from '@/utils/oss'
-
-/**
- * 用户信息组件 - 底部用户头像
- */
-function UserAvatar({ collapsed }: { collapsed: boolean }) {
-  const userInfo = useUserStore(state => state.userInfo)
-  const { t } = useTransClient('common')
-
-  if (!userInfo) {
-    return null
-  }
-
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <div
-            className={cn(
-              'flex items-center rounded-lg',
-              collapsed ? 'justify-center p-1' : 'gap-2 px-2 py-1.5',
-            )}
-          >
-            <Avatar className="h-8 w-8 shrink-0 border-2 border-border">
-              <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
-              <AvatarFallback className="bg-muted-foreground font-semibold text-background">
-                {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
-              </AvatarFallback>
-            </Avatar>
-            {!collapsed && (
-              <span className="truncate text-sm font-medium text-foreground">
-                {userInfo.name || t('unknownUser')}
-              </span>
-            )}
-          </div>
-        </TooltipTrigger>
-        {collapsed && (
-          <TooltipContent side="right">
-            <p>{t('profile')}</p>
-          </TooltipContent>
-        )}
-      </Tooltip>
-    </TooltipProvider>
-  )
-}
-
-/**
- * 主导航项组件
- */
-function NavItem({
-  path,
-  translationKey,
-  icon,
-  isActive,
-  collapsed,
-}: {
-  path: string
-  translationKey: string
-  icon?: React.ReactNode
-  isActive: boolean
-  collapsed: boolean
-}) {
-  const { t } = useTransClient('route')
-  const lng = useGetClientLng()
-  const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`
-
-  const content = (
-    <Link
-      href={fullPath}
-      className={cn(
-        'relative flex items-center rounded-lg text-sm font-medium transition-all',
-        'text-muted-foreground hover:bg-accent hover:text-foreground',
-        isActive && 'bg-background text-foreground shadow-sm',
-        collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
-      )}
-    >
-      {/* 激活状态左边框指示器 */}
-      {isActive && (
-        <span className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-foreground" />
-      )}
-      <span className={cn('flex shrink-0 items-center justify-center', isActive && 'text-foreground')}>
-        {icon || <FileText size={20} />}
-      </span>
-      {!collapsed && (
-        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {t(translationKey as any)}
-        </span>
-      )}
-    </Link>
-  )
-
-  // 收缩状态下显示 Tooltip
-  if (collapsed) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            {content}
-          </TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{t(translationKey as any)}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    )
-  }
-
-  return content
-}
-
-/**
- * 插件入口组件
- * 根据插件状态显示不同颜色：
- * - 未安装：灰色
- * - 未授权：橙色
- * - 已授权：绿色
- */
-function PluginEntry({ collapsed }: { collapsed: boolean }) {
-  const { t } = useTransClient('common')
-  const pluginStatus = usePluginStore(state => state.status)
-  const [pluginModalVisible, setPluginModalVisible] = useState(false)
-
-  // 根据插件状态返回对应的颜色和状态文本
-  const getStatusInfo = () => {
-    switch (pluginStatus) {
-      case PluginStatus.READY:
-        return {
-          iconColor: 'text-success',
-          dotColor: 'bg-success',
-          statusText: t('pluginStatus.ready'),
-          statusColor: 'text-success',
-        }
-      case PluginStatus.INSTALLED_NO_PERMISSION:
-        return {
-          iconColor: 'text-warning',
-          dotColor: 'bg-warning',
-          statusText: t('pluginStatus.noPermission'),
-          statusColor: 'text-warning',
-        }
-      case PluginStatus.CHECKING:
-        return {
-          iconColor: 'text-info',
-          dotColor: 'bg-info animate-pulse',
-          statusText: t('pluginStatus.checking'),
-          statusColor: 'text-info',
-        }
-      case PluginStatus.NOT_INSTALLED:
-      case PluginStatus.UNKNOWN:
-      default:
-        return {
-          iconColor: 'text-muted-foreground/70',
-          dotColor: 'bg-muted-foreground/70',
-          statusText: t('pluginStatus.notInstalled'),
-          statusColor: 'text-muted-foreground/70',
-        }
-    }
-  }
-
-  const { iconColor, dotColor, statusText, statusColor } = getStatusInfo()
-
-  const content = (
-    <button
-      onClick={() => setPluginModalVisible(true)}
-      className={cn(
-        'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
-        collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
-      )}
-    >
-      <div className="flex items-center gap-2">
-        <div className="relative">
-          <Puzzle size={18} className={iconColor} />
-          {/* 状态指示点 */}
-          <span
-            className={cn(
-              'absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full border border-background',
-              dotColor,
-            )}
-          />
-        </div>
-        {!collapsed && <span className="text-sm">{t('plugin')}</span>}
-      </div>
-      {!collapsed && (
-        <span className={cn('text-xs', statusColor)}>{statusText}</span>
-      )}
-    </button>
-  )
-
-  return (
-    <>
-      {collapsed
-        ? (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  {content}
-                </TooltipTrigger>
-                <TooltipContent side="right">
-                  <p>{t('plugin')} - {statusText}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )
-        : content}
-
-      {/* 插件状态弹框 */}
-      <PluginModal
-        visible={pluginModalVisible}
-        onClose={() => setPluginModalVisible(false)}
-      />
-    </>
-  )
-}
+import NotificationPanel from '@/components/notification/NotificationPanel'
+import SettingsModal, { type SettingsTab } from '@/components/SettingsModal'
+import { routerData } from '@/app/layout/routerData'
+import {
+  LogoSection,
+  NavSection,
+  BottomSection,
+  IconBar,
+  UserSection,
+} from './components'
 
 /**
  * 侧边栏主组件
  */
 const LayoutSidebar = () => {
   const router = useRouter()
-  const { t } = useTransClient('common')
-  const lng = useGetClientLng()
   const token = useUserStore(state => state.token)
   const route = useSelectedLayoutSegments()
   const { unreadCount } = useNotification()
-  const [notificationVisible, setNotificationVisible] = useState(false)
+
+  // UI 状态
   const [collapsed, setCollapsed] = useState(false)
+  const [notificationVisible, setNotificationVisible] = useState(false)
   const [settingsVisible, setSettingsVisible] = useState(false)
+  const [settingsDefaultTab, setSettingsDefaultTab] = useState<SettingsTab | undefined>(undefined)
 
   // 获取当前路由
   let currRouter = '/'
@@ -289,6 +57,25 @@ const LayoutSidebar = () => {
     router.push(`/auth/login`)
   }
 
+  // 打开设置弹框
+  const handleOpenSettings = (defaultTab?: SettingsTab) => {
+    setSettingsDefaultTab(defaultTab)
+    setSettingsVisible(true)
+  }
+
+  // 关闭设置弹框
+  const handleCloseSettings = () => {
+    setSettingsVisible(false)
+    setSettingsDefaultTab(undefined)
+  }
+
+  // 转换路由数据为 NavSection 所需格式
+  const navItems = routerData.map(item => ({
+    path: item.path || '/',
+    translationKey: item.translationKey,
+    icon: item.icon,
+  }))
+
   return (
     <>
       <aside
@@ -298,232 +85,37 @@ const LayoutSidebar = () => {
         )}
       >
         {/* Logo 区域 */}
-        <div className={cn(
-          'mb-3 flex items-center',
-          collapsed ? 'justify-center px-1 py-2' : 'justify-between px-2 py-2',
-        )}
-        >
-          {collapsed
-            ? (
-                // 收起状态：默认显示 logo，hover 时显示展开按钮
-                <div className="relative flex h-8 w-8 items-center justify-center">
-                  {/* Logo - 默认显示，hover 时隐藏 */}
-                  <Link
-                    href={`/${lng}`}
-                    className="flex items-center justify-center transition-opacity group-hover:opacity-0"
-                  >
-                    <Image src={logo} alt="AIToEarn" width={32} height={32} />
-                  </Link>
-                  {/* 展开按钮 - 默认隐藏，hover 时显示 */}
-                  <button
-                    onClick={() => setCollapsed(false)}
-                    className="absolute inset-0 flex items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 opacity-0 transition-opacity hover:bg-accent hover:text-muted-foreground group-hover:opacity-100"
-                  >
-                    <PanelLeftOpen size={18} />
-                  </button>
-                </div>
-              )
-            : (
-                <>
-                  <Link href={`/${lng}`} className="flex items-center gap-2 text-foreground no-underline hover:opacity-85">
-                    <Image src={logo} alt="AIToEarn" width={32} height={32} />
-                    <span className="text-base font-semibold tracking-tight">AIToEarn</span>
-                  </Link>
-                  <button
-                    onClick={() => setCollapsed(true)}
-                    className="flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
-                  >
-                    <PanelLeftClose size={18} />
-                  </button>
-                </>
-              )}
-        </div>
+        <LogoSection
+          collapsed={collapsed}
+          onToggle={() => setCollapsed(!collapsed)}
+        />
 
         {/* 主导航区域 */}
-        <nav className="flex flex-1 flex-col gap-1">
-          {routerData.map(item => (
-            <NavItem
-              key={item.path || item.name}
-              path={item.path || '/'}
-              translationKey={item.translationKey}
-              icon={item.icon}
-              isActive={item.path === currRouter}
-              collapsed={collapsed}
-            />
-          ))}
-        </nav>
+        <NavSection
+          items={navItems}
+          currentRoute={currRouter}
+          collapsed={collapsed}
+        />
 
-        {/* 底部区域 */}
-        <div className={cn(
-          'mt-auto flex flex-col gap-1 border-t border-sidebar-border pt-3',
-          collapsed && 'items-center',
-        )}
-        >
-          {/* 浏览器插件入口 */}
-          <PluginEntry collapsed={collapsed} />
+        {/* 底部功能区 */}
+        <BottomSection
+          collapsed={collapsed}
+          onOpenSettings={handleOpenSettings}
+        />
 
-          {/* VIP 会员入口 */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Link
-                  href={`/${lng}/pricing`}
-                  className={cn(
-                    'flex items-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
-                    collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
-                  )}
-                >
-                  <div className="flex items-center gap-2">
-                    <Crown size={18} className="text-warning" />
-                    {!collapsed && <span className="text-sm">{t('vip')}</span>}
-                  </div>
-                  {!collapsed && (
-                    <span className="text-xs text-muted-foreground">{t('subscribe')}</span>
-                  )}
-                </Link>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right">
-                  <p>{t('vip')}</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
+        {/* 底部图标栏 */}
+        <IconBar
+          collapsed={collapsed}
+          isLoggedIn={!!token}
+          unreadCount={unreadCount}
+          onOpenNotification={() => setNotificationVisible(true)}
+        />
 
-          {/* 设置入口 */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <button
-                  onClick={() => setSettingsVisible(true)}
-                  className={cn(
-                    'flex items-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground border-none bg-transparent cursor-pointer',
-                    collapsed ? 'h-9 w-9 justify-center' : 'gap-2 px-3 py-2',
-                  )}
-                >
-                  <Settings size={18} />
-                  {!collapsed && <span className="text-sm">{t('settings')}</span>}
-                </button>
-              </TooltipTrigger>
-              {collapsed && (
-                <TooltipContent side="right">
-                  <p>{t('settings')}</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          </TooltipProvider>
-
-          {/* 底部图标栏 - 邮箱、下载APP、通知 */}
-          <div className={cn(
-            'mt-2 flex items-center justify-center border-t border-sidebar-border pt-2',
-            collapsed ? 'flex-col gap-1' : 'flex-row gap-0',
-          )}
-          >
-            {/* 邮箱 - 联系我们 */}
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <a
-                    href="mailto:agent@aiearn.ai"
-                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
-                  >
-                    <Mail size={18} />
-                  </a>
-                </TooltipTrigger>
-                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-popover text-popover-foreground">
-                  <p>{t('contactUs')}: agent@aiearn.ai</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            {/* 手机 - 下载APP */}
-            <TooltipProvider delayDuration={0}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
-                    onClick={() => {
-                      // TODO: 打开下载APP弹窗
-                    }}
-                  >
-                    <Smartphone size={18} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-popover text-popover-foreground">
-                  <p>{t('downloadAppButton')}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-
-            {/* 通知 - 仅登录后显示 */}
-            {token && (
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <button
-                      className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
-                      onClick={() => setNotificationVisible(true)}
-                    >
-                      {unreadCount > 0
-                        ? (
-                            <div className="relative flex items-center justify-center">
-                              <Bell size={18} />
-                              <Badge
-                                variant="destructive"
-                                className="absolute -right-2 -top-2 h-[18px] min-w-[18px] px-1 text-[10px] leading-[18px]"
-                              >
-                                {unreadCount > 99 ? '99+' : unreadCount}
-                              </Badge>
-                            </div>
-                          )
-                        : (
-                            <Bell size={18} />
-                          )}
-                    </button>
-                  </TooltipTrigger>
-                  <TooltipContent side={collapsed ? 'right' : 'top'} className="bg-popover text-popover-foreground">
-                    <p>{t('notifications')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
-
-          {/* 用户头像 / 登录按钮 */}
-          {token
-            ? (
-                <UserAvatar collapsed={collapsed} />
-              )
-            : (
-                collapsed
-                  ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button
-                              onClick={handleLogin}
-                              size="icon"
-                              className="h-9 w-9"
-                            >
-                              <span className="text-sm font-semibold">登</span>
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent side="right">
-                            <p>{t('login')}</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    )
-                  : (
-                      <Button
-                        onClick={handleLogin}
-                        className="mt-1 w-full"
-                      >
-                        {t('login')}
-                      </Button>
-                    )
-              )}
-        </div>
+        {/* 用户头像 / 登录按钮 */}
+        <UserSection
+          collapsed={collapsed}
+          onLogin={handleLogin}
+        />
       </aside>
 
       {/* 通知面板 */}
@@ -535,7 +127,8 @@ const LayoutSidebar = () => {
       {/* 设置弹框 */}
       <SettingsModal
         open={settingsVisible}
-        onClose={() => setSettingsVisible(false)}
+        onClose={handleCloseSettings}
+        defaultTab={settingsDefaultTab}
       />
     </>
   )

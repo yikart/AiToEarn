@@ -35,7 +35,25 @@
   "subscription": {
     "currentPlan": "Current Plan",
     "upgrade": "Upgrade",
-    "manage": "Manage Subscription"
+    "manage": "Manage Subscription",
+    "balance": "Balance",
+    "usageRecords": "Usage Records",
+    "detail": "Detail",
+    "date": "Date",
+    "amountChange": "Amount Change",
+    "noRecords": "No usage records yet",
+    "loading": "Loading...",
+    "loadMore": "Load More",
+    "types": {
+      "register_bonus": "Registration Bonus",
+      "purchase": "Purchase",
+      "vip_monthly": "VIP Monthly",
+      "ai_service": "AI Service",
+      "video_style_transfer": "Video Style Transfer",
+      "publish": "Publish",
+      "expired": "Expired",
+      "manual": "Manual Adjustment"
+    }
   },
   "general": {
     "language": "Website Language",

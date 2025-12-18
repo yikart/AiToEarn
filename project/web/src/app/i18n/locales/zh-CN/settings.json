@@ -35,7 +35,25 @@
   "subscription": {
     "currentPlan": "当前套餐",
     "upgrade": "升级",
-    "manage": "管理订阅"
+    "manage": "管理订阅",
+    "balance": "余额",
+    "usageRecords": "使用记录",
+    "detail": "详情",
+    "date": "日期",
+    "amountChange": "金额变更",
+    "noRecords": "暂无使用记录",
+    "loading": "加载中...",
+    "loadMore": "加载更多",
+    "types": {
+      "register_bonus": "新用户奖励",
+      "purchase": "购买充值",
+      "vip_monthly": "VIP 月度奖励",
+      "ai_service": "AI 服务",
+      "video_style_transfer": "视频风格转换",
+      "publish": "发布内容",
+      "expired": "已过期",
+      "manual": "手动调整"
+    }
   },
   "general": {
     "language": "网站语言",

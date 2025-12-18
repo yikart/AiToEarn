@@ -9,6 +9,7 @@
   "settings": "Settings",
   "vip": "VIP",
   "subscribe": "Subscribe",
+  "balance": "Balance",
   "plugin": "Browser Plugin",
   "pluginStatus": {
     "notInstalled": "Not Installed",

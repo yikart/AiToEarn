@@ -4,10 +4,8 @@
  */
 'use client'
 
-import Image from 'next/image'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import logo from '@/assets/images/logo.png'
 
 export interface IChatHeaderProps {
   /** 任务标题 */
@@ -39,21 +37,10 @@ export function ChatHeader({
         <ArrowLeft className="w-5 h-5" />
       </Button>
 
-      {/* Logo 和标题 */}
-      <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary to-primary/70 flex items-center justify-center overflow-hidden">
-          <Image
-            src={logo}
-            alt="AiToEarn"
-            width={32}
-            height={32}
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <h1 className="text-base font-medium text-foreground line-clamp-1">
-          {title || defaultTitle}
-        </h1>
-      </div>
+      {/* 标题 */}
+      <h1 className="text-base font-medium text-foreground line-clamp-1">
+        {title || defaultTitle}
+      </h1>
 
       {/* 生成状态指示器 */}
       {isGenerating && (

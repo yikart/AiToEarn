@@ -3,45 +3,53 @@
  * 用于提示用户下载对应的移动端应用，支持显示插件下载 Tab
  */
 
-import { ApiOutlined, CheckOutlined, CopyOutlined, DownloadOutlined, MobileOutlined } from '@ant-design/icons'
-import { Button, Space, Tabs, Typography } from 'antd'
+'use client'
+
+import { useState } from 'react'
+import Image from 'next/image'
+import { Check, Copy, Download, Puzzle, Smartphone } from 'lucide-react'
+import { QRCode } from 'react-qrcode-logo'
 import { toast } from '@/lib/toast'
 import { Modal } from '@/components/ui/modal'
-import React, { useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { QRCode } from 'react-qrcode-logo'
-import { getMainAppDownloadUrlSync, MAIN_APP_DOWNLOAD_URL } from '@/app/config/appDownloadConfig'
+import { Button } from '@/components/ui/button'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getMainAppDownloadUrlSync } from '@/app/config/appDownloadConfig'
 import { useTransClient } from '@/app/i18n/client'
-import { PluginDownloadContent } from '@/components/Plugin'
+import { PluginDownloadContent } from '@/components/Plugin/PluginDownloadContent'
 import logo from '@/assets/images/logo.png'
-
-const { Text, Paragraph } = Typography
 
 interface DownloadAppModalProps {
   visible: boolean
   onClose: () => void
-  platform?: string // 平台名称，如"小红书"
-  appName?: string // app名称
-  downloadUrl?: string // 下载链接
-  qrCodeUrl?: string // 二维码图片URL
-  zIndex?: number // 弹窗层级
-  // 插件相关配置
-  showPluginTab?: boolean // 是否显示插件Tab
-  defaultTab?: 'plugin' | 'app' // 默认显示哪个Tab
-  pluginStatus?: 'not_installed' | 'no_permission' | 'ready' // 插件状态
-  onCheckPermission?: () => void // 检查权限回调
+  /** 平台名称，如"小红书" */
+  platform?: string
+  /** app 名称 */
+  appName?: string
+  /** 下载链接 */
+  downloadUrl?: string
+  /** 二维码图片 URL */
+  qrCodeUrl?: string
+  /** 弹窗层级 */
+  zIndex?: number
+  /** 是否显示插件 Tab */
+  showPluginTab?: boolean
+  /** 默认显示哪个 Tab */
+  defaultTab?: 'plugin' | 'app'
+  /** 插件状态 */
+  pluginStatus?: 'not_installed' | 'no_permission' | 'ready'
+  /** 检查权限回调 */
+  onCheckPermission?: () => void
 }
 
 /**
- * 下载App提示弹窗组件
+ * 下载 App 提示弹窗组件
  * 用于提示用户下载对应的移动端应用
- * 支持显示插件下载Tab（通过 showPluginTab 配置）
+ * 支持显示插件下载 Tab（通过 showPluginTab 配置）
  */
-const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
+export default function DownloadAppModal({
   visible,
   onClose,
   platform = '',
-  appName = 'Aitoearn App',
   downloadUrl,
   qrCodeUrl = '',
   zIndex = 1000,
@@ -49,199 +57,138 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
   defaultTab = 'app',
   pluginStatus = 'not_installed',
   onCheckPermission,
-}) => {
+}: DownloadAppModalProps) {
   const { t } = useTransClient('common')
-  const { t: tPlugin } = useTranslation('plugin')
+  const { t: tPlugin } = useTransClient('plugin')
   const [copySuccess, setCopySuccess] = useState(false)
   const [activeTab, setActiveTab] = useState(defaultTab)
 
+  const actualDownloadUrl = downloadUrl || getMainAppDownloadUrlSync()
+
   const handleDownload = () => {
-    const linkToOpen = downloadUrl || getMainAppDownloadUrlSync()
-    window.open(linkToOpen, '_blank')
+    window.open(actualDownloadUrl, '_blank')
   }
 
   const handleCopyLink = async () => {
-    const linkToCopy = downloadUrl || getMainAppDownloadUrlSync()
     try {
-      await navigator.clipboard.writeText(linkToCopy)
+      await navigator.clipboard.writeText(actualDownloadUrl)
       setCopySuccess(true)
       toast.success(t('downloadApp.copySuccess' as any))
       setTimeout(() => setCopySuccess(false), 2000)
     }
-    catch (error) {
+    catch {
       toast.error(t('downloadApp.copyFailed' as any))
     }
   }
 
-  /**
-   * 渲染插件Tab内容
-   */
-  const renderPluginContent = () => (
-    <PluginDownloadContent
-      pluginStatus={pluginStatus}
-      onCheckPermission={onCheckPermission}
-    />
-  )
-
-  /**
-   * 渲染App下载Tab内容
-   */
+  /** 渲染 App 下载内容 */
   const renderAppContent = () => (
-    <div style={{ textAlign: 'center', padding: '20px 0' }}>
+    <div className="flex flex-col items-center px-4 py-6">
       {/* App Logo */}
-      <div style={{ marginBottom: '24px' }}>
-        <img src={logo.src} alt="Aitoearn" style={{ width: 64, height: 64, borderRadius: 16, boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+      <div className="mb-6">
+        <Image
+          src={logo}
+          alt="Aitoearn"
+          width={64}
+          height={64}
+          className="rounded-2xl shadow-lg"
+        />
       </div>
 
       {/* 标题 */}
-      <Typography.Title level={4} style={{ marginBottom: '16px', color: '#1f2937' }}>
-        Aitoearn
-      </Typography.Title>
+      <h3 className="mb-4 text-xl font-semibold text-foreground">Aitoearn</h3>
 
       {/* 描述 */}
-      <Paragraph style={{ color: '#6b7280', marginBottom: '32px', fontSize: '14px', lineHeight: '1.6' }}>
-        <span dangerouslySetInnerHTML={{ __html: t('downloadApp.operationDescription' as any, { platform }) }} />
-      </Paragraph>
+      <p
+        className="mb-8 text-center text-sm leading-relaxed text-muted-foreground"
+        dangerouslySetInnerHTML={{
+          __html: t('downloadApp.operationDescription' as any, { platform }),
+        }}
+      />
 
       {/* 二维码区域 */}
-      <div style={{
-        marginBottom: '32px',
-        padding: '20px',
-        backgroundColor: '#f9fafb',
-        borderRadius: '12px',
-        border: '1px solid #e5e7eb',
-      }}
-      >
-        {qrCodeUrl
-          ? (
-              <img
-                src={qrCodeUrl}
-                alt="QR Code"
-                style={{
-                  width: 200,
-                  height: 200,
-                  borderRadius: '8px',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                }}
-              />
-            )
-          : (
-              <QRCode
-                value={downloadUrl || getMainAppDownloadUrlSync()}
-                size={200}
-                logoImage={logo.src}
-                logoWidth={20}
-                logoHeight={20}
-                logoPadding={5}
-                logoPaddingStyle="square"
-                logoOpacity={0.95}
-                qrStyle="dots"
-                eyeRadius={0}
-                style={{ borderRadius: '8px' }}
-              />
-            )}
+      <div className="mb-8 rounded-xl border border-border bg-muted/50 p-5">
+        {qrCodeUrl ? (
+          <img
+            src={qrCodeUrl}
+            alt="QR Code"
+            className="h-[200px] w-[200px] rounded-lg shadow-sm"
+          />
+        ) : (
+          <QRCode
+            value={actualDownloadUrl}
+            size={200}
+            logoImage={logo.src}
+            logoWidth={20}
+            logoHeight={20}
+            logoPadding={5}
+            logoPaddingStyle="square"
+            logoOpacity={0.95}
+            qrStyle="dots"
+            eyeRadius={0}
+          />
+        )}
       </div>
 
       {/* 下载链接区域 */}
-      <div style={{
-        marginBottom: '24px',
-        padding: '16px',
-        backgroundColor: '#f3f4f6',
-        borderRadius: '8px',
-        border: '1px solid #d1d5db',
-      }}
-      >
-        <Text type="secondary" style={{ fontSize: '12px', display: 'block', marginBottom: '8px' }}>
+      <div className="mb-6 w-full rounded-lg border border-border bg-muted/30 p-4">
+        <p className="mb-2 text-xs text-muted-foreground">
           {t('downloadApp.downloadLink')}
-        </Text>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '8px',
-        }}
-        >
-          <Text
-            style={{
-              flex: 1,
-              fontSize: '13px',
-              wordBreak: 'break-all',
-              textAlign: 'left',
-            }}
-          >
-            {downloadUrl || getMainAppDownloadUrlSync()}
-          </Text>
+        </p>
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex-1 break-all text-left text-sm text-foreground">
+            {actualDownloadUrl}
+          </span>
           <Button
-            size="small"
-            icon={copySuccess ? <CheckOutlined /> : <CopyOutlined />}
+            variant={copySuccess ? 'default' : 'outline'}
+            size="sm"
             onClick={handleCopyLink}
-            type={copySuccess ? 'primary' : 'default'}
+            className="shrink-0"
           >
-            {copySuccess ? t('downloadApp.copied' as any) : t('downloadApp.copy' as any)}
+            {copySuccess ? (
+              <>
+                <Check className="mr-1.5 h-3.5 w-3.5" />
+                {t('downloadApp.copied' as any)}
+              </>
+            ) : (
+              <>
+                <Copy className="mr-1.5 h-3.5 w-3.5" />
+                {t('downloadApp.copy' as any)}
+              </>
+            )}
           </Button>
         </div>
       </div>
 
       {/* 提示信息 */}
-      <div style={{
-        padding: '16px',
-        backgroundColor: '#eff6ff',
-        borderRadius: '8px',
-        border: '1px solid #dbeafe',
-      }}
-      >
-        <Text type="secondary" style={{ fontSize: '13px', color: '#1e40af' }}>
+      <div className="w-full rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-950/30">
+        <p className="text-center text-sm text-blue-700 dark:text-blue-400">
           {t('downloadApp.tip')}
-        </Text>
+        </p>
       </div>
 
-      {/* 下载按钮 */}
+      {/* 下载按钮（仅在不显示插件 Tab 时在内容区显示） */}
       {!showPluginTab && (
-        <div style={{ marginTop: '24px' }}>
-          <Button
-            type="primary"
-            size="large"
-            icon={<DownloadOutlined />}
-            onClick={handleDownload}
-            block
-          >
-            {t('downloadApp.downloadNow' as any)}
-          </Button>
-        </div>
+        <Button onClick={handleDownload} className="mt-6 w-full" size="lg">
+          <Download className="mr-2 h-4 w-4" />
+          {t('downloadApp.downloadNow' as any)}
+        </Button>
       )}
     </div>
   )
 
-  // 如果显示插件Tab，使用Tab布局
+  // 带插件 Tab 的布局
   if (showPluginTab) {
-    const tabItems = [
-      {
-        key: 'plugin',
-        label: (
-          <span>
-            <ApiOutlined />
-            {' '}
-            {tPlugin('header.downloadPlugin')}
-          </span>
-        ),
-        children: renderPluginContent(),
-      },
-      {
-        key: 'app',
-        label: (
-          <span>
-            <MobileOutlined />
-            {' '}
-            Download App
-          </span>
-        ),
-        children: renderAppContent(),
-      },
-    ]
+    const modalTitle =
+      activeTab === 'plugin'
+        ? pluginStatus === 'no_permission'
+          ? tPlugin('status.installedNoPermission')
+          : tPlugin('status.notInstalled')
+        : 'Download Aitoearn App'
 
     return (
       <Modal
-        title={activeTab === 'plugin' ? (pluginStatus === 'no_permission' ? tPlugin('status.installedNoPermission') : tPlugin('status.notInstalled')) : 'Download Aitoearn App'}
+        title={modalTitle}
         open={visible}
         onCancel={onClose}
         footer={null}
@@ -250,40 +197,56 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
         zIndex={zIndex}
       >
         <Tabs
-          activeKey={activeTab}
-          onChange={key => setActiveTab(key as 'plugin' | 'app')}
-          items={tabItems}
-          centered
-        />
+          value={activeTab}
+          onValueChange={(value: string) => setActiveTab(value as 'plugin' | 'app')}
+          className="w-full"
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="plugin" className="gap-2">
+              <Puzzle className="h-4 w-4" />
+              {tPlugin('header.downloadPlugin')}
+            </TabsTrigger>
+            <TabsTrigger value="app" className="gap-2">
+              <Smartphone className="h-4 w-4" />
+              Download App
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="plugin" className="mt-4">
+            <PluginDownloadContent
+              pluginStatus={pluginStatus}
+              onCheckPermission={onCheckPermission}
+            />
+          </TabsContent>
+          <TabsContent value="app" className="mt-4">
+            {renderAppContent()}
+          </TabsContent>
+        </Tabs>
       </Modal>
     )
   }
 
-  // 不显示插件Tab，只显示App下载（向后兼容）
+  // 不显示插件 Tab，只显示 App 下载（向后兼容）
   return (
     <Modal
-      title={(
-        <Space>
-          <img src={logo.src} alt="Aitoearn" style={{ width: 20, height: 20, borderRadius: 4 }} />
+      title={
+        <div className="flex items-center gap-2">
+          <Image src={logo} alt="Aitoearn" width={20} height={20} className="rounded" />
           <span>Download Aitoearn App</span>
-        </Space>
-      )}
+        </div>
+      }
       open={visible}
       onCancel={onClose}
-      footer={(
-        <>
-          <Button onClick={onClose}>
+      footer={
+        <div className="flex justify-end gap-2">
+          <Button variant="outline" onClick={onClose}>
             {t('downloadApp.close')}
           </Button>
-          <Button
-            type="primary"
-            icon={<DownloadOutlined />}
-            onClick={handleDownload}
-          >
+          <Button onClick={handleDownload}>
+            <Download className="mr-2 h-4 w-4" />
             {t('downloadApp.downloadNow' as any)}
           </Button>
-        </>
-      )}
+        </div>
+      }
       width={520}
       destroyOnClose
       zIndex={zIndex}
@@ -292,5 +255,3 @@ const DownloadAppModal: React.FC<DownloadAppModalProps> = ({
     </Modal>
   )
 }
-
-export default DownloadAppModal

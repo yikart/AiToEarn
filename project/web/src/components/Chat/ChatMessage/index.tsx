@@ -294,11 +294,11 @@ export function ChatMessage({
       <div
         className={cn(
           'shrink-0 w-8 h-8 rounded-full flex items-center justify-center overflow-hidden',
-          isUser ? 'bg-primary' : 'bg-linear-to-br from-primary to-primary/70',
+          isUser && 'bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/40 dark:to-indigo-900/40',
         )}
       >
         {isUser ? (
-          <User className="w-4 h-4 text-primary-foreground" />
+          <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
         ) : (
           <Image
             src={logo}
@@ -361,7 +361,7 @@ export function ChatMessage({
 
         {/* AI 消息：多步骤渲染 - 只有有实际内容或工作流时才显示 */}
         {!isUser && displaySteps.length > 0 && displaySteps.some(s => s.content?.trim() || s.workflowSteps?.length) && (
-          <div className="w-full bg-muted rounded-2xl rounded-bl-md px-4 py-3">
+          <div className="w-full bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
             {displaySteps.map((step, index) => (
               <MessageStepContent
                 key={step.id}
@@ -378,7 +378,7 @@ export function ChatMessage({
           <div
             className={cn(
               'px-4 py-3 rounded-2xl text-sm leading-relaxed',
-              'bg-primary text-primary-foreground rounded-br-md whitespace-pre-wrap',
+              'bg-card border border-border text-foreground rounded-br-md whitespace-pre-wrap',
             )}
           >
             {content}
@@ -387,7 +387,7 @@ export function ChatMessage({
 
         {/* 加载状态（无步骤内容时显示默认 loading） */}
         {!isUser && status === 'pending' && displaySteps.every(s => !s.content) && (
-          <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-muted rounded-bl-md">
+          <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-card border border-border rounded-bl-md">
             <Loader2 className="w-4 h-4 text-primary animate-spin" />
             <span className="text-sm text-muted-foreground">Thinking...</span>
           </div>
@@ -395,7 +395,7 @@ export function ChatMessage({
 
         {/* 流式输出状态（无内容时显示） */}
         {!isUser && status === 'streaming' && displaySteps.every(s => !s.content) && (
-          <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-muted rounded-bl-md">
+          <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-card border border-border rounded-bl-md">
             <div className="flex gap-1">
               <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
               <span className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />

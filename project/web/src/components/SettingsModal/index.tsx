@@ -7,7 +7,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Bot, Globe, User } from 'lucide-react'
+import { Bot, CreditCard, Globe, User } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -18,11 +18,11 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
-import { AgentTab, GeneralTab, ProfileTab } from './tabs'
+import { AgentTab, GeneralTab, ProfileTab, SubscriptionTab } from './tabs'
 import logo from '@/assets/images/logo.png'
 
 /** 设置页面类型 */
-type SettingsTab = 'profile' | 'agent' | 'general'
+type SettingsTab = 'profile' | 'agent' | 'subscription' | 'general'
 
 /** Tab 配置项类型 */
 interface TabConfig {
@@ -33,22 +33,34 @@ interface TabConfig {
   requireAuth?: boolean
 }
 
+/** 设置页面类型（导出供外部使用） */
+export type { SettingsTab }
+
 export interface SettingsModalProps {
   /** 是否显示弹框 */
   open: boolean
   /** 关闭弹框回调 */
   onClose: () => void
+  /** 默认选中的 Tab */
+  defaultTab?: SettingsTab
 }
 
 /**
  * SettingsModal 设置弹框组件
  */
-export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
+export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps) => {
   const { t } = useTransClient('settings')
   const token = useUserStore(state => state.token)
 
   const isLoggedIn = !!token
   const [activeTab, setActiveTab] = useState<SettingsTab>(isLoggedIn ? 'profile' : 'general')
+
+  // 打开弹框时，如果有 defaultTab 则使用它
+  useEffect(() => {
+    if (open && defaultTab && isLoggedIn) {
+      setActiveTab(defaultTab)
+    }
+  }, [open, defaultTab, isLoggedIn])
 
   // 登录状态变化时重置标签
   useEffect(() => {
@@ -61,6 +73,7 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
   const tabConfigs: TabConfig[] = [
     { key: 'profile', icon: <User className="h-4 w-4" />, label: t('tabs.profile'), requireAuth: true },
     { key: 'agent', icon: <Bot className="h-4 w-4" />, label: t('tabs.agent'), requireAuth: true },
+    { key: 'subscription', icon: <CreditCard className="h-4 w-4" />, label: t('tabs.subscription'), requireAuth: true },
     { key: 'general', icon: <Globe className="h-4 w-4" />, label: t('tabs.general') },
   ]
 
@@ -74,6 +87,8 @@ export const SettingsModal = ({ open, onClose }: SettingsModalProps) => {
         return isLoggedIn ? <ProfileTab onClose={onClose} /> : <GeneralTab />
       case 'agent':
         return isLoggedIn ? <AgentTab /> : <GeneralTab />
+      case 'subscription':
+        return isLoggedIn ? <SubscriptionTab /> : <GeneralTab />
       case 'general':
         return <GeneralTab />
       default:

@@ -79,11 +79,11 @@ import { useAccountStore } from '@/store/account'
 import {
   PlatformTaskStatus,
   PLUGIN_SUPPORTED_PLATFORMS,
-  PublishDetailModal,
   usePluginStore,
 } from '@/store/plugin'
 import { generateUUID } from '@/utils'
 import styles from './publishDialog.module.scss'
+import { PublishDetailModal } from '../Plugin'
 
 export interface IPublishDialogRef {
   // 设置发布时间
