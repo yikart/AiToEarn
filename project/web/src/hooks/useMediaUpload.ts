@@ -42,8 +42,8 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
   const [medias, setMedias] = useState<IUploadedMedia[]>([])
   const [isUploading, setIsUploading] = useState(false)
 
-  // AbortController 用于取消上传
-  const uploadAbortRef = useRef<AbortController | null>(null)
+  // AbortController Map：按媒体 id 管理中断
+  const uploadAbortRef = useRef<Map<string, AbortController> | null>(null)
 
   /**
    * 处理媒体文件上传
@@ -54,44 +54,65 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
       if (!files.length) return
 
       setIsUploading(true)
-      uploadAbortRef.current = new AbortController()
+      if (!uploadAbortRef.current) {
+        uploadAbortRef.current = new Map()
+      }
+
+      const fileArray = Array.from(files)
 
       try {
-        for (let i = 0; i < files.length; i++) {
-          const file = files[i]
+        // 先批量添加占位媒体，记录每个媒体的 id
+        const tempMedias: IUploadedMedia[] = fileArray.map((file) => {
+          const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`
           const isVideo = file.type.startsWith('video/')
           const isDocument = !file.type.startsWith('image/') && !file.type.startsWith('video/')
-
-          // 计算当前媒体在列表中的索引
-          const mediaIndex = medias.length + i
-
-          // 添加到列表，显示上传进度
-          const tempMedia: IUploadedMedia = {
+          return {
+            id,
             url: '',
             type: isDocument ? 'document' : isVideo ? 'video' : 'image',
             progress: 0,
             file,
             name: isDocument ? file.name : undefined,
           }
-          setMedias((prev) => [...prev, tempMedia])
+        })
 
-          // 上传文件（uploadToOss 返回全路径 URL）
-          const fullUrl = await uploadToOss(file, {
-            onProgress: (progress) => {
-              setMedias((prev) =>
-                prev.map((m, idx) => (idx === mediaIndex ? { ...m, progress } : m)),
-              )
-            },
-            signal: uploadAbortRef.current?.signal,
-          })
+        setMedias((prev) => [...prev, ...tempMedias])
 
-          // 上传完成，更新 URL 并移除进度
-          setMedias((prev) =>
-            prev.map((m, idx) =>
-              idx === mediaIndex ? { ...m, url: fullUrl as string, progress: undefined } : m,
-            ),
-          )
-        }
+        // 并行上传所有文件
+        await Promise.all(
+          fileArray.map(async (file, i) => {
+            const targetId = tempMedias[i]?.id
+            if (!targetId) return
+
+            const controller = new AbortController()
+            uploadAbortRef.current?.set(targetId, controller)
+
+            const fullUrl = await uploadToOss(file, {
+              onProgress: (progress) => {
+                // 兼容 0-1 或 0-100 两种进度表示，统一成 0-100
+                const percent = progress > 1 ? progress : progress * 100
+                setMedias((prev) =>
+                  prev.map((m, idx) =>
+                    m.id && m.id === targetId
+                      ? { ...m, progress: Math.min(99, Math.max(0, percent)) }
+                      : m,
+                  ),
+                )
+              },
+              signal: controller.signal,
+            })
+
+            setMedias((prev) =>
+              prev.map((m, idx) =>
+                m.id && m.id === targetId
+                  ? { ...m, url: fullUrl as string, progress: undefined }
+                  : m,
+              ),
+            )
+
+            uploadAbortRef.current?.delete(targetId)
+          }),
+        )
       } catch (error: any) {
         if (error.name !== 'AbortError') {
           console.error('Upload failed:', error)
@@ -99,10 +120,10 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
         }
       } finally {
         setIsUploading(false)
-        uploadAbortRef.current = null
+        uploadAbortRef.current?.clear()
       }
     },
-    [medias.length, onError],
+    [onError],
   )
 
   /**
@@ -110,7 +131,14 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
    * @param index 媒体索引
    */
   const handleMediaRemove = useCallback((index: number) => {
-    setMedias((prev) => prev.filter((_, i) => i !== index))
+    setMedias((prev) => {
+      const target = prev[index]
+      if (target?.id && uploadAbortRef.current?.has(target.id)) {
+        uploadAbortRef.current.get(target.id)?.abort()
+        uploadAbortRef.current.delete(target.id)
+      }
+      return prev.filter((_, i) => i !== index)
+    })
   }, [])
 
   /**
@@ -118,8 +146,8 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
    */
   const cancelUpload = useCallback(() => {
     if (uploadAbortRef.current) {
-      uploadAbortRef.current.abort()
-      uploadAbortRef.current = null
+      uploadAbortRef.current.forEach((controller) => controller.abort())
+      uploadAbortRef.current.clear()
     }
   }, [])
 

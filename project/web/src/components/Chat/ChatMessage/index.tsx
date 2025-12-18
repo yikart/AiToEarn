@@ -17,6 +17,7 @@ import type { IUploadedMedia } from '../MediaUpload'
 import type { IMessageStep, IWorkflowStep } from '@/store/agent'
 import logo from '@/assets/images/logo.png'
 import styles from './ChatMessage.module.scss'
+import { MediaPreview } from '@/components/common/MediaPreview'
 
 export type { IWorkflowStep }
 
@@ -253,6 +254,24 @@ export function ChatMessage({
   const isUser = role === 'user'
   const isStreaming = status === 'streaming' || status === 'pending'
 
+  // 媒体预览状态（统一使用全局 MediaPreview 组件）
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null)
+
+  const previewableMedias = useMemo(
+    () => medias.filter((m) => m.type === 'image' || m.type === 'video'),
+    [medias],
+  )
+
+  const previewItems = useMemo(
+    () =>
+      previewableMedias.map((m) => ({
+        type: m.type === 'video' ? 'video' as const : 'image' as const,
+        src: getOssUrl(m.url),
+        title: m.name || m.file?.name,
+      })),
+    [previewableMedias],
+  )
+
   // 处理消息步骤：如果有 steps 则使用 steps，否则从 content 生成单个步骤
   const displaySteps = useMemo(() => {
     if (steps && steps.length > 0) {
@@ -334,26 +353,45 @@ export function ChatMessage({
                 )
               }
 
+              const isPreviewable = media.type === 'image' || media.type === 'video'
+              const mediaUrl = getOssUrl(media.url)
+
+              const thisPreviewIndex = isPreviewable
+                ? previewableMedias.findIndex((m) => m === media)
+                : -1
+
+              const handleOpenPreview = () => {
+                if (thisPreviewIndex >= 0) {
+                  setPreviewIndex(thisPreviewIndex)
+                }
+              }
+
+              const Wrapper: React.ElementType = isPreviewable ? 'button' : 'div'
+
               return (
-                <div
+                <Wrapper
                   key={index}
-                  className="w-24 h-24 rounded-lg overflow-hidden border border-border bg-muted"
+                  type={isPreviewable ? 'button' : undefined}
+                  onClick={isPreviewable ? handleOpenPreview : undefined}
+                  className={cn(
+                    'w-24 h-24 rounded-lg overflow-hidden border border-border bg-muted',
+                    isPreviewable && 'cursor-pointer',
+                  )}
                 >
                   {media.type === 'video' ? (
                     <video
-                      src={getOssUrl(media.url)}
+                      src={mediaUrl}
                       className="w-full h-full object-cover"
                       muted
-                      controls
                     />
                   ) : (
                     <img
-                      src={getOssUrl(media.url)}
+                      src={mediaUrl}
                       alt={`attachment-${index}`}
                       className="w-full h-full object-cover"
                     />
                   )}
-                </div>
+                </Wrapper>
               )
             })}
           </div>
@@ -412,6 +450,16 @@ export function ChatMessage({
           </div>
         )}
       </div>
+
+      {/* 全局媒体预览（图片 / 视频） */}
+      {previewItems.length > 0 && (
+        <MediaPreview
+          open={previewIndex !== null}
+          items={previewItems}
+          initialIndex={previewIndex ?? 0}
+          onClose={() => setPreviewIndex(null)}
+        />
+      )}
     </div>
   )
 }
