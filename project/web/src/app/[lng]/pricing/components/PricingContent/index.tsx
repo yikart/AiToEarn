@@ -72,11 +72,11 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-(--bg-gray) flex items-center justify-center py-16 px-4 md:px-8">
+    <div className="min-h-screen bg-muted flex items-center justify-center py-16 px-4 md:px-8">
       <div className="max-w-7xl w-full">
         {/* 页面标题 */}
         <header className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-(--text-color) tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
             {t('pricing.pageTitle')}
           </h1>
         </header>
@@ -142,38 +142,38 @@ const PricingCard = memo(({
   return (
     <div
       className={cn(
-        'relative bg-(--card-background) rounded-2xl p-6 flex flex-col transition-all duration-300',
-        'border border-(--border-color) hover:shadow-xl hover:-translate-y-1',
-        isHighlight && 'ring-2 ring-(--primary-color) shadow-(--colorPrimary2)'
+        'relative bg-card rounded-2xl p-6 flex flex-col transition-all duration-300',
+        'border border-border hover:shadow-xl hover:-translate-y-1',
+        isHighlight && 'ring-2 ring-purple-500 shadow-purple-100 dark:shadow-purple-900/20'
       )}
     >
       {/* 最受欢迎标签 */}
       {isHighlight && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="bg-(--primary-color) text-white text-xs font-medium px-4 py-1.5 rounded-full whitespace-nowrap">
+          <span className="bg-purple-500 text-white text-xs font-medium px-4 py-1.5 rounded-full whitespace-nowrap">
             {t('pricing.mostPopular')}
           </span>
         </div>
       )}
 
       {/* 方案名称 */}
-      <h3 className="text-xl font-bold text-(--text-color) mb-4 mt-2">
+      <h3 className="text-xl font-bold text-foreground mb-4 mt-2">
         {planName}
       </h3>
 
       {/* 价格 */}
       <div className="mb-6 h-14 flex items-center">
         {isCustom ? (
-          <div className="text-4xl font-bold text-(--text-color) tracking-tight">
+          <div className="text-4xl font-bold text-foreground tracking-tight">
             {t('pricing.customPrice')}
           </div>
         ) : (
           <div className="flex items-baseline gap-1">
-            <span className="text-lg text-(--text-secondary)">$</span>
-            <span className="text-5xl font-bold text-(--text-color) tracking-tight">
+            <span className="text-lg text-muted-foreground">$</span>
+            <span className="text-5xl font-bold text-foreground tracking-tight">
               {planPrice}
             </span>
-            <span className="text-lg text-(--text-secondary)">
+            <span className="text-lg text-muted-foreground">
               {t('pricing.perMonth')}
             </span>
           </div>
@@ -188,7 +188,7 @@ const PricingCard = memo(({
               <Button
                 onClick={onSelect}
                 disabled={isLoading}
-                className="w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200 bg-(--grayColor13) hover:bg-(--grayColor12) text-white"
+                className="w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200 bg-secondary text-secondary-foreground hover:bg-secondary/80"
               >
                 {buttonText}
               </Button>
@@ -205,8 +205,8 @@ const PricingCard = memo(({
           className={cn(
             'w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200',
             isHighlight
-              ? 'bg-(--primary-color) hover:bg-(--primary-hover) text-white shadow-(--colorPrimary3)'
-              : 'bg-(--grayColor13) hover:bg-(--grayColor12) text-white'
+              ? 'bg-purple-500 hover:bg-purple-600 text-white shadow-lg shadow-purple-200 dark:shadow-purple-900/30'
+              : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
           )}
         >
           {isLoading ? (
@@ -238,8 +238,8 @@ const PricingCard = memo(({
       <ul className="space-y-3 flex-1">
         {features.map((feature, index) => (
           <li key={index} className="flex items-start gap-3">
-            <Check className="w-5 h-5 text-(--text-color) shrink-0 mt-0.5" />
-            <span className="text-sm text-(--text-color) leading-relaxed">
+            <Check className="w-5 h-5 text-foreground shrink-0 mt-0.5" />
+            <span className="text-sm text-foreground leading-relaxed">
               {feature}
             </span>
           </li>
@@ -256,7 +256,7 @@ PricingCard.displayName = 'PricingCard'
  */
 export const PricingCardSkeleton = () => {
   return (
-    <div className="bg-(--card-background) rounded-2xl p-6 flex flex-col border border-(--border-color)">
+    <div className="bg-card rounded-2xl p-6 flex flex-col border border-border">
       <Skeleton className="h-7 w-24 mb-4 mt-2" />
       <Skeleton className="h-14 w-32 mb-6" />
       <Skeleton className="h-12 w-full mb-6" />
