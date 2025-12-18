@@ -1,8 +1,15 @@
+/**
+ * InteractivePage - 互动管理页面
+ * 帖子评论、AI 回复、互动管理功能
+ */
+
 'use client'
 
 import type { EngagementPlatform, EngagementPostItem } from '@/api/types/engagement'
 import { CommentOutlined, DollarOutlined, EyeOutlined, HistoryOutlined, LikeOutlined, PlayCircleOutlined, RobotOutlined, WalletOutlined } from '@ant-design/icons'
-import { Avatar, Button, Card, Input, List, message, Modal, Select, Space, Tag } from 'antd'
+import { Avatar, Button, Card, Input, List, Select, Space, Tag } from 'antd'
+import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
@@ -403,11 +410,11 @@ export default function InteractivePage() {
         setReplyText('')
         setReplyTarget(null)
         await loadCommentsV2(commentPost.id)
-        message.success(t('messages.commentSuccess'))
+        toast.success(t('messages.commentSuccess'))
       }
     }
     catch (error) {
-      message.error(t('messages.commentFailed'))
+      toast.error(t('messages.commentFailed'))
     }
     finally {
       setSending(false)
@@ -427,11 +434,11 @@ export default function InteractivePage() {
         setReplyText('')
         setReplyTarget(null)
         await loadCommentsV2(commentPost.id)
-        message.success(t('messages.replySuccess'))
+        toast.success(t('messages.replySuccess'))
       }
     }
     catch (error) {
-      message.error(t('messages.replyFailed'))
+      toast.error(t('messages.replyFailed'))
     }
     finally {
       setSending(false)
@@ -469,7 +476,7 @@ export default function InteractivePage() {
         setAiModalVisible(false)
         setAiPrompt('')
         setAiReplyTarget(null)
-        message.success(t('messages.aiReplyTaskCreated'))
+        toast.success(t('messages.aiReplyTaskCreated'))
         // 刷新评论列表
         if (commentPost) {
           await loadCommentsV2(commentPost.id)
@@ -477,7 +484,7 @@ export default function InteractivePage() {
       }
     }
     catch (error) {
-      message.error(t('messages.aiReplyTaskFailed'))
+      toast.error(t('messages.aiReplyTaskFailed'))
     }
     finally {
       setAiLoading(false)
@@ -487,7 +494,7 @@ export default function InteractivePage() {
   // 获取AI评论建议，并填充到输入框
   const fetchAiSuggestion = async () => {
     if (!replyTarget || !replyTarget.id || !replyTarget.text) {
-      message.warning(t('ui.reply') as any)
+      toast.warning(t('ui.reply') as any)
       return
     }
     try {
@@ -526,11 +533,11 @@ export default function InteractivePage() {
         setTimeout(() => replyInputRef.current?.focus?.(), 0)
       }
       else {
-        message.warning(t('ui.noContent' as any) || '暂无AI建议')
+        toast.warning(t('ui.noContent' as any) || '暂无AI建议')
       }
     }
     catch (e) {
-      message.error(t('ui.requestFailed' as any) || '请求失败')
+      toast.error(t('ui.requestFailed' as any) || '请求失败')
     }
     finally {
       setAiSuggestLoading(false)
@@ -541,8 +548,8 @@ export default function InteractivePage() {
 
   useEffect(() => {
     if (!token) {
-      message.error(t('messages.pleaseLoginFirst'))
-      router.push('/login')
+      toast.error(t('messages.pleaseLoginFirst'))
+      router.push('/auth/login')
       return
     }
 

@@ -1,5 +1,6 @@
 import i18next from 'i18next'
 import { getUserInfoApi } from '@/api/apiReq'
+import { getCreditsBalanceApi } from '@/api/credits'
 import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
 import { createPersistStore } from '@/utils/createPersistStore'
 
@@ -48,6 +49,10 @@ export interface IUserStore {
   currentDatePickerType: PublishDatePickerType
   // 当前日期的选择类型
   defaultCurrentDatePickerType: PublishDatePickerType
+  // Credits 余额（美分）
+  creditsBalance: number
+  // Credits 余额加载状态
+  creditsLoading: boolean
 }
 
 const state: IUserStore = {
@@ -57,6 +62,8 @@ const state: IUserStore = {
   lang: i18next.language || 'en',
   defaultCurrentDatePickerType: PublishDatePickerType.DATE,
   currentDatePickerType: PublishDatePickerType.DATE,
+  creditsBalance: 0,
+  creditsLoading: false,
 }
 
 export const useUserStore = createPersistStore(
@@ -99,15 +106,34 @@ export const useUserStore = createPersistStore(
         }
       },
 
+      // 获取 Credits 余额
+      async fetchCreditsBalance() {
+        set({ creditsLoading: true })
+        try {
+          const res = await getCreditsBalanceApi()
+          if (res?.data) {
+            set({ creditsBalance: res.data.balance })
+          }
+        }
+        finally {
+          set({ creditsLoading: false })
+        }
+      },
+
+      // 设置 Credits 余额
+      setCreditsBalance(balance: number) {
+        set({ creditsBalance: balance })
+      },
+
       // 清除登录状态
       clearLoginStatus: () => {
-        set({ token: undefined, userInfo: undefined })
+        set({ token: undefined, userInfo: undefined, creditsBalance: 0 })
       },
 
       // 登出
       logout() {
         methods.clearLoginStatus()
-        window.location.href = '/login'
+        window.location.href = '/auth/login'
       },
     }
 

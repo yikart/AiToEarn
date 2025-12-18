@@ -32,10 +32,6 @@ const nextConfig = {
 
     return config
   },
-  sassOptions: {
-    includePaths: ['./app', '*.scss'],
-    prependData: `@import "@/app/styles/mixin.scss";`,
-  },
   reactStrictMode: false,
   experimental: {
     forceSwcTransforms: true,

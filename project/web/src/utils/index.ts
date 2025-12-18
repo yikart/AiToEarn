@@ -1,5 +1,5 @@
-import { message } from 'antd'
 import dayjs from 'dayjs'
+import { toast } from '@/lib/toast'
 /**
  * 生成唯一ID
  */
@@ -111,14 +111,10 @@ export async function sensitivityLoading() {
   ]
 
   for (const msg of msgs) {
-    message.open({
-      key,
-      type: 'loading',
-      content: `${msg} ...`,
-    })
+    toast.loading({ content: `${msg} ...`, key })
     await sleep(200)
   }
-  message.destroy(key)
+  toast.destroy(key)
 }
 
 // base64转Blob

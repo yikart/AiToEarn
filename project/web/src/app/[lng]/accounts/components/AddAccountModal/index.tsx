@@ -1,7 +1,15 @@
+/**
+ * AddAccountModal - 添加账号弹窗
+ * 支持添加各平台社交媒体账号
+ */
+
 import type { ForwardedRef } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IpLocationInfo } from '@/utils/ipLocation'
-import { Button, message, Modal, Select, Space, Tooltip, Typography } from 'antd'
+import { Button, Select, Space, Tooltip, Typography } from 'antd'
+import { toast } from '@/lib/toast'
+import { confirm } from '@/lib/confirm'
+import { Modal } from '@/components/ui/modal'
 import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'
@@ -238,7 +246,7 @@ const AddAccountModal = memo(
         // 检查是否有账号
         const account = platformAccounts[platform]
         if (!account) {
-          message.warning(t('addAccountModal.platformNotLoggedIn' as any, { platform: platformName }))
+          toast.warning(t('addAccountModal.platformNotLoggedIn' as any, { platform: platformName }))
           return
         }
 
@@ -246,17 +254,17 @@ const AddAccountModal = memo(
         try {
           const result = await syncAccountToDatabase(platform, selectedSpaceId)
           if (result) {
-            message.success(t('addAccountModal.syncSuccess' as any))
+            toast.success(t('addAccountModal.syncSuccess' as any))
             onAddSuccess(result)
             onClose()
           }
           else {
-            message.error(t('addAccountModal.syncFailed' as any))
+            toast.error(t('addAccountModal.syncFailed' as any))
           }
         }
         catch (error) {
           console.error('同步账号失败:', error)
-          message.error(t('addAccountModal.syncFailed' as any))
+          toast.error(t('addAccountModal.syncFailed' as any))
         }
         finally {
           setSyncLoadingPlatform(null)
@@ -293,7 +301,20 @@ const AddAccountModal = memo(
 
         switch (key) {
           case PlatType.KWAI:
-            await kwaiSkip(key, selectedSpaceId)
+            // 快手授权前先显示提示
+            // 在 onOk 回调中直接执行授权，确保 window.open 在用户交互上下文中
+            await confirm({
+              title: t('addAccountModal.kwaiAuthWarning.title' as any),
+              content: t('addAccountModal.kwaiAuthWarning.content' as any),
+              okText: t('addAccountModal.kwaiAuthWarning.okText' as any),
+              cancelText: undefined, // 不显示取消按钮
+              onOk: () => {
+                // 在用户点击"我知道了"时立即执行授权，确保 window.open 在用户交互上下文中
+                kwaiSkip(key, selectedSpaceId).catch((error) => {
+                  console.error('快手授权失败:', error)
+                })
+              },
+            })
             break
           case PlatType.BILIBILI:
             await bilibiliSkip(key, selectedSpaceId)

@@ -1,3 +1,8 @@
+/**
+ * TaskPageCore - 任务中心核心页面
+ * 任务接取、发布、提交的核心功能页面
+ */
+
 'use client'
 
 import type {
@@ -7,7 +12,9 @@ import type {
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
 import { CheckOutlined, ClockCircleOutlined, EyeOutlined, PlayCircleOutlined, UploadOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Empty, Input, List, message, Modal, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
+import { Button, Card, Col, Empty, Input, List, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
+import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -168,7 +175,7 @@ export default function TaskPageCore() {
     }
     catch (error) {
       console.error('Failed to get pending tasks:', error)
-      message.error(t('messages.getPendingTasksFailed'))
+      toast.error(t('messages.getPendingTasksFailed'))
       setPendingTasks([])
     }
     finally {
@@ -198,7 +205,7 @@ export default function TaskPageCore() {
     }
     catch (error) {
       console.error('Failed to get accepted tasks:', error)
-      message.error(t('messages.getAcceptedTasksFailed'))
+      toast.error(t('messages.getAcceptedTasksFailed'))
       setAcceptedTasks([])
     }
     finally {
@@ -265,7 +272,7 @@ export default function TaskPageCore() {
     try {
       const response = await apiAcceptTask(task.id)
       if (response && response.code === 0) {
-        message.success(t('messages.acceptTaskSuccess'))
+        toast.success(t('messages.acceptTaskSuccess'))
         // 刷新任务列表
         fetchPendingTasks()
         fetchAcceptedTasks()
@@ -273,11 +280,11 @@ export default function TaskPageCore() {
         setActiveTab('accepted')
       }
       else {
-        message.error(t('messages.acceptTaskFailed'))
+        toast.error(t('messages.acceptTaskFailed'))
       }
     }
     catch (error) {
-      message.error(t('messages.acceptTaskFailed'))
+      toast.error(t('messages.acceptTaskFailed'))
       console.error('接受任务失败:', error)
     }
   }
@@ -448,7 +455,7 @@ export default function TaskPageCore() {
       setRequiredAccountTypes(task.accountTypes || [])
       setTaskDetailModalVisible(false) // 关闭任务详情弹窗
       // 关闭消息通知弹窗
-      message.info(t('accountSelect.redirectingToAccounts' as any))
+      toast.info(t('accountSelect.redirectingToAccounts' as any))
 
       // 构建跳转URL，包含需要的平台类型参数
       const accountTypes = task.accountTypes || []
@@ -591,7 +598,7 @@ export default function TaskPageCore() {
     }
     catch (error) {
       console.error('获取素材列表失败:', error)
-      message.error('获取素材列表失败')
+      toast.error('获取素材列表失败')
     }
     finally {
       setMaterialLoading(false)
@@ -628,11 +635,11 @@ export default function TaskPageCore() {
         }
       }
       else {
-        message.error(t('messages.getTaskDetailFailed'))
+        toast.error(t('messages.getTaskDetailFailed'))
       }
     }
     catch (error) {
-      message.error(t('messages.getTaskDetailFailed'))
+      toast.error(t('messages.getTaskDetailFailed'))
       console.error('获取任务详情失败:', error)
     }
     finally {
@@ -656,11 +663,11 @@ export default function TaskPageCore() {
         }
       }
       else {
-        message.error(t('messages.getTaskDetailFailed'))
+        toast.error(t('messages.getTaskDetailFailed'))
       }
     }
     catch (error) {
-      message.error(t('messages.getTaskDetailFailed'))
+      toast.error(t('messages.getTaskDetailFailed'))
       console.error('Failed to get task detail:', error)
     }
     finally {
@@ -692,7 +699,7 @@ export default function TaskPageCore() {
 
     // 验证是否选择了素材
     if (!selectedMaterial) {
-      message.error('请选择一个草稿素材')
+      toast.error('请选择一个草稿素材')
       return
     }
 
@@ -817,7 +824,7 @@ export default function TaskPageCore() {
     }
     catch (error) {
       console.error('任务处理失败:', error)
-      message.error('任务处理失败')
+      toast.error('任务处理失败')
       setTaskProgressVisible(false)
     }
   }
@@ -967,7 +974,7 @@ export default function TaskPageCore() {
     }
     catch (error) {
       console.error('任务处理失败:', error)
-      message.error('任务处理失败')
+      toast.error('任务处理失败')
       setTaskProgressVisible(false)
     }
   }
@@ -1425,15 +1432,6 @@ export default function TaskPageCore() {
         footer={null}
         width={1200}
         zIndex={15}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Spin spinning={taskDetailLoading}>
           {taskDetail ? (
@@ -1800,20 +1798,9 @@ export default function TaskPageCore() {
           setAcceptedTaskDetailModalVisible(false)
           setAcceptedTaskDetail(null)
         }}
-        footer={[
-
-        ]}
+        footer={[]}
         width={800}
         zIndex={2000}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Spin spinning={acceptedTaskDetailLoading}>
           {acceptedTaskDetail ? (
@@ -2220,7 +2207,6 @@ export default function TaskPageCore() {
         title={previewMedia?.title || t('modal.mediaPreview')}
         open={mediaPreviewVisible}
         onCancel={handleCloseMediaPreview}
-        afterClose={handleCloseMediaPreview}
         footer={[
           <Button key="close" onClick={handleCloseMediaPreview}>
             {t('modal.close')}
@@ -2228,13 +2214,6 @@ export default function TaskPageCore() {
         ]}
         width={previewMedia?.type === 'video' ? 800 : 600}
         zIndex={3000}
-        destroyOnHidden={true}
-        styles={{
-          body: {
-            padding: '24px',
-            textAlign: 'center',
-          },
-        }}
       >
         {previewMedia && (
           <div>
@@ -2283,11 +2262,6 @@ export default function TaskPageCore() {
         footer={null}
         width={500}
         zIndex={3000}
-        styles={{
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Steps
           direction="vertical"
@@ -2314,15 +2288,6 @@ export default function TaskPageCore() {
         footer={null}
         width={600}
         zIndex={2500}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <div style={{ marginBottom: '16px' }}>
           <p style={{ margin: 0, color: '#666' }}>

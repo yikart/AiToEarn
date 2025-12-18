@@ -1,0 +1,904 @@
+
+id: 1
+data: {"type":"init","taskId":"694187157b4d3f42a743491b"}
+
+id: 2
+data: {"type":"keep_alive"}
+
+id: 3
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"147cddf7-cc2e-450d-aedb-9a9bbaaee31e","event":{"type":"message_start","message":{"model":"claude-sonnet-4-5-20250929","id":"msg_01HM6WYSFkPkb3VcDD5BNBoj","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":5679,"cache_read_input_tokens":29770,"cache_creation":{"ephemeral_5m_input_tokens":5679,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 4
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eea9f54a-c190-4a54-a89b-00b075ecf0de","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 5
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"caef682d-7975-42e6-a1cb-183bf843b9c7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我来帮您将"}},"parent_tool_use_id":null}}
+
+id: 6
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c9c4dbda-3c08-4bd0-afec-87fa112b14a3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"图片发布到小红书"}},"parent_tool_use_id":null}}
+
+id: 7
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95b0f931-23d3-418b-9961-62a54d2328da","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"。让"}},"parent_tool_use_id":null}}
+
+id: 8
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a167a9e1-281c-4c88-b55c-1f2a6bb7509e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我先获"}},"parent_tool_use_id":null}}
+
+id: 9
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5601b0ca-db58-4d05-8db1-2c8e5fb6a646","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"取您"}},"parent_tool_use_id":null}}
+
+id: 10
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"efcdc52c-4eea-4739-83b4-177ed3dbb8bf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"的小红书账号"}},"parent_tool_use_id":null}}
+
+id: 11
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bea9c037-c08b-4b30-a27c-7d71615bb212","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"信息和"}},"parent_tool_use_id":null}}
+
+id: 12
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"75158174-aa69-419c-a6fa-bc6b3993ff1f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"平"}},"parent_tool_use_id":null}}
+
+id: 13
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f1c5216-7616-4660-ba86-cbd46726fce9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"台发"}},"parent_tool_use_id":null}}
+
+id: 14
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac35780e-f56c-477b-95da-701faf5a74e7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布规则。"}},"parent_tool_use_id":null}}
+
+id: 15
+data: {"type":"assistant","message":{"type":"assistant","uuid":"c75d6104-6a4e-4a63-8650-7576b7d899ba","message":{"id":"msg_01HM6WYSFkPkb3VcDD5BNBoj","content":[{"type":"text","text":"我来帮您将图片发布到小红书。让我先获取您的小红书账号信息和平台发布规则。"}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":5679},"cache_creation_input_tokens":5679,"cache_read_input_tokens":29770,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 16
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac64b109-676c-404b-8b08-118523a13c74","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 17
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"494eafc3-9eeb-4ec5-b046-831a6d5df002","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01LDEA26Cd8xHqfJs2aY5tbV","name":"mcp__util__setTitle","input":{}}},"parent_tool_use_id":null}}
+
+id: 18
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b36b64fe-f1e6-4e43-93ac-5f9266527d24","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 19
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d197120d-a1bd-429d-bdbd-f9e6bcdd4e96","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"title\":"}},"parent_tool_use_id":null}}
+
+id: 20
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d8e9e75-a59c-4ca0-93c5-7b4f6be1d39a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" \"发布图片"}},"parent_tool_use_id":null}}
+
+id: 21
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"820a6fc1-99f4-4c73-9d64-5855684fd5e7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"到小红书\"}"}},"parent_tool_use_id":null}}
+
+id: 22
+data: {"type":"assistant","message":{"type":"assistant","uuid":"7b791868-0170-4ec2-888d-a201dfb3a8ff","message":{"id":"msg_01HM6WYSFkPkb3VcDD5BNBoj","content":[{"type":"tool_use","id":"toolu_01LDEA26Cd8xHqfJs2aY5tbV","name":"mcp__util__setTitle","input":{"title":"发布图片到小红书"}}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":5679},"cache_creation_input_tokens":5679,"cache_read_input_tokens":29770,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 23
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d26057d-8ab7-4a0d-8735-fac368424e7f","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 24
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1b434e43-828b-436d-8511-90b57ab71a74","event":{"type":"content_block_start","index":2,"content_block":{"type":"tool_use","id":"toolu_01WuD4d4SQZHTrxbeQ5AJMtk","name":"mcp__account__getAccountGroupList","input":{}}},"parent_tool_use_id":null}}
+
+id: 25
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"81e8bfa0-6a63-4748-bc4d-d05825b25cd4","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 26
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"88c82301-244d-4c8b-8245-1d96216c68a8","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"{\"user"}},"parent_tool_use_id":null}}
+
+id: 27
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2c8ba212-ba87-471c-91f2-2f0b9592c900","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"Id"}},"parent_tool_use_id":null}}
+
+id: 28
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"24c912dc-e488-475f-b44e-a5d31f0cf162","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"\": \""}},"parent_tool_use_id":null}}
+
+id: 29
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c501d03f-1059-4250-b789-55ea969ca3c6","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"68b55"}},"parent_tool_use_id":null}}
+
+id: 30
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"267e0fbf-a51a-4c22-910b-b16b7979b6f5","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"fb321b"}},"parent_tool_use_id":null}}
+
+id: 31
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3a2ce12c-81ec-49cf-9823-d4fc956fbb78","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"15a40e511d"}},"parent_tool_use_id":null}}
+
+id: 32
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d354f5fa-e26d-4d4f-9f60-bd840f54dc33","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"fc"}},"parent_tool_use_id":null}}
+
+id: 33
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1900785e-dae0-439e-b036-62c435d4e73b","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"f\"}"}},"parent_tool_use_id":null}}
+
+id: 34
+data: {"type":"assistant","message":{"type":"assistant","uuid":"d6eba459-8e0e-4c4e-af7d-1f8314984727","message":{"id":"msg_01HM6WYSFkPkb3VcDD5BNBoj","content":[{"type":"tool_use","id":"toolu_01WuD4d4SQZHTrxbeQ5AJMtk","name":"mcp__account__getAccountGroupList","input":{"userId":"68b55fb321b15a40e511dfcf"}}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":5679},"cache_creation_input_tokens":5679,"cache_read_input_tokens":29770,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 35
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0370c4bd-11a9-424a-b522-7e78b2b58d4e","event":{"type":"content_block_stop","index":2},"parent_tool_use_id":null}}
+
+id: 36
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c2bdf8d7-a6ff-4fd0-a7bf-f80c12a64a0b","event":{"type":"content_block_start","index":3,"content_block":{"type":"tool_use","id":"toolu_01PhHZ2pxehnc5YBMPcWBywp","name":"mcp__publish__publishRestrictions","input":{}}},"parent_tool_use_id":null}}
+
+id: 37
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9b3d3d11-219c-4767-b03d-b36870e54c40","event":{"type":"content_block_delta","index":3,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 38
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f97c1f8-e76a-4fab-bf72-35a4531dc4d7","event":{"type":"content_block_delta","index":3,"delta":{"type":"input_json_delta","partial_json":"{\"plat"}},"parent_tool_use_id":null}}
+
+id: 39
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9dbdc834-abe3-48b6-922e-2e37588551de","event":{"type":"content_block_delta","index":3,"delta":{"type":"input_json_delta","partial_json":"forms\": "}},"parent_tool_use_id":null}}
+
+id: 40
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f181039a-b012-41a8-989f-89b947d9ae89","event":{"type":"content_block_delta","index":3,"delta":{"type":"input_json_delta","partial_json":"[\"xhs\"]}"}},"parent_tool_use_id":null}}
+
+id: 41
+data: {"type":"keep_alive"}
+
+id: 42
+data: {"type":"assistant","message":{"type":"assistant","uuid":"e46b9b26-05a9-423f-9b34-35f6df1efa51","message":{"id":"msg_01HM6WYSFkPkb3VcDD5BNBoj","content":[{"type":"tool_use","id":"toolu_01PhHZ2pxehnc5YBMPcWBywp","name":"mcp__publish__publishRestrictions","input":{"platforms":["xhs"]}}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":5679},"cache_creation_input_tokens":5679,"cache_read_input_tokens":29770,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 43
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c2eceda9-90f5-44c6-815f-0df3a3f63997","event":{"type":"content_block_stop","index":3},"parent_tool_use_id":null}}
+
+id: 44
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f1120b72-c1c6-4bb4-8db0-d2d16d097f13","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":5679,"cache_read_input_tokens":29770,"input_tokens":3,"output_tokens":203}},"parent_tool_use_id":null}}
+
+id: 45
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12980464-4439-40e8-92c3-aa567c5ccbee","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 46
+data: {"type":"title_updated","taskId":"694187157b4d3f42a743491b","title":"发布图片到小红书"}
+
+id: 47
+data: {"type":"user","message":{"type":"user","uuid":"f2c4dcbd-3e68-4252-b4d5-b77fdf12aaa9","message":{"content":[{"tool_use_id":"toolu_01LDEA26Cd8xHqfJs2aY5tbV","type":"tool_result","content":[{"type":"text","text":"Title updated successfully"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Title updated successfully"}]}}
+
+id: 48
+data: {"type":"user","message":{"type":"user","uuid":"fd46777c-75c1-49aa-bb70-624e8accdc0e","message":{"content":[{"tool_use_id":"toolu_01WuD4d4SQZHTrxbeQ5AJMtk","type":"tool_result","content":[{"type":"text","text":"Account Groups:\nTotal 2:\n1. ID: 68fb48771790fcfba5e859bf, Name: 测试webview, IP: 114.80.161.93:63026\n2. ID: 68b55fb8f4ffee0534c8250b, Name: 默认空间, IP: None"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Account Groups:\nTotal 2:\n1. ID: 68fb48771790fcfba5e859bf, Name: 测试webview, IP: 114.80.161.93:63026\n2. ID: 68b55fb8f4ffee0534c8250b, Name: 默认空间, IP: None"}]}}
+
+id: 49
+data: {"type":"user","message":{"type":"user","uuid":"222846be-a3a4-4959-8d19-e6da93ee26b1","message":{"content":[{"tool_use_id":"toolu_01PhHZ2pxehnc5YBMPcWBywp","type":"tool_result","content":[{"type":"text","text":"\n\npublish restrictions:\n**General Parameter Validation (Applicable to All Platforms)**\nThese validations are enforced across all platforms unless specifically overridden by a platform.\n- Media Upload Completion Check: Images or videos must be fully uploaded.\n- Title Character Limit: Title length cannot exceed the platform's maximum limit.\n- Description Character Limit: Description length cannot exceed the platform's maximum limit.\n- Image Count Limit (Platforms supporting ImageText only): Number of images cannot exceed the platform's maximum limit.\n- Media Required (Platforms not supporting Article): Must upload at least one image or one video.\n- Hashtag Count Limit: Total number of hashtags (including those parsed from the description) cannot exceed the platform's maximum limit.\n- Hashtag Format Validation (in description): Hashtags cannot appear in the format \"#hashtag1#hashtag2\" (no space between them).\n\n**Platform-Specific Error Parameter Validation (Will Block Publishing)**\n- **xhs:**\n    \n    - Image and video are supported.\n    - Image format must be JPG, PNG, or JPEG. (recommended JPG, PNG, or JPEG)\n    - Image count ≤ 9.\n    - Image resolution must minimum 300x600. (recommended 1080x1920 or 1920x1080)\n    - Text length ≤ 1000 characters. (recommended 600-1000 characters)\n    - Video size ≤ 300MB. (recommended ≤ 300MB)\n    - Video duration ≤ 15 minutes. (recommended 2-5 minutes)\n    - Video format must be MP4 or MOV. (recommended MP4 or MOV)\n    - Video resolution must minimum 720p. (recommended ≥720p)\n    - Video aspect ratio must be 9:16 or 3:4 or 1:1 or 16:9. (recommended 9:16)\n    - Video frame rate recommended 25-30 FPS\n    - Audio format must be AAC. (recommended AAC)\n    - Cover image resolution recommended 1080x1440 or 1440x1080\n    \n      "}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"\n\npublish restrictions:\n**General Parameter Validation (Applicable to All Platforms)**\nThese validations are enforced across all platforms unless specifically overridden by a platform.\n- Media Upload Completion Check: Images or videos must be fully uploaded.\n- Title Character Limit: Title length cannot exceed the platform's maximum limit.\n- Description Character Limit: Description length cannot exceed the platform's maximum limit.\n- Image Count Limit (Platforms supporting ImageText only): Number of images cannot exceed the platform's maximum limit.\n- Media Required (Platforms not supporting Article): Must upload at least one image or one video.\n- Hashtag Count Limit: Total number of hashtags (including those parsed from the description) cannot exceed the platform's maximum limit.\n- Hashtag Format Validation (in description): Hashtags cannot appear in the format \"#hashtag1#hashtag2\" (no space between them).\n\n**Platform-Specific Error Parameter Validation (Will Block Publishing)**\n- **xhs:**\n    \n    - Image and video are supported.\n    - Image format must be JPG, PNG, or JPEG. (recommended JPG, PNG, or JPEG)\n    - Image count ≤ 9.\n    - Image resolution must minimum 300x600. (recommended 1080x1920 or 1920x1080)\n    - Text length ≤ 1000 characters. (recommended 600-1000 characters)\n    - Video size ≤ 300MB. (recommended ≤ 300MB)\n    - Video duration ≤ 15 minutes. (recommended 2-5 minutes)\n    - Video format must be MP4 or MOV. (recommended MP4 or MOV)\n    - Video resolution must minimum 720p. (recommended ≥720p)\n    - Video aspect ratio must be 9:16 or 3:4 or 1:1 or 16:9. (recommended 9:16)\n    - Video frame rate recommended 25-30 FPS\n    - Audio format must be AAC. (recommended AAC)\n    - Cover image resolution recommended 1080x1440 or 1440x1080\n    \n      "}]}}
+
+id: 50
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"278d3f99-9ea3-4d0e-8c30-f8d39fbb4b2f","event":{"type":"message_start","message":{"model":"claude-sonnet-4-5-20250929","id":"msg_01JRQ6QkHkbUtkHQho5Q2wPE","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":7,"cache_creation_input_tokens":890,"cache_read_input_tokens":35449,"cache_creation":{"ephemeral_5m_input_tokens":890,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 51
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3daa0b0-1b25-480c-84f8-2fd471d39a09","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 52
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f9d5cd7d-6f49-4e2d-9d62-4f1088f91a27","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"现"}},"parent_tool_use_id":null}}
+
+id: 53
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b2526bc-e1ba-4438-93a5-db1f4e1b4001","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"在让"}},"parent_tool_use_id":null}}
+
+id: 54
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"91e10853-f4de-4052-8382-0a477b64f0ab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我获"}},"parent_tool_use_id":null}}
+
+id: 55
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7261a590-8412-4e11-bd41-5ca07415beb2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"取具"}},"parent_tool_use_id":null}}
+
+id: 56
+data: {"type":"keep_alive"}
+
+id: 57
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5a763e5-cbad-4d44-ac71-7e8e8e4ac58c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"体的小红书账号信"}},"parent_tool_use_id":null}}
+
+id: 58
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dbdbd807-13ba-4bd3-af00-c27599cf8a79","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"息："}},"parent_tool_use_id":null}}
+
+id: 59
+data: {"type":"assistant","message":{"type":"assistant","uuid":"1f548bc8-429a-4d72-9bc0-816e574fa7c3","message":{"id":"msg_01JRQ6QkHkbUtkHQho5Q2wPE","content":[{"type":"text","text":"现在让我获取具体的小红书账号信息："}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":890},"cache_creation_input_tokens":890,"cache_read_input_tokens":35449,"input_tokens":7,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 60
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04625676-5c6e-4c75-83f4-87e7815b52ce","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 61
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"08b29ba9-6257-4d0e-b936-0f8a97857e85","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01QGyawCPDrFpnNX6bBmGgyU","name":"mcp__account__getAccountListByGroupId","input":{}}},"parent_tool_use_id":null}}
+
+id: 62
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"097cf504-3636-4851-ad2c-622cf194e839","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 63
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c288f5ca-042a-4cb2-a3dc-56e9d6c07eb2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"gro"}},"parent_tool_use_id":null}}
+
+id: 64
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"663451dd-203c-4428-a0f7-65135a9330b9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"upId\": \"68fb"}},"parent_tool_use_id":null}}
+
+id: 65
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9be3a1ff-498b-44cd-a58c-d40d73bd9046","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"48771"}},"parent_tool_use_id":null}}
+
+id: 66
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4278144b-91ce-48e9-b850-c76bce3c3993","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"790fcfba5e"}},"parent_tool_use_id":null}}
+
+id: 67
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a5f50971-216b-406a-958e-d4fa24ac52a3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"859bf\"}"}},"parent_tool_use_id":null}}
+
+id: 68
+data: {"type":"assistant","message":{"type":"assistant","uuid":"a45c2611-13e3-481c-956b-32a36966c358","message":{"id":"msg_01JRQ6QkHkbUtkHQho5Q2wPE","content":[{"type":"tool_use","id":"toolu_01QGyawCPDrFpnNX6bBmGgyU","name":"mcp__account__getAccountListByGroupId","input":{"groupId":"68fb48771790fcfba5e859bf"}}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":890},"cache_creation_input_tokens":890,"cache_read_input_tokens":35449,"input_tokens":7,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 69
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"82d82d1b-6d02-40d2-85e8-c9958f8ac4a9","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 70
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9a2f1ad4-c9db-43d5-9d25-9d21e167d2c7","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":890,"cache_read_input_tokens":35449,"input_tokens":7,"output_tokens":91}},"parent_tool_use_id":null}}
+
+id: 71
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"17261322-e9ef-4a97-9855-ef583f82d96b","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 72
+data: {"type":"user","message":{"type":"user","uuid":"d24ffee1-104b-4a62-863e-bb75aa954bbb","message":{"content":[{"tool_use_id":"toolu_01QGyawCPDrFpnNX6bBmGgyU","type":"tool_result","content":[{"type":"text","text":"Accounts:\nTotal 1:\n1. [linkedin] 振强 高 (id: linkedin_LuWax4KokO)"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Accounts:\nTotal 1:\n1. [linkedin] 振强 高 (id: linkedin_LuWax4KokO)"}]}}
+
+id: 73
+data: {"type":"keep_alive"}
+
+id: 74
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8aecc4e2-35c8-4d3c-97ff-2bff62422224","event":{"type":"message_start","message":{"model":"claude-sonnet-4-5-20250929","id":"msg_019usK53Hh2Qs9NknJaRQ6WG","type":"message","role":"assistant","content":[{"type":"tool_use","id":"toolu_01FCqxmnnsHv82QFvCPJPwCe","name":"mcp__account__getAccountListByGroupId","input":{}}],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":5,"cache_creation_input_tokens":34668,"cache_read_input_tokens":1809,"cache_creation":{"ephemeral_5m_input_tokens":34668,"ephemeral_1h_input_tokens":0},"output_tokens":32,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 75
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a823eee-37c3-4cba-ba2b-01f2f6129681","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_01FCqxmnnsHv82QFvCPJPwCe","name":"mcp__account__getAccountListByGroupId","input":{}}},"parent_tool_use_id":null}}
+
+id: 76
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d5bf5d55-0d36-40d2-aa37-f633a82920ae","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 77
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6299efc2-b36f-44d8-b94f-eea2ab3d2241","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"group"}},"parent_tool_use_id":null}}
+
+id: 78
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd1bbc05-c071-4fe7-8bbb-7acbd0b22274","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"Id"}},"parent_tool_use_id":null}}
+
+id: 79
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04150be0-4b2f-4bc5-b093-e5d5c7b1ab8a","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\": \""}},"parent_tool_use_id":null}}
+
+id: 80
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ea1ae387-f295-426c-9793-b6f2f2d17cd7","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"68b55fb8f4"}},"parent_tool_use_id":null}}
+
+id: 81
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"de33004b-f485-4b62-9a0d-94de99c806d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ffee"}},"parent_tool_use_id":null}}
+
+id: 82
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33f4bd8b-a7b3-4045-b327-6898469866fe","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"0534c"}},"parent_tool_use_id":null}}
+
+id: 83
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"68ad9461-3376-4604-b5df-f08d3e62fefd","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"8250b\"}"}},"parent_tool_use_id":null}}
+
+id: 84
+data: {"type":"assistant","message":{"type":"assistant","uuid":"23d64caf-0403-4e29-93bf-e479d742fac6","message":{"id":"msg_019usK53Hh2Qs9NknJaRQ6WG","content":[{"type":"tool_use","id":"toolu_01FCqxmnnsHv82QFvCPJPwCe","name":"mcp__account__getAccountListByGroupId","input":{"groupId":"68b55fb8f4ffee0534c8250b"}}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":34668},"cache_creation_input_tokens":34668,"cache_read_input_tokens":1809,"input_tokens":5,"output_tokens":76,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 85
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"29c644b1-d978-4308-9686-454ee10968f2","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 86
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"47876a33-a099-414e-8c00-2e8630ed9538","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":34668,"cache_read_input_tokens":1809,"input_tokens":5,"output_tokens":76}},"parent_tool_use_id":null}}
+
+id: 87
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"784f67c7-ae91-45ee-a915-68d24263631f","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 88
+data: {"type":"user","message":{"type":"user","uuid":"a0c3fad2-fb76-4d44-8777-6db41fec0b97","message":{"content":[{"tool_use_id":"toolu_01FCqxmnnsHv82QFvCPJPwCe","type":"tool_result","content":[{"type":"text","text":"Accounts:\nTotal 8:\n1. [KWAI] f1b6d99b9252a17314bf5724e666123f (id: KWAI_f1b6d99b9252a17314bf5724e666123f)\n2. [youtube] UCXefkITtK6LGxzQzXXvR15w (id: youtube_114858911621780518276)\n3. [instagram] abcg.ao (id: instagram_25721566527501315)\n4. [twitter] gaozhenqia42660 (id: twitter_1984100921996144640)\n5. [douyin] MS4wLjABAAAABK-RbKv414Vz1SmkfSM0Ekz0_PvcaJGkDbtYxo3MtAW60gXjJT2AITa0J-HslGKp (id: douyin_MS4wLjABAAAABK-RbKv414Vz1SmkfSM0Ekz0_PvcaJGkDbtYxo3MtAW60gXjJT2AITa0J-HslGKp_web)\n6. [bilibili] cd296d3bda0f465f977b1cbf200e21d6 (id: bilibili_cd296d3bda0f465f977b1cbf200e21d6)\n7. [douyin] MS4wLjABAAAAKiasFmgge2odtWqkbNma35Un-3jTVQqlU8DPporKuUhoFjXum9S94Sxo43Ef1xpk (id: douyin_MS4wLjABAAAAKiasFmgge2odtWqkbNma35Un-3jTVQqlU8DPporKuUhoFjXum9S94Sxo43Ef1xpk_web)\n8. [xhs] 67c03d08000000001703c89c (id: xhs_67c03d08000000001703c89c_web)"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Accounts:\nTotal 8:\n1. [KWAI] f1b6d99b9252a17314bf5724e666123f (id: KWAI_f1b6d99b9252a17314bf5724e666123f)\n2. [youtube] UCXefkITtK6LGxzQzXXvR15w (id: youtube_114858911621780518276)\n3. [instagram] abcg.ao (id: instagram_25721566527501315)\n4. [twitter] gaozhenqia42660 (id: twitter_1984100921996144640)\n5. [douyin] MS4wLjABAAAABK-RbKv414Vz1SmkfSM0Ekz0_PvcaJGkDbtYxo3MtAW60gXjJT2AITa0J-HslGKp (id: douyin_MS4wLjABAAAABK-RbKv414Vz1SmkfSM0Ekz0_PvcaJGkDbtYxo3MtAW60gXjJT2AITa0J-HslGKp_web)\n6. [bilibili] cd296d3bda0f465f977b1cbf200e21d6 (id: bilibili_cd296d3bda0f465f977b1cbf200e21d6)\n7. [douyin] MS4wLjABAAAAKiasFmgge2odtWqkbNma35Un-3jTVQqlU8DPporKuUhoFjXum9S94Sxo43Ef1xpk (id: douyin_MS4wLjABAAAAKiasFmgge2odtWqkbNma35Un-3jTVQqlU8DPporKuUhoFjXum9S94Sxo43Ef1xpk_web)\n8. [xhs] 67c03d08000000001703c89c (id: xhs_67c03d08000000001703c89c_web)"}]}}
+
+id: 89
+data: {"type":"keep_alive"}
+
+id: 90
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e2149954-1071-43e2-99da-05be08ad4ce5","event":{"type":"message_start","message":{"model":"claude-sonnet-4-5-20250929","id":"msg_011gAzjKB7eHDicNghGuvxDJ","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":35393,"cache_read_input_tokens":1809,"cache_creation":{"ephemeral_5m_input_tokens":35393,"ephemeral_1h_input_tokens":0},"output_tokens":2,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 91
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9351fd8-d32b-448e-918d-3d9884db765c","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 92
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad374402-6def-46d4-b7dd-993b9cbf5b2e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"找"}},"parent_tool_use_id":null}}
+
+id: 93
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc6b410f-7f6e-4390-94e6-82fe1939d0d6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"到了您"}},"parent_tool_use_id":null}}
+
+id: 94
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f55f58c-621c-4525-af65-b89b8dbe6af9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"的小红书账号！"}},"parent_tool_use_id":null}}
+
+id: 95
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"454e3e99-82bb-40be-87ec-d6c85aefe785","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"现在我需"}},"parent_tool_use_id":null}}
+
+id: 96
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0cd737fd-5191-429c-a841-8ac65bef59ad","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要为"}},"parent_tool_use_id":null}}
+
+id: 97
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0152d3a9-57f9-4c61-9f23-b3c6241782b0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"这"}},"parent_tool_use_id":null}}
+
+id: 98
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ae4bdd02-62fa-4bbd-90c9-826e28bfed89","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"张"}},"parent_tool_use_id":null}}
+
+id: 99
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4ee009ef-0080-4b56-8050-a8a7d41b4aed","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"图片创"}},"parent_tool_use_id":null}}
+
+id: 100
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3cc3b09-e9e7-4ba6-b7c6-75631c816cb1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"建标"}},"parent_tool_use_id":null}}
+
+id: 101
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c31d00c-a6ce-4b61-a18a-5a9f2e81e08b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题、"}},"parent_tool_use_id":null}}
+
+id: 102
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9a62cab-bb5d-4ca8-8f3f-6a244ead2585","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"描述和"}},"parent_tool_use_id":null}}
+
+id: 103
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5c2d88f2-5455-47cf-9f80-8b4bc7afb25a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标签，然后发布到"}},"parent_tool_use_id":null}}
+
+id: 104
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"667c0c5f-7e0c-47ce-bd33-8e65f458f1ed","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"小红书。让我为您"}},"parent_tool_use_id":null}}
+
+id: 105
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d193214-3734-45c5-a835-800b6e023608","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"生"}},"parent_tool_use_id":null}}
+
+id: 106
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d72add90-8ea0-4023-aada-70a1532b15ed","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成内"}},"parent_tool_use_id":null}}
+
+id: 107
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fb695932-b533-4fe6-992f-542b7d3e7b64","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容："}},"parent_tool_use_id":null}}
+
+id: 108
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e7d12e0d-085d-477b-a23e-6060338c0835","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n根"}},"parent_tool_use_id":null}}
+
+id: 109
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"057303e8-1784-4bd8-9538-98c53b164d3b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"据图"}},"parent_tool_use_id":null}}
+
+id: 110
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"36790b65-7329-481d-bb69-42ed6f64c3a2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"片内容，我将为您"}},"parent_tool_use_id":null}}
+
+id: 111
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d41796da-6e39-4d96-9eb4-c67134a36c00","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"创建以"}},"parent_tool_use_id":null}}
+
+id: 112
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b503d59b-61de-4c6a-aa85-d88d3d0fd34e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"下发"}},"parent_tool_use_id":null}}
+
+id: 113
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3c553ddd-4772-4855-979a-3da78181d7e6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布内容：\n\n**"}},"parent_tool_use_id":null}}
+
+id: 114
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8b6dd26e-7d2f-48bb-9848-e2b85b4f2f14","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标题**"}},"parent_tool_use_id":null}}
+
+id: 115
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2e1ee910-1605-4c7a-86b1-d5c9e3de2d6d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"：温"}},"parent_tool_use_id":null}}
+
+id: 116
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e16aa439-c703-4876-ba18-c23d70cf12bd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"馨家"}},"parent_tool_use_id":null}}
+
+id: 117
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"83a6248b-df60-4eb2-9533-e2ff01ae6b7f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"居"}},"parent_tool_use_id":null}}
+
+id: 118
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aa3b29de-ee62-4856-8fd3-47fe4f62089a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"一"}},"parent_tool_use_id":null}}
+
+id: 119
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4e4f1954-cfcf-4b33-b7ac-61ac8e1dbdef","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"角"}},"parent_tool_use_id":null}}
+
+id: 120
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d2387c4-c816-490f-9aea-ace0086780db","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n**描述**：分"}},"parent_tool_use_id":null}}
+
+id: 121
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e548d080-c8d0-4325-a2e4-dc0646c38c70","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"享一个"}},"parent_tool_use_id":null}}
+
+id: 122
+data: {"type":"keep_alive"}
+
+id: 123
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8d1812bd-3e65-4106-bb64-ae2678cf59b4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"舒适的家居角"}},"parent_tool_use_id":null}}
+
+id: 124
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bcaeb745-f9ff-4203-9d1f-ba7ab08b4184","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"落，简"}},"parent_tool_use_id":null}}
+
+id: 125
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fae77725-ec26-4626-85e2-2fa8dc07d99c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"约而"}},"parent_tool_use_id":null}}
+
+id: 126
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9a917da8-1acd-444e-9d24-f1d2da978d91","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"温馨的设计让"}},"parent_tool_use_id":null}}
+
+id: 127
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4eb923d4-8e04-4c73-95a9-d7e6beba03f2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"人"}},"parent_tool_use_id":null}}
+
+id: 128
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4d1499a0-487a-414e-863d-288a4342eeb7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"感到放松自"}},"parent_tool_use_id":null}}
+
+id: 129
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2b6448a1-318a-409e-8088-df91a4c8b26c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"在"}},"parent_tool_use_id":null}}
+
+id: 130
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"47059ec0-4a5a-42ab-b615-89801aa4b2b0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"。#"}},"parent_tool_use_id":null}}
+
+id: 131
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"36fdd751-31c5-4cbf-a95b-af7f8dd8a873","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"家"}},"parent_tool_use_id":null}}
+
+id: 132
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"485c9f5f-a8f7-402d-8ffe-7cebf36eac32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"居分"}},"parent_tool_use_id":null}}
+
+id: 133
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3793c264-8e01-49c9-9a45-3b09416ae262","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"享 "}},"parent_tool_use_id":null}}
+
+id: 134
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bd357a86-8716-4421-a276-c04a5170afaf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#生"}},"parent_tool_use_id":null}}
+
+id: 135
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8797d8b-4672-4591-a22b-6bd6125de3b5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"活美"}},"parent_tool_use_id":null}}
+
+id: 136
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8500a03e-d04b-4bf4-bc5a-260a8e5be8e3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"学 #温"}},"parent_tool_use_id":null}}
+
+id: 137
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"20be7ffe-f419-4f6a-a2e6-d038a919c235","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"馨小"}},"parent_tool_use_id":null}}
+
+id: 138
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"82dafce0-b97c-472c-b486-6dba613cd199","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"窝"}},"parent_tool_use_id":null}}
+
+id: 139
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"37c41562-71c2-4a00-9095-5988b7c90afc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n**标签**：家"}},"parent_tool_use_id":null}}
+
+id: 140
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3ec7da1c-620f-4cc4-b3a7-cd431429980e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"居"}},"parent_tool_use_id":null}}
+
+id: 141
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4c56ad5-002f-4cf5-8779-212517670c37","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"灵"}},"parent_tool_use_id":null}}
+
+id: 142
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6948d2ac-6954-406b-89b2-cf2374239436","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"感、室"}},"parent_tool_use_id":null}}
+
+id: 143
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"132e887e-6809-4b1a-a36c-55a377bfa640","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"内设"}},"parent_tool_use_id":null}}
+
+id: 144
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d623d5f6-6304-4b6c-b832-c4a1c0dc8a90","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"计、生活方"}},"parent_tool_use_id":null}}
+
+id: 145
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"35572431-09ae-4c4b-a1ad-cb7c332b93df","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"式"}},"parent_tool_use_id":null}}
+
+id: 146
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"414dac58-5b59-45f3-be06-25d95f13df38","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n现"}},"parent_tool_use_id":null}}
+
+id: 147
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4de5b102-42d4-4436-8f88-5588aa53ae07","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"在让"}},"parent_tool_use_id":null}}
+
+id: 148
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a9226c2f-f349-43ec-ad13-5e06b5cbc6c3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我发"}},"parent_tool_use_id":null}}
+
+id: 149
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2852e724-794d-4e13-8b74-27a5783e669a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布到小红书："}},"parent_tool_use_id":null}}
+
+id: 150
+data: {"type":"assistant","message":{"type":"assistant","uuid":"4613349d-a6d4-4f48-bbea-f77958ab5483","message":{"id":"msg_011gAzjKB7eHDicNghGuvxDJ","content":[{"type":"text","text":"找到了您的小红书账号！现在我需要为这张图片创建标题、描述和标签，然后发布到小红书。让我为您生成内容：\n\n根据图片内容，我将为您创建以下发布内容：\n\n**标题**：温馨家居一角\n**描述**：分享一个舒适的家居角落，简约而温馨的设计让人感到放松自在。#家居分享 #生活美学 #温馨小窝\n**标签**：家居灵感、室内设计、生活方式\n\n现在让我发布到小红书："}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":35393},"cache_creation_input_tokens":35393,"cache_read_input_tokens":1809,"input_tokens":3,"output_tokens":2,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 151
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ef122c55-2a7c-4c94-82b4-931a22baf24e","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 152
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"595616fc-c6f5-4cdd-a12f-45d5bdc17a42","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01PiALiKEqpZCJiZi3yeQsPc","name":"mcp__publish__publishPostToXhs","input":{}}},"parent_tool_use_id":null}}
+
+id: 153
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b6b2a54-4708-45e4-ad88-5646f43d0743","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 154
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c1ce6622-ba9d-4506-9369-584d73e1c4ea","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\""}},"parent_tool_use_id":null}}
+
+id: 155
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"97eebcc1-7c54-400a-902d-aaaa2590a200","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"userId\": \"6"}},"parent_tool_use_id":null}}
+
+id: 156
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"813e6e58-a307-444a-8a03-b44fcef4e864","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"8b"}},"parent_tool_use_id":null}}
+
+id: 157
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"953a72f7-3cb3-4c4a-b8bb-a7d86836ba1d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"55f"}},"parent_tool_use_id":null}}
+
+id: 158
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12daa2ea-66ee-4b6c-8e8b-0b901e087ff1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"b321b1"}},"parent_tool_use_id":null}}
+
+id: 159
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6e0bf8de-f821-46d4-8c19-1dc6b4d63254","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"5a40e51"}},"parent_tool_use_id":null}}
+
+id: 160
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d2619d53-f915-45f1-a0fb-636fb3bef7c8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"1dfcf\""}},"parent_tool_use_id":null}}
+
+id: 161
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6fb99f19-d705-462a-8e3a-58febaf07050","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", \"acc"}},"parent_tool_use_id":null}}
+
+id: 162
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"af5a3f5c-4426-4402-b90a-2347250a123d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"oun"}},"parent_tool_use_id":null}}
+
+id: 163
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ec8a0d9-875d-4263-a786-c3dc2dd563e1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"tId\": \"xhs_6"}},"parent_tool_use_id":null}}
+
+id: 164
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2783d8f3-ac67-4930-89cf-c60da7ec46da","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"7c"}},"parent_tool_use_id":null}}
+
+id: 165
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"58e8e3d9-d0b8-4768-91a8-5d0a96fe9c96","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"03d0800"}},"parent_tool_use_id":null}}
+
+id: 166
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5d164c69-ee7d-4dfe-9408-e6bf67009dd7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"0000001"}},"parent_tool_use_id":null}}
+
+id: 167
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ae68b8b-57bb-4b57-98b8-9a32271ae959","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"703c89c_web"}},"parent_tool_use_id":null}}
+
+id: 168
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0242647a-e59e-4c70-961d-e3651556e966","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\""}},"parent_tool_use_id":null}}
+
+id: 169
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4b8f306-7532-424c-893a-f78f55042b33","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", \""}},"parent_tool_use_id":null}}
+
+id: 170
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"27b7134c-096a-4b82-98a6-4f32983ea209","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"titl"}},"parent_tool_use_id":null}}
+
+id: 171
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1e10f06f-cd65-4c84-8fe9-afa398cd636f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e\": \"温馨家居一"}},"parent_tool_use_id":null}}
+
+id: 172
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0dae6e82-dec1-4e6e-894a-7ce07e059fe8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"角\""}},"parent_tool_use_id":null}}
+
+id: 173
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7f3a8fe0-12bc-4b3a-8201-30a48162c6e9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", \"de"}},"parent_tool_use_id":null}}
+
+id: 174
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c289ec45-0c1f-4f87-957e-3c125eb27271","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"sc\":"}},"parent_tool_use_id":null}}
+
+id: 175
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"46a2ca29-4ea0-4de1-aac6-1efc831f16a6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" \"分享"}},"parent_tool_use_id":null}}
+
+id: 176
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"109f6be4-ae4a-475d-9889-09f17132f1dd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"一个舒适"}},"parent_tool_use_id":null}}
+
+id: 177
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c13a6be7-c3eb-4db6-aa59-3ba6f37f003a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"的家居角落，简约而"}},"parent_tool_use_id":null}}
+
+id: 178
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a7e214ac-65e2-43ff-9a6d-5dff66adc5b3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"温馨的"}},"parent_tool_use_id":null}}
+
+id: 179
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"679bc846-f0dd-4943-b034-741c3d7841d9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"设计让人感到放松自在。"}},"parent_tool_use_id":null}}
+
+id: 180
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad1da28e-50f4-4304-b5d8-e909640bf93b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"#家居分享 "}},"parent_tool_use_id":null}}
+
+id: 181
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2b61b70d-ac01-47e1-80ad-b37d219bfbe2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"#生活美学 "}},"parent_tool_use_id":null}}
+
+id: 182
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8096a1e1-3d68-4150-a0e6-96bf5a5a561f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"#温馨小窝\""}},"parent_tool_use_id":null}}
+
+id: 183
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"099dac55-764f-4057-9224-d1646ec82cd5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}},"parent_tool_use_id":null}}
+
+id: 184
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c2e7978c-3b12-417a-9b12-f9e0c6f2537b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"imgL"}},"parent_tool_use_id":null}}
+
+id: 185
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"56d661b8-316d-414a-9d6a-c0121e32f6fd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ist\": \"[\\\"h"}},"parent_tool_use_id":null}}
+
+id: 186
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b902771a-41c2-433d-a589-08a3d4474b9e","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ttps"}},"parent_tool_use_id":null}}
+
+id: 187
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b455903a-7a9c-4823-aaef-d81e6b81baca","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"://s3.amaz"}},"parent_tool_use_id":null}}
+
+id: 188
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c2b34756-7aab-46b7-9d36-bafe64218667","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"onaws"}},"parent_tool_use_id":null}}
+
+id: 189
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"823f69d3-4313-4e6f-925e-cca8fde45c47","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":".com/a"}},"parent_tool_use_id":null}}
+
+id: 190
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"49a8cde0-8c24-4b35-91fb-d5e2e43caaa3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ppai."}},"parent_tool_use_id":null}}
+
+id: 191
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c1d55bad-1eab-4cd0-b44f-912773d60bf3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"staging/6"}},"parent_tool_use_id":null}}
+
+id: 192
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f87e22a-9658-46fd-9396-ab93149c528c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"8b55f"}},"parent_tool_use_id":null}}
+
+id: 193
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8332532a-e8a2-44ef-aef4-75240105d467","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"b321b15a40e5"}},"parent_tool_use_id":null}}
+
+id: 194
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"352b0f14-3fce-426a-8b51-a6ceb251f1c3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"11dfc"}},"parent_tool_use_id":null}}
+
+id: 195
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5f98568b-7b6a-42ac-9b8a-a7e6e8066226","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"f/373d0"}},"parent_tool_use_id":null}}
+
+id: 196
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf7513e6-0da6-41ea-a498-5f56bdfeb00d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"fc13714f769"}},"parent_tool_use_id":null}}
+
+id: 197
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"75c8a552-bd25-4492-a878-c43a1f3873f1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"7680"}},"parent_tool_use_id":null}}
+
+id: 198
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eabeaefc-d641-4dff-b2b9-a7424db2c2e3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e2"}},"parent_tool_use_id":null}}
+
+id: 199
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5809b78-b924-430b-86e1-e9b60787aeb1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"d6351f8fb71."}},"parent_tool_use_id":null}}
+
+id: 200
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0c8acf87-9d47-4c88-9c63-9d071a4af255","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"jpg\\\"]"}},"parent_tool_use_id":null}}
+
+id: 201
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cea40ee3-0cce-4dec-93a6-1d7313505ca9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\""}},"parent_tool_use_id":null}}
+
+id: 202
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"08ecdf3e-015a-45fe-90b0-f48380f6d55d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", \"top"}},"parent_tool_use_id":null}}
+
+id: 203
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"37ca7f15-7e1c-4272-9289-885a3f557f99","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ics\""}},"parent_tool_use_id":null}}
+
+id: 204
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"077e2d23-a1fb-48c0-8c62-3ad647e9f3f0","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":": \"[\\\"家居灵"}},"parent_tool_use_id":null}}
+
+id: 205
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74c7342f-66bb-4c3c-a8c1-3341ca3f60e9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"感\\\", \\\"室内设计"}},"parent_tool_use_id":null}}
+
+id: 206
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0811d793-54e4-4709-9638-971861b1af63","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\\\", \\\"生"}},"parent_tool_use_id":null}}
+
+id: 207
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"88df6a27-42ac-41cb-ac56-bcd7c011181b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"活方式\\\"]"}},"parent_tool_use_id":null}}
+
+id: 208
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9519d90-200d-42be-93a0-4202ebf94222","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"}"}},"parent_tool_use_id":null}}
+
+id: 209
+data: {"type":"assistant","message":{"type":"assistant","uuid":"0014463d-8e50-4573-9b63-4cf6f64c3e71","message":{"id":"msg_011gAzjKB7eHDicNghGuvxDJ","content":[{"type":"tool_use","id":"toolu_01PiALiKEqpZCJiZi3yeQsPc","name":"mcp__publish__publishPostToXhs","input":{"userId":"68b55fb321b15a40e511dfcf","accountId":"xhs_67c03d08000000001703c89c_web","title":"温馨家居一角","desc":"分享一个舒适的家居角落，简约而温馨的设计让人感到放松自在。#家居分享 #生活美学 #温馨小窝","imgList":"[\"https://s3.amazonaws.com/appai.staging/68b55fb321b15a40e511dfcf/373d0fc13714f7697680e2d6351f8fb71.jpg\"]","topics":"[\"家居灵感\", \"室内设计\", \"生活方式\"]"}}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":35393},"cache_creation_input_tokens":35393,"cache_read_input_tokens":1809,"input_tokens":3,"output_tokens":2,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 210
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"031618b1-ae7c-430d-965f-b83a767bef3f","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 211
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f803654-7434-447a-a31a-a900cf2cd2b1","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":35393,"cache_read_input_tokens":1809,"input_tokens":3,"output_tokens":475}},"parent_tool_use_id":null}}
+
+id: 212
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fbfcd5cb-0aeb-4f8c-b4c8-f51291827071","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 213
+data: {"type":"user","message":{"type":"user","uuid":"63b0dd06-fa02-4906-98ba-b36d11f32161","message":{"content":[{"type":"tool_result","content":"<tool_use_error>Error: No such tool available: mcp__publish__publishPostToXhs</tool_use_error>","is_error":true,"tool_use_id":"toolu_01PiALiKEqpZCJiZi3yeQsPc"}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":"Error: No such tool available: mcp__publish__publishPostToXhs"}}
+
+id: 214
+data: {"type":"keep_alive"}
+
+id: 215
+data: {"type":"keep_alive"}
+
+id: 216
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5c407f64-99e3-4449-831f-a14a1754117e","event":{"type":"message_start","message":{"model":"claude-sonnet-4-5-20250929","id":"msg_01B3uv4gKFNv1AYzVwUD9xc2","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":7,"cache_creation_input_tokens":35913,"cache_read_input_tokens":1809,"cache_creation":{"ephemeral_5m_input_tokens":35913,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 217
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f686f1c8-bd8c-4852-992e-73b9a30e41dd","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 218
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e72e7ff8-a2a1-49c8-861c-8eb23a556771","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"看"}},"parent_tool_use_id":null}}
+
+id: 219
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f2ba8465-0af3-4280-83ed-083c892893a4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"来小"}},"parent_tool_use_id":null}}
+
+id: 220
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"43aa9802-5d47-4247-bc8c-edf4eaf8af06","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"红书平"}},"parent_tool_use_id":null}}
+
+id: 221
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c041490-a2dd-4025-8da3-6c5df613eb47","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"台目前不支持通"}},"parent_tool_use_id":null}}
+
+id: 222
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f22a51ec-37d3-4188-af5b-b94c3ac6154f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"过M"}},"parent_tool_use_id":null}}
+
+id: 223
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9b3563ed-d77d-4a13-a74c-ce1f6f6f0bf2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"CP工具直"}},"parent_tool_use_id":null}}
+
+id: 224
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc2d129d-7514-4362-95c6-c55a3c7c2578","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"接发布。"}},"parent_tool_use_id":null}}
+
+id: 225
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"09f78b33-365f-4797-a952-de1cb95938ce","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"让"}},"parent_tool_use_id":null}}
+
+id: 226
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4166a496-585e-4062-87a0-a2d36d3b05d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我为"}},"parent_tool_use_id":null}}
+
+id: 227
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39ec919f-7466-46df-b39a-cf965b75805f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"您准备好"}},"parent_tool_use_id":null}}
+
+id: 228
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9a7ab44-ab7d-44f7-8303-1985cab4acb2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"内"}},"parent_tool_use_id":null}}
+
+id: 229
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fcb758e6-3236-4926-9cc1-b4f4bd8d7c4d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容，"}},"parent_tool_use_id":null}}
+
+id: 230
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"36c7c222-eef3-49af-92c7-b6d8944c99a6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"并"}},"parent_tool_use_id":null}}
+
+id: 231
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cc7ba630-463b-48a3-ac35-af9746929c93","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"引"}},"parent_tool_use_id":null}}
+
+id: 232
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bbc8ffbc-95e7-4a41-baff-6fdbba740253","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"导您到"}},"parent_tool_use_id":null}}
+
+id: 233
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"811c509f-9929-4df4-b3bd-fa0985ae3578","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"发"}},"parent_tool_use_id":null}}
+
+id: 234
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd7f1ea2-24bb-4e27-b27d-b156d7398e6a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布页面完"}},"parent_tool_use_id":null}}
+
+id: 235
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"76c871fd-073c-4fa3-b294-51dcb687b9fc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成发布："}},"parent_tool_use_id":null}}
+
+id: 236
+data: {"type":"assistant","message":{"type":"assistant","uuid":"25350e2f-bf76-4adc-9f4a-786560dd58fa","message":{"id":"msg_01B3uv4gKFNv1AYzVwUD9xc2","content":[{"type":"text","text":"看来小红书平台目前不支持通过MCP工具直接发布。让我为您准备好内容，并引导您到发布页面完成发布："}],"model":"claude-sonnet-4-5-20250929","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":35913},"cache_creation_input_tokens":35913,"cache_read_input_tokens":1809,"input_tokens":7,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 237
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e8953b81-24bf-44fc-ae28-09ebc9341037","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 238
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a1da6460-557e-4c8a-8e0c-4aa4bd85c172","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_014uGiXMrQ68CQir7HBJYJUs","name":"mcp__util__outputTaskResult","input":{}}},"parent_tool_use_id":null}}
+
+id: 239
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2a98378c-26d5-4c65-9247-3c9c9bd70b44","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 240
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e40ee9f0-9e62-4086-ab9c-7e2a9e0c0833","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"r"}},"parent_tool_use_id":null}}
+
+id: 241
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ecb3c8f4-cab1-4e15-9516-f11435ad3c1d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"esu"}},"parent_tool_use_id":null}}
+
+id: 242
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d23f5e3-da05-40a1-aac1-9881c89572d2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"lt\":"}},"parent_tool_use_id":null}}
+
+id: 243
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f696001b-a091-441f-86a6-d1563e3454bf","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" [{"}},"parent_tool_use_id":null}}
+
+id: 244
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a74890ce-afc5-4141-a15f-5ab82de90215","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"type\":\"f"}},"parent_tool_use_id":null}}
+
+id: 245
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"60fca51b-eaf3-487a-a271-be9523ee59e5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ullConte"}},"parent_tool_use_id":null}}
+
+id: 246
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d6017fc-7931-4509-89c3-c8e3c416857b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"nt\",\"ac"}},"parent_tool_use_id":null}}
+
+id: 247
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74835b6d-c153-4a60-9104-c845f1f5291c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"tion\":\"n"}},"parent_tool_use_id":null}}
+
+id: 248
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a2c3c071-5f93-472b-b3c3-5a6b2768d5c1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"avigateToP"}},"parent_tool_use_id":null}}
+
+id: 249
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"334a46c9-c527-4625-871b-81d9ed6e678a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ublish\",\"pl"}},"parent_tool_use_id":null}}
+
+id: 250
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"396bdaae-5b52-4d73-b1ea-cc65bc001e84","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"atfo"}},"parent_tool_use_id":null}}
+
+id: 251
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7878a36f-557e-4418-a0b8-e840621fcfa2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rm\":"}},"parent_tool_use_id":null}}
+
+id: 252
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a33e005-12b5-4896-8eef-a038fd34781d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"xh"}},"parent_tool_use_id":null}}
+
+id: 253
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ccdd5c6-6c19-4f88-a88f-97bc418fd1fd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"s\",\"ac"}},"parent_tool_use_id":null}}
+
+id: 254
+data: {"type":"keep_alive"}
+
+id: 255
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fbfa09e5-64fb-46ba-979c-627229035613","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"countId\":\"x"}},"parent_tool_use_id":null}}
+
+id: 256
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3ad9e0e-89c1-4e59-988a-5d6a589541a4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"hs_67c"}},"parent_tool_use_id":null}}
+
+id: 257
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"13e05dec-db7d-4ed1-8db8-f7378f465efe","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"03d08000"}},"parent_tool_use_id":null}}
+
+id: 258
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"051565cf-02fc-4bc2-ada6-87bd89d613e9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"00"}},"parent_tool_use_id":null}}
+
+id: 259
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"85ef0829-bec4-4080-b7c5-3c44b5a548bc","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"0001703"}},"parent_tool_use_id":null}}
+
+id: 260
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa3e3ec4-fa6a-47b9-8e26-966f53ac72f2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"c89c_"}},"parent_tool_use_id":null}}
+
+id: 261
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d0754427-fabb-4af7-bb64-6596a11dce24","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"web\",\"title"}},"parent_tool_use_id":null}}
+
+id: 262
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd3f680c-5958-42a5-9743-698831f343e9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\":\"温馨家居一角\""}},"parent_tool_use_id":null}}
+
+id: 263
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5b09d011-9c95-4855-8585-e1037ea8b7d1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":",\"descrip"}},"parent_tool_use_id":null}}
+
+id: 264
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"80307775-f4a3-4d94-8cbd-3e951b20c194","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"tion\":\"分"}},"parent_tool_use_id":null}}
+
+id: 265
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"62df7e2d-097f-4e54-916a-f2b432c019e1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"享一个舒适的家居角"}},"parent_tool_use_id":null}}
+
+id: 266
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6ecb2a79-8d54-4f39-a5c8-959f8915d988","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"落,简约而温馨"}},"parent_tool_use_id":null}}
+
+id: 267
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"034708a1-a7c7-4793-a9be-d33dec8ba460","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"的设计让人感到放松自在"}},"parent_tool_use_id":null}}
+
+id: 268
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f4f24729-25ed-4f64-bf70-d401e12dfe10","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"。#家居分享 #生"}},"parent_tool_use_id":null}}
+
+id: 269
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5b4da53b-fb36-43f2-850e-22b979af20b1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"活美学 #温"}},"parent_tool_use_id":null}}
+
+id: 270
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e13c16f-4695-41c5-b52c-6e7e3ab1563c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"馨小窝\","}},"parent_tool_use_id":null}}
+
+id: 271
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b08b6e10-f0f3-447c-8c8b-36e176b2110d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"tags\":[\""}},"parent_tool_use_id":null}}
+
+id: 272
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7ea23aec-f807-440f-9fb6-6b617b97e9b1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"家居灵感\""}},"parent_tool_use_id":null}}
+
+id: 273
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fd281d4e-7311-4e25-b578-87e394aee4d2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":",\"室"}},"parent_tool_use_id":null}}
+
+id: 274
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0cd98558-a8e4-4771-8917-b351c55c4427","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"内设计\",\"生活"}},"parent_tool_use_id":null}}
+
+id: 275
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b463b127-87aa-4b04-8118-37c6d38b8291","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"方式\"],\"med"}},"parent_tool_use_id":null}}
+
+id: 276
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5a51d037-80b4-482b-b6a5-ea0f039b66dc","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ias\":[{\"ty"}},"parent_tool_use_id":null}}
+
+id: 277
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cce76123-b26c-4c42-b2dd-95fc7994de55","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"pe\":\"IMAG"}},"parent_tool_use_id":null}}
+
+id: 278
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e47081a2-cc37-4b83-bd79-f73df5572335","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"E\",\""}},"parent_tool_use_id":null}}
+
+id: 279
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f1e94cf6-0327-402d-a1bf-1a4aa38b9b2d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"url"}},"parent_tool_use_id":null}}
+
+id: 280
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"94daf92a-e9ec-49d0-9f29-f246059b254e","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\":\""}},"parent_tool_use_id":null}}
+
+id: 281
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9074c2ae-570e-4b97-8aa7-d1159f54d218","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"htt"}},"parent_tool_use_id":null}}
+
+id: 282
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5e874467-51ea-4946-8659-c576216e4143","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ps://s3.a"}},"parent_tool_use_id":null}}
+
+id: 283
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c7a2fcc7-24c2-4706-bdc3-21cde66821a1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"mazonaw"}},"parent_tool_use_id":null}}
+
+id: 284
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5ab0f62e-97bb-4bd3-b398-25cdf37382fd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"s.com/"}},"parent_tool_use_id":null}}
+
+id: 285
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4df9990e-427e-42f3-881a-70421f30f248","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"appai.sta"}},"parent_tool_use_id":null}}
+
+id: 286
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"639ce783-20d4-49dc-9143-a516de830b19","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ging/68"}},"parent_tool_use_id":null}}
+
+id: 287
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0f5b771-d8b2-4349-b5ee-9a32ce5df221","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"b55fb"}},"parent_tool_use_id":null}}
+
+id: 288
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f9200ee3-125a-476b-9c68-a0b94a19c113","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"321b"}},"parent_tool_use_id":null}}
+
+id: 289
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4adff25-98ae-4c16-aa7f-748ac7524424","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"15a40e511d"}},"parent_tool_use_id":null}}
+
+id: 290
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a11f7da6-4f63-467f-b289-b97f9ee219cc","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"fcf/373d"}},"parent_tool_use_id":null}}
+
+id: 291
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ab495969-6c83-4523-89d6-57125292e969","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"0fc13714f769"}},"parent_tool_use_id":null}}
+
+id: 292
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c19885ee-22ed-4c5d-aab8-66ba56750dad","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"7680"}},"parent_tool_use_id":null}}
+
+id: 293
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e71b022-78c0-45cc-938d-dd1acb389a6f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e2d6351f8fb"}},"parent_tool_use_id":null}}
+
+id: 294
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6f49d1e7-c53f-4948-8573-514be762d093","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"71.jp"}},"parent_tool_use_id":null}}
+
+id: 295
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cea46cb3-08d1-4ab7-80e3-57373b2c9170","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"g\""}},"parent_tool_use_id":null}}
+
+id: 296
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d83c4337-d29a-428d-93f5-a2ca80a055e7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"}]"}},"parent_tool_use_id":null}}
+
+id: 297
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d681da53-24fc-4316-a4a9-7d4de1b4b9bd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":",\"erro"}},"parent_tool_use_id":null}}
+
+id: 298
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4806dda7-e7e9-44a3-b829-c06757062a25","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rMes"}},"parent_tool_use_id":null}}
+
+id: 299
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7ad8fb22-2d6d-43dd-81de-1b28be49ee81","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"sage\":"}},"parent_tool_use_id":null}}
+
+id: 300
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ffd4f2be-6a18-435a-b52b-c31d3d254be5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"小红书平台暂"}},"parent_tool_use_id":null}}
+
+id: 301
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"369eb671-938c-4001-8f0c-52140bbc9462","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"不支持AP"}},"parent_tool_use_id":null}}
+

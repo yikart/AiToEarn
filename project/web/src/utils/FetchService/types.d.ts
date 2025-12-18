@@ -1,6 +1,6 @@
 export interface RequestParams extends RequestInit {
   url: string
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
   data?: Dictionary
   params?: Dictionary
 }

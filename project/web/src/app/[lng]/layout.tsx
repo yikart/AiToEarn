@@ -1,7 +1,8 @@
 import { dir } from 'i18next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import ConditionalHeader from '../layout/ConditionalHeader'
+import LayoutSidebar from '@/app/layout/LayoutSidebar'
+import MobileNav from '@/app/layout/MobileNav'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
@@ -31,19 +32,22 @@ export default async function RootLayout({
 }>) {
   const { lng } = await params
   return (
-    <html lang={lng} dir={dir(lng)}>
+    <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
       <body>
         <Providers lng={lng}>
-          <div
-            style={{
-              height: '100vh',
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: '0',
-            }}
-          >
-            <ConditionalHeader />
-            {children}
+          {/* 移动端顶部导航 - fixed 定位，独立于 flex 布局 */}
+          <MobileNav />
+          <div className="flex h-screen w-full">
+            {/* 桌面端侧边栏 */}
+            <LayoutSidebar />
+            {/* 主内容区域 */}
+            <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
+              {children}
+            </main>
+            <script src="/js/xhs_web_sign.js" />
+            <script src="/js/xhs_sign_init.js" />
+            <script src="/js/xhs_sign_core.js" />
+            <script src="/js/xhs_sign_inject.js" />
           </div>
         </Providers>
       </body>

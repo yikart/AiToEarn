@@ -1,0 +1,31 @@
+/**
+ * AvatarCropModal - 头像裁剪弹窗样式
+ */
+
+.cropContainer {
+  height: 350px;
+  position: relative;
+  overflow: hidden;
+
+  // 覆盖 react-easy-crop 默认样式
+  :global(.reactEasyCrop_Container) {
+    background-color: #1a1a1a;
+  }
+
+  :global(.reactEasyCrop_CropArea) {
+    border: 2px solid rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  }
+
+  :global(.reactEasyCrop_CropAreaRound) {
+    border-radius: 50%;
+  }
+}
+
+.cropperContainer {
+  background-color: #1a1a1a;
+}
+
+.cropperMedia {
+  max-height: 100%;
+}

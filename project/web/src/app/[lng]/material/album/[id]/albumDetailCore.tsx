@@ -1,7 +1,8 @@
 'use client'
 
 import { PictureOutlined, PlayCircleOutlined, PlusOutlined, SoundOutlined } from '@ant-design/icons'
-import { Button, Card, Col, message, Row, Typography, Upload } from 'antd'
+import { Button, Card, Col, Row, Typography, Upload } from 'antd'
+import { toast } from '@/lib/toast'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import styles from './albumDetail.module.scss'
@@ -46,7 +47,7 @@ export function AlbumDetailCore({ albumId }: AlbumDetailCoreProps) {
 
   const handleUpload = (file: File) => {
     // 这里应该调用API上传素材
-    message.success('上传成功')
+    toast.success('上传成功')
     return false
   }
 

@@ -1,0 +1,319 @@
+/**
+ * 作品卡片样式
+ * 参考小红书风格设计
+ */
+
+.feedCard {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--whiteColor);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+  break-inside: avoid;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+
+    :global {
+      .feedCard_cover_overlay {
+        opacity: 1;
+      }
+
+      .feedCard_cover_img {
+        transform: scale(1.03);
+      }
+    }
+  }
+
+  :global {
+    // 封面区域 - 使用 padding-bottom 预设高度，避免图片加载时抖动
+    .feedCard_cover {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      background: var(--grayColor1);
+    }
+
+    // 封面占位背景（图片加载前显示）
+    .feedCard_cover_placeholder {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        var(--grayColor1) 25%,
+        var(--grayColor2) 50%,
+        var(--grayColor1) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    // 封面图片
+    .feedCard_cover_img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      opacity: 0;
+      transition:
+        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease;
+    }
+
+    // 图片加载完成后显示
+    .feedCard_cover_img-loaded {
+      opacity: 1;
+    }
+
+    // 图片加载失败占位
+    .feedCard_cover_error {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--grayColor1);
+    }
+
+    .feedCard_cover_error_icon {
+      width: 48px;
+      height: 48px;
+      color: var(--grayColor4);
+    }
+
+    // 封面遮罩层
+    .feedCard_cover_overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0) 0%,
+        rgba(0, 0, 0, 0.1) 100%
+      );
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+
+    // 视频标识
+    .feedCard_video_badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+      color: white;
+      font-size: 11px;
+      backdrop-filter: blur(4px);
+    }
+
+    .feedCard_video_icon {
+      width: 12px;
+      height: 12px;
+    }
+
+    // 内容区域
+    .feedCard_content {
+      padding: 10px 12px 12px;
+    }
+
+    // 标题
+    .feedCard_title {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-bottom: 10px;
+      min-height: 42px;
+    }
+
+    // 底部信息
+    .feedCard_footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    // 作者信息
+    .feedCard_author {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .feedCard_author_avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: var(--grayColor2);
+    }
+
+    .feedCard_author_name {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    // 点赞数
+    .feedCard_likes {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+
+    .feedCard_likes_icon {
+      width: 14px;
+      height: 14px;
+      color: var(--grayColor6);
+    }
+
+    // 已点赞状态
+    .feedCard_likes-active {
+      color: #ff4757;
+
+      .feedCard_likes_icon {
+        color: #ff4757;
+      }
+    }
+
+    // 话题标签区域
+    .feedCard_topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .feedCard_topic {
+      display: inline-block;
+      padding: 2px 8px;
+      background: var(--colorPrimary1);
+      color: var(--colorPrimary5);
+      font-size: 11px;
+      border-radius: 10px;
+      white-space: nowrap;
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feedCard_topic-more {
+      background: var(--grayColor2);
+      color: var(--text-secondary);
+    }
+  }
+}
+
+// 骨架屏样式
+.feedCardSkeleton {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--whiteColor);
+  margin-bottom: 16px;
+  break-inside: avoid;
+
+  :global {
+    .skeleton_cover {
+      width: 100%;
+      padding-bottom: 133%; // 默认 3:4 比例
+      position: relative;
+      background: linear-gradient(
+        90deg,
+        var(--grayColor1) 25%,
+        var(--grayColor2) 50%,
+        var(--grayColor1) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    .skeleton_content {
+      padding: 10px 12px 12px;
+    }
+
+    .skeleton_title {
+      height: 14px;
+      background: var(--grayColor2);
+      border-radius: 4px;
+      margin-bottom: 8px;
+      width: 80%;
+    }
+
+    .skeleton_title_short {
+      height: 14px;
+      background: var(--grayColor2);
+      border-radius: 4px;
+      margin-bottom: 10px;
+      width: 60%;
+    }
+
+    .skeleton_footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .skeleton_author {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .skeleton_avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--grayColor2);
+    }
+
+    .skeleton_name {
+      width: 60px;
+      height: 12px;
+      background: var(--grayColor2);
+      border-radius: 4px;
+    }
+
+    .skeleton_likes {
+      width: 40px;
+      height: 12px;
+      background: var(--grayColor2);
+      border-radius: 4px;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+

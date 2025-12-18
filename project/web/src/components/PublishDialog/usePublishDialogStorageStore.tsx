@@ -1,10 +1,8 @@
 import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
-import { ExclamationCircleFilled } from '@ant-design/icons'
-import { Modal } from 'antd'
 import { directTrans } from '@/app/i18n/client'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { confirm } from '@/lib/confirm'
 import { useAccountStore } from '@/store/account'
-import { modalApi, useConfigStore } from '@/store/config'
 import { createPersistStore } from '@/utils/createPersistStore'
 
 export interface IPublishDialogStorageStore {
@@ -51,19 +49,11 @@ export const usePublishDialogStorageStore = createPersistStore(
           return
         }
         // 提示用户是否恢复
-        modalApi.value.confirm({
+        confirm({
           title: directTrans('publish', 'restoreData.title'),
-          icon: <ExclamationCircleFilled />,
           content: directTrans('publish', 'restoreData.content'),
           okText: directTrans('publish', 'restoreData.okText'),
           cancelText: directTrans('publish', 'restoreData.cancelText'),
-          okButtonProps: {
-            type: 'primary',
-          },
-          cancelButtonProps: {
-            type: 'text',
-          },
-          centered: true,
           async onOk() {
             await methods.restorePubDataCore()
           },

@@ -17,7 +17,6 @@ import {
   Button,
   Card,
   Drawer,
-  message,
   Modal,
   Select,
   Space,
@@ -25,6 +24,7 @@ import {
   Table,
   Tooltip,
 } from 'antd'
+import { toast } from 'sonner'
 import {
   forwardRef,
   memo,
@@ -457,7 +457,7 @@ const UserManageModal = memo(
             onDeleteSuccess={async () => {
               await getAccountList()
               setSelectedRows([])
-              message.success('删除成功')
+              toast.success('删除成功')
             }}
           />
 

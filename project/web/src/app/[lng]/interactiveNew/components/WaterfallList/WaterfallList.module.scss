@@ -1,0 +1,130 @@
+/**
+ * 瀑布流列表样式
+ * 配合 @egjs/react-infinitegrid 虚拟瀑布流
+ */
+
+.waterfallList {
+  width: 100%;
+  min-height: 400px;
+
+  :global {
+    // @egjs/react-infinitegrid 虚拟瀑布流样式
+    .masonry-virtual-grid {
+      width: 100%;
+    }
+  }
+}
+
+// 加载指示器 - 使用 Ant Design Spin 组件
+.loadingIndicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 0;
+  color: var(--text-secondary);
+  font-size: var(--fs-sm);
+}
+
+// 空状态
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+
+  :global {
+    .emptyState_icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.6;
+    }
+
+    .emptyState_title {
+      font-size: var(--fs-md);
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .emptyState_desc {
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .emptyState_btn {
+      padding: 10px 24px;
+      background: var(--colorPrimary5);
+      color: white;
+      border: none;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: var(--fs-sm);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: var(--colorPrimary6);
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// 错误状态
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+
+  :global {
+    .errorState_icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .errorState_text {
+      font-size: var(--fs-sm);
+      color: var(--error-color);
+      margin-bottom: 16px;
+    }
+
+    .errorState_btn {
+      padding: 8px 20px;
+      background: var(--error-color);
+      color: white;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: var(--fs-sm);
+      transition: all 0.2s ease;
+
+      &:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+// 加载中骨架屏
+.loadingSkeleton {
+  width: 100%;
+
+  :global {
+    .masonry-grid {
+      display: flex;
+      margin-left: -16px;
+      width: auto;
+    }
+
+    .masonry-grid_column {
+      padding-left: 16px;
+      background-clip: padding-box;
+    }
+  }
+}

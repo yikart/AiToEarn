@@ -10,7 +10,8 @@ import type {
   IVideoFile,
 } from '@/components/PublishDialog/publishDialog.type'
 import { PlusOutlined } from '@ant-design/icons'
-import { Dropdown, message, Upload } from 'antd'
+import { Dropdown, Upload } from 'antd'
+import { toast } from '@/lib/toast'
 import React, {
   forwardRef,
   memo,
@@ -115,7 +116,7 @@ const PubParmasTextareaUpload = memo(
           catch (error) {
             if (!isAbortError(error)) {
               console.error(error)
-              message.error('上传失败，请稍后重试')
+              toast.error('上传失败，请稍后重试')
               videoHandle.cancel()
               coverHandle.cancel()
             }
@@ -174,7 +175,7 @@ const PubParmasTextareaUpload = memo(
               .catch((error) => {
                 if (!isAbortError(error)) {
                   console.error(error)
-                  message.error('上传失败，请稍后重试')
+                  toast.error('上传失败，请稍后重试')
                   cancel()
                 }
               })
@@ -287,7 +288,12 @@ const PubParmasTextareaUpload = memo(
           />
 
           <Dropdown menu={{ items: dropdownItems }} placement="top">
-            <div className="pubParmasTextarea-uploads-upload-blocker">
+            <div className="pubParmasTextarea-uploads-upload-blocker" onClick={() => {
+                  // 触发上传
+                  uploadRef
+                    .current!.nativeElement?.querySelector('input')!
+                    .click()
+                }}>
               <PlusOutlined style={{ fontSize: '20px' }} />
               {t('upload.selectFile')}
             </div>
