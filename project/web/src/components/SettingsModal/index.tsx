@@ -18,8 +18,7 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
-import { AgentTab, GeneralTab, ProfileTab, SubscriptionTab } from './tabs'
-import { SubscriptionManagementContent } from '@/app/[lng]/pricing/components/SubscriptionManagementDialog'
+import { AgentTab, GeneralTab, MembershipTab, ProfileTab, SubscriptionTab } from './tabs'
 import logo from '@/assets/images/logo.png'
 
 /** 设置页面类型 */
@@ -101,8 +100,7 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
       case 'subscription':
         return isLoggedIn ? <SubscriptionTab /> : <GeneralTab />
       case 'membership':
-        // 直接在设置弹框中展示订阅管理内容（不再嵌套 Dialog）
-        return <SubscriptionManagementContent />
+        return isLoggedIn ? <MembershipTab /> : <GeneralTab />
       case 'general':
         return <GeneralTab />
       default:
