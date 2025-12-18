@@ -15,7 +15,6 @@ import { PlatType, AccountPlatInfoMap } from '@/app/config/platConfig'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useTransClient } from '@/app/i18n/client'
 import rightArrow from '@/assets/images/jiantou.png'
-import VipContentModal from '@/components/modals/VipContentModal'
 import PublishDialog from '@/components/PublishDialog'
 import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useAccountStore } from '@/store/account'
@@ -27,7 +26,6 @@ interface AccountPageCoreProps {
   searchParams?: {
     platform?: string
     spaceId?: string
-    showVip?: string
     addChannel?: string // 添加频道引导参数
     action?: string // 动作类型：publish 等
     // AI生成的内容参数
@@ -65,8 +63,6 @@ export default function AccountPageCore({
   const [showMobileDownload, setShowMobileDownload] = useState(false)
   // 微信浏览器提示弹窗开关
   const [showWechatBrowserTip, setShowWechatBrowserTip] = useState(false)
-  // VIP弹窗状态
-  const [vipModalOpen, setVipModalOpen] = useState(false)
   // 发布弹窗状态
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
   const [defaultAccountId, setDefaultAccountId] = useState<string>()
@@ -208,19 +204,8 @@ export default function AccountPageCore({
       }
     }
 
-    // 处理显示VIP弹窗的参数
-    if (searchParams?.showVip === 'true') {
-      setVipModalOpen(true)
-      // 清除URL参数
-      if (typeof window !== 'undefined') {
-        const url = new URL(window.location.href)
-        url.searchParams.delete('showVip')
-        window.history.replaceState({}, '', url.toString())
-      }
-    }
-
     // Handle AI-generated content params
-    if (searchParams?.aiGenerated === 'true' && searchParams?.taskId && allAccounts.length > 0) {
+    if (searchParams?.aiGenerated === 'true' && allAccounts.length > 0) {
       try {
         const medias = searchParams.medias ? JSON.parse(decodeURIComponent(searchParams.medias)) : []
         const tags = searchParams.tags ? JSON.parse(decodeURIComponent(searchParams.tags)) : []
@@ -819,12 +804,6 @@ export default function AccountPageCore({
             </div>
           </>
         )}
-
-        {/* VIP弹窗 */}
-        <VipContentModal
-          open={vipModalOpen}
-          onClose={() => setVipModalOpen(false)}
-        />
 
         {/* 发布作品弹窗 */}
         {allAccounts.length > 0 && (

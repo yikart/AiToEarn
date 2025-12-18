@@ -1,0 +1,203 @@
+/**
+ * 互动模块主样式
+ */
+
+.interactiveNew {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #fafbfc 0%, #f5f6f8 100%);
+  padding: 24px 0;
+  position: relative;
+
+  :global {
+    .interactiveNew_container {
+      max-width: 1600px;
+    }
+
+    // 内容区域
+    .interactiveNew_content {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    // 工具栏
+    .interactiveNew_toolbar {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    // 瀑布流骨架屏样式
+    .masonry-grid {
+      display: flex;
+      margin-left: -16px;
+      width: auto;
+    }
+
+    .masonry-grid_column {
+      padding-left: 16px;
+      background-clip: padding-box;
+    }
+  }
+}
+
+// 平台选择器骨架屏
+.skeletonPlatforms {
+  display: flex;
+  gap: 12px;
+
+  :global {
+    .skeletonPlatforms_item {
+      width: 80px;
+      height: 36px;
+      border-radius: 20px;
+      background: linear-gradient(
+        90deg,
+        var(--grayColor1) 25%,
+        var(--grayColor2) 50%,
+        var(--grayColor1) 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+// 右下角悬浮按钮
+.floatingActions {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 100;
+
+  :global {
+    .floatingActions_btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: white;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      transform: scale(0.8) translateY(20px);
+      pointer-events: none;
+
+      svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      &:hover {
+        background: var(--colorPrimary5);
+        color: white;
+        transform: scale(1) translateY(-2px);
+        box-shadow: 0 6px 16px rgba(166, 106, 228, 0.4);
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+
+    .floatingActions_btn-visible {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .floatingActions_btn-loading {
+      svg {
+        animation: rotate 1s linear infinite;
+      }
+    }
+  }
+}
+
+// 插件未就绪状态
+.pluginNotReady {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #f8f4ff 0%, #f0e6ff 100%);
+  border-radius: 16px;
+  border: 1px dashed var(--colorPrimary3);
+
+  :global {
+    .pluginNotReady_icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+    }
+
+    .pluginNotReady_title {
+      font-size: var(--fs-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+
+    .pluginNotReady_desc {
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+      margin: 0 0 24px 0;
+      max-width: 400px;
+    }
+
+    .pluginNotReady_btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      background: linear-gradient(135deg, var(--colorPrimary5) 0%, var(--colorPrimary6) 100%);
+      color: white;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: var(--fs-sm);
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(166, 106, 228, 0.3);
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(166, 106, 228, 0.4);
+      }
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+

@@ -1,8 +1,14 @@
+/**
+ * MilestonePoster - 里程碑海报组件
+ * 用于展示和保存数据统计里程碑海报
+ */
+
 'use client'
 
 import { DownloadOutlined } from '@ant-design/icons'
-import { Button, Modal } from 'antd'
+import { Button } from 'antd'
 import { useEffect, useRef } from 'react'
+import { Modal } from '@/components/ui/modal'
 import { useTransClient } from '@/app/i18n/client'
 import logo from '@/assets/images/logo.png'
 import { useUserStore } from '@/store/user'

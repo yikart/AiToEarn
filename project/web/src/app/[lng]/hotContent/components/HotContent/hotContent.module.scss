@@ -132,7 +132,11 @@
       flex-direction: column;
       justify-content: space-between;
       &-title {
-        @include omitText(2);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       &-noTitle {
         color: var(--grayColor5);
@@ -174,7 +178,11 @@
   overflow: auto;
   margin-top: 15px;
   position: relative;
-  @include table-flex-container-with-selectors;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  max-height: none !important;
 
   scrollbar-width: none;
   &::-webkit-scrollbar {

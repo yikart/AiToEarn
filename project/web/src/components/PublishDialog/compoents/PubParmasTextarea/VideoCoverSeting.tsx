@@ -1,3 +1,8 @@
+/**
+ * VideoCoverSeting - 视频封面设置组件
+ * 支持视频截帧、图片选择、裁剪等功能
+ */
+
 import type {
   ForwardedRef,
 } from 'react'
@@ -5,8 +10,9 @@ import type {
   IImgFile,
   IVideoFile,
 } from '@/components/PublishDialog/publishDialog.type'
-import { Alert, Button, Modal, Slider, Spin } from 'antd'
+import { Alert, Button, Slider, Spin } from 'antd'
 import Cropper from 'cropperjs'
+import { Modal } from '@/components/ui/modal'
 import {
   forwardRef,
   memo,

@@ -1,0 +1,81 @@
+{
+  "title": "Settings",
+  "tabs": {
+    "profile": "Profile",
+    "agent": "Agent",
+    "subscription": "Subscription",
+    "general": "General"
+  },
+  "profile": {
+    "totalIncome": "Total Income",
+    "currentBalance": "Current Balance",
+    "logout": "Logout",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "uploading": "Uploading...",
+    "nameRequired": "Please enter a username",
+    "nameLengthError": "Username must be between 2-20 characters",
+    "nameUpdateSuccess": "Username updated successfully",
+    "nameUpdateFailed": "Failed to update username",
+    "avatarTypeError": "Please select an image file",
+    "avatarSizeError": "Image size cannot exceed 5MB",
+    "avatarUpdateSuccess": "Avatar updated successfully",
+    "avatarUpdateFailed": "Failed to update avatar",
+    "cropAvatar": "Crop Avatar",
+    "rotateLeft": "Rotate Left",
+    "rotateRight": "Rotate Right",
+    "zoomIn": "Zoom In",
+    "zoomOut": "Zoom Out",
+    "imageLoading": "Loading image...",
+    "processing": "Processing..."
+  },
+  "subscription": {
+    "currentPlan": "Current Plan",
+    "upgrade": "Upgrade",
+    "manage": "Manage Subscription",
+    "balance": "Balance",
+    "usageRecords": "Usage Records",
+    "detail": "Detail",
+    "date": "Date",
+    "amountChange": "Amount Change",
+    "noRecords": "No usage records yet",
+    "loading": "Loading...",
+    "loadMore": "Load More",
+    "types": {
+      "register_bonus": "Registration Bonus",
+      "purchase": "Purchase",
+      "vip_monthly": "VIP Monthly",
+      "ai_service": "AI Service",
+      "video_style_transfer": "Video Style Transfer",
+      "publish": "Publish",
+      "expired": "Expired",
+      "manual": "Manual Adjustment"
+    }
+  },
+  "general": {
+    "language": "Website Language",
+    "languageDesc": "This change does not affect the language used for content generation",
+    "theme": "Appearance",
+    "themeDesc": "Choose your preferred theme mode",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System"
+  },
+  "agent": {
+    "title": "Agent",
+    "defaultModel": "Default Model",
+    "defaultModelDesc": "Select the default AI model for Agent conversations",
+    "selectModel": "Select a model...",
+    "searchModels": "Search models...",
+    "noModelFound": "No model found",
+    "pleaseSelectModel": "Please select a model",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Failed to save"
+  }
+}
+

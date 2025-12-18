@@ -1,10 +1,15 @@
+/**
+ * ImageEditorModal - 图片编辑弹窗
+ * 基于 Toast UI Image Editor 的图片编辑弹窗，支持裁剪、滤镜等操作
+ */
+
 import type {
   ForwardedRef,
 } from 'react'
 import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
 // @ts-ignore
 import ImageEditor from '@toast-ui/react-image-editor'
-import { Button, Modal } from 'antd'
+import { Button } from 'antd'
 import {
   forwardRef,
   memo,
@@ -13,6 +18,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { Modal } from '@/components/ui/modal'
 import { uploadToOss } from '@/api/oss'
 import { useTransClient } from '@/app/i18n/client'
 import zhCNImageEditor from '@/app/i18n/locales/zh-CN/imageEditor.json'
@@ -112,7 +118,6 @@ const ImageEditorModal = memo(
           title={t('imageEditing')}
           open={open}
           onCancel={onCancel}
-          getContainer={() => document.body}
           width={1100}
           footer={(
             <>

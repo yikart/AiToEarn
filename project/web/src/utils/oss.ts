@@ -1,5 +1,5 @@
 // 获取完整的OSS URL
-export function getOssUrl(path: string) {
+export function getOssUrl(path?: string) {
   if (!path)
     return ''
   if (path.startsWith('http') || path.startsWith('https') || path.startsWith('ossProxy'))

@@ -1,0 +1,22 @@
+curl ^"https://edith.xiaohongshu.com/api/sns/web/v1/homefeed^" ^
+  -H ^"accept: application/json, text/plain, */*^" ^
+  -H ^"accept-language: zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6^" ^
+  -H ^"content-type: application/json;charset=UTF-8^" ^
+  -b ^"a1=1953cfa200duqccg24dtw9u1y7ubred8l9iyg1y0150000466896; webId=76f7ec5c74e78c5756fabe7b987c66bf; gid=yj2qSi0JD41Syj2qSi0J8jyv8f7ASSkJ4f9E38yj7yvW7v28DFdfYk8884KKYjK8qWDiq08i; customerClientId=412120289436764; abRequestId=76f7ec5c74e78c5756fabe7b987c66bf; x-user-id-ad-market.xiaohongshu.com=678df12c0000000004030ab9; x-user-id-pro.xiaohongshu.com=6496f186000000002a03781b; webBuild=5.0.6; web_session=040069b5e2b2cef9284da5ff0e3b4b810c6fc4; customer-sso-sid=68c517582856652078399498kutxfgyodoqsmiyv; x-user-id-creator.xiaohongshu.com=6496f186000000002a03781b; access-token-creator.xiaohongshu.com=customer.creator.AT-68c517582856652078399499zwvyv1dsjvg99ud4; galaxy_creator_session_id=L7plwww1NyakbJtjQ4mkTzi5PfD7AG5e3k8e; galaxy.creator.beaker.session.id=1765521395367053906846; xsecappid=xhs-pc-web; acw_tc=0ad5297e17655289427675681e94adb66ca893c32d48510193e887cbb2e11a; loadts=1765529133782; websectiga=10f9a40ba454a07755a08f27ef8194c53637eba4551cf9751c009d9afb564467; sec_poison_id=a6268b9f-4395-4aca-ab18-2ee01a1607fd; unread=^{^%^22ub^%^22:^%^226938cf5f000000001b023d3e^%^22^%^2C^%^22ue^%^22:^%^226927021a000000001e036fc0^%^22^%^2C^%^22uc^%^22:17^}^" ^
+  -H ^"origin: https://www.xiaohongshu.com^" ^
+  -H ^"priority: u=1, i^" ^
+  -H ^"referer: https://creator.xiaohongshu.com/^" ^
+  -H ^"sec-ch-ua: ^\^"Microsoft Edge^\^";v=^\^"143^\^", ^\^"Chromium^\^";v=^\^"143^\^", ^\^"Not A(Brand^\^";v=^\^"24^\^"^" ^
+  -H ^"sec-ch-ua-mobile: ?0^" ^
+  -H ^"sec-ch-ua-platform: ^\^"Windows^\^"^" ^
+  -H ^"sec-fetch-dest: empty^" ^
+  -H ^"sec-fetch-mode: cors^" ^
+  -H ^"sec-fetch-site: same-site^" ^
+  -H ^"user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36 Edg/143.0.0.0^" ^
+  -H ^"x-b3-traceid: 99e3fe013a5e646e^" ^
+  -H ^"x-s: XYS_2UQhPsHCH0c1Pjh9HjIj2erjwjQhyoPTqBPT49pjHjIj2eHjwjQgynEDJ74AHjIj2ePjwjQTJdPIPAZlg98yGLTlqLD7cg4bzSWULp81JUR9p7HhcDTb8f8awepn404x2bSkqLDUyfhF+7iF8BS04jVUa/SCnnzGLgSIppzMwoHhGFRgaeblLfTEzeSwpbWUPgSEzLR+LSqAppclPBzEL7PFydWFLnMCPBzjqpYL4FkmPrkHaMY/4Bbnz7iUPB8+c9EIqMQCLDkcpnbLP9lrwLT/Jfznnfl0yLLIaSQQyAmOarGROaHVHdWFH0ijJ9Qx8n+FHdF=^" ^
+  -H ^"x-s-common: 2UQAPsHC+aIjqArjwjHjNsQhPsHCH0rjNsQhPaHCH0c1Pjh9HjIj2eHjwjQgynEDJ74AHjIj2ePjwjQhyoPTqBPT49pjHjIj2ecjwjHMN0Z1+jHVHdWMH0ijP/DMP9+fG/HIPBzMqn+08AHF8oz7wgLl2/4MGdQS8eYVwnSE8AbEPerMPeZIPec9+0WE+jHVHdW9H0ijHjIj2eqjwjHjNsQhwsHCHDDAwoQH8B4AyfRI8FS98g+Dpd4daLP3JFSb/BMsn0pSPM87nrldzSzQ2bPAGdb7zgQB8nph8emSy9E0cgk+zSS1qgzianYt8p+s/LzN4gzaa/+NqMS6qS4HLozoqfQnPbZEp98QyaRSp9P98pSl4oSzcgmca/P78nTTL08z/sVManD9q9z18np/8db8aob7JeQl4epsPrzsagW3Lr4ryaRApdz3agYDq7YM47HFqgzkanYMGLSbP9LA/bGIa/+nprSe+9LI4gzVPDbrJg+P4fprLFTALMm7+LSb4d+kpdzt/7b7wrQM498cqBzSpr8g/FSh+bzQygL9nSm7qSmM4epQ4flY/BQdqA+l4oYQ2BpAPp87arS34nMQyFSE8nkdqMD6pMzd8/4SL7bF8aRr+7+rG7mkqBpD8pSUzozQcA8Szb87PDSb/d+/qgzVJfl/4LExpdzQ4fRSy7bFP9+y+7+nJAzdaLp/2LSizLkz8FlpagYTLrRCJnRQyn+G8pm7zDS9yLPUc04Azoi7q7Yn4BzQ408S8eq78pSxLD4QynzS+S4jzeQn49kQyrkAP9RSqA8r4fpLLozwGML98LzM4ApQ4SS120mm8nzl4MpIcDbAzb87LrDAngmQ2BMVq7bFq9bc47SAqFYjnDb98/+IN9prLo4haL+Sq9TrPBp/8LYkanD7q9kjJ7PA87QBanSD8/8M4A+QygQ34opFJgzM4r8Q2BpSpbmFzDSiafpkpdzVanTd8/mc4bP3qg4c2Sm7pLS9yBTQ2B+U+B4HcaTQ/fpkLozxanYU4rSiJ7+xqgzc/omzGg4Ua7+D8f+DanYCNAQM4MkU4g4/aL+Dq9Tc4bP3/LTSPn+mqMzPLdSQyB4ApfzNq9Tl4bmILo4caLPI8nkM49YQy94S2Bka4FS98np/+URS8S8FLFSha7+nLo4LweDh/FSbGAYQ4DEAPnQd8pz1PBpxze4Azb8FaFS3pSYQPMHMJMmF/rSeLD8QzLkA+D8rPF4p/7+xqgzYaLp+PfQM4bqU/emA8rFM8p+M4UT6LozaanSB/rS9tFpHqgzM8gb7PrS3PoPlN78S8ob7pFTc4e4Qc9T9/M8FqLS3zFzFpMkaagYOq9SjN7+kzd8S+S87yrEn4eYQy7p0agWAq98M4opQyBpS8D8TJLSengksGMQzaLPhzDSiafLI4g4Sa7pFpMkc4rRQygptaLP9q980PBprpd4yaDzcJDShypkO4g4yndbFLrDAyBbQcFL3aLp8yLS3+npkqepAp9QC+jTc4rlQ4DIRHjIj2eDjw0LAw/HMw/W9+UIj2erIH0iINsQhP/rjwjQ1J7QTGnIjKc==^" ^
+  -H ^"x-t: 1765529397228^" ^
+  -H ^"x-xray-traceid: cd88e053eece9171848d08d8a4da5a5b^" ^
+  -H ^"xy-direction: 41^" ^
+  --data-raw ^"^{^\^"cursor_score^\^":^\^"1.7655292369400043E9^\^",^\^"num^\^":21,^\^"refresh_type^\^":3,^\^"note_index^\^":28,^\^"unread_begin_note_id^\^":^\^"^\^",^\^"unread_end_note_id^\^":^\^"^\^",^\^"unread_note_count^\^":0,^\^"category^\^":^\^"homefeed_recommend^\^",^\^"search_key^\^":^\^"^\^",^\^"need_num^\^":6,^\^"image_formats^\^":^[^\^"jpg^\^",^\^"webp^\^",^\^"avif^\^"^],^\^"need_filter_image^\^":false^}^"

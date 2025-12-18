@@ -1,4 +1,9 @@
 import type { ForwardedRef } from 'react'
+/**
+ * PublishDialogAi - 发布对话框 AI 助手
+ * 提供 AI 文本处理、图片生成、视频生成等功能
+ */
+
 import { 
   CloseCircleFilled, 
   CopyOutlined, 
@@ -13,7 +18,9 @@ import {
   SettingOutlined,
   TagsOutlined,
 } from '@ant-design/icons'
-import { Button, Collapse, Input, message, Modal, Spin, Tooltip, Select, Progress } from 'antd'
+import { Button, Collapse, Input, Spin, Tooltip, Select, Progress } from 'antd'
+import { toast } from '@/lib/toast'
+import { Modal } from '@/components/ui/modal'
 import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState, useMemo } from 'react'
 import ReactMarkdown from 'react-markdown'
 import { useTransClient } from '@/app/i18n/client'
@@ -189,7 +196,7 @@ interface Message {
                 icon={<CopyOutlined />}
                 onClick={() => {
                   navigator.clipboard.writeText(msg.content)
-                  message.success(t('aiFeatures.copied' as any))
+                  toast.success(t('aiFeatures.copied' as any))
                 }}
               />
               <Button
@@ -502,13 +509,13 @@ const PublishDialogAi = memo(
                   return newMessages
                 })
                 
-                message.success(t('aiFeatures.videoGenerated' as any))
+                toast.success(t('aiFeatures.videoGenerated' as any))
                 setIsProcessing(false)
                 return true
               }
               if (normalized === 'failed') {
                 setVideoProgress(0)
-                message.error(fail_reason || t('aiFeatures.videoFailed' as any))
+                toast.error(fail_reason || t('aiFeatures.videoFailed' as any))
                 setMessages(prev => prev.slice(0, -1))
                 setIsProcessing(false)
                 return true
@@ -535,7 +542,7 @@ const PublishDialogAi = memo(
       const handleVideoGeneration = useCallback(async (prompt: string) => {
         // Wait for model list to load if still loading
         if (videoModelsLoadingRef.current) {
-          message.loading({ content: t('aiFeatures.loadingVideoModels' as any), key: 'loadingModels', duration: 0 })
+          toast.loading({ content: t('aiFeatures.loadingVideoModels' as any), key: 'loadingModels', duration: 0 })
           
           // Poll to check if models loaded, max wait 30 seconds
           const maxWaitTime = 30000
@@ -547,23 +554,23 @@ const PublishDialogAi = memo(
             waited += checkInterval
           }
           
-          message.destroy('loadingModels')
+          toast.dismiss('loadingModels')
           
           if (videoModelsLoadingRef.current) {
-            message.error(t('aiFeatures.videoModelLoadTimeout' as any))
+            toast.error(t('aiFeatures.videoModelLoadTimeout' as any))
             return
           }
         }
 
         if (!selectedVideoModel) {
-          message.error(t('aiFeatures.selectVideoModelFirst' as any))
+          toast.error(t('aiFeatures.selectVideoModelFirst' as any))
           return
         }
 
         const selectedModel = videoModels.find((m: any) => m.name === selectedVideoModel)
         if (!selectedModel) {
           console.error('Video model unavailable:', selectedVideoModel, 'Available models:', videoModels.map(m => m.name))
-          message.error(t('aiFeatures.videoModelUnavailable' as any, { model: selectedVideoModel }))
+          toast.error(t('aiFeatures.videoModelUnavailable' as any, { model: selectedVideoModel }))
           return
         }
 
@@ -608,7 +615,7 @@ const PublishDialogAi = memo(
           if (res?.data?.task_id) {
             setVideoTaskId(res.data.task_id)
             setVideoStatus(res.data.status)
-            message.success(t('aiFeatures.videoTaskSubmitted' as any))
+            toast.success(t('aiFeatures.videoTaskSubmitted' as any))
             pollVideoTaskStatus(res.data.task_id)
           } else {
             throw new Error(t('aiFeatures.videoGenerationFailed' as any))
@@ -616,7 +623,7 @@ const PublishDialogAi = memo(
         } catch (error: any) {
           console.error('Video Generation Error:', error)
           setMessages(prev => prev.slice(0, -1))
-          message.error(error.message || t('aiFeatures.videoGenerationFailed' as any))
+          toast.error(error.message || t('aiFeatures.videoGenerationFailed' as any))
           setVideoStatus('')
           setIsProcessing(false)
         }
@@ -723,7 +730,7 @@ const PublishDialogAi = memo(
           console.error('AI Response Error:', error)
           // Remove placeholder message
           setMessages(prev => prev.slice(0, -1))
-          message.error(error.message || 'AI processing failed, please retry')
+          toast.error(error.message || 'AI processing failed, please retry')
           setIsProcessing(false)
         }
       }, [selectedChatModel, selectedImageModel])
@@ -753,17 +760,17 @@ const PublishDialogAi = memo(
               
               // Update with OSS URL
               setUploadedImage({ file, preview, ossUrl, uploading: false })
-              message.success(t('aiFeatures.imageUploadSuccess' as any))
+              toast.success(t('aiFeatures.imageUploadSuccess' as any))
             } catch (error) {
               console.error('Upload to OSS failed:', error)
-              message.error(t('aiFeatures.imageUploadFailed' as any))
+              toast.error(t('aiFeatures.imageUploadFailed' as any))
               setUploadedImage(null)
             }
           }
           reader.readAsDataURL(file)
         } catch (error) {
           console.error('Failed to read image:', error)
-          message.error(t('aiFeatures.imageUploadFailed' as any))
+          toast.error(t('aiFeatures.imageUploadFailed' as any))
         }
       }, [t])
 
@@ -771,7 +778,7 @@ const PublishDialogAi = memo(
       const sendMessage = useCallback(async (content?: string, forceAction?: AIAction) => {
         const messageContent = content || inputValue
         if (!messageContent.trim()) {
-          message.warning(t('aiFeatures.selectText' as any))
+          toast.warning(t('aiFeatures.selectText' as any))
           return
         }
 
@@ -780,19 +787,19 @@ const PublishDialogAi = memo(
 
         // Check if image is required for imageToImage action
         if (currentAction === 'imageToImage' && !uploadedImage) {
-          message.warning(t('aiFeatures.uploadImageFirst' as any))
+          toast.warning(t('aiFeatures.uploadImageFirst' as any))
           return
         }
         
         // Check if image is still uploading
         if (currentAction === 'imageToImage' && uploadedImage?.uploading) {
-          message.warning(t('aiFeatures.imageUploading' as any))
+          toast.warning(t('aiFeatures.imageUploading' as any))
           return
         }
         
         // Check if image has OSS URL
         if (currentAction === 'imageToImage' && uploadedImage && !uploadedImage.ossUrl) {
-          message.error(t('aiFeatures.imageUploadFailed' as any))
+          toast.error(t('aiFeatures.imageUploadFailed' as any))
           return
         }
 
@@ -945,7 +952,7 @@ const PublishDialogAi = memo(
           return imgFile
         } catch (error) {
           console.error('Image processing failed:', error)
-          message.error(t('aiFeatures.imageProcessingFailed' as any, { index: index + 1, error: error instanceof Error ? error.message : 'Unknown' }))
+          toast.error(t('aiFeatures.imageProcessingFailed' as any, { index: index + 1, error: error instanceof Error ? error.message : 'Unknown' }))
           return null
         }
       }
@@ -976,7 +983,7 @@ const PublishDialogAi = memo(
           return videoFile
         } catch (error) {
           console.error('Video processing failed:', error)
-          message.error(t('aiFeatures.videoProcessingFailed' as any))
+          toast.error(t('aiFeatures.videoProcessingFailed' as any))
           return null
         }
       }
@@ -1030,7 +1037,7 @@ const PublishDialogAi = memo(
           // Download images
           let imageFiles: IImgFile[] = []
           if (imageUrls.length > 0) {
-            message.loading({ content: t('aiFeatures.downloadingImages' as any), key: 'downloadMedia' })
+            toast.loading({ content: t('aiFeatures.downloadingImages' as any), key: 'downloadMedia' })
             const downloadPromises = imageUrls.map((url, index) => 
               downloadImageAsImgFile(url, index)
             )
@@ -1041,12 +1048,12 @@ const PublishDialogAi = memo(
           // Download video
           let videoFile: IVideoFile | undefined
           if (videoUrl) {
-            message.loading({ content: t('aiFeatures.downloadingVideo' as any), key: 'downloadMedia' })
+            toast.loading({ content: t('aiFeatures.downloadingVideo' as any), key: 'downloadMedia' })
             videoFile = await downloadVideoAsVideoFile(videoUrl) || undefined
           }
           
           if (imageUrls.length > 0 || videoUrl) {
-            message.destroy('downloadMedia')
+            toast.dismiss('downloadMedia')
           }
 
           // Remove images and video links from markdown, keep only text content
@@ -1071,13 +1078,13 @@ const PublishDialogAi = memo(
           // If neither, sync text content
           if (videoFile) {
             onSyncToEditor('', [], videoFile, shouldAppend)
-            message.success(t('aiFeatures.videoSynced' as any))
+            toast.success(t('aiFeatures.videoSynced' as any))
           } else if (imageFiles.length > 0) {
             onSyncToEditor('', imageFiles, undefined, shouldAppend)
-            message.success(t('aiFeatures.imagesSynced' as any))
+            toast.success(t('aiFeatures.imagesSynced' as any))
           } else {
             onSyncToEditor(textContent, [], undefined, shouldAppend)
-            message.success(shouldAppend ? t('aiFeatures.hashtagsAppended' as any) : t('aiFeatures.syncSuccess' as any))
+            toast.success(shouldAppend ? t('aiFeatures.hashtagsAppended' as any) : t('aiFeatures.syncSuccess' as any))
           }
         }
       }, [onSyncToEditor, t, downloadImageAsImgFile, downloadVideoAsVideoFile])
@@ -1410,11 +1417,11 @@ const PublishDialogAi = memo(
             title={t('aiFeatures.settings' as any)}
             open={settingsVisible}
             onCancel={() => setSettingsVisible(false)}
-            footer={[
-              <Button key="close" onClick={() => setSettingsVisible(false)}>
+            footer={(
+              <Button onClick={() => setSettingsVisible(false)}>
                 {t('aiFeatures.close' as any)}
-              </Button>,
-            ]}
+              </Button>
+            )}
             width={700}
           >
             {/* Chat model selection */}
@@ -1428,7 +1435,7 @@ const PublishDialogAi = memo(
                 onChange={(value) => {
                   setSelectedChatModel(value)
                   localStorage.setItem('ai_chat_model', value)
-                  message.success(t('aiFeatures.chatModelSaved' as any))
+                  toast.success(t('aiFeatures.chatModelSaved' as any))
                 }}
                 style={{ width: '100%' }}
                 placeholder={t('aiFeatures.selectChatModel' as any)}
@@ -1464,7 +1471,7 @@ const PublishDialogAi = memo(
                 onChange={(value) => {
                   setSelectedImageModel(value)
                   localStorage.setItem('ai_image_model', value)
-                  message.success(t('aiFeatures.imageModelSaved' as any))
+                  toast.success(t('aiFeatures.imageModelSaved' as any))
                 }}
                 style={{ width: '100%' }}
                 placeholder={t('aiFeatures.selectImageModel' as any)}
@@ -1500,7 +1507,7 @@ const PublishDialogAi = memo(
                 onChange={(value) => {
                   setSelectedVideoModel(value)
                   localStorage.setItem('ai_video_model', value)
-                  message.success(t('aiFeatures.videoModelSaved' as any))
+                  toast.success(t('aiFeatures.videoModelSaved' as any))
                 }}
                 style={{ width: '100%' }}
                 placeholder={t('aiFeatures.selectVideoModel' as any)}
@@ -1726,7 +1733,7 @@ const PublishDialogAi = memo(
                           onClick={() => {
                             setCustomPrompts({})
                             localStorage.removeItem('ai_custom_prompts')
-                            message.success(t('aiFeatures.customPrompts.clearSuccess' as any))
+                            toast.success(t('aiFeatures.customPrompts.clearSuccess' as any))
                           }}
                         >
                           {t('aiFeatures.customPrompts.clearAll' as any)}

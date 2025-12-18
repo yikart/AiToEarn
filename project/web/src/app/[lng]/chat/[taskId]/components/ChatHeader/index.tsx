@@ -1,0 +1,58 @@
+/**
+ * ChatHeader - 对话页面顶部导航栏
+ * 显示返回按钮、标题、生成状态
+ */
+'use client'
+
+import { ArrowLeft, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+export interface IChatHeaderProps {
+  /** 任务标题 */
+  title?: string
+  /** 默认标题（任务标题为空时显示） */
+  defaultTitle: string
+  /** 是否正在生成 */
+  isGenerating: boolean
+  /** 生成进度（0-100） */
+  progress: number
+  /** 思考中文案 */
+  thinkingText: string
+  /** 返回按钮点击 */
+  onBack: () => void
+}
+
+export function ChatHeader({
+  title,
+  defaultTitle,
+  isGenerating,
+  progress,
+  thinkingText,
+  onBack,
+}: IChatHeaderProps) {
+  return (
+    <header className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border shrink-0">
+      {/* 返回按钮 */}
+      <Button variant="ghost" size="icon" onClick={onBack} className="w-8 h-8">
+        <ArrowLeft className="w-5 h-5" />
+      </Button>
+
+      {/* 标题 */}
+      <h1 className="text-base font-medium text-foreground line-clamp-1">
+        {title || defaultTitle}
+      </h1>
+
+      {/* 生成状态指示器 */}
+      {isGenerating && (
+        <div className="ml-auto flex items-center gap-2 text-sm text-primary">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>{thinkingText}</span>
+          {progress > 0 && progress < 100 && (
+            <span className="text-xs text-muted-foreground">({progress}%)</span>
+          )}
+        </div>
+      )}
+    </header>
+  )
+}
+

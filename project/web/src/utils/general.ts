@@ -2,8 +2,7 @@ import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 
 export async function getPageTitle(name: string, lng: string) {
-  const { t } = await useTranslation(lng)
-  return `${name} —— ${t('title')}`
+  return `${name} —— AiToEarn`
 }
 
 /**

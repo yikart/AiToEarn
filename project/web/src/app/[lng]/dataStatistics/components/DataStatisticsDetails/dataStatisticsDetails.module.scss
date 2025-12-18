@@ -76,10 +76,32 @@
         &--active {
           background: #fff;
           border: 1px solid var(--colorPrimary5);
+          position: relative;
+
+          &:after,
+          &:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 100%);
+            border: 12px solid #fff;
+            border-bottom: none;
+            border-right-color: transparent;
+            border-left-color: transparent;
+          }
+          &:before {
+            bottom: 1px;
+            z-index: 2;
+          }
+          &:after {
+            border-top-color: var(--colorPrimary5);
+            bottom: 0;
+          }
+
           .dataStatisticsDetails-content-item-title {
             color: var(--colorPrimary5);
           }
-          @include triangle-indicator(12px, #fff, var(--colorPrimary5), 1px);
         }
       }
     }

@@ -4,7 +4,8 @@ import type {
   IPlatsParamsRef,
 } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
 import { PlusOutlined, PushpinOutlined, SearchOutlined } from '@ant-design/icons'
-import { Button, Input, List, message, Tooltip } from 'antd'
+import { Button, Input, List, Tooltip } from 'antd'
+import { toast } from '@/lib/toast'
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { createPinterestBoardApi } from '@/api/pinterest'
@@ -109,7 +110,7 @@ const PinterestParams = memo(
       // 创建新Board
       const handleCreateBoard = async () => {
         if (!newBoardName.trim()) {
-          message.error(t('validation.boardNameRequired'))
+          toast.error(t('validation.boardNameRequired'))
           return
         }
 
@@ -119,7 +120,7 @@ const PinterestParams = memo(
           .find(v => v.type === PlatType.Pinterest)
 
         if (!pinterestAccount) {
-          message.error(t('messages.noAccountFound'))
+          toast.error(t('messages.noAccountFound'))
           return
         }
 
@@ -131,17 +132,17 @@ const PinterestParams = memo(
           )
 
           if (response?.code === 0) {
-            message.success(t('messages.boardCreateSuccess'))
+            toast.success(t('messages.boardCreateSuccess'))
             setNewBoardName('')
             // 重新获取Board列表
             await getPinterestBoards(true, pubItem.account.id)
           }
           else {
-            message.error(t('messages.boardCreateFailed'))
+            toast.error(t('messages.boardCreateFailed'))
           }
         }
         catch (error) {
-          message.error(t('messages.boardCreateFailed'))
+          toast.error(t('messages.boardCreateFailed'))
         }
         finally {
           setCreatingBoard(false)

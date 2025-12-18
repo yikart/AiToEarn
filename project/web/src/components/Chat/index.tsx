@@ -1,43 +1,10 @@
-import type { ForwardedRef } from 'react'
-import { forwardRef, memo, useEffect, useState } from 'react'
-import * as React from 'react'
-import { useGetClientLng } from '@/hooks/useSystem'
+/**
+ * Chat - 聊天相关组件导出
+ */
 
-export interface IChatRef {}
+export { ChatInput, type IChatInputProps } from './ChatInput'
+export { ChatMessage, type IChatMessageProps, type IWorkflowStep } from './ChatMessage'
+export { MediaUpload, type IMediaUploadProps, type IUploadedMedia } from './MediaUpload'
+export { TaskCard, type ITaskCardProps } from './TaskCard'
+export { TaskCardSkeleton, type ITaskCardSkeletonProps } from './TaskCard/TaskCardSkeleton'
 
-export interface IChatProps {
-  defaultMask?: string
-}
-
-const Chat = memo(
-  forwardRef(({ defaultMask }: IChatProps, ref: ForwardedRef<IChatRef>) => {
-    const [iframeUrl, setIframeUrl] = useState('')
-    const lng = useGetClientLng()
-
-    useEffect(() => {
-      const base = location.origin.includes('localhost')
-        ? 'https://aitoearn.ai'
-        : location.origin
-
-      const params = new URLSearchParams()
-      if (defaultMask)
-        params.set('mask', defaultMask)
-      if (lng)
-        params.set('lang', lng)
-
-      const qs = params.toString()
-      setIframeUrl(
-        `${base}/chat${qs ? `?${qs}` : ''}${defaultMask ? '#/new-chat' : '#/chat'}`,
-      )
-    }, [defaultMask, lng])
-
-    return (
-      <iframe
-        src={iframeUrl}
-        style={{ height: '100%', border: 'none', width: '100%' }}
-      />
-    )
-  }),
-)
-
-export default Chat

@@ -2,9 +2,6 @@
  * 浏览器插件模块统一导出
  */
 
-// Components
-export * from './components'
-
 // Constants
 export {
   DEFAULT_POLLING_INTERVAL,

@@ -1,5 +1,6 @@
 import type { ForwardedRef } from 'react'
-import { Button, Input, message } from 'antd'
+import { Button, Input } from 'antd'
+import { toast } from '@/lib/toast'
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import styles from './proxyInput.module.scss'
@@ -83,10 +84,10 @@ const ProxyInput = memo(
               onClick={async () => {
                 const verifyRes = await verifyProxy(proxyName)
                 if (verifyRes) {
-                  message.success(t('proxy.available'))
+                  toast.success(t('proxy.available'))
                 }
                 else {
-                  message.error(t('proxy.unavailable'))
+                  toast.error(t('proxy.unavailable'))
                 }
               }}
             >

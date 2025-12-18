@@ -43,11 +43,41 @@ export interface TaskDetail {
   medias: Media[]
   errorMessage: string
   createdAt: string
+  updatedAt: string
+  messages?: TaskMessage[]
+}
+
+// 任务消息类型
+export interface TaskMessage {
+  type: 'user' | 'assistant' | 'result' | 'system' | 'stream_event'
+  uuid?: string
+  message?: any
+  content?: string | any[]
+  parent_tool_use_id?: string | null
+  subtype?: string
+}
+
+// 任务列表项
+export interface TaskListItem {
+  id: string
+  userId: string
+  title?: string
+  createdAt: string
+  updatedAt: string
+}
+
+// 任务列表响应
+export interface TaskListResponse {
+  page: number
+  pageSize: number
+  totalPages: number
+  total: number
+  list: TaskListItem[]
 }
 
 // 创建任务请求参数
 export interface CreateTaskParams {
-  prompt: string
+  prompt: string | any[] // 支持字符串或 Claude Prompt 格式数组
   taskId?: string // 可选，传入则继续上一次对话
   messageUuid?: string // 可选，重置到对应的消息继续
   includePartialMessages?: boolean // 使用流式消息
@@ -125,6 +155,11 @@ export interface SSEMessage {
   data?: any
 }
 
+// 任务增量消息响应
+export interface TaskMessagesVo {
+  messages: TaskMessage[]
+}
+
 export const agentApi = {
   /**
    * 创建AI生成任务并通过 SSE 接收实时消息
@@ -154,14 +189,19 @@ export const agentApi = {
     console.log('[SSE] Starting fetchEventSource...')
 
     try {
+      // 获取语言设置
+      const lng = useUserStore.getState().lang || 'zh-CN'
+      
       await fetchEventSource(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${useUserStore.getState().token || ''}`,
+          'Accept-Language': lng,
         },
         body: JSON.stringify(params),
         signal: abortController.signal,
+        openWhenHidden: true,
         
         // 当连接打开时
         async onopen(response) {
@@ -203,18 +243,18 @@ export const agentApi = {
             if (data.sessionId) {
               sessionId = data.sessionId
               console.log('[SSE] Got sessionId:', sessionId)
-            }
-            
-            // 调用消息回调
-            onMessage(data)
-            
-            // 如果收到结束信号，关闭连接
-            if (data.type === 'done' || data.type === 'error') {
-              console.log('[SSE] Received end signal:', data.type)
-              abortController.abort()
-            }
           }
-          catch (error) {
+          
+          // 调用消息回调
+          onMessage(data)
+          
+          // 如果收到结束信号，关闭连接
+          if (data.type === 'done' || data.type === 'error') {
+            console.log('[SSE] Received end signal:', data.type)
+            abortController.abort()
+          }
+        }
+        catch (error) {
             console.error('[SSE] Failed to parse message:', event.data, error)
           }
         },
@@ -275,11 +315,51 @@ export const agentApi = {
   },
 
   /**
+   * 获取任务消息（增量）
+   * @param taskId 任务ID
+   * @param lastMessageId 上次获取的最后一条消息 UUID，可选
+   */
+  async getTaskMessages(taskId: string, lastMessageId?: string) {
+    const params = lastMessageId ? { lastMessageId } : undefined
+    const res = await http.get<TaskMessagesVo>(`agent/tasks/${taskId}/messages`, params)
+    return res
+  },
+
+  /**
    * 停止/取消任务
    * @param taskId 任务ID
    */
   async stopTask(taskId: string) {
     const res = await http.delete(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 获取任务列表
+   * @param page 页码，默认1
+   * @param pageSize 每页数量，默认10
+   */
+  async getTaskList(page = 1, pageSize = 10) {
+    const res = await http.get<TaskListResponse>('agent/tasks', { page, pageSize })
+    return res
+  },
+
+  /**
+   * 删除任务
+   * @param taskId 任务ID
+   */
+  async deleteTask(taskId: string) {
+    const res = await http.delete(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 更新任务标题
+   * @param taskId 任务ID
+   * @param title 新标题
+   */
+  async updateTaskTitle(taskId: string, title: string) {
+    const res = await http.patch(`agent/tasks/${taskId}`, { title })
     return res
   },
 }

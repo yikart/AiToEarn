@@ -6,7 +6,8 @@ import {
   StarOutlined,
   CommentOutlined,
 } from '@ant-design/icons'
-import { Avatar, Card, Image, message, Spin, Table, Tag } from 'antd'
+import { Avatar, Card, Image, Spin, Table, Tag } from 'antd'
+import { toast } from '@/lib/toast'
 import type { ColumnsType } from 'antd/es/table'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -43,7 +44,7 @@ export default function MonitoringDetailPage() {
       setDetail(data || null)
     }
     catch (error: any) {
-      message.error(error.message || t('error.loadFailed'))
+      toast.error(error.message || t('error.loadFailed'))
     }
     finally {
       setLoading(false)

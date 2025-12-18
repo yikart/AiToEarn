@@ -1,0 +1,54 @@
+{
+  "title": "Browser Plugin Guide",
+  "lastUpdated": "Last Updated",
+  "introduction": "This guide will walk you through how to install and use the AiToEarn browser plugin, enabling you to manage your social media accounts and publish content more conveniently.",
+  "steps": {
+    "step1": {
+      "title": "Step 1: Open Plugin Management Dialog",
+      "content": "On the AiToEarn platform page, click the plugin icon in the upper right corner to open the browser plugin management dialog."
+    },
+    "step2": {
+      "title": "Step 2: Download the Plugin",
+      "content": "Select the download method in the dialog and click to download the plugin.",
+      "note": "Difference between Chrome Web Store and GitHub Release installation:",
+      "noteItem1": "Plugins downloaded from GitHub Release require you to enable developer mode in your browser to install, but the resources installed here are the latest plugins.",
+      "noteItem2": "Plugins downloaded from Chrome Web Store can be installed directly."
+    },
+    "step3": {
+      "title": "Step 3: Check Installation Status",
+      "content": "After installation, click the browser's extensions button to check if the installation was successful."
+    },
+    "step4": {
+      "title": "Step 4: Enter Plugin Details Page",
+      "content": "If the installation is successful, click on the plugin to enter the plugin details page."
+    },
+    "step5": {
+      "title": "Step 5: Authorize the Plugin",
+      "content": "Click the \"Authorize Now\" button to authorize the plugin."
+    },
+    "step6": {
+      "title": "Step 6: Confirm Plugin is Ready",
+      "content": "Permission has been granted successfully. Next, open the AiToEarn platform, refresh the page, and you will see the plugin is ready. Click on it to view details."
+    },
+    "step7": {
+      "title": "Step 7: View Account Information",
+      "content": "If you have logged into the platforms supported by the plugin, you will see that the plugin has obtained the corresponding accounts."
+    },
+    "step8": {
+      "title": "Step 8: Sync Accounts",
+      "content": "You can sync accounts to account management here. Click the [Sync] button, and the account will be synced to our database."
+    },
+    "complete": {
+      "title": "Complete",
+      "content": "Now you can use the AiToEarn platform normally!"
+    }
+  },
+  "faq": {
+    "title": "FAQ",
+    "q1": {
+      "question": "Why does the plugin still show not logged in after I logged into Xiaohongshu?",
+      "answer": "You may not have logged into the Xiaohongshu Creator Center. On the Xiaohongshu homepage, click the button in the upper right corner to quickly log into the Xiaohongshu Creator Center."
+    }
+  },
+  "viewGuide": "View Guide"
+}

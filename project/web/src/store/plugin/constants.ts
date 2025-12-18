@@ -16,6 +16,11 @@ export const PLUGIN_DOWNLOAD_LINKS = {
 } as const
 
 /**
+ * 小红书创作者后台地址
+ */
+export const XHS_CREATOR_URL = 'https://creator.xiaohongshu.com/'
+
+/**
  * 插件状态国际化 key 映射
  */
 export const PLUGIN_STATUS_I18N_KEY = {

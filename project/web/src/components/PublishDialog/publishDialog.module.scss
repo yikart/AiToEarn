@@ -1,9 +1,19 @@
 $assistantWidth: 380px;
 
+// 发布弹窗样式 - 适配 shadcn/ui Dialog
 .publishDialog {
+  // 覆盖 shadcn/ui DialogContent 的默认样式
   width: auto !important;
-  margin: 0 auto;
-  display: inline-block;
+  max-width: none !important;
+  padding: 0 !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  overflow: visible;
+
   :global {
     .publishDialog-right {
       display: flex;
@@ -15,9 +25,6 @@ $assistantWidth: 380px;
       }
     }
 
-    .ant-modal-content {
-      padding: 0 !important;
-    }
     .publishDialog-wrapper {
       background: #fff;
       position: relative;
@@ -28,42 +35,52 @@ $assistantWidth: 380px;
       flex-direction: column;
       justify-content: space-between;
     }
+
     .publishDialog-con {
       box-sizing: border-box;
       padding: 20px;
       flex: 1;
+
       &-head {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 30px;
+
         &-title {
           font-weight: 600;
           font-size: var(--fs-md);
         }
       }
+
       &-acconts {
         display: flex;
         flex-wrap: wrap;
         gap: 11px;
+
         &-item {
           border: 2px solid transparent;
           border-radius: 50%;
+
           &:active {
             border-color: var(--colorPrimary4);
           }
+
           &--active {
             img {
               filter: grayscale(0) !important;
             }
           }
+
           &-avatar {
             cursor: pointer;
             transition: 0.3s;
             padding: 1px;
+
             & > img {
               filter: grayscale(100%);
             }
+
             &:hover {
               img {
                 filter: grayscale(0);
@@ -75,6 +92,7 @@ $assistantWidth: 380px;
               & > img {
                 filter: grayscale(100%);
               }
+
               &:hover {
                 img {
                   filter: grayscale(100%);
@@ -93,11 +111,13 @@ $assistantWidth: 380px;
         color: var(--grayColor7);
       }
     }
+
     .publishDialog-paramsSet {
       margin-top: 30px;
       max-height: 600px;
       overflow: auto;
     }
+
     .publishDialog-footer {
       display: flex;
       align-items: center;
@@ -105,40 +125,37 @@ $assistantWidth: 380px;
       justify-content: space-between;
       box-sizing: border-box;
       padding: 20px;
+
       &-btns {
         display: flex;
         width: 100%;
         justify-content: right;
         gap: 12px;
+
         button {
           margin-right: 10px;
         }
       }
-      &-time {
-      }
-    }
-    .ant-modal-body {
-      display: flex;
-      justify-content: center;
-    }
-    .ant-modal-content {
-      background-color: transparent !important;
-      box-shadow: none !important;
+
     }
 
+    // CSSTransition 动画类
     .right-enter,
     .left-enter {
       width: 0;
     }
+
     .right-enter-active,
     .left-enter-active {
       width: $assistantWidth;
       transition: all 300ms;
     }
+
     .right-exit,
     .left-exit {
       width: $assistantWidth;
     }
+
     .right-exit-active,
     .left-exit-active {
       width: 0;

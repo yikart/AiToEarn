@@ -1,11 +1,6 @@
 'use client'
 
-import type { FlatNamespace, KeyPrefix } from 'i18next'
-import type {
-  FallbackNs,
-  UseTranslationOptions,
-  UseTranslationResponse,
-} from 'react-i18next'
+import type { FlatNamespace } from 'i18next'
 import { getCookie, setCookie } from 'cookies-next'
 import i18next from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
@@ -41,13 +36,8 @@ i18next
     preload: runsOnServerSide ? languages : [],
   })
 
-export function useTransClient<
-  Ns extends FlatNamespace,
-  KPrefix extends KeyPrefix<FallbackNs<Ns>> = undefined,
->(
-  ns?: Ns,
-  options?: UseTranslationOptions<KPrefix>,
-): UseTranslationResponse<FallbackNs<Ns>, KPrefix> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function useTransClient(ns?: any, options?: any): any {
   const i18nextCookie = getCookie(cookieName)
   const lng = useGetClientLng()
   if (typeof lng !== 'string')

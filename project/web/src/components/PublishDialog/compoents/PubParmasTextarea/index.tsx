@@ -12,7 +12,8 @@ import {
   CloseOutlined,
   FileTextOutlined,
 } from '@ant-design/icons'
-import { Button, Image, Input, message, Tooltip } from 'antd'
+import { Button, Image, Input, Tooltip } from 'antd'
+import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import React, {
   forwardRef,
@@ -220,11 +221,7 @@ const PubParmasTextarea = memo(
           }
 
           const messageOpen = (content: string) => {
-            message.open({
-              content,
-              type: 'warning',
-              key: '1',
-            })
+            toast.warning(content, { id: 'upload-warning' })
           }
 
           if (uploadHasImage && !platConfig.pubTypes.has(PubType.ImageText)) {

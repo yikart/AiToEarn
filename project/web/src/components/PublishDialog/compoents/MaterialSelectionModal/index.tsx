@@ -1,8 +1,13 @@
+/**
+ * MaterialSelectionModal - 素材选择弹窗
+ * 用于从素材库中选择图片或视频素材
+ */
+
 import type {
   ForwardedRef,
 } from 'react'
 import { PictureOutlined } from '@ant-design/icons'
-import { Button, List, Modal, Spin } from 'antd'
+import { Button, List, Spin } from 'antd'
 import {
   forwardRef,
   memo,
@@ -10,6 +15,7 @@ import {
   useEffect,
   useState,
 } from 'react'
+import { Modal } from '@/components/ui/modal'
 import { getMediaGroupList, getMediaList } from '@/api/media'
 import { useTransClient } from '@/app/i18n/client'
 import { getOssUrl } from '@/utils/oss'

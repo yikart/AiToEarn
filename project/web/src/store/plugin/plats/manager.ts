@@ -5,13 +5,20 @@
 
 import { PlatType } from '@/app/config/platConfig'
 import type {
+  CommentListParams,
+  CommentListResult,
   CommentParams,
   CommentResult,
   DirectMessageParams,
   DirectMessageResult,
   FavoriteResult,
+  GetWorkDetailParams,
+  GetWorkDetailResult,
+  HomeFeedListParams,
+  HomeFeedListResult,
   IPlatformInteraction,
   LikeResult,
+  SubCommentListParams,
   SupportedPlatformType,
 } from './types'
 import { xhsInteraction } from './xhs'
@@ -116,6 +123,54 @@ class PlatformInteractionManager {
       }
     }
     return instance.sendDirectMessage(params)
+  }
+
+  /**
+   * 获取首页作品列表
+   * @param platform 平台类型
+   * @param params 分页参数
+   */
+  getHomeFeedList(
+    platform: SupportedPlatformType,
+    params: HomeFeedListParams,
+  ): Promise<HomeFeedListResult> {
+    return this.get(platform).getHomeFeedList(params)
+  }
+
+  /**
+   * 获取作品详情
+   * @param platform 平台类型
+   * @param params 详情请求参数
+   */
+  getWorkDetail(
+    platform: SupportedPlatformType,
+    params: GetWorkDetailParams,
+  ): Promise<GetWorkDetailResult> {
+    return this.get(platform).getWorkDetail(params)
+  }
+
+  /**
+   * 获取评论列表
+   * @param platform 平台类型
+   * @param params 评论列表请求参数
+   */
+  getCommentList(
+    platform: SupportedPlatformType,
+    params: CommentListParams,
+  ): Promise<CommentListResult> {
+    return this.get(platform).getCommentList(params)
+  }
+
+  /**
+   * 获取子评论列表（查看更多回复）
+   * @param platform 平台类型
+   * @param params 子评论列表请求参数
+   */
+  getSubCommentList(
+    platform: SupportedPlatformType,
+    params: SubCommentListParams,
+  ): Promise<CommentListResult> {
+    return this.get(platform).getSubCommentList(params)
   }
 }
 

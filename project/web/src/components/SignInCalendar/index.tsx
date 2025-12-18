@@ -1,8 +1,13 @@
+/**
+ * SignInCalendar - 签到日历组件
+ * 用于展示签到日历和签到功能
+ */
+
 'use client'
 
-import { BranchesOutlined, CheckOutlined } from '@ant-design/icons'
-import { Badge, Button, Calendar, Image, message, Modal } from 'antd'
+import { Button, Calendar, Image } from 'antd'
 import { useRouter } from 'next/navigation'
+import { Modal } from '@/components/ui/modal'
 import React, { useEffect, useMemo, useState } from 'react'
 import { PublishDayInfoResponse, PublishInfoResponse, signInApi, SignInResponse, SignInType } from '@/api/signIn'
 import { useTransClient } from '@/app/i18n/client'
@@ -91,7 +96,7 @@ const SignInCalendar: React.FC<SignInCalendarProps> = ({ className }) => {
   // 签到
   const handleSignIn = async () => {
     // if (calendarData.todaySigned) {
-    //   message.warning(t('signIn.alreadySignedIn'));
+    //   toast.warning(t('signIn.alreadySignedIn'));
     //   return;
     // }
 

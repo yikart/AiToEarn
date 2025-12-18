@@ -26,12 +26,12 @@ import {
   Button,
   Collapse,
   Input,
-  message,
   Modal,
   Popover,
   Skeleton,
   Tooltip,
 } from 'antd'
+import { toast } from '@/lib/toast'
 import Image from 'next/image'
 import {
   forwardRef,
@@ -416,7 +416,7 @@ const AccountSidebar = memo(
               break
             default:
               console.warn(`${t('messages.unsupportedPlatform' as any)}: ${platform}`)
-              message.warning(t('messages.platformNotSupported' as any, { platform }))
+              toast.warning(t('messages.platformNotSupported' as any, { platform }))
               return
           }
 
@@ -433,7 +433,7 @@ const AccountSidebar = memo(
         }
         catch (error) {
           console.error(t('messages.authFailed' as any), error)
-          message.error(`${t('messages.authFailed' as any)}，${t('messages.pleaseRetry' as any)}`)
+          toast.error(`${t('messages.authFailed' as any)}，${t('messages.pleaseRetry' as any)}`)
         }
         finally {
           setReauthAccount(null)
@@ -470,10 +470,10 @@ const AccountSidebar = memo(
         try {
           await apiUpdateAccountGroupSortRank({ list: updateList })
           await getAccountGroup()
-          message.success(t('messages.sortSuccess' as any))
+          toast.success(t('messages.sortSuccess' as any))
         }
         catch (error) {
-          message.error(t('messages.sortFailed' as any))
+          toast.error(t('messages.sortFailed' as any))
         }
       }
 
@@ -536,7 +536,7 @@ const AccountSidebar = memo(
         //     // await getAccountList();
         //   } catch (error) {
         //     console.error('自动保存排序失败:', error);
-        //     message.error(t("messages.sortFailed" as any));
+        //     toast.error(t("messages.sortFailed" as any));
         //   }
         // }, 2000);
       }
@@ -544,7 +544,7 @@ const AccountSidebar = memo(
       // 添加账号流程
       const openAddAccountFlow = async () => {
         if (accountGroupList.length === 0) {
-          message.error(t('messages.createSpaceFirst' as any))
+          toast.error(t('messages.createSpaceFirst' as any))
           return
         }
 
@@ -569,7 +569,7 @@ const AccountSidebar = memo(
           const latestAccountGroupList = useAccountStore.getState().accountGroupList
           
           if (latestAccountGroupList.length === 0) {
-            message.error(t('messages.createSpaceFirst' as any))
+            toast.error(t('messages.createSpaceFirst' as any))
             return
           }
 
@@ -616,7 +616,7 @@ const AccountSidebar = memo(
               catch {}
             }
             await getAccountList()
-            message.success(t('accountAddedToSpace'))
+            toast.success(t('accountAddedToSpace'))
           }
           finally {
             pendingGroupIdRef.current = null
@@ -662,7 +662,7 @@ const AccountSidebar = memo(
                     id: acc.id,
                     groupId: pendingGroupIdRef.current,
                   })
-                  message.success(t('accountAddedToSpace'))
+                  toast.success(t('accountAddedToSpace'))
                 }
               }
               finally {
@@ -687,7 +687,7 @@ const AccountSidebar = memo(
                   type="primary"
                   onClick={async () => {
                     if (!groupName.trim()) {
-                      message.error(t('createSpace.nameRequired'))
+                      toast.error(t('createSpace.nameRequired'))
                       return
                     }
                     setCreateGroupLoading(true)
@@ -696,11 +696,11 @@ const AccountSidebar = memo(
                         name: groupName.trim(),
                       })
                       await getAccountGroup()
-                      // message.success(t("createSpace.success"));
+                      // toast.success(t("createSpace.success"));
                       createGroupCancel()
                     }
                     catch (error) {
-                      message.error(t('createSpace.failed'))
+                      toast.error(t('createSpace.failed'))
                     }
                     finally {
                       setCreateGroupLoading(false)
@@ -721,7 +721,7 @@ const AccountSidebar = memo(
                 onChange={e => setGroupName(e.target.value)}
                 onPressEnter={async () => {
                   if (!groupName.trim()) {
-                    message.error(t('createSpace.nameRequired'))
+                    toast.error(t('createSpace.nameRequired'))
 
                     return
                   }
@@ -731,11 +731,11 @@ const AccountSidebar = memo(
                       name: groupName.trim(),
                     })
                     await getAccountGroup()
-                    message.success(t('createSpace.success'))
+                    toast.success(t('createSpace.success'))
                     createGroupCancel()
                   }
                   catch (error) {
-                    message.error(t('createSpace.failed'))
+                    toast.error(t('createSpace.failed'))
                   }
                   finally {
                     setCreateGroupLoading(false)
@@ -1074,7 +1074,7 @@ const AccountSidebar = memo(
               onDeleteSuccess={async () => {
                 await getAccountList()
                 setDeleteTarget(null)
-                message.success(t('messages.deleteSuccess' as any))
+                toast.success(t('messages.deleteSuccess' as any))
               }}
             />
 

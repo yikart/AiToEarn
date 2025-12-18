@@ -28,6 +28,10 @@
     "getStarted": "Get Started",
     "useMobilePhone": "use on mobile phone"
   },
+  "agentGenerator": {
+    "title": "How can I help you?",
+    "subtitle": "Describe what you want to create, AI will help you generate"
+  },
   "aiGeneration": {
     "inputPlaceholder": "Enter your content idea, AI will generate a complete work for you...",
     "generateButton": "Start Creating",
@@ -96,6 +100,10 @@
     "needLogin": "Need to Login",
     "pleaseLoginChannel": "Please login to this channel account first",
     "goLogin": "Go Login",
+    "needBindChannel": "Need to Bind Account",
+    "needBindChannelTitle": "Need to Bind Account",
+    "needBindChannelContent": "Please bind your account first to publish content",
+    "goBind": "Go Bind",
     "platformRequiresPlugin": "This platform requires plugin publishing, please authorize the plugin first",
     "needAuthorizePlugin": "Need to Authorize Plugin",
     "pluginAuthorizeDescription": "This platform requires plugin publishing, please click here to authorize the plugin",

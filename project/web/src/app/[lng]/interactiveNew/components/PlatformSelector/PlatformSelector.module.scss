@@ -1,0 +1,126 @@
+/**
+ * 平台选择器样式
+ */
+
+.platformSelector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+
+  :global {
+    .platformSelector_label {
+      font-size: var(--fs-sm);
+      color: var(--text-secondary);
+      flex-shrink: 0;
+    }
+
+    .platformSelector_list {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .platformSelector_item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 24px;
+      background: var(--grayColor1);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+      user-select: none;
+
+      &:hover:not(.platformSelector_item-disabled) {
+        background: var(--grayColor2);
+        transform: translateY(-1px);
+      }
+
+      &-active {
+        background: var(--colorPrimary1);
+        border-color: var(--colorPrimary5);
+
+        .platformSelector_item_name {
+          color: var(--colorPrimary6);
+          font-weight: 500;
+        }
+      }
+
+      &-disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+        filter: grayscale(1);
+
+        .platformSelector_item_icon,
+        .platformSelector_item_name {
+          opacity: 0.6;
+        }
+      }
+    }
+
+    .platformSelector_item_icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .platformSelector_item_name {
+      font-size: var(--fs-sm);
+      color: var(--text-primary);
+      white-space: nowrap;
+    }
+
+    .platformSelector_item_badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      background: var(--error-color);
+      color: white;
+      border-radius: 10px;
+      margin-left: 4px;
+    }
+  }
+}
+
+.loginTip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+  border-radius: 12px;
+  margin-top: 16px;
+  border: 1px solid #ffe58f;
+
+  :global {
+    .loginTip_icon {
+      font-size: 24px;
+    }
+
+    .loginTip_text {
+      font-size: var(--fs-sm);
+      color: var(--warning-color);
+    }
+
+    .loginTip_btn {
+      padding: 6px 16px;
+      background: var(--warning-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: var(--fs-sm);
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #d97706;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
