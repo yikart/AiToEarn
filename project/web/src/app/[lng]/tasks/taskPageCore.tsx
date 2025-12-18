@@ -1432,15 +1432,6 @@ export default function TaskPageCore() {
         footer={null}
         width={1200}
         zIndex={15}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Spin spinning={taskDetailLoading}>
           {taskDetail ? (
@@ -1807,20 +1798,9 @@ export default function TaskPageCore() {
           setAcceptedTaskDetailModalVisible(false)
           setAcceptedTaskDetail(null)
         }}
-        footer={[
-
-        ]}
+        footer={[]}
         width={800}
         zIndex={2000}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Spin spinning={acceptedTaskDetailLoading}>
           {acceptedTaskDetail ? (
@@ -2227,7 +2207,6 @@ export default function TaskPageCore() {
         title={previewMedia?.title || t('modal.mediaPreview')}
         open={mediaPreviewVisible}
         onCancel={handleCloseMediaPreview}
-        afterClose={handleCloseMediaPreview}
         footer={[
           <Button key="close" onClick={handleCloseMediaPreview}>
             {t('modal.close')}
@@ -2235,13 +2214,6 @@ export default function TaskPageCore() {
         ]}
         width={previewMedia?.type === 'video' ? 800 : 600}
         zIndex={3000}
-        destroyOnHidden={true}
-        styles={{
-          body: {
-            padding: '24px',
-            textAlign: 'center',
-          },
-        }}
       >
         {previewMedia && (
           <div>
@@ -2290,11 +2262,6 @@ export default function TaskPageCore() {
         footer={null}
         width={500}
         zIndex={3000}
-        styles={{
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <Steps
           direction="vertical"
@@ -2321,15 +2288,6 @@ export default function TaskPageCore() {
         footer={null}
         width={600}
         zIndex={2500}
-        styles={{
-          header: {
-            borderBottom: '1px solid #f0f0f0',
-            paddingBottom: '16px',
-          },
-          body: {
-            padding: '24px',
-          },
-        }}
       >
         <div style={{ marginBottom: '16px' }}>
           <p style={{ margin: 0, color: '#666' }}>
