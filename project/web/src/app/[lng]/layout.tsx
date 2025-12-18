@@ -44,6 +44,10 @@ export default async function RootLayout({
             <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
               {children}
             </main>
+            <script src="/js/xhs_web_sign.js" />
+            <script src="/js/xhs_sign_init.js" />
+            <script src="/js/xhs_sign_core.js" />
+            <script src="/js/xhs_sign_inject.js" />
           </div>
         </Providers>
       </body>

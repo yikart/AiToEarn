@@ -1,0 +1,9 @@
+# *
+User-agent: *
+
+# Host
+Host: https://aitoearn.ai
+
+# Sitemaps
+Sitemap: https://aitoearn.ai/sitemap.xml
+Sitemap: https://docs.aitoearn.ai/sitemap.xml

@@ -1,0 +1,262 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "主服务",
+    "description": "aitoearn-gateway API",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "OpenSource/Me/Credits"
+    }
+  ],
+  "paths": {
+    "/api/user/credits": {
+      "get": {
+        "summary": "Get My Credits Balance",
+        "deprecated": false,
+        "description": "",
+        "operationId": "CreditsController_getMyCreditsBalance",
+        "tags": [
+          "OpenSource/Me/Credits"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CreditsBalanceVo"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/api/user/credits/records": {
+      "get": {
+        "summary": "Get My Credits Records",
+        "deprecated": false,
+        "description": "",
+        "operationId": "CreditsController_getMyCreditsRecords",
+        "tags": [
+          "OpenSource/Me/Credits"
+        ],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 1,
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": 10,
+            "schema": {
+              "default": 10,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Credits类型",
+            "required": false,
+            "example": "",
+            "schema": {
+              "description": "Credits类型",
+              "type": "string",
+              "enum": [
+                "register_bonus",
+                "purchase",
+                "vip_monthly",
+                "ai_service",
+                "video_style_transfer",
+                "publish",
+                "expired",
+                "manual"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/CreditsRecordsVo"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreditsBalanceVo": {
+        "type": "object",
+        "properties": {
+          "balance": {
+            "description": "当前Credits余额（美分）",
+            "type": "number"
+          }
+        },
+        "required": [
+          "balance"
+        ],
+        "id": "CreditsBalanceVo"
+      },
+      "CreditsRecordsVo": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "pageSize": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "totalPages": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "total": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "list": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreditsRecordVo"
+            }
+          }
+        },
+        "required": [
+          "page",
+          "pageSize",
+          "totalPages",
+          "total",
+          "list"
+        ],
+        "id": "CreditsRecordsVo"
+      },
+      "CreditsRecordVo": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "description": "记录ID",
+            "type": "string"
+          },
+          "userId": {
+            "description": "用户ID",
+            "type": "string"
+          },
+          "amount": {
+            "description": "Credits变动数量（美分）",
+            "type": "number"
+          },
+          "balance": {
+            "description": "该记录剩余的可用余额（美分）",
+            "type": "number"
+          },
+          "type": {
+            "description": "Credits变动类型",
+            "type": "string",
+            "enum": [
+              "register_bonus",
+              "purchase",
+              "vip_monthly",
+              "ai_service",
+              "video_style_transfer",
+              "publish",
+              "expired",
+              "manual"
+            ]
+          },
+          "description": {
+            "description": "Credits变动描述",
+            "type": "string"
+          },
+          "expiredAt": {
+            "description": "过期时间，null表示永久有效",
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "description": "创建时间",
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "description": "更新时间",
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "amount",
+          "balance",
+          "type",
+          "createdAt",
+          "updatedAt"
+        ],
+        "id": "CreditsRecordVo"
+      }
+    },
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
