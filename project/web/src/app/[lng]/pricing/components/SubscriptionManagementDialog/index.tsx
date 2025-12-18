@@ -42,11 +42,6 @@ import {
 } from '@/api/types/payment'
 import { cn } from '@/lib/utils'
 
-interface SubscriptionManagementDialogProps {
-  open: boolean
-  onClose: () => void
-}
-
 // 状态判断辅助函数
 const getVipStatusInfo = (status: string) => {
   switch (status) {
@@ -71,10 +66,7 @@ const getVipStatusInfo = (status: string) => {
   }
 }
 
-export function SubscriptionManagementDialog({
-  open,
-  onClose,
-}: SubscriptionManagementDialogProps) {
+export function SubscriptionManagementContent() {
   const { t: tProfile } = useTransClient('profile')
   const { t: tVip } = useTransClient('vip')
   const { userInfo } = useUserStore()
@@ -247,13 +239,12 @@ export function SubscriptionManagementDialog({
     toast.success(tProfile('copySuccess'))
   }
 
-  // 弹窗打开时加载数据
+  // 组件挂载时加载数据（用于内嵌在 SettingsModal 的场景）
   useEffect(() => {
-    if (open) {
-      fetchOrders({ page: 1, size: 10 })
-      fetchSubscriptions({ page: 1, size: 10 })
-    }
-  }, [open])
+    fetchOrders({ page: 1, size: 10 })
+    fetchSubscriptions({ page: 1, size: 10 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // 格式化日期
   const formatDate = (date: string | number) => {
@@ -269,13 +260,7 @@ export function SubscriptionManagementDialog({
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{tVip('subscriptionManagement' as any)}</DialogTitle>
-          </DialogHeader>
-
-          <Tabs defaultValue="subscriptions" className="w-full">
+      <Tabs defaultValue="subscriptions" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="subscriptions">
                 {tVip('subscriptionPlanManagement' as any)}
@@ -610,14 +595,15 @@ export function SubscriptionManagementDialog({
                 </div>
               )}
             </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
+      </Tabs>
 
       {/* 订单详情弹窗 */}
       {currentOrderDetail && (
         <Dialog open={orderDetailVisible} onOpenChange={setOrderDetailVisible}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent
+            className="max-w-2xl"
+            aria-describedby={undefined}
+          >
             <DialogHeader>
               <DialogTitle>{tProfile('orderDetails')}</DialogTitle>
             </DialogHeader>
@@ -671,6 +657,34 @@ export function SubscriptionManagementDialog({
         </Dialog>
       )}
     </>
+  )
+}
+
+interface SubscriptionManagementDialogProps {
+  open: boolean
+  onClose: () => void
+}
+
+// 保留原来的 Dialog 包装，用于 pricing 页面
+export function SubscriptionManagementDialog({
+  open,
+  onClose,
+}: SubscriptionManagementDialogProps) {
+  const { t: tVip } = useTransClient('vip')
+
+  return (
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogContent
+        className="max-w-4xl max-h-[90vh] overflow-y-auto"
+        aria-describedby={undefined}
+      >
+        <DialogHeader>
+          <DialogTitle>{tVip('subscriptionManagement' as any)}</DialogTitle>
+        </DialogHeader>
+
+        <SubscriptionManagementContent />
+      </DialogContent>
+    </Dialog>
   )
 }
 

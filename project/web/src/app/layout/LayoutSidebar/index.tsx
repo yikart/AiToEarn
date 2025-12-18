@@ -20,7 +20,7 @@ import {
   IconBar,
   UserSection,
 } from './components'
-import { useLayoutSidebarStore } from './store'
+import { useSettingsModalStore } from '@/components/SettingsModal/store'
 
 /**
  * 侧边栏主组件
@@ -39,7 +39,7 @@ const LayoutSidebar = () => {
     settingsDefaultTab,
     openSettings,
     closeSettings,
-  } = useLayoutSidebarStore()
+  } = useSettingsModalStore()
 
   // 获取当前路由
   let currRouter = '/'

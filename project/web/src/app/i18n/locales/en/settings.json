@@ -4,6 +4,7 @@
     "profile": "Profile",
     "agent": "Agent",
     "subscription": "Subscription",
+    "membership": "Membership",
     "general": "General"
   },
   "profile": {

@@ -16,7 +16,7 @@ import { useUserStore } from '@/store/user'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/lib/toast'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
-import { SubscriptionManagementDialog } from '../SubscriptionManagementDialog'
+import { useSettingsModalStore } from '@/components/SettingsModal/store'
 
 /** 企业版联系邮箱 */
 const ENTERPRISE_EMAIL = 'agent@aiearn.ai'
@@ -53,7 +53,7 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
   const userStore = useUserStore()
   const router = useRouter()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
-  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false)
+  const openSettings = useSettingsModalStore(state => state.openSettings)
 
   // 状态判断辅助函数
   const getVipStatusInfo = (status: string) => {
@@ -222,25 +222,6 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
             <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
               {t('pricing.pageTitle')}
             </h1>
-            {userStore.userInfo && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => setSubscriptionDialogOpen(true)}
-                      className="h-10 w-10"
-                    >
-                      <Settings className="h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{t('subscriptionManagement')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
           </div>
         </header>
 
@@ -260,21 +241,13 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
               isVip={!!isVip}
               isLoading={loadingPlan === plan.id}
               onSelect={() => handleSelectPlan(plan.id)}
-              onOpenSubscriptionManagement={() => setSubscriptionDialogOpen(true)}
+              onOpenSubscriptionManagement={() => openSettings('membership')}
               t={t}
             />
           ))}
         </div>
       </div>
     </div>
-
-    {/* 订阅管理对话框 */}
-    {userStore.userInfo && (
-      <SubscriptionManagementDialog
-        open={subscriptionDialogOpen}
-        onClose={() => setSubscriptionDialogOpen(false)}
-      />
-    )}
     </>
   )
 })
