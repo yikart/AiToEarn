@@ -63,7 +63,26 @@ export function createStoreMethods(ctx: IMethodsContext) {
     // 显示结果消息
     if (resultMsg.message) {
       messageUtils.addMarkdownMessage(resultMsg.message)
-      messageUtils.updateMessageContent(resultMsg.message)
+      
+      // 确保有 assistant 消息存在并更新内容
+      const currentState = get()
+      const currentAssistantId = refs.currentAssistantMessageId.value
+      const hasAssistantMessage = currentState.messages.some(
+        (m: any) => m.role === 'assistant' && m.id === currentAssistantId
+      )
+      
+      if (hasAssistantMessage && currentAssistantId) {
+        // 如果 assistant 消息存在，更新其内容
+        messageUtils.updateMessageContent(resultMsg.message)
+      } else {
+        // 如果没有 assistant 消息，创建一个新的
+        const assistantMessage = messageUtils.createAssistantMessage()
+        assistantMessage.content = resultMsg.message
+        assistantMessage.status = 'done'
+        messageUtils.addMessage(assistantMessage)
+        // 更新 refs 以便后续更新
+        refs.currentAssistantMessageId.value = assistantMessage.id
+      }
     }
 
     set({
