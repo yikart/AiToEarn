@@ -202,7 +202,7 @@ export function SubscriptionTab() {
                   </div>
                 )}
           </div>
-          <Button>{t('subscription.upgrade')}</Button>
+          <Button onClick={() => window.open('/pricing', '_blank')}>{t('subscription.upgrade')}</Button>
         </div>
       </div>
 

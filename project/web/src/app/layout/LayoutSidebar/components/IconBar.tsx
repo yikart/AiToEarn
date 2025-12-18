@@ -4,6 +4,7 @@
 
 'use client'
 
+import { useState } from 'react'
 import { Bell, Mail, Smartphone } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Badge } from '@/components/ui/badge'
@@ -14,10 +15,12 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
+import DownloadAppModal from '@/components/common/DownloadAppModal'
 import type { IconBarProps } from '../types'
 
 export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification }: IconBarProps) {
   const { t } = useTransClient('common')
+  const [downloadModalVisible, setDownloadModalVisible] = useState(false)
 
   return (
     <div
@@ -52,9 +55,7 @@ export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification
           <TooltipTrigger asChild>
             <button
               className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
-              onClick={() => {
-                // TODO: 打开下载APP弹窗
-              }}
+              onClick={() => setDownloadModalVisible(true)}
             >
               <Smartphone size={18} />
             </button>
@@ -101,6 +102,12 @@ export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification
           </Tooltip>
         </TooltipProvider>
       )}
+
+      {/* 下载APP弹窗 */}
+      <DownloadAppModal
+        visible={downloadModalVisible}
+        onClose={() => setDownloadModalVisible(false)}
+      />
     </div>
   )
 }

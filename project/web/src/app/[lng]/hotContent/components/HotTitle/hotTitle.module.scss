@@ -32,7 +32,11 @@
           height: 100% !important;
           min-height: 0;
           margin: 0 !important;
-          @include table-flex-container-with-selectors;
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+          height: 100%;
+          max-height: none !important;
         }
       }
     }
@@ -71,7 +75,11 @@
         .ant-table-cell {
           background: #fff !important;
           .hotTitleItem-title {
-            @include omitText(1);
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: $line;
+            overflow: hidden;
+            text-overflow: ellipsis;
             .ant-typography {
               margin: 0 !important;
               .ant-typography-copy {

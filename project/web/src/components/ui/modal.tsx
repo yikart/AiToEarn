@@ -135,12 +135,25 @@ export const Modal: React.FC<ModalProps> = ({
         }}
         onInteractOutside={handleInteractOutside}
         onEscapeKeyDown={!closable ? (e) => e.preventDefault() : undefined}
+        aria-describedby={title ? undefined : undefined}
       >
-        {title && (
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-          </DialogHeader>
-        )}
+        {title
+          ? (
+              <DialogHeader>
+                <DialogTitle>{title}</DialogTitle>
+                {/* 隐藏的描述，用于满足无障碍要求 */}
+                <DialogDescription className="sr-only">
+                  {typeof title === 'string' ? title : 'Modal dialog'}
+                </DialogDescription>
+              </DialogHeader>
+            )
+          : (
+              <>
+                {/* 无标题时也需要隐藏的标题和描述 */}
+                <DialogTitle className="sr-only">Dialog</DialogTitle>
+                <DialogDescription className="sr-only">Dialog content</DialogDescription>
+              </>
+            )}
 
         {shouldRenderContent && (
           <div className={cn('flex-1 overflow-auto py-2', bodyClassName)}>

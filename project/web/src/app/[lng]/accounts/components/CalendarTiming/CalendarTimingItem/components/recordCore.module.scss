@@ -90,7 +90,11 @@
           color: var(--error-color);
         }
         &-desc {
-          @include omitText(2);
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: $line;
+          overflow: hidden;
+          text-overflow: ellipsis;
           margin-top: 10px;
           padding-right: 10px;
         }

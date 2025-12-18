@@ -129,7 +129,11 @@
       min-width: 0;
       display: flex;
       min-height: 0;
-      @include table-flex-container-with-selectors;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      height: 100%;
+      max-height: none !important;
     }
   }
 }
