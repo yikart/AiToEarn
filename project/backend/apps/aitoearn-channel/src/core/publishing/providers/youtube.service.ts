@@ -1,14 +1,34 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { youtube_v3 } from 'googleapis'
+import { z } from 'zod'
 import { chunkedDownloadFile, getFileSizeFromUrl } from '../../../common'
 import {
   PublishStatus,
   PublishTask,
 } from '../../../libs/database/schema/publishTask.schema'
 import { YoutubeService } from '../../platforms/youtube/youtube.service'
+import { CreatePublishDto } from '../dto/publish.dto'
 import { PublishingException } from '../publishing.exception'
 import { PublishingTaskResult } from '../publishing.interface'
 import { PublishService } from './base.service'
+
+// YouTube 发布参数验证 Schema
+const youtubePublishSchema = z.object({
+  title: z.string()
+    .min(1, 'Title is required')
+    .max(100, 'Title must be 100 characters or less'),
+  desc: z.string()
+    .min(1, 'Description is required')
+    .max(5000, 'Description must be 5000 characters or less'),
+  videoUrl: z.string()
+    .min(1, 'Video URL is required')
+    .url('Video URL must be a valid URL'),
+  option: z.object({
+    youtube: z.object({
+      categoryId: z.string().min(1, 'Category is required'),
+    }).passthrough(),
+  }).passthrough(),
+}).passthrough()
 
 @Injectable()
 export class YoutubePubService extends PublishService {
@@ -34,7 +54,7 @@ export class YoutubePubService extends PublishService {
         publishTask.topics,
         publishTask?.option?.youtube?.license || 'youtube',
         publishTask?.option?.youtube?.categoryId || '22',
-        publishTask?.option?.youtube?.privacyStatus || 'private',
+        publishTask?.option?.youtube?.privacyStatus || 'public',
         publishTask?.option?.youtube?.notifySubscribers || false,
         publishTask?.option?.youtube?.embeddable || false,
         publishTask?.option?.youtube?.selfDeclaredMadeForKids || false,
@@ -102,6 +122,28 @@ export class YoutubePubService extends PublishService {
     await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
     return {
       status: PublishStatus.PUBLISHED,
+    }
+  }
+
+  override async validatePublishParams(publishTask: CreatePublishDto): Promise<{
+    success: boolean
+    message?: string
+  }> {
+    const result = youtubePublishSchema.safeParse(publishTask)
+
+    if (result.success) {
+      return {
+        success: true,
+        message: 'Publish params are valid',
+      }
+    }
+
+    // 返回第一个验证错误
+    const errors = result.error.issues
+    const { message, path } = errors[0]
+    return {
+      success: false,
+      message: message ? `${message} ${path.join('.')}` : 'Validation failed',
     }
   }
 }

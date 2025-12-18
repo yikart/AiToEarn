@@ -6,5 +6,4 @@ export * from './ProfileTab'
 export * from './AgentTab'
 export * from './GeneralTab'
 export * from './SubscriptionTab'
-export * from './MembershipTab'
 

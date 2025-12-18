@@ -1,4 +1,4 @@
-import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
+import { Inject, Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountType, PublishRecord, PublishStatus } from '@yikart/aitoearn-server-client'
@@ -14,6 +14,7 @@ import { YoutubeService } from '../platforms/youtube/youtube.service'
 import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS } from './constant'
 import { CreatePublishDto, PublishRecordListFilterDto, UpdatePublishTaskDto } from './dto/publish.dto'
 import { TiktokWebhookDto } from './dto/tiktok-webhook.dto'
+import { PublishService } from './providers/base.service'
 import { TiktokPubService } from './providers/tiktok.service'
 import { generatePostMessage } from './util'
 
@@ -30,6 +31,8 @@ export class PublishingService implements OnModuleDestroy {
     private readonly publishRecordService: PublishRecordService,
     private readonly youtubeService: YoutubeService,
     private readonly facebookService: FacebookService,
+    @Inject('PUBLISHING_PROVIDERS')
+    private readonly publishingProviders: Record<AccountType, PublishService>,
   ) {}
 
   private determineMetaPostCategory(data: CreatePublishDto) {
@@ -65,6 +68,11 @@ export class PublishingService implements OnModuleDestroy {
   }
 
   async createPublishingTask(taskInfo: CreatePublishDto) {
+    const validateResult = await this.publishingProviders[taskInfo.accountType].validatePublishParams(taskInfo)
+    if (!validateResult.success) {
+      throw new AppException(ResponseCode.PublishTaskInvalid, validateResult.message)
+    }
+
     const isTaskExists = await this.publishTaskModel.findOne({
       flowId: taskInfo.flowId,
     })
@@ -342,6 +350,7 @@ export class PublishingService implements OnModuleDestroy {
       publishTime?: Date
       queued?: boolean
       inQueue?: boolean
+      // errorData?: PublishErrorData
     },
   ): Promise<boolean> {
     const res = await this.publishTaskModel.updateOne({ _id: id }, newData)

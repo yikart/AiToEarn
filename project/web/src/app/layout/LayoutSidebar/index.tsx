@@ -20,7 +20,6 @@ import {
   IconBar,
   UserSection,
 } from './components'
-import { useSettingsModalStore } from '@/components/SettingsModal/store'
 
 /**
  * 侧边栏主组件
@@ -34,12 +33,8 @@ const LayoutSidebar = () => {
   // UI 状态
   const [collapsed, setCollapsed] = useState(false)
   const [notificationVisible, setNotificationVisible] = useState(false)
-  const {
-    settingsVisible,
-    settingsDefaultTab,
-    openSettings,
-    closeSettings,
-  } = useSettingsModalStore()
+  const [settingsVisible, setSettingsVisible] = useState(false)
+  const [settingsDefaultTab, setSettingsDefaultTab] = useState<SettingsTab | undefined>(undefined)
 
   // 获取当前路由
   let currRouter = '/'
@@ -64,12 +59,14 @@ const LayoutSidebar = () => {
 
   // 打开设置弹框
   const handleOpenSettings = (defaultTab?: SettingsTab) => {
-    openSettings(defaultTab)
+    setSettingsDefaultTab(defaultTab)
+    setSettingsVisible(true)
   }
 
   // 关闭设置弹框
   const handleCloseSettings = () => {
-    closeSettings()
+    setSettingsVisible(false)
+    setSettingsDefaultTab(undefined)
   }
 
   // 转换路由数据为 NavSection 所需格式
