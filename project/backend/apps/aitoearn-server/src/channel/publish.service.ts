@@ -105,6 +105,9 @@ export class PublishService {
         if (record.workLink) {
           post.workLink = record.workLink
         }
+        post.videoUrl = record.videoUrl
+        post.coverUrl = record.coverUrl
+        post.imgUrlList = record.imgUrlList || []
         // Keep the original engagement (from postsHistory)
       }
       else {
@@ -174,26 +177,26 @@ export class PublishService {
     return Array.from(result.values()).sort((a, b) => new Date(b.publishTime).getTime() - new Date(a.publishTime).getTime())
   }
 
-  async getPostHistory(data: PubRecordListFilterDto, userId: string) {
+  async getPostHistory(filter: PubRecordListFilterDto, userId: string) {
     const publishRecords = await this.publishRecordService.getPublishRecordList({
-      ...data,
+      ...filter,
       userId,
     })
-    const publishTasks = await this.publishTaskNatsApi.getPublishTaskList(userId, data)
+    const publishTasks = await this.publishTaskNatsApi.getPublishTaskList(userId, filter)
     const range = { start: '', end: '' }
-    if (data.time) {
-      range.start = data.time[0].toISOString()
-      range.end = data.time[1].toISOString()
+    if (filter.time) {
+      range.start = filter.time[0].toISOString()
+      range.end = filter.time[1].toISOString()
     }
     const postsHistory = await this.postService.getUserAllPostsByPlatform({
-      ...data,
+      ...filter,
       range,
       userId,
-      platform: data.accountType,
+      platform: filter.accountType,
     })
     const posts = this.mergePostHistory(publishRecords, publishTasks, postsHistory.posts)
-    if (data.publishingChannel) {
-      return posts.filter(post => post.publishingChannel === data.publishingChannel)
+    if (filter.publishingChannel) {
+      return posts.filter(post => post.publishingChannel === filter.publishingChannel)
     }
     return posts
   }
