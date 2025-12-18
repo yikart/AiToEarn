@@ -236,17 +236,7 @@ export default function DownloadAppModal({
       }
       open={visible}
       onCancel={onClose}
-      footer={
-        <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose}>
-            {t('downloadApp.close')}
-          </Button>
-          <Button onClick={handleDownload}>
-            <Download className="mr-2 h-4 w-4" />
-            {t('downloadApp.downloadNow' as any)}
-          </Button>
-        </div>
-      }
+      footer={false}
       width={520}
       destroyOnClose
       zIndex={zIndex}
