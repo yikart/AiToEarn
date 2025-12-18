@@ -5,7 +5,7 @@
 
 'use client'
 
-import { Check, Star, Crown } from 'lucide-react'
+import { Check, Star, Crown, Settings } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { memo, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -16,6 +16,7 @@ import { useUserStore } from '@/store/user'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/lib/toast'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
+import { SubscriptionManagementDialog } from '../SubscriptionManagementDialog'
 
 /** 企业版联系邮箱 */
 const ENTERPRISE_EMAIL = 'agent@aiearn.ai'
@@ -52,6 +53,7 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
   const userStore = useUserStore()
   const router = useRouter()
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null)
+  const [subscriptionDialogOpen, setSubscriptionDialogOpen] = useState(false)
 
   // 状态判断辅助函数
   const getVipStatusInfo = (status: string) => {
@@ -216,9 +218,30 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
         <div className="max-w-7xl w-full">
         {/* 页面标题 */}
         <header className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-            {t('pricing.pageTitle')}
-          </h1>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+              {t('pricing.pageTitle')}
+            </h1>
+            {userStore.userInfo && (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => setSubscriptionDialogOpen(true)}
+                      className="h-10 w-10"
+                    >
+                      <Settings className="h-5 w-5" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{t('subscriptionManagement')}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
         </header>
 
         {/* 定价卡片网格 */}
@@ -237,12 +260,21 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
               isVip={!!isVip}
               isLoading={loadingPlan === plan.id}
               onSelect={() => handleSelectPlan(plan.id)}
+              onOpenSubscriptionManagement={() => setSubscriptionDialogOpen(true)}
               t={t}
             />
           ))}
         </div>
       </div>
     </div>
+
+    {/* 订阅管理对话框 */}
+    {userStore.userInfo && (
+      <SubscriptionManagementDialog
+        open={subscriptionDialogOpen}
+        onClose={() => setSubscriptionDialogOpen(false)}
+      />
+    )}
     </>
   )
 })
@@ -261,6 +293,7 @@ interface PricingCardProps {
   isVip?: boolean
   isLoading?: boolean
   onSelect: () => void
+  onOpenSubscriptionManagement?: () => void
   t: (key: string, options?: any) => string
 }
 
@@ -273,13 +306,14 @@ const PricingCard = memo(({
   isVip,
   isLoading,
   onSelect,
+  onOpenSubscriptionManagement,
   t,
 }: PricingCardProps) => {
   // 获取方案的翻译
   const planName = t(`pricing.plans.${planId}.name`)
   const planPrice = t(`pricing.plans.${planId}.price`)
-  // 如果是当前计划，按钮文本显示为"当前计划"
-  const buttonText = isCurrent ? t('currentPlan') : t(`pricing.plans.${planId}.button`)
+  // 如果是当前计划，按钮文本显示为"订阅管理"
+  const buttonText = isCurrent ? t('subscriptionManagement') : t(`pricing.plans.${planId}.button`)
   
   // 获取功能列表
   const featuresKey = `pricing.plans.${planId}.features`
@@ -297,34 +331,49 @@ const PricingCard = memo(({
     <div
       className={cn(
         'relative bg-card rounded-2xl p-6 flex flex-col transition-all duration-300',
-        'border border-border hover:shadow-xl hover:-translate-y-1',
-        isHighlight && 'ring-2 ring-purple-500 shadow-purple-100 dark:shadow-purple-900/20'
+        'hover:shadow-xl hover:-translate-y-1',
+        // 已开通会员：使用更明显的边框，但保持简约风格
+        isCurrent && isVip
+          ? 'border-2 border-(--border-color) bg-(--bg-gray)'
+          : 'border border-border',
+        // 推荐方案：使用柔和的边框
+        isHighlight && !isCurrent && 'ring-1 ring-(--primary-color)/20'
       )}
     >
       {/* 最受欢迎标签 / 尊敬的创作者 */}
       {isHighlight && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-          <span className="relative bg-(--primary-color) text-white text-xs font-medium px-4 py-1.5 rounded-full whitespace-nowrap inline-flex items-center gap-1.5 shadow-lg">
-            {/* 左侧星星 */}
-            <Star 
-              className="w-3 h-3 fill-yellow-300 text-yellow-300" 
-              style={{ 
-                animation: 'twinkle 1.5s ease-in-out infinite',
-                animationDelay: '0s'
-              }} 
-            />
+          <span className={cn(
+            "relative text-xs font-medium px-4 py-1.5 rounded-full whitespace-nowrap inline-flex items-center gap-1.5",
+            // 已开通会员：使用简约黑色风格，与按钮保持一致
+            isCurrent && isVip
+              ? "bg-(--grayColor13) text-white"
+              : "bg-(--primary-color) text-white shadow-lg"
+          )}>
+            {/* 左侧星星 - 仅未开通会员时显示 */}
+            {!isCurrent && (
+              <Star 
+                className="w-3 h-3 fill-yellow-300 text-yellow-300" 
+                style={{ 
+                  animation: 'twinkle 1.5s ease-in-out infinite',
+                  animationDelay: '0s'
+                }} 
+              />
+            )}
             {/* 文字 */}
             <span>
               {isCurrent && isVip ? t('pricing.respectedCreator') : t('pricing.mostPopular')}
             </span>
-            {/* 右侧星星 */}
-            <Star 
-              className="w-3 h-3 fill-yellow-300 text-yellow-300" 
-              style={{ 
-                animation: 'twinkle 1.5s ease-in-out infinite',
-                animationDelay: '0.75s'
-              }} 
-            />
+            {/* 右侧星星 - 仅未开通会员时显示 */}
+            {!isCurrent && (
+              <Star 
+                className="w-3 h-3 fill-yellow-300 text-yellow-300" 
+                style={{ 
+                  animation: 'twinkle 1.5s ease-in-out infinite',
+                  animationDelay: '0.75s'
+                }} 
+              />
+            )}
           </span>
         </div>
       )}
@@ -372,20 +421,14 @@ const PricingCard = memo(({
         </Button>
       ) : isCurrent ? (
         <Button
-          disabled
+          onClick={onOpenSubscriptionManagement}
           className={cn(
-            "w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200 cursor-not-allowed",
-            "bg-gradient-to-r from-(--primary-color) to-(--primary-hover) text-white",
-            "border-2 border-(--primary-color) shadow-lg shadow-(--primary-color)/30",
-            "relative overflow-hidden"
+            "w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200",
+            "bg-(--grayColor13) hover:bg-(--grayColor12) text-white",
+            "border border-(--border-color)"
           )}
         >
-          <span className="relative z-10 flex items-center justify-center gap-2">
-            <Crown className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-            {buttonText}
-          </span>
-          {/* 背景光效动画 */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+          {buttonText}
         </Button>
       ) : isCustom ? (
         <TooltipProvider>
