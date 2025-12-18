@@ -5,8 +5,10 @@
 
 'use client'
 
+import type React from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { MessageSquare, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Loader2, MessageSquare, MoreHorizontal, Trash2 } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
 import {
@@ -26,7 +28,7 @@ export interface ITaskCardProps {
   /** 更新时间 */
   updatedAt?: string | number
   /** 删除回调 */
-  onDelete?: (id: string) => void
+  onDelete?: (id: string) => void | Promise<void>
   /** 自定义类名 */
   className?: string
 }
@@ -44,16 +46,25 @@ export function TaskCard({
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
+  const [isDeleting, setIsDeleting] = useState(false)
 
   /** 跳转到对话详情页 */
   const handleClick = () => {
+    if (isDeleting) return
     router.push(`/${lng}/chat/${id}`)
   }
 
   /** 处理删除 */
-  const handleDelete = (e: React.MouseEvent) => {
+  const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    onDelete?.(id)
+    if (!onDelete || isDeleting) return
+
+    try {
+      setIsDeleting(true)
+      await onDelete(id)
+    } finally {
+      setIsDeleting(false)
+    }
   }
 
   return (
@@ -62,6 +73,7 @@ export function TaskCard({
       className={cn(
         'group relative flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
         'hover:border-border hover:shadow-md',
+        isDeleting && 'opacity-60 cursor-wait',
         className,
       )}
     >
@@ -85,13 +97,19 @@ export function TaskCard({
         <DropdownMenuTrigger asChild>
           <button
             onClick={(e) => e.stopPropagation()}
+            disabled={isDeleting}
             className={cn(
               'absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center',
               'opacity-0 group-hover:opacity-100 transition-opacity',
               'hover:bg-muted text-muted-foreground hover:text-foreground',
+              isDeleting && 'opacity-100 cursor-wait',
             )}
           >
-            <MoreHorizontal className="w-4 h-4" />
+            {isDeleting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <MoreHorizontal className="w-4 h-4" />
+            )}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">

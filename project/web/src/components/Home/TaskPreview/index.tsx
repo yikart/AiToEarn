@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowRight, History } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
@@ -32,34 +32,38 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
   const [tasks, setTasks] = useState<TaskListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  /** 加载任务列表 */
-  useEffect(() => {
-    const loadTasks = async () => {
-      setIsLoading(true)
-      try {
-        const result = await agentApi.getTaskList(1, limit)
-        if (result.code === 0 && result.data) {
-          setTasks(result.data.list || [])
-        }
-      } catch (error) {
-        console.error('Load task list failed:', error)
-      } finally {
-        setIsLoading(false)
+  /** 加载任务列表（始终保证尽量填满 limit 条） */
+  const loadTasks = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const result = await agentApi.getTaskList(1, limit)
+      if (result && result.code === 0 && result.data) {
+        setTasks(result.data.list || [])
       }
+    } catch (error) {
+      console.error('Load task list failed:', error)
+    } finally {
+      setIsLoading(false)
     }
-
-    loadTasks()
   }, [limit])
+
+  useEffect(() => {
+    void loadTasks()
+  }, [loadTasks])
 
   /** 处理删除任务 */
   const handleDelete = async (id: string) => {
     try {
       const result = await agentApi.deleteTask(id)
-      if (result.code === 0) {
+      if (result && result.code === 0) {
+        // 先本地移除，提升交互速度
         setTasks((prev) => prev.filter((task) => task.id !== id))
+        // 再重新拉取列表，确保数量重新补足到 limit（如果后端还有数据）
+        void loadTasks()
         toast.success(t('task.deleteSuccess' as any))
       } else {
-        toast.error(result.msg || t('task.deleteFailed' as any))
+        const msg = (result as any)?.msg as string | undefined
+        toast.error(msg || t('task.deleteFailed' as any))
       }
     } catch (error) {
       toast.error(t('task.deleteFailed' as any))
@@ -89,7 +93,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
         </div>
         <button
           onClick={handleViewAll}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           {t('home.viewAll' as any)}
           <ArrowRight className="w-4 h-4" />
