@@ -101,6 +101,10 @@ export function ChatInput({
 
   return (
     <div
+      style={{
+        position: 'relative',
+        zIndex: 2,
+      }}
       className={cn(
         'w-full rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
         mode === 'large' ? 'p-4' : 'p-3',
