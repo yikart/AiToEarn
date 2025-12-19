@@ -64,7 +64,7 @@ export function PluginNotInstalled() {
           </a>
         </Button>
 
-        <Button
+        {/* <Button
           variant="ghost"
           className="w-full gap-2"
           asChild
