@@ -84,23 +84,9 @@ export default function DownloadAppModal({
   /** 渲染 App 下载内容 */
   const renderAppContent = () => (
     <div className="flex flex-col items-center px-4 py-6">
-      {/* App Logo */}
-      <div className="mb-6">
-        <Image
-          src={logo}
-          alt="Aitoearn"
-          width={64}
-          height={64}
-          className="rounded-2xl shadow-lg"
-        />
-      </div>
-
-      {/* 标题 */}
-      <h3 className="mb-4 text-xl font-semibold text-foreground">Aitoearn</h3>
-
       {/* 描述 */}
       <p
-        className="mb-8 text-center text-sm leading-relaxed text-muted-foreground"
+        className="mb-6 text-center text-sm leading-relaxed text-muted-foreground"
         dangerouslySetInnerHTML={{
           __html: t('downloadApp.operationDescription' as any, { platform }),
         }}
@@ -136,7 +122,7 @@ export default function DownloadAppModal({
           {t('downloadApp.downloadLink')}
         </p>
         <div className="flex items-center justify-between gap-3">
-          <span className="flex-1 break-all text-left text-sm text-foreground">
+          <span className="flex-1 break-all text-left text-xs text-foreground">
             {actualDownloadUrl}
           </span>
           <Button

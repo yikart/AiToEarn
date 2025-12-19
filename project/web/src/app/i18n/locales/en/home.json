@@ -30,7 +30,7 @@
   },
   "agentGenerator": {
     "title": "How can I help you?",
-    "subtitle": "Describe what you want to create, AI will help you generate"
+    "subtitle": "What content do you want to create today and on which platform?"
   },
   "aiGeneration": {
     "inputPlaceholder": "Enter your content idea, AI will generate a complete work for you...",
