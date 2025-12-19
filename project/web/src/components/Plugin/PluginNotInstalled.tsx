@@ -71,13 +71,13 @@ export function PluginNotInstalled() {
         >
           <a
             href="/websit/plugin-guide"
-            target="_blank"
+            target="_blank"-
             rel="noopener noreferrer"
           >
             <BookOpen className="h-4 w-4" />
             {t('header.viewGuide')}
           </a>
-        </Button>
+        </Button> */}
       </div>
     </div>
   )
