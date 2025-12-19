@@ -102,9 +102,9 @@ export function HomeChat({
     setActionContext({
       router,
       lng: lng as string,
-      t: t as any,
+      t: tHome as any,
     })
-  }, [router, lng, t, setActionContext])
+  }, [router, lng, tHome, setActionContext])
 
   /** 处理发送消息 */
   const handleSend = useCallback(async () => {

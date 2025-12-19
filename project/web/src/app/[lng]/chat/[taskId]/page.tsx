@@ -66,10 +66,11 @@ const TEST_RESULT_DATA = {
 }
 
 // 测试模式：设置为 true 时，点击发送不发送请求，直接返回测试数据 00.00
-const TEST_MODE = false
+const TEST_MODE = true
 
 export default function ChatDetailPage() {
   const { t } = useTransClient('chat')
+  const { t: tHome } = useTransClient('home')
   const router = useRouter()
   const params = useParams()
   const taskId = params.taskId as string
@@ -125,9 +126,9 @@ export default function ChatDetailPage() {
     setActionContext({
       router,
       lng,
-      t: t as any,
+      t: tHome as any,
     })
-  }, [router, lng, t, setActionContext])
+  }, [router, lng, tHome, setActionContext])
 
   /**
    * 智能滚动：用户在底部附近时自动滚动
