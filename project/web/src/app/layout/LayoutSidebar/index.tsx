@@ -112,12 +112,14 @@ const LayoutSidebar = () => {
           isLoggedIn={!!token}
           unreadCount={unreadCount}
           onOpenNotification={() => setNotificationVisible(true)}
+          onOpenSettings={handleOpenSettings}
         />
 
         {/* 用户头像 / 登录按钮 */}
         <UserSection
           collapsed={collapsed}
           onLogin={handleLogin}
+          onOpenSettings={handleOpenSettings}
         />
       </aside>
 
