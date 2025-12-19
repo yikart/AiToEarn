@@ -1,5 +1,5 @@
-import type { AccountGroupItem } from '@/api/types/account.type'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { AccountGroup } from '@/store/account'
 import { ChevronDown, Layers } from 'lucide-react'
 import { memo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -21,18 +21,18 @@ import SpaceGroupItem from './SpaceGroupItem'
 interface AccountSelectorProps {
   accountActive?: SocialAccount
   accountList: SocialAccount[]
-  accountGroupList: AccountGroupItem[]
+  accountGroupList: AccountGroup[]
   filteredAccounts: SocialAccount[]
   collapsedSpaces: Set<string>
   showSpaceGroups: boolean
-  sortedGroups: AccountGroupItem[]
+  sortedGroups: AccountGroup[]
   sortLoading?: string | null
   deleteLoading?: string | null
   onAccountSelect: (account: SocialAccount | undefined) => void
   onAccountDelete: (account: SocialAccount) => void
   onToggleSpaceCollapse: (spaceId: string) => void
   onGroupSort: (groupId: string, direction: 'up' | 'down') => void
-  onGroupDelete: (group: AccountGroupItem) => void
+  onGroupDelete: (group: AccountGroup) => void
   searchText: string
   onSearchChange: (text: string) => void
 }

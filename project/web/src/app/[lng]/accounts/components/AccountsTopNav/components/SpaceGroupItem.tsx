@@ -1,5 +1,5 @@
-import type { AccountGroupItem } from '@/api/types/account.type'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { AccountGroup } from '@/store/account'
 import { DeleteOutlined, DownOutlined, EllipsisOutlined, LoadingOutlined, RightOutlined, UpOutlined } from '@ant-design/icons'
 import { memo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils'
 import AccountItem from './AccountItem'
 
 interface SpaceGroupItemProps {
-  group: AccountGroupItem
+  group: AccountGroup
   accounts: SocialAccount[]
   isCollapsed: boolean
   isDefaultGroup: boolean
@@ -28,7 +28,7 @@ interface SpaceGroupItemProps {
   onSelectAccount: (account: SocialAccount) => void
   onDeleteAccount: (account: SocialAccount) => void
   onGroupSort: (groupId: string, direction: 'up' | 'down') => void
-  onGroupDelete: (group: AccountGroupItem) => void
+  onGroupDelete: (group: AccountGroup) => void
 }
 
 const SpaceGroupItem = memo(({

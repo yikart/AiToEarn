@@ -8,8 +8,8 @@
 
 'use client'
 
-import type { AccountGroupItem } from '@/api/types/account.type'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { AccountGroup } from '@/store/account'
 import { PlusOutlined } from '@ant-design/icons'
 import { Modal } from 'antd'
 import { memo, useCallback, useMemo, useState } from 'react'
@@ -93,7 +93,7 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
     }, [accountActive, getAccountList, setAccountActive, t])
 
     // 处理空间删除
-    const handleGroupDelete = useCallback(async (group: AccountGroupItem) => {
+    const handleGroupDelete = useCallback(async (group: AccountGroup) => {
       setDeleteLoading(group.id)
       try {
         await deleteAccountGroupApi([group.id])
