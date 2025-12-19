@@ -34,6 +34,13 @@ export default async function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
       <body>
+        {/* Rewardful 脚本 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`,
+          }}
+        />
+        <script async src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" />
         <Providers lng={lng}>
           {/* 移动端顶部导航 - fixed 定位，独立于 flex 布局 */}
           <MobileNav />
