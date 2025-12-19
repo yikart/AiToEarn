@@ -235,7 +235,8 @@ const CalendarTiming = memo(
                     unmountOnExit
                   >
                     <div
-                      className="calendarTiming-calendar"
+                      className="calendarTiming-calendar overflow-hidden"
+                      id='calendarTiming-calendar'
                       ref={calendarTimingCalendarRef}
                     >
                       <DndProvider backend={HTML5Backend}>
