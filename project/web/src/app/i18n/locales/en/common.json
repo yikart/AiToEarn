@@ -7,10 +7,10 @@
   "support": "Support",
   "notifications": "Notifications",
   "settings": "Settings",
-  "vip": "VIP",
+  "vip": "Plus",
   "subscribe": "Upgrade",
-  "balance": "Balance",
-  "plugin": "Browser Ext",
+  "balance": "Credits",
+  "plugin": "Extension",
   "pluginStatus": {
     "notInstalled": "Install",
     "noPermission": "Not Authorized",
