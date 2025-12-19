@@ -31,7 +31,8 @@
     "zoomIn": "放大",
     "zoomOut": "缩小",
     "imageLoading": "图片加载中...",
-    "processing": "处理中..."
+    "processing": "处理中...",
+    "githubStars": "GitHub 星标"
   },
   "subscription": {
     "currentPlan": "当前套餐",
