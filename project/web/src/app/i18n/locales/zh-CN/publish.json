@@ -14,7 +14,7 @@
     "customizePerAccount": "自定义每个账户",
     "cancel": "取消",
     "cancelPublish": "取消发布",
-    "schedulePublish": "定时发布",
+    "schedulePublish": "发布",
     "publishNow": "立即发布",
     "copyLink": "复制链接",
     "delete": "删除",
@@ -337,5 +337,15 @@
   "pluginPublish": {
     "ready": "插件发布",
     "notReady": "插件未就绪"
+  },
+  "dateTimePicker": {
+    "sunday": "日",
+    "monday": "一",
+    "tuesday": "二",
+    "wednesday": "三",
+    "thursday": "四",
+    "friday": "五",
+    "saturday": "六",
+    "yearMonth": "{{year}}年 {{month}}月"
   }
 }

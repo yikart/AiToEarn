@@ -153,4 +153,6 @@ button {
   }
 }
 
-/* Accounts 页面动画 - 保留在 accounts.scss 中 */
+body > div {
+  pointer-events: auto;
+}

@@ -14,7 +14,7 @@
     "customizePerAccount": "Customize per account",
     "cancel": "Cancel",
     "cancelPublish": "Cancel Publish",
-    "schedulePublish": "Schedule Publish",
+    "schedulePublish": "Publish",
     "publishNow": "Now",
     "copyLink": "Copy link",
     "delete": "Delete",
@@ -336,5 +336,15 @@
   "pluginPublish": {
     "ready": "Plugin",
     "notReady": "Plugin Not Ready"
+  },
+  "dateTimePicker": {
+    "sunday": "Su",
+    "monday": "Mo",
+    "tuesday": "Tu",
+    "wednesday": "We",
+    "thursday": "Th",
+    "friday": "Fr",
+    "saturday": "Sa",
+    "yearMonth": "{{month}}/{{year}}"
   }
 }
