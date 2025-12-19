@@ -269,7 +269,7 @@ PUBLISH_STAGE_TEXT = {
 
 // 错误消息
 ERROR_MESSAGES = {
-  PLUGIN_NOT_INSTALLED: '请先安装 AIToEarn 浏览器插件',
+  PLUGIN_NOT_INSTALLED: '请先安装 Aitoearn 浏览器插件',
   PUBLISHING_IN_PROGRESS: '当前正在发布中，请稍后再试',
   LOGIN_FAILED: '登录失败',
   PUBLISH_FAILED: '发布失败',

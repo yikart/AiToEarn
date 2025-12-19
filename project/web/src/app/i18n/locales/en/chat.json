@@ -1,6 +1,6 @@
 {
   "input": {
-    "placeholder": "Describe what you want to create...",
+    "placeholder": "Help me create a cat dancing video and post it directly on YouTube",
     "send": "Send",
     "stop": "Stop",
     "uploading": "Uploading..."
@@ -27,7 +27,7 @@
   },
   "home": {
     "title": "How can I help you?",
-    "subtitle": "Describe what you want to create, AI will help you generate",
+    "subtitle": "What content do you want to create today and on which platform?",
     "recentTasks": "Recent Tasks",
     "viewAll": "View All",
     "noTasks": "No task records",

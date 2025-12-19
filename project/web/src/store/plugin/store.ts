@@ -84,7 +84,7 @@ export type PlatformAccountsMap = Record<PluginPlatformType, PlatAccountInfo | n
 
 /** 错误消息 */
 const ERROR_MESSAGES = {
-  PLUGIN_NOT_INSTALLED: '请先安装 AIToEarn 浏览器插件',
+  PLUGIN_NOT_INSTALLED: '请先安装 Aitoearn 浏览器插件',
   PLUGIN_NOT_READY: '插件未就绪，请先授权插件权限',
   PUBLISHING_IN_PROGRESS: '当前正在发布中，请稍后再试',
 } as const

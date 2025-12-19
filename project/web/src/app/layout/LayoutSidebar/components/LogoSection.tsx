@@ -30,7 +30,7 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
             href={`/${lng}`}
             className="flex items-center justify-center transition-opacity group-hover:opacity-0"
           >
-            <Image src={logo} alt="AIToEarn" width={32} height={32} />
+            <Image src={logo} alt="Aitoearn" width={32} height={32} />
           </Link>
           {/* 展开按钮 - 默认隐藏，hover 时显示 */}
           <button
@@ -46,8 +46,8 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
             href={`/${lng}`}
             className="flex items-center gap-2 text-foreground no-underline hover:opacity-85"
           >
-            <Image src={logo} alt="AIToEarn" width={32} height={32} />
-            <span className="text-base font-semibold tracking-tight">AIToEarn</span>
+            <Image src={logo} alt="Aitoearn" width={32} height={32} />
+            <span className="text-base font-semibold tracking-tight">Aitoearn</span>
           </Link>
           <button
             onClick={onToggle}
