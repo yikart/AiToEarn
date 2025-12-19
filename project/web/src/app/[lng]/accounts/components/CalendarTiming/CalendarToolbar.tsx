@@ -12,9 +12,13 @@ import {
   CalendarOutlined,
   UnorderedListOutlined,
 } from '@ant-design/icons'
+import dayjs from 'dayjs'
+import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/en'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
@@ -30,6 +34,14 @@ export interface ICalendarToolbarProps {
 const CalendarToolbar = memo<ICalendarToolbarProps>(
   ({ activeMode, onModeChange, currentDate, onPrev, onNext, onToday }) => {
     const { t } = useTransClient('account')
+    const lng = useGetClientLng()
+
+    // 根据语言设置 dayjs locale 并格式化日期
+    const formattedDate = useMemo(() => {
+      const locale = lng === 'zh-CN' ? 'zh-cn' : 'en'
+      dayjs.locale(locale)
+      return dayjs(currentDate).format('MMMM YYYY')
+    }, [currentDate, lng])
 
     return (
       <div className="h-14 flex items-center justify-between px-6 py-3 border-b bg-background shrink-0">
@@ -54,10 +66,7 @@ const CalendarToolbar = memo<ICalendarToolbarProps>(
                 <ChevronRight className="h-4 w-4" />
               </Button>
               <div className="text-base font-semibold text-foreground min-w-[120px] text-center">
-                {currentDate.toLocaleDateString('default', {
-                  year: 'numeric',
-                  month: 'long',
-                })}
+                {formattedDate}
               </div>
               <Button
                 variant="outline"
