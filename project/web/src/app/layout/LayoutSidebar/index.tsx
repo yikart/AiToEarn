@@ -51,8 +51,8 @@ const LayoutSidebar = () => {
     currRouter = `/${route.slice(0, 2).join('/')}`
   }
 
-  // auth 页面不显示侧边栏
-  const isAuthPage = route[0] === 'auth'
+  // auth 和 websit 页面不显示侧边栏
+  const isAuthPage = route[0] === 'auth' || route[0] === 'websit'
   if (isAuthPage) {
     return null
   }
