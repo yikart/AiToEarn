@@ -2,7 +2,7 @@ import type { CSSProperties, FC } from 'react'
 import type { XYCoord } from 'react-dnd'
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
 import { useDragLayer } from 'react-dnd'
-import { BoxDragPreview } from '@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/BoxDragPreview'
+import { BoxDragPreview } from './BoxDragPreview'
 
 function snapToGrid(x: number, y: number): [number, number] {
   const snappedX = Math.round(x / 32) * 32

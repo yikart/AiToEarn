@@ -1,7 +1,7 @@
 import type { CSSProperties, FC } from 'react'
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
 import { memo, useEffect, useState } from 'react'
-import RecordCore from '@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/RecordCore'
+import RecordCore from './RecordCore'
 
 const styles: CSSProperties = {
   display: 'inline-block',

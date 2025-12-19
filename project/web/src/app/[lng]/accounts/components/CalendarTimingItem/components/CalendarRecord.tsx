@@ -16,8 +16,9 @@ import {
   getDays,
   getUtcDays,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
-import RecordCore from '@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/RecordCore'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
+import styles from './calendarRecord.module.scss'
+import RecordCore from './RecordCore'
 
 export interface ICalendarRecordRef {}
 
@@ -116,6 +117,7 @@ const CalendarRecord = memo(
               drag(node)
             }
           }}
+          className={styles.calendarRecord}
           role="DraggableBox"
         >
           <RecordCore publishRecord={publishRecord} />

@@ -29,7 +29,6 @@ import {
   getFullCalendarLang,
   getTransitionClassNames,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
-import CalendarTimingItem from '@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem'
 import CalendarToolbar from '@/app/[lng]/accounts/components/CalendarTiming/CalendarToolbar'
 import ListMode from '@/app/[lng]/accounts/components/CalendarTiming/ListMode'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
@@ -38,6 +37,8 @@ import { PublishDatePickerType } from '@/components/PublishDialog/compoents/Publ
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
+import CalendarTimingItem from '../CalendarTimingItem'
+import './calendarTiming.scss'
 
 export interface ICalendarTimingRef {}
 export interface ICalendarTimingProps {}
@@ -224,7 +225,7 @@ const CalendarTiming = memo(
           />
 
           {/* 主内容区域 - 日历或列表视图 */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden relative">
             {activeMode === 'calendar'
               ? (
                   <CSSTransition

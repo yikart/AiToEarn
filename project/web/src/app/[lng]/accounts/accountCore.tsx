@@ -10,9 +10,6 @@ import 'driver.js/dist/driver.css'
 import AccountsTopNav from '@/app/[lng]/accounts/components/AccountsTopNav'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import CalendarTiming from '@/app/[lng]/accounts/components/CalendarTiming'
-// TODO: 需要重新实现这些模态框
-// import UserManageModal from '@/app/[lng]/accounts/components/AccountSidebar/UserManageModal'
-// import MCPManagerModal from '@/app/[lng]/accounts/components/AccountSidebar/MCPManagerModal'
 import { PlatType, AccountPlatInfoMap } from '@/app/config/platConfig'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useTransClient } from '@/app/i18n/client'
@@ -710,28 +707,11 @@ export default function AccountPageCore({
               setPublishDialogOpen(true)
             }
           }}
-          onUserManage={() => {
-            // TODO: 实现用户管理功能
-            console.log('User manage clicked')
-          }}
           onAddAccount={() => setAddAccountModalOpen(true)}
         />
 
         {/* 主内容区域: CalendarTiming (包含 Row 2 工具栏和日历/列表视图) */}
         <CalendarTiming />
-
-        {/* TODO: 需要重新实现这些模态框 */}
-        {/* 用户管理模态框 */}
-        {/* <UserManageModal
-          open={userManageModalOpen}
-          onCancel={() => setUserManageModalOpen(false)}
-        /> */}
-
-        {/* MCP 管理模态框 */}
-        {/* <MCPManagerModal
-          open={mcpManagerModalOpen}
-          onClose={(open: boolean) => setMcpManagerModalOpen(open)}
-        /> */}
 
         {/* 添加账号弹窗 */}
         <AddAccountModal

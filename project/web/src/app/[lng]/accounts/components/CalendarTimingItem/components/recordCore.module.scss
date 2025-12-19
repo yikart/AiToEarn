@@ -1,0 +1,170 @@
+.recordCore {
+  display: flex !important;
+  justify-content: space-between !important;
+  box-sizing: border-box;
+  //background: transparent !important;
+  position: fixed;
+  padding: 0 5px !important;
+
+  :global {
+    .recordCore-left {
+      display: flex;
+      align-items: center;
+      &-date {
+        font-weight: 600;
+      }
+      img {
+        height: 100%;
+        margin-right: 6px;
+      }
+    }
+    .recordCore-right {
+      display: flex;
+      align-items: center;
+      img {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+    }
+  }
+
+  &:hover {
+    :global {
+      background: #fff !important;
+    }
+  }
+}
+
+.recordDetails {
+  width: 450px;
+  box-sizing: border-box;
+  :global {
+    .recordDetails-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--grayColor2);
+      padding: 12px;
+      &-left {
+        font-weight: 600;
+        .anticon {
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .recordDetails-info {
+      display: flex;
+      gap: 15px;
+      padding: 10px;
+      border-bottom: 1px solid var(--grayColor2);
+      &-item {
+        flex: 1;
+        &-top {
+          display: flex;
+          gap: 5px;
+        }
+        &-num {
+          font-size: var(--fs-md);
+          font-weight: 600;
+        }
+      }
+    }
+
+    .recordDetails-center {
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--grayColor2);
+      &-left {
+        width: 100%;
+        min-height: 150px;
+        &-status {
+          margin-top: 15px;
+        }
+        &-failMsg {
+          margin-top: 5px;
+          font-size: var(--fs-xs);
+          color: var(--error-color);
+        }
+        &-desc {
+          display: -webkit-box;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 2;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          margin-top: 10px;
+          padding-right: 10px;
+        }
+      }
+
+      &-right {
+        img {
+          width: 145px;
+          height: 145px;
+          object-fit: contain;
+        }
+      }
+      &-title {
+        margin-left: 10px;
+        display: inline-block;
+        font-weight: 700;
+      }
+
+      // 客户端来源标签样式
+      &-clientType {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-left: 8px;
+
+        // Web 来源标签 - 蓝色调
+        &[data-type='web'] {
+          background-color: #e6f7ff;
+          color: #1890ff;
+          border: 1px solid #91d5ff;
+        }
+
+        // App/Flutter 来源标签 - 绿色调
+        &[data-type='app'] {
+          background-color: #f6ffed;
+          color: #52c41a;
+          border: 1px solid #b7eb8f;
+        }
+      }
+    }
+
+    .recordDetails-bottom {
+      padding: 12px;
+      display: flex;
+      justify-content: right;
+      gap: 10px;
+      :global {
+        .anticon {
+          font-size: 18px !important;
+          font-weight: 900 !important;
+        }
+      }
+    }
+  }
+}
+
+.recordPopover {
+  :global {
+    .ant-popover-inner {
+      padding: 0 !important;
+    }
+  }
+}
+
+.pubStatus {
+  :global {
+    .anticon {
+      margin-left: 5px;
+    }
+  }
+}
