@@ -195,8 +195,7 @@ const CalendarTimingItem = memo(
                   {records && records.length > 3 - reservationsTimesLast.length && (
                     <Button
                       variant="ghost"
-                      size="sm"
-                      className="h-auto py-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
+                      className="w-full h-auto py-2 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors justify-start"
                       onClick={() => {
                         setIsMore(!isMore)
                       }}
@@ -204,13 +203,13 @@ const CalendarTimingItem = memo(
                       {isMore
                         ? (
                             <>
-                              <ChevronUp className="mr-2 h-3.5 w-3.5" />
+                              <ChevronUp className="mr-2 h-4 w-4" />
                               {t('calendar.hideMore')}
                             </>
                           )
                         : (
                             <>
-                              <ChevronDown className="mr-2 h-3.5 w-3.5" />
+                              <ChevronDown className="mr-2 h-4 w-4" />
                               {records.length - recordsLast?.length}
                               {' '}
                               {t('calendar.showMore')}
