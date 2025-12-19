@@ -7,7 +7,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { Bot, CreditCard, Globe, User } from 'lucide-react'
+import { Bot, CreditCard, Crown, Globe, User } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -18,11 +18,11 @@ import {
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
-import { AgentTab, GeneralTab, ProfileTab, SubscriptionTab } from './tabs'
+import { AgentTab, GeneralTab, MembershipTab, ProfileTab, SubscriptionTab } from './tabs'
 import logo from '@/assets/images/logo.png'
 
 /** 设置页面类型 */
-type SettingsTab = 'profile' | 'agent' | 'subscription' | 'general'
+type SettingsTab = 'profile' | 'agent' | 'subscription' | 'membership' | 'general'
 
 /** Tab 配置项类型 */
 interface TabConfig {
@@ -51,6 +51,7 @@ export interface SettingsModalProps {
 export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps) => {
   const { t } = useTransClient('settings')
   const token = useUserStore(state => state.token)
+  const userInfo = useUserStore(state => state.userInfo)
 
   const isLoggedIn = !!token
   const [activeTab, setActiveTab] = useState<SettingsTab>(isLoggedIn ? 'profile' : 'general')
@@ -74,6 +75,15 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
     { key: 'profile', icon: <User className="h-4 w-4" />, label: t('tabs.profile'), requireAuth: true },
     { key: 'agent', icon: <Bot className="h-4 w-4" />, label: t('tabs.agent'), requireAuth: true },
     { key: 'subscription', icon: <CreditCard className="h-4 w-4" />, label: t('tabs.subscription'), requireAuth: true },
+    // 会员 Tab：只有用户曾经有过 vipInfo 才显示
+    ...(userInfo?.vipInfo
+      ? [{
+          key: 'membership' as SettingsTab,
+          icon: <Crown className="h-4 w-4" />,
+          label: t('tabs.membership' as any) ?? '会员',
+          requireAuth: true,
+        }]
+      : []),
     { key: 'general', icon: <Globe className="h-4 w-4" />, label: t('tabs.general') },
   ]
 
@@ -89,6 +99,8 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
         return isLoggedIn ? <AgentTab /> : <GeneralTab />
       case 'subscription':
         return isLoggedIn ? <SubscriptionTab /> : <GeneralTab />
+      case 'membership':
+        return isLoggedIn ? <MembershipTab /> : <GeneralTab />
       case 'general':
         return <GeneralTab />
       default:
@@ -98,10 +110,13 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
 
   return (
     <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
-      <DialogContent className="max-w-[880px] gap-0 overflow-hidden p-0" aria-describedby={undefined}>
+      <DialogContent
+        className="max-w-[880px] gap-0 overflow-hidden p-0"
+        aria-describedby={undefined}
+      >
         <DialogTitle className="sr-only">{t('title')}</DialogTitle>
 
-        <div className="flex min-h-[560px]">
+        <div className="flex h-[70vh]">
           {/* 左侧侧边栏 */}
           <div className="flex w-52 shrink-0 flex-col border-r border-border">
             {/* 侧边栏头部 - Logo + 项目名称 */}
@@ -135,14 +150,14 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
           </div>
 
           {/* 右侧内容区域 */}
-          <div className="flex flex-1 flex-col overflow-hidden">
+          <div className="flex flex-1 flex-col overflow-hidden min-h-0">
             {/* 右侧头部 - 设置标题 */}
             <div className="flex shrink-0 items-center border-b border-border px-8 py-4">
               <h2 className="text-lg font-semibold text-foreground">{t('title')}</h2>
             </div>
 
             {/* 右侧内容 */}
-            <div className="flex-1 overflow-auto px-8 py-6">
+            <div className="flex-1 overflow-y-auto px-8 py-6">
               {renderContent()}
             </div>
           </div>
