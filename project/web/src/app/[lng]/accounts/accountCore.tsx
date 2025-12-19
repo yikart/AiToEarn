@@ -7,10 +7,12 @@ import { useEffect, useState, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { driver } from 'driver.js'
 import 'driver.js/dist/driver.css'
-import AccountSidebar from '@/app/[lng]/accounts/components/AccountSidebar/AccountSidebar'
+import AccountsTopNav from '@/app/[lng]/accounts/components/AccountsTopNav'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import CalendarTiming from '@/app/[lng]/accounts/components/CalendarTiming'
-import AllPlatIcon from '@/app/[lng]/accounts/components/CalendarTiming/AllPlatIcon'
+// TODO: 需要重新实现这些模态框
+// import UserManageModal from '@/app/[lng]/accounts/components/AccountSidebar/UserManageModal'
+// import MCPManagerModal from '@/app/[lng]/accounts/components/AccountSidebar/MCPManagerModal'
 import { PlatType, AccountPlatInfoMap } from '@/app/config/platConfig'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useTransClient } from '@/app/i18n/client'
@@ -19,8 +21,6 @@ import PublishDialog from '@/components/PublishDialog'
 import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
-
-import styles from './accounts.module.scss'
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -56,6 +56,7 @@ export default function AccountPageCore({
   const [addAccountModalOpen, setAddAccountModalOpen] = useState(false)
   const [targetPlatform, setTargetPlatform] = useState<PlatType | undefined>()
   const [targetSpaceId, setTargetSpaceId] = useState<string | undefined>()
+
   const { t } = useTransClient('account')
   const userStore = useUserStore()
 
@@ -693,39 +694,44 @@ export default function AccountPageCore({
 
   return (
     <NoSSR>
-      <div className={styles.accounts}>
-        <AccountSidebar
-          activeAccountId={accountActive?.id || ''}
-          onAccountChange={(account) => {
-            setAccountActive(account)
+      <div className="flex flex-col h-screen bg-background">
+        {/* Row 1: 顶部导航栏 */}
+        <AccountsTopNav
+          onNewWork={() => {
+            // 检查是否有可用账户
+            const hasAccounts = allAccounts.some(
+              account => account.status === AccountStatus.USABLE
+            )
+
+            if (!hasAccounts) {
+              // 没有可用账户时的逻辑可以保留原来的
+              setPublishDialogOpen(true)
+            } else {
+              setPublishDialogOpen(true)
+            }
           }}
-          sidebarTopExtra={(
-            <>
-              <div
-                className={[
-                  'accountList-item',
-                  `${!accountActive?.id ? 'accountList-item--active' : ''}`,
-                ].join(' ')}
-                style={{
-                  border: '1px solid #d9d9d9',
-                  borderRight: 'none',
-                  borderLeft: 'none',
-                }}
-                onClick={async () => {
-                  setAccountActive(undefined)
-                }}
-              >
-                <AllPlatIcon size={38} />
-                <div className="accountList-item-right">
-                  <div className="accountList-item-right-name">
-                    {t('allPlatforms')}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+          onUserManage={() => {
+            // TODO: 实现用户管理功能
+            console.log('User manage clicked')
+          }}
+          onAddAccount={() => setAddAccountModalOpen(true)}
         />
+
+        {/* 主内容区域: CalendarTiming (包含 Row 2 工具栏和日历/列表视图) */}
         <CalendarTiming />
+
+        {/* TODO: 需要重新实现这些模态框 */}
+        {/* 用户管理模态框 */}
+        {/* <UserManageModal
+          open={userManageModalOpen}
+          onCancel={() => setUserManageModalOpen(false)}
+        /> */}
+
+        {/* MCP 管理模态框 */}
+        {/* <MCPManagerModal
+          open={mcpManagerModalOpen}
+          onClose={(open: boolean) => setMcpManagerModalOpen(open)}
+        /> */}
 
         {/* 添加账号弹窗 */}
         <AddAccountModal
@@ -740,34 +746,42 @@ export default function AccountPageCore({
         {/* 微信浏览器提示（遮罩 + 箭头指向右上角） */}
         {showWechatBrowserTip && (
           <>
-            <div className={styles.mobileDownloadOverlay} onClick={closeWechatBrowserTip} />
-            <Image src={rightArrow} alt="rightArrow" width={120} height={120} className={styles.rightArrow} />
-            <div className={styles.wechatTipContainer}>
-              <div className={styles.wechatTipContent}>
-                <div className={styles.wechatTipTitle}>{wechatBrowserTexts.title}</div>
-                <div className={styles.wechatTipSteps}>
-                  <div className={styles.wechatTipStep}>
-                    <span className={styles.stepNumber}>1</span>
-                    <span className={styles.stepText}>
+            <div className="fixed inset-0 bg-black/85 z-[1000] animate-[fadeIn_0.2s_ease-out]" onClick={closeWechatBrowserTip} />
+            <Image
+              src={rightArrow}
+              alt="rightArrow"
+              width={120}
+              height={120}
+              className="fixed top-[10%] right-5 z-[1002] pointer-events-none bg-accent animate-[arrowPulse_2s_ease-in-out_infinite] rounded-full p-2.5"
+            />
+            <div className="fixed inset-0 z-[1001] flex items-center justify-center pointer-events-none">
+              <div className="bg-background/95 rounded-2xl p-6 mx-5 max-w-[320px] shadow-[0_10px_40px_rgba(0,0,0,0.3)] backdrop-blur-[10px] pointer-events-auto animate-[tipFadeIn_0.3s_ease-out]">
+                <div className="text-lg font-bold text-foreground text-center mb-5">{wechatBrowserTexts.title}</div>
+                <div className="mb-5">
+                  <div className="flex items-center gap-3 mb-3 text-sm text-foreground leading-normal">
+                    <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">1</span>
+                    <span className="flex-1">
                       {t('wechatBrowserTip.clickCorner')}
-                      <span className={styles.dotsButton}>⋯</span>
+                      <span className="bg-muted text-muted-foreground px-2 py-0.5 rounded text-xs mx-1 inline-block">⋯</span>
                       {t('wechatBrowserTip.dotsButton')}
                     </span>
                   </div>
-                  <div className={styles.wechatTipStep}>
-                    <span className={styles.stepNumber}>2</span>
-                    <span className={styles.stepText}>
+                  <div className="flex items-center gap-3 mb-3 text-sm text-foreground leading-normal">
+                    <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">2</span>
+                    <span className="flex-1">
                       {t('wechatBrowserTip.selectBrowser')}
-                      <span className={styles.browserButton}>🌐</span>
+                      <span className="bg-muted text-muted-foreground px-1.5 py-0.5 rounded text-xs mx-1 inline-block">🌐</span>
                       {t('wechatBrowserTip.openInBrowser')}
                     </span>
                   </div>
                 </div>
-                <button className={styles.wechatTipClose} onClick={closeWechatBrowserTip}>
+                <button
+                  className="w-full bg-primary text-primary-foreground border-none px-3 py-3 rounded-lg font-semibold cursor-pointer transition-all hover:bg-primary/90"
+                  onClick={closeWechatBrowserTip}
+                >
                   {wechatBrowserTexts.cta}
                 </button>
               </div>
-
             </div>
           </>
         )}
@@ -775,24 +789,28 @@ export default function AccountPageCore({
         {/* 移动端下载提示（遮罩 + 底部弹窗） */}
         {showMobileDownload && (
           <>
-            <div className={styles.mobileDownloadOverlay} />
-            <div className={styles.mobileDownloadSheet} role="dialog" aria-modal="true">
-              <div className={styles.sheetHeader}>
-                <div className={styles.sheetTitle}>
+            <div className="fixed inset-0 bg-black/85 z-[1000] animate-[fadeIn_0.2s_ease-out]" />
+            <div className="fixed left-0 right-0 bottom-0 bg-background rounded-t-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] z-[1001] animate-[slideUp_0.25s_ease-out] p-4 pb-5" role="dialog" aria-modal="true">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-lg font-bold text-foreground">
                   {downloadTexts.title}
                   {' '}
                   👋
                 </div>
-                <button className={styles.sheetClose} aria-label="Close" onClick={closeMobileDownload}>
+                <button
+                  className="bg-transparent border-none text-[22px] text-muted-foreground cursor-pointer px-2 py-1 rounded-md transition-all hover:bg-accent"
+                  aria-label="Close"
+                  onClick={closeMobileDownload}
+                >
                   ×
                 </button>
               </div>
-              <div className={styles.sheetBody}>
-                <p className={styles.sheetDesc}>{downloadTexts.desc}</p>
+              <div className="py-3 px-1">
+                <p className="m-0 text-sm text-muted-foreground leading-relaxed">{downloadTexts.desc}</p>
               </div>
-              <div className={styles.sheetFooter}>
+              <div className="pt-3 flex justify-center">
                 <a
-                  className={styles.sheetCta}
+                  className="inline-block bg-primary text-primary-foreground no-underline px-[18px] py-2.5 rounded-lg font-semibold shadow-[0_6px_18px_rgba(79,70,229,0.35)]"
                   href={getDownloadHref()}
                   target="_blank"
                   rel="noopener noreferrer"

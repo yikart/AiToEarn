@@ -2,7 +2,6 @@ import type { DayCellContentArg } from '@fullcalendar/core'
 import type { ForwardedRef } from 'react'
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
 import { DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons'
-import { Button, Skeleton } from 'antd'
 import dayjs from 'dayjs'
 import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
@@ -11,7 +10,8 @@ import CalendarRecord from '@/app/[lng]/accounts/components/CalendarTiming/Calen
 import { CustomDragLayer } from '@/app/[lng]/accounts/components/CalendarTiming/CalendarTimingItem/components/CustomDragLayer'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import { useTransClient } from '@/app/i18n/client'
-import styles from './components/calendarTimingItem.module.scss'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 
 export interface ICalendarTimingItemRef {}
 
@@ -105,9 +105,16 @@ const CalendarTimingItem = memo(
           }}
           className={[
             'calendarTimingItem--js',
-            styles.calendarTimingItem,
-            argDate < nowDate ? styles.calendarTimingItemPast : '',
-            isOver ? styles.calendarTimingItem_over : '',
+            'calendarTimingItem',
+            'box-border',
+            'p-2.5',
+            'flex',
+            'flex-col',
+            'font-semibold',
+            'min-h-[200px]',
+            'h-full',
+            argDate < nowDate ? 'bg-muted/30' : '',
+            isOver ? 'bg-accent/50' : '',
           ].join(' ')}
         >
           <div className="calendarTimingItem-top">
@@ -117,8 +124,9 @@ const CalendarTimingItem = memo(
 
             {argDate >= nowDate && (
               <Button
-                size="small"
-                icon={<PlusOutlined />}
+                size="sm"
+                variant="ghost"
+                className="h-6 w-6 p-0"
                 onClick={() => {
                   const days = dayjs(arg.date)
                   const today = dayjs()
@@ -130,13 +138,15 @@ const CalendarTimingItem = memo(
                     onClickPub(days.format())
                   }
                 }}
-              />
+              >
+                <PlusOutlined />
+              </Button>
             )}
           </div>
           {loading
             ? (
                 <>
-                  <Skeleton.Button active={true} block={true} size="small" />
+                  <Skeleton className="h-8 w-full rounded" />
                 </>
               )
             : (
@@ -146,8 +156,8 @@ const CalendarTimingItem = memo(
                       return (
                         <Button
                           key={i}
-                          size="small"
-                          type="dashed"
+                          size="sm"
+                          variant="outline"
                           onClick={() => {
                             const days = dayjs(arg.date)
                               .set('hour', v[0])
@@ -180,14 +190,8 @@ const CalendarTimingItem = memo(
 
                   {records && records.length > 3 - reservationsTimesLast.length && (
                     <Button
-                      type="text"
-                      style={{
-                        height: 'auto',
-                        width: 'auto',
-                        padding: '3px 10px',
-                        fontSize: 'var(--fs-sm)',
-                        marginBottom: '0',
-                      }}
+                      variant="ghost"
+                      className="h-auto w-auto p-1.5 text-sm mb-0"
                       onClick={() => {
                         setIsMore(!isMore)
                       }}

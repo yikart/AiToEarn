@@ -2,12 +2,18 @@
   "title": "账户",
   "describe": "账户页面",
   "today": "今天",
-  "defaultSpace": "defaultSpace",
+  "defaultSpace": "默认空间",
   "addPost": "添加帖子",
   "calendarMode": "日历模式",
+  "calendarModeTab": "日历模式",
   "listModeTab": "列表模式",
   "newWork": "新建作品",
   "allPlatforms": "所有平台",
+  "allChannels": "全部频道",
+  "allSpaces": "全部空间",
+  "viewAllChannels": "查看所有频道的内容",
+  "userManagement": "用户管理",
+  "space": "空间",
   "accountManager": "账号管理器",
   "addAccount": "添加频道",
   "mcpManagerTit": "MCP 管理器",
@@ -276,5 +282,6 @@
     "label": "来源",
     "web": "网页端",
     "app": "App端"
-  }
+  },
+  "rightClickTip": "右键点击空间或频道可进行删除、排序等操作"
 }

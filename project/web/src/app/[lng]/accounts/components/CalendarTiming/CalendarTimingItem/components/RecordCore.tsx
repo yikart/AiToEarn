@@ -1,5 +1,3 @@
-import type { MenuProps } from 'antd'
-import type { TooltipRef } from 'antd/lib/tooltip'
 import type {
   ForwardedRef,
 } from 'react'
@@ -21,7 +19,6 @@ import {
   SendOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons'
-import { Button, Dropdown, Image, Popover, Tag } from 'antd'
 import {
   forwardRef,
   memo,
@@ -41,9 +38,22 @@ import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import ScrollButtonContainer from '@/components/ScrollButtonContainer'
+import { MediaPreview, type MediaPreviewItem } from '@/components/common/MediaPreview'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { Badge } from '@/components/ui/badge'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { useAccountStore } from '@/store/account'
 import { getOssUrl } from '@/utils/oss'
-import styles from './recordCore.module.scss'
 
 export interface IRecordCoreRef {}
 
@@ -55,34 +65,34 @@ function PubStatus({ status }: { status: PublishStatus }) {
   const { t } = useTransClient('publish')
 
   return (
-    <div className={styles.pubStatus}>
+    <div className="pubStatus">
       {status === PublishStatus.FAIL
         ? (
-            <Tag color="error">
+            <Badge variant="destructive" className="gap-1">
               {t('status.publishFailed')}
               <CloseCircleOutlined />
-            </Tag>
+            </Badge>
           )
         : status === PublishStatus.PUB_LOADING
           ? (
-              <Tag color="cyan">
+              <Badge variant="secondary" className="gap-1">
                 {t('status.publishing')}
                 <LoadingOutlined />
-              </Tag>
+              </Badge>
             )
           : status === PublishStatus.RELEASED
             ? (
-                <Tag color="success">
+                <Badge className="gap-1 bg-success text-success-foreground">
                   {t('status.publishSuccess')}
                   <CheckCircleOutlined />
-                </Tag>
+                </Badge>
               )
             : status === PublishStatus.UNPUBLISH
               ? (
-                  <Tag color="processing">
+                  <Badge variant="outline" className="gap-1">
                     {t('status.waitingPublish')}
                     <ClockCircleOutlined />
-                  </Tag>
+                  </Badge>
                 )
               : (
                   <></>
@@ -111,16 +121,39 @@ const RecordCore = memo(
         })),
       )
       const [popoverOpen, setPopoverOpen] = useState(false)
-      const popoverRef = useRef<TooltipRef>(null)
       const { t } = useTransClient('publish')
       const [nowPubLoading, setNowPubLoading] = useState(false)
+      const [previewOpen, setPreviewOpen] = useState(false)
+      const [previewItems, setPreviewItems] = useState<MediaPreviewItem[]>([])
 
-      const dropdownItems: MenuProps['items'] = useMemo(() => {
-        const dropdownItemsArr: MenuProps['items'] = []
+      // 处理媒体预览
+      const handleMediaClick = () => {
+        const items: MediaPreviewItem[] = []
+
+        if (publishRecord.videoUrl) {
+          items.push({
+            type: 'video',
+            src: publishRecord.videoUrl,
+            title: publishRecord.title || publishRecord.desc,
+          })
+        } else if (publishRecord.imgUrlList && publishRecord.imgUrlList.length > 0) {
+          items.push(...publishRecord.imgUrlList.map(url => ({
+            type: 'image' as const,
+            src: getOssUrl(url),
+          })))
+        }
+
+        if (items.length > 0) {
+          setPreviewItems(items)
+          setPreviewOpen(true)
+        }
+      }
+
+      const dropdownItems = useMemo(() => {
+        const items: Array<{ label: string, onClick: () => void, danger?: boolean }> = []
 
         if (publishRecord.workLink) {
-          dropdownItemsArr.push({
-            key: '2',
+          items.push({
             label: t('buttons.copyLink'),
             onClick: async () => {
               await navigator.clipboard.writeText(
@@ -133,7 +166,7 @@ const RecordCore = memo(
         /**
          * 删除按钮显示逻辑：
          * 1. 未发布的、发布失败的，直接显示删除按钮。
-         * 2. 已发布的，除了小红书、抖音、视频号、ins、tiktok之外，其他平台均显示删除按钮。
+         * 2. 已发布的，除了小红书、抖音、视频号、ins、tiktok之外,其他平台均显示删除按钮。
          *    注意：Facebook 只有post类型显示删除按钮。
          */
         const shouldShowDelete = (() => {
@@ -176,10 +209,9 @@ const RecordCore = memo(
         })()
 
         if (shouldShowDelete) {
-          dropdownItemsArr.push({
-            key: '3',
-            danger: true,
+          items.push({
             label: t('buttons.delete'),
+            danger: true,
             onClick: async () => {
               setPopoverOpen(false)
               setListLoading(true)
@@ -196,7 +228,7 @@ const RecordCore = memo(
           })
         }
 
-        return dropdownItemsArr
+        return items
       }, [publishRecord, t, setListLoading, getPubRecord])
 
       const days = useMemo(() => {
@@ -255,23 +287,42 @@ const RecordCore = memo(
       }, [t])
 
       return (
-        <Popover
-          ref={popoverRef}
-          placement="right"
-          rootClassName={styles.recordPopover}
-          open={popoverOpen}
-          onOpenChange={e => setPopoverOpen(e)}
-          content={() => {
-            const desc = `${publishRecord.desc} ${publishRecord.topics ? publishRecord.topics?.map(v => `#${v}`).join(' ') : ''}`
-            return (
-              <div className={styles.recordDetails}>
-                <div className="recordDetails-top">
-                  <div className="recordDetails-top-left">
-                    {days.format('YYYY-MM-DD HH:mm')}
-                    <FieldTimeOutlined />
+        <>
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="ghost"
+              className="recordCore"
+              style={{ width: `${calendarCallWidth}px` }}
+            >
+              <div className="recordCore-left">
+                <img src={platIcon} style={{ width: '25px', height: '25px' }} />
+                <div className="recordCore-left-date">{days.format('HH:mm')}</div>
+              </div>
+              {
+                publishRecord.coverUrl
+                && (
+                  <div className="recordCore-right">
+                    <img src={getOssUrl(publishRecord.coverUrl || '')} />
                   </div>
-                  <Button icon={<FullscreenOutlined />} size="small" />
+                )
+              }
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent side="right" className="recordPopover">
+            {(() => {
+              const desc = `${publishRecord.desc} ${publishRecord.topics ? publishRecord.topics?.map(v => `#${v}`).join(' ') : ''}`
+              return (
+            <div className="recordDetails">
+              <div className="recordDetails-top">
+                <div className="recordDetails-top-left">
+                  {days.format('YYYY-MM-DD HH:mm')}
+                  <FieldTimeOutlined />
                 </div>
+                <Button variant="ghost" size="sm">
+                  <FullscreenOutlined />
+                </Button>
+              </div>
                 <div className="recordDetails-center">
                   <div className="recordDetails-center-left">
                     <div className="recordDetails-center-left-user">
@@ -308,35 +359,15 @@ const RecordCore = memo(
                     </div>
                   </div>
                   {
-                    (publishRecord.videoUrl && publishRecord.imgUrlList.length !== 0)
+                    (publishRecord.videoUrl || publishRecord.imgUrlList?.length > 0)
                     && (
                       <div className="recordDetails-center-right">
-                        {publishRecord.videoUrl
-                          ? (
-                              <>
-                                <Image
-                                  src={getOssUrl(publishRecord.coverUrl || '')}
-                                  preview={{
-                                    destroyOnHidden: true,
-                                    imageRender: () => (
-                                      <video
-                                        muted
-                                        width="80%"
-                                        height={500}
-                                        controls
-                                        src={publishRecord.videoUrl}
-                                      />
-                                    ),
-                                    toolbarRender: () => null,
-                                  }}
-                                />
-                              </>
-                            )
-                          : (
-                              <Image.PreviewGroup items={publishRecord.imgUrlList}>
-                                <Image src={getOssUrl(publishRecord.coverUrl || '')} />
-                              </Image.PreviewGroup>
-                            )}
+                        <img
+                          src={getOssUrl(publishRecord.coverUrl || '')}
+                          alt="preview"
+                          className="cursor-pointer max-w-full rounded"
+                          onClick={handleMediaClick}
+                        />
                       </div>
                     )
                   }
@@ -361,11 +392,12 @@ const RecordCore = memo(
                 <div className="recordDetails-bottom">
                   {publishRecord.workLink && (
                     <Button
-                      icon={<ExportOutlined />}
+                      variant="outline"
                       onClick={() => {
                         window.open(publishRecord.workLink, '_blank')
                       }}
                     >
+                      <ExportOutlined />
                       {t('record.viewWork')}
                     </Button>
                   )}
@@ -374,8 +406,7 @@ const RecordCore = memo(
                     && publishRecord.status !== PublishStatus.PUB_LOADING
                     ? (
                         <Button
-                          loading={nowPubLoading}
-                          icon={<SendOutlined />}
+                          disabled={nowPubLoading}
                           onClick={async () => {
                             setNowPubLoading(true)
                             await nowPubTaskApi(publishRecord.id)
@@ -383,6 +414,7 @@ const RecordCore = memo(
                             setNowPubLoading(false)
                           }}
                         >
+                          <SendOutlined />
                           {t('buttons.publishNow')}
                         </Button>
                       )
@@ -390,34 +422,39 @@ const RecordCore = memo(
                         <></>
                       )}
                   {dropdownItems && dropdownItems.length > 0 && (
-                    <Dropdown menu={{ items: dropdownItems }} placement="top">
-                      <Button icon={<MoreOutlined />} />
-                    </Dropdown>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <MoreOutlined />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent>
+                        {dropdownItems.map((item, index) => (
+                          <DropdownMenuItem
+                            key={index}
+                            onClick={item.onClick}
+                            className={item.danger ? 'text-destructive' : ''}
+                          >
+                            {item.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
                 </div>
               </div>
-            )
-          }}
-          trigger="click"
-        >
-          <Button
-            className={styles.recordCore}
-            style={{ width: `${calendarCallWidth}px` }}
-          >
-            <div className="recordCore-left">
-              <img src={platIcon} style={{ width: '25px', height: '25px' }} />
-              <div className="recordCore-left-date">{days.format('HH:mm')}</div>
-            </div>
-            {
-              publishRecord.coverUrl
-              && (
-                <div className="recordCore-right">
-                  <img src={getOssUrl(publishRecord.coverUrl || '')} />
-                </div>
               )
-            }
-          </Button>
+            })()}
+          </PopoverContent>
         </Popover>
+
+        {/* 媒体预览 */}
+        <MediaPreview
+          open={previewOpen}
+          items={previewItems}
+          onClose={() => setPreviewOpen(false)}
+        />
+      </>
       )
     },
   ),

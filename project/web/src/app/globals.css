@@ -9,6 +9,10 @@ body {
   font-family: "SourceHanSansCN-Regular";
 }
 
+button {
+  cursor: pointer;
+}
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -147,4 +151,391 @@ body {
   body {
     @apply bg-background text-foreground text-sm;
   }
+}
+
+/* Accounts 页面动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes tipFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes arrowPulse {
+  0%,
+  100% {
+    opacity: 0.8;
+    transform: translateY(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-50%) scale(1.1);
+  }
+}
+
+/* CalendarTiming FullCalendar 样式覆盖 */
+.fc-daygrid-day.fc-day-today {
+  background: transparent;
+}
+
+.fc-daygrid-day.fc-day-today .calendarTimingItem-top-day {
+  @apply bg-primary text-primary-foreground;
+}
+
+.fc-daygrid-day-frame {
+  display: flex;
+}
+
+.fc-daygrid-day-frame .fc-daygrid-day-top {
+  display: flex;
+  flex: 1;
+}
+
+.fc-daygrid-day-frame .fc-daygrid-day-top .fc-daygrid-day-number {
+  z-index: auto;
+  padding: 0;
+  flex: 1;
+}
+
+.fc-daygrid-day-frame .fc-daygrid-day-events {
+  display: none;
+}
+
+.fc-media-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.calendarTiming-calendar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.calendarTiming-calendar .fc-scrollgrid {
+  border-top: none !important;
+}
+
+.calendarTiming-calendar thead {
+  @apply bg-background;
+  z-index: 5;
+}
+
+.calendarTiming-calendar thead .fc-scroller-harness {
+  @apply border-t border-border;
+}
+
+.calendarTiming-calendar thead .fc-scrollgrid-sync-inner {
+  padding: 5px 0;
+}
+
+.calendarTiming-calendar .fc-theme-standard td,
+.calendarTiming-calendar .fc-theme-standard th {
+  @apply border-border;
+}
+
+/* CSSTransition 动画 */
+.slideLeftEnter {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.slideLeftEnterActive {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.slideLeftExit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slideLeftExitActive {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.slideRightEnter {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.slideRightEnterActive {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.slideRightExit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slideRightExitActive {
+  opacity: 0;
+  transform: translateX(50px);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+.fadeEnter {
+  opacity: 0;
+}
+
+.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExitActive {
+  opacity: 0;
+  transition: opacity 300ms;
+}
+
+/* CalendarTimingItem 全局样式 */
+.calendarTimingItem-top {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.calendarTimingItem-top-day {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 50%;
+  margin-bottom: 3px;
+}
+
+.calendarTimingItem-top button {
+  @apply text-xs;
+  display: none;
+}
+
+.calendarTimingItem-con button {
+  width: 100%;
+  margin-bottom: 8px;
+  @apply text-xs;
+  padding: 0;
+  height: 34px;
+}
+
+.calendarTimingItem-con .calendarTimingItem-con-btn2 {
+  display: none;
+}
+
+.calendarTimingItem-con button:hover .calendarTimingItem-con-btn2 {
+  display: block;
+}
+
+.calendarTimingItem-con button:hover .calendarTimingItem-con-btn1 {
+  display: none;
+}
+
+.calendarTimingItem:hover .calendarTimingItem-top button {
+  display: block !important;
+}
+
+/* RecordCore 全局样式 */
+.recordCore {
+  display: flex !important;
+  justify-content: space-between !important;
+  box-sizing: border-box;
+  position: fixed;
+  padding: 0 5px !important;
+}
+
+.recordCore:hover {
+  @apply bg-background;
+}
+
+.recordCore-left {
+  display: flex;
+  align-items: center;
+}
+
+.recordCore-left-date {
+  font-weight: 600;
+}
+
+.recordCore-left img {
+  height: 100%;
+  margin-right: 6px;
+}
+
+.recordCore-right {
+  display: flex;
+  align-items: center;
+}
+
+.recordCore-right img {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.recordDetails {
+  width: 450px;
+  box-sizing: border-box;
+}
+
+.recordDetails-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  @apply border-b border-border;
+  padding: 12px;
+}
+
+.recordDetails-top-left {
+  font-weight: 600;
+}
+
+.recordDetails-top-left .anticon {
+  margin-left: 8px;
+}
+
+.recordDetails-info {
+  display: flex;
+  gap: 15px;
+  padding: 10px;
+  @apply border-b border-border;
+}
+
+.recordDetails-info-item {
+  flex: 1;
+}
+
+.recordDetails-info-item-top {
+  display: flex;
+  gap: 5px;
+}
+
+.recordDetails-info-item-num {
+  @apply text-base;
+  font-weight: 600;
+}
+
+.recordDetails-center {
+  padding: 12px;
+  display: flex;
+  justify-content: space-between;
+  @apply border-b border-border;
+}
+
+.recordDetails-center-left {
+  width: 100%;
+  min-height: 150px;
+}
+
+.recordDetails-center-left-status {
+  margin-top: 15px;
+}
+
+.recordDetails-center-left-failMsg {
+  margin-top: 5px;
+  @apply text-xs text-destructive;
+}
+
+.recordDetails-center-left-desc {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 10px;
+  padding-right: 10px;
+}
+
+.recordDetails-center-right img {
+  width: 145px;
+  height: 145px;
+  object-fit: contain;
+}
+
+.recordDetails-center-title {
+  margin-left: 10px;
+  display: inline-block;
+  font-weight: 700;
+}
+
+.recordDetails-center-clientType {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.recordDetails-center-clientType[data-type='web'] {
+  @apply bg-blue-50 text-blue-600 border border-blue-200;
+}
+
+.recordDetails-center-clientType[data-type='app'] {
+  @apply bg-green-50 text-green-600 border border-green-200;
+}
+
+.recordDetails-bottom {
+  padding: 12px;
+  display: flex;
+  justify-content: right;
+  gap: 10px;
+}
+
+.recordDetails-bottom .anticon {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+}
+
+.recordPopover .ant-popover-inner {
+  padding: 0 !important;
+}
+
+.pubStatus .anticon {
+  margin-left: 5px;
 }

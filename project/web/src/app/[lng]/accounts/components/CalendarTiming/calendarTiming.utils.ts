@@ -1,7 +1,6 @@
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import styles from './calendarTiming.module.scss'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
@@ -21,27 +20,27 @@ export function getFullCalendarLang(lang: string) {
 export function getTransitionClassNames(direction: 'left' | 'right' | 'fade') {
   if (direction === 'left') {
     return {
-      enter: styles.slideLeftEnter,
-      enterActive: styles.slideLeftEnterActive,
-      exit: styles.slideLeftExit,
-      exitActive: styles.slideLeftExitActive,
+      enter: 'slideLeftEnter',
+      enterActive: 'slideLeftEnterActive',
+      exit: 'slideLeftExit',
+      exitActive: 'slideLeftExitActive',
     }
   }
   else if (direction === 'right') {
     return {
-      enter: styles.slideRightEnter,
-      enterActive: styles.slideRightEnterActive,
-      exit: styles.slideRightExit,
-      exitActive: styles.slideRightExitActive,
+      enter: 'slideRightEnter',
+      enterActive: 'slideRightEnterActive',
+      exit: 'slideRightExit',
+      exitActive: 'slideRightExitActive',
     }
   }
   else {
     // fade 动画
     return {
-      enter: styles.fadeEnter,
-      enterActive: styles.fadeEnterActive,
-      exit: styles.fadeExit,
-      exitActive: styles.fadeExitActive,
+      enter: 'fadeEnter',
+      enterActive: 'fadeEnterActive',
+      exit: 'fadeExit',
+      exitActive: 'fadeExitActive',
     }
   }
 }

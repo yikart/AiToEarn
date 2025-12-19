@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm install:*)"
+      "Bash",
+      "Write",
+      "Edit",
+      "Read"
     ]
   }
 }
