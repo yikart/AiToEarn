@@ -11,6 +11,7 @@
   "subscribe": "Upgrade",
   "balance": "Credits",
   "plugin": "Extension",
+  "affiliates": "Affiliates",
   "pluginStatus": {
     "notInstalled": "Install",
     "noPermission": "Not Authorized",

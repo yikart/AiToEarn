@@ -205,8 +205,8 @@ export function HomeChat({
                 key={key}
                 src={value.icon}
                 alt={value.name}
-                width={24}
-                height={24}
+                width={20}
+                height={20}
                 className="w-6 h-6 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity"
                 style={{
                   marginLeft: index > 0 ? '-8px' : '0',

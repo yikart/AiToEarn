@@ -11,6 +11,7 @@
   "subscribe": "开通订阅",
   "balance": "额度",
   "plugin": "浏览器插件",
+  "affiliates": "推广赚钱",
   "pluginStatus": {
     "notInstalled": "未安装",
     "noPermission": "未授权",
