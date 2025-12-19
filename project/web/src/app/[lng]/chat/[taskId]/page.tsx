@@ -273,7 +273,7 @@ export default function ChatDetailPage() {
       />
 
       {/* 底部输入区域 */}
-      <div className="w-full p-4">
+      <div className="p-4 bg-background border-t border-border shrink-0">
         <ChatInput
           value={inputValue}
           onChange={setInputValue}
