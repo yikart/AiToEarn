@@ -54,7 +54,8 @@
       "publish": "Publish",
       "expired": "Expired",
       "manual": "Manual Adjustment"
-    }
+    },
+    "viewAgentPricing": "View the specific prices of each model of the agent"
   },
   "general": {
     "language": "Website Language",

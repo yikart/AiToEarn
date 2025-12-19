@@ -54,7 +54,8 @@
       "publish": "发布内容",
       "expired": "已过期",
       "manual": "手动调整"
-    }
+    },
+    "viewAgentPricing": "查看 Agent 各模型的具体价格"
   },
   "general": {
     "language": "网站语言",

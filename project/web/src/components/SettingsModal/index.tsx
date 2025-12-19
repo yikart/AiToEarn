@@ -22,7 +22,7 @@ import { AgentTab, GeneralTab, MembershipTab, ProfileTab, SubscriptionTab } from
 import logo from '@/assets/images/logo.png'
 
 /** 设置页面类型 */
-type SettingsTab = 'profile' | 'agent' | 'subscription' | 'membership' | 'general'
+type SettingsTab = 'profile' | 'subscription' | 'membership' | 'general'
 
 /** Tab 配置项类型 */
 interface TabConfig {
@@ -73,7 +73,6 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
   // Tab 配置列表（易于扩展）
   const tabConfigs: TabConfig[] = [
     { key: 'profile', icon: <User className="h-4 w-4" />, label: t('tabs.profile'), requireAuth: true },
-    { key: 'agent', icon: <Bot className="h-4 w-4" />, label: t('tabs.agent'), requireAuth: true },
     { key: 'subscription', icon: <CreditCard className="h-4 w-4" />, label: t('tabs.subscription'), requireAuth: true },
     // 会员 Tab：只有用户曾经有过 vipInfo 才显示
     ...(userInfo?.vipInfo

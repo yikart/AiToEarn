@@ -229,6 +229,17 @@ export function SubscriptionTab() {
             </Button>
           )}
         </div>
+        {/* Agent 价格链接 */}
+      <div className="pt-4 text-center">
+        <a
+          href="https://docs.aitoearn.ai/en/help-center/pricing/agent-price"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+        >
+          {t('subscription.viewAgentPricing')}
+        </a>
+      </div>
       </div>
 
       {/* 使用记录 */}
@@ -300,6 +311,8 @@ export function SubscriptionTab() {
         {/* 分页器 */}
         {!recordsLoading && records.length > 0 && renderPagination()}
       </div>
+
+      
     </div>
   )
 }
