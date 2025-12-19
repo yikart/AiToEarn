@@ -8,8 +8,8 @@
     "general": "General"
   },
   "profile": {
-    "totalIncome": "Total Income",
-    "currentBalance": "Current Balance",
+    "totalIncome": "Balance",
+    "currentBalance": "Current Credits",
     "logout": "Logout",
     "edit": "Edit",
     "save": "Save",
@@ -37,7 +37,7 @@
     "currentPlan": "Current Plan",
     "upgrade": "Upgrade",
     "manage": "Manage Subscription",
-    "balance": "Balance",
+    "balance": "Credits",
     "usageRecords": "Usage Records",
     "detail": "Detail",
     "date": "Date",
@@ -54,7 +54,8 @@
       "publish": "Publish",
       "expired": "Expired",
       "manual": "Manual Adjustment"
-    }
+    },
+    "viewAgentPricing": "View the specific prices of each model of the agent"
   },
   "general": {
     "language": "Website Language",

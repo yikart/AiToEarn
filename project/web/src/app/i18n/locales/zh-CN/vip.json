@@ -28,10 +28,7 @@
         "price": "19",
         "button": "升级至月度PLUS会员",
         "features": {
-          "0": "每月 50$ Agent 额度",
-          "1": "Sora-2：免费且无限",
-          "2": "Nano Banana Pro：免费且无限",
-          "3": "免费计划的所有功能"
+          "0": "每月 50$ Agent 额度"
         }
       },
       "enterprise": {

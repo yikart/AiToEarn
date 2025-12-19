@@ -5,7 +5,7 @@
 
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
@@ -28,13 +28,34 @@ export function SubscriptionTab() {
   const { t } = useTransClient('settings')
 
   // 从 user store 读取余额状态
-  const { creditsBalance, creditsLoading, setCreditsBalance } = useUserStore(
+  const { creditsBalance, creditsLoading, setCreditsBalance, userInfo } = useUserStore(
     useShallow(state => ({
       creditsBalance: state.creditsBalance,
       creditsLoading: state.creditsLoading,
       setCreditsBalance: state.setCreditsBalance,
+      userInfo: state.userInfo,
     })),
   )
+
+  // 判断用户是否为有效会员
+  const isVip = useMemo(() => {
+    const vipInfo = userInfo?.vipInfo
+    if (!vipInfo || !vipInfo.expireTime) return false
+
+    // 检查状态是否为有效会员状态（排除 expired 和 none）
+    const validStatuses = [
+      'trialing',
+      'monthly_once',
+      'yearly_once',
+      'active_monthly',
+      'active_yearly',
+      'active_nonrenewing',
+    ]
+    if (!validStatuses.includes(vipInfo.status)) return false
+
+    // 检查过期时间是否未过期
+    return new Date(vipInfo.expireTime) > new Date()
+  }, [userInfo])
 
   // 本地余额加载状态（用于初次加载）
   const [balanceLoading, setBalanceLoading] = useState(true)
@@ -200,10 +221,25 @@ export function SubscriptionTab() {
                       ${centsToUsd(creditsBalance)}
                     </span>
                   </div>
-                )}
+                )} 
           </div>
-          <Button onClick={() => window.open('/pricing', '_blank')}>{t('subscription.upgrade')}</Button>
+          {!isVip && (
+            <Button onClick={() => window.open('/pricing', '_blank')}>
+              {t('subscription.upgrade')}
+            </Button>
+          )}
         </div>
+        {/* Agent 价格链接 */}
+      <div className="pt-4 text-center">
+        <a
+          href="https://docs.aitoearn.ai/en/help-center/pricing/agent-price"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+        >
+          {t('subscription.viewAgentPricing')}
+        </a>
+      </div>
       </div>
 
       {/* 使用记录 */}
@@ -275,6 +311,8 @@ export function SubscriptionTab() {
         {/* 分页器 */}
         {!recordsLoading && records.length > 0 && renderPagination()}
       </div>
+
+      
     </div>
   )
 }

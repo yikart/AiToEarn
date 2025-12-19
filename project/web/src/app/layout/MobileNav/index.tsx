@@ -88,8 +88,8 @@ const MobileNav = () => {
       {/* 移动端顶部栏 */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50 flex items-center justify-between h-14 px-4 bg-background border-b border-border">
         <Link href={`/${lng}`} className="flex items-center gap-2">
-          <Image src={logo} alt="AIToEarn" width={32} height={32} />
-          <span className="text-base font-semibold text-foreground">AIToEarn</span>
+          <Image src={logo} alt="Aitoearn" width={32} height={32} />
+          <span className="text-base font-semibold text-foreground">Aitoearn</span>
         </Link>
         <button
           onClick={() => setIsOpen(true)}

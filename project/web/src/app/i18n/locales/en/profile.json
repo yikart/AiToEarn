@@ -101,7 +101,7 @@
     "myPoints": "My Points",
     "pointsDescription": "View your points change history and usage",
     "pointsChange": "Points Change",
-    "balance": "Balance",
+    "balance": "Credits",
     "changeType": "Change Type",
     "description": "Description",
     "time": "Time",
@@ -174,7 +174,7 @@
   "confirmCancel": "Confirm Cancellation",
   "stats": {
     "totalEarned": "Total Earned",
-    "balance": "Balance",
+    "balance": "Credits",
     "points": "Points",
     "coupons": "Coupons",
     "currencyYuan": "CNY"

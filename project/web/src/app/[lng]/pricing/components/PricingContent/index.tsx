@@ -41,11 +41,11 @@ const PLANS: Array<{
     id: 'creator',
     highlight: true, // 创作者方案设为推荐
   },
-  {
-    id: 'enterprise',
-    highlight: false,
-    isCustom: true, // 定制价格
-  },
+  // {
+  //   id: 'enterprise',
+  //   highlight: false,
+  //   isCustom: true, // 定制价格
+  // },
 ]
 
 export const PricingContent = memo(({ lng }: PricingContentProps) => {

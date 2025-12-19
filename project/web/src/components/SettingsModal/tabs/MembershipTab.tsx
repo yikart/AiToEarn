@@ -346,7 +346,7 @@ export const MembershipTab = () => {
                     <div className="flex items-center justify-between">
                       <div className="font-medium">
                         {subscription.plan === SubscriptionPlan.MONTH
-                          ? tVip('modal.vipInfo.monthly2' as any)
+                          ? 'Plus'
                           : subscription.plan === SubscriptionPlan.CLOUD_SPACE_MONTH
                             ? '云空间月度'
                             : tVip('basicMembership' as any)}
@@ -355,9 +355,7 @@ export const MembershipTab = () => {
                         variant={
                           subscription.status === SubscriptionStatus.ACTIVE
                             ? 'default'
-                            : subscription.status === SubscriptionStatus.CANCELED
-                              ? 'destructive'
-                              : 'secondary'
+                            : 'secondary'
                         }
                       >
                         {subscription.status === SubscriptionStatus.ACTIVE
@@ -416,26 +414,31 @@ export const MembershipTab = () => {
                     </div>
 
                     <div className="flex justify-end gap-2 border-t pt-2">
-                      {(subscription.status === SubscriptionStatus.ACTIVE &&
+                      {/* 活跃或试用中且未设置周期结束时取消 - 显示取消订阅按钮 */}
+                      {((subscription.status === SubscriptionStatus.ACTIVE &&
                         !subscription.cancelAtPeriodEnd) ||
                       (subscription.status === SubscriptionStatus.TRIALING &&
-                        !subscription.cancelAtPeriodEnd) ? (
+                        !subscription.cancelAtPeriodEnd)) && (
                           <Button
-                            variant="destructive"
+                            variant="outline"
                             size="sm"
                             onClick={() => handleUnsubscribe(subscription)}
                           >
                             {tProfile('cancelSubscription')}
                           </Button>
-                        ) : subscription.status === SubscriptionStatus.CANCELED &&
-                        subscription.cancelAtPeriodEnd ? (
+                        )}
+                      {/* 活跃但设置了周期结束时取消 - 显示恢复订阅按钮 */}
+                      {(subscription.status === SubscriptionStatus.ACTIVE &&
+                        subscription.cancelAtPeriodEnd) && (
                           <Button
+                            variant="outline"
                             size="sm"
                             onClick={() => handleResumeSubscription(subscription)}
                           >
                             {tProfile('resumeSubscription')}
                           </Button>
-                        ) : null}
+                        )}
+                      {/* 已完全取消的状态不显示任何按钮 */}
                     </div>
                   </div>
                 ))}

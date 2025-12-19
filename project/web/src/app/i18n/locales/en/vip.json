@@ -24,14 +24,11 @@
         }
       },
       "creator": {
-        "name": "Monthly PLUS Member",
+        "name": "LUS Member",
         "price": "19",
-        "button": "Upgrade to Monthly PLUS Member",
+        "button": "Upgrade to PLUS Member",
         "features": {
-          "0": "$50 Agent Credits per Month",
-          "1": "Sora-2: Free & Unlimited",
-          "2": "Nano Banana Pro: Free & Unlimited",
-          "3": "Everything in Free"
+          "0": "$50 Agent Credits per Month"
         }
       },
       "enterprise": {
@@ -134,7 +131,7 @@
       "details": "Details",
       "subscription": "Subscription",
       "planType": "Plan Type",
-      "monthly": "Monthly PLUS",
+      "monthly": "PLUS",
       "monthly2": "Monthly",
       "yearly2": "Yearly",
       "yearly": "Yearly PLUS",
