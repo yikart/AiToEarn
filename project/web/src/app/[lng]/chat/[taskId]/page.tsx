@@ -19,57 +19,26 @@ import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
 import { useScrollControl, useChatState } from './hooks'
 
 // 测试数据 - 用于测试 createChannel action
-const TEST_RESULT_DATA = {
-  type: 'result',
-  message: {
-    type: 'result',
-    subtype: 'success',
-    uuid: 'aee2c247-5e9d-4864-a7b7-0c9ad1832648',
-    duration_ms: 24585,
-    duration_api_ms: 32986,
-    is_error: false,
-    num_turns: 3,
-    message: '好的!我已经为您准备好发布流程了!\n\n**当前状态**:\n- ✅ 图片已生成\n- ✅ 推特文案已准备\n- ⚠️ 需要先绑定推特账号\n\n**接下来的步骤**:\n系统会引导您完成推特账号绑定,绑定完成后,您的内容就可以立即发布了!\n\n**准备发布的内容**:\n- 📸 **图片**: 高质量8K室内人像摄影\n- 📝 **文案**: \n > ✨ 室内私房人像摄影 | Indoor Portrait Photography\n > \n > 追求极致细节与真实质感的艺术表达\n > Pursuing ultimate detail and authentic texture in artistic expression\n > \n > #PortraitPhotography #AsianBeauty #IndoorPhotography #8K #Photography #ArtisticPortrait\n\n请按照系统提示完成推特账号绑定,然后您的精美图文作品就可以成功发布到推特了! 🚀',
-    result: [
-      {
-        type: 'fullContent',
-        title: '✨ 室内私房人像摄影 | Indoor Portrait Photography',
-        description: '追求极致细节与真实质感的艺术表达\nPursuing ultimate detail and authentic texture in artistic expression\n\n#PortraitPhotography #AsianBeauty #IndoorPhotography #8K #Photography #ArtisticPortrait',
-        tags: [],
-        medias: [
-          {
-            type: 'IMAGE',
-            url: 'https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjb2gsx3.jpg',
-          },
-        ],
-        action: 'createChannel',
-        platform: 'xhs',
-        errorMessage: '需要先绑定小红书账号才能发布内容',
-      },
-    ],
-    total_cost_usd: 0.4688474,
-    usage: {
-      cache_creation: {
-        ephemeral_1h_input_tokens: 0,
-        ephemeral_5m_input_tokens: 114598,
-      },
-      cache_creation_input_tokens: 114598,
-      cache_read_input_tokens: 61443,
-      input_tokens: 13,
-      output_tokens: 905,
-      server_tool_use: {
-        web_search_requests: 0,
-      },
-    },
-    permission_denials: [],
-  },
-}
+const TEST_RESULT_DATA = {"type":"result","message":{"type":"result","subtype":"success","uuid":"507f3578-d539-43dd-8214-67eee1613e87","duration_ms":198689,"duration_api_ms":41362,"is_error":false,"num_turns":9,"message":"完成！我已经生成了三张竖屏狗狗图片，并准备好发布到推特。由于你的账户还未绑定推特，系统会引导你进入发布页面，在那里你可以：\n\n1. **绑定推特账户**（如果还未绑定）\n2. **查看三条准备好的推文**：\n - 推文1：陪你看过海 + 海边图片\n - 推文2：陪你爬过山 + 山上图片\n - 推文3：你怎么忍心割我蛋蛋 + 傍晚图片\n\n3. **发布到推特**\n\n所有图片和文案都已准备就绪，你只需要完成账户连接并确认发布即可！🐕","result":[
+  {"type":"fullContent","title":"陪你看过海","description":"陪你看过海","tags":["狗狗","陪伴","回忆"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcqx6ux.png"}],
+  "action":"navigateToPublish","platform":"twitter"},
+  // {"type":"fullContent","title":"陪你爬过山","description":"陪你爬过山","tags":["狗狗","陪伴","冒险"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcqykej.png"}],
+  // "action":"navigateToPublish","platform":"twitter"},
+  // {"type":"fullContent","title":"你怎么忍心割我蛋蛋","description":"你怎么忍心割我蛋蛋","tags":["狗狗","可爱","搞笑"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcqzehm.png"}],
+  // "action":"navigateToPublish","platform":"twitter"}
+],"total_cost_usd":0.2299501,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":164958},"cache_creation_input_tokens":164958,"cache_read_input_tokens":63716,"input_tokens":34,"output_tokens":1922,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+
+
+
+// {"type":"result","message":{"type":"result","subtype":"success","uuid":"653d19f6-b1a4-4bc6-910b-f813c68c65a0","duration_ms":23024,"duration_api_ms":28454,"is_error":false,"num_turns":5,"message":"完成！我已经为你准备好了小红书发布内容。系统已引导你进入小红书发布页面，你可以：\n\n1. **绑定小红书账户**（如果还未绑定）\n2. **查看准备好的内容**：\n - 标题：陪你看过海，陪你爬过山\n - 描述：包含三分图的完整文案\n - 标签：#狗狗 #陪伴 #回忆 #搞笑 #宠物\n\n3. **上传并发布**这张精美的三分图到小红书\n\n所有内容都已准备就绪，你只需要完成账户连接并确认发布即可！🐕✨","result":[{"type":"fullContent","title":"陪你看过海，陪你爬过山","description":"上方小狗在海边眺望远方 陪你看过海，中方小狗在山上眺望远方 陪你爬过山，下方傍晚天气小狗正脸 你怎么忍心割我蛋蛋。三分图设计，温馨搞笑兼具的狗狗陪伴主题。","tags":["狗狗","陪伴","回忆","搞笑","宠物"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcrjbr6.png"}],
+// "action":"navigateToPublish","platform":"xhs"}],"total_cost_usd":0.1240453,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":82734},"cache_creation_input_tokens":82734,"cache_read_input_tokens":94298,"input_tokens":21,"output_tokens":844,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
 
 // 测试模式：设置为 true 时，点击发送不发送请求，直接返回测试数据 00.00
 const TEST_MODE = false
 
 export default function ChatDetailPage() {
   const { t } = useTransClient('chat')
+  const { t: tHome } = useTransClient('home')
   const router = useRouter()
   const params = useParams()
   const taskId = params.taskId as string
@@ -125,9 +94,9 @@ export default function ChatDetailPage() {
     setActionContext({
       router,
       lng,
-      t: t as any,
+      t: tHome as any,
     })
-  }, [router, lng, t, setActionContext])
+  }, [router, lng, tHome, setActionContext])
 
   /**
    * 智能滚动：用户在底部附近时自动滚动

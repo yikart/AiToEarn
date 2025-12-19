@@ -20,6 +20,7 @@ import {
   IconBar,
   UserSection,
 } from './components'
+import { AffiliatesEntry } from './components/BottomSection/AffiliatesEntry'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
 
 /**
@@ -99,6 +100,11 @@ const LayoutSidebar = () => {
           currentRoute={currRouter}
           collapsed={collapsed}
         />
+
+        {/* 推广赚钱入口 - 在底部功能区横线上方 */}
+        <div className="mt-auto pb-1">
+          <AffiliatesEntry collapsed={collapsed} />
+        </div>
 
         {/* 底部功能区 */}
         <BottomSection

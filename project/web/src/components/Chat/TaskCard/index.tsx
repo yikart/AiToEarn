@@ -23,6 +23,8 @@ export interface ITaskCardProps {
   id: string
   /** 任务标题 */
   title: string
+  /** 任务状态（英文原始状态字符串） */
+  status?: string
   /** 创建时间 */
   createdAt: string | number
   /** 更新时间 */
@@ -39,6 +41,7 @@ export interface ITaskCardProps {
 export function TaskCard({
   id,
   title,
+  status,
   createdAt,
   updatedAt,
   onDelete,
@@ -87,10 +90,17 @@ export function TaskCard({
         </h4>
       </div>
 
-      {/* 时间 */}
-      <span className="text-xs text-muted-foreground">
-        {formatRelativeTime(new Date(updatedAt || createdAt))}
-      </span>
+      {/* 时间 & 状态 */}
+      <div className="mt-1 flex items-center justify-between gap-2">
+        <span className="text-xs text-muted-foreground">
+          {formatRelativeTime(new Date(updatedAt || createdAt))}
+        </span>
+        {status && (
+          <span className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+            {status}
+          </span>
+        )}
+      </div>
 
       {/* 更多操作按钮 */}
       <DropdownMenu>

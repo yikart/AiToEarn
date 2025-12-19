@@ -16,6 +16,7 @@ import { useAgentStore } from '@/store/agent'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
+import { AccountPlatInfoArr, PlatType } from '@/app/config/platConfig'
 import logo from '@/assets/images/logo.png'
 
 /** 应用的提示词数据 */
@@ -102,9 +103,9 @@ export function HomeChat({
     setActionContext({
       router,
       lng: lng as string,
-      t: t as any,
+      t: tHome as any,
     })
-  }, [router, lng, t, setActionContext])
+  }, [router, lng, tHome, setActionContext])
 
   /** 处理发送消息 */
   const handleSend = useCallback(async () => {
@@ -174,7 +175,50 @@ export function HomeChat({
         isUploading={isUploading}
         placeholder={t('input.placeholder' as any)}
         mode="large"
+        
       />
+
+        {/* 平台工具链接提示 */}
+        <div
+          className="flex items-center justify-between gap-2 mb-2"
+          style={{
+            backgroundColor: '#F2F2F1',
+            borderBottomLeftRadius: '10px',
+            borderBottomRightRadius: '10px',
+            paddingTop: '20px',
+            paddingBottom: '8px',
+            paddingLeft: '16px',
+            paddingRight: '16px',
+            marginTop: '-12px',
+            zIndex: -1,
+          }}
+        >
+          <span
+            className="text-sm text-muted-foreground self-start pt-1"
+            style={{ zIndex: 10, position: 'relative', marginRight: '-8px' }}
+          >
+            {t('home.connectTools' as any)}
+          </span>
+          <div className="flex items-center">
+            {AccountPlatInfoArr.map(([key, value], index) => (
+              <Image
+                key={key}
+                src={value.icon}
+                alt={value.name}
+                width={20}
+                height={20}
+                className="w-6 h-6 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity"
+                style={{
+                  marginLeft: index > 0 ? '-8px' : '0',
+                  zIndex: AccountPlatInfoArr.length - index,
+                  position: 'relative',
+                }}
+                title={value.name}
+                onClick={() => router.push(`/${lng}/accounts?addChannel=${key}`)}
+              />
+            ))}
+          </div>
+        </div>
 
       {/* 提示标签 */}
       <div className="flex flex-wrap items-center justify-center gap-2 mt-4">

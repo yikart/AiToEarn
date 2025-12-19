@@ -31,7 +31,8 @@
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
     "imageLoading": "Loading image...",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "githubStars": "GitHub Stars"
   },
   "subscription": {
     "currentPlan": "Current Plan",
