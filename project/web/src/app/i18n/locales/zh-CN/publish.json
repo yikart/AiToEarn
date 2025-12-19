@@ -12,6 +12,7 @@
   },
   "buttons": {
     "customizePerAccount": "自定义每个账户",
+    "cancel": "取消",
     "cancelPublish": "取消发布",
     "schedulePublish": "定时发布",
     "publishNow": "立即发布",

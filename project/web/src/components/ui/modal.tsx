@@ -156,7 +156,7 @@ export const Modal: React.FC<ModalProps> = ({
             )}
 
         {shouldRenderContent && (
-          <div className={cn('flex-1 overflow-auto py-2', bodyClassName)}>
+          <div className={cn('flex-1 py-2 flex', bodyClassName)}>
             {children}
           </div>
         )}

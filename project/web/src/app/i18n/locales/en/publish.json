@@ -12,6 +12,7 @@
   },
   "buttons": {
     "customizePerAccount": "Customize per account",
+    "cancel": "Cancel",
     "cancelPublish": "Cancel Publish",
     "schedulePublish": "Schedule Publish",
     "publishNow": "Now",
