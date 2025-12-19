@@ -276,5 +276,11 @@
     "label": "Source",
     "web": "Web",
     "app": "App"
+  },
+  "addChannelGuide": {
+    "title": "Need to Add Channel",
+    "description": "We detected that you haven't added a {{platform}} channel yet. Click here to add a channel",
+    "gotIt": "Got it",
+    "enableGuide": "Enable Guide"
   }
 }

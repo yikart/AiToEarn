@@ -276,5 +276,11 @@
     "label": "来源",
     "web": "网页端",
     "app": "App端"
+  },
+  "addChannelGuide": {
+    "title": "需要添加频道",
+    "description": "检测到您还没有添加{{platform}}频道，点击这里添加频道",
+    "gotIt": "知道了",
+    "enableGuide": "启用引导"
   }
 }

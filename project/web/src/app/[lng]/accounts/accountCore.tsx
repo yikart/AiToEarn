@@ -109,23 +109,27 @@ export default function AccountPageCore({
     // 处理添加频道引导
     if (searchParams?.addChannel) {
       const platform = searchParams.addChannel
-      const platformNames: Record<string, string> = {
-        douyin: '抖音',
-        xhs: '小红书',
-        wxSph: '微信视频号',
-        KWAI: '快手',
-        youtube: 'YouTube',
-        wxGzh: '微信公众号',
-        bilibili: 'B站',
-        twitter: 'Twitter',
-        tiktok: 'TikTok',
-        facebook: 'Facebook',
-        instagram: 'Instagram',
-        threads: 'Threads',
-        pinterest: 'Pinterest',
-        linkedin: 'LinkedIn',
+      
+      // 检查是否启用引导（默认关闭）
+      const enableGuide = localStorage.getItem('enableAddChannelGuide') === 'true'
+      if (!enableGuide) {
+        // 如果未启用引导，直接设置目标平台并打开弹窗
+        setTargetPlatform(platform as PlatType)
+        setTimeout(() => {
+          setAddAccountModalOpen(true)
+        }, 300)
+        // 清除URL参数
+        if (typeof window !== 'undefined') {
+          const url = new URL(window.location.href)
+          url.searchParams.delete('addChannel')
+          window.history.replaceState({}, '', url.toString())
+        }
+        return
       }
-      const platformName = platformNames[platform] || '该平台'
+
+      // 获取平台名称（使用国际化）
+      const platformInfo = AccountPlatInfoMap.get(platform as PlatType)
+      const platformName = platformInfo?.name || platform
       
       // 延迟一下，确保页面已完全加载
       const timer = setTimeout(() => {
@@ -138,11 +142,15 @@ export default function AccountPageCore({
         // 设置目标平台
         setTargetPlatform(platform as PlatType)
 
+        const gotItText = t('addChannelGuide.gotIt')
+        const titleText = t('addChannelGuide.title')
+        const descriptionText = t('addChannelGuide.description', { platform: platformName })
+
         const driverObj = driver({
           showProgress: false,
           showButtons: ['next'],
-          nextBtnText: '知道了',
-          doneBtnText: '知道了',
+          nextBtnText: gotItText,
+          doneBtnText: gotItText,
           popoverOffset: 10,
           stagePadding: 4,
           stageRadius: 12,
@@ -152,8 +160,8 @@ export default function AccountPageCore({
             {
               element: '[data-driver-target="add-channel-btn"]',
               popover: {
-                title: '需要添加频道',
-                description: `检测到您还没有添加${platformName}频道，点击这里添加频道`,
+                title: titleText,
+                description: descriptionText,
                 side: 'top',
                 align: 'start',
                 onPopoverRender: () => {
@@ -163,7 +171,7 @@ export default function AccountPageCore({
                     const doneBtn = document.querySelector('.driver-popover-done-btn') as HTMLButtonElement
                     const btn = nextBtn || doneBtn
                     if (btn) {
-                      btn.textContent = '知道了'
+                      btn.textContent = gotItText
                       // 添加点击事件监听器
                       const handleClick = (e: MouseEvent) => {
                         e.preventDefault()
