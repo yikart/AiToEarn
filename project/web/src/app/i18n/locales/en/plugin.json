@@ -15,7 +15,7 @@
     "error": "Error"
   },
   "error": {
-    "pluginNotInstalled": "Please install AIToEarn browser plugin first",
+    "pluginNotInstalled": "Please install Aitoearn browser plugin first",
     "publishingInProgress": "Publishing in progress, please try again later",
     "loginFailed": "Login failed",
     "publishFailed": "Publish failed"
@@ -67,7 +67,7 @@
     "pluginActive": "Plugin Active",
     "pluginInactive": "Plugin Inactive",
     "downloadPlugin": "Download Plugin",
-    "downloadDescription": "AIToEarn browser plugin helps you quickly publish content to various platforms. Click the button below to download and install.",
+    "downloadDescription": "Aitoearn browser plugin helps you quickly publish content to various platforms. Click the button below to download and install.",
     "downloadButton": "Download Now",
     "chromeWebStore": "Chrome Web Store",
     "githubRelease": "GitHub Release",

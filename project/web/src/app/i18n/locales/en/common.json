@@ -8,11 +8,11 @@
   "notifications": "Notifications",
   "settings": "Settings",
   "vip": "VIP",
-  "subscribe": "Subscribe",
+  "subscribe": "Upgrade",
   "balance": "Balance",
-  "plugin": "Browser Plugin",
+  "plugin": "Browser Ext",
   "pluginStatus": {
-    "notInstalled": "Not Installed",
+    "notInstalled": "Install",
     "noPermission": "Not Authorized",
     "ready": "Ready",
     "checking": "Checking"
