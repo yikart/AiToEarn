@@ -27,6 +27,7 @@ interface AccountPageCoreProps {
     platform?: string
     spaceId?: string
     addChannel?: string // 添加频道引导参数
+    updateChannel?: string // 更新频道授权参数
     action?: string // 动作类型：publish 等
     // AI生成的内容参数
     aiGenerated?: string
@@ -81,6 +82,30 @@ export default function AccountPageCore({
 
   // 处理URL参数
   useEffect(() => {
+    // 处理更新频道授权（直接打开授权弹窗并自动触发）
+    if (searchParams?.updateChannel) {
+      const platform = searchParams.updateChannel as PlatType
+      const validPlatforms = Object.values(PlatType)
+      
+      if (validPlatforms.includes(platform)) {
+        // 设置目标平台
+        setTargetPlatform(platform)
+        
+        // 直接打开添加账号弹窗，autoTriggerPlatform 会自动触发授权
+        setTimeout(() => {
+          setAddAccountModalOpen(true)
+        }, 500)
+        
+        // 清除URL参数
+        if (typeof window !== 'undefined') {
+          const url = new URL(window.location.href)
+          url.searchParams.delete('updateChannel')
+          window.history.replaceState({}, '', url.toString())
+        }
+      }
+      return
+    }
+
     // 处理添加频道引导
     if (searchParams?.addChannel) {
       const platform = searchParams.addChannel
