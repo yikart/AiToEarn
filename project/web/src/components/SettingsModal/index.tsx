@@ -94,8 +94,6 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
     switch (activeTab) {
       case 'profile':
         return isLoggedIn ? <ProfileTab onClose={onClose} /> : <GeneralTab />
-      case 'agent':
-        return isLoggedIn ? <AgentTab /> : <GeneralTab />
       case 'subscription':
         return isLoggedIn ? <SubscriptionTab /> : <GeneralTab />
       case 'membership':
