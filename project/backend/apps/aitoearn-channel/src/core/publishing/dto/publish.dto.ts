@@ -67,7 +67,7 @@ export const YouTubePublishOptionSchema = z.object({
     YouTubePrivacyStatus.Public,
     YouTubePrivacyStatus.Unlisted,
     YouTubePrivacyStatus.Private,
-  ]),
+  ]).optional().default(YouTubePrivacyStatus.Public),
   license: z.enum(YouTubeLicense).optional(),
   categoryId: z.string(),
   notifySubscribers: z.boolean().optional().default(false),

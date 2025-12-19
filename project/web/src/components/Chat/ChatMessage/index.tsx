@@ -17,6 +17,7 @@ import type { IUploadedMedia } from '../MediaUpload'
 import type { IMessageStep, IWorkflowStep } from '@/store/agent'
 import logo from '@/assets/images/logo.png'
 import styles from './ChatMessage.module.scss'
+import { MediaPreview } from '@/components/common/MediaPreview'
 
 export type { IWorkflowStep }
 
@@ -51,26 +52,12 @@ const formatToolName = (name: string) => {
  */
 interface IWorkflowStepItemProps {
   step: IWorkflowStep
-  /** 所有工作流步骤（用于判断是否有多个不同的 toolName） */
-  allSteps: IWorkflowStep[]
 }
 
-function WorkflowStepItem({ step, allSteps }: IWorkflowStepItemProps) {
+function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
   const { t } = useTransClient('chat')
-  // 判断步骤是否完成：tool_result 类型即为完成，或者不活跃状态
-  const isCompleted = step.type === 'tool_result' || !step.isActive
-
-  // 检查是否有多个不同的 toolName（排除空值）
-  const uniqueToolNames = new Set(
-    allSteps
-      .map(s => s.toolName)
-      .filter((name): name is string => !!name)
-      .map(name => formatToolName(name))
-  )
-  const hasMultipleToolNames = uniqueToolNames.size > 1
-
-  // 如果有多个不同的 toolName，不显示具体的 toolName
-  const shouldShowToolName = !hasMultipleToolNames
+  // 判断步骤是否完成：不活跃状态即为完成
+  const isCompleted = !step.isActive
 
   return (
     <div
@@ -81,17 +68,11 @@ function WorkflowStepItem({ step, allSteps }: IWorkflowStepItemProps) {
     >
       {/* 步骤图标 */}
       <div className="shrink-0 mt-0.5">
-        {step.type === 'tool_result' ? (
-          // tool_result 类型显示完成图标
-          <CheckCircle2 className="w-3 h-3 text-success" />
-        ) : step.isActive ? (
-          // 正在执行显示转圈图标
+        {step.isActive ? (
           <Loader2 className="w-3 h-3 text-primary animate-spin" />
         ) : isCompleted ? (
-          // 已完成显示完成图标
           <CheckCircle2 className="w-3 h-3 text-success" />
         ) : (
-          // 其他情况显示工具图标
           <Wrench className="w-3 h-3 text-muted-foreground/70" />
         )}
       </div>
@@ -102,13 +83,9 @@ function WorkflowStepItem({ step, allSteps }: IWorkflowStepItemProps) {
           step.isActive ? 'text-primary' : isCompleted ? 'text-success' : 'text-muted-foreground',
         )}>
           {step.type === 'tool_call'
-            ? shouldShowToolName
-              ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
-              : `${t('workflow.processing' as any)}${isCompleted ? '' : '...'}`
+            ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
             : step.type === 'tool_result'
-              ? shouldShowToolName
-                ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
-                : t('workflow.toolResult' as any)
+              ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
               : formatToolName(step.toolName || t('workflow.processing' as any))}
         </div>
         {step.content && (
@@ -207,7 +184,7 @@ function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflow
           styles.workflowDetailList,
         )}>
           {workflowSteps.map((step, index) => (
-            <WorkflowStepItem key={step.id || index} step={step} allSteps={workflowSteps} />
+            <WorkflowStepItem key={step.id || index} step={step} />
           ))}
         </div>
       )}
@@ -276,6 +253,24 @@ export function ChatMessage({
   const { t } = useTransClient('chat')
   const isUser = role === 'user'
   const isStreaming = status === 'streaming' || status === 'pending'
+
+  // 媒体预览状态（统一使用全局 MediaPreview 组件）
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null)
+
+  const previewableMedias = useMemo(
+    () => medias.filter((m) => m.type === 'image' || m.type === 'video'),
+    [medias],
+  )
+
+  const previewItems = useMemo(
+    () =>
+      previewableMedias.map((m) => ({
+        type: m.type === 'video' ? 'video' as const : 'image' as const,
+        src: getOssUrl(m.url),
+        title: m.name || m.file?.name,
+      })),
+    [previewableMedias],
+  )
 
   // 处理消息步骤：如果有 steps 则使用 steps，否则从 content 生成单个步骤
   const displaySteps = useMemo(() => {
@@ -358,26 +353,45 @@ export function ChatMessage({
                 )
               }
 
+              const isPreviewable = media.type === 'image' || media.type === 'video'
+              const mediaUrl = getOssUrl(media.url)
+
+              const thisPreviewIndex = isPreviewable
+                ? previewableMedias.findIndex((m) => m === media)
+                : -1
+
+              const handleOpenPreview = () => {
+                if (thisPreviewIndex >= 0) {
+                  setPreviewIndex(thisPreviewIndex)
+                }
+              }
+
+              const Wrapper: React.ElementType = isPreviewable ? 'button' : 'div'
+
               return (
-                <div
+                <Wrapper
                   key={index}
-                  className="w-24 h-24 rounded-lg overflow-hidden border border-border bg-muted"
+                  type={isPreviewable ? 'button' : undefined}
+                  onClick={isPreviewable ? handleOpenPreview : undefined}
+                  className={cn(
+                    'w-24 h-24 rounded-lg overflow-hidden border border-border bg-muted',
+                    isPreviewable && 'cursor-pointer',
+                  )}
                 >
                   {media.type === 'video' ? (
                     <video
-                      src={getOssUrl(media.url)}
+                      src={mediaUrl}
                       className="w-full h-full object-cover"
                       muted
-                      controls
                     />
                   ) : (
                     <img
-                      src={getOssUrl(media.url)}
+                      src={mediaUrl}
                       alt={`attachment-${index}`}
                       className="w-full h-full object-cover"
                     />
                   )}
-                </div>
+                </Wrapper>
               )
             })}
           </div>
@@ -436,6 +450,16 @@ export function ChatMessage({
           </div>
         )}
       </div>
+
+      {/* 全局媒体预览（图片 / 视频） */}
+      {previewItems.length > 0 && (
+        <MediaPreview
+          open={previewIndex !== null}
+          items={previewItems}
+          initialIndex={previewIndex ?? 0}
+          onClose={() => setPreviewIndex(null)}
+        />
+      )}
     </div>
   )
 }
