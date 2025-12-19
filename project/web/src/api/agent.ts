@@ -61,9 +61,14 @@ export interface TaskMessage {
 export interface TaskListItem {
   id: string
   userId: string
+  /** 任务标题 */
   title?: string
+  /** 任务创建时间 */
   createdAt: string
+  /** 任务最近更新时间 */
   updatedAt: string
+  /** 任务状态（后端英文原始状态字符串，直接展示） */
+  status?: string
 }
 
 // 任务列表响应

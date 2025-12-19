@@ -151,6 +151,7 @@ export default function TasksHistoryPage() {
                     key={task.id}
                     id={task.id}
                     title={task.title || t('task.newChat' as any)}
+                    status={task.status}
                     createdAt={task.createdAt}
                     updatedAt={task.updatedAt}
                     onDelete={handleDelete}
