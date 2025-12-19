@@ -1,15 +1,16 @@
 import type { DayCellContentArg } from '@fullcalendar/core'
 import type { ForwardedRef } from 'react'
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
-import { DownOutlined, PlusOutlined, UpOutlined } from '@ant-design/icons'
-import { Button, Skeleton } from 'antd'
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
 import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { useShallow } from 'zustand/react/shallow'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import { useTransClient } from '@/app/i18n/client'
-import styles from './components/calendarTimingItem.module.scss'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 import CalendarRecord from './components/CalendarRecord'
 import { CustomDragLayer } from './components/CustomDragLayer'
 
@@ -103,22 +104,30 @@ const CalendarTimingItem = memo(
             }
             cellRef.current = node
           }}
-          className={[
+          className={cn(
             'calendarTimingItem--js',
-            styles.calendarTimingItem,
-            argDate < nowDate ? styles.calendarTimingItemPast : '',
-            isOver ? styles.calendarTimingItem_over : '',
-          ].join(' ')}
+            'box-border p-2.5 flex flex-col font-semibold min-h-[200px] h-full group',
+            'transition-colors',
+            argDate < nowDate && 'bg-muted/30',
+            isOver && 'bg-accent/50',
+          )}
         >
-          <div className="calendarTimingItem-top">
-            <div className="calendarTimingItem-top-day">
+          {/* 顶部：日期和添加按钮 */}
+          <div className="flex justify-between items-center mb-1.5 group/top">
+            <div
+              className={cn(
+                'w-6 h-6 leading-6 text-center rounded-full text-sm font-semibold',
+                argDate.getTime() === nowDate.getTime() && 'bg-(--primary-color) text-white',
+              )}
+            >
               {arg.date.getDate()}
             </div>
 
             {argDate >= nowDate && (
               <Button
-                size="small"
-                icon={<PlusOutlined />}
+                size="sm"
+                variant="ghost"
+                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={() => {
                   const days = dayjs(arg.date)
                   const today = dayjs()
@@ -130,24 +139,30 @@ const CalendarTimingItem = memo(
                     onClickPub(days.format())
                   }
                 }}
-              />
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </Button>
             )}
           </div>
+
+          {/* 内容区域 */}
           {loading
             ? (
-                <>
-                  <Skeleton.Button active={true} block={true} size="small" />
-                </>
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="h-[34px] w-full rounded-md" />
+                </div>
               )
             : (
-                <div className="calendarTimingItem-con">
+                <div className="flex flex-col gap-2">
+                  {/* 预约时间按钮 */}
                   {argDate >= nowDate
                     && reservationsTimesLast.map((v, i) => {
                       return (
                         <Button
                           key={i}
-                          size="small"
-                          type="dashed"
+                          size="sm"
+                          variant="outline"
+                          className="w-full h-[34px] text-xs group/btn relative overflow-hidden"
                           onClick={() => {
                             const days = dayjs(arg.date)
                               .set('hour', v[0])
@@ -155,19 +170,17 @@ const CalendarTimingItem = memo(
                             onClickPub(days.format())
                           }}
                         >
-                          <div className="calendarTimingItem-con-btn1">
-                            {v[0]}
-                            :
-                            {v[1]}
-                            {' '}
-                            PM
-                          </div>
-                          <div className="calendarTimingItem-con-btn2">
+                          <span className="group-hover/btn:opacity-0 transition-opacity">
+                            {v[0]}:{v[1]} PM
+                          </span>
+                          <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/btn:opacity-100 transition-opacity">
                             {t('addPost')}
-                          </div>
+                          </span>
                         </Button>
                       )
                     })}
+
+                  {/* 发布记录 */}
                   {records
                     && recordsLast.map((v) => {
                       return (
@@ -178,16 +191,12 @@ const CalendarTimingItem = memo(
                       )
                     })}
 
+                  {/* 显示更多/收起按钮 */}
                   {records && records.length > 3 - reservationsTimesLast.length && (
                     <Button
-                      type="text"
-                      style={{
-                        height: 'auto',
-                        width: 'auto',
-                        padding: '3px 10px',
-                        fontSize: 'var(--fs-sm)',
-                        marginBottom: '0',
-                      }}
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto py-1.5 px-2.5 text-xs text-muted-foreground hover:text-foreground"
                       onClick={() => {
                         setIsMore(!isMore)
                       }}
@@ -195,13 +204,13 @@ const CalendarTimingItem = memo(
                       {isMore
                         ? (
                             <>
-                              <UpOutlined style={{ marginRight: '8px' }} />
+                              <ChevronUp className="mr-2 h-3.5 w-3.5" />
                               {t('calendar.hideMore')}
                             </>
                           )
                         : (
                             <>
-                              <DownOutlined style={{ marginRight: '8px' }} />
+                              <ChevronDown className="mr-2 h-3.5 w-3.5" />
                               {records.length - recordsLast?.length}
                               {' '}
                               {t('calendar.showMore')}

@@ -3,10 +3,7 @@
   background: transparent;
 }
 
-.fc-daygrid-day.fc-day-today .calendarTimingItem-top-day {
-  background-color: var(--primary);
-  color: var(--primary-foreground);
-}
+/* 今天的日期样式已经在组件内通过 Tailwind CSS 处理，这里不再需要 */
 
 .fc-daygrid-day-frame {
   display: flex;
