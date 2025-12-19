@@ -4,8 +4,8 @@ import type { SocialAccount } from '@/api/types/account.type'
 import { Avatar } from 'antd'
 import { forwardRef, memo } from 'react'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
-import { OSS_URL } from '@/constant'
 import styles from './avatarPlat.module.scss'
+import { getOssUrl } from '@/utils/oss'
 
 export interface IAvatarPlatRef {}
 
@@ -23,7 +23,7 @@ function getAvatar(url: string) {
     return url
   }
   else {
-    return `${OSS_URL}/${url}`
+    return `${getOssUrl(url)}`
   }
 }
 

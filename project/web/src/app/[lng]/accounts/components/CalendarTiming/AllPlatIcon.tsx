@@ -1,6 +1,5 @@
 import type { ForwardedRef } from 'react'
 import { forwardRef, memo, useMemo } from 'react'
-import styles from './calendarTiming.module.scss'
 
 export interface IAllPlatIconRef {}
 
@@ -28,16 +27,16 @@ const AllPlatIcon = memo(
 
       return (
         <div
-          className={styles.allPlatIcon}
+          className="flex flex-wrap gap-1"
           style={{ width: `${size}px`, height: `${size}px`, ...style }}
         >
-          <ul>
-            <li style={childStyle}></li>
-            <li style={childStyle}></li>
+          <ul className="flex gap-1 list-none p-0 m-0">
+            <li className="bg-muted rounded" style={childStyle}></li>
+            <li className="bg-muted rounded" style={childStyle}></li>
           </ul>
-          <ul>
-            <li style={childStyle}></li>
-            <li style={childStyle}></li>
+          <ul className="flex gap-1 list-none p-0 m-0">
+            <li className="bg-muted rounded" style={childStyle}></li>
+            <li className="bg-muted rounded" style={childStyle}></li>
           </ul>
         </div>
       )

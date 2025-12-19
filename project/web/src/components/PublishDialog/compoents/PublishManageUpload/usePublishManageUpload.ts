@@ -15,8 +15,8 @@ import {
   createTaskId,
   isAbortError,
 } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload.utils'
-import { OSS_URL } from '@/constant'
 import { UploadTaskStatusEnum } from './publishManageUpload.enum'
+import { getOssUrl } from '@/utils/oss'
 
 // 仅定义状态形状，方法类型走类型推断
 const initialState: IPublishManageUploadState = {
@@ -109,7 +109,7 @@ export const usePublishManageUpload = create(
           runtime!.completed = true
           const result: UploadCacheItem = {
             ossKey,
-            ossUrl: `${OSS_URL}${ossKey}`,
+            ossUrl: `${getOssUrl(ossKey)}`,
           }
 
           set(state => ({

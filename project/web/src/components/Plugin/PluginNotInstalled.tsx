@@ -5,7 +5,7 @@
 
 'use client'
 
-import { Chrome, Github, Puzzle } from 'lucide-react'
+import { BookOpen, Chrome, Github, Puzzle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
 import { Button } from '@/components/ui/button'
@@ -63,6 +63,21 @@ export function PluginNotInstalled() {
             {t('header.githubRelease')}
           </a>
         </Button>
+
+        {/* <Button
+          variant="ghost"
+          className="w-full gap-2"
+          asChild
+        >
+          <a
+            href="/websit/plugin-guide"
+            target="_blank"-
+            rel="noopener noreferrer"
+          >
+            <BookOpen className="h-4 w-4" />
+            {t('header.viewGuide')}
+          </a>
+        </Button> */}
       </div>
     </div>
   )

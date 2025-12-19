@@ -1,23 +1,25 @@
+/**
+ * QueueItem 组件
+ * 功能：显示发布队列中的单个记录项
+ */
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
 import {
   CheckCircleOutlined,
   ClockCircleOutlined,
   CloseCircleOutlined,
   LoadingOutlined,
-  MessageOutlined,
   SendOutlined,
-  UserOutlined,
 } from '@ant-design/icons'
-import { Avatar, Button, Tag } from 'antd'
 import { memo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { PublishStatus } from '@/api/plat/types/publish.types'
 import { getDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import { useAccountStore } from '@/store/account'
 import { getOssUrl } from '@/utils/oss'
-import styles from './queueItem.module.scss'
 
 interface QueueItemProps {
   record: PublishRecordItem
@@ -77,141 +79,124 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
   const statusInfo = getStatusInfo()
 
   return (
-    <div className={styles.queueItem}>
+    <div className="bg-background rounded-xl border border-border shadow-sm overflow-hidden transition-all duration-300 ease-in-out mb-4 last:mb-0 hover:shadow-md hover:-translate-y-0.5">
       {/* 状态头部 */}
-      <div className={styles.statusHeader}>
-        <div className={styles.statusInfo}>
-
-          <div className={styles.dateTime}>
-            <span className={styles.date}>{days.format('MMM DD')}</span>
-            <span className={styles.time}>{days.format('h:mm A')}</span>
+      <div className="flex justify-between items-start p-4 pb-3 border-b border-border">
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground font-medium">{days.format('MMM DD')}</span>
+            <span className="text-sm text-muted-foreground font-medium">{days.format('h:mm A')}</span>
           </div>
-          <span className={styles.statusText}>{statusInfo.text}</span>
+          <span className="text-base font-semibold text-foreground">{statusInfo.text}</span>
         </div>
-        {/* <div className={styles.statusBadge}>
-          <Tag color={statusInfo.color} icon={statusInfo.icon}>
-            {statusInfo.text}
-          </Tag>
-        </div> */}
-        <div className={styles.commentIcon}>
-          {/* <MessageOutlined /> */}
+        <div className="flex-shrink-0">
+          {/* 可以在这里添加状态徽章 */}
         </div>
       </div>
 
       {/* 错误信息横幅 */}
       {record.status === PublishStatus.FAIL && record.errorMsg && (
-        <div className={styles.errorBanner}>
-          <div className={styles.errorIcon}>
+        <div className="flex items-center gap-3 p-3 px-5 bg-destructive/10 border-b border-destructive/30">
+          <div className="text-destructive text-base flex-shrink-0">
             <CloseCircleOutlined />
           </div>
-          <div className={styles.errorMessage}>
+          <div className="text-destructive text-sm leading-tight flex-1">
             {record.errorMsg}
           </div>
         </div>
       )}
 
       {/* 主要内容区域 */}
-      <div className={styles.contentArea}>
-
-        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', gap: '12px' }}>
-
-          {/* 账户信息 */}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-
-            <div className={styles.accountInfo}>
-              <div className={styles.avatarContainer}>
-
-                <Avatar
-                  size={40}
-                  src={getOssUrl(accountActive?.avatar || '')}
-                  className={styles.avatar}
-                >
-                  {accountActive?.nickname?.charAt(0) || accountActive?.account?.charAt(0)}
+      <div className="p-5">
+        <div className="flex flex-row justify-between gap-3">
+          {/* 左侧：账户信息和文本内容 */}
+          <div className="flex flex-col gap-3">
+            {/* 账户信息 */}
+            <div className="flex items-start gap-3 mb-4">
+              <div className="relative flex-shrink-0">
+                <Avatar className="h-10 w-10">
+                  <AvatarImage src={getOssUrl(accountActive?.avatar || '')} alt={accountActive?.nickname || accountActive?.account} />
+                  <AvatarFallback>
+                    {accountActive?.nickname?.charAt(0) || accountActive?.account?.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
-
-                {/* <Avatar
-              src={getOssUrl(account?.avatar || "")}
-              icon={!account?.avatar ? <UserOutlined /> : undefined}
-              className={styles.avatar}
-            /> */}
-                <div className={styles.platformIcon}>
+                <div className="absolute -bottom-0.5 -right-0.5 w-5 h-5 bg-background rounded-full flex items-center justify-center border-2 border-background shadow-sm">
                   <img
                     src={platInfo?.icon}
                     alt="platform"
-                    className={styles.platIcon}
+                    className="w-3 h-3 object-contain"
                   />
                 </div>
               </div>
-              <div className={styles.accountDetails}>
-                <div className={styles.accountName}>{account?.nickname}</div>
-                <div className={styles.accountHandle}>
+              <div className="flex-1 min-w-0">
+                <div className="text-base font-semibold text-foreground mb-1 leading-tight">
+                  {account?.nickname}
+                </div>
+                <div className="text-sm text-muted-foreground leading-tight">
                   @
                   {account?.account}
                 </div>
               </div>
-
             </div>
 
-            <div className={styles.postText}>{record.desc}</div>
+            {/* 发布内容文本 */}
+            <div className="text-base text-foreground leading-relaxed mb-4 break-words">
+              {record.desc}
+            </div>
           </div>
 
-          {/* 发布内容 */}
-          <div className={styles.postContent}>
-
-            {/* 媒体内容 */}
+          {/* 右侧：媒体内容 */}
+          <div className="relative">
             {(record.coverUrl || record.imgUrlList?.length > 0) && (
-              <div className={styles.mediaContainer}>
+              <div className="mb-4">
                 {record.videoUrl
                   ? (
-                      <div className={styles.videoThumbnail}>
+                      <div className="relative rounded-lg overflow-hidden bg-muted max-w-[300px]">
                         <img
                           src={getOssUrl(record.coverUrl || '')}
                           alt="video thumbnail"
-                          className={styles.mediaImage}
+                          className="w-full h-auto block rounded-lg"
                         />
-                        <div className={styles.playButton}>
-                          <div className={styles.playIcon}>▶</div>
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-black/70 rounded-full flex items-center justify-center cursor-pointer transition-all hover:bg-black/80 hover:scale-110">
+                          <div className="text-white text-base ml-0.5">▶</div>
                         </div>
                       </div>
                     )
                   : (
-                      <div className={styles.imageContainer}>
+                      <div className="rounded-lg overflow-hidden bg-muted max-w-[300px]">
                         <img
                           src={getOssUrl(record.coverUrl || record.imgUrlList?.[0] || '')}
                           alt="post image"
-                          className={styles.mediaImage}
+                          className="w-full h-auto block rounded-lg"
                         />
                       </div>
                     )}
               </div>
             )}
-
           </div>
-
         </div>
-
       </div>
 
       {/* 底部信息 */}
-      <div className={styles.footer}>
-        <div className={styles.creationInfo}>
+      <div className="flex justify-between items-center p-4 px-5 border-t border-border bg-muted/30">
+        <div className="text-sm text-muted-foreground">
           {t('creationInfo', { date: days.format('YYYY-MM-DD') })}
         </div>
-        <div className={styles.actionButtons}>
+        <div className="flex items-center gap-2">
           {record.status === PublishStatus.UNPUBLISH && (
             <Button
-              type="primary"
-              icon={<SendOutlined />}
               onClick={() => onRetry?.(record)}
-              className={styles.retryButton}
+              size="sm"
+              className="h-8 rounded-md font-medium"
             >
+              <SendOutlined />
               {t('buttons.publishNow')}
             </Button>
           )}
           {record.workLink && (
             <Button
-              icon={<SendOutlined />}
+              variant="outline"
+              size="sm"
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(record.workLink)
@@ -221,8 +206,9 @@ const QueueItem = memo(({ record, onRetry, onEdit, onMore }: QueueItemProps) => 
                   console.error('复制链接失败:', err)
                 }
               }}
-              className={styles.copyButton}
+              className="h-8 rounded-md font-medium border border-border bg-background transition-all hover:border-primary hover:bg-accent"
             >
+              <SendOutlined />
               {t('buttons.copyLink')}
             </Button>
           )}

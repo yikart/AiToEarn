@@ -1,0 +1,137 @@
+/* CalendarTiming FullCalendar 全局样式覆盖 */
+.fc-daygrid-day.fc-day-today {
+  background: transparent;
+}
+
+/* 今天的日期样式已经在组件内通过 Tailwind CSS 处理，这里不再需要 */
+
+.fc-daygrid-day-frame {
+  display: flex;
+}
+
+.fc-daygrid-day-frame .fc-daygrid-day-top {
+  display: flex;
+  flex: 1;
+}
+
+.fc-daygrid-day-frame .fc-daygrid-day-top .fc-daygrid-day-number {
+  z-index: auto;
+  padding: 0;
+  flex: 1;
+}
+
+.fc-daygrid-day-frame .fc-daygrid-day-events {
+  display: none;
+}
+
+.fc-media-screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.calendarTiming-calendar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+  padding: 1rem;
+  will-change: transform, opacity;
+}
+
+.calendarTiming-calendar .fc-scrollgrid {
+  border-top: none !important;
+}
+
+.calendarTiming-calendar thead {
+  background-color: var(--background);
+  z-index: 5;
+}
+
+.calendarTiming-calendar thead .fc-scroller-harness {
+  border-top: 1px solid var(--border);
+}
+
+.calendarTiming-calendar thead .fc-scrollgrid-sync-inner {
+  padding: 5px 0;
+}
+
+.calendarTiming-calendar .fc-theme-standard td,
+.calendarTiming-calendar .fc-theme-standard th {
+  border-color: var(--border);
+}
+
+/* CSSTransition 日历切换动画 */
+/* 向左滑动（下月）：从右侧滑入，向左滑出 */
+.slideLeftEnter {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.slideLeftEnterActive {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
+}
+
+.slideLeftExit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slideLeftExitActive {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
+}
+
+/* 向右滑动（上月）：从左侧滑入，向右滑出 */
+.slideRightEnter {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.slideRightEnterActive {
+  opacity: 1;
+  transform: translateX(0);
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
+}
+
+.slideRightExit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.slideRightExitActive {
+  opacity: 0;
+  transform: translateX(50px);
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
+}
+
+/* 淡入淡出（今天） */
+.fadeEnter {
+  opacity: 0;
+}
+
+.fadeEnterActive {
+  opacity: 1;
+  transition: opacity 300ms ease-out;
+}
+
+.fadeExit {
+  opacity: 1;
+}
+
+.fadeExitActive {
+  opacity: 0;
+  transition: opacity 300ms ease-out;
+}

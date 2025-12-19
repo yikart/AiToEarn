@@ -6,10 +6,23 @@
 import type { ForwardedRef } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IpLocationInfo } from '@/utils/ipLocation'
-import { Button, Select, Space, Tooltip, Typography } from 'antd'
 import { toast } from '@/lib/toast'
 import { confirm } from '@/lib/confirm'
 import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'
@@ -30,9 +43,6 @@ import { tiktokSkip } from '../../plat/TiktokLogin'
 import { twitterSkip } from '../../plat/TwtterLogin'
 import { wxGzhSkip } from '../../plat/WxGzh'
 import { youtubeSkip } from '../../plat/YoutubeLogin'
-import styles from './AddAccountModal.module.scss'
-
-const { Text } = Typography
 
 export interface IAddAccountModalRef {}
 
@@ -375,90 +385,79 @@ const AddAccountModal = memo(
             footer={null}
             width={650}
           >
-            <div className={styles.addAccountModal}>
-              <h1>{t('addAccountModal.subtitle')}</h1>
+            <div>
+              <h1 className="text-sm mb-[15px]">{t('addAccountModal.subtitle')}</h1>
 
               {/* 空间选择器 */}
               {spaceSelectionRequired && (
-                <div style={{
-                  marginBottom: '20px',
-                  paddingBottom: '16px',
-                  borderBottom: '1px solid var(--grayColor3)',
-                }}
-                >
-                  <Space align="center" style={{ width: '100%' }}>
-                    <Text strong style={{ fontSize: '14px', minWidth: '80px' }}>{t('addAccountModal.addTo')}</Text>
-                    <Select
-                      style={{ width: '200px' }}
-                      placeholder={t('pleaseChooseSpace')}
-                      value={selectedSpaceId}
-                      onChange={setSelectedSpaceId}
-                      options={accountGroupList.map(g => ({ value: g.id, label: g.name }))}
-                    />
-                  </Space>
+                <div className="mb-5 pb-4 border-b border-border">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold min-w-[80px]">{t('addAccountModal.addTo')}</span>
+                    <Select value={selectedSpaceId} onValueChange={setSelectedSpaceId}>
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder={t('pleaseChooseSpace')} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {accountGroupList.map(g => (
+                          <SelectItem key={g.id} value={g.id}>
+                            {g.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               )}
 
               {/* 当前选择的空间信息 */}
               {selectedSpaceId && !spaceSelectionRequired && (
-                <div style={{
-                  marginBottom: '20px',
-                  padding: '12px',
-                  backgroundColor: 'var(--grayColor1)',
-                  borderRadius: '6px',
-                  border: '1px solid var(--grayColor3)',
-                  fontSize: 'var(--fs-xs)',
-                  color: 'var(--grayColor6)',
-                }}
-                >
-                  <Text>
+                <div className="mb-5 p-3 bg-muted rounded-md border border-border text-xs text-muted-foreground">
+                  <span>
                     {t('addAccountModal.currentSpace')}
                     :
                     {' '}
                     {accountGroupList.find(g => g.id === selectedSpaceId)?.name}
-                  </Text>
+                  </span>
                 </div>
               )}
 
-              <div className="addAccountModal_plats">
-                {AccountPlatInfoArr.map(([key, value]) => {
-                  const isAvailable = isPlatformAvailable(key as PlatType)
-                  const isLoading = syncLoadingPlatform === key
-                  return (
-                    <Tooltip title={value.tips?.account} key={key}>
-                      <Button
-                        type="text"
-                        style={{ width: '84px' }}
-                        className={`addAccountModal_plats-item ${!isAvailable ? 'disabled' : ''}`}
-                        disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId)}
-                        loading={isLoading}
-                        onClick={() => handlePlatformClick(key as PlatType, value)}
-                      >
-                        <div className="addAccountModal_plats-item-con">
-                          <img
-                            src={value.icon}
-                            style={{ opacity: isAvailable ? 1 : 0.5 }}
-                          />
-                          <span style={{ opacity: isAvailable ? 1 : 0.5 }}>{value.name}</span>
-                        </div>
-                      </Button>
-                    </Tooltip>
-                  )
-                })}
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(84px,1fr))] gap-3 overflow-y-auto overflow-x-hidden mb-5">
+                <TooltipProvider>
+                  {AccountPlatInfoArr.map(([key, value]) => {
+                    const isAvailable = isPlatformAvailable(key as PlatType)
+                    const isLoading = syncLoadingPlatform === key
+                    return (
+                      <Tooltip key={key}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="p-2 rounded-lg h-[90px] whitespace-normal flex flex-col items-center justify-center hover:bg-accent disabled:opacity-50"
+                            disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId) || isLoading}
+                            onClick={() => handlePlatformClick(key as PlatType, value)}
+                          >
+                            <div className="flex flex-col items-center gap-2 w-full">
+                              <img
+                                src={value.icon}
+                                className="w-10 h-10"
+                                style={{ opacity: isAvailable ? 1 : 0.5 }}
+                                alt={value.name}
+                              />
+                              <span className="text-xs text-center" style={{ opacity: isAvailable ? 1 : 0.5 }}>{value.name}</span>
+                            </div>
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{value.tips?.account}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    )
+                  })}
+                </TooltipProvider>
               </div>
 
               {/* 属地限制提示 */}
               {isCnSpace !== null && (
-                <div style={{
-                  marginTop: '16px',
-                  padding: '12px',
-                  backgroundColor: 'var(--grayColor1)',
-                  borderRadius: '6px',
-                  fontSize: 'var(--fs-xs)',
-                  color: 'var(--grayColor6)',
-                  textAlign: 'center',
-                }}
-                >
+                <div className="mt-4 p-3 bg-muted rounded-md text-xs text-muted-foreground text-center">
                   {isCnSpace
                     ? t('locationRestriction.cnSpace')
                     : t('locationRestriction.nonCnSpace')}
@@ -467,16 +466,7 @@ const AddAccountModal = memo(
 
               {/* 空间选择提示 */}
               {spaceSelectionRequired && !selectedSpaceId && (
-                <div style={{
-                  marginTop: '16px',
-                  padding: '12px',
-                  backgroundColor: 'var(--warningColor1)',
-                  borderRadius: '6px',
-                  fontSize: 'var(--fs-xs)',
-                  color: 'var(--warningColor)',
-                  textAlign: 'center',
-                }}
-                >
+                <div className="mt-4 p-3 bg-warning/10 rounded-md text-xs text-warning text-center">
                   {t('addAccountModal.pleaseChooseSpaceFirst')}
                 </div>
               )}

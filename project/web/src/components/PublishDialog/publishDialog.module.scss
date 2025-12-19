@@ -132,7 +132,7 @@ $assistantWidth: 380px;
         justify-content: right;
         gap: 12px;
 
-        button {
+        & > button {
           margin-right: 10px;
         }
       }
