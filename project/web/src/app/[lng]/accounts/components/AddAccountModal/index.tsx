@@ -378,23 +378,33 @@ const AddAccountModal = memo(
       return (
         <>
           <Modal
-            title={t('addAccountModal.title')}
+            title={
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🎯</span>
+                <span className="text-sm sm:text-base md:text-lg font-semibold">{t('addAccountModal.title')}</span>
+              </div>
+            }
             open={open}
             onOk={handleOk}
             onCancel={handleCancel}
             footer={null}
-            width={650}
+            width={750}
+            className="add-account-responsive-modal"
           >
-            <div>
-              <h1 className="text-sm mb-[15px]">{t('addAccountModal.subtitle')}</h1>
+            <div className="w-full">
+              <h1 className="text-sm sm:text-base font-semibold mb-3 sm:mb-4 text-gray-700">
+                {t('addAccountModal.subtitle')}
+              </h1>
 
               {/* 空间选择器 */}
               {spaceSelectionRequired && (
-                <div className="mb-5 pb-4 border-b border-border">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold min-w-[80px]">{t('addAccountModal.addTo')}</span>
+                <div className="mb-3 sm:mb-4 pb-3 sm:pb-4 border-b border-border w-full">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
+                    <span className="text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap">
+                      {t('addAccountModal.addTo')}
+                    </span>
                     <Select value={selectedSpaceId} onValueChange={setSelectedSpaceId}>
-                      <SelectTrigger className="w-[200px]">
+                      <SelectTrigger className="w-full sm:w-[220px] border-blue-200 h-9">
                         <SelectValue placeholder={t('pleaseChooseSpace')} />
                       </SelectTrigger>
                       <SelectContent>
@@ -411,17 +421,34 @@ const AddAccountModal = memo(
 
               {/* 当前选择的空间信息 */}
               {selectedSpaceId && !spaceSelectionRequired && (
-                <div className="mb-5 p-3 bg-muted rounded-md border border-border text-xs text-muted-foreground">
-                  <span>
-                    {t('addAccountModal.currentSpace')}
-                    :
-                    {' '}
-                    {accountGroupList.find(g => g.id === selectedSpaceId)?.name}
+                <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100 text-xs sm:text-sm text-gray-600 w-full">
+                  <span className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <span className="inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
+                    <span>{t('addAccountModal.currentSpace')}:</span>
+                    <span className="font-semibold text-gray-800">
+                      {accountGroupList.find(g => g.id === selectedSpaceId)?.name}
+                    </span>
                   </span>
                 </div>
               )}
 
-              <div className="grid grid-cols-[repeat(auto-fill,minmax(84px,1fr))] gap-3 overflow-y-auto overflow-x-hidden mb-5">
+              {/* 平台网格 - 响应式优化 */}
+              <div 
+                className="
+                  w-full grid gap-2 sm:gap-3 mb-3 sm:mb-4
+                  overflow-y-auto overflow-x-hidden
+                  max-h-[60vh] sm:max-h-[450px]
+                  grid-cols-3
+                  sm:grid-cols-4
+                  md:grid-cols-5
+                  lg:grid-cols-6
+                  xl:grid-cols-7
+                "
+                style={{
+                  scrollbarWidth: 'thin',
+                  scrollbarColor: '#cbd5e1 #f1f5f9'
+                }}
+              >
                 <TooltipProvider>
                   {AccountPlatInfoArr.map(([key, value]) => {
                     const isAvailable = isPlatformAvailable(key as PlatType)
@@ -431,22 +458,62 @@ const AddAccountModal = memo(
                         <TooltipTrigger asChild>
                           <Button
                             variant="ghost"
-                            className="p-2 rounded-lg h-[90px] whitespace-normal flex flex-col items-center justify-center hover:bg-accent disabled:opacity-50"
+                            className={`
+                              relative rounded-lg sm:rounded-xl whitespace-normal 
+                              flex flex-col items-center justify-center
+                              bg-gradient-to-br from-white to-gray-50
+                              border border-gray-200 sm:border-[1.5px]
+                              transition-all duration-300 ease-out
+                              hover:border-blue-400 hover:shadow-lg hover:shadow-blue-100/50
+                              hover:-translate-y-1 hover:bg-gradient-to-br hover:from-white hover:to-blue-50
+                              active:translate-y-0 active:scale-[0.98]
+                              disabled:opacity-40 disabled:cursor-not-allowed 
+                              disabled:hover:translate-y-0 disabled:hover:shadow-none
+                              overflow-hidden group
+                              p-2 sm:p-3
+                              h-[90px] sm:h-[100px] md:h-[110px]
+                              min-w-0 w-full
+                              ${!isAvailable || (spaceSelectionRequired && !selectedSpaceId) ? 'grayscale' : ''}
+                            `}
                             disabled={!isAvailable || (spaceSelectionRequired && !selectedSpaceId) || isLoading}
                             onClick={() => handlePlatformClick(key as PlatType, value)}
                           >
-                            <div className="flex flex-col items-center gap-2 w-full">
-                              <img
-                                src={value.icon}
-                                className="w-10 h-10"
-                                style={{ opacity: isAvailable ? 1 : 0.5 }}
-                                alt={value.name}
-                              />
-                              <span className="text-xs text-center" style={{ opacity: isAvailable ? 1 : 0.5 }}>{value.name}</span>
+                            {/* 光泽效果 */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                            
+                            <div className="flex flex-col items-center gap-1.5 sm:gap-2 w-full relative z-10">
+                              {isLoading ? (
+                                <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center">
+                                  <div className="animate-spin rounded-full h-8 w-8 sm:h-9 sm:w-9 md:h-10 md:w-10 border-b-2 border-blue-500" />
+                                </div>
+                              ) : (
+                                <img
+                                  src={value.icon}
+                                  className={`
+                                    w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11
+                                    object-contain
+                                    transition-all duration-300
+                                    group-hover:scale-110 group-hover:rotate-[5deg]
+                                    filter drop-shadow-md
+                                  `}
+                                  alt={value.name}
+                                />
+                              )}
+                              <span 
+                                className={`
+                                  text-[11px] sm:text-xs text-center font-medium 
+                                  leading-tight transition-all duration-300
+                                  group-hover:text-blue-600 group-hover:font-semibold
+                                  ${isAvailable ? 'text-gray-700' : 'text-gray-400'}
+                                  line-clamp-2 w-full
+                                `}
+                              >
+                                {value.name}
+                              </span>
                             </div>
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>
+                        <TooltipContent className="max-w-[200px] text-xs">
                           <p>{value.tips?.account}</p>
                         </TooltipContent>
                       </Tooltip>
@@ -457,17 +524,23 @@ const AddAccountModal = memo(
 
               {/* 属地限制提示 */}
               {isCnSpace !== null && (
-                <div className="mt-4 p-3 bg-muted rounded-md text-xs text-muted-foreground text-center">
-                  {isCnSpace
-                    ? t('locationRestriction.cnSpace')
-                    : t('locationRestriction.nonCnSpace')}
+                <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 bg-gradient-to-r from-amber-50 to-orange-50 rounded-lg text-amber-700 text-center border border-amber-200 flex items-center justify-center gap-1.5 sm:gap-2 flex-wrap w-full">
+                  <span className="text-sm flex-shrink-0">ℹ️</span>
+                  <span className="text-[11px] sm:text-xs leading-tight">
+                    {isCnSpace
+                      ? t('locationRestriction.cnSpace')
+                      : t('locationRestriction.nonCnSpace')}
+                  </span>
                 </div>
               )}
 
               {/* 空间选择提示 */}
               {spaceSelectionRequired && !selectedSpaceId && (
-                <div className="mt-4 p-3 bg-warning/10 rounded-md text-xs text-warning text-center">
-                  {t('addAccountModal.pleaseChooseSpaceFirst')}
+                <div className="mt-2 sm:mt-3 p-2.5 sm:p-3 bg-gradient-to-r from-yellow-50 to-amber-50 rounded-lg text-amber-600 text-center border border-yellow-200 flex items-center justify-center gap-1.5 sm:gap-2 animate-pulse flex-wrap w-full">
+                  <span className="text-sm flex-shrink-0">⚠️</span>
+                  <span className="font-medium text-[11px] sm:text-xs leading-tight">
+                    {t('addAccountModal.pleaseChooseSpaceFirst')}
+                  </span>
                 </div>
               )}
             </div>

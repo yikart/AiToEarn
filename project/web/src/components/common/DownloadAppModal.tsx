@@ -7,13 +7,10 @@
 
 import { useState } from 'react'
 import Image from 'next/image'
-import { Check, Copy, Download, Puzzle, Smartphone } from 'lucide-react'
-import { QRCode } from 'react-qrcode-logo'
-import { toast } from '@/lib/toast'
+import { Download, Puzzle, Smartphone } from 'lucide-react'
 import { Modal } from '@/components/ui/modal'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { getMainAppDownloadUrlSync } from '@/app/config/appDownloadConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { PluginDownloadContent } from '@/components/Plugin/PluginDownloadContent'
 import logo from '@/assets/images/logo.png'
@@ -49,117 +46,63 @@ interface DownloadAppModalProps {
 export default function DownloadAppModal({
   visible,
   onClose,
-  platform = '',
-  downloadUrl,
-  qrCodeUrl = '',
   zIndex = 1000,
   showPluginTab = false,
   defaultTab = 'app',
   pluginStatus = 'not_installed',
   onCheckPermission,
 }: DownloadAppModalProps) {
-  const { t } = useTransClient('common')
   const { t: tPlugin } = useTransClient('plugin')
-  const [copySuccess, setCopySuccess] = useState(false)
   const [activeTab, setActiveTab] = useState(defaultTab)
 
-  const actualDownloadUrl = downloadUrl || getMainAppDownloadUrlSync()
-
-  const handleDownload = () => {
-    window.open(actualDownloadUrl, '_blank')
-  }
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(actualDownloadUrl)
-      setCopySuccess(true)
-      toast.success(t('downloadApp.copySuccess' as any))
-      setTimeout(() => setCopySuccess(false), 2000)
-    }
-    catch {
-      toast.error(t('downloadApp.copyFailed' as any))
-    }
-  }
+  // 多平台下载链接 - 统一跳转到下载页面
+  const downloadPageUrl = 'https://docs.aitoearn.ai/en/downloads'
 
   /** 渲染 App 下载内容 */
   const renderAppContent = () => (
-    <div className="flex flex-col items-center px-4 py-6">
-      {/* 描述 */}
-      <p
-        className="mb-6 text-center text-sm leading-relaxed text-muted-foreground"
-        dangerouslySetInnerHTML={{
-          __html: t('downloadApp.operationDescription' as any, { platform }),
-        }}
-      />
-
-      {/* 二维码区域 */}
-      <div className="mb-8 rounded-xl border border-border bg-muted/50 p-5">
-        {qrCodeUrl ? (
-          <img
-            src={qrCodeUrl}
-            alt="QR Code"
-            className="h-[200px] w-[200px] rounded-lg shadow-sm"
-          />
-        ) : (
-          <QRCode
-            value={actualDownloadUrl}
-            size={200}
-            logoImage={logo.src}
-            logoWidth={20}
-            logoHeight={20}
-            logoPadding={5}
-            logoPaddingStyle="square"
-            logoOpacity={0.95}
-            qrStyle="dots"
-            eyeRadius={0}
-          />
-        )}
-      </div>
-
-      {/* 下载链接区域 */}
-      <div className="mb-6 w-full rounded-lg border border-border bg-muted/30 p-4">
-        <p className="mb-2 text-xs text-muted-foreground">
-          {t('downloadApp.downloadLink')}
-        </p>
-        <div className="flex items-center justify-between gap-3">
-          <span className="flex-1 break-all text-left text-xs text-foreground">
-            {actualDownloadUrl}
-          </span>
-          <Button
-            variant={copySuccess ? 'default' : 'outline'}
-            size="sm"
-            onClick={handleCopyLink}
-            className="shrink-0"
-          >
-            {copySuccess ? (
-              <>
-                <Check className="mr-1.5 h-3.5 w-3.5" />
-                {t('downloadApp.copied' as any)}
-              </>
-            ) : (
-              <>
-                <Copy className="mr-1.5 h-3.5 w-3.5" />
-                {t('downloadApp.copy' as any)}
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
-
-      {/* 提示信息 */}
-      <div className="w-full rounded-lg border border-blue-200 bg-blue-50 p-4 dark:border-blue-900/50 dark:bg-blue-950/30">
-        <p className="text-center text-sm text-blue-700 dark:text-blue-400">
-          {t('downloadApp.tip')}
-        </p>
-      </div>
-
-      {/* 下载按钮（仅在不显示插件 Tab 时在内容区显示） */}
-      {!showPluginTab && (
-        <Button onClick={handleDownload} className="mt-6 w-full" size="lg">
-          <Download className="mr-2 h-4 w-4" />
-          {t('downloadApp.downloadNow' as any)}
+    <div className="flex flex-col items-center px-4 py-4">
+      {/* 多平台下载按钮 */}
+      <div className="w-full grid grid-cols-1 gap-3">
+        <Button 
+          onClick={() => window.open(downloadPageUrl, '_blank')} 
+          variant="outline"
+          className="w-full h-12 justify-start gap-3 text-left"
+          size="lg"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/>
+          </svg>
+          <span className="flex-1">Windows</span>
+          <Download className="h-4 w-4 text-muted-foreground" />
         </Button>
-      )}
+        
+        <Button 
+          onClick={() => window.open(downloadPageUrl, '_blank')} 
+          variant="outline"
+          className="w-full h-12 justify-start gap-3 text-left"
+          size="lg"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+          </svg>
+          <span className="flex-1">macOS</span>
+          <Download className="h-4 w-4 text-muted-foreground" />
+        </Button>
+        
+        <Button 
+          onClick={() => window.open(downloadPageUrl, '_blank')} 
+          variant="outline"
+          className="w-full h-12 justify-start gap-3 text-left"
+          size="lg"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-1.45-.66-3.08-1.03-4.84-1.03-1.76 0-3.39.37-4.84 1.03L4.95 5.67c-.18-.28-.54-.37-.83-.22-.3.16-.42.54-.26.85L5.7 9.48C3.32 10.78 1.7 13 1.21 15.65h21.58C22.3 13 20.68 10.78 17.6 9.48M7 13.5c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1m10 0c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1"/>
+            <path d="M5.5 17h1v5h-1zm12 0h1v5h-1zm-10 0h9v5h-9z"/>
+          </svg>
+          <span className="flex-1">Android</span>
+          <Download className="h-4 w-4 text-muted-foreground" />
+        </Button>
+      </div>
     </div>
   )
 

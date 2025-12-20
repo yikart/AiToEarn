@@ -91,8 +91,9 @@ export const Modal: React.FC<ModalProps> = ({
   zIndex,
 }) => {
   // 处理宽度 - 'auto' 或 undefined 时不设置内联宽度，让 CSS 控制
+  // 使用 CSS 变量来允许媒体查询覆盖
   const shouldSetWidthStyle = width !== 'auto' && width !== undefined
-  const widthStyle = typeof width === 'number' ? `${width}px` : width
+  const widthValue = typeof width === 'number' ? `${width}px` : width
 
   // 如果 destroyOnClose 为 true 且 modal 关闭，不渲染 children
   const shouldRenderContent = destroyOnClose ? open : true
@@ -126,13 +127,18 @@ export const Modal: React.FC<ModalProps> = ({
       <DialogContent
         className={cn(
           'max-h-[90vh] overflow-hidden flex flex-col',
+          // 移动端响应式宽度
+          'w-[calc(100vw-24px)] sm:w-auto',
           !closable && '[&>button]:hidden',
           className,
         )}
         style={{
-          ...(shouldSetWidthStyle ? { width: widthStyle, maxWidth: widthStyle } : {}),
+          // 使用 CSS 变量，允许媒体查询覆盖
+          '--modal-width': shouldSetWidthStyle ? widthValue : undefined,
+          width: shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
+          maxWidth: shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
           ...(zIndex ? { zIndex } : {}),
-        }}
+        } as React.CSSProperties}
         onInteractOutside={handleInteractOutside}
         onEscapeKeyDown={!closable ? (e) => e.preventDefault() : undefined}
         aria-describedby={title ? undefined : undefined}
@@ -156,7 +162,7 @@ export const Modal: React.FC<ModalProps> = ({
             )}
 
         {shouldRenderContent && (
-          <div className={cn('flex-1 py-2 flex', bodyClassName)}>
+          <div className={cn('flex-1 py-2 w-full', bodyClassName)}>
             {children}
           </div>
         )}

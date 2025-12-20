@@ -7,7 +7,7 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Sparkles, Check, ArrowRight, Grid3X3 } from 'lucide-react'
+import { Check, ArrowRight, Grid3X3 } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -69,23 +69,6 @@ export default function PromptGallery({
   return (
     <section className={cn('py-12 px-4 md:px-6 lg:px-8', className)}>
       <div className="max-w-[1920px] mx-auto">
-        {/* 标题区域 */}
-        <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-muted text-foreground rounded-full text-sm font-medium mb-4">
-            <Sparkles className="w-4 h-4" />
-            {t('badge')}
-          </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">
-            {t('title')}{' '}
-            <span className="text-muted-foreground">
-              {t('titleHighlight')}
-            </span>
-          </h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            {t('subtitle')}
-          </p>
-        </div>
-
         {/* 精选卡片网格 - 固定8个，等高对齐 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-10">
           {featuredPrompts.map((item, index) => (

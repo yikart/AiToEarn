@@ -156,3 +156,50 @@ button {
 body > div {
   pointer-events: auto;
 }
+
+/* 添加账号Modal响应式优化 */
+.add-account-responsive-modal {
+  /* 移动端优化 - 确保内容占满宽度 */
+  @media (max-width: 640px) {
+    /* 针对 shadcn Dialog 的移动端样式 */
+    & [role="dialog"] {
+      padding: 16px !important;
+    }
+  }
+}
+
+/* 自定义滚动条 - 细节优化 */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  
+  .scrollbar-thumb-gray-300 {
+    scrollbar-color: #d1d5db #f3f4f6;
+  }
+  
+  .scrollbar-track-gray-100 {
+    /* 用于scrollbar-color的第二个值 */
+  }
+}
+
+/* Webkit浏览器滚动条优化 */
+.add-account-responsive-modal ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.add-account-responsive-modal ::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 10px;
+}
+
+.add-account-responsive-modal ::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.add-account-responsive-modal ::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
