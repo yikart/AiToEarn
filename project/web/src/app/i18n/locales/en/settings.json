@@ -3,8 +3,8 @@
   "tabs": {
     "profile": "Profile",
     "agent": "Agent",
-    "subscription": "Subscription",
-    "membership": "Membership",
+    "subscription": "Credits",
+    "membership": "Subscription",
     "general": "General"
   },
   "profile": {

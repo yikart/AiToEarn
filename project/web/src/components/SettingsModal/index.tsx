@@ -118,8 +118,8 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
           <div className="flex w-52 shrink-0 flex-col border-r border-border">
             {/* 侧边栏头部 - Logo + 项目名称 */}
             <div className="flex shrink-0 items-center gap-2 px-5 py-4">
-              <Image src={logo} alt="AIToEarn" width={28} height={28} />
-              <span className="text-base font-semibold tracking-tight text-foreground">AIToEarn</span>
+              <Image src={logo} alt="Aitoearn" width={28} height={28} />
+              <span className="text-base font-semibold tracking-tight text-foreground">Aitoearn</span>
             </div>
 
             {/* Tab 列表 */}
