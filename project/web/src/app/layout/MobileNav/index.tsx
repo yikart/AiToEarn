@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
+import { openLoginModal } from '@/store/loginModal'
 
 /**
  * 移动端导航项组件
@@ -80,7 +81,7 @@ const MobileNav = () => {
 
   const handleLogin = () => {
     handleClose()
-    router.push(`/auth/login`)
+    openLoginModal()
   }
 
   return (

@@ -455,12 +455,13 @@ const createChannelHandler: IActionHandler = {
   async execute(taskData, context) {
     const { router, lng, t } = context
     const platform = taskData.platform
+    const platformName = platform ? platform.charAt(0).toUpperCase() + platform.slice(1) : 'Platform'
 
-    toast.warning(taskData.errorMessage || (t('aiGeneration.needBindChannel' as any) as string))
+    toast.warning(t('aiGeneration.needBindChannel' as any) as string)
 
     confirm({
       title: t('aiGeneration.needBindChannelTitle' as any) as string,
-      content: taskData.errorMessage || (t('aiGeneration.needBindChannelContent' as any) as string),
+      content: t('aiGeneration.needBindChannelContent' as any, { platform: platformName }) as string,
       okText: t('aiGeneration.goBind' as any) as string,
       cancelText: undefined, // 不显示取消按钮
       onOk: () => {

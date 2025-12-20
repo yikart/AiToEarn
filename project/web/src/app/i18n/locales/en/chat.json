@@ -35,7 +35,8 @@
     "aiCreation": "AI Creation",
     "supportUpload": "Support image/video upload",
     "enterToSend": "Press Enter to send",
-    "connectTools": "Publish to"
+    "connectTools": "Publish to",
+    "loginRequired": "Please login first"
   },
   "history": {
     "title": "Task History",
@@ -62,6 +63,23 @@
     "toolCallCompleted": "Tool Calls Completed",
     "toolResult": "Result Returned",
     "processing": "Processing..."
+  },
+  "action": {
+    "connectChannel": "Connect Channel",
+    "connectChannelDesc": "You haven't connected your {{platform}} account yet. Please connect your channel account to publish content.",
+    "connectNow": "Connect Now",
+    "updateAuth": "Update Authorization",
+    "updateAuthDesc": "Your {{platform}} account authorization has expired. Please re-authorize.",
+    "reauthorize": "Re-authorize",
+    "loginChannel": "Login Channel",
+    "loginChannelDesc": "Please login to your {{platform}} account first.",
+    "goLogin": "Go Login",
+    "readyToPublish": "Ready to Publish",
+    "readyToPublishDesc": "Content is ready and can be published to {{platform}}.",
+    "goPublish": "Go Publish",
+    "action": "Action",
+    "actionDesc": "Please complete the following action",
+    "continue": "Continue"
   }
 }
 

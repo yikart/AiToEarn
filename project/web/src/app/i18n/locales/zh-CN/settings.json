@@ -3,8 +3,8 @@
   "tabs": {
     "profile": "个人资料",
     "agent": "Agent",
-    "subscription": "订阅",
-    "membership": "会员",
+    "subscription": "额度",
+    "membership": "订阅",
     "general": "通用"
   },
   "profile": {

@@ -12,11 +12,13 @@ import { Sparkles } from 'lucide-react'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useTransClient } from '@/app/i18n/client'
 import { useAgentStore } from '@/store/agent'
+import { useUserStore } from '@/store/user'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { AccountPlatInfoArr } from '@/app/config/platConfig'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { openLoginModal } from '@/store/loginModal'
 
 export interface IHomeChatProps {
   /** 登录检查回调 */
@@ -36,6 +38,7 @@ export function HomeChat({
   const { t: tHome } = useTransClient('home')
   const router = useRouter()
   const { lng } = useParams()
+  const token = useUserStore(state => state.token)
 
   // 获取默认提示文本
   const defaultPrompt = t('input.placeholder' as any) || 'Help me create a cat dancing video and post it directly on YouTube'
@@ -44,6 +47,16 @@ export function HomeChat({
   const [inputValue, setInputValue] = useState(defaultPrompt)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
+
+  // 处理添加账号点击 - 未登录时跳转登录
+  const handleAddChannelClick = useCallback(() => {
+    if (!token) {
+      toast.warning(t('home.loginRequired' as any) || 'Please login first')
+      router.push('/auth/login')
+      return
+    }
+    setAddAccountVisible(true)
+  }, [token, router, t])
 
   // 使用媒体上传 Hook
   const {
@@ -57,7 +70,7 @@ export function HomeChat({
   })
 
   // 全局 Store
-  const { createTask, setActionContext } = useAgentStore()
+  const { setPendingTask, setActionContext } = useAgentStore()
 
   /**
    * 设置 Action 上下文（用于处理任务结果的 action）
@@ -70,13 +83,11 @@ export function HomeChat({
     })
   }, [router, lng, tHome, setActionContext])
 
-  /** 处理发送消息 */
-  const handleSend = useCallback(async () => {
+  /** 实际执行发送的函数 */
+  const doSend = useCallback(() => {
     if (!inputValue.trim()) return
 
-    setIsSubmitting(true)
-
-    // 保存当前输入（因为下面会清空）
+    // 保存当前输入
     const currentPrompt = inputValue
     const currentMedias = [...medias]
 
@@ -84,28 +95,29 @@ export function HomeChat({
     setInputValue('')
     clearMedias()
 
-    try {
-      // 使用全局 Store 创建任务
-      await createTask({
-        prompt: currentPrompt,
-        medias: currentMedias,
-        t: t as (key: string) => string,
-        onLoginRequired,
-        onTaskIdReady: (taskId) => {
-          console.log('[HomeChat] Task ID ready:', taskId)
-          // 收到 taskId 后立即跳转到对话详情页
-          router.push(`/${lng}/chat/${taskId}`)
-        },
-      })
-    } catch (error: any) {
-      toast.error(error.message || t('message.error' as any))
-      console.error('Create task failed:', error)
-      // 恢复输入
-      setInputValue(currentPrompt)
-    } finally {
-      setIsSubmitting(false)
+    // 将任务存入 store，立即跳转
+    setPendingTask({
+      prompt: currentPrompt,
+      medias: currentMedias,
+    })
+
+    // 立即跳转到聊天页面（使用 "new" 作为临时 taskId）
+    router.push(`/${lng}/chat/new`)
+  }, [inputValue, medias, router, lng, setPendingTask, clearMedias])
+
+  /** 处理发送消息 */
+  const handleSend = useCallback(async () => {
+    if (!inputValue.trim()) return
+
+    // 检查登录状态 - 未登录时显示登录弹窗
+    if (!token) {
+      openLoginModal(doSend)
+      return
     }
-  }, [inputValue, medias, onLoginRequired, router, lng, t, createTask, clearMedias])
+
+    // 执行发送逻辑
+    doSend()
+  }, [inputValue, token, doSend])
 
   return (
     <div className={cn('w-full max-w-3xl mx-auto', className)}>
@@ -144,7 +156,7 @@ export function HomeChat({
             marginTop: '-12px',
             position: 'relative',
           }}
-          onClick={() => setAddAccountVisible(true)}
+          onClick={handleAddChannelClick}
         >
           <span className="text-sm text-muted-foreground whitespace-nowrap">
             {t('home.connectTools' as any)}

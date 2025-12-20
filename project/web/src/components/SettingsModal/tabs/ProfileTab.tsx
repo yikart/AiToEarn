@@ -147,7 +147,7 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
     clearLoginStatus()
     toast.success(tCommon('logout'))
     onClose()
-    router.push('/auth/login')
+    router.push('/')
   }
 
   const totalIncome = ((userInfo as any)?.totalIncome || 0) / 100
