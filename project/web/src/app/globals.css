@@ -5,6 +5,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
   font-family: "SourceHanSansCN-Regular";
 }

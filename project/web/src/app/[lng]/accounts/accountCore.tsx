@@ -716,7 +716,7 @@ export default function AccountPageCore({
 
   return (
     <NoSSR>
-      <div className="flex flex-col h-screen bg-background">
+      <div className="flex flex-col h-full bg-background">
         {/* Row 1: 顶部导航栏 */}
         <AccountsTopNav
           onNewWork={() => {

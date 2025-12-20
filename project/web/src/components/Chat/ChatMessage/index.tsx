@@ -6,12 +6,22 @@
 
 'use client'
 
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, useCallback } from 'react'
 import Image from 'next/image'
-import ReactMarkdown from 'react-markdown'
-import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2, FileText } from 'lucide-react'
+import ReactMarkdown, { Components } from 'react-markdown'
+import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2, FileText, Play } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
+
+/** 判断 URL 是否为视频链接 */
+const isVideoUrl = (url: string): boolean => {
+  if (!url) return false
+  const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v', '.ogv']
+  const lowerUrl = url.toLowerCase()
+  return videoExtensions.some(ext => lowerUrl.includes(ext)) || 
+         lowerUrl.includes('video') ||
+         (lowerUrl.includes('s3') && lowerUrl.includes('.mp4'))
+}
 import { useTransClient } from '@/app/i18n/client'
 import type { IUploadedMedia } from '../MediaUpload'
 import type { IMessageStep, IWorkflowStep, IActionCard } from '@/store/agent'
@@ -213,6 +223,75 @@ function MessageStepContent({ step, isLast, isStreaming }: IMessageStepContentPr
   // 当前步骤是否活跃：是最后一个步骤且消息正在流式输出
   const isActiveStep = isLast && isStreaming
 
+  // 自定义 Markdown 组件 - 处理视频链接渲染
+  const markdownComponents: Components = useMemo(() => ({
+    // 自定义链接渲染：视频链接渲染为播放器
+    a: ({ href, children }) => {
+      if (href && isVideoUrl(href)) {
+        const videoUrl = getOssUrl(href)
+        return (
+          <div className="my-3">
+            <video
+              src={videoUrl}
+              controls
+              className="max-w-full max-h-[300px] rounded-lg border border-border"
+              preload="metadata"
+            >
+              Your browser does not support the video tag.
+            </video>
+          </div>
+        )
+      }
+      // 普通链接
+      return (
+        <a 
+          href={href} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="text-primary hover:underline"
+        >
+          {children}
+        </a>
+      )
+    },
+    // 处理纯文本中的视频 URL（不是链接格式）
+    p: ({ children }) => {
+      // 检查子元素是否包含视频 URL
+      const content = String(children)
+      const urlRegex = /(https?:\/\/[^\s]+\.mp4[^\s]*)/gi
+      const matches = content.match(urlRegex)
+      
+      if (matches && matches.length > 0) {
+        // 分割内容，将视频 URL 替换为视频播放器
+        const parts = content.split(urlRegex)
+        return (
+          <div>
+            {parts.map((part, index) => {
+              if (matches.includes(part)) {
+                const videoUrl = getOssUrl(part)
+                return (
+                  <div key={index} className="my-3">
+                    <video
+                      src={videoUrl}
+                      controls
+                      className="max-w-full max-h-[300px] rounded-lg border border-border"
+                      preload="metadata"
+                    >
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                )
+              }
+              return part ? <p key={index} className="mb-2 last:mb-0">{part}</p> : null
+            })}
+          </div>
+        )
+      }
+      
+      return <p className="mb-2 last:mb-0">{children}</p>
+    },
+  }), [])
+
   return (
     <div className={cn(
       styles.messageStep,
@@ -225,7 +304,7 @@ function MessageStepContent({ step, isLast, isStreaming }: IMessageStepContentPr
           'text-sm leading-relaxed text-foreground',
           styles.markdownContent,
         )}>
-          <ReactMarkdown>{step.content}</ReactMarkdown>
+          <ReactMarkdown components={markdownComponents}>{step.content}</ReactMarkdown>
         </div>
       )}
 

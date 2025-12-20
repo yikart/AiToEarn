@@ -86,13 +86,20 @@ const CalendarTimingItem = memo(
         }
       }, [isMore, records, reservationsTimesLast, recordMap])
 
-      // 进入视图时将“今天”尽量居中显示
+      // 进入视图时将"今天"尽量居中显示（仅在日历容器内滚动）
       useEffect(() => {
         if (argDate.getTime() === nowDate.getTime()) {
           // 推迟到布局完成后再滚动
           setTimeout(() => {
-            cellRef.current?.scrollIntoView({ block: 'center', inline: 'nearest' })
-          }, 0)
+            const calendarContainer = document.getElementById('calendarTiming-calendar')
+            if (calendarContainer && cellRef.current) {
+              // 计算目标位置，使"今天"居中显示
+              const containerRect = calendarContainer.getBoundingClientRect()
+              const cellRect = cellRef.current.getBoundingClientRect()
+              const scrollTop = calendarContainer.scrollTop + (cellRect.top - containerRect.top) - (containerRect.height / 2) + (cellRect.height / 2)
+              calendarContainer.scrollTo({ top: Math.max(0, scrollTop), behavior: 'smooth' })
+            }
+          }, 100)
         }
       }, [])
 

@@ -56,9 +56,9 @@ function BackToTop({ position = 'left' }: { position?: 'left' | 'right' }) {
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* 首屏 Chat 区域 */}
-      <section className="min-h-[70vh] flex items-center justify-center px-4 pt-32 pb-12">
+      <section className="min-h-[60vh] flex items-center justify-center px-4 pt-16 pb-8 md:pt-24 md:pb-12">
         <HomeChat />
       </section>
 
