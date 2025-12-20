@@ -6,11 +6,16 @@
 
 'use client'
 
+import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { Link2, RefreshCw, Send, ArrowRight, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
+import { useUserStore } from '@/store/user'
+import { toast } from '@/lib/toast'
+import { openLoginModal } from '@/store/loginModal'
+import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import type { IActionCard } from '@/store/agent/agent.types'
 
 export interface IActionCardProps {
@@ -62,6 +67,10 @@ export function ActionCard({ action, className }: IActionCardProps) {
   const router = useRouter()
   const { lng } = useParams()
   const { t } = useTransClient('chat')
+  const token = useUserStore(state => state.token)
+  
+  // 添加账号弹窗状态
+  const [addAccountVisible, setAddAccountVisible] = useState(false)
 
   const platformName = getPlatformDisplayName(action.platform)
 
@@ -71,9 +80,9 @@ export function ActionCard({ action, className }: IActionCardProps) {
       case 'createChannel':
         return {
           icon: <Link2 className="w-5 h-5" />,
-          title: t('action.connectChannel' as any) || '连接频道',
-          description: t('action.connectChannelDesc' as any, { platform: platformName }) || `您还未连接 ${platformName} 账号，请先连接频道账号才能发布内容`,
-          buttonText: t('action.connectNow' as any) || '立即连接',
+          title: t('action.addChannel' as any) || 'Add Channel',
+          description: t('action.addChannelDesc' as any, { platform: platformName }) || `You haven't connected a ${platformName} account yet. Please add a channel to publish content.`,
+          buttonText: t('action.addChannelNow' as any) || 'Add Channel',
           bgClass: 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30',
           borderClass: 'border-blue-200 dark:border-blue-800',
           iconClass: 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50',
@@ -129,7 +138,14 @@ export function ActionCard({ action, className }: IActionCardProps) {
     
     switch (action.type) {
       case 'createChannel':
-        router.push(`/${lng}/accounts?addChannel=${platform}`)
+        // 未登录时先登录
+        if (!token) {
+          toast.warning(t('home.loginRequired' as any) || 'Please login first')
+          openLoginModal(() => setAddAccountVisible(true))
+          return
+        }
+        // 直接打开添加账号弹窗
+        setAddAccountVisible(true)
         break
       case 'updateChannel':
         router.push(`/${lng}/accounts?updateChannel=${platform}`)
@@ -191,6 +207,16 @@ export function ActionCard({ action, className }: IActionCardProps) {
         {config.buttonText}
         <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
       </Button>
+
+      {/* 添加账号弹窗 - 仅用于 createChannel */}
+      {action.type === 'createChannel' && (
+        <AddAccountModal
+          open={addAccountVisible}
+          onClose={() => setAddAccountVisible(false)}
+          onAddSuccess={() => setAddAccountVisible(false)}
+          showSpaceSelector={true}
+        />
+      )}
     </div>
   )
 }
