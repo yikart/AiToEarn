@@ -1,6 +1,6 @@
 /**
  * 首页 - AI Agent 内容生成
- * 功能：AI 驱动的内容创作、提示词画廊、任务预览
+ * 功能：AI 驱动的内容创作、任务预览
  */
 'use client'
 
@@ -62,13 +62,6 @@ export default function Home() {
   const token = useUserStore((state) => state.token)
   const router = useRouter()
 
-  // 用于接收从 PromptGallery 应用的提示词
-  const [appliedPrompt, setAppliedPrompt] = useState<{
-    prompt: string
-    image?: string
-    mode: 'edit' | 'generate'
-  } | null>(null)
-
   /** 检查登录状态 */
   const handleLoginRequired = () => {
     if (!token) {
@@ -76,23 +69,12 @@ export default function Home() {
     }
   }
 
-  /** 处理应用提示词 */
-  const handleApplyPrompt = useCallback(
-    (data: { prompt: string; image?: string; mode: 'edit' | 'generate' }) => {
-      setAppliedPrompt(data)
-      // 可以在这里扩展更多逻辑，比如自动填充到 HomeChat
-    },
-    []
-  )
-
   return (
     <div className="min-h-screen bg-background">
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[70vh] flex items-center justify-center px-4 pt-32 pb-12">
         <HomeChat
           onLoginRequired={token ? undefined : handleLoginRequired}
-          appliedPrompt={appliedPrompt}
-          onAppliedPromptHandled={() => setAppliedPrompt(null)}
         />
       </section>
 
@@ -101,11 +83,11 @@ export default function Home() {
 
       {/* 提示词画廊区域 */}
       <section>
-        <PromptGallery onApplyPrompt={handleApplyPrompt} />
+        <PromptGallery />
       </section>
 
-      {/* 回到顶部按钮 - 左侧 */}
-      <BackToTop position="left" />
+      {/* 回到顶部按钮 - 右侧 */}
+      <BackToTop position="right" />
     </div>
   )
 }

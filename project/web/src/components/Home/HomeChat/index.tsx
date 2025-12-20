@@ -1,7 +1,6 @@
 /**
  * HomeChat - 首页Chat组件
  * 功能：大尺寸聊天输入框，使用全局 AgentStore 发起 SSE 任务，获取 taskId 后跳转到对话详情页
- * 支持外部传入提示词和图片（如从 PromptGallery 一键应用）
  */
 
 'use client'
@@ -16,25 +15,14 @@ import { useAgentStore } from '@/store/agent'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-import { AccountPlatInfoArr, PlatType } from '@/app/config/platConfig'
-import logo from '@/assets/images/logo.png'
-
-/** 应用的提示词数据 */
-export interface IAppliedPrompt {
-  prompt: string
-  image?: string
-  mode: 'edit' | 'generate'
-}
+import { AccountPlatInfoArr } from '@/app/config/platConfig'
+import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 
 export interface IHomeChatProps {
   /** 登录检查回调 */
   onLoginRequired?: () => void
   /** 自定义类名 */
   className?: string
-  /** 外部应用的提示词（从 PromptGallery 一键应用） */
-  appliedPrompt?: IAppliedPrompt | null
-  /** 提示词已处理完成的回调 */
-  onAppliedPromptHandled?: () => void
 }
 
 /**
@@ -43,22 +31,23 @@ export interface IHomeChatProps {
 export function HomeChat({
   onLoginRequired,
   className,
-  appliedPrompt,
-  onAppliedPromptHandled,
 }: IHomeChatProps) {
   const { t } = useTransClient('chat')
   const { t: tHome } = useTransClient('home')
   const router = useRouter()
   const { lng } = useParams()
 
-  // 状态
-  const [inputValue, setInputValue] = useState('')
+  // 获取默认提示文本
+  const defaultPrompt = t('input.placeholder' as any) || 'Help me create a cat dancing video and post it directly on YouTube'
+
+  // 状态 - 默认显示提示文本
+  const [inputValue, setInputValue] = useState(defaultPrompt)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [addAccountVisible, setAddAccountVisible] = useState(false)
 
   // 使用媒体上传 Hook
   const {
     medias,
-    setMedias,
     isUploading,
     handleMediasChange,
     handleMediaRemove,
@@ -66,32 +55,6 @@ export function HomeChat({
   } = useMediaUpload({
     onError: () => toast.error(t('media.uploadFailed' as any)),
   })
-
-  /**
-   * 处理外部应用的提示词（从 PromptGallery 一键应用）
-   */
-  useEffect(() => {
-    if (appliedPrompt) {
-      // 设置提示词到输入框
-      setInputValue(appliedPrompt.prompt)
-
-      // 如果是编辑模式且有图片，添加到媒体列表
-      if (appliedPrompt.mode === 'edit' && appliedPrompt.image) {
-        setMedias([
-          {
-            url: appliedPrompt.image,
-            type: 'image',
-          },
-        ])
-      }
-
-      // 通知父组件已处理完成
-      onAppliedPromptHandled?.()
-
-      // 显示提示
-      toast.success('提示词已应用，可直接发送或修改后发送')
-    }
-  }, [appliedPrompt, setMedias, onAppliedPromptHandled])
 
   // 全局 Store
   const { createTask, setActionContext } = useAgentStore()
@@ -147,20 +110,10 @@ export function HomeChat({
   return (
     <div className={cn('w-full max-w-3xl mx-auto', className)}>
       {/* 标题区域 */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-3 mb-3">
-          <Image
-            src={logo}
-            alt="AiToEarn"
-            width={56}
-            height={56}
-            className="w-14 h-14 object-contain"
-          />
-          <span className="text-foreground font-bold text-3xl">AiToEarn</span>
-        </div>
-        <p className="text-base text-muted-foreground">
+      <div className="text-center mb-6 px-4">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl text-foreground font-semibold leading-relaxed">
           {tHome('agentGenerator.subtitle' as any) || t('home.subtitle' as any)}
-        </p>
+        </h1>
       </div>
 
       {/* 聊天输入框 */}
@@ -173,48 +126,39 @@ export function HomeChat({
         onMediaRemove={handleMediaRemove}
         isGenerating={isSubmitting}
         isUploading={isUploading}
-        placeholder={t('input.placeholder' as any)}
+        placeholder=""
         mode="large"
-        
       />
 
         {/* 平台工具链接提示 */}
         <div
-          className="flex items-center justify-between gap-2 mb-2"
+          className="flex items-center gap-3 mb-2 cursor-pointer"
           style={{
             backgroundColor: '#F2F2F1',
             borderBottomLeftRadius: '10px',
             borderBottomRightRadius: '10px',
-            paddingTop: '20px',
-            paddingBottom: '8px',
+            paddingTop: '16px',
+            paddingBottom: '12px',
             paddingLeft: '16px',
             paddingRight: '16px',
             marginTop: '-12px',
-            zIndex: -1,
+            position: 'relative',
           }}
+          onClick={() => setAddAccountVisible(true)}
         >
-          <span
-            className="text-sm text-muted-foreground self-start pt-1"
-            style={{ zIndex: 10, position: 'relative', marginRight: '-8px' }}
-          >
+          <span className="text-sm text-muted-foreground whitespace-nowrap">
             {t('home.connectTools' as any)}
           </span>
-          <div className="flex items-center">
-            {AccountPlatInfoArr.map(([key, value], index) => (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {AccountPlatInfoArr.map(([key, value]) => (
               <Image
                 key={key}
                 src={value.icon}
                 alt={value.name}
-                width={20}
-                height={20}
-                className="w-6 h-6 rounded-full object-contain cursor-pointer hover:opacity-80 transition-opacity"
-                style={{
-                  marginLeft: index > 0 ? '-8px' : '0',
-                  zIndex: AccountPlatInfoArr.length - index,
-                  position: 'relative',
-                }}
+                width={24}
+                height={24}
+                className="w-6 h-6 rounded-full object-contain hover:scale-110 hover:opacity-80 transition-all"
                 title={value.name}
-                onClick={() => router.push(`/${lng}/accounts?addChannel=${key}`)}
               />
             ))}
           </div>
@@ -233,6 +177,14 @@ export function HomeChat({
           {t('home.enterToSend' as any)}
         </span>
       </div>
+
+      {/* 添加账号弹窗 */}
+      <AddAccountModal
+        open={addAccountVisible}
+        onClose={() => setAddAccountVisible(false)}
+        onAddSuccess={() => setAddAccountVisible(false)}
+        showSpaceSelector={true}
+      />
     </div>
   )
 }

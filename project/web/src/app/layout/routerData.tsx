@@ -51,12 +51,7 @@ export const routerData: IRouterDataItem[] = [
     path: '/interactiveNew',
     icon: <MessageCircle size={20} />,
   },
-  {
-    name: '任务中心',
-    translationKey: 'tasks',
-    path: '/tasks',
-    icon: <ListTodo size={20} />,
-  },
+  // Tasks (任务中心) 已移至站内信通知面板中
   {
     name: '数据统计',
     translationKey: 'dataStatistics',

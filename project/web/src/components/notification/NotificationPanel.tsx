@@ -9,8 +9,8 @@ import type { NotificationItem, TaskItem } from '@/api/notification'
 import type { SocialAccount } from '@/api/types/account.type'
 // 平台配置（图标等）
 import type { PlatType } from '@/app/config/platConfig'
-import { CheckOutlined, ClockCircleOutlined, DeleteOutlined } from '@ant-design/icons'
-import { Badge, Button, Empty, List, Popconfirm, Spin, Steps, Tag } from 'antd'
+import { CheckOutlined, ClockCircleOutlined, DeleteOutlined, UnorderedListOutlined } from '@ant-design/icons'
+import { Badge, Button, Empty, List, Popconfirm, Spin, Steps, Tag, Tabs } from 'antd'
 import { toast } from '@/lib/toast'
 import { Modal } from '@/components/ui/modal'
 import { useParams, useRouter } from 'next/navigation'
@@ -757,6 +757,56 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         width={700}
         destroyOnClose
       >
+        {/* 任务中心入口 */}
+        <div 
+          style={{ 
+            marginBottom: '16px', 
+            padding: '12px 16px', 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '12px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            transition: 'all 0.3s ease',
+          }}
+          onClick={() => {
+            router.push(`/${lng}/tasks`)
+            onClose()
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-2px)'
+            e.currentTarget.style.boxShadow = '0 8px 25px rgba(102, 126, 234, 0.4)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)'
+            e.currentTarget.style.boxShadow = 'none'
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ 
+              width: '40px', 
+              height: '40px', 
+              background: 'rgba(255,255,255,0.2)', 
+              borderRadius: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <UnorderedListOutlined style={{ fontSize: '20px', color: 'white' }} />
+            </div>
+            <div>
+              <div style={{ color: 'white', fontWeight: '600', fontSize: '15px' }}>
+                {t('taskCenter' as any) || '任务中心'}
+              </div>
+              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '12px' }}>
+                {t('taskCenterDesc' as any) || '查看和管理您的任务'}
+              </div>
+            </div>
+          </div>
+          <div style={{ color: 'white', fontSize: '20px' }}>→</div>
+        </div>
+
         <Spin spinning={loading}>
           {notifications.length > 0
             ? (
