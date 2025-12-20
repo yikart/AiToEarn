@@ -35,7 +35,8 @@
     "aiCreation": "AI 智能创作",
     "supportUpload": "支持图片/视频上传",
     "enterToSend": "按 Enter 发送",
-    "connectTools": "发布到"
+    "connectTools": "发布到",
+    "loginRequired": "请先登录"
   },
   "history": {
     "title": "任务记录",

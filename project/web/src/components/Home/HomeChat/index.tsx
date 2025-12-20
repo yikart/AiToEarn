@@ -12,6 +12,7 @@ import { Sparkles } from 'lucide-react'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useTransClient } from '@/app/i18n/client'
 import { useAgentStore } from '@/store/agent'
+import { useUserStore } from '@/store/user'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
@@ -36,6 +37,7 @@ export function HomeChat({
   const { t: tHome } = useTransClient('home')
   const router = useRouter()
   const { lng } = useParams()
+  const token = useUserStore(state => state.token)
 
   // 获取默认提示文本
   const defaultPrompt = t('input.placeholder' as any) || 'Help me create a cat dancing video and post it directly on YouTube'
@@ -44,6 +46,16 @@ export function HomeChat({
   const [inputValue, setInputValue] = useState(defaultPrompt)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
+
+  // 处理添加账号点击 - 未登录时跳转登录
+  const handleAddChannelClick = useCallback(() => {
+    if (!token) {
+      toast.warning(t('home.loginRequired' as any) || 'Please login first')
+      router.push('/auth/login')
+      return
+    }
+    setAddAccountVisible(true)
+  }, [token, router, t])
 
   // 使用媒体上传 Hook
   const {
@@ -144,7 +156,7 @@ export function HomeChat({
             marginTop: '-12px',
             position: 'relative',
           }}
-          onClick={() => setAddAccountVisible(true)}
+          onClick={handleAddChannelClick}
         >
           <span className="text-sm text-muted-foreground whitespace-nowrap">
             {t('home.connectTools' as any)}

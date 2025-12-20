@@ -33,16 +33,23 @@ export function VipEntry({ collapsed }: SidebarCommonProps) {
           <Link
             href={`/${lng}/pricing`}
             className={cn(
-              'flex items-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
-              collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
+              'flex flex-col rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
+              collapsed ? 'h-9 w-9 items-center justify-center' : 'px-3 py-2',
             )}
           >
-            <div className="flex items-center gap-2">
-              <Crown size={18} className="text-warning" />
-              {!collapsed && <span className="text-sm">{t('vip')}</span>}
+            <div className={cn('flex items-center', collapsed ? 'justify-center' : 'justify-between w-full')}>
+              <div className="flex items-center gap-2">
+                <Crown size={18} className="text-warning" />
+                {!collapsed && <span className="text-sm">{t('vip')}</span>}
+              </div>
+              {!collapsed && !isVip && (
+                <span className="text-xs text-muted-foreground">{t('subscribe')}</span>
+              )}
             </div>
             {!collapsed && !isVip && (
-              <span className="text-xs text-muted-foreground">{t('subscribe')}</span>
+              <div className="mt-1 ml-[26px]">
+                <span className="text-[10px] text-orange-500 font-medium">$19→$50 Credits</span>
+              </div>
             )}
           </Link>
         </TooltipTrigger>

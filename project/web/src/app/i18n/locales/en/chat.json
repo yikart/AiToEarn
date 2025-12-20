@@ -35,7 +35,8 @@
     "aiCreation": "AI Creation",
     "supportUpload": "Support image/video upload",
     "enterToSend": "Press Enter to send",
-    "connectTools": "Publish to"
+    "connectTools": "Publish to",
+    "loginRequired": "Please login first"
   },
   "history": {
     "title": "Task History",
