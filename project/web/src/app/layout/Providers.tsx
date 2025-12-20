@@ -14,6 +14,7 @@ import en_US from 'antd/es/locale/en_US'
 import zh_CN from 'antd/es/locale/zh_CN'
 import { Suspense, useEffect } from 'react'
 import { Toaster } from '@/components/ui/sonner'
+import { GlobalLoginModal } from '@/components/common/GlobalLoginModal'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import useCssVariables from '@/app/hooks/useCssVariables'
 import { fallbackLng } from '@/app/i18n/settings'
@@ -77,6 +78,7 @@ export function Providers({
             <Suspense>
               <AntdRegistry>
                 <Toaster position="top-center" richColors />
+                <GlobalLoginModal />
                 {children}
               </AntdRegistry>
             </Suspense>

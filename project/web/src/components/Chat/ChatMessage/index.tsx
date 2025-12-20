@@ -14,10 +14,11 @@ import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
 import { useTransClient } from '@/app/i18n/client'
 import type { IUploadedMedia } from '../MediaUpload'
-import type { IMessageStep, IWorkflowStep } from '@/store/agent'
+import type { IMessageStep, IWorkflowStep, IActionCard } from '@/store/agent'
 import logo from '@/assets/images/logo.png'
 import styles from './ChatMessage.module.scss'
 import { MediaPreview } from '@/components/common/MediaPreview'
+import { ActionCard } from '../ActionCard'
 
 export type { IWorkflowStep }
 
@@ -38,6 +39,8 @@ export interface IChatMessageProps {
   steps?: IMessageStep[]
   /** 工作流步骤列表（兼容旧接口，用于无steps时的显示） */
   workflowSteps?: IWorkflowStep[]
+  /** Action 卡片列表（用于显示可交互的 action） */
+  actions?: IActionCard[]
   /** 自定义类名 */
   className?: string
 }
@@ -248,6 +251,7 @@ export function ChatMessage({
   errorMessage,
   steps = [],
   workflowSteps = [],
+  actions = [],
   className,
 }: IChatMessageProps) {
   const { t } = useTransClient('chat')
@@ -447,6 +451,18 @@ export function ChatMessage({
           <div className="flex items-center gap-2 px-4 py-3 rounded-2xl bg-destructive/10 text-destructive rounded-bl-md">
             <AlertCircle className="w-4 h-4" />
             <span className="text-sm">{errorMessage || 'Generation failed, please retry'}</span>
+          </div>
+        )}
+
+        {/* Action 卡片 */}
+        {!isUser && actions && actions.length > 0 && (
+          <div className="w-full space-y-3 mt-2">
+            {actions.map((action, index) => (
+              <ActionCard
+                key={`action-${index}-${action.type}-${action.platform || ''}`}
+                action={action}
+              />
+            ))}
           </div>
         )}
       </div>

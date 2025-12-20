@@ -5,15 +5,12 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { ArrowUp } from 'lucide-react'
 import { HomeChat } from '@/components/Home/HomeChat'
 import { TaskPreview } from '@/components/Home/TaskPreview'
 import PromptGallery from '@/components/Home/PromptGallery'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-// store
-import { useUserStore } from '@/store/user'
 
 /**
  * 回到顶部按钮组件
@@ -58,24 +55,11 @@ function BackToTop({ position = 'left' }: { position?: 'left' | 'right' }) {
 }
 
 export default function Home() {
-  // 获取登录状态
-  const token = useUserStore((state) => state.token)
-  const router = useRouter()
-
-  /** 检查登录状态 */
-  const handleLoginRequired = () => {
-    if (!token) {
-      router.push('/auth/login')
-    }
-  }
-
   return (
     <div className="min-h-screen bg-background">
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[70vh] flex items-center justify-center px-4 pt-32 pb-12">
-        <HomeChat
-          onLoginRequired={token ? undefined : handleLoginRequired}
-        />
+        <HomeChat />
       </section>
 
       {/* 任务预览区域 - 无数据时自动隐藏 */}

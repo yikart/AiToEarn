@@ -3,7 +3,7 @@
  * 消息创建和状态管理工具
  */
 
-import type { IDisplayMessage, IUploadedMedia } from '../agent.types'
+import type { IDisplayMessage, IUploadedMedia, IActionCard } from '../agent.types'
 import type { IAgentRefs } from './refs'
 
 /** 消息工具上下文 */
@@ -79,6 +79,30 @@ export function createMessageUtils(ctx: IMessageContext) {
       set((state: any) => ({
         messages: state.messages.map((m: any) =>
           m.id === refs.currentAssistantMessageId.value ? { ...m, content, status: 'done' } : m,
+        ),
+      }))
+    },
+
+    /**
+     * 更新当前 assistant 消息的 actions
+     */
+    updateMessageActions(actions: IActionCard[]) {
+      set((state: any) => ({
+        messages: state.messages.map((m: any) =>
+          m.id === refs.currentAssistantMessageId.value ? { ...m, actions } : m,
+        ),
+      }))
+    },
+
+    /**
+     * 更新当前 assistant 消息内容和 actions
+     */
+    updateMessageWithActions(content: string, actions: IActionCard[]) {
+      set((state: any) => ({
+        messages: state.messages.map((m: any) =>
+          m.id === refs.currentAssistantMessageId.value 
+            ? { ...m, content, status: 'done', actions } 
+            : m,
         ),
       }))
     },

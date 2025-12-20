@@ -24,6 +24,9 @@ export const initialState: IAgentState = {
 
   // 消费状态
   currentCost: 0,
+
+  // 待处理任务
+  pendingTask: null,
 }
 
 /**

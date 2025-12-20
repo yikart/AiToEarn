@@ -18,6 +18,7 @@ import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { AccountPlatInfoArr } from '@/app/config/platConfig'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { openLoginModal } from '@/store/loginModal'
 
 export interface IHomeChatProps {
   /** 登录检查回调 */
@@ -69,7 +70,7 @@ export function HomeChat({
   })
 
   // 全局 Store
-  const { createTask, setActionContext } = useAgentStore()
+  const { setPendingTask, setActionContext } = useAgentStore()
 
   /**
    * 设置 Action 上下文（用于处理任务结果的 action）
@@ -82,13 +83,11 @@ export function HomeChat({
     })
   }, [router, lng, tHome, setActionContext])
 
-  /** 处理发送消息 */
-  const handleSend = useCallback(async () => {
+  /** 实际执行发送的函数 */
+  const doSend = useCallback(() => {
     if (!inputValue.trim()) return
 
-    setIsSubmitting(true)
-
-    // 保存当前输入（因为下面会清空）
+    // 保存当前输入
     const currentPrompt = inputValue
     const currentMedias = [...medias]
 
@@ -96,28 +95,29 @@ export function HomeChat({
     setInputValue('')
     clearMedias()
 
-    try {
-      // 使用全局 Store 创建任务
-      await createTask({
-        prompt: currentPrompt,
-        medias: currentMedias,
-        t: t as (key: string) => string,
-        onLoginRequired,
-        onTaskIdReady: (taskId) => {
-          console.log('[HomeChat] Task ID ready:', taskId)
-          // 收到 taskId 后立即跳转到对话详情页
-          router.push(`/${lng}/chat/${taskId}`)
-        },
-      })
-    } catch (error: any) {
-      toast.error(error.message || t('message.error' as any))
-      console.error('Create task failed:', error)
-      // 恢复输入
-      setInputValue(currentPrompt)
-    } finally {
-      setIsSubmitting(false)
+    // 将任务存入 store，立即跳转
+    setPendingTask({
+      prompt: currentPrompt,
+      medias: currentMedias,
+    })
+
+    // 立即跳转到聊天页面（使用 "new" 作为临时 taskId）
+    router.push(`/${lng}/chat/new`)
+  }, [inputValue, medias, router, lng, setPendingTask, clearMedias])
+
+  /** 处理发送消息 */
+  const handleSend = useCallback(async () => {
+    if (!inputValue.trim()) return
+
+    // 检查登录状态 - 未登录时显示登录弹窗
+    if (!token) {
+      openLoginModal(doSend)
+      return
     }
-  }, [inputValue, medias, onLoginRequired, router, lng, t, createTask, clearMedias])
+
+    // 执行发送逻辑
+    doSend()
+  }, [inputValue, token, doSend])
 
   return (
     <div className={cn('w-full max-w-3xl mx-auto', className)}>

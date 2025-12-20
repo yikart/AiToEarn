@@ -12,6 +12,7 @@ import { useNotification } from '@/hooks/useNotification'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 import { toast } from '@/lib/toast'
+import { openLoginModal } from '@/store/loginModal'
 import NotificationPanel from '@/components/notification/NotificationPanel'
 import SettingsModal, { type SettingsTab } from '@/components/SettingsModal'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
@@ -142,9 +143,9 @@ const LayoutSidebar = () => {
     return null
   }
 
-  // 处理登录跳转
+  // 处理登录弹窗
   const handleLogin = () => {
-    router.push(`/auth/login`)
+    openLoginModal()
   }
 
   // 打开设置弹框
@@ -161,7 +162,7 @@ const LayoutSidebar = () => {
   const handleAddChannel = () => {
     if (!token) {
       toast.warning('请先登录')
-      router.push('/auth/login')
+      openLoginModal(() => setAddAccountVisible(true))
       return
     }
     setAddAccountVisible(true)

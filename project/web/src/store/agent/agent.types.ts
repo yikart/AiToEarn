@@ -74,6 +74,24 @@ export interface IMessageStep {
   timestamp?: number
 }
 
+/** Action 卡片数据 */
+export interface IActionCard {
+  /** Action 类型 */
+  type: ActionType
+  /** 平台 */
+  platform?: PlatformType
+  /** 账号ID */
+  accountId?: string
+  /** 标题 */
+  title?: string
+  /** 描述 */
+  description?: string
+  /** 媒体数据（用于发布） */
+  medias?: IMediaItem[]
+  /** 标签 */
+  tags?: string[]
+}
+
 /** 显示消息项 */
 export interface IDisplayMessage {
   id: string
@@ -85,6 +103,8 @@ export interface IDisplayMessage {
   createdAt?: number
   /** AI 消息的步骤列表（仅 assistant 消息使用） */
   steps?: IMessageStep[]
+  /** Action 卡片列表（用于显示可交互的 action） */
+  actions?: IActionCard[]
 }
 
 // ============ 任务结果相关类型 ============
@@ -164,6 +184,12 @@ export interface IWorkflowStep {
 
 // ============ Store 状态类型 ============
 
+/** 待处理的任务（用于首页跳转后在聊天页创建） */
+export interface IPendingTask {
+  prompt: string
+  medias: IUploadedMedia[]
+}
+
 /** Agent Store 状态 */
 export interface IAgentState {
   // === 任务状态 ===
@@ -189,6 +215,10 @@ export interface IAgentState {
   // === 消费状态 ===
   /** 本次消费金额 */
   currentCost: number
+
+  // === 待处理任务 ===
+  /** 待处理的任务（从首页跳转时设置） */
+  pendingTask: IPendingTask | null
 }
 
 // ============ Action Handler 相关类型 ============

@@ -13,6 +13,7 @@ import {
 } from '@/api/monitoring'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import http from '@/utils/request'
+import { openLoginModal } from '@/store/loginModal'
 import { urlReg } from '@/utils/regulars'
 import styles from './dataMonitoring.module.scss'
 
@@ -112,7 +113,7 @@ export default function DataMonitoringPage() {
         setNoteLink('')
         loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
       } else if (response && response.code === 401) {
-        router.push('/auth/login')
+        openLoginModal()
       } else if (response) {
         // 其他错误
         toast.error(response.message || t('error.addFailed'))

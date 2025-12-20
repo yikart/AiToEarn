@@ -63,6 +63,23 @@
     "toolCallCompleted": "工具调用完成",
     "toolResult": "返回结果",
     "processing": "处理中..."
+  },
+  "action": {
+    "connectChannel": "连接频道",
+    "connectChannelDesc": "您还未连接 {{platform}} 账号，请先连接频道账号才能发布内容。",
+    "connectNow": "立即连接",
+    "updateAuth": "更新授权",
+    "updateAuthDesc": "您的 {{platform}} 账号授权已过期，请重新授权。",
+    "reauthorize": "重新授权",
+    "loginChannel": "登录频道",
+    "loginChannelDesc": "请先登录 {{platform}} 账号。",
+    "goLogin": "去登录",
+    "readyToPublish": "准备发布",
+    "readyToPublishDesc": "内容已准备好，可以发布到 {{platform}}。",
+    "goPublish": "去发布",
+    "action": "操作",
+    "actionDesc": "请完成以下操作",
+    "continue": "继续"
   }
 }
 

@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/lib/toast'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
+import { openLoginModal } from '@/store/loginModal'
 
 /** 企业版联系邮箱 */
 const ENTERPRISE_EMAIL = 'agent@aiearn.ai'
@@ -125,7 +126,7 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
     // 检查用户是否已登录
     if (!userStore.userInfo?.id) {
       toast.error(t('pleaseLoginFirst'))
-      router.push('/auth/login')
+      openLoginModal()
       return
     }
 

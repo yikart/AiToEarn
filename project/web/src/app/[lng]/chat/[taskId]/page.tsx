@@ -45,7 +45,7 @@ export default function ChatDetailPage() {
   const lng = params.lng as string
 
   // Store 方法
-  const { continueTask, stopTask, setActionContext, handleSSEMessage } = useAgentStore()
+  const { createTask, continueTask, stopTask, setActionContext, handleSSEMessage, consumePendingTask } = useAgentStore()
 
   // 聊天状态管理
   const {
@@ -97,6 +97,44 @@ export default function ChatDetailPage() {
       t: tHome as any,
     })
   }, [router, lng, tHome, setActionContext])
+
+  /**
+   * 处理新任务：当 taskId 为 "new" 时，从 store 获取待处理任务并发起请求
+   */
+  useEffect(() => {
+    if (taskId !== 'new') return
+
+    const pendingTask = consumePendingTask()
+    if (!pendingTask) {
+      // 没有待处理任务，返回首页
+      router.replace(`/${lng}`)
+      return
+    }
+
+    // 发起任务创建
+    const startTask = async () => {
+      setLocalIsGenerating(true)
+      try {
+        await createTask({
+          prompt: pendingTask.prompt,
+          medias: pendingTask.medias,
+          t: t as (key: string) => string,
+          onTaskIdReady: (newTaskId) => {
+            console.log('[ChatPage] Task ID ready:', newTaskId)
+            // 使用 replace 替换 URL，不添加历史记录
+            router.replace(`/${lng}/chat/${newTaskId}`)
+          },
+        })
+      } catch (error: any) {
+        console.error('[ChatPage] Create task failed:', error)
+        toast.error(error.message || t('message.error' as any))
+        // 出错时返回首页
+        router.replace(`/${lng}`)
+      }
+    }
+
+    startTask()
+  }, [taskId, lng, router, consumePendingTask, createTask, t, setLocalIsGenerating])
 
   /**
    * 智能滚动：用户在底部附近时自动滚动
