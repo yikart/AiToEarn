@@ -499,8 +499,9 @@ export function ChatMessage({
           <div
             className={cn(
               'px-4 py-3 rounded-2xl text-sm leading-relaxed',
-              'bg-card border border-border text-foreground rounded-br-md whitespace-pre-wrap',
+              'bg-card border border-border text-foreground rounded-br-md whitespace-pre-wrap break-words',
             )}
+            style={{ wordBreak: 'break-word', overflowWrap: 'anywhere' }}
           >
             {content}
           </div>

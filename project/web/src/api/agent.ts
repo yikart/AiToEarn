@@ -185,6 +185,10 @@ export const agentApi = {
     
     let sessionId: string | undefined
     let abortController = new AbortController()
+    // 用于消息去重，防止重复处理
+    const processedMessageIds = new Set<string>()
+    // 标记是否已经完成，防止重复调用 onDone
+    let isCompleted = false
     
     // 返回 abort 函数
     const abort = () => {
@@ -224,7 +228,7 @@ export const agentApi = {
             throw new Error(`HTTP ${response.status}: ${errorText}`)
           }
           else {
-            // 服务器错误或其他问题，会自动重试
+            // 服务器错误或其他问题，不自动重试，直接抛出错误
             console.error('[SSE] Server error:', response.status)
             throw new Error(`HTTP ${response.status}`)
           }
@@ -232,6 +236,12 @@ export const agentApi = {
         
         // 当收到消息时
         onmessage(event) {
+          // 如果已完成，忽略后续消息
+          if (isCompleted) {
+            console.log('[SSE] Already completed, ignoring message')
+            return
+          }
+          
           console.log('[SSE] Received message:', event)
           
           // 如果没有数据，跳过
@@ -244,22 +254,31 @@ export const agentApi = {
             const data = JSON.parse(event.data)
             console.log('[SSE] Parsed data:', data)
             
+            // 消息去重：基于 uuid 或生成唯一标识
+            const messageId = data.uuid || data.message?.uuid || `${data.type}-${JSON.stringify(data).slice(0, 100)}`
+            if (processedMessageIds.has(messageId)) {
+              console.log('[SSE] Duplicate message, skipping:', messageId)
+              return
+            }
+            processedMessageIds.add(messageId)
+            
             // 保存 sessionId
             if (data.sessionId) {
               sessionId = data.sessionId
               console.log('[SSE] Got sessionId:', sessionId)
-          }
+            }
           
-          // 调用消息回调
-          onMessage(data)
+            // 调用消息回调
+            onMessage(data)
           
-          // 如果收到结束信号，关闭连接
-          if (data.type === 'done' || data.type === 'error') {
-            console.log('[SSE] Received end signal:', data.type)
-            abortController.abort()
+            // 如果收到结束信号，关闭连接
+            if (data.type === 'done' || data.type === 'error') {
+              console.log('[SSE] Received end signal:', data.type)
+              isCompleted = true
+              abortController.abort()
+            }
           }
-        }
-        catch (error) {
+          catch (error) {
             console.error('[SSE] Failed to parse message:', event.data, error)
           }
         },
@@ -267,7 +286,10 @@ export const agentApi = {
         // 当连接关闭时
         onclose() {
           console.log('[SSE] Connection closed')
-          onDone(sessionId)
+          if (!isCompleted) {
+            isCompleted = true
+            onDone(sessionId)
+          }
         },
         
         // 当发生错误时
@@ -280,8 +302,12 @@ export const agentApi = {
             return
           }
           
-          // 其他错误，调用错误回调
-          onError(error instanceof Error ? error : new Error(String(error)))
+          // 标记为已完成，防止重复处理
+          if (!isCompleted) {
+            isCompleted = true
+            // 其他错误，调用错误回调
+            onError(error instanceof Error ? error : new Error(String(error)))
+          }
           
           // 抛出错误以停止重试
           throw error
@@ -291,8 +317,9 @@ export const agentApi = {
     catch (error) {
       console.error('[SSE] fetchEventSource failed:', error)
       
-      // 如果不是手动中止的错误，调用错误回调
-      if (!abortController.signal.aborted) {
+      // 如果不是手动中止的错误且未完成，调用错误回调
+      if (!abortController.signal.aborted && !isCompleted) {
+        isCompleted = true
         onError(error instanceof Error ? error : new Error(String(error)))
       }
     }
