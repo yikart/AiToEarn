@@ -248,64 +248,67 @@ export function SubscriptionTab() {
           {t('subscription.usageRecords')}
         </h4>
 
-        {/* 表头 - 移动端隐藏日期列 */}
-        <div className="grid grid-cols-2 gap-2 border-b border-border px-2 pb-3 text-xs font-medium text-muted-foreground md:grid-cols-12 md:gap-4">
-          <div className="md:col-span-6">{t('subscription.detail')}</div>
-          <div className="hidden md:col-span-3 md:block">{t('subscription.date')}</div>
-          <div className="text-right md:col-span-3">{t('subscription.amountChange')}</div>
-        </div>
+        {/* 表格容器 */}
+        <div className="w-full">
+          {/* 表头 */}
+          <div className="flex items-center border-b border-border px-2 pb-3 text-xs font-medium text-muted-foreground">
+            <div className="min-w-0 flex-1">{t('subscription.detail')}</div>
+            <div className="hidden w-[140px] shrink-0 text-right md:block">{t('subscription.date')}</div>
+            <div className="w-[70px] shrink-0 text-right md:w-[90px]">{t('subscription.amount')}</div>
+          </div>
 
-        {/* 记录列表 */}
-        <div className="divide-y divide-border">
-          {recordsLoading
-            ? (
-                // 骨架屏
-                Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="grid grid-cols-2 gap-2 px-2 py-3 md:grid-cols-12 md:gap-4">
-                    <div className="md:col-span-6">
-                      <Skeleton className="h-4 w-3/4" />
-                    </div>
-                    <div className="hidden md:col-span-3 md:block">
-                      <Skeleton className="h-4 w-full" />
-                    </div>
-                    <div className="flex justify-end md:col-span-3">
-                      <Skeleton className="h-4 w-16" />
-                    </div>
-                  </div>
-                ))
-              )
-            : records.length === 0
+          {/* 记录列表 */}
+          <div className="divide-y divide-border">
+            {recordsLoading
               ? (
-                  <div className="py-8 text-center text-sm text-muted-foreground">
-                    {t('subscription.noRecords')}
-                  </div>
-                )
-              : (
-                  records.map(record => (
-                    <div
-                      key={record.id}
-                      className="grid grid-cols-2 gap-2 px-2 py-3 text-sm md:grid-cols-12 md:gap-4"
-                    >
-                      {/* 详情 */}
-                      <div className="min-w-0 truncate text-foreground md:col-span-6">
-                        {record.description || t(`subscription.types.${record.type}`)}
+                  // 骨架屏
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="flex items-center px-2 py-3">
+                      <div className="min-w-0 flex-1">
+                        <Skeleton className="h-4 w-3/4" />
                       </div>
-                      {/* 日期 - 移动端隐藏 */}
-                      <div className="hidden text-muted-foreground md:col-span-3 md:block">
-                        {formatDate(record.createdAt)}
+                      <div className="hidden w-[140px] shrink-0 md:block">
+                        <Skeleton className="ml-auto h-4 w-24" />
                       </div>
-                      {/* 金额变更 */}
-                      <div
-                        className={cn(
-                          'text-right font-medium md:col-span-3',
-                          record.amount >= 0 ? 'text-green-600' : 'text-foreground',
-                        )}
-                      >
-                        {formatAmountChange(record.amount)}
+                      <div className="w-[70px] shrink-0 md:w-[90px]">
+                        <Skeleton className="ml-auto h-4 w-12" />
                       </div>
                     </div>
                   ))
-                )}
+                )
+              : records.length === 0
+                ? (
+                    <div className="py-8 text-center text-sm text-muted-foreground">
+                      {t('subscription.noRecords')}
+                    </div>
+                  )
+                : (
+                    records.map(record => (
+                      <div
+                        key={record.id}
+                        className="flex items-center px-2 py-3 text-sm"
+                      >
+                        {/* 详情 */}
+                        <div className="min-w-0 flex-1 truncate text-foreground">
+                          {record.description || t(`subscription.types.${record.type}`)}
+                        </div>
+                        {/* 日期 - 移动端隐藏 */}
+                        <div className="hidden w-[140px] shrink-0 text-right text-muted-foreground md:block">
+                          {formatDate(record.createdAt)}
+                        </div>
+                        {/* 金额变更 */}
+                        <div
+                          className={cn(
+                            'w-[70px] shrink-0 text-right font-medium tabular-nums md:w-[90px]',
+                            record.amount >= 0 ? 'text-green-600' : 'text-foreground',
+                          )}
+                        >
+                          {formatAmountChange(record.amount)}
+                        </div>
+                      </div>
+                    ))
+                  )}
+          </div>
         </div>
 
         {/* 分页器 */}

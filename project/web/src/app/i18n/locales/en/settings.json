@@ -42,6 +42,7 @@
     "usageRecords": "Usage Records",
     "detail": "Detail",
     "date": "Date",
+    "amount": "Amount",
     "amountChange": "Amount Change",
     "noRecords": "No usage records yet",
     "loading": "Loading...",

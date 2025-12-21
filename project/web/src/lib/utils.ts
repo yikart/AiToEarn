@@ -6,9 +6,9 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * 格式化相对时间
- * @param date 日期对象或时间戳
- * @returns 格式化后的相对时间字符串
+ * Format relative time
+ * @param date Date object or timestamp
+ * @returns Formatted relative time string
  */
 export function formatRelativeTime(date: Date | number): string {
   const now = new Date()
@@ -20,13 +20,13 @@ export function formatRelativeTime(date: Date | number): string {
   const diffDay = Math.floor(diffHour / 24)
 
   if (diffSec < 60) {
-    return '刚刚'
+    return 'Just now'
   } else if (diffMin < 60) {
-    return `${diffMin}分钟前`
+    return `${diffMin}m ago`
   } else if (diffHour < 24) {
-    return `${diffHour}小时前`
+    return `${diffHour}h ago`
   } else if (diffDay < 7) {
-    return `${diffDay}天前`
+    return `${diffDay}d ago`
   } else {
     const year = target.getFullYear()
     const month = String(target.getMonth() + 1).padStart(2, '0')
