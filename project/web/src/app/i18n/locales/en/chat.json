@@ -23,7 +23,13 @@
     "delete": "Delete",
     "deleteConfirm": "Are you sure you want to delete this chat?",
     "deleteSuccess": "Deleted successfully",
-    "deleteFailed": "Delete failed"
+    "deleteFailed": "Delete failed",
+    "status": {
+      "running": "Running",
+      "completed": "Completed",
+      "requiresAction": "Action Required",
+      "failed": "Failed"
+    }
   },
   "home": {
     "title": "How can I help you?",
