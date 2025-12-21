@@ -7,13 +7,14 @@
 'use client'
 
 import { useState, useCallback, useMemo } from 'react'
-import { Check, ArrowRight, Grid3X3 } from 'lucide-react'
+import { useParams } from 'next/navigation'
+import { Check, ArrowRight, Grid3X3, Star, Image as ImageIcon } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { FeaturedCard, PromptDetailModal, PromptGalleryModal } from './components'
 import { SAMPLE_PROMPTS, FEATURED_COUNT } from './constants'
-import type { IPromptGalleryProps, PromptItem } from './types'
+import type { IPromptGalleryProps, PromptItem, CategoryFilter } from './types'
 
 /**
  * PromptGallery - 提示词画廊主组件
@@ -23,15 +24,23 @@ export default function PromptGallery({
   className,
 }: IPromptGalleryProps) {
   const { t } = useTransClient('promptGallery')
+  const { lng } = useParams()
   const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null)
   const [applied, setApplied] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('Recommend')
 
-  // 首页精选提示词（固定8个）
-  const featuredPrompts = useMemo(
-    () => SAMPLE_PROMPTS.slice(0, FEATURED_COUNT),
-    []
-  )
+  // 分类按钮配置
+  const categoryButtons = [
+    { key: 'Recommend' as CategoryFilter, label: t('categories.recommend'), icon: Star },
+    { key: 'Image' as CategoryFilter, label: t('categories.image'), icon: ImageIcon },
+  ]
+
+  // 首页精选提示词 - 根据选中的分类显示
+  const featuredPrompts = useMemo(() => {
+    const filteredPrompts = SAMPLE_PROMPTS.filter(item => item.category === selectedCategory)
+    return filteredPrompts.slice(0, FEATURED_COUNT)
+  }, [selectedCategory])
 
   /**
    * 处理应用提示词
@@ -69,6 +78,27 @@ export default function PromptGallery({
   return (
     <section className={cn('py-12 px-4 md:px-6 lg:px-8', className)}>
       <div className="max-w-[1920px] mx-auto">
+        {/* 分类切换标签 */}
+        <div className="flex items-center justify-center gap-3 mb-8">
+          {categoryButtons.map(({ key, label, icon: Icon }) => (
+            <Button
+              key={key}
+              variant={selectedCategory === key ? 'default' : 'outline'}
+              size="lg"
+              onClick={() => setSelectedCategory(key)}
+              className={cn(
+                'rounded-full px-6 py-2 transition-all duration-300',
+                selectedCategory === key 
+                  ? 'shadow-lg scale-105' 
+                  : 'hover:scale-102'
+              )}
+            >
+              <Icon className="w-5 h-5 mr-2" />
+              {label}
+            </Button>
+          ))}
+        </div>
+
         {/* 精选卡片网格 - 固定8个，等高对齐 */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-10">
           {featuredPrompts.map((item, index) => (
@@ -78,6 +108,7 @@ export default function PromptGallery({
               onApply={handleApplyPrompt}
               onClick={setSelectedPrompt}
               t={t as (key: string) => string}
+              lng={lng as string}
             />
           ))}
         </div>
@@ -90,7 +121,7 @@ export default function PromptGallery({
             className="rounded-full px-8 group"
           >
             <Grid3X3 className="w-5 h-5 mr-2" />
-            查看全部 {SAMPLE_PROMPTS.length} 个提示词
+            {t('expandButton')} {SAMPLE_PROMPTS.length} {t('expandCount')}
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
@@ -111,6 +142,7 @@ export default function PromptGallery({
           onClose={() => setSelectedPrompt(null)}
           onApply={handleDetailApply}
           t={t as (key: string) => string}
+          lng={lng as string}
         />
 
         {/* 全屏画廊弹框 */}
@@ -120,6 +152,7 @@ export default function PromptGallery({
           onApplyPrompt={handleApplyPrompt}
           onSelectPrompt={setSelectedPrompt}
           t={t as (key: string) => string}
+          lng={lng as string}
         />
       </div>
     </section>

@@ -8,6 +8,10 @@
   "expandButton": "View More",
   "expandCount": "items",
   "appliedToast": "✓ Prompt Applied",
+  "loadedAll": "Loaded all",
+  "promptsCount": "prompts",
+  "noResults": "No matching prompts found",
+  "tryOtherKeywords": "Try searching with other keywords",
   "modal": {
     "promptLabel": "Prompt:",
     "applyButton": "Apply Now"
@@ -15,6 +19,11 @@
   "badges": {
     "edit": "Edit",
     "generate": "Text to Image"
+  },
+  "categories": {
+    "all": "All",
+    "recommend": "Recommend",
+    "image": "Image Generation"
   },
   "filters": {
     "all": "All",

@@ -20,6 +20,7 @@ interface PromptDetailModalProps {
   onClose: () => void
   onApply: (item: PromptItem) => void
   t: (key: string) => string
+  lng?: string
 }
 
 export function PromptDetailModal({
@@ -27,7 +28,13 @@ export function PromptDetailModal({
   onClose,
   onApply,
   t,
+  lng = 'zh-CN',
 }: PromptDetailModalProps) {
+  const isEnglish = lng === 'en'
+  const getTitle = (it: PromptItem) => isEnglish && it.title_en ? it.title_en : it.title
+  const getPrompt = (it: PromptItem) => isEnglish && it.prompt_en ? it.prompt_en : it.prompt
+  const getSubCategory = (it: PromptItem) => isEnglish && it.sub_category_en ? it.sub_category_en : it.sub_category
+  const getCategory = (it: PromptItem) => isEnglish && it.category_en ? it.category_en : it.category
   return (
     <Dialog open={!!item} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 overflow-hidden bg-card rounded-2xl flex flex-col">
@@ -46,25 +53,25 @@ export function PromptDetailModal({
             <div className="p-6 flex-1 overflow-y-auto">
               <DialogHeader className="mb-4">
                 <DialogTitle className="text-2xl font-bold text-foreground">
-                  {item.title}
+                  {getTitle(item)}
                 </DialogTitle>
               </DialogHeader>
 
               {/* 标签 */}
               <div className="flex items-center gap-2 mb-4 flex-wrap">
-                {item.sub_category && (
+                {getSubCategory(item) && (
                   <Badge
                     variant="secondary"
                     className="bg-muted text-muted-foreground"
                   >
-                    {item.sub_category}
+                    {getSubCategory(item)}
                   </Badge>
                 )}
                 <Badge
                   variant="secondary"
                   className="bg-muted text-muted-foreground"
                 >
-                  {item.category}
+                  {getCategory(item)}
                 </Badge>
               </div>
 
@@ -75,7 +82,7 @@ export function PromptDetailModal({
                 </label>
                 <div className="bg-muted rounded-xl p-4 max-h-48 overflow-y-auto border border-border">
                   <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">
-                    {item.prompt}
+                    {getPrompt(item)}
                   </p>
                 </div>
               </div>
