@@ -42,6 +42,7 @@
     "usageRecords": "使用记录",
     "detail": "详情",
     "date": "日期",
+    "amount": "金额",
     "amountChange": "金额变更",
     "noRecords": "暂无使用记录",
     "loading": "加载中...",
