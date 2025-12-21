@@ -62,15 +62,14 @@ export function HomeChat({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
 
-  // 处理添加账号点击 - 未登录时跳转登录
+  // 处理添加账号点击 - 未登录时弹出登录弹窗
   const handleAddChannelClick = useCallback(() => {
     if (!token) {
-      toast.warning(t('home.loginRequired' as any) || 'Please login first')
-      router.push('/auth/login')
+      openLoginModal(() => setAddAccountVisible(true))
       return
     }
     setAddAccountVisible(true)
-  }, [token, router, t])
+  }, [token])
 
   // 使用媒体上传 Hook
   const {
