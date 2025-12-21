@@ -31,24 +31,27 @@ function formatTime(timestamp: number): string {
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
 
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes}分钟前`
-  if (hours < 24) return `${hours}小时前`
-  if (days < 7) return `${days}天前`
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes} min ago`
+  if (hours < 24) return `${hours} hours ago`
+  if (days < 7) return `${days} days ago`
   if (days < 365) {
     const date = new Date(timestamp)
-    return `${date.getMonth() + 1}月${date.getDate()}日`
+    return `${date.getMonth() + 1}/${date.getDate()}`
   }
   const date = new Date(timestamp)
-  return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`
+  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`
 }
 
 /**
  * 格式化数字
  */
 function formatCount(count: number): string {
-  if (count >= 10000) {
-    return `${(count / 10000).toFixed(1)}万`
+  if (count >= 1000000) {
+    return `${(count / 1000000).toFixed(1)}M`
+  }
+  if (count >= 1000) {
+    return `${(count / 1000).toFixed(1)}K`
   }
   return String(count)
 }
@@ -97,7 +100,7 @@ function CommentItem({
         {/* 用户名和标签 */}
         <div className="commentItem_header">
           <span className="commentItem_nickname">{comment.user.nickname}</span>
-          {comment.isAuthor && <span className="commentItem_authorTag">作者</span>}
+          {comment.isAuthor && <span className="commentItem_authorTag">{t('author')}</span>}
         </div>
 
         {/* 评论内容 */}
@@ -105,7 +108,7 @@ function CommentItem({
           {/* 回复目标 */}
           {isReply && comment.replyTo && (
             <span className="commentItem_replyTo">
-              回复 <span className="commentItem_replyTo_name">@{comment.replyTo.user.nickname}</span>：
+              {t('replyTo')} <span className="commentItem_replyTo_name">@{comment.replyTo.user.nickname}</span>:
             </span>
           )}
           {comment.content}

@@ -280,7 +280,7 @@
             "channel": "yun"
           },
           {
-            "model": "kling2.1大师",
+            "model": "kling2.1-master",
             "type": "Video Generation",
             "duration": "5s",
             "resolution": "1080p",
@@ -290,7 +290,7 @@
             "channel": "yun"
           },
           {
-            "model": "kling2.1大师",
+            "model": "kling2.1-master",
             "type": "Video Generation",
             "duration": "10s",
             "resolution": "1080p",
@@ -320,7 +320,7 @@
             "channel": "yun"
           },
           {
-            "model": "wan2.1-turbo(14b）",
+            "model": "wan2.1-turbo(14b)",
             "type": "Video Generation",
             "duration": "5s",
             "resolution": "720p",

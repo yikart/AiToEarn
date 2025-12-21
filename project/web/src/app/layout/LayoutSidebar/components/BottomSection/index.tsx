@@ -15,7 +15,7 @@ export function BottomSection({ collapsed, onOpenSettings }: BottomSectionProps)
   return (
     <div
       className={cn(
-        'mt-auto flex flex-col gap-1 border-t border-sidebar-border pt-3',
+        'flex flex-col gap-1 border-t border-sidebar-border pt-3',
         collapsed && 'items-center',
       )}
     >

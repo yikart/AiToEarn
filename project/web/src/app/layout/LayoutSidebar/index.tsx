@@ -161,7 +161,7 @@ const LayoutSidebar = () => {
   // 打开添加账号弹窗
   const handleAddChannel = () => {
     if (!token) {
-      toast.warning('请先登录')
+      toast.warning('Please login first')
       openLoginModal(() => setAddAccountVisible(true))
       return
     }
@@ -183,49 +183,54 @@ const LayoutSidebar = () => {
           collapsed ? 'w-[68px] min-w-[68px]' : 'w-[220px] min-w-[220px]',
         )}
       >
-        {/* Logo 区域 */}
+        {/* Logo 区域 - 固定 */}
         <LogoSection
           collapsed={collapsed}
           onToggle={() => setCollapsed(!collapsed)}
         />
 
-        {/* 主导航区域 */}
-        <NavSection
-          items={navItems}
-          currentRoute={currRouter}
-          collapsed={collapsed}
-          onAddChannel={handleAddChannel}
-        />
-
-        {/* 推广赚钱入口 - 在底部功能区横线上方 */}
-        <div className="mt-auto pb-1">
-          <AffiliatesEntry collapsed={collapsed} />
+        {/* 可滚动区域：主导航 */}
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent">
+          <NavSection
+            items={navItems}
+            currentRoute={currRouter}
+            collapsed={collapsed}
+            onAddChannel={handleAddChannel}
+          />
         </div>
 
-        {/* 底部功能区 */}
-        <BottomSection
-          collapsed={collapsed}
-          onOpenSettings={handleOpenSettings}
-        />
+        {/* 底部固定区域 - 不随滚动 */}
+        <div className="flex-shrink-0">
+          {/* 推广赚钱入口 - 在底部功能区横线上方 */}
+          <div className="pb-1">
+            <AffiliatesEntry collapsed={collapsed} />
+          </div>
 
-        {/* 底部图标栏 */}
-        <IconBar
-          collapsed={collapsed}
-          isLoggedIn={!!token}
-          unreadCount={unreadCount}
-          onOpenNotification={() => setNotificationVisible(true)}
-          onOpenSettings={handleOpenSettings}
-        />
+          {/* 底部功能区 */}
+          <BottomSection
+            collapsed={collapsed}
+            onOpenSettings={handleOpenSettings}
+          />
 
-        {/* 用户头像 / 登录按钮 */}
-        <UserSection
-          collapsed={collapsed}
-          onLogin={handleLogin}
-          onOpenSettings={handleOpenSettings}
-        />
+          {/* 底部图标栏 */}
+          <IconBar
+            collapsed={collapsed}
+            isLoggedIn={!!token}
+            unreadCount={unreadCount}
+            onOpenNotification={() => setNotificationVisible(true)}
+            onOpenSettings={handleOpenSettings}
+          />
 
-        {/* 外部链接 - Docs 和 GitHub */}
-        <ExternalLinks collapsed={collapsed} />
+          {/* 用户头像 / 登录按钮 */}
+          <UserSection
+            collapsed={collapsed}
+            onLogin={handleLogin}
+            onOpenSettings={handleOpenSettings}
+          />
+
+          {/* 外部链接 - Docs 和 GitHub */}
+          <ExternalLinks collapsed={collapsed} />
+        </div>
       </aside>
 
       {/* 通知面板 */}
@@ -247,7 +252,7 @@ const LayoutSidebar = () => {
         onClose={() => setAddAccountVisible(false)}
         onAddSuccess={() => {
           setAddAccountVisible(false)
-          toast.success('账号添加成功')
+          toast.success('Account added successfully')
         }}
         showSpaceSelector={true}
       />

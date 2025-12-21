@@ -200,7 +200,7 @@ export const useDataStatisticsStore = create(
 
           try {
             if (validAccounts.length === 0) {
-              toast.error('没有有效的账号数据')
+              toast.error('No valid account data')
               return
             }
 
@@ -216,7 +216,7 @@ export const useDataStatisticsStore = create(
             const result = res?.data
 
             if (!result) {
-              toast.error('获取数据统计失败，请稍后重试')
+              toast.error('Failed to get statistics, please try again later')
               return
             }
 
@@ -226,8 +226,8 @@ export const useDataStatisticsStore = create(
             runDetection()
           }
           catch (error) {
-            console.error('获取数据统计失败', error)
-            toast.error('获取数据统计失败，请稍后重试')
+            console.error('Failed to get statistics', error)
+            toast.error('Failed to get statistics, please try again later')
           }
           finally {
             if (withLoading) {

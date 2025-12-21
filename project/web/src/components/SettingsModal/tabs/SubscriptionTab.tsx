@@ -202,13 +202,13 @@ export function SubscriptionTab() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* 余额卡片 */}
-      <div className="rounded-xl border border-border bg-card p-6">
-        <div className="flex items-center justify-between">
-          <div>
+      <div className="rounded-xl border border-border bg-card p-4 md:p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2 text-muted-foreground">
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4 shrink-0" />
               <span className="text-sm font-medium">{t('subscription.balance')}</span>
             </div>
             {balanceLoading || creditsLoading
@@ -224,35 +224,35 @@ export function SubscriptionTab() {
                 )} 
           </div>
           {!isVip && (
-            <Button onClick={() => window.open('/pricing', '_blank')}>
+            <Button className="shrink-0" onClick={() => window.open('/pricing', '_blank')}>
               {t('subscription.upgrade')}
             </Button>
           )}
         </div>
         {/* Agent 价格链接 */}
-      <div className="pt-4 text-center">
-        <a
-          href="https://docs.aitoearn.ai/en/help-center/pricing/agent-price"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-        >
-          {t('subscription.viewAgentPricing')}
-        </a>
-      </div>
+        <div className="pt-4 text-center">
+          <a
+            href="https://docs.aitoearn.ai/en/help-center/pricing/agent-price"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline break-words"
+          >
+            {t('subscription.viewAgentPricing')}
+          </a>
+        </div>
       </div>
 
       {/* 使用记录 */}
-      <div>
+      <div className="w-full min-w-0">
         <h4 className="mb-4 text-sm font-medium text-foreground">
           {t('subscription.usageRecords')}
         </h4>
 
-        {/* 表头 */}
-        <div className="grid grid-cols-12 gap-4 border-b border-border px-2 pb-3 text-xs font-medium text-muted-foreground">
-          <div className="col-span-6">{t('subscription.detail')}</div>
-          <div className="col-span-3">{t('subscription.date')}</div>
-          <div className="col-span-3 text-right">{t('subscription.amountChange')}</div>
+        {/* 表头 - 移动端隐藏日期列 */}
+        <div className="grid grid-cols-2 gap-2 border-b border-border px-2 pb-3 text-xs font-medium text-muted-foreground md:grid-cols-12 md:gap-4">
+          <div className="md:col-span-6">{t('subscription.detail')}</div>
+          <div className="hidden md:col-span-3 md:block">{t('subscription.date')}</div>
+          <div className="text-right md:col-span-3">{t('subscription.amountChange')}</div>
         </div>
 
         {/* 记录列表 */}
@@ -261,14 +261,14 @@ export function SubscriptionTab() {
             ? (
                 // 骨架屏
                 Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="grid grid-cols-12 gap-4 px-2 py-3">
-                    <div className="col-span-6">
+                  <div key={i} className="grid grid-cols-2 gap-2 px-2 py-3 md:grid-cols-12 md:gap-4">
+                    <div className="md:col-span-6">
                       <Skeleton className="h-4 w-3/4" />
                     </div>
-                    <div className="col-span-3">
+                    <div className="hidden md:col-span-3 md:block">
                       <Skeleton className="h-4 w-full" />
                     </div>
-                    <div className="col-span-3 flex justify-end">
+                    <div className="flex justify-end md:col-span-3">
                       <Skeleton className="h-4 w-16" />
                     </div>
                   </div>
@@ -284,20 +284,20 @@ export function SubscriptionTab() {
                   records.map(record => (
                     <div
                       key={record.id}
-                      className="grid grid-cols-12 gap-4 px-2 py-3 text-sm"
+                      className="grid grid-cols-2 gap-2 px-2 py-3 text-sm md:grid-cols-12 md:gap-4"
                     >
                       {/* 详情 */}
-                      <div className="col-span-6 truncate text-foreground">
+                      <div className="min-w-0 truncate text-foreground md:col-span-6">
                         {record.description || t(`subscription.types.${record.type}`)}
                       </div>
-                      {/* 日期 */}
-                      <div className="col-span-3 text-muted-foreground">
+                      {/* 日期 - 移动端隐藏 */}
+                      <div className="hidden text-muted-foreground md:col-span-3 md:block">
                         {formatDate(record.createdAt)}
                       </div>
                       {/* 金额变更 */}
                       <div
                         className={cn(
-                          'col-span-3 text-right font-medium',
+                          'text-right font-medium md:col-span-3',
                           record.amount >= 0 ? 'text-green-600' : 'text-foreground',
                         )}
                       >
