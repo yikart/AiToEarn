@@ -59,12 +59,25 @@ export const keepAliveHandler: ISSEHandler = {
   },
 }
 
+/** 从 SSE 消息中提取 event 对象（兼容两种格式） */
+function extractEvent(msg: ISSEMessage): any {
+  // 格式1: { type: 'stream_event', event: {...} }
+  if ((msg as any).event) {
+    return (msg as any).event
+  }
+  // 格式2: { type: 'stream_event', message: { event: {...} } }
+  if (msg.message && typeof msg.message === 'object') {
+    return (msg.message as any).event
+  }
+  return null
+}
+
 /** 处理 stream_event - message_start */
 export const messageStartHandler: ISSEHandler = {
   name: 'message_start',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event' || !msg.message) return false
-    const event = (msg.message as any).event
+    if (msg.type !== 'stream_event') return false
+    const event = extractEvent(msg)
     return event?.type === 'message_start'
   },
   handle: (_msg, ctx) => {
@@ -76,12 +89,12 @@ export const messageStartHandler: ISSEHandler = {
 export const toolUseStartHandler: ISSEHandler = {
   name: 'tool_use_start',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event' || !msg.message) return false
-    const event = (msg.message as any).event
+    if (msg.type !== 'stream_event') return false
+    const event = extractEvent(msg)
     return event?.type === 'content_block_start' && event.content_block?.type === 'tool_use'
   },
   handle: (msg, ctx) => {
-    const event = (msg.message as any).event
+    const event = extractEvent(msg)
     const toolName = event.content_block.name || 'Unknown Tool'
     const toolId = event.content_block.id || `tool-${Date.now()}`
 
@@ -101,12 +114,12 @@ export const toolUseStartHandler: ISSEHandler = {
 export const textDeltaHandler: ISSEHandler = {
   name: 'text_delta',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event' || !msg.message) return false
-    const event = (msg.message as any).event
+    if (msg.type !== 'stream_event') return false
+    const event = extractEvent(msg)
     return event?.type === 'content_block_delta' && event.delta?.type === 'text_delta'
   },
   handle: (msg, ctx) => {
-    const event = (msg.message as any).event
+    const event = extractEvent(msg)
     const text = event.delta.text
 
     if (!text) return
@@ -167,12 +180,12 @@ export const textDeltaHandler: ISSEHandler = {
 export const inputJsonDeltaHandler: ISSEHandler = {
   name: 'input_json_delta',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event' || !msg.message) return false
-    const event = (msg.message as any).event
+    if (msg.type !== 'stream_event') return false
+    const event = extractEvent(msg)
     return event?.type === 'content_block_delta' && event.delta?.type === 'input_json_delta'
   },
   handle: (msg, ctx) => {
-    const event = (msg.message as any).event
+    const event = extractEvent(msg)
     const partialJson = event.delta.partial_json
 
     if (partialJson) {
