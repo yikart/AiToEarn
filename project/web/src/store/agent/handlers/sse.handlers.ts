@@ -143,10 +143,6 @@ export const textDeltaHandler: ISSEHandler = {
       messages: state.messages.map((m: any) => {
         if (m.id === ctx.refs.currentAssistantMessageId.value) {
           const steps = m.steps || []
-          const allContent = steps.map((s: IMessageStep) => s.content).join('\n\n')
-          const totalContent = allContent
-            ? allContent + '\n\n' + ctx.refs.streamingText.value
-            : ctx.refs.streamingText.value
 
           let updatedSteps = [...steps]
           const currentStepData: IMessageStep = {
@@ -162,6 +158,9 @@ export const textDeltaHandler: ISSEHandler = {
           } else if (ctx.refs.currentStepIndex.value === updatedSteps.length) {
             updatedSteps.push(currentStepData)
           }
+
+          // 从更新后的 steps 计算 content，避免重复
+          const totalContent = updatedSteps.map((s: IMessageStep) => s.content).join('\n\n')
 
           return {
             ...m,
