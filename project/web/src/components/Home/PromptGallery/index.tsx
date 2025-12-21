@@ -43,14 +43,17 @@ export default function PromptGallery({
   }, [selectedCategory])
 
   /**
-   * 处理应用提示词
+   * 处理应用提示词 - 根据语言选择对应的提示词
    */
   const handleApplyPrompt = useCallback(
     (item: PromptItem, e?: React.MouseEvent) => {
       e?.stopPropagation()
       if (onApplyPrompt) {
+        const isEnglish = lng === 'en'
+        // 根据语言选择对应的提示词
+        const promptText = isEnglish && item.prompt_en ? item.prompt_en : item.prompt
         const applyData = {
-          prompt: item.prompt,
+          prompt: promptText,
           mode: item.mode,
           ...(item.mode === 'edit' && { image: item.preview }),
         }
@@ -62,7 +65,7 @@ export default function PromptGallery({
         window.scrollTo({ top: 0, behavior: 'smooth' })
       }
     },
-    [onApplyPrompt]
+    [onApplyPrompt, lng]
   )
 
   /**
