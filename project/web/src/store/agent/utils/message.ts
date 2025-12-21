@@ -84,12 +84,12 @@ export function createMessageUtils(ctx: IMessageContext) {
     },
 
     /**
-     * 更新当前 assistant 消息的 actions
+     * 更新当前 assistant 消息的 actions（同时标记为完成）
      */
     updateMessageActions(actions: IActionCard[]) {
       set((state: any) => ({
         messages: state.messages.map((m: any) =>
-          m.id === refs.currentAssistantMessageId.value ? { ...m, actions } : m,
+          m.id === refs.currentAssistantMessageId.value ? { ...m, actions, status: 'done' } : m,
         ),
       }))
     },

@@ -13,7 +13,9 @@ export enum TaskStatus {
   GeneratingImage = 'GENERATING_IMAGE', // 图片生成中
   GeneratingVideo = 'GENERATING_VIDEO', // 视频生成中
   GeneratingText = 'GENERATING_TEXT', // 文本生成中
+  Running = 'running', // 运行中
   Completed = 'COMPLETED', // 完成
+  RequiresAction = 'requires_action', // 需要用户操作（如绑定频道等）
   Failed = 'FAILED', // 失败
   Cancelled = 'CANCELLED', // 取消
 }

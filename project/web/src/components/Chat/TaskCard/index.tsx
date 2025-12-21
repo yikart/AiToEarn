@@ -8,9 +8,10 @@
 import type React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, MessageSquare, MoreHorizontal, Trash2 } from 'lucide-react'
+import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
+import { useTransClient } from '@/app/i18n/client'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,6 +36,45 @@ export interface ITaskCardProps {
   className?: string
 }
 
+/** 获取状态显示配置 */
+function getStatusConfig(status: string | undefined, t: (key: string) => string) {
+  const normalizedStatus = status?.toLowerCase()
+  
+  switch (normalizedStatus) {
+    case 'requires_action':
+      return {
+        label: t('task.status.requiresAction') || 'Requires Action',
+        className: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800',
+        icon: AlertCircle,
+      }
+    case 'completed':
+      return {
+        label: t('task.status.completed') || 'Completed',
+        className: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800',
+        icon: CheckCircle2,
+      }
+    case 'running':
+      return {
+        label: t('task.status.running') || 'Running',
+        className: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800',
+        icon: Loader2,
+      }
+    case 'error':
+    case 'failed':
+      return {
+        label: t('task.status.failed') || 'Failed',
+        className: 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800',
+        icon: AlertCircle,
+      }
+    default:
+      return {
+        label: status || '',
+        className: 'bg-muted text-muted-foreground border-border',
+        icon: null,
+      }
+  }
+}
+
 /**
  * TaskCard - 任务卡片组件
  */
@@ -49,7 +89,10 @@ export function TaskCard({
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
+  const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
+  
+  const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
   /** 跳转到对话详情页 */
   const handleClick = () => {
@@ -95,9 +138,18 @@ export function TaskCard({
         <span className="text-xs text-muted-foreground">
           {formatRelativeTime(new Date(updatedAt || createdAt))}
         </span>
-        {status && (
-          <span className="inline-flex items-center rounded-full border border-border px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
-            {status}
+        {status && statusConfig.label && (
+          <span className={cn(
+            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
+            statusConfig.className,
+          )}>
+            {statusConfig.icon && (
+              <statusConfig.icon className={cn(
+                'w-3 h-3',
+                status?.toLowerCase() === 'running' && 'animate-spin',
+              )} />
+            )}
+            {statusConfig.label}
           </span>
         )}
       </div>
