@@ -4,13 +4,14 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { ArrowUp } from 'lucide-react'
 import { HomeChat } from '@/components/Home/HomeChat'
 import { TaskPreview } from '@/components/Home/TaskPreview'
 import PromptGallery from '@/components/Home/PromptGallery'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { toast } from '@/lib/toast'
 
 /**
  * 回到顶部按钮组件
@@ -47,7 +48,7 @@ function BackToTop({ position = 'left' }: { position?: 'left' | 'right' }) {
           ? 'opacity-100 translate-y-0'
           : 'opacity-0 translate-y-4 pointer-events-none'
       )}
-      aria-label="回到顶部"
+      aria-label="Back to top"
     >
       <ArrowUp className="w-5 h-5" />
     </Button>
@@ -55,11 +56,29 @@ function BackToTop({ position = 'left' }: { position?: 'left' | 'right' }) {
 }
 
 export default function Home() {
+  const [appliedPrompt, setAppliedPrompt] = useState<string>('')
+
+  // 处理提示词应用
+  const handleApplyPrompt = useCallback((data: { prompt: string; image?: string; mode: 'edit' | 'generate' }) => {
+    setAppliedPrompt(data.prompt)
+    // 滚动到顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    toast.success('Prompt applied!')
+  }, [])
+
+  // 清除外部提示词
+  const handleClearExternalPrompt = useCallback(() => {
+    setAppliedPrompt('')
+  }, [])
+
   return (
     <div className="bg-background">
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[60vh] flex items-center justify-center px-4 pt-16 pb-8 md:pt-24 md:pb-12">
-        <HomeChat />
+        <HomeChat 
+          externalPrompt={appliedPrompt}
+          onClearExternalPrompt={handleClearExternalPrompt}
+        />
       </section>
 
       {/* 任务预览区域 - 无数据时自动隐藏 */}
@@ -67,7 +86,7 @@ export default function Home() {
 
       {/* 提示词画廊区域 */}
       <section>
-        <PromptGallery />
+        <PromptGallery onApplyPrompt={handleApplyPrompt} />
       </section>
 
       {/* 回到顶部按钮 - 右侧 */}

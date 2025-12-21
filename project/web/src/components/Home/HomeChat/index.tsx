@@ -25,6 +25,10 @@ export interface IHomeChatProps {
   onLoginRequired?: () => void
   /** 自定义类名 */
   className?: string
+  /** 外部设置的提示词 */
+  externalPrompt?: string
+  /** 清除外部提示词的回调 */
+  onClearExternalPrompt?: () => void
 }
 
 /**
@@ -33,6 +37,8 @@ export interface IHomeChatProps {
 export function HomeChat({
   onLoginRequired,
   className,
+  externalPrompt,
+  onClearExternalPrompt,
 }: IHomeChatProps) {
   const { t } = useTransClient('chat')
   const { t: tHome } = useTransClient('home')
@@ -45,6 +51,14 @@ export function HomeChat({
 
   // 状态 - 默认显示提示文本
   const [inputValue, setInputValue] = useState(defaultPrompt)
+
+  // 当外部提示词变化时更新输入框
+  useEffect(() => {
+    if (externalPrompt) {
+      setInputValue(externalPrompt)
+      onClearExternalPrompt?.()
+    }
+  }, [externalPrompt, onClearExternalPrompt])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
 
