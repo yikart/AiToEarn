@@ -6,7 +6,7 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { Search, X, Sparkles, Wand2, ImageIcon, Loader2, Grid3X3 } from 'lucide-react'
+import { Search, X, Sparkles, Wand2, ImageIcon, Loader2, Grid3X3, Star, Image as ImageLucide } from 'lucide-react'
 import Masonry from 'react-masonry-css'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import { Button } from '@/components/ui/button'
@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils'
 import { MasonryCard } from './MasonryCard'
 import { SAMPLE_PROMPTS, LOAD_MORE_COUNT, MASONRY_BREAKPOINTS } from '../constants'
 import { getGalleryCache, updateGalleryCache, resetGalleryCache } from '../cache'
-import type { PromptItem, FilterMode } from '../types'
+import type { PromptItem, FilterMode, CategoryFilter } from '../types'
 
 interface PromptGalleryModalProps {
   open: boolean
@@ -30,6 +30,7 @@ interface PromptGalleryModalProps {
   onApplyPrompt: (item: PromptItem, e?: React.MouseEvent) => void
   onSelectPrompt: (item: PromptItem) => void
   t: (key: string) => string
+  lng?: string
 }
 
 export function PromptGalleryModal({
@@ -38,11 +39,13 @@ export function PromptGalleryModal({
   onApplyPrompt,
   onSelectPrompt,
   t,
+  lng = 'zh-CN',
 }: PromptGalleryModalProps) {
   const cache = getGalleryCache()
 
   // 使用缓存的初始值
   const [selectedMode, setSelectedMode] = useState<FilterMode>(cache.selectedMode)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('all')
   const [titleFilter, setTitleFilter] = useState(cache.titleFilter)
   const [displayCount, setDisplayCount] = useState(cache.displayCount)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -82,6 +85,10 @@ export function PromptGalleryModal({
   // 根据筛选条件过滤提示词
   const filteredPrompts = useMemo(() => {
     return SAMPLE_PROMPTS.filter((item) => {
+      // 分类筛选
+      if (selectedCategory !== 'all' && item.category !== selectedCategory) {
+        return false
+      }
       if (selectedMode !== 'all' && item.mode !== selectedMode) {
         return false
       }
@@ -93,13 +100,13 @@ export function PromptGalleryModal({
       }
       return true
     })
-  }, [selectedMode, titleFilter])
+  }, [selectedMode, selectedCategory, titleFilter])
 
   // 当筛选条件改变时重置显示数量
   useEffect(() => {
     setDisplayCount(LOAD_MORE_COUNT)
     resetGalleryCache()
-  }, [selectedMode, titleFilter])
+  }, [selectedMode, selectedCategory, titleFilter])
 
   // 当前显示的提示词
   const displayedPrompts = filteredPrompts.slice(0, displayCount)
@@ -112,7 +119,14 @@ export function PromptGalleryModal({
     }, 300)
   }, [filteredPrompts.length])
 
-  // 筛选按钮配置
+  // 分类筛选按钮配置
+  const categoryButtons = [
+    { key: 'all' as CategoryFilter, label: t('categories.all' as any), icon: Grid3X3 },
+    { key: 'Recommend' as CategoryFilter, label: t('categories.recommend' as any), icon: Star },
+    { key: 'Image' as CategoryFilter, label: t('categories.image' as any), icon: ImageLucide },
+  ]
+
+  // 模式筛选按钮配置
   const filterButtons = [
     { key: 'all' as FilterMode, label: t('filters.all' as any), icon: Sparkles },
     { key: 'generate' as FilterMode, label: t('filters.generate' as any), icon: Wand2 },
@@ -137,15 +151,15 @@ export function PromptGalleryModal({
           </DialogHeader>
 
           {/* 筛选区域 */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-            {/* 筛选按钮组 */}
+          <div className="flex flex-col gap-4">
+            {/* 分类筛选按钮组 */}
             <div className="flex items-center gap-2 flex-wrap">
-              {filterButtons.map(({ key, label, icon: Icon }) => (
+              {categoryButtons.map(({ key, label, icon: Icon }) => (
                 <Button
                   key={key}
-                  variant={selectedMode === key ? 'default' : 'outline'}
+                  variant={selectedCategory === key ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => setSelectedMode(key)}
+                  onClick={() => setSelectedCategory(key)}
                   className="rounded-full px-4"
                 >
                   <Icon className="w-4 h-4 mr-1.5" />
@@ -154,24 +168,43 @@ export function PromptGalleryModal({
               ))}
             </div>
 
-            {/* 搜索框 */}
-            <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder={t('filters.searchPlaceholder' as any)}
-                value={titleFilter}
-                onChange={(e) => setTitleFilter(e.target.value)}
-                className="pl-10 pr-10 rounded-full bg-card border-border"
-              />
-              {titleFilter && (
-                <button
-                  onClick={() => setTitleFilter('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 transition-colors"
-                >
-                  <X className="w-3 h-3 text-muted-foreground" />
-                </button>
-              )}
+            {/* 模式筛选和搜索 */}
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+              {/* 模式筛选按钮组 */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {filterButtons.map(({ key, label, icon: Icon }) => (
+                  <Button
+                    key={key}
+                    variant={selectedMode === key ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedMode(key)}
+                    className="rounded-full px-4"
+                  >
+                    <Icon className="w-4 h-4 mr-1.5" />
+                    {label}
+                  </Button>
+                ))}
+              </div>
+
+              {/* 搜索框 */}
+              <div className="relative w-full sm:w-80">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder={t('filters.searchPlaceholder' as any)}
+                  value={titleFilter}
+                  onChange={(e) => setTitleFilter(e.target.value)}
+                  className="pl-10 pr-10 rounded-full bg-card border-border"
+                />
+                {titleFilter && (
+                  <button
+                    onClick={() => setTitleFilter('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 flex items-center justify-center rounded-full bg-muted hover:bg-muted/80 transition-colors"
+                  >
+                    <X className="w-3 h-3 text-muted-foreground" />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -195,7 +228,7 @@ export function PromptGalleryModal({
               }
               endMessage={
                 <div className="flex justify-center py-8 text-muted-foreground text-sm">
-                  已加载全部 {filteredPrompts.length} 个提示词
+                  {t('loadedAll')} {filteredPrompts.length} {t('promptsCount')}
                 </div>
               }
               scrollableTarget="gallery-scroll-container"
@@ -212,6 +245,7 @@ export function PromptGalleryModal({
                       onApply={onApplyPrompt}
                       onClick={onSelectPrompt}
                       t={t}
+                      lng={lng}
                     />
                   </div>
                 ))}
@@ -221,8 +255,8 @@ export function PromptGalleryModal({
             /* 空状态 */
             <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
               <Search className="w-12 h-12 mb-4 opacity-50" />
-              <p className="text-lg font-medium">未找到匹配的提示词</p>
-              <p className="text-sm mt-1">尝试使用其他关键词搜索</p>
+              <p className="text-lg font-medium">{t('noResults')}</p>
+              <p className="text-sm mt-1">{t('tryOtherKeywords')}</p>
             </div>
           )}
         </div>
