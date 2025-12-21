@@ -40,12 +40,12 @@ export function PromptDetailModal({
       <DialogContent className="sm:max-w-[700px] max-h-[90vh] p-0 overflow-hidden bg-card rounded-2xl flex flex-col">
         {item && (
           <>
-            {/* 图片区域 - 自适应高度，最大 400px */}
-            <div className="relative flex-shrink-0 max-h-[400px] overflow-hidden bg-muted">
+            {/* 图片区域 - 自适应高度，最大 200px */}
+            <div className="relative flex-shrink-0 max-h-[200px] overflow-hidden bg-muted">
               <img
                 src={item.preview}
                 alt={item.title}
-                className="w-full h-auto max-h-[400px] object-contain"
+                className="w-full h-auto max-h-[200px] object-contain"
               />
             </div>
 
