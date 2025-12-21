@@ -126,7 +126,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
   const insertIndex = interactiveIndex !== -1 ? interactiveIndex + 1 : 4
 
   return (
-    <nav className="flex flex-1 flex-col gap-1">
+    <nav className="flex flex-col gap-1">
       {items.map((item, index) => (
         <div key={item.path || item.translationKey}>
           <NavItem

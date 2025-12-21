@@ -369,11 +369,11 @@ export default function TaskPageCore() {
     })
   }
 
-  // 获取任务状态标签
+  // Get task status tag
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string, text: string }> = {
-      pending: { color: 'green', text: '已完成' }, // pending 是已完成
-      doing: { color: 'orange', text: '待完成' }, // doing 是待完成
+      pending: { color: 'green', text: t('taskStatus.pending' as any) }, // pending means completed
+      doing: { color: 'orange', text: t('taskStatus.doing' as any) }, // doing means pending
       accepted: { color: 'blue', text: t('taskStatus.accepted' as any) },
       completed: { color: 'green', text: t('taskStatus.completed' as any) },
       rejected: { color: 'red', text: t('taskStatus.rejected' as any) },
@@ -597,8 +597,8 @@ export default function TaskPageCore() {
       }
     }
     catch (error) {
-      console.error('获取素材列表失败:', error)
-      toast.error('获取素材列表失败')
+      console.error('Failed to get material list:', error)
+      toast.error('Failed to get material list')
     }
     finally {
       setMaterialLoading(false)
@@ -697,24 +697,24 @@ export default function TaskPageCore() {
     if (!task)
       return
 
-    // 验证是否选择了素材
+    // Validate if material is selected
     if (!selectedMaterial) {
-      toast.error('请选择一个草稿素材')
+      toast.error('Please select a draft material')
       return
     }
 
-    // 关闭详情弹窗
+    // Close detail modal
     setTaskDetailModalVisible(false)
 
-    // 显示进度弹窗
+    // Show progress modal
     setTaskProgressVisible(true)
     setTaskProgress({
       currentStep: 0,
       steps: [
-        { title: '正在接受任务...', status: 'processing' },
-        { title: '正在发布任务...', status: 'wait' },
-        { title: '正在提交任务...', status: 'wait' },
-        { title: '任务完成', status: 'wait' },
+        { title: 'Accepting task...', status: 'processing' },
+        { title: 'Publishing task...', status: 'wait' },
+        { title: 'Submitting task...', status: 'wait' },
+        { title: 'Task completed', status: 'wait' },
       ],
     })
 
@@ -807,24 +807,24 @@ export default function TaskPageCore() {
               }, 1000)
             }
             else {
-              throw new Error('提交任务失败')
+              throw new Error('Failed to submit task')
             }
           }
           else {
-            throw new Error('发布任务失败')
+            throw new Error('Failed to publish task')
           }
         }
         else {
-          throw new Error('找不到发布账号信息')
+          throw new Error('Cannot find publish account info')
         }
       }
       else {
-        throw new Error('接受任务失败')
+        throw new Error('Failed to accept task')
       }
     }
     catch (error) {
-      console.error('任务处理失败:', error)
-      toast.error('任务处理失败')
+      console.error('Task processing failed:', error)
+      toast.error('Task processing failed')
       setTaskProgressVisible(false)
     }
   }
@@ -870,15 +870,15 @@ export default function TaskPageCore() {
     })
 
     try {
-      // 更新进度：第一步完成，开始第二步
+      // Update progress: step 1 complete, start step 2
       setTaskProgress(prev => ({
         ...prev,
         currentStep: 1,
         steps: [
-          { title: '正在完成任务...', status: 'finish' },
-          { title: '正在发布任务...', status: 'processing' },
-          { title: '正在提交任务...', status: 'wait' },
-          { title: '任务完成', status: 'wait' },
+          { title: 'Completing task...', status: 'finish' },
+          { title: 'Publishing task...', status: 'processing' },
+          { title: 'Submitting task...', status: 'wait' },
+          { title: 'Task completed', status: 'wait' },
         ],
       }))
 
@@ -922,15 +922,15 @@ export default function TaskPageCore() {
 
         const publishResponse: any = await apiCreatePublish(publishData)
         if (publishResponse && publishResponse.code === 0) {
-          // 更新进度：第二步完成，开始第三步
+          // Update progress: step 2 complete, start step 3
           setTaskProgress(prev => ({
             ...prev,
             currentStep: 2,
             steps: [
-              { title: '正在完成任务...', status: 'finish' },
-              { title: '正在发布任务...', status: 'finish' },
-              { title: '正在提交任务...', status: 'processing' },
-              { title: '任务完成', status: 'wait' },
+              { title: 'Completing task...', status: 'finish' },
+              { title: 'Publishing task...', status: 'finish' },
+              { title: 'Submitting task...', status: 'processing' },
+              { title: 'Task completed', status: 'wait' },
             ],
           }))
 
@@ -939,15 +939,15 @@ export default function TaskPageCore() {
           const submitResponse: any = await submitTask(userTaskId, acceptedTaskDetail.task?.materialIds[0])
 
           if (submitResponse && submitResponse.code === 0) {
-            // 更新进度：第三步完成，开始第四步
+            // Update progress: step 3 complete, start step 4
             setTaskProgress(prev => ({
               ...prev,
               currentStep: 3,
               steps: [
-                { title: '正在完成任务...', status: 'finish' },
-                { title: '正在发布任务...', status: 'finish' },
-                { title: '正在提交任务...', status: 'finish' },
-                { title: '任务完成', status: 'finish' },
+                { title: 'Completing task...', status: 'finish' },
+                { title: 'Publishing task...', status: 'finish' },
+                { title: 'Submitting task...', status: 'finish' },
+                { title: 'Task completed', status: 'finish' },
               ],
             }))
 
@@ -961,25 +961,25 @@ export default function TaskPageCore() {
             }, 1000)
           }
           else {
-            throw new Error('提交任务失败')
+            throw new Error('Failed to submit task')
           }
         }
         else {
-          throw new Error('发布任务失败')
+          throw new Error('Failed to publish task')
         }
       }
       else {
-        throw new Error('找不到发布账号信息')
+        throw new Error('Cannot find publish account info')
       }
     }
     catch (error) {
-      console.error('任务处理失败:', error)
-      toast.error('任务处理失败')
+      console.error('Task processing failed:', error)
+      toast.error('Task processing failed')
       setTaskProgressVisible(false)
     }
   }
 
-  // 处理待接受任务分页变化
+  // Handle pending task page change
   const handlePendingPageChange = (page: number, pageSize?: number) => {
     fetchPendingTasks(page, pageSize || pendingPagination.pageSize)
   }
@@ -1112,8 +1112,8 @@ export default function TaskPageCore() {
                             </div>
                             <h3 style={{ margin: 0, fontSize: '16px' }}>
                               {task.accountTypes && task.accountTypes.length > 0
-                                ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}任务`
-                                : `${getPlatformName(task.accountType)}任务`}
+                                ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join(', ')} Task`
+                                : `${getPlatformName(task.accountType)} Task`}
                             </h3>
                           </div>
                           <Tag color="orange">{t('taskStatus.pending' as any)}</Tag>
@@ -1177,7 +1177,7 @@ export default function TaskPageCore() {
                             >
                               <Image
                                 src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                alt="账号头像"
+                                alt="Account avatar"
                                 width={32}
                                 height={32}
                                 style={{
@@ -1334,7 +1334,7 @@ export default function TaskPageCore() {
                             >
                               <Image
                                 src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                alt="账号头像"
+                                alt="Account avatar"
                                 width={32}
                                 height={32}
                                 style={{
@@ -2320,7 +2320,7 @@ export default function TaskPageCore() {
                 avatar={(
                   <Image
                     src={account.avatar ? getOssUrl(account.avatar) : '/default-avatar.png'}
-                    alt="账号头像"
+                    alt="Account avatar"
                     width={48}
                     height={48}
                     style={{

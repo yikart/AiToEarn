@@ -156,7 +156,7 @@ function DetailSection() {
         <button
           className={`feedDetailModal_followBtn ${displayData.isFollowed ? 'feedDetailModal_followBtn-followed' : ''}`}
         >
-          {displayData.isFollowed ? t('followed') : '关注'}
+          {displayData.isFollowed ? t('followed') : t('follow')}
         </button>
       </div>
 
@@ -212,16 +212,15 @@ function DetailSection() {
           </div>
         </div>
 
-        {/* 评论区域 */}
+        {/* Comments section */}
         <div className="feedDetailModal_comments">
           <div className="feedDetailModal_comments_header">
-            共{' '}
             {loading || displayData.commentCount === null ? (
               <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} spin />} size="small" />
             ) : (
               displayData.commentCount
             )}{' '}
-            条评论
+            {t('comments')}
           </div>
 
           {/* 评论列表 */}
@@ -249,7 +248,7 @@ function DetailSection() {
       <div className="feedDetailModal_footer">
         {/* 评论输入框 */}
         <div className="feedDetailModal_commentInput">
-          <Input placeholder="说点什么..." className="feedDetailModal_commentInput_field" />
+          <Input placeholder={t('commentPlaceholder')} className="feedDetailModal_commentInput_field" />
         </div>
 
         {/* 操作按钮 */}

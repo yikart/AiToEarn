@@ -79,7 +79,7 @@ export function UserSection({ collapsed, onLogin, onOpenSettings }: UserSectionP
         <Tooltip>
           <TooltipTrigger asChild>
             <Button onClick={onLogin} size="icon" className="h-9 w-9">
-              <span className="text-sm font-semibold">登</span>
+              <span className="text-sm font-semibold">In</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right">

@@ -165,9 +165,9 @@ export function parseUserMessageContent(content: string | any[]): IParsedUserCon
  */
 export function formatMediaTypeName(type: 'image' | 'video' | 'document'): string {
   const names: Record<string, string> = {
-    image: '图片',
-    video: '视频',
-    document: '文档',
+    image: 'Image',
+    video: 'Video',
+    document: 'Document',
   }
   return names[type] || type
 }

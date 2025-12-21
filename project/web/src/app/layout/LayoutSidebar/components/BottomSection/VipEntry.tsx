@@ -18,13 +18,21 @@ import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 import type { SidebarCommonProps } from '../../types'
 
+// 有效的 VIP 会员状态
+const ACTIVE_VIP_STATUSES = ['active_monthly', 'active_yearly', 'active_nonrenewing', 'monthly_once', 'yearly_once']
+
 export function VipEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
   const lng = useGetClientLng()
   const userInfo = useUserStore(state => state.userInfo)
 
-  // 判断用户是否是有效会员
-  const isVip = userInfo?.vipInfo?.expireTime && new Date(userInfo.vipInfo.expireTime) > new Date()
+  // 判断用户是否是有效会员：需要有有效的状态且未过期
+  const isVip = Boolean(
+    userInfo?.vipInfo?.status &&
+    ACTIVE_VIP_STATUSES.includes(userInfo.vipInfo.status) &&
+    userInfo.vipInfo.expireTime &&
+    new Date(userInfo.vipInfo.expireTime) > new Date()
+  )
 
   return (
     <TooltipProvider>

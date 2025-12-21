@@ -136,30 +136,30 @@ export function getMainAppDownloadUrlSync(lng?: string): string {
 
 export const APP_DOWNLOAD_CONFIGS: Record<string, AppDownloadConfig> = {
   xhs: {
-    platform: '小红书',
-    appName: '小红书App',
-    downloadUrl: 'https://apps.apple.com/cn/app/id123456789', // 这里配置实际的下载链接
-    qrCodeUrl: '', // 这里配置实际的二维码图片URL
-    description: '小红书相关操作需要在移动端App中进行，请下载并安装小红书App后继续操作。',
+    platform: 'Xiaohongshu',
+    appName: 'Xiaohongshu App',
+    downloadUrl: 'https://apps.apple.com/cn/app/id123456789', // Configure actual download link here
+    qrCodeUrl: '', // Configure actual QR code image URL here
+    description: 'Xiaohongshu operations need to be performed in the mobile app. Please download and install the Xiaohongshu App to continue.',
     tips: [
-      '安装完成后，请在App中登录您的账号',
-      '确保账号已通过实名认证',
-      '在App中完成相关任务操作',
+      'After installation, please log in to your account in the App',
+      'Ensure your account has completed identity verification',
+      'Complete related task operations in the App',
     ],
   },
   douyin: {
-    platform: '抖音',
-    appName: '抖音App',
+    platform: 'Douyin',
+    appName: 'Douyin App',
     downloadUrl: 'https://apps.apple.com/cn/app/douyin/id123456789',
     qrCodeUrl: '',
-    description: '抖音相关操作需要在移动端App中进行，请下载并安装抖音App后继续操作。',
+    description: 'Douyin operations need to be performed in the mobile app. Please download and install the Douyin App to continue.',
     tips: [
-      '安装完成后，请在App中登录您的账号',
-      '确保账号已通过实名认证',
-      '在App中完成相关任务操作',
+      'After installation, please log in to your account in the App',
+      'Ensure your account has completed identity verification',
+      'Complete related task operations in the App',
     ],
   },
-  // 可以继续添加其他平台的配置
+  // Additional platform configurations can be added here
 }
 
 /**

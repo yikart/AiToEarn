@@ -154,7 +154,7 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
   const currentBalance = (userInfo?.income || 0) / 100
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* 用户信息卡片 */}
       <div className="flex items-center gap-4">
         <div className="group relative shrink-0 cursor-pointer" onClick={handleAvatarClick}>

@@ -266,19 +266,19 @@ export const agentApi = {
             if (data.sessionId) {
               sessionId = data.sessionId
               console.log('[SSE] Got sessionId:', sessionId)
-            }
-          
-            // 调用消息回调
-            onMessage(data)
-          
-            // 如果收到结束信号，关闭连接
-            if (data.type === 'done' || data.type === 'error') {
-              console.log('[SSE] Received end signal:', data.type)
-              isCompleted = true
-              abortController.abort()
-            }
           }
-          catch (error) {
+          
+          // 调用消息回调
+          onMessage(data)
+          
+          // 如果收到结束信号，关闭连接
+          if (data.type === 'done' || data.type === 'error') {
+            console.log('[SSE] Received end signal:', data.type)
+              isCompleted = true
+            abortController.abort()
+          }
+        }
+        catch (error) {
             console.error('[SSE] Failed to parse message:', event.data, error)
           }
         },
@@ -288,7 +288,7 @@ export const agentApi = {
           console.log('[SSE] Connection closed')
           if (!isCompleted) {
             isCompleted = true
-            onDone(sessionId)
+          onDone(sessionId)
           }
         },
         
@@ -305,8 +305,8 @@ export const agentApi = {
           // 标记为已完成，防止重复处理
           if (!isCompleted) {
             isCompleted = true
-            // 其他错误，调用错误回调
-            onError(error instanceof Error ? error : new Error(String(error)))
+          // 其他错误，调用错误回调
+          onError(error instanceof Error ? error : new Error(String(error)))
           }
           
           // 抛出错误以停止重试

@@ -895,7 +895,7 @@ export default function PinterestPage() {
                       <div className={styles.uploadSuccess}>
                         <img
                           src={imagePreview}
-                          alt="预览"
+                          alt="Preview"
                           className={styles.previewImage}
                         />
                         <div className={styles.uploadStatus}>
