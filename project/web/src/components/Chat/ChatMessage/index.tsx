@@ -27,8 +27,10 @@ import type { IUploadedMedia } from '../MediaUpload'
 import type { IMessageStep, IWorkflowStep, IActionCard } from '@/store/agent'
 import logo from '@/assets/images/logo.png'
 import styles from './ChatMessage.module.scss'
-import { MediaPreview } from '@/components/common/MediaPreview'
+import MediaPreview, { MediaPreviewItem } from '@/components/common/MediaPreview'
 import { ActionCard } from '../ActionCard'
+import MediaGallery from '@/components/Chat/ChatMessage/MediaGallery'
+import WorkflowSection from '@/components/Chat/ChatMessage/WorkflowComponents'
 
 export type { IWorkflowStep }
 
@@ -60,150 +62,7 @@ const formatToolName = (name: string) => {
   return name.replace(/^mcp__\w+__/, '')
 }
 
-/**
- * WorkflowStepItem - 单个工作流步骤项
- */
-interface IWorkflowStepItemProps {
-  step: IWorkflowStep
-}
-
-function WorkflowStepItem({ step }: IWorkflowStepItemProps) {
-  const { t } = useTransClient('chat')
-  // 判断步骤是否完成：不活跃状态即为完成
-  const isCompleted = !step.isActive
-
-  return (
-    <div
-      className={cn(
-        'flex items-start gap-2 px-2 py-1.5 rounded-lg text-xs',
-        step.isActive ? 'bg-primary/10' : 'bg-muted/80',
-      )}
-    >
-      {/* 步骤图标 */}
-      <div className="shrink-0 mt-0.5">
-        {step.isActive ? (
-          <Loader2 className="w-3 h-3 text-primary animate-spin" />
-        ) : isCompleted ? (
-          <CheckCircle2 className="w-3 h-3 text-success" />
-        ) : (
-          <Wrench className="w-3 h-3 text-muted-foreground/70" />
-        )}
-      </div>
-      {/* 步骤内容 */}
-      <div className="flex-1 min-w-0">
-        <div className={cn(
-          'font-medium truncate',
-          step.isActive ? 'text-primary' : isCompleted ? 'text-success' : 'text-muted-foreground',
-        )}>
-          {step.type === 'tool_call'
-            ? `${formatToolName(step.toolName || 'Tool')}${isCompleted ? '' : '...'}`
-            : step.type === 'tool_result'
-              ? `${formatToolName(step.toolName || 'Tool')} ${t('workflow.toolResult' as any)}`
-              : formatToolName(step.toolName || t('workflow.processing' as any))}
-        </div>
-        {step.content && (
-          <pre className="text-[10px] text-muted-foreground/70 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap">
-            {step.content.substring(0, 80)}{step.content.length > 80 ? '...' : ''}
-          </pre>
-        )}
-      </div>
-    </div>
-  )
-}
-
-/**
- * WorkflowSection - 工作流展示区域
- * 支持自动展开当前活跃步骤，收起非活跃步骤
- * 工作流详情区域有高度限制，超出显示滚动条
- */
-interface IWorkflowSectionProps {
-  /** 工作流步骤列表 */
-  workflowSteps: IWorkflowStep[]
-  /** 是否为当前活跃的步骤 */
-  isActive?: boolean
-  /** 默认是否展开（如果不传，则根据 isActive 自动判断） */
-  defaultExpanded?: boolean
-}
-
-function WorkflowSection({ workflowSteps, isActive, defaultExpanded }: IWorkflowSectionProps) {
-  const { t } = useTransClient('chat')
-  // 默认展开，如果传了 defaultExpanded 则使用它，否则使用 isActive 或默认 true（历史消息默认展开）
-  const initialExpanded = defaultExpanded !== undefined ? defaultExpanded : (isActive !== undefined ? isActive : true)
-  const [expanded, setExpanded] = useState(initialExpanded)
-
-  // 当 isActive 变化时，自动更新展开状态：活跃步骤展开，非活跃步骤收起
-  useEffect(() => {
-    if (isActive !== undefined) {
-      setExpanded(isActive)
-    }
-  }, [isActive])
-
-  // 统计工具调用数
-  const totalToolCalls = workflowSteps.filter((s) => s.type === 'tool_call').length
-  // 已完成的工具调用数 = tool_result 的数量
-  const toolResultCount = workflowSteps.filter((s) => s.type === 'tool_result').length
-  // 完成数不能超过总数，取较小值
-  const completedSteps = Math.min(toolResultCount, totalToolCalls)
-
-  // 当前活跃的步骤
-  const activeStep = workflowSteps.find((s) => s.isActive)
-
-  if (workflowSteps.length === 0) {
-    return null
-  }
-
-  return (
-    <div className={cn(styles.workflowSection, 'mt-2')}>
-      {/* 工作流摘要按钮 */}
-      <button
-        onClick={() => setExpanded(!expanded)}
-        className={cn(
-          'flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs transition-all w-full',
-          isActive
-            ? 'bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20'
-            : 'bg-background/60 text-muted-foreground hover:bg-muted border border-border/60',
-        )}
-      >
-        {isActive && activeStep ? (
-          <>
-            <Wrench className="w-3.5 h-3.5 animate-pulse" />
-            <span className="font-medium truncate flex-1 text-left">
-              {formatToolName(activeStep.toolName || t('workflow.processing' as any))}
-            </span>
-            <Loader2 className="w-3 h-3 animate-spin" />
-          </>
-        ) : (
-          <>
-            <CheckCircle2 className="w-3.5 h-3.5 text-success" />
-            <span className="font-medium flex-1 text-left">
-              {completedSteps}/{totalToolCalls} {t('workflow.toolCallCompleted' as any)}
-            </span>
-          </>
-        )}
-        <span className="shrink-0">
-          {expanded ? (
-            <ChevronDown className="w-3.5 h-3.5" />
-          ) : (
-            <ChevronRight className="w-3.5 h-3.5" />
-          )}
-        </span>
-      </button>
-
-      {/* 展开的工作流详情 - 添加高度限制和滚动条 */}
-      {expanded && (
-        <div className={cn(
-          'pl-2 border-l-2 space-y-1 mt-1.5 ml-1 overflow-y-auto',
-          isActive ? 'border-primary/30' : 'border-border',
-          styles.workflowDetailList,
-        )}>
-          {workflowSteps.map((step, index) => (
-            <WorkflowStepItem key={step.id || index} step={step} />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
+// Workflow 子组件已拆分到 `WorkflowComponents`，这里直接使用导出的组件
 
 /**
  * MessageStepContent - 单个消息步骤的内容
@@ -218,35 +77,39 @@ interface IMessageStepContentProps {
   isStreaming: boolean
 }
 
-function MessageStepContent({ step, isLast, isStreaming }: IMessageStepContentProps) {
+function MessageStepContent({ step, isLast, isStreaming, onOpenPreview }: IMessageStepContentProps & { onOpenPreview?: (url: string) => void }) {
   const hasWorkflow = step.workflowSteps && step.workflowSteps.length > 0
   // 当前步骤是否活跃：是最后一个步骤且消息正在流式输出
   const isActiveStep = isLast && isStreaming
-
-  // 自定义 Markdown 组件 - 处理视频链接渲染
+  // 自定义 Markdown 组件 - 处理视频链接渲染为“首帧封面 + 点击打开预览”
   const markdownComponents: Components = useMemo(() => ({
-    // 自定义链接渲染：视频链接渲染为播放器
     a: ({ href, children }) => {
       if (href && isVideoUrl(href)) {
         const videoUrl = getOssUrl(href)
         return (
           <div className="my-3">
-            <video
-              src={videoUrl}
-              controls
-              className="max-w-full max-h-[300px] rounded-lg border border-border"
-              preload="metadata"
+            <button
+              type="button"
+              onClick={() => onOpenPreview?.(href)}
+              className="relative w-full rounded-lg overflow-hidden border border-border bg-muted"
             >
-              Your browser does not support the video tag.
-            </video>
+              <video
+                src={videoUrl}
+                className="w-full h-60 object-cover"
+                preload="metadata"
+                muted
+              />
+              <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <Play className="w-8 h-8 text-white/90" />
+              </span>
+            </button>
           </div>
         )
       }
-      // 普通链接
       return (
-        <a 
-          href={href} 
-          target="_blank" 
+        <a
+          href={href}
+          target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline"
         >
@@ -254,15 +117,12 @@ function MessageStepContent({ step, isLast, isStreaming }: IMessageStepContentPr
         </a>
       )
     },
-    // 处理纯文本中的视频 URL（不是链接格式）
     p: ({ children }) => {
-      // 检查子元素是否包含视频 URL
       const content = String(children)
-      const urlRegex = /(https?:\/\/[^\s]+\.mp4[^\s]*)/gi
+      const urlRegex = /(https?:\/\/[^\s]+(?:\.mp4|\.webm|\.mov)[^\s]*)/gi
       const matches = content.match(urlRegex)
-      
+
       if (matches && matches.length > 0) {
-        // 分割内容，将视频 URL 替换为视频播放器
         const parts = content.split(urlRegex)
         return (
           <div>
@@ -271,14 +131,21 @@ function MessageStepContent({ step, isLast, isStreaming }: IMessageStepContentPr
                 const videoUrl = getOssUrl(part)
                 return (
                   <div key={index} className="my-3">
-                    <video
-                      src={videoUrl}
-                      controls
-                      className="max-w-full max-h-[300px] rounded-lg border border-border"
-                      preload="metadata"
+                    <button
+                      type="button"
+                      onClick={() => onOpenPreview?.(part)}
+                      className="relative w-full rounded-lg overflow-hidden border border-border bg-muted"
                     >
-                      Your browser does not support the video tag.
-                    </video>
+                      <video
+                        src={videoUrl}
+                        className="w-full h-60 object-cover"
+                        preload="metadata"
+                        muted
+                      />
+                      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <Play className="w-8 h-8 text-white/90" />
+                      </span>
+                    </button>
                   </div>
                 )
               }
@@ -287,10 +154,10 @@ function MessageStepContent({ step, isLast, isStreaming }: IMessageStepContentPr
           </div>
         )
       }
-      
+
       return <p className="mb-2 last:mb-0">{children}</p>
     },
-  }), [])
+  }), [onOpenPreview])
 
   return (
     <div className={cn(
@@ -339,6 +206,8 @@ export function ChatMessage({
 
   // 媒体预览状态（统一使用全局 MediaPreview 组件）
   const [previewIndex, setPreviewIndex] = useState<number | null>(null)
+  // 来自文本/链接的外部预览（例如 Markdown 中的视频链接）——优先级高于附件数组预览
+  const [externalPreviewItems, setExternalPreviewItems] = useState<MediaPreviewItem[] | null>(null)
 
   const previewableMedias = useMemo(
     () => medias.filter((m) => m.type === 'image' || m.type === 'video'),
@@ -354,6 +223,15 @@ export function ChatMessage({
       })),
     [previewableMedias],
   )
+
+  const openPreviewWithUrl = useCallback((url: string) => {
+    if (!url) return
+    setExternalPreviewItems([{
+      type: 'video',
+      src: getOssUrl(url),
+      title: undefined,
+    }])
+  }, [])
 
   // 处理消息步骤：如果有 steps 则使用 steps，否则从 content 生成单个步骤
   const displaySteps = useMemo(() => {
@@ -414,70 +292,20 @@ export function ChatMessage({
 
       {/* 消息内容 */}
       <div className={cn('flex flex-col gap-2 max-w-[80%]', isUser ? 'items-end' : 'items-start')}>
-        {/* 媒体附件 */}
+        {/* 媒体附件（统一使用 MediaGallery） */}
         {medias.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {medias.map((media, index) => {
-              if (media.type === 'document') {
-                // 文档类型显示
-                return (
-                  <a
-                    key={index}
-                    href={getOssUrl(media.url)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted hover:bg-muted/80 transition-colors"
-                  >
-                    <FileText className="w-4 h-4 text-muted-foreground" />
-                    <span className="text-sm text-foreground truncate max-w-[200px]">
-                      {media.name || t('media.document' as any)}
-                    </span>
-                  </a>
-                )
-              }
-
-              const isPreviewable = media.type === 'image' || media.type === 'video'
-              const mediaUrl = getOssUrl(media.url)
-
-              const thisPreviewIndex = isPreviewable
-                ? previewableMedias.findIndex((m) => m === media)
-                : -1
-
-              const handleOpenPreview = () => {
-                if (thisPreviewIndex >= 0) {
-                  setPreviewIndex(thisPreviewIndex)
-                }
-              }
-
-              const Wrapper: React.ElementType = isPreviewable ? 'button' : 'div'
-
-              return (
-                <Wrapper
-                  key={index}
-                  type={isPreviewable ? 'button' : undefined}
-                  onClick={isPreviewable ? handleOpenPreview : undefined}
-                  className={cn(
-                    'w-24 h-24 rounded-lg overflow-hidden border border-border bg-muted',
-                    isPreviewable && 'cursor-pointer',
-                  )}
-                >
-                  {media.type === 'video' ? (
-                    <video
-                      src={mediaUrl}
-                      className="w-full h-full object-cover"
-                      muted
-                    />
-                  ) : (
-                    <img
-                      src={mediaUrl}
-                      alt={`attachment-${index}`}
-                      className="w-full h-full object-cover"
-                    />
-                  )}
-                </Wrapper>
-              )
-            })}
-          </div>
+          <MediaGallery
+            medias={medias}
+            onPreviewByIndex={(originalIndex) => {
+              // 将原始 medias 索引映射到 previewableMedias 的索引
+              const target = medias[originalIndex]
+              const mapped = previewableMedias.findIndex((m) => m === target)
+              if (mapped >= 0) setPreviewIndex(mapped)
+            }}
+            onPreviewByUrl={(url) => {
+              openPreviewWithUrl(url)
+            }}
+          />
         )}
 
         {/* AI 消息：多步骤渲染 - 只有有实际内容或工作流时才显示 */}
@@ -489,6 +317,7 @@ export function ChatMessage({
                 step={step}
                 isLast={index === displaySteps.length - 1}
                 isStreaming={isStreaming}
+                onOpenPreview={openPreviewWithUrl}
               />
             ))}
           </div>
@@ -548,12 +377,15 @@ export function ChatMessage({
       </div>
 
       {/* 全局媒体预览（图片 / 视频） */}
-      {previewItems.length > 0 && (
+      {(previewItems.length > 0 || externalPreviewItems) && (
         <MediaPreview
-          open={previewIndex !== null}
-          items={previewItems}
-          initialIndex={previewIndex ?? 0}
-          onClose={() => setPreviewIndex(null)}
+          open={previewIndex !== null || externalPreviewItems !== null}
+          items={externalPreviewItems ?? previewItems}
+          initialIndex={externalPreviewItems ? 0 : (previewIndex ?? 0)}
+          onClose={() => {
+            setPreviewIndex(null)
+            setExternalPreviewItems(null)
+          }}
         />
       )}
     </div>
