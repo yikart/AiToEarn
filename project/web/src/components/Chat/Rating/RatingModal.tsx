@@ -68,7 +68,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
     try {
       setLoading(true)
       await agentApi.submitTaskRating(taskId, { rating: rating as number, comment: comment.trim() })
-      toast.success(t('rating.saveSuccess' as any) || 'Saved')
+      // Delegate success toast to caller to avoid duplicate notifications
       onSaved?.({ rating: rating as number, comment: comment.trim() })
       onClose()
     } catch (err) {

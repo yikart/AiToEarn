@@ -248,7 +248,13 @@ export default function ChatDetailPage() {
    * 返回首页
    */
   const handleBack = useCallback(() => {
-    router.push(`/${lng}`)
+    // If there's a previous entry in the history stack, go back.
+    // Otherwise, navigate to the root homepage.
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
   }, [router, lng])
 
   // 加载中状态（仅非活跃任务显示骨架屏）

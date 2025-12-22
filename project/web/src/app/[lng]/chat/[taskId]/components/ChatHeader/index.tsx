@@ -8,6 +8,7 @@ import React, { useState } from 'react'
 import { ArrowLeft, Loader2, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import RatingModal from '@/components/Chat/Rating'
+import { useTransClient } from '@/app/i18n/client'
 
 export interface IChatHeaderProps {
   /** 任务标题 */
@@ -38,6 +39,7 @@ export function ChatHeader({
   taskId,
   rating,
 }: IChatHeaderProps) {
+  const { t } = useTransClient('chat')
   const [ratingOpen, setRatingOpen] = useState(false)
   return (
     <header className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border shrink-0">
@@ -62,14 +64,24 @@ export function ChatHeader({
             )}
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setRatingOpen(true)}
-          className="w-8 h-8"
-        >
-          <Star className={`w-5 h-5 ${rating ? 'text-amber-400' : 'text-muted-foreground'}`} {...(rating ? { fill: 'currentColor' } : {})} />
-        </Button>
+        <div className="flex items-center">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setRatingOpen(true)}
+            className="w-8 h-8"
+          >
+            <Star className={`w-5 h-5 ${rating ? 'text-amber-400' : 'text-muted-foreground'}`} {...(rating ? { fill: 'currentColor' } : {})} />
+          </Button>
+          {/* 文本提示，移动端隐藏以节省空间 */}
+          <button
+            onClick={() => setRatingOpen(true)}
+            className="ml-1 text-sm text-muted-foreground hidden sm:inline"
+            aria-label={t('task.rate' as any) || 'Rate'}
+          >
+            {t('task.rate' as any) || '评分'}
+          </button>
+        </div>
       </div>
       <RatingModal
         taskId={taskId ?? ''}
