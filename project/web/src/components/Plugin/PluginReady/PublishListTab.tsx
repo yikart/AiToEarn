@@ -70,7 +70,7 @@ export function PublishListTab({ onViewDetail }: PublishListTabProps) {
   // 空状态
   if (publishTasks.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
+      <div className="flex flex-1 flex-col items-center justify-center py-16">
         <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
           <FileText className="h-8 w-8 text-gray-400" />
         </div>
