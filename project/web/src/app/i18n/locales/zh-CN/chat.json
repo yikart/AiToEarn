@@ -30,6 +30,8 @@
       "requiresAction": "需要操作",
       "failed": "失败"
     }
+    ,
+    "rate": "评分"
   },
   "home": {
     "title": "有什么可以帮你的？",
@@ -49,6 +51,18 @@
     "empty": "暂无任务记录",
     "loadMore": "加载更多",
     "loading": "加载中..."
+  },
+  "rating": {
+    "title": "评分与评价",
+    "submit": "提交",
+    "cancel": "取消",
+    "requireComment": "低分需填写理由",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败",
+    "noRating": "未评分",
+    "commentLabel": "评价（可选）",
+    "commentPlaceholder": "填写评价...",
+    "commentRequiredIfLow": "低于 3 分需要填写理由"
   },
   "detail": {
     "title": "对话详情",

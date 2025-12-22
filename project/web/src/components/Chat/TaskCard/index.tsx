@@ -8,8 +8,9 @@
 import type React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2, Star } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useTransClient } from '@/app/i18n/client'
 import {
@@ -17,7 +18,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
+import RatingModal from '@/components/Chat/Rating'
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -34,6 +37,14 @@ export interface ITaskCardProps {
   onDelete?: (id: string) => void | Promise<void>
   /** 自定义类名 */
   className?: string
+  /** 任务评分（1-5） */
+  rating?: number | null
+  /** 任务评价文本 */
+  ratingComment?: string | null
+  /** 在列表中显示更醒目的评分行 */
+  showProminentRating?: boolean
+  /** 列表级别的评分按钮点击回调（传入 taskId） */
+  onRateClick?: (taskId: string) => void
 }
 
 /** 获取状态显示配置 */
@@ -86,11 +97,17 @@ export function TaskCard({
   updatedAt,
   onDelete,
   className,
+  rating: initialRating,
+  ratingComment: initialRatingComment,
+  showProminentRating,
+  onRateClick,
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
+  const [rating, setRating] = useState<number | null>(initialRating ?? null)
+  const [ratingComment, setRatingComment] = useState<string | null>(initialRatingComment ?? null)
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
@@ -133,26 +150,45 @@ export function TaskCard({
         </h4>
       </div>
 
-      {/* 时间 & 状态 */}
+      {/* 时间 & 状态 & 评分 */}
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className="text-xs text-muted-foreground">
           {formatRelativeTime(new Date(updatedAt || createdAt))}
         </span>
-        {status && statusConfig.label && (
-          <span className={cn(
-            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
-            statusConfig.className,
-          )}>
-            {statusConfig.icon && (
-              <statusConfig.icon className={cn(
-                'w-3 h-3',
-                status?.toLowerCase() === 'running' && 'animate-spin',
-              )} />
-            )}
-            {statusConfig.label}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {status && statusConfig.label && (
+            <span className={cn(
+              'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
+              statusConfig.className,
+            )}>
+              {statusConfig.icon && (
+                <statusConfig.icon className={cn(
+                  'w-3 h-3',
+                  status?.toLowerCase() === 'running' && 'animate-spin',
+                )} />
+              )}
+              {statusConfig.label}
+            </span>
+          )}
+        </div>
       </div>
+
+      {/* Prominent rating button (single compact control) */}
+      {showProminentRating && (
+        <div className="mt-3">
+          <div onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant={rating ? 'outline' : 'ghost'}
+              size="sm"
+              onClick={(e) => { e.stopPropagation(); onRateClick?.(id) }}
+              className={cn(rating ? '' : 'w-full justify-center')}
+            >
+              <Star className={cn('w-4 h-4 mr-2', rating ? 'text-amber-400' : 'text-muted-foreground')} {...(rating ? { fill: 'currentColor' } : {})} />
+              {rating ? `${rating} / 5` : (t('task.rate' as any) || 'Rate this task')}
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* 更多操作按钮 */}
       <DropdownMenu>
@@ -162,7 +198,7 @@ export function TaskCard({
             disabled={isDeleting}
             className={cn(
               'absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center',
-              'opacity-0 group-hover:opacity-100 transition-opacity',
+              'opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity',
               'hover:bg-muted text-muted-foreground hover:text-foreground',
               isDeleting && 'opacity-100 cursor-wait',
             )}
@@ -176,7 +212,17 @@ export function TaskCard({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            onClick={handleDelete}
+            onClick={(e) => {
+              e.stopPropagation()
+              onRateClick?.(id)
+            }}
+          >
+            <Star className="w-4 h-4 mr-2 text-amber-400" />
+            {t('task.rate' as any) || 'Rate'}
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={(e) => { e.stopPropagation(); handleDelete(e); }}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
             <Trash2 className="w-4 h-4 mr-2" />

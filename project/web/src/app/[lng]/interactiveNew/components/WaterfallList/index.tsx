@@ -182,7 +182,7 @@ function WaterfallList({
         align="stretch"
         useResizeObserver
         observeChildren
-        scrollContainer={typeof window !== 'undefined' ? document.getElementById('interactiveScrollContainer') : null}
+        scrollContainer={typeof window !== 'undefined' ? document.getElementById('main-content') : null}
         onRequestAppend={handleRequestAppend}
         threshold={800}
       >

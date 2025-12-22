@@ -38,7 +38,7 @@ export function PluginReady({ highlightPlatform, onViewDetail }: PluginReadyProp
   const [activeTab, setActiveTab] = useState<TabType>('accounts')
 
   return (
-    <div className="flex h-[420px]">
+    <div className="flex h-[420px] flex-1">
       {/* 左侧 Tab 导航 */}
       <div className="flex w-40 shrink-0 flex-col gap-1 border-r border-gray-200 pr-4">
         {tabs.map((tab) => {
@@ -64,7 +64,7 @@ export function PluginReady({ highlightPlatform, onViewDetail }: PluginReadyProp
       </div>
 
       {/* 右侧内容区域 */}
-      <div className="flex-1 overflow-auto pl-4">
+      <div className="flex-1 overflow-auto pl-4 flex">
         {activeTab === 'accounts' && (
           <AccountsTab highlightPlatform={highlightPlatform} />
         )}

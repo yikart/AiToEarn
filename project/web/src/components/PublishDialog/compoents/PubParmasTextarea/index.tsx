@@ -43,9 +43,8 @@ import PubParmasTextuploadImage from '@/components/PublishDialog/compoents/PubPa
 import VideoCoverSeting from '@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting'
 import Aibrush from '@/components/PublishDialog/svgs/aibrush.svg'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import VideoPreviewModal from '@/components/VideoPreviewModal'
+import MediaPreview from '@/components/common/MediaPreview'
 
-const { TextArea } = Input
 export interface IPubParmasTextareaRef {}
 
 export interface IChangeParams {
@@ -322,10 +321,15 @@ const PubParmasTextarea = memo(
               },
             }}
           />
-          <VideoPreviewModal
-            open={!!(previewData && (previewData as IVideoFile).videoUrl)}
-            videoUrl={(previewData as IVideoFile)?.videoUrl}
-            onCancel={() => setPreviewData(undefined)}
+          <MediaPreview
+            open={!!(previewData && (previewData as IVideoFile)?.videoUrl)}
+            items={[
+              {
+                type: 'video',
+                src: (previewData as IVideoFile)?.videoUrl,
+              }
+            ]}
+            onClose={() => setPreviewData(undefined)}
           />
           <ImageEditorModal
             onOk={(editedImg) => {
