@@ -116,6 +116,13 @@
     "pleaseSelectDraft": "Please select a draft",
     "pleaseSelectDraftMaterial": "Please select a draft material first"
   },
+  "publish": {
+    "useRecommended": "Publish with recommended draft",
+    "directPublish": "Publish directly",
+    "agentPublish": "Agent Publish",
+    "noAccountSelected": "Please select an account",
+    "accountNotMatchTask": "Selected account does not match task requirement"
+  },
   "progress": {
     "acceptingTask": "Accepting task...",
     "publishingTask": "Publishing task...",

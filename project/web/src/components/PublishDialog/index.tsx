@@ -98,6 +98,8 @@ export interface IPublishDialogProps {
   onPubSuccess?: () => void
   // 默认选中的账户Id
   defaultAccountId?: string
+  // 是否抑制自动发布（用于从任务页面打开，先让用户确认后再发布）
+  suppressAutoPublish?: boolean
 }
 
 // 发布作品弹框
@@ -110,6 +112,7 @@ const PublishDialog = memo(
         accounts,
         onPubSuccess,
         defaultAccountId,
+        suppressAutoPublish,
       }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
@@ -710,14 +713,20 @@ const PublishDialog = memo(
           })
         }
 
-        // 关闭发布弹框
-        onClose()
+      // 如果抑制自动发布，跳过自动发布流程
+      if (suppressAutoPublish) {
         setCreateLoading(false)
+        return
+      }
 
-        if (onPubSuccess) {
-          onPubSuccess()
-        }
-        usePublishDialogStorageStore.getState().clearPubData()
+      // 关闭发布弹框
+      onClose()
+      setCreateLoading(false)
+
+      if (onPubSuccess) {
+        onPubSuccess()
+      }
+      usePublishDialogStorageStore.getState().clearPubData()
       }, [pubListChoosed, pubTime, isPluginSupportedPlatform, t])
 
       // 处理划词操作

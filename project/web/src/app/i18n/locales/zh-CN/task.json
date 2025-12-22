@@ -116,6 +116,13 @@
     "pleaseSelectDraft": "请选择一个草稿",
     "pleaseSelectDraftMaterial": "请先选择一个草稿素材"
   },
+  "publish": {
+    "useRecommended": "使用推荐草稿发布",
+    "directPublish": "直接发布",
+    "agentPublish": "Agent 发布",
+    "noAccountSelected": "请先选择发布账户",
+    "accountNotMatchTask": "所选账户与任务要求不符"
+  },
   "progress": {
     "acceptingTask": "正在接受任务...",
     "publishingTask": "正在发布任务...",

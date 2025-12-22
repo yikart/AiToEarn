@@ -66,6 +66,20 @@ export default function Home() {
     toast.success('Prompt applied!')
   }, [])
 
+  // 从任务页面跳转带来的 agentExternalPrompt 自动填充
+  useEffect(() => {
+    try {
+      const prompt = localStorage.getItem('agentExternalPrompt')
+      if (prompt) {
+        setAppliedPrompt(prompt)
+        localStorage.removeItem('agentExternalPrompt')
+      }
+    }
+    catch (e) {
+      // ignore
+    }
+  }, [])
+
   // 清除外部提示词
   const handleClearExternalPrompt = useCallback(() => {
     setAppliedPrompt('')
