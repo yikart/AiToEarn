@@ -26,7 +26,7 @@ function Table({ className, children, ...props }: TableProps) {
 
 function TableHeader({ className, ...props }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
-    <thead className={cn('[&_tr]:border-b', className)} {...props} />
+    <thead className={cn('[&_tr]:border-b [&_tr]:border-border/50', className)} {...props} />
   )
 }
 
@@ -40,7 +40,7 @@ function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElem
   return (
     <tr
       className={cn(
-        'border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted',
+        'border-b border-border/30 transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted',
         className
       )}
       {...props}

@@ -15,7 +15,14 @@ import {
   updateWalletAccountApi,
   setDefaultWalletAccountApi,
 } from '@/api/payment'
-import { EMAIL_REGEX } from '@/api/userWalletAccount'
+// 邮箱正则表达式
+const EMAIL_REGEX = /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/
+
+// 中国手机号正则表达式（11位数字，1开头）
+const PHONE_REGEX = /^1[3-9]\d{9}$/
+
+// 身份证号正则表达式（支持国际身份证，限制宽松：6-30位字母数字组合，允许横线和空格）
+const ID_CARD_REGEX = /^[A-Za-z0-9\s\-]{6,30}$/
 import { useTransClient } from '@/app/i18n/client'
 import { useUserStore } from '@/store/user'
 import { toast } from '@/lib/toast'
@@ -24,10 +31,18 @@ import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Card } from '@/components/ui/card'
 import { Pagination } from '@/components/ui/pagination'
 import { Spin } from '@/components/ui/spin'
 import { Empty } from '@/components/ui/empty'
+import { Badge } from '@/components/ui/badge'
+import { MoreVertical, Edit, Trash2, Star } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 interface WalletModalProps {
   open: boolean
@@ -91,32 +106,58 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
 
   function onEdit(record: WalletAccount) {
     setEditing(record)
+    // 编辑模式下只设置可编辑的字段
     setFormData({
       email: record.email || '',
       userName: record.userName || '',
-      account: record.account || '',
       idCard: record.idCard || '',
       phone: record.phone || '',
-      type: record.type,
     })
     setFormErrors({})
     setModalOpen(true)
   }
 
   async function onDelete(record: WalletAccount) {
+    const deleteConfirmDesc = t('actions.deleteConfirmDesc')
     const result = await confirm({
       title: t('actions.deleteConfirm'),
-      content: t('actions.deleteConfirmDesc') || '此操作不可恢复',
+      content: deleteConfirmDesc && deleteConfirmDesc !== 'actions.deleteConfirmDesc' ? deleteConfirmDesc : 'This operation cannot be undone. Are you sure you want to delete this wallet account?',
       okType: 'destructive',
       okText: t('actions.confirm' as any),
       cancelText: t('actions.cancel' as any),
     })
 
+    console.log('result', result)
+
     if (result) {
-      const res = await deleteWalletAccountApi(record.id)
-      if (res) {
-        toast.success(t('messages.deleteSuccess'))
-        fetchList(pagination.current, pagination.pageSize)
+      try {
+        console.log('Deleting wallet account:', record.id)
+        const res = await deleteWalletAccountApi(record.id)
+        console.log('Delete response:', res)
+        
+        // request 函数返回格式：{ code, data, message, url } 或 null
+        // 成功时 code === 0，返回整个响应对象
+        // 失败时返回 null（request 函数内部已显示错误提示）
+        if (res) {
+          // 检查 code 是否为 0（成功）
+          if (res.code === 0 || res.code === '0') {
+            toast.success(t('messages.deleteSuccess'))
+            fetchList(pagination.current, pagination.pageSize)
+          }
+          else {
+            // code 不为 0，显示错误信息
+            const errorMsg = res.message || t('messages.deleteFailed') || 'Delete failed'
+            toast.error(errorMsg)
+          }
+        }
+        else {
+          // res 为 null，说明请求失败（request 函数已显示错误提示）
+          console.warn('Delete wallet account failed: request returned null')
+        }
+      }
+      catch (error) {
+        console.error('Delete wallet account error:', error)
+        toast.error(t('messages.deleteFailed') || 'Delete failed')
       }
     }
   }
@@ -125,28 +166,49 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     try {
       const res = await setDefaultWalletAccountApi(record.id)
       if (res) {
-        toast.success(t('messages.setDefaultSuccess') || '设置成功')
+        toast.success(t('messages.setDefaultSuccess') || 'Set as default successfully')
         fetchList(pagination.current, pagination.pageSize)
       }
     }
     catch (error) {
-      toast.error(t('messages.setDefaultFailed') || '设置失败')
+      toast.error(t('messages.setDefaultFailed') || 'Set as default failed')
     }
   }
 
   function validateForm(): boolean {
     const errors: Record<string, string> = {}
 
+    // 邮箱校验
     if (formData.email && !EMAIL_REGEX.test(formData.email)) {
-      errors.email = t('form.mailInvalid')
+      errors.email = t('form.mailInvalid') || 'Invalid email format'
     }
 
-    if (!formData.account) {
-      errors.account = t('form.required')
+    // 创建模式下才需要验证账号和类型
+    if (!editing) {
+      // 账号必填
+      if (!formData.account) {
+        errors.account = t('form.required') || 'Account is required'
+      }
+
+      // 类型必填
+      if (!formData.type) {
+        errors.type = t('form.required') || 'Type is required'
+      }
     }
 
-    if (!formData.type) {
-      errors.type = t('form.required')
+    // 手机号校验
+    if (formData.phone && formData.phone.trim() !== '') {
+      if (!PHONE_REGEX.test(formData.phone.trim())) {
+        errors.phone = 'Invalid phone number format. Please enter a valid 11-digit phone number'
+      }
+    }
+
+    // 身份证号校验
+    if (formData.idCard && formData.idCard.trim() !== '') {
+      const trimmedIdCard = formData.idCard.trim()
+      if (!ID_CARD_REGEX.test(trimmedIdCard)) {
+        errors.idCard = 'Invalid ID number format. Please enter 6-30 alphanumeric characters'
+      }
     }
 
     setFormErrors(errors)
@@ -199,8 +261,8 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
   // 获取类型显示文本
   const getTypeText = (type: WalletAccountType) => {
     const typeMap: Record<WalletAccountType, string> = {
-      [WalletAccountType.Alipay]: t('types.ZFB') || '支付宝',
-      [WalletAccountType.WechatPay]: t('types.WX_PAY') || '微信支付',
+      [WalletAccountType.Alipay]: t('types.ZFB') || 'Alipay',
+      [WalletAccountType.WechatPay]: t('types.WX_PAY') || 'WeChat Pay',
       [WalletAccountType.StripeConnect]: 'Stripe Connect',
     }
     return typeMap[type] || type
@@ -225,77 +287,117 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
           <Spin spinning={loading}>
             {list.length > 0 ? (
               <>
-                <div className="rounded-md border">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="w-[100px]">{t('columns.userName')}</TableHead>
-                        <TableHead className="w-[150px] hidden md:table-cell">{t('columns.mail')}</TableHead>
-                        <TableHead className="w-[120px]">{t('columns.account')}</TableHead>
-                        <TableHead className="w-[80px]">{t('columns.type')}</TableHead>
-                        <TableHead className="w-[120px] hidden lg:table-cell">{t('columns.phone')}</TableHead>
-                        <TableHead className="w-[120px] hidden lg:table-cell">{t('columns.cardNum')}</TableHead>
-                        <TableHead className="w-[120px]">{t('columns.actions')}</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {list.map((record) => (
-                        <TableRow key={record.id}>
-                          <TableCell className="truncate">{record.userName || '-'}</TableCell>
-                          <TableCell className="truncate hidden md:table-cell">{record.email || '-'}</TableCell>
-                          <TableCell className="truncate">{record.account}</TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <span>{getTypeText(record.type)}</span>
-                              {record.isDefault && (
-                                <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
-                                  默认
-                                </span>
-                              )}
-                              {record.isVerified && (
-                                <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">
-                                  已验证
-                                </span>
-                              )}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {list.map((record) => (
+                    <Card key={record.id} className="relative">
+                      {/* 右上角状态标识 */}
+                      <div className="absolute top-4 right-4 flex gap-2 z-10">
+                        {record.isDefault && (
+                            <Badge className="bg-primary text-primary-foreground">
+                              <Star className="w-3 h-3 mr-1 fill-current" />
+                              Default
+                            </Badge>
+                        )}
+                        {record.isVerified && (
+                          <Badge className="bg-green-100 text-green-800 border-green-200">
+                            Verified
+                          </Badge>
+                        )}
+                      </div>
+
+                      {/* 卡片内容 */}
+                      <div className="p-4 space-y-3">
+                        {/* 类型和操作按钮 */}
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="font-semibold text-lg mb-1">
+                              {getTypeText(record.type)}
                             </div>
-                          </TableCell>
-                          <TableCell className="truncate hidden lg:table-cell">{record.phone || '-'}</TableCell>
-                          <TableCell className="truncate hidden lg:table-cell">{record.idCard || '-'}</TableCell>
-                          <TableCell>
-                            <div className="flex gap-2">
+                            {record.userName && (
+                              <div className="text-sm text-muted-foreground">
+                                {record.userName}
+                              </div>
+                            )}
+                          </div>
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                                <MoreVertical className="h-4 w-4" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
                               {!record.isDefault && (
-                                <Button
-                                  size="sm"
-                                  variant="ghost"
-                                  onClick={() => onSetDefault(record)}
-                                >
-                                  设为默认
-                                </Button>
+                                <DropdownMenuItem onClick={() => onSetDefault(record)}>
+                                  <Star className="mr-2 h-4 w-4" />
+                                  Set as Default
+                                </DropdownMenuItem>
                               )}
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                onClick={() => onEdit(record)}
-                              >
+                              <DropdownMenuItem onClick={() => onEdit(record)}>
+                                <Edit className="mr-2 h-4 w-4" />
                                 {t('actions.edit')}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
                                 onClick={() => onDelete(record)}
-                                className="text-destructive hover:text-destructive"
+                                className="text-destructive"
                               >
+                                <Trash2 className="mr-2 h-4 w-4" />
                                 {t('actions.delete')}
-                              </Button>
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+
+                        {/* 账号信息 */}
+                        <div className="space-y-2 pt-2 border-t">
+                          <div>
+                            <div className="text-xs text-muted-foreground mb-1">
+                              {t('columns.account')}
                             </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                            <div className="font-mono text-sm break-all">
+                              {record.account}
+                            </div>
+                          </div>
+
+                          {record.email && (
+                            <div>
+                              <div className="text-xs text-muted-foreground mb-1">
+                                {t('columns.mail')}
+                              </div>
+                              <div className="text-sm break-all">
+                                {record.email}
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="grid grid-cols-2 gap-3">
+                            {record.phone && (
+                              <div>
+                                <div className="text-xs text-muted-foreground mb-1">
+                                  {t('columns.phone')}
+                                </div>
+                                <div className="text-sm">
+                                  {record.phone}
+                                </div>
+                              </div>
+                            )}
+                            {record.idCard && (
+                              <div>
+                                <div className="text-xs text-muted-foreground mb-1">
+                                  {t('columns.cardNum')}
+                                </div>
+                                <div className="text-sm break-all">
+                                  {record.idCard}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
                 </div>
 
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-6">
                   <Pagination
                     current={pagination.current}
                     pageSize={pagination.pageSize}
@@ -358,68 +460,97 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>
-              {t('form.account')}
-              <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              value={formData.account}
-              onChange={(e) => {
-                setFormData({ ...formData, account: e.target.value })
-                if (formErrors.account) {
-                  setFormErrors({ ...formErrors, account: '' })
-                }
-              }}
-              placeholder={t('form.accountPlaceholder')}
-              className={formErrors.account ? 'border-destructive' : ''}
-            />
-            {formErrors.account && (
-              <p className="text-sm text-destructive">{formErrors.account}</p>
-            )}
-          </div>
+          {/* 创建模式下显示账号字段 */}
+          {!editing && (
+            <div className="space-y-2">
+              <Label>
+                {t('form.account')}
+                <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                value={formData.account}
+                onChange={(e) => {
+                  setFormData({ ...formData, account: e.target.value })
+                  if (formErrors.account) {
+                    setFormErrors({ ...formErrors, account: '' })
+                  }
+                }}
+                placeholder={t('form.accountPlaceholder')}
+                className={formErrors.account ? 'border-destructive' : ''}
+              />
+              {formErrors.account && (
+                <p className="text-sm text-destructive">{formErrors.account}</p>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label>{t('form.cardNum')}</Label>
             <Input
               value={formData.idCard || ''}
-              onChange={(e) => setFormData({ ...formData, idCard: e.target.value })}
+              onChange={(e) => {
+                setFormData({ ...formData, idCard: e.target.value })
+                if (formErrors.idCard) {
+                  setFormErrors({ ...formErrors, idCard: '' })
+                }
+              }}
               placeholder={t('form.cardNumPlaceholder')}
+              className={formErrors.idCard ? 'border-destructive' : ''}
+              maxLength={30}
             />
+            {formErrors.idCard && (
+              <p className="text-sm text-destructive">{formErrors.idCard}</p>
+            )}
           </div>
 
           <div className="space-y-2">
             <Label>{t('form.phone')}</Label>
             <Input
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              placeholder={t('form.phonePlaceholder')}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label>
-              {t('form.type')}
-              <span className="text-destructive">*</span>
-            </Label>
-            <select
-              value={formData.type}
+              type="tel"
+              value={formData.phone || ''}
               onChange={(e) => {
-                setFormData({ ...formData, type: e.target.value as WalletAccountType })
-                if (formErrors.type) {
-                  setFormErrors({ ...formErrors, type: '' })
+                // 只允许输入数字
+                const value = e.target.value.replace(/\D/g, '')
+                setFormData({ ...formData, phone: value })
+                if (formErrors.phone) {
+                  setFormErrors({ ...formErrors, phone: '' })
                 }
               }}
-              className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            >
-              <option value={WalletAccountType.Alipay}>{t('types.ZFB') || '支付宝'}</option>
-              <option value={WalletAccountType.WechatPay}>{t('types.WX_PAY') || '微信支付'}</option>
-              <option value={WalletAccountType.StripeConnect}>Stripe Connect</option>
-            </select>
-            {formErrors.type && (
-              <p className="text-sm text-destructive">{formErrors.type}</p>
+              placeholder={t('form.phonePlaceholder')}
+              className={formErrors.phone ? 'border-destructive' : ''}
+              maxLength={11}
+            />
+            {formErrors.phone && (
+              <p className="text-sm text-destructive">{formErrors.phone}</p>
             )}
           </div>
+
+          {/* 创建模式下显示类型字段 */}
+          {!editing && (
+            <div className="space-y-2">
+              <Label>
+                {t('form.type')}
+                <span className="text-destructive">*</span>
+              </Label>
+              <select
+                value={formData.type}
+                onChange={(e) => {
+                  setFormData({ ...formData, type: e.target.value as WalletAccountType })
+                  if (formErrors.type) {
+                    setFormErrors({ ...formErrors, type: '' })
+                  }
+                }}
+                className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              >
+                <option value={WalletAccountType.Alipay}>{t('types.ZFB') || 'Alipay'}</option>
+                <option value={WalletAccountType.WechatPay}>{t('types.WX_PAY') || 'WeChat Pay'}</option>
+                <option value={WalletAccountType.StripeConnect}>Stripe Connect</option>
+              </select>
+              {formErrors.type && (
+                <p className="text-sm text-destructive">{formErrors.type}</p>
+              )}
+            </div>
+          )}
         </div>
       </Modal>
     </>

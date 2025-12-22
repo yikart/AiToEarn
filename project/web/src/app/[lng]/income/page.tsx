@@ -233,12 +233,12 @@ export default function IncomePage() {
   // 将 antd Tag 的 color 转换为 Badge 的样式类
   const getBadgeClassName = (color?: string) => {
     const colorMap: Record<string, string> = {
-      orange: 'bg-orange-100 text-orange-800 border-orange-200',
-      green: 'bg-green-100 text-green-800 border-green-200',
-      blue: 'bg-blue-100 text-blue-800 border-blue-200',
-      purple: 'bg-purple-100 text-purple-800 border-purple-200',
-      red: 'bg-red-100 text-red-800 border-red-200',
-      default: 'bg-gray-100 text-gray-800 border-gray-200',
+      orange: 'bg-orange-100 text-orange-800',
+      green: 'bg-green-100 text-green-800',
+      blue: 'bg-blue-100 text-blue-800',
+      purple: 'bg-purple-100 text-purple-800',
+      red: 'bg-red-100 text-red-800',
+      default: 'bg-gray-100 text-gray-800',
     }
     return colorMap[color || 'default'] || colorMap.default
   }
@@ -251,7 +251,7 @@ export default function IncomePage() {
       [WithdrawRecordStatus.FAIL]: { color: 'red', text: t('withdrawStatus.fail'), icon: <CloseCircleOutlined /> },
       [WithdrawRecordStatus.TASK_WITHDRAW]: { color: 'blue', text: t('withdrawStatus.task_withdraw' as any), icon: <DollarOutlined /> },
     }
-    const config = statusMap[status] || { color: 'default', text: '未知状态', icon: null }
+    const config = statusMap[status] || { color: 'default', text: t('withdrawStatus.unknown') || 'Unknown', icon: null }
     return {
       className: getBadgeClassName(config.color),
       text: config.text,
@@ -299,29 +299,28 @@ export default function IncomePage() {
             </div>
           </div>
           <div className={styles.headerRight}>
-            <div className={styles.balanceCard}>
-              <div className={styles.balanceIcon}>
-                <WalletOutlined />
-              </div>
-              <div className={styles.balanceInfo}>
-                <div className={styles.balanceLabel}>{t('currentBalance')}</div>
-                <div className={styles.balanceAmount}>
-                  CNY
-                  {' '}
-                  {((userInfo?.income as number) / 100 || 0).toFixed(2)}
+            <div className={styles.walletBlock}>
+              <div className={styles.walletBlockTop}>
+
+                <div className={styles.balanceInfo}>
+                  <div className={styles.balanceAmount}>
+                    CNY
+                    {' '}
+                    {((userInfo?.income as number) / 100 || 0).toFixed(2)}
+                  </div>
                 </div>
               </div>
+              <Button
+                variant="outline"
+                size="sm"
+                className={styles.walletButton}
+                onClick={() => setWalletModalOpen(true)}
+              >
+                <WalletOutlined />
+                &nbsp;
+                {t('myWallet')}
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setWalletModalOpen(true)}
-              className="text-white hover:bg-white/20"
-            >
-              <WalletOutlined />
-              &nbsp;
-              {t('myWallet')}
-            </Button>
           </div>
         </div>
       </div>
@@ -342,10 +341,9 @@ export default function IncomePage() {
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="income">
-            <Card>
-              {/* 筛选器 */}
-              <div className="flex gap-4 mb-4">
+          <TabsContent value="income" className="mt-4">
+            {/* 筛选器 */}
+            <div className="flex gap-4 mb-6">
                 <div className="flex-1">
                   <Label className="mb-2 block">{t('type')}</Label>
                   <select
@@ -358,7 +356,7 @@ export default function IncomePage() {
                     }}
                     className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   >
-                    <option value="all">全部</option>
+                    <option value="all">{t('all') || 'All'}</option>
                     <option value="task">{t('incomeTypes.task')}</option>
                     <option value="task_back">{t('incomeTypes.task_back')}</option>
                     <option value="reward_back">{t('incomeTypes.reward_back')}</option>
@@ -366,7 +364,7 @@ export default function IncomePage() {
                   </select>
                 </div>
                 <div className="flex-1">
-                  <Label className="mb-2 block">{t('status')}</Label>
+                  <Label className="mb-2 block">{t('statusLabel')}</Label>
                   <select
                     value={incomeFilters.status || 'all'}
                     onChange={(e) => {
@@ -377,24 +375,24 @@ export default function IncomePage() {
                     }}
                     className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   >
-                    <option value="all">全部</option>
+                    <option value="all">{t('all') || 'All'}</option>
                     <option value="pending">{t('status.pending')}</option>
                     <option value="withdrawn">{t('status.withdrawn')}</option>
                   </select>
                 </div>
-              </div>
+            </div>
 
-              <Spin spinning={incomeLoading}>
-                {incomeRecords.length > 0 ? (
-                  <>
-                    <div className="rounded-md border">
-                      <Table>
+            <Spin spinning={incomeLoading}>
+              {incomeRecords.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table>
                         <TableHeader>
                           <TableRow>
                             <TableHead className="w-[200px]">{t('incomeId')}</TableHead>
                             <TableHead>{t('amount')}</TableHead>
                             <TableHead>{t('type')}</TableHead>
-                            <TableHead>{t('status')}</TableHead>
+                            <TableHead>{t('statusLabel')}</TableHead>
                             <TableHead>{t('description')}</TableHead>
                             <TableHead>{t('createTime')}</TableHead>
                             <TableHead>{t('actions')}</TableHead>
@@ -475,27 +473,25 @@ export default function IncomePage() {
                         showTotal={(total, range) => t('messages.totalRecords', { total })}
                         pageSizeOptions={['10', '20', '50']}
                       />
-                    </div>
-                  </>
-                ) : (
-                  <Empty description={incomeLoading ? t('messages.loading') : t('messages.noIncomeRecords')} />
-                )}
-              </Spin>
-            </Card>
+                  </div>
+                </>
+              ) : (
+                <Empty description={incomeLoading ? t('messages.loading') : t('messages.noIncomeRecords')} />
+              )}
+            </Spin>
           </TabsContent>
 
-          <TabsContent value="withdraw">
-            <Card>
-              <Spin spinning={withdrawLoading}>
-                {withdrawRecords.length > 0 ? (
-                  <>
-                    <div className="rounded-md border">
-                      <Table>
+          <TabsContent value="withdraw" className="mt-4">
+            <Spin spinning={withdrawLoading}>
+              {withdrawRecords.length > 0 ? (
+                <>
+                  <div className="overflow-x-auto">
+                    <Table>
                         <TableHeader>
                           <TableRow>
                             <TableHead className="w-[200px]">{t('withdrawId')}</TableHead>
                             <TableHead>{t('amount')}</TableHead>
-                            <TableHead>{t('status')}</TableHead>
+                            <TableHead>{t('statusLabel')}</TableHead>
                             <TableHead>{t('description')}</TableHead>
                             <TableHead>{t('createTime')}</TableHead>
                             <TableHead>{t('updateTime')}</TableHead>
@@ -555,13 +551,12 @@ export default function IncomePage() {
                         showTotal={(total, range) => t('messages.totalRecords', { total })}
                         pageSizeOptions={['10', '20', '50']}
                       />
-                    </div>
-                  </>
-                ) : (
-                  <Empty description={withdrawLoading ? t('messages.loading') : t('messages.noWithdrawRecords')} />
-                )}
-              </Spin>
-            </Card>
+                  </div>
+                </>
+              ) : (
+                <Empty description={withdrawLoading ? t('messages.loading') : t('messages.noWithdrawRecords')} />
+              )}
+            </Spin>
           </TabsContent>
         </Tabs>
       </div>
@@ -587,14 +582,14 @@ export default function IncomePage() {
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>
                   {t('incomeId')}
-                  ：
+                  :
                 </span>
                 <span className={styles.withdrawValue}>{selectedIncomeRecord._id || selectedIncomeRecord.id}</span>
               </div>
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>
                   {t('withdrawAmount')}
-                  ：
+                  :
                 </span>
                 <span className={styles.withdrawAmount}>
                   {selectedIncomeRecord.currency || 'CNY'}
@@ -605,7 +600,7 @@ export default function IncomePage() {
               <div className={styles.withdrawItem}>
                 <span className={styles.withdrawLabel}>
                   {t('incomeType')}
-                  ：
+                  :
                 </span>
                 <Badge className={getIncomeTypeText(selectedIncomeRecord.type)}>
                   {t(`incomeTypes.${selectedIncomeRecord.type}` as any) || selectedIncomeRecord.type}
@@ -615,7 +610,7 @@ export default function IncomePage() {
                 <div className={styles.withdrawItem}>
                   <span className={styles.withdrawLabel}>
                     {t('description')}
-                    ：
+                    :
                   </span>
                   <span className={styles.withdrawValue}>{selectedIncomeRecord.desc}</span>
                 </div>
@@ -672,7 +667,7 @@ export default function IncomePage() {
                   </Badge>
                 </div>
                 <div>
-                  <Label className="text-muted-foreground">{t('status')}</Label>
+                  <Label className="text-muted-foreground">{t('statusLabel')}</Label>
                   {incomeDetail.status === 'pending' || incomeDetail.status === 0 || incomeDetail.status === undefined
                     ? (
                         <Badge className={getBadgeClassName('orange')}>

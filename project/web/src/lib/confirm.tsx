@@ -63,21 +63,43 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   const [loading, setLoading] = React.useState(false)
 
-  const handleOk = async () => {
+  const handleOk = async (e?: React.MouseEvent) => {
+    // 阻止 AlertDialogAction 的默认关闭行为
+    e?.preventDefault()
+    e?.stopPropagation()
+    
     if (onOk) {
       try {
         setLoading(true)
         await onOk()
+        // onOk 完成后，wrappedOptions.onOk 会处理 destroy 和 resolve
+        // 手动关闭对话框（但此时 destroy 已经执行，所以这个调用可能无效，但不影响）
+        onOpenChange(false)
       } finally {
         setLoading(false)
       }
     }
-    onOpenChange(false)
+    else {
+      // 如果没有 onOk 回调，直接关闭
+      onOpenChange(false)
+    }
   }
 
-  const handleCancel = () => {
-    onCancel?.()
-    onOpenChange(false)
+  const handleCancel = (e?: React.MouseEvent) => {
+    // 阻止 AlertDialogCancel 的默认关闭行为
+    e?.preventDefault()
+    e?.stopPropagation()
+    
+    if (onCancel) {
+      onCancel()
+      // onCancel 完成后，wrappedOptions.onCancel 会处理 destroy 和 resolve
+      // 手动关闭对话框（但此时 destroy 已经执行，所以这个调用可能无效，但不影响）
+      onOpenChange(false)
+    }
+    else {
+      // 如果没有 onCancel 回调，直接关闭
+      onOpenChange(false)
+    }
   }
 
   // 如果 cancelText 为 undefined 或 null，则不显示取消按钮
@@ -145,13 +167,17 @@ export function confirm(options: ConfirmOptions): Promise<boolean> {
 
     const root = createRoot(container)
 
+    let isResolved = false
+
     const destroy = () => {
       root.unmount()
       container.remove()
     }
 
     const handleOpenChange = (open: boolean) => {
-      if (!open) {
+      if (!open && !isResolved) {
+        // 如果对话框关闭但还没有 resolve，说明是点击外部或按 ESC 关闭
+        isResolved = true
         destroy()
         resolve(false)
       }
@@ -160,12 +186,25 @@ export function confirm(options: ConfirmOptions): Promise<boolean> {
     const wrappedOptions: ConfirmOptions = {
       ...options,
       onOk: async () => {
-        await options.onOk?.()
+        // 先设置 isResolved，防止 onOpenChange 触发时再次 resolve
+        isResolved = true
+        try {
+          await options.onOk?.()
+        } catch (error) {
+          // 如果 onOk 出错，仍然 resolve true（因为用户已经确认了）
+          console.error('onOk error:', error)
+        }
         destroy()
         resolve(true)
       },
       onCancel: () => {
-        options.onCancel?.()
+        // 先设置 isResolved，防止 onOpenChange 触发时再次 resolve
+        isResolved = true
+        try {
+          options.onCancel?.()
+        } catch (error) {
+          console.error('onCancel error:', error)
+        }
         destroy()
         resolve(false)
       },
