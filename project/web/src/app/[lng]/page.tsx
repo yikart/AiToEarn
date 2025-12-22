@@ -80,6 +80,21 @@ export default function Home() {
     }
   }, [])
 
+  // 读取 agentTaskId 并传给 HomeChat
+  const [agentTaskId, setAgentTaskId] = useState<string>('')
+  useEffect(() => {
+    try {
+      const id = localStorage.getItem('agentTaskId')
+      if (id) {
+        setAgentTaskId(id)
+        localStorage.removeItem('agentTaskId')
+      }
+    }
+    catch (e) {
+      // ignore
+    }
+  }, [])
+
   // 清除外部提示词
   const handleClearExternalPrompt = useCallback(() => {
     setAppliedPrompt('')
@@ -89,9 +104,10 @@ export default function Home() {
     <div className="bg-background">
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[60vh] flex items-center justify-center px-4 pt-16 pb-8 md:pt-24 md:pb-12">
-        <HomeChat 
+        <HomeChat
           externalPrompt={appliedPrompt}
           onClearExternalPrompt={handleClearExternalPrompt}
+          agentTaskId={agentTaskId}
         />
       </section>
 

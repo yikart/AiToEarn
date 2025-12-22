@@ -29,6 +29,8 @@ export interface IHomeChatProps {
   externalPrompt?: string
   /** 清除外部提示词的回调 */
   onClearExternalPrompt?: () => void
+  /** 从任务页面跳转带来的任务ID，优先显示在输入框 */
+  agentTaskId?: string
 }
 
 /**
@@ -52,13 +54,17 @@ export function HomeChat({
   // 状态 - 默认显示提示文本
   const [inputValue, setInputValue] = useState(defaultPrompt)
 
-  // 当外部提示词变化时更新输入框
+  // 当外部提示词或 agentTaskId 变化时更新输入框
   useEffect(() => {
+    if (agentTaskId) {
+      setInputValue(agentTaskId)
+      return
+    }
     if (externalPrompt) {
       setInputValue(externalPrompt)
       onClearExternalPrompt?.()
     }
-  }, [externalPrompt, onClearExternalPrompt])
+  }, [externalPrompt, onClearExternalPrompt, agentTaskId])
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
 

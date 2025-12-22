@@ -294,9 +294,6 @@ export default function TaskPageCore() {
         // 切换到已接受任务标签
         setActiveTab('accepted')
       }
-      else {
-        toast.error(t('messages.acceptTaskFailed'))
-      }
     }
     catch (error) {
       toast.error(t('messages.acceptTaskFailed'))
@@ -723,8 +720,8 @@ export default function TaskPageCore() {
     if (!task)
       return
 
-    // 允许无选中素材（直接发布模式），优先使用已选推荐草稿，否则使用任务素材列表中的第一个作为回退
-    const material = selectedMaterial || (materialList && materialList.length > 0 ? materialList[0] : undefined)
+    // 使用选中的推荐草稿（如果有）; 不要使用回退素材，直接发布模式下不自动填充
+    // const material will be read again after accept to ensure current selectedMaterial is used
 
     // Close detail modal
     setTaskDetailModalVisible(false)
@@ -805,7 +802,10 @@ export default function TaskPageCore() {
           }
 
           if (publishAccount) {
-            usePublishDialog.getState().setOnePubParams(pubParmas, publishAccount.id)
+            // 如果选择了草稿则预填参数，否则不预填
+            if (material) {
+              usePublishDialog.getState().setOnePubParams(pubParmas, publishAccount.id)
+            }
             setPublishDefaultAccountId(publishAccount.id)
           }
         }
@@ -815,6 +815,7 @@ export default function TaskPageCore() {
 
         // 打开发布弹窗，用户手动确认发布
         setTaskDetailModalVisible(false)
+        // 把 taskId 传入 PublishDialog，供其在发布完成时调用回调
         setPublishDialogOpen(true)
         // 切换到已接受任务标签
         setActiveTab('accepted')
@@ -822,12 +823,8 @@ export default function TaskPageCore() {
         fetchPendingTasks()
         fetchAcceptedTasks()
       }
-      else {
-        throw new Error('Failed to accept task')
-      }
     }
     catch (error) {
-      console.error('Task processing failed:', error)
       toast.error('Task processing failed')
       setTaskProgressVisible(false)
     }
@@ -1052,17 +1049,6 @@ export default function TaskPageCore() {
   // 发布弹窗发布成功回调：校验选中账户是否符合任务要求，符合则提交任务
   const handlePublishSuccess = async () => {
     try {
-      // 显示任务处理中弹窗（发布->提交）
-      setTaskProgressVisible(true)
-      setTaskProgress({
-        currentStep: 1,
-        steps: [
-          { title: t('publishingTask' as any), status: 'processing' },
-          { title: t('submittingTask' as any), status: 'wait' },
-          { title: t('taskCompleted' as any), status: 'wait' },
-        ],
-      })
-
       // 取得发布时选中的账户
       const pubListChoosed = usePublishDialog.getState().pubListChoosed || []
       if (pubListChoosed.length === 0) {
@@ -1092,34 +1078,14 @@ export default function TaskPageCore() {
         return
       }
 
-      // 调用提交任务接口
+      // 直接调用提交任务接口（不再弹出“任务处理中”弹窗）
       if (pendingUserTaskIdForPublish && pendingTaskMaterialIdForPublish) {
         const submitResp: any = await submitTask(pendingUserTaskIdForPublish, pendingTaskMaterialIdForPublish)
         if (submitResp && submitResp.code === 0) {
-          // 更新进度为完成
-          setTaskProgress(prev => ({
-            ...prev,
-            currentStep: 3,
-            steps: [
-              { title: t('publishingTask' as any), status: 'finish' },
-              { title: t('submittingTask' as any), status: 'finish' },
-              { title: t('taskCompleted' as any), status: 'finish' },
-            ],
-          }))
           toast.success(t('messages.submitTaskSuccess' as any) || 'Submit task success')
-          // 刷新已接受任务列表
           fetchAcceptedTasks()
         }
         else {
-          setTaskProgress(prev => ({
-            ...prev,
-            currentStep: 2,
-            steps: [
-              { title: t('publishingTask' as any), status: 'finish' },
-              { title: t('submittingTask' as any), status: 'error' },
-              { title: t('taskCompleted' as any), status: 'wait' },
-            ],
-          }))
           toast.error(t('messages.submitTaskFailed' as any) || 'Submit task failed')
         }
       }
@@ -1129,13 +1095,12 @@ export default function TaskPageCore() {
       toast.error(t('messages.submitTaskFailed' as any) || 'Submit task failed')
     }
     finally {
-      // 清理临时状态
+      // 清理临时状态并关闭发布弹窗
       setPublishDialogOpen(false)
       setPublishDefaultAccountId(undefined)
       setPendingUserTaskIdForPublish(undefined)
       setPendingTaskMaterialIdForPublish(undefined)
       setPendingTaskForPublish(null)
-      // 清 PublishDialog 存储的数据
       try {
         usePublishDialog.getState().clear()
         usePublishDialog.getState().setPubListChoosed([])
@@ -2339,26 +2304,7 @@ export default function TaskPageCore() {
         )}
       </Modal>
 
-      {/* 任务进度弹窗 */}
-      <Modal
-        title={t('taskProcessing')}
-        open={taskProgressVisible}
-        closable={false}
-        maskClosable={false}
-        footer={null}
-        width={500}
-        zIndex={3000}
-      >
-        <Steps
-          direction="vertical"
-          current={taskProgress.currentStep}
-          items={taskProgress.steps.map((step) => ({
-            title: step.title,
-            status: (step.status === 'processing' ? 'process' : step.status) as 'wait' | 'process' | 'finish' | 'error',
-            description: undefined,
-          }))}
-        />
-      </Modal>
+      {/* 任务进度弹窗（已移除，提交后只显示 Toast 提示） */}
 
       {/* 账号选择弹窗 */}
       <Modal
@@ -2467,6 +2413,11 @@ export default function TaskPageCore() {
           defaultAccountId={publishDefaultAccountId}
           onPubSuccess={handlePublishSuccess}
           suppressAutoPublish={true}
+          taskIdForPublish={pendingUserTaskIdForPublish}
+          onPublishConfirmed={(taskId?: string) => {
+            // 当 PublishDialog 内部确认发布完成时触发，继续提交任务
+            handlePublishSuccess()
+          }}
         />
       )}
     </div>
