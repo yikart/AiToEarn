@@ -29,7 +29,6 @@ import { uploadToOss } from '@/api/oss'
 import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { getOssUrl } from '@/utils/oss'
-import { OSS_URL } from '@/constant'
 import styles from '../publishDialog.module.scss'
 
 
@@ -756,7 +755,7 @@ const PublishDialogAi = memo(
             try {
               // Upload to OSS
               const ossKey = await uploadToOss(file)
-              const ossUrl = `${OSS_URL}${ossKey}`
+              const ossUrl = `${getOssUrl(ossKey)}`
               
               // Update with OSS URL
               setUploadedImage({ file, preview, ossUrl, uploading: false })
@@ -963,7 +962,7 @@ const PublishDialogAi = memo(
           // Convert relative path to full S3 URL for publishing
           // API returns: ai/video/sora-2/...
           // Publishing expects: https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/video/...
-          const ossUrl = `${OSS_URL}${url}`
+          const ossUrl = `${getOssUrl(url)}`
           const filename = `ai-generated-video.mp4`
           
           // Extract video info using proxy URL for preview (only for VideoGrabFrame)

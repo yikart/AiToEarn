@@ -5,17 +5,24 @@
 /** 提示词项接口定义 */
 export interface PromptItem {
   title: string
+  title_en?: string
   preview: string
   prompt: string
+  prompt_en?: string
   author: string
   link?: string
   mode: 'edit' | 'generate'
   category: string
+  category_en?: string
   sub_category?: string
+  sub_category_en?: string
 }
 
 /** 筛选模式类型 */
 export type FilterMode = 'all' | 'generate' | 'edit'
+
+/** 分类筛选类型 */
+export type CategoryFilter = 'all' | 'Recommend' | 'Image'
 
 /** 组件属性接口定义 */
 export interface IPromptGalleryProps {

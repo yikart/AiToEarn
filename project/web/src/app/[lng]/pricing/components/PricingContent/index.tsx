@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/lib/toast'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
+import { openLoginModal } from '@/store/loginModal'
 
 /** 企业版联系邮箱 */
 const ENTERPRISE_EMAIL = 'agent@aiearn.ai'
@@ -41,11 +42,11 @@ const PLANS: Array<{
     id: 'creator',
     highlight: true, // 创作者方案设为推荐
   },
-  {
-    id: 'enterprise',
-    highlight: false,
-    isCustom: true, // 定制价格
-  },
+  // {
+  //   id: 'enterprise',
+  //   highlight: false,
+  //   isCustom: true, // 定制价格
+  // },
 ]
 
 export const PricingContent = memo(({ lng }: PricingContentProps) => {
@@ -125,7 +126,7 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
     // 检查用户是否已登录
     if (!userStore.userInfo?.id) {
       toast.error(t('pleaseLoginFirst'))
-      router.push('/auth/login')
+      openLoginModal()
       return
     }
 

@@ -19,7 +19,7 @@ import { getOssUrl } from '@/utils/oss'
 import type { UserSectionProps } from '../types'
 
 /** 用户头像组件 */
-function UserAvatar({ collapsed }: { collapsed: boolean }) {
+function UserAvatar({ collapsed, onOpenSettings }: { collapsed: boolean; onOpenSettings: () => void }) {
   const userInfo = useUserStore(state => state.userInfo)
   const { t } = useTransClient('common')
 
@@ -31,9 +31,10 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <div
+          <button
+            onClick={onOpenSettings}
             className={cn(
-              'flex items-center rounded-lg',
+              'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent transition-colors hover:bg-accent',
               collapsed ? 'justify-center p-1' : 'gap-2 px-2 py-1.5',
             )}
           >
@@ -51,7 +52,7 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
                 {userInfo.name || t('unknownUser')}
               </span>
             )}
-          </div>
+          </button>
         </TooltipTrigger>
         {collapsed && (
           <TooltipContent side="right">
@@ -63,12 +64,12 @@ function UserAvatar({ collapsed }: { collapsed: boolean }) {
   )
 }
 
-export function UserSection({ collapsed, onLogin }: UserSectionProps) {
+export function UserSection({ collapsed, onLogin, onOpenSettings }: UserSectionProps) {
   const token = useUserStore(state => state.token)
   const { t } = useTransClient('common')
 
   if (token) {
-    return <UserAvatar collapsed={collapsed} />
+    return <UserAvatar collapsed={collapsed} onOpenSettings={() => onOpenSettings()} />
   }
 
   // 未登录状态
@@ -78,7 +79,7 @@ export function UserSection({ collapsed, onLogin }: UserSectionProps) {
         <Tooltip>
           <TooltipTrigger asChild>
             <Button onClick={onLogin} size="icon" className="h-9 w-9">
-              <span className="text-sm font-semibold">登</span>
+              <span className="text-sm font-semibold">In</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right">

@@ -8,6 +8,10 @@
   "expandButton": "查看更多",
   "expandCount": "个",
   "appliedToast": "✓ 已应用提示词",
+  "loadedAll": "已加载全部",
+  "promptsCount": "个提示词",
+  "noResults": "未找到匹配的提示词",
+  "tryOtherKeywords": "尝试使用其他关键词搜索",
   "modal": {
     "promptLabel": "提示词：",
     "applyButton": "一键应用"
@@ -15,6 +19,11 @@
   "badges": {
     "edit": "编辑",
     "generate": "文生图"
+  },
+  "categories": {
+    "all": "全部",
+    "recommend": "推荐",
+    "image": "图片生成"
   },
   "filters": {
     "all": "全部",

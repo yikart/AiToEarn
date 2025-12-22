@@ -9,10 +9,16 @@ import type { TaskDetail, TaskMessage } from '@/api/agent'
 import { TaskStatus } from '@/api/agent'
 
 // 认为这些状态表示任务已结束（不再需要轮询）
-const COMPLETED_STATUSES: TaskStatus[] = [
-  TaskStatus.Completed,
-  TaskStatus.Failed,
-  TaskStatus.Cancelled,
+// 同时支持大写和小写格式（兼容后端返回的格式）
+const COMPLETED_STATUS_VALUES = [
+  'completed',
+  'COMPLETED',
+  'failed',
+  'FAILED',
+  'cancelled',
+  'CANCELLED',
+  'requires_action', // 需要用户操作也算完成（停止轮询）
+  'error',
 ]
 
 /**
@@ -20,7 +26,9 @@ const COMPLETED_STATUSES: TaskStatus[] = [
  */
 export function isTaskCompletedByStatus(task: Pick<TaskDetail, 'status'> | null | undefined): boolean {
   if (!task) return false
-  return COMPLETED_STATUSES.includes(task.status)
+  const statusValue = task.status as string
+  return COMPLETED_STATUS_VALUES.includes(statusValue?.toLowerCase()) || 
+         COMPLETED_STATUS_VALUES.includes(statusValue)
 }
 
 /**

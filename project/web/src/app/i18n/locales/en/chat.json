@@ -1,6 +1,6 @@
 {
   "input": {
-    "placeholder": "Describe what you want to create...",
+    "placeholder": "Help me create a cat dancing video and post it directly on YouTube",
     "send": "Send",
     "stop": "Stop",
     "uploading": "Uploading..."
@@ -23,18 +23,26 @@
     "delete": "Delete",
     "deleteConfirm": "Are you sure you want to delete this chat?",
     "deleteSuccess": "Deleted successfully",
-    "deleteFailed": "Delete failed"
+    "deleteFailed": "Delete failed",
+    "status": {
+      "running": "Running",
+      "completed": "Completed",
+      "requiresAction": "Action Required",
+      "failed": "Failed"
+    }
   },
   "home": {
     "title": "How can I help you?",
-    "subtitle": "Describe what you want to create, AI will help you generate",
+    "subtitle": "What content do you want to create today and on which platform?",
     "recentTasks": "Recent Tasks",
     "viewAll": "View All",
     "noTasks": "No task records",
     "startChat": "Start Creating",
     "aiCreation": "AI Creation",
     "supportUpload": "Support image/video upload",
-    "enterToSend": "Press Enter to send"
+    "enterToSend": "Press Enter to send",
+    "connectTools": "Publish to",
+    "loginRequired": "Please login first"
   },
   "history": {
     "title": "Task History",
@@ -61,6 +69,26 @@
     "toolCallCompleted": "Tool Calls Completed",
     "toolResult": "Result Returned",
     "processing": "Processing..."
+  },
+  "action": {
+    "connectChannel": "Connect Channel",
+    "connectChannelDesc": "You haven't connected your {{platform}} account yet. Please connect your channel account to publish content.",
+    "connectNow": "Connect Now",
+    "addChannel": "Add Channel",
+    "addChannelDesc": "You haven't connected a {{platform}} account yet. Please add a channel to publish content.",
+    "addChannelNow": "Add Channel",
+    "updateAuth": "Update Authorization",
+    "updateAuthDesc": "Your {{platform}} account authorization has expired. Please re-authorize.",
+    "reauthorize": "Re-authorize",
+    "loginChannel": "Login Channel",
+    "loginChannelDesc": "Please login to your {{platform}} account first.",
+    "goLogin": "Go Login",
+    "readyToPublish": "Ready to Publish",
+    "readyToPublishDesc": "Content is ready and can be published to {{platform}}.",
+    "goPublish": "Go Publish",
+    "action": "Action",
+    "actionDesc": "Please complete the following action",
+    "continue": "Continue"
   }
 }
 

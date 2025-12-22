@@ -3,8 +3,8 @@
   "tabs": {
     "profile": "个人资料",
     "agent": "Agent",
-    "subscription": "订阅",
-    "membership": "会员",
+    "subscription": "额度",
+    "membership": "订阅",
     "general": "通用"
   },
   "profile": {
@@ -31,7 +31,8 @@
     "zoomIn": "放大",
     "zoomOut": "缩小",
     "imageLoading": "图片加载中...",
-    "processing": "处理中..."
+    "processing": "处理中...",
+    "githubStars": "GitHub 星标"
   },
   "subscription": {
     "currentPlan": "当前套餐",
@@ -41,6 +42,7 @@
     "usageRecords": "使用记录",
     "detail": "详情",
     "date": "日期",
+    "amount": "金额",
     "amountChange": "金额变更",
     "noRecords": "暂无使用记录",
     "loading": "加载中...",
@@ -54,7 +56,8 @@
       "publish": "发布内容",
       "expired": "已过期",
       "manual": "手动调整"
-    }
+    },
+    "viewAgentPricing": "查看 Agent 各模型的具体价格"
   },
   "general": {
     "language": "网站语言",

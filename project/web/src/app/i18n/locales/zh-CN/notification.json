@@ -1,5 +1,7 @@
 {
   "title": "消息通知",
+  "taskCenter": "任务中心",
+  "taskCenterDesc": "查看和管理您的任务",
   "detailTitle": "通知详情",
   "markAllAsRead": "全部标记为已读",
   "markAsRead": "标记为已读",

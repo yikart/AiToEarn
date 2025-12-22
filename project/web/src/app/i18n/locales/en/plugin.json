@@ -15,7 +15,7 @@
     "error": "Error"
   },
   "error": {
-    "pluginNotInstalled": "Please install AIToEarn browser plugin first",
+    "pluginNotInstalled": "Please install Aitoearn browser plugin first",
     "publishingInProgress": "Publishing in progress, please try again later",
     "loginFailed": "Login failed",
     "publishFailed": "Publish failed"
@@ -67,7 +67,7 @@
     "pluginActive": "Plugin Active",
     "pluginInactive": "Plugin Inactive",
     "downloadPlugin": "Download Plugin",
-    "downloadDescription": "AIToEarn browser plugin helps you quickly publish content to various platforms. Click the button below to download and install.",
+    "downloadDescription": "The AiToEarn browser plugin is designed for smart automation of Douyin and Xiaohongshu. Click the button below to download and install.",
     "downloadButton": "Download Now",
     "chromeWebStore": "Chrome Web Store",
     "githubRelease": "GitHub Release",
@@ -87,6 +87,7 @@
     "xhsHome": "Home",
     "xhsCreator": "Creator",
     "xhsLoginHomeTip": "Login to Xiaohongshu Homepage",
-    "xhsLoginCreatorTip": "Login to Xiaohongshu Creator Center"
+    "xhsLoginCreatorTip": "Login to Xiaohongshu Creator Center",
+    "viewGuide": "View Installation Guide"
   }
 }

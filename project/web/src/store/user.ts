@@ -133,7 +133,7 @@ export const useUserStore = createPersistStore(
       // 登出
       logout() {
         methods.clearLoginStatus()
-        window.location.href = '/auth/login'
+        window.location.href = '/'
       },
     }
 

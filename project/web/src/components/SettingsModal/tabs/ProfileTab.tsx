@@ -147,14 +147,14 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
     clearLoginStatus()
     toast.success(tCommon('logout'))
     onClose()
-    router.push('/auth/login')
+    router.push('/')
   }
 
   const totalIncome = ((userInfo as any)?.totalIncome || 0) / 100
   const currentBalance = (userInfo?.income || 0) / 100
 
   return (
-    <div className="space-y-6">
+    <div className="w-full space-y-6">
       {/* 用户信息卡片 */}
       <div className="flex items-center gap-4">
         <div className="group relative shrink-0 cursor-pointer" onClick={handleAvatarClick}>
@@ -233,8 +233,33 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="rounded-xl border border-border bg-muted p-4">
           <p className="mb-1 text-sm text-muted-foreground">{t('profile.totalIncome')}</p>
-          <p className="text-2xl font-bold text-foreground">¥{totalIncome.toFixed(2)}</p>
+          <p className="text-2xl font-bold text-foreground">{totalIncome.toFixed(2)} USD</p>
         </div>
+      </div>
+
+      {/* Docs & GitHub Stars */}
+      <div className="flex flex-wrap items-center gap-3">
+        <Button asChild variant="outline" size="sm">
+          <a
+            href="https://docs.aitoearn.ai/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {tCommon('docs')}
+          </a>
+        </Button>
+        <a
+          href="https://github.com/yikart/AttAiToEarn"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center"
+        >
+          <img
+            src="https://camo.githubusercontent.com/9feb948af77cdb3d349cafc64266332d8d24243f6bd72de0980b75c9de719cd8/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f79696b6172742f4174744169546f4561726e3f636f6c6f723d666136343730"
+            alt={t('profile.githubStars')}
+            className="h-5"
+          />
+        </a>
       </div>
 
       {/* 退出登录按钮 */}

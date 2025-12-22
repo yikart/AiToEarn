@@ -15,7 +15,7 @@
     "error": "错误"
   },
   "error": {
-    "pluginNotInstalled": "请先安装 AIToEarn 浏览器插件",
+    "pluginNotInstalled": "请先安装 Aitoearn 浏览器插件",
     "publishingInProgress": "当前正在发布中，请稍后再试",
     "loginFailed": "登录失败",
     "publishFailed": "发布失败"
@@ -67,7 +67,7 @@
     "pluginActive": "插件已激活",
     "pluginInactive": "插件未激活",
     "downloadPlugin": "下载插件",
-    "downloadDescription": "AIToEarn 浏览器插件可以帮助您快速发布内容到各大平台。请点击下方按钮下载安装。",
+    "downloadDescription": "AiToEarn 浏览器插件专门用于抖音和小红书的智能操作。请点击下方按钮下载安装。",
     "downloadButton": "立即下载",
     "chromeWebStore": "Chrome 应用商店",
     "githubRelease": "GitHub 下载",
@@ -87,6 +87,7 @@
     "xhsHome": "主页",
     "xhsCreator": "创作者",
     "xhsLoginHomeTip": "登录小红书主页",
-    "xhsLoginCreatorTip": "登录小红书创作者后台"
+    "xhsLoginCreatorTip": "登录小红书创作者后台",
+    "viewGuide": "查看安装教程"
   }
 }

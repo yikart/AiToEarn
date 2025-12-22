@@ -154,7 +154,7 @@ export function useInteractive() {
           ...prev,
           loading: false,
           loadingMore: false,
-          error: result.message || '加载失败',
+          error: result.message || 'Loading failed',
         }))
       }
     } catch (error) {
@@ -162,7 +162,7 @@ export function useInteractive() {
         ...prev,
         loading: false,
         loadingMore: false,
-        error: error instanceof Error ? error.message : '加载失败',
+        error: error instanceof Error ? error.message : 'Loading failed',
       }))
     }
   }, [isPluginReady])

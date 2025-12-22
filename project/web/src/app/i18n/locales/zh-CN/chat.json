@@ -23,7 +23,13 @@
     "delete": "删除",
     "deleteConfirm": "确定要删除这个对话吗？",
     "deleteSuccess": "删除成功",
-    "deleteFailed": "删除失败"
+    "deleteFailed": "删除失败",
+    "status": {
+      "running": "运行中",
+      "completed": "已完成",
+      "requiresAction": "需要操作",
+      "failed": "失败"
+    }
   },
   "home": {
     "title": "有什么可以帮你的？",
@@ -34,7 +40,9 @@
     "startChat": "开始创作",
     "aiCreation": "AI 智能创作",
     "supportUpload": "支持图片/视频上传",
-    "enterToSend": "按 Enter 发送"
+    "enterToSend": "按 Enter 发送",
+    "connectTools": "发布到",
+    "loginRequired": "请先登录"
   },
   "history": {
     "title": "任务记录",
@@ -61,6 +69,26 @@
     "toolCallCompleted": "工具调用完成",
     "toolResult": "返回结果",
     "processing": "处理中..."
+  },
+  "action": {
+    "connectChannel": "连接频道",
+    "connectChannelDesc": "您还未连接 {{platform}} 账号，请先连接频道账号才能发布内容。",
+    "connectNow": "立即连接",
+    "addChannel": "添加频道",
+    "addChannelDesc": "您还未连接 {{platform}} 账号，请先添加频道才能发布内容。",
+    "addChannelNow": "添加频道",
+    "updateAuth": "更新授权",
+    "updateAuthDesc": "您的 {{platform}} 账号授权已过期，请重新授权。",
+    "reauthorize": "重新授权",
+    "loginChannel": "登录频道",
+    "loginChannelDesc": "请先登录 {{platform}} 账号。",
+    "goLogin": "去登录",
+    "readyToPublish": "准备发布",
+    "readyToPublishDesc": "内容已准备好，可以发布到 {{platform}}。",
+    "goPublish": "去发布",
+    "action": "操作",
+    "actionDesc": "请完成以下操作",
+    "continue": "继续"
   }
 }
 

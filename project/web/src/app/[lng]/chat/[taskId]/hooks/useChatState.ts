@@ -102,6 +102,12 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
    * 加载任务详情
    */
   useEffect(() => {
+    // 如果是 "new" 任务，不加载历史数据，等待创建
+    if (taskId === 'new') {
+      setIsLoading(false)
+      return
+    }
+
     // 如果已经加载过，不再重复加载
     if (hasLoadedRef.current) {
       setIsLoading(false)

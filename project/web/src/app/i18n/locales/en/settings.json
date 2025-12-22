@@ -3,13 +3,13 @@
   "tabs": {
     "profile": "Profile",
     "agent": "Agent",
-    "subscription": "Subscription",
-    "membership": "Membership",
+    "subscription": "Credits",
+    "membership": "Subscription",
     "general": "General"
   },
   "profile": {
-    "totalIncome": "Total Income",
-    "currentBalance": "Current Balance",
+    "totalIncome": "Balance",
+    "currentBalance": "Current Credits",
     "logout": "Logout",
     "edit": "Edit",
     "save": "Save",
@@ -31,16 +31,18 @@
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out",
     "imageLoading": "Loading image...",
-    "processing": "Processing..."
+    "processing": "Processing...",
+    "githubStars": "GitHub Stars"
   },
   "subscription": {
     "currentPlan": "Current Plan",
     "upgrade": "Upgrade",
     "manage": "Manage Subscription",
-    "balance": "Balance",
+    "balance": "Credits",
     "usageRecords": "Usage Records",
     "detail": "Detail",
     "date": "Date",
+    "amount": "Amount",
     "amountChange": "Amount Change",
     "noRecords": "No usage records yet",
     "loading": "Loading...",
@@ -54,7 +56,8 @@
       "publish": "Publish",
       "expired": "Expired",
       "manual": "Manual Adjustment"
-    }
+    },
+    "viewAgentPricing": "View the specific prices of each model of the agent"
   },
   "general": {
     "language": "Website Language",

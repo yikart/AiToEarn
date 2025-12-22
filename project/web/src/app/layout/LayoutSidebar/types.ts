@@ -23,6 +23,8 @@ export interface BottomSectionProps extends SidebarCommonProps, BottomSectionCal
 export interface UserSectionProps extends SidebarCommonProps {
   /** 登录回调 */
   onLogin: () => void
+  /** 打开设置弹框 */
+  onOpenSettings: (defaultTab?: SettingsTab) => void
 }
 
 /** Logo 区域 Props */
@@ -54,5 +56,7 @@ export interface IconBarProps extends SidebarCommonProps {
   unreadCount: number
   /** 打开通知面板 */
   onOpenNotification: () => void
+  /** 打开设置弹框 */
+  onOpenSettings: (defaultTab?: SettingsTab) => void
 }
 

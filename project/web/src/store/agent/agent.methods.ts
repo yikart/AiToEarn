@@ -20,6 +20,8 @@ import type {
   ICreateTaskParams,
   ITaskData,
   IActionContext,
+  IActionCard,
+  IPendingTask,
 } from './agent.types'
 
 // ============ 方法工厂上下文 ============
@@ -60,6 +62,35 @@ export function createStoreMethods(ctx: IMethodsContext) {
       set({ currentCost: resultMsg.total_cost_usd })
     }
 
+    // 从 result 中提取需要显示为卡片的 actions
+    const actionCards: IActionCard[] = []
+    // 需要显示卡片的 action 类型（这些不会自动执行，而是显示卡片让用户点击）
+    const cardActionTypes = ['createChannel', 'updateChannel', 'loginChannel']
+    // 需要自动执行的 action（如发布、保存草稿等）
+    const autoExecuteActions: ITaskData[] = []
+
+    if (resultMsg.result) {
+      const resultArray: ITaskData[] = Array.isArray(resultMsg.result) ? resultMsg.result : [resultMsg.result]
+      
+      resultArray.forEach((taskData) => {
+        if (taskData.action && cardActionTypes.includes(taskData.action)) {
+          // 转换为 ActionCard 格式
+          actionCards.push({
+            type: taskData.action,
+            platform: taskData.platform,
+            accountId: taskData.accountId,
+            title: taskData.title,
+            description: taskData.description,
+            medias: taskData.medias,
+            tags: taskData.tags,
+          })
+        } else {
+          // 其他 action 自动执行
+          autoExecuteActions.push(taskData)
+        }
+      })
+    }
+
     // 显示结果消息
     if (resultMsg.message) {
       messageUtils.addMarkdownMessage(resultMsg.message)
@@ -72,17 +103,27 @@ export function createStoreMethods(ctx: IMethodsContext) {
       )
       
       if (hasAssistantMessage && currentAssistantId) {
-        // 如果 assistant 消息存在，更新其内容
-        messageUtils.updateMessageContent(resultMsg.message)
+        // 如果 assistant 消息存在，更新其内容和 actions
+        if (actionCards.length > 0) {
+          messageUtils.updateMessageWithActions(resultMsg.message, actionCards)
+        } else {
+          messageUtils.updateMessageContent(resultMsg.message)
+        }
       } else {
         // 如果没有 assistant 消息，创建一个新的
         const assistantMessage = messageUtils.createAssistantMessage()
         assistantMessage.content = resultMsg.message
         assistantMessage.status = 'done'
+        if (actionCards.length > 0) {
+          assistantMessage.actions = actionCards
+        }
         messageUtils.addMessage(assistantMessage)
         // 更新 refs 以便后续更新
         refs.currentAssistantMessageId.value = assistantMessage.id
       }
+    } else if (actionCards.length > 0) {
+      // 如果没有消息但有 action cards，也要更新
+      messageUtils.updateMessageActions(actionCards)
     }
 
     set({
@@ -91,14 +132,10 @@ export function createStoreMethods(ctx: IMethodsContext) {
       workflowSteps: [],
     })
 
-    // 处理任务结果的 actions
-    if (resultMsg.result && refs.actionContext.value) {
-      const resultArray: ITaskData[] = Array.isArray(resultMsg.result) ? resultMsg.result : [resultMsg.result]
-
-      if (resultArray.length > 0) {
-        console.log('[AgentStore] Processing result actions, count:', resultArray.length)
-        ActionRegistry.executeBatch(resultArray, refs.actionContext.value)
-      }
+    // 处理需要自动执行的 actions
+    if (autoExecuteActions.length > 0 && refs.actionContext.value) {
+      console.log('[AgentStore] Processing auto-execute actions, count:', autoExecuteActions.length)
+      ActionRegistry.executeBatch(autoExecuteActions, refs.actionContext.value)
     }
 
     // 刷新用户 Credits 余额
@@ -389,6 +426,27 @@ export function createStoreMethods(ctx: IMethodsContext) {
     /** 初始化实时模式 */
     initRealtimeMode(taskId: string) {
       set({ currentTaskId: taskId })
+    },
+
+    // ============ 待处理任务管理 ============
+
+    /** 设置待处理任务（从首页跳转时使用） */
+    setPendingTask(task: IPendingTask) {
+      set({ pendingTask: task })
+    },
+
+    /** 获取并清除待处理任务 */
+    consumePendingTask(): IPendingTask | null {
+      const task = get().pendingTask
+      if (task) {
+        set({ pendingTask: null })
+      }
+      return task
+    },
+
+    /** 清除待处理任务 */
+    clearPendingTask() {
+      set({ pendingTask: null })
     },
 
     // ============ Action 上下文管理 ============

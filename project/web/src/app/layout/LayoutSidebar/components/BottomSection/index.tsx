@@ -10,13 +10,12 @@ import type { BottomSectionProps } from '../../types'
 import { BalanceEntry } from './BalanceEntry'
 import { PluginEntry } from './PluginEntry'
 import { VipEntry } from './VipEntry'
-import { SettingsEntry } from './SettingsEntry'
 
 export function BottomSection({ collapsed, onOpenSettings }: BottomSectionProps) {
   return (
     <div
       className={cn(
-        'mt-auto flex flex-col gap-1 border-t border-sidebar-border pt-3',
+        'flex flex-col gap-1 border-t border-sidebar-border pt-3',
         collapsed && 'items-center',
       )}
     >
@@ -31,12 +30,6 @@ export function BottomSection({ collapsed, onOpenSettings }: BottomSectionProps)
 
       {/* VIP 会员入口 */}
       <VipEntry collapsed={collapsed} />
-
-      {/* 设置入口 */}
-      <SettingsEntry
-        collapsed={collapsed}
-        onClick={() => onOpenSettings()}
-      />
     </div>
   )
 }
@@ -45,5 +38,4 @@ export function BottomSection({ collapsed, onOpenSettings }: BottomSectionProps)
 export { BalanceEntry } from './BalanceEntry'
 export { PluginEntry } from './PluginEntry'
 export { VipEntry } from './VipEntry'
-export { SettingsEntry } from './SettingsEntry'
 

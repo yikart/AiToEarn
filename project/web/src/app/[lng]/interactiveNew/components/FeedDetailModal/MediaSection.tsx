@@ -118,7 +118,7 @@ function MediaSection() {
         <>
           {/* 底层：封面占位图（防止闪烁） */}
           <div className="feedDetailModal_media_placeholder">
-            <img src={coverUrl} alt="封面" />
+            <img src={coverUrl} alt="Cover" />
           </div>
 
           {/* 图片预览组件 - 支持多图预览 */}
@@ -161,7 +161,7 @@ function MediaSection() {
                       <div className="feedDetailModal_media_slideWrapper" onClick={handleImageClick}>
                         <Image
                           src={url}
-                          alt={`图片 ${index + 1}`}
+                          alt={`Image ${index + 1}`}
                           className="feedDetailModal_media_img"
                           preview={false}
                           fallback="/images/image-error.png"
@@ -175,7 +175,7 @@ function MediaSection() {
                 <div className="feedDetailModal_media_imageWrapper" onClick={handleImageClick}>
                   <Image
                     src={imageList[0] || coverUrl}
-                    alt="封面"
+                    alt="Cover"
                     className="feedDetailModal_media_img"
                     preview={false}
                     fallback="/images/image-error.png"

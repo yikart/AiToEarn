@@ -70,7 +70,7 @@ const DataStatisticsTable = memo(
       const columns = useMemo(() => {
         const columns: TableProps<StatisticsPeriodItems>['columns'] = [
           {
-            title: '账号',
+            title: 'Account',
             key: 'uid',
             render: (text, item) => {
               const account = accountList.find(v => v.uid === item.uid)!

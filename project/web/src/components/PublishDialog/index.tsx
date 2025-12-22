@@ -550,6 +550,7 @@ const PublishDialog = memo(
           content: t('confirmClose.content'),
           okType: 'destructive',
           centered: true,
+          cancelText: t('buttons.cancel'),
           onOk() {
             onClose()
           },

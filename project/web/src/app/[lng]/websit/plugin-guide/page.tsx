@@ -14,29 +14,6 @@ import image9 from './images/gyude-image9.png'
 import image10 from './images/gyude-image10.png'
 
 /**
- * Header 组件
- */
-function Header() {
-  const { t } = useTransClient('home')
-
-  return (
-    <header className={styles.header}>
-      <div className={styles.headerContainer}>
-        <div className={styles.logo}>
-          <span className={styles.logoText}>{t('header.logo')}</span>
-        </div>
-        <nav className={styles.nav}>
-          <a href="#marketplace" className={styles.navLink}>{t('header.nav.marketplace')}</a>
-          <a href="#pricing" className={styles.navLink}>{t('header.nav.pricing')}</a>
-          <a href="#docs" className={styles.navLink}>{t('header.nav.docs')}</a>
-        </nav>
-        <button className={styles.getStartedBtn}>{t('header.getStarted')}</button>
-      </div>
-    </header>
-  )
-}
-
-/**
  * 教程步骤组件
  */
 interface GuideStepProps {
@@ -89,8 +66,6 @@ export default function PluginGuidePage() {
 
   return (
     <div className={styles.pluginGuidePage}>
-      <Header />
-
       <main className={styles.main}>
         <div className={styles.container}>
           {/* 页面标题 */}

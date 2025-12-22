@@ -71,6 +71,7 @@ export function ChatMessageList({
               createdAt={message.createdAt}
               steps={message.steps}
               workflowSteps={isLastAssistant && isGenerating ? workflowSteps : undefined}
+              actions={message.actions}
             />
           )
         })}

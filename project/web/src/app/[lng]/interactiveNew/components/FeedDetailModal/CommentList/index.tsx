@@ -78,10 +78,10 @@ function CommentList({ workId, platform, commentCount, xsecToken }: CommentListP
         setCursor(result.cursor)
         setHasMore(result.hasMore)
       } else {
-        setError(result.message || '加载评论失败')
+        setError(result.message || 'Failed to load comments')
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : '加载评论失败')
+      setError(err instanceof Error ? err.message : 'Failed to load comments')
     } finally {
       setLoading(false)
       setLoadingMore(false)

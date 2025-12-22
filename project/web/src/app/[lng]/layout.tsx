@@ -34,6 +34,13 @@ export default async function RootLayout({
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
       <body>
+        {/* Rewardful 脚本 */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`,
+          }}
+        />
+        <script async src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" />
         <Providers lng={lng}>
           {/* 移动端顶部导航 - fixed 定位，独立于 flex 布局 */}
           <MobileNav />
@@ -41,7 +48,7 @@ export default async function RootLayout({
             {/* 桌面端侧边栏 */}
             <LayoutSidebar />
             {/* 主内容区域 */}
-            <main className="flex-1 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
+            <main className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
               {children}
             </main>
             <script src="/js/xhs_web_sign.js" />

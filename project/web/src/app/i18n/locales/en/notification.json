@@ -1,5 +1,7 @@
 {
   "title": "Notifications",
+  "taskCenter": "Task Center",
+  "taskCenterDesc": "View and manage your tasks",
   "detailTitle": "Notification Details",
   "markAllAsRead": "Mark All as Read",
   "markAsRead": "Mark as Read",

@@ -13,7 +13,9 @@ import { parseUserMessageContent } from './parseMessageContent'
  * - user: { type: 'user', content: [{ type: 'text', text: '...' }] }
  * - assistant: { type: 'assistant', uuid: '...', message: { content: [{ type: 'text', text: '...' }] } }
  * - stream_event: 流式事件，用于提取工具调用信息
- * - result: { type: 'result', message: '...' } - message 字段直接包含文本内容
+ * - result: { type: 'result', message: '...', result: { action: '...', platform: '...', ... } }
+ *   - message 字段包含文本内容
+ *   - result 字段（根级别）包含 action 数据（如 createChannel、updateChannel 等）
  *
  * 改进：解析多步骤和工作流步骤
  * - message_start 事件标识新步骤开始
@@ -334,20 +336,62 @@ function processResultMessage(
   msg: TaskMessage,
   index: number,
   displayMessages: IDisplayMessage[],
-): { contentToAdd?: string; newAssistantMsgIndex?: number } {
-  // result 消息的 message 字段直接在第一层
-  const content = (msg as any).message || ''
+): { contentToAdd?: string; newAssistantMsgIndex?: number; actions?: any[] } {
+  const msgAny = msg as any
+  const msgData = msgAny.message
+  let content = ''
+  let actions: any[] = []
 
-  if (content && typeof content === 'string') {
+  // 处理 result 消息格式
+  // 格式1: message 是字符串
+  if (msgData && typeof msgData === 'string') {
+    content = msgData
+  }
+  // 格式2: message 是对象，包含 message 文本和 result 数组/对象
+  else if (msgData && typeof msgData === 'object') {
+    // 获取文本消息
+    if (msgData.message && typeof msgData.message === 'string') {
+      content = msgData.message
+    }
+  }
+
+  // 解析 result 数据中的 action（支持数组和单个对象）
+  // 注意：后端保存的结构是 msg.result（根级别），不是 msg.message.result
+  // 同时兼容两种格式以防万一
+  const resultData = msgAny.result || (msgData && typeof msgData === 'object' ? msgData.result : null)
+  
+  if (resultData) {
+    // 统一转换为数组处理
+    const resultArray = Array.isArray(resultData) ? resultData : [resultData]
+    
+    actions = resultArray
+      .filter((item: any) => item && item.action) // 只处理有 action 的项
+      .map((item: any) => ({
+        type: item.action, // 映射 action -> type
+        platform: item.platform,
+        accountId: item.accountId,
+        title: item.title,
+        description: item.description,
+        medias: item.medias,
+        tags: item.tags,
+      }))
+  }
+
+  if (content || actions.length > 0) {
     const lastMsg = displayMessages[displayMessages.length - 1]
     if (lastMsg && lastMsg.role === 'assistant') {
-      return { contentToAdd: content }
+      // 将 actions 附加到最后一条 assistant 消息
+      if (actions.length > 0) {
+        lastMsg.actions = [...(lastMsg.actions || []), ...actions]
+      }
+      return { contentToAdd: content || undefined }
     } else {
       displayMessages.push({
-        id: (msg as any).uuid || `result-${index}`,
+        id: msgAny.uuid || `result-${index}`,
         role: 'assistant',
-        content,
+        content: content || '',
         status: 'done',
+        actions: actions.length > 0 ? actions : undefined,
       })
       return { newAssistantMsgIndex: displayMessages.length - 1 }
     }

@@ -28,49 +28,44 @@ export interface IRouterDataItem {
 
 export const routerData: IRouterDataItem[] = [
   {
-    name: '首页',
+    name: 'Home',
     translationKey: 'home',
     path: '/',
     icon: <Home size={20} />,
   },
   {
-    name: '任务记录',
+    name: 'Task History',
     translationKey: 'tasksHistory',
     path: '/tasks-history',
     icon: <History size={20} />,
   },
   {
-    name: '发布',
+    name: 'Publish',
     translationKey: 'accounts',
     path: '/accounts',
     icon: <Upload size={20} />,
   },
   {
-    name: '互动数据',
+    name: 'Engage',
     translationKey: 'interactive',
     path: '/interactiveNew',
     icon: <MessageCircle size={20} />,
   },
+  // Tasks moved to notification panel
   {
-    name: '任务中心',
-    translationKey: 'tasks',
-    path: '/tasks',
-    icon: <ListTodo size={20} />,
-  },
-  {
-    name: '数据统计',
+    name: 'Data Statistics',
     translationKey: 'dataStatistics',
     path: '/dataStatistics',
     icon: <BarChart3 size={20} />,
   },
   {
-    name: '素材库',
+    name: 'Material Library',
     translationKey: 'header.materialLibrary',
     path: '/material',
     icon: <FolderOpen size={20} />,
   },
   {
-    name: '草稿箱',
+    name: 'Draft Box',
     translationKey: 'header.draftBox',
     path: '/cgmaterial',
     icon: <FileText size={20} />,

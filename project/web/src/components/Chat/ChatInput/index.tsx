@@ -90,9 +90,11 @@ export function ChatInput({
 
   /** 处理发送/停止按钮点击 */
   const handleButtonClick = () => {
-    if (isGenerating) {
-      onStop?.()
-    } else if (!disabled && !isUploading && value.trim()) {
+    // 中断功能暂时禁用
+    // if (isGenerating) {
+    //   onStop?.()
+    // } else 
+    if (!disabled && !isUploading && value.trim() && !isGenerating) {
       onSend()
     }
   }
@@ -101,6 +103,10 @@ export function ChatInput({
 
   return (
     <div
+      style={{
+        position: 'relative',
+        zIndex: 2,
+      }}
       className={cn(
         'w-full rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
         mode === 'large' ? 'p-4' : 'p-3',
@@ -161,15 +167,14 @@ export function ChatInput({
         {/* 右侧：发送/停止按钮 */}
         <button
           onClick={handleButtonClick}
-          disabled={!isGenerating && !canSend}
+          disabled={isGenerating || !canSend}
           className={cn(
             'shrink-0 flex items-center justify-center rounded-full transition-all',
             mode === 'large' ? 'w-10 h-10' : 'w-8 h-8',
-            isGenerating
-              ? 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
-              : canSend
-                ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                : 'bg-muted text-muted-foreground cursor-not-allowed',
+            // 生成中或无法发送时都显示灰色
+            (isGenerating || !canSend)
+              ? 'bg-muted text-muted-foreground cursor-not-allowed'
+              : 'bg-primary hover:bg-primary/90 text-primary-foreground',
           )}
         >
           {isGenerating ? (

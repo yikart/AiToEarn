@@ -51,12 +51,12 @@ export function GeneralTab() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="w-full space-y-8">
       {/* 外观主题 */}
       <div>
         <h4 className="text-sm font-medium text-foreground mb-1">{t('general.theme')}</h4>
         <p className="text-sm text-muted-foreground mb-4">{t('general.themeDesc')}</p>
-        <div className="flex gap-4">
+        <div className="flex flex-wrap gap-3 md:gap-4">
           {themeOptions.map(option => {
             const isActive = theme === option.value
             return (
@@ -68,7 +68,7 @@ export function GeneralTab() {
                 {/* 图片容器 */}
                 <div
                   className={cn(
-                    'relative w-20 h-14 rounded-lg overflow-hidden border-2 transition-all',
+                    'relative w-16 h-11 md:w-20 md:h-14 rounded-lg overflow-hidden border-2 transition-all',
                     isActive
                       ? 'border-primary shadow-sm'
                       : 'border-border hover:border-muted-foreground'
@@ -97,13 +97,13 @@ export function GeneralTab() {
       </div>
 
       {/* 网站语言 */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0 flex-1">
           <h4 className="text-sm font-medium text-foreground">{t('general.language')}</h4>
           <p className="mt-0.5 text-sm text-muted-foreground">{t('general.languageDesc')}</p>
         </div>
         <Select value={lng} onValueChange={handleLanguageChange}>
-          <SelectTrigger className="h-9 w-[140px]">
+          <SelectTrigger className="h-9 w-full sm:w-[140px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

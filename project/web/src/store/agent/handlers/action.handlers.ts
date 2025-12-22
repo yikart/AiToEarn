@@ -16,7 +16,6 @@ import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import type { PluginPublishItem } from '@/store/plugin/store'
 import { driver } from 'driver.js'
 import type { ITaskData, IActionContext, ActionType, IMediaItem } from '../agent.types'
-import { useTransClient } from '@/app/i18n/client'
 
 // ============ Action Handler 接口 ============
 
@@ -321,8 +320,7 @@ const saveDraftHandler: IActionHandler = {
   },
 
   async execute(taskData, context) {
-    const { router, lng } = context
-    const { t } = useTransClient('home')
+    const { router, lng, t } = context
 
     try {
       // 转换 medias 格式
@@ -399,8 +397,7 @@ const updateChannelHandler: IActionHandler = {
   },
 
   async execute(taskData, context) {
-    const { router, lng } = context
-    const { t } = useTransClient('home')
+    const { router, lng, t } = context
     const platform = taskData.platform
 
     toast.warning(t('aiGeneration.channelAuthExpired' as any))
@@ -428,8 +425,7 @@ const loginChannelHandler: IActionHandler = {
   },
 
   async execute(taskData, context) {
-    const { router, lng } = context
-    const { t } = useTransClient('home')
+    const { router, lng, t } = context
     const platform = taskData.platform
 
     toast.info(t('aiGeneration.needLoginChannel' as any))
@@ -453,19 +449,19 @@ const createChannelHandler: IActionHandler = {
   type: 'createChannel',
 
   canHandle: (taskData) => {
-    return !!(taskData.type === 'fullContent' && taskData.action === 'createChannel' && taskData.errorMessage)
+    return !!(taskData.type === 'fullContent' && taskData.action === 'createChannel')
   },
 
   async execute(taskData, context) {
-    const { router, lng } = context
+    const { router, lng, t } = context
     const platform = taskData.platform
-    const { t } = useTransClient('home')
+    const platformName = platform ? platform.charAt(0).toUpperCase() + platform.slice(1) : 'Platform'
 
-    toast.warning(taskData.errorMessage || (t('aiGeneration.needBindChannel' as any) as string))
+    toast.warning(t('aiGeneration.needBindChannel' as any) as string)
 
     confirm({
       title: t('aiGeneration.needBindChannelTitle' as any) as string,
-      content: taskData.errorMessage || (t('aiGeneration.needBindChannelContent' as any) as string),
+      content: t('aiGeneration.needBindChannelContent' as any, { platform: platformName }) as string,
       okText: t('aiGeneration.goBind' as any) as string,
       cancelText: undefined, // 不显示取消按钮
       onOk: () => {
@@ -597,7 +593,7 @@ export const ActionRegistry = {
   async executePluginBatch(pluginTasks: ITaskData[], context: IActionContext): Promise<void> {
     const pluginStatus = usePluginStore.getState().status
     const isPluginReady = pluginStatus === PluginStatus.READY
-    const { t } = useTransClient('home')
+    const { t } = context
 
     if (!isPluginReady) {
       toast.warning(t('plugin.platformNeedsPlugin' as any))

@@ -2,12 +2,13 @@
  * SettingsModal - 设置弹框组件
  * 包含个人资料、Agent、通用设置等功能
  * 采用可扩展的 Tab 配置结构
+ * 支持移动端响应式布局
  */
 
 'use client'
 
 import type { ReactNode } from 'react'
-import { Bot, CreditCard, Crown, Globe, User } from 'lucide-react'
+import { CreditCard, Crown, Globe, User } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -22,7 +23,7 @@ import { AgentTab, GeneralTab, MembershipTab, ProfileTab, SubscriptionTab } from
 import logo from '@/assets/images/logo.png'
 
 /** 设置页面类型 */
-type SettingsTab = 'profile' | 'agent' | 'subscription' | 'membership' | 'general'
+type SettingsTab = 'profile' | 'subscription' | 'membership' | 'general'
 
 /** Tab 配置项类型 */
 interface TabConfig {
@@ -73,7 +74,6 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
   // Tab 配置列表（易于扩展）
   const tabConfigs: TabConfig[] = [
     { key: 'profile', icon: <User className="h-4 w-4" />, label: t('tabs.profile'), requireAuth: true },
-    { key: 'agent', icon: <Bot className="h-4 w-4" />, label: t('tabs.agent'), requireAuth: true },
     { key: 'subscription', icon: <CreditCard className="h-4 w-4" />, label: t('tabs.subscription'), requireAuth: true },
     // 会员 Tab：只有用户曾经有过 vipInfo 才显示
     ...(userInfo?.vipInfo
@@ -95,8 +95,6 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
     switch (activeTab) {
       case 'profile':
         return isLoggedIn ? <ProfileTab onClose={onClose} /> : <GeneralTab />
-      case 'agent':
-        return isLoggedIn ? <AgentTab /> : <GeneralTab />
       case 'subscription':
         return isLoggedIn ? <SubscriptionTab /> : <GeneralTab />
       case 'membership':
@@ -111,22 +109,23 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
   return (
     <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
       <DialogContent
-        className="max-w-[880px] gap-0 overflow-hidden p-0"
+        className="w-[95vw] max-w-[880px] gap-0 overflow-hidden p-0 md:w-[880px]"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">{t('title')}</DialogTitle>
 
-        <div className="flex h-[70vh]">
-          {/* 左侧侧边栏 */}
-          <div className="flex w-52 shrink-0 flex-col border-r border-border">
+        {/* 移动端布局：垂直排列；桌面端：水平排列 */}
+        <div className="flex h-[80vh] max-h-[600px] flex-col md:h-[70vh] md:max-h-none md:flex-row">
+          {/* 侧边栏/顶部导航 */}
+          <div className="flex w-full shrink-0 flex-col border-b border-border md:w-48 md:border-b-0 md:border-r">
             {/* 侧边栏头部 - Logo + 项目名称 */}
-            <div className="flex shrink-0 items-center gap-2 px-5 py-4">
-              <Image src={logo} alt="AIToEarn" width={28} height={28} />
-              <span className="text-base font-semibold tracking-tight text-foreground">AIToEarn</span>
+            <div className="flex shrink-0 items-center gap-2 px-4 py-3 md:px-5 md:py-4">
+              <Image src={logo} alt="Aitoearn" width={24} height={24} className="md:h-7 md:w-7" />
+              <span className="text-sm font-semibold tracking-tight text-foreground md:text-base">Aitoearn</span>
             </div>
 
-            {/* Tab 列表 */}
-            <div className="flex flex-1 flex-col gap-1 px-4 pb-4">
+            {/* Tab 列表 - 移动端水平滚动，桌面端垂直列表 */}
+            <div className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-x-visible md:px-3 md:pb-4">
               {visibleTabs.map((tab) => {
                 const isActive = activeTab === tab.key
 
@@ -135,30 +134,32 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
                     key={tab.key}
                     onClick={() => setActiveTab(tab.key)}
                     className={cn(
-                      'flex items-center gap-2 rounded-md px-3 py-2.5 text-left text-sm transition-all',
+                      'flex shrink-0 items-center gap-1.5 rounded-md px-3 py-2 text-left text-sm transition-all md:gap-2 md:py-2.5',
                       isActive
                         ? 'bg-muted font-medium text-foreground'
                         : 'text-muted-foreground hover:bg-muted hover:text-foreground',
                     )}
                   >
                     {tab.icon}
-                    {tab.label}
+                    <span className="whitespace-nowrap">{tab.label}</span>
                   </button>
                 )
               })}
             </div>
           </div>
 
-          {/* 右侧内容区域 */}
-          <div className="flex flex-1 flex-col overflow-hidden min-h-0">
+          {/* 右侧/下方内容区域 */}
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             {/* 右侧头部 - 设置标题 */}
-            <div className="flex shrink-0 items-center border-b border-border px-8 py-4">
-              <h2 className="text-lg font-semibold text-foreground">{t('title')}</h2>
+            <div className="flex shrink-0 items-center border-b border-border px-4 py-3 md:px-8 md:py-4">
+              <h2 className="text-base font-semibold text-foreground md:text-lg">{t('title')}</h2>
             </div>
 
-            {/* 右侧内容 */}
-            <div className="flex-1 overflow-y-auto px-8 py-6">
-              {renderContent()}
+            {/* 右侧内容 - 确保内容区域可以正确滚动和换行 */}
+            <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-8 md:py-6">
+              <div className="w-full">
+                {renderContent()}
+              </div>
             </div>
           </div>
         </div>
