@@ -326,7 +326,7 @@ const PubParmasTextarea = memo(
             items={[
               {
                 type: 'video',
-                src: (previewData as IVideoFile).videoUrl,
+                src: (previewData as IVideoFile)?.videoUrl,
               }
             ]}
             onClose={() => setPreviewData(undefined)}
