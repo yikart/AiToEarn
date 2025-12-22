@@ -5140,6 +5140,59 @@
       }
     },
     "/api/agent/tasks/{taskId}/rating": {
+      "get": {
+        "summary": "Get Content Generation Task Rating",
+        "deprecated": false,
+        "description": "Get rating and comment for a content generation task.",
+        "operationId": "AgentController_getRating",
+        "tags": [
+          "Close/Me/Agent"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "rating": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 5
+                        },
+                        "comment": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
       "post": {
         "summary": "Create or Update Content Generation Task Rating",
         "deprecated": false,

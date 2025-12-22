@@ -12,6 +12,7 @@ import { useAgentStore } from '@/store/agent'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { useTransClient } from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
+/* rating entry moved into ChatHeader */
 
 // 页面私有组件
 import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
@@ -74,6 +75,7 @@ export default function ChatDetailPage() {
 
   // 输入状态
   const [inputValue, setInputValue] = useState('')
+  // rating handled in ChatHeader
 
   // 媒体上传
   const {
@@ -263,6 +265,7 @@ export default function ChatDetailPage() {
         isGenerating={isGenerating}
         progress={progress}
         thinkingText={t('message.thinking' as any)}
+        taskId={taskId}
         onBack={handleBack}
       />
 
@@ -295,6 +298,8 @@ export default function ChatDetailPage() {
           mode="compact"
         />
       </div>
+
+      {/* 评分入口已移动到顶部 ChatHeader */}
     </div>
   )
 }

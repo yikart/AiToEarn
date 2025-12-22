@@ -8,7 +8,7 @@
 import type React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2, Star } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useTransClient } from '@/app/i18n/client'
@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import RatingModal from '@/components/Chat/Rating'
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -34,6 +35,10 @@ export interface ITaskCardProps {
   onDelete?: (id: string) => void | Promise<void>
   /** 自定义类名 */
   className?: string
+  /** 任务评分（1-5） */
+  rating?: number | null
+  /** 任务评价文本 */
+  ratingComment?: string | null
 }
 
 /** 获取状态显示配置 */
@@ -86,11 +91,16 @@ export function TaskCard({
   updatedAt,
   onDelete,
   className,
+  rating: initialRating,
+  ratingComment: initialRatingComment,
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
+  const [ratingOpen, setRatingOpen] = useState(false)
+  const [rating, setRating] = useState<number | null>(initialRating ?? null)
+  const [ratingComment, setRatingComment] = useState<string | null>(initialRatingComment ?? null)
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
@@ -133,25 +143,35 @@ export function TaskCard({
         </h4>
       </div>
 
-      {/* 时间 & 状态 */}
+      {/* 时间 & 状态 & 评分 */}
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className="text-xs text-muted-foreground">
           {formatRelativeTime(new Date(updatedAt || createdAt))}
         </span>
-        {status && statusConfig.label && (
-          <span className={cn(
-            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
-            statusConfig.className,
-          )}>
-            {statusConfig.icon && (
-              <statusConfig.icon className={cn(
-                'w-3 h-3',
-                status?.toLowerCase() === 'running' && 'animate-spin',
-              )} />
-            )}
-            {statusConfig.label}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {rating ? (
+            <span className="inline-flex items-center gap-1 text-sm text-foreground mr-2">
+              <svg className="w-4 h-4 text-amber-400" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
+              </svg>
+              <span className="font-medium">{rating}</span>
+            </span>
+          ) : null}
+          {status && statusConfig.label && (
+            <span className={cn(
+              'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
+              statusConfig.className,
+            )}>
+              {statusConfig.icon && (
+                <statusConfig.icon className={cn(
+                  'w-3 h-3',
+                  status?.toLowerCase() === 'running' && 'animate-spin',
+                )} />
+              )}
+              {statusConfig.label}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* 更多操作按钮 */}
@@ -176,14 +196,33 @@ export function TaskCard({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
+            onClick={(e) => {
+              e.stopPropagation()
+              setRatingOpen(true)
+            }}
+          >
+            <Star className="w-4 h-4 mr-2 text-amber-400" />
+            {t('task.rate' as any) || 'Rate'}
+          </DropdownMenuItem>
+          <DropdownMenuItem
             onClick={handleDelete}
-            className="text-destructive focus:text-destructive focus:bg-destructive/10"
+            className="text-destructive focus:text-destructive focus:bg-destructive/10 mt-2"
           >
             <Trash2 className="w-4 h-4 mr-2" />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {/* Rating Modal */}
+      <RatingModal
+        taskId={id}
+        open={ratingOpen}
+        onClose={() => setRatingOpen(false)}
+        onSaved={(data: { rating?: number | null; comment?: string | null }) => {
+          setRating(data.rating ?? null)
+          setRatingComment(data.comment ?? null)
+        }}
+      />
     </div>
   )
 }

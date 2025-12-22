@@ -155,6 +155,8 @@ export default function TasksHistoryPage() {
                     createdAt={task.createdAt}
                     updatedAt={task.updatedAt}
                     onDelete={handleDelete}
+                    rating={task.rating ?? null}
+                    ratingComment={task.ratingComment ?? null}
                   />
                 ))}
               </div>
