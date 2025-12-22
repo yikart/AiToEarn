@@ -107,6 +107,7 @@
   },
   "draft": {
     "selectDraft": "Select Draft:",
+    "recommendedDraft": "Recommended Draft",
     "taskDraft": "Task Draft",
     "myDraft": "My Draft",
     "reselect": "Reselect",

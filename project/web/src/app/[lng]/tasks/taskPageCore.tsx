@@ -1786,20 +1786,22 @@ export default function TaskPageCore() {
                   justifyContent: 'center',
                 }}
                 >
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      // 模式1：使用推荐草稿发布（必须选中推荐草稿）
-                      if (!selectedMaterial) {
-                        toast.error(t('draft.pleaseSelectDraftMaterial'))
-                        return
-                      }
-                      // 复用账号选择流程
-                      handleTaskAction(taskDetail)
-                    }}
-                  >
-                    {t('publish.useRecommended' as any) || '推荐草稿发布'}
-                  </Button>
+                  {materialList.length > 0 && (
+                    <Button
+                      size="lg"
+                      onClick={() => {
+                        // 模式1：使用推荐草稿发布（必须选中推荐草稿）
+                        if (!selectedMaterial) {
+                          toast.error(t('draft.pleaseSelectDraftMaterial'))
+                          return
+                        }
+                        // 复用账号选择流程
+                        handleTaskAction(taskDetail)
+                      }}
+                    >
+                      {t('publish.useRecommended' as any) || '推荐草稿发布'}
+                    </Button>
+                  )}
 
                   <Button
                     size="lg"
@@ -1817,14 +1819,11 @@ export default function TaskPageCore() {
                     onClick={() => {
                       // 模式3：Agent 发布，跳转到首页并填充输入
                       const prompt = taskDetail.description || taskDetail.title || ''
-                      try {
-                        localStorage.setItem('agentExternalPrompt', prompt)
-                        localStorage.setItem('agentTaskId', taskDetail.id || '')
-                      }
-                      catch (e) {
-                        console.error('localStorage error', e)
-                      }
-                      router.push(`/${lng}`)
+                      // 通过 URL query 传参到首页，避免使用 localStorage
+                      const params = new URLSearchParams()
+                      if (prompt) params.set('agentExternalPrompt', prompt)
+                      if (taskDetail?.id) params.set('agentTaskId', taskDetail.id)
+                      router.push(`/${lng}?${params.toString()}`)
                     }}
                   >
                     {t('publish.agentPublish' as any) || 'Agent 发布'}

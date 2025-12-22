@@ -107,6 +107,7 @@
   },
   "draft": {
     "selectDraft": "选择草稿：",
+    "recommendedDraft": "推荐草稿",
     "taskDraft": "任务草稿",
     "myDraft": "我的草稿",
     "reselect": "重新选择",
@@ -118,8 +119,8 @@
   },
   "publish": {
     "useRecommended": "使用推荐草稿发布",
-    "directPublish": "直接发布",
-    "agentPublish": "Agent 发布",
+    "directPublish": "发布完成",
+    "agentPublish": "Agent 完成",
     "noAccountSelected": "请先选择发布账户",
     "accountNotMatchTask": "所选账户与任务要求不符"
   },

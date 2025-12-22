@@ -5,6 +5,7 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { useSearchParams, useRouter, useParams } from 'next/navigation'
 import { ArrowUp } from 'lucide-react'
 import { HomeChat } from '@/components/Home/HomeChat'
 import { TaskPreview } from '@/components/Home/TaskPreview'
@@ -66,34 +67,30 @@ export default function Home() {
     toast.success('Prompt applied!')
   }, [])
 
-  // 从任务页面跳转带来的 agentExternalPrompt 自动填充
+  // 从 URL query 读取 agentExternalPrompt 和 agentTaskId（由任务页通过 query 传参）
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [agentTaskId, setAgentTaskId] = useState<string>('')
+  const params = useParams()
   useEffect(() => {
     try {
-      const prompt = localStorage.getItem('agentExternalPrompt')
+      const prompt = searchParams.get('agentExternalPrompt')
+      const id = searchParams.get('agentTaskId')
       if (prompt) {
         setAppliedPrompt(prompt)
-        localStorage.removeItem('agentExternalPrompt')
       }
-    }
-    catch (e) {
-      // ignore
-    }
-  }, [])
-
-  // 读取 agentTaskId 并传给 HomeChat
-  const [agentTaskId, setAgentTaskId] = useState<string>('')
-  useEffect(() => {
-    try {
-      const id = localStorage.getItem('agentTaskId')
       if (id) {
         setAgentTaskId(id)
-        localStorage.removeItem('agentTaskId')
+      }
+      // 清理 URL 上的 query，避免重复
+      if (prompt || id) {
+        router.replace(`/${params.lng}`)
       }
     }
     catch (e) {
       // ignore
     }
-  }, [])
+  }, [searchParams, router, params.lng])
 
   // 清除外部提示词
   const handleClearExternalPrompt = useCallback(() => {

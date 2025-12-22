@@ -41,6 +41,7 @@ export function HomeChat({
   className,
   externalPrompt,
   onClearExternalPrompt,
+  agentTaskId,
 }: IHomeChatProps) {
   const { t } = useTransClient('chat')
   const { t: tHome } = useTransClient('home')
@@ -57,9 +58,29 @@ export function HomeChat({
   // 当外部提示词或 agentTaskId 变化时更新输入框
   useEffect(() => {
     if (agentTaskId) {
-      setInputValue(agentTaskId)
+      // 优先从 localStorage 读取 agentExternalPrompt（任务页可能在跳转前写入）
+      let desc = ''
+      try {
+        const stored = localStorage.getItem('agentExternalPrompt')
+        if (stored) {
+          desc = stored
+          localStorage.removeItem('agentExternalPrompt')
+        }
+      }
+      catch (e) {
+        // ignore
+      }
+
+      console.log('desc', desc)
+
+        desc = externalPrompt || defaultPrompt
+      
+
+      setInputValue(`${desc} TaskId: ${agentTaskId}`)
+      onClearExternalPrompt?.()
       return
     }
+
     if (externalPrompt) {
       setInputValue(externalPrompt)
       onClearExternalPrompt?.()
