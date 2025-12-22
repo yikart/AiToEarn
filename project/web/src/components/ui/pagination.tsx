@@ -8,6 +8,7 @@
 import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './button'
+import { useTransClient } from '@/app/i18n/client'
 
 interface PaginationProps {
   /** 当前页码 */
@@ -44,6 +45,7 @@ export function Pagination({
   pageSizeOptions = ['10', '20', '50', '100'],
   className,
 }: PaginationProps) {
+  const { t } = useTransClient('common')
   const totalPages = Math.ceil(total / pageSize)
   const start = (current - 1) * pageSize + 1
   const end = Math.min(current * pageSize, total)
@@ -162,7 +164,7 @@ export function Pagination({
       {/* 每页条数选择器 */}
       {showSizeChanger && (
         <div className="flex items-center gap-2 text-sm whitespace-nowrap">
-          <span className="text-muted-foreground">每页</span>
+          <span className="text-muted-foreground">{t('pagination.perPage')}</span>
           <select
             value={pageSize}
             onChange={(e) => handleSizeChange(Number(e.target.value))}
@@ -174,20 +176,20 @@ export function Pagination({
               </option>
             ))}
           </select>
-          <span className="text-muted-foreground">条</span>
+          <span className="text-muted-foreground">{t('pagination.items')}</span>
         </div>
       )}
 
       {/* 快速跳转 */}
       {showQuickJumper && (
         <div className="flex items-center gap-2 text-sm whitespace-nowrap">
-          <span className="text-muted-foreground">跳至</span>
+          <span className="text-muted-foreground">{t('pagination.jumpTo')}</span>
           <input
             type="number"
             min={1}
             max={totalPages}
             className="h-8 w-14 px-2 text-sm text-center border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
-            placeholder="页"
+            placeholder={t('pagination.page')}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 const page = Number((e.target as HTMLInputElement).value)
@@ -196,7 +198,7 @@ export function Pagination({
               }
             }}
           />
-          <span className="text-muted-foreground">页</span>
+          <span className="text-muted-foreground">{t('pagination.page')}</span>
         </div>
       )}
     </div>

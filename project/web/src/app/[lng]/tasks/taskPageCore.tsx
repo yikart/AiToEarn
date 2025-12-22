@@ -361,15 +361,15 @@ export default function TaskPageCore() {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
       if (minutes < 60)
-        return `${minutes}分钟后`
+        return t('time.minutesLater' as any, { minutes })
       if (hours < 24)
-        return `${hours}小时后`
+        return t('time.hoursLater' as any, { hours })
       if (days < 7)
-        return `${days}天后`
+        return t('time.daysLater' as any, { days })
     }
 
     // 显示具体日期时间
-    return date.toLocaleString('zh-CN', {
+    return date.toLocaleString(lng === 'zh-CN' ? 'zh-CN' : 'en-US', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -720,7 +720,7 @@ export default function TaskPageCore() {
 
     // Validate if material is selected
     if (!selectedMaterial) {
-      toast.error('Please select a draft material')
+      toast.error(t('pleaseSelectDraftMaterial'))
       return
     }
 
@@ -732,10 +732,10 @@ export default function TaskPageCore() {
     setTaskProgress({
       currentStep: 0,
       steps: [
-        { title: 'Accepting task...', status: 'processing' },
-        { title: 'Publishing task...', status: 'wait' },
-        { title: 'Submitting task...', status: 'wait' },
-        { title: 'Task completed', status: 'wait' },
+        { title: t('acceptingTask'), status: 'processing' },
+        { title: t('publishingTask'), status: 'wait' },
+        { title: t('submittingTask'), status: 'wait' },
+        { title: t('taskCompleted'), status: 'wait' },
       ],
     })
 
@@ -896,10 +896,10 @@ export default function TaskPageCore() {
         ...prev,
         currentStep: 1,
         steps: [
-          { title: 'Completing task...', status: 'finish' },
-          { title: 'Publishing task...', status: 'processing' },
-          { title: 'Submitting task...', status: 'wait' },
-          { title: 'Task completed', status: 'wait' },
+          { title: t('completeTask'), status: 'finish' },
+          { title: t('publishingTask'), status: 'processing' },
+          { title: t('submittingTask'), status: 'wait' },
+          { title: t('taskCompleted'), status: 'wait' },
         ],
       }))
 
@@ -948,10 +948,10 @@ export default function TaskPageCore() {
             ...prev,
             currentStep: 2,
             steps: [
-              { title: 'Completing task...', status: 'finish' },
-              { title: 'Publishing task...', status: 'finish' },
-              { title: 'Submitting task...', status: 'processing' },
-              { title: 'Task completed', status: 'wait' },
+              { title: t('completeTask'), status: 'finish' },
+              { title: t('publishingTask'), status: 'finish' },
+              { title: t('submittingTask'), status: 'processing' },
+              { title: t('taskCompleted'), status: 'wait' },
             ],
           }))
 
@@ -965,10 +965,10 @@ export default function TaskPageCore() {
               ...prev,
               currentStep: 3,
               steps: [
-                { title: 'Completing task...', status: 'finish' },
-                { title: 'Publishing task...', status: 'finish' },
-                { title: 'Submitting task...', status: 'finish' },
-                { title: 'Task completed', status: 'finish' },
+                { title: t('completeTask'), status: 'finish' },
+                { title: t('publishingTask'), status: 'finish' },
+                { title: t('submittingTask'), status: 'finish' },
+                { title: t('taskCompleted'), status: 'finish' },
               ],
             }))
 
@@ -1668,7 +1668,7 @@ export default function TaskPageCore() {
                                   whiteSpace: 'nowrap',
                                 }}
                                 >
-                                  {material.title || 'no title'}
+                                  {material.title || t('draft.noTitle')}
                                 </div>
                                 <div style={{
                                   fontSize: '12px',
@@ -1678,7 +1678,7 @@ export default function TaskPageCore() {
                                   whiteSpace: 'nowrap',
                                 }}
                                 >
-                                  {material.desc || 'no description'}
+                                  {material.desc || t('draft.noDescription')}
                                 </div>
                               </div>
                             </div>
@@ -1702,8 +1702,8 @@ export default function TaskPageCore() {
                           </div>
                         )}
                       </>
-                    ) : (
-                      <Empty description="no draft material" />
+                      ) : (
+                      <Empty description={t('draft.noDrafts')} />
                     )}
                   </Spin>
                 )}
@@ -2100,7 +2100,7 @@ export default function TaskPageCore() {
                         marginBottom: '4px',
                       }}
                       >
-                        接受时间
+                        {t('taskInfo.acceptTime')}
                       </div>
                       <div style={{
                         fontSize: '12px',
@@ -2127,7 +2127,7 @@ export default function TaskPageCore() {
                         marginBottom: '4px',
                       }}
                       >
-                        提交时间
+                        {t('taskInfo.submitTime')}
                       </div>
                       <div style={{
                         fontSize: '12px',
@@ -2135,7 +2135,7 @@ export default function TaskPageCore() {
                         color: '#495057',
                       }}
                       >
-                        {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : '未提交'}
+                        {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : t('notSubmitted')}
                       </div>
                     </div>
                   </div>
@@ -2168,10 +2168,10 @@ export default function TaskPageCore() {
                   }}
                   >
                     {acceptedTaskDetail.status === 'doing'
-                      ? 'task pending'
+                      ? t('taskStatuses.taskPending')
                       : acceptedTaskDetail.status === 'pending'
-                        ? 'task completed'
-                        : `task status: ${acceptedTaskDetail.status}`}
+                        ? t('taskStatuses.taskCompleted')
+                        : `${t('taskStatuses.taskStatus')}: ${getTaskStatusTag(acceptedTaskDetail.status).text}`}
                   </span>
                 </div>
 
@@ -2181,7 +2181,7 @@ export default function TaskPageCore() {
                 }}
                 >
                   {acceptedTaskDetail.isFirstTimeSubmission && (
-                    <span style={{ color: '#52c41a' }}>first submission</span>
+                    <span style={{ color: '#52c41a' }}>{t('taskInfo.firstSubmission')}</span>
                   )}
                 </div>
               </div>
@@ -2278,16 +2278,10 @@ export default function TaskPageCore() {
         <Steps
           direction="vertical"
           current={taskProgress.currentStep}
-          items={taskProgress.steps.map((step, index) => ({
+          items={taskProgress.steps.map((step) => ({
             title: step.title,
             status: (step.status === 'processing' ? 'process' : step.status) as 'wait' | 'process' | 'finish' | 'error',
-            description: index === 0
-              ? (step.title.includes(t('completeTask' as any)) ? t('messages.taskProcessFailed') : t('messages.taskProcessFailed'))
-              : index === 1
-                ? t('messages.taskProcessFailed')
-                : index === 2
-                  ? t('messages.taskProcessFailed')
-                  : t('messages.taskProcessFailed'),
+            description: undefined,
           }))}
         />
       </Modal>
@@ -2360,7 +2354,9 @@ export default function TaskPageCore() {
                     </div>
                     {account.nickname && (
                       <div>
-                        nickname:
+                        {t('accountSelect.nickname' as any)}
+                        :
+                        {' '}
                         {account.nickname}
                       </div>
                     )}

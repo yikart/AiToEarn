@@ -93,7 +93,10 @@
     "justNow": "刚刚",
     "minutesAgo": "{{minutes}}分钟前",
     "hoursAgo": "{{hours}}小时前",
-    "daysAgo": "{{days}}天前"
+    "daysAgo": "{{days}}天前",
+    "minutesLater": "{{minutes}}分钟后",
+    "hoursLater": "{{hours}}小时后",
+    "daysLater": "{{days}}天后"
   },
   "accountSelect": {
     "title": "选择账号",
@@ -122,7 +125,12 @@
   },
   "taskStatuses": {
     "pending": "任务待完成",
-    "completed": "任务已完成"
+    "completed": "任务已完成",
+    "taskPending": "任务待完成",
+    "taskCompleted": "任务已完成",
+    "taskStatus": "任务状态"
   },
-  "accountAvatar": "账号头像"
+  "accountAvatar": "账号头像",
+  "notSubmitted": "未提交",
+  "pleaseSelectDraftMaterial": "请选择一个草稿素材"
 }

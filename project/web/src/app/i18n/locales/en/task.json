@@ -93,7 +93,10 @@
     "justNow": "Just now",
     "minutesAgo": "{{minutes}} minutes ago",
     "hoursAgo": "{{hours}} hours ago",
-    "daysAgo": "{{days}} days ago"
+    "daysAgo": "{{days}} days ago",
+    "minutesLater": "{{minutes}} minutes later",
+    "hoursLater": "{{hours}} hours later",
+    "daysLater": "{{days}} days later"
   },
   "accountSelect": {
     "title": "Select Account",
@@ -122,7 +125,12 @@
   },
   "taskStatuses": {
     "pending": "Task Pending",
-    "completed": "Task Completed"
+    "completed": "Task Completed",
+    "taskPending": "Task Pending",
+    "taskCompleted": "Task Completed",
+    "taskStatus": "Task Status"
   },
-  "accountAvatar": "Account Avatar"
+  "accountAvatar": "Account Avatar",
+  "notSubmitted": "Not Submitted",
+  "pleaseSelectDraftMaterial": "Please select a draft material"
 }
