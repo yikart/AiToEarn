@@ -99,29 +99,35 @@ export function Pagination({
   }
 
   return (
-    <div className={cn('flex flex-col items-center gap-4', className)}>
+    <div className={cn('flex flex-wrap items-center justify-center gap-3', className)}>
+      {/* 显示总数 */}
       {showTotal && (
-        <div className="text-sm text-muted-foreground">
+        <div className="text-sm text-muted-foreground whitespace-nowrap">
           {showTotal(total, [start, end])}
         </div>
       )}
 
-      <div className="flex items-center gap-2">
+      {/* 分页按钮组 */}
+      <div className="flex items-center gap-1">
         {/* 上一页 */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
+          className="h-8 w-8"
           onClick={() => handlePageChange(current - 1)}
           disabled={current === 1}
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="h-4 w-4" />
         </Button>
 
         {/* 页码 */}
         {getPageNumbers().map((page, index) => {
           if (page === 'ellipsis') {
             return (
-              <span key={`ellipsis-${index}`} className="px-2 text-muted-foreground">
+              <span
+                key={`ellipsis-${index}`}
+                className="px-2 h-8 flex items-center justify-center text-muted-foreground"
+              >
                 ...
               </span>
             )
@@ -132,9 +138,9 @@ export function Pagination({
             <Button
               key={pageNum}
               variant={current === pageNum ? 'default' : 'outline'}
-              size="sm"
+              size="icon"
+              className="h-8 w-8"
               onClick={() => handlePageChange(pageNum)}
-              className="min-w-[32px]"
             >
               {pageNum}
             </Button>
@@ -144,22 +150,23 @@ export function Pagination({
         {/* 下一页 */}
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
+          className="h-8 w-8"
           onClick={() => handlePageChange(current + 1)}
           disabled={current === totalPages}
         >
-          <ChevronRight className="w-4 h-4" />
+          <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
 
       {/* 每页条数选择器 */}
       {showSizeChanger && (
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm whitespace-nowrap">
           <span className="text-muted-foreground">每页</span>
           <select
             value={pageSize}
             onChange={(e) => handleSizeChange(Number(e.target.value))}
-            className="px-2 py-1 border rounded-md bg-background"
+            className="h-8 px-2 py-1 text-sm border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
           >
             {pageSizeOptions.map((option) => (
               <option key={option} value={option}>
@@ -173,13 +180,14 @@ export function Pagination({
 
       {/* 快速跳转 */}
       {showQuickJumper && (
-        <div className="flex items-center gap-2 text-sm">
+        <div className="flex items-center gap-2 text-sm whitespace-nowrap">
           <span className="text-muted-foreground">跳至</span>
           <input
             type="number"
             min={1}
             max={totalPages}
-            className="w-16 px-2 py-1 border rounded-md bg-background"
+            className="h-8 w-14 px-2 text-sm text-center border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+            placeholder="页"
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 const page = Number((e.target as HTMLInputElement).value)
