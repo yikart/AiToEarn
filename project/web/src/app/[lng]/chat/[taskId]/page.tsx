@@ -266,6 +266,7 @@ export default function ChatDetailPage() {
         progress={progress}
         thinkingText={t('message.thinking' as any)}
         taskId={taskId}
+        rating={task?.rating ?? null}
         onBack={handleBack}
       />
 

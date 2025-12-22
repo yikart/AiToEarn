@@ -9,6 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { Modal } from '@/components/ui/modal'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { Star, Loader2 } from 'lucide-react'
 import { agentApi } from '@/api/agent'
 import { toast } from '@/lib/toast'
 import { useTransClient } from '@/app/i18n/client'
@@ -86,7 +87,12 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
       onOk={handleSubmit}
       okText={t('rating.submit' as any) || '提交'}
       cancelText={t('rating.cancel' as any) || '取消'}
-      confirmLoading={loading}
+      confirmLoading={false}
+      footer={loading ? (
+        <div className="flex items-center justify-end w-full">
+          <Loader2 className="w-5 h-5 animate-spin" />
+        </div>
+      ) : undefined}
       width={520}
     >
       <div className="space-y-4 w-full">
@@ -103,15 +109,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
                   onClick={() => setRating(val)}
                   className={`p-1 rounded ${selected ? 'text-amber-400' : 'text-muted-foreground'}`}
                 >
-                  {selected ? (
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                      <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-                    </svg>
-                  ) : (
-                    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
-                      <polygon points="12,2 15,9 22,9 17,14 19,21 12,17 5,21 7,14 2,9 9,9" />
-                    </svg>
-                  )}
+                  <Star className="w-6 h-6" {...(selected ? { fill: 'currentColor' } : {})} />
                 </button>
               )
             })}

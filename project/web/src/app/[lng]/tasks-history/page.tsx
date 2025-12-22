@@ -6,8 +6,9 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, History, RefreshCw } from 'lucide-react'
+import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
+import RatingModal from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
 import { agentApi, type TaskListItem } from '@/api/agent'
 import { useTransClient } from '@/app/i18n/client'
@@ -24,6 +25,7 @@ export default function TasksHistoryPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
+  const [ratingModalFor, setRatingModalFor] = useState<string | null>(null)
 
   // 每页 16 条
   const pageSize = 16
@@ -147,7 +149,7 @@ export default function TasksHistoryPage() {
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {tasks.map((task) => (
-                  <TaskCard
+                <TaskCard
                     key={task.id}
                     id={task.id}
                     title={task.title || t('task.newChat' as any)}
@@ -157,9 +159,20 @@ export default function TasksHistoryPage() {
                     onDelete={handleDelete}
                     rating={task.rating ?? null}
                     ratingComment={task.ratingComment ?? null}
+                    onRateClick={(taskId) => setRatingModalFor(taskId)}
                   />
                 ))}
               </div>
+              <RatingModal
+                taskId={ratingModalFor ?? ''}
+                open={!!ratingModalFor}
+                onClose={() => setRatingModalFor(null)}
+                onSaved={(data) => {
+                  setTasks((prev) => prev.map((t) => (t.id === ratingModalFor ? { ...t, rating: data.rating ?? t.rating, ratingComment: data.comment ?? t.ratingComment } : t)))
+                  setRatingModalFor(null)
+                  toast.success(t('rating.saveSuccess' as any) || 'Saved')
+                }}
+              />
 
               {/* 分页器 */}
               {totalPages > 1 && (

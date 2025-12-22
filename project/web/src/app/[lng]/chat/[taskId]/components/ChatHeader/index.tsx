@@ -22,6 +22,8 @@ export interface IChatHeaderProps {
   thinkingText: string
   /** 任务ID（用于评分） */
   taskId?: string
+  /** 任务评分（用于显示实星） */
+  rating?: number | null
   /** 返回按钮点击 */
   onBack: () => void
 }
@@ -34,6 +36,7 @@ export function ChatHeader({
   thinkingText,
   onBack,
   taskId,
+  rating,
 }: IChatHeaderProps) {
   const [ratingOpen, setRatingOpen] = useState(false)
   return (
@@ -65,7 +68,7 @@ export function ChatHeader({
           onClick={() => setRatingOpen(true)}
           className="w-8 h-8"
         >
-          <Star className="w-5 h-5 text-amber-400" />
+          <Star className={`w-5 h-5 ${rating ? 'text-amber-400' : 'text-muted-foreground'}`} {...(rating ? { fill: 'currentColor' } : {})} />
         </Button>
       </div>
       <RatingModal
