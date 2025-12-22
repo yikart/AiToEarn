@@ -5,15 +5,17 @@
 
 'use client'
 
-import type { UserWalletAccount, UserWalletAccountCreateDto } from '@/api/userWalletAccount'
-import { useEffect, useMemo, useState } from 'react'
+import type { WalletAccount, WalletAccountRequest, WalletAccountUpdateRequest } from '@/api/types/userWalletAccount'
+import { WalletAccountType } from '@/api/types/userWalletAccount'
+import { useEffect, useState } from 'react'
 import {
-  createUserWalletAccount,
-  deleteUserWalletAccount,
-  EMAIL_REGEX,
-  getUserWalletAccountList,
-  updateUserWalletAccount,
-} from '@/api/userWalletAccount'
+  createWalletAccountApi,
+  deleteWalletAccountApi,
+  getWalletAccountListApi,
+  updateWalletAccountApi,
+  setDefaultWalletAccountApi,
+} from '@/api/payment'
+import { EMAIL_REGEX } from '@/api/userWalletAccount'
 import { useTransClient } from '@/app/i18n/client'
 import { useUserStore } from '@/store/user'
 import { toast } from '@/lib/toast'
@@ -36,21 +38,20 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
   const { t } = useTransClient('wallet')
   const { userInfo } = useUserStore()
 
-  const [list, setList] = useState<UserWalletAccount[]>([])
+  const [list, setList] = useState<WalletAccount[]>([])
   const [loading, setLoading] = useState(false)
   const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 })
 
-  const [formData, setFormData] = useState<Partial<UserWalletAccountCreateDto>>({
-    userId: userInfo?._id || '',
-    mail: '',
+  const [formData, setFormData] = useState<Partial<WalletAccountRequest>>({
+    email: '',
     userName: '',
     account: '',
-    cardNum: '',
+    idCard: '',
     phone: '',
-    type: 'ZFB',
+    type: WalletAccountType.Alipay,
   })
   const [modalOpen, setModalOpen] = useState(false)
-  const [editing, setEditing] = useState<UserWalletAccount | null>(null)
+  const [editing, setEditing] = useState<WalletAccount | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
@@ -60,13 +61,13 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     }
   }, [open])
 
-  async function fetchList(pageNo: number, pageSize: number) {
+  async function fetchList(page: number, pageSize: number) {
     setLoading(true)
     try {
-      const res = await getUserWalletAccountList(pageNo, pageSize)
+      const res = await getWalletAccountListApi({ page, pageSize })
       if (res?.data) {
         setList(res.data.list || [])
-        setPagination({ current: pageNo, pageSize, total: res.data.total || 0 })
+        setPagination({ current: page, pageSize, total: res.data.total || 0 })
       }
     }
     finally {
@@ -77,34 +78,32 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
   function openCreate() {
     setEditing(null)
     setFormData({
-      userId: userInfo?._id || '',
-      mail: '',
+      email: '',
       userName: '',
       account: '',
-      cardNum: '',
+      idCard: '',
       phone: '',
-      type: 'ZFB',
+      type: WalletAccountType.Alipay,
     })
     setFormErrors({})
     setModalOpen(true)
   }
 
-  function onEdit(record: UserWalletAccount) {
+  function onEdit(record: WalletAccount) {
     setEditing(record)
     setFormData({
-      userId: record.userId,
-      mail: record.mail,
-      userName: record.userName,
-      account: record.account,
-      cardNum: record.cardNum,
-      phone: record.phone,
+      email: record.email || '',
+      userName: record.userName || '',
+      account: record.account || '',
+      idCard: record.idCard || '',
+      phone: record.phone || '',
       type: record.type,
     })
     setFormErrors({})
     setModalOpen(true)
   }
 
-  async function onDelete(record: UserWalletAccount) {
+  async function onDelete(record: WalletAccount) {
     const result = await confirm({
       title: t('actions.deleteConfirm'),
       content: t('actions.deleteConfirmDesc') || '此操作不可恢复',
@@ -114,7 +113,7 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     })
 
     if (result) {
-      const res = await deleteUserWalletAccount(record._id)
+      const res = await deleteWalletAccountApi(record.id)
       if (res) {
         toast.success(t('messages.deleteSuccess'))
         fetchList(pagination.current, pagination.pageSize)
@@ -122,18 +121,24 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     }
   }
 
+  async function onSetDefault(record: WalletAccount) {
+    try {
+      const res = await setDefaultWalletAccountApi(record.id)
+      if (res) {
+        toast.success(t('messages.setDefaultSuccess') || '设置成功')
+        fetchList(pagination.current, pagination.pageSize)
+      }
+    }
+    catch (error) {
+      toast.error(t('messages.setDefaultFailed') || '设置失败')
+    }
+  }
+
   function validateForm(): boolean {
     const errors: Record<string, string> = {}
 
-    if (!formData.userId) {
-      errors.userId = t('form.required')
-    }
-
-    if (!formData.mail) {
-      errors.mail = t('form.required')
-    }
-    else if (!EMAIL_REGEX.test(formData.mail)) {
-      errors.mail = t('form.mailInvalid')
+    if (formData.email && !EMAIL_REGEX.test(formData.email)) {
+      errors.email = t('form.mailInvalid')
     }
 
     if (!formData.account) {
@@ -156,7 +161,13 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     setSubmitting(true)
     try {
       if (editing) {
-        const res = await updateUserWalletAccount(editing._id, formData as Partial<UserWalletAccountCreateDto>)
+        const updateData: WalletAccountUpdateRequest = {
+          email: formData.email,
+          userName: formData.userName,
+          phone: formData.phone,
+          idCard: formData.idCard,
+        }
+        const res = await updateWalletAccountApi(editing.id, updateData)
         if (res) {
           toast.success(t('messages.updateSuccess'))
           setModalOpen(false)
@@ -164,7 +175,15 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
         }
       }
       else {
-        const res = await createUserWalletAccount(formData as UserWalletAccountCreateDto)
+        const createData: WalletAccountRequest = {
+          account: formData.account,
+          email: formData.email,
+          userName: formData.userName,
+          phone: formData.phone,
+          idCard: formData.idCard,
+          type: formData.type!,
+        }
+        const res = await createWalletAccountApi(createData)
         if (res) {
           toast.success(t('messages.createSuccess'))
           setModalOpen(false)
@@ -175,6 +194,16 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     finally {
       setSubmitting(false)
     }
+  }
+
+  // 获取类型显示文本
+  const getTypeText = (type: WalletAccountType) => {
+    const typeMap: Record<WalletAccountType, string> = {
+      [WalletAccountType.Alipay]: t('types.ZFB') || '支付宝',
+      [WalletAccountType.WechatPay]: t('types.WX_PAY') || '微信支付',
+      [WalletAccountType.StripeConnect]: 'Stripe Connect',
+    }
+    return typeMap[type] || type
   }
 
   return (
@@ -211,15 +240,38 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
                     </TableHeader>
                     <TableBody>
                       {list.map((record) => (
-                        <TableRow key={record._id}>
+                        <TableRow key={record.id}>
                           <TableCell className="truncate">{record.userName || '-'}</TableCell>
-                          <TableCell className="truncate hidden md:table-cell">{record.mail}</TableCell>
+                          <TableCell className="truncate hidden md:table-cell">{record.email || '-'}</TableCell>
                           <TableCell className="truncate">{record.account}</TableCell>
-                          <TableCell>{record.type === 'ZFB' ? t('types.ZFB') : t('types.WX_PAY')}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <span>{getTypeText(record.type)}</span>
+                              {record.isDefault && (
+                                <span className="text-xs bg-primary text-primary-foreground px-1.5 py-0.5 rounded">
+                                  默认
+                                </span>
+                              )}
+                              {record.isVerified && (
+                                <span className="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded">
+                                  已验证
+                                </span>
+                              )}
+                            </div>
+                          </TableCell>
                           <TableCell className="truncate hidden lg:table-cell">{record.phone || '-'}</TableCell>
-                          <TableCell className="truncate hidden lg:table-cell">{record.cardNum || '-'}</TableCell>
+                          <TableCell className="truncate hidden lg:table-cell">{record.idCard || '-'}</TableCell>
                           <TableCell>
                             <div className="flex gap-2">
+                              {!record.isDefault && (
+                                <Button
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => onSetDefault(record)}
+                                >
+                                  设为默认
+                                </Button>
+                              )}
                               <Button
                                 size="sm"
                                 variant="ghost"
@@ -278,32 +330,22 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
       >
         <div className="space-y-4 max-h-[70vh] overflow-y-auto">
           <div className="space-y-2">
-            <Label>{t('form.userId')}</Label>
-            <Input
-              value={formData.userId}
-              disabled
-              placeholder={t('form.userIdPlaceholder')}
-            />
-          </div>
-
-          <div className="space-y-2">
             <Label>
               {t('form.mail')}
-              <span className="text-destructive">*</span>
             </Label>
             <Input
-              value={formData.mail}
+              value={formData.email || ''}
               onChange={(e) => {
-                setFormData({ ...formData, mail: e.target.value })
-                if (formErrors.mail) {
-                  setFormErrors({ ...formErrors, mail: '' })
+                setFormData({ ...formData, email: e.target.value })
+                if (formErrors.email) {
+                  setFormErrors({ ...formErrors, email: '' })
                 }
               }}
               placeholder={t('form.mailPlaceholder')}
-              className={formErrors.mail ? 'border-destructive' : ''}
+              className={formErrors.email ? 'border-destructive' : ''}
             />
-            {formErrors.mail && (
-              <p className="text-sm text-destructive">{formErrors.mail}</p>
+            {formErrors.email && (
+              <p className="text-sm text-destructive">{formErrors.email}</p>
             )}
           </div>
 
@@ -340,8 +382,8 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
           <div className="space-y-2">
             <Label>{t('form.cardNum')}</Label>
             <Input
-              value={formData.cardNum}
-              onChange={(e) => setFormData({ ...formData, cardNum: e.target.value })}
+              value={formData.idCard || ''}
+              onChange={(e) => setFormData({ ...formData, idCard: e.target.value })}
               placeholder={t('form.cardNumPlaceholder')}
             />
           </div>
@@ -363,15 +405,16 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
             <select
               value={formData.type}
               onChange={(e) => {
-                setFormData({ ...formData, type: e.target.value as 'ZFB' | 'WX_PAY' })
+                setFormData({ ...formData, type: e.target.value as WalletAccountType })
                 if (formErrors.type) {
                   setFormErrors({ ...formErrors, type: '' })
                 }
               }}
               className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             >
-              <option value="ZFB">{t('types.ZFB')}</option>
-              <option value="WX_PAY">{t('types.WX_PAY')}</option>
+              <option value={WalletAccountType.Alipay}>{t('types.ZFB') || '支付宝'}</option>
+              <option value={WalletAccountType.WechatPay}>{t('types.WX_PAY') || '微信支付'}</option>
+              <option value={WalletAccountType.StripeConnect}>Stripe Connect</option>
             </select>
             {formErrors.type && (
               <p className="text-sm text-destructive">{formErrors.type}</p>

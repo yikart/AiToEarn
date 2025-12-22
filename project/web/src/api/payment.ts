@@ -175,3 +175,93 @@ export function cancelWithdrawApi(id: string) {
     method: 'POST',
   })
 }
+
+/**
+ * 创建钱包账户
+ */
+export function createWalletAccountApi(params: {
+  account?: string
+  email?: string
+  idCard?: string
+  isDefault?: boolean
+  phone?: string
+  stripeConnectedAccountId?: string
+  type: 'alipay' | 'stripe_connect' | 'wechat_pay'
+  userName?: string
+  [property: string]: any
+}) {
+  return request<any>({
+    url: 'payment/user-wallet-account',
+    method: 'POST',
+    data: params,
+  })
+}
+
+/**
+ * 获取钱包账户列表
+ */
+export function getWalletAccountListApi(params: {
+  page?: number
+  pageSize?: number
+  type?: 'alipay' | 'stripe_connect' | 'wechat_pay'
+  [property: string]: any
+}) {
+  return request<{
+    page: number
+    pageSize: number
+    totalPages: number
+    total: number
+    list: any[]
+  }>({
+    url: 'payment/user-wallet-account',
+    method: 'GET',
+    params,
+  })
+}
+
+/**
+ * 获取钱包账户详情
+ */
+export function getWalletAccountDetailApi(id: string) {
+  return request<any>({
+    url: `payment/user-wallet-account/${id}`,
+    method: 'GET',
+  })
+}
+
+/**
+ * 更新钱包账户
+ */
+export function updateWalletAccountApi(id: string, params: {
+  email?: string
+  idCard?: string
+  phone?: string
+  userName?: string
+  [property: string]: any
+}) {
+  return request<any>({
+    url: `payment/user-wallet-account/${id}`,
+    method: 'PATCH',
+    data: params,
+  })
+}
+
+/**
+ * 删除钱包账户
+ */
+export function deleteWalletAccountApi(id: string) {
+  return request<any>({
+    url: `payment/user-wallet-account/${id}`,
+    method: 'DELETE',
+  })
+}
+
+/**
+ * 设置为默认钱包账户
+ */
+export function setDefaultWalletAccountApi(id: string) {
+  return request<any>({
+    url: `payment/user-wallet-account/${id}/set-default`,
+    method: 'POST',
+  })
+}
