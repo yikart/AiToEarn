@@ -11,10 +11,21 @@ import type {
 } from '@/api/task'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
-import { CheckOutlined, ClockCircleOutlined, EyeOutlined, PlayCircleOutlined, UploadOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Empty, Input, List, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
+import { ClockCircleOutlined, EyeOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import { toast } from '@/lib/toast'
 import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { Spin } from '@/components/ui/spin'
+import { Empty } from '@/components/ui/empty'
+import { Card } from '@/components/ui/card'
+import { Steps } from '@/components/ui/steps'
+import { List } from '@/components/ui/list'
+import { Pagination } from '@/components/ui/pagination'
+import { Radio } from '@/components/ui/radio'
+import { Row, Col } from '@/components/ui/grid'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -40,8 +51,6 @@ import { useUserStore } from '@/store/user'
 import { generateUUID } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
 import styles from './taskPageCore.module.scss'
-
-const { TabPane } = Tabs
 
 export default function TaskPageCore() {
   const { t } = useTransClient('task' as any)
@@ -379,6 +388,18 @@ export default function TaskPageCore() {
       rejected: { color: 'red', text: t('taskStatus.rejected' as any) },
     }
     return statusMap[status] || { color: 'default', text: status }
+  }
+
+  // 将 antd Tag 的 color 转换为 Badge 的样式类
+  const getBadgeClassName = (color?: string) => {
+    const colorMap: Record<string, string> = {
+      orange: 'bg-orange-100 text-orange-800 border-orange-200',
+      green: 'bg-green-100 text-green-800 border-green-200',
+      blue: 'bg-blue-100 text-blue-800 border-blue-200',
+      red: 'bg-red-100 text-red-800 border-red-200',
+      default: 'bg-gray-100 text-gray-800 border-gray-200',
+    }
+    return colorMap[color || 'default'] || colorMap.default
   }
 
   // 根据accountId获取账号信息
@@ -1053,21 +1074,23 @@ export default function TaskPageCore() {
       </div> */}
 
       <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
+        value={activeTab}
+        onValueChange={setActiveTab}
         className={styles.tabs}
       >
-        <TabPane
-          tab={(
-            <span>
-              <ClockCircleOutlined />
-              &nbsp;
-              {' '}
-              {t('pendingTasks')}
-            </span>
-          )}
-          key="pending"
-        >
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="pending">
+            <ClockCircleOutlined />
+            &nbsp;
+            {t('pendingTasks')}
+          </TabsTrigger>
+          <TabsTrigger value="accepted">
+            <PlayCircleOutlined />
+            &nbsp;
+            {t('acceptedTasks')}
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="pending">
           <Spin spinning={loading}>
             {pendingTasks.length > 0 ? (
               <div>
@@ -1116,7 +1139,7 @@ export default function TaskPageCore() {
                                 : `${getPlatformName(task.accountType)} Task`}
                             </h3>
                           </div>
-                          <Tag color="orange">{t('taskStatus.pending' as any)}</Tag>
+                          <Badge className={getBadgeClassName('orange')}>{t('taskStatus.pending' as any)}</Badge>
                         </div>
 
                         <div className={styles.taskContent}>
@@ -1202,11 +1225,11 @@ export default function TaskPageCore() {
 
                         <div className={styles.taskActions}>
                           <Button
-                            type="primary"
                             onClick={() => handleViewTaskDetail(task.id)}
-                            icon={<EyeOutlined />}
                             style={{ width: '100%' }}
                           >
+                            <EyeOutlined />
+                            &nbsp;
                             {t('viewDetails')}
                           </Button>
                         </div>
@@ -1232,19 +1255,9 @@ export default function TaskPageCore() {
               <Empty description={t('messages.noPendingTasks')} />
             )}
           </Spin>
-        </TabPane>
+        </TabsContent>
 
-        <TabPane
-          tab={(
-            <span>
-              <PlayCircleOutlined />
-              &nbsp;
-              {' '}
-              {t('acceptedTasks')}
-            </span>
-          )}
-          key="accepted"
-        >
+        <TabsContent value="accepted">
           <Spin spinning={loading}>
             {acceptedTasks.length > 0 ? (
               <div>
@@ -1277,9 +1290,9 @@ export default function TaskPageCore() {
                                 : `${getPlatformName(task.accountType)}Task`}
                             </h3>
                           </div>
-                          <Tag color={getTaskStatusTag(task.status).color}>
+                          <Badge className={getBadgeClassName(getTaskStatusTag(task.status).color)}>
                             {getTaskStatusTag(task.status).text}
-                          </Tag>
+                          </Badge>
                         </div>
 
                         <div className={styles.taskContent}>
@@ -1359,11 +1372,11 @@ export default function TaskPageCore() {
 
                         <div className={styles.taskActions}>
                           <Button
-                            type="primary"
                             onClick={() => handleViewAcceptedTaskDetail(task.id)}
-                            icon={<EyeOutlined />}
                             style={{ width: '100%' }}
                           >
+                            <EyeOutlined />
+                            &nbsp;
                             {t('viewDetails')}
                           </Button>
                         </div>
@@ -1389,7 +1402,7 @@ export default function TaskPageCore() {
               <Empty description={t('messages.noAcceptedTasks')} />
             )}
           </Spin>
-        </TabPane>
+        </TabsContent>
       </Tabs>
 
       {/* 提交任务弹窗 */}
@@ -1544,9 +1557,10 @@ export default function TaskPageCore() {
                     <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.selectDraft')}</span>
                     <Radio.Group
                       value={draftSource}
-                      onChange={(e) => {
-                        setDraftSource(e.target.value)
-                        if (e.target.value === 'own') {
+                      onChange={(e: { target: { value: string | number } }) => {
+                        const value = e.target.value as 'task' | 'own'
+                        setDraftSource(value)
+                        if (value === 'own') {
                           setDraftModalOpen(true)
                         }
                       }}
@@ -1557,7 +1571,7 @@ export default function TaskPageCore() {
                   </div>
                   {draftSource === 'own' && selectedMaterial && (
                     <Button
-                      type="link"
+                      variant="link"
                       onClick={() => setDraftModalOpen(true)}
                     >
                       {t('draft.reselect')}
@@ -1751,8 +1765,7 @@ export default function TaskPageCore() {
                 }}
                 >
                   <Button
-                    type="primary"
-                    size="large"
+                    size="lg"
                     onClick={() => handleTaskAction(taskDetail)}
                     disabled={!selectedMaterial}
                   >
@@ -2140,15 +2153,15 @@ export default function TaskPageCore() {
               }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Tag
-                    color={getTaskStatusTag(acceptedTaskDetail.status).color}
+                  <Badge 
+                    className={getBadgeClassName(getTaskStatusTag(acceptedTaskDetail.status).color)}
                     style={{
                       fontSize: '12px',
                       padding: '4px 8px',
                     }}
                   >
                     {getTaskStatusTag(acceptedTaskDetail.status).text}
-                  </Tag>
+                  </Badge>
                   <span style={{
                     fontSize: '12px',
                     color: '#666',
@@ -2180,8 +2193,7 @@ export default function TaskPageCore() {
                   return (
                     <div style={{ textAlign: 'center', marginTop: '16px' }}>
                       <Button
-                        type="primary"
-                        size="large"
+                        size="lg"
                         onClick={handleCompleteTask}
                         style={{ marginTop: '12px' }}
                       >
@@ -2268,7 +2280,7 @@ export default function TaskPageCore() {
           current={taskProgress.currentStep}
           items={taskProgress.steps.map((step, index) => ({
             title: step.title,
-            status: step.status as 'wait' | 'process' | 'finish' | 'error',
+            status: (step.status === 'processing' ? 'process' : step.status) as 'wait' | 'process' | 'finish' | 'error',
             description: index === 0
               ? (step.title.includes(t('completeTask' as any)) ? t('messages.taskProcessFailed') : t('messages.taskProcessFailed'))
               : index === 1
@@ -2335,7 +2347,7 @@ export default function TaskPageCore() {
                 title={(
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontWeight: '500' }}>{account.nickname}</span>
-                    <Tag color="blue">{getPlatformName(account.type)}</Tag>
+                    <Badge className={getBadgeClassName('blue')}>{getPlatformName(account.type)}</Badge>
                   </div>
                 )}
                 description={(

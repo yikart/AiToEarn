@@ -122,6 +122,9 @@ export const Modal: React.FC<ModalProps> = ({
     }
   }
 
+  // 计算 overlay 的 z-index（比 content 小 1）
+  const overlayZIndex = zIndex ? zIndex - 1 : undefined
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
@@ -139,6 +142,7 @@ export const Modal: React.FC<ModalProps> = ({
           maxWidth: shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
           ...(zIndex ? { zIndex } : {}),
         } as React.CSSProperties}
+        overlayStyle={overlayZIndex ? { zIndex: overlayZIndex } : undefined}
         onInteractOutside={handleInteractOutside}
         onEscapeKeyDown={!closable ? (e) => e.preventDefault() : undefined}
         aria-describedby={title ? undefined : undefined}
