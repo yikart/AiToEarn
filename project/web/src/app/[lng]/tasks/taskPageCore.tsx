@@ -21,10 +21,8 @@ import { Badge } from '@/components/ui/badge'
 import { Spin } from '@/components/ui/spin'
 import { Empty } from '@/components/ui/empty'
 import { Card } from '@/components/ui/card'
-import { Steps } from '@/components/ui/steps'
 import { List } from '@/components/ui/list'
 import { Pagination } from '@/components/ui/pagination'
-import { Radio } from '@/components/ui/radio'
 import { Row, Col } from '@/components/ui/grid'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
@@ -32,20 +30,16 @@ import React, { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
 import { apiGetMaterialList } from '@/api/material'
 import { acceptTask, getTaskDetail, submitTask } from '@/api/notification'
-import { apiCreatePublish } from '@/api/plat/publish'
 import {
   apiGetTaskOpportunityList,
   apiGetUserTaskDetail,
   apiGetUserTaskList,
   apiMarkTaskAsViewed
 } from '@/api/task'
-import { getDays, getUtcDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
-import { getAppDownloadConfig, getTasksRequiringApp } from '@/app/config/appDownloadConfig'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import DownloadAppModal from '@/components/common/DownloadAppModal'
+import MediaPreview from '@/components/common/MediaPreview'
 import { useUserStore } from '@/store/user'
-import { generateUUID } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
 import styles from './taskPageCore.module.scss'
 import PublishDialog from '@/components/PublishDialog'
@@ -115,28 +109,6 @@ export default function TaskPageCore() {
     url: string
     title?: string
   } | null>(null)
-  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null)
-
-  // Task progress modal state
-  const [taskProgressVisible, setTaskProgressVisible] = useState(false)
-  const [taskProgress, setTaskProgress] = useState({
-    currentStep: 0,
-    steps: [
-      { title: t('acceptingTask' as any), status: 'processing' },
-      { title: t('publishingTask' as any), status: 'wait' },
-      { title: t('submittingTask' as any), status: 'wait' },
-      { title: t('taskCompleted' as any), status: 'wait' },
-    ],
-  })
-
-  // 下载App弹窗状态 - 暂时注释
-  const [downloadAppVisible, setDownloadAppVisible] = useState(false)
-  const [downloadAppConfig, setDownloadAppConfig] = useState({
-    platform: '',
-    appName: '',
-    downloadUrl: '',
-    qrCodeUrl: '' as string | undefined,
-  })
 
   // 账号选择弹窗状态
   const [accountSelectVisible, setAccountSelectVisible] = useState(false)
@@ -328,7 +300,7 @@ export default function TaskPageCore() {
   // Get task status tag
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string, text: string }> = {
-      pending: { color: 'orange', text: t('taskStatus.pending' as any) }, // pending: 待接受
+      pending: { color: 'green', text: t('taskStatus.pending' as any) }, // pending: 已完成
       doing: { color: 'blue', text: t('taskStatus.doing' as any) }, // doing: 进行中
       accepted: { color: 'blue', text: t('taskStatus.accepted' as any) },
       completed: { color: 'green', text: t('taskStatus.completed' as any) },
@@ -340,11 +312,11 @@ export default function TaskPageCore() {
   // 将 antd Tag 的 color 转换为 Badge 的样式类
   const getBadgeClassName = (color?: string) => {
     const colorMap: Record<string, string> = {
-      orange: 'bg-orange-100 text-orange-800 border-orange-200',
-      green: 'bg-green-100 text-green-800 border-green-200',
-      blue: 'bg-blue-100 text-blue-800 border-blue-200',
-      red: 'bg-red-100 text-red-800 border-red-200',
-      default: 'bg-gray-100 text-gray-800 border-gray-200',
+      orange: 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-100',
+      green: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100',
+      blue: 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100',
+      red: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100',
+      default: 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-100',
     }
     return colorMap[color || 'default'] || colorMap.default
   }
@@ -364,51 +336,10 @@ export default function TaskPageCore() {
 
   // 处理任务操作（接受任务）
   const handleTaskAction = (task: any) => {
-    // 首先检查任务支持的所有平台是否都需要App操作
-    const taskPlatforms = task.accountTypes || []
-    const appRequiredPlatforms = getTasksRequiringApp(taskPlatforms)
-
-    // 如果所有平台都需要App操作，直接显示下载App提示
-    if (appRequiredPlatforms.length > 0 && appRequiredPlatforms.length === taskPlatforms.length) {
-      const firstPlatform = appRequiredPlatforms[0]
-      const config = getAppDownloadConfig(firstPlatform)
-
-      if (config) {
-        setDownloadAppConfig({
-          platform: config.platform,
-          appName: config.appName,
-          downloadUrl: config.downloadUrl,
-          qrCodeUrl: config.qrCodeUrl,
-        })
-        setDownloadAppVisible(true)
-        return
-      }
-    }
-
     // 如果任务指定了账号，使用指定账号的逻辑
     if (task.accountId) {
       const publishAccount = getAccountById(task.accountId)
       if (publishAccount) {
-        // 检查发布账号的平台是否需要App操作
-        const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type])
-
-        if (appRequiredPlatforms.length > 0) {
-          // 有需要App操作的平台，显示第一个平台的下载提示
-          const firstPlatform = appRequiredPlatforms[0]
-          const config = getAppDownloadConfig(firstPlatform)
-
-          if (config) {
-            setDownloadAppConfig({
-              platform: config.platform,
-              appName: config.appName,
-              downloadUrl: config.downloadUrl,
-              qrCodeUrl: config.qrCodeUrl,
-            })
-            setDownloadAppVisible(true)
-            return
-          }
-        }
-
         // 直接使用指定账号接受任务
         handleAcceptTaskFromDetail(task, publishAccount)
         return
@@ -422,7 +353,6 @@ export default function TaskPageCore() {
       // 没有符合条件的账号，跳转到账户界面并弹出授权界面
       setRequiredAccountTypes(task.accountTypes || [])
       setTaskDetailModalVisible(false) // 关闭任务详情弹窗
-      // 关闭消息通知弹窗
       toast.info(t('accountSelect.redirectingToAccounts' as any))
 
       // 构建跳转URL，包含需要的平台类型参数
@@ -439,26 +369,6 @@ export default function TaskPageCore() {
     if (availableAccounts.length === 1) {
       // 只有一个符合条件的账号，直接使用
       const account = availableAccounts[0]
-
-      // 检查是否需要App操作
-      const appRequiredPlatforms = getTasksRequiringApp([account.type])
-      if (appRequiredPlatforms.length > 0) {
-        const firstPlatform = appRequiredPlatforms[0]
-        const config = getAppDownloadConfig(firstPlatform)
-
-        if (config) {
-          setDownloadAppConfig({
-            platform: config.platform,
-            appName: config.appName,
-            downloadUrl: config.downloadUrl,
-            qrCodeUrl: config.qrCodeUrl,
-          })
-          setDownloadAppVisible(true)
-          return
-        }
-      }
-
-      // 直接使用这个账号接受任务
       handleAcceptTaskFromDetail(task, account)
       return
     }
@@ -472,24 +382,6 @@ export default function TaskPageCore() {
   const handleAccountSelect = (account: SocialAccount) => {
     setSelectedAccount(account)
     setAccountSelectVisible(false)
-
-    // 检查是否需要App操作
-    const appRequiredPlatforms = getTasksRequiringApp([account.type])
-    if (appRequiredPlatforms.length > 0) {
-      const firstPlatform = appRequiredPlatforms[0]
-      const config = getAppDownloadConfig(firstPlatform)
-
-      if (config) {
-        setDownloadAppConfig({
-          platform: config.platform,
-          appName: config.appName,
-          downloadUrl: config.downloadUrl,
-          qrCodeUrl: config.qrCodeUrl,
-        })
-        setDownloadAppVisible(true)
-        return
-      }
-    }
 
     // 使用选择的账号接受任务
     if (taskDetail) {
@@ -509,26 +401,6 @@ export default function TaskPageCore() {
         if (newAvailableAccounts.length === 1) {
           // 只有一个新账号，直接使用
           const account = newAvailableAccounts[0]
-
-          // 检查是否需要App操作
-          const appRequiredPlatforms = getTasksRequiringApp([account.type])
-          if (appRequiredPlatforms.length > 0) {
-            const firstPlatform = appRequiredPlatforms[0]
-            const config = getAppDownloadConfig(firstPlatform)
-
-            if (config) {
-              setDownloadAppConfig({
-                platform: config.platform,
-                appName: config.appName,
-                downloadUrl: config.downloadUrl,
-                qrCodeUrl: config.qrCodeUrl,
-              })
-              setDownloadAppVisible(true)
-              return
-            }
-          }
-
-          // 直接使用这个账号接受任务
           handleAcceptTaskFromDetail(taskDetail, account)
         }
         else {
@@ -664,33 +536,18 @@ export default function TaskPageCore() {
     if (!task)
       return
 
-    // 使用选中的推荐草稿（如果有）; 不要使用回退素材，直接发布模式下不自动填充
-    // const material will be read again after accept to ensure current selectedMaterial is used
-
     // Close detail modal
     setTaskDetailModalVisible(false)
 
-    // Show progress modal
-    setTaskProgressVisible(true)
-    setTaskProgress({
-      currentStep: 0,
-      steps: [
-        { title: t('acceptingTask'), status: 'processing' },
-        { title: t('publishingTask'), status: 'wait' },
-        { title: t('submittingTask'), status: 'wait' },
-        { title: t('taskCompleted'), status: 'wait' },
-      ],
-    })
-
     try {
-      // 第一步：接受任务（只接受，不自动发布）
+      // 接受任务（只接受，不自动发布）
       const response: any = await acceptTask(task.id, task.opportunityId, account?.id)
       if (response && response.code === 0 && response.data.id) {
         // 接受成功，准备打开发布弹窗以供用户确认发布
         const publishAccount = account || getAccountById(task.accountId)
         const material = selectedMaterial
 
-        // 保存待提交任务信息，等待用户在发布弹窗发布后调用提交接口（可能没有 material）
+        // 保存待提交任务信息，等待用户在发布弹窗发布后调用提交接口
         setPendingUserTaskIdForPublish(response.data.id)
         setPendingTaskMaterialIdForPublish(material?._id)
         setPendingTaskForPublish(task)
@@ -699,57 +556,7 @@ export default function TaskPageCore() {
         try {
           usePublishDialog.getState().init(accountList.length > 0 ? accountList : (publishAccount ? [publishAccount] : []), publishAccount?.id)
 
-          // 预填充当前账号的发布参数（优先使用推荐草稿 material，否则使用 task 的描述/标题）
-          const videos = material?.mediaList?.filter((m: any) => m.type === 'video') || []
-          const images = material?.mediaList?.filter((m: any) => m.type !== 'video') || []
-
-          const imgFiles = images.map((img: any) => ({
-            id: generateUUID(),
-            size: 0,
-            file: {} as any,
-            imgUrl: getOssUrl(img.url),
-            filename: '',
-            imgPath: '',
-            width: 0,
-            height: 0,
-            ossUrl: getOssUrl(img.url),
-          }))
-
-          const videoFile = videos.length > 0 ? {
-            size: 0,
-            file: {} as any,
-            videoUrl: '',
-            ossUrl: getOssUrl(videos[0].url),
-            filename: '',
-            width: 0,
-            height: 0,
-            duration: 0,
-            cover: {
-              id: generateUUID(),
-              size: 0,
-              file: {} as any,
-              imgUrl: material?.coverUrl ? getOssUrl(material.coverUrl) : (videos[0].cover ? getOssUrl(videos[0].cover) : ''),
-              filename: '',
-              imgPath: '',
-              width: 0,
-              height: 0,
-              ossUrl: material?.coverUrl ? getOssUrl(material.coverUrl) : (videos[0].cover ? getOssUrl(videos[0].cover) : ''),
-            },
-          } as any : undefined
-
-          const pubParmas: any = {
-            des: material?.desc || task.description || '',
-            title: material?.title || task.title || '',
-            images: imgFiles.length > 0 ? imgFiles : undefined,
-            video: videoFile,
-            option: {},
-          }
-
           if (publishAccount) {
-            // 如果选择了草稿则预填参数，否则不预填
-            if (material) {
-              usePublishDialog.getState().setOnePubParams(pubParmas, publishAccount.id)
-            }
             setPublishDefaultAccountId(publishAccount.id)
           }
         }
@@ -759,7 +566,6 @@ export default function TaskPageCore() {
 
         // 打开发布弹窗，用户手动确认发布
         setTaskDetailModalVisible(false)
-        // 把 taskId 传入 PublishDialog，供其在发布完成时调用回调
         setPublishDialogOpen(true)
         // 切换到已接受任务标签
         setActiveTab('accepted')
@@ -770,7 +576,6 @@ export default function TaskPageCore() {
     }
     catch (error) {
       toast.error('Task processing failed')
-      setTaskProgressVisible(false)
     }
   }
 
@@ -779,149 +584,34 @@ export default function TaskPageCore() {
     if (!currentTaskId)
       return
 
-    // Check if the platform requires App operation
+    // 获取发布账号
     const publishAccount = getAccountById(acceptedTaskDetail.accountId)
-    if (publishAccount) {
-      const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type])
-
-      if (appRequiredPlatforms.length > 0) {
-        // Platform requires App operation, show download prompt
-        const firstPlatform = appRequiredPlatforms[0]
-        const config = getAppDownloadConfig(firstPlatform)
-
-        if (config) {
-          setDownloadAppConfig({
-            platform: config.platform,
-            appName: config.appName,
-            downloadUrl: config.downloadUrl,
-            qrCodeUrl: config.qrCodeUrl,
-          })
-          setDownloadAppVisible(true)
-          return
-        }
-      }
+    if (!publishAccount) {
+      toast.error(t('messages.accountNotFound' as any) || 'Account not found')
+      return
     }
 
-    // 显示进度弹窗
-    setTaskProgressVisible(true)
-    setTaskProgress({
-      currentStep: 0,
-      steps: [
-        { title: t('completeTask' as any), status: 'processing' },
-        { title: t('publishingTask' as any), status: 'wait' },
-        { title: t('submittingTask' as any), status: 'wait' },
-        { title: t('taskCompleted' as any), status: 'wait' },
-      ],
-    })
+    // 获取任务素材
+    const materials = acceptedTaskDetail.task?.materials || []
+    const material = materials.length > 0 ? materials[0] : null
 
+    // 保存待提交任务信息
+    setPendingUserTaskIdForPublish(acceptedTaskDetail.id)
+    setPendingTaskMaterialIdForPublish(material?._id || acceptedTaskDetail.task?.materialIds?.[0])
+    setPendingTaskForPublish(acceptedTaskDetail.task)
+
+    // 初始化发布弹窗的数据
     try {
-      // Update progress: step 1 complete, start step 2
-      setTaskProgress(prev => ({
-        ...prev,
-        currentStep: 1,
-        steps: [
-          { title: t('completeTask'), status: 'finish' },
-          { title: t('publishingTask'), status: 'processing' },
-          { title: t('submittingTask'), status: 'wait' },
-          { title: t('taskCompleted'), status: 'wait' },
-        ],
-      }))
-
-      // 第二步：发布任务
-      const publishAccount = getAccountById(acceptedTaskDetail.accountId)
-      if (publishAccount) {
-        // 处理素材链接，确保使用完整链接
-        const processedMaterials = acceptedTaskDetail.task?.materials?.map((material: any) => ({
-          ...material,
-          coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
-          mediaList: material.mediaList?.map((media: any) => ({
-            ...media,
-            url: getOssUrl(media.url),
-            coverUrl: media.coverUrl ? getOssUrl(media.coverUrl) : undefined,
-          })),
-        }))
-
-        const publishData = {
-          flowId: `${publishAccount.uid}_${generateUUID()}`, // 使用账号的uid作为flowId
-          accountType: publishAccount.type,
-          accountId: publishAccount.id,
-          title: acceptedTaskDetail.task?.title,
-          desc: acceptedTaskDetail.task?.description,
-          type: acceptedTaskDetail.task?.type as any, // 转换为PubType
-          // 处理素材数据
-          videoUrl: processedMaterials?.[0]?.mediaList?.[0]?.type === 'video'
-            ? getOssUrl(processedMaterials[0].mediaList[0].url)
-            : undefined,
-          coverUrl: processedMaterials?.[0]?.coverUrl,
-          imgUrlList: processedMaterials?.flatMap((material: any) =>
-            material.mediaList?.filter((media: any) => media.type !== 'video')
-              .map((media: any) => getOssUrl(media.url)) || [],
-          ),
-          option: {},
-          topics: [],
-          publishTime: getUtcDays(getDays().add(6, 'minute')).format(),
-          userTaskId: acceptedTaskDetail.task?.id,
-          taskMaterialId: acceptedTaskDetail.task?.materialIds[0],
-
-        }
-
-        const publishResponse: any = await apiCreatePublish(publishData)
-        if (publishResponse && publishResponse.code === 0) {
-          // Update progress: step 2 complete, start step 3
-          setTaskProgress(prev => ({
-            ...prev,
-            currentStep: 2,
-            steps: [
-              { title: t('completeTask'), status: 'finish' },
-              { title: t('publishingTask'), status: 'finish' },
-              { title: t('submittingTask'), status: 'processing' },
-              { title: t('taskCompleted'), status: 'wait' },
-            ],
-          }))
-
-          // 第三步：提交任务
-          const userTaskId = acceptedTaskDetail.id
-          const submitResponse: any = await submitTask(userTaskId, acceptedTaskDetail.task?.materialIds[0])
-
-          if (submitResponse && submitResponse.code === 0) {
-            // Update progress: step 3 complete, start step 4
-            setTaskProgress(prev => ({
-              ...prev,
-              currentStep: 3,
-              steps: [
-                { title: t('completeTask'), status: 'finish' },
-                { title: t('publishingTask'), status: 'finish' },
-                { title: t('submittingTask'), status: 'finish' },
-                { title: t('taskCompleted'), status: 'finish' },
-              ],
-            }))
-
-            // 延迟1秒后关闭进度窗口并刷新任务列表
-            setTimeout(() => {
-              setTaskProgressVisible(false)
-              setAcceptedTaskDetailModalVisible(false)
-              setAcceptedTaskDetail(null)
-              setCurrentTaskId(null)
-              fetchAcceptedTasks()
-            }, 1000)
-          }
-          else {
-            throw new Error('Failed to submit task')
-          }
-        }
-        else {
-          throw new Error('Failed to publish task')
-        }
-      }
-      else {
-        throw new Error('Cannot find publish account info')
-      }
+      usePublishDialog.getState().init(accountList.length > 0 ? accountList : [publishAccount], publishAccount.id)
+      setPublishDefaultAccountId(publishAccount.id)
     }
-    catch (error) {
-      console.error('Task processing failed:', error)
-      toast.error('Task processing failed')
-      setTaskProgressVisible(false)
+    catch (err) {
+      console.error('初始化发布弹窗数据失败', err)
     }
+
+    // 打开发布弹窗
+    setAcceptedTaskDetailModalVisible(false)
+    setPublishDialogOpen(true)
   }
 
   // Handle pending task page change
@@ -963,18 +653,6 @@ export default function TaskPageCore() {
     setMediaPreviewVisible(true)
   }
 
-  // 关闭媒体预览
-  const handleCloseMediaPreview = () => {
-    // 停止视频播放
-    if (videoRef) {
-      videoRef.pause()
-      videoRef.currentTime = 0
-    }
-    setMediaPreviewVisible(false)
-    setPreviewMedia(null)
-    setVideoRef(null)
-  }
-
   useEffect(() => {
     if (token) {
       fetchPendingTasks()
@@ -992,10 +670,12 @@ export default function TaskPageCore() {
 
   // 发布弹窗发布成功回调：校验选中账户是否符合任务要求，符合则提交任务
   const handlePublishSuccess = async () => {
+    console.log('完成发布2222@@@')
     try {
       // 取得发布时选中的账户
       const pubListChoosed = usePublishDialog.getState().pubListChoosed || []
       if (pubListChoosed.length === 0) {
+        console.log('publish.noAccountSelected')
         toast.error(t('publish.noAccountSelected' as any) || 'No account selected for publish')
         return
       }
@@ -1018,6 +698,7 @@ export default function TaskPageCore() {
       }
 
       if (!ok) {
+        console.log('publish.accountNotMatchTask')
         toast.error(t('publish.accountNotMatchTask' as any) || 'Selected account does not match task requirement')
         return
       }
@@ -2113,57 +1794,15 @@ export default function TaskPageCore() {
       </Modal>
 
       {/* 媒体预览弹窗 */}
-      <Modal
-        title={previewMedia?.title || t('modal.mediaPreview')}
-        open={mediaPreviewVisible}
-        onCancel={handleCloseMediaPreview}
-        footer={[
-          <Button key="close" onClick={handleCloseMediaPreview}>
-            {t('modal.close')}
-          </Button>,
-        ]}
-        width={previewMedia?.type === 'video' ? 800 : 600}
-        zIndex={3000}
-      >
-        {previewMedia && (
-          <div>
-            {previewMedia.type === 'video' ? (
-              <video
-                ref={setVideoRef}
-                src={previewMedia.url}
-                controls
-                style={{
-                  width: '100%',
-                  maxHeight: '500px',
-                  borderRadius: '8px',
-                }}
-                autoPlay
-                onEnded={() => {
-                  // 视频播放结束时重置到开始
-                  if (videoRef) {
-                    videoRef.currentTime = 0
-                  }
-                }}
-              />
-            ) : (
-              <Image
-                src={previewMedia.url}
-                alt="preview"
-                width={600}
-                height={500}
-                style={{
-                  width: '100%',
-                  maxHeight: '500px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                }}
-              />
-            )}
-          </div>
-        )}
-      </Modal>
-
-      {/* 任务进度弹窗（已移除，提交后只显示 Toast 提示） */}
+      {previewMedia && (
+        <MediaPreview
+          open={mediaPreviewVisible}
+          onClose={() => setMediaPreviewVisible(false)}
+          mediaType={previewMedia?.type }
+          mediaUrl={previewMedia?.url}
+          title={previewMedia?.title || t('modal.mediaPreview')}
+        />
+      )}
 
       {/* 账号选择弹窗 */}
       <Modal
@@ -2247,16 +1886,6 @@ export default function TaskPageCore() {
         />
       </Modal>
 
-      {/* 下载App提示弹窗 */}
-      <DownloadAppModal
-        visible={downloadAppVisible}
-        onClose={() => setDownloadAppVisible(false)}
-        platform={downloadAppConfig.platform}
-        appName={downloadAppConfig.appName}
-        downloadUrl={downloadAppConfig.downloadUrl}
-        qrCodeUrl={downloadAppConfig.qrCodeUrl}
-        zIndex={3000}
-      />
       {/* 发布作品弹窗（用于任务流程触发） */}
       {accountList.length > 0 && (
         <PublishDialog
