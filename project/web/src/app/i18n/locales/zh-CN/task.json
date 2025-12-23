@@ -14,7 +14,7 @@
   "submittingTask": "正在提交任务...",
   "taskCompleted": "任务完成",
   "taskStatus": {
-    "pending": "可接受",
+    "pending": "已完成",
     "doing": "进行中",
     "accepted": "已接受",
     "completed": "已完成",

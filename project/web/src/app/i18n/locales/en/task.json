@@ -14,7 +14,7 @@
   "submittingTask": "Submitting task...",
   "taskCompleted": "Task Completed",
   "taskStatus": {
-    "pending": "Pending",
+    "pending": "Completed",
     "doing": "In Progress",
     "accepted": "Accepted",
     "completed": "Completed",

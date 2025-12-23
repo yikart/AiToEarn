@@ -694,6 +694,8 @@ const PublishDialog = memo(
             desc: item.params.des,
             accountId: item.account.id,
             accountType: item.account.type,
+            // If opened from task flow, include the user task id for server-side linking
+            userTaskId: taskIdForPublish,
             videoUrl: item.params.video?.ossUrl,
             coverUrl:
               item.params.video?.cover.ossUrl ||
@@ -728,31 +730,46 @@ const PublishDialog = memo(
           });
         }
 
-      // 如果抑制自动发布，跳过自动发布流程
+      // 如果抑制自动发布（来自任务流程），不要自动调用平台 API，但仍需通知外部父组件
       if (suppressAutoPublish) {
         setCreateLoading(false)
+
+        // 给父组件提示：发布已提交（用于任务流程触发后续提交）
+        toast.success(t("messages.publishSubmitted" as any), {
+          key: "publish_submitted",
+          duration: 3,
+        });
+
+        // 关闭发布弹框
+        try {
+          onClose()
+        }
+        catch (e) {
+          // ignore
+        }
+
+        // 通知外部发布已完成（携带任务 id，如果父组件需要）
+        if (onPublishConfirmed) {
+          try {
+            onPublishConfirmed(taskIdForPublish)
+          }
+          catch (e) {
+            console.error("onPublishConfirmed callback failed", e)
+          }
+        }
+
+        if (onPubSuccess) {
+          try {
+            onPubSuccess()
+          }
+          catch (e) {
+            console.error("onPubSuccess callback failed", e)
+          }
+        }
+
+        usePublishDialogStorageStore.getState().clearPubData()
         return
       }
-        
-      // 给用户提示：发布已提交，可能需要一些时间处理（符合 TikTok API 客户端要求）
-      toast.success(t("messages.publishSubmitted" as any), {
-        key: "publish_submitted",
-        duration: 3,
-      });
-
-      // 关闭发布弹框
-      onClose()
-      setCreateLoading(false)
-
-      // 通知外部发布已完成（携带任务 id，如果有）
-      if (onPublishConfirmed) {
-        onPublishConfirmed(taskIdForPublish)
-      }
-
-      if (onPubSuccess) {
-        onPubSuccess()
-      }
-      usePublishDialogStorageStore.getState().clearPubData()
       }, [pubListChoosed, pubTime, isPluginSupportedPlatform, t])
 
       // 处理划词操作
