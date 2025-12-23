@@ -93,7 +93,10 @@
     "justNow": "Just now",
     "minutesAgo": "{{minutes}} minutes ago",
     "hoursAgo": "{{hours}} hours ago",
-    "daysAgo": "{{days}} days ago"
+    "daysAgo": "{{days}} days ago",
+    "minutesLater": "{{minutes}} minutes later",
+    "hoursLater": "{{hours}} hours later",
+    "daysLater": "{{days}} days later"
   },
   "accountSelect": {
     "title": "Select Account",
@@ -104,6 +107,7 @@
   },
   "draft": {
     "selectDraft": "Select Draft:",
+    "recommendedDraft": "Recommended Draft",
     "taskDraft": "Task Draft",
     "myDraft": "My Draft",
     "reselect": "Reselect",
@@ -112,6 +116,13 @@
     "noDrafts": "No drafts available",
     "pleaseSelectDraft": "Please select a draft",
     "pleaseSelectDraftMaterial": "Please select a draft material first"
+  },
+  "publish": {
+    "useRecommended": "Publish with recommended draft",
+    "directPublish": "Publish directly",
+    "agentPublish": "Agent Publish",
+    "noAccountSelected": "Please select an account",
+    "accountNotMatchTask": "Selected account does not match task requirement"
   },
   "progress": {
     "acceptingTask": "Accepting task...",
@@ -122,7 +133,12 @@
   },
   "taskStatuses": {
     "pending": "Task Pending",
-    "completed": "Task Completed"
+    "completed": "Task Completed",
+    "taskPending": "Task Pending",
+    "taskCompleted": "Task Completed",
+    "taskStatus": "Task Status"
   },
-  "accountAvatar": "Account Avatar"
+  "accountAvatar": "Account Avatar",
+  "notSubmitted": "Not Submitted",
+  "pleaseSelectDraftMaterial": "Please select a draft material"
 }

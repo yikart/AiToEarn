@@ -93,7 +93,10 @@
     "justNow": "刚刚",
     "minutesAgo": "{{minutes}}分钟前",
     "hoursAgo": "{{hours}}小时前",
-    "daysAgo": "{{days}}天前"
+    "daysAgo": "{{days}}天前",
+    "minutesLater": "{{minutes}}分钟后",
+    "hoursLater": "{{hours}}小时后",
+    "daysLater": "{{days}}天后"
   },
   "accountSelect": {
     "title": "选择账号",
@@ -104,6 +107,7 @@
   },
   "draft": {
     "selectDraft": "选择草稿：",
+    "recommendedDraft": "推荐草稿",
     "taskDraft": "任务草稿",
     "myDraft": "我的草稿",
     "reselect": "重新选择",
@@ -112,6 +116,13 @@
     "noDrafts": "暂无草稿素材",
     "pleaseSelectDraft": "请选择一个草稿",
     "pleaseSelectDraftMaterial": "请先选择一个草稿素材"
+  },
+  "publish": {
+    "useRecommended": "使用推荐草稿发布",
+    "directPublish": "发布完成",
+    "agentPublish": "Agent 完成",
+    "noAccountSelected": "请先选择发布账户",
+    "accountNotMatchTask": "所选账户与任务要求不符"
   },
   "progress": {
     "acceptingTask": "正在接受任务...",
@@ -122,7 +133,12 @@
   },
   "taskStatuses": {
     "pending": "任务待完成",
-    "completed": "任务已完成"
+    "completed": "任务已完成",
+    "taskPending": "任务待完成",
+    "taskCompleted": "任务已完成",
+    "taskStatus": "任务状态"
   },
-  "accountAvatar": "账号头像"
+  "accountAvatar": "账号头像",
+  "notSubmitted": "未提交",
+  "pleaseSelectDraftMaterial": "请选择一个草稿素材"
 }

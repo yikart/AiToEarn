@@ -1,0 +1,255 @@
+.container {
+  padding: 24px;
+  min-height: 100vh;
+  background: var(--background);
+}
+
+/* 页面头部样式 - 简约设计 */
+.header {
+  margin-bottom: 32px;
+}
+
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--card);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.headerIcon {
+  width: 48px;
+  height: 48px;
+  background: var(--muted);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--primary);
+}
+
+.headerText {
+  flex: 1;
+}
+
+.headerTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--foreground);
+}
+
+.headerSubtitle {
+  font-size: 14px;
+  margin: 0;
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.walletBlock {
+  background: var(--muted);
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 200px;
+}
+
+.walletBlockTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.walletButton {
+  width: 100%;
+  justify-content: center;
+}
+
+.balanceIcon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--primary-foreground);
+}
+
+.balanceInfo {
+  flex: 1;
+}
+
+.balanceLabel {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.balanceAmount {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+/* 主要内容样式 */
+.content {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.content :global([role="tablist"]) {
+  margin-bottom: 0;
+}
+
+/* 提现弹窗样式 */
+.withdrawModalContent {
+  padding: 20px 0;
+}
+
+.withdrawInfo {
+  background: var(--muted);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.withdrawItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 0;
+}
+
+.withdrawItem:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.withdrawLabel {
+  font-weight: 500;
+  color: var(--foreground);
+  font-size: 14px;
+}
+
+.withdrawValue {
+  color: var(--muted-foreground);
+  font-size: 14px;
+  word-break: break-all;
+  max-width: 200px;
+  text-align: right;
+}
+
+.withdrawAmount {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.withdrawWarning {
+  background: var(--warning);
+  border-radius: 8px;
+  padding: 16px;
+  color: var(--warning-foreground);
+  margin-top: 16px;
+}
+
+.withdrawWarning p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.withdrawWarning p:last-child {
+  margin-bottom: 0;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
+  }
+
+  .headerContent {
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    align-items: stretch;
+  }
+
+  .headerLeft {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .headerIcon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .headerTitle {
+    font-size: 20px;
+  }
+
+  .headerSubtitle {
+    font-size: 13px;
+  }
+
+  .headerRight {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .walletBlock {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .walletBlockTop {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .balanceAmount {
+    font-size: 18px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
+  .withdrawItem {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .withdrawValue {
+    max-width: none;
+    text-align: left;
+  }
+}
