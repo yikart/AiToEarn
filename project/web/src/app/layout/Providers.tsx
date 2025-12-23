@@ -20,6 +20,7 @@ import useCssVariables from '@/app/hooks/useCssVariables'
 import { fallbackLng } from '@/app/i18n/settings'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
+import { useShallow } from 'zustand/shallow'
 
 // antd 语言获取
 function getAntdLang(lang: string): Locale {
@@ -40,6 +41,13 @@ export function Providers({
   lng: string
 }) {
   const cssVariables = useCssVariables()
+  const {
+    token,
+  } = useUserStore(
+    useShallow(state => ({
+      token: state.token,
+    })),
+  )
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search)
@@ -47,12 +55,12 @@ export function Providers({
     if (queryToken) {
       useUserStore.getState().setToken(queryToken)
     }
-    if (useUserStore.getState().token) {
+    if (token) {
       useDataStatisticsStore.getState().init()
       useUserStore.getState().getUserInfo()
       useAccountStore.getState().accountInit()
     }
-  }, [])
+  }, [token])
 
   useEffect(() => {
     useUserStore.getState().setLang(lng)
