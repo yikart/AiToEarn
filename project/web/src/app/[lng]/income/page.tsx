@@ -304,7 +304,7 @@ export default function IncomePage() {
 
                 <div className={styles.balanceInfo}>
                   <div className={styles.balanceAmount}>
-                    CNY
+                    USD
                     {' '}
                     {((userInfo?.income as number) / 100 || 0).toFixed(2)}
                   </div>
