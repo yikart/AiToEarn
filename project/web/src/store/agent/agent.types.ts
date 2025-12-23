@@ -68,6 +68,8 @@ export interface IMessageStep {
   content: string
   /** 该步骤关联的工作流步骤 */
   workflowSteps?: IWorkflowStep[]
+  /** 该步骤关联的媒体（图片/视频），用于在步骤位置内渲染资源 */ 
+  medias?: IUploadedMedia[]
   /** 是否为当前活跃步骤 */
   isActive?: boolean
   /** 时间戳 */
