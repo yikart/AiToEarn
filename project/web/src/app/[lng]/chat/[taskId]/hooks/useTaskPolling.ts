@@ -71,6 +71,8 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
     // 用于跟踪当前是否已有最后一条消息（决定使用增量拉取或全量拉取）
     const hasLastMessageRef = { current: false as boolean }
+    // 防止并发的轮询请求：若上一次请求尚未完成，则跳过本次 tick
+    let isRequestRunning = false
 
     // 读取当前已有的原始消息，决定初始轮询间隔（无 lastMessageId 则使用 5s 全量拉取）
     const initialRawMessages = getCurrentRawMessages ? getCurrentRawMessages() : []
@@ -85,6 +87,13 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
     hasLastMessageRef.current = Boolean(initialLastMessageId)
 
     const pollTask = async () => {
+      // 如果上一次请求还在进行中，直接跳过本次轮询，避免并发请求
+      if (isRequestRunning) {
+        console.log('[TaskPolling] previous poll still running, skipping this tick, taskId:', taskId)
+        return
+      }
+
+      isRequestRunning = true
       try {
         console.log('[TaskPolling] pollTask tick, taskId:', taskId)
         // 获取当前已有的原始消息列表
@@ -175,6 +184,9 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
       } catch (error) {
         console.error('[TaskPolling] Polling failed:', error)
         // 轮询失败不停止，继续尝试
+      } finally {
+        // 本次请求结束，允许下一个轮询执行
+        isRequestRunning = false
       }
     }
 

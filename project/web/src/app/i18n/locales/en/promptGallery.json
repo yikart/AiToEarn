@@ -36,15 +36,15 @@
   "prompts": {
     "dora": {
       "title": "Doraemon Comic Set",
-      "prompt": "Generate five Doraemon-themed comic images, vertical, bright colors, cinematic comic panels, optimized for Instagram, royalty-free, and publish directly to Instagram"
+      "prompt": "Generate three Doraemon-themed comic images, vertical, bright colors, cinematic comic panels, optimized for Instagram, royalty-free, and publish directly to Instagram"
     },
     "cats": {
       "title": "Cute Cats Illustrations",
-      "prompt": "Generate five cute cat-themed illustration images, fresh palette, vertical, optimized for Instagram, royalty-free, and publish directly to Instagram"
+      "prompt": "Generate three cute cat-themed illustration images, fresh palette, vertical, optimized for Instagram, royalty-free, and publish directly to Instagram"
     },
     "vintage": {
       "title": "Vintage City Posters",
-      "prompt": "Generate five vintage movie-poster style city night images, vertical, optimized for Twitter, royalty-free, and publish directly to Twitter"
+      "prompt": "Generate three vintage movie-poster style city night images, vertical, optimized for Twitter, royalty-free, and publish directly to Twitter"
     }
   }
   ,

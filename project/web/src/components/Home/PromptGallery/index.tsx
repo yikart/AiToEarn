@@ -33,19 +33,19 @@ export default function PromptGallery({
       {
         key: 'dora',
         title: '哆啦A梦漫画套图',
-        prompt: '生成五张哆啦A梦主题的漫画图片，竖版，色彩明快，漫画分镜感强，适配 Instagram，免版权素材，并直接发布到 Instagram',
+        prompt: '生成三张哆啦A梦主题的漫画图片，竖版，色彩明快，漫画分镜感强，适配 Instagram，免版权素材，并直接发布到 Instagram',
         mode: 'generate',
       } as PromptItem & { key: string },
       {
         key: 'cats',
         title: '可爱猫咪插画',
-        prompt: '生成五张可爱猫咪主题的插画图片，清新配色，竖版，适配 Instagram，免版权素材，并直接发布到 Instagram',
+        prompt: '生成三张可爱猫咪主题的插画图片，清新配色，竖版，适配 Instagram，免版权素材，并直接发布到 Instagram',
         mode: 'generate',
       } as PromptItem & { key: string },
       {
         key: 'vintage',
         title: '复古城市海报',
-        prompt: '生成五张复古电影海报风格的城市夜景图片，竖版，适配 Twitter，免版权素材，并直接发布到 Twitter',
+        prompt: '生成三张复古电影海报风格的城市夜景图片，竖版，适配 Twitter，免版权素材，并直接发布到 Twitter',
         mode: 'generate',
       } as PromptItem & { key: string },
     ]
