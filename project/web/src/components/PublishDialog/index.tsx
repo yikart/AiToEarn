@@ -710,6 +710,12 @@ const PublishDialog = memo(
           })
         }
 
+        // 给用户提示：发布已提交，可能需要一些时间处理（符合 TikTok API 客户端要求）
+        toast.success(
+          t('messages.publishSubmitted' as any),
+          { key: 'publish_submitted', duration: 5 },
+        )
+
         // 关闭发布弹框
         onClose()
         setCreateLoading(false)

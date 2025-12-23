@@ -315,8 +315,12 @@
       "default": "By posting, you agree to TikTok's Music Usage Confirmation.",
       "organic": "By posting, you agree to TikTok's Music Usage Confirmation.",
       "branded": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.",
-      "both": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation."
+      "both": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.",
+      "processNote": "Note: After publishing, it may take a few minutes for the content to process and appear on your profile."
     }
+  },
+  "messages": {
+    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your TikTok profile."
   },
   "previewvideo": "Preview Video",
   "record": {
