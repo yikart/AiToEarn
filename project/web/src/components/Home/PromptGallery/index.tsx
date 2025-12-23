@@ -8,13 +8,13 @@
 
 import { useState, useCallback, useMemo } from 'react'
 import { useParams } from 'next/navigation'
-import { Check, ArrowRight, Grid3X3, Star, Image as ImageIcon } from 'lucide-react'
+import { ArrowRight, Grid3X3, Check, Camera } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { FeaturedCard, PromptDetailModal, PromptGalleryModal } from './components'
-import { SAMPLE_PROMPTS, FEATURED_COUNT } from './constants'
-import type { IPromptGalleryProps, PromptItem, CategoryFilter } from './types'
+import { PromptGalleryModal } from './components'
+import { SAMPLE_PROMPTS } from './constants'
+import type { IPromptGalleryProps, PromptItem } from './types'
 
 /**
  * PromptGallery - 提示词画廊主组件
@@ -25,22 +25,32 @@ export default function PromptGallery({
 }: IPromptGalleryProps) {
   const { t } = useTransClient('promptGallery')
   const { lng } = useParams()
-  const [selectedPrompt, setSelectedPrompt] = useState<PromptItem | null>(null)
-  const [applied, setApplied] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>('Recommend')
 
-  // 分类按钮配置
-  const categoryButtons = [
-    { key: 'Recommend' as CategoryFilter, label: t('categories.recommend'), icon: Star },
-    { key: 'Image' as CategoryFilter, label: t('categories.image'), icon: ImageIcon },
-  ]
-
-  // 首页精选提示词 - 根据选中的分类显示
+  // 首页精选提示词 - 固定为三条「即点即用」的图片生成模板（不依赖外部 URL）
   const featuredPrompts = useMemo(() => {
-    const filteredPrompts = SAMPLE_PROMPTS.filter(item => item.category === selectedCategory)
-    return filteredPrompts.slice(0, FEATURED_COUNT)
-  }, [selectedCategory])
+    const prompts: PromptItem[] = [
+      {
+        key: 'dora',
+        title: '哆啦A梦漫画套图',
+        prompt: '生成五张哆啦A梦主题的漫画图片，竖版，色彩明快，漫画分镜感强，适配 Instagram，免版权素材，并直接发布到 Instagram',
+        mode: 'generate',
+      } as PromptItem & { key: string },
+      {
+        key: 'cats',
+        title: '可爱猫咪插画',
+        prompt: '生成五张可爱猫咪主题的插画图片，清新配色，竖版，适配 Instagram，免版权素材，并直接发布到 Instagram',
+        mode: 'generate',
+      } as PromptItem & { key: string },
+      {
+        key: 'vintage',
+        title: '复古城市海报',
+        prompt: '生成五张复古电影海报风格的城市夜景图片，竖版，适配 Twitter，免版权素材，并直接发布到 Twitter',
+        mode: 'generate',
+      } as PromptItem & { key: string },
+    ]
+    return prompts
+  }, [])
 
   /**
    * 处理应用提示词 - 根据语言选择对应的提示词
@@ -58,62 +68,50 @@ export default function PromptGallery({
           ...(item.mode === 'edit' && { image: item.preview }),
         }
         onApplyPrompt(applyData)
-        setApplied(true)
         setIsModalOpen(false)
-        setSelectedPrompt(null)
-        setTimeout(() => setApplied(false), 2000)
-        window.scrollTo({ top: 0, behavior: 'smooth' })
+        document.querySelector("#main-content")!.scrollTo({ top: 0, behavior: 'smooth' })
       }
     },
     [onApplyPrompt, lng]
   )
 
-  /**
-   * 处理详情弹框应用
-   */
-  const handleDetailApply = useCallback(
-    (item: PromptItem) => {
-      handleApplyPrompt(item)
-    },
-    [handleApplyPrompt]
-  )
+ 
 
   return (
     <section className={cn('py-12 px-4 md:px-6 lg:px-8', className)}>
-      <div className="max-w-[1920px] mx-auto">
-        {/* 分类切换标签 */}
-        <div className="flex items-center justify-center gap-3 mb-8">
-          {categoryButtons.map(({ key, label, icon: Icon }) => (
-            <Button
-              key={key}
-              variant={selectedCategory === key ? 'default' : 'outline'}
-              size="lg"
-              onClick={() => setSelectedCategory(key)}
-              className={cn(
-                'rounded-full px-6 py-2 transition-all duration-300',
-                selectedCategory === key 
-                  ? 'shadow-lg scale-105' 
-                  : 'hover:scale-102'
-              )}
-            >
-              <Icon className="w-5 h-5 mr-2" />
-              {label}
-            </Button>
-          ))}
-        </div>
+      <div className="w-full max-w-5xl mx-auto">
+        {/* 顶部提示词区域（少量） */}
 
-        {/* 精选卡片网格 - 固定8个，等高对齐 */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-10">
-          {featuredPrompts.map((item, index) => (
-            <FeaturedCard
-              key={index}
-              item={item}
-              onApply={handleApplyPrompt}
-              onClick={setSelectedPrompt}
-              t={t as (key: string) => string}
-              lng={lng as string}
-            />
-          ))}
+        {/* 文本提示列表：首页仅展示少量简洁提示词（无详情），直接触发发布行为 */}
+        <div className="mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {featuredPrompts.map((item: any, index) => {
+              const topic = item.title || '主题'
+              // 使用 i18n 文案优先，其次回退到 item.prompt / item.title
+              const titleText = item.key ? t(`prompts.${item.key}.title`) : item.title
+              const samplePrompt = item.key ? t(`prompts.${item.key}.prompt`) || item.prompt : item.prompt
+              return (
+                <div
+                  key={index}
+                  className="p-4 bg-card rounded-2xl shadow-xl hover:shadow-2xl transition-transform hover:-translate-y-1 border border-muted/10"
+                >
+                  <div className="flex items-start">
+                    <div className="flex-1">
+                      <div className="font-semibold text-base text-foreground">{titleText || item.title}</div>
+                      <div className="mt-2 text-sm text-muted-foreground leading-snug">
+                        {samplePrompt}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex justify-end mt-4">
+                    <Button size="sm" variant="default" onClick={(e) => handleApplyPrompt({ ...item, prompt: samplePrompt }, e)} className="rounded-full px-4 py-1">
+                      {t('apply') || '应用'}
+                    </Button>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
         {/* 查看全部按钮 */}
@@ -129,31 +127,12 @@ export default function PromptGallery({
           </Button>
         </div>
 
-        {/* 应用成功提示 */}
-        {applied && (
-          <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-            <div className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-full shadow-2xl">
-              <Check className="w-4 h-4 text-success" />
-              <span className="font-medium">{t('appliedToast')}</span>
-            </div>
-          </div>
-        )}
-
-        {/* 提示词详情弹窗 */}
-        <PromptDetailModal
-          item={selectedPrompt}
-          onClose={() => setSelectedPrompt(null)}
-          onApply={handleDetailApply}
-          t={t as (key: string) => string}
-          lng={lng as string}
-        />
-
         {/* 全屏画廊弹框 */}
         <PromptGalleryModal
           open={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onApplyPrompt={handleApplyPrompt}
-          onSelectPrompt={setSelectedPrompt}
+          onSelectPrompt={() => {}}
           t={t as (key: string) => string}
           lng={lng as string}
         />

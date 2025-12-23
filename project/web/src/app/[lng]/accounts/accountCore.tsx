@@ -741,7 +741,7 @@ export default function AccountPageCore({
                 },
               })
             } else {
-
+              setPublishDialogOpen(true)
             }
           }}
           onAddAccount={() => setAddAccountModalOpen(true)}

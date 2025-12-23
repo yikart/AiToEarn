@@ -69,6 +69,21 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
     console.log('[TaskPolling] Starting polling for task:', taskId)
 
+    // 用于跟踪当前是否已有最后一条消息（决定使用增量拉取或全量拉取）
+    const hasLastMessageRef = { current: false as boolean }
+
+    // 读取当前已有的原始消息，决定初始轮询间隔（无 lastMessageId 则使用 5s 全量拉取）
+    const initialRawMessages = getCurrentRawMessages ? getCurrentRawMessages() : []
+    let initialLastMessageId: string | undefined
+    for (let i = initialRawMessages.length - 1; i >= 0; i--) {
+      const uuid = initialRawMessages[i]?.uuid
+      if (uuid) {
+        initialLastMessageId = uuid
+        break
+      }
+    }
+    hasLastMessageRef.current = Boolean(initialLastMessageId)
+
     const pollTask = async () => {
       try {
         console.log('[TaskPolling] pollTask tick, taskId:', taskId)
@@ -85,7 +100,52 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           }
         }
 
-        // 调用增量消息接口，仅获取 lastMessageId 之后的新消息
+        // 如果没有 lastMessageId，执行每 5 秒一次的全量拉取逻辑（接口支持不传 lastMessageId 获取全部消息）
+        if (!lastMessageId) {
+          const result = await agentApi.getTaskMessages(taskId)
+          if (result?.code === 0 && result.data?.messages) {
+            const newMessages = result.data.messages
+            console.log('[TaskPolling] fetched fullMessages length:', newMessages.length)
+            if (!newMessages.length) {
+              return
+            }
+
+            const mergedMessages = [...newMessages]
+
+            // 更新消息
+            const converted = convertMessages(mergedMessages)
+            onMessagesUpdate(converted, mergedMessages)
+
+            // 如果本次拉取获得了最后一条消息（即 messages 中存在 uuid），则切换为增量拉取间隔
+            let nowHasLast = false
+            for (let i = mergedMessages.length - 1; i >= 0; i--) {
+              if (mergedMessages[i]?.uuid) {
+                nowHasLast = true
+                break
+              }
+            }
+            if (!hasLastMessageRef.current && nowHasLast) {
+              // 切换为增量拉取间隔（使用传入的 pollingInterval）
+              hasLastMessageRef.current = true
+              if (pollingTimerRef.current) {
+                clearInterval(pollingTimerRef.current)
+              }
+              pollingTimerRef.current = setInterval(pollTask, pollingInterval)
+            }
+
+            // 检测任务是否完成（此处没有最新的 TaskDetail，只能基于消息做兜底判断）
+            if (isTaskCompleted(mergedMessages)) {
+              console.log('[TaskPolling] Task completed, stopping polling')
+              setIsPolling(false)
+              // 任务完成时刷新 Credits 余额
+              fetchCreditsBalance()
+            }
+          }
+
+          return
+        }
+
+        // 如果存在 lastMessageId，调用增量消息接口，仅获取 lastMessageId 之后的新消息
         const result = await agentApi.getTaskMessages(taskId, lastMessageId)
         if (result?.code === 0 && result.data?.messages) {
           const newMessages = result.data.messages
@@ -118,8 +178,9 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
       }
     }
 
-    // 每 N 秒轮询一次
-    pollingTimerRef.current = setInterval(pollTask, pollingInterval)
+    // 根据初始是否有 lastMessageId 决定初始轮询间隔（无 lastMessageId 使用 5000ms）
+    const initialInterval = hasLastMessageRef.current ? pollingInterval : 5000
+    pollingTimerRef.current = setInterval(pollTask, initialInterval)
 
     return () => {
       if (pollingTimerRef.current) {

@@ -10,6 +10,7 @@ import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
 import RatingModal from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
+import { Pagination } from '@/components/ui/pagination'
 import { agentApi, type TaskListItem } from '@/api/agent'
 import { useTransClient } from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
@@ -174,30 +175,21 @@ export default function TasksHistoryPage() {
                 }}
               />
 
-              {/* 分页器 */}
+              {/* 分页器（使用项目内的 Pagination 组件） */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-8">
-                  <span className="text-sm text-muted-foreground">
-                    {page} / {totalPages}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1 || isLoading}
-                      onClick={() => handlePageChange(page - 1)}
-                    >
-                      {t('history.prevPage' as any) || 'Prev'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= totalPages || isLoading}
-                      onClick={() => handlePageChange(page + 1)}
-                    >
-                      {t('history.nextPage' as any) || 'Next'}
-                    </Button>
-                  </div>
+                <div className="mt-8">
+                  <Pagination
+                    current={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onChange={handlePageChange}
+                    showTotal={(totalCount, [_start, _end]) => (
+                      <span className="text-sm text-muted-foreground">
+                        {page} / {totalPages}
+                      </span>
+                    )}
+                    className="w-full"
+                  />
                 </div>
               )}
             </>
