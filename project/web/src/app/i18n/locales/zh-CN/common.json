@@ -35,6 +35,12 @@
     "noDescription": "暂无描述",
     "noContent": "暂无内容"
   },
+  "pagination": {
+    "perPage": "每页",
+    "items": "条",
+    "jumpTo": "跳至",
+    "page": "页"
+  },
   "notificationTypes": {
     "system": "系统通知",
     "user": "用户通知",

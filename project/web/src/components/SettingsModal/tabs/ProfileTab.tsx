@@ -231,7 +231,7 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
 
       {/* 收入信息 */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="rounded-xl border border-border bg-muted p-4">
+        <div className="rounded-xl border border-border bg-muted p-4 cursor-pointer" onClick={() => { router.push('/income'); onClose() }}>
           <p className="mb-1 text-sm text-muted-foreground">{t('profile.totalIncome')}</p>
           <p className="text-2xl font-bold text-foreground">{totalIncome.toFixed(2)} USD</p>
         </div>
