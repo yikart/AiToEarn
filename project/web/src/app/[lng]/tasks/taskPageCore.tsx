@@ -34,12 +34,10 @@ import { apiGetMaterialList } from '@/api/material'
 import { acceptTask, getTaskDetail, submitTask } from '@/api/notification'
 import { apiCreatePublish } from '@/api/plat/publish'
 import {
-  apiAcceptTask,
   apiGetTaskOpportunityList,
   apiGetUserTaskDetail,
   apiGetUserTaskList,
-  apiMarkTaskAsViewed,
-  apiSubmitTask,
+  apiMarkTaskAsViewed
 } from '@/api/task'
 import { getDays, getUtcDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { getAppDownloadConfig, getTasksRequiringApp } from '@/app/config/appDownloadConfig'
@@ -246,60 +244,6 @@ export default function TaskPageCore() {
     }
   }
 
-  // 接受任务
-  const handleAcceptTask = async (task: any) => {
-    // 打开任务详情让用户选择素材并完成接取/发布流程
-    await handleViewTaskDetail(task.id)
-
-    // TODO: 添加平台限制检查
-    // if (!task.accountTypes || task.accountTypes.length === 0) {
-    //   // 没有账号类型限制，直接接取任务
-    //   await doAcceptTask(task);
-    //   return;
-    // }
-
-    // // Check platforms that require App operation
-    // const appRequiredPlatforms = getTasksRequiringApp(task.accountTypes);
-
-    // if (appRequiredPlatforms.length > 0) {
-    //   // 有需要App操作的平台，显示第一个平台的下载提示
-    //   const firstPlatform = appRequiredPlatforms[0];
-    //   const config = getAppDownloadConfig(firstPlatform);
-
-    //   if (config) {
-    //     setDownloadAppConfig({
-    //       platform: config.platform,
-    //       appName: config.appName,
-    //       downloadUrl: config.downloadUrl,
-    //       qrCodeUrl: config.qrCodeUrl
-    //     });
-    //     setDownloadAppVisible(true);
-    //     return;
-    //   }
-    // }
-
-    // // Other task types can be accepted normally
-    // await doAcceptTask(task);
-  }
-
-  // 执行接受任务
-  const doAcceptTask = async (task: TaskOpportunity) => {
-    try {
-      const response = await apiAcceptTask(task.id)
-      if (response && response.code === 0) {
-        toast.success(t('messages.acceptTaskSuccess'))
-        // 刷新任务列表
-        fetchPendingTasks()
-        fetchAcceptedTasks()
-        // 切换到已接受任务标签
-        setActiveTab('accepted')
-      }
-    }
-    catch (error) {
-      toast.error(t('messages.acceptTaskFailed'))
-      console.error('接受任务失败:', error)
-    }
-  }
 
   // 获取平台显示名称
   const getPlatformName = (type: string) => {
@@ -384,8 +328,8 @@ export default function TaskPageCore() {
   // Get task status tag
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string, text: string }> = {
-      pending: { color: 'green', text: t('taskStatus.pending' as any) }, // pending means completed
-      doing: { color: 'orange', text: t('taskStatus.doing' as any) }, // doing means pending
+      pending: { color: 'orange', text: t('taskStatus.pending' as any) }, // pending: 待接受
+      doing: { color: 'blue', text: t('taskStatus.doing' as any) }, // doing: 进行中
       accepted: { color: 'blue', text: t('taskStatus.accepted' as any) },
       completed: { color: 'green', text: t('taskStatus.completed' as any) },
       rejected: { color: 'red', text: t('taskStatus.rejected' as any) },
@@ -1184,7 +1128,6 @@ export default function TaskPageCore() {
                                 : `${getPlatformName(task.accountType)} Task`}
                             </h3>
                           </div>
-                          <Badge className={getBadgeClassName('orange')}>{t('taskStatus.pending' as any)}</Badge>
                         </div>
 
                         <div className={styles.taskContent}>
@@ -1588,7 +1531,7 @@ export default function TaskPageCore() {
                 </Row>
               </div>
 
-              {/* 草稿选择区域 */}
+              {/* 示例展示区域 */}
               <div style={{ marginBottom: '24px' }}>
                 <div style={{
                   display: 'flex',
@@ -1598,11 +1541,11 @@ export default function TaskPageCore() {
                 }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.recommendedDraft' as any) || t('draft.selectDraft')}</span>
+                    <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.examples' as any) || '示例'}</span>
                   </div>
                 </div>
 
-                {/* 推荐任务草稿列表 */}
+                {/* 示例列表 */}
                 <Spin spinning={materialLoading}>
                   {materialList.length > 0 ? (
                     <>
@@ -1616,14 +1559,12 @@ export default function TaskPageCore() {
                           {materialList.map((material: any) => (
                             <div
                               key={material._id}
-                              onClick={(e) => { e.stopPropagation(); setSelectedMaterial(material) }}
                             style={{
-                              border: selectedMaterial?._id === material._id ? '2px solid #1890ff' : '1px solid #e8e8e8',
+                              border: '1px solid #e8e8e8',
                               borderRadius: '8px',
                               overflow: 'hidden',
-                              cursor: 'pointer',
                               transition: 'all 0.3s ease',
-                              backgroundColor: selectedMaterial?._id === material._id ? '#e6f7ff' : '#fff',
+                              backgroundColor: '#fff',
                             }}
                           >
                             {/* 素材封面 */}
@@ -1656,25 +1597,6 @@ export default function TaskPageCore() {
                                 }}
                                 >
                                   ▶
-                                </div>
-                              )}
-                              {selectedMaterial?._id === material._id && (
-                                <div style={{
-                                  position: 'absolute',
-                                  top: '8px',
-                                  right: '8px',
-                                  width: '24px',
-                                  height: '24px',
-                                  borderRadius: '50%',
-                                  backgroundColor: '#1890ff',
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  color: 'white',
-                                  fontSize: '14px',
-                                }}
-                                >
-                                  ✓
                                 </div>
                               )}
                             </div>
@@ -1728,51 +1650,6 @@ export default function TaskPageCore() {
                     <Empty description={t('draft.noDrafts')} />
                   )}
                 </Spin>
-
-                {/* 选中的推荐草稿信息展示 */}
-                {selectedMaterial && (
-                  <div style={{
-                    border: '2px solid #1890ff',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    backgroundColor: '#e6f7ff',
-                    padding: '16px',
-                  }}
-                  >
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                      {selectedMaterial.coverUrl && (
-                        <div style={{
-                          width: '120px',
-                          height: '120px',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          flexShrink: 0,
-                        }}
-                        >
-                          <Image
-                            src={getOssUrl(selectedMaterial.coverUrl)}
-                            alt={selectedMaterial.title}
-                            width={120}
-                            height={120}
-                            style={{
-                              objectFit: 'cover',
-                              width: '100%',
-                              height: '100%',
-                            }}
-                          />
-                        </div>
-                      )}
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
-                          {selectedMaterial.title || t('draft.noTitle')}
-                        </div>
-                        <div style={{ fontSize: '14px', color: '#666' }}>
-                          {selectedMaterial.desc || t('draft.noDescription')}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
 
               {/* 底部按钮 */}
@@ -1786,23 +1663,6 @@ export default function TaskPageCore() {
                   justifyContent: 'center',
                 }}
                 >
-                  {materialList.length > 0 && (
-                    <Button
-                      size="lg"
-                      onClick={() => {
-                        // 模式1：使用推荐草稿发布（必须选中推荐草稿）
-                        if (!selectedMaterial) {
-                          toast.error(t('draft.pleaseSelectDraftMaterial'))
-                          return
-                        }
-                        // 复用账号选择流程
-                        handleTaskAction(taskDetail)
-                      }}
-                    >
-                      {t('publish.useRecommended' as any) || '推荐草稿发布'}
-                    </Button>
-                  )}
-
                   <Button
                     size="lg"
                     onClick={() => {

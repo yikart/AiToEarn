@@ -15,7 +15,7 @@
   "taskCompleted": "Task Completed",
   "taskStatus": {
     "pending": "Pending",
-    "doing": "Completed",
+    "doing": "In Progress",
     "accepted": "Accepted",
     "completed": "Completed",
     "rejected": "Rejected",
@@ -108,6 +108,7 @@
   "draft": {
     "selectDraft": "Select Draft:",
     "recommendedDraft": "Recommended Draft",
+    "examples": "Examples",
     "taskDraft": "Task Draft",
     "myDraft": "My Draft",
     "reselect": "Reselect",
