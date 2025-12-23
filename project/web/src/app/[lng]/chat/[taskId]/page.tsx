@@ -20,19 +20,8 @@ import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
 import { useScrollControl, useChatState } from './hooks'
 
 // 测试数据 - 用于测试 createChannel action
-const TEST_RESULT_DATA = {"type":"result","message":{"type":"result","subtype":"success","uuid":"507f3578-d539-43dd-8214-67eee1613e87","duration_ms":198689,"duration_api_ms":41362,"is_error":false,"num_turns":9,"message":"完成！我已经生成了三张竖屏狗狗图片，并准备好发布到推特。由于你的账户还未绑定推特，系统会引导你进入发布页面，在那里你可以：\n\n1. **绑定推特账户**（如果还未绑定）\n2. **查看三条准备好的推文**：\n - 推文1：陪你看过海 + 海边图片\n - 推文2：陪你爬过山 + 山上图片\n - 推文3：你怎么忍心割我蛋蛋 + 傍晚图片\n\n3. **发布到推特**\n\n所有图片和文案都已准备就绪，你只需要完成账户连接并确认发布即可！🐕","result":[
-  {"type":"fullContent","title":"陪你看过海","description":"陪你看过海","tags":["狗狗","陪伴","回忆"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcqx6ux.png"}],
-  "action":"navigateToPublish","platform":"twitter"},
-  // {"type":"fullContent","title":"陪你爬过山","description":"陪你爬过山","tags":["狗狗","陪伴","冒险"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcqykej.png"}],
-  // "action":"navigateToPublish","platform":"twitter"},
-  // {"type":"fullContent","title":"你怎么忍心割我蛋蛋","description":"你怎么忍心割我蛋蛋","tags":["狗狗","可爱","搞笑"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcqzehm.png"}],
-  // "action":"navigateToPublish","platform":"twitter"}
-],"total_cost_usd":0.2299501,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":164958},"cache_creation_input_tokens":164958,"cache_read_input_tokens":63716,"input_tokens":34,"output_tokens":1922,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+const TEST_RESULT_DATA = {}
 
-
-
-// {"type":"result","message":{"type":"result","subtype":"success","uuid":"653d19f6-b1a4-4bc6-910b-f813c68c65a0","duration_ms":23024,"duration_api_ms":28454,"is_error":false,"num_turns":5,"message":"完成！我已经为你准备好了小红书发布内容。系统已引导你进入小红书发布页面，你可以：\n\n1. **绑定小红书账户**（如果还未绑定）\n2. **查看准备好的内容**：\n - 标题：陪你看过海，陪你爬过山\n - 描述：包含三分图的完整文案\n - 标签：#狗狗 #陪伴 #回忆 #搞笑 #宠物\n\n3. **上传并发布**这张精美的三分图到小红书\n\n所有内容都已准备就绪，你只需要完成账户连接并确认发布即可！🐕✨","result":[{"type":"fullContent","title":"陪你看过海，陪你爬过山","description":"上方小狗在海边眺望远方 陪你看过海，中方小狗在山上眺望远方 陪你爬过山，下方傍晚天气小狗正脸 你怎么忍心割我蛋蛋。三分图设计，温馨搞笑兼具的狗狗陪伴主题。","tags":["狗狗","陪伴","回忆","搞笑","宠物"],"medias":[{"type":"IMAGE","url":"https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/images/gemini-3-pro-image-preview/690df0fea7aa4267575e2d9c/mjcrjbr6.png"}],
-// "action":"navigateToPublish","platform":"xhs"}],"total_cost_usd":0.1240453,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":82734},"cache_creation_input_tokens":82734,"cache_read_input_tokens":94298,"input_tokens":21,"output_tokens":844,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
 
 // 测试模式：设置为 true 时，点击发送不发送请求，直接返回测试数据 00.00
 const TEST_MODE = false
