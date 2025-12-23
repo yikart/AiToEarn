@@ -1139,21 +1139,21 @@ export default function TaskPageCore() {
                 {/* 任务信息卡片 */}
                 <div className={`${infoItemsCount === 1 ? 'grid grid-cols-1 justify-items-start' : 'grid grid-cols-3'} gap-3`}>
                   {taskDetail.reward > 0 && (
-                    <div className="p-3 bg-warning/10 border border-warning/30 rounded-md text-center">
+                    <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
                       <div className="text-xs text-warning mb-1">{t('taskInfo.reward' as any)}</div>
                       <div className="text-sm font-bold text-destructive">CNY {taskDetail.reward / 100}</div>
                     </div>
                   )}
 
                   {taskDetail.cpmReward > 0 && (
-                    <div className="p-3 bg-warning/10 border border-warning/30 rounded-md text-center">
+                    <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
                       <div className="text-xs text-warning mb-1">{t('taskInfo.CPM' as any)}</div>
                       <div className="text-sm font-bold text-destructive">CNY {taskDetail.cpmReward / 100}</div>
                     </div>
                   )}
 
                   {taskDetail.type && (
-                    <div className="p-3 bg-muted/10 border border-muted/30 rounded-md text-center">
+                    <div className="bg-muted/10 border border-muted/30 rounded-md text-center">
                       <div className="text-xs text-muted-foreground mb-1">{t('taskInfo.type' as any)}</div>
                       <div className="text-sm font-medium text-foreground">{getTaskTypeName(taskDetail.type)}</div>
                     </div>

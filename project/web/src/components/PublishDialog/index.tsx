@@ -734,12 +734,6 @@ const PublishDialog = memo(
       if (suppressAutoPublish) {
         setCreateLoading(false)
 
-        // 给父组件提示：发布已提交（用于任务流程触发后续提交）
-        toast.success(t("messages.publishSubmitted" as any), {
-          key: "publish_submitted",
-          duration: 3,
-        });
-
         // 关闭发布弹框
         try {
           onClose()
