@@ -162,7 +162,7 @@ export const Modal: React.FC<ModalProps> = ({
             )}
 
         {shouldRenderContent && (
-          <div className={cn('flex-1 py-2 w-full flex', bodyClassName)}>
+          <div className={cn('flex-1 py-2 w-full flex flex-col', bodyClassName)}>
             {children}
           </div>
         )}
