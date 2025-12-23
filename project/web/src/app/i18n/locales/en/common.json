@@ -35,6 +35,12 @@
     "noDescription": "No description",
     "noContent": "No content"
   },
+  "pagination": {
+    "perPage": "Per page",
+    "items": "items",
+    "jumpTo": "Jump to",
+    "page": "page"
+  },
   "notificationTypes": {
     "system": "System Notification",
     "user": "User Notification",
