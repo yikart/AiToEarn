@@ -97,7 +97,7 @@ function MyComponent() {
 
 ### 特性
 
-- **全路径 URL**：上传完成后自动返回完整的 S3 URL（如 `https://aitoearn.s3.ap-southeast-1.amazonaws.com/userId/hash/filename.jpg`）
+- **全路径 URL**：上传完成后自动返回完整的 S3 URL（如 `https://aitoearn.ap-southeast-1.amazonaws.com/userId/hash/filename.jpg`）
 - **进度显示**：支持实时上传进度
 - **中断上传**：支持取消正在进行的上传
 - **多文件上传**：支持同时上传多个文件

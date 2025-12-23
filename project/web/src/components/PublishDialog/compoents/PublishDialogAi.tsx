@@ -961,7 +961,6 @@ const PublishDialogAi = memo(
         try {
           // Convert relative path to full S3 URL for publishing
           // API returns: ai/video/sora-2/...
-          // Publishing expects: https://aitoearn.s3.ap-southeast-1.amazonaws.com/ai/video/...
           const ossUrl = `${getOssUrl(url)}`
           const filename = `ai-generated-video.mp4`
           

@@ -106,6 +106,6 @@ export function acceptTask(taskId: string, opportunityId: string, accountId?: st
 }
 
 // 提交任务
-export function submitTask(userTaskId: string, materialId: string) {
+export function submitTask(userTaskId: string, materialId?: string) {
   return http.post('task/submit', { userTaskId, materialId })
 }
