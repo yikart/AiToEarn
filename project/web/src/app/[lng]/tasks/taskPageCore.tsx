@@ -124,18 +124,22 @@ export default function TaskPageCore() {
     total: 0,
   })
 
-  // 推荐草稿选择状态
-  const [selectedMaterial, setSelectedMaterial] = useState<any>(null) // 选中的推荐草稿
+  // 推荐草稿选择状态（已移除：任务提交/发布不再依赖草稿，详情仅作展示）
   const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([])
 
   // Accepted task detail material list state
   const [acceptedTaskMaterialList, setAcceptedTaskMaterialList] = useState<any[]>([])
   const [acceptedTaskMaterialLoading, setAcceptedTaskMaterialLoading] = useState(false)
+  // 任务信息卡片数量，用于控制对齐（只有一个时左对齐）
+  const infoItemsCount = (
+    (taskDetail?.reward && taskDetail.reward > 0 ? 1 : 0) +
+    (taskDetail?.cpmReward && taskDetail.cpmReward > 0 ? 1 : 0) +
+    (taskDetail?.type ? 1 : 0)
+  )
   // Publish dialog state
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
   const [publishDefaultAccountId, setPublishDefaultAccountId] = useState<string | undefined>(undefined)
   const [pendingUserTaskIdForPublish, setPendingUserTaskIdForPublish] = useState<string | undefined>(undefined)
-  const [pendingTaskMaterialIdForPublish, setPendingTaskMaterialIdForPublish] = useState<string | undefined>(undefined)
   const [pendingTaskForPublish, setPendingTaskForPublish] = useState<any | null>(null)
 
   // Fetch pending tasks list
@@ -430,10 +434,7 @@ export default function TaskPageCore() {
           pageSize,
           total: response.data.total || 0,
         })
-        // 默认选中第一个素材
-        if (response.data.list && response.data.list.length > 0 && !selectedMaterial) {
-          setSelectedMaterial(response.data.list[0])
-        }
+        // 示例仅用于展示，不在任务提交/发布流程中自动选择素材
       }
     }
     catch (error) {
@@ -454,8 +455,7 @@ export default function TaskPageCore() {
         setTaskDetail(response.data)
         setTaskDetailModalVisible(true)
 
-        // 重置推荐草稿选择状态
-        setSelectedMaterial(null)
+        // 示例仅用于展示，不在任务提交/发布流程中自动选择素材
 
         // 如果有 materialGroupId，获取素材列表
         if (response.data.materialGroupId) {
@@ -545,11 +545,10 @@ export default function TaskPageCore() {
       if (response && response.code === 0 && response.data.id) {
         // 接受成功，准备打开发布弹窗以供用户确认发布
         const publishAccount = account || getAccountById(task.accountId)
-        const material = selectedMaterial
+        // 不再使用推荐草稿作为发布/提交必须参数
 
-        // 保存待提交任务信息，等待用户在发布弹窗发布后调用提交接口
+        // 保存待提交任务信息（不再依赖素材 id）
         setPendingUserTaskIdForPublish(response.data.id)
-        setPendingTaskMaterialIdForPublish(material?._id)
         setPendingTaskForPublish(task)
 
         // 初始化发布弹窗的数据（传入当前的账号列表并默认选中发布账号）
@@ -595,9 +594,9 @@ export default function TaskPageCore() {
     const materials = acceptedTaskDetail.task?.materials || []
     const material = materials.length > 0 ? materials[0] : null
 
-    // 保存待提交任务信息
+    // 保存待提交任务信息（不再依赖素材 id）
     setPendingUserTaskIdForPublish(acceptedTaskDetail.id)
-    setPendingTaskMaterialIdForPublish(material?._id || acceptedTaskDetail.task?.materialIds?.[0])
+    // material id 不再用于提交流程
     setPendingTaskForPublish(acceptedTaskDetail.task)
 
     // 初始化发布弹窗的数据
@@ -674,13 +673,29 @@ export default function TaskPageCore() {
     try {
       // 取得发布时选中的账户
       const pubListChoosed = usePublishDialog.getState().pubListChoosed || []
-      if (pubListChoosed.length === 0) {
+
+      // If opened from task flow and dialog didn't have an explicit selection,
+      // fall back to the task's account (task specifies accountId).
+      let usedAccount: SocialAccount | undefined
+      if (pubListChoosed.length > 0) {
+        usedAccount = pubListChoosed[0].account
+      }
+      else {
+        // Prefer explicit publish default account if set
+        if (publishDefaultAccountId) {
+          usedAccount = getAccountById(publishDefaultAccountId) || undefined
+        }
+        // Otherwise, if the pending task has an accountId, use that
+        if (!usedAccount && pendingTaskForPublish && pendingTaskForPublish.accountId) {
+          usedAccount = getAccountById(pendingTaskForPublish.accountId) || undefined
+        }
+      }
+
+      if (!usedAccount) {
         console.log('publish.noAccountSelected')
         toast.error(t('publish.noAccountSelected' as any) || 'No account selected for publish')
         return
       }
-
-      const usedAccount = pubListChoosed[0].account
 
       // 校验：如果任务指定了 accountId，则必须一致；否则检查账户类型是否被任务接受
       const task = pendingTaskForPublish
@@ -703,9 +718,9 @@ export default function TaskPageCore() {
         return
       }
 
-      // 直接调用提交任务接口（不再弹出“任务处理中”弹窗）
-      if (pendingUserTaskIdForPublish && pendingTaskMaterialIdForPublish) {
-        const submitResp: any = await submitTask(pendingUserTaskIdForPublish, pendingTaskMaterialIdForPublish)
+      // 直接调用提交任务接口（不再依赖素材 id）
+      if (pendingUserTaskIdForPublish) {
+        const submitResp: any = await submitTask(pendingUserTaskIdForPublish)
         if (submitResp && submitResp.code === 0) {
           toast.success(t('messages.submitTaskSuccess' as any) || 'Submit task success')
           fetchAcceptedTasks()
@@ -724,7 +739,6 @@ export default function TaskPageCore() {
       setPublishDialogOpen(false)
       setPublishDefaultAccountId(undefined)
       setPendingUserTaskIdForPublish(undefined)
-      setPendingTaskMaterialIdForPublish(undefined)
       setPendingTaskForPublish(null)
       try {
         usePublishDialog.getState().clear()
@@ -738,10 +752,6 @@ export default function TaskPageCore() {
 
   return (
     <div className={styles.taskPage}>
-      {/* <div className={styles.header}>
-        <h1>任务中心</h1>
-        <p>接受任务，完成任务，获得奖励</p>
-      </div> */}
 
       <Tabs
         value={activeTab}
@@ -1105,10 +1115,9 @@ export default function TaskPageCore() {
         title={t('taskDetails')}
         open={taskDetailModalVisible}
         onCancel={() => {
-          setTaskDetailModalVisible(false)
-          setTaskDetail(null)
-          setMaterialList([])
-          setSelectedMaterial(null)
+        setTaskDetailModalVisible(false)
+        setTaskDetail(null)
+        setMaterialList([])
         }}
         footer={null}
         width={1200}
@@ -1118,102 +1127,42 @@ export default function TaskPageCore() {
           {taskDetail ? (
             <div>
               {/* 任务基本信息 */}
-              <div style={{
-                marginBottom: '24px',
-                padding: '16px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '8px',
-                border: '1px solid #e9ecef',
-              }}
-              >
-                <h2 style={{
-                  margin: '0 0 12px 0',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1a1a1a',
-                }}
-                >
+              <div className="mb-6 p-4 bg-background rounded-lg border border-border">
+                <h2 className="mb-3 text-lg font-semibold text-foreground">
                   {taskDetail.title}
                 </h2>
 
-                <div style={{
-                  fontSize: '14px',
-                  lineHeight: '1.6',
-                  color: '#495057',
-                  marginBottom: '12px',
-                }}
-                >
+                <div className="text-sm leading-7 text-muted-foreground mb-3">
                   <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
                 </div>
 
                 {/* 任务信息卡片 */}
-                <Row gutter={12}>
+                <div className={`${infoItemsCount === 1 ? 'grid grid-cols-1 justify-items-start' : 'grid grid-cols-3'} gap-3`}>
                   {taskDetail.reward > 0 && (
-                    <Col span={8}>
-                      <div style={{
-                        padding: '12px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{ fontSize: '12px', color: '#856404', marginBottom: '4px' }}>
-                          {t('taskInfo.reward' as any)}
-                        </div>
-                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#d63031' }}>
-                          CNY
-                          {' '}
-                          {taskDetail.reward / 100}
-                        </div>
-                      </div>
-                    </Col>
+                    <div className="p-3 bg-warning/10 border border-warning/30 rounded-md text-center">
+                      <div className="text-xs text-warning mb-1">{t('taskInfo.reward' as any)}</div>
+                      <div className="text-sm font-bold text-destructive">CNY {taskDetail.reward / 100}</div>
+                    </div>
                   )}
 
                   {taskDetail.cpmReward > 0 && (
-                    <Col span={8}>
-                      <div style={{
-                        padding: '12px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{ fontSize: '12px', color: '#856404', marginBottom: '4px' }}>
-                          {t('taskInfo.CPM' as any)}
-                        </div>
-                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#d63031' }}>
-                          CNY
-                          {' '}
-                          {taskDetail.cpmReward / 100}
-                        </div>
-                      </div>
-                    </Col>
+                    <div className="p-3 bg-warning/10 border border-warning/30 rounded-md text-center">
+                      <div className="text-xs text-warning mb-1">{t('taskInfo.CPM' as any)}</div>
+                      <div className="text-sm font-bold text-destructive">CNY {taskDetail.cpmReward / 100}</div>
+                    </div>
                   )}
 
-                  <Col span={8}>
-                    <div style={{
-                      padding: '12px',
-                      backgroundColor: '#d1ecf1',
-                      border: '1px solid #bee5eb',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
-                      <div style={{ fontSize: '12px', color: '#0c5460', marginBottom: '4px' }}>
-                        {t('taskInfo.type' as any)}
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '500', color: '#0c5460' }}>
-                        {getTaskTypeName(taskDetail.type)}
-                      </div>
+                  {taskDetail.type && (
+                    <div className="p-3 bg-muted/10 border border-muted/30 rounded-md text-center">
+                      <div className="text-xs text-muted-foreground mb-1">{t('taskInfo.type' as any)}</div>
+                      <div className="text-sm font-medium text-foreground">{getTaskTypeName(taskDetail.type)}</div>
                     </div>
-                  </Col>
-                </Row>
+                  )}
+                </div>
               </div>
 
               {/* 示例展示区域 */}
-              <div style={{ marginBottom: '24px' }}>
+              <div style={{ marginBottom: '24px', marginTop: '12px' }}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -1249,9 +1198,9 @@ export default function TaskPageCore() {
                             }}
                           >
                             {/* 素材封面 */}
-                            <div style={{
+                <div style={{
                               position: 'relative',
-                              paddingTop: '56.25%',
+                              paddingTop: '42%',
                               background: '#f0f0f0',
                             }}
                             >
@@ -1344,14 +1293,13 @@ export default function TaskPageCore() {
                   justifyContent: 'center',
                 }}
                 >
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      // 模式2：直接发布（不使用推荐草稿）
-                      setSelectedMaterial(null)
-                      handleTaskAction(taskDetail)
-                    }}
-                  >
+                      <Button
+                        size="lg"
+                        onClick={() => {
+                          // 模式2：直接发布
+                          handleTaskAction(taskDetail)
+                        }}
+                      >
                     {t('publish.directPublish' as any) || '直接发布'}
                   </Button>
 
@@ -1398,98 +1346,12 @@ export default function TaskPageCore() {
           {acceptedTaskDetail ? (
             <div>
               {/* 视频发布风格布局 */}
-              <div style={{
-                display: 'flex',
-                gap: '24px',
-                marginBottom: '24px',
-              }}
-              >
-                {/* Left side: Video/Media content */}
-                <div style={{ flex: '0 0 400px' }}>
-                  <Spin spinning={acceptedTaskMaterialLoading}>
-                    {acceptedTaskMaterialList.length > 0 && acceptedTaskMaterialList[0].mediaList && acceptedTaskMaterialList[0].mediaList.length > 0 && (
-                      <div style={{
-                        border: '1px solid #e8e8e8',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        backgroundColor: '#000',
-                      }}
-                      >
-                        <div style={{ position: 'relative', cursor: 'pointer' }}>
-                          {acceptedTaskMaterialList[0].mediaList[0].type === 'video' ? (
-                            <div
-                              style={{
-                                position: 'relative',
-                                overflow: 'hidden',
-                              }}
-                            onClick={(e) => { e.stopPropagation(); handleVideoCoverClick(acceptedTaskMaterialList[0].mediaList[0], acceptedTaskDetail.task.title) }}
-                            >
-                              {/* Video cover image */}
-                              <Image
-                                src={acceptedTaskMaterialList[0].coverUrl ? getOssUrl(acceptedTaskMaterialList[0].coverUrl) : getOssUrl(acceptedTaskMaterialList[0].mediaList[0].url)}
-                                alt="video cover"
-                                width={400}
-                                height={300}
-                                style={{
-                                  width: '100%',
-                                  height: 'auto',
-                                  display: 'block',
-                                }}
-                              />
-                              {/* Play button */}
-                              <div style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                color: 'white',
-                                fontSize: '24px',
-                                background: 'rgba(0,0,0,0.7)',
-                                borderRadius: '50%',
-                                width: '60px',
-                                height: '60px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                              }}
-                              >
-                                ▶
-                              </div>
-                            </div>
-                          ) : acceptedTaskMaterialList[0].mediaList[0].type === 'img' ? (
-                            <Image
-                              src={getOssUrl(acceptedTaskMaterialList[0].mediaList[0].url)}
-                              alt="media"
-                              width={400}
-                              height={300}
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                                display: 'block',
-                              }}
-                            onClick={(e) => { e.stopPropagation(); handleMediaClick(acceptedTaskMaterialList[0].mediaList[0], acceptedTaskDetail.task.title) }}
-                            />
-                          ) : null}
-                        </div>
-                      </div>
-                    )}
-                  </Spin>
-                </div>
-
-                {/* 右侧：标题和描述 */}
-                <div style={{ flex: '1', minWidth: '300px' }}>
+              <div className="space-y-4">
+                {/* 右侧：标题和描述（已移除顶部媒体展示） */}
+                <div className="flex-1">
                   {/* 标题区域 */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <h2 style={{
-                      margin: '0 0 8px 0',
-                      fontSize: '20px',
-                      fontWeight: '600',
-                      lineHeight: '1.4',
-                      color: '#1a1a1a',
-                    }}
-                    >
+                  <div className="mb-4">
+                    <h2 className="mb-2 text-xl font-semibold text-foreground">
                       {acceptedTaskDetail.task?.title}
                     </h2>
 
@@ -1721,31 +1583,13 @@ export default function TaskPageCore() {
                 </div>
               </div>
 
-              {/* 底部状态栏 */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px 0',
-                borderTop: '1px solid #e8e8e8',
-                marginTop: '16px',
-              }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Badge 
-                    className={getBadgeClassName(getTaskStatusTag(acceptedTaskDetail.status).color)}
-                    style={{
-                      fontSize: '12px',
-                      padding: '4px 8px',
-                    }}
-                  >
+              {/* 底部状态栏：左侧状态，右侧首次提交 */}
+              <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
+                <div className="flex items-center gap-3">
+                  <Badge className={getBadgeClassName(getTaskStatusTag(acceptedTaskDetail.status).color)} style={{ fontSize: 12, padding: '4px 8px' }}>
                     {getTaskStatusTag(acceptedTaskDetail.status).text}
                   </Badge>
-                  <span style={{
-                    fontSize: '12px',
-                    color: '#666',
-                  }}
-                  >
+                  <span className="text-sm text-muted-foreground">
                     {acceptedTaskDetail.status === 'doing'
                       ? t('taskStatuses.taskPending')
                       : acceptedTaskDetail.status === 'pending'
@@ -1754,15 +1598,11 @@ export default function TaskPageCore() {
                   </span>
                 </div>
 
-                <div style={{
-                  fontSize: '12px',
-                  color: '#999',
-                }}
-                >
-                  {acceptedTaskDetail.isFirstTimeSubmission && (
-                    <span style={{ color: '#52c41a' }}>{t('taskInfo.firstSubmission')}</span>
-                  )}
-                </div>
+                {acceptedTaskDetail.isFirstTimeSubmission && (
+                  <span className="inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-100">
+                    {t('taskInfo.firstSubmission')}
+                  </span>
+                )}
               </div>
 
               {/* 根据任务状态显示不同按钮 */}
@@ -1798,9 +1638,8 @@ export default function TaskPageCore() {
         <MediaPreview
           open={mediaPreviewVisible}
           onClose={() => setMediaPreviewVisible(false)}
-          mediaType={previewMedia?.type }
-          mediaUrl={previewMedia?.url}
-          title={previewMedia?.title || t('modal.mediaPreview')}
+          items={[{ type: previewMedia.type, src: previewMedia.url, title: previewMedia.title || t('modal.mediaPreview') }]}
+          initialIndex={0}
         />
       )}
 
@@ -1894,12 +1733,10 @@ export default function TaskPageCore() {
             setPublishDialogOpen(false)
             setPublishDefaultAccountId(undefined)
             setPendingUserTaskIdForPublish(undefined)
-            setPendingTaskMaterialIdForPublish(undefined)
             setPendingTaskForPublish(null)
           }}
           accounts={accountList}
           defaultAccountId={publishDefaultAccountId}
-          onPubSuccess={handlePublishSuccess}
           suppressAutoPublish={true}
           taskIdForPublish={pendingUserTaskIdForPublish}
           onPublishConfirmed={(taskId?: string) => {
