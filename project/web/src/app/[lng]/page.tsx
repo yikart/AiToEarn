@@ -10,6 +10,7 @@ import { ArrowUp } from 'lucide-react'
 import { HomeChat } from '@/components/Home/HomeChat'
 import { TaskPreview } from '@/components/Home/TaskPreview'
 import PromptGallery from '@/components/Home/PromptGallery'
+import AgentFeatures from '@/components/Home/AgentFeatures'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
@@ -115,6 +116,9 @@ export default function Home() {
       <section>
         <PromptGallery onApplyPrompt={handleApplyPrompt} />
       </section>
+
+      {/* AI Agent 功能亮点（独立展示） */}
+      <AgentFeatures />
 
       {/* 回到顶部按钮 - 右侧 */}
       <BackToTop position="right" />

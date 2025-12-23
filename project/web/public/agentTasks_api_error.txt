@@ -1,0 +1,10 @@
+
+id: 1
+data: {"type":"init","taskId":"694a6cd01ce170ee02ec22d0"}
+
+id: 2
+data: {"type":"assistant","message":{"type":"assistant","uuid":"86847191-c6e5-40e4-b412-4c42753e143e","message":{"id":"52c6ec89-4c8f-4375-baec-5e845bef5eb5","content":[{"type":"text","text":"API Error: 404 {\"error\":{\"message\":\"Error from provider(new,claude-sonnet-4-5-20250929: 404): <html>\\r\\n<head><title>404 Not Found</title></head>\\r\\n<body>\\r\\n<center><h1>404 Not Found</h1></center>\\r\\n<hr><center>nginx</center>\\r\\n</body>\\r\\n</html>\\r\\nError: Error from provider(new,claude-sonnet-4-5-20250929: 404): <html>\\r\\n<head><title>404 Not Found</title></head>\\r\\n<body>\\r\\n<center><h1>404 Not Found</h1></center>\\r\\n<hr><center>nginx</center>\\r\\n</body>\\r\\n</html>\\r\\n\\n    at nt (/app/node_modules/.pnpm/@musistudio+claude-code-router@1.0.73_@modelcontextprotocol+sdk@1.25.1_@cfworker+json-s_cceb99b6ac112d593c6272b8487a9a0f/node_modules/@musistudio/claude-code-router/dist/cli.js:79940:11)\\n    at p0 (/app/node_modules/.pnpm/@musistudio+claude-code-router@1.0.73_@modelcontextprotocol+sdk@1.25.1_@cfworker+json-s_cceb99b6ac112d593c6272b8487a9a0f/node_modules/@musistudio/claude-code-router/dist/cli.js:80000:114)\\n    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\\n    at async f0 (/app/node_modules/.pnpm/@musistudio+claude-code-router@1.0.73_@modelcontextprotocol+sdk@1.25.1_@cfworker+json-s_cceb99b6ac112d593c6272b8487a9a0f/node_modules/@musistudio/claude-code-router/dist/cli.js:79965:96)\",\"type\":\"api_error\",\"code\":\"provider_response_error\"}}"}],"model":"<synthetic>","role":"assistant","stop_reason":"stop_sequence","stop_sequence":"","type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"input_tokens":0,"output_tokens":0,"server_tool_use":{"web_search_requests":0},"service_tier":null},"container":null,"context_management":null},"parent_tool_use_id":null,"error":"unknown"}}
+
+id: 3
+data: {"type":"error","code":500,"message":"Internal server error","data":{},"timestamp":1766485204026}
+

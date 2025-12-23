@@ -175,6 +175,16 @@ function MessageStepContent({ step, isLast, isStreaming, onOpenPreview }: IMessa
         </div>
       )}
 
+      {/* 如果该步骤包含媒体（image/video），在步骤内容下方渲染 MediaGallery */}
+      {step.medias && step.medias.length > 0 && (
+        <div className="mt-3">
+          <MediaGallery
+            medias={step.medias as any}
+            onPreviewByUrl={(url) => onOpenPreview?.(url)}
+          />
+        </div>
+      )}
+
       {/* 该步骤的工作流展示 */}
       {hasWorkflow && (
         <WorkflowSection

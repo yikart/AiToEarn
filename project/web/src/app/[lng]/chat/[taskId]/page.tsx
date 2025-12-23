@@ -18,13 +18,7 @@ import { toast } from '@/lib/toast'
 import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
 // 页面私有 hooks
 import { useScrollControl, useChatState } from './hooks'
-
-// 测试数据 - 用于测试 createChannel action
-const TEST_RESULT_DATA = {}
-
-
-// 测试模式：设置为 true 时，点击发送不发送请求，直接返回测试数据 00.00
-const TEST_MODE = false
+import { enableDebugReplay, disableDebugReplay } from '@/store/agent'
 
 export default function ChatDetailPage() {
   const { t } = useTransClient('chat')
@@ -154,49 +148,6 @@ export default function ChatDetailPage() {
     scrollToBottom(true)
 
     try {
-      // 测试模式：直接返回测试数据，不发送真实请求
-      if (TEST_MODE) {
-        // 先正常调用 continueTask 来添加消息和设置状态
-        // 但我们需要拦截 API 调用，所以先设置状态，然后立即模拟返回
-        const store = useAgentStore.getState()
-        
-        // 添加用户消息
-        const userMessage = {
-          id: `user-${Date.now()}`,
-          role: 'user' as const,
-          content: currentPrompt,
-          medias: currentMedias,
-          createdAt: Date.now(),
-        }
-        store.setMessages([...store.messages, userMessage])
-        
-        // 添加 AI 待回复消息
-        const assistantMessage = {
-          id: `assistant-${Date.now()}`,
-          role: 'assistant' as const,
-          content: '',
-          status: 'streaming' as const,
-          createdAt: Date.now(),
-        }
-        store.setMessages([...store.messages, assistantMessage])
-        
-        // 设置生成状态（通过 set 方法）
-        useAgentStore.setState({
-          isGenerating: true,
-          progress: 10,
-          currentTaskId: taskId,
-        })
-        
-        // 模拟 SSE 消息处理（延迟一点以模拟真实请求）
-        setTimeout(() => {
-          if (handleSSEMessage) {
-            handleSSEMessage(TEST_RESULT_DATA as any)
-          }
-        }, 500)
-        
-        return
-      }
-
       await continueTask({
         prompt: currentPrompt,
         medias: currentMedias,
@@ -246,6 +197,34 @@ export default function ChatDetailPage() {
     }
   }, [router, lng])
 
+  // Debug Replay panel: show when query param debug=true
+  const [showReplay, setShowReplay] = (() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search)
+        return [params.get('debug') === 'true', () => params.get('debug') === 'true']
+      }
+    } catch (e) {}
+    return [false, () => false]
+  })()
+
+  useEffect(() => {
+    // enable debug replay when panel is shown via query param
+    if (showReplay) {
+      try {
+        enableDebugReplay()
+      } catch (e) {}
+    }
+    return () => {
+      // disable debug replay on unmount
+      if (showReplay) {
+        try {
+          disableDebugReplay()
+        } catch (e) {}
+      }
+    }
+  }, [showReplay])
+
   // 加载中状态（仅非活跃任务显示骨架屏）
   if (isLoading && !isActiveTask) {
     return <ChatLoadingSkeleton />
@@ -294,8 +273,6 @@ export default function ChatDetailPage() {
           mode="compact"
         />
       </div>
-
-      {/* 评分入口已移动到顶部 ChatHeader */}
     </div>
   )
 }
