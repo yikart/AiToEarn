@@ -291,11 +291,24 @@ export const errorHandler: ISSEHandler = {
         window.location.href = `/${lng}/pricing`
       }
     } else {
-      // 其他错误，正常显示错误消息
+      // 其他错误：创建一个 assistant 消息，显示为错误卡片（不显示文本）
       if (errorMessage) {
-        const errorMsg = `❌ : ${errorMessage}`
+        const assistantMessage = {
+          id: `assistant-error-${Date.now()}`,
+          role: 'assistant',
+          content: '',
+          status: 'done',
+          createdAt: Date.now(),
+          actions: [
+            {
+              type: 'errorOnly',
+              title: '生成失败',
+              description: errorMessage,
+            },
+          ],
+        }
         ctx.set((state: any) => ({
-          markdownMessages: [...state.markdownMessages, errorMsg],
+          messages: [...state.messages, assistantMessage],
         }))
       }
     }

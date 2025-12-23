@@ -123,6 +123,7 @@ export type ActionType =
   | 'loginChannel'
   | 'createChannel'
   | 'platformNotSupported'
+  | 'errorOnly'
 
 /** 平台类型 */
 export type PlatformType =

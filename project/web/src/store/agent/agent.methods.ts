@@ -166,6 +166,41 @@ export function createStoreMethods(ctx: IMethodsContext) {
     console.log("00000000000000");
     console.log(sseMessage, sseContext, callbacks);
 
+    // 处理 error 类型的 SSE，显示为 assistant 错误消息
+    if (sseMessage.type === 'error') {
+      let errText = ''
+      try {
+        if (typeof sseMessage.message === 'string') {
+          errText = sseMessage.message
+        } else if (sseMessage.message && typeof sseMessage.message === 'object') {
+          errText = JSON.stringify(sseMessage.message)
+        } else if (sseMessage.data) {
+          errText = typeof sseMessage.data === 'string' ? sseMessage.data : JSON.stringify(sseMessage.data)
+        } else {
+          errText = `Error: ${sseMessage}`
+        }
+      } catch (e) {
+        errText = 'Unknown error'
+      }
+
+      // 创建一个 assistant 消息，显示为错误卡片（不包含按钮）
+      const assistantMessage = messageUtils.createAssistantMessage()
+      assistantMessage.content = ''
+      assistantMessage.status = 'done'
+      assistantMessage.actions = [
+        {
+          type: 'errorOnly' as any,
+          title: '生成失败',
+          description: errText,
+        },
+      ]
+      messageUtils.addMessage(assistantMessage)
+
+      // 更新状态
+      set({ isGenerating: false, progress: 0 })
+      return
+    }
+
     // 处理 result 消息（需要特殊处理）
     if (sseMessage.type === 'result' && sseMessage.message) {
       handleResult(sseMessage.message)
