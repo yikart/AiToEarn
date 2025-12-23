@@ -214,6 +214,8 @@ export interface IAgentState {
   // === 消息状态 ===
   /** 显示的消息列表 */
   messages: IDisplayMessage[]
+  /** 调试回放开关（true 时强制使用 store 的消息渲染） */
+  debugReplayActive?: boolean
 
   // === 消费状态 ===
   /** 本次消费金额 */

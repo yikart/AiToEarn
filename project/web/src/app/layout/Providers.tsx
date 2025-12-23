@@ -41,9 +41,8 @@ export function Providers({
   lng: string;
 }) {
   const cssVariables = useCssVariables();
-  const { token, _hasHydrated } = useUserStore(
+  const { _hasHydrated } = useUserStore(
     useShallow((state) => ({
-      token: state.token,
       _hasHydrated: state._hasHydrated,
     }))
   );
@@ -55,13 +54,11 @@ export function Providers({
       if (queryToken) {
         useUserStore.getState().setToken(queryToken);
       }
-      if (token) {
-        useDataStatisticsStore.getState().init();
-        useUserStore.getState().getUserInfo();
-        useAccountStore.getState().accountInit();
-      }
+      useDataStatisticsStore.getState().init();
+      useUserStore.getState().getUserInfo();
+      useAccountStore.getState().accountInit();
     }
-  }, [token, _hasHydrated]);
+  }, [_hasHydrated]);
 
   useEffect(() => {
     useUserStore.getState().setLang(lng);

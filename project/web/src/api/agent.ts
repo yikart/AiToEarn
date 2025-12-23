@@ -4,6 +4,7 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import http from '@/utils/request'
 import { useUserStore } from '@/store/user'
+import { useAgentStore } from '@/store/agent'
 
 // 任务状态枚举
 export enum TaskStatus {
@@ -204,6 +205,68 @@ export const agentApi = {
     }
 
     console.log('[SSE] Starting fetchEventSource...')
+
+    // Debug replay interception: if debugReplayActive is enabled in the store,
+    // replay events from a local .txt file instead of opening a network SSE.
+    try {
+      const debugActive = useAgentStore.getState().debugReplayActive
+      if (debugActive) {
+        console.log('[SSE] Debug replay active - replaying from public .txt')
+        let abortController = { aborted: false }
+        let isAborted = false
+        const abort = () => {
+          isAborted = true
+          abortController.aborted = true
+        }
+
+        (async () => {
+          // try common paths
+          const candidates = ['/en/agentTasks_api.txt']
+          let raw = ''
+          for (const p of candidates) {
+            try {
+              const resp = await fetch(p)
+              if (!resp.ok) continue
+              raw = await resp.text()
+              break
+            } catch (e) {
+              // continue
+            }
+          }
+          if (!raw) {
+            console.warn('[SSE] Debug replay: no local file found to replay')
+            onDone?.()
+            return
+          }
+
+          const blocks = raw.split(/\r?\n\r?\n+/).map((b) => b.trim()).filter(Boolean)
+          for (let i = 0; i < blocks.length; i++) {
+            if (isAborted) break
+            const block = blocks[i]
+            const dataLine = block.split(/\r?\n/).find((l) => l.startsWith('data:'))
+            if (!dataLine) continue
+            const jsonPart = dataLine.replace(/^data:\s*/, '')
+            try {
+              const data = JSON.parse(jsonPart)
+              // call callback
+              onMessage(data as any)
+            } catch (e) {
+              console.warn('[SSE] Debug replay: failed to parse block', e)
+            }
+            // small delay between events to simulate streaming
+            await new Promise((r) => setTimeout(r, 40))
+          }
+
+          if (!isAborted) {
+            onDone?.()
+          }
+        })()
+
+        return abort
+      }
+    } catch (e) {
+      console.warn('[SSE] Debug replay check failed', e)
+    }
 
     try {
       // 获取语言设置

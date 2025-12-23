@@ -156,15 +156,15 @@ export function createStoreMethods(ctx: IMethodsContext) {
     if (SSEHandlerRegistry.handle(sseMessage, sseContext, callbacks)) {
       // 处理 init 后刷新任务列表
       if (sseMessage.type === 'init' && sseMessage.taskId) {
-        agentApi.getTaskList(1, 10).catch((err) => {
-          console.warn('[AgentStore] Background refresh task list failed:', err)
-        })
+        // 在回放调试模式下不触发后台刷新
+        if (!get().debugReplayActive) {
+          agentApi.getTaskList(1, 10).catch((err) => {
+            console.warn('[AgentStore] Background refresh task list failed:', err)
+          })
+        }
       }
       return
     }
-
-    console.log("00000000000000");
-    console.log(sseMessage, sseContext, callbacks);
 
     // 处理 error 类型的 SSE，显示为 assistant 错误消息
     if (sseMessage.type === 'error') {
@@ -455,6 +455,18 @@ export function createStoreMethods(ctx: IMethodsContext) {
 
     setMessages: messageUtils.setMessages.bind(messageUtils),
     appendMessage: messageUtils.addMessage.bind(messageUtils),
+    /**
+     * 为回放创建一个 assistant 消息并设置 refs，返回该消息 id
+     * 这会使用内部的 messageUtils.createAssistantMessage 来保证 refs.currentAssistantMessageId 被正确设置
+     */
+    startReplaySession() {
+      const assistantMessage = messageUtils.createAssistantMessage()
+      // 标记为流式中
+      assistantMessage.status = 'streaming'
+      messageUtils.addMessage(assistantMessage)
+      set({ isGenerating: true })
+      return assistantMessage.id
+    },
 
     // ============ 模式管理 ============
 

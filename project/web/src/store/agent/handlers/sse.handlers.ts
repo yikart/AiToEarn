@@ -142,7 +142,18 @@ export const textDeltaHandler: ISSEHandler = {
     // 更新消息列表中的 assistant 消息
     ctx.set((state: any) => ({
       messages: state.messages.map((m: any) => {
-        if (m.id === ctx.refs.currentAssistantMessageId.value) {
+        // Determine target assistant message id:
+        // prefer refs.currentAssistantMessageId.value, otherwise fall back to last assistant message in state
+        const targetAssistantId =
+          ctx.refs.currentAssistantMessageId.value ||
+          (function findLastAssistantId() {
+            const msgs = state.messages || []
+            for (let i = msgs.length - 1; i >= 0; i--) {
+              if (msgs[i].role === 'assistant') return msgs[i].id
+            }
+            return ''
+          })()
+        if (m.id === targetAssistantId) {
           const steps = m.steps || []
 
           let updatedSteps = [...steps]
