@@ -3,6 +3,7 @@
  * 使用职责链模式处理不同类型的 SSE 消息
  */
 
+import { directTrans, useTransClient } from '@/app/i18n/client'
 import type { ISSEMessage, IWorkflowStep, IMessageStep } from '../agent.types'
 import type { IAgentRefs } from '../utils/refs'
 import type { WorkflowUtils } from '../utils/workflow'
@@ -271,9 +272,9 @@ export const errorHandler: ISSEHandler = {
       
       if (actionContext) {
         // 使用国际化文本
-        const title = actionContext.t('error.insufficientCredits.title') || 'Agent 额度不足'
-        const content = actionContext.t('error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
-        const okText = actionContext.t('error.insufficientCredits.okText') || '确定'
+        const title = directTrans('chat', 'error.insufficientCredits.title') || 'Agent 额度不足'
+        const content = directTrans('chat', 'error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
+        const okText = directTrans('chat', 'error.insufficientCredits.okText') || '确定'
         
         confirm({
           title,

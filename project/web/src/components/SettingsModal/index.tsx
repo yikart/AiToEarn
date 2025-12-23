@@ -109,7 +109,7 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
   return (
     <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
       <DialogContent
-        className="w-[95vw] max-w-[880px] gap-0 overflow-hidden p-0 md:w-[880px]"
+        className="!w-[min(880px,95vw)] sm:!w-[min(880px,95vw)] !max-w-none mx-auto gap-0 overflow-hidden p-0"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">{t('title')}</DialogTitle>

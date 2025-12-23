@@ -7,6 +7,12 @@
   },
   "tags": [
     {
+      "name": "Close"
+    },
+    {
+      "name": "Close/Me"
+    },
+    {
       "name": "Close/Me/Agent"
     }
   ],
@@ -140,519 +146,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
-                  {
-                    "type": "object",
-                    "properties": {
-                      "prompt": {
-                        "description": "提示词（字符串或内容块数组）",
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 4000
-                          },
-                          {
-                            "minItems": 1,
-                            "maxItems": 20,
-                            "type": "array",
-                            "items": {
-                              "anyOf": [
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "text"
-                                    },
-                                    "text": {
-                                      "type": "string",
-                                      "minLength": 1
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "text"
-                                  ]
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "image"
-                                    },
-                                    "source": {
-                                      "type": "object",
-                                      "properties": {
-                                        "type": {
-                                          "type": "string",
-                                          "const": "url"
-                                        },
-                                        "url": {
-                                          "type": "string",
-                                          "format": "uri"
-                                        }
-                                      },
-                                      "required": [
-                                        "type",
-                                        "url"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "source"
-                                  ]
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "video"
-                                    },
-                                    "source": {
-                                      "type": "object",
-                                      "properties": {
-                                        "type": {
-                                          "type": "string",
-                                          "const": "url"
-                                        },
-                                        "url": {
-                                          "type": "string",
-                                          "format": "uri"
-                                        }
-                                      },
-                                      "required": [
-                                        "type",
-                                        "url"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "source"
-                                  ]
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "document"
-                                    },
-                                    "source": {
-                                      "anyOf": [
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "type": {
-                                              "type": "string",
-                                              "const": "text"
-                                            },
-                                            "media_type": {
-                                              "type": "string",
-                                              "const": "text/plain"
-                                            },
-                                            "data": {
-                                              "type": "string"
-                                            }
-                                          },
-                                          "required": [
-                                            "type",
-                                            "media_type",
-                                            "data"
-                                          ]
-                                        },
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "type": {
-                                              "type": "string",
-                                              "const": "content"
-                                            },
-                                            "content": {
-                                              "anyOf": [
-                                                {
-                                                  "type": "string"
-                                                },
-                                                {
-                                                  "type": "array",
-                                                  "items": {
-                                                    "anyOf": [
-                                                      {
-                                                        "type": "object",
-                                                        "properties": {
-                                                          "type": {
-                                                            "type": "string",
-                                                            "const": "text"
-                                                          },
-                                                          "text": {
-                                                            "type": "string",
-                                                            "minLength": 1
-                                                          }
-                                                        },
-                                                        "required": [
-                                                          "type",
-                                                          "text"
-                                                        ]
-                                                      },
-                                                      {
-                                                        "type": "object",
-                                                        "properties": {
-                                                          "type": {
-                                                            "type": "string",
-                                                            "const": "image"
-                                                          },
-                                                          "source": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                              "type": {
-                                                                "type": "string",
-                                                                "const": "url"
-                                                              },
-                                                              "url": {
-                                                                "type": "string",
-                                                                "format": "uri"
-                                                              }
-                                                            },
-                                                            "required": [
-                                                              "type",
-                                                              "url"
-                                                            ]
-                                                          }
-                                                        },
-                                                        "required": [
-                                                          "type",
-                                                          "source"
-                                                        ]
-                                                      }
-                                                    ]
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          },
-                                          "required": [
-                                            "type",
-                                            "content"
-                                          ]
-                                        },
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "type": {
-                                              "type": "string",
-                                              "const": "url"
-                                            },
-                                            "url": {
-                                              "type": "string",
-                                              "format": "uri"
-                                            }
-                                          },
-                                          "required": [
-                                            "type",
-                                            "url"
-                                          ]
-                                        }
-                                      ]
-                                    },
-                                    "cache_control": {
-                                      "type": "object",
-                                      "properties": {
-                                        "type": {
-                                          "type": "string",
-                                          "const": "ephemeral"
-                                        }
-                                      },
-                                      "required": [
-                                        "type"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "source"
-                                  ]
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      },
-                      "taskId": {
-                        "description": "任务ID",
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "messageUuid": {
-                        "description": "消息UUID",
-                        "type": "string",
-                        "minLength": 1
-                      },
-                      "includePartialMessages": {
-                        "description": "是否包含部分消息（流式）",
-                        "default": false,
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "prompt",
-                      "taskId"
-                    ]
-                  },
-                  {
-                    "type": "object",
-                    "properties": {
-                      "prompt": {
-                        "description": "提示词（字符串或内容块数组）",
-                        "anyOf": [
-                          {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 4000
-                          },
-                          {
-                            "minItems": 1,
-                            "maxItems": 20,
-                            "type": "array",
-                            "items": {
-                              "anyOf": [
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "text"
-                                    },
-                                    "text": {
-                                      "type": "string",
-                                      "minLength": 1
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "text"
-                                  ]
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "image"
-                                    },
-                                    "source": {
-                                      "type": "object",
-                                      "properties": {
-                                        "type": {
-                                          "type": "string",
-                                          "const": "url"
-                                        },
-                                        "url": {
-                                          "type": "string",
-                                          "format": "uri"
-                                        }
-                                      },
-                                      "required": [
-                                        "type",
-                                        "url"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "source"
-                                  ]
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "video"
-                                    },
-                                    "source": {
-                                      "type": "object",
-                                      "properties": {
-                                        "type": {
-                                          "type": "string",
-                                          "const": "url"
-                                        },
-                                        "url": {
-                                          "type": "string",
-                                          "format": "uri"
-                                        }
-                                      },
-                                      "required": [
-                                        "type",
-                                        "url"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "source"
-                                  ]
-                                },
-                                {
-                                  "type": "object",
-                                  "properties": {
-                                    "type": {
-                                      "type": "string",
-                                      "const": "document"
-                                    },
-                                    "source": {
-                                      "anyOf": [
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "type": {
-                                              "type": "string",
-                                              "const": "text"
-                                            },
-                                            "media_type": {
-                                              "type": "string",
-                                              "const": "text/plain"
-                                            },
-                                            "data": {
-                                              "type": "string"
-                                            }
-                                          },
-                                          "required": [
-                                            "type",
-                                            "media_type",
-                                            "data"
-                                          ]
-                                        },
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "type": {
-                                              "type": "string",
-                                              "const": "content"
-                                            },
-                                            "content": {
-                                              "anyOf": [
-                                                {
-                                                  "type": "string"
-                                                },
-                                                {
-                                                  "type": "array",
-                                                  "items": {
-                                                    "anyOf": [
-                                                      {
-                                                        "type": "object",
-                                                        "properties": {
-                                                          "type": {
-                                                            "type": "string",
-                                                            "const": "text"
-                                                          },
-                                                          "text": {
-                                                            "type": "string",
-                                                            "minLength": 1
-                                                          }
-                                                        },
-                                                        "required": [
-                                                          "type",
-                                                          "text"
-                                                        ]
-                                                      },
-                                                      {
-                                                        "type": "object",
-                                                        "properties": {
-                                                          "type": {
-                                                            "type": "string",
-                                                            "const": "image"
-                                                          },
-                                                          "source": {
-                                                            "type": "object",
-                                                            "properties": {
-                                                              "type": {
-                                                                "type": "string",
-                                                                "const": "url"
-                                                              },
-                                                              "url": {
-                                                                "type": "string",
-                                                                "format": "uri"
-                                                              }
-                                                            },
-                                                            "required": [
-                                                              "type",
-                                                              "url"
-                                                            ]
-                                                          }
-                                                        },
-                                                        "required": [
-                                                          "type",
-                                                          "source"
-                                                        ]
-                                                      }
-                                                    ]
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          },
-                                          "required": [
-                                            "type",
-                                            "content"
-                                          ]
-                                        },
-                                        {
-                                          "type": "object",
-                                          "properties": {
-                                            "type": {
-                                              "type": "string",
-                                              "const": "url"
-                                            },
-                                            "url": {
-                                              "type": "string",
-                                              "format": "uri"
-                                            }
-                                          },
-                                          "required": [
-                                            "type",
-                                            "url"
-                                          ]
-                                        }
-                                      ]
-                                    },
-                                    "cache_control": {
-                                      "type": "object",
-                                      "properties": {
-                                        "type": {
-                                          "type": "string",
-                                          "const": "ephemeral"
-                                        }
-                                      },
-                                      "required": [
-                                        "type"
-                                      ]
-                                    }
-                                  },
-                                  "required": [
-                                    "type",
-                                    "source"
-                                  ]
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      },
-                      "includePartialMessages": {
-                        "description": "是否包含部分消息（流式）",
-                        "default": false,
-                        "type": "boolean"
-                      }
-                    },
-                    "required": [
-                      "prompt"
-                    ]
-                  }
-                ]
+                "$ref": "#/components/schemas/CreateContentGenerationTaskDto"
               }
             }
           },
@@ -1602,7 +1096,8 @@
                                                             },
                                                             "publishTime": {
                                                               "type": "string",
-                                                              "format": "date-time"
+                                                              "format": "date-time",
+                                                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                                                             },
                                                             "topics": {
                                                               "type": "array",
@@ -2021,10 +1516,6 @@
                                                     ]
                                                   }
                                                 },
-                                                "required": [
-                                                  "stop_reason",
-                                                  "stop_sequence"
-                                                ],
                                                 "additionalProperties": false
                                               },
                                               "usage": {
@@ -3224,7 +2715,8 @@
                                                           },
                                                           "publishTime": {
                                                             "type": "string",
-                                                            "format": "date-time"
+                                                            "format": "date-time",
+                                                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                                                           },
                                                           "topics": {
                                                             "type": "array",
@@ -3643,10 +3135,6 @@
                                                   ]
                                                 }
                                               },
-                                              "required": [
-                                                "stop_reason",
-                                                "stop_sequence"
-                                              ],
                                               "additionalProperties": false
                                             },
                                             "usage": {
@@ -4888,7 +4376,8 @@
                                                         },
                                                         "publishTime": {
                                                           "type": "string",
-                                                          "format": "date-time"
+                                                          "format": "date-time",
+                                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                                                         },
                                                         "topics": {
                                                           "type": "array",
@@ -5307,10 +4796,6 @@
                                                 ]
                                               }
                                             },
-                                            "required": [
-                                              "stop_reason",
-                                              "stop_sequence"
-                                            ],
                                             "additionalProperties": false
                                           },
                                           "usage": {
@@ -5531,13 +5016,31 @@
                               }
                             ]
                           }
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "running",
+                            "completed",
+                            "requires_action",
+                            "error"
+                          ]
+                        },
+                        "rating": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 5
+                        },
+                        "ratingComment": {
+                          "type": "string"
                         }
                       },
                       "required": [
                         "id",
                         "userId",
                         "createdAt",
-                        "updatedAt"
+                        "updatedAt",
+                        "status"
                       ],
                       "additionalProperties": false
                     }
@@ -5635,6 +5138,107 @@
         },
         "security": []
       }
+    },
+    "/api/agent/tasks/{taskId}/rating": {
+      "get": {
+        "summary": "Get Content Generation Task Rating",
+        "deprecated": false,
+        "description": "Get rating and comment for a content generation task.",
+        "operationId": "AgentController_getRating",
+        "tags": [
+          "Close/Me/Agent"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "rating": {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 5
+                        },
+                        "comment": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      },
+      "post": {
+        "summary": "Create or Update Content Generation Task Rating",
+        "deprecated": false,
+        "description": "Create or update a rating for a content generation task.",
+        "operationId": "AgentController_createRating",
+        "tags": [
+          "Close/Me/Agent"
+        ],
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": "",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContentGenerationTaskRatingDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
     }
   },
   "components": {
@@ -5676,6 +5280,15 @@
                 "title": {
                   "type": "string"
                 },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "running",
+                    "completed",
+                    "requires_action",
+                    "error"
+                  ]
+                },
                 "createdAt": {
                   "type": "string",
                   "format": "date-time"
@@ -5688,6 +5301,7 @@
               "required": [
                 "id",
                 "userId",
+                "status",
                 "createdAt",
                 "updatedAt"
               ]
@@ -6625,7 +6239,8 @@
                                           },
                                           "publishTime": {
                                             "type": "string",
-                                            "format": "date-time"
+                                            "format": "date-time",
+                                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
                                           },
                                           "topics": {
                                             "type": "array",
@@ -7027,11 +6642,7 @@
                                     }
                                   ]
                                 }
-                              },
-                              "required": [
-                                "stop_reason",
-                                "stop_sequence"
-                              ]
+                              }
                             },
                             "usage": {
                               "type": "object",
@@ -7248,6 +6859,7 @@
             "enum": [
               "running",
               "completed",
+              "requires_action",
               "error"
             ]
           }
@@ -7257,6 +6869,293 @@
           "status"
         ],
         "id": "TaskMessagesVo"
+      },
+      "CreateContentGenerationTaskDto": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "description": "提示词（字符串或内容块数组）",
+            "anyOf": [
+              {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 4000
+              },
+              {
+                "minItems": 1,
+                "maxItems": 20,
+                "type": "array",
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "text"
+                        },
+                        "text": {
+                          "type": "string",
+                          "minLength": 1
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "text"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "image"
+                        },
+                        "source": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "url"
+                            },
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "url"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "source"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "video"
+                        },
+                        "source": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "url"
+                            },
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            }
+                          },
+                          "required": [
+                            "type",
+                            "url"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "source"
+                      ]
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "type": {
+                          "type": "string",
+                          "const": "document"
+                        },
+                        "source": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "text"
+                                },
+                                "media_type": {
+                                  "type": "string",
+                                  "const": "text/plain"
+                                },
+                                "data": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "media_type",
+                                "data"
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "content"
+                                },
+                                "content": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string"
+                                    },
+                                    {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "text"
+                                              },
+                                              "text": {
+                                                "type": "string",
+                                                "minLength": 1
+                                              }
+                                            },
+                                            "required": [
+                                              "type",
+                                              "text"
+                                            ]
+                                          },
+                                          {
+                                            "type": "object",
+                                            "properties": {
+                                              "type": {
+                                                "type": "string",
+                                                "const": "image"
+                                              },
+                                              "source": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "url"
+                                                  },
+                                                  "url": {
+                                                    "type": "string",
+                                                    "format": "uri"
+                                                  }
+                                                },
+                                                "required": [
+                                                  "type",
+                                                  "url"
+                                                ]
+                                              }
+                                            },
+                                            "required": [
+                                              "type",
+                                              "source"
+                                            ]
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "content"
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string",
+                                  "const": "url"
+                                },
+                                "url": {
+                                  "type": "string",
+                                  "format": "uri"
+                                }
+                              },
+                              "required": [
+                                "type",
+                                "url"
+                              ]
+                            }
+                          ]
+                        },
+                        "cache_control": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string",
+                              "const": "ephemeral"
+                            }
+                          },
+                          "required": [
+                            "type"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "type",
+                        "source"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "model": {
+            "description": "使用的模型",
+            "default": "claude-sonnet-4-5-20250929",
+            "type": "string",
+            "enum": [
+              "claude-haiku-4-5-20251001",
+              "claude-sonnet-4-5-20250929",
+              "claude-opus-4-1-20250805",
+              "claude-opus-4-5-20251101"
+            ]
+          },
+          "includePartialMessages": {
+            "description": "是否包含部分消息（流式）",
+            "default": false,
+            "type": "boolean"
+          },
+          "taskId": {
+            "description": "任务ID（恢复对话时使用）",
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "id": "CreateContentGenerationTaskDto"
+      },
+      "CreateContentGenerationTaskRatingDto": {
+        "type": "object",
+        "properties": {
+          "rating": {
+            "description": "评分 (1-5)",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "comment": {
+            "description": "评论文本",
+            "type": "string",
+            "maxLength": 1000
+          }
+        },
+        "required": [
+          "rating"
+        ],
+        "id": "CreateContentGenerationTaskRatingDto"
       }
     },
     "responses": {},

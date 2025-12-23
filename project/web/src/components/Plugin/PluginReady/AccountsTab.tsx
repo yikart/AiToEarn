@@ -80,7 +80,7 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 flex-1">
       {/* 顶部状态栏 */}
       <div className="flex items-center gap-2 rounded-lg bg-success/10 px-4 py-3">
         <CheckCircle className="h-5 w-5 text-success" />

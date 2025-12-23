@@ -12,6 +12,7 @@ import { useAgentStore } from '@/store/agent'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { useTransClient } from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
+/* rating entry moved into ChatHeader */
 
 // 页面私有组件
 import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
@@ -74,6 +75,7 @@ export default function ChatDetailPage() {
 
   // 输入状态
   const [inputValue, setInputValue] = useState('')
+  // rating handled in ChatHeader
 
   // 媒体上传
   const {
@@ -246,7 +248,13 @@ export default function ChatDetailPage() {
    * 返回首页
    */
   const handleBack = useCallback(() => {
-    router.push(`/${lng}`)
+    // If there's a previous entry in the history stack, go back.
+    // Otherwise, navigate to the root homepage.
+    if (typeof window !== 'undefined' && window.history.length > 1) {
+      router.back()
+    } else {
+      router.push('/')
+    }
   }, [router, lng])
 
   // 加载中状态（仅非活跃任务显示骨架屏）
@@ -263,6 +271,8 @@ export default function ChatDetailPage() {
         isGenerating={isGenerating}
         progress={progress}
         thinkingText={t('message.thinking' as any)}
+        taskId={taskId}
+        rating={task?.rating ?? null}
         onBack={handleBack}
       />
 
@@ -295,6 +305,8 @@ export default function ChatDetailPage() {
           mode="compact"
         />
       </div>
+
+      {/* 评分入口已移动到顶部 ChatHeader */}
     </div>
   )
 }

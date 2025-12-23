@@ -23,7 +23,6 @@
 | `SettingsModal/` | 设置弹框组件 |
 | `ScrollButtonContainer/` | 滚动按钮容器 |
 | `SignInCalendar/` | 签到日历组件 |
-| `VideoPreviewModal.tsx` | 视频预览弹窗 |
 | `WalletAccountSelect/` | 钱包账户选择器 |
 
 ---
@@ -379,20 +378,6 @@ import { AvatarCropModal } from '@/components/AvatarCropModal'
 - 🔍 支持缩放（放大/缩小）
 - 🖱️ 支持拖拽移动图片
 - 💾 输出 400x400 PNG 格式
-
-### VideoPreviewModal - 视频预览弹窗
-
-简单的视频预览弹窗。
-
-```tsx
-import VideoPreviewModal from '@/components/VideoPreviewModal'
-
-<VideoPreviewModal
-  open={boolean}
-  videoUrl="https://..."
-  onCancel={() => void}
-/>
-```
 
 ### ImageEditorModal - 图片编辑弹窗
 

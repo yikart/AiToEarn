@@ -60,7 +60,7 @@ export default function DownloadAppModal({
 
   /** 渲染 App 下载内容 */
   const renderAppContent = () => (
-    <div className="flex flex-col items-center px-4 py-4">
+    <div className="flex items-center px-4 py-4">
       {/* 多平台下载按钮 */}
       <div className="w-full grid grid-cols-1 gap-3">
         <Button 

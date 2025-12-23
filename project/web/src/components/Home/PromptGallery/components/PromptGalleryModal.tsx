@@ -135,7 +135,7 @@ export function PromptGalleryModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-[95vw] w-full h-[90vh] p-0 overflow-hidden bg-background rounded-2xl flex flex-col">
+    <DialogContent className="!w-[min(1800px,95vw)] !max-w-none sm:!w-[min(1800px,95vw)] sm:!max-w-none h-[90vh] p-0 overflow-hidden bg-background rounded-2xl flex flex-col mx-auto">
         {/* 头部 */}
         <div className="flex-shrink-0 px-6 pt-6 pb-4 bg-card/80 backdrop-blur-md border-b border-border">
           <DialogHeader className="mb-4">
@@ -221,6 +221,7 @@ export function PromptGalleryModal({
               dataLength={displayedPrompts.length}
               next={loadMore}
               hasMore={hasMore}
+              scrollThreshold={0.6}
               loader={
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />

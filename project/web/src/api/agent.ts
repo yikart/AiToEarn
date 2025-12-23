@@ -47,6 +47,8 @@ export interface TaskDetail {
   createdAt: string
   updatedAt: string
   messages?: TaskMessage[]
+  rating?: number | null
+  ratingComment?: string | null
 }
 
 // 任务消息类型
@@ -71,6 +73,10 @@ export interface TaskListItem {
   updatedAt: string
   /** 任务状态（后端英文原始状态字符串，直接展示） */
   status?: string
+  /** 任务评分（1-5） */
+  rating?: number | null
+  /** 任务评价文本 */
+  ratingComment?: string | null
 }
 
 // 任务列表响应
@@ -356,6 +362,25 @@ export const agentApi = {
   async getTaskMessages(taskId: string, lastMessageId?: string) {
     const params = lastMessageId ? { lastMessageId } : undefined
     const res = await http.get<TaskMessagesVo>(`agent/tasks/${taskId}/messages`, params)
+    return res
+  },
+
+  /**
+   * 获取任务评分
+   * @param taskId 任务ID
+   */
+  async getTaskRating(taskId: string) {
+    const res = await http.get<{ data: { rating?: number | null; comment?: string | null } }>(`agent/tasks/${taskId}/rating`)
+    return res
+  },
+
+  /**
+   * 提交或更新任务评分
+   * @param taskId 任务ID
+   * @param payload { rating: number, comment?: string }
+   */
+  async submitTaskRating(taskId: string, payload: { rating: number; comment?: string }) {
+    const res = await http.post(`agent/tasks/${taskId}/rating`, payload)
     return res
   },
 
