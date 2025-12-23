@@ -75,11 +75,17 @@ export default function PromptGallery({
     [onApplyPrompt, lng]
   )
 
- 
-
   return (
     <section className={cn('py-12 px-4 md:px-6 lg:px-8', className)}>
       <div className="w-full max-w-5xl mx-auto">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-2xl font-extrabold tracking-tight text-foreground">
+            {t('title')}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {t('subtitle')}
+          </p>
+        </div>
         {/* 顶部提示词区域（少量） */}
 
         {/* 文本提示列表：首页仅展示少量简洁提示词（无详情），直接触发发布行为 */}
