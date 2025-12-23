@@ -13,7 +13,7 @@
                         "type": "video",
                         "source": {
                             "type": "url",
-                            "url": "https://aitoearn.s3.ap-southeast-1.amazonaws.com/68b503b421b15a40e511dfa4/8e9372f8014244760dc2194378302dac30348543864-1-192.mp4"
+                            "url": "https://aitoearn.ap-southeast-1.amazonaws.com/68b503b421b15a40e511dfa4/8e9372f8014244760dc2194378302dac30348543864-1-192.mp4"
                         }
                     },
                     {
@@ -1108,7 +1108,7 @@
                     "index": 2,
                     "delta": {
                         "type": "input_json_delta",
-                        "partial_json": "earn.s3.a"
+                        "partial_json": "earn.s8.a"
                     }
                 },
                 "parent_tool_use_id": null
@@ -1322,7 +1322,7 @@
                                 "userId": "68b503b421b15a40e511dfa4",
                                 "prompt": "将这个中文视频翻译成英文，包括翻译字幕、克隆语音并保持情感、同步唇形到英文",
                                 "multiInputs": [
-                                    "https://aitoearn.s3.ap-southeast-1.amazonaws.com/68b503b421b15a40e511dfa4/8e9372f8014244760dc2194378302dac30348543864-1-192.mp4"
+                                    "https://aitoearn.ap-southeast-1.amazonaws.com/68b503b421b15a40e511dfa4/8e9372f8014244760dc2194378302dac30348543864-1-192.mp4"
                                 ]
                             }
                         }
