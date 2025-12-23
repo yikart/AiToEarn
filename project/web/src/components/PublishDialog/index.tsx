@@ -117,6 +117,8 @@ const PublishDialog = memo(
         onPubSuccess,
         defaultAccountId,
         suppressAutoPublish,
+        taskIdForPublish,
+        onPublishConfirmed,
       }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {

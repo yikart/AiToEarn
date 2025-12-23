@@ -7,7 +7,7 @@
 
 import { cn } from '@/lib/utils'
 
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   /** 标题 */
   title?: React.ReactNode
   /** 额外内容 */
