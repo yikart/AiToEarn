@@ -301,7 +301,7 @@ export function ChatMessage({
       </div>
 
       {/* 消息内容 */}
-      <div className={cn('flex flex-col gap-2 max-w-[80%]', isUser ? 'items-end' : 'items-start')}>
+      <div className={cn('flex flex-col gap-2 max-w-[80%] min-w-0', isUser ? 'items-end' : 'items-start')}>
         {/* 媒体附件（统一使用 MediaGallery） */}
         {medias.length > 0 && (
           <MediaGallery
@@ -320,7 +320,7 @@ export function ChatMessage({
 
         {/* AI 消息：多步骤渲染 - 只有有实际内容或工作流时才显示 */}
         {!isUser && displaySteps.length > 0 && displaySteps.some(s => s.content?.trim() || s.workflowSteps?.length) && (
-          <div className="w-full bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
+          <div className="w-full bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3 min-w-0">
             {displaySteps.map((step, index) => (
               <MessageStepContent
                 key={step.id}
