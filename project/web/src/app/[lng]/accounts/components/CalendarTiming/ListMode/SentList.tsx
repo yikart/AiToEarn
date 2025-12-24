@@ -69,7 +69,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
       const response = await getSentPosts(params)
 
       // Handle new API response format
-      const responseData = (response as any)?.data || response
+      const responseData = (response)?.data || response
 
       // Handle response data, directly use responseData as an array
       const postsData = Array.isArray(responseData) ? responseData : (responseData?.posts || responseData?.list || [])
@@ -125,7 +125,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
   const renderPostItem = (post: SentPost) => {
     // Get account information based on accountId
     const account = accountMap.get(post.accountId)
-    const platInfo = AccountPlatInfoMap.get(post.accountType as any)
+    const platInfo = AccountPlatInfoMap.get(post.accountType)
 
     const timeInfo = formatTime(post.publishTime)
     const postTime = typeof post.publishTime === 'string' ? new Date(post.publishTime).getTime() : post.publishTime
@@ -235,7 +235,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
             {/* Bottom information */}
             <div className="flex justify-between items-center pt-4 border-t border-border/50">
               <div className="text-sm text-muted-foreground">
-                {t('listMode.createdDaysAgo' as any, { days: daysAgo })}
+                {t('listMode.createdDaysAgo', { days: daysAgo })}
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -244,7 +244,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
                   className="text-sm text-primary px-2 h-auto border border-border/50 rounded bg-background transition-all hover:border-primary hover:bg-accent"
                   onClick={() => window.open(post.workLink, '_blank')}
                 >
-                  {t('listMode.viewPost' as any)}
+                  {t('listMode.viewPost')}
                   {' '}
                   ↗️
                 </Button>
@@ -316,7 +316,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
         : (
             <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground h-full min-h-[300px]">
               <div className="text-4xl mb-4">📮</div>
-              <p className="text-sm">{t('listMode.noSentPosts' as any)}</p>
+              <p className="text-sm">{t('listMode.noSentPosts')}</p>
             </div>
           )}
     </div>

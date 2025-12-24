@@ -80,13 +80,13 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
       try {
         await deleteAccountsApi([account.id])
         await getAccountList()
-        toast.success(t('messages.deleteSuccess' as any))
+        toast.success(t('messages.deleteSuccess'))
         // 如果删除的是当前选中的账号，清空选中状态
         if (accountActive?.id === account.id) {
           setAccountActive(undefined)
         }
       } catch (error) {
-        toast.error(t('messages.sortFailed' as any))
+        toast.error(t('messages.sortFailed'))
       } finally {
         setDeleteLoading(null)
       }
@@ -98,9 +98,9 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
       try {
         await deleteAccountGroupApi([group.id])
         await getAccountGroup()
-        toast.success(t('messages.deleteSuccess' as any))
+        toast.success(t('messages.deleteSuccess'))
       } catch (error) {
-        toast.error(t('messages.sortFailed' as any))
+        toast.error(t('messages.sortFailed'))
       } finally {
         setDeleteLoading(null)
       }
@@ -135,9 +135,9 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
 
         await apiUpdateAccountGroupSortRank({ list: updateList })
         await getAccountGroup()
-        toast.success(t('messages.sortSuccess' as any))
+        toast.success(t('messages.sortSuccess'))
       } catch (error) {
-        toast.error(t('messages.sortFailed' as any))
+        toast.error(t('messages.sortFailed'))
       } finally {
         setSortLoading(null)
       }

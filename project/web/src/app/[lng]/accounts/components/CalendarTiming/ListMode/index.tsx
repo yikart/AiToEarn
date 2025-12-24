@@ -67,7 +67,7 @@ const ListMode = memo(
             <div className="flex justify-between items-center mb-[15px] pb-2.5 border-b border-border">
               <div className="flex flex-col gap-1">
                 <h3 className="m-0 text-lg font-semibold text-foreground">
-                  {t('listMode.title' as any)}
+                  {t('listMode.title')}
                 </h3>
               </div>
             </div>
@@ -98,7 +98,7 @@ const ListMode = memo(
               : (
                   <div className="flex flex-col items-center justify-center py-16 text-center text-muted-foreground">
                     <div className="text-4xl mb-4">📋</div>
-                    <p className="text-sm">{t('listMode.noRecords' as any)}</p>
+                    <p className="text-sm">{t('listMode.noRecords')}</p>
                   </div>
                 )}
           </DndProvider>
@@ -125,7 +125,7 @@ const ListMode = memo(
           <Tabs defaultValue="queue" className="flex-1 flex flex-col min-h-0">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="queue" className="gap-2">
-                <span>{t('listMode.queue' as any)}</span>
+                <span>{t('listMode.queue')}</span>
                 {queueRecords.length > 0 && (
                   <Badge variant="secondary" className="h-5 min-w-5 px-1.5 text-xs">
                     {queueRecords.length}
@@ -133,7 +133,7 @@ const ListMode = memo(
                 )}
               </TabsTrigger>
               <TabsTrigger value="sent" className="gap-2">
-                <span>{t('listMode.sent' as any)}</span>
+                <span>{t('listMode.sent')}</span>
                 {sentCount > 0 && (
                   <Badge variant="secondary" className="h-5 min-w-5 px-1.5 text-xs">
                     {sentCount}

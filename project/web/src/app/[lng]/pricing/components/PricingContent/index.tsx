@@ -19,9 +19,6 @@ import { createPaymentOrderApi, PaymentType } from '@/api/vip'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
 import { openLoginModal } from '@/store/loginModal'
 
-/** 企业版联系邮箱 */
-const ENTERPRISE_EMAIL = 'agent@aiearn.ai'
-
 interface PricingContentProps {
   lng: string
 }

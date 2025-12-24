@@ -15,6 +15,7 @@ import zh_CN from "antd/es/locale/zh_CN";
 import { Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { GlobalLoginModal } from "@/components/common/GlobalLoginModal";
+import NotificationCenter from "@/components/ui/NotificationCenter";
 import { useDataStatisticsStore } from "@/app/[lng]/dataStatistics/useDataStatistics";
 import useCssVariables from "@/app/hooks/useCssVariables";
 import { fallbackLng } from "@/app/i18n/settings";
@@ -84,6 +85,8 @@ export function Providers({
             <Suspense>
               <AntdRegistry>
                 <Toaster position="top-center" richColors />
+                {/* 专用右上角通知中心（不影响现有 toast） */}
+                <NotificationCenter />
                 <GlobalLoginModal />
                 {children}
               </AntdRegistry>

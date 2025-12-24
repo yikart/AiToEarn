@@ -6,10 +6,7 @@ import i18next from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import resourcesToBackend from 'i18next-resources-to-backend'
 import { useEffect, useState } from 'react'
-import {
-  initReactI18next,
-  useTranslation,
-} from 'react-i18next'
+import { initReactI18next, useTranslation, type UseTranslationResponse, type UseTranslationOptions } from 'react-i18next'
 
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cookieName, getOptions, languages } from './settings'
@@ -36,8 +33,10 @@ i18next
     preload: runsOnServerSide ? languages : [],
   })
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function useTransClient(ns?: any, options?: any): any {
+export function useTransClient<Ns extends string | undefined = undefined>(
+  ns?: Ns | Ns[],
+  options?: UseTranslationOptions,
+): UseTranslationResponse<Ns> {
   const i18nextCookie = getCookie(cookieName)
   const lng = useGetClientLng()
   if (typeof lng !== 'string')
@@ -81,7 +80,8 @@ export function useTransClient(ns?: any, options?: any): any {
       setCookie(cookieName, lng, { path: '/' })
     }, [lng, i18nextCookie])
   }
-  return useTranslation(ns, options)
+  // 强制类型断言以匹配 react-i18next 的签名
+  return useTranslation(ns as Ns | Ns[] | undefined, options) as UseTranslationResponse<Ns>
 }
 
 export default i18next

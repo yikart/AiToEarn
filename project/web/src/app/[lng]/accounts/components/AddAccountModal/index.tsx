@@ -256,7 +256,7 @@ const AddAccountModal = memo(
         // 检查是否有账号
         const account = platformAccounts[platform]
         if (!account) {
-          toast.warning(t('addAccountModal.platformNotLoggedIn' as any, { platform: platformName }))
+          toast.warning(t('addAccountModal.platformNotLoggedIn', { platform: platformName }))
           return
         }
 
@@ -264,17 +264,17 @@ const AddAccountModal = memo(
         try {
           const result = await syncAccountToDatabase(platform, selectedSpaceId)
           if (result) {
-            toast.success(t('addAccountModal.syncSuccess' as any))
+            toast.success(t('addAccountModal.syncSuccess'))
             onAddSuccess(result)
             onClose()
           }
           else {
-            toast.error(t('addAccountModal.syncFailed' as any))
+            toast.error(t('addAccountModal.syncFailed'))
           }
         }
         catch (error) {
           console.error('同步账号失败:', error)
-          toast.error(t('addAccountModal.syncFailed' as any))
+          toast.error(t('addAccountModal.syncFailed'))
         }
         finally {
           setSyncLoadingPlatform(null)
@@ -314,9 +314,9 @@ const AddAccountModal = memo(
             // 快手授权前先显示提示
             // 在 onOk 回调中直接执行授权，确保 window.open 在用户交互上下文中
             await confirm({
-              title: t('addAccountModal.kwaiAuthWarning.title' as any),
-              content: t('addAccountModal.kwaiAuthWarning.content' as any),
-              okText: t('addAccountModal.kwaiAuthWarning.okText' as any),
+              title: t('addAccountModal.kwaiAuthWarning.title'),
+              content: t('addAccountModal.kwaiAuthWarning.content'),
+              okText: t('addAccountModal.kwaiAuthWarning.okText'),
               cancelText: undefined, // 不显示取消按钮
               onOk: () => {
                 // 在用户点击"我知道了"时立即执行授权，确保 window.open 在用户交互上下文中
