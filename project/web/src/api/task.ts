@@ -103,3 +103,19 @@ export function apiGetNotViewCount() {
 export function apiMarkTaskAsViewed(opportunityId: string) {
   return http.put<any>(`task/opportunity/doView/${opportunityId}`)
 }
+
+/**
+ * Get settle info by userTaskId
+ * @param userTaskId
+ */
+export function apiGetSettleInfoByUserTask(userTaskId: string) {
+  return http.get<any>(`task/settle/info/${userTaskId}`)
+}
+
+/**
+ * Get settle item list by settleId
+ * @param settleId
+ */
+export function apiGetSettleItemList(settleId: string) {
+  return http.get<any>(`task/settle/item/list/${settleId}`)
+}
