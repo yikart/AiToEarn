@@ -129,7 +129,7 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
 
     // 企业版直接发送邮件
     if (planId === 'enterprise') {
-      window.open(`mailto:${ENTERPRISE_EMAIL}?subject=Enterprise Plan Inquiry`, '_blank')
+      window.open(`mailto:agent@aiearn.ai?subject=Enterprise Plan Inquiry`, '_blank')
       return
     }
 
@@ -416,7 +416,7 @@ const PricingCard = memo(({
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              <p>{ENTERPRISE_EMAIL}</p>
+              <p>agent@aiearn.ai</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

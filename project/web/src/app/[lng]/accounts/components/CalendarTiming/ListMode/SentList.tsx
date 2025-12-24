@@ -69,10 +69,12 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
       const response = await getSentPosts(params)
 
       // Handle new API response format
-      const responseData = (response)?.data || response
+      const responseData = (response as any)?.data || response
 
       // Handle response data, directly use responseData as an array
-      const postsData = Array.isArray(responseData) ? responseData : (responseData?.posts || responseData?.list || [])
+      const postsData = Array.isArray(responseData)
+        ? responseData
+        : (responseData?.posts || responseData?.data?.posts || responseData?.list || [])
 
       if (append) {
         setPosts(prev => [...prev, ...postsData])
@@ -125,7 +127,7 @@ const SentList: React.FC<SentListProps> = ({ platform, uid, onDataChange, accoun
   const renderPostItem = (post: SentPost) => {
     // Get account information based on accountId
     const account = accountMap.get(post.accountId)
-    const platInfo = AccountPlatInfoMap.get(post.accountType)
+    const platInfo = AccountPlatInfoMap.get(post.accountType as any)
 
     const timeInfo = formatTime(post.publishTime)
     const postTime = typeof post.publishTime === 'string' ? new Date(post.publishTime).getTime() : post.publishTime

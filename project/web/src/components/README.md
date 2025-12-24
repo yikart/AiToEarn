@@ -24,6 +24,7 @@
 | `ScrollButtonContainer/` | 滚动按钮容器 |
 | `SignInCalendar/` | 签到日历组件 |
 | `WalletAccountSelect/` | 钱包账户选择器 |
+| `ChannelManager/` | 频道管理弹窗组件 |
 
 ---
 
@@ -537,6 +538,57 @@ import SettingsModal from '@/components/SettingsModal'
 - 💰 显示累计收入和当前余额
 - 🌐 通用设置：网站语言切换
 - 🎨 使用 shadcn/ui + Tailwind CSS 实现
+
+### ChannelManager - 频道管理弹窗
+
+频道和空间的统一管理弹窗，支持搜索筛选、创建空间、删除空间等功能。
+
+```tsx
+import ChannelManager from '@/components/ChannelManager'
+
+// 非受控模式（推荐）- 通过 store 控制
+<ChannelManager />
+
+// 受控模式
+<ChannelManager
+  open={isOpen}
+  onOpenChange={setIsOpen}
+  fetchChannels={customFetchChannels}
+  fetchSpaces={customFetchSpaces}
+/>
+```
+
+**Props：**
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 受控模式下的打开状态 | `boolean` | - |
+| `onOpenChange` | 受控模式下的状态改变回调 | `(open: boolean) => void` | - |
+| `fetchChannels` | 自定义获取频道数据的函数 | `() => Promise<void>` | - |
+| `fetchSpaces` | 自定义获取空间数据的函数 | `() => Promise<void>` | - |
+
+**特性：**
+- 📱 响应式设计，支持深色/浅色主题
+- 🔍 支持频道和空间的搜索筛选
+- ➕ 内置创建空间功能
+- 🗑️ 支持删除空间（非默认空间）
+- 📂 标签页布局（频道/空间）
+- 🎨 使用 shadcn/ui + Tailwind CSS v4
+- 🌐 完整的国际化支持
+- ♿ 无障碍访问支持
+
+**Store API：**
+
+```tsx
+import { useChannelManagerStore } from '@/components/ChannelManager'
+
+// 打开弹窗
+const { setOpen } = useChannelManagerStore()
+setOpen(true)
+
+// 监听状态
+const { open, activeTab, filterText } = useChannelManagerStore()
+```
 
 ---
 

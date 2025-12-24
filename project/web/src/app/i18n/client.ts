@@ -35,8 +35,8 @@ i18next
 
 export function useTransClient<Ns extends string | undefined = undefined>(
   ns?: Ns | Ns[],
-  options?: UseTranslationOptions,
-): UseTranslationResponse<Ns> {
+  options?: UseTranslationOptions<FlatNamespace>,
+): UseTranslationResponse<string, FlatNamespace> {
   const i18nextCookie = getCookie(cookieName)
   const lng = useGetClientLng()
   if (typeof lng !== 'string')
@@ -81,7 +81,7 @@ export function useTransClient<Ns extends string | undefined = undefined>(
     }, [lng, i18nextCookie])
   }
   // 强制类型断言以匹配 react-i18next 的签名
-  return useTranslation(ns as Ns | Ns[] | undefined, options) as UseTranslationResponse<Ns>
+  return useTranslation(ns as Ns | Ns[] | undefined, options) as UseTranslationResponse<string, FlatNamespace>
 }
 
 export default i18next

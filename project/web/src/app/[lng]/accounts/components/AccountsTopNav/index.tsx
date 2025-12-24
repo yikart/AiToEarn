@@ -15,7 +15,6 @@ import { Modal } from 'antd'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { deleteAccountsApi } from '@/api/account'
-import { deleteAccountGroupApi } from '@/api/account'
 import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
@@ -85,26 +84,14 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
         if (accountActive?.id === account.id) {
           setAccountActive(undefined)
         }
-      } catch (error) {
+      }
+      catch (error) {
         toast.error(t('messages.sortFailed'))
-      } finally {
+      }
+      finally {
         setDeleteLoading(null)
       }
     }, [accountActive, getAccountList, setAccountActive, t])
-
-    // 处理空间删除
-    const handleGroupDelete = useCallback(async (group: AccountGroup) => {
-      setDeleteLoading(group.id)
-      try {
-        await deleteAccountGroupApi([group.id])
-        await getAccountGroup()
-        toast.success(t('messages.deleteSuccess'))
-      } catch (error) {
-        toast.error(t('messages.sortFailed'))
-      } finally {
-        setDeleteLoading(null)
-      }
-    }, [getAccountGroup, t])
 
     // 处理空间排序
     const handleGroupSort = useCallback(async (groupId: string, direction: 'up' | 'down') => {
@@ -136,20 +123,23 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
         await apiUpdateAccountGroupSortRank({ list: updateList })
         await getAccountGroup()
         toast.success(t('messages.sortSuccess'))
-      } catch (error) {
+      }
+      catch (error) {
         toast.error(t('messages.sortFailed'))
-      } finally {
+      }
+      finally {
         setSortLoading(null)
       }
     }, [accountGroupList, getAccountGroup, t])
 
     // 切换空间折叠状态
     const toggleSpaceCollapse = useCallback((spaceId: string) => {
-      setCollapsedSpaces(prev => {
+      setCollapsedSpaces((prev) => {
         const newSet = new Set(prev)
         if (newSet.has(spaceId)) {
           newSet.delete(spaceId)
-        } else {
+        }
+        else {
           newSet.add(spaceId)
         }
         return newSet
@@ -206,7 +196,6 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
             onAccountDelete={handleAccountDelete}
             onToggleSpaceCollapse={toggleSpaceCollapse}
             onGroupSort={handleGroupSort}
-            onGroupDelete={handleGroupDelete}
             searchText={accountSearchText}
             onSearchChange={setAccountSearchText}
           />
