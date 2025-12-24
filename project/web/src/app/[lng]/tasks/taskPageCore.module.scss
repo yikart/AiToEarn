@@ -106,6 +106,36 @@
   .ant-spin-container {
     min-height: 200px;
   }
+
+  /* 任务机会详情（taskDetail modal）布局：左右列，移动端堆叠 */
+  .taskDetailContainer {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+
+    .taskDetailLeft {
+      flex: 0 0 320px;
+    }
+
+    .taskDetailRight {
+      flex: 1;
+      min-width: 260px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .taskDetailContainer {
+      flex-direction: column;
+      gap: 12px;
+      .taskDetailLeft {
+        width: 100%;
+      }
+      .taskDetailRight {
+        width: 100%;
+      }
+    }
+  }
 }
 
 // 响应式设计
@@ -143,5 +173,83 @@
         }
       }
     }
+  }
+}
+
+/* 任务详情模态框布局（接受的任务详情与机会详情） */
+.taskPage {
+  .acceptedTaskDetailContainer {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 24px;
+    align-items: flex-start;
+
+    .left {
+      flex: 0 0 320px;
+    }
+
+    .right {
+      flex: 1;
+      min-width: 300px;
+    }
+  }
+
+  .taskDetailActions {
+    text-align: center;
+    padding-top: 16px;
+    border-top: 1px solid #e8e8e8;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+
+    .ant-btn {
+      min-width: 140px;
+    }
+
+    .firstSubmissionWrap {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      min-width: 120px;
+    }
+
+    .firstSubmission {
+      font-size: 12px;
+      color: #52c41a;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+  }
+
+  /* 改进首次提交 pill 风格 */
+  .firstSubmission {
+    display: inline-block;
+    background: #e6ffed;
+    color: #237804;
+    padding: 6px 10px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid rgba(35,120,4,0.12);
+  }
+
+  @media (max-width: 768px) {
+    .acceptedTaskDetailContainer {
+      flex-direction: column;
+      gap: 12px;
+
+      .left {
+        flex: none;
+        width: 100%;
+      }
+
+      .right {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    /* 保持状态和首次提交在同一行，移动端也采用左右对齐 */
   }
 }

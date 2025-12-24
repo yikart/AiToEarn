@@ -31,5 +31,41 @@
     "edit": "Image Edit",
     "searchPlaceholder": "Search title..."
   }
+  ,
+  "apply": "Apply",
+  "prompts": {
+    "dora": {
+      "title": "Doraemon Comic Set",
+      "prompt": "Generate three Doraemon-themed comic images, vertical, bright colors, cinematic comic panels, optimized for Instagram, royalty-free, and publish directly to Instagram"
+    },
+    "cats": {
+      "title": "Cute Cats Illustrations",
+      "prompt": "Generate three cute cat-themed illustration images, fresh palette, vertical, optimized for Instagram, royalty-free, and publish directly to Instagram"
+    },
+    "vintage": {
+      "title": "Vintage City Posters",
+      "prompt": "Generate three vintage movie-poster style city night images, vertical, optimized for Twitter, royalty-free, and publish directly to Twitter"
+    }
+  }
+  ,
+  "agentFeatures": {
+    "title": "AI Agent Highlights",
+    "subtitle": "Our signature features, one click away",
+    "platforms": "Supported platforms",
+    "helperTitle": "One-line publish",
+    "helperExample": "Example: Generate images about \"street food\" with oil painting style and suggest publish times for Instagram",
+    "items": {
+      "schedule": { "title": "Schedule Publish", "desc": "Set publish time and auto-publish to all connected platforms", "point1": "Support one-time / recurring / timezone-specific", "point2": "Provide smart time suggestions" },
+      "inspiration": { "title": "Creative Inspiration", "desc": "Generate topic ideas based on your account", "point1": "Multiple style templates", "point2": "Trending & data-driven suggestions" },
+      "storyboard": { "title": "Storyboard Design", "desc": "Auto-generate storyboard script for a topic", "point1": "Timeline & dialog support", "point2": "Exportable shooting checklist" },
+      "download": { "title": "Content Download", "desc": "Download videos based on social platform links and organize as publishable assets", "point1": "Auto fetch multiple resolutions", "point2": "Batch download & format conversion" },
+      "highlight": { "title": "Highlight Editing", "desc": "Extract dramatic and suspenseful clips", "point1": "Auto-detect highlight moments", "point2": "Support multiple edit templates" },
+      "translate": { "title": "Video Translation", "desc": "Face-level lip-sync, voice cloning, subtitle removal", "point1": "Multi-language support", "point2": "Export embedded or soft subtitles" },
+      "styleTransfer": { "title": "Style Transfer", "desc": "Convert live-action to anime/3D/sketch styles", "point1": "Multiple styles one-click", "point2": "Preserve facial expression details" },
+      "videoGenerate": { "title": "Video Generation", "desc": "Generate short video assets from scripts or prompts", "point1": "Auto music & shot planning", "point2": "Platform-length optimized outputs" },
+      "imageGenerate": { "title": "Image Generation", "desc": "Generate high-quality images from prompts", "point1": "Support multi-style & multi-output", "point2": "Direct publish or export" },
+      "videoUnderstanding": { "title": "Video Understanding", "desc": "Automatically analyze video and generate structured summaries", "point1": "Emotion,人物, event recognition", "point2": "Generate searchable tags & chapters" }
+    }
+  }
 }
 

@@ -68,6 +68,8 @@ export interface IMessageStep {
   content: string
   /** 该步骤关联的工作流步骤 */
   workflowSteps?: IWorkflowStep[]
+  /** 该步骤关联的媒体（图片/视频），用于在步骤位置内渲染资源 */ 
+  medias?: IUploadedMedia[]
   /** 是否为当前活跃步骤 */
   isActive?: boolean
   /** 时间戳 */
@@ -121,6 +123,7 @@ export type ActionType =
   | 'loginChannel'
   | 'createChannel'
   | 'platformNotSupported'
+  | 'errorOnly'
 
 /** 平台类型 */
 export type PlatformType =
@@ -211,6 +214,8 @@ export interface IAgentState {
   // === 消息状态 ===
   /** 显示的消息列表 */
   messages: IDisplayMessage[]
+  /** 调试回放开关（true 时强制使用 store 的消息渲染） */
+  debugReplayActive?: boolean
 
   // === 消费状态 ===
   /** 本次消费金额 */

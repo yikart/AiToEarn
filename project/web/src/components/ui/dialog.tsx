@@ -45,6 +45,17 @@ const DialogContent = React.forwardRef<
     />
     <DialogPrimitive.Content
       ref={ref}
+      // Ensure the content container can receive focus and explicitly move focus
+      // to it when the dialog opens to avoid aria-hidden being applied to an
+      // ancestor while a descendant still has focus (causes accessibility warning).
+      tabIndex={-1}
+      onOpenAutoFocus={(event) => {
+        // Prevent Radix from performing its default auto-focus behavior and
+        // immediately focus the content container to avoid a race where an
+        // ancestor gets aria-hidden while a focused descendant exists.
+        event.preventDefault()
+        ;(event.currentTarget as HTMLElement)?.focus?.()
+      }}
       className={cn(
         // 改造说明：
         // - 保持移动端默认行为：使用 `w-[calc(100%-24px)]` 使弹窗左右留出 12px 边距
