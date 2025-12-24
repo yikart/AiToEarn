@@ -207,7 +207,6 @@ export function TaskCard({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             onClick={(e) => {
-              e.preventDefault()
               e.stopPropagation()
               // 在新窗口中打开任务详情页
               try {
@@ -225,7 +224,6 @@ export function TaskCard({
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={(e) => {
-              e.preventDefault()
               e.stopPropagation()
               onRateClick?.(id)
             }}
@@ -235,7 +233,7 @@ export function TaskCard({
           </DropdownMenuItem>
           
            <DropdownMenuItem
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(e); }}
+            onClick={(e) => { e.stopPropagation(); handleDelete(e); }}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
             <Trash2 className="w-4 h-4 mr-2" />

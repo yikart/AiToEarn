@@ -106,6 +106,76 @@ import DownloadAppModal from '@/components/common/DownloadAppModal'
 import { LanguageSwitcher } from '@/components/common'
 ```
 
+### MediaPreview
+
+媒体预览组件，用于在列表或弹窗中展示图片/视频/文件预览，支持放大、轮播和下载。
+
+```tsx
+import MediaPreview from '@/components/common/MediaPreview'
+
+<MediaPreview
+  medias={[{ url: string, type: 'image' | 'video' | 'file' }]}
+  visible={boolean}
+  initialIndex={0}           // 可选，初始展示索引
+  onClose={() => void}
+/>
+```
+
+常用 Props：
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `medias` | 媒体数组，包含 url 与 type | `Array<{url:string,type:string}>` | - |
+| `visible` | 是否可见 | `boolean` | - |
+| `initialIndex` | 初始展示索引 | `number` | `0` |
+| `onClose` | 关闭回调 | `() => void` | - |
+
+### GlobalLoginModal
+
+全局登录弹窗，用于在未登录时从任意页面触发的登录入口（通常由顶部或浮层触发）。
+
+```tsx
+import GlobalLoginModal from '@/components/common/GlobalLoginModal'
+
+<GlobalLoginModal
+  open={boolean}
+  onClose={() => void}
+  onSuccess={(user) => void} // 可选，登录成功回调
+/>
+```
+
+常用 Props：
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 是否显示弹窗 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+| `onSuccess` | 登录成功回调 | `(user:any) => void` | - |
+
+### LoginModal
+
+局部登录弹窗/组件，通常用于表单页或需要内嵌登录控件的场景，与 `GlobalLoginModal` 对应但更偏向页面内使用。
+
+```tsx
+import LoginModal from '@/components/common/LoginModal'
+
+<LoginModal
+  visible={boolean}
+  onClose={() => void}
+  onLogin={(credentials) => void}
+/>
+```
+
+常用 Props：
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `visible` | 是否显示 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+| `onLogin` | 提交登录回调 | `(credentials:any) => void` | - |
+
+注意：`common/` 目录下的组件是应用内公用组件，新增或修改组件时请务必在本文件中补充对应文档条目，包含：用途说明、引入示例、常用 Props、重要行为（如异步操作/失败处理）、以及是否有额外依赖（如样式、图片资源等）。
+
 ---
 
 ## modals/ - 弹窗组件集合

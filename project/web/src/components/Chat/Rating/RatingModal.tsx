@@ -27,11 +27,13 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
   const [comment, setComment] = useState<string>('')
   const [loading, setLoading] = useState(false)
   const [initialLoaded, setInitialLoaded] = useState(false)
+  const [fetchingRating, setFetchingRating] = useState(false)
 
   useEffect(() => {
     if (!open) return
     let mounted = true
     setInitialLoaded(false)
+    setFetchingRating(true)
     ;(async () => {
       try {
         // Some deployments don't expose GET /tasks/:id/rating.
@@ -46,7 +48,10 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
         // ignore 404 / not rated
         console.error('Get rating failed', err)
       } finally {
-        if (mounted) setInitialLoaded(true)
+        if (mounted) {
+          setInitialLoaded(true)
+          setFetchingRating(false)
+        }
       }
     })()
     return () => {
@@ -62,7 +67,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
 
   const handleSubmit = async () => {
     if (!canSubmit()) {
-      toast.error(t('rating.requireComment' as any) || 'Please provide a comment for low ratings')
+      toast.error(t('rating.requireComment') || 'Please provide a comment for low ratings')
       return
     }
     try {
@@ -73,7 +78,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
       onClose()
     } catch (err) {
       console.error(err)
-      toast.error(t('rating.saveFailed' as any) || 'Save failed')
+      toast.error(t('rating.saveFailed') || 'Save failed')
     } finally {
       setLoading(false)
     }
@@ -82,11 +87,11 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
   return (
     <Modal
       open={open}
-      title={t('rating.title' as any) || '评分'}
+      title={t('rating.title') || '评分'}
       onCancel={onClose}
       onOk={handleSubmit}
-      okText={t('rating.submit' as any) || '提交'}
-      cancelText={t('rating.cancel' as any) || '取消'}
+      okText={t('rating.submit') || '提交'}
+      cancelText={t('rating.cancel') || '取消'}
       confirmLoading={false}
       footer={loading ? (
         <div className="flex items-center justify-end w-full">
@@ -96,7 +101,16 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
       width={520}
     >
       <div className="space-y-4 w-full">
-        <div>
+        {fetchingRating ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <span className="ml-2 text-sm text-muted-foreground">
+              {t('rating.loading') || '加载中...'}
+            </span>
+          </div>
+        ) : (
+          <>
+            <div>
           <div className="flex items-center gap-2">
             {Array.from({ length: 5 }).map((_, idx) => {
               const val = idx + 1
@@ -115,26 +129,28 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
             })}
           </div>
           <div className="text-xs text-muted-foreground mt-1">
-            {rating ? `${rating} / 5` : t('rating.noRating' as any) || '未评分'}
+            {rating ? `${rating} / 5` : t('rating.noRating') || '未评分'}
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-medium text-foreground mb-1">
-            {t('rating.commentLabel' as any) || '评价（可选）'}
+            {t('rating.commentLabel') || '评价（可选）'}
           </label>
           <Textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             className="min-h-[100px] resize-vertical"
-            placeholder={t('rating.commentPlaceholder' as any) || '填写评价...'}
+            placeholder={t('rating.commentPlaceholder') || '填写评价...'}
           />
           {rating !== null && rating < 3 && (
             <div className="text-xs text-destructive mt-1">
-              {t('rating.commentRequiredIfLow' as any) || '低于 3 分需要填写理由'}
+              {t('rating.commentRequiredIfLow') || '低于 3 分需要填写理由'}
             </div>
           )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   )

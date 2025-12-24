@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
+import TaskHistoryList from '@/components/Chat/TaskHistoryList'
 import RatingModal from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/ui/pagination'
@@ -148,26 +149,14 @@ export default function TasksHistoryPage() {
           ) : (
             // 任务卡片网格 + 分页器
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {tasks.map((task) => (
-                <a
-                  key={task.id}
-                  href={`/${lng}/chat/${task.id}`}
-                  className="block"
-                >
-                  <TaskCard
-                    id={task.id}
-                    title={task.title || t('task.newChat')}
-                    status={task.status}
-                    createdAt={task.createdAt}
-                    updatedAt={task.updatedAt}
-                    onDelete={handleDelete}
-                    rating={task.rating ?? null}
-                    ratingComment={task.ratingComment ?? null}
-                    onRateClick={(taskId) => setRatingModalFor(taskId)}
-                  />
-                </a>
-                ))}
+              <div>
+                <TaskHistoryList
+                  tasks={tasks}
+                  isLoading={isLoading}
+                  onDelete={handleDelete}
+                  onRateClick={(taskId) => setRatingModalFor(taskId)}
+                  linkBasePath={`/${lng}/chat`}
+                />
               </div>
               <RatingModal
                 taskId={ratingModalFor ?? ''}

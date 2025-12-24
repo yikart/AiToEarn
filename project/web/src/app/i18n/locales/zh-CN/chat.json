@@ -62,7 +62,8 @@
     "noRating": "未评分",
     "commentLabel": "评价（可选）",
     "commentPlaceholder": "填写评价...",
-    "commentRequiredIfLow": "低于 3 分需要填写理由"
+    "commentRequiredIfLow": "低于 3 分需要填写理由",
+    "loading": "加载中..."
   },
   "detail": {
     "title": "对话详情",

@@ -50,7 +50,7 @@ export function HomeChat({
   const token = useUserStore(state => state.token)
 
   // 获取默认提示文本
-  const defaultPrompt = t('input.placeholder' as any) || 'Help me create a cat dancing video and post it directly on YouTube'
+  const defaultPrompt = t('input.placeholder') || 'Help me create a cat dancing video and post it directly on YouTube'
 
   // 状态 - 默认显示提示文本
   const [inputValue, setInputValue] = useState(defaultPrompt)
@@ -106,7 +106,7 @@ export function HomeChat({
     handleMediaRemove,
     clearMedias,
   } = useMediaUpload({
-    onError: () => toast.error(t('media.uploadFailed' as any)),
+    onError: () => toast.error(t('media.uploadFailed')),
   })
 
   // 全局 Store
@@ -119,7 +119,7 @@ export function HomeChat({
     setActionContext({
       router,
       lng: lng as string,
-      t: tHome as any,
+      t: tHome,
     })
   }, [router, lng, tHome, setActionContext])
 
@@ -164,7 +164,7 @@ export function HomeChat({
       {/* 标题区域 */}
       <div className="text-center mb-6 px-4">
         <h1 className="text-2xl sm:text-3xl md:text-4xl text-foreground font-semibold leading-relaxed">
-          {tHome('agentGenerator.subtitle' as any) || t('home.subtitle' as any)}
+          {tHome('agentGenerator.subtitle') || t('home.subtitle')}
         </h1>
       </div>
 
@@ -199,7 +199,7 @@ export function HomeChat({
           onClick={handleAddChannelClick}
         >
           <span className="text-sm text-muted-foreground whitespace-nowrap">
-            {t('home.connectTools' as any)}
+            {t('home.connectTools')}
           </span>
           <div className="flex items-center gap-1.5 flex-wrap">
             {AccountPlatInfoArr.map(([key, value]) => (
@@ -220,13 +220,13 @@ export function HomeChat({
       <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
         <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-foreground text-xs font-medium">
           <Sparkles className="w-3 h-3" />
-          {t('home.aiCreation' as any)}
+          {t('home.aiCreation')}
         </span>
         <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs">
-          {t('home.supportUpload' as any)}
+          {t('home.supportUpload')}
         </span>
         <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-muted text-muted-foreground text-xs">
-          {t('home.enterToSend' as any)}
+          {t('home.enterToSend')}
         </span>
       </div>
 
