@@ -7,7 +7,6 @@
 
 import type React from 'react'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2, Star } from 'lucide-react'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -102,7 +101,7 @@ export function TaskCard({
   showProminentRating,
   onRateClick,
 }: ITaskCardProps) {
-  const router = useRouter()
+  
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
@@ -111,11 +110,7 @@ export function TaskCard({
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
-  /** 跳转到对话详情页 */
-  const handleClick = () => {
-    if (isDeleting) return
-    router.push(`/${lng}/chat/${id}`)
-  }
+ 
 
   /** 处理删除 */
   const handleDelete = async (e: React.MouseEvent) => {
@@ -132,9 +127,8 @@ export function TaskCard({
 
   return (
     <div
-      onClick={handleClick}
       className={cn(
-        'group relative flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
+        'group relative flex flex-col p-4 rounded-xl border border-border bg-card transition-all',
         'hover:border-border hover:shadow-md',
         isDeleting && 'opacity-60 cursor-wait',
         className,
@@ -194,7 +188,7 @@ export function TaskCard({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
             disabled={isDeleting}
             className={cn(
               'absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center',
@@ -213,6 +207,25 @@ export function TaskCard({
         <DropdownMenuContent align="end">
           <DropdownMenuItem
             onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              // 在新窗口中打开任务详情页
+              try {
+                window.open(`/${lng}/chat/${id}`, '_blank', 'noopener')
+              } catch (err) {
+                // fallback: 使用 location.assign
+                // eslint-disable-next-line no-console
+                console.error('Open new window failed', err)
+              }
+            }}
+          >
+            <MessageSquare className="w-4 h-4 mr-2" />
+            打开
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={(e) => {
+              e.preventDefault()
               e.stopPropagation()
               onRateClick?.(id)
             }}
@@ -220,9 +233,9 @@ export function TaskCard({
             <Star className="w-4 h-4 mr-2 text-amber-400" />
             {t('task.rate' as any) || 'Rate'}
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={(e) => { e.stopPropagation(); handleDelete(e); }}
+          
+           <DropdownMenuItem
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(e); }}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
             <Trash2 className="w-4 h-4 mr-2" />

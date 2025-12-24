@@ -150,8 +150,12 @@ export default function TasksHistoryPage() {
             <>
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {tasks.map((task) => (
-                <TaskCard
-                    key={task.id}
+                <a
+                  key={task.id}
+                  href={`/${lng}/chat/${task.id}`}
+                  className="block"
+                >
+                  <TaskCard
                     id={task.id}
                     title={task.title || t('task.newChat')}
                     status={task.status}
@@ -162,6 +166,7 @@ export default function TasksHistoryPage() {
                     ratingComment={task.ratingComment ?? null}
                     onRateClick={(taskId) => setRatingModalFor(taskId)}
                   />
+                </a>
                 ))}
               </div>
               <RatingModal
