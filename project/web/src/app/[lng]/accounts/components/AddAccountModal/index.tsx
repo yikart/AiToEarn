@@ -435,7 +435,7 @@ const AddAccountModal = memo(
               {/* 平台网格 - 响应式优化 */}
               <div 
                 className="
-                  w-full grid gap-2 sm:gap-3 mb-3 sm:mb-4
+                  w-full p-3 grid gap-2 sm:gap-3 mb-3 sm:mb-4
                   overflow-y-auto overflow-x-hidden
                   max-h-[60vh] sm:max-h-[450px]
                   grid-cols-3
@@ -449,8 +449,8 @@ const AddAccountModal = memo(
                   scrollbarColor: '#cbd5e1 #f1f5f9'
                 }}
               >
-                <TooltipProvider>
-                  {AccountPlatInfoArr.map(([key, value]) => {
+                      <TooltipProvider>
+                        {AccountPlatInfoArr.map(([key, value]) => {
                     const isAvailable = isPlatformAvailable(key as PlatType)
                     const isLoading = syncLoadingPlatform === key
                     return (
@@ -518,8 +518,8 @@ const AddAccountModal = memo(
                         </TooltipContent>
                       </Tooltip>
                     )
-                  })}
-                </TooltipProvider>
+                        })}
+                      </TooltipProvider>
               </div>
 
               {/* 属地限制提示 */}
