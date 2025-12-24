@@ -1410,23 +1410,28 @@ export default function TaskPageCore() {
                   </div>
 
                   {/* 描述区域 */}
-                  <div style={{
-                    marginBottom: '16px',
-                    padding: '16px',
-                    backgroundColor: '#f8f9fa',
-                    borderRadius: '8px',
-                    border: '1px solid #e9ecef',
-                  }}
-                  >
-                    <div style={{
-                      fontSize: '14px',
-                      lineHeight: '1.6',
-                      color: '#495057',
-                    }}
-                    >
-                      <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
-                    </div>
-                  </div>
+                  {
+                    acceptedTaskDetail.task?.description && (
+                      <div style={{
+                        marginBottom: '16px',
+                        padding: '16px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px',
+                        border: '1px solid #e9ecef',
+                      }}
+                      >
+                        <div style={{
+                          fontSize: '14px',
+                          lineHeight: '1.6',
+                          color: '#495057',
+                        }}
+                        >
+                          <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
+                        </div>
+                      </div>
+                    )
+                  }
+                  
 
                   {/* 任务信息卡片 */}
                   <div style={{
@@ -1497,32 +1502,37 @@ export default function TaskPageCore() {
                       </div>
                     )}
 
-                    <div style={{
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#d1ecf1',
-                      border: '1px solid #bee5eb',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
+                  {
+                    acceptedTaskDetail.task?.type && (
                       <div style={{
-                        fontSize: '12px',
-                        color: '#0c5460',
-                        marginBottom: '4px',
+                        flex: '1',
+                        padding: '12px',
+                        backgroundColor: '#d1ecf1',
+                        border: '1px solid #bee5eb',
+                        borderRadius: '8px',
+                        textAlign: 'center',
                       }}
                       >
-                        {t('taskInfo.type' as any)}
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#0c5460',
+                          marginBottom: '4px',
+                        }}
+                        >
+                          {t('taskInfo.type' as any)}
+                        </div>
+                        <div style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: '#0c5460',
+                        }}
+                        >
+                          {getTaskTypeName(acceptedTaskDetail.task?.type)}
+                        </div>
                       </div>
-                      <div style={{
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        color: '#0c5460',
-                      }}
-                      >
-                        {getTaskTypeName(acceptedTaskDetail.task?.type)}
-                      </div>
-                    </div>
+                    )
+                  }
+                    
                   </div>
 
                   {/* 任务状态信息 */}
