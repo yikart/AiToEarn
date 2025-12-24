@@ -44,6 +44,7 @@ import { getOssUrl } from '@/utils/oss'
 import styles from './taskPageCore.module.scss'
 import PublishDialog from '@/components/PublishDialog'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { openLoginModal } from '@/store/loginModal'
 
 export default function TaskPageCore() {
   const { t } = useTransClient('task' as any)
@@ -53,20 +54,7 @@ export default function TaskPageCore() {
   const params = useParams()
   const lng = params.lng as string
 
-  // Show login prompt if not logged in
-  if (!token) {
-    return (
-      <div className={styles.taskPage}>
-        <div className={styles.header}>
-          <h1>{t('title')}</h1>
-          <p>{t('messages.pleaseLoginFirst')}</p>
-        </div>
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <Empty description={t('messages.pleaseLoginFirst')} />
-        </div>
-      </div>
-    )
-  }
+  // Do not early return on missing token — render login prompt in JSX to preserve hook order
 
   // State management
   const [activeTab, setActiveTab] = useState('pending') // pending: Pending tasks, accepted: Accepted tasks
@@ -667,6 +655,23 @@ export default function TaskPageCore() {
     }
   }, [accountList, requiredAccountTypes, taskDetail])
 
+  // 如果未登录，重定向到登录页面（保留 hook 顺序，UI 不展示登录提示）
+  useEffect(() => {
+    if (!token) {
+      // 打开登录弹窗并在登录成功后刷新列表
+      try {
+        openLoginModal(() => {
+          fetchPendingTasks()
+          fetchAcceptedTasks()
+          fetchAccountList()
+        })
+      }
+      catch (e) {
+        console.error('open login modal failed', e)
+      }
+    }
+  }, [token, router, lng])
+
   // 发布弹窗发布成功回调：校验选中账户是否符合任务要求，符合则提交任务
   const handlePublishSuccess = async () => {
     console.log('完成发布2222@@@')
@@ -752,7 +757,8 @@ export default function TaskPageCore() {
 
   return (
     <div className={styles.taskPage}>
-
+      {token && (
+      <>
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
@@ -899,8 +905,8 @@ export default function TaskPageCore() {
                                 </div>
                               </div>
                             </div>
-                          )}
-                        </div>
+      )}
+    </div>
 
                         <div className={styles.taskActions}>
                               <Button
@@ -1744,6 +1750,8 @@ export default function TaskPageCore() {
             handlePublishSuccess()
           }}
         />
+      )}
+      </>
       )}
     </div>
   )

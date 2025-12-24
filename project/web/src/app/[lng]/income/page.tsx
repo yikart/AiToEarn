@@ -16,6 +16,7 @@ import { useTransClient } from '@/app/i18n/client'
 import WalletAccountSelect from '@/components/WalletAccountSelect'
 import WalletModal from '@/components/WalletModal'
 import { useUserStore } from '@/store/user'
+import { openLoginModal } from '@/store/loginModal'
 import { toast } from '@/lib/toast'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -268,14 +269,14 @@ export default function IncomePage() {
   useEffect(() => {
     if (!token) {
       toast.error(t('messages.pleaseLoginFirst'))
-      router.push('/login')
+      openLoginModal()
       return
     }
 
     // 初始加载数据
     fetchIncomeRecords(1, 10)
     fetchWithdrawRecords(1, 10)
-  }, [token, router])
+  }, [token])
 
   // 当筛选条件改变时重新获取数据
   useEffect(() => {
