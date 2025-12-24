@@ -5,7 +5,7 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useAgentStore } from '@/store/agent'
@@ -27,6 +27,7 @@ export default function ChatDetailPage() {
   const params = useParams()
   const taskId = params.taskId as string
   const lng = params.lng as string
+  const isInitialRender = useRef(false);
 
   // Store 方法
   const { createTask, continueTask, stopTask, setActionContext, handleSSEMessage, consumePendingTask } = useAgentStore()
@@ -71,6 +72,14 @@ export default function ChatDetailPage() {
   } = useMediaUpload({
     onError: () => toast.error(t('media.uploadFailed' as any)),
   })
+
+  useEffect(() => {
+    if (isInitialRender.current) return
+    isInitialRender.current = true
+    setTimeout(() => {
+      scrollToBottom()
+    }, 100)
+  }, [displayMessages, isInitialRender])
 
   /**
    * 设置 Action 上下文（用于处理任务结果的 action） 
