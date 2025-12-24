@@ -19,6 +19,7 @@ import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
 import { confirm } from '@/lib/confirm'
+import { useCalendarTiming } from './components/CalendarTiming/useCalendarTiming'
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -856,6 +857,7 @@ export default function AccountPageCore({
               setPublishDialogOpen(false)
               setAiGeneratedData(null)
               setDefaultAccountId(undefined)
+              useCalendarTiming.getState().getPubRecord()
             }}
           />
         )}
