@@ -74,11 +74,11 @@ export default function ChatDetailPage() {
   })
 
   useEffect(() => {
-    if (isInitialRender.current) return
+    if (isInitialRender.current || displayMessages.length === 0) return
     isInitialRender.current = true
     setTimeout(() => {
       scrollToBottom()
-    }, 100)
+    }, 10)
   }, [displayMessages, isInitialRender])
 
   /**
