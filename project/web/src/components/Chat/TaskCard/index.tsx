@@ -9,6 +9,8 @@ import type React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { agentApi } from '@/api/agent'
+import { toast } from '@/lib/toast'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useTransClient } from '@/app/i18n/client'
@@ -32,6 +34,8 @@ export interface ITaskCardProps {
   updatedAt?: string | number
   /** 删除回调 */
   onDelete?: (id: string) => void | Promise<void>
+  /** 选择回调（如果提供，点击卡片将触发选择而不是跳转） */
+  onSelect?: (id: string) => void
   /** 自定义类名 */
   className?: string
 }
@@ -86,17 +90,23 @@ export function TaskCard({
   updatedAt,
   onDelete,
   className,
+  onSelect,
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
   /** 跳转到对话详情页 */
   const handleClick = () => {
     if (isDeleting) return
+    if (onSelect) {
+      onSelect(id)
+      return
+    }
     router.push(`/${lng}/chat/${id}`)
   }
 
@@ -110,6 +120,41 @@ export function TaskCard({
       await onDelete(id)
     } finally {
       setIsDeleting(false)
+    }
+  }
+
+  /** 处理转发（复制会话为新任务并跳转） */
+  const handleForward = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (isProcessing) return
+    try {
+      setIsProcessing(true)
+      // 创建一个新的任务，传入 taskId 以复用会话（后端会在可用时复用 session）
+      const res = await agentApi.createTask({ prompt: [], taskId: id })
+      if (res && (res as any).code === 0 && (res as any).data) {
+        const newTaskId = (res as any).data.id
+        router.push(`/${lng}/chat/${newTaskId}`)
+      } else {
+        toast.error((res as any)?.msg || t('task.forwardFailed' as any) || 'Forward failed')
+      }
+    } catch (error) {
+      console.error('Forward failed', error)
+      toast.error(t('task.forwardFailed' as any) || 'Forward failed')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  /** 复制任务链接到剪贴板 */
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      const url = `${window.location.origin}/${lng}/chat/${id}`
+      await navigator.clipboard.writeText(url)
+      toast.success(t('task.copyLinkSuccess' as any) || 'Link copied')
+    } catch (error) {
+      console.error('Copy link failed', error)
+      toast.error(t('task.copyLinkFailed' as any) || 'Copy failed')
     }
   }
 
@@ -175,6 +220,14 @@ export function TaskCard({
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleForward} className="focus:bg-muted/5">
+            {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <MessageSquare className="w-4 h-4 mr-2" />}
+            Forward
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleCopyLink} className="focus:bg-muted/5">
+            <MoreHorizontal className="w-4 h-4 mr-2" />
+            Copy link
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={handleDelete}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"

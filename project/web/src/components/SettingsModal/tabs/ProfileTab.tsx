@@ -230,10 +230,10 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
       </div>
 
       {/* 收入信息 */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-muted p-4">
           <p className="mb-1 text-sm text-muted-foreground">{t('profile.totalIncome')}</p>
-          <p className="text-2xl font-bold text-foreground">{totalIncome.toFixed(2)} USD</p>
+          <p className="text-xl font-bold text-foreground sm:text-2xl">{totalIncome.toFixed(2)} USD</p>
         </div>
       </div>
 

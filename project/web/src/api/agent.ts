@@ -396,5 +396,15 @@ export const agentApi = {
     const res = await http.patch(`agent/tasks/${taskId}`, { title })
     return res
   },
+  /**
+   * 为任务创建或更新评分
+   * @param taskId 任务ID
+   * @param rating 评分值（1-5）
+   * @param comment 可选评论
+   */
+  async createRating(taskId: string, rating: number, comment?: string) {
+    const res = await http.post(`agent/tasks/${taskId}/rating`, { rating, comment })
+    return res
+  },
 }
 

@@ -370,7 +370,7 @@ export const MembershipTab = () => {
                       </Badge>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 sm:gap-4">
                       <div>
                         <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
                         <span className="ml-2">
@@ -397,14 +397,14 @@ export const MembershipTab = () => {
                           <span className="ml-2">{formatDate(subscription.trialEndAt)}</span>
                         </div>
                       )}
-                      <div className="col-span-2">
+                      <div className="sm:col-span-2">
                         <span className="text-muted-foreground">{tProfile('subscriptionId')}:</span>
                         <div className="mt-1 flex items-center gap-2">
-                          <span className="font-mono text-xs">{subscription.id}</span>
+                          <span className="truncate font-mono text-xs">{subscription.id}</span>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0"
+                            className="h-6 w-6 shrink-0 p-0"
                             onClick={() => handleCopy(subscription.id)}
                           >
                             <Copy className="h-3 w-3" />
@@ -512,7 +512,7 @@ export const MembershipTab = () => {
                   key={order._id}
                   className="space-y-3 rounded-lg border bg-card p-4"
                 >
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 sm:gap-4">
                     <div>
                       <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
                       <span className="ml-2">{getSubscriptionModeText(order.mode)}</span>
@@ -541,14 +541,14 @@ export const MembershipTab = () => {
                         {(order as any).payment_method || tVip('alipayPayment')}
                       </span>
                     </div>
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                       <span className="text-muted-foreground">{tProfile('orderId')}:</span>
                       <div className="mt-1 flex items-center gap-2">
-                        <span className="font-mono text-xs">{order.id}</span>
+                        <span className="truncate font-mono text-xs">{order.id}</span>
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="h-6 w-6 p-0"
+                          className="h-6 w-6 shrink-0 p-0"
                           onClick={() => handleCopy(order.id)}
                         >
                           <Copy className="h-3 w-3" />
@@ -626,38 +626,38 @@ export const MembershipTab = () => {
               </div>
             ) : (
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('orderId')}:</span>
-                  <span className="font-mono">{currentOrderDetail.id}</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('orderId')}:</span>
+                  <span className="truncate font-mono">{currentOrderDetail.id}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('internalId')}:</span>
-                  <span className="font-mono">{currentOrderDetail._id}</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('internalId')}:</span>
+                  <span className="truncate font-mono">{currentOrderDetail._id}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('packageType')}:</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('packageType')}:</span>
                   <span>{getPaymentTypeText(currentOrderDetail.metadata?.payment)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('subscriptionMode')}:</span>
                   <span>{currentOrderDetail.mode}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('amount')}:</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('amount')}:</span>
                   <span>
                     CNY {(currentOrderDetail.amount / 100).toFixed(2)}
                   </span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('status')}:</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('status')}:</span>
                   <span>{getOrderStatusTag(currentOrderDetail.status)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('createTime')}:</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('createTime')}:</span>
                   <span>{formatDate(currentOrderDetail.created)}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('paymentMethod')}:</span>
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
+                  <span className="shrink-0 text-muted-foreground">{tProfile('paymentMethod')}:</span>
                   <span>
                     {(currentOrderDetail as any).payment_method || tProfile('unknown')}
                   </span>
