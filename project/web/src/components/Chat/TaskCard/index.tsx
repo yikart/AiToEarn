@@ -6,7 +6,7 @@
 'use client'
 
 import type React from 'react'
-import { AlertCircle, CheckCircle2, Loader2, MessageSquare, Trash2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Loader2, MessageSquare, Star, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -25,6 +25,8 @@ export interface ITaskCardProps {
   createdAt: string | number
   /** 更新时间 */
   updatedAt?: string | number
+  /** 任务评分（1-5） */
+  rating?: number | null
   /** 删除回调 */
   onDelete?: (id: string) => void | Promise<void>
   /** 评分回调（用于历史列表触发外部评分弹窗） */
@@ -85,6 +87,7 @@ export function TaskCard({
   status,
   createdAt,
   updatedAt,
+  rating,
   onDelete,
   className,
   onSelect,
@@ -112,6 +115,7 @@ export function TaskCard({
   /** 处理删除 */
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation()
+    e.preventDefault()
     if (!onDelete || isDeleting)
       return
 
@@ -131,6 +135,7 @@ export function TaskCard({
   /** 触发评分回调（由历史列表等外部组件使用） */
   const handleRateClick = (e: React.MouseEvent) => {
     e.stopPropagation()
+    e.preventDefault()
     if (!onRateClick)
       return
     onRateClick(id)
@@ -179,8 +184,16 @@ export function TaskCard({
         )}
       </div>
 
-      {/* Action buttons: subtle delete (share and rating hidden per request) */}
-      <div className="mt-3 flex items-center justify-end">
+      {/* Action buttons: rating and delete */}
+      <div className="mt-3 flex items-center justify-end gap-2">
+        <button
+          onClick={handleRateClick}
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors text-xs opacity-60 hover:opacity-100"
+          aria-label="rate"
+        >
+          <Star className={`w-3 h-3 ${rating ? 'text-amber-400' : ''}`} {...(rating ? { fill: 'currentColor' } : {})} />
+          <span className="hidden sm:inline">{t('task.rate' as any) || 'Rate'}</span>
+        </button>
         <button
           onClick={handleDelete}
           disabled={isDeleting}
@@ -191,8 +204,6 @@ export function TaskCard({
           <span className="hidden sm:inline">{t('task.delete' as any) || 'Delete'}</span>
         </button>
       </div>
-
-      {/* Rating UI hidden on TaskCard as requested */}
     </div>
   )
 }

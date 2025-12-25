@@ -9,7 +9,6 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
 import TaskHistoryList from '@/components/Chat/TaskHistoryList'
-import RatingModal from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/ui/pagination'
 import { agentApi, type TaskListItem } from '@/api/agent'
@@ -27,7 +26,6 @@ export default function TasksHistoryPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
-  const [ratingModalFor, setRatingModalFor] = useState<string | null>(null)
 
   // 每页 16 条
   const pageSize = 16
@@ -72,21 +70,6 @@ export default function TasksHistoryPage() {
     loadTasks(nextPage)
   }
 
-  /** 处理删除任务：删除后刷新当前页 */
-  const handleDelete = async (id: string) => {
-    try {
-      const result = await agentApi.deleteTask(id)
-      if (result && result.code === 0) {
-        toast.success(t('task.deleteSuccess'))
-        // 删除成功后，重新加载当前页，避免页码错乱
-        loadTasks(page)
-      } else {
-        toast.error(result?.message || t('task.deleteFailed'))
-      }
-    } catch (error) {
-      toast.error(t('task.deleteFailed'))
-    }
-  }
 
   /** 返回首页 */
   const handleBack = () => {
@@ -153,21 +136,10 @@ export default function TasksHistoryPage() {
                 <TaskHistoryList
                   tasks={tasks}
                   isLoading={isLoading}
-                  onDelete={handleDelete}
-                  onRateClick={(taskId) => setRatingModalFor(taskId)}
+                  onRefresh={() => loadTasks(page)}
                   linkBasePath={`/${lng}/chat`}
                 />
               </div>
-              <RatingModal
-                taskId={ratingModalFor ?? ''}
-                open={!!ratingModalFor}
-                onClose={() => setRatingModalFor(null)}
-                onSaved={(data) => {
-                  setTasks((prev) => prev.map((t) => (t.id === ratingModalFor ? { ...t, rating: data.rating ?? t.rating, ratingComment: data.comment ?? t.ratingComment } : t)))
-                  setRatingModalFor(null)
-                  toast.success(t('rating.saveSuccess') || 'Saved')
-                }}
-              />
 
               {/* 分页器（使用项目内的 Pagination 组件） */}
               {totalPages > 1 && (
