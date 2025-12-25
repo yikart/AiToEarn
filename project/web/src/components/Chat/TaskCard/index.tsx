@@ -8,18 +8,13 @@
 import type React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { Loader2, MessageSquare, Trash2, AlertCircle, CheckCircle2, Link2 } from 'lucide-react'
 import { agentApi } from '@/api/agent'
 import { toast } from '@/lib/toast'
 import { cn, formatRelativeTime } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useTransClient } from '@/app/i18n/client'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { Modal } from '@/components/ui/modal'
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -38,6 +33,8 @@ export interface ITaskCardProps {
   onRateClick?: (taskId: string) => void
   /** 选择回调（如果提供，点击卡片将触发选择而不是跳转） */
   onSelect?: (id: string) => void
+  /** 在主页展示内联评分控件 */
+  showInlineRating?: boolean
   /** 自定义类名 */
   className?: string
 }
@@ -94,12 +91,17 @@ export function TaskCard({
   className,
   onSelect,
   onRateClick,
+  showInlineRating = false,
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [ratingModalOpen, setRatingModalOpen] = useState(false)
+  const [inlineRating, setInlineRating] = useState<number>(0)
+  const [ratingComment, setRatingComment] = useState<string>('')
+  const [isRatingSubmitting, setIsRatingSubmitting] = useState(false)
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
@@ -127,37 +129,54 @@ export function TaskCard({
   }
 
   /** 处理转发（复制会话为新任务并跳转） */
-  const handleForward = async (e: React.MouseEvent) => {
+  const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation()
     if (isProcessing) return
     try {
       setIsProcessing(true)
-      // 创建一个新的任务，传入 taskId 以复用会话（后端会在可用时复用 session）
+      // 创建一个新的任务（复用会话），获取新 id
       const res = await agentApi.createTask({ prompt: [], taskId: id })
       if (res && (res as any).code === 0 && (res as any).data) {
         const newTaskId = (res as any).data.id
+        const url = `${window.location.origin}/${lng}/chat/${newTaskId}`
+        try {
+          await navigator.clipboard.writeText(url)
+          toast.success(t('task.copyLinkSuccess' as any) || 'Link copied')
+        } catch {
+          // ignore clipboard error, still navigate
+        }
         router.push(`/${lng}/chat/${newTaskId}`)
       } else {
-        toast.error((res as any)?.msg || t('task.forwardFailed' as any) || 'Forward failed')
+        toast.error((res as any)?.msg || t('task.forwardFailed' as any) || 'Share failed')
       }
     } catch (error) {
-      console.error('Forward failed', error)
-      toast.error(t('task.forwardFailed' as any) || 'Forward failed')
+      console.error('Share failed', error)
+      toast.error(t('task.forwardFailed' as any) || 'Share failed')
     } finally {
       setIsProcessing(false)
     }
   }
 
-  /** 复制任务链接到剪贴板 */
-  const handleCopyLink = async (e: React.MouseEvent) => {
-    e.stopPropagation()
+  /** 提交评分（内联） */
+  const submitInlineRating = async () => {
+    if (inlineRating < 1 || inlineRating > 5) {
+      toast.error(t('task.ratingInvalid' as any) || 'Invalid rating')
+      return
+    }
     try {
-      const url = `${window.location.origin}/${lng}/chat/${id}`
-      await navigator.clipboard.writeText(url)
-      toast.success(t('task.copyLinkSuccess' as any) || 'Link copied')
+      setIsRatingSubmitting(true)
+      const res = await agentApi.createRating(id, inlineRating, ratingComment)
+      if (res && (res as any).code === 0) {
+        toast.success(t('task.ratingSuccess' as any) || 'Rating submitted')
+        setRatingModalOpen(false)
+      } else {
+        toast.error((res as any)?.msg || (t('task.ratingFailed' as any) || 'Submit failed'))
+      }
     } catch (error) {
-      console.error('Copy link failed', error)
-      toast.error(t('task.copyLinkFailed' as any) || 'Copy failed')
+      console.error('Submit rating failed', error)
+      toast.error(t('task.ratingFailed' as any) || 'Submit failed')
+    } finally {
+      setIsRatingSubmitting(false)
     }
   }
 
@@ -209,48 +228,74 @@ export function TaskCard({
         )}
       </div>
 
-      {/* 更多操作按钮 */}
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            disabled={isDeleting}
-            className={cn(
-              'absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center',
-              'opacity-0 group-hover:opacity-100 transition-opacity',
-              'hover:bg-muted text-muted-foreground hover:text-foreground',
-              isDeleting && 'opacity-100 cursor-wait',
-            )}
+      {/* Action buttons: Share (forward+copy) and Delete */}
+      <div className="absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+        <button
+          onClick={handleShare}
+          disabled={isDeleting || isProcessing}
+          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
+          aria-label="share"
+        >
+          {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}
+        </button>
+        <button
+          onClick={handleDelete}
+          disabled={isDeleting}
+          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-destructive hover:text-destructive/90"
+          aria-label="delete"
+        >
+          {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+        </button>
+      </div>
+
+      {/* Inline rating UI for homepage usage */}
+      {showInlineRating && (
+        <>
+          <div className="mt-3">
+            <div className="flex items-center gap-2">
+              {Array.from({ length: 5 }).map((_, idx) => {
+                const v = idx + 1
+                return (
+                  <button
+                    key={v}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      setInlineRating(v)
+                      setRatingModalOpen(true)
+                    }}
+                    className={cn(
+                      'w-7 h-7 rounded-md border flex items-center justify-center',
+                      inlineRating >= v ? 'bg-amber-100 border-amber-300 text-amber-700' : 'bg-transparent'
+                    )}
+                    aria-label={`rate-${v}`}
+                  >
+                    {v}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          <Modal
+            open={ratingModalOpen}
+            title={t('task.externalRating' as any) || 'Rate selected task'}
+            onCancel={() => setRatingModalOpen(false)}
+            onOk={submitInlineRating}
+            okText={isRatingSubmitting ? t('task.submitting' as any) || 'Submitting' : t('task.submit' as any) || 'Submit'}
+            confirmLoading={isRatingSubmitting}
           >
-            {isDeleting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <MoreHorizontal className="w-4 h-4" />
-            )}
-          </button>
-        </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={handleRateClick} className="focus:bg-muted/5">
-            <CheckCircle2 className="w-4 h-4 mr-2" />
-            Rate
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleForward} className="focus:bg-muted/5">
-            {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <MessageSquare className="w-4 h-4 mr-2" />}
-            Forward
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleCopyLink} className="focus:bg-muted/5">
-            <MoreHorizontal className="w-4 h-4 mr-2" />
-            Copy link
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={handleDelete}
-            className="text-destructive focus:text-destructive focus:bg-destructive/10"
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <div className="flex flex-col gap-2">
+              <div className="text-sm text-muted-foreground">Task: {id}</div>
+              <textarea
+                value={ratingComment}
+                onChange={(e) => setRatingComment(e.target.value)}
+                placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
+                className="w-full p-2 border rounded-md resize-none h-24"
+              />
+            </div>
+          </Modal>
+        </>
+      )}
     </div>
   )
 }
