@@ -34,16 +34,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/lib/toast'
+import type { SocialAccount } from '@/api/types/account.type'
 import { ChannelItem } from './ChannelItem'
-
-interface Channel {
-  id: string
-  name: string
-  platform: string
-  accountId: string
-  avatar?: string
-  fansCount?: number
-}
 
 interface AccountGroup {
   id: string
@@ -53,7 +45,7 @@ interface AccountGroup {
 
 interface SpaceItemProps {
   space: AccountGroup
-  channels: Channel[]
+  channels: SocialAccount[]
   index: number
   totalSpaces: number
   isCollapsed: boolean
@@ -70,7 +62,7 @@ interface SpaceItemProps {
   onMoveUp?: () => void
   onMoveDown?: () => void
   onDelete: () => void
-  onChannelDelete: (channel: Channel) => void
+  onChannelDelete: (channel: SocialAccount) => void
   onRefresh: () => void
 }
 
