@@ -20,6 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { Loader2 } from 'lucide-react'
 
 interface DeleteConfirmDialogProps {
   open: boolean
@@ -48,12 +49,10 @@ export function DeleteConfirmDialog({
             {t('channelManager.deleteConfirm', '确认删除')}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            确定要删除
-            {type === 'space' ? '空间' : '频道'}
-            {' '}
-            "
-            {name}
-            " 吗？此操作无法撤销。
+            {t('channelManager.deleteDialogContent', {
+              type: type === 'space' ? t('space') : t('channel'),
+              name,
+            })}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -67,8 +66,8 @@ export function DeleteConfirmDialog({
           >
             {loading ? (
               <>
-                <LoadingOutlined className="h-4 w-4 mr-2 animate-spin" />
-                删除中...
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                {t('channelManager.deleting', '删除中...')}
               </>
             ) : (
               t('common.confirm', '确认')

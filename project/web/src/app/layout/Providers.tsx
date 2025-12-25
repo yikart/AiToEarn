@@ -55,9 +55,7 @@ export function Providers({
       if (queryToken) {
         useUserStore.getState().setToken(queryToken);
       }
-      useDataStatisticsStore.getState().init();
-      useUserStore.getState().getUserInfo();
-      useAccountStore.getState().accountInit();
+      useUserStore.getState().appInit();
     }
   }, [_hasHydrated]);
 

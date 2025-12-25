@@ -9,6 +9,7 @@
 
 'use client'
 
+import type { SocialAccount } from '@/api/types/account.type'
 import { useCallback, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { deleteAccountApi, deleteAccountGroupApi, updateAccountGroupApi } from '@/api/account'
@@ -21,16 +22,6 @@ import { CreateSpaceSection } from './CreateSpaceSection'
 import { SpaceItem } from './SpaceItem'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { SpaceListSkeleton } from './SpaceListSkeleton'
-
-// 频道数据类型
-interface Channel {
-  id: string
-  name: string
-  platform: string
-  accountId: string
-  avatar?: string
-  fansCount?: number
-}
 
 export function UnifiedChannelSpaceList() {
   const { t } = useTransClient('account')
@@ -182,19 +173,10 @@ export function UnifiedChannelSpaceList() {
   }, [accountGroupList, getAccountGroup, t, sortingSpaceLoading])
 
   // 获取空间下的频道
-  const getChannelsInSpace = useCallback((spaceId: string): Channel[] => {
+  const getChannelsInSpace = useCallback((spaceId: string): SocialAccount[] => {
     // TODO: 从API获取真实频道数据
     // 暂时返回模拟数据
-    return accountList
-      .filter(account => account.groupId === spaceId)
-      .map(account => ({
-        id: account.id,
-        name: account.nickname || account.account,
-        platform: account.type || 'unknown',
-        accountId: account.account,
-        avatar: account.avatar,
-        fansCount: account.fansCount,
-      }))
+    return accountList.filter(account => account.groupId === spaceId)
   }, [accountList])
 
   if (accountLoading) {
@@ -240,11 +222,11 @@ export function UnifiedChannelSpaceList() {
                   id: space.id,
                   name: space.name,
                 })}
-                onChannelDelete={(channel: Channel) => setDeleteDialog({
+                onChannelDelete={(channel: SocialAccount) => setDeleteDialog({
                   open: true,
                   type: 'channel',
                   id: channel.id,
-                  name: channel.name,
+                  name: channel.nickname,
                 })}
                 onRefresh={getAccountGroup}
               />

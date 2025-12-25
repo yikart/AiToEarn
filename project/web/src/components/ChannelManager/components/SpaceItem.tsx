@@ -34,16 +34,8 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/lib/toast'
+import type { SocialAccount } from '@/api/types/account.type'
 import { ChannelItem } from './ChannelItem'
-
-interface Channel {
-  id: string
-  name: string
-  platform: string
-  accountId: string
-  avatar?: string
-  fansCount?: number
-}
 
 interface AccountGroup {
   id: string
@@ -53,7 +45,7 @@ interface AccountGroup {
 
 interface SpaceItemProps {
   space: AccountGroup
-  channels: Channel[]
+  channels: SocialAccount[]
   index: number
   totalSpaces: number
   isCollapsed: boolean
@@ -70,7 +62,7 @@ interface SpaceItemProps {
   onMoveUp?: () => void
   onMoveDown?: () => void
   onDelete: () => void
-  onChannelDelete: (channel: Channel) => void
+  onChannelDelete: (channel: SocialAccount) => void
   onRefresh: () => void
 }
 
@@ -146,21 +138,16 @@ export function SpaceItem({
           <>
             <div className="flex-1 min-w-0">
               <div className="font-medium text-sm">{space.name}</div>
-              {space.isDefault && (
-                <div className="text-xs text-muted-foreground">
-                  {t('account.defaultSpace', '默认空间')}
-                </div>
-              )}
             </div>
 
             <div className="text-xs text-muted-foreground shrink-0">
-              {channels.length} 个频道
+              {t('channelManager.channelCount', { count: channels.length })}
             </div>
 
             {isSorting && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-                <LoadingOutlined className="h-3 w-3 animate-spin" />
-                排序中...
+                <Loader2 className="h-3 w-3 animate-spin" />
+                {t('channelManager.sorting', '排序中...')}
               </div>
             )}
 

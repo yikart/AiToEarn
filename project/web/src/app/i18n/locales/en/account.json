@@ -194,6 +194,7 @@
     "douyin": "Douyin",
     "xiaohongshu": "Xiaohongshu"
   },
+  "channel": "Channel",
   "sidebar": {
     "noAccounts": "No accounts",
     "noOnlineAccounts": "No online accounts",
@@ -296,9 +297,24 @@
     "createSpaceNamePlaceholder": "Enter space name",
     "createSpaceSuccess": "Space created successfully",
     "createSpaceFailed": "Failed to create space",
+    "editSpaceSuccess": "Space edited successfully",
+    "editSpaceFailed": "Failed to edit space",
+    "deleteChannelSuccess": "Channel deleted successfully",
+    "deleteChannelFailed": "Failed to delete channel",
+    "sortSuccess": "Sort successful",
+    "sortFailed": "Sort failed",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "noChannels": "No channels",
+    "deleteConfirm": "Confirm delete",
     "deleteSpaceConfirm": "Confirm Delete Space",
     "deleteSpaceSuccess": "Space deleted successfully",
     "deleteSpaceFailed": "Failed to delete space",
+    "channelCount": "{{count}} channels",
+    "sorting": "Sorting...",
+    "deleting": "Deleting...",
+    "fans": "Fans: {{count}}",
+    "deleteDialogContent": "Are you sure you want to delete {{type}} '{{name}}'? This action cannot be undone.",
     "noData": "No data available"
   }
 }
