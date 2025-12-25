@@ -34,6 +34,8 @@ export interface ITaskCardProps {
   updatedAt?: string | number
   /** 删除回调 */
   onDelete?: (id: string) => void | Promise<void>
+  /** 评分回调（用于历史列表触发外部评分弹窗） */
+  onRateClick?: (taskId: string) => void
   /** 选择回调（如果提供，点击卡片将触发选择而不是跳转） */
   onSelect?: (id: string) => void
   /** 自定义类名 */
@@ -91,6 +93,7 @@ export function TaskCard({
   onDelete,
   className,
   onSelect,
+  onRateClick,
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
@@ -158,6 +161,13 @@ export function TaskCard({
     }
   }
 
+  /** 触发评分回调（由历史列表等外部组件使用） */
+  const handleRateClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!onRateClick) return
+    onRateClick(id)
+  }
+
   return (
     <div
       onClick={handleClick}
@@ -219,7 +229,11 @@ export function TaskCard({
             )}
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleRateClick} className="focus:bg-muted/5">
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            Rate
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleForward} className="focus:bg-muted/5">
             {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <MessageSquare className="w-4 h-4 mr-2" />}
             Forward
