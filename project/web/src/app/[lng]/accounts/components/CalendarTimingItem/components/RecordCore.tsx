@@ -192,10 +192,10 @@ const RecordCore = memo(
       const getClientTypeLabel = (clientType?: ClientType) => {
         if (!clientType) return null
         if (clientType === ClientType.WEB) {
-          return t('clientType.web' as any)
+          return t('clientType.web')
         }
         if (clientType === ClientType.APP) {
-          return t('clientType.app' as any)
+          return t('clientType.app')
         }
         return null
       }

@@ -87,6 +87,10 @@
     "downloadNow": "Download Now",
     "tip": "💡 Tip: After installation, please log in to your account in the App, then try the related operation again"
   },
+  "networkBusy": "Network busy, please try again later!",
+  "networkError": "Network error, please try again later!",
+  "contact": "Need help? Contact support:"
+,
   "websit": {
     "termsOfService": {
       "title": "Terms of Service",

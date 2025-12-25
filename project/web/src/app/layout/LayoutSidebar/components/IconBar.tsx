@@ -17,6 +17,7 @@ import {
 import { cn } from '@/lib/utils'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import type { IconBarProps } from '../types'
+import { CONTACT } from '@/constant'
 
 export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification, onOpenSettings }: IconBarProps) {
   const { t } = useTransClient('common')
@@ -54,7 +55,7 @@ export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification
         <Tooltip>
           <TooltipTrigger asChild>
             <a
-              href="mailto:agent@aiearn.ai"
+              href={`mailto:${CONTACT}`}
               className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
             >
               <Mail size={18} />
@@ -64,7 +65,7 @@ export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification
             side={collapsed ? 'right' : 'top'}
             className="bg-popover text-popover-foreground"
           >
-            <p>{t('contactUs')}: agent@aiearn.ai</p>
+            <p>{t('contactUs')}: {CONTACT}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

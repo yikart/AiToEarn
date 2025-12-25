@@ -36,6 +36,10 @@ import {
   apiGetUserTaskList,
   apiMarkTaskAsViewed
 } from '@/api/task'
+import {
+  apiGetSettleInfoByUserTask,
+  apiGetSettleItemList,
+} from '@/api/task'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import MediaPreview from '@/components/common/MediaPreview'
@@ -44,6 +48,7 @@ import { getOssUrl } from '@/utils/oss'
 import styles from './taskPageCore.module.scss'
 import PublishDialog from '@/components/PublishDialog'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { openLoginModal } from '@/store/loginModal'
 
 export default function TaskPageCore() {
   const { t } = useTransClient('task' as any)
@@ -53,20 +58,7 @@ export default function TaskPageCore() {
   const params = useParams()
   const lng = params.lng as string
 
-  // Show login prompt if not logged in
-  if (!token) {
-    return (
-      <div className={styles.taskPage}>
-        <div className={styles.header}>
-          <h1>{t('title')}</h1>
-          <p>{t('messages.pleaseLoginFirst')}</p>
-        </div>
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <Empty description={t('messages.pleaseLoginFirst')} />
-        </div>
-      </div>
-    )
-  }
+  // Do not early return on missing token — render login prompt in JSX to preserve hook order
 
   // State management
   const [activeTab, setActiveTab] = useState('pending') // pending: Pending tasks, accepted: Accepted tasks
@@ -130,6 +122,9 @@ export default function TaskPageCore() {
   // Accepted task detail material list state
   const [acceptedTaskMaterialList, setAcceptedTaskMaterialList] = useState<any[]>([])
   const [acceptedTaskMaterialLoading, setAcceptedTaskMaterialLoading] = useState(false)
+  // Accepted task settle items (from /task/settle endpoints)
+  const [acceptedTaskSettleItems, setAcceptedTaskSettleItems] = useState<any[]>([])
+  const [acceptedTaskSettleLoading, setAcceptedTaskSettleLoading] = useState(false)
   // 任务信息卡片数量，用于控制对齐（只有一个时左对齐）
   const infoItemsCount = (
     (taskDetail?.reward && taskDetail.reward > 0 ? 1 : 0) +
@@ -500,6 +495,14 @@ export default function TaskPageCore() {
         if (response.data.task?.materialGroupId) {
           fetchAcceptedTaskMaterialList(response.data.task.materialGroupId)
         }
+
+        // Fetch settle info/items for this accepted user task and show in modal
+        try {
+          fetchAcceptedTaskSettleInfo(taskId)
+        }
+        catch (err) {
+          console.error('fetchAcceptedTaskSettleInfo failed', err)
+        }
       }
       else {
         toast.error(t('messages.getTaskDetailFailed'))
@@ -528,6 +531,50 @@ export default function TaskPageCore() {
     }
     finally {
       setAcceptedTaskMaterialLoading(false)
+    }
+  }
+  // Fetch settle info for an accepted user task (calls /task/settle/info/{userTaskId})
+  const fetchAcceptedTaskSettleInfo = async (userTaskId: string) => {
+    if (!userTaskId) return
+    try {
+      setAcceptedTaskSettleLoading(true)
+      const infoResp: any = await apiGetSettleInfoByUserTask(userTaskId)
+      if (infoResp && infoResp.data && (infoResp.code === 0 || infoResp.success) && infoResp.data.id) {
+        const settleId = infoResp.data.id
+        await fetchAcceptedTaskSettleItems(settleId)
+      }
+      else {
+        setAcceptedTaskSettleItems([])
+      }
+    }
+    catch (err) {
+      console.error('Failed to fetch settle info:', err)
+      setAcceptedTaskSettleItems([])
+    }
+    finally {
+      setAcceptedTaskSettleLoading(false)
+    }
+  }
+
+  // Fetch settle items list by settleId (calls /task/settle/item/list/{settleId})
+  const fetchAcceptedTaskSettleItems = async (settleId: string) => {
+    if (!settleId) return
+    try {
+      setAcceptedTaskSettleLoading(true)
+      const itemsResp: any = await apiGetSettleItemList(settleId)
+      if (itemsResp && itemsResp.data && (itemsResp.code === 0 || itemsResp.success)) {
+        setAcceptedTaskSettleItems(itemsResp.data.list || itemsResp.data || [])
+      }
+      else {
+        setAcceptedTaskSettleItems([])
+      }
+    }
+    catch (err) {
+      console.error('Failed to fetch settle items:', err)
+      setAcceptedTaskSettleItems([])
+    }
+    finally {
+      setAcceptedTaskSettleLoading(false)
     }
   }
 
@@ -667,6 +714,23 @@ export default function TaskPageCore() {
     }
   }, [accountList, requiredAccountTypes, taskDetail])
 
+  // 如果未登录，重定向到登录页面（保留 hook 顺序，UI 不展示登录提示）
+  useEffect(() => {
+    if (!token) {
+      // 打开登录弹窗并在登录成功后刷新列表
+      try {
+        openLoginModal(() => {
+          fetchPendingTasks()
+          fetchAcceptedTasks()
+          fetchAccountList()
+        })
+      }
+      catch (e) {
+        console.error('open login modal failed', e)
+      }
+    }
+  }, [token, router, lng])
+
   // 发布弹窗发布成功回调：校验选中账户是否符合任务要求，符合则提交任务
   const handlePublishSuccess = async () => {
     console.log('完成发布2222@@@')
@@ -752,7 +816,8 @@ export default function TaskPageCore() {
 
   return (
     <div className={styles.taskPage}>
-
+      {token && (
+      <>
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
@@ -899,8 +964,8 @@ export default function TaskPageCore() {
                                 </div>
                               </div>
                             </div>
-                          )}
-                        </div>
+      )}
+    </div>
 
                         <div className={styles.taskActions}>
                               <Button
@@ -1404,23 +1469,28 @@ export default function TaskPageCore() {
                   </div>
 
                   {/* 描述区域 */}
-                  <div style={{
-                    marginBottom: '16px',
-                    padding: '16px',
-                    backgroundColor: '#f8f9fa',
-                    borderRadius: '8px',
-                    border: '1px solid #e9ecef',
-                  }}
-                  >
-                    <div style={{
-                      fontSize: '14px',
-                      lineHeight: '1.6',
-                      color: '#495057',
-                    }}
-                    >
-                      <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
-                    </div>
-                  </div>
+                  {
+                    acceptedTaskDetail.task?.description && (
+                      <div style={{
+                        marginBottom: '16px',
+                        padding: '16px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px',
+                        border: '1px solid #e9ecef',
+                      }}
+                      >
+                        <div style={{
+                          fontSize: '14px',
+                          lineHeight: '1.6',
+                          color: '#495057',
+                        }}
+                        >
+                          <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
+                        </div>
+                      </div>
+                    )
+                  }
+                  
 
                   {/* 任务信息卡片 */}
                   <div style={{
@@ -1491,33 +1561,72 @@ export default function TaskPageCore() {
                       </div>
                     )}
 
-                    <div style={{
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#d1ecf1',
-                      border: '1px solid #bee5eb',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
+                  {
+                    acceptedTaskDetail.task?.type && (
                       <div style={{
-                        fontSize: '12px',
-                        color: '#0c5460',
-                        marginBottom: '4px',
+                        flex: '1',
+                        padding: '12px',
+                        backgroundColor: '#d1ecf1',
+                        border: '1px solid #bee5eb',
+                        borderRadius: '8px',
+                        textAlign: 'center',
                       }}
                       >
-                        {t('taskInfo.type' as any)}
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#0c5460',
+                          marginBottom: '4px',
+                        }}
+                        >
+                          {t('taskInfo.type' as any)}
+                        </div>
+                        <div style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: '#0c5460',
+                        }}
+                        >
+                          {getTaskTypeName(acceptedTaskDetail.task?.type)}
+                        </div>
                       </div>
-                      <div style={{
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        color: '#0c5460',
-                      }}
-                      >
-                        {getTaskTypeName(acceptedTaskDetail.task?.type)}
+                    )
+                  }
+                    
+                  </div>
+
+                  {/* 结算项（来自 /task/settle 接口），显示在接受时间上方 */}
+                  {acceptedTaskSettleLoading ? (
+                    <div style={{ marginBottom: '12px' }}>
+                      <Spin spinning={true} />
+                    </div>
+                  ) : acceptedTaskSettleItems && acceptedTaskSettleItems.length > 0 ? (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ marginBottom: '8px', fontWeight: 600 }}>{t('settle.items' as any) || '结算信息'}</div>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {acceptedTaskSettleItems.map((item: any, idx: number) => (
+                          <div
+                            key={idx}
+                            style={{
+                              padding: '8px',
+                              backgroundColor: '#f8f9fa',
+                              border: '1px solid #e9ecef',
+                              borderRadius: '8px',
+                              minWidth: '120px',
+                            }}
+                          >
+                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                              {item.title || item.name || item.key || JSON.stringify(item)}
+                            </div>
+                            {item.value !== undefined ? (
+                              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.value}</div>
+                            ) : item.amount !== undefined ? (
+                              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.amount}</div>
+                            ) : null}
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </div>
+                  ) : null}
 
                   {/* 任务状态信息 */}
                   <div style={{
@@ -1744,6 +1853,8 @@ export default function TaskPageCore() {
             handlePublishSuccess()
           }}
         />
+      )}
+      </>
       )}
     </div>
   )

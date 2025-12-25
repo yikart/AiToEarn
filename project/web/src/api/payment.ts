@@ -150,7 +150,7 @@ export function withdrawAllPendingApi(params: {
   [property: string]: any
 }) {
   return request<any>({
-    url: 'payment/withdraw/all-pending',
+    url: 'payment/withdraw/all',
     method: 'POST',
     data: params,
   })
@@ -263,5 +263,79 @@ export function setDefaultWalletAccountApi(id: string) {
   return request<any>({
     url: `payment/user-wallet-account/${id}/set-default`,
     method: 'POST',
+  })
+}
+
+/**
+ * 获取 Stripe / Connected Account 列表（新的商家钱包接口）
+ */
+export function getConnectedAccountListApi(params: {
+  email?: string
+  page?: number
+  pageSize?: number
+  search?: string
+  status?: string
+  [property: string]: any
+}) {
+  return request<any>({
+    url: 'payment/connected-account',
+    method: 'GET',
+    params,
+  })
+}
+
+/**
+ * 创建 Connected Account（商家账户）
+ */
+export function createConnectedAccountApi(params: {
+  country: string
+  email: string
+  entityType: 'company' | 'individual'
+  [property: string]: any
+}) {
+  return request<any>({
+    url: 'payment/connected-account',
+    method: 'POST',
+    data: params,
+  })
+}
+
+/**
+ * 获取 Connected Account 的 Onboarding 链接
+ */
+export function getConnectedAccountOnboardingLinkApi(accountId: string) {
+  return request<any>({
+    url: `payment/connected-account/${accountId}/onboarding-link`,
+    method: 'GET',
+  })
+}
+
+/**
+ * 获取 Connected Account 详情
+ */
+export function getConnectedAccountDetailApi(accountId: string) {
+  return request<any>({
+    url: `payment/connected-account/${accountId}`,
+    method: 'GET',
+  })
+}
+
+/**
+ * 刷新 Connected Account 状态（同步 Stripe）
+ */
+export function refreshConnectedAccountStatusApi(accountId: string) {
+  return request<any>({
+    url: `payment/connected-account/${accountId}/refresh`,
+    method: 'POST',
+  })
+}
+
+/**
+ * 获取商家后台登录链接（dashboard link）
+ */
+export function getConnectedAccountDashboardLinkApi(accountId: string) {
+  return request<any>({
+    url: `payment/connected-account/${accountId}/dashboard-link`,
+    method: 'GET',
   })
 }
