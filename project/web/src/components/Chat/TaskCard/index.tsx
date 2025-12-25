@@ -6,15 +6,15 @@
 'use client'
 
 import type React from 'react'
-import { useState } from 'react'
+import { AlertCircle, CheckCircle2, ExternalLink, Link2, Loader2, MessageSquare, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { Loader2, MessageSquare, Trash2, AlertCircle, CheckCircle2, Link2 } from 'lucide-react'
+import { useState } from 'react'
 import { agentApi } from '@/api/agent'
-import { toast } from '@/lib/toast'
-import { cn, formatRelativeTime } from '@/lib/utils'
-import { useGetClientLng } from '@/hooks/useSystem'
 import { useTransClient } from '@/app/i18n/client'
 import { Modal } from '@/components/ui/modal'
+import { useGetClientLng } from '@/hooks/useSystem'
+import { toast } from '@/lib/toast'
+import { cn, formatRelativeTime } from '@/lib/utils'
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -42,7 +42,7 @@ export interface ITaskCardProps {
 /** 获取状态显示配置 */
 function getStatusConfig(status: string | undefined, t: (key: string) => string) {
   const normalizedStatus = status?.toLowerCase()
-  
+
   switch (normalizedStatus) {
     case 'requires_action':
       return {
@@ -100,14 +100,15 @@ export function TaskCard({
   const [isProcessing, setIsProcessing] = useState(false)
   const [ratingModalOpen, setRatingModalOpen] = useState(false)
   const [inlineRating, setInlineRating] = useState<number>(0)
-  const [ratingComment, setRatingComment] = useState<string>('')
+  const [ratingComments, setRatingComments] = useState<string[]>(['', '', '', ''])
   const [isRatingSubmitting, setIsRatingSubmitting] = useState(false)
-  
+
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
   /** 跳转到对话详情页 */
   const handleClick = () => {
-    if (isDeleting) return
+    if (isDeleting)
+      return
     if (onSelect) {
       onSelect(id)
       return
@@ -118,12 +119,14 @@ export function TaskCard({
   /** 处理删除 */
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!onDelete || isDeleting) return
+    if (!onDelete || isDeleting)
+      return
 
     try {
       setIsDeleting(true)
       await onDelete(id)
-    } finally {
+    }
+    finally {
       setIsDeleting(false)
     }
   }
@@ -131,7 +134,8 @@ export function TaskCard({
   /** 处理转发（复制会话为新任务并跳转） */
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (isProcessing) return
+    if (isProcessing)
+      return
     try {
       setIsProcessing(true)
       // 创建一个新的任务（复用会话），获取新 id
@@ -142,17 +146,52 @@ export function TaskCard({
         try {
           await navigator.clipboard.writeText(url)
           toast.success(t('task.copyLinkSuccess' as any) || 'Link copied')
-        } catch {
+        }
+        catch {
           // ignore clipboard error, still navigate
         }
         router.push(`/${lng}/chat/${newTaskId}`)
-      } else {
+      }
+      else {
         toast.error((res as any)?.msg || t('task.forwardFailed' as any) || 'Share failed')
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Share failed', error)
       toast.error(t('task.forwardFailed' as any) || 'Share failed')
-    } finally {
+    }
+    finally {
+      setIsProcessing(false)
+    }
+  }
+
+  /** 创建公开分享链接 */
+  const handleCreatePublicLink = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (isProcessing)
+      return
+    try {
+      setIsProcessing(true)
+      const res = await agentApi.createPublicShare(id)
+      const token = (res as any)?.data?.token || (res as any)?.token
+      const urlPath = (res as any)?.data?.urlPath || (res as any)?.urlPath
+      const fullUrl = urlPath ? `${window.location.origin}${urlPath}` : `${window.location.origin}/agent/tasks/shared/${token}`
+      try {
+        await navigator.clipboard.writeText(fullUrl)
+        toast.success(t('task.publicShareCopied' as any) || 'Public share link copied to clipboard')
+      }
+      catch {
+        // fallback: log link so user can copy from console if clipboard denied
+
+        console.log('Public share link:', fullUrl)
+        toast.success(t('task.publicShareCreated' as any) || 'Public share link created')
+      }
+    }
+    catch (err) {
+      console.error('Create public share failed', err)
+      toast.error(t('task.publicShareFailed' as any) || 'Create public share failed')
+    }
+    finally {
       setIsProcessing(false)
     }
   }
@@ -165,17 +204,23 @@ export function TaskCard({
     }
     try {
       setIsRatingSubmitting(true)
-      const res = await agentApi.createRating(id, inlineRating, ratingComment)
+      // 将4个评论组合成一个字符串，用分隔符分开
+      const combinedComment = ratingComments.filter(comment => comment.trim() !== '').join('\n---\n')
+      const res = await agentApi.createRating(id, inlineRating, combinedComment)
       if (res && (res as any).code === 0) {
         toast.success(t('task.ratingSuccess' as any) || 'Rating submitted')
         setRatingModalOpen(false)
-      } else {
+        setRatingComments(['', '', '', '']) // 重置评论
+      }
+      else {
         toast.error((res as any)?.msg || (t('task.ratingFailed' as any) || 'Submit failed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Submit rating failed', error)
       toast.error(t('task.ratingFailed' as any) || 'Submit failed')
-    } finally {
+    }
+    finally {
       setIsRatingSubmitting(false)
     }
   }
@@ -183,7 +228,8 @@ export function TaskCard({
   /** 触发评分回调（由历史列表等外部组件使用） */
   const handleRateClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!onRateClick) return
+    if (!onRateClick)
+      return
     onRateClick(id)
   }
 
@@ -191,7 +237,7 @@ export function TaskCard({
     <div
       onClick={handleClick}
       className={cn(
-        'group relative flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
+        'flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
         'hover:border-border hover:shadow-md',
         isDeleting && 'opacity-60 cursor-wait',
         className,
@@ -216,35 +262,53 @@ export function TaskCard({
           <span className={cn(
             'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
             statusConfig.className,
-          )}>
+          )}
+          >
             {statusConfig.icon && (
               <statusConfig.icon className={cn(
                 'w-3 h-3',
                 status?.toLowerCase() === 'running' && 'animate-spin',
-              )} />
+              )}
+              />
             )}
             {statusConfig.label}
           </span>
         )}
       </div>
 
-      {/* Action buttons: Share (forward+copy) and Delete */}
-      <div className="absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={handleShare}
-          disabled={isDeleting || isProcessing}
-          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
-          aria-label="share"
-        >
-          {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}
-        </button>
+      {/* Action buttons: Prominent share and subtle delete */}
+      <div className="mt-3 flex items-center justify-between gap-3">
+        {/* Share buttons - prominent */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleShare}
+            disabled={isDeleting || isProcessing}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary hover:text-primary/90 transition-colors text-sm font-medium min-w-[80px] justify-center"
+            aria-label="share"
+          >
+            {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+            <span className="hidden sm:inline">{t('task.share' as any) || 'Share'}</span>
+          </button>
+          <button
+            onClick={handleCreatePublicLink}
+            disabled={isDeleting || isProcessing}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 hover:bg-secondary text-secondary-foreground hover:text-secondary-foreground/90 transition-colors text-sm font-medium min-w-[80px] justify-center"
+            aria-label="public-share"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('task.publicLink' as any) || 'Public'}</span>
+          </button>
+        </div>
+
+        {/* Delete button - subtle */}
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-destructive hover:text-destructive/90"
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors text-xs opacity-60 hover:opacity-100"
           aria-label="delete"
         >
-          {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          {isDeleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+          <span className="hidden sm:inline">{t('task.delete' as any) || 'Delete'}</span>
         </button>
       </div>
 
@@ -265,7 +329,7 @@ export function TaskCard({
                     }}
                     className={cn(
                       'w-7 h-7 rounded-md border flex items-center justify-center',
-                      inlineRating >= v ? 'bg-amber-100 border-amber-300 text-amber-700' : 'bg-transparent'
+                      inlineRating >= v ? 'bg-amber-100 border-amber-300 text-amber-700' : 'bg-transparent',
                     )}
                     aria-label={`rate-${v}`}
                   >
@@ -284,14 +348,31 @@ export function TaskCard({
             okText={isRatingSubmitting ? t('task.submitting' as any) || 'Submitting' : t('task.submit' as any) || 'Submit'}
             confirmLoading={isRatingSubmitting}
           >
-            <div className="flex flex-col gap-2">
-              <div className="text-sm text-muted-foreground">Task: {id}</div>
-              <textarea
-                value={ratingComment}
-                onChange={(e) => setRatingComment(e.target.value)}
-                placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
-                className="w-full p-2 border rounded-md resize-none h-24"
-              />
+            <div className="flex flex-col gap-4">
+              <div className="text-sm text-muted-foreground">
+                Task:
+                {id}
+              </div>
+              <div className="space-y-3">
+                {ratingComments.map((comment, index) => (
+                  <div key={index} className="flex flex-col gap-1">
+                    <label className="text-xs text-muted-foreground font-medium">
+                      {t('task.commentLabel' as any, { number: index + 1 }) || `Comment ${index + 1}`}
+                    </label>
+                    <textarea
+                      value={comment}
+                      onChange={(e) => {
+                        const newComments = [...ratingComments]
+                        newComments[index] = e.target.value
+                        setRatingComments(newComments)
+                      }}
+                      placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
+                      className="w-full p-2 border rounded-md resize-none h-16 text-sm"
+                      maxLength={200}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </Modal>
         </>
@@ -301,4 +382,3 @@ export function TaskCard({
 }
 
 export default TaskCard
-

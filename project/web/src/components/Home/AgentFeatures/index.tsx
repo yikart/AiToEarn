@@ -14,29 +14,74 @@ interface AgentFeaturesProps {
 }
 
 const iconMap = {
-  schedule: Clock,
   inspiration: Lightbulb,
-  storyboard: Edit3,
-  download: Download,
-  highlight: Film,
-  translate: Globe,
-  styleTransfer: Camera,
-  videoGenerate: Film,
+  oneClickScript: Edit3,
+  multiTemplates: Edit3,
   imageGenerate: ImageIcon,
+  videoGenerate: Film,
+
+  highlight: Film,
+  storyboard: Edit3,
+  coverSuggestion: ImageIcon,
+  download: Download,
+
+  videoTranslation: Globe,
+  platformAdapt: Globe,
+  topicTag: Lightbulb,
+  seo: Globe,
+
+  schedule: Clock,
+  multiPlatform: Clock,
+  smartTime: Clock,
+
+  sse: Clock,
+  taskManagement: Clock,
+  workflow: Lightbulb,
+
   videoUnderstanding: Eye,
+  report: Eye,
+
+  commentAssistant: Edit3,
+  audienceInsight: Eye,
 } as const
 
 const featureKeys = [
-  'schedule',
+  // Content generation & creation
   'inspiration',
-  'storyboard',
-  'download',
-  'highlight',
-  'translate',
-  'styleTransfer',
-  'videoGenerate',
+  'oneClickScript',
+  'multiTemplates',
   'imageGenerate',
+  'videoGenerate',
+
+  // Editing & post-processing
+  'highlight',
+  'storyboard',
+  'coverSuggestion',
+  'download',
+
+  // Localization & smart optimization
+  'videoTranslation',
+  'platformAdapt',
+  'topicTag',
+  'seo',
+
+  // Publishing & distribution
+  'schedule',
+  'multiPlatform',
+  'smartTime',
+
+  // Automation & pipeline
+  'sse',
+  'taskManagement',
+  'workflow',
+
+  // Understanding & analytics
   'videoUnderstanding',
+  'report',
+
+  // Interaction & ops
+  'commentAssistant',
+  'audienceInsight',
 ]
 
 const AgentFeatures: FC<AgentFeaturesProps> = ({ className }) => {
