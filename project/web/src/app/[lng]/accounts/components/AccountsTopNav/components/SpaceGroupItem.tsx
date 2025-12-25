@@ -64,7 +64,6 @@ const SpaceGroupItem = memo(({
             account={account}
             isActive={isActive}
             onSelect={onSelectAccount}
-            deleteLoading={deleteLoading}
             indent
           />
         )

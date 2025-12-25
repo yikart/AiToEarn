@@ -155,7 +155,6 @@ const AccountSelector = memo(({
                             account={account}
                             isActive={isActive}
                             onSelect={onAccountSelect}
-                            deleteLoading={deleteLoading}
                           />
                         )
                       })
