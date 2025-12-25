@@ -204,9 +204,9 @@ function LayoutSidebar() {
         {/* 底部固定区域 - 不随滚动 */}
         <div className="flex-shrink-0">
           {/* 我的频道入口 */}
-          {/* <div className="pb-1 flex flex-1">
+          <div className="pb-1 flex flex-1">
             <MyChannelsEntry collapsed={collapsed} />
-          </div> */}
+          </div>
 
           {/* 推广赚钱入口 - 在底部功能区横线上方 */}
           <div className="pb-1">

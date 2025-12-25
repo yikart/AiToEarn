@@ -53,6 +53,8 @@ export interface IChatMessageProps {
   workflowSteps?: IWorkflowStep[]
   /** Action 卡片列表（用于显示可交互的 action） */
   actions?: IActionCard[]
+  /** 是否正在生成（用于最后一条AI消息显示思考状态） */
+  isGenerating?: boolean
   /** 自定义类名 */
   className?: string
 }
@@ -208,6 +210,7 @@ export function ChatMessage({
   steps = [],
   workflowSteps = [],
   actions = [],
+  isGenerating = false,
   className,
 }: IChatMessageProps) {
   const { t } = useTransClient('chat')
@@ -330,6 +333,71 @@ export function ChatMessage({
                 onOpenPreview={openPreviewWithUrl}
               />
             ))}
+
+            {/* 思考中状态 - 在最后一条AI消息底部显示 */}
+            {isGenerating && (
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <div className="flex items-center gap-3 px-1">
+                  {/* 优雅的波点动画 */}
+                  <div className="flex items-center gap-1 flex-shrink-0">
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-blue-500"
+                      style={{
+                        animation: 'bounceDots 1.4s ease-in-out infinite both',
+                        animationDelay: '0s',
+                      }}
+                    ></div>
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-purple-500"
+                      style={{
+                        animation: 'bounceDots 1.4s ease-in-out infinite both',
+                        animationDelay: '0.2s',
+                      }}
+                    ></div>
+                    <div
+                      className="w-1.5 h-1.5 rounded-full bg-pink-500"
+                      style={{
+                        animation: 'bounceDots 1.4s ease-in-out infinite both',
+                        animationDelay: '0.4s',
+                      }}
+                    ></div>
+                  </div>
+
+                  {/* 思考文字 */}
+                  <span
+                    className="text-sm font-medium bg-linear-to-r from-blue-500 via-purple-500 to-pink-500 bg-clip-text text-transparent"
+                    style={{
+                      animation: 'thinkingGlow 1.8s ease-in-out infinite',
+                      display: 'inline-block',
+                    }}
+                  >
+                    {t('message.thinking')}
+                  </span>
+                </div>
+                <style>{`
+                  @keyframes thinkingGlow {
+                    0%, 100% {
+                      opacity: 0.7;
+                      filter: hue-rotate(0deg) brightness(1);
+                    }
+                    50% {
+                      opacity: 1;
+                      filter: hue-rotate(180deg) brightness(1.2);
+                    }
+                  }
+                  @keyframes bounceDots {
+                    0%, 80%, 100% {
+                      transform: scale(0.8);
+                      opacity: 0.5;
+                    }
+                    40% {
+                      transform: scale(1.2);
+                      opacity: 1;
+                    }
+                  }
+                `}</style>
+              </div>
+            )}
           </div>
         )}
 
