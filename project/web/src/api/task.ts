@@ -68,14 +68,6 @@ export function apiGetTaskOpportunityList(params: {
   return http.get<{ list: TaskOpportunity[] }>(`task/opportunity/list/${params.page}/${params.pageSize}`)
 }
 
-/**
- * 接取任务
- * @param opportunityId
- * @returns
- */
-export function apiAcceptTask(opportunityId: string) {
-  return http.post<any>(`task/accept`, { opportunityId })
-}
 
 // 获取已接受的任务列表
 export function apiGetUserTaskList(params: {
@@ -94,14 +86,6 @@ export function apiGetUserTaskDetail(id: string) {
   return http.get<any>(`task/userTask/info/${id}`)
 }
 
-/**
- * 接取任务
- * @param userTaskId
- * @returns
- */
-export function apiSubmitTask(userTaskId: string, submissionUrl: string) {
-  return http.post<any>(`task/submit`, { userTaskId, submissionUrl })
-}
 
 /**
  * 获取未读任务数量
@@ -118,4 +102,20 @@ export function apiGetNotViewCount() {
  */
 export function apiMarkTaskAsViewed(opportunityId: string) {
   return http.put<any>(`task/opportunity/doView/${opportunityId}`)
+}
+
+/**
+ * Get settle info by userTaskId
+ * @param userTaskId
+ */
+export function apiGetSettleInfoByUserTask(userTaskId: string) {
+  return http.get<any>(`task/settle/info/${userTaskId}`)
+}
+
+/**
+ * Get settle item list by settleId
+ * @param settleId
+ */
+export function apiGetSettleItemList(settleId: string) {
+  return http.get<any>(`task/settle/item/list/${settleId}`)
 }

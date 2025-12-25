@@ -234,6 +234,63 @@ function Chat() {
 }
 ```
 
+## 国际化（i18n）使用规范 — 类型与方法
+
+为保证类型安全与可维护性，项目国际化使用以下约定，禁止在调用 i18n 方法处使用 `any`：
+
+- 目录与入口
+  - 国际化资源放置在 `src/app/i18n/locales/{lng}/{namespace}.json`。
+  - 客户端工具位于 `src/app/i18n/client.ts`，导出 `useTransClient`（Hook）和 `directTrans`（静态方法）。
+
+- Hook 使用（推荐在组件中）
+  - 导入：`import { useTransClient } from '@/app/i18n/client'`
+  - 签名：`const { t } = useTransClient<'namespace' | undefined>('namespace')`
+  - 示例（带类型）：
+
+```tsx
+import { useTransClient } from '@/app/i18n/client'
+
+export const MyComponent: React.FC = () => {
+  // 指定 namespace 字符串字面量以获得类型推断
+  const { t } = useTransClient<'account'>('account')
+  return <div>{t('messages.deleteSuccess')}</div>
+}
+```
+
+  - 约束：
+    - 不要使用 `useTransClient(any)` 或 `useTransClient('xxx' as any)`。
+    - 优先传入字面量类型参数以获得更好的类型推断（如 `'account'`、`'common'`）。
+
+- 静态方法（server/client 通用，**不会** 自动响应语言切换）
+  - 导入：`import { directTrans } from '@/app/i18n/client'`
+  - 用途：用于工具函数、请求层或非 React 渲染路径下需要即时翻译的场景。
+  - 签名示例（在调用处请传入已知的 namespace 字面量）：
+
+```ts
+import { directTrans } from '@/app/i18n/client'
+
+const msg = directTrans('common', 'networkBusy') // 返回 string
+```
+
+  - 约束：
+    - `directTrans` 是静态读取，语言切换不会触发重新计算，**仅用于不需要自动响应语言变化的场景**（如日志、请求报错信息、初始化文本等）。
+    - 传参请使用已存在的 namespace 字符串（如 `'common'`、`'account'`），不要传 `any`。
+
+- 类型说明
+  - `useTransClient` 返回类型符合 `react-i18next` 的 `UseTranslationResponse<Namespace>`；在组件中使用时推荐为 `Namespace` 指定字面量类型以获得更好类型提示。
+  - `directTrans<Ns extends FlatNamespace>(ns: Ns, key: string): string`：静态翻译接口，返回字符串。
+
+- 代码示例（请求层错误处理）
+
+```ts
+import { directTrans } from '@/app/i18n/client'
+import { CONTACT } from '@/constant'
+
+const message = `${directTrans('common', 'networkError')} ${CONTACT}`
+```
+
+按照以上规范更新或新增 i18n 调用后，请同时运行 linter 确保没有 `any` 引入及类型错误。
+
 # SEO 元数据规范
 
 页面的 SEO 元数据必须使用 `getMetadata` 方法,**不要自己拼接 title**:
@@ -293,3 +350,5 @@ router.push(`/${lng}/tasks`)
 - 项目使用 Next.js 国际化路由,中间件会自动处理语言重定向
 - 直接使用不带语言前缀的路径即可,如 `/pricing`、`/accounts`
 - 系统会根据用户当前语言自动重定向到正确的路径
+
+

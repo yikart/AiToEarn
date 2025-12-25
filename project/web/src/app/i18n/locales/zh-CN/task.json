@@ -1,7 +1,7 @@
 {
   "title": "任务中心",
   "subtitle": "接受任务，完成任务，获得奖励",
-  "pendingTasks": "待接受任务",
+  "pendingTasks": "可接受任务",
   "acceptedTasks": "已接受任务",
   "taskDetails": "任务详情",
   "acceptTask": "接受任务",
@@ -14,8 +14,8 @@
   "submittingTask": "正在提交任务...",
   "taskCompleted": "任务完成",
   "taskStatus": {
-    "pending": "待完成",
-    "doing": "已完成",
+    "pending": "已完成",
+    "doing": "进行中",
     "accepted": "已接受",
     "completed": "已完成",
     "rejected": "已拒绝",
@@ -60,7 +60,7 @@
   },
   "messages": {
     "pleaseLoginFirst": "请先登录以查看任务",
-    "getPendingTasksFailed": "获取待接受任务失败",
+    "getPendingTasksFailed": "获取可接受任务失败",
     "getAcceptedTasksFailed": "获取已接受任务失败",
     "acceptTaskSuccess": "接受任务成功！",
     "acceptTaskFailed": "接受任务失败",
@@ -69,7 +69,7 @@
     "publishTaskFailed": "发布任务失败",
     "getTaskDetailFailed": "获取任务详情失败",
     "taskProcessFailed": "任务处理失败",
-    "noPendingTasks": "暂无待接受任务",
+    "noPendingTasks": "暂无可接受任务",
     "noAcceptedTasks": "暂无已接受任务",
     "noTaskDetails": "暂无任务详情",
     "loading": "加载中...",
@@ -93,7 +93,10 @@
     "justNow": "刚刚",
     "minutesAgo": "{{minutes}}分钟前",
     "hoursAgo": "{{hours}}小时前",
-    "daysAgo": "{{days}}天前"
+    "daysAgo": "{{days}}天前",
+    "minutesLater": "{{minutes}}分钟后",
+    "hoursLater": "{{hours}}小时后",
+    "daysLater": "{{days}}天后"
   },
   "accountSelect": {
     "title": "选择账号",
@@ -104,6 +107,8 @@
   },
   "draft": {
     "selectDraft": "选择草稿：",
+    "recommendedDraft": "推荐草稿",
+    "examples": "示例",
     "taskDraft": "任务草稿",
     "myDraft": "我的草稿",
     "reselect": "重新选择",
@@ -112,6 +117,13 @@
     "noDrafts": "暂无草稿素材",
     "pleaseSelectDraft": "请选择一个草稿",
     "pleaseSelectDraftMaterial": "请先选择一个草稿素材"
+  },
+  "publish": {
+    "useRecommended": "使用推荐草稿发布",
+    "directPublish": "发布完成",
+    "agentPublish": "Agent 完成",
+    "noAccountSelected": "请先选择发布账户",
+    "accountNotMatchTask": "所选账户与任务要求不符"
   },
   "progress": {
     "acceptingTask": "正在接受任务...",
@@ -122,7 +134,12 @@
   },
   "taskStatuses": {
     "pending": "任务待完成",
-    "completed": "任务已完成"
+    "completed": "任务已完成",
+    "taskPending": "任务待完成",
+    "taskCompleted": "任务已完成",
+    "taskStatus": "任务状态"
   },
-  "accountAvatar": "账号头像"
+  "accountAvatar": "账号头像",
+  "notSubmitted": "未提交",
+  "pleaseSelectDraftMaterial": "请选择一个草稿素材"
 }

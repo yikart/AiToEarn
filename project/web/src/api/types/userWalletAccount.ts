@@ -1,35 +1,76 @@
-/*
- * @Author: nevin
- * @Date: 2025-03-01 19:27:35
- * @LastEditTime: 2025-03-01 19:39:02
- * @LastEditors: nevin
- * @Description: 用户钱包账户
- */
+// 旧类型（保留兼容）
+export type WalletType = 'ZFB' | 'WX_PAY'
+
+export interface UserWalletAccountCreateDto {
+  userId: string
+  mail: string // email
+  userName?: string
+  account: string
+  cardNum?: string
+  phone?: string
+  type: WalletType
+}
+
+export interface UserWalletAccount extends UserWalletAccountCreateDto {
+  _id: string
+  createdAt?: string
+  updatedAt?: string
+}
+
+// 新API类型
 export enum WalletAccountType {
-  ZFB = 'ZFB',
-  WX_PAY = 'WX_PAY',
+  Alipay = 'alipay',
+  StripeConnect = 'stripe_connect',
+  WechatPay = 'wechat_pay',
 }
 
-export interface UserWallet {
-  userId: string
-  balance: number
-  income: number
+export interface WalletAccountRequest {
+  account?: string
+  email?: string
+  idCard?: string
+  isDefault?: boolean
+  phone?: string
+  stripeConnectedAccountId?: string
+  type: WalletAccountType
+  userName?: string
+  [property: string]: any
 }
 
-export interface UserWalletAccount {
+export interface WalletAccountUpdateRequest {
+  email?: string
+  idCard?: string
+  phone?: string
+  userName?: string
+  [property: string]: any
+}
+
+export interface WalletAccount {
   id: string
-  account: string // 账户号
   userId: string
-  userName: string // 真实姓名
-  cardNum: string // 身份证号
-  phone: string // 绑定的手机号
   type: WalletAccountType
+  account: string
+  userName?: string
+  phone?: string
+  email?: string
+  idCard?: string
+  stripeConnectedAccountId?: string
+  isDefault: boolean
+  isVerified: boolean
+  createdAt: string
+  updatedAt: string
 }
 
-export interface CreateUserWalletAccountParams {
-  account: string // 账户号
-  userName: string // 真实姓名
-  cardNum: string // 身份证号
-  phone: string // 绑定的手机号
-  type: WalletAccountType
+export interface WalletAccountListRequest {
+  page?: number
+  pageSize?: number
+  type?: WalletAccountType
+  [property: string]: any
+}
+
+export interface WalletAccountListResponse {
+  page: number
+  pageSize: number
+  totalPages: number
+  total: number
+  list: WalletAccount[]
 }

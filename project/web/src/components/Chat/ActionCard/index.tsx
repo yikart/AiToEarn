@@ -77,6 +77,16 @@ export function ActionCard({ action, className }: IActionCardProps) {
   // 根据 action 类型获取配置
   const getActionConfig = (): IActionConfig => {
     switch (action.type) {
+      case 'errorOnly':
+        return {
+          icon: <AlertCircle className="w-5 h-5" />,
+          title: action.title || t('action.error' as any) || '生成失败',
+          description: action.description || t('action.errorDesc' as any) || '生成失败，请稍后重试。',
+          buttonText: '',
+          bgClass: 'bg-gradient-to-br from-rose-50 to-pink-50 dark:from-rose-950/30 dark:to-pink-950/30',
+          borderClass: 'border-rose-200 dark:border-rose-800',
+          iconClass: 'text-rose-600 dark:text-rose-400 bg-rose-100 dark:bg-rose-900/50',
+        }
       case 'createChannel':
         return {
           icon: <Link2 className="w-5 h-5" />,
@@ -198,15 +208,17 @@ export function ActionCard({ action, className }: IActionCardProps) {
         {config.description}
       </p>
 
-      {/* 操作按钮 */}
-      <Button
-        onClick={handleClick}
-        className="w-full group"
-        variant="default"
-      >
-        {config.buttonText}
-        <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
-      </Button>
+      {/* 操作按钮：errorOnly 不显示按钮 */}
+      {action.type !== 'errorOnly' && (
+        <Button
+          onClick={handleClick}
+          className="w-full group"
+          variant="default"
+        >
+          {config.buttonText}
+          <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+        </Button>
+      )}
 
       {/* 添加账号弹窗 - 仅用于 createChannel */}
       {action.type === 'createChannel' && (

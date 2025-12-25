@@ -282,5 +282,23 @@
     "label": "Source",
     "web": "Web",
     "app": "App"
+  },
+  "channelManager": {
+    "myChannels": "My Channels",
+    "title": "Channel Manager",
+    "description": "Manage your channels and space groups",
+    "tabs": {
+      "channels": "Channels",
+      "spaces": "Spaces"
+    },
+    "searchPlaceholder": "Search channels or spaces...",
+    "createSpace": "Create Space",
+    "createSpaceNamePlaceholder": "Enter space name",
+    "createSpaceSuccess": "Space created successfully",
+    "createSpaceFailed": "Failed to create space",
+    "deleteSpaceConfirm": "Confirm Delete Space",
+    "deleteSpaceSuccess": "Space deleted successfully",
+    "deleteSpaceFailed": "Failed to delete space",
+    "noData": "No data available"
   }
 }

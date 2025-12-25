@@ -7,5 +7,4 @@ export * from './account'
 export * from './agent'
 // 浏览器插件模块
 export * from './plugin'
-export * from './system'
 export * from './user'

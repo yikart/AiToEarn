@@ -22,6 +22,9 @@ export const initialState: IAgentState = {
   // 消息状态
   messages: [],
 
+  // 调试回放模式（用于本地调试回放文件）
+  debugReplayActive: false,
+
   // 消费状态
   currentCost: 0,
 

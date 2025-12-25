@@ -3,6 +3,8 @@ import { getUserInfoApi } from '@/api/apiReq'
 import { getCreditsBalanceApi } from '@/api/credits'
 import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
 import { createPersistStore } from '@/utils/createPersistStore'
+import lodash from "lodash";
+import { useAccountStore } from '.'
 
 export interface UserInfo {
   createTime: string
@@ -66,9 +68,13 @@ const state: IUserStore = {
   creditsLoading: false,
 }
 
+const getState = (): IUserStore => {
+  return lodash.cloneDeep(state);
+}
+
 export const useUserStore = createPersistStore(
   {
-    ...state,
+    ...getState(),
   },
   (set, _get) => {
     const methods = {
@@ -127,7 +133,8 @@ export const useUserStore = createPersistStore(
 
       // 清除登录状态
       clearLoginStatus: () => {
-        set({ token: undefined, userInfo: undefined, creditsBalance: 0 })
+        set({ ...getState() });
+        useAccountStore.getState().clear();
       },
 
       // 登出

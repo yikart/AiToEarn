@@ -18,6 +18,8 @@ import PublishDialog from '@/components/PublishDialog'
 import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
+import { confirm } from '@/lib/confirm'
+import { useCalendarTiming } from './components/CalendarTiming/useCalendarTiming'
 
 interface AccountPageCoreProps {
   searchParams?: {
@@ -56,6 +58,7 @@ export default function AccountPageCore({
   const [targetSpaceId, setTargetSpaceId] = useState<string | undefined>()
 
   const { t } = useTransClient('account')
+  const { t: tCommon } = useTransClient('common')
   const userStore = useUserStore()
 
   // 移动端下载提示弹窗开关
@@ -726,8 +729,18 @@ export default function AccountPageCore({
             )
 
             if (!hasAccounts) {
-              // 没有可用账户时的逻辑可以保留原来的
-              setPublishDialogOpen(true)
+              // 使用 confirm 弹窗提示用户先添加账号，点击“去添加”打开添加账号弹窗
+              confirm({
+                title: t('noAccountWarning.title'),
+                content: t('noAccountWarning.content'),
+                okText: t('noAccountWarning.addAccount'),
+                cancelText: tCommon('actions.cancel'),
+                okType: 'default',
+                onOk: async () => {
+                  // 打开添加账号弹窗
+                  setAddAccountModalOpen(true)
+                },
+              })
             } else {
               setPublishDialogOpen(true)
             }
@@ -844,6 +857,7 @@ export default function AccountPageCore({
               setPublishDialogOpen(false)
               setAiGeneratedData(null)
               setDefaultAccountId(undefined)
+              useCalendarTiming.getState().getPubRecord()
             }}
           />
         )}

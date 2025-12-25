@@ -3,6 +3,7 @@
  * 使用职责链模式处理不同类型的 SSE 消息
  */
 
+import { directTrans, useTransClient } from '@/app/i18n/client'
 import type { ISSEMessage, IWorkflowStep, IMessageStep } from '../agent.types'
 import type { IAgentRefs } from '../utils/refs'
 import type { WorkflowUtils } from '../utils/workflow'
@@ -141,7 +142,18 @@ export const textDeltaHandler: ISSEHandler = {
     // 更新消息列表中的 assistant 消息
     ctx.set((state: any) => ({
       messages: state.messages.map((m: any) => {
-        if (m.id === ctx.refs.currentAssistantMessageId.value) {
+        // Determine target assistant message id:
+        // prefer refs.currentAssistantMessageId.value, otherwise fall back to last assistant message in state
+        const targetAssistantId =
+          ctx.refs.currentAssistantMessageId.value ||
+          (function findLastAssistantId() {
+            const msgs = state.messages || []
+            for (let i = msgs.length - 1; i >= 0; i--) {
+              if (msgs[i].role === 'assistant') return msgs[i].id
+            }
+            return ''
+          })()
+        if (m.id === targetAssistantId) {
           const steps = m.steps || []
 
           let updatedSteps = [...steps]
@@ -271,9 +283,9 @@ export const errorHandler: ISSEHandler = {
       
       if (actionContext) {
         // 使用国际化文本
-        const title = actionContext.t('error.insufficientCredits.title') || 'Agent 额度不足'
-        const content = actionContext.t('error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
-        const okText = actionContext.t('error.insufficientCredits.okText') || '确定'
+        const title = directTrans('chat', 'error.insufficientCredits.title') || 'Agent 额度不足'
+        const content = directTrans('chat', 'error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
+        const okText = directTrans('chat', 'error.insufficientCredits.okText') || '确定'
         
         confirm({
           title,
@@ -290,11 +302,24 @@ export const errorHandler: ISSEHandler = {
         window.location.href = `/${lng}/pricing`
       }
     } else {
-      // 其他错误，正常显示错误消息
+      // 其他错误：创建一个 assistant 消息，显示为错误卡片（不显示文本）
       if (errorMessage) {
-        const errorMsg = `❌ : ${errorMessage}`
+        const assistantMessage = {
+          id: `assistant-error-${Date.now()}`,
+          role: 'assistant',
+          content: '',
+          status: 'done',
+          createdAt: Date.now(),
+          actions: [
+            {
+              type: 'errorOnly',
+              title: '生成失败',
+              description: errorMessage,
+            },
+          ],
+        }
         ctx.set((state: any) => ({
-          markdownMessages: [...state.markdownMessages, errorMsg],
+          messages: [...state.messages, assistantMessage],
         }))
       }
     }

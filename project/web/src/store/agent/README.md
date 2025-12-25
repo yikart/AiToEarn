@@ -68,6 +68,19 @@ SSEHandlerRegistry.register({
 - `text` - 文本消息
 - `error` - 错误消息
 
+> **注意**：以前示例中曾使用 `actionContext.t` 在处理器/handler 内部进行国际化，这种写法可能会引入上下文依赖或在 store handler 中不可用。**请不要使用 `actionContext.t`**。在 store 的 handler 中应使用同步翻译函数 `directTrans`（定义在 `web/src/app/i18n/client.ts`，约第 89-99 行），示例如下：
+
+```typescript
+import { directTrans } from '@/app/i18n/client'
+
+// 在 handler 中直接调用同步翻译
+const title = directTrans('chat', 'error.insufficientCredits.title') || 'Agent 额度不足'
+const content = directTrans('chat', 'error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
+const okText = directTrans('chat', 'error.insufficientCredits.okText') || '确定'
+
+// 之后可在 UI 确认对话或跳转中使用这些字符串
+```
+
 #### Action 处理器 (action.handlers.ts)
 
 使用策略模式处理任务结果：

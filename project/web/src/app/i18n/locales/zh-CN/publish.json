@@ -316,8 +316,12 @@
       "default": "发布即表示您同意 TikTok 的音乐使用确认。",
       "organic": "发布即表示您同意 TikTok 的音乐使用确认。",
       "branded": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
-      "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。"
+      "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
+      "processNote": "提示：发布后内容可能需要几分钟处理，才会显示在您的个人主页上。"
     }
+  },
+  "messages": {
+    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 TikTok 个人主页上。"
   },
   "previewvideo": "预览视频",
   "record": {

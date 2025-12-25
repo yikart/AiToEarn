@@ -12,7 +12,7 @@
   "actions": "Actions",
   "applyWithdraw": "Apply Withdrawal",
   "withdrawId": "Withdrawal ID",
-  "status": "Status",
+  "statusLabel": "Status",
   "updateTime": "Update Time",
   "confirmWithdraw": "Confirm Withdrawal Application",
   "cancel": "Cancel",
@@ -26,6 +26,10 @@
     "task_back": "Task Refund",
     "reward_back": "Reward Refund",
     "task_withdraw": "Task Withdrawal"
+  },
+  "status": {
+    "pending": "Pending",
+    "withdrawn": "Withdrawn"
   },
   "withdrawStatus": {
     "wait": "Waiting",

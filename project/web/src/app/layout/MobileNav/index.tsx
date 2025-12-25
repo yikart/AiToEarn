@@ -47,6 +47,7 @@ import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { openLoginModal } from '@/store/loginModal'
 import { centsToUsd } from '@/api/credits'
 import { getOssUrl } from '@/utils/oss'
+import { CONTACT } from '@/constant'
 
 // GitHub 配置
 const GITHUB_REPO = 'yikart/AiToEarn'
@@ -353,9 +354,9 @@ function MobileBottomSection({
       <div className="flex items-center justify-center gap-4 border-t border-border py-3 mt-2">
         {/* 邮箱 - 联系我们 */}
         <a
-          href="mailto:agent@aiearn.ai"
+          href={`mailto:${CONTACT}`}
           className="flex h-10 w-10 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted transition-colors"
-          title={`${t('contactUs')}: agent@aiearn.ai`}
+          title={`${t('contactUs')}: ${CONTACT}`}
         >
           <Mail size={20} />
         </a>

@@ -4,6 +4,7 @@
 import { fetchEventSource } from '@microsoft/fetch-event-source'
 import http from '@/utils/request'
 import { useUserStore } from '@/store/user'
+import { useAgentStore } from '@/store/agent'
 
 // 任务状态枚举
 export enum TaskStatus {
@@ -47,6 +48,8 @@ export interface TaskDetail {
   createdAt: string
   updatedAt: string
   messages?: TaskMessage[]
+  rating?: number | null
+  ratingComment?: string | null
 }
 
 // 任务消息类型
@@ -71,6 +74,10 @@ export interface TaskListItem {
   updatedAt: string
   /** 任务状态（后端英文原始状态字符串，直接展示） */
   status?: string
+  /** 任务评分（1-5） */
+  rating?: number | null
+  /** 任务评价文本 */
+  ratingComment?: string | null
 }
 
 // 任务列表响应
@@ -198,6 +205,68 @@ export const agentApi = {
     }
 
     console.log('[SSE] Starting fetchEventSource...')
+
+    // Debug replay interception: if debugReplayActive is enabled in the store,
+    // replay events from a local .txt file instead of opening a network SSE.
+    try {
+      const debugActive = useAgentStore.getState().debugReplayActive
+      if (debugActive) {
+        console.log('[SSE] Debug replay active - replaying from public .txt')
+        let abortController = { aborted: false }
+        let isAborted = false
+        const abort = () => {
+          isAborted = true
+          abortController.aborted = true
+        }
+
+        (async () => {
+          // try common paths
+          const candidates = ['/en/agentTasks_api.txt']
+          let raw = ''
+          for (const p of candidates) {
+            try {
+              const resp = await fetch(p)
+              if (!resp.ok) continue
+              raw = await resp.text()
+              break
+            } catch (e) {
+              // continue
+            }
+          }
+          if (!raw) {
+            console.warn('[SSE] Debug replay: no local file found to replay')
+            onDone?.()
+            return
+          }
+
+          const blocks = raw.split(/\r?\n\r?\n+/).map((b) => b.trim()).filter(Boolean)
+          for (let i = 0; i < blocks.length; i++) {
+            if (isAborted) break
+            const block = blocks[i]
+            const dataLine = block.split(/\r?\n/).find((l) => l.startsWith('data:'))
+            if (!dataLine) continue
+            const jsonPart = dataLine.replace(/^data:\s*/, '')
+            try {
+              const data = JSON.parse(jsonPart)
+              // call callback
+              onMessage(data as any)
+            } catch (e) {
+              console.warn('[SSE] Debug replay: failed to parse block', e)
+            }
+            // small delay between events to simulate streaming
+            await new Promise((r) => setTimeout(r, 40))
+          }
+
+          if (!isAborted) {
+            onDone?.()
+          }
+        })()
+
+        return abort
+      }
+    } catch (e) {
+      console.warn('[SSE] Debug replay check failed', e)
+    }
 
     try {
       // 获取语言设置
@@ -356,6 +425,25 @@ export const agentApi = {
   async getTaskMessages(taskId: string, lastMessageId?: string) {
     const params = lastMessageId ? { lastMessageId } : undefined
     const res = await http.get<TaskMessagesVo>(`agent/tasks/${taskId}/messages`, params)
+    return res
+  },
+
+  /**
+   * 获取任务评分
+   * @param taskId 任务ID
+   */
+  async getTaskRating(taskId: string) {
+    const res = await http.get<{ data: { rating?: number | null; comment?: string | null } }>(`agent/tasks/${taskId}/rating`)
+    return res
+  },
+
+  /**
+   * 提交或更新任务评分
+   * @param taskId 任务ID
+   * @param payload { rating: number, comment?: string }
+   */
+  async submitTaskRating(taskId: string, payload: { rating: number; comment?: string }) {
+    const res = await http.post(`agent/tasks/${taskId}/rating`, payload)
     return res
   },
 

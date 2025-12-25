@@ -30,6 +30,8 @@
       "requiresAction": "Action Required",
       "failed": "Failed"
     }
+    ,
+    "rate": "Rate"
   },
   "home": {
     "title": "How can I help you?",
@@ -48,6 +50,19 @@
     "title": "Task History",
     "empty": "No task records",
     "loadMore": "Load More",
+    "loading": "Loading..."
+  },
+  "rating": {
+    "title": "Rating & Review",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "requireComment": "Please provide a comment for low ratings",
+    "saveSuccess": "Saved successfully",
+    "saveFailed": "Save failed",
+    "noRating": "Not rated",
+    "commentLabel": "Review (optional)",
+    "commentPlaceholder": "Write your review...",
+    "commentRequiredIfLow": "A reason is required for ratings below 3",
     "loading": "Loading..."
   },
   "detail": {

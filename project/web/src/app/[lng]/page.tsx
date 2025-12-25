@@ -5,10 +5,12 @@
 'use client'
 
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { useSearchParams, useRouter, useParams } from 'next/navigation'
 import { ArrowUp } from 'lucide-react'
 import { HomeChat } from '@/components/Home/HomeChat'
 import { TaskPreview } from '@/components/Home/TaskPreview'
 import PromptGallery from '@/components/Home/PromptGallery'
+import AgentFeatures from '@/components/Home/AgentFeatures'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
@@ -66,6 +68,31 @@ export default function Home() {
     toast.success('Prompt applied!')
   }, [])
 
+  // 从 URL query 读取 agentExternalPrompt 和 agentTaskId（由任务页通过 query 传参）
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [agentTaskId, setAgentTaskId] = useState<string>('')
+  const params = useParams()
+  useEffect(() => {
+    try {
+      const prompt = searchParams.get('agentExternalPrompt')
+      const id = searchParams.get('agentTaskId')
+      if (prompt) {
+        setAppliedPrompt(prompt)
+      }
+      if (id) {
+        setAgentTaskId(id)
+      }
+      // 清理 URL 上的 query，避免重复
+      if (prompt || id) {
+        router.replace(`/${params.lng}`)
+      }
+    }
+    catch (e) {
+      // ignore
+    }
+  }, [searchParams, router, params.lng])
+
   // 清除外部提示词
   const handleClearExternalPrompt = useCallback(() => {
     setAppliedPrompt('')
@@ -75,9 +102,10 @@ export default function Home() {
     <div className="bg-background">
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[60vh] flex items-center justify-center px-4 pt-16 pb-8 md:pt-24 md:pb-12">
-        <HomeChat 
+        <HomeChat
           externalPrompt={appliedPrompt}
           onClearExternalPrompt={handleClearExternalPrompt}
+          agentTaskId={agentTaskId}
         />
       </section>
 
@@ -88,6 +116,9 @@ export default function Home() {
       <section>
         <PromptGallery onApplyPrompt={handleApplyPrompt} />
       </section>
+
+      {/* AI Agent 功能亮点（独立展示） */}
+      <AgentFeatures />
 
       {/* 回到顶部按钮 - 右侧 */}
       <BackToTop position="right" />

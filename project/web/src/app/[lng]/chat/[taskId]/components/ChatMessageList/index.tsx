@@ -72,6 +72,7 @@ export function ChatMessageList({
               steps={message.steps}
               workflowSteps={isLastAssistant && isGenerating ? workflowSteps : undefined}
               actions={message.actions}
+              isGenerating={isLastAssistant && isGenerating}
             />
           )
         })}
@@ -83,6 +84,7 @@ export function ChatMessageList({
             content=""
             status="streaming"
             workflowSteps={workflowSteps}
+            isGenerating={true}
           />
         )}
 

@@ -10,17 +10,13 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
-import { getChatModels } from '@/api/ai'
 import { apiGetEngagementPosts } from '@/api/engagement'
 import {
   apiCreateMaterial,
   apiCreateMaterialGroup,
-  apiCreateMaterialTask,
   apiDeleteMaterialGroup,
   apiGetMaterialGroupList,
   apiGetMaterialList,
-  apiPreviewMaterialTask,
-  apiStartMaterialTask,
   apiUpdateMaterial,
   apiUpdateMaterialGroupInfo,
 } from '@/api/material'
@@ -76,27 +72,10 @@ export default function CgMaterialPageCore() {
   // 单个素材位置
   const [singleLocation, setSingleLocation] = useState<[number, number]>([0, 0])
 
-  // 创建/批量表单
+  // 创建表单
   const [form] = Form.useForm()
-  const [batchForm] = Form.useForm()
   const [createGroupForm] = Form.useForm()
   const [creating, setCreating] = useState(false)
-  const [batchModal, setBatchModal] = useState(false)
-  const [batchTaskLoading, setBatchTaskLoading] = useState(false)
-  const [chatModels, setChatModels] = useState<any[]>([])
-  const [chatModelsLoading, setChatModelsLoading] = useState(false)
-
-  // 批量生成草稿相关
-  const [batchMediaGroups, setBatchMediaGroups] = useState<string[]>([])
-  const [batchCoverGroup, setBatchCoverGroup] = useState<string>('')
-  const [batchLocation, setBatchLocation] = useState<[number, number]>([0, 0])
-  // 预览相关
-  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null)
-  const [lastTaskParams, setLastTaskParams] = useState<any>(null)
-  const [previewModal, setPreviewModal] = useState(false)
-  const [previewLoading, setPreviewLoading] = useState(false)
-  const [previewList, setPreviewList] = useState<any[]>([])
-  const [previewData, setPreviewData] = useState<any>(null)
 
   const [detailModal, setDetailModal] = useState(false)
   const [detailData, setDetailData] = useState<any>(null)
@@ -487,128 +466,6 @@ export default function CgMaterialPageCore() {
     }
   }
 
-  // 打开批量生成草稿弹窗时，拉取媒体组和定位
-  async function openBatchModal() {
-    setBatchModal(true)
-    // 拉取媒体组
-    const res = await getMediaGroupList(1, 50)
-    setMediaGroups(((res?.data as any)?.list as any[]) || [])
-    // 拉取聊天大模型
-    try {
-      setChatModelsLoading(true)
-      const chatRes = await getChatModels()
-      setChatModels(((chatRes?.data as any[]) || []))
-    }
-    catch (e) {
-      // 忽略加载失败，不阻塞弹窗
-      setChatModels([])
-    }
-    finally {
-      setChatModelsLoading(false)
-    }
-    // 获取地理位置
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setBatchLocation([pos.coords.longitude, pos.coords.latitude])
-          batchForm.setFieldsValue({ location: [pos.coords.longitude, pos.coords.latitude] })
-        },
-        () => {
-          setBatchLocation([0, 0])
-          batchForm.setFieldsValue({ location: [0, 0] })
-        },
-      )
-    }
-    else {
-      setBatchLocation([0, 0])
-      batchForm.setFieldsValue({ location: [0, 0] })
-    }
-  }
-
-  // 生成任务参数
-  function getBatchTaskParams() {
-    const values = batchForm.getFieldsValue()
-    return {
-      groupId: selectedGroup?._id,
-      num: values.num,
-      aiModelTag: values.model,
-      prompt: values.prompt,
-      title: values.title,
-      desc: values.desc,
-      location: batchLocation,
-      publishTime: new Date().toISOString(),
-      mediaGroups: batchMediaGroups,
-      coverGroup: batchCoverGroup,
-      option: {},
-    }
-  }
-
-  // 预览批量生成草稿
-  async function handlePreviewMaterial() {
-    const values = await batchForm.validateFields()
-    const params: any = getBatchTaskParams()
-    // 判断参数是否变化
-    if (!lastTaskParams || JSON.stringify(params) !== JSON.stringify(lastTaskParams)) {
-      setCurrentTaskId(null)
-      setLastTaskParams(params)
-    }
-    setPreviewLoading(true)
-    let taskId = currentTaskId
-    try {
-      if (!taskId) {
-        const res = await apiCreateMaterialTask(params)
-        taskId = res?.data?._id || null
-        setCurrentTaskId(taskId ?? null)
-      }
-      if (taskId) {
-        const res = await apiPreviewMaterialTask(taskId)
-        // @ts-ignore
-        setPreviewData(res?.data?.data || null)
-        setPreviewModal(true)
-      }
-      else {
-        toast.error(t('batchGenerate.previewFailed'))
-      }
-    }
-    catch (e) {
-      toast.error(t('batchGenerate.previewFailed'))
-    }
-    finally {
-      setPreviewLoading(false)
-    }
-  }
-
-  // 批量生成草稿
-  async function handleBatchMaterial() {
-    const values = await batchForm.validateFields()
-    const params: any = getBatchTaskParams()
-    setBatchTaskLoading(true)
-    try {
-      let taskId = currentTaskId
-      // 如果参数变化或没有taskId，重新创建
-      if (!lastTaskParams || JSON.stringify(params) !== JSON.stringify(lastTaskParams)) {
-        const res = await apiCreateMaterialTask(params)
-        taskId = res?.data?._id || null
-        setCurrentTaskId(taskId ?? null)
-        setLastTaskParams(params)
-      }
-      if (taskId) {
-        await apiStartMaterialTask(taskId)
-        toast.success(t('batchGenerate.taskStarted'))
-        setBatchModal(false)
-        batchForm.resetFields()
-        fetchMaterialList(selectedGroup._id)
-        setCurrentTaskId(null)
-        setLastTaskParams(null)
-      }
-    }
-    catch (e) {
-      toast.error(t('batchGenerate.generateFailed'))
-    }
-    finally {
-      setBatchTaskLoading(false)
-    }
-  }
 
   // 处理编辑组
   async function handleEditGroup() {
@@ -1192,7 +1049,7 @@ export default function CgMaterialPageCore() {
                                   content: t('sidebar.deleteConfirmDesc', { name: item.name || item.title }),
                                   okText: t('sidebar.delete'),
                                   okType: 'destructive',
-                                  cancelText: t('batchGenerate.cancel'),
+                                  cancelText: t('actions.cancel' as any),
                                   onOk: async () => {
                                     try {
                                       await apiDeleteMaterialGroup(item._id)
@@ -1233,14 +1090,6 @@ export default function CgMaterialPageCore() {
                 icon={<PlusOutlined />}
               >
                 {t('content.createMaterial')}
-              </Button>
-              <Button
-                className={styles.actionButton}
-                onClick={openBatchModal}
-                disabled={!selectedGroup}
-                icon={<FileTextOutlined />}
-              >
-                {t('content.batchGenerate')}
               </Button>
             </div>
           </div>
@@ -1424,7 +1273,7 @@ export default function CgMaterialPageCore() {
                 setSelectedPublishItems([])
               }}
             >
-              {t('batchGenerate.cancel')}
+              {t('actions.cancel' as any)}
             </Button>
           ),
           (
@@ -2236,109 +2085,6 @@ export default function CgMaterialPageCore() {
             />
           </Form.Item>
         </Form>
-      </Modal>
-      {/* 批量生成草稿弹窗 */}
-      <Modal
-        open={batchModal}
-        title={t('batchGenerate.title')}
-        onOk={handleBatchMaterial}
-        onCancel={() => setBatchModal(false)}
-        confirmLoading={batchTaskLoading}
-        footer={[
-          <Button key="preview" onClick={handlePreviewMaterial} loading={previewLoading} type="default">{t('batchGenerate.preview')}</Button>,
-          <Button key="submit" type="primary" onClick={handleBatchMaterial} loading={batchTaskLoading}>{t('batchGenerate.startTask')}</Button>,
-          <Button key="cancel" onClick={() => setBatchModal(false)}>{t('batchGenerate.cancel')}</Button>,
-        ]}
-      >
-        <Form form={batchForm} layout="vertical">
-          <Form.Item label={t('batchGenerate.model')} name="model" rules={[{ required: true, message: t('batchGenerate.modelPlaceholder') }]}>
-            <Select
-              style={{ width: 200 }}
-              loading={chatModelsLoading}
-              options={chatModels.map((m: any) => ({ label: m?.description || m?.name, value: m?.name }))}
-              placeholder={t('batchGenerate.modelPlaceholder')}
-            />
-          </Form.Item>
-          <Form.Item label={t('batchGenerate.prompt')} name="prompt">
-            <Input placeholder={t('batchGenerate.promptPlaceholder')} />
-          </Form.Item>
-          <Form.Item label={t('fields.title' as any)} name="title">
-            <Input placeholder={t('batchGenerate.titlePlaceholder')} />
-          </Form.Item>
-          <Form.Item label={t('fields.description' as any)} name="desc">
-            <TextArea rows={3} placeholder={t('batchGenerate.descPlaceholder')} />
-          </Form.Item>
-          <Form.Item label={t('batchGenerate.coverGroup')} name="coverGroup" rules={[{ required: true, message: t('batchGenerate.coverGroupPlaceholder') }]}>
-            <Select
-              options={mediaGroups.map((g: any) => ({ label: g.title, value: g._id }))}
-              style={{ width: 200 }}
-              onChange={v => setBatchCoverGroup(v)}
-            />
-          </Form.Item>
-          <Form.Item label={t('batchGenerate.mediaGroups')} name="mediaGroups" rules={[{ required: true, message: t('batchGenerate.mediaGroupsPlaceholder') }]}>
-            <Select
-              mode="multiple"
-              options={mediaGroups.map((g: any) => ({ label: g.title, value: g._id }))}
-              style={{ width: 300 }}
-              onChange={v => setBatchMediaGroups(v)}
-            />
-          </Form.Item>
-          <Form.Item label={t('batchGenerate.num')} name="num" initialValue={4} rules={[{ required: true }]}>
-            <InputNumber min={1} max={20} />
-          </Form.Item>
-          {/* <Form.Item label="地理位置" name="location">
-            <Input value={batchLocation.join(',')} disabled />
-          </Form.Item> */}
-        </Form>
-      </Modal>
-      {/* 预览弹窗 */}
-      <Modal
-        open={previewModal}
-        title={t('previewModal.title' as any)}
-        onCancel={() => setPreviewModal(false)}
-        footer={null}
-        width={700}
-      >
-        <Spin spinning={previewLoading}>
-          {!previewData
-            ? (
-                <div style={{ textAlign: 'center', color: '#888' }}>{t('batchGenerate.noPreview')}</div>
-              )
-            : (
-                <Card title={previewData.title} bordered>
-                  <div style={{ marginBottom: 8 }}>
-                    <b>{t('detail.descLabel' as any)}</b>
-                    {previewData.desc}
-                  </div>
-                  <div style={{ marginBottom: 8 }}>
-                    <b>{t('detail.typeLabel' as any)}</b>
-                    {getMaterialTypeLabel(previewData.type)}
-                  </div>
-                  <div style={{ marginBottom: 8 }}>
-                    <b>{t('detail.coverLabel' as any)}</b>
-                    <div style={{ marginTop: 4 }}>
-                      {previewData.coverUrl && (
-                        <Image
-                          src={getOssUrl(previewData.coverUrl)}
-                          alt="cover"
-                          width={320}
-                          height={120}
-                          style={{ width: '100%', maxWidth: 320, height: 120, objectFit: 'cover', borderRadius: 8, display: 'block' }}
-                        />
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ marginBottom: 8 }}>
-                    <b>{t('fields.location' as any)}</b>
-                    {Array.isArray(previewData.location) ? previewData.location.join(', ') : ''}
-                  </div>
-                  <div>
-                    <b>{t('detail.materialsLabel' as any)}</b>
-                    {renderMediaContent(previewData.mediaList)}
-                  </div>
-                </Card>
-              )}
-        </Spin>
       </Modal>
       {/* 详情弹窗 */}
       <Modal

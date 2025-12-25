@@ -6,9 +6,12 @@
 
 import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ArrowLeft, History, RefreshCw } from 'lucide-react'
+import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
+import TaskHistoryList from '@/components/Chat/TaskHistoryList'
+import RatingModal from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
+import { Pagination } from '@/components/ui/pagination'
 import { agentApi, type TaskListItem } from '@/api/agent'
 import { useTransClient } from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
@@ -24,6 +27,7 @@ export default function TasksHistoryPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [page, setPage] = useState(1)
   const [total, setTotal] = useState(0)
+  const [ratingModalFor, setRatingModalFor] = useState<string | null>(null)
 
   // 每页 16 条
   const pageSize = 16
@@ -44,7 +48,7 @@ export default function TasksHistoryPage() {
         }
       } catch (error) {
         console.error('Load task list failed:', error)
-        toast.error(t('message.error' as any))
+        toast.error(t('message.error'))
       } finally {
         setIsLoading(false)
       }
@@ -73,14 +77,14 @@ export default function TasksHistoryPage() {
     try {
       const result = await agentApi.deleteTask(id)
       if (result && result.code === 0) {
-        toast.success(t('task.deleteSuccess' as any))
+        toast.success(t('task.deleteSuccess'))
         // 删除成功后，重新加载当前页，避免页码错乱
         loadTasks(page)
       } else {
-        toast.error(result?.message || t('task.deleteFailed' as any))
+        toast.error(result?.message || t('task.deleteFailed'))
       }
     } catch (error) {
-      toast.error(t('task.deleteFailed' as any))
+      toast.error(t('task.deleteFailed'))
     }
   }
 
@@ -105,7 +109,7 @@ export default function TasksHistoryPage() {
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-primary" />
             <h1 className="text-lg font-semibold text-foreground">
-              {t('history.title' as any)}
+              {t('history.title')}
             </h1>
           </div>
           {total > 0 && (
@@ -137,52 +141,49 @@ export default function TasksHistoryPage() {
             // 空状态
             <div className="flex flex-col items-center justify-center py-16">
               <History className="w-16 h-16 text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground mb-4">{t('history.empty' as any)}</p>
+              <p className="text-muted-foreground mb-4">{t('history.empty')}</p>
               <Button onClick={handleBack}>
-                {t('home.startChat' as any)}
+                {t('home.startChat')}
               </Button>
             </div>
           ) : (
             // 任务卡片网格 + 分页器
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {tasks.map((task) => (
-                  <TaskCard
-                    key={task.id}
-                    id={task.id}
-                    title={task.title || t('task.newChat' as any)}
-                    status={task.status}
-                    createdAt={task.createdAt}
-                    updatedAt={task.updatedAt}
-                    onDelete={handleDelete}
-                  />
-                ))}
+              <div>
+                <TaskHistoryList
+                  tasks={tasks}
+                  isLoading={isLoading}
+                  onDelete={handleDelete}
+                  onRateClick={(taskId) => setRatingModalFor(taskId)}
+                  linkBasePath={`/${lng}/chat`}
+                />
               </div>
+              <RatingModal
+                taskId={ratingModalFor ?? ''}
+                open={!!ratingModalFor}
+                onClose={() => setRatingModalFor(null)}
+                onSaved={(data) => {
+                  setTasks((prev) => prev.map((t) => (t.id === ratingModalFor ? { ...t, rating: data.rating ?? t.rating, ratingComment: data.comment ?? t.ratingComment } : t)))
+                  setRatingModalFor(null)
+                  toast.success(t('rating.saveSuccess') || 'Saved')
+                }}
+              />
 
-              {/* 分页器 */}
+              {/* 分页器（使用项目内的 Pagination 组件） */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-8">
-                  <span className="text-sm text-muted-foreground">
-                    {page} / {totalPages}
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page <= 1 || isLoading}
-                      onClick={() => handlePageChange(page - 1)}
-                    >
-                      {t('history.prevPage' as any) || 'Prev'}
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={page >= totalPages || isLoading}
-                      onClick={() => handlePageChange(page + 1)}
-                    >
-                      {t('history.nextPage' as any) || 'Next'}
-                    </Button>
-                  </div>
+                <div className="mt-8">
+                  <Pagination
+                    current={page}
+                    pageSize={pageSize}
+                    total={total}
+                    onChange={handlePageChange}
+                    showTotal={(totalCount, [_start, _end]) => (
+                      <span className="text-sm text-muted-foreground">
+                        {page} / {totalPages}
+                      </span>
+                    )}
+                    className="w-full"
+                  />
                 </div>
               )}
             </>

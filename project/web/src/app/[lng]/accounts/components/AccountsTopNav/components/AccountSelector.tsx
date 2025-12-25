@@ -13,9 +13,9 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
+import AccountItem from './AccountItem'
 import AccountSearchBar from './AccountSearchBar'
 import AllChannelsItem from './AllChannelsItem'
-import AccountItem from './AccountItem'
 import SpaceGroupItem from './SpaceGroupItem'
 
 interface AccountSelectorProps {
@@ -29,10 +29,8 @@ interface AccountSelectorProps {
   sortLoading?: string | null
   deleteLoading?: string | null
   onAccountSelect: (account: SocialAccount | undefined) => void
-  onAccountDelete: (account: SocialAccount) => void
   onToggleSpaceCollapse: (spaceId: string) => void
   onGroupSort: (groupId: string, direction: 'up' | 'down') => void
-  onGroupDelete: (group: AccountGroup) => void
   searchText: string
   onSearchChange: (text: string) => void
 }
@@ -48,10 +46,8 @@ const AccountSelector = memo(({
   sortLoading,
   deleteLoading,
   onAccountSelect,
-  onAccountDelete,
   onToggleSpaceCollapse,
   onGroupSort,
-  onGroupDelete,
   searchText,
   onSearchChange,
 }: AccountSelectorProps) => {
@@ -113,37 +109,33 @@ const AccountSelector = memo(({
                   // 多空间: 按空间分组显示,支持折叠
                   sortedGroups.length > 0
                     ? sortedGroups.map((group) => {
-                      const isCollapsed = collapsedSpaces.has(group.id)
-                      const groupAccounts = filteredAccounts.filter(account =>
-                        group.children.some(child => child.id === account.id)
-                      )
-                      const isDefaultGroup = group.isDefault
-                      const currentIndex = sortedGroups.findIndex(g => g.id === group.id)
-                      const canMoveUp = !isDefaultGroup && currentIndex > 0
-                      const canMoveDown = !isDefaultGroup && currentIndex < sortedGroups.length - 1
-                      const canDelete = !isDefaultGroup
+                        const isCollapsed = collapsedSpaces.has(group.id)
+                        const groupAccounts = filteredAccounts.filter(account =>
+                          group.children.some(child => child.id === account.id),
+                        )
+                        const isDefaultGroup = group.isDefault
+                        const currentIndex = sortedGroups.findIndex(g => g.id === group.id)
+                        const canMoveUp = !isDefaultGroup && currentIndex > 0
+                        const canMoveDown = !isDefaultGroup && currentIndex < sortedGroups.length - 1
 
-                      return (
-                        <SpaceGroupItem
-                          key={group.id}
-                          group={group}
-                          accounts={groupAccounts}
-                          isCollapsed={isCollapsed}
-                          isDefaultGroup={isDefaultGroup}
-                          canMoveUp={canMoveUp}
-                          canMoveDown={canMoveDown}
-                          canDelete={canDelete}
-                          activeAccountId={accountActive?.id}
-                          sortLoading={sortLoading}
-                          deleteLoading={deleteLoading}
-                          onToggleCollapse={onToggleSpaceCollapse}
-                          onSelectAccount={onAccountSelect}
-                          onDeleteAccount={onAccountDelete}
-                          onGroupSort={onGroupSort}
-                          onGroupDelete={onGroupDelete}
-                        />
-                      )
-                    })
+                        return (
+                          <SpaceGroupItem
+                            key={group.id}
+                            group={group}
+                            accounts={groupAccounts}
+                            isCollapsed={isCollapsed}
+                            isDefaultGroup={isDefaultGroup}
+                            canMoveUp={canMoveUp}
+                            canMoveDown={canMoveDown}
+                            activeAccountId={accountActive?.id}
+                            sortLoading={sortLoading}
+                            deleteLoading={deleteLoading}
+                            onToggleCollapse={onToggleSpaceCollapse}
+                            onSelectAccount={onAccountSelect}
+                            onGroupSort={onGroupSort}
+                          />
+                        )
+                      })
                     : (
                         <div className="text-center text-muted-foreground text-sm py-8">
                           {accountList.length === 0
@@ -156,18 +148,16 @@ const AccountSelector = memo(({
                   // 单空间: 直接显示所有账号
                   filteredAccounts.length > 0
                     ? filteredAccounts.map((account) => {
-                      const isActive = accountActive?.id === account.id
-                      return (
-                        <AccountItem
-                          key={account.id}
-                          account={account}
-                          isActive={isActive}
-                          onSelect={onAccountSelect}
-                          onDelete={onAccountDelete}
-                          deleteLoading={deleteLoading}
-                        />
-                      )
-                    })
+                        const isActive = accountActive?.id === account.id
+                        return (
+                          <AccountItem
+                            key={account.id}
+                            account={account}
+                            isActive={isActive}
+                            onSelect={onAccountSelect}
+                          />
+                        )
+                      })
                     : (
                         <div className="text-center text-muted-foreground text-sm py-8">
                           {accountList.length === 0
@@ -186,4 +176,3 @@ const AccountSelector = memo(({
 AccountSelector.displayName = 'AccountSelector'
 
 export default AccountSelector
-

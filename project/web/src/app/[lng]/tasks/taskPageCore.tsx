@@ -11,59 +11,54 @@ import type {
 } from '@/api/task'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
-import { CheckOutlined, ClockCircleOutlined, EyeOutlined, PlayCircleOutlined, UploadOutlined } from '@ant-design/icons'
-import { Button, Card, Col, Empty, Input, List, Pagination, Radio, Row, Spin, Steps, Tabs, Tag, Tooltip } from 'antd'
+import { ClockCircleOutlined, EyeOutlined, PlayCircleOutlined } from '@ant-design/icons'
 import { toast } from '@/lib/toast'
 import { Modal } from '@/components/ui/modal'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { Spin } from '@/components/ui/spin'
+import { Empty } from '@/components/ui/empty'
+import { Card } from '@/components/ui/card'
+import { List } from '@/components/ui/list'
+import { Pagination } from '@/components/ui/pagination'
+import { Row, Col } from '@/components/ui/grid'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
 import { apiGetMaterialList } from '@/api/material'
 import { acceptTask, getTaskDetail, submitTask } from '@/api/notification'
-import { apiCreatePublish } from '@/api/plat/publish'
 import {
-  apiAcceptTask,
   apiGetTaskOpportunityList,
   apiGetUserTaskDetail,
   apiGetUserTaskList,
-  apiMarkTaskAsViewed,
-  apiSubmitTask,
+  apiMarkTaskAsViewed
 } from '@/api/task'
-import { getDays, getUtcDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
-import { getAppDownloadConfig, getTasksRequiringApp } from '@/app/config/appDownloadConfig'
+import {
+  apiGetSettleInfoByUserTask,
+  apiGetSettleItemList,
+} from '@/api/task'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import DownloadAppModal from '@/components/common/DownloadAppModal'
-import DraftSelectionModal from '@/components/PublishDialog/compoents/DraftSelectionModal'
+import MediaPreview from '@/components/common/MediaPreview'
 import { useUserStore } from '@/store/user'
-import { generateUUID } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
 import styles from './taskPageCore.module.scss'
-
-const { TabPane } = Tabs
+import PublishDialog from '@/components/PublishDialog'
+import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { openLoginModal } from '@/store/loginModal'
 
 export default function TaskPageCore() {
   const { t } = useTransClient('task' as any)
+  // use only task namespace translator `t` to avoid cross-namespace missing translations
   const token = useUserStore(state => state.token)
   const router = useRouter()
   const params = useParams()
   const lng = params.lng as string
 
-  // Show login prompt if not logged in
-  if (!token) {
-    return (
-      <div className={styles.taskPage}>
-        <div className={styles.header}>
-          <h1>{t('title')}</h1>
-          <p>{t('messages.pleaseLoginFirst')}</p>
-        </div>
-        <div style={{ textAlign: 'center', padding: '60px 0' }}>
-          <Empty description={t('messages.pleaseLoginFirst')} />
-        </div>
-      </div>
-    )
-  }
+  // Do not early return on missing token — render login prompt in JSX to preserve hook order
 
   // State management
   const [activeTab, setActiveTab] = useState('pending') // pending: Pending tasks, accepted: Accepted tasks
@@ -106,28 +101,6 @@ export default function TaskPageCore() {
     url: string
     title?: string
   } | null>(null)
-  const [videoRef, setVideoRef] = useState<HTMLVideoElement | null>(null)
-
-  // Task progress modal state
-  const [taskProgressVisible, setTaskProgressVisible] = useState(false)
-  const [taskProgress, setTaskProgress] = useState({
-    currentStep: 0,
-    steps: [
-      { title: t('acceptingTask' as any), status: 'processing' },
-      { title: t('publishingTask' as any), status: 'wait' },
-      { title: t('submittingTask' as any), status: 'wait' },
-      { title: t('taskCompleted' as any), status: 'wait' },
-    ],
-  })
-
-  // 下载App弹窗状态 - 暂时注释
-  const [downloadAppVisible, setDownloadAppVisible] = useState(false)
-  const [downloadAppConfig, setDownloadAppConfig] = useState({
-    platform: '',
-    appName: '',
-    downloadUrl: '',
-    qrCodeUrl: '' as string | undefined,
-  })
 
   // 账号选择弹窗状态
   const [accountSelectVisible, setAccountSelectVisible] = useState(false)
@@ -143,15 +116,26 @@ export default function TaskPageCore() {
     total: 0,
   })
 
-  // 草稿选择状态
-  const [draftSource, setDraftSource] = useState<'task' | 'own'>('task') // 'task': Task draft, 'own': My draft
-  const [selectedMaterial, setSelectedMaterial] = useState<any>(null) // Selected task material
-  const [draftModalOpen, setDraftModalOpen] = useState(false) // My draft selection modal
+  // 推荐草稿选择状态（已移除：任务提交/发布不再依赖草稿，详情仅作展示）
   const [requiredAccountTypes, setRequiredAccountTypes] = useState<string[]>([])
 
   // Accepted task detail material list state
   const [acceptedTaskMaterialList, setAcceptedTaskMaterialList] = useState<any[]>([])
   const [acceptedTaskMaterialLoading, setAcceptedTaskMaterialLoading] = useState(false)
+  // Accepted task settle items (from /task/settle endpoints)
+  const [acceptedTaskSettleItems, setAcceptedTaskSettleItems] = useState<any[]>([])
+  const [acceptedTaskSettleLoading, setAcceptedTaskSettleLoading] = useState(false)
+  // 任务信息卡片数量，用于控制对齐（只有一个时左对齐）
+  const infoItemsCount = (
+    (taskDetail?.reward && taskDetail.reward > 0 ? 1 : 0) +
+    (taskDetail?.cpmReward && taskDetail.cpmReward > 0 ? 1 : 0) +
+    (taskDetail?.type ? 1 : 0)
+  )
+  // Publish dialog state
+  const [publishDialogOpen, setPublishDialogOpen] = useState(false)
+  const [publishDefaultAccountId, setPublishDefaultAccountId] = useState<string | undefined>(undefined)
+  const [pendingUserTaskIdForPublish, setPendingUserTaskIdForPublish] = useState<string | undefined>(undefined)
+  const [pendingTaskForPublish, setPendingTaskForPublish] = useState<any | null>(null)
 
   // Fetch pending tasks list
   const fetchPendingTasks = async (page: number = 1, pageSize: number = 15) => {
@@ -231,63 +215,6 @@ export default function TaskPageCore() {
     }
   }
 
-  // 接受任务
-  const handleAcceptTask = async (task: any) => {
-    // 暂时简化，直接接受任务
-    await doAcceptTask(task)
-
-    // TODO: 添加平台限制检查
-    // if (!task.accountTypes || task.accountTypes.length === 0) {
-    //   // 没有账号类型限制，直接接取任务
-    //   await doAcceptTask(task);
-    //   return;
-    // }
-
-    // // Check platforms that require App operation
-    // const appRequiredPlatforms = getTasksRequiringApp(task.accountTypes);
-
-    // if (appRequiredPlatforms.length > 0) {
-    //   // 有需要App操作的平台，显示第一个平台的下载提示
-    //   const firstPlatform = appRequiredPlatforms[0];
-    //   const config = getAppDownloadConfig(firstPlatform);
-
-    //   if (config) {
-    //     setDownloadAppConfig({
-    //       platform: config.platform,
-    //       appName: config.appName,
-    //       downloadUrl: config.downloadUrl,
-    //       qrCodeUrl: config.qrCodeUrl
-    //     });
-    //     setDownloadAppVisible(true);
-    //     return;
-    //   }
-    // }
-
-    // // Other task types can be accepted normally
-    // await doAcceptTask(task);
-  }
-
-  // 执行接受任务
-  const doAcceptTask = async (task: TaskOpportunity) => {
-    try {
-      const response = await apiAcceptTask(task.id)
-      if (response && response.code === 0) {
-        toast.success(t('messages.acceptTaskSuccess'))
-        // 刷新任务列表
-        fetchPendingTasks()
-        fetchAcceptedTasks()
-        // 切换到已接受任务标签
-        setActiveTab('accepted')
-      }
-      else {
-        toast.error(t('messages.acceptTaskFailed'))
-      }
-    }
-    catch (error) {
-      toast.error(t('messages.acceptTaskFailed'))
-      console.error('接受任务失败:', error)
-    }
-  }
 
   // 获取平台显示名称
   const getPlatformName = (type: string) => {
@@ -352,15 +279,15 @@ export default function TaskPageCore() {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24))
 
       if (minutes < 60)
-        return `${minutes}分钟后`
+        return t('time.minutesLater' as any, { minutes })
       if (hours < 24)
-        return `${hours}小时后`
+        return t('time.hoursLater' as any, { hours })
       if (days < 7)
-        return `${days}天后`
+        return t('time.daysLater' as any, { days })
     }
 
     // 显示具体日期时间
-    return date.toLocaleString('zh-CN', {
+    return date.toLocaleString(lng === 'zh-CN' ? 'zh-CN' : 'en-US', {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
@@ -372,13 +299,25 @@ export default function TaskPageCore() {
   // Get task status tag
   const getTaskStatusTag = (status: string) => {
     const statusMap: Record<string, { color: string, text: string }> = {
-      pending: { color: 'green', text: t('taskStatus.pending' as any) }, // pending means completed
-      doing: { color: 'orange', text: t('taskStatus.doing' as any) }, // doing means pending
+      pending: { color: 'green', text: t('taskStatus.pending' as any) }, // pending: 已完成
+      doing: { color: 'blue', text: t('taskStatus.doing' as any) }, // doing: 进行中
       accepted: { color: 'blue', text: t('taskStatus.accepted' as any) },
       completed: { color: 'green', text: t('taskStatus.completed' as any) },
       rejected: { color: 'red', text: t('taskStatus.rejected' as any) },
     }
     return statusMap[status] || { color: 'default', text: status }
+  }
+
+  // 将 antd Tag 的 color 转换为 Badge 的样式类
+  const getBadgeClassName = (color?: string) => {
+    const colorMap: Record<string, string> = {
+      orange: 'bg-orange-100 text-orange-800 border-orange-200 hover:bg-orange-100',
+      green: 'bg-green-100 text-green-800 border-green-200 hover:bg-green-100',
+      blue: 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-100',
+      red: 'bg-red-100 text-red-800 border-red-200 hover:bg-red-100',
+      default: 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-100',
+    }
+    return colorMap[color || 'default'] || colorMap.default
   }
 
   // 根据accountId获取账号信息
@@ -396,51 +335,10 @@ export default function TaskPageCore() {
 
   // 处理任务操作（接受任务）
   const handleTaskAction = (task: any) => {
-    // 首先检查任务支持的所有平台是否都需要App操作
-    const taskPlatforms = task.accountTypes || []
-    const appRequiredPlatforms = getTasksRequiringApp(taskPlatforms)
-
-    // 如果所有平台都需要App操作，直接显示下载App提示
-    if (appRequiredPlatforms.length > 0 && appRequiredPlatforms.length === taskPlatforms.length) {
-      const firstPlatform = appRequiredPlatforms[0]
-      const config = getAppDownloadConfig(firstPlatform)
-
-      if (config) {
-        setDownloadAppConfig({
-          platform: config.platform,
-          appName: config.appName,
-          downloadUrl: config.downloadUrl,
-          qrCodeUrl: config.qrCodeUrl,
-        })
-        setDownloadAppVisible(true)
-        return
-      }
-    }
-
     // 如果任务指定了账号，使用指定账号的逻辑
     if (task.accountId) {
       const publishAccount = getAccountById(task.accountId)
       if (publishAccount) {
-        // 检查发布账号的平台是否需要App操作
-        const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type])
-
-        if (appRequiredPlatforms.length > 0) {
-          // 有需要App操作的平台，显示第一个平台的下载提示
-          const firstPlatform = appRequiredPlatforms[0]
-          const config = getAppDownloadConfig(firstPlatform)
-
-          if (config) {
-            setDownloadAppConfig({
-              platform: config.platform,
-              appName: config.appName,
-              downloadUrl: config.downloadUrl,
-              qrCodeUrl: config.qrCodeUrl,
-            })
-            setDownloadAppVisible(true)
-            return
-          }
-        }
-
         // 直接使用指定账号接受任务
         handleAcceptTaskFromDetail(task, publishAccount)
         return
@@ -454,7 +352,6 @@ export default function TaskPageCore() {
       // 没有符合条件的账号，跳转到账户界面并弹出授权界面
       setRequiredAccountTypes(task.accountTypes || [])
       setTaskDetailModalVisible(false) // 关闭任务详情弹窗
-      // 关闭消息通知弹窗
       toast.info(t('accountSelect.redirectingToAccounts' as any))
 
       // 构建跳转URL，包含需要的平台类型参数
@@ -471,26 +368,6 @@ export default function TaskPageCore() {
     if (availableAccounts.length === 1) {
       // 只有一个符合条件的账号，直接使用
       const account = availableAccounts[0]
-
-      // 检查是否需要App操作
-      const appRequiredPlatforms = getTasksRequiringApp([account.type])
-      if (appRequiredPlatforms.length > 0) {
-        const firstPlatform = appRequiredPlatforms[0]
-        const config = getAppDownloadConfig(firstPlatform)
-
-        if (config) {
-          setDownloadAppConfig({
-            platform: config.platform,
-            appName: config.appName,
-            downloadUrl: config.downloadUrl,
-            qrCodeUrl: config.qrCodeUrl,
-          })
-          setDownloadAppVisible(true)
-          return
-        }
-      }
-
-      // 直接使用这个账号接受任务
       handleAcceptTaskFromDetail(task, account)
       return
     }
@@ -504,24 +381,6 @@ export default function TaskPageCore() {
   const handleAccountSelect = (account: SocialAccount) => {
     setSelectedAccount(account)
     setAccountSelectVisible(false)
-
-    // 检查是否需要App操作
-    const appRequiredPlatforms = getTasksRequiringApp([account.type])
-    if (appRequiredPlatforms.length > 0) {
-      const firstPlatform = appRequiredPlatforms[0]
-      const config = getAppDownloadConfig(firstPlatform)
-
-      if (config) {
-        setDownloadAppConfig({
-          platform: config.platform,
-          appName: config.appName,
-          downloadUrl: config.downloadUrl,
-          qrCodeUrl: config.qrCodeUrl,
-        })
-        setDownloadAppVisible(true)
-        return
-      }
-    }
 
     // 使用选择的账号接受任务
     if (taskDetail) {
@@ -541,26 +400,6 @@ export default function TaskPageCore() {
         if (newAvailableAccounts.length === 1) {
           // 只有一个新账号，直接使用
           const account = newAvailableAccounts[0]
-
-          // 检查是否需要App操作
-          const appRequiredPlatforms = getTasksRequiringApp([account.type])
-          if (appRequiredPlatforms.length > 0) {
-            const firstPlatform = appRequiredPlatforms[0]
-            const config = getAppDownloadConfig(firstPlatform)
-
-            if (config) {
-              setDownloadAppConfig({
-                platform: config.platform,
-                appName: config.appName,
-                downloadUrl: config.downloadUrl,
-                qrCodeUrl: config.qrCodeUrl,
-              })
-              setDownloadAppVisible(true)
-              return
-            }
-          }
-
-          // 直接使用这个账号接受任务
           handleAcceptTaskFromDetail(taskDetail, account)
         }
         else {
@@ -590,10 +429,7 @@ export default function TaskPageCore() {
           pageSize,
           total: response.data.total || 0,
         })
-        // 默认选中第一个素材
-        if (response.data.list && response.data.list.length > 0 && !selectedMaterial) {
-          setSelectedMaterial(response.data.list[0])
-        }
+        // 示例仅用于展示，不在任务提交/发布流程中自动选择素材
       }
     }
     catch (error) {
@@ -614,9 +450,7 @@ export default function TaskPageCore() {
         setTaskDetail(response.data)
         setTaskDetailModalVisible(true)
 
-        // 重置草稿选择状态
-        setDraftSource('task')
-        setSelectedMaterial(null)
+        // 示例仅用于展示，不在任务提交/发布流程中自动选择素材
 
         // 如果有 materialGroupId，获取素材列表
         if (response.data.materialGroupId) {
@@ -661,6 +495,14 @@ export default function TaskPageCore() {
         if (response.data.task?.materialGroupId) {
           fetchAcceptedTaskMaterialList(response.data.task.materialGroupId)
         }
+
+        // Fetch settle info/items for this accepted user task and show in modal
+        try {
+          fetchAcceptedTaskSettleInfo(taskId)
+        }
+        catch (err) {
+          console.error('fetchAcceptedTaskSettleInfo failed', err)
+        }
       }
       else {
         toast.error(t('messages.getTaskDetailFailed'))
@@ -691,141 +533,95 @@ export default function TaskPageCore() {
       setAcceptedTaskMaterialLoading(false)
     }
   }
+  // Fetch settle info for an accepted user task (calls /task/settle/info/{userTaskId})
+  const fetchAcceptedTaskSettleInfo = async (userTaskId: string) => {
+    if (!userTaskId) return
+    try {
+      setAcceptedTaskSettleLoading(true)
+      const infoResp: any = await apiGetSettleInfoByUserTask(userTaskId)
+      if (infoResp && infoResp.data && (infoResp.code === 0 || infoResp.success) && infoResp.data.id) {
+        const settleId = infoResp.data.id
+        await fetchAcceptedTaskSettleItems(settleId)
+      }
+      else {
+        setAcceptedTaskSettleItems([])
+      }
+    }
+    catch (err) {
+      console.error('Failed to fetch settle info:', err)
+      setAcceptedTaskSettleItems([])
+    }
+    finally {
+      setAcceptedTaskSettleLoading(false)
+    }
+  }
+
+  // Fetch settle items list by settleId (calls /task/settle/item/list/{settleId})
+  const fetchAcceptedTaskSettleItems = async (settleId: string) => {
+    if (!settleId) return
+    try {
+      setAcceptedTaskSettleLoading(true)
+      const itemsResp: any = await apiGetSettleItemList(settleId)
+      if (itemsResp && itemsResp.data && (itemsResp.code === 0 || itemsResp.success)) {
+        setAcceptedTaskSettleItems(itemsResp.data.list || itemsResp.data || [])
+      }
+      else {
+        setAcceptedTaskSettleItems([])
+      }
+    }
+    catch (err) {
+      console.error('Failed to fetch settle items:', err)
+      setAcceptedTaskSettleItems([])
+    }
+    finally {
+      setAcceptedTaskSettleLoading(false)
+    }
+  }
 
   // 从任务详情接受任务
   const handleAcceptTaskFromDetail = async (task: any, account?: SocialAccount) => {
     if (!task)
       return
 
-    // Validate if material is selected
-    if (!selectedMaterial) {
-      toast.error('Please select a draft material')
-      return
-    }
-
     // Close detail modal
     setTaskDetailModalVisible(false)
 
-    // Show progress modal
-    setTaskProgressVisible(true)
-    setTaskProgress({
-      currentStep: 0,
-      steps: [
-        { title: 'Accepting task...', status: 'processing' },
-        { title: 'Publishing task...', status: 'wait' },
-        { title: 'Submitting task...', status: 'wait' },
-        { title: 'Task completed', status: 'wait' },
-      ],
-    })
-
     try {
-      // 第一步：接受任务
+      // 接受任务（只接受，不自动发布）
       const response: any = await acceptTask(task.id, task.opportunityId, account?.id)
       if (response && response.code === 0 && response.data.id) {
-        // 更新进度：第一步完成，开始第二步
-        setTaskProgress(prev => ({
-          ...prev,
-          currentStep: 1,
-          steps: [
-            { title: t('acceptingTask' as any), status: 'finish' },
-            { title: t('publishingTask' as any), status: 'processing' },
-            { title: t('submittingTask' as any), status: 'wait' },
-            { title: t('taskCompleted' as any), status: 'wait' },
-          ],
-        }))
-
-        // 第二步：发布任务
+        // 接受成功，准备打开发布弹窗以供用户确认发布
         const publishAccount = account || getAccountById(task.accountId)
-        if (publishAccount) {
-          // 使用选中的素材
-          const material = selectedMaterial
+        // 不再使用推荐草稿作为发布/提交必须参数
 
-          // 处理媒体内容
-          const videos = material.mediaList?.filter((m: any) => m.type === 'video') || []
-          const images = material.mediaList?.filter((m: any) => m.type !== 'video') || []
+        // 保存待提交任务信息（不再依赖素材 id）
+        setPendingUserTaskIdForPublish(response.data.id)
+        setPendingTaskForPublish(task)
 
-          const publishData = {
-            flowId: `${publishAccount.uid}_${generateUUID()}`, // 使用账号的uid作为flowId
-            accountType: publishAccount.type,
-            accountId: publishAccount.id,
-            title: material.title || task.title,
-            desc: material.desc || task.description,
-            type: 'article' as any, // 固定为 article 类型
-            // 处理素材数据
-            videoUrl: videos.length > 0 ? getOssUrl(videos[0].url) : undefined,
-            coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
-            imgUrlList: images.map((img: any) => getOssUrl(img.url)),
-            option: {},
-            topics: [],
-            publishTime: getUtcDays(getDays().add(6, 'minute')).format(),
-            userTaskId: response.data.id,
-            taskMaterialId: material._id, // 使用选中素材的ID
-          }
+        // 初始化发布弹窗的数据（传入当前的账号列表并默认选中发布账号）
+        try {
+          usePublishDialog.getState().init(accountList.length > 0 ? accountList : (publishAccount ? [publishAccount] : []), publishAccount?.id)
 
-          const publishResponse: any = await apiCreatePublish(publishData)
-
-          console.log('publishResponse', publishResponse)
-          // return false;
-
-          if (publishResponse && publishResponse.code === 0) {
-            // 更新进度：第二步完成，开始第三步
-            setTaskProgress(prev => ({
-              ...prev,
-              currentStep: 2,
-              steps: [
-                { title: t('acceptingTask' as any), status: 'finish' },
-                { title: t('publishingTask' as any), status: 'finish' },
-                { title: t('submittingTask' as any), status: 'processing' },
-                { title: t('taskCompleted' as any), status: 'wait' },
-              ],
-            }))
-
-            // 第三步：提交任务
-            const userTaskId = response.data.id
-            const submitResponse: any = await submitTask(userTaskId, material._id)
-
-            if (submitResponse && submitResponse.code === 0) {
-              // 更新进度：第三步完成，开始第四步
-              setTaskProgress(prev => ({
-                ...prev,
-                currentStep: 3,
-                steps: [
-                  { title: t('acceptingTask' as any), status: 'finish' },
-                  { title: t('publishingTask' as any), status: 'finish' },
-                  { title: t('submittingTask' as any), status: 'finish' },
-                  { title: t('taskCompleted' as any), status: 'finish' },
-                ],
-              }))
-
-              // 延迟1秒后关闭进度窗口并刷新任务列表
-              setTimeout(() => {
-                setTaskProgressVisible(false)
-                setTaskDetail(null)
-                fetchPendingTasks()
-                fetchAcceptedTasks()
-                setActiveTab('accepted')
-              }, 1000)
-            }
-            else {
-              throw new Error('Failed to submit task')
-            }
-          }
-          else {
-            throw new Error('Failed to publish task')
+          if (publishAccount) {
+            setPublishDefaultAccountId(publishAccount.id)
           }
         }
-        else {
-          throw new Error('Cannot find publish account info')
+        catch (err) {
+          console.error('初始化发布弹窗数据失败', err)
         }
-      }
-      else {
-        throw new Error('Failed to accept task')
+
+        // 打开发布弹窗，用户手动确认发布
+        setTaskDetailModalVisible(false)
+        setPublishDialogOpen(true)
+        // 切换到已接受任务标签
+        setActiveTab('accepted')
+        // 刷新任务列表
+        fetchPendingTasks()
+        fetchAcceptedTasks()
       }
     }
     catch (error) {
-      console.error('Task processing failed:', error)
       toast.error('Task processing failed')
-      setTaskProgressVisible(false)
     }
   }
 
@@ -834,149 +630,34 @@ export default function TaskPageCore() {
     if (!currentTaskId)
       return
 
-    // Check if the platform requires App operation
+    // 获取发布账号
     const publishAccount = getAccountById(acceptedTaskDetail.accountId)
-    if (publishAccount) {
-      const appRequiredPlatforms = getTasksRequiringApp([publishAccount.type])
-
-      if (appRequiredPlatforms.length > 0) {
-        // Platform requires App operation, show download prompt
-        const firstPlatform = appRequiredPlatforms[0]
-        const config = getAppDownloadConfig(firstPlatform)
-
-        if (config) {
-          setDownloadAppConfig({
-            platform: config.platform,
-            appName: config.appName,
-            downloadUrl: config.downloadUrl,
-            qrCodeUrl: config.qrCodeUrl,
-          })
-          setDownloadAppVisible(true)
-          return
-        }
-      }
+    if (!publishAccount) {
+      toast.error(t('messages.accountNotFound' as any) || 'Account not found')
+      return
     }
 
-    // 显示进度弹窗
-    setTaskProgressVisible(true)
-    setTaskProgress({
-      currentStep: 0,
-      steps: [
-        { title: t('completeTask' as any), status: 'processing' },
-        { title: t('publishingTask' as any), status: 'wait' },
-        { title: t('submittingTask' as any), status: 'wait' },
-        { title: t('taskCompleted' as any), status: 'wait' },
-      ],
-    })
+    // 获取任务素材
+    const materials = acceptedTaskDetail.task?.materials || []
+    const material = materials.length > 0 ? materials[0] : null
 
+    // 保存待提交任务信息（不再依赖素材 id）
+    setPendingUserTaskIdForPublish(acceptedTaskDetail.id)
+    // material id 不再用于提交流程
+    setPendingTaskForPublish(acceptedTaskDetail.task)
+
+    // 初始化发布弹窗的数据
     try {
-      // Update progress: step 1 complete, start step 2
-      setTaskProgress(prev => ({
-        ...prev,
-        currentStep: 1,
-        steps: [
-          { title: 'Completing task...', status: 'finish' },
-          { title: 'Publishing task...', status: 'processing' },
-          { title: 'Submitting task...', status: 'wait' },
-          { title: 'Task completed', status: 'wait' },
-        ],
-      }))
-
-      // 第二步：发布任务
-      const publishAccount = getAccountById(acceptedTaskDetail.accountId)
-      if (publishAccount) {
-        // 处理素材链接，确保使用完整链接
-        const processedMaterials = acceptedTaskDetail.task?.materials?.map((material: any) => ({
-          ...material,
-          coverUrl: material.coverUrl ? getOssUrl(material.coverUrl) : undefined,
-          mediaList: material.mediaList?.map((media: any) => ({
-            ...media,
-            url: getOssUrl(media.url),
-            coverUrl: media.coverUrl ? getOssUrl(media.coverUrl) : undefined,
-          })),
-        }))
-
-        const publishData = {
-          flowId: `${publishAccount.uid}_${generateUUID()}`, // 使用账号的uid作为flowId
-          accountType: publishAccount.type,
-          accountId: publishAccount.id,
-          title: acceptedTaskDetail.task?.title,
-          desc: acceptedTaskDetail.task?.description,
-          type: acceptedTaskDetail.task?.type as any, // 转换为PubType
-          // 处理素材数据
-          videoUrl: processedMaterials?.[0]?.mediaList?.[0]?.type === 'video'
-            ? getOssUrl(processedMaterials[0].mediaList[0].url)
-            : undefined,
-          coverUrl: processedMaterials?.[0]?.coverUrl,
-          imgUrlList: processedMaterials?.flatMap((material: any) =>
-            material.mediaList?.filter((media: any) => media.type !== 'video')
-              .map((media: any) => getOssUrl(media.url)) || [],
-          ),
-          option: {},
-          topics: [],
-          publishTime: getUtcDays(getDays().add(6, 'minute')).format(),
-          userTaskId: acceptedTaskDetail.task?.id,
-          taskMaterialId: acceptedTaskDetail.task?.materialIds[0],
-
-        }
-
-        const publishResponse: any = await apiCreatePublish(publishData)
-        if (publishResponse && publishResponse.code === 0) {
-          // Update progress: step 2 complete, start step 3
-          setTaskProgress(prev => ({
-            ...prev,
-            currentStep: 2,
-            steps: [
-              { title: 'Completing task...', status: 'finish' },
-              { title: 'Publishing task...', status: 'finish' },
-              { title: 'Submitting task...', status: 'processing' },
-              { title: 'Task completed', status: 'wait' },
-            ],
-          }))
-
-          // 第三步：提交任务
-          const userTaskId = acceptedTaskDetail.id
-          const submitResponse: any = await submitTask(userTaskId, acceptedTaskDetail.task?.materialIds[0])
-
-          if (submitResponse && submitResponse.code === 0) {
-            // Update progress: step 3 complete, start step 4
-            setTaskProgress(prev => ({
-              ...prev,
-              currentStep: 3,
-              steps: [
-                { title: 'Completing task...', status: 'finish' },
-                { title: 'Publishing task...', status: 'finish' },
-                { title: 'Submitting task...', status: 'finish' },
-                { title: 'Task completed', status: 'finish' },
-              ],
-            }))
-
-            // 延迟1秒后关闭进度窗口并刷新任务列表
-            setTimeout(() => {
-              setTaskProgressVisible(false)
-              setAcceptedTaskDetailModalVisible(false)
-              setAcceptedTaskDetail(null)
-              setCurrentTaskId(null)
-              fetchAcceptedTasks()
-            }, 1000)
-          }
-          else {
-            throw new Error('Failed to submit task')
-          }
-        }
-        else {
-          throw new Error('Failed to publish task')
-        }
-      }
-      else {
-        throw new Error('Cannot find publish account info')
-      }
+      usePublishDialog.getState().init(accountList.length > 0 ? accountList : [publishAccount], publishAccount.id)
+      setPublishDefaultAccountId(publishAccount.id)
     }
-    catch (error) {
-      console.error('Task processing failed:', error)
-      toast.error('Task processing failed')
-      setTaskProgressVisible(false)
+    catch (err) {
+      console.error('初始化发布弹窗数据失败', err)
     }
+
+    // 打开发布弹窗
+    setAcceptedTaskDetailModalVisible(false)
+    setPublishDialogOpen(true)
   }
 
   // Handle pending task page change
@@ -1018,18 +699,6 @@ export default function TaskPageCore() {
     setMediaPreviewVisible(true)
   }
 
-  // 关闭媒体预览
-  const handleCloseMediaPreview = () => {
-    // 停止视频播放
-    if (videoRef) {
-      videoRef.pause()
-      videoRef.currentTime = 0
-    }
-    setMediaPreviewVisible(false)
-    setPreviewMedia(null)
-    setVideoRef(null)
-  }
-
   useEffect(() => {
     if (token) {
       fetchPendingTasks()
@@ -1045,29 +714,128 @@ export default function TaskPageCore() {
     }
   }, [accountList, requiredAccountTypes, taskDetail])
 
+  // 如果未登录，重定向到登录页面（保留 hook 顺序，UI 不展示登录提示）
+  useEffect(() => {
+    if (!token) {
+      // 打开登录弹窗并在登录成功后刷新列表
+      try {
+        openLoginModal(() => {
+          fetchPendingTasks()
+          fetchAcceptedTasks()
+          fetchAccountList()
+        })
+      }
+      catch (e) {
+        console.error('open login modal failed', e)
+      }
+    }
+  }, [token, router, lng])
+
+  // 发布弹窗发布成功回调：校验选中账户是否符合任务要求，符合则提交任务
+  const handlePublishSuccess = async () => {
+    console.log('完成发布2222@@@')
+    try {
+      // 取得发布时选中的账户
+      const pubListChoosed = usePublishDialog.getState().pubListChoosed || []
+
+      // If opened from task flow and dialog didn't have an explicit selection,
+      // fall back to the task's account (task specifies accountId).
+      let usedAccount: SocialAccount | undefined
+      if (pubListChoosed.length > 0) {
+        usedAccount = pubListChoosed[0].account
+      }
+      else {
+        // Prefer explicit publish default account if set
+        if (publishDefaultAccountId) {
+          usedAccount = getAccountById(publishDefaultAccountId) || undefined
+        }
+        // Otherwise, if the pending task has an accountId, use that
+        if (!usedAccount && pendingTaskForPublish && pendingTaskForPublish.accountId) {
+          usedAccount = getAccountById(pendingTaskForPublish.accountId) || undefined
+        }
+      }
+
+      if (!usedAccount) {
+        console.log('publish.noAccountSelected')
+        toast.error(t('publish.noAccountSelected' as any) || 'No account selected for publish')
+        return
+      }
+
+      // 校验：如果任务指定了 accountId，则必须一致；否则检查账户类型是否被任务接受
+      const task = pendingTaskForPublish
+      let ok = false
+      if (task) {
+        if (task.accountId) {
+          ok = usedAccount.id === task.accountId
+        }
+        else if (task.accountTypes && task.accountTypes.length > 0) {
+          ok = task.accountTypes.includes(usedAccount.type)
+        }
+        else {
+          ok = true
+        }
+      }
+
+      if (!ok) {
+        console.log('publish.accountNotMatchTask')
+        toast.error(t('publish.accountNotMatchTask' as any) || 'Selected account does not match task requirement')
+        return
+      }
+
+      // 直接调用提交任务接口（不再依赖素材 id）
+      if (pendingUserTaskIdForPublish) {
+        const submitResp: any = await submitTask(pendingUserTaskIdForPublish)
+        if (submitResp && submitResp.code === 0) {
+          toast.success(t('messages.submitTaskSuccess' as any) || 'Submit task success')
+          fetchAcceptedTasks()
+        }
+        else {
+          toast.error(t('messages.submitTaskFailed' as any) || 'Submit task failed')
+        }
+      }
+    }
+    catch (err) {
+      console.error('handlePublishSuccess failed', err)
+      toast.error(t('messages.submitTaskFailed' as any) || 'Submit task failed')
+    }
+    finally {
+      // 清理临时状态并关闭发布弹窗
+      setPublishDialogOpen(false)
+      setPublishDefaultAccountId(undefined)
+      setPendingUserTaskIdForPublish(undefined)
+      setPendingTaskForPublish(null)
+      try {
+        usePublishDialog.getState().clear()
+        usePublishDialog.getState().setPubListChoosed([])
+      }
+      catch (e) {
+        // ignore
+      }
+    }
+  }
+
   return (
     <div className={styles.taskPage}>
-      {/* <div className={styles.header}>
-        <h1>任务中心</h1>
-        <p>接受任务，完成任务，获得奖励</p>
-      </div> */}
-
+      {token && (
+      <>
       <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
+        value={activeTab}
+        onValueChange={setActiveTab}
         className={styles.tabs}
       >
-        <TabPane
-          tab={(
-            <span>
-              <ClockCircleOutlined />
-              &nbsp;
-              {' '}
-              {t('pendingTasks')}
-            </span>
-          )}
-          key="pending"
-        >
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="pending">
+            <ClockCircleOutlined />
+            &nbsp;
+            {t('pendingTasks')}
+          </TabsTrigger>
+          <TabsTrigger value="accepted">
+            <PlayCircleOutlined />
+            &nbsp;
+            {t('acceptedTasks')}
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="pending">
           <Spin spinning={loading}>
             {pendingTasks.length > 0 ? (
               <div>
@@ -1116,7 +884,6 @@ export default function TaskPageCore() {
                                 : `${getPlatformName(task.accountType)} Task`}
                             </h3>
                           </div>
-                          <Tag color="orange">{t('taskStatus.pending' as any)}</Tag>
                         </div>
 
                         <div className={styles.taskContent}>
@@ -1197,16 +964,16 @@ export default function TaskPageCore() {
                                 </div>
                               </div>
                             </div>
-                          )}
-                        </div>
+      )}
+    </div>
 
                         <div className={styles.taskActions}>
-                          <Button
-                            type="primary"
-                            onClick={() => handleViewTaskDetail(task.id)}
-                            icon={<EyeOutlined />}
-                            style={{ width: '100%' }}
-                          >
+                              <Button
+                                onClick={(e) => { e.stopPropagation(); handleViewTaskDetail(task.id) }}
+                                style={{ width: '100%' }}
+                              >
+                            <EyeOutlined />
+                            &nbsp;
                             {t('viewDetails')}
                           </Button>
                         </div>
@@ -1232,19 +999,9 @@ export default function TaskPageCore() {
               <Empty description={t('messages.noPendingTasks')} />
             )}
           </Spin>
-        </TabPane>
+        </TabsContent>
 
-        <TabPane
-          tab={(
-            <span>
-              <PlayCircleOutlined />
-              &nbsp;
-              {' '}
-              {t('acceptedTasks')}
-            </span>
-          )}
-          key="accepted"
-        >
+        <TabsContent value="accepted">
           <Spin spinning={loading}>
             {acceptedTasks.length > 0 ? (
               <div>
@@ -1277,9 +1034,9 @@ export default function TaskPageCore() {
                                 : `${getPlatformName(task.accountType)}Task`}
                             </h3>
                           </div>
-                          <Tag color={getTaskStatusTag(task.status).color}>
+                          <Badge className={getBadgeClassName(getTaskStatusTag(task.status).color)}>
                             {getTaskStatusTag(task.status).text}
-                          </Tag>
+                          </Badge>
                         </div>
 
                         <div className={styles.taskContent}>
@@ -1359,11 +1116,11 @@ export default function TaskPageCore() {
 
                         <div className={styles.taskActions}>
                           <Button
-                            type="primary"
-                            onClick={() => handleViewAcceptedTaskDetail(task.id)}
-                            icon={<EyeOutlined />}
+                            onClick={(e) => { e.stopPropagation(); handleViewAcceptedTaskDetail(task.id) }}
                             style={{ width: '100%' }}
                           >
+                            <EyeOutlined />
+                            &nbsp;
                             {t('viewDetails')}
                           </Button>
                         </div>
@@ -1389,7 +1146,7 @@ export default function TaskPageCore() {
               <Empty description={t('messages.noAcceptedTasks')} />
             )}
           </Spin>
-        </TabPane>
+        </TabsContent>
       </Tabs>
 
       {/* 提交任务弹窗 */}
@@ -1423,11 +1180,9 @@ export default function TaskPageCore() {
         title={t('taskDetails')}
         open={taskDetailModalVisible}
         onCancel={() => {
-          setTaskDetailModalVisible(false)
-          setTaskDetail(null)
-          setMaterialList([])
-          setSelectedMaterial(null)
-          setDraftSource('task')
+        setTaskDetailModalVisible(false)
+        setTaskDetail(null)
+        setMaterialList([])
         }}
         footer={null}
         width={1200}
@@ -1437,102 +1192,42 @@ export default function TaskPageCore() {
           {taskDetail ? (
             <div>
               {/* 任务基本信息 */}
-              <div style={{
-                marginBottom: '24px',
-                padding: '16px',
-                backgroundColor: '#f8f9fa',
-                borderRadius: '8px',
-                border: '1px solid #e9ecef',
-              }}
-              >
-                <h2 style={{
-                  margin: '0 0 12px 0',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                  color: '#1a1a1a',
-                }}
-                >
+              <div className="mb-6 p-4 bg-background rounded-lg border border-border">
+                <h2 className="mb-3 text-lg font-semibold text-foreground">
                   {taskDetail.title}
                 </h2>
 
-                <div style={{
-                  fontSize: '14px',
-                  lineHeight: '1.6',
-                  color: '#495057',
-                  marginBottom: '12px',
-                }}
-                >
+                <div className="text-sm leading-7 text-muted-foreground mb-3">
                   <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
                 </div>
 
                 {/* 任务信息卡片 */}
-                <Row gutter={12}>
+                <div className={`${infoItemsCount === 1 ? 'grid grid-cols-1 justify-items-start' : 'grid grid-cols-3'} gap-3`}>
                   {taskDetail.reward > 0 && (
-                    <Col span={8}>
-                      <div style={{
-                        padding: '12px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{ fontSize: '12px', color: '#856404', marginBottom: '4px' }}>
-                          {t('taskInfo.reward' as any)}
-                        </div>
-                        <div style={{ fontSize: '14px', fontWeight: 'bold', color: '#d63031' }}>
-                          CNY
-                          {' '}
-                          {taskDetail.reward / 100}
-                        </div>
-                      </div>
-                    </Col>
+                    <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
+                      <div className="text-xs text-warning mb-1">{t('taskInfo.reward' as any)}</div>
+                      <div className="text-sm font-bold text-destructive">CNY {taskDetail.reward / 100}</div>
+                    </div>
                   )}
 
                   {taskDetail.cpmReward > 0 && (
-                    <Col span={8}>
-                      <div style={{
-                        padding: '12px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{ fontSize: '12px', color: '#856404', marginBottom: '4px' }}>
-                          {t('taskInfo.CPM' as any)}
-                        </div>
-                        <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#d63031' }}>
-                          CNY
-                          {' '}
-                          {taskDetail.cpmReward / 100}
-                        </div>
-                      </div>
-                    </Col>
+                    <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
+                      <div className="text-xs text-warning mb-1">{t('taskInfo.CPM' as any)}</div>
+                      <div className="text-sm font-bold text-destructive">CNY {taskDetail.cpmReward / 100}</div>
+                    </div>
                   )}
 
-                  <Col span={8}>
-                    <div style={{
-                      padding: '12px',
-                      backgroundColor: '#d1ecf1',
-                      border: '1px solid #bee5eb',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
-                      <div style={{ fontSize: '12px', color: '#0c5460', marginBottom: '4px' }}>
-                        {t('taskInfo.type' as any)}
-                      </div>
-                      <div style={{ fontSize: '14px', fontWeight: '500', color: '#0c5460' }}>
-                        {getTaskTypeName(taskDetail.type)}
-                      </div>
+                  {taskDetail.type && (
+                    <div className="bg-muted/10 border border-muted/30 rounded-md text-center">
+                      <div className="text-xs text-muted-foreground mb-1">{t('taskInfo.type' as any)}</div>
+                      <div className="text-sm font-medium text-foreground">{getTaskTypeName(taskDetail.type)}</div>
                     </div>
-                  </Col>
-                </Row>
+                  )}
+                </div>
               </div>
 
-              {/* 草稿选择区域 */}
-              <div style={{ marginBottom: '24px' }}>
+              {/* 示例展示区域 */}
+              <div style={{ marginBottom: '24px', marginTop: '12px' }}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'center',
@@ -1541,205 +1236,115 @@ export default function TaskPageCore() {
                 }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.selectDraft')}</span>
-                    <Radio.Group
-                      value={draftSource}
-                      onChange={(e) => {
-                        setDraftSource(e.target.value)
-                        if (e.target.value === 'own') {
-                          setDraftModalOpen(true)
-                        }
-                      }}
-                    >
-                      <Radio value="task">{t('draft.taskDraft')}</Radio>
-                      <Radio value="own">{t('draft.myDraft')}</Radio>
-                    </Radio.Group>
+                    <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.examples' as any) || '示例'}</span>
                   </div>
-                  {draftSource === 'own' && selectedMaterial && (
-                    <Button
-                      type="link"
-                      onClick={() => setDraftModalOpen(true)}
-                    >
-                      {t('draft.reselect')}
-                    </Button>
-                  )}
                 </div>
 
-                {/* 任务草稿列表 */}
-                {draftSource === 'task' && (
-                  <Spin spinning={materialLoading}>
-                    {materialList.length > 0 ? (
-                      <>
-                        <div style={{
-                          display: 'grid',
-                          gridTemplateColumns: 'repeat(3, 1fr)',
-                          gap: '16px',
-                          marginBottom: '16px',
-                        }}
-                        >
+                {/* 示例列表 */}
+                <Spin spinning={materialLoading}>
+                  {materialList.length > 0 ? (
+                    <>
+                      <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '16px',
+                        marginBottom: '16px',
+                      }}
+                      >
                           {materialList.map((material: any) => (
                             <div
                               key={material._id}
-                              onClick={() => setSelectedMaterial(material)}
-                              style={{
-                                border: selectedMaterial?._id === material._id ? '2px solid #1890ff' : '1px solid #e8e8e8',
-                                borderRadius: '8px',
-                                overflow: 'hidden',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                                backgroundColor: selectedMaterial?._id === material._id ? '#e6f7ff' : '#fff',
-                              }}
+                            style={{
+                              border: '1px solid #e8e8e8',
+                              borderRadius: '8px',
+                              overflow: 'hidden',
+                              transition: 'all 0.3s ease',
+                              backgroundColor: '#fff',
+                            }}
+                          >
+                            {/* 素材封面 */}
+                <div style={{
+                              position: 'relative',
+                              paddingTop: '42%',
+                              background: '#f0f0f0',
+                            }}
                             >
-                              {/* 素材封面 */}
+                              {material.coverUrl && (
+                                <Image
+                                  src={getOssUrl(material.coverUrl)}
+                                  alt={material.title}
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 33vw"
+                                  style={{
+                                    objectFit: 'cover',
+                                  }}
+                                />
+                              )}
+                              {material.mediaList && material.mediaList[0]?.type === 'video' && (
+                                <div style={{
+                                  position: 'absolute',
+                                  top: '50%',
+                                  left: '50%',
+                                  transform: 'translate(-50%, -50%)',
+                                  color: 'white',
+                                  fontSize: '32px',
+                                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                                }}
+                                >
+                                  ▶
+                                </div>
+                              )}
+                            </div>
+
+                            {/* 素材信息 */}
+                            <div style={{ padding: '12px' }}>
                               <div style={{
-                                position: 'relative',
-                                paddingTop: '56.25%',
-                                background: '#f0f0f0',
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                marginBottom: '4px',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
                               }}
                               >
-                                {material.coverUrl && (
-                                  <Image
-                                    src={getOssUrl(material.coverUrl)}
-                                    alt={material.title}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 33vw"
-                                    style={{
-                                      objectFit: 'cover',
-                                    }}
-                                  />
-                                )}
-                                {material.mediaList && material.mediaList[0]?.type === 'video' && (
-                                  <div style={{
-                                    position: 'absolute',
-                                    top: '50%',
-                                    left: '50%',
-                                    transform: 'translate(-50%, -50%)',
-                                    color: 'white',
-                                    fontSize: '32px',
-                                    textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-                                  }}
-                                  >
-                                    ▶
-                                  </div>
-                                )}
-                                {selectedMaterial?._id === material._id && (
-                                  <div style={{
-                                    position: 'absolute',
-                                    top: '8px',
-                                    right: '8px',
-                                    width: '24px',
-                                    height: '24px',
-                                    borderRadius: '50%',
-                                    backgroundColor: '#1890ff',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: 'white',
-                                    fontSize: '14px',
-                                  }}
-                                  >
-                                    ✓
-                                  </div>
-                                )}
+                                {material.title || t('draft.noTitle')}
                               </div>
-
-                              {/* 素材信息 */}
-                              <div style={{ padding: '12px' }}>
-                                <div style={{
-                                  fontSize: '14px',
-                                  fontWeight: '500',
-                                  marginBottom: '4px',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                }}
-                                >
-                                  {material.title || 'no title'}
-                                </div>
-                                <div style={{
-                                  fontSize: '12px',
-                                  color: '#999',
-                                  overflow: 'hidden',
-                                  textOverflow: 'ellipsis',
-                                  whiteSpace: 'nowrap',
-                                }}
-                                >
-                                  {material.desc || 'no description'}
-                                </div>
+                              <div style={{
+                                fontSize: '12px',
+                                color: '#999',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap',
+                              }}
+                              >
+                                {material.desc || t('draft.noDescription')}
                               </div>
                             </div>
-                          ))}
-                        </div>
-
-                        {/* 分页 */}
-                        {materialPagination.total > materialPagination.pageSize && (
-                          <div style={{ textAlign: 'center' }}>
-                            <Pagination
-                              current={materialPagination.current}
-                              pageSize={materialPagination.pageSize}
-                              total={materialPagination.total}
-                              onChange={(page, pageSize) => {
-                                if (taskDetail.materialGroupId) {
-                                  fetchMaterialList(taskDetail.materialGroupId, page, pageSize)
-                                }
-                              }}
-                              showSizeChanger={false}
-                            />
                           </div>
-                        )}
-                      </>
-                    ) : (
-                      <Empty description="no draft material" />
-                    )}
-                  </Spin>
-                )}
+                        ))}
+                      </div>
 
-                {/* 我的草稿选择结果 */}
-                {draftSource === 'own' && selectedMaterial && (
-                  <div style={{
-                    border: '2px solid #1890ff',
-                    borderRadius: '8px',
-                    overflow: 'hidden',
-                    backgroundColor: '#e6f7ff',
-                    padding: '16px',
-                  }}
-                  >
-                    <div style={{ display: 'flex', gap: '16px' }}>
-                      {selectedMaterial.coverUrl && (
-                        <div style={{
-                          width: '120px',
-                          height: '120px',
-                          borderRadius: '8px',
-                          overflow: 'hidden',
-                          flexShrink: 0,
-                        }}
-                        >
-                          <Image
-                            src={getOssUrl(selectedMaterial.coverUrl)}
-                            alt={selectedMaterial.title}
-                            fill
-                            sizes="120px"
-                            style={{
-                              objectFit: 'cover',
+                      {/* 分页 */}
+                      {materialPagination.total > materialPagination.pageSize && (
+                        <div style={{ textAlign: 'center' }}>
+                          <Pagination
+                            current={materialPagination.current}
+                            pageSize={materialPagination.pageSize}
+                            total={materialPagination.total}
+                            onChange={(page, pageSize) => {
+                              if (taskDetail.materialGroupId) {
+                                fetchMaterialList(taskDetail.materialGroupId, page, pageSize)
+                              }
                             }}
+                            showSizeChanger={false}
                           />
                         </div>
                       )}
-                      <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px' }}>
-                          {selectedMaterial.title || t('draft.noTitle')}
-                        </div>
-                        <div style={{ fontSize: '14px', color: '#666' }}>
-                          {selectedMaterial.desc || t('draft.noDescription')}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {draftSource === 'own' && !selectedMaterial && (
-                  <Empty description={t('draft.pleaseSelectDraft')} />
-                )}
+                    </>
+                  ) : (
+                    <Empty description={t('draft.noDrafts')} />
+                  )}
+                </Spin>
               </div>
 
               {/* 底部按钮 */}
@@ -1748,21 +1353,35 @@ export default function TaskPageCore() {
                   textAlign: 'center',
                   paddingTop: '16px',
                   borderTop: '1px solid #e8e8e8',
+                  display: 'flex',
+                  gap: '12px',
+                  justifyContent: 'center',
                 }}
                 >
-                  <Button
-                    type="primary"
-                    size="large"
-                    onClick={() => handleTaskAction(taskDetail)}
-                    disabled={!selectedMaterial}
-                  >
-                    {t('acceptTask')}
+                      <Button
+                        size="lg"
+                        onClick={() => {
+                          // 模式2：直接发布
+                          handleTaskAction(taskDetail)
+                        }}
+                      >
+                    {t('publish.directPublish' as any) || '直接发布'}
                   </Button>
-                  {!selectedMaterial && (
-                    <div style={{ marginTop: '8px', color: '#ff4d4f', fontSize: '12px' }}>
-                      {t('draft.pleaseSelectDraftMaterial')}
-                    </div>
-                  )}
+
+                  <Button
+                    size="lg"
+                    onClick={() => {
+                      // 模式3：Agent 发布，跳转到首页并填充输入
+                      const prompt = taskDetail.description || taskDetail.title || ''
+                      // 通过 URL query 传参到首页，避免使用 localStorage
+                      const params = new URLSearchParams()
+                      if (prompt) params.set('agentExternalPrompt', prompt)
+                      if (taskDetail?.id) params.set('agentTaskId', taskDetail.id)
+                      router.push(`/${lng}?${params.toString()}`)
+                    }}
+                  >
+                    {t('publish.agentPublish' as any) || 'Agent 发布'}
+                  </Button>
                 </div>
               )}
             </div>
@@ -1774,21 +1393,7 @@ export default function TaskPageCore() {
         </Spin>
       </Modal>
 
-      {/* DraftSelectionModal 用于选择自己的草稿 */}
-      <DraftSelectionModal
-        draftModalOpen={draftModalOpen}
-        onCancel={() => {
-          setDraftModalOpen(false)
-          // 如果取消选择且当前选择的是自己的草稿，切换回任务草稿
-          if (draftSource === 'own' && !selectedMaterial) {
-            setDraftSource('task')
-          }
-        }}
-        onSelectDraft={(draft) => {
-          setSelectedMaterial(draft)
-          setDraftSource('own')
-        }}
-      />
+      {/* 已移除：我的草稿选择，当前仅支持推荐草稿和直接发布/Agent 发布 */}
 
       {/* 已接受任务详情弹窗 */}
       <Modal
@@ -1806,98 +1411,12 @@ export default function TaskPageCore() {
           {acceptedTaskDetail ? (
             <div>
               {/* 视频发布风格布局 */}
-              <div style={{
-                display: 'flex',
-                gap: '24px',
-                marginBottom: '24px',
-              }}
-              >
-                {/* Left side: Video/Media content */}
-                <div style={{ flex: '0 0 400px' }}>
-                  <Spin spinning={acceptedTaskMaterialLoading}>
-                    {acceptedTaskMaterialList.length > 0 && acceptedTaskMaterialList[0].mediaList && acceptedTaskMaterialList[0].mediaList.length > 0 && (
-                      <div style={{
-                        border: '1px solid #e8e8e8',
-                        borderRadius: '12px',
-                        overflow: 'hidden',
-                        backgroundColor: '#000',
-                      }}
-                      >
-                        <div style={{ position: 'relative', cursor: 'pointer' }}>
-                          {acceptedTaskMaterialList[0].mediaList[0].type === 'video' ? (
-                            <div
-                              style={{
-                                position: 'relative',
-                                overflow: 'hidden',
-                              }}
-                              onClick={() => handleVideoCoverClick(acceptedTaskMaterialList[0].mediaList[0], acceptedTaskDetail.task.title)}
-                            >
-                              {/* Video cover image */}
-                              <Image
-                                src={acceptedTaskMaterialList[0].coverUrl ? getOssUrl(acceptedTaskMaterialList[0].coverUrl) : getOssUrl(acceptedTaskMaterialList[0].mediaList[0].url)}
-                                alt="video cover"
-                                width={400}
-                                height={300}
-                                style={{
-                                  width: '100%',
-                                  height: 'auto',
-                                  display: 'block',
-                                }}
-                              />
-                              {/* Play button */}
-                              <div style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                transform: 'translate(-50%, -50%)',
-                                color: 'white',
-                                fontSize: '24px',
-                                background: 'rgba(0,0,0,0.7)',
-                                borderRadius: '50%',
-                                width: '60px',
-                                height: '60px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                transition: 'all 0.3s ease',
-                              }}
-                              >
-                                ▶
-                              </div>
-                            </div>
-                          ) : acceptedTaskMaterialList[0].mediaList[0].type === 'img' ? (
-                            <Image
-                              src={getOssUrl(acceptedTaskMaterialList[0].mediaList[0].url)}
-                              alt="media"
-                              width={400}
-                              height={300}
-                              style={{
-                                width: '100%',
-                                height: 'auto',
-                                display: 'block',
-                              }}
-                              onClick={() => handleMediaClick(acceptedTaskMaterialList[0].mediaList[0], acceptedTaskDetail.task.title)}
-                            />
-                          ) : null}
-                        </div>
-                      </div>
-                    )}
-                  </Spin>
-                </div>
-
-                {/* 右侧：标题和描述 */}
-                <div style={{ flex: '1', minWidth: '300px' }}>
+              <div className="space-y-4">
+                {/* 右侧：标题和描述（已移除顶部媒体展示） */}
+                <div className="flex-1">
                   {/* 标题区域 */}
-                  <div style={{ marginBottom: '16px' }}>
-                    <h2 style={{
-                      margin: '0 0 8px 0',
-                      fontSize: '20px',
-                      fontWeight: '600',
-                      lineHeight: '1.4',
-                      color: '#1a1a1a',
-                    }}
-                    >
+                  <div className="mb-4">
+                    <h2 className="mb-2 text-xl font-semibold text-foreground">
                       {acceptedTaskDetail.task?.title}
                     </h2>
 
@@ -1950,23 +1469,28 @@ export default function TaskPageCore() {
                   </div>
 
                   {/* 描述区域 */}
-                  <div style={{
-                    marginBottom: '16px',
-                    padding: '16px',
-                    backgroundColor: '#f8f9fa',
-                    borderRadius: '8px',
-                    border: '1px solid #e9ecef',
-                  }}
-                  >
-                    <div style={{
-                      fontSize: '14px',
-                      lineHeight: '1.6',
-                      color: '#495057',
-                    }}
-                    >
-                      <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
-                    </div>
-                  </div>
+                  {
+                    acceptedTaskDetail.task?.description && (
+                      <div style={{
+                        marginBottom: '16px',
+                        padding: '16px',
+                        backgroundColor: '#f8f9fa',
+                        borderRadius: '8px',
+                        border: '1px solid #e9ecef',
+                      }}
+                      >
+                        <div style={{
+                          fontSize: '14px',
+                          lineHeight: '1.6',
+                          color: '#495057',
+                        }}
+                        >
+                          <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
+                        </div>
+                      </div>
+                    )
+                  }
+                  
 
                   {/* 任务信息卡片 */}
                   <div style={{
@@ -2037,33 +1561,72 @@ export default function TaskPageCore() {
                       </div>
                     )}
 
-                    <div style={{
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#d1ecf1',
-                      border: '1px solid #bee5eb',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
+                  {
+                    acceptedTaskDetail.task?.type && (
                       <div style={{
-                        fontSize: '12px',
-                        color: '#0c5460',
-                        marginBottom: '4px',
+                        flex: '1',
+                        padding: '12px',
+                        backgroundColor: '#d1ecf1',
+                        border: '1px solid #bee5eb',
+                        borderRadius: '8px',
+                        textAlign: 'center',
                       }}
                       >
-                        {t('taskInfo.type' as any)}
+                        <div style={{
+                          fontSize: '12px',
+                          color: '#0c5460',
+                          marginBottom: '4px',
+                        }}
+                        >
+                          {t('taskInfo.type' as any)}
+                        </div>
+                        <div style={{
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          color: '#0c5460',
+                        }}
+                        >
+                          {getTaskTypeName(acceptedTaskDetail.task?.type)}
+                        </div>
                       </div>
-                      <div style={{
-                        fontSize: '14px',
-                        fontWeight: '500',
-                        color: '#0c5460',
-                      }}
-                      >
-                        {getTaskTypeName(acceptedTaskDetail.task?.type)}
+                    )
+                  }
+                    
+                  </div>
+
+                  {/* 结算项（来自 /task/settle 接口），显示在接受时间上方 */}
+                  {acceptedTaskSettleLoading ? (
+                    <div style={{ marginBottom: '12px' }}>
+                      <Spin spinning={true} />
+                    </div>
+                  ) : acceptedTaskSettleItems && acceptedTaskSettleItems.length > 0 ? (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ marginBottom: '8px', fontWeight: 600 }}>{t('settle.items' as any) || '结算信息'}</div>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                        {acceptedTaskSettleItems.map((item: any, idx: number) => (
+                          <div
+                            key={idx}
+                            style={{
+                              padding: '8px',
+                              backgroundColor: '#f8f9fa',
+                              border: '1px solid #e9ecef',
+                              borderRadius: '8px',
+                              minWidth: '120px',
+                            }}
+                          >
+                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                              {item.title || item.name || item.key || JSON.stringify(item)}
+                            </div>
+                            {item.value !== undefined ? (
+                              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.value}</div>
+                            ) : item.amount !== undefined ? (
+                              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.amount}</div>
+                            ) : null}
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  </div>
+                  ) : null}
 
                   {/* 任务状态信息 */}
                   <div style={{
@@ -2087,7 +1650,7 @@ export default function TaskPageCore() {
                         marginBottom: '4px',
                       }}
                       >
-                        接受时间
+                        {t('taskInfo.acceptTime')}
                       </div>
                       <div style={{
                         fontSize: '12px',
@@ -2114,7 +1677,7 @@ export default function TaskPageCore() {
                         marginBottom: '4px',
                       }}
                       >
-                        提交时间
+                        {t('taskInfo.submitTime')}
                       </div>
                       <div style={{
                         fontSize: '12px',
@@ -2122,55 +1685,33 @@ export default function TaskPageCore() {
                         color: '#495057',
                       }}
                       >
-                        {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : '未提交'}
+                        {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : t('notSubmitted')}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* 底部状态栏 */}
-              <div style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '16px 0',
-                borderTop: '1px solid #e8e8e8',
-                marginTop: '16px',
-              }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Tag
-                    color={getTaskStatusTag(acceptedTaskDetail.status).color}
-                    style={{
-                      fontSize: '12px',
-                      padding: '4px 8px',
-                    }}
-                  >
+              {/* 底部状态栏：左侧状态，右侧首次提交 */}
+              <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
+                <div className="flex items-center gap-3">
+                  <Badge className={getBadgeClassName(getTaskStatusTag(acceptedTaskDetail.status).color)} style={{ fontSize: 12, padding: '4px 8px' }}>
                     {getTaskStatusTag(acceptedTaskDetail.status).text}
-                  </Tag>
-                  <span style={{
-                    fontSize: '12px',
-                    color: '#666',
-                  }}
-                  >
+                  </Badge>
+                  <span className="text-sm text-muted-foreground">
                     {acceptedTaskDetail.status === 'doing'
-                      ? 'task pending'
+                      ? t('taskStatuses.taskPending')
                       : acceptedTaskDetail.status === 'pending'
-                        ? 'task completed'
-                        : `task status: ${acceptedTaskDetail.status}`}
+                        ? t('taskStatuses.taskCompleted')
+                        : `${t('taskStatuses.taskStatus')}: ${getTaskStatusTag(acceptedTaskDetail.status).text}`}
                   </span>
                 </div>
 
-                <div style={{
-                  fontSize: '12px',
-                  color: '#999',
-                }}
-                >
-                  {acceptedTaskDetail.isFirstTimeSubmission && (
-                    <span style={{ color: '#52c41a' }}>first submission</span>
-                  )}
-                </div>
+                {acceptedTaskDetail.isFirstTimeSubmission && (
+                  <span className="inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-100">
+                    {t('taskInfo.firstSubmission')}
+                  </span>
+                )}
               </div>
 
               {/* 根据任务状态显示不同按钮 */}
@@ -2180,8 +1721,7 @@ export default function TaskPageCore() {
                   return (
                     <div style={{ textAlign: 'center', marginTop: '16px' }}>
                       <Button
-                        type="primary"
-                        size="large"
+                        size="lg"
                         onClick={handleCompleteTask}
                         style={{ marginTop: '12px' }}
                       >
@@ -2203,82 +1743,14 @@ export default function TaskPageCore() {
       </Modal>
 
       {/* 媒体预览弹窗 */}
-      <Modal
-        title={previewMedia?.title || t('modal.mediaPreview')}
-        open={mediaPreviewVisible}
-        onCancel={handleCloseMediaPreview}
-        footer={[
-          <Button key="close" onClick={handleCloseMediaPreview}>
-            {t('modal.close')}
-          </Button>,
-        ]}
-        width={previewMedia?.type === 'video' ? 800 : 600}
-        zIndex={3000}
-      >
-        {previewMedia && (
-          <div>
-            {previewMedia.type === 'video' ? (
-              <video
-                ref={setVideoRef}
-                src={previewMedia.url}
-                controls
-                style={{
-                  width: '100%',
-                  maxHeight: '500px',
-                  borderRadius: '8px',
-                }}
-                autoPlay
-                onEnded={() => {
-                  // 视频播放结束时重置到开始
-                  if (videoRef) {
-                    videoRef.currentTime = 0
-                  }
-                }}
-              />
-            ) : (
-              <Image
-                src={previewMedia.url}
-                alt="preview"
-                width={600}
-                height={500}
-                style={{
-                  width: '100%',
-                  maxHeight: '500px',
-                  objectFit: 'contain',
-                  borderRadius: '8px',
-                }}
-              />
-            )}
-          </div>
-        )}
-      </Modal>
-
-      {/* 任务进度弹窗 */}
-      <Modal
-        title={t('taskProcessing')}
-        open={taskProgressVisible}
-        closable={false}
-        maskClosable={false}
-        footer={null}
-        width={500}
-        zIndex={3000}
-      >
-        <Steps
-          direction="vertical"
-          current={taskProgress.currentStep}
-          items={taskProgress.steps.map((step, index) => ({
-            title: step.title,
-            status: step.status as 'wait' | 'process' | 'finish' | 'error',
-            description: index === 0
-              ? (step.title.includes(t('completeTask' as any)) ? t('messages.taskProcessFailed') : t('messages.taskProcessFailed'))
-              : index === 1
-                ? t('messages.taskProcessFailed')
-                : index === 2
-                  ? t('messages.taskProcessFailed')
-                  : t('messages.taskProcessFailed'),
-          }))}
+      {previewMedia && (
+        <MediaPreview
+          open={mediaPreviewVisible}
+          onClose={() => setMediaPreviewVisible(false)}
+          items={[{ type: previewMedia.type, src: previewMedia.url, title: previewMedia.title || t('modal.mediaPreview') }]}
+          initialIndex={0}
         />
-      </Modal>
+      )}
 
       {/* 账号选择弹窗 */}
       <Modal
@@ -2335,7 +1807,7 @@ export default function TaskPageCore() {
                 title={(
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <span style={{ fontWeight: '500' }}>{account.nickname}</span>
-                    <Tag color="blue">{getPlatformName(account.type)}</Tag>
+                    <Badge className={getBadgeClassName('blue')}>{getPlatformName(account.type)}</Badge>
                   </div>
                 )}
                 description={(
@@ -2348,7 +1820,9 @@ export default function TaskPageCore() {
                     </div>
                     {account.nickname && (
                       <div>
-                        nickname:
+                        {t('accountSelect.nickname' as any)}
+                        :
+                        {' '}
                         {account.nickname}
                       </div>
                     )}
@@ -2360,16 +1834,28 @@ export default function TaskPageCore() {
         />
       </Modal>
 
-      {/* 下载App提示弹窗 */}
-      <DownloadAppModal
-        visible={downloadAppVisible}
-        onClose={() => setDownloadAppVisible(false)}
-        platform={downloadAppConfig.platform}
-        appName={downloadAppConfig.appName}
-        downloadUrl={downloadAppConfig.downloadUrl}
-        qrCodeUrl={downloadAppConfig.qrCodeUrl}
-        zIndex={3000}
-      />
+      {/* 发布作品弹窗（用于任务流程触发） */}
+      {accountList.length > 0 && (
+        <PublishDialog
+          open={publishDialogOpen}
+          onClose={() => {
+            setPublishDialogOpen(false)
+            setPublishDefaultAccountId(undefined)
+            setPendingUserTaskIdForPublish(undefined)
+            setPendingTaskForPublish(null)
+          }}
+          accounts={accountList}
+          defaultAccountId={publishDefaultAccountId}
+          suppressAutoPublish={true}
+          taskIdForPublish={pendingUserTaskIdForPublish}
+          onPublishConfirmed={(taskId?: string) => {
+            // 当 PublishDialog 内部确认发布完成时触发，继续提交任务
+            handlePublishSuccess()
+          }}
+        />
+      )}
+      </>
+      )}
     </div>
   )
 }

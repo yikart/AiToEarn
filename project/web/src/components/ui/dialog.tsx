@@ -29,16 +29,39 @@ const DialogOverlay = React.forwardRef<
 ))
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
+interface DialogContentProps extends React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> {
+  overlayStyle?: React.CSSProperties
+  overlayClassName?: string
+}
+
 const DialogContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+  DialogContentProps
+>(({ className, children, overlayStyle, overlayClassName, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay />
+    <DialogOverlay 
+      className={overlayClassName}
+      style={overlayStyle}
+    />
     <DialogPrimitive.Content
       ref={ref}
+      // Ensure the content container can receive focus and explicitly move focus
+      // to it when the dialog opens to avoid aria-hidden being applied to an
+      // ancestor while a descendant still has focus (causes accessibility warning).
+      tabIndex={-1}
+      onOpenAutoFocus={(event) => {
+        // Prevent Radix from performing its default auto-focus behavior and
+        // immediately focus the content container to avoid a race where an
+        // ancestor gets aria-hidden while a focused descendant exists.
+        event.preventDefault()
+        ;(event.currentTarget as HTMLElement)?.focus?.()
+      }}
       className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-24px)] sm:w-full sm:max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-4 sm:p-6 shadow-2xl duration-500 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-xl",
+        // 改造说明：
+        // - 保持移动端默认行为：使用 `w-[calc(100%-24px)]` 使弹窗左右留出 12px 边距
+        // - 对于更大的视口，使用 min(maxWidth, 95vw) 策略，避免被 `sm:w-full` 强制撑满或过窄
+        // - 这样可以兼顾移动端和桌面大屏的显示效果，且无需在各处强制覆盖
+        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-24px)] sm:w-[min(1100px,95vw)] translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-4 sm:p-6 shadow-2xl duration-500 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-xl",
         className
       )}
       {...props}

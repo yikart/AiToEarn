@@ -64,3 +64,12 @@ export type { ISSEHandler, ISSEHandlerContext, ISSECallbacks, IActionHandler } f
 // 导出工具（用于扩展）
 export { createWorkflowUtils, createMessageUtils, createAgentRefs } from './utils'
 export type { IAgentRefs, WorkflowUtils, MessageUtils } from './utils'
+
+// Debug helpers: enable/disable persistent debug replay mode
+export function enableDebugReplay() {
+  useAgentStore.setState({ debugReplayActive: true })
+}
+
+export function disableDebugReplay() {
+  useAgentStore.setState({ debugReplayActive: false })
+}
