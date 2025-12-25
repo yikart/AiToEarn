@@ -56,6 +56,8 @@ export interface IUserStore {
   creditsBalance: number
   // Credits 余额加载状态
   creditsLoading: boolean
+  // 侧边栏收起状态
+  sidebarCollapsed: boolean
 }
 
 const state: IUserStore = {
@@ -67,6 +69,7 @@ const state: IUserStore = {
   currentDatePickerType: PublishDatePickerType.DATE,
   creditsBalance: 0,
   creditsLoading: false,
+  sidebarCollapsed: false,
 }
 
 const getState = (): IUserStore => {
@@ -136,6 +139,11 @@ export const useUserStore = createPersistStore(
       // 设置 Credits 余额
       setCreditsBalance(balance: number) {
         set({ creditsBalance: balance })
+      },
+
+      // 设置侧边栏收起状态
+      setSidebarCollapsed(collapsed: boolean) {
+        set({ sidebarCollapsed: collapsed })
       },
 
       // 清除登录状态

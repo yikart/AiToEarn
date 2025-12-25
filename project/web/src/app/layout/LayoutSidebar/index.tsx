@@ -9,6 +9,7 @@ import type { SettingsTab } from '@/components/SettingsModal'
 import { BookOpen } from 'lucide-react'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useShallow } from 'zustand/shallow'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import { routerData } from '@/app/layout/routerData'
 import NotificationPanel from '@/components/notification/NotificationPanel'
@@ -118,8 +119,18 @@ function LayoutSidebar() {
   const route = useSelectedLayoutSegments()
   const { unreadCount } = useNotification()
 
+  // 获取侧边栏状态和设置方法
+  const {
+    sidebarCollapsed: collapsed,
+    setSidebarCollapsed: setCollapsed,
+  } = useUserStore(
+    useShallow(state => ({
+      sidebarCollapsed: state.sidebarCollapsed,
+      setSidebarCollapsed: state.setSidebarCollapsed,
+    })),
+  )
+
   // UI 状态
-  const [collapsed, setCollapsed] = useState(false)
   const [notificationVisible, setNotificationVisible] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
   const {

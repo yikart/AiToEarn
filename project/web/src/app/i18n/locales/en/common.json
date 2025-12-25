@@ -29,6 +29,8 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "selectAll": "Select All",
+    "edit": "Edit",
+    "delete": "Delete",
     "loading": "Loading...",
     "noData": "No data",
     "noImage": "No image",

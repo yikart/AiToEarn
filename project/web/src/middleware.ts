@@ -27,7 +27,6 @@ export function middleware(req: NextRequest) {
       '/sitemap-3.xml',
       '/sitemap-4.xml',
       '/sitemap',
-      '/chat',
       '/healthz',
       "/js/xhs_sign_init.js",
       "/js/xhs_web_sign.js",
