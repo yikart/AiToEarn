@@ -116,7 +116,6 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
                 createdAt={task.createdAt}
                 updatedAt={task.updatedAt}
                 onDelete={handleDelete}
-                showInlineRating={true}
               />
             ))}
       </div>

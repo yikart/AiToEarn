@@ -6,12 +6,10 @@
 'use client'
 
 import type React from 'react'
-import { AlertCircle, CheckCircle2, ExternalLink, Link2, Loader2, MessageSquare, Trash2 } from 'lucide-react'
+import { AlertCircle, CheckCircle2, Loader2, MessageSquare, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { agentApi } from '@/api/agent'
 import { useTransClient } from '@/app/i18n/client'
-import { Modal } from '@/components/ui/modal'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { toast } from '@/lib/toast'
 import { cn, formatRelativeTime } from '@/lib/utils'
@@ -91,17 +89,12 @@ export function TaskCard({
   className,
   onSelect,
   onRateClick,
-  showInlineRating = false,
 }: ITaskCardProps) {
   const router = useRouter()
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [ratingModalOpen, setRatingModalOpen] = useState(false)
-  const [inlineRating, setInlineRating] = useState<number>(0)
-  const [ratingComments, setRatingComments] = useState<string[]>(['', '', '', ''])
-  const [isRatingSubmitting, setIsRatingSubmitting] = useState(false)
 
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
@@ -131,99 +124,9 @@ export function TaskCard({
     }
   }
 
-  /** 处理转发（复制会话为新任务并跳转） */
-  const handleShare = async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (isProcessing)
-      return
-    try {
-      setIsProcessing(true)
-      // 创建一个新的任务（复用会话），获取新 id
-      const res = await agentApi.createTask({ prompt: [], taskId: id })
-      if (res && (res as any).code === 0 && (res as any).data) {
-        const newTaskId = (res as any).data.id
-        const url = `${window.location.origin}/${lng}/chat/${newTaskId}`
-        try {
-          await navigator.clipboard.writeText(url)
-          toast.success(t('task.copyLinkSuccess' as any) || 'Link copied')
-        }
-        catch {
-          // ignore clipboard error, still navigate
-        }
-        router.push(`/${lng}/chat/${newTaskId}`)
-      }
-      else {
-        toast.error((res as any)?.msg || t('task.forwardFailed' as any) || 'Share failed')
-      }
-    }
-    catch (error) {
-      console.error('Share failed', error)
-      toast.error(t('task.forwardFailed' as any) || 'Share failed')
-    }
-    finally {
-      setIsProcessing(false)
-    }
-  }
+  // Note: share and public-link actions intentionally removed from UI per request.
 
-  /** 创建公开分享链接 */
-  const handleCreatePublicLink = async (e: React.MouseEvent) => {
-    e.stopPropagation()
-    if (isProcessing)
-      return
-    try {
-      setIsProcessing(true)
-      const res = await agentApi.createPublicShare(id)
-      const token = (res as any)?.data?.token || (res as any)?.token
-      const urlPath = (res as any)?.data?.urlPath || (res as any)?.urlPath
-      const fullUrl = urlPath ? `${window.location.origin}${urlPath}` : `${window.location.origin}/agent/tasks/shared/${token}`
-      try {
-        await navigator.clipboard.writeText(fullUrl)
-        toast.success(t('task.publicShareCopied' as any) || 'Public share link copied to clipboard')
-      }
-      catch {
-        // fallback: log link so user can copy from console if clipboard denied
-
-        console.log('Public share link:', fullUrl)
-        toast.success(t('task.publicShareCreated' as any) || 'Public share link created')
-      }
-    }
-    catch (err) {
-      console.error('Create public share failed', err)
-      toast.error(t('task.publicShareFailed' as any) || 'Create public share failed')
-    }
-    finally {
-      setIsProcessing(false)
-    }
-  }
-
-  /** 提交评分（内联） */
-  const submitInlineRating = async () => {
-    if (inlineRating < 1 || inlineRating > 5) {
-      toast.error(t('task.ratingInvalid' as any) || 'Invalid rating')
-      return
-    }
-    try {
-      setIsRatingSubmitting(true)
-      // 将4个评论组合成一个字符串，用分隔符分开
-      const combinedComment = ratingComments.filter(comment => comment.trim() !== '').join('\n---\n')
-      const res = await agentApi.createRating(id, inlineRating, combinedComment)
-      if (res && (res as any).code === 0) {
-        toast.success(t('task.ratingSuccess' as any) || 'Rating submitted')
-        setRatingModalOpen(false)
-        setRatingComments(['', '', '', '']) // 重置评论
-      }
-      else {
-        toast.error((res as any)?.msg || (t('task.ratingFailed' as any) || 'Submit failed'))
-      }
-    }
-    catch (error) {
-      console.error('Submit rating failed', error)
-      toast.error(t('task.ratingFailed' as any) || 'Submit failed')
-    }
-    finally {
-      setIsRatingSubmitting(false)
-    }
-  }
+  // Inline rating handlers removed — rating UI hidden on TaskCard.
 
   /** 触发评分回调（由历史列表等外部组件使用） */
   const handleRateClick = (e: React.MouseEvent) => {
@@ -276,31 +179,8 @@ export function TaskCard({
         )}
       </div>
 
-      {/* Action buttons: Prominent share and subtle delete */}
-      <div className="mt-3 flex items-center justify-between gap-3">
-        {/* Share buttons - prominent */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleShare}
-            disabled={isDeleting || isProcessing}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary hover:text-primary/90 transition-colors text-sm font-medium min-w-[80px] justify-center"
-            aria-label="share"
-          >
-            {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
-            <span className="hidden sm:inline">{t('task.share' as any) || 'Share'}</span>
-          </button>
-          <button
-            onClick={handleCreatePublicLink}
-            disabled={isDeleting || isProcessing}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 hover:bg-secondary text-secondary-foreground hover:text-secondary-foreground/90 transition-colors text-sm font-medium min-w-[80px] justify-center"
-            aria-label="public-share"
-          >
-            <ExternalLink className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('task.publicLink' as any) || 'Public'}</span>
-          </button>
-        </div>
-
-        {/* Delete button - subtle */}
+      {/* Action buttons: subtle delete (share and rating hidden per request) */}
+      <div className="mt-3 flex items-center justify-end">
         <button
           onClick={handleDelete}
           disabled={isDeleting}
@@ -312,71 +192,7 @@ export function TaskCard({
         </button>
       </div>
 
-      {/* Inline rating UI for homepage usage */}
-      {showInlineRating && (
-        <>
-          <div className="mt-3">
-            <div className="flex items-center gap-2">
-              {Array.from({ length: 5 }).map((_, idx) => {
-                const v = idx + 1
-                return (
-                  <button
-                    key={v}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setInlineRating(v)
-                      setRatingModalOpen(true)
-                    }}
-                    className={cn(
-                      'w-7 h-7 rounded-md border flex items-center justify-center',
-                      inlineRating >= v ? 'bg-amber-100 border-amber-300 text-amber-700' : 'bg-transparent',
-                    )}
-                    aria-label={`rate-${v}`}
-                  >
-                    {v}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-
-          <Modal
-            open={ratingModalOpen}
-            title={t('task.externalRating' as any) || 'Rate selected task'}
-            onCancel={() => setRatingModalOpen(false)}
-            onOk={submitInlineRating}
-            okText={isRatingSubmitting ? t('task.submitting' as any) || 'Submitting' : t('task.submit' as any) || 'Submit'}
-            confirmLoading={isRatingSubmitting}
-          >
-            <div className="flex flex-col gap-4">
-              <div className="text-sm text-muted-foreground">
-                Task:
-                {id}
-              </div>
-              <div className="space-y-3">
-                {ratingComments.map((comment, index) => (
-                  <div key={index} className="flex flex-col gap-1">
-                    <label className="text-xs text-muted-foreground font-medium">
-                      {t('task.commentLabel' as any, { number: index + 1 }) || `Comment ${index + 1}`}
-                    </label>
-                    <textarea
-                      value={comment}
-                      onChange={(e) => {
-                        const newComments = [...ratingComments]
-                        newComments[index] = e.target.value
-                        setRatingComments(newComments)
-                      }}
-                      placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
-                      className="w-full p-2 border rounded-md resize-none h-16 text-sm"
-                      maxLength={200}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </Modal>
-        </>
-      )}
+      {/* Rating UI hidden on TaskCard as requested */}
     </div>
   )
 }
