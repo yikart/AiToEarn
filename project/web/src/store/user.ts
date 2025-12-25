@@ -5,6 +5,7 @@ import { PublishDatePickerType } from '@/components/PublishDialog/compoents/Publ
 import { createPersistStore } from '@/utils/createPersistStore'
 import lodash from "lodash";
 import { useAccountStore } from '.'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 
 export interface UserInfo {
   createTime: string
@@ -100,6 +101,12 @@ export const useUserStore = createPersistStore(
       },
       setUserInfo: (userInfo: UserInfo) => {
         set({ userInfo })
+      },
+
+      appInit() {
+        useDataStatisticsStore.getState().init();
+        methods.getUserInfo();
+        useAccountStore.getState().accountInit();
       },
 
       // 获取用户信息
