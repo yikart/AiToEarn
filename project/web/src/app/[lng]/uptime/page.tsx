@@ -73,11 +73,7 @@ export default function UptimePage() {
           pageSize,
           time: [startDate.toISOString(), endDate.toISOString()],
         }
-        console.log('------ response ------', params)
-
         const response = await getUptimeListApi(params)
-
-        console.log('------ response ------', response)
 
         let items: UptimeItem[] = []
         let total = 0
