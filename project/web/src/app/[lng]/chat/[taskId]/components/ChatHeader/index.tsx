@@ -9,6 +9,8 @@ import { ArrowLeft, Loader2, Star } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import RatingModal from '@/components/Chat/Rating'
 import { useTransClient } from '@/app/i18n/client'
+import ShareButton from '@/components/Share/ShareButton'
+import ShareModal from '@/components/Share/ShareModal'
 
 export interface IChatHeaderProps {
   /** 任务标题 */
@@ -41,6 +43,7 @@ export function ChatHeader({
 }: IChatHeaderProps) {
   const { t } = useTransClient('chat')
   const [ratingOpen, setRatingOpen] = useState(false)
+  const [shareOpen, setShareOpen] = useState(false)
   return (
     <header className="flex items-center gap-3 px-4 py-3 bg-background border-b border-border shrink-0">
       {/* 返回按钮 */}
@@ -73,6 +76,7 @@ export function ChatHeader({
           >
             <Star className={`w-5 h-5 ${rating ? 'text-amber-400' : 'text-muted-foreground'}`} {...(rating ? { fill: 'currentColor' } : {})} />
           </Button>
+          <ShareButton onClick={() => setShareOpen(true)} />
           {/* 文本提示，移动端隐藏以节省空间 */}
           <button
             onClick={() => setRatingOpen(true)}
@@ -83,6 +87,7 @@ export function ChatHeader({
           </button>
         </div>
       </div>
+      <ShareModal taskId={taskId ?? ''} open={shareOpen} onOpenChange={(v) => setShareOpen(v)} />
       <RatingModal
         taskId={taskId ?? ''}
         open={ratingOpen}

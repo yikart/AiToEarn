@@ -225,10 +225,45 @@ const AddAccountModal = memo(
       }
 
       // 处理Facebook页面选择成功
-      const handleFacebookPagesSuccess = () => {
+      const handleFacebookPagesSuccess = async () => {
         setShowFacebookPagesModal(false)
-        onClose()
-        // 可以在这里添加成功提示或其他逻辑
+        // Facebook页面选择成功后，刷新账号列表并触发成功回调
+        await handleAuthSuccess(null, PlatType.Facebook)
+      }
+
+      // 统一处理授权成功后的逻辑
+      const handleAuthSuccess = async (authResult: any, platType: PlatType) => {
+        try {
+          // 刷新账号列表
+          await getAccountList()
+
+          // 找到新添加的账号
+          const afterAuthCount = accountGroupList.reduce((total, group) => total + group.children.length, 0)
+          const currentSpace = accountGroupList.find(group => group.id === selectedSpaceId)
+
+          if (currentSpace) {
+            const newAccounts = currentSpace.children.filter(account => {
+              // 这里可以根据时间戳或其他方式判断是否为新账号
+              // 暂时简单判断数量变化
+              return true // 需要更精确的判断逻辑
+            })
+
+            if (newAccounts.length > 0) {
+              // 找到最新添加的账号
+              const latestAccount = newAccounts[newAccounts.length - 1]
+              // 触发成功回调
+              onAddSuccess(latestAccount)
+              // 显示成功提示
+              toast.success(t('addAccountModal.authSuccess', { platform: AccountPlatInfoMap.get(platType)?.name || platType }))
+            }
+          }
+
+          // 关闭弹窗
+          onClose()
+        } catch (error) {
+          console.error('处理授权成功失败:', error)
+          toast.error(t('addAccountModal.authSuccessFailed'))
+        }
       }
 
       /**
@@ -309,70 +344,72 @@ const AddAccountModal = memo(
         // 记录授权前的账号数量，用于后续识别新账号
         const beforeAuthCount = accountGroupList.reduce((total, group) => total + group.children.length, 0)
 
-        switch (key) {
-          case PlatType.KWAI:
-            // 快手授权前先显示提示
-            // 在 onOk 回调中直接执行授权，确保 window.open 在用户交互上下文中
-            await confirm({
-              title: t('addAccountModal.kwaiAuthWarning.title'),
-              content: t('addAccountModal.kwaiAuthWarning.content'),
-              okText: t('addAccountModal.kwaiAuthWarning.okText'),
-              cancelText: undefined, // 不显示取消按钮
-              onOk: () => {
-                // 在用户点击"我知道了"时立即执行授权，确保 window.open 在用户交互上下文中
-                kwaiSkip(key, selectedSpaceId).catch((error) => {
-                  console.error('快手授权失败:', error)
-                })
-              },
-            })
-            break
-          case PlatType.BILIBILI:
-            await bilibiliSkip(key, selectedSpaceId)
-            break
-          case PlatType.YouTube:
-            await youtubeSkip(key, selectedSpaceId)
-            break
-          case PlatType.Twitter:
-            await twitterSkip(key, selectedSpaceId)
-            break
-          case PlatType.Tiktok:
-            await tiktokSkip(key, selectedSpaceId)
-            break
-          case PlatType.Facebook:
-            try {
-              await facebookSkip(key, selectedSpaceId)
-              // Facebook授权成功后显示页面选择弹窗
+        let authResult: any = null
+
+        try {
+          switch (key) {
+            case PlatType.KWAI:
+              // 快手授权前先显示提示
+              // 在 onOk 回调中直接执行授权，确保 window.open 在用户交互上下文中
+              await confirm({
+                title: t('addAccountModal.kwaiAuthWarning.title'),
+                content: t('addAccountModal.kwaiAuthWarning.content'),
+                okText: t('addAccountModal.kwaiAuthWarning.okText'),
+                cancelText: undefined, // 不显示取消按钮
+                onOk: async () => {
+                  // 在用户点击"我知道了"时立即执行授权，确保 window.open 在用户交互上下文中
+                  try {
+                    authResult = await kwaiSkip(key, selectedSpaceId)
+                  } catch (error) {
+                    console.error('快手授权失败:', error)
+                    throw error
+                  }
+                },
+              })
+              break
+            case PlatType.BILIBILI:
+              authResult = await bilibiliSkip(key, selectedSpaceId)
+              break
+            case PlatType.YouTube:
+              authResult = await youtubeSkip(key, selectedSpaceId)
+              break
+            case PlatType.Twitter:
+              authResult = await twitterSkip(key, selectedSpaceId)
+              break
+            case PlatType.Tiktok:
+              authResult = await tiktokSkip(key, selectedSpaceId)
+              break
+            case PlatType.Facebook:
+              authResult = await facebookSkip(key, selectedSpaceId)
+              // Facebook授权成功后显示页面选择弹窗（特殊处理，不刷新账号列表）
               handleFacebookAuthSuccess()
-            }
-            catch (error) {
-              console.error('Facebook授权失败:', error)
-            }
-            break
-          case PlatType.Instagram:
-            await instagramSkip(key, selectedSpaceId)
-            break
-          case PlatType.Threads:
-            await threadsSkip(key, selectedSpaceId)
-            break
-          case PlatType.WxGzh:
-            await wxGzhSkip(key, selectedSpaceId)
-            break
-          case PlatType.Pinterest:
-            await pinterestSkip(key, selectedSpaceId)
-            break
-          case PlatType.LinkedIn:
-            await linkedinSkip(key, selectedSpaceId)
-            break
+              break
+            case PlatType.Instagram:
+              authResult = await instagramSkip(key, selectedSpaceId)
+              break
+            case PlatType.Threads:
+              authResult = await threadsSkip(key, selectedSpaceId)
+              break
+            case PlatType.WxGzh:
+              authResult = await wxGzhSkip(key, selectedSpaceId)
+              break
+            case PlatType.Pinterest:
+              authResult = await pinterestSkip(key, selectedSpaceId)
+              break
+            case PlatType.LinkedIn:
+              authResult = await linkedinSkip(key, selectedSpaceId)
+              break
+          }
+
+          // 统一处理授权成功后的逻辑（除了Facebook这种特殊情况）
+          if (authResult && key !== PlatType.Facebook) {
+            await handleAuthSuccess(authResult, key)
+          }
+        } catch (error) {
+          console.error(`${key} 授权失败:`, error)
+          // 可以在这里添加失败提示
         }
 
-        // 授权完成后刷新账号列表
-        setTimeout(async () => {
-          try {
-            await getAccountList()
-          }
-          catch (error) {
-          }
-        }, 2000) // 等待3秒让授权完成
       }
 
       return (

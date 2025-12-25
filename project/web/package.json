@@ -98,6 +98,7 @@
     "tui-image-editor": "^3.15.3",
     "zod": "^3.25.76",
     "zustand": "^5.0.5"
+    , "html2canvas": "^1.4.1"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",

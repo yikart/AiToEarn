@@ -22,7 +22,7 @@ export async function pinterestSkip(platType: PlatType, spaceId?: string) {
   const url = res.data.uri
   window.open(`${url}`)
 
-  const pinterestLoginRes = await pinterestLogin(res.data.taskId)
+  return await pinterestLogin(res.data.taskId)
 }
 
 export function pinterestLogin(taskId: any): Promise<any> {
@@ -38,10 +38,7 @@ export function pinterestLogin(taskId: any): Promise<any> {
           const authRess: any = await checkPinterestAuthApi(taskId)
           const authRes = authRess
           if (authRes?.code === 0 && authRes?.data.status == 1) {
-            // message.success('授权成功');
-            // useAccountStore
-            const accountStore = useAccountStore.getState()
-            await accountStore.getAccountList()
+            // 授权成功，返回结果，交由调用方处理
             resolve(authRes)
             return true
           }

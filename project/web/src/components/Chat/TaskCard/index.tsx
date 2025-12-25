@@ -20,6 +20,8 @@ import { useTransClient } from "@/app/i18n/client";
 import { useGetClientLng } from "@/hooks/useSystem";
 import { toast } from "@/lib/toast";
 import { cn, formatRelativeTime } from "@/lib/utils";
+import ShareButton from "@/components/Share/ShareButton";
+import ShareModal from "@/components/Share/ShareModal";
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -112,6 +114,7 @@ export function TaskCard({
   const { t } = useTransClient("chat");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
   const statusConfig = getStatusConfig(status, t as (key: string) => string);
 
@@ -149,6 +152,12 @@ export function TaskCard({
     e.preventDefault();
     if (!onRateClick) return;
     onRateClick(id);
+  };
+
+  const handleShareClick = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    e?.preventDefault();
+    setShareOpen(true);
   };
 
   return (
@@ -214,6 +223,7 @@ export function TaskCard({
             {t("task.rate" as any) || "Rate"}
           </span>
         </button>
+        <ShareButton onClick={handleShareClick} />
         <button
           onClick={handleDelete}
           disabled={isDeleting}
@@ -230,6 +240,7 @@ export function TaskCard({
           </span>
         </button>
       </div>
+      <ShareModal taskId={id} open={shareOpen} onOpenChange={(v) => setShareOpen(v)} />
     </div>
   );
 }

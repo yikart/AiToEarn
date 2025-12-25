@@ -21,7 +21,7 @@ export async function linkedinSkip(platType: PlatType, spaceId?: string) {
   const url = res.data.url
   window.open(`${url}`)
 
-  await linkedinLogin(res.data.taskId)
+  return await linkedinLogin(res.data.taskId)
 }
 
 /**
@@ -40,8 +40,7 @@ export function linkedinLogin(taskId: any): Promise<any> {
           const authRess: any = await checkMetaAuthApi(taskId)
           const authRes = authRess
           if (authRes?.code === 0 && authRes?.data.status == 1) {
-            const accountStore = useAccountStore.getState()
-            await accountStore.getAccountList()
+            // 授权成功，返回结果，交由调用方处理
             resolve(authRes)
             return true
           }
