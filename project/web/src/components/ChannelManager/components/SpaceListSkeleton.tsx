@@ -48,7 +48,7 @@ export function SpaceListSkeleton() {
       <div className="flex items-center justify-center py-4">
         <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         <span className="ml-2 text-sm text-muted-foreground">
-          {t('common.loading', '加载中...')}
+          {t('common.actions.loading', '加载中...')}
         </span>
       </div>
     </div>
