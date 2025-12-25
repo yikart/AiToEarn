@@ -151,7 +151,9 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
                 createdAt={task.createdAt}
                 updatedAt={task.updatedAt}
                 onDelete={handleDelete}
-                onSelect={(id: string) => {
+                // Do NOT pass onSelect so clicking the card navigates to the chat detail.
+                // Keep onRateClick so users can still select a task for external rating.
+                onRateClick={(id: string) => {
                   setSelectedTaskId(id)
                 }}
               />
