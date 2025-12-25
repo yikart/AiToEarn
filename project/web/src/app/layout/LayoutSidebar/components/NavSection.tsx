@@ -4,7 +4,7 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { FileText, PlusCircle } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
@@ -48,7 +48,7 @@ function NavItem({ item, isActive, collapsed }: NavItemProps) {
       </span>
       {!collapsed && (
         <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {t(item.translationKey as any)}
+          {t(item.translationKey)}
         </span>
       )}
     </Link>
@@ -61,7 +61,7 @@ function NavItem({ item, isActive, collapsed }: NavItemProps) {
         <Tooltip>
           <TooltipTrigger asChild>{content}</TooltipTrigger>
           <TooltipContent side="right">
-            <p>{t(item.translationKey as any)}</p>
+            <p>{t(item.translationKey)}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -94,7 +94,7 @@ function AddChannelButton({ collapsed, onClick }: AddChannelButtonProps) {
       </span>
       {!collapsed && (
         <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {t('addChannel' as any)}
+          {t('addChannel')}
         </span>
       )}
     </button>
@@ -107,7 +107,7 @@ function AddChannelButton({ collapsed, onClick }: AddChannelButtonProps) {
         <Tooltip>
           <TooltipTrigger asChild>{content}</TooltipTrigger>
           <TooltipContent side="right">
-            <p>{t('addChannel' as any)}</p>
+            <p>{t('addChannel')}</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -137,6 +137,15 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
   const otherItems = items.filter(i => !groupKeys.includes(i.translationKey as string))
 
   const [groupOpen, setGroupOpen] = useState(false)
+  const { t } = useTransClient('route')
+
+  // Auto-expand group if current route is in the grouped items
+  useEffect(() => {
+    const isCurrentRouteInGroup = groupedItems.some(item => item.path === currentRoute)
+    if (isCurrentRouteInGroup && !groupOpen) {
+      setGroupOpen(true)
+    }
+  }, [currentRoute, groupedItems, groupOpen])
 
   return (
     <nav className="flex flex-col gap-1">
@@ -181,6 +190,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
               className={cn(
                 'relative flex items-center rounded-lg text-sm font-medium transition-all w-full',
                 'text-muted-foreground hover:bg-accent hover:text-foreground',
+                groupOpen && 'bg-accent text-foreground',
                 collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
               )}
             >
@@ -190,23 +200,37 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
               {!collapsed && (
                 <span className="overflow-hidden text-ellipsis whitespace-nowrap">
                   {/* Use a generic label for the grouped section */}
-                  {useTransClient('route').t('sidebar.more' as any) || 'More'}
+                  {t('sidebar.more')}
+                </span>
+              )}
+              {/* Show expand/collapse indicator in collapsed mode */}
+              {collapsed && (
+                <span className="absolute right-1 top-1/2 -translate-y-1/2 text-xs opacity-60">
+                  {groupOpen ? '−' : '+'}
                 </span>
               )}
             </button>
           </div>
 
-          {/* Expand list when open */}
-          {!collapsed && groupOpen && (
-            <div className="mt-1 flex flex-col gap-1 pl-2">
-              {groupedItems.map((gitem) => (
-                <NavItem
-                  key={gitem.path || gitem.translationKey}
-                  item={gitem}
-                  isActive={gitem.path === currentRoute}
-                  collapsed={collapsed}
-                />
-              ))}
+          {/* Expand list when open - show in both collapsed and expanded states */}
+          {groupOpen && (
+            <div
+              className={cn(
+                'overflow-hidden transition-all duration-300 ease-in-out',
+                groupOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0',
+                collapsed ? 'mt-1' : 'mt-1 pl-2'
+              )}
+            >
+              <div className="flex flex-col gap-1">
+                {groupedItems.map((gitem) => (
+                  <NavItem
+                    key={gitem.path || gitem.translationKey}
+                    item={gitem}
+                    isActive={gitem.path === currentRoute}
+                    collapsed={collapsed}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>

@@ -7,6 +7,7 @@
     "dev": "next dev -p 6060",
     "dev:local": "cross-env NEXT_PUBLIC_API_URL=http://localhost:7001/api next dev",
     "build": "next build",
+    "type-check": "tsc --noEmit",
     "build:copy": "tsc && next build && npm run copy-static",
     "copy-static": "xcopy public .next\\standalone\\public /E /I /Y && if exist .next\\static xcopy .next\\static .next\\standalone\\.next\\static /E /I /Y",
     "start": "next start",
