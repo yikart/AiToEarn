@@ -15,6 +15,7 @@ import { useTransClient } from '@/app/i18n/client'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -44,15 +45,20 @@ export function ChannelManager({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl h-[600px] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-4xl h-[700px] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">
             {t('channelManager.title', '我的频道')}
           </DialogTitle>
+          <DialogDescription>
+            {t('channelManager.description', '管理您的频道和空间分组')}
+          </DialogDescription>
         </DialogHeader>
 
         {/* 统一的空间和频道管理列表 */}
-        <UnifiedChannelSpaceList />
+        <div className="flex-1 min-h-0">
+          <UnifiedChannelSpaceList />
+        </div>
       </DialogContent>
     </Dialog>
   )

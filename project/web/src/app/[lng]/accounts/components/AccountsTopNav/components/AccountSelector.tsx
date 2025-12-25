@@ -29,7 +29,6 @@ interface AccountSelectorProps {
   sortLoading?: string | null
   deleteLoading?: string | null
   onAccountSelect: (account: SocialAccount | undefined) => void
-  onAccountDelete: (account: SocialAccount) => void
   onToggleSpaceCollapse: (spaceId: string) => void
   onGroupSort: (groupId: string, direction: 'up' | 'down') => void
   searchText: string
@@ -47,7 +46,6 @@ const AccountSelector = memo(({
   sortLoading,
   deleteLoading,
   onAccountSelect,
-  onAccountDelete,
   onToggleSpaceCollapse,
   onGroupSort,
   searchText,
@@ -134,7 +132,6 @@ const AccountSelector = memo(({
                             deleteLoading={deleteLoading}
                             onToggleCollapse={onToggleSpaceCollapse}
                             onSelectAccount={onAccountSelect}
-                            onDeleteAccount={onAccountDelete}
                             onGroupSort={onGroupSort}
                           />
                         )
@@ -158,8 +155,6 @@ const AccountSelector = memo(({
                             account={account}
                             isActive={isActive}
                             onSelect={onAccountSelect}
-                            onDelete={onAccountDelete}
-                            deleteLoading={deleteLoading}
                           />
                         )
                       })

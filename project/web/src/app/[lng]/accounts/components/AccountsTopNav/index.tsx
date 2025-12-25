@@ -73,26 +73,6 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
       [setAccountActive],
     )
 
-    // 处理账户删除
-    const handleAccountDelete = useCallback(async (account: SocialAccount) => {
-      setDeleteLoading(account.id)
-      try {
-        await deleteAccountsApi([account.id])
-        await getAccountList()
-        toast.success(t('messages.deleteSuccess'))
-        // 如果删除的是当前选中的账号，清空选中状态
-        if (accountActive?.id === account.id) {
-          setAccountActive(undefined)
-        }
-      }
-      catch (error) {
-        toast.error(t('messages.sortFailed'))
-      }
-      finally {
-        setDeleteLoading(null)
-      }
-    }, [accountActive, getAccountList, setAccountActive, t])
-
     // 处理空间排序
     const handleGroupSort = useCallback(async (groupId: string, direction: 'up' | 'down') => {
       setSortLoading(groupId)
@@ -193,7 +173,6 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(
             sortLoading={sortLoading}
             deleteLoading={deleteLoading}
             onAccountSelect={handleAccountSelect}
-            onAccountDelete={handleAccountDelete}
             onToggleSpaceCollapse={toggleSpaceCollapse}
             onGroupSort={handleGroupSort}
             searchText={accountSearchText}
