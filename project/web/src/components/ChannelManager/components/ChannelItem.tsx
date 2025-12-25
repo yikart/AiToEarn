@@ -17,6 +17,7 @@ import { getOssUrl } from '@/utils/oss'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import AccountStatusView from '@/app/[lng]/accounts/components/AccountsTopNav/components/AccountStatusView'
+import { useTransClient } from '@/app/i18n/client'
 
 interface ChannelItemProps {
   channel: SocialAccount
@@ -27,6 +28,7 @@ interface ChannelItemProps {
 export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemProps) {
   const platInfo = AccountPlatInfoMap.get(channel.type)
   const isDeleting = deleteLoading === channel.id
+  const { t } = useTransClient("account");
 
   return (
     <div
@@ -59,7 +61,7 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
           <AccountStatusView account={channel} />
           {channel.fansCount !== undefined && channel.fansCount !== null && (
             <span className="text-xs text-muted-foreground shrink-0">
-              粉丝: {channel.fansCount}
+              {t('channelManager.fans', { count: channel.fansCount })}
             </span>
           )}
         </div>
