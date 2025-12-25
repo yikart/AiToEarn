@@ -1,6 +1,6 @@
 {
-  "title": "账户",
-  "describe": "账户页面",
+  "title": "发布",
+  "describe": "发布页面",
   "today": "今天",
   "defaultSpace": "默认空间",
   "addPost": "添加帖子",
@@ -297,9 +297,26 @@
     "createSpaceNamePlaceholder": "输入空间名称",
     "createSpaceSuccess": "创建空间成功",
     "createSpaceFailed": "创建空间失败",
+    "editSpaceSuccess": "空间编辑成功",
+    "editSpaceFailed": "空间编辑失败",
+    "deleteChannelSuccess": "删除频道成功",
+    "deleteChannelFailed": "删除频道失败",
+    "sortSuccess": "排序成功",
+    "sortFailed": "排序失败",
+    "moveUp": "上移",
+    "moveDown": "下移",
+    "noChannels": "暂无频道",
+    "deleteConfirm": "确认删除",
+    "channelCount": "{{count}} 个频道",
+    "sorting": "排序中...",
+    "deleting": "删除中...",
+    "fans": "粉丝: {{count}}",
+    "deleteDialogContent": "确定要删除 {{type}} \"{{name}}\" 吗？此操作无法撤销。",
     "deleteSpaceConfirm": "确认删除空间",
     "deleteSpaceSuccess": "删除空间成功",
     "deleteSpaceFailed": "删除空间失败",
     "noData": "暂无数据"
   }
+  ,
+  "channel": "频道"
 }

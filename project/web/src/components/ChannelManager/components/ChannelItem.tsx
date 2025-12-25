@@ -8,32 +8,27 @@
 
 'use client'
 
+import type { SocialAccount } from '@/api/types/account.type'
 import Image from 'next/image'
-import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons'
+import { Loader2 } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { getOssUrl } from '@/utils/oss'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-
-interface Channel {
-  id: string
-  name: string
-  platform: string
-  accountId: string
-  avatar?: string
-  fansCount?: number
-}
+import AccountStatusView from '@/app/[lng]/accounts/components/AccountsTopNav/components/AccountStatusView'
+import { useTransClient } from '@/app/i18n/client'
 
 interface ChannelItemProps {
-  channel: Channel
-  onDelete: (channel: Channel) => void
+  channel: SocialAccount
+  onDelete: (channel: SocialAccount) => void
   deleteLoading?: string | null
 }
 
 export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemProps) {
-  const platInfo = AccountPlatInfoMap.get(channel.platform as any)
+  const platInfo = AccountPlatInfoMap.get(channel.type)
   const isDeleting = deleteLoading === channel.id
+  const { t } = useTransClient("account");
 
   return (
     <div
@@ -42,12 +37,14 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
       }`}
     >
       <Avatar className="h-10 w-10 shrink-0">
-        <AvatarImage src={getOssUrl(channel.avatar)} alt={channel.name} />
-        <AvatarFallback>{channel.name[0]}</AvatarFallback>
+        <AvatarImage src={getOssUrl(channel.avatar)} alt={channel.nickname} />
+        <AvatarFallback>{channel.nickname?.[0] || channel.account?.[0]}</AvatarFallback>
       </Avatar>
 
       <div className="flex-1 min-w-0">
-        <div className="font-medium text-sm truncate">{channel.name}</div>
+        <div className="font-medium text-sm truncate">
+          {channel.nickname || channel.account}
+        </div>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           {platInfo?.icon && (
             <Image
@@ -61,14 +58,10 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
           <span className="text-xs text-muted-foreground shrink-0">
             {platInfo?.name}
           </span>
-          {/* 状态显示 */}
-          <span className="flex items-center gap-1 text-xs text-green-600 shrink-0">
-            <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-            在线
-          </span>
-          {channel.fansCount !== undefined && (
+          <AccountStatusView account={channel} />
+          {channel.fansCount !== undefined && channel.fansCount !== null && (
             <span className="text-xs text-muted-foreground shrink-0">
-              粉丝: {channel.fansCount}
+              {t('channelManager.fans', { count: channel.fansCount })}
             </span>
           )}
         </div>
@@ -76,7 +69,7 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
 
       {isDeleting ? (
         <div className="p-1">
-          <LoadingOutlined className="h-4 w-4 text-muted-foreground animate-spin" />
+          <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
         </div>
       ) : (
         <Button
