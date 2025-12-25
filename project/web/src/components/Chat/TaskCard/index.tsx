@@ -8,7 +8,7 @@
 import type React from 'react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, MessageSquare, Trash2, AlertCircle, CheckCircle2, Link2 } from 'lucide-react'
+import { Loader2, MessageSquare, Trash2, AlertCircle, CheckCircle2, Link2, ExternalLink } from 'lucide-react'
 import { agentApi } from '@/api/agent'
 import { toast } from '@/lib/toast'
 import { cn, formatRelativeTime } from '@/lib/utils'
@@ -157,6 +157,28 @@ export function TaskCard({
     }
   }
 
+  /** 创建公开分享链接 */
+  const handleCreatePublicLink = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (isProcessing) return
+    try {
+      setIsProcessing(true)
+      const res = await agentApi.createPublicShare(id)
+      const token = (res as any)?.data?.token || (res as any)?.token
+      const urlPath = (res as any)?.data?.urlPath || (res as any)?.urlPath
+      const fullUrl = urlPath ? `${window.location.origin}${urlPath}` : `${window.location.origin}/agent/tasks/shared/${token}`
+      try {
+        await navigator.clipboard.writeText(fullUrl)
+      } catch {}
+      window.prompt('Public share link (copied to clipboard):', fullUrl)
+    } catch (err) {
+      console.error('Create public share failed', err)
+      toast.error(t('task.publicShareFailed' as any) || 'Create public share failed')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
   /** 提交评分（内联） */
   const submitInlineRating = async () => {
     if (inlineRating < 1 || inlineRating > 5) {
@@ -236,7 +258,15 @@ export function TaskCard({
           className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
           aria-label="share"
         >
-          {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}
+          {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+        </button>
+        <button
+          onClick={handleCreatePublicLink}
+          disabled={isDeleting || isProcessing}
+          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
+          aria-label="public-share"
+        >
+          <ExternalLink className="w-4 h-4" />
         </button>
         <button
           onClick={handleDelete}
