@@ -7,9 +7,11 @@
 
 import type React from 'react'
 import { useState } from 'react'
-import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2, Star } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { Loader2, MessageSquare, MoreHorizontal, Trash2, AlertCircle, CheckCircle2 } from 'lucide-react'
+import { agentApi } from '@/api/agent'
+import { toast } from '@/lib/toast'
 import { cn, formatRelativeTime } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { useTransClient } from '@/app/i18n/client'
 import {
@@ -17,9 +19,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
-import RatingModal from '@/components/Chat/Rating'
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -34,16 +34,12 @@ export interface ITaskCardProps {
   updatedAt?: string | number
   /** 删除回调 */
   onDelete?: (id: string) => void | Promise<void>
+  /** 评分回调（用于历史列表触发外部评分弹窗） */
+  onRateClick?: (taskId: string) => void
+  /** 选择回调（如果提供，点击卡片将触发选择而不是跳转） */
+  onSelect?: (id: string) => void
   /** 自定义类名 */
   className?: string
-  /** 任务评分（1-5） */
-  rating?: number | null
-  /** 任务评价文本 */
-  ratingComment?: string | null
-  /** 在列表中显示更醒目的评分行 */
-  showProminentRating?: boolean
-  /** 列表级别的评分按钮点击回调（传入 taskId） */
-  onRateClick?: (taskId: string) => void
 }
 
 /** 获取状态显示配置 */
@@ -96,21 +92,26 @@ export function TaskCard({
   updatedAt,
   onDelete,
   className,
-  rating: initialRating,
-  ratingComment: initialRatingComment,
-  showProminentRating,
+  onSelect,
   onRateClick,
 }: ITaskCardProps) {
-  
+  const router = useRouter()
   const lng = useGetClientLng()
   const { t } = useTransClient('chat')
   const [isDeleting, setIsDeleting] = useState(false)
-  const [rating, setRating] = useState<number | null>(initialRating ?? null)
-  const [ratingComment, setRatingComment] = useState<string | null>(initialRatingComment ?? null)
+  const [isProcessing, setIsProcessing] = useState(false)
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
 
- 
+  /** 跳转到对话详情页 */
+  const handleClick = () => {
+    if (isDeleting) return
+    if (onSelect) {
+      onSelect(id)
+      return
+    }
+    router.push(`/${lng}/chat/${id}`)
+  }
 
   /** 处理删除 */
   const handleDelete = async (e: React.MouseEvent) => {
@@ -125,10 +126,53 @@ export function TaskCard({
     }
   }
 
+  /** 处理转发（复制会话为新任务并跳转） */
+  const handleForward = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (isProcessing) return
+    try {
+      setIsProcessing(true)
+      // 创建一个新的任务，传入 taskId 以复用会话（后端会在可用时复用 session）
+      const res = await agentApi.createTask({ prompt: [], taskId: id })
+      if (res && (res as any).code === 0 && (res as any).data) {
+        const newTaskId = (res as any).data.id
+        router.push(`/${lng}/chat/${newTaskId}`)
+      } else {
+        toast.error((res as any)?.msg || t('task.forwardFailed' as any) || 'Forward failed')
+      }
+    } catch (error) {
+      console.error('Forward failed', error)
+      toast.error(t('task.forwardFailed' as any) || 'Forward failed')
+    } finally {
+      setIsProcessing(false)
+    }
+  }
+
+  /** 复制任务链接到剪贴板 */
+  const handleCopyLink = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    try {
+      const url = `${window.location.origin}/${lng}/chat/${id}`
+      await navigator.clipboard.writeText(url)
+      toast.success(t('task.copyLinkSuccess' as any) || 'Link copied')
+    } catch (error) {
+      console.error('Copy link failed', error)
+      toast.error(t('task.copyLinkFailed' as any) || 'Copy failed')
+    }
+  }
+
+  /** 触发评分回调（由历史列表等外部组件使用） */
+  const handleRateClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!onRateClick) return
+    onRateClick(id)
+  }
+
   return (
     <div
+      onClick={handleClick}
       className={cn(
-        'group relative flex flex-col p-4 rounded-xl border border-border bg-card transition-all',
+        'group relative flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
         'hover:border-border hover:shadow-md',
         isDeleting && 'opacity-60 cursor-wait',
         className,
@@ -144,55 +188,36 @@ export function TaskCard({
         </h4>
       </div>
 
-      {/* 时间 & 状态 & 评分 */}
+      {/* 时间 & 状态 */}
       <div className="mt-1 flex items-center justify-between gap-2">
         <span className="text-xs text-muted-foreground">
           {formatRelativeTime(new Date(updatedAt || createdAt))}
         </span>
-        <div className="flex items-center gap-2">
-          {status && statusConfig.label && (
-            <span className={cn(
-              'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
-              statusConfig.className,
-            )}>
-              {statusConfig.icon && (
-                <statusConfig.icon className={cn(
-                  'w-3 h-3',
-                  status?.toLowerCase() === 'running' && 'animate-spin',
-                )} />
-              )}
-              {statusConfig.label}
-            </span>
-          )}
-        </div>
+        {status && statusConfig.label && (
+          <span className={cn(
+            'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
+            statusConfig.className,
+          )}>
+            {statusConfig.icon && (
+              <statusConfig.icon className={cn(
+                'w-3 h-3',
+                status?.toLowerCase() === 'running' && 'animate-spin',
+              )} />
+            )}
+            {statusConfig.label}
+          </span>
+        )}
       </div>
-
-      {/* Prominent rating button (single compact control) */}
-      {showProminentRating && (
-        <div className="mt-3">
-          <div onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant={rating ? 'outline' : 'ghost'}
-              size="sm"
-              onClick={(e) => { e.stopPropagation(); onRateClick?.(id) }}
-              className={cn(rating ? '' : 'w-full justify-center')}
-            >
-              <Star className={cn('w-4 h-4 mr-2', rating ? 'text-amber-400' : 'text-muted-foreground')} {...(rating ? { fill: 'currentColor' } : {})} />
-              {rating ? `${rating} / 5` : (t('task.rate' as any) || 'Rate this task')}
-            </Button>
-          </div>
-        </div>
-      )}
 
       {/* 更多操作按钮 */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={(e) => e.stopPropagation()}
             disabled={isDeleting}
             className={cn(
               'absolute top-2 right-2 w-7 h-7 rounded-md flex items-center justify-center',
-              'opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity',
+              'opacity-0 group-hover:opacity-100 transition-opacity',
               'hover:bg-muted text-muted-foreground hover:text-foreground',
               isDeleting && 'opacity-100 cursor-wait',
             )}
@@ -204,36 +229,21 @@ export function TaskCard({
             )}
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={(e) => {
-              e.stopPropagation()
-              // 在新窗口中打开任务详情页
-              try {
-                window.open(`/${lng}/chat/${id}`, '_blank', 'noopener')
-              } catch (err) {
-                // fallback: 使用 location.assign
-                // eslint-disable-next-line no-console
-                console.error('Open new window failed', err)
-              }
-            }}
-          >
-            <MessageSquare className="w-4 h-4 mr-2" />
-            打开
+          <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={handleRateClick} className="focus:bg-muted/5">
+            <CheckCircle2 className="w-4 h-4 mr-2" />
+            Rate
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={(e) => {
-              e.stopPropagation()
-              onRateClick?.(id)
-            }}
-          >
-            <Star className="w-4 h-4 mr-2 text-amber-400" />
-            {t('task.rate' as any) || 'Rate'}
+          <DropdownMenuItem onClick={handleForward} className="focus:bg-muted/5">
+            {isProcessing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <MessageSquare className="w-4 h-4 mr-2" />}
+            Forward
           </DropdownMenuItem>
-          
-           <DropdownMenuItem
-            onClick={(e) => { e.stopPropagation(); handleDelete(e); }}
+          <DropdownMenuItem onClick={handleCopyLink} className="focus:bg-muted/5">
+            <MoreHorizontal className="w-4 h-4 mr-2" />
+            Copy link
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={handleDelete}
             className="text-destructive focus:text-destructive focus:bg-destructive/10"
           >
             <Trash2 className="w-4 h-4 mr-2" />

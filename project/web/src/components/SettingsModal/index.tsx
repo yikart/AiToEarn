@@ -109,15 +109,15 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
   return (
     <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
       <DialogContent
-        className="!w-[min(880px,95vw)] sm:!w-[min(880px,95vw)] !max-w-none mx-auto gap-0 overflow-hidden p-0"
+        className="w-[95vw] max-w-[900px] gap-0 overflow-hidden p-0 md:w-[900px]"
         aria-describedby={undefined}
       >
         <DialogTitle className="sr-only">{t('title')}</DialogTitle>
 
         {/* 移动端布局：垂直排列；桌面端：水平排列 */}
-        <div className="flex h-[80vh] max-h-[600px] flex-col md:h-[70vh] md:max-h-none md:flex-row">
+        <div className="flex h-[85vh] max-h-[650px] flex-col md:h-[70vh] md:max-h-none md:flex-row">
           {/* 侧边栏/顶部导航 */}
-          <div className="flex w-full shrink-0 flex-col border-b border-border md:w-48 md:border-b-0 md:border-r">
+          <div className="flex w-full shrink-0 flex-col border-b border-border md:w-52 md:border-b-0 md:border-r">
             {/* 侧边栏头部 - Logo + 项目名称 */}
             <div className="flex shrink-0 items-center gap-2 px-4 py-3 md:px-5 md:py-4">
               <Image src={logo} alt="Aitoearn" width={24} height={24} className="md:h-7 md:w-7" />
@@ -151,13 +151,13 @@ export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps)
           {/* 右侧/下方内容区域 */}
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             {/* 右侧头部 - 设置标题 */}
-            <div className="flex shrink-0 items-center border-b border-border px-4 py-3 md:px-8 md:py-4">
+            <div className="flex shrink-0 items-center border-b border-border px-4 py-3 md:px-6 md:py-4">
               <h2 className="text-base font-semibold text-foreground md:text-lg">{t('title')}</h2>
             </div>
 
-            {/* 右侧内容 - 确保内容区域可以正确滚动和换行 */}
-            <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 md:px-8 md:py-6">
-              <div className="w-full">
+            {/* 右侧内容 - 确保内容区域可以正确滚动 */}
+            <div className="flex-1 overflow-auto px-4 py-4 md:px-6 md:py-6">
+              <div className="w-full min-w-0">
                 {renderContent()}
               </div>
             </div>
