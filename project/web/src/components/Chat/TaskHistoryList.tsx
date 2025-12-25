@@ -29,7 +29,7 @@ export const TaskHistoryList = ({
   skeletonCount = 4,
   onRefresh,
   className,
-  linkBasePath,
+  linkBasePath = '/chat',
 }: ITaskHistoryListProps) => {
   const { t } = useTransClient("chat");
   const [ratingModalFor, setRatingModalFor] = useState<string | null>(null);

@@ -137,7 +137,6 @@ export default function TasksHistoryPage() {
                   tasks={tasks}
                   isLoading={isLoading}
                   onRefresh={() => loadTasks(page)}
-                  linkBasePath={`/${lng}/chat`}
                 />
               </div>
 
