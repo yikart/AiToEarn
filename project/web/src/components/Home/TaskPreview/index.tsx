@@ -31,10 +31,6 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
 
   const [tasks, setTasks] = useState<TaskListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
-  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
-  const [ratingValue, setRatingValue] = useState<number>(0)
-  const [ratingComment, setRatingComment] = useState<string>('')
-  const [isSubmittingRating, setIsSubmittingRating] = useState(false)
 
   /** 加载任务列表（始终保证尽量填满 limit 条） */
   const loadTasks = useCallback(async () => {
@@ -79,37 +75,6 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
     router.push(`/${lng}/tasks-history`)
   }
 
-  /** 处理评分提交（放到列表外部） */
-  const handleSubmitRating = async () => {
-    if (!selectedTaskId) {
-      toast.error(t('task.selectTaskFirst' as any) || 'Please select a task first')
-      return
-    }
-    if (ratingValue < 1 || ratingValue > 5) {
-      toast.error(t('task.ratingInvalid' as any) || 'Invalid rating')
-      return
-    }
-
-    try {
-      setIsSubmittingRating(true)
-      const res = await agentApi.createRating(selectedTaskId, ratingValue, ratingComment)
-      if (res && (res as any).code === 0) {
-        toast.success(t('task.ratingSuccess' as any) || 'Rating submitted')
-        // clear local state
-        setRatingValue(0)
-        setRatingComment('')
-        // reload tasks to reflect any change
-        void loadTasks()
-      } else {
-        toast.error((res as any)?.msg || (t('task.ratingFailed' as any) || 'Submit failed'))
-      }
-    } catch (error) {
-      console.error('Submit rating failed', error)
-      toast.error(t('task.ratingFailed' as any) || 'Submit failed')
-    } finally {
-      setIsSubmittingRating(false)
-    }
-  }
 
   // 如果没有任务且非加载中，不显示该区域
   if (!isLoading && tasks.length === 0) {
@@ -151,61 +116,9 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
                 createdAt={task.createdAt}
                 updatedAt={task.updatedAt}
                 onDelete={handleDelete}
-                // Do NOT pass onSelect so clicking the card navigates to the chat detail.
-                // Keep onRateClick so users can still select a task for external rating.
-                onRateClick={(id: string) => {
-                  setSelectedTaskId(id)
-                }}
+                showInlineRating={true}
               />
             ))}
-      </div>
-      {/* 外部评分区域（红框示意位置） */}
-      <div className="w-full max-w-5xl mx-auto mt-4">
-        <div className="rounded-lg border border-border bg-card p-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="text-sm font-medium text-foreground">
-              {t('task.externalRating' as any) || 'Rate selected task'}
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {selectedTaskId ? `Task: ${selectedTaskId}` : t('task.noTaskSelected' as any) || 'No task selected'}
-            </div>
-          </div>
-          <div className="flex items-start gap-4">
-            <div className="flex items-center gap-1">
-              {Array.from({ length: 5 }).map((_, idx) => {
-                const v = idx + 1
-                return (
-                  <button
-                    key={v}
-                    onClick={() => setRatingValue(v)}
-                    className={cn(
-                      'w-8 h-8 rounded-md border flex items-center justify-center',
-                      ratingValue >= v ? 'bg-amber-100 border-amber-300' : 'bg-transparent'
-                    )}
-                    aria-label={`rate-${v}`}
-                  >
-                    {v}
-                  </button>
-                )
-              })}
-            </div>
-            <textarea
-              value={ratingComment}
-              onChange={(e) => setRatingComment(e.target.value)}
-              placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
-              className="flex-1 p-2 border rounded-md resize-none h-12"
-            />
-            <div className="flex items-center">
-              <button
-                onClick={handleSubmitRating}
-                disabled={isSubmittingRating || !selectedTaskId}
-                className="px-3 py-1 rounded-md bg-primary text-white disabled:opacity-50"
-              >
-                {isSubmittingRating ? t('task.submitting' as any) || 'Submitting' : t('task.submit' as any) || 'Submit'}
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
       </div>
     </section>

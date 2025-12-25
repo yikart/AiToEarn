@@ -49,22 +49,41 @@
   }
   ,
   "agentFeatures": {
-    "title": "AI Agent Highlights",
+    "title": "Aitoearn Key Feature",
     "subtitle": "Our signature features, one click away",
     "platforms": "Supported platforms",
     "helperTitle": "One-line publish",
     "helperExample": "Example: Generate images about \"street food\" with oil painting style and suggest publish times for Instagram",
     "items": {
-      "schedule": { "title": "Schedule Publish", "desc": "Set publish time and auto-publish to all connected platforms", "point1": "Support one-time / recurring / timezone-specific", "point2": "Provide smart time suggestions" },
-      "inspiration": { "title": "Creative Inspiration", "desc": "Generate topic ideas based on your account", "point1": "Multiple style templates", "point2": "Trending & data-driven suggestions" },
-      "storyboard": { "title": "Storyboard Design", "desc": "Auto-generate storyboard script for a topic", "point1": "Timeline & dialog support", "point2": "Exportable shooting checklist" },
-      "download": { "title": "Content Download", "desc": "Download videos based on social platform links and organize as publishable assets", "point1": "Auto fetch multiple resolutions", "point2": "Batch download & format conversion" },
-      "highlight": { "title": "Highlight Editing", "desc": "Extract dramatic and suspenseful clips", "point1": "Auto-detect highlight moments", "point2": "Support multiple edit templates" },
-      "translate": { "title": "Video Translation", "desc": "Face-level lip-sync, voice cloning, subtitle removal", "point1": "Multi-language support", "point2": "Export embedded or soft subtitles" },
-      "styleTransfer": { "title": "Style Transfer", "desc": "Convert live-action to anime/3D/sketch styles", "point1": "Multiple styles one-click", "point2": "Preserve facial expression details" },
-      "videoGenerate": { "title": "Video Generation", "desc": "Generate short video assets from scripts or prompts", "point1": "Auto music & shot planning", "point2": "Platform-length optimized outputs" },
-      "imageGenerate": { "title": "Image Generation", "desc": "Generate high-quality images from prompts", "point1": "Support multi-style & multi-output", "point2": "Direct publish or export" },
-      "videoUnderstanding": { "title": "Video Understanding", "desc": "Automatically analyze video and generate structured summaries", "point1": "Emotion,人物, event recognition", "point2": "Generate searchable tags & chapters" }
+      "inspiration": { "title": "Creative Inspiration", "desc": "Generate topic ideas and creative templates from account traits and trends" },
+      "oneClickScript": { "title": "One-click Script", "desc": "Auto-generate short video / article scripts and storyboard details from keywords or prompts" },
+      "multiTemplates": { "title": "Multi-style Templates", "desc": "Provide multiple video and copy style templates with one-click switching" },
+      "imageGenerate": { "title": "Image Generation", "desc": "Generate high-quality images from prompts, supporting multiple styles and outputs" },
+      "videoGenerate": { "title": "Video Generation", "desc": "Produce short video drafts from scripts or prompts, including music and shot suggestions" },
+
+      "highlight": { "title": "Highlight Editing", "desc": "Automatically detect high-energy moments and create highlight clips using templates" },
+      "storyboard": { "title": "Storyboard Design", "desc": "Auto-generate timeline, dialogue and shooting checklist with export support" },
+      "coverSuggestion": { "title": "Cover & Thumbnail", "desc": "Generate multiple cover options and suggest click-optimized thumbnails" },
+      "download": { "title": "Asset Download & Convert", "desc": "Fetch platform videos, batch-download in multiple resolutions and convert formats" },
+
+      "videoTranslation": { "title": "Video Translation", "desc": "Support face-level lip-sync, voice cloning and embedded/soft subtitle export" },
+      "platformAdapt": { "title": "Platform Adaptation", "desc": "Automatically adjust copy length, pacing and format to target platform rules" },
+      "topicTag": { "title": "Topic & Tag Recommendation", "desc": "Recommend high-value topics and tags based on trends and account history" },
+      "seo": { "title": "SEO & Keyword Optimization", "desc": "Provide search and discovery optimization suggestions for copy and descriptions" },
+
+      "schedule": { "title": "Scheduled Publishing", "desc": "Support one-time, recurring and timezone-aware scheduling and auto-publish" },
+      "multiPlatform": { "title": "Multi-platform Distribution", "desc": "Configure once and automatically sync and publish to multiple channels" },
+      "smartTime": { "title": "Smart Time Suggestion", "desc": "Recommend optimal publish times based on historical data to maximize reach" },
+
+      "sse": { "title": "Streaming Tasks (SSE)", "desc": "Stream task generation in real-time with incremental results and cancel support" },
+      "taskManagement": { "title": "Task Management", "desc": "Create/stop/view/delete tasks, rate and comment; support task forwarding and duplication" },
+      "workflow": { "title": "Extensible Workflows", "desc": "Support multi-step pipelines and custom action handlers to chain complex automation" },
+
+      "videoUnderstanding": { "title": "Video Understanding", "desc": "Automatically recognize emotions, people and events to generate tags and chapters" },
+      "report": { "title": "Reporting & Insights", "desc": "Auto-generate publish performance and growth suggestions for review and optimization" },
+
+      "commentAssistant": { "title": "Comment & DM Assistant", "desc": "Auto-generate reply suggestions and batch-reply templates to boost engagement" },
+      "audienceInsight": { "title": "Audience Insights", "desc": "Provide audience profiles and content preference analysis to guide topic and targeting" }
     }
   }
 }
