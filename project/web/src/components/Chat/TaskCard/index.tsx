@@ -100,7 +100,7 @@ export function TaskCard({
   const [isProcessing, setIsProcessing] = useState(false)
   const [ratingModalOpen, setRatingModalOpen] = useState(false)
   const [inlineRating, setInlineRating] = useState<number>(0)
-  const [ratingComment, setRatingComment] = useState<string>('')
+  const [ratingComments, setRatingComments] = useState<string[]>(['', '', '', ''])
   const [isRatingSubmitting, setIsRatingSubmitting] = useState(false)
   
   const statusConfig = getStatusConfig(status, t as (key: string) => string)
@@ -187,10 +187,13 @@ export function TaskCard({
     }
     try {
       setIsRatingSubmitting(true)
-      const res = await agentApi.createRating(id, inlineRating, ratingComment)
+      // 将4个评论组合成一个字符串，用分隔符分开
+      const combinedComment = ratingComments.filter(comment => comment.trim() !== '').join('\n---\n')
+      const res = await agentApi.createRating(id, inlineRating, combinedComment)
       if (res && (res as any).code === 0) {
         toast.success(t('task.ratingSuccess' as any) || 'Rating submitted')
         setRatingModalOpen(false)
+        setRatingComments(['', '', '', '']) // 重置评论
       } else {
         toast.error((res as any)?.msg || (t('task.ratingFailed' as any) || 'Submit failed'))
       }
@@ -314,14 +317,28 @@ export function TaskCard({
             okText={isRatingSubmitting ? t('task.submitting' as any) || 'Submitting' : t('task.submit' as any) || 'Submit'}
             confirmLoading={isRatingSubmitting}
           >
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-4">
               <div className="text-sm text-muted-foreground">Task: {id}</div>
-              <textarea
-                value={ratingComment}
-                onChange={(e) => setRatingComment(e.target.value)}
-                placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
-                className="w-full p-2 border rounded-md resize-none h-24"
-              />
+              <div className="space-y-3">
+                {ratingComments.map((comment, index) => (
+                  <div key={index} className="flex flex-col gap-1">
+                    <label className="text-xs text-muted-foreground font-medium">
+                      {t('task.commentLabel' as any, { number: index + 1 }) || `Comment ${index + 1}`}
+                    </label>
+                    <textarea
+                      value={comment}
+                      onChange={(e) => {
+                        const newComments = [...ratingComments]
+                        newComments[index] = e.target.value
+                        setRatingComments(newComments)
+                      }}
+                      placeholder={t('task.ratingCommentPlaceholder' as any) || 'Optional comment'}
+                      className="w-full p-2 border rounded-md resize-none h-16 text-sm"
+                      maxLength={200}
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
           </Modal>
         </>
