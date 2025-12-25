@@ -8,6 +8,7 @@ import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
+import TaskHistoryList from '@/components/Chat/TaskHistoryList'
 import RatingModal from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/ui/pagination'
@@ -47,7 +48,7 @@ export default function TasksHistoryPage() {
         }
       } catch (error) {
         console.error('Load task list failed:', error)
-        toast.error(t('message.error' as any))
+        toast.error(t('message.error'))
       } finally {
         setIsLoading(false)
       }
@@ -76,14 +77,14 @@ export default function TasksHistoryPage() {
     try {
       const result = await agentApi.deleteTask(id)
       if (result && result.code === 0) {
-        toast.success(t('task.deleteSuccess' as any))
+        toast.success(t('task.deleteSuccess'))
         // 删除成功后，重新加载当前页，避免页码错乱
         loadTasks(page)
       } else {
-        toast.error(result?.message || t('task.deleteFailed' as any))
+        toast.error(result?.message || t('task.deleteFailed'))
       }
     } catch (error) {
-      toast.error(t('task.deleteFailed' as any))
+      toast.error(t('task.deleteFailed'))
     }
   }
 
@@ -108,7 +109,7 @@ export default function TasksHistoryPage() {
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-primary" />
             <h1 className="text-lg font-semibold text-foreground">
-              {t('history.title' as any)}
+              {t('history.title')}
             </h1>
           </div>
           {total > 0 && (
@@ -140,29 +141,22 @@ export default function TasksHistoryPage() {
             // 空状态
             <div className="flex flex-col items-center justify-center py-16">
               <History className="w-16 h-16 text-muted-foreground/30 mb-4" />
-              <p className="text-muted-foreground mb-4">{t('history.empty' as any)}</p>
+              <p className="text-muted-foreground mb-4">{t('history.empty')}</p>
               <Button onClick={handleBack}>
-                {t('home.startChat' as any)}
+                {t('home.startChat')}
               </Button>
             </div>
           ) : (
             // 任务卡片网格 + 分页器
             <>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {tasks.map((task) => (
-                <TaskCard
-                    key={task.id}
-                    id={task.id}
-                    title={task.title || t('task.newChat' as any)}
-                    status={task.status}
-                    createdAt={task.createdAt}
-                    updatedAt={task.updatedAt}
-                    onDelete={handleDelete}
-                    rating={task.rating ?? null}
-                    ratingComment={task.ratingComment ?? null}
-                    onRateClick={(taskId) => setRatingModalFor(taskId)}
-                  />
-                ))}
+              <div>
+                <TaskHistoryList
+                  tasks={tasks}
+                  isLoading={isLoading}
+                  onDelete={handleDelete}
+                  onRateClick={(taskId) => setRatingModalFor(taskId)}
+                  linkBasePath={`/${lng}/chat`}
+                />
               </div>
               <RatingModal
                 taskId={ratingModalFor ?? ''}
@@ -171,7 +165,7 @@ export default function TasksHistoryPage() {
                 onSaved={(data) => {
                   setTasks((prev) => prev.map((t) => (t.id === ratingModalFor ? { ...t, rating: data.rating ?? t.rating, ratingComment: data.comment ?? t.ratingComment } : t)))
                   setRatingModalFor(null)
-                  toast.success(t('rating.saveSuccess' as any) || 'Saved')
+                  toast.success(t('rating.saveSuccess') || 'Saved')
                 }}
               />
 

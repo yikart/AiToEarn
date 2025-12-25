@@ -5,7 +5,7 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useAgentStore } from '@/store/agent'
@@ -27,6 +27,7 @@ export default function ChatDetailPage() {
   const params = useParams()
   const taskId = params.taskId as string
   const lng = params.lng as string
+  const isInitialRender = useRef(false);
 
   // Store 方法
   const { createTask, continueTask, stopTask, setActionContext, handleSSEMessage, consumePendingTask } = useAgentStore()
@@ -69,8 +70,16 @@ export default function ChatDetailPage() {
     handleMediaRemove,
     clearMedias,
   } = useMediaUpload({
-    onError: () => toast.error(t('media.uploadFailed' as any)),
+    onError: () => toast.error(t('media.uploadFailed')),
   })
+
+  useEffect(() => {
+    if (isInitialRender.current || displayMessages.length === 0) return
+    isInitialRender.current = true
+    setTimeout(() => {
+      scrollToBottom()
+    }, 10)
+  }, [displayMessages, isInitialRender])
 
   /**
    * 设置 Action 上下文（用于处理任务结果的 action） 
@@ -79,7 +88,7 @@ export default function ChatDetailPage() {
     setActionContext({
       router,
       lng,
-      t: tHome as any,
+      t: tHome,
     })
   }, [router, lng, tHome, setActionContext])
 
@@ -112,7 +121,7 @@ export default function ChatDetailPage() {
         })
       } catch (error: any) {
         console.error('[ChatPage] Create task failed:', error)
-        toast.error(error.message || t('message.error' as any))
+        toast.error(error.message || t('message.error'))
         // 出错时返回首页
         router.replace(`/${lng}`)
       }
@@ -156,7 +165,7 @@ export default function ChatDetailPage() {
       })
     } catch (error: any) {
       console.error('Continue task failed:', error)
-      toast.error(error.message || t('message.error' as any))
+      toast.error(error.message || t('message.error'))
       // 恢复输入
       setInputValue(currentPrompt)
       setMedias(currentMedias)
@@ -235,10 +244,10 @@ export default function ChatDetailPage() {
       {/* 顶部导航 */}
       <ChatHeader
         title={task?.title}
-        defaultTitle={t('task.newChat' as any)}
+        defaultTitle={t('task.newChat')}
         isGenerating={isGenerating}
         progress={progress}
-        thinkingText={t('message.thinking' as any)}
+        thinkingText={t('message.thinking')}
         taskId={taskId}
         rating={task?.rating ?? null}
         onBack={handleBack}
@@ -269,7 +278,7 @@ export default function ChatDetailPage() {
           onMediaRemove={handleMediaRemove}
           isGenerating={isGenerating}
           isUploading={isUploading}
-          placeholder={t('detail.continuePlaceholder' as any)}
+          placeholder={t('detail.continuePlaceholder')}
           mode="compact"
         />
       </div>

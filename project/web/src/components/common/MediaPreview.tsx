@@ -21,15 +21,28 @@ export interface MediaPreviewProps {
 
 export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPreviewProps) => {
   const [index, setIndex] = useState(initialIndex)
+  const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null)
 
   useEffect(() => {
     if (open) {
       setIndex(Math.min(Math.max(initialIndex, 0), Math.max(items.length - 1, 0)))
+      setVideoAspectRatio(null) // 重置宽高比
     }
   }, [open, initialIndex, items.length])
 
   const hasMultiple = items.length > 1
   const current = items[index]
+
+  // 处理视频加载，获取宽高比
+  const handleVideoLoad = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    const video = e.currentTarget
+    if (video.videoWidth && video.videoHeight) {
+      setVideoAspectRatio(video.videoWidth / video.videoHeight)
+    }
+  }
+
+  // 根据宽高比决定是否为横屏视频
+  const isWideVideo = videoAspectRatio && videoAspectRatio > 1.6 // 宽高比大于16:10认为是横屏
 
   const handlePrev = () => {
     if (!hasMultiple) return
@@ -43,9 +56,9 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent
+    <DialogContent
         className={cn(
-          'border-none bg-transparent shadow-none p-0 max-w-[90vw] max-h-[90vh]',
+          'border-none bg-transparent shadow-none p-0 w-screen h-screen',
           // 使用默认 overlay 做半透明背景，这里只负责居中内容
           '[&>button]:hidden flex items-center justify-center',
         )}
@@ -58,7 +71,7 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
 
         <div className="relative w-full flex items-center justify-center">
           {/* 内容卡片 */}
-          <div className="relative max-h-[80vh] max-w-[90vw] overflow-hidden rounded-xl bg-background shadow-2xl">
+          <div className="relative max-h-[85vh] w-[min(95vw,1200px)] overflow-hidden rounded-xl bg-background shadow-2xl">
             {/* 顶部关闭按钮 */}
             <button
               type="button"
@@ -79,12 +92,18 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.97 }}
                     transition={{ duration: 0.18 }}
-                    className="max-h-[80vh] max-w-[90vw]"
+                    className="max-h-[80vh] w-full flex items-center justify-center"
                   >
                     {current.type === 'video' ? (
                       <video
                         src={current.src}
-                        className="max-h-[80vh] max-w-[90vw] bg-black object-contain"
+                        onLoadedMetadata={handleVideoLoad}
+                        className={cn(
+                          "bg-black object-contain",
+                          isWideVideo
+                            ? "max-h-[70vh] w-[min(95vw,1200px)]" // 横屏视频：限制高度，使用最大宽度约束
+                            : "max-h-[75vh] w-[min(85vw,900px)]" // 竖屏/方屏视频：正常限制
+                        )}
                         controls
                         autoPlay
                       />
@@ -92,7 +111,7 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
                       <img
                         src={current.src}
                         alt={current.title || 'preview'}
-                        className="max-h-[80vh] max-w-[90vw] object-contain"
+                        className="max-h-[80vh] w-[min(90vw,900px)] object-contain"
                       />
                     )}
                   </motion.div>

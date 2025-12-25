@@ -1,6 +1,6 @@
-import type { AccountGroupItem } from '@/api/types/account.type'
-import type { SocialAccount } from '@/api/types/account.type'
-import { DeleteOutlined, DownOutlined, UpOutlined } from '@ant-design/icons'
+import type { AccountGroupItem, SocialAccount } from '@/api/types/account.type'
+
+import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 import { memo, useEffect } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 
@@ -14,7 +14,6 @@ interface ContextMenuProps {
   onClose: () => void
   onAccountDelete: (account: SocialAccount) => void
   onGroupSort: (groupId: string, direction: 'up' | 'down') => void
-  onGroupDelete: (group: AccountGroupItem) => void
 }
 
 const ContextMenu = memo(({
@@ -27,12 +26,12 @@ const ContextMenu = memo(({
   onClose,
   onAccountDelete,
   onGroupSort,
-  onGroupDelete,
 }: ContextMenuProps) => {
   const { t } = useTransClient('account')
 
   useEffect(() => {
-    if (!open) return
+    if (!open)
+      return
 
     const handleClickOutside = () => {
       onClose()
@@ -44,7 +43,8 @@ const ContextMenu = memo(({
     }
   }, [open, onClose])
 
-  if (!open || !data) return null
+  if (!open || !data)
+    return null
 
   return (
     <div
@@ -53,7 +53,7 @@ const ContextMenu = memo(({
         left: x,
         top: y,
       }}
-      onClick={(e) => e.stopPropagation()}
+      onClick={e => e.stopPropagation()}
     >
       {target === 'account' && (
         <button
@@ -63,7 +63,7 @@ const ContextMenu = memo(({
             onClose()
           }}
         >
-          <DeleteOutlined />
+          <Trash2 className="h-4 w-4" />
           {t('deleteAccount')}
         </button>
       )}
@@ -73,7 +73,6 @@ const ContextMenu = memo(({
         const currentIndex = sortedGroups.findIndex(g => g.id === group.id)
         const canMoveUp = !isDefaultGroup && currentIndex > 0
         const canMoveDown = !isDefaultGroup && currentIndex < sortedGroups.length - 1
-        const canDelete = !isDefaultGroup
 
         return (
           <>
@@ -85,7 +84,7 @@ const ContextMenu = memo(({
               }}
               disabled={!canMoveUp}
             >
-              <UpOutlined />
+              <ChevronUp className="h-4 w-4" />
               {t('sidebar.moveUp')}
             </button>
             <button
@@ -96,20 +95,8 @@ const ContextMenu = memo(({
               }}
               disabled={!canMoveDown}
             >
-              <DownOutlined />
+              <ChevronDown className="h-4 w-4" />
               {t('sidebar.moveDown')}
-            </button>
-            <div className="h-px bg-border my-1" />
-            <button
-              className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-sm text-destructive disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              onClick={() => {
-                onGroupDelete(group)
-                onClose()
-              }}
-              disabled={!canDelete}
-            >
-              <DeleteOutlined />
-              {t('userManageSidebar.delete')}
             </button>
           </>
         )
@@ -121,4 +108,3 @@ const ContextMenu = memo(({
 ContextMenu.displayName = 'ContextMenu'
 
 export default ContextMenu
-

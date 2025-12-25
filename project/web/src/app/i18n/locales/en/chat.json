@@ -62,7 +62,8 @@
     "noRating": "Not rated",
     "commentLabel": "Review (optional)",
     "commentPlaceholder": "Write your review...",
-    "commentRequiredIfLow": "A reason is required for ratings below 3"
+    "commentRequiredIfLow": "A reason is required for ratings below 3",
+    "loading": "Loading..."
   },
   "detail": {
     "title": "Chat Details",

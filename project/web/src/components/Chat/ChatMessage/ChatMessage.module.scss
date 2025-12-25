@@ -69,6 +69,14 @@
 }
 
 .markdownContent {
+  /* 允许内部长单词/URL在必要时换行，避免溢出父容器 */
+  overflow-wrap: anywhere;
+  word-wrap: break-word;
+  word-break: break-word;
+  -webkit-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+
   // 段落
   :global(p) {
     margin: 0 0 12px 0;
@@ -223,6 +231,12 @@
     color: #7c3aed;
     text-decoration: none;
     font-weight: 500;
+    /* 支持长链接/无空格字符串换行，防止溢出气泡容器 */
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
+    /* break-all 可在必要时强制断行（对英语长链接生效） */
+    word-break: break-all;
+    hyphens: auto;
   }
 
   :global(a:hover) {

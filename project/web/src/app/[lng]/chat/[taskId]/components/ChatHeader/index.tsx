@@ -77,9 +77,9 @@ export function ChatHeader({
           <button
             onClick={() => setRatingOpen(true)}
             className="ml-1 text-sm text-muted-foreground hidden sm:inline"
-            aria-label={t('task.rate' as any) || 'Rate'}
+            aria-label={t('task.rate') || 'Rate'}
           >
-            {t('task.rate' as any) || '评分'}
+            {t('task.rate') || '评分'}
           </button>
         </div>
       </div>

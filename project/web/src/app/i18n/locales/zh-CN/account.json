@@ -283,5 +283,23 @@
     "web": "网页端",
     "app": "App端"
   },
-  "rightClickTip": "右键点击空间或频道可进行删除、排序等操作"
+  "rightClickTip": "右键点击空间或频道可进行删除、排序等操作",
+  "channelManager": {
+    "myChannels": "我的频道",
+    "title": "频道管理",
+    "description": "管理您的频道和空间分组",
+    "tabs": {
+      "channels": "频道",
+      "spaces": "空间"
+    },
+    "searchPlaceholder": "搜索频道或空间...",
+    "createSpace": "新建空间",
+    "createSpaceNamePlaceholder": "输入空间名称",
+    "createSpaceSuccess": "创建空间成功",
+    "createSpaceFailed": "创建空间失败",
+    "deleteSpaceConfirm": "确认删除空间",
+    "deleteSpaceSuccess": "删除空间成功",
+    "deleteSpaceFailed": "删除空间失败",
+    "noData": "暂无数据"
+  }
 }

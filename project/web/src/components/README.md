@@ -24,6 +24,7 @@
 | `ScrollButtonContainer/` | 滚动按钮容器 |
 | `SignInCalendar/` | 签到日历组件 |
 | `WalletAccountSelect/` | 钱包账户选择器 |
+| `ChannelManager/` | 频道管理弹窗组件 |
 
 ---
 
@@ -105,6 +106,76 @@ import DownloadAppModal from '@/components/common/DownloadAppModal'
 ```tsx
 import { LanguageSwitcher } from '@/components/common'
 ```
+
+### MediaPreview
+
+媒体预览组件，用于在列表或弹窗中展示图片/视频/文件预览，支持放大、轮播和下载。
+
+```tsx
+import MediaPreview from '@/components/common/MediaPreview'
+
+<MediaPreview
+  medias={[{ url: string, type: 'image' | 'video' | 'file' }]}
+  visible={boolean}
+  initialIndex={0}           // 可选，初始展示索引
+  onClose={() => void}
+/>
+```
+
+常用 Props：
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `medias` | 媒体数组，包含 url 与 type | `Array<{url:string,type:string}>` | - |
+| `visible` | 是否可见 | `boolean` | - |
+| `initialIndex` | 初始展示索引 | `number` | `0` |
+| `onClose` | 关闭回调 | `() => void` | - |
+
+### GlobalLoginModal
+
+全局登录弹窗，用于在未登录时从任意页面触发的登录入口（通常由顶部或浮层触发）。
+
+```tsx
+import GlobalLoginModal from '@/components/common/GlobalLoginModal'
+
+<GlobalLoginModal
+  open={boolean}
+  onClose={() => void}
+  onSuccess={(user) => void} // 可选，登录成功回调
+/>
+```
+
+常用 Props：
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 是否显示弹窗 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+| `onSuccess` | 登录成功回调 | `(user:any) => void` | - |
+
+### LoginModal
+
+局部登录弹窗/组件，通常用于表单页或需要内嵌登录控件的场景，与 `GlobalLoginModal` 对应但更偏向页面内使用。
+
+```tsx
+import LoginModal from '@/components/common/LoginModal'
+
+<LoginModal
+  visible={boolean}
+  onClose={() => void}
+  onLogin={(credentials) => void}
+/>
+```
+
+常用 Props：
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `visible` | 是否显示 | `boolean` | - |
+| `onClose` | 关闭回调 | `() => void` | - |
+| `onLogin` | 提交登录回调 | `(credentials:any) => void` | - |
+
+注意：`common/` 目录下的组件是应用内公用组件，新增或修改组件时请务必在本文件中补充对应文档条目，包含：用途说明、引入示例、常用 Props、重要行为（如异步操作/失败处理）、以及是否有额外依赖（如样式、图片资源等）。
 
 ---
 
@@ -467,6 +538,57 @@ import SettingsModal from '@/components/SettingsModal'
 - 💰 显示累计收入和当前余额
 - 🌐 通用设置：网站语言切换
 - 🎨 使用 shadcn/ui + Tailwind CSS 实现
+
+### ChannelManager - 频道管理弹窗
+
+频道和空间的统一管理弹窗，支持搜索筛选、创建空间、删除空间等功能。
+
+```tsx
+import ChannelManager from '@/components/ChannelManager'
+
+// 非受控模式（推荐）- 通过 store 控制
+<ChannelManager />
+
+// 受控模式
+<ChannelManager
+  open={isOpen}
+  onOpenChange={setIsOpen}
+  fetchChannels={customFetchChannels}
+  fetchSpaces={customFetchSpaces}
+/>
+```
+
+**Props：**
+
+| 属性 | 说明 | 类型 | 默认值 |
+|------|------|------|--------|
+| `open` | 受控模式下的打开状态 | `boolean` | - |
+| `onOpenChange` | 受控模式下的状态改变回调 | `(open: boolean) => void` | - |
+| `fetchChannels` | 自定义获取频道数据的函数 | `() => Promise<void>` | - |
+| `fetchSpaces` | 自定义获取空间数据的函数 | `() => Promise<void>` | - |
+
+**特性：**
+- 📱 响应式设计，支持深色/浅色主题
+- 🔍 支持频道和空间的搜索筛选
+- ➕ 内置创建空间功能
+- 🗑️ 支持删除空间（非默认空间）
+- 📂 标签页布局（频道/空间）
+- 🎨 使用 shadcn/ui + Tailwind CSS v4
+- 🌐 完整的国际化支持
+- ♿ 无障碍访问支持
+
+**Store API：**
+
+```tsx
+import { useChannelManagerStore } from '@/components/ChannelManager'
+
+// 打开弹窗
+const { setOpen } = useChannelManagerStore()
+setOpen(true)
+
+// 监听状态
+const { open, activeTab, filterText } = useChannelManagerStore()
+```
 
 ---
 

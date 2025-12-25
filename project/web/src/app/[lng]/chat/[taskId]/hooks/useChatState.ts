@@ -81,6 +81,56 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
   const hasLoadedRef = useRef(false)
   const rawMessagesRef = useRef<TaskMessage[]>([])
 
+  // 当 taskId 变化时，重置与任务相关的本地状态，确保不会错误地使用上一次任务的缓存
+  useEffect(() => {
+    // 重置已加载标记，强制重新从 API 拉取数据
+    hasLoadedRef.current = false
+    // 清空上一次的原始消息，避免后续基于旧数据的短路逻辑
+    rawMessagesRef.current = []
+    // 清空本地 task 与消息状态，显示 loading，等待新的加载逻辑触发
+    setTask(null)
+    setLocalMessages([])
+    setIsLoading(true)
+    // 注意：不主动调用 startPolling，这里只做重置，后续 loadTask 会根据新任务情况自行决定是否启动轮询
+  }, [taskId])
+
+  // 当 taskId 变化时，为全局 Agent Store 添加护栏：
+  // - 如果当前 store 的 currentTaskId 与新 taskId 不同且 store 不在生成中，则清理 store 中残留的消息与 currentTaskId，
+  //   避免进入新任务时意外复用上一个任务的消息缓存。
+  // - 在组件卸载时，如果 store 的 currentTaskId 等于当前 taskId 且不在生成中，也清理 currentTaskId 与消息。
+  useEffect(() => {
+    try {
+      const state = useAgentStore.getState()
+      if (state.currentTaskId && state.currentTaskId !== taskId && !state.isGenerating) {
+        // 只清理与消息相关的最小字段，避免重置 refs 或其他全局状态
+        useAgentStore.setState({
+          currentTaskId: '',
+          messages: [],
+          markdownMessages: [],
+          workflowSteps: [],
+        })
+      }
+    } catch (e) {
+      console.warn('[ChatState] Failed to apply store guard on task change', e)
+    }
+
+    return () => {
+      try {
+        const state = useAgentStore.getState()
+        if (state.currentTaskId === taskId && !state.isGenerating) {
+          useAgentStore.setState({
+            currentTaskId: '',
+            messages: [],
+            markdownMessages: [],
+            workflowSteps: [],
+          })
+        }
+      } catch (e) {
+        console.warn('[ChatState] Failed to apply store guard on unmount', e)
+      }
+    }
+  }, [taskId])
+
   // 轮询 Hook
   const { isPolling, startPolling } = useTaskPolling({
     taskId,

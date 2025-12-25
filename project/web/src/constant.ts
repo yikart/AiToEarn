@@ -10,3 +10,6 @@ export const ProxyUrls = [
 
 // OSS URL
 export const OSS_URL = process.env.NEXT_PUBLIC_OSS_URL!
+
+// 联系方式
+export const CONTACT = "agent@aiearn.ai";

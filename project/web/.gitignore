@@ -41,3 +41,5 @@ certificates
 *.idea/
 .env.development
 package-lock.json
+
+/public/en/*
