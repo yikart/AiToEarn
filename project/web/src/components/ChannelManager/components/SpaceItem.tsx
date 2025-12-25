@@ -166,7 +166,7 @@ export function SpaceItem({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={onStartEdit}>
                     <Edit className="h-4 w-4 mr-2" />
-                    {t('common.edit', '编辑')}
+                    {t('actions.edit')}
                   </DropdownMenuItem>
                   {canMoveUp && (
                     <DropdownMenuItem
@@ -198,7 +198,7 @@ export function SpaceItem({
                     className="text-destructive"
                   >
                     <Trash2 className="h-4 w-4 mr-2" />
-                    {t('common.delete', '删除')}
+                    {t('actions.delete')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
