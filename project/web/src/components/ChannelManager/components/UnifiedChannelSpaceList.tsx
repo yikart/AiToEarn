@@ -23,16 +23,6 @@ import { SpaceItem } from './SpaceItem'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { SpaceListSkeleton } from './SpaceListSkeleton'
 
-// 频道数据类型
-interface Channel {
-  id: string
-  name: string
-  platform: string
-  accountId: string
-  avatar?: string
-  fansCount?: number
-}
-
 export function UnifiedChannelSpaceList() {
   const { t } = useTransClient('account')
   const {
@@ -232,11 +222,11 @@ export function UnifiedChannelSpaceList() {
                   id: space.id,
                   name: space.name,
                 })}
-                onChannelDelete={(channel: Channel) => setDeleteDialog({
+                onChannelDelete={(channel: SocialAccount) => setDeleteDialog({
                   open: true,
                   type: 'channel',
                   id: channel.id,
-                  name: channel.name,
+                  name: channel.nickname,
                 })}
                 onRefresh={getAccountGroup}
               />

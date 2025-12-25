@@ -10,7 +10,7 @@
 
 import type { SocialAccount } from '@/api/types/account.type'
 import Image from 'next/image'
-import { DeleteOutlined, LoadingOutlined } from '@ant-design/icons'
+import { Loader2 } from 'lucide-react'
 import { Trash2 } from 'lucide-react'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { getOssUrl } from '@/utils/oss'
@@ -67,7 +67,7 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
 
       {isDeleting ? (
         <div className="p-1">
-          <LoadingOutlined className="h-4 w-4 text-muted-foreground animate-spin" />
+          <Loader2 className="h-4 w-4 text-muted-foreground animate-spin" />
         </div>
       ) : (
         <Button
