@@ -4,6 +4,7 @@
 
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import { FileText, PlusCircle } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
@@ -121,27 +122,95 @@ interface NavSectionWithAddChannelProps extends NavSectionProps {
 }
 
 export function NavSection({ items, currentRoute, collapsed, onAddChannel }: NavSectionWithAddChannelProps) {
-  // 在 "互动数据" 后面插入 Add Channel 按钮 (index 3，即第4个位置)
-  const interactiveIndex = items.findIndex(item => item.translationKey === 'interactive')
-  const insertIndex = interactiveIndex !== -1 ? interactiveIndex + 1 : 4
+  // Move Add Channel to be the second item (under Home)
+  const addChannelInsertIndex = 1
+
+  // Keys to group into a collapsed section
+  const groupKeys = [
+    'tasksHistory',
+    'dataStatistics',
+    'header.materialLibrary',
+    'header.draftBox',
+  ]
+
+  const groupedItems = items.filter(i => groupKeys.includes(i.translationKey as string))
+  const otherItems = items.filter(i => !groupKeys.includes(i.translationKey as string))
+
+  const [groupOpen, setGroupOpen] = useState(false)
 
   return (
     <nav className="flex flex-col gap-1">
-      {items.map((item, index) => (
-        <div key={item.path || item.translationKey}>
-          <NavItem
-            item={item}
-            isActive={item.path === currentRoute}
-            collapsed={collapsed}
-          />
-          {/* 在指定位置插入 Add Channel 按钮 */}
-          {index === insertIndex - 1 && onAddChannel && (
-            <div className="mt-1">
-              <AddChannelButton collapsed={collapsed} onClick={onAddChannel} />
+      {otherItems.map((item, index) => {
+        // Render first item (Home)
+        if (index === 0) {
+          return (
+            <div key={item.path || item.translationKey}>
+              <NavItem
+                item={item}
+                isActive={item.path === currentRoute}
+                collapsed={collapsed}
+              />
+              {/* Insert Add Channel right after first item */}
+              {onAddChannel && (
+                <div className="mt-1">
+                  <AddChannelButton collapsed={collapsed} onClick={onAddChannel} />
+                </div>
+              )}
+            </div>
+          )
+        }
+
+        // For other items (excluding the grouped ones), render normally
+        return (
+          <div key={item.path || item.translationKey}>
+            <NavItem
+              item={item}
+              isActive={item.path === currentRoute}
+              collapsed={collapsed}
+            />
+          </div>
+        )
+      })}
+
+      {/* Collapsible group for Task History / Data / Library / Drafts */}
+      {groupedItems.length > 0 && (
+        <div>
+          <div className="mt-1">
+            <button
+              onClick={() => setGroupOpen((s) => !s)}
+              className={cn(
+                'relative flex items-center rounded-lg text-sm font-medium transition-all w-full',
+                'text-muted-foreground hover:bg-accent hover:text-foreground',
+                collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
+              )}
+            >
+              <span className="flex shrink-0 items-center justify-center">
+                <FileText size={20} />
+              </span>
+              {!collapsed && (
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+                  {/* Use a generic label for the grouped section */}
+                  {useTransClient('route').t('sidebar.more' as any) || 'More'}
+                </span>
+              )}
+            </button>
+          </div>
+
+          {/* Expand list when open */}
+          {!collapsed && groupOpen && (
+            <div className="mt-1 flex flex-col gap-1 pl-2">
+              {groupedItems.map((gitem) => (
+                <NavItem
+                  key={gitem.path || gitem.translationKey}
+                  item={gitem}
+                  isActive={gitem.path === currentRoute}
+                  collapsed={collapsed}
+                />
+              ))}
             </div>
           )}
         </div>
-      ))}
+      )}
     </nav>
   )
 }
