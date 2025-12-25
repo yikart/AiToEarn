@@ -237,7 +237,7 @@ export function TaskCard({
     <div
       onClick={handleClick}
       className={cn(
-        'group relative flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
+        'flex flex-col p-4 rounded-xl border border-border bg-card cursor-pointer transition-all',
         'hover:border-border hover:shadow-md',
         isDeleting && 'opacity-60 cursor-wait',
         className,
@@ -276,31 +276,39 @@ export function TaskCard({
         )}
       </div>
 
-      {/* Action buttons: Share (forward+copy) and Delete */}
-      <div className="absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={handleShare}
-          disabled={isDeleting || isProcessing}
-          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
-          aria-label="share"
-        >
-          {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
-        </button>
-        <button
-          onClick={handleCreatePublicLink}
-          disabled={isDeleting || isProcessing}
-          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground"
-          aria-label="public-share"
-        >
-          <ExternalLink className="w-4 h-4" />
-        </button>
+      {/* Action buttons: Prominent share and subtle delete */}
+      <div className="mt-3 flex items-center justify-between gap-3">
+        {/* Share buttons - prominent */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleShare}
+            disabled={isDeleting || isProcessing}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary hover:text-primary/90 transition-colors text-sm font-medium min-w-[80px] justify-center"
+            aria-label="share"
+          >
+            {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
+            <span className="hidden sm:inline">{t('task.share' as any) || 'Share'}</span>
+          </button>
+          <button
+            onClick={handleCreatePublicLink}
+            disabled={isDeleting || isProcessing}
+            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-secondary/50 hover:bg-secondary text-secondary-foreground hover:text-secondary-foreground/90 transition-colors text-sm font-medium min-w-[80px] justify-center"
+            aria-label="public-share"
+          >
+            <ExternalLink className="w-4 h-4" />
+            <span className="hidden sm:inline">{t('task.publicLink' as any) || 'Public'}</span>
+          </button>
+        </div>
+
+        {/* Delete button - subtle */}
         <button
           onClick={handleDelete}
           disabled={isDeleting}
-          className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-muted text-destructive hover:text-destructive/90"
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors text-xs opacity-60 hover:opacity-100"
           aria-label="delete"
         >
-          {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+          {isDeleting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Trash2 className="w-3 h-3" />}
+          <span className="hidden sm:inline">{t('task.delete' as any) || 'Delete'}</span>
         </button>
       </div>
 
