@@ -77,9 +77,27 @@ export const ShareModal = ({
     return convertMessages(taskDetail.messages);
   }, [taskDetail?.messages]);
 
+  // 在列表中始终显示所有消息（复选框仅用于高亮与导出选择）
   const displayMessages = useMemo(() => {
-    return messages.filter((m) => selectedIds.includes(m.id));
-  }, [messages, selectedIds]);
+    return messages;
+  }, [messages]);
+
+  // 折叠状态：记录被折叠的 message id 集合
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
+  const toggleCollapse = (id: string) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds(prev => {
+      if (prev.includes(id)) return prev.filter(p => p !== id);
+      return [...prev, id];
+    });
+  }, []);
 
   const handleOpenChange = useCallback(
     (open: boolean) => {
@@ -176,39 +194,104 @@ export const ShareModal = ({
         <div className="flex flex-col gap-4 h-full max-h-[calc(90vh-120px)]">
           {/* 消息选择区域 */}
           <div className="flex-1 overflow-y-auto border rounded-lg p-4 space-y-4">
-            {displayMessages.map((message) => (
-              <div key={message.id} className="flex items-start gap-3">
+            {displayMessages.map((message) => {
+              const isUser = message.role === 'user';
+              const isSelected = selectedIds.includes(message.id);
+              const isCollapsed = collapsedIds.has(message.id);
+              const isLong = !!(message.content && message.content.length > 400);
+
+              const checkbox = (
                 <input
                   type="checkbox"
-                  checked={selectedIds.includes(message.id)}
+                  checked={isSelected}
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setSelectedIds((prev) => [...prev, message.id]);
+                      setSelectedIds((prev) => Array.from(new Set([...prev, message.id])));
                     } else {
-                      setSelectedIds((prev) =>
-                        prev.filter((id) => id !== message.id)
-                      );
+                      setSelectedIds((prev) => prev.filter((id) => id !== message.id));
                     }
                   }}
                   className="mt-1"
                 />
-                <div className="flex-1 min-w-0">
-                  <ChatMessage
-                    role={
-                      message.role === "system" ? "assistant" : message.role
-                    }
-                    content={message.content}
-                    medias={message.medias}
-                    status={message.status}
-                    errorMessage={message.errorMessage}
-                    createdAt={message.createdAt}
-                    steps={message.steps}
-                    actions={message.actions}
-                    className="max-w-full"
-                  />
+              );
+
+              // click handler for message area: toggle selection unless inner interactive element clicked
+              const onMessageClick = (e: React.MouseEvent) => {
+                const target = e.target as HTMLElement | null;
+                if (!target) return;
+                // if clicked inside an interactive element, ignore
+                if (target.closest('a,button,input,textarea,select,video')) return;
+                toggleSelect(message.id);
+              };
+
+              const selectedStyle: React.CSSProperties | undefined = isSelected ? {
+                background: '#f5f7ff',
+                borderRadius: '8px',
+                // use boxShadow instead of border/padding to avoid layout shift
+                boxShadow: 'inset 0 0 0 1px rgba(230,238,252,0.6)'
+              } : undefined;
+
+              return (
+                <div
+                  key={message.id}
+                  className="relative"
+                >
+                  <div
+                    onClick={onMessageClick}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSelect(message.id); }}
+                    className={`flex items-start gap-3 ${isSelected ? '' : ''}`}
+                    style={selectedStyle}
+                  >
+                    {!isUser && (
+                      <div className="mt-1">
+                        {checkbox}
+                      </div>
+                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div style={isLong && isCollapsed ? { maxHeight: 140, overflow: 'hidden', position: 'relative' } : undefined}>
+                        <ChatMessage
+                          role={message.role === 'system' ? 'assistant' : message.role}
+                          content={message.content}
+                          medias={message.medias}
+                          status={message.status}
+                          errorMessage={message.errorMessage}
+                          createdAt={message.createdAt}
+                          steps={message.steps}
+                          actions={message.actions}
+                          className="max-w-full"
+                        />
+                        {isLong && isCollapsed && (
+                          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 48, background: 'linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.95))' }} />
+                        )}
+                      </div>
+                      {/* fold button moved to top-right for better visibility */}
+                    </div>
+
+                    {isUser && (
+                      <div className="mt-1">
+                        {checkbox}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* top-right collapse button */}
+                  {isLong && (
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); toggleCollapse(message.id); }}
+                      title={isCollapsed ? 'Show more' : 'Collapse'}
+                      className="absolute right-3 top-3 w-9 h-9 flex items-center justify-center bg-white border border-border rounded-full shadow-sm hover:bg-muted/80"
+                      style={{ zIndex: 20 }}
+                    >
+                      <span style={{ fontSize: 12 }}>{isCollapsed ? '▾' : '▴'}</span>
+                    </button>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="flex items-center justify-end gap-2">
