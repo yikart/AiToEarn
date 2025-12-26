@@ -45,6 +45,10 @@ const nextConfig = {
         source: `${process.env.NEXT_PUBLIC_OSS_URL_PROXY}:path*`,
         destination: `${process.env.NEXT_PUBLIC_OSS_URL}/:path*`,
       },
+      {
+        source: `${process.env.NEXT_PUBLIC_S3_PROXY}:path*`,
+        destination: `${process.env.NEXT_PUBLIC_S3_URL}:path*`,
+      },
     ]
 
     // 存在 NEXT_PUBLIC_PROXY_URL 则代理，本地直连 用

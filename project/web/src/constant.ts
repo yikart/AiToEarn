@@ -6,6 +6,7 @@ export const ProxyUrls = [
   '/api/',
   process.env.NEXT_PUBLIC_BILI_OSS_PROXY,
   process.env.NEXT_PUBLIC_OSS_URL_PROXY,
+  process.env.NEXT_PUBLIC_S3_PROXY,
 ]
 
 // OSS URL
