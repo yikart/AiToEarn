@@ -1,5 +1,5 @@
 {
-  "title": "我的钱包",
+  "title": "钱包账户",
   "columns": {
     "userName": "真实姓名",
     "mail": "邮箱",
@@ -18,6 +18,7 @@
     "edit": "编辑",
     "delete": "删除",
     "deleteConfirm": "确认删除该钱包账户？",
+    "deleteConfirmDesc": "此操作不可撤销，确认要删除该钱包账户吗？",
     "confirm": "确认",
     "cancel": "取消"
   },
@@ -43,9 +44,16 @@
     "typePlaceholder": "请选择类型",
     "required": "必填项"
   },
+  "selectWalletPlaceholder": "选择提现钱包账户",
   "messages": {
     "createSuccess": "创建成功",
     "updateSuccess": "更新成功",
-    "deleteSuccess": "删除成功"
+    "deleteSuccess": "删除成功",
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "deleteFailed": "删除失败",
+    "createFailed": "创建失败",
+    "setDefaultSuccess": "设置为默认成功",
+    "setDefaultFailed": "设置为默认失败"
   }
 }
