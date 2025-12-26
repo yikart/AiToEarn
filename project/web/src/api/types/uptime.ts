@@ -7,6 +7,7 @@ export enum UptimeStatus {
 export enum UptimeModule {
   Agent = 'agent', // Agent
   Server = 'server', // 服务器
+  Ai = 'ai', // Ai
   Database = 'database', // 数据库
   Network = 'network', // 网络
   Other = 'other', // 其他
@@ -14,6 +15,8 @@ export enum UptimeModule {
 
 export enum UptimeType {
   AgentStatus = 'agentStatus',
+  AgentMcpStatus = 'agentMcpStatus', // Agent Mcp 状态
+  NewApiStatus = 'newApiStatus', // NewApi 状态
 }
 
 export interface UptimeItem {

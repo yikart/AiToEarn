@@ -17,14 +17,10 @@ export function getUptimeListApi(params: {
   page: number
   pageSize: number
 }) {
-  return http.get<
+  return http.post<
     {
       list: UptimeItem[]
       total: number
     }
-  >('uptime/list', {
-    date: {
-      params,
-    },
-  })
+  >('uptime/list', params)
 }
