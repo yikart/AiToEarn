@@ -4,7 +4,6 @@ import { createRoot } from "react-dom/client";
 import type { IDisplayMessage } from "@/store/agent";
 import ChatMessage from "@/components/Chat/ChatMessage";
 import { getOssUrl } from "@/utils/oss";
-import { OSS_URL } from "@/constant";
 
 export async function generateImageFromMessages(
   messages: IDisplayMessage[],
@@ -70,11 +69,13 @@ async function generateImageFromAllMessages(
       )
     );
     // 等待组件渲染完成
-    setTimeout(() => {
+    setTimeout(async () => {
       // 替换所有img和video元素的URL为代理地址
       replaceMediaUrlsWithProxy(container);
+      // 等待视频首帧加载完成
+      await ensureVideoThumbnails(container);
       resolve();
-    }, 500); // 增加等待时间确保所有消息都渲染完成
+    }, 1000); // 增加等待时间确保所有消息和视频都渲染完成
   });
 
   document.body.appendChild(container);
@@ -212,6 +213,112 @@ function replaceMediaUrlsWithProxy(container: HTMLElement): void {
       video.poster = proxyUrl + path;
     }
   });
+}
+
+/**
+ * 确保容器中的视频元素显示首帧
+ */
+async function ensureVideoThumbnails(container: HTMLElement): Promise<void> {
+  const videos = container.querySelectorAll('video');
+
+  if (videos.length === 0) {
+    return;
+  }
+
+  const videoPromises = Array.from(videos).map(async (video) => {
+    const videoElement = video as HTMLVideoElement;
+
+    try {
+      // 设置视频属性以确保能显示首帧
+      videoElement.preload = 'metadata';
+      videoElement.muted = true;
+      videoElement.playsInline = true;
+
+      // 如果视频已经有 poster，使用 poster
+      if (videoElement.poster) {
+        return;
+      }
+
+      // 等待视频元数据加载
+      await new Promise<void>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          reject(new Error('Video metadata timeout'));
+        }, 10000);
+
+        videoElement.onloadedmetadata = () => {
+          clearTimeout(timeout);
+          resolve();
+        };
+
+        videoElement.onerror = () => {
+          clearTimeout(timeout);
+          reject(new Error('Video load error'));
+        };
+
+        // 如果视频已经加载了元数据
+        if (videoElement.readyState >= 1) {
+          clearTimeout(timeout);
+          resolve();
+        }
+      });
+
+      // 设置当前时间为0（首帧）
+      videoElement.currentTime = 0;
+
+      // 等待一帧渲染
+      await new Promise<void>((resolve) => {
+        const onSeeked = () => {
+          videoElement.removeEventListener('seeked', onSeeked);
+          setTimeout(resolve, 100); // 等待渲染
+        };
+        videoElement.addEventListener('seeked', onSeeked);
+      });
+
+    } catch (error) {
+      console.warn('Failed to load video thumbnail:', error);
+      // 如果视频加载失败，至少显示一个占位符
+      replaceVideoWithPlaceholder(videoElement);
+    }
+  });
+
+  try {
+    await Promise.all(videoPromises);
+  } catch (error) {
+    console.warn('Some videos failed to load thumbnails:', error);
+  }
+}
+
+/**
+ * 用占位符替换无法加载的视频
+ */
+function replaceVideoWithPlaceholder(videoElement: HTMLVideoElement): void {
+  const placeholder = document.createElement('div');
+  placeholder.style.width = videoElement.offsetWidth + 'px';
+  placeholder.style.height = videoElement.offsetHeight + 'px';
+  placeholder.style.backgroundColor = '#f3f4f6';
+  placeholder.style.border = '2px dashed #d1d5db';
+  placeholder.style.borderRadius = '8px';
+  placeholder.style.display = 'flex';
+  placeholder.style.alignItems = 'center';
+  placeholder.style.justifyContent = 'center';
+  placeholder.style.color = '#6b7280';
+  placeholder.style.fontSize = '14px';
+  placeholder.style.fontFamily = 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial';
+
+  const icon = document.createElement('div');
+  icon.textContent = '🎥';
+  icon.style.fontSize = '24px';
+  icon.style.marginRight = '8px';
+
+  const text = document.createElement('span');
+  text.textContent = 'Video';
+
+  placeholder.appendChild(icon);
+  placeholder.appendChild(text);
+
+  if (videoElement.parentNode) {
+    videoElement.parentNode.replaceChild(placeholder, videoElement);
+  }
 }
 
 

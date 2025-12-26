@@ -5,6 +5,7 @@ import { agentApi, type TaskDetail, type TaskMessage } from "@/api/agent";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -52,7 +53,7 @@ export const ShareModal = ({
           setTaskDetail(res.data);
           // 默认选中所有消息
           const msgIds = (res.data.messages || []).map(
-            (m: TaskMessage, idx: number) => m.uuid || String(idx)
+            (m: TaskMessage, idx: number) => m.uuid || (m.type === 'user' ? `user-${idx}` : String(idx))
           );
           setSelectedIds(msgIds);
         } else {
@@ -167,6 +168,9 @@ export const ShareModal = ({
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden">
         <DialogHeader>
           <DialogTitle>Share Conversation</DialogTitle>
+          <DialogDescription>
+            Select messages to share as an image
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-4 h-full max-h-[calc(90vh-120px)]">
