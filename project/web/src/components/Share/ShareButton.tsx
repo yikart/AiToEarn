@@ -14,21 +14,20 @@ interface ShareButtonProps {
 }
 
 export const ShareButton = ({ onClick, ariaLabel }: ShareButtonProps) => {
-  const { t } = useTransClient('share');
-  const label = ariaLabel || t('share');
+  const { t } = useTransClient("share");
+  const label = ariaLabel || t("share");
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={onClick}
-      className="w-8 h-8"
-      aria-label={label}
+    <button
+      onClick={() => onClick}
+      className="ml-1 text-sm text-muted-foreground sm:inline flex items-center"
+      aria-label={t("task.rate") || "Rate"}
     >
-      <Share2 className="w-5 h-5" />
-    </Button>
+      <Button variant="ghost" size="icon" onClick={onClick} className="w-8 h-8">
+        <Share2 className="w-5 h-5" />
+      </Button>
+      {t("task.rate") || "评分"}
+    </button>
   );
 };
 
 export default ShareButton;
-
-

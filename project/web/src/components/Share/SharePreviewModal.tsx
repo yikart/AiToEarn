@@ -1,6 +1,6 @@
- "use client";
+"use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,8 @@ import { useAccountStore } from "@/store/account";
 import { AccountPlatInfoMap } from "@/app/config/platConfig";
 import { PubType } from "@/app/config/publishConfig";
 import { uploadToOss } from "@/api/oss";
+import { usePublishDialogData } from "../PublishDialog/usePublishDialogData";
+import { usePublishDialogStorageStore } from "../PublishDialog/usePublishDialogStorageStore";
 
 interface SharePreviewModalProps {
   open: boolean;
@@ -19,11 +21,17 @@ interface SharePreviewModalProps {
   taskId: string;
 }
 
-export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: SharePreviewModalProps) => {
+export const SharePreviewModal = ({
+  open,
+  onClose,
+  blobs,
+  urls,
+  taskId,
+}: SharePreviewModalProps) => {
   const { t } = useTransClient("share");
   const router = useRouter();
   const { accountList, getAccountList } = useAccountStore();
- 
+  const [uploading, setUploading] = useState(false);
 
   const downloadBlobs = async () => {
     try {
@@ -32,7 +40,10 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
         const a = document.createElement("a");
         const url = URL.createObjectURL(blob);
         a.href = url;
-        a.download = blobs.length === 1 ? `aitoearn_conversation_${taskId}.png` : `aitoearn_${taskId}_${i + 1}.png`;
+        a.download =
+          blobs.length === 1
+            ? `aitoearn_conversation_${taskId}.png`
+            : `aitoearn_${taskId}_${i + 1}.png`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -47,25 +58,37 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
 
   const handleAgentShare = async () => {
     try {
+      setUploading(true);
       // upload blobs (if available) and get urls
       const targets = blobs && blobs.length > 0 ? blobs : [];
       let uploadedUrls: string[] = [];
-      if (targets.length > 0) {
-        for (let i = 0; i < targets.length; i++) {
-          const file = new File([targets[i]], `aitoearn_export_${Date.now()}_${i}.png`, { type: targets[i].type || "image/png" });
-          try {
-            const url = await uploadToOss(file);
-            uploadedUrls.push(url as string);
-          } catch (err) {
-            console.error("Upload failed for blob", err);
+        if (targets.length > 0) {
+          for (let i = 0; i < targets.length; i++) {
+            const file = new File(
+              [targets[i]],
+              `aitoearn_export_${Date.now()}_${i}.png`,
+              { type: targets[i].type || "image/png" }
+            );
+            try {
+              const url = await uploadToOss(file);
+              uploadedUrls.push(url as string);
+            } catch (err) {
+              console.error("Upload failed for blob", err);
+            }
           }
         }
-      }
 
-      const payloadPrompt = t("agentSharePrompt") || "Share this image to social media. Copy write freely.";
+      const payloadPrompt =
+        t("agentSharePrompt") ||
+        "Share this image to social media. Copy write freely.";
       const params = new URLSearchParams();
       params.set("aiGenerated", "true");
-      params.set("medias", encodeURIComponent(JSON.stringify(uploadedUrls.map(u => ({ type: "IMAGE", url: u })))));
+      params.set(
+        "medias",
+        encodeURIComponent(
+          JSON.stringify(uploadedUrls.map((u) => ({ type: "IMAGE", url: u })))
+        )
+      );
       params.set("description", encodeURIComponent(payloadPrompt));
 
       onClose();
@@ -74,23 +97,31 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
     } catch (e) {
       console.error(e);
       toast.error(t("agentShareFailed") || "Failed to prepare agent share");
+    } finally {
+      setUploading(false);
     }
   };
 
   const handlePublishShare = async () => {
     try {
+      usePublishDialogStorageStore.getState().clearPubData();
+      setUploading(true);
       // ensure accounts loaded
       if (!accountList || accountList.length === 0) {
         await getAccountList();
       }
       // filter accounts that support ImageText and are online (status !== 0)
-      const candidates = (useAccountStore.getState().accountList || []).filter((acc) => {
-        const plat = AccountPlatInfoMap.get(acc.type as any);
-        return acc.status !== 0 && plat?.pubTypes?.has(PubType.ImageText);
-      });
+      const candidates = (useAccountStore.getState().accountList || []).filter(
+        (acc) => {
+          const plat = AccountPlatInfoMap.get(acc.type as any);
+          return acc.status !== 0 && plat?.pubTypes?.has(PubType.ImageText);
+        }
+      );
 
       if (!candidates || candidates.length === 0) {
-        toast.error(t("noAvailablePublishAccounts") || "No available accounts to publish");
+        toast.error(
+          t("noAvailablePublishAccounts") || "No available accounts to publish"
+        );
         return;
       }
 
@@ -98,13 +129,19 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
       const targets = blobs && blobs.length > 0 ? blobs : [];
       let uploadedUrls: string[] = [];
       if (targets.length > 0) {
-        for (let i = 0; i < targets.length; i++) {
-          const file = new File([targets[i]], `aitoearn_export_${Date.now()}_${i}.png`, { type: targets[i].type || "image/png" });
-          try {
-            const url = await uploadToOss(file);
-            uploadedUrls.push(url as string);
-          } catch (err) {
-            console.error("Upload failed for blob", err);
+        if (targets.length > 0) {
+          for (let i = 0; i < targets.length; i++) {
+            const file = new File(
+              [targets[i]],
+              `aitoearn_export_${Date.now()}_${i}.png`,
+              { type: targets[i].type || "image/png" }
+            );
+            try {
+              const url = await uploadToOss(file);
+              uploadedUrls.push(url as string);
+            } catch (err) {
+              console.error("Upload failed for blob", err);
+            }
           }
         }
       } else {
@@ -114,7 +151,9 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
 
       const medias = uploadedUrls.map((u) => ({ type: "IMAGE", url: u }));
       const title = "";
-      const description = t("publishShareDescription") || "I generated this conversation on aitoearn using agent, check it out!";
+      const description =
+        t("publishShareDescription") ||
+        "I generated this conversation on aitoearn using agent, check it out!";
       const tags = ["aitoearn", "agent"];
 
       // Build URL params and navigate to /accounts to trigger publish dialog filling
@@ -132,6 +171,8 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
     } catch (e) {
       console.error(e);
       toast.error(t("publishShareFailed") || "Failed to prepare publish");
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -139,13 +180,32 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
     <Modal open={open} onCancel={onClose} title={t("previewTitle")}>
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-md border p-4 flex justify-center">
-          {urls[0] ? <img src={urls[0]} alt="preview" className="max-h-[40vh] object-contain" /> : <div className="text-sm text-muted-foreground">{t("noPreview")}</div>}
+          {urls[0] ? (
+            <img
+              src={urls[0]}
+              alt="preview"
+              className="max-h-[40vh] object-contain"
+            />
+          ) : (
+            <div className="text-sm text-muted-foreground">
+              {t("noPreview")}
+            </div>
+          )}
         </div>
 
         <div className="mt-4 flex items-center justify-end gap-2">
-          <Button variant="outline" onClick={handleAgentShare}>{t("agentShare")}</Button>
-          <Button variant="outline" onClick={handlePublishShare}>{t("publishShare")}</Button>
-          <Button onClick={downloadBlobs}>{t("download")}</Button>
+          <div className="flex items-center gap-3">
+            {/* show nothing; buttons will show loading state */}
+          </div>
+          <Button variant="outline" onClick={handleAgentShare} loading={uploading}>
+            {t("agentShare")}
+          </Button>
+          <Button variant="outline" onClick={handlePublishShare} loading={uploading}>
+            {t("publishShare")}
+          </Button>
+          <Button onClick={downloadBlobs} disabled={uploading}>
+            {t("download")}
+          </Button>
         </div>
       </div>
     </Modal>
@@ -153,5 +213,3 @@ export const SharePreviewModal = ({ open, onClose, blobs, urls, taskId }: ShareP
 };
 
 export default SharePreviewModal;
-
-

@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Loader2,
   MessageSquare,
+  Share2,
   Star,
   Trash2,
 } from "lucide-react";
@@ -113,8 +114,8 @@ export function TaskCard({
   const lng = useGetClientLng();
   const { t } = useTransClient("chat");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const { t: cgmaterialT } = useTransClient("cgmaterial");
 
   const statusConfig = getStatusConfig(status, t as (key: string) => string);
 
@@ -141,10 +142,6 @@ export function TaskCard({
       setIsDeleting(false);
     }
   };
-
-  // Note: share and public-link actions intentionally removed from UI per request.
-
-  // Inline rating handlers removed — rating UI hidden on TaskCard.
 
   /** 触发评分回调（由历史列表等外部组件使用） */
   const handleRateClick = (e: React.MouseEvent) => {
@@ -220,10 +217,22 @@ export function TaskCard({
             {...(rating ? { fill: "currentColor" } : {})}
           />
           <span className="hidden sm:inline">
-            {t("task.rate" as any) || "Rate"}
+            {t("task.rate") || "Rate"}
           </span>
         </button>
-        <ShareButton onClick={handleShareClick} />
+        <button
+          onClick={handleShareClick}
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors text-xs opacity-60 hover:opacity-100"
+          aria-label="rate"
+        >
+          <Share2
+            className={`w-3 h-3 ${rating ? "text-amber-400" : ""}`}
+            {...(rating ? { fill: "currentColor" } : {})}
+          />
+          <span className="hidden sm:inline">
+            {cgmaterialT("import.shares")}
+          </span>
+        </button>
         <button
           onClick={handleDelete}
           disabled={isDeleting}
@@ -236,7 +245,7 @@ export function TaskCard({
             <Trash2 className="w-3 h-3" />
           )}
           <span className="hidden sm:inline">
-            {t("task.delete" as any) || "Delete"}
+            {t("task.delete") || "Delete"}
           </span>
         </button>
       </div>
