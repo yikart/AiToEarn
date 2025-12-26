@@ -308,10 +308,17 @@ export default function UptimePage() {
                   <div className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <h2 className="text-xl font-semibold text-gray-900">
-                        {moduleNameMap[group.module]}
-                        {typeNameMap[group.type] && ` - ${typeNameMap[group.type]}`}
                         {' '}
-                        - 过去90天运行状态
+                        <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
+                          <span className="w-1 h-6 bg-blue-600 rounded-full"></span>
+                          {moduleNameMap[group.module]}
+                          {typeNameMap[group.type] && (
+                            <>
+                              <span className="text-gray-400">/</span>
+                              <span className="text-blue-600">{typeNameMap[group.type]}</span>
+                            </>
+                          )}
+                        </h2>
                       </h2>
                       <div className="text-sm text-gray-600">
                         正常运行时间：
@@ -339,6 +346,7 @@ export default function UptimePage() {
                                   {dayjs(item.createdAt).format('YYYY-MM-DD HH:mm:ss')}
                                 </div>
                                 <div className="text-gray-300">{getStatusBarTitle(item.status)}</div>
+                                <div className="text-gray-100">{item.id}</div>
                                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 -mt-1">
                                   <div className="border-4 border-transparent border-t-gray-900" />
                                 </div>
