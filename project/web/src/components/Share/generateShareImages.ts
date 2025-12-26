@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import type { IDisplayMessage } from "@/store/agent";
 import ChatMessage from "@/components/Chat/ChatMessage";
 import { getOssUrl } from "@/utils/oss";
+import logo from "@/assets/images/logo.png";
 
 export async function generateImageFromMessages(
   messages: IDisplayMessage[],
@@ -58,14 +59,39 @@ async function generateImageFromAllMessages(
       })
     );
 
+    // header 包含 logo 和标题
+    const headerEl = React.createElement(
+      'div',
+      { className: 'flex items-center gap-3 mb-4' },
+      React.createElement('img', {
+        src: logo.src || logo,
+        style: { width: '40px', height: '40px', borderRadius: '8px' },
+      }),
+      React.createElement(
+        'div',
+        { style: { display: 'flex', flexDirection: 'column' } },
+        React.createElement('div', { style: { fontSize: '18px', fontWeight: 700 } }, 'AiToEarn'),
+        React.createElement('div', { style: { fontSize: '12px', color: '#6b7280' } }, 'https://aitoearn.ai')
+      )
+    );
+
     root.render(
-      React.createElement('div', { className: 'flex flex-col gap-4' },
+      React.createElement(
+        'div',
+        { className: 'flex flex-col gap-4' },
+        headerEl,
         // 所有消息内容
         ...messageElements,
         // 用户信息
-        userName && React.createElement('div', {
-          className: 'text-xs text-muted-foreground mt-4 pt-4 border-t border-gray-200'
-        }, `Shared by ${userName}`)
+        userName &&
+          React.createElement(
+            'div',
+            {
+              className: 'text-xs text-muted-foreground mt-4 pt-4 border-t border-gray-200',
+              style: { marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #eef2f7' },
+            },
+            `Shared by ${userName}`
+          )
       )
     );
     // 等待组件渲染完成
@@ -74,6 +100,8 @@ async function generateImageFromAllMessages(
       replaceMediaUrlsWithProxy(container);
       // 等待视频首帧加载完成
       await ensureVideoThumbnails(container);
+    // 规范化媒体容器样式（截图时避免因 bg-muted 等类导致气泡看起来变淡）
+    normalizeMediaWrapperStyles(container);
       resolve();
     }, 1000); // 增加等待时间确保所有消息和视频都渲染完成
   });
@@ -81,6 +109,12 @@ async function generateImageFromAllMessages(
   document.body.appendChild(container);
 
   try {
+    // 确保所有图片已加载并且字体就绪，避免因未加载资源导致导出不全
+    await waitForImagesToLoad(container);
+    await (document as any).fonts?.ready;
+    // 确保容器高度被正确计算
+    container.style.height = `${container.scrollHeight}px`;
+
     const canvas = await html2canvas(container, {
       scale: 2, // 高分辨率
       useCORS: true, // 【重要】开启跨域配置
@@ -115,6 +149,44 @@ async function generateImageFromAllMessages(
       container.parentNode.removeChild(container);
     }
   }
+}
+
+/**
+ * 等待容器内所有图片通过 proxy 加载完成
+ */
+function waitForImagesToLoad(container: HTMLElement, timeoutMs = 15000): Promise<void> {
+  const imgs = Array.from(container.querySelectorAll('img')).map((img) => img as HTMLImageElement);
+  if (imgs.length === 0) return Promise.resolve();
+
+  return new Promise<void>((resolve) => {
+    let settled = 0;
+    const total = imgs.length;
+    const onSettled = () => {
+      settled++;
+      if (settled >= total) resolve();
+    };
+
+    const timer = setTimeout(() => {
+      resolve(); // 超时仍然继续，避免阻塞太久
+    }, timeoutMs);
+
+    imgs.forEach((img) => {
+      // 使用单独的 Image 对象预加载，确保跨域资源也能尝试加载
+      try {
+        const tester = new Image();
+        tester.crossOrigin = 'anonymous';
+        tester.onload = () => {
+          onSettled();
+        };
+        tester.onerror = () => {
+          onSettled();
+        };
+        tester.src = img.src;
+      } catch (e) {
+        onSettled();
+      }
+    });
+  });
 }
 
 export async function generateImageFromNode(node: HTMLElement, scale = 1): Promise<Blob | null> {
@@ -319,6 +391,38 @@ function replaceVideoWithPlaceholder(videoElement: HTMLVideoElement): void {
   if (videoElement.parentNode) {
     videoElement.parentNode.replaceChild(placeholder, videoElement);
   }
+}
+
+/**
+ * 规范化媒体容器样式，避免在截图时出现气泡颜色变淡的问题
+ */
+function normalizeMediaWrapperStyles(container: HTMLElement): void {
+  // 将使用 bg-muted 的按钮背景替换为与消息气泡一致的背景（bg-card）
+  const mediaButtons = container.querySelectorAll('button');
+  mediaButtons.forEach(btn => {
+    // 仅处理包含 video 或 img 的按钮
+    if (btn.querySelector('video') || btn.querySelector('img')) {
+      // 强制设置背景与边框，覆盖 Tailwind 的语义化类带来的颜色差异
+      (btn as HTMLElement).style.background = '#ffffff';
+      (btn as HTMLElement).style.borderColor = '#e6e9ef';
+      (btn as HTMLElement).style.boxShadow = 'none';
+      (btn as HTMLElement).style.opacity = '1';
+    }
+  });
+
+  // 对直接包含媒体的容器也做同样处理（例如 markdown 渲染出来的 video 包裹）
+  const mediaWrappers = container.querySelectorAll('.bg-muted, .media-wrapper');
+  mediaWrappers.forEach(w => {
+    (w as HTMLElement).style.background = '#ffffff';
+    (w as HTMLElement).style.opacity = '1';
+  });
+}
+
+/**
+ * 将 AI 消息气泡调暗一些，截图时视觉更贴合设计要求
+ */
+function dimAssistantBubbles(container: HTMLElement): void {
+  // removed: dimming no longer applied
 }
 
 
