@@ -19,9 +19,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTransClient } from "@/app/i18n/client";
 import { useGetClientLng } from "@/hooks/useSystem";
-import { toast } from "@/lib/toast";
 import { cn, formatRelativeTime } from "@/lib/utils";
-import ShareButton from "@/components/Share/ShareButton";
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -246,7 +244,6 @@ export function TaskCard({
           </span>
         </button>
       </div>
-      {/* ShareModal moved to TaskHistoryList to avoid navigation issues when overlay closes */}
     </div>
   );
 }

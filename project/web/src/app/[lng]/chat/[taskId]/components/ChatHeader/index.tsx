@@ -9,7 +9,6 @@ import { ArrowLeft, Loader2, Share2, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RatingModal from "@/components/Chat/Rating";
 import { useTransClient } from "@/app/i18n/client";
-import ShareButton from "@/components/Share/ShareButton";
 import ShareModal from "@/components/Share/ShareModal";
 
 export interface IChatHeaderProps {
