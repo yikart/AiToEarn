@@ -228,7 +228,7 @@ export const ShareModal = ({
             >
               {loading
                 ? "Generating..."
-                : `Generate & Download (${selectedIds.length} messages)`}
+                : `Generate & Download (${displayMessages.length} messages)`}
             </Button>
           </div>
         </div>
