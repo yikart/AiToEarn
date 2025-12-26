@@ -92,6 +92,37 @@ export const ShareModal = ({
       return next;
     });
   };
+  // refs for measuring rendered message height
+  const messageRefs = React.useRef<Map<string, HTMLDivElement>>(new Map());
+  const [longIds, setLongIds] = useState<Set<string>>(new Set());
+
+  React.useEffect(() => {
+    const measure = () => {
+      const next = new Set<string>();
+      messageRefs.current.forEach((el, id) => {
+        try {
+          // threshold changed to 60
+          if (el && el.scrollHeight > 60) next.add(id);
+        } catch (e) {
+          // ignore
+        }
+      });
+      setLongIds(next);
+    };
+
+    // initial measure after a tick to allow children render
+    const t = setTimeout(measure, 150);
+    const ro = new ResizeObserver(measure);
+    messageRefs.current.forEach((el) => {
+      if (el) ro.observe(el);
+    });
+    window.addEventListener('resize', measure);
+    return () => {
+      clearTimeout(t);
+      ro.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [displayMessages]);
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds(prev => {
       if (prev.includes(id)) return prev.filter(p => p !== id);
@@ -198,7 +229,7 @@ export const ShareModal = ({
               const isUser = message.role === 'user';
               const isSelected = selectedIds.includes(message.id);
               const isCollapsed = collapsedIds.has(message.id);
-              const isLong = !!(message.content && message.content.length > 400);
+              const isLong = longIds.has(message.id) || !!(message.content && message.content.length > 60) || (message.medias && message.medias.length > 0);
 
               const checkbox = (
                 <input
@@ -224,12 +255,30 @@ export const ShareModal = ({
                 toggleSelect(message.id);
               };
 
-              const selectedStyle: React.CSSProperties | undefined = isSelected ? {
-                background: '#f5f7ff',
-                borderRadius: '8px',
-                // use boxShadow instead of border/padding to avoid layout shift
-                boxShadow: 'inset 0 0 0 1px rgba(230,238,252,0.6)'
-              } : undefined;
+              // role-based base and highlight colors (tunable)
+              const ROLE_BASE: Record<string, string> = {
+                user: '#f0fff4', // light green
+                assistant: '#fff7f0', // light warm
+              };
+              const ROLE_HIGHLIGHT: Record<string, string> = {
+                user: '#dcfce7', // lighter green
+                assistant: '#fff1e6', // lighter warm
+              };
+              const baseMessageStyle: React.CSSProperties = {
+                padding: 12,
+                borderRadius: 8,
+              };
+              const roleBg = isUser ? ROLE_BASE.user : ROLE_BASE.assistant;
+              const selectedBg = isUser ? ROLE_HIGHLIGHT.user : ROLE_HIGHLIGHT.assistant;
+              const selectedStyle: React.CSSProperties = {
+                ...baseMessageStyle,
+                background: selectedBg,
+                boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.04)'
+              };
+              const defaultStyle: React.CSSProperties = {
+                ...baseMessageStyle,
+                background: roleBg
+              };
 
               return (
                 <div
@@ -241,8 +290,12 @@ export const ShareModal = ({
                     role="button"
                     tabIndex={0}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggleSelect(message.id); }}
-                    className={`flex items-start gap-3 ${isSelected ? '' : ''}`}
-                    style={selectedStyle}
+                    className={`flex items-start gap-3`}
+                    style={isSelected ? selectedStyle : defaultStyle}
+                    ref={(el) => {
+                      if (el) messageRefs.current.set(message.id, el as HTMLDivElement);
+                      else messageRefs.current.delete(message.id);
+                    }}
                   >
                     {!isUser && (
                       <div className="mt-1">
@@ -251,7 +304,7 @@ export const ShareModal = ({
                     )}
 
                     <div className="flex-1 min-w-0">
-                      <div style={isLong && isCollapsed ? { maxHeight: 140, overflow: 'hidden', position: 'relative' } : undefined}>
+                      <div style={isLong && isCollapsed ? { maxHeight: 40, overflow: 'hidden', position: 'relative' } : undefined}>
                         <ChatMessage
                           role={message.role === 'system' ? 'assistant' : message.role}
                           content={message.content}
@@ -264,7 +317,7 @@ export const ShareModal = ({
                           className="max-w-full"
                         />
                         {isLong && isCollapsed && (
-                          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 48, background: 'linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.95))' }} />
+                          <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 40, background: 'linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.95))' }} />
                         )}
                       </div>
                       {/* fold button moved to top-right for better visibility */}
@@ -283,8 +336,8 @@ export const ShareModal = ({
                       type="button"
                       onClick={(e) => { e.stopPropagation(); toggleCollapse(message.id); }}
                       title={isCollapsed ? 'Show more' : 'Collapse'}
-                      className="absolute right-3 top-3 w-9 h-9 flex items-center justify-center bg-white border border-border rounded-full shadow-sm hover:bg-muted/80"
-                      style={{ zIndex: 20 }}
+                      className={`absolute top-3 w-9 h-9 flex items-center justify-center bg-white border border-border rounded-full shadow-sm hover:bg-muted/80`}
+                      style={{ zIndex: 20, left: isUser ? '12px' : undefined, right: isUser ? undefined : '12px' } as React.CSSProperties}
                     >
                       <span style={{ fontSize: 12 }}>{isCollapsed ? '▾' : '▴'}</span>
                     </button>
