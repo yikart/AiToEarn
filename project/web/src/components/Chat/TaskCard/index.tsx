@@ -22,7 +22,6 @@ import { useGetClientLng } from "@/hooks/useSystem";
 import { toast } from "@/lib/toast";
 import { cn, formatRelativeTime } from "@/lib/utils";
 import ShareButton from "@/components/Share/ShareButton";
-import ShareModal from "@/components/Share/ShareModal";
 
 export interface ITaskCardProps {
   /** 任务ID */
@@ -47,6 +46,8 @@ export interface ITaskCardProps {
   showInlineRating?: boolean;
   /** 自定义类名 */
   className?: string;
+  /** 分享回调（由父组件触发 ShareModal） */
+  onShare?: (id: string) => void;
 }
 
 /** 获取状态显示配置 */
@@ -109,12 +110,13 @@ export function TaskCard({
   className,
   onSelect,
   onRateClick,
+  onShare,
 }: ITaskCardProps) {
   const router = useRouter();
   const lng = useGetClientLng();
   const { t } = useTransClient("chat");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [shareOpen, setShareOpen] = useState(false);
+  
   const { t: cgmaterialT } = useTransClient("cgmaterial");
 
   const statusConfig = getStatusConfig(status, t as (key: string) => string);
@@ -154,7 +156,7 @@ export function TaskCard({
   const handleShareClick = (e?: React.MouseEvent) => {
     e?.stopPropagation();
     e?.preventDefault();
-    setShareOpen(true);
+    if (typeof onShare === "function") onShare(id);
   };
 
   return (
@@ -216,19 +218,14 @@ export function TaskCard({
             className={`w-3 h-3 ${rating ? "text-amber-400" : ""}`}
             {...(rating ? { fill: "currentColor" } : {})}
           />
-          <span className="hidden sm:inline">
-            {t("task.rate") || "Rate"}
-          </span>
+          <span className="hidden sm:inline">{t("task.rate") || "Rate"}</span>
         </button>
         <button
           onClick={handleShareClick}
           className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors text-xs opacity-60 hover:opacity-100"
           aria-label="rate"
         >
-          <Share2
-            className={`w-3 h-3 ${rating ? "text-amber-400" : ""}`}
-            {...(rating ? { fill: "currentColor" } : {})}
-          />
+          <Share2 className={`w-3 h-3`} />
           <span className="hidden sm:inline">
             {cgmaterialT("import.shares")}
           </span>
@@ -249,7 +246,7 @@ export function TaskCard({
           </span>
         </button>
       </div>
-      <ShareModal taskId={id} open={shareOpen} onOpenChange={(v) => setShareOpen(v)} />
+      {/* ShareModal moved to TaskHistoryList to avoid navigation issues when overlay closes */}
     </div>
   );
 }

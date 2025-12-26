@@ -6,6 +6,7 @@
 
 import React, { useState } from "react";
 import { TaskCard, TaskCardSkeleton } from "@/components/Chat";
+import ShareModal from "@/components/Share/ShareModal";
 import RatingModal from "@/components/Chat/Rating";
 import { agentApi, type TaskListItem } from "@/api/agent";
 import { toast } from "@/lib/toast";
@@ -33,6 +34,7 @@ export const TaskHistoryList = ({
 }: ITaskHistoryListProps) => {
   const { t } = useTransClient("chat");
   const [ratingModalFor, setRatingModalFor] = useState<string | null>(null);
+  const [shareTaskId, setShareTaskId] = useState<string | null>(null);
 
   const handleRateClick = (taskId: string) => {
     setRatingModalFor(taskId);
@@ -90,6 +92,7 @@ export const TaskHistoryList = ({
                 rating={task.rating}
                 onDelete={() => handleDelete(String(task.id))}
                 onRateClick={() => handleRateClick(task.id)}
+                onShare={() => setShareTaskId(String(task.id))}
               />
             );
 
@@ -114,6 +117,14 @@ export const TaskHistoryList = ({
             handleRatingUpdate(ratingModalFor, data);
           }
           setRatingModalFor(null);
+        }}
+      />
+      {/* ShareModal centralized here to avoid overlay click propagation issues */}
+      <ShareModal
+        taskId={shareTaskId ?? ""}
+        open={!!shareTaskId}
+        onOpenChange={(v) => {
+          if (!v) setShareTaskId(null);
         }}
       />
     </div>
