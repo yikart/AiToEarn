@@ -5,6 +5,7 @@ import type { IDisplayMessage } from "@/store/agent";
 import ChatMessage from "@/components/Chat/ChatMessage";
 import { getOssUrl } from "@/utils/oss";
 import logo from "@/assets/images/logo.png";
+// upload handled by caller (SharePreviewModal)
 
 export async function generateImageFromMessages(
   messages: IDisplayMessage[],
@@ -22,7 +23,7 @@ export async function generateImageFromMessages(
 async function generateImageFromAllMessages(
   messages: IDisplayMessage[],
   userName?: string,
-  options?: { appTitle?: string; appUrl?: string }
+  options?: { appTitle?: string; appUrl?: string; upload?: boolean }
 ): Promise<Blob | null> {
   // 处理消息中的媒体URL，确保使用代理URL
   const processedMessages = messages.map(message => ({
@@ -105,6 +106,8 @@ async function generateImageFromAllMessages(
       // 等待视频首帧加载完成
       await ensureVideoThumbnails(container);
     // 规范化媒体容器样式（截图时避免因 bg-muted 等类导致气泡看起来变淡）
+    // 调暗/强化 AI 气泡对比，避免在消息较少时 AI 气泡过淡
+    dimAssistantBubbles(container);
     normalizeMediaWrapperStyles(container);
       resolve();
     }, 1000); // 增加等待时间确保所有消息和视频都渲染完成
@@ -132,7 +135,7 @@ async function generateImageFromAllMessages(
       windowHeight: container.scrollHeight,
     });
 
-    return new Promise<Blob | null>((resolve, reject) => {
+    const resultBlob: Blob | null = await new Promise<Blob | null>((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error("Image generation timeout"));
       }, 45000); // 增加超时时间
@@ -146,6 +149,8 @@ async function generateImageFromAllMessages(
         0.95
       );
     });
+    // return generated blob; caller is responsible for uploading if needed
+    return resultBlob;
   } finally {
     // 清理
     root.unmount();
@@ -426,7 +431,52 @@ function normalizeMediaWrapperStyles(container: HTMLElement): void {
  * 将 AI 消息气泡调暗一些，截图时视觉更贴合设计要求
  */
 function dimAssistantBubbles(container: HTMLElement): void {
-  // removed: dimming no longer applied
+  try {
+    // Find avatar images that are the assistant logo (AiToEarn)
+    const imgs = Array.from(container.querySelectorAll('img'));
+    imgs.forEach((img) => {
+      try {
+        const src = img.src || '';
+        // heuristic: logo file name contains 'logo' or 'aitoearn'
+        if (!/logo|aitoearn/i.test(src)) return;
+
+        // find the message root (the flex container that holds avatar + message)
+        let root = img.closest('.flex');
+        if (!root) {
+          // fallback: go up a few levels to find a container with two children (avatar + content)
+          let el: HTMLElement | null = img.parentElement;
+          for (let i = 0; i < 4 && el; i++) {
+            if (el.classList && el.classList.contains('flex')) {
+              root = el;
+              break;
+            }
+            el = el.parentElement;
+          }
+        }
+        if (!root) return;
+
+        // within the root, find descendant that looks like the message bubble (bg-card)
+        const bubble = root.querySelector('.bg-card') as HTMLElement | null;
+        if (!bubble) return;
+
+        // Apply stronger background and text color to increase contrast for exported image
+        bubble.style.background = '#ffffff'; // keep white base
+        bubble.style.boxShadow = 'inset 0 0 0 1px rgba(0,0,0,0.03)';
+        bubble.style.color = '#0f172a';
+        bubble.style.opacity = '1';
+        // Also ensure any muted-text inside becomes more visible
+        const mutedEls = bubble.querySelectorAll('.text-muted-foreground, .text-muted');
+        mutedEls.forEach((el) => {
+          (el as HTMLElement).style.color = '#4b5563'; // slate-600
+          (el as HTMLElement).style.opacity = '1';
+        });
+      } catch (e) {
+        // ignore per-element errors
+      }
+    });
+  } catch (e) {
+    // silent
+  }
 }
 
 

@@ -25,6 +25,7 @@ import { toast } from "@/lib/toast";
 import type { IDisplayMessage } from "@/store/agent";
 import { convertMessages } from "@/app/[lng]/chat/[taskId]/utils";
 import { useTransClient } from "@/app/i18n/client";
+import SharePreviewModal from "./SharePreviewModal";
 
 interface ShareModalProps {
   taskId: string;
@@ -44,6 +45,9 @@ export const ShareModal = ({
   const [loading, setLoading] = useState(false);
   const [taskDetail, setTaskDetail] = useState<TaskDetail | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewBlobs, setPreviewBlobs] = useState<Blob[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const user = useUserStore((s) => s.userInfo);
 
   useEffect(() => {
@@ -161,24 +165,19 @@ export const ShareModal = ({
       return;
     }
 
+    // 生成后展示预览（不立即下载）
     setLoading(true);
-
     try {
-      // 生成包含所有选中消息的长图
       const blobs = await generateImageFromMessages(
         selectedMessages,
         user?.name,
         { appTitle: t('appName'), appUrl: t('appUrl') }
       );
-
-      if (blobs.length === 0) {
-        throw new Error("No images were generated successfully");
-      }
-
-      // 下载生成的图片
-      await downloadImages(blobs, taskId);
-
-      toast.success(`Conversation image generated and downloaded successfully`);
+      if (!blobs || blobs.length === 0) throw new Error("No images were generated");
+      setPreviewBlobs(blobs);
+      const urls = blobs.map((b) => URL.createObjectURL(b));
+      setPreviewUrls(urls);
+      setPreviewOpen(true);
     } catch (err) {
       console.error("Failed to generate images:", err);
       const errorMessage =
@@ -186,8 +185,6 @@ export const ShareModal = ({
       toast.error(`Failed to generate images: ${errorMessage}`);
     } finally {
       setLoading(false);
-      onOpenChange?.(false);
-      setVisible(false);
     }
   }, [messages, selectedIds, taskId, user?.name, onOpenChange]);
 
@@ -456,17 +453,38 @@ export const ShareModal = ({
               {t('cancel')}
             </Button>
             <Button
-              onClick={handleGenerateAndDownload}
-              disabled={loading || selectedIds.length === 0}
-              className="bg-primary text-white"
-            >
-              {loading
-                ? t('generating')
-                : t('generateAndDownload', { count: selectedIds.length })}
+                onClick={handleGenerateAndDownload}
+                disabled={loading || selectedIds.length === 0}
+                className="bg-primary text-white"
+              >
+                {loading ? t('generating') : t('generate')}
             </Button>
           </div>
         </div>
       </DialogContent>
+      {/* Share preview modal */}
+      {previewOpen && (
+        // lazy load the preview modal component to avoid bundle size; import statically here for simplicity
+        <div>
+          <SharePreviewModal
+            open={previewOpen}
+            onClose={() => {
+              // revoke object urls
+              previewUrls.forEach((u) => {
+                try { URL.revokeObjectURL(u) } catch (e) {}
+              });
+              setPreviewOpen(false);
+              setPreviewBlobs([]);
+              setPreviewUrls([]);
+              onOpenChange?.(false);
+              setVisible(false);
+            }}
+            blobs={previewBlobs}
+            urls={previewUrls}
+            taskId={taskId}
+          />
+        </div>
+      )}
     </Dialog>
   );
 };

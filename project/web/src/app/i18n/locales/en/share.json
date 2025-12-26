@@ -16,5 +16,16 @@
   "share": "Share",
   "appName": "AiToEarn",
   "appUrl": "https://aitoearn.ai"
+  ,
+  "previewTitle": "Preview",
+  "agentShare": "Share via Agent",
+  "publishShare": "Share via Publish",
+  "download": "Download",
+  "downloadFailed": "Download failed",
+  "agentSharePrompt": "Share this image to social media. Copy write freely.",
+  "agentShareSaved": "Ready to share on Home",
+  "agentShareFailed": "Failed to prepare agent share",
+  "publishShareDescription": "I generated this conversation on AiToEarn using agent, check it out!",
+  "noAvailablePublishAccounts": "No available accounts to publish"
 }
 
