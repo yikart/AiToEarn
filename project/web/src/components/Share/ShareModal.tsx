@@ -11,6 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { generateImageFromMessages } from "./generateShareImages";
 import ChatMessage from "@/components/Chat/ChatMessage";
 import { useUserStore } from "@/store/user";
@@ -51,11 +57,12 @@ export const ShareModal = ({
 
         if (res?.data) {
           setTaskDetail(res.data);
-          // 默认选中所有消息
-          const msgIds = (res.data.messages || []).map(
-            (m: TaskMessage, idx: number) => m.uuid || (m.type === 'user' ? `user-${idx}` : String(idx))
-          );
-          setSelectedIds(msgIds);
+          // 使用转换后的 display messages 的 id 作为默认选中（避免后端原始消息 id 与前端展示 id 不一致）
+          const converted = convertMessages(res.data.messages || []);
+          const displayIds = converted.map((m) => m.id);
+          setSelectedIds(displayIds);
+          // 默认全部折叠
+          setCollapsedIds(new Set(displayIds));
         } else {
           toast.error("Failed to load task detail: No data received");
         }
@@ -223,6 +230,77 @@ export const ShareModal = ({
         </DialogHeader>
 
         <div className="flex flex-col gap-4 h-full max-h-[calc(90vh-120px)]">
+          {/* 操作按钮区域 */}
+          <div className="flex items-center justify-between gap-2 p-3 border rounded-lg bg-muted/30">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const allIds = displayMessages.map(m => m.id);
+                  setSelectedIds(allIds);
+                }}
+                className="cursor-pointer"
+              >
+                选取全部
+              </Button>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer"
+                  >
+                    选最近几条
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const recentCount = Math.min(5, displayMessages.length);
+                      const recentIds = displayMessages.slice(-recentCount).map(m => m.id);
+                      setSelectedIds(recentIds);
+                    }}
+                  >
+                    最近5条
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const recentCount = Math.min(10, displayMessages.length);
+                      const recentIds = displayMessages.slice(-recentCount).map(m => m.id);
+                      setSelectedIds(recentIds);
+                    }}
+                  >
+                    最近10条
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      const recentCount = Math.min(20, displayMessages.length);
+                      const recentIds = displayMessages.slice(-recentCount).map(m => m.id);
+                      setSelectedIds(recentIds);
+                    }}
+                  >
+                    最近20条
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedIds([])}
+                className="cursor-pointer"
+              >
+                清空选中
+              </Button>
+            </div>
+
+            <div className="text-sm text-muted-foreground">
+              已选中 {selectedIds.length} 条消息
+            </div>
+          </div>
+
           {/* 消息选择区域 */}
           <div className="flex-1 overflow-y-auto border rounded-lg p-4 space-y-4">
             {displayMessages.map((message) => {
@@ -255,14 +333,15 @@ export const ShareModal = ({
                 toggleSelect(message.id);
               };
 
-              // role-based base and highlight colors (tunable)
+              // role-based base and highlight colors (now unified; use grayish highlight)
               const ROLE_BASE: Record<string, string> = {
-                user: '#f0fff4', // light green
-                assistant: '#fff7f0', // light warm
+                user: '#ffffff',
+                assistant: '#ffffff',
               };
+              // make highlight very subtle (lighter)
               const ROLE_HIGHLIGHT: Record<string, string> = {
-                user: '#dcfce7', // lighter green
-                assistant: '#fff1e6', // lighter warm
+                user: '#fbfbfd',
+                assistant: '#fbfbfd',
               };
               const baseMessageStyle: React.CSSProperties = {
                 padding: 12,
@@ -273,7 +352,7 @@ export const ShareModal = ({
               const selectedStyle: React.CSSProperties = {
                 ...baseMessageStyle,
                 background: selectedBg,
-                boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.04)'
+                boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.02)'
               };
               const defaultStyle: React.CSSProperties = {
                 ...baseMessageStyle,
@@ -364,7 +443,7 @@ export const ShareModal = ({
             >
               {loading
                 ? "Generating..."
-                : `Generate & Download (${displayMessages.length} messages)`}
+                : `Generate & Download (${selectedIds.length} messages)`}
             </Button>
           </div>
         </div>
