@@ -142,4 +142,11 @@
   "accountAvatar": "Account Avatar",
   "notSubmitted": "Not Submitted",
   "pleaseSelectDraftMaterial": "Please select a draft material"
+  ,
+  "settle": {
+    "items": "Settlement Info",
+    "dataType": {
+      "views": "Views"
+    }
+  }
 }

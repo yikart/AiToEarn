@@ -48,4 +48,8 @@
     "loading": "Loading...",
     "totalRecords": "Total {{total}} records"
   }
+  ,
+  "all": "All",
+  "withdrawAll": "Withdraw All",
+  "selectWalletForWithdrawAll": "Please select a wallet account to use for withdrawing all pending income"
 }
