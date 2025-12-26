@@ -241,8 +241,8 @@ function processUserMessage(
     }
   }
 
-  // 只有非工具结果的用户消息才显示
-  if (content && !isToolResult) {
+  // 只有非工具结果的用户消息才显示（包含文本或媒体）
+  if ((content || medias.length > 0) && !isToolResult) {
     saveStepsToMessage()
 
     displayMessages.push({

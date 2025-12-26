@@ -4,35 +4,69 @@ import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
 import { sleep } from '@/utils'
 
-export async function kwaiSkip(platType: PlatType, spaceId?: string) {
-  const res = await createKwaiAuth('pc', spaceId)
-  if (res?.code == 1) {
-    useUserStore.getState().logout()
-    return
-  }
-  if (!res?.data)
-    return
-  window.open(res?.data.url)
+export async function kwaiSkip(platType: PlatType, spaceId?: string): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const res = await createKwaiAuth('pc', spaceId)
+      if (res?.code == 1) {
+        useUserStore.getState().logout()
+        reject(new Error('login required'))
+        return
+      }
+      if (!res?.data) {
+        reject(new Error('no data'))
+        return
+      }
 
-  let queryCount = 0
-  const maxQueryCount = 30 // 最大轮询次数
+      window.open(res?.data.url)
 
-  while (queryCount < maxQueryCount) {
-    const autoStatusRes = await getKwaiAuthStatus(res.data.taskId)
+      let queryCount = 0
+      const maxQueryCount = 30 // 最大轮询次数
 
-    if (!autoStatusRes?.data)
-      break
-    if (autoStatusRes.data.status === 1) {
-      useAccountStore.getState().getAccountList()
-      break
+      const checkAuthStatus = async () => {
+        try {
+          queryCount++
+          const autoStatusRes = await getKwaiAuthStatus(res.data.taskId)
+
+          if (!autoStatusRes?.data) {
+            reject(new Error('no status data'))
+            return true
+          }
+
+          if (autoStatusRes.data.status === 1) {
+            // 授权成功，返回结果，交由调用方处理
+            resolve(autoStatusRes)
+            return true
+          }
+
+          // 检查是否达到最大轮询次数
+          if (queryCount >= maxQueryCount) {
+            reject(new Error('timeout, max poll count reached'))
+            return true
+          }
+
+          return false
+        } catch (error) {
+          reject(error)
+          return true
+        }
+      }
+
+      // 设置轮询间隔
+      const interval = setInterval(async () => {
+        const isFinished = await checkAuthStatus()
+        if (isFinished) {
+          clearInterval(interval)
+        }
+      }, 1000)
+
+      // 5分钟后自动停止轮询
+      setTimeout(() => {
+        clearInterval(interval)
+        reject(new Error('timeout'))
+      }, 5 * 60 * 1000)
+    } catch (error) {
+      reject(error)
     }
-
-    queryCount++
-    await sleep(1000)
-  }
-
-  // 如果达到最大轮询次数仍未成功，记录日志
-  if (queryCount >= maxQueryCount) {
-    console.log('快手授权达到最大轮询次数，停止轮询')
-  }
+  })
 }

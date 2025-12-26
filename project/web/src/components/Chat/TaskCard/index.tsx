@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   Loader2,
   MessageSquare,
+  Share2,
   Star,
   Trash2,
 } from "lucide-react";
@@ -18,7 +19,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useTransClient } from "@/app/i18n/client";
 import { useGetClientLng } from "@/hooks/useSystem";
-import { toast } from "@/lib/toast";
 import { cn, formatRelativeTime } from "@/lib/utils";
 
 export interface ITaskCardProps {
@@ -44,6 +44,8 @@ export interface ITaskCardProps {
   showInlineRating?: boolean;
   /** 自定义类名 */
   className?: string;
+  /** 分享回调（由父组件触发 ShareModal） */
+  onShare?: (id: string) => void;
 }
 
 /** 获取状态显示配置 */
@@ -106,12 +108,14 @@ export function TaskCard({
   className,
   onSelect,
   onRateClick,
+  onShare,
 }: ITaskCardProps) {
   const router = useRouter();
   const lng = useGetClientLng();
   const { t } = useTransClient("chat");
   const [isDeleting, setIsDeleting] = useState(false);
-  const [isProcessing, setIsProcessing] = useState(false);
+  
+  const { t: cgmaterialT } = useTransClient("cgmaterial");
 
   const statusConfig = getStatusConfig(status, t as (key: string) => string);
 
@@ -139,16 +143,18 @@ export function TaskCard({
     }
   };
 
-  // Note: share and public-link actions intentionally removed from UI per request.
-
-  // Inline rating handlers removed — rating UI hidden on TaskCard.
-
   /** 触发评分回调（由历史列表等外部组件使用） */
   const handleRateClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
     if (!onRateClick) return;
     onRateClick(id);
+  };
+
+  const handleShareClick = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    e?.preventDefault();
+    if (typeof onShare === "function") onShare(id);
   };
 
   return (
@@ -210,8 +216,16 @@ export function TaskCard({
             className={`w-3 h-3 ${rating ? "text-amber-400" : ""}`}
             {...(rating ? { fill: "currentColor" } : {})}
           />
+          <span className="hidden sm:inline">{t("task.rate") || "Rate"}</span>
+        </button>
+        <button
+          onClick={handleShareClick}
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors text-xs opacity-60 hover:opacity-100"
+          aria-label="rate"
+        >
+          <Share2 className={`w-3 h-3`} />
           <span className="hidden sm:inline">
-            {t("task.rate" as any) || "Rate"}
+            {cgmaterialT("import.shares")}
           </span>
         </button>
         <button
@@ -226,7 +240,7 @@ export function TaskCard({
             <Trash2 className="w-3 h-3" />
           )}
           <span className="hidden sm:inline">
-            {t("task.delete" as any) || "Delete"}
+            {t("task.delete") || "Delete"}
           </span>
         </button>
       </div>

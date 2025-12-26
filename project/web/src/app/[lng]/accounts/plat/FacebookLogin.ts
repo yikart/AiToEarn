@@ -25,7 +25,7 @@ export async function facebookSkip(platType: PlatType, spaceId?: string) {
   const url = res.data.url
   window.open(`${url}`)
 
-  const facebookLoginRes = await facebookLogin(res.data.taskId)
+  return await facebookLogin(res.data.taskId)
 }
 
 export function facebookLogin(taskId: any): Promise<any> {

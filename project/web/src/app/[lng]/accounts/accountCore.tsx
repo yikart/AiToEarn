@@ -238,8 +238,8 @@ export default function AccountPageCore({
         
         const data = {
           taskId: searchParams.taskId,
-          title: searchParams.title || '',
-          description: searchParams.description || '',
+          title: searchParams.title ? decodeURIComponent(searchParams.title) : '',
+          description: searchParams.description ? decodeURIComponent(searchParams.description) : '',
           tags: tags,
           medias: medias,
         }
@@ -716,6 +716,7 @@ export default function AccountPageCore({
       return () => clearTimeout(timeoutId)
     }
   }, [aiGeneratedData, publishDialogOpen, allAccounts.length])
+ 
 
   return (
     <NoSSR>

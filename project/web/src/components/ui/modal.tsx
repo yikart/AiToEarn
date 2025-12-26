@@ -101,11 +101,11 @@ export const Modal: React.FC<ModalProps> = ({
   // 默认 footer
   const defaultFooter = (
     <>
-      <Button variant="outline" onClick={onCancel} disabled={confirmLoading}>
+      <Button variant="outline" onClick={onCancel}>
         {cancelText}
       </Button>
-      <Button onClick={onOk} disabled={confirmLoading}>
-        {confirmLoading ? '处理中...' : okText}
+      <Button onClick={onOk} disabled={confirmLoading} loading={confirmLoading}>
+        {okText}
       </Button>
     </>
   )
