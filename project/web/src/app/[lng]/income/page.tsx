@@ -11,7 +11,7 @@ import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DollarOu
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { WithdrawRecordStatus, WithdrawStatus } from '@/api/types/withdraw'
-import { getIncomeListApi, getIncomeDetailApi, createWithdrawApi, getWithdrawListApi } from '@/api/payment'
+import { getIncomeListApi, getIncomeDetailApi, createWithdrawApi, getWithdrawListApi, withdrawAllPendingApi } from '@/api/payment'
 import { useTransClient } from '@/app/i18n/client'
 import WalletAccountSelect from '@/components/WalletAccountSelect'
 import WalletModal from '@/components/WalletModal'
@@ -68,6 +68,9 @@ export default function IncomePage() {
 
   // 钱包弹窗状态
   const [walletModalOpen, setWalletModalOpen] = useState(false)
+  const [withdrawAllModalVisible, setWithdrawAllModalVisible] = useState(false)
+  const [withdrawAllSubmitting, setWithdrawAllSubmitting] = useState(false)
+  const [withdrawAllWalletId, setWithdrawAllWalletId] = useState<string>('')
 
   // 收入详情状态
   const [incomeDetailModalVisible, setIncomeDetailModalVisible] = useState(false)
@@ -311,16 +314,18 @@ export default function IncomePage() {
                   </div>
                 </div>
               </div>
-              <Button
-                variant="outline"
-                size="sm"
-                className={styles.walletButton}
-                onClick={() => setWalletModalOpen(true)}
-              >
-                <WalletOutlined />
-                &nbsp;
-                {t('myWallet')}
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={styles.walletButton}
+                  onClick={() => setWalletModalOpen(true)}
+                >
+                  <WalletOutlined />
+                  &nbsp;
+                  {t('myWallet')}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -343,7 +348,7 @@ export default function IncomePage() {
           </TabsList>
 
           <TabsContent value="income" className="mt-4">
-            {/* 筛选器 */}
+          {/* 筛选器 */}
             <div className="flex gap-4 mb-6">
                 <div className="flex-1">
                   <Label className="mb-2 block">{t('type')}</Label>
@@ -381,6 +386,17 @@ export default function IncomePage() {
                     <option value="withdrawn">{t('status.withdrawn')}</option>
                   </select>
                 </div>
+            </div>
+
+            {/* Withdraw All 按钮 — 放在收入记录选项卡下方 */}
+            <div className="flex justify-end mb-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setWithdrawAllModalVisible(true)}
+              >
+                {t('withdrawAll')}
+              </Button>
             </div>
 
             <Spin spinning={incomeLoading}>
@@ -561,6 +577,58 @@ export default function IncomePage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* 全部提现弹窗 */}
+      <Modal
+        title={t('withdrawAll')}
+        open={withdrawAllModalVisible}
+        onCancel={() => {
+          setWithdrawAllModalVisible(false)
+          setWithdrawAllWalletId('')
+        }}
+        onOk={async () => {
+          if (!withdrawAllWalletId) {
+            toast.error(t('selectWalletForWithdrawAll'))
+            return
+          }
+          setWithdrawAllSubmitting(true)
+          try {
+            const resp = await withdrawAllPendingApi({
+              currency: 'CNY',
+              walletAccountId: withdrawAllWalletId,
+            })
+            if (resp) {
+              toast.success(t('messages.withdrawSubmitted'))
+              setWithdrawAllModalVisible(false)
+              // refresh lists
+              fetchIncomeRecords(incomePagination.current, incomePagination.pageSize)
+              fetchWithdrawRecords(withdrawPagination.current, withdrawPagination.pageSize)
+            }
+            else {
+              toast.error(t('messages.withdrawFailed'))
+            }
+          }
+          catch (err) {
+            console.error('withdrawAll failed', err)
+            toast.error(t('messages.withdrawFailed'))
+          }
+          finally {
+            setWithdrawAllSubmitting(false)
+          }
+        }}
+        okText={t('confirm')}
+        cancelText={t('cancel')}
+        confirmLoading={withdrawAllSubmitting}
+        width={500}
+      >
+        <div>
+          <p style={{ marginBottom: 12 }}>{t('selectWalletForWithdrawAll')}</p>
+          <WalletAccountSelect
+            value={withdrawAllWalletId}
+            onChange={(val: any) => setWithdrawAllWalletId(val || '')}
+          />
+        </div>
+      </Modal>
 
       {/* 提现确认弹窗 */}
       <Modal
