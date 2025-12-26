@@ -137,9 +137,9 @@ importers:
       glob:
         specifier: ^11.0.3
         version: 11.0.3
-      html2canvas:
-        specifier: ^1.4.1
-        version: 1.4.1
+      html2canvas-pro:
+        specifier: ^1.4.3
+        version: 1.6.2
       i18next:
         specifier: 24.2.3
         version: 24.2.3(typescript@5.9.3)
@@ -4064,9 +4064,9 @@ packages:
   html-url-attributes@3.0.1:
     resolution: {integrity: sha512-ol6UPyBWqsrO6EJySPz2O7ZSr856WDrEzM5zMqp+FJJLGMW35cLYmmZnl0vztAZxRUoNZJFTCohfjuIJ8I4QBQ==}
 
-  html2canvas@1.4.1:
-    resolution: {integrity: sha512-fPU6BHNpsyIhr8yyMpTLLxAbkaK8ArIBcmZIRiBLiDhjeqvXolaEmDGmELFuX9I4xDcaKKcJl+TKZLqruBbmWA==}
-    engines: {node: '>=8.0.0'}
+  html2canvas-pro@1.6.2:
+    resolution: {integrity: sha512-BhoazWMFupMDyprWRn32b35azl1mN/4r25wqX12DKXhwTVM/N70Wq1UrVrZouhxPMihi0fu15I4HvnGsZ6yX3Q==}
+    engines: {node: '>=16.0.0'}
 
   htmlparser2@8.0.2:
     resolution: {integrity: sha512-GYdjWKDkbRLkZ5geuHs5NY1puJ+PXwP7+fHPRz06Eirsb9ugf6d8kkXav6ADhcODhFFPMIXyxkxSuMf3D6NCFA==}
@@ -10971,7 +10971,7 @@ snapshots:
 
   html-url-attributes@3.0.1: {}
 
-  html2canvas@1.4.1:
+  html2canvas-pro@1.6.2:
     dependencies:
       css-line-break: 2.1.0
       text-segmentation: 1.0.3
