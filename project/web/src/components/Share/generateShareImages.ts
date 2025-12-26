@@ -8,10 +8,11 @@ import logo from "@/assets/images/logo.png";
 
 export async function generateImageFromMessages(
   messages: IDisplayMessage[],
-  userName?: string
+  userName?: string,
+  options?: { appTitle?: string; appUrl?: string }
 ): Promise<Blob[]> {
   // 将所有消息渲染到一张长图中
-  const blob = await generateImageFromAllMessages(messages, userName);
+  const blob = await generateImageFromAllMessages(messages, userName, options);
   if (!blob) {
     throw new Error('Failed to generate combined image');
   }
@@ -20,7 +21,8 @@ export async function generateImageFromMessages(
 
 async function generateImageFromAllMessages(
   messages: IDisplayMessage[],
-  userName?: string
+  userName?: string,
+  options?: { appTitle?: string; appUrl?: string }
 ): Promise<Blob | null> {
   // 处理消息中的媒体URL，确保使用代理URL
   const processedMessages = messages.map(message => ({
@@ -60,6 +62,8 @@ async function generateImageFromAllMessages(
     );
 
     // header 包含 logo 和标题
+    const appTitle = options?.appTitle || 'AiToEarn';
+    const appUrl = options?.appUrl || 'https://aitoearn.ai';
     const headerEl = React.createElement(
       'div',
       { className: 'flex items-center gap-3 mb-4' },
@@ -70,8 +74,8 @@ async function generateImageFromAllMessages(
       React.createElement(
         'div',
         { style: { display: 'flex', flexDirection: 'column' } },
-        React.createElement('div', { style: { fontSize: '18px', fontWeight: 700 } }, 'AiToEarn'),
-        React.createElement('div', { style: { fontSize: '12px', color: '#6b7280' } }, 'https://aitoearn.ai')
+        React.createElement('div', { style: { fontSize: '18px', fontWeight: 700 } }, appTitle),
+        React.createElement('div', { style: { fontSize: '12px', color: '#6b7280' } }, appUrl)
       )
     );
 

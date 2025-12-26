@@ -1,0 +1,20 @@
+{
+  "title": "分享对话",
+  "description": "选择要作为图片分享的消息",
+  "selectAll": "选取全部",
+  "selectRecent": "选最近几条",
+  "recent5": "最近5条",
+  "recent10": "最近10条",
+  "recent20": "最近20条",
+  "clearSelection": "清空选中",
+  "selectedCount": "已选中 {{count}} 条消息",
+  "cancel": "取消",
+  "generating": "生成中...",
+  "generateAndDownload": "生成并下载（{{count}} 条）",
+  "showMore": "展开更多",
+  "collapse": "收起",
+  "share": "分享",
+  "appName": "AiToEarn",
+  "appUrl": "https://aitoearn.ai"
+}
+

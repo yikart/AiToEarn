@@ -1,0 +1,20 @@
+{
+  "title": "Share Conversation",
+  "description": "Select messages to share as an image",
+  "selectAll": "Select All",
+  "selectRecent": "Select Recent",
+  "recent5": "Recent 5",
+  "recent10": "Recent 10",
+  "recent20": "Recent 20",
+  "clearSelection": "Clear Selection",
+  "selectedCount": "Selected {{count}} messages",
+  "cancel": "Cancel",
+  "generating": "Generating...",
+  "generateAndDownload": "Generate & Download ({{count}} messages)",
+  "showMore": "Show more",
+  "collapse": "Collapse",
+  "share": "Share",
+  "appName": "AiToEarn",
+  "appUrl": "https://aitoearn.ai"
+}
+
