@@ -15,9 +15,11 @@ import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import rightArrow from '@/assets/images/jiantou.png'
 import PublishDialog from '@/components/PublishDialog'
+import { VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import { confirm } from '@/lib/confirm'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
+import { generateUUID } from '@/utils'
 import { useCalendarTiming } from './components/CalendarTiming/useCalendarTiming'
 import 'driver.js/dist/driver.css'
 
@@ -481,10 +483,6 @@ export default function AccountPageCore({
 
       // Helper function to fill data
       const fillAIData = async (store: any) => {
-        const { VideoGrabFrame } = require('@/components/PublishDialog/PublishDialog.util')
-        // Dynamic import generateUUID and VideoGrabFrame
-        const { generateUUID } = require('@/utils')
-
         // Build params - append tags to description
         let description = aiGeneratedData.description || ''
         if (aiGeneratedData.tags && aiGeneratedData.tags.length > 0) {
@@ -510,8 +508,6 @@ export default function AccountPageCore({
               // If API returned cover URL, use it directly (support both coverUrl and thumbUrl)
               const coverUrl = videoMedia.coverUrl || videoMedia.thumbUrl
               if (coverUrl) {
-                const { formatImg } = require('@/components/PublishDialog/PublishDialog.util')
-
                 // Load cover image to get dimension info
                 coverInfo = await new Promise((resolve) => {
                   const img = document.createElement('img')
