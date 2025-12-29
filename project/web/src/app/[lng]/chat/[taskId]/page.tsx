@@ -8,6 +8,7 @@
 import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { agentApi } from '@/api/agent'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
@@ -45,6 +46,9 @@ export default function ChatDetailPage() {
     taskId,
     t: t as (key: string) => string,
   })
+
+  // 中断状态 - 用于强制隐藏工作流步骤
+  const [isInterrupted, setIsInterrupted] = useState(false)
 
   // 滚动控制
   const {
@@ -108,6 +112,7 @@ export default function ChatDetailPage() {
 
     // 发起任务创建
     const startTask = async () => {
+      setIsInterrupted(false)
       setLocalIsGenerating(true)
       try {
         await createTask({
@@ -154,6 +159,8 @@ export default function ChatDetailPage() {
     // 清空输入
     setInputValue('')
     clearMedias()
+    // 重置中断状态，开始新任务
+    setIsInterrupted(false)
     setLocalIsGenerating(true)
 
     // 强制滚动到底部
@@ -193,10 +200,23 @@ export default function ChatDetailPage() {
   /**
    * 停止生成
    */
-  const handleStop = useCallback(() => {
-    stopTask()
-    setLocalIsGenerating(false)
-  }, [stopTask, setLocalIsGenerating])
+  const handleStop = useCallback(async () => {
+    try {
+      // 调用后端 API 中断任务
+      await agentApi.abortTask(taskId)
+      console.log('[ChatPage] Task aborted successfully')
+    } catch (error: any) {
+      console.error('[ChatPage] Failed to abort task:', error)
+      toast.error(t('message.error'))
+    } finally {
+      // 无论 API 调用是否成功，都停止本地状态
+      // 立即设置中断状态，强制隐藏工作流步骤
+      setIsInterrupted(true)
+      // 立即设置本地生成状态为 false，确保 UI 立即响应
+      setLocalIsGenerating(false)
+      stopTask()
+    }
+  }, [taskId, t, stopTask, setLocalIsGenerating])
 
   /**
    * 返回首页
@@ -265,7 +285,7 @@ export default function ChatDetailPage() {
       {/* 消息列表 */}
       <ChatMessageList
         messages={displayMessages}
-        workflowSteps={workflowSteps}
+        workflowSteps={isInterrupted ? [] : workflowSteps}
         isGenerating={isGenerating}
         containerRef={containerRef}
         bottomRef={bottomRef}
