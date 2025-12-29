@@ -17,6 +17,8 @@ const COMPLETED_STATUS_VALUES = [
   'FAILED',
   'cancelled',
   'CANCELLED',
+  'aborted',
+  'ABORTED',
   'requires_action', // 需要用户操作也算完成（停止轮询）
   'error',
 ]

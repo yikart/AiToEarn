@@ -1,4 +1,5 @@
 import type { TaskDetail, TaskMessage } from '@/api/agent'
+import { TaskStatus } from '@/api/agent'
 import type { IDisplayMessage } from '@/store/agent'
 /**
  * 任务轮询 Hook
@@ -22,6 +23,8 @@ export interface ITaskPollingOptions {
   onMessagesUpdate: (messages: IDisplayMessage[], rawMessages: TaskMessage[]) => void
   /** 任务更新回调 */
   onTaskUpdate?: (task: TaskDetail) => void
+  /** 任务状态变化回调 */
+  onTaskStatusChange?: (status: string) => void
 }
 
 export interface ITaskPollingReturn {
@@ -44,6 +47,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
     pollingInterval = 3000,
     onMessagesUpdate,
     onTaskUpdate,
+    onTaskStatusChange,
   } = options
 
   const [isPolling, setIsPolling] = useState(false)
@@ -113,7 +117,15 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         // 如果没有 lastMessageId，执行每 5 秒一次的全量拉取逻辑（接口支持不传 lastMessageId 获取全部消息）
         if (!lastMessageId) {
           const result = await agentApi.getTaskMessages(taskId)
-          if (result?.code === 0 && result.data?.messages) {
+          if (result?.code === 0 && result.data) {
+          // 检查任务状态
+          if (result.data.status === TaskStatus.Aborted) {
+            console.log('[TaskPolling] Task aborted, stopping polling')
+            setIsPolling(false)
+            onTaskStatusChange?.('aborted')
+            return
+          }
+
             const newMessages = result.data.messages
             console.log('[TaskPolling] fetched fullMessages length:', newMessages.length)
             if (!newMessages.length) {
@@ -157,7 +169,15 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
         // 如果存在 lastMessageId，调用增量消息接口，仅获取 lastMessageId 之后的新消息
         const result = await agentApi.getTaskMessages(taskId, lastMessageId)
-        if (result?.code === 0 && result.data?.messages) {
+        if (result?.code === 0 && result.data) {
+          // 检查任务状态
+          if (result.data.status === TaskStatus.Aborted) {
+            console.log('[TaskPolling] Task aborted, stopping polling')
+            setIsPolling(false)
+            onTaskStatusChange?.('aborted')
+            return
+          }
+
           const newMessages = result.data.messages
           console.log('[TaskPolling] fetched newMessages length:', newMessages.length, 'lastMessageId:', lastMessageId)
           if (!newMessages.length) {

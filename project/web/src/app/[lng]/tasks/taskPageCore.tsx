@@ -852,12 +852,12 @@ export default function TaskPageCore() {
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="pending">
                 <ClockCircleOutlined />
-            &nbsp;
+                &nbsp;
                 {t('pendingTasks')}
               </TabsTrigger>
               <TabsTrigger value="accepted">
                 <PlayCircleOutlined />
-            &nbsp;
+                &nbsp;
                 {t('acceptedTasks')}
               </TabsTrigger>
             </TabsList>
@@ -999,7 +999,7 @@ export default function TaskPageCore() {
                                 style={{ width: '100%' }}
                               >
                                 <EyeOutlined />
-                            &nbsp;
+                                &nbsp;
                                 {t('viewDetails')}
                               </Button>
                             </div>
@@ -1146,7 +1146,7 @@ export default function TaskPageCore() {
                                 style={{ width: '100%' }}
                               >
                                 <EyeOutlined />
-                            &nbsp;
+                                &nbsp;
                                 {t('viewDetails')}
                               </Button>
                             </div>
@@ -1459,45 +1459,45 @@ export default function TaskPageCore() {
                           const publishAccount = getAccountById(acceptedTaskDetail.accountId)
                           return publishAccount
                             ? (
-                                <div style={{
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  gap: '8px',
-                                  marginBottom: '12px',
-                                }}
-                                >
-                                  <Image
-                                    src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                    alt="account avatar"
-                                    width={32}
-                                    height={32}
-                                    style={{
-                                      borderRadius: '50%',
-                                      objectFit: 'cover',
-                                    }}
-                                    onError={(e: any) => {
-                                      e.target.src = '/default-avatar.png'
-                                    }}
-                                  />
-                                  <div>
-                                    <div style={{
-                                      fontSize: '14px',
-                                      fontWeight: '500',
-                                      color: '#1a1a1a',
-                                    }}
-                                    >
-                                      {publishAccount.nickname}
-                                    </div>
-                                    <div style={{
-                                      fontSize: '12px',
-                                      color: '#666',
-                                    }}
-                                    >
-                                      {getPlatformName(publishAccount.type)}
-                                    </div>
+                              <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                marginBottom: '12px',
+                              }}
+                              >
+                                <Image
+                                  src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                                  alt="account avatar"
+                                  width={32}
+                                  height={32}
+                                  style={{
+                                    borderRadius: '50%',
+                                    objectFit: 'cover',
+                                  }}
+                                  onError={(e: any) => {
+                                    e.target.src = '/default-avatar.png'
+                                  }}
+                                />
+                                <div>
+                                  <div style={{
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    color: '#1a1a1a',
+                                  }}
+                                  >
+                                    {publishAccount.nickname}
+                                  </div>
+                                  <div style={{
+                                    fontSize: '12px',
+                                    color: '#666',
+                                  }}
+                                  >
+                                    {getPlatformName(publishAccount.type)}
                                   </div>
                                 </div>
-                              )
+                              </div>
+                            )
                             : null
                         })()}
                       </div>
