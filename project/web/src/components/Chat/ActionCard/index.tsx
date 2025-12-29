@@ -7,7 +7,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter, useParams } from 'next/navigation'
+import { useRouter, useParams, usePathname } from 'next/navigation'
 import { Link2, RefreshCw, Send, ArrowRight, AlertCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useTransClient } from '@/app/i18n/client'
@@ -16,6 +16,7 @@ import { useUserStore } from '@/store/user'
 import { toast } from '@/lib/toast'
 import { openLoginModal } from '@/store/loginModal'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { useAgentStore } from '@/store/agent'
 import type { IActionCard } from '@/store/agent/agent.types'
 
 export interface IActionCardProps {
@@ -65,10 +66,14 @@ interface IActionConfig {
  */
 export function ActionCard({ action, className }: IActionCardProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const { lng } = useParams()
   const { t } = useTransClient('chat')
   const token = useUserStore(state => state.token)
-  
+
+  // Agent store 方法
+  const { continueTask } = useAgentStore()
+
   // 添加账号弹窗状态
   const [addAccountVisible, setAddAccountVisible] = useState(false)
 
@@ -141,6 +146,39 @@ export function ActionCard({ action, className }: IActionCardProps) {
   }
 
   const config = getActionConfig()
+
+  /**
+   * 处理账号添加成功
+   */
+  const handleAccountAddSuccess = async () => {
+    // 关闭弹窗
+    setAddAccountVisible(false)
+
+    // 检查是否在 chat 页面
+    if (pathname.includes('/chat/')) {
+      // 提取 taskId
+      const pathParts = pathname.split('/')
+      const taskIdIndex = pathParts.findIndex(part => part === 'chat')
+      if (taskIdIndex !== -1 && pathParts[taskIdIndex + 1]) {
+        const taskId = pathParts[taskIdIndex + 1]
+
+        // 自动发送消息
+        const platformName = getPlatformDisplayName(action.platform)
+        const autoMessage = `I have added the "${platformName}" channel account, please continue.`
+
+        try {
+          await continueTask({
+            prompt: autoMessage,
+            medias: [],
+            t: t as (key: string) => string,
+            taskId,
+          })
+        } catch (error) {
+          console.error('Auto send message failed:', error)
+        }
+      }
+    }
+  }
 
   // 处理按钮点击
   const handleClick = () => {
@@ -225,7 +263,7 @@ export function ActionCard({ action, className }: IActionCardProps) {
         <AddAccountModal
           open={addAccountVisible}
           onClose={() => setAddAccountVisible(false)}
-          onAddSuccess={() => setAddAccountVisible(false)}
+          onAddSuccess={handleAccountAddSuccess}
           showSpaceSelector={true}
         />
       )}

@@ -9,6 +9,7 @@ import type { SettingsTab } from '@/components/SettingsModal'
 import { BookOpen } from 'lucide-react'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { useShallow } from 'zustand/shallow'
 import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import { routerData } from '@/app/layout/routerData'
 import NotificationPanel from '@/components/notification/NotificationPanel'
@@ -118,8 +119,18 @@ function LayoutSidebar() {
   const route = useSelectedLayoutSegments()
   const { unreadCount } = useNotification()
 
+  // 获取侧边栏状态和设置方法
+  const {
+    sidebarCollapsed: collapsed,
+    setSidebarCollapsed: setCollapsed,
+  } = useUserStore(
+    useShallow(state => ({
+      sidebarCollapsed: state.sidebarCollapsed,
+      setSidebarCollapsed: state.setSidebarCollapsed,
+    })),
+  )
+
   // UI 状态
-  const [collapsed, setCollapsed] = useState(false)
   const [notificationVisible, setNotificationVisible] = useState(false)
   const [addAccountVisible, setAddAccountVisible] = useState(false)
   const {
@@ -204,9 +215,9 @@ function LayoutSidebar() {
         {/* 底部固定区域 - 不随滚动 */}
         <div className="flex-shrink-0">
           {/* 我的频道入口 */}
-          {/* <div className="pb-1 flex flex-1">
+          <div className="pb-1 flex flex-1">
             <MyChannelsEntry collapsed={collapsed} />
-          </div> */}
+          </div>
 
           {/* 推广赚钱入口 - 在底部功能区横线上方 */}
           <div className="pb-1">

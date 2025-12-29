@@ -8,10 +8,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { ArrowRight, History } from "lucide-react";
-import { TaskCard, TaskCardSkeleton } from "@/components/Chat";
 import TaskHistoryList from "@/components/Chat/TaskHistoryList";
-import RatingModal from "@/components/Chat/Rating";
-import { toast } from "@/lib/toast";
 import { agentApi, type TaskListItem } from "@/api/agent";
 import { useTransClient } from "@/app/i18n/client";
 import { cn } from "@/lib/utils";
@@ -33,7 +30,6 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
 
   const [tasks, setTasks] = useState<TaskListItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [ratingModalFor, setRatingModalFor] = useState<string | null>(null)
 
   /** 加载任务列表（始终保证尽量填满 limit 条） */
   const loadTasks = useCallback(async () => {
@@ -54,24 +50,6 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
     void loadTasks();
   }, [loadTasks]);
 
-  /** 处理删除任务 */
-  const handleDelete = async (id: string) => {
-    try {
-      const result = await agentApi.deleteTask(id);
-      if (result && result.code === 0) {
-        // 先本地移除，提升交互速度
-        setTasks((prev) => prev.filter((task) => task.id !== id));
-        // 再重新拉取列表，确保数量重新补足到 limit（如果后端还有数据）
-        void loadTasks();
-        toast.success(t("task.deleteSuccess"));
-      } else {
-        const msg = (result)?.message as string | undefined;
-        toast.error(msg || t("task.deleteFailed"));
-      }
-    } catch (error) {
-      toast.error(t("task.deleteFailed"));
-    }
-  };
 
   /** 跳转到任务记录页 */
   const handleViewAll = () => {
@@ -91,14 +69,14 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
           <div className="flex items-center gap-2">
             <History className="w-5 h-5 text-muted-foreground" />
             <h3 className="text-base font-medium text-foreground">
-              {t("home.recentTasks")}
+              {t("home.recentTasks" as any)}
             </h3>
           </div>
           <button
             onClick={handleViewAll}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
           >
-            {t("home.viewAll")}
+            {t("home.viewAll" as any)}
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
@@ -108,19 +86,8 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
           tasks={tasks}
           isLoading={isLoading}
           skeletonCount={limit}
-          onDelete={handleDelete}
-          onRateClick={(taskId) => setRatingModalFor(taskId)}
+          onRefresh={() => loadTasks()}
           className="grid-cols-2 md:grid-cols-4"
-        />
-        <RatingModal
-          taskId={ratingModalFor ?? ''}
-          open={!!ratingModalFor}
-          onClose={() => setRatingModalFor(null)}
-          onSaved={(data) => {
-            setTasks((prev) => prev.map((t) => (t.id === ratingModalFor ? { ...t, rating: data.rating ?? t.rating, ratingComment: data.comment ?? t.ratingComment } : t)))
-            setRatingModalFor(null)
-            toast.success(t('rating.saveSuccess') || 'Saved')
-          }}
         />
       </div>
     </section>

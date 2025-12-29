@@ -17,7 +17,6 @@ interface SpaceGroupItemProps {
   deleteLoading?: string | null
   onToggleCollapse: (groupId: string) => void
   onSelectAccount: (account: SocialAccount) => void
-  onDeleteAccount: (account: SocialAccount) => void
   onGroupSort: (groupId: string, direction: 'up' | 'down') => void
 }
 
@@ -33,7 +32,6 @@ const SpaceGroupItem = memo(({
   deleteLoading,
   onToggleCollapse,
   onSelectAccount,
-  onDeleteAccount,
   onGroupSort,
 }: SpaceGroupItemProps) => {
   const { t } = useTransClient('account')
@@ -66,8 +64,6 @@ const SpaceGroupItem = memo(({
             account={account}
             isActive={isActive}
             onSelect={onSelectAccount}
-            onDelete={onDeleteAccount}
-            deleteLoading={deleteLoading}
             indent
           />
         )

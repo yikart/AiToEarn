@@ -70,7 +70,7 @@ export function LoginModal({
   onSuccess: propOnSuccess,
   useGlobalStore = false,
 }: ILoginModalProps) {
-  const { setToken, setUserInfo } = useUserStore()
+  const { setToken, setUserInfo, appInit } = useUserStore()
   const { t } = useTransClient('login')
   
   // 全局 store 状态
@@ -140,6 +140,7 @@ export function LoginModal({
     toast.success(t('loginSuccess'))
     handleClose()
     handleSuccess()
+    appInit();
   }
 
   // 处理邮箱登录

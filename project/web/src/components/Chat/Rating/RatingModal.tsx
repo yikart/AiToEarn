@@ -92,12 +92,7 @@ export const RatingModal: React.FC<RatingModalProps> = ({ taskId, open, onClose,
       onOk={handleSubmit}
       okText={t('rating.submit') || '提交'}
       cancelText={t('rating.cancel') || '取消'}
-      confirmLoading={false}
-      footer={loading ? (
-        <div className="flex items-center justify-end w-full">
-          <Loader2 className="w-5 h-5 animate-spin" />
-        </div>
-      ) : undefined}
+      confirmLoading={loading}
       width={520}
     >
       <div className="space-y-4 w-full">

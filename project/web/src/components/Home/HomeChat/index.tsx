@@ -14,6 +14,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { useAgentStore } from '@/store/agent'
 import { useUserStore } from '@/store/user'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
+import { useSearchParams } from 'next/navigation'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { AccountPlatInfoArr } from '@/app/config/platConfig'
@@ -101,6 +102,7 @@ export function HomeChat({
   // 使用媒体上传 Hook
   const {
     medias,
+    setMedias,
     isUploading,
     handleMediasChange,
     handleMediaRemove,
@@ -108,6 +110,50 @@ export function HomeChat({
   } = useMediaUpload({
     onError: () => toast.error(t('media.uploadFailed')),
   })
+
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    try {
+      if (!searchParams) return
+      const aiGenerated = searchParams.get('aiGenerated')
+      if (aiGenerated === 'true') {
+        const mediasParam = searchParams.get('medias')
+        const descriptionParam = searchParams.get('description')
+        if (descriptionParam) {
+          setInputValue(decodeURIComponent(descriptionParam) || defaultPrompt)
+        }
+        if (mediasParam) {
+          try {
+            const medias = JSON.parse(decodeURIComponent(mediasParam))
+            if (Array.isArray(medias) && medias.length > 0) {
+              setMedias((prev) => [
+                {
+                  id: `shared-${Date.now()}`,
+                  url: medias[0].url,
+                  type: 'image',
+                  file: undefined,
+                },
+                ...prev,
+              ])
+            }
+          } catch (e) {
+            // ignore parse errors
+          }
+        }
+        // remove params to avoid re-processing (replaceState)
+        if (typeof window !== 'undefined') {
+          const url = new URL(window.location.href)
+          url.searchParams.delete('aiGenerated')
+          url.searchParams.delete('medias')
+          url.searchParams.delete('description')
+          window.history.replaceState({}, '', url.toString())
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [searchParams])
 
   // 全局 Store
   const { setPendingTask, setActionContext } = useAgentStore()

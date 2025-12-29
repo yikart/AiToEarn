@@ -5,6 +5,7 @@ import { PublishDatePickerType } from '@/components/PublishDialog/compoents/Publ
 import { createPersistStore } from '@/utils/createPersistStore'
 import lodash from "lodash";
 import { useAccountStore } from '.'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 
 export interface UserInfo {
   createTime: string
@@ -55,6 +56,8 @@ export interface IUserStore {
   creditsBalance: number
   // Credits 余额加载状态
   creditsLoading: boolean
+  // 侧边栏收起状态
+  sidebarCollapsed: boolean
 }
 
 const state: IUserStore = {
@@ -66,6 +69,7 @@ const state: IUserStore = {
   currentDatePickerType: PublishDatePickerType.DATE,
   creditsBalance: 0,
   creditsLoading: false,
+  sidebarCollapsed: false,
 }
 
 const getState = (): IUserStore => {
@@ -102,6 +106,12 @@ export const useUserStore = createPersistStore(
         set({ userInfo })
       },
 
+      appInit() {
+        useDataStatisticsStore.getState().init();
+        methods.getUserInfo();
+        useAccountStore.getState().accountInit();
+      },
+
       // 获取用户信息
       async getUserInfo() {
         const res = await getUserInfoApi()
@@ -129,6 +139,11 @@ export const useUserStore = createPersistStore(
       // 设置 Credits 余额
       setCreditsBalance(balance: number) {
         set({ creditsBalance: balance })
+      },
+
+      // 设置侧边栏收起状态
+      setSidebarCollapsed(collapsed: boolean) {
+        set({ sidebarCollapsed: collapsed })
       },
 
       // 清除登录状态

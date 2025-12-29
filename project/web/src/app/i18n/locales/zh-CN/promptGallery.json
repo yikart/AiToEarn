@@ -49,22 +49,41 @@
   }
   ,
   "agentFeatures": {
-    "title": "AI Agent 功能亮点",
+    "title": "Aitoearn 关键特性",
     "subtitle": "我们的特色功能，一键触达",
     "platforms": "支持的平台",
     "helperTitle": "一句话帮我发布",
     "helperExample": "例如：生成一段主题「街头美食」内容的图片，油画风格，建议几点发布到 Instagram",
     "items": {
-      "schedule": { "title": "定时发布", "desc": "支持设置发布时间并自动发布到所有已连接的平台", "point1": "支持单次/循环/指定时区", "point2": "可设置智能发布时间建议" },
-      "inspiration": { "title": "创意灵感", "desc": "根据账号特性生成选题建议", "point1": "提供多风格选题模板", "point2": "结合热点与数据推荐" },
-      "storyboard": { "title": "分镜设计", "desc": "为指定选题自动生成分镜脚本", "point1": "支持分镜时间轴与台词", "point2": "可导出为脚本或拍摄清单" },
-      "download": { "title": "内容下载", "desc": "根据社交平台链接下载视频并整理为可发布素材", "point1": "自动抓取多清晰度资源", "point2": "支持批量下载与格式转换" },
-      "highlight": { "title": "高光剪辑", "desc": "提取剧情冲突与悬念片段", "point1": "智能识别高能片段", "point2": "支持多风格剪辑模板" },
-      "translate": { "title": "视频翻译", "desc": "面容级口型匹配、音色克隆、字幕擦除", "point1": "支持多语种互译", "point2": "可导出嵌入式字幕或软字幕" },
-      "styleTransfer": { "title": "真人实拍转绘", "desc": "动漫 / 3D 卡通 / 素描等风格", "point1": "多风格一键切换", "point2": "保留面部表情细节" },
-      "videoGenerate": { "title": "视频生成", "desc": "基于脚本或提示生成短视频素材", "point1": "支持自动配乐与镜头规划", "point2": "输出适配各平台时长" },
-      "imageGenerate": { "title": "图片生成", "desc": "基于提示词生成高质量图像", "point1": "支持多风格与多张输出", "point2": "可直接发布或导出" },
-      "videoUnderstanding": { "title": "视频理解", "desc": "自动分析视频内容并生成结构化摘要", "point1": "情绪、人物与事件识别", "point2": "生成可搜索标签与章节" }
+      "inspiration": { "title": "创意灵感", "desc": "基于账号特性与热点自动生成选题与创意模板，快速产出话题清单" },
+      "oneClickScript": { "title": "一键生成脚本", "desc": "从关键词或提示自动生成短视频/图文脚本与分镜要点" },
+      "multiTemplates": { "title": "多风格模板", "desc": "提供多种视频/文案风格模板，一键切换输出样式" },
+      "imageGenerate": { "title": "图片生成", "desc": "根据提示词生成高质量图像，支持多风格与多张输出" },
+      "videoGenerate": { "title": "视频生成", "desc": "从脚本或提示自动生成短视频草稿，含配乐与镜头建议" },
+
+      "highlight": { "title": "高光剪辑", "desc": "智能识别高能片段并按模板生成短视频高光" },
+      "storyboard": { "title": "分镜设计", "desc": "自动产出时间轴、台词与拍摄清单，支持导出脚本" },
+      "coverSuggestion": { "title": "封面与缩略图建议", "desc": "生成多套封面方案并给出点击率优化建议" },
+      "download": { "title": "素材下载与转换", "desc": "一键抓取平台视频，多清晰度批量下载并格式转换" },
+
+      "videoTranslation": { "title": "视频翻译", "desc": "支持面容级口型匹配、音色克隆与嵌入/软字幕导出" },
+      "platformAdapt": { "title": "平台适配", "desc": "自动调整文案长度、节奏与格式以适配目标平台规范" },
+      "topicTag": { "title": "话题与标签推荐", "desc": "基于实时热点与账号历史推荐高价值话题标签" },
+      "seo": { "title": "SEO/关键词优化", "desc": "为文案和说明提供搜索与发现向优化建议" },
+
+      "schedule": { "title": "定时排期发布", "desc": "支持单次/循环/时区设置，自动按排期发布到已连接平台" },
+      "multiPlatform": { "title": "多平台一键分发", "desc": "统一配置后自动同步并发布到多个渠道" },
+      "smartTime": { "title": "智能发布时间建议", "desc": "基于历史数据推荐最优发布时间以提高覆盖" },
+
+      "sse": { "title": "流式任务执行（SSE）", "desc": "任务实时流式生成，中途可查看增量结果并中断" },
+      "taskManagement": { "title": "任务管理", "desc": "创建/停止/查看/删除任务、任务评分与评论，支持任务转发与复制" },
+      "workflow": { "title": "可扩展工作流", "desc": "支持分步处理与自定义 action handlers，便于串联多阶段自动化" },
+
+      "videoUnderstanding": { "title": "视频理解", "desc": "自动识别情绪、人物与事件，生成标签、章节与结构化摘要" },
+      "report": { "title": "运营报告", "desc": "自动生成发布效果与增长建议，便于复盘与优化" },
+
+      "commentAssistant": { "title": "评论与私信助手", "desc": "自动生成回复建议与批量回复模板，提升互动效率" },
+      "audienceInsight": { "title": "用户画像洞察", "desc": "提供受众画像与内容倾向分析，辅助选题与投放策略" }
     }
   }
 }

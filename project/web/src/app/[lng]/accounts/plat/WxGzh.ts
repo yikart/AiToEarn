@@ -22,7 +22,7 @@ export async function wxGzhSkip(platType: PlatType, spaceId?: string) {
   const url = res.data.url
   window.open(`${url}`)
 
-  const wxGzhLoginRes = await wxGzhLogin(res.data.id)
+  return await wxGzhLogin(res.data.id)
 }
 
 export function wxGzhLogin(taskId: any): Promise<any> {
@@ -38,10 +38,7 @@ export function wxGzhLogin(taskId: any): Promise<any> {
           const authRess: any = await checkWxGzAuthApi(taskId)
           const authRes = authRess
           if (authRes?.code === 0 && authRes?.data.status == 1) {
-            // message.success('授权成功');
-            // useAccountStore
-            const accountStore = useAccountStore.getState()
-            await accountStore.getAccountList()
+            // 授权成功，返回结果，交由调用方处理
             resolve(authRes)
             return true
           }
