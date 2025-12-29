@@ -310,6 +310,21 @@ export const useChannelManagerStore = create(
         methods.startAuth(platform, targetSpaceId || undefined)
       },
 
+      /** 直接打开并进入连接新频道列表页 */
+      openConnectList(spaceId?: string) {
+        // 如果没有指定空间，使用默认空间
+        const accountGroupList = useAccountStore.getState().accountGroupList
+        const defaultSpace = accountGroupList.find(g => g.isDefault)
+        const targetSpaceId = spaceId || defaultSpace?.id || null
+
+        set({
+          open: true,
+          currentView: 'connect-list',
+          targetSpaceId,
+          isNewUser: false,
+        })
+      },
+
       /** 设置授权成功回调 */
       setOnAuthSuccess(callback) {
         set({ onAuthSuccess: callback })

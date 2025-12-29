@@ -9,9 +9,10 @@
 import type { IActionCard } from '@/store/agent/agent.types'
 import { AlertCircle, ArrowRight, Link2, RefreshCw, Send } from 'lucide-react'
 import { useParams, usePathname, useRouter } from 'next/navigation'
-import { useState } from 'react'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { useCallback } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
@@ -75,8 +76,13 @@ export function ActionCard({ action, className }: IActionCardProps) {
   // Agent store 方法
   const { continueTask } = useAgentStore()
 
-  // 添加账号弹窗状态
-  const [addAccountVisible, setAddAccountVisible] = useState(false)
+  // 频道管理器
+  const { openConnectList, setOnAuthSuccess } = useChannelManagerStore(
+    useShallow(state => ({
+      openConnectList: state.openConnectList,
+      setOnAuthSuccess: state.setOnAuthSuccess,
+    })),
+  )
 
   const platformName = getPlatformDisplayName(action.platform)
 
@@ -149,11 +155,11 @@ export function ActionCard({ action, className }: IActionCardProps) {
   const config = getActionConfig()
 
   /**
-   * 处理账号添加成功
+   * 处理账号添加成功 - 用于 ChannelManager 回调
    */
-  const handleAccountAddSuccess = async () => {
-    // 关闭弹窗
-    setAddAccountVisible(false)
+  const handleAccountAddSuccess = useCallback(async () => {
+    // 清除回调
+    setOnAuthSuccess(null)
 
     // 检查是否在 chat 页面
     if (pathname.includes('/chat/')) {
@@ -164,8 +170,8 @@ export function ActionCard({ action, className }: IActionCardProps) {
         const taskId = pathParts[taskIdIndex + 1]
 
         // 自动发送消息
-        const platformName = getPlatformDisplayName(action.platform)
-        const autoMessage = `I have added the "${platformName}" channel account, please continue.`
+        const platformDisplayName = getPlatformDisplayName(action.platform)
+        const autoMessage = `I have added the "${platformDisplayName}" channel account, please continue.`
 
         try {
           await continueTask({
@@ -180,7 +186,17 @@ export function ActionCard({ action, className }: IActionCardProps) {
         }
       }
     }
-  }
+  }, [pathname, action.platform, continueTask, t, setOnAuthSuccess])
+
+  /**
+   * 打开频道管理器并设置成功回调
+   */
+  const openChannelManager = useCallback(() => {
+    // 设置授权成功回调
+    setOnAuthSuccess(handleAccountAddSuccess)
+    // 打开频道管理器
+    openConnectList()
+  }, [setOnAuthSuccess, handleAccountAddSuccess, openConnectList])
 
   // 处理按钮点击
   const handleClick = () => {
@@ -191,11 +207,11 @@ export function ActionCard({ action, className }: IActionCardProps) {
         // 未登录时先登录
         if (!token) {
           toast.warning(t('home.loginRequired' as any) || 'Please login first')
-          openLoginModal(() => setAddAccountVisible(true))
+          openLoginModal(() => openChannelManager())
           return
         }
-        // 直接打开添加账号弹窗
-        setAddAccountVisible(true)
+        // 打开频道管理器
+        openChannelManager()
         break
       case 'updateChannel':
         router.push(`/${lng}/accounts?updateChannel=${platform}`)
@@ -264,16 +280,6 @@ export function ActionCard({ action, className }: IActionCardProps) {
           {config.buttonText}
           <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
         </Button>
-      )}
-
-      {/* 添加账号弹窗 - 仅用于 createChannel */}
-      {action.type === 'createChannel' && (
-        <AddAccountModal
-          open={addAccountVisible}
-          onClose={() => setAddAccountVisible(false)}
-          onAddSuccess={handleAccountAddSuccess}
-          showSpaceSelector={true}
-        />
       )}
     </div>
   )

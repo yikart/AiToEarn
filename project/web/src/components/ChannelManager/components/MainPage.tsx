@@ -7,11 +7,13 @@
 
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
+import { Plus } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { deleteAccountApi, deleteAccountGroupApi, updateAccountGroupApi } from '@/api/account'
 import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
 import { useTransClient } from '@/app/i18n/client'
+import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
@@ -221,9 +223,27 @@ export function MainPage() {
   }, [accountGroupList, selectedPlatform])
 
   return (
-    <div className="flex h-full">
-      {/* 左侧侧边栏 */}
-      <ChannelSidebar />
+    <div className="flex h-full flex-col md:flex-row">
+      {/* 左侧侧边栏 - 移动端隐藏 */}
+      <div className="hidden md:block">
+        <ChannelSidebar />
+      </div>
+
+      {/* 移动端顶部操作栏 */}
+      <div className="flex items-center justify-between border-b px-4 py-2 md:hidden">
+        <span className="text-sm text-muted-foreground">
+          {t('channelManager.channelCount', { count: accountList.length })}
+        </span>
+        <Button
+          variant="default"
+          size="sm"
+          className="cursor-pointer"
+          onClick={() => setCurrentView('connect-list')}
+        >
+          <Plus className="mr-1.5 h-4 w-4" />
+          {t('channelManager.addChannel')}
+        </Button>
+      </div>
 
       {/* 右侧主内容区 */}
       <div className="flex flex-1 flex-col overflow-hidden">

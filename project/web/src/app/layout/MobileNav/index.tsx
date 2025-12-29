@@ -24,11 +24,11 @@ import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { centsToUsd } from '@/api/credits'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import { useTransClient } from '@/app/i18n/client'
 import { routerData } from '@/app/layout/routerData'
 import { ACTIVE_VIP_STATUSES, AFFILIATES_URL, ExternalLinks } from '@/app/layout/shared'
 import logo from '@/assets/images/logo.png'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
 import NotificationPanel from '@/components/notification/NotificationPanel'
 import SettingsModal from '@/components/SettingsModal'
@@ -332,7 +332,6 @@ function MobileBottomSection({
  */
 function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
-  const [addAccountVisible, setAddAccountVisible] = useState(false)
   const router = useRouter()
   const lng = useGetClientLng()
   const route = useSelectedLayoutSegments()
@@ -343,6 +342,13 @@ function MobileNav() {
     openSettings,
     closeSettings,
   } = useSettingsModalStore()
+
+  // 频道管理器
+  const { openConnectList } = useChannelManagerStore(
+    useShallow(state => ({
+      openConnectList: state.openConnectList,
+    })),
+  )
 
   // 获取当前路由
   let currRouter = '/'
@@ -370,10 +376,10 @@ function MobileNav() {
   const handleAddChannel = () => {
     if (!token) {
       toast.warning('Please login first')
-      openLoginModal(() => setAddAccountVisible(true))
+      openLoginModal(() => openConnectList())
       return
     }
-    setAddAccountVisible(true)
+    openConnectList()
   }
 
   return (
@@ -460,16 +466,6 @@ function MobileNav() {
         open={settingsVisible}
         onClose={closeSettings}
         defaultTab={settingsDefaultTab}
-      />
-
-      {/* 添加账号弹窗 */}
-      <AddAccountModal
-        open={addAccountVisible}
-        onClose={() => setAddAccountVisible(false)}
-        onAddSuccess={() => {
-          setAddAccountVisible(false)
-        }}
-        showSpaceSelector={true}
       />
     </>
   )

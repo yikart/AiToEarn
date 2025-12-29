@@ -9,9 +9,9 @@ import type { SettingsTab } from '@/components/SettingsModal'
 import { useRouter, useSelectedLayoutSegments } from 'next/navigation'
 import { useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import { routerData } from '@/app/layout/routerData'
 import { ExternalLinks } from '@/app/layout/shared'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import NotificationPanel from '@/components/notification/NotificationPanel'
 import SettingsModal from '@/components/SettingsModal'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
@@ -50,9 +50,15 @@ function LayoutSidebar() {
     })),
   )
 
+  // 频道管理器
+  const { openConnectList } = useChannelManagerStore(
+    useShallow(state => ({
+      openConnectList: state.openConnectList,
+    })),
+  )
+
   // UI 状态
   const [notificationVisible, setNotificationVisible] = useState(false)
-  const [addAccountVisible, setAddAccountVisible] = useState(false)
   const {
     settingsVisible,
     settingsDefaultTab,
@@ -95,10 +101,10 @@ function LayoutSidebar() {
   const handleAddChannel = () => {
     if (!token) {
       toast.warning('Please login first')
-      openLoginModal(() => setAddAccountVisible(true))
+      openLoginModal(() => openConnectList())
       return
     }
-    setAddAccountVisible(true)
+    openConnectList()
   }
 
   // 转换路由数据为 NavSection 所需格式
@@ -183,17 +189,6 @@ function LayoutSidebar() {
         onClose={handleCloseSettings}
         defaultTab={settingsDefaultTab}
       />
-
-      {/* 添加账号弹窗 */}
-      <AddAccountModal
-        open={addAccountVisible}
-        onClose={() => setAddAccountVisible(false)}
-        onAddSuccess={() => {
-          setAddAccountVisible(false)
-        }}
-        showSpaceSelector={true}
-      />
-
     </>
   )
 }

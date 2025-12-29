@@ -54,6 +54,8 @@ export interface ChannelManagerMethods {
   closeModal: () => void
   /** 直接打开并进入指定平台的授权流程 */
   openAndAuth: (platform: PlatType, spaceId?: string) => void
+  /** 直接打开并进入连接新频道列表页 */
+  openConnectList: (spaceId?: string) => void
   /** 设置授权成功回调 */
   setOnAuthSuccess: (
     callback: ((account: SocialAccount, platform: PlatType) => void) | null,

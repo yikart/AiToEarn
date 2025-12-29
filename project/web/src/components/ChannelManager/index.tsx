@@ -60,7 +60,7 @@ export function ChannelManager() {
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
-      <DialogContent className="flex h-[700px] max-w-5xl flex-col overflow-hidden p-0">
+      <DialogContent className="flex h-[100dvh] max-h-[100dvh] w-full max-w-full flex-col overflow-hidden p-0 md:h-[700px] md:max-h-[700px] md:max-w-5xl md:rounded-lg">
         {/* Header - 只在主页和连接列表页显示 */}
         {currentView !== 'auth-loading' && (
           <DialogHeader className="border-b px-6 py-4">
