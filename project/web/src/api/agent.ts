@@ -19,6 +19,7 @@ export enum TaskStatus {
   RequiresAction = 'requires_action', // 需要用户操作（如绑定频道等）
   Failed = 'FAILED', // 失败
   Cancelled = 'CANCELLED', // 取消
+  Aborted = 'aborted', // 中止
 }
 
 // 媒体类型
@@ -172,6 +173,7 @@ export interface SSEMessage {
 // 任务增量消息响应
 export interface TaskMessagesVo {
   messages: TaskMessage[]
+  status?: TaskStatus // 任务状态，可选
 }
 
 export const agentApi = {
@@ -459,6 +461,15 @@ export const agentApi = {
    */
   async stopTask(taskId: string) {
     const res = await http.delete(`agent/tasks/${taskId}`)
+    return res
+  },
+
+  /**
+   * 中断内容生成任务
+   * @param taskId 任务ID
+   */
+  async abortTask(taskId: string) {
+    const res = await http.post(`agent/tasks/${taskId}/abort`)
     return res
   },
 

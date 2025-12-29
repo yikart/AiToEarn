@@ -98,62 +98,6 @@ export default function UptimePage() {
     loadHistoryData()
   }, [])
 
-  // 计算整体状态
-  const overallStatus = (() => {
-    if (dataMap.size === 0)
-      return null
-
-    const latestStatuses = new Map<string, UptimeItem>()
-
-    // 获取每个模块的最新状态
-    dataMap.forEach((items, type) => {
-      items.forEach((item) => {
-        const key = `${item.module}-${type}`
-        const existing = latestStatuses.get(key)
-        if (!existing || new Date(item.createdAt) > new Date(existing.createdAt))
-          latestStatuses.set(key, item)
-      })
-    })
-
-    const statuses = Array.from(latestStatuses.values())
-    const hasUnavailable = statuses.some(
-      s => s.status === UptimeStatusEnum.UNAVAILABLE,
-    )
-    const hasTimeout = statuses.some(
-      s => s.status === UptimeStatusEnum.TIMEOUT,
-    )
-
-    if (hasUnavailable)
-      return 'major-outage'
-    if (hasTimeout)
-      return 'partial-outage'
-    return 'operational'
-  })()
-
-  // 获取整体状态文本
-  const getOverallStatusText = () => {
-    switch (overallStatus) {
-      case 'major-outage':
-        return '部分系统不可用'
-      case 'partial-outage':
-        return '部分系统性能下降'
-      case 'operational':
-        return '所有系统运行正常'
-    }
-  }
-
-  // 获取整体状态颜色
-  const getOverallStatusColor = () => {
-    switch (overallStatus) {
-      case 'major-outage':
-        return 'text-red-600'
-      case 'partial-outage':
-        return 'text-yellow-600'
-      case 'operational':
-        return 'text-green-600'
-    }
-  }
-
   // 计算指定模块和类型的正常运行时间百分比
   const calculateModuleTypeUptimePercentage = (
     module: UptimeModule,
@@ -220,36 +164,6 @@ export default function UptimePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* 顶部横幅 */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                系统状态
-              </h1>
-              <div className="flex items-center gap-2">
-                <div
-                  className={cn('w-3 h-3 rounded-full', {
-                    'bg-green-500': overallStatus === 'operational',
-                    'bg-yellow-500': overallStatus === 'partial-outage',
-                    'bg-red-500': overallStatus === 'major-outage',
-                  })}
-                />
-                <span
-                  className={cn(
-                    'text-lg font-semibold',
-                    getOverallStatusColor(),
-                  )}
-                >
-                  {getOverallStatusText()}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* 为每个模块-类型组合显示状态条 */}
         {loadingHistory ? (

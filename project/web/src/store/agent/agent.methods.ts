@@ -466,7 +466,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
       })
 
       messageUtils.markMessageDone()
-      toast.info(refs.t.value?.('aiGeneration.taskStopped' as any) || 'Task stopped')
+      // 移除 toast 显示，改为由调用方处理
     },
 
     /** 重置状态 */

@@ -150,6 +150,13 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
     onTaskUpdate: useCallback((taskData: TaskDetail) => {
       setTask(taskData)
     }, []),
+    onTaskStatusChange: useCallback((status: string) => {
+      if (status === 'aborted') {
+        console.log('[ChatState] Task aborted, clearing generating state')
+        // 任务被中止时，停止本地生成状态
+        setLocalIsGenerating(false)
+      }
+    }, []),
   })
 
   /**

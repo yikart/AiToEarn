@@ -443,15 +443,15 @@ export default function IncomePage() {
                             <TableCell>
                               {record.status === 'pending' || record.status === 0 || record.status === undefined
                                 ? (
-                                    <Badge className={getBadgeClassName('orange')}>
-                                      {t('status.pending')}
-                                    </Badge>
-                                  )
+                                  <Badge className={getBadgeClassName('orange')}>
+                                    {t('status.pending')}
+                                  </Badge>
+                                )
                                 : (
-                                    <Badge className={getBadgeClassName('green')}>
-                                      {t('status.withdrawn')}
-                                    </Badge>
-                                  )}
+                                  <Badge className={getBadgeClassName('green')}>
+                                    {t('status.withdrawn')}
+                                  </Badge>
+                                )}
                             </TableCell>
                             <TableCell className="max-w-[200px] truncate">
                               {record.desc || '-'}
@@ -534,7 +534,7 @@ export default function IncomePage() {
                               <TableCell>
                                 <Badge className={statusTag.className}>
                                   {statusTag.icon}
-                                    &nbsp;
+                                  &nbsp;
                                   {statusTag.text}
                                 </Badge>
                               </TableCell>
@@ -741,15 +741,15 @@ export default function IncomePage() {
                   <Label className="text-muted-foreground">{t('statusLabel')}</Label>
                   {incomeDetail.status === 'pending' || incomeDetail.status === 0 || incomeDetail.status === undefined
                     ? (
-                        <Badge className={getBadgeClassName('orange')}>
-                          {t('status.pending')}
-                        </Badge>
-                      )
+                      <Badge className={getBadgeClassName('orange')}>
+                        {t('status.pending')}
+                      </Badge>
+                    )
                     : (
-                        <Badge className={getBadgeClassName('green')}>
-                          {t('status.withdrawn')}
-                        </Badge>
-                      )}
+                      <Badge className={getBadgeClassName('green')}>
+                        {t('status.withdrawn')}
+                      </Badge>
+                    )}
                 </div>
                 <div className="col-span-2">
                   <Label className="text-muted-foreground">{t('description')}</Label>

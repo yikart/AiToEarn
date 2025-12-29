@@ -183,46 +183,46 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
         <div className="min-w-0 flex-1">
           {isEditingName
             ? (
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={e => setEditName(e.target.value)}
-                    className="flex-1 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    autoFocus
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter')
-                        handleSaveName()
-                      if (e.key === 'Escape') {
-                        setIsEditingName(false)
-                        setEditName(userInfo?.name || '')
-                      }
-                    }}
-                  />
-                  <Button size="sm" onClick={handleSaveName} disabled={isSaving} className="h-8">
-                    {isSaving ? t('profile.saving') : t('profile.save')}
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    onClick={() => {
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={e => setEditName(e.target.value)}
+                  className="flex-1 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter')
+                      handleSaveName()
+                    if (e.key === 'Escape') {
                       setIsEditingName(false)
                       setEditName(userInfo?.name || '')
-                    }}
-                    className="h-8"
-                  >
-                    {t('profile.cancel')}
-                  </Button>
-                </div>
-              )
-            : (
-                <div
-                  className="cursor-pointer text-lg font-semibold text-foreground transition-colors hover:text-primary"
-                  onClick={() => setIsEditingName(true)}
+                    }
+                  }}
+                />
+                <Button size="sm" onClick={handleSaveName} disabled={isSaving} className="h-8">
+                  {isSaving ? t('profile.saving') : t('profile.save')}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => {
+                    setIsEditingName(false)
+                    setEditName(userInfo?.name || '')
+                  }}
+                  className="h-8"
                 >
-                  {userInfo?.name || tCommon('unknownUser')}
-                </div>
-              )}
+                  {t('profile.cancel')}
+                </Button>
+              </div>
+            )
+            : (
+              <div
+                className="cursor-pointer text-lg font-semibold text-foreground transition-colors hover:text-primary"
+                onClick={() => setIsEditingName(true)}
+              >
+                {userInfo?.name || tCommon('unknownUser')}
+              </div>
+            )}
           <p className="mt-1 truncate text-sm text-muted-foreground">{userInfo?.mail || '-'}</p>
         </div>
       </div>
