@@ -539,9 +539,15 @@ export default function TaskPageCore() {
     try {
       setAcceptedTaskSettleLoading(true)
       const infoResp: any = await apiGetSettleInfoByUserTask(userTaskId)
-      if (infoResp && infoResp.data && (infoResp.code === 0 || infoResp.success) && infoResp.data.id) {
-        const settleId = infoResp.data.id
-        await fetchAcceptedTaskSettleItems(settleId)
+      // API may return id or _id. Accept both and fall back to empty list when missing.
+      if (infoResp && infoResp.data && (infoResp.code === 0 || infoResp.success)) {
+        const settleId = infoResp.data.id || infoResp.data._id || (infoResp.data as any).settleId
+        if (settleId) {
+          await fetchAcceptedTaskSettleItems(settleId)
+        }
+        else {
+          setAcceptedTaskSettleItems([])
+        }
       }
       else {
         setAcceptedTaskSettleItems([])
@@ -563,7 +569,27 @@ export default function TaskPageCore() {
       setAcceptedTaskSettleLoading(true)
       const itemsResp: any = await apiGetSettleItemList(settleId)
       if (itemsResp && itemsResp.data && (itemsResp.code === 0 || itemsResp.success)) {
-        setAcceptedTaskSettleItems(itemsResp.data.list || itemsResp.data || [])
+        const rawList = itemsResp.data.list || itemsResp.data || []
+        // normalize items for UI: provide `title` and `value` fields
+        const normalized = (rawList as any[]).map(item => {
+          const dataType = item.dataType || item.type || item.key
+          // Try translate dataType; if translation returns the key itself, treat as missing and fallback.
+          let titleFromType: string | undefined = undefined
+          if (dataType) {
+            const translated = t(`settle.dataType.${dataType}` as any)
+            if (translated && !translated.includes('settle.dataType.')) {
+              titleFromType = translated
+            }
+          }
+          const title = titleFromType || item.title || item.name || dataType || ''
+          const value = item.dataValue ?? item.value ?? item.amount ?? item.pricing ?? null
+          return {
+            ...item,
+            title,
+            value,
+          }
+        })
+        setAcceptedTaskSettleItems(normalized)
       }
       else {
         setAcceptedTaskSettleItems([])

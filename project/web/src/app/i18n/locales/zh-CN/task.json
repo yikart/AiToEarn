@@ -142,4 +142,11 @@
   "accountAvatar": "账号头像",
   "notSubmitted": "未提交",
   "pleaseSelectDraftMaterial": "请选择一个草稿素材"
+  ,
+  "settle": {
+    "items": "结算信息",
+    "dataType": {
+      "views": "播放量"
+    }
+  }
 }
