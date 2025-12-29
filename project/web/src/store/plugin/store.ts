@@ -659,7 +659,7 @@ export const usePluginStore = create(
           const { items, platformTaskIdMap, publishTime, onProgress, onComplete } = params
 
           // 创建发布任务
-          const platformTasks: PlatformPublishTask[] = items.map((item) => {
+          const platformTasks: any = items.map((item) => {
             const platform = item.account.type as PluginPlatformType
             const accountId = item.account.id
             const requestId = platformTaskIdMap.get(accountId) || ''
@@ -682,7 +682,9 @@ export const usePluginStore = create(
                 publishParams.cover = item.params.video.cover.ossUrl
               }
             } else if (item.params.images && item.params.images.length > 0) {
-              publishParams.images = item.params.images.map(img => img.ossUrl).filter(Boolean)
+              publishParams.images = item.params.images
+                .map(img => img.ossUrl)
+                .filter((url): url is string => typeof url === 'string' && url.length > 0)
             }
 
             return {
@@ -691,7 +693,7 @@ export const usePluginStore = create(
               accountId,
               requestId,
               params: publishParams,
-              status: PlatformTaskStatus.WAITING,
+              status: PlatformTaskStatus.PENDING,
               progress: {
                 stage: 'waiting',
                 progress: 0,
