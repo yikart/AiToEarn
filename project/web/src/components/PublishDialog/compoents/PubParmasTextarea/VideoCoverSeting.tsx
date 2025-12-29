@@ -12,7 +12,6 @@ import type {
 } from '@/components/PublishDialog/publishDialog.type'
 import { Alert, Button, Slider, Spin } from 'antd'
 import Cropper from 'cropperjs'
-import { Modal } from '@/components/ui/modal'
 import {
   forwardRef,
   memo,
@@ -26,6 +25,7 @@ import {
   formatImg,
   VideoGrabFrame,
 } from '@/components/PublishDialog/PublishDialog.util'
+import { Modal } from '@/components/ui/modal'
 import { getOssUrl } from '@/utils/oss'
 import styles from './videoCoverSeting.module.scss'
 import 'cropperjs/dist/cropper.css'

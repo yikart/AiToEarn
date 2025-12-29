@@ -5,20 +5,21 @@
  * 整合平台选择器、瀑布流列表等子组件
  */
 
-import { useCallback, useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { AnimatePresence } from 'framer-motion'
-import Masonry from 'react-masonry-css'
+import type { ClickRect } from './components/FeedCard'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
+import { AnimatePresence } from 'framer-motion'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import Masonry from 'react-masonry-css'
 import { PluginStatus } from '@/store/plugin'
 import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
+import { FeedCardSkeleton } from './components/FeedCard'
+import FeedDetailModal from './components/FeedDetailModal'
 import PlatformSelector from './components/PlatformSelector'
 import WaterfallList from './components/WaterfallList'
-import FeedDetailModal from './components/FeedDetailModal'
-import { FeedCardSkeleton, type ClickRect } from './components/FeedCard'
-import { useInteractive } from './useInteractive'
-import { useDetailModalStore } from './store/detailStore'
 import styles from './InteractiveNew.module.scss'
+import { useDetailModalStore } from './store/detailStore'
+import { useInteractive } from './useInteractive'
 
 /** 瀑布流响应式断点配置 */
 const MASONRY_BREAKPOINTS = {
@@ -65,7 +66,8 @@ export default function InteractiveNewCore() {
    * 处理卡片点击 - 打开弹框并请求详情
    */
   const handleCardClick = useCallback((item: HomeFeedItem, rect: ClickRect) => {
-    if (!currentPlatform) return
+    if (!currentPlatform)
+      return
     openDetail(item, rect, currentPlatform)
   }, [currentPlatform, openDetail])
 
@@ -96,7 +98,8 @@ export default function InteractiveNewCore() {
    */
   useEffect(() => {
     const container = document.getElementById('interactiveScrollContainer')
-    if (!container) return
+    if (!container)
+      return
 
     const handleScroll = () => {
       setShowBackTop(container.scrollTop > 300)

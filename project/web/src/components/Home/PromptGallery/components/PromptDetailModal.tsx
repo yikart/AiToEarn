@@ -4,16 +4,16 @@
 
 'use client'
 
+import type { PromptItem } from '../types'
 import { Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import type { PromptItem } from '../types'
 
 interface PromptDetailModalProps {
   item: PromptItem | null
@@ -105,4 +105,3 @@ export function PromptDetailModal({
     </Dialog>
   )
 }
-

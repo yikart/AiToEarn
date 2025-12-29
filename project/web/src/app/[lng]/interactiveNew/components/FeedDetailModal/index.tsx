@@ -12,14 +12,14 @@
  * - detailStore: 状态管理
  */
 
+import { CloseOutlined } from '@ant-design/icons'
+import { motion } from 'framer-motion'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { motion } from 'framer-motion'
-import { CloseOutlined } from '@ant-design/icons'
 import { useDetailModalStore } from '../../store/detailStore'
-import MediaSection from './MediaSection'
 import DetailSection from './DetailSection'
 import styles from './FeedDetailModal.module.scss'
+import MediaSection from './MediaSection'
 
 interface FeedDetailModalProps {
   /** 关闭回调 */
@@ -101,11 +101,11 @@ function FeedDetailModal({ onClose }: FeedDetailModalProps) {
    */
   const handleBackdropClick = useCallback(
     (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      onClose()
-    }
+      if (e.target === e.currentTarget) {
+        onClose()
+      }
     },
-    [onClose]
+    [onClose],
   )
 
   /**
@@ -125,14 +125,15 @@ function FeedDetailModal({ onClose }: FeedDetailModalProps) {
    * 锁定 body 滚动
    */
   useEffect(() => {
-      document.body.style.overflow = 'hidden'
+    document.body.style.overflow = 'hidden'
     return () => {
       document.body.style.overflow = ''
     }
   }, [])
 
   // 没有数据时不显示
-  if (!preview && !detail) return null
+  if (!preview && !detail)
+    return null
 
   const modalContent = (
     <motion.div
@@ -149,12 +150,12 @@ function FeedDetailModal({ onClose }: FeedDetailModalProps) {
       </button>
 
       {/* 弹框主体 */}
-      <motion.div 
+      <motion.div
         className="feedDetailModal_wrapper"
         initial={initialState}
         animate={animateState}
         exit={initialState}
-        transition={{ 
+        transition={{
           type: 'spring',
           stiffness: 280,
           damping: 32,
@@ -176,7 +177,8 @@ function FeedDetailModal({ onClose }: FeedDetailModalProps) {
   )
 
   // 使用 Portal 渲染到 body
-  if (typeof window === 'undefined') return null
+  if (typeof window === 'undefined')
+    return null
   return createPortal(modalContent, document.body)
 }
 

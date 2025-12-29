@@ -48,8 +48,7 @@
     "loading": "加载中...",
     "totalRecords": "共 {{total}} 条记录"
   },
-  "myWallet": "钱包账户"
-  ,
+  "myWallet": "钱包账户",
   "all": "全部",
   "withdrawAll": "全部提现",
   "selectWalletForWithdrawAll": "请选择用于全部提现的钱包账号"

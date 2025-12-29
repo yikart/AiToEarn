@@ -4,12 +4,12 @@
 
 'use client'
 
+import type { PromptItem } from '../types'
 import { Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { LazyImage } from './LazyImage'
-import type { PromptItem } from '../types'
 
 interface MasonryCardProps {
   item: PromptItem
@@ -24,7 +24,7 @@ export function MasonryCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Masonr
   const title = isEnglish && item.title_en ? item.title_en : item.title
   const prompt = isEnglish && item.prompt_en ? item.prompt_en : item.prompt
   const subCategory = isEnglish && item.sub_category_en ? item.sub_category_en : item.sub_category
-  const description = prompt.length > 100 ? prompt.substring(0, 100) + '...' : prompt
+  const description = prompt.length > 100 ? `${prompt.substring(0, 100)}...` : prompt
 
   return (
     <div
@@ -61,7 +61,7 @@ export function MasonryCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Masonr
                     'text-xs border backdrop-blur-sm',
                     item.mode === 'edit'
                       ? 'bg-info/30 text-white border-info/50'
-                      : 'bg-muted-foreground/30 text-white border-muted-foreground/50'
+                      : 'bg-muted-foreground/30 text-white border-muted-foreground/50',
                   )}
                 >
                   {t(`badges.${item.mode === 'edit' ? 'edit' : 'generate'}` as any)}
@@ -71,7 +71,7 @@ export function MasonryCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Masonr
               {/* 应用按钮 */}
               <Button
                 size="sm"
-                onClick={(e) => onApply(item, e)}
+                onClick={e => onApply(item, e)}
                 className="w-full bg-card text-foreground hover:bg-muted rounded-xl font-medium shadow-lg"
               >
                 <Check className="w-4 h-4 mr-1.5" />
@@ -97,7 +97,7 @@ export function MasonryCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Masonr
                 'text-xs px-2 py-0.5 rounded-full',
                 item.mode === 'edit'
                   ? 'bg-info/10 text-info'
-                  : 'bg-muted text-muted-foreground'
+                  : 'bg-muted text-muted-foreground',
               )}
             >
               {t(`badges.${item.mode === 'edit' ? 'edit' : 'generate'}` as any)}
@@ -108,4 +108,3 @@ export function MasonryCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Masonr
     </div>
   )
 }
-

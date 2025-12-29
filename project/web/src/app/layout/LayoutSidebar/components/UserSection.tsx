@@ -4,6 +4,7 @@
 
 'use client'
 
+import type { UserSectionProps } from '../types'
 import { useTransClient } from '@/app/i18n/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
@@ -16,10 +17,9 @@ import {
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
-import type { UserSectionProps } from '../types'
 
 /** 用户头像组件 */
-function UserAvatar({ collapsed, onOpenSettings }: { collapsed: boolean; onOpenSettings: () => void }) {
+function UserAvatar({ collapsed, onOpenSettings }: { collapsed: boolean, onOpenSettings: () => void }) {
   const userInfo = useUserStore(state => state.userInfo)
   const { t } = useTransClient('common')
 
@@ -96,4 +96,3 @@ export function UserSection({ collapsed, onLogin, onOpenSettings }: UserSectionP
     </Button>
   )
 }
-

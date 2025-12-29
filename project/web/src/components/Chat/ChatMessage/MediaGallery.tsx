@@ -1,10 +1,10 @@
 'use client'
 
-import React from 'react'
-import { Play, FileText } from 'lucide-react'
-import { getOssUrl } from '@/utils/oss'
-import { cn } from '@/lib/utils'
 import type { IUploadedMedia } from '../MediaUpload'
+import { FileText, Play } from 'lucide-react'
+import React from 'react'
+import { cn } from '@/lib/utils'
+import { getOssUrl } from '@/utils/oss'
 
 interface MediaGalleryProps {
   medias: IUploadedMedia[]
@@ -12,8 +12,9 @@ interface MediaGalleryProps {
   onPreviewByUrl?: (url: string) => void
 }
 
-export const MediaGallery = ({ medias, onPreviewByIndex, onPreviewByUrl }: MediaGalleryProps) => {
-  if (!medias || medias.length === 0) return null
+export function MediaGallery({ medias, onPreviewByIndex, onPreviewByUrl }: MediaGalleryProps) {
+  if (!medias || medias.length === 0)
+    return null
 
   return (
     <div className="flex flex-wrap gap-2">
@@ -45,13 +46,14 @@ export const MediaGallery = ({ medias, onPreviewByIndex, onPreviewByUrl }: Media
             onClick={() => {
               if (onPreviewByIndex) {
                 onPreviewByIndex(idx)
-              } else if (onPreviewByUrl) {
+              }
+              else if (onPreviewByUrl) {
                 onPreviewByUrl(media.url)
               }
             }}
             className={cn(
               'w-28 h-20 rounded-lg overflow-hidden border border-border bg-muted relative',
-              'flex items-center justify-center p-0'
+              'flex items-center justify-center p-0',
             )}
           >
             {isVideo ? (
@@ -72,5 +74,3 @@ export const MediaGallery = ({ medias, onPreviewByIndex, onPreviewByUrl }: Media
 }
 
 export default MediaGallery
-
-

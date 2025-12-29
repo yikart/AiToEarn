@@ -9,15 +9,15 @@
 'use client'
 
 import type { SocialAccount } from '@/api/types/account.type'
+import { Loader2, Trash2 } from 'lucide-react'
+
 import Image from 'next/image'
-import { Loader2 } from 'lucide-react'
-import { Trash2 } from 'lucide-react'
+import AccountStatusView from '@/app/[lng]/accounts/components/AccountsTopNav/components/AccountStatusView'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
-import { getOssUrl } from '@/utils/oss'
+import { useTransClient } from '@/app/i18n/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import AccountStatusView from '@/app/[lng]/accounts/components/AccountsTopNav/components/AccountStatusView'
-import { useTransClient } from '@/app/i18n/client'
+import { getOssUrl } from '@/utils/oss'
 
 interface ChannelItemProps {
   channel: SocialAccount
@@ -28,7 +28,7 @@ interface ChannelItemProps {
 export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemProps) {
   const platInfo = AccountPlatInfoMap.get(channel.type)
   const isDeleting = deleteLoading === channel.id
-  const { t } = useTransClient("account");
+  const { t } = useTransClient('account')
 
   return (
     <div

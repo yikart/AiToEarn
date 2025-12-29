@@ -2,9 +2,8 @@
  * Settings Tabs 统一导出
  */
 
-export * from './ProfileTab'
 export * from './AgentTab'
 export * from './GeneralTab'
-export * from './SubscriptionTab'
 export * from './MembershipTab'
-
+export * from './ProfileTab'
+export * from './SubscriptionTab'

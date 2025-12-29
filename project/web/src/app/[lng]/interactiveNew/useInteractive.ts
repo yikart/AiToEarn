@@ -3,6 +3,7 @@
  * 管理平台选择、列表数据获取、加载状态等
  */
 
+import type { HomeFeedItem, SupportedPlatformType } from '@/store/plugin/plats/types'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import {
@@ -11,7 +12,6 @@ import {
   PluginStatus,
   usePluginStore,
 } from '@/store/plugin'
-import type { HomeFeedItem, SupportedPlatformType } from '@/store/plugin/plats/types'
 
 /** 每页数量 */
 const PAGE_SIZE = 20
@@ -82,8 +82,7 @@ export function useInteractive() {
       const platInfo = AccountPlatInfoMap.get(type)
       const account = platformAccounts[type]
 
-      console.log(platInfo?.name);
-      
+      console.log(platInfo?.name)
 
       return {
         type,
@@ -127,7 +126,8 @@ export function useInteractive() {
    * 加载作品列表
    */
   const loadFeedList = useCallback(async (platform: SupportedPlatformType, page: number, isRefresh = false) => {
-    if (!isPluginReady) return
+    if (!isPluginReady)
+      return
 
     setState(prev => ({
       ...prev,
@@ -149,7 +149,8 @@ export function useInteractive() {
           loadingMore: false,
           error: null,
         }))
-      } else {
+      }
+      else {
         setState(prev => ({
           ...prev,
           loading: false,
@@ -157,7 +158,8 @@ export function useInteractive() {
           error: result.message || 'Loading failed',
         }))
       }
-    } catch (error) {
+    }
+    catch (error) {
       setState(prev => ({
         ...prev,
         loading: false,
@@ -209,7 +211,8 @@ export function useInteractive() {
    */
   const refresh = useCallback(() => {
     const { currentPlatform } = stateRef.current
-    if (!currentPlatform) return
+    if (!currentPlatform)
+      return
 
     // 返回顶部
     const container = document.getElementById('interactiveScrollContainer')
@@ -230,8 +233,10 @@ export function useInteractive() {
    * 初始化：选择默认平台
    */
   useEffect(() => {
-    if (!isPluginReady) return
-    if (state.currentPlatform) return
+    if (!isPluginReady)
+      return
+    if (state.currentPlatform)
+      return
 
     const defaultPlatform = getFirstLoggedInPlatform()
     if (defaultPlatform) {
@@ -254,4 +259,3 @@ export function useInteractive() {
     refresh,
   }
 }
-

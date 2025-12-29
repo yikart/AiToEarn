@@ -42,4 +42,3 @@ export interface ApplyPromptData {
   image?: string
   mode: 'edit' | 'generate'
 }
-

@@ -15,8 +15,8 @@ const XhsParams = memo(
 
       return (
         <>
-          <PubParmasTextarea 
-            {...pubParmasTextareaCommonParams} 
+          <PubParmasTextarea
+            {...pubParmasTextareaCommonParams}
             extend={(
               <>
                 <CommonTitleInput pubItem={pubItem} />

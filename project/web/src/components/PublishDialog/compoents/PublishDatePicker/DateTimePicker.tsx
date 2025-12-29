@@ -7,9 +7,9 @@ import type { Dayjs } from 'dayjs'
 import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
+import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { useTransClient } from '@/app/i18n/client'
 
 interface DateTimePickerProps {
   value: Dayjs | null
@@ -92,7 +92,8 @@ export function DateTimePicker({ value, onChange, disabledDate, disabledTime }: 
   }
 
   const handleSelectDate = (date: Dayjs) => {
-    if (disabledDate && disabledDate(date)) return
+    if (disabledDate && disabledDate(date))
+      return
 
     setSelectedDate(date)
     const newDateTime = date.hour(selectedHour).minute(selectedMinute)
@@ -189,7 +190,9 @@ export function DateTimePicker({ value, onChange, disabledDate, disabledTime }: 
         <div className="p-3 border-b border-border shrink-0">
           <div className="text-center">
             <div className="text-lg font-semibold tabular-nums">
-              {selectedHour.toString().padStart(2, '0')}:{selectedMinute.toString().padStart(2, '0')}
+              {selectedHour.toString().padStart(2, '0')}
+              :
+              {selectedMinute.toString().padStart(2, '0')}
             </div>
           </div>
         </div>
@@ -208,7 +211,7 @@ export function DateTimePicker({ value, onChange, disabledDate, disabledTime }: 
                 }
               }}
             >
-              {Array.from({ length: 24 }, (_, i) => i).map(hour => {
+              {Array.from({ length: 24 }, (_, i) => i).map((hour) => {
                 const isDisabled = disabledHours.includes(hour)
                 const isSelected = hour === selectedHour
                 return (
@@ -243,7 +246,7 @@ export function DateTimePicker({ value, onChange, disabledDate, disabledTime }: 
                 }
               }}
             >
-              {Array.from({ length: 60 }, (_, i) => i).map(minute => {
+              {Array.from({ length: 60 }, (_, i) => i).map((minute) => {
                 const isDisabled = disabledMinutes.includes(minute)
                 const isSelected = minute === selectedMinute
                 return (

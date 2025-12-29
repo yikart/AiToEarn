@@ -5,8 +5,8 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
 import type { BottomSectionProps } from '../../types'
+import { cn } from '@/lib/utils'
 import { BalanceEntry } from './BalanceEntry'
 import { PluginEntry } from './PluginEntry'
 import { VipEntry } from './VipEntry'
@@ -38,4 +38,3 @@ export function BottomSection({ collapsed, onOpenSettings }: BottomSectionProps)
 export { BalanceEntry } from './BalanceEntry'
 export { PluginEntry } from './PluginEntry'
 export { VipEntry } from './VipEntry'
-

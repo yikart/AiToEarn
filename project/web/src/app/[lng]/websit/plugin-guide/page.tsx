@@ -1,8 +1,7 @@
 'use client'
 
-import { useTransClient } from '@/app/i18n/client'
 import Image from 'next/image'
-import styles from './pluginGuide.module.scss'
+import { useTransClient } from '@/app/i18n/client'
 import image1 from './images/gyude-image1.png'
 import image2 from './images/gyude-image2.png'
 import image4 from './images/gyude-image4.png'
@@ -12,6 +11,7 @@ import image7 from './images/gyude-image7.png'
 import image8 from './images/gyude-image8.png'
 import image9 from './images/gyude-image9.png'
 import image10 from './images/gyude-image10.png'
+import styles from './pluginGuide.module.scss'
 
 /**
  * 教程步骤组件
@@ -47,9 +47,9 @@ function GuideStep({ stepNumber, title, content, image, imageAlt, note }: GuideS
         </div>
       )}
       <div className={styles.imageWrapper}>
-        <Image 
-          src={image} 
-          alt={imageAlt} 
+        <Image
+          src={image}
+          alt={imageAlt}
           className={styles.guideImage}
           placeholder="blur"
         />
@@ -71,7 +71,10 @@ export default function PluginGuidePage() {
           {/* 页面标题 */}
           <div className={styles.pageHeader}>
             <h1 className={styles.title}>{t('title')}</h1>
-            <p className={styles.lastUpdated}>{t('lastUpdated')}: 2024-12-15</p>
+            <p className={styles.lastUpdated}>
+              {t('lastUpdated')}
+              : 2024-12-15
+            </p>
           </div>
 
           {/* 简介 */}
@@ -181,9 +184,9 @@ export default function PluginGuidePage() {
                 <span>{t('faq.q1.answer')}</span>
               </div>
               <div className={styles.imageWrapper}>
-                <Image 
-                  src={image10} 
-                  alt={t('faq.q1.question')} 
+                <Image
+                  src={image10}
+                  alt={t('faq.q1.question')}
                   className={styles.guideImage}
                   placeholder="blur"
                 />

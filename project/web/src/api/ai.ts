@@ -1,6 +1,6 @@
+import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
 import http from '@/utils/request'
-import { useUserStore } from '@/store/user'
 
 // 获取聊天大模型列表
 export function getChatModels() {
@@ -206,7 +206,7 @@ export async function aiChatStream(data: {
 }) {
   const token = useUserStore.getState().token
   const lang = useUserStore.getState().lang
-  
+
   const response = await fetch('https://aitoearn.ai/api/ai/chat', {
     method: 'POST',
     headers: {
@@ -215,7 +215,7 @@ export async function aiChatStream(data: {
       'Accept-Language': lang || 'zh-CN',
     },
     body: JSON.stringify({
-      stream: false, // 使用非流式响应 
+      stream: false, // 使用非流式响应
       model: 'gpt-5.1-all',
       temperature: 1,
       presence_penalty: 0,
@@ -225,10 +225,10 @@ export async function aiChatStream(data: {
       ...data,
     }),
   })
-  
+
   if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
-  
+
   return response
 }

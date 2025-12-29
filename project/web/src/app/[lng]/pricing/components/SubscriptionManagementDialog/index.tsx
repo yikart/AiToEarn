@@ -5,21 +5,14 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import type {
+  Order,
+  OrderListParams,
+  Subscription,
+  SubscriptionListParams,
+} from '@/api/types/payment'
 import { Copy, Crown } from 'lucide-react'
-import { useTransClient } from '@/app/i18n/client'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { toast } from '@/lib/toast'
-import { useUserStore } from '@/store/user'
+import { useEffect, useState } from 'react'
 import {
   cancelSubscriptionApi,
   getOrderDetailApi,
@@ -27,12 +20,6 @@ import {
   getSubscriptionListApi,
   unsubscribeApi,
 } from '@/api/payment'
-import type {
-  Order,
-  OrderListParams,
-  Subscription,
-  SubscriptionListParams,
-} from '@/api/types/payment'
 import {
   OrderStatus,
   PaymentMode,
@@ -40,7 +27,20 @@ import {
   SubscriptionPlan,
   SubscriptionStatus,
 } from '@/api/types/payment'
+import { useTransClient } from '@/app/i18n/client'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
+import { useUserStore } from '@/store/user'
 
 interface SubscriptionManagementDialogProps {
   open: boolean
@@ -48,7 +48,7 @@ interface SubscriptionManagementDialogProps {
 }
 
 // 状态判断辅助函数
-const getVipStatusInfo = (status: string) => {
+function getVipStatusInfo(status: string) {
   switch (status) {
     case 'none':
       return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false }
@@ -114,9 +114,11 @@ export function SubscriptionManagementDialog({
           total: data.total || 0,
         })
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取订单列表失败:', error)
-    } finally {
+    }
+    finally {
       setOrdersLoading(false)
     }
   }
@@ -135,7 +137,8 @@ export function SubscriptionManagementDialog({
             pageSize: params.size,
             total: data.length,
           })
-        } else {
+        }
+        else {
           setSubscriptions(data.list || [])
           setSubscriptionsPagination({
             current: data.page || params.page,
@@ -144,9 +147,11 @@ export function SubscriptionManagementDialog({
           })
         }
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取订阅列表失败:', error)
-    } finally {
+    }
+    finally {
       setSubscriptionsLoading(false)
     }
   }
@@ -165,7 +170,8 @@ export function SubscriptionManagementDialog({
           size: subscriptionsPagination.pageSize,
         })
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('退订失败:', error)
       toast.error(tProfile('unsubscribeFailed'))
     }
@@ -185,7 +191,8 @@ export function SubscriptionManagementDialog({
           size: subscriptionsPagination.pageSize,
         })
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('恢复订阅失败:', error)
       toast.error(tProfile('updateFailed'))
     }
@@ -199,13 +206,16 @@ export function SubscriptionManagementDialog({
       if (response?.code === 0 && response.data) {
         setCurrentOrderDetail(response.data[0])
         setOrderDetailVisible(true)
-      } else {
+      }
+      else {
         toast.error(tProfile('getOrderDetailFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('获取订单详情失败:', error)
       toast.error(tProfile('getOrderDetailFailed'))
-    } finally {
+    }
+    finally {
       setOrderDetailLoading(false)
     }
   }
@@ -235,7 +245,8 @@ export function SubscriptionManagementDialog({
   const getSubscriptionModeText = (mode: PaymentMode | string) => {
     if (mode === PaymentMode.PAYMENT) {
       return tVip('oneTimePurchase')
-    } else if (mode === PaymentMode.SUBSCRIPTION) {
+    }
+    else if (mode === PaymentMode.SUBSCRIPTION) {
       return tProfile('subscription')
     }
     return mode || tProfile('unknown')
@@ -289,7 +300,7 @@ export function SubscriptionManagementDialog({
             <TabsContent value="subscriptions" className="space-y-4">
               <div>
                 <h3 className="text-lg font-semibold mb-4">{tVip('myMembership' as any)}</h3>
-                
+
                 {/* 会员信息卡片 */}
                 {userInfo?.vipInfo && (
                   <div className="border rounded-lg p-4 mb-4 bg-card">
@@ -300,30 +311,39 @@ export function SubscriptionManagementDialog({
                       <div className="flex-1">
                         <div className="font-medium">
                           {(() => {
-                            if (!userInfo.vipInfo) return tVip('modal.vipInfo.monthly' as any)
+                            if (!userInfo.vipInfo)
+                              return tVip('modal.vipInfo.monthly' as any)
                             const statusInfo = getVipStatusInfo(userInfo.vipInfo.status)
                             if (statusInfo.isYearly && statusInfo.isAutoRenew) {
                               return tVip('modal.vipInfo.yearly' as any)
-                            } else if (statusInfo.isYearly && !statusInfo.isAutoRenew) {
+                            }
+                            else if (statusInfo.isYearly && !statusInfo.isAutoRenew) {
                               return `${tVip('modal.vipInfo.yearly' as any)} (${tVip('modal.vipInfo.singleMonth' as any)})`
-                            } else if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
+                            }
+                            else if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
                               return tVip('modal.vipInfo.monthly' as any)
-                            } else if (statusInfo.isMonthly && !statusInfo.isAutoRenew) {
+                            }
+                            else if (statusInfo.isMonthly && !statusInfo.isAutoRenew) {
                               return `${tVip('modal.vipInfo.monthly' as any)} (${tVip('modal.vipInfo.singleMonth' as any)})`
-                            } else if (statusInfo.isOnce) {
+                            }
+                            else if (statusInfo.isOnce) {
                               return statusInfo.isYearly
                                 ? `${tVip('modal.vipInfo.yearly' as any)} (${tVip('modal.vipInfo.singleMonth' as any)})`
                                 : `${tVip('modal.vipInfo.monthly' as any)} (${tVip('modal.vipInfo.singleMonth' as any)})`
-                            } else if (userInfo.vipInfo.status === 'trialing') {
+                            }
+                            else if (userInfo.vipInfo.status === 'trialing') {
                               return `${tVip('modal.vipInfo.monthly' as any)} (${tVip('modal.vipInfo.trial' as any)})`
-                            } else if (userInfo.vipInfo.status === 'active_nonrenewing') {
+                            }
+                            else if (userInfo.vipInfo.status === 'active_nonrenewing') {
                               return tVip('modal.vipInfo.cancelled' as any)
                             }
                             return tVip('modal.vipInfo.monthly' as any)
                           })()}
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">
-                          {tVip('membershipExpires' as any)}: {userInfo.vipInfo.expireTime
+                          {tVip('membershipExpires' as any)}
+                          :
+                          {userInfo.vipInfo.expireTime
                             ? formatDate(userInfo.vipInfo.expireTime)
                             : '-'}
                         </div>
@@ -335,7 +355,7 @@ export function SubscriptionManagementDialog({
                 {/* 订阅列表 */}
                 {subscriptionsLoading ? (
                   <div className="space-y-4">
-                    {[...Array(3)].map((_, i) => (
+                    {[...Array.from({ length: 3 })].map((_, i) => (
                       <Skeleton key={i} className="h-32 w-full" />
                     ))}
                   </div>
@@ -377,7 +397,10 @@ export function SubscriptionManagementDialog({
 
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
-                            <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                            <span className="text-muted-foreground">
+                              {tProfile('subscriptionMode')}
+                              :
+                            </span>
                             <span className="ml-2">
                               {subscription.plan === SubscriptionPlan.MONTH
                                 ? tVip('modal.vipInfo.monthly2' as any)
@@ -387,23 +410,35 @@ export function SubscriptionManagementDialog({
                             </span>
                           </div>
                           <div>
-                            <span className="text-muted-foreground">{tProfile('createTime')}:</span>
+                            <span className="text-muted-foreground">
+                              {tProfile('createTime')}
+                              :
+                            </span>
                             <span className="ml-2">{formatDate(subscription.createdAt)}</span>
                           </div>
                           {subscription.canceledAt && (
                             <div>
-                              <span className="text-muted-foreground">{tProfile('cancelTime')}:</span>
+                              <span className="text-muted-foreground">
+                                {tProfile('cancelTime')}
+                                :
+                              </span>
                               <span className="ml-2">{formatDate(subscription.canceledAt)}</span>
                             </div>
                           )}
                           {subscription.trialEndAt && (
                             <div>
-                              <span className="text-muted-foreground">{tProfile('trialEndTime')}:</span>
+                              <span className="text-muted-foreground">
+                                {tProfile('trialEndTime')}
+                                :
+                              </span>
                               <span className="ml-2">{formatDate(subscription.trialEndAt)}</span>
                             </div>
                           )}
                           <div className="col-span-2">
-                            <span className="text-muted-foreground">{tProfile('subscriptionId')}:</span>
+                            <span className="text-muted-foreground">
+                              {tProfile('subscriptionId')}
+                              :
+                            </span>
                             <div className="flex items-center gap-2 mt-1">
                               <span className="font-mono text-xs">{subscription.id}</span>
                               <Button
@@ -419,26 +454,26 @@ export function SubscriptionManagementDialog({
                         </div>
 
                         <div className="flex justify-end gap-2 pt-2 border-t">
-                          {(subscription.status === SubscriptionStatus.ACTIVE &&
-                            !subscription.cancelAtPeriodEnd) ||
-                          (subscription.status === SubscriptionStatus.TRIALING &&
-                            !subscription.cancelAtPeriodEnd) ? (
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleUnsubscribe(subscription)}
-                            >
-                              {tProfile('cancelSubscription')}
-                            </Button>
-                          ) : subscription.status === SubscriptionStatus.CANCELED &&
-                            subscription.cancelAtPeriodEnd ? (
-                            <Button
-                              size="sm"
-                              onClick={() => handleResumeSubscription(subscription)}
-                            >
-                              {tProfile('resumeSubscription')}
-                            </Button>
-                          ) : null}
+                          {(subscription.status === SubscriptionStatus.ACTIVE
+                            && !subscription.cancelAtPeriodEnd)
+                          || (subscription.status === SubscriptionStatus.TRIALING
+                            && !subscription.cancelAtPeriodEnd) ? (
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={() => handleUnsubscribe(subscription)}
+                                >
+                                  {tProfile('cancelSubscription')}
+                                </Button>
+                              ) : subscription.status === SubscriptionStatus.CANCELED
+                                && subscription.cancelAtPeriodEnd ? (
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleResumeSubscription(subscription)}
+                                    >
+                                      {tProfile('resumeSubscription')}
+                                    </Button>
+                                  ) : null}
                         </div>
                       </div>
                     ))}
@@ -454,8 +489,7 @@ export function SubscriptionManagementDialog({
                             fetchSubscriptions({
                               page: subscriptionsPagination.current - 1,
                               size: subscriptionsPagination.pageSize,
-                            })
-                          }
+                            })}
                         >
                           {tVip('previousPage' as any)}
                         </Button>
@@ -473,8 +507,8 @@ export function SubscriptionManagementDialog({
                           variant="outline"
                           size="sm"
                           disabled={
-                            subscriptionsPagination.current >=
-                            Math.ceil(
+                            subscriptionsPagination.current
+                            >= Math.ceil(
                               subscriptionsPagination.total / subscriptionsPagination.pageSize,
                             )
                           }
@@ -482,8 +516,7 @@ export function SubscriptionManagementDialog({
                             fetchSubscriptions({
                               page: subscriptionsPagination.current + 1,
                               size: subscriptionsPagination.pageSize,
-                            })
-                          }
+                            })}
                         >
                           {tVip('nextPage' as any)}
                         </Button>
@@ -503,7 +536,7 @@ export function SubscriptionManagementDialog({
             <TabsContent value="orders" className="space-y-4">
               {ordersLoading ? (
                 <div className="space-y-4">
-                  {[...Array(3)].map((_, i) => (
+                  {[...Array.from({ length: 3 })].map((_, i) => (
                     <Skeleton key={i} className="h-32 w-full" />
                   ))}
                 </div>
@@ -516,35 +549,58 @@ export function SubscriptionManagementDialog({
                     >
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
-                          <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('subscriptionMode')}
+                            :
+                          </span>
                           <span className="ml-2">{getSubscriptionModeText(order.mode)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">{tProfile('amount')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('amount')}
+                            :
+                          </span>
                           <span className="ml-2">
-                            {(order.amount / 100).toFixed(2)} {order.currency}
+                            {(order.amount / 100).toFixed(2)}
+                            {' '}
+                            {order.currency}
                           </span>
                         </div>
-                          <div>
-                            <span className="text-muted-foreground">{tProfile('quantity')}:</span>
-                            <span className="ml-2">{order.quantity || 1}</span>
-                          </div>
                         <div>
-                          <span className="text-muted-foreground">{tProfile('status')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('quantity')}
+                            :
+                          </span>
+                          <span className="ml-2">{order.quantity || 1}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">
+                            {tProfile('status')}
+                            :
+                          </span>
                           <span className="ml-2">{getOrderStatusTag(order.status)}</span>
                         </div>
                         <div>
-                          <span className="text-muted-foreground">{tProfile('createTime')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('createTime')}
+                            :
+                          </span>
                           <span className="ml-2">{formatDate(order.created)}</span>
                         </div>
-                          <div>
-                            <span className="text-muted-foreground">{tProfile('paymentMethod')}:</span>
-                            <span className="ml-2">
-                              {(order as any).payment_method || tVip('alipayPayment')}
-                            </span>
-                          </div>
+                        <div>
+                          <span className="text-muted-foreground">
+                            {tProfile('paymentMethod')}
+                            :
+                          </span>
+                          <span className="ml-2">
+                            {(order as any).payment_method || tVip('alipayPayment')}
+                          </span>
+                        </div>
                         <div className="col-span-2">
-                          <span className="text-muted-foreground">{tProfile('orderId')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('orderId')}
+                            :
+                          </span>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="font-mono text-xs">{order.id}</span>
                             <Button
@@ -572,8 +628,7 @@ export function SubscriptionManagementDialog({
                           fetchOrders({
                             page: ordersPagination.current - 1,
                             size: ordersPagination.pageSize,
-                          })
-                        }
+                          })}
                       >
                         {tVip('previousPage' as any)}
                       </Button>
@@ -589,15 +644,14 @@ export function SubscriptionManagementDialog({
                         variant="outline"
                         size="sm"
                         disabled={
-                          ordersPagination.current >=
-                          Math.ceil(ordersPagination.total / ordersPagination.pageSize)
+                          ordersPagination.current
+                          >= Math.ceil(ordersPagination.total / ordersPagination.pageSize)
                         }
                         onClick={() =>
                           fetchOrders({
                             page: ordersPagination.current + 1,
                             size: ordersPagination.pageSize,
-                          })
-                        }
+                          })}
                       >
                         {tVip('nextPage' as any)}
                       </Button>
@@ -623,44 +677,70 @@ export function SubscriptionManagementDialog({
             </DialogHeader>
             {orderDetailLoading ? (
               <div className="space-y-4">
-                {[...Array(8)].map((_, i) => (
+                {[...Array.from({ length: 8 })].map((_, i) => (
                   <Skeleton key={i} className="h-4 w-full" />
                 ))}
               </div>
             ) : (
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('orderId')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('orderId')}
+                    :
+                  </span>
                   <span className="font-mono">{currentOrderDetail.id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('internalId')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('internalId')}
+                    :
+                  </span>
                   <span className="font-mono">{currentOrderDetail._id}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('packageType')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('packageType')}
+                    :
+                  </span>
                   <span>{getPaymentTypeText(currentOrderDetail.metadata?.payment)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('subscriptionMode')}
+                    :
+                  </span>
                   <span>{currentOrderDetail.mode}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('amount')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('amount')}
+                    :
+                  </span>
                   <span>
-                    CNY {(currentOrderDetail.amount / 100).toFixed(2)}
+                    CNY
+                    {' '}
+                    {(currentOrderDetail.amount / 100).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('status')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('status')}
+                    :
+                  </span>
                   <span>{getOrderStatusTag(currentOrderDetail.status)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('createTime')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('createTime')}
+                    :
+                  </span>
                   <span>{formatDate(currentOrderDetail.created)}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{tProfile('paymentMethod')}:</span>
+                  <span className="text-muted-foreground">
+                    {tProfile('paymentMethod')}
+                    :
+                  </span>
                   <span>
                     {(currentOrderDetail as any).payment_method || tProfile('unknown')}
                   </span>
@@ -673,4 +753,3 @@ export function SubscriptionManagementDialog({
     </>
   )
 }
-

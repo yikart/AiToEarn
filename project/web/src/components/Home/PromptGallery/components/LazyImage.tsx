@@ -4,8 +4,8 @@
 
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import { Loader2, ImageIcon } from 'lucide-react'
+import { ImageIcon, Loader2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface LazyImageProps {
@@ -27,7 +27,8 @@ export function LazyImage({
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!containerRef.current || imageSrc) return
+    if (!containerRef.current || imageSrc)
+      return
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -41,7 +42,7 @@ export function LazyImage({
       {
         rootMargin: '200px',
         threshold: 0.01,
-      }
+      },
     )
 
     observer.observe(containerRef.current)
@@ -57,7 +58,7 @@ export function LazyImage({
       className={cn(
         'relative w-full overflow-hidden',
         fixedHeight ? 'h-48' : '',
-        className
+        className,
       )}
     >
       {/* 骨架屏加载状态 */}
@@ -76,7 +77,7 @@ export function LazyImage({
           onError={() => setIsError(true)}
           className={cn(
             'w-full h-full object-cover transition-opacity duration-500',
-            isLoaded ? 'opacity-100' : 'opacity-0'
+            isLoaded ? 'opacity-100' : 'opacity-0',
           )}
           loading="lazy"
         />
@@ -92,4 +93,3 @@ export function LazyImage({
     </div>
   )
 }
-

@@ -4,10 +4,10 @@
  */
 'use client'
 
+import type { IDisplayMessage, IWorkflowStep } from '@/store/agent'
 import { ArrowDown } from 'lucide-react'
 import { ChatMessage } from '@/components/Chat/ChatMessage'
 import { Button } from '@/components/ui/button'
-import type { IDisplayMessage, IWorkflowStep } from '@/store/agent'
 
 export interface IChatMessageListProps {
   /** 消息列表 */
@@ -57,8 +57,8 @@ export function ChatMessageList({
       >
         {filteredMessages.map((message, index) => {
           // 判断是否为最后一条 assistant 消息（用于显示工作流）
-          const isLastAssistant =
-            message.role === 'assistant' && index === filteredMessages.length - 1
+          const isLastAssistant
+            = message.role === 'assistant' && index === filteredMessages.length - 1
 
           return (
             <ChatMessage
@@ -78,7 +78,7 @@ export function ChatMessageList({
         })}
 
         {/* 如果正在生成但还没有 assistant 消息，显示一个空的 AI 消息 */}
-        {isGenerating && messages.every((m) => m.role === 'user') && (
+        {isGenerating && messages.every(m => m.role === 'user') && (
           <ChatMessage
             role="assistant"
             content=""
@@ -109,4 +109,3 @@ export function ChatMessageList({
     </div>
   )
 }
-

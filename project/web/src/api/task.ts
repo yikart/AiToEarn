@@ -68,7 +68,6 @@ export function apiGetTaskOpportunityList(params: {
   return http.get<{ list: TaskOpportunity[] }>(`task/opportunity/list/${params.page}/${params.pageSize}`)
 }
 
-
 // 获取已接受的任务列表
 export function apiGetUserTaskList(params: {
   page?: number
@@ -85,7 +84,6 @@ export function apiGetUserTaskList(params: {
 export function apiGetUserTaskDetail(id: string) {
   return http.get<any>(`task/userTask/info/${id}`)
 }
-
 
 /**
  * 获取未读任务数量

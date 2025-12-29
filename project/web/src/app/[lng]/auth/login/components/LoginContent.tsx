@@ -6,6 +6,9 @@
 
 'use client'
 
+import type {
+  GoogleLoginParams,
+} from '@/api/apiReq'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleLogin } from '@react-oauth/google'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -15,11 +18,10 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
+import { z } from 'zod'
 import {
   googleLoginApi,
-  GoogleLoginParams,
   loginWithMailApi,
   mailRegistApi,
 } from '@/api/apiReq'
@@ -107,7 +109,8 @@ export default function LoginContent() {
           setUserEmail(data.email)
           registerForm.setValue('password', data.password)
           setStep('register')
-        } else if (response.data.token) {
+        }
+        else if (response.data.token) {
           // 登录成功
           setToken(response.data.token)
           if (response.data.userInfo) {
@@ -116,10 +119,12 @@ export default function LoginContent() {
           toast.success(t('loginSuccess'))
           router.push('/')
         }
-      } else {
+      }
+      else {
         toast.error(response.message || t('loginFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('loginError'))
     }
   }
@@ -147,10 +152,12 @@ export default function LoginContent() {
         }
         toast.success(t('registerSuccess'))
         router.push('/')
-      } else {
+      }
+      else {
         toast.error(response.message || t('registerError'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('registerError'))
     }
   }
@@ -177,10 +184,12 @@ export default function LoginContent() {
         }
         toast.success(t('loginSuccess'))
         router.push('/')
-      } else {
+      }
+      else {
         toast.error(response.message || t('googleLoginFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('googleLoginFailed'))
     }
   }
@@ -429,11 +438,14 @@ export default function LoginContent() {
 
         {/* 底部条款 */}
         <p className="mt-10 text-center text-xs text-muted-foreground/70">
-          {t('termsText')}{' '}
+          {t('termsText')}
+          {' '}
           <Link href="/websit/terms-of-service" className="text-muted-foreground underline hover:text-foreground">
             {t('termsOfService')}
           </Link>
-          {' '}{t('and')}{' '}
+          {' '}
+          {t('and')}
+          {' '}
           <Link href="/websit/privacy-policy" className="text-muted-foreground underline hover:text-foreground">
             {t('privacyPolicy')}
           </Link>
@@ -442,4 +454,3 @@ export default function LoginContent() {
     </div>
   )
 }
-

@@ -6,10 +6,12 @@
 
 'use client'
 
-import { useRef, useState, useEffect, KeyboardEvent } from 'react'
+import type { KeyboardEvent } from 'react'
+import type { IUploadedMedia } from '../MediaUpload'
 import { ArrowUp, Loader2, Square } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
 import { cn } from '@/lib/utils'
-import { MediaUpload, type IUploadedMedia } from '../MediaUpload'
+import { MediaUpload } from '../MediaUpload'
 
 export interface IChatInputProps {
   /** 输入内容 */
@@ -61,18 +63,21 @@ export function ChatInput({
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
 
-  /** 自动调整高度
+  /**
+   * 自动调整高度
    * - large 模式：根据内容自适应高度（最多 200px）
    * - compact 模式：保持单行起步，允许根据内容适度增高
    */
   useEffect(() => {
-    if (!textareaRef.current) return
+    if (!textareaRef.current)
+      return
 
     if (mode === 'large') {
       textareaRef.current.style.height = 'auto'
       const maxHeight = 200
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, maxHeight)}px`
-    } else {
+    }
+    else {
       textareaRef.current.style.height = 'auto'
     }
   }, [value, mode])
@@ -93,7 +98,7 @@ export function ChatInput({
     // 中断功能暂时禁用
     // if (isGenerating) {
     //   onStop?.()
-    // } else 
+    // } else
     if (!disabled && !isUploading && value.trim() && !isGenerating) {
       onSend()
     }
@@ -134,7 +139,7 @@ export function ChatInput({
         <textarea
           ref={textareaRef}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={e => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -191,4 +196,3 @@ export function ChatInput({
 }
 
 export default ChatInput
-

@@ -15,9 +15,9 @@ import {
   useEffect,
   useState,
 } from 'react'
-import { Modal } from '@/components/ui/modal'
 import { getMediaGroupList, getMediaList } from '@/api/media'
 import { useTransClient } from '@/app/i18n/client'
+import { Modal } from '@/components/ui/modal'
 import { getOssUrl } from '@/utils/oss'
 
 export interface IMaterialSelectionModalRef {}

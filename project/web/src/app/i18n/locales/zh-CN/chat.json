@@ -29,8 +29,7 @@
       "completed": "已完成",
       "requiresAction": "需要操作",
       "failed": "失败"
-    }
-    ,
+    },
     "rate": "评分"
   },
   "home": {
@@ -106,4 +105,3 @@
     "continue": "继续"
   }
 }
-

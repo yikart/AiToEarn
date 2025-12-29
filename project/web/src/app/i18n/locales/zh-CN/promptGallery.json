@@ -30,8 +30,7 @@
     "generate": "文生图",
     "edit": "图片编辑",
     "searchPlaceholder": "搜索标题..."
-  }
-  ,
+  },
   "apply": "应用",
   "prompts": {
     "dora": {
@@ -46,8 +45,7 @@
       "title": "复古城市海报",
       "prompt": "生成三张复古电影海报风格的城市夜景图片，竖版，适配 Twitter，免版权素材，并直接发布到 Twitter"
     }
-  }
-  ,
+  },
   "agentFeatures": {
     "title": "Aitoearn 关键特性",
     "subtitle": "我们的特色功能，一键触达",
@@ -87,4 +85,3 @@
     }
   }
 }
-

@@ -5,7 +5,6 @@ import type {
 } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
 import { PlusOutlined, PushpinOutlined, SearchOutlined } from '@ant-design/icons'
 import { Button, Input, List, Tooltip } from 'antd'
-import { toast } from '@/lib/toast'
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { createPinterestBoardApi } from '@/api/pinterest'
@@ -15,6 +14,7 @@ import CommonTitleInput from '@/components/PublishDialog/compoents/PlatParamsSet
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import { usePublishDialogData } from '@/components/PublishDialog/usePublishDialogData'
+import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import styles from '../platParamsSetting.module.scss'
 

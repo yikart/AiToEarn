@@ -46,7 +46,8 @@ export async function kwaiSkip(platType: PlatType, spaceId?: string): Promise<an
           }
 
           return false
-        } catch (error) {
+        }
+        catch (error) {
           reject(error)
           return true
         }
@@ -65,7 +66,8 @@ export async function kwaiSkip(platType: PlatType, spaceId?: string): Promise<an
         clearInterval(interval)
         reject(new Error('timeout'))
       }, 5 * 60 * 1000)
-    } catch (error) {
+    }
+    catch (error) {
       reject(error)
     }
   })

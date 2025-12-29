@@ -5,11 +5,16 @@
 
 import type { ForwardedRef } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
+import type { PluginPlatformType } from '@/store/plugin'
 import type { IpLocationInfo } from '@/utils/ipLocation'
-import { toast } from '@/lib/toast'
-import { confirm } from '@/lib/confirm'
-import { Modal } from '@/components/ui/modal'
+import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
+import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'
+import { AccountPlatInfoArr, AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { useTransClient } from '@/app/i18n/client'
+import DownloadAppModal from '@/components/common/DownloadAppModal'
 import { Button } from '@/components/ui/button'
+import { Modal } from '@/components/ui/modal'
 import {
   Select,
   SelectContent,
@@ -23,14 +28,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
-import { useShallow } from 'zustand/react/shallow'
-import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'
-import { AccountPlatInfoArr, AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
-import { useTransClient } from '@/app/i18n/client'
-import DownloadAppModal from '@/components/common/DownloadAppModal'
+import { confirm } from '@/lib/confirm'
+import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
-import type { PluginPlatformType } from '@/store/plugin'
 import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus, usePluginStore } from '@/store/plugin'
 import { getIpLocation } from '@/utils/ipLocation'
 import { bilibiliSkip } from '../../plat/BilibiliLogin'
@@ -242,7 +242,7 @@ const AddAccountModal = memo(
           const currentSpace = accountGroupList.find(group => group.id === selectedSpaceId)
 
           if (currentSpace) {
-            const newAccounts = currentSpace.children.filter(account => {
+            const newAccounts = currentSpace.children.filter((account) => {
               // 这里可以根据时间戳或其他方式判断是否为新账号
               // 暂时简单判断数量变化
               return true // 需要更精确的判断逻辑
@@ -260,7 +260,8 @@ const AddAccountModal = memo(
 
           // 关闭弹窗
           onClose()
-        } catch (error) {
+        }
+        catch (error) {
           console.error('处理授权成功失败:', error)
           toast.error(t('addAccountModal.authSuccessFailed'))
         }
@@ -360,7 +361,8 @@ const AddAccountModal = memo(
                   // 在用户点击"我知道了"时立即执行授权，确保 window.open 在用户交互上下文中
                   try {
                     authResult = await kwaiSkip(key, selectedSpaceId)
-                  } catch (error) {
+                  }
+                  catch (error) {
                     console.error('快手授权失败:', error)
                     throw error
                   }
@@ -405,22 +407,22 @@ const AddAccountModal = memo(
           if (authResult && key !== PlatType.Facebook) {
             await handleAuthSuccess(authResult, key)
           }
-        } catch (error) {
+        }
+        catch (error) {
           console.error(`${key} 授权失败:`, error)
           // 可以在这里添加失败提示
         }
-
       }
 
       return (
         <>
           <Modal
-            title={
+            title={(
               <div className="flex items-center gap-2">
                 <span className="text-xl">🎯</span>
                 <span className="text-sm sm:text-base md:text-lg font-semibold">{t('addAccountModal.title')}</span>
               </div>
-            }
+            )}
             open={open}
             onOk={handleOk}
             onCancel={handleCancel}
@@ -461,7 +463,10 @@ const AddAccountModal = memo(
                 <div className="mb-3 sm:mb-4 p-2.5 sm:p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100 text-xs sm:text-sm text-gray-600 w-full">
                   <span className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                     <span className="inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
-                    <span>{t('addAccountModal.currentSpace')}:</span>
+                    <span>
+                      {t('addAccountModal.currentSpace')}
+                      :
+                    </span>
                     <span className="font-semibold text-gray-800">
                       {accountGroupList.find(g => g.id === selectedSpaceId)?.name}
                     </span>
@@ -470,7 +475,7 @@ const AddAccountModal = memo(
               )}
 
               {/* 平台网格 - 响应式优化 */}
-              <div 
+              <div
                 className="
                   w-full p-3 grid gap-2 sm:gap-3 mb-3 sm:mb-4
                   overflow-y-auto overflow-x-hidden
@@ -483,11 +488,11 @@ const AddAccountModal = memo(
                 "
                 style={{
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#cbd5e1 #f1f5f9'
+                  scrollbarColor: '#cbd5e1 #f1f5f9',
                 }}
               >
-                      <TooltipProvider>
-                        {AccountPlatInfoArr.map(([key, value]) => {
+                <TooltipProvider>
+                  {AccountPlatInfoArr.map(([key, value]) => {
                     const isAvailable = isPlatformAvailable(key as PlatType)
                     const isLoading = syncLoadingPlatform === key
                     return (
@@ -517,7 +522,7 @@ const AddAccountModal = memo(
                           >
                             {/* 光泽效果 */}
                             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                            
+
                             <div className="flex flex-col items-center gap-1.5 sm:gap-2 w-full relative z-10">
                               {isLoading ? (
                                 <div className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11 flex items-center justify-center">
@@ -536,7 +541,7 @@ const AddAccountModal = memo(
                                   alt={value.name}
                                 />
                               )}
-                              <span 
+                              <span
                                 className={`
                                   text-[11px] sm:text-xs text-center font-medium 
                                   leading-tight transition-all duration-300
@@ -555,8 +560,8 @@ const AddAccountModal = memo(
                         </TooltipContent>
                       </Tooltip>
                     )
-                        })}
-                      </TooltipProvider>
+                  })}
+                </TooltipProvider>
               </div>
 
               {/* 属地限制提示 */}

@@ -8,8 +8,6 @@ import type {
 } from 'react'
 import { FolderOpenOutlined } from '@ant-design/icons'
 import { Button, List, Spin } from 'antd'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
 import {
   forwardRef,
   memo,
@@ -24,6 +22,8 @@ import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { Modal } from '@/components/ui/modal'
+import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 
 export interface IDraftSelectionModalRef {}

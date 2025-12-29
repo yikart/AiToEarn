@@ -16,7 +16,7 @@
 
   .pageHeader {
     margin-bottom: 24px;
-    
+
     .pageTitle {
       font-size: 24px;
       font-weight: 600;
@@ -25,13 +25,13 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      
+
       .backIcon {
         cursor: pointer;
         font-size: 20px;
         color: #8c8c8c;
         transition: color 0.2s;
-        
+
         &:hover {
           color: #1890ff;
         }
@@ -43,27 +43,27 @@
     margin-bottom: 16px;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    
+
     :global(.ant-card-body) {
       padding: 16px 24px;
     }
-    
+
     .taskInfo {
       display: flex;
       align-items: center;
       gap: 32px;
       flex-wrap: wrap;
-      
+
       .infoItem {
         display: flex;
         align-items: center;
         gap: 8px;
-        
+
         .label {
           font-size: 14px;
           color: #8c8c8c;
         }
-        
+
         .value {
           font-size: 14px;
           color: #262626;
@@ -77,14 +77,14 @@
     margin-bottom: 16px;
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    
+
     .noteContent {
       display: flex;
       gap: 24px;
-      
+
       .noteImage {
         flex-shrink: 0;
-        
+
         :global(.ant-image) {
           display: block;
         }
@@ -97,11 +97,11 @@
           display: block;
         }
       }
-      
+
       .noteDetails {
         flex: 1;
         min-width: 0;
-        
+
         .authorInfo {
           display: flex;
           align-items: center;
@@ -120,7 +120,7 @@
             color: #262626;
           }
         }
-        
+
         .noteTitle {
           font-size: 20px;
           font-weight: 600;
@@ -129,24 +129,24 @@
           line-height: 1.4;
           word-break: break-word;
         }
-        
+
         .noteTags {
           display: flex;
           align-items: center;
           gap: 12px;
           margin-bottom: 16px;
-          
+
           .viewLink {
             color: #1890ff;
             font-size: 14px;
             text-decoration: none;
-            
+
             &:hover {
               text-decoration: underline;
             }
           }
         }
-        
+
         .noteDesc {
           font-size: 14px;
           color: #595959;
@@ -156,34 +156,34 @@
           word-break: break-word;
           overflow: auto;
         }
-        
+
         .noteStats {
           display: flex;
           gap: 32px;
           padding-top: 16px;
           border-top: 1px solid #f0f0f0;
-          
-        .statItem {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          
-          .statIcon {
-            font-size: 16px;
-            color: #1890ff;
+
+          .statItem {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            .statIcon {
+              font-size: 16px;
+              color: #1890ff;
+            }
+
+            .statLabel {
+              font-size: 14px;
+              color: #8c8c8c;
+            }
+
+            .statValue {
+              font-size: 16px;
+              font-weight: 600;
+              color: #262626;
+            }
           }
-          
-          .statLabel {
-            font-size: 14px;
-            color: #8c8c8c;
-          }
-          
-          .statValue {
-            font-size: 16px;
-            font-weight: 600;
-            color: #262626;
-          }
-        }
         }
       }
     }
@@ -192,25 +192,25 @@
   .incrementCard {
     border-radius: 8px;
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-    
+
     .cardTitle {
       font-size: 18px;
       font-weight: 600;
       color: #1a1a1a;
       margin: 0 0 20px 0;
     }
-    
+
     :global {
       .ant-table {
         font-size: 14px;
       }
-      
+
       .ant-table-thead > tr > th {
         background-color: #fafafa;
         font-weight: 600;
         color: #262626;
       }
-      
+
       .ant-table-tbody > tr:hover > td {
         background-color: #f5f7fa;
       }
@@ -222,25 +222,25 @@
 @media (max-width: 768px) {
   .detailPage {
     padding: 16px;
-    
+
     .noteCard {
       .noteContent {
         flex-direction: column;
-        
+
         .noteImage {
           width: 100%;
-          
+
           :global(.ant-image) {
             width: 100%;
           }
         }
       }
     }
-    
+
     .taskInfoCard {
       .taskInfo {
         gap: 16px;
-        
+
         .infoItem {
           flex: 1 1 100%;
         }

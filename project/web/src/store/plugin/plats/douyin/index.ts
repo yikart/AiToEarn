@@ -13,7 +13,6 @@
  *   └── homeFeed.ts   # 首页列表功能模块
  */
 
-import { PlatType } from '@/app/config/platConfig'
 import type {
   CommentListParams,
   CommentListResult,
@@ -31,6 +30,7 @@ import type {
   SubCommentListParams,
 } from '../types'
 import type { DouyinDirectMessageResponse, DouyinInteractionResponse } from './types'
+import { PlatType } from '@/app/config/platConfig'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
 import { getWorkDetail, getWorkDetailFromListItem } from './workDetail'
 

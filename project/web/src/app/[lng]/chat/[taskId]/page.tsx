@@ -5,20 +5,19 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { ChatInput } from '@/components/Chat/ChatInput'
-import { useAgentStore } from '@/store/agent'
-import { useMediaUpload } from '@/hooks/useMediaUpload'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { ChatInput } from '@/components/Chat/ChatInput'
+import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
+import { disableDebugReplay, enableDebugReplay, useAgentStore } from '@/store/agent'
 /* rating entry moved into ChatHeader */
 
 // 页面私有组件
-import { ChatHeader, ChatMessageList, ChatLoadingSkeleton } from './components'
+import { ChatHeader, ChatLoadingSkeleton, ChatMessageList } from './components'
 // 页面私有 hooks
-import { useScrollControl, useChatState } from './hooks'
-import { enableDebugReplay, disableDebugReplay } from '@/store/agent'
+import { useChatState, useScrollControl } from './hooks'
 
 export default function ChatDetailPage() {
   const { t } = useTransClient('chat')
@@ -27,7 +26,7 @@ export default function ChatDetailPage() {
   const params = useParams()
   const taskId = params.taskId as string
   const lng = params.lng as string
-  const isInitialRender = useRef(false);
+  const isInitialRender = useRef(false)
 
   // Store 方法
   const { createTask, continueTask, stopTask, setActionContext, handleSSEMessage, consumePendingTask } = useAgentStore()
@@ -74,7 +73,8 @@ export default function ChatDetailPage() {
   })
 
   useEffect(() => {
-    if (isInitialRender.current || displayMessages.length === 0) return
+    if (isInitialRender.current || displayMessages.length === 0)
+      return
     isInitialRender.current = true
     setTimeout(() => {
       scrollToBottom()
@@ -82,7 +82,7 @@ export default function ChatDetailPage() {
   }, [displayMessages, isInitialRender])
 
   /**
-   * 设置 Action 上下文（用于处理任务结果的 action） 
+   * 设置 Action 上下文（用于处理任务结果的 action）
    */
   useEffect(() => {
     setActionContext({
@@ -96,7 +96,8 @@ export default function ChatDetailPage() {
    * 处理新任务：当 taskId 为 "new" 时，从 store 获取待处理任务并发起请求
    */
   useEffect(() => {
-    if (taskId !== 'new') return
+    if (taskId !== 'new')
+      return
 
     const pendingTask = consumePendingTask()
     if (!pendingTask) {
@@ -119,7 +120,8 @@ export default function ChatDetailPage() {
             router.replace(`/${lng}/chat/${newTaskId}`)
           },
         })
-      } catch (error: any) {
+      }
+      catch (error: any) {
         console.error('[ChatPage] Create task failed:', error)
         toast.error(error.message || t('message.error'))
         // 出错时返回首页
@@ -143,7 +145,8 @@ export default function ChatDetailPage() {
    * 发送消息（继续对话）
    */
   const handleSend = useCallback(async () => {
-    if (!inputValue.trim() || isGenerating) return
+    if (!inputValue.trim() || isGenerating)
+      return
 
     const currentPrompt = inputValue
     const currentMedias = [...medias]
@@ -163,13 +166,15 @@ export default function ChatDetailPage() {
         t: t as (key: string) => string,
         taskId,
       })
-    } catch (error: any) {
+    }
+    catch (error: any) {
       console.error('Continue task failed:', error)
       toast.error(error.message || t('message.error'))
       // 恢复输入
       setInputValue(currentPrompt)
       setMedias(currentMedias)
-    } finally {
+    }
+    finally {
       setLocalIsGenerating(false)
     }
   }, [
@@ -201,7 +206,8 @@ export default function ChatDetailPage() {
     // Otherwise, navigate to the root homepage.
     if (typeof window !== 'undefined' && window.history.length > 1) {
       router.back()
-    } else {
+    }
+    else {
       router.push('/')
     }
   }, [router, lng])
@@ -213,7 +219,8 @@ export default function ChatDetailPage() {
         const params = new URLSearchParams(window.location.search)
         return [params.get('debug') === 'true', () => params.get('debug') === 'true']
       }
-    } catch (e) {}
+    }
+    catch (e) {}
     return [false, () => false]
   })()
 
@@ -222,14 +229,16 @@ export default function ChatDetailPage() {
     if (showReplay) {
       try {
         enableDebugReplay()
-      } catch (e) {}
+      }
+      catch (e) {}
     }
     return () => {
       // disable debug replay on unmount
       if (showReplay) {
         try {
           disableDebugReplay()
-        } catch (e) {}
+        }
+        catch (e) {}
       }
     }
   }, [showReplay])

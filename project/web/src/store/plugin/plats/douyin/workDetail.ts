@@ -1,6 +1,6 @@
 /**
  * 抖音作品详情功能模块
- * 
+ *
  * 抖音不需要额外请求详情API，直接从list的item数据获取详情
  */
 
@@ -31,7 +31,8 @@ function buildTopicUrl(keyword: string): string {
  * @returns 话题名称数组
  */
 function extractTopicsFromDesc(desc: string): string[] {
-  if (!desc) return []
+  if (!desc)
+    return []
   // 匹配 #话题 格式的标签（中文、英文、数字）
   const regex = /#([^\s#]+)/g
   const topics: string[] = []
@@ -46,7 +47,8 @@ function extractTopicsFromDesc(desc: string): string[] {
  * 格式化数字（转换大数字为"万"）
  */
 function formatCount(count: number | undefined): string {
-  if (!count) return '0'
+  if (!count)
+    return '0'
   if (count >= 10000) {
     return `${(count / 10000).toFixed(1)}万`
   }
@@ -72,7 +74,7 @@ export function transformToWorkDetail(item: any): WorkDetail {
 
   // 解析话题列表
   const topicNames: string[] = []
-  
+
   if (item.cha_list && Array.isArray(item.cha_list)) {
     item.cha_list.forEach((cha: any) => {
       if (cha.cha_name) {
@@ -80,7 +82,7 @@ export function transformToWorkDetail(item: any): WorkDetail {
       }
     })
   }
-  
+
   if (topicNames.length === 0 && item.text_extra && Array.isArray(item.text_extra)) {
     item.text_extra.forEach((extra: any) => {
       if (extra.hashtag_name) {
@@ -88,7 +90,7 @@ export function transformToWorkDetail(item: any): WorkDetail {
       }
     })
   }
-  
+
   if (topicNames.length === 0) {
     // 从描述中解析话题
     topicNames.push(...extractTopicsFromDesc(item.desc || ''))
@@ -200,11 +202,11 @@ export function getWorkDetailFromListItem(listItemOrigin: any): GetWorkDetailRes
       success: true,
       detail,
     }
-  } catch (error) {
+  }
+  catch (error) {
     return {
       success: false,
       message: error instanceof Error ? error.message : '转换详情数据失败',
     }
   }
 }
-

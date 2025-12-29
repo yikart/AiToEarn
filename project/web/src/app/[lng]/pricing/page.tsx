@@ -6,8 +6,8 @@
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import { PricingContent } from './components/PricingContent'
 import { getMetadata } from '@/utils/general'
+import { PricingContent } from './components/PricingContent'
 
 // SEO 元数据
 export async function generateMetadata({
@@ -16,7 +16,8 @@ export async function generateMetadata({
   params: Promise<{ lng: string }>
 }): Promise<Metadata> {
   let { lng } = await params
-  if (!languages.includes(lng)) lng = fallbackLng
+  if (!languages.includes(lng))
+    lng = fallbackLng
   const { t } = await useTranslation(lng, 'vip')
 
   return getMetadata(
@@ -33,11 +34,10 @@ interface PricingPageProps {
   params: Promise<{ lng: string }>
 }
 
-const PricingPage = async ({ params }: PricingPageProps) => {
+async function PricingPage({ params }: PricingPageProps) {
   const { lng } = await params
 
   return <PricingContent lng={lng} />
 }
 
 export default PricingPage
-

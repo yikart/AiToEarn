@@ -1,17 +1,17 @@
 import type { CSSProperties } from 'react'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
-import { Button } from 'antd'
-import { 
-  CompressOutlined, 
-  ExpandOutlined, 
-  EditOutlined, 
-  TranslationOutlined,
-  TagsOutlined,
+import type { AIAction } from './PublishDialogAi'
+import {
+  CompressOutlined,
+  EditOutlined,
+  ExpandOutlined,
   PictureOutlined,
+  TagsOutlined,
+  TranslationOutlined,
   VideoCameraOutlined,
 } from '@ant-design/icons'
+import { Button } from 'antd'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import type { AIAction } from './PublishDialogAi'
 import styles from './TextSelectionToolbar.module.scss'
 
 export interface TextSelectionToolbarProps {
@@ -24,7 +24,7 @@ export interface TextSelectionToolbarProps {
 const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionToolbarProps) => {
   const { t } = useTransClient('publish')
   const [visible, setVisible] = useState(false)
-  const [position, setPosition] = useState<{ top: number; left: number }>({ top: 0, left: 0 })
+  const [position, setPosition] = useState<{ top: number, left: number }>({ top: 0, left: 0 })
   const [selectedText, setSelectedText] = useState('')
   const toolbarRef = useRef<HTMLDivElement>(null)
 
@@ -41,7 +41,7 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
     if (containerRef.current && selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0)
       const container = containerRef.current
-      
+
       if (!container.contains(range.commonAncestorContainer)) {
         setVisible(false)
         return
@@ -77,7 +77,7 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
 
     const handleClickOutside = (e: MouseEvent) => {
       if (
-        toolbarRef.current 
+        toolbarRef.current
         && !toolbarRef.current.contains(e.target as Node)
         && visible
       ) {
@@ -94,7 +94,8 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
     }
   }, [handleSelection, visible])
 
-  if (!visible) return null
+  if (!visible)
+    return null
 
   const toolbarStyle: CSSProperties = {
     position: 'fixed',
@@ -190,4 +191,3 @@ const TextSelectionToolbar = memo(({ containerRef, onAction }: TextSelectionTool
 })
 
 export default TextSelectionToolbar
-

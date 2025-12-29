@@ -3,26 +3,26 @@
  * 包含创建任务、继续任务、SSE处理等核心逻辑
  */
 
-import { toast } from '@/lib/toast'
-import { useUserStore } from '@/store/user'
-import { agentApi } from '@/api/agent'
-import { getInitialState } from './agent.state'
-import { calculateProgress as calcProgress, getStatusConfig } from './utils/progress'
-import { SSEHandlerRegistry, ActionRegistry } from './handlers'
-import { buildPromptForAPI } from './utils/buildPrompt'
-import type { ISSEHandlerContext, ISSECallbacks } from './handlers'
+import type {
+  IActionCard,
+  IActionContext,
+  IAgentState,
+  ICreateTaskParams,
+  IPendingTask,
+  ISSEMessage,
+  ITaskData,
+} from './agent.types'
+import type { ISSECallbacks, ISSEHandlerContext } from './handlers'
+import type { MessageUtils } from './utils/message'
 import type { IAgentRefs } from './utils/refs'
 import type { WorkflowUtils } from './utils/workflow'
-import type { MessageUtils } from './utils/message'
-import type {
-  IAgentState,
-  ISSEMessage,
-  ICreateTaskParams,
-  ITaskData,
-  IActionContext,
-  IActionCard,
-  IPendingTask,
-} from './agent.types'
+import { agentApi } from '@/api/agent'
+import { toast } from '@/lib/toast'
+import { useUserStore } from '@/store/user'
+import { getInitialState } from './agent.state'
+import { ActionRegistry, SSEHandlerRegistry } from './handlers'
+import { buildPromptForAPI } from './utils/buildPrompt'
+import { calculateProgress as calcProgress, getStatusConfig } from './utils/progress'
 
 // ============ 方法工厂上下文 ============
 
@@ -71,7 +71,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
 
     if (resultMsg.result) {
       const resultArray: ITaskData[] = Array.isArray(resultMsg.result) ? resultMsg.result : [resultMsg.result]
-      
+
       resultArray.forEach((taskData) => {
         if (taskData.action && cardActionTypes.includes(taskData.action)) {
           // 转换为 ActionCard 格式
@@ -84,7 +84,8 @@ export function createStoreMethods(ctx: IMethodsContext) {
             medias: taskData.medias,
             tags: taskData.tags,
           })
-        } else {
+        }
+        else {
           // 其他 action 自动执行
           autoExecuteActions.push(taskData)
         }
@@ -94,22 +95,24 @@ export function createStoreMethods(ctx: IMethodsContext) {
     // 显示结果消息
     if (resultMsg.message) {
       messageUtils.addMarkdownMessage(resultMsg.message)
-      
+
       // 确保有 assistant 消息存在并更新内容
       const currentState = get()
       const currentAssistantId = refs.currentAssistantMessageId.value
       const hasAssistantMessage = currentState.messages.some(
-        (m: any) => m.role === 'assistant' && m.id === currentAssistantId
+        (m: any) => m.role === 'assistant' && m.id === currentAssistantId,
       )
-      
+
       if (hasAssistantMessage && currentAssistantId) {
         // 如果 assistant 消息存在，更新其内容和 actions
         if (actionCards.length > 0) {
           messageUtils.updateMessageWithActions(resultMsg.message, actionCards)
-        } else {
+        }
+        else {
           messageUtils.updateMessageContent(resultMsg.message)
         }
-      } else {
+      }
+      else {
         // 如果没有 assistant 消息，创建一个新的
         const assistantMessage = messageUtils.createAssistantMessage()
         assistantMessage.content = resultMsg.message
@@ -121,7 +124,8 @@ export function createStoreMethods(ctx: IMethodsContext) {
         // 更新 refs 以便后续更新
         refs.currentAssistantMessageId.value = assistantMessage.id
       }
-    } else if (actionCards.length > 0) {
+    }
+    else if (actionCards.length > 0) {
       // 如果没有消息但有 action cards，也要更新
       messageUtils.updateMessageActions(actionCards)
     }
@@ -145,7 +149,8 @@ export function createStoreMethods(ctx: IMethodsContext) {
       if (userStore?.fetchCreditsBalance) {
         userStore.fetchCreditsBalance()
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.warn('[AgentStore] Failed to refresh credits balance:', error)
     }
   }
@@ -172,14 +177,18 @@ export function createStoreMethods(ctx: IMethodsContext) {
       try {
         if (typeof sseMessage.message === 'string') {
           errText = sseMessage.message
-        } else if (sseMessage.message && typeof sseMessage.message === 'object') {
+        }
+        else if (sseMessage.message && typeof sseMessage.message === 'object') {
           errText = JSON.stringify(sseMessage.message)
-        } else if (sseMessage.data) {
+        }
+        else if (sseMessage.data) {
           errText = typeof sseMessage.data === 'string' ? sseMessage.data : JSON.stringify(sseMessage.data)
-        } else {
+        }
+        else {
           errText = `Error: ${sseMessage}`
         }
-      } catch (e) {
+      }
+      catch (e) {
         errText = 'Unknown error'
       }
 
@@ -320,12 +329,13 @@ export function createStoreMethods(ctx: IMethodsContext) {
         const checkInterval = 100
 
         while (!get().currentTaskId && waitTime < maxWaitTime) {
-          await new Promise((resolve) => setTimeout(resolve, checkInterval))
+          await new Promise(resolve => setTimeout(resolve, checkInterval))
           waitTime += checkInterval
         }
 
         return get().currentTaskId || null
-      } catch (error: any) {
+      }
+      catch (error: any) {
         console.error('[AgentStore] Create task error:', error)
         const errorMsg = refs.t.value
           ? `${refs.t.value('aiGeneration.createTaskFailed' as any)}: ${error.message || refs.t.value('aiGeneration.unknownError' as any)}`
@@ -360,7 +370,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
 
         // 添加用户消息
         const userMessage = messageUtils.createUserMessage(prompt, medias)
-        set((state) => ({
+        set(state => ({
           messages: [...state.messages, userMessage],
         }))
         messageUtils.addMarkdownMessage(`👤 ${prompt}`)
@@ -396,7 +406,8 @@ export function createStoreMethods(ctx: IMethodsContext) {
         )
 
         refs.sseAbort.value = abortFn
-      } catch (error: any) {
+      }
+      catch (error: any) {
         console.error('[AgentStore] Continue task error:', error)
         toast.error(error.message || 'Continue task failed')
         set({ isGenerating: false, progress: 0 })

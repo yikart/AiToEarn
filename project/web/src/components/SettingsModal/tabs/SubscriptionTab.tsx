@@ -5,19 +5,20 @@
 
 'use client'
 
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import type { CreditsRecordVo } from '@/api/credits'
 import { ChevronLeft, ChevronRight, Sparkles } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useTransClient } from '@/app/i18n/client'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   centsToUsd,
+
   formatAmountChange,
   getCreditsBalanceApi,
   getCreditsRecordsApi,
-  type CreditsRecordVo,
 } from '@/api/credits'
+import { useTransClient } from '@/app/i18n/client'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 
@@ -40,7 +41,8 @@ export function SubscriptionTab() {
   // 判断用户是否为有效会员
   const isVip = useMemo(() => {
     const vipInfo = userInfo?.vipInfo
-    if (!vipInfo || !vipInfo.expireTime) return false
+    if (!vipInfo || !vipInfo.expireTime)
+      return false
 
     // 检查状态是否为有效会员状态（排除 expired 和 none）
     const validStatuses = [
@@ -51,7 +53,8 @@ export function SubscriptionTab() {
       'active_yearly',
       'active_nonrenewing',
     ]
-    if (!validStatuses.includes(vipInfo.status)) return false
+    if (!validStatuses.includes(vipInfo.status))
+      return false
 
     // 检查过期时间是否未过期
     return new Date(vipInfo.expireTime) > new Date()
@@ -125,7 +128,8 @@ export function SubscriptionTab() {
 
   // 生成分页按钮
   const renderPagination = () => {
-    if (totalPages <= 1) return null
+    if (totalPages <= 1)
+      return null
 
     const pages: (number | 'ellipsis')[] = []
     const showPages = 5 // 最多显示的页码数
@@ -218,10 +222,11 @@ export function SubscriptionTab() {
               : (
                   <div className="mt-2 flex items-baseline gap-1">
                     <span className="text-3xl font-bold text-foreground">
-                      ${centsToUsd(creditsBalance)}
+                      $
+                      {centsToUsd(creditsBalance)}
                     </span>
                   </div>
-                )} 
+                )}
           </div>
           {!isVip && (
             <Button className="shrink-0" onClick={() => window.open('/pricing', '_blank')}>
@@ -315,7 +320,6 @@ export function SubscriptionTab() {
         {!recordsLoading && records.length > 0 && renderPagination()}
       </div>
 
-      
     </div>
   )
 }

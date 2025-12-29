@@ -8,9 +8,9 @@
 import { DownloadOutlined } from '@ant-design/icons'
 import { Button } from 'antd'
 import { useEffect, useRef } from 'react'
-import { Modal } from '@/components/ui/modal'
 import { useTransClient } from '@/app/i18n/client'
 import logo from '@/assets/images/logo.png'
+import { Modal } from '@/components/ui/modal'
 import { useUserStore } from '@/store/user'
 import styles from './milestonePoster.module.scss'
 

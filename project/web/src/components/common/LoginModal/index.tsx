@@ -6,19 +6,21 @@
 
 'use client'
 
+import type {
+  GoogleLoginParams,
+} from '@/api/apiReq'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleLogin } from '@react-oauth/google'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowLeft, Loader2, X } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useMemo, useState, useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
+import { z } from 'zod'
 import {
   googleLoginApi,
-  GoogleLoginParams,
   loginWithMailApi,
   mailRegistApi,
 } from '@/api/apiReq'
@@ -27,9 +29,9 @@ import logo from '@/assets/images/logo.png'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/lib/toast'
-import { useUserStore } from '@/store/user'
-import { useLoginModalStore } from '@/store/loginModal'
 import { cn } from '@/lib/utils'
+import { useLoginModalStore } from '@/store/loginModal'
+import { useUserStore } from '@/store/user'
 
 export interface ILoginModalProps {
   /** 是否打开（可选，不传则使用全局 store） */
@@ -64,22 +66,22 @@ interface RegisterFormData {
   inviteCode?: string
 }
 
-export function LoginModal({ 
-  open: propOpen, 
-  onClose: propOnClose, 
+export function LoginModal({
+  open: propOpen,
+  onClose: propOnClose,
   onSuccess: propOnSuccess,
   useGlobalStore = false,
 }: ILoginModalProps) {
   const { setToken, setUserInfo, appInit } = useUserStore()
   const { t } = useTransClient('login')
-  
+
   // 全局 store 状态
-  const { 
-    isOpen: globalOpen, 
-    closeLoginModal: globalClose, 
+  const {
+    isOpen: globalOpen,
+    closeLoginModal: globalClose,
     handleLoginSuccess: globalHandleSuccess,
   } = useLoginModalStore()
-  
+
   // 根据 useGlobalStore 决定使用哪个状态源
   const isOpen = useGlobalStore ? globalOpen : (propOpen ?? false)
   const handleClose = useGlobalStore ? globalClose : (propOnClose ?? (() => {}))
@@ -140,7 +142,7 @@ export function LoginModal({
     toast.success(t('loginSuccess'))
     handleClose()
     handleSuccess()
-    appInit();
+    appInit()
   }
 
   // 处理邮箱登录
@@ -157,14 +159,17 @@ export function LoginModal({
           setUserEmail(data.email)
           registerForm.setValue('password', data.password)
           setStep('register')
-        } else if (response.data.token) {
+        }
+        else if (response.data.token) {
           // 登录成功
           onLoginSuccess(response.data.token, response.data.userInfo)
         }
-      } else {
+      }
+      else {
         toast.error(response.message || t('loginFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('loginError'))
     }
   }
@@ -187,10 +192,12 @@ export function LoginModal({
       if (response.code === 0 && response.data.token) {
         // 注册成功
         onLoginSuccess(response.data.token, response.data.userInfo)
-      } else {
+      }
+      else {
         toast.error(response.message || t('registerError'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('registerError'))
     }
   }
@@ -212,10 +219,12 @@ export function LoginModal({
       if (response.code === 0 && response.data.token) {
         // Google 登录成功
         onLoginSuccess(response.data.token, response.data.userInfo)
-      } else {
+      }
+      else {
         toast.error(response.message || t('googleLoginFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('googleLoginFailed'))
     }
   }
@@ -229,16 +238,17 @@ export function LoginModal({
     registerForm.reset()
   }
 
-  if (!isOpen) return null
+  if (!isOpen)
+    return null
 
   return (
     <>
       {/* 遮罩层 */}
-      <div 
+      <div
         className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
         onClick={handleClose}
       />
-      
+
       {/* 弹窗内容 - 移动端底部抽屉，桌面端居中 */}
       <div className={cn(
         'fixed z-50 bg-background rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden',
@@ -247,7 +257,8 @@ export function LoginModal({
         // 桌面端：居中弹窗
         'sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2',
         'sm:w-full sm:max-w-[420px] sm:max-h-[85vh]',
-      )}>
+      )}
+      >
         {/* 移动端拖拽指示条 */}
         <div className="flex justify-center pt-3 sm:hidden">
           <div className="w-12 h-1.5 bg-muted-foreground/20 rounded-full" />
@@ -363,11 +374,14 @@ export function LoginModal({
 
                 {/* 条款 */}
                 <p className="mt-5 text-center text-xs text-muted-foreground/70">
-                  {t('termsText')}{' '}
+                  {t('termsText')}
+                  {' '}
                   <Link href="/websit/terms-of-service" onClick={handleClose} className="text-muted-foreground underline hover:text-foreground">
                     {t('termsOfService')}
                   </Link>
-                  {' '}{t('and')}{' '}
+                  {' '}
+                  {t('and')}
+                  {' '}
                   <Link href="/websit/privacy-policy" onClick={handleClose} className="text-muted-foreground underline hover:text-foreground">
                     {t('privacyPolicy')}
                   </Link>
@@ -491,4 +505,3 @@ export function LoginModal({
 }
 
 export default LoginModal
-

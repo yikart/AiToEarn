@@ -6,18 +6,18 @@
 
 'use client'
 
+import type { IActionCard } from '@/store/agent/agent.types'
+import { AlertCircle, ArrowRight, Link2, RefreshCw, Send } from 'lucide-react'
+import { useParams, usePathname, useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { useRouter, useParams, usePathname } from 'next/navigation'
-import { Link2, RefreshCw, Send, ArrowRight, AlertCircle } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
-import { useUserStore } from '@/store/user'
 import { toast } from '@/lib/toast'
-import { openLoginModal } from '@/store/loginModal'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { cn } from '@/lib/utils'
 import { useAgentStore } from '@/store/agent'
-import type { IActionCard } from '@/store/agent/agent.types'
+import { openLoginModal } from '@/store/loginModal'
+import { useUserStore } from '@/store/user'
 
 export interface IActionCardProps {
   /** Action 数据 */
@@ -46,7 +46,8 @@ const PLATFORM_NAMES: Record<string, string> = {
 
 /** 获取平台显示名称 */
 function getPlatformDisplayName(platform?: string): string {
-  if (!platform) return 'Platform'
+  if (!platform)
+    return 'Platform'
   return PLATFORM_NAMES[platform] || platform.charAt(0).toUpperCase() + platform.slice(1)
 }
 
@@ -173,7 +174,8 @@ export function ActionCard({ action, className }: IActionCardProps) {
             t: t as (key: string) => string,
             taskId,
           })
-        } catch (error) {
+        }
+        catch (error) {
           console.error('Auto send message failed:', error)
         }
       }
@@ -183,7 +185,7 @@ export function ActionCard({ action, className }: IActionCardProps) {
   // 处理按钮点击
   const handleClick = () => {
     const platform = action.platform || ''
-    
+
     switch (action.type) {
       case 'createChannel':
         // 未登录时先登录
@@ -206,12 +208,18 @@ export function ActionCard({ action, className }: IActionCardProps) {
         const params = new URLSearchParams()
         params.set('action', 'publish')
         params.set('aiGenerated', 'true')
-        if (platform) params.set('platform', platform)
-        if (action.accountId) params.set('accountId', action.accountId)
-        if (action.title) params.set('title', action.title)
-        if (action.description) params.set('description', action.description)
-        if (action.tags?.length) params.set('tags', JSON.stringify(action.tags))
-        if (action.medias?.length) params.set('medias', JSON.stringify(action.medias))
+        if (platform)
+          params.set('platform', platform)
+        if (action.accountId)
+          params.set('accountId', action.accountId)
+        if (action.title)
+          params.set('title', action.title)
+        if (action.description)
+          params.set('description', action.description)
+        if (action.tags?.length)
+          params.set('tags', JSON.stringify(action.tags))
+        if (action.medias?.length)
+          params.set('medias', JSON.stringify(action.medias))
         router.push(`/${lng}/accounts?${params.toString()}`)
         break
       default:
@@ -272,4 +280,3 @@ export function ActionCard({ action, className }: IActionCardProps) {
 }
 
 export default ActionCard
-

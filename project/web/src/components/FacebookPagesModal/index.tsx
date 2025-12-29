@@ -5,11 +5,11 @@
 
 import { ReloadOutlined } from '@ant-design/icons'
 import { Avatar, Button, Checkbox, List, Spin, Typography } from 'antd'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
 import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { apiGetFacebookPages, apiSubmitFacebookPages } from '@/api/plat/facebook'
+import { Modal } from '@/components/ui/modal'
+import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import styles from './index.module.scss'
 

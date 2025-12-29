@@ -37,4 +37,3 @@ export function resetGalleryCache(): void {
   galleryCache.scrollTop = 0
   galleryCache.displayCount = LOAD_MORE_COUNT
 }
-

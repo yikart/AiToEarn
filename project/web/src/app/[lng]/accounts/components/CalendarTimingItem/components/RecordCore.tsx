@@ -5,19 +5,19 @@ import type {
   PublishRecordItem,
 } from '@/api/plat/types/publish.types'
 import {
+  Calendar,
   CheckCircle2,
   Clock,
-  XCircle,
   ExternalLink,
   Eye,
-  Calendar,
-  Maximize2,
   Heart,
-  MessageCircle,
   Loader2,
+  Maximize2,
+  MessageCircle,
   MoreVertical,
   Send,
   Share2,
+  XCircle,
 } from 'lucide-react'
 import {
   forwardRef,
@@ -25,7 +25,6 @@ import {
   useMemo,
   useState,
 } from 'react'
-import { MediaPreview } from '@/components/common/MediaPreview'
 import { useShallow } from 'zustand/react/shallow'
 import { deletePlatWorkApi, deletePublishRecordApi, nowPubTaskApi } from '@/api/plat/publish'
 import {
@@ -37,6 +36,7 @@ import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTimin
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
+import { MediaPreview } from '@/components/common/MediaPreview'
 import ScrollButtonContainer from '@/components/ScrollButtonContainer'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -51,8 +51,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { useAccountStore } from '@/store/account'
 import { cn } from '@/lib/utils'
+import { useAccountStore } from '@/store/account'
 import { getOssUrl } from '@/utils/oss'
 
 export interface IRecordCoreRef {}
@@ -190,7 +190,8 @@ const RecordCore = memo(
        * @returns 标签显示文本
        */
       const getClientTypeLabel = (clientType?: ClientType) => {
-        if (!clientType) return null
+        if (!clientType)
+          return null
         if (clientType === ClientType.WEB) {
           return t('clientType.web')
         }
@@ -231,8 +232,8 @@ const RecordCore = memo(
 
       // 构建媒体预览 items
       const mediaPreviewItems = useMemo(() => {
-        const items: Array<{ type: 'image' | 'video'; src: string }> = []
-        
+        const items: Array<{ type: 'image' | 'video', src: string }> = []
+
         // 如果有视频，添加视频
         if (publishRecord.videoUrl) {
           items.push({
@@ -240,7 +241,7 @@ const RecordCore = memo(
             src: getOssUrl(publishRecord.videoUrl),
           })
         }
-        
+
         // 如果有图片列表，添加所有图片
         if (publishRecord.imgUrlList && publishRecord.imgUrlList.length > 0) {
           publishRecord.imgUrlList.forEach((imgUrl) => {
@@ -250,7 +251,7 @@ const RecordCore = memo(
             })
           })
         }
-        
+
         // 如果只有封面图，也添加封面图
         if (items.length === 0 && publishRecord.coverUrl) {
           items.push({
@@ -258,7 +259,7 @@ const RecordCore = memo(
             src: getOssUrl(publishRecord.coverUrl),
           })
         }
-        
+
         return items
       }, [publishRecord])
 
@@ -280,249 +281,249 @@ const RecordCore = memo(
       return (
         <>
           <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              className={cn(
-                'flex justify-between items-center box-border px-1.5 w-full h-auto py-1.5',
-                'bg-card hover:bg-accent border-border',
-                'rounded-md transition-colors',
-                'text-foreground font-normal',
-                'shadow-none',
-              )}
-              style={{ width: `${calendarCallWidth}px` }}
-            >
-              <div className="flex items-center gap-1.5">
-                <img
-                  src={platIcon}
-                  className="w-[25px] h-[25px]"
-                  alt="platform"
-                />
-                <div className="font-semibold text-sm">{days.format('HH:mm')}</div>
-              </div>
-              {publishRecord.coverUrl && (
-                <div className="flex items-center">
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  'flex justify-between items-center box-border px-1.5 w-full h-auto py-1.5',
+                  'bg-card hover:bg-accent border-border',
+                  'rounded-md transition-colors',
+                  'text-foreground font-normal',
+                  'shadow-none',
+                )}
+                style={{ width: `${calendarCallWidth}px` }}
+              >
+                <div className="flex items-center gap-1.5">
                   <img
-                    src={getOssUrl(publishRecord.coverUrl || '')}
-                    className="w-6 h-6 rounded object-cover"
-                    alt="cover"
+                    src={platIcon}
+                    className="w-[25px] h-[25px]"
+                    alt="platform"
                   />
+                  <div className="font-semibold text-sm">{days.format('HH:mm')}</div>
                 </div>
-              )}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent
-            side="right"
-            className="w-[450px] p-0"
-            align="start"
-            onInteractOutside={(e) => {
+                {publishRecord.coverUrl && (
+                  <div className="flex items-center">
+                    <img
+                      src={getOssUrl(publishRecord.coverUrl || '')}
+                      className="w-6 h-6 rounded object-cover"
+                      alt="cover"
+                    />
+                  </div>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              side="right"
+              className="w-[450px] p-0"
+              align="start"
+              onInteractOutside={(e) => {
               // MediaPreview 打开时，完全阻止 Popover 关闭
-              if (mediaPreviewOpen) {
-                e.preventDefault()
-                return
-              }
-              // 如果点击的是封面区域，阻止 Popover 关闭
-              const target = e.target as HTMLElement
-              if (target.closest('[data-cover-preview]')) {
-                e.preventDefault()
-              }
-            }}
-            onPointerDownOutside={(e) => {
+                if (mediaPreviewOpen) {
+                  e.preventDefault()
+                  return
+                }
+                // 如果点击的是封面区域，阻止 Popover 关闭
+                const target = e.target as HTMLElement
+                if (target.closest('[data-cover-preview]')) {
+                  e.preventDefault()
+                }
+              }}
+              onPointerDownOutside={(e) => {
               // MediaPreview 打开时，完全阻止 Popover 关闭
-              if (mediaPreviewOpen) {
-                e.preventDefault()
-                return
-              }
-              // 如果点击的是封面区域，阻止 Popover 关闭
-              const target = e.target as HTMLElement
-              if (target.closest('[data-cover-preview]')) {
-                e.preventDefault()
-              }
-            }}
-          >
-            <div className="w-full box-border" onMouseDown={(e) => e.stopPropagation()}>
-              {/* 顶部：时间和全屏按钮 */}
-              <div className="flex justify-between items-center border-b border-border p-3">
-                <div className="font-semibold flex items-center gap-2">
-                  {days.format('YYYY-MM-DD HH:mm')}
-                  <Calendar className="h-4 w-4" />
+                if (mediaPreviewOpen) {
+                  e.preventDefault()
+                  return
+                }
+                // 如果点击的是封面区域，阻止 Popover 关闭
+                const target = e.target as HTMLElement
+                if (target.closest('[data-cover-preview]')) {
+                  e.preventDefault()
+                }
+              }}
+            >
+              <div className="w-full box-border" onMouseDown={e => e.stopPropagation()}>
+                {/* 顶部：时间和全屏按钮 */}
+                <div className="flex justify-between items-center border-b border-border p-3">
+                  <div className="font-semibold flex items-center gap-2">
+                    {days.format('YYYY-MM-DD HH:mm')}
+                    <Calendar className="h-4 w-4" />
+                  </div>
                 </div>
-              </div>
 
-              {/* 中间：用户信息和内容 */}
-              <div className="flex justify-between gap-3 border-b border-border p-3">
-                <div className="flex-1 min-h-[150px]">
-                  <div className="flex items-center mb-3">
-                    <AvatarPlat account={account} size="large" />
-                    <span className="ml-2.5 inline-block font-bold">
-                      {account?.nickname}
-                    </span>
-                    {account?.clientType && (
-                      <span
-                        className={cn(
-                          'inline-block px-1.5 py-0.5 rounded text-[11px] font-medium ml-2',
-                          account.clientType === 'web'
-                            ? 'bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700'
-                            : 'bg-green-50 text-green-600 border border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700',
-                        )}
-                      >
-                        {getClientTypeLabel(account.clientType)}
+                {/* 中间：用户信息和内容 */}
+                <div className="flex justify-between gap-3 border-b border-border p-3">
+                  <div className="flex-1 min-h-[150px]">
+                    <div className="flex items-center mb-3">
+                      <AvatarPlat account={account} size="large" />
+                      <span className="ml-2.5 inline-block font-bold">
+                        {account?.nickname}
                       </span>
-                    )}
-                  </div>
-                  <div
-                    title={desc}
-                    className="line-clamp-2 overflow-hidden text-ellipsis mt-2.5 pr-2.5"
-                  >
-                    {desc}
-                  </div>
-                  <div className="mt-4">
-                    {publishRecord && (
-                      <PubStatus status={publishRecord.status} />
-                    )}
-                  </div>
-                  {publishRecord.errorMsg && (
+                      {account?.clientType && (
+                        <span
+                          className={cn(
+                            'inline-block px-1.5 py-0.5 rounded text-[11px] font-medium ml-2',
+                            account.clientType === 'web'
+                              ? 'bg-blue-50 text-blue-600 border border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700'
+                              : 'bg-green-50 text-green-600 border border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700',
+                          )}
+                        >
+                          {getClientTypeLabel(account.clientType)}
+                        </span>
+                      )}
+                    </div>
                     <div
-                      title={publishRecord.errorMsg}
-                      className="mt-1 text-xs text-destructive"
+                      title={desc}
+                      className="line-clamp-2 overflow-hidden text-ellipsis mt-2.5 pr-2.5"
                     >
-                      {publishRecord.errorMsg}
+                      {desc}
+                    </div>
+                    <div className="mt-4">
+                      {publishRecord && (
+                        <PubStatus status={publishRecord.status} />
+                      )}
+                    </div>
+                    {publishRecord.errorMsg && (
+                      <div
+                        title={publishRecord.errorMsg}
+                        className="mt-1 text-xs text-destructive"
+                      >
+                        {publishRecord.errorMsg}
+                      </div>
+                    )}
+                  </div>
+                  {mediaPreviewItems.length > 0 && (
+                    <div className="shrink-0" onClick={e => e.stopPropagation()} onMouseDown={e => e.stopPropagation()}>
+                      <div
+                        data-cover-preview
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          e.preventDefault()
+                          handleCoverClick(e)
+                        }}
+                        onMouseDown={(e) => {
+                          e.stopPropagation()
+                          handleCoverMouseDown(e)
+                        }}
+                        className="w-[145px] h-[145px] rounded-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity border border-border"
+                      >
+                        <img
+                          src={getOssUrl(publishRecord.coverUrl || publishRecord.imgUrlList?.[0] || '')}
+                          className="w-full h-full object-cover pointer-events-none"
+                          alt="cover"
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
-                {mediaPreviewItems.length > 0 && (
-                  <div className="shrink-0" onClick={(e) => e.stopPropagation()} onMouseDown={(e) => e.stopPropagation()}>
-                    <div
-                      data-cover-preview
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        e.preventDefault()
-                        handleCoverClick(e)
-                      }}
-                      onMouseDown={(e) => {
-                        e.stopPropagation()
-                        handleCoverMouseDown(e)
-                      }}
-                      className="w-[145px] h-[145px] rounded-md overflow-hidden cursor-pointer hover:opacity-90 transition-opacity border border-border"
-                    >
-                      <img
-                        src={getOssUrl(publishRecord.coverUrl || publishRecord.imgUrlList?.[0] || '')}
-                        className="w-full h-full object-cover pointer-events-none"
-                        alt="cover"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
 
-              {/* 信息指标 */}
-              <ScrollButtonContainer>
-                <div className="flex gap-4 p-2.5 border-b border-border">
-                  {recordInfo.map(v => (
-                    <div key={v.label} className="flex-1">
-                      <div className="flex items-center gap-1.5">
-                        {v.icon}
-                        <span className="text-xs text-muted-foreground">{v.label}</span>
-                      </div>
-                      {publishRecord.engagement && (
-                        <div className="text-base font-semibold mt-1">
-                          {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
+                {/* 信息指标 */}
+                <ScrollButtonContainer>
+                  <div className="flex gap-4 p-2.5 border-b border-border">
+                    {recordInfo.map(v => (
+                      <div key={v.label} className="flex-1">
+                        <div className="flex items-center gap-1.5">
+                          {v.icon}
+                          <span className="text-xs text-muted-foreground">{v.label}</span>
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </ScrollButtonContainer>
-
-              {/* 底部：操作按钮 */}
-              <div className="flex justify-end gap-2.5 p-3">
-                {publishRecord.workLink && (
-                  <Button
-                    onClick={() => {
-                      window.open(publishRecord.workLink, '_blank')
-                    }}
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    {t('record.viewWork')}
-                  </Button>
-                )}
-
-                {publishRecord.status !== PublishStatus.RELEASED
-                  && publishRecord.status !== PublishStatus.PUB_LOADING
-                  ? (
-                      <Button
-                        disabled={nowPubLoading}
-                        onClick={async () => {
-                          setNowPubLoading(true)
-                          await nowPubTaskApi(publishRecord.id)
-                          getPubRecord()
-                          setNowPubLoading(false)
-                        }}
-                      >
-                        {nowPubLoading ? (
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        ) : (
-                          <Send className="mr-2 h-4 w-4" />
+                        {publishRecord.engagement && (
+                          <div className="text-base font-semibold mt-1">
+                            {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
+                          </div>
                         )}
-                        {t('buttons.publishNow')}
-                      </Button>
-                    )
-                  : null}
+                      </div>
+                    ))}
+                  </div>
+                </ScrollButtonContainer>
 
-                {(publishRecord.workLink || shouldShowDelete) && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="icon">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      {publishRecord.workLink && (
-                        <DropdownMenuItem
+                {/* 底部：操作按钮 */}
+                <div className="flex justify-end gap-2.5 p-3">
+                  {publishRecord.workLink && (
+                    <Button
+                      onClick={() => {
+                        window.open(publishRecord.workLink, '_blank')
+                      }}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      {t('record.viewWork')}
+                    </Button>
+                  )}
+
+                  {publishRecord.status !== PublishStatus.RELEASED
+                    && publishRecord.status !== PublishStatus.PUB_LOADING
+                    ? (
+                        <Button
+                          disabled={nowPubLoading}
                           onClick={async () => {
-                            await navigator.clipboard.writeText(
-                              publishRecord?.workLink ?? '',
-                            )
-                          }}
-                        >
-                          {t('buttons.copyLink')}
-                        </DropdownMenuItem>
-                      )}
-                      {shouldShowDelete && (
-                        <DropdownMenuItem
-                          className="text-destructive focus:text-destructive"
-                          onClick={async () => {
-                            setPopoverOpen(false)
-                            setListLoading(true)
-                            if (publishRecord.status === PublishStatus.RELEASED) {
-                              const res = await deletePlatWorkApi(publishRecord.accountId!, publishRecord.dataId)
-                              if (!res) {
-                                setListLoading(false)
-                                return
-                              }
-                            }
-                            await deletePublishRecordApi(publishRecord.id)
+                            setNowPubLoading(true)
+                            await nowPubTaskApi(publishRecord.id)
                             getPubRecord()
+                            setNowPubLoading(false)
                           }}
                         >
-                          {t('buttons.delete')}
-                        </DropdownMenuItem>
-                      )}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+                          {nowPubLoading ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          ) : (
+                            <Send className="mr-2 h-4 w-4" />
+                          )}
+                          {t('buttons.publishNow')}
+                        </Button>
+                      )
+                    : null}
 
-        {/* 媒体预览 */}
-        <MediaPreview
-          open={mediaPreviewOpen}
-          items={mediaPreviewItems}
-          initialIndex={mediaPreviewIndex}
-          onClose={() => setMediaPreviewOpen(false)}
-        />
+                  {(publishRecord.workLink || shouldShowDelete) && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="icon">
+                          <MoreVertical className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {publishRecord.workLink && (
+                          <DropdownMenuItem
+                            onClick={async () => {
+                              await navigator.clipboard.writeText(
+                                publishRecord?.workLink ?? '',
+                              )
+                            }}
+                          >
+                            {t('buttons.copyLink')}
+                          </DropdownMenuItem>
+                        )}
+                        {shouldShowDelete && (
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={async () => {
+                              setPopoverOpen(false)
+                              setListLoading(true)
+                              if (publishRecord.status === PublishStatus.RELEASED) {
+                                const res = await deletePlatWorkApi(publishRecord.accountId!, publishRecord.dataId)
+                                if (!res) {
+                                  setListLoading(false)
+                                  return
+                                }
+                              }
+                              await deletePublishRecordApi(publishRecord.id)
+                              getPubRecord()
+                            }}
+                          >
+                            {t('buttons.delete')}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )}
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+
+          {/* 媒体预览 */}
+          <MediaPreview
+            open={mediaPreviewOpen}
+            items={mediaPreviewItems}
+            initialIndex={mediaPreviewIndex}
+            onClose={() => setMediaPreviewOpen(false)}
+          />
         </>
       )
     },

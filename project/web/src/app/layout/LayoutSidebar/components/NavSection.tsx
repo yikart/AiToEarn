@@ -4,24 +4,24 @@
 
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
-import Link from 'next/link'
+import type { NavItemData, NavSectionProps, SidebarCommonProps } from '../types'
 import { FileText, PlusCircle } from 'lucide-react'
+import Link from 'next/link'
+import { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { useGetClientLng } from '@/hooks/useSystem'
-import { cn } from '@/lib/utils'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import type { NavSectionProps, NavItemData, SidebarCommonProps } from '../types'
+import { useGetClientLng } from '@/hooks/useSystem'
+import { cn } from '@/lib/utils'
 
 /** 单个导航项 */
 interface NavItemProps extends SidebarCommonProps {
@@ -251,7 +251,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
                   onMouseLeave={handleMouseLeave}
                 >
                   <div className="space-y-1">
-                    {groupedItems.map((gitem) => (
+                    {groupedItems.map(gitem => (
                       <NavItem
                         key={gitem.path || gitem.translationKey}
                         item={gitem}
@@ -268,7 +268,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
             <>
               <div className="mt-1">
                 <button
-                  onClick={() => setGroupOpen((s) => !s)}
+                  onClick={() => setGroupOpen(s => !s)}
                   className={cn(
                     'relative flex items-center rounded-lg text-sm font-medium transition-all w-full',
                     'text-muted-foreground hover:bg-accent hover:text-foreground',
@@ -294,7 +294,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
               {groupOpen && (
                 <div className="mt-1 pl-2">
                   <div className="flex flex-col gap-1">
-                    {groupedItems.map((gitem) => (
+                    {groupedItems.map(gitem => (
                       <NavItem
                         key={gitem.path || gitem.translationKey}
                         item={gitem}
@@ -312,4 +312,3 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
     </nav>
   )
 }
-

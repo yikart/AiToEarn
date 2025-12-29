@@ -5,10 +5,10 @@
  * 显示单条评论，支持展开/收起回复
  */
 
-import { memo, useState, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { HeartOutlined, HeartFilled, DownOutlined, LoadingOutlined } from '@ant-design/icons'
 import type { CommentItem as CommentItemType } from '@/store/plugin/plats/types'
+import { DownOutlined, HeartFilled, HeartOutlined, LoadingOutlined } from '@ant-design/icons'
+import { memo, useCallback, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface CommentItemProps {
   /** 评论数据 */
@@ -31,10 +31,14 @@ function formatTime(timestamp: number): string {
   const hours = Math.floor(diff / 3600000)
   const days = Math.floor(diff / 86400000)
 
-  if (minutes < 1) return 'Just now'
-  if (minutes < 60) return `${minutes} min ago`
-  if (hours < 24) return `${hours} hours ago`
-  if (days < 7) return `${days} days ago`
+  if (minutes < 1)
+    return 'Just now'
+  if (minutes < 60)
+    return `${minutes} min ago`
+  if (hours < 24)
+    return `${hours} hours ago`
+  if (days < 7)
+    return `${days} days ago`
   if (days < 365) {
     const date = new Date(timestamp)
     return `${date.getMonth() + 1}/${date.getDate()}`
@@ -108,7 +112,13 @@ function CommentItem({
           {/* 回复目标 */}
           {isReply && comment.replyTo && (
             <span className="commentItem_replyTo">
-              {t('replyTo')} <span className="commentItem_replyTo_name">@{comment.replyTo.user.nickname}</span>:
+              {t('replyTo')}
+              {' '}
+              <span className="commentItem_replyTo_name">
+                @
+                {comment.replyTo.user.nickname}
+              </span>
+              :
             </span>
           )}
           {comment.content}
@@ -194,4 +204,3 @@ function CommentItem({
 }
 
 export default memo(CommentItem)
-

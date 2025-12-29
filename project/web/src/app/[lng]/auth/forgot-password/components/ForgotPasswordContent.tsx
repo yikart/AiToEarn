@@ -94,10 +94,12 @@ export default function ForgotPasswordContent() {
         toast.success(t('resetEmailSent'))
         setUserEmail(data.email)
         setStep('reset')
-      } else {
+      }
+      else {
         toast.error(response.message || t('sendEmailFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('sendEmailFailed'))
     }
   }
@@ -114,10 +116,12 @@ export default function ForgotPasswordContent() {
       if (response.code === 0) {
         toast.success(t('resetSuccess'))
         router.push('/auth/login')
-      } else {
+      }
+      else {
         toast.error(response.message || t('resetFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('resetFailed'))
     }
   }
@@ -330,4 +334,3 @@ export default function ForgotPasswordContent() {
     </div>
   )
 }
-

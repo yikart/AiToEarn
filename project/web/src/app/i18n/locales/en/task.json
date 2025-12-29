@@ -141,8 +141,7 @@
   },
   "accountAvatar": "Account Avatar",
   "notSubmitted": "Not Submitted",
-  "pleaseSelectDraftMaterial": "Please select a draft material"
-  ,
+  "pleaseSelectDraftMaterial": "Please select a draft material",
   "settle": {
     "items": "Settlement Info",
     "dataType": {

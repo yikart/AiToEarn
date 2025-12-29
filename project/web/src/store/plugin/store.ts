@@ -25,12 +25,11 @@ import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useAccountStore } from '@/store/account'
-import { generateUUID } from '@/utils'
+import { generateUUID, parseTopicString } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
 import { PlatformTaskStatus, PLUGIN_SUPPORTED_PLATFORMS, PluginStatus as Status } from './types/baseTypes'
-import { parseTopicString } from '@/utils'
 
 // 启用 dayjs utc 插件
 dayjs.extend(utc)
@@ -154,7 +153,7 @@ export const usePluginStore = create(
         /** 检查插件是否安装 */
         checkPlugin() {
           const isAvailable = typeof window !== 'undefined' && !!window.AIToEarnPlugin
-          
+
           if (!isAvailable) {
             set({ status: Status.NOT_INSTALLED })
             return false

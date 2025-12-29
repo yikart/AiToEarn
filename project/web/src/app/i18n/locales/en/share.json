@@ -15,8 +15,7 @@
   "collapse": "Collapse",
   "share": "Share",
   "appName": "AiToEarn",
-  "appUrl": "https://aitoearn.ai"
-  ,
+  "appUrl": "https://aitoearn.ai",
   "previewTitle": "Preview",
   "agentShare": "Share via Agent",
   "publishShare": "Share via Publish",
@@ -28,4 +27,3 @@
   "publishShareDescription": "I generated this conversation on AiToEarn using agent, check it out!",
   "noAvailablePublishAccounts": "No available accounts to publish"
 }
-

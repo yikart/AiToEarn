@@ -48,7 +48,7 @@ function transformSubComment(item: XhsSubCommentItem): CommentItem {
     id: item.id,
     content: item.content,
     createTime: item.create_time,
-    likeCount: parseInt(item.like_count, 10) || 0,
+    likeCount: Number.parseInt(item.like_count, 10) || 0,
     user: transformUser(item.user_info),
     ipLocation: item.ip_location,
     isAuthor: checkIsAuthor(item.show_tags),
@@ -76,13 +76,13 @@ function transformComment(item: XhsCommentItem): CommentItem {
     id: item.id,
     content: item.content,
     createTime: item.create_time,
-    likeCount: parseInt(item.like_count, 10) || 0,
+    likeCount: Number.parseInt(item.like_count, 10) || 0,
     user: transformUser(item.user_info),
     ipLocation: item.ip_location,
     isAuthor: checkIsAuthor(item.show_tags),
     isLiked: item.liked,
     // 子评论相关
-    replyCount: parseInt(item.sub_comment_count, 10) || 0,
+    replyCount: Number.parseInt(item.sub_comment_count, 10) || 0,
     replies: (item.sub_comments || []).map(transformSubComment),
     replyCursor: item.sub_comment_cursor || '',
     hasMoreReplies: item.sub_comment_has_more,
@@ -152,7 +152,8 @@ export async function getCommentList(params: CommentListParams): Promise<Comment
       hasMore: response.data.has_more,
       rawData: response,
     }
-  } catch (error) {
+  }
+  catch (error) {
     return {
       success: false,
       message: error instanceof Error ? error.message : '请求失败',
@@ -223,7 +224,8 @@ export async function getSubCommentList(params: SubCommentListParams): Promise<C
       hasMore: response.data.has_more,
       rawData: response,
     }
-  } catch (error) {
+  }
+  catch (error) {
     return {
       success: false,
       message: error instanceof Error ? error.message : '请求失败',
@@ -233,4 +235,3 @@ export async function getSubCommentList(params: SubCommentListParams): Promise<C
     }
   }
 }
-

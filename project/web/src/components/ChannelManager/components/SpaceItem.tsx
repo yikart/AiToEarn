@@ -10,18 +10,19 @@
 
 'use client'
 
-import { useCallback, useState } from 'react'
+import type { SocialAccount } from '@/api/types/account.type'
 import { LoadingOutlined } from '@ant-design/icons'
 import {
+  Box,
   ChevronDown,
   ChevronRight,
   ChevronUp,
   Edit,
+  Loader2,
   MoreVertical,
   Trash2,
-  Box,
-  Loader2,
 } from 'lucide-react'
+import { useCallback, useState } from 'react'
 import { updateAccountGroupApi } from '@/api/account'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
@@ -34,7 +35,6 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/lib/toast'
-import type { SocialAccount } from '@/api/types/account.type'
 import { ChannelItem } from './ChannelItem'
 
 interface AccountGroup {
@@ -118,8 +118,10 @@ export function SpaceItem({
               value={editSpaceName}
               onChange={e => onEditNameChange(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') onSaveEdit()
-                if (e.key === 'Escape') onCancelEdit()
+                if (e.key === 'Enter')
+                  onSaveEdit()
+                if (e.key === 'Escape')
+                  onCancelEdit()
               }}
               autoFocus
               className="h-7 text-sm"
@@ -158,7 +160,7 @@ export function SpaceItem({
                     variant="ghost"
                     size="sm"
                     className="h-8 w-8 p-0 shrink-0"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={e => e.stopPropagation()}
                   >
                     <MoreVertical className="h-4 w-4" />
                   </Button>
@@ -172,7 +174,8 @@ export function SpaceItem({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation()
-                        if (!isSorting) onMoveUp?.()
+                        if (!isSorting)
+                          onMoveUp?.()
                       }}
                       disabled={isSorting}
                     >
@@ -184,7 +187,8 @@ export function SpaceItem({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation()
-                        if (!isSorting) onMoveDown?.()
+                        if (!isSorting)
+                          onMoveDown?.()
                       }}
                       disabled={isSorting}
                     >
@@ -215,7 +219,7 @@ export function SpaceItem({
               {t('channelManager.noChannels', '暂无频道')}
             </div>
           ) : (
-            channels.map((channel) => (
+            channels.map(channel => (
               <ChannelItem
                 key={channel.id}
                 channel={channel}

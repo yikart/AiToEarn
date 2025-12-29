@@ -7,8 +7,8 @@
 
 import { BookOpen, Chrome, Github, Puzzle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
 import { Button } from '@/components/ui/button'
+import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
 
 /**
  * 插件未安装状态组件
@@ -82,4 +82,3 @@ export function PluginNotInstalled() {
     </div>
   )
 }
-

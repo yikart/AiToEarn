@@ -1,18 +1,18 @@
-import type { ForwardedRef } from "react";
-import type { SocialAccount } from "@/api/types/account.type";
+import type { ForwardedRef } from 'react'
+import type { SocialAccount } from '@/api/types/account.type'
 import type {
   AIAction,
   IPublishDialogAiRef,
-} from "@/components/PublishDialog/compoents/PublishDialogAi";
+} from '@/components/PublishDialog/compoents/PublishDialogAi'
 import type {
   IImgFile,
   IVideoFile,
-} from "@/components/PublishDialog/publishDialog.type";
+} from '@/components/PublishDialog/publishDialog.type'
 import type {
   PlatformPublishTask,
   PluginPlatformType,
   PublishParams as PluginPublishParams,
-} from "@/store/plugin";
+} from '@/store/plugin'
 
 import {
   ArrowRightOutlined,
@@ -20,13 +20,10 @@ import {
   ExclamationCircleFilled,
   InfoCircleOutlined,
   SendOutlined,
-} from "@ant-design/icons";
+} from '@ant-design/icons'
 
-import { Button, Tooltip } from "antd";
-import { toast } from "@/lib/toast";
-import { confirm } from "@/lib/confirm";
-import { Modal } from "@/components/ui/modal";
-import dayjs from "dayjs";
+import { Button, Tooltip } from 'antd'
+import dayjs from 'dayjs'
 import {
   forwardRef,
   memo,
@@ -36,78 +33,81 @@ import {
   useMemo,
   useRef,
   useState,
-} from "react";
-import { CSSTransition } from "react-transition-group";
-import { useWindowSize } from "react-use";
-import { useShallow } from "zustand/react/shallow";
-import { getChatModels } from "@/api/ai";
-import { apiCreatePublish } from "@/api/plat/publish";
-import { toolsApi } from "@/api/tools";
+} from 'react'
+import { CSSTransition } from 'react-transition-group'
+import { useWindowSize } from 'react-use'
+import { useShallow } from 'zustand/react/shallow'
+import { getChatModels } from '@/api/ai'
+import { apiCreatePublish } from '@/api/plat/publish'
+import { toolsApi } from '@/api/tools'
 import {
   getDays,
   getUtcDays,
-} from "@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils";
-import { useCalendarTiming } from "@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming";
-import { bilibiliSkip } from "@/app/[lng]/accounts/plat/BilibiliLogin";
+} from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
+import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
+import { bilibiliSkip } from '@/app/[lng]/accounts/plat/BilibiliLogin'
 import {
   FacebookPagesModal,
   facebookSkip,
-} from "@/app/[lng]/accounts/plat/FacebookLogin";
-import { instagramSkip } from "@/app/[lng]/accounts/plat/InstagramLogin";
+} from '@/app/[lng]/accounts/plat/FacebookLogin'
+import { instagramSkip } from '@/app/[lng]/accounts/plat/InstagramLogin'
 // 导入各平台授权函数
-import { kwaiSkip } from "@/app/[lng]/accounts/plat/kwaiLogin";
-import { linkedinSkip } from "@/app/[lng]/accounts/plat/LinkedinLogin";
-import { pinterestSkip } from "@/app/[lng]/accounts/plat/PinterestLogin";
-import { threadsSkip } from "@/app/[lng]/accounts/plat/ThreadsLogin";
-import { tiktokSkip } from "@/app/[lng]/accounts/plat/TiktokLogin";
-import { twitterSkip } from "@/app/[lng]/accounts/plat/TwtterLogin";
-import { wxGzhSkip } from "@/app/[lng]/accounts/plat/WxGzh";
-import { youtubeSkip } from "@/app/[lng]/accounts/plat/YoutubeLogin";
-import { AccountPlatInfoMap, PlatType } from "@/app/config/platConfig";
-import { PubType } from "@/app/config/publishConfig";
-import { useTransClient } from "@/app/i18n/client";
-import AvatarPlat from "@/components/AvatarPlat";
-import DownloadAppModal from "@/components/common/DownloadAppModal";
-import PlatParamsSetting from "@/components/PublishDialog/compoents/PlatParamsSetting";
-import PublishDatePicker from "@/components/PublishDialog/compoents/PublishDatePicker";
-import PublishDialogAi from "@/components/PublishDialog/compoents/PublishDialogAi";
-import PublishDialogPreview from "@/components/PublishDialog/compoents/PublishDialogPreview";
-import { UploadTaskTypeEnum } from "@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum";
-import { usePublishManageUpload } from "@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload";
-import PubParmasTextarea from "@/components/PublishDialog/compoents/PubParmasTextarea";
-import TextSelectionToolbar from "@/components/PublishDialog/compoents/TextSelectionToolbar";
-import usePubParamsVerify from "@/components/PublishDialog/hooks/usePubParamsVerify";
-import { usePublishDialog } from "@/components/PublishDialog/usePublishDialog";
-import { usePublishDialogStorageStore } from "@/components/PublishDialog/usePublishDialogStorageStore";
-import { useAccountStore } from "@/store/account";
+import { kwaiSkip } from '@/app/[lng]/accounts/plat/kwaiLogin'
+import { linkedinSkip } from '@/app/[lng]/accounts/plat/LinkedinLogin'
+import { pinterestSkip } from '@/app/[lng]/accounts/plat/PinterestLogin'
+import { threadsSkip } from '@/app/[lng]/accounts/plat/ThreadsLogin'
+import { tiktokSkip } from '@/app/[lng]/accounts/plat/TiktokLogin'
+import { twitterSkip } from '@/app/[lng]/accounts/plat/TwtterLogin'
+import { wxGzhSkip } from '@/app/[lng]/accounts/plat/WxGzh'
+import { youtubeSkip } from '@/app/[lng]/accounts/plat/YoutubeLogin'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { PubType } from '@/app/config/publishConfig'
+import { useTransClient } from '@/app/i18n/client'
+import AvatarPlat from '@/components/AvatarPlat'
+import DownloadAppModal from '@/components/common/DownloadAppModal'
+import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
+import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
+import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
+import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
+import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
+import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
+import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
+import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
+import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
+import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
+import { Modal } from '@/components/ui/modal'
+import { confirm } from '@/lib/confirm'
+import { toast } from '@/lib/toast'
+import { useAccountStore } from '@/store/account'
 import {
   PlatformTaskStatus,
   PLUGIN_SUPPORTED_PLATFORMS,
   usePluginStore,
-} from "@/store/plugin";
-import { generateUUID } from "@/utils";
-import styles from "./publishDialog.module.scss";
-import { PublishDetailModal } from "../Plugin";
+} from '@/store/plugin'
+import { generateUUID } from '@/utils'
+import { PublishDetailModal } from '../Plugin'
+import styles from './publishDialog.module.scss'
 
 export interface IPublishDialogRef {
   // 设置发布时间
-  setPubTime: (pubTime?: string) => void;
+  setPubTime: (pubTime?: string) => void
 }
 
 export interface IPublishDialogProps {
-  open: boolean;
-  onClose: () => void;
-  accounts: SocialAccount[];
+  open: boolean
+  onClose: () => void
+  accounts: SocialAccount[]
   // 发布成功事件
-  onPubSuccess?: () => void;
+  onPubSuccess?: () => void
   // 默认选中的账户Id
-  defaultAccountId?: string;
+  defaultAccountId?: string
   // 是否抑制自动发布（用于从任务页面打开，先让用户确认后再发布）
-  suppressAutoPublish?: boolean;
+  suppressAutoPublish?: boolean
   // 关联的任务ID（如果是从任务流程打开）
-  taskIdForPublish?: string;
+  taskIdForPublish?: string
   // 发布确认回调（发布完成时触发，并携带 taskIdForPublish）
-  onPublishConfirmed?: (taskId?: string) => void;
+  onPublishConfirmed?: (taskId?: string) => void
 }
 
 // 发布作品弹框
@@ -124,18 +124,18 @@ const PublishDialog = memo(
         taskIdForPublish,
         onPublishConfirmed,
       }: IPublishDialogProps,
-      ref: ForwardedRef<IPublishDialogRef>
+      ref: ForwardedRef<IPublishDialogRef>,
     ) => {
-      const { width } = useWindowSize();
-      const { setPubData, restorePubData, _hasHydrated, setPubListData } =
-        usePublishDialogStorageStore(
-          useShallow((state) => ({
+      const { width } = useWindowSize()
+      const { setPubData, restorePubData, _hasHydrated, setPubListData }
+        = usePublishDialogStorageStore(
+          useShallow(state => ({
             setPubData: state.setPubData,
             restorePubData: state.restorePubData,
             _hasHydrated: state._hasHydrated,
             setPubListData: state.setPubListData,
-          }))
-        );
+          })),
+        )
       const {
         pubListChoosed,
         setPubListChoosed,
@@ -157,7 +157,7 @@ const PublishDialog = memo(
         openLeft,
         setPubList,
       } = usePublishDialog(
-        useShallow((state) => ({
+        useShallow(state => ({
           pubListChoosed: state.pubListChoosed,
           setPubListChoosed: state.setPubListChoosed,
           init: state.init,
@@ -177,76 +177,76 @@ const PublishDialog = memo(
           setOnePubParams: state.setOnePubParams,
           openLeft: state.openLeft,
           setOpenLeft: state.setOpenLeft,
-        }))
-      );
-      const { errParamsMap, warningParamsMap } =
-        usePubParamsVerify(pubListChoosed);
-      const [createLoading, setCreateLoading] = useState(false);
+        })),
+      )
+      const { errParamsMap, warningParamsMap }
+        = usePubParamsVerify(pubListChoosed)
+      const [createLoading, setCreateLoading] = useState(false)
       // 内容安全检测状态
-      const [moderationLoading, setModerationLoading] = useState(false);
+      const [moderationLoading, setModerationLoading] = useState(false)
       const [moderationResult, setModerationResult] = useState<boolean | null>(
-        null
-      );
-      const [moderationDesc, setModerationDesc] = useState<string>("");
-      const [moderationLevel, setModerationLevel] = useState<any>(null);
+        null,
+      )
+      const [moderationDesc, setModerationDesc] = useState<string>('')
+      const [moderationLevel, setModerationLevel] = useState<any>(null)
       // 下载App弹窗状态
-      const [downloadModalVisible, setDownloadModalVisible] = useState(false);
-      const [currentPlatform, setCurrentPlatform] = useState<string>("");
+      const [downloadModalVisible, setDownloadModalVisible] = useState(false)
+      const [currentPlatform, setCurrentPlatform] = useState<string>('')
       // Facebook页面选择弹窗状态
-      const [showFacebookPagesModal, setShowFacebookPagesModal] =
-        useState(false);
+      const [showFacebookPagesModal, setShowFacebookPagesModal]
+        = useState(false)
       // 发布详情弹框状态
-      const [publishDetailVisible, setPublishDetailVisible] = useState(false);
+      const [publishDetailVisible, setPublishDetailVisible] = useState(false)
       const [currentPublishTaskId, setCurrentPublishTaskId] = useState<
         string | undefined
-      >(undefined);
-      const { t } = useTransClient("publish");
+      >(undefined)
+      const { t } = useTransClient('publish')
       // AI助手ref
-      const aiAssistantRef = useRef<IPublishDialogAiRef>(null);
+      const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
       // 聊天模型列表
-      const [chatModels, setChatModels] = useState<any[]>([]);
+      const [chatModels, setChatModels] = useState<any[]>([])
       // 中间内容区域ref，用于划词功能
-      const contentAreaRef = useRef<HTMLDivElement>(null);
+      const contentAreaRef = useRef<HTMLDivElement>(null)
       const { tasks, md5Cache, enqueueUpload } = usePublishManageUpload(
-        useShallow((state) => ({
+        useShallow(state => ({
           tasks: state.tasks,
           md5Cache: state.md5Cache,
           enqueueUpload: state.enqueueUpload,
-        }))
-      );
+        })),
+      )
       // 是否clear
-      const isClear = useRef(true);
+      const isClear = useRef(true)
       // 是否init
-      const isInit = useRef(false);
+      const isInit = useRef(false)
 
       // 获取账户store
       const { accountGroupList, getAccountList } = useAccountStore(
-        useShallow((state) => ({
+        useShallow(state => ({
           accountGroupList: state.accountGroupList,
           getAccountList: state.getAccountList,
-        }))
-      );
+        })),
+      )
 
       // 匹配上传结果的ossUrl到发布参数中
       useEffect(() => {
         const newPubList = pubListChoosed.map((v) => {
-          const newPubItem = { ...v };
-          const video = newPubItem.params.video;
-          const images = newPubItem.params.images;
+          const newPubItem = { ...v }
+          const video = newPubItem.params.video
+          const images = newPubItem.params.images
 
           // 视频匹配
           if (video) {
             // 如果视频本身没有ossUrl，从上传任务中获取
             if (!video.ossUrl && video.uploadTaskIds?.video) {
-              newPubItem.params.video!.ossUrl =
-                md5Cache[tasks[video.uploadTaskIds.video].md5!]?.ossUrl;
+              newPubItem.params.video!.ossUrl
+                = md5Cache[tasks[video.uploadTaskIds.video].md5!]?.ossUrl
             }
             // 如果封面没有ossUrl，从上传任务中获取
             if (!video.cover.ossUrl && video.uploadTaskIds?.cover) {
-              newPubItem.params.video!.cover.ossUrl =
-                md5Cache[tasks[video.uploadTaskIds.cover].md5!]?.ossUrl;
+              newPubItem.params.video!.cover.ossUrl
+                = md5Cache[tasks[video.uploadTaskIds.cover].md5!]?.ossUrl
             }
-            return newPubItem;
+            return newPubItem
           }
           // 图片匹配
           if (images) {
@@ -254,339 +254,357 @@ const PublishDialog = memo(
               // 只有当图片没有ossUrl且有uploadTaskId时，才从上传任务中获取
               // AI生成的图片已经有ossUrl，不需要从上传任务获取
               if (!img.ossUrl && img.uploadTaskId && tasks[img.uploadTaskId]) {
-                const taskMd5 = tasks[img.uploadTaskId].md5;
+                const taskMd5 = tasks[img.uploadTaskId].md5
                 if (taskMd5 && md5Cache[taskMd5]) {
-                  img.ossUrl = md5Cache[taskMd5].ossUrl;
+                  img.ossUrl = md5Cache[taskMd5].ossUrl
                 }
               }
-              return img;
-            });
-            return newPubItem;
+              return img
+            })
+            return newPubItem
           }
-          return newPubItem;
-        });
-        setPubListChoosed(newPubList);
-      }, [md5Cache, tasks]);
+          return newPubItem
+        })
+        setPubListChoosed(newPubList)
+      }, [md5Cache, tasks])
 
       useEffect(() => {
         if (open && _hasHydrated) {
-          restorePubData();
+          restorePubData()
         }
-      }, [open, _hasHydrated]);
+      }, [open, _hasHydrated])
 
       // 处理Facebook授权成功后的页面选择
       const handleFacebookAuthSuccess = () => {
-        setShowFacebookPagesModal(true);
-      };
+        setShowFacebookPagesModal(true)
+      }
 
       // 处理离线账户头像点击，直接跳转到对应平台授权页面
       const handleOfflineAvatarClick = useCallback(
         async (account: SocialAccount) => {
-          const platform = account.type;
-          const targetSpaceId = account.groupId; // 使用账户原本的空间ID
+          const platform = account.type
+          const targetSpaceId = account.groupId // 使用账户原本的空间ID
 
           try {
             // 记录授权前的账号数量，用于后续识别新账号
             const beforeAuthCount = accountGroupList.reduce(
               (total, group) => total + group.children.length,
-              0
-            );
+              0,
+            )
 
             // 根据平台类型调用对应的授权函数，传递目标空间ID
             switch (platform) {
               case PlatType.KWAI:
-                await kwaiSkip(platform, targetSpaceId);
-                break;
+                await kwaiSkip(platform, targetSpaceId)
+                break
               case PlatType.BILIBILI:
-                await bilibiliSkip(platform, targetSpaceId);
-                break;
+                await bilibiliSkip(platform, targetSpaceId)
+                break
               case PlatType.YouTube:
-                await youtubeSkip(platform, targetSpaceId);
-                break;
+                await youtubeSkip(platform, targetSpaceId)
+                break
               case PlatType.Twitter:
-                await twitterSkip(platform, targetSpaceId);
-                break;
+                await twitterSkip(platform, targetSpaceId)
+                break
               case PlatType.Tiktok:
-                await tiktokSkip(platform, targetSpaceId);
-                break;
+                await tiktokSkip(platform, targetSpaceId)
+                break
               case PlatType.Facebook:
                 try {
-                  await facebookSkip(platform, targetSpaceId);
+                  await facebookSkip(platform, targetSpaceId)
                   // Facebook授权成功后显示页面选择弹窗
-                  handleFacebookAuthSuccess();
-                } catch (error) {
-                  console.error(t("messages.facebookAuthFailed" as any), error);
+                  handleFacebookAuthSuccess()
                 }
-                break;
+                catch (error) {
+                  console.error(t('messages.facebookAuthFailed' as any), error)
+                }
+                break
               case PlatType.Instagram:
-                await instagramSkip(platform, targetSpaceId);
-                break;
+                await instagramSkip(platform, targetSpaceId)
+                break
               case PlatType.Threads:
-                await threadsSkip(platform, targetSpaceId);
-                break;
+                await threadsSkip(platform, targetSpaceId)
+                break
               case PlatType.WxGzh:
-                await wxGzhSkip(platform, targetSpaceId);
-                break;
+                await wxGzhSkip(platform, targetSpaceId)
+                break
               case PlatType.Pinterest:
-                await pinterestSkip(platform, targetSpaceId);
-                break;
+                await pinterestSkip(platform, targetSpaceId)
+                break
               case PlatType.LinkedIn:
-                await linkedinSkip(platform, targetSpaceId);
-                break;
+                await linkedinSkip(platform, targetSpaceId)
+                break
               default:
                 console.warn(
-                  `${t("messages.unsupportedPlatformType" as any)}: ${platform}`
-                );
+                  `${t('messages.unsupportedPlatformType' as any)}: ${platform}`,
+                )
                 toast.warning(
-                  t("messages.platformNotSupportedDirect" as any, { platform })
-                );
-                return;
+                  t('messages.platformNotSupportedDirect' as any, { platform }),
+                )
+                return
             }
 
             // Refresh account list after authorization
             setTimeout(async () => {
               try {
-                await getAccountList();
-              } catch (error) {
-                console.error(
-                  t("messages.refreshAccountListFailed" as any),
-                  error
-                );
+                await getAccountList()
               }
-            }, 3000); // Wait 3 seconds for authorization to complete
-          } catch (error) {
-            console.error(t("messages.authFailed" as any), error);
-            toast.error(t("messages.authFailedRetry" as any));
+              catch (error) {
+                console.error(
+                  t('messages.refreshAccountListFailed' as any),
+                  error,
+                )
+              }
+            }, 3000) // Wait 3 seconds for authorization to complete
+          }
+          catch (error) {
+            console.error(t('messages.authFailed' as any), error)
+            toast.error(t('messages.authFailedRetry' as any))
           }
         },
-        [accountGroupList, getAccountList]
-      );
+        [accountGroupList, getAccountList],
+      )
 
       // 处理Facebook页面选择成功
       const handleFacebookPagesSuccess = () => {
-        setShowFacebookPagesModal(false);
+        setShowFacebookPagesModal(false)
         // 可以在这里添加成功提示或其他逻辑
-      };
+      }
 
       // 内容安全检测函数
       const handleContentModeration = useCallback(async () => {
         // 获取当前描述内容
-        let contentToCheck = "";
+        let contentToCheck = ''
         if (step === 0 && pubListChoosed.length >= 2) {
-          contentToCheck = commonPubParams.des || "";
-        } else if (step === 1 && expandedPubItem) {
-          contentToCheck = expandedPubItem.params.des || "";
-        } else if (pubListChoosed.length === 1) {
-          contentToCheck = pubListChoosed[0].params.des || "";
+          contentToCheck = commonPubParams.des || ''
+        }
+        else if (step === 1 && expandedPubItem) {
+          contentToCheck = expandedPubItem.params.des || ''
+        }
+        else if (pubListChoosed.length === 1) {
+          contentToCheck = pubListChoosed[0].params.des || ''
         }
 
         if (!contentToCheck.trim()) {
-          toast.warning(t("messages.pleaseInputContent" as any));
-          return;
+          toast.warning(t('messages.pleaseInputContent' as any))
+          return
         }
 
         try {
-          setModerationLoading(true);
-          setModerationResult(null);
-          setModerationDesc("");
-          setModerationLevel(null);
-          const result = await toolsApi.textModeration(contentToCheck);
+          setModerationLoading(true)
+          setModerationResult(null)
+          setModerationDesc('')
+          setModerationLevel(null)
+          const result = await toolsApi.textModeration(contentToCheck)
 
           if (result?.code === 0) {
-            const data: any = result?.data || ({} as any);
-            const descriptions: string =
-              (data && (data.descriptions as string)) || "";
-            const labels: string = (data && (data.labels as string)) || "";
-            const reason: any =
-              data && (data.reason ? JSON.parse(data.reason) : "");
-            const isSafe = !descriptions && !labels && !reason;
-            setModerationResult(isSafe);
-            setModerationLevel(reason);
+            const data: any = result?.data || ({} as any)
+            const descriptions: string
+              = (data && (data.descriptions as string)) || ''
+            const labels: string = (data && (data.labels as string)) || ''
+            const reason: any
+              = data && (data.reason ? JSON.parse(data.reason) : '')
+            const isSafe = !descriptions && !labels && !reason
+            setModerationResult(isSafe)
+            setModerationLevel(reason)
             setModerationDesc(
               isSafe
-                ? ""
-                : descriptions || reason || t("actions.contentUnsafe" as any)
-            );
+                ? ''
+                : descriptions || reason || t('actions.contentUnsafe' as any),
+            )
             if (isSafe) {
-              toast.success(t("actions.contentSafe" as any));
-            } else {
-              toast.error(t("actions.contentUnsafe" as any));
+              toast.success(t('actions.contentSafe' as any))
+            }
+            else {
+              toast.error(t('actions.contentUnsafe' as any))
             }
           }
-        } catch (error) {
-          console.error(t("messages.contentModerationError" as any), error);
-          toast.error(t("messages.contentModerationFailed" as any));
-        } finally {
-          setModerationLoading(false);
         }
-      }, [step, pubListChoosed, commonPubParams, expandedPubItem, t]);
+        catch (error) {
+          console.error(t('messages.contentModerationError' as any), error)
+          toast.error(t('messages.contentModerationFailed' as any))
+        }
+        finally {
+          setModerationLoading(false)
+        }
+      }, [step, pubListChoosed, commonPubParams, expandedPubItem, t])
 
       // 检查是否有描述内容
       const hasDescription = useMemo(() => {
         if (step === 0 && pubListChoosed.length >= 2) {
-          return !!(commonPubParams.des && commonPubParams.des.trim());
-        } else if (step === 1 && expandedPubItem) {
+          return !!(commonPubParams.des && commonPubParams.des.trim())
+        }
+        else if (step === 1 && expandedPubItem) {
           return !!(
             expandedPubItem.params.des && expandedPubItem.params.des.trim()
-          );
-        } else if (pubListChoosed.length === 1) {
+          )
+        }
+        else if (pubListChoosed.length === 1) {
           return !!(
             pubListChoosed[0].params.des && pubListChoosed[0].params.des.trim()
-          );
+          )
         }
-        return false;
-      }, [step, pubListChoosed, commonPubParams, expandedPubItem]);
+        return false
+      }, [step, pubListChoosed, commonPubParams, expandedPubItem])
 
       // 实时保存数据
       useEffect(() => {
-        if (!open) return;
+        if (!open)
+          return
         if (
-          !expandedPubItem?.params.des &&
-          expandedPubItem?.params.images?.length === 0 &&
-          !expandedPubItem?.params.video
+          !expandedPubItem?.params.des
+          && expandedPubItem?.params.images?.length === 0
+          && !expandedPubItem?.params.video
         ) {
-          return;
+          return
         }
         if (isClear.current) {
-          isClear.current = false;
-          return;
+          isClear.current = false
+          return
         }
-        setPubData(pubListChoosed);
-      }, [pubListChoosed]);
+        setPubData(pubListChoosed)
+      }, [pubListChoosed])
       useEffect(() => {
-        if (!expandedPubItem || pubList.length === 0) return;
+        if (!expandedPubItem || pubList.length === 0)
+          return
         if (isInit.current) {
-          isInit.current = false;
-          return;
+          isInit.current = false
+          return
         }
-        setPubListData(pubList);
-      }, [pubList]);
+        setPubListData(pubList)
+      }, [pubList])
 
       // 检查选中的平台是否需要内容安全检测
       const needsContentModeration = useMemo(() => {
-        if (pubListChoosed.length === 0) return false;
+        if (pubListChoosed.length === 0)
+          return false
 
         // 检查所有选中的账户对应的平台是否需要内容检测
         return pubListChoosed.some((pubItem) => {
           const platInfo = AccountPlatInfoMap.get(
-            pubItem.account.type as PlatType
-          );
-          return platInfo?.jiancha === true;
-        });
-      }, [pubListChoosed]);
+            pubItem.account.type as PlatType,
+          )
+          return platInfo?.jiancha === true
+        })
+      }, [pubListChoosed])
 
       // 监听内容变化，重置内容安全检测状态
       useEffect(() => {
-        setModerationResult(null);
-        setModerationDesc("");
-        setModerationLevel(null);
+        setModerationResult(null)
+        setModerationDesc('')
+        setModerationLevel(null)
       }, [
         commonPubParams.des,
         expandedPubItem?.params.des,
-        pubListChoosed.map((item) => item.params.des).join(","),
-      ]);
+        pubListChoosed.map(item => item.params.des).join(','),
+      ])
 
       // 当内容被清空时，也重置检测状态
       useEffect(() => {
         if (!hasDescription) {
-          setModerationResult(null);
-          setModerationDesc("");
-          setModerationLevel(null);
+          setModerationResult(null)
+          setModerationDesc('')
+          setModerationLevel(null)
         }
-      }, [hasDescription]);
+      }, [hasDescription])
 
       useEffect(() => {
         if (open) {
-          isInit.current = true;
-          init(accounts, defaultAccountId);
+          isInit.current = true
+          init(accounts, defaultAccountId)
 
           // 获取聊天模型列表（使用 sessionStorage 缓存）
-          const cachedModels = sessionStorage.getItem("ai_chat_models");
+          const cachedModels = sessionStorage.getItem('ai_chat_models')
           if (cachedModels) {
             try {
-              setChatModels(JSON.parse(cachedModels));
-            } catch (error) {
-              console.error(
-                t("messages.parseCachedChatModelsFailed" as any),
-                error
-              );
+              setChatModels(JSON.parse(cachedModels))
             }
-          } else {
+            catch (error) {
+              console.error(
+                t('messages.parseCachedChatModelsFailed' as any),
+                error,
+              )
+            }
+          }
+          else {
             // 如果没有缓存，则请求
             getChatModels()
               .then((res: any) => {
                 if (res?.code === 0 && res.data && Array.isArray(res.data)) {
-                  setChatModels(res.data);
+                  setChatModels(res.data)
                   sessionStorage.setItem(
-                    "ai_chat_models",
-                    JSON.stringify(res.data)
-                  );
+                    'ai_chat_models',
+                    JSON.stringify(res.data),
+                  )
                 }
               })
               .catch((error) => {
-                console.error(t("messages.getChatModelsFailed" as any), error);
-              });
+                console.error(t('messages.getChatModelsFailed' as any), error)
+              })
           }
-        } else {
-          // 弹窗关闭时只清除选中状态和步骤，保留pubList以便下次打开
-          isClear.current = true;
-          setPubListChoosed([]);
-          setStep(0);
-          setExpandedPubItem(undefined);
-          clear();
         }
-      }, [open]);
+        else {
+          // 弹窗关闭时只清除选中状态和步骤，保留pubList以便下次打开
+          isClear.current = true
+          setPubListChoosed([])
+          setStep(0)
+          setExpandedPubItem(undefined)
+          clear()
+        }
+      }, [open])
 
       // 离线账号（status === 0）不可参与发布：如被默认选中则自动移除
       useEffect(() => {
         const filtered = pubListChoosed.filter(
-          (item) => item.account.status !== 0
-        );
+          item => item.account.status !== 0,
+        )
         if (filtered.length !== pubListChoosed.length) {
-          setPubListChoosed(filtered);
+          setPubListChoosed(filtered)
         }
-      }, [pubListChoosed, setPubListChoosed]);
+      }, [pubListChoosed, setPubListChoosed])
 
       // 移除PC端不支持的平台账户过滤逻辑，改为在UI中显示遮罩
 
       // 关闭弹框并确认关闭
       const closeDialog = useCallback(() => {
         confirm({
-          title: t("confirmClose.title"),
+          title: t('confirmClose.title'),
           icon: <ExclamationCircleFilled />,
-          content: t("confirmClose.content"),
-          okType: "destructive",
+          content: t('confirmClose.content'),
+          okType: 'destructive',
           centered: true,
-          cancelText: t("buttons.cancel"),
+          cancelText: t('buttons.cancel'),
           onOk() {
-            onClose();
+            onClose()
           },
-        });
-      }, [onClose, t]);
+        })
+      }, [onClose, t])
 
       // 是否打开右侧预览
       const openRight = useMemo(() => {
         if (step === 0) {
-          return pubListChoosed.length !== 0;
-        } else {
-          return expandedPubItem !== undefined;
+          return pubListChoosed.length !== 0
         }
-      }, [pubListChoosed, expandedPubItem, step]);
+        else {
+          return expandedPubItem !== undefined
+        }
+      }, [pubListChoosed, expandedPubItem, step])
 
       // 是否打开左侧
       const openLeftSide = useMemo(() => {
-        if (!openLeft) return false;
+        if (!openLeft)
+          return false
         // 如果用户主动打开了AI助手（openLeft=true），就保持打开状态
         // 不再依赖于 pubListChoosed 或 expandedPubItem 的状态
-        return true;
-      }, [openLeft]);
+        return true
+      }, [openLeft])
 
       useEffect(() => {
-        setErrParamsMap(errParamsMap);
-      }, [errParamsMap]);
+        setErrParamsMap(errParamsMap)
+      }, [errParamsMap])
       useEffect(() => {
-        setWarningParamsMap(warningParamsMap);
-      }, [warningParamsMap]);
+        setWarningParamsMap(warningParamsMap)
+      }, [warningParamsMap])
 
       /**
        * 检查平台是否由插件支持
@@ -596,11 +614,11 @@ const PublishDialog = memo(
       const isPluginSupportedPlatform = useCallback(
         (platType: PlatType): boolean => {
           return PLUGIN_SUPPORTED_PLATFORMS.includes(
-            platType as PluginPlatformType
-          );
+            platType as PluginPlatformType,
+          )
         },
-        []
-      );
+        [],
+      )
 
       /**
        * Publish content with scheduled time (from calendar picker)
@@ -609,27 +627,27 @@ const PublishDialog = memo(
        * 3. 显示发布详情弹框
        */
       const pubClick = useCallback(async () => {
-        setCreateLoading(true);
+        setCreateLoading(true)
 
         const publishTime = getUtcDays(
-          pubTime || getDays().add(5, "second")
-        ).format();
+          pubTime || getDays().add(5, 'second'),
+        ).format()
 
         // 分离 API 发布列表和插件发布列表
         const apiPublishItems = pubListChoosed.filter(
-          (item) => !isPluginSupportedPlatform(item.account.type)
-        );
-        const pluginPublishItems = pubListChoosed.filter((item) =>
-          isPluginSupportedPlatform(item.account.type)
-        );
+          item => !isPluginSupportedPlatform(item.account.type),
+        )
+        const pluginPublishItems = pubListChoosed.filter(item =>
+          isPluginSupportedPlatform(item.account.type),
+        )
 
         // 如果有插件发布项，创建发布任务并显示详情弹框
-        let taskId: string | null = null;
+        let taskId: string | null = null
         // 存储每个发布项对应的平台任务ID，用于后续精确更新
-        const platformTaskIdMap = new Map<string, string>();
+        const platformTaskIdMap = new Map<string, string>()
 
         if (pluginPublishItems.length > 0) {
-          const { addPublishTask, getPublishTask } = usePluginStore.getState();
+          const { addPublishTask, getPublishTask } = usePluginStore.getState()
 
           // 创建平台任务列表，为每个任务生成唯一ID和requestId
           const platformTasks: PlatformPublishTask[] = pluginPublishItems.map(
@@ -637,13 +655,13 @@ const PublishDialog = memo(
               // 使用账号ID生成唯一的平台任务ID
               const platformTaskId = `${item.account.type}-${
                 item.account.id
-              }-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+              }-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
               // 生成唯一的 requestId，用于插件回调匹配
               const requestId = `req-${Date.now()}-${Math.random()
                 .toString(36)
-                .slice(2, 10)}`;
+                .slice(2, 10)}`
               // 保存映射关系，用于后续更新（保存 requestId 而非 platformTaskId）
-              platformTaskIdMap.set(item.account.id, requestId);
+              platformTaskIdMap.set(item.account.id, requestId)
 
               return {
                 id: platformTaskId,
@@ -652,9 +670,9 @@ const PublishDialog = memo(
                 accountId: item.account.id,
                 params: {
                   platform: item.account.type as PluginPlatformType,
-                  type: item.params.video?.ossUrl ? "video" : "image",
-                  title: item.params.title || "",
-                  desc: item.params.des || "",
+                  type: item.params.video?.ossUrl ? 'video' : 'image',
+                  title: item.params.title || '',
+                  desc: item.params.des || '',
                   topics: item.params.topics || [],
                 } as PluginPublishParams,
                 status: PlatformTaskStatus.PENDING,
@@ -663,23 +681,23 @@ const PublishDialog = memo(
                 startTime: null,
                 endTime: null,
                 error: null,
-              };
-            }
-          );
+              }
+            },
+          )
 
           // 添加发布任务
           taskId = addPublishTask({
             title:
-              pubListChoosed[0]?.params.title ||
-              pubListChoosed[0]?.params.des?.slice(0, 20) ||
-              t("title"),
+              pubListChoosed[0]?.params.title
+              || pubListChoosed[0]?.params.des?.slice(0, 20)
+              || t('title'),
             description: pubListChoosed[0]?.params.des?.slice(0, 100),
             platformTasks,
-          });
+          })
 
           // 设置任务ID并显示弹框
-          setCurrentPublishTaskId(taskId);
-          setPublishDetailVisible(true);
+          setCurrentPublishTaskId(taskId)
+          setPublishDetailVisible(true)
         }
 
         // 1. 先执行 API 发布（非插件支持平台）
@@ -690,7 +708,7 @@ const PublishDialog = memo(
             type: item.params.video?.cover.ossUrl
               ? PubType.VIDEO
               : PubType.ImageText,
-            title: item.params.title || "",
+            title: item.params.title || '',
             desc: item.params.des,
             accountId: item.account.id,
             accountType: item.account.type,
@@ -698,20 +716,20 @@ const PublishDialog = memo(
             userTaskId: taskIdForPublish,
             videoUrl: item.params.video?.ossUrl,
             coverUrl:
-              item.params.video?.cover.ossUrl ||
-              (item.params.images && item.params.images.length > 0
+              item.params.video?.cover.ossUrl
+              || (item.params.images && item.params.images.length > 0
                 ? item.params.images[0].ossUrl
                 : undefined),
             imgUrlList:
               item.params.images
-                ?.map((v) => v.ossUrl)
+                ?.map(v => v.ossUrl)
                 .filter((url): url is string => url !== undefined) || [],
             publishTime,
             option: item.params.option,
-          });
+          })
           if (res?.code !== 0) {
-            setCreateLoading(false);
-            return;
+            setCreateLoading(false)
+            return
           }
         }
 
@@ -725,9 +743,9 @@ const PublishDialog = memo(
             publishTime,
             onComplete: () => {
               // 发布完成后刷新发布记录
-              useCalendarTiming.getState().getPubRecord();
+              useCalendarTiming.getState().getPubRecord()
             },
-          });
+          })
         }
 
         // 如果抑制自动发布（来自任务流程），不要自动调用平台 API，但仍需通知外部父组件
@@ -735,17 +753,19 @@ const PublishDialog = memo(
           // 通知外部发布已完成（携带任务 id，如果父组件需要）
           if (onPublishConfirmed) {
             try {
-              onPublishConfirmed(taskIdForPublish);
-            } catch (e) {
-              console.error("onPublishConfirmed callback failed", e);
+              onPublishConfirmed(taskIdForPublish)
+            }
+            catch (e) {
+              console.error('onPublishConfirmed callback failed', e)
             }
           }
-        } else {
+        }
+        else {
           // 给用户提示：发布已提交，可能需要一些时间处理（符合 TikTok API 客户端要求）
-          toast.success(t("messages.publishSubmitted" as any), {
-            key: "publish_submitted",
+          toast.success(t('messages.publishSubmitted' as any), {
+            key: 'publish_submitted',
             duration: 3,
-          });
+          })
         }
 
         // 关闭发布弹框
@@ -755,43 +775,43 @@ const PublishDialog = memo(
           onPubSuccess()
         }
         usePublishDialogStorageStore.getState().clearPubData()
-      }, [pubListChoosed, pubTime, isPluginSupportedPlatform, t]);
+      }, [pubListChoosed, pubTime, isPluginSupportedPlatform, t])
 
       // 处理划词操作
       const handleTextSelection = useCallback(
         (action: AIAction, selectedText: string) => {
           // 只有当面板未打开时才设置，避免重复触发导致状态混乱
           if (!openLeft) {
-            setOpenLeft(true);
+            setOpenLeft(true)
           }
           // 等待面板打开动画完成后调用AI处理并自动发送
           setTimeout(
             () => {
-              aiAssistantRef.current?.processText(selectedText, action);
+              aiAssistantRef.current?.processText(selectedText, action)
             },
-            openLeft ? 100 : 500
-          ); // 如果已打开，减少延迟
+            openLeft ? 100 : 500,
+          ) // 如果已打开，减少延迟
         },
-        [openLeft, setOpenLeft]
-      );
+        [openLeft, setOpenLeft],
+      )
 
       // 处理图生图
       const handleImageToImage = useCallback(
         (imageFile: IImgFile) => {
           // 打开AI面板
           if (!openLeft) {
-            setOpenLeft(true);
+            setOpenLeft(true)
           }
           // 等待面板打开动画完成后调用图生图功能
           setTimeout(
             () => {
-              aiAssistantRef.current?.processImageToImage(imageFile.file, "");
+              aiAssistantRef.current?.processImageToImage(imageFile.file, '')
             },
-            openLeft ? 100 : 500
-          );
+            openLeft ? 100 : 500,
+          )
         },
-        [openLeft, setOpenLeft]
-      );
+        [openLeft, setOpenLeft],
+      )
 
       // Sync AI content to editor
       const handleSyncToEditor = useCallback(
@@ -799,37 +819,37 @@ const PublishDialog = memo(
           content: string,
           images?: IImgFile[],
           video?: IVideoFile,
-          append?: boolean
+          append?: boolean,
         ) => {
           // Handle image upload
           if (images && images.length > 0) {
             const uploadsWithImages: Array<{
-              image: IImgFile;
-              promise: Promise<any>;
-              cancel: () => void;
-            }> = [];
+              image: IImgFile
+              promise: Promise<any>
+              cancel: () => void
+            }> = []
 
             for (const image of images) {
               const handle = enqueueUpload({
                 file: image.file,
                 fileName: image.filename,
                 type: UploadTaskTypeEnum.Image,
-              });
+              })
 
               const imageWithTask: IImgFile = {
                 ...image,
                 uploadTaskId: handle.taskId,
-              };
+              }
 
               uploadsWithImages.push({
                 image: imageWithTask,
                 promise: handle.promise,
                 cancel: handle.cancel,
-              });
+              })
             }
 
             // Use images with uploadTaskId
-            images = uploadsWithImages.map((item) => item.image);
+            images = uploadsWithImages.map(item => item.image)
           }
 
           // Handle video upload (AI-generated videos already have ossUrl, only need to upload cover)
@@ -840,14 +860,14 @@ const PublishDialog = memo(
                 file: video.cover.file,
                 fileName: video.cover.filename,
                 type: UploadTaskTypeEnum.Image,
-              });
+              })
 
               video = {
                 ...video,
                 uploadTaskIds: {
                   cover: coverHandle.taskId,
                 },
-              };
+              }
             }
             // If video doesn't have ossUrl (user uploaded), need to upload both video and cover
             else if (!video.ossUrl) {
@@ -855,13 +875,13 @@ const PublishDialog = memo(
                 file: video.file,
                 fileName: video.filename,
                 type: UploadTaskTypeEnum.Video,
-              });
+              })
 
               const coverHandle = enqueueUpload({
                 file: video.cover.file,
                 fileName: video.cover.filename,
                 type: UploadTaskTypeEnum.Image,
-              });
+              })
 
               video = {
                 ...video,
@@ -869,75 +889,81 @@ const PublishDialog = memo(
                   video: videoHandle.taskId,
                   cover: coverHandle.taskId,
                 },
-              };
+              }
             }
           }
 
           // If only one account, update directly
           if (pubListChoosed.length === 1) {
-            const params: any = {};
+            const params: any = {}
             // Only update content if not empty string
             if (content) {
               // If append mode, append content to existing text
               if (append && pubListChoosed[0].params.des) {
-                params.des = `${pubListChoosed[0].params.des}\n${content}`;
-              } else {
-                params.des = content;
+                params.des = `${pubListChoosed[0].params.des}\n${content}`
+              }
+              else {
+                params.des = content
               }
             }
             // Video and images cannot exist simultaneously
             if (video) {
-              params.video = video;
+              params.video = video
               // If has video, clear images
-              params.images = [];
-            } else if (images && images.length > 0) {
-              params.images = images;
+              params.images = []
             }
-            setOnePubParams(params, pubListChoosed[0].account.id);
+            else if (images && images.length > 0) {
+              params.images = images
+            }
+            setOnePubParams(params, pubListChoosed[0].account.id)
           }
           // If multiple accounts and in step 0, update common params
           else if (pubListChoosed.length >= 2 && step === 0) {
-            const params: any = {};
+            const params: any = {}
             // Only update content if not empty string
             if (content) {
               // If append mode, append content to existing text
               if (append && commonPubParams.des) {
-                params.des = `${commonPubParams.des}\n${content}`;
-              } else {
-                params.des = content;
+                params.des = `${commonPubParams.des}\n${content}`
+              }
+              else {
+                params.des = content
               }
             }
             // Video and images cannot exist simultaneously
             if (video) {
-              params.video = video;
+              params.video = video
               // If has video, clear images
-              params.images = [];
-            } else if (images && images.length > 0) {
-              params.images = images;
+              params.images = []
             }
-            setAccountAllParams(params);
+            else if (images && images.length > 0) {
+              params.images = images
+            }
+            setAccountAllParams(params)
           }
           // If in step 1 and has expanded item, update that item
           else if (step === 1 && expandedPubItem) {
-            const params: any = {};
+            const params: any = {}
             // Only update content if not empty string
             if (content) {
               // If append mode, append content to existing text
               if (append && expandedPubItem.params.des) {
-                params.des = `${expandedPubItem.params.des}\n${content}`;
-              } else {
-                params.des = content;
+                params.des = `${expandedPubItem.params.des}\n${content}`
+              }
+              else {
+                params.des = content
               }
             }
             // Video and images cannot exist simultaneously
             if (video) {
-              params.video = video;
+              params.video = video
               // If has video, clear images
-              params.images = [];
-            } else if (images && images.length > 0) {
-              params.images = images;
+              params.images = []
             }
-            setOnePubParams(params, expandedPubItem.account.id);
+            else if (images && images.length > 0) {
+              params.images = images
+            }
+            setOnePubParams(params, expandedPubItem.account.id)
           }
         },
         [
@@ -947,13 +973,13 @@ const PublishDialog = memo(
           setOnePubParams,
           setAccountAllParams,
           enqueueUpload,
-        ]
-      );
+        ],
+      )
 
       const imperativeHandle: IPublishDialogRef = {
         setPubTime,
-      };
-      useImperativeHandle(ref, () => imperativeHandle);
+      }
+      useImperativeHandle(ref, () => imperativeHandle)
 
       return (
         <>
@@ -986,7 +1012,7 @@ const PublishDialog = memo(
                 className="publishDialog-wrapper"
                 onClick={() => {
                   if (step === 1) {
-                    setExpandedPubItem(undefined);
+                    setExpandedPubItem(undefined)
                   }
                 }}
               >
@@ -999,116 +1025,117 @@ const PublishDialog = memo(
                 <div className="publishDialog-con" ref={contentAreaRef}>
                   <div className="publishDialog-con-head">
                     <span className="publishDialog-con-head-title">
-                      {t("title")}
+                      {t('title')}
                     </span>
                     <CloseOutlined
                       onClick={closeDialog}
                       style={{
-                        fontSize: "16px",
-                        cursor: "pointer",
-                        color: "#999",
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        color: '#999',
                       }}
                     />
                   </div>
                   <div className="publishDialog-con-acconts">
                     {pubList.map((pubItem) => {
                       const platConfig = AccountPlatInfoMap.get(
-                        pubItem.account.type
-                      )!;
+                        pubItem.account.type,
+                      )!
                       const isChoosed = pubListChoosed.find(
-                        (v) => v.account.id === pubItem.account.id
-                      );
-                      const isOffline = pubItem.account.status === 0;
-                      const isPcNotSupported =
-                        platConfig && platConfig.pcNoThis === true;
+                        v => v.account.id === pubItem.account.id,
+                      )
+                      const isOffline = pubItem.account.status === 0
+                      const isPcNotSupported
+                        = platConfig && platConfig.pcNoThis === true
 
                       return (
                         <Tooltip
                           title={
                             isPcNotSupported
-                              ? t("tips.pcNotSupported" as any)
+                              ? t('tips.pcNotSupported' as any)
                               : isOffline
-                              ? t("tips.accountOffline" as any)
-                              : undefined
+                                ? t('tips.accountOffline' as any)
+                                : undefined
                           }
                           key={pubItem.account.id}
                         >
                           <div
                             className={[
-                              "publishDialog-con-acconts-item",
+                              'publishDialog-con-acconts-item',
                               isChoosed
-                                ? "publishDialog-con-acconts-item--active"
-                                : "",
-                            ].join(" ")}
+                                ? 'publishDialog-con-acconts-item--active'
+                                : '',
+                            ].join(' ')}
                             style={{
                               borderColor: isChoosed
                                 ? platConfig.themeColor
-                                : "transparent",
+                                : 'transparent',
                             }}
                             onClick={(e) => {
-                              e.stopPropagation();
+                              e.stopPropagation()
                               // 离线账户的点击由头像容器处理，这里不处理
                               if (isOffline) {
-                                return;
+                                return
                               }
                               if (isPcNotSupported) {
-                                setCurrentPlatform(platConfig?.name || "");
-                                setDownloadModalVisible(true);
-                                return;
+                                setCurrentPlatform(platConfig?.name || '')
+                                setDownloadModalVisible(true)
+                                return
                               }
-                              const newPubListChoosed = [...pubListChoosed];
+                              const newPubListChoosed = [...pubListChoosed]
                               // 查找当前账户是否已被选择
                               const index = newPubListChoosed.findIndex(
-                                (v) => v.account.id === pubItem.account.id
-                              );
+                                v => v.account.id === pubItem.account.id,
+                              )
                               if (index !== -1) {
-                                newPubListChoosed.splice(index, 1);
-                              } else {
-                                newPubListChoosed.push(pubItem);
+                                newPubListChoosed.splice(index, 1)
+                              }
+                              else {
+                                newPubListChoosed.push(pubItem)
                               }
                               // 是否自动回到第一步
                               if (
-                                newPubListChoosed.length === 0 &&
-                                step === 1
+                                newPubListChoosed.length === 0
+                                && step === 1
                               ) {
                                 const isBack = newPubListChoosed.every(
-                                  (v) =>
-                                    !v.params.des &&
-                                    !v.params.video &&
-                                    !v.params.images?.length
-                                );
+                                  v =>
+                                    !v.params.des
+                                    && !v.params.video
+                                    && !v.params.images?.length,
+                                )
                                 if (isBack) {
-                                  setStep(0);
+                                  setStep(0)
                                 }
                               }
                               // 是否自动前往第二步
                               if (
-                                step === 0 &&
-                                newPubListChoosed.length !== 0
+                                step === 0
+                                && newPubListChoosed.length !== 0
                               ) {
                                 const isFront = newPubListChoosed.every(
-                                  (v) =>
-                                    v.params.des ||
-                                    v.params.video ||
-                                    v.params.images?.length !== 0
-                                );
+                                  v =>
+                                    v.params.des
+                                    || v.params.video
+                                    || v.params.images?.length !== 0,
+                                )
                                 if (isFront) {
-                                  setStep(1);
+                                  setStep(1)
                                 }
                               }
                               if (newPubListChoosed.length === 1) {
-                                setExpandedPubItem(newPubListChoosed[0]);
+                                setExpandedPubItem(newPubListChoosed[0])
                               }
-                              setPubListChoosed(newPubListChoosed);
+                              setPubListChoosed(newPubListChoosed)
                             }}
                           >
                             {/* 账号头像：离线或PC不支持显示遮罩并禁用 */}
-                            <div style={{ position: "relative" }}>
+                            <div style={{ position: 'relative' }}>
                               <AvatarPlat
                                 className={`publishDialog-con-acconts-item-avatar ${
                                   !isChoosed || isOffline || isPcNotSupported
-                                    ? "disabled"
-                                    : ""
+                                    ? 'disabled'
+                                    : ''
                                 }`}
                                 account={pubItem.account}
                                 size="large"
@@ -1121,49 +1148,49 @@ const PublishDialog = memo(
                                   onClick={(e) => {
                                     // 小红书平台即使是掉线状态也显示下载App弹窗
                                     if (pubItem.account.type === PlatType.Xhs) {
-                                      setCurrentPlatform(t("rednote" as any));
-                                      setDownloadModalVisible(true);
-                                      return;
+                                      setCurrentPlatform(t('rednote' as any))
+                                      setDownloadModalVisible(true)
+                                      return
                                     }
                                     // 其他平台的离线账户触发授权跳转
                                     if (isOffline) {
-                                      handleOfflineAvatarClick(pubItem.account);
+                                      handleOfflineAvatarClick(pubItem.account)
                                     }
                                     // 正常账户的点击事件由父容器处理，这里不需要额外处理
                                   }}
                                   style={{
-                                    position: "absolute",
+                                    position: 'absolute',
                                     inset: 0,
-                                    background: "rgba(0,0,0,0.45)",
-                                    borderRadius: "50%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    color: "#fff",
+                                    background: 'rgba(0,0,0,0.45)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#fff',
                                     fontSize: 12,
                                     fontWeight: 600,
-                                    pointerEvents: "auto",
-                                    cursor: "pointer",
+                                    pointerEvents: 'auto',
+                                    cursor: 'pointer',
                                   }}
                                 >
-                                  {t("badges.offline" as any)}
+                                  {t('badges.offline' as any)}
                                 </div>
                               )}
                               {isPcNotSupported && !isOffline && (
                                 <div
                                   style={{
-                                    position: "absolute",
+                                    position: 'absolute',
                                     inset: 0,
-                                    background: "rgba(0,0,0,0.6)",
-                                    borderRadius: "50%",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    color: "#fff",
+                                    background: 'rgba(0,0,0,0.6)',
+                                    borderRadius: '50%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#fff',
                                     fontSize: 10,
                                     fontWeight: 600,
-                                    pointerEvents: "none",
-                                    textAlign: "center",
+                                    pointerEvents: 'none',
+                                    textAlign: 'center',
                                     lineHeight: 1.2,
                                   }}
                                 >
@@ -1173,7 +1200,7 @@ const PublishDialog = memo(
                             </div>
                           </div>
                         </Tooltip>
-                      );
+                      )
                     })}
                   </div>
 
@@ -1189,7 +1216,7 @@ const PublishDialog = memo(
                         {pubListChoosed.length >= 2 && (
                           <PubParmasTextarea
                             key={`${commonPubParams.images?.length || 0}-${
-                              commonPubParams.video ? "video" : "no-video"
+                              commonPubParams.video ? 'video' : 'no-video'
                             }`}
                             platType={PlatType.Instagram}
                             rows={16}
@@ -1201,7 +1228,7 @@ const PublishDialog = memo(
                                 des: values.value,
                                 images: values.imgs,
                                 video: values.video,
-                              });
+                              })
                             }}
                             onImageToImage={handleImageToImage}
                           />
@@ -1214,106 +1241,106 @@ const PublishDialog = memo(
                             <PlatParamsSetting
                               key={v.account.id}
                               pubItem={v}
-                              style={{ marginBottom: "12px" }}
+                              style={{ marginBottom: '12px' }}
                               onImageToImage={handleImageToImage}
                             />
-                          );
+                          )
                         })}
                       </>
                     )}
 
-                    {pubListChoosed.length === 0 &&
-                    pubList.some(
-                      (v) =>
-                        v.params.des ||
-                        v.params.video ||
-                        (v.params.images && v.params.images.length > 0)
-                    ) ? (
-                      <div
-                        className="publishDialog-con-tips"
-                        style={{ height: "400px" }}
-                      >
-                        {t("tips.workSaved")}
-                      </div>
-                    ) : (
-                      <>
-                        {pubListChoosed.length === 0 && (
-                          <div className="publishDialog-con-tips">
-                            {t("tips.selectAccount")}
+                    {pubListChoosed.length === 0
+                      && pubList.some(
+                        v =>
+                          v.params.des
+                          || v.params.video
+                          || (v.params.images && v.params.images.length > 0),
+                      ) ? (
+                          <div
+                            className="publishDialog-con-tips"
+                            style={{ height: '400px' }}
+                          >
+                            {t('tips.workSaved')}
                           </div>
+                        ) : (
+                          <>
+                            {pubListChoosed.length === 0 && (
+                              <div className="publishDialog-con-tips">
+                                {t('tips.selectAccount')}
+                              </div>
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
                   </div>
                 </div>
                 <div
                   className="publishDialog-footer"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={e => e.stopPropagation()}
                 >
                   <div className="publishDialog-footer-btns">
                     {step === 0 && pubListChoosed.length >= 2 ? (
                       <Button
                         size="large"
                         onClick={() => {
-                          setExpandedPubItem(undefined);
-                          setStep(1);
+                          setExpandedPubItem(undefined)
+                          setStep(1)
                         }}
                       >
-                        {t("buttons.customizePerAccount")}
+                        {t('buttons.customizePerAccount')}
                         <ArrowRightOutlined />
                       </Button>
                     ) : (
                       <>
                         <div
                           style={{
-                            display: "flex",
-                            alignItems: "center",
+                            display: 'flex',
+                            alignItems: 'center',
                             gap: 12,
                           }}
                         >
                           {moderationResult !== null && (
                             <div
                               style={{
-                                display: "flex",
-                                flexDirection: "column",
+                                display: 'flex',
+                                flexDirection: 'column',
                               }}
                             >
                               <span
                                 style={{
                                   fontSize: 14,
                                   color: moderationResult
-                                    ? "#52c41a"
-                                    : "#ff4d4f",
+                                    ? '#52c41a'
+                                    : '#ff4d4f',
                                   fontWeight: 500,
                                 }}
                               >
                                 {moderationResult
-                                  ? t("actions.contentSafe" as any)
+                                  ? t('actions.contentSafe' as any)
                                   : moderationLevel?.riskLevel
-                                  ? `${t("actions.riskLevel" as any)} ${
+                                    ? `${t('actions.riskLevel' as any)} ${
                                       moderationLevel.riskLevel
                                     }`
-                                  : t("actions.contentUnsafe" as any)}
+                                    : t('actions.contentUnsafe' as any)}
                               </span>
                               {!moderationResult && !!moderationDesc && (
                                 <span
                                   style={{
                                     fontSize: 12,
-                                    color: "#ff4d4f",
+                                    color: '#ff4d4f',
                                     maxWidth: 360,
-                                    whiteSpace: "pre-wrap",
-                                    display: "inline-flex",
-                                    alignItems: "center",
+                                    whiteSpace: 'pre-wrap',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
                                     gap: 6,
                                   }}
                                 >
                                   {moderationDesc}
                                   <Tooltip
-                                    title={moderationLevel?.riskTips || ""}
+                                    title={moderationLevel?.riskTips || ''}
                                     placement="top"
                                   >
                                     <InfoCircleOutlined
-                                      style={{ color: "#ff4d4f" }}
+                                      style={{ color: '#ff4d4f' }}
                                     />
                                   </Tooltip>
                                 </span>
@@ -1328,34 +1355,34 @@ const PublishDialog = memo(
                               onClick={handleContentModeration}
                               type={
                                 moderationResult === true
-                                  ? "primary"
+                                  ? 'primary'
                                   : moderationResult === false
-                                  ? "default"
-                                  : "default"
+                                    ? 'default'
+                                    : 'default'
                               }
                               style={{
                                 backgroundColor:
                                   moderationResult === true
-                                    ? "#52c41a"
+                                    ? '#52c41a'
                                     : moderationResult === false
-                                    ? "#ff4d4f"
-                                    : undefined,
+                                      ? '#ff4d4f'
+                                      : undefined,
                                 borderColor:
                                   moderationResult === true
-                                    ? "#52c41a"
+                                    ? '#52c41a'
                                     : moderationResult === false
-                                    ? "#ff4d4f"
-                                    : undefined,
+                                      ? '#ff4d4f'
+                                      : undefined,
                                 color:
-                                  moderationResult === true ||
-                                  moderationResult === false
-                                    ? "#fff"
+                                  moderationResult === true
+                                  || moderationResult === false
+                                    ? '#fff'
                                     : undefined,
                               }}
                             >
                               {moderationLoading
-                                ? t("actions.checkingContent" as any)
-                                : t("actions.contentModeration" as any)}
+                                ? t('actions.checkingContent' as any)
+                                : t('actions.contentModeration' as any)}
                             </Button>
                           )}
                         </div>
@@ -1366,16 +1393,16 @@ const PublishDialog = memo(
                             for (const [key, errVideoItem] of errParamsMap) {
                               if (errVideoItem) {
                                 const pubItem = pubListChoosed.find(
-                                  (v) => v.account.id === key
-                                )!;
+                                  v => v.account.id === key,
+                                )!
                                 if (step === 1) {
-                                  setExpandedPubItem(pubItem);
+                                  setExpandedPubItem(pubItem)
                                 }
-                                toast.warning(errVideoItem.parErrMsg);
-                                return;
+                                toast.warning(errVideoItem.parErrMsg)
+                                return
                               }
                             }
-                            pubClick();
+                            pubClick()
                           }}
                         />
                       </>
@@ -1431,15 +1458,15 @@ const PublishDialog = memo(
           <PublishDetailModal
             visible={publishDetailVisible}
             onClose={() => {
-              setPublishDetailVisible(false);
-              setCurrentPublishTaskId(undefined);
+              setPublishDetailVisible(false)
+              setCurrentPublishTaskId(undefined)
             }}
             taskId={currentPublishTaskId}
           />
         </>
-      );
-    }
-  )
-);
+      )
+    },
+  ),
+)
 
-export default PublishDialog;
+export default PublishDialog

@@ -5,19 +5,19 @@
 
 'use client'
 
-import { Check, Star, Crown, Settings } from 'lucide-react'
+import { Check, Crown, Settings, Star } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { memo, useMemo, useState } from 'react'
-import { useTransClient } from '@/app/i18n/client'
-import { Button } from '@/components/ui/button'
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-import { useUserStore } from '@/store/user'
-import { Skeleton } from '@/components/ui/skeleton'
-import { toast } from '@/lib/toast'
 import { createPaymentOrderApi, PaymentType } from '@/api/vip'
+import { useTransClient } from '@/app/i18n/client'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
+import { Button } from '@/components/ui/button'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { toast } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 import { openLoginModal } from '@/store/loginModal'
+import { useUserStore } from '@/store/user'
 
 interface PricingContentProps {
   lng: string
@@ -80,7 +80,8 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
   // 判断用户是否为有效会员
   const isVip = useMemo(() => {
     const vipInfo = userStore.userInfo?.vipInfo
-    if (!vipInfo) return false
+    if (!vipInfo)
+      return false
 
     const statusInfo = getVipStatusInfo(vipInfo.status)
     return statusInfo.isVip && vipInfo.expireTime && new Date(vipInfo.expireTime) > new Date()
@@ -148,16 +149,17 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
       if (planId === 'creator') {
         paymentType = PaymentType.MONTH // 创作者对应月度订阅
         paymentMethod = 'subscription'
-      } else {
+      }
+      else {
         paymentType = PaymentType.MONTH
         paymentMethod = 'subscription'
       }
 
       // 创建支付订单
-      const returnTo = userStore.lang === 'zh-CN' 
-        ? `${window.location.origin}/zh-CN/pricing` 
+      const returnTo = userStore.lang === 'zh-CN'
+        ? `${window.location.origin}/zh-CN/pricing`
         : `${window.location.origin}/en/pricing`
-      
+
       const response: any = await createPaymentOrderApi({
         returnTo,
         mode: paymentMethod,
@@ -172,16 +174,20 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
         // 直接跳转到支付页面
         if (response.data?.url) {
           window.location.href = response.data.url
-        } else {
+        }
+        else {
           toast.error(t('paymentLinkNotFound'))
         }
-      } else {
+      }
+      else {
         toast.error(response?.message || response?.msg || t('createPaymentOrderFailed'))
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('创建支付订单失败:', error)
       toast.error(t('createPaymentOrderError'))
-    } finally {
+    }
+    finally {
       setLoadingPlan(null)
     }
   }
@@ -211,41 +217,43 @@ export const PricingContent = memo(({ lng }: PricingContentProps) => {
         .animate-shimmer {
           animation: shimmer 2s ease-in-out infinite;
         }
-      `}} />
+      ` }}
+      />
       <div className="min-h-screen bg-(--bg-gray) flex items-center justify-center py-16 px-4 md:px-8">
         <div className="max-w-7xl w-full">
-        {/* 页面标题 */}
-        <header className="text-center mb-16">
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
-              {t('pricing.pageTitle')}
-            </h1>
-          </div>
-        </header>
+          {/* 页面标题 */}
+          <header className="text-center mb-16">
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+                {t('pricing.pageTitle')}
+              </h1>
+            </div>
+          </header>
 
-        {/* 定价卡片网格 */}
-        <div className={cn(
-          "grid gap-6 max-w-6xl mx-auto",
-          visiblePlans.length === 1 ? "grid-cols-1 max-w-md" : visiblePlans.length === 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-3"
-        )}>
-          {visiblePlans.map((plan) => (
-            <PricingCard
-              key={plan.id}
-              planId={plan.id}
-              isHighlight={plan.highlight}
-              isCustom={plan.isCustom}
-              isFree={plan.isFree}
-              isCurrent={plan.id === 'creator' && isCurrentPlan.creator}
-              isVip={!!isVip}
-              isLoading={loadingPlan === plan.id}
-              onSelect={() => handleSelectPlan(plan.id)}
-              onOpenSubscriptionManagement={() => openSettings('membership')}
-              t={t}
-            />
-          ))}
+          {/* 定价卡片网格 */}
+          <div className={cn(
+            'grid gap-6 max-w-6xl mx-auto',
+            visiblePlans.length === 1 ? 'grid-cols-1 max-w-md' : visiblePlans.length === 2 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1 md:grid-cols-3',
+          )}
+          >
+            {visiblePlans.map(plan => (
+              <PricingCard
+                key={plan.id}
+                planId={plan.id}
+                isHighlight={plan.highlight}
+                isCustom={plan.isCustom}
+                isFree={plan.isFree}
+                isCurrent={plan.id === 'creator' && isCurrentPlan.creator}
+                isVip={!!isVip}
+                isLoading={loadingPlan === plan.id}
+                onSelect={() => handleSelectPlan(plan.id)}
+                onOpenSubscriptionManagement={() => openSettings('membership')}
+                t={t}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
     </>
   )
 })
@@ -285,11 +293,11 @@ const PricingCard = memo(({
   const planPrice = t(`pricing.plans.${planId}.price`)
   // 如果是当前计划，按钮文本显示为"订阅管理"
   const buttonText = isCurrent ? t('subscriptionManagement') : t(`pricing.plans.${planId}.button`)
-  
+
   // 获取功能列表
   const featuresKey = `pricing.plans.${planId}.features`
   const features: string[] = []
-  
+
   // 尝试获取功能列表（数组）
   for (let i = 0; i < 10; i++) {
     const feature = t(`${featuresKey}.${i}`, { defaultValue: '' })
@@ -308,27 +316,28 @@ const PricingCard = memo(({
           ? 'border-2 border-(--border-color) bg-(--bg-gray)'
           : 'border border-border',
         // 推荐方案：使用柔和的边框
-        isHighlight && !isCurrent && 'ring-1 ring-(--primary-color)/20'
+        isHighlight && !isCurrent && 'ring-1 ring-(--primary-color)/20',
       )}
     >
       {/* 最受欢迎标签 / 尊敬的创作者 */}
       {isHighlight && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
           <span className={cn(
-            "relative text-xs font-medium px-4 py-1.5 rounded-full whitespace-nowrap inline-flex items-center gap-1.5",
+            'relative text-xs font-medium px-4 py-1.5 rounded-full whitespace-nowrap inline-flex items-center gap-1.5',
             // 已开通会员：使用简约黑色风格，与按钮保持一致
             isCurrent && isVip
-              ? "bg-(--grayColor13) text-white"
-              : "bg-(--primary-color) text-white shadow-lg"
-          )}>
+              ? 'bg-(--grayColor13) text-white'
+              : 'bg-(--primary-color) text-white shadow-lg',
+          )}
+          >
             {/* 左侧星星 - 仅未开通会员时显示 */}
             {!isCurrent && (
-              <Star 
-                className="w-3 h-3 fill-yellow-300 text-yellow-300" 
-                style={{ 
+              <Star
+                className="w-3 h-3 fill-yellow-300 text-yellow-300"
+                style={{
                   animation: 'twinkle 1.5s ease-in-out infinite',
-                  animationDelay: '0s'
-                }} 
+                  animationDelay: '0s',
+                }}
               />
             )}
             {/* 文字 */}
@@ -337,12 +346,12 @@ const PricingCard = memo(({
             </span>
             {/* 右侧星星 - 仅未开通会员时显示 */}
             {!isCurrent && (
-              <Star 
-                className="w-3 h-3 fill-yellow-300 text-yellow-300" 
-                style={{ 
+              <Star
+                className="w-3 h-3 fill-yellow-300 text-yellow-300"
+                style={{
                   animation: 'twinkle 1.5s ease-in-out infinite',
-                  animationDelay: '0.75s'
-                }} 
+                  animationDelay: '0.75s',
+                }}
               />
             )}
           </span>
@@ -363,7 +372,8 @@ const PricingCard = memo(({
         ) : isFree ? (
           <div className="flex items-baseline gap-1">
             <span className="text-5xl font-bold text-(--text-color) tracking-tight">
-              ${planPrice}
+              $
+              {planPrice}
             </span>
             <span className="text-lg text-(--text-secondary)">
               {t('pricing.perMonth')}
@@ -394,9 +404,9 @@ const PricingCard = memo(({
         <Button
           onClick={onOpenSubscriptionManagement}
           className={cn(
-            "w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200",
-            "bg-(--grayColor13) hover:bg-(--grayColor12) text-white",
-            "border border-(--border-color)"
+            'w-full h-12 text-base font-medium rounded-xl mb-6 transition-all duration-200',
+            'bg-(--grayColor13) hover:bg-(--grayColor12) text-white',
+            'border border-(--border-color)',
           )}
         >
           {buttonText}
@@ -473,14 +483,14 @@ PricingCard.displayName = 'PricingCard'
 /**
  * 定价卡片骨架屏
  */
-export const PricingCardSkeleton = () => {
+export function PricingCardSkeleton() {
   return (
     <div className="bg-card rounded-2xl p-6 flex flex-col border border-border">
       <Skeleton className="h-7 w-24 mb-4 mt-2" />
       <Skeleton className="h-14 w-32 mb-6" />
       <Skeleton className="h-12 w-full mb-6" />
       <div className="space-y-3">
-        {[...Array(5)].map((_, i) => (
+        {[...Array.from({ length: 5 })].map((_, i) => (
           <div key={i} className="flex items-start gap-3">
             <Skeleton className="w-5 h-5 rounded-full shrink-0" />
             <Skeleton className="h-4 w-full" />
@@ -490,5 +500,3 @@ export const PricingCardSkeleton = () => {
     </div>
   )
 }
-
-

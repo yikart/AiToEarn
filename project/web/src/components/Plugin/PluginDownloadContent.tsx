@@ -33,4 +33,3 @@ export function PluginDownloadContent({
   // 未安装
   return <PluginNotInstalled />
 }
-

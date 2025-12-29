@@ -3,8 +3,8 @@
  * 初始状态和状态类型
  */
 
-import lodash from 'lodash'
 import type { IAgentState } from './agent.types'
+import lodash from 'lodash'
 
 // ============ 初始状态 ============
 
@@ -38,4 +38,3 @@ export const initialState: IAgentState = {
 export function getInitialState(): IAgentState {
   return lodash.cloneDeep(initialState)
 }
-

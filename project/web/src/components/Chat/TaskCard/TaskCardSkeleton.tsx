@@ -3,8 +3,8 @@
  * 用于任务卡片加载状态的占位显示
  */
 
-import { cn } from '@/lib/utils'
 import { Skeleton } from '@/components/ui/skeleton'
+import { cn } from '@/lib/utils'
 
 export interface ITaskCardSkeletonProps {
   /** 自定义类名 */
@@ -36,4 +36,3 @@ export function TaskCardSkeleton({ className }: ITaskCardSkeletonProps) {
 }
 
 export default TaskCardSkeleton
-

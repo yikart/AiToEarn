@@ -51,7 +51,6 @@ export function pinterestLogin(taskId: any): Promise<any> {
           // return false;
         }
         catch (error) {
-          
           return false
         }
       }

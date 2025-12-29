@@ -28,6 +28,11 @@
  * 4. 在此文件中导出
  */
 
+export { douyinInteraction } from './douyin'
+
+// 管理器
+export { platformManager } from './manager'
+
 // 类型导出
 export type {
   BaseResult,
@@ -52,10 +57,5 @@ export type {
   TopicInfo,
   WorkDetail,
 } from './types'
-
-// 管理器
-export { platformManager } from './manager'
-
 // 平台实例
 export { xhsInteraction } from './xhs'
-export { douyinInteraction } from './douyin'

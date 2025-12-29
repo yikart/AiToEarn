@@ -4,11 +4,9 @@ import type {
   InitialConfigType,
 } from '@lexical/react/LexicalComposer'
 import type { EditorState, LexicalEditor } from 'lexical'
-import {
-  ForwardedRef, useEffect,
+import type {
+  ForwardedRef,
 } from 'react'
-import { driver } from 'driver.js'
-import 'driver.js/dist/driver.css'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import {
   LexicalComposer,
@@ -18,6 +16,7 @@ import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
+import { driver } from 'driver.js'
 import { $getRoot } from 'lexical'
 import {
   BeautifulMentionNode,
@@ -26,21 +25,25 @@ import {
 } from 'lexical-beautiful-mentions'
 import React, {
   forwardRef,
+
   memo,
   useCallback,
+  useEffect,
   useRef,
 } from 'react'
-import { getDouyinTopicsApi } from '@/api/dataStatistics'
 
+import { getDouyinTopicsApi } from '@/api/dataStatistics'
 import {
   Menu,
   MenuItem,
 } from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/components/Menu'
+
 import {
   InitialValuePlugin,
   PasteTopicsPlugin,
 } from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/utils/editor-utils'
 import styles from './pubParmasMentionInput.module.scss'
+import 'driver.js/dist/driver.css'
 
 export interface IPubParmasMentionInputRef {}
 
@@ -109,7 +112,8 @@ const PubParmasMentionInput = memo(
       // 初始化新手引导 - 提示用户可以划词选择AI功能
       useEffect(() => {
         const hasSeenTextSelectionGuide = localStorage.getItem('hasSeenTextSelectionGuide')
-        if (hasSeenTextSelectionGuide) return
+        if (hasSeenTextSelectionGuide)
+          return
 
         // 延迟显示，确保编辑器已渲染
         const timer = setTimeout(() => {
@@ -121,7 +125,8 @@ const PubParmasMentionInput = memo(
               editorElement.id = 'mention-input-editor'
             }
           }
-          if (!editorElement) return
+          if (!editorElement)
+            return
 
           const driverObj = driver({
             showProgress: false,

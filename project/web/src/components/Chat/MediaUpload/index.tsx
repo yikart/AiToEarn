@@ -5,12 +5,12 @@
 
 'use client'
 
-import { useRef, useMemo, useEffect, useState } from 'react'
-import { Loader2, Plus, X, FileText } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { getOssUrl } from '@/utils/oss'
+import { FileText, Loader2, Plus, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { MediaPreview } from '@/components/common/MediaPreview'
+import { cn } from '@/lib/utils'
+import { getOssUrl } from '@/utils/oss'
 
 /** 上传的媒体文件类型 */
 export interface IUploadedMedia {
@@ -26,11 +26,15 @@ export interface IUploadedMedia {
   name?: string
 }
 
-const formatFileSize = (bytes?: number) => {
-  if (!bytes || bytes <= 0) return ''
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  if (bytes < 1024 * 1024 * 1024) return `${(bytes / 1024 / 1024).toFixed(2)} MB`
+function formatFileSize(bytes?: number) {
+  if (!bytes || bytes <= 0)
+    return ''
+  if (bytes < 1024)
+    return `${bytes} B`
+  if (bytes < 1024 * 1024)
+    return `${(bytes / 1024).toFixed(1)} KB`
+  if (bytes < 1024 * 1024 * 1024)
+    return `${(bytes / 1024 / 1024).toFixed(2)} MB`
   return `${(bytes / 1024 / 1024 / 1024).toFixed(2)} GB`
 }
 
@@ -104,14 +108,16 @@ export function MediaUpload({
       const remaining = Math.max(0, maxCount - medias.length)
       if (remaining <= 0) {
         // 已达到最大数量，直接忽略本次选择
-      } else if (files.length > remaining) {
+      }
+      else if (files.length > remaining) {
         // 只取前 remaining 个文件
         const dt = new DataTransfer()
         for (let i = 0; i < remaining; i++) {
           dt.items.add(files[i])
         }
         onFilesChange?.(dt.files)
-      } else {
+      }
+      else {
         onFilesChange?.(files)
       }
     }
@@ -133,8 +139,10 @@ export function MediaUpload({
   /** 打开预览 */
   const handlePreview = (index: number) => {
     const media = medias[index]
-    if (!media) return
-    if (media.type === 'document') return
+    if (!media)
+      return
+    if (media.type === 'document')
+      return
     setPreviewIndex(index)
   }
 
@@ -151,115 +159,116 @@ export function MediaUpload({
       )}
     >
       {/* 已上传的媒体列表 */}
-      {showList &&
-        medias.map((media, index) => (
-        <div
-          key={`${media.url}-${index}`}
-          className={cn(
-            'relative group rounded-lg overflow-hidden border border-border bg-muted',
-            media.type === 'document' || media.type === 'video'
-              ? 'min-w-[220px] h-14'
-              : 'w-14 h-14',
-          )}
-        >
-          {/* 媒体预览 */}
-          {media.type === 'document' ? (
-            <div className="flex items-center gap-3 h-full px-3 bg-background">
-              <div className="flex items-center justify-center w-7 h-7 rounded-md bg-red-500/10 text-red-500">
-                <FileText className="w-4 h-4" />
-              </div>
-              <div className="flex flex-col justify-center min-w-0">
-                <span className="text-xs font-medium text-foreground truncate max-w-[160px]">
-                  {media.name || media.file?.name || t('media.document' as any)}
-                </span>
-                {media.file && (
-                  <span className="text-[11px] text-muted-foreground mt-0.5">
-                    {formatFileSize(media.file.size)}
-                  </span>
-                )}
-              </div>
-            </div>
-          ) : media.type === 'video' ? (
-            <button
-              type="button"
-              onClick={() => handlePreview(index)}
-              className="flex items-center gap-3 h-full w-full px-3 bg-background text-left cursor-pointer"
-            >
-              <div className="flex items-center justify-center w-7 h-7 rounded-md bg-blue-500/10 text-blue-500">
-                <span className="text-[11px] font-semibold">VID</span>
-              </div>
-              <div className="flex flex-col justify-center min-w-0">
-                <span className="text-xs font-medium text-foreground truncate max-w-[160px]">
-                  {media.name || media.file?.name || 'video'}
-                </span>
-                {media.file && (
-                  <span className="text-[11px] text-muted-foreground mt-0.5">
-                    {formatFileSize(media.file.size)}
-                  </span>
-                )}
-              </div>
-            </button>
-          ) : (
-            <img
-              src={previewUrls[index]}
-              alt={`media-${index}`}
-              className="w-full h-full object-cover cursor-pointer"
-              onClick={() => handlePreview(index)}
-            />
-          )}
-
-          {/* 上传进度遮罩：仅在进度未完成时显示，由 Hook 负责在完成时清理 progress */}
-          {media.progress !== undefined && media.progress < 100 && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/45">
-              {media.type === 'image' ? (
-                <Loader2 className="w-6 h-6 text-white animate-spin" />
-              ) : (
-                <div className="relative w-8 h-8">
-                  <svg className="w-8 h-8 -rotate-90">
-                    <circle
-                      cx="16"
-                      cy="16"
-                      r="12"
-                      stroke="rgba(255,255,255,0.3)"
-                      strokeWidth="3"
-                      fill="none"
-                    />
-                    <circle
-                      cx="16"
-                      cy="16"
-                      r="12"
-                      stroke="white"
-                      strokeWidth="3"
-                      fill="none"
-                      strokeDasharray={`${(media.progress || 0) * 0.75} 75`}
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span className="absolute inset-0 flex items-center justify-center text-white text-[10px] font-medium">
-                    {media.progress}%
-                  </span>
+      {showList
+        && medias.map((media, index) => (
+          <div
+            key={`${media.url}-${index}`}
+            className={cn(
+              'relative group rounded-lg overflow-hidden border border-border bg-muted',
+              media.type === 'document' || media.type === 'video'
+                ? 'min-w-[220px] h-14'
+                : 'w-14 h-14',
+            )}
+          >
+            {/* 媒体预览 */}
+            {media.type === 'document' ? (
+              <div className="flex items-center gap-3 h-full px-3 bg-background">
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-red-500/10 text-red-500">
+                  <FileText className="w-4 h-4" />
                 </div>
-              )}
-            </div>
-          )}
+                <div className="flex flex-col justify-center min-w-0">
+                  <span className="text-xs font-medium text-foreground truncate max-w-[160px]">
+                    {media.name || media.file?.name || t('media.document' as any)}
+                  </span>
+                  {media.file && (
+                    <span className="text-[11px] text-muted-foreground mt-0.5">
+                      {formatFileSize(media.file.size)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ) : media.type === 'video' ? (
+              <button
+                type="button"
+                onClick={() => handlePreview(index)}
+                className="flex items-center gap-3 h-full w-full px-3 bg-background text-left cursor-pointer"
+              >
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-blue-500/10 text-blue-500">
+                  <span className="text-[11px] font-semibold">VID</span>
+                </div>
+                <div className="flex flex-col justify-center min-w-0">
+                  <span className="text-xs font-medium text-foreground truncate max-w-[160px]">
+                    {media.name || media.file?.name || 'video'}
+                  </span>
+                  {media.file && (
+                    <span className="text-[11px] text-muted-foreground mt-0.5">
+                      {formatFileSize(media.file.size)}
+                    </span>
+                  )}
+                </div>
+              </button>
+            ) : (
+              <img
+                src={previewUrls[index]}
+                alt={`media-${index}`}
+                className="w-full h-full object-cover cursor-pointer"
+                onClick={() => handlePreview(index)}
+              />
+            )}
 
-          {/* 删除按钮（上传中和上传完成都可关闭） */}
-          {!disabled && (
-            <button
-              onClick={() => onRemove?.(index)}
-              className={cn(
-                'absolute top-1 right-1 z-10 w-4 h-4 rounded-full flex items-center justify-center cursor-pointer',
-                'bg-background/95 text-muted-foreground shadow-sm border border-border/70',
-                'hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors',
-              )}
-              aria-label={t('media.remove' as any)}
-              type="button"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
-        </div>
-      ))}
+            {/* 上传进度遮罩：仅在进度未完成时显示，由 Hook 负责在完成时清理 progress */}
+            {media.progress !== undefined && media.progress < 100 && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/45">
+                {media.type === 'image' ? (
+                  <Loader2 className="w-6 h-6 text-white animate-spin" />
+                ) : (
+                  <div className="relative w-8 h-8">
+                    <svg className="w-8 h-8 -rotate-90">
+                      <circle
+                        cx="16"
+                        cy="16"
+                        r="12"
+                        stroke="rgba(255,255,255,0.3)"
+                        strokeWidth="3"
+                        fill="none"
+                      />
+                      <circle
+                        cx="16"
+                        cy="16"
+                        r="12"
+                        stroke="white"
+                        strokeWidth="3"
+                        fill="none"
+                        strokeDasharray={`${(media.progress || 0) * 0.75} 75`}
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                    <span className="absolute inset-0 flex items-center justify-center text-white text-[10px] font-medium">
+                      {media.progress}
+                      %
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* 删除按钮（上传中和上传完成都可关闭） */}
+            {!disabled && (
+              <button
+                onClick={() => onRemove?.(index)}
+                className={cn(
+                  'absolute top-1 right-1 z-10 w-4 h-4 rounded-full flex items-center justify-center cursor-pointer',
+                  'bg-background/95 text-muted-foreground shadow-sm border border-border/70',
+                  'hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors',
+                )}
+                aria-label={t('media.remove' as any)}
+                type="button"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
+        ))}
 
       {/* 上传按钮 */}
       {showUploadButton && canUploadMore && (
@@ -317,4 +326,3 @@ export function MediaUpload({
 }
 
 export default MediaUpload
-

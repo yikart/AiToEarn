@@ -56,12 +56,7 @@
       width: 80px;
       height: 36px;
       border-radius: 20px;
-      background: linear-gradient(
-        90deg,
-        var(--grayColor1) 25%,
-        var(--grayColor2) 50%,
-        var(--grayColor1) 75%
-      );
+      background: linear-gradient(90deg, var(--grayColor1) 25%, var(--grayColor2) 50%, var(--grayColor1) 75%);
       background-size: 200% 100%;
       animation: shimmer 1.5s infinite;
     }
@@ -200,4 +195,3 @@
     transform: rotate(360deg);
   }
 }
-

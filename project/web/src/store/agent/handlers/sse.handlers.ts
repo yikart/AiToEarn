@@ -3,10 +3,10 @@
  * 使用职责链模式处理不同类型的 SSE 消息
  */
 
-import { directTrans, useTransClient } from '@/app/i18n/client'
-import type { ISSEMessage, IWorkflowStep, IMessageStep } from '../agent.types'
+import type { IMessageStep, ISSEMessage, IWorkflowStep } from '../agent.types'
 import type { IAgentRefs } from '../utils/refs'
 import type { WorkflowUtils } from '../utils/workflow'
+import { directTrans, useTransClient } from '@/app/i18n/client'
 
 // ============ SSE 处理器类型 ============
 
@@ -38,7 +38,7 @@ export interface ISSEHandler {
 /** 处理 init 消息 */
 export const initHandler: ISSEHandler = {
   name: 'init',
-  canHandle: (msg) => msg.type === 'init' && !!msg.taskId,
+  canHandle: msg => msg.type === 'init' && !!msg.taskId,
   handle: (msg, ctx, callbacks) => {
     const receivedTaskId = msg.taskId!
     console.log('[SSE] Received taskId:', receivedTaskId)
@@ -54,7 +54,7 @@ export const initHandler: ISSEHandler = {
 /** 处理 keep_alive 消息 */
 export const keepAliveHandler: ISSEHandler = {
   name: 'keep_alive',
-  canHandle: (msg) => msg.type === 'keep_alive',
+  canHandle: msg => msg.type === 'keep_alive',
   handle: () => {
     // 心跳消息，无需处理
   },
@@ -77,7 +77,8 @@ function extractEvent(msg: ISSEMessage): any {
 export const messageStartHandler: ISSEHandler = {
   name: 'message_start',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event') return false
+    if (msg.type !== 'stream_event')
+      return false
     const event = extractEvent(msg)
     return event?.type === 'message_start'
   },
@@ -90,7 +91,8 @@ export const messageStartHandler: ISSEHandler = {
 export const toolUseStartHandler: ISSEHandler = {
   name: 'tool_use_start',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event') return false
+    if (msg.type !== 'stream_event')
+      return false
     const event = extractEvent(msg)
     return event?.type === 'content_block_start' && event.content_block?.type === 'tool_use'
   },
@@ -115,7 +117,8 @@ export const toolUseStartHandler: ISSEHandler = {
 export const textDeltaHandler: ISSEHandler = {
   name: 'text_delta',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event') return false
+    if (msg.type !== 'stream_event')
+      return false
     const event = extractEvent(msg)
     return event?.type === 'content_block_delta' && event.delta?.type === 'text_delta'
   },
@@ -123,7 +126,8 @@ export const textDeltaHandler: ISSEHandler = {
     const event = extractEvent(msg)
     const text = event.delta.text
 
-    if (!text) return
+    if (!text)
+      return
 
     ctx.refs.streamingText.value += text
     ctx.set({ streamingText: ctx.refs.streamingText.value })
@@ -133,7 +137,8 @@ export const textDeltaHandler: ISSEHandler = {
       const newMessages = [...state.markdownMessages]
       if (newMessages.length > 0 && newMessages[newMessages.length - 1].startsWith('🤖 ')) {
         newMessages[newMessages.length - 1] = `🤖 ${ctx.refs.streamingText.value}`
-      } else {
+      }
+      else {
         newMessages.push(`🤖 ${ctx.refs.streamingText.value}`)
       }
       return { markdownMessages: newMessages }
@@ -144,19 +149,20 @@ export const textDeltaHandler: ISSEHandler = {
       messages: state.messages.map((m: any) => {
         // Determine target assistant message id:
         // prefer refs.currentAssistantMessageId.value, otherwise fall back to last assistant message in state
-        const targetAssistantId =
-          ctx.refs.currentAssistantMessageId.value ||
-          (function findLastAssistantId() {
-            const msgs = state.messages || []
-            for (let i = msgs.length - 1; i >= 0; i--) {
-              if (msgs[i].role === 'assistant') return msgs[i].id
-            }
-            return ''
-          })()
+        const targetAssistantId
+          = ctx.refs.currentAssistantMessageId.value
+            || (function findLastAssistantId() {
+              const msgs = state.messages || []
+              for (let i = msgs.length - 1; i >= 0; i--) {
+                if (msgs[i].role === 'assistant')
+                  return msgs[i].id
+              }
+              return ''
+            })()
         if (m.id === targetAssistantId) {
           const steps = m.steps || []
 
-          let updatedSteps = [...steps]
+          const updatedSteps = [...steps]
           const currentStepData: IMessageStep = {
             id: `step-${ctx.refs.currentStepIndex.value}-live`,
             content: ctx.refs.streamingText.value,
@@ -167,7 +173,8 @@ export const textDeltaHandler: ISSEHandler = {
 
           if (ctx.refs.currentStepIndex.value >= 0 && ctx.refs.currentStepIndex.value < updatedSteps.length) {
             updatedSteps[ctx.refs.currentStepIndex.value] = currentStepData
-          } else if (ctx.refs.currentStepIndex.value === updatedSteps.length) {
+          }
+          else if (ctx.refs.currentStepIndex.value === updatedSteps.length) {
             updatedSteps.push(currentStepData)
           }
 
@@ -191,7 +198,8 @@ export const textDeltaHandler: ISSEHandler = {
 export const inputJsonDeltaHandler: ISSEHandler = {
   name: 'input_json_delta',
   canHandle: (msg) => {
-    if (msg.type !== 'stream_event') return false
+    if (msg.type !== 'stream_event')
+      return false
     const event = extractEvent(msg)
     return event?.type === 'content_block_delta' && event.delta?.type === 'input_json_delta'
   },
@@ -200,7 +208,7 @@ export const inputJsonDeltaHandler: ISSEHandler = {
     const partialJson = event.delta.partial_json
 
     if (partialJson) {
-      ctx.workflowUtils.updateLastWorkflowStep((step) => ({
+      ctx.workflowUtils.updateLastWorkflowStep(step => ({
         ...step,
         content: (step.content || '') + partialJson,
       }))
@@ -211,7 +219,7 @@ export const inputJsonDeltaHandler: ISSEHandler = {
 /** 处理 assistant 消息（工具调用完成） */
 export const assistantMessageHandler: ISSEHandler = {
   name: 'assistant_message',
-  canHandle: (msg) => msg.type === 'assistant' && !!msg.message,
+  canHandle: msg => msg.type === 'assistant' && !!msg.message,
   handle: (msg, ctx) => {
     const assistantMsg = msg.message as any
     if (assistantMsg?.message?.content && Array.isArray(assistantMsg.message.content)) {
@@ -229,7 +237,7 @@ export const assistantMessageHandler: ISSEHandler = {
 /** 处理 user 消息（工具结果） */
 export const userMessageHandler: ISSEHandler = {
   name: 'user_message',
-  canHandle: (msg) => msg.type === 'user' && !!msg.message,
+  canHandle: msg => msg.type === 'user' && !!msg.message,
   handle: (msg, ctx) => {
     const userMsg = msg.message as any
     // 支持两种数据路径：userMsg.content 和 userMsg.message.content
@@ -244,7 +252,8 @@ export const userMessageHandler: ISSEHandler = {
                 resultText = rc.text || ''
               }
             })
-          } else if (typeof item.content === 'string') {
+          }
+          else if (typeof item.content === 'string') {
             resultText = item.content
           }
           if (resultText) {
@@ -259,7 +268,7 @@ export const userMessageHandler: ISSEHandler = {
 /** 处理 text 消息 */
 export const textHandler: ISSEHandler = {
   name: 'text',
-  canHandle: (msg) => msg.type === 'text' && !!msg.message,
+  canHandle: msg => msg.type === 'text' && !!msg.message,
   handle: (msg, ctx) => {
     ctx.set((state: any) => ({
       markdownMessages: [...state.markdownMessages, msg.message as string],
@@ -270,23 +279,23 @@ export const textHandler: ISSEHandler = {
 /** 处理 error 消息 */
 export const errorHandler: ISSEHandler = {
   name: 'error',
-  canHandle: (msg) => msg.type === 'error',
+  canHandle: msg => msg.type === 'error',
   handle: async (msg, ctx) => {
     // 检查错误码 12001（额度不足）
     const errorCode = (msg as any).code
     const errorMessage = typeof msg.message === 'string' ? msg.message : (msg.message as any)?.message || 'Unknown error'
-    
+
     if (errorCode === 12001) {
       // 额度不足，显示确认对话框并跳转到定价页面
       const { confirm } = await import('@/lib/confirm')
       const actionContext = ctx.refs.actionContext.value
-      
+
       if (actionContext) {
         // 使用国际化文本
         const title = directTrans('chat', 'error.insufficientCredits.title') || 'Agent 额度不足'
         const content = directTrans('chat', 'error.insufficientCredits.content') || '您的 Agent 额度不足，请开通会员'
         const okText = directTrans('chat', 'error.insufficientCredits.okText') || '确定'
-        
+
         confirm({
           title,
           content,
@@ -296,12 +305,14 @@ export const errorHandler: ISSEHandler = {
             actionContext.router.push(`/${actionContext.lng}/pricing`)
           },
         })
-      } else {
+      }
+      else {
         // 如果没有 actionContext，使用 window.location 跳转
         const lng = window.location.pathname.split('/')[1] || 'zh-CN'
         window.location.href = `/${lng}/pricing`
       }
-    } else {
+    }
+    else {
       // 其他错误：创建一个 assistant 消息，显示为错误卡片（不显示文本）
       if (errorMessage) {
         const assistantMessage = {
@@ -375,7 +386,6 @@ export const SSEHandlerRegistry = {
    * 获取所有处理器名称
    */
   getHandlerNames(): string[] {
-    return sseHandlers.map((h) => h.name)
+    return sseHandlers.map(h => h.name)
   },
 }
-

@@ -29,8 +29,7 @@
       "completed": "Completed",
       "requiresAction": "Action Required",
       "failed": "Failed"
-    }
-    ,
+    },
     "rate": "Rate"
   },
   "home": {
@@ -106,4 +105,3 @@
     "continue": "Continue"
   }
 }
-

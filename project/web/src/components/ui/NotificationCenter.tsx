@@ -1,8 +1,8 @@
- 'use client'
+'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
 
-type NotificationDetail = {
+interface NotificationDetail {
   key?: string
   id?: string
   _uid?: string
@@ -10,7 +10,7 @@ type NotificationDetail = {
   duration?: number
 }
 
-type NotificationItem = {
+interface NotificationItem {
   uid: string // internal unique id
   key?: string
   content: React.ReactNode
@@ -32,7 +32,8 @@ export const NotificationCenter: React.FC = () => {
   useEffect(() => {
     function onAdd(e: Event) {
       const detail = (e as CustomEvent)?.detail as NotificationDetail | undefined
-      if (!detail) return
+      if (!detail)
+        return
       const uid = detail._uid || genUid()
       const key = detail.key || detail.id
       const duration = (typeof detail.duration === 'number') ? detail.duration * 1000 : 3000
@@ -68,7 +69,8 @@ export const NotificationCenter: React.FC = () => {
 
     function onRemove(e: Event) {
       const detail = (e as CustomEvent)?.detail as NotificationDetail | undefined
-      if (!detail) return
+      if (!detail)
+        return
       const uid = detail._uid
       const key = detail.key || detail.id
       if (uid) {
@@ -85,7 +87,7 @@ export const NotificationCenter: React.FC = () => {
         // remove only first matched key (avoid closing all with same key)
         let removed = false
         let removedUid: string | null = null
-        setItems(prev => prev.map(it => {
+        setItems(prev => prev.map((it) => {
           if (!removed && it.key === key) {
             removed = true
             removedUid = it.uid
@@ -170,5 +172,3 @@ export const NotificationCenter: React.FC = () => {
 }
 
 export default NotificationCenter
-
-

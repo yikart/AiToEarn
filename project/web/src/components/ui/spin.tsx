@@ -64,4 +64,3 @@ export function Spin({ spinning = false, children, className, tip }: SpinProps) 
     </div>
   )
 }
-

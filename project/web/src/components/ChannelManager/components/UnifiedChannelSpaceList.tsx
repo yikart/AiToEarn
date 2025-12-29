@@ -19,8 +19,8 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import { CreateSpaceSection } from './CreateSpaceSection'
-import { SpaceItem } from './SpaceItem'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
+import { SpaceItem } from './SpaceItem'
 import { SpaceListSkeleton } from './SpaceListSkeleton'
 
 export function UnifiedChannelSpaceList() {
@@ -127,11 +127,12 @@ export function UnifiedChannelSpaceList() {
 
   // 切换空间折叠状态
   const toggleSpaceCollapse = useCallback((spaceId: string) => {
-    setCollapsedSpaces(prev => {
+    setCollapsedSpaces((prev) => {
       const newSet = new Set(prev)
       if (newSet.has(spaceId)) {
         newSet.delete(spaceId)
-      } else {
+      }
+      else {
         newSet.add(spaceId)
       }
       return newSet
@@ -140,7 +141,8 @@ export function UnifiedChannelSpaceList() {
 
   // 空间排序函数
   const handleSpaceSort = useCallback(async (spaceId: string, direction: 'up' | 'down') => {
-    if (sortingSpaceLoading) return // 防止重复操作
+    if (sortingSpaceLoading)
+      return // 防止重复操作
 
     setSortingSpaceLoading(spaceId)
 
@@ -148,10 +150,12 @@ export function UnifiedChannelSpaceList() {
       const sortedGroups = [...accountGroupList].sort((a, b) => (a.rank || 0) - (b.rank || 0))
       const currentIndex = sortedGroups.findIndex(g => g.id === spaceId)
 
-      if (currentIndex === -1) return
+      if (currentIndex === -1)
+        return
 
       const newIndex = direction === 'up' ? currentIndex - 1 : currentIndex + 1
-      if (newIndex < 0 || newIndex >= sortedGroups.length) return
+      if (newIndex < 0 || newIndex >= sortedGroups.length)
+        return
 
       // 交换位置
       [sortedGroups[currentIndex], sortedGroups[newIndex]] = [sortedGroups[newIndex], sortedGroups[currentIndex]]
@@ -165,9 +169,11 @@ export function UnifiedChannelSpaceList() {
       await apiUpdateAccountGroupSortRank({ list: updateList })
       await getAccountGroup()
       toast.success(t('channelManager.sortSuccess', '排序成功'))
-    } catch (error) {
+    }
+    catch (error) {
       toast.error(t('channelManager.sortFailed', '排序失败'))
-    } finally {
+    }
+    finally {
       setSortingSpaceLoading(null)
     }
   }, [accountGroupList, getAccountGroup, t, sortingSpaceLoading])

@@ -6,6 +6,7 @@
 'use client'
 
 import * as React from 'react'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export interface ModalProps {
@@ -138,13 +138,13 @@ export const Modal: React.FC<ModalProps> = ({
         style={{
           // 使用 CSS 变量，允许媒体查询覆盖
           '--modal-width': shouldSetWidthStyle ? widthValue : undefined,
-          width: shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
-          maxWidth: shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
+          'width': shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
+          'maxWidth': shouldSetWidthStyle ? 'min(var(--modal-width), calc(100vw - 24px))' : undefined,
           ...(zIndex ? { zIndex } : {}),
         } as React.CSSProperties}
         overlayStyle={overlayZIndex ? { zIndex: overlayZIndex } : undefined}
         onInteractOutside={handleInteractOutside}
-        onEscapeKeyDown={!closable ? (e) => e.preventDefault() : undefined}
+        onEscapeKeyDown={!closable ? e => e.preventDefault() : undefined}
         aria-describedby={title ? undefined : undefined}
       >
         {title
@@ -183,4 +183,3 @@ export const Modal: React.FC<ModalProps> = ({
 
 // 为了与 antd Modal 使用方式兼容，也导出一个 default
 export default Modal
-

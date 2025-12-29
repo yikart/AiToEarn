@@ -5,7 +5,7 @@
  * 2. Claude Prompt 格式：{ type, source, text, cache_control }
  */
 
-import type { IUploadedMedia, IPromptContentItem, IParsedUserContent } from '@/store/agent'
+import type { IParsedUserContent, IPromptContentItem, IUploadedMedia } from '@/store/agent'
 
 /**
  * Markdown 引用格式正则
@@ -33,7 +33,7 @@ function parseMarkdownReferences(text: string): IParsedUserContent {
 
   // 提取所有引用
   const matches = text.matchAll(MARKDOWN_REFERENCE_REGEX)
-  
+
   for (const match of matches) {
     const [fullMatch, type, url] = match
     const trimmedUrl = url.trim()
@@ -66,9 +66,9 @@ function parseMarkdownReferences(text: string): IParsedUserContent {
 function parseClaudePrompt(text: string): IParsedUserContent {
   try {
     const items: IPromptContentItem[] = JSON.parse(text)
-    
+
     if (!Array.isArray(items)) {
-      throw new Error('Invalid format: not an array')
+      throw new TypeError('Invalid format: not an array')
     }
 
     const medias: IUploadedMedia[] = []
@@ -77,13 +77,14 @@ function parseClaudePrompt(text: string): IParsedUserContent {
     items.forEach((item) => {
       if (item.type === 'text' && item.text) {
         textParts.push(item.text)
-      } else if (['image', 'video', 'document'].includes(item.type)) {
+      }
+      else if (['image', 'video', 'document'].includes(item.type)) {
         if (item.source?.url) {
           const media: IUploadedMedia = {
             url: item.source.url,
             type: item.type as 'image' | 'video' | 'document',
           }
-          
+
           // 添加缓存控制（如果存在）
           if (item.cache_control) {
             media.cache_control = item.cache_control
@@ -99,7 +100,8 @@ function parseClaudePrompt(text: string): IParsedUserContent {
       medias,
       hasSpecialFormat: true,
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.error('Failed to parse Claude prompt format:', error)
     // 解析失败，返回原始文本
     return {
@@ -120,7 +122,8 @@ export function parseUserMessageContent(content: string | any[]): IParsedUserCon
     try {
       const jsonStr = JSON.stringify(content)
       return parseClaudePrompt(jsonStr)
-    } catch {
+    }
+    catch {
       return {
         text: '',
         medias: [],
@@ -171,4 +174,3 @@ export function formatMediaTypeName(type: 'image' | 'video' | 'document'): strin
   }
   return names[type] || type
 }
-

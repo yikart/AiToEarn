@@ -18,7 +18,7 @@ export function ChatLoadingSkeleton() {
 
       {/* 消息区域骨架 */}
       <div className="flex-1 p-4 space-y-4">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3].map(i => (
           <div
             key={i}
             className={cn('flex gap-3', i % 2 === 0 ? 'flex-row-reverse' : '')}
@@ -38,4 +38,3 @@ export function ChatLoadingSkeleton() {
     </div>
   )
 }
-

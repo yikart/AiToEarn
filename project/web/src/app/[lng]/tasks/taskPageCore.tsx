@@ -12,18 +12,6 @@ import type {
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
 import { ClockCircleOutlined, EyeOutlined, PlayCircleOutlined } from '@ant-design/icons'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { Spin } from '@/components/ui/spin'
-import { Empty } from '@/components/ui/empty'
-import { Card } from '@/components/ui/card'
-import { List } from '@/components/ui/list'
-import { Pagination } from '@/components/ui/pagination'
-import { Row, Col } from '@/components/ui/grid'
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -31,24 +19,35 @@ import { getAccountListApi } from '@/api/account'
 import { apiGetMaterialList } from '@/api/material'
 import { acceptTask, getTaskDetail, submitTask } from '@/api/notification'
 import {
+  apiGetSettleInfoByUserTask,
+  apiGetSettleItemList,
   apiGetTaskOpportunityList,
   apiGetUserTaskDetail,
   apiGetUserTaskList,
-  apiMarkTaskAsViewed
+  apiMarkTaskAsViewed,
 } from '@/api/task'
-import {
-  apiGetSettleInfoByUserTask,
-  apiGetSettleItemList,
-} from '@/api/task'
+
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import MediaPreview from '@/components/common/MediaPreview'
+import PublishDialog from '@/components/PublishDialog'
+import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
+import { Empty } from '@/components/ui/empty'
+import { Col, Row } from '@/components/ui/grid'
+import { Input } from '@/components/ui/input'
+import { List } from '@/components/ui/list'
+import { Modal } from '@/components/ui/modal'
+import { Pagination } from '@/components/ui/pagination'
+import { Spin } from '@/components/ui/spin'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { toast } from '@/lib/toast'
+import { openLoginModal } from '@/store/loginModal'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
 import styles from './taskPageCore.module.scss'
-import PublishDialog from '@/components/PublishDialog'
-import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import { openLoginModal } from '@/store/loginModal'
 
 export default function TaskPageCore() {
   const { t } = useTransClient('task' as any)
@@ -127,9 +126,9 @@ export default function TaskPageCore() {
   const [acceptedTaskSettleLoading, setAcceptedTaskSettleLoading] = useState(false)
   // 任务信息卡片数量，用于控制对齐（只有一个时左对齐）
   const infoItemsCount = (
-    (taskDetail?.reward && taskDetail.reward > 0 ? 1 : 0) +
-    (taskDetail?.cpmReward && taskDetail.cpmReward > 0 ? 1 : 0) +
-    (taskDetail?.type ? 1 : 0)
+    (taskDetail?.reward && taskDetail.reward > 0 ? 1 : 0)
+    + (taskDetail?.cpmReward && taskDetail.cpmReward > 0 ? 1 : 0)
+    + (taskDetail?.type ? 1 : 0)
   )
   // Publish dialog state
   const [publishDialogOpen, setPublishDialogOpen] = useState(false)
@@ -214,7 +213,6 @@ export default function TaskPageCore() {
       console.error('Failed to get account list:', error)
     }
   }
-
 
   // 获取平台显示名称
   const getPlatformName = (type: string) => {
@@ -535,7 +533,8 @@ export default function TaskPageCore() {
   }
   // Fetch settle info for an accepted user task (calls /task/settle/info/{userTaskId})
   const fetchAcceptedTaskSettleInfo = async (userTaskId: string) => {
-    if (!userTaskId) return
+    if (!userTaskId)
+      return
     try {
       setAcceptedTaskSettleLoading(true)
       const infoResp: any = await apiGetSettleInfoByUserTask(userTaskId)
@@ -564,17 +563,18 @@ export default function TaskPageCore() {
 
   // Fetch settle items list by settleId (calls /task/settle/item/list/{settleId})
   const fetchAcceptedTaskSettleItems = async (settleId: string) => {
-    if (!settleId) return
+    if (!settleId)
+      return
     try {
       setAcceptedTaskSettleLoading(true)
       const itemsResp: any = await apiGetSettleItemList(settleId)
       if (itemsResp && itemsResp.data && (itemsResp.code === 0 || itemsResp.success)) {
         const rawList = itemsResp.data.list || itemsResp.data || []
         // normalize items for UI: provide `title` and `value` fields
-        const normalized = (rawList as any[]).map(item => {
+        const normalized = (rawList as any[]).map((item) => {
           const dataType = item.dataType || item.type || item.key
           // Try translate dataType; if translation returns the key itself, treat as missing and fallback.
-          let titleFromType: string | undefined = undefined
+          let titleFromType: string | undefined
           if (dataType) {
             const translated = t(`settle.dataType.${dataType}` as any)
             if (translated && !translated.includes('settle.dataType.')) {
@@ -843,547 +843,553 @@ export default function TaskPageCore() {
   return (
     <div className={styles.taskPage}>
       {token && (
-      <>
-      <Tabs
-        value={activeTab}
-        onValueChange={setActiveTab}
-        className={styles.tabs}
-      >
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="pending">
-            <ClockCircleOutlined />
+        <>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className={styles.tabs}
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="pending">
+                <ClockCircleOutlined />
             &nbsp;
-            {t('pendingTasks')}
-          </TabsTrigger>
-          <TabsTrigger value="accepted">
-            <PlayCircleOutlined />
+                {t('pendingTasks')}
+              </TabsTrigger>
+              <TabsTrigger value="accepted">
+                <PlayCircleOutlined />
             &nbsp;
-            {t('acceptedTasks')}
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="pending">
-          <Spin spinning={loading}>
-            {pendingTasks.length > 0 ? (
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                  {pendingTasks.map((task: any) => {
-                    const publishAccount = getAccountById(task.accountId)
-                    return (
-                      <Card
-                        key={task.id}
-                        className={styles.taskCard}
-                        style={{ marginBottom: 0, position: 'relative' }}
-                      >
-                        {/* 未读红点标识 */}
-                        {!task.isView && (
-                          <div style={{
-                            position: 'absolute',
-                            top: '8px',
-                            right: '8px',
-                            width: '8px',
-                            height: '8px',
-                            backgroundColor: '#ff4d4f',
-                            borderRadius: '50%',
-                            zIndex: 1,
-                            boxShadow: '0 0 0 2px #fff',
-                          }}
-                          />
-                        )}
-
-                        <div className={styles.taskHeader}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            {/* 显示多个平台图标 */}
-                            <div style={{ display: 'flex', gap: '4px' }}>
-                              {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
-                                <Image
-                                  key={platformType}
-                                  src={getPlatformIcon(platformType)}
-                                  alt="platform"
-                                  width={20}
-                                  height={20}
-                                />
-                              ))}
-                            </div>
-                            <h3 style={{ margin: 0, fontSize: '16px' }}>
-                              {task.accountTypes && task.accountTypes.length > 0
-                                ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join(', ')} Task`
-                                : `${getPlatformName(task.accountType)} Task`}
-                            </h3>
-                          </div>
-                        </div>
-
-                        <div className={styles.taskContent}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                            <span>
-                              <strong>
-                                {t('taskInfo.publishTime' as any)}
-                                ：
-                              </strong>
-                              {formatTime(task.createdAt)}
-                            </span>
-                            <span>
-                              <strong>
-                                {t('taskInfo.endTime' as any)}
-                                ：
-                              </strong>
-                              {formatAbsoluteTime(task.expiredAt)}
-                            </span>
-                          </div>
-
-                          {task.reward > 0 && (
-                            <div style={{ marginBottom: '12px' }}>
-                              <strong>
-                                {t('taskInfo.reward' as any)}
-                                ：
-                              </strong>
-                              <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                CNY
-                                {task.reward / 100}
-                              </span>
-                            </div>
-                          )}
-
-                          {task.cpmReward > 0 && (
-                            <div style={{ marginBottom: '12px' }}>
-                              <strong>
-                                {t('taskInfo.CPM' as any)}
-                                ：
-                              </strong>
-                              <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                CNY
-                                {task.cpmReward / 100}
-                              </span>
-                            </div>
-                          )}
-
-                          {/* 发布账号信息 */}
-                          {publishAccount && (
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              padding: '8px',
-                              backgroundColor: '#f8f9fa',
-                              borderRadius: '6px',
-                              marginBottom: '12px',
-                            }}
-                            >
-                              <Image
-                                src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                alt="Account avatar"
-                                width={32}
-                                height={32}
-                                style={{
-                                  borderRadius: '50%',
-                                  objectFit: 'cover',
-                                }}
-                                onError={(e: any) => {
-                                  e.target.src = '/default-avatar.png'
-                                }}
+                {t('acceptedTasks')}
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent value="pending">
+              <Spin spinning={loading}>
+                {pendingTasks.length > 0 ? (
+                  <div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                      {pendingTasks.map((task: any) => {
+                        const publishAccount = getAccountById(task.accountId)
+                        return (
+                          <Card
+                            key={task.id}
+                            className={styles.taskCard}
+                            style={{ marginBottom: 0, position: 'relative' }}
+                          >
+                            {/* 未读红点标识 */}
+                            {!task.isView && (
+                              <div style={{
+                                position: 'absolute',
+                                top: '8px',
+                                right: '8px',
+                                width: '8px',
+                                height: '8px',
+                                backgroundColor: '#ff4d4f',
+                                borderRadius: '50%',
+                                zIndex: 1,
+                                boxShadow: '0 0 0 2px #fff',
+                              }}
                               />
-                              <div>
-                                <div style={{ fontWeight: '500', fontSize: '14px' }}>
-                                  {publishAccount.nickname}
+                            )}
+
+                            <div className={styles.taskHeader}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {/* 显示多个平台图标 */}
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
+                                    <Image
+                                      key={platformType}
+                                      src={getPlatformIcon(platformType)}
+                                      alt="platform"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  ))}
                                 </div>
-                                <div style={{ fontSize: '12px', color: '#666' }}>
-                                  {getPlatformName(publishAccount.type)}
-                                </div>
+                                <h3 style={{ margin: 0, fontSize: '16px' }}>
+                                  {task.accountTypes && task.accountTypes.length > 0
+                                    ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join(', ')} Task`
+                                    : `${getPlatformName(task.accountType)} Task`}
+                                </h3>
                               </div>
                             </div>
-      )}
-    </div>
 
-                        <div className={styles.taskActions}>
+                            <div className={styles.taskContent}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                <span>
+                                  <strong>
+                                    {t('taskInfo.publishTime' as any)}
+                                    ：
+                                  </strong>
+                                  {formatTime(task.createdAt)}
+                                </span>
+                                <span>
+                                  <strong>
+                                    {t('taskInfo.endTime' as any)}
+                                    ：
+                                  </strong>
+                                  {formatAbsoluteTime(task.expiredAt)}
+                                </span>
+                              </div>
+
+                              {task.reward > 0 && (
+                                <div style={{ marginBottom: '12px' }}>
+                                  <strong>
+                                    {t('taskInfo.reward' as any)}
+                                    ：
+                                  </strong>
+                                  <span style={{ color: '#f50', fontWeight: 'bold' }}>
+                                    CNY
+                                    {task.reward / 100}
+                                  </span>
+                                </div>
+                              )}
+
+                              {task.cpmReward > 0 && (
+                                <div style={{ marginBottom: '12px' }}>
+                                  <strong>
+                                    {t('taskInfo.CPM' as any)}
+                                    ：
+                                  </strong>
+                                  <span style={{ color: '#f50', fontWeight: 'bold' }}>
+                                    CNY
+                                    {task.cpmReward / 100}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* 发布账号信息 */}
+                              {publishAccount && (
+                                <div style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  padding: '8px',
+                                  backgroundColor: '#f8f9fa',
+                                  borderRadius: '6px',
+                                  marginBottom: '12px',
+                                }}
+                                >
+                                  <Image
+                                    src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                                    alt="Account avatar"
+                                    width={32}
+                                    height={32}
+                                    style={{
+                                      borderRadius: '50%',
+                                      objectFit: 'cover',
+                                    }}
+                                    onError={(e: any) => {
+                                      e.target.src = '/default-avatar.png'
+                                    }}
+                                  />
+                                  <div>
+                                    <div style={{ fontWeight: '500', fontSize: '14px' }}>
+                                      {publishAccount.nickname}
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: '#666' }}>
+                                      {getPlatformName(publishAccount.type)}
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className={styles.taskActions}>
                               <Button
                                 onClick={(e) => { e.stopPropagation(); handleViewTaskDetail(task.id) }}
                                 style={{ width: '100%' }}
                               >
-                            <EyeOutlined />
+                                <EyeOutlined />
                             &nbsp;
-                            {t('viewDetails')}
-                          </Button>
-                        </div>
-                      </Card>
-                    )
-                  })}
-                </div>
-                <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                  <Pagination
-                    current={pendingPagination.current}
-                    pageSize={pendingPagination.pageSize}
-                    total={pendingPagination.total}
-                    onChange={handlePendingPageChange}
-                    onShowSizeChange={handlePendingPageChange}
-                    showSizeChanger
-                    showQuickJumper
-                    showTotal={(total, range) => t('messages.pageInfo' as any, { start: range[0], end: range[1], total })}
-                    pageSizeOptions={['10', '20', '50', '100']}
-                  />
-                </div>
-              </div>
-            ) : (
-              <Empty description={t('messages.noPendingTasks')} />
-            )}
-          </Spin>
-        </TabsContent>
-
-        <TabsContent value="accepted">
-          <Spin spinning={loading}>
-            {acceptedTasks.length > 0 ? (
-              <div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px', marginBottom: '16px' }}>
-                  {acceptedTasks.map((task: any) => {
-                    const publishAccount = getAccountById(task.accountId)
-                    return (
-                      <Card
-                        key={task.id}
-                        className={styles.taskCard}
-                        style={{ marginBottom: 0 }}
-                      >
-                        <div className={styles.taskHeader}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            {/* 显示多个平台图标 */}
-                            <div style={{ display: 'flex', gap: '4px' }}>
-                              {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
-                                <Image
-                                  key={platformType}
-                                  src={getPlatformIcon(platformType)}
-                                  alt="platform"
-                                  width={20}
-                                  height={20}
-                                />
-                              ))}
+                                {t('viewDetails')}
+                              </Button>
                             </div>
-                            <h3 style={{ margin: 0, fontSize: '16px' }}>
-                              {task.accountTypes && task.accountTypes.length > 0
-                                ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}Task`
-                                : `${getPlatformName(task.accountType)}Task`}
-                            </h3>
-                          </div>
-                          <Badge className={getBadgeClassName(getTaskStatusTag(task.status).color)}>
-                            {getTaskStatusTag(task.status).text}
-                          </Badge>
-                        </div>
-
-                        <div className={styles.taskContent}>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
-                            <span>
-                              <strong>
-                                {t('taskInfo.acceptTime' as any)}
-                                ：
-                              </strong>
-                              {formatTime(task.createdAt)}
-                            </span>
-                            <span> </span>
-                          </div>
-
-                          {task.reward > 0 && (
-                            <div style={{ marginBottom: '12px' }}>
-                              <strong>
-                                {t('taskInfo.reward' as any)}
-                                ：
-                              </strong>
-                              <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                CNY
-                                {task.reward / 100}
-                              </span>
-                            </div>
-                          )}
-
-                          {task.cpmReward > 0 && (
-                            <div style={{ marginBottom: '12px' }}>
-                              <strong>
-                                {t('taskInfo.CPM' as any)}
-                                ：
-                              </strong>
-                              <span style={{ color: '#f50', fontWeight: 'bold' }}>
-                                CNY
-                                {task.cpmReward / 100}
-                              </span>
-                            </div>
-                          )}
-
-                          {/* 发布账号信息 */}
-                          {publishAccount && (
-                            <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              padding: '8px',
-                              backgroundColor: '#f8f9fa',
-                              borderRadius: '6px',
-                              marginBottom: '12px',
-                            }}
-                            >
-                              <Image
-                                src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                alt="Account avatar"
-                                width={32}
-                                height={32}
-                                style={{
-                                  borderRadius: '50%',
-                                  objectFit: 'cover',
-                                }}
-                                onError={(e: any) => {
-                                  e.target.src = '/default-avatar.png'
-                                }}
-                              />
-                              <div>
-                                <div style={{ fontWeight: '500', fontSize: '14px' }}>
-                                  {publishAccount.nickname}
-                                </div>
-                                <div style={{ fontSize: '12px', color: '#666' }}>
-                                  {getPlatformName(publishAccount.type)}
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-
-                        <div className={styles.taskActions}>
-                          <Button
-                            onClick={(e) => { e.stopPropagation(); handleViewAcceptedTaskDetail(task.id) }}
-                            style={{ width: '100%' }}
-                          >
-                            <EyeOutlined />
-                            &nbsp;
-                            {t('viewDetails')}
-                          </Button>
-                        </div>
-                      </Card>
-                    )
-                  })}
-                </div>
-                <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                  <Pagination
-                    current={acceptedPagination.current}
-                    pageSize={acceptedPagination.pageSize}
-                    total={acceptedPagination.total}
-                    onChange={handleAcceptedPageChange}
-                    onShowSizeChange={handleAcceptedPageChange}
-                    showSizeChanger
-                    showQuickJumper
-                    showTotal={(total, range) => t('messages.pageInfo' as any, { start: range[0], end: range[1], total })}
-                    pageSizeOptions={['10', '20', '50', '100']}
-                  />
-                </div>
-              </div>
-            ) : (
-              <Empty description={t('messages.noAcceptedTasks')} />
-            )}
-          </Spin>
-        </TabsContent>
-      </Tabs>
-
-      {/* 提交任务弹窗 */}
-      <Modal
-        title={t('modal.submitTask')}
-        open={submitModalVisible}
-        onCancel={() => setSubmitModalVisible(false)}
-        confirmLoading={submittingTaskId !== null}
-        okText={t('modal.confirmSubmit')}
-        cancelText={t('modal.cancel')}
-      >
-        <div style={{ marginBottom: '16px' }}>
-          <label>
-            {t('modal.submitLink')}
-            ：
-          </label>
-          <Input
-            value={submissionUrl}
-            onChange={e => setSubmissionUrl(e.target.value)}
-            placeholder={t('modal.submitLinkPlaceholder')}
-            style={{ marginTop: '8px' }}
-          />
-        </div>
-        <p style={{ color: '#666', fontSize: '12px' }}>
-          {t('modal.submitTip')}
-        </p>
-      </Modal>
-
-      {/* 任务详情弹窗 */}
-      <Modal
-        title={t('taskDetails')}
-        open={taskDetailModalVisible}
-        onCancel={() => {
-        setTaskDetailModalVisible(false)
-        setTaskDetail(null)
-        setMaterialList([])
-        }}
-        footer={null}
-        width={1200}
-        zIndex={15}
-      >
-        <Spin spinning={taskDetailLoading}>
-          {taskDetail ? (
-            <div>
-              {/* 任务基本信息 */}
-              <div className="mb-6 p-4 bg-background rounded-lg border border-border">
-                <h2 className="mb-3 text-lg font-semibold text-foreground">
-                  {taskDetail.title}
-                </h2>
-
-                <div className="text-sm leading-7 text-muted-foreground mb-3">
-                  <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
-                </div>
-
-                {/* 任务信息卡片 */}
-                <div className={`${infoItemsCount === 1 ? 'grid grid-cols-1 justify-items-start' : 'grid grid-cols-3'} gap-3`}>
-                  {taskDetail.reward > 0 && (
-                    <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
-                      <div className="text-xs text-warning mb-1">{t('taskInfo.reward' as any)}</div>
-                      <div className="text-sm font-bold text-destructive">CNY {taskDetail.reward / 100}</div>
+                          </Card>
+                        )
+                      })}
                     </div>
-                  )}
-
-                  {taskDetail.cpmReward > 0 && (
-                    <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
-                      <div className="text-xs text-warning mb-1">{t('taskInfo.CPM' as any)}</div>
-                      <div className="text-sm font-bold text-destructive">CNY {taskDetail.cpmReward / 100}</div>
+                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                      <Pagination
+                        current={pendingPagination.current}
+                        pageSize={pendingPagination.pageSize}
+                        total={pendingPagination.total}
+                        onChange={handlePendingPageChange}
+                        onShowSizeChange={handlePendingPageChange}
+                        showSizeChanger
+                        showQuickJumper
+                        showTotal={(total, range) => t('messages.pageInfo' as any, { start: range[0], end: range[1], total })}
+                        pageSizeOptions={['10', '20', '50', '100']}
+                      />
                     </div>
-                  )}
-
-                  {taskDetail.type && (
-                    <div className="bg-muted/10 border border-muted/30 rounded-md text-center">
-                      <div className="text-xs text-muted-foreground mb-1">{t('taskInfo.type' as any)}</div>
-                      <div className="text-sm font-medium text-foreground">{getTaskTypeName(taskDetail.type)}</div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* 示例展示区域 */}
-              <div style={{ marginBottom: '24px', marginTop: '12px' }}>
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                  marginBottom: '16px',
-                }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.examples' as any) || '示例'}</span>
                   </div>
-                </div>
+                ) : (
+                  <Empty description={t('messages.noPendingTasks')} />
+                )}
+              </Spin>
+            </TabsContent>
 
-                {/* 示例列表 */}
-                <Spin spinning={materialLoading}>
-                  {materialList.length > 0 ? (
-                    <>
-                      <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: '16px',
-                        marginBottom: '16px',
-                      }}
-                      >
-                          {materialList.map((material: any) => (
-                            <div
-                              key={material._id}
-                            style={{
-                              border: '1px solid #e8e8e8',
-                              borderRadius: '8px',
-                              overflow: 'hidden',
-                              transition: 'all 0.3s ease',
-                              backgroundColor: '#fff',
-                            }}
+            <TabsContent value="accepted">
+              <Spin spinning={loading}>
+                {acceptedTasks.length > 0 ? (
+                  <div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '16px', marginBottom: '16px' }}>
+                      {acceptedTasks.map((task: any) => {
+                        const publishAccount = getAccountById(task.accountId)
+                        return (
+                          <Card
+                            key={task.id}
+                            className={styles.taskCard}
+                            style={{ marginBottom: 0 }}
                           >
-                            {/* 素材封面 */}
-                <div style={{
-                              position: 'relative',
-                              paddingTop: '42%',
-                              background: '#f0f0f0',
-                            }}
-                            >
-                              {material.coverUrl && (
-                                <Image
-                                  src={getOssUrl(material.coverUrl)}
-                                  alt={material.title}
-                                  fill
-                                  sizes="(max-width: 768px) 100vw, 33vw"
-                                  style={{
-                                    objectFit: 'cover',
-                                  }}
-                                />
+                            <div className={styles.taskHeader}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                {/* 显示多个平台图标 */}
+                                <div style={{ display: 'flex', gap: '4px' }}>
+                                  {(task.accountTypes && task.accountTypes.length > 0 ? task.accountTypes : [task.accountType]).map((platformType: string, index: number) => (
+                                    <Image
+                                      key={platformType}
+                                      src={getPlatformIcon(platformType)}
+                                      alt="platform"
+                                      width={20}
+                                      height={20}
+                                    />
+                                  ))}
+                                </div>
+                                <h3 style={{ margin: 0, fontSize: '16px' }}>
+                                  {task.accountTypes && task.accountTypes.length > 0
+                                    ? `${task.accountTypes.map((type: string) => getPlatformName(type)).join('、')}Task`
+                                    : `${getPlatformName(task.accountType)}Task`}
+                                </h3>
+                              </div>
+                              <Badge className={getBadgeClassName(getTaskStatusTag(task.status).color)}>
+                                {getTaskStatusTag(task.status).text}
+                              </Badge>
+                            </div>
+
+                            <div className={styles.taskContent}>
+                              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                <span>
+                                  <strong>
+                                    {t('taskInfo.acceptTime' as any)}
+                                    ：
+                                  </strong>
+                                  {formatTime(task.createdAt)}
+                                </span>
+                                <span> </span>
+                              </div>
+
+                              {task.reward > 0 && (
+                                <div style={{ marginBottom: '12px' }}>
+                                  <strong>
+                                    {t('taskInfo.reward' as any)}
+                                    ：
+                                  </strong>
+                                  <span style={{ color: '#f50', fontWeight: 'bold' }}>
+                                    CNY
+                                    {task.reward / 100}
+                                  </span>
+                                </div>
                               )}
-                              {material.mediaList && material.mediaList[0]?.type === 'video' && (
+
+                              {task.cpmReward > 0 && (
+                                <div style={{ marginBottom: '12px' }}>
+                                  <strong>
+                                    {t('taskInfo.CPM' as any)}
+                                    ：
+                                  </strong>
+                                  <span style={{ color: '#f50', fontWeight: 'bold' }}>
+                                    CNY
+                                    {task.cpmReward / 100}
+                                  </span>
+                                </div>
+                              )}
+
+                              {/* 发布账号信息 */}
+                              {publishAccount && (
                                 <div style={{
-                                  position: 'absolute',
-                                  top: '50%',
-                                  left: '50%',
-                                  transform: 'translate(-50%, -50%)',
-                                  color: 'white',
-                                  fontSize: '32px',
-                                  textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  padding: '8px',
+                                  backgroundColor: '#f8f9fa',
+                                  borderRadius: '6px',
+                                  marginBottom: '12px',
                                 }}
                                 >
-                                  ▶
+                                  <Image
+                                    src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                                    alt="Account avatar"
+                                    width={32}
+                                    height={32}
+                                    style={{
+                                      borderRadius: '50%',
+                                      objectFit: 'cover',
+                                    }}
+                                    onError={(e: any) => {
+                                      e.target.src = '/default-avatar.png'
+                                    }}
+                                  />
+                                  <div>
+                                    <div style={{ fontWeight: '500', fontSize: '14px' }}>
+                                      {publishAccount.nickname}
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: '#666' }}>
+                                      {getPlatformName(publishAccount.type)}
+                                    </div>
+                                  </div>
                                 </div>
                               )}
                             </div>
 
-                            {/* 素材信息 */}
-                            <div style={{ padding: '12px' }}>
-                              <div style={{
-                                fontSize: '14px',
-                                fontWeight: '500',
-                                marginBottom: '4px',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                              }}
+                            <div className={styles.taskActions}>
+                              <Button
+                                onClick={(e) => { e.stopPropagation(); handleViewAcceptedTaskDetail(task.id) }}
+                                style={{ width: '100%' }}
                               >
-                                {material.title || t('draft.noTitle')}
-                              </div>
-                              <div style={{
-                                fontSize: '12px',
-                                color: '#999',
-                                overflow: 'hidden',
-                                textOverflow: 'ellipsis',
-                                whiteSpace: 'nowrap',
-                              }}
-                              >
-                                {material.desc || t('draft.noDescription')}
-                              </div>
+                                <EyeOutlined />
+                            &nbsp;
+                                {t('viewDetails')}
+                              </Button>
                             </div>
-                          </div>
-                        ))}
-                      </div>
+                          </Card>
+                        )
+                      })}
+                    </div>
+                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                      <Pagination
+                        current={acceptedPagination.current}
+                        pageSize={acceptedPagination.pageSize}
+                        total={acceptedPagination.total}
+                        onChange={handleAcceptedPageChange}
+                        onShowSizeChange={handleAcceptedPageChange}
+                        showSizeChanger
+                        showQuickJumper
+                        showTotal={(total, range) => t('messages.pageInfo' as any, { start: range[0], end: range[1], total })}
+                        pageSizeOptions={['10', '20', '50', '100']}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <Empty description={t('messages.noAcceptedTasks')} />
+                )}
+              </Spin>
+            </TabsContent>
+          </Tabs>
 
-                      {/* 分页 */}
-                      {materialPagination.total > materialPagination.pageSize && (
-                        <div style={{ textAlign: 'center' }}>
-                          <Pagination
-                            current={materialPagination.current}
-                            pageSize={materialPagination.pageSize}
-                            total={materialPagination.total}
-                            onChange={(page, pageSize) => {
-                              if (taskDetail.materialGroupId) {
-                                fetchMaterialList(taskDetail.materialGroupId, page, pageSize)
-                              }
-                            }}
-                            showSizeChanger={false}
-                          />
+          {/* 提交任务弹窗 */}
+          <Modal
+            title={t('modal.submitTask')}
+            open={submitModalVisible}
+            onCancel={() => setSubmitModalVisible(false)}
+            confirmLoading={submittingTaskId !== null}
+            okText={t('modal.confirmSubmit')}
+            cancelText={t('modal.cancel')}
+          >
+            <div style={{ marginBottom: '16px' }}>
+              <label>
+                {t('modal.submitLink')}
+                ：
+              </label>
+              <Input
+                value={submissionUrl}
+                onChange={e => setSubmissionUrl(e.target.value)}
+                placeholder={t('modal.submitLinkPlaceholder')}
+                style={{ marginTop: '8px' }}
+              />
+            </div>
+            <p style={{ color: '#666', fontSize: '12px' }}>
+              {t('modal.submitTip')}
+            </p>
+          </Modal>
+
+          {/* 任务详情弹窗 */}
+          <Modal
+            title={t('taskDetails')}
+            open={taskDetailModalVisible}
+            onCancel={() => {
+              setTaskDetailModalVisible(false)
+              setTaskDetail(null)
+              setMaterialList([])
+            }}
+            footer={null}
+            width={1200}
+            zIndex={15}
+          >
+            <Spin spinning={taskDetailLoading}>
+              {taskDetail ? (
+                <div>
+                  {/* 任务基本信息 */}
+                  <div className="mb-6 p-4 bg-background rounded-lg border border-border">
+                    <h2 className="mb-3 text-lg font-semibold text-foreground">
+                      {taskDetail.title}
+                    </h2>
+
+                    <div className="text-sm leading-7 text-muted-foreground mb-3">
+                      <div dangerouslySetInnerHTML={{ __html: taskDetail.description }} />
+                    </div>
+
+                    {/* 任务信息卡片 */}
+                    <div className={`${infoItemsCount === 1 ? 'grid grid-cols-1 justify-items-start' : 'grid grid-cols-3'} gap-3`}>
+                      {taskDetail.reward > 0 && (
+                        <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
+                          <div className="text-xs text-warning mb-1">{t('taskInfo.reward' as any)}</div>
+                          <div className="text-sm font-bold text-destructive">
+                            CNY
+                            {taskDetail.reward / 100}
+                          </div>
                         </div>
                       )}
-                    </>
-                  ) : (
-                    <Empty description={t('draft.noDrafts')} />
-                  )}
-                </Spin>
-              </div>
 
-              {/* 底部按钮 */}
-              {taskDetail.status === 'active' && taskDetail.currentRecruits < taskDetail.maxRecruits && (
-                <div style={{
-                  textAlign: 'center',
-                  paddingTop: '16px',
-                  borderTop: '1px solid #e8e8e8',
-                  display: 'flex',
-                  gap: '12px',
-                  justifyContent: 'center',
-                }}
-                >
+                      {taskDetail.cpmReward > 0 && (
+                        <div className="bg-warning/10 border border-warning/30 rounded-md text-center">
+                          <div className="text-xs text-warning mb-1">{t('taskInfo.CPM' as any)}</div>
+                          <div className="text-sm font-bold text-destructive">
+                            CNY
+                            {taskDetail.cpmReward / 100}
+                          </div>
+                        </div>
+                      )}
+
+                      {taskDetail.type && (
+                        <div className="bg-muted/10 border border-muted/30 rounded-md text-center">
+                          <div className="text-xs text-muted-foreground mb-1">{t('taskInfo.type' as any)}</div>
+                          <div className="text-sm font-medium text-foreground">{getTaskTypeName(taskDetail.type)}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* 示例展示区域 */}
+                  <div style={{ marginBottom: '24px', marginTop: '12px' }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '16px',
+                    }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                        <span style={{ fontSize: '16px', fontWeight: '600' }}>{t('draft.examples' as any) || '示例'}</span>
+                      </div>
+                    </div>
+
+                    {/* 示例列表 */}
+                    <Spin spinning={materialLoading}>
+                      {materialList.length > 0 ? (
+                        <>
+                          <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(3, 1fr)',
+                            gap: '16px',
+                            marginBottom: '16px',
+                          }}
+                          >
+                            {materialList.map((material: any) => (
+                              <div
+                                key={material._id}
+                                style={{
+                                  border: '1px solid #e8e8e8',
+                                  borderRadius: '8px',
+                                  overflow: 'hidden',
+                                  transition: 'all 0.3s ease',
+                                  backgroundColor: '#fff',
+                                }}
+                              >
+                                {/* 素材封面 */}
+                                <div style={{
+                                  position: 'relative',
+                                  paddingTop: '42%',
+                                  background: '#f0f0f0',
+                                }}
+                                >
+                                  {material.coverUrl && (
+                                    <Image
+                                      src={getOssUrl(material.coverUrl)}
+                                      alt={material.title}
+                                      fill
+                                      sizes="(max-width: 768px) 100vw, 33vw"
+                                      style={{
+                                        objectFit: 'cover',
+                                      }}
+                                    />
+                                  )}
+                                  {material.mediaList && material.mediaList[0]?.type === 'video' && (
+                                    <div style={{
+                                      position: 'absolute',
+                                      top: '50%',
+                                      left: '50%',
+                                      transform: 'translate(-50%, -50%)',
+                                      color: 'white',
+                                      fontSize: '32px',
+                                      textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                                    }}
+                                    >
+                                      ▶
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* 素材信息 */}
+                                <div style={{ padding: '12px' }}>
+                                  <div style={{
+                                    fontSize: '14px',
+                                    fontWeight: '500',
+                                    marginBottom: '4px',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                  >
+                                    {material.title || t('draft.noTitle')}
+                                  </div>
+                                  <div style={{
+                                    fontSize: '12px',
+                                    color: '#999',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                  >
+                                    {material.desc || t('draft.noDescription')}
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* 分页 */}
+                          {materialPagination.total > materialPagination.pageSize && (
+                            <div style={{ textAlign: 'center' }}>
+                              <Pagination
+                                current={materialPagination.current}
+                                pageSize={materialPagination.pageSize}
+                                total={materialPagination.total}
+                                onChange={(page, pageSize) => {
+                                  if (taskDetail.materialGroupId) {
+                                    fetchMaterialList(taskDetail.materialGroupId, page, pageSize)
+                                  }
+                                }}
+                                showSizeChanger={false}
+                              />
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <Empty description={t('draft.noDrafts')} />
+                      )}
+                    </Spin>
+                  </div>
+
+                  {/* 底部按钮 */}
+                  {taskDetail.status === 'active' && taskDetail.currentRecruits < taskDetail.maxRecruits && (
+                    <div style={{
+                      textAlign: 'center',
+                      paddingTop: '16px',
+                      borderTop: '1px solid #e8e8e8',
+                      display: 'flex',
+                      gap: '12px',
+                      justifyContent: 'center',
+                    }}
+                    >
                       <Button
                         size="lg"
                         onClick={() => {
@@ -1391,496 +1397,497 @@ export default function TaskPageCore() {
                           handleTaskAction(taskDetail)
                         }}
                       >
-                    {t('publish.directPublish' as any) || '直接发布'}
-                  </Button>
+                        {t('publish.directPublish' as any) || '直接发布'}
+                      </Button>
 
-                  <Button
-                    size="lg"
-                    onClick={() => {
-                      // 模式3：Agent 发布，跳转到首页并填充输入
-                      const prompt = taskDetail.description || taskDetail.title || ''
-                      // 通过 URL query 传参到首页，避免使用 localStorage
-                      const params = new URLSearchParams()
-                      if (prompt) params.set('agentExternalPrompt', prompt)
-                      if (taskDetail?.id) params.set('agentTaskId', taskDetail.id)
-                      router.push(`/${lng}?${params.toString()}`)
-                    }}
-                  >
-                    {t('publish.agentPublish' as any) || 'Agent 发布'}
-                  </Button>
+                      <Button
+                        size="lg"
+                        onClick={() => {
+                          // 模式3：Agent 发布，跳转到首页并填充输入
+                          const prompt = taskDetail.description || taskDetail.title || ''
+                          // 通过 URL query 传参到首页，避免使用 localStorage
+                          const params = new URLSearchParams()
+                          if (prompt)
+                            params.set('agentExternalPrompt', prompt)
+                          if (taskDetail?.id)
+                            params.set('agentTaskId', taskDetail.id)
+                          router.push(`/${lng}?${params.toString()}`)
+                        }}
+                      >
+                        {t('publish.agentPublish' as any) || 'Agent 发布'}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              ) : !taskDetailLoading && (
+                <div style={{ textAlign: 'center', color: '#999' }}>
+                  {t('messages.noTaskDetails')}
                 </div>
               )}
-            </div>
-          ) : !taskDetailLoading && (
-            <div style={{ textAlign: 'center', color: '#999' }}>
-              {t('messages.noTaskDetails')}
-            </div>
-          )}
-        </Spin>
-      </Modal>
+            </Spin>
+          </Modal>
 
-      {/* 已移除：我的草稿选择，当前仅支持推荐草稿和直接发布/Agent 发布 */}
+          {/* 已移除：我的草稿选择，当前仅支持推荐草稿和直接发布/Agent 发布 */}
 
-      {/* 已接受任务详情弹窗 */}
-      <Modal
-        title={t('taskDetails')}
-        open={acceptedTaskDetailModalVisible}
-        onCancel={() => {
-          setAcceptedTaskDetailModalVisible(false)
-          setAcceptedTaskDetail(null)
-        }}
-        footer={[]}
-        width={800}
-        zIndex={2000}
-      >
-        <Spin spinning={acceptedTaskDetailLoading}>
-          {acceptedTaskDetail ? (
-            <div>
-              {/* 视频发布风格布局 */}
-              <div className="space-y-4">
-                {/* 右侧：标题和描述（已移除顶部媒体展示） */}
-                <div className="flex-1">
-                  {/* 标题区域 */}
-                  <div className="mb-4">
-                    <h2 className="mb-2 text-xl font-semibold text-foreground">
-                      {acceptedTaskDetail.task?.title}
-                    </h2>
+          {/* 已接受任务详情弹窗 */}
+          <Modal
+            title={t('taskDetails')}
+            open={acceptedTaskDetailModalVisible}
+            onCancel={() => {
+              setAcceptedTaskDetailModalVisible(false)
+              setAcceptedTaskDetail(null)
+            }}
+            footer={[]}
+            width={800}
+            zIndex={2000}
+          >
+            <Spin spinning={acceptedTaskDetailLoading}>
+              {acceptedTaskDetail ? (
+                <div>
+                  {/* 视频发布风格布局 */}
+                  <div className="space-y-4">
+                    {/* 右侧：标题和描述（已移除顶部媒体展示） */}
+                    <div className="flex-1">
+                      {/* 标题区域 */}
+                      <div className="mb-4">
+                        <h2 className="mb-2 text-xl font-semibold text-foreground">
+                          {acceptedTaskDetail.task?.title}
+                        </h2>
 
-                    {/* 发布账号信息 */}
-                    {acceptedTaskDetail.accountId && (() => {
-                      const publishAccount = getAccountById(acceptedTaskDetail.accountId)
-                      return publishAccount
-                        ? (
+                        {/* 发布账号信息 */}
+                        {acceptedTaskDetail.accountId && (() => {
+                          const publishAccount = getAccountById(acceptedTaskDetail.accountId)
+                          return publishAccount
+                            ? (
+                                <div style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '8px',
+                                  marginBottom: '12px',
+                                }}
+                                >
+                                  <Image
+                                    src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
+                                    alt="account avatar"
+                                    width={32}
+                                    height={32}
+                                    style={{
+                                      borderRadius: '50%',
+                                      objectFit: 'cover',
+                                    }}
+                                    onError={(e: any) => {
+                                      e.target.src = '/default-avatar.png'
+                                    }}
+                                  />
+                                  <div>
+                                    <div style={{
+                                      fontSize: '14px',
+                                      fontWeight: '500',
+                                      color: '#1a1a1a',
+                                    }}
+                                    >
+                                      {publishAccount.nickname}
+                                    </div>
+                                    <div style={{
+                                      fontSize: '12px',
+                                      color: '#666',
+                                    }}
+                                    >
+                                      {getPlatformName(publishAccount.type)}
+                                    </div>
+                                  </div>
+                                </div>
+                              )
+                            : null
+                        })()}
+                      </div>
+
+                      {/* 描述区域 */}
+                      {
+                        acceptedTaskDetail.task?.description && (
+                          <div style={{
+                            marginBottom: '16px',
+                            padding: '16px',
+                            backgroundColor: '#f8f9fa',
+                            borderRadius: '8px',
+                            border: '1px solid #e9ecef',
+                          }}
+                          >
                             <div style={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              gap: '8px',
-                              marginBottom: '12px',
+                              fontSize: '14px',
+                              lineHeight: '1.6',
+                              color: '#495057',
                             }}
                             >
-                              <Image
-                                src={publishAccount.avatar ? getOssUrl(publishAccount.avatar) : '/default-avatar.png'}
-                                alt="account avatar"
-                                width={32}
-                                height={32}
-                                style={{
-                                  borderRadius: '50%',
-                                  objectFit: 'cover',
-                                }}
-                                onError={(e: any) => {
-                                  e.target.src = '/default-avatar.png'
-                                }}
-                              />
-                              <div>
-                                <div style={{
-                                  fontSize: '14px',
-                                  fontWeight: '500',
-                                  color: '#1a1a1a',
-                                }}
-                                >
-                                  {publishAccount.nickname}
-                                </div>
-                                <div style={{
-                                  fontSize: '12px',
-                                  color: '#666',
-                                }}
-                                >
-                                  {getPlatformName(publishAccount.type)}
-                                </div>
+                              <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
+                            </div>
+                          </div>
+                        )
+                      }
+
+                      {/* 任务信息卡片 */}
+                      <div style={{
+                        display: 'flex',
+                        gap: '12px',
+                        marginBottom: '16px',
+                      }}
+                      >
+                        {acceptedTaskDetail.reward > 0 && (
+                          <div style={{
+                            flex: '1',
+                            padding: '12px',
+                            backgroundColor: '#fff3cd',
+                            border: '1px solid #ffeaa7',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                          }}
+                          >
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#856404',
+                              marginBottom: '4px',
+                            }}
+                            >
+                              {t('taskInfo.reward' as any)}
+                            </div>
+                            <div style={{
+                              fontSize: '18px',
+                              fontWeight: 'bold',
+                              color: '#d63031',
+                            }}
+                            >
+                              CNY
+                              {' '}
+                              {acceptedTaskDetail.reward / 100}
+                            </div>
+                          </div>
+                        )}
+
+                        {acceptedTaskDetail.cpmReward > 0 && (
+                          <div style={{
+                            flex: '1',
+                            padding: '12px',
+                            backgroundColor: '#fff3cd',
+                            border: '1px solid #ffeaa7',
+                            borderRadius: '8px',
+                            textAlign: 'center',
+                          }}
+                          >
+                            <div style={{
+                              fontSize: '12px',
+                              color: '#856404',
+                              marginBottom: '4px',
+                            }}
+                            >
+                              {t('taskInfo.CPM' as any)}
+                            </div>
+                            <div style={{
+                              fontSize: '18px',
+                              fontWeight: 'bold',
+                              color: '#d63031',
+                            }}
+                            >
+                              CNY
+                              {' '}
+                              {acceptedTaskDetail.cpmReward / 100}
+                            </div>
+                          </div>
+                        )}
+
+                        {
+                          acceptedTaskDetail.task?.type && (
+                            <div style={{
+                              flex: '1',
+                              padding: '12px',
+                              backgroundColor: '#d1ecf1',
+                              border: '1px solid #bee5eb',
+                              borderRadius: '8px',
+                              textAlign: 'center',
+                            }}
+                            >
+                              <div style={{
+                                fontSize: '12px',
+                                color: '#0c5460',
+                                marginBottom: '4px',
+                              }}
+                              >
+                                {t('taskInfo.type' as any)}
+                              </div>
+                              <div style={{
+                                fontSize: '14px',
+                                fontWeight: '500',
+                                color: '#0c5460',
+                              }}
+                              >
+                                {getTaskTypeName(acceptedTaskDetail.task?.type)}
                               </div>
                             </div>
                           )
-                        : null
-                    })()}
-                  </div>
+                        }
 
-                  {/* 描述区域 */}
-                  {
-                    acceptedTaskDetail.task?.description && (
-                      <div style={{
-                        marginBottom: '16px',
-                        padding: '16px',
-                        backgroundColor: '#f8f9fa',
-                        borderRadius: '8px',
-                        border: '1px solid #e9ecef',
-                      }}
-                      >
-                        <div style={{
-                          fontSize: '14px',
-                          lineHeight: '1.6',
-                          color: '#495057',
-                        }}
-                        >
-                          <div dangerouslySetInnerHTML={{ __html: acceptedTaskDetail.task?.description }} />
-                        </div>
                       </div>
-                    )
-                  }
-                  
 
-                  {/* 任务信息卡片 */}
-                  <div style={{
-                    display: 'flex',
-                    gap: '12px',
-                    marginBottom: '16px',
-                  }}
-                  >
-                    {acceptedTaskDetail.reward > 0 && (
-                      <div style={{
-                        flex: '1',
-                        padding: '12px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#856404',
-                          marginBottom: '4px',
-                        }}
-                        >
-                          {t('taskInfo.reward' as any)}
+                      {/* 结算项（来自 /task/settle 接口），显示在接受时间上方 */}
+                      {acceptedTaskSettleLoading ? (
+                        <div style={{ marginBottom: '12px' }}>
+                          <Spin spinning={true} />
                         </div>
-                        <div style={{
-                          fontSize: '18px',
-                          fontWeight: 'bold',
-                          color: '#d63031',
-                        }}
-                        >
-                          CNY
-                          {' '}
-                          {acceptedTaskDetail.reward / 100}
-                        </div>
-                      </div>
-                    )}
-
-                    {acceptedTaskDetail.cpmReward > 0 && (
-                      <div style={{
-                        flex: '1',
-                        padding: '12px',
-                        backgroundColor: '#fff3cd',
-                        border: '1px solid #ffeaa7',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#856404',
-                          marginBottom: '4px',
-                        }}
-                        >
-                          {t('taskInfo.CPM' as any)}
-                        </div>
-                        <div style={{
-                          fontSize: '18px',
-                          fontWeight: 'bold',
-                          color: '#d63031',
-                        }}
-                        >
-                          CNY
-                          {' '}
-                          {acceptedTaskDetail.cpmReward / 100}
-                        </div>
-                      </div>
-                    )}
-
-                  {
-                    acceptedTaskDetail.task?.type && (
-                      <div style={{
-                        flex: '1',
-                        padding: '12px',
-                        backgroundColor: '#d1ecf1',
-                        border: '1px solid #bee5eb',
-                        borderRadius: '8px',
-                        textAlign: 'center',
-                      }}
-                      >
-                        <div style={{
-                          fontSize: '12px',
-                          color: '#0c5460',
-                          marginBottom: '4px',
-                        }}
-                        >
-                          {t('taskInfo.type' as any)}
-                        </div>
-                        <div style={{
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          color: '#0c5460',
-                        }}
-                        >
-                          {getTaskTypeName(acceptedTaskDetail.task?.type)}
-                        </div>
-                      </div>
-                    )
-                  }
-                    
-                  </div>
-
-                  {/* 结算项（来自 /task/settle 接口），显示在接受时间上方 */}
-                  {acceptedTaskSettleLoading ? (
-                    <div style={{ marginBottom: '12px' }}>
-                      <Spin spinning={true} />
-                    </div>
-                  ) : acceptedTaskSettleItems && acceptedTaskSettleItems.length > 0 ? (
-                    <div style={{ marginBottom: '12px' }}>
-                      <div style={{ marginBottom: '8px', fontWeight: 600 }}>{t('settle.items' as any) || '结算信息'}</div>
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                        {acceptedTaskSettleItems.map((item: any, idx: number) => (
-                          <div
-                            key={idx}
-                            style={{
-                              padding: '8px',
-                              backgroundColor: '#f8f9fa',
-                              border: '1px solid #e9ecef',
-                              borderRadius: '8px',
-                              minWidth: '120px',
-                            }}
-                          >
-                            <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
-                              {item.title || item.name || item.key || JSON.stringify(item)}
-                            </div>
-                            {item.value !== undefined ? (
-                              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.value}</div>
-                            ) : item.amount !== undefined ? (
-                              <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.amount}</div>
-                            ) : null}
+                      ) : acceptedTaskSettleItems && acceptedTaskSettleItems.length > 0 ? (
+                        <div style={{ marginBottom: '12px' }}>
+                          <div style={{ marginBottom: '8px', fontWeight: 600 }}>{t('settle.items' as any) || '结算信息'}</div>
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                            {acceptedTaskSettleItems.map((item: any, idx: number) => (
+                              <div
+                                key={idx}
+                                style={{
+                                  padding: '8px',
+                                  backgroundColor: '#f8f9fa',
+                                  border: '1px solid #e9ecef',
+                                  borderRadius: '8px',
+                                  minWidth: '120px',
+                                }}
+                              >
+                                <div style={{ fontSize: '12px', color: '#666', marginBottom: '4px' }}>
+                                  {item.title || item.name || item.key || JSON.stringify(item)}
+                                </div>
+                                {item.value !== undefined ? (
+                                  <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.value}</div>
+                                ) : item.amount !== undefined ? (
+                                  <div style={{ fontSize: '14px', fontWeight: 500 }}>{item.amount}</div>
+                                ) : null}
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
+                        </div>
+                      ) : null}
 
-                  {/* 任务状态信息 */}
-                  <div style={{
-                    display: 'flex',
-                    gap: '12px',
-                    marginBottom: '16px',
-                  }}
-                  >
-                    <div style={{
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#e2e3e5',
-                      border: '1px solid #d6d8db',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
+                      {/* 任务状态信息 */}
                       <div style={{
-                        fontSize: '12px',
-                        color: '#495057',
-                        marginBottom: '4px',
+                        display: 'flex',
+                        gap: '12px',
+                        marginBottom: '16px',
                       }}
                       >
-                        {t('taskInfo.acceptTime')}
-                      </div>
-                      <div style={{
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        color: '#495057',
-                      }}
-                      >
-                        {formatTime(acceptedTaskDetail.createdAt)}
-                      </div>
-                    </div>
+                        <div style={{
+                          flex: '1',
+                          padding: '12px',
+                          backgroundColor: '#e2e3e5',
+                          border: '1px solid #d6d8db',
+                          borderRadius: '8px',
+                          textAlign: 'center',
+                        }}
+                        >
+                          <div style={{
+                            fontSize: '12px',
+                            color: '#495057',
+                            marginBottom: '4px',
+                          }}
+                          >
+                            {t('taskInfo.acceptTime')}
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            color: '#495057',
+                          }}
+                          >
+                            {formatTime(acceptedTaskDetail.createdAt)}
+                          </div>
+                        </div>
 
-                    <div style={{
-                      flex: '1',
-                      padding: '12px',
-                      backgroundColor: '#e2e3e5',
-                      border: '1px solid #d6d8db',
-                      borderRadius: '8px',
-                      textAlign: 'center',
-                    }}
-                    >
-                      <div style={{
-                        fontSize: '12px',
-                        color: '#495057',
-                        marginBottom: '4px',
-                      }}
-                      >
-                        {t('taskInfo.submitTime')}
-                      </div>
-                      <div style={{
-                        fontSize: '12px',
-                        fontWeight: '500',
-                        color: '#495057',
-                      }}
-                      >
-                        {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : t('notSubmitted')}
+                        <div style={{
+                          flex: '1',
+                          padding: '12px',
+                          backgroundColor: '#e2e3e5',
+                          border: '1px solid #d6d8db',
+                          borderRadius: '8px',
+                          textAlign: 'center',
+                        }}
+                        >
+                          <div style={{
+                            fontSize: '12px',
+                            color: '#495057',
+                            marginBottom: '4px',
+                          }}
+                          >
+                            {t('taskInfo.submitTime')}
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            fontWeight: '500',
+                            color: '#495057',
+                          }}
+                          >
+                            {acceptedTaskDetail.submissionTime ? formatTime(acceptedTaskDetail.submissionTime) : t('notSubmitted')}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* 底部状态栏：左侧状态，右侧首次提交 */}
-              <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
-                <div className="flex items-center gap-3">
-                  <Badge className={getBadgeClassName(getTaskStatusTag(acceptedTaskDetail.status).color)} style={{ fontSize: 12, padding: '4px 8px' }}>
-                    {getTaskStatusTag(acceptedTaskDetail.status).text}
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">
-                    {acceptedTaskDetail.status === 'doing'
-                      ? t('taskStatuses.taskPending')
-                      : acceptedTaskDetail.status === 'pending'
-                        ? t('taskStatuses.taskCompleted')
-                        : `${t('taskStatuses.taskStatus')}: ${getTaskStatusTag(acceptedTaskDetail.status).text}`}
-                  </span>
-                </div>
-
-                {acceptedTaskDetail.isFirstTimeSubmission && (
-                  <span className="inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-100">
-                    {t('taskInfo.firstSubmission')}
-                  </span>
-                )}
-              </div>
-
-              {/* 根据任务状态显示不同按钮 */}
-              {(() => {
-                // 如果是已接受任务且状态为doing（待完成），显示完成任务按钮
-                if (acceptedTaskDetail.status === 'doing') {
-                  return (
-                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
-                      <Button
-                        size="lg"
-                        onClick={handleCompleteTask}
-                        style={{ marginTop: '12px' }}
-                      >
-                        {t('completeTask')}
-                      </Button>
+                  {/* 底部状态栏：左侧状态，右侧首次提交 */}
+                  <div className="flex items-center justify-between gap-4 border-t border-border pt-4">
+                    <div className="flex items-center gap-3">
+                      <Badge className={getBadgeClassName(getTaskStatusTag(acceptedTaskDetail.status).color)} style={{ fontSize: 12, padding: '4px 8px' }}>
+                        {getTaskStatusTag(acceptedTaskDetail.status).text}
+                      </Badge>
+                      <span className="text-sm text-muted-foreground">
+                        {acceptedTaskDetail.status === 'doing'
+                          ? t('taskStatuses.taskPending')
+                          : acceptedTaskDetail.status === 'pending'
+                            ? t('taskStatuses.taskCompleted')
+                            : `${t('taskStatuses.taskStatus')}: ${getTaskStatusTag(acceptedTaskDetail.status).text}`}
+                      </span>
                     </div>
-                  )
-                }
 
-                return null
-              })()}
-            </div>
-          ) : !acceptedTaskDetailLoading && (
-            <div style={{ textAlign: 'center', color: '#999' }}>
-              {t('messages.noTaskDetails')}
-            </div>
-          )}
-        </Spin>
-      </Modal>
-
-      {/* 媒体预览弹窗 */}
-      {previewMedia && (
-        <MediaPreview
-          open={mediaPreviewVisible}
-          onClose={() => setMediaPreviewVisible(false)}
-          items={[{ type: previewMedia.type, src: previewMedia.url, title: previewMedia.title || t('modal.mediaPreview') }]}
-          initialIndex={0}
-        />
-      )}
-
-      {/* 账号选择弹窗 */}
-      <Modal
-        title={t('accountSelect.title' as any)}
-        open={accountSelectVisible}
-        onCancel={() => setAccountSelectVisible(false)}
-        footer={null}
-        width={600}
-        zIndex={2500}
-      >
-        <div style={{ marginBottom: '16px' }}>
-          <p style={{ margin: 0, color: '#666' }}>
-            {t('accountSelect.description' as any)}
-          </p>
-        </div>
-        <List
-          dataSource={availableAccounts}
-          renderItem={account => (
-            <List.Item
-              style={{
-                padding: '16px',
-                border: '1px solid #f0f0f0',
-                borderRadius: '8px',
-                marginBottom: '8px',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = '#1890ff'
-                e.currentTarget.style.backgroundColor = '#f6ffed'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = '#f0f0f0'
-                e.currentTarget.style.backgroundColor = 'transparent'
-              }}
-              onClick={() => handleAccountSelect(account)}
-            >
-              <List.Item.Meta
-                avatar={(
-                  <Image
-                    src={account.avatar ? getOssUrl(account.avatar) : '/default-avatar.png'}
-                    alt="Account avatar"
-                    width={48}
-                    height={48}
-                    style={{
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                    }}
-                    onError={(e: any) => {
-                      e.target.src = '/default-avatar.png'
-                    }}
-                  />
-                )}
-                title={(
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontWeight: '500' }}>{account.nickname}</span>
-                    <Badge className={getBadgeClassName('blue')}>{getPlatformName(account.type)}</Badge>
-                  </div>
-                )}
-                description={(
-                  <div style={{ color: '#666' }}>
-                    <div>
-                      {t('accountSelect.accountId' as any)}
-                      :
-                      {' '}
-                      {account.account}
-                    </div>
-                    {account.nickname && (
-                      <div>
-                        {t('accountSelect.nickname' as any)}
-                        :
-                        {' '}
-                        {account.nickname}
-                      </div>
+                    {acceptedTaskDetail.isFirstTimeSubmission && (
+                      <span className="inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-sm font-semibold border border-emerald-100">
+                        {t('taskInfo.firstSubmission')}
+                      </span>
                     )}
                   </div>
-                )}
-              />
-            </List.Item>
-          )}
-        />
-      </Modal>
 
-      {/* 发布作品弹窗（用于任务流程触发） */}
-      {accountList.length > 0 && (
-        <PublishDialog
-          open={publishDialogOpen}
-          onClose={() => {
-            setPublishDialogOpen(false)
-            setPublishDefaultAccountId(undefined)
-            setPendingUserTaskIdForPublish(undefined)
-            setPendingTaskForPublish(null)
-          }}
-          accounts={accountList}
-          defaultAccountId={publishDefaultAccountId}
-          suppressAutoPublish={true}
-          taskIdForPublish={pendingUserTaskIdForPublish}
-          onPublishConfirmed={(taskId?: string) => {
-            // 当 PublishDialog 内部确认发布完成时触发，继续提交任务
-            handlePublishSuccess()
-          }}
-        />
-      )}
-      </>
+                  {/* 根据任务状态显示不同按钮 */}
+                  {(() => {
+                    // 如果是已接受任务且状态为doing（待完成），显示完成任务按钮
+                    if (acceptedTaskDetail.status === 'doing') {
+                      return (
+                        <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                          <Button
+                            size="lg"
+                            onClick={handleCompleteTask}
+                            style={{ marginTop: '12px' }}
+                          >
+                            {t('completeTask')}
+                          </Button>
+                        </div>
+                      )
+                    }
+
+                    return null
+                  })()}
+                </div>
+              ) : !acceptedTaskDetailLoading && (
+                <div style={{ textAlign: 'center', color: '#999' }}>
+                  {t('messages.noTaskDetails')}
+                </div>
+              )}
+            </Spin>
+          </Modal>
+
+          {/* 媒体预览弹窗 */}
+          {previewMedia && (
+            <MediaPreview
+              open={mediaPreviewVisible}
+              onClose={() => setMediaPreviewVisible(false)}
+              items={[{ type: previewMedia.type, src: previewMedia.url, title: previewMedia.title || t('modal.mediaPreview') }]}
+              initialIndex={0}
+            />
+          )}
+
+          {/* 账号选择弹窗 */}
+          <Modal
+            title={t('accountSelect.title' as any)}
+            open={accountSelectVisible}
+            onCancel={() => setAccountSelectVisible(false)}
+            footer={null}
+            width={600}
+            zIndex={2500}
+          >
+            <div style={{ marginBottom: '16px' }}>
+              <p style={{ margin: 0, color: '#666' }}>
+                {t('accountSelect.description' as any)}
+              </p>
+            </div>
+            <List
+              dataSource={availableAccounts}
+              renderItem={account => (
+                <List.Item
+                  style={{
+                    padding: '16px',
+                    border: '1px solid #f0f0f0',
+                    borderRadius: '8px',
+                    marginBottom: '8px',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.borderColor = '#1890ff'
+                    e.currentTarget.style.backgroundColor = '#f6ffed'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.borderColor = '#f0f0f0'
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                  }}
+                  onClick={() => handleAccountSelect(account)}
+                >
+                  <List.Item.Meta
+                    avatar={(
+                      <Image
+                        src={account.avatar ? getOssUrl(account.avatar) : '/default-avatar.png'}
+                        alt="Account avatar"
+                        width={48}
+                        height={48}
+                        style={{
+                          borderRadius: '50%',
+                          objectFit: 'cover',
+                        }}
+                        onError={(e: any) => {
+                          e.target.src = '/default-avatar.png'
+                        }}
+                      />
+                    )}
+                    title={(
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{ fontWeight: '500' }}>{account.nickname}</span>
+                        <Badge className={getBadgeClassName('blue')}>{getPlatformName(account.type)}</Badge>
+                      </div>
+                    )}
+                    description={(
+                      <div style={{ color: '#666' }}>
+                        <div>
+                          {t('accountSelect.accountId' as any)}
+                          :
+                          {' '}
+                          {account.account}
+                        </div>
+                        {account.nickname && (
+                          <div>
+                            {t('accountSelect.nickname' as any)}
+                            :
+                            {' '}
+                            {account.nickname}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  />
+                </List.Item>
+              )}
+            />
+          </Modal>
+
+          {/* 发布作品弹窗（用于任务流程触发） */}
+          {accountList.length > 0 && (
+            <PublishDialog
+              open={publishDialogOpen}
+              onClose={() => {
+                setPublishDialogOpen(false)
+                setPublishDefaultAccountId(undefined)
+                setPendingUserTaskIdForPublish(undefined)
+                setPendingTaskForPublish(null)
+              }}
+              accounts={accountList}
+              defaultAccountId={publishDefaultAccountId}
+              suppressAutoPublish={true}
+              taskIdForPublish={pendingUserTaskIdForPublish}
+              onPublishConfirmed={(taskId?: string) => {
+                // 当 PublishDialog 内部确认发布完成时触发，继续提交任务
+                handlePublishSuccess()
+              }}
+            />
+          )}
+        </>
       )}
     </div>
   )

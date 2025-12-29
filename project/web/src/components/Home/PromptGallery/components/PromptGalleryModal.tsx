@@ -5,24 +5,24 @@
 
 'use client'
 
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
-import { Search, X, Sparkles, Wand2, ImageIcon, Loader2, Grid3X3, Star, Image as ImageLucide } from 'lucide-react'
-import Masonry from 'react-masonry-css'
+import type { CategoryFilter, FilterMode, PromptItem } from '../types'
+import { Grid3X3, ImageIcon, Image as ImageLucide, Loader2, Search, Sparkles, Star, Wand2, X } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import Masonry from 'react-masonry-css'
 import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
+import { getGalleryCache, resetGalleryCache, updateGalleryCache } from '../cache'
+import { LOAD_MORE_COUNT, MASONRY_BREAKPOINTS, SAMPLE_PROMPTS } from '../constants'
 import { MasonryCard } from './MasonryCard'
-import { SAMPLE_PROMPTS, LOAD_MORE_COUNT, MASONRY_BREAKPOINTS } from '../constants'
-import { getGalleryCache, updateGalleryCache, resetGalleryCache } from '../cache'
-import type { PromptItem, FilterMode, CategoryFilter } from '../types'
 
 interface PromptGalleryModalProps {
   open: boolean
@@ -93,8 +93,8 @@ export function PromptGalleryModal({
         return false
       }
       if (
-        titleFilter.trim() &&
-        !item.title.toLowerCase().includes(titleFilter.toLowerCase())
+        titleFilter.trim()
+        && !item.title.toLowerCase().includes(titleFilter.toLowerCase())
       ) {
         return false
       }
@@ -115,7 +115,7 @@ export function PromptGalleryModal({
   // 加载更多
   const loadMore = useCallback(() => {
     setTimeout(() => {
-      setDisplayCount((prev) => Math.min(prev + LOAD_MORE_COUNT, filteredPrompts.length))
+      setDisplayCount(prev => Math.min(prev + LOAD_MORE_COUNT, filteredPrompts.length))
     }, 300)
   }, [filteredPrompts.length])
 
@@ -135,7 +135,7 @@ export function PromptGalleryModal({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-    <DialogContent className="!w-[min(1800px,95vw)] !max-w-none sm:!w-[min(1800px,95vw)] sm:!max-w-none h-[90vh] p-0 overflow-hidden bg-background rounded-2xl flex flex-col mx-auto">
+      <DialogContent className="!w-[min(1800px,95vw)] !max-w-none sm:!w-[min(1800px,95vw)] sm:!max-w-none h-[90vh] p-0 overflow-hidden bg-background rounded-2xl flex flex-col mx-auto">
         {/* 头部 */}
         <div className="flex-shrink-0 px-6 pt-6 pb-4 bg-card/80 backdrop-blur-md border-b border-border">
           <DialogHeader className="mb-4">
@@ -145,7 +145,9 @@ export function PromptGalleryModal({
               </div>
               {t('title')}
               <Badge variant="secondary" className="ml-2 bg-muted text-muted-foreground">
-                {filteredPrompts.length} {t('expandCount')}
+                {filteredPrompts.length}
+                {' '}
+                {t('expandCount')}
               </Badge>
             </DialogTitle>
           </DialogHeader>
@@ -193,7 +195,7 @@ export function PromptGalleryModal({
                   type="text"
                   placeholder={t('filters.searchPlaceholder' as any)}
                   value={titleFilter}
-                  onChange={(e) => setTitleFilter(e.target.value)}
+                  onChange={e => setTitleFilter(e.target.value)}
                   className="pl-10 pr-10 rounded-full bg-card border-border"
                 />
                 {titleFilter && (
@@ -222,16 +224,20 @@ export function PromptGalleryModal({
               next={loadMore}
               hasMore={hasMore}
               scrollThreshold={0.6}
-              loader={
+              loader={(
                 <div className="flex justify-center py-8">
                   <Loader2 className="w-8 h-8 text-muted-foreground animate-spin" />
                 </div>
-              }
-              endMessage={
+              )}
+              endMessage={(
                 <div className="flex justify-center py-8 text-muted-foreground text-sm">
-                  {t('loadedAll')} {filteredPrompts.length} {t('promptsCount')}
+                  {t('loadedAll')}
+                  {' '}
+                  {filteredPrompts.length}
+                  {' '}
+                  {t('promptsCount')}
                 </div>
-              }
+              )}
               scrollableTarget="gallery-scroll-container"
             >
               <Masonry
@@ -265,4 +271,3 @@ export function PromptGalleryModal({
     </Dialog>
   )
 }
-

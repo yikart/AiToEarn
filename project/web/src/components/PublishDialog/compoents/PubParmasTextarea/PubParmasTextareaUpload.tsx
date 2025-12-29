@@ -11,7 +11,6 @@ import type {
 } from '@/components/PublishDialog/publishDialog.type'
 import { PlusOutlined } from '@ant-design/icons'
 import { Dropdown, Upload } from 'antd'
-import { toast } from '@/lib/toast'
 import React, {
   forwardRef,
   memo,
@@ -30,6 +29,7 @@ import {
   VideoGrabFrame,
 } from '@/components/PublishDialog/PublishDialog.util'
 import { OSS_URL } from '@/constant'
+import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 
 const { Dragger } = Upload
@@ -288,12 +288,15 @@ const PubParmasTextareaUpload = memo(
           />
 
           <Dropdown menu={{ items: dropdownItems }} placement="top">
-            <div className="pubParmasTextarea-uploads-upload-blocker" onClick={() => {
-                  // 触发上传
-                  uploadRef
-                    .current!.nativeElement?.querySelector('input')!
-                    .click()
-                }}>
+            <div
+              className="pubParmasTextarea-uploads-upload-blocker"
+              onClick={() => {
+              // 触发上传
+                uploadRef
+                  .current!.nativeElement?.querySelector('input')!
+                  .click()
+              }}
+            >
               <PlusOutlined style={{ fontSize: '20px' }} />
               {t('upload.selectFile')}
             </div>

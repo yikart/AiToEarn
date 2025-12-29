@@ -1,21 +1,22 @@
 'use client'
 
+import type { ColumnsType } from 'antd/es/table'
+import type { NoteMonitoringItem } from '@/api/monitoring'
 import {
   ArrowLeftOutlined,
+  CommentOutlined,
   LikeOutlined,
   StarOutlined,
-  CommentOutlined,
 } from '@ant-design/icons'
 import { Avatar, Card, Image, Spin, Table, Tag } from 'antd'
-import { toast } from '@/lib/toast'
-import type { ColumnsType } from 'antd/es/table'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useTransClient } from '@/app/i18n/client'
 import {
   apiGetNoteMonitoringDetail,
-  type NoteMonitoringItem,
+
 } from '@/api/monitoring'
+import { useTransClient } from '@/app/i18n/client'
+import { toast } from '@/lib/toast'
 import styles from './detailPage.module.scss'
 
 interface HistoryDataRecord {
@@ -59,11 +60,12 @@ export default function MonitoringDetailPage() {
 
   // 获取每日增量数据
   const getDailyIncrements = () => {
-    if (!detail?.insights || detail.insights.length === 0) return []
+    if (!detail?.insights || detail.insights.length === 0)
+      return []
 
     // 按业务日期排序
-    const sortedInsights = [...detail.insights].sort((a, b) => 
-      new Date(a.businessDate).getTime() - new Date(b.businessDate).getTime()
+    const sortedInsights = [...detail.insights].sort((a, b) =>
+      new Date(a.businessDate).getTime() - new Date(b.businessDate).getTime(),
     )
 
     // 直接使用 dailyDelta 数据
@@ -155,8 +157,8 @@ export default function MonitoringDetailPage() {
       {/* 页面标题 */}
       <div className={styles.pageHeader}>
         <h1 className={styles.pageTitle}>
-          <ArrowLeftOutlined 
-            className={styles.backIcon} 
+          <ArrowLeftOutlined
+            className={styles.backIcon}
             onClick={() => router.back()}
           />
           {t('detail.pageTitle')}
@@ -167,22 +169,31 @@ export default function MonitoringDetailPage() {
       <Card className={styles.taskInfoCard}>
         <div className={styles.taskInfo}>
           <div className={styles.infoItem}>
-            <span className={styles.label}>{t('detail.taskId')}:</span>
+            <span className={styles.label}>
+              {t('detail.taskId')}
+              :
+            </span>
             <span className={styles.value}>{detail._id.substring(0, 12)}</span>
           </div>
           <div className={styles.infoItem}>
-            <span className={styles.label}>{t('detail.startTime')}:</span>
+            <span className={styles.label}>
+              {t('detail.startTime')}
+              :
+            </span>
             <span className={styles.value}>
               {new Date(detail.createdAt).toLocaleString('zh-CN')}
             </span>
           </div>
           <div className={styles.infoItem}>
-            <span className={styles.label}>{t('detail.updateTime')}:</span>
+            <span className={styles.label}>
+              {t('detail.updateTime')}
+              :
+            </span>
             <span className={styles.value}>
               {new Date(detail.updatedAt).toLocaleString('zh-CN')}
             </span>
           </div>
-          
+
         </div>
       </Card>
 
@@ -240,29 +251,40 @@ export default function MonitoringDetailPage() {
             <div className={styles.noteTags}>
               {detail.link && (
                 <a href={detail.link} target="_blank" rel="noopener noreferrer" className={styles.viewLink}>
-                  {t('detail.viewOriginal')} →
+                  {t('detail.viewOriginal')}
+                  {' '}
+                  →
                 </a>
               )}
             </div>
             <div className={styles.noteDesc}>
-              {detail.postDetail?.desc && detail.postDetail.desc.length > 500 
-                ? `${detail.postDetail.desc.substring(0, 500)}...` 
+              {detail.postDetail?.desc && detail.postDetail.desc.length > 500
+                ? `${detail.postDetail.desc.substring(0, 500)}...`
                 : detail.postDetail?.desc}
             </div>
             <div className={styles.noteStats}>
               <div className={styles.statItem}>
                 <LikeOutlined className={styles.statIcon} />
-                <span className={styles.statLabel}>{t('stats.likes')}:</span>
+                <span className={styles.statLabel}>
+                  {t('stats.likes')}
+                  :
+                </span>
                 <span className={styles.statValue}>{detail.postDetail?.likeCount || 0}</span>
               </div>
               <div className={styles.statItem}>
                 <StarOutlined className={styles.statIcon} />
-                <span className={styles.statLabel}>{t('stats.favorites')}:</span>
+                <span className={styles.statLabel}>
+                  {t('stats.favorites')}
+                  :
+                </span>
                 <span className={styles.statValue}>{detail.postDetail?.collectCount || 0}</span>
               </div>
               <div className={styles.statItem}>
                 <CommentOutlined className={styles.statIcon} />
-                <span className={styles.statLabel}>{t('stats.comments')}:</span>
+                <span className={styles.statLabel}>
+                  {t('stats.comments')}
+                  :
+                </span>
                 <span className={styles.statValue}>{detail.postDetail?.commentCount || 0}</span>
               </div>
             </div>
@@ -282,11 +304,10 @@ export default function MonitoringDetailPage() {
             showTotal: total => t('detail.table.totalDays', { count: total }),
           }}
           locale={{
-            emptyText: t('detail.noData')
+            emptyText: t('detail.noData'),
           }}
         />
       </Card>
     </div>
   )
 }
-

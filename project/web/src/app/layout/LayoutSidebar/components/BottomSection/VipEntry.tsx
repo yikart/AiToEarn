@@ -4,19 +4,19 @@
 
 'use client'
 
-import Link from 'next/link'
+import type { SidebarCommonProps } from '../../types'
 import { Crown } from 'lucide-react'
+import Link from 'next/link'
 import { useTransClient } from '@/app/i18n/client'
-import { useGetClientLng } from '@/hooks/useSystem'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
-import type { SidebarCommonProps } from '../../types'
 
 // 有效的 VIP 会员状态
 const ACTIVE_VIP_STATUSES = ['active_monthly', 'active_yearly', 'active_nonrenewing', 'monthly_once', 'yearly_once']
@@ -28,10 +28,10 @@ export function VipEntry({ collapsed }: SidebarCommonProps) {
 
   // 判断用户是否是有效会员：需要有有效的状态且未过期
   const isVip = Boolean(
-    userInfo?.vipInfo?.status &&
-    ACTIVE_VIP_STATUSES.includes(userInfo.vipInfo.status) &&
-    userInfo.vipInfo.expireTime &&
-    new Date(userInfo.vipInfo.expireTime) > new Date()
+    userInfo?.vipInfo?.status
+    && ACTIVE_VIP_STATUSES.includes(userInfo.vipInfo.status)
+    && userInfo.vipInfo.expireTime
+    && new Date(userInfo.vipInfo.expireTime) > new Date(),
   )
 
   return (
@@ -70,4 +70,3 @@ export function VipEntry({ collapsed }: SidebarCommonProps) {
     </TooltipProvider>
   )
 }
-

@@ -12,10 +12,10 @@ import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import { useUserStore } from '@/store/user'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
+import { useUserStore } from '@/store/user'
 import { DateTimePicker } from './DateTimePicker'
 
 export interface IPublishDatePickerRef {}
@@ -37,8 +37,8 @@ const PublishDatePicker = memo(
         setPubTime: state.setPubTime,
       })),
     )
-    const { currentDatePickerType, defaultCurrentDatePickerType, setDefaultCurrentDatePickerType, setCurrentDatePickerType } =
-      useUserStore(
+    const { currentDatePickerType, defaultCurrentDatePickerType, setDefaultCurrentDatePickerType, setCurrentDatePickerType }
+      = useUserStore(
         useShallow(state => ({
           currentDatePickerType: state.currentDatePickerType,
           defaultCurrentDatePickerType: state.defaultCurrentDatePickerType,
@@ -57,7 +57,8 @@ const PublishDatePicker = memo(
       // 更新时间
       if (currentDatePickerType === PublishDatePickerType.DATE) {
         setPubTime(tempDate ? tempDate.format() : undefined)
-      } else {
+      }
+      else {
         setPubTime(undefined)
       }
 
@@ -76,7 +77,8 @@ const PublishDatePicker = memo(
         setPubTime(undefined)
         setMenuOpen(false)
         setShowMenu(true)
-      } else {
+      }
+      else {
         setShowMenu(false)
       }
     }
@@ -89,7 +91,8 @@ const PublishDatePicker = memo(
     const handleToggleFavorite = (type: PublishDatePickerType) => {
       if (defaultCurrentDatePickerType === type) {
         setDefaultCurrentDatePickerType(PublishDatePickerType.DATE)
-      } else {
+      }
+      else {
         setDefaultCurrentDatePickerType(type)
       }
     }
@@ -101,7 +104,8 @@ const PublishDatePicker = memo(
 
     // 禁用当前时间之前和当前时间20分钟内的时间（只精确到分钟，不考虑秒）
     const disabledDateTime = (current: dayjs.Dayjs | null) => {
-      if (!current) return {}
+      if (!current)
+        return {}
 
       const now = dayjs()
       const minTime = now.add(20, 'minute')
@@ -115,7 +119,8 @@ const PublishDatePicker = memo(
         const disabledHours = () => {
           const hours: number[] = []
           for (let i = 0; i < 24; i++) {
-            if (i < minHour) hours.push(i)
+            if (i < minHour)
+              hours.push(i)
           }
           return hours
         }
@@ -127,7 +132,8 @@ const PublishDatePicker = memo(
             for (let i = 0; i < minMinute; i++) {
               minutes.push(i)
             }
-          } else if (selectedHour < minHour) {
+          }
+          else if (selectedHour < minHour) {
             // 小时都禁用了，分钟全部禁用
             for (let i = 0; i < 60; i++) {
               minutes.push(i)
@@ -198,7 +204,7 @@ const PublishDatePicker = memo(
             size="sm"
             className="h-8 w-8 p-0"
             title={t('buttons.defaultPublishAction')}
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation()
               handleToggleFavorite(PublishDatePickerType.Now)
             }}
@@ -246,7 +252,7 @@ const PublishDatePicker = memo(
             size="sm"
             className="h-8 w-8 p-0"
             title={t('buttons.defaultPublishAction')}
-            onClick={e => {
+            onClick={(e) => {
               e.stopPropagation()
               handleToggleFavorite(PublishDatePickerType.DATE)
             }}
@@ -331,7 +337,8 @@ const PublishDatePicker = memo(
                 className="opacity-75"
                 fill="currentColor"
                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              ></path>
+              >
+              </path>
             </svg>
           )}
           {t('buttons.schedulePublish')}

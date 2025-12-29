@@ -3,11 +3,11 @@
  */
 'use client'
 
-import { useTransClient } from '@/app/i18n/client'
-import { Clock, Lightbulb, Edit3, Download, Film, Globe, Camera, Image as ImageIcon, Eye } from 'lucide-react'
-import { AccountPlatInfoArr } from '@/app/config/platConfig'
-import { cn } from '@/lib/utils'
 import type { FC } from 'react'
+import { Camera, Clock, Download, Edit3, Eye, Film, Globe, Image as ImageIcon, Lightbulb } from 'lucide-react'
+import { AccountPlatInfoArr } from '@/app/config/platConfig'
+import { useTransClient } from '@/app/i18n/client'
+import { cn } from '@/lib/utils'
 
 interface AgentFeaturesProps {
   className?: string
@@ -124,5 +124,3 @@ const AgentFeatures: FC<AgentFeaturesProps> = ({ className }) => {
 }
 
 export default AgentFeatures
-
-

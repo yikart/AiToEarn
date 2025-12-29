@@ -301,7 +301,9 @@ export default function Page() {
   return (
     <div className={styles.aiRanking}>
       <div className="aiRanking-title">
-        {t('ranking.title')} ·
+        {t('ranking.title')}
+        {' '}
+        ·
         {' '}
         {optionsTags.find(v => v.value === params.area)?.label}
         {' '}

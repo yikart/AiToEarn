@@ -76,4 +76,3 @@ const Radio = Object.assign(RadioComponent, {
 })
 
 export { Radio, RadioGroup }
-

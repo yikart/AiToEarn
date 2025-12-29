@@ -16,7 +16,8 @@ export async function generateMetadata({
   params: Promise<{ lng: string }>
 }): Promise<Metadata> {
   let { lng } = await params
-  if (!languages.includes(lng)) lng = fallbackLng
+  if (!languages.includes(lng))
+    lng = fallbackLng
   const { t } = await useTranslation(lng, 'login')
 
   return getMetadata(
@@ -33,7 +34,7 @@ interface LoginPageProps {
   params: Promise<{ lng: string }>
 }
 
-const LoginPage = async ({ params }: LoginPageProps) => {
+async function LoginPage({ params }: LoginPageProps) {
   const { lng } = await params
 
   return <LoginContent />

@@ -6,15 +6,15 @@
 
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import type { IPromptGalleryProps, PromptItem } from './types'
+import { ArrowRight, Camera, Check, Grid3X3 } from 'lucide-react'
 import { useParams } from 'next/navigation'
-import { ArrowRight, Grid3X3, Check, Camera } from 'lucide-react'
+import { useCallback, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PromptGalleryModal } from './components'
 import { SAMPLE_PROMPTS } from './constants'
-import type { IPromptGalleryProps, PromptItem } from './types'
 
 /**
  * PromptGallery - 提示词画廊主组件
@@ -69,10 +69,10 @@ export default function PromptGallery({
         }
         onApplyPrompt(applyData)
         setIsModalOpen(false)
-        document.querySelector("#main-content")!.scrollTo({ top: 0, behavior: 'smooth' })
+        document.querySelector('#main-content')!.scrollTo({ top: 0, behavior: 'smooth' })
       }
     },
-    [onApplyPrompt, lng]
+    [onApplyPrompt, lng],
   )
 
   return (
@@ -110,7 +110,7 @@ export default function PromptGallery({
                     </div>
                   </div>
                   <div className="flex justify-end mt-4">
-                    <Button size="sm" variant="default" onClick={(e) => handleApplyPrompt({ ...item, prompt: samplePrompt }, e)} className="rounded-full px-4 py-1">
+                    <Button size="sm" variant="default" onClick={e => handleApplyPrompt({ ...item, prompt: samplePrompt }, e)} className="rounded-full px-4 py-1">
                       {t('apply') || '应用'}
                     </Button>
                   </div>
@@ -128,7 +128,11 @@ export default function PromptGallery({
             className="rounded-full px-8 group"
           >
             <Grid3X3 className="w-5 h-5 mr-2" />
-            {t('expandButton')} {SAMPLE_PROMPTS.length} {t('expandCount')}
+            {t('expandButton')}
+            {' '}
+            {SAMPLE_PROMPTS.length}
+            {' '}
+            {t('expandCount')}
             <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>

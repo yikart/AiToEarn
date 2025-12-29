@@ -3,11 +3,11 @@
  * 管理详情弹框的打开/关闭、加载状态、预览数据和详情数据
  */
 
+import type { ClickRect } from '../components/FeedCard'
+import type { HomeFeedItem, SupportedPlatformType, WorkDetail } from '@/store/plugin/plats/types'
 import { create } from 'zustand'
 import { PlatType } from '@/app/config/platConfig'
-import type { HomeFeedItem, WorkDetail, SupportedPlatformType } from '@/store/plugin/plats/types'
 import { platformManager } from '@/store/plugin'
-import type { ClickRect } from '../components/FeedCard'
 
 /**
  * 预览数据（从列表项提取，在请求详情前显示）
@@ -67,10 +67,10 @@ interface DetailModalActions {
    * @param platform 当前平台
    */
   open: (item: HomeFeedItem, rect: ClickRect, platform: SupportedPlatformType) => void
-  
+
   /** 关闭弹框 */
   close: () => void
-  
+
   /** 重置状态 */
   reset: () => void
 
@@ -79,10 +79,10 @@ interface DetailModalActions {
   // ============================================================================
   /** 设置当前图片索引 */
   setCurrentImageIndex: (index: number) => void
-  
+
   /** 打开图片预览 */
   openImagePreview: (index?: number) => void
-  
+
   /** 关闭图片预览 */
   closeImagePreview: () => void
 }
@@ -133,7 +133,7 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
   open: (item, rect, platform) => {
     // 提取预览数据并立即打开弹框
     const preview = extractPreviewData(item)
-    
+
     set({
       isOpen: true,
       loading: true,
@@ -159,7 +159,8 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
         })
 
         // 检查弹框是否还在打开状态（避免关闭后还更新状态）
-        if (!get().isOpen) return
+        if (!get().isOpen)
+          return
 
         if (result.success && result.detail) {
           set({
@@ -167,15 +168,18 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
             loading: false,
             error: null,
           })
-        } else {
+        }
+        else {
           set({
             loading: false,
             error: result.message || '获取详情失败',
           })
         }
-      } catch (error) {
+      }
+      catch (error) {
         // 检查弹框是否还在打开状态
-        if (!get().isOpen) return
+        if (!get().isOpen)
+          return
 
         set({
           loading: false,

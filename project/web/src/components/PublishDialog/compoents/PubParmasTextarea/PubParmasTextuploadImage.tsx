@@ -46,14 +46,15 @@ const PubParmasTextuploadImage = memo(
               <img src={imageFile.imgUrl} alt="preview" />
             </Tooltip>
 
-            <div style={{ 
-              position: 'absolute', 
-              bottom: 8, 
-              right: 8, 
-              display: 'flex', 
+            <div style={{
+              position: 'absolute',
+              bottom: 8,
+              right: 8,
+              display: 'flex',
               gap: 4,
-              zIndex: 1
-            }}>
+              zIndex: 1,
+            }}
+            >
               <Tooltip title="Edit">
                 <Button
                   icon={<EditOutlined />}
@@ -64,11 +65,11 @@ const PubParmasTextuploadImage = memo(
                   }}
                   style={{
                     minWidth: 'auto',
-                    padding: '4px 8px'
+                    padding: '4px 8px',
                   }}
                 />
               </Tooltip>
-              
+
               {onImageToImageClick && (
                 <Tooltip title={t('aiFeatures.imageToImage' as any)}>
                   <Button
@@ -80,7 +81,7 @@ const PubParmasTextuploadImage = memo(
                     }}
                     style={{
                       minWidth: 'auto',
-                      padding: '4px 8px'
+                      padding: '4px 8px',
                     }}
                   />
                 </Tooltip>

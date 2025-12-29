@@ -3,7 +3,7 @@ import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useTransClient } from '@/app/i18n/client'
 
-const AccountStatusView = ({ account }: { account: SocialAccount }) => {
+function AccountStatusView({ account }: { account: SocialAccount }) {
   const { t } = useTransClient('account')
   if (account.status === AccountStatus.USABLE) {
     return (
@@ -23,4 +23,3 @@ const AccountStatusView = ({ account }: { account: SocialAccount }) => {
 }
 
 export default AccountStatusView
-

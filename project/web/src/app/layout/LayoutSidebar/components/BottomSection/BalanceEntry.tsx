@@ -5,21 +5,21 @@
 
 'use client'
 
-import { useEffect } from 'react'
+import type { SidebarCommonProps } from '../../types'
 import { DollarSign } from 'lucide-react'
+import { useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { centsToUsd } from '@/api/credits'
 import { useTransClient } from '@/app/i18n/client'
+import { Skeleton } from '@/components/ui/skeleton'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
-import { centsToUsd } from '@/api/credits'
-import type { SidebarCommonProps } from '../../types'
 
 interface BalanceEntryProps extends SidebarCommonProps {
   /** 点击时打开设置弹框并选中订阅 Tab */
@@ -67,7 +67,8 @@ export function BalanceEntry({ collapsed, onClick }: BalanceEntryProps) {
           <Skeleton className="h-4 w-12" />
         ) : (
           <span className="text-xs font-medium text-foreground">
-            ${centsToUsd(creditsBalance)}
+            $
+            {centsToUsd(creditsBalance)}
           </span>
         )
       )}
@@ -81,7 +82,9 @@ export function BalanceEntry({ collapsed, onClick }: BalanceEntryProps) {
           <TooltipTrigger asChild>{content}</TooltipTrigger>
           <TooltipContent side="right">
             <p>
-              {t('balance')}: ${centsToUsd(creditsBalance)}
+              {t('balance')}
+              : $
+              {centsToUsd(creditsBalance)}
             </p>
           </TooltipContent>
         </Tooltip>
@@ -91,4 +94,3 @@ export function BalanceEntry({ collapsed, onClick }: BalanceEntryProps) {
 
   return content
 }
-

@@ -4,6 +4,7 @@
 
 'use client'
 
+import type { SidebarCommonProps } from '../../types'
 import { Settings } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import {
@@ -13,7 +14,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import type { SidebarCommonProps } from '../../types'
 
 interface SettingsEntryProps extends SidebarCommonProps {
   onClick: () => void
@@ -46,4 +46,3 @@ export function SettingsEntry({ collapsed, onClick }: SettingsEntryProps) {
     </TooltipProvider>
   )
 }
-

@@ -1,10 +1,10 @@
 'use client'
 
+import type { UserWalletAccount } from '@/api/userWalletAccount'
 // using payment API shape (id, userName, email, account, type, ...)
 import { Empty, Select, Spin } from 'antd'
 import { useEffect, useMemo, useState } from 'react'
 import { getWalletAccountListApi } from '@/api/payment'
-import type { UserWalletAccount } from '@/api/userWalletAccount'
 import { useTransClient } from '@/app/i18n/client'
 
 interface Props {
@@ -70,7 +70,7 @@ export default function WalletAccountSelect(props: Props) {
     >
       {list.map(item => (
         <Option key={item.id || item._id} value={item.id || item._id}>
-          {(item.userName || item.email) + ' · ' + (item.type || '') + ' · ' + (item.account || '')}
+          {`${item.userName || item.email} · ${item.type || ''} · ${item.account || ''}`}
         </Option>
       ))}
     </Select>

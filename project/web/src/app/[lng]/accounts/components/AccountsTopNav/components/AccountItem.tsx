@@ -56,7 +56,9 @@ const AccountItem = memo(({ account, isActive, onSelect, indent = false }: Accou
           <AccountStatusView account={account} />
           {account.fansCount !== undefined && account.fansCount !== null && (
             <span className="text-xs text-muted-foreground shrink-0">
-              {t('fansCount')}: {account.fansCount ?? 0}
+              {t('fansCount')}
+              :
+              {account.fansCount ?? 0}
             </span>
           )}
         </div>
@@ -69,4 +71,3 @@ const AccountItem = memo(({ account, isActive, onSelect, indent = false }: Accou
 AccountItem.displayName = 'AccountItem'
 
 export default AccountItem
-

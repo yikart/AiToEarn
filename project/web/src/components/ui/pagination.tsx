@@ -5,10 +5,10 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { Button } from './button'
 import { useTransClient } from '@/app/i18n/client'
+import { cn } from '@/lib/utils'
+import { Button } from './button'
 
 interface PaginationProps {
   /** 当前页码 */
@@ -69,20 +69,23 @@ export function Pagination({
       for (let i = 1; i <= totalPages; i++) {
         pages.push(i)
       }
-    } else {
+    }
+    else {
       if (current <= 3) {
         for (let i = 1; i <= 5; i++) {
           pages.push(i)
         }
         pages.push('ellipsis')
         pages.push(totalPages)
-      } else if (current >= totalPages - 2) {
+      }
+      else if (current >= totalPages - 2) {
         pages.push(1)
         pages.push('ellipsis')
         for (let i = totalPages - 4; i <= totalPages; i++) {
           pages.push(i)
         }
-      } else {
+      }
+      else {
         pages.push(1)
         pages.push('ellipsis')
         for (let i = current - 1; i <= current + 1; i++) {
@@ -167,10 +170,10 @@ export function Pagination({
           <span className="text-muted-foreground">{t('pagination.perPage')}</span>
           <select
             value={pageSize}
-            onChange={(e) => handleSizeChange(Number(e.target.value))}
+            onChange={e => handleSizeChange(Number(e.target.value))}
             className="h-8 px-2 py-1 text-sm border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
           >
-            {pageSizeOptions.map((option) => (
+            {pageSizeOptions.map(option => (
               <option key={option} value={option}>
                 {option}
               </option>
@@ -204,4 +207,3 @@ export function Pagination({
     </div>
   )
 }
-

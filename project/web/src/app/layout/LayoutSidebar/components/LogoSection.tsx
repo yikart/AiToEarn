@@ -4,13 +4,13 @@
 
 'use client'
 
+import type { LogoSectionProps } from '../types'
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import logo from '@/assets/images/logo.png'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
-import logo from '@/assets/images/logo.png'
-import type { LogoSectionProps } from '../types'
 
 export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
   const lng = useGetClientLng()
@@ -60,4 +60,3 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
     </div>
   )
 }
-

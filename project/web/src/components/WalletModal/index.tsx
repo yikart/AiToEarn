@@ -6,52 +6,51 @@
 'use client'
 
 import type { WalletAccount, WalletAccountRequest, WalletAccountUpdateRequest } from '@/api/types/userWalletAccount'
-import { WalletAccountType } from '@/api/types/userWalletAccount'
+import { Edit, MoreVertical, Star, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
+  createConnectedAccountApi,
   createWalletAccountApi,
   deleteWalletAccountApi,
-  getWalletAccountListApi,
-  updateWalletAccountApi,
-  setDefaultWalletAccountApi,
-} from '@/api/payment'
-import {
-  getConnectedAccountListApi,
-  createConnectedAccountApi,
-  getConnectedAccountOnboardingLinkApi,
-  getConnectedAccountDetailApi,
-  refreshConnectedAccountStatusApi,
   getConnectedAccountDashboardLinkApi,
+  getConnectedAccountDetailApi,
+  getConnectedAccountListApi,
+  getConnectedAccountOnboardingLinkApi,
+  getWalletAccountListApi,
+  refreshConnectedAccountStatusApi,
+  setDefaultWalletAccountApi,
+  updateWalletAccountApi,
 } from '@/api/payment'
-// 邮箱正则表达式
-const EMAIL_REGEX = /^(?!\.)(?!.*\.\.)([A-Za-z0-9_'+\-\.]*)[A-Za-z0-9_+-]@([A-Za-z0-9][A-Za-z0-9\-]*\.)+[A-Za-z]{2,}$/
 
-// 中国手机号正则表达式（11位数字，1开头）
-const PHONE_REGEX = /^1[3-9]\d{9}$/
-
-// 身份证号正则表达式（支持国际身份证，限制宽松：6-30位字母数字组合，允许横线和空格）
-const ID_CARD_REGEX = /^[A-Za-z0-9\s\-]{6,30}$/
+import { WalletAccountType } from '@/api/types/userWalletAccount'
 import { useTransClient } from '@/app/i18n/client'
-import { useUserStore } from '@/store/user'
-import { toast } from '@/lib/toast'
-import { confirm } from '@/lib/confirm'
-import { Button } from '@/components/ui/button'
-import { Modal } from '@/components/ui/modal'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Card } from '@/components/ui/card'
-import { Pagination } from '@/components/ui/pagination'
-import { Spin } from '@/components/ui/spin'
-import { Empty } from '@/components/ui/empty'
 import { Badge } from '@/components/ui/badge'
-import { MoreVertical, Edit, Trash2, Star } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card } from '@/components/ui/card'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Empty } from '@/components/ui/empty'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Modal } from '@/components/ui/modal'
+import { Pagination } from '@/components/ui/pagination'
+import { Spin } from '@/components/ui/spin'
 import countries from '@/data/countries_alpha2.json'
+import { confirm } from '@/lib/confirm'
+import { toast } from '@/lib/toast'
+import { useUserStore } from '@/store/user'
+// 邮箱正则表达式
+const EMAIL_REGEX = /^(?!\.)(?!.*\.\.)([\w'+\-.]*)[\w+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i
+
+// 中国手机号正则表达式（11位数字，1开头）
+const PHONE_REGEX = /^1[3-9]\d{9}$/
+
+// 身份证号正则表达式（支持国际身份证，限制宽松：6-30位字母数字组合，允许横线和空格）
+const ID_CARD_REGEX = /^[A-Z0-9\s\-]{6,30}$/i
 
 interface WalletModalProps {
   open: boolean
@@ -156,7 +155,7 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
         console.log('Deleting wallet account:', record.id)
         const res = await deleteWalletAccountApi(record.id)
         console.log('Delete response:', res)
-        
+
         // request 函数返回格式：{ code, data, message, url } 或 null
         // 成功时 code === 0，返回整个响应对象
         // 失败时返回 null（request 函数内部已显示错误提示）
@@ -368,7 +367,7 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
         width="90%"
       >
         <div className="space-y-4">
-                <div className="flex justify-end">
+          <div className="flex justify-end">
             <Button onClick={openCreate} size="sm">
               {t('actions.create')}
             </Button>
@@ -378,15 +377,15 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
             {list.length > 0 ? (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {list.map((record) => (
+                  {list.map(record => (
                     <Card key={record.id} className="relative">
                       {/* 右上角状态标识 */}
                       <div className="absolute top-4 right-4 flex gap-2 z-10">
                         {record.isDefault && (
-                            <Badge className="bg-primary text-primary-foreground">
-                              <Star className="w-3 h-3 mr-1 fill-current" />
-                              Default
-                            </Badge>
+                          <Badge className="bg-primary text-primary-foreground">
+                            <Star className="w-3 h-3 mr-1 fill-current" />
+                            Default
+                          </Badge>
                         )}
                         {record.isVerified && (
                           <Badge className="bg-green-100 text-green-800 border-green-200">
@@ -546,7 +545,7 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
                 <Label>{t('form.userName')}</Label>
                 <Input
                   value={formData.userName}
-                  onChange={(e) => setFormData({ ...formData, userName: e.target.value })}
+                  onChange={e => setFormData({ ...formData, userName: e.target.value })}
                   placeholder={t('form.userNamePlaceholder')}
                 />
               </div>
@@ -559,11 +558,17 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
                 <Label>Country</Label>
                 <select
                   value={connectedForm.country}
-                  onChange={(e) => setConnectedForm({ ...connectedForm, country: e.target.value })}
+                  onChange={e => setConnectedForm({ ...connectedForm, country: e.target.value })}
                   className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   {Array.isArray(countries) && countries.map((c: any) => (
-                    <option key={c.code} value={c.code}>{c.zh} - {c.code}</option>
+                    <option key={c.code} value={c.code}>
+                      {c.zh}
+                      {' '}
+                      -
+                      {' '}
+                      {c.code}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -572,7 +577,7 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
                 <Label>Email</Label>
                 <Input
                   value={connectedForm.email || ''}
-                  onChange={(e) => setConnectedForm({ ...connectedForm, email: e.target.value })}
+                  onChange={e => setConnectedForm({ ...connectedForm, email: e.target.value })}
                   placeholder="email@example.com"
                 />
               </div>
@@ -581,7 +586,7 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
                 <Label>Entity Type</Label>
                 <select
                   value={connectedForm.entityType}
-                  onChange={(e) => setConnectedForm({ ...connectedForm, entityType: e.target.value as any })}
+                  onChange={e => setConnectedForm({ ...connectedForm, entityType: e.target.value as any })}
                   className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   <option value="individual">Individual</option>
@@ -595,4 +600,3 @@ export default function WalletModal({ open, onClose }: WalletModalProps) {
     </>
   )
 }
-
