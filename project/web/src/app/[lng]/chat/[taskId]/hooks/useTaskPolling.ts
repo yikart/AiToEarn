@@ -1,4 +1,5 @@
 import type { TaskDetail, TaskMessage } from '@/api/agent'
+import { TaskStatus } from '@/api/agent'
 import type { IDisplayMessage } from '@/store/agent'
 /**
  * 任务轮询 Hook
@@ -117,13 +118,13 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         if (!lastMessageId) {
           const result = await agentApi.getTaskMessages(taskId)
           if (result?.code === 0 && result.data) {
-            // 检查任务状态
-            if (result.data.status === 'aborted') {
-              console.log('[TaskPolling] Task aborted, stopping polling')
-              setIsPolling(false)
-              onTaskStatusChange?.('aborted')
-              return
-            }
+          // 检查任务状态
+          if (result.data.status === TaskStatus.Aborted) {
+            console.log('[TaskPolling] Task aborted, stopping polling')
+            setIsPolling(false)
+            onTaskStatusChange?.('aborted')
+            return
+          }
 
             const newMessages = result.data.messages
             console.log('[TaskPolling] fetched fullMessages length:', newMessages.length)
@@ -170,7 +171,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         const result = await agentApi.getTaskMessages(taskId, lastMessageId)
         if (result?.code === 0 && result.data) {
           // 检查任务状态
-          if (result.data.status === 'aborted') {
+          if (result.data.status === TaskStatus.Aborted) {
             console.log('[TaskPolling] Task aborted, stopping polling')
             setIsPolling(false)
             onTaskStatusChange?.('aborted')

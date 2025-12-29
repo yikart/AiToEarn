@@ -19,6 +19,7 @@ export enum TaskStatus {
   RequiresAction = 'requires_action', // 需要用户操作（如绑定频道等）
   Failed = 'FAILED', // 失败
   Cancelled = 'CANCELLED', // 取消
+  Aborted = 'aborted', // 中止
 }
 
 // 媒体类型
