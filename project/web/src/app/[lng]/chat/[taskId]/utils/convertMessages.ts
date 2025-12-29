@@ -31,6 +31,8 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
   let currentStepWorkflow: IWorkflowStep[] = []
   let stepIndex = 0
   let lastAssistantMsgIndex = -1
+  // 用于在 medias 处理后保留原始 content 供去重检查
+  let contentBeforeMediasProcessing = ''
 
   // 用于追踪工具调用的 Map
   const toolCallMap = new Map<string, string>()
@@ -71,6 +73,9 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
     if (msgAnyCheck && msgAnyCheck.result) {
       const resultData = msgAnyCheck.result
       const resultArray = Array.isArray(resultData) ? resultData : [resultData]
+
+      // 保存处理 medias 前的 currentStepContent，用于后续去重检查
+      contentBeforeMediasProcessing = currentStepContent
 
       resultArray.forEach((item: any, arrIndex: number) => {
         if (item && item.medias && Array.isArray(item.medias) && item.medias.length > 0) {
@@ -169,9 +174,24 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
     else if (msg.type === 'result') {
       // 结果消息处理
       const result = processResultMessage(msg, index, displayMessages)
-      if (result.contentToAdd && !currentStepContent.includes(result.contentToAdd)) {
+      // 更严格的去重：比较 trim 后的内容，避免因空白字符导致重复
+      // 注意：如果 medias 处理时调用了 saveCurrentStep()，currentStepContent 可能被重置
+      // 使用 contentBeforeMediasProcessing 作为备选来源进行去重检查
+      const contentToAdd = result.contentToAdd?.trim()
+      const existingContent = currentStepContent.trim()
+      const previousContent = contentBeforeMediasProcessing.trim()
+      // 检查内容是否已存在于当前步骤或之前保存的步骤中
+      const isDuplicate = contentToAdd && (
+        existingContent.includes(contentToAdd)
+        || contentToAdd === existingContent
+        || previousContent.includes(contentToAdd)
+        || contentToAdd === previousContent
+      )
+      if (contentToAdd && !isDuplicate) {
         currentStepContent += (currentStepContent ? '\n\n' : '') + result.contentToAdd
       }
+      // 重置 contentBeforeMediasProcessing，避免影响后续消息
+      contentBeforeMediasProcessing = ''
       if (result.newAssistantMsgIndex !== undefined) {
         lastAssistantMsgIndex = result.newAssistantMsgIndex
       }
@@ -460,8 +480,9 @@ function processResultMessage(
     const resultArray = Array.isArray(resultData) ? resultData : [resultData]
 
     // Map actions (but do NOT attach medias to action cards to avoid duplicate rendering)
+    // 过滤掉 action 为 "none" 的项，因为它们不需要显示为 action 卡片
     actions = resultArray
-      .filter((item: any) => item && item.action) // 只处理有 action 的项
+      .filter((item: any) => item && item.action && item.action !== 'none') // 只处理有实际 action 的项
       .map((item: any) => ({
         type: item.action, // 映射 action -> type
         platform: item.platform,

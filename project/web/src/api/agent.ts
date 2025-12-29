@@ -221,7 +221,7 @@ export const agentApi = {
 
         (async () => {
           // try common paths
-          const candidates = ['/en/agentTasks_api.txt']
+          const candidates = ['/en/agent_test3.txt']
           let raw = ''
           for (const p of candidates) {
             try {

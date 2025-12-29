@@ -15,7 +15,6 @@ import { useChannelManagerStore } from '../channelManagerStore'
 
 export function AuthLoadingPage() {
   const { t } = useTransClient('account')
-  const { t: commonT } = useTransClient('common')
 
   const { authState, setCurrentView, reopenAuthWindow, stopAuth, startAuth }
     = useChannelManagerStore(
@@ -153,7 +152,7 @@ export function AuthLoadingPage() {
       <div className="flex gap-3">
         <Button variant="outline" className="cursor-pointer" onClick={handleCancel}>
           <X className="mr-2 h-4 w-4" />
-          {commonT('common.cancel')}
+          {t('cancel')}
         </Button>
         <Button className="cursor-pointer" onClick={reopenAuthWindow}>
           <ExternalLink className="mr-2 h-4 w-4" />

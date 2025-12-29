@@ -1,3 +1,9 @@
+/**
+ * CalendarTimingItem 组件
+ *
+ * 功能描述: 日历单元格组件 - 显示日期和发布记录
+ */
+
 import type { DayCellContentArg } from '@fullcalendar/core'
 import type { ForwardedRef } from 'react'
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
@@ -10,6 +16,7 @@ import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTimin
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/lib/utils'
 import CalendarRecord from './components/CalendarRecord'
 import { CustomDragLayer } from './components/CustomDragLayer'
@@ -31,11 +38,10 @@ const CalendarTimingItem = memo(
       ref: ForwardedRef<ICalendarTimingItemRef>,
     ) => {
       const { t } = useTransClient('account')
+      const isMobile = useIsMobile()
+
       // arg.date 是当前格子的日期，Date 类型
       const today = new Date()
-
-      // 🔧 测试模式：模拟今天是1号（取消注释下面一行来测试）
-      // today.setDate(30);
 
       // 去掉时分秒，只比较年月日
       const argDate = new Date(
@@ -48,11 +54,13 @@ const CalendarTimingItem = memo(
         today.getMonth(),
         today.getDate(),
       )
+
       // [[小时，分钟]] [[4, 12]]
       const [reservationsTimes, setReservationsTimes] = useState([])
       const [{ canDrop, isOver }, drop] = useDrop(
         () => ({
-          accept: 'box',
+          // 移动端禁用拖拽
+          accept: isMobile ? 'none' : 'box',
           drop: () => ({
             time: arg,
           }),
@@ -61,7 +69,7 @@ const CalendarTimingItem = memo(
             canDrop: monitor.canDrop(),
           }),
         }),
-        [],
+        [isMobile],
       )
       const [isMore, setIsMore] = useState(false)
       const cellRef = useRef<HTMLDivElement | null>(null)
@@ -75,6 +83,9 @@ const CalendarTimingItem = memo(
         return argDate >= nowDate ? reservationsTimes : []
       }, [reservationsTimes])
 
+      // 移动端默认显示更少的记录
+      const maxRecords = isMobile ? 2 : 3
+
       const recordsLast = useMemo(() => {
         if (!records)
           return []
@@ -82,9 +93,9 @@ const CalendarTimingItem = memo(
           return records
         }
         else {
-          return records?.slice(0, 3 - reservationsTimesLast.length)
+          return records?.slice(0, maxRecords - reservationsTimesLast.length)
         }
-      }, [isMore, records, reservationsTimesLast, recordMap])
+      }, [isMore, records, reservationsTimesLast, recordMap, maxRecords])
 
       // 进入视图时将"今天"尽量居中显示（仅在日历容器内滚动）
       useEffect(() => {
@@ -106,35 +117,42 @@ const CalendarTimingItem = memo(
       return (
         <div
           ref={(node) => {
-            if (argDate >= nowDate) {
+            // 移动端不启用 drop
+            if (!isMobile && argDate >= nowDate) {
               drop(node)
             }
             cellRef.current = node
           }}
           className={cn(
             'calendarTimingItem--js',
-            'box-border p-2.5 flex flex-col font-semibold min-h-[200px] h-full group',
+            'box-border p-1.5 md:p-2.5 flex flex-col font-semibold',
+            'min-h-[120px] md:min-h-[200px] h-full group',
             'transition-colors',
             argDate < nowDate && 'bg-muted/30',
-            isOver && 'bg-accent/50',
+            // 只在桌面端显示拖拽高亮
+            !isMobile && isOver && 'bg-accent/50',
           )}
         >
           {/* 顶部：日期和添加按钮 */}
-          <div className="flex justify-between items-center mb-1.5 group/top">
+          <div className="flex justify-between items-center mb-1 md:mb-1.5 group/top">
             <div
               className={cn(
-                'w-6 h-6 leading-6 text-center rounded-full text-sm font-semibold',
+                'w-5 h-5 md:w-6 md:h-6 leading-5 md:leading-6 text-center rounded-full text-xs md:text-sm font-semibold',
                 argDate.getTime() === nowDate.getTime() && 'bg-(--primary-color) text-white',
               )}
             >
               {arg.date.getDate()}
             </div>
 
+            {/* 添加按钮：移动端始终可见，桌面端 hover 显示 */}
             {argDate >= nowDate && (
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                className={cn(
+                  'h-5 w-5 md:h-6 md:w-6 p-0 cursor-pointer',
+                  'md:opacity-0 md:group-hover:opacity-100 transition-opacity',
+                )}
                 onClick={() => {
                   const days = dayjs(arg.date)
                   const today = dayjs()
@@ -147,7 +165,7 @@ const CalendarTimingItem = memo(
                   }
                 }}
               >
-                <Plus className="h-3.5 w-3.5" />
+                <Plus className="h-3 w-3 md:h-3.5 md:w-3.5" />
               </Button>
             )}
           </div>
@@ -155,12 +173,12 @@ const CalendarTimingItem = memo(
           {/* 内容区域 */}
           {loading
             ? (
-                <div className="flex flex-col gap-2">
-                  <Skeleton className="h-[34px] w-full rounded-md" />
+                <div className="flex flex-col gap-1.5 md:gap-2">
+                  <Skeleton className="h-[28px] md:h-[34px] w-full rounded-md" />
                 </div>
               )
             : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-1.5 md:gap-2">
                   {/* 预约时间按钮 */}
                   {argDate >= nowDate
                     && reservationsTimesLast.map((v, i) => {
@@ -169,7 +187,7 @@ const CalendarTimingItem = memo(
                           key={i}
                           size="sm"
                           variant="outline"
-                          className="w-full h-[34px] text-xs group/btn relative overflow-hidden"
+                          className="w-full h-[28px] md:h-[34px] text-xs group/btn relative overflow-hidden cursor-pointer"
                           onClick={() => {
                             const days = dayjs(arg.date)
                               .set('hour', v[0])
@@ -196,17 +214,18 @@ const CalendarTimingItem = memo(
                     && recordsLast.map((v) => {
                       return (
                         <div key={v.id + v.title + v.uid + v.updatedAt}>
-                          <CustomDragLayer publishRecord={v} snapToGrid={false} />
+                          {/* 移动端不显示拖拽层 */}
+                          {!isMobile && <CustomDragLayer publishRecord={v} snapToGrid={false} />}
                           <CalendarRecord publishRecord={v} />
                         </div>
                       )
                     })}
 
                   {/* 显示更多/收起按钮 */}
-                  {records && records.length > 3 - reservationsTimesLast.length && (
+                  {records && records.length > maxRecords - reservationsTimesLast.length && (
                     <Button
                       variant="ghost"
-                      className="w-full h-auto py-2 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors justify-start"
+                      className="w-full h-auto py-1.5 md:py-2 px-2 md:px-3 text-xs md:text-sm text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors justify-start cursor-pointer"
                       onClick={() => {
                         setIsMore(!isMore)
                       }}
@@ -214,13 +233,13 @@ const CalendarTimingItem = memo(
                       {isMore
                         ? (
                             <>
-                              <ChevronUp className="mr-2 h-4 w-4" />
+                              <ChevronUp className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
                               {t('calendar.hideMore')}
                             </>
                           )
                         : (
                             <>
-                              <ChevronDown className="mr-2 h-4 w-4" />
+                              <ChevronDown className="mr-1.5 md:mr-2 h-3.5 w-3.5 md:h-4 md:w-4" />
                               {records.length - recordsLast?.length}
                               {' '}
                               {t('calendar.showMore')}
