@@ -145,7 +145,6 @@ export const Modal: React.FC<ModalProps> = ({
         overlayStyle={overlayZIndex ? { zIndex: overlayZIndex } : undefined}
         onInteractOutside={handleInteractOutside}
         onEscapeKeyDown={!closable ? e => e.preventDefault() : undefined}
-        aria-describedby={title ? undefined : undefined}
       >
         {title
           ? (
