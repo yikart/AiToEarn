@@ -63,6 +63,8 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
   useEffect(() => {
     if (token && _hasHydrated) {
       loadTasks()
+    } else {
+      setIsLoading(false)
     }
   }, [loadTasks, token, _hasHydrated])
 
