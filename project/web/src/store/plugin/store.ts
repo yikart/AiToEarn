@@ -664,18 +664,43 @@ export const usePluginStore = create(
             const accountId = item.account.id
             const requestId = platformTaskIdMap.get(accountId) || ''
 
+            // 构造 PublishParams
+            const publishParams: PublishParams = {
+              platform,
+              accountId,
+              requestId,
+              type: item.params.video ? 'video' : 'image',
+              title: item.params.title || '',
+              desc: item.params.des || '',
+              topics: item.params.topics || [],
+            }
+
+            // 添加视频或图片参数
+            if (item.params.video) {
+              publishParams.video = item.params.video.ossUrl
+              if (item.params.video.cover?.ossUrl) {
+                publishParams.cover = item.params.video.cover.ossUrl
+              }
+            } else if (item.params.images && item.params.images.length > 0) {
+              publishParams.images = item.params.images.map(img => img.ossUrl).filter(Boolean)
+            }
+
             return {
               id: generateId(),
               platform,
               accountId,
               requestId,
+              params: publishParams,
               status: PlatformTaskStatus.WAITING,
               progress: {
                 stage: 'waiting',
                 progress: 0,
                 message: '等待开始...',
               },
+              result: null,
               startTime: Date.now(),
+              endTime: null,
+              error: null,
             }
           })
 
