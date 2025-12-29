@@ -100,10 +100,6 @@ export default function Home() {
 
   return (
     <div className="bg-background">
-      <p className="hidden">
-        Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf
-      </p>
-
       {/* 首屏 Chat 区域 */}
       <section className="min-h-[60vh] flex items-center justify-center px-4 pt-16 pb-8 md:pt-24 md:pb-12">
         <HomeChat

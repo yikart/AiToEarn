@@ -42,6 +42,9 @@ export default async function RootLayout({
         />
         <script async src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" />
         <Providers lng={lng}>
+          <p className="hidden">
+            Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf
+          </p>
           {/* 移动端顶部导航 - fixed 定位，独立于 flex 布局 */}
           <MobileNav />
           <div className="flex h-screen w-full">
