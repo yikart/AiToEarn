@@ -205,6 +205,8 @@ export default function ChatDetailPage() {
       // 调用后端 API 中断任务
       await agentApi.abortTask(taskId)
       console.log('[ChatPage] Task aborted successfully')
+      // 显示停止成功的提示
+      toast.info(tHome('aiGeneration.taskStopped'))
     } catch (error: any) {
       console.error('[ChatPage] Failed to abort task:', error)
       toast.error(t('message.error'))
@@ -216,7 +218,7 @@ export default function ChatDetailPage() {
       setLocalIsGenerating(false)
       stopTask()
     }
-  }, [taskId, t, stopTask, setLocalIsGenerating])
+  }, [taskId, t, tHome, stopTask, setLocalIsGenerating])
 
   /**
    * 返回首页
