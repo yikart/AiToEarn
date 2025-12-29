@@ -419,14 +419,12 @@ export function ShareModal({
                 setVisible(false)
                 onOpenChange?.(false)
               }}
-              className="cursor-pointer"
             >
               {t('cancel')}
             </Button>
             <Button
               onClick={handleGenerateAndDownload}
               disabled={loading || selectedIds.length === 0}
-              className="cursor-pointer"
             >
               {loading ? t('generating') : t('generate')}
             </Button>

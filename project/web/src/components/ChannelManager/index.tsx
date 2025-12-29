@@ -34,18 +34,18 @@ export function ChannelManager({
   const [internalOpen, setInternalOpen] = useState(false)
   const isOpen = controlledOpen ?? internalOpen
 
-  // 使用useCallback优化关闭函数
-  const handleClose = useCallback(() => {
+  // 处理对话框开关状态变化
+  const handleOpenChange = useCallback((open: boolean) => {
     if (onOpenChange) {
-      onOpenChange(false)
+      onOpenChange(open)
     }
     else {
-      setInternalOpen(false)
+      setInternalOpen(open)
     }
   }, [onOpenChange])
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-4xl h-[700px] overflow-hidden flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">

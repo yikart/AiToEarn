@@ -8,7 +8,6 @@
 
 'use client'
 
-import { LoadingOutlined } from '@ant-design/icons'
 import { Loader2 } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import {

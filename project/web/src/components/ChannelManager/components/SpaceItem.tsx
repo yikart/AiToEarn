@@ -11,7 +11,6 @@
 'use client'
 
 import type { SocialAccount } from '@/api/types/account.type'
-import { LoadingOutlined } from '@ant-design/icons'
 import {
   Box,
   ChevronDown,
@@ -22,8 +21,6 @@ import {
   MoreVertical,
   Trash2,
 } from 'lucide-react'
-import { useCallback, useState } from 'react'
-import { updateAccountGroupApi } from '@/api/account'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -34,7 +31,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { toast } from '@/lib/toast'
 import { ChannelItem } from './ChannelItem'
 
 interface AccountGroup {

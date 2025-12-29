@@ -59,6 +59,8 @@ const DialogContent = React.forwardRef<
     />
     <DialogPrimitive.Content
       ref={ref}
+      // 抑制 Radix UI 的 Description 警告，允许 Dialog 没有 Description
+      aria-describedby={props['aria-describedby'] ?? undefined}
       // Ensure the content container can receive focus and explicitly move focus
       // to it when the dialog opens to avoid aria-hidden being applied to an
       // ancestor while a descendant still has focus (causes accessibility warning).

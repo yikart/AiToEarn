@@ -216,7 +216,6 @@ export function SharePreviewModal({
             variant="outline"
             onClick={handleAgentShare}
             loading={uploading}
-            className="cursor-pointer"
           >
             {t('agentShare')}
           </Button>
@@ -224,14 +223,12 @@ export function SharePreviewModal({
             variant="outline"
             onClick={handlePublishShare}
             loading={uploading}
-            className="cursor-pointer"
           >
             {t('publishShare')}
           </Button>
           <Button
             onClick={downloadBlobs}
             disabled={uploading}
-            className="cursor-pointer"
           >
             {t('download')}
           </Button>
