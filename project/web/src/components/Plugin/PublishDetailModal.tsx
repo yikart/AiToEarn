@@ -247,11 +247,15 @@ export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDe
         </div>
       )}
       footer={(
-        <Button onClick={onClose}>
-          {t('publishDetail.close')}
-        </Button>
+        <div className="flex justify-end">
+          <Button onClick={onClose}>
+            {t('publishDetail.close')}
+          </Button>
+        </div>
       )}
       width={600}
+      zIndex={1000}
+      closable={false}
     >
       <div className="space-y-4">
         {/* 任务基本信息 */}

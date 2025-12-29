@@ -658,8 +658,38 @@ export const usePluginStore = create(
         async executePluginPublish(params: ExecutePluginPublishParams): Promise<void> {
           const { items, platformTaskIdMap, publishTime, onProgress, onComplete } = params
 
+          // 创建发布任务
+          const platformTasks: PlatformPublishTask[] = items.map((item) => {
+            const platform = item.account.type as PluginPlatformType
+            const accountId = item.account.id
+            const requestId = platformTaskIdMap.get(accountId) || ''
+
+            return {
+              id: generateId(),
+              platform,
+              accountId,
+              requestId,
+              status: PlatformTaskStatus.WAITING,
+              progress: {
+                stage: 'waiting',
+                progress: 0,
+                message: '等待开始...',
+              },
+              startTime: Date.now(),
+            }
+          })
+
+          // 添加到发布任务列表
+          const taskId = methods.addPublishTask({
+            title: items[0]?.params.title || '插件发布任务',
+            description: `发布到 ${items.length} 个平台`,
+            platformTasks,
+          })
+
+          console.log('[PluginStore] Created publish task:', taskId)
+
           // 并行执行插件发布（不等待，同时发布多个平台）
-          const publishTasks = items.map(async (item) => {
+          const publishPromises = items.map(async (item) => {
             const platform = item.account.type as PluginPlatformType
             const accountId = item.account.id
             // 获取该账号对应的 requestId（用于进度匹配）
@@ -669,17 +699,6 @@ export const usePluginStore = create(
               console.error('未找到账号对应的 requestId:', accountId)
               return
             }
-
-            // 触发初始进度回调
-            onProgress?.({
-              stage: 'download',
-              progress: 0,
-              message: '准备发布...',
-              timestamp: Date.now(),
-              accountId,
-              platform,
-              requestId,
-            })
 
             // 更新任务状态为发布中
             methods.updatePlatformTaskByRequestId(requestId, {
@@ -843,7 +862,7 @@ export const usePluginStore = create(
           })
 
           // 并行执行所有发布任务
-          await Promise.all(publishTasks)
+          await Promise.all(publishPromises)
 
           // 发布完成后的回调
           onComplete?.()

@@ -11,8 +11,12 @@ import { useTransClient } from '@/app/i18n/client'
 import { agentApi } from '@/api/agent'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
+import { PublishDetailModal } from '@/components/Plugin/PublishDetailModal'
 import { toast } from '@/lib/toast'
 import { disableDebugReplay, enableDebugReplay, useAgentStore } from '@/store/agent'
+import { usePluginStore } from '@/store/plugin'
+import { PlatType } from '@/app/config/platConfig'
+import { PlatformTaskStatus } from '@/store/plugin/types/baseTypes'
 /* rating entry moved into ChatHeader */
 
 // 页面私有组件
@@ -50,6 +54,12 @@ export default function ChatDetailPage() {
   // 中断状态 - 用于强制隐藏工作流步骤
   const [isInterrupted, setIsInterrupted] = useState(false)
 
+  // 发布详情弹框状态
+  const [publishDetailVisible, setPublishDetailVisible] = useState(false)
+  const [currentPublishTaskId, setCurrentPublishTaskId] = useState<string | undefined>(undefined)
+  // 跟踪用户是否手动关闭了弹窗
+  const [userClosedModal, setUserClosedModal] = useState(false)
+
   // 滚动控制
   const {
     containerRef,
@@ -76,6 +86,9 @@ export default function ChatDetailPage() {
     onError: () => toast.error(t('media.uploadFailed')),
   })
 
+  // 监听发布任务创建
+  const publishTasks = usePluginStore(state => state.publishTasks)
+
   useEffect(() => {
     if (isInitialRender.current || displayMessages.length === 0)
       return
@@ -84,6 +97,21 @@ export default function ChatDetailPage() {
       scrollToBottom()
     }, 10)
   }, [displayMessages, isInitialRender])
+
+  // 监听发布任务创建，显示发布详情弹框
+  useEffect(() => {
+    if (publishTasks.length > 0) {
+      // 获取最新的发布任务（通常是刚创建的）
+      const latestTask = publishTasks[0]
+      if (latestTask && !publishDetailVisible && !userClosedModal) {
+        console.log('[ChatPage] New publish task detected:', latestTask.id)
+        setCurrentPublishTaskId(latestTask.id)
+        setPublishDetailVisible(true)
+        // 重置用户关闭状态，因为现在有新任务了
+        setUserClosedModal(false)
+      }
+    }
+  }, [publishTasks, publishDetailVisible, userClosedModal])
 
   /**
    * 设置 Action 上下文（用于处理任务结果的 action）
@@ -150,6 +178,68 @@ export default function ChatDetailPage() {
    * 发送消息（继续对话）
    */
   const handleSend = useCallback(async () => {
+    // console.log('handleSend')
+    // // 测试打开发布弹窗
+    // const testTaskId = usePluginStore.getState().addPublishTask({
+    //   title: '测试发布任务',
+    //   description: '用于测试发布详情弹窗',
+    //   platformTasks: [
+    //     {
+    //       id: 'test-platform-1',
+    //       platform: PlatType.Xhs,
+    //       accountId: 'test-account-1',
+    //       requestId: 'test-req-1',
+    //       params: {
+    //         platform: PlatType.Xhs,
+    //         type: 'image',
+    //         title: '测试小红书内容',
+    //         desc: '测试描述',
+    //         images: ['test-image-url'],
+    //       },
+    //       status: PlatformTaskStatus.COMPLETED,
+    //       progress: {
+    //         stage: 'complete',
+    //         progress: 100,
+    //         message: '发布成功',
+    //       },
+    //       result: {
+    //         success: true,
+    //         workId: 'test-work-1',
+    //         shareLink: 'https://example.com/test',
+    //       },
+    //       startTime: Date.now() - 60000,
+    //       endTime: Date.now(),
+    //       error: null,
+    //     },
+    //     {
+    //       id: 'test-platform-2',
+    //       platform: PlatType.Douyin,
+    //       accountId: 'test-account-2',
+    //       requestId: 'test-req-2',
+    //       params: {
+    //         platform: PlatType.Douyin,
+    //         type: 'image',
+    //         title: '测试抖音内容',
+    //         desc: '测试描述',
+    //         images: ['test-image-url'],
+    //       },
+    //       status: PlatformTaskStatus.PUBLISHING,
+    //       progress: {
+    //         stage: 'publish',
+    //         progress: 75,
+    //         message: '正在发布...',
+    //       },
+    //       result: null,
+    //       startTime: Date.now() - 30000,
+    //       endTime: null,
+    //       error: null,
+    //     },
+    //   ],
+    // })
+    // setCurrentPublishTaskId(testTaskId)
+    // setPublishDetailVisible(true)
+    // return
+
     if (!inputValue.trim() || isGenerating)
       return
 
@@ -313,6 +403,18 @@ export default function ChatDetailPage() {
           mode="compact"
         />
       </div>
+
+      {/* 发布详情弹框 - 显示插件发布进度 */}
+      <PublishDetailModal
+        visible={publishDetailVisible}
+        onClose={() => {
+          console.log('[ChatPage] User manually closed modal')
+          setPublishDetailVisible(false)
+          setCurrentPublishTaskId(undefined)
+          setUserClosedModal(true)
+        }}
+        taskId={currentPublishTaskId}
+      />
     </div>
   )
 }
