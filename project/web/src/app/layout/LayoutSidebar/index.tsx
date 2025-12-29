@@ -11,12 +11,10 @@ import { useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { routerData } from '@/app/layout/routerData'
 import { ExternalLinks } from '@/app/layout/shared'
-import { useChannelManagerStore } from '@/components/ChannelManager'
 import NotificationPanel from '@/components/notification/NotificationPanel'
 import SettingsModal from '@/components/SettingsModal'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
 import { useNotification } from '@/hooks/useNotification'
-import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { openLoginModal } from '@/store/loginModal'
 import { useUserStore } from '@/store/user'
@@ -47,13 +45,6 @@ function LayoutSidebar() {
     useShallow(state => ({
       sidebarCollapsed: state.sidebarCollapsed,
       setSidebarCollapsed: state.setSidebarCollapsed,
-    })),
-  )
-
-  // 频道管理器
-  const { openConnectList } = useChannelManagerStore(
-    useShallow(state => ({
-      openConnectList: state.openConnectList,
     })),
   )
 
@@ -97,16 +88,6 @@ function LayoutSidebar() {
     closeSettings()
   }
 
-  // 打开添加账号弹窗
-  const handleAddChannel = () => {
-    if (!token) {
-      toast.warning('Please login first')
-      openLoginModal(() => openConnectList())
-      return
-    }
-    openConnectList()
-  }
-
   // 转换路由数据为 NavSection 所需格式
   const navItems = routerData.map(item => ({
     path: item.path || '/',
@@ -134,7 +115,6 @@ function LayoutSidebar() {
             items={navItems}
             currentRoute={currRouter}
             collapsed={collapsed}
-            onAddChannel={handleAddChannel}
           />
         </div>
 

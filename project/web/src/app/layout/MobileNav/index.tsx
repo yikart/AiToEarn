@@ -8,14 +8,17 @@
 import type { SettingsTab } from '@/components/SettingsModal'
 import {
   Bell,
+  ChevronDown,
+  ChevronUp,
   Crown,
   DollarSign,
   FileText,
   Mail,
   Menu,
-  PlusCircle,
+  MoreHorizontal,
   Share2,
   Smartphone,
+  Tv,
   X,
 } from 'lucide-react'
 import Image from 'next/image'
@@ -40,7 +43,6 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { CONTACT } from '@/constant'
 import { useNotification } from '@/hooks/useNotification'
 import { useGetClientLng } from '@/hooks/useSystem'
-import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { openLoginModal } from '@/store/loginModal'
 import { useUserStore } from '@/store/user'
@@ -85,34 +87,137 @@ function MobileNavItem({
 }
 
 /**
- * 移动端 Add Channel 按钮
+ * 移动端我的频道按钮
  */
-function MobileAddChannelButton({
+function MobileMyChannelsButton({
   onClose,
-  onAddChannel,
+  onOpenMyChannels,
 }: {
   onClose: () => void
-  onAddChannel: () => void
+  onOpenMyChannels: () => void
 }) {
-  const { t } = useTransClient('route')
+  const { t } = useTransClient('account')
 
   return (
     <button
       onClick={() => {
         onClose()
-        onAddChannel()
+        onOpenMyChannels()
       }}
       className={cn(
         'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all w-full',
-        'text-primary hover:bg-primary/10 hover:text-primary',
-        'border border-dashed border-primary/40 hover:border-primary',
+        'text-muted-foreground hover:bg-muted hover:text-foreground',
       )}
     >
       <span className="flex items-center justify-center text-primary">
-        <PlusCircle size={20} />
+        <Tv size={20} />
       </span>
-      <span>{t('addChannel' as any)}</span>
+      <span>{t('channelManager.myChannels')}</span>
     </button>
+  )
+}
+
+/**
+ * 移动端导航列表 - 包含主导航和"更多"折叠菜单
+ */
+function MobileNavList({
+  currentRoute,
+  onClose,
+  onOpenMyChannels,
+}: {
+  currentRoute: string
+  onClose: () => void
+  onOpenMyChannels: () => void
+}) {
+  const { t } = useTransClient('route')
+  const [moreOpen, setMoreOpen] = useState(false)
+
+  // Keys to group into the "More" section
+  // Order: tasksHistory, interactive (作品互动), dataStatistics, materialLibrary, draftBox
+  const groupKeys = [
+    'tasksHistory',
+    'interactive',
+    'dataStatistics',
+    'header.materialLibrary',
+    'header.draftBox',
+  ]
+
+  // Main items: only Home and Publish (accounts)
+  const mainItems = routerData.filter(i => !groupKeys.includes(i.translationKey as string))
+  // Grouped items in specified order
+  const groupedItems = groupKeys
+    .map(key => routerData.find(i => i.translationKey === key))
+    .filter((i): i is (typeof routerData)[0] => i !== undefined)
+
+  // Auto-expand if current route is in grouped items
+  useEffect(() => {
+    const isCurrentRouteInGroup = groupedItems.some(item => item.path === currentRoute)
+    if (isCurrentRouteInGroup && !moreOpen) {
+      setMoreOpen(true)
+    }
+  }, [currentRoute, groupedItems, moreOpen])
+
+  return (
+    <nav className="flex flex-col gap-1 p-4">
+      {/* Main navigation items: Home, Publish */}
+      {mainItems.map(item => (
+        <MobileNavItem
+          key={item.path || item.name}
+          path={item.path || '/'}
+          translationKey={item.translationKey}
+          icon={item.icon}
+          isActive={item.path === currentRoute}
+          onClose={onClose}
+        />
+      ))}
+
+      {/* 我的频道 */}
+      <MobileMyChannelsButton
+        onClose={onClose}
+        onOpenMyChannels={onOpenMyChannels}
+      />
+
+      {/* "More" collapsible section */}
+      {groupedItems.length > 0 && (
+        <div className="mt-1">
+          {/* More button */}
+          <button
+            onClick={() => setMoreOpen(s => !s)}
+            className={cn(
+              'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all w-full',
+              'text-muted-foreground hover:bg-muted hover:text-foreground',
+              moreOpen && 'bg-muted text-foreground',
+            )}
+          >
+            <span className="flex items-center justify-center">
+              <MoreHorizontal size={20} />
+            </span>
+            <span className="flex-1 text-left">{t('sidebar.more')}</span>
+            {moreOpen ? (
+              <ChevronUp size={18} className="text-muted-foreground" />
+            ) : (
+              <ChevronDown size={18} className="text-muted-foreground" />
+            )}
+          </button>
+
+          {/* Expanded items */}
+          {moreOpen && (
+            <div className="mt-1 ml-2 flex flex-col gap-1">
+              {groupedItems.map(item => (
+                <MobileNavItem
+                  key={item.path || item.name}
+                  path={item.path || '/'}
+                  translationKey={item.translationKey}
+                  icon={item.icon}
+                  isActive={item.path === currentRoute}
+                  onClose={onClose}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </nav>
   )
 }
 
@@ -344,9 +449,9 @@ function MobileNav() {
   } = useSettingsModalStore()
 
   // 频道管理器
-  const { openConnectList } = useChannelManagerStore(
+  const { openModal } = useChannelManagerStore(
     useShallow(state => ({
-      openConnectList: state.openConnectList,
+      openModal: state.openModal,
     })),
   )
 
@@ -370,16 +475,6 @@ function MobileNav() {
 
   const handleOpenSettings = (defaultTab?: SettingsTab) => {
     openSettings(defaultTab)
-  }
-
-  // 打开添加账号弹窗
-  const handleAddChannel = () => {
-    if (!token) {
-      toast.warning('Please login first')
-      openLoginModal(() => openConnectList())
-      return
-    }
-    openConnectList()
   }
 
   return (
@@ -427,32 +522,11 @@ function MobileNav() {
         {/* 可滚动内容区域 */}
         <div className="flex-1 overflow-y-auto">
           {/* 导航列表 */}
-          <nav className="flex flex-col gap-1 p-4">
-            {routerData.map((item, index) => {
-              // 找到 interactive（Engage）的位置，在其后面插入 Add Channel 按钮
-              const isInteractive = item.translationKey === 'interactive'
-              return (
-                <div key={item.path || item.name}>
-                  <MobileNavItem
-                    path={item.path || '/'}
-                    translationKey={item.translationKey}
-                    icon={item.icon}
-                    isActive={item.path === currRouter}
-                    onClose={handleClose}
-                  />
-                  {/* 在 Engage 后面插入 Add Channel 按钮 */}
-                  {isInteractive && (
-                    <div className="mt-1">
-                      <MobileAddChannelButton
-                        onClose={handleClose}
-                        onAddChannel={handleAddChannel}
-                      />
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </nav>
+          <MobileNavList
+            currentRoute={currRouter}
+            onClose={handleClose}
+            onOpenMyChannels={openModal}
+          />
 
           {/* 底部功能区 */}
           <div className="px-4 pb-4">

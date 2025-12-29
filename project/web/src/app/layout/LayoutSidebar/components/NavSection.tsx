@@ -5,7 +5,7 @@
 'use client'
 
 import type { NavItemData, NavSectionProps, SidebarCommonProps } from '../types'
-import { FileText, PlusCircle } from 'lucide-react'
+import { FileText, MoreHorizontal } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -76,70 +76,23 @@ function NavItem({ item, isActive, collapsed }: NavItemProps) {
   return content
 }
 
-/** Add Channel 按钮 */
-interface AddChannelButtonProps extends SidebarCommonProps {
-  onClick: () => void
-}
-
-function AddChannelButton({ collapsed, onClick }: AddChannelButtonProps) {
-  const { t } = useTransClient('route')
-
-  const content = (
-    <button
-      onClick={onClick}
-      className={cn(
-        'relative flex items-center rounded-lg text-sm font-medium transition-all w-full',
-        'text-primary hover:bg-primary/10 hover:text-primary',
-        'border border-dashed border-primary/40 hover:border-primary',
-        collapsed ? 'justify-center px-2 py-2.5' : 'gap-3 px-3 py-2.5',
-      )}
-    >
-      <span className="flex shrink-0 items-center justify-center text-primary">
-        <PlusCircle size={20} />
-      </span>
-      {!collapsed && (
-        <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-          {t('addChannel')}
-        </span>
-      )}
-    </button>
-  )
-
-  // 收缩状态下显示 Tooltip
-  if (collapsed) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>{content}</TooltipTrigger>
-          <TooltipContent side="right">
-            <p>{t('addChannel')}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    )
-  }
-
-  return content
-}
-
-interface NavSectionWithAddChannelProps extends NavSectionProps {
-  onAddChannel?: () => void
-}
-
-export function NavSection({ items, currentRoute, collapsed, onAddChannel }: NavSectionWithAddChannelProps) {
-  // Move Add Channel to be the second item (under Home)
-  const addChannelInsertIndex = 1
-
-  // Keys to group into a collapsed section
+export function NavSection({ items, currentRoute, collapsed }: NavSectionProps) {
+  // Keys to group into the "More" section
+  // Order: tasksHistory, interactive (作品互动), dataStatistics, materialLibrary, draftBox
   const groupKeys = [
     'tasksHistory',
+    'interactive',
     'dataStatistics',
     'header.materialLibrary',
     'header.draftBox',
   ]
 
-  const groupedItems = items.filter(i => groupKeys.includes(i.translationKey as string))
-  const otherItems = items.filter(i => !groupKeys.includes(i.translationKey as string))
+  // Main items: only Home and Publish (accounts)
+  const mainItems = items.filter(i => !groupKeys.includes(i.translationKey as string))
+  // Grouped items in specified order
+  const groupedItems = groupKeys
+    .map(key => items.find(i => i.translationKey === key))
+    .filter((i): i is NavItemData => i !== undefined)
 
   const [groupOpen, setGroupOpen] = useState(false)
   const [popoverOpen, setPopoverOpen] = useState(false)
@@ -171,7 +124,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
     }
     hoverTimeoutRef.current = setTimeout(() => {
       setPopoverOpen(true)
-    }, 200) // 200ms delay to prevent accidental triggers
+    }, 200)
   }
 
   const handleMouseLeave = () => {
@@ -180,44 +133,22 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
     }
     hoverTimeoutRef.current = setTimeout(() => {
       setPopoverOpen(false)
-    }, 300) // 300ms delay to allow moving to popover
+    }, 300)
   }
 
   return (
     <nav className="flex flex-col gap-1">
-      {otherItems.map((item, index) => {
-        // Render first item (Home)
-        if (index === 0) {
-          return (
-            <div key={item.path || item.translationKey}>
-              <NavItem
-                item={item}
-                isActive={item.path === currentRoute}
-                collapsed={collapsed}
-              />
-              {/* Insert Add Channel right after first item */}
-              {onAddChannel && (
-                <div className="mt-1">
-                  <AddChannelButton collapsed={collapsed} onClick={onAddChannel} />
-                </div>
-              )}
-            </div>
-          )
-        }
+      {/* Main navigation items: Home, Publish */}
+      {mainItems.map(item => (
+        <NavItem
+          key={item.path || item.translationKey}
+          item={item}
+          isActive={item.path === currentRoute}
+          collapsed={collapsed}
+        />
+      ))}
 
-        // For other items (excluding the grouped ones), render normally
-        return (
-          <div key={item.path || item.translationKey}>
-            <NavItem
-              item={item}
-              isActive={item.path === currentRoute}
-              collapsed={collapsed}
-            />
-          </div>
-        )
-      })}
-
-      {/* Collapsible group for Task History / Data / Library / Drafts */}
+      {/* Collapsible "More" section */}
       {groupedItems.length > 0 && (
         <div>
           {collapsed ? (
@@ -235,7 +166,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
                     onMouseLeave={handleMouseLeave}
                   >
                     <span className="flex shrink-0 items-center justify-center">
-                      <FileText size={20} />
+                      <MoreHorizontal size={20} />
                     </span>
                   </button>
                 </PopoverTrigger>
@@ -256,7 +187,7 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
                         key={gitem.path || gitem.translationKey}
                         item={gitem}
                         isActive={gitem.path === currentRoute}
-                        collapsed={false} // Always show text in popover
+                        collapsed={false}
                       />
                     ))}
                   </div>
@@ -277,13 +208,11 @@ export function NavSection({ items, currentRoute, collapsed, onAddChannel }: Nav
                   )}
                 >
                   <span className="flex shrink-0 items-center justify-center">
-                    <FileText size={20} />
+                    <MoreHorizontal size={20} />
                   </span>
                   <span className="overflow-hidden text-ellipsis whitespace-nowrap">
-                    {/* Use a generic label for the grouped section */}
                     {t('sidebar.more')}
                   </span>
-                  {/* Show expand/collapse indicator */}
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs opacity-60">
                     {groupOpen ? '−' : '+'}
                   </span>
