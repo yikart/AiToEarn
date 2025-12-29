@@ -310,6 +310,10 @@
     "authDescription": "正在等待授权完成",
     "connectDescription": "选择要连接的平台",
     "retry": "重试",
+    "pluginNotReady": "请先安装并授权浏览器插件后再添加{{platform}}账号",
+    "platformNotLoggedIn": "{{platform}}未登录，请先在插件中登录",
+    "syncSuccess": "账号同步成功",
+    "syncFailed": "账号同步失败",
     "tabs": {
       "channels": "频道",
       "spaces": "空间"

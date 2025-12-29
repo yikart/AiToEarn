@@ -761,8 +761,10 @@ const PublishDialog = memo(
           }
         }
         else {
-          // 给用户提示：发布已提交，可能需要一些时间处理（符合 TikTok API 客户端要求）
-          toast.success(t('messages.publishSubmitted' as any), {
+          // 给用户提示：发布已提交，可能需要一些时间处理
+          toast.success(t('messages.publishSubmitted', {
+            platform: pubListChoosed.map(item => AccountPlatInfoMap.get(item.account!.type)!.name).join(', '),
+          }), {
             key: 'publish_submitted',
             duration: 3,
           })

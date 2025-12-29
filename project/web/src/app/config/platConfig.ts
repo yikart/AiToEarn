@@ -83,8 +83,8 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       themeColor: 'red',
       pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
-        titleMax: 100,
-        topicMax: 100,
+        titleMax: 10,
+        topicMax: 5,
         desMax: 1000,
       },
       jiancha: true,
@@ -118,22 +118,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         desMax: 2000,
       },
       themeColor: '#F06198',
-      jiancha: true,
-    },
-  ],
-  [
-    PlatType.Douyin,
-    {
-      name: 'douyin',
-      icon: douyinSvg,
-      url: 'https://www.douyin.com/',
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
-      commonPubParamsConfig: {
-        titleMax: 30,
-        topicMax: 5,
-        desMax: 1000,
-      },
-      themeColor: '#FF4D00',
       jiancha: true,
     },
   ],

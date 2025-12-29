@@ -310,6 +310,10 @@
     "authDescription": "Waiting for authorization to complete",
     "connectDescription": "Select a platform to connect",
     "retry": "Retry",
+    "pluginNotReady": "Please install and authorize the browser plugin before adding {{platform}} account",
+    "platformNotLoggedIn": "{{platform}} is not logged in, please log in via the plugin first",
+    "syncSuccess": "Account synced successfully",
+    "syncFailed": "Account sync failed",
     "tabs": {
       "channels": "Channels",
       "spaces": "Spaces"

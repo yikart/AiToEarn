@@ -53,7 +53,6 @@ export enum PluginStatus {
  * 插件支持的平台列表
  */
 export const PLUGIN_SUPPORTED_PLATFORMS = [
-  PlatType.Douyin,
   PlatType.Xhs,
 ] as const
 

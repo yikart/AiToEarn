@@ -7,7 +7,7 @@
 
 import type { SidebarCommonProps } from '../../types'
 import { Puzzle } from 'lucide-react'
-import { useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { PluginModal } from '@/components/Plugin'
 import {
@@ -22,8 +22,15 @@ import { PluginStatus } from '@/store/plugin/types/baseTypes'
 
 export function PluginEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
-  const pluginStatus = usePluginStore(state => state.status)
-  const [pluginModalVisible, setPluginModalVisible] = useState(false)
+
+  const { pluginStatus, pluginModalVisible, openPluginModal, closePluginModal } = usePluginStore(
+    useShallow(state => ({
+      pluginStatus: state.status,
+      pluginModalVisible: state.pluginModalVisible,
+      openPluginModal: state.openPluginModal,
+      closePluginModal: state.closePluginModal,
+    })),
+  )
 
   // 根据插件状态返回对应的颜色和状态文本
   const getStatusInfo = () => {
@@ -65,7 +72,7 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
 
   const content = (
     <button
-      onClick={() => setPluginModalVisible(true)}
+      onClick={openPluginModal}
       className={cn(
         'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
         collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
@@ -109,7 +116,7 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
       )}
 
       {/* 插件状态弹框 */}
-      <PluginModal visible={pluginModalVisible} onClose={() => setPluginModalVisible(false)} />
+      <PluginModal visible={pluginModalVisible} onClose={closePluginModal} />
     </>
   )
 }

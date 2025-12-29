@@ -29,22 +29,6 @@ function getPlatformName(platform: PluginPlatformType): string {
 }
 
 /**
- * 获取状态 Badge 样式
- */
-function getStatusVariant(status: PlatformTaskStatus): 'default' | 'secondary' | 'destructive' | 'outline' {
-  switch (status) {
-    case PlatformTaskStatus.COMPLETED:
-      return 'default'
-    case PlatformTaskStatus.PUBLISHING:
-      return 'secondary'
-    case PlatformTaskStatus.ERROR:
-      return 'destructive'
-    default:
-      return 'outline'
-  }
-}
-
-/**
  * 获取状态 Badge 自定义类名
  */
 function getStatusClassName(status: PlatformTaskStatus): string {

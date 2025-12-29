@@ -33,11 +33,19 @@ import {
   getYouTubeAuthUrlApi,
 } from '@/api/platAuth'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import i18next from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus, usePluginStore } from '@/store/plugin'
 import { useUserStore } from '@/store/user'
 import { DEFAULT_AUTH_COUNTDOWN, POLLING_INTERVAL } from './types'
+
+/**
+ * 获取翻译文本
+ */
+function t(key: string, options?: Record<string, string>): string {
+  return i18next.t(key, { ns: 'account', ...options })
+}
 
 /**
  * 检查平台是否为插件支持的平台
@@ -463,29 +471,28 @@ export const useChannelManagerStore = create(
 
         // 检查插件是否就绪
         if (pluginStore.status !== PluginStatus.READY) {
-          // 插件未就绪，设置错误状态并提示用户
+          // 插件未就绪，重置状态并打开插件弹框
           set({
-            authState: {
-              ...get().authState,
-              error: 'plugin_not_ready',
-              isPolling: false,
-            },
+            currentView: 'connect-list',
+            authState: { ...initialAuthState },
           })
-          toast.warning(`请先安装并授权浏览器插件后再添加${platformName}账号`)
+          toast.warning(t('channelManager.pluginNotReady', { platform: platformName }))
+          // 打开插件弹框引导用户安装/授权
+          pluginStore.openPluginModal()
           return
         }
 
         // 检查是否有账号
         const account = pluginStore.platformAccounts[platform]
         if (!account) {
+          // 平台未登录，重置状态并打开插件弹框
           set({
-            authState: {
-              ...get().authState,
-              error: 'platform_not_logged_in',
-              isPolling: false,
-            },
+            currentView: 'connect-list',
+            authState: { ...initialAuthState },
           })
-          toast.warning(`${platformName}未登录，请先在插件中登录`)
+          toast.warning(t('channelManager.platformNotLoggedIn', { platform: platformName }))
+          // 打开插件弹框引导用户登录
+          pluginStore.openPluginModal()
           return
         }
 
@@ -495,7 +502,7 @@ export const useChannelManagerStore = create(
 
           if (result) {
             // 同步成功
-            toast.success('账号同步成功')
+            toast.success(t('channelManager.syncSuccess'))
 
             // 刷新账户列表
             await useAccountStore.getState().getAccountList()
@@ -505,25 +512,19 @@ export const useChannelManagerStore = create(
           }
           else {
             set({
-              authState: {
-                ...get().authState,
-                error: 'sync_failed',
-                isPolling: false,
-              },
+              currentView: 'connect-list',
+              authState: { ...initialAuthState },
             })
-            toast.error('账号同步失败')
+            toast.error(t('channelManager.syncFailed'))
           }
         }
         catch (error) {
           console.error('Plugin auth error:', error)
           set({
-            authState: {
-              ...get().authState,
-              error: error instanceof Error ? error.message : '同步失败',
-              isPolling: false,
-            },
+            currentView: 'connect-list',
+            authState: { ...initialAuthState },
           })
-          toast.error('账号同步失败')
+          toast.error(t('channelManager.syncFailed'))
         }
       },
 

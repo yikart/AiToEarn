@@ -321,7 +321,7 @@
     }
   },
   "messages": {
-    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 TikTok 个人主页上。"
+    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 {{platform}} 个人主页上。"
   },
   "previewvideo": "预览视频",
   "record": {

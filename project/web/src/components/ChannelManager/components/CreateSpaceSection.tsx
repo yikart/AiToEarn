@@ -73,7 +73,7 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
             ) : (
               <Plus className="h-4 w-4 mr-1" />
             )}
-            {t('common.confirm')}
+            {t('deleteConfirm.confirm')}
           </Button>
           <Button
             variant="outline"
@@ -83,7 +83,7 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
             }}
             size="sm"
           >
-            {t('common.cancel')}
+            {t('deleteConfirm.cancel')}
           </Button>
         </>
       ) : (
