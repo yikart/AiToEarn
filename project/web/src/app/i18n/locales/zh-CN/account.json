@@ -42,9 +42,10 @@
     "syncFailed": "账号同步失败",
     "kwaiAuthWarning": {
       "title": "快手授权提示",
-      "content": "快手可能出现登录后还在登录界面，系快手官方问题刷新页面再返回平台刷新可授权成功",
+      "content": "快手可能出现登录后还在登录界面，联系快手官方问题刷新页面再返回平台刷新可授权成功",
       "okText": "我知道了"
-    }
+    },
+    "authSuccess": "频道 {{platform}} 授权成功!"
   },
   "noAccountWarning": {
     "title": "提示",

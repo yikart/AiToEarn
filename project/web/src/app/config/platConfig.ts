@@ -122,23 +122,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     },
   ],
   [
-    PlatType.WxGzh,
-    {
-      name: 'wxgzh',
-      icon: gongzhonghaoSvg.src,
-      url: 'https://mp.weixin.qq.com/',
-      pubTypes: new Set([PubType.ImageText, PubType.Article]),
-      commonPubParamsConfig: {
-        topicMax: 10,
-        desMax: 2200,
-        imagesMax: 20,
-      },
-      themeColor: 'green',
-      jiancha: true,
-    },
-  ],
-
-  [
     PlatType.Douyin,
     {
       name: 'douyin',
@@ -151,23 +134,6 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
         desMax: 1000,
       },
       themeColor: '#FF4D00',
-      jiancha: true,
-    },
-  ],
-  [
-    PlatType.WxSph,
-    {
-      name: 'wxsph',
-      icon: wxSphSvg,
-      url: 'https://mp.weixin.qq.com/',
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
-      commonPubParamsConfig: {
-        titleMax: 100,
-        topicMax: 100,
-        desMax: 5000,
-      },
-      themeColor: 'green',
-      pcNoThis: true,
       jiancha: true,
     },
   ],

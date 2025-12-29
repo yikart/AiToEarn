@@ -44,7 +44,8 @@
       "title": "Kwai Authorization Notice",
       "content": "Kwai may remain on the login page after login. This is an official Kwai issue. Please refresh the page and return to the platform to refresh, then authorization can succeed.",
       "okText": "I understand"
-    }
+    },
+    "authSuccess": "The authorization for the channel {{platform}} has been successful!"
   },
   "noAccountWarning": {
     "title": "Notice",

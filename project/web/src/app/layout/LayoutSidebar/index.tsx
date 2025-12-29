@@ -270,7 +270,6 @@ function LayoutSidebar() {
         onClose={() => setAddAccountVisible(false)}
         onAddSuccess={() => {
           setAddAccountVisible(false)
-          toast.success('Account added successfully')
         }}
         showSpaceSelector={true}
       />

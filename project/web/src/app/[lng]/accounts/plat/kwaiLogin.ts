@@ -33,7 +33,7 @@ export async function kwaiSkip(platType: PlatType, spaceId?: string): Promise<an
             return true
           }
 
-          if (autoStatusRes.data.status === 1) {
+          if (autoStatusRes?.data?.status === 1) {
             // 授权成功，返回结果，交由调用方处理
             resolve(autoStatusRes)
             return true
