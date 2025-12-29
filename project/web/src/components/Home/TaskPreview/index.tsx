@@ -9,10 +9,12 @@ import type { TaskListItem } from '@/api/agent'
 import { ArrowRight, History } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { agentApi } from '@/api/agent'
 import { useTransClient } from '@/app/i18n/client'
 import TaskHistoryList from '@/components/Chat/TaskHistoryList'
 import { cn } from '@/lib/utils'
+import { useUserStore } from '@/store'
 
 export interface ITaskPreviewProps {
   /** 显示数量 */
@@ -28,6 +30,15 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
   const { t } = useTransClient('chat')
   const router = useRouter()
   const { lng } = useParams()
+  const {
+    _hasHydrated,
+    token,
+  } = useUserStore(
+    useShallow(state => ({
+      _hasHydrated: state._hasHydrated,
+      token: state.token,
+    })),
+  )
 
   const [tasks, setTasks] = useState<TaskListItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -50,8 +61,10 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
   }, [limit])
 
   useEffect(() => {
-    void loadTasks()
-  }, [loadTasks])
+    if (token && _hasHydrated) {
+      loadTasks()
+    }
+  }, [loadTasks, token, _hasHydrated])
 
   /** 跳转到任务记录页 */
   const handleViewAll = () => {

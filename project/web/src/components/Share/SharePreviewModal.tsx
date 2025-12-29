@@ -1,7 +1,11 @@
+/**
+ * SharePreviewModal - 分享预览弹窗组件
+ * 用于预览生成的分享图片并提供下载/发布功能
+ */
 'use client'
 
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { uploadToOss } from '@/api/oss'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
@@ -10,7 +14,6 @@ import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
-import { usePublishDialogData } from '../PublishDialog/usePublishDialogData'
 import { usePublishDialogStorageStore } from '../PublishDialog/usePublishDialogStorageStore'
 
 interface SharePreviewModalProps {
@@ -19,6 +22,30 @@ interface SharePreviewModalProps {
   blobs: Blob[]
   urls: string[] // object URLs
   taskId: string
+}
+
+/**
+ * 上传 Blob 数组到 OSS
+ * @param blobs - 待上传的 Blob 数组
+ * @returns 上传成功的 URL 数组
+ */
+async function uploadBlobsToOss(blobs: Blob[]): Promise<string[]> {
+  const uploadedUrls: string[] = []
+  for (let i = 0; i < blobs.length; i++) {
+    const file = new File(
+      [blobs[i]],
+      `aitoearn_export_${Date.now()}_${i}.png`,
+      { type: blobs[i].type || 'image/png' },
+    )
+    try {
+      const url = await uploadToOss(file)
+      uploadedUrls.push(url as string)
+    }
+    catch (err) {
+      console.error('Upload failed for blob', err)
+    }
+  }
+  return uploadedUrls
 }
 
 export function SharePreviewModal({
@@ -33,7 +60,8 @@ export function SharePreviewModal({
   const { accountList, getAccountList } = useAccountStore()
   const [uploading, setUploading] = useState(false)
 
-  const downloadBlobs = async () => {
+  // 下载图片
+  const downloadBlobs = useCallback(async () => {
     try {
       for (let i = 0; i < blobs.length; i++) {
         const blob = blobs[i]
@@ -55,29 +83,22 @@ export function SharePreviewModal({
       console.error(e)
       toast.error(t('downloadFailed') || 'Download failed')
     }
-  }
+  }, [blobs, taskId, t])
 
-  const handleAgentShare = async () => {
+  // Agent 分享：上传图片并跳转到首页
+  const handleAgentShare = useCallback(async () => {
+    if (!blobs || blobs.length === 0) {
+      toast.error(t('noImagesToShare') || 'No images to share')
+      return
+    }
+
     try {
       setUploading(true)
-      // upload blobs (if available) and get urls
-      const targets = blobs && blobs.length > 0 ? blobs : []
-      const uploadedUrls: string[] = []
-      if (targets.length > 0) {
-        for (let i = 0; i < targets.length; i++) {
-          const file = new File(
-            [targets[i]],
-            `aitoearn_export_${Date.now()}_${i}.png`,
-            { type: targets[i].type || 'image/png' },
-          )
-          try {
-            const url = await uploadToOss(file)
-            uploadedUrls.push(url as string)
-          }
-          catch (err) {
-            console.error('Upload failed for blob', err)
-          }
-        }
+      const uploadedUrls = await uploadBlobsToOss(blobs)
+
+      if (uploadedUrls.length === 0) {
+        toast.error(t('uploadFailed') || 'Upload failed')
+        return
       }
 
       const payloadPrompt
@@ -104,17 +125,25 @@ export function SharePreviewModal({
     finally {
       setUploading(false)
     }
-  }
+  }, [blobs, onClose, router, t])
 
-  const handlePublishShare = async () => {
+  // 发布分享：上传图片并跳转到账号页面
+  const handlePublishShare = useCallback(async () => {
+    if (!blobs || blobs.length === 0) {
+      toast.error(t('noImagesToShare') || 'No images to share')
+      return
+    }
+
     try {
       usePublishDialogStorageStore.getState().clearPubData()
       setUploading(true)
-      // ensure accounts loaded
+
+      // 确保账号列表已加载
       if (!accountList || accountList.length === 0) {
         await getAccountList()
       }
-      // filter accounts that support ImageText and are online (status !== 0)
+
+      // 筛选支持图文发布且在线的账号
       const candidates = (useAccountStore.getState().accountList || []).filter(
         (acc) => {
           const plat = AccountPlatInfoMap.get(acc.type as any)
@@ -129,30 +158,12 @@ export function SharePreviewModal({
         return
       }
 
-      // Prepare medias param for accounts page (upload blobs then navigate)
-      const targets = blobs && blobs.length > 0 ? blobs : []
-      let uploadedUrls: string[] = []
-      if (targets.length > 0) {
-        if (targets.length > 0) {
-          for (let i = 0; i < targets.length; i++) {
-            const file = new File(
-              [targets[i]],
-              `aitoearn_export_${Date.now()}_${i}.png`,
-              { type: targets[i].type || 'image/png' },
-            )
-            try {
-              const url = await uploadToOss(file)
-              uploadedUrls.push(url as string)
-            }
-            catch (err) {
-              console.error('Upload failed for blob', err)
-            }
-          }
-        }
-      }
-      else {
-        // fallback to provided urls
-        uploadedUrls = urls.slice()
+      // 上传图片
+      const uploadedUrls = await uploadBlobsToOss(blobs)
+
+      if (uploadedUrls.length === 0) {
+        toast.error(t('uploadFailed') || 'Upload failed')
+        return
       }
 
       const medias = uploadedUrls.map(u => ({ type: 'IMAGE', url: u }))
@@ -162,14 +173,13 @@ export function SharePreviewModal({
           || 'I generated this conversation on aitoearn using agent, check it out!'
       const tags = ['aitoearn', 'agent']
 
-      // Build URL params and navigate to /accounts to trigger publish dialog filling
+      // 构建 URL 参数并跳转到账号页面
       const params = new URLSearchParams()
       params.set('aiGenerated', 'true')
       params.set('medias', encodeURIComponent(JSON.stringify(medias)))
       params.set('description', encodeURIComponent(description))
       params.set('title', encodeURIComponent(title))
       params.set('tags', encodeURIComponent(JSON.stringify(tags)))
-      // set accountId to first candidate for default selection
       params.set('accountId', candidates[0].id)
 
       onClose()
@@ -182,12 +192,12 @@ export function SharePreviewModal({
     finally {
       setUploading(false)
     }
-  }
+  }, [blobs, accountList, getAccountList, onClose, router, t])
 
   return (
     <Modal open={open} onCancel={onClose} title={t('previewTitle')}>
       <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-md border p-4 flex justify-center">
+        <div className="bg-card rounded-md border p-4 flex justify-center">
           {urls[0] ? (
             <img
               src={urls[0]}
@@ -202,16 +212,27 @@ export function SharePreviewModal({
         </div>
 
         <div className="mt-4 flex items-center justify-end gap-2">
-          <div className="flex items-center gap-3">
-            {/* show nothing; buttons will show loading state */}
-          </div>
-          <Button variant="outline" onClick={handleAgentShare} loading={uploading}>
+          <Button
+            variant="outline"
+            onClick={handleAgentShare}
+            loading={uploading}
+            className="cursor-pointer"
+          >
             {t('agentShare')}
           </Button>
-          <Button variant="outline" onClick={handlePublishShare} loading={uploading}>
+          <Button
+            variant="outline"
+            onClick={handlePublishShare}
+            loading={uploading}
+            className="cursor-pointer"
+          >
             {t('publishShare')}
           </Button>
-          <Button onClick={downloadBlobs} disabled={uploading}>
+          <Button
+            onClick={downloadBlobs}
+            disabled={uploading}
+            className="cursor-pointer"
+          >
             {t('download')}
           </Button>
         </div>

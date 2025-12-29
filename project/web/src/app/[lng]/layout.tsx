@@ -54,9 +54,13 @@ export default async function RootLayout({
             <main id="main-content" className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
               {children}
             </main>
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_web_sign.js" />
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_sign_init.js" />
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_sign_core.js" />
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_sign_inject.js" />
           </div>
         </Providers>
