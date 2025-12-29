@@ -695,11 +695,7 @@ const PublishDialogAi = memo(
 
                   // Convert to blob
                   const byteCharacters = atob(base64Data)
-                  const byteNumbers = Array.from({ length: byteCharacters.length })
-                  for (let i = 0; i < byteCharacters.length; i++) {
-                    byteNumbers[i] = byteCharacters.charCodeAt(i)
-                  }
-                  const byteArray = new Uint8Array(byteNumbers)
+                  const byteArray = Uint8Array.from(byteCharacters, c => c.charCodeAt(0))
                   const blob = new Blob([byteArray], { type: mimeType })
                   const blobUrl = URL.createObjectURL(blob)
 
@@ -948,11 +944,7 @@ const PublishDialogAi = memo(
             }
 
             const byteCharacters = atob(base64Data)
-            const byteNumbers = Array.from({ length: byteCharacters.length })
-            for (let i = 0; i < byteCharacters.length; i++) {
-              byteNumbers[i] = byteCharacters.charCodeAt(i)
-            }
-            const byteArray = new Uint8Array(byteNumbers)
+            const byteArray = Uint8Array.from(byteCharacters, c => c.charCodeAt(0))
             blob = new Blob([byteArray], { type: mimeType })
           }
           // Regular URL, need to download
