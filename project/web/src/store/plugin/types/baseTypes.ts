@@ -47,8 +47,6 @@ export enum PluginStatus {
   INSTALLED_NO_PERMISSION = 'INSTALLED_NO_PERMISSION',
   /** 未安装 */
   NOT_INSTALLED = 'NOT_INSTALLED',
-  /** 已连接（兼容旧代码） */
-  CONNECTED = 'READY',
 }
 
 /**

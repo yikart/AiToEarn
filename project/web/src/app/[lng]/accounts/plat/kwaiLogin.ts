@@ -29,7 +29,7 @@ export async function kwaiSkip(platType: PlatType, spaceId?: string): Promise<an
           const autoStatusRes = await getKwaiAuthStatus(res.data.taskId)
 
           if (!autoStatusRes?.data) {
-            reject(new Error('no status data'))
+            resolve(autoStatusRes)
             return true
           }
 

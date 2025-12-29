@@ -3,6 +3,7 @@ import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
 import LayoutSidebar from '@/app/layout/LayoutSidebar'
 import MobileNav from '@/app/layout/MobileNav'
+import { ChannelManager } from '@/components/ChannelManager'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
@@ -42,6 +43,8 @@ export default async function RootLayout({
         />
         <script async src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" />
         <Providers lng={lng}>
+          {/* 全局频道管理弹框 */}
+          <ChannelManager />
           <p className="hidden">
             Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf
           </p>

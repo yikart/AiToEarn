@@ -25,6 +25,8 @@
   "markAsRead": "标记为已读",
   "unreadCount": "未读消息",
   "viewAll": "查看全部",
+  "cancel": "取消",
+  "confirm": "确认",
   "actions": {
     "cancel": "取消",
     "confirm": "确认",

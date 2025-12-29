@@ -19,6 +19,7 @@ import {
   Edit,
   Loader2,
   MoreVertical,
+  Plus,
   Trash2,
 } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
@@ -60,6 +61,7 @@ interface SpaceItemProps {
   onDelete: () => void
   onChannelDelete: (channel: SocialAccount) => void
   onRefresh: () => void
+  onAddChannel?: () => void
 }
 
 export function SpaceItem({
@@ -83,6 +85,7 @@ export function SpaceItem({
   onDelete,
   onChannelDelete,
   onRefresh,
+  onAddChannel,
 }: SpaceItemProps) {
   const { t } = useTransClient('account')
 
@@ -93,54 +96,79 @@ export function SpaceItem({
   return (
     <div className={`border rounded-lg overflow-hidden ${isSorting ? 'opacity-60 pointer-events-none' : ''}`}>
       {/* 空间标题栏 */}
-      <div className="flex items-center gap-2.5 py-2 px-4 bg-muted/30 border-b">
-        {isCollapsed ? (
-          <ChevronRight
-            className="h-4 w-4 text-muted-foreground shrink-0 cursor-pointer hover:text-foreground transition-colors"
-            onClick={() => !isEditing && onToggleCollapse()}
-          />
-        ) : (
-          <ChevronDown
-            className="h-4 w-4 text-muted-foreground shrink-0 cursor-pointer hover:text-foreground transition-colors"
-            onClick={() => !isEditing && onToggleCollapse()}
-          />
-        )}
-
-        <Box className="h-4 w-4 text-primary shrink-0" />
-
-        {isEditing ? (
-          <div className="flex-1 flex gap-2">
-            <Input
-              value={editSpaceName}
-              onChange={e => onEditNameChange(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter')
-                  onSaveEdit()
-                if (e.key === 'Escape')
-                  onCancelEdit()
-              }}
-              autoFocus
-              className="h-7 text-sm"
+      <div className="flex items-center gap-2.5 py-2 px-4 bg-muted/30 border-b hover:bg-muted/50 transition-colors">
+        {/* 可点击的折叠区域 */}
+        <div
+          className="flex flex-1 items-center gap-2.5 min-w-0 cursor-pointer"
+          onClick={() => !isEditing && onToggleCollapse()}
+        >
+          {isCollapsed ? (
+            <ChevronRight
+              className="h-4 w-4 text-muted-foreground shrink-0 hover:text-foreground transition-colors"
             />
-            <Button onClick={onSaveEdit} size="sm" disabled={editingSpaceLoading}>
-              {editingSpaceLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-1" />
-              ) : null}
-              {t('common.save', '保存')}
-            </Button>
-            <Button variant="outline" onClick={onCancelEdit} size="sm" disabled={editingSpaceLoading}>
-              {t('common.cancel', '取消')}
-            </Button>
-          </div>
-        ) : (
-          <>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium text-sm">{space.name}</div>
-            </div>
+          ) : (
+            <ChevronDown
+              className="h-4 w-4 text-muted-foreground shrink-0 hover:text-foreground transition-colors"
+            />
+          )}
 
-            <div className="text-xs text-muted-foreground shrink-0">
-              {t('channelManager.channelCount', { count: channels.length })}
+          <Box className="h-4 w-4 text-primary shrink-0" />
+
+          {isEditing ? (
+            <div className="flex-1 flex gap-2" onClick={e => e.stopPropagation()}>
+              <Input
+                value={editSpaceName}
+                onChange={e => onEditNameChange(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter')
+                    onSaveEdit()
+                  if (e.key === 'Escape')
+                    onCancelEdit()
+                }}
+                autoFocus
+                className="h-7 text-sm"
+              />
+              <Button onClick={onSaveEdit} size="sm" disabled={editingSpaceLoading}>
+                {editingSpaceLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-1" />
+                ) : null}
+                {t('common.save', '保存')}
+              </Button>
+              <Button variant="outline" onClick={onCancelEdit} size="sm" disabled={editingSpaceLoading}>
+                {t('common.cancel', '取消')}
+              </Button>
             </div>
+          ) : (
+            <>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-sm">{space.name}</div>
+              </div>
+
+              <div className="text-xs text-muted-foreground shrink-0">
+                {t('channelManager.channelCount', { count: channels.length })}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* 操作按钮区域 - 不参与折叠点击 */}
+        {!isEditing && (
+          <>
+            {/* 添加频道按钮 */}
+            {onAddChannel && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 cursor-pointer shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onAddChannel()
+                }}
+              >
+                <Plus className="mr-1 h-3 w-3" />
+                {t('channelManager.addChannel')}
+              </Button>
+            )}
 
             {isSorting && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">

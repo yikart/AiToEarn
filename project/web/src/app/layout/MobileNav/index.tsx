@@ -49,6 +49,7 @@ import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
+import {PluginEntry} from "@/app/layout/LayoutSidebar/components/BottomSection";
 
 // GitHub 配置
 const GITHUB_REPO = 'yikart/AiToEarn'
@@ -309,7 +310,6 @@ function MobileBottomSection({
           </button>
         )}
 
-        {/* 插件入口 */}
         <button
           onClick={() => setPluginModalVisible(true)}
           className="flex items-center justify-between px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted transition-colors w-full"

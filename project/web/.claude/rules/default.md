@@ -5,9 +5,10 @@ TypeScript 类型检查：使用 `npx tsc --noEmit`，不要使用 `npm run buil
 
 # 项目主题色
 
-1. 项目使用shadcnui 默认的中性灰色系即可，不需要其它主题色。
+1. 项目使用shadcnui 默认的中性灰色系即可，不需要其它主题色，注意，不要无脑用中性色，需要其它漂亮的颜色点缀的地方，可以使用 shadcnui 提供的语义化颜色变量。
 2. 注意项目要实现主题色 深色/浅色 切换，不要使用硬编码的颜色类（如 text-gray-900、bg-white），要使用shadcn/ui 的语义化颜色变量，全局css `/src/app/globals.css`。
 3. 不要使用 `/src/app/var.css` 中的颜色，我现在在过渡阶段，项目中所有用到 var.css 的地方我都会逐渐全改了。
+4. 注意修复eslint问题。
 
 # 测试和文档规则
 
