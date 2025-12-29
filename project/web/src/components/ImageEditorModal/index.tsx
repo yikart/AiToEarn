@@ -18,11 +18,11 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Modal } from '@/components/ui/modal'
 import { uploadToOss } from '@/api/oss'
 import { useTransClient } from '@/app/i18n/client'
 import zhCNImageEditor from '@/app/i18n/locales/zh-CN/imageEditor.json'
 import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
+import { Modal } from '@/components/ui/modal'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { dataURLToBlob } from '@/utils'
 import { getOssUrl } from '@/utils/oss'

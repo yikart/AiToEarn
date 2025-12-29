@@ -12,6 +12,7 @@ import { CreditCard, Crown, Globe, User } from 'lucide-react'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import logo from '@/assets/images/logo.png'
 import {
   Dialog,
   DialogContent,
@@ -20,7 +21,6 @@ import {
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 import { AgentTab, GeneralTab, MembershipTab, ProfileTab, SubscriptionTab } from './tabs'
-import logo from '@/assets/images/logo.png'
 
 /** 设置页面类型 */
 type SettingsTab = 'profile' | 'subscription' | 'membership' | 'general'
@@ -49,7 +49,7 @@ export interface SettingsModalProps {
 /**
  * SettingsModal 设置弹框组件
  */
-export const SettingsModal = ({ open, onClose, defaultTab }: SettingsModalProps) => {
+export function SettingsModal({ open, onClose, defaultTab }: SettingsModalProps) {
   const { t } = useTransClient('settings')
   const token = useUserStore(state => state.token)
   const userInfo = useUserStore(state => state.userInfo)

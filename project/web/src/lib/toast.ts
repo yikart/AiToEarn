@@ -1,6 +1,6 @@
 import { toast as sonnerToast } from 'sonner'
 
-type ToastOptions = {
+interface ToastOptions {
   key?: string
   id?: string
   duration?: number
@@ -142,4 +142,3 @@ export const toast = {
 }
 
 export default toast
-

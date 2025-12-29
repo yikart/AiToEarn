@@ -1,14 +1,16 @@
+import type { TaskDetail, TaskMessage } from '@/api/agent'
+import type { IDisplayMessage, IWorkflowStep } from '@/store/agent'
 /**
  * 聊天状态管理 Hook
  * 整合 Store 状态和本地状态，统一对外提供
  */
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { agentApi, type TaskDetail, type TaskMessage } from '@/api/agent'
-import { useAgentStore, type IDisplayMessage, type IWorkflowStep } from '@/store/agent'
-import { useUserStore } from '@/store/user'
+import { agentApi } from '@/api/agent'
 import { toast } from '@/lib/toast'
-import { isTaskCompleted, convertMessages } from '../utils'
+import { useAgentStore } from '@/store/agent'
+import { useUserStore } from '@/store/user'
+import { convertMessages, isTaskCompleted } from '../utils'
 import { useTaskPolling } from './useTaskPolling'
 
 export interface IChatStateOptions {
@@ -54,7 +56,7 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
     progress,
     setMessages,
   } = useAgentStore(
-    useShallow((state) => ({
+    useShallow(state => ({
       currentTaskId: state.currentTaskId,
       isGenerating: state.isGenerating,
       messages: state.messages,
@@ -110,7 +112,8 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
           workflowSteps: [],
         })
       }
-    } catch (e) {
+    }
+    catch (e) {
       console.warn('[ChatState] Failed to apply store guard on task change', e)
     }
 
@@ -125,7 +128,8 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
             workflowSteps: [],
           })
         }
-      } catch (e) {
+      }
+      catch (e) {
         console.warn('[ChatState] Failed to apply store guard on unmount', e)
       }
     }
@@ -172,7 +176,8 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
     }
 
     const loadTask = async () => {
-      if (!taskId) return
+      if (!taskId)
+        return
 
       setIsLoading(true)
       try {
@@ -196,18 +201,21 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
               startPolling()
             }
           }
-          
+
           // 获取到 result 后，刷新 Credits 余额
           fetchCreditsBalance()
-          
+
           hasLoadedRef.current = true
-        } else {
+        }
+        else {
           toast.error(result.message || t('message.error'))
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Load task detail failed:', error)
         toast.error(t('message.error'))
-      } finally {
+      }
+      finally {
         setIsLoading(false)
       }
     }
@@ -232,4 +240,3 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
     setLocalIsGenerating,
   }
 }
-

@@ -52,7 +52,7 @@
         .ant-tabs-tab {
           font-size: 16px;
           padding: 12px 24px;
-          
+
           &.ant-tabs-tab-active {
             .ant-tabs-tab-btn {
               color: #a66ae4;
@@ -98,7 +98,7 @@
       .filterSelect {
         :global(.ant-select-selector) {
           border-color: rgba(166, 106, 228, 0.3);
-          
+
           &:hover {
             border-color: #a66ae4;
           }
@@ -133,7 +133,7 @@
         .platformSelectInput {
           :global(.ant-select-selector) {
             border-color: rgba(166, 106, 228, 0.3);
-            
+
             &:hover {
               border-color: #a66ae4;
             }
@@ -156,7 +156,7 @@
 
         :global(.ant-input-affix-wrapper) {
           border-color: rgba(166, 106, 228, 0.3);
-          
+
           &:hover {
             border-color: #a66ae4;
           }
@@ -394,7 +394,7 @@
         overflow-wrap: break-word;
         max-width: 100%;
         flex-shrink: 0;
-        
+
         :global(.ant-tag) {
           max-width: 100%;
           white-space: normal;
@@ -439,7 +439,6 @@
   .accountMonitoring {
     min-height: 400px;
   }
-
 
   // 详情弹窗样式
   .detailLoading {
@@ -498,7 +497,7 @@
       }
     }
 
-      .statsSection {
+    .statsSection {
       margin-bottom: 24px;
       padding: 20px;
       background: linear-gradient(135deg, rgba(166, 106, 228, 0.08) 0%, rgba(129, 77, 189, 0.08) 100%);
@@ -573,7 +572,7 @@
           }
         }
 
-          .historyItem {
+        .historyItem {
           padding: 16px;
           margin-bottom: 12px;
           background: #fafafa;
@@ -677,4 +676,3 @@
     }
   }
 }
-

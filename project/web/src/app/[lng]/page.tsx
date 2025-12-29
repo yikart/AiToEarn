@@ -4,16 +4,16 @@
  */
 'use client'
 
-import { useState, useCallback, useEffect, useRef } from 'react'
-import { useSearchParams, useRouter, useParams } from 'next/navigation'
 import { ArrowUp } from 'lucide-react'
-import { HomeChat } from '@/components/Home/HomeChat'
-import { TaskPreview } from '@/components/Home/TaskPreview'
-import PromptGallery from '@/components/Home/PromptGallery'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import AgentFeatures from '@/components/Home/AgentFeatures'
+import { HomeChat } from '@/components/Home/HomeChat'
+import PromptGallery from '@/components/Home/PromptGallery'
+import { TaskPreview } from '@/components/Home/TaskPreview'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { toast } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 
 /**
  * 回到顶部按钮组件
@@ -48,7 +48,7 @@ function BackToTop({ position = 'left' }: { position?: 'left' | 'right' }) {
         position === 'left' ? 'left-8' : 'right-8',
         isVisible
           ? 'opacity-100 translate-y-0'
-          : 'opacity-0 translate-y-4 pointer-events-none'
+          : 'opacity-0 translate-y-4 pointer-events-none',
       )}
       aria-label="Back to top"
     >
@@ -61,7 +61,7 @@ export default function Home() {
   const [appliedPrompt, setAppliedPrompt] = useState<string>('')
 
   // 处理提示词应用
-  const handleApplyPrompt = useCallback((data: { prompt: string; image?: string; mode: 'edit' | 'generate' }) => {
+  const handleApplyPrompt = useCallback((data: { prompt: string, image?: string, mode: 'edit' | 'generate' }) => {
     setAppliedPrompt(data.prompt)
     // 滚动到顶部
     window.scrollTo({ top: 0, behavior: 'smooth' })

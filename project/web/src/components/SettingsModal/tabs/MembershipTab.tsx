@@ -6,16 +6,14 @@
  * 由原来的 SubscriptionManagementDialog 抽离而来，归属 SettingsModal
  */
 
-import { useEffect, useState } from 'react'
+import type {
+  Order,
+  OrderListParams,
+  Subscription,
+  SubscriptionListParams,
+} from '@/api/types/payment'
 import { Copy, Crown } from 'lucide-react'
-import { useTransClient } from '@/app/i18n/client'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { toast } from '@/lib/toast'
-import { useUserStore } from '@/store/user'
+import { useEffect, useState } from 'react'
 import {
   cancelSubscriptionApi,
   getOrderDetailApi,
@@ -23,12 +21,6 @@ import {
   getSubscriptionListApi,
   unsubscribeApi,
 } from '@/api/payment'
-import type {
-  Order,
-  OrderListParams,
-  Subscription,
-  SubscriptionListParams,
-} from '@/api/types/payment'
 import {
   OrderStatus,
   PaymentMode,
@@ -36,9 +28,17 @@ import {
   SubscriptionPlan,
   SubscriptionStatus,
 } from '@/api/types/payment'
+import { useTransClient } from '@/app/i18n/client'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { toast } from '@/lib/toast'
+import { useUserStore } from '@/store/user'
 
 // 状态判断辅助函数
-const getVipStatusInfo = (status: string) => {
+function getVipStatusInfo(status: string) {
   switch (status) {
     case 'none':
       return { isVip: false, isMonthly: false, isYearly: false, isAutoRenew: false, isOnce: false }
@@ -61,7 +61,7 @@ const getVipStatusInfo = (status: string) => {
   }
 }
 
-export const MembershipTab = () => {
+export function MembershipTab() {
   const { t: tProfile } = useTransClient('profile')
   const { t: tVip } = useTransClient('vip')
   const { userInfo } = useUserStore()
@@ -320,7 +320,9 @@ export const MembershipTab = () => {
                       })()}
                     </div>
                     <div className="mt-1 text-sm text-muted-foreground">
-                      {tVip('membershipExpires' as any)}: {userInfo.vipInfo.expireTime
+                      {tVip('membershipExpires' as any)}
+                      :
+                      {userInfo.vipInfo.expireTime
                         ? formatDate(userInfo.vipInfo.expireTime)
                         : '-'}
                     </div>
@@ -332,7 +334,7 @@ export const MembershipTab = () => {
             {/* 订阅列表 */}
             {subscriptionsLoading ? (
               <div className="space-y-4">
-                {[...Array(3)].map((_, i) => (
+                {[...Array.from({ length: 3 })].map((_, i) => (
                   <Skeleton key={i} className="h-32 w-full" />
                 ))}
               </div>
@@ -372,7 +374,10 @@ export const MembershipTab = () => {
 
                     <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 sm:gap-4">
                       <div>
-                        <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                        <span className="text-muted-foreground">
+                          {tProfile('subscriptionMode')}
+                          :
+                        </span>
                         <span className="ml-2">
                           {subscription.plan === SubscriptionPlan.MONTH
                             ? tVip('modal.vipInfo.monthly2' as any)
@@ -382,23 +387,35 @@ export const MembershipTab = () => {
                         </span>
                       </div>
                       <div>
-                        <span className="text-muted-foreground">{tProfile('createTime')}:</span>
+                        <span className="text-muted-foreground">
+                          {tProfile('createTime')}
+                          :
+                        </span>
                         <span className="ml-2">{formatDate(subscription.createdAt)}</span>
                       </div>
                       {subscription.canceledAt && (
                         <div>
-                          <span className="text-muted-foreground">{tProfile('cancelTime')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('cancelTime')}
+                            :
+                          </span>
                           <span className="ml-2">{formatDate(subscription.canceledAt)}</span>
                         </div>
                       )}
                       {subscription.trialEndAt && (
                         <div>
-                          <span className="text-muted-foreground">{tProfile('trialEndTime')}:</span>
+                          <span className="text-muted-foreground">
+                            {tProfile('trialEndTime')}
+                            :
+                          </span>
                           <span className="ml-2">{formatDate(subscription.trialEndAt)}</span>
                         </div>
                       )}
                       <div className="sm:col-span-2">
-                        <span className="text-muted-foreground">{tProfile('subscriptionId')}:</span>
+                        <span className="text-muted-foreground">
+                          {tProfile('subscriptionId')}
+                          :
+                        </span>
                         <div className="mt-1 flex items-center gap-2">
                           <span className="truncate font-mono text-xs">{subscription.id}</span>
                           <Button
@@ -415,29 +432,29 @@ export const MembershipTab = () => {
 
                     <div className="flex justify-end gap-2 border-t pt-2">
                       {/* 活跃或试用中且未设置周期结束时取消 - 显示取消订阅按钮 */}
-                      {((subscription.status === SubscriptionStatus.ACTIVE &&
-                        !subscription.cancelAtPeriodEnd) ||
-                      (subscription.status === SubscriptionStatus.TRIALING &&
-                        !subscription.cancelAtPeriodEnd)) && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleUnsubscribe(subscription)}
-                          >
-                            {tProfile('cancelSubscription')}
-                          </Button>
-                        )}
+                      {((subscription.status === SubscriptionStatus.ACTIVE
+                        && !subscription.cancelAtPeriodEnd)
+                      || (subscription.status === SubscriptionStatus.TRIALING
+                        && !subscription.cancelAtPeriodEnd)) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleUnsubscribe(subscription)}
+                        >
+                          {tProfile('cancelSubscription')}
+                        </Button>
+                      )}
                       {/* 活跃但设置了周期结束时取消 - 显示恢复订阅按钮 */}
-                      {(subscription.status === SubscriptionStatus.ACTIVE &&
-                        subscription.cancelAtPeriodEnd) && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleResumeSubscription(subscription)}
-                          >
-                            {tProfile('resumeSubscription')}
-                          </Button>
-                        )}
+                      {(subscription.status === SubscriptionStatus.ACTIVE
+                        && subscription.cancelAtPeriodEnd) && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleResumeSubscription(subscription)}
+                        >
+                          {tProfile('resumeSubscription')}
+                        </Button>
+                      )}
                       {/* 已完全取消的状态不显示任何按钮 */}
                     </div>
                   </div>
@@ -501,7 +518,7 @@ export const MembershipTab = () => {
         <TabsContent value="orders" className="space-y-4">
           {ordersLoading ? (
             <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
+              {[...Array.from({ length: 3 })].map((_, i) => (
                 <Skeleton key={i} className="h-32 w-full" />
               ))}
             </div>
@@ -514,35 +531,58 @@ export const MembershipTab = () => {
                 >
                   <div className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-2 sm:gap-4">
                     <div>
-                      <span className="text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('subscriptionMode')}
+                        :
+                      </span>
                       <span className="ml-2">{getSubscriptionModeText(order.mode)}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{tProfile('amount')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('amount')}
+                        :
+                      </span>
                       <span className="ml-2">
-                        {(order.amount / 100).toFixed(2)} {order.currency}
+                        {(order.amount / 100).toFixed(2)}
+                        {' '}
+                        {order.currency}
                       </span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{tProfile('quantity')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('quantity')}
+                        :
+                      </span>
                       <span className="ml-2">{order.quantity || 1}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{tProfile('status')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('status')}
+                        :
+                      </span>
                       <span className="ml-2">{getOrderStatusTag(order.status)}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{tProfile('createTime')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('createTime')}
+                        :
+                      </span>
                       <span className="ml-2">{formatDate(order.created)}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground">{tProfile('paymentMethod')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('paymentMethod')}
+                        :
+                      </span>
                       <span className="ml-2">
                         {(order as any).payment_method || tVip('alipayPayment')}
                       </span>
                     </div>
                     <div className="sm:col-span-2">
-                      <span className="text-muted-foreground">{tProfile('orderId')}:</span>
+                      <span className="text-muted-foreground">
+                        {tProfile('orderId')}
+                        :
+                      </span>
                       <div className="mt-1 flex items-center gap-2">
                         <span className="truncate font-mono text-xs">{order.id}</span>
                         <Button
@@ -620,44 +660,70 @@ export const MembershipTab = () => {
             </DialogHeader>
             {orderDetailLoading ? (
               <div className="space-y-4">
-                {[...Array(8)].map((_, i) => (
+                {[...Array.from({ length: 8 })].map((_, i) => (
                   <Skeleton key={i} className="h-4 w-full" />
                 ))}
               </div>
             ) : (
               <div className="space-y-3 text-sm">
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('orderId')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('orderId')}
+                    :
+                  </span>
                   <span className="truncate font-mono">{currentOrderDetail.id}</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('internalId')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('internalId')}
+                    :
+                  </span>
                   <span className="truncate font-mono">{currentOrderDetail._id}</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('packageType')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('packageType')}
+                    :
+                  </span>
                   <span>{getPaymentTypeText(currentOrderDetail.metadata?.payment)}</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('subscriptionMode')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('subscriptionMode')}
+                    :
+                  </span>
                   <span>{currentOrderDetail.mode}</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('amount')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('amount')}
+                    :
+                  </span>
                   <span>
-                    CNY {(currentOrderDetail.amount / 100).toFixed(2)}
+                    CNY
+                    {' '}
+                    {(currentOrderDetail.amount / 100).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('status')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('status')}
+                    :
+                  </span>
                   <span>{getOrderStatusTag(currentOrderDetail.status)}</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('createTime')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('createTime')}
+                    :
+                  </span>
                   <span>{formatDate(currentOrderDetail.created)}</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
-                  <span className="shrink-0 text-muted-foreground">{tProfile('paymentMethod')}:</span>
+                  <span className="shrink-0 text-muted-foreground">
+                    {tProfile('paymentMethod')}
+                    :
+                  </span>
                   <span>
                     {(currentOrderDetail as any).payment_method || tProfile('unknown')}
                   </span>
@@ -670,5 +736,3 @@ export const MembershipTab = () => {
     </>
   )
 }
-
-

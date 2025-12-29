@@ -15,7 +15,7 @@ const DouyinParams = memo(
 
       return (
         <>
-          <PubParmasTextarea 
+          <PubParmasTextarea
             {...pubParmasTextareaCommonParams}
             extend={(
               <>

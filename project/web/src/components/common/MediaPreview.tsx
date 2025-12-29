@@ -1,10 +1,10 @@
 'use client'
 
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, X } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
 
 export interface MediaPreviewItem {
   type: 'image' | 'video'
@@ -19,7 +19,7 @@ export interface MediaPreviewProps {
   onClose: () => void
 }
 
-export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPreviewProps) => {
+export function MediaPreview({ open, items, initialIndex = 0, onClose }: MediaPreviewProps) {
   const [index, setIndex] = useState(initialIndex)
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null)
 
@@ -45,18 +45,20 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
   const isWideVideo = videoAspectRatio && videoAspectRatio > 1.6 // 宽高比大于16:10认为是横屏
 
   const handlePrev = () => {
-    if (!hasMultiple) return
-    setIndex((prev) => (prev - 1 + items.length) % items.length)
+    if (!hasMultiple)
+      return
+    setIndex(prev => (prev - 1 + items.length) % items.length)
   }
 
   const handleNext = () => {
-    if (!hasMultiple) return
-    setIndex((prev) => (prev + 1) % items.length)
+    if (!hasMultiple)
+      return
+    setIndex(prev => (prev + 1) % items.length)
   }
 
   return (
-    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-    <DialogContent
+    <Dialog open={open} onOpenChange={o => !o && onClose()}>
+      <DialogContent
         className={cn(
           'border-none bg-transparent shadow-none p-0 w-screen h-screen',
           // 使用默认 overlay 做半透明背景，这里只负责居中内容
@@ -99,10 +101,10 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
                         src={current.src}
                         onLoadedMetadata={handleVideoLoad}
                         className={cn(
-                          "bg-black object-contain",
+                          'bg-black object-contain',
                           isWideVideo
-                            ? "max-h-[70vh] w-[min(95vw,1200px)]" // 横屏视频：限制高度，使用最大宽度约束
-                            : "max-h-[75vh] w-[min(85vw,900px)]" // 竖屏/方屏视频：正常限制
+                            ? 'max-h-[70vh] w-[min(95vw,1200px)]' // 横屏视频：限制高度，使用最大宽度约束
+                            : 'max-h-[75vh] w-[min(85vw,900px)]', // 竖屏/方屏视频：正常限制
                         )}
                         controls
                         autoPlay
@@ -123,7 +125,9 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
             <div className="flex items-center justify-between px-4 py-2 text-xs text-muted-foreground border-t border-border/60 bg-background/80">
               {hasMultiple ? (
                 <span>
-                  {index + 1}/{items.length}
+                  {index + 1}
+                  /
+                  {items.length}
                 </span>
               ) : (
                 <span />
@@ -162,5 +166,3 @@ export const MediaPreview = ({ open, items, initialIndex = 0, onClose }: MediaPr
 }
 
 export default MediaPreview
-
-

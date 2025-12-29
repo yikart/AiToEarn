@@ -4,9 +4,11 @@
 
 'use client'
 
-import { useState } from 'react'
+import type { IconBarProps } from '../types'
 import { Bell, Mail, Settings, Smartphone } from 'lucide-react'
+import { useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import DownloadAppModal from '@/components/common/DownloadAppModal'
 import { Badge } from '@/components/ui/badge'
 import {
   Tooltip,
@@ -14,10 +16,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-import DownloadAppModal from '@/components/common/DownloadAppModal'
-import type { IconBarProps } from '../types'
 import { CONTACT } from '@/constant'
+import { cn } from '@/lib/utils'
 
 export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification, onOpenSettings }: IconBarProps) {
   const { t } = useTransClient('common')
@@ -65,7 +65,12 @@ export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification
             side={collapsed ? 'right' : 'top'}
             className="bg-popover text-popover-foreground"
           >
-            <p>{t('contactUs')}: {CONTACT}</p>
+            <p>
+              {t('contactUs')}
+              :
+              {' '}
+              {CONTACT}
+            </p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
@@ -132,4 +137,3 @@ export function IconBar({ collapsed, isLoggedIn, unreadCount, onOpenNotification
     </div>
   )
 }
-

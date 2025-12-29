@@ -6,14 +6,14 @@
 'use client'
 
 import type { PluginPlatformType, PublishTask } from '@/store/plugin/types/baseTypes'
-import { FileText } from 'lucide-react'
 import dayjs from 'dayjs'
+import { FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { Badge } from '@/components/ui/badge'
+import { cn } from '@/lib/utils'
 import { usePluginStore } from '@/store/plugin'
 import { PlatformTaskStatus } from '@/store/plugin/types/baseTypes'
-import { cn } from '@/lib/utils'
 
 interface PublishListTabProps {
   /** 点击任务回调 */
@@ -106,7 +106,8 @@ export function PublishListTab({ onViewDetail }: PublishListTabProps) {
                 ))}
                 {task.platformTasks.length > 3 && (
                   <Badge variant="outline" className="text-xs">
-                    +{task.platformTasks.length - 3}
+                    +
+                    {task.platformTasks.length - 3}
                   </Badge>
                 )}
               </div>

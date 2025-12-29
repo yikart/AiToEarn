@@ -5,14 +5,14 @@
  * 支持动态平台列表，根据登录状态显示不同样式
  */
 
-import { memo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { message } from 'antd'
-import Image from 'next/image'
 import type { PlatformInfo } from '../../useInteractive'
 import type { SupportedPlatformType } from '@/store/plugin/plats/types'
-import styles from './PlatformSelector.module.scss'
+import { message } from 'antd'
+import Image from 'next/image'
+import { memo, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import styles from './PlatformSelector.module.scss'
 
 interface PlatformSelectorProps {
   /** 平台列表 */
@@ -92,4 +92,3 @@ function PlatformSelector({
 }
 
 export default memo(PlatformSelector)
-

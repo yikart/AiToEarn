@@ -19,8 +19,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { Modal } from '@/components/ui/modal'
 import SimpleAccountChoose from '@/components/ChooseAccountModule/components/SimpleAccountChoose'
+import { Modal } from '@/components/ui/modal'
 
 export interface IChooseAccountModuleRef {
   getSimpleAccountChooseRef: () => ISimpleAccountChooseRef | null

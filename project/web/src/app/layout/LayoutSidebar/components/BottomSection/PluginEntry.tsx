@@ -5,8 +5,9 @@
 
 'use client'
 
-import { useState } from 'react'
+import type { SidebarCommonProps } from '../../types'
 import { Puzzle } from 'lucide-react'
+import { useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { PluginModal } from '@/components/Plugin'
 import {
@@ -18,7 +19,6 @@ import {
 import { cn } from '@/lib/utils'
 import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
-import type { SidebarCommonProps } from '../../types'
 
 export function PluginEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
@@ -96,7 +96,10 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
             <TooltipTrigger asChild>{content}</TooltipTrigger>
             <TooltipContent side="right">
               <p>
-                {t('plugin')} - {statusText}
+                {t('plugin')}
+                {' '}
+                -
+                {statusText}
               </p>
             </TooltipContent>
           </Tooltip>
@@ -110,4 +113,3 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
     </>
   )
 }
-

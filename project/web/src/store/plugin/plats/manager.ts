@@ -3,7 +3,6 @@
  * 统一管理所有平台的交互操作
  */
 
-import { PlatType } from '@/app/config/platConfig'
 import type {
   CommentListParams,
   CommentListResult,
@@ -21,8 +20,9 @@ import type {
   SubCommentListParams,
   SupportedPlatformType,
 } from './types'
-import { xhsInteraction } from './xhs'
+import type { PlatType } from '@/app/config/platConfig'
 import { douyinInteraction } from './douyin'
+import { xhsInteraction } from './xhs'
 
 /**
  * 平台交互管理器

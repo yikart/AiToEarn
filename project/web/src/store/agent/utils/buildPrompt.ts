@@ -3,7 +3,7 @@
  * 将用户输入的文本和媒体文件转换为 Claude Prompt 格式
  */
 
-import type { IUploadedMedia, IPromptContentItem } from '../agent.types'
+import type { IPromptContentItem, IUploadedMedia } from '../agent.types'
 
 /**
  * 构建 Claude Prompt 格式
@@ -18,7 +18,7 @@ export function buildClaudePrompt(
   const prompt: IPromptContentItem[] = []
 
   // 过滤有效的媒体文件（已上传完成的）
-  const validMedias = medias.filter((m) => m.url && m.progress === undefined)
+  const validMedias = medias.filter(m => m.url && m.progress === undefined)
 
   // 添加媒体内容项
   validMedias.forEach((media) => {
@@ -60,7 +60,7 @@ export function buildPromptForAPI(
   medias: IUploadedMedia[] = [],
 ): string | IPromptContentItem[] {
   // 过滤有效的媒体文件
-  const validMedias = medias.filter((m) => m.url && m.progress === undefined)
+  const validMedias = medias.filter(m => m.url && m.progress === undefined)
 
   // 如果没有媒体文件，直接返回文本
   if (validMedias.length === 0) {
@@ -70,4 +70,3 @@ export function buildPromptForAPI(
   // 否则返回 Claude Prompt 格式数组
   return buildClaudePrompt(text, medias)
 }
-

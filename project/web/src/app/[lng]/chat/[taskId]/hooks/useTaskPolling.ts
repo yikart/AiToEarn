@@ -1,12 +1,13 @@
+import type { TaskDetail, TaskMessage } from '@/api/agent'
+import type { IDisplayMessage } from '@/store/agent'
 /**
  * 任务轮询 Hook
  * 在页面刷新后任务未完成时，通过轮询获取最新状态
  */
-import { useEffect, useRef, useState, useCallback } from 'react'
-import { agentApi, type TaskDetail, type TaskMessage } from '@/api/agent'
-import type { IDisplayMessage } from '@/store/agent'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { agentApi } from '@/api/agent'
 import { useUserStore } from '@/store/user'
-import { isTaskCompleted, convertMessages } from '../utils'
+import { convertMessages, isTaskCompleted } from '../utils'
 
 export interface ITaskPollingOptions {
   /** 任务 ID */
@@ -47,7 +48,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
   const [isPolling, setIsPolling] = useState(false)
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
-  
+
   // 获取 Credits 余额
   const fetchCreditsBalance = useUserStore(state => state.fetchCreditsBalance)
 
@@ -181,10 +182,12 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
             fetchCreditsBalance()
           }
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error('[TaskPolling] Polling failed:', error)
         // 轮询失败不停止，继续尝试
-      } finally {
+      }
+      finally {
         // 本次请求结束，允许下一个轮询执行
         isRequestRunning = false
       }
@@ -218,4 +221,3 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
     stopPolling,
   }
 }
-

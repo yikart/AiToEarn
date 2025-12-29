@@ -1,12 +1,13 @@
 'use client'
 
 import type { FlatNamespace } from 'i18next'
+import type { UseTranslationOptions, UseTranslationResponse } from 'react-i18next'
 import { getCookie, setCookie } from 'cookies-next'
 import i18next from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import resourcesToBackend from 'i18next-resources-to-backend'
 import { useEffect, useState } from 'react'
-import { initReactI18next, useTranslation, type UseTranslationResponse, type UseTranslationOptions } from 'react-i18next'
+import { initReactI18next, useTranslation } from 'react-i18next'
 
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cookieName, getOptions, languages } from './settings'

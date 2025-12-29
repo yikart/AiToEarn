@@ -15,10 +15,10 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
 import { usePluginStore } from '@/store/plugin'
 import { PLUGIN_SUPPORTED_PLATFORMS } from '@/store/plugin/types/baseTypes'
-import { cn } from '@/lib/utils'
 
 interface AccountsTabProps {
   /** 需要高亮的平台 */

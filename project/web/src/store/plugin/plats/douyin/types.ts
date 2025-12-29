@@ -111,4 +111,3 @@ export interface DouyinHomeFeedItem {
     height?: number
   }
 }
-

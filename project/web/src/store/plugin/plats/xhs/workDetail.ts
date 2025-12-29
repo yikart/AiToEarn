@@ -132,7 +132,7 @@ function transformToWorkDetail(item: XhsDetailItem): WorkDetail {
   // 构建作者主页链接
   const authorUrl = buildAuthorUrl(
     note_card.user?.user_id || '',
-    note_card.user?.xsec_token || ''
+    note_card.user?.xsec_token || '',
   )
 
   // 解析话题列表
@@ -272,11 +272,11 @@ export async function getWorkDetail(params: GetWorkDetailParams): Promise<GetWor
       detail,
       rawData: response,
     }
-  } catch (error) {
+  }
+  catch (error) {
     return {
       success: false,
       message: error instanceof Error ? error.message : '请求失败',
     }
   }
 }
-

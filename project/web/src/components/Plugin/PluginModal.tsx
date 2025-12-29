@@ -11,8 +11,8 @@ import { useTranslation } from 'react-i18next'
 import { Modal } from '@/components/ui/modal'
 import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
-import { PluginNotInstalled } from './PluginNotInstalled'
 import { PluginNoPermission } from './PluginNoPermission'
+import { PluginNotInstalled } from './PluginNotInstalled'
 import { PluginReady } from './PluginReady'
 import { PublishDetailModal } from './PublishDetailModal'
 
@@ -47,8 +47,10 @@ export function PluginModal({ visible, onClose, highlightPlatform }: PluginModal
    * 获取弹框标题
    */
   const getModalTitle = () => {
-    if (isReady) return t('status.ready')
-    if (isInstalledNoPermission) return t('status.installedNoPermission')
+    if (isReady)
+      return t('status.ready')
+    if (isInstalledNoPermission)
+      return t('status.installedNoPermission')
     return t('status.notInstalled')
   }
 

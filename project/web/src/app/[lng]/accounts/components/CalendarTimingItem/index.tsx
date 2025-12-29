@@ -1,8 +1,8 @@
 import type { DayCellContentArg } from '@fullcalendar/core'
 import type { ForwardedRef } from 'react'
 import type { PublishRecordItem } from '@/api/plat/types/publish.types'
-import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import dayjs from 'dayjs'
+import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { useDrop } from 'react-dnd'
 import { useShallow } from 'zustand/react/shallow'
@@ -178,7 +178,11 @@ const CalendarTimingItem = memo(
                           }}
                         >
                           <span className="group-hover/btn:opacity-0 transition-opacity">
-                            {v[0]}:{v[1]} PM
+                            {v[0]}
+                            :
+                            {v[1]}
+                            {' '}
+                            PM
                           </span>
                           <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/btn:opacity-100 transition-opacity">
                             {t('addPost')}

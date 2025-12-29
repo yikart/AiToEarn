@@ -1,9 +1,9 @@
 import type { RequestParams } from '@/utils/FetchService/types'
-import { useUserStore } from '@/store/user'
-import FetchService from '@/utils/FetchService/FetchService'
 import { directTrans } from '@/app/i18n/client'
 import { CONTACT } from '@/constant'
 import { notification } from '@/lib/notification'
+import { useUserStore } from '@/store/user'
+import FetchService from '@/utils/FetchService/FetchService'
 
 interface ResponseType<T> {
   code: string | number
@@ -20,7 +20,6 @@ const fetchService = new FetchService({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/`,
   requestInterceptor(requestParams) {
     const token = useUserStore.getState().token
-    // const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtYWlsIjoiemlqdWUyMDI1QG91dGxvb2suY29tIiwiaWQiOiI2OGI1MDM0ZDIxYjE1YTQwZTUxMWRmOWIiLCJuYW1lIjoi55So5oi3X1dYeVMzb0N3IiwiaWF0IjoxNzY0MDM1NTQzLCJleHAiOjE3NjQ2NDAzNDN9.ylPhoyWW5zPV2Y92lxR8OP0z55pWrY7aZ_kZlMRd0_s'
     requestParams.headers = {
       ...(requestParams.headers || {}),
       Authorization: token ? `Bearer ${token}` : '',
@@ -48,10 +47,8 @@ export async function request<T>(params: RequestParamsWithSilent) {
     const data: ResponseType<T> = await res.json()
 
     const lang = useUserStore.getState().lang || 'zh-CN'
-    const isZh = (lang || '').toLowerCase().startsWith('zh')
     // 使用项目的静态翻译方法（只使用国际化字段，不再使用硬编码回退）
     const networkBusy = directTrans('common', 'networkBusy')
-    const networkError = directTrans('common', 'networkError')
     const contactLabel = directTrans('common', 'contact')
     const contactText = `${contactLabel} ${CONTACT}`
 
@@ -91,7 +88,8 @@ export async function request<T>(params: RequestParamsWithSilent) {
     return data
   }
   catch (e) {
-    if (!params.silent && typeof window !== 'undefined') {
+    if ((useUserStore.getState().token || params.url.includes('login/mail'))
+      && !params.silent && typeof window !== 'undefined') {
       const errText = directTrans('common', 'networkError')
       const contactLabelNow = directTrans('common', 'contact')
       notification.error({

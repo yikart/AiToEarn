@@ -15,8 +15,8 @@ import {
   createTaskId,
   isAbortError,
 } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload.utils'
-import { UploadTaskStatusEnum } from './publishManageUpload.enum'
 import { getOssUrl } from '@/utils/oss'
+import { UploadTaskStatusEnum } from './publishManageUpload.enum'
 
 // 仅定义状态形状，方法类型走类型推断
 const initialState: IPublishManageUploadState = {

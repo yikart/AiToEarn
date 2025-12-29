@@ -1,5 +1,6 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import type { ClassValue } from 'clsx'
+import { clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -21,13 +22,17 @@ export function formatRelativeTime(date: Date | number): string {
 
   if (diffSec < 60) {
     return 'Just now'
-  } else if (diffMin < 60) {
+  }
+  else if (diffMin < 60) {
     return `${diffMin}m ago`
-  } else if (diffHour < 24) {
+  }
+  else if (diffHour < 24) {
     return `${diffHour}h ago`
-  } else if (diffDay < 7) {
+  }
+  else if (diffDay < 7) {
     return `${diffDay}d ago`
-  } else {
+  }
+  else {
     const year = target.getFullYear()
     const month = String(target.getMonth() + 1).padStart(2, '0')
     const day = String(target.getDate()).padStart(2, '0')

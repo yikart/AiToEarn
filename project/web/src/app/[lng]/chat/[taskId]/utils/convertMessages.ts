@@ -4,7 +4,7 @@
  */
 import type { TaskMessage } from '@/api/agent'
 import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
-import type { IDisplayMessage, IWorkflowStep, IMessageStep } from '@/store/agent'
+import type { IDisplayMessage, IMessageStep, IWorkflowStep } from '@/store/agent'
 import { parseUserMessageContent } from './parseMessageContent'
 
 /**
@@ -91,7 +91,8 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
               timestamp: Date.now(),
               medias: convertedMedias,
             } as any)
-          } else {
+          }
+          else {
             // 否则直接附加到最后一条 assistant 消息的 steps（如果存在），或新建一条 assistant 消息
             const lastMsg = displayMessages[displayMessages.length - 1]
             const mediaStep = {
@@ -103,7 +104,8 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
               medias: convertedMedias,
             }
             if (lastMsg && lastMsg.role === 'assistant') {
-              if (!lastMsg.steps) lastMsg.steps = []
+              if (!lastMsg.steps)
+                lastMsg.steps = []
               // 尝试将 media 插入到最后一个有文本内容的 step 之后
               let inserted = false
               for (let i = lastMsg.steps.length - 1; i >= 0; i--) {
@@ -131,7 +133,8 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
                 // 最后添加 mediaStep
                 lastMsg.steps.push(mediaStep as any)
               }
-            } else {
+            }
+            else {
               displayMessages.push({
                 id: msgAnyCheck.uuid || `result-${index}-${arrIndex}`,
                 role: 'assistant',
@@ -148,10 +151,12 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
     if (msg.type === 'user') {
       // 用户消息处理
       processUserMessage(msg, index, displayMessages, currentStepWorkflow, toolCallMap, saveStepsToMessage)
-    } else if (msg.type === 'stream_event') {
+    }
+    else if (msg.type === 'stream_event') {
       // 流式事件处理
       processStreamEvent(msg, currentStepWorkflow, toolCallMap, saveCurrentStep)
-    } else if (msg.type === 'assistant') {
+    }
+    else if (msg.type === 'assistant') {
       // AI 回复消息处理
       const result = processAssistantMessage(msg, index, displayMessages, currentStepWorkflow, toolCallMap)
       if (result.contentToAdd) {
@@ -160,7 +165,8 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
       if (result.newAssistantMsgIndex !== undefined) {
         lastAssistantMsgIndex = result.newAssistantMsgIndex
       }
-    } else if (msg.type === 'result') {
+    }
+    else if (msg.type === 'result') {
       // 结果消息处理
       const result = processResultMessage(msg, index, displayMessages)
       if (result.contentToAdd && !currentStepContent.includes(result.contentToAdd)) {
@@ -176,7 +182,7 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
   saveStepsToMessage()
 
   // 后处理：确保每条 assistant 消息都有正确的 content
-  displayMessages.forEach(msg => {
+  displayMessages.forEach((msg) => {
     if (msg.role === 'assistant' && msg.steps && msg.steps.length > 0) {
       const totalContent = msg.steps.map(s => s.content).filter(Boolean).join('\n\n')
       if (totalContent && !msg.content) {
@@ -207,32 +213,38 @@ function processUserMessage(
     if (parsed.hasSpecialFormat || parsed.medias.length > 0) {
       content = parsed.text
       medias.push(...parsed.medias)
-    } else {
+    }
+    else {
       // 使用原有逻辑
       msg.content.forEach((item: any) => {
         if (item.type === 'text') {
           content = item.text || ''
-        } else if (item.type === 'image') {
+        }
+        else if (item.type === 'image') {
           medias.push({
             url: item.source?.url || '',
             type: 'image',
           })
-        } else if (item.type === 'video') {
+        }
+        else if (item.type === 'video') {
           medias.push({
             url: item.source?.url || '',
             type: 'video',
           })
-        } else if (item.type === 'document') {
+        }
+        else if (item.type === 'document') {
           medias.push({
             url: item.source?.url || '',
             type: 'document',
           })
-        } else if (item.type === 'tool_result') {
+        }
+        else if (item.type === 'tool_result') {
           isToolResult = true
         }
       })
     }
-  } else if (typeof msg.content === 'string') {
+  }
+  else if (typeof msg.content === 'string') {
     // 尝试使用新的解析器解析字符串格式
     const parsed = parseUserMessageContent(msg.content)
     content = parsed.text
@@ -269,7 +281,8 @@ function processUserMessage(
                 resultText = rc.text || ''
               }
             })
-          } else if (typeof item.content === 'string') {
+          }
+          else if (typeof item.content === 'string') {
             resultText = item.content
           }
 
@@ -359,7 +372,7 @@ function processAssistantMessage(
   displayMessages: IDisplayMessage[],
   currentStepWorkflow: IWorkflowStep[],
   toolCallMap: Map<string, string>,
-): { contentToAdd?: string; newAssistantMsgIndex?: number } {
+): { contentToAdd?: string, newAssistantMsgIndex?: number } {
   let content = ''
   const messageData = (msg as any).message as any
 
@@ -367,7 +380,8 @@ function processAssistantMessage(
     messageData.content.forEach((item: any) => {
       if (item.type === 'text') {
         content += item.text || ''
-      } else if (item.type === 'tool_use') {
+      }
+      else if (item.type === 'tool_use') {
         const toolName = item.name || 'Unknown Tool'
         const toolId = item.id || `tool-${Date.now()}`
         const toolInput = item.input ? JSON.stringify(item.input, null, 2) : ''
@@ -378,7 +392,8 @@ function processAssistantMessage(
         if (existingCall) {
           existingCall.content = toolInput
           existingCall.isActive = false
-        } else {
+        }
+        else {
           currentStepWorkflow.push({
             id: toolId,
             type: 'tool_call',
@@ -416,7 +431,7 @@ function processResultMessage(
   msg: TaskMessage,
   index: number,
   displayMessages: IDisplayMessage[],
-): { contentToAdd?: string; newAssistantMsgIndex?: number; actions?: any[] } {
+): { contentToAdd?: string, newAssistantMsgIndex?: number, actions?: any[] } {
   const msgAny = msg as any
   const msgData = msgAny.message
   let content = ''
@@ -439,11 +454,11 @@ function processResultMessage(
   // 注意：后端保存的结构是 msg.result（根级别），不是 msg.message.result
   // 同时兼容两种格式以防万一
   const resultData = msgAny.result || (msgData && typeof msgData === 'object' ? msgData.result : null)
-  
+
   if (resultData) {
     // 统一转换为数组处理
     const resultArray = Array.isArray(resultData) ? resultData : [resultData]
-    
+
     // Map actions (but do NOT attach medias to action cards to avoid duplicate rendering)
     actions = resultArray
       .filter((item: any) => item && item.action) // 只处理有 action 的项
@@ -468,7 +483,8 @@ function processResultMessage(
         lastMsg.actions = [...(lastMsg.actions || []), ...actions]
       }
       return { contentToAdd: content || undefined }
-    } else {
+    }
+    else {
       displayMessages.push({
         id: msgAny.uuid || `result-${index}`,
         role: 'assistant',
@@ -482,4 +498,3 @@ function processResultMessage(
 
   return {}
 }
-

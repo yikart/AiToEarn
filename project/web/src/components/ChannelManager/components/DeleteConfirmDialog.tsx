@@ -9,6 +9,7 @@
 'use client'
 
 import { LoadingOutlined } from '@ant-design/icons'
+import { Loader2 } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import {
   AlertDialog,
@@ -20,7 +21,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Loader2 } from 'lucide-react'
 
 interface DeleteConfirmDialogProps {
   open: boolean

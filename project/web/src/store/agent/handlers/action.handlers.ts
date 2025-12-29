@@ -1,21 +1,21 @@
 /**
  * Agent Store - Action 处理器模块
  * 使用策略模式处理不同的任务结果操作
- * 
+ *
  * 从 public/AgentGenerator/actionHandlers.ts 移植并增强
  */
 
-import { confirm } from '@/lib/confirm'
-import { toast } from '@/lib/toast'
-import { PubType } from '@/app/config/publishConfig'
+import type { ActionType, IActionContext, IMediaItem, ITaskData } from '../agent.types'
+import type { PluginPublishItem } from '@/store/plugin/store'
+import { driver } from 'driver.js'
 import { MediaType } from '@/api/agent'
 import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
+import { PubType } from '@/app/config/publishConfig'
+import { confirm } from '@/lib/confirm'
+import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
-import type { PluginPublishItem } from '@/store/plugin/store'
-import { driver } from 'driver.js'
-import type { ITaskData, IActionContext, ActionType, IMediaItem } from '../agent.types'
 
 // ============ Action Handler 接口 ============
 
@@ -41,11 +41,16 @@ function buildPublishQueryParams(taskData: ITaskData): URLSearchParams {
   params.set('aiGenerated', 'true')
 
   // 只添加非空值
-  if (taskData.platform) params.set('platform', taskData.platform)
-  if (taskData.accountId) params.set('accountId', taskData.accountId)
-  if (taskData.taskId) params.set('taskId', taskData.taskId)
-  if (taskData.title) params.set('title', taskData.title)
-  if (taskData.description) params.set('description', taskData.description)
+  if (taskData.platform)
+    params.set('platform', taskData.platform)
+  if (taskData.accountId)
+    params.set('accountId', taskData.accountId)
+  if (taskData.taskId)
+    params.set('taskId', taskData.taskId)
+  if (taskData.title)
+    params.set('title', taskData.title)
+  if (taskData.description)
+    params.set('description', taskData.description)
   if (taskData.tags && taskData.tags.length > 0) {
     params.set('tags', JSON.stringify(taskData.tags))
   }
@@ -179,9 +184,9 @@ const navigateToPublishPluginHandler: IActionHandler = {
 
   canHandle: (taskData) => {
     return (
-      taskData.type === 'fullContent' &&
-      taskData.action === 'navigateToPublish' &&
-      (taskData.platform === 'xhs' || taskData.platform === 'douyin')
+      taskData.type === 'fullContent'
+      && taskData.action === 'navigateToPublish'
+      && (taskData.platform === 'xhs' || taskData.platform === 'douyin')
     )
   },
 
@@ -206,14 +211,16 @@ const navigateToPublishPluginHandler: IActionHandler = {
       // 根据 accountId 或 platform 查找目标账号
       let targetAccounts: any[] = []
       if (taskData.accountId) {
-        const targetAccount = allAccounts.find((account) => account.id === taskData.accountId)
+        const targetAccount = allAccounts.find(account => account.id === taskData.accountId)
         if (targetAccount) {
           targetAccounts = [targetAccount]
-        } else {
+        }
+        else {
           console.warn(`[ActionHandler] Account not found: ${taskData.accountId}`)
         }
-      } else {
-        targetAccounts = allAccounts.filter((account) => account.type === taskData.platform)
+      }
+      else {
+        targetAccounts = allAccounts.filter(account => account.type === taskData.platform)
       }
 
       if (targetAccounts.length === 0) {
@@ -254,7 +261,8 @@ const navigateToPublishPluginHandler: IActionHandler = {
           },
         })
       }
-    } catch (error: any) {
+    }
+    catch (error: any) {
       console.error('[ActionHandler] Plugin publish error:', error)
       toast.error(
         `${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`,
@@ -271,10 +279,10 @@ const navigateToPublishOtherHandler: IActionHandler = {
 
   canHandle: (taskData) => {
     return (
-      taskData.type === 'fullContent' &&
-      taskData.action === 'navigateToPublish' &&
-      taskData.platform !== 'xhs' &&
-      taskData.platform !== 'douyin'
+      taskData.type === 'fullContent'
+      && taskData.action === 'navigateToPublish'
+      && taskData.platform !== 'xhs'
+      && taskData.platform !== 'douyin'
     )
   },
 
@@ -335,10 +343,10 @@ const saveDraftHandler: IActionHandler = {
       })
 
       // 确定封面URL
-      const coverUrl =
-        medias.find((m: IMediaItem) => m.coverUrl)?.coverUrl ||
-        medias.find((m: IMediaItem) => m.type === 'IMAGE')?.url ||
-        undefined
+      const coverUrl
+        = medias.find((m: IMediaItem) => m.coverUrl)?.coverUrl
+          || medias.find((m: IMediaItem) => m.type === 'IMAGE')?.url
+          || undefined
 
       // 获取分组列表
       const groupListRes = await apiGetMaterialGroupList(1, 100)
@@ -374,10 +382,12 @@ const saveDraftHandler: IActionHandler = {
         setTimeout(() => {
           router.push(`/${lng}/cgmaterial`)
         }, 1500)
-      } else {
+      }
+      else {
         toast.error(t('aiGeneration.saveDraftFailed' as any))
       }
-    } catch (error: any) {
+    }
+    catch (error: any) {
       console.error('[ActionHandler] Save draft error:', error)
       toast.error(
         `${t('aiGeneration.saveDraftFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`,
@@ -533,7 +543,7 @@ export const ActionRegistry = {
     }
 
     // 查找匹配的 Handler
-    const handler = actionHandlers.find((h) => h.canHandle(taskData))
+    const handler = actionHandlers.find(h => h.canHandle(taskData))
 
     if (handler) {
       console.log(`[ActionRegistry] Executing handler: ${handler.type} for platform: ${taskData.platform}`)
@@ -564,10 +574,12 @@ export const ActionRegistry = {
       if (taskData.type === 'fullContent' && taskData.action === 'navigateToPublish') {
         if (taskData.platform === 'xhs' || taskData.platform === 'douyin') {
           pluginTasks.push(taskData)
-        } else {
+        }
+        else {
           otherTasks.push(taskData)
         }
-      } else {
+      }
+      else {
         otherTasks.push(taskData)
       }
     })
@@ -613,12 +625,13 @@ export const ActionRegistry = {
       pluginTasks.forEach((taskData) => {
         let targetAccounts: any[] = []
         if (taskData.accountId) {
-          const targetAccount = allAccounts.find((account) => account.id === taskData.accountId)
+          const targetAccount = allAccounts.find(account => account.id === taskData.accountId)
           if (targetAccount) {
             targetAccounts = [targetAccount]
           }
-        } else {
-          targetAccounts = allAccounts.filter((account) => account.type === taskData.platform)
+        }
+        else {
+          targetAccounts = allAccounts.filter(account => account.type === taskData.platform)
         }
 
         if (targetAccounts.length === 0) {
@@ -654,10 +667,12 @@ export const ActionRegistry = {
             toast.info(t('plugin.publishTaskSubmitted' as any))
           },
         })
-      } else {
+      }
+      else {
         toast.warning(t('aiGeneration.noAccountFound' as any) || '未找到可发布的账号')
       }
-    } catch (error: any) {
+    }
+    catch (error: any) {
       console.error('[ActionRegistry] Plugin batch publish error:', error)
       toast.error(
         `${t('plugin.publishFailed' as any)}: ${error.message || t('aiGeneration.unknownError' as any)}`,
@@ -669,9 +684,8 @@ export const ActionRegistry = {
    * 获取所有已注册的 Action 类型
    */
   getRegisteredTypes(): ActionType[] {
-    return [...new Set(actionHandlers.map((h) => h.type))]
+    return [...new Set(actionHandlers.map(h => h.type))]
   },
 }
 
 export default ActionRegistry
-

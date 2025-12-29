@@ -35,7 +35,6 @@ import {
   Typography,
   Upload,
 } from 'antd'
-import { toast } from '@/lib/toast'
 import { useEffect, useRef, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
 import { uploadToOss } from '@/api/oss'
@@ -52,6 +51,7 @@ import {
 } from '@/api/pinterest'
 import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 import styles from './pinterest.module.scss'
 

@@ -5,13 +5,14 @@
 
 @custom-variant dark (&:is(.dark *));
 
-html, body {
+html,
+body {
   height: 100%;
   overflow: hidden;
 }
 
 body {
-  font-family: "SourceHanSansCN-Regular";
+  font-family: 'SourceHanSansCN-Regular';
 }
 
 button {
@@ -167,7 +168,7 @@ body > div {
   /* 移动端优化 - 确保内容占满宽度 */
   @media (max-width: 640px) {
     /* 针对 shadcn Dialog 的移动端样式 */
-    & [role="dialog"] {
+    & [role='dialog'] {
       padding: 16px !important;
     }
   }
@@ -178,11 +179,11 @@ body > div {
   .scrollbar-thin {
     scrollbar-width: thin;
   }
-  
+
   .scrollbar-thumb-gray-300 {
     scrollbar-color: #d1d5db #f3f4f6;
   }
-  
+
   .scrollbar-track-gray-100 {
     /* 用于scrollbar-color的第二个值 */
   }

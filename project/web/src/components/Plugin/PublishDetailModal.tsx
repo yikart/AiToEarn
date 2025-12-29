@@ -6,8 +6,8 @@
 'use client'
 
 import type { PlatformPublishTask, PluginPlatformType, PublishTask } from '@/store/plugin/types/baseTypes'
-import { ExternalLink } from 'lucide-react'
 import dayjs from 'dayjs'
+import { ExternalLink } from 'lucide-react'
 import Image from 'next/image'
 import { useTranslation } from 'react-i18next'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
@@ -15,11 +15,11 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
+import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
 import { usePluginStore } from '@/store/plugin'
 import { PlatformTaskStatus } from '@/store/plugin/types/baseTypes'
 import { getOssUrl } from '@/utils/oss'
-import { cn } from '@/lib/utils'
 
 /**
  * 组件属性
@@ -128,7 +128,10 @@ function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask 
         <div className="mb-3">
           <div className="mb-1 flex items-center justify-between text-xs">
             <span className="text-gray-500">{t(`stage.${platformTask.progress.stage}`)}</span>
-            <span className="text-gray-400">{Math.round(progress)}%</span>
+            <span className="text-gray-400">
+              {Math.round(progress)}
+              %
+            </span>
           </div>
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100">
             <div
@@ -147,13 +150,19 @@ function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask 
         <div className="space-y-1 border-t border-gray-100 pt-3">
           {platformTask.result.workId && (
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-gray-500">{t('publishDetail.workId')}:</span>
+              <span className="text-gray-500">
+                {t('publishDetail.workId')}
+                :
+              </span>
               <span className="text-gray-700">{platformTask.result.workId}</span>
             </div>
           )}
           {platformTask.result.shareLink && (
             <div className="flex items-center gap-2 text-xs">
-              <span className="text-gray-500">{t('publishDetail.shareLink')}:</span>
+              <span className="text-gray-500">
+                {t('publishDetail.shareLink')}
+                :
+              </span>
               <a
                 href={platformTask.result.shareLink}
                 target="_blank"
@@ -167,7 +176,10 @@ function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask 
           )}
           {platformTask.result.failReason && (
             <div className="flex items-start gap-2 text-xs">
-              <span className="shrink-0 text-gray-500">{t('publishDetail.failReason')}:</span>
+              <span className="shrink-0 text-gray-500">
+                {t('publishDetail.failReason')}
+                :
+              </span>
               <span className="text-red-600">{platformTask.result.failReason}</span>
             </div>
           )}
@@ -186,12 +198,16 @@ function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask 
         <div className="mt-3 flex gap-4 border-t border-gray-100 pt-3 text-xs text-gray-400">
           {platformTask.startTime && (
             <span>
-              {t('common.startTime')}: {dayjs(platformTask.startTime).format('HH:mm:ss')}
+              {t('common.startTime')}
+              :
+              {dayjs(platformTask.startTime).format('HH:mm:ss')}
             </span>
           )}
           {platformTask.endTime && (
             <span>
-              {t('common.endTime')}: {dayjs(platformTask.endTime).format('HH:mm:ss')}
+              {t('common.endTime')}
+              :
+              {dayjs(platformTask.endTime).format('HH:mm:ss')}
             </span>
           )}
         </div>
@@ -247,14 +263,20 @@ export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDe
             <p className="mb-2 text-sm text-gray-500">{currentTask.description}</p>
           )}
           <div className="text-xs text-gray-400">
-            {t('common.createdAt')}: {dayjs(currentTask.createdAt).format('YYYY-MM-DD HH:mm:ss')}
+            {t('common.createdAt')}
+            :
+            {dayjs(currentTask.createdAt).format('YYYY-MM-DD HH:mm:ss')}
           </div>
         </div>
 
         {/* 平台任务列表 */}
         <div>
           <h4 className="mb-3 text-sm font-medium text-gray-700">
-            {t('publishList.platforms')} ({currentTask.platformTasks.length})
+            {t('publishList.platforms')}
+            {' '}
+            (
+            {currentTask.platformTasks.length}
+            )
           </h4>
           <div className="space-y-3">
             {currentTask.platformTasks.map(platformTask => (

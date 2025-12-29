@@ -28,10 +28,10 @@ export function middleware(req: NextRequest) {
       '/sitemap-4.xml',
       '/sitemap',
       '/healthz',
-      "/js/xhs_sign_init.js",
-      "/js/xhs_web_sign.js",
-      "/js/xhs_sign_core.js",
-      "/js/xhs_sign_inject.js",
+      '/js/xhs_sign_init.js',
+      '/js/xhs_web_sign.js',
+      '/js/xhs_sign_core.js',
+      '/js/xhs_sign_inject.js',
     ].find(v => req.nextUrl.pathname.includes(v!))
   ) {
     return NextResponse.next()

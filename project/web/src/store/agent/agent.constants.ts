@@ -4,7 +4,7 @@
  */
 
 /** 状态显示配置 */
-export const STATUS_CONFIG: Record<string, { text: string; color: string }> = {
+export const STATUS_CONFIG: Record<string, { text: string, color: string }> = {
   THINKING: { text: 'thinking', color: '#a66ae4' },
   WAITING: { text: 'waiting', color: '#b78ae9' },
   GENERATING_CONTENT: { text: 'generatingContent', color: '#a66ae4' },
@@ -34,4 +34,3 @@ export const GENERATING_STATUSES = [
   'GENERATING_VIDEO',
   'GENERATING_TEXT',
 ]
-

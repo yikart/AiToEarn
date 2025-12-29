@@ -1,11 +1,11 @@
-type NotificationOptions = {
+interface NotificationOptions {
   key?: string
   id?: string
   duration?: number
   content?: React.ReactNode
 }
 
-function emit(payload: { key?: string; id?: string; content?: React.ReactNode; duration?: number; _uid?: string }) {
+function emit(payload: { key?: string, id?: string, content?: React.ReactNode, duration?: number, _uid?: string }) {
   if (typeof window === 'undefined') {
     // server-side fallback: no-op
     return
@@ -18,8 +18,9 @@ function emit(payload: { key?: string; id?: string; content?: React.ReactNode; d
   }
 }
 
-function removeEmit(payload: { key?: string; id?: string; _uid?: string }) {
-  if (typeof window === 'undefined') return
+function removeEmit(payload: { key?: string, id?: string, _uid?: string }) {
+  if (typeof window === 'undefined')
+    return
   try {
     window.dispatchEvent(new CustomEvent('aito:notification-remove', { detail: payload }))
   }
@@ -71,12 +72,11 @@ export const notification = {
   },
 
   destroy(key?: string) {
-    if (!key) return
+    if (!key)
+      return
     // try remove by uid first
     removeEmit({ _uid: key, key })
   },
 }
 
 export default notification
-
-

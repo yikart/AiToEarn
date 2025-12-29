@@ -89,7 +89,8 @@ export function AgentTab() {
 
   // 过滤模型列表
   const filteredModels = useMemo(() => {
-    if (!searchQuery.trim()) return chatModels
+    if (!searchQuery.trim())
+      return chatModels
     const query = searchQuery.toLowerCase()
     return chatModels.filter(
       model =>
@@ -183,7 +184,9 @@ export function AgentTab() {
                                 </span>
                                 {currentModel.pricing && (
                                   <span className="text-xs font-normal text-muted-foreground">
-                                    Input: {currentModel.pricing.prompt}
+                                    Input:
+                                    {' '}
+                                    {currentModel.pricing.prompt}
                                     {currentModel.pricing.completion && ` · Output: ${currentModel.pricing.completion}`}
                                   </span>
                                 )}
@@ -283,7 +286,9 @@ export function AgentTab() {
                                     </div>
                                     {model.pricing && (
                                       <span className="mt-1 text-xs text-muted-foreground">
-                                        Input: {model.pricing.prompt}
+                                        Input:
+                                        {' '}
+                                        {model.pricing.prompt}
                                         {model.pricing.completion && ` · Output: ${model.pricing.completion}`}
                                       </span>
                                     )}

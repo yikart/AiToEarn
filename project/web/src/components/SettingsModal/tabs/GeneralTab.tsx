@@ -4,9 +4,9 @@
 
 'use client'
 
+import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useTheme } from 'next-themes'
 import { useTransClient } from '@/app/i18n/client'
 import {
   Select,
@@ -15,13 +15,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
 import { useGetClientLng } from '@/hooks/useSystem'
+import { cn } from '@/lib/utils'
 
-// 主题图片
-import lightColorImg from '../images/lightColor.png'
 import darkColorImg from '../images/darkColor.png'
 import followSystemImg from '../images/followSystem.png'
+// 主题图片
+import lightColorImg from '../images/lightColor.png'
 
 const languageOptions = [
   { value: 'en', label: 'English' },
@@ -29,7 +29,7 @@ const languageOptions = [
 ]
 
 /** 主题选项配置 */
-const themeOptions: { value: string; labelKey: string; image: typeof lightColorImg }[] = [
+const themeOptions: { value: string, labelKey: string, image: typeof lightColorImg }[] = [
   { value: 'light', labelKey: 'general.themeLight', image: lightColorImg },
   { value: 'dark', labelKey: 'general.themeDark', image: darkColorImg },
   { value: 'system', labelKey: 'general.themeSystem', image: followSystemImg },
@@ -57,7 +57,7 @@ export function GeneralTab() {
         <h4 className="text-sm font-medium text-foreground mb-1">{t('general.theme')}</h4>
         <p className="text-sm text-muted-foreground mb-4">{t('general.themeDesc')}</p>
         <div className="flex flex-wrap gap-3 md:gap-4">
-          {themeOptions.map(option => {
+          {themeOptions.map((option) => {
             const isActive = theme === option.value
             return (
               <button
@@ -71,7 +71,7 @@ export function GeneralTab() {
                     'relative w-16 h-11 md:w-20 md:h-14 rounded-lg overflow-hidden border-2 transition-all',
                     isActive
                       ? 'border-primary shadow-sm'
-                      : 'border-border hover:border-muted-foreground'
+                      : 'border-border hover:border-muted-foreground',
                   )}
                 >
                   <Image
@@ -85,7 +85,7 @@ export function GeneralTab() {
                 <span
                   className={cn(
                     'text-xs transition-colors',
-                    isActive ? 'text-primary font-medium' : 'text-muted-foreground'
+                    isActive ? 'text-primary font-medium' : 'text-muted-foreground',
                   )}
                 >
                   {t(option.labelKey)}
@@ -118,4 +118,3 @@ export function GeneralTab() {
     </div>
   )
 }
-

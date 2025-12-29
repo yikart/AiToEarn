@@ -45,14 +45,12 @@ export function tiktokLogin(taskId: any): Promise<any> {
 
           // 检查是否达到最大轮询次数
           if (pollCount >= maxPollCount) {
-            
             return true
           }
 
           // return false;
         }
         catch (error) {
-          
           return false
         }
       }

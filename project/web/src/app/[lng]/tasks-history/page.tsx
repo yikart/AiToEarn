@@ -4,15 +4,16 @@
  */
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import type { TaskListItem } from '@/api/agent'
 import { ArrowLeft, History, RefreshCw, Star } from 'lucide-react'
+import { useParams, useRouter } from 'next/navigation'
+import { useCallback, useEffect, useState } from 'react'
+import { agentApi } from '@/api/agent'
+import { useTransClient } from '@/app/i18n/client'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
 import TaskHistoryList from '@/components/Chat/TaskHistoryList'
 import { Button } from '@/components/ui/button'
 import { Pagination } from '@/components/ui/pagination'
-import { agentApi, type TaskListItem } from '@/api/agent'
-import { useTransClient } from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 
@@ -44,14 +45,16 @@ export default function TasksHistoryPage() {
           setTotal(result.data.total || 0)
           setPage(pageNum)
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error('Load task list failed:', error)
         toast.error(t('message.error'))
-      } finally {
+      }
+      finally {
         setIsLoading(false)
       }
     },
-    [pageSize, t]
+    [pageSize, t],
   )
 
   /** 初始加载 */
@@ -66,10 +69,10 @@ export default function TasksHistoryPage() {
 
   /** 分页切换 */
   const handlePageChange = (nextPage: number) => {
-    if (nextPage < 1 || nextPage > totalPages) return
+    if (nextPage < 1 || nextPage > totalPages)
+      return
     loadTasks(nextPage)
   }
-
 
   /** 返回首页 */
   const handleBack = () => {
@@ -96,7 +99,11 @@ export default function TasksHistoryPage() {
             </h1>
           </div>
           {total > 0 && (
-            <span className="text-sm text-muted-foreground">({total})</span>
+            <span className="text-sm text-muted-foreground">
+              (
+              {total}
+              )
+            </span>
           )}
         </div>
         <Button
@@ -150,7 +157,10 @@ export default function TasksHistoryPage() {
                     onChange={handlePageChange}
                     showTotal={(totalCount, [_start, _end]) => (
                       <span className="text-sm text-muted-foreground">
-                        {page} / {totalPages}
+                        {page}
+                        {' '}
+                        /
+                        {totalPages}
                       </span>
                     )}
                     className="w-full"

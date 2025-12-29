@@ -10,25 +10,25 @@ import type { WithdrawRecord } from '@/api/types/withdraw'
 import { CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DollarOutlined, HistoryOutlined, WalletOutlined } from '@ant-design/icons'
 import { useParams, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { createWithdrawApi, getIncomeDetailApi, getIncomeListApi, getWithdrawListApi, withdrawAllPendingApi } from '@/api/payment'
 import { WithdrawRecordStatus, WithdrawStatus } from '@/api/types/withdraw'
-import { getIncomeListApi, getIncomeDetailApi, createWithdrawApi, getWithdrawListApi, withdrawAllPendingApi } from '@/api/payment'
 import { useTransClient } from '@/app/i18n/client'
-import WalletAccountSelect from '@/components/WalletAccountSelect'
-import WalletModal from '@/components/WalletModal'
-import { useUserStore } from '@/store/user'
-import { openLoginModal } from '@/store/loginModal'
-import { toast } from '@/lib/toast'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { Badge } from '@/components/ui/badge'
-import { Spin } from '@/components/ui/spin'
 import { Empty } from '@/components/ui/empty'
-import { Pagination } from '@/components/ui/pagination'
-import { Modal } from '@/components/ui/modal'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Modal } from '@/components/ui/modal'
+import { Pagination } from '@/components/ui/pagination'
+import { Spin } from '@/components/ui/spin'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import WalletAccountSelect from '@/components/WalletAccountSelect'
+import WalletModal from '@/components/WalletModal'
+import { toast } from '@/lib/toast'
+import { openLoginModal } from '@/store/loginModal'
+import { useUserStore } from '@/store/user'
 import styles from './income.module.scss'
 
 export default function IncomePage() {
@@ -348,44 +348,44 @@ export default function IncomePage() {
           </TabsList>
 
           <TabsContent value="income" className="mt-4">
-          {/* 筛选器 */}
+            {/* 筛选器 */}
             <div className="flex gap-4 mb-6">
-                <div className="flex-1">
-                  <Label className="mb-2 block">{t('type')}</Label>
-                  <select
-                    value={incomeFilters.type || 'all'}
-                    onChange={(e) => {
-                      setIncomeFilters(prev => ({
-                        ...prev,
-                        type: e.target.value === 'all' ? undefined : e.target.value as any,
-                      }))
-                    }}
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  >
-                    <option value="all">{t('all') || 'All'}</option>
-                    <option value="task">{t('incomeTypes.task')}</option>
-                    <option value="task_back">{t('incomeTypes.task_back')}</option>
-                    <option value="reward_back">{t('incomeTypes.reward_back')}</option>
-                    <option value="task_withdraw">{t('incomeTypes.task_withdraw' as any)}</option>
-                  </select>
-                </div>
-                <div className="flex-1">
-                  <Label className="mb-2 block">{t('statusLabel')}</Label>
-                  <select
-                    value={incomeFilters.status || 'all'}
-                    onChange={(e) => {
-                      setIncomeFilters(prev => ({
-                        ...prev,
-                        status: e.target.value === 'all' ? undefined : e.target.value as any,
-                      }))
-                    }}
-                    className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                  >
-                    <option value="all">{t('all') || 'All'}</option>
-                    <option value="pending">{t('status.pending')}</option>
-                    <option value="withdrawn">{t('status.withdrawn')}</option>
-                  </select>
-                </div>
+              <div className="flex-1">
+                <Label className="mb-2 block">{t('type')}</Label>
+                <select
+                  value={incomeFilters.type || 'all'}
+                  onChange={(e) => {
+                    setIncomeFilters(prev => ({
+                      ...prev,
+                      type: e.target.value === 'all' ? undefined : e.target.value as any,
+                    }))
+                  }}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="all">{t('all') || 'All'}</option>
+                  <option value="task">{t('incomeTypes.task')}</option>
+                  <option value="task_back">{t('incomeTypes.task_back')}</option>
+                  <option value="reward_back">{t('incomeTypes.reward_back')}</option>
+                  <option value="task_withdraw">{t('incomeTypes.task_withdraw' as any)}</option>
+                </select>
+              </div>
+              <div className="flex-1">
+                <Label className="mb-2 block">{t('statusLabel')}</Label>
+                <select
+                  value={incomeFilters.status || 'all'}
+                  onChange={(e) => {
+                    setIncomeFilters(prev => ({
+                      ...prev,
+                      status: e.target.value === 'all' ? undefined : e.target.value as any,
+                    }))
+                  }}
+                  className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                >
+                  <option value="all">{t('all') || 'All'}</option>
+                  <option value="pending">{t('status.pending')}</option>
+                  <option value="withdrawn">{t('status.withdrawn')}</option>
+                </select>
+              </div>
             </div>
 
             {/* Withdraw All 按钮 — 放在收入记录选项卡下方 */}
@@ -404,92 +404,93 @@ export default function IncomePage() {
                 <>
                   <div className="overflow-x-auto">
                     <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[200px]">{t('incomeId')}</TableHead>
-                            <TableHead>{t('amount')}</TableHead>
-                            <TableHead>{t('type')}</TableHead>
-                            <TableHead>{t('statusLabel')}</TableHead>
-                            <TableHead>{t('description')}</TableHead>
-                            <TableHead>{t('createTime')}</TableHead>
-                            <TableHead>{t('actions')}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {incomeRecords.map((record) => (
-                            <TableRow key={record._id || record.id}>
-                              <TableCell className="font-mono text-xs">
-                                <button
-                                  type="button"
-                                  onClick={() => fetchIncomeDetail(record._id || record.id)}
-                                  className="text-primary hover:underline"
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[200px]">{t('incomeId')}</TableHead>
+                          <TableHead>{t('amount')}</TableHead>
+                          <TableHead>{t('type')}</TableHead>
+                          <TableHead>{t('statusLabel')}</TableHead>
+                          <TableHead>{t('description')}</TableHead>
+                          <TableHead>{t('createTime')}</TableHead>
+                          <TableHead>{t('actions')}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {incomeRecords.map(record => (
+                          <TableRow key={record._id || record.id}>
+                            <TableCell className="font-mono text-xs">
+                              <button
+                                type="button"
+                                onClick={() => fetchIncomeDetail(record._id || record.id)}
+                                className="text-primary hover:underline"
+                              >
+                                {(record._id || record.id).slice(0, 8)}
+                                ...
+                              </button>
+                            </TableCell>
+                            <TableCell>
+                              <span className="text-green-600 font-bold">
+                                {record.currency || 'CNY'}
+                                {' '}
+                                {(record.amount / 100).toFixed(2)}
+                              </span>
+                            </TableCell>
+                            <TableCell>
+                              <Badge className={getIncomeTypeText(record.type)}>
+                                {t(`incomeTypes.${record.type}` as any) || record.type}
+                              </Badge>
+                            </TableCell>
+                            <TableCell>
+                              {record.status === 'pending' || record.status === 0 || record.status === undefined
+                                ? (
+                                    <Badge className={getBadgeClassName('orange')}>
+                                      {t('status.pending')}
+                                    </Badge>
+                                  )
+                                : (
+                                    <Badge className={getBadgeClassName('green')}>
+                                      {t('status.withdrawn')}
+                                    </Badge>
+                                  )}
+                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate">
+                              {record.desc || '-'}
+                            </TableCell>
+                            <TableCell className="text-sm text-muted-foreground">
+                              {new Date(record.createdAt).toLocaleString()}
+                            </TableCell>
+                            <TableCell>
+                              {canWithdraw(record) && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => handleWithdraw(record)}
                                 >
-                                  {(record._id || record.id).slice(0, 8)}...
-                                </button>
-                              </TableCell>
-                              <TableCell>
-                                <span className="text-green-600 font-bold">
-                                  {record.currency || 'CNY'}
-                                  {' '}
-                                  {(record.amount / 100).toFixed(2)}
-                                </span>
-                              </TableCell>
-                              <TableCell>
-                                <Badge className={getIncomeTypeText(record.type)}>
-                                  {t(`incomeTypes.${record.type}` as any) || record.type}
-                                </Badge>
-                              </TableCell>
-                              <TableCell>
-                                {record.status === 'pending' || record.status === 0 || record.status === undefined
-                                  ? (
-                                      <Badge className={getBadgeClassName('orange')}>
-                                        {t('status.pending')}
-                                      </Badge>
-                                    )
-                                  : (
-                                      <Badge className={getBadgeClassName('green')}>
-                                        {t('status.withdrawn')}
-                                      </Badge>
-                                    )}
-                              </TableCell>
-                              <TableCell className="max-w-[200px] truncate">
-                                {record.desc || '-'}
-                              </TableCell>
-                              <TableCell className="text-sm text-muted-foreground">
-                                {new Date(record.createdAt).toLocaleString()}
-                              </TableCell>
-                              <TableCell>
-                                {canWithdraw(record) && (
-                                  <Button
-                                    size="sm"
-                                    onClick={() => handleWithdraw(record)}
-                                  >
-                                    {t('applyWithdraw')}
-                                  </Button>
-                                )}
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+                                  {t('applyWithdraw')}
+                                </Button>
+                              )}
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
 
-                    <div className="mt-4">
-                      <Pagination
-                        current={incomePagination.current}
-                        pageSize={incomePagination.pageSize}
-                        total={incomePagination.total}
-                        onChange={(page, pageSize) => {
-                          fetchIncomeRecords(page, pageSize || 10)
-                        }}
-                        onShowSizeChange={(current, size) => {
-                          fetchIncomeRecords(current, size)
-                        }}
-                        showSizeChanger
-                        showQuickJumper
-                        showTotal={(total, range) => t('messages.totalRecords', { total })}
-                        pageSizeOptions={['10', '20', '50']}
-                      />
+                  <div className="mt-4">
+                    <Pagination
+                      current={incomePagination.current}
+                      pageSize={incomePagination.pageSize}
+                      total={incomePagination.total}
+                      onChange={(page, pageSize) => {
+                        fetchIncomeRecords(page, pageSize || 10)
+                      }}
+                      onShowSizeChange={(current, size) => {
+                        fetchIncomeRecords(current, size)
+                      }}
+                      showSizeChanger
+                      showQuickJumper
+                      showTotal={(total, range) => t('messages.totalRecords', { total })}
+                      pageSizeOptions={['10', '20', '50']}
+                    />
                   </div>
                 </>
               ) : (
@@ -504,70 +505,71 @@ export default function IncomePage() {
                 <>
                   <div className="overflow-x-auto">
                     <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="w-[200px]">{t('withdrawId')}</TableHead>
-                            <TableHead>{t('amount')}</TableHead>
-                            <TableHead>{t('statusLabel')}</TableHead>
-                            <TableHead>{t('description')}</TableHead>
-                            <TableHead>{t('createTime')}</TableHead>
-                            <TableHead>{t('updateTime')}</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {withdrawRecords.map((record) => {
-                            const statusTag = getWithdrawStatusTag(record.status)
-                            return (
-                              <TableRow key={record._id || record.id}>
-                                <TableCell className="font-mono text-xs">
-                                  {(record._id || record.id).slice(0, 8)}...
-                                </TableCell>
-                                <TableCell>
-                                  <span className="text-blue-600 font-bold">
-                                    {(record as any).currency || 'CNY'}
-                                    {' '}
-                                    {(record.amount / 100).toFixed(2)}
-                                  </span>
-                                </TableCell>
-                                <TableCell>
-                                  <Badge className={statusTag.className}>
-                                    {statusTag.icon}
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="w-[200px]">{t('withdrawId')}</TableHead>
+                          <TableHead>{t('amount')}</TableHead>
+                          <TableHead>{t('statusLabel')}</TableHead>
+                          <TableHead>{t('description')}</TableHead>
+                          <TableHead>{t('createTime')}</TableHead>
+                          <TableHead>{t('updateTime')}</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {withdrawRecords.map((record) => {
+                          const statusTag = getWithdrawStatusTag(record.status)
+                          return (
+                            <TableRow key={record._id || record.id}>
+                              <TableCell className="font-mono text-xs">
+                                {(record._id || record.id).slice(0, 8)}
+                                ...
+                              </TableCell>
+                              <TableCell>
+                                <span className="text-blue-600 font-bold">
+                                  {(record as any).currency || 'CNY'}
+                                  {' '}
+                                  {(record.amount / 100).toFixed(2)}
+                                </span>
+                              </TableCell>
+                              <TableCell>
+                                <Badge className={statusTag.className}>
+                                  {statusTag.icon}
                                     &nbsp;
-                                    {statusTag.text}
-                                  </Badge>
-                                </TableCell>
-                                <TableCell className="max-w-[200px] truncate">
-                                  {record.desc || '-'}
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground">
-                                  {new Date(record.createdAt).toLocaleString()}
-                                </TableCell>
-                                <TableCell className="text-sm text-muted-foreground">
-                                  {new Date(record.updatedAt).toLocaleString()}
-                                </TableCell>
-                              </TableRow>
-                            )
-                          })}
-                        </TableBody>
-                      </Table>
-                    </div>
+                                  {statusTag.text}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="max-w-[200px] truncate">
+                                {record.desc || '-'}
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground">
+                                {new Date(record.createdAt).toLocaleString()}
+                              </TableCell>
+                              <TableCell className="text-sm text-muted-foreground">
+                                {new Date(record.updatedAt).toLocaleString()}
+                              </TableCell>
+                            </TableRow>
+                          )
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
 
-                    <div className="mt-4">
-                      <Pagination
-                        current={withdrawPagination.current}
-                        pageSize={withdrawPagination.pageSize}
-                        total={withdrawPagination.total}
-                        onChange={(page, pageSize) => {
-                          fetchWithdrawRecords(page, pageSize || 10)
-                        }}
-                        onShowSizeChange={(current, size) => {
-                          fetchWithdrawRecords(current, size)
-                        }}
-                        showSizeChanger
-                        showQuickJumper
-                        showTotal={(total, range) => t('messages.totalRecords', { total })}
-                        pageSizeOptions={['10', '20', '50']}
-                      />
+                  <div className="mt-4">
+                    <Pagination
+                      current={withdrawPagination.current}
+                      pageSize={withdrawPagination.pageSize}
+                      total={withdrawPagination.total}
+                      onChange={(page, pageSize) => {
+                        fetchWithdrawRecords(page, pageSize || 10)
+                      }}
+                      onShowSizeChange={(current, size) => {
+                        fetchWithdrawRecords(current, size)
+                      }}
+                      showSizeChanger
+                      showQuickJumper
+                      showTotal={(total, range) => t('messages.totalRecords', { total })}
+                      pageSizeOptions={['10', '20', '50']}
+                    />
                   </div>
                 </>
               ) : (
@@ -690,7 +692,7 @@ export default function IncomePage() {
               <Label>{t('myWallet')}</Label>
               <WalletAccountSelect
                 value={selectedWalletAccountId}
-                onChange={(val) => setSelectedWalletAccountId(val || '')}
+                onChange={val => setSelectedWalletAccountId(val || '')}
               />
             </div>
 
@@ -777,4 +779,3 @@ export default function IncomePage() {
     </div>
   )
 }
-

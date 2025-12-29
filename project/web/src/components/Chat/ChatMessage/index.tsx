@@ -6,31 +6,34 @@
 
 'use client'
 
-import { useState, useMemo, useEffect, useCallback } from 'react'
-import Image from 'next/image'
-import ReactMarkdown, { Components } from 'react-markdown'
-import { Loader2, AlertCircle, User, ChevronDown, ChevronRight, Wrench, CheckCircle2, FileText, Play } from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { getOssUrl } from '@/utils/oss'
-
-/** 判断 URL 是否为视频链接 */
-const isVideoUrl = (url: string): boolean => {
-  if (!url) return false
-  const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v', '.ogv']
-  const lowerUrl = url.toLowerCase()
-  return videoExtensions.some(ext => lowerUrl.includes(ext)) || 
-         lowerUrl.includes('video') ||
-         (lowerUrl.includes('s3') && lowerUrl.includes('.mp4'))
-}
-import { useTransClient } from '@/app/i18n/client'
+import type { Components } from 'react-markdown'
 import type { IUploadedMedia } from '../MediaUpload'
-import type { IMessageStep, IWorkflowStep, IActionCard } from '@/store/agent'
+import type { MediaPreviewItem } from '@/components/common/MediaPreview'
+import type { IActionCard, IMessageStep, IWorkflowStep } from '@/store/agent'
+import { AlertCircle, CheckCircle2, ChevronDown, ChevronRight, FileText, Loader2, Play, User, Wrench } from 'lucide-react'
+import Image from 'next/image'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import { useTransClient } from '@/app/i18n/client'
 import logo from '@/assets/images/logo.png'
-import styles from './ChatMessage.module.scss'
-import MediaPreview, { MediaPreviewItem } from '@/components/common/MediaPreview'
-import { ActionCard } from '../ActionCard'
 import MediaGallery from '@/components/Chat/ChatMessage/MediaGallery'
 import WorkflowSection from '@/components/Chat/ChatMessage/WorkflowComponents'
+import MediaPreview from '@/components/common/MediaPreview'
+import { cn } from '@/lib/utils'
+import { getOssUrl } from '@/utils/oss'
+import { ActionCard } from '../ActionCard'
+import styles from './ChatMessage.module.scss'
+
+/** 判断 URL 是否为视频链接 */
+function isVideoUrl(url: string): boolean {
+  if (!url)
+    return false
+  const videoExtensions = ['.mp4', '.webm', '.mov', '.avi', '.mkv', '.m4v', '.ogv']
+  const lowerUrl = url.toLowerCase()
+  return videoExtensions.some(ext => lowerUrl.includes(ext))
+    || lowerUrl.includes('video')
+    || (lowerUrl.includes('s3') && lowerUrl.includes('.mp4'))
+}
 
 export type { IWorkflowStep }
 
@@ -60,7 +63,7 @@ export interface IChatMessageProps {
 }
 
 /** 格式化工具名称（移除 mcp__ 前缀） */
-const formatToolName = (name: string) => {
+function formatToolName(name: string) {
   return name.replace(/^mcp__\w+__/, '')
 }
 
@@ -121,7 +124,7 @@ function MessageStepContent({ step, isLast, isStreaming, onOpenPreview }: IMessa
     },
     p: ({ children }) => {
       const content = String(children)
-      const urlRegex = /(https?:\/\/[^\s]+(?:\.mp4|\.webm|\.mov)[^\s]*)/gi
+      const urlRegex = /(https?:\/\/\S+(?:\.mp4|\.webm|\.mov)\S*)/gi
       const matches = content.match(urlRegex)
 
       if (matches && matches.length > 0) {
@@ -166,13 +169,15 @@ function MessageStepContent({ step, isLast, isStreaming, onOpenPreview }: IMessa
       styles.messageStep,
       // 非最后一个步骤时，在底部添加分隔线
       !isLast && 'border-b border-border/60 pb-3 mb-3',
-    )}>
+    )}
+    >
       {/* 步骤文本内容 */}
       {step.content && (
         <div className={cn(
           'text-sm leading-relaxed text-foreground',
           styles.markdownContent,
-        )}>
+        )}
+        >
           <ReactMarkdown components={markdownComponents}>{step.content}</ReactMarkdown>
         </div>
       )}
@@ -182,7 +187,7 @@ function MessageStepContent({ step, isLast, isStreaming, onOpenPreview }: IMessa
         <div className="mt-3">
           <MediaGallery
             medias={step.medias as any}
-            onPreviewByUrl={(url) => onOpenPreview?.(url)}
+            onPreviewByUrl={url => onOpenPreview?.(url)}
           />
         </div>
       )}
@@ -223,13 +228,13 @@ export function ChatMessage({
   const [externalPreviewItems, setExternalPreviewItems] = useState<MediaPreviewItem[] | null>(null)
 
   const previewableMedias = useMemo(
-    () => medias.filter((m) => m.type === 'image' || m.type === 'video'),
+    () => medias.filter(m => m.type === 'image' || m.type === 'video'),
     [medias],
   )
 
   const previewItems = useMemo(
     () =>
-      previewableMedias.map((m) => ({
+      previewableMedias.map(m => ({
         type: m.type === 'video' ? 'video' as const : 'image' as const,
         src: getOssUrl(m.url),
         title: m.name || m.file?.name,
@@ -238,7 +243,8 @@ export function ChatMessage({
   )
 
   const openPreviewWithUrl = useCallback((url: string) => {
-    if (!url) return
+    if (!url)
+      return
     setExternalPreviewItems([{
       type: 'video',
       src: getOssUrl(url),
@@ -254,7 +260,7 @@ export function ChatMessage({
     // 没有 steps 时，尝试从 content 解析多个段落作为步骤
     // 使用双换行分割内容为多个步骤
     if (content) {
-      const paragraphs = content.split(/\n\n+/).filter(p => p.trim())
+      const paragraphs = content.split(/\n{2,}/).filter(p => p.trim())
       if (paragraphs.length > 1) {
         return paragraphs.map((p, i) => ({
           id: `legacy-step-${i}`,
@@ -312,8 +318,9 @@ export function ChatMessage({
             onPreviewByIndex={(originalIndex) => {
               // 将原始 medias 索引映射到 previewableMedias 的索引
               const target = medias[originalIndex]
-              const mapped = previewableMedias.findIndex((m) => m === target)
-              if (mapped >= 0) setPreviewIndex(mapped)
+              const mapped = previewableMedias.findIndex(m => m === target)
+              if (mapped >= 0)
+                setPreviewIndex(mapped)
             }}
             onPreviewByUrl={(url) => {
               openPreviewWithUrl(url)
@@ -346,21 +353,24 @@ export function ChatMessage({
                         animation: 'bounceDots 1.4s ease-in-out infinite both',
                         animationDelay: '0s',
                       }}
-                    ></div>
+                    >
+                    </div>
                     <div
                       className="w-1.5 h-1.5 rounded-full bg-purple-500"
                       style={{
                         animation: 'bounceDots 1.4s ease-in-out infinite both',
                         animationDelay: '0.2s',
                       }}
-                    ></div>
+                    >
+                    </div>
                     <div
                       className="w-1.5 h-1.5 rounded-full bg-pink-500"
                       style={{
                         animation: 'bounceDots 1.4s ease-in-out infinite both',
                         animationDelay: '0.4s',
                       }}
-                    ></div>
+                    >
+                    </div>
                   </div>
 
                   {/* 思考文字 */}
@@ -374,7 +384,8 @@ export function ChatMessage({
                     {t('message.thinking')}
                   </span>
                 </div>
-                <style>{`
+                <style>
+                  {`
                   @keyframes thinkingGlow {
                     0%, 100% {
                       opacity: 0.7;
@@ -395,7 +406,8 @@ export function ChatMessage({
                       opacity: 1;
                     }
                   }
-                `}</style>
+                `}
+                </style>
               </div>
             )}
           </div>

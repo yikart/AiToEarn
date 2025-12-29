@@ -3,7 +3,7 @@
  * 消息创建和状态管理工具
  */
 
-import type { IDisplayMessage, IUploadedMedia, IActionCard } from '../agent.types'
+import type { IActionCard, IDisplayMessage, IUploadedMedia } from '../agent.types'
 import type { IAgentRefs } from './refs'
 
 /** 消息工具上下文 */
@@ -28,7 +28,7 @@ export function createMessageUtils(ctx: IMessageContext) {
         id: `user-${Date.now()}`,
         role: 'user',
         content,
-        medias: medias?.filter((m) => m.url && !m.progress),
+        medias: medias?.filter(m => m.url && !m.progress),
         status: 'done',
         createdAt: Date.now(),
       }
@@ -100,8 +100,8 @@ export function createMessageUtils(ctx: IMessageContext) {
     updateMessageWithActions(content: string, actions: IActionCard[]) {
       set((state: any) => ({
         messages: state.messages.map((m: any) =>
-          m.id === refs.currentAssistantMessageId.value 
-            ? { ...m, content, status: 'done', actions } 
+          m.id === refs.currentAssistantMessageId.value
+            ? { ...m, content, status: 'done', actions }
             : m,
         ),
       }))
@@ -140,7 +140,8 @@ export function createMessageUtils(ctx: IMessageContext) {
         const newMessages = [...state.markdownMessages]
         if (newMessages.length > 0 && newMessages[newMessages.length - 1].startsWith('🤖 ')) {
           newMessages[newMessages.length - 1] = message
-        } else {
+        }
+        else {
           newMessages.push(message)
         }
         return { markdownMessages: newMessages }
@@ -150,4 +151,3 @@ export function createMessageUtils(ctx: IMessageContext) {
 }
 
 export type MessageUtils = ReturnType<typeof createMessageUtils>
-

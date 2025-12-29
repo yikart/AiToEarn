@@ -4,9 +4,9 @@
  * 复用场景：HomeChat、ChatDetailPage 等需要上传媒体的组件
  */
 
-import { useRef, useState, useCallback } from 'react'
-import { uploadToOss } from '@/api/oss'
 import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
+import { useCallback, useRef, useState } from 'react'
+import { uploadToOss } from '@/api/oss'
 
 export interface IUseMediaUploadOptions {
   /** 上传失败时的回调 */
@@ -51,7 +51,8 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
    */
   const handleMediasChange = useCallback(
     async (files: FileList) => {
-      if (!files.length) return
+      if (!files.length)
+        return
 
       setIsUploading(true)
       if (!uploadAbortRef.current) {
@@ -76,13 +77,14 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
           }
         })
 
-        setMedias((prev) => [...prev, ...tempMedias])
+        setMedias(prev => [...prev, ...tempMedias])
 
         // 并行上传所有文件
         await Promise.all(
           fileArray.map(async (file, i) => {
             const targetId = tempMedias[i]?.id
-            if (!targetId) return
+            if (!targetId)
+              return
 
             const controller = new AbortController()
             uploadAbortRef.current?.set(targetId, controller)
@@ -91,7 +93,7 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
               onProgress: (progress) => {
                 // 兼容 0-1 或 0-100 两种进度表示，统一成 0-100
                 const percent = progress > 1 ? progress : progress * 100
-                setMedias((prev) =>
+                setMedias(prev =>
                   prev.map((m, idx) =>
                     m.id && m.id === targetId
                       ? { ...m, progress: Math.min(99, Math.max(0, percent)) }
@@ -102,7 +104,7 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
               signal: controller.signal,
             })
 
-            setMedias((prev) =>
+            setMedias(prev =>
               prev.map((m, idx) =>
                 m.id && m.id === targetId
                   ? { ...m, url: fullUrl as string, progress: undefined }
@@ -113,12 +115,14 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
             uploadAbortRef.current?.delete(targetId)
           }),
         )
-      } catch (error: any) {
+      }
+      catch (error: any) {
         if (error.name !== 'AbortError') {
           console.error('Upload failed:', error)
           onError?.(error)
         }
-      } finally {
+      }
+      finally {
         setIsUploading(false)
         uploadAbortRef.current?.clear()
       }
@@ -146,7 +150,7 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
    */
   const cancelUpload = useCallback(() => {
     if (uploadAbortRef.current) {
-      uploadAbortRef.current.forEach((controller) => controller.abort())
+      uploadAbortRef.current.forEach(controller => controller.abort())
       uploadAbortRef.current.clear()
     }
   }, [])
@@ -170,4 +174,3 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
 }
 
 export default useMediaUpload
-

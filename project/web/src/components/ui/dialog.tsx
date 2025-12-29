@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import * as React from "react"
-import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { X } from "lucide-react"
+import * as DialogPrimitive from '@radix-ui/react-dialog'
+import { X } from 'lucide-react'
+import * as React from 'react'
 
-import { cn } from "@/lib/utils"
+import { cn } from '@/lib/utils'
 
 const Dialog = DialogPrimitive.Root
 
@@ -20,25 +20,26 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => {
   // prevent clicks on the overlay from bubbling to underlying elements (which may cause navigation)
   const handlePointerDown: React.PointerEventHandler = (e) => {
-    e.stopPropagation();
-    if (typeof props.onPointerDown === "function") {
+    e.stopPropagation()
+    if (typeof props.onPointerDown === 'function') {
       try {
-        (props.onPointerDown as any)(e);
-      } catch {}
+        (props.onPointerDown as any)(e)
+      }
+      catch {}
     }
-  };
+  }
 
   return (
     <DialogPrimitive.Overlay
       ref={ref}
       className={cn(
-        "fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-500",
-        className
+        'fixed inset-0 z-50 bg-black/60 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 duration-500',
+        className,
       )}
       onPointerDown={handlePointerDown}
       {...props}
     />
-  );
+  )
 })
 DialogOverlay.displayName = DialogPrimitive.Overlay.displayName
 
@@ -52,7 +53,7 @@ const DialogContent = React.forwardRef<
   DialogContentProps
 >(({ className, children, overlayStyle, overlayClassName, ...props }, ref) => (
   <DialogPortal>
-    <DialogOverlay 
+    <DialogOverlay
       className={overlayClassName}
       style={overlayStyle}
     />
@@ -74,8 +75,8 @@ const DialogContent = React.forwardRef<
         // - 保持移动端默认行为：使用 `w-[calc(100%-24px)]` 使弹窗左右留出 12px 边距
         // - 对于更大的视口，使用 min(maxWidth, 95vw) 策略，避免被 `sm:w-full` 强制撑满或过窄
         // - 这样可以兼顾移动端和桌面大屏的显示效果，且无需在各处强制覆盖
-        "fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-24px)] sm:w-[min(1100px,95vw)] translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-4 sm:p-6 shadow-2xl duration-500 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-xl",
-        className
+        'fixed left-[50%] top-[50%] z-50 grid w-[calc(100%-24px)] sm:w-[min(1100px,95vw)] translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-4 sm:p-6 shadow-2xl duration-500 ease-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 rounded-xl',
+        className,
       )}
       {...props}
     >
@@ -89,33 +90,37 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
-const DialogHeader = ({
+function DialogHeader({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
-      className
-    )}
-    {...props}
-  />
-)
-DialogHeader.displayName = "DialogHeader"
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        'flex flex-col space-y-1.5 text-center sm:text-left',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+DialogHeader.displayName = 'DialogHeader'
 
-const DialogFooter = ({
+function DialogFooter({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end gap-2",
-      className
-    )}
-    {...props}
-  />
-)
-DialogFooter.displayName = "DialogFooter"
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        'flex flex-col-reverse sm:flex-row sm:justify-end gap-2',
+        className,
+      )}
+      {...props}
+    />
+  )
+}
+DialogFooter.displayName = 'DialogFooter'
 
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
@@ -124,8 +129,8 @@ const DialogTitle = React.forwardRef<
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
+      'text-lg font-semibold leading-none tracking-tight',
+      className,
     )}
     {...props}
   />
@@ -138,7 +143,7 @@ const DialogDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn('text-sm text-muted-foreground', className)}
     {...props}
   />
 ))
@@ -146,13 +151,13 @@ DialogDescription.displayName = DialogPrimitive.Description.displayName
 
 export {
   Dialog,
-  DialogPortal,
-  DialogOverlay,
-  DialogTrigger,
   DialogClose,
   DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
   DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+  DialogTrigger,
 }

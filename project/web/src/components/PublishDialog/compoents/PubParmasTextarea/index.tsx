@@ -13,7 +13,6 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons'
 import { Button, Image, Input, Tooltip } from 'antd'
-import { toast } from '@/lib/toast'
 import dynamic from 'next/dynamic'
 import React, {
   forwardRef,
@@ -25,14 +24,15 @@ import React, {
   useRef,
   useState,
 } from 'react'
-
 import { ReactSortable } from 'react-sortablejs'
 
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
+
 import { useShallow } from 'zustand/react/shallow'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
+import MediaPreview from '@/components/common/MediaPreview'
 import DraftSelectionModal from '@/components/PublishDialog/compoents/DraftSelectionModal'
 import PublishUploadProgress from '@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
@@ -43,7 +43,7 @@ import PubParmasTextuploadImage from '@/components/PublishDialog/compoents/PubPa
 import VideoCoverSeting from '@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting'
 import Aibrush from '@/components/PublishDialog/svgs/aibrush.svg'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import MediaPreview from '@/components/common/MediaPreview'
+import { toast } from '@/lib/toast'
 
 export interface IPubParmasTextareaRef {}
 
@@ -327,7 +327,7 @@ const PubParmasTextarea = memo(
               {
                 type: 'video',
                 src: (previewData as IVideoFile)?.videoUrl,
-              }
+              },
             ]}
             onClose={() => setPreviewData(undefined)}
           />

@@ -4,36 +4,35 @@ import type { ForwardedRef } from 'react'
  * 提供 AI 文本处理、图片生成、视频生成等功能
  */
 
-import { 
-  CloseCircleFilled, 
-  CopyOutlined, 
-  SendOutlined, 
-  SyncOutlined,
-  CompressOutlined,
-  ExpandOutlined,
-  EditOutlined,
-  TranslationOutlined,
-  PictureOutlined,
-  VideoCameraOutlined,
-  SettingOutlined,
-  TagsOutlined,
-} from '@ant-design/icons'
-import { Button, Collapse, Input, Spin, Tooltip, Select, Progress } from 'antd'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
-import { forwardRef, memo, useCallback, useImperativeHandle, useRef, useEffect, useState, useMemo } from 'react'
-import ReactMarkdown from 'react-markdown'
-import { useTransClient } from '@/app/i18n/client'
-import { aiChatStream, getVideoGenerationModels, generateVideo, getVideoTaskStatus } from '@/api/ai'
-import { uploadToOss } from '@/api/oss'
-import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
+import {
+  CloseCircleFilled,
+  CompressOutlined,
+  CopyOutlined,
+  EditOutlined,
+  ExpandOutlined,
+  PictureOutlined,
+  SendOutlined,
+  SettingOutlined,
+  SyncOutlined,
+  TagsOutlined,
+  TranslationOutlined,
+  VideoCameraOutlined,
+} from '@ant-design/icons'
+import { Button, Collapse, Input, Progress, Select, Spin, Tooltip } from 'antd'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
+import { aiChatStream, generateVideo, getVideoGenerationModels, getVideoTaskStatus } from '@/api/ai'
+import { uploadToOss } from '@/api/oss'
+import { useTransClient } from '@/app/i18n/client'
+import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
+import { Modal } from '@/components/ui/modal'
+import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 import styles from '../publishDialog.module.scss'
 
-
 // Custom urlTransform to allow data: URLs (base64 images)
-const urlTransform = (url: string) => {
+function urlTransform(url: string) {
   // Allow data: protocol (base64 images)
   if (url.startsWith('data:image/')) {
     return url
@@ -76,167 +75,168 @@ interface Message {
   action?: AIAction
 }
 
-  // Message item component - use memo to avoid unnecessary re-renders
-  const MessageItem = memo(({ 
-    msg, 
-    index, 
-    showRawContent,
-    setShowRawContent,
-    syncToEditor,
-    videoStatus,
-    videoProgress,
-    messagesLength,
-    t,
-    markdownComponents
-  }: {
-    msg: Message
-    index: number
-    showRawContent: number | null
-    setShowRawContent: (index: number | null) => void
-    syncToEditor: (content: string, action?: AIAction) => void
-    videoStatus: string
-    videoProgress: number
-    messagesLength: number
-    t: any
-    markdownComponents: any
-  }) => {
-    // Process video markers
-    const processVideoContent = (content: string) => {
-      const videoMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
-      if (videoMatch) {
-        const videoUrl = videoMatch[1]
-        const fullVideoUrl = getOssUrl(videoUrl)
-        const textPart = content.replace(/__VIDEO__.*?__VIDEO__/, '').trim()
-        
-        return (
-          <>
-            {textPart && <div style={{ marginBottom: '12px' }}>{textPart}</div>}
-            <video 
-              src={fullVideoUrl}
-              controls 
-              style={{ 
-                maxWidth: '100%', 
-                maxHeight: '400px', 
-                borderRadius: '8px',
-                display: 'block'
-              }} 
-            />
-          </>
-        )
-      }
-      return null
+// Message item component - use memo to avoid unnecessary re-renders
+const MessageItem = memo(({
+  msg,
+  index,
+  showRawContent,
+  setShowRawContent,
+  syncToEditor,
+  videoStatus,
+  videoProgress,
+  messagesLength,
+  t,
+  markdownComponents,
+}: {
+  msg: Message
+  index: number
+  showRawContent: number | null
+  setShowRawContent: (index: number | null) => void
+  syncToEditor: (content: string, action?: AIAction) => void
+  videoStatus: string
+  videoProgress: number
+  messagesLength: number
+  t: any
+  markdownComponents: any
+}) => {
+  // Process video markers
+  const processVideoContent = (content: string) => {
+    const videoMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
+    if (videoMatch) {
+      const videoUrl = videoMatch[1]
+      const fullVideoUrl = getOssUrl(videoUrl)
+      const textPart = content.replace(/__VIDEO__.*?__VIDEO__/, '').trim()
+
+      return (
+        <>
+          {textPart && <div style={{ marginBottom: '12px' }}>{textPart}</div>}
+          <video
+            src={fullVideoUrl}
+            controls
+            style={{
+              maxWidth: '100%',
+              maxHeight: '400px',
+              borderRadius: '8px',
+              display: 'block',
+            }}
+          />
+        </>
+      )
     }
-    
-    return (
+    return null
+  }
+
+  return (
+    <div
+      key={index}
+      style={{
+        marginBottom: 16,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
+      }}
+    >
       <div
-        key={index}
         style={{
-          marginBottom: 16,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: msg.role === 'user' ? 'flex-end' : 'flex-start',
+          maxWidth: '85%',
+          padding: '12px',
+          background: msg.role === 'user' ? '#1890ff' : '#f5f5f5',
+          color: msg.role === 'user' ? '#fff' : '#000',
+          borderRadius: '8px',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
         }}
+        className="ai-message-content"
       >
-        <div
-          style={{
-            maxWidth: '85%',
-            padding: '12px',
-            background: msg.role === 'user' ? '#1890ff' : '#f5f5f5',
-            color: msg.role === 'user' ? '#fff' : '#000',
-            borderRadius: '8px',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
-          }}
-          className="ai-message-content"
-        >
-          {msg.content ? (
-            msg.role === 'assistant' ? (
-              <>
-                {msg.content.includes('__VIDEO__') ? (
-                  processVideoContent(msg.content)
-                ) : (
-                  <ReactMarkdown 
-                    urlTransform={urlTransform}
-                    components={markdownComponents}
-                  >
-                    {msg.content}
-                  </ReactMarkdown>
-                )}
-                {/* Show progress bar if it's a video generation message with progress */}
-                {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messagesLength - 1 && (
-                  <div style={{ marginTop: 8 }}>
-                    <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
-                    <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
-                      {videoStatus === 'submitted' && t('aiFeatures.taskSubmitted' as any)}
-                      {videoStatus === 'processing' && t('aiFeatures.generatingStatus' as any)}
-                      {videoStatus === 'failed' && t('aiFeatures.videoFailed' as any)}
-                    </div>
+        {msg.content ? (
+          msg.role === 'assistant' ? (
+            <>
+              {msg.content.includes('__VIDEO__') ? (
+                processVideoContent(msg.content)
+              ) : (
+                <ReactMarkdown
+                  urlTransform={urlTransform}
+                  components={markdownComponents}
+                >
+                  {msg.content}
+                </ReactMarkdown>
+              )}
+              {/* Show progress bar if it's a video generation message with progress */}
+              {msg.action === 'generateVideo' && videoStatus && videoStatus !== 'completed' && index === messagesLength - 1 && (
+                <div style={{ marginTop: 8 }}>
+                  <Progress percent={videoProgress} status={videoStatus === 'failed' ? 'exception' : 'active'} />
+                  <div style={{ fontSize: '12px', color: '#666', marginTop: 4 }}>
+                    {videoStatus === 'submitted' && t('aiFeatures.taskSubmitted' as any)}
+                    {videoStatus === 'processing' && t('aiFeatures.generatingStatus' as any)}
+                    {videoStatus === 'failed' && t('aiFeatures.videoFailed' as any)}
                   </div>
-                )}
-              </>
-            ) : (
-              <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
-            )
+                </div>
+              )}
+            </>
           ) : (
-            <Spin size="small" />
-          )}
-        </div>
-        {msg.role === 'assistant' && msg.content && (
-          <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <Button
-                size="small"
-                icon={<SyncOutlined />}
-                onClick={() => syncToEditor(msg.content, msg.action)}
-              >
-                {t('aiFeatures.syncToEditor' as any)}
-              </Button>
-              <Button
-                size="small"
-                icon={<CopyOutlined />}
-                onClick={() => {
-                  navigator.clipboard.writeText(msg.content)
-                  toast.success(t('aiFeatures.copied' as any))
-                }}
-              />
-              <Button
-                size="small"
-                onClick={() => setShowRawContent(showRawContent === index ? null : index)}
-              >
-                {showRawContent === index ? t('aiFeatures.hideRaw' as any) : t('aiFeatures.showRaw' as any)}
-              </Button>
-            </div>
-            {showRawContent === index && (
-              <div style={{ 
-                background: '#f0f0f0', 
-                padding: '8px', 
-                borderRadius: '4px',
-                fontSize: '12px',
-                maxHeight: '200px',
-                overflowY: 'auto',
-                wordBreak: 'break-all',
-              }}>
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.content}</pre>
-              </div>
-            )}
-          </div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{msg.content}</div>
+          )
+        ) : (
+          <Spin size="small" />
         )}
       </div>
-    )
-  }, (prevProps, nextProps) => {
-    // Only re-render when these properties change
-    return (
-      prevProps.msg.content === nextProps.msg.content &&
-      prevProps.showRawContent === nextProps.showRawContent &&
-      prevProps.videoStatus === nextProps.videoStatus &&
-      prevProps.videoProgress === nextProps.videoProgress
-    )
-  })
+      {msg.role === 'assistant' && msg.content && (
+        <div style={{ marginTop: 4, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Button
+              size="small"
+              icon={<SyncOutlined />}
+              onClick={() => syncToEditor(msg.content, msg.action)}
+            >
+              {t('aiFeatures.syncToEditor' as any)}
+            </Button>
+            <Button
+              size="small"
+              icon={<CopyOutlined />}
+              onClick={() => {
+                navigator.clipboard.writeText(msg.content)
+                toast.success(t('aiFeatures.copied' as any))
+              }}
+            />
+            <Button
+              size="small"
+              onClick={() => setShowRawContent(showRawContent === index ? null : index)}
+            >
+              {showRawContent === index ? t('aiFeatures.hideRaw' as any) : t('aiFeatures.showRaw' as any)}
+            </Button>
+          </div>
+          {showRawContent === index && (
+            <div style={{
+              background: '#f0f0f0',
+              padding: '8px',
+              borderRadius: '4px',
+              fontSize: '12px',
+              maxHeight: '200px',
+              overflowY: 'auto',
+              wordBreak: 'break-all',
+            }}
+            >
+              <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{msg.content}</pre>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}, (prevProps, nextProps) => {
+  // Only re-render when these properties change
+  return (
+    prevProps.msg.content === nextProps.msg.content
+    && prevProps.showRawContent === nextProps.showRawContent
+    && prevProps.videoStatus === nextProps.videoStatus
+    && prevProps.videoProgress === nextProps.videoProgress
+  )
+})
 
-  // AI-generated image component
-  const AIGeneratedImage = memo(({ src, alt }: { src: string; alt?: string }) => {
-    const { t } = useTransClient('publish')
-    const [imageLoading, setImageLoading] = useState(true)
-    const [imageError, setImageError] = useState(false)
+// AI-generated image component
+const AIGeneratedImage = memo(({ src, alt }: { src: string, alt?: string }) => {
+  const { t } = useTransClient('publish')
+  const [imageLoading, setImageLoading] = useState(true)
+  const [imageError, setImageError] = useState(false)
 
   // Show error if no src
   if (!src) {
@@ -265,7 +265,8 @@ interface Message {
           justifyContent: 'center',
           color: '#999',
           fontSize: '14px',
-        }}>
+        }}
+        >
           <Spin />
         </div>
       )}
@@ -297,7 +298,8 @@ interface Message {
           borderRadius: '4px',
           fontSize: '12px',
           color: '#c00',
-        }}>
+        }}
+        >
           {t('aiFeatures.imageLoadFailed' as any)}
         </div>
       )}
@@ -355,9 +357,9 @@ const PublishDialogAi = memo(
       const [videoStatus, setVideoStatus] = useState<string>('')
       const [videoProgress, setVideoProgress] = useState(0)
       const [videoResult, setVideoResult] = useState<string | null>(null)
-      
+
       // Image to image state
-      const [uploadedImage, setUploadedImage] = useState<{ file: File; preview: string; ossUrl?: string; uploading?: boolean } | null>(null)
+      const [uploadedImage, setUploadedImage] = useState<{ file: File, preview: string, ossUrl?: string, uploading?: boolean } | null>(null)
 
       // Auto-scroll to bottom
       useEffect(() => {
@@ -377,7 +379,8 @@ const PublishDialogAi = memo(
             if (defaultModel) {
               setSelectedChatModel(defaultModel.name)
               localStorage.setItem('ai_chat_model', defaultModel.name)
-            } else if (chatModels.length > 0) {
+            }
+            else if (chatModels.length > 0) {
               // Use first model if default not found
               setSelectedChatModel(chatModels[0].name)
               localStorage.setItem('ai_chat_model', chatModels[0].name)
@@ -392,7 +395,8 @@ const PublishDialogAi = memo(
             if (defaultModel) {
               setSelectedImageModel(defaultModel.name)
               localStorage.setItem('ai_image_model', defaultModel.name)
-            } else if (chatModels.length > 0) {
+            }
+            else if (chatModels.length > 0) {
               // Use first model if default not found
               setSelectedImageModel(chatModels[0].name)
               localStorage.setItem('ai_image_model', chatModels[0].name)
@@ -409,42 +413,47 @@ const PublishDialogAi = memo(
             const res: any = await getVideoGenerationModels()
             if (res.data && Array.isArray(res.data)) {
               setVideoModels(res.data)
-              
+
               // Read saved model from localStorage
               const savedModel = localStorage.getItem('ai_video_model')
-              
+
               // Check if current model exists in list
               const currentModelExists = res.data.find((m: any) => m.name === selectedVideoModel)
-              
+
               if (currentModelExists) {
                 // Current model is valid, no update needed
-              } else if (savedModel && res.data.find((m: any) => m.name === savedModel)) {
+              }
+              else if (savedModel && res.data.find((m: any) => m.name === savedModel)) {
                 // Use saved model if it exists in list
                 setSelectedVideoModel(savedModel)
-              } else {
+              }
+              else {
                 // Try to find sora-related model
-                const soraModel = res.data.find((m: any) => 
-                  m.name?.toLowerCase().includes('sora') || m.name === 'sora-2'
+                const soraModel = res.data.find((m: any) =>
+                  m.name?.toLowerCase().includes('sora') || m.name === 'sora-2',
                 )
-                
+
                 if (soraModel) {
                   // Prefer sora model
                   setSelectedVideoModel(soraModel.name)
                   localStorage.setItem('ai_video_model', soraModel.name)
-                } else if (res.data.length > 0) {
+                }
+                else if (res.data.length > 0) {
                   // Use first model if no sora found
                   setSelectedVideoModel(res.data[0].name)
                   localStorage.setItem('ai_video_model', res.data[0].name)
                 }
               }
             }
-          } catch (error) {
+          }
+          catch (error) {
             console.error('Failed to fetch video models:', error)
-          } finally {
+          }
+          finally {
             videoModelsLoadingRef.current = false
           }
         }
-        
+
         fetchVideoModels()
       }, []) // Only execute once on component mount
 
@@ -454,49 +463,50 @@ const PublishDialogAi = memo(
           try {
             const res: any = await getVideoTaskStatus(taskId)
             if (res.data) {
-              const { status, fail_reason, progress, data } : any = res.data;
-            //   {
-            //     "task_id": "691d59a0cf8f85110ff2538d",
-            //     "action": "",
-            //     "status": "SUCCESS",
-            //     "fail_reason": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
-            //     "submit_time": 1763531161,
-            //     "start_time": 1763531161,
-            //     "finish_time": 1763531405,
-            //     "progress": "100%",
-            //     "data": {
-            //         "id": "video_1459b06c-e279-4765-8465-3040eec4e10a",
-            //         "size": "720x1280",
-            //         "model": "sora-2",
-            //         "object": "video",
-            //         "status": "completed",
-            //         "seconds": "10",
-            //         "progress": 100,
-            //         "video_url": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
-            //         "created_at": 1763531162,
-            //         "completed_at": 1763531339
-            //     }
-            // }
+              const { status, fail_reason, progress, data }: any = res.data
+              //   {
+              //     "task_id": "691d59a0cf8f85110ff2538d",
+              //     "action": "",
+              //     "status": "SUCCESS",
+              //     "fail_reason": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
+              //     "submit_time": 1763531161,
+              //     "start_time": 1763531161,
+              //     "finish_time": 1763531405,
+              //     "progress": "100%",
+              //     "data": {
+              //         "id": "video_1459b06c-e279-4765-8465-3040eec4e10a",
+              //         "size": "720x1280",
+              //         "model": "sora-2",
+              //         "object": "video",
+              //         "status": "completed",
+              //         "seconds": "10",
+              //         "progress": 100,
+              //         "video_url": "ai/video/sora-2/68abbe6af812ccb3e1a53d68/691d59a0cf8f85110ff2538d.mp4",
+              //         "created_at": 1763531162,
+              //         "completed_at": 1763531339
+              //     }
+              // }
               const up = typeof status === 'string' ? status.toUpperCase() : ''
               const normalized = up === 'SUCCESS' ? 'completed' : up === 'FAILED' ? 'failed' : up === 'PROCESSING' ? 'processing' : up === 'NOT_START' || up === 'NOT_STARTED' || up === 'QUEUED' || up === 'PENDING' ? 'submitted' : (status || '').toString().toLowerCase()
               setVideoStatus(normalized)
-              
+
               let percent = 0
               if (typeof progress === 'string') {
                 const m = progress.match(/(\d+)/)
                 percent = m ? Number(m[1]) : 0
-              } else if (typeof progress === 'number') {
+              }
+              else if (typeof progress === 'number') {
                 percent = progress > -1 ? Math.round(progress) : Math.round(progress * 100)
               }
-              
+
               if (normalized === 'completed') {
-                let videoUrl = res.data?.data?.video_url || data?.video_url
+                const videoUrl = res.data?.data?.video_url || data?.video_url
                 console.log('videoUrl', videoUrl)
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
-                
+
                 // Update last message, embed video (using custom marker)
-                setMessages(prev => {
+                setMessages((prev) => {
                   const newMessages = [...prev]
                   if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === 'assistant') {
                     // Save original video URL to message for syncing
@@ -507,7 +517,7 @@ const PublishDialogAi = memo(
                   }
                   return newMessages
                 })
-                
+
                 toast.success(t('aiFeatures.videoGenerated' as any))
                 setIsProcessing(false)
                 return true
@@ -523,11 +533,12 @@ const PublishDialogAi = memo(
               return false
             }
             return false
-          } catch {
+          }
+          catch {
             return false
           }
         }
-        
+
         const poll = async () => {
           const done = await checkStatus()
           if (!done) {
@@ -542,19 +553,19 @@ const PublishDialogAi = memo(
         // Wait for model list to load if still loading
         if (videoModelsLoadingRef.current) {
           toast.loading({ content: t('aiFeatures.loadingVideoModels' as any), key: 'loadingModels', duration: 0 })
-          
+
           // Poll to check if models loaded, max wait 30 seconds
           const maxWaitTime = 30000
           const checkInterval = 200
           let waited = 0
-          
+
           while (videoModelsLoadingRef.current && waited < maxWaitTime) {
             await new Promise(resolve => setTimeout(resolve, checkInterval))
             waited += checkInterval
           }
-          
+
           toast.dismiss('loadingModels')
-          
+
           if (videoModelsLoadingRef.current) {
             toast.error(t('aiFeatures.videoModelLoadTimeout' as any))
             return
@@ -585,15 +596,20 @@ const PublishDialogAi = memo(
           // Get first available resolution and duration
           let duration = 5
           let size = '720p'
-          
+
           if (selectedModel?.channel === 'kling' && selectedModel?.pricing) {
             const durations = [...new Set(selectedModel.pricing.map((p: any) => p.duration))] as number[]
             const modes = [...new Set(selectedModel.pricing.map((p: any) => p.mode))] as string[]
-            if (durations.length > 0) duration = durations[0]
-            if (modes.length > 0) size = modes[0]
-          } else {
-            if (selectedModel?.durations?.length > 0) duration = selectedModel.durations[0]
-            if (selectedModel?.resolutions?.length > 0) size = selectedModel.resolutions[0]
+            if (durations.length > 0)
+              duration = durations[0]
+            if (modes.length > 0)
+              size = modes[0]
+          }
+          else {
+            if (selectedModel?.durations?.length > 0)
+              duration = selectedModel.durations[0]
+            if (selectedModel?.resolutions?.length > 0)
+              size = selectedModel.resolutions[0]
           }
 
           const data: any = {
@@ -605,21 +621,24 @@ const PublishDialogAi = memo(
           // Use mode parameter for kling model
           if (selectedModel?.channel === 'kling') {
             data.mode = size
-          } else {
+          }
+          else {
             data.size = size
           }
 
           const res: any = await generateVideo(data)
-          
+
           if (res?.data?.task_id) {
             setVideoTaskId(res.data.task_id)
             setVideoStatus(res.data.status)
             toast.success(t('aiFeatures.videoTaskSubmitted' as any))
             pollVideoTaskStatus(res.data.task_id)
-          } else {
+          }
+          else {
             throw new Error(t('aiFeatures.videoGenerationFailed' as any))
           }
-        } catch (error: any) {
+        }
+        catch (error: any) {
           console.error('Video Generation Error:', error)
           setMessages(prev => prev.slice(0, -1))
           toast.error(error.message || t('aiFeatures.videoGenerationFailed' as any))
@@ -628,7 +647,6 @@ const PublishDialogAi = memo(
         }
       }, [selectedVideoModel, videoModels, pollVideoTaskStatus, t])
 
-
       // Handle AI response
       const handleAIResponse = useCallback(async (
         action: AIAction,
@@ -636,19 +654,19 @@ const PublishDialogAi = memo(
       ) => {
         try {
           setIsProcessing(true)
-          
+
           // Add assistant message placeholder
           const placeholderMsg: Message = { role: 'assistant', content: '', action }
           setMessages(prev => [...prev, placeholderMsg])
 
           // Select model based on action (use image model for both generateImage and imageToImage)
           const modelToUse = (action === 'generateImage' || action === 'imageToImage') ? selectedImageModel : selectedChatModel
-          
-          const response = await aiChatStream({ 
+
+          const response = await aiChatStream({
             messages: apiMessages as any,
-            model: modelToUse
+            model: modelToUse,
           })
-          
+
           // Check response status
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`)
@@ -656,16 +674,16 @@ const PublishDialogAi = memo(
 
           // Try to read JSON response
           const result = await response.json()
-          
+
           if (result.code === 0 && result.data?.content) {
             // Optimize: convert base64 images to blob URLs to avoid storing large data causing input lag
             let processedContent = result.data.content
-            
+
             // Find all base64 images and convert to blob URLs
             const base64Regex = /!\[([^\]]*)\]\((data:image\/[^;]+;base64,[^)]+)\)/g
             let match
-            const replacements: Array<{ original: string; blobUrl: string }> = []
-            
+            const replacements: Array<{ original: string, blobUrl: string }> = []
+
             while ((match = base64Regex.exec(result.data.content)) !== null) {
               const [fullMatch, alt, base64Url] = match
               try {
@@ -674,34 +692,35 @@ const PublishDialogAi = memo(
                 if (parts.length === 2) {
                   const mimeType = base64Url.match(/data:(.*?);/)?.[1] || 'image/png'
                   const base64Data = parts[1]
-                  
+
                   // Convert to blob
                   const byteCharacters = atob(base64Data)
-                  const byteNumbers = new Array(byteCharacters.length)
+                  const byteNumbers = Array.from({ length: byteCharacters.length })
                   for (let i = 0; i < byteCharacters.length; i++) {
                     byteNumbers[i] = byteCharacters.charCodeAt(i)
                   }
                   const byteArray = new Uint8Array(byteNumbers)
                   const blob = new Blob([byteArray], { type: mimeType })
                   const blobUrl = URL.createObjectURL(blob)
-                  
+
                   replacements.push({
                     original: fullMatch,
-                    blobUrl: `![${alt}](${blobUrl})`
+                    blobUrl: `![${alt}](${blobUrl})`,
                   })
                 }
-              } catch (error) {
+              }
+              catch (error) {
                 console.error('Base64 to blob conversion failed:', error)
               }
             }
-            
+
             // Execute all replacements
             replacements.forEach(({ original, blobUrl }) => {
               processedContent = processedContent.replace(original, blobUrl)
             })
-            
+
             // Update last message
-            setMessages(prev => {
+            setMessages((prev) => {
               const newMessages = [...prev]
               newMessages[newMessages.length - 1] = {
                 role: 'assistant',
@@ -710,7 +729,7 @@ const PublishDialogAi = memo(
               }
               return newMessages
             })
-            
+
             // Auto-sync to editor if hashtags generation (append mode)
             if (action === 'generateHashtags') {
               // Delay to let user see the result
@@ -720,12 +739,14 @@ const PublishDialogAi = memo(
                 }
               }, 500)
             }
-          } else {
+          }
+          else {
             throw new Error(result.message || 'AI response failed')
           }
 
           setIsProcessing(false)
-        } catch (error: any) {
+        }
+        catch (error: any) {
           console.error('AI Response Error:', error)
           // Remove placeholder message
           setMessages(prev => prev.slice(0, -1))
@@ -742,7 +763,7 @@ const PublishDialogAi = memo(
           setUploadedImage(null)
         }
       }, [])
-      
+
       // Handle image upload for image-to-image
       const handleImageUpload = useCallback(async (file: File) => {
         try {
@@ -751,23 +772,25 @@ const PublishDialogAi = memo(
           reader.onload = async (e) => {
             const preview = e.target?.result as string
             setUploadedImage({ file, preview, uploading: true })
-            
+
             try {
               // Upload to OSS
               const ossKey = await uploadToOss(file)
               const ossUrl = `${getOssUrl(ossKey)}`
-              
+
               // Update with OSS URL
               setUploadedImage({ file, preview, ossUrl, uploading: false })
               toast.success(t('aiFeatures.imageUploadSuccess' as any))
-            } catch (error) {
+            }
+            catch (error) {
               console.error('Upload to OSS failed:', error)
               toast.error(t('aiFeatures.imageUploadFailed' as any))
               setUploadedImage(null)
             }
           }
           reader.readAsDataURL(file)
-        } catch (error) {
+        }
+        catch (error) {
           console.error('Failed to read image:', error)
           toast.error(t('aiFeatures.imageUploadFailed' as any))
         }
@@ -789,13 +812,13 @@ const PublishDialogAi = memo(
           toast.warning(t('aiFeatures.uploadImageFirst' as any))
           return
         }
-        
+
         // Check if image is still uploading
         if (currentAction === 'imageToImage' && uploadedImage?.uploading) {
           toast.warning(t('aiFeatures.imageUploading' as any))
           return
         }
-        
+
         // Check if image has OSS URL
         if (currentAction === 'imageToImage' && uploadedImage && !uploadedImage.ossUrl) {
           toast.error(t('aiFeatures.imageUploadFailed' as any))
@@ -847,36 +870,37 @@ const PublishDialogAi = memo(
 
         // Prepare API messages
         const apiMessages: Array<{ role: string, content: string | Array<any> }> = []
-        
+
         // Add default system prompt if exists
         if (systemPrompt) {
           apiMessages.push({ role: 'system', content: systemPrompt })
         }
-        
+
         // Add user custom system prompt if configured
         const userCustomPrompt = currentAction ? (customPrompts[currentAction] || '') : ''
         if (userCustomPrompt) {
           apiMessages.push({ role: 'system', content: userCustomPrompt })
         }
-        
+
         // For imageToImage, add image data to user message (use saved reference)
         if (currentAction === 'imageToImage' && savedUploadedImage && savedUploadedImage.ossUrl) {
-          apiMessages.push({ 
-            role: 'user', 
+          apiMessages.push({
+            role: 'user',
             content: [
               {
                 type: 'image_url',
                 image_url: {
-                  url: savedUploadedImage.ossUrl
-                }
+                  url: savedUploadedImage.ossUrl,
+                },
               },
               {
                 type: 'text',
-                text: messageContent
-              }
-            ]
+                text: messageContent,
+              },
+            ],
           })
-        } else {
+        }
+        else {
           apiMessages.push({ role: 'user', content: messageContent })
         }
 
@@ -895,7 +919,7 @@ const PublishDialogAi = memo(
       const downloadImageAsImgFile = async (url: string, index: number): Promise<IImgFile | null> => {
         try {
           let blob: Blob
-          
+
           // If it's a blob URL
           if (url.startsWith('blob:')) {
             const response = await fetch(url)
@@ -909,28 +933,28 @@ const PublishDialogAi = memo(
             if (!url.includes(',')) {
               throw new Error('Invalid base64 image format')
             }
-            
+
             const parts = url.split(',')
             if (parts.length !== 2) {
               throw new Error('Base64 data format error')
             }
-            
+
             const base64Data = parts[1]
             const mimeType = url.match(/data:(.*?);/)?.[1] || 'image/png'
-            
+
             // Check if base64 data is valid
             if (!base64Data || base64Data.length < 100) {
               throw new Error('Base64 data too short or empty')
             }
-            
+
             const byteCharacters = atob(base64Data)
-            const byteNumbers = new Array(byteCharacters.length)
+            const byteNumbers = Array.from({ length: byteCharacters.length })
             for (let i = 0; i < byteCharacters.length; i++) {
               byteNumbers[i] = byteCharacters.charCodeAt(i)
             }
             const byteArray = new Uint8Array(byteNumbers)
             blob = new Blob([byteArray], { type: mimeType })
-          } 
+          }
           // Regular URL, need to download
           else {
             const response = await fetch(url)
@@ -939,17 +963,18 @@ const PublishDialogAi = memo(
             }
             blob = await response.blob()
           }
-          
+
           const filename = `ai-generated-image-${index + 1}.png`
-          
+
           // Use formatImg function to properly process image
           const imgFile = await formatImg({
             blob,
             path: filename,
           })
-          
+
           return imgFile
-        } catch (error) {
+        }
+        catch (error) {
           console.error('Image processing failed:', error)
           toast.error(t('aiFeatures.imageProcessingFailed' as any, { index: index + 1, error: error instanceof Error ? error.message : 'Unknown' }))
           return null
@@ -963,23 +988,24 @@ const PublishDialogAi = memo(
           // API returns: ai/video/sora-2/...
           const ossUrl = `${getOssUrl(url)}`
           const filename = `ai-generated-video.mp4`
-          
+
           // Extract video info using proxy URL for preview (only for VideoGrabFrame)
           const proxyUrl = getOssUrl(url)
           const videoInfo = await VideoGrabFrame(proxyUrl, 0)
-          
+
           // Note: we don't create local blob, just use network URL
           const videoFile: IVideoFile = {
             filename,
             videoUrl: ossUrl, // Full S3 URL
             size: 0, // No download means no size, set to 0
             file: new Blob(), // Placeholder, not actually used
-            ossUrl: ossUrl, // Full S3 URL for publishing API
+            ossUrl, // Full S3 URL for publishing API
             ...videoInfo,
           }
-          
+
           return videoFile
-        } catch (error) {
+        }
+        catch (error) {
           console.error('Video processing failed:', error)
           toast.error(t('aiFeatures.videoProcessingFailed' as any))
           return null
@@ -992,12 +1018,12 @@ const PublishDialogAi = memo(
           // Extract all image URLs and video links
           const imageMatches = content.match(/!\[.*?\]\(([^)]+)\)/g) || []
           const linkMatches = content.match(/\[.*?\]\(([^)]+)\)/g) || []
-          
+
           // Separate image and video links
           const imageUrls: string[] = []
           let videoUrl: string | null = null
-          
-          imageMatches.forEach(match => {
+
+          imageMatches.forEach((match) => {
             const urlMatch = match.match(/!\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
             if (url) {
@@ -1005,16 +1031,16 @@ const PublishDialogAi = memo(
               imageUrls.push(url)
             }
           })
-          
+
           // Check for video links (support Markdown and pure URL formats)
-          linkMatches.forEach(match => {
+          linkMatches.forEach((match) => {
             const urlMatch = match.match(/\[.*?\]\(([^)]+)\)/)
             const url = urlMatch ? urlMatch[1] : null
             if (url && (url.includes('.mp4') || url.includes('.webm') || url.includes('video'))) {
               videoUrl = url
             }
           })
-          
+
           // If no Markdown video link found, try to match custom marker
           if (!videoUrl) {
             const videoTagMatch = content.match(/__VIDEO__(.*?)__VIDEO__/)
@@ -1022,10 +1048,10 @@ const PublishDialogAi = memo(
               videoUrl = videoTagMatch[1]
             }
           }
-          
+
           // If still not found, try to match pure URL
           if (!videoUrl) {
-            const urlRegex = /(https?:\/\/[^\s]+\.(mp4|webm)|https?:\/\/[^\s]*video[^\s]*)/gi
+            const urlRegex = /(https?:\/\/\S+\.(mp4|webm)|https?:\/\/\S*video\S*)/gi
             const urlMatches = content.match(urlRegex)
             if (urlMatches && urlMatches.length > 0) {
               videoUrl = urlMatches[0]
@@ -1036,8 +1062,8 @@ const PublishDialogAi = memo(
           let imageFiles: IImgFile[] = []
           if (imageUrls.length > 0) {
             toast.loading({ content: t('aiFeatures.downloadingImages' as any), key: 'downloadMedia' })
-            const downloadPromises = imageUrls.map((url, index) => 
-              downloadImageAsImgFile(url, index)
+            const downloadPromises = imageUrls.map((url, index) =>
+              downloadImageAsImgFile(url, index),
             )
             const results = await Promise.all(downloadPromises)
             imageFiles = results.filter((file): file is IImgFile => file !== null)
@@ -1049,7 +1075,7 @@ const PublishDialogAi = memo(
             toast.loading({ content: t('aiFeatures.downloadingVideo' as any), key: 'downloadMedia' })
             videoFile = await downloadVideoAsVideoFile(videoUrl) || undefined
           }
-          
+
           if (imageUrls.length > 0 || videoUrl) {
             toast.dismiss('downloadMedia')
           }
@@ -1060,27 +1086,29 @@ const PublishDialogAi = memo(
             .replace(/\[视频链接\]\([^)]+\)/g, '') // Remove Markdown video links
             .replace(/\[.*?\]\([^)]+\.(mp4|webm)[^)]*\)/gi, '') // Remove Markdown format videos
             .replace(/__VIDEO__.*?__VIDEO__/g, '') // Remove custom video markers
-          
+
           // Remove pure URL format video links
           if (videoUrl) {
             textContent = textContent.replace(videoUrl, '')
           }
-          
+
           textContent = textContent.trim()
 
           // Determine if content should be appended (hashtags generation)
           const shouldAppend = action === 'generateHashtags'
-          
+
           // If there's video, only sync video (don't update text)
           // If there are images, only sync images (don't update text)
           // If neither, sync text content
           if (videoFile) {
             onSyncToEditor('', [], videoFile, shouldAppend)
             toast.success(t('aiFeatures.videoSynced' as any))
-          } else if (imageFiles.length > 0) {
+          }
+          else if (imageFiles.length > 0) {
             onSyncToEditor('', imageFiles, undefined, shouldAppend)
             toast.success(t('aiFeatures.imagesSynced' as any))
-          } else {
+          }
+          else {
             onSyncToEditor(textContent, [], undefined, shouldAppend)
             toast.success(shouldAppend ? t('aiFeatures.hashtagsAppended' as any) : t('aiFeatures.syncSuccess' as any))
           }
@@ -1135,7 +1163,7 @@ const PublishDialogAi = memo(
         },
         a: ({ node, ...props }: any) => {
           const href = props.href || ''
-          
+
           // Check if it's an audio file
           if (/\.(aac|mp3|opus|wav)$/.test(href)) {
             return (
@@ -1144,18 +1172,18 @@ const PublishDialogAi = memo(
               </figure>
             )
           }
-          
+
           // Check if it's a video file
           if (/\.(3gp|3g2|webm|ogv|mpeg|mp4|avi)$/.test(href) || href.includes('video')) {
             return (
               <div style={{ margin: '8px 0' }}>
-                <video 
-                  controls 
-                  style={{ 
-                    maxWidth: '100%', 
-                    maxHeight: '400px', 
+                <video
+                  controls
+                  style={{
+                    maxWidth: '100%',
+                    maxHeight: '400px',
                     borderRadius: '8px',
-                    display: 'block'
+                    display: 'block',
                   }}
                 >
                   <source src={getOssUrl(href)} />
@@ -1163,9 +1191,9 @@ const PublishDialogAi = memo(
               </div>
             )
           }
-          
+
           // Regular link
-          const isInternal = /^\/#/i.test(href)
+          const isInternal = /^\/#/.test(href)
           const target = isInternal ? '_self' : props.target ?? '_blank'
           return <a {...props} target={target} style={{ color: '#1890ff', textDecoration: 'underline' }} rel="noopener noreferrer" />
         },
@@ -1188,12 +1216,12 @@ const PublishDialogAi = memo(
           </h1>
           <div className="publishDialogAi-wrapper" style={{ padding: '0 12px', marginTop: '12px' }}>
             {/* Chat messages area */}
-            <div 
+            <div
               ref={chatContainerRef}
-              className="publishDialogAi-chat" 
-              style={{ 
+              className="publishDialogAi-chat"
+              style={{
                 flex: '1 1 0',
-                overflowY: 'auto', 
+                overflowY: 'auto',
                 marginBottom: 12,
                 padding: '12px',
                 background: '#f5f5f5',
@@ -1202,11 +1230,12 @@ const PublishDialogAi = memo(
             >
 
               {messages.length === 0 ? (
-                <div style={{ 
-                  textAlign: 'center', 
-                  color: '#999', 
+                <div style={{
+                  textAlign: 'center',
+                  color: '#999',
                   padding: '40px 20px',
-                }}>
+                }}
+                >
                   {t('aiFeatures.emptyChat' as any)}
                 </div>
               ) : (
@@ -1232,7 +1261,7 @@ const PublishDialogAi = memo(
             <div style={{ position: 'relative' }}>
               {/* Image upload area for imageToImage - positioned above buttons */}
               {activeAction === 'imageToImage' && (
-                <div style={{ 
+                <div style={{
                   position: 'absolute',
                   bottom: '100%',
                   left: '120px',
@@ -1240,35 +1269,38 @@ const PublishDialogAi = memo(
                   marginBottom: 10,
                   display: 'flex',
                   gap: 8,
-                  flexWrap: 'wrap'
-                }}>
+                  flexWrap: 'wrap',
+                }}
+                >
                   {/* Uploaded image preview */}
                   {uploadedImage && (
-                    <div style={{ 
-                      position: 'relative', 
+                    <div style={{
+                      position: 'relative',
                       display: 'inline-block',
                       borderRadius: '8px',
-                      overflow: 'hidden'
-                    }}>
-                      <img 
-                        src={uploadedImage.preview} 
-                        alt="Uploaded" 
-                        style={{ 
+                      overflow: 'hidden',
+                    }}
+                    >
+                      <img
+                        src={uploadedImage.preview}
+                        alt="Uploaded"
+                        style={{
                           width: '120px',
-                          height: '80px', 
+                          height: '80px',
                           borderRadius: '8px',
                           display: 'block',
                           objectFit: 'cover',
-                          opacity: uploadedImage.uploading ? 0.5 : 1
-                        }} 
+                          opacity: uploadedImage.uploading ? 0.5 : 1,
+                        }}
                       />
                       {uploadedImage.uploading && (
                         <div style={{
                           position: 'absolute',
                           top: '50%',
                           left: '50%',
-                          transform: 'translate(-50%, -50%)'
-                        }}>
+                          transform: 'translate(-50%, -50%)',
+                        }}
+                        >
                           <Spin />
                         </div>
                       )}
@@ -1293,12 +1325,12 @@ const PublishDialogAi = memo(
                           justifyContent: 'center',
                           background: 'rgba(0, 0, 0, 0.5)',
                           color: '#fff',
-                          border: 'none'
+                          border: 'none',
                         }}
                       />
                     </div>
                   )}
-                  
+
                   {/* Upload box - show when no image */}
                   {!uploadedImage && (
                     <>
@@ -1314,34 +1346,35 @@ const PublishDialogAi = memo(
                         style={{ display: 'none' }}
                         id="imageToImageUpload"
                       />
-                      <label 
-                        htmlFor="imageToImageUpload" 
-                        style={{ 
+                      <label
+                        htmlFor="imageToImageUpload"
+                        style={{
                           margin: 0,
-                          cursor: 'pointer'
+                          cursor: 'pointer',
                         }}
                       >
-                        <div style={{
-                          width: '120px',
-                          height: '80px',
-                          border: '2px dashed #d9d9d9',
-                          borderRadius: '8px',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: '#fafafa',
-                          transition: 'all 0.3s',
-                          color: '#999'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.borderColor = '#1890ff'
-                          e.currentTarget.style.color = '#1890ff'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.borderColor = '#d9d9d9'
-                          e.currentTarget.style.color = '#999'
-                        }}
+                        <div
+                          style={{
+                            width: '120px',
+                            height: '80px',
+                            border: '2px dashed #d9d9d9',
+                            borderRadius: '8px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            background: '#fafafa',
+                            transition: 'all 0.3s',
+                            color: '#999',
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#1890ff'
+                            e.currentTarget.style.color = '#1890ff'
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = '#d9d9d9'
+                            e.currentTarget.style.color = '#999'
+                          }}
                         >
                           <PictureOutlined style={{ fontSize: '24px', marginBottom: '4px' }} />
                           <span style={{ fontSize: '12px' }}>{t('aiFeatures.uploadImage' as any)}</span>
@@ -1351,17 +1384,18 @@ const PublishDialogAi = memo(
                   )}
                 </div>
               )}
-              
-              <div style={{ 
-                display: 'flex', 
-                gap: 8, 
+
+              <div style={{
+                display: 'flex',
+                gap: 8,
                 marginBottom: 8,
                 padding: '8px',
                 background: '#fafafa',
                 borderRadius: '8px',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-              }}>
+              }}
+              >
                 <div style={{ display: 'flex', gap: 8, flex: 1, flexWrap: 'wrap' }}>
                   {actionButtons.map(({ action, icon, label }) => (
                     <Tooltip key={action} title={label}>
@@ -1393,7 +1427,8 @@ const PublishDialogAi = memo(
                 rows={1}
                 disabled={isProcessing}
                 onPressEnter={(e) => {
-                  if (e.shiftKey) return // Shift+Enter for new line
+                  if (e.shiftKey)
+                    return // Shift+Enter for new line
                   e.preventDefault()
                   sendMessage()
                 }}
@@ -1440,8 +1475,8 @@ const PublishDialogAi = memo(
                 optionLabelProp="label"
               >
                 {chatModels.map((model: any) => (
-                  <Option 
-                    key={model.name} 
+                  <Option
+                    key={model.name}
                     value={model.name}
                     label={model.description || model.name}
                   >
@@ -1476,8 +1511,8 @@ const PublishDialogAi = memo(
                 optionLabelProp="label"
               >
                 {chatModels.map((model: any) => (
-                  <Option 
-                    key={model.name} 
+                  <Option
+                    key={model.name}
                     value={model.name}
                     label={model.description || model.name}
                   >
@@ -1512,8 +1547,8 @@ const PublishDialogAi = memo(
                 optionLabelProp="label"
               >
                 {videoModels.map((model: any) => (
-                  <Option 
-                    key={model.name} 
+                  <Option
+                    key={model.name}
                     value={model.name}
                     label={model.description || model.name}
                   >
@@ -1530,25 +1565,42 @@ const PublishDialogAi = memo(
               </Select>
               {selectedVideoModel && (() => {
                 const model = videoModels.find((m: any) => m.name === selectedVideoModel)
-                if (!model) return null
-                
+                if (!model)
+                  return null
+
                 let duration = 5
                 let size = '720p'
-                
+
                 if (model?.channel === 'kling' && model?.pricing) {
                   const durations = [...new Set(model.pricing.map((p: any) => p.duration))] as number[]
                   const modes = [...new Set(model.pricing.map((p: any) => p.mode))] as string[]
-                  if (durations.length > 0) duration = durations[0]
-                  if (modes.length > 0) size = modes[0]
-                } else {
-                  if (model?.durations?.length > 0) duration = model.durations[0]
-                  if (model?.resolutions?.length > 0) size = model.resolutions[0]
+                  if (durations.length > 0)
+                    duration = durations[0]
+                  if (modes.length > 0)
+                    size = modes[0]
                 }
-                
+                else {
+                  if (model?.durations?.length > 0)
+                    duration = model.durations[0]
+                  if (model?.resolutions?.length > 0)
+                    size = model.resolutions[0]
+                }
+
                 return (
                   <div style={{ marginTop: 8, padding: '8px', background: '#f5f5f5', borderRadius: '4px', fontSize: '12px', color: '#666' }}>
-                    <div>{t('aiFeatures.defaultDuration' as any)}: {duration}{t('aiFeatures.seconds' as any)}</div>
-                    <div>{t('aiFeatures.defaultResolution' as any)}: {size}</div>
+                    <div>
+                      {t('aiFeatures.defaultDuration' as any)}
+                      :
+                      {' '}
+                      {duration}
+                      {t('aiFeatures.seconds' as any)}
+                    </div>
+                    <div>
+                      {t('aiFeatures.defaultResolution' as any)}
+                      :
+                      {' '}
+                      {size}
+                    </div>
                   </div>
                 )
               })()}
@@ -1571,7 +1623,7 @@ const PublishDialogAi = memo(
                         <div style={{ marginBottom: 12, fontSize: '12px', color: '#666' }}>
                           {t('aiFeatures.customPrompts.description' as any)}
                         </div>
-                        
+
                         {/* Shorten */}
                         <div style={{ marginBottom: 16 }}>
                           <div style={{ marginBottom: 4, fontWeight: 500, fontSize: '13px' }}>

@@ -1,11 +1,11 @@
 /**
  * Agent Store - 工作流工具
  * 管理 AI 工作流步骤（工具调用、结果等）
- * 
+ *
  * 注意：内部方法调用使用闭包引用，避免 this 上下文丢失问题
  */
 
-import type { IWorkflowStep, IMessageStep } from '../agent.types'
+import type { IMessageStep, IWorkflowStep } from '../agent.types'
 import type { IAgentRefs } from './refs'
 
 /** 工作流工具上下文 */
@@ -45,12 +45,13 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
           const steps = m.steps || []
           const existingIndex = steps.findIndex(
             (s: IMessageStep) =>
-              s.id === stepData.id ||
-              (refs.currentStepIndex.value >= 0 && steps.length === refs.currentStepIndex.value),
+              s.id === stepData.id
+              || (refs.currentStepIndex.value >= 0 && steps.length === refs.currentStepIndex.value),
           )
           if (existingIndex >= 0) {
             steps[existingIndex] = stepData
-          } else {
+          }
+          else {
             steps.push(stepData)
           }
           return { ...m, steps: [...steps] }
@@ -152,7 +153,7 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
   function handleToolCallComplete(toolName: string, toolInput: string) {
     // 更新当前步骤的工作流
     const stepIndex = refs.currentStepWorkflow.value.findIndex(
-      (s) => s.type === 'tool_call' && s.toolName === toolName && s.isActive,
+      s => s.type === 'tool_call' && s.toolName === toolName && s.isActive,
     )
     if (stepIndex >= 0) {
       refs.currentStepWorkflow.value[stepIndex] = {
@@ -166,7 +167,7 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
     set((state: any) => {
       const steps = [...state.workflowSteps]
       const globalStepIndex = steps.findIndex(
-        (s) => s.type === 'tool_call' && s.toolName === toolName && s.isActive,
+        s => s.type === 'tool_call' && s.toolName === toolName && s.isActive,
       )
       if (globalStepIndex >= 0) {
         steps[globalStepIndex] = {
@@ -193,7 +194,7 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
    */
   function handleToolResult(resultText: string) {
     // 找到最近的 tool_call 步骤
-    const lastToolCall = [...refs.currentStepWorkflow.value].reverse().find((s) => s.type === 'tool_call')
+    const lastToolCall = [...refs.currentStepWorkflow.value].reverse().find(s => s.type === 'tool_call')
     const prevToolName = lastToolCall?.toolName || 'Tool'
 
     // 添加工具结果步骤 - 使用闭包引用
@@ -208,7 +209,7 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
     addWorkflowStep(resultStep)
 
     // 记录到 markdown 消息
-    const displayResult = resultText.length > 500 ? resultText.substring(0, 500) + '...' : resultText
+    const displayResult = resultText.length > 500 ? `${resultText.substring(0, 500)}...` : resultText
     set((state: any) => ({
       markdownMessages: [...state.markdownMessages, `📋 **Tool Result**:\n\`\`\`\n${displayResult}\n\`\`\``],
     }))

@@ -148,7 +148,9 @@
   border-radius: 16px;
   padding: 32px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
 
   &:hover {
     transform: translateY(-2px);
@@ -339,4 +341,3 @@
   font-weight: 700;
   flex-shrink: 0;
 }
-

@@ -4,6 +4,7 @@
 
 'use client'
 
+import type { SidebarCommonProps } from '../../types'
 import { Share2 } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import {
@@ -13,7 +14,6 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
-import type { SidebarCommonProps } from '../../types'
 
 const AFFILIATES_URL = 'https://aitoearn.getrewardful.com/signup?_gl=1*15wk8k8*_gcl_au*MjAzNTIwODgyMi4xNzY1MjkwMjc2LjExMjI2NzUyNDguMTc2NjE1MjM5OS4xNzY2MTUzODYz*_ga*OTk1MTc5MzQzLjE3NjUyOTAyNzY.*_ga_YJYFH7ZS27*czE3NjYxNTIzOTIkbzckZzEkdDE3NjYxNTM4OTQkajQ3JGwwJGgxODk3OTAxMTc1'
 
@@ -48,4 +48,3 @@ export function AffiliatesEntry({ collapsed }: SidebarCommonProps) {
     </TooltipProvider>
   )
 }
-

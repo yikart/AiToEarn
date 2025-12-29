@@ -73,5 +73,4 @@ function Col({ span = 24, className, children, style, ...props }: ColProps) {
   )
 }
 
-export { Row, Col }
-
+export { Col, Row }

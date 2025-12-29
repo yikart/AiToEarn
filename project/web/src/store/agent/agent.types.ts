@@ -3,8 +3,8 @@
  * 全局 AI Agent 任务管理的类型定义
  */
 
-import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 import type { TFunction } from 'i18next'
+import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime'
 
 // ============ 媒体相关类型 ============
 
@@ -68,7 +68,7 @@ export interface IMessageStep {
   content: string
   /** 该步骤关联的工作流步骤 */
   workflowSteps?: IWorkflowStep[]
-  /** 该步骤关联的媒体（图片/视频），用于在步骤位置内渲染资源 */ 
+  /** 该步骤关联的媒体（图片/视频），用于在步骤位置内渲染资源 */
   medias?: IUploadedMedia[]
   /** 是否为当前活跃步骤 */
   isActive?: boolean
@@ -115,32 +115,32 @@ export interface IDisplayMessage {
 export type ResultType = 'imageOnly' | 'videoOnly' | 'mediaOnly' | 'fullContent'
 
 /** 操作类型 */
-export type ActionType =
-  | 'navigateToPublish'
-  | 'navigateToDraft'
-  | 'saveDraft'
-  | 'updateChannel'
-  | 'loginChannel'
-  | 'createChannel'
-  | 'platformNotSupported'
-  | 'errorOnly'
+export type ActionType
+  = | 'navigateToPublish'
+    | 'navigateToDraft'
+    | 'saveDraft'
+    | 'updateChannel'
+    | 'loginChannel'
+    | 'createChannel'
+    | 'platformNotSupported'
+    | 'errorOnly'
 
 /** 平台类型 */
-export type PlatformType =
-  | 'douyin'
-  | 'xhs'
-  | 'wxSph'
-  | 'KWAI'
-  | 'youtube'
-  | 'wxGzh'
-  | 'bilibili'
-  | 'twitter'
-  | 'tiktok'
-  | 'facebook'
-  | 'instagram'
-  | 'threads'
-  | 'pinterest'
-  | 'linkedin'
+export type PlatformType
+  = | 'douyin'
+    | 'xhs'
+    | 'wxSph'
+    | 'KWAI'
+    | 'youtube'
+    | 'wxGzh'
+    | 'bilibili'
+    | 'twitter'
+    | 'tiktok'
+    | 'facebook'
+    | 'instagram'
+    | 'threads'
+    | 'pinterest'
+    | 'linkedin'
 
 /** 媒体项 */
 export interface IMediaItem {
@@ -271,4 +271,3 @@ export interface ICreateTaskParams {
   /** 需要登录回调 */
   onLoginRequired?: () => void
 }
-

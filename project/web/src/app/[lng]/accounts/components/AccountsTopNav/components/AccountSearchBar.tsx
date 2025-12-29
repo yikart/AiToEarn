@@ -29,4 +29,3 @@ const AccountSearchBar = memo(({ searchText, onSearchChange }: AccountSearchBarP
 AccountSearchBar.displayName = 'AccountSearchBar'
 
 export default AccountSearchBar
-

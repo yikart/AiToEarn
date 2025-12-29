@@ -5,8 +5,8 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
 import { Check, Loader2, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export type StepStatus = 'wait' | 'process' | 'finish' | 'error'
 
@@ -31,9 +31,12 @@ export function Steps({ current = 0, items, direction = 'horizontal', className 
   const isVertical = direction === 'vertical'
 
   const getStepStatus = (index: number, itemStatus?: StepStatus): StepStatus => {
-    if (itemStatus) return itemStatus
-    if (index < current) return 'finish'
-    if (index === current) return 'process'
+    if (itemStatus)
+      return itemStatus
+    if (index < current)
+      return 'finish'
+    if (index === current)
+      return 'process'
     return 'wait'
   }
 
@@ -155,4 +158,3 @@ export function Steps({ current = 0, items, direction = 'horizontal', className 
     </div>
   )
 }
-

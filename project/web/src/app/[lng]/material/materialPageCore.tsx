@@ -14,13 +14,13 @@ import {
   VideoCameraOutlined,
 } from '@ant-design/icons'
 import { Input, Popconfirm, Select } from 'antd'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { createMediaGroup, deleteMediaGroup, getMediaGroupList, updateMediaGroupInfo } from '@/api/media'
 import { useTransClient } from '@/app/i18n/client'
+import { Modal } from '@/components/ui/modal'
+import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 import styles from './styles/material.module.scss'
 

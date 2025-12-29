@@ -6,15 +6,15 @@
 import http from '@/utils/request'
 
 /** Credits 变动类型 */
-export type CreditsType =
-  | 'register_bonus'
-  | 'purchase'
-  | 'vip_monthly'
-  | 'ai_service'
-  | 'video_style_transfer'
-  | 'publish'
-  | 'expired'
-  | 'manual'
+export type CreditsType
+  = | 'register_bonus'
+    | 'purchase'
+    | 'vip_monthly'
+    | 'ai_service'
+    | 'video_style_transfer'
+    | 'publish'
+    | 'expired'
+    | 'manual'
 
 /** 余额响应 */
 export interface CreditsBalanceVo {
@@ -88,4 +88,3 @@ export function formatAmountChange(cents: number): string {
   const usd = centsToUsd(Math.abs(cents))
   return cents >= 0 ? `+$${usd}` : `-$${usd}`
 }
-

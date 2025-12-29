@@ -80,4 +80,3 @@ function List<T = any>({ dataSource, renderItem, className, children }: ListProp
 List.Item = ListItem
 
 export { List, ListItem, ListItemMeta }
-

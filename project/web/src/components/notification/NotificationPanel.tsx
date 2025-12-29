@@ -10,9 +10,7 @@ import type { SocialAccount } from '@/api/types/account.type'
 // 平台配置（图标等）
 import type { PlatType } from '@/app/config/platConfig'
 import { CheckOutlined, ClockCircleOutlined, DeleteOutlined, UnorderedListOutlined } from '@ant-design/icons'
-import { Badge, Button, Empty, List, Popconfirm, Spin, Steps, Tag, Tabs } from 'antd'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
+import { Badge, Button, Empty, List, Popconfirm, Spin, Steps, Tabs, Tag } from 'antd'
 import { useParams, useRouter } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { getAccountListApi } from '@/api/account'
@@ -36,6 +34,8 @@ import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import DownloadAppModal from '@/components/common/DownloadAppModal'
+import { Modal } from '@/components/ui/modal'
+import { toast } from '@/lib/toast'
 import { useUserStore } from '@/store/user'
 import { generateUUID } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
@@ -758,10 +758,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
         destroyOnClose
       >
         {/* 任务中心入口 */}
-        <div 
-          style={{ 
-            marginBottom: '16px', 
-            padding: '12px 16px', 
+        <div
+          style={{
+            marginBottom: '16px',
+            padding: '12px 16px',
             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             borderRadius: '12px',
             cursor: 'pointer',
@@ -784,15 +784,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ visible, onClose 
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ 
-              width: '40px', 
-              height: '40px', 
-              background: 'rgba(255,255,255,0.2)', 
+            <div style={{
+              width: '40px',
+              height: '40px',
+              background: 'rgba(255,255,255,0.2)',
               borderRadius: '10px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-            }}>
+            }}
+            >
               <UnorderedListOutlined style={{ fontSize: '20px', color: 'white' }} />
             </div>
             <div>

@@ -1,12 +1,12 @@
 'use client'
 
 import { Popconfirm } from 'antd'
-import { toast } from '@/lib/toast'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { createMedia, deleteMedia, getMediaList } from '@/api/media'
 import { uploadToOss } from '@/api/oss'
 import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
+import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 import styles from './album.module.scss'
 

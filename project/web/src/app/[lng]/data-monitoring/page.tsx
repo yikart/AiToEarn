@@ -1,20 +1,21 @@
 'use client'
 
+import type { NoteMonitoringListItem } from '@/api/monitoring'
 import { EyeOutlined, LinkOutlined, UserOutlined } from '@ant-design/icons'
 import { Avatar, Badge, Button, Card, Empty, Input, Pagination, Select, Spin, Tabs, Tag } from 'antd'
-import { toast } from '@/lib/toast'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useTransClient } from '@/app/i18n/client'
 import {
   apiAddNoteMonitoring,
   apiGetNoteMonitoringList,
-  type NoteMonitoringListItem,
+
 } from '@/api/monitoring'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
-import http from '@/utils/request'
+import { useTransClient } from '@/app/i18n/client'
+import { toast } from '@/lib/toast'
 import { openLoginModal } from '@/store/loginModal'
 import { urlReg } from '@/utils/regulars'
+import http from '@/utils/request'
 import styles from './dataMonitoring.module.scss'
 
 // Supported platforms for monitoring
@@ -91,9 +92,9 @@ export default function DataMonitoringPage() {
     // 1. 以 http:// 或 https:// 开头
     // 2. 或者是有效的域名格式（包含点号，如 example.com）
     const hasProtocol = /^https?:\/\//i.test(trimmedLink)
-    const hasDomain = /^([\da-z\.-]+)\.([a-z\.]{2,6})/i.test(trimmedLink)
+    const hasDomain = /^([\da-z.-]+)\.([a-z.]{2,6})/i.test(trimmedLink)
     const isValidUrl = urlReg.test(trimmedLink) || (hasProtocol && hasDomain)
-    
+
     if (!isValidUrl) {
       toast.warning('请输入有效的链接地址（例如：https://example.com 或 example.com）')
       return
@@ -106,18 +107,21 @@ export default function DataMonitoringPage() {
         link: noteLink,
         platform: selectedPlatform,
       }, true) // silent = true
-      
+
       // 检查响应 code
       if (response && response.code === 0) {
         toast.success(t('addModal.addSuccess'))
         setNoteLink('')
         loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
-      } else if (response && response.code === 401) {
+      }
+      else if (response && response.code === 401) {
         openLoginModal()
-      } else if (response) {
+      }
+      else if (response) {
         // 其他错误
         toast.error(response.message || t('error.addFailed'))
-      } else {
+      }
+      else {
         toast.error(t('error.addFailed'))
       }
     }
@@ -134,7 +138,8 @@ export default function DataMonitoringPage() {
     // 登录成功后，重新尝试添加监控
     if (noteLink.trim()) {
       handleAddNote()
-    } else {
+    }
+    else {
       // 如果没有待添加的链接，重新加载列表
       loadMonitoringList(1, filterPlatform === 'all' ? undefined : filterPlatform)
     }
@@ -205,11 +210,12 @@ export default function DataMonitoringPage() {
                         size="large"
                         className={styles.platformSelectInput}
                       >
-                        {SUPPORTED_PLATFORMS.map(platform => {
+                        {SUPPORTED_PLATFORMS.map((platform) => {
                           const platInfo = AccountPlatInfoMap.get(platform)
-                          if (!platInfo) return null
-                          const iconSrc = typeof platInfo.icon === 'string' 
-                            ? platInfo.icon 
+                          if (!platInfo)
+                            return null
+                          const iconSrc = typeof platInfo.icon === 'string'
+                            ? platInfo.icon
                             : (platInfo.icon as any)?.src || String(platInfo.icon)
                           return (
                             <Select.Option key={platform} value={platform}>
@@ -254,20 +260,24 @@ export default function DataMonitoringPage() {
               <div className={styles.filterSection}>
                 <Card className={styles.filterCard}>
                   <div className={styles.filterContent}>
-                    <span className={styles.filterLabel}>{t('list.filterByPlatform' as any)}:</span>
+                    <span className={styles.filterLabel}>
+                      {t('list.filterByPlatform' as any)}
+                      :
+                    </span>
                     <Select
                       value={filterPlatform}
-                      onChange={(value) => setFilterPlatform(value)}
+                      onChange={value => setFilterPlatform(value)}
                       style={{ width: 200 }}
                       size="large"
                       className={styles.filterSelect}
                     >
                       <Select.Option value="all">{t('list.allPlatforms' as any)}</Select.Option>
-                      {SUPPORTED_PLATFORMS.map(platform => {
+                      {SUPPORTED_PLATFORMS.map((platform) => {
                         const platInfo = AccountPlatInfoMap.get(platform)
-                        if (!platInfo) return null
-                        const iconSrc = typeof platInfo.icon === 'string' 
-                          ? platInfo.icon 
+                        if (!platInfo)
+                          return null
+                        const iconSrc = typeof platInfo.icon === 'string'
+                          ? platInfo.icon
                           : (platInfo.icon as any)?.src || String(platInfo.icon)
                         return (
                           <Select.Option key={platform} value={platform}>
@@ -341,15 +351,24 @@ export default function DataMonitoringPage() {
                         </div>
                         {item.error && (
                           <div className={styles.errorMessage}>
-                            <Tag color="error">{t('list.error')}: {item.error}</Tag>
+                            <Tag color="error">
+                              {t('list.error')}
+                              :
+                              {' '}
+                              {item.error}
+                            </Tag>
                           </div>
                         )}
                         <div className={`${styles.cardFooter} ${!item.error ? styles.cardFooterNoError : ''}`}>
                           <span className={styles.createTime}>
-                            {t('list.createdAt')}: {new Date(item.createdAt).toLocaleString('zh-CN')}
+                            {t('list.createdAt')}
+                            :
+                            {new Date(item.createdAt).toLocaleString('zh-CN')}
                           </span>
                           <span className={styles.updateTime}>
-                            {t('list.updatedAt')}: {new Date(item.updatedAt).toLocaleString('zh-CN')}
+                            {t('list.updatedAt')}
+                            :
+                            {new Date(item.updatedAt).toLocaleString('zh-CN')}
                           </span>
                         </div>
                       </Card>
@@ -399,4 +418,3 @@ export default function DataMonitoringPage() {
     </div>
   )
 }
-

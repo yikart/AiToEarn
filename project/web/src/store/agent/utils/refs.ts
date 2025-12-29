@@ -3,7 +3,7 @@
  * 管理内部引用变量，避免闭包问题
  */
 
-import type { IWorkflowStep, IActionContext } from '../agent.types'
+import type { IActionContext, IWorkflowStep } from '../agent.types'
 
 // ============ Ref 类型定义 ============
 
@@ -66,4 +66,3 @@ export function resetAllRefs(refs: IAgentRefs): void {
   refs.t.value = null
   refs.actionContext.value = null
 }
-

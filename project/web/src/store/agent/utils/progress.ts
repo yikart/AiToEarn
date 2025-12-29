@@ -3,7 +3,7 @@
  * 进度计算和状态配置
  */
 
-import { STATUS_CONFIG, BASE_PROGRESS, GENERATING_STATUSES } from '../agent.constants'
+import { BASE_PROGRESS, GENERATING_STATUSES, STATUS_CONFIG } from '../agent.constants'
 
 /**
  * 计算任务进度
@@ -34,4 +34,3 @@ export function calculateProgress(currentProgress: number, status: string, isNew
 export function getStatusConfig(status: string) {
   return STATUS_CONFIG[status] || { text: status, color: '#333' }
 }
-

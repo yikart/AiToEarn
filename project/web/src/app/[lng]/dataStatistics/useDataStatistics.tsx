@@ -8,7 +8,6 @@ import {
   MessageFilled,
   VideoCameraFilled,
 } from '@ant-design/icons'
-import { toast } from '@/lib/toast'
 import dayjs from 'dayjs'
 import { create } from 'zustand/index'
 import { combine } from 'zustand/middleware'
@@ -16,6 +15,7 @@ import { getStatisticsPeriodApi } from '@/api/dataStatistics'
 import drawDataStatisticsEchartLine from '@/app/[lng]/dataStatistics/echart/drawDataStatisticsEchartLine'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { directTrans } from '@/app/i18n/client'
+import { toast } from '@/lib/toast'
 import CollectCount from './svgs/collectCount.svg'
 import FansCount from './svgs/fansCount.svg'
 import ForwardCount from './svgs/forwardCount.svg'

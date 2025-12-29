@@ -13,14 +13,14 @@ import {
   UnorderedListOutlined,
 } from '@ant-design/icons'
 import dayjs from 'dayjs'
-import 'dayjs/locale/zh-cn'
-import 'dayjs/locale/en'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { useGetClientLng } from '@/hooks/useSystem'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useGetClientLng } from '@/hooks/useSystem'
+import 'dayjs/locale/zh-cn'
+import 'dayjs/locale/en'
 
 export interface ICalendarToolbarProps {
   activeMode: 'calendar' | 'list'

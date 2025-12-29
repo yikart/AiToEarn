@@ -67,7 +67,7 @@ export function VideoGrabFrame(
       context.fillStyle = 'white'
       context.fillRect(0, 0, width, height)
       context.drawImage(video, 0, 0)
-      
+
       // 尝试导出canvas，可能因为CORS失败
       try {
         canvas.toBlob(async (blob) => {
@@ -77,10 +77,10 @@ export function VideoGrabFrame(
             reject(new Error('Canvas转换为Blob失败'))
             return
           }
-          
+
           try {
             const cover = await formatImg({
-              blob: blob,
+              blob,
               path: `cover.${blob.type.split('/')[1]}`,
             })
             clearTimeout(timeout)
@@ -91,13 +91,15 @@ export function VideoGrabFrame(
               cover,
             })
             video.remove()
-          } catch (formatError) {
+          }
+          catch (formatError) {
             clearTimeout(timeout)
             video.remove()
             reject(new Error(`格式化封面失败: ${formatError}`))
           }
         })
-      } catch (canvasError) {
+      }
+      catch (canvasError) {
         clearTimeout(timeout)
         video.remove()
         reject(new Error(`Canvas操作失败（可能是CORS问题）: ${canvasError}`))

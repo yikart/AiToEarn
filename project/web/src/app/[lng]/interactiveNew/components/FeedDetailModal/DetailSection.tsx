@@ -7,9 +7,7 @@
  * - 底部：操作区域（固定）
  */
 
-import { memo, useMemo, useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Spin, Input } from 'antd'
+import type { SupportedPlatformType } from '@/store/plugin/plats/types'
 import {
   HeartFilled,
   HeartOutlined,
@@ -19,8 +17,10 @@ import {
   StarFilled,
   StarOutlined,
 } from '@ant-design/icons'
+import { Input, Spin } from 'antd'
+import { memo, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { PlatType } from '@/app/config/platConfig'
-import type { SupportedPlatformType } from '@/store/plugin/plats/types'
 import { useDetailModalStore } from '../../store/detailStore'
 import CommentList from './CommentList'
 
@@ -34,14 +34,15 @@ import CommentList from './CommentList'
  * @returns 移除话题后的纯文本
  */
 function removeTopicsFromDescription(text: string, platform: SupportedPlatformType | null): string {
-  if (!text) return ''
+  if (!text)
+    return ''
 
   let result = text
 
   switch (platform) {
     case PlatType.Xhs:
       // 小红书格式：#话题名[话题]#
-      result = result.replace(/#[^#\[\]]+\[话题\]#/g, '')
+      result = result.replace(/#[^#[\]]+\[话题\]#/g, '')
       break
 
     case PlatType.Douyin:
@@ -51,14 +52,14 @@ function removeTopicsFromDescription(text: string, platform: SupportedPlatformTy
 
     default:
       // 通用格式：移除 #话题名[话题]# 和 #话题名
-      result = result.replace(/#[^#\[\]]+\[话题\]#/g, '')
+      result = result.replace(/#[^#[\]]+\[话题\]#/g, '')
       result = result.replace(/#[^\s#]+#?/g, '')
       break
   }
 
   // 清理多余空格（保留换行符）
   return result
-    .replace(/[^\S\n]+/g, ' ')  // 将非换行的空白字符替换为单个空格
+    .replace(/[^\S\n]+/g, ' ') // 将非换行的空白字符替换为单个空格
     .replace(/\n{3,}/g, '\n\n') // 将连续3个及以上换行替换为2个
     .trim()
 }
@@ -107,7 +108,7 @@ function DetailSection() {
         commentCount: null as string | null,
         shareCount: null as string | null,
         description: null as string | null,
-        topics: null as Array<{ name: string; url: string }> | null,
+        topics: null as Array<{ name: string, url: string }> | null,
         publishTime: null as number | null | undefined,
         ipLocation: null as string | null | undefined,
       }
@@ -119,20 +120,25 @@ function DetailSection() {
    * 格式化发布时间
    */
   const formatPublishTime = useCallback((timestamp?: number | null) => {
-    if (!timestamp) return ''
+    if (!timestamp)
+      return ''
     const now = Date.now()
     const diff = now - timestamp
     const minutes = Math.floor(diff / 60000)
     const hours = Math.floor(diff / 3600000)
     const days = Math.floor(diff / 86400000)
 
-    if (minutes < 60) return `${minutes}分钟前`
-    if (hours < 24) return `${hours}小时前`
-    if (days < 30) return `${days}天前`
+    if (minutes < 60)
+      return `${minutes}分钟前`
+    if (hours < 24)
+      return `${hours}小时前`
+    if (days < 30)
+      return `${days}天前`
     return new Date(timestamp).toLocaleDateString()
   }, [])
 
-  if (!displayData) return null
+  if (!displayData)
+    return null
 
   return (
     <div className="feedDetailModal_detail">
@@ -143,7 +149,7 @@ function DetailSection() {
           target="_blank"
           rel="noopener noreferrer"
           className="feedDetailModal_author"
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           <img
             src={displayData.authorAvatar || '/images/default-avatar.png'}
@@ -165,7 +171,7 @@ function DetailSection() {
         {/* 标题和描述 */}
         <div className="feedDetailModal_desc">
           <h2 className="feedDetailModal_desc_title">{displayData.title || t('noTitle')}</h2>
-          
+
           {/* 描述（移除话题标签，话题会单独显示） */}
           {loading ? (
             <div className="feedDetailModal_skeleton">
@@ -195,9 +201,10 @@ function DetailSection() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="feedDetailModal_topic"
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={e => e.stopPropagation()}
                 >
-                  #{topic.name}
+                  #
+                  {topic.name}
                 </a>
               ))}
             </div>
@@ -219,7 +226,8 @@ function DetailSection() {
               <Spin indicator={<LoadingOutlined style={{ fontSize: 12 }} spin />} size="small" />
             ) : (
               displayData.commentCount
-            )}{' '}
+            )}
+            {' '}
             {t('comments')}
           </div>
 
@@ -239,7 +247,10 @@ function DetailSection() {
         {/* 错误提示 */}
         {error && (
           <div className="feedDetailModal_error">
-            <span>⚠️ {error}</span>
+            <span>
+              ⚠️
+              {error}
+            </span>
           </div>
         )}
       </div>
@@ -294,4 +305,3 @@ function DetailSection() {
 }
 
 export default memo(DetailSection)
-

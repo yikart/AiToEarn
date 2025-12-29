@@ -10,7 +10,7 @@ const isBrowser = typeof window !== 'undefined' && typeof indexedDB !== 'undefin
  * 动态导入 idb-keyval，仅在浏览器环境中使用
  * 避免 SSR 时报错：indexedDB is not defined
  */
-const getIdbKeyval = async () => {
+async function getIdbKeyval() {
   if (!isBrowser) {
     return null
   }

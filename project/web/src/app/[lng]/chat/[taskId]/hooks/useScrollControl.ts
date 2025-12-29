@@ -2,7 +2,7 @@
  * 滚动控制 Hook
  * 管理消息列表的智能滚动行为
  */
-import { useRef, useState, useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 export interface IScrollControlOptions {
   /** 判断为"底部附近"的阈值（px） */
@@ -52,7 +52,8 @@ export function useScrollControl(options: IScrollControlOptions = {}): IScrollCo
   /** 检查是否在底部附近 */
   const checkIfNearBottom = useCallback(() => {
     const container = containerRef.current
-    if (!container) return true
+    if (!container)
+      return true
 
     const { scrollTop, scrollHeight, clientHeight } = container
     return scrollHeight - scrollTop - clientHeight < nearBottomThreshold
@@ -113,4 +114,3 @@ export function useScrollControl(options: IScrollControlOptions = {}): IScrollCo
     handleScroll,
   }
 }
-

@@ -15,8 +15,7 @@
   "collapse": "收起",
   "share": "分享",
   "appName": "AiToEarn",
-  "appUrl": "https://aitoearn.ai"
-  ,
+  "appUrl": "https://aitoearn.ai",
   "previewTitle": "预览",
   "agentShare": "通过 Agent 分享",
   "publishShare": "通过发布分享",
@@ -28,4 +27,3 @@
   "publishShareDescription": "我在aitoearn用agent生成的对话太有意思了，你也来试试吧！",
   "noAvailablePublishAccounts": "没有可用的发布账号"
 }
-

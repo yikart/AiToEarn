@@ -36,4 +36,3 @@ const AllChannelsItem = memo(({ isActive, onClick }: AllChannelsItemProps) => {
 AllChannelsItem.displayName = 'AllChannelsItem'
 
 export default AllChannelsItem
-

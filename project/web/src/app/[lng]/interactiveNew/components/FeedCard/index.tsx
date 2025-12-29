@@ -6,14 +6,14 @@
  * 使用 Framer Motion 实现共享元素过渡动画
  */
 
-import { memo, useState, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import type { HomeFeedItem } from '@/store/plugin/plats/types'
 import {
   CaretRightOutlined,
   HeartFilled,
   PictureOutlined,
 } from '@ant-design/icons'
-import type { HomeFeedItem } from '@/store/plugin/plats/types'
+import { memo, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styles from './FeedCard.module.scss'
 
 /** 点击位置信息 */
@@ -51,7 +51,8 @@ function calcAspectRatio(width?: number, height?: number): number {
  * 格式化视频时长
  */
 function formatDuration(seconds?: number): string {
-  if (!seconds) return ''
+  if (!seconds)
+    return ''
   const mins = Math.floor(seconds / 60)
   const secs = seconds % 60
   return `${mins}:${secs.toString().padStart(2, '0')}`
@@ -150,7 +151,7 @@ function FeedCard({ item, onClick }: FeedCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             className="feedCard_author"
-            onClick={(e) => e.stopPropagation()}
+            onClick={e => e.stopPropagation()}
           >
             <img
               src={item.authorAvatar || '/images/default-avatar.png'}

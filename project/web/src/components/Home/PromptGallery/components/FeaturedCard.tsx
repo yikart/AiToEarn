@@ -4,11 +4,11 @@
 
 'use client'
 
+import type { PromptItem } from '../types'
 import { Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { LazyImage } from './LazyImage'
-import type { PromptItem } from '../types'
 
 interface FeaturedCardProps {
   item: PromptItem
@@ -23,7 +23,7 @@ export function FeaturedCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Featu
   const title = isEnglish && item.title_en ? item.title_en : item.title
   const prompt = isEnglish && item.prompt_en ? item.prompt_en : item.prompt
   const subCategory = isEnglish && item.sub_category_en ? item.sub_category_en : item.sub_category
-  const description = prompt.length > 80 ? prompt.substring(0, 80) + '...' : prompt
+  const description = prompt.length > 80 ? `${prompt.substring(0, 80)}...` : prompt
 
   return (
     <div
@@ -48,7 +48,7 @@ export function FeaturedCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Featu
               {/* 应用按钮 */}
               <Button
                 size="sm"
-                onClick={(e) => onApply(item, e)}
+                onClick={e => onApply(item, e)}
                 className="w-full bg-card text-foreground hover:bg-muted rounded-lg font-medium shadow-lg text-xs h-8"
               >
                 <Check className="w-3 h-3 mr-1" />
@@ -74,7 +74,7 @@ export function FeaturedCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Featu
                 'text-xs px-2 py-0.5 rounded-full',
                 item.mode === 'edit'
                   ? 'bg-info/10 text-info'
-                  : 'bg-muted text-muted-foreground'
+                  : 'bg-muted text-muted-foreground',
               )}
             >
               {t(`badges.${item.mode === 'edit' ? 'edit' : 'generate'}` as any)}
@@ -85,4 +85,3 @@ export function FeaturedCard({ item, onApply, onClick, t, lng = 'zh-CN' }: Featu
     </div>
   )
 }
-

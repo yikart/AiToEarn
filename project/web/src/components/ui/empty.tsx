@@ -26,4 +26,3 @@ export function Empty({ description = '暂无数据', image, className }: EmptyP
     </div>
   )
 }
-

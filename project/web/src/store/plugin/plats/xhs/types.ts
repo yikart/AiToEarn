@@ -223,4 +223,3 @@ export interface XhsSubCommentListResponse extends XhsBaseResponse {
     xsec_token: string
   }
 }
-

@@ -2,9 +2,9 @@
  * @Description: AI Agent 内容生成任务接口
  */
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import http from '@/utils/request'
-import { useUserStore } from '@/store/user'
 import { useAgentStore } from '@/store/agent'
+import { useUserStore } from '@/store/user'
+import http from '@/utils/request'
 
 // 任务状态枚举
 export enum TaskStatus {
@@ -177,7 +177,7 @@ export interface TaskMessagesVo {
 export const agentApi = {
   /**
    * 创建AI生成任务并通过 SSE 接收实时消息
-   * @param params 
+   * @param params
    * @param onMessage SSE 消息回调
    * @param onError 错误回调
    * @param onDone 完成回调
@@ -191,14 +191,14 @@ export const agentApi = {
   ): Promise<() => void> {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL
     const url = `${apiUrl}/agent/tasks`
-    
+
     let sessionId: string | undefined
-    let abortController = new AbortController()
+    const abortController = new AbortController()
     // 用于消息去重，防止重复处理
     const processedMessageIds = new Set<string>()
     // 标记是否已经完成，防止重复调用 onDone
     let isCompleted = false
-    
+
     // 返回 abort 函数
     const abort = () => {
       abortController.abort()
@@ -212,7 +212,7 @@ export const agentApi = {
       const debugActive = useAgentStore.getState().debugReplayActive
       if (debugActive) {
         console.log('[SSE] Debug replay active - replaying from public .txt')
-        let abortController = { aborted: false }
+        const abortController = { aborted: false }
         let isAborted = false
         const abort = () => {
           isAborted = true
@@ -226,10 +226,12 @@ export const agentApi = {
           for (const p of candidates) {
             try {
               const resp = await fetch(p)
-              if (!resp.ok) continue
+              if (!resp.ok)
+                continue
               raw = await resp.text()
               break
-            } catch (e) {
+            }
+            catch (e) {
               // continue
             }
           }
@@ -239,22 +241,25 @@ export const agentApi = {
             return
           }
 
-          const blocks = raw.split(/\r?\n\r?\n+/).map((b) => b.trim()).filter(Boolean)
+          const blocks = raw.split(/\r?\n\r?\n+/).map(b => b.trim()).filter(Boolean)
           for (let i = 0; i < blocks.length; i++) {
-            if (isAborted) break
+            if (isAborted)
+              break
             const block = blocks[i]
-            const dataLine = block.split(/\r?\n/).find((l) => l.startsWith('data:'))
-            if (!dataLine) continue
+            const dataLine = block.split(/\r?\n/).find(l => l.startsWith('data:'))
+            if (!dataLine)
+              continue
             const jsonPart = dataLine.replace(/^data:\s*/, '')
             try {
               const data = JSON.parse(jsonPart)
               // call callback
               onMessage(data as any)
-            } catch (e) {
+            }
+            catch (e) {
               console.warn('[SSE] Debug replay: failed to parse block', e)
             }
             // small delay between events to simulate streaming
-            await new Promise((r) => setTimeout(r, 40))
+            await new Promise(r => setTimeout(r, 40))
           }
 
           if (!isAborted) {
@@ -264,14 +269,15 @@ export const agentApi = {
 
         return abort
       }
-    } catch (e) {
+    }
+    catch (e) {
       console.warn('[SSE] Debug replay check failed', e)
     }
 
     try {
       // 获取语言设置
       const lng = useUserStore.getState().lang || 'zh-CN'
-      
+
       await fetchEventSource(url, {
         method: 'POST',
         headers: {
@@ -282,15 +288,15 @@ export const agentApi = {
         body: JSON.stringify(params),
         signal: abortController.signal,
         openWhenHidden: true,
-        
+
         // 当连接打开时
         async onopen(response) {
           console.log('[SSE] Connection opened, status:', response.status)
-          
+
           if (response.ok) {
             return // 一切正常，继续处理消息
           }
-          
+
           // 处理错误响应
           if (response.status >= 400 && response.status < 500 && response.status !== 429) {
             // 客户端错误，不重试
@@ -304,7 +310,7 @@ export const agentApi = {
             throw new Error(`HTTP ${response.status}`)
           }
         },
-        
+
         // 当收到消息时
         onmessage(event) {
           // 如果已完成，忽略后续消息
@@ -312,19 +318,19 @@ export const agentApi = {
             console.log('[SSE] Already completed, ignoring message')
             return
           }
-          
+
           console.log('[SSE] Received message:', event)
-          
+
           // 如果没有数据，跳过
           if (!event.data) {
             console.log('[SSE] Empty message, skipping')
             return
           }
-          
+
           try {
             const data = JSON.parse(event.data)
             console.log('[SSE] Parsed data:', data)
-            
+
             // 消息去重：基于 uuid 或生成唯一标识
             const messageId = data.uuid || data.message?.uuid || `${data.type}-${JSON.stringify(data).slice(0, 100)}`
             if (processedMessageIds.has(messageId)) {
@@ -332,54 +338,54 @@ export const agentApi = {
               return
             }
             processedMessageIds.add(messageId)
-            
+
             // 保存 sessionId
             if (data.sessionId) {
               sessionId = data.sessionId
               console.log('[SSE] Got sessionId:', sessionId)
-          }
-          
-          // 调用消息回调
-          onMessage(data)
-          
-          // 如果收到结束信号，关闭连接
-          if (data.type === 'done' || data.type === 'error') {
-            console.log('[SSE] Received end signal:', data.type)
+            }
+
+            // 调用消息回调
+            onMessage(data)
+
+            // 如果收到结束信号，关闭连接
+            if (data.type === 'done' || data.type === 'error') {
+              console.log('[SSE] Received end signal:', data.type)
               isCompleted = true
-            abortController.abort()
+              abortController.abort()
+            }
           }
-        }
-        catch (error) {
+          catch (error) {
             console.error('[SSE] Failed to parse message:', event.data, error)
           }
         },
-        
+
         // 当连接关闭时
         onclose() {
           console.log('[SSE] Connection closed')
           if (!isCompleted) {
             isCompleted = true
-          onDone(sessionId)
+            onDone(sessionId)
           }
         },
-        
+
         // 当发生错误时
         onerror(error) {
           console.error('[SSE] Error occurred:', error)
-          
+
           // 如果是手动中止，不抛出错误
           if (abortController.signal.aborted) {
             console.log('[SSE] Connection aborted by user')
             return
           }
-          
+
           // 标记为已完成，防止重复处理
           if (!isCompleted) {
             isCompleted = true
-          // 其他错误，调用错误回调
-          onError(error instanceof Error ? error : new Error(String(error)))
+            // 其他错误，调用错误回调
+            onError(error instanceof Error ? error : new Error(String(error)))
           }
-          
+
           // 抛出错误以停止重试
           throw error
         },
@@ -387,21 +393,21 @@ export const agentApi = {
     }
     catch (error) {
       console.error('[SSE] fetchEventSource failed:', error)
-      
+
       // 如果不是手动中止的错误且未完成，调用错误回调
       if (!abortController.signal.aborted && !isCompleted) {
         isCompleted = true
         onError(error instanceof Error ? error : new Error(String(error)))
       }
     }
-    
+
     // 返回 abort 函数
     return abort
   },
 
   /**
    * 创建AI生成任务（旧方法，保留兼容性）
-   * @param params 
+   * @param params
    */
   async createTask(params: CreateTaskParams) {
     const res = await http.post<CreateTaskResponse>('agent/tasks', params)
@@ -433,7 +439,7 @@ export const agentApi = {
    * @param taskId 任务ID
    */
   async getTaskRating(taskId: string) {
-    const res = await http.get<{ data: { rating?: number | null; comment?: string | null } }>(`agent/tasks/${taskId}/rating`)
+    const res = await http.get<{ data: { rating?: number | null, comment?: string | null } }>(`agent/tasks/${taskId}/rating`)
     return res
   },
 
@@ -442,7 +448,7 @@ export const agentApi = {
    * @param taskId 任务ID
    * @param payload { rating: number, comment?: string }
    */
-  async submitTaskRating(taskId: string, payload: { rating: number; comment?: string }) {
+  async submitTaskRating(taskId: string, payload: { rating: number, comment?: string }) {
     const res = await http.post(`agent/tasks/${taskId}/rating`, payload)
     return res
   },
@@ -501,8 +507,7 @@ export const agentApi = {
    */
   async createPublicShare(taskId: string, ttlSeconds?: number) {
     const body = typeof ttlSeconds === 'number' ? { ttlSeconds } : undefined
-    const res = await http.post<{ token: string; expiresAt: string; urlPath: string }>(`agent/tasks/${taskId}/share`, body)
+    const res = await http.post<{ token: string, expiresAt: string, urlPath: string }>(`agent/tasks/${taskId}/share`, body)
     return res
   },
 }
-

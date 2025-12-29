@@ -2,9 +2,9 @@ import type { RcFile } from 'antd/es/upload'
 import type { FC } from 'react'
 import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
 import { Button, Upload } from 'antd'
-import { toast } from '@/lib/toast'
 import { useRef } from 'react'
 import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
+import { toast } from '@/lib/toast'
 
 interface ImgChooseProps {
   // 单选就使用单选方法，多选就使用单选方法

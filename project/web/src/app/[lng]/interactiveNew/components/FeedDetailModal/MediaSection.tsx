@@ -7,12 +7,12 @@
  * - 图片预览（使用 Ant Design Image.PreviewGroup）
  */
 
-import { memo, useEffect, useRef, useMemo, useState } from 'react'
-import { Image } from 'antd'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
-import { useDetailModalStore, getImageList, getVideoInfo } from '../../store/detailStore'
+import { Image } from 'antd'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
+import { Navigation, Pagination } from 'swiper/modules'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { getImageList, getVideoInfo, useDetailModalStore } from '../../store/detailStore'
 
 // Swiper 样式
 import 'swiper/css'
@@ -128,7 +128,8 @@ function MediaSection() {
               onVisibleChange: (visible) => {
                 if (visible) {
                   openImagePreview()
-                } else {
+                }
+                else {
                   closeImagePreview()
                 }
               },

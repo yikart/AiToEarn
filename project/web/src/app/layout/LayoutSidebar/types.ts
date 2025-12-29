@@ -59,4 +59,3 @@ export interface IconBarProps extends SidebarCommonProps {
   /** 打开设置弹框 */
   onOpenSettings: (defaultTab?: SettingsTab) => void
 }
-

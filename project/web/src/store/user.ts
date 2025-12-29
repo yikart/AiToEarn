@@ -1,11 +1,11 @@
 import i18next from 'i18next'
+import lodash from 'lodash'
 import { getUserInfoApi } from '@/api/apiReq'
 import { getCreditsBalanceApi } from '@/api/credits'
+import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
 import { createPersistStore } from '@/utils/createPersistStore'
-import lodash from "lodash";
 import { useAccountStore } from '.'
-import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 
 export interface UserInfo {
   createTime: string
@@ -72,8 +72,8 @@ const state: IUserStore = {
   sidebarCollapsed: false,
 }
 
-const getState = (): IUserStore => {
-  return lodash.cloneDeep(state);
+function getState(): IUserStore {
+  return lodash.cloneDeep(state)
 }
 
 export const useUserStore = createPersistStore(
@@ -107,9 +107,9 @@ export const useUserStore = createPersistStore(
       },
 
       appInit() {
-        useDataStatisticsStore.getState().init();
-        methods.getUserInfo();
-        useAccountStore.getState().accountInit();
+        useDataStatisticsStore.getState().init()
+        methods.getUserInfo()
+        useAccountStore.getState().accountInit()
       },
 
       // 获取用户信息
@@ -148,8 +148,8 @@ export const useUserStore = createPersistStore(
 
       // 清除登录状态
       clearLoginStatus: () => {
-        set({ ...getState() });
-        useAccountStore.getState().clear();
+        set({ ...getState() })
+        useAccountStore.getState().clear()
       },
 
       // 登出

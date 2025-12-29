@@ -5,21 +5,21 @@
 
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import Image from 'next/image'
 import { Sparkles } from 'lucide-react'
-import { ChatInput } from '@/components/Chat/ChatInput'
+import Image from 'next/image'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
+
+import { useCallback, useEffect, useState } from 'react'
+import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { AccountPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import { useAgentStore } from '@/store/agent'
-import { useUserStore } from '@/store/user'
+import { ChatInput } from '@/components/Chat/ChatInput'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
-import { useSearchParams } from 'next/navigation'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-import { AccountPlatInfoArr } from '@/app/config/platConfig'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { useAgentStore } from '@/store/agent'
 import { openLoginModal } from '@/store/loginModal'
+import { useUserStore } from '@/store/user'
 
 export interface IHomeChatProps {
   /** 登录检查回调 */
@@ -74,8 +74,7 @@ export function HomeChat({
 
       console.log('desc', desc)
 
-        desc = externalPrompt || defaultPrompt
-      
+      desc = externalPrompt || defaultPrompt
 
       setInputValue(`${desc} TaskId: ${agentTaskId}`)
       onClearExternalPrompt?.()
@@ -115,7 +114,8 @@ export function HomeChat({
 
   useEffect(() => {
     try {
-      if (!searchParams) return
+      if (!searchParams)
+        return
       const aiGenerated = searchParams.get('aiGenerated')
       if (aiGenerated === 'true') {
         const mediasParam = searchParams.get('medias')
@@ -127,7 +127,7 @@ export function HomeChat({
           try {
             const medias = JSON.parse(decodeURIComponent(mediasParam))
             if (Array.isArray(medias) && medias.length > 0) {
-              setMedias((prev) => [
+              setMedias(prev => [
                 {
                   id: `shared-${Date.now()}`,
                   url: medias[0].url,
@@ -137,7 +137,8 @@ export function HomeChat({
                 ...prev,
               ])
             }
-          } catch (e) {
+          }
+          catch (e) {
             // ignore parse errors
           }
         }
@@ -150,7 +151,8 @@ export function HomeChat({
           window.history.replaceState({}, '', url.toString())
         }
       }
-    } catch (e) {
+    }
+    catch (e) {
       // ignore
     }
   }, [searchParams])
@@ -171,7 +173,8 @@ export function HomeChat({
 
   /** 实际执行发送的函数 */
   const doSend = useCallback(() => {
-    if (!inputValue.trim()) return
+    if (!inputValue.trim())
+      return
 
     // 保存当前输入
     const currentPrompt = inputValue
@@ -193,7 +196,8 @@ export function HomeChat({
 
   /** 处理发送消息 */
   const handleSend = useCallback(async () => {
-    if (!inputValue.trim()) return
+    if (!inputValue.trim())
+      return
 
     // 检查登录状态 - 未登录时显示登录弹窗
     if (!token) {
@@ -228,39 +232,39 @@ export function HomeChat({
         mode="large"
       />
 
-        {/* 平台工具链接提示 */}
-        <div
-          className="flex items-center gap-3 mb-2 cursor-pointer"
-          style={{
-            backgroundColor: '#F2F2F1',
-            borderBottomLeftRadius: '10px',
-            borderBottomRightRadius: '10px',
-            paddingTop: '16px',
-            paddingBottom: '12px',
-            paddingLeft: '16px',
-            paddingRight: '16px',
-            marginTop: '-12px',
-            position: 'relative',
-          }}
-          onClick={handleAddChannelClick}
-        >
-          <span className="text-sm text-muted-foreground whitespace-nowrap">
-            {t('home.connectTools')}
-          </span>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {AccountPlatInfoArr.map(([key, value]) => (
-              <Image
-                key={key}
-                src={value.icon}
-                alt={value.name}
-                width={24}
-                height={24}
-                className="w-6 h-6 rounded-full object-contain hover:scale-110 hover:opacity-80 transition-all"
-                title={value.name}
-              />
-            ))}
-          </div>
+      {/* 平台工具链接提示 */}
+      <div
+        className="flex items-center gap-3 mb-2 cursor-pointer"
+        style={{
+          backgroundColor: '#F2F2F1',
+          borderBottomLeftRadius: '10px',
+          borderBottomRightRadius: '10px',
+          paddingTop: '16px',
+          paddingBottom: '12px',
+          paddingLeft: '16px',
+          paddingRight: '16px',
+          marginTop: '-12px',
+          position: 'relative',
+        }}
+        onClick={handleAddChannelClick}
+      >
+        <span className="text-sm text-muted-foreground whitespace-nowrap">
+          {t('home.connectTools')}
+        </span>
+        <div className="flex items-center gap-1.5 flex-wrap">
+          {AccountPlatInfoArr.map(([key, value]) => (
+            <Image
+              key={key}
+              src={value.icon}
+              alt={value.name}
+              width={24}
+              height={24}
+              className="w-6 h-6 rounded-full object-contain hover:scale-110 hover:opacity-80 transition-all"
+              title={value.name}
+            />
+          ))}
         </div>
+      </div>
 
       {/* 提示标签 */}
       <div className="flex flex-wrap items-center justify-center gap-2 mt-4">

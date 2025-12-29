@@ -62,6 +62,3 @@ export function openLoginModal(onSuccess?: () => void) {
 export function closeLoginModal() {
   useLoginModalStore.getState().closeLoginModal()
 }
-
-
-

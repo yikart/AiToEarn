@@ -3,9 +3,6 @@
 import type { EngagementPostsParams } from '@/api/types/engagement'
 import { DeleteOutlined, EditOutlined, FileTextOutlined, FolderOpenOutlined, ImportOutlined, PlusOutlined, VideoCameraOutlined } from '@ant-design/icons'
 import { Avatar, Button, Card, Form, Input, InputNumber, List, Select, Space, Spin } from 'antd'
-import { confirm } from '@/lib/confirm'
-import { toast } from '@/lib/toast'
-import { Modal } from '@/components/ui/modal'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -26,6 +23,9 @@ import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import publishDialogStyles from '@/components/PublishDialog/publishDialog.module.scss'
+import { Modal } from '@/components/ui/modal'
+import { confirm } from '@/lib/confirm'
+import { toast } from '@/lib/toast'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
 import styles from './styles/cgmaterial.module.scss'
@@ -465,7 +465,6 @@ export default function CgMaterialPageCore() {
       setCreating(false)
     }
   }
-
 
   // 处理编辑组
   async function handleEditGroup() {
@@ -2908,7 +2907,7 @@ export default function CgMaterialPageCore() {
           </div>
         )}
       </Modal>
-      
+
     </div>
   )
 }

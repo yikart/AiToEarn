@@ -95,9 +95,9 @@ export function HotContentBaseInfo({
             </span>
           </div>
         ) : (
-          <img 
-            className="baseInfo-cover" 
-            src={cover} 
+          <img
+            className="baseInfo-cover"
+            src={cover}
             onError={() => setImageError(true)}
             alt={title || nickname}
           />

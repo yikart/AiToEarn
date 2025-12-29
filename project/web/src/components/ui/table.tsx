@@ -41,7 +41,7 @@ function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElem
     <tr
       className={cn(
         'border-b border-border/30 transition-colors hover:bg-muted/30 data-[state=selected]:bg-muted',
-        className
+        className,
       )}
       {...props}
     />
@@ -53,7 +53,7 @@ function TableHead({ className, ...props }: React.HTMLAttributes<HTMLTableCellEl
     <th
       className={cn(
         'h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0',
-        className
+        className,
       )}
       {...props}
     />
@@ -69,5 +69,4 @@ function TableCell({ className, ...props }: React.HTMLAttributes<HTMLTableCellEl
   )
 }
 
-export { Table, TableHeader, TableBody, TableRow, TableHead, TableCell }
-
+export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow }

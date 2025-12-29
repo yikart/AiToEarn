@@ -30,8 +30,7 @@
     "generate": "Text to Image",
     "edit": "Image Edit",
     "searchPlaceholder": "Search title..."
-  }
-  ,
+  },
   "apply": "Apply",
   "prompts": {
     "dora": {
@@ -46,8 +45,7 @@
       "title": "Vintage City Posters",
       "prompt": "Generate three vintage movie-poster style city night images, vertical, optimized for Twitter, royalty-free, and publish directly to Twitter"
     }
-  }
-  ,
+  },
   "agentFeatures": {
     "title": "Aitoearn Key Feature",
     "subtitle": "Our signature features, one click away",
@@ -87,4 +85,3 @@
     }
   }
 }
-

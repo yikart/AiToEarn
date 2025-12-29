@@ -6,23 +6,28 @@
  * 支持无限滚动和 DOM 回收，优化大量数据渲染性能
  */
 
-import { memo, useCallback, useRef, useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import { Spin } from 'antd'
-import { MasonryInfiniteGrid } from '@egjs/react-infinitegrid'
-import Masonry from 'react-masonry-css'
+import type { ClickRect } from '../FeedCard'
 import type { HomeFeedItem } from '@/store/plugin/plats/types'
-import FeedCard, { FeedCardSkeleton, type ClickRect } from '../FeedCard'
+import { MasonryInfiniteGrid } from '@egjs/react-infinitegrid'
+import { Spin } from 'antd'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import Masonry from 'react-masonry-css'
+import FeedCard, { FeedCardSkeleton } from '../FeedCard'
 import styles from './WaterfallList.module.scss'
 
 /**
  * 根据窗口宽度获取列数
  */
 function getColumnCount(width: number): number {
-  if (width <= 480) return 2
-  if (width <= 768) return 2
-  if (width <= 1100) return 3
-  if (width <= 1400) return 4
+  if (width <= 480)
+    return 2
+  if (width <= 768)
+    return 2
+  if (width <= 1100)
+    return 3
+  if (width <= 1400)
+    return 4
   return 5
 }
 

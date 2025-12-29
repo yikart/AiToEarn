@@ -20,8 +20,21 @@ export {
   usePluginWorkflow,
 } from './hooks'
 
+// Platform Interaction (平台交互模块 - 点赞、评论、收藏等)
+export { douyinInteraction, platformManager, xhsInteraction } from './plats'
+export type {
+  BaseResult,
+  CommentParams,
+  CommentResult,
+  FavoriteResult,
+  IPlatformInteraction,
+  LikeResult,
+  SupportedPlatformType,
+} from './plats'
+
 // Store
 export { usePluginStore } from './store'
+
 export type {
   ExecutePluginPublishParams,
   PlatformAccountsMap,
@@ -51,7 +64,6 @@ export {
   PLUGIN_SUPPORTED_PLATFORMS,
   PluginStatus,
 } from './types/baseTypes'
-
 // Utils
 export {
   formatFileSize,
@@ -68,15 +80,3 @@ export {
   validateFileType,
   withRetry,
 } from './utils'
-
-// Platform Interaction (平台交互模块 - 点赞、评论、收藏等)
-export { platformManager, xhsInteraction, douyinInteraction } from './plats'
-export type {
-  BaseResult,
-  CommentParams,
-  CommentResult,
-  FavoriteResult,
-  IPlatformInteraction,
-  LikeResult,
-  SupportedPlatformType,
-} from './plats'

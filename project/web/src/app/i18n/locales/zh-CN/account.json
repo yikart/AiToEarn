@@ -316,7 +316,6 @@
     "deleteSpaceSuccess": "删除空间成功",
     "deleteSpaceFailed": "删除空间失败",
     "noData": "暂无数据"
-  }
-  ,
+  },
   "channel": "频道"
 }

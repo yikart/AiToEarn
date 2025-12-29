@@ -5,10 +5,10 @@
 
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
-import Cropper from 'react-easy-crop'
 import type { Area } from 'react-easy-crop'
 import { Loader2, RotateCcw, RotateCw, ZoomIn, ZoomOut } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
+import Cropper from 'react-easy-crop'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -99,7 +99,8 @@ async function getCroppedImg(
       (blob) => {
         if (blob) {
           resolve(blob)
-        } else {
+        }
+        else {
           reject(new Error('Canvas is empty'))
         }
       },
@@ -131,7 +132,7 @@ function createImage(url: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const image = new Image()
     image.addEventListener('load', () => resolve(image))
-    image.addEventListener('error', (error) => reject(error))
+    image.addEventListener('error', error => reject(error))
     image.crossOrigin = 'anonymous'
     image.src = url
   })
@@ -140,13 +141,13 @@ function createImage(url: string): Promise<HTMLImageElement> {
 /**
  * AvatarCropModal 头像裁剪弹窗组件
  */
-export const AvatarCropModal = ({
+export function AvatarCropModal({
   open,
   onClose,
   imageFile,
   onCropComplete,
   isUploading = false,
-}: AvatarCropModalProps) => {
+}: AvatarCropModalProps) {
   const { t } = useTransClient('settings')
 
   // 图片 URL
@@ -174,7 +175,8 @@ export const AvatarCropModal = ({
       return () => {
         URL.revokeObjectURL(url)
       }
-    } else {
+    }
+    else {
       setImageUrl('')
       setIsImageLoading(false)
     }
@@ -192,25 +194,28 @@ export const AvatarCropModal = ({
 
   // 旋转图片
   const handleRotate = (degree: number) => {
-    setRotation((prev) => (prev + degree) % 360)
+    setRotation(prev => (prev + degree) % 360)
   }
 
   // 缩放图片
   const handleZoom = (delta: number) => {
-    setZoom((prev) => Math.min(3, Math.max(1, prev + delta)))
+    setZoom(prev => Math.min(3, Math.max(1, prev + delta)))
   }
 
   // 确认裁剪
   const handleConfirm = async () => {
-    if (!croppedAreaPixels || !imageUrl) return
+    if (!croppedAreaPixels || !imageUrl)
+      return
 
     setIsProcessing(true)
     try {
       const croppedBlob = await getCroppedImg(imageUrl, croppedAreaPixels, rotation)
       onCropComplete(croppedBlob)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('裁剪失败:', error)
-    } finally {
+    }
+    finally {
       setIsProcessing(false)
     }
   }
@@ -219,7 +224,7 @@ export const AvatarCropModal = ({
   const isDisabled = isUploading || isProcessing
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
+    <Dialog open={open} onOpenChange={isOpen => !isOpen && onClose()}>
       <DialogContent className="max-w-[520px] p-0 gap-0 overflow-hidden" aria-describedby={undefined}>
         {/* 无障碍标题 */}
         <DialogTitle className="sr-only">{t('profile.cropAvatar')}</DialogTitle>

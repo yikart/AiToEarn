@@ -2,8 +2,8 @@
  * 平台交互统一类型定义
  */
 
-import { PlatType } from '@/app/config/platConfig'
-import { PLUGIN_SUPPORTED_PLATFORMS } from '../types/baseTypes'
+import type { PLUGIN_SUPPORTED_PLATFORMS } from '../types/baseTypes'
+import type { PlatType } from '@/app/config/platConfig'
 
 // ============================================================================
 // 通用参数类型
@@ -249,50 +249,50 @@ export interface IPlatformInteraction {
    * @param workId 作品ID
    * @param isLike true 点赞，false 取消点赞
    */
-  likeWork(workId: string, isLike: boolean): Promise<LikeResult>
+  likeWork: (workId: string, isLike: boolean) => Promise<LikeResult>
 
   /**
    * 评论作品
    * @param params 评论参数
    */
-  commentWork(params: CommentParams): Promise<CommentResult>
+  commentWork: (params: CommentParams) => Promise<CommentResult>
 
   /**
    * 收藏/取消收藏作品
    * @param workId 作品ID
    * @param isFavorite true 收藏，false 取消收藏
    */
-  favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult>
+  favoriteWork: (workId: string, isFavorite: boolean) => Promise<FavoriteResult>
 
   /**
    * 发送私信（可选方法，不是所有平台都支持）
    * @param params 私信参数
    */
-  sendDirectMessage?(params: DirectMessageParams): Promise<DirectMessageResult>
+  sendDirectMessage?: (params: DirectMessageParams) => Promise<DirectMessageResult>
 
   /**
    * 获取首页作品列表
    * @param params 分页参数
    */
-  getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult>
+  getHomeFeedList: (params: HomeFeedListParams) => Promise<HomeFeedListResult>
 
   /**
    * 获取作品详情
    * @param params 作品详情请求参数
    */
-  getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult>
+  getWorkDetail: (params: GetWorkDetailParams) => Promise<GetWorkDetailResult>
 
   /**
    * 获取评论列表
    * @param params 评论列表请求参数
    */
-  getCommentList(params: CommentListParams): Promise<CommentListResult>
+  getCommentList: (params: CommentListParams) => Promise<CommentListResult>
 
   /**
    * 获取子评论列表（查看更多回复）
    * @param params 子评论列表请求参数
    */
-  getSubCommentList(params: SubCommentListParams): Promise<CommentListResult>
+  getSubCommentList: (params: SubCommentListParams) => Promise<CommentListResult>
 }
 
 // ============================================================================

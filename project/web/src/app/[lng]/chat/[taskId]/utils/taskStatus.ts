@@ -25,10 +25,11 @@ const COMPLETED_STATUS_VALUES = [
  * 根据 TaskDetail 的 status 判断任务是否完成
  */
 export function isTaskCompletedByStatus(task: Pick<TaskDetail, 'status'> | null | undefined): boolean {
-  if (!task) return false
+  if (!task)
+    return false
   const statusValue = task.status as string
-  return COMPLETED_STATUS_VALUES.includes(statusValue?.toLowerCase()) || 
-         COMPLETED_STATUS_VALUES.includes(statusValue)
+  return COMPLETED_STATUS_VALUES.includes(statusValue?.toLowerCase())
+    || COMPLETED_STATUS_VALUES.includes(statusValue)
 }
 
 /**
@@ -71,4 +72,3 @@ export function isTaskCompleted(
   }
   return isTaskCompletedByMessages(messages)
 }
-

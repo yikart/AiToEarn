@@ -4,8 +4,8 @@ import type { SocialAccount } from '@/api/types/account.type'
 import { Avatar } from 'antd'
 import { forwardRef, memo } from 'react'
 import { AccountPlatInfoMap } from '@/app/config/platConfig'
-import styles from './avatarPlat.module.scss'
 import { getOssUrl } from '@/utils/oss'
+import styles from './avatarPlat.module.scss'
 
 export interface IAvatarPlatRef {}
 

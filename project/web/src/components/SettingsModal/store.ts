@@ -26,5 +26,3 @@ export const useSettingsModalStore = create<SettingsModalState>(set => ({
       settingsDefaultTab: undefined,
     }),
 }))
-
-

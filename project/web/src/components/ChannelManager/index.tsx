@@ -38,7 +38,8 @@ export function ChannelManager({
   const handleClose = useCallback(() => {
     if (onOpenChange) {
       onOpenChange(false)
-    } else {
+    }
+    else {
       setInternalOpen(false)
     }
   }, [onOpenChange])

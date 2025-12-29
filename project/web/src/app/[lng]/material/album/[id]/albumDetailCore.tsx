@@ -2,9 +2,9 @@
 
 import { PictureOutlined, PlayCircleOutlined, PlusOutlined, SoundOutlined } from '@ant-design/icons'
 import { Button, Card, Col, Row, Typography, Upload } from 'antd'
-import { toast } from '@/lib/toast'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { toast } from '@/lib/toast'
 import styles from './albumDetail.module.scss'
 
 const { Title } = Typography
