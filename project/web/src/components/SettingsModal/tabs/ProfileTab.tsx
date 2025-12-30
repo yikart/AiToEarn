@@ -29,11 +29,11 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { userInfo, getUserInfo, clearLoginStatus } = useUserStore(
+  const { userInfo, getUserInfo, logout } = useUserStore(
     useShallow(state => ({
       userInfo: state.userInfo,
       getUserInfo: state.getUserInfo,
-      clearLoginStatus: state.clearLoginStatus,
+      logout: state.logout,
     })),
   )
 
@@ -144,14 +144,12 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
   }
 
   const handleLogout = () => {
-    clearLoginStatus()
+    logout()
     toast.success(tCommon('logout'))
     onClose()
-    router.push('/')
   }
 
   const totalIncome = ((userInfo as any)?.totalIncome || 0) / 100
-  const currentBalance = (userInfo?.income || 0) / 100
 
   return (
     <div className="w-full space-y-6">

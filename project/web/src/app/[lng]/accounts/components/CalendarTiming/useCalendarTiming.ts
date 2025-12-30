@@ -3,7 +3,7 @@ import type { PublishRecordItem } from '@/api/plat/types/publish.types'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { getPublishList, getPublishQueue, getPublishRecordDetail } from '@/api/plat/publish'
+import { getPublishList, getPublishRecordDetail } from '@/api/plat/publish'
 import { getDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useAccountStore } from '@/store/account'
 
@@ -112,45 +112,6 @@ export const useCalendarTiming = create(
           }
           catch (error) {
             console.error('获取发布记录数据时发生错误:', error)
-            methods.setListLoading(false)
-            methods.setRecordMap(new Map())
-          }
-        },
-
-        // 获取列表模式队列数据（不依赖日历可视范围）
-        async getQueueRecord(status?: number) {
-          try {
-            methods.setListLoading(true)
-            const res = await getPublishQueue({
-              accountType: useAccountStore.getState().accountActive?.type,
-              status,
-              publishingChannel: 'internal',
-            })
-            methods.setListLoading(false)
-
-            if (!res || !res.data || !Array.isArray(res.data)) {
-              console.warn('获取发布队列数据失败或数据格式不正确:', res)
-              methods.setRecordMap(new Map())
-              return
-            }
-
-            const recordMap = new Map<string, PublishRecordItem[]>()
-            res.data.forEach((v) => {
-              const days = getDays(v.publishTime)
-              const timeStr = days.format('YYYY-MM-DD')
-              let list = recordMap.get(timeStr)
-              if (!list) {
-                list = []
-                recordMap.set(timeStr, list)
-              }
-              list.push(v)
-            })
-            methods.setRecordMap(recordMap)
-            // 获取完数据后，启动轮询检查
-            methods.queryPubTask()
-          }
-          catch (error) {
-            console.error('获取发布队列时发生错误:', error)
             methods.setListLoading(false)
             methods.setRecordMap(new Map())
           }

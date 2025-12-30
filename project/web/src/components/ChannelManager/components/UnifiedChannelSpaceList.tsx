@@ -100,8 +100,8 @@ export function UnifiedChannelSpaceList() {
 
   // 删除空间或频道
   const confirmDelete = useCallback(async () => {
+    setDeleteLoading(deleteDialog.id)
     try {
-      setDeleteLoading(deleteDialog.id)
       if (deleteDialog.type === 'space') {
         await deleteAccountGroupApi([deleteDialog.id])
         toast.success(t('channelManager.deleteSpaceSuccess', '删除空间成功'))
@@ -113,15 +113,16 @@ export function UnifiedChannelSpaceList() {
         // 删除频道后同时刷新账户列表和分组数据
         await Promise.all([getAccountList(), getAccountGroup()])
       }
+      // 删除成功后关闭对话框
+      setDeleteDialog({ open: false, type: 'space', id: '', name: '' })
     }
     catch (error) {
       const errorType = deleteDialog.type === 'space' ? '空间' : '频道'
       toast.error(`删除${errorType}失败`)
-      return
+      // 删除失败不关闭对话框，让用户可以重试
     }
     finally {
       setDeleteLoading(null)
-      setDeleteDialog({ open: false, type: 'space', id: '', name: '' })
     }
   }, [deleteDialog, getAccountGroup, getAccountList, t])
 

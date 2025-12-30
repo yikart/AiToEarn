@@ -6,7 +6,6 @@
 import type { ClickRect } from '../components/FeedCard'
 import type { HomeFeedItem, SupportedPlatformType, WorkDetail } from '@/store/plugin/plats/types'
 import { create } from 'zustand'
-import { PlatType } from '@/app/config/platConfig'
 import { platformManager } from '@/store/plugin'
 
 /**
@@ -154,8 +153,6 @@ export const useDetailModalStore = create<DetailModalStore>((set, get) => ({
           workId: item.workId,
           // 小红书需要 xsecToken
           xsecToken: item.origin?.xsec_token,
-          // 抖音需要 origin 数据
-          origin: platform === PlatType.Douyin ? item.origin : undefined,
         })
 
         // 检查弹框是否还在打开状态（避免关闭后还更新状态）

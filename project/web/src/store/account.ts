@@ -4,6 +4,7 @@ import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
 import { getAccountGroupApi, getAccountListApi } from '@/api/account'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
+import { PlatType } from '@/app/config/platConfig'
 import { directTrans } from '@/app/i18n/client'
 import { usePluginStore } from '@/store/plugin'
 import { useUserStore } from '@/store/user'
@@ -91,6 +92,10 @@ export const useAccountStore = create(
 
             const accountList: SocialAccount[] = []
             for (const item of result.data) {
+              // 抖音账号过滤
+              if (item.type === PlatType.Douyin) {
+                continue
+              }
               accountMap.set(item.id, item)
               accountAccountMap.set(item.account, item)
               accountList.push(item)

@@ -73,7 +73,7 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
             ) : (
               <Plus className="h-4 w-4 mr-1" />
             )}
-            {t('common.confirm', '确认')}
+            {t('deleteConfirm.confirm')}
           </Button>
           <Button
             variant="outline"
@@ -83,18 +83,18 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
             }}
             size="sm"
           >
-            {t('common.cancel', '取消')}
+            {t('deleteConfirm.cancel')}
           </Button>
         </>
       ) : (
         <Button
           variant="outline"
           onClick={() => setShowCreateSpace(true)}
-          className="w-full justify-start"
+          className="w-full cursor-pointer justify-start border-dashed"
           disabled={showCreateSpace}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          {t('channelManager.createSpace', '新建空间')}
+          <Plus className="mr-2 h-4 w-4" />
+          {t('channelManager.createSpace')}
         </Button>
       )}
     </div>

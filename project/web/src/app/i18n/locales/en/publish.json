@@ -320,7 +320,7 @@
     }
   },
   "messages": {
-    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your TikTok profile."
+    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your {{platform}} profile."
   },
   "previewvideo": "Preview Video",
   "record": {

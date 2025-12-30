@@ -1,7 +1,10 @@
+/**
+ * ShareModal - 分享对话弹窗组件
+ * 用于选择并导出聊天消息为图片
+ */
 'use client'
 
-import type { TaskDetail, TaskMessage } from '@/api/agent'
-import type { IDisplayMessage } from '@/store/agent'
+import type { TaskDetail } from '@/api/agent'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { agentApi } from '@/api/agent'
 import { convertMessages } from '@/app/[lng]/chat/[taskId]/utils'
@@ -24,6 +27,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Skeleton } from '@/components/ui/skeleton'
 import { toast } from '@/lib/toast'
+import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 import { generateImageFromMessages } from './generateShareImages'
 import SharePreviewModal from './SharePreviewModal'
@@ -97,11 +101,6 @@ export function ShareModal({
     return convertMessages(taskDetail.messages)
   }, [taskDetail?.messages])
 
-  // 在列表中始终显示所有消息（复选框仅用于高亮与导出选择）
-  const displayMessages = useMemo(() => {
-    return messages
-  }, [messages])
-
   // 折叠状态：记录被折叠的 message id 集合
   const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set())
   const toggleCollapse = (id: string) => {
@@ -146,7 +145,7 @@ export function ShareModal({
       ro.disconnect()
       window.removeEventListener('resize', measure)
     }
-  }, [displayMessages])
+  }, [messages])
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
       if (prev.includes(id))
@@ -200,39 +199,7 @@ export function ShareModal({
     finally {
       setLoading(false)
     }
-  }, [messages, selectedIds, taskId, user?.name, onOpenChange])
-
-  // 辅助函数：下载图片
-  const downloadImages = async (
-    blobs: Blob[],
-    taskId: string,
-  ): Promise<void> => {
-    const downloadPromises = blobs.map((blob, index) => {
-      return new Promise<void>((resolve, reject) => {
-        try {
-          const a = document.createElement('a')
-          const url = URL.createObjectURL(blob)
-          a.href = url
-          // 为长图使用不同的命名
-          const fileName
-            = blobs.length === 1
-              ? `aitoearn_conversation_${taskId}.png`
-              : `aitoearn_${taskId}_${index + 1}.png`
-          a.download = fileName
-          document.body.appendChild(a)
-          a.click()
-          a.remove()
-          URL.revokeObjectURL(url)
-          resolve()
-        }
-        catch (err) {
-          reject(err)
-        }
-      })
-    })
-
-    await Promise.all(downloadPromises)
-  }
+  }, [messages, selectedIds, user?.name, t])
 
   const messageListContent = loading ? (
     <div className="space-y-4">
@@ -248,7 +215,7 @@ export function ShareModal({
       ))}
     </div>
   ) : (
-    displayMessages.map((message) => {
+    messages.map((message) => {
       const isUser = message.role === 'user'
       const isSelected = selectedIds.includes(message.id)
       const isCollapsed = collapsedIds.has(message.id)
@@ -258,7 +225,7 @@ export function ShareModal({
         <input
           type="checkbox"
           checked={isSelected}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             if (e.target.checked) {
               setSelectedIds(prev => Array.from(new Set([...prev, message.id])))
             }
@@ -266,7 +233,7 @@ export function ShareModal({
               setSelectedIds(prev => prev.filter(id => id !== message.id))
             }
           }}
-          className="mt-1"
+          className="mt-1 h-4 w-4 cursor-pointer rounded border-border accent-primary"
         />
       )
 
@@ -279,32 +246,6 @@ export function ShareModal({
         if (target.closest('a,button,input,textarea,select,video'))
           return
         toggleSelect(message.id)
-      }
-
-      // role-based base and highlight colors (now unified; use grayish highlight)
-      const ROLE_BASE: Record<string, string> = {
-        user: '#ffffff',
-        assistant: '#ffffff',
-      }
-      // make highlight very subtle (lighter)
-      const ROLE_HIGHLIGHT: Record<string, string> = {
-        user: '#fbfbfd',
-        assistant: '#fbfbfd',
-      }
-      const baseMessageStyle: React.CSSProperties = {
-        padding: 12,
-        borderRadius: 8,
-      }
-      const roleBg = isUser ? ROLE_BASE.user : ROLE_BASE.assistant
-      const selectedBg = isUser ? ROLE_HIGHLIGHT.user : ROLE_HIGHLIGHT.assistant
-      const selectedStyle: React.CSSProperties = {
-        ...baseMessageStyle,
-        background: selectedBg,
-        boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.02)',
-      }
-      const defaultStyle: React.CSSProperties = {
-        ...baseMessageStyle,
-        background: roleBg,
       }
 
       return (
@@ -320,8 +261,12 @@ export function ShareModal({
               if (e.key === 'Enter' || e.key === ' ')
                 toggleSelect(message.id)
             }}
-            className="flex items-start gap-3"
-            style={isSelected ? selectedStyle : defaultStyle}
+            className={cn(
+              'flex items-start gap-3 p-3 rounded-lg transition-colors cursor-pointer',
+              isSelected
+                ? 'bg-muted/50 ring-1 ring-border/50'
+                : 'bg-card hover:bg-muted/30',
+            )}
             ref={(el) => {
               if (el)
                 messageRefs.current.set(message.id, el as HTMLDivElement)
@@ -335,7 +280,7 @@ export function ShareModal({
             )}
 
             <div className="flex-1 min-w-0">
-              <div style={isLong && isCollapsed ? { maxHeight: 40, overflow: 'hidden', position: 'relative' } : undefined}>
+              <div className={cn(isLong && isCollapsed && 'max-h-10 overflow-hidden relative')}>
                 <ChatMessage
                   role={message.role === 'system' ? 'assistant' : message.role}
                   content={message.content}
@@ -348,10 +293,9 @@ export function ShareModal({
                   className="max-w-full"
                 />
                 {isLong && isCollapsed && (
-                  <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, height: 40, background: 'linear-gradient(rgba(255,255,255,0), rgba(255,255,255,0.95))' }} />
+                  <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background to-transparent" />
                 )}
               </div>
-              {/* fold button moved to top-right for better visibility */}
             </div>
 
             {isUser && (
@@ -361,16 +305,20 @@ export function ShareModal({
             )}
           </div>
 
-          {/* top-right collapse button */}
+          {/* 折叠/展开按钮 */}
           {isLong && (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); toggleCollapse(message.id) }}
               title={isCollapsed ? t('showMore') : t('collapse')}
-              className="absolute top-3 w-9 h-9 flex items-center justify-center bg-white border border-border rounded-full shadow-sm hover:bg-muted/80"
-              style={{ zIndex: 20, left: isUser ? '12px' : undefined, right: isUser ? undefined : '12px' } as React.CSSProperties}
+              className={cn(
+                'absolute top-3 z-20 w-9 h-9 flex items-center justify-center',
+                'bg-background border border-border rounded-full shadow-sm',
+                'hover:bg-muted/80 cursor-pointer transition-colors',
+                isUser ? 'left-3' : 'right-3',
+              )}
             >
-              <span style={{ fontSize: 12 }}>{isCollapsed ? '▾' : '▴'}</span>
+              <span className="text-xs">{isCollapsed ? '▾' : '▴'}</span>
             </button>
           )}
         </div>
@@ -395,7 +343,7 @@ export function ShareModal({
                 variant="outline"
                 size="sm"
                 onClick={() => {
-                  const allIds = displayMessages.map(m => m.id)
+                  const allIds = messages.map(m => m.id)
                   setSelectedIds(allIds)
                 }}
                 className="cursor-pointer"
@@ -416,8 +364,8 @@ export function ShareModal({
                 <DropdownMenuContent>
                   <DropdownMenuItem
                     onClick={() => {
-                      const recentCount = Math.min(5, displayMessages.length)
-                      const recentIds = displayMessages.slice(-recentCount).map(m => m.id)
+                      const recentCount = Math.min(5, messages.length)
+                      const recentIds = messages.slice(-recentCount).map(m => m.id)
                       setSelectedIds(recentIds)
                     }}
                   >
@@ -425,8 +373,8 @@ export function ShareModal({
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      const recentCount = Math.min(10, displayMessages.length)
-                      const recentIds = displayMessages.slice(-recentCount).map(m => m.id)
+                      const recentCount = Math.min(10, messages.length)
+                      const recentIds = messages.slice(-recentCount).map(m => m.id)
                       setSelectedIds(recentIds)
                     }}
                   >
@@ -434,8 +382,8 @@ export function ShareModal({
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => {
-                      const recentCount = Math.min(20, displayMessages.length)
-                      const recentIds = displayMessages.slice(-recentCount).map(m => m.id)
+                      const recentCount = Math.min(20, messages.length)
+                      const recentIds = messages.slice(-recentCount).map(m => m.id)
                       setSelectedIds(recentIds)
                     }}
                   >
@@ -477,7 +425,6 @@ export function ShareModal({
             <Button
               onClick={handleGenerateAndDownload}
               disabled={loading || selectedIds.length === 0}
-              className="bg-primary text-white"
             >
               {loading ? t('generating') : t('generate')}
             </Button>

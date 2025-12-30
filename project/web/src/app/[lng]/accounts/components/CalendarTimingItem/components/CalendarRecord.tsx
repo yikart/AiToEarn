@@ -1,3 +1,9 @@
+/**
+ * CalendarRecord 组件
+ *
+ * 功能描述: 可拖拽的发布记录组件（桌面端支持拖拽，移动端禁用）
+ */
+
 import type { ForwardedRef } from 'react'
 import type { DragSourceMonitor } from 'react-dnd'
 import type {
@@ -17,6 +23,7 @@ import {
   getUtcDays,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import RecordCore from './RecordCore'
 
 export interface ICalendarRecordRef {}
@@ -31,6 +38,7 @@ const CalendarRecord = memo(
       { publishRecord }: ICalendarRecordProps,
       ref: ForwardedRef<ICalendarRecordRef>,
     ) => {
+      const isMobile = useIsMobile()
       const { setRecordMap, recordMap } = useCalendarTiming(
         useShallow(state => ({
           setRecordMap: state.setRecordMap,
@@ -39,7 +47,9 @@ const CalendarRecord = memo(
       )
       const [{ opacity }, drag, preview] = useDrag(
         () => ({
-          type: 'box',
+          // 移动端禁用拖拽
+          type: isMobile ? 'none' : 'box',
+          canDrag: !isMobile,
           item: { publishRecord },
           end(item, monitor) {
             const dropResult: any = monitor.getDropResult()
@@ -101,22 +111,26 @@ const CalendarRecord = memo(
             opacity: monitor.isDragging() ? 0 : 1,
           }),
         }),
-        [recordMap],
+        [recordMap, isMobile],
       )
 
       useEffect(() => {
-        preview(getEmptyImage(), { captureDraggingState: true })
-      }, [])
+        // 移动端不需要设置空图片预览
+        if (!isMobile) {
+          preview(getEmptyImage(), { captureDraggingState: true })
+        }
+      }, [isMobile, preview])
 
       return (
         <div
           style={{ opacity }}
           ref={(node) => {
-            if (publishRecord.status === PublishStatus.UNPUBLISH) {
+            // 只在桌面端且未发布状态启用拖拽
+            if (!isMobile && publishRecord.status === PublishStatus.UNPUBLISH) {
               drag(node)
             }
           }}
-          role="DraggableBox"
+          role={isMobile ? 'button' : 'DraggableBox'}
         >
           <RecordCore publishRecord={publishRecord} />
         </div>

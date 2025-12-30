@@ -68,11 +68,26 @@ export function createStoreMethods(ctx: IMethodsContext) {
     const cardActionTypes = ['createChannel', 'updateChannel', 'loginChannel']
     // 需要自动执行的 action（如发布、保存草稿等）
     const autoExecuteActions: ITaskData[] = []
+    // 收集所有 result 中的 medias（用于在消息中显示视频/图片）
+    const allMedias: Array<{ type: string, url: string, thumbUrl?: string }> = []
 
     if (resultMsg.result) {
       const resultArray: ITaskData[] = Array.isArray(resultMsg.result) ? resultMsg.result : [resultMsg.result]
 
       resultArray.forEach((taskData) => {
+        // 收集 medias（无论 action 类型）
+        if (taskData.medias && Array.isArray(taskData.medias) && taskData.medias.length > 0) {
+          taskData.medias.forEach((media: any) => {
+            if (media && (media.url || media.thumbUrl)) {
+              allMedias.push({
+                type: media.type || 'IMAGE',
+                url: media.url || '',
+                thumbUrl: media.thumbUrl,
+              })
+            }
+          })
+        }
+
         if (taskData.action && cardActionTypes.includes(taskData.action)) {
           // 转换为 ActionCard 格式
           actionCards.push({
@@ -85,8 +100,8 @@ export function createStoreMethods(ctx: IMethodsContext) {
             tags: taskData.tags,
           })
         }
-        else {
-          // 其他 action 自动执行
+        else if (taskData.action && (taskData.action as string) !== 'none') {
+          // 其他有效 action 自动执行（排除 none，none 是后端表示无操作的特殊值）
           autoExecuteActions.push(taskData)
         }
       })
@@ -107,6 +122,10 @@ export function createStoreMethods(ctx: IMethodsContext) {
         // 如果 assistant 消息存在，更新其内容和 actions
         if (actionCards.length > 0) {
           messageUtils.updateMessageWithActions(resultMsg.message, actionCards)
+        }
+        else if (allMedias.length > 0) {
+          // 有 medias 时使用带 medias 的更新方法
+          messageUtils.updateMessageContentWithMedias(resultMsg.message, allMedias)
         }
         else {
           messageUtils.updateMessageContent(resultMsg.message)

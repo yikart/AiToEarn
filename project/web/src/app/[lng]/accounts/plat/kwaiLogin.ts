@@ -29,11 +29,11 @@ export async function kwaiSkip(platType: PlatType, spaceId?: string): Promise<an
           const autoStatusRes = await getKwaiAuthStatus(res.data.taskId)
 
           if (!autoStatusRes?.data) {
-            reject(new Error('no status data'))
+            resolve(autoStatusRes)
             return true
           }
 
-          if (autoStatusRes.data.status === 1) {
+          if (autoStatusRes?.data?.status === 1) {
             // 授权成功，返回结果，交由调用方处理
             resolve(autoStatusRes)
             return true

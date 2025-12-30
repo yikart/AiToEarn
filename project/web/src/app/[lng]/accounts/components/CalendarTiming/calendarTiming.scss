@@ -135,3 +135,50 @@
   opacity: 0;
   transition: opacity 300ms ease-out;
 }
+
+/* ================================
+   移动端响应式样式 (< 768px)
+   ================================ */
+@media (max-width: 767px) {
+  /* 日历容器：减小内边距 */
+  .calendarTiming-calendar {
+    padding: 0.5rem;
+  }
+
+  /* 星期头部：字体缩小 */
+  .calendarTiming-calendar thead .fc-scrollgrid-sync-inner {
+    padding: 3px 0;
+    font-size: 0.75rem;
+  }
+
+  /* 星期名称：缩小 */
+  .fc-col-header-cell-cushion {
+    font-size: 0.7rem;
+    padding: 4px 2px;
+  }
+
+  /* 动画加速 - 移动端使用更快的动画 */
+  .slideLeftEnterActive,
+  .slideLeftExitActive,
+  .slideRightEnterActive,
+  .slideRightExitActive {
+    transition-duration: 200ms;
+  }
+
+  /* 减小滑动距离 */
+  .slideLeftEnter {
+    transform: translateX(30px);
+  }
+
+  .slideLeftExitActive {
+    transform: translateX(-30px);
+  }
+
+  .slideRightEnter {
+    transform: translateX(-30px);
+  }
+
+  .slideRightExitActive {
+    transform: translateX(30px);
+  }
+}

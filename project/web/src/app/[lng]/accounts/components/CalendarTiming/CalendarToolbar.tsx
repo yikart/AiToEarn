@@ -1,30 +1,24 @@
 /**
  * CalendarToolbar 组件
  *
- * 功能描述: 日历工具栏 (Row 2 - Calendar Controls Bar)
- * - 左侧: 上月/下月按钮 + 当前月份显示 + 今天按钮 (仅日历模式显示)
- * - 右侧: 日历/列表模式切换标签
+ * 功能描述: 日历工具栏 - 包含导航按钮和月份显示
+ * - 上月/下月按钮
+ * - 当前月份显示
+ * - 今天按钮
  */
 
 'use client'
 
-import {
-  CalendarOutlined,
-  UnorderedListOutlined,
-} from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { memo, useMemo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useGetClientLng } from '@/hooks/useSystem'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 
 export interface ICalendarToolbarProps {
-  activeMode: 'calendar' | 'list'
-  onModeChange: (mode: 'calendar' | 'list') => void
   currentDate: Date
   onPrev: () => void
   onNext: () => void
@@ -32,7 +26,7 @@ export interface ICalendarToolbarProps {
 }
 
 const CalendarToolbar = memo<ICalendarToolbarProps>(
-  ({ activeMode, onModeChange, currentDate, onPrev, onNext, onToday }) => {
+  ({ currentDate, onPrev, onNext, onToday }) => {
     const { t } = useTransClient('account')
     const lng = useGetClientLng()
 
@@ -44,56 +38,39 @@ const CalendarToolbar = memo<ICalendarToolbarProps>(
     }, [currentDate, lng])
 
     return (
-      <div className="h-14 flex items-center justify-between px-6 py-3 border-b bg-background shrink-0">
-        {/* 左侧: 日历导航控制 (仅在日历模式显示) */}
-        <div className="flex items-center gap-3">
-          {activeMode === 'calendar' && (
-            <>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onPrev}
-                className="h-8 w-8"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={onNext}
-                className="h-8 w-8"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
-              <div className="text-base font-semibold text-foreground min-w-[120px] text-center">
-                {formattedDate}
-              </div>
-              <Button
-                variant="outline"
-                onClick={onToday}
-                className="h-8"
-              >
-                {t('today')}
-              </Button>
-            </>
-          )}
+      <div className="h-12 md:h-14 flex items-center justify-between px-4 md:px-6 py-2 md:py-3 border-b bg-background shrink-0">
+        {/* 导航控制 */}
+        <div className="flex items-center gap-1 md:gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onPrev}
+            className="h-7 w-7 md:h-8 md:w-8 cursor-pointer"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onNext}
+            className="h-7 w-7 md:h-8 md:w-8 cursor-pointer"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          <div className="text-sm md:text-base font-semibold text-foreground min-w-[100px] md:min-w-[120px] text-center">
+            {formattedDate}
+          </div>
         </div>
 
-        {/* 右侧: 模式切换标签 */}
-        <div className="flex items-center gap-3">
-          <Tabs value={activeMode} onValueChange={value => onModeChange(value as 'calendar' | 'list')}>
-            <TabsList>
-              <TabsTrigger value="calendar" className="gap-1.5">
-                <CalendarOutlined />
-                {t('calendarModeTab')}
-              </TabsTrigger>
-              <TabsTrigger value="list" className="gap-1.5">
-                <UnorderedListOutlined />
-                {t('listModeTab')}
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        {/* 今天按钮 */}
+        <Button
+          variant="outline"
+          onClick={onToday}
+          size="sm"
+          className="h-7 md:h-8 text-xs md:text-sm cursor-pointer"
+        >
+          {t('today')}
+        </Button>
       </div>
     )
   },

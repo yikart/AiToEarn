@@ -11,10 +11,10 @@ import { forwardRef, memo, useState } from 'react'
 import { Navigation } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useShallow } from 'zustand/react/shallow'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import { useDataStatisticsStore } from '@/app/[lng]/dataStatistics/useDataStatistics'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import { useAccountStore } from '@/store/account'
 import AccountCount from '../../svgs/accountCount.svg'
 import styles from './dataStatisticsHeader.module.scss'
@@ -49,21 +49,16 @@ const DataStatisticsHeader = memo(
           setAccountSearchValue: state.setAccountSearchValue,
         })),
       )
-      const [addAccountModalOpen, setAddAccountModalOpen] = useState(false)
       const { t } = useTransClient('dataStatistics')
+      // 频道管理器相关方法
+      const { openConnectList } = useChannelManagerStore(
+        useShallow(state => ({
+          openConnectList: state.openConnectList,
+        })),
+      )
 
       return (
         <div className={styles.dataStatisticsHeader}>
-          {/* 添加账号弹窗 */}
-          <AddAccountModal
-            open={addAccountModalOpen}
-            onClose={() => setAddAccountModalOpen(false)}
-            onAddSuccess={() => setAddAccountModalOpen(false)}
-            // targetGroupId={targetSpaceId}
-            // showSpaceSelector={!targetSpaceId}
-            // autoTriggerPlatform={targetPlatform}
-          />
-
           <div className="dataStatisticsHeader-top">
             <h2>{t('accountData')}</h2>
             <div className="dataStatisticsHeader-top-options">
@@ -174,7 +169,7 @@ const DataStatisticsHeader = memo(
                                               <a
                                                 onClick={(e) => {
                                                   e.preventDefault()
-                                                  setAddAccountModalOpen(true)
+                                                  openConnectList()
                                                 }}
                                               >
                                                 {t('relogin')}

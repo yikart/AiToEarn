@@ -1,3 +1,7 @@
+/**
+ * generateShareImages - 分享图片生成工具
+ * 将聊天消息渲染为可分享的图片
+ */
 import type { IDisplayMessage } from '@/store/agent'
 import html2canvas from 'html2canvas-pro'
 import React from 'react'
@@ -271,8 +275,14 @@ export async function generateImageFromNode(node: HTMLElement, scale = 1): Promi
  * 将容器中所有img和video元素的AWS URL替换为代理URL
  */
 function replaceMediaUrlsWithProxy(container: HTMLElement): void {
-  const awsUrl = process.env.NEXT_PUBLIC_S3_URL!
-  const proxyUrl = process.env.NEXT_PUBLIC_S3_PROXY!
+  const awsUrl = process.env.NEXT_PUBLIC_S3_URL
+  const proxyUrl = process.env.NEXT_PUBLIC_S3_PROXY
+
+  // 如果环境变量未配置，跳过替换
+  if (!awsUrl || !proxyUrl) {
+    console.warn('S3 URL or proxy URL not configured, skipping URL replacement')
+    return
+  }
 
   // 处理图片元素
   const images = container.querySelectorAll('img')

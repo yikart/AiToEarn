@@ -8,16 +8,19 @@ import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import AccountsTopNav from '@/app/[lng]/accounts/components/AccountsTopNav'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
 import CalendarTiming from '@/app/[lng]/accounts/components/CalendarTiming'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import rightArrow from '@/assets/images/jiantou.png'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import PublishDialog from '@/components/PublishDialog'
+import { VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
+import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { confirm } from '@/lib/confirm'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
+import { generateUUID } from '@/utils'
 import { useCalendarTiming } from './components/CalendarTiming/useCalendarTiming'
 import 'driver.js/dist/driver.css'
 
@@ -52,14 +55,17 @@ export default function AccountPageCore({
       })),
     )
 
-  // 添加账号弹窗状态
-  const [addAccountModalOpen, setAddAccountModalOpen] = useState(false)
-  const [targetPlatform, setTargetPlatform] = useState<PlatType | undefined>()
-  const [targetSpaceId, setTargetSpaceId] = useState<string | undefined>()
-
   const { t } = useTransClient('account')
   const { t: tCommon } = useTransClient('common')
   const userStore = useUserStore()
+
+  // 频道管理器相关方法
+  const { openConnectList, openAndAuth } = useChannelManagerStore(
+    useShallow(state => ({
+      openConnectList: state.openConnectList,
+      openAndAuth: state.openAndAuth,
+    })),
+  )
 
   // 移动端下载提示弹窗开关
   const [showMobileDownload, setShowMobileDownload] = useState(false)
@@ -89,12 +95,9 @@ export default function AccountPageCore({
       const validPlatforms = Object.values(PlatType)
 
       if (validPlatforms.includes(platform)) {
-        // 设置目标平台
-        setTargetPlatform(platform)
-
-        // 直接打开添加账号弹窗，autoTriggerPlatform 会自动触发授权
+        // 直接打开频道管理器并触发授权
         setTimeout(() => {
-          setAddAccountModalOpen(true)
+          openAndAuth(platform)
         }, 500)
 
         // 清除URL参数
@@ -135,9 +138,6 @@ export default function AccountPageCore({
           console.warn('Add channel button not found')
           return
         }
-
-        // 设置目标平台
-        setTargetPlatform(platform as PlatType)
 
         const driverObj = driver({
           showProgress: false,
@@ -186,7 +186,7 @@ export default function AccountPageCore({
             },
           ],
           onNextClick: () => {
-            // 点击按钮时关闭引导并打开添加账号弹窗
+            // 点击按钮时关闭引导并打开频道管理器
             driverObj.destroy()
             // 清除URL参数
             if (typeof window !== 'undefined') {
@@ -194,9 +194,9 @@ export default function AccountPageCore({
               url.searchParams.delete('addChannel')
               window.history.replaceState({}, '', url.toString())
             }
-            // 打开添加账号弹窗
+            // 打开频道管理器并直接授权该平台
             setTimeout(() => {
-              setAddAccountModalOpen(true)
+              openAndAuth(platform as PlatType)
             }, 300)
             return false // 阻止默认行为
           },
@@ -245,15 +245,6 @@ export default function AccountPageCore({
         }
 
         setAiGeneratedData(data)
-
-        // 如果有 platform 参数，设置目标平台
-        if (searchParams.platform) {
-          const platform = searchParams.platform as PlatType
-          const validPlatforms = Object.values(PlatType)
-          if (validPlatforms.includes(platform)) {
-            setTargetPlatform(platform)
-          }
-        }
 
         // 选择账号：优先使用 accountId，其次选择对应平台的账号
         let targetAccount = null
@@ -325,19 +316,18 @@ export default function AccountPageCore({
       // 验证平台类型是否有效
       const platform = searchParams.platform as PlatType
       const validPlatforms = Object.values(PlatType)
+      const spaceId = searchParams.spaceId
 
       if (searchParams.platform && validPlatforms.includes(platform)) {
-        setTargetPlatform(platform)
+        // 有指定平台，直接授权
+        openAndAuth(platform, spaceId)
       }
-
-      if (searchParams.spaceId) {
-        setTargetSpaceId(searchParams.spaceId)
+      else if (spaceId) {
+        // 只有spaceId，打开连接频道列表
+        openConnectList(spaceId)
       }
-
-      // 打开添加账号弹窗
-      setAddAccountModalOpen(true)
     }
-  }, [searchParams, allAccounts.length])
+  }, [searchParams, allAccounts.length, openAndAuth, openConnectList])
 
   /**
    * 检测是否为微信浏览器
@@ -436,29 +426,12 @@ export default function AccountPageCore({
     }
   })()
 
-  const handleAddAccountSuccess = (accountInfo: SocialAccount) => {
-    setAddAccountModalOpen(false)
-    // 可以在这里添加成功提示或其他逻辑
-  }
-
-  const handleAddAccountClose = () => {
-    setAddAccountModalOpen(false)
-    // 清除URL参数（可选）
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href)
-      url.searchParams.delete('platform')
-      url.searchParams.delete('spaceId')
-      window.history.replaceState({}, '', url.toString())
-    }
-  }
-
   // Fill AI-generated data after publish dialog opens
   useEffect(() => {
     if (aiGeneratedData && publishDialogOpen && allAccounts.length > 0) {
       // Delay filling to ensure PublishDialog is fully initialized
       const timeoutId = setTimeout(() => {
         try {
-          const { usePublishDialog } = require('@/components/PublishDialog/usePublishDialog')
           const store = usePublishDialog.getState()
 
           // If pubList is not initialized yet, retry after delay
@@ -481,10 +454,6 @@ export default function AccountPageCore({
 
       // Helper function to fill data
       const fillAIData = async (store: any) => {
-        const { VideoGrabFrame } = require('@/components/PublishDialog/PublishDialog.util')
-        // Dynamic import generateUUID and VideoGrabFrame
-        const { generateUUID } = require('@/utils')
-
         // Build params - append tags to description
         let description = aiGeneratedData.description || ''
         if (aiGeneratedData.tags && aiGeneratedData.tags.length > 0) {
@@ -510,8 +479,6 @@ export default function AccountPageCore({
               // If API returned cover URL, use it directly (support both coverUrl and thumbUrl)
               const coverUrl = videoMedia.coverUrl || videoMedia.thumbUrl
               if (coverUrl) {
-                const { formatImg } = require('@/components/PublishDialog/PublishDialog.util')
-
                 // Load cover image to get dimension info
                 coverInfo = await new Promise((resolve) => {
                   const img = document.createElement('img')
@@ -736,7 +703,7 @@ export default function AccountPageCore({
             )
 
             if (!hasAccounts) {
-              // 使用 confirm 弹窗提示用户先添加账号，点击“去添加”打开添加账号弹窗
+              // 使用 confirm 弹窗提示用户先添加账号，点击"去添加"打开频道管理器
               confirm({
                 title: t('noAccountWarning.title'),
                 content: t('noAccountWarning.content'),
@@ -744,8 +711,8 @@ export default function AccountPageCore({
                 cancelText: tCommon('actions.cancel'),
                 okType: 'default',
                 onOk: async () => {
-                  // 打开添加账号弹窗
-                  setAddAccountModalOpen(true)
+                  // 打开频道管理器连接频道列表
+                  openConnectList()
                 },
               })
             }
@@ -753,21 +720,11 @@ export default function AccountPageCore({
               setPublishDialogOpen(true)
             }
           }}
-          onAddAccount={() => setAddAccountModalOpen(true)}
+          onAddAccount={() => openConnectList()}
         />
 
         {/* 主内容区域: CalendarTiming (包含 Row 2 工具栏和日历/列表视图) */}
         <CalendarTiming />
-
-        {/* 添加账号弹窗 */}
-        <AddAccountModal
-          open={addAccountModalOpen}
-          onClose={handleAddAccountClose}
-          onAddSuccess={handleAddAccountSuccess}
-          targetGroupId={targetSpaceId}
-          showSpaceSelector={!targetSpaceId}
-          autoTriggerPlatform={targetPlatform}
-        />
 
         {/* 微信浏览器提示（遮罩 + 箭头指向右上角） */}
         {showWechatBrowserTip && (

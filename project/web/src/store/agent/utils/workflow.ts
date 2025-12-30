@@ -25,6 +25,7 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
 
   /**
    * 保存当前步骤到消息中
+   * 关键：正确处理 textDeltaHandler 创建的 `-live` 步骤，更新而非新增
    */
   function saveCurrentStepToMessage() {
     if (refs.currentStepIndex.value < 0 || !refs.streamingText.value.trim()) {
@@ -32,7 +33,7 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
     }
 
     const stepData: IMessageStep = {
-      id: `step-${refs.currentStepIndex.value}-${Date.now()}`,
+      id: `step-${refs.currentStepIndex.value}-saved`,
       content: refs.streamingText.value,
       workflowSteps: [...refs.currentStepWorkflow.value],
       isActive: false,
@@ -43,13 +44,23 @@ export function createWorkflowUtils(ctx: IWorkflowContext) {
       messages: state.messages.map((m: any) => {
         if (m.id === refs.currentAssistantMessageId.value) {
           const steps = m.steps || []
+          // 查找匹配的步骤：可能是 -live 步骤或相同 index 的步骤
+          const liveStepId = `step-${refs.currentStepIndex.value}-live`
           const existingIndex = steps.findIndex(
             (s: IMessageStep) =>
-              s.id === stepData.id
-              || (refs.currentStepIndex.value >= 0 && steps.length === refs.currentStepIndex.value),
+              s.id === liveStepId // 匹配 textDeltaHandler 创建的 -live 步骤
+              || s.id.startsWith(`step-${refs.currentStepIndex.value}-`), // 匹配相同 index 的步骤
           )
           if (existingIndex >= 0) {
-            steps[existingIndex] = stepData
+            // 更新已有步骤（保留工作流步骤的合并）
+            const existingStep = steps[existingIndex]
+            steps[existingIndex] = {
+              ...stepData,
+              // 合并工作流步骤，避免丢失
+              workflowSteps: (stepData.workflowSteps && stepData.workflowSteps.length > 0)
+                ? stepData.workflowSteps
+                : (existingStep.workflowSteps || []),
+            }
           }
           else {
             steps.push(stepData)

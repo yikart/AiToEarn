@@ -3,6 +3,7 @@ import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
 import LayoutSidebar from '@/app/layout/LayoutSidebar'
 import MobileNav from '@/app/layout/MobileNav'
+import { ChannelManager } from '@/components/ChannelManager'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
@@ -42,6 +43,8 @@ export default async function RootLayout({
         />
         <script async src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" />
         <Providers lng={lng}>
+          {/* 全局频道管理弹框 */}
+          <ChannelManager />
           <p className="hidden">
             Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf
           </p>
@@ -54,9 +57,13 @@ export default async function RootLayout({
             <main id="main-content" className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-14 md:pt-0">
               {children}
             </main>
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_web_sign.js" />
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_sign_init.js" />
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_sign_core.js" />
+            {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_sign_inject.js" />
           </div>
         </Providers>

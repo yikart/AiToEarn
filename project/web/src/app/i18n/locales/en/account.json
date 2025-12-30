@@ -44,7 +44,8 @@
       "title": "Kwai Authorization Notice",
       "content": "Kwai may remain on the login page after login. This is an official Kwai issue. Please refresh the page and return to the platform to refresh, then authorization can succeed.",
       "okText": "I understand"
-    }
+    },
+    "authSuccess": "The authorization for the channel {{platform}} has been successful!"
   },
   "noAccountWarning": {
     "title": "Notice",
@@ -288,6 +289,31 @@
     "myChannels": "My Channels",
     "title": "Channel Manager",
     "description": "Manage your channels and space groups",
+    "platforms": "Platforms",
+    "allChannels": "All Channels",
+    "availablePlatforms": "Available Platforms",
+    "connectNewChannel": "Connect New Channel",
+    "backToChannels": "Back to My Channels",
+    "newUserTip": "Connect any channel to start your amazing AiToEarn journey!",
+    "addChannel": "Add Channel",
+    "connecting": "Connecting {{platform}}",
+    "authWaitingTip": "Please complete authorization in the new window...",
+    "remainingTime": "Remaining time: ",
+    "reopenAuthPage": "Reopen Authorization Page",
+    "autoRedirectTip": "Will automatically redirect after successful authorization",
+    "authTimeout": "Authorization Timeout",
+    "authTimeoutTip": "Authorization time has expired, please try again",
+    "authFailed": "Authorization Failed",
+    "authFailedTip": "An error occurred during authorization, please retry",
+    "authError": "Authorization Error",
+    "authInProgress": "Authorizing",
+    "authDescription": "Waiting for authorization to complete",
+    "connectDescription": "Select a platform to connect",
+    "retry": "Retry",
+    "pluginNotReady": "Please install and authorize the browser plugin before adding {{platform}} account",
+    "platformNotLoggedIn": "{{platform}} is not logged in, please log in via the plugin first",
+    "syncSuccess": "Account synced successfully",
+    "syncFailed": "Account sync failed",
     "tabs": {
       "channels": "Channels",
       "spaces": "Spaces"
@@ -314,6 +340,8 @@
     "sorting": "Sorting...",
     "deleting": "Deleting...",
     "fans": "Fans: {{count}}",
+    "reauth": "Re-authorize",
+    "addToSpace": "Add to: {{space}}",
     "deleteDialogContent": "Are you sure you want to delete {{type}} '{{name}}'? This action cannot be undone.",
     "noData": "No data available"
   }

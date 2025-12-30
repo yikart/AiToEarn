@@ -117,6 +117,8 @@ export interface IPluginStore {
   publishTasks: PublishTask[]
   taskListConfig: PublishTaskListConfig
   platformAccounts: PlatformAccountsMap
+  /** 插件弹框是否可见 */
+  pluginModalVisible: boolean
 }
 
 const store: IPluginStore = {
@@ -134,6 +136,7 @@ const store: IPluginStore = {
     cleanAfter: 24 * 60 * 60 * 1000,
   },
   platformAccounts: createInitialPlatformAccounts(),
+  pluginModalVisible: false,
 }
 
 function getStore() {
@@ -148,6 +151,16 @@ export const usePluginStore = create(
       const methods = {
         clear() {
           set({ ...getStore() })
+        },
+
+        /** 打开插件弹框 */
+        openPluginModal() {
+          set({ pluginModalVisible: true })
+        },
+
+        /** 关闭插件弹框 */
+        closePluginModal() {
+          set({ pluginModalVisible: false })
         },
 
         /** 检查插件是否安装 */

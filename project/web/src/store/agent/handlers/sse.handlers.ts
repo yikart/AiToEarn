@@ -174,7 +174,9 @@ export const textDeltaHandler: ISSEHandler = {
           if (ctx.refs.currentStepIndex.value >= 0 && ctx.refs.currentStepIndex.value < updatedSteps.length) {
             updatedSteps[ctx.refs.currentStepIndex.value] = currentStepData
           }
-          else if (ctx.refs.currentStepIndex.value === updatedSteps.length) {
+          else if (ctx.refs.currentStepIndex.value >= updatedSteps.length) {
+            // 当 stepIndex >= steps.length 时，添加新步骤
+            // 这处理了 stepIndex > steps.length 的情况（中间可能有跳过的空步骤）
             updatedSteps.push(currentStepData)
           }
 

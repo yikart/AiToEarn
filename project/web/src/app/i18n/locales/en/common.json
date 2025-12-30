@@ -25,6 +25,8 @@
   "markAsRead": "Mark as read",
   "unreadCount": "Unread messages",
   "viewAll": "View all",
+  "cancel": "Cancel",
+  "confirm": "Confirm",
   "actions": {
     "cancel": "Cancel",
     "confirm": "Confirm",

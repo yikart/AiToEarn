@@ -1,8 +1,7 @@
 /**
  * CalendarTiming 组件
  *
- * 功能描述: 日历定时发布组件 - 显示日历视图或列表视图,管理发布任务
- * 重构说明: 已移除顶部header和toolbar,使用新的CalendarToolbar组件
+ * 功能描述: 日历定时发布组件 - 显示日历视图，管理发布任务
  */
 
 import type { DatesSetArg } from '@fullcalendar/core'
@@ -30,7 +29,6 @@ import {
   getTransitionClassNames,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import CalendarToolbar from '@/app/[lng]/accounts/components/CalendarTiming/CalendarToolbar'
-import ListMode from '@/app/[lng]/accounts/components/CalendarTiming/ListMode'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import PublishDialog from '@/components/PublishDialog'
 import { PublishDatePickerType } from '@/components/PublishDialog/compoents/PublishDatePicker/publishDatePicker.enums'
@@ -55,9 +53,7 @@ const CalendarTiming = memo(
         'left',
       )
       const [currentDate, setCurrentDate] = useState<Date>(new Date())
-      const [activeMode, setActiveMode] = useState<'calendar' | 'list'>(
-        'calendar',
-      )
+
       const handleDatesSet = (arg: DatesSetArg) => {
         const date = calendarRef.current?.getApi().getDate()
         if (date) {
@@ -79,14 +75,12 @@ const CalendarTiming = memo(
         recordMap,
         setCalendarRef,
         getPubRecord,
-        getQueueRecord,
       } = useCalendarTiming(
         useShallow(state => ({
           setCalendarCallWidth: state.setCalendarCallWidth,
           listLoading: state.listLoading,
           recordMap: state.recordMap,
           getPubRecord: state.getPubRecord,
-          getQueueRecord: state.getQueueRecord,
           setCalendarRef: state.setCalendarRef,
         })),
       )
@@ -95,12 +89,7 @@ const CalendarTiming = memo(
       useEffect(() => {
         setCalendarRef(calendarRef.current!)
         window.addEventListener('resize', handleResize)
-        if (activeMode === 'list') {
-          getQueueRecord(0)
-        }
-        else {
-          getPubRecord()
-        }
+        getPubRecord()
 
         setTimeout(() => {
           handleResize()
@@ -147,18 +136,15 @@ const CalendarTiming = memo(
       }, [])
 
       useEffect(() => {
-        if (activeMode === 'list') {
-          getQueueRecord(0)
-        }
-        else {
-          getPubRecord()
-        }
-      }, [accountActive, activeMode, getPubRecord, getQueueRecord])
+        getPubRecord()
+      }, [accountActive, getPubRecord])
 
       // 处理窗口大小变化
       const handleResize = () => {
         setTimeout(() => {
-          const el = document.querySelector('.calendarTimingItem--js')!
+          const el = document.querySelector('.calendarTimingItem--js')
+          if (!el) return
+
           const style = window.getComputedStyle(el)
           const paddingLeft = Number.parseFloat(style.paddingLeft)
           const paddingRight = Number.parseFloat(style.paddingRight)
@@ -169,7 +155,9 @@ const CalendarTiming = memo(
 
       // 动画触发函数
       const triggerAnimation = (dir: 'left' | 'right' | 'fade') => {
-        calendarTimingCalendarRef.current!.scrollTop = 0
+        if (calendarTimingCalendarRef.current) {
+          calendarTimingCalendarRef.current.scrollTop = 0
+        }
         setDirection(dir)
         setAnimating(true)
       }
@@ -201,6 +189,36 @@ const CalendarTiming = memo(
         }, 300)
       }
 
+      // FullCalendar 内容（移动端不包裹 DndProvider）
+      const calendarContent = (
+        <FullCalendar
+          ref={calendarRef}
+          locale={getFullCalendarLang(lng)}
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          initialDate={currentDate}
+          headerToolbar={false}
+          stickyFooterScrollbar={true}
+          dayCellContent={(arg) => {
+            const dateStr = getDays(arg.date).format('YYYY-MM-DD')
+            return (
+              <CalendarTimingItem
+                key={dateStr}
+                records={recordMap.get(dateStr)}
+                loading={listLoading}
+                arg={arg}
+                onClickPub={(date) => {
+                  useUserStore.getState().setCurrentDatePickerType(PublishDatePickerType.DATE)
+                  publishDialogRef.current!.setPubTime(date)
+                  setPublishDialogOpen(true)
+                }}
+              />
+            )
+          }}
+          datesSet={handleDatesSet}
+        />
+      )
+
       return (
         <div className="flex flex-col flex-1 overflow-hidden">
           <PublishDialog
@@ -214,70 +232,32 @@ const CalendarTiming = memo(
             accounts={accountList}
           />
 
-          {/* 日历工具栏 (Row 2) */}
+          {/* 日历工具栏 */}
           <CalendarToolbar
-            activeMode={activeMode}
-            onModeChange={setActiveMode}
             currentDate={currentDate}
             onPrev={handlePrev}
             onNext={handleNext}
             onToday={handleToday}
           />
 
-          {/* 主内容区域 - 日历或列表视图 */}
+          {/* 主内容区域 - 日历视图 */}
           <div className="flex-1 overflow-hidden relative">
-            {activeMode === 'calendar'
-              ? (
-                  <CSSTransition
-                    in={!animating}
-                    timeout={300}
-                    classNames={getTransitionClassNames(direction)}
-                    unmountOnExit
-                  >
-                    <div
-                      className="calendarTiming-calendar overflow-hidden"
-                      id="calendarTiming-calendar"
-                      ref={calendarTimingCalendarRef}
-                    >
-                      <DndProvider backend={HTML5Backend}>
-                        <FullCalendar
-                          ref={calendarRef}
-                          locale={getFullCalendarLang(lng)}
-                          plugins={[dayGridPlugin]}
-                          initialView="dayGridMonth"
-                          initialDate={currentDate}
-                          headerToolbar={false}
-                          stickyFooterScrollbar={true}
-                          dayCellContent={(arg) => {
-                            const dateStr = getDays(arg.date).format('YYYY-MM-DD')
-                            return (
-                              <CalendarTimingItem
-                                key={dateStr}
-                                records={recordMap.get(dateStr)}
-                                loading={listLoading}
-                                arg={arg}
-                                onClickPub={(date) => {
-                                  useUserStore.getState().setCurrentDatePickerType(PublishDatePickerType.DATE)
-                                  publishDialogRef.current!.setPubTime(date)
-                                  setPublishDialogOpen(true)
-                                }}
-                              />
-                            )
-                          }}
-                          datesSet={handleDatesSet}
-                        />
-                      </DndProvider>
-                    </div>
-                  </CSSTransition>
-                )
-              : (
-                  <ListMode
-                    onClickPub={(date) => {
-                      publishDialogRef.current!.setPubTime(date)
-                      setPublishDialogOpen(true)
-                    }}
-                  />
-                )}
+            <CSSTransition
+              in={!animating}
+              timeout={300}
+              classNames={getTransitionClassNames(direction)}
+              unmountOnExit
+            >
+              <div
+                className="calendarTiming-calendar overflow-hidden"
+                id="calendarTiming-calendar"
+                ref={calendarTimingCalendarRef}
+              >
+                <DndProvider backend={HTML5Backend}>
+                {calendarContent}
+              </DndProvider>
+              </div>
+            </CSSTransition>
           </div>
         </div>
       )

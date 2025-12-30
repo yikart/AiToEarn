@@ -28,7 +28,6 @@ import CommentList from './CommentList'
  * 从描述中移除话题标签（因为话题会单独显示）
  * 支持多平台格式：
  * - 小红书：#话题名[话题]#
- * - 抖音：#话题名 或 #话题名#
  * @param text 原始描述文本
  * @param platform 当前平台
  * @returns 移除话题后的纯文本
@@ -43,11 +42,6 @@ function removeTopicsFromDescription(text: string, platform: SupportedPlatformTy
     case PlatType.Xhs:
       // 小红书格式：#话题名[话题]#
       result = result.replace(/#[^#[\]]+\[话题\]#/g, '')
-      break
-
-    case PlatType.Douyin:
-      // 抖音格式：#话题名 或 #话题名#（话题名不含空格和#）
-      result = result.replace(/#[^\s#]+#?/g, '')
       break
 
     default:

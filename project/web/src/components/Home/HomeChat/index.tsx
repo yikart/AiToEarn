@@ -10,9 +10,10 @@ import Image from 'next/image'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 
 import { useCallback, useEffect, useState } from 'react'
-import AddAccountModal from '@/app/[lng]/accounts/components/AddAccountModal'
+import { useShallow } from 'zustand/react/shallow'
 import { AccountPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
@@ -87,16 +88,22 @@ export function HomeChat({
     }
   }, [externalPrompt, onClearExternalPrompt, agentTaskId])
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [addAccountVisible, setAddAccountVisible] = useState(false)
+
+  // 频道管理器
+  const { openConnectList } = useChannelManagerStore(
+    useShallow(state => ({
+      openConnectList: state.openConnectList,
+    })),
+  )
 
   // 处理添加账号点击 - 未登录时弹出登录弹窗
   const handleAddChannelClick = useCallback(() => {
     if (!token) {
-      openLoginModal(() => setAddAccountVisible(true))
+      openLoginModal(() => openConnectList())
       return
     }
-    setAddAccountVisible(true)
-  }, [token])
+    openConnectList()
+  }, [token, openConnectList])
 
   // 使用媒体上传 Hook
   const {
@@ -279,14 +286,6 @@ export function HomeChat({
           {t('home.enterToSend')}
         </span>
       </div>
-
-      {/* 添加账号弹窗 */}
-      <AddAccountModal
-        open={addAccountVisible}
-        onClose={() => setAddAccountVisible(false)}
-        onAddSuccess={() => setAddAccountVisible(false)}
-        showSpaceSelector={true}
-      />
     </div>
   )
 }
