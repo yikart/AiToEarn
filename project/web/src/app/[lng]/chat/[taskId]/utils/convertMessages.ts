@@ -37,6 +37,10 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
   // 用于追踪工具调用的 Map
   const toolCallMap = new Map<string, string>()
 
+  // 用于追踪当前消息轮次（通过 message.id 判断）
+  // 当 message.id 变化时，表示新的一轮消息开始，需要分割步骤
+  let currentMessageId = ''
+
   /** 保存当前步骤到步骤列表 */
   const saveCurrentStep = () => {
     if (currentStepContent.trim() || currentStepWorkflow.length > 0) {
@@ -163,6 +167,25 @@ export function convertMessages(messages: TaskMessage[]): IDisplayMessage[] {
     }
     else if (msg.type === 'assistant') {
       // AI 回复消息处理
+      // 检测消息轮次变化：通过 message.id 判断是否是新的一轮
+      // 在详情数据中，同一轮的多条 assistant 消息会有相同的 message.id
+      const messageData = (msg as any).message as any
+      const messageId = messageData?.id || ''
+
+      // 检查是否包含 text 内容（非空文本）
+      const hasText = messageData?.content?.some((item: any) => item.type === 'text' && item.text?.trim())
+
+      // 只在遇到包含 text 的新 message.id 时开始新步骤
+      // 纯 tool_use 消息不触发新步骤，其工作流会合并到当前步骤
+      if (hasText && messageId && currentMessageId && messageId !== currentMessageId) {
+        // 新的消息轮次开始（且有文本内容），保存当前步骤
+        saveCurrentStep()
+      }
+      // 更新当前消息 ID
+      if (messageId) {
+        currentMessageId = messageId
+      }
+
       const result = processAssistantMessage(msg, index, displayMessages, currentStepWorkflow, toolCallMap)
       if (result.contentToAdd) {
         currentStepContent += (currentStepContent ? '\n\n' : '') + result.contentToAdd

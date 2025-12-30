@@ -163,20 +163,27 @@ export const textDeltaHandler: ISSEHandler = {
           const steps = m.steps || []
 
           const updatedSteps = [...steps]
+          const currentStepId = `step-${ctx.refs.currentStepIndex.value}-live`
           const currentStepData: IMessageStep = {
-            id: `step-${ctx.refs.currentStepIndex.value}-live`,
+            id: currentStepId,
             content: ctx.refs.streamingText.value,
             workflowSteps: [...ctx.refs.currentStepWorkflow.value],
             isActive: true,
             timestamp: Date.now(),
           }
 
-          if (ctx.refs.currentStepIndex.value >= 0 && ctx.refs.currentStepIndex.value < updatedSteps.length) {
-            updatedSteps[ctx.refs.currentStepIndex.value] = currentStepData
+          // 通过 ID 查找已存在的步骤，而不是使用数组索引
+          // 这样可以正确处理 stepIndex 跳过某些值的情况
+          const existingStepIndex = updatedSteps.findIndex(
+            (s: IMessageStep) => s.id === currentStepId || s.id === `step-${ctx.refs.currentStepIndex.value}-saved`,
+          )
+
+          if (existingStepIndex >= 0) {
+            // 更新已存在的步骤
+            updatedSteps[existingStepIndex] = currentStepData
           }
-          else if (ctx.refs.currentStepIndex.value >= updatedSteps.length) {
-            // 当 stepIndex >= steps.length 时，添加新步骤
-            // 这处理了 stepIndex > steps.length 的情况（中间可能有跳过的空步骤）
+          else {
+            // 添加新步骤
             updatedSteps.push(currentStepData)
           }
 
