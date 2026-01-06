@@ -17,7 +17,10 @@ Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Offic
 TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## 🎥 Demo Video
-[![Watch the video](./presentation/display-1.5.2png.png)](https://youtu.be/y900LxIrZT4)
+<a href="https://youtu.be/y900LxIrZT4">
+  <img src="./presentation/display-1.5.2png.png" alt="Watch the video" width="480">
+</a>
+
 
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
