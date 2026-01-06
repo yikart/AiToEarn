@@ -17,11 +17,12 @@ Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Offic
 TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## 🎥 Demo Video
+[![Watch the video](./presentation/display-1.5.2png.png)](https://youtu.be/y900LxIrZT4)
 
-[![Watch the video](https://img.youtube.com/vi/y900LxIrZT4/0.jpg)](https://studio.youtube.com/video/y900LxIrZT4/edit)
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
 ## What's new:
+* 2025.01.06 : [1.5.3 version](https://www.aitoearn.ai/en), deal with lots of issue
 * 2025.12.15 : "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content, and help you operate AiToEarn. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
 
 * 2025.11.28 : Support automatic updates within the application. Add a large number of AI functions to the creation interface, such as abbreviation, expansion, image creation, video creation, tag generation, etc., supporting Nano Banana Pro.[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
