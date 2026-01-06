@@ -15,10 +15,12 @@ AiToEarn 通过**AI 自动化**，帮助创作者、品牌与企业在全球主�
 TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
 
 ## 🎥 Demo Video
+[![Watch the video](./presentation/display-1.5.2png.png)](https://youtu.be/y900LxIrZT4)
 
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
 ## 最新动态:
+* **2025.01.06** : [1.5.3 version](https://www.aitoearn.ai/en), 修复大量已知问题
 * **2025.12.15**： "All In Agent" 的开始！我们加入了能够自动内容生成和发布以及一些帮助你操作Aitoearn的超级Ai智能agent。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
 * **2025.11.28**：支持应用内自动更新。在创作界面新增大量 AI 功能，例如：缩写、扩写、图片生成、视频生成、标签生成等，并支持 Nano Banana Pro。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 * **2025.11.12**：首个开源且可完全使用的版本。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
@@ -43,10 +45,13 @@ TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest�
 </details>
 
 ## 创作者快速开始（应用程序与网页版）
+[![网页版](https://img.shields.io/badge/网页版-推荐-green?style=for-the-badge&logo=googlechrome&logoColor=white)](https://aitoearn.ai/en/accounts)
 
-[![下载](https://img.shields.io/badge/客户端下载-前往-blue?style=for-the-badge&logo=github)](https://github.com/yikart/AiToEarn/releases)
-[![网页版](https://img.shields.io/badge/网页版-在线使用-green?style=for-the-badge&logo=googlechrome)](https://aitoearn.ai/en/accounts)
-[![Google Play](https://img.shields.io/badge/Google%20Play-前往-black?style=for-the-badge&logo=googleplay)](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+[![下载](https://img.shields.io/badge/客户端-Mac%20%7C%20Win%20%7C%20Android-blue?style=for-the-badge&logo=github&logoColor=white)](https://github.com/yikart/AiToEarn/releases)
+
+[![Google Play](https://img.shields.io/badge/Google%20Play-前往-black?style=for-the-badge&logo=google-play&logoColor=white)](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
+
+
 
 > 📥 **支持平台**: Windows、macOS、Android、iOS（即将推出）
 
