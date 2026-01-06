@@ -18,6 +18,7 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## 🎥 Demo Video
 
+[![Watch the video](https://img.youtube.com/vi/y900LxIrZT4/0.jpg)](https://studio.youtube.com/video/y900LxIrZT4/edit)
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
 ## What's new:
