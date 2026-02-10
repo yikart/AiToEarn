@@ -1,4 +1,4 @@
-# [Aitoearn：最佳开源 AI 内容营销智能体](https://aitoearn.ai)
+# [Aitoearn：一人公司的AI 内容营销智能体](https://aitoearn.ai)
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
