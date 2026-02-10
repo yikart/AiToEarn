@@ -254,17 +254,12 @@ The Electron project provides a desktop client for AiToEarn.
 
 ## MCP Service
 https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn
+
 https://www.npmjs.com/~aitoearn?activeTab=packages
-
-
-
-
 
 ## Contact
 https://t.me/harryyyy2025
 
-
----
 
 ## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
