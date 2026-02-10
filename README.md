@@ -25,6 +25,7 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 [![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
 
 ## What's new:
+* 2025.02.07: [1.8.0 version](https://www.aitoearn.ai/), we introduced support for offline business scenarios, covering restaurants, retail stores, hotels and guesthouses, beauty and hair salons, gyms, and other types of physical businesses. This feature transforms offline promotional activities into executable online distribution tasks. Through content publishing and user participation mechanisms, it helps businesses gain more online exposure and in-store traffic.
 * 2025.01.06 : [1.5.3 version](https://www.aitoearn.ai/en), deal with lots of issue
 * 2025.12.15 : "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content, and help you operate AiToEarn. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
 
@@ -36,14 +37,11 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
   
   <br/>
   
-  1. [Quick Start for Creators (Apps & Web)](#quick-start-for-creators-apps--web)
-  2. [Quick Start for Developers (Docker, Recommended)](#quick-start-for-developers-docker-recommended)
+  1. [Quick Start for Creators (Apps & Web)](#quick-start-for-creators)
   3. [Key Features](#key-features)
-  4. [MCP Service](#mcp-service)
-  5. [Advanced Setup](#advanced-setup)
-  6. [Contribution Guide](#contribution-guide)
+  4. [Quick Start for Developers (Docker, Recommended)](#quick-start-for-developers-docker-recommended)
+  5. [MCP Service](#mcp-service)
   7. [Contact](#contact)
-  8. [Milestones](#milestones)
   9. [FAQ](#faq)
   10. [Recommended](#recommended)
 </details>
@@ -52,14 +50,107 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 
 
-## Quick Start for Creators (Apps & Web)
+## [Quick Start for Creators](https://aitoearn.ai/)
 
-[![Download](https://img.shields.io/badge/Client%20Download-Get%20Started-blue?style=for-the-badge&logo=github)](https://github.com/yikart/AiToEarn/releases)
-[![Web App](https://img.shields.io/badge/Web-Use%20Online-green?style=for-the-badge&logo=googlechrome)](https://aitoearn.ai/en/accounts)
-[![Google Play](https://img.shields.io/badge/Google%20Play-Get%20Started-black?style=for-the-badge&logo=googleplay)](https://play.google.com/store/apps/details?id=com.yika.aitoearn.aitoearn_app)
 
-> 📥 **Supports**: Windows, macOS, Android, iOS (coming soon)
 
+
+
+
+
+
+
+## Key Features
+
+🚀 **AiToEarn is a full-stack AI-powered content growth & monetization platform.**
+From creative ideas, to multi-channel publishing, to analytics & monetization — AiToEarn helps you truly **Create · Publish · Engage · Monetize.**
+
+### Agent — AI Assistant
+- **All In Agent**: Let the AI agent help you create and publish content, assisting you in operating AiToEarn.
+
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/agent_0.png" width="100%">
+</div>
+
+
+### 1. Content Publishing — One-Click Multi-Platform
+
+* **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat Channels, WeChat Offical Account, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, x(Twitter)).
+* **Smart Import**: Import historical content for fast re-editing & redistribution.
+
+  * Example: Sync your Xiaohongshu posts to YouTube in one click.
+* **Calendar Scheduler**: Plan & coordinate content like a calendar across all platforms.
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/app-screenshot/1. content publish/calendar.jpeg" width="30%">
+  <img src="presentation/app-screenshot/1. content publish/support_channels.jpeg" width="30%">
+</div>
+
+### 2. Content Hotspot — Viral Inspiration Engine
+
+* **Case Library**: Explore how others create posts with 10,000+ likes.
+* **Trend Radar**: Discover the latest viral trends instantly, reduce creator anxiety.
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot.jpg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot2.jpeg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot3.jpeg" width="22%">
+  <img src="presentation/app-screenshot/2. content hotspot/hotspot4.jpeg" width="22%">
+</div>
+
+### 3. Content Search — Brand & Market Insights
+
+* **Brand Monitoring**: Track conversations about your brand in real-time.
+* **Content Discovery**: Search for posts, topics, and communities for targeted engagement.
+
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch2.jpeg" width="22%">
+  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
+</div>
+
+
+### 4. Comments Search — Precision User Mining
+
+* **Smart Comment Search**: Detect high-conversion signals like “link please” or “how to buy.”
+* **Conversion Booster**: Reply instantly, drive higher engagement & sales.
+ <div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/4. comments search/commentsearch.gif" width="30%">
+  <img src="presentation/app-screenshot/4. comments search/commentfilter.jpeg" width="30%">
+</div>
+
+### 5. Content Engagement — Growth Engine
+
+* **Unified Dashboard**: Manage all interactions in one place.
+* **Proactive Engagement**: Join trending conversations, connect with potential customers.
+* Turn **passive operations** into **active traffic growth.**
+
+ <div style="display:flex; justify-content:space-between; align-items:center;">
+  <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
+</div>
+
+### 6. Content Analytics — Full-Funnel Data
+
+* **Cross-Platform Comparison**: One platform may block traffic, but others won’t.
+* **End-to-End Monitoring**: Track performance and build your path to 1M+ followers.
+
+<img src="./presentation/data_center.png" alt="post" width="500"/>
+
+### 7. (Coming Soon) AI Content Creation — End-to-End Assistant
+
+* **AI Copywriting**: Auto-generate titles, captions & descriptions.
+* **AI Commenting**: Engage proactively, attract traffic.
+* **Image & Card Generator**: Speed up content workflows.
+* **Supported AI Video Models**: Seedance, Kling, Hailuo, Veo, Medjourney, Sora, Pika, Runway.
+* **Supported AI Image Models**: GPT, Flux.
+* **Next**: Tag generator, smart DMs, video editing, AI avatars, translation for global distribution.
+
+
+### 8. (Coming Soon) Content Marketplace — Trade & Monetize
+
+* **Creators**: Sell your content directly, find buyers fast.
+* **Brands**: Purchase ready-made, high-quality content.
+* **AI-Powered Growth**:
+  **Let’s use AI to earn. Let’s earn money together!**
 
 ## Quick Start for Developers (Docker, Recommended)
 
@@ -161,137 +252,17 @@ The Electron project provides a desktop client for AiToEarn.
 
 </details>
 
-
-
-
-## Key Features
-
-🚀 **AiToEarn is a full-stack AI-powered content growth & monetization platform.**
-From creative ideas, to multi-channel publishing, to analytics & monetization — AiToEarn helps you truly **Create · Publish · Engage · Monetize.**
-
-### Agent — AI Assistant
-- **All In Agent**: Let the AI agent help you create and publish content, assisting you in operating AiToEarn.
-
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/agent_0.png" width="100%">
-</div>
-
-
-### 1. Content Publishing — One-Click Multi-Platform
-
-* **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat Channels, WeChat Offical Account, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, x(Twitter)).
-* **Smart Import**: Import historical content for fast re-editing & redistribution.
-
-  * Example: Sync your Xiaohongshu posts to YouTube in one click.
-* **Calendar Scheduler**: Plan & coordinate content like a calendar across all platforms.
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/app-screenshot/1. content publish/calendar.jpeg" width="30%">
-  <img src="presentation/app-screenshot/1. content publish/support_channels.jpeg" width="30%">
-</div>
-
-### 2. Content Hotspot — Viral Inspiration Engine
-
-* **Case Library**: Explore how others create posts with 10,000+ likes.
-* **Trend Radar**: Discover the latest viral trends instantly, reduce creator anxiety.
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot.jpg" width="22%">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot2.jpeg" width="22%">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot3.jpeg" width="22%">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot4.jpeg" width="22%">
-</div>
-
-### 3. Content Search — Brand & Market Insights
-
-* **Brand Monitoring**: Track conversations about your brand in real-time.
-* **Content Discovery**: Search for posts, topics, and communities for targeted engagement.
-
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch2.jpeg" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
-</div>
-
-
-### 4. Comments Search — Precision User Mining
-
-* **Smart Comment Search**: Detect high-conversion signals like “link please” or “how to buy.”
-* **Conversion Booster**: Reply instantly, drive higher engagement & sales.
- <div style="display:flex; justify-content:space-between; align-items:center;">
-  <img src="presentation/app-screenshot/4. comments search/commentsearch.gif" width="30%">
-  <img src="presentation/app-screenshot/4. comments search/commentfilter.jpeg" width="30%">
-</div>
-
-### 5. Content Engagement — Growth Engine
-
-* **Unified Dashboard**: Manage all interactions in one place.
-* **Proactive Engagement**: Join trending conversations, connect with potential customers.
-* Turn **passive operations** into **active traffic growth.**
-
- <div style="display:flex; justify-content:space-between; align-items:center;">
-  <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
-</div>
-
-### 6. Content Analytics — Full-Funnel Data
-
-* **Cross-Platform Comparison**: One platform may block traffic, but others won’t.
-* **End-to-End Monitoring**: Track performance and build your path to 1M+ followers.
-
-<img src="./presentation/data_center.png" alt="post" width="500"/>
-
-### 7. (Coming Soon) AI Content Creation — End-to-End Assistant
-
-* **AI Copywriting**: Auto-generate titles, captions & descriptions.
-* **AI Commenting**: Engage proactively, attract traffic.
-* **Image & Card Generator**: Speed up content workflows.
-* **Supported AI Video Models**: Seedance, Kling, Hailuo, Veo, Medjourney, Sora, Pika, Runway.
-* **Supported AI Image Models**: GPT, Flux.
-* **Next**: Tag generator, smart DMs, video editing, AI avatars, translation for global distribution.
-
-
-### 8. (Coming Soon) Content Marketplace — Trade & Monetize
-
-* **Creators**: Sell your content directly, find buyers fast.
-* **Brands**: Purchase ready-made, high-quality content.
-* **AI-Powered Growth**:
-  **Let’s use AI to earn. Let’s earn money together!**
-
-
 ## MCP Service
 https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn
 https://www.npmjs.com/~aitoearn?activeTab=packages
 
 
-## Advanced Setup
 
-AiToEarn integrates with many official APIs. Developer key setup guides:
-
-* [Bilibili](./aitoearn_web/CHANNEL_Md/BILIBILI.md)
-* [WeChat Official Accounts](./aitoearn_web/CHANNEL_Md/WXPLAT.md)
-
-
-## Contribution Guide
-
-See [Contribution Guide](./aitoearn_web/CONTRIBUTING.md) to get started.
 
 
 ## Contact
 https://t.me/harryyyy2025
 
-
-## Milestones
-
-* 2025.02.26 — Released win-0.1.1
-* 2025.03.15 — Released win-0.2.0
-* 2025.04.18 — Released win-0.6.0
-* 2025.05.20 — Released win-0.8.0
-* 2025.08.08 — [Released win-0.8.1](https://github.com/yikart/AiToEarn/releases/tag/v0.8.1)
-* 2025.08.08 — [Released web-0.1-beta](./aitoearn_web/README.md)
-* 2025.09.16 — [Released v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
-* 2025.10.01 — [Released v1.0.27](https://github.com/yikart/AiToEarn/releases/tag/v1.0.27)
-* 2025.11.01 — [First Usable Version: v1.2.2](https://github.com/yikart/AiToEarn/releases/tag/v1.2.2)
-* 2025.11.12 — [The first open-source, fully usable release. Released: v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
-* 2025.12.15 — [First Agent Version Released: v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
 
 ---
 
@@ -299,10 +270,6 @@ https://t.me/harryyyy2025
 
 
 ## Recommended
-
-**[AWS Activate Program](https://www.amazonaws.cn/en/campaign/ps-yunchuang/)**
-
-**[AI Model Hub](https://api.zyai.online/)**
 
 * [https://github.com/TMElyralab/MuseTalk](https://github.com/TMElyralab/MuseTalk)
 * [https://github.com/5ime/video\_spider](https://github.com/5ime/video_spider)
