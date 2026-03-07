@@ -1,12 +1,15 @@
 
 # [Aitoearn: The Best Open-Source AI Agent for Content Marketing](https://aitoearn.ai)
 
+<a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 ![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)
 ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node\&message=20.18.x%20\&logo=node.js\&color=3f893e)](https://nodejs.org/about/releases)
 
 English | [简体中文](README_CN.md)
+
+
 
 **Create · Publish · Engage · Monetize — all in one platform.**
 
