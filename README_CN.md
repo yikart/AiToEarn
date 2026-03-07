@@ -1,5 +1,6 @@
 
 # Aitoearn：一人公司的AI内容营销智能体
+<a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![GitHub stars](https://img.shields.io/github/stars/yikart/AttAiToEarn?color=fa6470)](https://github.com/yikart/AttAiToEarn/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -13,6 +14,8 @@ AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主
 
 支持渠道：  
 抖音、小红书（Rednote）、视频号、快手、哔哩哔哩、微信公众号、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
+
+我们预计会在2026年4月份发布全新版本。
 
 ## 🎥 Demo Video
 
