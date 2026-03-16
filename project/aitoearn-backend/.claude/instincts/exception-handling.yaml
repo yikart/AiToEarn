@@ -1,0 +1,51 @@
+---
+id: aitoearn-exception-handling
+trigger: "when throwing exceptions or handling errors"
+confidence: 0.95
+domain: typescript
+source: local-repo-analysis
+---
+
+# AppException Pattern
+
+## Action
+Only use `AppException` with `ResponseCode` for business errors.
+
+## Usage
+```typescript
+import { AppException, ResponseCode } from '@yikart/common'
+
+// Only code
+throw new AppException(ResponseCode.PaymentPriceNotFound)
+
+// Code + data
+throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx' })
+```
+
+## ResponseCode Rules
+- Success: `Success = 0`
+- Business errors: Start from `10000`, allocated by module
+- Naming: PascalCase, specific resource name
+- Location: Only in `libs/common/src/enums/response-code.enum.ts`
+
+## Adding New Error Code
+1. Add constant in `ResponseCode` enum
+2. Add message mapping in `libs/common/src/i18n/messages.ts`
+3. Use in business code
+
+## Forbidden
+- ❌ Custom message override
+- ❌ Generic names: `Unauthorized`, `PermissionDenied`, `AccessDenied`
+- ❌ Custom exception classes
+- ❌ Custom HTTP status codes in business code
+
+## Correct Naming
+- ✅ `ContractNotFound`
+- ✅ `CommentNotFound`
+- ✅ `PaymentPriceNotFound`
+- ❌ `Unauthorized`
+- ❌ `AccessDenied`
+
+## Evidence
+- Enforced in CLAUDE.md development standards
+- Consistent pattern across all services

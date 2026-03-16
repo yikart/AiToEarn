@@ -1,0 +1,1150 @@
+
+id: 1
+data: {"type":"init","taskId":"697332b80ca8e6f2f01fa1d7"}
+
+id: 2
+data: {"type":"keep_alive"}
+
+id: 3
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2e68616b-d963-47e1-8446-a345d4cbdb81","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01QevKGitVNPoSxumMqV7cmY","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":36472,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":36472,"ephemeral_1h_input_tokens":0},"output_tokens":2,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 4
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f97919b4-d9c6-4152-98cd-38cf8fe02c9f","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 5
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9cddc5f9-56bd-4fc9-b1dd-afe094126a7f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"📋 **执行计划**"}},"parent_tool_use_id":null}}
+
+id: 6
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7720f2f3-3ba3-4b3c-b7d9-451321e1267c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n**需求**: 为选"}},"parent_tool_use_id":null}}
+
+id: 7
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f24e16d4-5198-4dd7-b4a3-a40724eff7bc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题5「早起10分"}},"parent_tool_use_id":null}}
+
+id: 8
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f058eee5-ecac-4c2b-a7ae-0a5b9ee42e80","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"钟普拉提｜专"}},"parent_tool_use_id":null}}
+
+id: 9
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4288822b-6195-46cd-9b93-3caf0da1e90f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"瘦假胯宽"}},"parent_tool_use_id":null}}
+
+id: 10
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c0a67742-78a7-4c3b-a39d-0af61bbba03b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"+大腿内侧"}},"parent_tool_use_id":null}}
+
+id: 11
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12b56cd9-0e1e-4900-b85f-b13659d14aed","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"肉」生成8秒短"}},"parent_tool_use_id":null}}
+
+id: 12
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a7918071-627e-4636-b555-f59165e0a3e4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"视频\n\n**步骤**"}},"parent_tool_use_id":null}}
+
+id: 13
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"726c0a71-7937-41bf-84eb-2bd5fa1cb1e2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":\n1. 使用 "}},"parent_tool_use_id":null}}
+
+id: 14
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f3f4e551-39c7-49fc-85b5-9740fa5849a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"veo3.1-fast "}},"parent_tool_use_id":null}}
+
+id: 15
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"728a1aaa-632f-455b-9ad2-bba15f7812db","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"模型生成8秒普"}},"parent_tool_use_id":null}}
+
+id: 16
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"752e6382-19ce-4acc-a660-3c03f7ae13e7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拉提健身视频"}},"parent_tool_use_id":null}}
+
+id: 17
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1946f616-0f8f-4c9c-aa18-21cb8834602e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n2. 轮询任务"}},"parent_tool_use_id":null}}
+
+id: 18
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"753f8467-f8ce-4441-879d-9b6a85957d40","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"状态直到完成\n3"}},"parent_tool_use_id":null}}
+
+id: 19
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5ea3e20d-4c79-4b82-b5bc-2a2441e0be5f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". 返回生成的视"}},"parent_tool_use_id":null}}
+
+id: 20
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"87c75b9c-54e8-4a9c-8884-0a78a43c57d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"频\n\n**资源**: 模"}},"parent_tool_use_id":null}}
+
+id: 21
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ae0494c1-8197-4c5f-a2fd-2bc4dde056d8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"型: veo3.1-"}},"parent_tool_use_id":null}}
+
+id: 22
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5bf6f41e-9f9a-43b8-871e-fcb9fe41f9ec","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"fast | 时长: 8"}},"parent_tool_use_id":null}}
+
+id: 23
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa560ce3-8c03-4dc1-9480-1e58e45f30ce","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"秒 | 分辨"}},"parent_tool_use_id":null}}
+
+id: 24
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad5115ea-ade4-499d-9465-99ac8eae2c13","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"率: 720x1280（"}},"parent_tool_use_id":null}}
+
+id: 25
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d80ecd9f-a6d7-4093-a55c-df1ad7ffb958","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"竖版适配抖音"}},"parent_tool_use_id":null}}
+
+id: 26
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"08fbea17-aa85-4b83-900f-e25a392a081b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"）\n\n正在开始生成"}},"parent_tool_use_id":null}}
+
+id: 27
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f07f4d8-ce5a-4b9a-952e-8ef4c5f49528","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"... 🎬"}},"parent_tool_use_id":null}}
+
+id: 28
+data: {"type":"assistant","message":{"type":"assistant","uuid":"63274b34-a122-441f-a9f4-0647b7226b04","message":{"id":"msg_01QevKGitVNPoSxumMqV7cmY","content":[{"type":"text","text":"📋 **执行计划**\n\n**需求**: 为选题5「早起10分钟普拉提｜专瘦假胯宽+大腿内侧肉」生成8秒短视频\n\n**步骤**:\n1. 使用 veo3.1-fast 模型生成8秒普拉提健身视频\n2. 轮询任务状态直到完成\n3. 返回生成的视频\n\n**资源**: 模型: veo3.1-fast | 时长: 8秒 | 分辨率: 720x1280（竖版适配抖音）\n\n正在开始生成... 🎬"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":36472},"cache_creation_input_tokens":36472,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":2,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 29
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"908bef0a-bc3d-4edd-afc6-531308f9c397","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 30
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"71fb5170-e800-439f-925f-ff497bc94a80","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_016fcifinQLa5TTUDUKLYUUX","name":"mcp__mediaGeneration__generateVideo","input":{}}},"parent_tool_use_id":null}}
+
+id: 31
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d05ed4ba-ac40-460f-847d-45d2391aa115","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 32
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bf5e9fa7-c5f0-4050-9900-8b616f1fb785","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"model\": \"v"}},"parent_tool_use_id":null}}
+
+id: 33
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"676da2a2-a00f-4cd1-b1fd-883761203894","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"eo3."}},"parent_tool_use_id":null}}
+
+id: 34
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6ae30d6e-d93c-405c-a78d-29a9ba7ec624","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"1-fast\""}},"parent_tool_use_id":null}}
+
+id: 35
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"020910d4-d786-478e-8f31-b3beec6a1b32","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}},"parent_tool_use_id":null}}
+
+id: 36
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bfee94d8-a409-4b93-acca-04dc9c757532","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"pr"}},"parent_tool_use_id":null}}
+
+id: 37
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e6f658f3-e576-43b8-a094-30681596d14d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"om"}},"parent_tool_use_id":null}}
+
+id: 38
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"34b61686-ef8b-4bfe-ba53-2e699f193726","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"pt\": \""}},"parent_tool_use_id":null}}
+
+id: 39
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1b5c4f3d-48c3-4687-896f-920e9929c9b4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"A fit you"}},"parent_tool_use_id":null}}
+
+id: 40
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0a6b1e9-c946-4fa6-a5b5-14b72746a281","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ng Asian wom"}},"parent_tool_use_id":null}}
+
+id: 41
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d8eb6fe6-88bf-4461-b496-696acd09001b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"an in her"}},"parent_tool_use_id":null}}
+
+id: 42
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"15b9d217-044a-44f4-b3bc-87e32c3ac6a2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" 20s doing"}},"parent_tool_use_id":null}}
+
+id: 43
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"de7e94ef-4389-4d79-b4fe-79e8ed6de969","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" Pilates ex"}},"parent_tool_use_id":null}}
+
+id: 44
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"15064451-c89e-4716-a34b-7185e765b20a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"er"}},"parent_tool_use_id":null}}
+
+id: 45
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aa22e446-4d0b-43d2-b6e4-1ae5388c4739","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"cis"}},"parent_tool_use_id":null}}
+
+id: 46
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9335d5e4-09e8-4e76-b514-5bf49485c1e4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"es"}},"parent_tool_use_id":null}}
+
+id: 47
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c81d2bc0-e2b5-4886-bd96-a917700577c5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" on a yoga "}},"parent_tool_use_id":null}}
+
+id: 48
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"09f38ade-ae2c-4dfc-a74d-a965a5f67a80","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"mat in a b"}},"parent_tool_use_id":null}}
+
+id: 49
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39a2483f-39dc-4582-b1d6-dc7dcc64ce2a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"right"}},"parent_tool_use_id":null}}
+
+id: 50
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eccc9543-b3c0-4601-92c5-e6a61d4acfef","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", minima"}},"parent_tool_use_id":null}}
+
+id: 51
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"758ad7f9-ae29-4d1e-83f2-dc8ead1082b4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"li"}},"parent_tool_use_id":null}}
+
+id: 52
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"17697e6c-00cb-4788-87fa-1938f1f32b02","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"st liv"}},"parent_tool_use_id":null}}
+
+id: 53
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9aa7fff0-5388-4dc3-a5bd-d072db31273c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing r"}},"parent_tool_use_id":null}}
+
+id: 54
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bfbc3cf3-babb-4d4e-b380-16c9e344d17b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"oom with "}},"parent_tool_use_id":null}}
+
+id: 55
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"314947c6-0236-4d3e-90f7-9cb0b19d7ccd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"morning "}},"parent_tool_use_id":null}}
+
+id: 56
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"94daeed3-50c6-446e-9ebc-da65d147c486","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"sunlight"}},"parent_tool_use_id":null}}
+
+id: 57
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"97861a39-efaa-4a00-b61d-cc28d4c15dd8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" streaming "}},"parent_tool_use_id":null}}
+
+id: 58
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"702d9697-0a82-40db-becd-8a375f15fa54","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"throu"}},"parent_tool_use_id":null}}
+
+id: 59
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f497214-be4f-4e98-acab-51e899538de4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"gh "}},"parent_tool_use_id":null}}
+
+id: 60
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4896d5b1-a29c-4d81-854e-9f32ad2de4fa","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"win"}},"parent_tool_use_id":null}}
+
+id: 61
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"888dfe6f-b7c9-4063-81e2-7b4180fdae96","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"dows. S"}},"parent_tool_use_id":null}}
+
+id: 62
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2eda9482-791b-46a6-9032-365c9dde42b8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"he "}},"parent_tool_use_id":null}}
+
+id: 63
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"24caabf6-c49b-4497-a18d-580b12a50969","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"is wearing s"}},"parent_tool_use_id":null}}
+
+id: 64
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"561dd80a-e526-417d-861f-88cd6353ac3b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"tylish wor"}},"parent_tool_use_id":null}}
+
+id: 65
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8bc6991b-d9b8-4f76-99fa-fc2cad9c6e86","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"kout cloth"}},"parent_tool_use_id":null}}
+
+id: 66
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f6000e50-515d-43c8-ad74-f9c98f712fdb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"es (sp"}},"parent_tool_use_id":null}}
+
+id: 67
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"587d81a4-1256-478c-9c0d-1593032c0a4b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ort"}},"parent_tool_use_id":null}}
+
+id: 68
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f53cf69-ac76-423c-ba3d-86a86fe4ea81","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"s bra a"}},"parent_tool_use_id":null}}
+
+id: 69
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9dfba7d-15dd-462c-a223-401bfda97afb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"nd le"}},"parent_tool_use_id":null}}
+
+id: 70
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"50a1b946-7399-440a-89c6-a15aefc5944f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ggings)."}},"parent_tool_use_id":null}}
+
+id: 71
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4b2a3583-1251-4eb3-b877-9622e14b015a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" The camer"}},"parent_tool_use_id":null}}
+
+id: 72
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"50d06ce9-f9c3-4074-8af9-a8b677d64bc7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"a capture"}},"parent_tool_use_id":null}}
+
+id: 73
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bfc970ee-c94f-4666-b477-d7268c0a4178","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"s h"}},"parent_tool_use_id":null}}
+
+id: 74
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6da03cc4-e99a-417a-b014-2584c6b7dd1d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"er p"}},"parent_tool_use_id":null}}
+
+id: 75
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5c38d2ad-a042-4be8-9d4b-0e8b0cbb6482","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"erfor"}},"parent_tool_use_id":null}}
+
+id: 76
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1c69fa1f-05e8-48e9-b86a-a75a830ec27a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ming "}},"parent_tool_use_id":null}}
+
+id: 77
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"30e9a997-1503-43a9-a636-c3e73cae02b6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"inner"}},"parent_tool_use_id":null}}
+
+id: 78
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"37014dd3-2759-4992-901c-8cc25276a37e","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" t"}},"parent_tool_use_id":null}}
+
+id: 79
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d58efff1-78c1-4baa-803d-532a8dcd6004","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"high ex"}},"parent_tool_use_id":null}}
+
+id: 80
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7f7026eb-9612-44aa-a419-d20258d712c7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"er"}},"parent_tool_use_id":null}}
+
+id: 81
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"45915918-262e-4e90-a8a7-39445db96ce1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"cise"}},"parent_tool_use_id":null}}
+
+id: 82
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"461a0dfb-88b6-406f-afe8-32b25db325a5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"s - lying o"}},"parent_tool_use_id":null}}
+
+id: 83
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b50a3e1a-9d8b-4f4d-a746-38ef47f476c5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"n her "}},"parent_tool_use_id":null}}
+
+id: 84
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ddefa68a-b093-4937-b6bd-43ff4e6e4387","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"side, lift"}},"parent_tool_use_id":null}}
+
+id: 85
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1021aae9-edbd-43eb-ae75-ae31df2aedc0","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing"}},"parent_tool_use_id":null}}
+
+id: 86
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bf0a375a-e4f0-42f0-8559-0dfa42fb2539","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" her leg gra"}},"parent_tool_use_id":null}}
+
+id: 87
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5720282a-c646-4742-a113-4a013f6ac0d5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"cefull"}},"parent_tool_use_id":null}}
+
+id: 88
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9412938c-c1c4-4716-ba5b-e4e19260cd43","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"y wi"}},"parent_tool_use_id":null}}
+
+id: 89
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"02ea82d8-2ce8-4c60-be21-09f2900b4247","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"th controll"}},"parent_tool_use_id":null}}
+
+id: 90
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4af4ad8f-cf33-4339-96cf-2cd9c4f3c5f6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ed m"}},"parent_tool_use_id":null}}
+
+id: 91
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4e9c32b4-bd8d-43b6-8b7f-3e25a32a7b56","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ovem"}},"parent_tool_use_id":null}}
+
+id: 92
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3a0d6fb3-948d-46a4-b9e3-6cac6d5b6c90","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ents. So"}},"parent_tool_use_id":null}}
+
+id: 93
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"81cc8e3d-16d9-4478-b2a4-bf14f041acde","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ft na"}},"parent_tool_use_id":null}}
+
+id: 94
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec26a0c2-06ce-47ed-a43d-e1f1f6026b11","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"tural light"}},"parent_tool_use_id":null}}
+
+id: 95
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0424d8a2-78f1-489d-b42e-c491e6140716","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing, clean "}},"parent_tool_use_id":null}}
+
+id: 96
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d8dd974f-58af-4593-b65c-de2f744fac7f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"aesthetic,"}},"parent_tool_use_id":null}}
+
+id: 97
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c2867b4-9848-4569-ba8f-c928c339945f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" vertical m"}},"parent_tool_use_id":null}}
+
+id: 98
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3ed2aad-809f-43c1-a50e-6048e04fb78a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"obil"}},"parent_tool_use_id":null}}
+
+id: 99
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"75105c70-1ca5-4497-a25c-5ced4c235390","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e "}},"parent_tool_use_id":null}}
+
+id: 100
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"609acff4-83ec-481a-bd02-2acf98a491b8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"video forma"}},"parent_tool_use_id":null}}
+
+id: 101
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac99dee3-ba7b-4a73-8c51-9038b895d281","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"t. Fitness m"}},"parent_tool_use_id":null}}
+
+id: 102
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5b422eb5-5414-4b0e-bcc7-4fd95d4339ad","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"oti"}},"parent_tool_use_id":null}}
+
+id: 103
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7a308dc5-c865-4a7a-9d8f-33c2bc8ef98b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"vation vid"}},"parent_tool_use_id":null}}
+
+id: 104
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1a3aeae7-c583-4f08-88be-ac15482efeca","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"eo "}},"parent_tool_use_id":null}}
+
+id: 105
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c09f324b-a311-4de2-b21f-3851e72f4258","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"style"}},"parent_tool_use_id":null}}
+
+id: 106
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"afec1fdd-9b81-4392-b53a-1f27c708081c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":".\""}},"parent_tool_use_id":null}}
+
+id: 107
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9e4ab095-ae2d-4743-8c9e-2072d0081a5c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}},"parent_tool_use_id":null}}
+
+id: 108
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b669675e-30ac-448c-9d12-684963dca21b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"size"}},"parent_tool_use_id":null}}
+
+id: 109
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4f2f0677-34ff-4ba9-879e-d8857da80cf5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\": "}},"parent_tool_use_id":null}}
+
+id: 110
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0424197f-ba54-49d7-be78-ace82b00a3c6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\"720x12"}},"parent_tool_use_id":null}}
+
+id: 111
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1af35a4-81e3-41f5-96fb-ce351428615c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"80\"}"}},"parent_tool_use_id":null}}
+
+id: 112
+data: {"type":"assistant","message":{"type":"assistant","uuid":"7597b704-f633-4d3e-8081-f6a977b28915","message":{"id":"msg_01QevKGitVNPoSxumMqV7cmY","content":[{"type":"tool_use","id":"toolu_016fcifinQLa5TTUDUKLYUUX","name":"mcp__mediaGeneration__generateVideo","input":{"model":"veo3.1-fast","prompt":"A fit young Asian woman in her 20s doing Pilates exercises on a yoga mat in a bright, minimalist living room with morning sunlight streaming through windows. She is wearing stylish workout clothes (sports bra and leggings). The camera captures her performing inner thigh exercises - lying on her side, lifting her leg gracefully with controlled movements. Soft natural lighting, clean aesthetic, vertical mobile video format. Fitness motivation video style.","size":"720x1280"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":36472},"cache_creation_input_tokens":36472,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":2,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 113
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"faf69b81-59bf-4ab2-8243-960a803c7d6a","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 114
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"50eae9ee-bf3b-4887-8af0-de6d2b10400a","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":36472,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":378}},"parent_tool_use_id":null}}
+
+id: 115
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"60b0278c-a882-465d-972e-5bf297de1213","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 116
+data: {"type":"user","message":{"type":"user","uuid":"a2aa3c37-9678-4ce4-ba33-0cd68701b19f","message":{"content":[{"tool_use_id":"toolu_016fcifinQLa5TTUDUKLYUUX","type":"tool_result","content":[{"type":"text","text":"Video is generating with OpenAI veo3.1-fast, task id: 6973369c67305ac332a080b7"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Video is generating with OpenAI veo3.1-fast, task id: 6973369c67305ac332a080b7"}]}}
+
+id: 117
+data: {"type":"keep_alive"}
+
+id: 118
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"682474f5-75d1-44e9-9337-74ea33954cb0","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01XVrrqaLXRadH283xvjMT7T","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":423,"cache_read_input_tokens":36472,"cache_creation":{"ephemeral_5m_input_tokens":423,"ephemeral_1h_input_tokens":0},"output_tokens":3,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 119
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a88a6488-e408-4119-a74c-1faddd7660e6","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 120
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31f28f94-bf55-4624-8696-d68e39990ec2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"视频生"}},"parent_tool_use_id":null}}
+
+id: 121
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e442fc5f-1b4d-4511-b303-03b48a45ebe6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成中"}},"parent_tool_use_id":null}}
+
+id: 122
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f03867f3-54cf-4d81-bc71-d6236f3fa42f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 123
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"71ed58ce-5004-4f36-ab33-80bc9a21fb86","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"⏳"}},"parent_tool_use_id":null}}
+
+id: 124
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cacdd9d5-e146-4699-9f68-41c414125c71","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 预"}},"parent_tool_use_id":null}}
+
+id: 125
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9910ac99-f721-4282-b790-322c679421aa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"计需要3"}},"parent_tool_use_id":null}}
+
+id: 126
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"60d60eb7-1b54-4f0c-9928-12a164ddada8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-5分钟..."}},"parent_tool_use_id":null}}
+
+id: 127
+data: {"type":"assistant","message":{"type":"assistant","uuid":"334c81ae-6aac-4b91-b10d-155f67d2bc92","message":{"id":"msg_01XVrrqaLXRadH283xvjMT7T","content":[{"type":"text","text":"视频生成中 ⏳ 预计需要3-5分钟..."}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":423},"cache_creation_input_tokens":423,"cache_read_input_tokens":36472,"input_tokens":1,"output_tokens":3,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 128
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1606aab-7b62-42b0-99dd-d1668a48e9c0","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 129
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"65f680a1-bb11-47bb-8274-783ba6457f21","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01J8M3xNTHsM2c2XhXZBvedZ","name":"mcp__util__wait","input":{}}},"parent_tool_use_id":null}}
+
+id: 130
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e9766db9-e839-4523-9848-cc08dec3a024","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 131
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4ef2edba-4934-4448-8efa-9e94e29d4ff1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"s"}},"parent_tool_use_id":null}}
+
+id: 132
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b8dc2dc3-54b8-4fcd-8eaf-914d670efb4c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"econds"}},"parent_tool_use_id":null}}
+
+id: 133
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"abdd49f8-757b-4f06-85dd-810acd1ecf53","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\": 210}"}},"parent_tool_use_id":null}}
+
+id: 134
+data: {"type":"assistant","message":{"type":"assistant","uuid":"3a5f1ff4-b5d0-4efc-a7fb-f9a10c9414f8","message":{"id":"msg_01XVrrqaLXRadH283xvjMT7T","content":[{"type":"tool_use","id":"toolu_01J8M3xNTHsM2c2XhXZBvedZ","name":"mcp__util__wait","input":{"seconds":210}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":423},"cache_creation_input_tokens":423,"cache_read_input_tokens":36472,"input_tokens":1,"output_tokens":3,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 135
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"142dd47a-2dcc-49a3-8240-cd6583d61719","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 136
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33cec4a9-37fb-4312-a327-fc0405c15276","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":423,"cache_read_input_tokens":36472,"input_tokens":1,"output_tokens":80}},"parent_tool_use_id":null}}
+
+id: 137
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95b99d62-5a5a-4927-82d2-d734dbbcd9f5","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 138
+data: {"type":"keep_alive"}
+
+id: 139
+data: {"type":"keep_alive"}
+
+id: 140
+data: {"type":"keep_alive"}
+
+id: 141
+data: {"type":"keep_alive"}
+
+id: 142
+data: {"type":"keep_alive"}
+
+id: 143
+data: {"type":"keep_alive"}
+
+id: 144
+data: {"type":"keep_alive"}
+
+id: 145
+data: {"type":"keep_alive"}
+
+id: 146
+data: {"type":"keep_alive"}
+
+id: 147
+data: {"type":"keep_alive"}
+
+id: 148
+data: {"type":"keep_alive"}
+
+id: 149
+data: {"type":"keep_alive"}
+
+id: 150
+data: {"type":"keep_alive"}
+
+id: 151
+data: {"type":"keep_alive"}
+
+id: 152
+data: {"type":"keep_alive"}
+
+id: 153
+data: {"type":"keep_alive"}
+
+id: 154
+data: {"type":"keep_alive"}
+
+id: 155
+data: {"type":"keep_alive"}
+
+id: 156
+data: {"type":"keep_alive"}
+
+id: 157
+data: {"type":"keep_alive"}
+
+id: 158
+data: {"type":"keep_alive"}
+
+id: 159
+data: {"type":"keep_alive"}
+
+id: 160
+data: {"type":"keep_alive"}
+
+id: 161
+data: {"type":"keep_alive"}
+
+id: 162
+data: {"type":"keep_alive"}
+
+id: 163
+data: {"type":"keep_alive"}
+
+id: 164
+data: {"type":"keep_alive"}
+
+id: 165
+data: {"type":"keep_alive"}
+
+id: 166
+data: {"type":"keep_alive"}
+
+id: 167
+data: {"type":"keep_alive"}
+
+id: 168
+data: {"type":"keep_alive"}
+
+id: 169
+data: {"type":"keep_alive"}
+
+id: 170
+data: {"type":"keep_alive"}
+
+id: 171
+data: {"type":"keep_alive"}
+
+id: 172
+data: {"type":"keep_alive"}
+
+id: 173
+data: {"type":"keep_alive"}
+
+id: 174
+data: {"type":"keep_alive"}
+
+id: 175
+data: {"type":"keep_alive"}
+
+id: 176
+data: {"type":"keep_alive"}
+
+id: 177
+data: {"type":"keep_alive"}
+
+id: 178
+data: {"type":"keep_alive"}
+
+id: 179
+data: {"type":"keep_alive"}
+
+id: 180
+data: {"type":"user","message":{"type":"user","uuid":"6954b67e-5093-410a-a884-74ad470b792b","message":{"content":[{"tool_use_id":"toolu_01J8M3xNTHsM2c2XhXZBvedZ","type":"tool_result","content":[{"type":"text","text":"Waited for 210 seconds"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Waited for 210 seconds"}]}}
+
+id: 181
+data: {"type":"keep_alive"}
+
+id: 182
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f2d18f2c-2884-4c8d-8c7b-324261e1c418","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01RMekBA5PhhKWaV6BRUpoAT","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":99,"cache_read_input_tokens":36895,"cache_creation":{"ephemeral_5m_input_tokens":99,"ephemeral_1h_input_tokens":0},"output_tokens":28,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 183
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c43ef0d8-e5df-47df-a17f-ee9857a1415a","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_01Rkwky3yTLqeGMUj1yJmyAg","name":"mcp__mediaGeneration__getVideoStatus","input":{}}},"parent_tool_use_id":null}}
+
+id: 184
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"986ba268-af27-42a0-9cde-fdd3a987304b","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 185
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"68ac9371-5acd-4fe9-ab3e-19df1e89c5ee","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"ta"}},"parent_tool_use_id":null}}
+
+id: 186
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b42fecf-5f95-4b04-89a7-09ed27592c0a","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"skId"}},"parent_tool_use_id":null}}
+
+id: 187
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bcac47c0-09de-46df-90a5-fc09db59cdcc","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\": \"6973369"}},"parent_tool_use_id":null}}
+
+id: 188
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11a72e2a-a0bd-4f1d-912c-0a2a0563086f","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"c67305ac"}},"parent_tool_use_id":null}}
+
+id: 189
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2442306b-ac08-4743-a71f-b1ed470b4bc1","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"332a0"}},"parent_tool_use_id":null}}
+
+id: 190
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"151b90e5-5f67-4bb1-92f6-baf8904213dd","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"80b7\"}"}},"parent_tool_use_id":null}}
+
+id: 191
+data: {"type":"assistant","message":{"type":"assistant","uuid":"4e632d16-9830-440b-b960-d296df4244aa","message":{"id":"msg_01RMekBA5PhhKWaV6BRUpoAT","content":[{"type":"tool_use","id":"toolu_01Rkwky3yTLqeGMUj1yJmyAg","name":"mcp__mediaGeneration__getVideoStatus","input":{"taskId":"6973369c67305ac332a080b7"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":99},"cache_creation_input_tokens":99,"cache_read_input_tokens":36895,"input_tokens":1,"output_tokens":28,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 192
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"165633e0-9542-4edc-aaeb-346e2f99c1ec","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 193
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"035a6a1f-bd73-4476-9b88-24b17fd0fb27","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":99,"cache_read_input_tokens":36895,"input_tokens":1,"output_tokens":72}},"parent_tool_use_id":null}}
+
+id: 194
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ae3b5069-3b0b-4f8e-a12d-26b62d8c5ae2","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 195
+data: {"type":"user","message":{"type":"user","uuid":"ee41629e-da0d-42f5-a50d-f3d2c229f654","message":{"content":[{"tool_use_id":"toolu_01Rkwky3yTLqeGMUj1yJmyAg","type":"tool_result","content":[{"type":"text","text":"Video is completed, task id: 6973369c67305ac332a080b7 and video url is https://assets.aitoearn.ai/68b55fb321b15a40e511dfcf/ai/video/veo3.1-fast/202601/mkqn8m1j-8670eeccb6b2bd1b7ae29cdd157c54.mp4\nStart time: 2026-01-23T08:51:40.000Z\nCurrent time: 2026-01-23T08:55:17.646Z\nElapsed time: 3 minutes 37 seconds"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Video is completed, task id: 6973369c67305ac332a080b7 and video url is https://assets.aitoearn.ai/68b55fb321b15a40e511dfcf/ai/video/veo3.1-fast/202601/mkqn8m1j-8670eeccb6b2bd1b7ae29cdd157c54.mp4\nStart time: 2026-01-23T08:51:40.000Z\nCurrent time: 2026-01-23T08:55:17.646Z\nElapsed time: 3 minutes 37 seconds"}]}}
+
+id: 196
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"884e80d3-4a28-4920-90c7-523f7bef3ad6","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01XXak7MK929onLMKJCFKGxk","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":233,"cache_read_input_tokens":36994,"cache_creation":{"ephemeral_5m_input_tokens":233,"ephemeral_1h_input_tokens":0},"output_tokens":9,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 197
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ca3f83de-4490-43c7-a3a1-f1d71dc45dbe","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 198
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad5af726-d7cf-41c9-8d47-f52a1ab6eaaf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"✅ **视频生成完"}},"parent_tool_use_id":null}}
+
+id: 199
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9760ae95-6ccb-43f3-b935-d99ad58907ca","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成！**\n\n!["}},"parent_tool_use_id":null}}
+
+id: 200
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c7be0ce3-0257-4648-8809-ef2ee17ba53e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"普"}},"parent_tool_use_id":null}}
+
+id: 201
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4e7c0d3e-c9f1-419e-b862-41afa478867a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拉提健"}},"parent_tool_use_id":null}}
+
+id: 202
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"123d4f4e-da43-49dc-82c0-7940234fabd0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"身视频](https://assets."}},"parent_tool_use_id":null}}
+
+id: 203
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7c3af72e-e869-4fb2-a73d-2df801122e87","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"aitoearn.ai/68"}},"parent_tool_use_id":null}}
+
+id: 204
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e82d8f6f-5ed6-4346-bc5a-a57ed96ebebb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"b55fb321b15a40"}},"parent_tool_use_id":null}}
+
+id: 205
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7e2757b5-255a-4daa-b63e-011af1a898c9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"e511dfcf/ai/"}},"parent_tool_use_id":null}}
+
+id: 206
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1985597c-b49f-430c-b04c-18a4adafe9de","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"video/veo3.1-"}},"parent_tool_use_id":null}}
+
+id: 207
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"92c69770-8109-4ed7-854a-fd9215fab404","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"fast/202601/mkqn"}},"parent_tool_use_id":null}}
+
+id: 208
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c3c6275c-50d0-493c-ac8d-45bbf2555a62","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"8m1j-8670e"}},"parent_tool_use_id":null}}
+
+id: 209
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6e380968-cc81-410c-8318-2b3d9b45cc90","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"eccb6b2bd1b"}},"parent_tool_use_id":null}}
+
+id: 210
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fcee7bc7-d06f-42d6-86fb-8243c2a3352f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"7ae29cdd157c54"}},"parent_tool_use_id":null}}
+
+id: 211
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e9d6fc69-af0a-4bfd-a3f5-46099d24ea2a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".mp4)\n\n---"}},"parent_tool_use_id":null}}
+
+id: 212
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e06ccb0-a1b1-4ada-9efb-2e3ce40e22a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n**"}},"parent_tool_use_id":null}}
+
+id: 213
+data: {"type":"keep_alive"}
+
+id: 214
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"553f8251-b1ce-41b2-bb47-2b7b4638e3ff","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"📊"}},"parent_tool_use_id":null}}
+
+id: 215
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0d8fbf07-038e-4e98-a09f-5bb031952626","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 生"}},"parent_tool_use_id":null}}
+
+id: 216
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1752327f-8d8f-4101-bee0-775f63ee3be6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成详"}},"parent_tool_use_id":null}}
+
+id: 217
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"85c9d0ba-6705-46c4-b8e7-f90f7f605bae","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"情**\n|"}},"parent_tool_use_id":null}}
+
+id: 218
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b4b8afbb-668a-472f-beee-436afc426d95","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 项目 | 内"}},"parent_tool_use_id":null}}
+
+id: 219
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5f6fef3-66fc-4166-8de8-738c43badabc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容 |\n|"}},"parent_tool_use_id":null}}
+
+id: 220
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f40333d3-6c73-4eea-b74e-aaba20d1e166","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"------|------|\n| **"}},"parent_tool_use_id":null}}
+
+id: 221
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"de0c8a10-49a4-4c53-95ff-35588ec3e21a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"时"}},"parent_tool_use_id":null}}
+
+id: 222
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8256168-975a-4eaa-82d6-a350b2501e39","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"长** | 8秒 "}},"parent_tool_use_id":null}}
+
+id: 223
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"232545d8-7384-4c9f-9a49-965a01056cd3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"|\n| **分辨率"}},"parent_tool_use_id":null}}
+
+id: 224
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b718e211-acf1-4915-a9b8-f566c03a09d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"** | 720x1280（"}},"parent_tool_use_id":null}}
+
+id: 225
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c90e1e80-69df-4427-b3c3-1fda7d3b141a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"竖版）"}},"parent_tool_use_id":null}}
+
+id: 226
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"775009aa-e68f-49d3-8811-73dc6d7b9c43","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| **内"}},"parent_tool_use_id":null}}
+
+id: 227
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"46f9f09a-a86f-410a-84f8-f3ee9efdeb2c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容** | 年轻女"}},"parent_tool_use_id":null}}
+
+id: 228
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4fea785e-d87c-44fc-8af0-c0f145edcb91","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性在明亮客"}},"parent_tool_use_id":null}}
+
+id: 229
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad7e3cf8-ad53-4804-aca4-6b8bbe6b27dd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"厅做普拉提"}},"parent_tool_use_id":null}}
+
+id: 230
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2ceae515-67e8-4029-ac2a-6e98126fda32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"侧卧抬腿动"}},"parent_tool_use_id":null}}
+
+id: 231
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"354018aa-8a6b-43b3-a6f2-013840ac4e7f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作 |\n| **生"}},"parent_tool_use_id":null}}
+
+id: 232
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"97047542-08e5-4017-9f94-1f98e3be7bf8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成"}},"parent_tool_use_id":null}}
+
+id: 233
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"09aa1645-15c7-42e4-b685-eb49f5bb81d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"耗时** | 3分37"}},"parent_tool_use_id":null}}
+
+id: 234
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e441c382-7f9f-4405-b9f9-9ca96cd472a7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"秒 |\n\n---"}},"parent_tool_use_id":null}}
+
+id: 235
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a73c2fd1-97a9-436d-9096-9fd5a367e70e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n需"}},"parent_tool_use_id":null}}
+
+id: 236
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"977d4143-9087-4651-8aab-1bf813b679e7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要我"}},"parent_tool_use_id":null}}
+
+id: 237
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9ffd79b8-ca37-4c5e-b89e-73ffa5f86efd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帮你："}},"parent_tool_use_id":null}}
+
+id: 238
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"76ce3b1e-d813-4ae7-8acb-bb2746af0a95","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n1. "}},"parent_tool_use_id":null}}
+
+id: 239
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c203013-1d2d-42b1-a7c7-2820004a690c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🎬 **添"}},"parent_tool_use_id":null}}
+
+id: 240
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51e6d3ed-b16d-4610-bef8-7a5349a40b60","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"加文"}},"parent_tool_use_id":null}}
+
+id: 241
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"134f9aee-3886-4d0f-bcd1-29d784edb1b1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"字/"}},"parent_tool_use_id":null}}
+
+id: 242
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6eb577cc-0a18-4912-bc7e-5d7b487416ee","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"字"}},"parent_tool_use_id":null}}
+
+id: 243
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"17f1cbe8-8af2-46a5-bdf1-40eecae6b47d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"幕** -"}},"parent_tool_use_id":null}}
+
+id: 244
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bdc424fb-2ea1-46b7-9fef-450aa58e1e5c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 加"}},"parent_tool_use_id":null}}
+
+id: 245
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5e3afb78-310e-4a60-ba3a-96f49c24c839","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"上"}},"parent_tool_use_id":null}}
+
+id: 246
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5388339d-8c75-43ff-80af-e4fdf5fa9785","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\""}},"parent_tool_use_id":null}}
+
+id: 247
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f3de410b-49fe-4f7a-9e55-b9263c33963c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"早"}},"parent_tool_use_id":null}}
+
+id: 248
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8390f900-2cb6-4c13-ab1f-6e3e09c1a184","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"起10分钟普拉"}},"parent_tool_use_id":null}}
+
+id: 249
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a81e6210-422e-4c0c-81a3-80e4ca252fa9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"提\"等"}},"parent_tool_use_id":null}}
+
+id: 250
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aa191ffc-091a-49a5-b19b-c2ec6f0d4232","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标"}},"parent_tool_use_id":null}}
+
+id: 251
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fe74b902-bea3-4823-9e8c-e91ab7fe45d6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题\n2. 🎵"}},"parent_tool_use_id":null}}
+
+id: 252
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"287614ca-f335-494d-8812-13801cb8090d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **添加背"}},"parent_tool_use_id":null}}
+
+id: 253
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dcaa83f3-5d44-4801-935c-abe63ba8449a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"景音乐** - 配"}},"parent_tool_use_id":null}}
+
+id: 254
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2250c7be-375b-4a32-90df-0d1922bc0861","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"上轻快"}},"parent_tool_use_id":null}}
+
+id: 255
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b956328-6774-4b95-85bb-9341660d4e3a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"的健"}},"parent_tool_use_id":null}}
+
+id: 256
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"afffe349-ca12-4704-b53c-4feb2eda6a9c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"身音乐\n3. "}},"parent_tool_use_id":null}}
+
+id: 257
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ea03d3ab-b59d-44fb-b2f7-c009d72cfe9a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"💾"}},"parent_tool_use_id":null}}
+
+id: 258
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6f5bee8b-4724-4619-a808-80fc7cc7e935","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **保存到"}},"parent_tool_use_id":null}}
+
+id: 259
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d9dad12-b51d-4fdf-b925-739a216b3a6c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"素"}},"parent_tool_use_id":null}}
+
+id: 260
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"68f236db-0f9b-4d9d-9fd0-3751f1df8e50","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"材库** - 方"}},"parent_tool_use_id":null}}
+
+id: 261
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95ce1830-7670-4de3-b206-1f758c2f5888","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"便后续使用"}},"parent_tool_use_id":null}}
+
+id: 262
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"75723635-b2e2-414b-95c0-79c15bdff5a3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n4. 📤"}},"parent_tool_use_id":null}}
+
+id: 263
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"29f84d53-dc14-4644-b3cd-d5bb33a38e66","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **发布"}},"parent_tool_use_id":null}}
+
+id: 264
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0cebc22a-9c55-45c1-b8e3-2dd373759ef5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"到"}},"parent_tool_use_id":null}}
+
+id: 265
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5bb951f-1826-483d-b046-b561bdeab5f3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"抖音** - 直"}},"parent_tool_use_id":null}}
+
+id: 266
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6ca99842-eced-43a0-8395-58171b0ab7a7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"接发"}},"parent_tool_use_id":null}}
+
+id: 267
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"43b9233b-70f8-4205-a91c-ed01b7241118","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布"}},"parent_tool_use_id":null}}
+
+id: 268
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2a89a607-c494-496c-9dc7-0dbe1c70508e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n请"}},"parent_tool_use_id":null}}
+
+id: 269
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6fc60701-6b58-4115-a694-f4615e7bb930","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"告"}},"parent_tool_use_id":null}}
+
+id: 270
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"35dc289a-4d00-42e6-b124-fc0f06b0ca8e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"诉我下"}},"parent_tool_use_id":null}}
+
+id: 271
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7a20dace-65c7-4ef7-a899-fbd463758bdf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"一步操"}},"parent_tool_use_id":null}}
+
+id: 272
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b6dd2c70-245b-464a-a5c4-4501427209a2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作！"}},"parent_tool_use_id":null}}
+
+id: 273
+data: {"type":"assistant","message":{"type":"assistant","uuid":"390c184a-f689-4da2-b614-bc82ca9fff76","message":{"id":"msg_01XXak7MK929onLMKJCFKGxk","content":[{"type":"text","text":"✅ **视频生成完成！**\n\n![普拉提健身视频](https://assets.aitoearn.ai/68b55fb321b15a40e511dfcf/ai/video/veo3.1-fast/202601/mkqn8m1j-8670eeccb6b2bd1b7ae29cdd157c54.mp4)\n\n---\n\n**📊 生成详情**\n| 项目 | 内容 |\n|------|------|\n| **时长** | 8秒 |\n| **分辨率** | 720x1280（竖版） |\n| **内容** | 年轻女性在明亮客厅做普拉提侧卧抬腿动作 |\n| **生成耗时** | 3分37秒 |\n\n---\n\n需要我帮你：\n1. 🎬 **添加文字/字幕** - 加上\"早起10分钟普拉提\"等标题\n2. 🎵 **添加背景音乐** - 配上轻快的健身音乐\n3. 💾 **保存到素材库** - 方便后续使用\n4. 📤 **发布到抖音** - 直接发布\n\n请告诉我下一步操作！"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":233},"cache_creation_input_tokens":233,"cache_read_input_tokens":36994,"input_tokens":1,"output_tokens":9,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 274
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5111072-4d9c-49ac-95a6-6004d9275142","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 275
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0c412dba-a9d0-4e12-9d02-1fb05f10602f","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01HnVZZuM2riVCfYPMCnsRqq","name":"mcp__sessionTools__outputTaskResult","input":{}}},"parent_tool_use_id":null}}
+
+id: 276
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9aa37224-5a48-4824-9bdc-4c48b8535cdb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 277
+data: {"type":"keep_alive"}
+
+id: 278
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e2be62c-7361-400e-8726-8f88d088f74d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"resul"}},"parent_tool_use_id":null}}
+
+id: 279
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6576c450-2340-42b0-bb87-7183d8df2c7a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"t\": "}},"parent_tool_use_id":null}}
+
+id: 280
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5a627400-c973-48f8-b7cf-8a39cb8f7738","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"typ"}},"parent_tool_use_id":null}}
+
+id: 281
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c8cac6cf-62b9-4a52-ada7-639925e2de22","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e\""}},"parent_tool_use_id":null}}
+
+id: 282
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7eda67f7-cd9e-44eb-8133-79b2b937e395","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":":\"med"}},"parent_tool_use_id":null}}
+
+id: 283
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3ee5676-a3c5-4c11-a8d1-bdf14431f0df","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"iaOnly\",\""}},"parent_tool_use_id":null}}
+
+id: 284
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e378fa40-81fa-48df-a87a-3c0e605dff25","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"act"}},"parent_tool_use_id":null}}
+
+id: 285
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"38132319-41b1-443f-9b67-ae6a33c7eaeb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ion"}},"parent_tool_use_id":null}}
+
+id: 286
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0665e664-c57b-41fc-8fcb-ef0c2687011d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\":\"none\",\"m"}},"parent_tool_use_id":null}}
+
+id: 287
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4f752d67-7b24-40b1-99b4-ed3185c66f65","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"edias\":[{\"t"}},"parent_tool_use_id":null}}
+
+id: 288
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fcbbf69c-328c-4271-8cef-7ba70c600ea9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ype\":\"V"}},"parent_tool_use_id":null}}
+
+id: 289
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"94bd7204-0671-4fee-8539-c726488951e7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"IDEO\",\"u"}},"parent_tool_use_id":null}}
+
+id: 290
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"768c32a2-7f6f-4e10-8a50-9c3becda7920","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rl\""}},"parent_tool_use_id":null}}
+
+id: 291
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4038f76a-544f-4f00-893b-c3efb2d62c1e","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":":\"https://a"}},"parent_tool_use_id":null}}
+
+id: 292
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4bfb39a3-9cdc-4e4b-9acc-65e565aa3d47","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ssets.aitoea"}},"parent_tool_use_id":null}}
+
+id: 293
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"78868284-8ed9-4e8d-a526-0d2bdf9a9022","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rn"}},"parent_tool_use_id":null}}
+
+id: 294
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bc7fd621-d7f1-462b-a3ea-2bfd04079875","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":".ai/6"}},"parent_tool_use_id":null}}
+
+id: 295
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"45529ce1-e94f-4fa1-889d-1db5f2544f24","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"8b55fb32"}},"parent_tool_use_id":null}}
+
+id: 296
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc652e82-c948-4909-ab66-f0185f6e059f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"1b15"}},"parent_tool_use_id":null}}
+
+id: 297
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c321887-4dbf-4ce3-85aa-e0dd427919df","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"a40e511dfcf"}},"parent_tool_use_id":null}}
+
+id: 298
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fbcd2974-734f-46b5-bc49-49931bbe8eee","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"/ai/video/v"}},"parent_tool_use_id":null}}
+
+id: 299
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9263a7ee-f75b-4820-9d69-65dcdace18ab","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"eo3.1-fast"}},"parent_tool_use_id":null}}
+
+id: 300
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b752ef2-d517-41f4-8e4c-9f0202299fbb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"/2026"}},"parent_tool_use_id":null}}
+
+id: 301
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0478ee9c-e536-4673-99b6-9e497d61d84b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"01/mkqn8m"}},"parent_tool_use_id":null}}
+
+id: 302
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f7edddc6-b607-4c97-84e4-03c483d30df1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"1j-"}},"parent_tool_use_id":null}}
+
+id: 303
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7c102864-e654-47a2-b967-4c74e4911597","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"8670e"}},"parent_tool_use_id":null}}
+
+id: 304
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"798fafda-318c-430d-856a-67ca6ff04d21","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"eccb6b2bd"}},"parent_tool_use_id":null}}
+
+id: 305
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"67a8d488-a3ce-45d9-8e14-c6d52accbfab","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"1b7"}},"parent_tool_use_id":null}}
+
+id: 306
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9ae8f4a5-0170-4ede-a11c-bb6fefe2386b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ae29c"}},"parent_tool_use_id":null}}
+
+id: 307
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"94b9e122-1896-49a1-809c-ddf194b0ed50","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"dd15"}},"parent_tool_use_id":null}}
+
+id: 308
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ffcc8fb9-d427-48fc-ae81-6a9b792343bc","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"7c"}},"parent_tool_use_id":null}}
+
+id: 309
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ff956fe1-7ce1-45ec-acb4-e9f923b382c8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"54.mp4\",\"pro"}},"parent_tool_use_id":null}}
+
+id: 310
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f316bdf2-eece-4fe7-a93e-3fb6e77035eb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"mpt\":\"A "}},"parent_tool_use_id":null}}
+
+id: 311
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"af959acf-a6fd-4047-b580-0ba21beb0b9d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"fit young A"}},"parent_tool_use_id":null}}
+
+id: 312
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dee14da4-ed63-4aa3-875e-bf32bc073ab9","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"sian woma"}},"parent_tool_use_id":null}}
+
+id: 313
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"28e713b4-014f-45b6-b8cb-b2e62f87c472","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"n in her 2"}},"parent_tool_use_id":null}}
+
+id: 314
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39fbf73e-c67b-424a-8b1b-70b0d6630081","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"0s do"}},"parent_tool_use_id":null}}
+
+id: 315
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9d56db5a-1f35-4cc1-a2ee-f06bed84fc44","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing Pilat"}},"parent_tool_use_id":null}}
+
+id: 316
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc76c80b-7fc2-41bd-aa6b-249b767963e5","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"es ex"}},"parent_tool_use_id":null}}
+
+id: 317
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a81db439-7190-4cb6-b130-e7b9e766c31d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ercises on a"}},"parent_tool_use_id":null}}
+
+id: 318
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cc786b72-d1b8-41d6-a766-517dc3add47c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" yoga"}},"parent_tool_use_id":null}}
+
+id: 319
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9db7a330-d7d1-4284-be16-5e6bf490659f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" mat "}},"parent_tool_use_id":null}}
+
+id: 320
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e69f6b11-9d40-46fa-a8f5-c5ab05bbd6da","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"in a b"}},"parent_tool_use_id":null}}
+
+id: 321
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b71f80fb-523e-4a73-9ea3-9e812aae0139","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"right, mini"}},"parent_tool_use_id":null}}
+
+id: 322
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad0c834a-50d3-400b-ae69-f23575591278","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"malist liv"}},"parent_tool_use_id":null}}
+
+id: 323
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dbf10f4f-c254-40fb-89dd-d6bcd7793ad3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing room wi"}},"parent_tool_use_id":null}}
+
+id: 324
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e5270942-cce5-47db-a37d-c1cb3ee0bb32","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"th m"}},"parent_tool_use_id":null}}
+
+id: 325
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc0b9edd-109a-474c-8299-db1dd83b0ddb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"orning sunl"}},"parent_tool_use_id":null}}
+
+id: 326
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b373eb1a-01d8-4999-a978-cb0f227141b8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ight s"}},"parent_tool_use_id":null}}
+
+id: 327
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a9d8e098-cb6f-4774-a6b9-776e7a128cff","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"treaming thr"}},"parent_tool_use_id":null}}
+
+id: 328
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"06560254-f820-4102-b73f-59ad15b10d07","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ough windo"}},"parent_tool_use_id":null}}
+
+id: 329
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dd744ea9-b775-44f9-9cf0-c84b4fb45385","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ws."}},"parent_tool_use_id":null}}
+
+id: 330
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2db75205-62f9-4dbf-a5cf-31e46d91150e","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" She "}},"parent_tool_use_id":null}}
+
+id: 331
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"21895853-ca80-4586-ab00-7299a5de2b40","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"is weari"}},"parent_tool_use_id":null}}
+
+id: 332
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"65f3dd1a-790f-4df3-956c-06049e4099a0","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ng stylish "}},"parent_tool_use_id":null}}
+
+id: 333
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac52fc5a-582c-487b-a2f9-4ed509409edd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"workou"}},"parent_tool_use_id":null}}
+
+id: 334
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9b6df5f9-add2-4257-a64c-03199facd535","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"t clot"}},"parent_tool_use_id":null}}
+
+id: 335
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0ef87688-f305-4b3d-bcd4-56bd7b9d6d15","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"hes "}},"parent_tool_use_id":null}}
+
+id: 336
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1c1d19f9-6e1c-47c8-8564-80343d16ae84","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"(sports br"}},"parent_tool_use_id":null}}
+
+id: 337
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11525059-9327-4cfb-aacc-a7cce9dbbece","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"a "}},"parent_tool_use_id":null}}
+
+id: 338
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3a454722-0cd3-4994-8655-ce7abc3badec","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"and"}},"parent_tool_use_id":null}}
+
+id: 339
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c28fe4cc-c945-441b-9291-7fc5946979b6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" leggings)"}},"parent_tool_use_id":null}}
+
+id: 340
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"82ab4702-47b2-4257-bf64-4acf95772663","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":". The "}},"parent_tool_use_id":null}}
+
+id: 341
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ab92f470-b9aa-401c-84c9-db11975baa38","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"camera c"}},"parent_tool_use_id":null}}
+
+id: 342
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b9cd0b8c-7e6d-4f20-9b65-508f1e2ee451","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"apture"}},"parent_tool_use_id":null}}
+
+id: 343
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"631e0d77-450f-4c1d-94c5-68425904f4a7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"s her "}},"parent_tool_use_id":null}}
+
+id: 344
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0d70d166-b800-4966-956b-e52c64d88267","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"perform"}},"parent_tool_use_id":null}}
+
+id: 345
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3ec15906-e7fc-4e51-8331-a9f0734e3ae6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing inner"}},"parent_tool_use_id":null}}
+
+id: 346
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f962274-ffe1-4497-a34a-75acb5b649a2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" thigh exerc"}},"parent_tool_use_id":null}}
+
+id: 347
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"712148fb-75a5-42fc-927c-dbf34e1d465b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ises -"}},"parent_tool_use_id":null}}
+
+id: 348
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7ad90d6a-2227-44ee-80a8-8ba7b5b850b4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" ly"}},"parent_tool_use_id":null}}
+
+id: 349
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a4bd7105-6f20-496a-84e9-002d1cd312e6","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing on her s"}},"parent_tool_use_id":null}}
+
+id: 350
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f97d6b69-ac7c-42d9-82d0-8d21c6468dd2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ide"}},"parent_tool_use_id":null}}
+
+id: 351
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ea089e0-48d5-4511-9342-8121ff1fa02b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", "}},"parent_tool_use_id":null}}
+
+id: 352
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"97961e8f-9816-4837-b82f-e9ced3fff7f3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"lifti"}},"parent_tool_use_id":null}}
+
+id: 353
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d1536ea-f2f7-4f5a-874c-c2ca3864e160","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ng"}},"parent_tool_use_id":null}}
+
+id: 354
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6b8d5689-2fb0-4c2a-bdfa-d645a79824d0","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" h"}},"parent_tool_use_id":null}}
+
+id: 355
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e09c4b6d-6a27-401b-8e2f-66a5e99ba928","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"er leg "}},"parent_tool_use_id":null}}
+
+id: 356
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f4978a2e-ba70-4ff3-b7fa-f2bbdcddc44b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"graceful"}},"parent_tool_use_id":null}}
+
+id: 357
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"84d2e24f-e9d0-4836-9cd8-e3abfe3ee068","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ly with cont"}},"parent_tool_use_id":null}}
+
+id: 358
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e9c32123-5675-41d1-b178-5becba5b37c0","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rolled mo"}},"parent_tool_use_id":null}}
+
+id: 359
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04be9b70-7a1c-42d9-845f-e405da4ae12b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"vem"}},"parent_tool_use_id":null}}
+
+id: 360
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cad56c9b-eba1-4a3c-b3a1-8e1c2bb61505","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ents. So"}},"parent_tool_use_id":null}}
+
+id: 361
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b5619c0a-a930-4caf-ba26-ad6a98d01df8","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ft natural "}},"parent_tool_use_id":null}}
+
+id: 362
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a6cb1f0c-89d6-41ae-8e3d-4ef6d93b7d9d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"light"}},"parent_tool_use_id":null}}
+
+id: 363
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e48e1731-df24-407d-863a-965e98252b8c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ing,"}},"parent_tool_use_id":null}}
+
+id: 364
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31a84965-0fd7-404d-800f-0b875f1f5e34","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" clean "}},"parent_tool_use_id":null}}
+
+id: 365
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"507f7628-3af9-479e-b250-6529472fed33","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"aesth"}},"parent_tool_use_id":null}}
+
+id: 366
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8cdd324f-9018-4f39-b4b2-ec10e45ed933","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"et"}},"parent_tool_use_id":null}}
+
+id: 367
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"928fad11-75ed-4330-9f8f-e6c2509d7fb1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ic, vertical"}},"parent_tool_use_id":null}}
+
+id: 368
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa033a48-7546-4f2a-b198-8d0994a19e2b","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" mobile vi"}},"parent_tool_use_id":null}}
+
+id: 369
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ea95db1a-cc7e-406e-a2e9-05f85a4a8211","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"deo fo"}},"parent_tool_use_id":null}}
+
+id: 370
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12345615-6f27-4f3e-9e86-d7a5debe978c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"rmat. Fitne"}},"parent_tool_use_id":null}}
+
+id: 371
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"50bb1d2d-d7c2-4501-877e-46e283ef036c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ss motivat"}},"parent_tool_use_id":null}}
+
+id: 372
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f186bbc5-e1d4-41fd-b23c-02dd4e7f2be7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ion"}},"parent_tool_use_id":null}}
+
+id: 373
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"25435f36-c68e-4ba5-a33c-3564ebb640f1","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" video sty"}},"parent_tool_use_id":null}}
+
+id: 374
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ebf2fc62-5e54-4098-888e-e43e4918caef","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"le.\"}]}}"}},"parent_tool_use_id":null}}
+
+id: 375
+data: {"type":"assistant","message":{"type":"assistant","uuid":"9fb539ee-5b6a-4aff-8639-35aa2d0475d3","message":{"id":"msg_01XXak7MK929onLMKJCFKGxk","content":[{"type":"tool_use","id":"toolu_01HnVZZuM2riVCfYPMCnsRqq","name":"mcp__sessionTools__outputTaskResult","input":{"result":{"type":"mediaOnly","action":"none","medias":[{"type":"VIDEO","url":"https://assets.aitoearn.ai/68b55fb321b15a40e511dfcf/ai/video/veo3.1-fast/202601/mkqn8m1j-8670eeccb6b2bd1b7ae29cdd157c54.mp4","prompt":"A fit young Asian woman in her 20s doing Pilates exercises on a yoga mat in a bright, minimalist living room with morning sunlight streaming through windows. She is wearing stylish workout clothes (sports bra and leggings). The camera captures her performing inner thigh exercises - lying on her side, lifting her leg gracefully with controlled movements. Soft natural lighting, clean aesthetic, vertical mobile video format. Fitness motivation video style."}]}}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":233},"cache_creation_input_tokens":233,"cache_read_input_tokens":36994,"input_tokens":1,"output_tokens":9,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 376
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e0cc494b-5d22-4516-90f2-4bf8e7756455","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 377
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f218e24d-76e4-4a85-a2da-6412f131edf7","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":233,"cache_read_input_tokens":36994,"input_tokens":1,"output_tokens":605}},"parent_tool_use_id":null}}
+
+id: 378
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf63f926-4830-488f-b5a3-c8a2cacb0d20","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 379
+data: {"type":"user","message":{"type":"user","uuid":"a2496915-b4f1-488f-80bb-c8f9a8a7eee1","message":{"content":[{"tool_use_id":"toolu_01HnVZZuM2riVCfYPMCnsRqq","type":"tool_result","content":[{"type":"text","text":"Task result submitted successfully"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Task result submitted successfully"}]}}
+
+id: 380
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e5cd7e52-1803-47e9-9bd3-b809aa5ab829","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_019XprDUtfqfnJFQkoRvYqxQ","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":620,"cache_read_input_tokens":37227,"cache_creation":{"ephemeral_5m_input_tokens":620,"ephemeral_1h_input_tokens":0},"output_tokens":2,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 381
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"672eebc8-6e93-4498-8312-0ec98bac5a23","event":{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"cache_creation_input_tokens":620,"cache_read_input_tokens":37227,"input_tokens":1,"output_tokens":2}},"parent_tool_use_id":null}}
+
+id: 382
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e89a0e6d-1e98-45fa-bfde-1498348ab308","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 383
+data: {"type":"result","message":{"type":"result","subtype":"success","uuid":"37e510a8-1dbf-4d4c-95bc-1baf75dc5a90","duration_ms":237169,"duration_api_ms":25525,"is_error":false,"num_turns":5,"result":{"type":"mediaOnly","medias":[{"type":"VIDEO","url":"https://assets.aitoearn.ai/68b55fb321b15a40e511dfcf/ai/video/veo3.1-fast/202601/mkqn8m1j-8670eeccb6b2bd1b7ae29cdd157c54.mp4","prompt":"A fit young Asian woman in her 20s doing Pilates exercises on a yoga mat in a bright, minimalist living room with morning sunlight streaming through windows. She is wearing stylish workout clothes (sports bra and leggings). The camera captures her performing inner thigh exercises - lying on her side, lifting her leg gracefully with controlled movements. Soft natural lighting, clean aesthetic, vertical mobile video format. Fitness motivation video style."}],"action":"none"},"total_cost_usd":0.33879775,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":37847},"cache_creation_input_tokens":37847,"cache_read_input_tokens":147588,"input_tokens":7,"output_tokens":1137,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+

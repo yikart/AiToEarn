@@ -1,0 +1,27 @@
+{
+  "privacyPolicy": {
+    "title": "개인정보 처리방침 - 데이터 보호 방법",
+    "description": "AiToEarn의 개인정보 처리방침을 읽고 개인정보의 수집, 사용, 저장 및 보호 방법을 알아보세요.",
+    "keywords": "개인정보 처리방침, 데이터 보호, 개인정보, GDPR 준수, 데이터 보안, AiToEarn"
+  },
+  "termsOfService": {
+    "title": "이용약관 - 사용자 동의 및 가이드라인",
+    "description": "AiToEarn의 이용약관을 확인하세요. 사용자 권리, 콘텐츠 가이드라인, 결제 조건 및 플랫폼 이용 규칙을 다루고 있습니다.",
+    "keywords": "이용약관, 사용자 동의, 플랫폼 규칙, 콘텐츠 가이드라인, 결제 조건, AiToEarn"
+  },
+  "dataDeletion": {
+    "title": "데이터 삭제 가이드 - 계정 및 데이터 삭제",
+    "description": "AiToEarn 계정과 개인 데이터를 삭제하는 단계별 안내. 데이터 보존 정책 및 데이터 삭제 요청 방법을 알아보세요.",
+    "keywords": "데이터 삭제, 계정 삭제, 개인정보 권리, 데이터 소거, 계정 탈퇴, AiToEarn"
+  },
+  "dataProtection": {
+    "title": "데이터 보호 계약 - GDPR 준수 및 컴플라이언스",
+    "description": "AiToEarn의 데이터 보호 계약은 GDPR 준수 데이터 처리 표준, 보안 조치 및 개인 데이터에 대한 귀하의 권리를 설명합니다.",
+    "keywords": "데이터 보호, GDPR 준수, 데이터 처리, 데이터 보안, 개인정보 권리, AiToEarn"
+  },
+  "extensionPrivacy": {
+    "title": "브라우저 확장 프로그램 개인정보 - 데이터 사용 및 권한",
+    "description": "AiToEarn 브라우저 확장 프로그램의 데이터 처리 방법을 알아보세요. Chrome 확장 프로그램의 권한 및 보안 조치를 설명합니다.",
+    "keywords": "확장 프로그램 개인정보, 브라우저 확장, Chrome 확장, 데이터 권한, AiToEarn 확장"
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "common": {
+    "previous": "上一个",
+    "next": "下一个"
+  },
+  "seo": {
+    "title": "AI驱动的内容创作与社交媒体管理平台",
+    "description": "AiToEarn为您提供最方便的AI视频制作服务，帮助线下门店引流，同时提供社媒账号托管，完成内容发布和评论互动。",
+    "keywords": "AI视频制作,社媒管理,多平台发布,AI营销,内容创作,社交媒体自动化,AiToEarn,AI运营,线下推广,一键发布,爱团团"
+  },
+  "navbar": {
+    "pricing": "定价",
+    "docs": "文档",
+    "brandPromotion": "产品",
+    "aiSocial": "AI社媒",
+    "login": "登录",
+    "getDemo": "免费开始"
+  },
+  "hero": {
+    "badge": "AI 驱动餐厅增长",
+    "title": "一人公司的AI运营员工",
+    "subtitle": "使用AiToEarn，你可以轻松为您的线下门店引流。AiToEarn为您提供最方便的AI视频制作服务，同时，您可以将您的社媒账号托管在AiToEarn，我们帮您完成内容发布和评论互动。",
+    "placeholder": "输入您的餐厅名称",
+    "cta": "获取我的AI助手",
+    "selectFirst": "请先选择一家餐厅",
+    "tags": {
+      "aiVideo": "AI视频制作",
+      "socialMedia": "社媒托管"
+    },
+    "error": {
+      "draftFailed": "创建草稿失败，请重试"
+    }
+  },
+  "owners": {
+    "title": "数千位餐厅老板的信赖之选",
+    "subtitle": "使用 Owner，获得更多流量、更多销售、更多回头客"
+  },
+  "features": {
+    "title": "使用 Owner，获得更多流量、更多销售、更多回头客",
+    "onlineOrdering": {
+      "title": "在线订餐",
+      "description": "零佣金订餐，让您赚得更多"
+    },
+    "mobileApp": {
+      "title": "移动应用",
+      "description": "您自己的品牌应用，内置会员奖励"
+    },
+    "marketing": {
+      "title": "营销",
+      "description": "自动化营销活动，促进复购"
+    }
+  },
+  "reviews": {
+    "title": "用户评价",
+    "subtitle": "加入数千位信任 AiToEarn 的一人公司创业者",
+    "viewOnGithub": "在 GitHub 上查看",
+    "review1": {
+      "content": "终于有一个能处理多平台发布的开源工具！一键发布到抖音、TikTok、YouTube - 每周节省好几个小时。"
+    },
+    "review2": {
+      "content": "作为一人创业者，AiToEarn 简直是神器。AI 生成内容、自动发布，甚至处理评论。我的社媒现在完全自动运行。"
+    },
+    "review3": {
+      "content": "AI Agent 功能太棒了。自动撰写、优化、发布内容。内容成本降低了 90%。"
+    },
+    "review4": {
+      "content": "最棒的是开源。我可以根据品牌需求定制。覆盖国内外所有主流平台。"
+    },
+    "review5": {
+      "content": "按播放量付费的模式太合理了。只为真实效果付费，而不是单纯的内容创作。透明公平。"
+    },
+    "review6": {
+      "content": "喜欢 MCP 工具集成。视频剪辑、翻译、发布 - 全部 AI 驱动。一人公司的完美选择。"
+    },
+    "review7": {
+      "content": "扫码发布功能让我的顾客变成品牌大使。他们喜欢分享，我获得免费推广！"
+    },
+    "review8": {
+      "content": "自动回复评论节省了大量时间。AI 处理基础问题，我专注业务增长。"
+    },
+    "review9": {
+      "content": "支持 14+ 平台！从 TikTok 到微信，全部自动同步。真正的一站式解决方案。"
+    }
+  },
+  "tech": {
+    "title": "AI 生成专业探店视频",
+    "subtitle": "扫码即发布，单条成本下降 90%+",
+    "description": "高质量内容自动生成，让每一次线下互动转化为有效的社交媒体曝光",
+    "playVideo": "播放视频",
+    "video1": { "title": "Blacklock 探店 Vlog" },
+    "video2": { "title": "餐厅探索短视频" },
+    "video3": { "title": "The Shed 英式餐厅" }
+  },
+  "testimonials": {
+    "title": "听听像您一样的餐厅老板怎么说",
+    "watchVideo": "观看视频"
+  },
+  "beliefs": {
+    "title": "为什么选择 AiToEarn",
+    "subtitle": "专为一人公司和小型企业打造",
+    "belief1": {
+      "title": "专为一人公司设计",
+      "description": "功能精简、操作简单、结果导向。无需雇佣大量人手，也不浪费预算在无效推广上。"
+    },
+    "belief2": {
+      "title": "全流程 AI 托管",
+      "description": "策划、生成、优化、发布、评论互动全自动。AI 代替重复劳动，你专注业务，我们帮你把品牌声量做起来。"
+    },
+    "belief4": {
+      "title": "按量付费，透明定价",
+      "description": "没有订阅捆绑，没有隐藏费用。用多少付多少，积分永不过期（12个月内有效），定价与上游成本完全对齐，绝不额外加价。"
+    }
+  },
+  "guides": {
+    "title": "核心功能",
+    "subtitle": "三大能力，助力品牌增长",
+    "viewDocs": "查看文档",
+    "learnMore": "了解更多",
+    "feature1": {
+      "title": "线下推广营销",
+      "subtitle": "扫码即可发布高质量内容",
+      "description": "用户扫码，AI 自动生成专业内容。单条内容成本下降 90%+，顾客轻松成为线下推广大使。"
+    },
+    "feature2": {
+      "title": "内容交易",
+      "subtitle": "按结果付费，按播放量结算",
+      "description": "购买或委托创作者内容，费用按播放量结算。例如 1 美元 / 1000 播放量。"
+    },
+    "feature3": {
+      "title": "AI 社媒托管",
+      "subtitle": "一条内容，多平台自动发布",
+      "description": "支持 14+ 社交平台，自动评论互动，集成顶级 AI 模型。"
+    }
+  },
+  "experience": {
+    "title": "使用 Aitoearn，获得更多流量、更多销售、更多客户",
+    "subtitle": "从线下营销到多平台发布，让 AI 为您代劳",
+    "tab1": {
+      "title": "线下推广营销",
+      "subtitle": "扫码即发布",
+      "description": "用户扫描您的推广二维码，AI 自动生成专业内容（视频、图片、文字），自动优化并发布。"
+    },
+    "tab2": {
+      "title": "多平台发布",
+      "subtitle": "一条内容，全平台覆盖",
+      "description": "一次发布，全网同步。支持以下所有平台："
+    },
+    "tab3": {
+      "title": "AI 视频创作",
+      "subtitle": "全流程 AI 处理",
+      "description": "从策划到生成到优化，让 AI 处理整个内容创作流程，集成 Claude、Veo、Sora 等顶级模型。"
+    },
+    "tab4": {
+      "title": "自动化社媒互动",
+      "subtitle": "浏览器插件驱动",
+      "description": "使用我们强大的浏览器插件，可以在任何社媒平台上自动化互动操作。点赞、评论、关注、养号 - 全自动完成，每天节省数小时的手动操作时间。"
+    }
+  },
+  "footer": {
+    "ctaTitle": "开始试用，注册即送100积分！",
+    "startTrial": "立即开始",
+    "resources": "资源",
+    "account": "账户",
+    "legal": "法律协议",
+    "docs": "文档",
+    "login": "登录",
+    "register": "注册",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "dataProtection": "数据保护协议",
+    "dataDeletion": "数据删除",
+    "pluginGuide": "插件使用指南",
+    "extensionPrivacy": "扩展隐私政策",
+    "contact": "联系我们",
+    "supportedPlatforms": "支持平台",
+    "copyright": "© 2026 AiToEarn. 保留所有权利。"
+  }
+}

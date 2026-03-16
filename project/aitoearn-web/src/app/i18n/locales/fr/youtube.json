@@ -1,0 +1,17 @@
+{
+  "youtubeAuth": "Autorisation YouTube",
+  "authDescription": "Veuillez entrer votre adresse e-mail pour obtenir l'autorisation YouTube",
+  "email": "E-mail",
+  "enterEmail": "Entrez votre adresse e-mail",
+  "authorize": "Autoriser",
+  "pleaseEnterEmail": "Veuillez entrer votre adresse e-mail",
+  "invalidEmail": "Veuillez entrer une adresse e-mail valide",
+  "authFailed": "Échec de l'autorisation, veuillez réessayer plus tard",
+  "checkAuth": "Vérifier l'autorisation",
+  "uploadVideo": "Télécharger une vidéo",
+  "needAuthFirst": "Autorisation requise d'abord",
+  "uploadFailed": "Échec du téléchargement",
+  "uploadSuccess": "Téléchargement réussi",
+  "checkFailed": "Échec de la vérification",
+  "alreadyAuthorized": "Déjà autorisé"
+}

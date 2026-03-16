@@ -1,0 +1,117 @@
+{
+  "seo": {
+    "title": "Browser Extension Guide - Install AiToEarn Plugin",
+    "description": "Step-by-step guide to install and use the AiToEarn browser extension for automated social media content publishing and management.",
+    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, AiToEarn"
+  },
+  "title": "브라우저 플러그인 가이드",
+  "lastUpdated": "최종 업데이트",
+  "introduction": "이 가이드는 AiToEarn 브라우저 플러그인을 설치하고 사용하는 방법을 안내하여 소셜 미디어 계정 관리와 콘텐츠 게시를 더 편리하게 할 수 있도록 도와줍니다.",
+  "tableOfContents": "목차",
+  "sections": {
+    "installation": "플러그인 설치",
+    "manualInstall": "수동 설치",
+    "manualInstallDesc": "GitHub 또는 중국 다운로드 채널용",
+    "authorize": "플러그인 인증",
+    "loginAccount": "소셜 미디어 계정 로그인",
+    "syncAccount": "계정 동기화"
+  },
+  "steps": {
+    "step1": {
+      "title": "1단계: 플러그인 관리 대화상자 열기",
+      "content": "AiToEarn 플랫폼 페이지에서 오른쪽 상단의 플러그인 아이콘을 클릭하여 브라우저 플러그인 관리 대화상자를 엽니다.",
+      "caption": "오른쪽 상단의 확장 프로그램 버튼 클릭"
+    },
+    "step2": {
+      "title": "2단계: 플러그인 다운로드",
+      "content": "대화상자에서 다운로드 방법을 선택하고 클릭하여 플러그인을 다운로드합니다.",
+      "caption": "적절한 다운로드 채널 선택",
+      "note": "Chrome 웹 스토어와 GitHub 릴리스 설치의 차이점:",
+      "noteItem1": "GitHub 릴리스에서 다운로드한 플러그인은 브라우저에서 개발자 모드를 활성화해야 설치할 수 있지만, 여기서 설치한 리소스가 최신 플러그인입니다.",
+      "noteItem2": "Chrome 웹 스토어에서 다운로드한 플러그인은 바로 설치할 수 있습니다."
+    },
+    "step3": {
+      "title": "3단계: 설치 상태 확인",
+      "content": "설치 후 브라우저의 확장 프로그램 버튼을 클릭하여 설치가 성공했는지 확인합니다.",
+      "caption": "브라우저 확장 프로그램 바에서 AiToEarn 플러그인 찾기"
+    },
+    "step4": {
+      "title": "4단계: 플러그인 상세 페이지 들어가기",
+      "content": "설치가 성공하면 플러그인을 클릭하여 플러그인 상세 페이지로 들어갑니다."
+    },
+    "step5": {
+      "title": "5단계: 플러그인 인증",
+      "notLoggedInContent": "AiToEarn 홈페이지에 로그인하지 않은 경우, \"Go to Home\"을 클릭하여 AiToEarn 홈페이지로 이동하여 로그인하세요.",
+      "notLoggedInCaption": "'Go to Home'을 클릭하여 먼저 로그인",
+      "loggedInContent": "AiToEarn 홈페이지에 이미 로그인한 경우, \"Authorize Now\"를 클릭하여 인증하세요.",
+      "loggedInCaption": "'Authorize Now'를 클릭하여 플러그인 인증"
+    },
+    "step6": {
+      "title": "6단계: 플러그인 준비 확인",
+      "content": "권한이 성공적으로 부여되었습니다. 다음으로 AiToEarn 플랫폼을 열고 페이지를 새로고침하면 플러그인이 준비된 것을 볼 수 있습니다. 클릭하여 상세를 확인하세요.",
+      "caption1": "인증 성공",
+      "caption2": "AiToEarn 플랫폼으로 돌아가서 플러그인 상태 확인"
+    },
+    "step7": {
+      "title": "7단계: 계정 정보 보기",
+      "content": "플러그인이 지원하는 플랫폼에 로그인한 경우 플러그인이 해당 계정을 가져온 것을 볼 수 있습니다.",
+      "loginContent": "\"확장 프로그램\" 버튼을 클릭하여 계정 로그인 상태를 확인하세요. 로그인되지 않음으로 표시되면 먼저 해당 소셜 미디어 플랫폼에 로그인해 주세요.",
+      "caption": "샤오홍슈 계정 로그인 상태 확인"
+    },
+    "step7b": {
+      "title": "샤오홍슈 계정 로그인",
+      "content": "\"지금 로그인\"을 클릭하여 샤오홍슈 페이지로 이동하여 로그인합니다. 로그인 후 크리에이터 센터에도 로그인해야 합니다.",
+      "caption1": "오른쪽 상단에서 크리에이터 센터에 빠르게 들어가기",
+      "caption2": "로그인 후 페이지를 새로고침하면 계정이 인증된 것을 볼 수 있습니다",
+      "importantNote": "중요 안내",
+      "importantNoteContent": "샤오홍슈 홈페이지와 크리에이터 센터는 별도로 로그인해야 합니다. 둘 다 로그인해야 플러그인 기능을 정상적으로 사용할 수 있습니다."
+    },
+    "step8": {
+      "title": "8단계: 계정 동기화",
+      "content": "여기서 계정을 계정 관리에 동기화할 수 있습니다. [동기화] 버튼을 클릭하면 계정이 데이터베이스에 동기화됩니다.",
+      "caption": "'동기화' 버튼을 클릭하여 계정 동기화"
+    },
+    "step9": {
+      "title": "동기화 결과 보기",
+      "content": "AiToEarn 홈페이지로 돌아가서 \"내 채널\"을 클릭하여 계정 관리 페이지로 들어갑니다.",
+      "caption1": "'내 채널'을 클릭하여 계정 관리 들어가기",
+      "caption2": "샤오홍슈 계정이 성공적으로 동기화된 것을 볼 수 있습니다"
+    },
+    "complete": {
+      "title": "완료",
+      "content": "이제 AiToEarn 플랫폼을 정상적으로 사용할 수 있습니다!"
+    }
+  },
+  "manualInstall": {
+    "tip": "팁",
+    "tipContent": "Chrome 웹 스토어에서 플러그인을 성공적으로 설치한 경우 이 섹션을 건너뛰고 \"플러그인 인증\" 장으로 바로 이동할 수 있습니다.",
+    "step1": {
+      "title": "확장 프로그램 관리 페이지 들어가기",
+      "content": "브라우저 오른쪽 상단의 점 세 개 메뉴를 클릭하고 \"확장 프로그램 관리\" 페이지로 들어갑니다."
+    },
+    "step2": {
+      "title": "개발자 모드 활성화",
+      "content": "확장 프로그램 페이지의 오른쪽 상단에서 \"개발자 모드\"를 활성화합니다."
+    },
+    "step3": {
+      "title": "다운로드한 플러그인 파일 찾기",
+      "content": "브라우저의 다운로드 폴더를 열고 다운로드한 .crx 플러그인 패키지를 찾습니다."
+    },
+    "step4": {
+      "title": "드래그 앤 드롭으로 플러그인 설치",
+      "content": ".crx 플러그인 패키지를 확장 프로그램 페이지로 드래그 앤 드롭합니다."
+    },
+    "step5": {
+      "title": "설치 확인",
+      "content": "팝업 대화상자에서 \"확장 프로그램 추가\"를 클릭하여 설치를 확인합니다."
+    }
+  },
+  "faq": {
+    "title": "자주 묻는 질문",
+    "q1": {
+      "question": "샤오홍슈에 로그인했는데 플러그인에서 여전히 로그인되지 않음으로 표시되는 이유는 무엇인가요?",
+      "answer": "샤오홍슈 크리에이터 센터에 로그인하지 않았을 수 있습니다. 샤오홍슈 홈페이지에서 오른쪽 상단의 버튼을 클릭하여 샤오홍슈 크리에이터 센터에 빠르게 로그인하세요."
+    }
+  },
+  "viewGuide": "가이드 보기"
+}

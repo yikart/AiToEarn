@@ -1,0 +1,112 @@
+{
+  "title": "品牌信息",
+  "viewDetails": "查看详情",
+  "noData": "暂无品牌信息",
+  "stores": "门店",
+  "reviews": "评价",
+  "rating": "评分",
+  "status": {
+    "pending": "处理中",
+    "initializing": "初始化中",
+    "active": "已激活",
+    "failed": "失败",
+    "disabled": "已停用"
+  },
+  "section": {
+    "basicInfo": "基本信息",
+    "brandImages": "品牌形象",
+    "gallery": "店铺图片",
+    "contact": "联系方式",
+    "socialLinks": "社交链接"
+  },
+  "field": {
+    "name": "品牌名称",
+    "nameEn": "英文名称",
+    "category": "分类",
+    "description": "品牌描述",
+    "logo": "Logo",
+    "coverImage": "封面图",
+    "website": "官网",
+    "phone": "电话",
+    "email": "邮箱",
+    "address": "地址"
+  },
+  "placeholder": {
+    "name": "请输入品牌名称",
+    "nameEn": "请输入英文名称",
+    "category": "请选择分类",
+    "description": "请输入品牌描述",
+    "website": "https://example.com",
+    "phone": "+86 123 4567 8900",
+    "email": "contact@example.com",
+    "address": "请输入地址",
+    "socialLink": "请输入链接"
+  },
+  "category": {
+    "restaurant": "餐厅",
+    "cafe": "咖啡馆",
+    "bar": "酒吧",
+    "bakery": "烘焙店",
+    "fast_food": "快餐",
+    "fine_dining": "高级餐厅",
+    "other": "其他"
+  },
+  "image": {
+    "uploadLogo": "上传 Logo",
+    "uploadCover": "上传封面",
+    "addImage": "添加图片",
+    "deleteImage": "删除图片",
+    "deleteConfirm": "确定要删除这张图片吗？",
+    "sourceGoogleMaps": "Google Maps",
+    "sourceUserUpload": "用户上传",
+    "uploadFailed": "图片上传失败",
+    "deleteFailed": "图片删除失败",
+    "dragOrClick": "拖拽或点击上传",
+    "maxSize": "最大 5MB",
+    "supportedFormats": "支持 JPG、PNG、WebP",
+    "uploadDisabled": "请先完成品牌初始化",
+    "linkFirst": "关联店铺后即可管理图片"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "X (Twitter)",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "action": {
+    "edit": "编辑",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "取消",
+    "updateSuccess": "品牌信息更新成功",
+    "updateFailed": "品牌信息更新失败"
+  },
+  "createdAt": "创建时间",
+  "updatedAt": "更新时间",
+  "viewOnGoogleMaps": "在 Google Maps 上查看",
+  "photoCount": "{{count}} 张图片",
+  "aiHint": "AI生成的视频将基于您的品牌信息方向生成",
+  "switchStore": {
+    "button": "切换店铺",
+    "searching": "搜索新店铺...",
+    "switching": "正在切换店铺...",
+    "success": "店铺切换成功",
+    "failed": "店铺切换失败",
+    "cancel": "取消",
+    "confirm": "确认切换"
+  },
+  "setup": {
+    "title": "关联您的店铺",
+    "description": "搜索并关联您的店铺，开始管理品牌信息",
+    "cardHint": "点击关联店铺，开始线下推广",
+    "searchHint": "搜索关联店铺后，AI 将基于品牌信息生成内容"
+  },
+  "validation": {
+    "nameRequired": "请输入品牌名称",
+    "nameMaxLength": "品牌名称不能超过 50 个字符",
+    "nameEnMaxLength": "英文名称不能超过 100 个字符",
+    "descriptionMaxLength": "描述不能超过 500 个字符"
+  }
+}

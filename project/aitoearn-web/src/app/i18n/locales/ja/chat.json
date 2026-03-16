@@ -1,0 +1,205 @@
+{
+  "input": {
+    "placeholder": "新しい寿司盛り合わせの8秒縦型プロモーション動画を作成してください。アップテンポなジャズ音楽、新鮮なサーモンのクローズアップ、字幕を生成、最後にロゴを表示。",
+    "send": "送信",
+    "stop": "停止",
+    "uploading": "アップロード中..."
+  },
+  "message": {
+    "thinking": "考え中...",
+    "error": "操作に失敗しました。もう一度お試しください",
+    "loadFailed": "読み込みに失敗しました",
+    "connectionInterrupted": "接続が中断されました"
+  },
+  "error": {
+    "insufficientCredits": {
+      "title": "エージェントクレジット不足",
+      "content": "エージェントクレジットが不足しています。メンバーシップにご登録ください",
+      "okText": "OK"
+    }
+  },
+  "task": {
+    "newChat": "新規チャット",
+    "delete": "削除",
+    "deleteConfirm": "このチャットを削除してもよろしいですか？",
+    "deleteSuccess": "削除しました",
+    "deleteFailed": "削除に失敗しました",
+    "status": {
+      "running": "実行中",
+      "completed": "完了",
+      "requiresAction": "対応が必要",
+      "failed": "失敗"
+    },
+    "rate": "評価",
+    "share": "シェア"
+  },
+  "home": {
+    "title": "何かお手伝いできますか？",
+    "recentTasks": "最近のタスク",
+    "viewAll": "すべて表示",
+    "noTasks": "タスク履歴がありません",
+    "startChat": "作成を開始",
+    "aiCreation": "AI作成",
+    "supportUpload": "画像/動画のアップロードに対応",
+    "enterToSend": "Enterキーで送信",
+    "connectTools": "投稿先",
+    "loginRequired": "先にログインしてください",
+    "defaultImageGroup": "デフォルト画像グループ",
+    "defaultVideoGroup": "デフォルト動画グループ",
+    "materialLibrary": "メディアライブラリ",
+    "affiliateReward": "$716.4を獲得",
+    "imageMaterial": "画像",
+    "videoMaterial": "動画",
+    "agentAssets": "Agent素材",
+    "noData": "データがありません"
+  },
+  "history": {
+    "meta": {
+      "title": "AIタスク履歴 - 会話と生成記録",
+      "description": "AI Agentタスク記録を閲覧・管理。会話履歴、AI利用ログ、動画生成履歴を含む。ページネーション、タスク評価、履歴管理をサポート。",
+      "keywords": "AIタスク記録, 会話履歴, AI Agent履歴, タスク管理, AI利用ログ, 動画生成履歴, 履歴記録, タスク評価, AIチャット記録, ワークフロー履歴, コンテンツ作成記録, AI作成履歴"
+    },
+    "title": "タスク履歴",
+    "empty": "タスク履歴がありません",
+    "loadMore": "もっと読み込む",
+    "loading": "読み込み中...",
+    "logs": "利用ログ",
+    "logsTitle": "AI利用ログ",
+    "logsEmpty": "利用履歴がありません",
+    "logsLoading": "ログを読み込み中...",
+    "logsError": "ログの読み込みに失敗しました",
+    "pageInfo": "{{page}} / {{totalPages}} ページ、全 {{total}} 件",
+    "logType": {
+      "agent": "AIエージェント",
+      "chat": "AIチャット"
+    },
+    "logFields": {
+      "model": "モデル",
+      "channel": "チャンネル",
+      "points": "使用ポイント",
+      "duration": "所要時間",
+      "taskId": "タスクID"
+    },
+    "videoHistory": "動画履歴",
+    "videoHistoryTitle": "動画生成履歴",
+    "videoHistoryEmpty": "動画生成履歴がありません",
+    "videoGeneration": "動画生成",
+    "videoSize": "動画サイズ",
+    "videoDuration": "動画の長さ",
+    "prompt": "プロンプト",
+    "progress": "進捗",
+    "previewVideo": "動画をプレビュー",
+    "playVideo": "動画を再生",
+    "downloadVideo": "動画をダウンロード",
+    "logStatus": {
+      "success": "成功",
+      "failed": "失敗",
+      "pending": "保留中"
+    },
+    "videoStatus": {
+      "pending": "保留中",
+      "processing": "処理中",
+      "completed": "完了",
+      "failed": "失敗"
+    },
+    "duration": {
+      "seconds": "秒",
+      "minutes": "分",
+      "secondsUnit": "秒"
+    },
+    "searchPlaceholder": "タスクを検索...",
+    "favoriteOnly": "お気に入り",
+    "emptyFavorites": "お気に入りのタスクがありません",
+    "emptySearch": "一致するタスクが見つかりません",
+    "clearFilters": "フィルターをクリア"
+  },
+  "rating": {
+    "title": "評価とレビュー",
+    "submit": "送信",
+    "cancel": "キャンセル",
+    "requireComment": "低評価の場合はコメントをご記入ください",
+    "saveSuccess": "保存しました",
+    "saveFailed": "保存に失敗しました",
+    "noRating": "未評価",
+    "commentLabel": "レビュー（任意）",
+    "commentPlaceholder": "レビューを書く...",
+    "commentRequiredIfLow": "3未満の評価には理由が必要です",
+    "loading": "読み込み中...",
+    "feedbackPrompt": "ご意見は改善に役立ちます",
+    "submitSuccess": "送信しました。ご意見ありがとうございます！"
+  },
+  "detail": {
+    "title": "チャット詳細",
+    "continuePlaceholder": "会話を続ける...",
+    "back": "戻る",
+    "workflowProcess": "AIワークフロー",
+    "waitingResponse": "AIの応答を待っています...",
+    "scrollToBottom": "一番下に戻る"
+  },
+  "media": {
+    "video": "動画",
+    "image": "画像",
+    "document": "ドキュメント",
+    "uploadFailed": "アップロードに失敗しました。もう一度お試しください",
+    "uploadCancelled": "アップロードがキャンセルされました"
+  },
+  "workflow": {
+    "toolCallCompleted": "ツール呼び出し完了",
+    "toolResult": "結果が返されました",
+    "processing": "処理中..."
+  },
+  "action": {
+    "connectChannel": "チャンネルを接続",
+    "connectChannelDesc": "{{platform}}アカウントがまだ接続されていません。コンテンツを公開するにはチャンネルアカウントを接続してください。",
+    "connectNow": "今すぐ接続",
+    "addChannel": "チャンネルを追加",
+    "addChannelDesc": "{{platform}}アカウントがまだ接続されていません。コンテンツを公開するにはチャンネルを追加してください。",
+    "addChannelNow": "チャンネルを追加",
+    "updateAuth": "認証を更新",
+    "updateAuthDesc": "{{platform}}アカウントの認証が期限切れです。再認証してください。",
+    "reauthorize": "再認証",
+    "loginChannel": "チャンネルにログイン",
+    "loginChannelDesc": "まず{{platform}}アカウントにログインしてください。",
+    "goLogin": "ログインする",
+    "readyToPublish": "公開準備完了",
+    "readyToPublishDesc": "コンテンツの準備が整い、{{platform}}に公開できます。",
+    "goPublish": "公開する",
+    "insufficientCredits": "クレジット不足",
+    "insufficientCreditsDesc": "タスクが一時停止しました。続行するにはクレジットをチャージしてください。",
+    "rechargeCredits": "クレジットをチャージ",
+    "action": "アクション",
+    "actionDesc": "以下のアクションを完了してください",
+    "continue": "続ける"
+  },
+  "publishDetail": {
+    "title": "公開詳細",
+    "loading": "読み込み中...",
+    "publishing": "公開中...",
+    "published": "公開済み",
+    "failed": "失敗",
+    "unpublished": "未公開",
+    "viewWork": "投稿を見る",
+    "noTitle": "タイトルなし",
+    "retry": "再試行"
+  },
+  "pluginPublish": {
+    "autoPublishIn": "{{seconds}}秒後に{{platform}}へ自動公開します",
+    "publishNow": "今すぐ公開",
+    "cancel": "キャンセル",
+    "publishing": "{{platform}}に公開中...",
+    "doNotCloseBrowser": "公開中です。ブラウザウィンドウを閉じないでください",
+    "publishSuccess": "公開成功！",
+    "publishFailed": "公開失敗",
+    "retryPublish": "再試行",
+    "viewWork": "投稿を見る",
+    "pluginNotReady": "プラグインの準備ができていません。先にインストールして認証してください",
+    "noAccountFound": "利用可能な公開アカウントが見つかりません",
+    "goPublish": "公開する",
+    "stage": {
+      "download": "リソースをダウンロード中...",
+      "upload": "アップロード中...",
+      "publish": "公開中...",
+      "complete": "公開完了"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+/* HomeChat 流光渐变动画 - 用于推广入口按钮 */
+@keyframes gradient-flow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-flow 3s ease infinite;
+}

@@ -1,0 +1,27 @@
+{
+  "privacyPolicy": {
+    "title": "プライバシーポリシー - データ保護について",
+    "description": "AiToEarnのプライバシーポリシーをお読みください。個人情報の収集、使用、保存、保護方法について説明しています。",
+    "keywords": "プライバシーポリシー, データ保護, 個人情報, GDPR準拠, データセキュリティ, AiToEarn"
+  },
+  "termsOfService": {
+    "title": "利用規約 - ユーザー契約とガイドライン",
+    "description": "AiToEarnの利用規約をご確認ください。ユーザーの権利、コンテンツガイドライン、支払い条件、プラットフォーム利用規則について。",
+    "keywords": "利用規約, ユーザー契約, プラットフォームルール, コンテンツガイドライン, 支払い条件, AiToEarn"
+  },
+  "dataDeletion": {
+    "title": "データ削除ガイド - アカウントとデータの削除",
+    "description": "AiToEarnアカウントと個人データを削除する手順。データ保持ポリシーとデータ削除リクエストの提出方法。",
+    "keywords": "データ削除, アカウント削除, プライバシー権, データ消去, アカウント退会, AiToEarn"
+  },
+  "dataProtection": {
+    "title": "データ保護契約 - GDPR準拠とコンプライアンス",
+    "description": "AiToEarnのデータ保護契約は、GDPR準拠のデータ処理基準、セキュリティ対策、個人データに関する権利を概説しています。",
+    "keywords": "データ保護, GDPR準拠, データ処理, データセキュリティ, プライバシー権, AiToEarn"
+  },
+  "extensionPrivacy": {
+    "title": "ブラウザ拡張機能プライバシー - データ使用と権限",
+    "description": "AiToEarnブラウザ拡張機能のデータ処理方法について。Chrome拡張機能の権限、データ収集、セキュリティ対策を説明。",
+    "keywords": "拡張機能プライバシー, ブラウザ拡張, Chrome拡張, データ権限, AiToEarn拡張"
+  }
+}

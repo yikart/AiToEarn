@@ -1,0 +1,29 @@
+/* AgentFeatures Swiper 分页器样式 */
+.agent-features-swiper .swiper {
+  padding-bottom: 2.5rem !important;
+}
+
+.agent-features-swiper .swiper-pagination {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  gap: 6px !important;
+}
+
+.agent-features-swiper .swiper-pagination-bullet {
+  width: 8px !important;
+  height: 8px !important;
+  background: oklch(0.6 0 0 / 0.3) !important;
+  opacity: 1 !important;
+  border-radius: 9999px !important;
+  transition: all 0.3s ease !important;
+  margin: 0 !important;
+}
+
+.agent-features-swiper .swiper-pagination-bullet-active {
+  width: 20px !important;
+  background: var(--primary) !important;
+}

@@ -1,0 +1,322 @@
+
+id: 1
+data: {"type":"init","taskId":"6964ccf6d45f3e5ed53e60be"}
+
+id: 2
+data: {"type":"keep_alive"}
+
+id: 3
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4b28ece-cd82-4b82-b5fc-bcc821b3c73f","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_015ZceLcpKN9qgzS6Q73C711","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":26749,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":26749,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 4
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"415b7317-d745-4b4b-ae98-4028f0813581","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_01Dfazz7wasjSkDBA38twRJB","name":"mcp__sessionTools__setTitle","input":{}}},"parent_tool_use_id":null}}
+
+id: 5
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4eac3ab1-7b6b-4e8f-8861-f9daf8a4d0f6","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 6
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c05ae60a-2389-4a5c-b81c-d728591c6bca","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"title\""}},"parent_tool_use_id":null}}
+
+id: 7
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"49a9bf40-d549-4963-ae2f-1f2226d785b7","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":": \"问候"}},"parent_tool_use_id":null}}
+
+id: 8
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3902b8d7-1cd6-4ef9-be20-6948747b6a9d","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"消息"}},"parent_tool_use_id":null}}
+
+id: 9
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04e09cec-1641-40f7-9a0f-1c3c6cdfbddd","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"}"}},"parent_tool_use_id":null}}
+
+id: 10
+data: {"type":"assistant","message":{"type":"assistant","uuid":"08c8e60d-49a3-4a00-a95a-78fe01b68d98","message":{"id":"msg_015ZceLcpKN9qgzS6Q73C711","content":[{"type":"tool_use","id":"toolu_01Dfazz7wasjSkDBA38twRJB","name":"mcp__sessionTools__setTitle","input":{"title":"问候消息"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":26749},"cache_creation_input_tokens":26749,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 11
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"415b2c16-5182-476e-b660-ec2d1de812d2","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 12
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6d426c13-20ec-47aa-8c8e-be76f812c220","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":26749,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":61}},"parent_tool_use_id":null}}
+
+id: 13
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c928313f-2556-4870-99f6-3b1deb7efa42","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 14
+data: {"type":"title_updated","taskId":"6964ccf6d45f3e5ed53e60be","title":"问候消息"}
+
+id: 15
+data: {"type":"user","message":{"type":"user","uuid":"1626f077-6010-453e-967e-98d297b7ef2a","message":{"content":[{"tool_use_id":"toolu_01Dfazz7wasjSkDBA38twRJB","type":"tool_result","content":[{"type":"text","text":"Title updated successfully"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Title updated successfully"}]}}
+
+id: 16
+data: {"type":"keep_alive"}
+
+id: 17
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6966094d-5dbd-4ec7-b884-cac74fe05da0","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01CkxqVsQefSv8Ejmiumxnaw","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":79,"cache_read_input_tokens":26749,"cache_creation":{"ephemeral_5m_input_tokens":79,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 18
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dcb2fc58-4c1e-4c9f-b22e-9431ac62ae24","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 19
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c187da8-3c61-4184-9f89-2740b5a29c2a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"你"}},"parent_tool_use_id":null}}
+
+id: 20
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d154a16c-52bf-4ec6-8634-da43f7bfeea1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"好！"}},"parent_tool_use_id":null}}
+
+id: 21
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"49899747-4374-4cf1-8d83-204374906ec9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"👋 我"}},"parent_tool_use_id":null}}
+
+id: 22
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"57145e78-d66a-4268-aafb-98d80b7aff64","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"是"}},"parent_tool_use_id":null}}
+
+id: 23
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6d217dd0-8fa7-4a2c-8071-491a88deaaef","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"你"}},"parent_tool_use_id":null}}
+
+id: 24
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3b5ce17-e533-48bc-9c38-435831eb9af6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"的社"}},"parent_tool_use_id":null}}
+
+id: 25
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"41265d60-ebe2-4d85-8498-0b1858bbc19d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"交媒体内"}},"parent_tool_use_id":null}}
+
+id: 26
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa09cc7c-576a-4f2f-9fa0-8c514407221a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容创作助手"}},"parent_tool_use_id":null}}
+
+id: 27
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"505ed542-52c7-4d17-a639-3cca11598bb4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"。"}},"parent_tool_use_id":null}}
+
+id: 28
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1e7e3978-3d52-477b-b16b-3f1c0e57ecfd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n我可以帮"}},"parent_tool_use_id":null}}
+
+id: 29
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bb94012e-1e0a-477c-b175-739b37dadb53","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"你：\n- "}},"parent_tool_use_id":null}}
+
+id: 30
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c9ec6e9d-e1dc-44f9-9ff3-670882232f12","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🎨"}},"parent_tool_use_id":null}}
+
+id: 31
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1427efd-4a3f-4ff1-bff7-c4a154fa1235","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **"}},"parent_tool_use_id":null}}
+
+id: 32
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6a7d2a61-c66c-40c5-9d84-85b8c1967962","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"生"}},"parent_tool_use_id":null}}
+
+id: 33
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3eaeb339-4981-41bf-aeb9-681135f63f9b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成图片"}},"parent_tool_use_id":null}}
+
+id: 34
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"accb8361-2154-488c-b72d-0967ed117e1f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**"}},"parent_tool_use_id":null}}
+
+id: 35
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4a6443f-b907-4725-a7ef-4b9eed2cb83a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" - AI"}},"parent_tool_use_id":null}}
+
+id: 36
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac41a7f6-7c0a-47b3-a7b3-be371a3f6ca3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"创"}},"parent_tool_use_id":null}}
+
+id: 37
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9e3467e-6c58-49c1-86bf-af78eca926f9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作"}},"parent_tool_use_id":null}}
+
+id: 38
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1fe5b065-4c29-410d-90c9-5c279ac9ba2f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"各"}},"parent_tool_use_id":null}}
+
+id: 39
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"217ce6a1-dcf8-4eb2-b471-f359d4c6d17f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"种风"}},"parent_tool_use_id":null}}
+
+id: 40
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"38e0a2aa-2f61-486b-b70e-8b5b6a92f518","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"格的图片"}},"parent_tool_use_id":null}}
+
+id: 41
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"77c15966-920f-486f-a867-145475a9f86b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- "}},"parent_tool_use_id":null}}
+
+id: 42
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7159cf1d-ae62-4c01-a561-68be841527b1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🎬"}},"parent_tool_use_id":null}}
+
+id: 43
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7cbf03de-7dfe-4e01-9cf5-05cf2ad9af15","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **生"}},"parent_tool_use_id":null}}
+
+id: 44
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e12eeca-7f3c-4d17-ad9a-be1584134d8c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成视频** -"}},"parent_tool_use_id":null}}
+
+id: 45
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9fad11d7-fe36-44c2-9cb6-6a49712f3005","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 46
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d5313b25-7f8f-4ab2-9867-e7b0edc6059c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"使"}},"parent_tool_use_id":null}}
+
+id: 47
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f2783b2f-e1a2-451d-9906-94dd4feacf06","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"用"}},"parent_tool_use_id":null}}
+
+id: 48
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9003e9a4-345d-4215-88df-3e76a4ebec7a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"S"}},"parent_tool_use_id":null}}
+
+id: 49
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eb67a148-1729-4950-9bff-7c329dd3c788","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ora等"}},"parent_tool_use_id":null}}
+
+id: 50
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f288d82a-5906-4838-9e34-a8318a147c4d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"模"}},"parent_tool_use_id":null}}
+
+id: 51
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ff3dcac3-ac30-45a4-bd19-6fd94545bdbf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"型制"}},"parent_tool_use_id":null}}
+
+id: 52
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec5afab3-beec-40c6-ba37-8549c884859c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作视"}},"parent_tool_use_id":null}}
+
+id: 53
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"90ee25eb-14d6-4da8-b671-63217ebf9c6d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"频\n- "}},"parent_tool_use_id":null}}
+
+id: 54
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b6806eb1-5166-4f3d-9577-1e2f21e1ab4c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"✍️ **"}},"parent_tool_use_id":null}}
+
+id: 55
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b4a6fdee-1d2b-46b2-99f3-a52e7b561665","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"创"}},"parent_tool_use_id":null}}
+
+id: 56
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"81766c03-6a51-420d-a729-02d580d719de","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作文案"}},"parent_tool_use_id":null}}
+
+id: 57
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0fa11264-0d5d-46ac-b2c9-586e0a4aa81e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"** - 撰"}},"parent_tool_use_id":null}}
+
+id: 58
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6675f65e-12f0-41eb-8687-4d83c92745d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"写标"}},"parent_tool_use_id":null}}
+
+id: 59
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cc5703fb-1d9a-4dcf-9039-25ae048a8d32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题、描"}},"parent_tool_use_id":null}}
+
+id: 60
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"66cad404-7b20-46ae-ad06-1232b0242278","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"述、话"}},"parent_tool_use_id":null}}
+
+id: 61
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b11d38d0-6e14-421b-9411-f0af693523e3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题标"}},"parent_tool_use_id":null}}
+
+id: 62
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ea08e03f-4164-42c4-a675-5395460edb02","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签"}},"parent_tool_use_id":null}}
+
+id: 63
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1eb64fac-bd50-4533-b534-e70c58167e2b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- 📥"}},"parent_tool_use_id":null}}
+
+id: 64
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"152d5309-3eaa-4bd7-b9cc-a68232f2614e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **下"}},"parent_tool_use_id":null}}
+
+id: 65
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"84142c67-dea3-4296-98a8-7bd058fd46c7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"载视"}},"parent_tool_use_id":null}}
+
+id: 66
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a9872b55-2b1f-4f02-8963-b8e069198b8b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"频** - 从"}},"parent_tool_use_id":null}}
+
+id: 67
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5d9490b6-6ade-47a3-844d-8fa3228e7e7a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"抖"}},"parent_tool_use_id":null}}
+
+id: 68
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c44bd11d-2ad3-4dc9-8a04-7edbe185bbcd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"音、B"}},"parent_tool_use_id":null}}
+
+id: 69
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7be6cc10-b53d-49c0-8400-185d32bb8115","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"站、"}},"parent_tool_use_id":null}}
+
+id: 70
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"acc26536-9c64-4772-bee8-23eb81eaf92f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"YouTube、"}},"parent_tool_use_id":null}}
+
+id: 71
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"50cfb310-4061-42a9-bca3-8d10a7887596","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"TikTok等"}},"parent_tool_use_id":null}}
+
+id: 72
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f157df0a-1df0-4950-89fb-c4f9460833ca","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"平"}},"parent_tool_use_id":null}}
+
+id: 73
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e2c9cd64-10e5-4924-b655-220f8dbfa354","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"台提"}},"parent_tool_use_id":null}}
+
+id: 74
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"baa1ed2f-0110-4576-b792-bad8fb818f91","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"取视频\n-"}},"parent_tool_use_id":null}}
+
+id: 75
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"90fe366a-fef4-4b0f-8813-4c68ce541b9c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 76
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"36b58eb0-a5c7-4cc2-a161-c6768a4b3f42","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"📤"}},"parent_tool_use_id":null}}
+
+id: 77
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"152f170f-b579-4356-aff5-cc2be1ce0846","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **发"}},"parent_tool_use_id":null}}
+
+id: 78
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f52662a6-2ce5-4633-8c8d-9f70de15f99f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布内"}},"parent_tool_use_id":null}}
+
+id: 79
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e8cab583-8aa0-4430-bdb3-ea06d41fbbb0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容** - 一"}},"parent_tool_use_id":null}}
+
+id: 80
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"936d791e-727e-456f-8825-ceb3546748db","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"键发布到多"}},"parent_tool_use_id":null}}
+
+id: 81
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"23d4e301-bfd7-4351-ad26-d7515983e1a8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个社"}},"parent_tool_use_id":null}}
+
+id: 82
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"551c2340-f8b5-4201-b5eb-599b22603cc5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"交平"}},"parent_tool_use_id":null}}
+
+id: 83
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0d4c2f59-c6cf-42a5-85e1-ad05e3eb0b6d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"台"}},"parent_tool_use_id":null}}
+
+id: 84
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd558107-b73f-4054-bc1e-efbd7d851452","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- "}},"parent_tool_use_id":null}}
+
+id: 85
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c51053e5-68f1-4ca7-afc3-4162e685eca9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"✂"}},"parent_tool_use_id":null}}
+
+id: 86
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b8d4c2bd-a204-44d1-bf33-306da9fbebe6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"️ **编"}},"parent_tool_use_id":null}}
+
+id: 87
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"08657d18-4cb5-477a-91a0-4b58ff83116f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"辑视"}},"parent_tool_use_id":null}}
+
+id: 88
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e17b631d-b4e5-4914-afee-86d7d3a7b203","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"频** - "}},"parent_tool_use_id":null}}
+
+id: 89
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1405e304-b70f-4efe-9c21-f85afa2d1d54","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"裁剪、添"}},"parent_tool_use_id":null}}
+
+id: 90
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"996d55b2-4bb5-4cce-9ac9-5f08babb1061","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"加字幕、"}},"parent_tool_use_id":null}}
+
+id: 91
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0ee241c9-6196-4905-8dde-74ca65612513","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"滤镜、"}},"parent_tool_use_id":null}}
+
+id: 92
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c387b055-8d63-43d4-90c7-6b8d47bee414","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"转"}},"parent_tool_use_id":null}}
+
+id: 93
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4ca4d9b2-a1e6-4bcd-a0de-39b9ad537935","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"场"}},"parent_tool_use_id":null}}
+
+id: 94
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eb5feb97-99d3-4ffb-b897-26c14bcbb20f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"等"}},"parent_tool_use_id":null}}
+
+id: 95
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1b472394-dd97-49b4-84bf-457d83e7ee3a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n请"}},"parent_tool_use_id":null}}
+
+id: 96
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a7f0c60d-02f5-4153-a4d3-bef1a8e16233","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"告"}},"parent_tool_use_id":null}}
+
+id: 97
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e78dc550-4f08-4c7d-a06d-6661011142aa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"诉我你想"}},"parent_tool_use_id":null}}
+
+id: 98
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f82bff64-6c4e-422b-9496-3c53addddb56","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"创作什么内"}},"parent_tool_use_id":null}}
+
+id: 99
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"03541881-62f9-4605-9d7d-d2fccd96f006","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容？"}},"parent_tool_use_id":null}}
+
+id: 100
+data: {"type":"keep_alive"}
+
+id: 101
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8858fa0e-ae80-4bd6-988d-d11a6fdd5b6a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 102
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33749715-17a3-4625-b30a-2201bc25c0b7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"😊"}},"parent_tool_use_id":null}}
+
+id: 103
+data: {"type":"assistant","message":{"type":"assistant","uuid":"228b71cb-f46e-44da-90dd-fba3114afa19","message":{"id":"msg_01CkxqVsQefSv8Ejmiumxnaw","content":[{"type":"text","text":"你好！👋 我是你的社交媒体内容创作助手。\n\n我可以帮你：\n- 🎨 **生成图片** - AI创作各种风格的图片\n- 🎬 **生成视频** - 使用Sora等模型制作视频\n- ✍️ **创作文案** - 撰写标题、描述、话题标签\n- 📥 **下载视频** - 从抖音、B站、YouTube、TikTok等平台提取视频\n- 📤 **发布内容** - 一键发布到多个社交平台\n- ✂️ **编辑视频** - 裁剪、添加字幕、滤镜、转场等\n\n请告诉我你想创作什么内容？ 😊"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":79},"cache_creation_input_tokens":79,"cache_read_input_tokens":26749,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 104
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ebd2712-f87e-4fc1-ba44-759a3235ebb8","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 105
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8047ce25-1c01-44a6-bc3f-4894d6a55321","event":{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"cache_creation_input_tokens":79,"cache_read_input_tokens":26749,"input_tokens":1,"output_tokens":226}},"parent_tool_use_id":null}}
+
+id: 106
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c2455bce-2a2c-4a20-bcd4-aec549c60843","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 107
+data: {"type":"result","message":{"type":"result","subtype":"success","uuid":"00f427d4-4c6a-4106-8697-ae5534633235","duration_ms":12996,"duration_api_ms":20361,"is_error":false,"num_turns":2,"total_cost_usd":0.1940185,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":26828},"cache_creation_input_tokens":26828,"cache_read_input_tokens":26749,"input_tokens":4,"output_tokens":287,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+

@@ -1,0 +1,464 @@
+{
+  "dropToUpload": "松手上传文件",
+  "announcement": {
+    "text": "AiToEarn 使用 Agent 来完成你所有的内容需求，期间会调用大量工具，执行时间会稍久，您可以随时退出，稍后再来查看任务的完成情况。"
+  },
+  "releaseBanner": {
+    "tag": "Release v0.8.0",
+    "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
+  },
+  "header": {
+    "logo": "Aitoearn",
+    "nav": {
+      "home": "首页",
+      "marketplace": "市场",
+      "pricing": "价格",
+      "status": "状态",
+      "docs": "文档",
+      "blog": "博客",
+      "download": "下载",
+      "brand": "品牌",
+      "resources": "资源"
+    },
+    "getStarted": "立即开始"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "stars on",
+    "github": "GitHub",
+    "title": "成为最好用的内容营销\nAI Agent",
+    "subtitle": "从今天起，使用AI轻松管理你的社交媒体。AITOEARN提供从灵感创意、内容制作，内容分发内容互动管理等一站式能力，让AI触手可及。",
+    "getStarted": "立即开始",
+    "useMobilePhone": "使用移动设备"
+  },
+  "seo": {
+    "title": "AI视频与内容创作 - 一键发布15+社交平台",
+    "description": "AiToEarn是你的AI社交媒体运营员工。一句话AI生成视频、图片和文案，一键发布到抖音、小红书、B站、快手、TikTok、YouTube等15+主流平台。提供AI内容创作、智能剪辑、视频转绘、视频翻译、热点发现、品牌监控、统一互动管理等全链路功能，助力创作者和企业实现AI驱动的内容增长与变现。",
+    "keywords": "AI内容营销, AI社交媒体管理, AI视频生成, 多平台发布, AI创作, 自媒体运营, 抖音运营, 小红书运营, AI Agent, 内容分发, AI文案生成, 智能剪辑, 视频转绘, 品牌监控, AiToEarn"
+  },
+  "agentGenerator": {
+    "title": "有什么可以帮你的？",
+    "subtitle": "你的AI运营员工"
+  },
+  "aiGeneration": {
+    "inputPlaceholder": "输入你想创作的内容，AI将为你生成完整的作品...",
+    "generateButton": "开始创作",
+    "generating": "创作中...",
+    "emptyPromptAlert": "请输入生成内容的提示词",
+    "createTaskFailed": "创建任务失败",
+    "uploadSuccess": "图片上传成功",
+    "uploadFailed": "图片上传失败，请重试",
+    "taskCreatedSuccess": "任务创建成功",
+    "thinking": "AI思考中...",
+    "topicPrefix": "创作主题：",
+    "generatedTitlePrefix": "生成主题：",
+    "descriptionPrefix": "📄 ",
+    "failedReasonPrefix": "失败原因: ",
+    "taskTimeout": "任务超时，请稍后重试",
+    "unknownError": "未知错误",
+    "status": {
+      "thinking": "AI思考中...",
+      "waiting": "等待处理...",
+      "generatingContent": "内容生成中",
+      "generatingImage": "图片生成中",
+      "generatingVideo": "视频生成中",
+      "generatingText": "文本生成中",
+      "completed": "生成完成！",
+      "failed": "生成失败",
+      "cancelled": "已取消"
+    },
+    "channelAuthRequired": "请先添加并授权频道",
+    "channelAuthExpired": "频道授权已过期，请重新授权",
+    "channelNotSupported": "该平台暂不支持直接发布",
+    "taskStopped": "已停止生成",
+    "stopTaskFailed": "停止任务失败",
+    "newConversation": "已开启新对话",
+    "generatingWarning": "正在生成中，请先停止当前任务",
+    "conversationId": "对话ID",
+    "startNewConversation": "开启新对话",
+    "currentCost": "本次耗费",
+    "aiGenerationProcess": "AI 生成过程",
+    "waitingAiResponse": "等待 AI 响应...",
+    "uploadImage": "上传图片",
+    "removeImage": "移除图片",
+    "agentMode": "Agent 模式",
+    "imageGeneration": "图片生成",
+    "videoGeneration": "视频生成",
+    "draftBox": "草稿箱",
+    "batchPublish": "批次发布",
+    "stopGeneration": "停止生成",
+    "sendMessage": "发送消息",
+    "inspirationPrompt": "灵感来了?一句话帮你开始创作",
+    "onboardingTitle": "想要创作不知道如何下手？",
+    "onboardingDescription": "一句话帮你创作",
+    "gotIt": "知道了",
+    "saveDraftFailed": "保存草稿失败",
+    "saveDraftSuccess": "草稿保存成功",
+    "noDraftGroupFound": "未找到可用的草稿分组，请先创建分组",
+    "noDraftGroup": "未找到可用的草稿分组",
+    "unknownError": "未知错误",
+    "needAddChannel": "需要添加频道",
+    "channelNotAdded": "检测到您还没有添加{platform}频道，是否前往添加？",
+    "goAdd": "去添加",
+    "cancel": "取消",
+    "channelAuthExpiredTitle": "频道授权已过期",
+    "channelAuthExpiredContent": "您的频道授权已过期，是否重新授权？",
+    "reauthorize": "重新授权",
+    "needLoginChannel": "需要登录频道",
+    "needLogin": "需要登录",
+    "pleaseLoginChannel": "请先登录该频道账号",
+    "goLogin": "去登录",
+    "needBindChannel": "连接频道",
+    "needBindChannelTitle": "连接频道",
+    "needBindChannelContent": "未找到 {{platform}} 账号，请先添加 {{platform}} 账号后再发布",
+    "goBind": "添加频道",
+    "platformRequiresPlugin": "该平台需要使用插件发布，请先授权插件",
+    "needAuthorizePlugin": "需要授权插件",
+    "pluginAuthorizeDescription": "该平台需要使用插件发布，请点击这里授权插件",
+    "noAccountFound": "未找到该平台的账号，请先添加账号",
+    "publishTaskSubmitted": "发布任务已提交到插件",
+    "publishingViaPlugin": "正在通过插件发布...",
+    "pluginPublishFailed": "插件发布失败"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "该平台需要使用插件发布，请先授权插件",
+    "authorizePluginTitle": "需要授权插件",
+    "authorizePluginDescription": "该平台需要使用插件发布，请点击这里授权插件",
+    "noAccountFound": "未找到该平台的账号，请先添加账号",
+    "publishTaskSubmitted": "发布任务已提交到插件",
+    "publishingViaPlugin": "正在通过插件发布...",
+    "publishFailed": "插件发布失败"
+  },
+  "status": {
+    "generatingInProcess": "正在生成中，请先停止当前任务",
+    "stopGenerating": "停止生成",
+    "sendMessage": "发送消息"
+  },
+  "messages": {
+    "generatingInProcessStopFirst": "正在生成中，请先停止当前任务",
+    "newConversationStarted": "已开启新对话",
+    "draftSavedSuccessfully": "草稿保存成功",
+    "saveDraftFailed": "保存草稿失败",
+    "noDraftGroupFound": "未找到可用的草稿分组，请先创建分组",
+    "createDraftGroupFirst": "未找到可用的草稿分组"
+  },
+  "platformNames": {
+    "douyin": "抖音",
+    "xhs": "小红书",
+    "wxSph": "微信视频号",
+    "KWAI": "快手",
+    "youtube": "YouTube",
+    "wxGzh": "微信公众号",
+    "bilibili": "B站",
+    "twitter": "Twitter",
+    "tiktok": "TikTok",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest",
+    "linkedin": "LinkedIn"
+  },
+  "channel": {
+    "addChannelRequiredTitle": "需要添加频道",
+    "addChannelRequiredContent": "检测到您还没有添加{platform}频道，是否前往添加？",
+    "goToAdd": "去添加",
+    "authExpiredTitle": "频道授权已过期",
+    "authExpiredContent": "您的频道授权已过期，是否重新授权？",
+    "reauthorize": "重新授权",
+    "loginRequiredTitle": "需要登录频道",
+    "loginRequiredContent": "请先登录该频道账号",
+    "goToLogin": "去登录"
+  },
+  "guide": {
+    "aiInputTitle": "想要创作不知道如何下手？",
+    "aiInputDescription": "一句话帮你创作"
+  },
+  "download": {
+    "downloadNow": "立即下载"
+  },
+  "wechat": {
+    "officialAccount": "微信公众号",
+    "communityOfficialAccount": "社区公众号"
+  },
+  "brandBar": {
+    "title": "支持的社交媒体平台"
+  },
+  "buildSection": {
+    "badge": "功能1",
+    "title": "Content Publishing — 一键发布 · 多平台触达",
+    "titleBlue": "从创意灵感到多平台分发，再到数据分析和商业化",
+    "features": {
+      "hotTopic": {
+        "title": "多平台分发",
+        "description": "支持全球最多主流社交平台（Douyin, Kwai, Wechat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X）。"
+      },
+      "international": {
+        "title": "日历编排",
+        "description": "像操作日历一样规划内容，实现多平台协同发布。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "hotspotSection": {
+    "badge": "功能2",
+    "title": "Content Hotspot — 爆款灵感引擎",
+    "titleBlue": "爆款案例库与趋势捕捉",
+    "features": {
+      "hotTopic": {
+        "title": "爆款案例库",
+        "description": "随时查看他人如何打造 10,000+ 点赞的内容。"
+      },
+      "international": {
+        "title": "趋势捕捉",
+        "description": "快速发现流行趋势，降低创作焦虑。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "searchSection": {
+    "badge": "功能3",
+    "title": "Content Search — 品牌与市场洞察",
+    "titleBlue": "品牌监控与内容搜索",
+    "features": {
+      "hotTopic": {
+        "title": "品牌监控",
+        "description": "实时追踪品牌相关讨论，第一时间响应。"
+      },
+      "international": {
+        "title": "内容搜索",
+        "description": "找到目标帖子和话题，高效互动，精准拓展市场。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "commentsSection": {
+    "badge": "功能4",
+    "title": "Comments Search — 精准用户挖掘",
+    "titleBlue": "智能评论搜索与精准转化",
+    "features": {
+      "hotTopic": {
+        "title": "智能评论搜索",
+        "description": "快速发现\"求链接\"\"怎么购买\"等高转化信号。"
+      },
+      "international": {
+        "title": "精准转化",
+        "description": "主动回复，提升流量变现效率。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "connectSection": {
+    "badge": "功能5",
+    "title": "Content Engagement — 互动与增长引擎",
+    "titleBlue": "统一后台与主动运营",
+    "features": {
+      "creation": {
+        "title": "统一后台",
+        "description": "集中管理所有内容，互动零遗漏。"
+      },
+      "distribution": {
+        "title": "主动运营",
+        "description": "参与热门话题，与潜在用户双向互动。把\"被动内容运营\"变成\"主动流量经营\"。"
+      }
+    },
+    "carouselHint": "使用滚轮切换图片"
+  },
+  "upcomingSection": {
+    "badge": "即将上线",
+    "title": "AI 驱动的全链路内容增长与变现平台",
+    "titleBlue": "即将上线功能，敬请期待",
+    "features": {
+      "smartImport": {
+        "title": "智能导入",
+        "description": "直接导入历史内容，快速编辑、二次分发。例如：小红书创作者可一键同步到 YouTube，让更多用户看到。"
+      },
+      "analytics": {
+        "title": "Content Analytics — 全景化数据视图",
+        "description": "多平台对比：一个平台不给流量，不代表所有平台不给。全链路监控：追踪内容表现，助力打造下一个百万博主。"
+      },
+      "aiCreation": {
+        "title": "AI Content Creation — 全流程 AI 助手",
+        "description": "AI 文案生成：自动生成标题、描述，高效产出。AI 评论生成：主动出击，获取流量。图文卡片生成，全流程加速创作。支持主流 AI 视频模型和图片模型。"
+      },
+      "marketplace": {
+        "title": "Content Marketplace — 内容交易与变现",
+        "description": "创作者变现：在平台直接出售内容，让优质作品快速找到买家。品牌采购：企业可直接购买现成内容，节省时间与成本。让创作变成收益 —— Let's use AI to earn. Let's earn money together!"
+      }
+    }
+  },
+  "downloadSection": {
+    "title": "随时随地开始创作",
+    "titleBlue": "移动端也能轻松管理",
+    "description": "借助 AI ToEarn 移动应用，您的创作不再局限于桌面端。我们还为您提供App移动应用，随时随地释放您的创造力，仅需一部手机即可！",
+    "qrCodeText": "扫描二维码下载",
+    "appStore": {
+      "text": "Download on the",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "GET IT ON",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "企业级服务",
+    "title": "专业的AI自媒体解决方案",
+    "titleBlue": "助力企业营销成功",
+    "subtitle": "企业级AI营销转型不仅需要工具，更需要稳固的基础设施。AI ToEarn 提供可靠的平台，将AI内容创作能力分发到多个部门，实现无与伦比的营销效率。"
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "用户"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "社交平台"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "国家地区"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "内容发布"
+      }
+    },
+    "testimonial": {
+      "quote": "在内容营销竞争激烈的今天，快速验证和创作工具不仅有帮助，更是生存必需品。对于我们这样的营销公司来说，AI ToEarn 在这个AI前沿为我们提供了不可或缺的价值。",
+      "author": "李明",
+      "title": "某知名MCN机构 内容运营总监"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "预计每年节省创作时间",
+        "number": "50,000 小时"
+      },
+      "aiAssistant": {
+        "title": "AI营销助手：为500+企业客户提供跨平台内容分发服务"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "社区生态",
+    "title": "加入我们的",
+    "titleBlue": "活跃创作者社区",
+    "subtitle": "AI ToEarn 由全球AI内容创作者社区共同推动。加入我们，一起探索AI内容营销的无限边界。",
+    "buttons": {
+      "wechat": "微信群组",
+      "community": "创作者交流群"
+    },
+    "wechatPopup": "扫码关注微信公众号",
+    "communityPopup": "扫码加入社区群",
+    "stats": {
+      "downloads": {
+        "number": "20万+",
+        "label": "下载量"
+      },
+      "members": {
+        "number": "15K",
+        "label": "社区成员"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "活跃创作者"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "资源",
+      "links": {
+        "docs": "文档",
+        "blog": "博客",
+        "download": "下载",
+        "education": "教育",
+        "partner": "合作伙伴",
+        "support": "服务支持",
+        "roadmap": "产品线路图"
+      }
+    },
+    "company": {
+      "title": "公司",
+      "links": {
+        "talk": "联系我们",
+        "terms": "服务条款",
+        "privacy": "隐私政策",
+        "cookies": "Cookie 设置",
+        "data": "数据删除引导",
+        "marketplace": "市场协议",
+        "brand": "品牌指南"
+      }
+    },
+    "description": "AI ToEarn 自媒体运营平台一站式解决方案，从灵感创意到内容制作，从内容分发到内容互动管理",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Let's Use AI To",
+    "copyright": "© 2025 AiToEarn, Corp.",
+    "tagline": "",
+    "dataDeletion": {
+      "title": "Data Deletion Instructions",
+      "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
+      "standardTitle": "Standard Procedure (Post-Launch):",
+      "standardSteps": [
+        "Log in to your AiToEarn account",
+        "Navigate to Settings > Privacy",
+        "Click \"Request Account Deletion\"",
+        "Confirmation will be sent to your registered email"
+      ],
+      "contactTitle": "Contact for Assistance:",
+      "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
+    }
+  },
+  "ecosystem": {
+    "title": "一图解读 AiToEarn",
+    "subtitle": "AI驱动的内容创作与变现生态闭环",
+    "creator": "内容创作者",
+    "consumer": "内容需求者",
+    "publish": "内容发布",
+    "publishDesc": "一键多平台分发",
+    "publishDetails": [
+      "抖音、小红书（Rednote）、视频号、快手、哔哩哔哩、微信公众号",
+      "TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn"
+    ],
+    "create": "内容制作",
+    "createDesc": "AI生成视频、图片、文案",
+    "createDetails": [
+      "视频生成：Veo3.1、Sora-2",
+      "图片生成与编辑：Nano banana Pro、GPT-image-1.5",
+      "视频剪辑：视频合成、混编、旋转、分割、变速、裁剪、出入场动画、特效、音效、花字、转场、滤镜等",
+      "视频理解：基于多模态大模型的视频理解",
+      "视频转绘：将真人视频转绘为动漫风、卡通风、素描风",
+      "视频翻译：音色克隆、口型匹配，支持中、英、日、韩、德、法、俄、泰、西班牙、葡萄牙、意大利等多语种输出",
+      "智能切片：从短剧、电视、直播等长视频中智能提取高光精彩片段"
+    ],
+    "manage": "内容管理",
+    "manageDesc": "自动点赞、收藏、评论",
+    "manageDetails": ["自动对特定内容进行点赞、收藏、评论等操作"],
+    "analyze": "内容分析",
+    "analyzeDesc": "全网热点与创意灵感",
+    "analyzeDetails": ["全网热点", "创意灵感"],
+    "dashboard": "数据看板",
+    "dashboardDesc": "全网数据一站式整合分析",
+    "dashboardDetails": ["全网数据一站式整合分析"],
+    "trade": "内容交易",
+    "sell": "卖",
+    "buy": "买",
+    "platforms": "支持平台",
+    "features": {
+      "video": "视频生成：Veo3.1、Sora-2",
+      "image": "图片生成与编辑：Nano banana Pro、GPT-image-1.5",
+      "edit": "视频剪辑：视频合成、混编、旋转、分割、变速、裁剪、出入场动画、特效、音效、花字、转场、滤镜等",
+      "understand": "视频理解：基于多模态大模型的视频理解",
+      "style": "视频转绘：将真人视频转绘为动漫风、卡通风、素描风",
+      "translate": "视频翻译：音色克隆、口型匹配，支持中、英、日、韩、德、法、俄、泰、西班牙、葡萄牙、意大利等多语种输出",
+      "clip": "智能切片：从短剧、电视、直播等长视频中智能提取高光精彩片段"
+    }
+  }
+}

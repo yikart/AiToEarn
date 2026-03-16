@@ -1,0 +1,211 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "部署环境"
+        required: true
+        type: choice
+        options:
+          - dev
+          - prod
+      deploy_aitoearn_admin_server:
+        description: "aitoearn-admin-server"
+        required: false
+        type: boolean
+        default: false
+      deploy_aitoearn_payment:
+        description: "aitoearn-payment"
+        required: false
+        type: boolean
+        default: false
+      deploy_aitoearn_server:
+        description: "aitoearn-server"
+        required: false
+        type: boolean
+        default: false
+      deploy_aitoearn_task:
+        description: "aitoearn-task"
+        required: false
+        type: boolean
+        default: false
+      deploy_aitoearn_ai:
+        description: "aitoearn-ai"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  INFRASTRUCTURE_REPO: fly-apps
+
+jobs:
+  # 解析手动选择的应用
+  parse-manual-apps:
+    runs-on: ubuntu-latest
+    outputs:
+      manual_apps: ${{ steps.parse.outputs.manual_apps }}
+      environment: ${{ steps.env.outputs.env }}
+    steps:
+      - name: Parse manual app selection
+        id: parse
+        run: |
+          APPS=""
+
+          if [ "${{ inputs.deploy_aitoearn_admin_server }}" = "true" ]; then
+            APPS="aitoearn-admin-server"
+          fi
+
+          if [ "${{ inputs.deploy_aitoearn_payment }}" = "true" ]; then
+            if [ -n "$APPS" ]; then
+              APPS="$APPS,aitoearn-payment"
+            else
+              APPS="aitoearn-payment"
+            fi
+          fi
+
+          if [ "${{ inputs.deploy_aitoearn_server }}" = "true" ]; then
+            if [ -n "$APPS" ]; then
+              APPS="$APPS,aitoearn-server"
+            else
+              APPS="aitoearn-server"
+            fi
+          fi
+
+          if [ "${{ inputs.deploy_aitoearn_task }}" = "true" ]; then
+            if [ -n "$APPS" ]; then
+              APPS="$APPS,aitoearn-task"
+            else
+              APPS="aitoearn-task"
+            fi
+          fi
+
+          if [ "${{ inputs.deploy_aitoearn_ai }}" = "true" ]; then
+            if [ -n "$APPS" ]; then
+              APPS="$APPS,aitoearn-ai"
+            else
+              APPS="aitoearn-ai"
+            fi
+          fi
+
+          echo "manual_apps=$APPS" >> $GITHUB_OUTPUT
+
+          if [ -n "$APPS" ]; then
+            echo "✅ 手动选择的应用: $APPS"
+          else
+            echo "⚠️  未选择任何应用"
+          fi
+
+      - name: Determine environment
+        id: env
+        run: |
+          BRANCH="${{ github.ref_name }}"
+          EVENT_TYPE="${{ github.event_name }}"
+
+          # 手动触发时，必须提供环境
+          if [ "$EVENT_TYPE" = "workflow_dispatch" ]; then
+            ENV="${{ inputs.environment }}"
+            if [ -z "$ENV" ]; then
+              echo "❌ 错误: 手动部署时必须选择环境"
+              exit 1
+            fi
+          else
+            # Push 触发时，基于分支自动判断
+            if [ "$BRANCH" = "dev" ]; then
+              ENV="dev"
+            elif [ "$BRANCH" = "main" ]; then
+              ENV="prod"
+            else
+              echo "❌ 错误: 分支 '$BRANCH' 不是 dev 或 main，无法自动确定环境"
+              exit 1
+            fi
+          fi
+
+          # 验证环境值
+          if [ "$ENV" != "dev" ] && [ "$ENV" != "prod" ]; then
+            echo "❌ 错误: 无效的环境值 '$ENV'，必须是 dev 或 prod"
+            exit 1
+          fi
+
+          echo "环境: $ENV"
+          echo "分支: $BRANCH"
+          echo "触发方式: $EVENT_TYPE"
+          echo "env=${ENV}" >> "$GITHUB_OUTPUT"
+          echo "config_dir=${ENV}" >> "$GITHUB_OUTPUT"
+
+  # 调用通用构建工作流
+  build:
+    needs: [parse-manual-apps]
+    if: github.event_name == 'push' || needs.parse-manual-apps.outputs.manual_apps != ''
+    permissions:
+      id-token: write
+      contents: read
+      actions: write # 允许被调用的 workflow 使用 GitHub Actions 缓存
+    uses: ./.github/workflows/build.yml
+    with:
+      manual_apps: ${{ needs.parse-manual-apps.outputs.manual_apps || '' }}
+    secrets: inherit
+
+  # 触发部署
+  trigger-deployment:
+    needs: [build, parse-manual-apps]
+    if: needs.build.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ env.INFRASTRUCTURE_REPO }}
+
+      - name: Trigger deployment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const owner = '${{ github.repository_owner }}';
+            const repo = '${{ env.INFRASTRUCTURE_REPO }}';
+            const apps = ${{ needs.build.outputs.apps_json }};
+            const branch = '${{ github.ref_name }}';
+
+            await github.rest.repos.createDispatchEvent({
+              owner: owner,
+              repo: repo,
+              event_type: 'deploy',
+              client_payload: {
+                source_repo: '${{ github.repository }}',
+                source_branch: branch,
+                source_commit: '${{ github.sha }}',
+                apps: apps,
+                environment: '${{ needs.parse-manual-apps.outputs.environment }}',
+                triggered_by: `push_to_${branch}`,
+                build_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              }
+            });
+
+            console.log(`✅ 已触发 deploy 事件 (branch: ${branch})`);
+            console.log('Payload:', {
+              source_repo: '${{ github.repository }}',
+              source_branch: branch,
+              source_commit: '${{ github.sha }}',
+              apps: apps,
+              environment: '${{ needs.parse-manual-apps.outputs.environment }}'
+            });
+
+      - name: Summary
+        run: |
+          echo "## 🚀 已触发部署" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **分支**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **环境**: ${{ needs.parse-manual-apps.outputs.environment }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **提交**: [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **部署目标**: ${{ env.INFRASTRUCTURE_REPO }}" >> $GITHUB_STEP_SUMMARY

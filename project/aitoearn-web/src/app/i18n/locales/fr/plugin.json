@@ -1,0 +1,101 @@
+{
+  "status": {
+    "unknown": "Inconnu",
+    "checking": "Vérification...",
+    "ready": "Plugin prêt",
+    "installedNoPermission": "Plugin installé, autorisation en attente",
+    "notInstalled": "Plugin non installé",
+    "connected": "Connecté"
+  },
+  "stage": {
+    "download": "Téléchargement",
+    "upload": "Téléversement",
+    "publish": "Publication",
+    "complete": "Terminé",
+    "error": "Erreur"
+  },
+  "error": {
+    "pluginNotInstalled": "Veuillez d'abord installer le plugin de navigateur Aitoearn",
+    "publishingInProgress": "Publication en cours, veuillez réessayer plus tard",
+    "loginFailed": "Échec de la connexion",
+    "publishFailed": "Échec de la publication"
+  },
+  "publishList": {
+    "title": "Liste de publication",
+    "empty": "Aucun enregistrement de publication",
+    "platforms": "Plateformes",
+    "status": "Statut",
+    "time": "Heure",
+    "viewDetail": "Voir les détails"
+  },
+  "publishDetail": {
+    "title": "Détails de la publication",
+    "platform": "Plateforme",
+    "progress": "Progression",
+    "status": "Statut",
+    "message": "Message",
+    "result": "Résultat",
+    "workId": "ID de l'œuvre",
+    "shareLink": "Lien de partage",
+    "failReason": "Raison de l'échec",
+    "close": "Fermer",
+    "unknownAccount": "Compte inconnu",
+    "creatingRecord": "Création de l'enregistrement de publication..."
+  },
+  "common": {
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "loading": "Chargement...",
+    "success": "Succès",
+    "failed": "Échoué",
+    "pending": "En attente",
+    "publishing": "Publication",
+    "completed": "Terminé",
+    "error": "Erreur",
+    "action": "Action",
+    "total": "Total",
+    "items": "éléments",
+    "viewLink": "Voir le lien",
+    "startTime": "Heure de début",
+    "endTime": "Heure de fin",
+    "createdAt": "Créé le",
+    "PENDING": "En attente",
+    "PUBLISHING": "Publication",
+    "COMPLETED": "Terminé",
+    "ERROR": "Erreur"
+  },
+  "header": {
+    "pluginActive": "Plugin actif",
+    "pluginInactive": "Plugin inactif",
+    "downloadPlugin": "Télécharger le plugin",
+    "downloadDescription": "Le plugin de navigateur AiToEarn est spécialement conçu pour l'opération intelligente de Xiaohongshu. Veuillez cliquer sur le bouton ci-dessous pour télécharger et installer.",
+    "downloadButton": "Télécharger maintenant",
+    "chromeWebStore": "Chrome Web Store",
+    "githubRelease": "GitHub Release",
+    "chinaDownload": "Téléchargement Chine",
+    "activeDescription": "Votre plugin de navigateur est activé. Vous pouvez commencer à utiliser la fonction de publication !",
+    "platformAccounts": "Comptes de plateforme",
+    "notLoggedIn": "Non connecté",
+    "xhsNotLoggedInTip": "Xiaohongshu nécessite une connexion au Centre Créateur",
+    "loginNow": "Se connecter maintenant",
+    "viewPublishList": "Voir la liste de publication",
+    "permissionRequired": "Permission requise",
+    "permissionDescription": "Le plugin est installé mais nécessite les permissions nécessaires pour fonctionner correctement. Veuillez accorder les permissions requises dans les paramètres d'extension de votre navigateur.",
+    "checkPermission": "Revérifier la permission",
+    "sync": "Synchroniser",
+    "syncToAccount": "Synchroniser vers le gestionnaire de compte",
+    "syncSuccess": "Compte synchronisé avec succès",
+    "syncFailed": "Échec de la synchronisation du compte",
+    "xhsHome": "Accueil",
+    "xhsCreator": "Créateur",
+    "xhsLoginHomeTip": "Connexion à la page d'accueil Xiaohongshu",
+    "xhsLoginCreatorTip": "Connexion au Centre Créateur Xiaohongshu",
+    "viewGuide": "Des problèmes ? Besoin d'aide pour l'installation ?"
+  },
+  "mobile": {
+    "title": "Bureau uniquement",
+    "description": "L'extension de navigateur n'est pas disponible sur les appareils mobiles. Veuillez utiliser un navigateur de bureau pour installer et utiliser l'extension.",
+    "goToPC": "Veuillez visiter sur PC",
+    "introduction": "Extension de navigateur pour la plateforme AiToEarn. Fonctionne avec AiToEarn web pour automatiser la publication de contenu Xiaohongshu — vidéos, carrousels d'images, titres, hashtags et plus encore, le tout en un clic. Agent IA intégré, propulsé par Claude Opus 4.6 — l'un des modèles d'IA les plus avancés au monde — vous aide à automatiser les tâches du navigateur par conversation naturelle. Installez pour débloquer toutes les fonctionnalités de la plateforme AiToEarn, y compris la publication en un clic, le suivi en temps réel et l'automatisation alimentée par l'IA."
+  }
+}

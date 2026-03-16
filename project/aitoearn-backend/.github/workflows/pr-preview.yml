@@ -1,0 +1,178 @@
+name: Backend PR Preview Environment
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed, labeled, unlabeled]
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+env:
+  INFRASTRUCTURE_REPO: terraform
+  PREVIEW_LABEL: preview
+
+jobs:
+  # 调用通用构建工作流
+  build:
+    if: |
+      github.event.action != 'closed' &&
+      github.event.action != 'unlabeled' &&
+      (
+        (github.event.action == 'labeled' && github.event.label.name == 'preview') ||
+        (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'preview'))
+      )
+    permissions:
+      id-token: write
+      contents: read
+      actions: write  # 允许被调用的 workflow 使用 GitHub Actions 缓存
+    uses: ./.github/workflows/build.yml
+    with:
+      base_ref: ${{ github.base_ref }}
+    secrets: inherit
+
+  # 创建或更新预览环境
+  create-or-update-environment:
+    needs: build
+    if: |
+      github.event.action != 'closed' &&
+      github.event.action != 'unlabeled' &&
+      (
+        (github.event.action == 'labeled' && github.event.label.name == 'preview') ||
+        (github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'preview'))
+      ) &&
+      needs.build.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ env.INFRASTRUCTURE_REPO }}
+
+      # 检查是否已存在预览环境
+      - name: Check if environment exists
+        id: check-env
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const branchName = `env/pr-${prNumber}`;
+            const infraRepo = '${{ env.INFRASTRUCTURE_REPO }}';
+
+            try {
+              // 查询 infrastructure 仓库的 PR
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: infraRepo,
+                state: 'open',
+                head: `${context.repo.owner}:${branchName}`
+              });
+
+              const exists = prs.length > 0;
+
+              if (exists) {
+                console.log(`✅ 预览环境已存在: ${infraRepo} PR #${prs[0].number}`);
+                core.setOutput('exists', 'true');
+                core.setOutput('event_type', 'pr-update');
+              } else {
+                console.log('🆕 需要创建新的预览环境');
+                core.setOutput('exists', 'false');
+                core.setOutput('event_type', 'pr-create');
+              }
+            } catch (error) {
+              console.log('⚠️  检查环境时出错，默认为创建新环境');
+              console.error('错误详情:', error.message);
+              core.setOutput('exists', 'false');
+              core.setOutput('event_type', 'pr-create');
+            }
+
+      # 触发 infrastructure 仓库创建或更新环境
+      - name: Trigger environment deployment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const eventType = '${{ steps.check-env.outputs.event_type }}';
+            const owner = '${{ github.repository_owner }}'
+            const repo = '${{ env.INFRASTRUCTURE_REPO }}'
+            const apps = ${{ needs.build.outputs.apps_json }};
+
+            await github.rest.repos.createDispatchEvent({
+              owner: owner,
+              repo: repo,
+              event_type: eventType,
+              client_payload: {
+                pr_number: '${{ github.event.pull_request.number }}',
+                source_repo: '${{ github.repository }}',
+                apps: apps
+              }
+            });
+
+            console.log(`✅ 已触发 ${eventType} 事件`);
+            console.log('Payload:', {
+              pr_number: '${{ github.event.pull_request.number }}',
+              source_repo: '${{ github.repository }}',
+              apps: apps
+            });
+
+  # 销毁预览环境
+  destroy-environment:
+    if: |
+      github.event.action == 'closed' ||
+      (github.event.action == 'unlabeled' && github.event.label.name == 'preview')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ env.INFRASTRUCTURE_REPO }}
+
+      # 关闭 infrastructure 仓库的 PR（会触发销毁）
+      - name: Close infrastructure PR
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            const branchName = `env/pr-${prNumber}`;
+            const infraRepo = '${{ env.INFRASTRUCTURE_REPO }}';
+
+            try {
+              // 查找 infrastructure 仓库的对应 PR
+              const { data: prs } = await github.rest.pulls.list({
+                owner: context.repo.owner,
+                repo: infraRepo,
+                state: 'open',
+                head: `${context.repo.owner}:${branchName}`
+              });
+
+              if (prs.length > 0) {
+                const infraPR = prs[0];
+
+                // 关闭 PR
+                await github.rest.pulls.update({
+                  owner: context.repo.owner,
+                  repo: infraRepo,
+                  pull_number: infraPR.number,
+                  state: 'closed'
+                });
+
+                console.log(`✅ 已关闭 ${infraRepo} PR #${infraPR.number}`);
+              } else {
+                console.log(`⚠️  未找到对应的 ${infraRepo} PR，可能已被删除`);
+              }
+            } catch (error) {
+              console.error('❌ 关闭 PR 失败:', error.message);
+              console.error('详细信息:', error);
+              // 不抛出错误，因为 PR 可能已经被手动关闭
+            }

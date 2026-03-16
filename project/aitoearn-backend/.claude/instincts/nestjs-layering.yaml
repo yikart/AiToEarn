@@ -1,0 +1,41 @@
+---
+id: aitoearn-nestjs-layering
+trigger: "when creating or modifying NestJS code"
+confidence: 0.95
+domain: architecture
+source: local-repo-analysis
+---
+
+# NestJS Layered Architecture
+
+## Action
+Follow strict separation of concerns:
+
+1. **Controller** - Only routing, parameter binding, VO transformation
+2. **Service** - Business logic, permission filtering, entity mapping
+3. **Repository** - Data access only, no business logic
+
+## Rules
+- Controller MUST NOT contain business logic
+- Controller MUST NOT access database directly
+- Controller MUST return VO (not entity)
+- Service handles permission filtering via query conditions
+- Repository MUST NOT contain permission checks
+- Repository MUST NOT perform cross-model operations
+
+## File Structure
+```
+src/
+├── module-name/
+│   ├── module-name.controller.ts
+│   ├── module-name.service.ts
+│   ├── module-name.module.ts
+│   ├── dto/
+│   │   ├── module-name.dto.ts
+│   │   └── module-name.vo.ts
+│   └── (repository in libs/)
+```
+
+## Evidence
+- Consistent pattern across all apps
+- Enforced in CLAUDE.md development standards

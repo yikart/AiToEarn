@@ -1,0 +1,15 @@
+/*  全局css变量 */
+:root {
+  --gradientBackColor: linear-gradient(to right, oklch(55.8% 0.288 302.321), oklch(54.6% 0.245 262.881));
+
+  /* 品牌色 */
+  --brand-purple: oklch(55.8% 0.288 302.321);
+  --brand-cyan: oklch(54.6% 0.245 262.881);
+
+  /* Section 交替背景色 */
+  --section-alt-bg: #f8f9fa;
+}
+
+.dark {
+  --section-alt-bg: rgba(255, 255, 255, 0.03);
+}

@@ -1,0 +1,195 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 镜像版本 (留空使用默认生成规则)
+        required: false
+        type: string
+      architectures:
+        description: 目标平台 (逗号分隔，如 linux/amd64,linux/arm64)
+        required: false
+        type: string
+        default: linux/amd64
+      environment:
+        description: 部署环境
+        required: false
+        type: choice
+        options:
+          - dev
+          - prod
+        default: prod
+
+permissions:
+  contents: read
+
+env:
+  FLY_REGISTRY: registry.fly.io
+  DOCKER_REGISTRY: registry.aitoearn.cn
+  APP_NAME: aitoearn-web
+  INFRASTRUCTURE_REPO: fly-apps
+
+jobs:
+  build-image:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.10.0
+
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@v1.4
+
+      - name: Log in to the registry
+        run: flyctl auth docker
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Login to Private Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Generate version
+        id: version
+        run: |
+          if [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Set environment URLs
+        id: env-urls
+        run: |
+          ENV="${{ github.event.inputs.environment || 'prod' }}"
+          if [ "$ENV" = "dev" ]; then
+            echo "host_url=https://dev.aitoearn.ai" >> $GITHUB_OUTPUT
+            echo "oss_url=https://assets.dev.aitoearn.ai/" >> $GITHUB_OUTPUT
+            echo "base_api=https://dev.aitoearn.ai/api" >> $GITHUB_OUTPUT
+          else
+            echo "host_url=https://aitoearn.ai" >> $GITHUB_OUTPUT
+            echo "oss_url=https://assets.aitoearn.ai/" >> $GITHUB_OUTPUT
+            echo "base_api=https://aitoearn.ai/api" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push to Fly.io registry
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ github.event.inputs.architectures }}
+          push: true
+          tags: ${{ env.FLY_REGISTRY }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
+          build-args: |
+            NEXT_PUBLIC_HOST_URL=${{ steps.env-urls.outputs.host_url }}
+            NEXT_PUBLIC_OSS_URL=${{ steps.env-urls.outputs.oss_url }}
+            NEXT_PUBLIC_API_URL=${{ steps.env-urls.outputs.base_api }}
+          cache-from: type=gha,scope=fly-${{ github.event.inputs.environment || 'prod' }}
+          cache-to: type=gha,mode=max,scope=fly-${{ github.event.inputs.environment || 'prod' }}
+
+      - name: Build and push to private registry
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: ${{ github.event.inputs.architectures }}
+          push: true
+          tags: ${{ env.DOCKER_REGISTRY }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
+          build-args: |
+            NEXT_PUBLIC_HOST_URL=${{ steps.env-urls.outputs.host_url }}
+            NEXT_PUBLIC_OSS_URL=${{ steps.env-urls.outputs.oss_url }}
+            NEXT_PUBLIC_API_URL=${{ steps.env-urls.outputs.base_api }}
+          cache-from: type=gha,scope=private-${{ github.event.inputs.environment || 'prod' }}
+          cache-to: type=gha,mode=max,scope=private-${{ github.event.inputs.environment || 'prod' }}
+      - name: Build summary
+        run: |
+          echo "### ✅ 构建成功: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **私有镜像**: \`${{ env.DOCKER_REGISTRY }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fly.io 镜像**: \`${{ env.FLY_REGISTRY }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+
+  # 触发部署
+  trigger-deployment:
+    needs: build-image
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/create-github-app-token@v2
+        id: generate-token
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ env.INFRASTRUCTURE_REPO }}
+
+      - name: Build apps JSON
+        id: build-apps-json
+        run: |
+          APP_NAME="${{ env.APP_NAME }}"
+          VERSION="${{ needs.build-image.outputs.version }}"
+          IMAGE="${{ env.FLY_REGISTRY }}/$APP_NAME:$VERSION"
+
+          APPS_JSON="{\"$APP_NAME\":{\"image\":\"$IMAGE\"}}"
+          echo "apps_json=$APPS_JSON" >> $GITHUB_OUTPUT
+          echo "📋 Apps JSON: $APPS_JSON"
+
+      - name: Trigger deployment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.generate-token.outputs.token }}
+          script: |
+            const owner = '${{ github.repository_owner }}';
+            const repo = '${{ env.INFRASTRUCTURE_REPO }}';
+            const apps = ${{ steps.build-apps-json.outputs.apps_json }};
+            const branch = '${{ github.ref_name }}';
+            const environment = '${{ github.event.inputs.environment }}' || 'prod';
+
+            await github.rest.repos.createDispatchEvent({
+              owner: owner,
+              repo: repo,
+              event_type: 'deploy',
+              client_payload: {
+                source_repo: '${{ github.repository }}',
+                source_branch: branch,
+                source_commit: '${{ github.sha }}',
+                apps: apps,
+                environment: environment,
+                triggered_by: `workflow_dispatch_${branch}`,
+                build_url: '${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}'
+              }
+            });
+
+            console.log(`✅ 已触发 deploy 事件 (branch: ${branch}, environment: ${environment})`);
+            console.log('Payload:', {
+              source_repo: '${{ github.repository }}',
+              source_branch: branch,
+              source_commit: '${{ github.sha }}',
+              apps: apps,
+              environment: environment
+            });
+
+      - name: Summary
+        run: |
+          echo "## 🚀 已触发部署" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **分支**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **环境**: ${{ github.event.inputs.environment || 'prod' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **提交**: [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **部署目标**: ${{ env.INFRASTRUCTURE_REPO }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **应用**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **镜像**: \`${{ env.FLY_REGISTRY }}/${{ env.APP_NAME }}:${{ needs.build-image.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY

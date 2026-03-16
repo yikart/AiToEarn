@@ -1,0 +1,178 @@
+{
+  "common": {
+    "previous": "이전",
+    "next": "다음"
+  },
+  "seo": {
+    "title": "AI 기반 콘텐츠 제작 및 소셜 미디어 플랫폼",
+    "description": "AiToEarn은 가장 편리한 AI 영상 제작 서비스를 제공하고, 오프라인 매장의 트래픽을 증가시키며, 콘텐츠 게시 및 댓글 상호작용을 위한 소셜 미디어 계정 호스팅을 제공합니다.",
+    "keywords": "AI 영상 제작,소셜 미디어 관리,멀티 플랫폼 게시,AI 마케팅,콘텐츠 제작,소셜 미디어 자동화,AiToEarn,브랜드 프로모션"
+  },
+  "navbar": {
+    "pricing": "요금제",
+    "docs": "문서",
+    "brandPromotion": "제품",
+    "aiSocial": "AI 소셜",
+    "login": "로그인",
+    "getDemo": "무료로 시작"
+  },
+  "hero": {
+    "badge": "AI 기반 레스토랑 성장",
+    "title": "1인 기업을 위한 AI 성장 운영자",
+    "subtitle": "AiToEarn을 사용하면 오프라인 매장으로 쉽게 트래픽을 유도할 수 있습니다. AiToEarn은 가장 편리한 AI 영상 제작 서비스를 제공합니다. 또한 AiToEarn에서 소셜 미디어 계정을 호스팅하면 콘텐츠 게시와 댓글 상호작용을 도와드립니다.",
+    "placeholder": "레스토랑 찾기",
+    "cta": "AI 에이전트 받기",
+    "selectFirst": "먼저 레스토랑을 선택해 주세요",
+    "tags": {
+      "aiVideo": "AI 영상 제작",
+      "socialMedia": "SNS 호스팅"
+    },
+    "error": {
+      "draftFailed": "초안 생성에 실패했습니다. 다시 시도해 주세요"
+    }
+  },
+  "owners": {
+    "title": "수천 명의 사업주가 신뢰합니다",
+    "subtitle": "Owner와 함께 더 많은 트래픽, 더 많은 매출, 더 많은 단골 고객을 확보하세요"
+  },
+  "features": {
+    "title": "Owner와 함께 더 많은 트래픽, 더 많은 매출, 더 많은 단골 고객을 확보하세요",
+    "onlineOrdering": {
+      "title": "온라인 주문",
+      "description": "수수료 없는 주문으로 더 많은 수익 확보"
+    },
+    "mobileApp": {
+      "title": "모바일 앱",
+      "description": "로열티 리워드가 내장된 자체 브랜드 앱"
+    },
+    "marketing": {
+      "title": "마케팅",
+      "description": "반복 주문을 유도하는 자동화 캠페인"
+    }
+  },
+  "reviews": {
+    "title": "사용자 후기",
+    "subtitle": "AiToEarn을 신뢰하는 수천 명의 1인 창업가와 함께하세요",
+    "viewOnGithub": "GitHub에서 보기",
+    "review1": {
+      "content": "드디어 멀티 플랫폼 게시를 처리하는 오픈소스 도구가 나왔어요! Douyin, TikTok, YouTube로 원클릭 - 매주 몇 시간씩 절약됩니다."
+    },
+    "review2": {
+      "content": "1인 창업가로서 AiToEarn은 게임 체인저입니다. AI가 콘텐츠를 생성하고, 자동 게시하고, 댓글까지 처리해요. 이제 소셜 미디어가 저절로 운영됩니다."
+    },
+    "review3": {
+      "content": "AI 에이전트 기능이 놀랍습니다. 콘텐츠를 자동으로 작성하고, 최적화하고, 게시합니다. 콘텐츠 비용이 90% 감소했어요."
+    },
+    "review4": {
+      "content": "최고의 점은? 오픈소스라서 브랜드에 맞게 커스터마이징할 수 있습니다. 국내외 모든 주요 플랫폼을 지원해요."
+    },
+    "review5": {
+      "content": "조회당 지불 모델이 정말 합리적입니다. 콘텐츠 제작이 아닌 실제 결과에 대해서만 지불. 투명하고 공정해요."
+    },
+    "review6": {
+      "content": "MCP 도구 통합이 마음에 듭니다. 영상 편집, 번역, 게시 - 모두 AI 기반. 1인 비즈니스에 완벽해요."
+    },
+    "review7": {
+      "content": "스캔 게시 기능이 고객을 브랜드 홍보대사로 만들었어요. 그들은 공유하는 것을 좋아하고 저는 무료 마케팅을 얻습니다!"
+    },
+    "review8": {
+      "content": "자동 댓글 답변이 많은 시간을 절약해 줍니다. AI가 기본 질문을 처리하는 동안 비즈니스 성장에 집중할 수 있어요."
+    },
+    "review9": {
+      "content": "14개 이상의 플랫폼 지원! TikTok에서 WeChat까지 모든 것이 자동 동기화됩니다. 진정한 원스톱 솔루션."
+    }
+  },
+  "tech": {
+    "title": "AI 생성 레스토랑 영상",
+    "subtitle": "스캔 & 게시, 게시당 90% 이상 비용 절감",
+    "description": "자동 생성된 고품질 콘텐츠가 모든 체크인을 소셜 미디어 노출로 전환",
+    "playVideo": "영상 재생",
+    "video1": { "title": "Blacklock 체크인 Vlog" },
+    "video2": { "title": "레스토랑 발견" },
+    "video3": { "title": "The Shed 브리티시 레스토랑" }
+  },
+  "testimonials": {
+    "title": "당신과 같은 레스토랑 사업주의 이야기를 들어보세요",
+    "watchVideo": "영상 보기"
+  },
+  "beliefs": {
+    "title": "AiToEarn을 선택하는 이유",
+    "subtitle": "1인 기업과 소규모 사업체를 위해 설계",
+    "belief1": {
+      "title": "1인 기업을 위한 설계",
+      "description": "효율적인 기능, 간단한 운영, 결과 지향. 큰 팀을 고용하거나 비효율적인 프로모션에 예산을 낭비할 필요가 없습니다."
+    },
+    "belief2": {
+      "title": "전 과정 AI 관리",
+      "description": "기획, 생성, 최적화, 게시, 댓글 상호작용 - 모두 자동화. AI가 반복 작업을 처리하고 당신은 비즈니스에 집중하세요."
+    },
+    "belief4": {
+      "title": "사용량 기반 결제, 투명한 가격",
+      "description": "구독 없음, 숨겨진 비용 없음. 사용한 만큼만 결제. 크레딧 12개월 유효, 업스트림 비용에 완전히 연동 — 추가 마진 제로."
+    }
+  },
+  "guides": {
+    "title": "핵심 기능",
+    "subtitle": "브랜드 성장을 지원하는 세 가지 역량",
+    "viewDocs": "문서 보기",
+    "learnMore": "자세히 보기",
+    "feature1": {
+      "title": "오프라인 체크인 마케팅",
+      "subtitle": "스캔으로 고품질 콘텐츠 게시",
+      "description": "고객이 스캔하면 AI가 자동으로 전문 콘텐츠를 생성. 게시당 90% 이상 비용 절감, 고객이 브랜드 홍보대사로."
+    },
+    "feature2": {
+      "title": "콘텐츠 거래",
+      "subtitle": "성과 기반 지불, 조회수로 정산",
+      "description": "크리에이터 콘텐츠를 구매하거나 의뢰하고, 조회수로 지불. 예: 1,000 조회당 $1."
+    },
+    "feature3": {
+      "title": "AI 소셜 미디어 관리",
+      "subtitle": "하나의 콘텐츠, 멀티 플랫폼 자동 게시",
+      "description": "14개 이상 소셜 플랫폼 지원, 자동 댓글 상호작용, 최고의 AI 모델과 통합."
+    }
+  },
+  "experience": {
+    "title": "Aitoearn으로 더 많은 트래픽, 더 많은 매출, 더 많은 고객을 확보하세요",
+    "subtitle": "오프라인 마케팅부터 멀티 플랫폼 게시까지, AI에게 맡기세요",
+    "tab1": {
+      "title": "오프라인 체크인 마케팅",
+      "subtitle": "스캔으로 게시",
+      "description": "사용자가 프로모 QR 코드를 스캔하면 AI가 자동으로 전문 콘텐츠(영상, 이미지, 텍스트)를 생성하고 최적화하여 자동 게시합니다."
+    },
+    "tab2": {
+      "title": "멀티 플랫폼 게시",
+      "subtitle": "하나의 콘텐츠, 모든 플랫폼",
+      "description": "한 번 게시하면 어디서나 게시. 다음 모든 플랫폼을 지원합니다:"
+    },
+    "tab3": {
+      "title": "AI 영상 제작",
+      "subtitle": "전체 AI 워크플로우",
+      "description": "기획부터 생성, 최적화까지 Claude, Veo, Sora와 같은 최고의 모델로 전체 콘텐츠 제작 과정을 AI에게 맡기세요."
+    },
+    "tab4": {
+      "title": "자동화 소셜 인게이지먼트",
+      "subtitle": "브라우저 확장 프로그램",
+      "description": "강력한 브라우저 확장 프로그램으로 모든 플랫폼에서 SNS 상호작용을 자동화하세요. 좋아요, 댓글, 팔로우, 계정 육성 - 모두 자동으로 완료되어 매일 수 시간의 수동 작업을 절약합니다."
+    }
+  },
+  "footer": {
+    "ctaTitle": "지금 시작하세요 — 가입 시 100 크레딧 무료!",
+    "startTrial": "시작하기",
+    "resources": "리소스",
+    "account": "계정",
+    "legal": "법적 정보",
+    "docs": "문서",
+    "login": "로그인",
+    "register": "가입",
+    "privacy": "개인정보 보호정책",
+    "terms": "이용약관",
+    "dataProtection": "데이터 보호 계약",
+    "dataDeletion": "데이터 삭제",
+    "pluginGuide": "플러그인 가이드",
+    "extensionPrivacy": "확장 프로그램 개인정보 보호정책",
+    "contact": "문의하기",
+    "supportedPlatforms": "지원 플랫폼",
+    "copyright": "© 2026 AiToEarn. All rights reserved."
+  }
+}

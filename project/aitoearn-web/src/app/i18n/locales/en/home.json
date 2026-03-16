@@ -1,0 +1,464 @@
+{
+  "dropToUpload": "Drop to upload",
+  "announcement": {
+    "text": "AiToEarn uses Agent to fulfill all your content needs. It calls many tools during execution, which may take some time. You can exit anytime and check the task progress later."
+  },
+  "releaseBanner": {
+    "tag": "Release v0.8.0",
+    "text": "Build and Extend AI Workflows with Plugins and a Thriving Marketplace."
+  },
+  "header": {
+    "logo": "Aitoearn",
+    "nav": {
+      "home": "Home",
+      "marketplace": "Marketplace",
+      "pricing": "Pricing",
+      "status": "Status",
+      "docs": "Docs",
+      "blog": "Blog",
+      "download": "Downloads",
+      "brand": "Brand",
+      "resources": "Resources"
+    },
+    "getStarted": "Get Started"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "stars on",
+    "github": "GitHub",
+    "title": "The Best Content Marketing\nAI Agent",
+    "subtitle": "From today on, easily manage your social media with AI. AiToEarn provides one-stop capabilities from creative inspiration, content creation, content distribution to content interaction management, making AI within reach.",
+    "getStarted": "Get Started",
+    "useMobilePhone": "use on mobile phone"
+  },
+  "seo": {
+    "title": "AI Video & Content Creator for 15+ Social Platforms",
+    "description": "AiToEarn is your AI-powered social media growth operator. Generate videos, images and copy with AI, then publish to 15+ platforms including TikTok, YouTube, Instagram, Facebook and X in one click. Features AI content creation, smart video editing, style transfer, video translation, trend discovery, brand monitoring and unified engagement dashboard for creators and enterprises.",
+    "keywords": "AI content marketing, AI social media management, AI video generation, multi-platform publishing, AI content creation, social media automation, TikTok marketing, YouTube marketing, Instagram marketing, AI Agent, content distribution, influencer tools, AI copywriting, video editing AI, brand monitoring, AiToEarn"
+  },
+  "agentGenerator": {
+    "title": "How can I help you?",
+    "subtitle": "Your AI Growth Operator"
+  },
+  "aiGeneration": {
+    "inputPlaceholder": "Enter your content idea, AI will generate a complete work for you...",
+    "generateButton": "Start Creating",
+    "generating": "Creating...",
+    "emptyPromptAlert": "Please enter a prompt for content generation",
+    "createTaskFailed": "Failed to create task",
+    "uploadSuccess": "Image uploaded successfully",
+    "uploadFailed": "Image upload failed, please try again",
+    "taskCreatedSuccess": "Task created successfully",
+    "thinking": "AI Thinking...",
+    "topicPrefix": "Creation Topic: ",
+    "generatedTitlePrefix": "Generated Title: ",
+    "descriptionPrefix": "📄 ",
+    "failedReasonPrefix": "Failure Reason: ",
+    "taskTimeout": "Task timeout, please try again later",
+    "unknownError": "Unknown error",
+    "status": {
+      "thinking": "AI Thinking...",
+      "waiting": "Waiting...",
+      "generatingContent": "Generating Content",
+      "generatingImage": "Generating Image",
+      "generatingVideo": "Generating Video",
+      "generatingText": "Generating Text",
+      "completed": "Completed!",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    },
+    "channelAuthRequired": "Please add and authorize a channel first",
+    "channelAuthExpired": "Channel authorization has expired, please reauthorize",
+    "channelNotSupported": "Direct publishing is not supported for this platform",
+    "taskStopped": "Generation stopped",
+    "stopTaskFailed": "Failed to stop task",
+    "newConversation": "New conversation started",
+    "generatingWarning": "Generation in progress, please stop the current task first",
+    "conversationId": "Conversation ID",
+    "startNewConversation": "Start New Conversation",
+    "currentCost": "Current Cost",
+    "aiGenerationProcess": "AI Generation Process",
+    "waitingAiResponse": "Waiting for AI response...",
+    "uploadImage": "Upload Image",
+    "removeImage": "Remove Image",
+    "agentMode": "Agent Mode",
+    "imageGeneration": "Image Generation",
+    "videoGeneration": "Video Generation",
+    "draftBox": "Draft Box",
+    "batchPublish": "Batch Publish",
+    "stopGeneration": "Stop Generation",
+    "sendMessage": "Send Message",
+    "inspirationPrompt": "Got inspiration? Start creating with one sentence",
+    "onboardingTitle": "Don't know how to start creating?",
+    "onboardingDescription": "Start creating with one sentence",
+    "gotIt": "Got it",
+    "saveDraftFailed": "Failed to save draft",
+    "saveDraftSuccess": "Draft saved successfully",
+    "noDraftGroupFound": "No available draft group found, please create a group first",
+    "noDraftGroup": "No available draft group found",
+    "unknownError": "Unknown error",
+    "needAddChannel": "Need to Add Channel",
+    "channelNotAdded": "We detected that you haven't added the {platform} channel yet. Would you like to add it?",
+    "goAdd": "Go Add",
+    "cancel": "Cancel",
+    "channelAuthExpiredTitle": "Channel Authorization Expired",
+    "channelAuthExpiredContent": "Your channel authorization has expired. Would you like to reauthorize?",
+    "reauthorize": "Reauthorize",
+    "needLoginChannel": "Need to Login Channel",
+    "needLogin": "Need to Login",
+    "pleaseLoginChannel": "Please login to this channel account first",
+    "goLogin": "Go Login",
+    "needBindChannel": "Connect Channel",
+    "needBindChannelTitle": "Connect Channel",
+    "needBindChannelContent": "{{platform}} account not found. Please add a {{platform}} account to publish.",
+    "goBind": "Add Channel",
+    "platformRequiresPlugin": "This platform requires plugin publishing, please authorize the plugin first",
+    "needAuthorizePlugin": "Need to Authorize Plugin",
+    "pluginAuthorizeDescription": "This platform requires plugin publishing, please click here to authorize the plugin",
+    "noAccountFound": "No account found for this platform, please add an account first",
+    "publishTaskSubmitted": "Publish task submitted to plugin",
+    "publishingViaPlugin": "Publishing via plugin...",
+    "pluginPublishFailed": "Plugin publish failed"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "This platform requires plugin publishing, please authorize the plugin first",
+    "authorizePluginTitle": "Need to Authorize Plugin",
+    "authorizePluginDescription": "This platform requires plugin publishing, please click here to authorize the plugin",
+    "noAccountFound": "No account found for this platform, please add an account first",
+    "publishTaskSubmitted": "Publish task submitted to plugin",
+    "publishingViaPlugin": "Publishing via plugin...",
+    "publishFailed": "Plugin publish failed"
+  },
+  "status": {
+    "generatingInProcess": "Generation in progress, please stop the current task first",
+    "stopGenerating": "Stop Generation",
+    "sendMessage": "Send Message"
+  },
+  "messages": {
+    "generatingInProcessStopFirst": "Generation in progress, please stop the current task first",
+    "newConversationStarted": "New conversation started",
+    "draftSavedSuccessfully": "Draft saved successfully",
+    "saveDraftFailed": "Failed to save draft",
+    "noDraftGroupFound": "No available draft group found, please create a group first",
+    "createDraftGroupFirst": "No available draft group found"
+  },
+  "platformNames": {
+    "douyin": "Douyin",
+    "xhs": "Xiaohongshu",
+    "wxSph": "WeChat Channels",
+    "KWAI": "Kwai",
+    "youtube": "YouTube",
+    "wxGzh": "WeChat Official Account",
+    "bilibili": "Bilibili",
+    "twitter": "Twitter",
+    "tiktok": "TikTok",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest",
+    "linkedin": "LinkedIn"
+  },
+  "channel": {
+    "addChannelRequiredTitle": "Need to Add Channel",
+    "addChannelRequiredContent": "We detected that you haven't added the {platform} channel yet. Would you like to add it?",
+    "goToAdd": "Go Add",
+    "authExpiredTitle": "Channel Authorization Expired",
+    "authExpiredContent": "Your channel authorization has expired. Would you like to reauthorize?",
+    "reauthorize": "Reauthorize",
+    "loginRequiredTitle": "Need to Login Channel",
+    "loginRequiredContent": "Please login to this channel account first",
+    "goToLogin": "Go Login"
+  },
+  "guide": {
+    "aiInputTitle": "Don't know how to start creating?",
+    "aiInputDescription": "Start creating with one sentence"
+  },
+  "download": {
+    "downloadNow": "Download Now"
+  },
+  "wechat": {
+    "officialAccount": "WeChat Official Account",
+    "communityOfficialAccount": "Community Official Account"
+  },
+  "brandBar": {
+    "title": "Supported Social Media Platforms"
+  },
+  "buildSection": {
+    "badge": "Feature 1",
+    "title": "Content Publishing",
+    "titleBlue": " — One-Click Multi-Platform",
+    "features": {
+      "hotTopic": {
+        "title": "Distribute Everywhere",
+        "description": "Publish to the widest range of global platforms (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X)."
+      },
+      "international": {
+        "title": "Calendar Scheduler",
+        "description": "Plan & coordinate content like a calendar across all platforms. Unified Dashboard: Manage all interactions in one place."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "hotspotSection": {
+    "badge": "Feature 2",
+    "title": "Content Hotspot — Viral Inspiration Engine",
+    "titleBlue": "Case Library & Trend Radar",
+    "features": {
+      "hotTopic": {
+        "title": "Case Library",
+        "description": "Explore how others create posts with 10,000+ likes."
+      },
+      "international": {
+        "title": "Trend Radar",
+        "description": "Discover the latest viral trends instantly, reduce creator anxiety."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "searchSection": {
+    "badge": "Feature 3",
+    "title": "Content Search — Brand & Market Insights",
+    "titleBlue": "Brand Monitoring & Content Discovery",
+    "features": {
+      "hotTopic": {
+        "title": "Brand Monitoring",
+        "description": "Track conversations about your brand in real-time."
+      },
+      "international": {
+        "title": "Content Discovery",
+        "description": "Search for posts, topics, and communities for targeted engagement."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "commentsSection": {
+    "badge": "Feature 4",
+    "title": "Comments Search — Precision User Mining",
+    "titleBlue": "Smart Comment Search & Conversion Booster",
+    "features": {
+      "hotTopic": {
+        "title": "Smart Comment Search",
+        "description": "Detect high-conversion signals like \"link please\" or \"how to buy.\""
+      },
+      "international": {
+        "title": "Conversion Booster",
+        "description": "Reply instantly, drive higher engagement & sales."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "connectSection": {
+    "badge": "Feature 5",
+    "title": "Content Engagement — Growth Engine",
+    "titleBlue": "Unified Dashboard & Proactive Engagement",
+    "features": {
+      "creation": {
+        "title": "Unified Dashboard",
+        "description": "Manage all interactions in one place."
+      },
+      "distribution": {
+        "title": "Proactive Engagement",
+        "description": "Join trending conversations, connect with potential customers. Turn passive operations into active traffic growth."
+      }
+    },
+    "carouselHint": "Use scroll wheel to switch images"
+  },
+  "upcomingSection": {
+    "badge": "Coming Soon",
+    "title": "Full-Stack AI-Powered Content Growth & Monetization Platform",
+    "titleBlue": "Coming Soon Features, Stay Tuned",
+    "features": {
+      "smartImport": {
+        "title": "Smart Import",
+        "description": "Import historical content for fast re-editing & redistribution. Example: Sync your Xiaohongshu posts to YouTube in one click."
+      },
+      "analytics": {
+        "title": "Content Analytics — Full-Funnel Data",
+        "description": "Cross-Platform Comparison: One platform may block traffic, but others won't. End-to-End Monitoring: Track performance and build your path to 1M+ followers."
+      },
+      "aiCreation": {
+        "title": "AI Content Creation — End-to-End Assistant",
+        "description": "AI Copywriting: Auto-generate titles, captions & descriptions. AI Commenting: Engage proactively, attract traffic. Image & Card Generator: Speed up content workflows. Supported AI Video Models and Image Models."
+      },
+      "marketplace": {
+        "title": "Content Marketplace — Trade & Monetize",
+        "description": "Creators: Sell your content directly, find buyers fast. Brands: Purchase ready-made, high-quality content. AI-Powered Growth: Let's use AI to earn. Let's earn money together!"
+      }
+    }
+  },
+  "downloadSection": {
+    "title": "Start Creating Anytime, Anywhere",
+    "titleBlue": "Easy Management on Mobile Too",
+    "description": "With the AI ToEarn mobile app, your creativity is no longer limited to desktop. We also provide iOS and Android mobile apps for you to unleash your creativity anytime, anywhere, with just one phone!",
+    "qrCodeText": "Scan QR Code to Download",
+    "appStore": {
+      "text": "Download on the",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "GET IT ON",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "Enterprise Service",
+    "title": "Professional AI social media Media Solutions",
+    "titleBlue": "Powering Enterprise Marketing Success",
+    "subtitle": "Enterprise AI marketing transformation requires not just tools, but solid infrastructure. AI ToEarn provides a reliable platform to distribute AI content creation capabilities across multiple departments for unparalleled marketing efficiency."
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "Users"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "Social Platforms"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "Countries"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "Content Published"
+      }
+    },
+    "testimonial": {
+      "quote": "In today's highly competitive content marketing landscape, rapid validation and creation tools are not just helpful—they're essential for survival. For marketing companies like ours, AI ToEarn provides indispensable value in this AI frontier.",
+      "author": "John Smith",
+      "title": "Content Operations Director at Leading MCN Agency"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "Estimated annual content creation time saved",
+        "number": "50,000 hours"
+      },
+      "aiAssistant": {
+        "title": "AI Marketing Assistant: Serving 500+ enterprise clients with cross-platform content distribution"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "Community Ecosystem",
+    "title": "Join Our",
+    "titleBlue": "Active Creator Community",
+    "subtitle": "AI ToEarn is powered by a global community of AI content creators. Join us to explore the infinite boundaries of AI content marketing.",
+    "buttons": {
+      "wechat": "WeChat Group",
+      "community": "Creator Community"
+    },
+    "wechatPopup": "Scan QR code to follow WeChat Official Account",
+    "communityPopup": "Scan QR code to join community group",
+    "stats": {
+      "downloads": {
+        "number": "200K+",
+        "label": "Downloads"
+      },
+      "members": {
+        "number": "15K",
+        "label": "Community Members"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "Active Creators"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "Resources",
+      "links": {
+        "docs": "Documentation",
+        "blog": "Blog",
+        "download": "Downloads",
+        "education": "Education",
+        "partner": "Partners",
+        "support": "Support",
+        "roadmap": "Roadmap"
+      }
+    },
+    "company": {
+      "title": "Company",
+      "links": {
+        "talk": "Contact Us",
+        "terms": "Terms of Service",
+        "privacy": "Privacy Policy",
+        "cookies": "Cookie Settings",
+        "data": "Data Protection Agreement",
+        "marketplace": "Marketplace Agreement",
+        "brand": "Brand Guidelines"
+      }
+    },
+    "description": "AI ToEarn one-stop social media management platform solution, from creative inspiration to content creation, from content distribution to content interaction management",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Let's Use AI To",
+    "copyright": "© 2025 AiToEarn, Corp.",
+    "tagline": "",
+    "dataDeletion": {
+      "title": "Data Deletion Instructions",
+      "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
+      "standardTitle": "Standard Procedure (Post-Launch):",
+      "standardSteps": [
+        "Log in to your AiToEarn account",
+        "Navigate to Settings > Privacy",
+        "Click \"Request Account Deletion\"",
+        "Confirmation will be sent to your registered email"
+      ],
+      "contactTitle": "Contact for Assistance:",
+      "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
+    }
+  },
+  "ecosystem": {
+    "title": "Understanding AiToEarn",
+    "subtitle": "AI-Powered Content Creation & Monetization Ecosystem",
+    "creator": "Content Creator",
+    "consumer": "Content Consumer",
+    "publish": "Content Publishing",
+    "publishDesc": "One-click multi-platform distribution",
+    "publishDetails": [
+      "Douyin, Xiaohongshu (Rednote), WeChat Video, Kuaishou, Bilibili, WeChat Official Account",
+      "TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn"
+    ],
+    "create": "Content Creation",
+    "createDesc": "AI generates video, images, copy",
+    "createDetails": [
+      "Video Generation: Veo3.1, Sora-2",
+      "Image Generation & Editing: Nano banana Pro, GPT-image-1.5",
+      "Video Editing: Composition, mixing, rotation, splitting, speed, cropping, transitions, effects, audio, text, filters & more",
+      "Video Understanding: Multimodal AI-based video comprehension",
+      "Video Style Transfer: Transform real videos into anime, cartoon, or sketch styles",
+      "Video Translation: Voice cloning, lip-sync, supporting Chinese, English, Japanese, Korean, German, French, Russian, Thai, Spanish, Portuguese, Italian & more",
+      "Smart Clipping: Intelligently extract highlights from dramas, TV shows, livestreams & long videos"
+    ],
+    "manage": "Content Management",
+    "manageDesc": "Auto likes, bookmarks, comments",
+    "manageDetails": ["Automatically like, bookmark, and comment on specific content"],
+    "analyze": "Content Analysis",
+    "analyzeDesc": "Global trends & creative inspiration",
+    "analyzeDetails": ["Global Trending Topics", "Creative Inspiration"],
+    "dashboard": "Data Dashboard",
+    "dashboardDesc": "Unified data analytics across platforms",
+    "dashboardDetails": ["Unified data analytics across all platforms"],
+    "trade": "Content Trading",
+    "sell": "Sell",
+    "buy": "Buy",
+    "platforms": "Supported Platforms",
+    "features": {
+      "video": "Video Generation: Veo3.1, Sora-2",
+      "image": "Image Generation & Editing: Nano banana Pro, GPT-image-1.5",
+      "edit": "Video Editing: Composition, mixing, rotation, splitting, speed, cropping, transitions, effects, audio, text, filters & more",
+      "understand": "Video Understanding: Multimodal AI-based video comprehension",
+      "style": "Video Style Transfer: Transform real videos into anime, cartoon, or sketch styles",
+      "translate": "Video Translation: Voice cloning, lip-sync, supporting Chinese, English, Japanese, Korean, German, French, Russian, Thai, Spanish, Portuguese, Italian & more",
+      "clip": "Smart Clipping: Intelligently extract highlights from dramas, TV shows, livestreams & long videos"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+trustPolicyExclude:
+  - 'detect-port@1.6.1'
+  - 'chokidar@4.0.3'
+
+packages:
+  - 'apps/*'
+  - 'libs/*'
+  - 'tools/*'
+
+onlyBuiltDependencies:
+  - '@alicloud/openapi-core'
+  - '@nestjs/core'
+  - '@parcel/watcher'
+  - '@scarf/scarf'
+  - esbuild
+  - git-commit-msg-linter
+  - msgpackr-extract
+  - nx
+  - protobufjs
+  - sharp
+  - simple-git-hooks
+  - unrs-resolver
+
+peerDependencyRules:
+  ignoreMissing:
+    - axios

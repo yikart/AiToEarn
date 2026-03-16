@@ -1,0 +1,532 @@
+{
+  "seo": {
+    "title": "Pricing Plans - Flexible AI Credits & Subscriptions",
+    "description": "AI ToEarn offers various pricing plans from free trial to professional packages to meet different users' content creation needs. Support video generation, image creation, multi-platform publishing and other AI features.",
+    "keywords": "AI pricing, plan selection, content creation packages, AI subscription, video generation pricing"
+  },
+  "pageTitle": "Pay As You Go",
+  "pageDescription": "Aitoearn is more than a software company — we are a results delivery company.\nOur goal is to deliver operational results for solo entrepreneurs.\nThe Aitoearn credits you purchase (covering token fees) are used to pay for model costs from Google, OpenAI, xAI, Anthropic, and other providers.\nWe promise that our prices will never exceed the official pricing of any model.\nAnd as our usage grows and we earn volume discounts from these providers, we will pass those savings on to you.",
+  "sections": {
+    "credits": "Buy Credits",
+    "creditsDesc": "Purchase credits on demand, use flexibly, no subscription needed"
+  },
+  "tabs": {
+    "credits": "Credits",
+    "balance": "Balance"
+  },
+  "balance": {
+    "rechargeButton": "Recharge",
+    "balanceAmount": "Balance",
+    "features": {
+      "adCampaign": "For promotional task delivery",
+      "neverExpire": "Balance never expires"
+    }
+  },
+  "paymentMethod": {
+    "creditCard": "Credit Card",
+    "alipay": "Alipay"
+  },
+  "creditsTiers": {
+    "credits_10": {
+      "button": "Buy"
+    },
+    "credits_50": {
+      "button": "Buy"
+    },
+    "credits_100": {
+      "button": "Buy"
+    },
+    "credits_cny_70": {
+      "button": "Buy"
+    },
+    "credits_cny_350": {
+      "button": "Buy"
+    },
+    "credits_cny_700": {
+      "button": "Buy"
+    }
+  },
+  "creditsCard": {
+    "credits": "Credits",
+    "recommended": "Recommended",
+    "canGenerate": "≈ Can generate"
+  },
+  "allPlansInclude": "Supported Features",
+  "features": {
+    "longVideoGen": "Long Video Generation (Minutes)",
+    "aiMultiPlatformPublish": "AI Adaptive Multi-Platform Publishing",
+    "videoNarration": "Video Narration",
+    "liveClipping": "Live Stream Clipping",
+    "shortVideoGen": "Short Video Generation (10s)",
+    "videoEditing": "Video Editing",
+    "imageGen": "Image Generation",
+    "imageEditing": "Image Editing",
+    "videoTranslation": "Video Translation",
+    "contentCopyright": "AI Content Copyright Detection",
+    "contentQualityAnalysis": "AI Content Quality Analysis",
+    "textModeration": "Text Moderation",
+    "imageModeration": "Image Moderation",
+    "videoModeration": "Video Moderation",
+    "multiModel": "Multi-Model Support",
+    "textToVideo": "Text to Video",
+    "imageToVideo": "Image to Video",
+    "videoToVideo": "Video to Video",
+    "consistentCharacter": "Consistent Character",
+    "aiAnimation": "AI Animation",
+    "aiImage": "AI Image",
+    "voiceClone": "Voice Clone",
+    "voiceSynthesis": "Voice Synthesis",
+    "fasterSpeed": "Faster Speed",
+    "withWatermark": "With Watermark",
+    "noWatermark": "No Watermark",
+    "storage500M": "500M Storage",
+    "storage5G": "5G Storage"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "paymentMethods": {
+      "question": "What payment methods do you support?",
+      "answer": "We support multiple payment methods, including major credit cards (Visa, MasterCard, American Express) as well as Alipay. If you are using our services in China, you can purchase one-time services with Alipay."
+    },
+    "creditDeduction": {
+      "question": "How are credits deducted for image and video generation?",
+      "answer": "Our pricing for image and video generation is aligned with the official channels. If bulk purchases from the official channels come with discounts, we will also pass those discounts on to you.",
+      "pricingTable": {
+        "title": "Detailed Pricing Table",
+        "headers": {
+          "model": "Model",
+          "type": "Type",
+          "duration": "Duration",
+          "resolution": "Resolution",
+          "notes": "Notes",
+          "credits": "Credits",
+          "price": "Price",
+          "channel": "Channel"
+        },
+        "rows": [
+          {
+            "model": "gpt-5",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "Large model pricing follows official pricing",
+            "credits": "Per million tokens",
+            "price": "Input CNY9, Output CNY72",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-mini",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input CNY1.8, Output CNY14.4",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-nano",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input CNY0.36, Output CNY2.88",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "Video Support",
+            "notes": "",
+            "credits": "",
+            "price": "Input CNY9, Output CNY72",
+            "channel": "yun"
+          },
+          {
+            "model": "chatgpt-4o-latest",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input CNY36, Output CNY108",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "Video Support",
+            "notes": "",
+            "credits": "",
+            "price": "Input CNY2.16, Output CNY18",
+            "channel": "yun"
+          },
+          {
+            "model": "qwen-vl-max-latest",
+            "type": "Large Model",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Input CNY1.6, Output CNY4",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash-image",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "Also known as Nano Banana Pro, supports multi-image input",
+            "credits": "1 credit",
+            "price": "CNY0.27",
+            "channel": "yun"
+          },
+          {
+            "model": "seedream-3.0",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "2.6 credits",
+            "price": "CNY0.26",
+            "channel": "Official"
+          },
+          {
+            "model": "seededit-3.0",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "Image editing, supports jpeg, png formats",
+            "credits": "3 credits",
+            "price": "CNY0.3",
+            "channel": "Official"
+          },
+          {
+            "model": "gpt-image-1",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "Image editing support",
+            "notes": "",
+            "credits": "Promotion",
+            "price": "Low $0.011-0.016, Medium $0.042-0.063, High $0.167-0.25",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [max]",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "Image editing support",
+            "notes": "",
+            "credits": "1.5 credits",
+            "price": "CNY0.6",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [pro]",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "Image editing support",
+            "notes": "",
+            "credits": "1 credit",
+            "price": "CNY0.3",
+            "channel": "yun"
+          },
+          {
+            "model": "Flux 1.1 pro ultra",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "4.5 credits",
+            "price": "CNY0.45",
+            "channel": "Official"
+          },
+          {
+            "model": "Flux1.1 pro",
+            "type": "Image Generation",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "3 credits",
+            "price": "CNY0.3",
+            "channel": "Official"
+          },
+          {
+            "model": "midjourney relax",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "",
+            "notes": "",
+            "credits": "Free",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "midjourney fast/turbo",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "",
+            "notes": "",
+            "credits": "4 credits",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "20 credits",
+            "price": "CNY2",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "10s",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "40 credits",
+            "price": "CNY4",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 credits",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Video Generation",
+            "duration": "10s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "70 credits",
+            "price": "CNY7",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "100 credits",
+            "price": "CNY10",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "Video Generation",
+            "duration": "10s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "200 credits",
+            "price": "CNY20",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "",
+            "credits": "70 credits",
+            "price": "CNY0.7",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 credits",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-turbo(14b)",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Do not use volcano channel",
+            "credits": "12 credits",
+            "price": "CNY1.2",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Supports first and last frames",
+            "credits": "35 credits",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "wanx2.1-vace-plus",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Video editing",
+            "credits": "35 credits",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "Supports 10s",
+            "credits": "7.2 credits",
+            "price": "CNY0.72",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "10s price doubles",
+            "credits": "16.4 credits",
+            "price": "CNY1.64",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "36.7 credits",
+            "price": "CNY3.67",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "Supports first and last frames",
+            "credits": "5 credits",
+            "price": "CNY0.5",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Supports 10s",
+            "credits": "11 credits",
+            "price": "CNY1.1",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Video Generation",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "10s price doubles",
+            "credits": "25 credits",
+            "price": "CNY2.5",
+            "channel": "yun"
+          }
+        ]
+      }
+    },
+    "creditExpiry": {
+      "question": "Do my credits expire?",
+      "answer": "Our credit expiration policy is very flexible. Credits will only expire 12 calendar months after they are acquired, giving you plenty of time to use them."
+    },
+    "moreCredits": {
+      "question": "What if I need more credits?",
+      "answer": "You can earn free credits by publishing content daily. You can also purchase credit packs directly for more credits."
+    },
+    "checkCredits": {
+      "question": "How can I check my credit status?",
+      "answer": "Simply click on your credit balance to view detailed changes and usage history."
+    },
+    "hiddenFees": {
+      "question": "Are there any hidden fees?",
+      "answer": "No. The price you see is the price you pay. There are no hidden charges beyond the plan you select."
+    }
+  },
+  "pricingTable": {
+    "title": "Pricing Table",
+    "expand": "Pricing Table",
+    "collapse": "Collapse",
+    "creditsPolicy": {
+      "title": "Credits Usage Policy",
+      "desc1": "Credits are primarily consumed in two ways:",
+      "llmTokens": "LLM Tokens",
+      "llmTokensDesc": "Used for task planning, decision-making, and generating outputs",
+      "thirdPartyApis": "Third-party APIs",
+      "thirdPartyApisDesc": "Used for accessing image models, video models, video editing/processing, and other external services",
+      "costNote": "The actual credit consumption of a task depends on its complexity, duration, and number of external calls.",
+      "storageNote": "After a task is completed, storing, hosting, displaying, or deploying its output does not consume additional credits.",
+      "refundNote": "If a task fails due to AiToEarn technical issues, we will fully refund the credits consumed by that task.",
+      "exchangeRate": "100 Credits = $1 USD"
+    },
+    "llm": {
+      "title": "Large Language Models",
+      "unit": "per million tokens",
+      "input": "Input",
+      "output": "Output",
+      "inputModality": "Input Modality",
+      "outputModality": "Output Modality",
+      "notes": "Notes"
+    },
+    "videoGen": {
+      "title": "Video Generation Models",
+      "price": "Price",
+      "latency": "Latency",
+      "latencyValues": {
+        "minutes": "Minutes",
+        "seconds": "Seconds",
+        "hours": "Hours"
+      }
+    },
+    "imageGen": {
+      "title": "Image Generation Models"
+    },
+    "headers": {
+      "model": "Model",
+      "price": "Price",
+      "tool": "Tool"
+    },
+    "videoTools": {
+      "title": "Video Processing Tools",
+      "perMin": "/min",
+      "billingMethod": "Billing Method",
+      "tools": {
+        "videoUnderstanding": "Video Understanding",
+        "videoEditing": "Video Editing",
+        "videoStyleTransfer": "Video Style Transfer",
+        "videoTranslation": "Video Translation",
+        "highlightClipping": "Highlight Clipping",
+        "subtitleRemoval": "Subtitle Removal",
+        "scriptRecovery": "Script Recovery",
+        "videoNarration": "Video Narration"
+      },
+      "billing": {
+        "perInputMin": "Per input video minute",
+        "perOutputMin": "Per output video minute",
+        "perGenMin": "Per generated video minute",
+        "720P output": "720P output"
+      }
+    }
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "title": "Brand Info",
+  "viewDetails": "View Details",
+  "noData": "No brand info available",
+  "stores": "Stores",
+  "reviews": "Reviews",
+  "rating": "Rating",
+  "status": {
+    "pending": "Processing",
+    "initializing": "Initializing",
+    "active": "Active",
+    "failed": "Failed",
+    "disabled": "Disabled"
+  },
+  "section": {
+    "basicInfo": "Basic Info",
+    "brandImages": "Brand Images",
+    "gallery": "Store Photos",
+    "contact": "Contact",
+    "socialLinks": "Social Links"
+  },
+  "field": {
+    "name": "Brand Name",
+    "nameEn": "English Name",
+    "category": "Category",
+    "description": "Description",
+    "logo": "Logo",
+    "coverImage": "Cover Image",
+    "website": "Website",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address"
+  },
+  "placeholder": {
+    "name": "Enter brand name",
+    "nameEn": "Enter English name",
+    "category": "Select category",
+    "description": "Enter brand description",
+    "website": "https://example.com",
+    "phone": "+1 234 567 890",
+    "email": "contact@example.com",
+    "address": "Enter address",
+    "socialLink": "Enter profile URL"
+  },
+  "category": {
+    "restaurant": "Restaurant",
+    "cafe": "Cafe",
+    "bar": "Bar",
+    "bakery": "Bakery",
+    "fast_food": "Fast Food",
+    "fine_dining": "Fine Dining",
+    "other": "Other"
+  },
+  "image": {
+    "uploadLogo": "Upload Logo",
+    "uploadCover": "Upload Cover",
+    "addImage": "Add Image",
+    "deleteImage": "Delete Image",
+    "deleteConfirm": "Are you sure you want to delete this image?",
+    "sourceGoogleMaps": "Google Maps",
+    "sourceUserUpload": "Uploaded",
+    "uploadFailed": "Image upload failed",
+    "deleteFailed": "Image deletion failed",
+    "dragOrClick": "Drag or click to upload",
+    "maxSize": "Max size: 5MB",
+    "supportedFormats": "Supports JPG, PNG, WebP",
+    "uploadDisabled": "Please complete brand initialization first",
+    "linkFirst": "Link a store to manage images"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "X (Twitter)",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "action": {
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "updateSuccess": "Brand info updated successfully",
+    "updateFailed": "Failed to update brand info"
+  },
+  "createdAt": "Created",
+  "updatedAt": "Updated",
+  "viewOnGoogleMaps": "View on Google Maps",
+  "photoCount": "{{count}} photos",
+  "aiHint": "AI-generated videos will be created based on your brand information",
+  "switchStore": {
+    "button": "Switch Store",
+    "searching": "Search for a new store...",
+    "switching": "Switching store...",
+    "success": "Store switched successfully",
+    "failed": "Failed to switch store",
+    "cancel": "Cancel",
+    "confirm": "Confirm Switch"
+  },
+  "setup": {
+    "title": "Link Your Store",
+    "description": "Search and link your store to start managing brand info",
+    "cardHint": "Click to link store and start promotion",
+    "searchHint": "Link a store and AI will generate content based on your brand info"
+  },
+  "validation": {
+    "nameRequired": "Brand name is required",
+    "nameMaxLength": "Brand name cannot exceed 50 characters",
+    "nameEnMaxLength": "English name cannot exceed 100 characters",
+    "descriptionMaxLength": "Description cannot exceed 500 characters"
+  }
+}

@@ -1,0 +1,205 @@
+{
+  "input": {
+    "placeholder": "Erstellen Sie ein 8-Sekunden-Hochformat-Werbevideo für unsere neue Sushi-Platte. Verwenden Sie fröhliche Jazzmusik, Nahaufnahmen von frischem Lachs, generieren Sie Untertitel und enden Sie mit unserem Logo.",
+    "send": "Senden",
+    "stop": "Stoppen",
+    "uploading": "Wird hochgeladen..."
+  },
+  "message": {
+    "thinking": "Denke nach...",
+    "error": "Vorgang fehlgeschlagen, bitte erneut versuchen",
+    "loadFailed": "Laden fehlgeschlagen",
+    "connectionInterrupted": "Verbindung unterbrochen"
+  },
+  "error": {
+    "insufficientCredits": {
+      "title": "Unzureichende Agent-Guthaben",
+      "content": "Ihre Agent-Guthaben sind unzureichend, bitte abonnieren Sie eine Mitgliedschaft",
+      "okText": "OK"
+    }
+  },
+  "task": {
+    "newChat": "Neuer Chat",
+    "delete": "Löschen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Chat löschen möchten?",
+    "deleteSuccess": "Erfolgreich gelöscht",
+    "deleteFailed": "Löschen fehlgeschlagen",
+    "status": {
+      "running": "Läuft",
+      "completed": "Abgeschlossen",
+      "requiresAction": "Aktion erforderlich",
+      "failed": "Fehlgeschlagen"
+    },
+    "rate": "Bewerten",
+    "share": "Teilen"
+  },
+  "home": {
+    "title": "Wie kann ich Ihnen helfen?",
+    "recentTasks": "Letzte Aufgaben",
+    "viewAll": "Alle anzeigen",
+    "noTasks": "Keine Aufgabenaufzeichnungen",
+    "startChat": "Erstellung starten",
+    "aiCreation": "KI-Erstellung",
+    "supportUpload": "Unterstützt Bild-/Video-Upload",
+    "enterToSend": "Enter drücken zum Senden",
+    "connectTools": "Veröffentlichen auf",
+    "loginRequired": "Bitte zuerst anmelden",
+    "defaultImageGroup": "Standard-Bildgruppe",
+    "defaultVideoGroup": "Standard-Videogruppe",
+    "materialLibrary": "Medienbibliothek",
+    "affiliateReward": "68,40 $ verdienen",
+    "imageMaterial": "Bilder",
+    "videoMaterial": "Videos",
+    "agentAssets": "Agent-Assets",
+    "noData": "Keine Daten"
+  },
+  "history": {
+    "meta": {
+      "title": "KI-Aufgabenverlauf - Gespräche & Generierungsaufzeichnungen",
+      "description": "Sehen und verwalten Sie Ihre AI Agent Aufgabenaufzeichnungen, einschließlich Gesprächsverlauf, KI-Nutzungsprotokolle und Videogenerierungsverlauf. Unterstützt Paginierung, Aufgabenbewertung und Verlaufsverwaltung.",
+      "keywords": "KI-Aufgabenaufzeichnungen, Gesprächsverlauf, AI Agent Verlauf, Aufgabenverwaltung, KI-Nutzungsprotokolle, Videogenerierungsverlauf, Verlaufsaufzeichnungen, Aufgabenbewertung, KI-Chat-Aufzeichnungen, Workflow-Verlauf, Content-Erstellungsaufzeichnungen, KI-Erstellungsverlauf"
+    },
+    "title": "Aufgabenverlauf",
+    "empty": "Keine Aufgabenaufzeichnungen",
+    "loadMore": "Mehr laden",
+    "loading": "Laden...",
+    "logs": "Nutzungsprotokolle",
+    "logsTitle": "KI-Nutzungsprotokolle",
+    "logsEmpty": "Keine Nutzungsaufzeichnungen",
+    "logsLoading": "Protokolle werden geladen...",
+    "logsError": "Protokolle konnten nicht geladen werden",
+    "pageInfo": "Seite {{page}} / {{totalPages}}, Gesamt {{total}} Einträge",
+    "logType": {
+      "agent": "KI-Agent",
+      "chat": "KI-Chat"
+    },
+    "logFields": {
+      "model": "Modell",
+      "channel": "Kanal",
+      "points": "Verwendete Punkte",
+      "duration": "Dauer",
+      "taskId": "Aufgaben-ID"
+    },
+    "videoHistory": "Video-Verlauf",
+    "videoHistoryTitle": "Video-Generierungsverlauf",
+    "videoHistoryEmpty": "Keine Video-Generierungsaufzeichnungen",
+    "videoGeneration": "Video-Generierung",
+    "videoSize": "Videogröße",
+    "videoDuration": "Videodauer",
+    "prompt": "Prompt",
+    "progress": "Fortschritt",
+    "previewVideo": "Video-Vorschau",
+    "playVideo": "Video abspielen",
+    "downloadVideo": "Video herunterladen",
+    "logStatus": {
+      "success": "Erfolgreich",
+      "failed": "Fehlgeschlagen",
+      "pending": "Ausstehend"
+    },
+    "videoStatus": {
+      "pending": "Ausstehend",
+      "processing": "Wird verarbeitet",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    },
+    "duration": {
+      "seconds": "s",
+      "minutes": "m",
+      "secondsUnit": "s"
+    },
+    "searchPlaceholder": "Aufgaben suchen...",
+    "favoriteOnly": "Meine Favoriten",
+    "emptyFavorites": "Keine Lieblingsaufgaben",
+    "emptySearch": "Keine passenden Aufgaben gefunden",
+    "clearFilters": "Filter löschen"
+  },
+  "rating": {
+    "title": "Bewertung & Rezension",
+    "submit": "Absenden",
+    "cancel": "Abbrechen",
+    "requireComment": "Bitte geben Sie einen Kommentar für niedrige Bewertungen ab",
+    "saveSuccess": "Erfolgreich gespeichert",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "noRating": "Nicht bewertet",
+    "commentLabel": "Rezension (optional)",
+    "commentPlaceholder": "Schreiben Sie Ihre Rezension...",
+    "commentRequiredIfLow": "Für Bewertungen unter 3 ist eine Begründung erforderlich",
+    "loading": "Laden...",
+    "feedbackPrompt": "Ihr Feedback hilft uns, uns zu verbessern",
+    "submitSuccess": "Erfolgreich eingereicht, vielen Dank für Ihr Feedback!"
+  },
+  "detail": {
+    "title": "Chat-Details",
+    "continuePlaceholder": "Gespräch fortsetzen...",
+    "back": "Zurück",
+    "workflowProcess": "KI-Workflow",
+    "waitingResponse": "Warten auf KI-Antwort...",
+    "scrollToBottom": "Zurück nach unten"
+  },
+  "media": {
+    "video": "Video",
+    "image": "Bild",
+    "document": "Dokument",
+    "uploadFailed": "Upload fehlgeschlagen, bitte erneut versuchen",
+    "uploadCancelled": "Upload abgebrochen"
+  },
+  "workflow": {
+    "toolCallCompleted": "Tool-Aufrufe abgeschlossen",
+    "toolResult": "Ergebnis zurückgegeben",
+    "processing": "Wird verarbeitet..."
+  },
+  "action": {
+    "connectChannel": "Kanal verbinden",
+    "connectChannelDesc": "Sie haben Ihr {{platform}}-Konto noch nicht verbunden. Bitte verbinden Sie Ihr Kanalkonto, um Inhalte zu veröffentlichen.",
+    "connectNow": "Jetzt verbinden",
+    "addChannel": "Kanal hinzufügen",
+    "addChannelDesc": "Sie haben noch kein {{platform}}-Konto verbunden. Bitte fügen Sie einen Kanal hinzu, um Inhalte zu veröffentlichen.",
+    "addChannelNow": "Kanal hinzufügen",
+    "updateAuth": "Autorisierung aktualisieren",
+    "updateAuthDesc": "Ihre {{platform}}-Kontoautorisierung ist abgelaufen. Bitte erneut autorisieren.",
+    "reauthorize": "Erneut autorisieren",
+    "loginChannel": "Kanal anmelden",
+    "loginChannelDesc": "Bitte melden Sie sich zuerst bei Ihrem {{platform}}-Konto an.",
+    "goLogin": "Zur Anmeldung",
+    "readyToPublish": "Bereit zur Veröffentlichung",
+    "readyToPublishDesc": "Inhalt ist bereit und kann auf {{platform}} veröffentlicht werden.",
+    "goPublish": "Zur Veröffentlichung",
+    "insufficientCredits": "Unzureichendes Guthaben",
+    "insufficientCreditsDesc": "Aufgabe pausiert. Bitte laden Sie Guthaben auf, um fortzufahren.",
+    "rechargeCredits": "Guthaben aufladen",
+    "action": "Aktion",
+    "actionDesc": "Bitte führen Sie die folgende Aktion aus",
+    "continue": "Fortfahren"
+  },
+  "publishDetail": {
+    "title": "Veröffentlichungsdetails",
+    "loading": "Laden...",
+    "publishing": "Wird veröffentlicht...",
+    "published": "Veröffentlicht",
+    "failed": "Fehlgeschlagen",
+    "unpublished": "Ausstehend",
+    "viewWork": "Beitrag anzeigen",
+    "noTitle": "Kein Titel",
+    "retry": "Erneut versuchen"
+  },
+  "pluginPublish": {
+    "autoPublishIn": "Automatische Veröffentlichung auf {{platform}} in {{seconds}}s",
+    "publishNow": "Jetzt veröffentlichen",
+    "cancel": "Abbrechen",
+    "publishing": "Wird auf {{platform}} veröffentlicht...",
+    "doNotCloseBrowser": "Veröffentlichung läuft, bitte schließen Sie dieses Browserfenster nicht",
+    "publishSuccess": "Erfolgreich veröffentlicht!",
+    "publishFailed": "Veröffentlichung fehlgeschlagen",
+    "retryPublish": "Erneut versuchen",
+    "viewWork": "Beitrag anzeigen",
+    "pluginNotReady": "Plugin nicht bereit, bitte installieren und autorisieren Sie das Plugin zuerst",
+    "noAccountFound": "Kein verfügbares Veröffentlichungskonto gefunden",
+    "goPublish": "Veröffentlichen",
+    "stage": {
+      "download": "Ressourcen werden heruntergeladen...",
+      "upload": "Wird hochgeladen...",
+      "publish": "Wird veröffentlicht...",
+      "complete": "Veröffentlicht"
+    }
+  }
+}

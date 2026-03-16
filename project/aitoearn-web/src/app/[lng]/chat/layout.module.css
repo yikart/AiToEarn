@@ -1,0 +1,17 @@
+/* Chat 布局局部样式 */
+
+/* 滚动动画 */
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  display: flex;
+  align-items: center;
+  animation: marquee 20s linear infinite;
+}

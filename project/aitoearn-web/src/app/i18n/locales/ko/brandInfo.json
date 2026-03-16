@@ -1,0 +1,112 @@
+{
+  "title": "브랜드 정보",
+  "viewDetails": "상세 보기",
+  "noData": "브랜드 정보 없음",
+  "stores": "매장",
+  "reviews": "리뷰",
+  "rating": "평점",
+  "status": {
+    "pending": "처리 중",
+    "initializing": "초기화 중",
+    "active": "활성",
+    "failed": "실패",
+    "disabled": "비활성"
+  },
+  "section": {
+    "basicInfo": "기본 정보",
+    "brandImages": "브랜드 이미지",
+    "gallery": "매장 사진",
+    "contact": "연락처",
+    "socialLinks": "소셜 링크"
+  },
+  "field": {
+    "name": "브랜드명",
+    "nameEn": "영문명",
+    "category": "카테고리",
+    "description": "설명",
+    "logo": "로고",
+    "coverImage": "커버 이미지",
+    "website": "웹사이트",
+    "phone": "전화번호",
+    "email": "이메일",
+    "address": "주소"
+  },
+  "placeholder": {
+    "name": "브랜드명을 입력하세요",
+    "nameEn": "영문명을 입력하세요",
+    "category": "카테고리 선택",
+    "description": "브랜드 설명을 입력하세요",
+    "website": "https://example.com",
+    "phone": "+82 2 1234 5678",
+    "email": "contact@example.kr",
+    "address": "주소를 입력하세요",
+    "socialLink": "프로필 URL을 입력하세요"
+  },
+  "category": {
+    "restaurant": "레스토랑",
+    "cafe": "카페",
+    "bar": "바",
+    "bakery": "베이커리",
+    "fast_food": "패스트푸드",
+    "fine_dining": "파인 다이닝",
+    "other": "기타"
+  },
+  "image": {
+    "uploadLogo": "로고 업로드",
+    "uploadCover": "커버 업로드",
+    "addImage": "이미지 추가",
+    "deleteImage": "이미지 삭제",
+    "deleteConfirm": "이 이미지를 삭제하시겠습니까?",
+    "sourceGoogleMaps": "Google Maps",
+    "sourceUserUpload": "업로드됨",
+    "uploadFailed": "이미지 업로드 실패",
+    "deleteFailed": "이미지 삭제 실패",
+    "dragOrClick": "드래그하거나 클릭하여 업로드",
+    "maxSize": "최대 크기: 5MB",
+    "supportedFormats": "JPG, PNG, WebP 지원",
+    "uploadDisabled": "브랜드 초기화를 완료하세요",
+    "linkFirst": "매장을 연결하면 이미지를 관리할 수 있습니다"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "X (Twitter)",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "action": {
+    "edit": "편집",
+    "save": "저장",
+    "saving": "저장 중...",
+    "cancel": "취소",
+    "updateSuccess": "브랜드 정보가 업데이트되었습니다",
+    "updateFailed": "브랜드 정보 업데이트 실패"
+  },
+  "createdAt": "생성일",
+  "updatedAt": "수정일",
+  "viewOnGoogleMaps": "Google Maps에서 보기",
+  "photoCount": "사진 {{count}}장",
+  "aiHint": "AI 생성 동영상은 브랜드 정보를 기반으로 생성됩니다",
+  "switchStore": {
+    "button": "매장 전환",
+    "searching": "새 매장 검색...",
+    "switching": "매장 전환 중...",
+    "success": "매장이 성공적으로 전환되었습니다",
+    "failed": "매장 전환에 실패했습니다",
+    "cancel": "취소",
+    "confirm": "전환 확인"
+  },
+  "setup": {
+    "title": "매장 연결하기",
+    "description": "매장을 검색하고 연결하여 브랜드 정보 관리를 시작하세요",
+    "cardHint": "클릭하여 매장을 연결하고 프로모션 시작",
+    "searchHint": "매장을 연결하면 AI가 브랜드 정보를 기반으로 콘텐츠를 생성합니다"
+  },
+  "validation": {
+    "nameRequired": "브랜드명은 필수입니다",
+    "nameMaxLength": "브랜드명은 50자를 초과할 수 없습니다",
+    "nameEnMaxLength": "영문명은 100자를 초과할 수 없습니다",
+    "descriptionMaxLength": "설명은 500자를 초과할 수 없습니다"
+  }
+}

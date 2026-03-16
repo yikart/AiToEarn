@@ -1,0 +1,147 @@
+/*
+ * @Author: nevin
+ * @Date: 2024-06-17 19:19:20
+ * @LastEditTime: 2024-12-23 12:45:22
+ * @LastEditors: nevin
+ * @Description: 媒体资源
+ */
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc, AppException, FileUtil, ResponseCode, TableDto } from '@yikart/common'
+import { MediaGroup } from '@yikart/mongodb'
+import {
+  CreateMediaGroupDto,
+  MediaGroupFilterDto,
+  UpdateMediaGroupDto,
+} from './media-group.dto'
+import { MediaGroupService } from './media-group.service'
+import { MediaService } from './media.service'
+
+@ApiTags('Me/MediaGroup')
+@Controller('media/group')
+export class MediaGroupController {
+  constructor(
+    private readonly mediaGroupService: MediaGroupService,
+    private readonly mediaService: MediaService,
+  ) { }
+
+  @ApiDoc({
+    summary: '创建媒体分组',
+    description: '创建用于组织资源的媒体分组。',
+    body: CreateMediaGroupDto.schema,
+  })
+  @Post()
+  async createGroup(
+    @GetToken() token: TokenInfo,
+    @Body() body: CreateMediaGroupDto,
+  ) {
+    const res = await this.mediaGroupService.create(token.id, {
+      type: body.type,
+      title: body.title,
+      desc: body.desc,
+    })
+    return res
+  }
+
+  @ApiDoc({
+    summary: '删除媒体分组',
+    description: '根据ID删除媒体分组。',
+  })
+  @Delete(':id')
+  async delGroup(@GetToken() token: TokenInfo, @Param('id') id: string) {
+    const mediaGroup = await this.mediaGroupService.getInfo(id)
+    if (!mediaGroup || mediaGroup.userId !== token.id) {
+      throw new AppException(ResponseCode.MediaGroupNotFound, 'Media Group not found')
+    }
+    if (
+      mediaGroup.isDefault
+    ) {
+      throw new AppException(ResponseCode.MediaGroupDefaultNotAllowed, 'Default media group cannot be deleted')
+    }
+    const res = await this.mediaGroupService.del(id)
+    return res
+  }
+
+  @ApiDoc({
+    summary: '更新媒体分组信息',
+    description: '更新媒体分组的属性。',
+    body: UpdateMediaGroupDto.schema,
+  })
+  @Post('info/:id')
+  async updateGroupInfo(
+    @GetToken() token: TokenInfo,
+    @Param('id') id: string,
+    @Body() body: UpdateMediaGroupDto,
+  ) {
+    const dataInfo = await this.mediaGroupService.getInfo(id)
+    if (!dataInfo || dataInfo.userId !== token.id) {
+      throw new AppException(ResponseCode.MediaGroupNotFound)
+    }
+    const res = await this.mediaGroupService.updateInfo(id, body)
+    return res
+  }
+
+  @ApiDoc({
+    summary: '获取媒体分组详情',
+    description: '根据ID获取媒体分组详情。',
+  })
+  @Get('info/:id')
+  async getGroupInfo(@Param('id') id: string) {
+    const res = await this.mediaGroupService.getInfo(id)
+    return res
+  }
+
+  /**
+   * 获取资源组的简略图列表
+   * @param userId
+   * @param group
+   * @returns
+   */
+  private async getMediaDesList(userId: string, group: MediaGroup) {
+    const res = await this.mediaService.getList(
+      { pageNo: 1, pageSize: 3 },
+      {
+        userId,
+        groupId: group.id,
+      },
+    )
+    res.list.forEach((item) => {
+      item.url = FileUtil.buildUrl(item.url)
+      if (item.thumbUrl)
+        item.thumbUrl = FileUtil.buildUrl(item.thumbUrl)
+    })
+    return { ...group, mediaList: res }
+  }
+
+  @ApiDoc({
+    summary: '获取媒体分组列表',
+    description: '分页获取媒体分组列表。',
+    query: MediaGroupFilterDto.schema,
+  })
+  @Get('list/:pageNo/:pageSize')
+  async getGroupList(
+    @GetToken() token: TokenInfo,
+    @Param() param: TableDto,
+    @Query() query: MediaGroupFilterDto,
+  ) {
+    const { list, total } = await this.mediaGroupService.getList(param, {
+      userId: token.id,
+      ...query,
+    })
+
+    const updatedList = await Promise.all(
+      list.map(item => this.getMediaDesList(token.id, item)),
+    )
+
+    return { list: updatedList, total }
+  }
+}

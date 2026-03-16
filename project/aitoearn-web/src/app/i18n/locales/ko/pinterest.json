@@ -1,0 +1,120 @@
+{
+  "title": "Pinterest 관리",
+  "tabs": {
+    "boards": "내 보드",
+    "pins": "내 핀"
+  },
+  "actions": {
+    "selectAccount": "계정 선택",
+    "refresh": "새로고침",
+    "createBoard": "보드 만들기",
+    "createPin": "핀 만들기",
+    "search": "검색...",
+    "view": "보기",
+    "edit": "편집",
+    "delete": "삭제",
+    "link": "링크",
+    "change": "변경"
+  },
+  "stats": {
+    "followers": "팔로워",
+    "boardCount": "보드 수",
+    "pinCount": "핀 수",
+    "monthlyViews": "월간 조회수"
+  },
+  "board": {
+    "createTitle": "새 보드 만들기",
+    "name": "보드 이름",
+    "namePlaceholder": "보드 이름 입력",
+    "description": "설명",
+    "descriptionPlaceholder": "보드 설명 입력",
+    "privacy": "공개 설정",
+    "public": "공개",
+    "private": "비공개",
+    "createButton": "보드 만들기",
+    "deleteConfirm": "이 보드를 삭제하시겠습니까?",
+    "detailTitle": "보드 상세",
+    "createTime": "생성 시간",
+    "noDescription": "설명 없음"
+  },
+  "pin": {
+    "createTitle": "새 핀 만들기",
+    "selectBoard": "게시할 보드",
+    "selectBoardPlaceholder": "게시할 보드 선택",
+    "uploadImage": "이미지 업로드",
+    "uploadImagePlaceholder": "OSS에 이미지를 업로드하려면 클릭",
+    "uploadHint": "JPG, PNG, GIF 형식 지원, 최대 10MB",
+    "uploading": "OSS에 업로드 중...",
+    "uploadSuccess": "✓ 업로드 성공",
+    "reupload": "다시 업로드",
+    "ossUrl": "OSS URL",
+    "title": "제목",
+    "titlePlaceholder": "핀 제목 입력",
+    "description": "설명",
+    "descriptionPlaceholder": "핀 설명 입력",
+    "link": "링크",
+    "linkPlaceholder": "대상 링크 입력 (선택사항)",
+    "altText": "대체 텍스트",
+    "altTextPlaceholder": "이미지 대체 텍스트 입력 (선택사항)",
+    "dominantColor": "주요 색상",
+    "dominantColorTip": "핀의 주요 색상 선택",
+    "createButton": "핀 만들기",
+    "deleteConfirm": "이 핀을 삭제하시겠습니까?",
+    "detailTitle": "핀 상세",
+    "pinId": "핀 ID",
+    "boardId": "보드 ID",
+    "creativeType": "크리에이티브 유형",
+    "boardOwner": "보드 소유자",
+    "isOwner": "소유자",
+    "isRemovable": "제거 가능",
+    "isStandard": "표준 핀",
+    "noDescription": "설명 없음",
+    "imageAlt": "핀 이미지"
+  },
+  "badges": {
+    "pins": "핀",
+    "followers": "팔로워",
+    "owner": "소유자",
+    "yes": "예",
+    "no": "아니오",
+    "selected": "선택됨"
+  },
+  "empty": {
+    "noBoards": "보드 없음",
+    "noPins": "핀 없음"
+  },
+  "pagination": {
+    "total": "{range} / {total}개 항목"
+  },
+  "messages": {
+    "loadAccountsFailed": "계정 목록을 로드하는 데 실패했습니다",
+    "loadBoardsFailed": "보드 목록을 로드하는 데 실패했습니다",
+    "loadPinsFailed": "핀 목록을 로드하는 데 실패했습니다",
+    "boardCreateSuccess": "보드가 성공적으로 생성되었습니다",
+    "boardCreateFailed": "보드 생성 실패",
+    "boardDeleteSuccess": "보드가 성공적으로 삭제되었습니다",
+    "boardDeleteFailed": "보드 삭제 실패",
+    "pinCreateSuccess": "핀이 성공적으로 생성되었습니다",
+    "pinCreateFailed": "핀 생성 실패",
+    "pinDeleteSuccess": "핀이 성공적으로 삭제되었습니다",
+    "pinDeleteFailed": "핀 삭제 실패",
+    "getBoardDetailFailed": "보드 상세를 가져오는 데 실패했습니다",
+    "getPinDetailFailed": "핀 상세를 가져오는 데 실패했습니다",
+    "uploadImageFirst": "먼저 이미지를 업로드해 주세요",
+    "selectImageFile": "이미지 파일을 선택해 주세요",
+    "imageSizeLimit": "이미지 크기는 10MB를 초과할 수 없습니다",
+    "imageUploadSuccess": "이미지 업로드 성공",
+    "imageUploadFailed": "이미지 업로드 실패, 다시 시도해 주세요",
+    "noAccountFound": "Pinterest 계정을 찾을 수 없습니다"
+  },
+  "validation": {
+    "boardNameRequired": "보드 이름을 입력해 주세요",
+    "selectBoardRequired": "보드를 선택해 주세요",
+    "titleRequired": "제목을 입력해 주세요",
+    "descriptionRequired": "설명을 입력해 주세요"
+  },
+  "confirm": {
+    "ok": "확인",
+    "cancel": "취소"
+  }
+}

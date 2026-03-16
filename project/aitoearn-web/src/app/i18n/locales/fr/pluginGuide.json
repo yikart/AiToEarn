@@ -1,0 +1,117 @@
+{
+  "seo": {
+    "title": "Browser Extension Guide - Install AiToEarn Plugin",
+    "description": "Step-by-step guide to install and use the AiToEarn browser extension for automated social media content publishing and management.",
+    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, AiToEarn"
+  },
+  "title": "Guide du plugin de navigateur",
+  "lastUpdated": "Dernière mise à jour",
+  "introduction": "Ce guide vous expliquera comment installer et utiliser le plugin de navigateur AiToEarn, vous permettant de gérer vos comptes de réseaux sociaux et de publier du contenu plus facilement.",
+  "tableOfContents": "Sommaire",
+  "sections": {
+    "installation": "Installer le plugin",
+    "manualInstall": "Installation manuelle",
+    "manualInstallDesc": "Pour les canaux GitHub ou Téléchargement Chine",
+    "authorize": "Autoriser le plugin",
+    "loginAccount": "Connexion au compte de réseau social",
+    "syncAccount": "Synchroniser le compte"
+  },
+  "steps": {
+    "step1": {
+      "title": "Étape 1 : Ouvrir la boîte de dialogue de gestion du plugin",
+      "content": "Sur la page de la plateforme AiToEarn, cliquez sur l'icône du plugin dans le coin supérieur droit pour ouvrir la boîte de dialogue de gestion du plugin de navigateur.",
+      "caption": "Cliquez sur le bouton Extension dans le coin supérieur droit"
+    },
+    "step2": {
+      "title": "Étape 2 : Télécharger le plugin",
+      "content": "Sélectionnez la méthode de téléchargement dans la boîte de dialogue et cliquez pour télécharger le plugin.",
+      "caption": "Choisissez le canal de téléchargement approprié",
+      "note": "Différence entre l'installation Chrome Web Store et GitHub Release :",
+      "noteItem1": "Les plugins téléchargés depuis GitHub Release nécessitent d'activer le mode développeur dans votre navigateur pour l'installation, mais les ressources installées ici sont les plugins les plus récents.",
+      "noteItem2": "Les plugins téléchargés depuis Chrome Web Store peuvent être installés directement."
+    },
+    "step3": {
+      "title": "Étape 3 : Vérifier le statut d'installation",
+      "content": "Après l'installation, cliquez sur le bouton des extensions du navigateur pour vérifier si l'installation a réussi.",
+      "caption": "Trouvez le plugin AiToEarn dans la barre d'extensions du navigateur"
+    },
+    "step4": {
+      "title": "Étape 4 : Accéder à la page de détails du plugin",
+      "content": "Si l'installation a réussi, cliquez sur le plugin pour accéder à la page de détails du plugin."
+    },
+    "step5": {
+      "title": "Étape 5 : Autoriser le plugin",
+      "notLoggedInContent": "Si vous n'êtes pas connecté sur la page d'accueil AiToEarn, cliquez sur \"Go to Home\" pour accéder à la page d'accueil AiToEarn et vous connecter.",
+      "notLoggedInCaption": "Cliquez sur 'Go to Home' pour vous connecter d'abord",
+      "loggedInContent": "Si vous êtes déjà connecté sur la page d'accueil AiToEarn, cliquez sur \"Authorize Now\" pour autoriser.",
+      "loggedInCaption": "Cliquez sur 'Authorize Now' pour autoriser le plugin"
+    },
+    "step6": {
+      "title": "Étape 6 : Confirmer que le plugin est prêt",
+      "content": "La permission a été accordée avec succès. Ensuite, ouvrez la plateforme AiToEarn, rafraîchissez la page, et vous verrez que le plugin est prêt. Cliquez dessus pour voir les détails.",
+      "caption1": "Autorisation réussie",
+      "caption2": "Retournez à la plateforme AiToEarn pour vérifier le statut du plugin"
+    },
+    "step7": {
+      "title": "Étape 7 : Voir les informations du compte",
+      "content": "Si vous vous êtes connecté aux plateformes prises en charge par le plugin, vous verrez que le plugin a obtenu les comptes correspondants.",
+      "loginContent": "Cliquez sur le bouton \"Extension\" pour voir le statut de connexion du compte. S'il affiche non connecté, veuillez d'abord vous connecter à la plateforme de réseau social correspondante.",
+      "caption": "Vérifiez le statut de connexion du compte Xiaohongshu"
+    },
+    "step7b": {
+      "title": "Connexion au compte Xiaohongshu",
+      "content": "Cliquez sur \"Se connecter maintenant\" pour accéder à la page Xiaohongshu et vous connecter. Après la connexion, vous devez également vous connecter au Centre Créateur.",
+      "caption1": "Accédez rapidement au Centre Créateur depuis le coin supérieur droit",
+      "caption2": "Après la connexion, rafraîchissez la page pour voir que le compte est autorisé",
+      "importantNote": "Note importante",
+      "importantNoteContent": "La page d'accueil Xiaohongshu et le Centre Créateur doivent être connectés séparément. La fonction du plugin ne peut être utilisée normalement qu'après la connexion aux deux."
+    },
+    "step8": {
+      "title": "Étape 8 : Synchroniser les comptes",
+      "content": "Vous pouvez synchroniser les comptes vers la gestion des comptes ici. Cliquez sur le bouton [Synchroniser], et le compte sera synchronisé vers notre base de données.",
+      "caption": "Cliquez sur le bouton 'Synchroniser' pour synchroniser le compte"
+    },
+    "step9": {
+      "title": "Voir les résultats de la synchronisation",
+      "content": "Retournez à la page d'accueil AiToEarn et cliquez sur \"Mes chaînes\" pour accéder à la page de gestion des comptes.",
+      "caption1": "Cliquez sur 'Mes chaînes' pour accéder à la gestion des comptes",
+      "caption2": "Vous pouvez voir que le compte Xiaohongshu a été synchronisé avec succès"
+    },
+    "complete": {
+      "title": "Terminé",
+      "content": "Vous pouvez maintenant utiliser la plateforme AiToEarn normalement !"
+    }
+  },
+  "manualInstall": {
+    "tip": "Conseil",
+    "tipContent": "Si vous avez installé le plugin avec succès depuis Chrome Web Store, vous pouvez ignorer cette section et aller directement au chapitre \"Autoriser le plugin\".",
+    "step1": {
+      "title": "Accéder à la page de gestion des extensions",
+      "content": "Cliquez sur le menu à trois points dans le coin supérieur droit du navigateur, et cliquez pour accéder à la page \"Gérer les extensions\"."
+    },
+    "step2": {
+      "title": "Activer le mode développeur",
+      "content": "Dans le coin supérieur droit de la page des extensions, activez le \"Mode développeur\"."
+    },
+    "step3": {
+      "title": "Trouver le fichier du plugin téléchargé",
+      "content": "Ouvrez le dossier de téléchargement de votre navigateur et trouvez le package du plugin .crx téléchargé."
+    },
+    "step4": {
+      "title": "Glisser-déposer pour installer le plugin",
+      "content": "Glissez-déposez le package du plugin .crx sur la page des extensions."
+    },
+    "step5": {
+      "title": "Confirmer l'installation",
+      "content": "Dans la boîte de dialogue qui apparaît, cliquez sur \"Ajouter l'extension\" pour confirmer l'installation."
+    }
+  },
+  "faq": {
+    "title": "FAQ",
+    "q1": {
+      "question": "Pourquoi le plugin affiche-t-il toujours non connecté après m'être connecté à Xiaohongshu ?",
+      "answer": "Vous ne vous êtes peut-être pas connecté au Centre Créateur Xiaohongshu. Sur la page d'accueil Xiaohongshu, cliquez sur le bouton dans le coin supérieur droit pour vous connecter rapidement au Centre Créateur Xiaohongshu."
+    }
+  },
+  "viewGuide": "Voir le guide"
+}

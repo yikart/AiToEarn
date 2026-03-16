@@ -1,0 +1,58 @@
+---
+id: aitoearn-dto-vo-pattern
+trigger: "when creating DTOs or VOs"
+confidence: 0.95
+domain: typescript
+source: local-repo-analysis
+---
+
+# Zod Schema + DTO/VO Pattern
+
+## Action
+Always define Zod schema first, then generate DTO/VO class using `createZodDto`.
+
+## DTO (Input)
+```typescript
+import { createZodDto, PaginationDtoSchema } from '@yikart/common'
+import { z } from 'zod'
+
+export const CreateOrderDtoSchema = z.object({
+  productId: z.string(),
+  quantity: z.number().int().positive().default(1),
+  returnTo: z.url().optional(),
+})
+export class CreateOrderDto extends createZodDto(CreateOrderDtoSchema, 'CreateOrderDto') {}
+```
+
+## VO (Output)
+```typescript
+import { createPaginationVo, createZodDto } from '@yikart/common'
+import { z } from 'zod'
+
+export const OrderDetailVoSchema = z.object({
+  id: z.string(),
+  amount: z.number(),
+  createdAt: z.date()
+})
+export class OrderDetailVo extends createZodDto(OrderDetailVoSchema, 'OrderDetailVo') {}
+export class OrderListVo extends createPaginationVo(OrderDetailVoSchema, 'OrderListVo') {}
+```
+
+## Controller Usage
+```typescript
+// Regular VO - use static create()
+return OrderDetailVo.create(data)
+
+// Pagination VO - use new
+return new OrderListVo({ page, pageSize, total, totalPages, list })
+```
+
+## Rules
+- Never use entity as input (use DTO)
+- Never return entity directly (use VO)
+- Pagination input: use `PaginationDtoSchema`
+- Pagination output fields: page, pageSize, totalPages, total, list
+
+## Evidence
+- Pattern defined in CLAUDE.md
+- Used consistently across all services

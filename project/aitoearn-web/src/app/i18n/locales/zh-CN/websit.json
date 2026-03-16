@@ -1,0 +1,27 @@
+{
+  "privacyPolicy": {
+    "title": "隐私政策 - 我们如何保护您的数据",
+    "description": "阅读AiToEarn隐私政策，了解我们如何收集、使用、存储和保护您的个人信息。符合GDPR的社交媒体管理平台数据处理。",
+    "keywords": "隐私政策, 数据保护, 个人信息, GDPR合规, 数据安全, 用户隐私, AiToEarn"
+  },
+  "termsOfService": {
+    "title": "服务条款 - 用户协议与使用规范",
+    "description": "查阅AiToEarn服务条款，涵盖用户权利、内容规范、付款条款和社交媒体管理服务平台使用规则。",
+    "keywords": "服务条款, 用户协议, 平台规则, 内容规范, 付款条款, AiToEarn条款"
+  },
+  "dataDeletion": {
+    "title": "数据删除指南 - 删除账号与个人数据",
+    "description": "分步说明如何删除您的AiToEarn账号和个人数据。了解数据保留政策，提交数据删除请求。",
+    "keywords": "数据删除, 账号注销, 隐私权利, 数据擦除, 删除账号, 被遗忘权, AiToEarn"
+  },
+  "dataProtection": {
+    "title": "数据保护协议 - GDPR合规与数据安全",
+    "description": "AiToEarn数据保护协议概述了符合GDPR的数据处理标准、安全措施和您的个人数据权利。",
+    "keywords": "数据保护协议, GDPR合规, 数据处理, 数据安全, 隐私权利, 数据控制者, AiToEarn"
+  },
+  "extensionPrivacy": {
+    "title": "浏览器扩展隐私 - 数据使用与权限说明",
+    "description": "了解AiToEarn浏览器扩展如何处理您的数据。了解Chrome扩展的权限、数据收集和安全措施。",
+    "keywords": "扩展隐私, 浏览器扩展, Chrome扩展, 数据权限, 扩展数据收集, AiToEarn扩展"
+  }
+}

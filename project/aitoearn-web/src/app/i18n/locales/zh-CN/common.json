@@ -1,0 +1,278 @@
+{
+  "profile": "个人中心",
+  "logout": "退出登录",
+  "unknownUser": "未知用户",
+  "docs": "帮助文档",
+  "login": "登录",
+  "support": "支持",
+  "notifications": "消息通知",
+  "settings": "设置",
+  "vip": "会员",
+  "vip.tier": {
+    "free": "免费版",
+    "trialing": "试用会员",
+    "go": "Go 会员",
+    "plus": "Plus 会员",
+    "ultra": "Ultra 会员"
+  },
+  "subscribe": "升级会员",
+  "balance": "积分",
+  "recharge": "充值",
+  "adBalance": "余额",
+  "plugin": "浏览器插件",
+  "affiliates": "推广赚钱",
+  "advertiser": "AI打卡",
+  "goToWebsite": "前往官网",
+  "pluginStatus": {
+    "notInstalled": "未安装",
+    "noPermission": "未授权",
+    "ready": "已就绪",
+    "checking": "检测中"
+  },
+  "contactUs": "联系我们",
+  "documents": "文档",
+  "helpDocs": "帮助文档",
+  "pluginGuide": "插件指南",
+  "privacyPolicy": "隐私政策",
+  "termsOfService": "服务条款",
+  "downloadAppButton": "下载手机APP",
+  "noNotifications": "暂无消息",
+  "markAllAsRead": "全部标记为已读",
+  "markAsRead": "标记为已读",
+  "unreadCount": "未读消息",
+  "viewAll": "查看全部",
+  "cancel": "取消",
+  "confirm": "确认",
+  "expand": "展开",
+  "collapse": "收起",
+  "yes": "是",
+  "no": "否",
+  "calendar": {
+    "weekDaysShort": ["日", "一", "二", "三", "四", "五", "六"],
+    "monthSuffix": "月"
+  },
+  "actions": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "ok": "确定",
+    "processing": "处理中...",
+    "selectAll": "全选",
+    "edit": "编辑",
+    "delete": "删除",
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "noImage": "暂无图片",
+    "noDescription": "暂无描述",
+    "noContent": "暂无内容"
+  },
+  "select": {
+    "placeholder": "请选择...",
+    "searchPlaceholder": "搜索...",
+    "noResults": "未找到结果"
+  },
+  "pagination": {
+    "perPage": "每页",
+    "items": "条",
+    "jumpTo": "跳至",
+    "page": "页"
+  },
+  "notificationTypes": {
+    "system": "系统通知",
+    "user": "用户通知",
+    "material": "素材通知",
+    "other": "其他通知"
+  },
+  "header": {
+    "messages": "消息通知",
+    "income": "收入记录",
+    "wallet": "钱包账户",
+    "materialLibrary": "素材库",
+    "draftBox": "内容管理",
+    "draftBoxSeoTitle": "内容管理 - AI批量创作与草稿编辑",
+    "draftBoxSeoDescription": "在一个地方管理所有内容草稿。使用AI批量生成社媒帖子，发布前编辑草稿，用AiToEarn组织多平台分发内容。",
+    "draftBoxSeoKeywords": "内容管理, 草稿编辑, AI内容生成, 批量创作, 社媒草稿, 内容排期, AiToEarn",
+    "brandPromotion": "AI打卡"
+  },
+  "tasks": "内容市场",
+  "signIn": {
+    "title": "每日签到得积分",
+    "myPoints": "我的积分",
+    "signIn": "签到",
+    "today": "今天",
+    "rules": "签到规则",
+    "rules1": "连续签到 1-7天, 每天1积分",
+    "rules2": "连续签到 8-21天, 每天2积分",
+    "rules3": "连续签到 22天以上, 每天3积分",
+    "signedIn": "已签到",
+    "notSignedIn": "未签到",
+    "signInSuccess": "签到成功",
+    "signInFailed": "签到失败",
+    "alreadySignedIn": "今日已签到",
+    "consecutiveDays": "连续签到天数",
+    "totalPoints": "总积分"
+  },
+  "downloadApp": {
+    "title": "下载{{appName}}",
+    "operationInApp": "请在{{appName}}中操作添加",
+    "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
+    "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
+    "scanQrCode": "扫描二维码下载",
+    "downloadLink": "下载链接：",
+    "copy": "复制",
+    "copySuccess": "复制成功",
+    "copyFailed": "复制失败，请手动复制",
+    "copied": "已复制",
+    "close": "关闭",
+    "downloadNow": "立即下载",
+    "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
+  },
+  "uptime": {
+    "seoTitle": "服务状态 - 实时系统健康监控",
+    "pageKeywords": "服务状态, 系统监控, 在线率追踪, 服务器健康, API状态, AiToEarn状态, 实时监控",
+    "pageTitle": "服务状态",
+    "pageDescription": "实时监控 AiToEarn 服务的运行状态和可用性。查看 Agent、服务器、AI、数据库和网络模块的运行状况。",
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "uptimePercentage": "正常运行时间：",
+    "normal": "正常",
+    "timeout": "超时",
+    "unavailable": "中断",
+    "filter": {
+      "title": "筛选条件",
+      "module": "模块",
+      "type": "类型",
+      "timeRange": "时间范围",
+      "all": "全部",
+      "last7Days": "最近7天",
+      "last30Days": "最近30天",
+      "last90Days": "最近90天",
+      "reset": "重置",
+      "apply": "应用"
+    },
+    "copy": "复制",
+    "copied": "已复制",
+    "module": {
+      "Agent": "Agent",
+      "Server": "服务器",
+      "Ai": "AI",
+      "Database": "数据库",
+      "Network": "网络",
+      "Other": "其他"
+    },
+    "type": {
+      "AgentStatus": "Agent状态",
+      "AgentMcpStatus": "Agent Mcp 状态",
+      "NewApiStatus": "NewApi 状态"
+    }
+  },
+  "websit": {
+    "termsOfService": {
+      "title": "用户协议",
+      "lastUpdated": "最后更新时间",
+      "content": {
+        "introduction": "欢迎使用我们的服务。在使用本服务前，请仔细阅读以下条款和条件。",
+        "acceptance": "1. 接受条款",
+        "acceptanceContent": "通过访问和使用本服务，您同意受本用户协议的约束。如果您不同意这些条款，请不要使用本服务。",
+        "serviceDescription": "2. 服务说明",
+        "serviceDescriptionContent": "本服务是一个AI内容创作平台，帮助用户生成和管理多媒体内容。",
+        "userResponsibilities": "3. 用户责任",
+        "userResponsibilitiesContent": "用户应确保其使用本服务的行为符合当地法律法规，不得用于非法目的。",
+        "privacy": "4. 隐私保护",
+        "privacyContent": "我们重视您的隐私，详细信息请参阅我们的隐私政策。",
+        "termination": "5. 服务终止",
+        "terminationContent": "我们保留在任何时候终止或暂停服务的权利。",
+        "contact": "6. 联系我们",
+        "contactContent": "如有任何问题，请通过邮件联系我们：support@example.com"
+      }
+    },
+    "privacyPolicy": {
+      "title": "隐私政策",
+      "lastUpdated": "最后更新时间",
+      "content": {
+        "introduction": "本隐私政策说明我们如何收集、使用和保护您的个人信息。",
+        "informationCollection": "1. 信息收集",
+        "informationCollectionContent": "我们收集您主动提供的信息以及您使用服务时自动收集的信息。",
+        "informationUse": "2. 信息使用",
+        "informationUseContent": "我们使用收集的信息来提供、维护和改进我们的服务。",
+        "informationSharing": "3. 信息共享",
+        "informationSharingContent": "我们不会向第三方出售、交易或转让您的个人信息。",
+        "dataSecurity": "4. 数据安全",
+        "dataSecurityContent": "我们采用适当的安全措施来保护您的个人信息。",
+        "userRights": "5. 用户权利",
+        "userRightsContent": "您有权访问、更正或删除您的个人信息。",
+        "contact": "6. 联系我们",
+        "contactContent": "如有隐私相关问题，请联系我们：privacy@example.com"
+      }
+    },
+    "dataDeletion": {
+      "title": "申请删除数据",
+      "subtitle": "如果您希望删除您的个人数据，请按照以下步骤操作",
+      "lastUpdated": "最后更新时间",
+      "prelaunchNote": "对于预发布用户：",
+      "prelaunchContent": "我们目前处于预发布阶段，如需删除数据，请直接联系我们的支持团队。",
+      "standardProcedure": "标准删除流程：",
+      "steps": [
+        "登录您的账户并进入设置页面",
+        "点击「数据管理」选项",
+        "选择「删除我的数据」",
+        "确认删除操作并等待处理完成"
+      ],
+      "contactInfo": "联系方式：",
+      "contactEmail": "如需帮助，请发送邮件至：datadeletion@example.com",
+      "processingTime": "处理时间：",
+      "processingTimeContent": "数据删除请求通常在 7-14 个工作日内处理完成。",
+      "importantNote": "重要提示：",
+      "importantNoteContent": "数据删除后无法恢复，请谨慎操作。某些法律要求保留的数据可能无法删除。"
+    }
+  },
+  "lowBalanceAlert": {
+    "title": "余额不足提醒",
+    "content": "您的积分余额不足，请及时充值以继续使用",
+    "neverRemind": "不再提示"
+  },
+  "announcementBanner": {
+    "seedancePromo": "seedance-2.0 低至0.03美元/秒",
+    "videoPromo": "Grok、Veo 等视频生成模型限时促销，价格低至 {{price}}/秒"
+  },
+  "chinaDomainPrompt": {
+    "title": "切换到中国区域",
+    "content": "检测到您的位置在中国，是否要切换到中国区域域名以获得更好的体验？",
+    "ok": "切换",
+    "cancel": "留在当前"
+  },
+  "abroadDomainPrompt": {
+    "title": "切换到国际版",
+    "content": "检测到您的位置不在中国，是否要切换到国际版以获得更好的体验？",
+    "ok": "切换",
+    "cancel": "留在当前"
+  },
+  "brushEditor": {
+    "title": "画笔编辑",
+    "brush": "画笔",
+    "rectangle": "矩形",
+    "ellipse": "椭圆",
+    "color": "颜色",
+    "size": "大小",
+    "undo": "撤销",
+    "clearAll": "清除",
+    "cancel": "取消",
+    "save": "保存",
+    "saving": "保存中...",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败",
+    "crop": "裁剪",
+    "cropFree": "自由",
+    "cropConfirm": "确认裁剪",
+    "cropCancel": "取消裁剪",
+    "cropRatio": "比例"
+  },
+  "switchToInternational": "前往「国际版」",
+  "switchToChina": "前往「中国版」",
+  "platformRegionPrompt": {
+    "title": "平台区域限制",
+    "chinaContent": "{{platform}} 仅在国内站支持，是否跳转到国内站？",
+    "abroadContent": "{{platform}} 仅在国际站支持，是否跳转到国际站？",
+    "ok": "前往",
+    "cancel": "取消"
+  }
+}

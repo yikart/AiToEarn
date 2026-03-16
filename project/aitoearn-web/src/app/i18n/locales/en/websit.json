@@ -1,0 +1,27 @@
+{
+  "privacyPolicy": {
+    "title": "Privacy Policy - How We Protect Your Data",
+    "description": "Read AiToEarn's privacy policy to understand how we collect, use, store and protect your personal information. GDPR compliant data handling for our social media management platform.",
+    "keywords": "privacy policy, data protection, personal information, GDPR compliance, data security, user privacy, AiToEarn"
+  },
+  "termsOfService": {
+    "title": "Terms of Service - User Agreement & Guidelines",
+    "description": "Review AiToEarn's terms of service covering user rights, content guidelines, payment terms, and platform usage rules for our social media management service.",
+    "keywords": "terms of service, user agreement, platform rules, content guidelines, payment terms, AiToEarn terms"
+  },
+  "dataDeletion": {
+    "title": "Data Deletion Guide - Remove Your Account & Data",
+    "description": "Step-by-step instructions to delete your AiToEarn account and personal data. Learn about data retention policies and submit data removal requests.",
+    "keywords": "data deletion, account removal, privacy rights, data erasure, delete account, right to be forgotten, AiToEarn"
+  },
+  "dataProtection": {
+    "title": "Data Protection Agreement - GDPR & Compliance",
+    "description": "AiToEarn's data protection agreement outlines GDPR-compliant data processing standards, security measures, and your rights regarding personal data.",
+    "keywords": "data protection, GDPR compliance, data processing, data security, privacy rights, data controller, AiToEarn"
+  },
+  "extensionPrivacy": {
+    "title": "Browser Extension Privacy - Data Usage & Permissions",
+    "description": "Understand how the AiToEarn browser extension handles your data. Learn about permissions, data collection practices, and security measures for our Chrome extension.",
+    "keywords": "extension privacy, browser extension, Chrome extension, data permissions, extension data collection, AiToEarn extension"
+  }
+}

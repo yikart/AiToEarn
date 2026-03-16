@@ -1,0 +1,532 @@
+{
+  "seo": {
+    "title": "Preispläne - Flexible KI-Credits & Abonnements",
+    "description": "AI ToEarn bietet verschiedene Preispläne von der kostenlosen Testversion bis zu professionellen Paketen, um die unterschiedlichen Inhaltserstellungsbedürfnisse der Benutzer zu erfüllen. Unterstützt Videogenerierung, Bilderstellung, Multi-Plattform-Veröffentlichung und andere KI-Funktionen.",
+    "keywords": "KI-Preise, Planauswahl, Inhaltserstellungspakete, KI-Abonnement, Videogenerierungspreise"
+  },
+  "pageTitle": "Nutzungsbasierte Abrechnung",
+  "pageDescription": "Aitoearn ist mehr als ein Softwareunternehmen — wir sind ein Ergebnislieferant.\nUnser Ziel ist es, Betriebsergebnisse für Solopreneure zu liefern.\nDie Aitoearn-Guthaben, die Sie kaufen (zur Deckung der Token-Gebühren), werden für Modellkosten von Google, OpenAI, xAI, Anthropic und anderen Anbietern verwendet.\nWir versprechen, dass unsere Preise niemals die offiziellen Preise eines Modells übersteigen werden.\nUnd wenn unser Nutzungsvolumen wächst und wir Mengenrabatte von diesen Anbietern erhalten, werden wir diese Einsparungen an Sie weitergeben.",
+  "sections": {
+    "credits": "Guthaben kaufen",
+    "creditsDesc": "Kaufen Sie Guthaben nach Bedarf, ohne Abonnement"
+  },
+  "tabs": {
+    "credits": "Guthaben aufladen",
+    "balance": "Kontostand aufladen"
+  },
+  "balance": {
+    "rechargeButton": "Aufladen",
+    "balanceAmount": "Guthaben",
+    "features": {
+      "adCampaign": "Für Werbeaufgaben-Auslieferung",
+      "neverExpire": "Guthaben läuft nie ab"
+    }
+  },
+  "paymentMethod": {
+    "creditCard": "Kreditkarte",
+    "alipay": "Alipay"
+  },
+  "creditsTiers": {
+    "credits_10": {
+      "button": "Kaufen"
+    },
+    "credits_50": {
+      "button": "Kaufen"
+    },
+    "credits_100": {
+      "button": "Kaufen"
+    },
+    "credits_cny_70": {
+      "button": "Kaufen"
+    },
+    "credits_cny_350": {
+      "button": "Kaufen"
+    },
+    "credits_cny_700": {
+      "button": "Kaufen"
+    }
+  },
+  "creditsCard": {
+    "credits": "Guthaben",
+    "recommended": "Empfohlen",
+    "canGenerate": "≈ Generierbar"
+  },
+  "allPlansInclude": "Unterstützte Funktionen",
+  "features": {
+    "longVideoGen": "Lange Videogenerierung (Minuten)",
+    "aiMultiPlatformPublish": "KI-adaptive Multi-Plattform-Veröffentlichung",
+    "videoNarration": "Video-Erzählung",
+    "liveClipping": "Live-Stream-Clipping",
+    "shortVideoGen": "Kurzvideogenerierung (10s)",
+    "videoEditing": "Videobearbeitung",
+    "imageGen": "Bildgenerierung",
+    "imageEditing": "Bildbearbeitung",
+    "videoTranslation": "Videoübersetzung",
+    "contentCopyright": "KI-Inhalts-Urheberrechtserkennung",
+    "contentQualityAnalysis": "KI-Inhaltsqualitätsanalyse",
+    "textModeration": "Textmoderation",
+    "imageModeration": "Bildmoderation",
+    "videoModeration": "Videomoderation",
+    "multiModel": "Multi-Modell-Unterstützung",
+    "textToVideo": "Text zu Video",
+    "imageToVideo": "Bild zu Video",
+    "videoToVideo": "Video zu Video",
+    "consistentCharacter": "Konsistenter Charakter",
+    "aiAnimation": "KI-Animation",
+    "aiImage": "KI-Bild",
+    "voiceClone": "Stimmenklonierung",
+    "voiceSynthesis": "Stimmensynthese",
+    "fasterSpeed": "Schnellere Geschwindigkeit",
+    "withWatermark": "Mit Wasserzeichen",
+    "noWatermark": "Ohne Wasserzeichen",
+    "storage500M": "500M Speicher",
+    "storage5G": "5G Speicher"
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "paymentMethods": {
+      "question": "Welche Zahlungsmethoden unterstützen Sie?",
+      "answer": "Wir unterstützen mehrere Zahlungsmethoden, darunter gängige Kreditkarten (Visa, MasterCard, American Express) sowie Alipay. Wenn Sie unsere Dienste in China nutzen, können Sie einmalige Dienste mit Alipay kaufen."
+    },
+    "creditDeduction": {
+      "question": "Wie werden Guthaben für Bild- und Videogenerierung abgezogen?",
+      "answer": "Unsere Preise für Bild- und Videogenerierung entsprechen den offiziellen Kanälen. Wenn Großeinkäufe über offizielle Kanäle mit Rabatten verbunden sind, geben wir diese Rabatte auch an Sie weiter.",
+      "pricingTable": {
+        "title": "Detaillierte Preistabelle",
+        "headers": {
+          "model": "Modell",
+          "type": "Typ",
+          "duration": "Dauer",
+          "resolution": "Auflösung",
+          "notes": "Hinweise",
+          "credits": "Guthaben",
+          "price": "Preis",
+          "channel": "Kanal"
+        },
+        "rows": [
+          {
+            "model": "gpt-5",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "",
+            "notes": "Großmodell-Preise folgen offiziellen Preisen",
+            "credits": "Pro Million Token",
+            "price": "Eingabe 9 CNY, Ausgabe 72 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-mini",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Eingabe 1,8 CNY, Ausgabe 14,4 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-nano",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Eingabe 0,36 CNY, Ausgabe 2,88 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "Video-Unterstützung",
+            "notes": "",
+            "credits": "",
+            "price": "Eingabe 9 CNY, Ausgabe 72 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "chatgpt-4o-latest",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Eingabe 36 CNY, Ausgabe 108 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "Video-Unterstützung",
+            "notes": "",
+            "credits": "",
+            "price": "Eingabe 2,16 CNY, Ausgabe 18 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "qwen-vl-max-latest",
+            "type": "Großes Modell",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "Eingabe 1,6 CNY, Ausgabe 4 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash-image",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "",
+            "notes": "Auch bekannt als Nano Banana Pro, unterstützt Mehrfachbild-Eingabe",
+            "credits": "1 Guthaben",
+            "price": "0,27 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedream-3.0",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "2,6 Guthaben",
+            "price": "0,26 CNY",
+            "channel": "Offiziell"
+          },
+          {
+            "model": "seededit-3.0",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "",
+            "notes": "Bildbearbeitung, unterstützt jpeg, png Formate",
+            "credits": "3 Guthaben",
+            "price": "0,3 CNY",
+            "channel": "Offiziell"
+          },
+          {
+            "model": "gpt-image-1",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "Bildbearbeitungs-Unterstützung",
+            "notes": "",
+            "credits": "Aktion",
+            "price": "Niedrig $0,011-0,016, Mittel $0,042-0,063, Hoch $0,167-0,25",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [max]",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "Bildbearbeitungs-Unterstützung",
+            "notes": "",
+            "credits": "1,5 Guthaben",
+            "price": "0,6 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [pro]",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "Bildbearbeitungs-Unterstützung",
+            "notes": "",
+            "credits": "1 Guthaben",
+            "price": "0,3 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "Flux 1.1 pro ultra",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "4,5 Guthaben",
+            "price": "0,45 CNY",
+            "channel": "Offiziell"
+          },
+          {
+            "model": "Flux1.1 pro",
+            "type": "Bildgenerierung",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "3 Guthaben",
+            "price": "0,3 CNY",
+            "channel": "Offiziell"
+          },
+          {
+            "model": "midjourney relax",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "",
+            "notes": "",
+            "credits": "Kostenlos",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "midjourney fast/turbo",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "",
+            "notes": "",
+            "credits": "4 Guthaben",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "20 Guthaben",
+            "price": "2 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Videogenerierung",
+            "duration": "10s",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "40 Guthaben",
+            "price": "4 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 Guthaben",
+            "price": "3,5 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "Videogenerierung",
+            "duration": "10s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "70 Guthaben",
+            "price": "7 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "100 Guthaben",
+            "price": "10 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "Videogenerierung",
+            "duration": "10s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "200 Guthaben",
+            "price": "20 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "",
+            "credits": "70 Guthaben",
+            "price": "0,7 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 Guthaben",
+            "price": "3,5 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-turbo(14b)",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Nicht Volcano-Kanal verwenden",
+            "credits": "12 Guthaben",
+            "price": "1,2 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-plus",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Unterstützt erstes und letztes Bild",
+            "credits": "35 Guthaben",
+            "price": "3,5 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "wanx2.1-vace-plus",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Videobearbeitung",
+            "credits": "35 Guthaben",
+            "price": "3,5 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "Unterstützt 10s",
+            "credits": "7,2 Guthaben",
+            "price": "0,72 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "10s Preis verdoppelt",
+            "credits": "16,4 Guthaben",
+            "price": "1,64 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "36,7 Guthaben",
+            "price": "3,67 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "480p",
+            "notes": "Unterstützt erstes und letztes Bild",
+            "credits": "5 Guthaben",
+            "price": "0,5 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "720p",
+            "notes": "Unterstützt 10s",
+            "credits": "11 Guthaben",
+            "price": "1,1 CNY",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "Videogenerierung",
+            "duration": "5s",
+            "resolution": "1080p",
+            "notes": "10s Preis verdoppelt",
+            "credits": "25 Guthaben",
+            "price": "2,5 CNY",
+            "channel": "yun"
+          }
+        ]
+      }
+    },
+    "creditExpiry": {
+      "question": "Laufen meine Guthaben ab?",
+      "answer": "Unsere Guthaben-Ablaufrichtlinie ist sehr flexibel. Guthaben laufen erst 12 Kalendermonate nach dem Erwerb ab, was Ihnen viel Zeit gibt, sie zu nutzen."
+    },
+    "moreCredits": {
+      "question": "Was ist, wenn ich mehr Guthaben brauche?",
+      "answer": "Sie können kostenlose Guthaben verdienen, indem Sie täglich Inhalte veröffentlichen. Außerdem können Sie mehr Guthaben durch ein Mitgliedschaftsabonnement oder den direkten Kauf von Guthaben erhalten."
+    },
+    "checkCredits": {
+      "question": "Wie kann ich meinen Guthaben-Status überprüfen?",
+      "answer": "Klicken Sie einfach auf Ihr Guthaben-Guthaben, um detaillierte Änderungen und Nutzungsverlauf anzuzeigen."
+    },
+    "hiddenFees": {
+      "question": "Gibt es versteckte Gebühren?",
+      "answer": "Nein. Der Preis, den Sie sehen, ist der Preis, den Sie zahlen. Es gibt keine versteckten Gebühren über den ausgewählten Plan hinaus."
+    }
+  },
+  "pricingTable": {
+    "title": "Preistabelle",
+    "expand": "Preistabelle",
+    "collapse": "Einklappen",
+    "creditsPolicy": {
+      "title": "Guthaben-Nutzungsrichtlinie",
+      "desc1": "Guthaben werden hauptsächlich auf zwei Arten verbraucht:",
+      "llmTokens": "LLM Tokens",
+      "llmTokensDesc": "Für Aufgabenplanung, Entscheidungsfindung und Ausgabegenerierung",
+      "thirdPartyApis": "Drittanbieter-APIs",
+      "thirdPartyApisDesc": "Für den Zugriff auf Bildmodelle, Videomodelle, Videobearbeitung/-verarbeitung und andere externe Dienste",
+      "costNote": "Der tatsächliche Guthabenverbrauch einer Aufgabe hängt von ihrer Komplexität, Dauer und Anzahl externer Aufrufe ab.",
+      "storageNote": "Nach Abschluss einer Aufgabe verbraucht das Speichern, Hosten, Anzeigen oder Bereitstellen ihrer Ausgabe keine zusätzlichen Guthaben.",
+      "refundNote": "Wenn eine Aufgabe aufgrund technischer Probleme von AiToEarn fehlschlägt, erstatten wir die verbrauchten Guthaben vollständig.",
+      "exchangeRate": "100 Guthaben = 1 USD"
+    },
+    "llm": {
+      "title": "Große Sprachmodelle",
+      "unit": "pro Million Token",
+      "input": "Eingabe",
+      "output": "Ausgabe",
+      "inputModality": "Eingabemodalität",
+      "outputModality": "Ausgabemodalität",
+      "notes": "Hinweise"
+    },
+    "videoGen": {
+      "title": "Videogenerierungsmodelle",
+      "price": "Preis",
+      "latency": "Latenz",
+      "latencyValues": {
+        "minutes": "Minuten",
+        "seconds": "Sekunden",
+        "hours": "Stunden"
+      }
+    },
+    "imageGen": {
+      "title": "Bildgenerierungsmodelle"
+    },
+    "headers": {
+      "model": "Modell",
+      "price": "Preis",
+      "tool": "Werkzeug"
+    },
+    "videoTools": {
+      "title": "Videoverarbeitungswerkzeuge",
+      "perMin": "/Min",
+      "billingMethod": "Abrechnungsmethode",
+      "tools": {
+        "videoUnderstanding": "Videoverständnis",
+        "videoEditing": "Videobearbeitung",
+        "videoStyleTransfer": "Video-Stiltransfer",
+        "videoTranslation": "Videoübersetzung",
+        "highlightClipping": "Highlight-Clipping",
+        "subtitleRemoval": "Untertitelentfernung",
+        "scriptRecovery": "Skriptwiederherstellung",
+        "videoNarration": "Video-Erzählung"
+      },
+      "billing": {
+        "perInputMin": "Pro Eingabevideominute",
+        "perOutputMin": "Pro Ausgabevideominute",
+        "perGenMin": "Pro generierte Videominute",
+        "720P output": "720P Ausgabe"
+      }
+    }
+  }
+}

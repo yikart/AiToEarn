@@ -1,0 +1,67 @@
+{
+  "name": "@yikart/source",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "prepare": "command -v git >/dev/null 2>&1 && npx simple-git-hooks || echo 'Git not available, skipping git hooks setup'",
+    "lint": "nx run-many --target=lint --nxBail --outputStyle=static --parallel=\"75%\"",
+    "ai:serve": "nx serve aitoearn-ai",
+    "ai:dev": "npx nx serve aitoearn-ai --c=local",
+    "task:dev": "npx nx serve aitoearn-task --c=local",
+    "payment:serve": "nx serve aitoearn-payment",
+    "server:serve": "nx serve aitoearn-server",
+    "admin:serve": "nx serve aitoearn-admin-server"
+  },
+  "dependencies": {
+    "apify-client": "^2.22.2",
+    "commander": "^14.0.0",
+    "reflect-metadata": "^0.2.2",
+    "tslib": "^2.3.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^7.2.0",
+    "@eslint/js": "^9.39.2",
+    "@nestjs/schematics": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
+    "@nx/eslint": "22.4.4",
+    "@nx/eslint-plugin": "22.4.4",
+    "@nx/js": "22.4.4",
+    "@nx/nest": "22.4.4",
+    "@nx/node": "22.4.4",
+    "@nx/vite": "^22.4.4",
+    "@nx/vitest": "^22.4.4",
+    "@nx/workspace": "22.4.4",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.12.0",
+    "@vitest/coverage-v8": "^4.0.0",
+    "eslint": "^9.39.2",
+    "eslint-plugin-format": "^1.3.1",
+    "eslint-plugin-import": "^2.32.0",
+    "git-commit-msg-linter": "^5.0.8",
+    "jsonc-eslint-parser": "^2.4.2",
+    "lint-staged": "^16.1.5",
+    "nx": "22.4.4",
+    "simple-git-hooks": "^2.13.1",
+    "typescript": "~5.9.3",
+    "vite": "^7.0.0",
+    "vitest": "^4.0.8",
+    "zx": "^8.8.1"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged",
+    "preserveUnused": true
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": "nx affected -t lint --base=HEAD --nxBail --outputStyle=static"
+  },
+  "pnpm": {
+    "overrides": {
+      "fast-xml-parser": "5.3.4"
+    }
+  },
+  "nx": {
+    "includedScripts": []
+  }
+}

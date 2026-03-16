@@ -1,0 +1,279 @@
+{
+  "profile": "Profil",
+  "logout": "Abmelden",
+  "unknownUser": "Unbekannter Benutzer",
+  "docs": "Dokumentation",
+  "login": "Anmelden",
+  "support": "Support",
+  "notifications": "Benachrichtigungen",
+  "settings": "Einstellungen",
+  "vip": "Plus",
+  "vip.tier": {
+    "free": "Kostenlos",
+    "trialing": "Testversion",
+    "go": "Go",
+    "plus": "Plus",
+    "ultra": "Ultra"
+  },
+  "subscribe": "Upgraden",
+  "balance": "Guthaben",
+  "recharge": "Aufladen",
+  "adBalance": "Kontostand",
+  "plugin": "Erweiterung",
+  "affiliates": "Partner",
+  "goToWebsite": "Zur Website",
+  "pluginStatus": {
+    "notInstalled": "Installieren",
+    "noPermission": "Nicht autorisiert",
+    "ready": "Bereit",
+    "checking": "Wird geprüft"
+  },
+  "contactUs": "Kontaktieren Sie uns",
+  "documents": "Dokumente",
+  "helpDocs": "Hilfedokumentation",
+  "pluginGuide": "Plugin-Anleitung",
+  "privacyPolicy": "Datenschutzrichtlinie",
+  "termsOfService": "Nutzungsbedingungen",
+  "downloadAppButton": "App herunterladen",
+  "noNotifications": "Keine Benachrichtigungen",
+  "markAllAsRead": "Alle als gelesen markieren",
+  "markAsRead": "Als gelesen markieren",
+  "unreadCount": "Ungelesene Nachrichten",
+  "viewAll": "Alle anzeigen",
+  "cancel": "Abbrechen",
+  "confirm": "Bestätigen",
+  "expand": "Erweitern",
+  "collapse": "Reduzieren",
+  "yes": "Ja",
+  "no": "Nein",
+  "calendar": {
+    "weekDaysShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "monthSuffix": ""
+  },
+  "actions": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "ok": "OK",
+    "processing": "Wird verarbeitet...",
+    "selectAll": "Alle auswählen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "loading": "Laden...",
+    "noData": "Keine Daten",
+    "noImage": "Kein Bild",
+    "noDescription": "Keine Beschreibung",
+    "noContent": "Kein Inhalt"
+  },
+  "select": {
+    "placeholder": "Auswählen...",
+    "searchPlaceholder": "Suchen...",
+    "noResults": "Keine Ergebnisse gefunden"
+  },
+  "pagination": {
+    "perPage": "Pro Seite",
+    "items": "Einträge",
+    "jumpTo": "Gehe zu",
+    "page": "Seite"
+  },
+  "notificationTypes": {
+    "system": "Systembenachrichtigung",
+    "user": "Benutzerbenachrichtigung",
+    "material": "Materialbenachrichtigung",
+    "other": "Andere Benachrichtigung"
+  },
+  "header": {
+    "messages": "Nachrichten",
+    "income": "Einnahmenübersicht",
+    "wallet": "Meine Wallet",
+    "materialLibrary": "Bibliothek",
+    "draftBox": "Inhaltsverwaltung",
+    "draftBoxSeoTitle": "Content-Management - KI-Batch-Erstellung & Entwurfseditor",
+    "draftBoxSeoDescription": "Alle Ihre Content-Entwürfe an einem Ort verwalten. Mit KI Social-Media-Posts generieren, Entwürfe vor der Veröffentlichung bearbeiten.",
+    "draftBoxSeoKeywords": "Content-Management, Entwurfseditor, KI-Content-Generierung, Batch-Erstellung, Social-Media-Entwürfe, AiToEarn"
+  },
+  "tasks": "Marktplatz",
+  "signIn": {
+    "title": "Tägliches Anmelden für Punkte",
+    "myPoints": "Meine Punkte",
+    "signIn": "Anmelden",
+    "today": "Heute",
+    "rules": "Anmelderegeln",
+    "rules1": "Aufeinanderfolgende Anmeldungen 1-7 Tage, 1 Punkt pro Tag",
+    "rules2": "Aufeinanderfolgende Anmeldungen 8-21 Tage, 2 Punkte pro Tag",
+    "rules3": "Aufeinanderfolgende Anmeldungen ab 22 Tagen, 3 Punkte pro Tag",
+    "signedIn": "Angemeldet",
+    "notSignedIn": "Nicht angemeldet",
+    "signInSuccess": "Anmeldung erfolgreich",
+    "signInFailed": "Anmeldung fehlgeschlagen",
+    "alreadySignedIn": "Heute bereits angemeldet",
+    "consecutiveDays": "Aufeinanderfolgende Tage",
+    "totalPoints": "Gesamtpunkte"
+  },
+  "downloadApp": {
+    "title": "{{appName}} herunterladen",
+    "operationInApp": "Bitte führen Sie dies in {{appName}} aus, um hinzuzufügen",
+    "description": "Für eine bessere Benutzererfahrung und vollständige Funktionalität muss dieser Vorgang in {{appName}} abgeschlossen werden, um Konten hinzuzufügen. Bitte laden Sie {{appName}} herunter und installieren Sie es, um fortzufahren.",
+    "operationDescription": "Bitte führen Sie den {{platform}}-Kanalvorgang in der Aitoearn-App aus<br/>Für eine bessere Benutzererfahrung und Vollständigkeit laden Sie bitte die Aitoearn-App herunter und installieren Sie sie, um fortzufahren.",
+    "scanQrCode": "QR-Code scannen zum Herunterladen",
+    "downloadLink": "Download-Link:",
+    "copy": "Kopieren",
+    "copySuccess": "Kopieren erfolgreich",
+    "copyFailed": "Kopieren fehlgeschlagen, bitte manuell kopieren",
+    "copied": "Kopiert",
+    "close": "Schließen",
+    "downloadNow": "Jetzt herunterladen",
+    "tip": "💡 Tipp: Nach der Installation melden Sie sich bitte in der App bei Ihrem Konto an und versuchen Sie den Vorgang erneut"
+  },
+  "networkBusy": "Netzwerk ausgelastet, bitte später erneut versuchen!",
+  "networkError": "Netzwerkfehler, bitte später erneut versuchen!",
+  "contact": "Brauchen Sie Hilfe? Kontaktieren Sie den Support:",
+  "uptime": {
+    "seoTitle": "Servicestatus - Echtzeit-Systemüberwachung",
+    "pageKeywords": "Servicestatus, Systemüberwachung, Verfügbarkeits-Tracker, Server-Status, API-Status, AiToEarn-Status",
+    "pageTitle": "Dienststatus",
+    "pageDescription": "Überwachen Sie den Echtzeitstatus und die Verfügbarkeit der AiToEarn-Dienste. Prüfen Sie den Betriebsstatus von Agent, Server, KI, Datenbank und Netzwerkmodulen.",
+    "loading": "Laden...",
+    "noData": "Keine Daten",
+    "uptimePercentage": "Verfügbarkeit:",
+    "normal": "Normal",
+    "timeout": "Zeitüberschreitung",
+    "unavailable": "Nicht verfügbar",
+    "filter": {
+      "title": "Filter",
+      "module": "Modul",
+      "type": "Typ",
+      "timeRange": "Zeitraum",
+      "all": "Alle",
+      "last7Days": "Letzte 7 Tage",
+      "last30Days": "Letzte 30 Tage",
+      "last90Days": "Letzte 90 Tage",
+      "reset": "Zurücksetzen",
+      "apply": "Anwenden"
+    },
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "module": {
+      "Agent": "Agent",
+      "Server": "Server",
+      "Ai": "KI",
+      "Database": "Datenbank",
+      "Network": "Netzwerk",
+      "Other": "Sonstiges"
+    },
+    "type": {
+      "AgentStatus": "Agent-Status",
+      "AgentMcpStatus": "Agent-MCP-Status",
+      "NewApiStatus": "NewApi-Status"
+    }
+  },
+  "websit": {
+    "termsOfService": {
+      "title": "Nutzungsbedingungen",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "content": {
+        "introduction": "Willkommen bei unserem Service. Bitte lesen Sie die folgenden Geschäftsbedingungen sorgfältig durch, bevor Sie diesen Service nutzen.",
+        "acceptance": "1. Annahme der Bedingungen",
+        "acceptanceContent": "Durch den Zugang und die Nutzung dieses Dienstes erklären Sie sich mit dieser Nutzervereinbarung einverstanden. Wenn Sie diesen Bedingungen nicht zustimmen, nutzen Sie diesen Dienst bitte nicht.",
+        "serviceDescription": "2. Dienstbeschreibung",
+        "serviceDescriptionContent": "Dieser Dienst ist eine KI-Inhaltserstellungsplattform, die Benutzern hilft, Multimedia-Inhalte zu erstellen und zu verwalten.",
+        "userResponsibilities": "3. Benutzerpflichten",
+        "userResponsibilitiesContent": "Benutzer sollten sicherstellen, dass ihre Nutzung dieses Dienstes den lokalen Gesetzen und Vorschriften entspricht und nicht für illegale Zwecke verwendet wird.",
+        "privacy": "4. Datenschutz",
+        "privacyContent": "Wir schätzen Ihre Privatsphäre. Für detaillierte Informationen lesen Sie bitte unsere Datenschutzrichtlinie.",
+        "termination": "5. Dienstbeendigung",
+        "terminationContent": "Wir behalten uns das Recht vor, den Dienst jederzeit zu beenden oder auszusetzen.",
+        "contact": "6. Kontaktieren Sie uns",
+        "contactContent": "Bei Fragen kontaktieren Sie uns bitte per E-Mail: support@example.com"
+      }
+    },
+    "privacyPolicy": {
+      "title": "Datenschutzrichtlinie",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "content": {
+        "introduction": "Diese Datenschutzrichtlinie erklärt, wie wir Ihre persönlichen Daten sammeln, verwenden und schützen.",
+        "informationCollection": "1. Datenerhebung",
+        "informationCollectionContent": "Wir erheben Informationen, die Sie freiwillig bereitstellen, und Informationen, die automatisch erfasst werden, wenn Sie unsere Dienste nutzen.",
+        "informationUse": "2. Datennutzung",
+        "informationUseContent": "Wir verwenden die gesammelten Informationen, um unsere Dienste bereitzustellen, zu pflegen und zu verbessern.",
+        "informationSharing": "3. Datenweitergabe",
+        "informationSharingContent": "Wir verkaufen, handeln oder übertragen Ihre persönlichen Daten nicht an Dritte.",
+        "dataSecurity": "4. Datensicherheit",
+        "dataSecurityContent": "Wir implementieren angemessene Sicherheitsmaßnahmen zum Schutz Ihrer persönlichen Daten.",
+        "userRights": "5. Benutzerrechte",
+        "userRightsContent": "Sie haben das Recht, auf Ihre persönlichen Daten zuzugreifen, sie zu korrigieren oder zu löschen.",
+        "contact": "6. Kontaktieren Sie uns",
+        "contactContent": "Bei datenschutzbezogenen Fragen kontaktieren Sie uns bitte: privacy@example.com"
+      }
+    },
+    "dataDeletion": {
+      "title": "Datenlöschung anfordern",
+      "subtitle": "Wenn Sie Ihre persönlichen Daten löschen möchten, folgen Sie bitte diesen Schritten",
+      "lastUpdated": "Zuletzt aktualisiert",
+      "prelaunchNote": "Für Pre-Launch-Benutzer:",
+      "prelaunchContent": "Wir befinden uns derzeit in der Pre-Launch-Phase. Für die Datenlöschung wenden Sie sich bitte direkt an unser Support-Team.",
+      "standardProcedure": "Standard-Löschvorgang:",
+      "steps": [
+        "Melden Sie sich bei Ihrem Konto an und gehen Sie zur Einstellungsseite",
+        "Klicken Sie auf die Option 'Datenverwaltung'",
+        "Wählen Sie 'Meine Daten löschen'",
+        "Bestätigen Sie den Löschvorgang und warten Sie auf die Verarbeitung"
+      ],
+      "contactInfo": "Kontaktinformationen:",
+      "contactEmail": "Für Unterstützung senden Sie bitte eine E-Mail an: datadeletion@example.com",
+      "processingTime": "Bearbeitungszeit:",
+      "processingTimeContent": "Datenlöschanfragen werden in der Regel innerhalb von 7-14 Werktagen bearbeitet.",
+      "importantNote": "Wichtiger Hinweis:",
+      "importantNoteContent": "Daten können nach der Löschung nicht wiederhergestellt werden. Bitte gehen Sie vorsichtig vor. Einige gesetzlich vorgeschriebene Daten können möglicherweise nicht gelöscht werden."
+    }
+  },
+  "lowBalanceAlert": {
+    "title": "Warnung: Niedriges Guthaben",
+    "content": "Ihr Guthaben ist niedrig. Bitte laden Sie auf, um unsere Dienste weiter nutzen zu können.",
+    "neverRemind": "Nicht mehr erinnern"
+  },
+  "announcementBanner": {
+    "seedancePromo": "seedance-2.0 ab nur $0,03/Sek.",
+    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+  },
+  "chinaDomainPrompt": {
+    "title": "Zur China-Region wechseln",
+    "content": "Ihr Standort wurde in China erkannt. Für ein besseres Erlebnis zur China-Domain wechseln?",
+    "ok": "Wechseln",
+    "cancel": "Bleiben"
+  },
+  "abroadDomainPrompt": {
+    "title": "Zur internationalen Version wechseln",
+    "content": "Wir haben festgestellt, dass Sie sich nicht in China befinden. Zur internationalen Domain wechseln für ein besseres Erlebnis?",
+    "ok": "Wechseln",
+    "cancel": "Bleiben"
+  },
+  "brushEditor": {
+    "title": "Pinsel-Editor",
+    "brush": "Pinsel",
+    "rectangle": "Rechteck",
+    "ellipse": "Ellipse",
+    "color": "Farbe",
+    "size": "Größe",
+    "undo": "Rückgängig",
+    "clearAll": "Löschen",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "saving": "Speichern...",
+    "saveSuccess": "Erfolgreich gespeichert",
+    "saveFailed": "Speichern fehlgeschlagen",
+    "crop": "Zuschneiden",
+    "cropFree": "Frei",
+    "cropConfirm": "Zuschnitt anwenden",
+    "cropCancel": "Zuschnitt abbrechen",
+    "cropRatio": "Verhältnis"
+  },
+  "switchToInternational": "Zu \"International\"",
+  "switchToChina": "Zu \"China\"",
+  "platformRegionPrompt": {
+    "title": "Plattform-Regionsbeschränkung",
+    "chinaContent": "{{platform}} ist nur auf der China-Seite verfügbar. Zur China-Seite weiterleiten?",
+    "abroadContent": "{{platform}} ist nur auf der internationalen Seite verfügbar. Zur internationalen Seite weiterleiten?",
+    "ok": "Weiter",
+    "cancel": "Abbrechen"
+  }
+}

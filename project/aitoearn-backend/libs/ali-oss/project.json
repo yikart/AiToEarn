@@ -1,0 +1,48 @@
+{
+  "name": "ali-oss",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/ali-oss/src",
+  "projectType": "library",
+  "release": {
+    "version": {
+      "manifestRootsToUpdate": [
+        "dist/{projectRoot}"
+      ],
+      "currentVersionResolver": "git-tag",
+      "fallbackCurrentVersionResolver": "disk"
+    }
+  },
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "outputPath": "dist/libs/ali-oss",
+        "tsConfig": "libs/ali-oss/tsconfig.lib.json",
+        "packageJson": "libs/ali-oss/package.json",
+        "main": "libs/ali-oss/src/index.ts",
+        "assets": [
+          "libs/ali-oss/*.md"
+        ]
+      }
+    },
+    "nx-release-publish": {
+      "dependsOn": ["build"],
+      "options": {
+        "packageRoot": "dist/{projectRoot}"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": [
+        "{options.outputFile}"
+      ],
+      "options": {
+        "fix": true
+      }
+    }
+  }
+}

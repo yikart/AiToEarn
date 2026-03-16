@@ -1,0 +1,55 @@
+/* AddMediaButton - hover 菜单浮层 */
+
+.wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+// 用于需要 absolute 定位的场景（如折叠态按钮）
+.wrapperAbsolute {
+  position: absolute;
+  display: inline-flex;
+}
+
+.hoverMenu {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  left: 0;
+  z-index: 30;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  min-width: 120px;
+}
+
+.hoverMenuPortal {
+  z-index: 50;
+  background: var(--popover);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 4px;
+  min-width: 120px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--foreground);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease;
+  background: transparent;
+  border: none;
+
+  &:hover {
+    background: var(--muted);
+  }
+}

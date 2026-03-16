@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AiToEarn 代理任务执行结果</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+        width: 100%;
+        max-width: 600px;
+        text-align: center;
+        animation: fadeIn 0.5s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .logo {
+        margin-bottom: 30px;
+      }
+
+      .logo-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+
+      .logo-icon::before {
+        content: "🤖";
+        font-size: 30px;
+      }
+
+      h1 {
+        color: #333;
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .message {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #6c757d;
+        margin-bottom: 30px;
+      }
+
+      .info-container {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        margin-bottom: 25px;
+        text-align: left;
+        border-left: 4px solid #667eea;
+      }
+
+      .info-item {
+        margin-bottom: 20px;
+      }
+
+      .info-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .info-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 8px;
+        display: block;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      .info-value {
+        color: #333;
+        font-size: 16px;
+        word-break: break-word;
+      }
+
+      .task-id {
+        font-family: 'Courier New', monospace;
+        background: white;
+        padding: 10px;
+        border-radius: 6px;
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 14px;
+        letter-spacing: 0.5px;
+      }
+
+      .status[class*="running"] {
+        background: #e3f2fd;
+        color: #1976d2;
+      }
+
+      .status[class*="completed"] {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .status[class*="requires"] {
+        background: #fff3e0;
+        color: #e65100;
+      }
+
+      .status[class*="error"] {
+        background: #ffebee;
+        color: #c62828;
+      }
+
+      .description {
+        background: white;
+        padding: 15px;
+        border-radius: 6px;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .footer {
+        margin-top: 25px;
+        font-size: 14px;
+        color: #6c757d;
+      }
+
+      .divider {
+        height: 1px;
+        background: #e0e0e0;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo">
+        <div class="logo-icon"></div>
+      </div>
+
+      <h1>AiToEarn：代理任务执行结果</h1>
+
+      <div class="message">
+        您的代理任务已执行完毕，以下是详细信息：
+      </div>
+
+      <div class="info-container">
+        <div class="info-item">
+          <span class="info-label">任务 ID</span>
+          <div class="info-value">
+            <span class="task-id">{{ taskId }}</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="info-item">
+          <span class="info-label">状态</span>
+          <div class="info-value">
+            <span class="status status-{{ status }}">{{ status }}</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="info-item">
+          <span class="info-label">描述</span>
+          <div class="info-value">
+            <div class="description">{{ description }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        感谢您使用 AiToEarn。如有任何问题，请联系我们的客服团队。
+      </div>
+    </div>
+  </body>
+</html>

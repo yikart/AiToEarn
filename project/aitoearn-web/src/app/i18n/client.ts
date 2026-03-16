@@ -1,0 +1,113 @@
+'use client'
+
+import type { FlatNamespace } from 'i18next'
+import type { UseTranslationOptions, UseTranslationResponse } from 'react-i18next'
+import { getCookie, setCookie } from 'cookies-next'
+import i18next from 'i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
+import resourcesToBackend from 'i18next-resources-to-backend'
+import { useEffect, useState } from 'react'
+import { initReactI18next, useTranslation } from 'react-i18next'
+
+import { useGetClientLng } from '@/hooks/useSystem'
+import { cookieName, getOptions, languages } from './settings'
+
+const runsOnServerSide = typeof window === 'undefined'
+
+// 全局标志：是否禁用语言自动切换（用于图片生成等场景）
+let disableLanguageSwitch = false
+
+/**
+ * 临时禁用语言自动切换
+ * 用于在离屏渲染 React 组件时防止语言被意外切换
+ */
+export function setDisableLanguageSwitch(disabled: boolean): void {
+  disableLanguageSwitch = disabled
+}
+
+// on client side the normal singleton is ok
+i18next
+  .use(initReactI18next)
+  .use(LanguageDetector)
+  .use(
+    resourcesToBackend(
+      (language: string, namespace: string) => import(`./locales/${language}/${namespace}.json`),
+    ),
+  )
+  // .use(LocizeBackend) // locize backend could be used on client side, but prefer to keep it in sync with server side
+  .init({
+    ...getOptions(undefined), // 不传递 lng 参数，让 i18next 自动检测
+    lng: undefined, // let detect the language on client side
+    detection: {
+      order: ['path', 'htmlTag', 'cookie', 'navigator'],
+    },
+    preload: runsOnServerSide ? languages : [],
+  })
+
+export function useTransClient<Ns extends string | undefined = undefined>(
+  ns?: Ns | Ns[],
+  options?: UseTranslationOptions<FlatNamespace>,
+): UseTranslationResponse<string, FlatNamespace> {
+  const i18nextCookie = getCookie(cookieName)
+  const lng = useGetClientLng()
+  if (typeof lng !== 'string')
+    throw new Error('useT is only available inside /app/[lng]')
+
+  if (runsOnServerSide && i18next.resolvedLanguage !== lng) {
+    i18next.changeLanguage(lng)
+  }
+  else {
+    const [activeLng, setActiveLng] = useState(i18next.resolvedLanguage)
+
+    // 监听 i18next 语言变化
+    useEffect(() => {
+      if (activeLng === i18next.resolvedLanguage)
+        return
+      setActiveLng(i18next.resolvedLanguage)
+    }, [activeLng, i18next.resolvedLanguage])
+
+    // 强制同步 URL 参数中的语言到 i18next
+    useEffect(() => {
+      // 如果禁用了语言切换（如图片生成场景），跳过
+      if (disableLanguageSwitch)
+        return
+
+      if (!lng)
+        return
+
+      // 始终使用 URL 参数中的语言，忽略 i18next 的自动检测
+      if (i18next.resolvedLanguage !== lng) {
+        i18next.changeLanguage(lng).then(() => {
+          // 语言切换完成后，强制重新渲染
+          setActiveLng(lng)
+        })
+      }
+      else {
+        // 即使语言相同，也确保状态同步
+        setActiveLng(lng)
+      }
+    }, [lng])
+
+    // 同步 cookie
+    useEffect(() => {
+      if (i18nextCookie === lng)
+        return
+      setCookie(cookieName, lng, { path: '/' })
+    }, [lng, i18nextCookie])
+  }
+  // 强制类型断言以匹配 react-i18next 的签名
+  return useTranslation(ns as Ns | Ns[] | undefined, options) as UseTranslationResponse<
+    string,
+    FlatNamespace
+  >
+}
+
+export default i18next
+
+// 静态方法，注意这个方法的国际化不会自动更新
+export function directTrans<Ns extends FlatNamespace>(ns: Ns, key: string): string {
+  // @ts-ignore
+  const t = (key: string) => i18next.t(key, { ns })
+  // @ts-ignore
+  return t(key)
+}

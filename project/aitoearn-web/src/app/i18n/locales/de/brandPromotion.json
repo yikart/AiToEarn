@@ -1,0 +1,34 @@
+{
+  "seo": {
+    "title": "KI-Markenpromotion - QR-Code-Marketing & Analysen"
+  },
+  "secondaryTab": {
+    "contentManagement": "Inhalte",
+    "dataAnalysis": "Analytik"
+  },
+  "detail": {
+    "targetPlatforms": "Zielplattformen",
+    "selectPlatforms": "Plattformen",
+    "platformsSelected": "{{count}} Plattformen",
+    "parameterLimits": "Parameterbegrenzungen",
+    "titleLimit": "Titel-Limit",
+    "descriptionLimit": "Beschreibungs-Limit",
+    "topicLimit": "Themen-Limit",
+    "imageLimit": "Bilder-Limit",
+    "characters": "Zeichen",
+    "items": "Stück",
+    "noLimit": "Kein Limit",
+    "noPlatformSelected": "Keine Zielplattform ausgewählt, keine Parameterbegrenzungen.",
+    "selectAll": "Alle auswählen",
+    "deselectAll": "Alle abwählen",
+    "limitsMinTip": "Zeigt den Minimalwert aller ausgewählten Plattformen.",
+    "platformIncompatible": {
+      "contentTypeNotSupported": "Diese Plattform unterstützt den aktuellen Inhaltstyp nicht",
+      "durationOutOfRange": "Aktuelle Dauer {{current}}, Plattform erfordert {{min}}-{{max}}",
+      "aspectRatioNotSupported": "Aktuelles Verhältnis {{current}}, Plattform unterstützt {{supported}}",
+      "imageCountExceeded": "Bilderanzahl überschreitet das Plattformlimit (max. {{max}})"
+    },
+    "platformIncompatibleCount": "{{count}} inkompatibel",
+    "timeLimitedModelTip": "Zeitlich begrenzte Modelle sind nicht garantiert verfügbar. Falls nicht nutzbar, versuchen Sie es später erneut oder wechseln Sie zu einem anderen Modell."
+  }
+}

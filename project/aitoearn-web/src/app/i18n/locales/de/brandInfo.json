@@ -1,0 +1,112 @@
+{
+  "title": "Markeninfo",
+  "viewDetails": "Details anzeigen",
+  "noData": "Keine Markeninfo verfügbar",
+  "stores": "Filialen",
+  "reviews": "Bewertungen",
+  "rating": "Bewertung",
+  "status": {
+    "pending": "Verarbeitung",
+    "initializing": "Initialisierung",
+    "active": "Aktiv",
+    "failed": "Fehlgeschlagen",
+    "disabled": "Deaktiviert"
+  },
+  "section": {
+    "basicInfo": "Grundlegende Informationen",
+    "brandImages": "Markenbilder",
+    "gallery": "Geschäftsfotos",
+    "contact": "Kontakt",
+    "socialLinks": "Soziale Links"
+  },
+  "field": {
+    "name": "Markenname",
+    "nameEn": "Englischer Name",
+    "category": "Kategorie",
+    "description": "Beschreibung",
+    "logo": "Logo",
+    "coverImage": "Titelbild",
+    "website": "Webseite",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "address": "Adresse"
+  },
+  "placeholder": {
+    "name": "Markenname eingeben",
+    "nameEn": "Englischen Namen eingeben",
+    "category": "Kategorie wählen",
+    "description": "Markenbeschreibung eingeben",
+    "website": "https://example.com",
+    "phone": "+49 123 456 789",
+    "email": "kontakt@beispiel.de",
+    "address": "Adresse eingeben",
+    "socialLink": "Profil-URL eingeben"
+  },
+  "category": {
+    "restaurant": "Restaurant",
+    "cafe": "Café",
+    "bar": "Bar",
+    "bakery": "Bäckerei",
+    "fast_food": "Fast Food",
+    "fine_dining": "Gehobene Küche",
+    "other": "Sonstiges"
+  },
+  "image": {
+    "uploadLogo": "Logo hochladen",
+    "uploadCover": "Titelbild hochladen",
+    "addImage": "Bild hinzufügen",
+    "deleteImage": "Bild löschen",
+    "deleteConfirm": "Möchten Sie dieses Bild wirklich löschen?",
+    "sourceGoogleMaps": "Google Maps",
+    "sourceUserUpload": "Hochgeladen",
+    "uploadFailed": "Bild-Upload fehlgeschlagen",
+    "deleteFailed": "Bild konnte nicht gelöscht werden",
+    "dragOrClick": "Ziehen oder klicken zum Hochladen",
+    "maxSize": "Max. Größe: 5 MB",
+    "supportedFormats": "Unterstützt JPG, PNG, WebP",
+    "uploadDisabled": "Bitte zuerst die Markeninitialisierung abschließen",
+    "linkFirst": "Verknüpfen Sie ein Geschäft, um Bilder zu verwalten"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "X (Twitter)",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "action": {
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "saving": "Wird gespeichert...",
+    "cancel": "Abbrechen",
+    "updateSuccess": "Markeninfo erfolgreich aktualisiert",
+    "updateFailed": "Markeninfo konnte nicht aktualisiert werden"
+  },
+  "createdAt": "Erstellt",
+  "updatedAt": "Aktualisiert",
+  "viewOnGoogleMaps": "Auf Google Maps anzeigen",
+  "photoCount": "{{count}} Fotos",
+  "aiHint": "KI-generierte Videos werden basierend auf Ihren Markeninformationen erstellt",
+  "switchStore": {
+    "button": "Geschäft wechseln",
+    "searching": "Nach neuem Geschäft suchen...",
+    "switching": "Geschäft wird gewechselt...",
+    "success": "Geschäft erfolgreich gewechselt",
+    "failed": "Geschäft konnte nicht gewechselt werden",
+    "cancel": "Abbrechen",
+    "confirm": "Wechsel bestätigen"
+  },
+  "setup": {
+    "title": "Geschäft verknüpfen",
+    "description": "Suchen und verknüpfen Sie Ihr Geschäft, um Markeninfos zu verwalten",
+    "cardHint": "Klicken Sie, um Geschäft zu verknüpfen",
+    "searchHint": "Verknüpfen Sie ein Geschäft und KI generiert Inhalte basierend auf Ihren Markeninfos"
+  },
+  "validation": {
+    "nameRequired": "Markenname ist erforderlich",
+    "nameMaxLength": "Markenname darf 50 Zeichen nicht überschreiten",
+    "nameEnMaxLength": "Englischer Name darf 100 Zeichen nicht überschreiten",
+    "descriptionMaxLength": "Beschreibung darf 500 Zeichen nicht überschreiten"
+  }
+}

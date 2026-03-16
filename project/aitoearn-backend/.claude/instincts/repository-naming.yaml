@@ -1,0 +1,42 @@
+---
+id: aitoearn-repository-naming
+trigger: "when creating or naming repository methods"
+confidence: 0.95
+domain: typescript
+source: local-repo-analysis
+---
+
+# Repository Method Naming Convention
+
+## Action
+Use strict prefix conventions for repository methods.
+
+## Required Prefixes
+
+| Prefix | Returns | Format |
+|--------|---------|--------|
+| `get` | Single value | `getById`, `getByUserId`, `getByIdAndStatus` |
+| `list` | Array | `listByUserId`, `listByStatus`, `listWithPagination` |
+| `create` | Created entity | `create`, `createMany`, `createByUser` |
+| `update` | Updated entity | `updateById`, `updateByStatus`, `updateManyByIds` |
+| `delete` | Deleted entity | `deleteById`, `deleteByUserId`, `deleteManyByIds` |
+| `count` | Number | `countByUserId`, `countByStatus` |
+| `aggregate` | Aggregation | `aggregateByDate`, `sum`, `avg` |
+
+## Pagination Methods
+Must end with `WithPagination`: `listWithPagination`
+
+## Forbidden Prefixes
+| ❌ Wrong | ✅ Correct |
+|----------|-----------|
+| `findById` | `getById` |
+| `findList` | `listWithPagination` |
+| `delOne` | `deleteById` |
+| `addUseCount` | `updateUseCountById` |
+| `recharge` | `updateRechargeById` |
+| `markAsRead` | `updateAsReadByIds` |
+| `check` | `get` + business logic in Service |
+
+## Evidence
+- Enforced in CLAUDE.md development standards
+- Consistent pattern in libs/*-db/repositories/

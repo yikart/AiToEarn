@@ -1,0 +1,112 @@
+{
+  "title": "Info de marque",
+  "viewDetails": "Voir les détails",
+  "noData": "Aucune info de marque disponible",
+  "stores": "Magasins",
+  "reviews": "Avis",
+  "rating": "Note",
+  "status": {
+    "pending": "En cours de traitement",
+    "initializing": "Initialisation",
+    "active": "Actif",
+    "failed": "Échoué",
+    "disabled": "Désactivé"
+  },
+  "section": {
+    "basicInfo": "Informations de base",
+    "brandImages": "Images de marque",
+    "gallery": "Photos du magasin",
+    "contact": "Contact",
+    "socialLinks": "Liens sociaux"
+  },
+  "field": {
+    "name": "Nom de la marque",
+    "nameEn": "Nom en anglais",
+    "category": "Catégorie",
+    "description": "Description",
+    "logo": "Logo",
+    "coverImage": "Image de couverture",
+    "website": "Site web",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "address": "Adresse"
+  },
+  "placeholder": {
+    "name": "Entrez le nom de la marque",
+    "nameEn": "Entrez le nom en anglais",
+    "category": "Sélectionner une catégorie",
+    "description": "Entrez la description de la marque",
+    "website": "https://example.com",
+    "phone": "+33 1 23 45 67 89",
+    "email": "contact@exemple.fr",
+    "address": "Entrez l'adresse",
+    "socialLink": "Entrez l'URL du profil"
+  },
+  "category": {
+    "restaurant": "Restaurant",
+    "cafe": "Café",
+    "bar": "Bar",
+    "bakery": "Boulangerie",
+    "fast_food": "Fast-food",
+    "fine_dining": "Gastronomie",
+    "other": "Autre"
+  },
+  "image": {
+    "uploadLogo": "Télécharger le logo",
+    "uploadCover": "Télécharger la couverture",
+    "addImage": "Ajouter une image",
+    "deleteImage": "Supprimer l'image",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette image ?",
+    "sourceGoogleMaps": "Google Maps",
+    "sourceUserUpload": "Téléchargé",
+    "uploadFailed": "Échec du téléchargement",
+    "deleteFailed": "Échec de la suppression",
+    "dragOrClick": "Glissez ou cliquez pour télécharger",
+    "maxSize": "Taille max : 5 Mo",
+    "supportedFormats": "Prend en charge JPG, PNG, WebP",
+    "uploadDisabled": "Veuillez d'abord compléter l'initialisation de la marque",
+    "linkFirst": "Associez un magasin pour gérer les images"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "X (Twitter)",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "action": {
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "updateSuccess": "Info de marque mise à jour avec succès",
+    "updateFailed": "Échec de la mise à jour"
+  },
+  "createdAt": "Créé",
+  "updatedAt": "Mis à jour",
+  "viewOnGoogleMaps": "Voir sur Google Maps",
+  "photoCount": "{{count}} photos",
+  "aiHint": "Les vidéos générées par l'IA seront créées en fonction de vos informations de marque",
+  "switchStore": {
+    "button": "Changer de magasin",
+    "searching": "Rechercher un nouveau magasin...",
+    "switching": "Changement de magasin en cours...",
+    "success": "Magasin changé avec succès",
+    "failed": "Échec du changement de magasin",
+    "cancel": "Annuler",
+    "confirm": "Confirmer le changement"
+  },
+  "setup": {
+    "title": "Associer votre magasin",
+    "description": "Recherchez et associez votre magasin pour gérer les infos de marque",
+    "cardHint": "Cliquez pour associer et commencer la promotion",
+    "searchHint": "Associez un magasin et l'IA générera du contenu basé sur vos infos de marque"
+  },
+  "validation": {
+    "nameRequired": "Le nom de la marque est requis",
+    "nameMaxLength": "Le nom de la marque ne peut pas dépasser 50 caractères",
+    "nameEnMaxLength": "Le nom en anglais ne peut pas dépasser 100 caractères",
+    "descriptionMaxLength": "La description ne peut pas dépasser 500 caractères"
+  }
+}

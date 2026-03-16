@@ -1,0 +1,120 @@
+{
+  "title": "Gestion Pinterest",
+  "tabs": {
+    "boards": "Mes tableaux",
+    "pins": "Mes épingles"
+  },
+  "actions": {
+    "selectAccount": "Sélectionner un compte",
+    "refresh": "Rafraîchir",
+    "createBoard": "Créer un tableau",
+    "createPin": "Créer une épingle",
+    "search": "Rechercher...",
+    "view": "Voir",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "link": "Lien",
+    "change": "Modifier"
+  },
+  "stats": {
+    "followers": "Abonnés",
+    "boardCount": "Nombre de tableaux",
+    "pinCount": "Nombre d'épingles",
+    "monthlyViews": "Vues mensuelles"
+  },
+  "board": {
+    "createTitle": "Créer un nouveau tableau",
+    "name": "Nom du tableau",
+    "namePlaceholder": "Entrez le nom du tableau",
+    "description": "Description",
+    "descriptionPlaceholder": "Entrez la description du tableau",
+    "privacy": "Paramètres de confidentialité",
+    "public": "Public",
+    "private": "Privé",
+    "createButton": "Créer le tableau",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce tableau ?",
+    "detailTitle": "Détails du tableau",
+    "createTime": "Date de création",
+    "noDescription": "Aucune description"
+  },
+  "pin": {
+    "createTitle": "Créer une nouvelle épingle",
+    "selectBoard": "Épingler sur",
+    "selectBoardPlaceholder": "Sélectionnez le tableau pour publier",
+    "uploadImage": "Télécharger une image",
+    "uploadImagePlaceholder": "Cliquez pour télécharger l'image vers OSS",
+    "uploadHint": "Supporte les formats JPG, PNG, GIF, max 10 Mo",
+    "uploading": "Téléchargement vers OSS...",
+    "uploadSuccess": "✓ Téléchargement réussi",
+    "reupload": "Retélécharger",
+    "ossUrl": "URL OSS",
+    "title": "Titre",
+    "titlePlaceholder": "Entrez le titre de l'épingle",
+    "description": "Description",
+    "descriptionPlaceholder": "Entrez la description de l'épingle",
+    "link": "Lien",
+    "linkPlaceholder": "Entrez le lien cible (optionnel)",
+    "altText": "Texte alternatif",
+    "altTextPlaceholder": "Entrez le texte alternatif de l'image (optionnel)",
+    "dominantColor": "Couleur dominante",
+    "dominantColorTip": "Sélectionnez la couleur dominante de l'épingle",
+    "createButton": "Créer l'épingle",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette épingle ?",
+    "detailTitle": "Détails de l'épingle",
+    "pinId": "ID de l'épingle",
+    "boardId": "ID du tableau",
+    "creativeType": "Type créatif",
+    "boardOwner": "Propriétaire du tableau",
+    "isOwner": "Propriétaire",
+    "isRemovable": "Supprimable",
+    "isStandard": "Épingle standard",
+    "noDescription": "Aucune description",
+    "imageAlt": "Image de l'épingle"
+  },
+  "badges": {
+    "pins": "Épingles",
+    "followers": "Abonnés",
+    "owner": "Propriétaire",
+    "yes": "Oui",
+    "no": "Non",
+    "selected": "Sélectionné"
+  },
+  "empty": {
+    "noBoards": "Aucun tableau",
+    "noPins": "Aucune épingle"
+  },
+  "pagination": {
+    "total": "{range} sur {total} éléments"
+  },
+  "messages": {
+    "loadAccountsFailed": "Échec du chargement de la liste des comptes",
+    "loadBoardsFailed": "Échec du chargement de la liste des tableaux",
+    "loadPinsFailed": "Échec du chargement de la liste des épingles",
+    "boardCreateSuccess": "Tableau créé avec succès",
+    "boardCreateFailed": "Échec de la création du tableau",
+    "boardDeleteSuccess": "Tableau supprimé avec succès",
+    "boardDeleteFailed": "Échec de la suppression du tableau",
+    "pinCreateSuccess": "Épingle créée avec succès",
+    "pinCreateFailed": "Échec de la création de l'épingle",
+    "pinDeleteSuccess": "Épingle supprimée avec succès",
+    "pinDeleteFailed": "Échec de la suppression de l'épingle",
+    "getBoardDetailFailed": "Échec de la récupération des détails du tableau",
+    "getPinDetailFailed": "Échec de la récupération des détails de l'épingle",
+    "uploadImageFirst": "Veuillez d'abord télécharger une image",
+    "selectImageFile": "Veuillez sélectionner un fichier image",
+    "imageSizeLimit": "La taille de l'image ne peut pas dépasser 10 Mo",
+    "imageUploadSuccess": "Image téléchargée avec succès",
+    "imageUploadFailed": "Échec du téléchargement de l'image, veuillez réessayer",
+    "noAccountFound": "Aucun compte Pinterest trouvé"
+  },
+  "validation": {
+    "boardNameRequired": "Veuillez entrer le nom du tableau",
+    "selectBoardRequired": "Veuillez sélectionner un tableau",
+    "titleRequired": "Veuillez entrer le titre",
+    "descriptionRequired": "Veuillez entrer la description"
+  },
+  "confirm": {
+    "ok": "OK",
+    "cancel": "Annuler"
+  }
+}

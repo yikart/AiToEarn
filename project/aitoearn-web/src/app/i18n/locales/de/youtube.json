@@ -1,0 +1,17 @@
+{
+  "youtubeAuth": "YouTube-Autorisierung",
+  "authDescription": "Bitte geben Sie Ihre E-Mail-Adresse ein, um die YouTube-Autorisierung zu erhalten",
+  "email": "E-Mail",
+  "enterEmail": "Geben Sie Ihre E-Mail-Adresse ein",
+  "authorize": "Autorisieren",
+  "pleaseEnterEmail": "Bitte geben Sie Ihre E-Mail-Adresse ein",
+  "invalidEmail": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
+  "authFailed": "Autorisierung fehlgeschlagen, bitte später erneut versuchen",
+  "checkAuth": "Autorisierung prüfen",
+  "uploadVideo": "Video hochladen",
+  "needAuthFirst": "Zuerst Autorisierung erforderlich",
+  "uploadFailed": "Upload fehlgeschlagen",
+  "uploadSuccess": "Upload erfolgreich",
+  "checkFailed": "Prüfung fehlgeschlagen",
+  "alreadyAuthorized": "Bereits autorisiert"
+}

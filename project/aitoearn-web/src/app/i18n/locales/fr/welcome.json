@@ -1,0 +1,178 @@
+{
+  "common": {
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "seo": {
+    "title": "Création de contenu et gestion des réseaux sociaux propulsées par l'IA",
+    "description": "AiToEarn fournit le service de création vidéo IA le plus pratique, aide à générer du trafic vers les magasins physiques et offre l'hébergement de comptes de médias sociaux pour la publication de contenu et l'interaction avec les commentaires.",
+    "keywords": "création vidéo IA,gestion des médias sociaux,publication multi-plateforme,marketing IA,création de contenu,automatisation des médias sociaux,AiToEarn,promotion de marque"
+  },
+  "navbar": {
+    "pricing": "Tarifs",
+    "docs": "Documentation",
+    "brandPromotion": "Produit",
+    "aiSocial": "IA Social",
+    "login": "Connexion",
+    "getDemo": "Commencer gratuitement"
+  },
+  "hero": {
+    "badge": "Croissance de restaurant alimentée par l'IA",
+    "title": "Opérateur de croissance IA pour les entrepreneurs solo",
+    "subtitle": "Avec AiToEarn, vous pouvez facilement générer du trafic vers vos magasins physiques. AiToEarn vous fournit le service de création vidéo IA le plus pratique. Vous pouvez également héberger vos comptes de médias sociaux sur AiToEarn, et nous vous aiderons pour la publication de contenu et l'interaction avec les commentaires.",
+    "placeholder": "Trouvez votre restaurant",
+    "cta": "Obtenir mon Agent IA",
+    "selectFirst": "Veuillez d'abord sélectionner un restaurant",
+    "tags": {
+      "aiVideo": "Création vidéo IA",
+      "socialMedia": "Hébergement médias sociaux"
+    },
+    "error": {
+      "draftFailed": "Échec de la création du brouillon, veuillez réessayer"
+    }
+  },
+  "owners": {
+    "title": "Approuvé par des milliers de propriétaires",
+    "subtitle": "Avec Owner, vous obtenez plus de trafic, plus de ventes, plus de clients fidèles"
+  },
+  "features": {
+    "title": "Avec Owner, vous obtenez plus de trafic, plus de ventes, plus de clients fidèles",
+    "onlineOrdering": {
+      "title": "Commande en ligne",
+      "description": "Commande sans commission qui met plus d'argent dans votre poche"
+    },
+    "mobileApp": {
+      "title": "Application mobile",
+      "description": "Votre propre application de marque avec récompenses de fidélité intégrées"
+    },
+    "marketing": {
+      "title": "Marketing",
+      "description": "Campagnes automatisées qui génèrent des commandes répétées"
+    }
+  },
+  "reviews": {
+    "title": "Ce que disent nos utilisateurs",
+    "subtitle": "Rejoignez des milliers d'entrepreneurs individuels qui font confiance à AiToEarn",
+    "viewOnGithub": "Voir sur GitHub",
+    "review1": {
+      "content": "Enfin un outil open source qui gère la publication multi-plateforme ! Un clic vers Douyin, TikTok, YouTube - me fait gagner des heures chaque semaine."
+    },
+    "review2": {
+      "content": "En tant qu'entrepreneur individuel, AiToEarn change la donne. L'IA génère du contenu, publie automatiquement, gère même les commentaires. Mes réseaux sociaux fonctionnent tout seuls maintenant."
+    },
+    "review3": {
+      "content": "La fonction Agent IA est incroyable. Elle écrit, optimise et publie du contenu automatiquement. Les coûts de contenu ont chuté de 90%."
+    },
+    "review4": {
+      "content": "Le meilleur ? C'est open source. Je peux le personnaliser pour ma marque. Couvre toutes les grandes plateformes - nationales et internationales."
+    },
+    "review5": {
+      "content": "Le modèle pay-per-view a tellement de sens. Ne payer que pour les résultats réels, pas seulement pour la création de contenu. Transparent et équitable."
+    },
+    "review6": {
+      "content": "J'adore l'intégration des outils MCP. Montage vidéo, traduction, publication - tout alimenté par l'IA. Parfait pour les entreprises unipersonnelles."
+    },
+    "review7": {
+      "content": "La fonction scan-to-post a transformé mes clients en ambassadeurs de marque. Ils adorent partager et j'obtiens du marketing gratuit !"
+    },
+    "review8": {
+      "content": "Les réponses automatiques aux commentaires me font gagner tellement de temps. L'IA gère les questions de base pendant que je me concentre sur la croissance de mon entreprise."
+    },
+    "review9": {
+      "content": "Supporte plus de 14 plateformes ! De TikTok à WeChat, tout se synchronise automatiquement. Une vraie solution tout-en-un."
+    }
+  },
+  "tech": {
+    "title": "Vidéos de restaurant générées par l'IA",
+    "subtitle": "Scanner et publier, réduction des coûts de 90%+ par publication",
+    "description": "Du contenu de qualité généré automatiquement transforme chaque check-in en exposition sur les médias sociaux",
+    "playVideo": "Lire la vidéo",
+    "video1": { "title": "Vlog Check-in Blacklock" },
+    "video2": { "title": "Découverte de restaurant" },
+    "video3": { "title": "Restaurant britannique The Shed" }
+  },
+  "testimonials": {
+    "title": "Écoutez les propriétaires de restaurants comme vous",
+    "watchVideo": "Regarder la vidéo"
+  },
+  "beliefs": {
+    "title": "Pourquoi choisir AiToEarn",
+    "subtitle": "Conçu pour les entrepreneurs individuels et les petites entreprises",
+    "belief1": {
+      "title": "Conçu pour les entrepreneurs individuels",
+      "description": "Fonctionnalités rationalisées, opérations simples, orientées résultats. Pas besoin d'embaucher une grande équipe ou de gaspiller du budget en promotions inefficaces."
+    },
+    "belief2": {
+      "title": "Gestion IA complète du processus",
+      "description": "Planification, création, optimisation, publication et interaction avec les commentaires - tout automatisé. L'IA gère les tâches répétitives pendant que vous vous concentrez sur votre entreprise."
+    },
+    "belief4": {
+      "title": "Paiement à l'usage, tarifs transparents",
+      "description": "Pas d'abonnement, pas de frais cachés. Payez uniquement ce que vous utilisez. Crédits valables 12 mois, tarifs alignés sur les coûts fournisseurs — sans marge ajoutée."
+    }
+  },
+  "guides": {
+    "title": "Fonctionnalités principales",
+    "subtitle": "Trois capacités pour alimenter la croissance de votre marque",
+    "viewDocs": "Voir la documentation",
+    "learnMore": "En savoir plus",
+    "feature1": {
+      "title": "Marketing Check-in hors ligne",
+      "subtitle": "Scanner pour publier du contenu de haute qualité",
+      "description": "Les clients scannent, l'IA génère automatiquement du contenu professionnel. Réduction des coûts de 90%+ par publication, transformant les clients en ambassadeurs de marque."
+    },
+    "feature2": {
+      "title": "Commerce de contenu",
+      "subtitle": "Payez pour les résultats, facturez par vues",
+      "description": "Achetez ou commandez du contenu de créateur, payez par vues. Par exemple, 1$ pour 1 000 vues."
+    },
+    "feature3": {
+      "title": "Gestion IA des médias sociaux",
+      "subtitle": "Un contenu, publication automatique multi-plateforme",
+      "description": "Support de plus de 14 plateformes sociales, interaction automatique avec les commentaires, intégré avec les meilleurs modèles IA."
+    }
+  },
+  "experience": {
+    "title": "Avec Aitoearn, obtenez plus de trafic, plus de ventes, plus de clients",
+    "subtitle": "Du marketing hors ligne à la publication multi-plateforme, laissez l'IA faire le gros du travail",
+    "tab1": {
+      "title": "Marketing Check-in hors ligne",
+      "subtitle": "Scanner pour publier",
+      "description": "Les utilisateurs scannent votre code QR promo, et l'IA génère automatiquement du contenu professionnel (vidéo, image, texte) qui est optimisé et publié automatiquement."
+    },
+    "tab2": {
+      "title": "Publication multi-plateforme",
+      "subtitle": "Un contenu, toutes les plateformes",
+      "description": "Publiez une fois, publiez partout. Supporte toutes les plateformes suivantes :"
+    },
+    "tab3": {
+      "title": "Création vidéo IA",
+      "subtitle": "Workflow IA complet",
+      "description": "De la planification à la génération en passant par l'optimisation, laissez l'IA gérer l'ensemble du processus de création de contenu avec les meilleurs modèles comme Claude, Veo et Sora."
+    },
+    "tab4": {
+      "title": "Engagement social automatisé",
+      "subtitle": "Extension de navigateur",
+      "description": "Notre puissante extension de navigateur automatise les interactions sur les réseaux sociaux sur toutes les plateformes. Aimer, commenter, suivre et interagir avec votre audience automatiquement - économisant des heures de travail manuel chaque jour."
+    }
+  },
+  "footer": {
+    "ctaTitle": "Commencez maintenant — 100 crédits offerts à l'inscription !",
+    "startTrial": "Commencer",
+    "resources": "Ressources",
+    "account": "Compte",
+    "legal": "Mentions légales",
+    "docs": "Documentation",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "dataProtection": "Accord de protection des données",
+    "dataDeletion": "Suppression des données",
+    "pluginGuide": "Guide du plugin",
+    "extensionPrivacy": "Politique de confidentialité de l'extension",
+    "contact": "Nous contacter",
+    "supportedPlatforms": "Plateformes supportées",
+    "copyright": "© 2026 AiToEarn. Tous droits réservés."
+  }
+}

@@ -1,0 +1,387 @@
+name: Build and Push Docker Images
+
+on:
+  workflow_call:
+    inputs:
+      base_ref:
+        description: "Base branch for affected detection (for PR preview)"
+        required: false
+        type: string
+        default: ""
+      manual_apps:
+        description: "Comma-separated list of apps to build (for manual deployment)"
+        required: false
+        type: string
+        default: ""
+    outputs:
+      apps_json:
+        description: "JSON array of built apps with image and port info"
+        value: ${{ jobs.generate-matrix.outputs.apps_json }}
+      has_changes:
+        description: "Whether any apps were affected"
+        value: ${{ jobs.generate-matrix.outputs.has_changes }}
+  workflow_dispatch:
+    inputs:
+      build_aitoearn_admin_server:
+        description: "aitoearn-admin-server"
+        required: false
+        type: boolean
+        default: false
+      build_aitoearn_payment:
+        description: "aitoearn-payment"
+        required: false
+        type: boolean
+        default: false
+      build_aitoearn_server:
+        description: "aitoearn-server"
+        required: false
+        type: boolean
+        default: false
+      build_aitoearn_task:
+        description: "aitoearn-task"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  id-token: write
+  contents: read
+  actions: write # 启用 GitHub Actions 缓存
+
+env:
+  FLY_REGISTRY: registry.fly.io
+  DOCKER_REGISTRY: registry.aitoearn.cn
+  NX_NO_CLOUD: true
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+jobs:
+  # Job 1: 检测受影响的应用并生成 matrix
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      apps_json: ${{ steps.set-matrix.outputs.apps_json }}
+      has_changes: ${{ steps.set-matrix.outputs.has_changes }}
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      # 解析手动触发的应用选择
+      - name: Parse manual app selection
+        id: parse-manual
+        run: |
+          MANUAL_APPS=""
+
+          # 如果是从 workflow_call 传入的 manual_apps，直接使用
+          if [ -n "${{ inputs.manual_apps }}" ]; then
+            MANUAL_APPS="${{ inputs.manual_apps }}"
+            echo "✅ 使用 workflow_call 传入的应用: $MANUAL_APPS"
+          else
+            # 解析 workflow_dispatch 的 boolean 参数
+            if [ "${{ inputs.build_aitoearn_admin_server }}" = "true" ]; then
+              MANUAL_APPS="aitoearn-admin-server"
+            fi
+
+            if [ "${{ inputs.build_aitoearn_payment }}" = "true" ]; then
+              if [ -n "$MANUAL_APPS" ]; then
+                MANUAL_APPS="$MANUAL_APPS,aitoearn-payment"
+              else
+                MANUAL_APPS="aitoearn-payment"
+              fi
+            fi
+
+            if [ "${{ inputs.build_aitoearn_server }}" = "true" ]; then
+              if [ -n "$MANUAL_APPS" ]; then
+                MANUAL_APPS="$MANUAL_APPS,aitoearn-server"
+              else
+                MANUAL_APPS="aitoearn-server"
+              fi
+            fi
+
+            if [ "${{ inputs.build_aitoearn_task }}" = "true" ]; then
+              if [ -n "$MANUAL_APPS" ]; then
+                MANUAL_APPS="$MANUAL_APPS,aitoearn-task"
+              else
+                MANUAL_APPS="aitoearn-task"
+              fi
+            fi
+
+            if [ -n "$MANUAL_APPS" ]; then
+              echo "✅ 手动选择的应用: $MANUAL_APPS"
+            else
+              echo "⚠️  未选择任何应用"
+            fi
+          fi
+
+          echo "manual_apps=$MANUAL_APPS" >> $GITHUB_OUTPUT
+
+      - name: Install pnpm
+        if: steps.parse-manual.outputs.manual_apps == ''
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        if: steps.parse-manual.outputs.manual_apps == ''
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Cache node_modules
+        if: steps.parse-manual.outputs.manual_apps == ''
+        id: cache-node-modules-matrix
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            libs/*/node_modules
+          key: node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        if: steps.parse-manual.outputs.manual_apps == '' && steps.cache-node-modules-matrix.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      # 检测受影响的应用
+      - name: Detect affected apps
+        id: detect-changes
+        run: |
+          # 检查是否为手动部署模式
+          if [ -n "${{ steps.parse-manual.outputs.manual_apps }}" ]; then
+            echo "🎯 手动构建模式: 使用指定的应用列表"
+            AFFECTED_APPS="${{ steps.parse-manual.outputs.manual_apps }}"
+            echo "✅ 手动选择的应用: $AFFECTED_APPS"
+            echo "affected_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
+
+            echo ""
+            echo "详细信息:"
+            for APP in $(echo "$AFFECTED_APPS" | tr ',' ' '); do
+              echo "  - $APP"
+            done
+          else
+            # 根据触发方式设置 base 分支
+            if [ -n "${{ inputs.base_ref }}" ]; then
+              BASE_REF="origin/${{ inputs.base_ref }}"
+              echo "📋 PR 模式: 检测从 $BASE_REF 到 HEAD 的变更"
+            else
+              BASE_REF="HEAD~1"
+              echo "📋 Push 模式: 检测最近一次提交的变更"
+            fi
+
+            echo "Base: $BASE_REF"
+            echo "Head: HEAD"
+
+            AFFECTED_APPS=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --exclude="browser-automation-worker" --exclude="apprunner-monitor" --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
+
+            if [ -z "$AFFECTED_APPS" ]; then
+              echo "⚠️  未检测到受影响的应用"
+              echo "affected_apps=" >> $GITHUB_OUTPUT
+            else
+              echo "✅ 受影响的应用: $AFFECTED_APPS"
+              echo "affected_apps=$AFFECTED_APPS" >> $GITHUB_OUTPUT
+
+              echo ""
+              echo "详细信息:"
+              for APP in $(echo "$AFFECTED_APPS" | tr ',' ' '); do
+                echo "  - $APP"
+              done
+            fi
+          fi
+
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="$(date +%Y%m%d)-$(git rev-parse --short HEAD)"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "📦 版本: $VERSION"
+
+      # 生成 matrix 配置
+      - name: Generate matrix and apps JSON
+        id: set-matrix
+        run: |
+          AFFECTED_APPS="${{ steps.detect-changes.outputs.affected_apps }}"
+          VERSION="${{ steps.version.outputs.version }}"
+
+          if [ -z "$AFFECTED_APPS" ]; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "matrix={\"include\":[]}" >> $GITHUB_OUTPUT
+            echo "apps_json={}" >> $GITHUB_OUTPUT
+            echo "⚠️  无变更，跳过构建"
+            exit 0
+          fi
+
+          echo "has_changes=true" >> $GITHUB_OUTPUT
+
+          # 构建 matrix JSON 数组
+          MATRIX_JSON="{"
+          MATRIX_JSON="$MATRIX_JSON\"include\":["
+
+          # 构建 apps JSON 对象
+          APPS_JSON="{"
+
+          FIRST=true
+          IFS=',' read -ra APPS <<< "$AFFECTED_APPS"
+
+          for APP in "${APPS[@]}"; do
+            CONFIG_FILE="apps/$APP/config/config.js"
+
+            if [ ! -f "$CONFIG_FILE" ]; then
+              echo "❌ 错误: 应用 $APP 的配置文件不存在: $CONFIG_FILE"
+              exit 1
+            fi
+
+            # 提取端口号
+            PORT=$(grep -oP 'port:\s*\K\d+' "$CONFIG_FILE" 2>/dev/null | head -1 | tr -d '[:space:]')
+
+            if [ -z "$PORT" ]; then
+              echo "❌ 错误: 无法从 $CONFIG_FILE 读取端口号"
+              exit 1
+            fi
+
+            if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
+              echo "❌ 错误: 从 $CONFIG_FILE 读取的端口号无效: '$PORT'"
+              exit 1
+            fi
+
+            echo "  ✓ $APP 端口: $PORT"
+
+            IMAGE_TAG="$APP:$VERSION"
+
+            # 添加到 matrix
+            if [ "$FIRST" = true ]; then
+              FIRST=false
+            else
+              MATRIX_JSON="$MATRIX_JSON,"
+              APPS_JSON="$APPS_JSON,"
+            fi
+
+            MATRIX_JSON="$MATRIX_JSON{\"app\":\"$APP\",\"image\":\"$IMAGE_TAG\"}"
+
+            # 添加到 apps_json
+            APP_JSON="{\"image\":\"${{ env.FLY_REGISTRY }}/$IMAGE_TAG\",\"port\":\"$PORT\",\"config_path\":\"$CONFIG_FILE\"}"
+            APPS_JSON="$APPS_JSON\"$APP\":$APP_JSON"
+          done
+
+          MATRIX_JSON="$MATRIX_JSON]}"
+          APPS_JSON="$APPS_JSON}"
+
+          echo "matrix=$MATRIX_JSON" >> $GITHUB_OUTPUT
+          echo "apps_json=$APPS_JSON" >> $GITHUB_OUTPUT
+
+          echo ""
+          echo "🎯 Matrix 配置:"
+          echo "$MATRIX_JSON" | jq .
+          echo ""
+          echo "📋 Apps JSON:"
+          echo "$APPS_JSON" | jq .
+
+  # Job 2: 使用 matrix 并行构建和推送
+  build-and-push:
+    needs: generate-matrix
+    if: needs.generate-matrix.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Cache node_modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            libs/*/node_modules
+          key: node-modules-${{ hashFiles('pnpm-lock.yaml') }}
+
+      - name: Install dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Nx build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .nx/cache
+            .nx/workspace-data
+          key: nx-${{ matrix.app }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ matrix.app }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            nx-${{ matrix.app }}-
+
+      - name: Build application
+        run: |
+          echo "🔨 构建应用: ${{ matrix.app }}"
+          pnpm nx run ${{ matrix.app }}:build
+
+      - name: Prepare Docker context
+        run: pnpm nx run ${{ matrix.app }}:docker-context
+
+      - name: Set up flyctl
+        uses: superfly/flyctl-actions/setup-flyctl@v1.4
+
+      - name: Log in to the registry
+        run: flyctl auth docker
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      - name: Log in to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKER_REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./tmp/docker-context
+          file: ./tmp/docker-context/Dockerfile
+          platforms: linux/amd64
+          build-args: |
+            APP_NAME=${{ matrix.app }}
+          tags: |
+            ${{ env.FLY_REGISTRY }}/${{ matrix.image }}
+            ${{ env.DOCKER_REGISTRY }}/${{ matrix.image }}
+          push: false
+          load: true
+          cache-from: |
+            type=gha,scope=${{ matrix.app }}
+          cache-to: |
+            type=gha,mode=max,scope=${{ matrix.app }}
+            type=inline
+
+      - name: Push to Fly.io Registry
+        run: docker push ${{ env.FLY_REGISTRY }}/${{ matrix.image }}
+
+      - name: Push to Docker Registry
+        run: docker push ${{ env.DOCKER_REGISTRY }}/${{ matrix.image }}
+
+      - name: Build summary
+        run: |
+          echo "### ✅ 构建成功: ${{ matrix.app }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Fly.io 镜像**: \`${{ env.FLY_REGISTRY }}/${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Docker 镜像**: \`${{ env.DOCKER_REGISTRY }}/${{ matrix.image }}\`" >> $GITHUB_STEP_SUMMARY

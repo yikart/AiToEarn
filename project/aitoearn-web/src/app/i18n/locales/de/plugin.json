@@ -1,0 +1,101 @@
+{
+  "status": {
+    "unknown": "Unbekannt",
+    "checking": "Wird geprüft...",
+    "ready": "Plugin bereit",
+    "installedNoPermission": "Plugin installiert, Autorisierung ausstehend",
+    "notInstalled": "Plugin nicht installiert",
+    "connected": "Verbunden"
+  },
+  "stage": {
+    "download": "Wird heruntergeladen",
+    "upload": "Wird hochgeladen",
+    "publish": "Wird veröffentlicht",
+    "complete": "Abgeschlossen",
+    "error": "Fehler"
+  },
+  "error": {
+    "pluginNotInstalled": "Bitte installieren Sie zuerst das Aitoearn-Browser-Plugin",
+    "publishingInProgress": "Veröffentlichung läuft, bitte später erneut versuchen",
+    "loginFailed": "Anmeldung fehlgeschlagen",
+    "publishFailed": "Veröffentlichung fehlgeschlagen"
+  },
+  "publishList": {
+    "title": "Veröffentlichungsliste",
+    "empty": "Keine Veröffentlichungseinträge",
+    "platforms": "Plattformen",
+    "status": "Status",
+    "time": "Zeit",
+    "viewDetail": "Details anzeigen"
+  },
+  "publishDetail": {
+    "title": "Veröffentlichungsdetails",
+    "platform": "Plattform",
+    "progress": "Fortschritt",
+    "status": "Status",
+    "message": "Nachricht",
+    "result": "Ergebnis",
+    "workId": "Werk-ID",
+    "shareLink": "Link teilen",
+    "failReason": "Fehlergrund",
+    "close": "Schließen",
+    "unknownAccount": "Unbekanntes Konto",
+    "creatingRecord": "Veröffentlichungsdatensatz wird erstellt..."
+  },
+  "common": {
+    "confirm": "Bestätigen",
+    "cancel": "Abbrechen",
+    "loading": "Laden...",
+    "success": "Erfolgreich",
+    "failed": "Fehlgeschlagen",
+    "pending": "Ausstehend",
+    "publishing": "Wird veröffentlicht",
+    "completed": "Abgeschlossen",
+    "error": "Fehler",
+    "action": "Aktion",
+    "total": "Gesamt",
+    "items": "Einträge",
+    "viewLink": "Link anzeigen",
+    "startTime": "Startzeit",
+    "endTime": "Endzeit",
+    "createdAt": "Erstellt am",
+    "PENDING": "Ausstehend",
+    "PUBLISHING": "Wird veröffentlicht",
+    "COMPLETED": "Abgeschlossen",
+    "ERROR": "Fehler"
+  },
+  "header": {
+    "pluginActive": "Plugin aktiv",
+    "pluginInactive": "Plugin inaktiv",
+    "downloadPlugin": "Plugin herunterladen",
+    "downloadDescription": "Das AiToEarn-Browser-Plugin ist speziell für den intelligenten Betrieb von Xiaohongshu entwickelt. Bitte klicken Sie auf die Schaltfläche unten, um es herunterzuladen und zu installieren.",
+    "downloadButton": "Jetzt herunterladen",
+    "chromeWebStore": "Chrome Web Store",
+    "githubRelease": "GitHub Release",
+    "chinaDownload": "China-Download",
+    "activeDescription": "Ihr Browser-Plugin ist aktiviert. Sie können jetzt die Veröffentlichungsfunktion nutzen!",
+    "platformAccounts": "Plattform-Konten",
+    "notLoggedIn": "Nicht angemeldet",
+    "xhsNotLoggedInTip": "Xiaohongshu erfordert Anmeldung im Creator Center",
+    "loginNow": "Jetzt anmelden",
+    "viewPublishList": "Veröffentlichungsliste anzeigen",
+    "permissionRequired": "Berechtigung erforderlich",
+    "permissionDescription": "Plugin ist installiert, benötigt aber die erforderlichen Berechtigungen, um ordnungsgemäß zu funktionieren. Bitte erteilen Sie die erforderlichen Berechtigungen in Ihren Browser-Erweiterungseinstellungen.",
+    "checkPermission": "Berechtigung erneut prüfen",
+    "sync": "Synchronisieren",
+    "syncToAccount": "Mit Kontoverwaltung synchronisieren",
+    "syncSuccess": "Konto erfolgreich synchronisiert",
+    "syncFailed": "Kontosynchronisierung fehlgeschlagen",
+    "xhsHome": "Startseite",
+    "xhsCreator": "Creator",
+    "xhsLoginHomeTip": "Bei Xiaohongshu-Startseite anmelden",
+    "xhsLoginCreatorTip": "Bei Xiaohongshu Creator Center anmelden",
+    "viewGuide": "Probleme? Hilfe bei der Installation benötigt?"
+  },
+  "mobile": {
+    "title": "Nur für Desktop",
+    "description": "Die Browser-Erweiterung ist auf mobilen Geräten nicht verfügbar. Bitte verwenden Sie einen Desktop-Browser, um die Erweiterung zu installieren und zu nutzen.",
+    "goToPC": "Bitte am PC besuchen",
+    "introduction": "Browser-Erweiterung für die AiToEarn-Plattform. Arbeitet mit AiToEarn Web zusammen, um die Veröffentlichung von Xiaohongshu-Inhalten zu automatisieren — Videos, Bilderkarussells, Titel, Hashtags und mehr, alles mit einem Klick. Integrierter AI Agent, angetrieben von Claude Opus 4.6 — einem der fortschrittlichsten KI-Modelle der Welt — hilft Ihnen, Browseraufgaben durch natürliche Konversation zu automatisieren. Installieren Sie die Erweiterung, um alle AiToEarn-Plattformfunktionen freizuschalten, einschließlich Ein-Klick-Veröffentlichung, Echtzeit-Fortschrittsverfolgung und KI-gesteuerte Automatisierung."
+  }
+}

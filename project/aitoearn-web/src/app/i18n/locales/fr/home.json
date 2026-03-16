@@ -1,0 +1,418 @@
+{
+  "dropToUpload": "Déposez pour télécharger",
+  "announcement": {
+    "text": "AiToEarn utilise Agent pour répondre à tous vos besoins en contenu. Il appelle de nombreux outils pendant l'exécution, ce qui peut prendre du temps. Vous pouvez quitter à tout moment et vérifier la progression de la tâche plus tard."
+  },
+  "releaseBanner": {
+    "tag": "Version v0.8.0",
+    "text": "Construisez et étendez les workflows IA avec des plugins et un marché florissant."
+  },
+  "header": {
+    "logo": "Aitoearn",
+    "nav": {
+      "home": "Accueil",
+      "marketplace": "Marché",
+      "pricing": "Tarifs",
+      "status": "Statut",
+      "docs": "Documentation",
+      "blog": "Blog",
+      "download": "Téléchargements",
+      "brand": "Marque",
+      "resources": "Ressources"
+    },
+    "getStarted": "Commencer"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "étoiles sur",
+    "github": "GitHub",
+    "title": "Le meilleur agent IA\npour le marketing de contenu",
+    "subtitle": "À partir d'aujourd'hui, gérez facilement vos réseaux sociaux avec l'IA. AiToEarn fournit des capacités complètes allant de l'inspiration créative, à la création de contenu, à la distribution de contenu jusqu'à la gestion des interactions de contenu, rendant l'IA accessible à tous.",
+    "getStarted": "Commencer",
+    "useMobilePhone": "utiliser sur mobile"
+  },
+  "seo": {
+    "title": "Création de vidéos et contenus IA pour 15+ plateformes sociales",
+    "description": "AiToEarn est votre opérateur de croissance IA pour les réseaux sociaux. Générez des vidéos, images et textes avec l'IA, puis publiez en un clic sur plus de 15 plateformes dont TikTok, YouTube, Instagram, Facebook et X. Création de contenu IA, montage vidéo intelligent, transfert de style, traduction vidéo, découverte de tendances, surveillance de marque et tableau de bord d'engagement unifié.",
+    "keywords": "marketing de contenu IA, gestion réseaux sociaux IA, génération vidéo IA, publication multiplateforme, création de contenu IA, automatisation réseaux sociaux, marketing TikTok, marketing YouTube, Agent IA, distribution de contenu, rédaction IA, montage vidéo IA, surveillance de marque, AiToEarn"
+  },
+  "agentGenerator": {
+    "title": "Comment puis-je vous aider ?",
+    "subtitle": "Votre opérateur de croissance IA"
+  },
+  "aiGeneration": {
+    "inputPlaceholder": "Entrez votre idée de contenu, l'IA générera une œuvre complète pour vous...",
+    "generateButton": "Commencer à créer",
+    "generating": "Création en cours...",
+    "emptyPromptAlert": "Veuillez entrer une invite pour la génération de contenu",
+    "createTaskFailed": "Échec de la création de la tâche",
+    "uploadSuccess": "Image téléchargée avec succès",
+    "uploadFailed": "Échec du téléchargement de l'image, veuillez réessayer",
+    "taskCreatedSuccess": "Tâche créée avec succès",
+    "thinking": "L'IA réfléchit...",
+    "topicPrefix": "Sujet de création : ",
+    "generatedTitlePrefix": "Titre généré : ",
+    "descriptionPrefix": " ",
+    "failedReasonPrefix": "Raison de l'échec : ",
+    "taskTimeout": "Délai de la tâche dépassé, veuillez réessayer plus tard",
+    "unknownError": "Erreur inconnue",
+    "status": {
+      "thinking": "L'IA réfléchit...",
+      "waiting": "En attente...",
+      "generatingContent": "Génération du contenu",
+      "generatingImage": "Génération de l'image",
+      "generatingVideo": "Génération de la vidéo",
+      "generatingText": "Génération du texte",
+      "completed": "Terminé !",
+      "failed": "Échoué",
+      "cancelled": "Annulé"
+    },
+    "channelAuthRequired": "Veuillez d'abord ajouter et autoriser une chaîne",
+    "channelAuthExpired": "L'autorisation de la chaîne a expiré, veuillez réautoriser",
+    "channelNotSupported": "La publication directe n'est pas prise en charge pour cette plateforme",
+    "taskStopped": "Génération arrêtée",
+    "stopTaskFailed": "Échec de l'arrêt de la tâche",
+    "newConversation": "Nouvelle conversation démarrée",
+    "generatingWarning": "Génération en cours, veuillez d'abord arrêter la tâche actuelle",
+    "conversationId": "ID de conversation",
+    "startNewConversation": "Démarrer une nouvelle conversation",
+    "currentCost": "Coût actuel",
+    "aiGenerationProcess": "Processus de génération IA",
+    "waitingAiResponse": "En attente de la réponse de l'IA...",
+    "uploadImage": "Télécharger une image",
+    "removeImage": "Supprimer l'image",
+    "agentMode": "Mode Agent",
+    "imageGeneration": "Génération d'image",
+    "videoGeneration": "Génération de vidéo",
+    "draftBox": "Boîte de brouillons",
+    "batchPublish": "Publication par lot",
+    "stopGeneration": "Arrêter la génération",
+    "sendMessage": "Envoyer le message",
+    "inspirationPrompt": "Vous avez de l'inspiration ? Commencez à créer avec une phrase",
+    "onboardingTitle": "Vous ne savez pas comment commencer à créer ?",
+    "onboardingDescription": "Commencez à créer avec une phrase",
+    "gotIt": "Compris",
+    "saveDraftFailed": "Échec de l'enregistrement du brouillon",
+    "saveDraftSuccess": "Brouillon enregistré avec succès",
+    "noDraftGroupFound": "Aucun groupe de brouillons disponible trouvé, veuillez d'abord créer un groupe",
+    "noDraftGroup": "Aucun groupe de brouillons disponible trouvé",
+    "needAddChannel": "Besoin d'ajouter une chaîne",
+    "channelNotAdded": "Nous avons détecté que vous n'avez pas encore ajouté la chaîne {platform}. Voulez-vous l'ajouter ?",
+    "goAdd": "Ajouter",
+    "cancel": "Annuler",
+    "channelAuthExpiredTitle": "Autorisation de la chaîne expirée",
+    "channelAuthExpiredContent": "L'autorisation de votre chaîne a expiré. Voulez-vous réautoriser ?",
+    "reauthorize": "Réautoriser",
+    "needLoginChannel": "Besoin de se connecter à la chaîne",
+    "needLogin": "Besoin de se connecter",
+    "pleaseLoginChannel": "Veuillez d'abord vous connecter à ce compte de chaîne",
+    "goLogin": "Se connecter",
+    "needBindChannel": "Connecter une chaîne",
+    "needBindChannelTitle": "Connecter une chaîne",
+    "needBindChannelContent": "Compte {{platform}} non trouvé. Veuillez ajouter un compte {{platform}} pour publier.",
+    "goBind": "Ajouter une chaîne",
+    "platformRequiresPlugin": "Cette plateforme nécessite la publication via le plugin, veuillez d'abord autoriser le plugin",
+    "needAuthorizePlugin": "Besoin d'autoriser le plugin",
+    "pluginAuthorizeDescription": "Cette plateforme nécessite la publication via le plugin, veuillez cliquer ici pour autoriser le plugin",
+    "noAccountFound": "Aucun compte trouvé pour cette plateforme, veuillez d'abord ajouter un compte",
+    "publishTaskSubmitted": "Tâche de publication soumise au plugin",
+    "publishingViaPlugin": "Publication via le plugin...",
+    "pluginPublishFailed": "Échec de la publication via le plugin"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "Cette plateforme nécessite la publication via le plugin, veuillez d'abord autoriser le plugin",
+    "authorizePluginTitle": "Besoin d'autoriser le plugin",
+    "authorizePluginDescription": "Cette plateforme nécessite la publication via le plugin, veuillez cliquer ici pour autoriser le plugin",
+    "noAccountFound": "Aucun compte trouvé pour cette plateforme, veuillez d'abord ajouter un compte",
+    "publishTaskSubmitted": "Tâche de publication soumise au plugin",
+    "publishingViaPlugin": "Publication via le plugin...",
+    "publishFailed": "Échec de la publication via le plugin"
+  },
+  "status": {
+    "generatingInProcess": "Génération en cours, veuillez d'abord arrêter la tâche actuelle",
+    "stopGenerating": "Arrêter la génération",
+    "sendMessage": "Envoyer le message"
+  },
+  "messages": {
+    "generatingInProcessStopFirst": "Génération en cours, veuillez d'abord arrêter la tâche actuelle",
+    "newConversationStarted": "Nouvelle conversation démarrée",
+    "draftSavedSuccessfully": "Brouillon enregistré avec succès",
+    "saveDraftFailed": "Échec de l'enregistrement du brouillon",
+    "noDraftGroupFound": "Aucun groupe de brouillons disponible trouvé, veuillez d'abord créer un groupe",
+    "createDraftGroupFirst": "Aucun groupe de brouillons disponible trouvé"
+  },
+  "platformNames": {
+    "douyin": "Douyin",
+    "xhs": "Xiaohongshu",
+    "wxSph": "Chaînes WeChat",
+    "KWAI": "Kwai",
+    "youtube": "YouTube",
+    "wxGzh": "Compte officiel WeChat",
+    "bilibili": "Bilibili",
+    "twitter": "Twitter",
+    "tiktok": "TikTok",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest",
+    "linkedin": "LinkedIn"
+  },
+  "channel": {
+    "addChannelRequiredTitle": "Besoin d'ajouter une chaîne",
+    "addChannelRequiredContent": "Nous avons détecté que vous n'avez pas encore ajouté la chaîne {platform}. Voulez-vous l'ajouter ?",
+    "goToAdd": "Ajouter",
+    "authExpiredTitle": "Autorisation de la chaîne expirée",
+    "authExpiredContent": "L'autorisation de votre chaîne a expiré. Voulez-vous réautoriser ?",
+    "reauthorize": "Réautoriser",
+    "loginRequiredTitle": "Besoin de se connecter à la chaîne",
+    "loginRequiredContent": "Veuillez d'abord vous connecter à ce compte de chaîne",
+    "goToLogin": "Se connecter"
+  },
+  "guide": {
+    "aiInputTitle": "Vous ne savez pas comment commencer à créer ?",
+    "aiInputDescription": "Commencez à créer avec une phrase"
+  },
+  "download": {
+    "downloadNow": "Télécharger maintenant"
+  },
+  "wechat": {
+    "officialAccount": "Compte officiel WeChat",
+    "communityOfficialAccount": "Compte officiel de la communauté"
+  },
+  "brandBar": {
+    "title": "Plateformes de réseaux sociaux prises en charge"
+  },
+  "buildSection": {
+    "badge": "Fonctionnalité 1",
+    "title": "Publication de contenu",
+    "titleBlue": " — Un clic multiplateforme",
+    "features": {
+      "hotTopic": {
+        "title": "Distribuez partout",
+        "description": "Publiez sur la plus large gamme de plateformes mondiales (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X)."
+      },
+      "international": {
+        "title": "Planificateur calendrier",
+        "description": "Planifiez et coordonnez le contenu comme un calendrier sur toutes les plateformes. Tableau de bord unifié : Gérez toutes les interactions en un seul endroit."
+      }
+    },
+    "carouselHint": "Utilisez la molette pour changer d'images"
+  },
+  "hotspotSection": {
+    "badge": "Fonctionnalité 2",
+    "title": "Hotspot de contenu — Moteur d'inspiration virale",
+    "titleBlue": "Bibliothèque de cas et radar de tendances",
+    "features": {
+      "hotTopic": {
+        "title": "Bibliothèque de cas",
+        "description": "Explorez comment d'autres créent des publications avec plus de 10 000 likes."
+      },
+      "international": {
+        "title": "Radar de tendances",
+        "description": "Découvrez instantanément les dernières tendances virales, réduisez l'anxiété du créateur."
+      }
+    },
+    "carouselHint": "Utilisez la molette pour changer d'images"
+  },
+  "searchSection": {
+    "badge": "Fonctionnalité 3",
+    "title": "Recherche de contenu — Aperçus marque et marché",
+    "titleBlue": "Surveillance de marque et découverte de contenu",
+    "features": {
+      "hotTopic": {
+        "title": "Surveillance de marque",
+        "description": "Suivez les conversations sur votre marque en temps réel."
+      },
+      "international": {
+        "title": "Découverte de contenu",
+        "description": "Recherchez des publications, des sujets et des communautés pour un engagement ciblé."
+      }
+    },
+    "carouselHint": "Utilisez la molette pour changer d'images"
+  },
+  "commentsSection": {
+    "badge": "Fonctionnalité 4",
+    "title": "Recherche de commentaires — Extraction précise d'utilisateurs",
+    "titleBlue": "Recherche intelligente de commentaires et booster de conversion",
+    "features": {
+      "hotTopic": {
+        "title": "Recherche intelligente de commentaires",
+        "description": "Détectez les signaux de haute conversion comme \"lien svp\" ou \"comment acheter.\""
+      },
+      "international": {
+        "title": "Booster de conversion",
+        "description": "Répondez instantanément, augmentez l'engagement et les ventes."
+      }
+    },
+    "carouselHint": "Utilisez la molette pour changer d'images"
+  },
+  "connectSection": {
+    "badge": "Fonctionnalité 5",
+    "title": "Engagement de contenu — Moteur de croissance",
+    "titleBlue": "Tableau de bord unifié et engagement proactif",
+    "features": {
+      "creation": {
+        "title": "Tableau de bord unifié",
+        "description": "Gérez toutes les interactions en un seul endroit."
+      },
+      "distribution": {
+        "title": "Engagement proactif",
+        "description": "Rejoignez les conversations tendances, connectez-vous avec des clients potentiels. Transformez les opérations passives en croissance active du trafic."
+      }
+    },
+    "carouselHint": "Utilisez la molette pour changer d'images"
+  },
+  "upcomingSection": {
+    "badge": "Bientôt disponible",
+    "title": "Plateforme complète de croissance et monétisation de contenu alimentée par l'IA",
+    "titleBlue": "Fonctionnalités à venir, restez à l'écoute",
+    "features": {
+      "smartImport": {
+        "title": "Importation intelligente",
+        "description": "Importez du contenu historique pour une réédition et redistribution rapides. Exemple : Synchronisez vos publications Xiaohongshu sur YouTube en un clic."
+      },
+      "analytics": {
+        "title": "Analytique de contenu — Données complètes",
+        "description": "Comparaison multiplateforme : Une plateforme peut bloquer le trafic, mais pas les autres. Surveillance de bout en bout : Suivez les performances et construisez votre chemin vers 1M+ d'abonnés."
+      },
+      "aiCreation": {
+        "title": "Création de contenu IA — Assistant de bout en bout",
+        "description": "Rédaction IA : Générez automatiquement titres, légendes et descriptions. Commentaires IA : Engagez de manière proactive, attirez du trafic. Générateur d'images et de cartes : Accélérez les workflows de contenu. Modèles vidéo et image IA pris en charge."
+      },
+      "marketplace": {
+        "title": "Marché de contenu — Échangez et monétisez",
+        "description": "Créateurs : Vendez votre contenu directement, trouvez des acheteurs rapidement. Marques : Achetez du contenu de haute qualité prêt à l'emploi. Croissance alimentée par l'IA : Utilisons l'IA pour gagner. Gagnons de l'argent ensemble !"
+      }
+    }
+  },
+  "downloadSection": {
+    "title": "Commencez à créer n'importe où, n'importe quand",
+    "titleBlue": "Gestion facile sur mobile aussi",
+    "description": "Avec l'application mobile AI ToEarn, votre créativité n'est plus limitée au bureau. Nous fournissons également des applications mobiles iOS et Android pour que vous puissiez libérer votre créativité n'importe où, n'importe quand, avec juste un téléphone !",
+    "qrCodeText": "Scannez le QR code pour télécharger",
+    "appStore": {
+      "text": "Télécharger sur",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "TÉLÉCHARGER SUR",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "Service entreprise",
+    "title": "Solutions professionnelles IA pour les réseaux sociaux",
+    "titleBlue": "Propulser le succès marketing des entreprises",
+    "subtitle": "La transformation marketing IA des entreprises nécessite non seulement des outils, mais aussi une infrastructure solide. AI ToEarn fournit une plateforme fiable pour distribuer les capacités de création de contenu IA à plusieurs départements pour une efficacité marketing inégalée."
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "Utilisateurs"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "Plateformes sociales"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "Pays"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "Contenus publiés"
+      }
+    },
+    "testimonial": {
+      "quote": "Dans le paysage hautement concurrentiel du marketing de contenu d'aujourd'hui, les outils de validation et de création rapides ne sont pas seulement utiles, ils sont essentiels à la survie. Pour les entreprises de marketing comme la nôtre, AI ToEarn apporte une valeur indispensable à cette frontière de l'IA.",
+      "author": "Jean Dupont",
+      "title": "Directeur des opérations de contenu chez une agence MCN leader"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "Temps estimé de création de contenu économisé annuellement",
+        "number": "50 000 heures"
+      },
+      "aiAssistant": {
+        "title": "Assistant marketing IA : Servant plus de 500 clients entreprise avec la distribution de contenu multiplateforme"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "Écosystème communautaire",
+    "title": "Rejoignez notre",
+    "titleBlue": "communauté active de créateurs",
+    "subtitle": "AI ToEarn est propulsé par une communauté mondiale de créateurs de contenu IA. Rejoignez-nous pour explorer les frontières infinies du marketing de contenu IA.",
+    "buttons": {
+      "wechat": "Groupe WeChat",
+      "community": "Communauté de créateurs"
+    },
+    "wechatPopup": "Scannez le QR code pour suivre le compte officiel WeChat",
+    "communityPopup": "Scannez le QR code pour rejoindre le groupe communautaire",
+    "stats": {
+      "downloads": {
+        "number": "200K+",
+        "label": "Téléchargements"
+      },
+      "members": {
+        "number": "15K",
+        "label": "Membres de la communauté"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "Créateurs actifs"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "Ressources",
+      "links": {
+        "docs": "Documentation",
+        "blog": "Blog",
+        "download": "Téléchargements",
+        "education": "Éducation",
+        "partner": "Partenaires",
+        "support": "Support",
+        "roadmap": "Feuille de route"
+      }
+    },
+    "company": {
+      "title": "Entreprise",
+      "links": {
+        "talk": "Contactez-nous",
+        "terms": "Conditions d'utilisation",
+        "privacy": "Politique de confidentialité",
+        "cookies": "Paramètres des cookies",
+        "data": "Accord de protection des données",
+        "marketplace": "Accord du marché",
+        "brand": "Directives de la marque"
+      }
+    },
+    "description": "AI ToEarn solution de gestion des réseaux sociaux tout-en-un, de l'inspiration créative à la création de contenu, de la distribution de contenu à la gestion des interactions de contenu",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Utilisons l'IA pour",
+    "copyright": "© 2025 AiToEarn, Corp.",
+    "tagline": "",
+    "dataDeletion": {
+      "title": "Instructions de suppression des données",
+      "prelaunch": "Notre application est actuellement en phase de pré-lancement et ne stocke pas de vraies données utilisateur. Si vous avez interagi avec nos systèmes de test, contactez-nous pour la suppression des données.",
+      "standardTitle": "Procédure standard (post-lancement) :",
+      "standardSteps": [
+        "Connectez-vous à votre compte AiToEarn",
+        "Allez dans Paramètres > Confidentialité",
+        "Cliquez sur \"Demander la suppression du compte\"",
+        "La confirmation sera envoyée à votre e-mail enregistré"
+      ],
+      "contactTitle": "Contactez-nous pour obtenir de l'aide :",
+      "contactEmail": "E-mail : metat@aitoearning.com (Demandes pré-lancement uniquement)"
+    }
+  }
+}

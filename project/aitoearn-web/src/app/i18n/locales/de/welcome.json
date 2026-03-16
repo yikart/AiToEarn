@@ -1,0 +1,178 @@
+{
+  "common": {
+    "previous": "Zurück",
+    "next": "Weiter"
+  },
+  "seo": {
+    "title": "KI-gestützte Content-Erstellung & Social-Media-Plattform",
+    "description": "AiToEarn bietet den bequemsten KI-Videoerstellungsservice, hilft beim Traffic für Offline-Geschäfte und bietet Social-Media-Konto-Hosting für Content-Publishing und Kommentar-Interaktion.",
+    "keywords": "KI-Videoerstellung,Social-Media-Management,Multi-Plattform-Veröffentlichung,KI-Marketing,Content-Erstellung,Social-Media-Automatisierung,AiToEarn,Markenwerbung"
+  },
+  "navbar": {
+    "pricing": "Preise",
+    "docs": "Dokumentation",
+    "brandPromotion": "Produkt",
+    "aiSocial": "KI Social",
+    "login": "Anmelden",
+    "getDemo": "Kostenlos starten"
+  },
+  "hero": {
+    "badge": "KI-gestütztes Restaurant-Wachstum",
+    "title": "KI-Wachstumsoperator für Solo-Unternehmen",
+    "subtitle": "Mit AiToEarn können Sie einfach Traffic zu Ihren Offline-Geschäften lenken. AiToEarn bietet Ihnen den bequemsten KI-Videoerstellungsservice. Sie können auch Ihre Social-Media-Konten auf AiToEarn hosten, und wir helfen Ihnen bei der Content-Veröffentlichung und Kommentar-Interaktion.",
+    "placeholder": "Finden Sie Ihr Restaurant",
+    "cta": "Holen Sie sich meinen KI-Agenten",
+    "selectFirst": "Bitte wählen Sie zuerst ein Restaurant aus",
+    "tags": {
+      "aiVideo": "KI-Videoerstellung",
+      "socialMedia": "Social-Media-Hosting"
+    },
+    "error": {
+      "draftFailed": "Entwurf konnte nicht erstellt werden, bitte versuchen Sie es erneut"
+    }
+  },
+  "owners": {
+    "title": "Von Tausenden von Besitzern vertraut",
+    "subtitle": "Mit Owner erhalten Sie mehr Traffic, mehr Verkäufe, mehr Stammkunden"
+  },
+  "features": {
+    "title": "Mit Owner erhalten Sie mehr Traffic, mehr Verkäufe, mehr Stammkunden",
+    "onlineOrdering": {
+      "title": "Online-Bestellung",
+      "description": "Provisionsfreie Bestellung, die mehr Geld in Ihre Tasche bringt"
+    },
+    "mobileApp": {
+      "title": "Mobile App",
+      "description": "Ihre eigene Marken-App mit integrierten Treueprämien"
+    },
+    "marketing": {
+      "title": "Marketing",
+      "description": "Automatisierte Kampagnen, die Wiederholungsbestellungen fördern"
+    }
+  },
+  "reviews": {
+    "title": "Was unsere Nutzer sagen",
+    "subtitle": "Schließen Sie sich Tausenden von Einzelunternehmern an, die AiToEarn vertrauen",
+    "viewOnGithub": "Auf GitHub ansehen",
+    "review1": {
+      "content": "Endlich ein Open-Source-Tool, das Multi-Plattform-Publishing handhabt! Ein Klick zu Douyin, TikTok, YouTube - spart mir jede Woche Stunden."
+    },
+    "review2": {
+      "content": "Als Einzelunternehmer ist AiToEarn ein Game Changer. KI generiert Inhalte, veröffentlicht automatisch, handhabt sogar Kommentare. Meine Social Media läuft jetzt von selbst."
+    },
+    "review3": {
+      "content": "Die KI-Agent-Funktion ist unglaublich. Sie schreibt, optimiert und postet Inhalte automatisch. Inhaltskosten um 90% gesunken."
+    },
+    "review4": {
+      "content": "Das Beste? Es ist Open Source. Ich kann es für meine Marke anpassen. Deckt alle wichtigen Plattformen ab - national und international."
+    },
+    "review5": {
+      "content": "Das Pay-per-View-Modell macht so viel Sinn. Nur für tatsächliche Ergebnisse zahlen, nicht nur für Content-Erstellung. Transparent und fair."
+    },
+    "review6": {
+      "content": "Liebe die MCP-Tools-Integration. Videobearbeitung, Übersetzung, Publishing - alles KI-gestützt. Perfekt für Ein-Personen-Unternehmen."
+    },
+    "review7": {
+      "content": "Die Scan-to-Post-Funktion hat meine Kunden zu Markenbotschaftern gemacht. Sie lieben das Teilen und ich bekomme kostenloses Marketing!"
+    },
+    "review8": {
+      "content": "Automatische Kommentarantworten sparen mir so viel Zeit. KI handhabt grundlegende Fragen, während ich mich auf das Wachstum meines Geschäfts konzentriere."
+    },
+    "review9": {
+      "content": "Unterstützt 14+ Plattformen! Von TikTok bis WeChat, alles synchronisiert automatisch. Echte All-in-One-Lösung."
+    }
+  },
+  "tech": {
+    "title": "KI-generierte Restaurant-Videos",
+    "subtitle": "Scannen & veröffentlichen, 90%+ Kostenreduzierung pro Beitrag",
+    "description": "Automatisch generierte Qualitätsinhalte verwandeln jeden Check-in in Social-Media-Exposition",
+    "playVideo": "Video abspielen",
+    "video1": { "title": "Blacklock Check-in Vlog" },
+    "video2": { "title": "Restaurant-Entdeckung" },
+    "video3": { "title": "The Shed Britisches Restaurant" }
+  },
+  "testimonials": {
+    "title": "Hören Sie von Restaurantbesitzern wie Ihnen",
+    "watchVideo": "Video ansehen"
+  },
+  "beliefs": {
+    "title": "Warum AiToEarn wählen",
+    "subtitle": "Entwickelt für Einzelunternehmer und kleine Unternehmen",
+    "belief1": {
+      "title": "Für Einzelunternehmer entwickelt",
+      "description": "Optimierte Funktionen, einfache Bedienung, ergebnisorientiert. Kein großes Team nötig, kein Budget für ineffektive Werbung verschwendet."
+    },
+    "belief2": {
+      "title": "Vollständiges KI-Prozessmanagement",
+      "description": "Planung, Erstellung, Optimierung, Veröffentlichung und Kommentar-Interaktion - alles automatisiert. KI übernimmt repetitive Aufgaben, während Sie sich auf Ihr Geschäft konzentrieren."
+    },
+    "belief4": {
+      "title": "Nutzungsbasiert, transparente Preise",
+      "description": "Kein Abo, keine versteckten Gebühren. Zahlen Sie nur, was Sie nutzen. Guthaben 12 Monate gültig, Preise direkt an Upstream-Kosten angelehnt — ohne Aufschlag."
+    }
+  },
+  "guides": {
+    "title": "Kernfunktionen",
+    "subtitle": "Drei Fähigkeiten für Ihr Markenwachstum",
+    "viewDocs": "Dokumentation ansehen",
+    "learnMore": "Mehr erfahren",
+    "feature1": {
+      "title": "Offline Check-in Marketing",
+      "subtitle": "Scannen zum Veröffentlichen hochwertiger Inhalte",
+      "description": "Kunden scannen, KI generiert automatisch professionelle Inhalte. 90%+ Kostenreduzierung pro Beitrag, Kunden werden zu Markenbotschaftern."
+    },
+    "feature2": {
+      "title": "Content-Handel",
+      "subtitle": "Zahlen für Ergebnisse, Abrechnung nach Views",
+      "description": "Kaufen oder beauftragen Sie Creator-Inhalte, zahlen Sie nach Views. Zum Beispiel 1$ pro 1.000 Views."
+    },
+    "feature3": {
+      "title": "KI Social Media Management",
+      "subtitle": "Ein Inhalt, Multi-Plattform Auto-Veröffentlichung",
+      "description": "Unterstützung für 14+ soziale Plattformen, automatische Kommentar-Interaktion, integriert mit Top-KI-Modellen."
+    }
+  },
+  "experience": {
+    "title": "Mit Aitoearn erhalten Sie mehr Traffic, mehr Umsatz, mehr Kunden",
+    "subtitle": "Von Offline-Marketing bis Multi-Plattform-Publishing, lassen Sie die KI die schwere Arbeit erledigen",
+    "tab1": {
+      "title": "Offline Check-in Marketing",
+      "subtitle": "Scannen zum Veröffentlichen",
+      "description": "Benutzer scannen Ihren Promo-QR-Code, und KI generiert automatisch professionelle Inhalte (Video, Bild, Text), die optimiert und automatisch veröffentlicht werden."
+    },
+    "tab2": {
+      "title": "Multi-Plattform-Veröffentlichung",
+      "subtitle": "Ein Inhalt, alle Plattformen",
+      "description": "Einmal posten, überall veröffentlichen. Unterstützt alle folgenden Plattformen:"
+    },
+    "tab3": {
+      "title": "KI-Videoerstellung",
+      "subtitle": "Vollständiger KI-Workflow",
+      "description": "Von der Planung über die Generierung bis zur Optimierung, lassen Sie die KI den gesamten Content-Erstellungsprozess mit Top-Modellen wie Claude, Veo und Sora übernehmen."
+    },
+    "tab4": {
+      "title": "Automatisiertes Social Engagement",
+      "subtitle": "Browser-Erweiterung",
+      "description": "Unsere leistungsstarke Browser-Erweiterung automatisiert Social-Media-Interaktionen auf jeder Plattform. Liken, kommentieren, folgen und mit Ihrem Publikum interagieren - automatisch und täglich Stunden manueller Arbeit sparen."
+    }
+  },
+  "footer": {
+    "ctaTitle": "Jetzt starten — 100 Gratis-Guthaben bei Registrierung!",
+    "startTrial": "Loslegen",
+    "resources": "Ressourcen",
+    "account": "Konto",
+    "legal": "Rechtliches",
+    "docs": "Dokumentation",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "privacy": "Datenschutzrichtlinie",
+    "terms": "Nutzungsbedingungen",
+    "dataProtection": "Datenschutzvereinbarung",
+    "dataDeletion": "Datenlöschung",
+    "pluginGuide": "Plugin-Anleitung",
+    "extensionPrivacy": "Erweiterungs-Datenschutzrichtlinie",
+    "contact": "Kontaktieren Sie uns",
+    "supportedPlatforms": "Unterstützte Plattformen",
+    "copyright": "© 2026 AiToEarn. Alle Rechte vorbehalten."
+  }
+}

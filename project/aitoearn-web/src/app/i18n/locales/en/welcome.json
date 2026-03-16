@@ -1,0 +1,178 @@
+{
+  "common": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "seo": {
+    "title": "AI-Powered Content Creation & Social Media Platform",
+    "description": "AiToEarn provides the most convenient AI video creation service, helps drive traffic to offline stores, and offers social media account hosting for content publishing and comment interaction.",
+    "keywords": "AI video creation,social media management,multi-platform publishing,AI marketing,content creation,social media automation,AiToEarn,brand promotion,one-click publishing"
+  },
+  "navbar": {
+    "pricing": "Pricing",
+    "docs": "Docs",
+    "brandPromotion": "Product",
+    "aiSocial": "AI social media",
+    "login": "Login",
+    "getDemo": "Start Free"
+  },
+  "hero": {
+    "badge": "AI-Powered Restaurant Growth",
+    "title": "AI Growth Operator for Solo Businesses",
+    "subtitle": "With AiToEarn, you can easily drive traffic to your offline stores. AiToEarn provides you with the most convenient AI video creation service. You can also host your social media accounts on AiToEarn, and we will help you with content publishing and comment interaction.",
+    "placeholder": "Find your restaurant",
+    "cta": "Get my AI Agent",
+    "selectFirst": "Please select a restaurant first",
+    "tags": {
+      "aiVideo": "AI Video Creation",
+      "socialMedia": "Social Media Hosting"
+    },
+    "error": {
+      "draftFailed": "Failed to create draft, please try again"
+    }
+  },
+  "owners": {
+    "title": "Trusted by thousands of owners",
+    "subtitle": "With Owner, you get more traffic, more sales, more repeat customers"
+  },
+  "features": {
+    "title": "With Owner, you get more traffic, more sales, more repeat customers",
+    "onlineOrdering": {
+      "title": "Online Ordering",
+      "description": "Commission-free ordering that puts more money in your pocket"
+    },
+    "mobileApp": {
+      "title": "Mobile App",
+      "description": "Your own branded app with built-in loyalty rewards"
+    },
+    "marketing": {
+      "title": "Marketing",
+      "description": "Automated campaigns that drive repeat orders"
+    }
+  },
+  "reviews": {
+    "title": "What Our Users Say",
+    "subtitle": "Join thousands of solo entrepreneurs who trust AiToEarn",
+    "viewOnGithub": "View on GitHub",
+    "review1": {
+      "content": "Finally an open-source tool that handles multi-platform publishing! One click to Douyin, TikTok, YouTube - saved me hours every week."
+    },
+    "review2": {
+      "content": "As a solo entrepreneur, AiToEarn is a game changer. AI generates content, auto-publishes, even handles comments. My social media runs itself now."
+    },
+    "review3": {
+      "content": "The AI Agent feature is incredible. It writes, optimizes, and posts content automatically. Content costs dropped by 90%."
+    },
+    "review4": {
+      "content": "Best part? It's open source. I can customize it for my brand. Covers all major platforms - domestic and international."
+    },
+    "review5": {
+      "content": "Pay-per-view model makes so much sense. Only paying for actual results, not just content creation. Transparent and fair."
+    },
+    "review6": {
+      "content": "Love the MCP tools integration. Video editing, translation, publishing - all AI-powered. Perfect for one-person businesses."
+    },
+    "review7": {
+      "content": "Scan-to-post feature turned my customers into brand ambassadors. They love sharing and I get free marketing!"
+    },
+    "review8": {
+      "content": "Auto comment replies save me so much time. AI handles basic questions while I focus on growing my business."
+    },
+    "review9": {
+      "content": "Supports 14+ platforms! From TikTok to WeChat, everything syncs automatically. True one-stop solution."
+    }
+  },
+  "tech": {
+    "title": "AI-Generated Restaurant Videos",
+    "subtitle": "Scan & publish, 90%+ cost reduction per post",
+    "description": "Auto-generated quality content turns every check-in into social media exposure",
+    "playVideo": "Play Video",
+    "video1": { "title": "Blacklock Check-in Vlog" },
+    "video2": { "title": "Restaurant Discovery" },
+    "video3": { "title": "The Shed British Restaurant" }
+  },
+  "testimonials": {
+    "title": "Hear from restaurant owners like you",
+    "watchVideo": "Watch video"
+  },
+  "beliefs": {
+    "title": "Why Choose AiToEarn",
+    "subtitle": "Built for solo businesses and small enterprises",
+    "belief1": {
+      "title": "Designed for Solo Businesses",
+      "description": "Streamlined features, simple operations, results-oriented. No need to hire a large team or waste budget on ineffective promotions."
+    },
+    "belief2": {
+      "title": "Full-Process AI Management",
+      "description": "Planning, creation, optimization, publishing, and comment interaction—all automated. AI handles repetitive tasks while you focus on your business."
+    },
+    "belief4": {
+      "title": "Pay As You Go, Transparent Pricing",
+      "description": "No subscriptions, no hidden fees. Pay only for what you use, credits valid for 12 months, pricing aligned with upstream costs — zero markup."
+    }
+  },
+  "guides": {
+    "title": "Core Features",
+    "subtitle": "Three capabilities to power your brand growth",
+    "viewDocs": "View Docs",
+    "learnMore": "Learn More",
+    "feature1": {
+      "title": "Offline Check-in Marketing",
+      "subtitle": "Scan to publish high-quality content",
+      "description": "Customers scan, AI auto-generates professional content. 90%+ cost reduction per post, turning customers into brand ambassadors."
+    },
+    "feature2": {
+      "title": "Content Trading",
+      "subtitle": "Pay for results, settle by views",
+      "description": "Buy or commission creator content, pay by views. For example, $1 per 1,000 views."
+    },
+    "feature3": {
+      "title": "AI social media Media Management",
+      "subtitle": "One content, multi-platform auto-publish",
+      "description": "Support 14+ social platforms, auto comment interaction, integrated with top AI models."
+    }
+  },
+  "experience": {
+    "title": "With Aitoearn, You Get More Traffic, More Sales, More Customers",
+    "subtitle": "From offline marketing to multi-platform publishing, let AI handle the heavy lifting",
+    "tab1": {
+      "title": "Offline Check-in Marketing",
+      "subtitle": "Scan to Publish",
+      "description": "Users scan your promo QR code, and AI auto-generates professional content (video, image, text) that's optimized and published automatically."
+    },
+    "tab2": {
+      "title": "Multi-Platform Publishing",
+      "subtitle": "One Content, All Platforms",
+      "description": "Post once, publish everywhere. Supports all the following platforms:"
+    },
+    "tab3": {
+      "title": "AI Video Creation",
+      "subtitle": "Full AI Workflow",
+      "description": "From planning to generation to optimization, let AI handle the entire content creation process with top models like Claude, Veo, and Sora."
+    },
+    "tab4": {
+      "title": "Auto Engagement",
+      "subtitle": "Browser Extension Powered",
+      "description": "Our powerful browser extension automates social media interactions across any platform. Like, comment, follow, and engage with your audience automatically - saving hours of manual work daily."
+    }
+  },
+  "footer": {
+    "ctaTitle": "Get Started — 100 Free Credits on Sign Up!",
+    "startTrial": "Get Started",
+    "resources": "Resources",
+    "account": "Account",
+    "legal": "Legal",
+    "docs": "Documentation",
+    "login": "Login",
+    "register": "Register",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "dataProtection": "Data Protection Agreement",
+    "dataDeletion": "Data Deletion",
+    "pluginGuide": "Plugin Guide",
+    "extensionPrivacy": "Extension Privacy Policy",
+    "contact": "Contact Us",
+    "supportedPlatforms": "Supported Platforms",
+    "copyright": "© 2026 AiToEarn. All rights reserved."
+  }
+}

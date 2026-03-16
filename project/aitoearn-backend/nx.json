@@ -1,0 +1,96 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "production": [
+      "default",
+      "!{projectRoot}/.eslintrc.json",
+      "!{projectRoot}/eslint.config.mjs",
+      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
+      "!{projectRoot}/tsconfig.spec.json"
+    ],
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/build.yml"]
+  },
+  "nxCloudId": "68a45c67c639875b4be60423",
+  "plugins": [
+    {
+      "plugin": "@nx/vitest",
+      "options": {
+        "testTargetName": "test"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
+      }
+    }
+  ],
+  "targetDefaults": {
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
+    },
+    "docker-context": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/build-docker.mjs {projectName} --context-only",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/build-docker.mjs {projectName} -p",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "release": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/release.mjs -p {projectName}",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "release:build-only": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "command": "node scripts/release.mjs -p {projectName} --build-only",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "release:verbose": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/release.mjs -p {projectName} --verbose",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "release:dry-run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node scripts/release.mjs -p {projectName} --dry-run --verbose",
+        "cwd": "{workspaceRoot}"
+      }
+    },
+    "@nx/vitest:test": {
+      "cache": true,
+      "inputs": ["default", "^production"]
+    }
+  },
+  "release": {
+    "version": {
+      "preVersionCommand": "pnpm dlx nx run-many -t build"
+    }
+  },
+  "tui": {
+    "enabled": false
+  }
+}

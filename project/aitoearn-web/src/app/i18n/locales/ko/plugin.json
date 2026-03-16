@@ -1,0 +1,101 @@
+{
+  "status": {
+    "unknown": "알 수 없음",
+    "checking": "확인 중...",
+    "ready": "플러그인 준비됨",
+    "installedNoPermission": "플러그인 설치됨, 인증 대기 중",
+    "notInstalled": "플러그인 설치 안됨",
+    "connected": "연결됨"
+  },
+  "stage": {
+    "download": "다운로드 중",
+    "upload": "업로드 중",
+    "publish": "게시 중",
+    "complete": "완료",
+    "error": "오류"
+  },
+  "error": {
+    "pluginNotInstalled": "먼저 Aitoearn 브라우저 플러그인을 설치해 주세요",
+    "publishingInProgress": "게시 진행 중, 나중에 다시 시도해 주세요",
+    "loginFailed": "로그인 실패",
+    "publishFailed": "게시 실패"
+  },
+  "publishList": {
+    "title": "게시 목록",
+    "empty": "게시 기록 없음",
+    "platforms": "플랫폼",
+    "status": "상태",
+    "time": "시간",
+    "viewDetail": "상세 보기"
+  },
+  "publishDetail": {
+    "title": "게시 상세",
+    "platform": "플랫폼",
+    "progress": "진행률",
+    "status": "상태",
+    "message": "메시지",
+    "result": "결과",
+    "workId": "작품 ID",
+    "shareLink": "공유 링크",
+    "failReason": "실패 원인",
+    "close": "닫기",
+    "unknownAccount": "알 수 없는 계정",
+    "creatingRecord": "게시 기록 생성 중..."
+  },
+  "common": {
+    "confirm": "확인",
+    "cancel": "취소",
+    "loading": "로딩 중...",
+    "success": "성공",
+    "failed": "실패",
+    "pending": "대기 중",
+    "publishing": "게시 중",
+    "completed": "완료됨",
+    "error": "오류",
+    "action": "작업",
+    "total": "합계",
+    "items": "항목",
+    "viewLink": "링크 보기",
+    "startTime": "시작 시간",
+    "endTime": "종료 시간",
+    "createdAt": "생성일",
+    "PENDING": "대기 중",
+    "PUBLISHING": "게시 중",
+    "COMPLETED": "완료됨",
+    "ERROR": "오류"
+  },
+  "header": {
+    "pluginActive": "플러그인 활성",
+    "pluginInactive": "플러그인 비활성",
+    "downloadPlugin": "플러그인 다운로드",
+    "downloadDescription": "AiToEarn 브라우저 플러그인은 샤오홍슈의 지능형 운영을 위해 특별히 설계되었습니다. 아래 버튼을 클릭하여 다운로드하고 설치하세요.",
+    "downloadButton": "지금 다운로드",
+    "chromeWebStore": "Chrome 웹 스토어",
+    "githubRelease": "GitHub 릴리스",
+    "chinaDownload": "중국 다운로드",
+    "activeDescription": "브라우저 플러그인이 활성화되었습니다. 게시 기능을 사용할 수 있습니다!",
+    "platformAccounts": "플랫폼 계정",
+    "notLoggedIn": "로그인 안됨",
+    "xhsNotLoggedInTip": "샤오홍슈는 크리에이터 센터 로그인이 필요합니다",
+    "loginNow": "지금 로그인",
+    "viewPublishList": "게시 목록 보기",
+    "permissionRequired": "권한 필요",
+    "permissionDescription": "플러그인이 설치되었지만 제대로 작동하려면 필요한 권한이 필요합니다. 브라우저 확장 프로그램 설정에서 필요한 권한을 부여해 주세요.",
+    "checkPermission": "권한 다시 확인",
+    "sync": "동기화",
+    "syncToAccount": "계정 관리자에 동기화",
+    "syncSuccess": "계정 동기화 성공",
+    "syncFailed": "계정 동기화 실패",
+    "xhsHome": "홈",
+    "xhsCreator": "크리에이터",
+    "xhsLoginHomeTip": "샤오홍슈 홈페이지 로그인",
+    "xhsLoginCreatorTip": "샤오홍슈 크리에이터 센터 로그인",
+    "viewGuide": "문제가 있으세요? 설치 도움이 필요하세요?"
+  },
+  "mobile": {
+    "title": "데스크톱 전용",
+    "description": "브라우저 확장 프로그램은 모바일 기기에서 사용할 수 없습니다. 확장 프로그램을 설치하고 사용하려면 데스크톱 브라우저를 이용해 주세요.",
+    "goToPC": "PC에서 방문해 주세요",
+    "introduction": "AiToEarn 플랫폼용 브라우저 확장 프로그램입니다. AiToEarn 웹과 연동하여 샤오홍슈 콘텐츠 게시를 자동화합니다 — 동영상, 이미지 캐러셀, 제목, 해시태그 등을 원클릭으로 처리합니다. 세계 최고 수준의 AI 모델인 Claude Opus 4.6 기반의 내장 AI 에이전트가 자연스러운 대화를 통해 브라우저 작업을 자동화합니다. 설치하면 원클릭 게시, 실시간 진행 상황 추적, AI 자동화 등 AiToEarn 플랫폼의 모든 기능을 이용할 수 있습니다."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "status": {
+    "unknown": "Unknown",
+    "checking": "Checking...",
+    "ready": "Plugin Ready",
+    "installedNoPermission": "Plugin Installed, Pending Authorization",
+    "notInstalled": "Plugin Not Installed",
+    "connected": "Connected"
+  },
+  "stage": {
+    "download": "Downloading",
+    "upload": "Uploading",
+    "publish": "Publishing",
+    "complete": "Complete",
+    "error": "Error"
+  },
+  "error": {
+    "pluginNotInstalled": "Please install Aitoearn browser plugin first",
+    "publishingInProgress": "Publishing in progress, please try again later",
+    "loginFailed": "Login failed",
+    "publishFailed": "Publish failed"
+  },
+  "publishList": {
+    "title": "Publish List",
+    "empty": "No publish records",
+    "platforms": "Platforms",
+    "status": "Status",
+    "time": "Time",
+    "viewDetail": "View Detail"
+  },
+  "publishDetail": {
+    "title": "Publish Detail",
+    "platform": "Platform",
+    "progress": "Progress",
+    "status": "Status",
+    "message": "Message",
+    "result": "Result",
+    "workId": "Work ID",
+    "shareLink": "Share Link",
+    "failReason": "Fail Reason",
+    "close": "Close",
+    "unknownAccount": "Unknown Account",
+    "creatingRecord": "Creating publish record..."
+  },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "success": "Success",
+    "failed": "Failed",
+    "pending": "Pending",
+    "publishing": "Publishing",
+    "completed": "Completed",
+    "error": "Error",
+    "action": "Action",
+    "total": "Total",
+    "items": "items",
+    "viewLink": "View Link",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "createdAt": "Created At",
+    "PENDING": "Pending",
+    "PUBLISHING": "Publishing",
+    "COMPLETED": "Completed",
+    "ERROR": "Error"
+  },
+  "header": {
+    "pluginActive": "Plugin Active",
+    "pluginInactive": "Plugin Inactive",
+    "downloadPlugin": "Download Plugin",
+    "downloadDescription": "The AiToEarn browser plugin is specifically designed for the intelligent operation of Xiaohongshu. Please click the button below to download and install.",
+    "downloadButton": "Download Now",
+    "chromeWebStore": "Chrome Web Store",
+    "githubRelease": "GitHub Release",
+    "chinaDownload": "China Download",
+    "activeDescription": "Your browser plugin is activated. You can start using the publish feature!",
+    "platformAccounts": "Platform Accounts",
+    "notLoggedIn": "Not Logged In",
+    "xhsNotLoggedInTip": "Xiaohongshu requires login to Creator Center",
+    "loginNow": "Login Now",
+    "viewPublishList": "View Publish List",
+    "permissionRequired": "Permission Required",
+    "permissionDescription": "Plugin is installed but requires necessary permissions to work properly. Please grant the required permissions in your browser extension settings.",
+    "checkPermission": "Check Permission Again",
+    "sync": "Sync",
+    "syncToAccount": "Sync to Account Manager",
+    "syncSuccess": "Account synced successfully",
+    "syncFailed": "Account sync failed",
+    "xhsHome": "Home",
+    "xhsCreator": "Creator",
+    "xhsLoginHomeTip": "Login to Xiaohongshu Homepage",
+    "xhsLoginCreatorTip": "Login to Xiaohongshu Creator Center",
+    "viewGuide": "Having trouble? Need help installing?"
+  },
+  "mobile": {
+    "title": "Desktop Only",
+    "description": "The browser extension is not available on mobile devices. Please use a desktop browser to install and use the extension.",
+    "goToPC": "Please visit on PC",
+    "introduction": "Browser extension for the AiToEarn platform. Works with AiToEarn web to automate Xiaohongshu content publishing — videos, image carousels, titles, hashtags, and more, all in one click. Built-in AI Agent, powered by Claude Opus 4.6 — one of the world's most advanced AI models — helps you automate browser tasks through natural conversation. Install to unlock full AiToEarn platform features including one-click publishing, real-time progress tracking, and AI-powered automation."
+  }
+}

@@ -1,0 +1,418 @@
+{
+  "dropToUpload": "업로드하려면 놓으세요",
+  "announcement": {
+    "text": "AiToEarn은 에이전트를 사용하여 모든 콘텐츠 요구사항을 충족합니다. 실행 중 여러 도구를 호출하므로 시간이 걸릴 수 있습니다. 언제든지 종료하고 나중에 작업 진행 상황을 확인할 수 있습니다."
+  },
+  "releaseBanner": {
+    "tag": "릴리스 v0.8.0",
+    "text": "플러그인과 활발한 마켓플레이스로 AI 워크플로우를 구축하고 확장하세요."
+  },
+  "header": {
+    "logo": "Aitoearn",
+    "nav": {
+      "home": "홈",
+      "marketplace": "마켓플레이스",
+      "pricing": "가격",
+      "status": "상태",
+      "docs": "문서",
+      "blog": "블로그",
+      "download": "다운로드",
+      "brand": "브랜드",
+      "resources": "리소스"
+    },
+    "getStarted": "시작하기"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "스타",
+    "github": "GitHub",
+    "title": "최고의 콘텐츠 마케팅\nAI 에이전트",
+    "subtitle": "오늘부터 AI로 소셜 미디어를 쉽게 관리하세요. AITOEARN은 창작 영감, 콘텐츠 제작, 콘텐츠 배포부터 콘텐츠 상호작용 관리까지 원스톱 기능을 제공하여 AI를 손쉽게 활용할 수 있게 합니다.",
+    "getStarted": "시작하기",
+    "useMobilePhone": "모바일에서 사용"
+  },
+  "seo": {
+    "title": "AI 영상 및 콘텐츠 제작 - 15개 이상 소셜 플랫폼에 게시",
+    "description": "AiToEarn은 AI 기반 소셜 미디어 성장 운영자입니다. AI로 동영상, 이미지, 카피를 생성하고 TikTok, YouTube, Instagram, Facebook, X 등 15개 이상의 플랫폼에 원클릭 배포하세요. AI 콘텐츠 제작, 스마트 편집, 스타일 변환, 영상 번역, 트렌드 발견, 브랜드 모니터링, 통합 인게이지먼트 대시보드를 제공합니다.",
+    "keywords": "AI 콘텐츠 마케팅, AI 소셜 미디어 관리, AI 영상 생성, 다중 플랫폼 게시, AI 콘텐츠 제작, 소셜 미디어 자동화, TikTok 마케팅, YouTube 마케팅, AI 에이전트, 콘텐츠 배포, AI 카피라이팅, 영상 편집 AI, 브랜드 모니터링, AiToEarn"
+  },
+  "agentGenerator": {
+    "title": "무엇을 도와드릴까요?",
+    "subtitle": "당신의 AI 성장 운영자"
+  },
+  "aiGeneration": {
+    "inputPlaceholder": "콘텐츠 아이디어를 입력하면 AI가 완성된 작품을 만들어 드립니다...",
+    "generateButton": "만들기 시작",
+    "generating": "만드는 중...",
+    "emptyPromptAlert": "콘텐츠 생성을 위한 프롬프트를 입력해 주세요",
+    "createTaskFailed": "작업 생성 실패",
+    "uploadSuccess": "이미지 업로드 성공",
+    "uploadFailed": "이미지 업로드 실패, 다시 시도해 주세요",
+    "taskCreatedSuccess": "작업이 성공적으로 생성되었습니다",
+    "thinking": "AI 생각 중...",
+    "topicPrefix": "창작 주제: ",
+    "generatedTitlePrefix": "생성된 제목: ",
+    "descriptionPrefix": "📄 ",
+    "failedReasonPrefix": "실패 원인: ",
+    "taskTimeout": "작업 시간 초과, 나중에 다시 시도해 주세요",
+    "unknownError": "알 수 없는 오류",
+    "status": {
+      "thinking": "AI 생각 중...",
+      "waiting": "대기 중...",
+      "generatingContent": "콘텐츠 생성 중",
+      "generatingImage": "이미지 생성 중",
+      "generatingVideo": "동영상 생성 중",
+      "generatingText": "텍스트 생성 중",
+      "completed": "완료!",
+      "failed": "실패",
+      "cancelled": "취소됨"
+    },
+    "channelAuthRequired": "먼저 채널을 추가하고 인증해 주세요",
+    "channelAuthExpired": "채널 인증이 만료되었습니다. 재인증해 주세요",
+    "channelNotSupported": "이 플랫폼은 직접 게시를 지원하지 않습니다",
+    "taskStopped": "생성이 중지되었습니다",
+    "stopTaskFailed": "작업 중지 실패",
+    "newConversation": "새 대화가 시작되었습니다",
+    "generatingWarning": "생성 진행 중입니다. 먼저 현재 작업을 중지해 주세요",
+    "conversationId": "대화 ID",
+    "startNewConversation": "새 대화 시작",
+    "currentCost": "현재 비용",
+    "aiGenerationProcess": "AI 생성 프로세스",
+    "waitingAiResponse": "AI 응답 대기 중...",
+    "uploadImage": "이미지 업로드",
+    "removeImage": "이미지 제거",
+    "agentMode": "에이전트 모드",
+    "imageGeneration": "이미지 생성",
+    "videoGeneration": "동영상 생성",
+    "draftBox": "초안함",
+    "batchPublish": "일괄 게시",
+    "stopGeneration": "생성 중지",
+    "sendMessage": "메시지 전송",
+    "inspirationPrompt": "영감이 떠오르셨나요? 한 문장으로 창작을 시작하세요",
+    "onboardingTitle": "창작을 어떻게 시작해야 할지 모르시겠나요?",
+    "onboardingDescription": "한 문장으로 창작을 시작하세요",
+    "gotIt": "알겠습니다",
+    "saveDraftFailed": "초안 저장 실패",
+    "saveDraftSuccess": "초안이 성공적으로 저장되었습니다",
+    "noDraftGroupFound": "사용 가능한 초안 그룹이 없습니다. 먼저 그룹을 만들어 주세요",
+    "noDraftGroup": "사용 가능한 초안 그룹이 없습니다",
+    "needAddChannel": "채널 추가 필요",
+    "channelNotAdded": "{platform} 채널을 아직 추가하지 않은 것으로 확인됩니다. 추가하시겠습니까?",
+    "goAdd": "추가하기",
+    "cancel": "취소",
+    "channelAuthExpiredTitle": "채널 인증 만료",
+    "channelAuthExpiredContent": "채널 인증이 만료되었습니다. 재인증하시겠습니까?",
+    "reauthorize": "재인증",
+    "needLoginChannel": "채널 로그인 필요",
+    "needLogin": "로그인 필요",
+    "pleaseLoginChannel": "먼저 이 채널 계정에 로그인해 주세요",
+    "goLogin": "로그인",
+    "needBindChannel": "채널 연결",
+    "needBindChannelTitle": "채널 연결",
+    "needBindChannelContent": "{{platform}} 계정을 찾을 수 없습니다. 게시하려면 {{platform}} 계정을 추가해 주세요.",
+    "goBind": "채널 추가",
+    "platformRequiresPlugin": "이 플랫폼은 플러그인 게시가 필요합니다. 먼저 플러그인을 인증해 주세요",
+    "needAuthorizePlugin": "플러그인 인증 필요",
+    "pluginAuthorizeDescription": "이 플랫폼은 플러그인 게시가 필요합니다. 여기를 클릭하여 플러그인을 인증해 주세요",
+    "noAccountFound": "이 플랫폼에 대한 계정을 찾을 수 없습니다. 먼저 계정을 추가해 주세요",
+    "publishTaskSubmitted": "게시 작업이 플러그인에 제출되었습니다",
+    "publishingViaPlugin": "플러그인을 통해 게시 중...",
+    "pluginPublishFailed": "플러그인 게시 실패"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "이 플랫폼은 플러그인 게시가 필요합니다. 먼저 플러그인을 인증해 주세요",
+    "authorizePluginTitle": "플러그인 인증 필요",
+    "authorizePluginDescription": "이 플랫폼은 플러그인 게시가 필요합니다. 여기를 클릭하여 플러그인을 인증해 주세요",
+    "noAccountFound": "이 플랫폼에 대한 계정을 찾을 수 없습니다. 먼저 계정을 추가해 주세요",
+    "publishTaskSubmitted": "게시 작업이 플러그인에 제출되었습니다",
+    "publishingViaPlugin": "플러그인을 통해 게시 중...",
+    "publishFailed": "플러그인 게시 실패"
+  },
+  "status": {
+    "generatingInProcess": "생성 진행 중입니다. 먼저 현재 작업을 중지해 주세요",
+    "stopGenerating": "생성 중지",
+    "sendMessage": "메시지 전송"
+  },
+  "messages": {
+    "generatingInProcessStopFirst": "생성 진행 중입니다. 먼저 현재 작업을 중지해 주세요",
+    "newConversationStarted": "새 대화가 시작되었습니다",
+    "draftSavedSuccessfully": "초안이 성공적으로 저장되었습니다",
+    "saveDraftFailed": "초안 저장 실패",
+    "noDraftGroupFound": "사용 가능한 초안 그룹이 없습니다. 먼저 그룹을 만들어 주세요",
+    "createDraftGroupFirst": "사용 가능한 초안 그룹이 없습니다"
+  },
+  "platformNames": {
+    "douyin": "더우인",
+    "xhs": "샤오홍슈",
+    "wxSph": "위챗 채널",
+    "KWAI": "쾌수",
+    "youtube": "YouTube",
+    "wxGzh": "위챗 공식 계정",
+    "bilibili": "비리비리",
+    "twitter": "Twitter",
+    "tiktok": "TikTok",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest",
+    "linkedin": "LinkedIn"
+  },
+  "channel": {
+    "addChannelRequiredTitle": "채널 추가 필요",
+    "addChannelRequiredContent": "{platform} 채널을 아직 추가하지 않은 것으로 확인됩니다. 추가하시겠습니까?",
+    "goToAdd": "추가하기",
+    "authExpiredTitle": "채널 인증 만료",
+    "authExpiredContent": "채널 인증이 만료되었습니다. 재인증하시겠습니까?",
+    "reauthorize": "재인증",
+    "loginRequiredTitle": "채널 로그인 필요",
+    "loginRequiredContent": "먼저 이 채널 계정에 로그인해 주세요",
+    "goToLogin": "로그인"
+  },
+  "guide": {
+    "aiInputTitle": "창작을 어떻게 시작해야 할지 모르시겠나요?",
+    "aiInputDescription": "한 문장으로 창작을 시작하세요"
+  },
+  "download": {
+    "downloadNow": "지금 다운로드"
+  },
+  "wechat": {
+    "officialAccount": "위챗 공식 계정",
+    "communityOfficialAccount": "커뮤니티 공식 계정"
+  },
+  "brandBar": {
+    "title": "지원되는 소셜 미디어 플랫폼"
+  },
+  "buildSection": {
+    "badge": "기능 1",
+    "title": "콘텐츠 게시",
+    "titleBlue": " — 원클릭 다중 플랫폼",
+    "features": {
+      "hotTopic": {
+        "title": "어디서나 배포",
+        "description": "가장 광범위한 글로벌 플랫폼에 게시 (더우인, 쾌수, 위챗, 비리비리, 샤오홍슈, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X)."
+      },
+      "international": {
+        "title": "캘린더 스케줄러",
+        "description": "모든 플랫폼에서 캘린더처럼 콘텐츠를 계획하고 조정하세요. 통합 대시보드: 한 곳에서 모든 상호작용을 관리합니다."
+      }
+    },
+    "carouselHint": "스크롤 휠로 이미지 전환"
+  },
+  "hotspotSection": {
+    "badge": "기능 2",
+    "title": "콘텐츠 핫스팟 — 바이럴 영감 엔진",
+    "titleBlue": "사례 라이브러리 & 트렌드 레이더",
+    "features": {
+      "hotTopic": {
+        "title": "사례 라이브러리",
+        "description": "10,000개 이상의 좋아요를 받는 게시물이 어떻게 만들어지는지 탐색하세요."
+      },
+      "international": {
+        "title": "트렌드 레이더",
+        "description": "최신 바이럴 트렌드를 즉시 발견하고 크리에이터 불안을 줄이세요."
+      }
+    },
+    "carouselHint": "스크롤 휠로 이미지 전환"
+  },
+  "searchSection": {
+    "badge": "기능 3",
+    "title": "콘텐츠 검색 — 브랜드 & 마켓 인사이트",
+    "titleBlue": "브랜드 모니터링 & 콘텐츠 디스커버리",
+    "features": {
+      "hotTopic": {
+        "title": "브랜드 모니터링",
+        "description": "브랜드에 대한 대화를 실시간으로 추적하세요."
+      },
+      "international": {
+        "title": "콘텐츠 디스커버리",
+        "description": "타겟 참여를 위한 게시물, 주제 및 커뮤니티를 검색하세요."
+      }
+    },
+    "carouselHint": "스크롤 휠로 이미지 전환"
+  },
+  "commentsSection": {
+    "badge": "기능 4",
+    "title": "댓글 검색 — 정밀 사용자 마이닝",
+    "titleBlue": "스마트 댓글 검색 & 전환 부스터",
+    "features": {
+      "hotTopic": {
+        "title": "스마트 댓글 검색",
+        "description": "\"링크 주세요\" 또는 \"어떻게 사나요\"와 같은 높은 전환 신호를 감지합니다."
+      },
+      "international": {
+        "title": "전환 부스터",
+        "description": "즉시 답변하고 더 높은 참여도와 판매를 유도하세요."
+      }
+    },
+    "carouselHint": "스크롤 휠로 이미지 전환"
+  },
+  "connectSection": {
+    "badge": "기능 5",
+    "title": "콘텐츠 인게이지먼트 — 성장 엔진",
+    "titleBlue": "통합 대시보드 & 적극적인 참여",
+    "features": {
+      "creation": {
+        "title": "통합 대시보드",
+        "description": "한 곳에서 모든 상호작용을 관리합니다."
+      },
+      "distribution": {
+        "title": "적극적인 참여",
+        "description": "트렌드 대화에 참여하고 잠재 고객과 연결하세요. 수동적인 운영을 능동적인 트래픽 성장으로 전환합니다."
+      }
+    },
+    "carouselHint": "스크롤 휠로 이미지 전환"
+  },
+  "upcomingSection": {
+    "badge": "곧 출시",
+    "title": "풀스택 AI 기반 콘텐츠 성장 & 수익화 플랫폼",
+    "titleBlue": "곧 출시될 기능, 기대해 주세요",
+    "features": {
+      "smartImport": {
+        "title": "스마트 가져오기",
+        "description": "빠른 재편집 및 재배포를 위해 기존 콘텐츠를 가져옵니다. 예: 샤오홍슈 게시물을 원클릭으로 YouTube에 동기화합니다."
+      },
+      "analytics": {
+        "title": "콘텐츠 분석 — 풀퍼널 데이터",
+        "description": "크로스 플랫폼 비교: 한 플랫폼이 트래픽을 차단해도 다른 플랫폼은 차단하지 않습니다. 종단 간 모니터링: 성과를 추적하고 100만 이상 팔로워까지의 경로를 구축합니다."
+      },
+      "aiCreation": {
+        "title": "AI 콘텐츠 제작 — 종단 간 어시스턴트",
+        "description": "AI 카피라이팅: 제목, 캡션 및 설명을 자동 생성합니다. AI 댓글: 적극적으로 참여하고 트래픽을 유도합니다. 이미지 및 카드 생성기: 콘텐츠 워크플로우를 가속화합니다. 지원되는 AI 비디오 모델 및 이미지 모델."
+      },
+      "marketplace": {
+        "title": "콘텐츠 마켓플레이스 — 거래 & 수익화",
+        "description": "크리에이터: 콘텐츠를 직접 판매하고 구매자를 빠르게 찾으세요. 브랜드: 기성품 고품질 콘텐츠를 구매하세요. AI 기반 성장: AI를 사용하여 수익을 올립시다. 함께 돈을 벌어요!"
+      }
+    }
+  },
+  "downloadSection": {
+    "title": "언제 어디서나 창작을 시작하세요",
+    "titleBlue": "모바일에서도 쉽게 관리",
+    "description": "AI ToEarn 모바일 앱으로 창의력은 더 이상 데스크톱에 제한되지 않습니다. iOS 및 Android 모바일 앱을 제공하여 스마트폰 하나로 언제 어디서나 창의력을 발휘할 수 있습니다!",
+    "qrCodeText": "QR 코드를 스캔하여 다운로드",
+    "appStore": {
+      "text": "다운로드",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "다운로드",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "기업 서비스",
+    "title": "전문적인 AI 소셜 미디어 솔루션",
+    "titleBlue": "기업 마케팅 성공 지원",
+    "subtitle": "기업 AI 마케팅 전환에는 도구뿐만 아니라 견고한 인프라가 필요합니다. AI ToEarn은 비교할 수 없는 마케팅 효율성을 위해 AI 콘텐츠 제작 기능을 여러 부서에 배포할 수 있는 신뢰할 수 있는 플랫폼을 제공합니다."
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "사용자"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "소셜 플랫폼"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "국가"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "게시된 콘텐츠"
+      }
+    },
+    "testimonial": {
+      "quote": "오늘날 치열한 경쟁의 콘텐츠 마케팅 환경에서 빠른 검증과 제작 도구는 단순히 도움이 되는 것이 아니라 생존에 필수적입니다. 우리와 같은 마케팅 회사에게 AI ToEarn은 이 AI 최전선에서 없어서는 안 될 가치를 제공합니다.",
+      "author": "김철수",
+      "title": "선도 MCN 에이전시 콘텐츠 운영 이사"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "연간 콘텐츠 제작 시간 절약 추정",
+        "number": "50,000시간"
+      },
+      "aiAssistant": {
+        "title": "AI 마케팅 어시스턴트: 크로스 플랫폼 콘텐츠 배포로 500개 이상의 기업 고객에게 서비스 제공"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "커뮤니티 생태계",
+    "title": "우리의",
+    "titleBlue": "활발한 크리에이터 커뮤니티",
+    "subtitle": "AI ToEarn은 글로벌 AI 콘텐츠 크리에이터 커뮤니티에 의해 운영됩니다. AI 콘텐츠 마케팅의 무한한 가능성을 함께 탐색하세요.",
+    "buttons": {
+      "wechat": "위챗 그룹",
+      "community": "크리에이터 커뮤니티"
+    },
+    "wechatPopup": "QR 코드를 스캔하여 위챗 공식 계정 팔로우",
+    "communityPopup": "QR 코드를 스캔하여 커뮤니티 그룹 참여",
+    "stats": {
+      "downloads": {
+        "number": "200K+",
+        "label": "다운로드"
+      },
+      "members": {
+        "number": "15K",
+        "label": "커뮤니티 멤버"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "활발한 크리에이터"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "리소스",
+      "links": {
+        "docs": "문서",
+        "blog": "블로그",
+        "download": "다운로드",
+        "education": "교육",
+        "partner": "파트너",
+        "support": "지원",
+        "roadmap": "로드맵"
+      }
+    },
+    "company": {
+      "title": "회사",
+      "links": {
+        "talk": "문의하기",
+        "terms": "서비스 이용약관",
+        "privacy": "개인정보 처리방침",
+        "cookies": "쿠키 설정",
+        "data": "데이터 보호 계약",
+        "marketplace": "마켓플레이스 계약",
+        "brand": "브랜드 가이드라인"
+      }
+    },
+    "description": "AI ToEarn 원스톱 소셜 미디어 관리 플랫폼 솔루션, 창작 영감에서 콘텐츠 제작, 콘텐츠 배포에서 콘텐츠 상호작용 관리까지",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Let's Use AI To",
+    "copyright": "© 2025 AiToEarn, Corp.",
+    "tagline": "",
+    "dataDeletion": {
+      "title": "데이터 삭제 안내",
+      "prelaunch": "현재 애플리케이션은 출시 전 단계이며 실제 사용자 데이터를 저장하지 않습니다. 테스트 시스템과 상호작용한 경우 데이터 제거를 위해 문의해 주세요.",
+      "standardTitle": "표준 절차 (출시 후):",
+      "standardSteps": [
+        "AiToEarn 계정에 로그인",
+        "설정 > 개인정보로 이동",
+        "\"계정 삭제 요청\" 클릭",
+        "등록된 이메일로 확인이 전송됩니다"
+      ],
+      "contactTitle": "도움을 위한 연락처:",
+      "contactEmail": "이메일: metat@aitoearning.com (출시 전 문의만)"
+    }
+  }
+}
