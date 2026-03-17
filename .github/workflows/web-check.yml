@@ -9,7 +9,7 @@ permissions:
   pull-requests: read
 
 env:
-  MONOREPO_DIR: project/web
+  MONOREPO_DIR: project/aitoearn-web
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -29,7 +29,7 @@ jobs:
       - name: Check if web files changed
         id: check-changes
         run: |
-          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -q "^project/web/"; then
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -q "^project/aitoearn-web/"; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -38,7 +38,7 @@ jobs:
       - name: Skip if no changes
         if: steps.check-changes.outputs.changed == 'false'
         run: |
-          echo "No changes in project/web/, skipping checks"
+          echo "No changes in project/aitoearn-web/, skipping checks"
           exit 0
 
       - name: Install pnpm

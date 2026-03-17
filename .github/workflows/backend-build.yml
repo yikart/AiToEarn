@@ -5,12 +5,12 @@ on:
     branches:
       - main
     paths:
-      - 'project/backend/**'
+      - 'project/aitoearn-backend/**'
       - '.github/workflows/backend-build.yml'
   workflow_dispatch:
     inputs:
-      build_aitoearn_channel:
-        description: 'aitoearn-channel'
+      build_aitoearn_ai:
+        description: 'aitoearn-ai'
         required: false
         type: boolean
         default: false
@@ -48,7 +48,7 @@ permissions:
 env:
   DOCKER_HUB_USERNAME: aitoearn
   NX_NO_CLOUD: true
-  MONOREPO_DIR: project/backend
+  MONOREPO_DIR: project/aitoearn-backend
 
 jobs:
   parse-manual-apps:
@@ -62,8 +62,8 @@ jobs:
         run: |
           APPS=""
           
-          if [ "${{ inputs.build_aitoearn_channel }}" = "true" ]; then
-            APPS="aitoearn-channel"
+          if [ "${{ inputs.build_aitoearn_ai }}" = "true" ]; then
+            APPS="aitoearn-ai"
           fi
           
           if [ "${{ inputs.build_aitoearn_server }}" = "true" ]; then
@@ -269,10 +269,10 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ env.MONOREPO_DIR }}/.nx/cache
-          key: nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-monorepo/pnpm-lock.yaml') }}-${{ matrix.app }}-${{ github.sha }}
+          key: nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-backend/pnpm-lock.yaml') }}-${{ matrix.app }}-${{ github.sha }}
           restore-keys: |
-            nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-monorepo/pnpm-lock.yaml') }}-${{ matrix.app }}-
-            nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-monorepo/pnpm-lock.yaml') }}-
+            nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-backend/pnpm-lock.yaml') }}-${{ matrix.app }}-
+            nx-${{ runner.os }}-${{ hashFiles('project/aitoearn-backend/pnpm-lock.yaml') }}-
             nx-${{ runner.os }}-
 
       - name: Build application
