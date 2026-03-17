@@ -19,12 +19,7 @@ on:
         type: boolean
         default: false
 
-permissions:
-  id-token: write
-  contents: read
-
 env:
-  IMAGE_REPO: aitoearn
   APP_NAME: aitoearn-web
   MONOREPO_DIR: project/aitoearn-web
   DOCKER_HUB_USERNAME: aitoearn
@@ -39,16 +34,6 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -82,9 +67,9 @@ jobs:
       - name: Prepare tags
         id: tags
         run: |
-          TAGS="${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"
+          TAGS="${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}"
           if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
-            TAGS="$TAGS"$'\n'"${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest"
+            TAGS="$TAGS"$'\n'"${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:latest"
           fi
           echo "tags<<EOF" >> $GITHUB_OUTPUT
           echo "$TAGS" >> $GITHUB_OUTPUT
@@ -108,12 +93,6 @@ jobs:
           echo "- **App**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Version**: ${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
           echo "- **Platform**: linux/amd64" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### 🐳 ECR Images" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version Image**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
-          if [ "${{ steps.push-latest.outputs.push_latest }}" = "true" ]; then
-            echo "- **Latest**: \`${{ secrets.ECR_REGISTRY }}/${{ env.IMAGE_REPO }}/${{ env.APP_NAME }}:latest\`" >> $GITHUB_STEP_SUMMARY
-          fi
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### 🐋 Docker Hub Images" >> $GITHUB_STEP_SUMMARY
           echo "- **Version Image**: \`${{ env.DOCKER_HUB_USERNAME }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
