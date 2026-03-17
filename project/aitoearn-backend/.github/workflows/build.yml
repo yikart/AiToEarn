@@ -352,33 +352,29 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
+      - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
           context: ./tmp/docker-context
           file: ./tmp/docker-context/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           build-args: |
             APP_NAME=${{ matrix.app }}
           tags: |
             ${{ env.FLY_REGISTRY }}/${{ matrix.image }}
             ${{ env.DOCKER_REGISTRY }}/${{ matrix.image }}
-          push: false
-          load: true
+          push: true
           cache-from: |
             type=gha,scope=${{ matrix.app }}
           cache-to: |
             type=gha,mode=max,scope=${{ matrix.app }}
             type=inline
-
-      - name: Push to Fly.io Registry
-        run: docker push ${{ env.FLY_REGISTRY }}/${{ matrix.image }}
-
-      - name: Push to Docker Registry
-        run: docker push ${{ env.DOCKER_REGISTRY }}/${{ matrix.image }}
 
       - name: Build summary
         run: |

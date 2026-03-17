@@ -208,10 +208,15 @@ async function buildImage(projectName, contextDir, options = {}) {
     verbose = false,
     registries = ['registry.fly.io', 'registry.aitoearn.cn'],
     push = false,
+    platforms = ['linux/amd64'],
   } = options
 
-  if (verbose)
+  const platformStr = platforms.join(',')
+
+  if (verbose) {
     console.info(chalk.yellow(`构建 Docker 镜像: ${projectName}`))
+    console.info(chalk.gray(`  目标平台: ${platformStr}`))
+  }
 
   // 获取当前日期 (YYYYMMDD 格式)
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, '')
@@ -229,7 +234,7 @@ async function buildImage(projectName, contextDir, options = {}) {
 
   try {
     // 构建镜像并打所有 tag
-    await $({ cwd: contextDir })`docker build --build-arg APP_NAME=${projectName} --platform linux/amd64 -t ${localImageName} ${tagArgs} .`
+    await $({ cwd: contextDir })`docker buildx build --build-arg APP_NAME=${projectName} --platform ${platformStr} -t ${localImageName} ${tagArgs} .`
     console.info(chalk.green(`Docker 镜像构建完成:`))
     console.info(chalk.gray(`  本地: ${localImageName}`))
     for (const registry of registries) {
@@ -384,6 +389,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     .option('--context-only', '仅准备 Docker 上下文，不构建镜像', false)
     .option('-r, --registry <registry...>', 'Docker 镜像仓库地址（可多次指定）', ['registry.fly.io', 'registry.aitoearn.cn'])
     .option('-p, --push', '构建后推送镜像到仓库', false)
+    .option('--platform <platforms...>', '目标平台（可多次指定，如 linux/amd64 linux/arm64）', ['linux/amd64'])
     .action(async (appName, options) => {
       try {
         const finalOptions = { ...options, contextOnly: options.contextOnly }
@@ -395,6 +401,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
             verbose: options.verbose,
             registries: options.registry,
             push: options.push,
+            platforms: options.platform,
           })
         }
       }
