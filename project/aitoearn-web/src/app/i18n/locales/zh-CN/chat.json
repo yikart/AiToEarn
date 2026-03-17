@@ -1,0 +1,225 @@
+{
+  "input": {
+    "placeholder": "为我们的新品寿司拼盘制作一个8秒的竖屏宣传视频。使用欢快的爵士乐，新鲜三文鱼的特写镜头，生成字幕，最后展示我们的logo。",
+    "send": "发送",
+    "stop": "停止",
+    "uploading": "上传中...",
+    "upload": "上传",
+    "linkPromotionPlan": "链接推广计划（让agent操作您的推广计划）",
+    "selectPromotionPlan": "选择推广计划",
+    "noPromotionPlan": "暂无推广计划",
+    "clearSelection": "清除选择"
+  },
+  "message": {
+    "thinking": "思考中...",
+    "error": "操作失败，请重试",
+    "loadFailed": "加载失败",
+    "connectionInterrupted": "连接中断"
+  },
+  "error": {
+    "insufficientCredits": {
+      "title": "Agent 积分不足",
+      "content": "您的 Agent 积分不足，请开通会员",
+      "okText": "确定"
+    }
+  },
+  "task": {
+    "newChat": "新对话",
+    "delete": "删除",
+    "deleteConfirm": "确定要删除这个对话吗？",
+    "deleteSuccess": "删除成功",
+    "deleteFailed": "删除失败",
+    "status": {
+      "running": "运行中",
+      "completed": "已完成",
+      "requiresAction": "需要操作",
+      "failed": "失败"
+    },
+    "rate": "评分",
+    "favorite": "收藏",
+    "unfavorite": "取消收藏",
+    "editTitle": "编辑标题",
+    "share": "分享",
+    "titleLabel": "任务标题",
+    "titlePlaceholder": "请输入标题",
+    "titleUpdated": "标题已更新",
+    "moreActions": "更多"
+  },
+  "home": {
+    "title": "有什么可以帮你的？",
+    "recentTasks": "最近任务",
+    "viewAll": "浏览全部",
+    "noTasks": "暂无任务记录",
+    "startChat": "开始创作",
+    "aiCreation": "AI 智能创作",
+    "supportUpload": "支持图片/视频上传",
+    "enterToSend": "按 Enter 发送",
+    "connectTools": "发布到",
+    "loginRequired": "请先登录",
+    "defaultImageGroup": "默认图片资源组",
+    "defaultVideoGroup": "默认视频资源组",
+    "materialLibrary": "媒体资源库",
+    "affiliateReward": "赚 $716.4",
+    "imageMaterial": "图片素材",
+    "videoMaterial": "视频素材",
+    "agentAssets": "Agent 素材",
+    "noData": "暂无数据"
+  },
+  "history": {
+    "meta": {
+      "title": "AI任务记录 - 对话与生成历史",
+      "description": "查看和管理您的AI Agent任务记录，包括对话历史、AI使用日志、视频生成历史。支持分页浏览、任务评分和历史记录管理。",
+      "keywords": "AI任务记录, 对话历史, AI Agent历史, 任务管理, AI使用日志, 视频生成历史, 历史记录, 任务评分, AI对话记录, 工作流历史, 内容创作记录, AI创作历史"
+    },
+    "title": "任务记录",
+    "empty": "暂无任务记录",
+    "loadMore": "加载更多",
+    "loading": "加载中...",
+    "logs": "使用日志",
+    "logsTitle": "AI 使用日志",
+    "logsEmpty": "暂无使用记录",
+    "logsLoading": "加载日志中...",
+    "logsError": "获取日志失败",
+    "pageInfo": "第 {{page}} / {{totalPages}} 页，共 {{total}} 条记录",
+    "logType": {
+      "agent": "AI Agent",
+      "chat": "AI 对话"
+    },
+    "logFields": {
+      "model": "模型",
+      "channel": "渠道",
+      "points": "消耗积分",
+      "duration": "耗时",
+      "taskId": "任务ID"
+    },
+    "videoHistory": "视频历史",
+    "videoHistoryTitle": "视频生成历史",
+    "videoHistoryEmpty": "暂无视频生成记录",
+    "videoGeneration": "视频生成",
+    "videoSize": "视频尺寸",
+    "videoDuration": "视频时长",
+    "prompt": "提示词",
+    "progress": "进度",
+    "previewVideo": "预览视频",
+    "logStatus": {
+      "success": "成功",
+      "failed": "失败",
+      "pending": "进行中"
+    },
+    "videoStatus": {
+      "pending": "等待中",
+      "processing": "生成中",
+      "completed": "已完成",
+      "failed": "失败"
+    },
+    "duration": {
+      "seconds": "秒",
+      "minutes": "分",
+      "secondsUnit": "秒"
+    },
+    "searchPlaceholder": "搜索任务标题...",
+    "favoriteOnly": "我的收藏",
+    "emptyFavorites": "暂无收藏的任务",
+    "emptySearch": "未找到匹配的任务",
+    "clearFilters": "清除筛选"
+  },
+  "rating": {
+    "title": "评分与评价",
+    "submit": "提交",
+    "cancel": "取消",
+    "requireComment": "低分需填写理由",
+    "saveSuccess": "保存成功",
+    "saveFailed": "保存失败",
+    "noRating": "未评分",
+    "commentLabel": "评价（可选）",
+    "commentPlaceholder": "填写评价...",
+    "commentRequiredIfLow": "低于 3 分需要填写理由",
+    "loading": "加载中...",
+    "feedbackPrompt": "您的每一条评价都会让我们变得更好",
+    "submitSuccess": "提交成功，感谢您的评价！"
+  },
+  "detail": {
+    "title": "对话详情",
+    "continuePlaceholder": "继续对话...",
+    "back": "返回",
+    "workflowProcess": "AI 工作流程",
+    "waitingResponse": "等待 AI 响应...",
+    "scrollToBottom": "回到底部"
+  },
+  "media": {
+    "video": "视频",
+    "image": "图片",
+    "document": "文档",
+    "uploadFailed": "上传失败，请重试",
+    "uploadCancelled": "上传已取消"
+  },
+  "workflow": {
+    "toolCallCompleted": "工具调用完成",
+    "toolResult": "返回结果",
+    "processing": "处理中..."
+  },
+  "toolDetail": {
+    "input": "输入参数",
+    "output": "执行结果",
+    "noResult": "暂无结果"
+  },
+  "action": {
+    "connectChannel": "连接频道",
+    "connectChannelDesc": "您还未连接 {{platform}} 账号，请先连接频道账号才能发布内容。",
+    "connectNow": "立即连接",
+    "addChannel": "添加频道",
+    "addChannelDesc": "您还未连接 {{platform}} 账号，请先添加频道才能发布内容。",
+    "addChannelNow": "添加频道",
+    "updateAuth": "更新授权",
+    "updateAuthDesc": "您的 {{platform}} 账号授权已过期，请重新授权。",
+    "reauthorize": "重新授权",
+    "loginChannel": "登录频道",
+    "loginChannelDesc": "请先登录 {{platform}} 账号。",
+    "goLogin": "去登录",
+    "readyToPublish": "准备发布",
+    "readyToPublishDesc": "内容已准备好，可以发布到 {{platform}}。",
+    "goPublish": "去发布",
+    "insufficientCredits": "积分不足",
+    "insufficientCreditsDesc": "任务已暂停，请充值积分后继续。",
+    "rechargeCredits": "充值积分",
+    "action": "操作",
+    "actionDesc": "请完成以下操作",
+    "continue": "继续"
+  },
+  "publishDetail": {
+    "title": "发布详情",
+    "loading": "加载中...",
+    "publishing": "发布中...",
+    "published": "已发布",
+    "failed": "发布失败",
+    "unpublished": "待发布",
+    "viewWork": "查看作品",
+    "noTitle": "无标题",
+    "retry": "重试"
+  },
+  "pluginPublish": {
+    "autoPublishIn": "{{seconds}} 秒后将自动发布到{{platform}}",
+    "publishNow": "立即发布",
+    "cancel": "取消",
+    "publishing": "正在发布到{{platform}}...",
+    "doNotCloseBrowser": "正在发布，请不要关闭这个浏览器窗口",
+    "publishSuccess": "发布成功！",
+    "publishFailed": "发布失败",
+    "retryPublish": "重新发布",
+    "viewWork": "查看作品",
+    "pluginNotReady": "插件未就绪，请先安装并授权插件",
+    "noAccountFound": "未找到可用的发布账号",
+    "goPublish": "去发布",
+    "pluginNotInstalled": "您未安装浏览器插件，无法发布，",
+    "installPlugin": "点击安装插件",
+    "platformNotLogged": "您未在此浏览器登录{{platform}}账号，",
+    "goLogin": "前往登录",
+    "retry": "重试",
+    "stage": {
+      "download": "正在下载资源...",
+      "upload": "正在上传...",
+      "publish": "正在发布...",
+      "complete": "发布完成"
+    }
+  }
+}

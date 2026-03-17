@@ -1,13 +1,11 @@
-version: '3.8'
-
 services:
   mongodb:
-    image: mongo:7.0
+    image: mongo:latest
     container_name: aitoearn-mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_PASSWORD:-password}
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
     ports:
       - "27017:27017"
     volumes:
@@ -23,10 +21,10 @@ services:
       start_period: 40s
 
   redis:
-    image: redis:7-alpine
+    image: redis:latest
     container_name: aitoearn-redis
     restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD:-password}
+    command: redis-server --requirepass password
     ports:
       - "6379:6379"
     volumes:
@@ -40,74 +38,96 @@ services:
       retries: 5
       start_period: 30s
 
-  aitoearn-channel:
-    image: aitoearn/aitoearn-channel:latest
-    container_name: aitoearn-channel
+  rustfs:
+    image: rustfs/rustfs:latest
+    container_name: aitoearn-rustfs
+    hostname: rustfs.local
+    restart: unless-stopped
+    environment:
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - rustfs-data:/data
+    networks:
+      aitoearn-network:
+        aliases:
+          - rustfs.local
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  rustfs-init:
+    image: minio/mc:latest
+    container_name: aitoearn-rustfs-init
+    depends_on:
+      rustfs:
+        condition: service_healthy
+    networks:
+      - aitoearn-network
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set rustfs http://rustfs.local:9000 rustfsadmin rustfsadmin;
+      mc mb rustfs/aitoearn --ignore-existing;
+      mc anonymous set download rustfs/aitoearn;
+      exit 0;
+      "
+
+  aitoearn-ai:
+    image: aitoearn/aitoearn-ai:latest
+    container_name: aitoearn-ai
     restart: unless-stopped
     depends_on:
       mongodb:
         condition: service_healthy
       redis:
         condition: service_healthy
-    ports:
-      - "7001:7001"
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      APP_ENV: ${APP_ENV:-production}
-      APP_NAME: aitoearn-channel
-      APP_DOMAIN: ${APP_DOMAIN:-localhost}
-      
-      MONGODB_HOST: mongodb
-      MONGODB_PORT: 27017
-      MONGODB_USERNAME: ${MONGODB_USERNAME:-admin}
-      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-password}
-      
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
-      
-      SERVER_URL: http://aitoearn-server:3002
-      
-      INTERNAL_TOKEN: ${INTERNAL_TOKEN:-change-this-secret-token}
-      
-      FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
-      FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET:-}
-      
-      BILIBILI_CLIENT_ID: ${BILIBILI_CLIENT_ID:-}
-      BILIBILI_CLIENT_SECRET: ${BILIBILI_CLIENT_SECRET:-}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      KWAI_CLIENT_ID: ${KWAI_CLIENT_ID:-}
-      KWAI_CLIENT_SECRET: ${KWAI_CLIENT_SECRET:-}
-      PINTEREST_CLIENT_ID: ${PINTEREST_CLIENT_ID:-}
-      PINTEREST_CLIENT_SECRET: ${PINTEREST_CLIENT_SECRET:-}
-      PINTEREST_TEST_AUTHORIZATION: ${PINTEREST_TEST_AUTHORIZATION:-}
-      TIKTOK_CLIENT_ID: ${TIKTOK_CLIENT_ID:-}
-      TIKTOK_CLIENT_SECRET: ${TIKTOK_CLIENT_SECRET:-}
-      TWITTER_CLIENT_ID: ${TWITTER_CLIENT_ID:-}
-      TWITTER_CLIENT_SECRET: ${TWITTER_CLIENT_SECRET:-}
-      FACEBOOK_CLIENT_ID: ${FACEBOOK_CLIENT_ID:-}
-      FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET:-}
-      FACEBOOK_CONFIG_ID: ${FACEBOOK_CONFIG_ID:-}
-      THREADS_CLIENT_ID: ${THREADS_CLIENT_ID:-}
-      THREADS_CLIENT_SECRET: ${THREADS_CLIENT_SECRET:-}
-      INSTAGRAM_CLIENT_ID: ${INSTAGRAM_CLIENT_ID:-}
-      INSTAGRAM_CLIENT_SECRET: ${INSTAGRAM_CLIENT_SECRET:-}
-      LINKEDIN_CLIENT_ID: ${LINKEDIN_CLIENT_ID:-}
-      LINKEDIN_CLIENT_SECRET: ${LINKEDIN_CLIENT_SECRET:-}
-      YOUTUBE_CLIENT_ID: ${YOUTUBE_CLIENT_ID:-}
-      YOUTUBE_CLIENT_SECRET: ${YOUTUBE_CLIENT_SECRET:-}
-      WXPLAT_APP_ID: ${WXPLAT_APP_ID:-}
-      WXPLAT_APP_SECRET: ${WXPLAT_APP_SECRET:-}
-      WXPLAT_ENCODING_AES_KEY: ${WXPLAT_ENCODING_AES_KEY:-}
-      
-      # 阿里云绿网配置
-      ALI_GREEN_ACCESS_KEY_ID: ${ALI_GREEN_ACCESS_KEY_ID:-}
-      ALI_GREEN_ACCESS_KEY_SECRET: ${ALI_GREEN_ACCESS_KEY_SECRET:-}
+    volumes:
+      - ./config/aitoearn-ai.config.js:/app/config.js:ro
+      - ./config/gcs-placeholder.json:/app/config/gcs-placeholder.json:ro
     networks:
       - aitoearn-network
+    environment:
+      NODE_ENV: production
+      APP_ENV: production
+      APP_NAME: aitoearn-ai
+
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_USERNAME: admin
+      MONGODB_PASSWORD: password
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: password
+
+      JWT_SECRET: change-this-jwt-secret
+      INTERNAL_TOKEN: change-this-secret-token
+
+      SERVER_URL: http://aitoearn-server:3002
+
+      # AI Services
+      OPENAI_API_KEY: sk-placeholder
+      OPENAI_BASE_URL: https://api.openai.com/v1
+      ANTHROPIC_API_KEY: sk-placeholder
+      ANTHROPIC_BASE_URL: https://api.anthropic.com
+      VOLCENGINE_API_KEY: ""
+      VOLCENGINE_ACCESS_KEY_ID: ""
+      VOLCENGINE_SECRET_ACCESS_KEY: ""
+      VOLCENGINE_VOD_SPACE_NAME: ""
+      GROK_API_KEY: ""
+      AICSO_API_KEY: ""
+      AICSO_BASE_URL: ""
+      GEMINI_KEY_PAIRS: '[{"projectId":"placeholder","apiKey":"placeholder","keyFile":"/app/config/gcs-placeholder.json","bucket":"placeholder"}]'
+      GEMINI_LOCATION: us-central1
+      AI_PROXY_URL: ""
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:7001/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3010/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -122,58 +142,88 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-      aitoearn-channel:
+      aitoearn-ai:
         condition: service_healthy
-    ports:
-      - "3002:3002"
-    environment:
-      # 应用配置
-      NODE_ENV: ${NODE_ENV:-production}
-      APP_ENV: ${APP_ENV:-production}
-      APP_NAME: aitoearn-server
-      
-      MONGODB_HOST: mongodb
-      MONGODB_PORT: 27017
-      MONGODB_USERNAME: ${MONGODB_USERNAME:-admin}
-      MONGODB_PASSWORD: ${MONGODB_PASSWORD:-password}
-      
-      STATISTICS_DB_HOST: mongodb
-      STATISTICS_DB_PORT: 27017
-      STATISTICS_DB_USERNAME: ${MONGODB_USERNAME:-admin}
-      STATISTICS_DB_PASSWORD: ${MONGODB_PASSWORD:-password}
-      
-      # Redis 配置
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-password}
-      
-      CHANNEL_URL: http://aitoearn-channel:7001
-      
-      # 认证配置
-      JWT_SECRET: ${JWT_SECRET:-change-this-jwt-secret}
-      INTERNAL_TOKEN: ${INTERNAL_TOKEN:-change-this-secret-token}
-      
-      MAIL_USER: ${MAIL_USER:-}
-      MAIL_PASS: ${MAIL_PASS:-}
-      
-      FEISHU_WEBHOOK_URL: ${FEISHU_WEBHOOK_URL:-}
-      FEISHU_WEBHOOK_SECRET: ${FEISHU_WEBHOOK_SECRET:-}
-      
-      KLING_ACCESS_KEY: ${KLING_ACCESS_KEY:-}
-      KLING_BASE_URL: ${KLING_BASE_URL:-}
-      VOLCENGINE_API_KEY: ${VOLCENGINE_API_KEY:-}
-      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-}
-      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
-      DASHSCOPE_BASE_URL: ${DASHSCOPE_BASE_URL:-}
-      SORA2_API_KEY: ${SORA2_API_KEY:-}
-      SORA2_BASE_URL: ${SORA2_BASE_URL:-}
-      MD2CARD_API_KEY: ${MD2CARD_API_KEY:-}
-      
-      ALI_GREEN_ACCESS_KEY_ID: ${ALI_GREEN_ACCESS_KEY_ID:-}
-      ALI_GREEN_ACCESS_KEY_SECRET: ${ALI_GREEN_ACCESS_KEY_SECRET:-}
+    volumes:
+      - ./config/aitoearn-server.config.js:/app/config.js:ro
     networks:
       - aitoearn-network
+    environment:
+      NODE_ENV: production
+      APP_ENV: production
+      APP_NAME: aitoearn-server
+      APP_DOMAIN: localhost
+
+      MONGODB_HOST: mongodb
+      MONGODB_PORT: 27017
+      MONGODB_USERNAME: admin
+      MONGODB_PASSWORD: password
+
+      STATISTICS_DB_HOST: mongodb
+      STATISTICS_DB_PORT: 27017
+      STATISTICS_DB_USERNAME: admin
+      STATISTICS_DB_PASSWORD: password
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: password
+
+      AI_URL: http://aitoearn-ai:3010
+
+      JWT_SECRET: change-this-jwt-secret
+      INTERNAL_TOKEN: change-this-secret-token
+
+      MAIL_USER: ""
+      MAIL_PASS: ""
+
+      # AI Services
+      OPENAI_API_KEY: sk-placeholder
+      OPENAI_BASE_URL: https://api.openai.com/v1
+
+      # Third-party OAuth
+      BILIBILI_CLIENT_ID: ""
+      BILIBILI_CLIENT_SECRET: ""
+      GOOGLE_CLIENT_ID: ""
+      GOOGLE_CLIENT_SECRET: ""
+      KWAI_CLIENT_ID: ""
+      KWAI_CLIENT_SECRET: ""
+      PINTEREST_CLIENT_ID: ""
+      PINTEREST_CLIENT_SECRET: ""
+      PINTEREST_TEST_AUTHORIZATION: ""
+      TIKTOK_CLIENT_ID: ""
+      TIKTOK_CLIENT_SECRET: ""
+      TWITTER_CLIENT_ID: ""
+      TWITTER_CLIENT_SECRET: ""
+      FACEBOOK_CLIENT_ID: ""
+      FACEBOOK_CLIENT_SECRET: ""
+      FACEBOOK_CONFIG_ID: ""
+      THREADS_CLIENT_ID: ""
+      THREADS_CLIENT_SECRET: ""
+      INSTAGRAM_CLIENT_ID: ""
+      INSTAGRAM_CLIENT_SECRET: ""
+      LINKEDIN_CLIENT_ID: ""
+      LINKEDIN_CLIENT_SECRET: ""
+      YOUTUBE_CLIENT_ID: ""
+      YOUTUBE_CLIENT_SECRET: ""
+      WXPLAT_APP_ID: ""
+      WXPLAT_APP_SECRET: ""
+      WXPLAT_ENCODING_AES_KEY: ""
+      DOYIN_CLIENT_ID: ""
+      DOYIN_CLIENT_SECRET: ""
+
+      # Aliyun SMS
+      ALI_SMS_ACCESS_KEY_ID: ""
+      ALI_SMS_ACCESS_KEY_SECRET: ""
+      ALI_SMS_SIGN_NAME: ""
+      ALI_SMS_TEMPLATE_CODE: ""
+
+      # Aliyun Content Safety
+      ALI_GREEN_ACCESS_KEY_ID: ""
+      ALI_GREEN_ACCESS_KEY_SECRET: ""
+
+      # New API
+      NEW_API_URL: ""
+      NEW_API_TOKEN: ""
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
@@ -181,7 +231,6 @@ services:
       retries: 3
       start_period: 60s
 
-  # AiToEarn Web 服务 - 前端应用
   aitoearn-web:
     image: aitoearn/aitoearn-web:latest
     container_name: aitoearn-web
@@ -189,14 +238,36 @@ services:
     depends_on:
       aitoearn-server:
         condition: service_healthy
-    ports:
-      - "3000:3000"
-    environment:
-      NODE_ENV: ${NODE_ENV:-production}
-      NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:3002/api}
     networks:
       - aitoearn-network
+    environment:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+      NEXT_PUBLIC_API_URL: http://localhost:8080/api
+
+  nginx:
+    image: nginx:alpine
+    container_name: aitoearn-nginx
+    restart: unless-stopped
+    depends_on:
+      aitoearn-web:
+        condition: service_started
+      aitoearn-server:
+        condition: service_healthy
+      aitoearn-ai:
+        condition: service_healthy
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - aitoearn-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/_nhealth"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
 networks:
   aitoearn-network:
@@ -210,4 +281,5 @@ volumes:
     driver: local
   redis-data:
     driver: local
-
+  rustfs-data:
+    driver: local

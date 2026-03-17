@@ -1,0 +1,57 @@
+---
+id: aitoearn-nx-workflow
+trigger: "when building, serving, or testing the project"
+confidence: 0.95
+domain: build
+source: local-repo-analysis
+---
+
+# Nx Monorepo Workflow
+
+## Action
+Use Nx commands for all build and development tasks.
+
+## Commands
+
+### Serve Application
+```bash
+pnpm nx serve <project>
+```
+
+### Build Application
+```bash
+pnpm nx build <project>
+```
+
+### Run Linting
+```bash
+pnpm lint -w
+```
+
+### Run Tests
+```bash
+pnpm nx test <project>
+```
+
+## Available Projects
+- `aitoearn-admin-server`
+- `aitoearn-ai`
+- `aitoearn-channel`
+- `aitoearn-payment`
+- `aitoearn-server`
+- `aitoearn-task`
+- `browser-automation-worker`
+
+## Build Verification Rules
+- Always use `pnpm nx build <project>` to verify
+- Never use `tsc` directly
+- After renaming methods, run build to ensure all references updated
+
+## Pre-commit
+- Lint runs automatically via `lint-staged`
+- Must pass `pnpm lint -w` before commit
+
+## Evidence
+- Nx configuration in `nx.json`
+- Build scripts in `package.json`
+- Enforced in CLAUDE.md development standards

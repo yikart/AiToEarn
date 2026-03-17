@@ -1,0 +1,532 @@
+{
+  "seo": {
+    "title": "定価プラン - 柔軟なAIクレジットとサブスクリプション",
+    "description": "AI ToEarnは無料トライアルからプロフェッショナルパッケージまで、様々なユーザーのコンテンツ作成ニーズに対応する多彩な料金プランを提供しています。動画生成、画像作成、マルチプラットフォーム配信などのAI機能をサポート。",
+    "keywords": "AI料金, プラン選択, コンテンツ作成パッケージ, AIサブスクリプション, 動画生成料金"
+  },
+  "pageTitle": "従量課金",
+  "pageDescription": "Aitoearnは単なるソフトウェア会社ではなく、成果をお届けする会社です。\n私たちの目標は、一人起業家に運営成果を届けることです。\nご購入いただいたAitoearnクレジット（トークン料金の代理チャージ）は、Google、OpenAI、xAI、Anthropicなどのプロバイダーのモデル費用の支払いに使用されます。\n私たちは、すべてのモデルの公式価格を超えないことをお約束します。\nまた、利用量の増加によりプロバイダーからボリュームディスカウントを受けられた場合、その割引をお客様にも還元いたします。",
+  "sections": {
+    "credits": "クレジット購入",
+    "creditsDesc": "必要な分だけクレジットを購入、サブスクリプション不要"
+  },
+  "tabs": {
+    "credits": "クレジットチャージ",
+    "balance": "残高チャージ"
+  },
+  "balance": {
+    "rechargeButton": "チャージ",
+    "balanceAmount": "残高",
+    "features": {
+      "adCampaign": "プロモーションタスクの配信に使用",
+      "neverExpire": "残高は期限切れなし"
+    }
+  },
+  "paymentMethod": {
+    "creditCard": "クレジットカード",
+    "alipay": "Alipay"
+  },
+  "creditsTiers": {
+    "credits_10": {
+      "button": "購入"
+    },
+    "credits_50": {
+      "button": "購入"
+    },
+    "credits_100": {
+      "button": "購入"
+    },
+    "credits_cny_70": {
+      "button": "購入"
+    },
+    "credits_cny_350": {
+      "button": "購入"
+    },
+    "credits_cny_700": {
+      "button": "購入"
+    }
+  },
+  "creditsCard": {
+    "credits": "クレジット",
+    "recommended": "おすすめ",
+    "canGenerate": "≈ 生成可能"
+  },
+  "allPlansInclude": "対応機能",
+  "features": {
+    "longVideoGen": "長尺動画生成（数分）",
+    "aiMultiPlatformPublish": "AI適応型マルチプラットフォーム配信",
+    "videoNarration": "映像解説",
+    "liveClipping": "ライブ配信切り抜き",
+    "shortVideoGen": "ショート動画生成（10秒）",
+    "videoEditing": "動画編集",
+    "imageGen": "画像生成",
+    "imageEditing": "画像編集",
+    "videoTranslation": "動画翻訳",
+    "contentCopyright": "AIコンテンツ著作権検出",
+    "contentQualityAnalysis": "AIコンテンツ品質分析",
+    "textModeration": "テキストモデレーション",
+    "imageModeration": "画像モデレーション",
+    "videoModeration": "動画モデレーション",
+    "multiModel": "マルチモデル対応",
+    "textToVideo": "テキストから動画",
+    "imageToVideo": "画像から動画",
+    "videoToVideo": "動画から動画",
+    "consistentCharacter": "キャラクター一貫性",
+    "aiAnimation": "AIアニメーション",
+    "aiImage": "AI画像",
+    "voiceClone": "音声クローン",
+    "voiceSynthesis": "音声合成",
+    "fasterSpeed": "高速処理",
+    "withWatermark": "ウォーターマークあり",
+    "noWatermark": "ウォーターマークなし",
+    "storage500M": "500MBストレージ",
+    "storage5G": "5GBストレージ"
+  },
+  "faq": {
+    "title": "よくある質問",
+    "paymentMethods": {
+      "question": "どのような支払い方法に対応していますか？",
+      "answer": "主要なクレジットカード（Visa、MasterCard、American Express）およびAlipayなど、複数の支払い方法に対応しています。中国でサービスをご利用の場合は、Alipayで都度払いでご購入いただけます。"
+    },
+    "creditDeduction": {
+      "question": "画像や動画生成のクレジットはどのように消費されますか？",
+      "answer": "画像・動画生成の料金は公式チャンネルに準拠しています。公式チャンネルでまとめ買い割引がある場合は、その割引をお客様にも適用いたします。",
+      "pricingTable": {
+        "title": "詳細料金表",
+        "headers": {
+          "model": "モデル",
+          "type": "タイプ",
+          "duration": "時間",
+          "resolution": "解像度",
+          "notes": "備考",
+          "credits": "クレジット",
+          "price": "価格",
+          "channel": "チャンネル"
+        },
+        "rows": [
+          {
+            "model": "gpt-5",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "",
+            "notes": "大規模モデルの価格は公式価格に準拠",
+            "credits": "100万トークンあたり",
+            "price": "入力9元、出力72元",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-mini",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "入力1.8元、出力14.4元",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-nano",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "入力0.36元、出力2.88元",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "動画対応",
+            "notes": "",
+            "credits": "",
+            "price": "入力9元、出力72元",
+            "channel": "yun"
+          },
+          {
+            "model": "chatgpt-4o-latest",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "入力36元、出力108元",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "動画対応",
+            "notes": "",
+            "credits": "",
+            "price": "入力2.16元、出力18元",
+            "channel": "yun"
+          },
+          {
+            "model": "qwen-vl-max-latest",
+            "type": "大規模言語モデル",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "入力1.6元、出力4元",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash-image",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "Nano Banana Proとも呼ばれ、複数画像入力に対応",
+            "credits": "1クレジット",
+            "price": "0.27元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedream-3.0",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "2.6クレジット",
+            "price": "0.26元",
+            "channel": "公式"
+          },
+          {
+            "model": "seededit-3.0",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "画像編集、jpeg・png形式対応",
+            "credits": "3クレジット",
+            "price": "0.3元",
+            "channel": "公式"
+          },
+          {
+            "model": "gpt-image-1",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "画像編集対応",
+            "notes": "",
+            "credits": "プロモーション",
+            "price": "低画質 $0.011-0.016、中画質 $0.042-0.063、高画質 $0.167-0.25",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [max]",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "画像編集対応",
+            "notes": "",
+            "credits": "1.5クレジット",
+            "price": "0.6元",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [pro]",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "画像編集対応",
+            "notes": "",
+            "credits": "1クレジット",
+            "price": "0.3元",
+            "channel": "yun"
+          },
+          {
+            "model": "Flux 1.1 pro ultra",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "4.5クレジット",
+            "price": "0.45元",
+            "channel": "公式"
+          },
+          {
+            "model": "Flux1.1 pro",
+            "type": "画像生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "3クレジット",
+            "price": "0.3元",
+            "channel": "公式"
+          },
+          {
+            "model": "midjourney relax",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "",
+            "notes": "",
+            "credits": "無料",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "midjourney fast/turbo",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "",
+            "notes": "",
+            "credits": "4クレジット",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "20クレジット",
+            "price": "2元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "動画生成",
+            "duration": "10秒",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "40クレジット",
+            "price": "4元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35クレジット",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "動画生成",
+            "duration": "10秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "70クレジット",
+            "price": "7元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "100クレジット",
+            "price": "10元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "動画生成",
+            "duration": "10秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "200クレジット",
+            "price": "20元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "480p",
+            "notes": "",
+            "credits": "70クレジット",
+            "price": "0.7元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35クレジット",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-turbo(14b)",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "volcanoチャンネルは使用しないでください",
+            "credits": "12クレジット",
+            "price": "1.2元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-plus",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "開始・終了フレーム対応",
+            "credits": "35クレジット",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "wanx2.1-vace-plus",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "動画編集",
+            "credits": "35クレジット",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "480p",
+            "notes": "10秒対応",
+            "credits": "7.2クレジット",
+            "price": "0.72元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "10秒の場合は2倍の価格",
+            "credits": "16.4クレジット",
+            "price": "1.64元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "36.7クレジット",
+            "price": "3.67元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "480p",
+            "notes": "開始・終了フレーム対応",
+            "credits": "5クレジット",
+            "price": "0.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "10秒対応",
+            "credits": "11クレジット",
+            "price": "1.1元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "動画生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "10秒の場合は2倍の価格",
+            "credits": "25クレジット",
+            "price": "2.5元",
+            "channel": "yun"
+          }
+        ]
+      }
+    },
+    "creditExpiry": {
+      "question": "クレジットに有効期限はありますか？",
+      "answer": "クレジットの有効期限ポリシーは非常に柔軟です。クレジットは取得から12ヶ月後に期限切れとなるため、十分な時間をかけてご利用いただけます。"
+    },
+    "moreCredits": {
+      "question": "もっとクレジットが必要な場合は？",
+      "answer": "毎日コンテンツを公開することで無料クレジットを獲得できます。また、メンバーシップに登録するか、クレジットを直接購入することでさらにクレジットを取得できます。"
+    },
+    "checkCredits": {
+      "question": "クレジットの残高はどこで確認できますか？",
+      "answer": "クレジット残高をクリックするだけで、詳細な変動履歴と使用状況を確認できます。"
+    },
+    "hiddenFees": {
+      "question": "隠れた費用はありますか？",
+      "answer": "いいえ。表示価格がお支払い価格です。選択したプラン以外に追加料金は一切かかりません。"
+    }
+  },
+  "pricingTable": {
+    "title": "料金表",
+    "expand": "料金表",
+    "collapse": "折りたたむ",
+    "creditsPolicy": {
+      "title": "クレジット使用ポリシー",
+      "desc1": "クレジットは主に2つの方法で消費されます：",
+      "llmTokens": "LLM トークン",
+      "llmTokensDesc": "タスクの計画、意思決定、出力の生成に使用",
+      "thirdPartyApis": "サードパーティAPI",
+      "thirdPartyApisDesc": "画像モデル、動画モデル、動画編集/処理などの外部サービスへのアクセスに使用",
+      "costNote": "タスクの実際のクレジット消費は、その複雑さ、所要時間、外部呼び出し回数によって異なります。",
+      "storageNote": "タスク完了後、その出力の保存、ホスティング、表示、デプロイに追加クレジットは消費されません。",
+      "refundNote": "AiToEarnの技術的な問題でタスクが失敗した場合、消費されたクレジットを全額返金いたします。",
+      "exchangeRate": "100クレジット = 1米ドル"
+    },
+    "llm": {
+      "title": "大規模言語モデル",
+      "unit": "100万トークンあたり",
+      "input": "入力",
+      "output": "出力",
+      "inputModality": "入力モダリティ",
+      "outputModality": "出力モダリティ",
+      "notes": "備考"
+    },
+    "videoGen": {
+      "title": "動画生成モデル",
+      "price": "価格",
+      "latency": "レイテンシー",
+      "latencyValues": {
+        "minutes": "数分",
+        "seconds": "数秒",
+        "hours": "数時間"
+      }
+    },
+    "imageGen": {
+      "title": "画像生成モデル"
+    },
+    "headers": {
+      "model": "モデル",
+      "price": "価格",
+      "tool": "ツール"
+    },
+    "videoTools": {
+      "title": "動画処理ツール",
+      "perMin": "/分",
+      "billingMethod": "課金方法",
+      "tools": {
+        "videoUnderstanding": "動画理解",
+        "videoEditing": "動画編集",
+        "videoStyleTransfer": "動画スタイル変換",
+        "videoTranslation": "動画翻訳",
+        "highlightClipping": "ハイライトクリッピング",
+        "subtitleRemoval": "字幕除去",
+        "scriptRecovery": "スクリプト復元",
+        "videoNarration": "動画ナレーション"
+      },
+      "billing": {
+        "perInputMin": "入力動画1分あたり",
+        "perOutputMin": "出力動画1分あたり",
+        "perGenMin": "生成動画1分あたり",
+        "720P output": "720P出力"
+      }
+    }
+  }
+}

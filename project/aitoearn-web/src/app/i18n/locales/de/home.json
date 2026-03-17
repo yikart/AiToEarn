@@ -1,0 +1,418 @@
+{
+  "dropToUpload": "Zum Hochladen ablegen",
+  "announcement": {
+    "text": "AiToEarn verwendet einen Agenten, um alle Ihre Inhaltsbedürfnisse zu erfüllen. Er ruft während der Ausführung viele Tools auf, was einige Zeit dauern kann. Sie können jederzeit beenden und den Aufgabenfortschritt später überprüfen."
+  },
+  "releaseBanner": {
+    "tag": "Release v0.8.0",
+    "text": "Erstellen und erweitern Sie KI-Workflows mit Plugins und einem wachsenden Marktplatz."
+  },
+  "header": {
+    "logo": "Aitoearn",
+    "nav": {
+      "home": "Startseite",
+      "marketplace": "Marktplatz",
+      "pricing": "Preise",
+      "status": "Status",
+      "docs": "Dokumentation",
+      "blog": "Blog",
+      "download": "Downloads",
+      "brand": "Marke",
+      "resources": "Ressourcen"
+    },
+    "getStarted": "Loslegen"
+  },
+  "hero": {
+    "stars": "105.2k",
+    "starsText": "Sterne auf",
+    "github": "GitHub",
+    "title": "Der beste Content-Marketing\nKI-Agent",
+    "subtitle": "Ab heute verwalten Sie Ihre Social Media ganz einfach mit KI. AiToEarn bietet Komplettlösungen von kreativer Inspiration, Inhaltserstellung, Inhaltsverteilung bis hin zur Interaktionsverwaltung und macht KI für jeden zugänglich.",
+    "getStarted": "Loslegen",
+    "useMobilePhone": "Auf dem Handy nutzen"
+  },
+  "seo": {
+    "title": "KI-Video- & Content-Erstellung für 15+ Social-Plattformen",
+    "description": "AiToEarn ist Ihr KI-gestützter Social-Media-Wachstumsoperator. Generieren Sie Videos, Bilder und Texte mit KI und veröffentlichen Sie mit einem Klick auf über 15 Plattformen wie TikTok, YouTube, Instagram, Facebook und X. Mit KI-Content-Erstellung, Smart-Videobearbeitung, Stiltransfer, Videoübersetzung, Trendentdeckung, Markenüberwachung und einheitlichem Engagement-Dashboard.",
+    "keywords": "KI-Content-Marketing, KI-Social-Media-Management, KI-Videogenerierung, Multi-Plattform-Publishing, KI-Inhaltserstellung, Social-Media-Automatisierung, TikTok-Marketing, YouTube-Marketing, KI-Agent, Content-Distribution, KI-Texterstellung, Videobearbeitung KI, Markenüberwachung, AiToEarn"
+  },
+  "agentGenerator": {
+    "title": "Wie kann ich Ihnen helfen?",
+    "subtitle": "Ihr KI-Wachstumsoperator"
+  },
+  "aiGeneration": {
+    "inputPlaceholder": "Geben Sie Ihre Inhaltsidee ein, die KI erstellt ein vollständiges Werk für Sie...",
+    "generateButton": "Erstellung starten",
+    "generating": "Wird erstellt...",
+    "emptyPromptAlert": "Bitte geben Sie einen Prompt für die Inhaltsgenerierung ein",
+    "createTaskFailed": "Aufgabe konnte nicht erstellt werden",
+    "uploadSuccess": "Bild erfolgreich hochgeladen",
+    "uploadFailed": "Bild-Upload fehlgeschlagen, bitte erneut versuchen",
+    "taskCreatedSuccess": "Aufgabe erfolgreich erstellt",
+    "thinking": "KI denkt nach...",
+    "topicPrefix": "Erstellungsthema: ",
+    "generatedTitlePrefix": "Generierter Titel: ",
+    "descriptionPrefix": "📄 ",
+    "failedReasonPrefix": "Fehlergrund: ",
+    "taskTimeout": "Aufgabenzeitüberschreitung, bitte später erneut versuchen",
+    "unknownError": "Unbekannter Fehler",
+    "status": {
+      "thinking": "KI denkt nach...",
+      "waiting": "Warten...",
+      "generatingContent": "Inhalt wird generiert",
+      "generatingImage": "Bild wird generiert",
+      "generatingVideo": "Video wird generiert",
+      "generatingText": "Text wird generiert",
+      "completed": "Abgeschlossen!",
+      "failed": "Fehlgeschlagen",
+      "cancelled": "Abgebrochen"
+    },
+    "channelAuthRequired": "Bitte fügen Sie zuerst einen Kanal hinzu und autorisieren Sie ihn",
+    "channelAuthExpired": "Kanalautorisierung ist abgelaufen, bitte erneut autorisieren",
+    "channelNotSupported": "Direktes Veröffentlichen wird für diese Plattform nicht unterstützt",
+    "taskStopped": "Generierung gestoppt",
+    "stopTaskFailed": "Aufgabe konnte nicht gestoppt werden",
+    "newConversation": "Neue Konversation gestartet",
+    "generatingWarning": "Generierung läuft, bitte stoppen Sie zuerst die aktuelle Aufgabe",
+    "conversationId": "Konversations-ID",
+    "startNewConversation": "Neue Konversation starten",
+    "currentCost": "Aktuelle Kosten",
+    "aiGenerationProcess": "KI-Generierungsprozess",
+    "waitingAiResponse": "Warten auf KI-Antwort...",
+    "uploadImage": "Bild hochladen",
+    "removeImage": "Bild entfernen",
+    "agentMode": "Agent-Modus",
+    "imageGeneration": "Bilderzeugung",
+    "videoGeneration": "Videoerzeugung",
+    "draftBox": "Entwurfsbox",
+    "batchPublish": "Stapelveröffentlichung",
+    "stopGeneration": "Generierung stoppen",
+    "sendMessage": "Nachricht senden",
+    "inspirationPrompt": "Haben Sie Inspiration? Beginnen Sie mit einem Satz zu erstellen",
+    "onboardingTitle": "Wissen Sie nicht, wie Sie mit der Erstellung beginnen sollen?",
+    "onboardingDescription": "Beginnen Sie mit einem Satz zu erstellen",
+    "gotIt": "Verstanden",
+    "saveDraftFailed": "Entwurf konnte nicht gespeichert werden",
+    "saveDraftSuccess": "Entwurf erfolgreich gespeichert",
+    "noDraftGroupFound": "Keine verfügbare Entwurfsgruppe gefunden, bitte erstellen Sie zuerst eine Gruppe",
+    "noDraftGroup": "Keine verfügbare Entwurfsgruppe gefunden",
+    "needAddChannel": "Kanal muss hinzugefügt werden",
+    "channelNotAdded": "Wir haben festgestellt, dass Sie den {platform}-Kanal noch nicht hinzugefügt haben. Möchten Sie ihn hinzufügen?",
+    "goAdd": "Hinzufügen",
+    "cancel": "Abbrechen",
+    "channelAuthExpiredTitle": "Kanalautorisierung abgelaufen",
+    "channelAuthExpiredContent": "Ihre Kanalautorisierung ist abgelaufen. Möchten Sie erneut autorisieren?",
+    "reauthorize": "Erneut autorisieren",
+    "needLoginChannel": "Kanal-Anmeldung erforderlich",
+    "needLogin": "Anmeldung erforderlich",
+    "pleaseLoginChannel": "Bitte melden Sie sich zuerst bei diesem Kanalkonto an",
+    "goLogin": "Zur Anmeldung",
+    "needBindChannel": "Kanal verbinden",
+    "needBindChannelTitle": "Kanal verbinden",
+    "needBindChannelContent": "{{platform}}-Konto nicht gefunden. Bitte fügen Sie ein {{platform}}-Konto hinzu, um zu veröffentlichen.",
+    "goBind": "Kanal hinzufügen",
+    "platformRequiresPlugin": "Diese Plattform erfordert Plugin-Veröffentlichung, bitte autorisieren Sie zuerst das Plugin",
+    "needAuthorizePlugin": "Plugin-Autorisierung erforderlich",
+    "pluginAuthorizeDescription": "Diese Plattform erfordert Plugin-Veröffentlichung, bitte klicken Sie hier, um das Plugin zu autorisieren",
+    "noAccountFound": "Kein Konto für diese Plattform gefunden, bitte fügen Sie zuerst ein Konto hinzu",
+    "publishTaskSubmitted": "Veröffentlichungsaufgabe an Plugin übermittelt",
+    "publishingViaPlugin": "Wird über Plugin veröffentlicht...",
+    "pluginPublishFailed": "Plugin-Veröffentlichung fehlgeschlagen"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "Diese Plattform erfordert Plugin-Veröffentlichung, bitte autorisieren Sie zuerst das Plugin",
+    "authorizePluginTitle": "Plugin-Autorisierung erforderlich",
+    "authorizePluginDescription": "Diese Plattform erfordert Plugin-Veröffentlichung, bitte klicken Sie hier, um das Plugin zu autorisieren",
+    "noAccountFound": "Kein Konto für diese Plattform gefunden, bitte fügen Sie zuerst ein Konto hinzu",
+    "publishTaskSubmitted": "Veröffentlichungsaufgabe an Plugin übermittelt",
+    "publishingViaPlugin": "Wird über Plugin veröffentlicht...",
+    "publishFailed": "Plugin-Veröffentlichung fehlgeschlagen"
+  },
+  "status": {
+    "generatingInProcess": "Generierung läuft, bitte stoppen Sie zuerst die aktuelle Aufgabe",
+    "stopGenerating": "Generierung stoppen",
+    "sendMessage": "Nachricht senden"
+  },
+  "messages": {
+    "generatingInProcessStopFirst": "Generierung läuft, bitte stoppen Sie zuerst die aktuelle Aufgabe",
+    "newConversationStarted": "Neue Konversation gestartet",
+    "draftSavedSuccessfully": "Entwurf erfolgreich gespeichert",
+    "saveDraftFailed": "Entwurf konnte nicht gespeichert werden",
+    "noDraftGroupFound": "Keine verfügbare Entwurfsgruppe gefunden, bitte erstellen Sie zuerst eine Gruppe",
+    "createDraftGroupFirst": "Keine verfügbare Entwurfsgruppe gefunden"
+  },
+  "platformNames": {
+    "douyin": "Douyin",
+    "xhs": "Xiaohongshu",
+    "wxSph": "WeChat Kanäle",
+    "KWAI": "Kwai",
+    "youtube": "YouTube",
+    "wxGzh": "WeChat Offizielles Konto",
+    "bilibili": "Bilibili",
+    "twitter": "Twitter",
+    "tiktok": "TikTok",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "pinterest": "Pinterest",
+    "linkedin": "LinkedIn"
+  },
+  "channel": {
+    "addChannelRequiredTitle": "Kanal muss hinzugefügt werden",
+    "addChannelRequiredContent": "Wir haben festgestellt, dass Sie den {platform}-Kanal noch nicht hinzugefügt haben. Möchten Sie ihn hinzufügen?",
+    "goToAdd": "Hinzufügen",
+    "authExpiredTitle": "Kanalautorisierung abgelaufen",
+    "authExpiredContent": "Ihre Kanalautorisierung ist abgelaufen. Möchten Sie erneut autorisieren?",
+    "reauthorize": "Erneut autorisieren",
+    "loginRequiredTitle": "Kanal-Anmeldung erforderlich",
+    "loginRequiredContent": "Bitte melden Sie sich zuerst bei diesem Kanalkonto an",
+    "goToLogin": "Zur Anmeldung"
+  },
+  "guide": {
+    "aiInputTitle": "Wissen Sie nicht, wie Sie mit der Erstellung beginnen sollen?",
+    "aiInputDescription": "Beginnen Sie mit einem Satz zu erstellen"
+  },
+  "download": {
+    "downloadNow": "Jetzt herunterladen"
+  },
+  "wechat": {
+    "officialAccount": "WeChat Offizielles Konto",
+    "communityOfficialAccount": "Community Offizielles Konto"
+  },
+  "brandBar": {
+    "title": "Unterstützte Social-Media-Plattformen"
+  },
+  "buildSection": {
+    "badge": "Funktion 1",
+    "title": "Inhaltsveröffentlichung",
+    "titleBlue": " — Ein-Klick Multi-Plattform",
+    "features": {
+      "hotTopic": {
+        "title": "Überall verteilen",
+        "description": "Veröffentlichen Sie auf den meisten globalen Plattformen (Douyin, Kwai, WeChat, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X)."
+      },
+      "international": {
+        "title": "Kalender-Planer",
+        "description": "Planen und koordinieren Sie Inhalte wie einen Kalender über alle Plattformen hinweg. Einheitliches Dashboard: Verwalten Sie alle Interaktionen an einem Ort."
+      }
+    },
+    "carouselHint": "Scrollen Sie zum Bildwechsel"
+  },
+  "hotspotSection": {
+    "badge": "Funktion 2",
+    "title": "Inhalts-Hotspot — Virale Inspirations-Engine",
+    "titleBlue": "Fallbibliothek & Trend-Radar",
+    "features": {
+      "hotTopic": {
+        "title": "Fallbibliothek",
+        "description": "Entdecken Sie, wie andere Beiträge mit 10.000+ Likes erstellen."
+      },
+      "international": {
+        "title": "Trend-Radar",
+        "description": "Entdecken Sie sofort die neuesten viralen Trends, reduzieren Sie kreative Ängste."
+      }
+    },
+    "carouselHint": "Scrollen Sie zum Bildwechsel"
+  },
+  "searchSection": {
+    "badge": "Funktion 3",
+    "title": "Inhaltssuche — Marken- & Markteinblicke",
+    "titleBlue": "Markenüberwachung & Inhaltsentdeckung",
+    "features": {
+      "hotTopic": {
+        "title": "Markenüberwachung",
+        "description": "Verfolgen Sie Gespräche über Ihre Marke in Echtzeit."
+      },
+      "international": {
+        "title": "Inhaltsentdeckung",
+        "description": "Suchen Sie nach Beiträgen, Themen und Communities für gezieltes Engagement."
+      }
+    },
+    "carouselHint": "Scrollen Sie zum Bildwechsel"
+  },
+  "commentsSection": {
+    "badge": "Funktion 4",
+    "title": "Kommentarsuche — Präzise Nutzergewinnung",
+    "titleBlue": "Intelligente Kommentarsuche & Konversions-Booster",
+    "features": {
+      "hotTopic": {
+        "title": "Intelligente Kommentarsuche",
+        "description": "Erkennen Sie hochkonvertierende Signale wie \"Link bitte\" oder \"wie kaufen\"."
+      },
+      "international": {
+        "title": "Konversions-Booster",
+        "description": "Antworten Sie sofort, steigern Sie Engagement & Verkäufe."
+      }
+    },
+    "carouselHint": "Scrollen Sie zum Bildwechsel"
+  },
+  "connectSection": {
+    "badge": "Funktion 5",
+    "title": "Inhalts-Engagement — Wachstumsmotor",
+    "titleBlue": "Einheitliches Dashboard & Proaktives Engagement",
+    "features": {
+      "creation": {
+        "title": "Einheitliches Dashboard",
+        "description": "Verwalten Sie alle Interaktionen an einem Ort."
+      },
+      "distribution": {
+        "title": "Proaktives Engagement",
+        "description": "Beteiligen Sie sich an Trend-Gesprächen, verbinden Sie sich mit potenziellen Kunden. Verwandeln Sie passive Operationen in aktives Traffic-Wachstum."
+      }
+    },
+    "carouselHint": "Scrollen Sie zum Bildwechsel"
+  },
+  "upcomingSection": {
+    "badge": "Demnächst",
+    "title": "Full-Stack KI-gestützte Content-Wachstums- & Monetarisierungsplattform",
+    "titleBlue": "Kommende Funktionen, bleiben Sie dran",
+    "features": {
+      "smartImport": {
+        "title": "Smart Import",
+        "description": "Importieren Sie historische Inhalte für schnelle Neubearbeitung & Umverteilung. Beispiel: Synchronisieren Sie Ihre Xiaohongshu-Beiträge mit einem Klick zu YouTube."
+      },
+      "analytics": {
+        "title": "Inhaltsanalyse — Full-Funnel-Daten",
+        "description": "Plattformübergreifender Vergleich: Eine Plattform kann Traffic blockieren, andere nicht. End-to-End-Monitoring: Verfolgen Sie die Leistung und bauen Sie Ihren Weg zu 1M+ Followern."
+      },
+      "aiCreation": {
+        "title": "KI-Inhaltserstellung — End-to-End-Assistent",
+        "description": "KI-Texterstellung: Automatische Generierung von Titeln, Bildunterschriften & Beschreibungen. KI-Kommentierung: Proaktives Engagement, Traffic-Anziehung. Bild- & Kartengenerator: Beschleunigung der Inhalts-Workflows. Unterstützte KI-Video- und Bildmodelle."
+      },
+      "marketplace": {
+        "title": "Inhaltsmarktplatz — Handel & Monetarisierung",
+        "description": "Kreative: Verkaufen Sie Ihre Inhalte direkt, finden Sie schnell Käufer. Marken: Kaufen Sie fertige, hochwertige Inhalte. KI-gestütztes Wachstum: Lassen Sie uns KI nutzen, um zu verdienen. Lassen Sie uns gemeinsam Geld verdienen!"
+      }
+    }
+  },
+  "downloadSection": {
+    "title": "Beginnen Sie jederzeit und überall zu erstellen",
+    "titleBlue": "Einfache Verwaltung auch auf dem Handy",
+    "description": "Mit der AI ToEarn Mobile-App ist Ihre Kreativität nicht mehr auf den Desktop beschränkt. Wir bieten auch iOS- und Android-Mobile-Apps, um Ihre Kreativität jederzeit und überall mit nur einem Handy zu entfesseln!",
+    "qrCodeText": "QR-Code scannen zum Herunterladen",
+    "appStore": {
+      "text": "Herunterladen im",
+      "store": "App Store"
+    },
+    "googlePlay": {
+      "text": "JETZT BEI",
+      "store": "Google Play"
+    }
+  },
+  "enterpriseSection": {
+    "badge": "Unternehmensservice",
+    "title": "Professionelle KI-Social-Media-Lösungen",
+    "titleBlue": "Powering Enterprise Marketing Success",
+    "subtitle": "Die KI-Marketing-Transformation von Unternehmen erfordert nicht nur Tools, sondern eine solide Infrastruktur. AI ToEarn bietet eine zuverlässige Plattform zur Verteilung von KI-Inhaltserstellungsfunktionen über mehrere Abteilungen für unübertroffene Marketing-Effizienz."
+  },
+  "statsSection": {
+    "stats": {
+      "users": {
+        "number": "50K+",
+        "label": "Benutzer"
+      },
+      "platforms": {
+        "number": "15+",
+        "label": "Social-Plattformen"
+      },
+      "countries": {
+        "number": "100+",
+        "label": "Länder"
+      },
+      "content": {
+        "number": "5M+",
+        "label": "Veröffentlichte Inhalte"
+      }
+    },
+    "testimonial": {
+      "quote": "In der heutigen hochkompetitiven Content-Marketing-Landschaft sind schnelle Validierungs- und Erstellungstools nicht nur hilfreich - sie sind überlebenswichtig. Für Marketing-Unternehmen wie unseres bietet AI ToEarn unschätzbaren Wert an dieser KI-Front.",
+      "author": "John Smith",
+      "title": "Content-Operations-Direktor bei führender MCN-Agentur"
+    },
+    "caseStudies": {
+      "timeSaved": {
+        "title": "Geschätzte jährlich eingesparte Inhaltserstellungszeit",
+        "number": "50.000 Stunden"
+      },
+      "aiAssistant": {
+        "title": "KI-Marketing-Assistent: Bedient 500+ Unternehmenskunden mit plattformübergreifender Inhaltsverteilung"
+      }
+    }
+  },
+  "communitySection": {
+    "badge": "Community-Ökosystem",
+    "title": "Treten Sie unserer",
+    "titleBlue": "aktiven Creator-Community bei",
+    "subtitle": "AI ToEarn wird von einer globalen Community von KI-Inhaltserstellern angetrieben. Treten Sie uns bei, um die unendlichen Grenzen des KI-Content-Marketings zu erkunden.",
+    "buttons": {
+      "wechat": "WeChat-Gruppe",
+      "community": "Creator-Community"
+    },
+    "wechatPopup": "QR-Code scannen, um dem WeChat-Offiziellen Konto zu folgen",
+    "communityPopup": "QR-Code scannen, um der Community-Gruppe beizutreten",
+    "stats": {
+      "downloads": {
+        "number": "200K+",
+        "label": "Downloads"
+      },
+      "members": {
+        "number": "15K",
+        "label": "Community-Mitglieder"
+      },
+      "creators": {
+        "number": "500+",
+        "label": "Aktive Kreative"
+      }
+    }
+  },
+  "footer": {
+    "resources": {
+      "title": "Ressourcen",
+      "links": {
+        "docs": "Dokumentation",
+        "blog": "Blog",
+        "download": "Downloads",
+        "education": "Bildung",
+        "partner": "Partner",
+        "support": "Support",
+        "roadmap": "Roadmap"
+      }
+    },
+    "company": {
+      "title": "Unternehmen",
+      "links": {
+        "talk": "Kontaktieren Sie uns",
+        "terms": "Nutzungsbedingungen",
+        "privacy": "Datenschutzrichtlinie",
+        "cookies": "Cookie-Einstellungen",
+        "data": "Datenschutzvereinbarung",
+        "marketplace": "Marktplatz-Vereinbarung",
+        "brand": "Markenrichtlinien"
+      }
+    },
+    "description": "AI ToEarn All-in-One Social-Media-Management-Plattform-Lösung, von kreativer Inspiration bis Inhaltserstellung, von Inhaltsverteilung bis Interaktionsverwaltung",
+    "social": {
+      "github": "GitHub",
+      "discord": "Discord",
+      "youtube": "YouTube",
+      "linkedin": "LinkedIn",
+      "twitter": "Twitter"
+    },
+    "bigText": "Let's Use AI To",
+    "copyright": "© 2025 AiToEarn, Corp.",
+    "tagline": "",
+    "dataDeletion": {
+      "title": "Anleitung zur Datenlöschung",
+      "prelaunch": "Unsere Anwendung befindet sich derzeit in der Pre-Launch-Phase und speichert keine echten Benutzerdaten. Wenn Sie mit unseren Testsystemen interagiert haben, kontaktieren Sie uns zur Datenentfernung.",
+      "standardTitle": "Standardverfahren (nach dem Launch):",
+      "standardSteps": [
+        "Melden Sie sich bei Ihrem AiToEarn-Konto an",
+        "Navigieren Sie zu Einstellungen > Datenschutz",
+        "Klicken Sie auf \"Kontolöschung anfordern\"",
+        "Bestätigung wird an Ihre registrierte E-Mail gesendet"
+      ],
+      "contactTitle": "Kontakt für Unterstützung:",
+      "contactEmail": "E-Mail: metat@aitoearning.com (Nur Pre-Launch-Anfragen)"
+    }
+  }
+}

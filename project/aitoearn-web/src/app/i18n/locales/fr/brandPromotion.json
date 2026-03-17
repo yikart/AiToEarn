@@ -1,0 +1,34 @@
+{
+  "seo": {
+    "title": "Promotion de marque IA - Marketing QR Code et analytiques"
+  },
+  "secondaryTab": {
+    "contentManagement": "Contenu",
+    "dataAnalysis": "Analytique"
+  },
+  "detail": {
+    "targetPlatforms": "Plateformes cibles",
+    "selectPlatforms": "Plateformes",
+    "platformsSelected": "{{count}} plateformes",
+    "parameterLimits": "Limites des paramètres",
+    "titleLimit": "Limite du titre",
+    "descriptionLimit": "Limite de description",
+    "topicLimit": "Limite de sujets",
+    "imageLimit": "Limite d'images",
+    "characters": "car.",
+    "items": "éléments",
+    "noLimit": "Pas de limite",
+    "noPlatformSelected": "Aucune plateforme cible sélectionnée, aucune limite de paramètres.",
+    "selectAll": "Tout sélectionner",
+    "deselectAll": "Tout désélectionner",
+    "limitsMinTip": "Affiche la valeur minimale de toutes les plateformes sélectionnées.",
+    "platformIncompatible": {
+      "contentTypeNotSupported": "Cette plateforme ne prend pas en charge le type de contenu actuel",
+      "durationOutOfRange": "Durée actuelle {{current}}, la plateforme exige {{min}}-{{max}}",
+      "aspectRatioNotSupported": "Ratio actuel {{current}}, la plateforme prend en charge {{supported}}",
+      "imageCountExceeded": "Le nombre d'images dépasse la limite de la plateforme (max {{max}})"
+    },
+    "platformIncompatibleCount": "{{count}} incompatible(s)",
+    "timeLimitedModelTip": "Les modèles à durée limitée ne sont pas garantis disponibles. Si indisponible, réessayez plus tard ou passez à un autre modèle."
+  }
+}

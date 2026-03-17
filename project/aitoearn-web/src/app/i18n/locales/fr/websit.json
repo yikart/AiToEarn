@@ -1,0 +1,27 @@
+{
+  "privacyPolicy": {
+    "title": "Politique de confidentialité - Comment nous protégeons vos données",
+    "description": "Lisez la politique de confidentialité d'AiToEarn pour comprendre comment nous collectons, utilisons, stockons et protégeons vos informations personnelles.",
+    "keywords": "politique de confidentialité, protection des données, informations personnelles, conformité RGPD, sécurité des données, AiToEarn"
+  },
+  "termsOfService": {
+    "title": "Conditions d'utilisation - Accord utilisateur et directives",
+    "description": "Consultez les conditions d'utilisation d'AiToEarn couvrant les droits des utilisateurs, les directives de contenu, les conditions de paiement et les règles d'utilisation.",
+    "keywords": "conditions d'utilisation, accord utilisateur, règles de la plateforme, directives de contenu, conditions de paiement, AiToEarn"
+  },
+  "dataDeletion": {
+    "title": "Guide de suppression des données - Supprimer votre compte",
+    "description": "Instructions étape par étape pour supprimer votre compte AiToEarn et vos données personnelles. Informations sur les politiques de conservation des données.",
+    "keywords": "suppression des données, suppression de compte, droits à la vie privée, effacement des données, supprimer compte, AiToEarn"
+  },
+  "dataProtection": {
+    "title": "Accord de protection des données - RGPD et conformité",
+    "description": "L'accord de protection des données d'AiToEarn décrit les normes de traitement des données conformes au RGPD, les mesures de sécurité et vos droits.",
+    "keywords": "protection des données, conformité RGPD, traitement des données, sécurité des données, droits à la vie privée, AiToEarn"
+  },
+  "extensionPrivacy": {
+    "title": "Confidentialité de l'extension - Utilisation des données et permissions",
+    "description": "Découvrez comment l'extension de navigateur AiToEarn gère vos données. Informations sur les permissions et les mesures de sécurité.",
+    "keywords": "confidentialité extension, extension navigateur, extension Chrome, permissions données, AiToEarn extension"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "title": "Wallet Accounts",
+  "subtitle": "Manage your payment receiving accounts",
+  "addWallet": "Add Wallet",
+  "editWallet": "Edit Wallet",
+  "noWallets": "No wallet accounts yet",
+  "noWalletsDesc": "Add a wallet account to receive payments",
+  "types": {
+    "alipay": "Alipay",
+    "wechat_pay": "WeChat Pay",
+    "stripe_connect": "Stripe",
+    "wise": "Wise"
+  },
+  "fields": {
+    "account": "Account",
+    "userName": "Real Name",
+    "idCard": "ID Card Number",
+    "phone": "Phone Number",
+    "email": "Email",
+    "currency": "Currency",
+    "recipientType": "Account Type",
+    "accountHolderName": "Account Holder Name"
+  },
+  "actions": {
+    "setDefault": "Set as Default",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "status": {
+    "default": "Default",
+    "verified": "Verified",
+    "unverified": "Unverified"
+  },
+  "messages": {
+    "createSuccess": "Wallet created successfully",
+    "createFailed": "Failed to create wallet",
+    "updateSuccess": "Wallet updated successfully",
+    "updateFailed": "Failed to update wallet",
+    "deleteSuccess": "Wallet deleted successfully",
+    "deleteFailed": "Failed to delete wallet",
+    "setDefaultSuccess": "Default wallet changed",
+    "setDefaultFailed": "Failed to set default wallet",
+    "loading": "Loading...",
+    "loadFailed": "Failed to load wallet accounts"
+  },
+  "confirm": {
+    "deleteTitle": "Delete Wallet",
+    "deleteContent": "Are you sure you want to delete this wallet account? This action cannot be undone."
+  },
+  "form": {
+    "selectType": "Select Wallet Type",
+    "selectTypeDesc": "Choose the type of wallet you want to add",
+    "fillDetails": "Fill Details",
+    "submit": "Add Wallet",
+    "submitting": "Adding...",
+    "update": "Save Changes",
+    "updating": "Saving...",
+    "cancel": "Cancel",
+    "back": "Back",
+    "setAsDefault": "Set as default wallet",
+    "required": "This field is required",
+    "invalidFormat": "Invalid format"
+  },
+  "wise": {
+    "title": "Wise Account",
+    "selectCurrency": "Select Currency",
+    "selectCurrencyPlaceholder": "Choose currency",
+    "selectRecipientType": "Select Account Type",
+    "selectRecipientTypePlaceholder": "Choose account type",
+    "loadingRequirements": "Loading form fields...",
+    "loadRequirementsFailed": "Failed to load form fields",
+    "supportedCurrencies": "Supported currencies: EUR, GBP, USD, CNY, etc.",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "firstNamePlaceholder": "Enter first name",
+    "lastNamePlaceholder": "Enter last name",
+    "emailPlaceholder": "Enter email address",
+    "wiseEmail": "Wise Account Email"
+  },
+  "alipay": {
+    "title": "Alipay Account",
+    "notice": "You are creating an Alipay account. We will transfer funds to your Alipay account.",
+    "accountPlaceholder": "Enter Alipay account (phone/email)",
+    "userNamePlaceholder": "Enter real name",
+    "phonePlaceholder": "Enter phone number",
+    "phoneRequired": "Please enter a phone number"
+  },
+  "wechat": {
+    "title": "WeChat Pay Account",
+    "accountPlaceholder": "Enter WeChat ID",
+    "userNamePlaceholder": "Enter real name"
+  },
+  "stripe": {
+    "title": "Stripe Account",
+    "connected": "Connected",
+    "notConnected": "Not Connected",
+    "connectStripe": "Connect Stripe Account"
+  },
+  "manage": {
+    "title": "Manage Wallets"
+  },
+  "balance": {
+    "available": "Available Balance",
+    "totalIncome": "Total Income",
+    "totalWithdrawn": "Withdrawn",
+    "frozen": "Frozen"
+  },
+  "withdraw": {
+    "title": "Withdraw",
+    "availableBalance": "Available Balance",
+    "selectWallet": "Select Wallet",
+    "selectWalletPlaceholder": "Choose a wallet",
+    "selectWalletRequired": "Please select a wallet",
+    "noWallet": "No wallet available",
+    "noWalletDesc": "Please add a wallet first",
+    "amount": "Amount",
+    "amountPlaceholder": "Enter amount",
+    "amountInvalid": "Please enter a valid amount",
+    "minAmount": "Minimum withdrawal amount is {{symbol}}{{amount}}",
+    "amountExceedsBalance": "Amount exceeds balance",
+    "submit": "Submit",
+    "submitting": "Submitting...",
+    "success": "Withdrawal submitted",
+    "failed": "Withdrawal failed"
+  }
+}

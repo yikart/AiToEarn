@@ -1,0 +1,34 @@
+/**
+ * 上传项进入/退出动画样式
+ * 用于 react-transition-group 的 CSSTransition 组件
+ */
+
+/* 进入动画 - 初始状态 */
+.upload-item-enter {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+/* 进入动画 - 激活状态 */
+.upload-item-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}
+
+/* 退出动画 - 初始状态 */
+.upload-item-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 退出动画 - 激活状态 */
+.upload-item-exit-active {
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 300ms,
+    transform 300ms;
+}

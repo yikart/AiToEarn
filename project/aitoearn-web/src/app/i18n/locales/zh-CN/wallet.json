@@ -1,0 +1,126 @@
+{
+  "title": "钱包账户",
+  "subtitle": "管理你的收款账户",
+  "addWallet": "添加钱包",
+  "editWallet": "编辑钱包",
+  "noWallets": "暂无钱包账户",
+  "noWalletsDesc": "添加钱包账户以接收付款",
+  "types": {
+    "alipay": "支付宝",
+    "wechat_pay": "微信支付",
+    "stripe_connect": "Stripe",
+    "wise": "Wise"
+  },
+  "fields": {
+    "account": "账户",
+    "userName": "真实姓名",
+    "idCard": "身份证号",
+    "phone": "手机号",
+    "email": "邮箱",
+    "currency": "货币",
+    "recipientType": "账户类型",
+    "accountHolderName": "账户持有人姓名"
+  },
+  "actions": {
+    "setDefault": "设为默认",
+    "edit": "编辑",
+    "delete": "删除"
+  },
+  "status": {
+    "default": "默认",
+    "verified": "已验证",
+    "unverified": "未验证"
+  },
+  "messages": {
+    "createSuccess": "钱包创建成功",
+    "createFailed": "钱包创建失败",
+    "updateSuccess": "钱包更新成功",
+    "updateFailed": "钱包更新失败",
+    "deleteSuccess": "钱包删除成功",
+    "deleteFailed": "钱包删除失败",
+    "setDefaultSuccess": "已设置为默认钱包",
+    "setDefaultFailed": "设置默认钱包失败",
+    "loading": "加载中...",
+    "loadFailed": "加载钱包账户失败"
+  },
+  "confirm": {
+    "deleteTitle": "删除钱包",
+    "deleteContent": "确定要删除此钱包账户吗？此操作无法撤销。"
+  },
+  "form": {
+    "selectType": "选择钱包类型",
+    "selectTypeDesc": "选择要添加的钱包类型",
+    "fillDetails": "填写详情",
+    "submit": "添加钱包",
+    "submitting": "添加中...",
+    "update": "保存更改",
+    "updating": "保存中...",
+    "cancel": "取消",
+    "back": "返回",
+    "setAsDefault": "设为默认钱包",
+    "required": "此字段为必填",
+    "invalidFormat": "格式无效"
+  },
+  "wise": {
+    "title": "Wise 账户",
+    "selectCurrency": "选择货币",
+    "selectCurrencyPlaceholder": "请选择货币",
+    "selectRecipientType": "选择账户类型",
+    "selectRecipientTypePlaceholder": "请选择账户类型",
+    "loadingRequirements": "加载表单字段中...",
+    "loadRequirementsFailed": "加载表单字段失败",
+    "supportedCurrencies": "支持的货币：EUR、GBP、USD、CNY 等",
+    "firstName": "名字",
+    "lastName": "姓氏",
+    "firstNamePlaceholder": "请输入名字",
+    "lastNamePlaceholder": "请输入姓氏",
+    "emailPlaceholder": "请输入邮箱地址",
+    "wiseEmail": "Wise 账号邮箱"
+  },
+  "alipay": {
+    "title": "支付宝账户",
+    "notice": "您要创建的是支付宝账户，我们会将钱汇款到您的支付宝",
+    "accountPlaceholder": "请输入支付宝账号（手机号/邮箱）",
+    "userNamePlaceholder": "请输入真实姓名",
+    "phonePlaceholder": "请输入手机号",
+    "phoneRequired": "请输入手机号"
+  },
+  "wechat": {
+    "title": "微信支付账户",
+    "accountPlaceholder": "请输入微信号",
+    "userNamePlaceholder": "请输入真实姓名"
+  },
+  "stripe": {
+    "title": "Stripe 账户",
+    "connected": "已连接",
+    "notConnected": "未连接",
+    "connectStripe": "连接 Stripe 账户"
+  },
+  "manage": {
+    "title": "管理钱包"
+  },
+  "balance": {
+    "available": "可用余额",
+    "totalIncome": "累计收入",
+    "totalWithdrawn": "已提现",
+    "frozen": "冻结金额"
+  },
+  "withdraw": {
+    "title": "提现",
+    "availableBalance": "可提现余额",
+    "selectWallet": "选择钱包",
+    "selectWalletPlaceholder": "请选择钱包",
+    "selectWalletRequired": "请选择钱包",
+    "noWallet": "暂无可用钱包",
+    "noWalletDesc": "请先添加钱包",
+    "amount": "金额",
+    "amountPlaceholder": "请输入金额",
+    "amountInvalid": "请输入有效金额",
+    "minAmount": "最低提现金额为 {{symbol}}{{amount}}",
+    "amountExceedsBalance": "金额超出余额",
+    "submit": "提交",
+    "submitting": "提交中...",
+    "success": "提现申请已提交",
+    "failed": "提现失败"
+  }
+}

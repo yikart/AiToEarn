@@ -1,0 +1,21 @@
+# 构建输出
+.next
+out
+dist
+build
+
+# 依赖
+node_modules
+
+# 锁文件
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# 其他
+.git
+.husky
+coverage
+*.min.js
+*.min.css
+public

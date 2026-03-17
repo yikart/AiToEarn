@@ -1,0 +1,72 @@
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
+import { DEFAULT_SCHEMA_OPTIONS } from '../mongodb.constants'
+import { WithTimestampSchema } from './timestamp.schema'
+
+@Schema({ ...DEFAULT_SCHEMA_OPTIONS, collection: 'accountGroup' })
+export class AccountGroup extends WithTimestampSchema {
+  id: string
+
+  @Prop({
+    required: true,
+    type: String,
+  })
+  userId: string
+
+  // 是否为默认用户组
+  @Prop({
+    required: true,
+    type: Boolean,
+    default: false,
+  })
+  isDefault: boolean
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  ip?: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  location?: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  countryCode?: string
+
+  // 代理IP
+  @Prop({
+    required: false,
+    type: String,
+    default: '',
+  })
+  proxyIp: string
+
+  // 组名称
+  @Prop({
+    required: true,
+    type: String,
+  })
+  name: string
+
+  // json 指纹浏览器配置
+  @Prop({
+    required: false,
+    type: Object,
+  })
+  browserConfig?: Record<string, any>
+
+  // 组排序
+  @Prop({
+    required: true,
+    type: Number,
+    default: 1,
+  })
+  rank: number
+}
+
+export const AccountGroupSchema = SchemaFactory.createForClass(AccountGroup)

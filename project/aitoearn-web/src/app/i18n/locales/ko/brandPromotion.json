@@ -1,0 +1,34 @@
+{
+  "seo": {
+    "title": "AI 브랜드 프로모션 - QR코드 마케팅 및 분석"
+  },
+  "secondaryTab": {
+    "contentManagement": "콘텐츠 관리",
+    "dataAnalysis": "데이터 분석"
+  },
+  "detail": {
+    "targetPlatforms": "대상 플랫폼",
+    "selectPlatforms": "플랫폼",
+    "platformsSelected": "{{count}}개 플랫폼",
+    "parameterLimits": "매개변수 제한",
+    "titleLimit": "제목 제한",
+    "descriptionLimit": "설명 제한",
+    "topicLimit": "토픽 제한",
+    "imageLimit": "이미지 제한",
+    "characters": "자",
+    "items": "개",
+    "noLimit": "제한 없음",
+    "noPlatformSelected": "대상 플랫폼이 선택되지 않았습니다. 매개변수 제한이 없습니다.",
+    "selectAll": "모두 선택",
+    "deselectAll": "모두 해제",
+    "limitsMinTip": "선택된 모든 플랫폼의 최소값을 표시합니다.",
+    "platformIncompatible": {
+      "contentTypeNotSupported": "이 플랫폼은 현재 콘텐츠 유형을 지원하지 않습니다",
+      "durationOutOfRange": "현재 길이 {{current}}, 플랫폼 요구 {{min}}-{{max}}",
+      "aspectRatioNotSupported": "현재 비율 {{current}}, 플랫폼 지원 {{supported}}",
+      "imageCountExceeded": "이미지 수가 플랫폼 제한을 초과합니다 (최대 {{max}}장)"
+    },
+    "platformIncompatibleCount": "{{count}}개 비호환",
+    "timeLimitedModelTip": "한시적 모델은 가용성이 보장되지 않습니다. 사용할 수 없는 경우 나중에 다시 시도하거나 다른 모델로 전환하세요."
+  }
+}

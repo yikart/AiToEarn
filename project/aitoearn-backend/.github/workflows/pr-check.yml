@@ -1,0 +1,128 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+env:
+  NX_NO_CLOUD: true
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+jobs:
+  lint-and-build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Check Pull Request title
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const prNumber = context.payload.pull_request.number;
+            let prBody = context.payload.pull_request.body || '';
+            const prTitle = context.payload.pull_request.title || '';
+
+            const conventionalCommitsPattern = /^(feat|fix|docs|style|refactor|perf|test|chore|ci|build)(\(.+\))?: .+$/;
+            const validTypes = ['feat', 'fix', 'docs', 'style', 'refactor', 'perf', 'test', 'chore', 'ci', 'build'];
+
+            if (!conventionalCommitsPattern.test(prTitle)) {
+              const errorMessage =
+                '❌ PR title does not follow Conventional Commits format.\n\n' +
+                'Required format: <type>(<scope>): <description>\n\n' +
+                'Valid types:\n' +
+                validTypes.map(t => `  - ${t}`).join('\n') + '\n\n' +
+                'Examples:\n' +
+                '  ✅ feat: add user authentication\n' +
+                '  ✅ fix(web): resolve login button issue\n' +
+                '  ✅ docs: update API documentation\n' +
+                '  ✅ refactor(backend): improve error handling\n' +
+                '  ✅ chore: update dependencies\n\n' +
+                'Common mistakes:\n' +
+                '  ❌ "Add new feature" (missing type and colon)\n' +
+                '  ❌ "feat add feature" (missing colon)\n' +
+                '  ❌ "feat: " (missing description)\n' +
+                '  ❌ "feature: add something" (invalid type)\n\n' +
+                `Current title: "${prTitle}"\n\n` +
+                'Please update your PR title to follow the Conventional Commits specification.';
+
+              core.setFailed(errorMessage);
+              return;
+            }
+
+
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Nx build outputs
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-cache-pr-${{ github.event.pull_request.number }}-${{ github.sha }}
+          restore-keys: |
+            nx-cache-pr-${{ github.event.pull_request.number }}-
+            nx-cache-
+
+      - name: 检测受影响的项目
+        id: detect-changes
+        run: |
+          BASE_REF="origin/${{ github.base_ref }}"
+          echo "📋 检测从 $BASE_REF 到 HEAD 的变更"
+          echo "Base: $BASE_REF"
+          echo "Head: HEAD"
+
+          AFFECTED_PROJECTS=$(pnpm nx show projects --affected --sep="," --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
+
+          if [ -z "$AFFECTED_PROJECTS" ]; then
+            echo "⚠️  未检测到受影响的项目"
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+            echo "affected_projects=" >> $GITHUB_OUTPUT
+          else
+            echo "✅ 受影响的项目: $AFFECTED_PROJECTS"
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            echo "affected_projects=$AFFECTED_PROJECTS" >> $GITHUB_OUTPUT
+
+            echo ""
+            echo "详细信息:"
+            for PROJECT in $(echo "$AFFECTED_PROJECTS" | tr ',' ' '); do
+              echo "  - $PROJECT"
+            done
+          fi
+
+      - name: 运行 ESLint 检查
+        if: steps.detect-changes.outputs.has_changes == 'true'
+        run: |
+          AFFECTED_PROJECTS="${{ steps.detect-changes.outputs.affected_projects }}"
+          echo "🔍 对受影响的项目运行 ESLint 检查"
+          pnpm nx run-many --target=lint --projects="$AFFECTED_PROJECTS" --no-fix --nxBail --outputStyle=static
+
+      - name: 运行构建
+        if: steps.detect-changes.outputs.has_changes == 'true'
+        run: |
+          AFFECTED_PROJECTS="${{ steps.detect-changes.outputs.affected_projects }}"
+          echo "🔨 对受影响的项目运行构建"
+          pnpm nx run-many --target=build --projects="$AFFECTED_PROJECTS" --nxBail --outputStyle=static
+
+      - name: 无变更跳过
+        if: steps.detect-changes.outputs.has_changes == 'false'
+        run: |
+          echo "✅ 未检测到变更，跳过检查"
+          echo "### ✅ 无变更" >> $GITHUB_STEP_SUMMARY
+          echo "未检测到需要检查的项目变更" >> $GITHUB_STEP_SUMMARY
+

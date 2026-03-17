@@ -1,0 +1,120 @@
+{
+  "title": "Pinterest-Verwaltung",
+  "tabs": {
+    "boards": "Meine Boards",
+    "pins": "Meine Pins"
+  },
+  "actions": {
+    "selectAccount": "Konto auswählen",
+    "refresh": "Aktualisieren",
+    "createBoard": "Board erstellen",
+    "createPin": "Pin erstellen",
+    "search": "Suchen...",
+    "view": "Anzeigen",
+    "edit": "Bearbeiten",
+    "delete": "Löschen",
+    "link": "Link",
+    "change": "Ändern"
+  },
+  "stats": {
+    "followers": "Follower",
+    "boardCount": "Board-Anzahl",
+    "pinCount": "Pin-Anzahl",
+    "monthlyViews": "Monatliche Aufrufe"
+  },
+  "board": {
+    "createTitle": "Neues Board erstellen",
+    "name": "Board-Name",
+    "namePlaceholder": "Board-Namen eingeben",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Board-Beschreibung eingeben",
+    "privacy": "Datenschutzeinstellungen",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "createButton": "Board erstellen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie dieses Board löschen möchten?",
+    "detailTitle": "Board-Details",
+    "createTime": "Erstellungszeit",
+    "noDescription": "Keine Beschreibung"
+  },
+  "pin": {
+    "createTitle": "Neuen Pin erstellen",
+    "selectBoard": "Pinnen auf",
+    "selectBoardPlaceholder": "Board zum Veröffentlichen auswählen",
+    "uploadImage": "Bild hochladen",
+    "uploadImagePlaceholder": "Klicken, um Bild auf OSS hochzuladen",
+    "uploadHint": "Unterstützt JPG, PNG, GIF-Formate, max. 10MB",
+    "uploading": "Wird auf OSS hochgeladen...",
+    "uploadSuccess": "✓ Upload erfolgreich",
+    "reupload": "Erneut hochladen",
+    "ossUrl": "OSS-URL",
+    "title": "Titel",
+    "titlePlaceholder": "Pin-Titel eingeben",
+    "description": "Beschreibung",
+    "descriptionPlaceholder": "Pin-Beschreibung eingeben",
+    "link": "Link",
+    "linkPlaceholder": "Ziel-Link eingeben (optional)",
+    "altText": "Alternativer Text",
+    "altTextPlaceholder": "Bild-Alternativtext eingeben (optional)",
+    "dominantColor": "Dominante Farbe",
+    "dominantColorTip": "Wählen Sie die dominante Farbe des Pins",
+    "createButton": "Pin erstellen",
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Pin löschen möchten?",
+    "detailTitle": "Pin-Details",
+    "pinId": "Pin-ID",
+    "boardId": "Board-ID",
+    "creativeType": "Kreativtyp",
+    "boardOwner": "Board-Besitzer",
+    "isOwner": "Besitzer",
+    "isRemovable": "Entfernbar",
+    "isStandard": "Standard-Pin",
+    "noDescription": "Keine Beschreibung",
+    "imageAlt": "Pin-Bild"
+  },
+  "badges": {
+    "pins": "Pins",
+    "followers": "Follower",
+    "owner": "Besitzer",
+    "yes": "Ja",
+    "no": "Nein",
+    "selected": "Ausgewählt"
+  },
+  "empty": {
+    "noBoards": "Keine Boards",
+    "noPins": "Keine Pins"
+  },
+  "pagination": {
+    "total": "{range} von {total} Einträgen"
+  },
+  "messages": {
+    "loadAccountsFailed": "Kontoliste konnte nicht geladen werden",
+    "loadBoardsFailed": "Board-Liste konnte nicht geladen werden",
+    "loadPinsFailed": "Pin-Liste konnte nicht geladen werden",
+    "boardCreateSuccess": "Board erfolgreich erstellt",
+    "boardCreateFailed": "Board konnte nicht erstellt werden",
+    "boardDeleteSuccess": "Board erfolgreich gelöscht",
+    "boardDeleteFailed": "Board konnte nicht gelöscht werden",
+    "pinCreateSuccess": "Pin erfolgreich erstellt",
+    "pinCreateFailed": "Pin konnte nicht erstellt werden",
+    "pinDeleteSuccess": "Pin erfolgreich gelöscht",
+    "pinDeleteFailed": "Pin konnte nicht gelöscht werden",
+    "getBoardDetailFailed": "Board-Details konnten nicht abgerufen werden",
+    "getPinDetailFailed": "Pin-Details konnten nicht abgerufen werden",
+    "uploadImageFirst": "Bitte laden Sie zuerst ein Bild hoch",
+    "selectImageFile": "Bitte wählen Sie eine Bilddatei aus",
+    "imageSizeLimit": "Bildgröße darf 10MB nicht überschreiten",
+    "imageUploadSuccess": "Bild erfolgreich hochgeladen",
+    "imageUploadFailed": "Bild-Upload fehlgeschlagen, bitte erneut versuchen",
+    "noAccountFound": "Kein Pinterest-Konto gefunden"
+  },
+  "validation": {
+    "boardNameRequired": "Bitte Board-Namen eingeben",
+    "selectBoardRequired": "Bitte wählen Sie ein Board aus",
+    "titleRequired": "Bitte Titel eingeben",
+    "descriptionRequired": "Bitte Beschreibung eingeben"
+  },
+  "confirm": {
+    "ok": "OK",
+    "cancel": "Abbrechen"
+  }
+}

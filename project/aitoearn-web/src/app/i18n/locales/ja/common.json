@@ -1,0 +1,279 @@
+{
+  "profile": "プロフィール",
+  "logout": "ログアウト",
+  "unknownUser": "不明なユーザー",
+  "docs": "ドキュメント",
+  "login": "ログイン",
+  "support": "サポート",
+  "notifications": "通知",
+  "settings": "設定",
+  "vip": "Plus",
+  "vip.tier": {
+    "free": "無料",
+    "trialing": "トライアル",
+    "go": "Go",
+    "plus": "Plus",
+    "ultra": "Ultra"
+  },
+  "subscribe": "アップグレード",
+  "balance": "クレジット",
+  "recharge": "チャージ",
+  "adBalance": "残高",
+  "plugin": "拡張機能",
+  "affiliates": "アフィリエイト",
+  "goToWebsite": "公式サイトへ",
+  "pluginStatus": {
+    "notInstalled": "インストール",
+    "noPermission": "未承認",
+    "ready": "準備完了",
+    "checking": "確認中"
+  },
+  "contactUs": "お問い合わせ",
+  "documents": "ドキュメント",
+  "helpDocs": "ヘルプドキュメント",
+  "pluginGuide": "プラグインガイド",
+  "privacyPolicy": "プライバシーポリシー",
+  "termsOfService": "利用規約",
+  "downloadAppButton": "アプリをダウンロード",
+  "noNotifications": "通知はありません",
+  "markAllAsRead": "すべて既読にする",
+  "markAsRead": "既読にする",
+  "unreadCount": "未読メッセージ",
+  "viewAll": "すべて表示",
+  "cancel": "キャンセル",
+  "confirm": "確認",
+  "expand": "展開",
+  "collapse": "折りたたむ",
+  "yes": "はい",
+  "no": "いいえ",
+  "calendar": {
+    "weekDaysShort": ["日", "月", "火", "水", "木", "金", "土"],
+    "monthSuffix": "月"
+  },
+  "actions": {
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "ok": "OK",
+    "processing": "処理中...",
+    "selectAll": "すべて選択",
+    "edit": "編集",
+    "delete": "削除",
+    "loading": "読み込み中...",
+    "noData": "データがありません",
+    "noImage": "画像がありません",
+    "noDescription": "説明がありません",
+    "noContent": "コンテンツがありません"
+  },
+  "select": {
+    "placeholder": "選択してください...",
+    "searchPlaceholder": "検索...",
+    "noResults": "結果が見つかりません"
+  },
+  "pagination": {
+    "perPage": "1ページあたり",
+    "items": "件",
+    "jumpTo": "移動先",
+    "page": "ページ"
+  },
+  "notificationTypes": {
+    "system": "システム通知",
+    "user": "ユーザー通知",
+    "material": "素材通知",
+    "other": "その他の通知"
+  },
+  "header": {
+    "messages": "メッセージ",
+    "income": "収入記録",
+    "wallet": "マイウォレット",
+    "materialLibrary": "ライブラリ",
+    "draftBox": "コンテンツ管理",
+    "draftBoxSeoTitle": "コンテンツ管理 - AIバッチ作成と下書きエディタ",
+    "draftBoxSeoDescription": "すべてのコンテンツ下書きを一か所で管理。AIで一括生成、投稿前に編集、AiToEarnでマルチプラットフォーム配信を整理。",
+    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn"
+  },
+  "tasks": "マーケットプレイス",
+  "signIn": {
+    "title": "毎日サインインしてポイントを獲得",
+    "myPoints": "マイポイント",
+    "signIn": "サインイン",
+    "today": "今日",
+    "rules": "サインインルール",
+    "rules1": "連続サインイン1〜7日目：1日1ポイント",
+    "rules2": "連続サインイン8〜21日目：1日2ポイント",
+    "rules3": "連続サインイン22日目以上：1日3ポイント",
+    "signedIn": "サインイン済み",
+    "notSignedIn": "未サインイン",
+    "signInSuccess": "サインイン成功",
+    "signInFailed": "サインイン失敗",
+    "alreadySignedIn": "本日はすでにサインイン済みです",
+    "consecutiveDays": "連続日数",
+    "totalPoints": "合計ポイント"
+  },
+  "downloadApp": {
+    "title": "{{appName}}をダウンロード",
+    "operationInApp": "{{appName}}で操作して追加してください",
+    "description": "より良いユーザー体験と完全な機能をご利用いただくため、この操作は{{appName}}でアカウントを追加する必要があります。{{appName}}をダウンロードしてインストールしてください。",
+    "operationDescription": "Aitoearn Appで{{platform}}チャンネルアカウントを操作してください<br/>より良いユーザー体験と完全な機能をご利用いただくため、Aitoearn Appをダウンロードしてインストールしてください。",
+    "scanQrCode": "QRコードをスキャンしてダウンロード",
+    "downloadLink": "ダウンロードリンク：",
+    "copy": "コピー",
+    "copySuccess": "コピー成功",
+    "copyFailed": "コピー失敗、手動でコピーしてください",
+    "copied": "コピーしました",
+    "close": "閉じる",
+    "downloadNow": "今すぐダウンロード",
+    "tip": "💡 ヒント：インストール後、アプリでアカウントにログインしてから、関連操作を再度お試しください"
+  },
+  "networkBusy": "ネットワークが混雑しています。後でもう一度お試しください！",
+  "networkError": "ネットワークエラーです。後でもう一度お試しください！",
+  "contact": "お困りですか？サポートにお問い合わせください：",
+  "uptime": {
+    "seoTitle": "サービスステータス - リアルタイムシステム監視",
+    "pageKeywords": "サービスステータス, システム監視, 稼働率追跡, サーバー状態, APIステータス, AiToEarnステータス, リアルタイム監視",
+    "pageTitle": "サービス状況",
+    "pageDescription": "AiToEarnサービスのリアルタイム状況と稼働時間を監視します。Agent、Server、AI、Database、Networkモジュールの運用状況をご確認ください。",
+    "loading": "読み込み中...",
+    "noData": "データがありません",
+    "uptimePercentage": "稼働率：",
+    "normal": "正常",
+    "timeout": "タイムアウト",
+    "unavailable": "利用不可",
+    "filter": {
+      "title": "フィルター",
+      "module": "モジュール",
+      "type": "タイプ",
+      "timeRange": "期間",
+      "all": "すべて",
+      "last7Days": "過去7日間",
+      "last30Days": "過去30日間",
+      "last90Days": "過去90日間",
+      "reset": "リセット",
+      "apply": "適用"
+    },
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "module": {
+      "Agent": "Agent",
+      "Server": "Server",
+      "Ai": "AI",
+      "Database": "Database",
+      "Network": "Network",
+      "Other": "その他"
+    },
+    "type": {
+      "AgentStatus": "Agentステータス",
+      "AgentMcpStatus": "Agent MCPステータス",
+      "NewApiStatus": "NewApiステータス"
+    }
+  },
+  "websit": {
+    "termsOfService": {
+      "title": "利用規約",
+      "lastUpdated": "最終更新日",
+      "content": {
+        "introduction": "当サービスをご利用いただきありがとうございます。本サービスをご利用になる前に、以下の利用規約をよくお読みください。",
+        "acceptance": "1. 規約への同意",
+        "acceptanceContent": "本サービスにアクセスし利用することにより、お客様はこの利用規約に拘束されることに同意するものとします。これらの規約に同意されない場合は、本サービスをご利用にならないでください。",
+        "serviceDescription": "2. サービスの説明",
+        "serviceDescriptionContent": "本サービスは、ユーザーがマルチメディアコンテンツを生成・管理するのを支援するAIコンテンツ作成プラットフォームです。",
+        "userResponsibilities": "3. ユーザーの責任",
+        "userResponsibilitiesContent": "ユーザーは、本サービスの利用が現地の法律および規制に準拠していることを確認し、違法な目的に使用しないものとします。",
+        "privacy": "4. プライバシー保護",
+        "privacyContent": "私たちはお客様のプライバシーを重視しています。詳細については、プライバシーポリシーをご参照ください。",
+        "termination": "5. サービスの終了",
+        "terminationContent": "私たちは、いつでもサービスを終了または一時停止する権利を留保します。",
+        "contact": "6. お問い合わせ",
+        "contactContent": "ご質問がございましたら、メールでお問い合わせください：support@example.com"
+      }
+    },
+    "privacyPolicy": {
+      "title": "プライバシーポリシー",
+      "lastUpdated": "最終更新日",
+      "content": {
+        "introduction": "このプライバシーポリシーでは、私たちがお客様の個人情報をどのように収集、使用、保護するかについて説明します。",
+        "informationCollection": "1. 情報の収集",
+        "informationCollectionContent": "私たちは、お客様が自発的に提供する情報と、サービスご利用時に自動的に収集される情報を収集します。",
+        "informationUse": "2. 情報の使用",
+        "informationUseContent": "私たちは収集した情報を、サービスの提供、維持、改善のために使用します。",
+        "informationSharing": "3. 情報の共有",
+        "informationSharingContent": "私たちはお客様の個人情報を第三者に販売、取引、または譲渡することはありません。",
+        "dataSecurity": "4. データセキュリティ",
+        "dataSecurityContent": "私たちはお客様の個人情報を保護するために適切なセキュリティ対策を実施しています。",
+        "userRights": "5. ユーザーの権利",
+        "userRightsContent": "お客様には、ご自身の個人情報にアクセス、訂正、または削除する権利があります。",
+        "contact": "6. お問い合わせ",
+        "contactContent": "プライバシーに関するご質問は、こちらまでお問い合わせください：privacy@example.com"
+      }
+    },
+    "dataDeletion": {
+      "title": "データ削除のリクエスト",
+      "subtitle": "個人データの削除をご希望の場合は、以下の手順に従ってください",
+      "lastUpdated": "最終更新日",
+      "prelaunchNote": "プレローンチ期間のユーザーの方へ：",
+      "prelaunchContent": "現在プレローンチ期間中です。データ削除については、サポートチームに直接お問い合わせください。",
+      "standardProcedure": "標準的な削除手順：",
+      "steps": [
+        "アカウントにログインして設定ページに移動",
+        "「データ管理」オプションをクリック",
+        "「マイデータを削除」を選択",
+        "削除操作を確認して処理完了をお待ちください"
+      ],
+      "contactInfo": "お問い合わせ先：",
+      "contactEmail": "サポートが必要な場合は、こちらにメールをお送りください：datadeletion@example.com",
+      "processingTime": "処理時間：",
+      "processingTimeContent": "データ削除リクエストは通常7〜14営業日以内に処理されます。",
+      "importantNote": "重要なお知らせ：",
+      "importantNoteContent": "データは削除後に復元できません。慎重に操作してください。法律で要求される一部のデータは削除できない場合があります。"
+    }
+  },
+  "lowBalanceAlert": {
+    "title": "残高不足の警告",
+    "content": "クレジット残高が不足しています。引き続きご利用いただくために、チャージしてください。",
+    "neverRemind": "今後表示しない"
+  },
+  "announcementBanner": {
+    "seedancePromo": "seedance-2.0 最低0.03ドル/秒",
+    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+  },
+  "chinaDomainPrompt": {
+    "title": "中国リージョンに切り替え",
+    "content": "お客様の所在地が中国であることが検出されました。より快適にご利用いただくため、中国ドメインに切り替えますか？",
+    "ok": "切り替え",
+    "cancel": "このまま"
+  },
+  "abroadDomainPrompt": {
+    "title": "国際版に切り替え",
+    "content": "中国以外の場所が検出されました。より良い体験のために国際版に切り替えますか？",
+    "ok": "切り替え",
+    "cancel": "このまま"
+  },
+  "brushEditor": {
+    "title": "ブラシ編集",
+    "brush": "ブラシ",
+    "rectangle": "矩形",
+    "ellipse": "楕円",
+    "color": "色",
+    "size": "サイズ",
+    "undo": "元に戻す",
+    "clearAll": "クリア",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中...",
+    "saveSuccess": "保存しました",
+    "saveFailed": "保存に失敗しました",
+    "crop": "切り抜き",
+    "cropFree": "自由",
+    "cropConfirm": "切り抜きを適用",
+    "cropCancel": "切り抜きをキャンセル",
+    "cropRatio": "比率"
+  },
+  "switchToInternational": "「国際版」へ",
+  "switchToChina": "「中国版」へ",
+  "platformRegionPrompt": {
+    "title": "プラットフォーム地域制限",
+    "chinaContent": "{{platform}} は中国サイトでのみ利用可能です。中国サイトに移動しますか？",
+    "abroadContent": "{{platform}} は国際サイトでのみ利用可能です。国際サイトに移動しますか？",
+    "ok": "移動",
+    "cancel": "キャンセル"
+  }
+}

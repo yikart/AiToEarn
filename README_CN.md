@@ -152,7 +152,6 @@ AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
-cp env.example .env
 docker compose up -d
 ```
 
@@ -162,45 +161,32 @@ Docker 成功启动后，您可以通过以下地址访问服务：
 
 | 服务 | URL | 描述 |
 |------|-----|------|
-| **Web 前端** | [http://localhost:3000](http://localhost:3000) | Web 用户界面 |
-| **主后端 API** | [http://localhost:3002](http://localhost:3002) | AiToEarn 主服务器 API |
-| **渠道服务 API** | [http://localhost:7001](http://localhost:7001) | AiToEarn 渠道服务 API |
-| **MongoDB** | `localhost:27017` | MongoDB（在 Docker 内部，使用 `.env` 中的用户名/密码） |
-| **Redis** | `localhost:6379` | Redis（在 Docker 内部，使用 `.env` 中的密码） |
+| **Web 前端** | [http://localhost:8080](http://localhost:8080) | Web 用户界面（通过 Nginx） |
+| **后端 API** | [http://localhost:8080/api](http://localhost:8080/api) | AiToEarn 后端 API（通过 Nginx） |
+| **RustFS 控制台** | [http://localhost:9001](http://localhost:9001) | 对象存储管理控制台 |
+| **MongoDB** | `localhost:27017` | MongoDB 数据库 |
+| **Redis** | `localhost:6379` | Redis 缓存 |
 
-> ℹ️ MongoDB 和 Redis 都由 `docker compose` 启动。  
-> 您只需在 `.env` 中配置它们的密码；无需额外的本地安装。
+> ℹ️ 所有服务（MongoDB、Redis、RustFS、Nginx 等）均由 `docker compose` 启动，无需额外的本地安装。
 
-### 🧩 高级配置（.env）
+### 🧩 高级配置
 
-编辑 `.env` 文件以设置安全值并自定义您的部署：
+所有服务配置（密码、API 密钥、域名设置等）直接在 `docker-compose.yml` 和 `config/` 目录下的配置文件中管理。
 
-```bash
-# 必需的安全配置
-MONGODB_PASSWORD=your-secure-mongodb-password
-REDIS_PASSWORD=your-secure-redis-password
-JWT_SECRET=your-jwt-secret-key
-INTERNAL_TOKEN=your-internal-token
-
-# 如果需要外部访问，请设置您的公共 API/域名
-NEXT_PUBLIC_API_URL=http://your-domain.com:3002/api
-APP_DOMAIN=your-domain.com
-```
-
-> ✅ 在生产环境中，请使用强随机密码和密钥。
+详细部署说明请参阅 [DOCKER_DEPLOYMENT_CN.md](DOCKER_DEPLOYMENT_CN.md)。
 
 <details>
 <summary>🧪 可选：手动运行后端和前端（开发模式）</summary>
 
-此模式主要用于本地开发和调试。  
-您仍然可以使用 Docker 运行 MongoDB/Redis，或通过 `.env` 指向您自己的服务。
+此模式主要用于本地开发和调试。
+您仍然可以使用 Docker 运行 MongoDB/Redis，或在配置文件中指向您自己的服务。
 
 #### 1. 启动后端服务
 
 ```bash
-cd project/aitoearn-monorepo
+cd project/aitoearn-backend
 pnpm install
-npx nx serve aitoearn-channel
+npx nx serve aitoearn-ai
 # 在另一个终端
 npx nx serve aitoearn-server
 ```
@@ -275,26 +261,3 @@ AiToEarn 集成了多种官方 API。以下是开发者密钥配置指南：
 - [facefusion](https://github.com/facefusion/facefusion)
 - [NarratoAI](https://github.com/linyqh/NarratoAI)
 - [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)
-```
-
-## 主要修改说明
-
-1. **日期格式统一**：将 `2025.02.07` 改为 `2025-02-07`（ISO 8601 标准格式），并修正了 2025 年 12 月和 11 月的日期为 2024 年（逻辑修正）
-
-2. **徽章链接修复**：为 GitHub stars 和 license 徽章添加了正确的链接
-
-3. **空格规范**：统一中英文之间的空格（如 `AI 自动化`、`AiToEarn`）
-
-4. **路径编码**：修正图片路径中的空格为 `%20`（如 `3.%20content%20search`）
-
-5. **拼写修正**：`Medjourney` → `Midjourney`，`Aitiearn` → `AiToEarn`
-
-6. **HTML 标签优化**：将自闭合 `<img>` 标签改为标准格式，移除不必要的 `./` 前缀
-
-7. **表格对齐**：统一表格列宽和格式
-
-8. **代码块标识**：为 bash 命令添加 `bash` 语言标识
-
-9. **链接格式**：移除链接末尾多余的空格，统一使用尖括号包裹 URL
-
-10. **标题层级**：确保目录中的锚点与实际标题一致

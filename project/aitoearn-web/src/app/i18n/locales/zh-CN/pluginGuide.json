@@ -1,0 +1,117 @@
+{
+  "seo": {
+    "title": "浏览器插件安装指南 - AiToEarn 扩展程序",
+    "description": "详细的 AiToEarn 浏览器插件安装和使用教程,帮助您实现社交媒体内容的自动化发布和管理。",
+    "keywords": "浏览器插件, 插件安装, 安装指南, Chrome扩展, 社交媒体自动化, AiToEarn"
+  },
+  "title": "浏览器插件使用教程",
+  "lastUpdated": "最后更新",
+  "introduction": "本教程将指导您如何安装和使用 AiToEarn 浏览器插件，让您能够更便捷地管理社交媒体账号和发布内容。",
+  "tableOfContents": "目录",
+  "sections": {
+    "installation": "安装插件",
+    "manualInstall": "手动安装方式",
+    "manualInstallDesc": "适用于 GitHub 或 中国地区下载渠道",
+    "authorize": "授权插件",
+    "loginAccount": "登录社交媒体账号",
+    "syncAccount": "同步账号"
+  },
+  "steps": {
+    "step1": {
+      "title": "第一步：打开插件管理弹框",
+      "content": "在 AiToEarn 平台页面，点击右上角的插件图标，打开浏览器插件管理弹框。",
+      "caption": "点击页面右上角的 Extension 按钮"
+    },
+    "step2": {
+      "title": "第二步：下载插件",
+      "content": "在弹框中选择下载方式，点击下载插件。",
+      "caption": "选择合适的下载渠道",
+      "note": "Chrome Web Store 和 GitHub Release 安装区别：",
+      "noteItem1": "GitHub Release 下载的插件您需要浏览器打开开发者模式安装，但是此处安装的资源是最新的插件。",
+      "noteItem2": "Chrome Web Store 下载的插件您可以直接安装。"
+    },
+    "step3": {
+      "title": "第三步：检查安装状态",
+      "content": "安装完成后我们点击浏览器的扩展程序按钮，查看是否安装成功。",
+      "caption": "在浏览器扩展栏中找到 AiToEarn 插件"
+    },
+    "step4": {
+      "title": "第四步：进入插件详情页",
+      "content": "如果安装成功，我们点击插件，进入插件详情页。"
+    },
+    "step5": {
+      "title": "第五步：授权插件",
+      "notLoggedInContent": "如果您没有在 AiToEarn 主页登录，点击 \"Go to Home\"，前往 AiToEarn 登录。",
+      "notLoggedInCaption": "点击 'Go to Home' 前往登录",
+      "loggedInContent": "如果您已在 AiToEarn 主页登录，点击 \"Authorize Now\" 即可授权。",
+      "loggedInCaption": "点击 'Authorize Now' 授权插件"
+    },
+    "step6": {
+      "title": "第六步：确认插件就绪",
+      "content": "权限已授予成功，下一步打开 AiToEarn 平台，刷新页面，此时可以看到插件已经就绪，点击它查看详情。",
+      "caption1": "授权成功提示",
+      "caption2": "返回 AiToEarn 平台查看插件状态"
+    },
+    "step7": {
+      "title": "第七步：查看账号信息",
+      "content": "如果您已经登录插件支持的平台，会看到插件已经获取到对应的账号。",
+      "loginContent": "点击 \"Extension\" 按钮，查看账号登录状态。如果显示未登录，请先登录对应的社交媒体平台。",
+      "caption": "检查小红书账号登录状态"
+    },
+    "step7b": {
+      "title": "登录小红书账号",
+      "content": "点击 \"Login Now\" 跳转到小红书页面进行登录。登录完成后，还需要登录创作者中心。",
+      "caption1": "从右上角快速进入创作者中心",
+      "caption2": "登录完成后，刷新页面即可看到账号已授权",
+      "importantNote": "重要提示",
+      "importantNoteContent": "小红书主页和创作者中心需要分别登录，两者都登录完成后才能正常使用插件功能。"
+    },
+    "step8": {
+      "title": "第八步：同步账号",
+      "content": "可以在此处将账号同步到账号管理，点击 [Sync] 按钮，账号会被同步到我们的数据库中。",
+      "caption": "点击 'Sync' 按钮同步账号"
+    },
+    "step9": {
+      "title": "查看同步结果",
+      "content": "回到 AiToEarn 主页，点击 \"My Channels\" 进入账号管理页面。",
+      "caption1": "点击 'My Channels' 进入账号管理",
+      "caption2": "可以看到小红书账号已成功同步"
+    },
+    "complete": {
+      "title": "完成",
+      "content": "此时您可以正常使用 AiToEarn 平台了！"
+    }
+  },
+  "manualInstall": {
+    "tip": "提示",
+    "tipContent": "如果您已通过 Chrome Web Store 成功安装插件，可以跳过此部分，直接前往「授权插件」章节。",
+    "step1": {
+      "title": "进入扩展程序管理页面",
+      "content": "点击浏览器右上角的三点菜单，依次点击进入 \"Manage Extensions\" 管理页面。"
+    },
+    "step2": {
+      "title": "开启开发者模式",
+      "content": "在扩展程序页面右上角，开启 \"Developer mode\" 开发者模式。"
+    },
+    "step3": {
+      "title": "找到下载的插件文件",
+      "content": "打开浏览器的下载文件夹，找到下载的 .crx 插件包。"
+    },
+    "step4": {
+      "title": "拖放安装插件",
+      "content": "将 .crx 插件包拖放到扩展程序页面中。"
+    },
+    "step5": {
+      "title": "确认安装",
+      "content": "在弹出的对话框中，点击 \"Add extension\" 确认安装。"
+    }
+  },
+  "faq": {
+    "title": "常见问题",
+    "q1": {
+      "question": "为什么我登录了小红书，但是插件还是显示未登录？",
+      "answer": "可能是未登录小红书创作者中心，在小红书主页，右上角按钮，点击可以快速登录小红书创作者中心。"
+    }
+  },
+  "viewGuide": "查看教程"
+}

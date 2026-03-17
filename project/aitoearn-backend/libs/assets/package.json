@@ -1,0 +1,36 @@
+{
+  "name": "@yikart/assets",
+  "type": "commonjs",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/schedule": "^6.0.0",
+    "@nestjs/swagger": "^11.2.0",
+    "@yikart/aitoearn-auth": "workspace:*",
+    "@yikart/ali-oss": "workspace:*",
+    "@yikart/aws-s3": "workspace:*",
+    "@yikart/common": "workspace:*",
+    "@yikart/mongodb": "workspace:*",
+    "@yikart/redlock": "workspace:*",
+    "dayjs": "^1.11.13",
+    "nanoid": "^5.1.6",
+    "tslib": "^2.3.0",
+    "zod": "^4.3.5"
+  },
+  "dependencies": {
+    "execa": "^9.6.1",
+    "mime-types": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/mime-types": "^3.0.1"
+  }
+}

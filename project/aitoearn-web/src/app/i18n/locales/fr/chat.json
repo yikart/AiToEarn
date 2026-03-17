@@ -1,0 +1,205 @@
+{
+  "input": {
+    "placeholder": "Créez une vidéo promotionnelle verticale de 8 secondes pour notre nouveau plateau de sushi. Utilisez de la musique jazz entraînante, des gros plans de saumon frais, générez des sous-titres et terminez avec notre logo.",
+    "send": "Envoyer",
+    "stop": "Arrêter",
+    "uploading": "Téléchargement..."
+  },
+  "message": {
+    "thinking": "Réflexion en cours...",
+    "error": "L'opération a échoué, veuillez réessayer",
+    "loadFailed": "Échec du chargement",
+    "connectionInterrupted": "Connexion interrompue"
+  },
+  "error": {
+    "insufficientCredits": {
+      "title": "Crédits Agent insuffisants",
+      "content": "Vos crédits Agent sont insuffisants, veuillez souscrire à un abonnement",
+      "okText": "OK"
+    }
+  },
+  "task": {
+    "newChat": "Nouvelle conversation",
+    "delete": "Supprimer",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette conversation ?",
+    "deleteSuccess": "Supprimé avec succès",
+    "deleteFailed": "Échec de la suppression",
+    "status": {
+      "running": "En cours",
+      "completed": "Terminé",
+      "requiresAction": "Action requise",
+      "failed": "Échoué"
+    },
+    "rate": "Évaluer",
+    "share": "Partages"
+  },
+  "home": {
+    "title": "Comment puis-je vous aider ?",
+    "recentTasks": "Tâches récentes",
+    "viewAll": "Voir tout",
+    "noTasks": "Aucun historique de tâches",
+    "startChat": "Commencer à créer",
+    "aiCreation": "Création IA",
+    "supportUpload": "Supporte le téléchargement d'images/vidéos",
+    "enterToSend": "Appuyez sur Entrée pour envoyer",
+    "connectTools": "Publier sur",
+    "loginRequired": "Veuillez d'abord vous connecter",
+    "defaultImageGroup": "Groupe d'images par défaut",
+    "defaultVideoGroup": "Groupe vidéo par défaut",
+    "materialLibrary": "Médiathèque",
+    "affiliateReward": "Gagnez 716,4 $",
+    "imageMaterial": "Images",
+    "videoMaterial": "Vidéos",
+    "agentAssets": "Ressources Agent",
+    "noData": "Aucune donnée"
+  },
+  "history": {
+    "meta": {
+      "title": "Historique des tâches IA - Conversations et enregistrements",
+      "description": "Consultez et gérez vos enregistrements de tâches AI Agent, y compris l'historique des conversations, les journaux d'utilisation IA et l'historique de génération vidéo. Prend en charge la pagination, l'évaluation des tâches et la gestion de l'historique.",
+      "keywords": "enregistrements de tâches IA, historique des conversations, historique AI Agent, gestion des tâches, journaux d'utilisation IA, historique de génération vidéo, enregistrements d'historique, évaluation des tâches, enregistrements de chat IA, historique de workflow, enregistrements de création de contenu, historique de création IA"
+    },
+    "title": "Historique des tâches",
+    "empty": "Aucun historique de tâches",
+    "loadMore": "Charger plus",
+    "loading": "Chargement...",
+    "logs": "Journaux d'utilisation",
+    "logsTitle": "Journaux d'utilisation IA",
+    "logsEmpty": "Aucun historique d'utilisation",
+    "logsLoading": "Chargement des journaux...",
+    "logsError": "Échec du chargement des journaux",
+    "pageInfo": "Page {{page}} / {{totalPages}}, Total {{total}} enregistrements",
+    "logType": {
+      "agent": "Agent IA",
+      "chat": "Chat IA"
+    },
+    "logFields": {
+      "model": "Modèle",
+      "channel": "Canal",
+      "points": "Points utilisés",
+      "duration": "Durée",
+      "taskId": "ID de tâche"
+    },
+    "videoHistory": "Historique vidéo",
+    "videoHistoryTitle": "Historique de génération vidéo",
+    "videoHistoryEmpty": "Aucun historique de génération vidéo",
+    "videoGeneration": "Génération vidéo",
+    "videoSize": "Taille de la vidéo",
+    "videoDuration": "Durée de la vidéo",
+    "prompt": "Invite",
+    "progress": "Progression",
+    "previewVideo": "Aperçu vidéo",
+    "playVideo": "Lire la vidéo",
+    "downloadVideo": "Télécharger la vidéo",
+    "logStatus": {
+      "success": "Réussi",
+      "failed": "Échoué",
+      "pending": "En attente"
+    },
+    "videoStatus": {
+      "pending": "En attente",
+      "processing": "En cours",
+      "completed": "Terminé",
+      "failed": "Échoué"
+    },
+    "duration": {
+      "seconds": "s",
+      "minutes": "min",
+      "secondsUnit": "s"
+    },
+    "searchPlaceholder": "Rechercher des tâches...",
+    "favoriteOnly": "Mes favoris",
+    "emptyFavorites": "Aucune tâche favorite",
+    "emptySearch": "Aucune tâche correspondante trouvée",
+    "clearFilters": "Effacer les filtres"
+  },
+  "rating": {
+    "title": "Évaluation et avis",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "requireComment": "Veuillez fournir un commentaire pour les notes basses",
+    "saveSuccess": "Enregistré avec succès",
+    "saveFailed": "Échec de l'enregistrement",
+    "noRating": "Non évalué",
+    "commentLabel": "Avis (optionnel)",
+    "commentPlaceholder": "Écrivez votre avis...",
+    "commentRequiredIfLow": "Une raison est requise pour les notes inférieures à 3",
+    "loading": "Chargement...",
+    "feedbackPrompt": "Vos commentaires nous aident à nous améliorer",
+    "submitSuccess": "Soumis avec succès, merci pour votre retour !"
+  },
+  "detail": {
+    "title": "Détails de la conversation",
+    "continuePlaceholder": "Continuer la conversation...",
+    "back": "Retour",
+    "workflowProcess": "Workflow IA",
+    "waitingResponse": "En attente de la réponse de l'IA...",
+    "scrollToBottom": "Retour en bas"
+  },
+  "media": {
+    "video": "Vidéo",
+    "image": "Image",
+    "document": "Document",
+    "uploadFailed": "Échec du téléchargement, veuillez réessayer",
+    "uploadCancelled": "Téléchargement annulé"
+  },
+  "workflow": {
+    "toolCallCompleted": "Appels d'outils terminés",
+    "toolResult": "Résultat retourné",
+    "processing": "Traitement en cours..."
+  },
+  "action": {
+    "connectChannel": "Connecter une chaîne",
+    "connectChannelDesc": "Vous n'avez pas encore connecté votre compte {{platform}}. Veuillez connecter votre compte de chaîne pour publier du contenu.",
+    "connectNow": "Connecter maintenant",
+    "addChannel": "Ajouter une chaîne",
+    "addChannelDesc": "Vous n'avez pas encore connecté de compte {{platform}}. Veuillez ajouter une chaîne pour publier du contenu.",
+    "addChannelNow": "Ajouter une chaîne",
+    "updateAuth": "Mettre à jour l'autorisation",
+    "updateAuthDesc": "L'autorisation de votre compte {{platform}} a expiré. Veuillez vous réautoriser.",
+    "reauthorize": "Réautoriser",
+    "loginChannel": "Connexion à la chaîne",
+    "loginChannelDesc": "Veuillez d'abord vous connecter à votre compte {{platform}}.",
+    "goLogin": "Se connecter",
+    "readyToPublish": "Prêt à publier",
+    "readyToPublishDesc": "Le contenu est prêt et peut être publié sur {{platform}}.",
+    "goPublish": "Publier",
+    "insufficientCredits": "Crédits insuffisants",
+    "insufficientCreditsDesc": "Tâche en pause. Veuillez recharger vos crédits pour continuer.",
+    "rechargeCredits": "Recharger les crédits",
+    "action": "Action",
+    "actionDesc": "Veuillez compléter l'action suivante",
+    "continue": "Continuer"
+  },
+  "publishDetail": {
+    "title": "Détails de la publication",
+    "loading": "Chargement...",
+    "publishing": "Publication en cours...",
+    "published": "Publié",
+    "failed": "Échoué",
+    "unpublished": "En attente",
+    "viewWork": "Voir la publication",
+    "noTitle": "Sans titre",
+    "retry": "Réessayer"
+  },
+  "pluginPublish": {
+    "autoPublishIn": "Publication automatique sur {{platform}} dans {{seconds}}s",
+    "publishNow": "Publier maintenant",
+    "cancel": "Annuler",
+    "publishing": "Publication sur {{platform}} en cours...",
+    "doNotCloseBrowser": "Publication en cours, veuillez ne pas fermer cette fenêtre de navigateur",
+    "publishSuccess": "Publié avec succès !",
+    "publishFailed": "Échec de la publication",
+    "retryPublish": "Réessayer",
+    "viewWork": "Voir la publication",
+    "pluginNotReady": "Plugin non prêt, veuillez d'abord installer et autoriser le plugin",
+    "noAccountFound": "Aucun compte de publication disponible trouvé",
+    "goPublish": "Publier",
+    "stage": {
+      "download": "Téléchargement des ressources...",
+      "upload": "Envoi en cours...",
+      "publish": "Publication en cours...",
+      "complete": "Publié"
+    }
+  }
+}

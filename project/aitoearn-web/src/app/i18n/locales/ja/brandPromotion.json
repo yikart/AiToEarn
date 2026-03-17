@@ -1,0 +1,34 @@
+{
+  "seo": {
+    "title": "AIブランドプロモーション - QRコードマーケティングと分析"
+  },
+  "secondaryTab": {
+    "contentManagement": "コンテンツ管理",
+    "dataAnalysis": "データ分析"
+  },
+  "detail": {
+    "targetPlatforms": "ターゲットプラットフォーム",
+    "selectPlatforms": "プラットフォーム",
+    "platformsSelected": "{{count}} プラットフォーム",
+    "parameterLimits": "パラメータ制限",
+    "titleLimit": "タイトル上限",
+    "descriptionLimit": "説明上限",
+    "topicLimit": "トピック上限",
+    "imageLimit": "画像上限",
+    "characters": "文字",
+    "items": "件",
+    "noLimit": "制限なし",
+    "noPlatformSelected": "ターゲットプラットフォームが選択されていません。パラメータ制限はありません。",
+    "selectAll": "すべて選択",
+    "deselectAll": "すべて解除",
+    "limitsMinTip": "選択されたすべてのプラットフォームの最小値を表示します。",
+    "platformIncompatible": {
+      "contentTypeNotSupported": "このプラットフォームは現在のコンテンツタイプに対応していません",
+      "durationOutOfRange": "現在の長さ {{current}}、プラットフォーム要件 {{min}}-{{max}}",
+      "aspectRatioNotSupported": "現在の比率 {{current}}、プラットフォーム対応 {{supported}}",
+      "imageCountExceeded": "画像数がプラットフォームの上限を超えています（最大 {{max}} 枚）"
+    },
+    "platformIncompatibleCount": "{{count}} 件非対応",
+    "timeLimitedModelTip": "期間限定モデルの利用は保証されていません。利用できない場合は、後で再試行するか、他のモデルに切り替えてください。"
+  }
+}

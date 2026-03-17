@@ -1,0 +1,535 @@
+{
+  "seo": {
+    "title": "定价方案 - 灵活的AI积分与订阅计划",
+    "description": "AI ToEarn提供多种定价方案，从免费体验到专业版套餐，满足不同用户的内容创作需求。支持视频生成、图片创作、多平台发布等AI功能。",
+    "keywords": "AI定价, 套餐选择, 内容创作套餐, AI订阅, 视频生成定价"
+  },
+  "pageTitle": "按量付费",
+  "pageDescription": "Aitoearn 不止是一家软件公司，更是一家结果交付公司。\n我们的目标是为一人公司交付运营结果。\n您所购买的aitoearn积分（代充值token费用）都将用于支付Google、OpenAI、xAI、Anthropic等公司的模型费用。\n我们向您承诺，我们的使用价格不会高于所有模型的官方价格。\n同时，如果我们的使用量增长，可以从大公司这里享受到一些折扣时，我们也会将折扣的优惠传递给您。",
+  "sections": {
+    "credits": "积分购买",
+    "creditsDesc": "按需购买积分，灵活使用，无需订阅"
+  },
+  "tabs": {
+    "credits": "积分充值",
+    "balance": "余额充值"
+  },
+  "balance": {
+    "rechargeButton": "充值",
+    "balanceAmount": "余额",
+    "features": {
+      "adCampaign": "用于推广任务投放",
+      "neverExpire": "余额永不过期"
+    }
+  },
+  "paymentMethod": {
+    "creditCard": "信用卡",
+    "alipay": "支付宝"
+  },
+  "creditsTiers": {
+    "credits_10": {
+      "button": "购买"
+    },
+    "credits_50": {
+      "button": "购买"
+    },
+    "credits_100": {
+      "button": "购买"
+    },
+    "credits_cny_70": {
+      "button": "购买"
+    },
+    "credits_cny_350": {
+      "button": "购买"
+    },
+    "credits_cny_700": {
+      "button": "购买"
+    }
+  },
+  "creditsCard": {
+    "credits": "积分",
+    "recommended": "推荐",
+    "canGenerate": "≈ 可生成"
+  },
+  "allPlansInclude": "支持的功能",
+  "features": {
+    "longVideoGen": "长视频生成（数分钟）",
+    "aiMultiPlatformPublish": "AI自适应发布多平台",
+    "videoNarration": "影视解说",
+    "liveClipping": "直播切片",
+    "shortVideoGen": "短视频生成（10秒）",
+    "videoEditing": "视频编辑",
+    "imageGen": "图片生成",
+    "imageEditing": "图片编辑",
+    "videoTranslation": "视频翻译",
+    "contentCopyright": "AI内容版权检测",
+    "contentQualityAnalysis": "AI内容质量分析",
+    "textModeration": "文本内容安全审查",
+    "imageModeration": "图片内容安全审查",
+    "videoModeration": "视频内容安全审查",
+    "multiModel": "多模型一站式支持",
+    "textToVideo": "文字转视频",
+    "imageToVideo": "图像转视频",
+    "videoToVideo": "视频到视频",
+    "consistentCharacter": "一致的角色视频",
+    "aiAnimation": "AI动画生成",
+    "aiImage": "AI图像生成",
+    "voiceClone": "声音克隆",
+    "voiceSynthesis": "声音合成",
+    "fasterSpeed": "更快的生成速度",
+    "withWatermark": "含水印输出",
+    "noWatermark": "无水印输出",
+    "storage500M": "存储空间500M",
+    "storage5G": "存储空间5G"
+  },
+  "faq": {
+    "title": "常见问题",
+    "paymentMethods": {
+      "question": "你们支持哪些支付方式？",
+      "answer": "我们支持多种支付方式，包括主要的信用卡（Visa、MasterCard、American Express）以及支付宝等。如果您在中国使用我们的服务，可以通过支付宝购买一次性服务。"
+    },
+    "creditDeduction": {
+      "question": "图片和视频生成时，积分是如何扣除的？",
+      "answer": "我们的图片和视频生成定价与官方渠道保持一致。通常情况下，如果官方渠道有大额采购折扣，我们也会同步将这些优惠让利给您。",
+      "pricingTable": {
+        "title": "详细价格表",
+        "headers": {
+          "model": "模型",
+          "type": "类型",
+          "duration": "时长",
+          "resolution": "分辨率",
+          "notes": "备注",
+          "credits": "积分",
+          "price": "价格",
+          "channel": "渠道"
+        },
+        "rows": [
+          {
+            "model": "gpt-5",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "",
+            "notes": "大模型价格以官方价格为准",
+            "credits": "每百万tokens",
+            "price": "输入 9元，输出 72元",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-mini",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "输入 1.8元，输出 14.4元",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-nano",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "输入 0.36元，输出 2.88元",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "支持视频",
+            "notes": "",
+            "credits": "",
+            "price": "输入9元，输出 72元",
+            "channel": "yun"
+          },
+          {
+            "model": "chatgpt-4o-latest",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "输入 36元，输出 108元",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "支持视频",
+            "notes": "",
+            "credits": "",
+            "price": "输入 2.16元，输出 18元",
+            "channel": "yun"
+          },
+          {
+            "model": "qwen-vl-max-latest",
+            "type": "大模型",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "输入1.6元，输出4元",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash-image",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "又名Nano Banana Pro，支持多图像输入",
+            "credits": "1",
+            "price": "0.27元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedream-3.0",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "2.6",
+            "price": "0.26元",
+            "channel": "官方"
+          },
+          {
+            "model": "seededit-3.0",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "图片编辑，支持jpeg、png格式",
+            "credits": "3",
+            "price": "0.3元",
+            "channel": "官方"
+          },
+          {
+            "model": "gpt-image-1",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "支持图片编辑",
+            "notes": "",
+            "credits": "促销",
+            "price": "low $0.011-0.016，medium $0.042-0.063，high $0.167-0.25",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [max]",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "支持图片编辑",
+            "notes": "",
+            "credits": "1.5",
+            "price": "0.6元",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [pro]",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "支持图片编辑",
+            "notes": "",
+            "credits": "1",
+            "price": "0.3元",
+            "channel": "yun"
+          },
+          {
+            "model": "Flux 1.1 pro ultra",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "4.5",
+            "price": "0.45元",
+            "channel": "官方"
+          },
+          {
+            "model": "Flux1.1 pro",
+            "type": "图片生成",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "3",
+            "price": "0.3元",
+            "channel": "官方"
+          },
+          {
+            "model": "midjourney relax",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "",
+            "notes": "",
+            "credits": "免费",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "midjourney fast/turbo",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "",
+            "notes": "",
+            "credits": "4",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "20",
+            "price": "2元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "视频生成",
+            "duration": "10秒",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "40",
+            "price": "4元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "视频生成",
+            "duration": "10秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "70",
+            "price": "7元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1大师",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "100",
+            "price": "10元",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1大师",
+            "type": "视频生成",
+            "duration": "10秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "200",
+            "price": "20元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "480p",
+            "notes": "",
+            "credits": "70",
+            "price": "0.7元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-turbo(14b）",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "不要使用火山渠道",
+            "credits": "12",
+            "price": "1.2元",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-plus",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "支持首尾帧",
+            "credits": "35",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "wanx2.1-vace-plus",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "视频编辑",
+            "credits": "35",
+            "price": "3.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "480p",
+            "notes": "支持10秒",
+            "credits": "7.2",
+            "price": "0.72元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "10秒价格翻倍",
+            "credits": "16.4",
+            "price": "1.64元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "36.7",
+            "price": "3.67元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "480p",
+            "notes": "支持首尾帧",
+            "credits": "5",
+            "price": "0.5元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "720p",
+            "notes": "支持10秒",
+            "credits": "11",
+            "price": "1.1元",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "视频生成",
+            "duration": "5秒",
+            "resolution": "1080p",
+            "notes": "10秒价格翻倍",
+            "credits": "25",
+            "price": "2.5元",
+            "channel": "yun"
+          }
+        ]
+      }
+    },
+    "creditExpiry": {
+      "question": "我的积分会过期吗？",
+      "answer": "我们的积分过期机制非常宽松。积分自获取之日起 12 个自然月后才会过期，您有充足的时间使用。"
+    },
+    "moreCredits": {
+      "question": "如果我需要更多积分怎么办？",
+      "answer": "您可以通过每天发布内容来获取免费积分，也可以直接购买积分包获得更多积分。"
+    },
+    "checkCredits": {
+      "question": "如何查看我的积分情况？",
+      "answer": "点击您的积分余额，即可查看积分的变更明细。"
+    },
+    "hiddenFees": {
+      "question": "是否存在隐藏费用？",
+      "answer": "没有。您所看到的价格就是您最终支付的价格，不会有任何额外的隐性收费。"
+    },
+    "refundPolicy": {
+      "question": "有退款政策吗？",
+      "answer": "我们提供7天无理由退款保证。如果您对服务不满意，可以在购买后7天内申请全额退款。"
+    }
+  },
+  "pricingTable": {
+    "title": "价格表",
+    "expand": "价格表",
+    "collapse": "收起",
+    "creditsPolicy": {
+      "title": "积分使用说明",
+      "desc1": "积分主要用于两类消耗：",
+      "llmTokens": "LLM Tokens",
+      "llmTokensDesc": "用于任务规划、决策和生成输出",
+      "thirdPartyApis": "第三方 API",
+      "thirdPartyApisDesc": "用于访问图片模型、视频模型、视频编辑/处理等外部服务",
+      "costNote": "任务的实际积分消耗取决于其复杂度、时长和外部调用次数。",
+      "storageNote": "任务完成后，存储、托管、展示或部署其输出不会消耗额外积分。",
+      "refundNote": "如果任务因 AiToEarn 技术问题失败，我们将全额退还该任务消耗的积分。",
+      "exchangeRate": "100 积分 = 1 美元"
+    },
+    "llm": {
+      "title": "大语言模型",
+      "unit": "每百万 tokens",
+      "input": "输入",
+      "output": "输出",
+      "inputModality": "输入模态",
+      "outputModality": "输出模态",
+      "notes": "备注"
+    },
+    "videoGen": {
+      "title": "视频生成模型",
+      "price": "定价",
+      "latency": "延迟",
+      "latencyValues": {
+        "minutes": "数分钟",
+        "seconds": "数秒",
+        "hours": "数小时"
+      }
+    },
+    "imageGen": {
+      "title": "图片生成模型"
+    },
+    "headers": {
+      "model": "模型",
+      "price": "价格",
+      "tool": "工具"
+    },
+    "videoTools": {
+      "title": "视频处理工具",
+      "perMin": "/分钟",
+      "billingMethod": "计费方式",
+      "tools": {
+        "videoUnderstanding": "视频理解",
+        "videoEditing": "视频编辑",
+        "videoStyleTransfer": "视频风格迁移",
+        "videoTranslation": "视频翻译",
+        "highlightClipping": "高光剪辑",
+        "subtitleRemoval": "字幕移除",
+        "scriptRecovery": "脚本还原",
+        "videoNarration": "视频解说"
+      },
+      "billing": {
+        "perInputMin": "按输入视频时长计费",
+        "perOutputMin": "按输出视频时长计费",
+        "perGenMin": "按生成视频时长计费",
+        "720P output": "720P 输出"
+      }
+    }
+  }
+}

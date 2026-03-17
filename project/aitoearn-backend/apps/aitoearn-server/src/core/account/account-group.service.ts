@@ -1,0 +1,118 @@
+import { Injectable } from '@nestjs/common'
+import { QueueService } from '@yikart/aitoearn-queue'
+import { AccountType } from '@yikart/common'
+import { AccountGroup, AccountGroupRepository, AccountRepository } from '@yikart/mongodb'
+import { AccountPortraitReportData } from '../channel/common'
+import { FingerprintService } from '../fingerprint/fingerprint.service'
+
+@Injectable()
+export class AccountGroupService {
+  constructor(
+    private readonly accountRepository: AccountRepository,
+    private readonly queueService: QueueService,
+    private readonly fingerprintService: FingerprintService,
+    private readonly accountGroupRepository: AccountGroupRepository,
+  ) { }
+
+  // Find group by ID
+  async findOneById(id: string) {
+    const data = await this.accountGroupRepository.getById(id)
+    return data
+  }
+
+  // Get default user group, create if not exists
+  async getDefaultGroup(userId: string): Promise<AccountGroup> {
+    const data = await this.accountGroupRepository.getDefaultGroup(userId)
+    return data
+  }
+
+  /**
+   * Add group
+   * @param accountGroup
+   */
+  async createAccountGroup(
+    accountGroup: Partial<AccountGroup>,
+  ): Promise<AccountGroup> {
+    if (!accountGroup.browserConfig) {
+      accountGroup.browserConfig = await this.fingerprintService.generateFingerprint()
+    }
+    const data = await this.accountGroupRepository.createAccountGroup(accountGroup)
+    return data
+  }
+
+  async updateAccountGroup(
+    group: AccountGroup,
+    upData: Partial<AccountGroup>,
+  ): Promise<boolean> {
+    const data = await this.accountGroupRepository.updateAccountGroup(group.id, upData)
+    // after update group, if country code changed, need to update all accounts' country code
+    if (upData.countryCode && group.countryCode !== upData.countryCode) {
+      await this.reportGroupAccounts(
+        group.userId,
+        { ...group, ...upData },
+      )
+    }
+
+    return data
+  }
+
+  /**
+   * Delete multiple groups
+   * @param ids
+   * @param userId
+   */
+  async deleteAccountGroup(ids: string[], userId: string): Promise<boolean> {
+    const accountGroupList = await this.accountGroupRepository.getAccountGorupListByIds(ids, userId)
+    const defaultGroup = await this.getDefaultGroup(userId)
+    for (const group of accountGroupList) {
+      await this.accountRepository.updateManyToDefaultGroup(
+        userId,
+        group.id,
+        defaultGroup.id,
+      )
+    }
+
+    const data = await this.accountGroupRepository.deleteAccountGroup(ids, userId)
+    return data
+  }
+
+  /**
+   * Get all groups
+   * @param userId
+   * @returns
+   */
+  async getAccountGroup(userId: string): Promise<AccountGroup[]> {
+    const accountGroupList: AccountGroup[] = await this.accountGroupRepository.getAccountGroup(userId)
+    return accountGroupList
+  }
+
+  // Sort
+  async sortRank(userId: string, list: { id: string, rank: number }[]): Promise<boolean> {
+    const success = await this.accountGroupRepository.sortRank(userId, list)
+    return success
+  }
+
+  // 根据名称获取账户组列表
+  async getAccountGroupByName(userId: string, name: string): Promise<AccountGroup[]> {
+    const accountGroupList: AccountGroup[] = await this.accountGroupRepository.getAccountGroupByName(userId, name)
+    return accountGroupList
+  }
+
+  private async reportGroupAccounts(userId: string, group: AccountGroup) {
+    const cursor = await this.accountRepository.getAccountCursor({ userId, groupId: group.id })
+    for (let account = await cursor.next(); account !== null; account = await cursor.next()) {
+      await this.queueService.addTaskAccountPortraitReportJob({
+        accountId: account.id,
+        userId: account.userId,
+        type: account.type as AccountType,
+        uid: account.uid,
+        countryCode: group.countryCode,
+        totalFollowers: account.fansCount,
+        totalWorks: account.workCount,
+        totalViews: account.readCount,
+        totalLikes: account.likeCount,
+        totalCollects: account.collectCount,
+      } satisfies AccountPortraitReportData)
+    }
+  }
+}

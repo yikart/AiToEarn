@@ -1,0 +1,661 @@
+
+id: 1
+data: {"type":"init","taskId":"697345180ca8e6f2f01fa887"}
+
+id: 2
+data: {"type":"keep_alive"}
+
+id: 3
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d2eeedf-1e49-4648-8da9-0000de3c7250","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01QhgWgV4re2T16ZGQnC66Dh","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":31089,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":31089,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 4
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5048aae2-8a9a-4628-8104-4f52c62d7f31","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_016VMswX1yAWeJqr1GupRUG5","name":"mcp__sessionTools__setTitle","input":{}}},"parent_tool_use_id":null}}
+
+id: 5
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0413a2e8-6d71-46b9-a8b7-dbca0d95b30f","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 6
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e71a870b-ae92-499c-8428-da1be057cfa3","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"tit"}},"parent_tool_use_id":null}}
+
+id: 7
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d70e59a0-bb14-46b0-83b2-97e85d22c150","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"le"}},"parent_tool_use_id":null}}
+
+id: 8
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8b2ee87f-8a23-4b97-bddc-798d51f99852","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\": "}},"parent_tool_use_id":null}}
+
+id: 9
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bb6568ba-bac1-4254-a8df-3fa2b27dba88","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"网红奶茶测评话题标签推"}},"parent_tool_use_id":null}}
+
+id: 10
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d923b60-9b2f-4964-9fd0-5598a83f5487","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"荐\"}"}},"parent_tool_use_id":null}}
+
+id: 11
+data: {"type":"assistant","message":{"type":"assistant","uuid":"70364e79-6e8c-49a0-af93-5891fb5e78bb","message":{"id":"msg_01QhgWgV4re2T16ZGQnC66Dh","content":[{"type":"tool_use","id":"toolu_016VMswX1yAWeJqr1GupRUG5","name":"mcp__sessionTools__setTitle","input":{"title":"网红奶茶测评话题标签推荐"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":31089},"cache_creation_input_tokens":31089,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 12
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12a4a530-8a39-410d-841d-470aeac62e12","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 13
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e3cda19c-49d9-4591-8b26-11051d995e0d","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":31089,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":72}},"parent_tool_use_id":null}}
+
+id: 14
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"26fd0217-8b91-4005-b1f0-5c29e7bf0403","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 15
+data: {"type":"title_updated","taskId":"697345180ca8e6f2f01fa887","title":"网红奶茶测评话题标签推荐"}
+
+id: 16
+data: {"type":"user","message":{"type":"user","uuid":"a7c359e4-fef3-4a61-bf78-21ec6639cf26","message":{"content":[{"tool_use_id":"toolu_016VMswX1yAWeJqr1GupRUG5","type":"tool_result","content":[{"type":"text","text":"Title updated successfully"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Title updated successfully"}]}}
+
+id: 17
+data: {"type":"keep_alive"}
+
+id: 18
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f30e2824-0acd-4a4e-b80f-bb7d90237344","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_019s4gMjpUhH66SdqFWAU9Gw","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":90,"cache_read_input_tokens":31089,"cache_creation":{"ephemeral_5m_input_tokens":90,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 19
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a19211e-32a9-402a-ae69-5f7ecac22fba","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 20
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f617056b-6c07-4fe1-b6a8-e368d7ce2749","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"##"}},"parent_tool_use_id":null}}
+
+id: 21
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f3889f7d-920f-4aa0-a1d1-1499031c36be","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 22
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"16fe01fd-2eaa-4eb8-a2e3-a85615251973","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🏷"}},"parent_tool_use_id":null}}
+
+id: 23
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d571f241-921d-46cf-bdb4-70800b54aac3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"️ 网"}},"parent_tool_use_id":null}}
+
+id: 24
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c259af1-af1c-464e-8a1b-dde7f504c5e7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"红奶茶测评 "}},"parent_tool_use_id":null}}
+
+id: 25
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"40d10bcf-0c25-4fe0-8536-3222e1d23bc5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-"}},"parent_tool_use_id":null}}
+
+id: 26
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d520ed1a-2528-4be8-a182-f7553684aaab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 高热度话题标签"}},"parent_tool_use_id":null}}
+
+id: 27
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7069a61f-3c15-4458-80e4-4f586a2fa72c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"推"}},"parent_tool_use_id":null}}
+
+id: 28
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b9c22a8-8b6a-493c-a3f1-5c6923a9a23b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荐\n\n根"}},"parent_tool_use_id":null}}
+
+id: 29
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c40599c1-ad6a-47f9-b6c0-bde76fb536e2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"据您的美"}},"parent_tool_use_id":null}}
+
+id: 30
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e6e984f-d10f-4525-ab07-1e51ef81f1da","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"食探店账"}},"parent_tool_use_id":null}}
+
+id: 31
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"56287c90-ac7d-435d-bced-64de872cb03e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"号定"}},"parent_tool_use_id":null}}
+
+id: 32
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8c4080f-7927-47d4-b615-f52b27ef3ae5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"位和"}},"parent_tool_use_id":null}}
+
+id: 33
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0006ac64-4d93-4d79-b4da-c8266079fc84","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\""}},"parent_tool_use_id":null}}
+
+id: 34
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ccfa17d9-7be7-4adb-ad63-7adbedade661","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"网红奶茶测"}},"parent_tool_use_id":null}}
+
+id: 35
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7a8acbc5-f7e2-4a07-880b-72d04669f683","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评\"主题，以"}},"parent_tool_use_id":null}}
+
+id: 36
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"649a0ca9-489e-477d-8999-330f7eacdd5f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"下是10个推"}},"parent_tool_use_id":null}}
+
+id: 37
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"60b67785-7750-4b46-86aa-3c171b5a2324","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荐的高热度话题"}},"parent_tool_use_id":null}}
+
+id: 38
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8608b226-2dbb-4fa5-bc1b-129b79bff5be","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标签：\n\n### "}},"parent_tool_use_id":null}}
+
+id: 39
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"311b40fa-4bcb-4a7a-8b4f-bcf851a3ed15","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🔥 核"}},"parent_tool_use_id":null}}
+
+id: 40
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c44bdc05-8428-487a-89cd-a9d57ab33518","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"心话"}},"parent_tool_use_id":null}}
+
+id: 41
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1b2d1da8-db10-441d-90c4-87f51ca623d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题标"}},"parent_tool_use_id":null}}
+
+id: 42
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b0391e6-f96c-4ef5-9675-a7afb019975c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签"}},"parent_tool_use_id":null}}
+
+id: 43
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"88077eaa-4e1e-4b57-a0c8-c8ee0ca3a543","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n|"}},"parent_tool_use_id":null}}
+
+id: 44
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"22407337-c5d4-4ad1-9804-26c94b9ed05c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 序"}},"parent_tool_use_id":null}}
+
+id: 45
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"20f2dfe0-b3e4-45b7-9e25-e9af518bd72e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"号 | 标签 |"}},"parent_tool_use_id":null}}
+
+id: 46
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"16da9a22-5ff1-4b5c-9b69-b7e7829e5412","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 推"}},"parent_tool_use_id":null}}
+
+id: 47
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1cbc5de6-15be-4791-ae1f-5db079bcbb27","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荐理由 |\n|"}},"parent_tool_use_id":null}}
+
+id: 48
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c84ee51a-4ec3-40c3-a92a-a98a40fc959e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"------|------|----------|\n|"}},"parent_tool_use_id":null}}
+
+id: 49
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"52fef96a-4afa-4ed5-8e58-91f730a8d911","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 1 | **"}},"parent_tool_use_id":null}}
+
+id: 50
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"48698f25-d231-4edd-a20b-66c9cda39b89","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#"}},"parent_tool_use_id":null}}
+
+id: 51
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b78af78-9d05-4f46-874f-7e3e11ffe9b4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"奶茶测"}},"parent_tool_use_id":null}}
+
+id: 52
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"192dfe2c-9522-428a-ab15-20efc5dcff75","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评** | 核"}},"parent_tool_use_id":null}}
+
+id: 53
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b2bc828c-543b-4156-af37-74ff1cc7887d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"心主"}},"parent_tool_use_id":null}}
+
+id: 54
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2534a3c4-068c-4ba3-a97f-c4a222ac8aa8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题标"}},"parent_tool_use_id":null}}
+
+id: 55
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"995a6807-37d0-4302-bd13-d8884969562b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签，精"}},"parent_tool_use_id":null}}
+
+id: 56
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0c75fec2-53ff-4bf8-86e6-2736bef261da","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"准触"}},"parent_tool_use_id":null}}
+
+id: 57
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4a6db00-7a92-4592-9ed0-55fd3d1c3803","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"达目标受"}},"parent_tool_use_id":null}}
+
+id: 58
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6d1fe130-ea42-4ad9-8881-76ffebf8fedc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"众 |\n| 2 "}},"parent_tool_use_id":null}}
+
+id: 59
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"127950b1-5a19-498f-9001-e8597f8e189f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| **#网红奶"}},"parent_tool_use_id":null}}
+
+id: 60
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8167989c-8e53-46b5-a385-7f0f14051c26","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"茶** | 高热度流"}},"parent_tool_use_id":null}}
+
+id: 61
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8d29c80d-cd03-4522-9e6e-54bad2845625","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"量"}},"parent_tool_use_id":null}}
+
+id: 62
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"18a02b45-f26d-47a7-9778-5346507e4437","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"词"}},"parent_tool_use_id":null}}
+
+id: 63
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5c42198b-7b2f-41d4-baaa-2809dd6f3c87","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"，自"}},"parent_tool_use_id":null}}
+
+id: 64
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6335e7c2-7a23-4749-840e-0d7fb609f19f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"带"}},"parent_tool_use_id":null}}
+
+id: 65
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b6a3ad46-0b7b-4e79-9f20-5ecda65d0c5d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"话"}},"parent_tool_use_id":null}}
+
+id: 66
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3475acad-76cc-4f79-9cc7-adf8480126f9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题属"}},"parent_tool_use_id":null}}
+
+id: 67
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9b850f53-5915-4a89-9fca-497d90a6e838","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性 |\n| 3 "}},"parent_tool_use_id":null}}
+
+id: 68
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c7a90f47-3128-4a86-8b5f-70207e4aaeeb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| **#"}},"parent_tool_use_id":null}}
+
+id: 69
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1a848979-001c-41f0-863b-7d7ae57c04cf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"奶茶控"}},"parent_tool_use_id":null}}
+
+id: 70
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a01e1cd-65fd-437a-90b5-41db9c4bce15","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"** | "}},"parent_tool_use_id":null}}
+
+id: 71
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4dd70b0f-0474-4b55-9e07-d8f363158123","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"圈定"}},"parent_tool_use_id":null}}
+
+id: 72
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fba73642-cd29-45ab-8e50-d3fe6c5a8351","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"核心"}},"parent_tool_use_id":null}}
+
+id: 73
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6272f0b5-2fc8-46a4-a869-ab1bdc6e6722","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"兴趣人"}},"parent_tool_use_id":null}}
+
+id: 74
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b7a637c9-0cef-445d-a9ea-897b1f94ef20","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"群，互"}},"parent_tool_use_id":null}}
+
+id: 75
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"981328de-f525-406c-a9cf-b847aa561d10","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"动性强 |\n| "}},"parent_tool_use_id":null}}
+
+id: 76
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f79ff79-6a08-49fe-ae65-d73fba6015f9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"4 | **#今"}},"parent_tool_use_id":null}}
+
+id: 77
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"670619b7-9a6d-483a-b639-944b1907285b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"日奶茶** | "}},"parent_tool_use_id":null}}
+
+id: 78
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f2f5fbc-5977-4efd-aeb4-f7c11602b346","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"日"}},"parent_tool_use_id":null}}
+
+id: 79
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e0beeb7b-6a16-40b3-a5fd-8753ab0888e4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"常热"}},"parent_tool_use_id":null}}
+
+id: 80
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad2cd15c-9b98-457d-a8b3-fea8ff925dff","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门"}},"parent_tool_use_id":null}}
+
+id: 81
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d5323d6-bee1-4f07-ba57-1e1728262015","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标"}},"parent_tool_use_id":null}}
+
+id: 82
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c4de7e28-3c45-47bb-bed6-4dcfe4fbe308","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签，"}},"parent_tool_use_id":null}}
+
+id: 83
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c2c55e0-271e-4931-a8ff-794b3c1e481e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"曝光量"}},"parent_tool_use_id":null}}
+
+id: 84
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"afdced90-deb6-4d8d-a6a0-5c6d7727b05e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"稳定"}},"parent_tool_use_id":null}}
+
+id: 85
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3725102e-11ec-422b-8794-4fa1d071b04c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| 5 |"}},"parent_tool_use_id":null}}
+
+id: 86
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"85700dff-b86e-4da6-845f-ff8b39c95f32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **#"}},"parent_tool_use_id":null}}
+
+id: 87
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95731110-f256-47a6-9458-2737ed7b4630","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"奶茶推"}},"parent_tool_use_id":null}}
+
+id: 88
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4d3b3517-9c3e-4479-89dc-6b7c1aa14ea2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荐** | 种"}},"parent_tool_use_id":null}}
+
+id: 89
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a1124257-3d0e-4115-a61e-a9480ef1512c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"草属"}},"parent_tool_use_id":null}}
+
+id: 90
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fb600bad-2f5e-4033-96e7-0c0c3862f595","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性强"}},"parent_tool_use_id":null}}
+
+id: 91
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d78a453e-825c-478b-ba9a-e299287d1b50","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"，转"}},"parent_tool_use_id":null}}
+
+id: 92
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"329361aa-4caf-4606-bbb5-306b68212788","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化"}},"parent_tool_use_id":null}}
+
+id: 93
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"deac6cf3-37c3-4788-a3d5-da8895d457fb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"率高 |"}},"parent_tool_use_id":null}}
+
+id: 94
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5278ca5-38bb-4a74-8f08-7ce879d9467d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n### "}},"parent_tool_use_id":null}}
+
+id: 95
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5ba560f0-b945-4833-9c9d-57e421271049","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🍵"}},"parent_tool_use_id":null}}
+
+id: 96
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cabb3577-01af-4dc5-be27-17723b9546b4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 97
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d41dac1-ad50-4879-92b6-36f4851d7e66","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"扩展流"}},"parent_tool_use_id":null}}
+
+id: 98
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ba7a3025-72e5-40e3-859d-8861e78eaa09","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"量标"}},"parent_tool_use_id":null}}
+
+id: 99
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e7b85316-9a72-43a2-839a-20672bde525a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签\n\n| 序号 |"}},"parent_tool_use_id":null}}
+
+id: 100
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b7589044-e081-4d17-896a-6b12d138bbe4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 标签 | 推"}},"parent_tool_use_id":null}}
+
+id: 101
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6a0ce0ba-7c18-4cfb-af58-4393c9a9dd36","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荐理由 |\n|---"}},"parent_tool_use_id":null}}
+
+id: 102
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1e41669-21d2-4812-b4de-753579221682","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"---|------|----------|\n| "}},"parent_tool_use_id":null}}
+
+id: 103
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c47959d4-85f0-4f3e-b825-8393fca80a56","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"6 | **#美"}},"parent_tool_use_id":null}}
+
+id: 104
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"69ff3e70-ebd1-47c8-a3e6-a758ef681a7d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"食探"}},"parent_tool_use_id":null}}
+
+id: 105
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac675d1e-024d-472d-8c40-1cbaa7ec5254","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"店** | 契"}},"parent_tool_use_id":null}}
+
+id: 106
+data: {"type":"keep_alive"}
+
+id: 107
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"113e926d-67cd-4052-98fd-71fdab4c5fad","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合账"}},"parent_tool_use_id":null}}
+
+id: 108
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0654570-18f9-4cb9-8d02-150e79b16c65","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"号定位，增加账"}},"parent_tool_use_id":null}}
+
+id: 109
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"40a3a5fc-b0a9-4f35-915a-4ef5b802e8fa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"号权"}},"parent_tool_use_id":null}}
+
+id: 110
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e2060d4-93a9-4963-8413-cfcf6f6d0a2d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"重 |\n| 7 "}},"parent_tool_use_id":null}}
+
+id: 111
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c729e586-a964-4f6c-a219-4e3010e5e63f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| **#探"}},"parent_tool_use_id":null}}
+
+id: 112
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"767092b8-44eb-4baa-bdfb-2b3e5380f106","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"店v"}},"parent_tool_use_id":null}}
+
+id: 113
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6d0413ca-249a-40e8-a046-06150a8996b0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"log** | 视频内"}},"parent_tool_use_id":null}}
+
+id: 114
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"603286aa-ea58-4739-ad1e-af9733b43258","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容热"}},"parent_tool_use_id":null}}
+
+id: 115
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c696a078-884e-4733-afc6-8d00df79b28b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门标签 "}},"parent_tool_use_id":null}}
+
+id: 116
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c3bc820e-b5b6-4bd4-9d10-9a2659a3c431","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"|\n| 8 | **"}},"parent_tool_use_id":null}}
+
+id: 117
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0bee548c-432e-4520-8652-b83bd22c04de","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#下"}},"parent_tool_use_id":null}}
+
+id: 118
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"47822e1c-d337-4b3c-8b15-72899ee8a53e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"午"}},"parent_tool_use_id":null}}
+
+id: 119
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"61a59f7b-3796-4915-8d09-ea83ffddf8b7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"茶** | 场"}},"parent_tool_use_id":null}}
+
+id: 120
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"272982d1-9f28-476f-ad6d-0395c530605c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"景化标签，"}},"parent_tool_use_id":null}}
+
+id: 121
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"de3363ab-56e9-4643-8bca-e62c4aa5082a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"覆盖更多用户 "}},"parent_tool_use_id":null}}
+
+id: 122
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11075671-d32c-4f36-8075-89dee0723672","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"|\n| 9 | **"}},"parent_tool_use_id":null}}
+
+id: 123
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"35ece898-f6df-4bc8-aedb-09bf62875623","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#"}},"parent_tool_use_id":null}}
+
+id: 124
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3b0c57f-79e3-4f20-a149-555db1b34614","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮品测评** | 品"}},"parent_tool_use_id":null}}
+
+id: 125
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95cebaf6-1f32-4aeb-bb33-14cee08ce3bc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"类"}},"parent_tool_use_id":null}}
+
+id: 126
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"255e120c-7f50-4501-96d7-3eae9560d69e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"扩展，增加"}},"parent_tool_use_id":null}}
+
+id: 127
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"05bf1ba8-4440-4d2c-aaf1-3c61004093fc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"搜索"}},"parent_tool_use_id":null}}
+
+id: 128
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4a5dd0a-6f29-4b97-90a1-de1430095ccb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"曝光 |\n| 10"}},"parent_tool_use_id":null}}
+
+id: 129
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2b318076-6d1e-4490-b820-c10a6b6aaa6d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | **#好"}},"parent_tool_use_id":null}}
+
+id: 130
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7cc04d52-bc8a-4ff4-8c7b-7ff703df89e2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"喝到"}},"parent_tool_use_id":null}}
+
+id: 131
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e81f1492-22e2-4ac3-9d0d-77852a9e95c6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"流"}},"parent_tool_use_id":null}}
+
+id: 132
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a4fd9eba-3dc9-452d-aaa4-046c49995682","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"泪** | 情"}},"parent_tool_use_id":null}}
+
+id: 133
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"42279a1c-0050-4666-8543-e20b76fdbfb9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"绪化表"}},"parent_tool_use_id":null}}
+
+id: 134
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"15fc66b0-b315-4d37-8fbb-dbac1170ad2a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"达，容"}},"parent_tool_use_id":null}}
+
+id: 135
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d1ff1bc-38c5-48df-97ae-b4bf37485f7c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"易引发"}},"parent_tool_use_id":null}}
+
+id: 136
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d88b1389-dc43-4ccd-aa1e-26b6c373ad61","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"共鸣 |\n\n---"}},"parent_tool_use_id":null}}
+
+id: 137
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f50e8444-7a93-40c2-9f99-6208ce79dff4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n###"}},"parent_tool_use_id":null}}
+
+id: 138
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d5019d3c-6b6a-4540-88a6-4cb20b5fed5f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 139
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c53d8b4-a942-4a98-bed5-cebfd7bcd635","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"💡 使"}},"parent_tool_use_id":null}}
+
+id: 140
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"57acd533-9bdf-443b-86df-76350b17054a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"用建议\n\n1. **组"}},"parent_tool_use_id":null}}
+
+id: 141
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ab225b48-501c-477d-ad03-01769505be90","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合策"}},"parent_tool_use_id":null}}
+
+id: 142
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a731b704-e334-4607-8860-9d33ede21ac0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"略**：建"}},"parent_tool_use_id":null}}
+
+id: 143
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0d243c3b-3f8b-4c23-bdd6-94bb2f753bc3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"议选"}},"parent_tool_use_id":null}}
+
+id: 144
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a14f7a14-7869-4062-b5d2-ef54747e3f15","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"择 "}},"parent_tool_use_id":null}}
+
+id: 145
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"877d1a62-4855-438b-988b-ad1b46287de6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"5"}},"parent_tool_use_id":null}}
+
+id: 146
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"de4a0e6c-f4eb-4e58-a213-05e522489b58","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-8"}},"parent_tool_use_id":null}}
+
+id: 147
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4163dad0-6076-45a6-9e27-e4d985607652","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 个标"}},"parent_tool_use_id":null}}
+
+id: 148
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"26f84bcb-c370-410c-8e4b-cde84017f985","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签混"}},"parent_tool_use_id":null}}
+
+id: 149
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac5b6461-f5eb-4e16-9013-ff1883c4467c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"搭使用\n2. **平"}},"parent_tool_use_id":null}}
+
+id: 150
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0983de3c-9f2e-412f-b46e-6fbdeff1bfda","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"台"}},"parent_tool_use_id":null}}
+
+id: 151
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"41ee0fc9-4981-4157-9556-a5c54c711fa8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"适"}},"parent_tool_use_id":null}}
+
+id: 152
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b53dd1d0-be87-4fe4-8090-a2b3dcd0ae43","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"配**："}},"parent_tool_use_id":null}}
+
+id: 153
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4457c56d-88cd-4325-be7f-555e5668268a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n   - **"}},"parent_tool_use_id":null}}
+
+id: 154
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"488210ae-cd6d-41a2-a15d-de86f947ea13","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"抖音/"}},"parent_tool_use_id":null}}
+
+id: 155
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"92cd6580-b17a-4c9f-b9b7-2f8667beac7c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"快手**"}},"parent_tool_use_id":null}}
+
+id: 156
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"10db5c31-be86-4cf5-beb9-c1195da5d11a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"：优"}},"parent_tool_use_id":null}}
+
+id: 157
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d00364b-72cf-4b20-8cc2-c16908c441e5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"先选择 "}},"parent_tool_use_id":null}}
+
+id: 158
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"166a19e8-55a7-40fc-af7f-5757ba068fe0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#奶茶测评 "}},"parent_tool_use_id":null}}
+
+id: 159
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"676e1695-2f56-4485-b209-5a476ef393f2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"#"}},"parent_tool_use_id":null}}
+
+id: 160
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ca20ce05-462c-4179-8b67-f47b776f825b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"网红奶茶 #"}},"parent_tool_use_id":null}}
+
+id: 161
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d567c85d-76ce-424d-8388-da34bcf91f9b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"奶茶控"}},"parent_tool_use_id":null}}
+
+id: 162
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"83d4eced-45bc-4d1f-9700-a3deb211f163","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" #今日奶茶"}},"parent_tool_use_id":null}}
+
+id: 163
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9cfa3523-9991-4a63-96dc-1600dc811213","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n   - **小"}},"parent_tool_use_id":null}}
+
+id: 164
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad7511b2-1411-4bbd-aa9c-7aee13af31f0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"红书**：可"}},"parent_tool_use_id":null}}
+
+id: 165
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"14451842-bdf2-4893-90aa-2009e031f22b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"增"}},"parent_tool_use_id":null}}
+
+id: 166
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3f020db6-1075-4edc-a893-8ea397592cbe","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"加 #"}},"parent_tool_use_id":null}}
+
+id: 167
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"14ccb6d7-5b7c-4c8f-9615-532025930bd4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"奶茶合"}},"parent_tool_use_id":null}}
+
+id: 168
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6e4aa0ff-2996-4b53-b94d-d50789c5bb56","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"集 #"}},"parent_tool_use_id":null}}
+
+id: 169
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"378798b4-1a97-42f2-b09b-e8362fa72537","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"踩"}},"parent_tool_use_id":null}}
+
+id: 170
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"05e91581-70fe-45b6-b608-7be4b0647813","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"雷避"}},"parent_tool_use_id":null}}
+
+id: 171
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bee2d84f-04d6-44d8-bdc6-d5013667afe2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"坑 #真"}},"parent_tool_use_id":null}}
+
+id: 172
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"81d6d7bc-958c-48dc-b752-b5f5eab8fb6a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"实测"}},"parent_tool_use_id":null}}
+
+id: 173
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c8f47bf-dd1b-4c43-bee8-9a81a8d17f2b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评\n   - **B"}},"parent_tool_use_id":null}}
+
+id: 174
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b49494b-cacb-4bc4-a70c-4c09f7602fe8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"站"}},"parent_tool_use_id":null}}
+
+id: 175
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad2968c1-f67c-4fe1-b464-b8ec2e898cc2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**：适"}},"parent_tool_use_id":null}}
+
+id: 176
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"20602b7e-a92a-4532-bac5-6b93c4631559","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合 #奶茶测"}},"parent_tool_use_id":null}}
+
+id: 177
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"77fcaf82-363a-4ee2-8403-320810dcd956","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评 #探"}},"parent_tool_use_id":null}}
+
+id: 178
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"64c5f6ee-ac5d-409b-9ac9-24e3046c9fd1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"店vlog #"}},"parent_tool_use_id":null}}
+
+id: 179
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c354bad2-01d9-4993-bb98-5bbb5923eb9f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"美"}},"parent_tool_use_id":null}}
+
+id: 180
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b1f103f3-2bc9-4232-8f69-bd1fbba2b193","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"食区"}},"parent_tool_use_id":null}}
+
+id: 181
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8b5c67f0-6b42-4cf9-b576-a4a9205c8742","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n3"}},"parent_tool_use_id":null}}
+
+id: 182
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c531ce9-5ae4-44a6-ba1d-72ef292bab0c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". **时"}},"parent_tool_use_id":null}}
+
+id: 183
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"754665c3-7cd1-4724-a1d9-2e1a6fc7307d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"效性**：如"}},"parent_tool_use_id":null}}
+
+id: 184
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b56c8830-9cfa-477e-935c-5b16c805f9a5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"果测"}},"parent_tool_use_id":null}}
+
+id: 185
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8e8df788-6dfe-4546-af36-5afdeb700f90","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评的"}},"parent_tool_use_id":null}}
+
+id: 186
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ff82b9bf-711a-4fd3-b59a-b5c9d38789a7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"是"}},"parent_tool_use_id":null}}
+
+id: 187
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4e824fbb-c401-4f80-be12-38a8ac5be2e4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"当季"}},"parent_tool_use_id":null}}
+
+id: 188
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"483f216c-ce44-4ea9-84cb-32d2ec8b143a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"新"}},"parent_tool_use_id":null}}
+
+id: 189
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1aacfa50-76cf-4503-8b63-2cb44b025b22","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"品，可"}},"parent_tool_use_id":null}}
+
+id: 190
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"10528adf-45cb-4a0d-b0ca-1f221423129c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"加"}},"parent_tool_use_id":null}}
+
+id: 191
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e36d5dee-0440-4100-9f1e-76ad4afde36c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"上"}},"parent_tool_use_id":null}}
+
+id: 192
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"afb35cd1-b92f-4599-94c2-6640876ee86a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"品"}},"parent_tool_use_id":null}}
+
+id: 193
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"925f881c-b9fc-4d70-b17f-ea435afdee97","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"牌名"}},"parent_tool_use_id":null}}
+
+id: 194
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"97bae373-1e51-48a5-b878-80ad6cdee8aa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"或"}},"parent_tool_use_id":null}}
+
+id: 195
+data: {"type":"keep_alive"}
+
+id: 196
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f171d9c7-4e96-42b8-8199-f7857530698a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"新"}},"parent_tool_use_id":null}}
+
+id: 197
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4224cdbd-ca7f-4bb4-846d-3e440a78ef73","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"品名"}},"parent_tool_use_id":null}}
+
+id: 198
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"403f8592-9345-4212-87a5-12412d4bd8a4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"称"}},"parent_tool_use_id":null}}
+
+id: 199
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8fdbdcd0-96e9-4f2f-97ed-326d50a882c9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作"}},"parent_tool_use_id":null}}
+
+id: 200
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f42127cc-2b7a-4540-b305-34eb342da384","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"为标签"}},"parent_tool_use_id":null}}
+
+id: 201
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b42b12bd-a60e-4895-a3f4-09e3243f7515","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n需"}},"parent_tool_use_id":null}}
+
+id: 202
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"89459b8b-eb01-4d91-9197-e79d4339e77d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要我"}},"parent_tool_use_id":null}}
+
+id: 203
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1a4fde4-9520-41f8-bdf7-5ce42781d524","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帮您生"}},"parent_tool_use_id":null}}
+
+id: 204
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0ce43807-ed5c-4bf9-b26b-0dfd2e3ee765","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成完"}},"parent_tool_use_id":null}}
+
+id: 205
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"baca63e9-aaa2-48b5-a1e0-ae2bf6e6fac1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"整的内"}},"parent_tool_use_id":null}}
+
+id: 206
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"17d2bbd6-e978-4c1b-a6ba-d25895fcd64f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容文"}},"parent_tool_use_id":null}}
+
+id: 207
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11246a33-40ee-45f2-b698-21dda43ad788","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"案，或"}},"parent_tool_use_id":null}}
+
+id: 208
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3072c0c-c4fa-4fd0-a3d0-4f4f05f4619f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"者直"}},"parent_tool_use_id":null}}
+
+id: 209
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"65716750-0484-4f69-a2d9-80671393ca0a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"接发"}},"parent_tool_use_id":null}}
+
+id: 210
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b1185e9-e54a-420c-b307-a2835d055abc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"布到某"}},"parent_tool_use_id":null}}
+
+id: 211
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"019ba7e4-0dd7-4169-8c6d-565c5604ecf7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个"}},"parent_tool_use_id":null}}
+
+id: 212
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dca7bb19-848b-49f5-82b4-8464b9acb5a3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"平台"}},"parent_tool_use_id":null}}
+
+id: 213
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a79f9f8b-421d-4ac9-9401-60ebad96d4f4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吗？"}},"parent_tool_use_id":null}}
+
+id: 214
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd00d55c-2054-4204-bc43-05128d72031d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 215
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"75a8f091-7e6d-4cd9-b72d-e233ec6287a9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🧋"}},"parent_tool_use_id":null}}
+
+id: 216
+data: {"type":"assistant","message":{"type":"assistant","uuid":"33581299-6cae-4e38-bf3f-1befa04a412a","message":{"id":"msg_019s4gMjpUhH66SdqFWAU9Gw","content":[{"type":"text","text":"## 🏷️ 网红奶茶测评 - 高热度话题标签推荐\n\n根据您的美食探店账号定位和\"网红奶茶测评\"主题，以下是10个推荐的高热度话题标签：\n\n### 🔥 核心话题标签\n\n| 序号 | 标签 | 推荐理由 |\n|------|------|----------|\n| 1 | **#奶茶测评** | 核心主题标签，精准触达目标受众 |\n| 2 | **#网红奶茶** | 高热度流量词，自带话题属性 |\n| 3 | **#奶茶控** | 圈定核心兴趣人群，互动性强 |\n| 4 | **#今日奶茶** | 日常热门标签，曝光量稳定 |\n| 5 | **#奶茶推荐** | 种草属性强，转化率高 |\n\n### 🍵 扩展流量标签\n\n| 序号 | 标签 | 推荐理由 |\n|------|------|----------|\n| 6 | **#美食探店** | 契合账号定位，增加账号权重 |\n| 7 | **#探店vlog** | 视频内容热门标签 |\n| 8 | **#下午茶** | 场景化标签，覆盖更多用户 |\n| 9 | **#饮品测评** | 品类扩展，增加搜索曝光 |\n| 10 | **#好喝到流泪** | 情绪化表达，容易引发共鸣 |\n\n---\n\n### 💡 使用建议\n\n1. **组合策略**：建议选择 5-8 个标签混搭使用\n2. **平台适配**：\n   - **抖音/快手**：优先选择 #奶茶测评 #网红奶茶 #奶茶控 #今日奶茶\n   - **小红书**：可增加 #奶茶合集 #踩雷避坑 #真实测评\n   - **B站**：适合 #奶茶测评 #探店vlog #美食区\n3. **时效性**：如果测评的是当季新品，可加上品牌名或新品名称作为标签\n\n需要我帮您生成完整的内容文案，或者直接发布到某个平台吗？ 🧋"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":90},"cache_creation_input_tokens":90,"cache_read_input_tokens":31089,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 217
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1012d164-bd57-40fc-9833-e01a45ad61d6","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 218
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"09cc7cf7-e6f9-4681-8e09-a71f20e41003","event":{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"cache_creation_input_tokens":90,"cache_read_input_tokens":31089,"input_tokens":1,"output_tokens":706}},"parent_tool_use_id":null}}
+
+id: 219
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"28dbcb35-df80-491a-b233-35ba7bc897ae","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 220
+data: {"type":"result","message":{"type":"result","subtype":"success","uuid":"e39dc53c-51dc-4931-9ee2-35a585730d2b","duration_ms":18803,"duration_api_ms":18702,"is_error":false,"num_turns":2,"message":"## 🏷️ 网红奶茶测评 - 高热度话题标签推荐\n\n根据您的美食探店账号定位和\"网红奶茶测评\"主题，以下是10个推荐的高热度话题标签：\n\n### 🔥 核心话题标签\n\n| 序号 | 标签 | 推荐理由 |\n|------|------|----------|\n| 1 | **#奶茶测评** | 核心主题标签，精准触达目标受众 |\n| 2 | **#网红奶茶** | 高热度流量词，自带话题属性 |\n| 3 | **#奶茶控** | 圈定核心兴趣人群，互动性强 |\n| 4 | **#今日奶茶** | 日常热门标签，曝光量稳定 |\n| 5 | **#奶茶推荐** | 种草属性强，转化率高 |\n\n### 🍵 扩展流量标签\n\n| 序号 | 标签 | 推荐理由 |\n|------|------|----------|\n| 6 | **#美食探店** | 契合账号定位，增加账号权重 |\n| 7 | **#探店vlog** | 视频内容热门标签 |\n| 8 | **#下午茶** | 场景化标签，覆盖更多用户 |\n| 9 | **#饮品测评** | 品类扩展，增加搜索曝光 |\n| 10 | **#好喝到流泪** | 情绪化表达，容易引发共鸣 |\n\n---\n\n### 💡 使用建议\n\n1. **组合策略**：建议选择 5-8 个标签混搭使用\n2. **平台适配**：\n   - **抖音/快手**：优先选择 #奶茶测评 #网红奶茶 #奶茶控 #今日奶茶\n   - **小红书**：可增加 #奶茶合集 #踩雷避坑 #真实测评\n   - **B站**：适合 #奶茶测评 #探店vlog #美食区\n3. **时效性**：如果测评的是当季新品，可加上品牌名或新品名称作为标签\n\n需要我帮您生成完整的内容文案，或者直接发布到某个平台吗？ 🧋","total_cost_usd":0.22988324999999998,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":31179},"cache_creation_input_tokens":31179,"cache_read_input_tokens":31089,"input_tokens":4,"output_tokens":778,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+

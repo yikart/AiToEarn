@@ -163,44 +163,30 @@ You **do NOT** need to install MongoDB or Redis on your machine manually.
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
-cp env.example .env
 docker compose up -d
-````
+```
 
 
 ### 🌐 Access Applications
 
 After Docker starts successfully, you can access services at:
 
-| Service                 | URL                                            | Description                                                 |
-| ----------------------- | ---------------------------------------------- | ----------------------------------------------------------- |
-| **Web Frontend**        | [http://localhost:3000](http://localhost:3000) | Web user interface                                          |
-| **Main Backend API**    | [http://localhost:3002](http://localhost:3002) | AiToEarn main server API                                    |
-| **Channel Service API** | [http://localhost:7001](http://localhost:7001) | AiToEarn channel service API                                |
-| **MongoDB**             | localhost:27017                                | MongoDB (inside Docker, uses username/password from `.env`) |
-| **Redis**               | localhost:6379                                 | Redis (inside Docker, uses password from `.env`)            |
+| Service              | URL                                              | Description                          |
+| -------------------- | ------------------------------------------------ | ------------------------------------ |
+| **Web Frontend**     | [http://localhost:8080](http://localhost:8080)    | Web user interface (via Nginx)       |
+| **Backend API**      | [http://localhost:8080/api](http://localhost:8080/api) | AiToEarn backend API (via Nginx) |
+| **RustFS Console**   | [http://localhost:9001](http://localhost:9001)    | Object storage management console    |
+| **MongoDB**          | localhost:27017                                   | MongoDB database                     |
+| **Redis**            | localhost:6379                                    | Redis cache                          |
 
-> ℹ️ MongoDB & Redis are both started by `docker compose`.
-> You only need to configure their passwords in `.env`; no extra local installation is required.
+> ℹ️ All services (MongoDB, Redis, RustFS, Nginx, etc.) are started by `docker compose`. No extra local installation is required.
 
 
-### 🧩 Advanced Configuration (.env)
+### 🧩 Advanced Configuration
 
-Edit the `.env` file to set secure values and customize your deployment:
+All service configurations (passwords, API keys, domain settings, etc.) are managed directly in `docker-compose.yml` and the config files under the `config/` directory.
 
-```bash
-# Required security configurations
-MONGODB_PASSWORD=your-secure-mongodb-password
-REDIS_PASSWORD=your-secure-redis-password
-JWT_SECRET=your-jwt-secret-key
-INTERNAL_TOKEN=your-internal-token
-
-# If external access is needed, set your public API/domain
-NEXT_PUBLIC_API_URL=http://your-domain.com:3002/api
-APP_DOMAIN=your-domain.com
-```
-
-> ✅ In production, please use strong, random passwords and secrets.
+For detailed deployment instructions, see [DOCKER_DEPLOYMENT_EN.md](DOCKER_DEPLOYMENT_EN.md).
 
 
 
@@ -208,14 +194,14 @@ APP_DOMAIN=your-domain.com
 <summary>🧪 Optional: Run backend & frontend manually (dev mode)</summary>
 
 This mode is mainly for local development & debugging.
-You can still use Docker for MongoDB/Redis or point to your own services via `.env`.
+You can still use Docker for MongoDB/Redis, or configure your own services in the config files.
 
 #### 1. Start the backend services
 
 ```bash
-cd project/aitoearn-monorepo
+cd project/aitoearn-backend
 pnpm install
-npx nx serve aitoearn-channel
+npx nx serve aitoearn-ai
 # in another terminal
 npx nx serve aitoearn-server
 ```

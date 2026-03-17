@@ -1,0 +1,279 @@
+{
+  "profile": "Profil",
+  "logout": "Déconnexion",
+  "unknownUser": "Utilisateur inconnu",
+  "docs": "Documentation",
+  "login": "Connexion",
+  "support": "Support",
+  "notifications": "Notifications",
+  "settings": "Paramètres",
+  "vip": "Plus",
+  "vip.tier": {
+    "free": "Gratuit",
+    "trialing": "Essai",
+    "go": "Go",
+    "plus": "Plus",
+    "ultra": "Ultra"
+  },
+  "subscribe": "Mettre à niveau",
+  "balance": "Crédits",
+  "recharge": "Recharger",
+  "adBalance": "Solde",
+  "plugin": "Extension",
+  "affiliates": "Affiliés",
+  "goToWebsite": "Aller au site",
+  "pluginStatus": {
+    "notInstalled": "Installer",
+    "noPermission": "Non autorisé",
+    "ready": "Prêt",
+    "checking": "Vérification"
+  },
+  "contactUs": "Contactez-nous",
+  "documents": "Documents",
+  "helpDocs": "Documentation",
+  "pluginGuide": "Guide du plugin",
+  "privacyPolicy": "Politique de confidentialité",
+  "termsOfService": "Conditions d'utilisation",
+  "downloadAppButton": "Télécharger l'application",
+  "noNotifications": "Aucune notification",
+  "markAllAsRead": "Tout marquer comme lu",
+  "markAsRead": "Marquer comme lu",
+  "unreadCount": "Messages non lus",
+  "viewAll": "Voir tout",
+  "cancel": "Annuler",
+  "confirm": "Confirmer",
+  "expand": "Développer",
+  "collapse": "Réduire",
+  "yes": "Oui",
+  "no": "Non",
+  "calendar": {
+    "weekDaysShort": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    "monthSuffix": ""
+  },
+  "actions": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "ok": "OK",
+    "processing": "Traitement...",
+    "selectAll": "Tout sélectionner",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "loading": "Chargement...",
+    "noData": "Aucune donnée",
+    "noImage": "Aucune image",
+    "noDescription": "Aucune description",
+    "noContent": "Aucun contenu"
+  },
+  "select": {
+    "placeholder": "Sélectionner...",
+    "searchPlaceholder": "Rechercher...",
+    "noResults": "Aucun résultat trouvé"
+  },
+  "pagination": {
+    "perPage": "Par page",
+    "items": "éléments",
+    "jumpTo": "Aller à",
+    "page": "page"
+  },
+  "notificationTypes": {
+    "system": "Notification système",
+    "user": "Notification utilisateur",
+    "material": "Notification matériel",
+    "other": "Autre notification"
+  },
+  "header": {
+    "messages": "Messages",
+    "income": "Historique des revenus",
+    "wallet": "Mon portefeuille",
+    "materialLibrary": "Bibliothèque",
+    "draftBox": "Gestion de contenu",
+    "draftBoxSeoTitle": "Gestion de contenu - Création par lots IA et éditeur de brouillons",
+    "draftBoxSeoDescription": "Gérez tous vos brouillons de contenu en un seul endroit. Utilisez l'IA pour générer des publications par lots et organisez la distribution multi-plateformes avec AiToEarn.",
+    "draftBoxSeoKeywords": "gestion de contenu, éditeur de brouillons, génération de contenu IA, création par lots, brouillons réseaux sociaux, AiToEarn"
+  },
+  "tasks": "Marché",
+  "signIn": {
+    "title": "Connexion quotidienne pour gagner des points",
+    "myPoints": "Mes points",
+    "signIn": "Se connecter",
+    "today": "Aujourd'hui",
+    "rules": "Règles de connexion",
+    "rules1": "Connexions consécutives 1-7 jours, 1 point par jour",
+    "rules2": "Connexions consécutives 8-21 jours, 2 points par jour",
+    "rules3": "Connexions consécutives 22 jours ou plus, 3 points par jour",
+    "signedIn": "Connecté",
+    "notSignedIn": "Non connecté",
+    "signInSuccess": "Connexion réussie",
+    "signInFailed": "Échec de la connexion",
+    "alreadySignedIn": "Déjà connecté aujourd'hui",
+    "consecutiveDays": "Jours consécutifs",
+    "totalPoints": "Points totaux"
+  },
+  "downloadApp": {
+    "title": "Télécharger {{appName}}",
+    "operationInApp": "Veuillez opérer dans {{appName}} pour ajouter",
+    "description": "Pour une meilleure expérience utilisateur et des fonctionnalités complètes, cette opération doit être effectuée dans {{appName}} pour ajouter des comptes. Veuillez télécharger et installer {{appName}} pour continuer.",
+    "operationDescription": "Veuillez opérer le compte de chaîne {{platform}} dans l'application Aitoearn<br/>Pour une meilleure expérience utilisateur et des fonctionnalités complètes, veuillez télécharger et installer l'application Aitoearn pour continuer.",
+    "scanQrCode": "Scannez le QR code pour télécharger",
+    "downloadLink": "Lien de téléchargement :",
+    "copy": "Copier",
+    "copySuccess": "Copie réussie",
+    "copyFailed": "Échec de la copie, veuillez copier manuellement",
+    "copied": "Copié",
+    "close": "Fermer",
+    "downloadNow": "Télécharger maintenant",
+    "tip": "Astuce : Après l'installation, veuillez vous connecter à votre compte dans l'application, puis réessayez l'opération concernée"
+  },
+  "networkBusy": "Réseau occupé, veuillez réessayer plus tard !",
+  "networkError": "Erreur réseau, veuillez réessayer plus tard !",
+  "contact": "Besoin d'aide ? Contactez le support :",
+  "uptime": {
+    "seoTitle": "État du service - Surveillance système en temps réel",
+    "pageKeywords": "état du service, surveillance système, suivi disponibilité, état serveur, état API, AiToEarn statut",
+    "pageTitle": "État des services",
+    "pageDescription": "Surveillez l'état en temps réel et la disponibilité des services AiToEarn. Vérifiez le statut opérationnel des modules Agent, Serveur, IA, Base de données et Réseau.",
+    "loading": "Chargement...",
+    "noData": "Aucune donnée",
+    "uptimePercentage": "Disponibilité :",
+    "normal": "Normal",
+    "timeout": "Délai dépassé",
+    "unavailable": "Indisponible",
+    "filter": {
+      "title": "Filtres",
+      "module": "Module",
+      "type": "Type",
+      "timeRange": "Période",
+      "all": "Tout",
+      "last7Days": "7 derniers jours",
+      "last30Days": "30 derniers jours",
+      "last90Days": "90 derniers jours",
+      "reset": "Réinitialiser",
+      "apply": "Appliquer"
+    },
+    "copy": "Copier",
+    "copied": "Copié",
+    "module": {
+      "Agent": "Agent",
+      "Server": "Serveur",
+      "Ai": "IA",
+      "Database": "Base de données",
+      "Network": "Réseau",
+      "Other": "Autre"
+    },
+    "type": {
+      "AgentStatus": "Statut Agent",
+      "AgentMcpStatus": "Statut MCP Agent",
+      "NewApiStatus": "Statut NewApi"
+    }
+  },
+  "websit": {
+    "termsOfService": {
+      "title": "Conditions d'utilisation",
+      "lastUpdated": "Dernière mise à jour",
+      "content": {
+        "introduction": "Bienvenue dans notre service. Veuillez lire attentivement les termes et conditions suivants avant d'utiliser ce service.",
+        "acceptance": "1. Acceptation des conditions",
+        "acceptanceContent": "En accédant et en utilisant ce service, vous acceptez d'être lié par le présent Accord Utilisateur. Si vous n'acceptez pas ces conditions, veuillez ne pas utiliser ce service.",
+        "serviceDescription": "2. Description du service",
+        "serviceDescriptionContent": "Ce service est une plateforme de création de contenu IA qui aide les utilisateurs à générer et gérer du contenu multimédia.",
+        "userResponsibilities": "3. Responsabilités de l'utilisateur",
+        "userResponsibilitiesContent": "Les utilisateurs doivent s'assurer que leur utilisation de ce service est conforme aux lois et réglementations locales et ne doit pas être utilisée à des fins illégales.",
+        "privacy": "4. Protection de la vie privée",
+        "privacyContent": "Nous accordons de l'importance à votre vie privée. Pour plus d'informations, veuillez consulter notre Politique de confidentialité.",
+        "termination": "5. Résiliation du service",
+        "terminationContent": "Nous nous réservons le droit de résilier ou de suspendre le service à tout moment.",
+        "contact": "6. Nous contacter",
+        "contactContent": "Si vous avez des questions, veuillez nous contacter par e-mail : support@example.com"
+      }
+    },
+    "privacyPolicy": {
+      "title": "Politique de confidentialité",
+      "lastUpdated": "Dernière mise à jour",
+      "content": {
+        "introduction": "Cette Politique de confidentialité explique comment nous collectons, utilisons et protégeons vos informations personnelles.",
+        "informationCollection": "1. Collecte d'informations",
+        "informationCollectionContent": "Nous collectons les informations que vous fournissez volontairement et les informations collectées automatiquement lorsque vous utilisez nos services.",
+        "informationUse": "2. Utilisation des informations",
+        "informationUseContent": "Nous utilisons les informations collectées pour fournir, maintenir et améliorer nos services.",
+        "informationSharing": "3. Partage des informations",
+        "informationSharingContent": "Nous ne vendons pas, n'échangeons pas et ne transférons pas vos informations personnelles à des tiers.",
+        "dataSecurity": "4. Sécurité des données",
+        "dataSecurityContent": "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos informations personnelles.",
+        "userRights": "5. Droits de l'utilisateur",
+        "userRightsContent": "Vous avez le droit d'accéder, de corriger ou de supprimer vos informations personnelles.",
+        "contact": "6. Nous contacter",
+        "contactContent": "Pour les questions relatives à la confidentialité, veuillez nous contacter : privacy@example.com"
+      }
+    },
+    "dataDeletion": {
+      "title": "Demander la suppression des données",
+      "subtitle": "Si vous souhaitez supprimer vos données personnelles, veuillez suivre ces étapes",
+      "lastUpdated": "Dernière mise à jour",
+      "prelaunchNote": "Pour les utilisateurs pré-lancement :",
+      "prelaunchContent": "Nous sommes actuellement en phase de pré-lancement. Pour la suppression des données, veuillez contacter directement notre équipe de support.",
+      "standardProcedure": "Procédure de suppression standard :",
+      "steps": [
+        "Connectez-vous à votre compte et accédez à la page des paramètres",
+        "Cliquez sur l'option 'Gestion des données'",
+        "Sélectionnez 'Supprimer mes données'",
+        "Confirmez l'opération de suppression et attendez le traitement"
+      ],
+      "contactInfo": "Informations de contact :",
+      "contactEmail": "Pour obtenir de l'aide, veuillez envoyer un e-mail à : datadeletion@example.com",
+      "processingTime": "Délai de traitement :",
+      "processingTimeContent": "Les demandes de suppression de données sont généralement traitées dans les 7 à 14 jours ouvrables.",
+      "importantNote": "Note importante :",
+      "importantNoteContent": "Les données ne peuvent pas être récupérées après la suppression. Veuillez procéder avec prudence. Certaines données requises par la loi peuvent ne pas être supprimables."
+    }
+  },
+  "lowBalanceAlert": {
+    "title": "Alerte de solde bas",
+    "content": "Votre solde de crédits est faible. Veuillez recharger pour continuer à utiliser nos services.",
+    "neverRemind": "Ne plus me rappeler"
+  },
+  "announcementBanner": {
+    "seedancePromo": "seedance-2.0 à partir de 0,03$/sec",
+    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+  },
+  "chinaDomainPrompt": {
+    "title": "Passer à la région Chine",
+    "content": "Votre emplacement a été détecté en Chine. Passer au domaine chinois pour une meilleure expérience ?",
+    "ok": "Changer",
+    "cancel": "Rester"
+  },
+  "abroadDomainPrompt": {
+    "title": "Passer à l'international",
+    "content": "Nous avons détecté que vous n'êtes pas en Chine. Passer au domaine international pour une meilleure expérience ?",
+    "ok": "Changer",
+    "cancel": "Rester"
+  },
+  "brushEditor": {
+    "title": "Éditeur de pinceau",
+    "brush": "Pinceau",
+    "rectangle": "Rectangle",
+    "ellipse": "Ellipse",
+    "color": "Couleur",
+    "size": "Taille",
+    "undo": "Annuler",
+    "clearAll": "Effacer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "saveSuccess": "Enregistré avec succès",
+    "saveFailed": "Échec de l'enregistrement",
+    "crop": "Recadrer",
+    "cropFree": "Libre",
+    "cropConfirm": "Appliquer le recadrage",
+    "cropCancel": "Annuler le recadrage",
+    "cropRatio": "Ratio"
+  },
+  "switchToInternational": "Vers \"International\"",
+  "switchToChina": "Vers \"Chine\"",
+  "platformRegionPrompt": {
+    "title": "Restriction régionale de la plateforme",
+    "chinaContent": "{{platform}} n'est disponible que sur le site chinois. Rediriger vers le site chinois ?",
+    "abroadContent": "{{platform}} n'est disponible que sur le site international. Rediriger vers le site international ?",
+    "ok": "Aller",
+    "cancel": "Annuler"
+  }
+}

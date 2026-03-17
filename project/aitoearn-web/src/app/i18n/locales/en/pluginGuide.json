@@ -1,0 +1,117 @@
+{
+  "seo": {
+    "title": "Browser Extension Guide - Install AiToEarn Plugin",
+    "description": "Step-by-step guide to install and use the AiToEarn browser extension for automated social media content publishing and management.",
+    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, AiToEarn"
+  },
+  "title": "Browser Plugin Guide",
+  "lastUpdated": "Last Updated",
+  "introduction": "This guide will walk you through how to install and use the AiToEarn browser plugin, enabling you to manage your social media accounts and publish content more conveniently.",
+  "tableOfContents": "Contents",
+  "sections": {
+    "installation": "Install Plugin",
+    "manualInstall": "Manual Installation",
+    "manualInstallDesc": "For GitHub or China Download channels",
+    "authorize": "Authorize Plugin",
+    "loginAccount": "Login Social Media Account",
+    "syncAccount": "Sync Account"
+  },
+  "steps": {
+    "step1": {
+      "title": "Step 1: Open Plugin Management Dialog",
+      "content": "On the AiToEarn platform page, click the plugin icon in the upper right corner to open the browser plugin management dialog.",
+      "caption": "Click the Extension button in the upper right corner"
+    },
+    "step2": {
+      "title": "Step 2: Download the Plugin",
+      "content": "Select the download method in the dialog and click to download the plugin.",
+      "caption": "Choose the appropriate download channel",
+      "note": "Difference between Chrome Web Store and GitHub Release installation:",
+      "noteItem1": "Plugins downloaded from GitHub Release require you to enable developer mode in your browser to install, but the resources installed here are the latest plugins.",
+      "noteItem2": "Plugins downloaded from Chrome Web Store can be installed directly."
+    },
+    "step3": {
+      "title": "Step 3: Check Installation Status",
+      "content": "After installation, click the browser's extensions button to check if the installation was successful.",
+      "caption": "Find AiToEarn plugin in browser extension bar"
+    },
+    "step4": {
+      "title": "Step 4: Enter Plugin Details Page",
+      "content": "If the installation is successful, click on the plugin to enter the plugin details page."
+    },
+    "step5": {
+      "title": "Step 5: Authorize the Plugin",
+      "notLoggedInContent": "If you are not logged in on the AiToEarn homepage, click \"Go to Home\" to go to the AiToEarn homepage and log in.",
+      "notLoggedInCaption": "Click 'Go to Home' to log in first",
+      "loggedInContent": "If you are already logged in on the AiToEarn homepage, click \"Authorize Now\" to authorize.",
+      "loggedInCaption": "Click 'Authorize Now' to authorize the plugin"
+    },
+    "step6": {
+      "title": "Step 6: Confirm Plugin is Ready",
+      "content": "Permission has been granted successfully. Next, open the AiToEarn platform, refresh the page, and you will see the plugin is ready. Click on it to view details.",
+      "caption1": "Authorization successful",
+      "caption2": "Return to AiToEarn platform to check plugin status"
+    },
+    "step7": {
+      "title": "Step 7: View Account Information",
+      "content": "If you have logged into the platforms supported by the plugin, you will see that the plugin has obtained the corresponding accounts.",
+      "loginContent": "Click the \"Extension\" button to view account login status. If it shows not logged in, please log in to the corresponding social media platform first.",
+      "caption": "Check Xiaohongshu account login status"
+    },
+    "step7b": {
+      "title": "Login Xiaohongshu Account",
+      "content": "Click \"Login Now\" to jump to the Xiaohongshu page to log in. After logging in, you also need to log in to the Creator Center.",
+      "caption1": "Quickly enter Creator Center from the upper right corner",
+      "caption2": "After logging in, refresh the page to see the account is authorized",
+      "importantNote": "Important Note",
+      "importantNoteContent": "Xiaohongshu homepage and Creator Center need to be logged in separately. The plugin function can only be used normally after both are logged in."
+    },
+    "step8": {
+      "title": "Step 8: Sync Accounts",
+      "content": "You can sync accounts to account management here. Click the [Sync] button, and the account will be synced to our database.",
+      "caption": "Click 'Sync' button to sync account"
+    },
+    "step9": {
+      "title": "View Sync Results",
+      "content": "Return to the AiToEarn homepage and click \"My Channels\" to enter the account management page.",
+      "caption1": "Click 'My Channels' to enter account management",
+      "caption2": "You can see the Xiaohongshu account has been successfully synced"
+    },
+    "complete": {
+      "title": "Complete",
+      "content": "Now you can use the AiToEarn platform normally!"
+    }
+  },
+  "manualInstall": {
+    "tip": "Tip",
+    "tipContent": "If you have successfully installed the plugin from Chrome Web Store, you can skip this section and go directly to the \"Authorize Plugin\" chapter.",
+    "step1": {
+      "title": "Enter Extensions Management Page",
+      "content": "Click the three-dot menu in the upper right corner of the browser, and click to enter \"Manage Extensions\" page."
+    },
+    "step2": {
+      "title": "Enable Developer Mode",
+      "content": "In the upper right corner of the extensions page, enable \"Developer mode\"."
+    },
+    "step3": {
+      "title": "Find the Downloaded Plugin File",
+      "content": "Open your browser's download folder and find the downloaded .crx plugin package."
+    },
+    "step4": {
+      "title": "Drag and Drop to Install Plugin",
+      "content": "Drag and drop the .crx plugin package to the extensions page."
+    },
+    "step5": {
+      "title": "Confirm Installation",
+      "content": "In the pop-up dialog, click \"Add extension\" to confirm the installation."
+    }
+  },
+  "faq": {
+    "title": "FAQ",
+    "q1": {
+      "question": "Why does the plugin still show not logged in after I logged into Xiaohongshu?",
+      "answer": "You may not have logged into the Xiaohongshu Creator Center. On the Xiaohongshu homepage, click the button in the upper right corner to quickly log into the Xiaohongshu Creator Center."
+    }
+  },
+  "viewGuide": "View Guide"
+}

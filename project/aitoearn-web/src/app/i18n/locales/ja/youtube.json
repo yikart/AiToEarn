@@ -1,0 +1,17 @@
+{
+  "youtubeAuth": "YouTube認証",
+  "authDescription": "YouTube認証を取得するためにメールアドレスを入力してください",
+  "email": "メールアドレス",
+  "enterEmail": "メールアドレスを入力してください",
+  "authorize": "認証する",
+  "pleaseEnterEmail": "メールアドレスを入力してください",
+  "invalidEmail": "有効なメールアドレスを入力してください",
+  "authFailed": "認証に失敗しました。後でもう一度お試しください",
+  "checkAuth": "認証を確認",
+  "uploadVideo": "動画をアップロード",
+  "needAuthFirst": "先に認証が必要です",
+  "uploadFailed": "アップロードに失敗しました",
+  "uploadSuccess": "アップロードに成功しました",
+  "checkFailed": "確認に失敗しました",
+  "alreadyAuthorized": "認証済みです"
+}

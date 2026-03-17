@@ -1,0 +1,120 @@
+{
+  "title": "Pinterest管理",
+  "tabs": {
+    "boards": "マイボード",
+    "pins": "マイピン"
+  },
+  "actions": {
+    "selectAccount": "アカウントを選択",
+    "refresh": "更新",
+    "createBoard": "ボードを作成",
+    "createPin": "ピンを作成",
+    "search": "検索...",
+    "view": "表示",
+    "edit": "編集",
+    "delete": "削除",
+    "link": "リンク",
+    "change": "変更"
+  },
+  "stats": {
+    "followers": "フォロワー",
+    "boardCount": "ボード数",
+    "pinCount": "ピン数",
+    "monthlyViews": "月間閲覧数"
+  },
+  "board": {
+    "createTitle": "新規ボードを作成",
+    "name": "ボード名",
+    "namePlaceholder": "ボード名を入力",
+    "description": "説明",
+    "descriptionPlaceholder": "ボードの説明を入力",
+    "privacy": "プライバシー設定",
+    "public": "公開",
+    "private": "非公開",
+    "createButton": "ボードを作成",
+    "deleteConfirm": "このボードを削除してもよろしいですか？",
+    "detailTitle": "ボード詳細",
+    "createTime": "作成日時",
+    "noDescription": "説明なし"
+  },
+  "pin": {
+    "createTitle": "新規ピンを作成",
+    "selectBoard": "投稿先",
+    "selectBoardPlaceholder": "投稿するボードを選択",
+    "uploadImage": "画像をアップロード",
+    "uploadImagePlaceholder": "クリックして画像をOSSにアップロード",
+    "uploadHint": "JPG、PNG、GIF形式に対応、最大10MB",
+    "uploading": "OSSにアップロード中...",
+    "uploadSuccess": "✓ アップロード成功",
+    "reupload": "再アップロード",
+    "ossUrl": "OSS URL",
+    "title": "タイトル",
+    "titlePlaceholder": "ピンのタイトルを入力",
+    "description": "説明",
+    "descriptionPlaceholder": "ピンの説明を入力",
+    "link": "リンク",
+    "linkPlaceholder": "リンク先URLを入力（任意）",
+    "altText": "代替テキスト",
+    "altTextPlaceholder": "画像の代替テキストを入力（任意）",
+    "dominantColor": "メインカラー",
+    "dominantColorTip": "ピンのメインカラーを選択",
+    "createButton": "ピンを作成",
+    "deleteConfirm": "このピンを削除してもよろしいですか？",
+    "detailTitle": "ピン詳細",
+    "pinId": "ピンID",
+    "boardId": "ボードID",
+    "creativeType": "クリエイティブタイプ",
+    "boardOwner": "ボードオーナー",
+    "isOwner": "オーナー",
+    "isRemovable": "削除可能",
+    "isStandard": "標準ピン",
+    "noDescription": "説明なし",
+    "imageAlt": "ピン画像"
+  },
+  "badges": {
+    "pins": "ピン",
+    "followers": "フォロワー",
+    "owner": "オーナー",
+    "yes": "はい",
+    "no": "いいえ",
+    "selected": "選択済み"
+  },
+  "empty": {
+    "noBoards": "ボードがありません",
+    "noPins": "ピンがありません"
+  },
+  "pagination": {
+    "total": "{total}件中{range}件を表示"
+  },
+  "messages": {
+    "loadAccountsFailed": "アカウント一覧の読み込みに失敗しました",
+    "loadBoardsFailed": "ボード一覧の読み込みに失敗しました",
+    "loadPinsFailed": "ピン一覧の読み込みに失敗しました",
+    "boardCreateSuccess": "ボードを作成しました",
+    "boardCreateFailed": "ボードの作成に失敗しました",
+    "boardDeleteSuccess": "ボードを削除しました",
+    "boardDeleteFailed": "ボードの削除に失敗しました",
+    "pinCreateSuccess": "ピンを作成しました",
+    "pinCreateFailed": "ピンの作成に失敗しました",
+    "pinDeleteSuccess": "ピンを削除しました",
+    "pinDeleteFailed": "ピンの削除に失敗しました",
+    "getBoardDetailFailed": "ボード詳細の取得に失敗しました",
+    "getPinDetailFailed": "ピン詳細の取得に失敗しました",
+    "uploadImageFirst": "先に画像をアップロードしてください",
+    "selectImageFile": "画像ファイルを選択してください",
+    "imageSizeLimit": "画像サイズは10MB以下にしてください",
+    "imageUploadSuccess": "画像をアップロードしました",
+    "imageUploadFailed": "画像のアップロードに失敗しました。再度お試しください",
+    "noAccountFound": "Pinterestアカウントが見つかりません"
+  },
+  "validation": {
+    "boardNameRequired": "ボード名を入力してください",
+    "selectBoardRequired": "ボードを選択してください",
+    "titleRequired": "タイトルを入力してください",
+    "descriptionRequired": "説明を入力してください"
+  },
+  "confirm": {
+    "ok": "OK",
+    "cancel": "キャンセル"
+  }
+}

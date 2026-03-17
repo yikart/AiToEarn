@@ -1,0 +1,302 @@
+/* ImageStack - 折叠/展开动画（纯 transform 驱动） */
+
+/* Enter / Exit keyframes */
+@keyframes imageItemEnter {
+  from {
+    scale: 0;
+  }
+  to {
+    scale: 1;
+  }
+}
+
+@keyframes imageItemExit {
+  to {
+    opacity: 0;
+    scale: 0.3;
+  }
+}
+
+.expandContainer {
+  position: absolute;
+  top: 0;
+  /* left 由 inline style 动态控制以实现居中 */
+  transition:
+    width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &.expanded {
+    z-index: 20;
+  }
+}
+
+/* 单张图片项 — 始终 absolute，动画仅靠 transform */
+.imageItem {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50px;
+  height: 66px;
+  border-radius: 8px;
+  border: 2px solid var(--background);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  will-change: transform;
+  backface-visibility: hidden;
+  transition:
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    top 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    left 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.2s ease;
+  animation: imageItemEnter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Exit 动画 — 延迟删除时播放 */
+.imageItemExiting {
+  animation: imageItemExit 0.3s ease forwards;
+  pointer-events: none;
+}
+
+/* 展开态 — 通过 CSS 变量管理 transform，支持 hover 动画 */
+.imageItemExpanded {
+  top: 0;
+  left: 0;
+  cursor: pointer;
+  z-index: var(--stack-z, 0);
+  transform: translateX(var(--expand-x, 0px)) rotate(var(--expand-rotation, 0deg));
+  filter: brightness(1);
+  transition:
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.15s ease,
+    z-index 0s;
+
+  &:hover {
+    z-index: 50;
+    transform: translateX(var(--expand-x, 0px)) rotate(var(--expand-rotation, 0deg)) scale(1.08) translateY(-3px);
+    filter: brightness(0.9);
+  }
+}
+
+/* "+" 按钮外层定位容器 — 始终 absolute，transition 驱动位移 */
+.addButtonWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.addButtonWrapperExpanded {
+  transform: translateX(var(--expand-x, 0px));
+}
+
+.addButtonWrapperCollapsed {
+  transform: translate(36px, 52px);
+  z-index: 10;
+}
+
+/* "+" 按钮展开态 — 卡片 */
+.addButtonExpanded {
+  width: 50px;
+  height: 70px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transform: rotate(-8deg);
+  transition:
+    width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-radius 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.3s ease,
+    color 0.15s ease,
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    color: var(--primary);
+    transform: rotate(-8deg) scale(1.08) translateY(-3px);
+  }
+}
+
+/* "+" 按钮折叠态 — 小圆形 */
+.addButtonCollapsed {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--background);
+  color: var(--muted-foreground);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transform: rotate(0deg);
+  transition:
+    width 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    height 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-radius 0.55s cubic-bezier(0.34, 1.56, 0.64, 1),
+    background 0.3s ease,
+    color 0.15s ease,
+    transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+}
+
+/* 空状态 "+" 按钮 — 卡片样式（复用展开态外观） */
+.addButton {
+  width: 50px;
+  height: 70px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transform: rotate(-8deg);
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    color: var(--primary);
+    transform: rotate(-8deg) scale(1.08) translateY(-3px);
+  }
+}
+
+/* 视频时长标签 */
+.durationBadge {
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  padding: 0 3px;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  font-size: 9px;
+  line-height: 14px;
+  pointer-events: none;
+}
+
+/* 删除按钮 — 展开态 hover 显示，移动端始终显示 */
+.deleteButton {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border: 1.5px solid var(--background);
+  opacity: 0;
+  transform: scale(0.8);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease;
+  pointer-events: none;
+
+  &:hover {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+}
+
+/* 展开态 group hover 显示删除按钮 */
+.imageItemExpanded:hover .deleteButton {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* 移动端始终显示删除按钮 */
+.mobileDeleteButton {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  z-index: 10;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  border: 1.5px solid var(--background);
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    background: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+}
+
+/* ========== 移动端适配 ========== */
+.mobileGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+  padding: 8px 8px 4px;
+}
+
+.mobileGridItem {
+  position: relative;
+  width: 50px;
+  height: 66px;
+  border-radius: 8px;
+  border: 2px solid var(--background);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    filter 0.15s ease;
+  animation: imageItemEnter 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    transform: rotate(var(--expand-rotation, 0deg)) scale(1.08) translateY(-3px);
+    filter: brightness(0.9);
+  }
+}
+
+.mobileAddButton {
+  position: relative;
+  width: 50px;
+  height: 70px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: var(--muted);
+  color: var(--muted-foreground);
+  transform: rotate(-8deg);
+  flex-shrink: 0;
+  transition:
+    transform 0.15s ease,
+    color 0.15s ease;
+
+  &:hover {
+    color: var(--primary);
+    transform: rotate(-8deg) scale(1.08) translateY(-3px);
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "status": {
+    "unknown": "不明",
+    "checking": "確認中...",
+    "ready": "プラグイン準備完了",
+    "installedNoPermission": "プラグインインストール済み、認証待ち",
+    "notInstalled": "プラグイン未インストール",
+    "connected": "接続済み"
+  },
+  "stage": {
+    "download": "ダウンロード中",
+    "upload": "アップロード中",
+    "publish": "公開中",
+    "complete": "完了",
+    "error": "エラー"
+  },
+  "error": {
+    "pluginNotInstalled": "まずAitoearnブラウザプラグインをインストールしてください",
+    "publishingInProgress": "公開処理中です。後でもう一度お試しください",
+    "loginFailed": "ログインに失敗しました",
+    "publishFailed": "公開に失敗しました"
+  },
+  "publishList": {
+    "title": "公開リスト",
+    "empty": "公開記録がありません",
+    "platforms": "プラットフォーム",
+    "status": "ステータス",
+    "time": "時間",
+    "viewDetail": "詳細を見る"
+  },
+  "publishDetail": {
+    "title": "公開詳細",
+    "platform": "プラットフォーム",
+    "progress": "進捗",
+    "status": "ステータス",
+    "message": "メッセージ",
+    "result": "結果",
+    "workId": "作品ID",
+    "shareLink": "共有リンク",
+    "failReason": "失敗理由",
+    "close": "閉じる",
+    "unknownAccount": "不明なアカウント",
+    "creatingRecord": "公開レコード作成中..."
+  },
+  "common": {
+    "confirm": "確認",
+    "cancel": "キャンセル",
+    "loading": "読み込み中...",
+    "success": "成功",
+    "failed": "失敗",
+    "pending": "保留中",
+    "publishing": "公開中",
+    "completed": "完了",
+    "error": "エラー",
+    "action": "操作",
+    "total": "合計",
+    "items": "件",
+    "viewLink": "リンクを見る",
+    "startTime": "開始時間",
+    "endTime": "終了時間",
+    "createdAt": "作成日時",
+    "PENDING": "保留中",
+    "PUBLISHING": "公開中",
+    "COMPLETED": "完了",
+    "ERROR": "エラー"
+  },
+  "header": {
+    "pluginActive": "プラグイン有効",
+    "pluginInactive": "プラグイン無効",
+    "downloadPlugin": "プラグインをダウンロード",
+    "downloadDescription": "AiToEarnブラウザプラグインは小紅書のスマート運用のために特別に設計されています。下のボタンをクリックしてダウンロードしてインストールしてください。",
+    "downloadButton": "今すぐダウンロード",
+    "chromeWebStore": "Chrome ウェブストア",
+    "githubRelease": "GitHub リリース",
+    "chinaDownload": "中国ダウンロード",
+    "activeDescription": "ブラウザプラグインが有効になりました。公開機能をご利用いただけます！",
+    "platformAccounts": "プラットフォームアカウント",
+    "notLoggedIn": "未ログイン",
+    "xhsNotLoggedInTip": "小紅書はクリエイターセンターへのログインが必要です",
+    "loginNow": "今すぐログイン",
+    "viewPublishList": "公開リストを見る",
+    "permissionRequired": "権限が必要です",
+    "permissionDescription": "プラグインはインストールされていますが、正常に動作するには必要な権限が必要です。ブラウザの拡張機能設定で必要な権限を付与してください。",
+    "checkPermission": "権限を再確認",
+    "sync": "同期",
+    "syncToAccount": "アカウントマネージャーに同期",
+    "syncSuccess": "アカウントの同期に成功しました",
+    "syncFailed": "アカウントの同期に失敗しました",
+    "xhsHome": "ホーム",
+    "xhsCreator": "クリエイター",
+    "xhsLoginHomeTip": "小紅書ホームページにログイン",
+    "xhsLoginCreatorTip": "小紅書クリエイターセンターにログイン",
+    "viewGuide": "お困りですか？インストールのヘルプが必要ですか？"
+  },
+  "mobile": {
+    "title": "デスクトップ専用",
+    "description": "ブラウザ拡張機能はモバイルデバイスでは利用できません。拡張機能のインストールと使用にはデスクトップブラウザをご利用ください。",
+    "goToPC": "PCでアクセスしてください",
+    "introduction": "AiToEarnプラットフォーム用ブラウザ拡張機能。AiToEarn Webと連携し、小紅書のコンテンツ公開を自動化します — 動画、画像カルーセル、タイトル、ハッシュタグなど、すべてワンクリックで完了。内蔵AIエージェントは、世界最先端のAIモデルの一つであるClaude Opus 4.6を搭載し、自然な会話でブラウザタスクの自動化をサポートします。インストールすると、ワンクリック公開、リアルタイム進捗追跡、AI自動化など、AiToEarnプラットフォームの全機能が利用可能になります。"
+  }
+}

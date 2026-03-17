@@ -1,1 +1,0 @@
-export const ALI_GREEN_CLIENT = 'ALI_GREEN_CLIENT'

@@ -1,0 +1,17 @@
+{
+  "youtubeAuth": "YouTube 인증",
+  "authDescription": "YouTube 인증을 받으려면 이메일 주소를 입력해 주세요",
+  "email": "이메일",
+  "enterEmail": "이메일 주소를 입력하세요",
+  "authorize": "인증",
+  "pleaseEnterEmail": "이메일 주소를 입력해 주세요",
+  "invalidEmail": "유효한 이메일 주소를 입력해 주세요",
+  "authFailed": "인증에 실패했습니다. 나중에 다시 시도해 주세요",
+  "checkAuth": "인증 확인",
+  "uploadVideo": "동영상 업로드",
+  "needAuthFirst": "먼저 인증이 필요합니다",
+  "uploadFailed": "업로드 실패",
+  "uploadSuccess": "업로드 성공",
+  "checkFailed": "확인 실패",
+  "alreadyAuthorized": "이미 인증됨"
+}

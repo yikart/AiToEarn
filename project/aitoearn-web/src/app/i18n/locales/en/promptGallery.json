@@ -1,0 +1,163 @@
+{
+  "prompts": {
+    "title1": "Human Silhouette in Digital Code Waterfall",
+    "title2": "Flame Phoenix Rising from Ashes",
+    "title3": "Spaceship Traversing Interstellar Wormhole",
+    "title4": "Cyber Samurai Drawing Sword in Rainy Night",
+    "item1": "Model: Veo 3.1 Fast\nDuration: 6 seconds\nResolution: 720 × 1280 (9:16 portrait)\n\nScene: Human silhouette in digital code waterfall\n\nFirst frame/cover requirements:\n- Green code streams cascading from the top\n- Clear human outline in the center, high-tech aesthetic\n\nTimeline:\n- 0-1s: Dense green code rain pouring from above\n- 1-3s: A human silhouette gradually emerges in the code stream, code flowing around it\n- 3-5s: The figure opens its eyes (emitting blue glow), reaches out to touch the code\n- 5-6s: Light bursts where the code is touched, spreading outward, fading out\n\nEffects: Matrix code rain, holographic scan lines, data particles, ray-traced reflections\nBackground: Pure black space, only code glow\nStyle: Matrix aesthetic, black-green color scheme, high-tech texture\nCamera: Fixed front view, slight push-in",
+    "item2": "Model: Veo 3.1 Fast\nDuration: 6 seconds\nResolution: 720 × 1280 (9:16 portrait)\n\nScene: Flame phoenix rising from ashes\n\nFirst frame/cover requirements:\n- Phoenix silhouette centered, surrounded by flame particles\n- Dark background contrasting the firelight, strong visual impact\n\nTimeline:\n- 0-1s: Ashes accumulate in darkness, faint embers flickering\n- 1-3s: Flames suddenly erupt, phoenix outline gradually taking shape\n- 3-5s: Phoenix fully spreads its wings, flame feathers scatter, particles splash\n- 5-6s: Phoenix takes flight, flame trail behind, camera moves up and fades out\n\nEffects: Flame particles, falling embers, heat wave distorting air, dynamic lighting\nBackground: Pure black abyss, illuminated only by firelight\nStyle: Epic CG, orange-red-gold tones, cinematic lighting\nCamera: Low angle looking up, slow upward pan following",
+    "item3": "Model: Veo 3.1 Fast\nDuration: 6 seconds\nResolution: 1280 × 720 (16:9 landscape)\n\nScene: Spaceship traversing interstellar wormhole\n\nFirst frame/cover requirements:\n- Ship centered, surrounded by wormhole ring\n- Spectacular starfield background, stunning composition\n\nTimeline:\n- 0-1s: Ship hovers before the massive wormhole entrance, energy vortex rotating\n- 1-3s: Ship engines ignite, plunging into the wormhole, space-time begins to warp\n- 3-5s: During traversal, colorful light streaks rush past, nebulae stretch and deform\n- 5-6s: Ship emerges from the other end, facing a new galaxy, fade out\n\nEffects: Energy vortex, light-speed stretch effect, space-time distortion, engine trails, nebula particles\nBackground: Deep space nebula, distant galaxies, wormhole energy ring\nStyle: Interstellar/Star Wars aesthetic, grand epic feel, HDR high dynamic range\nCamera: Following the ship, from stationary to high-speed acceleration",
+    "item4": "Model: Veo 3.1 Fast\nDuration: 6 seconds\nResolution: 1280 × 720 (16:9 landscape)\n\nScene: Cyber samurai drawing sword in rainy night\n\nFirst frame/cover requirements:\n- Samurai standing sideways, hand on sword hilt\n- Neon lights reflecting on armor, raindrops frozen in air\n\nTimeline:\n- 0-1s: Rainy street at night, samurai stands with back to camera, neon lights flickering\n- 1-2s: Samurai suddenly turns, hand gripping hilt (slow motion)\n- 2-4s: Sword drawn from sheath, blade light cuts through rain curtain, slicing raindrops (super slow motion)\n- 4-5s: Sword returns to sheath, raindrops resume falling\n- 5-6s: Samurai turns and walks away, disappearing into the rain mist, fade out\n\nEffects: Blade light trail, details of sliced raindrops, slow-motion rain, neon reflections, steam mist\nBackground: Cyberpunk Japanese street, neon signs, wet ground reflections\nStyle: Devil May Cry/Cyberpunk samurai aesthetic, cyan-purple neon colors, cinematic slow motion\nCamera: Medium side shot, switching to front close-up during the strike"
+  },
+  "badge": "🎨 Prompt Inspiration Library",
+  "title": "Featured Examples",
+  "titleHighlight": "Start Creating Quickly",
+  "subtitle": "Explore featured examples, one-click apply to start creating",
+  "applyButton": "Apply Now",
+  "collapseButton": "Collapse",
+  "expandButton": "View More",
+  "expandCount": "items",
+  "appliedToast": "✓ Prompt Applied",
+  "loadedAll": "Loaded all",
+  "promptsCount": "prompts",
+  "noResults": "No matching prompts found",
+  "tryOtherKeywords": "Try searching with other keywords",
+  "modal": {
+    "promptLabel": "Prompt:",
+    "applyButton": "Apply Now",
+    "materialsLabel": "Reference Materials",
+    "materialsHint": "These materials will be added to your input when applied"
+  },
+  "badges": {
+    "edit": "Edit",
+    "generate": "Text to Image"
+  },
+  "categories": {
+    "all": "All",
+    "recommend": "Recommend",
+    "image": "Image Generation"
+  },
+  "filters": {
+    "all": "All",
+    "generate": "Text to Image",
+    "edit": "Image Edit",
+    "searchPlaceholder": "Search title..."
+  },
+  "apply": "Apply",
+  "agentFeatures": {
+    "title": "Aitoearn Key Feature",
+    "subtitle": "Our signature features, one click away",
+    "platforms": "Supported platforms",
+    "helperTitle": "One-line publish",
+    "helperExample": "Example: Generate images about \"street food\" with oil painting style and suggest publish times for Instagram",
+    "categories": {
+      "contentGeneration": "Content Generation",
+      "editing": "Editing & Post-processing",
+      "localization": "Localization & Optimization",
+      "publishing": "Publishing & Distribution",
+      "automation": "Automation",
+      "analytics": "Analytics & Insights",
+      "interaction": "Engagement & Operations"
+    },
+    "items": {
+      "inspiration": {
+        "title": "Creative Inspiration",
+        "desc": "Generate topic ideas and creative templates from account traits and trends"
+      },
+      "oneClickScript": {
+        "title": "One-click Script",
+        "desc": "Auto-generate short video / article scripts and storyboard details from keywords or prompts"
+      },
+      "multiTemplates": {
+        "title": "Multi-style Templates",
+        "desc": "Provide multiple video and copy style templates with one-click switching"
+      },
+      "imageGenerate": {
+        "title": "Image Generation",
+        "desc": "Generate high-quality images from prompts, supporting multiple styles and outputs"
+      },
+      "videoGenerate": {
+        "title": "Video Generation",
+        "desc": "Produce short video drafts from scripts or prompts, including music and shot suggestions"
+      },
+
+      "highlight": {
+        "title": "Highlight Editing",
+        "desc": "Automatically detect high-energy moments and create highlight clips using templates"
+      },
+      "storyboard": {
+        "title": "Storyboard Design",
+        "desc": "Auto-generate timeline, dialogue and shooting checklist with export support"
+      },
+      "coverSuggestion": {
+        "title": "Cover & Thumbnail",
+        "desc": "Generate multiple cover options and suggest click-optimized thumbnails"
+      },
+      "download": {
+        "title": "Asset Download & Convert",
+        "desc": "Fetch platform videos, batch-download in multiple resolutions and convert formats"
+      },
+
+      "videoTranslation": {
+        "title": "Video Translation",
+        "desc": "Support face-level lip-sync, voice cloning and embedded/soft subtitle export"
+      },
+      "platformAdapt": {
+        "title": "Platform Adaptation",
+        "desc": "Automatically adjust copy length, pacing and format to target platform rules"
+      },
+      "topicTag": {
+        "title": "Topic & Tag Recommendation",
+        "desc": "Recommend high-value topics and tags based on trends and account history"
+      },
+      "seo": {
+        "title": "SEO & Keyword Optimization",
+        "desc": "Provide search and discovery optimization suggestions for copy and descriptions"
+      },
+
+      "schedule": {
+        "title": "Scheduled Publishing",
+        "desc": "Support one-time, recurring and timezone-aware scheduling and auto-publish"
+      },
+      "multiPlatform": {
+        "title": "Multi-platform Distribution",
+        "desc": "Configure once and automatically sync and publish to multiple channels"
+      },
+      "smartTime": {
+        "title": "Smart Time Suggestion",
+        "desc": "Recommend optimal publish times based on historical data to maximize reach"
+      },
+
+      "sse": {
+        "title": "Streaming Tasks (SSE)",
+        "desc": "Stream task generation in real-time with incremental results and cancel support"
+      },
+      "taskManagement": {
+        "title": "Task Management",
+        "desc": "Create/stop/view/delete tasks, rate and comment; support task forwarding and duplication"
+      },
+      "workflow": {
+        "title": "Extensible Workflows",
+        "desc": "Support multi-step pipelines and custom action handlers to chain complex automation"
+      },
+
+      "videoUnderstanding": {
+        "title": "Video Understanding",
+        "desc": "Automatically recognize emotions, people and events to generate tags and chapters"
+      },
+      "report": {
+        "title": "Reporting & Insights",
+        "desc": "Auto-generate publish performance and growth suggestions for review and optimization"
+      },
+
+      "commentAssistant": {
+        "title": "Comment & DM Assistant",
+        "desc": "Auto-generate reply suggestions and batch-reply templates to boost engagement"
+      },
+      "audienceInsight": {
+        "title": "Audience Insights",
+        "desc": "Provide audience profiles and content preference analysis to guide topic and targeting"
+      }
+    }
+  }
+}

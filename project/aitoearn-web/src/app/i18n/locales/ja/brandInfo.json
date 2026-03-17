@@ -1,0 +1,112 @@
+{
+  "title": "ブランド情報",
+  "viewDetails": "詳細を見る",
+  "noData": "ブランド情報がありません",
+  "stores": "店舗",
+  "reviews": "レビュー",
+  "rating": "評価",
+  "status": {
+    "pending": "処理中",
+    "initializing": "初期化中",
+    "active": "アクティブ",
+    "failed": "失敗",
+    "disabled": "無効"
+  },
+  "section": {
+    "basicInfo": "基本情報",
+    "brandImages": "ブランド画像",
+    "gallery": "店舗写真",
+    "contact": "連絡先",
+    "socialLinks": "ソーシャルリンク"
+  },
+  "field": {
+    "name": "ブランド名",
+    "nameEn": "英語名",
+    "category": "カテゴリー",
+    "description": "説明",
+    "logo": "ロゴ",
+    "coverImage": "カバー画像",
+    "website": "ウェブサイト",
+    "phone": "電話番号",
+    "email": "メール",
+    "address": "住所"
+  },
+  "placeholder": {
+    "name": "ブランド名を入力",
+    "nameEn": "英語名を入力",
+    "category": "カテゴリーを選択",
+    "description": "ブランドの説明を入力",
+    "website": "https://example.com",
+    "phone": "+81 3 1234 5678",
+    "email": "contact@example.jp",
+    "address": "住所を入力",
+    "socialLink": "プロフィールURLを入力"
+  },
+  "category": {
+    "restaurant": "レストラン",
+    "cafe": "カフェ",
+    "bar": "バー",
+    "bakery": "ベーカリー",
+    "fast_food": "ファストフード",
+    "fine_dining": "高級レストラン",
+    "other": "その他"
+  },
+  "image": {
+    "uploadLogo": "ロゴをアップロード",
+    "uploadCover": "カバーをアップロード",
+    "addImage": "画像を追加",
+    "deleteImage": "画像を削除",
+    "deleteConfirm": "この画像を削除してもよろしいですか？",
+    "sourceGoogleMaps": "Google Maps",
+    "sourceUserUpload": "アップロード済み",
+    "uploadFailed": "画像のアップロードに失敗しました",
+    "deleteFailed": "画像の削除に失敗しました",
+    "dragOrClick": "ドラッグまたはクリックでアップロード",
+    "maxSize": "最大サイズ：5MB",
+    "supportedFormats": "JPG、PNG、WebP に対応",
+    "uploadDisabled": "ブランドの初期化を完了してください",
+    "linkFirst": "店舗を関連付けると画像を管理できます"
+  },
+  "social": {
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "twitter": "X (Twitter)",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "linkedin": "LinkedIn"
+  },
+  "action": {
+    "edit": "編集",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "キャンセル",
+    "updateSuccess": "ブランド情報を更新しました",
+    "updateFailed": "ブランド情報の更新に失敗しました"
+  },
+  "createdAt": "作成日",
+  "updatedAt": "更新日",
+  "viewOnGoogleMaps": "Google Mapsで表示",
+  "photoCount": "{{count}}枚の写真",
+  "aiHint": "AI生成動画はブランド情報に基づいて作成されます",
+  "switchStore": {
+    "button": "店舗を切り替え",
+    "searching": "新しい店舗を検索...",
+    "switching": "店舗を切り替え中...",
+    "success": "店舗の切り替えに成功しました",
+    "failed": "店舗の切り替えに失敗しました",
+    "cancel": "キャンセル",
+    "confirm": "切り替えを確認"
+  },
+  "setup": {
+    "title": "店舗を関連付ける",
+    "description": "店舗を検索して関連付け、ブランド情報の管理を始めましょう",
+    "cardHint": "クリックして店舗を関連付け、プロモーションを開始",
+    "searchHint": "店舗を関連付けると、AIがブランド情報に基づいてコンテンツを生成します"
+  },
+  "validation": {
+    "nameRequired": "ブランド名は必須です",
+    "nameMaxLength": "ブランド名は50文字以内にしてください",
+    "nameEnMaxLength": "英語名は100文字以内にしてください",
+    "descriptionMaxLength": "説明は500文字以内にしてください"
+  }
+}

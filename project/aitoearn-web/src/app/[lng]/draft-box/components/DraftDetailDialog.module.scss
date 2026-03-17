@@ -1,0 +1,74 @@
+.draftMediaSwiper {
+  :global {
+    .swiper {
+      width: 100% !important;
+      max-width: 100% !important;
+    }
+    .swiper-wrapper {
+      width: 100% !important;
+    }
+    .swiper-slide {
+      width: 100% !important;
+    }
+
+    // 分页器小圆点 - 加阴影增强可见性
+    .swiper-pagination-bullet {
+      background: white;
+      opacity: 0.6;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+    .swiper-pagination-bullet-active {
+      opacity: 1;
+    }
+
+    // 左右导航箭头
+    .swiper-button-prev,
+    .swiper-button-next {
+      color: white;
+      background: rgba(0, 0, 0, 0.3);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+
+      &::after {
+        font-size: 16px;
+        font-weight: bold;
+      }
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
+    }
+
+    // 禁用状态隐藏
+    .swiper-button-disabled {
+      display: none;
+    }
+
+    // 默认隐藏导航元素
+    .swiper-pagination,
+    .swiper-button-prev,
+    .swiper-button-next {
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
+  }
+}
+
+// Hover 时显示
+.swiperVisible :global {
+  .swiper-pagination,
+  .swiper-button-prev,
+  .swiper-button-next {
+    opacity: 1;
+  }
+}
+
+// 非 Hover 时隐藏
+.swiperHidden :global {
+  .swiper-pagination,
+  .swiper-button-prev,
+  .swiper-button-next {
+    opacity: 0;
+  }
+}

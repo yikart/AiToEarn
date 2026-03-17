@@ -1,0 +1,1840 @@
+
+id: 1
+data: {"type":"init","taskId":"697332b80ca8e6f2f01fa1d7"}
+
+id: 2
+data: {"type":"keep_alive"}
+
+id: 3
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f818a1b-050c-4303-9837-3e9777849c80","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01MJ59FaH7aC6LgwJoaTu5Qp","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":379,"cache_read_input_tokens":30719,"cache_creation":{"ephemeral_5m_input_tokens":379,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 4
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd310744-e67f-47da-8dc1-7632ce674910","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_012nNinaQeye17v82k2g4ScC","name":"mcp__sessionTools__setTitle","input":{}}},"parent_tool_use_id":null}}
+
+id: 5
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d304217-0023-4306-a3dc-32cde63233c4","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 6
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"46022934-f187-4266-b507-2b007ff4759e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"title\":"}},"parent_tool_use_id":null}}
+
+id: 7
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b7185f75-b0cd-4e5e-adec-5d6c730b029f","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" \"健身减脂短视频选题"}},"parent_tool_use_id":null}}
+
+id: 8
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"22b3a795-ba75-441d-8993-f8b701d3310a","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"}"}},"parent_tool_use_id":null}}
+
+id: 9
+data: {"type":"assistant","message":{"type":"assistant","uuid":"20dfef76-8ce9-45d5-94dc-af7285d46732","message":{"id":"msg_01MJ59FaH7aC6LgwJoaTu5Qp","content":[{"type":"tool_use","id":"toolu_012nNinaQeye17v82k2g4ScC","name":"mcp__sessionTools__setTitle","input":{"title":"健身减脂短视频选题"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":379},"cache_creation_input_tokens":379,"cache_read_input_tokens":30719,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 10
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a4e5ad17-1a9c-4bb1-8067-5b546cf36435","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 11
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9d3305aa-7057-4925-8d9d-f4da3f83faa5","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":379,"cache_read_input_tokens":30719,"input_tokens":3,"output_tokens":67}},"parent_tool_use_id":null}}
+
+id: 12
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"37e19809-4302-4ee3-871f-c7727c31865c","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 13
+data: {"type":"title_updated","taskId":"697332b80ca8e6f2f01fa1d7","title":"健身减脂短视频选题"}
+
+id: 14
+data: {"type":"user","message":{"type":"user","uuid":"f97b6e26-0fda-44f7-b6eb-a4c00cea661c","message":{"content":[{"tool_use_id":"toolu_012nNinaQeye17v82k2g4ScC","type":"tool_result","content":[{"type":"text","text":"Title updated successfully"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Title updated successfully"}]}}
+
+id: 15
+data: {"type":"keep_alive"}
+
+id: 16
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d154fc4f-4b9a-4717-a9de-92c718f634a6","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01BR463tdAwr3LmEbWxi1zv5","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":85,"cache_read_input_tokens":31098,"cache_creation":{"ephemeral_5m_input_tokens":85,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 17
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aa327e2f-7174-48c1-bffa-204bfcc9b305","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 18
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a6b4f6ef-644d-4c8a-acce-7c80ff0b0d7c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我"}},"parent_tool_use_id":null}}
+
+id: 19
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0c754efd-1a3b-47b9-a3a0-67e7e5767259","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"来"}},"parent_tool_use_id":null}}
+
+id: 20
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"43e9a936-aaeb-4af8-8ebe-8d8cca71f39f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帮你生成10个关"}},"parent_tool_use_id":null}}
+
+id: 21
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"febe10f1-c1be-4128-950f-4e9136626a6f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"于\"健身减脂\""}},"parent_tool_use_id":null}}
+
+id: 22
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0a912067-b830-4051-b4c9-59b5e4efd9d4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"主题的短视频选题"}},"parent_tool_use_id":null}}
+
+id: 23
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3608d47-80ec-4136-a520-e7a0b7709a27","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"。让我先了"}},"parent_tool_use_id":null}}
+
+id: 24
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d5b740c-c655-4152-a441-1141e6468cd0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"解一下最"}},"parent_tool_use_id":null}}
+
+id: 25
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31cef7ac-2798-4330-820d-008fb4361754","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"近的健康饮食热"}},"parent_tool_use_id":null}}
+
+id: 26
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c507b192-9697-4ecf-a1d5-9cc24c483365","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"点"}},"parent_tool_use_id":null}}
+
+id: 27
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"46153888-aaff-4a9f-a701-9f2d6d12894a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"趋势。"}},"parent_tool_use_id":null}}
+
+id: 28
+data: {"type":"assistant","message":{"type":"assistant","uuid":"84fc4ae9-f4e6-4a8f-b7c0-e28a5112a58a","message":{"id":"msg_01BR463tdAwr3LmEbWxi1zv5","content":[{"type":"text","text":"我来帮你生成10个关于\"健身减脂\"主题的短视频选题。让我先了解一下最近的健康饮食热点趋势。"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":85},"cache_creation_input_tokens":85,"cache_read_input_tokens":31098,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 29
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3f5ff9a-82e4-4783-9227-1020819323f5","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 30
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"28181809-372f-49f1-9f72-fe8f0b3beb2c","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01NNEspUodkY3zNULHEnAduV","name":"WebFetch","input":{}}},"parent_tool_use_id":null}}
+
+id: 31
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d676eddc-a4b2-49e4-b2ab-3f0776044def","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 32
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7595762b-dce4-4fbe-adb6-ffa6fdfcd998","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"url\": \"ht"}},"parent_tool_use_id":null}}
+
+id: 33
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"302d9ec0-9dc9-4f69-ac8d-9dd33565c3fa","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"tps://w"}},"parent_tool_use_id":null}}
+
+id: 34
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0fb31240-3864-403a-9a6d-bb30cba2747f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ww.x"}},"parent_tool_use_id":null}}
+
+id: 35
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b0cba750-c4f8-4608-8fa4-01357a244a97","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"iao"}},"parent_tool_use_id":null}}
+
+id: 36
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1612762e-72eb-4d94-9472-6ae3be864004","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"hon"}},"parent_tool_use_id":null}}
+
+id: 37
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bd7ae820-cd43-4fc8-86b8-981ff0dad049","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"gs"}},"parent_tool_use_id":null}}
+
+id: 38
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8bcd1132-8665-40d2-9067-5042b437a3cc","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"hu.com/ex"}},"parent_tool_use_id":null}}
+
+id: 39
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"328d8821-992e-42b5-8281-d87781ea63dd","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"plor"}},"parent_tool_use_id":null}}
+
+id: 40
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a74b38b-3e4f-4ed5-a037-e080bc702836","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"e\""}},"parent_tool_use_id":null}}
+
+id: 41
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a9046362-f99b-4279-b1ca-e7834e728c6c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", \"prompt"}},"parent_tool_use_id":null}}
+
+id: 42
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ce0aa1f9-8f62-4604-bac4-eff3918b3c66","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"\": \"找出当前关于健身"}},"parent_tool_use_id":null}}
+
+id: 43
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f5a4b80-b1a0-4024-9541-fd415260e355","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"、减脂、健"}},"parent_tool_use_id":null}}
+
+id: 44
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a48bc326-ea64-4570-9583-dc77026d33ac","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"康饮食的热门"}},"parent_tool_use_id":null}}
+
+id: 45
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"77f27c95-6009-4a56-ba43-2cf6a40d6ac2","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"话题和趋势，包括"}},"parent_tool_use_id":null}}
+
+id: 46
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c665e39f-5e19-4f4a-8925-851c2f585a9c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"流行的食材、饮"}},"parent_tool_use_id":null}}
+
+id: 47
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c3b71b4f-def6-414a-8f42-e7422ee4884a","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"食方法、运"}},"parent_tool_use_id":null}}
+
+id: 48
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2fddb0ad-4ed2-4ce2-b5d2-89e177d1c72f","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"动方式等\"}"}},"parent_tool_use_id":null}}
+
+id: 49
+data: {"type":"assistant","message":{"type":"assistant","uuid":"ee6555a1-47ac-43b9-a685-4489a3634866","message":{"id":"msg_01BR463tdAwr3LmEbWxi1zv5","content":[{"type":"tool_use","id":"toolu_01NNEspUodkY3zNULHEnAduV","name":"WebFetch","input":{"url":"https://www.xiaohongshu.com/explore","prompt":"找出当前关于健身、减脂、健康饮食的热门话题和趋势，包括流行的食材、饮食方法、运动方式等"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":85},"cache_creation_input_tokens":85,"cache_read_input_tokens":31098,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 50
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8430da58-1289-4dd0-bdb0-633716cc76e0","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 51
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cb2f0bf6-de02-4f61-aef5-09d6fd70a060","event":{"type":"content_block_start","index":2,"content_block":{"type":"tool_use","id":"toolu_01MNhr2yFEx2hzrjwgMUiatY","name":"WebFetch","input":{}}},"parent_tool_use_id":null}}
+
+id: 52
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fdb26163-aab0-4599-b4bf-e5ff1d1afc82","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 53
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2731c536-6fde-4341-b252-966be1bcdcaa","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"{\"url\": \"htt"}},"parent_tool_use_id":null}}
+
+id: 54
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4f03e78-ac20-4e5a-9909-ab0e611bdeb4","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"ps://www.z"}},"parent_tool_use_id":null}}
+
+id: 55
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f346a57-8d02-470f-80cc-21306b24a5bd","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"hihu.com/"}},"parent_tool_use_id":null}}
+
+id: 56
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2707363b-d8a4-4814-9b7e-b7369af98438","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"hot\""}},"parent_tool_use_id":null}}
+
+id: 57
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"beb41fb6-8ec7-4db3-9ec4-2e78b8bb8cc9","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":", \"prompt\":"}},"parent_tool_use_id":null}}
+
+id: 58
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8f9882d1-9fec-4479-83c0-994d445f2141","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":" \"找出当前关于健身、减"}},"parent_tool_use_id":null}}
+
+id: 59
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"25cfb252-bf5e-4e3f-83bc-d253f3019a6c","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"脂、健康饮食的热门话题和"}},"parent_tool_use_id":null}}
+
+id: 60
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec1b06c1-2263-4e9c-8eae-f2aa4d09fda2","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"趋势\"}"}},"parent_tool_use_id":null}}
+
+id: 61
+data: {"type":"assistant","message":{"type":"assistant","uuid":"bc138bac-70c5-441f-b17f-57b28497f994","message":{"id":"msg_01BR463tdAwr3LmEbWxi1zv5","content":[{"type":"tool_use","id":"toolu_01MNhr2yFEx2hzrjwgMUiatY","name":"WebFetch","input":{"url":"https://www.zhihu.com/hot","prompt":"找出当前关于健身、减脂、健康饮食的热门话题和趋势"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":85},"cache_creation_input_tokens":85,"cache_read_input_tokens":31098,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 62
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"447b7ebb-2160-41af-a239-b3763d70b57c","event":{"type":"content_block_stop","index":2},"parent_tool_use_id":null}}
+
+id: 63
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"13b0a82b-2a7d-4b68-9689-fbf49c1cde1f","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":85,"cache_read_input_tokens":31098,"input_tokens":1,"output_tokens":266}},"parent_tool_use_id":null}}
+
+id: 64
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"94d4f9be-f653-45fd-9074-4f518ab0a970","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 65
+data: {"type":"keep_alive"}
+
+id: 66
+data: {"type":"user","message":{"type":"user","uuid":"b430f618-7dc9-4454-94c0-cbad92faaced","message":{"content":[{"type":"tool_result","content":"Request failed with status code 403","is_error":true,"tool_use_id":"toolu_01MNhr2yFEx2hzrjwgMUiatY"}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":"Error: Request failed with status code 403"}}
+
+id: 67
+data: {"type":"keep_alive"}
+
+id: 68
+data: {"type":"user","message":{"type":"user","uuid":"fd2d96ba-9257-4c65-8fb1-712db6e2340a","message":{"content":[{"tool_use_id":"toolu_01NNEspUodkY3zNULHEnAduV","type":"tool_result","content":"I appreciate your request, but I need to clarify what I'm looking at here.\n\nThe content you've provided appears to be **minified JavaScript code and CSS stylesheets** from a web application (likely Xiaohongshu/小红书's frontend). This is technical markup and styling code—not actual article content about fitness, nutrition, or health trends.\n\nThis code doesn't contain:\n- Blog posts or articles about fitness topics\n- Discussion of popular diets or exercise methods\n- Information about trending health foods\n- User-generated content about wellness trends\n\n**To help you find current fitness and health trends, I would need:**\n- Actual article text or blog posts\n- Social media discussions or comments\n- Nutrition/fitness publications\n- Health trend reports\n\nIf you'd like me to analyze content about fitness and nutrition trends, please share the actual written content rather than the underlying code that powers the website. I'd be happy to help identify patterns and trending topics once you provide readable source material."}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":{"bytes":426839,"code":200,"codeText":"OK","result":"I appreciate your request, but I need to clarify what I'm looking at here.\n\nThe content you've provided appears to be **minified JavaScript code and CSS stylesheets** from a web application (likely Xiaohongshu/小红书's frontend). This is technical markup and styling code—not actual article content about fitness, nutrition, or health trends.\n\nThis code doesn't contain:\n- Blog posts or articles about fitness topics\n- Discussion of popular diets or exercise methods\n- Information about trending health foods\n- User-generated content about wellness trends\n\n**To help you find current fitness and health trends, I would need:**\n- Actual article text or blog posts\n- Social media discussions or comments\n- Nutrition/fitness publications\n- Health trend reports\n\nIf you'd like me to analyze content about fitness and nutrition trends, please share the actual written content rather than the underlying code that powers the website. I'd be happy to help identify patterns and trending topics once you provide readable source material.","durationMs":7122,"url":"https://www.xiaohongshu.com/explore"}}}
+
+id: 69
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"62a280ce-18cc-4862-aaa0-5cbb85be1b06","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01Tr3na5jx45s1VQbmuukTKY","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":39,"cache_creation_input_tokens":510,"cache_read_input_tokens":31183,"cache_creation":{"ephemeral_5m_input_tokens":510,"ephemeral_1h_input_tokens":0},"output_tokens":3,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 70
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d87375d9-e729-4e2a-86ec-d42b526ec211","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 71
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3873837-95f0-4ef6-a4c3-f927ccc79861","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"让我换"}},"parent_tool_use_id":null}}
+
+id: 72
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"67df6faa-6f95-4b0c-b9be-e9f31a58e26e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"一"}},"parent_tool_use_id":null}}
+
+id: 73
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f1b2d187-2ebb-4d1b-ae54-acd5f93724ee","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个方式获"}},"parent_tool_use_id":null}}
+
+id: 74
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc4fe733-41d2-4bf2-9437-20965026de3c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"取健康"}},"parent_tool_use_id":null}}
+
+id: 75
+data: {"type":"keep_alive"}
+
+id: 76
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"712088f9-9ba7-4965-bb9c-f8830d1178b9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮食热点信息："}},"parent_tool_use_id":null}}
+
+id: 77
+data: {"type":"assistant","message":{"type":"assistant","uuid":"2ad5cfb3-c4f0-41c9-a7b9-655be1f5f1c9","message":{"id":"msg_01Tr3na5jx45s1VQbmuukTKY","content":[{"type":"text","text":"让我换一个方式获取健康饮食热点信息："}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":510},"cache_creation_input_tokens":510,"cache_read_input_tokens":31183,"input_tokens":39,"output_tokens":3,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 78
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bc17ba0a-0ead-4727-aa30-fe22f42b619e","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 79
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"43524863-14b2-4b98-aa9f-80e69de14c0f","event":{"type":"content_block_start","index":1,"content_block":{"type":"tool_use","id":"toolu_01GsSWgJov4vrPPhJtqGEWJn","name":"WebFetch","input":{}}},"parent_tool_use_id":null}}
+
+id: 80
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f450889-2bff-4052-a124-baf6b9048a5c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 81
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"441a7bb9-09dd-4d83-8035-89b96416d04d","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"{\"pro"}},"parent_tool_use_id":null}}
+
+id: 82
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"270132a4-1a71-44fc-81b5-a15c19bc5c0c","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"mpt\":"}},"parent_tool_use_id":null}}
+
+id: 83
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dddd51a4-f809-4d84-b974-64435a9cd5c3","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":" \"找出202"}},"parent_tool_use_id":null}}
+
+id: 84
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fb50ad46-2a44-4cde-82b7-66ce78e7f583","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"4-20"}},"parent_tool_use_id":null}}
+
+id: 85
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"59050ee1-89a2-486a-b279-009fa14cec97","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"25年关于健身、减脂"}},"parent_tool_use_id":null}}
+
+id: 86
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b032ee4-ff1c-44df-a11a-d7bf4e46a500","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"、健康饮食的热门话题和趋"}},"parent_tool_use_id":null}}
+
+id: 87
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc0162d8-29aa-482d-ab65-6a67dd0c21e4","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"势，包括流"}},"parent_tool_use_id":null}}
+
+id: 88
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cb966e30-1271-4a4c-8d61-8ca5179a02aa","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"行的食材、饮食方"}},"parent_tool_use_id":null}}
+
+id: 89
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cefa4958-8f73-4079-9d31-4ed399d8b1cb","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"法、运动方式等\""}},"parent_tool_use_id":null}}
+
+id: 90
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0a4773a6-1057-418c-ad99-ed52234929ce","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":", \"url\""}},"parent_tool_use_id":null}}
+
+id: 91
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3c9391c6-2695-4694-9a5f-708d403b7a51","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":": \"h"}},"parent_tool_use_id":null}}
+
+id: 92
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4f39c36d-6af7-403c-ab09-ade98bc1ec79","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"ttps://www"}},"parent_tool_use_id":null}}
+
+id: 93
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"02cd2ad8-8245-4ed7-9ea2-eb3c4522b2f7","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":".so"}},"parent_tool_use_id":null}}
+
+id: 94
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8793f2e5-7b64-4bf8-a12d-ba4f9a1e5806","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"hu.com/a"}},"parent_tool_use_id":null}}
+
+id: 95
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"35dba486-3755-4ab8-a3cc-d24cc927ffac","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"/heal"}},"parent_tool_use_id":null}}
+
+id: 96
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"57712f38-e4ad-4ac7-b14a-308bcb0d7515","event":{"type":"content_block_delta","index":1,"delta":{"type":"input_json_delta","partial_json":"th\"}"}},"parent_tool_use_id":null}}
+
+id: 97
+data: {"type":"assistant","message":{"type":"assistant","uuid":"6e2cb7f5-fa03-4ba2-a87b-e6963865e1d0","message":{"id":"msg_01Tr3na5jx45s1VQbmuukTKY","content":[{"type":"tool_use","id":"toolu_01GsSWgJov4vrPPhJtqGEWJn","name":"WebFetch","input":{"prompt":"找出2024-2025年关于健身、减脂、健康饮食的热门话题和趋势，包括流行的食材、饮食方法、运动方式等","url":"https://www.sohu.com/a/health"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":510},"cache_creation_input_tokens":510,"cache_read_input_tokens":31183,"input_tokens":39,"output_tokens":3,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 98
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8c47236a-28c5-46cf-b26c-3e547dc0f341","event":{"type":"content_block_stop","index":1},"parent_tool_use_id":null}}
+
+id: 99
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"214ddbd0-b872-4974-a07d-4c6ba742d669","event":{"type":"content_block_start","index":2,"content_block":{"type":"tool_use","id":"toolu_01S8HoYhw1JDDTkR5R8cwzqW","name":"WebFetch","input":{}}},"parent_tool_use_id":null}}
+
+id: 100
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dd71c6f6-4796-420c-a8e8-ab07d56f7d76","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 101
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f4f535a4-cfdb-4faf-b95d-b71556d1abda","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"{\"pro"}},"parent_tool_use_id":null}}
+
+id: 102
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"222a32ff-b855-468d-95cc-80d22c8eb0b2","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"mpt\":"}},"parent_tool_use_id":null}}
+
+id: 103
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eaab1709-2544-4ea3-9619-9bdb68f5bc13","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":" \"找出健"}},"parent_tool_use_id":null}}
+
+id: 104
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c9bd8fd-7f2c-49c0-a105-eac5a097ee5c","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"身减脂、健康饮食"}},"parent_tool_use_id":null}}
+
+id: 105
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6edd6d3e-2552-447d-b3bb-1686e6011b18","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"相关的"}},"parent_tool_use_id":null}}
+
+id: 106
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ed41e6ef-a8de-4817-8a8d-7c254582f864","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"热门话题\""}},"parent_tool_use_id":null}}
+
+id: 107
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0d63b486-796f-45a5-ad56-42987cad41d3","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":", "}},"parent_tool_use_id":null}}
+
+id: 108
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"89f0e369-4fdf-4952-a0cd-ac192cf97191","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"\"url"}},"parent_tool_use_id":null}}
+
+id: 109
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c6b94024-28f1-4387-8691-0cc44f22e5b6","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"\": \"h"}},"parent_tool_use_id":null}}
+
+id: 110
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bf1b928b-cf8a-4de1-9116-ccffa9873d49","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"ttps://www"}},"parent_tool_use_id":null}}
+
+id: 111
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3709b486-112a-467b-925f-1f95384dd63d","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":".163"}},"parent_tool_use_id":null}}
+
+id: 112
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2b42c187-a1eb-4621-988f-7bebac3b2bc1","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":".c"}},"parent_tool_use_id":null}}
+
+id: 113
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8e5b140e-d0b2-460a-a3bc-1d3a1df531bf","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"om/dy"}},"parent_tool_use_id":null}}
+
+id: 114
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"82cccdd1-1110-4573-b8d9-de305fcae49b","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"/article/"}},"parent_tool_use_id":null}}
+
+id: 115
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f60638ba-8338-486b-9cc3-7f2b4fef9b8c","event":{"type":"content_block_delta","index":2,"delta":{"type":"input_json_delta","partial_json":"health\"}"}},"parent_tool_use_id":null}}
+
+id: 116
+data: {"type":"assistant","message":{"type":"assistant","uuid":"d3ceb3ea-a1c5-40d5-a6f2-d4723edbab59","message":{"id":"msg_01Tr3na5jx45s1VQbmuukTKY","content":[{"type":"tool_use","id":"toolu_01S8HoYhw1JDDTkR5R8cwzqW","name":"WebFetch","input":{"prompt":"找出健身减脂、健康饮食相关的热门话题","url":"https://www.163.com/dy/article/health"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":510},"cache_creation_input_tokens":510,"cache_read_input_tokens":31183,"input_tokens":39,"output_tokens":3,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 117
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f98095f-f91b-4433-8a0c-12b29f3b1aaa","event":{"type":"content_block_stop","index":2},"parent_tool_use_id":null}}
+
+id: 118
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"714433cb-c01b-491e-bd0b-b024267feeb0","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":510,"cache_read_input_tokens":31183,"input_tokens":39,"output_tokens":235}},"parent_tool_use_id":null}}
+
+id: 119
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b172a74f-b5b9-4a6d-a3aa-4470387b5109","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 120
+data: {"type":"user","message":{"type":"user","uuid":"c636493a-c32b-4750-a3f7-0691312d6035","message":{"content":[{"tool_use_id":"toolu_01GsSWgJov4vrPPhJtqGEWJn","type":"tool_result","content":"REDIRECT DETECTED: The URL redirects to a different host.\n\nOriginal URL: https://www.sohu.com/a/health\nRedirect URL: http://www.sohu.com/404.html\nStatus: 302 Found\n\nTo complete your request, I need to fetch content from the redirected URL. Please use WebFetch again with these parameters:\n- url: \"http://www.sohu.com/404.html\"\n- prompt: \"找出2024-2025年关于健身、减脂、健康饮食的热门话题和趋势，包括流行的食材、饮食方法、运动方式等\""}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":{"bytes":474,"code":302,"codeText":"Found","result":"REDIRECT DETECTED: The URL redirects to a different host.\n\nOriginal URL: https://www.sohu.com/a/health\nRedirect URL: http://www.sohu.com/404.html\nStatus: 302 Found\n\nTo complete your request, I need to fetch content from the redirected URL. Please use WebFetch again with these parameters:\n- url: \"http://www.sohu.com/404.html\"\n- prompt: \"找出2024-2025年关于健身、减脂、健康饮食的热门话题和趋势，包括流行的食材、饮食方法、运动方式等\"","durationMs":1423,"url":"https://www.sohu.com/a/health"}}}
+
+id: 121
+data: {"type":"keep_alive"}
+
+id: 122
+data: {"type":"user","message":{"type":"user","uuid":"9f2f0f34-392b-4c1b-93c1-826e87b4268f","message":{"content":[{"type":"tool_result","content":"getaddrinfo EAI_AGAIN www.163.com","is_error":true,"tool_use_id":"toolu_01S8HoYhw1JDDTkR5R8cwzqW"}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":"Error: getaddrinfo EAI_AGAIN www.163.com"}}
+
+id: 123
+data: {"type":"keep_alive"}
+
+id: 124
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c419fe88-ca27-40eb-929c-9cbc18d39c16","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01VkWf6rqczkdH7pGT2XuQSH","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":507,"cache_read_input_tokens":31693,"cache_creation":{"ephemeral_5m_input_tokens":507,"ephemeral_1h_input_tokens":0},"output_tokens":25,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 125
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4adc9c2-c68d-46e6-bdd5-08634d9ab760","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_01Y4arL6xqbQ18kEf1qd7F3E","name":"WebFetch","input":{}}},"parent_tool_use_id":null}}
+
+id: 126
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b9f3b3d6-cee6-49b9-b1bb-5cadc9218aa4","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 127
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"65a34751-36b6-47b0-9a1b-a246a2d945b2","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\"prompt\":"}},"parent_tool_use_id":null}}
+
+id: 128
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31e849b5-3d2a-4b08-a42b-b3cd17f64a6f","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" \"找"}},"parent_tool_use_id":null}}
+
+id: 129
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec0fa55f-e21f-45cd-8614-1066f65b751e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"出202"}},"parent_tool_use_id":null}}
+
+id: 130
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e5d0846-42c4-4972-8785-7e7e2e2973fa","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"4-202"}},"parent_tool_use_id":null}}
+
+id: 131
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"96ac62c5-4bce-471c-b7a1-e5b79cb3deed","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"5年健身减脂、健康"}},"parent_tool_use_id":null}}
+
+id: 132
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0c003ee-ac2a-431d-a9eb-f12ecd05e55e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"饮食"}},"parent_tool_use_id":null}}
+
+id: 133
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b353da8f-dadf-45af-a13d-66200347d585","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"的热门趋"}},"parent_tool_use_id":null}}
+
+id: 134
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8046a91c-18f0-4f40-981a-84bedeb57b04","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"势和话题\""}},"parent_tool_use_id":null}}
+
+id: 135
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"894236ea-3e8c-4578-b174-38b607482243","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":", \""}},"parent_tool_use_id":null}}
+
+id: 136
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7813b0bc-71f6-42f3-8d9d-577b86e18e5d","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"url\": \"h"}},"parent_tool_use_id":null}}
+
+id: 137
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f3b7be9-5eed-45cb-a081-c16e982d9f27","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"ttps://ww"}},"parent_tool_use_id":null}}
+
+id: 138
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0490e7d3-4cc5-441f-9667-b382f0dcfc9e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"w.t"}},"parent_tool_use_id":null}}
+
+id: 139
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ed4f96ae-238f-4551-9ee7-350d35712785","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"hepape"}},"parent_tool_use_id":null}}
+
+id: 140
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"010fd927-7f96-4085-a069-632e0eea17a1","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"r.c"}},"parent_tool_use_id":null}}
+
+id: 141
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf5ce040-71bd-47d6-bbf9-55fbeaddbd4e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"n/list_25635"}},"parent_tool_use_id":null}}
+
+id: 142
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f31c6219-7115-4282-af27-23d24aeb5ad3","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"\"}"}},"parent_tool_use_id":null}}
+
+id: 143
+data: {"type":"assistant","message":{"type":"assistant","uuid":"f4dca221-61bd-4c32-9d2d-fed85bede2a5","message":{"id":"msg_01VkWf6rqczkdH7pGT2XuQSH","content":[{"type":"tool_use","id":"toolu_01Y4arL6xqbQ18kEf1qd7F3E","name":"WebFetch","input":{"prompt":"找出2024-2025年健身减脂、健康饮食的热门趋势和话题","url":"https://www.thepaper.cn/list_25635"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":507},"cache_creation_input_tokens":507,"cache_read_input_tokens":31693,"input_tokens":1,"output_tokens":25,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 144
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"baf1feec-80dd-497c-ad0f-784363ae4194","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 145
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b18a9646-d395-4650-bbac-8657bc8935ee","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":507,"cache_read_input_tokens":31693,"input_tokens":1,"output_tokens":110}},"parent_tool_use_id":null}}
+
+id: 146
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc09a769-8a0c-4456-b1e1-a82ea388c7e2","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 147
+data: {"type":"keep_alive"}
+
+id: 148
+data: {"type":"user","message":{"type":"user","uuid":"e00b83e6-a0da-42fa-a84e-1c3a568e1d7b","message":{"content":[{"tool_use_id":"toolu_01Y4arL6xqbQ18kEf1qd7F3E","type":"tool_result","content":"REDIRECT DETECTED: The URL redirects to a different host.\n\nOriginal URL: https://www.thepaper.cn/list_25635\nRedirect URL: https://m.thepaper.cn/list_25635\nStatus: 302 Found\n\nTo complete your request, I need to fetch content from the redirected URL. Please use WebFetch again with these parameters:\n- url: \"https://m.thepaper.cn/list_25635\"\n- prompt: \"找出2024-2025年健身减脂、健康饮食的热门趋势和话题\""}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":{"bytes":421,"code":302,"codeText":"Found","result":"REDIRECT DETECTED: The URL redirects to a different host.\n\nOriginal URL: https://www.thepaper.cn/list_25635\nRedirect URL: https://m.thepaper.cn/list_25635\nStatus: 302 Found\n\nTo complete your request, I need to fetch content from the redirected URL. Please use WebFetch again with these parameters:\n- url: \"https://m.thepaper.cn/list_25635\"\n- prompt: \"找出2024-2025年健身减脂、健康饮食的热门趋势和话题\"","durationMs":2679,"url":"https://www.thepaper.cn/list_25635"}}}
+
+id: 149
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e52eda0f-d01c-4135-83b9-2b793b72659e","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01CRt6sEGjf7ENa2Nhc2aKBE","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":261,"cache_read_input_tokens":32200,"cache_creation":{"ephemeral_5m_input_tokens":261,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 150
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cc6d3153-f360-4930-94c3-30d9889e2023","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 151
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac8f171d-93e6-4258-81fe-a705186e01d1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"基"}},"parent_tool_use_id":null}}
+
+id: 152
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"012b50eb-5a20-4836-8aa7-c07198fce016","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"于我"}},"parent_tool_use_id":null}}
+
+id: 153
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"afc7f338-48af-4e85-88b7-d5c496cdc385","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对当"}},"parent_tool_use_id":null}}
+
+id: 154
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0daeae6c-a674-43f0-be69-63e5d79a6913","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"前健康"}},"parent_tool_use_id":null}}
+
+id: 155
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74d1c02e-d752-4044-b38c-daa8d0b95d03","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮食热点的专"}},"parent_tool_use_id":null}}
+
+id: 156
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"87fc433b-12b5-4a2e-aef8-e83de03d1d63","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"业了"}},"parent_tool_use_id":null}}
+
+id: 157
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"88e2db04-a8d2-419c-817e-f521d8b83724","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"解（"}},"parent_tool_use_id":null}}
+
+id: 158
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f5fa148-f066-4672-9fd3-b772438cab4a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"包"}},"parent_tool_use_id":null}}
+
+id: 159
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e2ca41a1-4a9a-4bc6-a89e-9b39a349579b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"括："}},"parent_tool_use_id":null}}
+
+id: 160
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"26a39bcc-b083-4149-ad4c-31e9f284f7ce","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"低"}},"parent_tool_use_id":null}}
+
+id: 161
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"68ba4c3d-93de-458a-b838-a32f3686a90d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"G"}},"parent_tool_use_id":null}}
+
+id: 162
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"41f04032-6dc7-4461-9842-cbae549270c1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"I"}},"parent_tool_use_id":null}}
+
+id: 163
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3c8516d9-a301-4793-aff5-03399d676e6c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮食、地"}},"parent_tool_use_id":null}}
+
+id: 164
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3692906a-3cad-44b4-a865-e84747e6a043","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"中海饮食、16"}},"parent_tool_use_id":null}}
+
+id: 165
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d02066ac-ed22-4b25-99ae-2a4594955173","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":8"}},"parent_tool_use_id":null}}
+
+id: 166
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"389c1808-87ce-4275-bf07-b366a0869c86","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"轻断食、高"}},"parent_tool_use_id":null}}
+
+id: 167
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"00250f56-8179-44bf-9244-744cff27ea23","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"蛋白饮食、"}},"parent_tool_use_id":null}}
+
+id: 168
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7a761884-d153-43b4-a757-82572d5d5e59","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"无"}},"parent_tool_use_id":null}}
+
+id: 169
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"363da4f4-c17b-4bd5-98a4-f6dfbf4b59df","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"糖/"}},"parent_tool_use_id":null}}
+
+id: 170
+data: {"type":"keep_alive"}
+
+id: 171
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e0751c15-6075-4d59-b5bb-70c962ca722b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"低糖生"}},"parent_tool_use_id":null}}
+
+id: 172
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4f8b801a-fb5e-4b46-83c7-e9e59f3bc900","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"活"}},"parent_tool_use_id":null}}
+
+id: 173
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0e5d3ed-6c3a-4827-a607-7ac5a58ad15d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"、"}},"parent_tool_use_id":null}}
+
+id: 174
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d9d18f79-3946-49a9-818e-c88636a836e0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"白"}},"parent_tool_use_id":null}}
+
+id: 175
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c5fcefe2-14ee-4390-82f2-d5e616965807","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"人"}},"parent_tool_use_id":null}}
+
+id: 176
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33189744-47de-4938-be7d-7001e0d7a00b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饭"}},"parent_tool_use_id":null}}
+
+id: 177
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e99a5270-6548-4cbd-a990-9228fe46d37b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"/"}},"parent_tool_use_id":null}}
+
+id: 178
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"928aa5b3-a254-4610-beb3-0ddf8bd7c0bf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"沙拉"}},"parent_tool_use_id":null}}
+
+id: 179
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"00af230f-fe27-48b5-831c-55633cb3d59b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"轻食、"}},"parent_tool_use_id":null}}
+
+id: 180
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d218973-3b83-4a10-8be4-924d839c88bb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帕"}},"parent_tool_use_id":null}}
+
+id: 181
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"146e5d1a-4ed5-45cd-b91d-5d3e64dcaa7e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"梅拉健"}},"parent_tool_use_id":null}}
+
+id: 182
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f252d28c-260f-4a5c-a946-1030b8b83bf9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"身"}},"parent_tool_use_id":null}}
+
+id: 183
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1fc99f88-252f-49c1-872e-9cc182a5dd69","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"操"}},"parent_tool_use_id":null}}
+
+id: 184
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f00d2882-d670-40b1-a2e1-5550560a9e98","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"、"}},"parent_tool_use_id":null}}
+
+id: 185
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eea2fac3-2bcf-42ae-947d-13b76a86d888","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"刘"}},"parent_tool_use_id":null}}
+
+id: 186
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"088e453e-ff2e-4701-a7d7-fc49772b93a5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"畊"}},"parent_tool_use_id":null}}
+
+id: 187
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"64bed6eb-e114-4e3b-8505-1d4693b896e5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"宏健身操、"}},"parent_tool_use_id":null}}
+
+id: 188
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"618eb434-bddd-4bc3-96fa-102c418d3919","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"普"}},"parent_tool_use_id":null}}
+
+id: 189
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa9630e4-7a76-4d89-8376-a874062f041a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拉提/"}},"parent_tool_use_id":null}}
+
+id: 190
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0dd2f5f-7cc5-4666-9f5c-9b4f1ed41e74","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"瑜伽、居"}},"parent_tool_use_id":null}}
+
+id: 191
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6daa3678-63c1-4e58-83e5-1dba4518f9a5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"家"}},"parent_tool_use_id":null}}
+
+id: 192
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"55cf868e-d17e-48b5-8645-c19ebca49d86","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"燃脂运动等"}},"parent_tool_use_id":null}}
+
+id: 193
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d0f9d71-f3cd-44cd-91a0-9ecd685a58a5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"趋势），我为"}},"parent_tool_use_id":null}}
+
+id: 194
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fe1c9d70-f046-479a-af4e-3cc18efaa30d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"你生成以"}},"parent_tool_use_id":null}}
+
+id: 195
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"733c5116-c759-4dc8-8c63-16db1099a315","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"下10个选"}},"parent_tool_use_id":null}}
+
+id: 196
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"32907d78-1fea-4be0-b8f1-1761316c2f9f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题：\n\n---"}},"parent_tool_use_id":null}}
+
+id: 197
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"79869eed-2c10-45c3-a6c1-f746ebf5fce5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n##"}},"parent_tool_use_id":null}}
+
+id: 198
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"06193003-b246-4a59-bf53-f69c088537e0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 199
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5ecdf910-2783-43dd-ac5a-23966f299453","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🔥 健身减脂短"}},"parent_tool_use_id":null}}
+
+id: 200
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f35cd92-2c96-48dd-9a7c-2ab7fdcbf7a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"视频选题（"}},"parent_tool_use_id":null}}
+
+id: 201
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d49d40c8-7620-4e0f-9692-286bb63d4942","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"适"}},"parent_tool_use_id":null}}
+
+id: 202
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3f95c2d6-6a54-4077-a171-c59e5efbdaaa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合抖音年"}},"parent_tool_use_id":null}}
+
+id: 203
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3a6e1aa-f8bc-481c-9807-fcbabda6b39e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"轻女性用"}},"parent_tool_use_id":null}}
+
+id: 204
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4662b8d-9b73-4cf0-9789-565da17afe35","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"户）\n\n### "}},"parent_tool_use_id":null}}
+
+id: 205
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d7e64775-2de5-42a3-825c-143ef6f4b646","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"📋"}},"parent_tool_use_id":null}}
+
+id: 206
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d7fdcc01-ac11-46c7-873f-cbfffd44b058","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **"}},"parent_tool_use_id":null}}
+
+id: 207
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1c7d315b-0c71-4744-9f59-f7d2310b35fe","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"选"}},"parent_tool_use_id":null}}
+
+id: 208
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d30d5a3f-f444-413d-af67-934db9136cf9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题清"}},"parent_tool_use_id":null}}
+
+id: 209
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"20fae9af-ef96-42b2-8a98-79a5d9a54538","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"单**\n\n|"}},"parent_tool_use_id":null}}
+
+id: 210
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"13f30522-d175-4516-ac6d-0836ad3cfb3d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 序"}},"parent_tool_use_id":null}}
+
+id: 211
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"df2c68f8-1827-4600-81a9-6a8ceb03b1a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"号 | 选题标"}},"parent_tool_use_id":null}}
+
+id: 212
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1cd8f27c-0fa4-40cb-a8f9-7a1c1f3cacfe","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题 | 热"}},"parent_tool_use_id":null}}
+
+id: 213
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cb1b4c80-be71-4213-ba30-337da969a638","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"点结"}},"parent_tool_use_id":null}}
+
+id: 214
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"76132173-c117-4e1f-90dd-200c219526df","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合 "}},"parent_tool_use_id":null}}
+
+id: 215
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1908b2dd-cd80-4b3f-9675-b9b4ed56c81a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| 内"}},"parent_tool_use_id":null}}
+
+id: 216
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"34deab0c-65d9-4b81-8c2c-567f57427223","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容方"}},"parent_tool_use_id":null}}
+
+id: 217
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"da0a2b89-9a38-4416-b093-aaa52838c156","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"向 |"}},"parent_tool_use_id":null}}
+
+id: 218
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b90fa360-5e2b-4643-a180-ababf815fc22","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n|------|----------|----------|"}},"parent_tool_use_id":null}}
+
+id: 219
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b27d2b71-21f0-46a6-8021-fdd1d7d2e775","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"----------|\n| **"}},"parent_tool_use_id":null}}
+
+id: 220
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0ef13ced-a763-45d8-8d29-89f86ebc2804","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"1** | "}},"parent_tool_use_id":null}}
+
+id: 221
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5f53fab-7dac-4393-9807-003d24a68a6c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🥗 **"}},"parent_tool_use_id":null}}
+
+id: 222
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc1c328b-2afa-4192-828a-be35173102ab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\""}},"parent_tool_use_id":null}}
+
+id: 223
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad057d04-90bd-47af-8fda-df6a55a2b932","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"白"}},"parent_tool_use_id":null}}
+
+id: 224
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c7ec81bd-d151-4444-b866-314cb6ca00e6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"人饭\""}},"parent_tool_use_id":null}}
+
+id: 225
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c039755b-1a65-4523-a278-35a37c8c2b81","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"升"}},"parent_tool_use_id":null}}
+
+id: 226
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2abeca1d-c315-4ad5-9043-196c4cb20935","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"级版"}},"parent_tool_use_id":null}}
+
+id: 227
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"18e653f5-03d6-427e-9d95-0d5b6209ebfb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"！"}},"parent_tool_use_id":null}}
+
+id: 228
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f88808a-8bcf-4918-bdf1-066c93f01b1a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"5"}},"parent_tool_use_id":null}}
+
+id: 229
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1c423fc4-d272-4d48-be73-a2dddfab6022","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"款"}},"parent_tool_use_id":null}}
+
+id: 230
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"69868a51-66bf-423a-bb4c-2a398721fa9e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"办"}},"parent_tool_use_id":null}}
+
+id: 231
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b0abedef-1921-4003-b1b8-bc4745bb06bd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"公室减脂便"}},"parent_tool_use_id":null}}
+
+id: 232
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e92fbd4-f6a7-4d64-bcc7-e7792f5a5163","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"当，"}},"parent_tool_use_id":null}}
+
+id: 233
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"16168197-6749-41c0-b9af-05f5f0e8bf01","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吃"}},"parent_tool_use_id":null}}
+
+id: 234
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"86247797-6809-4892-8d99-49c38dffdde4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饱"}},"parent_tool_use_id":null}}
+
+id: 235
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"85781c8b-8475-42c2-91d2-f8480189b2b4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"还"}},"parent_tool_use_id":null}}
+
+id: 236
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"937dec46-9fc8-48fe-b9e1-8b88607a3f44","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"能"}},"parent_tool_use_id":null}}
+
+id: 237
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"999f2ac4-ab34-413f-93c1-a8da1812c8ae","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"瘦**"}},"parent_tool_use_id":null}}
+
+id: 238
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33f84479-9694-43d3-846d-9e0d326cf8f5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 白"}},"parent_tool_use_id":null}}
+
+id: 239
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"396c4feb-a2ce-404f-bdfc-4336823e3491","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"人饭热"}},"parent_tool_use_id":null}}
+
+id: 240
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"829e63c5-e252-479d-aebe-48f9d11a88d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"潮+"}},"parent_tool_use_id":null}}
+
+id: 241
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95dde034-aa06-4e08-a22c-e5dc601457d1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"办"}},"parent_tool_use_id":null}}
+
+id: 242
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6fc41667-7087-44e6-84be-b3f0523852f0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"公族"}},"parent_tool_use_id":null}}
+
+id: 243
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e65450bb-35b0-4fb2-9e8d-a5c9be6925ef","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"痛点 | 展"}},"parent_tool_use_id":null}}
+
+id: 244
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2be0b4eb-8fbd-46c2-a613-be4b02f26be1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"示"}},"parent_tool_use_id":null}}
+
+id: 245
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1af38a00-1552-44ab-bddc-575b2c74cc1c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"5"}},"parent_tool_use_id":null}}
+
+id: 246
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6e72f1f9-1ddb-4fdb-b98b-fcce2822aa16","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"款简"}},"parent_tool_use_id":null}}
+
+id: 247
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b48b4226-22cf-423d-89ad-c9d3c74b65e5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"单易做的低"}},"parent_tool_use_id":null}}
+
+id: 248
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5e098d91-6228-48bd-93ca-198a320cd767","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"卡便"}},"parent_tool_use_id":null}}
+
+id: 249
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"108c3bba-75b7-47d0-8d89-4c9337a0864a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"当，突"}},"parent_tool_use_id":null}}
+
+id: 250
+data: {"type":"keep_alive"}
+
+id: 251
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f20d64c5-6eb1-4f71-9e83-1430d2f4d8cf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"出"}},"parent_tool_use_id":null}}
+
+id: 252
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bc9821a5-3003-4f45-b726-4fcef0dbb02a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\""}},"parent_tool_use_id":null}}
+
+id: 253
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"07365adc-315d-41f8-9082-1f0580635d45","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"不"}},"parent_tool_use_id":null}}
+
+id: 254
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"15a0fdb1-3311-44df-b1e2-ee8acf0c0381","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饿"}},"parent_tool_use_id":null}}
+
+id: 255
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eb8d2296-f54c-4103-9b2d-3bf474c32d2f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"肚子也"}},"parent_tool_use_id":null}}
+
+id: 256
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5617b10e-6407-4115-aa05-7664c13523f1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"能瘦\""}},"parent_tool_use_id":null}}
+
+id: 257
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a997a401-f6f3-4f26-bbd6-0e646dad3d93","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| **2** | "}},"parent_tool_use_id":null}}
+
+id: 258
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0cc39867-1cfc-450f-bd89-9981cc729b92","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"💪 **"}},"parent_tool_use_id":null}}
+
+id: 259
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"59972fae-e6dd-4bde-8ecc-9c85258d1dd0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"跟"}},"parent_tool_use_id":null}}
+
+id: 260
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b388588a-996f-4730-ab7c-f281a136fb80","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"着"}},"parent_tool_use_id":null}}
+
+id: 261
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"431e57ae-ac10-40f3-a978-f147b1c587f7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帕梅拉"}},"parent_tool_use_id":null}}
+
+id: 262
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d1ad85fc-6f35-496a-bb90-81ba214008a2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"跳"}},"parent_tool_use_id":null}}
+
+id: 263
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"012101e7-98ae-472c-9e71-6a7cea21ac35","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"了"}},"parent_tool_use_id":null}}
+
+id: 264
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4751e25c-9488-423f-9325-9fe32430dffd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"30"}},"parent_tool_use_id":null}}
+
+id: 265
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c3a79019-872a-43ba-a0b1-c7c27fcf02bc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"天"}},"parent_tool_use_id":null}}
+
+id: 266
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa6da375-31ec-4d0b-951a-69a611a24197","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"，"}},"parent_tool_use_id":null}}
+
+id: 267
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c754b24-ccf8-477c-9e8e-98096e74b86e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"我的身"}},"parent_tool_use_id":null}}
+
+id: 268
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ca585d9-fcb9-4e97-98e0-be6beb14c836","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"体变"}},"parent_tool_use_id":null}}
+
+id: 269
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8c90c206-b8f5-4799-9cf9-61b026086967","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化太"}},"parent_tool_use_id":null}}
+
+id: 270
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33752b2e-7806-4ddd-98c4-5fe7ffd5b4fa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"惊人了** | 帕"}},"parent_tool_use_id":null}}
+
+id: 271
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"777d9f1a-1bc8-4614-aee0-65fa13473b82","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"梅拉健身热"}},"parent_tool_use_id":null}}
+
+id: 272
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"54cc7004-1f6d-4311-8d0c-14dc3826052a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 273
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"67a979a3-8547-48e5-a262-0498b1a1ee66","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| 真"}},"parent_tool_use_id":null}}
+
+id: 274
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d45fe8d-b78f-4eae-9b1d-df72be745fec","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"实记"}},"parent_tool_use_id":null}}
+
+id: 275
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f1f98e83-4092-434f-b28b-eddb80f351cf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"录"}},"parent_tool_use_id":null}}
+
+id: 276
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8148eb2-26eb-4abe-a163-ff687c968b85","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"跟练"}},"parent_tool_use_id":null}}
+
+id: 277
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2645118e-6a10-47bf-9df8-0802c453b0d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"效"}},"parent_tool_use_id":null}}
+
+id: 278
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"43a1f414-ce50-4df3-b4e0-391b189d73ad","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"果，对"}},"parent_tool_use_id":null}}
+
+id: 279
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ab05e9cf-31b2-40a0-819e-166ce27b5ea9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"比前"}},"parent_tool_use_id":null}}
+
+id: 280
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d906c0f-fa31-4b57-9356-f023ae8e5964","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"后身"}},"parent_tool_use_id":null}}
+
+id: 281
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a4e0a4d2-04a8-4c8f-9bc4-b7cd75d086c8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"材变化，"}},"parent_tool_use_id":null}}
+
+id: 282
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e345c6a9-4ebe-419a-be45-04db1e580949","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"增"}},"parent_tool_use_id":null}}
+
+id: 283
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf1e5e99-4579-4b28-8f35-ef4454d9d4f2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"加"}},"parent_tool_use_id":null}}
+
+id: 284
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"29570b04-61a6-4c55-9fda-4b022b83d743","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"信服"}},"parent_tool_use_id":null}}
+
+id: 285
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ff9bd99c-c3d2-4171-b59c-a8dd99710805","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"力"}},"parent_tool_use_id":null}}
+
+id: 286
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"da0eda36-2f98-4390-b568-fcf7959f4956","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| **3** |"}},"parent_tool_use_id":null}}
+
+id: 287
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7f37a4c7-dc7c-421e-9b91-e9961de80d06","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 288
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"34097f3d-0eae-46c1-96a2-0c44f25a0349","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🍚"}},"parent_tool_use_id":null}}
+
+id: 289
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"980e02d3-84c1-49d3-86bd-cea53a55c396","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **低"}},"parent_tool_use_id":null}}
+
+id: 290
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c63244aa-9dc3-4351-bb24-d698f530768e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"GI主"}},"parent_tool_use_id":null}}
+
+id: 291
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"80324bc4-376b-4cfd-b2f2-616f6d26c70d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"食替"}},"parent_tool_use_id":null}}
+
+id: 292
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e3f99855-8d85-485e-9402-7c448d1b456e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"换"}},"parent_tool_use_id":null}}
+
+id: 293
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8451071-5992-4cd2-b494-dacaf4ae8a4a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"指"}},"parent_tool_use_id":null}}
+
+id: 294
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6b87e2c6-9324-4459-918d-818e65280d65","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"南"}},"parent_tool_use_id":null}}
+
+id: 295
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0cc9533e-fcbb-40d2-86ac-80e78c92f3af","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜告"}},"parent_tool_use_id":null}}
+
+id: 296
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e0ca24af-18c3-4229-b81e-685921789e18","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"别米"}},"parent_tool_use_id":null}}
+
+id: 297
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"305732f6-18b4-4d79-9782-a14c58563fac","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饭"}},"parent_tool_use_id":null}}
+
+id: 298
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ddac8cf0-9d46-43a5-b5e1-1b975842e532","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"馒头，这样"}},"parent_tool_use_id":null}}
+
+id: 299
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"10ef0dfd-0cbd-4f07-9034-bad6f64d13e7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吃血"}},"parent_tool_use_id":null}}
+
+id: 300
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1b6ccd90-94c1-4ad6-a173-dffd200a102e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"糖"}},"parent_tool_use_id":null}}
+
+id: 301
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d121e70b-34cf-4468-8e77-c7157ae279d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"稳"}},"parent_tool_use_id":null}}
+
+id: 302
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"13175dfb-a666-4cfd-b382-db756dd85bb6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"稳的"}},"parent_tool_use_id":null}}
+
+id: 303
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"887a1203-1c1f-446a-9035-e6997ef9372b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"** | "}},"parent_tool_use_id":null}}
+
+id: 304
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1a76be98-e325-4e95-9abe-085eaca4d528","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"低GI饮食"}},"parent_tool_use_id":null}}
+
+id: 305
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e013186c-fa9a-42a9-872b-8ac7c9287b3c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"趋势 | 介"}},"parent_tool_use_id":null}}
+
+id: 306
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"81cf066b-30b7-4933-8720-967d13d7badd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"绍"}},"parent_tool_use_id":null}}
+
+id: 307
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3ea2c8a0-a506-400c-b096-96a65fb1e6cc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"糙"}},"parent_tool_use_id":null}}
+
+id: 308
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"903c3382-37e3-4928-b0ae-3835a697362f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"米、燕麦、"}},"parent_tool_use_id":null}}
+
+id: 309
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"183e086b-638e-4c7d-9616-0b2f1be2078f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荞麦面"}},"parent_tool_use_id":null}}
+
+id: 310
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"45d0cdd2-6879-433b-8aea-6fd55ee18150","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"等低GI主"}},"parent_tool_use_id":null}}
+
+id: 311
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95ebf976-730d-4f08-b926-50643d6e485e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"食，配"}},"parent_tool_use_id":null}}
+
+id: 312
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a3356282-aff2-4302-a5f3-6d3f4066e425","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合简"}},"parent_tool_use_id":null}}
+
+id: 313
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f4665ef-d44e-4e14-bf37-5ea5547e6744","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"单食"}},"parent_tool_use_id":null}}
+
+id: 314
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2148e462-975c-44a9-950c-546776c64a39","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"谱 "}},"parent_tool_use_id":null}}
+
+id: 315
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"da41c3b5-1934-423d-88ca-81631c76cb7a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"|\n| **4** | "}},"parent_tool_use_id":null}}
+
+id: 316
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"546c6bb8-6d61-46b9-a6b7-7faec47fc8bc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"⏰ **16"}},"parent_tool_use_id":null}}
+
+id: 317
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e0cc3cb4-6ca5-48ca-a96a-069b4cf65bae","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":8轻断食一"}},"parent_tool_use_id":null}}
+
+id: 318
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f54beb5f-0166-45de-8314-36c40eae36b8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"周"}},"parent_tool_use_id":null}}
+
+id: 319
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5d740b72-812e-446f-af98-1b3aad79227b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"挑战"}},"parent_tool_use_id":null}}
+
+id: 320
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"71942c32-7219-4681-895e-d8d2daa15c3d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜小"}},"parent_tool_use_id":null}}
+
+id: 321
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7cbc06fd-512b-4c73-9f64-5c4539431451","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"基"}},"parent_tool_use_id":null}}
+
+id: 322
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4199426d-a508-4554-99db-79c337511c1f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"数女"}},"parent_tool_use_id":null}}
+
+id: 323
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8d251fd1-34aa-4011-9e4d-8e47949fd6f8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"生"}},"parent_tool_use_id":null}}
+
+id: 324
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d3d15265-acb1-465f-a7af-d2bc752c1b1a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"亲测"}},"parent_tool_use_id":null}}
+
+id: 325
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b49dd711-2719-4170-92e3-18a8bcdc987c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"掉"}},"parent_tool_use_id":null}}
+
+id: 326
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"271309ea-ce2b-4170-a48b-d49bcd64716d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"秤记"}},"parent_tool_use_id":null}}
+
+id: 327
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d8bb5f86-221c-4f12-8a78-9ff41d4fbd7f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"录** | "}},"parent_tool_use_id":null}}
+
+id: 328
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f1f70d63-cd7d-475b-9e19-8432738fcd9a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"轻断食热"}},"parent_tool_use_id":null}}
+
+id: 329
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"80d3bffa-ebc6-446b-be61-040efe5d446c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"潮 | 记"}},"parent_tool_use_id":null}}
+
+id: 330
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b695b2e0-21cd-492c-a99b-446313cfce72","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"录一"}},"parent_tool_use_id":null}}
+
+id: 331
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"23a07b51-7266-4645-b984-4ec8137d3c77","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"周轻断食过程，"}},"parent_tool_use_id":null}}
+
+id: 332
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ba2452bb-e4b0-43b4-91f4-49230539228b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"分享执"}},"parent_tool_use_id":null}}
+
+id: 333
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"acaa599d-3d82-43ac-a797-16eb45f25724","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"行技巧和"}},"parent_tool_use_id":null}}
+
+id: 334
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5bd94f6b-66c0-4df8-9ab9-1d958c945dbb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"注"}},"parent_tool_use_id":null}}
+
+id: 335
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b5c59286-25cf-4347-ab22-2dddbd31fb35","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"意事项 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 336
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a52cf45-ac07-402a-adf3-acdf48433275","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"5** | 🧘 "}},"parent_tool_use_id":null}}
+
+id: 337
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f96fcc89-5eea-4dc5-a6c5-316ae83a494f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**早"}},"parent_tool_use_id":null}}
+
+id: 338
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1cffe2ef-0e50-4171-b23a-0a84694e8041","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"起"}},"parent_tool_use_id":null}}
+
+id: 339
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ae6d3063-26de-44f8-9a00-5c022b2ce6e8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"10"}},"parent_tool_use_id":null}}
+
+id: 340
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2a407a30-95c2-4c22-8eba-ab128ec5e615","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"分钟普"}},"parent_tool_use_id":null}}
+
+id: 341
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74e65565-1afc-4233-8c4b-da5927aed21b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拉提｜专"}},"parent_tool_use_id":null}}
+
+id: 342
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"10bcec45-22de-4967-9f7c-c8b53ad59826","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"瘦假"}},"parent_tool_use_id":null}}
+
+id: 343
+data: {"type":"keep_alive"}
+
+id: 344
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"68da286d-cac9-4c50-9a9d-2f2e12790bb0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"胯"}},"parent_tool_use_id":null}}
+
+id: 345
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b0b94d63-e59c-41bc-86e9-2a589c695e32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"宽+"}},"parent_tool_use_id":null}}
+
+id: 346
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"66cedc1e-1982-4632-a3c6-e3235223f047","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"大腿内"}},"parent_tool_use_id":null}}
+
+id: 347
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8e729968-1547-4fe1-ac31-3f2d4646219c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"侧肉"}},"parent_tool_use_id":null}}
+
+id: 348
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7bd1f49a-b786-43d2-8353-8579519dd6ce","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**"}},"parent_tool_use_id":null}}
+
+id: 349
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e3603ffc-1d76-4311-8ed0-76070d19ae19","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 普拉提流"}},"parent_tool_use_id":null}}
+
+id: 350
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31b8103b-debc-4f1d-8a8d-ee53ad157d5a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"行+"}},"parent_tool_use_id":null}}
+
+id: 351
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8ecc8eea-ef5d-44e3-b8a7-9e902b07fc94","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"身"}},"parent_tool_use_id":null}}
+
+id: 352
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e67df72-2836-4d60-bc43-1b8fe6499aa3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"材"}},"parent_tool_use_id":null}}
+
+id: 353
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2db45145-f3b2-46b1-8929-6af071115e40","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"焦虑"}},"parent_tool_use_id":null}}
+
+id: 354
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6f4e74d2-475a-4f02-9214-b613b68c6498","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"痛点 | 针"}},"parent_tool_use_id":null}}
+
+id: 355
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c074473-d730-408d-bb96-eeadc613fc8a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对女"}},"parent_tool_use_id":null}}
+
+id: 356
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ef7fb83b-2e69-4747-8a33-75659a290b35","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性常"}},"parent_tool_use_id":null}}
+
+id: 357
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"796a0f24-51ee-4c6e-87a7-dfb4958b78f3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"见身"}},"parent_tool_use_id":null}}
+
+id: 358
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"db21700e-77e0-4d40-b4f7-6ed51e180be0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"材问"}},"parent_tool_use_id":null}}
+
+id: 359
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"716146c4-b75d-4b5d-b51d-28a1f0b3e7cd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题，提"}},"parent_tool_use_id":null}}
+
+id: 360
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"453338e1-24e0-43ff-8cff-0d5c01b58086","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"供针"}},"parent_tool_use_id":null}}
+
+id: 361
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"84854f89-07f0-48ba-a034-fb485656aa11","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对性动"}},"parent_tool_use_id":null}}
+
+id: 362
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f658a0a-88a6-476f-bc93-524e72b0d1f7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"作教"}},"parent_tool_use_id":null}}
+
+id: 363
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3bcf99b6-deb6-46a1-8b6e-b93ba41726cd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"学 |\n| **6**"}},"parent_tool_use_id":null}}
+
+id: 364
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6430eac3-06ca-41b3-9125-77daa837d684","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | "}},"parent_tool_use_id":null}}
+
+id: 365
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9979a97c-979f-474b-bced-447c97768020","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🥤"}},"parent_tool_use_id":null}}
+
+id: 366
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"43bf4036-f6a6-4f40-9646-24aabb6e7eee","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **无糖生"}},"parent_tool_use_id":null}}
+
+id: 367
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f070c69c-bac3-40b4-a3d4-d4290e0ddabb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"活第"}},"parent_tool_use_id":null}}
+
+id: 368
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7fe77e20-780f-4187-a734-5c419880670d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"7"}},"parent_tool_use_id":null}}
+
+id: 369
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3055efeb-6ecb-42e5-b27c-7b18e33d9845","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"天"}},"parent_tool_use_id":null}}
+
+id: 370
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"504dc36d-4e25-481d-ae8e-a6808fc8e0de","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜"}},"parent_tool_use_id":null}}
+
+id: 371
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0305d2ff-22ff-4f6b-9b45-f662249a861a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"戒糖后"}},"parent_tool_use_id":null}}
+
+id: 372
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2addc944-94f4-4818-be72-bbdf5e4ccc80","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"皮"}},"parent_tool_use_id":null}}
+
+id: 373
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39713182-01df-45f4-bdf7-308761a9da4d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"肤和"}},"parent_tool_use_id":null}}
+
+id: 374
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"07da8735-db4d-4d1a-9f42-478665195a35","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"身体的"}},"parent_tool_use_id":null}}
+
+id: 375
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c1593ecb-66a3-48ff-91d7-5891071647e5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"真"}},"parent_tool_use_id":null}}
+
+id: 376
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"812556ea-8523-4d35-9ee2-71c547f4a423","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"实"}},"parent_tool_use_id":null}}
+
+id: 377
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"69b0afa7-4788-4be7-8d18-46823eb03946","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"变化** | 无糖"}},"parent_tool_use_id":null}}
+
+id: 378
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"97b8e99f-712e-4bd6-862b-b82422d30e2e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"生活趋势 | "}},"parent_tool_use_id":null}}
+
+id: 379
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"098674f7-c92d-47c6-ab34-f666e986dd01","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"记"}},"parent_tool_use_id":null}}
+
+id: 380
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6eb2631d-25db-49ea-86c8-d14d5dd6cfd7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"录"}},"parent_tool_use_id":null}}
+
+id: 381
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a7527c5d-f6b2-47c6-bb25-5570931868fd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"戒糖"}},"parent_tool_use_id":null}}
+
+id: 382
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8e35bb5f-b81f-4e3c-be4a-0ece63721f0e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"挑战，"}},"parent_tool_use_id":null}}
+
+id: 383
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1afdcdf-2f1b-4802-9ce1-4b9777e4b5fa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"展"}},"parent_tool_use_id":null}}
+
+id: 384
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf15bd29-769b-41f5-8f7a-7124b8b5c207","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"示"}},"parent_tool_use_id":null}}
+
+id: 385
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"67ec0e30-1128-4a73-8e6e-46ea5f55a1dd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"皮肤改善、"}},"parent_tool_use_id":null}}
+
+id: 386
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74ff0c5f-471e-4703-adff-5ad3ba2fad7d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"体重变"}},"parent_tool_use_id":null}}
+
+id: 387
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2abc45bb-0ecb-411c-a2a4-4d0e9054cfe6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化等效果 |\n|"}},"parent_tool_use_id":null}}
+
+id: 388
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9619c9b0-8245-4a9e-ae4a-f1439adf5d32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **7** | "}},"parent_tool_use_id":null}}
+
+id: 389
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9b1a4224-2def-4995-8808-f16dc6dfdbc1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🥑"}},"parent_tool_use_id":null}}
+
+id: 390
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2764f7c8-867b-4959-8658-580f2c181676","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **地中海饮食"}},"parent_tool_use_id":null}}
+
+id: 391
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2a75caf1-388e-4ce4-a89d-e43f94113ae6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"入"}},"parent_tool_use_id":null}}
+
+id: 392
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"50c7cffe-ce86-4ebd-ac39-479269643129","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门｜"}},"parent_tool_use_id":null}}
+
+id: 393
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa6f00b8-fb3d-47eb-9972-0fc0c8a346f0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"懒人也能"}},"parent_tool_use_id":null}}
+
+id: 394
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2ff5b0ef-8425-459a-8444-343909833bea","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"坚持的减"}},"parent_tool_use_id":null}}
+
+id: 395
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"08de1308-b4d7-4f9c-bc61-25a83e59ff7a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"脂"}},"parent_tool_use_id":null}}
+
+id: 396
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"244c3e66-fd3a-4580-9a9f-efbbdcdd6998","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吃法** | 地中海"}},"parent_tool_use_id":null}}
+
+id: 397
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4d4551d-1cec-4ffb-bd42-d59f30195cc5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮食热"}},"parent_tool_use_id":null}}
+
+id: 398
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2fbcab7b-013a-4891-89c7-17bd69efd35b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"度"}},"parent_tool_use_id":null}}
+
+id: 399
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"53baf835-7588-4914-867d-f652347f7db4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"上"}},"parent_tool_use_id":null}}
+
+id: 400
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e41e267e-f59a-4caa-9b92-8eb1e6b87ea6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"升 | 介绍地"}},"parent_tool_use_id":null}}
+
+id: 401
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0004ce44-0263-427d-8b2d-426a33ccedac","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"中海饮食原"}},"parent_tool_use_id":null}}
+
+id: 402
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"754f5c4d-4f74-443f-93dd-1f8eb9384c66","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"则，提"}},"parent_tool_use_id":null}}
+
+id: 403
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d2dc169-d1df-42e1-a22f-0f8a8823bb34","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"供简单上"}},"parent_tool_use_id":null}}
+
+id: 404
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b18ec456-1c61-43ab-b7bb-57e3b660a632","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手的一"}},"parent_tool_use_id":null}}
+
+id: 405
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"84607b0e-37b7-4c8c-bf22-8435e87e5541","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"周"}},"parent_tool_use_id":null}}
+
+id: 406
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"feb52bdf-aab5-4a26-a875-89b8845e33b1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"食谱 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 407
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c6564b44-581a-42db-9f1a-4f0cec7fe61d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"8** | 🏃"}},"parent_tool_use_id":null}}
+
+id: 408
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc703cfa-4a60-4810-aaa0-d2e60946354a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"‍♀️ **"}},"parent_tool_use_id":null}}
+
+id: 409
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c4e92360-8dd8-4270-ac06-fcff4c49ca5f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"刘畊宏女"}},"parent_tool_use_id":null}}
+
+id: 410
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a1cedac9-2578-4d02-a14c-b0d357bfb6a3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"孩2"}},"parent_tool_use_id":null}}
+
+id: 411
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fa169a93-5d6d-45a7-af6b-628619555eab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"."}},"parent_tool_use_id":null}}
+
+id: 412
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2daffb7a-a4b3-4818-bc34-e7ebee6a8769","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"0！"}},"parent_tool_use_id":null}}
+
+id: 413
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f418234-41cc-44eb-9b61-0c4685e123f4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"宿"}},"parent_tool_use_id":null}}
+
+id: 414
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"600ba8b1-fb95-4e9d-8943-f1d6fd8ade0c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"舍/"}},"parent_tool_use_id":null}}
+
+id: 415
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fdf4a492-126e-48f5-97d7-5ba6ce83b991","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"出"}},"parent_tool_use_id":null}}
+
+id: 416
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3511c25a-769a-43c9-8368-6242b6bfe8dc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"租"}},"parent_tool_use_id":null}}
+
+id: 417
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a6bf2c2f-3d9d-4fab-a101-b1173c19f367","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"屋也能"}},"parent_tool_use_id":null}}
+
+id: 418
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4f2c985e-06c8-4a87-81ef-048e764213c7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"跳"}},"parent_tool_use_id":null}}
+
+id: 419
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f742ddd7-49a8-4a62-9467-774533329200","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"的静"}},"parent_tool_use_id":null}}
+
+id: 420
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d60274bb-1a9f-40cf-abb4-55c0f10e5277","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"音"}},"parent_tool_use_id":null}}
+
+id: 421
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"20f0ab2f-cd0f-4da6-8457-470d826b63b2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"燃脂操** | "}},"parent_tool_use_id":null}}
+
+id: 422
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b49cd734-7777-4d82-983a-2c4bac3545dd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"刘畊宏热"}},"parent_tool_use_id":null}}
+
+id: 423
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"380c976b-b3d1-4ab0-884e-a666236337b3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"潮延"}},"parent_tool_use_id":null}}
+
+id: 424
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4167ba6c-12cb-481e-bdee-ae10761cb8e1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"续+"}},"parent_tool_use_id":null}}
+
+id: 425
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a9b0a89f-ca41-4f3a-bc96-3682c5700546","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"租"}},"parent_tool_use_id":null}}
+
+id: 426
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b0169aff-40a8-46e1-adb1-ff017a6c2679","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"房"}},"parent_tool_use_id":null}}
+
+id: 427
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b5e10ffd-d4c2-4284-8657-3f031b8e663a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"痛点 | 改"}},"parent_tool_use_id":null}}
+
+id: 428
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c795c9c-4600-4557-a5fe-442e28bb8354","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"良"}},"parent_tool_use_id":null}}
+
+id: 429
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4becc64-369c-433e-9548-1e2c8c9832f6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"版静"}},"parent_tool_use_id":null}}
+
+id: 430
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b80b5c59-a6fc-4ac2-9c1a-c479ce9b81fc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"音有"}},"parent_tool_use_id":null}}
+
+id: 431
+data: {"type":"keep_alive"}
+
+id: 432
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"96c29251-be04-4f6a-9016-1a67dddd8919","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"氧操"}},"parent_tool_use_id":null}}
+
+id: 433
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"219342ec-db88-4422-952d-2495062eedf9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"，解"}},"parent_tool_use_id":null}}
+
+id: 434
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8b1aaff6-66f8-468b-9268-08089ff7e3a1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"决"}},"parent_tool_use_id":null}}
+
+id: 435
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"888ea0f0-0ab1-40ea-a792-9459975c00ed","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"扰"}},"parent_tool_use_id":null}}
+
+id: 436
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"13fedd1f-ef50-4a77-881d-ebb3cbcbb5dd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"民"}},"parent_tool_use_id":null}}
+
+id: 437
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f7c2095a-a634-498b-9062-a3c1b53e23e4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"和"}},"parent_tool_use_id":null}}
+
+id: 438
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f7e4bc1-0a8e-4fea-89f3-e20bf628b6cf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"空"}},"parent_tool_use_id":null}}
+
+id: 439
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aac056f2-2fa8-4d7c-961f-39fac8096474","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"间限"}},"parent_tool_use_id":null}}
+
+id: 440
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b9a40c99-022e-408d-b659-4541aee79d38","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"制问题 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 441
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e72761fc-7ee8-4117-8def-428b37d05862","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"9** | "}},"parent_tool_use_id":null}}
+
+id: 442
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e880df62-7c81-430a-9dbc-6989ead3b1d7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🍗"}},"parent_tool_use_id":null}}
+
+id: 443
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0a6bbdcc-3b7e-4d7e-986b-b85891771b3f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **高"}},"parent_tool_use_id":null}}
+
+id: 444
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"221e0500-a683-4160-89e9-be589b8ac3d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"蛋白减"}},"parent_tool_use_id":null}}
+
+id: 445
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5b7b60ae-c242-4767-a742-75ad1457b483","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"脂"}},"parent_tool_use_id":null}}
+
+id: 446
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5343f842-3808-404a-bb96-8583058cea18","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"餐"}},"parent_tool_use_id":null}}
+
+id: 447
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2aea5540-41ef-4be5-9d4d-43fdeb89b8be","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜一"}},"parent_tool_use_id":null}}
+
+id: 448
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6baeda11-fdd4-466c-b1ef-12270b404d49","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"天"}},"parent_tool_use_id":null}}
+
+id: 449
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a6fcd0be-bf3c-41d3-948f-3d1d20781dbb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"100"}},"parent_tool_use_id":null}}
+
+id: 450
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5c6cca25-6ec6-48ef-b4e7-15c1fee7e447","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"g"}},"parent_tool_use_id":null}}
+
+id: 451
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b88a63e0-4cb7-48af-9ca5-01edae48961f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"蛋白质"}},"parent_tool_use_id":null}}
+
+id: 452
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"87e8b2e7-098a-4f53-afc9-7284eea2289d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"怎么吃？"}},"parent_tool_use_id":null}}
+
+id: 453
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7fac0deb-5634-478c-af70-6eb625d9a195","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"** | 高蛋白"}},"parent_tool_use_id":null}}
+
+id: 454
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8f77626f-db2a-4e3c-b694-406f805278f2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮食趋势 |"}},"parent_tool_use_id":null}}
+
+id: 455
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74980168-94e0-4e3b-a39c-66fbe465db4b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 详"}},"parent_tool_use_id":null}}
+
+id: 456
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fbe9d940-8241-4ed1-b183-ac71a4d8edad","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"细"}},"parent_tool_use_id":null}}
+
+id: 457
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ae478f27-045b-4e51-ac3d-e9c4c786d596","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拆解一"}},"parent_tool_use_id":null}}
+
+id: 458
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c3d57f2a-792b-4ed6-a556-3678e28eaa6c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"日"}},"parent_tool_use_id":null}}
+
+id: 459
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f14fe1cc-0210-46cb-9287-5ba8169b5d64","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"三"}},"parent_tool_use_id":null}}
+
+id: 460
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"72037856-e9cb-4207-a576-b5625499f432","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"餐如"}},"parent_tool_use_id":null}}
+
+id: 461
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1fcf4cea-4500-4b8a-9844-09cedd55880c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"何"}},"parent_tool_use_id":null}}
+
+id: 462
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"677d7c3d-9b15-468a-8a12-ac3706e16b88","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"轻松达"}},"parent_tool_use_id":null}}
+
+id: 463
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b05489c2-e3f8-4877-ae47-8709ec881490","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"到蛋白质"}},"parent_tool_use_id":null}}
+
+id: 464
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2db9d64b-07ca-4bed-a265-5363170d657b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"摄入目"}},"parent_tool_use_id":null}}
+
+id: 465
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6a0568af-a7fa-4a28-9681-285c13881d05","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标 |\n| **10**"}},"parent_tool_use_id":null}}
+
+id: 466
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"877495cc-27a2-41bd-bec5-bdbe564f5fff","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | "}},"parent_tool_use_id":null}}
+
+id: 467
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3eea8aa0-614e-43b6-98f3-454893f808b8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"📊"}},"parent_tool_use_id":null}}
+
+id: 468
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a6a5f221-7457-4900-8b75-855f319dcd6a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **"}},"parent_tool_use_id":null}}
+
+id: 469
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"725ab075-754e-4589-b6ae-b8e9fba6b89e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"姨"}},"parent_tool_use_id":null}}
+
+id: 470
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3dcbb19b-6f2b-4c45-b267-705a3f2564b4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妈期"}},"parent_tool_use_id":null}}
+
+id: 471
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3005ac6c-c061-4e34-8e3c-8dee6586e759","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"减"}},"parent_tool_use_id":null}}
+
+id: 472
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec13952c-0d21-4b75-b449-31020be1085c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"脂指"}},"parent_tool_use_id":null}}
+
+id: 473
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d8879961-3a13-41c3-a914-452de4443199","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"南｜生"}},"parent_tool_use_id":null}}
+
+id: 474
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fea75b98-29a7-4081-8c9d-dfb7f75d368f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"理期这"}},"parent_tool_use_id":null}}
+
+id: 475
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"46919137-4556-47b1-af33-8d5c1ed10ec2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"样"}},"parent_tool_use_id":null}}
+
+id: 476
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4516f60c-37cd-4eb9-bfb3-d76a8ec7234b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吃动"}},"parent_tool_use_id":null}}
+
+id: 477
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d2e0292-884f-413f-bad6-bc06cec7ab56","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"，"}},"parent_tool_use_id":null}}
+
+id: 478
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8c33886-d5d5-447d-8c03-c8b7b396cb79","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"效"}},"parent_tool_use_id":null}}
+
+id: 479
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc2b16b5-6459-40b0-b51a-aa988531b50f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"率"}},"parent_tool_use_id":null}}
+
+id: 480
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1523b98-bc59-4edc-b339-aa070246e214","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"翻倍！** | "}},"parent_tool_use_id":null}}
+
+id: 481
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6dd4953e-9b68-40c8-9347-63eb8775d428","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"女"}},"parent_tool_use_id":null}}
+
+id: 482
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6b0e125f-72d1-4eda-99a5-b53a6d7d7a24","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性专"}},"parent_tool_use_id":null}}
+
+id: 483
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc03bda3-bdc3-43e8-980d-82d54c6b009e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"属"}},"parent_tool_use_id":null}}
+
+id: 484
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c9f0907c-f07e-4bd4-9a18-38ae503555d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"痛点+"}},"parent_tool_use_id":null}}
+
+id: 485
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"32fd9c2b-c160-4373-8023-a7b6c7ae0134","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"科"}},"parent_tool_use_id":null}}
+
+id: 486
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5fab1b31-f314-4089-acdf-252775b5530b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"学减"}},"parent_tool_use_id":null}}
+
+id: 487
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"63446dce-8b37-4cfb-a20a-2be344cbee5e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"脂 | 针"}},"parent_tool_use_id":null}}
+
+id: 488
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9d83ca28-1ae5-4760-bcc6-38e6c8517e55","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对女"}},"parent_tool_use_id":null}}
+
+id: 489
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"264a5626-dbd3-482f-8ca4-a6dc6c73a3ac","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性生理周"}},"parent_tool_use_id":null}}
+
+id: 490
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2fd91f42-0038-4684-8006-999a306c8234","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"期，"}},"parent_tool_use_id":null}}
+
+id: 491
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d4ff35d-d185-4267-8977-8d9d5d34c0b2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"分享不"}},"parent_tool_use_id":null}}
+
+id: 492
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bac4855a-570e-437d-b651-89372da69a6a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"同"}},"parent_tool_use_id":null}}
+
+id: 493
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7cc3013e-69ae-498d-b746-9521d3fa9edc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"阶段的"}},"parent_tool_use_id":null}}
+
+id: 494
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"be33cd46-5018-442e-8178-dda686f7f607","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"饮食运"}},"parent_tool_use_id":null}}
+
+id: 495
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"684da170-0739-415f-9e2d-c0d8cdb3c8bd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"动建"}},"parent_tool_use_id":null}}
+
+id: 496
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3bb236f5-5053-4985-a790-6f572aaecf3b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"议 |\n\n---"}},"parent_tool_use_id":null}}
+
+id: 497
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5eda7017-a072-45a1-86d9-e377710acc55","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n###"}},"parent_tool_use_id":null}}
+
+id: 498
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ed9604e0-bc09-48df-8190-e171a0c79ddd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 499
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dfd9ba93-eccb-4ef0-ada3-731fbe4bd019","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"💡 **选"}},"parent_tool_use_id":null}}
+
+id: 500
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d40955b-dfd1-4971-ba10-9bc20d82e031","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题特点分"}},"parent_tool_use_id":null}}
+
+id: 501
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7e2d2564-cc3a-405f-9ef9-b34f0a2e1760","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"析**\n\n|"}},"parent_tool_use_id":null}}
+
+id: 502
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b275558f-8911-4640-b9d3-af587369a06e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 维"}},"parent_tool_use_id":null}}
+
+id: 503
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"215a32c4-c8a2-470b-84ea-2f780c9f57be","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"度 | 策"}},"parent_tool_use_id":null}}
+
+id: 504
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a0a96a55-51c5-4921-a444-c14966ca27bd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"略 |"}},"parent_tool_use_id":null}}
+
+id: 505
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"df132dbb-742e-4ec1-9f33-c14069c525bd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n|------|---"}},"parent_tool_use_id":null}}
+
+id: 506
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a5d18b25-75d7-46aa-99c6-ad711f8213c3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"---|\n| **目"}},"parent_tool_use_id":null}}
+
+id: 507
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8c9c51ae-b78c-497c-a3a2-d9381944300a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标人群** | 18"}},"parent_tool_use_id":null}}
+
+id: 508
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"af9125f0-8ad5-417f-851b-fc32fe9df1d6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-30"}},"parent_tool_use_id":null}}
+
+id: 509
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"62e8730a-b49e-4941-9d7f-7d08e3ef36f6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"岁年轻女性，"}},"parent_tool_use_id":null}}
+
+id: 510
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aa81edc5-2b20-4d4c-82b4-36ee1373b85e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"关"}},"parent_tool_use_id":null}}
+
+id: 511
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1bc94b42-90d2-420f-af87-3be7d5bd07e7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"注身"}},"parent_tool_use_id":null}}
+
+id: 512
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"47fe7a0d-5a3c-46d8-a4ac-281634a310c4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"材管"}},"parent_tool_use_id":null}}
+
+id: 513
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"397071f7-a6fb-401f-9118-219435bbf01b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"理、"}},"parent_tool_use_id":null}}
+
+id: 514
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3ea1692-76de-49cd-8493-4152e9e4864f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"健康生"}},"parent_tool_use_id":null}}
+
+id: 515
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"62202d90-0dc7-4ca5-9523-f5cc2a0737fb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"活 |\n| **热"}},"parent_tool_use_id":null}}
+
+id: 516
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"74e19f49-5d01-45f3-b0d0-36c5993569cf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"点结"}},"parent_tool_use_id":null}}
+
+id: 517
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2159613b-056a-4f30-b8ae-325e6fdfba2b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合** | 白人饭"}},"parent_tool_use_id":null}}
+
+id: 518
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"45a132e7-f50e-4aa6-ada3-902d5304a3a1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"、"}},"parent_tool_use_id":null}}
+
+id: 519
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8d5432d7-3bcf-409b-8e78-d2a19a98f24b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帕梅拉、轻"}},"parent_tool_use_id":null}}
+
+id: 520
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cb96e791-d034-4a6d-9c14-a96a520d8f84","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"断食、无"}},"parent_tool_use_id":null}}
+
+id: 521
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c79eb1e6-977f-43a1-9d70-d303bfbce8f9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"糖生活等2"}},"parent_tool_use_id":null}}
+
+id: 522
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8e82ac2f-ed55-477f-963c-b9c9047b0118","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"024-"}},"parent_tool_use_id":null}}
+
+id: 523
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8dfd301-5ce3-4bd1-8aae-0086b175bc2b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"2025热"}},"parent_tool_use_id":null}}
+
+id: 524
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"189928d1-56fd-4223-b37d-f0d09862a46a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门"}},"parent_tool_use_id":null}}
+
+id: 525
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"007df79a-bfe5-448f-8117-5983ad635e8e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"话题 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 526
+data: {"type":"keep_alive"}
+
+id: 527
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1429cc1d-4292-4d86-bcc2-87831b1d12cd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"痛点切"}},"parent_tool_use_id":null}}
+
+id: 528
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"290d9e23-63ee-473b-9239-cd181a94f2bc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"入** | 办"}},"parent_tool_use_id":null}}
+
+id: 529
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51bd97b1-9075-4fc5-872f-90cb8b87db63","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"公久"}},"parent_tool_use_id":null}}
+
+id: 530
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"42d78b25-8321-468b-b519-cac97c2e31c3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"坐、假"}},"parent_tool_use_id":null}}
+
+id: 531
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec000aa3-31ec-4829-b221-58bf8e27ff86","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"胯宽、租"}},"parent_tool_use_id":null}}
+
+id: 532
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9eb519d6-3e79-437e-b507-ead1b9d30a15","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"房空"}},"parent_tool_use_id":null}}
+
+id: 533
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac63a0ad-5a42-4290-99af-615f95e62231","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"间小"}},"parent_tool_use_id":null}}
+
+id: 534
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ce0ecb9e-b5a0-4954-99df-2ee88adbf76f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"、"}},"parent_tool_use_id":null}}
+
+id: 535
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4acc4ae4-8c9b-42fb-9165-c3e876f8efd2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"姨妈期等女"}},"parent_tool_use_id":null}}
+
+id: 536
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dea4b8ab-c882-4884-917b-c60c4e37260f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性真"}},"parent_tool_use_id":null}}
+
+id: 537
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7d5d94db-44d7-4245-9751-d141e7fc6280","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"实困"}},"parent_tool_use_id":null}}
+
+id: 538
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c51a8ef8-a9a8-4f9e-aee7-f659f7f65060","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"扰 |\n| **内"}},"parent_tool_use_id":null}}
+
+id: 539
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"007d6e26-2bef-41ac-a866-733add2b1935","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容形式** | "}},"parent_tool_use_id":null}}
+
+id: 540
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0c154954-f771-49c1-8af2-3eb931d62d48","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"挑战记"}},"parent_tool_use_id":null}}
+
+id: 541
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4425cd37-9262-4763-9df8-38475c0254af","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"录、教"}},"parent_tool_use_id":null}}
+
+id: 542
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad496919-39be-4490-8e3a-4a25a170b318","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程"}},"parent_tool_use_id":null}}
+
+id: 543
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e2bb141d-45b0-462a-befb-46898ddc5445","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"分享、测"}},"parent_tool_use_id":null}}
+
+id: 544
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bb934061-6142-466d-b8bf-84457bbdd21a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评"}},"parent_tool_use_id":null}}
+
+id: 545
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"16870cf2-c014-4d4f-9e94-bc765d311638","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对"}},"parent_tool_use_id":null}}
+
+id: 546
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3a0fb0a0-beee-4bc2-af47-4f9ae24bedac","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"比，"}},"parent_tool_use_id":null}}
+
+id: 547
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"52ff2ce7-705c-4180-b8f6-7ea3a8f70f0e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"符合抖音"}},"parent_tool_use_id":null}}
+
+id: 548
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51d8d3dd-8bd6-4b8f-8e31-c92cbc3f6511","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"爆款模"}},"parent_tool_use_id":null}}
+
+id: 549
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4ee6cd3b-67d7-42db-a917-fbc8f56f4e1a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"式 |"}},"parent_tool_use_id":null}}
+
+id: 550
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3860d381-49c7-4137-bc76-7179fe92d10f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n| **情"}},"parent_tool_use_id":null}}
+
+id: 551
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2884e92d-c9e8-4c97-9233-6ee5d2f4e5a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"感共鸣** | "}},"parent_tool_use_id":null}}
+
+id: 552
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2b64a07b-5a73-4c32-a277-26b9b8b163b9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"强"}},"parent_tool_use_id":null}}
+
+id: 553
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b87e9bb9-1519-454f-80db-0a3b0e74b15a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"调\""}},"parent_tool_use_id":null}}
+
+id: 554
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"761bfb10-5574-44c4-87b2-d308a81aa960","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"不饿肚子\"\""}},"parent_tool_use_id":null}}
+
+id: 555
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9212e04b-039b-4e17-90f1-a9c94bb4ee54","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"懒人也能做"}},"parent_tool_use_id":null}}
+
+id: 556
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5ad2a382-c281-459c-be5c-e26fe116ad74","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\"\"小"}},"parent_tool_use_id":null}}
+
+id: 557
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9267dd2c-7530-4cfb-9b3a-bc27dfa2f8b7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"基数也"}},"parent_tool_use_id":null}}
+
+id: 558
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d7b4e1e-e7b4-471c-b2bc-7be92dbba968","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"能瘦\" |\n\n---"}},"parent_tool_use_id":null}}
+
+id: 559
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e626a6ab-db55-48e6-9ff0-f4af0d2988cc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n### 🎬"}},"parent_tool_use_id":null}}
+
+id: 560
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ea533968-99dd-44ca-8fc9-f1c32b2a17fe","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **推"}},"parent_tool_use_id":null}}
+
+id: 561
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12a0701a-6cc9-4309-9b9e-b25b8cf71e11","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"荐优"}},"parent_tool_use_id":null}}
+
+id: 562
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d35756d-3c01-4ed9-b27b-dc6dca9ec3f4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"先"}},"parent_tool_use_id":null}}
+
+id: 563
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5dcd7357-78cb-4a23-896c-97ed47c261e0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拍摄**"}},"parent_tool_use_id":null}}
+
+id: 564
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3e112ea-da78-4809-afab-3f57949680c0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n1. **选"}},"parent_tool_use_id":null}}
+
+id: 565
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b67457aa-9e18-467d-9e5b-0d03aa762f12","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题5"}},"parent_tool_use_id":null}}
+
+id: 566
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f001201d-654d-4697-936b-1b741a2b70a3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**"}},"parent_tool_use_id":null}}
+
+id: 567
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f7f21de-5ca1-4930-9df9-2889500e906c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"（"}},"parent_tool_use_id":null}}
+
+id: 568
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a0d72308-fa3e-40d8-ab98-928b5df33ed2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"普"}},"parent_tool_use_id":null}}
+
+id: 569
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"174d41e5-946e-4e04-9668-91391c2e8df6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"拉提假"}},"parent_tool_use_id":null}}
+
+id: 570
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"69698158-569b-4b30-8c36-be457981bead","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"胯宽）"}},"parent_tool_use_id":null}}
+
+id: 571
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"177d9323-277c-42df-b5a1-74151afa54aa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-"}},"parent_tool_use_id":null}}
+
+id: 572
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a7aec3af-bcfb-41d0-9e56-dd4e690ce674","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 573
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"75d273a5-5ff0-4828-b9f7-c3dd50cb222d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"痛点精"}},"parent_tool_use_id":null}}
+
+id: 574
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2eab03d0-9b99-41d0-8b14-e4a8e8f689ff","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"准，教"}},"parent_tool_use_id":null}}
+
+id: 575
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9563ebbc-b2d0-4a67-a957-28305187ef81","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程"}},"parent_tool_use_id":null}}
+
+id: 576
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"327ed97c-d090-4b90-bebd-8e24e6a5f52c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"类"}},"parent_tool_use_id":null}}
+
+id: 577
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e35eec8-bbaa-468f-bcc4-9b5f02f1f659","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"内容易"}},"parent_tool_use_id":null}}
+
+id: 578
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0fe490d7-b383-4f56-8d75-1212b5f6a69b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"爆\n2. **选题1"}},"parent_tool_use_id":null}}
+
+id: 579
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d59c8ee5-59c8-40b3-8f34-b4d342f9fa7e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**（白人饭升级"}},"parent_tool_use_id":null}}
+
+id: 580
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e15a58b5-b279-494b-8c83-d3363ba2c955","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"版）- "}},"parent_tool_use_id":null}}
+
+id: 581
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eb6508ee-b52e-4432-a49d-628eeec04c10","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"蹭"}},"parent_tool_use_id":null}}
+
+id: 582
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c98758c-473e-4ee1-b6b0-51c9ec488d88","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"热点"}},"parent_tool_use_id":null}}
+
+id: 583
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c51bbe49-2c08-4301-8c85-e3e7215b171a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"+"}},"parent_tool_use_id":null}}
+
+id: 584
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9af11dd8-5cf3-470b-b1de-d62e132945f7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"实"}},"parent_tool_use_id":null}}
+
+id: 585
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1ea2fa94-a35a-4a41-baa8-0da393586532","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"用性强\n3. **选"}},"parent_tool_use_id":null}}
+
+id: 586
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e69c352c-1d5e-4845-bdd0-b954c6b4124d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题10"}},"parent_tool_use_id":null}}
+
+id: 587
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"424f2102-aed9-4a30-9b4d-574db7ea16a8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**（"}},"parent_tool_use_id":null}}
+
+id: 588
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c4ddd25f-f76e-406a-ad88-9267c5f81f77","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"姨妈期减脂）"}},"parent_tool_use_id":null}}
+
+id: 589
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fb6cceca-8163-4e55-8cfd-5f85aae34c79","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"- 女"}},"parent_tool_use_id":null}}
+
+id: 590
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9e2ebedb-a477-4a0a-aa21-6c9242dc3256","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"性专属，差"}},"parent_tool_use_id":null}}
+
+id: 591
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9f758caf-2d21-4f68-8175-67f189b598b7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"异化内容"}},"parent_tool_use_id":null}}
+
+id: 592
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"814a4022-3537-41e0-96ee-f958847e0ed6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n需"}},"parent_tool_use_id":null}}
+
+id: 593
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5c83155a-57a5-48d6-a865-71c1ac6c4a1b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要我"}},"parent_tool_use_id":null}}
+
+id: 594
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"95d5e9e1-ebb7-4547-9da1-9bf9eb3c7655","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"针"}},"parent_tool_use_id":null}}
+
+id: 595
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8032af99-2826-425d-84c3-2c48bf0f8187","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对某"}},"parent_tool_use_id":null}}
+
+id: 596
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ff5462aa-1d67-4590-a0ac-d159897127fc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个选"}},"parent_tool_use_id":null}}
+
+id: 597
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"94f90461-22c5-4d7c-8fc5-da6cd20d5daa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题进一"}},"parent_tool_use_id":null}}
+
+id: 598
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b492b8a-97da-47d3-a44d-8a01a810a32d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"步细"}},"parent_tool_use_id":null}}
+
+id: 599
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"67c087ef-5985-4612-9962-e07680a7736b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化"}},"parent_tool_use_id":null}}
+
+id: 600
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"91fbdfa5-2946-4bf5-b667-dcb6f5e3e48f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"脚"}},"parent_tool_use_id":null}}
+
+id: 601
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8698c1e-714e-4eb9-970c-2b63cfab939f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"本或"}},"parent_tool_use_id":null}}
+
+id: 602
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c523e43-ecba-4ca9-89d0-a6a368bd5da3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"生"}},"parent_tool_use_id":null}}
+
+id: 603
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e5634bd-f420-4b74-9ff9-2748e360b00f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成配"}},"parent_tool_use_id":null}}
+
+id: 604
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d8f1771d-bf81-476a-b49b-1b9f0a30c85f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"套的"}},"parent_tool_use_id":null}}
+
+id: 605
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d6fdc53-b1a7-4553-9755-1789a002fc17","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"视频内容"}},"parent_tool_use_id":null}}
+
+id: 606
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2c8e63e0-cea4-409d-8c3b-506a6bc14614","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吗？"}},"parent_tool_use_id":null}}
+
+id: 607
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b997874a-393c-4a1a-a501-ccb6003d6977","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 608
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3d534def-87df-48b9-84d3-7b0b197396d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🎥"}},"parent_tool_use_id":null}}
+
+id: 609
+data: {"type":"assistant","message":{"type":"assistant","uuid":"ca201318-455e-4dc8-8f97-20676433dab6","message":{"id":"msg_01CRt6sEGjf7ENa2Nhc2aKBE","content":[{"type":"text","text":"基于我对当前健康饮食热点的专业了解（包括：低GI饮食、地中海饮食、16:8轻断食、高蛋白饮食、无糖/低糖生活、白人饭/沙拉轻食、帕梅拉健身操、刘畊宏健身操、普拉提/瑜伽、居家燃脂运动等趋势），我为你生成以下10个选题：\n\n---\n\n## 🔥 健身减脂短视频选题（适合抖音年轻女性用户）\n\n### 📋 **选题清单**\n\n| 序号 | 选题标题 | 热点结合 | 内容方向 |\n|------|----------|----------|----------|\n| **1** | 🥗 **\"白人饭\"升级版！5款办公室减脂便当，吃饱还能瘦** | 白人饭热潮+办公族痛点 | 展示5款简单易做的低卡便当，突出\"不饿肚子也能瘦\" |\n| **2** | 💪 **跟着帕梅拉跳了30天，我的身体变化太惊人了** | 帕梅拉健身热 | 真实记录跟练效果，对比前后身材变化，增加信服力 |\n| **3** | 🍚 **低GI主食替换指南｜告别米饭馒头，这样吃血糖稳稳的** | 低GI饮食趋势 | 介绍糙米、燕麦、荞麦面等低GI主食，配合简单食谱 |\n| **4** | ⏰ **16:8轻断食一周挑战｜小基数女生亲测掉秤记录** | 轻断食热潮 | 记录一周轻断食过程，分享执行技巧和注意事项 |\n| **5** | 🧘 **早起10分钟普拉提｜专瘦假胯宽+大腿内侧肉** | 普拉提流行+身材焦虑痛点 | 针对女性常见身材问题，提供针对性动作教学 |\n| **6** | 🥤 **无糖生活第7天｜戒糖后皮肤和身体的真实变化** | 无糖生活趋势 | 记录戒糖挑战，展示皮肤改善、体重变化等效果 |\n| **7** | 🥑 **地中海饮食入门｜懒人也能坚持的减脂吃法** | 地中海饮食热度上升 | 介绍地中海饮食原则，提供简单上手的一周食谱 |\n| **8** | 🏃‍♀️ **刘畊宏女孩2.0！宿舍/出租屋也能跳的静音燃脂操** | 刘畊宏热潮延续+租房痛点 | 改良版静音有氧操，解决扰民和空间限制问题 |\n| **9** | 🍗 **高蛋白减脂餐｜一天100g蛋白质怎么吃？** | 高蛋白饮食趋势 | 详细拆解一日三餐如何轻松达到蛋白质摄入目标 |\n| **10** | 📊 **姨妈期减脂指南｜生理期这样吃动，效率翻倍！** | 女性专属痛点+科学减脂 | 针对女性生理周期，分享不同阶段的饮食运动建议 |\n\n---\n\n### 💡 **选题特点分析**\n\n| 维度 | 策略 |\n|------|------|\n| **目标人群** | 18-30岁年轻女性，关注身材管理、健康生活 |\n| **热点结合** | 白人饭、帕梅拉、轻断食、无糖生活等2024-2025热门话题 |\n| **痛点切入** | 办公久坐、假胯宽、租房空间小、姨妈期等女性真实困扰 |\n| **内容形式** | 挑战记录、教程分享、测评对比，符合抖音爆款模式 |\n| **情感共鸣** | 强调\"不饿肚子\"\"懒人也能做\"\"小基数也能瘦\" |\n\n---\n\n### 🎬 **推荐优先拍摄**\n\n1. **选题5**（普拉提假胯宽）- 痛点精准，教程类内容易爆\n2. **选题1**（白人饭升级版）- 蹭热点+实用性强\n3. **选题10**（姨妈期减脂）- 女性专属，差异化内容\n\n需要我针对某个选题进一步细化脚本或生成配套的视频内容吗？ 🎥"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":261},"cache_creation_input_tokens":261,"cache_read_input_tokens":32200,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 610
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"791f7168-b874-4718-83ca-b95916f20c31","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 611
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"edc4dbac-df80-4a34-a51b-a1a76037c449","event":{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"cache_creation_input_tokens":261,"cache_read_input_tokens":32200,"input_tokens":1,"output_tokens":1455}},"parent_tool_use_id":null}}
+
+id: 612
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2acaf37f-2034-4f18-952c-bcdec3d526a7","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 613
+data: {"type":"result","message":{"type":"result","subtype":"success","uuid":"201f65f4-1d38-4948-926f-e0c7a36e089f","duration_ms":67376,"duration_api_ms":57191,"is_error":false,"num_turns":7,"message":"基于我对当前健康饮食热点的专业了解（包括：低GI饮食、地中海饮食、16:8轻断食、高蛋白饮食、无糖/低糖生活、白人饭/沙拉轻食、帕梅拉健身操、刘畊宏健身操、普拉提/瑜伽、居家燃脂运动等趋势），我为你生成以下10个选题：\n\n---\n\n## 🔥 健身减脂短视频选题（适合抖音年轻女性用户）\n\n### 📋 **选题清单**\n\n| 序号 | 选题标题 | 热点结合 | 内容方向 |\n|------|----------|----------|----------|\n| **1** | 🥗 **\"白人饭\"升级版！5款办公室减脂便当，吃饱还能瘦** | 白人饭热潮+办公族痛点 | 展示5款简单易做的低卡便当，突出\"不饿肚子也能瘦\" |\n| **2** | 💪 **跟着帕梅拉跳了30天，我的身体变化太惊人了** | 帕梅拉健身热 | 真实记录跟练效果，对比前后身材变化，增加信服力 |\n| **3** | 🍚 **低GI主食替换指南｜告别米饭馒头，这样吃血糖稳稳的** | 低GI饮食趋势 | 介绍糙米、燕麦、荞麦面等低GI主食，配合简单食谱 |\n| **4** | ⏰ **16:8轻断食一周挑战｜小基数女生亲测掉秤记录** | 轻断食热潮 | 记录一周轻断食过程，分享执行技巧和注意事项 |\n| **5** | 🧘 **早起10分钟普拉提｜专瘦假胯宽+大腿内侧肉** | 普拉提流行+身材焦虑痛点 | 针对女性常见身材问题，提供针对性动作教学 |\n| **6** | 🥤 **无糖生活第7天｜戒糖后皮肤和身体的真实变化** | 无糖生活趋势 | 记录戒糖挑战，展示皮肤改善、体重变化等效果 |\n| **7** | 🥑 **地中海饮食入门｜懒人也能坚持的减脂吃法** | 地中海饮食热度上升 | 介绍地中海饮食原则，提供简单上手的一周食谱 |\n| **8** | 🏃‍♀️ **刘畊宏女孩2.0！宿舍/出租屋也能跳的静音燃脂操** | 刘畊宏热潮延续+租房痛点 | 改良版静音有氧操，解决扰民和空间限制问题 |\n| **9** | 🍗 **高蛋白减脂餐｜一天100g蛋白质怎么吃？** | 高蛋白饮食趋势 | 详细拆解一日三餐如何轻松达到蛋白质摄入目标 |\n| **10** | 📊 **姨妈期减脂指南｜生理期这样吃动，效率翻倍！** | 女性专属痛点+科学减脂 | 针对女性生理周期，分享不同阶段的饮食运动建议 |\n\n---\n\n### 💡 **选题特点分析**\n\n| 维度 | 策略 |\n|------|------|\n| **目标人群** | 18-30岁年轻女性，关注身材管理、健康生活 |\n| **热点结合** | 白人饭、帕梅拉、轻断食、无糖生活等2024-2025热门话题 |\n| **痛点切入** | 办公久坐、假胯宽、租房空间小、姨妈期等女性真实困扰 |\n| **内容形式** | 挑战记录、教程分享、测评对比，符合抖音爆款模式 |\n| **情感共鸣** | 强调\"不饿肚子\"\"懒人也能做\"\"小基数也能瘦\" |\n\n---\n\n### 🎬 **推荐优先拍摄**\n\n1. **选题5**（普拉提假胯宽）- 痛点精准，教程类内容易爆\n2. **选题1**（白人饭升级版）- 蹭热点+实用性强\n3. **选题10**（姨妈期减脂）- 女性专属，差异化内容\n\n需要我针对某个选题进一步细化脚本或生成配套的视频内容吗？ 🎥","total_cost_usd":0.18370499999999998,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":1742},"cache_creation_input_tokens":1742,"cache_read_input_tokens":156893,"input_tokens":45,"output_tokens":2133,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+

@@ -1,0 +1,532 @@
+{
+  "seo": {
+    "title": "요금제 - 유연한 AI 크레딧 및 구독",
+    "description": "AI ToEarn은 무료 체험부터 프로페셔널 패키지까지 다양한 가격 플랜을 제공하여 다양한 사용자의 콘텐츠 제작 요구를 충족합니다. 동영상 생성, 이미지 생성, 다중 플랫폼 게시 및 기타 AI 기능을 지원합니다.",
+    "keywords": "AI 가격, 플랜 선택, 콘텐츠 제작 패키지, AI 구독, 동영상 생성 가격"
+  },
+  "pageTitle": "사용량 기반 결제",
+  "pageDescription": "Aitoearn은 단순한 소프트웨어 회사가 아닌, 결과를 제공하는 회사입니다.\n우리의 목표는 1인 기업가에게 운영 결과를 제공하는 것입니다.\n구매하신 Aitoearn 크레딧(토큰 비용 대리 충전)은 Google, OpenAI, xAI, Anthropic 등 제공업체의 모델 비용을 지불하는 데 사용됩니다.\n우리는 모든 모델의 공식 가격을 초과하지 않을 것을 약속합니다.\n또한 사용량이 증가하여 제공업체로부터 대량 할인을 받게 되면, 그 할인 혜택을 고객님께 전달해 드리겠습니다.",
+  "sections": {
+    "credits": "크레딧 구매",
+    "creditsDesc": "필요한 만큼 크레딧 구매, 구독 불필요"
+  },
+  "tabs": {
+    "credits": "크레딧 충전",
+    "balance": "잔액 충전"
+  },
+  "balance": {
+    "rechargeButton": "충전",
+    "balanceAmount": "잔액",
+    "features": {
+      "adCampaign": "프로모션 작업 배포에 사용",
+      "neverExpire": "잔액 만료 없음"
+    }
+  },
+  "paymentMethod": {
+    "creditCard": "신용카드",
+    "alipay": "Alipay"
+  },
+  "creditsTiers": {
+    "credits_10": {
+      "button": "구매"
+    },
+    "credits_50": {
+      "button": "구매"
+    },
+    "credits_100": {
+      "button": "구매"
+    },
+    "credits_cny_70": {
+      "button": "구매"
+    },
+    "credits_cny_350": {
+      "button": "구매"
+    },
+    "credits_cny_700": {
+      "button": "구매"
+    }
+  },
+  "creditsCard": {
+    "credits": "크레딧",
+    "recommended": "추천",
+    "canGenerate": "≈ 생성 가능"
+  },
+  "allPlansInclude": "지원 기능",
+  "features": {
+    "longVideoGen": "장편 동영상 생성 (수 분)",
+    "aiMultiPlatformPublish": "AI 적응형 다중 플랫폼 게시",
+    "videoNarration": "영상 해설",
+    "liveClipping": "라이브 스트림 클리핑",
+    "shortVideoGen": "짧은 동영상 생성 (10초)",
+    "videoEditing": "동영상 편집",
+    "imageGen": "이미지 생성",
+    "imageEditing": "이미지 편집",
+    "videoTranslation": "동영상 번역",
+    "contentCopyright": "AI 콘텐츠 저작권 감지",
+    "contentQualityAnalysis": "AI 콘텐츠 품질 분석",
+    "textModeration": "텍스트 검수",
+    "imageModeration": "이미지 검수",
+    "videoModeration": "동영상 검수",
+    "multiModel": "다중 모델 지원",
+    "textToVideo": "텍스트에서 동영상으로",
+    "imageToVideo": "이미지에서 동영상으로",
+    "videoToVideo": "동영상에서 동영상으로",
+    "consistentCharacter": "일관된 캐릭터",
+    "aiAnimation": "AI 애니메이션",
+    "aiImage": "AI 이미지",
+    "voiceClone": "음성 복제",
+    "voiceSynthesis": "음성 합성",
+    "fasterSpeed": "더 빠른 속도",
+    "withWatermark": "워터마크 있음",
+    "noWatermark": "워터마크 없음",
+    "storage500M": "500M 저장공간",
+    "storage5G": "5G 저장공간"
+  },
+  "faq": {
+    "title": "자주 묻는 질문",
+    "paymentMethods": {
+      "question": "어떤 결제 방법을 지원하나요?",
+      "answer": "주요 신용카드 (Visa, MasterCard, American Express) 및 Alipay를 포함한 다양한 결제 방법을 지원합니다. 중국에서 서비스를 사용하시는 경우 Alipay로 일회성 서비스를 구매할 수 있습니다."
+    },
+    "creditDeduction": {
+      "question": "이미지 및 동영상 생성에 크레딧이 어떻게 차감되나요?",
+      "answer": "이미지 및 동영상 생성 가격은 공식 채널과 일치합니다. 공식 채널에서 대량 구매 시 할인이 적용되면 그 할인도 전달해 드립니다.",
+      "pricingTable": {
+        "title": "상세 가격표",
+        "headers": {
+          "model": "모델",
+          "type": "유형",
+          "duration": "길이",
+          "resolution": "해상도",
+          "notes": "참고",
+          "credits": "크레딧",
+          "price": "가격",
+          "channel": "채널"
+        },
+        "rows": [
+          {
+            "model": "gpt-5",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "",
+            "notes": "대형 모델 가격은 공식 가격을 따릅니다",
+            "credits": "백만 토큰당",
+            "price": "입력 CNY9, 출력 CNY72",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-mini",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "입력 CNY1.8, 출력 CNY14.4",
+            "channel": "yun"
+          },
+          {
+            "model": "gpt-5-nano",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "입력 CNY0.36, 출력 CNY2.88",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-pro",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "동영상 지원",
+            "notes": "",
+            "credits": "",
+            "price": "입력 CNY9, 출력 CNY72",
+            "channel": "yun"
+          },
+          {
+            "model": "chatgpt-4o-latest",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "입력 CNY36, 출력 CNY108",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "동영상 지원",
+            "notes": "",
+            "credits": "",
+            "price": "입력 CNY2.16, 출력 CNY18",
+            "channel": "yun"
+          },
+          {
+            "model": "qwen-vl-max-latest",
+            "type": "대형 모델",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "",
+            "price": "입력 CNY1.6, 출력 CNY4",
+            "channel": "yun"
+          },
+          {
+            "model": "gemini-2.5-flash-image",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "",
+            "notes": "Nano Banana Pro라고도 함, 다중 이미지 입력 지원",
+            "credits": "1 크레딧",
+            "price": "CNY0.27",
+            "channel": "yun"
+          },
+          {
+            "model": "seedream-3.0",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "2.6 크레딧",
+            "price": "CNY0.26",
+            "channel": "공식"
+          },
+          {
+            "model": "seededit-3.0",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "",
+            "notes": "이미지 편집, jpeg, png 형식 지원",
+            "credits": "3 크레딧",
+            "price": "CNY0.3",
+            "channel": "공식"
+          },
+          {
+            "model": "gpt-image-1",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "이미지 편집 지원",
+            "notes": "",
+            "credits": "프로모션",
+            "price": "Low $0.011-0.016, Medium $0.042-0.063, High $0.167-0.25",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [max]",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "이미지 편집 지원",
+            "notes": "",
+            "credits": "1.5 크레딧",
+            "price": "CNY0.6",
+            "channel": "yun"
+          },
+          {
+            "model": "FLUX.1 Kontext [pro]",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "이미지 편집 지원",
+            "notes": "",
+            "credits": "1 크레딧",
+            "price": "CNY0.3",
+            "channel": "yun"
+          },
+          {
+            "model": "Flux 1.1 pro ultra",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "4.5 크레딧",
+            "price": "CNY0.45",
+            "channel": "공식"
+          },
+          {
+            "model": "Flux1.1 pro",
+            "type": "이미지 생성",
+            "duration": "",
+            "resolution": "",
+            "notes": "",
+            "credits": "3 크레딧",
+            "price": "CNY0.3",
+            "channel": "공식"
+          },
+          {
+            "model": "midjourney relax",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "",
+            "notes": "",
+            "credits": "무료",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "midjourney fast/turbo",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "",
+            "notes": "",
+            "credits": "4 크레딧",
+            "price": "",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "20 크레딧",
+            "price": "CNY2",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "동영상 생성",
+            "duration": "10초",
+            "resolution": "720p",
+            "notes": "",
+            "credits": "40 크레딧",
+            "price": "CNY4",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 크레딧",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "kling1.5/1.6/2.1",
+            "type": "동영상 생성",
+            "duration": "10초",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "70 크레딧",
+            "price": "CNY7",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "100 크레딧",
+            "price": "CNY10",
+            "channel": "yun"
+          },
+          {
+            "model": "kling2.1-master",
+            "type": "동영상 생성",
+            "duration": "10초",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "200 크레딧",
+            "price": "CNY20",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "480p",
+            "notes": "",
+            "credits": "70 크레딧",
+            "price": "CNY0.7",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.2-plus",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "35 크레딧",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-turbo(14b)",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "720p",
+            "notes": "volcano 채널 사용 금지",
+            "credits": "12 크레딧",
+            "price": "CNY1.2",
+            "channel": "yun"
+          },
+          {
+            "model": "wan2.1-plus",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "720p",
+            "notes": "첫 번째 및 마지막 프레임 지원",
+            "credits": "35 크레딧",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "wanx2.1-vace-plus",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "720p",
+            "notes": "동영상 편집",
+            "credits": "35 크레딧",
+            "price": "CNY3.5",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "480p",
+            "notes": "10초 지원",
+            "credits": "7.2 크레딧",
+            "price": "CNY0.72",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "720p",
+            "notes": "10초 가격 2배",
+            "credits": "16.4 크레딧",
+            "price": "CNY1.64",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-pro",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "1080p",
+            "notes": "",
+            "credits": "36.7 크레딧",
+            "price": "CNY3.67",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "480p",
+            "notes": "첫 번째 및 마지막 프레임 지원",
+            "credits": "5 크레딧",
+            "price": "CNY0.5",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "720p",
+            "notes": "10초 지원",
+            "credits": "11 크레딧",
+            "price": "CNY1.1",
+            "channel": "yun"
+          },
+          {
+            "model": "seedance-1.0-lite",
+            "type": "동영상 생성",
+            "duration": "5초",
+            "resolution": "1080p",
+            "notes": "10초 가격 2배",
+            "credits": "25 크레딧",
+            "price": "CNY2.5",
+            "channel": "yun"
+          }
+        ]
+      }
+    },
+    "creditExpiry": {
+      "question": "크레딧이 만료되나요?",
+      "answer": "저희 크레딧 만료 정책은 매우 유연합니다. 크레딧은 획득한 후 12개월이 지나야 만료되므로 사용할 시간이 충분합니다."
+    },
+    "moreCredits": {
+      "question": "더 많은 크레딧이 필요하면 어떻게 하나요?",
+      "answer": "매일 콘텐츠를 게시하여 무료 크레딧을 얻을 수 있습니다. 또한 멤버십을 구독하거나 크레딧을 직접 구매하여 더 많은 크레딧을 받을 수 있습니다."
+    },
+    "checkCredits": {
+      "question": "크레딧 상태를 어떻게 확인할 수 있나요?",
+      "answer": "크레딧 잔액을 클릭하면 상세 변경 및 사용 기록을 확인할 수 있습니다."
+    },
+    "hiddenFees": {
+      "question": "숨겨진 수수료가 있나요?",
+      "answer": "없습니다. 보시는 가격이 지불하시는 가격입니다. 선택하신 플랜 외에 숨겨진 요금은 없습니다."
+    }
+  },
+  "pricingTable": {
+    "title": "가격표",
+    "expand": "가격표",
+    "collapse": "접기",
+    "creditsPolicy": {
+      "title": "크레딧 사용 정책",
+      "desc1": "크레딧은 주로 두 가지 방식으로 소비됩니다:",
+      "llmTokens": "LLM 토큰",
+      "llmTokensDesc": "작업 계획, 의사 결정 및 출력 생성에 사용",
+      "thirdPartyApis": "서드파티 API",
+      "thirdPartyApisDesc": "이미지 모델, 동영상 모델, 동영상 편집/처리 및 기타 외부 서비스에 사용",
+      "costNote": "작업의 실제 크레딧 소비는 복잡도, 소요 시간 및 외부 호출 수에 따라 달라집니다.",
+      "storageNote": "작업 완료 후 출력물의 저장, 호스팅, 표시 또는 배포에 추가 크레딧이 소비되지 않습니다.",
+      "refundNote": "AiToEarn 기술 문제로 작업이 실패한 경우, 소비된 크레딧을 전액 환불해 드립니다.",
+      "exchangeRate": "100 크레딧 = 1 USD"
+    },
+    "llm": {
+      "title": "대규모 언어 모델",
+      "unit": "백만 토큰당",
+      "input": "입력",
+      "output": "출력",
+      "inputModality": "입력 모달리티",
+      "outputModality": "출력 모달리티",
+      "notes": "참고"
+    },
+    "videoGen": {
+      "title": "동영상 생성 모델",
+      "price": "가격",
+      "latency": "지연 시간",
+      "latencyValues": {
+        "minutes": "수 분",
+        "seconds": "수 초",
+        "hours": "수 시간"
+      }
+    },
+    "imageGen": {
+      "title": "이미지 생성 모델"
+    },
+    "headers": {
+      "model": "모델",
+      "price": "가격",
+      "tool": "도구"
+    },
+    "videoTools": {
+      "title": "동영상 처리 도구",
+      "perMin": "/분",
+      "billingMethod": "과금 방식",
+      "tools": {
+        "videoUnderstanding": "동영상 이해",
+        "videoEditing": "동영상 편집",
+        "videoStyleTransfer": "동영상 스타일 변환",
+        "videoTranslation": "동영상 번역",
+        "highlightClipping": "하이라이트 클리핑",
+        "subtitleRemoval": "자막 제거",
+        "scriptRecovery": "스크립트 복구",
+        "videoNarration": "동영상 내레이션"
+      },
+      "billing": {
+        "perInputMin": "입력 동영상 분당",
+        "perOutputMin": "출력 동영상 분당",
+        "perGenMin": "생성 동영상 분당",
+        "720P output": "720P 출력"
+      }
+    }
+  }
+}

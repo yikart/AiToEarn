@@ -1,0 +1,285 @@
+/**
+ * Welcome Page Module Styles
+ * 仅用于 Tailwind 无法实现的复杂样式
+ */
+
+/* ========== 动画关键帧 ========== */
+
+/* 旋转渐变背景动画 */
+@keyframes rotate-gradient {
+  from {
+    --rotation: 0deg;
+  }
+  to {
+    --rotation: 360deg;
+  }
+}
+
+/* 进度条填充动画 */
+@keyframes slide-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Pin 弹跳旋转动画 */
+@keyframes pin-bounce {
+  0% {
+    transform: rotateY(0deg) translateY(0px);
+  }
+  10% {
+    transform: rotateY(0deg) translateY(6px) scale(1.1);
+  }
+  25% {
+    transform: rotateY(180deg) translateY(-10px) scale(1.15);
+  }
+  35% {
+    transform: rotateY(210deg) translateY(-7px) scale(1.15);
+  }
+  50% {
+    transform: rotateY(360deg) translateY(8px) scale(1.1);
+  }
+  65% {
+    transform: rotateY(360deg) translateY(0px) scale(1);
+  }
+  75%,
+  85%,
+  100% {
+    transform: rotateY(360deg) translateY(0px);
+  }
+}
+
+/* 光标闪烁动画 */
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 水平无限滚动动画 */
+@keyframes marquee-horizontal {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+/* ========== 组件样式 ========== */
+
+/* 渐变边框背景 */
+.gradientBorder {
+  position: relative;
+  animation: rotate-gradient 3s linear infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    background: conic-gradient(
+      from var(--rotation, 0deg),
+      #015bf8,
+      #7c3aed,
+      #ec4899,
+      #f97316,
+      #eab308,
+      #22c55e,
+      #015bf8
+    );
+    border-radius: inherit;
+    z-index: -1;
+    animation: inherit;
+  }
+}
+
+/* Pin 图标动画 */
+.pinIcon {
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  transition: transform 0.3s ease;
+}
+
+.pinIconAnimate {
+  animation: pin-bounce 1s linear infinite;
+}
+
+.pinIconHover:hover .pinIcon {
+  animation: pin-bounce 1s linear;
+}
+
+/* 进度条 */
+.progressLine {
+  transform-origin: left;
+  transform: scaleX(0);
+}
+
+.progressLineActive {
+  animation: slide-progress 7s linear forwards;
+}
+
+.progressLineStopped {
+  animation: none;
+  transform: scaleX(0);
+}
+
+/* Marquee 无限滚动 */
+.marqueeContainer {
+  overflow: hidden;
+  display: flex;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+}
+
+.marqueeRow {
+  display: flex;
+  flex-shrink: 0;
+  gap: 1rem;
+  animation: marquee-horizontal 80s linear infinite;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+.marqueeRowFast {
+  animation-duration: 50s;
+}
+
+.marqueeRowReverse {
+  animation-direction: reverse;
+}
+
+/* 评论区移动端滑动效果 */
+.previousSlide {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* 体验标签视觉区域 */
+.expTabsVisual {
+  position: relative;
+  aspect-ratio: 16/10;
+  overflow: hidden;
+  border-radius: 1rem;
+}
+
+/* Bento 网格第一项 */
+.bentoItemFirst {
+  min-width: 100%;
+  padding: 0;
+  flex-direction: row;
+  aspect-ratio: auto;
+
+  @media (max-width: 479px) {
+    flex-direction: column;
+  }
+}
+
+/* 科技功能卡片内图片动画 */
+.techOrderVisual {
+  position: relative;
+
+  img {
+    transition: transform 0.5s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+/* 自定义滚动条隐藏 */
+.noScrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+}
+
+/* 文本截断 */
+.lineClamp2 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.lineClamp3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* 图片链接悬停效果 */
+.linkImage {
+  transition: transform 0.35s ease;
+}
+
+.linkImageHover:hover .linkImage {
+  transform: scale(1.05);
+}
+
+/* 按钮箭头动画 */
+.buttonArrowTail {
+  width: 0;
+  transition: width 0.35s ease;
+}
+
+.buttonArrowHover:hover .buttonArrowTail {
+  width: 10px;
+}
+
+/* 导航栏固定样式 */
+.navFixed {
+  background-color: rgba(255, 255, 255, 0.85);
+  border-color: #ebebec;
+  backdrop-filter: blur(8px);
+}
+
+.navOpen {
+  background-color: white;
+}
+
+/* 页脚渐变遮罩 */
+.footerLegalMask {
+  position: relative;
+
+  @media (max-width: 767px) {
+    &::after {
+      content: '';
+      display: block;
+      position: absolute;
+      width: 6rem;
+      height: 100%;
+      right: 0;
+      top: 0;
+      background: linear-gradient(-90deg, #f2f0ed 0%, rgba(242, 240, 237, 0) 100%);
+      pointer-events: none;
+    }
+  }
+}
+
+/* 表单背景动画 */
+.formBgRotate {
+  @property --rotation {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+  }
+
+  animation: rotate-gradient 3s linear infinite;
+  background: conic-gradient(from var(--rotation, 0deg), #015bf8, #7c3aed, #ec4899, #f97316, #eab308, #22c55e, #015bf8);
+}

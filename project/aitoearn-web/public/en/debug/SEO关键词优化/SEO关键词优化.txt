@@ -1,0 +1,1213 @@
+
+id: 1
+data: {"type":"init","taskId":"6973455f0ca8e6f2f01fa8b5"}
+
+id: 2
+data: {"type":"keep_alive"}
+
+id: 3
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3cf7d3af-6bbe-447f-88a2-aae60b16d126","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_011F8VGMzcKZWzu2Gyr8YRBY","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":3,"cache_creation_input_tokens":31110,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":31110,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 4
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b934e390-cd5d-4d95-8b6e-9170ea45e32e","event":{"type":"content_block_start","index":0,"content_block":{"type":"tool_use","id":"toolu_018FmmFySt24srSKFrmU7zsn","name":"mcp__sessionTools__setTitle","input":{}}},"parent_tool_use_id":null}}
+
+id: 5
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fcd61146-727e-4011-829d-de8a6c2c612e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":""}},"parent_tool_use_id":null}}
+
+id: 6
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f5f36108-82c4-4470-a288-65804fbe4e5f","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"{\""}},"parent_tool_use_id":null}}
+
+id: 7
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"60cfca89-d6af-43a4-ac60-7163a601e7a6","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"title\":"}},"parent_tool_use_id":null}}
+
+id: 8
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5e5afcf6-a292-4308-959d-ac1e253b44f4","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":" \""}},"parent_tool_use_id":null}}
+
+id: 9
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11d3f50e-e013-4ea6-bc92-c8d01f66e61e","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"YouTube SE"}},"parent_tool_use_id":null}}
+
+id: 10
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7987324f-6387-4aa0-8b9d-219fdeead9ec","event":{"type":"content_block_delta","index":0,"delta":{"type":"input_json_delta","partial_json":"O优化\"}"}},"parent_tool_use_id":null}}
+
+id: 11
+data: {"type":"assistant","message":{"type":"assistant","uuid":"d76f9c4d-0726-432a-96f7-ef6c52a5f6d6","message":{"id":"msg_011F8VGMzcKZWzu2Gyr8YRBY","content":[{"type":"tool_use","id":"toolu_018FmmFySt24srSKFrmU7zsn","name":"mcp__sessionTools__setTitle","input":{"title":"YouTube SEO优化"}}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":31110},"cache_creation_input_tokens":31110,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 12
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9ae58547-edbe-4038-b79a-c8a554cd39d4","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 13
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ac74e416-3677-41a5-9cab-c4068b92deeb","event":{"type":"message_delta","delta":{"stop_reason":"tool_use","stop_sequence":null},"usage":{"cache_creation_input_tokens":31110,"cache_read_input_tokens":0,"input_tokens":3,"output_tokens":62}},"parent_tool_use_id":null}}
+
+id: 14
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8bf844e4-0fbb-428c-a897-cc0604456c07","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 15
+data: {"type":"title_updated","taskId":"6973455f0ca8e6f2f01fa8b5","title":"YouTube SEO优化"}
+
+id: 16
+data: {"type":"user","message":{"type":"user","uuid":"d90523f9-f1b9-4020-827a-b8f2c8e01d93","message":{"content":[{"tool_use_id":"toolu_018FmmFySt24srSKFrmU7zsn","type":"tool_result","content":[{"type":"text","text":"Title updated successfully"}]}],"role":"user"},"parent_tool_use_id":null,"tool_use_result":[{"type":"text","text":"Title updated successfully"}]}}
+
+id: 17
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eda00ceb-5960-4c65-892b-aa1ea64026b2","event":{"type":"message_start","message":{"model":"claude-opus-4-5-20251101","id":"msg_01N7LSNCc56eiwKgN9dPwFxu","type":"message","role":"assistant","content":[],"stop_reason":null,"stop_sequence":null,"usage":{"input_tokens":1,"cache_creation_input_tokens":80,"cache_read_input_tokens":31110,"cache_creation":{"ephemeral_5m_input_tokens":80,"ephemeral_1h_input_tokens":0},"output_tokens":1,"service_tier":"standard"}}},"parent_tool_use_id":null}}
+
+id: 18
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d872b417-e347-4815-8333-cb7b821ede92","event":{"type":"content_block_start","index":0,"content_block":{"type":"text","text":""}},"parent_tool_use_id":null}}
+
+id: 19
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9df94b70-ece7-4ce0-a958-ef06b2750711","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"##"}},"parent_tool_use_id":null}}
+
+id: 20
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8954f138-61f9-45f7-8343-96480bf2ebdf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 21
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e7fe6a0-907d-469a-b456-8d37386e0a7b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"📋 YouTube"}},"parent_tool_use_id":null}}
+
+id: 22
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"238d1180-cb04-4259-9121-8650ada625ed","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"视"}},"parent_tool_use_id":null}}
+
+id: 23
+data: {"type":"keep_alive"}
+
+id: 24
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"47e861a7-7caa-430e-83f8-c34eadd339d4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"频SE"}},"parent_tool_use_id":null}}
+
+id: 25
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11c041a8-409c-4257-b0e6-826dc18178f9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"O优化分"}},"parent_tool_use_id":null}}
+
+id: 26
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b5356312-a3c2-4c76-a0b7-d085fcc0d7f3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"析\n\n### 原"}},"parent_tool_use_id":null}}
+
+id: 27
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c7e8a711-80e2-452a-9e75-dfc27d35d71c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"始内"}},"parent_tool_use_id":null}}
+
+id: 28
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7635f5c5-3cfb-47e0-9f76-fb4186e99ce5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容"}},"parent_tool_use_id":null}}
+
+id: 29
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"639d254f-487e-484b-bcf5-9cfe275d5711","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n-"}},"parent_tool_use_id":null}}
+
+id: 30
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b458789f-c2ac-44f0-9e51-aaebdfae73cb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **"}},"parent_tool_use_id":null}}
+
+id: 31
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ab92bce3-dde8-476c-a645-058691321f26","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标题**"}},"parent_tool_use_id":null}}
+
+id: 32
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f9138916-8dc6-40af-b494-7d7d26cf9f44","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"：新手化妆教程"}},"parent_tool_use_id":null}}
+
+id: 33
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f72280ce-d8ec-44ee-825b-db76c837dd33","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- **描述**：教"}},"parent_tool_use_id":null}}
+
+id: 34
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b0c2963-dd8f-46ea-8651-1c6bb7dd8d74","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"你怎么化妆"}},"parent_tool_use_id":null}}
+
+id: 35
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e145752b-d0e3-4604-b207-7f37eb0d1d03","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n---"}},"parent_tool_use_id":null}}
+
+id: 36
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"49aedb3d-c024-4aa1-b42d-a4018036d62e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n### "}},"parent_tool_use_id":null}}
+
+id: 37
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f14eaf7e-a68a-491c-b43a-609a7feb3fe6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🔍 SE"}},"parent_tool_use_id":null}}
+
+id: 38
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3c193bbb-8f0b-4247-a384-f64780c5f4b2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"O问"}},"parent_tool_use_id":null}}
+
+id: 39
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc99c48e-6ee7-41ac-8f2e-ab7aecaa4089","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题分析\n\n|"}},"parent_tool_use_id":null}}
+
+id: 40
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4921de04-26f6-4acd-a9d5-0dc57f16bfd6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 问题 "}},"parent_tool_use_id":null}}
+
+id: 41
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0a934a2a-ac4e-4356-b459-0ba570340ded","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| 原标"}},"parent_tool_use_id":null}}
+
+id: 42
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04dcba86-52ae-4956-b29b-2a77cc22ea51","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题/"}},"parent_tool_use_id":null}}
+
+id: 43
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a58c87ff-1ee7-4f52-94f8-04f67027d555","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"描述 | 影"}},"parent_tool_use_id":null}}
+
+id: 44
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"33550d43-50f5-4670-a38b-1ca4a3b9cf5b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"响 "}},"parent_tool_use_id":null}}
+
+id: 45
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2cd5f679-2c58-44dc-9cf5-3b04f1748e88","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"|\n|------|------------|"}},"parent_tool_use_id":null}}
+
+id: 46
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6246b2c2-7a51-4b9b-9f9b-34486a4c6293","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"---"}},"parent_tool_use_id":null}}
+
+id: 47
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ad8a1ae2-6741-4289-bdb7-fb9797f29d31","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"---|\n| 标"}},"parent_tool_use_id":null}}
+
+id: 48
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"85ed8fba-6c02-407c-a83d-8ea20d21a86a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"题过"}},"parent_tool_use_id":null}}
+
+id: 49
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ca26fd89-4e34-4789-b7a0-a373cda29094","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"短"}},"parent_tool_use_id":null}}
+
+id: 50
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc8ce0b9-b996-4278-84cb-17b32653f53f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | "}},"parent_tool_use_id":null}}
+
+id: 51
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b8f58c25-283c-4744-83e7-8d9e55dfdba7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"仅6"}},"parent_tool_use_id":null}}
+
+id: 52
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c3a5faa-bf54-438d-88a5-bba5755633d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个字 "}},"parent_tool_use_id":null}}
+
+id: 53
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39d2edc7-69ec-4a06-8119-c02514d67c55","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| 搜索"}},"parent_tool_use_id":null}}
+
+id: 54
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ddcbc10a-6ca2-48b1-8db3-1770bd28e98b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"覆盖面"}},"parent_tool_use_id":null}}
+
+id: 55
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"069e55bf-68e8-436f-a916-b5c67d08b10d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"窄 |\n| "}},"parent_tool_use_id":null}}
+
+id: 56
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8f2ab271-2c70-47d3-a7fe-0b3f621723ba","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"缺乏关键词 |"}},"parent_tool_use_id":null}}
+
+id: 57
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cd465e4a-ed07-4b8c-b5ad-c0a928c3211d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 无"}},"parent_tool_use_id":null}}
+
+id: 58
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39f3f6f0-0980-4640-b576-1b68545c2b69","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"具"}},"parent_tool_use_id":null}}
+
+id: 59
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8159a58-bff5-44f7-a56f-6b4a4bdfa878","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"体化"}},"parent_tool_use_id":null}}
+
+id: 60
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1b1f8fbd-4544-41f9-8081-71595f0e8af9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆类"}},"parent_tool_use_id":null}}
+
+id: 61
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cc6722c0-9c50-4160-9ee8-fe504015c924","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"型 | 难"}},"parent_tool_use_id":null}}
+
+id: 62
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f3ad84f4-700c-4d63-94ad-1893e74b91f8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"以精"}},"parent_tool_use_id":null}}
+
+id: 63
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ddca4ec7-a09f-4404-beea-79dae96a9e6a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"准触"}},"parent_tool_use_id":null}}
+
+id: 64
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"403ef196-c3da-446f-97cc-e689aa1717d2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"达目"}},"parent_tool_use_id":null}}
+
+id: 65
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"218182f4-7387-43b8-acba-7a24897d9a93","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标受众 |\n| "}},"parent_tool_use_id":null}}
+
+id: 66
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"743abf09-b12b-42dc-9203-a4abc5dae057","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"描述过简"}},"parent_tool_use_id":null}}
+
+id: 67
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"510755eb-eec0-4852-bd46-617cc1acf0f4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 68
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5e9dece2-fedb-4b09-b5c3-074bc1fdc847","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"| "}},"parent_tool_use_id":null}}
+
+id: 69
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8b65a6fb-7d79-4295-82d5-49c2db2cfc8a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"仅5"}},"parent_tool_use_id":null}}
+
+id: 70
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6559f764-2f37-4103-94ce-9bfa2b329f3c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个字 | YouTube"}},"parent_tool_use_id":null}}
+
+id: 71
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec42c99c-9c28-49ce-ad0e-3060f318f97e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"算"}},"parent_tool_use_id":null}}
+
+id: 72
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a4aaffac-1c69-4d70-993b-7040838532e1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"法难"}},"parent_tool_use_id":null}}
+
+id: 73
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a880e221-2e3f-473d-bdf6-31317ab875cf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"以理"}},"parent_tool_use_id":null}}
+
+id: 74
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ce2b1e05-a395-41c1-b8f3-d14e75a646e5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"解内"}},"parent_tool_use_id":null}}
+
+id: 75
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"133c90cb-22a8-472b-b3a6-3d4539abd274","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容 |\n| 无"}},"parent_tool_use_id":null}}
+
+id: 76
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1056f6ea-20da-4d0b-9837-fe3077f64ddb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"行"}},"parent_tool_use_id":null}}
+
+id: 77
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1bc75fcf-f6f7-4b68-ae3c-751d60c07e20","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"动"}},"parent_tool_use_id":null}}
+
+id: 78
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b7e7045-9ff4-44f9-964b-88618ebed9de","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"号"}},"parent_tool_use_id":null}}
+
+id: 79
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aad741d6-58b7-423b-b787-77153b41cafc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"召"}},"parent_tool_use_id":null}}
+
+id: 80
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5d9eda29-39a9-4891-b871-ab3ec8e771ca","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | -"}},"parent_tool_use_id":null}}
+
+id: 81
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f7b03537-2521-45ed-948b-2b562d7f6a79","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 互"}},"parent_tool_use_id":null}}
+
+id: 82
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d8bb431f-458f-4ab7-9c62-dc3a5af703ea","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"动率"}},"parent_tool_use_id":null}}
+
+id: 83
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f6a741e9-a69d-460b-b2a9-3478e8223c92","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"低 |\n\n---"}},"parent_tool_use_id":null}}
+
+id: 84
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a37d69d6-10ed-4368-96b5-d0f95957ea4a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n### "}},"parent_tool_use_id":null}}
+
+id: 85
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"799f4bcc-308a-4377-92f2-67f67053c786","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"✨"}},"parent_tool_use_id":null}}
+
+id: 86
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"69c18b90-a0fc-4c57-ac03-8e9416640fe2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 优"}},"parent_tool_use_id":null}}
+
+id: 87
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"21d08863-e41b-4fa5-8192-705ff6f6c8fa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化后"}},"parent_tool_use_id":null}}
+
+id: 88
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4239db2-2431-4fa6-b7a3-6082503866d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"版"}},"parent_tool_use_id":null}}
+
+id: 89
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0db143f0-9a18-435c-adbc-b2e66c6e4e35","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"本\n\n####"}},"parent_tool_use_id":null}}
+
+id: 90
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3123d88f-4b17-4f3c-a0d3-e3b273c91a82","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" "}},"parent_tool_use_id":null}}
+
+id: 91
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4baff7b4-aab1-4081-aa61-cce8a0e67e14","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🎬"}},"parent_tool_use_id":null}}
+
+id: 92
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d80b0882-e8d6-4bbf-bb9b-af6f7d4d42fa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 标题建"}},"parent_tool_use_id":null}}
+
+id: 93
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0d0a7912-3a99-4353-87e2-32a61681fa2a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"议（"}},"parent_tool_use_id":null}}
+
+id: 94
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5b2d558c-650b-4001-980e-eebd9107a8e4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"3"}},"parent_tool_use_id":null}}
+
+id: 95
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d355e9fe-0ebb-4280-94fc-d2b04313fb6e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个"}},"parent_tool_use_id":null}}
+
+id: 96
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cca2060d-4ba2-4f2d-8470-74f3ce21f4df","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"版"}},"parent_tool_use_id":null}}
+
+id: 97
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0518dddb-d622-4c62-85f4-324e70076b9c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"本）"}},"parent_tool_use_id":null}}
+
+id: 98
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"55d10ca2-5ae8-472e-8214-c92a9a3e8a37","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n1. **【"}},"parent_tool_use_id":null}}
+
+id: 99
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1413a0a0-2828-4bc4-8bd2-eb4341e9d923","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"新"}},"parent_tool_use_id":null}}
+
+id: 100
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0131c696-fb96-4e40-a182-4e31087c2a2d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手必"}},"parent_tool_use_id":null}}
+
+id: 101
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7ec39dfd-7d6d-4c48-a507-a14296d11502","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"看】"}},"parent_tool_use_id":null}}
+
+id: 102
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"48d3b7dd-8e98-497a-aaf6-b3c82a3e6e5e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"10"}},"parent_tool_use_id":null}}
+
+id: 103
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e009f0b-93b9-4ec4-ae02-e4284d729aef","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"分"}},"parent_tool_use_id":null}}
+
+id: 104
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ec4bddef-a184-404b-8654-716f7f92a9e2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"钟日"}},"parent_tool_use_id":null}}
+
+id: 105
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b4f8fab-8f69-4ecb-8158-061b089538ea","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"常"}},"parent_tool_use_id":null}}
+
+id: 106
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"abb8b5f2-d68a-4bcd-9de0-203aa0259fe5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆容教"}},"parent_tool_use_id":null}}
+
+id: 107
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1958cfee-e0c4-4a4d-a4c9-1cf17e730a2e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程"}},"parent_tool_use_id":null}}
+
+id: 108
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8b56f442-8635-423e-b435-a6257186071c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜零"}},"parent_tool_use_id":null}}
+
+id: 109
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ca05c985-69f6-4a8f-a34c-29f44d79c61d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"基础化"}},"parent_tool_use_id":null}}
+
+id: 110
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6cabc396-2e6e-4cd9-bfc6-aa2bb53743da","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆入"}},"parent_tool_use_id":null}}
+
+id: 111
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"269e258e-4f3b-48a2-a907-bfb8a2b8ffd1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门指南**\n2"}},"parent_tool_use_id":null}}
+
+id: 112
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e49f985d-d42b-4453-9467-c913dcc218c6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". **化"}},"parent_tool_use_id":null}}
+
+id: 113
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e847f82-0468-49b4-bc24-d3a5dfa29aff","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆教程"}},"parent_tool_use_id":null}}
+
+id: 114
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"508e4102-68ce-4482-bfdc-cd521f81d6b2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜新"}},"parent_tool_use_id":null}}
+
+id: 115
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"de30040c-c7a6-4c4a-bca8-7b2c9c58a153","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手小"}},"parent_tool_use_id":null}}
+
+id: 116
+data: {"type":"keep_alive"}
+
+id: 117
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d6a56091-ec6d-4cc5-bf6c-0d34001b6efa","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"白从零开始学化"}},"parent_tool_use_id":null}}
+
+id: 118
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a678e123-039d-4890-9c70-cd48019bf8fd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆"}},"parent_tool_use_id":null}}
+
+id: 119
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9bd3c197-4761-42c4-9689-23ff67a95917","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"｜简"}},"parent_tool_use_id":null}}
+
+id: 120
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e4f52993-0f73-436b-b44e-f9a5bb6ea97c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"单易学日"}},"parent_tool_use_id":null}}
+
+id: 121
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7ae87020-bd34-4689-a754-ef65916a51a7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"常妆**"}},"parent_tool_use_id":null}}
+
+id: 122
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"aff18b6d-15ab-4909-be0e-156eeb919e55","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n3. **新"}},"parent_tool_use_id":null}}
+
+id: 123
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c919d8d-870b-4c56-b5fe-aaaccc8b0e65","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手化妆教程2"}},"parent_tool_use_id":null}}
+
+id: 124
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e26f08b6-5f7a-4b70-b23f-089376edf2c3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"024｜5"}},"parent_tool_use_id":null}}
+
+id: 125
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f41248fd-94ca-410d-a393-383fd5954cfd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"步"}},"parent_tool_use_id":null}}
+
+id: 126
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"429f8540-8653-4177-b170-44e29a9a3ae6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"打"}},"parent_tool_use_id":null}}
+
+id: 127
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cecc30fd-cc5d-4c9f-911e-79704362e0af","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"造自"}},"parent_tool_use_id":null}}
+
+id: 128
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"253fa24c-4c0f-45a0-b61b-065d9ce21867","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"然清"}},"parent_tool_use_id":null}}
+
+id: 129
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"09d17cd7-2375-4125-8153-61e9f0b655b0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"透"}},"parent_tool_use_id":null}}
+
+id: 130
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1366da13-8e05-4645-9990-671626b2d5c1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆容｜化妆"}},"parent_tool_use_id":null}}
+
+id: 131
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5080740a-f1d2-4f17-a2de-cbe22e72e772","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"初"}},"parent_tool_use_id":null}}
+
+id: 132
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"78c3f761-7e66-4709-8764-f143e1415500","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"学者必"}},"parent_tool_use_id":null}}
+
+id: 133
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"337c21d5-0ec3-4132-a2f1-5af67f9f69e1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"备"}},"parent_tool_use_id":null}}
+
+id: 134
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b173473-f082-4c42-90de-202d31fc7cad","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**\n\n#### 📝 优"}},"parent_tool_use_id":null}}
+
+id: 135
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f2421ac1-10a4-4860-86c7-08e61db70b5d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化描"}},"parent_tool_use_id":null}}
+
+id: 136
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b57a0f67-917b-43d6-9d36-4706f5a7e6d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"述"}},"parent_tool_use_id":null}}
+
+id: 137
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"653220af-2895-4f83-8b75-7988e7200b9b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n```"}},"parent_tool_use_id":null}}
+
+id: 138
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c8ce3672-c5ee-4faa-9eab-48fa628033d4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n🌟 新"}},"parent_tool_use_id":null}}
+
+id: 139
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d5e54489-5f56-4a4b-b038-f380edc14b87","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手化妆教程 |"}},"parent_tool_use_id":null}}
+
+id: 140
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1d92fd26-d09b-4c0a-9b53-be9fd7f88acb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 零基础也"}},"parent_tool_use_id":null}}
+
+id: 141
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"58e8a8ea-a80e-4a8d-bfae-5987b7ed477e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"能"}},"parent_tool_use_id":null}}
+
+id: 142
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"22a9aa51-89c1-4c66-bd78-b2b27883d72b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"轻松学"}},"parent_tool_use_id":null}}
+
+id: 143
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a0a6a576-3460-4c23-b17c-2afa18383fba","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"会！"}},"parent_tool_use_id":null}}
+
+id: 144
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9862eae3-c1fc-4af0-b0b2-d682a780f96b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n大"}},"parent_tool_use_id":null}}
+
+id: 145
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"886e155d-9379-4d15-9492-514d816347e8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"家好！"}},"parent_tool_use_id":null}}
+
+id: 146
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"10bb7065-64ee-41f2-a853-f20c4edd477e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"这"}},"parent_tool_use_id":null}}
+
+id: 147
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3a697c39-689a-454f-8a7d-d31d2a17ac74","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"是一期"}},"parent_tool_use_id":null}}
+
+id: 148
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"765ecb9c-e045-4532-8df5-cbc5c8af1296","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"专"}},"parent_tool_use_id":null}}
+
+id: 149
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bee61fca-50f4-4e4c-86f5-04b8d61b946c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"为化"}},"parent_tool_use_id":null}}
+
+id: 150
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"13676a9d-c97a-4ab4-a34d-beb7bcd9ce5c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆新手准"}},"parent_tool_use_id":null}}
+
+id: 151
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4d08e3a3-f6f4-4d4b-a107-7c68770f43c5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"备的入"}},"parent_tool_use_id":null}}
+
+id: 152
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"940b10de-b661-426e-9beb-f6a2d5e0356e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门教"}},"parent_tool_use_id":null}}
+
+id: 153
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e64d3b8d-13c6-4671-b407-a4087bc2e294","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程～"}},"parent_tool_use_id":null}}
+
+id: 154
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"305d701b-a353-4309-901d-64af832b4be3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n📌"}},"parent_tool_use_id":null}}
+
+id: 155
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c06a9a83-d41b-4d80-9d8a-9fa34a86df23","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 本"}},"parent_tool_use_id":null}}
+
+id: 156
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3bbdda09-aa3f-4087-89be-66109364bce2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"期"}},"parent_tool_use_id":null}}
+
+id: 157
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"82d0e8bf-daed-4744-aa88-5a1113ac0f54","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"内容：\n00"}},"parent_tool_use_id":null}}
+
+id: 158
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3bf13d5e-736e-4ff3-b70b-1479aa5b6015","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":00 开"}},"parent_tool_use_id":null}}
+
+id: 159
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a77ae553-25db-4d4a-beb4-1d73ab0b973a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"场介"}},"parent_tool_use_id":null}}
+
+id: 160
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b4698009-bb9d-4907-8b56-b22a9842509e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"绍\n01:30 护"}},"parent_tool_use_id":null}}
+
+id: 161
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"78ba7dca-2b36-4fd1-a8cb-24106946f30c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"肤打"}},"parent_tool_use_id":null}}
+
+id: 162
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eb615063-4227-4c5a-8870-7ec2869c0050","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"底"}},"parent_tool_use_id":null}}
+
+id: 163
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf7248b3-b302-4ee0-a269-d1c32884ecca","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n03:00 底"}},"parent_tool_use_id":null}}
+
+id: 164
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"178912e6-a75c-4644-be97-b87e6702cd58","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆教"}},"parent_tool_use_id":null}}
+
+id: 165
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2418babd-21bc-4628-8d8a-c430505f7e8d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程（"}},"parent_tool_use_id":null}}
+
+id: 166
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"be054f09-3730-4e96-a301-af032f754db7","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"粉底/"}},"parent_tool_use_id":null}}
+
+id: 167
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9d1f9729-b297-4e55-842c-8aa79ffe2136","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"遮瑕/定"}},"parent_tool_use_id":null}}
+
+id: 168
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"633bdf6d-623e-41d6-8f46-bc8ad23f7164","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆）\n06"}},"parent_tool_use_id":null}}
+
+id: 169
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4810c5a4-4405-4607-a07a-647d5bc72678","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":00 "}},"parent_tool_use_id":null}}
+
+id: 170
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a6883aa3-56ee-4b07-9b4e-7a0e2786b14e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"眉"}},"parent_tool_use_id":null}}
+
+id: 171
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8f63e889-f750-46ea-ba9a-4e3d23e7f386","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"毛画"}},"parent_tool_use_id":null}}
+
+id: 172
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1610a982-d408-4796-9158-ddaea0410145","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"法\n08:00 眼"}},"parent_tool_use_id":null}}
+
+id: 173
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"91c319c3-da75-42fb-bf7c-82aa704ae715","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆教"}},"parent_tool_use_id":null}}
+
+id: 174
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"84a8913c-182d-4384-ac21-a7987c745027","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程"}},"parent_tool_use_id":null}}
+
+id: 175
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4bc965ba-7f07-471d-8cee-3d1d519383d0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n10:00 "}},"parent_tool_use_id":null}}
+
+id: 176
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d1b1456f-4cac-4294-ab1c-b5e98c5c0413","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"腮红/"}},"parent_tool_use_id":null}}
+
+id: 177
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2b0f4373-e07d-4d8b-925b-f1727a1988f5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"高"}},"parent_tool_use_id":null}}
+
+id: 178
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f89660b-3024-4747-90c6-9298cd9ef3bc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"光/"}},"parent_tool_use_id":null}}
+
+id: 179
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9db42823-3a2e-4286-bdb4-46cf6c6149b1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"修"}},"parent_tool_use_id":null}}
+
+id: 180
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3b6230a7-1bc3-4bc6-818a-2880e308be5c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容\n12:00 唇"}},"parent_tool_use_id":null}}
+
+id: 181
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f71613f2-0e66-49cc-83f1-656ed15d5a06","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆完"}},"parent_tool_use_id":null}}
+
+id: 182
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04536bc6-5fc3-4815-8309-945beaee453c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"成"}},"parent_tool_use_id":null}}
+
+id: 183
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"53a1ef2c-8c00-4bd0-95a5-dc061cd7f620","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n✅"}},"parent_tool_use_id":null}}
+
+id: 184
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b0a46c2-7dd8-40a8-ab08-48ae8aeef812","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 适"}},"parent_tool_use_id":null}}
+
+id: 185
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4179da8-f145-4ae0-b609-b5c046351174","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"合人"}},"parent_tool_use_id":null}}
+
+id: 186
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"35a34ff6-351b-4d0c-a2e2-0452aa2ed3d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"群：\n• 化"}},"parent_tool_use_id":null}}
+
+id: 187
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5bceb2e7-774d-47a9-b3f6-9781b3f567e0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆小"}},"parent_tool_use_id":null}}
+
+id: 188
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"dc6b2c12-2fda-48e3-82ba-71e6361f544f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"白/"}},"parent_tool_use_id":null}}
+
+id: 189
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7b9d35ef-d558-4cb8-816f-4d4f8dc23a18","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"初"}},"parent_tool_use_id":null}}
+
+id: 190
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3439024c-2905-47bb-a0ce-a18234c55a7a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"学者\n• 想学"}},"parent_tool_use_id":null}}
+
+id: 191
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"99537989-6a63-4a8e-ae23-7c5a52152f6f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"日"}},"parent_tool_use_id":null}}
+
+id: 192
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ff4395c8-5d0d-4683-95a5-ca95daf666a2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"常妆容的"}},"parent_tool_use_id":null}}
+
+id: 193
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51b8469c-7280-43eb-86d3-b8a8dbfe474f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"朋友\n• 追"}},"parent_tool_use_id":null}}
+
+id: 194
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"25b88c8b-6d03-4ee9-aaf0-ebc9b3a205bd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"求自然清透妆感"}},"parent_tool_use_id":null}}
+
+id: 195
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c59a7b4f-b0db-4bbe-a448-71b069c39715","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"的你"}},"parent_tool_use_id":null}}
+
+id: 196
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b2458abb-3965-4e5c-a254-138336efba7f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n🛒"}},"parent_tool_use_id":null}}
+
+id: 197
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"07d0033e-2d56-4b6e-a590-5b37516fc643","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 视"}},"parent_tool_use_id":null}}
+
+id: 198
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d1e1d091-b1c2-4215-827d-d6509ae86928","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"频中"}},"parent_tool_use_id":null}}
+
+id: 199
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e96ea8a-2f9e-4bd4-bcbb-a2225bb9e14d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"使"}},"parent_tool_use_id":null}}
+
+id: 200
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"54e9a330-8c35-4c69-b21f-a1d805f6fb45","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"用的产"}},"parent_tool_use_id":null}}
+
+id: 201
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b998be1-0a5a-4e58-b391-fca5785008b2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"品：\n• 粉底"}},"parent_tool_use_id":null}}
+
+id: 202
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2e49650f-0111-4081-be23-a6b5b0d95e5b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"液："}},"parent_tool_use_id":null}}
+
+id: 203
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8032673-aa5e-44b2-8b65-ad94d0ce2a4b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"["}},"parent_tool_use_id":null}}
+
+id: 204
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6c0fc4cf-534c-493c-9033-a9a5921aa011","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"品"}},"parent_tool_use_id":null}}
+
+id: 205
+data: {"type":"keep_alive"}
+
+id: 206
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"35aa9823-f12f-497e-9b63-387c9181de1c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"牌名"}},"parent_tool_use_id":null}}
+
+id: 207
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5bdf9708-9cc0-402b-9cac-88c5f3cef68b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"称"}},"parent_tool_use_id":null}}
+
+id: 208
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"896d5619-27fd-49cf-81b5-08e515f6d97d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"]"}},"parent_tool_use_id":null}}
+
+id: 209
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"44d2c283-3ec7-4a3c-abd6-d66856c7e853","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n• "}},"parent_tool_use_id":null}}
+
+id: 210
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"be713b23-8381-4f46-9898-ec56aae8a8ae","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"眉"}},"parent_tool_use_id":null}}
+
+id: 211
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"faf69d1f-cb2e-4b71-b730-db5670956eca","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"笔：[品牌名称"}},"parent_tool_use_id":null}}
+
+id: 212
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a1d5de0b-3014-43ff-a7b4-4cc070d91f73","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"]\n• 口"}},"parent_tool_use_id":null}}
+
+id: 213
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"58354903-9ca6-4640-9750-87a7239b4838","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"红：[品牌名称"}},"parent_tool_use_id":null}}
+
+id: 214
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"abe83da4-e4f5-4cc2-8dfb-4824f2a1b9c6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"]"}},"parent_tool_use_id":null}}
+
+id: 215
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"46225642-2a88-42a2-a4d9-e93dd75f8fc4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n💬"}},"parent_tool_use_id":null}}
+
+id: 216
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"09e34679-bff8-4215-8b80-66dacf6bf038","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 如"}},"parent_tool_use_id":null}}
+
+id: 217
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8a8b5f6c-4fc3-429d-b1e8-80a121e45042","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"果这"}},"parent_tool_use_id":null}}
+
+id: 218
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b7995771-7a7c-4ac3-ac41-f710273db51c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"个视频对你"}},"parent_tool_use_id":null}}
+
+id: 219
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"68a1c80e-9c8d-4f8f-b327-6006936e3e7f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"有帮助，记"}},"parent_tool_use_id":null}}
+
+id: 220
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"910effc3-e2c6-437f-97c0-160aca54a661","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"得点"}},"parent_tool_use_id":null}}
+
+id: 221
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0b0a17c7-1df6-494c-b547-6477192e9dee","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"赞"}},"parent_tool_use_id":null}}
+
+id: 222
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4286af4d-33a1-4420-9573-53e7c6bc68d3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"👍订"}},"parent_tool_use_id":null}}
+
+id: 223
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fac147e8-c6d0-4e23-b7f6-693fbe90b59e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"阅"}},"parent_tool_use_id":null}}
+
+id: 224
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b3c96445-292d-4385-a18f-df1bdd618ecb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🔔分"}},"parent_tool_use_id":null}}
+
+id: 225
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8dff9f8d-cf32-41f8-a432-8aa5cd23bce5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"享给"}},"parent_tool_use_id":null}}
+
+id: 226
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d69c29cb-bcff-4116-a4ed-be42eef49c03","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"需"}},"parent_tool_use_id":null}}
+
+id: 227
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"735f983a-09c1-4d3e-bd1f-819ace0e0c43","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要的朋友！"}},"parent_tool_use_id":null}}
+
+id: 228
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e5a387b-17fd-478f-bc5f-3e3fae5ac066","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n有"}},"parent_tool_use_id":null}}
+
+id: 229
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c33d1790-c046-401f-9b09-7882ed559022","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"任"}},"parent_tool_use_id":null}}
+
+id: 230
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"37e82c05-87c9-4c2d-813c-0c975100ab03","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"何问题"}},"parent_tool_use_id":null}}
+
+id: 231
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2e1ccb91-5936-4456-9ffd-1ecb42cf04ee","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"欢迎在"}},"parent_tool_use_id":null}}
+
+id: 232
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8dad7e5-4a3f-4562-86aa-bb2532715fd9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"评论区留言～"}},"parent_tool_use_id":null}}
+
+id: 233
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"54b55c02-64f7-4ca0-9d60-e54a73a9e3a9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n#化妆教"}},"parent_tool_use_id":null}}
+
+id: 234
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"515b8289-cb1e-4246-bbf0-90aacf28733f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程 #新手化妆"}},"parent_tool_use_id":null}}
+
+id: 235
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1736c77-44a9-4a1c-8ed3-ebf6c7beaa9c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" #日"}},"parent_tool_use_id":null}}
+
+id: 236
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a53f6c05-a48a-4fbc-8524-197b6255334b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"常妆容 #化"}},"parent_tool_use_id":null}}
+
+id: 237
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7e242182-9023-4fc1-81d1-43d19516b7a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆入"}},"parent_tool_use_id":null}}
+
+id: 238
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4b2c7aca-8bec-43ee-a46a-965e0fada168","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"门 #美"}},"parent_tool_use_id":null}}
+
+id: 239
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c47fbbee-66bb-4510-b6ce-947055708357","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆教程 #makeup"}},"parent_tool_use_id":null}}
+
+id: 240
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3395307e-418e-461c-9b0e-494abc168de5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" #"}},"parent_tool_use_id":null}}
+
+id: 241
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6662e2e4-eea8-4bab-8f68-0eb8f8fe9c07","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"make"}},"parent_tool_use_id":null}}
+
+id: 242
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7017ca38-c6f2-483a-9113-959bea1328cd","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"uptutorial"}},"parent_tool_use_id":null}}
+
+id: 243
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"06b0b22f-e7db-4074-bd00-4234a36c1d66","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n```\n\n---"}},"parent_tool_use_id":null}}
+
+id: 244
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fd81b67a-07e6-48ef-84be-a1cb70ee363c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n### "}},"parent_tool_use_id":null}}
+
+id: 245
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b8a9d499-7c8c-478d-a0ef-7a20ae32d4bf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"🏷"}},"parent_tool_use_id":null}}
+
+id: 246
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"968fcc48-1d66-4c57-ac82-baf1f4bcac9b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"️ 关键词建议"}},"parent_tool_use_id":null}}
+
+id: 247
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"12f853a7-17e9-4ffd-bff6-7d8d875fea2d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n####"}},"parent_tool_use_id":null}}
+
+id: 248
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d39256d9-483d-4298-a4ca-24b3066961d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 主"}},"parent_tool_use_id":null}}
+
+id: 249
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"fc2fb79a-4e96-435a-83bf-9002630d945c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"关键词（高"}},"parent_tool_use_id":null}}
+
+id: 250
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c7558586-ab42-4edd-a7e8-b6857d429ba1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"搜索量"}},"parent_tool_use_id":null}}
+
+id: 251
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a502de81-65a2-419a-a03a-73893f92df41","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"）\n|"}},"parent_tool_use_id":null}}
+
+id: 252
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51c30d1f-5fdc-4d2e-907d-aadac7e074bb","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 关键词 | 类"}},"parent_tool_use_id":null}}
+
+id: 253
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a427b3d7-4a60-498f-9e62-aae8126ac74e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"型 |"}},"parent_tool_use_id":null}}
+
+id: 254
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"931973c4-264c-41e1-8a32-a2b5057be7f1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n|-----"}},"parent_tool_use_id":null}}
+
+id: 255
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d0e80806-1531-4c0b-8021-30a4be330acf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"---|------|\n| 化"}},"parent_tool_use_id":null}}
+
+id: 256
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"be9a4b37-7e97-4b0d-9e77-088d2ca8b584","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆教"}},"parent_tool_use_id":null}}
+
+id: 257
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31d535a0-24e5-4732-a993-5bfe94a6eb13","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程 | 核"}},"parent_tool_use_id":null}}
+
+id: 258
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3697e4d7-4bfe-4446-af35-bca9a604202d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"心词"}},"parent_tool_use_id":null}}
+
+id: 259
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a16917fc-ef28-48f6-9975-b1339a23be94","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| 新手化"}},"parent_tool_use_id":null}}
+
+id: 260
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a26c22b3-38a8-469b-ba60-345027bbc735","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆 | 核心词"}},"parent_tool_use_id":null}}
+
+id: 261
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0ce3af17-4e1a-423d-83f5-a33dec42fa39","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| 化"}},"parent_tool_use_id":null}}
+
+id: 262
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f392a681-6796-4c23-b770-e54797e7444a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆入门 | 核"}},"parent_tool_use_id":null}}
+
+id: 263
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a579f1b1-1008-4b3b-ab35-65119517c372","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"心词 |\n| 日"}},"parent_tool_use_id":null}}
+
+id: 264
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"072ddb21-0344-4d50-8d2f-34cb66f43f84","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"常妆容 | 场"}},"parent_tool_use_id":null}}
+
+id: 265
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"711adfff-8ff4-411f-8390-48a698babc53","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"景词 |"}},"parent_tool_use_id":null}}
+
+id: 266
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8046194e-a8ae-4b15-b0d4-09b29d3eb9ce","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n#### 长"}},"parent_tool_use_id":null}}
+
+id: 267
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"14db0c05-98a4-438d-a1e7-0b7cccb1dd04","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"尾关键词（"}},"parent_tool_use_id":null}}
+
+id: 268
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f86e143c-cc97-464d-8a59-5ef3e658e78b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"精"}},"parent_tool_use_id":null}}
+
+id: 269
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"82abc0b5-65a7-4b97-be5f-287e8c55d025","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"准流"}},"parent_tool_use_id":null}}
+
+id: 270
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8443370d-5630-4797-8c40-7a222b037fa3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"量）\n| 关键词"}},"parent_tool_use_id":null}}
+
+id: 271
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2e6aaa50-ebae-4d30-be26-2ca176ea2756","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 适"}},"parent_tool_use_id":null}}
+
+id: 272
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2c9a13d2-a93f-4737-b564-87d2368a3a9b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"用"}},"parent_tool_use_id":null}}
+
+id: 273
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3790617a-01f3-409f-96ea-4343473716d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"场景 |\n|--------|"}},"parent_tool_use_id":null}}
+
+id: 274
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"59c13963-c57c-44cf-9f0f-d7b0a2605590","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"------"}},"parent_tool_use_id":null}}
+
+id: 275
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e916acc8-478b-4285-829f-f00c7ef40334","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"---|\n| 新"}},"parent_tool_use_id":null}}
+
+id: 276
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a51911da-bb1b-42dd-80db-474d41153597","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手化妆教"}},"parent_tool_use_id":null}}
+
+id: 277
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5448df6e-f0a8-47c8-b764-1f35000c11a6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程零"}},"parent_tool_use_id":null}}
+
+id: 278
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ecdb67c3-4b55-401b-b66f-d537a56df891","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"基础 | 完"}},"parent_tool_use_id":null}}
+
+id: 279
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"62d2814a-b863-49cd-ad3c-94d7830ac5a3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"全"}},"parent_tool_use_id":null}}
+
+id: 280
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f4d3aed-3a4b-4816-ad36-577889e8e106","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"新"}},"parent_tool_use_id":null}}
+
+id: 281
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f01e7b8f-8018-4885-a53c-c452a0d7ce9e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手 |\n| 简"}},"parent_tool_use_id":null}}
+
+id: 282
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a8d2fa2e-032a-4df2-aa7f-b78de53a7792","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"单化"}},"parent_tool_use_id":null}}
+
+id: 283
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6bd3b3f3-14d4-4a76-9562-34050f7eb46b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆步"}},"parent_tool_use_id":null}}
+
+id: 284
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2d866665-7f7a-4ef3-9e2d-cf9bf2bad3a9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"骤 | 追"}},"parent_tool_use_id":null}}
+
+id: 285
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"87e9d7f6-6a8c-4a1c-97db-4135bd55982f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"求简"}},"parent_tool_use_id":null}}
+
+id: 286
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ba14c622-0af8-4ca8-942d-5be88583b806","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"单"}},"parent_tool_use_id":null}}
+
+id: 287
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"99f312eb-be24-4740-a1b0-84517f73ab4f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" |\n| 5"}},"parent_tool_use_id":null}}
+
+id: 288
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11c50b27-05d0-42a1-a01a-b419a222ef22","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"分"}},"parent_tool_use_id":null}}
+
+id: 289
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1116a914-6e82-4f70-955a-45778ce4ae3a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"钟快"}},"parent_tool_use_id":null}}
+
+id: 290
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"928f6a17-3756-49e5-a8e5-f087f7981367","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"速化"}},"parent_tool_use_id":null}}
+
+id: 291
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4b999634-827e-406b-829c-b351b2293f46","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆 | 时"}},"parent_tool_use_id":null}}
+
+id: 292
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3e098324-880c-477e-a69a-34cdbd3b7bae","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"间"}},"parent_tool_use_id":null}}
+
+id: 293
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ab667f91-c465-4e99-aa22-fdf940531903","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"紧迫 |"}},"parent_tool_use_id":null}}
+
+id: 294
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f05b82c5-63e1-4e37-9133-aee96f7faac0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n| 学"}},"parent_tool_use_id":null}}
+
+id: 295
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"788b4d08-7075-4406-a741-e0ec90322fcf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"生"}},"parent_tool_use_id":null}}
+
+id: 296
+data: {"type":"keep_alive"}
+
+id: 297
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"03e8b2e2-f9c8-4fa0-95cb-71b7c70aeff6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"党"}},"parent_tool_use_id":null}}
+
+id: 298
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b100fd70-4dd0-4335-87dd-9ab24941758a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化妆教"}},"parent_tool_use_id":null}}
+
+id: 299
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f4c79c54-b87f-40e0-b1f9-d7f0326af18d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程 | 学生群"}},"parent_tool_use_id":null}}
+
+id: 300
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"76be61fc-812c-4ca9-b308-5ac09f376a48","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"体 |"}},"parent_tool_use_id":null}}
+
+id: 301
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ca3da42c-2b20-4be7-ad60-e5d091efa8d4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n| 自然"}},"parent_tool_use_id":null}}
+
+id: 302
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2c5c6c8d-0786-4131-968f-3c9febb500c2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆容教"}},"parent_tool_use_id":null}}
+
+id: 303
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f6ed7532-1064-4bdc-b5b3-73cbc8638770","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"程 | "}},"parent_tool_use_id":null}}
+
+id: 304
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6cf64cfc-fac6-4856-aee5-64bdae786960","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"淡妆"}},"parent_tool_use_id":null}}
+
+id: 305
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3064a822-1cd7-43f8-b786-16e5cffb778d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"爱好"}},"parent_tool_use_id":null}}
+
+id: 306
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a36bccdd-9313-42b3-8574-fcf730ed6be5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"者 |"}},"parent_tool_use_id":null}}
+
+id: 307
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cecefb77-206a-4775-b532-d56d10aea46d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n| 化"}},"parent_tool_use_id":null}}
+
+id: 308
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"23770e0e-1f1b-42a7-8031-da124a6cb417","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆新"}},"parent_tool_use_id":null}}
+
+id: 309
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9cf3a18d-7e9d-4747-9273-49b99f4cc2d1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"手必看"}},"parent_tool_use_id":null}}
+
+id: 310
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"93309a40-63e9-4643-b3c7-4105359c2e04","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 入门用"}},"parent_tool_use_id":null}}
+
+id: 311
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31c930ed-20ad-4e51-b7a4-a48ccb44d5ab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"户 |\n\n####"}},"parent_tool_use_id":null}}
+
+id: 312
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eec89cfe-11ce-4244-9b99-1859c6585f07","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 英"}},"parent_tool_use_id":null}}
+
+id: 313
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2764387a-69d3-4d06-ba72-5434f3ee66c6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"文关键词（"}},"parent_tool_use_id":null}}
+
+id: 314
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"badb02c1-6667-4a56-a7f8-59c920253663","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"扩大"}},"parent_tool_use_id":null}}
+
+id: 315
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8d1de2f-25c2-4de0-ae4e-199c8ed5d609","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"受"}},"parent_tool_use_id":null}}
+
+id: 316
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"31323cd5-5530-4afa-8e94-7bff26ef4a00","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"众）\n-"}},"parent_tool_use_id":null}}
+
+id: 317
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f19b7a6-4fb0-4f56-9967-f8cffa2ef43e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" makeup"}},"parent_tool_use_id":null}}
+
+id: 318
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"87eaa770-db24-4ef1-a65c-aafb59bbab8b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" tutorial for"}},"parent_tool_use_id":null}}
+
+id: 319
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b620319a-f351-44b5-9cfb-48b1e21c98ba","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" beginners\n- easy"}},"parent_tool_use_id":null}}
+
+id: 320
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4570d0b7-2248-43a7-bf1a-b54a8956d733","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" makeup tutorial"}},"parent_tool_use_id":null}}
+
+id: 321
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b06f419c-e1bf-46fa-8d10-9e293dda14ab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- natural"}},"parent_tool_use_id":null}}
+
+id: 322
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"401db780-8228-45e0-9cad-8064bcd9f6b3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" makeup look"}},"parent_tool_use_id":null}}
+
+id: 323
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0f84f722-9550-45f1-b71e-c6f87a97c458","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n- everyday"}},"parent_tool_use_id":null}}
+
+id: 324
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4fa6dafa-b23f-4e34-9b3e-594294bf1962","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" makeup\n\n---\n\n### 📊"}},"parent_tool_use_id":null}}
+
+id: 325
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"36958f57-1376-454a-bc6c-e87c6db51fe3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" SEO优"}},"parent_tool_use_id":null}}
+
+id: 326
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6d4ecc4b-0ee6-4388-a24f-ea708e8e78f1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化要"}},"parent_tool_use_id":null}}
+
+id: 327
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ef3bd66d-039d-41f7-a182-451d368dda0f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"点总"}},"parent_tool_use_id":null}}
+
+id: 328
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"39048ef9-91c3-4b81-842e-e9c24d37a9d5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"结\n\n|"}},"parent_tool_use_id":null}}
+
+id: 329
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8889b931-e6c6-4f81-a7e4-b5ea67e274ab","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 优"}},"parent_tool_use_id":null}}
+
+id: 330
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9dedf82e-c2f7-4213-8ba4-6d54f3b35e93","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"化项"}},"parent_tool_use_id":null}}
+
+id: 331
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"47f60afe-d1d2-40cb-9a0f-20d644b40c50","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 建"}},"parent_tool_use_id":null}}
+
+id: 332
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"11829028-3288-429c-8ebd-b932d6724f4c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"议 |"}},"parent_tool_use_id":null}}
+
+id: 333
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4d04025b-1669-41a6-b833-73f02f0f590b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n|--------|------|\n|"}},"parent_tool_use_id":null}}
+
+id: 334
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5e185100-5631-4eb6-bfc3-ee6276bf6c69","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" **"}},"parent_tool_use_id":null}}
+
+id: 335
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a43aea4d-9898-4e67-9948-5267098b515b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标题长"}},"parent_tool_use_id":null}}
+
+id: 336
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a64623c3-4aea-49b2-920c-9ee86f1a3e5a","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"度** | 40"}},"parent_tool_use_id":null}}
+
+id: 337
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4f41a71-fff5-47a8-8038-f1bc2588ebd5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-60字"}},"parent_tool_use_id":null}}
+
+id: 338
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6119897a-86e8-4430-8aa0-a5801d35370c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"符"}},"parent_tool_use_id":null}}
+
+id: 339
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"486e31fd-d9ac-414a-8cef-39f23a17ccac","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"，"}},"parent_tool_use_id":null}}
+
+id: 340
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c26d5966-0cff-4f44-9667-3d73e07803de","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"包"}},"parent_tool_use_id":null}}
+
+id: 341
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bbea3a58-16d0-4bd5-8139-7287286c53a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"含2"}},"parent_tool_use_id":null}}
+
+id: 342
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1c30f0de-3599-44c0-909b-d3d0ba7468d9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-3个关键词 |"}},"parent_tool_use_id":null}}
+
+id: 343
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f4bc9b11-2aa2-40ea-9b8c-dff47f03c5f6","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n| **描述长度**"}},"parent_tool_use_id":null}}
+
+id: 344
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3227daf5-b520-4910-aedd-3305df265567","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" | 200"}},"parent_tool_use_id":null}}
+
+id: 345
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cdf464dd-4d61-4f7d-a3d1-888307c8705e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-500"}},"parent_tool_use_id":null}}
+
+id: 346
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"339d505c-383a-4b95-b149-c85aa29129ef","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"字，"}},"parent_tool_use_id":null}}
+
+id: 347
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"5bc3cf64-a0fd-49ad-a6f4-392a89db2b40","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"前"}},"parent_tool_use_id":null}}
+
+id: 348
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ca8b6fd7-56d8-4a6b-b1d6-c1bf5682d147","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"150"}},"parent_tool_use_id":null}}
+
+id: 349
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7992484b-1380-4102-bc4f-a04ae0458384","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"字最"}},"parent_tool_use_id":null}}
+
+id: 350
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"905dfece-6149-4df8-8f37-721df3fc19e5","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"重"}},"parent_tool_use_id":null}}
+
+id: 351
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"272cf41a-bf74-4da4-815b-f8504cb3e684","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要 |\n| **时"}},"parent_tool_use_id":null}}
+
+id: 352
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"472e552a-a023-4d41-8c22-9b9b694cbab2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"间戳** | 添"}},"parent_tool_use_id":null}}
+
+id: 353
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d626ad44-a04d-4dbd-bb8c-0e6d458b3aa0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"加章"}},"parent_tool_use_id":null}}
+
+id: 354
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"32ad2816-044b-4c35-844f-ac979ed92591","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"节，"}},"parent_tool_use_id":null}}
+
+id: 355
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2a92952b-dffb-40a6-8e6a-f6864a9c54f1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"提"}},"parent_tool_use_id":null}}
+
+id: 356
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f8742ea3-14b4-4fc3-9aed-548d7c00179b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"升"}},"parent_tool_use_id":null}}
+
+id: 357
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d855b119-4e5b-44f8-94a0-f72a4342f424","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"用"}},"parent_tool_use_id":null}}
+
+id: 358
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"acab223e-7cda-44bb-b7f5-a071e74778a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"户体验 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 359
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b158d29c-779a-48da-a27e-8c4aef8b227b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"标"}},"parent_tool_use_id":null}}
+
+id: 360
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4345efa0-63aa-4f23-b742-fa7655e2cc07","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签"}},"parent_tool_use_id":null}}
+
+id: 361
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"0e19beee-dd34-4fb4-a7fa-9cf9849895a0","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"/"}},"parent_tool_use_id":null}}
+
+id: 362
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7a68bb4a-92f3-43bc-973b-3306ac08ed17","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Hashtag"}},"parent_tool_use_id":null}}
+
+id: 363
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a7cb71ee-a105-4d53-b3ea-ae3ac49cd6b4","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"** | 5"}},"parent_tool_use_id":null}}
+
+id: 364
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"05c2438e-501d-4d0b-82b4-837d8188061f","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-10个相"}},"parent_tool_use_id":null}}
+
+id: 365
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51db6ef6-073a-460a-8834-1754caa24da9","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"关标"}},"parent_tool_use_id":null}}
+
+id: 366
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"c96e75d1-aa60-4d31-818a-eeb7146b0832","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"签 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 367
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"bee6917d-dc38-4fd4-99fb-abb73ea521e8","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"缩略图** | 高"}},"parent_tool_use_id":null}}
+
+id: 368
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"4c91abb3-8555-47bc-9eba-8ea037080e70","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对"}},"parent_tool_use_id":null}}
+
+id: 369
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e1fea3df-e7db-41ec-a21b-2763d39d0aee","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"比度，展"}},"parent_tool_use_id":null}}
+
+id: 370
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"2f77799e-145c-4656-8303-d085cebf0e96","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"示"}},"parent_tool_use_id":null}}
+
+id: 371
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1f1f1e7c-1eae-4300-9b90-03d72a95e672","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆容前"}},"parent_tool_use_id":null}}
+
+id: 372
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f9288d1e-f876-4411-b19f-9dfa5c734724","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"后对比 |\n| **"}},"parent_tool_use_id":null}}
+
+id: 373
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7ac13650-0e4a-4108-bf5c-655968384eaf","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"行"}},"parent_tool_use_id":null}}
+
+id: 374
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d4aa9e4a-55c6-4012-a8df-77374e57ebe2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"动号召** | 引"}},"parent_tool_use_id":null}}
+
+id: 375
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"8210c6ab-5bdb-4015-bb05-4f9507e53ca3","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"导点"}},"parent_tool_use_id":null}}
+
+id: 376
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"1363e9f4-b90b-4400-ba0a-8952cb38961d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"赞、订阅、评"}},"parent_tool_use_id":null}}
+
+id: 377
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"273f82e2-bc0c-43c4-bf07-2603848d85dc","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"论 |\n\n需"}},"parent_tool_use_id":null}}
+
+id: 378
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7acaa983-0e99-4ba6-8bb1-a35203b94e05","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"要我"}},"parent_tool_use_id":null}}
+
+id: 379
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"6f4a9550-9c54-48b9-af9f-03f7df13e0e1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"帮你进"}},"parent_tool_use_id":null}}
+
+id: 380
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e6b39458-07f6-42c8-bb78-60e97db5385c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"一步调"}},"parent_tool_use_id":null}}
+
+id: 381
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"318bdb6b-13dd-453c-bd34-d8b4088be2c1","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"整优化内"}},"parent_tool_use_id":null}}
+
+id: 382
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"54362229-6b6d-4e54-a3aa-b063fce1f0db","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"容，"}},"parent_tool_use_id":null}}
+
+id: 383
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7fafbe11-948b-40d7-bbba-c67b64c16a36","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"或"}},"parent_tool_use_id":null}}
+
+id: 384
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"732a1acd-947b-4619-a90a-ce0bee3f5d32","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"者针"}},"parent_tool_use_id":null}}
+
+id: 385
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"51bc2e9f-0bc4-4d13-a47c-9ee8208ac15b","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"对特"}},"parent_tool_use_id":null}}
+
+id: 386
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"d0aad41d-2590-4623-ae86-5f60301a2482","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"定的化"}},"parent_tool_use_id":null}}
+
+id: 387
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"9c1ec040-3d86-4291-91ad-d34bf4b4f27d","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆类"}},"parent_tool_use_id":null}}
+
+id: 388
+data: {"type":"keep_alive"}
+
+id: 389
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"348e2bc6-1429-4663-8176-35deb9f44129","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"型（"}},"parent_tool_use_id":null}}
+
+id: 390
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"ebc47f9c-f8c1-447a-95b4-6ac5b91f66ba","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"如"}},"parent_tool_use_id":null}}
+
+id: 391
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"e32bd246-91a7-40e7-b109-2e089d397bf2","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"韩系"}},"parent_tool_use_id":null}}
+
+id: 392
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"76b0c1d5-7d11-4b1c-8d96-d9d80fba0b7c","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆容"}},"parent_tool_use_id":null}}
+
+id: 393
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"3ec14fd3-f17b-4af9-a4d8-c44d2a325406","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"、职"}},"parent_tool_use_id":null}}
+
+id: 394
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"55b270d2-577a-4af1-b408-349103d7628e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"场"}},"parent_tool_use_id":null}}
+
+id: 395
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"cf4f8423-cf4a-4387-8823-a2de97542d4e","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"妆等"}},"parent_tool_use_id":null}}
+
+id: 396
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"07afdaa9-e58a-44c1-a28e-2fec3adfd327","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"）重"}},"parent_tool_use_id":null}}
+
+id: 397
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"04a74ab8-3110-4c4a-baf4-52cc5559cf81","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"新定"}},"parent_tool_use_id":null}}
+
+id: 398
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"b80620b0-52a8-45cc-b8e6-aa65d050f170","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"制"}},"parent_tool_use_id":null}}
+
+id: 399
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"eebc9c14-b71e-407d-952a-b3c23ab57c41","event":{"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"吗？"}},"parent_tool_use_id":null}}
+
+id: 400
+data: {"type":"assistant","message":{"type":"assistant","uuid":"65c1c402-a916-4603-90da-cc2f3524b82b","message":{"id":"msg_01N7LSNCc56eiwKgN9dPwFxu","content":[{"type":"text","text":"## 📋 YouTube视频SEO优化分析\n\n### 原始内容\n- **标题**：新手化妆教程\n- **描述**：教你怎么化妆\n\n---\n\n### 🔍 SEO问题分析\n\n| 问题 | 原标题/描述 | 影响 |\n|------|------------|------|\n| 标题过短 | 仅6个字 | 搜索覆盖面窄 |\n| 缺乏关键词 | 无具体化妆类型 | 难以精准触达目标受众 |\n| 描述过简 | 仅5个字 | YouTube算法难以理解内容 |\n| 无行动号召 | - | 互动率低 |\n\n---\n\n### ✨ 优化后版本\n\n#### 🎬 标题建议（3个版本）\n\n1. **【新手必看】10分钟日常妆容教程｜零基础化妆入门指南**\n2. **化妆教程｜新手小白从零开始学化妆｜简单易学日常妆**\n3. **新手化妆教程2024｜5步打造自然清透妆容｜化妆初学者必备**\n\n#### 📝 优化描述\n\n```\n🌟 新手化妆教程 | 零基础也能轻松学会！\n\n大家好！这是一期专为化妆新手准备的入门教程～\n\n📌 本期内容：\n00:00 开场介绍\n01:30 护肤打底\n03:00 底妆教程（粉底/遮瑕/定妆）\n06:00 眉毛画法\n08:00 眼妆教程\n10:00 腮红/高光/修容\n12:00 唇妆完成\n\n✅ 适合人群：\n• 化妆小白/初学者\n• 想学日常妆容的朋友\n• 追求自然清透妆感的你\n\n🛒 视频中使用的产品：\n• 粉底液：[品牌名称]\n• 眉笔：[品牌名称]\n• 口红：[品牌名称]\n\n💬 如果这个视频对你有帮助，记得点赞👍订阅🔔分享给需要的朋友！\n有任何问题欢迎在评论区留言～\n\n#化妆教程 #新手化妆 #日常妆容 #化妆入门 #美妆教程 #makeup #makeuptutorial\n```\n\n---\n\n### 🏷️ 关键词建议\n\n#### 主关键词（高搜索量）\n| 关键词 | 类型 |\n|--------|------|\n| 化妆教程 | 核心词 |\n| 新手化妆 | 核心词 |\n| 化妆入门 | 核心词 |\n| 日常妆容 | 场景词 |\n\n#### 长尾关键词（精准流量）\n| 关键词 | 适用场景 |\n|--------|---------|\n| 新手化妆教程零基础 | 完全新手 |\n| 简单化妆步骤 | 追求简单 |\n| 5分钟快速化妆 | 时间紧迫 |\n| 学生党化妆教程 | 学生群体 |\n| 自然妆容教程 | 淡妆爱好者 |\n| 化妆新手必看 | 入门用户 |\n\n#### 英文关键词（扩大受众）\n- makeup tutorial for beginners\n- easy makeup tutorial\n- natural makeup look\n- everyday makeup\n\n---\n\n### 📊 SEO优化要点总结\n\n| 优化项 | 建议 |\n|--------|------|\n| **标题长度** | 40-60字符，包含2-3个关键词 |\n| **描述长度** | 200-500字，前150字最重要 |\n| **时间戳** | 添加章节，提升用户体验 |\n| **标签/Hashtag** | 5-10个相关标签 |\n| **缩略图** | 高对比度，展示妆容前后对比 |\n| **行动号召** | 引导点赞、订阅、评论 |\n\n需要我帮你进一步调整优化内容，或者针对特定的化妆类型（如韩系妆容、职场妆等）重新定制吗？"}],"model":"claude-opus-4-5-20251101","role":"assistant","stop_reason":null,"stop_sequence":null,"type":"message","usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":80},"cache_creation_input_tokens":80,"cache_read_input_tokens":31110,"input_tokens":1,"output_tokens":1,"service_tier":"standard"},"context_management":null},"parent_tool_use_id":null}}
+
+id: 401
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"f0381a39-865c-4639-85d3-9156813bcf6a","event":{"type":"content_block_stop","index":0},"parent_tool_use_id":null}}
+
+id: 402
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"7a26c97e-bf9a-42a0-b1d9-05b8b9afb9fa","event":{"type":"message_delta","delta":{"stop_reason":"end_turn","stop_sequence":null},"usage":{"cache_creation_input_tokens":80,"cache_read_input_tokens":31110,"input_tokens":1,"output_tokens":1261}},"parent_tool_use_id":null}}
+
+id: 403
+data: {"type":"stream_event","message":{"type":"stream_event","uuid":"a9a75cc5-8908-46e2-ba53-4b6647056574","event":{"type":"message_stop"},"parent_tool_use_id":null}}
+
+id: 404
+data: {"type":"result","message":{"type":"result","subtype":"success","uuid":"733b8fa8-1c68-48e8-ae49-7817f95dcf47","duration_ms":28579,"duration_api_ms":28507,"is_error":false,"num_turns":2,"message":"## 📋 YouTube视频SEO优化分析\n\n### 原始内容\n- **标题**：新手化妆教程\n- **描述**：教你怎么化妆\n\n---\n\n### 🔍 SEO问题分析\n\n| 问题 | 原标题/描述 | 影响 |\n|------|------------|------|\n| 标题过短 | 仅6个字 | 搜索覆盖面窄 |\n| 缺乏关键词 | 无具体化妆类型 | 难以精准触达目标受众 |\n| 描述过简 | 仅5个字 | YouTube算法难以理解内容 |\n| 无行动号召 | - | 互动率低 |\n\n---\n\n### ✨ 优化后版本\n\n#### 🎬 标题建议（3个版本）\n\n1. **【新手必看】10分钟日常妆容教程｜零基础化妆入门指南**\n2. **化妆教程｜新手小白从零开始学化妆｜简单易学日常妆**\n3. **新手化妆教程2024｜5步打造自然清透妆容｜化妆初学者必备**\n\n#### 📝 优化描述\n\n```\n🌟 新手化妆教程 | 零基础也能轻松学会！\n\n大家好！这是一期专为化妆新手准备的入门教程～\n\n📌 本期内容：\n00:00 开场介绍\n01:30 护肤打底\n03:00 底妆教程（粉底/遮瑕/定妆）\n06:00 眉毛画法\n08:00 眼妆教程\n10:00 腮红/高光/修容\n12:00 唇妆完成\n\n✅ 适合人群：\n• 化妆小白/初学者\n• 想学日常妆容的朋友\n• 追求自然清透妆感的你\n\n🛒 视频中使用的产品：\n• 粉底液：[品牌名称]\n• 眉笔：[品牌名称]\n• 口红：[品牌名称]\n\n💬 如果这个视频对你有帮助，记得点赞👍订阅🔔分享给需要的朋友！\n有任何问题欢迎在评论区留言～\n\n#化妆教程 #新手化妆 #日常妆容 #化妆入门 #美妆教程 #makeup #makeuptutorial\n```\n\n---\n\n### 🏷️ 关键词建议\n\n#### 主关键词（高搜索量）\n| 关键词 | 类型 |\n|--------|------|\n| 化妆教程 | 核心词 |\n| 新手化妆 | 核心词 |\n| 化妆入门 | 核心词 |\n| 日常妆容 | 场景词 |\n\n#### 长尾关键词（精准流量）\n| 关键词 | 适用场景 |\n|--------|---------|\n| 新手化妆教程零基础 | 完全新手 |\n| 简单化妆步骤 | 追求简单 |\n| 5分钟快速化妆 | 时间紧迫 |\n| 学生党化妆教程 | 学生群体 |\n| 自然妆容教程 | 淡妆爱好者 |\n| 化妆新手必看 | 入门用户 |\n\n#### 英文关键词（扩大受众）\n- makeup tutorial for beginners\n- easy makeup tutorial\n- natural makeup look\n- everyday makeup\n\n---\n\n### 📊 SEO优化要点总结\n\n| 优化项 | 建议 |\n|--------|------|\n| **标题长度** | 40-60字符，包含2-3个关键词 |\n| **描述长度** | 200-500字，前150字最重要 |\n| **时间戳** | 添加章节，提升用户体验 |\n| **标签/Hashtag** | 5-10个相关标签 |\n| **缩略图** | 高对比度，展示妆容前后对比 |\n| **行动号召** | 引导点赞、订阅、评论 |\n\n需要我帮你进一步调整优化内容，或者针对特定的化妆类型（如韩系妆容、职场妆等）重新定制吗？","total_cost_usd":0.24358749999999998,"usage":{"cache_creation":{"ephemeral_1h_input_tokens":0,"ephemeral_5m_input_tokens":31190},"cache_creation_input_tokens":31190,"cache_read_input_tokens":31110,"input_tokens":4,"output_tokens":1323,"server_tool_use":{"web_search_requests":0}},"permission_denials":[]}}
+

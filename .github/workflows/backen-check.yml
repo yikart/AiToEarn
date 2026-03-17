@@ -10,7 +10,7 @@ permissions:
 
 env:
   NX_NO_CLOUD: true
-  MONOREPO_DIR: project/backend
+  MONOREPO_DIR: project/aitoearn-backend
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -30,7 +30,7 @@ jobs:
       - name: Check if backend files changed
         id: check-changes
         run: |
-          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -q "^project/backend/"; then
+          if git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep -q "^project/aitoearn-backend/"; then
             echo "changed=true" >> $GITHUB_OUTPUT
           else
             echo "changed=false" >> $GITHUB_OUTPUT
@@ -39,7 +39,7 @@ jobs:
       - name: Skip if no changes
         if: steps.check-changes.outputs.changed == 'false'
         run: |
-          echo "No changes in project/backend/, skipping checks"
+          echo "No changes in project/aitoearn-backend/, skipping checks"
           exit 0
 
       - name: Install pnpm
