@@ -231,24 +231,15 @@ async function buildImage(projectName, contextDir, options = {}) {
 
   // 为每个 registry 生成 tag 参数
   const tagArgs = registries.flatMap(registry => ['-t', `${registry}/${projectName}:${tag}`])
+  const pushArgs = push ? ['--push'] : []
 
   try {
     // 构建镜像并打所有 tag
-    await $({ cwd: contextDir })`docker buildx build --build-arg APP_NAME=${projectName} --platform ${platformStr} -t ${localImageName} ${tagArgs} .`
+    await $({ cwd: contextDir })`docker buildx build --build-arg APP_NAME=${projectName} --platform ${platformStr} -t ${localImageName} ${tagArgs} ${pushArgs} .`
     console.info(chalk.green(`Docker 镜像构建完成:`))
     console.info(chalk.gray(`  本地: ${localImageName}`))
     for (const registry of registries) {
       console.info(chalk.gray(`  远程: ${registry}/${projectName}:${tag}`))
-    }
-
-    // 如果指定了 push，则逐个推送到各仓库
-    if (push) {
-      for (const registry of registries) {
-        const fullName = `${registry}/${projectName}:${tag}`
-        console.info(chalk.yellow(`推送镜像到 ${registry}...`))
-        await $({ stdio: 'inherit' })`docker push ${fullName}`
-        console.info(chalk.green(`镜像推送完成: ${fullName}`))
-      }
     }
   }
   catch (error) {
