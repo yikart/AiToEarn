@@ -263,9 +263,6 @@ export class OpenAIVideoService {
       duration,
       errorMessage: status === 'failed' ? data.error?.message : undefined,
     })
-
-    if (aiLogStatus === AiLogStatus.Failed) {
-    }
   }
 
   /**

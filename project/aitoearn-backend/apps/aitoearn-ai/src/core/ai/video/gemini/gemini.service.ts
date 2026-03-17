@@ -288,9 +288,6 @@ export class GeminiVideoService {
       errorMessage: operation.error?.['message'],
     })
 
-    if (aiLogStatus === AiLogStatus.Failed) {
-    }
-
     return callbackData
   }
 

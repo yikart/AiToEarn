@@ -185,9 +185,6 @@ export class VolcengineVideoService {
       duration,
       errorMessage: status === 'failed' ? callbackData.error?.message : undefined,
     })
-
-    if (aiLogStatus === AiLogStatus.Failed) {
-    }
   }
 
   /**

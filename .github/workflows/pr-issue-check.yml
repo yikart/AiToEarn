@@ -52,38 +52,3 @@ jobs:
               core.setFailed(errorMessage);
               return;
             }
-            
-            console.log(`✅ PR title follows Conventional Commits format: "${prTitle}"`);
-            
-            prBody = prBody.replace(/<!--[\s\S]*?-->/g, '');
-            
-            const issuePattern = /(?:closes?|fixes?|resolves?|related to|refs?)\s*#(\d+)/gi;
-            const matches = [];
-            
-            const bodyMatches = prBody.matchAll(issuePattern);
-            for (const match of bodyMatches) {
-              matches.push(parseInt(match[1]));
-            }
-            
-            const titleWithoutComments = prTitle.replace(/<!--[\s\S]*?-->/g, '');
-            const titlePattern = /(?:closes?|fixes?|resolves?|related to|refs?)\s*#(\d+)/gi;
-            const titleMatches = titleWithoutComments.matchAll(titlePattern);
-            for (const match of titleMatches) {
-              matches.push(parseInt(match[1]));
-            }
-            
-            const issueNumbers = [...new Set(matches)];
-            
-            if (issueNumbers.length === 0) {
-              core.setFailed(
-                '❌ This PR must be linked to an issue.\n\n' +
-                'Please add one of the following to your PR description or title:\n' +
-                '- Closes #123\n' +
-                '- Fixes #123\n' +
-                '- Resolves #123\n' +
-                '- Related to #123\n' +
-                '- Refs #123\n\n' +
-                'You can link multiple issues: Closes #12, Related to #34'
-              );
-              return;
-            }
