@@ -41,6 +41,8 @@ export interface IUserStore {
   sidebarCollapsed: boolean
   // 是否曾经登录过（用于判断是否显示登录页或重定向到注册页）
   hasEverLoggedIn: boolean
+  // appInit 是否已完成（用于路由守卫等待自动登录）
+  _appInitialized: boolean
 }
 
 const state: IUserStore = {
@@ -50,6 +52,7 @@ const state: IUserStore = {
   lang: i18next.language || 'en',
   sidebarCollapsed: false,
   hasEverLoggedIn: false,
+  _appInitialized: false,
 }
 
 function getState(): IUserStore {
@@ -82,11 +85,12 @@ export const useUserStore = createPersistStore(
         // 自动登录：从 init 服务生成的 token 文件中获取
         if (!_get().token) {
           try {
-            const res = await fetch('/api/auto-login')
+            const res = await fetch('/auto-login')
             const data = await res.json()
             if (data.token) methods.setToken(data.token)
           } catch {}
         }
+        set({ _appInitialized: true })
         methods.getUserInfo()
         useAccountStore.getState().accountInit()
       },

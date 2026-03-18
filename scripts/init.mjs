@@ -21,7 +21,7 @@ async function main() {
   console.log('Connected to MongoDB')
 
   const db = client.db(DB_NAME)
-  const users = db.collection('users')
+  const users = db.collection('user')
 
   let user = await users.findOne({ mail: DEFAULT_EMAIL, isDelete: { $ne: true } })
 

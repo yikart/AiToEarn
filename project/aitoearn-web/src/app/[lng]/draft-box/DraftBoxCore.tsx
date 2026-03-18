@@ -1,32 +1,30 @@
 /**
  * 草稿箱核心组件
- * 管理草稿组选择和内容展示
+ * 自动获取/创建默认草稿箱并展示内容
  */
 
 'use client'
 
 import { Loader2 } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
 import { useEffect } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import DraftContentModule from './components/DraftContentModule'
 import { useDraftBoxStore } from './draftBoxStore'
 
 export default function DraftBoxCore() {
-  const searchParams = useSearchParams()
-  const urlPlanId = searchParams.get('planId')
+  const { planLoading, currentPlan } = useDraftBoxStore(
+    useShallow(state => ({
+      planLoading: state.planLoading,
+      currentPlan: state.currentPlan,
+    })),
+  )
+  const autoInit = useDraftBoxStore(state => state.autoInit)
 
-  const initDetailPage = useDraftBoxStore(state => state.initDetailPage)
-  const planLoading = useDraftBoxStore(state => state.planLoading)
-  const currentPlan = useDraftBoxStore(state => state.currentPlan)
-
-  // 根据 URL 参数初始化数据
   useEffect(() => {
-    if (urlPlanId) {
-      initDetailPage(urlPlanId)
-    }
-  }, [urlPlanId, initDetailPage])
+    autoInit()
+  }, [autoInit])
 
-  if (urlPlanId && planLoading && !currentPlan) {
+  if (planLoading && !currentPlan) {
     return (
       <div className="flex flex-col h-full">
         <div className="flex-1 min-h-0">

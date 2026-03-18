@@ -9,7 +9,7 @@
 'use client'
 
 import type { DraftMaterial } from '@/app/[lng]/draft-box/types'
-import { Check, ListChecks, Plus } from 'lucide-react'
+import { Check, FileText, ListChecks, Plus } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef } from 'react'
 import Masonry from 'react-masonry-css'
 import { useShallow } from 'zustand/react/shallow'
@@ -268,6 +268,38 @@ export const DraftListSection = memo(() => {
               <DraftCardSkeleton key={i} index={i} />
             ))}
           </Masonry>
+        </CardContent>
+      </Card>
+    )
+  }
+
+  // 空状态：加载完成且无草稿
+  if (!materialsLoading && materials.length === 0) {
+    return (
+      <Card>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-base">{t('overview.draftList', { count: 0 })}</CardTitle>
+            <Button variant="ghost" size="sm" onClick={openGenerationDetailDialog} className="cursor-pointer gap-1.5 text-muted-foreground">
+              <ListChecks className="h-3.5 w-3.5" />
+              {t('draftManage.generationDetail')}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-16 gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+              <FileText className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <div className="text-center">
+              <p className="text-base font-medium text-muted-foreground">{t('material.emptyTitle')}</p>
+              <p className="mt-1 text-sm text-muted-foreground/70">{t('material.emptyDesc')}</p>
+            </div>
+            <Button onClick={openCreateMaterialModal} className="cursor-pointer mt-2 gap-1.5">
+              <Plus className="h-4 w-4" />
+              {t('detail.manualGenerate')}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     )

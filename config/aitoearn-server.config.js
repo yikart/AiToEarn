@@ -254,6 +254,8 @@ module.exports = {
     region: 'us-east-1',
     bucketName: 'aitoearn',
     endpoint: 'http://rustfs.local:9000',
+    signEndpoint: 'http://localhost:9000',
+    cdnEndpoint: 'http://localhost:8080/oss',
     accessKeyId: 'rustfsadmin',
     secretAccessKey: 'rustfsadmin',
   },

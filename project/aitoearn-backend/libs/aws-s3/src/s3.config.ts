@@ -6,8 +6,9 @@ export const s3ConfigSchema = z.object({
   accessKeyId: z.string().optional(),
   secretAccessKey: z.string().optional(),
   bucketName: z.string(),
-  endpoint: z.httpUrl(),
-  cdnEndpoint: z.httpUrl().optional(),
+  endpoint: z.url(),
+  cdnEndpoint: z.url().optional(),
+  signEndpoint: z.url().optional().describe('预签名 URL 使用的外部可达 endpoint，不设置则使用 endpoint'),
   signExpires: z.number().default(5 * 60).describe('sign expires in seconds'),
 })
 

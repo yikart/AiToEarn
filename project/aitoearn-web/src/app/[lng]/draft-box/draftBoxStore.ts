@@ -13,8 +13,10 @@ import {
 } from '@/api/draftGeneration'
 import {
   apiBatchDeleteMaterials,
+  apiCreateMaterialGroup,
   apiDeleteMaterial,
   apiFilterDeleteMaterials,
+  apiGetMaterialGroupList,
   apiGetMaterialInfo,
   apiGetMaterialList,
 } from '@/api/material'
@@ -378,6 +380,46 @@ export const useDraftBoxStore = create(
       },
 
       // ==================== 初始化 ====================
+
+      /** 自动获取或创建默认草稿箱，然后初始化页面 */
+      autoInit: async () => {
+        const { initializedGroupId } = get()
+
+        set({ planLoading: true })
+        try {
+          // 获取第一个草稿箱
+          const res = await apiGetMaterialGroupList(1, 1)
+          const list = res?.data?.list || []
+
+          let groupId: string
+
+          if (list.length > 0) {
+            groupId = list[0]._id
+          }
+          else {
+            // 没有草稿箱，自动创建一个
+            const createRes = await apiCreateMaterialGroup({ name: '默认草稿箱' })
+            if (createRes?.data?._id) {
+              groupId = createRes.data._id
+            }
+            else {
+              set({ planLoading: false, materialsLoading: false })
+              return
+            }
+          }
+
+          // 防止重复初始化
+          if (initializedGroupId === groupId) {
+            set({ planLoading: false })
+            return
+          }
+
+          await methods.initDetailPage(groupId, true)
+        }
+        catch {
+          set({ planLoading: false, materialsLoading: false })
+        }
+      },
 
       initDetailPage: async (groupId: string, force: boolean = false) => {
         const { initializedGroupId } = get()

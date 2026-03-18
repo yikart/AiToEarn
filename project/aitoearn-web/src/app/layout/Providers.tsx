@@ -26,10 +26,11 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
   // 用于追踪是否已经在当前路由弹出过登录框，避免重复弹出
   const hasPromptedRef = useRef(false)
 
-  const { _hasHydrated, token } = useUserStore(
+  const { _hasHydrated, token, _appInitialized } = useUserStore(
     useShallow(state => ({
       _hasHydrated: state._hasHydrated,
       token: state.token,
+      _appInitialized: state._appInitialized,
     })),
   )
 
@@ -48,8 +49,8 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
 
   // 未登录用户访问非公开页面时，跳转到登录页
   useEffect(() => {
-    // 等待持久化数据同步完成
-    if (!_hasHydrated) {
+    // 等待持久化数据同步完成和 appInit 完成（含自动登录）
+    if (!_hasHydrated || !_appInitialized) {
       return
     }
 
@@ -73,7 +74,7 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
     // 在当前页面弹出登录框，不跳转
     hasPromptedRef.current = true
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
-  }, [_hasHydrated, token, pathname])
+  }, [_hasHydrated, _appInitialized, token, pathname])
 
   // 拦截 @react-oauth/google 的脚本加载，添加 ?hl= 参数以设置按钮语言
   useLayoutEffect(() => {

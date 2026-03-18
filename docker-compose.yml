@@ -47,7 +47,6 @@ services:
       RUSTFS_ACCESS_KEY: rustfsadmin
       RUSTFS_SECRET_KEY: rustfsadmin
     ports:
-      - "9000:9000"
       - "9001:9001"
     volumes:
       - rustfs-data:/data
@@ -280,6 +279,7 @@ services:
         condition: service_healthy
     ports:
       - "8080:80"
+      - "9000:9000"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
     networks:

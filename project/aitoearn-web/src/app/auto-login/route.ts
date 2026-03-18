@@ -5,6 +5,8 @@
 import { readFileSync } from 'fs'
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 export function GET() {
   const tokenPath = process.env.AUTO_LOGIN_TOKEN_PATH
   if (!tokenPath) return NextResponse.json({ token: null })
