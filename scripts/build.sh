@@ -27,7 +27,6 @@ echo "=== Building frontend image ==="
 
 cd "$PROJECT_ROOT/project/aitoearn-web"
 docker build \
-  --build-arg NEXT_PUBLIC_API_URL=http://localhost:8080/api \
   -t aitoearn/aitoearn-web:latest .
 
 echo "=== All images built successfully ==="

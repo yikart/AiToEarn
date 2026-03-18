@@ -2,7 +2,7 @@ import type { PageParams } from '@/app/globals'
 import * as React from 'react'
 import { MaterialPageCore } from '@/app/[lng]/material/materialPageCore'
 import { useTranslation } from '@/app/i18n'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/server-general'
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params

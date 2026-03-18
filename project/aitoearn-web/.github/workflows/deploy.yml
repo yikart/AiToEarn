@@ -15,14 +15,6 @@ on:
         required: false
         type: string
         default: linux/amd64
-      environment:
-        description: 部署环境
-        required: false
-        type: choice
-        options:
-          - dev
-          - prod
-        default: prod
 
 permissions:
   contents: read
@@ -71,20 +63,6 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Set environment URLs
-        id: env-urls
-        run: |
-          ENV="${{ github.event.inputs.environment || 'prod' }}"
-          if [ "$ENV" = "dev" ]; then
-            echo "host_url=https://dev.aitoearn.ai" >> $GITHUB_OUTPUT
-            echo "oss_url=https://assets.dev.aitoearn.ai/" >> $GITHUB_OUTPUT
-            echo "base_api=https://dev.aitoearn.ai/api" >> $GITHUB_OUTPUT
-          else
-            echo "host_url=https://aitoearn.ai" >> $GITHUB_OUTPUT
-            echo "oss_url=https://assets.aitoearn.ai/" >> $GITHUB_OUTPUT
-            echo "base_api=https://aitoearn.ai/api" >> $GITHUB_OUTPUT
-          fi
-
       - name: Build and push to Fly.io registry
         uses: docker/build-push-action@v5
         with:
@@ -93,12 +71,8 @@ jobs:
           platforms: ${{ github.event.inputs.architectures }}
           push: true
           tags: ${{ env.FLY_REGISTRY }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
-          build-args: |
-            NEXT_PUBLIC_HOST_URL=${{ steps.env-urls.outputs.host_url }}
-            NEXT_PUBLIC_OSS_URL=${{ steps.env-urls.outputs.oss_url }}
-            NEXT_PUBLIC_API_URL=${{ steps.env-urls.outputs.base_api }}
-          cache-from: type=gha,scope=fly-${{ github.event.inputs.environment || 'prod' }}
-          cache-to: type=gha,mode=max,scope=fly-${{ github.event.inputs.environment || 'prod' }}
+          cache-from: type=gha,scope=fly-prod
+          cache-to: type=gha,mode=max,scope=fly-prod
 
       - name: Build and push to private registry
         uses: docker/build-push-action@v5
@@ -108,12 +82,8 @@ jobs:
           platforms: ${{ github.event.inputs.architectures }}
           push: true
           tags: ${{ env.DOCKER_REGISTRY }}/${{ env.APP_NAME }}:${{ steps.version.outputs.version }}
-          build-args: |
-            NEXT_PUBLIC_HOST_URL=${{ steps.env-urls.outputs.host_url }}
-            NEXT_PUBLIC_OSS_URL=${{ steps.env-urls.outputs.oss_url }}
-            NEXT_PUBLIC_API_URL=${{ steps.env-urls.outputs.base_api }}
-          cache-from: type=gha,scope=private-${{ github.event.inputs.environment || 'prod' }}
-          cache-to: type=gha,mode=max,scope=private-${{ github.event.inputs.environment || 'prod' }}
+          cache-from: type=gha,scope=private-prod
+          cache-to: type=gha,mode=max,scope=private-prod
       - name: Build summary
         run: |
           echo "### ✅ 构建成功: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY
@@ -157,7 +127,7 @@ jobs:
             const repo = '${{ env.INFRASTRUCTURE_REPO }}';
             const apps = ${{ steps.build-apps-json.outputs.apps_json }};
             const branch = '${{ github.ref_name }}';
-            const environment = '${{ github.event.inputs.environment }}' || 'prod';
+            const environment = 'prod';
 
             await github.rest.repos.createDispatchEvent({
               owner: owner,
@@ -188,7 +158,7 @@ jobs:
           echo "## 🚀 已触发部署" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **分支**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **环境**: ${{ github.event.inputs.environment || 'prod' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **环境**: prod" >> $GITHUB_STEP_SUMMARY
           echo "- **提交**: [\`${{ github.sha }}\`](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
           echo "- **部署目标**: ${{ env.INFRASTRUCTURE_REPO }}" >> $GITHUB_STEP_SUMMARY
           echo "- **应用**: ${{ env.APP_NAME }}" >> $GITHUB_STEP_SUMMARY

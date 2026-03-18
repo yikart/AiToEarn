@@ -62,6 +62,26 @@ services:
       retries: 5
       start_period: 30s
 
+  aitoearn-init:
+    image: node:lts-alpine
+    container_name: aitoearn-init
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./scripts/init.mjs:/app/init.mjs:ro
+      - ./scripts/init-package.json:/app/package.json:ro
+      - init-data:/data/init
+    working_dir: /app
+    environment:
+      MONGO_URI: mongodb://admin:password@mongodb:27017
+      JWT_SECRET: change-this-jwt-secret
+      DB_NAME: aitoearn
+      AUTO_LOGIN_TOKEN_PATH: /data/init/token.txt
+    entrypoint: /bin/sh -c "npm install --omit=dev 2>/dev/null && node init.mjs"
+    networks:
+      - aitoearn-network
+
   rustfs-init:
     image: minio/mc:latest
     container_name: aitoearn-rustfs-init
@@ -238,12 +258,14 @@ services:
     depends_on:
       aitoearn-server:
         condition: service_healthy
+    volumes:
+      - init-data:/data/init:ro
     networks:
       - aitoearn-network
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: 1
-      NEXT_PUBLIC_API_URL: http://localhost:8080/api
+      AUTO_LOGIN_TOKEN_PATH: /data/init/token.txt
 
   nginx:
     image: nginx:alpine
@@ -282,4 +304,6 @@ volumes:
   redis-data:
     driver: local
   rustfs-data:
+    driver: local
+  init-data:
     driver: local

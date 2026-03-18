@@ -6,7 +6,7 @@ const { HREFLANG_MAP, languages } = require('./src/lib/i18n/hreflangMap.cjs')
 
 const BLOCKLIST_REGEX = /material\/album\/\[id\]/
 const HAS_DYNAMIC_SEGMENT = /\[[^/]+?\]/
-const siteUrl = process.env.NEXT_PUBLIC_HOST_URL || 'https://aitoearn.ai'
+const siteUrl = 'https://aitoearn.ai'
 
 // 生成多语言alternateRefs（每个语言的根 URL）
 const alternateRefs = languages.map(lang => ({

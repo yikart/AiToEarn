@@ -1,7 +1,7 @@
 import type { PageParams } from '@/app/globals'
 import AccountPageCore from '@/app/[lng]/accounts/accountCore'
 import { useTranslation } from '@/app/i18n'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/server-general'
 
 export async function generateMetadata({ params }: PageParams) {
   const { lng } = await params

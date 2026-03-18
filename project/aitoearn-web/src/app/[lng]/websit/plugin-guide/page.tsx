@@ -5,7 +5,7 @@
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/server-general'
 import PluginGuideContent from './PluginGuideContent'
 
 export async function generateMetadata({

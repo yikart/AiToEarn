@@ -78,7 +78,15 @@ export const useUserStore = createPersistStore(
         set({ userInfo })
       },
 
-      appInit() {
+      async appInit() {
+        // 自动登录：从 init 服务生成的 token 文件中获取
+        if (!_get().token) {
+          try {
+            const res = await fetch('/api/auto-login')
+            const data = await res.json()
+            if (data.token) methods.setToken(data.token)
+          } catch {}
+        }
         methods.getUserInfo()
         useAccountStore.getState().accountInit()
       },

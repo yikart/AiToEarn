@@ -4,6 +4,8 @@
  * 无客户端依赖（不使用 useUserStore、directTrans）
  */
 
+import { headers } from 'next/headers'
+
 interface ServerFetchOptions {
   revalidate?: number | false
   tags?: string[]
@@ -15,14 +17,16 @@ interface ApiResponse<T> {
   message: string
 }
 
-function getBaseUrl() {
-  // 生产环境 NEXT_PUBLIC_API_URL 是 /api（相对路径），SSR 需要完整 URL
+async function getApiBaseUrl() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || '/api'
   if (apiUrl.startsWith('http')) {
     return apiUrl
   }
-  const hostUrl = process.env.NEXT_PUBLIC_HOST_URL || 'https://aitoearn.ai'
-  return `${hostUrl}${apiUrl}`
+  // 相对路径时，从请求 headers 中获取 host 拼接完整 URL
+  const h = await headers()
+  const host = h.get('host') || 'localhost:3000'
+  const proto = h.get('x-forwarded-proto') || 'http'
+  return `${proto}://${host}${apiUrl}`
 }
 
 /**
@@ -35,7 +39,7 @@ export async function serverFetch<T>(
   options: ServerFetchOptions = {},
 ): Promise<ApiResponse<T> | null> {
   try {
-    const baseUrl = getBaseUrl()
+    const baseUrl = await getApiBaseUrl()
     const url = new URL(`${baseUrl}/${path}`)
 
     if (params) {

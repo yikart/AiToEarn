@@ -6,7 +6,7 @@
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/server-general'
 import PromoCallbackCore from './promoCallbackCore'
 
 // 生成 SEO 元数据

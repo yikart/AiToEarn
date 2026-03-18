@@ -6,7 +6,7 @@
 import dynamic from 'next/dynamic'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/lib/i18n/languageConfig'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/server-general'
 
 interface PageParams {
   params: Promise<{ lng: string }>

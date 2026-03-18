@@ -9,6 +9,7 @@ import MobileNav from '@/app/layout/MobileNav'
 import { ChannelManager } from '@/components/ChannelManager'
 import { StructuredData } from '@/components/SEO/StructuredData'
 import { getHreflang } from '@/lib/i18n/languageConfig'
+import { getBaseUrl } from '@/utils/server-general'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lng: stri
     lng = fallbackLng
   const { t } = await useTranslation(lng)
 
-  const baseUrl = process.env.NEXT_PUBLIC_HOST_URL || 'https://aitoearn.ai'
+  const baseUrl = await getBaseUrl()
 
   // 生成hreflang链接
   const alternateRefs = languages.map(lang => ({
@@ -51,7 +52,7 @@ export default async function RootLayout({
   params: Promise<{ lng: string }>
 }>) {
   const { lng } = await params
-  const baseUrl = process.env.NEXT_PUBLIC_HOST_URL || 'https://aitoearn.ai'
+  const baseUrl = await getBaseUrl()
 
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
