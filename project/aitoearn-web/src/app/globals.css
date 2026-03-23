@@ -164,6 +164,9 @@ button {
   body {
     @apply bg-background text-foreground text-sm;
   }
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
 }
 
 body > div {

@@ -29,6 +29,20 @@
       "imageCountExceeded": "이미지 수가 플랫폼 제한을 초과합니다 (최대 {{max}}장)"
     },
     "platformIncompatibleCount": "{{count}}개 비호환",
-    "timeLimitedModelTip": "한시적 모델은 가용성이 보장되지 않습니다. 사용할 수 없는 경우 나중에 다시 시도하거나 다른 모델로 전환하세요."
+    "timeLimitedModelTip": "한시적 모델은 가용성이 보장되지 않습니다. 사용할 수 없는 경우 나중에 다시 시도하거나 다른 모델로 전환하세요.",
+    "draftModeOn": "초안 생성",
+    "draftModeOffVideo": "비디오 생성",
+    "draftModeOffImage": "이미지 생성",
+    "modelType": "모델",
+    "duration": "영상 길이",
+    "aspectRatio": "비율",
+    "promptTitle": "사용자 정의 프롬프트",
+    "referenceImages": "참조 이미지",
+    "imageModel": "이미지 모델",
+    "imageCount": "이미지 수",
+    "imageResolution": "해상도"
+  },
+  "publishRecord": {
+    "untitled": "제목 없음"
   }
 }

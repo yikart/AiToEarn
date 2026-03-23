@@ -19,6 +19,85 @@
 - 使用硬编码颜色（如 `text-gray-900`）→ 用 shadcn/ui 语义化变量
 - 使用纯黑色（`#000`、`black`、`text-black`）→ 用灰色系语义化变量（`text-muted-foreground`、`text-foreground` 等）
 - 用 `as any` 绕过 TypeScript 类型错误 → 必须从源头修复类型定义（扩展 interface/type、添加联合类型等）
+- 使用 `<Input type="number">` 或 `<input type="number">` → 用 `NumberInput` 组件（`src/components/ui/number-input.tsx`）
+
+## 代码复用（强制）
+
+**核心原则：相同或相似功能的代码必须复用，严禁重复实现。**
+
+### 编码前强制检索流程
+
+每次编写新逻辑前，**必须按顺序检索**以下位置，确认无现有实现后才可编写：
+
+1. **工具函数**：`src/utils/README.md` → `src/lib/README.md` → 对应源文件
+2. **自定义 Hooks**：`src/hooks/` 目录下所有 hooks
+3. **公共组件**：`src/components/README.md` → 相关组件目录
+4. **配置常量**：`src/app/config/` 下的配置文件
+5. **Store 方法**：`src/store/README.md` → 对应 store 是否已有类似状态/方法
+6. **页面级复用**：当前页面目录下的 store、hooks、utils
+
+**如果找到相似实现，必须复用或扩展，不得另起炉灶。**
+
+### 禁止的重复模式
+
+```tsx
+// ❌ 禁止：手写格式化逻辑，项目已有 formatNumber / formatDate / formatTime / formatSeconds
+const formatted = value > 10000 ? (value / 10000).toFixed(1) + 'w' : value
+
+// ❌ 禁止：手写货币符号，项目已有 appCurrencySymbol / formatCents
+const price = '$' + (amount / 100).toFixed(2)
+
+// ❌ 禁止：手写 OSS URL 拼接，项目已有 getOssUrl / getOssProxyPath
+const imgUrl = 'https://oss.xxx.com/' + path
+
+// ❌ 禁止：手写移动端判断，项目已有 useIsMobile hook
+const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
+// ❌ 禁止：手写视频时长获取，项目已有 getVideoDuration / getVideoInfo
+const video = document.createElement('video')
+
+// ❌ 禁止：手写倒计时逻辑，项目已有 useKeepTimeCountdown hook
+const [countdown, setCountdown] = useState(60)
+
+// ❌ 禁止：手写 VIP 判断，项目已有 getVipStatusInfo / getVipTier
+const isVip = status === 'active_monthly' || status === 'active_yearly'
+
+// ❌ 禁止：手写中文语言判断，项目已有 isChineseLanguage
+const isCN = lng === 'zh-CN' || lng === 'zh-TW'
+
+// ❌ 禁止：手写相对时间，项目已有 formatRelativeTime
+const timeAgo = Date.now() - time < 60000 ? '刚刚' : ...
+
+// ❌ 禁止：手写确认弹窗，项目已有 confirm()
+if (window.confirm('确定删除吗？')) { ... }
+
+// ❌ 禁止：使用原生 type="number"，有浏览器行为不一致问题（退格无法清空、spinner 等）
+<Input type="number" onChange={e => field.onChange(Number(e.target.value))} />
+
+// ✅ 正确：使用 NumberInput，自动处理清空、小数、格式化
+<NumberInput value={field.value} onValueChange={v => field.onChange(v)} decimalScale={2} />
+```
+
+### 相似 UI 模式必须抽取复用
+
+- **列表页**：分页逻辑、空状态、加载骨架屏 → 检查是否有类似页面可复用模式
+- **表单页**：校验、提交、loading → 检查 `react-hook-form` + `zod` 已有模式
+- **弹窗**：使用 `src/components/ui/modal.tsx` 或 `confirm()`，不得自建弹窗容器
+- **媒体预览**：使用 `MediaPreview` 组件，不得自建图片/视频预览
+
+### 新建 vs 复用决策
+
+| 场景                 | 做法                                            |
+| -------------------- | ----------------------------------------------- |
+| 功能与现有完全一致   | **直接引用**                                    |
+| 功能与现有 80% 相似  | **扩展现有**（加参数/配置项）                   |
+| 功能与现有 50% 相似  | **抽取公共部分**为新的共享工具/组件             |
+| 功能全新、无类似实现 | **允许新建**，但写到合适的公共目录并更新 README |
+
+### 发现重复代码时
+
+- 若在开发过程中发现项目中已存在重复代码，**主动提示用户**是否需要重构合并
+- 新增的可复用逻辑（utils / hooks / components），**必须**放到对应公共目录并更新 README
 
 ## 代码质量
 

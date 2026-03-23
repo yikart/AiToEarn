@@ -51,6 +51,10 @@
     "upload": "Télécharger",
     "deleteMediaConfirm": "Êtes-vous sûr de vouloir supprimer ce média ?",
     "noMedia": "Aucune ressource média",
+    "noVideo": "Pas encore de vidéos",
+    "noImage": "Pas encore d'images",
+    "noVideoDesc": "Les vidéos générées apparaîtront ici",
+    "noImageDesc": "Les images générées apparaîtront ici",
     "uploadMediaHint": "Cliquez sur le bouton ci-dessous pour télécharger {{type}}",
     "searchPlaceholder": "Rechercher des groupes...",
     "default": "Par défaut",
@@ -69,7 +73,8 @@
     "selectImage": "Sélectionner une image",
     "selectedCount": "{{count}} sélectionné(s)",
     "confirm": "Confirmer",
-    "noMediaDesc": "Aucun média dans ce groupe"
+    "noMediaDesc": "Aucun média dans ce groupe",
+    "drafts": "Brouillons"
   },
   "aiGenerate": {
     "title": "Outils IA",

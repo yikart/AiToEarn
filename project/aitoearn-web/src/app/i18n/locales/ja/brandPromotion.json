@@ -29,6 +29,20 @@
       "imageCountExceeded": "画像数がプラットフォームの上限を超えています（最大 {{max}} 枚）"
     },
     "platformIncompatibleCount": "{{count}} 件非対応",
-    "timeLimitedModelTip": "期間限定モデルの利用は保証されていません。利用できない場合は、後で再試行するか、他のモデルに切り替えてください。"
+    "timeLimitedModelTip": "期間限定モデルの利用は保証されていません。利用できない場合は、後で再試行するか、他のモデルに切り替えてください。",
+    "draftModeOn": "下書き生成",
+    "draftModeOffVideo": "動画生成",
+    "draftModeOffImage": "画像生成",
+    "modelType": "モデル",
+    "duration": "動画の長さ",
+    "aspectRatio": "比率",
+    "promptTitle": "カスタムプロンプト",
+    "referenceImages": "参考画像",
+    "imageModel": "画像モデル",
+    "imageCount": "画像数",
+    "imageResolution": "解像度"
+  },
+  "publishRecord": {
+    "untitled": "無題"
   }
 }

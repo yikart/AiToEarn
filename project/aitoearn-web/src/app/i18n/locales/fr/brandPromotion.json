@@ -29,6 +29,20 @@
       "imageCountExceeded": "Le nombre d'images dépasse la limite de la plateforme (max {{max}})"
     },
     "platformIncompatibleCount": "{{count}} incompatible(s)",
-    "timeLimitedModelTip": "Les modèles à durée limitée ne sont pas garantis disponibles. Si indisponible, réessayez plus tard ou passez à un autre modèle."
+    "timeLimitedModelTip": "Les modèles à durée limitée ne sont pas garantis disponibles. Si indisponible, réessayez plus tard ou passez à un autre modèle.",
+    "draftModeOn": "Générer un brouillon",
+    "draftModeOffVideo": "Générer une vidéo",
+    "draftModeOffImage": "Générer une image",
+    "modelType": "Modèle",
+    "duration": "Durée vidéo",
+    "aspectRatio": "Ratio",
+    "promptTitle": "Prompt personnalisé",
+    "referenceImages": "Images de référence",
+    "imageModel": "Modèle d'image",
+    "imageCount": "Nombre d'images",
+    "imageResolution": "Résolution"
+  },
+  "publishRecord": {
+    "untitled": "Sans titre"
   }
 }

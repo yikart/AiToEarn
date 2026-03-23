@@ -70,6 +70,7 @@
     "task_review_approved": "任务审核",
     "ai_review_skipped": "AI 审核",
     "task_submitted": "任务提交",
+    "interaction_ai_review_failed": "AI 审核",
     "other": "其他通知"
   },
   "taskStatus": {

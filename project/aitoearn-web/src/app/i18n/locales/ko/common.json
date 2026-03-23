@@ -89,7 +89,8 @@
     "draftBox": "콘텐츠 관리",
     "draftBoxSeoTitle": "콘텐츠 관리 - AI 일괄 생성 및 초안 편집기",
     "draftBoxSeoDescription": "모든 콘텐츠 초안을 한 곳에서 관리하세요. AI로 소셜 미디어 게시물을 일괄 생성하고, 게시 전 초안을 편집하고, AiToEarn으로 멀티 플랫폼 배포를 정리하세요.",
-    "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, AiToEarn"
+    "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, AiToEarn",
+    "agentAssets": "Agent 자산"
   },
   "tasks": "마켓플레이스",
   "signIn": {
@@ -128,20 +129,23 @@
   "networkError": "네트워크 오류, 나중에 다시 시도해 주세요!",
   "contact": "도움이 필요하세요? 지원팀에 문의하세요:",
   "uptime": {
-    "seoTitle": "서비스 상태 - 실시간 시스템 모니터링",
-    "pageKeywords": "서비스 상태, 시스템 모니터링, 가동률 추적, 서버 상태, API 상태, AiToEarn 상태",
-    "pageTitle": "서비스 상태",
-    "pageDescription": "AiToEarn 서비스의 실시간 상태와 가동 시간을 모니터링합니다. Agent, Server, AI, Database, Network 모듈의 작동 상태를 확인합니다.",
+    "seoTitle": "AI 모델 상태 - 실시간 모델 가용성 모니터링",
+    "pageKeywords": "AI 모델 상태, 모델 가용성, 가동률 추적, AI 서비스 상태, 모델 모니터링, AiToEarn 상태",
+    "pageTitle": "AI 모델 상태",
+    "pageDescription": "AI 모델의 실시간 가용성과 가동 시간을 모니터링합니다. 각 모델과 제공업체의 작동 상태를 확인합니다.",
     "loading": "로딩 중...",
     "noData": "데이터 없음",
     "uptimePercentage": "가동률:",
     "normal": "정상",
     "timeout": "시간 초과",
     "unavailable": "사용 불가",
+    "provider": "제공업체",
+    "operation": "작업",
+    "latency": "지연 시간",
+    "errorType": "오류",
     "filter": {
       "title": "필터",
-      "module": "모듈",
-      "type": "유형",
+      "model": "모델",
       "timeRange": "기간",
       "all": "전체",
       "last7Days": "최근 7일",
@@ -151,20 +155,7 @@
       "apply": "적용"
     },
     "copy": "복사",
-    "copied": "복사됨",
-    "module": {
-      "Agent": "에이전트",
-      "Server": "서버",
-      "Ai": "AI",
-      "Database": "데이터베이스",
-      "Network": "네트워크",
-      "Other": "기타"
-    },
-    "type": {
-      "AgentStatus": "에이전트 상태",
-      "AgentMcpStatus": "에이전트 MCP 상태",
-      "NewApiStatus": "NewApi 상태"
-    }
+    "copied": "복사됨"
   },
   "websit": {
     "termsOfService": {
@@ -275,5 +266,6 @@
     "abroadContent": "{{platform}}은(는) 국제 사이트에서만 이용 가능합니다. 국제 사이트로 이동하시겠습니까?",
     "ok": "이동",
     "cancel": "취소"
-  }
+  },
+  "noMore": "더 이상 데이터가 없습니다"
 }

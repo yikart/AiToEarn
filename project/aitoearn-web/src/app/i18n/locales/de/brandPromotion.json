@@ -29,6 +29,20 @@
       "imageCountExceeded": "Bilderanzahl überschreitet das Plattformlimit (max. {{max}})"
     },
     "platformIncompatibleCount": "{{count}} inkompatibel",
-    "timeLimitedModelTip": "Zeitlich begrenzte Modelle sind nicht garantiert verfügbar. Falls nicht nutzbar, versuchen Sie es später erneut oder wechseln Sie zu einem anderen Modell."
+    "timeLimitedModelTip": "Zeitlich begrenzte Modelle sind nicht garantiert verfügbar. Falls nicht nutzbar, versuchen Sie es später erneut oder wechseln Sie zu einem anderen Modell.",
+    "draftModeOn": "Entwurf erstellen",
+    "draftModeOffVideo": "Video erstellen",
+    "draftModeOffImage": "Bild erstellen",
+    "modelType": "Modell",
+    "duration": "Videolänge",
+    "aspectRatio": "Verhältnis",
+    "promptTitle": "Benutzerdefinierter Prompt",
+    "referenceImages": "Referenzbilder",
+    "imageModel": "Bildmodell",
+    "imageCount": "Bilderanzahl",
+    "imageResolution": "Auflösung"
+  },
+  "publishRecord": {
+    "untitled": "Unbenannt"
   }
 }
