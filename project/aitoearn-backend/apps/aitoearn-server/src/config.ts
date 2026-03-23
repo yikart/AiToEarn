@@ -134,6 +134,12 @@ const MetaOAuth2ConfigSchema = z.object({
   linkedin: OAuth2ConfigSchema,
 })
 
+export const relayConfigSchema = z.object({
+  serverUrl: z.string().url().describe('中转服务器地址'),
+  apiKey: z.string().describe('用户 API Key'),
+  callbackUrl: z.string().url().describe('OAuth 回调完整地址，如 http://localhost:3000/api/plat/relay-callback'),
+})
+
 export const channelConfigSchema = z.object({
   channelDb: channelDbConfigSchema,
   moreApi: moreApiConfigSchema,
@@ -166,8 +172,9 @@ export const appConfigSchema = z.object({
   mail: mailConfigSchema,
   aiClient: aitoearnAiClientConfigSchema,
   credits: creditsConfigSchema,
-  newApi: newApiConfigSchema,
+  newApi: newApiConfigSchema.optional(),
   channel: channelConfigSchema,
+  relay: relayConfigSchema.optional(),
 })
 
 export class AppConfig extends createZodDto(appConfigSchema) { }

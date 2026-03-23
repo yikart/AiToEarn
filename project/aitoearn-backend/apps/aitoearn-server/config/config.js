@@ -30,18 +30,8 @@ const {
 } = process.env
 
 const {
-  FEISHU_WEBHOOK_URL,
-  FEISHU_WEBHOOK_SECRET,
-} = process.env
-
-const {
   MAIL_USER,
   MAIL_PASS,
-} = process.env
-
-const {
-  NEW_API_URL,
-  NEW_API_TOKEN,
 } = process.env
 
 const {
@@ -83,6 +73,12 @@ const {
   ALI_SMS_TEMPLATE_CODE,
 } = process.env
 
+const {
+  RELAY_SERVER_URL,
+  RELAY_API_KEY,
+  RELAY_CALLBACK_URL,
+} = process.env
+
 module.exports = {
   // 应用基础
   appDomain: APP_DOMAIN,
@@ -102,11 +98,6 @@ module.exports = {
       enable: true,
       level: 'debug',
       pretty: false,
-    },
-    feishu: {
-      enable: true,
-      url: FEISHU_WEBHOOK_URL,
-      secret: FEISHU_WEBHOOK_SECRET,
     },
   },
 
@@ -293,9 +284,15 @@ module.exports = {
 
   // 业务
   credits: {
+    registerBonus: 50,
   },
-  newApi: {
-    baseUrl: NEW_API_URL,
-    token: NEW_API_TOKEN,
-  },
+
+  // 中转服务（可选）
+  ...(RELAY_SERVER_URL && {
+    relay: {
+      serverUrl: RELAY_SERVER_URL,
+      apiKey: RELAY_API_KEY,
+      callbackUrl: RELAY_CALLBACK_URL,
+    },
+  }),
 }
