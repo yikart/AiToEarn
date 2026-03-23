@@ -693,6 +693,7 @@ export class TwitterService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       this.logger.warn(`No access token found for twitter accountId: ${accountId}`)

@@ -1,15 +1,9 @@
-/*
- * @Author: nevin
- * @Date: 2024-06-17 19:19:20
- * @LastEditTime: 2024-12-23 12:45:22
- * @LastEditors: nevin
- * @Description: 草稿组
- */
 import {
   Body,
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Post,
   Query,
@@ -18,11 +12,15 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { CreateMaterialGroupDto, MaterialGroupFilterDto, MaterialGroupFilterSchema, UpdateMaterialGroupDto } from './material-group.dto'
+
 import { MaterialGroupService } from './material-group.service'
+import { MaterialGroupVo } from './material-group.vo'
 
 @ApiTags('Me/MaterialGroup')
 @Controller('material/group')
 export class MaterialGroupController {
+  private readonly logger = new Logger(MaterialGroupController.name)
+
   constructor(
     private readonly materialGroupService: MaterialGroupService,
   ) { }
@@ -37,11 +35,10 @@ export class MaterialGroupController {
     @GetToken() token: TokenInfo,
     @Body() body: CreateMaterialGroupDto,
   ) {
-    const res = await this.materialGroupService.createGroup({
+    return this.materialGroupService.createGroup({
       ...body,
       userId: token.id,
     })
-    return res
   }
 
   @ApiDoc({
@@ -55,15 +52,12 @@ export class MaterialGroupController {
   ) {
     const materialGroup = await this.materialGroupService.getGroupInfo(id)
     if (!materialGroup || materialGroup.userId !== token.id) {
-      throw new AppException(ResponseCode.MaterialGroupNotFound, 'Material Group not found')
+      throw new AppException(ResponseCode.MaterialGroupNotFound)
     }
-    if (
-      materialGroup.isDefault
-    ) {
-      throw new AppException(ResponseCode.MaterialGroupDefaultNotAllowed, 'Default material group cannot be deleted')
+    if (materialGroup.isDefault) {
+      throw new AppException(ResponseCode.MaterialGroupDefaultNotAllowed)
     }
-    const res = await this.materialGroupService.delGroup(id)
-    return res
+    return this.materialGroupService.delGroup(id)
   }
 
   @ApiDoc({
@@ -79,10 +73,9 @@ export class MaterialGroupController {
   ) {
     const materialGroup = await this.materialGroupService.getGroupInfo(id)
     if (!materialGroup || materialGroup.userId !== token.id) {
-      throw new AppException(ResponseCode.MaterialGroupNotFound, 'Material Group not found')
+      throw new AppException(ResponseCode.MaterialGroupNotFound)
     }
-    const res = await this.materialGroupService.updateGroupInfo(id, body)
-    return res
+    return this.materialGroupService.updateGroupInfo(id, body)
   }
 
   @ApiDoc({
@@ -91,14 +84,14 @@ export class MaterialGroupController {
   })
   @Get('info/:id')
   async getGroupInfo(@Param('id') id: string) {
-    const res = await this.materialGroupService.getGroupInfo(id)
-    return res
+    return this.materialGroupService.getGroupInfo(id)
   }
 
   @ApiDoc({
     summary: '获取草稿分组列表',
     description: '分页获取草稿分组列表。',
     query: MaterialGroupFilterSchema,
+    response: [MaterialGroupVo],
   })
   @Get('list/:pageNo/:pageSize')
   async getGroupList(
@@ -113,6 +106,9 @@ export class MaterialGroupController {
       ...query,
     })
 
-    return { list, total }
+    return {
+      list: list.map(item => MaterialGroupVo.create(item)),
+      total,
+    }
   }
 }

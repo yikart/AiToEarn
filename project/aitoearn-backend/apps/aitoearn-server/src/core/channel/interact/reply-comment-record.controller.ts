@@ -36,7 +36,7 @@ export class ReplyCommentRecordController {
     @Query() query: ReplyCommentRecordListDto,
     @Param() param: TableDto,
   ) {
-    return await this.replyCommentRecordService.getList(query.filters, param)
+    return await this.replyCommentRecordService.getList({ ...query.filters, userId: token.id }, param)
   }
 
   @ApiDoc({

@@ -5,15 +5,11 @@
  * @LastEditors: nevin
  * @Description: PublishRecord
  */
-import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { QueueService } from '@yikart/aitoearn-queue'
-import { AccountType, CreditsType, TableDto } from '@yikart/common'
+import { Injectable, Logger } from '@nestjs/common'
+import { AccountType, TableDto } from '@yikart/common'
 import { PublishRecord, PublishRecordRepository, PublishStatus, PublishType } from '@yikart/mongodb'
-import dayjs from 'dayjs'
 import { UpdateQuery } from 'mongoose'
 import { MaterialService } from '../content/material.service'
-import { CreditsService } from '../credits/credits.service'
 import {
   GetPublishRecordDetailDto,
   PublishDayInfoListFiltersDto,
@@ -21,41 +17,12 @@ import {
 } from './publish-record.dto'
 
 @Injectable()
-export class PublishRecordService implements OnModuleInit {
+export class PublishRecordService {
   private readonly logger = new Logger(PublishRecordService.name)
   constructor(
     private readonly publishRecordRepository: PublishRecordRepository,
     private readonly materialService: MaterialService,
-    private eventEmitter: EventEmitter2,
-    private readonly creditsService: CreditsService,
-    @Inject(QueueService)
-    protected readonly queueService: QueueService,
   ) { }
-
-  async onModuleInit() {
-    // const data = {
-    //   "id": "69aa26a88d4edb16c4642293",
-    //   "userId": "69908f81a8660002fc02522b",
-    //   "userTaskId": "69aa26978d4edb16c464228a",
-    //   "taskId": "69aa26778d4edb16c464227a",
-    //   "type": PublishType.VIDEO,
-    //   "title": "",
-    //   "desc": "",
-    //   "topics": [],
-    //   "accountType": AccountType.TIKTOK,
-    //   "imgUrlList": [],
-    //   "publishTime": new Date("2026-03-06T00:58:16.583Z"),
-    //   "status": 1,
-    //   "inQueue": false,
-    //   "queued": false,
-    //   "dataId": "7610426383415774472",
-    //   "uniqueId": "tiktok_7610426383415774472",
-    //   "workLink": "https://www.tiktok.com/@arianalee0928/video/7610426383415774472",
-    //   "createdAt": new Date("2026-03-06T00:58:16.587Z"),
-    //   "updatedAt": new Date("2026-03-06T00:58:16.587Z")
-    // }
-    // await this.onPublishCompleted(data)
-  }
 
   /**
    * 更新素材使用次数
@@ -83,7 +50,7 @@ export class PublishRecordService implements OnModuleInit {
   }
 
   /**
-   * 发布完成后的副作用：任务处理、每日统计、积分奖励、Redis 事件
+   * 发布完成后的副作用：任务处理、每日统计、Redis 事件
    * @param data 已完成的发布记录
    */
   private onPublishCompleted(data: PublishRecord) {
@@ -93,8 +60,14 @@ export class PublishRecordService implements OnModuleInit {
     this.increaseMaterialUseCount(data.materialId)
     // 更新每日发布信息
     this.upDayPublishInfo(data)
-    // 发放发布奖励
-    this.grantPublishReward(data)
+  }
+
+  /**
+   * 更新每日发布统计信息
+   * @param data 发布记录数据
+   */
+  private async upDayPublishInfo(data: PublishRecord) {
+    await this.publishRecordRepository.upDayPublishInfo(data)
   }
 
   /**
@@ -154,46 +127,8 @@ export class PublishRecordService implements OnModuleInit {
    * 处理发布完成后的任务逻辑：触发任务追踪事件、自动删除或增加素材使用次数
    * @param data 发布记录数据
    */
-  private async doTaskProcess(data: Partial<PublishRecord>) {
-    if (!data.userTaskId || !data.userId)
-      return
-
-    if (data.accountType && data.uid && data.dataId) {
-      this.eventEmitter.emit(
-        'statistics.task.userTaskPosts',
-        {
-          userId: data.userId,
-          accountId: data.accountId!,
-          taskId: data.taskId,
-          type: data.accountType,
-          uid: data.uid!,
-          postId: data.dataId,
-        },
-      )
-    }
-  }
-
-  /**
-   * 为用户增加发布积分奖励
-   * @param userId 用户ID
-   */
-  private addPoints(userId: string) {
-    this.creditsService.addCredits({
-      userId,
-      amount: 10,
-      type: CreditsType.Publish,
-      description: '发布奖励',
-      metadata: {},
-      expiredAt: null,
-    })
-  }
-
-  /**
-   * 更新每日发布统计信息
-   * @param data 发布记录数据
-   */
-  private async upDayPublishInfo(data: PublishRecord) {
-    await this.publishRecordRepository.upDayPublishInfo(data)
+  private async doTaskProcess(_data: Partial<PublishRecord>) {
+    // Task module removed — no-op
   }
 
   /**
@@ -209,51 +144,6 @@ export class PublishRecordService implements OnModuleInit {
     return this.publishRecordRepository.getPublishDayInfoList(
       inFilter,
       pageInfo,
-    )
-  }
-
-  /**
-   * 发放发布奖励：根据连续发布天数发放积分
-   * @param data 发布记录数据
-   */
-  async grantPublishReward(data: PublishRecord) {
-    // 1. 查询发放状态
-    const recordInfo = await this.publishRecordRepository.getUserRecordInfo(data.userId)
-    if (!recordInfo) {
-      this.addPoints(data.userId)
-      this.publishRecordRepository.createPublishInfo({
-        userId: data.userId,
-        upInfoDate: new Date(),
-        days: 1,
-      })
-      return
-    }
-
-    const { upInfoDate } = recordInfo
-    if (dayjs(upInfoDate).isSame(dayjs(), 'day')) {
-      return
-    }
-
-    const isYesterday = dayjs(upInfoDate).isSame(
-      dayjs().subtract(1, 'day'),
-      'day',
-    )
-
-    if (!isYesterday) {
-      this.addPoints(data.userId)
-      await this.publishRecordRepository.updateUserPublishInfo(
-        data.userId,
-        { upInfoDate: new Date(), days: 1 },
-      )
-      return
-    }
-
-    const { days } = recordInfo
-    this.addPoints(data.userId)
-    const newDays = days + 1
-    await this.publishRecordRepository.updateUserPublishInfo(
-      data.userId,
-      { upInfoDate: new Date(), days: newDays },
     )
   }
 

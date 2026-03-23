@@ -73,6 +73,7 @@ export class MetaBaseService extends PlatformBaseService {
   override async getAccessTokenStatus(
     accountId: string,
   ): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       this.updateAccountStatus(accountId, 0)

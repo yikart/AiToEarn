@@ -98,21 +98,7 @@ export class AccountGroupService {
     return accountGroupList
   }
 
-  private async reportGroupAccounts(userId: string, group: AccountGroup) {
-    const cursor = await this.accountRepository.getAccountCursor({ userId, groupId: group.id })
-    for (let account = await cursor.next(); account !== null; account = await cursor.next()) {
-      await this.queueService.addTaskAccountPortraitReportJob({
-        accountId: account.id,
-        userId: account.userId,
-        type: account.type as AccountType,
-        uid: account.uid,
-        countryCode: group.countryCode,
-        totalFollowers: account.fansCount,
-        totalWorks: account.workCount,
-        totalViews: account.readCount,
-        totalLikes: account.likeCount,
-        totalCollects: account.collectCount,
-      } satisfies AccountPortraitReportData)
-    }
+  private async reportGroupAccounts(_userId: string, _group: AccountGroup) {
+    // Task module removed — no-op
   }
 }

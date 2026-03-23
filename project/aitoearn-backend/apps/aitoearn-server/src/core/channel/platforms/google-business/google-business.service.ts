@@ -304,6 +304,7 @@ export class GoogleBusinessService extends PlatformBaseService {
    * 获取 Access Token 状态
    */
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getCredential(accountId)
     if (!credential || !credential.accessToken) {
       this.updateAccountStatus(accountId, 0)

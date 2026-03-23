@@ -124,6 +124,7 @@ export class MediaService {
     filter: {
       userId: string
       groupId?: string
+      materialGroupId?: string
       type?: MediaType
       userType?: UserType
       useCount?: number

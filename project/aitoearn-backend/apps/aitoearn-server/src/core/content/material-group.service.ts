@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { TableDto } from '@yikart/common'
+import { AppException, ResponseCode, TableDto } from '@yikart/common'
 import { MaterialGroupRepository } from '@yikart/mongodb'
 import { NewMaterialGroup, UpdateMaterialGroup } from './common'
 
@@ -10,37 +10,31 @@ export class MaterialGroupService {
   ) { }
 
   async createGroup(newData: NewMaterialGroup) {
-    const res = await this.materialGroupRepository.create(newData)
-    return res
+    return this.materialGroupRepository.create(newData)
   }
 
   async delGroup(id: string): Promise<boolean> {
-    const res = await this.materialGroupRepository.delete(id)
-    return res
+    return this.materialGroupRepository.delete(id)
   }
 
   async updateGroupInfo(id: string, newData: UpdateMaterialGroup) {
-    const res = await this.materialGroupRepository.update(id, newData)
-    return res
+    return this.materialGroupRepository.update(id, newData)
   }
 
   async getGroupInfo(id: string) {
-    const res = await this.materialGroupRepository.getById(id)
-    return res
+    return this.materialGroupRepository.getById(id)
   }
 
   async getInfoByName(userId: string, name: string) {
-    const res = await this.materialGroupRepository.getInfoByName(userId, name)
-    return res
+    return this.materialGroupRepository.getInfoByName(userId, name)
   }
 
   async getDefaultGroup(userId: string) {
-    const res = await this.materialGroupRepository.getDefaultGroup(userId)
-    return res
+    return this.materialGroupRepository.getDefaultGroup(userId)
   }
 
   async ensureDefaultGroup(userId: string) {
-    return await this.materialGroupRepository.createDefault(userId)
+    return this.materialGroupRepository.createDefault(userId)
   }
 
   async getGroupList(
@@ -50,7 +44,6 @@ export class MaterialGroupService {
       title?: string
     },
   ) {
-    const res = await this.materialGroupRepository.getList(filter, page)
-    return res
+    return this.materialGroupRepository.getList(filter, page)
   }
 }

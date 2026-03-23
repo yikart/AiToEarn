@@ -2217,6 +2217,7 @@ export class YoutubeService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (credential && credential.access_token) {
       this.updateAccountStatus(accountId, 1)

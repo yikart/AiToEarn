@@ -329,6 +329,7 @@ export class KwaiService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string) {
+    await this.ensureLocalAccount(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       this.updateAccountStatus(accountId, 0)

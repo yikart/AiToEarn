@@ -263,34 +263,40 @@
               </div>
               <% } %>
 
-                <div class="redirect-message">
-                  Page will automatically close in <span id="countdown">5</span> seconds
-                </div>
+                <% if (typeof autoPostCallback !== 'undefined' && autoPostCallback && typeof callbackUrl !== 'undefined') { %>
+                  <div class="redirect-message">
+                    Redirecting...
+                  </div>
+                  <form id="callbackForm" method="POST" action="<%= callbackUrl %>" style="display:none">
+                    <input type="hidden" name="relayAccountRef" value="<%= accountId %>" />
+                    <input type="hidden" name="nickname" value="<%= typeof nickname !== 'undefined' ? nickname : '' %>" />
+                    <input type="hidden" name="avatar" value="<%= typeof avatar !== 'undefined' ? avatar : '' %>" />
+                    <input type="hidden" name="platformUid" value="<%= typeof platformUid !== 'undefined' ? platformUid : '' %>" />
+                    <input type="hidden" name="accountType" value="<%= typeof accountType !== 'undefined' ? accountType : '' %>" />
+                    <input type="hidden" name="userId" value="<%= typeof userId !== 'undefined' ? userId : '' %>" />
+                  </form>
+                <% } else { %>
+                  <div class="redirect-message">
+                    Page will automatically close in <span id="countdown">5</span> seconds
+                  </div>
+                <% } %>
   </div>
 
   <script>
-    // Auto countdown to close page
-    let countdown = 5;
-    const countdownElement = document.getElementById('countdown');
-
-    const countdownInterval = setInterval(() => {
-      countdown--;
-      countdownElement.textContent = countdown;
-
-      if (countdown <= 0) {
-        clearInterval(countdownInterval);
-        // Try to close window, if unable to close then prompt user to close manually
-        window.close();
-      }
-    }, 1000);
-
-    // If successful status, consider auto redirect to application homepage
-    // if (status === 'success') {
-    //   setTimeout(() => {
-    //     // Can add redirect logic here if needed
-    //     // window.location.href = '/dashboard';
-    //   }, 3000);
-    // }
+    <% if (typeof autoPostCallback !== 'undefined' && autoPostCallback) { %>
+      document.getElementById('callbackForm').submit();
+    <% } else { %>
+      var countdown = 5;
+      var countdownElement = document.getElementById('countdown');
+      var countdownInterval = setInterval(function() {
+        countdown--;
+        countdownElement.textContent = countdown;
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          window.close();
+        }
+      }, 1000);
+    <% } %>
   </script>
 </body>
 

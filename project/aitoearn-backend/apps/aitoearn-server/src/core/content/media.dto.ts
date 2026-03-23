@@ -27,6 +27,7 @@ export class CreateMediaDto extends createZodDto(CreateMediaSchema) {}
 
 export const MediaFilterSchema = z.object({
   groupId: z.string().optional().describe('组ID'),
+  materialGroupId: z.string().optional().describe('草稿箱组ID'),
   type: z.enum(MediaType).optional().describe('类型'),
   useCount: z.coerce.number().optional().describe('use conut (min)'),
 })

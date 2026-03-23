@@ -51,6 +51,8 @@ export class TiktokController {
       userId: token.id,
       scopes: data.scopes,
       spaceId: data.spaceId,
+      callbackUrl: data.callbackUrl,
+      callbackMethod: data.callbackMethod,
     })
   }
 
@@ -117,6 +119,14 @@ export class TiktokController {
       data.state,
       { code: data.code, state: data.state },
     )
+
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', {
+        ...result,
+        autoPostCallback: true,
+      })
+    }
+
     return res.render('auth/back', result)
   }
 

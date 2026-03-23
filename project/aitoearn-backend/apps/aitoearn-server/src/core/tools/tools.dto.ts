@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 export const GenerateQrCodeArtDtoSchema = z.object({
   content: z.string().min(1).max(2000).describe('二维码扫码后的内容'),
-  referenceImageUrl: z.string().url().optional().describe('参考样式图 URL'),
+  referenceImageUrl: z.url().optional().describe('参考样式图 URL'),
   prompt: z.string().min(1).max(4000).describe('文字描述（提示词）'),
   model: z.string().default('gpt-image-1').describe('图片生成模型'),
   size: z.string().optional().describe('图片尺寸'),
@@ -16,12 +16,12 @@ export const CreateQrCodeArtImageDtoSchema = z.object({
   relType: z.string().min(1).describe('关联的数据类型'),
   logId: z.string().min(1).describe('AI 任务日志 ID'),
   content: z.string().min(1).max(2000).describe('二维码扫码后的内容'),
-  referenceImageUrl: z.string().url().optional().describe('参考样式图 URL'),
+  referenceImageUrl: z.url().optional().describe('参考样式图 URL'),
   prompt: z.string().min(1).max(4000).describe('文字描述（提示词）'),
   model: z.string().describe('图片生成模型'),
   size: z.string().optional().describe('图片尺寸'),
   status: z.string().describe('任务状态'),
-  imageUrl: z.string().url().optional().describe('生成的二维码艺术图 URL'),
+  imageUrl: z.url().optional().describe('生成的二维码艺术图 URL'),
 })
 
 export class CreateQrCodeArtImageDto extends createZodDto(CreateQrCodeArtImageDtoSchema, 'CreateQrCodeArtImageDto') {}

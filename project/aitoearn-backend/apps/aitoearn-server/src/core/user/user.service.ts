@@ -258,12 +258,6 @@ export class UserService {
       this.userRepository.updateById(user.id, { locale })
     }
 
-    // Report user data
-    await this.queueService.addTaskUserPortraitReportJob({
-      userId: user.id,
-      lastLoginTime: (new Date()).toISOString(),
-    })
-
     return true
   }
 
@@ -301,19 +295,9 @@ export class UserService {
     this.materialGroupRepository.createDefault(user.id)
     this.mediaGroupRepository.createDefault(user.id)
 
-    // Report user data
-    await this.queueService.addTaskUserPortraitReportJob({
-      userId: user.id,
-      name: user.name,
-      avatar: user.avatar,
-      status: UserStatus.OPEN,
-      lastLoginTime: (new Date()).toISOString(),
-    })
-
     // Generate invite code
     await this.generateUsePopularizeCode(user.id)
     this.redisPubSubService.emit(PsChannel.USER_CREATE, user)
-    await this.queueService.addTaskUserCreatePushJob({ userId: user.id })
   }
 
   async setAiConfig(userId: string, aiConfig: Partial<UserAiInfo>): Promise<boolean> {

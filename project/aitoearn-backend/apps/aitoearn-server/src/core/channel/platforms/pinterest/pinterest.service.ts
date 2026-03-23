@@ -635,6 +635,7 @@ export class PinterestService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string) {
+    await this.ensureLocalAccount(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (_.isEmpty(tokenInfo) || !tokenInfo?.expires_in) {
       this.updateAccountStatus(accountId, 0)

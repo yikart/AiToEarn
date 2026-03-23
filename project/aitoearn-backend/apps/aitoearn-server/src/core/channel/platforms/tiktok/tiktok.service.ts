@@ -5,6 +5,7 @@ import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayClientService } from '../../../relay/relay-client.service'
 import { TiktokPostMode, TiktokPrivacyLevel, TiktokSourceType } from '../../libs/tiktok/tiktok.enum'
 import {
   TiktokCreatorInfo,
@@ -37,6 +38,9 @@ export interface AuthTaskInfo {
   // QR Code 授权相关
   taskId?: string // 推广任务ID
   qrToken?: string // QR Code token
+  // 通用 OAuth 回调
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }
 
 export interface NoUserAuthInfo {
@@ -54,6 +58,7 @@ export class TiktokService extends PlatformBaseService {
     private readonly redisService: RedisService,
     private readonly tiktokApiService: TiktokApiService,
     private readonly channelAccountService: ChannelAccountService,
+    private readonly relayClientService: RelayClientService,
   ) {
     super()
     this.defaultScopes = config.channel.tiktok.scopes.length > 0
@@ -167,7 +172,21 @@ export class TiktokService extends PlatformBaseService {
     scopes?: string[]
     spaceId?: string
     taskId?: string
+    callbackUrl?: string
+    callbackMethod?: 'GET' | 'POST'
   }) {
+    if (config.relay) {
+      return this.relayClientService.post<{ url: string, taskId: string, state: string }>(
+        '/plat/tiktok/auth/url',
+        {
+          scopes: data.scopes,
+          spaceId: data.spaceId,
+          callbackUrl: config.relay.callbackUrl,
+          callbackMethod: 'POST',
+        },
+      )
+    }
+
     const state = randomBytes(32).toString('hex')
     const requestedScopes = data.scopes || this.defaultScopes
 
@@ -179,6 +198,8 @@ export class TiktokService extends PlatformBaseService {
       userId: data.userId,
       spaceId: data.spaceId,
       taskId: data.taskId,
+      callbackUrl: data.callbackUrl,
+      callbackMethod: data.callbackMethod,
     }
 
     const success = await this.redisService.setJson(
@@ -349,16 +370,24 @@ export class TiktokService extends PlatformBaseService {
       accountInfo.id,
     )
 
-    return taskUpdated
-      ? {
-          status: 1,
-          message: '授权成功',
-          accountId: accountInfo.id,
-        }
-      : {
-          status: 0,
-          message: '更新任务状态失败',
-        }
+    if (!taskUpdated) {
+      return {
+        status: 0,
+        message: '更新任务状态失败',
+      }
+    }
+
+    return {
+      status: 1,
+      message: '授权成功',
+      accountId: accountInfo.id,
+      callbackUrl: authTaskInfo.callbackUrl,
+      callbackMethod: authTaskInfo.callbackMethod,
+      nickname: userInfo.data.user.display_name || userInfo.data.user.username,
+      avatar: userInfo.data.user.avatar_url,
+      platformUid: accessTokenInfo.open_id,
+      accountType: AccountType.TIKTOK,
+    }
   }
 
   /**
@@ -613,6 +642,7 @@ export class TiktokService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       this.updateAccountStatus(accountId, 0)
