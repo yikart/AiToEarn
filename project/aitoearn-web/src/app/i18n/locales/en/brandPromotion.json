@@ -106,7 +106,6 @@
     "videoEditMode": "Video Edit",
     "ratioLockedByVideo": "Ratio follows input video",
     "durationLockedByVideo": "Duration matches input video",
-    "durationAutoAdjusted": "Duration auto-adjusted to {{duration}}s",
     "dropToUpload": "Drop files here to upload",
     "resetConfig": "Reset",
     "targetPlatforms": "Target Platforms",

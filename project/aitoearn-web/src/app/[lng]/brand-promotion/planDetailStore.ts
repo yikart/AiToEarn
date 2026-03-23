@@ -27,6 +27,7 @@ import {
   apiGetMaterialList,
 } from '@/api/material'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
+import { toast } from '@/lib/toast'
 
 // Store 状态类型
 export interface IPlanDetailStoreState {
@@ -210,7 +211,9 @@ export const usePlanDetailStore = create(
       deleteMaterial: async (materialId: string): Promise<boolean> => {
         set({ isSubmitting: true })
         try {
-          await apiDeleteMaterial(materialId)
+          const res = await apiDeleteMaterial(materialId)
+          if (res?.code !== 0)
+            return false
           const { currentPlan, materialsPagination } = get()
           if (currentPlan) {
             await methods.fetchMaterials(currentPlan.id, materialsPagination.current)
@@ -312,14 +315,18 @@ export const usePlanDetailStore = create(
             platforms: platforms?.length ? platforms : undefined,
             draftType,
           })
-          if (res?.data !== undefined) {
+          if (res?.code === 0) {
             const { generatingCount } = get()
             set({
               generatingCount: generatingCount + quantity,
             })
             return true
           }
-          return false
+          else {
+            if (res?.message)
+              toast.error(res.message)
+            return false
+          }
         }
         catch {
           return false
@@ -362,14 +369,18 @@ export const usePlanDetailStore = create(
             platforms: platforms?.length ? platforms : undefined,
             draftType,
           })
-          if (res?.data !== undefined) {
+          if (res?.code === 0) {
             const { generatingCount } = get()
             set({
               generatingCount: generatingCount + quantity,
             })
             return true
           }
-          return false
+          else {
+            if (res?.message)
+              toast.error(res.message)
+            return false
+          }
         }
         catch {
           return false
@@ -490,7 +501,9 @@ export const usePlanDetailStore = create(
           return false
         set({ batchDeleting: true })
         try {
-          await apiBatchDeleteMaterials(selectedMaterialIds)
+          const res = await apiBatchDeleteMaterials(selectedMaterialIds)
+          if (res?.code !== 0)
+            return false
           set({ batchMode: false, selectedMaterialIds: [] })
           await methods.fetchMaterials(currentPlan.id, 1)
           return true
@@ -516,7 +529,9 @@ export const usePlanDetailStore = create(
         if (!currentPlan)
           return false
         try {
-          await apiFilterDeleteMaterials({ ...conditions, groupId: currentPlan.id })
+          const res = await apiFilterDeleteMaterials({ ...conditions, groupId: currentPlan.id })
+          if (res?.code !== 0)
+            return false
           set({ conditionalDeleteDialogOpen: false })
           await methods.fetchMaterials(currentPlan.id, 1)
           return true

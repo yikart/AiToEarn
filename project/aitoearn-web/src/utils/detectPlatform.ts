@@ -23,6 +23,7 @@ const PLATFORM_HOST_MAP: [string, PlatType][] = [
   ['b23.tv', PlatType.BILIBILI],
   ['douyin.com', PlatType.Douyin],
   ['iesdouyin.com', PlatType.Douyin],
+  ['kuaishou.com', PlatType.KWAI],
 ]
 
 /**

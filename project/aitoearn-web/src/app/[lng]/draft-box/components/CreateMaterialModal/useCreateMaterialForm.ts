@@ -282,17 +282,25 @@ export function useCreateMaterialForm({
       }
 
       if (isEditing && editingMaterial?.id) {
-        await apiUpdateMaterial(editingMaterial.id, {
+        const res = await apiUpdateMaterial(editingMaterial.id, {
           coverUrl: materialData.coverUrl,
           mediaList: materialData.mediaList,
           title: materialData.title,
           desc: materialData.desc,
           accountTypes: materialData.accountTypes,
         })
+        if (res?.code !== 0) {
+          toast.error(res?.message || t('createMaterial.createFailed'))
+          return
+        }
         toast.success(t('createMaterial.createSuccess'))
       }
       else {
-        await apiCreateMaterial(materialData)
+        const res = await apiCreateMaterial(materialData)
+        if (res?.code !== 0) {
+          toast.error(res?.message || t('createMaterial.createFailed'))
+          return
+        }
         toast.success(t('createMaterial.createSuccess'))
       }
 

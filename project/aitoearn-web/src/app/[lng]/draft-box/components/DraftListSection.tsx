@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
+import { AllListSection } from './AllListSection'
 import { BatchActionBar } from './BatchActionBar'
 import { ConditionalDeleteDialog } from './ConditionalDeleteDialog'
 import { useMediaTabStore } from './ContentTabs/mediaTabStore'
@@ -225,7 +226,14 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
   const { t: tMaterial } = useTransClient('material')
 
   const showTabs = !!materialGroupId
-  const [activeTab, setActiveTab] = useState('drafts')
+  const [activeTab, setActiveTab] = useState('all')
+
+  // materialGroupId 变化时，有 Tab 模式默认选中"全部"
+  useEffect(() => {
+    if (materialGroupId) {
+      setActiveTab('all')
+    }
+  }, [materialGroupId])
 
   // 无限滚动加载触发器
   const loadMoreRef = useRef<HTMLDivElement>(null)
@@ -256,16 +264,19 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
   const openGenerationDetailDialog = usePlanDetailStore(state => state.openGenerationDetailDialog)
   const toggleMaterialSelection = usePlanDetailStore(state => state.toggleMaterialSelection)
 
-  const { videoTotal, imgTotal } = useMediaTabStore(
+  const { videoTotal, imgTotal, allTotal } = useMediaTabStore(
     useShallow(state => ({
       videoTotal: state.video.total,
       imgTotal: state.img.total,
+      allTotal: state.all.draftTotal + state.all.videoTotal + state.all.imgTotal,
     })),
   )
 
   const fetchMediaList = useMediaTabStore(state => state.fetchMediaList)
+  const fetchAllList = useMediaTabStore(state => state.fetchAllList)
   const videoInitialized = useMediaTabStore(state => state.video.initialized)
   const imgInitialized = useMediaTabStore(state => state.img.initialized)
+  const allInitialized = useMediaTabStore(state => state.all.initialized)
 
   const selectedSet = new Set(selectedMaterialIds)
 
@@ -274,13 +285,16 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
     setActiveTab(value)
 
     // 首次切换到对应 Tab 时触发加载
+    if (value === 'all' && !allInitialized && materialGroupId && currentPlan) {
+      fetchAllList(materialGroupId, currentPlan.id)
+    }
     if (value === 'video' && !videoInitialized && materialGroupId) {
       fetchMediaList(materialGroupId, 'video')
     }
     if (value === 'img' && !imgInitialized && materialGroupId) {
       fetchMediaList(materialGroupId, 'img')
     }
-  }, [videoInitialized, imgInitialized, materialGroupId, fetchMediaList])
+  }, [allInitialized, videoInitialized, imgInitialized, materialGroupId, currentPlan, fetchAllList, fetchMediaList])
 
   // IntersectionObserver 实现无限滚动
   useEffect(() => {
@@ -308,6 +322,8 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
   // 根据 activeTab 获取标题（数量已在 Tab Badge 中展示，此处不再重复）
   const getHeaderTitle = () => {
     switch (activeTab) {
+      case 'all':
+        return tMaterial('mediaManagement.all')
       case 'video':
         return tMaterial('mediaManagement.video')
       case 'img':
@@ -399,6 +415,14 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
   // TabsList 组件
   const tabsList = (
     <TabsList className="w-full sm:w-auto">
+      <TabsTrigger value="all" className="cursor-pointer gap-1.5 flex-1 sm:flex-initial">
+        {tMaterial('mediaManagement.all')}
+        {allTotal > 0 && (
+          <Badge variant="secondary" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
+            {allTotal}
+          </Badge>
+        )}
+      </TabsTrigger>
       <TabsTrigger value="drafts" className="cursor-pointer gap-1.5 flex-1 sm:flex-initial">
         {tMaterial('mediaManagement.drafts', '草稿箱')}
         {materialsPagination.total > 0 && (
@@ -426,9 +450,12 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
     </TabsList>
   )
 
-  // 页面加载时预取视频/图片数据
+  // 页面加载时预取全部/视频/图片数据
   useEffect(() => {
     if (materialGroupId && showTabs) {
+      if (!allInitialized && currentPlan) {
+        fetchAllList(materialGroupId, currentPlan.id)
+      }
       if (!videoInitialized) {
         fetchMediaList(materialGroupId, 'video')
       }
@@ -436,7 +463,7 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
         fetchMediaList(materialGroupId, 'img')
       }
     }
-  }, [materialGroupId, showTabs, videoInitialized, imgInitialized, fetchMediaList])
+  }, [materialGroupId, showTabs, allInitialized, videoInitialized, imgInitialized, currentPlan, fetchAllList, fetchMediaList])
 
   // 初始加载骨架屏
   if (materialsLoading && materials.length === 0) {
@@ -513,6 +540,12 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
             </Button>
           </div>
         </CardHeader>
+
+        <TabsContent value="all" className="mt-0">
+          <CardContent>
+            <AllListSection materialGroupId={materialGroupId} />
+          </CardContent>
+        </TabsContent>
 
         <TabsContent value="drafts" className="mt-0">
           <CardContent className={cn(batchMode && 'pb-16')}>

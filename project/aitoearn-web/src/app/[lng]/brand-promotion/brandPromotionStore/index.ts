@@ -114,7 +114,7 @@ export const useBrandPromotionStore = create(
         set({ isSubmitting: true })
         try {
           const res = await apiUpdateMaterialGroupInfo(id, data)
-          if (!res)
+          if (res?.code !== 0)
             return false
           const { plansPagination } = get()
           await methods.fetchPlans(plansPagination.current)
@@ -136,7 +136,9 @@ export const useBrandPromotionStore = create(
       deletePlan: async (id: string): Promise<boolean> => {
         set({ isSubmitting: true })
         try {
-          await apiDeleteMaterialGroup(id)
+          const res = await apiDeleteMaterialGroup(id)
+          if (res?.code !== 0)
+            return false
           const { plansPagination } = get()
           await methods.fetchPlans(plansPagination.current)
           // 通知 planTabStore 同步

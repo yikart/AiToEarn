@@ -9,7 +9,7 @@ import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDia
 import { Bot, Play, TriangleAlert, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReactSortable } from 'react-sortablejs'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
@@ -19,6 +19,7 @@ import { useTransClient } from '@/app/i18n/client'
 import MediaPreview from '@/components/common/MediaPreview'
 import BrushEditor from '@/components/common/MediaPreview/BrushEditor'
 import PublishUploadProgress from '@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress'
+import PubParmasMentionInput from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput'
 import PubParmasTextareaUpload from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload'
 import PubParmasTextuploadImage from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage'
 import VideoCoverSeting from '@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting'
@@ -69,7 +70,6 @@ const MobileContent = memo(
     // 视频封面裁剪
     const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false)
     // 内部图片/视频状态（用于排序等操作后同步回 params）
-    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     // 平台配置（用于上传类型判断，取 TikTok 作为基准）
     const platConfig = useMemo(() => {
@@ -190,18 +190,6 @@ const MobileContent = memo(
     const handleSortList = useCallback(
       (newList: IImgFile[]) => {
         updateParams({ images: newList })
-      },
-      [updateParams],
-    )
-
-    // textarea 自动增高
-    const handleDesChange = useCallback(
-      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateParams({ des: e.target.value })
-        // 自动调整高度
-        const el = e.target
-        el.style.height = 'auto'
-        el.style.height = `${el.scrollHeight}px`
       },
       [updateParams],
     )
@@ -447,13 +435,11 @@ const MobileContent = memo(
 
           {/* 描述输入 */}
           <div className="mt-3 border-t border-border pt-3">
-            <textarea
-              ref={textareaRef}
+            <PubParmasMentionInput
               value={params.des}
+              onChange={(value: string) => updateParams({ des: value })}
               placeholder={tPublish('form.descriptionPlaceholder')}
-              onChange={handleDesChange}
-              rows={4}
-              className="w-full text-sm bg-transparent border-none shadow-none outline-none resize-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
+              maxLength={effectiveLimits.desMax?.value ?? 2200}
             />
           </div>
         </div>

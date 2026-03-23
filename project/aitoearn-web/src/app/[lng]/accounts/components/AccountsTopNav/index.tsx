@@ -114,9 +114,14 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
           rank: index,
         }))
 
-        await apiUpdateAccountGroupSortRank({ list: updateList })
-        await getAccountGroup()
-        toast.success(t('messages.sortSuccess'))
+        const res = await apiUpdateAccountGroupSortRank({ list: updateList })
+        if (res?.code === 0) {
+          await getAccountGroup()
+          toast.success(t('messages.sortSuccess'))
+        }
+        else {
+          toast.error(res?.message || t('messages.sortFailed'))
+        }
       }
       catch (error) {
         toast.error(t('messages.sortFailed'))

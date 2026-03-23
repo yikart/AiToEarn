@@ -336,7 +336,6 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     if (duration > videoDurationLimits.max) {
       setDuration(videoDurationLimits.max)
       updateConfig(configKey, { duration: videoDurationLimits.max })
-      toast.info(t('detail.durationAutoAdjusted', { duration: videoDurationLimits.max }))
     }
     else if (duration < videoDurationLimits.min) {
       setDuration(videoDurationLimits.min)

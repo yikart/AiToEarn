@@ -106,7 +106,6 @@
     "videoEditMode": "视频编辑",
     "ratioLockedByVideo": "比例跟随输入视频",
     "durationLockedByVideo": "时长跟随输入视频",
-    "durationAutoAdjusted": "时长已自动调整为 {{duration}}s",
     "dropToUpload": "拖拽文件到此处上传",
     "resetConfig": "重置配置",
     "targetPlatforms": "目标平台",
