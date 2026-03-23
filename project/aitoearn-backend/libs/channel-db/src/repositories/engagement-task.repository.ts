@@ -34,14 +34,14 @@ export class EngagementTaskRepository extends BaseRepository<EngagementTask> {
   }
 
   async updateFailedSubTaskCount(taskId: string, count: number): Promise<EngagementTask | null> {
-    return this.engagementTaskModel.findByIdAndUpdate(taskId, { failedSubTaskCount: count }).lean({ virtuals: true })
+    return this.engagementTaskModel.findByIdAndUpdate(taskId, { $inc: { failedSubTaskCount: count } }, { new: true }).lean({ virtuals: true })
   }
 
   async updateSubTaskCount(taskId: string, count: number): Promise<EngagementTask | null> {
-    return this.engagementTaskModel.findByIdAndUpdate(taskId, { subTaskCount: count }).lean({ virtuals: true })
+    return this.engagementTaskModel.findByIdAndUpdate(taskId, { $inc: { subTaskCount: count } }, { new: true }).lean({ virtuals: true })
   }
 
   async updateCompletedSubTaskCount(taskId: string, count: number): Promise<EngagementTask | null> {
-    return this.engagementTaskModel.findByIdAndUpdate(taskId, { completedSubTaskCount: count }).lean({ virtuals: true })
+    return this.engagementTaskModel.findByIdAndUpdate(taskId, { $inc: { completedSubTaskCount: count } }, { new: true }).lean({ virtuals: true })
   }
 }

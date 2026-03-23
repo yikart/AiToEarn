@@ -74,11 +74,12 @@ export class MaterialRepository extends BaseRepository<Material> {
     return await this.materialModel.findOne({ _id: id }).lean({ virtuals: true })
   }
 
-  async getOptimalByGroup(groupId: string, type?: string) {
+  async getOptimalByGroup(groupId: string, type?: string, accountType?: string) {
     const filter = {
       groupId,
       status: MaterialStatus.SUCCESS,
       ...(type && { type }),
+      ...(accountType && { accountTypes: accountType }),
     }
 
     const [data = null] = await this.materialModel.aggregate([

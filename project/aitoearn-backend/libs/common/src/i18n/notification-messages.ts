@@ -11,6 +11,7 @@ export enum NotificationMessageKey {
   TaskReminderAccountBinding = 'task_reminder_account_binding',
   TaskReminderLogin = 'task_reminder_login',
   TaskReminderAccountLogin = 'task_reminder_account_login',
+  InteractionAiReviewFailed = 'interaction_ai_review_failed',
   TaskPunish = 'task_punish',
   AgentResult = 'agent_result',
   AgentResultRequiresAction = 'agent_result_requires_action',
@@ -122,6 +123,17 @@ const notificationMessages: Record<NotificationMessageKey, NotificationMessageDe
     content: {
       'en-US': template.compile('{{message}}'),
       'zh-CN': template.compile('{{message}}'),
+    },
+  },
+
+  [NotificationMessageKey.InteractionAiReviewFailed]: {
+    title: {
+      'en-US': 'Interaction task needs manual review',
+      'zh-CN': '互动任务需要人工审核',
+    },
+    content: {
+      'en-US': template.compile('AI review failed for interaction task "{{taskTitle}}". Reason: {{reason}}. Please review manually.'),
+      'zh-CN': template.compile('互动任务"{{taskTitle}}"的 AI 审核未通过，原因：{{reason}}，请手动复审。'),
     },
   },
 

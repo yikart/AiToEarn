@@ -170,6 +170,9 @@ export class Account extends WithTimestampSchema {
     default: 1,
   })
   rank: number
+
+  @Prop({ type: String, default: null })
+  relayAccountRef: string | null
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account)

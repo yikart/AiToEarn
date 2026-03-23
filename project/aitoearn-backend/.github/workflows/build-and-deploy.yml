@@ -37,7 +37,6 @@ on:
         required: false
         type: boolean
         default: false
-
 permissions:
   id-token: write
   contents: read

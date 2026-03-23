@@ -1,6 +1,7 @@
 import { AccountGroupRepository } from './account-group.repository'
 import { AccountRepository } from './account.repository'
 import { AiLogRepository } from './ai-log.repository'
+import { ApiKeyRepository } from './api-key.repository'
 import { AssetRepository } from './asset.repository'
 import { BlogRepository } from './blog.repository'
 import { ContentGenerationTaskRepository } from './content-generation-task.repository'
@@ -23,6 +24,7 @@ import { UserRepository } from './user.repository'
 export * from './account-group.repository'
 export * from './account.repository'
 export * from './ai-log.repository'
+export * from './api-key.repository'
 export * from './asset.repository'
 export * from './base.repository'
 export * from './blog.repository'
@@ -54,6 +56,7 @@ export const repositories = [
   UserRepository,
   AccountRepository,
   AccountGroupRepository,
+  ApiKeyRepository,
   MediaRepository,
   MediaGroupRepository,
   MaterialAdaptationRepository,
@@ -61,8 +64,8 @@ export const repositories = [
   MaterialRepository,
   MaterialTaskRepository,
   PublishRecordRepository,
-  OAuth2CredentialRepository,
   ContentGenerationTaskRepository,
   UserNotificationControlRepository,
   QrCodeArtImageRepository,
 ] as const
+

@@ -56,6 +56,9 @@ export class MaterialGroup extends WithTimestampSchema {
   })
   platforms: AccountType[]
 
+  @Prop({ required: false, index: true })
+  libraryId?: string
+
   // 是否开启推广
   @Prop({
     required: true,

@@ -18,7 +18,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { S3Config } from './s3.config'
-import { SIGN_S3_CLIENT } from './s3.constants'
+import { S3_SIGNING_CLIENT } from './s3.constants'
 
 @Injectable()
 export class S3Service {
@@ -27,7 +27,7 @@ export class S3Service {
   constructor(
     private readonly config: S3Config,
     private readonly client: S3Client,
-    @Inject(SIGN_S3_CLIENT) private readonly signClient: S3Client,
+    @Inject(S3_SIGNING_CLIENT) private readonly signingClient: S3Client,
   ) {}
 
   async putObject(
@@ -79,7 +79,7 @@ export class S3Service {
 
   // 生成预签名上传 URL
   async getUploadSignPost(objectPath: string, contentType?: string) {
-    const result = await createPresignedPost(this.signClient, {
+    const result = await createPresignedPost(this.signingClient, {
       Bucket: this.config.bucketName,
       Key: objectPath,
       Expires: this.config.signExpires,
@@ -90,7 +90,7 @@ export class S3Service {
   }
 
   async getUploadSignUrl(objectPath: string, contentType?: string, contentLength?: number) {
-    return getSignedUrl(this.signClient, new PutObjectCommand({
+    return getSignedUrl(this.signingClient, new PutObjectCommand({
       Bucket: this.config.bucketName,
       Key: objectPath,
       ContentType: contentType,
@@ -204,7 +204,7 @@ export class S3Service {
    * 生成预签名 GET URL（用于让外部服务读取 R2 对象，绕过 CDN 限制）
    */
   async getReadSignUrl(objectPath: string, expiresIn = 3600) {
-    return getSignedUrl(this.signClient, new GetObjectCommand({
+    return getSignedUrl(this.signingClient, new GetObjectCommand({
       Bucket: this.config.bucketName,
       Key: objectPath,
     }), { expiresIn })

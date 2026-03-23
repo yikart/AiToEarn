@@ -7,8 +7,6 @@ export enum NotificationStatus {
 // 通知类型枚举
 export enum NotificationType {
   TaskReminder = 'task_reminder',
-  UserWithdraw = 'user_withdraw',
-  TaskPunish = 'task_punish',
   AgentResult = 'agent_result',
   AppRelease = 'app_release',
   AiReviewSkipped = 'ai_review_skipped',

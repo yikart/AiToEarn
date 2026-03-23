@@ -52,6 +52,10 @@ export class AccountRepository extends BaseRepository<Account> {
     return await this.accountModel.find({ userId }).lean({ virtuals: true }).exec()
   }
 
+  async listRelayAccountsByUserId(userId: string) {
+    return await this.accountModel.find({ userId, relayAccountRef: { $ne: null } }).lean({ virtuals: true }).exec()
+  }
+
   async getList(
     page: {
       pageNo: number
