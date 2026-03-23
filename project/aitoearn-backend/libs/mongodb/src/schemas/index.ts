@@ -22,7 +22,6 @@ import { Material, MaterialSchema } from './material.schema'
 import { MediaGroup, MediaGroupSchema } from './media-group.schema'
 import { Media, MediaSchema } from './media.schema'
 import { Notification, NotificationSchema } from './notification.schema'
-import { OAuth2Credential, OAuth2CredentialSchema } from './oauth2-credential.schema'
 import {
   PointsRecord,
   PointsRecordSchema,
@@ -100,4 +99,3 @@ export const schemas = [
   { name: InteractionRecord.name, schema: InteractionRecordSchema },
   { name: ReplyCommentRecord.name, schema: ReplyCommentRecordSchema },
 ] as const
-

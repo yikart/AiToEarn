@@ -18,6 +18,6 @@
     "zod": "^4.3.5"
   },
   "dependencies": {
-    "ioredis": "^5.7.0"
+    "ioredis": "5.9.3"
   }
 }

@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { QueueService } from '@yikart/aitoearn-queue'
-import { AccountType } from '@yikart/common'
 import { AccountGroup, AccountGroupRepository, AccountRepository } from '@yikart/mongodb'
-import { AccountPortraitReportData } from '../channel/common'
 import { FingerprintService } from '../fingerprint/fingerprint.service'
 
 @Injectable()

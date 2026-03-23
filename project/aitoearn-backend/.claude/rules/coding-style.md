@@ -30,17 +30,25 @@ MANY SMALL FILES > FEW LARGE FILES:
 
 ## Error Handling
 
-ALWAYS handle errors comprehensively:
+Business errors use `AppException + ResponseCode`, handled by the global exception filter. Do NOT wrap business logic with try-catch.
 
 ```typescript
+// WRONG: try-catch + console + throw new Error
 try {
-  const result = await riskyOperation()
-  return result
+  const order = await this.orderService.getById(id)
 } catch (error) {
-  console.error('Operation failed:', error)
-  throw new Error('Detailed user-friendly message')
+  console.error('Failed:', error)       // ❌ console prohibited
+  throw new Error('Order not found')    // ❌ use AppException
+}
+
+// CORRECT: Let the framework handle exceptions
+const order = await this.orderRepository.getById(id)
+if (!order) {
+  throw new AppException(ResponseCode.OrderNotFound)
 }
 ```
+
+Only use try-catch for infrastructure-level operations (external API calls, file I/O), and log with `this.logger.error()` instead of `console`.
 
 ## Input Validation
 
@@ -65,6 +73,6 @@ Before marking work complete:
 - [ ] Files are focused (<800 lines)
 - [ ] No deep nesting (>4 levels)
 - [ ] Proper error handling
-- [ ] No console.log statements
+- [ ] No console usage (use Logger instance)
 - [ ] No hardcoded values
 - [ ] No mutation (immutable patterns used)

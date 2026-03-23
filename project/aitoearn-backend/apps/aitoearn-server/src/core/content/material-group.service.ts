@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { AppException, ResponseCode, TableDto } from '@yikart/common'
+import { TableDto } from '@yikart/common'
 import { MaterialGroupRepository } from '@yikart/mongodb'
 import { NewMaterialGroup, UpdateMaterialGroup } from './common'
 

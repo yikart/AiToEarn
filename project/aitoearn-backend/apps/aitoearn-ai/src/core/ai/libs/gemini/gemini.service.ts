@@ -53,79 +53,79 @@ export class GeminiService {
 
     this.logger.debug({ prompt, imageUrlsCount: imageUrls.length, imageSize, aspectRatio }, 'Starting image generation')
 
-      const parts: Array<{ text: string } | { inlineData: { mimeType: string, data: string } }> = []
+    const parts: Array<{ text: string } | { inlineData: { mimeType: string, data: string } }> = []
 
-      for (const url of imageUrls) {
-        const imageData = await this.fetchImageAsBase64(url)
-        parts.push({
-          inlineData: {
-            mimeType: imageData.mimeType,
-            data: imageData.base64,
-          },
-        })
-      }
-
-      parts.push({ text: prompt })
-
-      const response = await this.genAiClient.models.generateContent({
-        model,
-        contents: [{ role: 'user', parts }],
-        config: {
-          responseModalities: [Modality.IMAGE],
-          imageConfig: {
-            ...(imageSize && { imageSize }),
-            ...(aspectRatio && { aspectRatio }),
-          },
+    for (const url of imageUrls) {
+      const imageData = await this.fetchImageAsBase64(url)
+      parts.push({
+        inlineData: {
+          mimeType: imageData.mimeType,
+          data: imageData.base64,
         },
       })
+    }
 
-      const images: GeminiGeneratedImage[] = []
+    parts.push({ text: prompt })
 
-      if (response.candidates?.[0]?.content?.parts) {
-        for (const part of response.candidates[0].content.parts) {
-          if ('inlineData' in part && part.inlineData) {
-            images.push({
-              imageData: Buffer.from(part.inlineData.data!, 'base64'),
-              mimeType: part.inlineData.mimeType || 'image/png',
-            })
-          }
+    const response = await this.genAiClient.models.generateContent({
+      model,
+      contents: [{ role: 'user', parts }],
+      config: {
+        responseModalities: [Modality.IMAGE],
+        imageConfig: {
+          ...(imageSize && { imageSize }),
+          ...(aspectRatio && { aspectRatio }),
+        },
+      },
+    })
+
+    const images: GeminiGeneratedImage[] = []
+
+    if (response.candidates?.[0]?.content?.parts) {
+      for (const part of response.candidates[0].content.parts) {
+        if ('inlineData' in part && part.inlineData) {
+          images.push({
+            imageData: Buffer.from(part.inlineData.data!, 'base64'),
+            mimeType: part.inlineData.mimeType || 'image/png',
+          })
         }
       }
+    }
 
-      if (images.length === 0) {
-        this.logger.error('No image generated from Gemini API')
-        throw new Error('No image generated')
-      }
+    if (images.length === 0) {
+      this.logger.error('No image generated from Gemini API')
+      throw new Error('No image generated')
+    }
 
-      const usage: GeminiImageUsage | undefined = response.usageMetadata
-        ? {
-            promptTokenCount: response.usageMetadata.promptTokenCount || 0,
-            candidatesTokenCount: response.usageMetadata.candidatesTokenCount || 0,
-            totalTokenCount: response.usageMetadata.totalTokenCount || 0,
-            inputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['promptTokensDetails'] || []),
-            outputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['candidatesTokensDetails'] || []),
-          }
-        : undefined
-
-      this.logger.debug({
-        imageCount: images.length,
-        totalSize: images.reduce((sum, img) => sum + img.imageData.length, 0),
-        usage,
-      }, 'Image generation completed')
-
-      if (usage && images.length > 0 && (!usage.outputTokenDetails || !usage.outputTokenDetails.image)) {
-        const imageTokens = this.calculateImageTokens(model, imageSize)
-        if (imageTokens > 0) {
-          const totalImageTokens = imageTokens * images.length
-          usage.outputTokenDetails = {
-            ...usage.outputTokenDetails,
-            image: (usage.outputTokenDetails?.image || 0) + totalImageTokens,
-          }
-          usage.candidatesTokenCount += totalImageTokens
-          usage.totalTokenCount += totalImageTokens
-          this.logger.debug({ model, imageSize, imageCount: images.length, totalImageTokens }, 'Manually calculated image tokens')
+    const usage: GeminiImageUsage | undefined = response.usageMetadata
+      ? {
+          promptTokenCount: response.usageMetadata.promptTokenCount || 0,
+          candidatesTokenCount: response.usageMetadata.candidatesTokenCount || 0,
+          totalTokenCount: response.usageMetadata.totalTokenCount || 0,
+          inputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['promptTokensDetails'] || []),
+          outputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['candidatesTokensDetails'] || []),
         }
+      : undefined
+
+    this.logger.debug({
+      imageCount: images.length,
+      totalSize: images.reduce((sum, img) => sum + img.imageData.length, 0),
+      usage,
+    }, 'Image generation completed')
+
+    if (usage && images.length > 0 && (!usage.outputTokenDetails || !usage.outputTokenDetails.image)) {
+      const imageTokens = this.calculateImageTokens(model, imageSize)
+      if (imageTokens > 0) {
+        const totalImageTokens = imageTokens * images.length
+        usage.outputTokenDetails = {
+          ...usage.outputTokenDetails,
+          image: (usage.outputTokenDetails?.image || 0) + totalImageTokens,
+        }
+        usage.candidatesTokenCount += totalImageTokens
+        usage.totalTokenCount += totalImageTokens
+        this.logger.debug({ model, imageSize, imageCount: images.length, totalImageTokens }, 'Manually calculated image tokens')
       }
+    }
 
     return { images, usage }
   }

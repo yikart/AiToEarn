@@ -1,18 +1,18 @@
-import type {
-  ArgumentsHost,
-  ExceptionFilter,
-} from '@nestjs/common'
 import type { Response } from 'express'
-
 import type { Observable } from 'rxjs'
+
 import type { CommonResponse } from '../interfaces'
 import {
+  ArgumentsHost,
   Catch,
+  ExceptionFilter,
+  HttpException,
   InternalServerErrorException,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common'
 import { of } from 'rxjs'
+import { AppException } from '../exceptions'
 import { getExceptionPayload } from '../utils'
 
 export interface GlobalExceptionFilterOptions {
@@ -25,16 +25,19 @@ export class GlobalExceptionFilter<T> implements ExceptionFilter<T> {
   constructor(private options: GlobalExceptionFilterOptions = {}) { }
 
   catch(exception: T, host: ArgumentsHost): void | Observable<CommonResponse<unknown>> {
-    if (exception instanceof UnauthorizedException) {
-      this.logger.warn(exception)
-    }
-    else if (
+    if (
       exception instanceof InternalServerErrorException
     ) {
       this.logger.fatal(exception)
     }
-    else {
+    else if (exception instanceof UnauthorizedException || exception instanceof AppException) {
+      this.logger.warn(exception)
+    }
+    else if (exception instanceof HttpException) {
       this.logger.error(exception)
+    }
+    else {
+      this.logger.fatal(exception)
     }
 
     const payload = getExceptionPayload(exception, this.options.returnBadRequestDetails)

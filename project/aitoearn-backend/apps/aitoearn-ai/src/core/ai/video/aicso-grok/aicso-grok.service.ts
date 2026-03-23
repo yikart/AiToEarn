@@ -75,12 +75,12 @@ export class AicsoGrokVideoService {
     const startedAt = new Date()
 
     const result = await this.aicsoLibService.createVideo({
-        model,
-        prompt,
-        images,
-        aspect_ratio: aspectRatio,
-        size,
-      })
+      model,
+      prompt,
+      images,
+      aspect_ratio: aspectRatio,
+      size,
+    })
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({

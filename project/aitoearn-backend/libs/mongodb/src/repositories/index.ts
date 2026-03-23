@@ -14,7 +14,6 @@ import { MaterialRepository } from './material.repository'
 import { MediaGroupRepository } from './media-group.repository'
 import { MediaRepository } from './media.repository'
 import { NotificationRepository } from './notification.repository'
-import { OAuth2CredentialRepository } from './oauth2-credential.repository'
 import { PointsRecordRepository } from './points-record.repository'
 import { PublishRecordRepository } from './publish-record.repository'
 import { QrCodeArtImageRepository } from './qr-code-art-image.repository'
@@ -68,4 +67,3 @@ export const repositories = [
   UserNotificationControlRepository,
   QrCodeArtImageRepository,
 ] as const
-

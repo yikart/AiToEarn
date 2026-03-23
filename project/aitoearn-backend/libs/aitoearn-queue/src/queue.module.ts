@@ -40,6 +40,7 @@ export class AitoearnQueueModule {
         RedisModule.forRoot(config.redis),
         // 配置 Bull 连接
         BullModule.forRootAsync({
+          imports: [],
           useFactory: (redis: Redis) => ({
             prefix: config.prefix,
             connection: redis,

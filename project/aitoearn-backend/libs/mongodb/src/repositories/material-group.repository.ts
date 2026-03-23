@@ -152,6 +152,10 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
     return this.materialGroupModel.find({ libraryId }).lean({ virtuals: true })
   }
 
+  async countByLibraryIdAndUserId(libraryId: string, userId: string): Promise<number> {
+    return this.materialGroupModel.countDocuments({ libraryId, userId })
+  }
+
   async updateLibraryIdById(id: string, libraryId: string | null): Promise<boolean> {
     const res = await this.materialGroupModel.updateOne(
       { _id: id },
