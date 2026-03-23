@@ -9,7 +9,7 @@ import type { EffectiveLimitsDetailed } from '../platformLimits'
 import type { DraftContentType, VideoModelType } from '@/api/draftGeneration'
 import type { ImageModelPricing, VideoModelInfo } from '@/api/types/draftGeneration'
 import type { PlatType } from '@/app/config/platConfig'
-import { AlertTriangle, ArrowUp, Clock, Coins, ExternalLink, Grid2x2, Image, Layers, Loader2, Lock, Monitor, Ruler, Video } from 'lucide-react'
+import { AlertTriangle, ArrowUp, Clock, Coins, ExternalLink, FileText, Grid2x2, Image, Layers, Loader2, Lock, Monitor, Ruler, Video } from 'lucide-react'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -45,9 +45,11 @@ interface ToolBarInlineProps {
   hasVideos: boolean
   promptsExploreUrl: string
   promptsExploreLabel: string
+  isDraftMode: boolean
   selectedPlatforms: PlatType[]
   effectiveLimitsDetailed: EffectiveLimitsDetailed
   disabledPlatforms: Map<PlatType, string[]>
+  onDraftModeChange: (isDraft: boolean) => void
   onContentTypeChange: (contentType: DraftContentType) => void
   onModelTypeChange: (modelType: VideoModelType) => void
   onAspectRatioChange: (ratio: string) => void
@@ -92,9 +94,11 @@ const ToolBarInline = memo(({
   hasVideos,
   promptsExploreUrl,
   promptsExploreLabel,
+  isDraftMode,
   selectedPlatforms,
   effectiveLimitsDetailed,
   disabledPlatforms,
+  onDraftModeChange,
   onContentTypeChange,
   onModelTypeChange,
   onAspectRatioChange,
@@ -159,7 +163,7 @@ const ToolBarInline = memo(({
   }, [onImageCountChange])
 
   // Popover 状态
-  const contentTypePopover = useClickPopover()
+  const genModePopover = useClickPopover()
   const modelPopover = useClickPopover()
   const ratioPopover = useClickPopover()
   const durationPopover = useClickPopover()
@@ -177,18 +181,24 @@ const ToolBarInline = memo(({
         </span>
       )}
 
-      {/* 内容类型切换 pill */}
-      <Popover open={contentTypePopover.open} onOpenChange={contentTypePopover.onOpenChange}>
+      {/* 生成模式选择 pill（草稿/图片/视频 三选一） */}
+      <Popover open={genModePopover.open} onOpenChange={genModePopover.onOpenChange}>
         <PopoverTrigger asChild>
           <button
-            data-testid="draftbox-ai-content-type"
+            data-testid="draftbox-ai-gen-mode"
             type="button"
             className={pillClass}
           >
-            {isVideoMode
-              ? <Video className="h-3.5 w-3.5" />
-              : <Image className="h-3.5 w-3.5" />}
-            {isVideoMode ? t('detail.contentTypeVideo') : t('detail.contentTypeImageText')}
+            {isDraftMode
+              ? <FileText className="h-3.5 w-3.5" />
+              : isVideoMode
+                ? <Video className="h-3.5 w-3.5" />
+                : <Image className="h-3.5 w-3.5" />}
+            {isDraftMode
+              ? `${t('detail.draftModeOn')}(${isVideoMode ? t('detail.contentTypeVideo') : t('detail.contentTypeImageText')})`
+              : isVideoMode
+                ? t('detail.draftModeOffVideo')
+                : t('detail.draftModeOffImage')}
           </button>
         </PopoverTrigger>
         <PopoverContent
@@ -197,37 +207,78 @@ const ToolBarInline = memo(({
           align="start"
         >
           <div className="flex flex-col gap-1">
+            {/* 草稿模式选项 */}
             {([
-              { value: 'video' as const, label: t('detail.contentTypeVideo'), icon: Video },
-              { value: 'image_text' as const, label: t('detail.contentTypeImageText'), icon: Image },
-            ]).map(({ value, label, icon: Icon }) => (
-              <button
-                key={value}
-                type="button"
-                className={cn(
-                  'flex items-center gap-2 px-3 py-2 rounded-md text-xs cursor-pointer transition-colors text-left',
-                  value === contentType
-                    ? 'bg-primary/10 text-foreground font-medium'
-                    : 'hover:bg-muted text-muted-foreground',
-                )}
-                onClick={() => onContentTypeChange(value)}
-              >
-                <Icon className="h-3.5 w-3.5" />
-                {label}
-              </button>
-            ))}
+              { key: 'draft_image', label: `${t('detail.draftModeOn')}(${t('detail.contentTypeImageText')})`, icon: FileText, isDraft: true, ct: 'image_text' as const },
+              { key: 'draft_video', label: `${t('detail.draftModeOn')}(${t('detail.contentTypeVideo')})`, icon: FileText, isDraft: true, ct: 'video' as const },
+            ]).map(({ key, label, icon: Icon, isDraft, ct }) => {
+              const isActive = isDraftMode && contentType === ct
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2 rounded-md text-xs cursor-pointer transition-colors text-left',
+                    isActive
+                      ? 'bg-primary/10 text-foreground font-medium'
+                      : 'hover:bg-muted text-muted-foreground',
+                  )}
+                  onClick={() => {
+                    onDraftModeChange(true)
+                    if (contentType !== ct)
+                      onContentTypeChange(ct)
+                    genModePopover.onOpenChange(false)
+                  }}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {label}
+                </button>
+              )
+            })}
+            {/* 分割线 */}
+            <div className="border-t border-border my-1" />
+            {/* 非草稿模式选项 */}
+            {([
+              { key: 'image', label: t('detail.draftModeOffImage'), icon: Image, ct: 'image_text' as const },
+              { key: 'video', label: t('detail.draftModeOffVideo'), icon: Video, ct: 'video' as const },
+            ]).map(({ key, label, icon: Icon, ct }) => {
+              const isActive = !isDraftMode && contentType === ct
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={cn(
+                    'flex items-center gap-2 px-3 py-2 rounded-md text-xs cursor-pointer transition-colors text-left',
+                    isActive
+                      ? 'bg-primary/10 text-foreground font-medium'
+                      : 'hover:bg-muted text-muted-foreground',
+                  )}
+                  onClick={() => {
+                    onDraftModeChange(false)
+                    if (contentType !== ct)
+                      onContentTypeChange(ct)
+                    genModePopover.onOpenChange(false)
+                  }}
+                >
+                  <Icon className="h-3.5 w-3.5" />
+                  {label}
+                </button>
+              )
+            })}
           </div>
         </PopoverContent>
       </Popover>
 
-      {/* 平台选择 pill（内含参数限制 ⓘ） */}
-      <PlatformSelector
-        selectedPlatforms={selectedPlatforms}
-        onPlatformsChange={onPlatformsChange}
-        pillClass={pillClass}
-        disabledPlatforms={disabledPlatforms}
-        effectiveLimitsDetailed={effectiveLimitsDetailed}
-      />
+      {/* 平台选择 pill（内含参数限制 ⓘ）— 仅草稿模式显示 */}
+      {isDraftMode && (
+        <PlatformSelector
+          selectedPlatforms={selectedPlatforms}
+          onPlatformsChange={onPlatformsChange}
+          pillClass={pillClass}
+          disabledPlatforms={disabledPlatforms}
+          effectiveLimitsDetailed={effectiveLimitsDetailed}
+        />
+      )}
 
       {/* 模型选择 pill */}
       <Popover open={modelPopover.open} onOpenChange={modelPopover.onOpenChange}>
@@ -256,7 +307,7 @@ const ToolBarInline = memo(({
                   const isActive = key === modelType
                   // 每秒价格：取默认 duration 对应的 pricing 计算
                   const defaultDuration = model.defaults?.duration ?? model.durations[0]
-                  const defaultPricing = model.pricing.find(p => p.duration === defaultDuration && !p.mode) ?? model.pricing.find(p => !p.mode)
+                  const defaultPricing = model.pricing.find(p => p.duration === defaultDuration) ?? model.pricing[0]
                   const pricePerSecond = defaultPricing && defaultPricing.duration > 0
                     ? Math.round((defaultPricing.price / defaultPricing.duration) * 100) / 100
                     : null

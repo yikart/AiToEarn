@@ -39,7 +39,7 @@ src/store/
 | `account.ts`            | `useAccountStore`       | 社交账户管理、账户分组、余额不足弹框         | 否              |
 | `user.ts`               | `useUserStore`          | 用户登录态、Credits 余额、语言、侧边栏       | 是              |
 | `system.ts`             | `useSystemStore`        | 系统配置（余额提示、日历视图）               | 是（IndexedDB） |
-| `brandInfo.ts`          | `useBrandInfoStore`     | 品牌信息（品牌库、品牌图片）                 | 否              |
+| `brandInfo.ts`          | `useBrandInfoStore`     | 品牌信息（按草稿箱独立，多实例缓存）         | 否              |
 | `publishDetailCache.ts` | `usePublishDetailCache` | 发布详情缓存（5 分钟过期）                   | 是（IndexedDB） |
 | `taskSquare.ts`         | `useTaskSquareStore`    | 任务广场列表、分页、平台筛选、国家筛选       | 否              |
 | `notification.ts`       | `useNotificationStore`  | 通知列表、未读数、无限滚动、乐观更新         | 否              |
@@ -118,16 +118,21 @@ src/store/
 
 **主要状态：**
 
-- `brandInfo` — 品牌库数据（`BrandLibraryVo`）
-- `loading` / `updating` / `switching` — 各操作加载状态
-- `initialized` — 是否已初始化
+- `brandInfoMap` — `groupId → BrandLibraryVo | null` 品牌信息映射
+- `loadingMap` / `updatingMap` / `switchingMap` — 各操作按 groupId 隔离的加载状态
+- `initializedMap` — 按 groupId 隔离的初始化状态
 
 **主要方法：**
 
-- `fetchBrandInfo()` — 获取品牌信息
-- `updateBrandInfo()` — 更新品牌基本信息
-- `addImage()` / `deleteImage()` — 品牌图片增删
-- `switchBrandLib()` — 切换关联餐厅
+- `fetchBrandInfo(groupId)` — 获取草稿箱关联的品牌信息
+- `updateBrandInfo(groupId, data)` — 更新品牌基本信息
+- `addImage(groupId, url)` / `deleteImage(groupId, imageId)` — 品牌图片增删
+- `linkBrandLib(groupId, placeId)` — 关联品牌到草稿箱
+- `switchBrandLib(groupId, placeId)` — 切换关联品牌
+
+**便捷 Hook：**
+
+- `useBrandInfoByGroup(groupId)` — 获取指定草稿箱的品牌信息及状态
 
 ---
 

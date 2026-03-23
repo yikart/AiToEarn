@@ -9,7 +9,8 @@
 'use client'
 
 import type { SocialAccount } from '@/api/types/account.type'
-import { SquarePen, UserPlus } from 'lucide-react'
+import { Bot, SquarePen, UserPlus } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
@@ -26,6 +27,7 @@ export interface IAccountsTopNavProps {
 
 const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) => {
   const { t } = useTransClient('account')
+  const router = useRouter()
   const [accountSearchText, setAccountSearchText] = useState('')
   const [collapsedSpaces, setCollapsedSpaces] = useState<Set<string>>(new Set())
   const [sortLoading, setSortLoading] = useState<string | null>(null)
@@ -174,6 +176,18 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
           >
             <UserPlus className="h-4 w-4" />
             <span>{t('addAccount')}</span>
+          </Button>
+
+          <div className="border-l border-border h-6 mx-1 md:mx-2" />
+
+          {/* Agent创建按钮 */}
+          <Button
+            variant="outline"
+            onClick={() => router.push('/ai-social')}
+            className="h-8 md:h-9 gap-1 md:gap-2 px-2 md:px-4 cursor-pointer"
+          >
+            <Bot className="h-4 w-4" />
+            <span>{t('agentCreate')}</span>
           </Button>
         </div>
 

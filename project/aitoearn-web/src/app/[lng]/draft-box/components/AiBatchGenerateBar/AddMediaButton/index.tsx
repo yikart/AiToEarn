@@ -5,6 +5,7 @@
 
 'use client'
 
+import type { BrandImage } from '../index'
 import { ImageIcon, Upload } from 'lucide-react'
 import { memo, useCallback, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -13,7 +14,7 @@ import ImageSelectorPopover from '../ImageSelectorPopover'
 import styles from './AddMediaButton.module.scss'
 
 interface AddMediaButtonProps {
-  allImages: any[]
+  allImages: BrandImage[]
   selectedIds: string[]
   maxImages: number
   onImagesChange: (ids: string[]) => void

@@ -13,12 +13,15 @@ import type { PlatType } from '@/app/config/platConfig'
 import { RotateCcw, Upload, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { AccountPlatInfoMap, RegionTaskPlatInfoArr, TASK_EXCLUDED_PLATFORMS } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
+import { useAccountStore } from '@/store/account'
+import { useUserStore } from '@/store/user'
 import { getVideoMeta } from '@/utils/media'
 import { getOssUrl } from '@/utils/oss'
 import { useDraftBoxConfigStore } from '../../draftBoxConfigStore'
@@ -27,6 +30,7 @@ import {
   DEFAULT_MAX_INPUT_IMAGES,
   getVideoModelConfigFromApi,
   getVideoModelStaticConfig,
+  IMAGE_TEXT_ASPECT_RATIOS,
   matchClosestRatio,
 } from './constants'
 import ImageStack from './ImageStack'
@@ -44,8 +48,14 @@ const PROMPTS_EXPLORE_LNG_MAP: Record<string, string> = {
   'ko': 'ko-KR',
 }
 
+/** 品牌图片类型（原 BrandImage，品牌库模块移除后本地保留） */
+export interface BrandImage {
+  id: string
+  url: string
+}
+
 /** 模块级常量，避免 selector 每次返回新引用导致无限重渲染 */
-const EMPTY_IMAGE_LIST: any[] = []
+const EMPTY_IMAGE_LIST: BrandImage[] = []
 
 interface AiBatchGenerateBarProps {
   /** 外部传入 groupId，不从 store 读取 */
@@ -60,8 +70,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   const { t } = useTransClient('brandPromotion')
   const lng = useGetClientLng()
 
-  // 图片列表（品牌信息已移除，置空）
-  const imageList: any[] = []
+  const imageList = EMPTY_IMAGE_LIST
 
   // 配置 key：按 groupId 隔离
   const configKey = groupId || '__default__'
@@ -76,12 +85,18 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
 
   const config = getConfig(configKey)
 
-  // Store：生成状态（planDetailStore 已移除，暂用空实现）
-  const isGeneratingBatch = false
-  const createBatchGeneration = async (..._args: any[]) => false
-  const createImageTextBatchGeneration = async (..._args: any[]) => false
+  // Store：生成状态
+  const {
+    isGeneratingBatch,
+    createBatchGeneration,
+    createImageTextBatchGeneration,
+  } = usePlanDetailStore(useShallow(state => ({
+    isGeneratingBatch: state.isGeneratingBatch,
+    createBatchGeneration: state.createBatchGeneration,
+    createImageTextBatchGeneration: state.createImageTextBatchGeneration,
+  })))
 
-  // 默认提示词（品牌信息已移除）
+  // 默认提示词
   const defaultPrompt = ''
 
   // 拖拽状态
@@ -99,7 +114,8 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   const [imageCount, setImageCount] = useState(config.imageCount)
   const [imageSize, setImageSize] = useState(config.imageSize)
   const [quantity, setQuantity] = useState(config.quantity)
-  // 计算可用平台
+  const [isDraftMode, setIsDraftMode] = useState(config.isDraftMode ?? true)
+  // 计算当前区域可用平台
   const availablePlatforms = useMemo(() =>
     RegionTaskPlatInfoArr.map(([plat]) => plat), [])
 
@@ -122,6 +138,8 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   // 追踪上一次的 configKey，用于同步 effect 检测切换
   const prevConfigKeyRef = useRef(configKey)
   const isMediaInitializedRef = useRef(false)
+  // 防止同一品牌 ID 重复应用默认值
+  const lastAppliedBrandIdRef = useRef<string | null>(null)
 
   // Pricing 数据
   const { pricingData, isLoading: isPricingLoading } = usePricingData()
@@ -216,6 +234,20 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     }
   }, [defaultPrompt, promptValue])
 
+  // imageList 异步加载后自动选中默认图片
+  useEffect(() => {
+    if (!initialSelectionDone.current && imageList.length > 0) {
+      const maxImages = contentType === 'image_text'
+        ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES)
+        : currentVideoModelConfig.maxImages
+      const defaultCount = Math.min(5, maxImages, imageList.length)
+      const defaultIds = imageList.slice(0, defaultCount).map(img => img.id)
+      setSelectedIds(defaultIds)
+      updateConfig(configKey, { selectedImageIds: defaultIds })
+      initialSelectionDone.current = true
+    }
+  }, [imageList, modelType, contentType, imageModel, configKey, updateConfig, currentVideoModelConfig])
+
   // 本地上传媒体
   const {
     medias: localMedias,
@@ -271,16 +303,12 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   // 是否为视频编辑模式（上传了视频 + 视频内容类型）
   const isVideoEditMode = hasVideos && contentType === 'video'
 
-  // 派生：当前模式（普通 or video2video）的定价数组
+  // 派生：当前模型的定价数组
   const videoPricing: VideoModelPricing[] = useMemo(() => {
     if (!currentVideoModelInfo?.pricing)
       return []
-    if (isVideoEditMode) {
-      const v2vPricing = currentVideoModelInfo.pricing.filter(p => p.mode === 'video2video')
-      return v2vPricing.length > 0 ? v2vPricing : currentVideoModelInfo.pricing.filter(p => !p.mode)
-    }
-    return currentVideoModelInfo.pricing.filter(p => !p.mode)
-  }, [currentVideoModelInfo, isVideoEditMode])
+    return currentVideoModelInfo.pricing
+  }, [currentVideoModelInfo])
 
   // 派生：从 pricing 数据的 duration 范围派生时长限制
   const videoDurationLimits = useMemo(() => {
@@ -350,6 +378,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     setImageCount(newConfig.imageCount)
     setImageSize(newConfig.imageSize)
     setQuantity(newConfig.quantity)
+    setIsDraftMode(newConfig.isDraftMode ?? true)
     // selectedPlatforms 需要区域过滤 + 空时默认全选
     const storedPlatforms = newConfig.selectedPlatforms
     if (storedPlatforms.length === 0) {
@@ -362,7 +391,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     const storedPrompt = newConfig.promptValue ?? ''
     setPromptValue(storedPrompt)
     defaultPromptFilledRef.current = !!storedPrompt
-    // 从 store 恢复品牌图片选择
+    // 从 store 恢复图片选择
     const storedImageIds = newConfig.selectedImageIds ?? []
     if (storedImageIds.length > 0) {
       setSelectedIds(storedImageIds)
@@ -372,6 +401,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       setSelectedIds([])
       initialSelectionDone.current = false
     }
+    lastAppliedBrandIdRef.current = newConfig.linkedBrandId || null
     // 从 store 恢复持久化的媒体
     const persistedMedias = newConfig.persistedMedias ?? []
     if (persistedMedias.length > 0) {
@@ -394,8 +424,11 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     isMediaInitializedRef.current = true
   }, [configKey, _hasHydrated])
 
-  // 已选图片对象（品牌图片已移除）
-  const selectedImages: any[] = []
+  // 已选图片对象
+  const selectedImages = useMemo(() => {
+    const imageMap = new Map(imageList.map(img => [img.id, img]))
+    return selectedIds.map(id => imageMap.get(id)).filter(Boolean) as BrandImage[]
+  }, [selectedIds, imageList])
 
   // 平台兼容性检查
   const incompatiblePlatforms = useMemo(() => {
@@ -437,10 +470,32 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     // 切换内容类型时清理已上传的媒体资源
     clearMedias()
     videoDurationMapRef.current.clear()
-    // 重置图片选择
-    setSelectedIds([])
-    updateConfig(configKey, { selectedImageIds: [] })
-  }, [configKey, updateConfig, clearMedias])
+    // 切换内容类型时校验并重置比例
+    if (ct === 'image_text') {
+      const supported = IMAGE_TEXT_ASPECT_RATIOS.map(r => r.label)
+      if (!supported.includes(aspectRatio)) {
+        const defaultRatio = supported.includes('9:16') ? '9:16' : (supported[0] ?? '9:16')
+        setAspectRatio(defaultRatio)
+        updateConfig(configKey, { aspectRatio: defaultRatio })
+      }
+    }
+    else {
+      const supported = currentVideoModelConfig.supportedRatios
+      if (!supported.has(aspectRatio)) {
+        const defaultRatio = supported.has('9:16') ? '9:16' : ([...supported][0] ?? '9:16')
+        setAspectRatio(defaultRatio)
+        updateConfig(configKey, { aspectRatio: defaultRatio })
+      }
+    }
+    // 重置店铺图片选择（重新自动选中）
+    const maxImages = ct === 'image_text'
+      ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES)
+      : currentVideoModelConfig.maxImages
+    const defaultCount = Math.min(5, maxImages, imageList.length)
+    const newIds = imageList.slice(0, defaultCount).map(img => img.id)
+    setSelectedIds(newIds)
+    updateConfig(configKey, { selectedImageIds: newIds })
+  }, [configKey, updateConfig, clearMedias, currentVideoModelConfig, currentImageModelInfo, imageList, aspectRatio])
 
   const handleImageModelChange = useCallback((im: string) => {
     setImageModel(im)
@@ -498,12 +553,14 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     updateConfig(configKey, { aspectRatio: defaultRatio })
     // 根据新模型的 maxImages 重新初始化选中的图片
     const maxImages = newConfig.maxImages
-    setSelectedIds([])
-    updateConfig(configKey, { selectedImageIds: [] })
+    const defaultCount = Math.min(maxImages, imageList.length)
+    const newIds = imageList.slice(0, defaultCount).map(img => img.id)
+    setSelectedIds(newIds)
+    updateConfig(configKey, { selectedImageIds: newIds })
     // 清理超出限制的本地上传图片
     const currentLocalImages = localMedias.filter(m => m.type === 'image')
-    if (currentLocalImages.length > 0 && currentLocalImages.length > maxImages) {
-      const allowedLocal = Math.max(0, maxImages)
+    if (currentLocalImages.length > 0 && newIds.length + currentLocalImages.length > maxImages) {
+      const allowedLocal = Math.max(0, maxImages - newIds.length)
       for (let i = currentLocalImages.length - 1; i >= allowedLocal; i--) {
         const mediaIndex = localMedias.indexOf(currentLocalImages[i]!)
         if (mediaIndex >= 0)
@@ -528,11 +585,16 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       setDuration(newMaxDuration)
       updateConfig(configKey, { duration: newMaxDuration })
     }
-  }, [aspectRatio, duration, configKey, updateConfig, localMedias, removeLocalMedia, t, pricingData?.videoModels])
+  }, [aspectRatio, duration, configKey, updateConfig, imageList, localMedias, removeLocalMedia, t, pricingData?.videoModels])
 
   const handlePlatformsChange = useCallback((platforms: PlatType[]) => {
     setSelectedPlatforms(platforms)
     updateConfig(configKey, { selectedPlatforms: platforms })
+  }, [configKey, updateConfig])
+
+  const handleDraftModeChange = useCallback((isDraft: boolean) => {
+    setIsDraftMode(isDraft)
+    updateConfig(configKey, { isDraftMode: isDraft })
   }, [configKey, updateConfig])
 
   // 重置所有配置到默认值
@@ -550,20 +612,36 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     setImageCount(3)
     setImageSize(firstImageModel?.pricing?.[0]?.resolution ?? '1K')
     setQuantity(1)
+    setIsDraftMode(true)
     setSelectedPlatforms(availablePlatforms)
     // 清空媒体
     clearMedias()
     videoDurationMapRef.current.clear()
 
-    // 直接恢复默认提示词
-    setPromptValue('')
-    updateConfig(configKey, { promptValue: '' })
-    defaultPromptFilledRef.current = false
+    // 直接恢复默认提示词（不依赖 effect，避免多次点击时 deps 不变导致 effect 不触发）
+    if (defaultPrompt) {
+      setPromptValue(defaultPrompt)
+      updateConfig(configKey, { promptValue: defaultPrompt })
+      defaultPromptFilledRef.current = true
+    }
+    else {
+      setPromptValue('')
+      updateConfig(configKey, { promptValue: '' })
+      defaultPromptFilledRef.current = false
+    }
 
-    // 重置图片选中
-    setSelectedIds([])
-    initialSelectionDone.current = false
-  }, [configKey, resetConfig, clearMedias, defaultPlatforms, pricingData])
+    // 直接恢复默认图片选中（不依赖 effect）
+    if (imageList.length > 0) {
+      const maxImages = getVideoModelStaticConfig(firstVideoModel, pricingData?.videoModels).maxImages
+      const defaultCount = Math.min(5, maxImages, imageList.length)
+      setSelectedIds(imageList.slice(0, defaultCount).map(img => img.id))
+      initialSelectionDone.current = true
+    }
+    else {
+      setSelectedIds([])
+      initialSelectionDone.current = false
+    }
+  }, [configKey, resetConfig, clearMedias, defaultPlatforms, defaultPrompt, imageList, pricingData])
 
   // 本地上传处理
   const handleLocalUpload = useCallback(async (files: FileList) => {
@@ -700,22 +778,53 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       return
     }
 
+    // 将平台参数限制追加到 prompt，让 AI 感知限制（非草稿模式不需要，因为不生成文案）
+    const buildPromptWithLimits = (basePrompt: string): string => {
+      if (!isDraftMode)
+        return basePrompt
+      const limits: string[] = []
+      if (effectiveLimitsDetailed.titleMax) {
+        limits.push(`标题字数限制：${effectiveLimitsDetailed.titleMax.value}`)
+      }
+      if (effectiveLimitsDetailed.desMax) {
+        limits.push(`描述字数限制：${effectiveLimitsDetailed.desMax.value}`)
+      }
+      if (effectiveLimitsDetailed.topicMax) {
+        limits.push(`话题数量限制：${effectiveLimitsDetailed.topicMax.value}`)
+      }
+      if (limits.length === 0)
+        return basePrompt
+      return `${basePrompt}\n\n重要：${limits.join('，')}`
+    }
+
     const imageUrls = [
       ...selectedImages.map(img => getOssUrl(img.url)),
       ...localImages.filter(m => m.url).map(m => m.url),
     ]
 
     if (contentType === 'image_text') {
+      // 图文模式积分验证
+      const currentPricing = imagePricing.find(p => p.resolution === imageSize)
+      const pricePerImage = currentPricing?.pricePerImage ?? 0
+      const totalCredits = Math.ceil(pricePerImage * imageCount * quantity * 100) / 100
+      const creditsBalance = useUserStore.getState().creditsBalance
+      if (creditsBalance < totalCredits) {
+        toast.error(t('detail.insufficientBalance', { total: totalCredits, balance: creditsBalance }))
+        useAccountStore.getState().setLowBalanceAlertOpen(true)
+        return
+      }
+
       const success = await createImageTextBatchGeneration(
         quantity,
         imageModel,
-        promptValue.trim(),
+        buildPromptWithLimits(promptValue.trim()),
         imageCount,
         aspectRatio,
         imageUrls.length > 0 ? imageUrls : undefined,
         groupId,
         imageSize,
         effectiveSelectedPlatforms.length > 0 ? effectiveSelectedPlatforms : undefined,
+        isDraftMode ? 'draft' : 'image',
       )
       if (success) {
         toast.success(t('detail.imageTextGenerated'))
@@ -723,6 +832,15 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       }
     }
     else {
+      // 视频模式积分验证（使用 API 驱动的查表积分）
+      const totalCredits = videoCredits
+      const creditsBalance = useUserStore.getState().creditsBalance
+      if (creditsBalance < totalCredits) {
+        toast.error(t('detail.insufficientBalance', { total: totalCredits, balance: creditsBalance }))
+        useAccountStore.getState().setLowBalanceAlertOpen(true)
+        return
+      }
+
       const videoUrls = localVideos.filter(v => v.url).map(v => v.url)
 
       const success = await createBatchGeneration(
@@ -730,25 +848,26 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
         modelType,
         duration,
         aspectRatio,
-        promptValue.trim() || undefined,
+        buildPromptWithLimits(promptValue.trim()) || undefined,
         imageUrls.length > 0 ? imageUrls : undefined,
         videoUrls.length > 0 ? videoUrls : undefined,
         groupId,
         effectiveSelectedPlatforms.length > 0 ? effectiveSelectedPlatforms : undefined,
+        isDraftMode ? 'draft' : 'video',
       )
       if (success) {
         toast.success(t('detail.aiBatchGenerate'))
         onGenerated?.()
       }
     }
-  }, [promptValue, aspectRatio, duration, modelType, selectedImages, localImages, localVideos, hasVideos, quantity, createBatchGeneration, createImageTextBatchGeneration, contentType, imageModel, imageCount, imageSize, imagePricing, videoCredits, isUploading, t, groupId, onGenerated, effectiveSelectedPlatforms])
+  }, [promptValue, aspectRatio, duration, modelType, selectedImages, localImages, localVideos, hasVideos, quantity, createBatchGeneration, createImageTextBatchGeneration, contentType, imageModel, imageCount, imageSize, imagePricing, videoCredits, isUploading, t, groupId, onGenerated, effectiveSelectedPlatforms, effectiveLimitsDetailed, isDraftMode])
 
   // Prompts 探索页 URL（不同语言对应不同路径）
   const promptsExploreUrl = useMemo(() => {
     const lngPath = PROMPTS_EXPLORE_LNG_MAP[lng]
     return lngPath
-      ? `https://youmind.com/${lngPath}/seedance-2-0-prompts`
-      : 'https://youmind.com/seedance-2-0-prompts'
+      ? `https://youmind.com/${lngPath}/grok-imagine-prompts`
+      : 'https://youmind.com/grok-imagine-prompts'
   }, [lng])
 
   // 动态 Placeholder
@@ -859,9 +978,11 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
           hasVideos={hasVideos}
           promptsExploreUrl={promptsExploreUrl}
           promptsExploreLabel={t('detail.exploreMorePrompts')}
+          isDraftMode={isDraftMode}
           selectedPlatforms={selectedPlatforms}
           effectiveLimitsDetailed={effectiveLimitsDetailed}
           disabledPlatforms={incompatiblePlatforms}
+          onDraftModeChange={handleDraftModeChange}
           onContentTypeChange={handleContentTypeChange}
           onModelTypeChange={handleModelTypeChange}
           onAspectRatioChange={handleAspectRatioChange}

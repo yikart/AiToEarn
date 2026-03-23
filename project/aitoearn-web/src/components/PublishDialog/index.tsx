@@ -65,6 +65,8 @@ export interface IPublishDialogProps {
   onPublishConfirmed?: (taskId?: string, publishRecordId?: string, workLink?: string) => void
   // 发布开始回调（pubClick 开头触发，用于提前设置外部 loading）
   onPublishStart?: () => void
+  // 发布完成后是否自动关闭详情弹框（默认 false）
+  autoCloseOnComplete?: boolean
 }
 
 // ============ 主组件 ============
@@ -82,6 +84,7 @@ const PublishDialog = memo(
         taskIdForPublish,
         onPublishConfirmed,
         onPublishStart,
+        autoCloseOnComplete,
       }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
@@ -353,11 +356,10 @@ const PublishDialog = memo(
 
       // PC 不支持平台点击
       const handlePcNotSupportedClick = useCallback(
-        (platformName: string) => {
-          modalState.setCurrentPlatform(platformName)
-          modalState.setDownloadModalVisible(true)
+        (_platformName: string) => {
+          // DownloadAppModal has been removed; no-op for now
         },
-        [modalState],
+        [],
       )
 
       // Facebook 授权成功
@@ -412,9 +414,6 @@ const PublishDialog = memo(
             </Modal>
 
             <PublishModals
-              downloadModalVisible={modalState.downloadModalVisible}
-              setDownloadModalVisible={modalState.setDownloadModalVisible}
-              currentPlatform={modalState.currentPlatform}
               showFacebookPagesModal={modalState.showFacebookPagesModal}
               setShowFacebookPagesModal={modalState.setShowFacebookPagesModal}
               onFacebookPagesSuccess={handleFacebookPagesSuccess}
@@ -424,6 +423,7 @@ const PublishDialog = memo(
               publishDetailVisible={modalState.publishDetailVisible}
               onPublishDetailClose={closePublishDetailModal}
               currentPublishTaskId={modalState.currentPublishTaskId}
+              autoCloseOnComplete={autoCloseOnComplete}
             />
           </>
         )
@@ -470,9 +470,6 @@ const PublishDialog = memo(
           </Modal>
 
           <PublishModals
-            downloadModalVisible={modalState.downloadModalVisible}
-            setDownloadModalVisible={modalState.setDownloadModalVisible}
-            currentPlatform={modalState.currentPlatform}
             showFacebookPagesModal={modalState.showFacebookPagesModal}
             setShowFacebookPagesModal={modalState.setShowFacebookPagesModal}
             onFacebookPagesSuccess={handleFacebookPagesSuccess}

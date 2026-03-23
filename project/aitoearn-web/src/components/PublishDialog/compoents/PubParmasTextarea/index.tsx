@@ -63,6 +63,10 @@ export interface IPubParmasTextareaProps {
   hideWritingAssistant?: boolean
   // toolbar 额外内容（写作助手按钮后面）
   toolbarExtra?: React.ReactNode
+  // 覆盖图片最大数量（优先于平台配置）
+  imagesMaxOverride?: number
+  // 覆盖描述最大长度（优先于平台配置）
+  desMaxOverride?: number
 }
 
 const PubParmasTextarea = memo(
@@ -84,6 +88,8 @@ const PubParmasTextarea = memo(
         isMobile,
         hideWritingAssistant,
         toolbarExtra,
+        imagesMaxOverride,
+        desMaxOverride,
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
@@ -160,8 +166,8 @@ const PubParmasTextarea = memo(
         return AccountPlatInfoMap.get(platType)! || {}
       }, [platType])
       const imageMax = useMemo(() => {
-        return platConfig.commonPubParamsConfig?.imagesMax || 10
-      }, [platConfig])
+        return imagesMaxOverride ?? platConfig.commonPubParamsConfig?.imagesMax ?? 10
+      }, [platConfig, imagesMaxOverride])
 
       // 动态accept类型
       const uploadAccept = useMemo(() => {
@@ -280,8 +286,8 @@ const PubParmasTextarea = memo(
       )
 
       const desMax = useMemo(() => {
-        return platConfig.commonPubParamsConfig?.desMax || 2200
-      }, [platConfig])
+        return desMaxOverride ?? platConfig.commonPubParamsConfig?.desMax ?? 2200
+      }, [platConfig, desMaxOverride])
 
       return (
         <>

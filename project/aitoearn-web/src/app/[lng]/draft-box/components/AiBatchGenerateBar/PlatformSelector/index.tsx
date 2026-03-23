@@ -15,6 +15,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/lib/utils'
 import PlatformLimitsInfo from '../PlatformLimitsInfo'
 
@@ -37,6 +38,7 @@ function getAvailablePlatforms(): [PlatType, { icon: string, name: string }][] {
 const PlatformSelector = memo(({ selectedPlatforms, onPlatformsChange, pillClass, disabledPlatforms, effectiveLimitsDetailed }: PlatformSelectorProps) => {
   const { t } = useTransClient('brandPromotion')
   const [open, setOpen] = useState(false)
+  const isMobile = useIsMobile()
 
   const availablePlatforms = useMemo(() => getAvailablePlatforms(), [])
 
@@ -157,6 +159,17 @@ const PlatformSelector = memo(({ selectedPlatforms, onPlatformsChange, pillClass
           side="top"
           align="start"
         >
+          {/* 不兼容警告 banner */}
+          {disabledSelectedCount > 0 && (
+            <div className="flex items-start gap-1.5 mb-2 p-2 rounded-md bg-amber-50 text-amber-700 text-xs dark:bg-amber-950/30 dark:text-amber-400">
+              <TriangleAlert className="h-3.5 w-3.5 mt-0.5 flex-shrink-0" />
+              <div>
+                <div>{t('detail.platformIncompatibleCount', { count: disabledSelectedCount })}</div>
+                <div className="text-amber-600/70 dark:text-amber-400/70">{disabledSelectedNames.join(', ')}</div>
+              </div>
+            </div>
+          )}
+
           {/* 标题 + 全选/取消 */}
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-medium text-foreground">{t('detail.targetPlatforms')}</span>
@@ -217,6 +230,18 @@ const PlatformSelector = memo(({ selectedPlatforms, onPlatformsChange, pillClass
                 )
 
                 if (isDisabled) {
+                  if (isMobile) {
+                    return (
+                      <div key={plat} className="col-span-2">
+                        {button}
+                        <div className="px-2 pb-1 text-[10px] text-amber-600/80 dark:text-amber-400/70 leading-tight">
+                          {disabledReasons.map((reason, i) => (
+                            <div key={i}>{reason}</div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  }
                   return (
                     <Tooltip key={plat}>
                       <TooltipTrigger asChild>

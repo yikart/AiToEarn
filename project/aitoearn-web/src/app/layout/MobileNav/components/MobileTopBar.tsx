@@ -33,9 +33,11 @@ export function MobileTopBar({ onOpen }: MobileTopBarProps) {
             data-testid="mobile-topbar-menu-btn"
             className="flex items-center rounded-lg p-1.5 text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
           >
-            <Avatar className="h-7 w-7">
+            <Avatar className="h-7 w-7 shrink-0 border border-border">
               <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
-              <AvatarFallback>{userInfo.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+              <AvatarFallback className="bg-muted-foreground font-semibold text-background text-xs">
+                {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
+              </AvatarFallback>
             </Avatar>
           </button>
         ) : (

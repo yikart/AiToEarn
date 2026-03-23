@@ -3,8 +3,9 @@
  * 包含导航项的图标、路径、翻译键等信息
  */
 import {
-  FileText,
-  FolderOpen,
+  Bot,
+  History,
+  Home,
   Sparkles,
   Upload,
 } from 'lucide-react'
@@ -26,14 +27,20 @@ export const routerData: IRouterDataItem[] = [
   {
     name: 'Content Management',
     translationKey: 'header.draftBox',
-    path: '/draft-box',
-    icon: <FileText size={20} />,
+    path: '/',
+    icon: <Home size={20} />,
   },
   {
-    name: 'AI social media',
+    name: 'AI Publish',
     translationKey: 'aiSocial',
     path: '/ai-social',
     icon: <Sparkles size={20} />,
+  },
+  {
+    name: 'Task History',
+    translationKey: 'tasksHistory',
+    path: '/tasks-history',
+    icon: <History size={20} />,
   },
   {
     name: 'Publish',
@@ -41,10 +48,11 @@ export const routerData: IRouterDataItem[] = [
     path: '/accounts',
     icon: <Upload size={20} />,
   },
+  // Tasks moved to notification panel
   {
-    name: 'Material Library',
-    translationKey: 'header.materialLibrary',
-    path: '/material',
-    icon: <FolderOpen size={20} />,
+    name: 'Agent Assets',
+    translationKey: 'header.agentAssets',
+    path: '/agent-assets',
+    icon: <Bot size={20} />,
   },
 ]

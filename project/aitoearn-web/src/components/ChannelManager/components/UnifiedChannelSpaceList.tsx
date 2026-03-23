@@ -112,8 +112,9 @@ export function UnifiedChannelSpaceList() {
       setDeleteDialog({ open: false, type: 'space', id: '', name: '' })
     }
     catch (error) {
-      const errorType = deleteDialog.type === 'space' ? '空间' : '频道'
-      toast.error(`删除${errorType}失败`)
+      toast.error(deleteDialog.type === 'space'
+        ? t('channelManager.deleteSpaceFailed')
+        : t('channelManager.deleteChannelFailed'))
       // 删除失败不关闭对话框，让用户可以重试
     }
     finally {

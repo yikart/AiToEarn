@@ -1,5 +1,5 @@
 /**
- * IconBar - 底部图标栏（邮箱、下载APP、通知）
+ * IconBar - 底部图标栏（邮箱、通知）
  */
 
 'use client'
@@ -17,7 +17,6 @@ export function IconBar({
   isLoggedIn,
   unreadCount,
   onOpenNotification,
-  onOpenSettings,
 }: IconBarProps) {
   const { t } = useTransClient('common')
 
@@ -85,7 +84,6 @@ export function IconBar({
           </Tooltip>
         </TooltipProvider>
       )}
-
     </div>
   )
 }

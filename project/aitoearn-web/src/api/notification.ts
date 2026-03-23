@@ -14,13 +14,14 @@ export enum NotificationType {
   TaskReviewApproved = 'task_review_approved',
   AiReviewSkipped = 'ai_review_skipped',
   TaskSubmitted = 'task_submitted',
+  InteractionAiReviewFailed = 'interaction_ai_review_failed',
 }
 
 export interface NotificationItem {
   id: string
   title: string
   content: string
-  type: 'system' | 'user' | 'material' | 'other' | 'task_reminder' | 'app_release' | 'user_withdraw' | 'task_punish' | 'agent_result' | 'task_settled' | 'task_review_rejected' | 'task_review_approved' | 'ai_review_skipped' | 'task_submitted'
+  type: 'system' | 'user' | 'material' | 'other' | 'task_reminder' | 'app_release' | 'user_withdraw' | 'task_punish' | 'agent_result' | 'task_settled' | 'task_review_rejected' | 'task_review_approved' | 'ai_review_skipped' | 'task_submitted' | 'interaction_ai_review_failed'
   status: 'read' | 'unread'
   readAt?: string
   createdAt: string

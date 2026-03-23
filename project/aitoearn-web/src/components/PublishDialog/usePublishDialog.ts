@@ -4,7 +4,7 @@ import type { IPubParams, PubItem } from '@/components/PublishDialog/publishDial
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { AccountPlatInfoMap, isPlatformAvailable } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 
@@ -140,10 +140,10 @@ export const usePublishDialog = create(
           })
 
           if (defaultAccountIds && defaultAccountIds.length > 0) {
-            // 过滤掉离线账号（status === 0）
+            // 过滤掉离线账号（status === 0）和区域不可用的平台
             const validIds = defaultAccountIds.filter((id) => {
               const acc = account.find(a => a.id === id)
-              return acc && acc.status !== 0
+              return acc && acc.status !== 0 && isPlatformAvailable(acc.type)
             })
 
             const chosen = pubList.filter(p => validIds.includes(p.account.id))

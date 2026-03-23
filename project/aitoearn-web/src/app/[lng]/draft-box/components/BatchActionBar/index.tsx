@@ -8,7 +8,7 @@
 import { Loader2, Trash2 } from 'lucide-react'
 import { memo, useCallback } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useDraftBoxStore } from '@/app/[lng]/draft-box/draftBoxStore'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { confirm } from '@/lib/confirm'
@@ -17,15 +17,15 @@ import { toast } from '@/lib/toast'
 const BatchActionBar = memo(() => {
   const { t } = useTransClient('brandPromotion')
 
-  const { selectedMaterialIds, batchDeleting } = useDraftBoxStore(
+  const { selectedMaterialIds, batchDeleting } = usePlanDetailStore(
     useShallow(state => ({
       selectedMaterialIds: state.selectedMaterialIds,
       batchDeleting: state.batchDeleting,
     })),
   )
 
-  const exitBatchMode = useDraftBoxStore(state => state.exitBatchMode)
-  const batchDeleteMaterials = useDraftBoxStore(state => state.batchDeleteMaterials)
+  const exitBatchMode = usePlanDetailStore(state => state.exitBatchMode)
+  const batchDeleteMaterials = usePlanDetailStore(state => state.batchDeleteMaterials)
 
   const handleDelete = useCallback(() => {
     const count = selectedMaterialIds.length

@@ -141,9 +141,11 @@ function LoggedInMenuContent({
       <div className="flex flex-col gap-1 p-2">
         {/* 用户信息区域 */}
         <div className="flex items-center gap-3 px-3 py-2">
-          <Avatar className="h-10 w-10">
+          <Avatar className="h-10 w-10 shrink-0 border border-border">
             <AvatarImage src={getOssUrl(userInfo?.avatar) || ''} alt={userInfo?.name || t('common:unknownUser')} />
-            <AvatarFallback>{userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+            <AvatarFallback className="bg-muted-foreground font-semibold text-background">
+              {userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}
+            </AvatarFallback>
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col">
             <span className="truncate text-sm font-medium text-foreground" data-testid="sidebar-user-name">
@@ -319,13 +321,13 @@ export function UserDropdownMenu({
                     collapsed ? 'justify-center' : 'gap-2',
                   )}
                 >
-                  {/* 用户头像 */}
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 shrink-0 border border-border">
                     <AvatarImage src={getOssUrl(userInfo?.avatar) || ''} alt={userInfo?.name || t('unknownUser')} />
-                    <AvatarFallback>{userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+                    <AvatarFallback className="bg-muted-foreground font-semibold text-background">
+                      {userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}
+                    </AvatarFallback>
                   </Avatar>
 
-                  {/* 用户名 */}
                   {!collapsed && (
                     <div className="flex min-w-0 flex-1 flex-col items-start">
                       <span className="w-full truncate text-left text-sm font-medium text-foreground">

@@ -5,7 +5,7 @@
 
 'use client'
 
-import type { MediaItem } from '@/app/[lng]/material/materialStore/materialStore.types'
+import type { MediaItem } from '@/api/types/media'
 import { Image as ImageIcon, Play, Video } from 'lucide-react'
 import Image from 'next/image'
 import { useVideoThumbnail } from '@/hooks/useVideoThumbnail'

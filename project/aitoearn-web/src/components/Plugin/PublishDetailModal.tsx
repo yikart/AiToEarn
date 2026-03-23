@@ -38,6 +38,8 @@ export interface PublishDetailModalProps {
   taskId?: string
   /** 任务对象（二选一） */
   task?: PublishTask
+  /** 发布完成后是否自动关闭弹框（默认 false） */
+  autoCloseOnComplete?: boolean
 }
 
 /**
@@ -227,7 +229,7 @@ function PlatformTaskCard({ platformTask }: { platformTask: PlatformPublishTask 
 /**
  * 发布详情弹框组件
  */
-export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDetailModalProps) {
+export function PublishDetailModal({ visible, onClose, taskId, task, autoCloseOnComplete = false }: PublishDetailModalProps) {
   const { t } = useTranslation('plugin')
   const isCreatingRecord = usePluginStore(state => state.isCreatingRecord)
 
@@ -239,12 +241,12 @@ export function PublishDetailModal({ visible, onClose, taskId, task }: PublishDe
     return task
   })
 
-  // 自动关闭：发布完成且发布记录创建完毕
+  // 自动关闭：仅当 autoCloseOnComplete 为 true 时，发布完成且发布记录创建完毕后自动关闭
   useEffect(() => {
-    if (currentTask?.overallStatus === PlatformTaskStatus.COMPLETED && !isCreatingRecord) {
+    if (autoCloseOnComplete && currentTask?.overallStatus === PlatformTaskStatus.COMPLETED && !isCreatingRecord) {
       onClose()
     }
-  }, [currentTask?.overallStatus, isCreatingRecord, onClose])
+  }, [autoCloseOnComplete, currentTask?.overallStatus, isCreatingRecord, onClose])
 
   if (!currentTask) {
     return null

@@ -20,11 +20,11 @@
 | `storageIndexedDb.ts`   | IndexedDB 封装（SSR 安全，自动降级）             |
 | `createPersistStore.ts` | Zustand 持久化 Store 工厂函数                    |
 | `appLaunch.ts`          | App 唤起工具（多策略：iframe + href + 超时降级） |
-| `regionRedirect.ts`     | 平台区域限制跳转确认工具                         |
-| `ipLocation.ts`         | IP 地理位置获取（JSONP + ping0.cc）              |
 | `geoData.ts`            | 地理数据工具（国家/省/市三级联动数据源）         |
 | `download.ts`           | 带进度回调的文件下载工具（fetchWithProgress）    |
 | `FetchService/`         | 底层 Fetch 请求封装类                            |
+| `detectPlatform.ts`     | URL 自动识别社交平台（`detectPlatformFromUrl`）  |
+| `settlement.ts`         | CPM/CPE 预估计算（互动分、预估金额）             |
 
 ---
 
@@ -194,32 +194,21 @@ export async function generateMetadata({
 ### 导入方式
 
 ```typescript
-import { getOssUrl, getOssProxyPath } from '@/utils/oss'
+import { getOssUrl } from '@/utils/oss'
 ```
 
 ### API
 
-| 函数                       | 说明                                                 | 参数              | 返回值   |
-| -------------------------- | ---------------------------------------------------- | ----------------- | -------- |
-| `getOssUrl(path?)`         | 将 OSS 路径拼接为完整 URL（已为完整 URL 则直接返回） | `path?: string`   | `string` |
-| `getOssProxyPath(ossUrl?)` | 将 OSS URL 转为同域代理 URL（解决 Canvas 跨域问题）  | `ossUrl?: string` | `string` |
+| 函数               | 说明                                                 | 参数            | 返回值   |
+| ------------------ | ---------------------------------------------------- | --------------- | -------- |
+| `getOssUrl(path?)` | 将 OSS 路径拼接为完整 URL（已为完整 URL 则直接返回） | `path?: string` | `string` |
 
 ### 使用示例
 
 ```typescript
-// 拼接完整 URL
-getOssUrl('images/avatar.png')
-// => 'https://proxy.example.com/images/avatar.png'
-
-// 转为代理路径（解决跨域）
-getOssProxyPath('https://oss.example.com/image.png')
-// => 'https://proxy.example.com/image.png'
+getOssUrl('https://example.com/images/avatar.png')
+// => 'https://example.com/images/avatar.png'
 ```
-
-### 注意事项
-
-- ⚠️ 所有 OSS 资源引用必须使用 `getOssUrl`，不要硬编码 OSS 域名
-- Canvas 操作中使用 `getOssProxyPath` 避免跨域污染
 
 ---
 
@@ -652,66 +641,6 @@ getCountryDisplayName('US', 'en') // => 'United States'
 
 ---
 
-## ipLocation.ts - IP 地理位置获取
-
-### 导入方式
-
-```typescript
-import {
-  getIpLocation,
-  extractCountry,
-  formatLocationInfo,
-  getCountryCode,
-  getCountryCodeFromChineseName,
-} from '@/utils/ipLocation'
-import type { IpLocationInfo } from '@/utils/ipLocation'
-```
-
-### API
-
-| 函数                                  | 说明                                                                                           | 参数                              | 返回值                         |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------ |
-| `getIpLocation()`                     | JSONP 方式获取 IP 地理位置（10 秒超时）                                                        | -                                 | `Promise<IpLocationInfo>`      |
-| `extractCountry(location)`            | 从位置字符串提取国家                                                                           | `location: string`                | `string`                       |
-| `formatLocationInfo(info)`            | 格式化位置信息为 `国家 \| IP`                                                                  | `info: IpLocationInfo`            | `string`                       |
-| `getCountryCode(ipLocationInfo?)`     | 从免费 IP API 获取 ISO 国家代码（顺序尝试多个 API，每个 5 秒超时），全部失败时用中文名映射兜底 | `ipLocationInfo?: IpLocationInfo` | `Promise<string \| undefined>` |
-| `getCountryCodeFromChineseName(name)` | 通过中文国家名反查 ISO alpha-2 国家代码                                                        | `name: string`                    | `string \| undefined`          |
-
-### IpLocationInfo 接口
-
-| 字段       | 类型     | 说明                               |
-| ---------- | -------- | ---------------------------------- |
-| `ip`       | `string` | IP 地址                            |
-| `location` | `string` | 位置信息（格式："国家 省份 城市"） |
-| `asn`      | `string` | ASN 编号                           |
-| `org`      | `string` | 运营商/组织                        |
-
-### 使用示例
-
-```typescript
-const info = await getIpLocation()
-// => { ip: '1.2.3.4', location: '中国 广东 深圳', asn: 'AS12345', org: 'China Telecom' }
-
-extractCountry('中国 广东 深圳') // => '中国'
-formatLocationInfo(info) // => '中国 | 1.2.3.4'
-
-// 获取国家代码（顺序尝试: country.is → ipwho.is → freeipapi.com → 中文名映射）
-const code = await getCountryCode() // => 'SG' | 'US' | undefined
-
-// 从中文名反查国家代码
-getCountryCodeFromChineseName('新加坡') // => 'SG'
-getCountryCodeFromChineseName('美国') // => 'US'
-```
-
-### 注意事项
-
-- 仅在浏览器端可用（依赖 `document` 和 `window`）
-- 通常由 `useUserStore.fetchIpLocation()` 调用，自带 24 小时缓存，无需手动管理
-- 调用 `https://ping0.cc/geo/jsonp/` 第三方服务
-- 国家代码获取优先级：`country.is` → `ipwho.is` → `freeipapi.com` → `countries_alpha2.json` 中文名映射兜底
-
----
-
 ## appLaunch.ts - App 唤起工具
 
 ### 导入方式
@@ -739,37 +668,6 @@ openApp('https://api.example.com/redirect', () => {
   console.log('唤起失败')
 })
 ```
-
----
-
-## regionRedirect.ts - 平台区域限制跳转
-
-### 导入方式
-
-```typescript
-import { confirmPlatformRegionRedirect } from '@/utils/regionRedirect'
-```
-
-### API
-
-| 函数                                          | 说明                                   | 参数                   | 返回值          |
-| --------------------------------------------- | -------------------------------------- | ---------------------- | --------------- |
-| `confirmPlatformRegionRedirect(platformName)` | 弹出区域限制提示，确认后跳转到对应域名 | `platformName: string` | `Promise<void>` |
-
-### 使用示例
-
-```typescript
-// 用户点击了当前区域不支持的平台
-if (!isPlatformAvailable(platform)) {
-  confirmPlatformRegionRedirect(platInfo.name)
-  return
-}
-```
-
-### 注意事项
-
-- 国内站点击后跳转到 `NEXT_PUBLIC_ABROAD_DOMAIN`，国外站跳转到 `NEXT_PUBLIC_CHINA_DOMAIN`
-- 使用 `confirm()` 弹窗，用户确认后才跳转
 
 ---
 
@@ -803,6 +701,41 @@ const blob = await fetchWithProgress('https://example.com/file.zip')
 
 - 无 `Content-Length` 响应头时降级为无进度下载（直接返回 blob，回调 100%）
 - 进度值为 0-100 的整数
+
+---
+
+## settlement.ts - CPM/CPE 预估计算
+
+### 导入方式
+
+```typescript
+import {
+  ENGAGEMENT_WEIGHTS,
+  calculateEngagementScore,
+  calculateEstimatedAmount,
+} from '@/utils/settlement'
+```
+
+### API
+
+| 函数/常量                                              | 说明                                           | 参数                                                                         | 返回值   |
+| ------------------------------------------------------ | ---------------------------------------------- | ---------------------------------------------------------------------------- | -------- |
+| `ENGAGEMENT_WEIGHTS`                                   | CPE 互动分权重（LIKE=1, COLLECT=3, COMMENT=5） | -                                                                            | `object` |
+| `calculateEngagementScore(likes, favorites, comments)` | 计算互动分                                     | `likes, favorites, comments: number`                                         | `number` |
+| `calculateEstimatedAmount(count, pricePerThousand)`    | 计算预估金额（分）                             | `count: number` (播放量/互动分), `pricePerThousand: number` (每千次单价，分) | `number` |
+
+### 使用示例
+
+```typescript
+// 互动分 = 234×1 + 89×3 + 56×5 = 781
+const score = calculateEngagementScore(234, 89, 56)
+
+// CPM 预估 = (12345 / 1000) × 100 = 1235 分
+const cpmAmount = calculateEstimatedAmount(12345, 100)
+
+// CPE 预估 = (781 / 1000) × 500 = 391 分
+const cpeAmount = calculateEstimatedAmount(score, 500)
+```
 
 ---
 

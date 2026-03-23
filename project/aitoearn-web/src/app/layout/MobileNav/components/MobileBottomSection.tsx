@@ -1,7 +1,7 @@
 import type { MobileBottomSectionProps } from '../types'
 /**
  * MobileBottomSection - 移动端底部功能区
- * 包含通知、邮箱联系、外部链接和用户区域
+ * 包含图标栏、外部链接和用户区域
  */
 import {
   Bell,

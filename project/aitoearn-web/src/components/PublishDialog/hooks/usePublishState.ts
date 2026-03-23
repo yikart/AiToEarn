@@ -9,11 +9,6 @@ export interface PublishModalState {
   // 创建发布loading
   createLoading: boolean
   setCreateLoading: (loading: boolean) => void
-  // 下载App弹窗
-  downloadModalVisible: boolean
-  setDownloadModalVisible: (visible: boolean) => void
-  currentPlatform: string
-  setCurrentPlatform: (platform: string) => void
   // 抖音扫码发布弹窗
   douyinQRCodeVisible: boolean
   setDouyinQRCodeVisible: (visible: boolean) => void
@@ -35,9 +30,6 @@ export interface PublishModalState {
 export function usePublishModalState(): PublishModalState {
   // 创建发布loading
   const [createLoading, setCreateLoading] = useState(false)
-  // 下载App弹窗状态
-  const [downloadModalVisible, setDownloadModalVisible] = useState(false)
-  const [currentPlatform, setCurrentPlatform] = useState<string>('')
   // 抖音扫码发布弹窗状态
   const [douyinQRCodeVisible, setDouyinQRCodeVisible] = useState(false)
   const [douyinPermalink, setDouyinPermalink] = useState('')
@@ -50,10 +42,6 @@ export function usePublishModalState(): PublishModalState {
   return {
     createLoading,
     setCreateLoading,
-    downloadModalVisible,
-    setDownloadModalVisible,
-    currentPlatform,
-    setCurrentPlatform,
     douyinQRCodeVisible,
     setDouyinQRCodeVisible,
     douyinPermalink,

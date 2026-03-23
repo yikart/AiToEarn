@@ -1,6 +1,7 @@
 /**
  * DraftContentModule - 内容管理核心模块
  * 可复用的草稿管理区域，包含 AI生成栏、草稿列表、相关弹框
+ * 在 brand-promotion 页面和独立 draft-box 页面中复用
  */
 
 'use client'
@@ -8,17 +9,18 @@
 import type { IPubParams } from '@/components/PublishDialog/publishDialog.type'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
+import { AccountPlatInfoMap, isPlatformAvailable } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import PublishDialog from '@/components/PublishDialog'
 import { VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { useAccountStore } from '@/store/account'
-
+import { useUserStore } from '@/store/user'
 import { generateUUID } from '@/utils'
-import { useDraftBoxStore } from '../../draftBoxStore'
 import { useGenerationPolling } from '../../hooks/useGenerationPolling'
 import AiBatchGenerateBar from '../AiBatchGenerateBar'
+import { useMediaTabStore } from '../ContentTabs/mediaTabStore'
 import { CreateMaterialModal } from '../CreateMaterialModal'
 import { DraftDetailDialog } from '../DraftDetailDialog'
 import { DraftListSection } from '../DraftListSection'
@@ -32,7 +34,7 @@ function DraftContentModule() {
     generatingCount,
     publishDialogOpen,
     publishingDraft,
-  } = useDraftBoxStore(
+  } = usePlanDetailStore(
     useShallow(state => ({
       currentPlan: state.currentPlan,
       createMaterialModalOpen: state.createMaterialModalOpen,
@@ -43,14 +45,19 @@ function DraftContentModule() {
     })),
   )
 
-  const selectedPlanId = currentPlan?._id || null
-  const closeMaterialModal = useDraftBoxStore(state => state.closeMaterialModal)
-  const fetchMaterials = useDraftBoxStore(state => state.fetchMaterials)
-  const closePublishDialog = useDraftBoxStore(state => state.closePublishDialog)
-  const silentRefreshMaterials = useDraftBoxStore(state => state.silentRefreshMaterials)
-  const updateGeneratingCount = useDraftBoxStore(state => state.updateGeneratingCount)
+  const selectedPlanId = currentPlan?.id || null
+  const closeMaterialModal = usePlanDetailStore(state => state.closeMaterialModal)
+  const fetchMaterials = usePlanDetailStore(state => state.fetchMaterials)
+  const closePublishDialog = usePlanDetailStore(state => state.closePublishDialog)
+  const silentRefreshMaterials = usePlanDetailStore(state => state.silentRefreshMaterials)
+  const updateGeneratingCount = usePlanDetailStore(state => state.updateGeneratingCount)
 
   const accountList = useAccountStore(state => state.accountList)
+
+  // Plan 切换时重置媒体 Tab 数据
+  useEffect(() => {
+    useMediaTabStore.getState().reset()
+  }, [selectedPlanId])
 
   // AI 批量生成轮询
   useGenerationPolling({
@@ -59,7 +66,9 @@ function DraftContentModule() {
     onTaskCompleted: () => {
       if (selectedPlanId) {
         silentRefreshMaterials(selectedPlanId)
+        useMediaTabStore.getState().silentRefresh(selectedPlanId)
       }
+      useUserStore.getState().fetchCreditsBalance()
     },
     onCountUpdate: updateGeneratingCount,
   })
@@ -74,7 +83,7 @@ function DraftContentModule() {
     return accountList
       .filter((acc) => {
         const platConfig = AccountPlatInfoMap.get(acc.type)
-        return platConfig?.pubTypes.has(targetPubType) && acc.status !== 0
+        return platConfig?.pubTypes.has(targetPubType) && acc.status !== 0 && isPlatformAvailable(acc.type)
       })
       .map(acc => acc.id)
   }, [publishingDraft, accountList])
@@ -186,8 +195,9 @@ function DraftContentModule() {
   // 创建草稿成功回调
   const handleMaterialSuccess = useCallback(() => {
     if (currentPlan) {
-      fetchMaterials(currentPlan._id, 1)
+      fetchMaterials(currentPlan.id, 1)
     }
+    useUserStore.getState().fetchCreditsBalance()
   }, [currentPlan, fetchMaterials])
 
   return (
@@ -195,14 +205,14 @@ function DraftContentModule() {
       <div className="space-y-6 p-4 md:p-6">
         {/* AI 批量生成输入栏 */}
         <AiBatchGenerateBar groupId={selectedPlanId || undefined} />
-        {/* 草稿列表 */}
-        <DraftListSection />
+        {/* 内容 Tabs：草稿箱 / 视频 / 图片 */}
+        <DraftListSection materialGroupId={selectedPlanId || undefined} />
       </div>
 
       {/* 创建草稿弹窗 */}
       <CreateMaterialModal
         open={createMaterialModalOpen}
-        groupId={currentPlan?._id || null}
+        groupId={currentPlan?.id || null}
         editingMaterial={editingMaterial}
         onClose={closeMaterialModal}
         onSuccess={handleMaterialSuccess}
@@ -222,6 +232,7 @@ function DraftContentModule() {
         defaultAccountIds={defaultAccountIds}
         onPubSuccess={closePublishDialog}
       />
+
     </>
   )
 }

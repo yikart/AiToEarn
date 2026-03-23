@@ -1,6 +1,6 @@
 /**
  * SettingsModal - 设置弹框组件
- * 包含个人资料、通用设置等功能
+ * 包含个人资料、Agent、通用设置等功能
  * 采用可扩展的 Tab 配置结构
  * 支持移动端响应式布局
  */
@@ -16,6 +16,7 @@ import logo from '@/assets/images/logo.png'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
+import { useSettingsModalStore } from './store'
 import {
   GeneralTab,
   ProfileTab,
@@ -50,7 +51,8 @@ export interface SettingsModalProps {
  */
 export function SettingsModal({ open, onClose, defaultTab }: SettingsModalProps) {
   // 预加载所有子组件需要的 namespace，避免切换 tab 时闪烁
-  const { t } = useTransClient(['settings', 'profile'])
+  const { t } = useTransClient(['settings', 'profile', 'wallet'])
+  const settingsSubTab = useSettingsModalStore(state => state.settingsSubTab)
   const token = useUserStore(state => state.token)
   const isLoggedIn = !!token
   const [activeTab, setActiveTab] = useState<SettingsTab>(isLoggedIn ? 'profile' : 'general')
@@ -119,7 +121,7 @@ export function SettingsModal({ open, onClose, defaultTab }: SettingsModalProps)
     { key: 'general', icon: <Globe className="h-4 w-4" />, label: t('tabs.general') },
   ]
 
-  // 根据登录状态过滤 Tab
+  // 根据登录状态和 placeId 过滤 Tab
   const visibleTabs = tabConfigs.filter((tab) => {
     if (tab.requireAuth && !isLoggedIn)
       return false

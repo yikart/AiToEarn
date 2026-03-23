@@ -7,6 +7,7 @@
 
 'use client'
 
+import type { BrandImage } from '../index'
 import type { VideoModelType } from '@/api/draftGeneration'
 import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
 import type { MediaPreviewItem } from '@/components/common/MediaPreview'
@@ -21,8 +22,8 @@ import AddMediaButton from '../AddMediaButton'
 import styles from './ImageStack.module.scss'
 
 interface ImageStackProps {
-  images: any[]
-  allImages: any[]
+  images: BrandImage[]
+  allImages: BrandImage[]
   selectedIds: string[]
   maxImages: number
   onImagesChange: (ids: string[]) => void

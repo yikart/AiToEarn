@@ -30,6 +30,7 @@
 | `form.tsx`              | 表单组件（基于 react-hook-form，提供 FormField/FormItem/FormLabel/FormControl/FormMessage） |
 | `star-rating.tsx`       | 星星评分组件（悬停预览、点击选择）                                                          |
 | `sonner.tsx`            | Toast 通知（配合 `@/lib/toast` 使用）                                                       |
+| `number-input.tsx`      | 数字输入框（基于 react-number-format，替代 type="number"）                                  |
 
 > **Modal** 使用：`<Modal open onClose title="标题" footer={...}>`，命令式确认用 `@/lib/confirm`。新代码禁止使用 antd Modal。
 
@@ -97,18 +98,19 @@
 
 ## 独立组件
 
-| 组件                    | 说明                                                               |
-| ----------------------- | ------------------------------------------------------------------ |
-| `AvatarPlat`            | 带平台标识的头像                                                   |
-| `AvatarCropModal`       | 头像裁剪弹窗（基于 cropperjs，输出 400x400 PNG）                   |
-| `WalletAccountSelect`   | 钱包账户选择器（分页加载）                                         |
-| `SignInCalendar`        | 签到日历                                                           |
-| `ScrollButtonContainer` | 左右滚动按钮容器                                                   |
-| `ChooseAccountModule`   | 社交账号选择模块                                                   |
-| `GetCode`               | 获取验证码组件                                                     |
-| `UserLogsModal`         | 用户 AI 使用日志弹窗（分页）                                       |
-| `VideoHistoryModal`     | 视频生成历史弹窗（分页、播放、下载）                               |
-| `InviteCodeHandler`     | 邀请码处理（纯逻辑组件，已集成到 Providers，自动处理推广链接绑定） |
+| 组件                    | 说明                                                                                               |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `AvatarPlat`            | 带平台标识的头像                                                                                   |
+| `AvatarCropModal`       | 头像裁剪弹窗（基于 cropperjs，输出 400x400 PNG）                                                   |
+| `WalletAccountSelect`   | 钱包账户选择器（分页加载）                                                                         |
+| `SignInCalendar`        | 签到日历                                                                                           |
+| `ScrollButtonContainer` | 左右滚动按钮容器                                                                                   |
+| `ChooseAccountModule`   | 社交账号选择模块                                                                                   |
+| `GetCode`               | 获取验证码组件                                                                                     |
+| `UserLogsModal`         | 用户 AI 使用日志弹窗（分页）                                                                       |
+| `VideoHistoryModal`     | 视频生成历史弹窗（分页、播放、下载）                                                               |
+| `InviteCodeHandler`     | 邀请码处理（纯逻辑组件，已集成到 Providers，自动处理推广链接绑定）                                 |
+| `RewardDisplay`         | 任务奖励金额展示，根据定价类型（基础/CPM/CPE）智能切换主显金额，支持 sidebar/card/compact 三种尺寸 |
 
 ### 关键组件说明
 

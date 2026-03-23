@@ -28,8 +28,10 @@ export function VideoGrabFrame(
 }> {
   return new Promise((resolve, reject) => {
     const video = document.createElement('video')
-    video.src = getOssUrl(videoUrl)
-    video.crossOrigin = 'anonymous' // 尝试跨域访问
+    video.crossOrigin = 'anonymous'
+    // 添加查询参数避免浏览器复用非 CORS 缓存（同一 URL 无 crossOrigin 的请求会污染缓存）
+    const url = getOssUrl(videoUrl)
+    video.src = url.startsWith('blob:') ? url : `${url}${url.includes('?') ? '&' : '?'}x-cors=1`
 
     // 设置超时
     const timeout = setTimeout(() => {

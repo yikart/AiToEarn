@@ -17,6 +17,7 @@ import { ChatInput } from '@/components/Chat/ChatInput'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
+import { useAccountStore } from '@/store/account'
 
 import { useAgentStore } from '@/store/agent'
 import { useUserStore } from '@/store/user'
@@ -252,6 +253,13 @@ export const HomeChat = forwardRef<IHomeChatRef, IHomeChatProps>(
         const actualPrompt = inputValue.trim() || defaultPrompt
         sessionStorage.setItem('pendingTask', JSON.stringify({ prompt: actualPrompt, medias }))
         navigateToLogin(`/chat/new`)
+        return
+      }
+
+      // 余额不足检查 - 阈值 50（美分）与 LowBalanceAlertProvider 中的 BALANCE_THRESHOLD 一致
+      const creditsBalance = useUserStore.getState().creditsBalance
+      if (creditsBalance < 50) {
+        useAccountStore.getState().setLowBalanceAlertOpen(true)
         return
       }
 

@@ -24,7 +24,10 @@
   animation: slideIn 0.15s ease-out;
 
   button {
-    transition: all 0.15s ease;
+    transition:
+      transform 0.15s ease,
+      background-color 0.15s ease,
+      box-shadow 0.15s ease;
 
     &:active {
       transform: scale(0.98);

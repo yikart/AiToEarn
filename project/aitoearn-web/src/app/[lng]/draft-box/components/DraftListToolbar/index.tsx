@@ -10,7 +10,7 @@ import lodash from 'lodash'
 import { Search, Trash2 } from 'lucide-react'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useDraftBoxStore } from '@/app/[lng]/draft-box/draftBoxStore'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -24,7 +24,7 @@ const DraftListToolbar = memo(() => {
     selectedMaterialIds,
     materials,
     materialsFilter,
-  } = useDraftBoxStore(
+  } = usePlanDetailStore(
     useShallow(state => ({
       batchMode: state.batchMode,
       selectedMaterialIds: state.selectedMaterialIds,
@@ -33,12 +33,12 @@ const DraftListToolbar = memo(() => {
     })),
   )
 
-  const setMaterialsFilter = useDraftBoxStore(state => state.setMaterialsFilter)
-  const enterBatchMode = useDraftBoxStore(state => state.enterBatchMode)
-  const exitBatchMode = useDraftBoxStore(state => state.exitBatchMode)
-  const selectAllLoadedMaterials = useDraftBoxStore(state => state.selectAllLoadedMaterials)
-  const deselectAllMaterials = useDraftBoxStore(state => state.deselectAllMaterials)
-  const openConditionalDeleteDialog = useDraftBoxStore(state => state.openConditionalDeleteDialog)
+  const setMaterialsFilter = usePlanDetailStore(state => state.setMaterialsFilter)
+  const enterBatchMode = usePlanDetailStore(state => state.enterBatchMode)
+  const exitBatchMode = usePlanDetailStore(state => state.exitBatchMode)
+  const selectAllLoadedMaterials = usePlanDetailStore(state => state.selectAllLoadedMaterials)
+  const deselectAllMaterials = usePlanDetailStore(state => state.deselectAllMaterials)
+  const openConditionalDeleteDialog = usePlanDetailStore(state => state.openConditionalDeleteDialog)
 
   const [searchValue, setSearchValue] = useState(materialsFilter.title || '')
 
@@ -56,7 +56,7 @@ const DraftListToolbar = memo(() => {
   const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setSearchValue(value)
-    const { materialsFilter } = useDraftBoxStore.getState()
+    const { materialsFilter } = usePlanDetailStore.getState()
     debouncedRef.current({
       ...materialsFilter,
       title: value || undefined,
@@ -78,7 +78,7 @@ const DraftListToolbar = memo(() => {
     return (
       <div className="flex items-center gap-3 mb-4">
         <div data-testid="draftbox-select-all-checkbox" className="flex items-center gap-2 cursor-pointer" onClick={handleToggleSelectAll}>
-          <Checkbox checked={allSelected} />
+          <Checkbox checked={allSelected} onCheckedChange={handleToggleSelectAll} />
           <span className="text-sm">{t('draftManage.selectAll')}</span>
         </div>
         <span className="text-sm text-muted-foreground">

@@ -11,8 +11,6 @@
 | `utils.ts`               | 通用工具函数                                |
 | `vip.ts`                 | VIP 状态判断工具函数                        |
 | `i18n/languageConfig.ts` | 语言配置中心，统一管理语言相关配置          |
-| `server-fetch.ts`        | 服务端 fetch 封装（SSR/Metadata/Sitemap 用）|
-| `server-api.ts`          | 服务端 API 方法（任务列表/详情/Sitemap）    |
 
 ---
 
@@ -432,53 +430,3 @@ export const LANGUAGE_METADATA: Record<string, LanguageMetadata> = {
 
 - ⚠️ **禁止硬编码语言判断**，统一使用此工具的函数
 - 添加新语言时，还需在 `src/app/i18n/settings.ts` 的 `languages` 数组中添加语言代码
-
----
-
-## server-fetch.ts - 服务端 fetch 封装
-
-用于 Server Component / generateMetadata / sitemap 等 SSR 场景的轻量 fetch 封装。无客户端依赖（不使用 useUserStore、directTrans）。
-
-### 导入方式
-
-```typescript
-import { serverFetch } from '@/lib/server-fetch'
-```
-
-### 特点
-
-- 自动拼接完整 API URL（生产环境 `NEXT_PUBLIC_API_URL=/api` 是相对路径，SSR 中需要绝对路径）
-- 支持 Next.js `fetch` + `next.revalidate` 实现 ISR 缓存
-- 支持 `tags` 用于按需 revalidation
-- 无 token、无客户端依赖
-
-### 注意事项
-
-- ⚠️ **仅用于无需鉴权的公开 API**
-- 如需鉴权请求，请使用客户端 `src/utils/request.ts`
-
----
-
-## server-api.ts - 服务端 API 方法
-
-基于 `server-fetch.ts` 封装的业务 API，对应客户端 `src/api/advertiser/task.ts`。
-
-### 导入方式
-
-```typescript
-import { getTaskListSSR, getTaskInfoSSR, getAllTaskIdsForSitemap } from '@/lib/server-api'
-```
-
-### API
-
-| 函数 | 说明 | 缓存时间 |
-| --- | --- | --- |
-| `getTaskListSSR(pageNo, pageSize, revalidate?)` | 获取任务列表 | 5 分钟 |
-| `getTaskInfoSSR(id, revalidate?)` | 获取任务详情 | 10 分钟 |
-| `getAllTaskIdsForSitemap()` | 获取所有任务 ID（用于 Sitemap） | 1 小时 |
-
-### 使用场景
-
-- `generateMetadata` 中获取任务数据生成动态 SEO 标签
-- Server Component 中预取数据传给客户端组件
-- Sitemap 路由中获取所有任务 ID

@@ -59,6 +59,7 @@ const NOTIFICATION_TYPE_CONFIG: Record<string, {
   task_review_approved: { icon: CheckCircle, iconClass: 'text-success' },
   ai_review_skipped: { icon: AlertTriangle, iconClass: 'text-warning' },
   task_submitted: { icon: CheckCircle, iconClass: 'text-info' },
+  interaction_ai_review_failed: { icon: XCircle, iconClass: 'text-destructive' },
   other: { icon: Info, iconClass: 'text-muted-foreground' },
 }
 

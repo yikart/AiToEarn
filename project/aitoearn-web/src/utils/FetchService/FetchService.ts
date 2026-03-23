@@ -33,10 +33,15 @@ class FetchService<T = Response> {
         requestParams = newRequestParams
       }
 
+      let baseURL = this.baseURL
+      if (requestParams.url === 'assets/uploadSign' && process.env.NEXT_PUBLIC_OSS_TEMP_URL) {
+        baseURL = process.env.NEXT_PUBLIC_OSS_TEMP_URL
+      }
+
       // body 参数处理
       const fetchURL = requestParams.url.startsWith('http')
         ? requestParams.url
-        : this.baseURL + requestParams.url
+        : baseURL + requestParams.url
       if (!requestParams.body && requestParams.data) {
         // 检查是否为FormData
         if (requestParams.data instanceof FormData) {

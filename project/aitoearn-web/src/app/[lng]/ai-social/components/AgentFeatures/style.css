@@ -19,7 +19,9 @@
   background: oklch(0.6 0 0 / 0.3) !important;
   opacity: 1 !important;
   border-radius: 9999px !important;
-  transition: all 0.3s ease !important;
+  transition:
+    width 0.3s ease,
+    background 0.3s ease !important;
   margin: 0 !important;
 }
 
