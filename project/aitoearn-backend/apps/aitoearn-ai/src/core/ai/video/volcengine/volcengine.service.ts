@@ -95,11 +95,11 @@ export class VolcengineVideoService {
 
     const startedAt = new Date()
     const result = await this.volcengineLibService.createVideoGenerationTask({
-      ...params,
-      model,
-      content,
-      callback_url: config.ai.volcengine.callbackUrl,
-    })
+        ...params,
+        model,
+        content,
+        callback_url: config.ai.volcengine.callbackUrl,
+      })
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({
@@ -130,7 +130,8 @@ export class VolcengineVideoService {
     return {
       ...result,
       id: aiLog.id,
-    } as CreateVideoGenerationTaskResponse
+      points: pricing,
+    } as CreateVideoGenerationTaskResponse & { points: number }
   }
 
   /**
@@ -185,6 +186,12 @@ export class VolcengineVideoService {
       duration,
       errorMessage: status === 'failed' ? callbackData.error?.message : undefined,
     })
+
+    if (aiLogStatus === AiLogStatus.Failed) {
+    }
+
+    if (aiLogStatus === AiLogStatus.Success || aiLogStatus === AiLogStatus.Failed) {
+    }
   }
 
   /**

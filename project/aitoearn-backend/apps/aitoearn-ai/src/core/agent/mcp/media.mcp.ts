@@ -429,7 +429,7 @@ Returns task ID for status tracking.`,
         const result = await this.grokVideoService.getTask(userId, userType, taskId)
 
         if (result.videoUrl) {
-          return successResult(`Video is completed, task id: ${taskId} and video url is ${result.videoUrl}`)
+          return successResult(`Video is completed, task id: ${taskId} and video url is ${FileUtil.buildUrl(result.videoUrl)}`)
         }
         if (result.error) {
           return errorResult(`Video failed, task id: ${taskId} and error message is ${result.error}`)

@@ -74,13 +74,13 @@ export class AicsoVeoVideoService {
     const startedAt = new Date()
 
     const result = await this.aicsoLibService.createVideo({
-      model,
-      prompt,
-      images,
-      enhance_prompt: true,
-      enable_upsample: true,
-      aspect_ratio: aspectRatio || '16:9',
-    })
+        model,
+        prompt,
+        images,
+        enhance_prompt: true,
+        enable_upsample: true,
+        aspect_ratio: aspectRatio || '16:9',
+      })
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({

@@ -4,8 +4,7 @@ import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
-import { AppException, FileUtil, getErrorMessage, poll, ResponseCode, retry, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
+import { AccountType, AppException, FileUtil, getErrorMessage, poll, ResponseCode, retry, UserType } from '@yikart/common'
 import {
   AiLogChannel,
   AiLogRepository,
@@ -17,7 +16,9 @@ import {
   MaterialSource,
   MaterialStatus,
   MaterialType,
+  MediaRepository,
   MediaType,
+  UserRepository,
 } from '@yikart/mongodb'
 import { z } from 'zod'
 import { TaskStatus } from '../../common'
@@ -33,14 +34,14 @@ import { VideoService } from '../ai/video/video.service'
 import { getCompatibleAccountTypes } from '../material-adaptation/material-adaptation.constants'
 import { DRAFT_GENERATION_SYSTEM_PROMPT } from './draft-generation.constants'
 import {
-  CreateDraftGenerationDto,
   CreateDraftGenerationV2Dto,
   CreateImageTextDraftDto,
-
+  DraftType,
+  ImageTextDraftType,
   ListDraftGenerationTasksDto,
   QueryDraftGenerationTasksDto,
 } from './draft-generation.dto'
-import { DraftGenerationPricingVo, DraftGenerationResult, DraftGenerationResultSchema } from './draft-generation.vo'
+import { DraftGenerationPricingVoInput, DraftGenerationResult, DraftGenerationResultSchema } from './draft-generation.vo'
 
 export class DraftGenerationError extends Error {
   constructor(
@@ -96,11 +97,12 @@ export class DraftGenerationService implements OnModuleDestroy {
     private readonly videoUtilsMcp: VideoUtilsMcp,
     private readonly agentService: AgentService,
     private readonly queueService: QueueService,
-    private readonly creditsHelper: CreditsHelperService,
+    private readonly userRepository: UserRepository,
     private readonly videoService: VideoService,
     private readonly assetsService: AssetsService,
     private readonly videoMetadataService: VideoMetadataService,
     private readonly imageService: ImageService,
+    private readonly mediaRepository: MediaRepository,
   ) { }
 
   /** 优雅关机：等待所有正在运行的生成任务完成后再销毁模块 */
@@ -126,66 +128,6 @@ export class DraftGenerationService implements OnModuleDestroy {
     }
 
     this.logger.debug('DraftGenerationService shutdown complete')
-  }
-
-  /**
-   * 创建草稿生成任务（同步阶段）
-   *
-   * 流程：校验 → 创建 AiLog → 投递队列 → 返回任务ID
-   * 实际的 AI 生成由 DraftGenerationConsumer 异步消费完成
-   */
-  async createDrafts(userId: string, userType: UserType, dto: CreateDraftGenerationDto): Promise<string[]> {
-    // 解析目标素材组：优先使用指定的 groupId，否则使用用户默认草稿箱
-    let resolvedGroupId: string
-    if (dto.groupId) {
-      // 指定了素材组，校验存在性和归属权限
-      const group = await this.materialGroupRepository.getInfo(dto.groupId)
-      if (!group || group.userId !== userId) {
-        throw new AppException(ResponseCode.MaterialGroupNotFound)
-      }
-      resolvedGroupId = group.id
-    }
-    else {
-      // 未指定素材组，获取用户默认素材组
-      const defaultGroup = await this.materialGroupRepository.getDefaultGroup(userId)
-      if (!defaultGroup) {
-        throw new AppException(ResponseCode.MaterialGroupNotFound)
-      }
-      resolvedGroupId = defaultGroup.id
-    }
-
-    // 按请求数量（默认1，最多10）逐个创建任务
-    const quantity = dto.quantity ?? 1
-    const aiLogIds: string[] = []
-
-    for (let i = 0; i < quantity; i++) {
-      // 创建 AiLog 记录，初始状态为 Generating，作为任务进度追踪凭证
-      const aiLog = await this.aiLogRepository.create({
-        userId,
-        userType,
-        type: AiLogType.DraftGeneration,
-        model: 'claude-agent',
-        channel: AiLogChannel.ClaudeAgent,
-        status: AiLogStatus.Generating,
-        startedAt: new Date(),
-        points: 0,
-        request: { groupId: resolvedGroupId },
-        response: {},
-      })
-
-      // 投递到 BullMQ 队列，配置：3次重试、指数退避（基准30s）、失败不移除
-      await this.queueService.addDraftGenerationJob({
-        aiLogId: aiLog.id,
-        userId,
-        userType,
-        groupId: resolvedGroupId,
-      })
-
-      aiLogIds.push(aiLog.id)
-    }
-
-    // 返回所有 AiLog ID，前端可通过 GET /ai/draft-generation/:id 或 POST /query 轮询状态
-    return aiLogIds
   }
 
   async getTask(taskId: string, userId: string, userType: UserType) {
@@ -241,9 +183,8 @@ export class DraftGenerationService implements OnModuleDestroy {
     this.runningGenerations.set(aiLogId, taskInfo)
 
     try {
-      // 构建发送给 Agent 的消息内容
       const messageContent: MessageContent[] = [
-        { type: 'text', text: 'Generate an engaging TikTok video showcasing interesting content.' },
+        { type: 'text', text: 'Create an engaging video for this content group.' },
       ]
 
       // 调用 Claude Agent（claude-sonnet-4-5）+ MCP 工具执行视频生成
@@ -399,7 +340,7 @@ export class DraftGenerationService implements OnModuleDestroy {
 
   /**
    * V2: 创建草稿生成任务（与 v1 相同的校验逻辑，投递队列时标记 version=v2）
-   * 支持选择 duration、aspectRatio
+   * 支持选择 modelType（jimeng/grok）、duration、aspectRatio
    */
   async createDraftsV2(userId: string, userType: UserType, dto: CreateDraftGenerationV2Dto): Promise<string[]> {
     const modelConfig = config.ai.models.video.generation.find(m => m.name === dto.model)
@@ -442,6 +383,10 @@ export class DraftGenerationService implements OnModuleDestroy {
           model: dto.model,
           duration: dto.duration,
           aspectRatio: dto.aspectRatio,
+          prompt: dto.prompt,
+          imageUrls: dto.imageUrls,
+          videoUrls: dto.videoUrls,
+          draftType: dto.draftType ?? 'draft',
         },
         response: {},
       })
@@ -458,6 +403,8 @@ export class DraftGenerationService implements OnModuleDestroy {
         duration: dto.duration,
         aspectRatio: dto.aspectRatio,
         videoUrls: dto.videoUrls,
+        draftType: dto.draftType ?? 'draft',
+        platforms: dto.platforms,
       })
 
       aiLogIds.push(aiLog.id)
@@ -471,7 +418,7 @@ export class DraftGenerationService implements OnModuleDestroy {
    *
    * 流程：
    * 1. Gemini Flash 分析品牌 → 选图 + 生成视频 prompt + 元数据（一次 LLM 调用）
-   * 2. 根据 model 选择对应渠道生成视频
+   * 2. 根据 modelType 选择 Jimeng 或 Grok 生成视频，失败时兜底到对方
    * 3. 截帧生成封面
    * 4. 保存素材 + 更新 AiLog
    *
@@ -489,19 +436,27 @@ export class DraftGenerationService implements OnModuleDestroy {
       duration?: number
       aspectRatio?: string
       videoUrls?: string[]
+      draftType?: DraftType
+      platforms?: string[]
     },
   ): Promise<{ consumedPoints: number }> {
     let consumedPoints = 0
     const startTime = Date.now()
+    const draftType = options?.draftType ?? 'draft'
 
     try {
       const candidateImageUrls = options?.imageUrls ?? []
-      const { plan, points: planPoints } = await this.planWithGemini(userId, userType, candidateImageUrls, options?.prompt)
-      consumedPoints += planPoints
-
       const model = options?.model ?? 'grok-imagine-video'
       const duration = options?.duration
       const aspectRatio = options?.aspectRatio ?? '9:16'
+
+      // 仅 draft 类型需要 Gemini 规划（生成标题/描述/话题）
+      let plan: V2PlanResult | undefined
+      if (draftType === 'draft') {
+        const { plan: geminiPlan, points: planPoints } = await this.planWithGemini(userId, userType, candidateImageUrls, options?.prompt)
+        plan = geminiPlan
+        consumedPoints += planPoints
+      }
 
       const { videoUrl, points: videoPoints } = await this.generateVideo(
         aiLogId,
@@ -525,6 +480,31 @@ export class DraftGenerationService implements OnModuleDestroy {
       })
       const coverUrl = uploadResult.asset.path
 
+      if (draftType === 'video') {
+        // 仅生成视频：存入 Media 表，记录 materialGroupId
+        const media = await this.mediaRepository.create({
+          userId,
+          userType,
+          materialGroupId: groupId,
+          type: MediaType.VIDEO,
+          url: videoUrl,
+          thumbUrl: coverUrl,
+        })
+
+        await this.aiLogRepository.updateById(aiLogId, {
+          $set: {
+            status: AiLogStatus.Success,
+            model,
+            points: consumedPoints,
+            duration: Date.now() - startTime,
+            response: { mediaId: media.id, videoUrl, coverUrl },
+          },
+        })
+
+        return { consumedPoints }
+      }
+
+      // draft 类型：保存完整草稿素材
       const material = await this.materialRepository.create({
         userId,
         userType,
@@ -532,29 +512,29 @@ export class DraftGenerationService implements OnModuleDestroy {
         type: MaterialType.VIDEO,
         source: MaterialSource.PlaceDraft,
         status: MaterialStatus.SUCCESS,
-        title: plan.title,
-        desc: plan.description,
-        topics: plan.topics,
+        title: plan!.title,
+        desc: plan!.description,
+        topics: plan!.topics,
         coverUrl,
         mediaList: [{ url: videoUrl, type: MediaType.VIDEO, thumbUrl: coverUrl }],
         useCount: 0,
         autoDeleteMedia: false,
         openAffiliate: true,
         model,
-        accountTypes: getCompatibleAccountTypes({
+        accountTypes: (options?.platforms as AccountType[]) ?? getCompatibleAccountTypes({
           type: 'video',
-          title: plan.title,
-          desc: plan.description,
-          topics: plan.topics,
+          title: plan!.title,
+          desc: plan!.description,
+          topics: plan!.topics,
           duration,
           aspectRatio,
         }),
       })
 
       const result: DraftGenerationResult = {
-        title: plan.title,
-        description: plan.description,
-        topics: plan.topics,
+        title: plan!.title,
+        description: plan!.description,
+        topics: plan!.topics,
         videoUrl,
         coverUrl,
       }
@@ -714,12 +694,12 @@ Return the result as JSON.`
       { taskName: `Video generation (${model})` },
     )
 
-    return { videoUrl: url, points: 0 }
+    return { videoUrl: url, points: task.points }
   }
 
   // ==================== 图文草稿生成 ====================
 
-  getDraftGenerationPricing(): DraftGenerationPricingVo {
+  getDraftGenerationPricing(): DraftGenerationPricingVoInput {
     const imageModels = config.ai.draftGeneration.imageModels
 
     const videoModels = config.ai.models.video.generation
@@ -770,6 +750,9 @@ Return the result as JSON.`
           imageCount: dto.imageCount,
           imageSize: dto.imageSize,
           aspectRatio: dto.aspectRatio,
+          prompt: dto.prompt,
+          imageUrls: dto.imageUrls,
+          draftType: dto.draftType ?? 'draft',
         },
         response: {},
       })
@@ -786,6 +769,8 @@ Return the result as JSON.`
         imageCount: dto.imageCount ?? 3,
         imageSize: dto.imageSize,
         aspectRatio: dto.aspectRatio,
+        imageTextDraftType: dto.draftType ?? 'draft',
+        platforms: dto.platforms,
       })
 
       aiLogIds.push(aiLog.id)
@@ -814,36 +799,51 @@ Return the result as JSON.`
       imageCount: number
       imageSize?: string
       aspectRatio?: string
+      draftType?: ImageTextDraftType
+      platforms?: string[]
     },
   ): Promise<{ consumedPoints: number }> {
     let consumedPoints = 0
     const startTime = Date.now()
+    const draftType = options.draftType ?? 'draft'
 
     try {
       const referenceImageUrls = options.imageUrls ?? []
       this.logger.log(
-        { aiLogId, imageModel: options.imageModel, imageCount: options.imageCount, aspectRatio: options.aspectRatio, refImageCount: referenceImageUrls.length },
+        { aiLogId, imageModel: options.imageModel, imageCount: options.imageCount, aspectRatio: options.aspectRatio, refImageCount: referenceImageUrls.length, draftType },
         'ImageText: Starting generation',
       )
 
-      const { plan, points: planPoints } = await this.planImageTextWithGemini(
-        userId,
-        userType,
-        referenceImageUrls,
-        options.prompt,
-        options.imageCount,
-      )
-      consumedPoints += planPoints
-      this.logger.log(
-        { aiLogId, title: plan.title, imagePromptsCount: plan.imagePrompts.length, planPoints },
-        'ImageText: Planning completed',
-      )
+      // 仅 draft 类型需要 Gemini 规划（生成标题/描述/话题/图片 prompts）
+      let plan: ImageTextPlanResult | undefined
+      let imagePrompts: string[]
+
+      if (draftType === 'draft') {
+        const { plan: geminiPlan, points: planPoints } = await this.planImageTextWithGemini(
+          userId,
+          userType,
+          referenceImageUrls,
+          options.prompt,
+          options.imageCount,
+        )
+        plan = geminiPlan
+        imagePrompts = plan.imagePrompts
+        consumedPoints += planPoints
+        this.logger.log(
+          { aiLogId, title: plan.title, imagePromptsCount: plan.imagePrompts.length, planPoints },
+          'ImageText: Planning completed',
+        )
+      }
+      else {
+        // image 类型：直接使用用户 prompt 作为每张图片的生成 prompt
+        imagePrompts = Array.from({ length: options.imageCount }, () => options.prompt)
+      }
 
       const { urls: generatedImageUrls, points: imagePoints } = await this.generateImages(
         userId,
         userType,
         options.imageModel,
-        plan.imagePrompts,
+        imagePrompts,
         referenceImageUrls,
         options.aspectRatio,
         options.imageSize,
@@ -854,10 +854,39 @@ Return the result as JSON.`
         'ImageText: Image generation completed',
       )
 
-      const coverUrl = generatedImageUrls[0]
-      if (!coverUrl) {
+      if (generatedImageUrls.length === 0) {
         throw new Error('ImageText: No images were generated')
       }
+
+      if (draftType === 'image') {
+        // 仅生成图片：逐张存入 Media 表，记录 materialGroupId
+        const mediaIds: string[] = []
+        for (const imageUrl of generatedImageUrls) {
+          const media = await this.mediaRepository.create({
+            userId,
+            userType,
+            materialGroupId: groupId,
+            type: MediaType.IMG,
+            url: imageUrl,
+          })
+          mediaIds.push(media.id)
+        }
+
+        await this.aiLogRepository.updateById(aiLogId, {
+          $set: {
+            status: AiLogStatus.Success,
+            model: options.imageModel,
+            points: consumedPoints,
+            duration: Date.now() - startTime,
+            response: { mediaIds, imageUrls: generatedImageUrls },
+          },
+        })
+
+        return { consumedPoints }
+      }
+
+      // draft 类型：保存完整图文草稿素材
+      const coverUrl = generatedImageUrls[0]
 
       const material = await this.materialRepository.create({
         userId,
@@ -866,29 +895,29 @@ Return the result as JSON.`
         type: MaterialType.ARTICLE,
         source: MaterialSource.PlaceDraft,
         status: MaterialStatus.SUCCESS,
-        title: plan.title,
-        desc: plan.description,
-        topics: plan.topics,
+        title: plan!.title,
+        desc: plan!.description,
+        topics: plan!.topics,
         coverUrl,
         mediaList: generatedImageUrls.map(url => ({ url, type: MediaType.IMG })),
         useCount: 0,
         autoDeleteMedia: false,
         openAffiliate: true,
         model: options.imageModel,
-        accountTypes: getCompatibleAccountTypes({
+        accountTypes: (options.platforms as AccountType[]) ?? getCompatibleAccountTypes({
           type: 'article',
-          title: plan.title,
-          desc: plan.description,
-          topics: plan.topics,
+          title: plan!.title,
+          desc: plan!.description,
+          topics: plan!.topics,
           imageCount: generatedImageUrls.length,
           aspectRatio: options.aspectRatio,
         }),
       })
 
       const result: DraftGenerationResult = {
-        title: plan.title,
-        description: plan.description,
-        topics: plan.topics,
+        title: plan!.title,
+        description: plan!.description,
+        topics: plan!.topics,
         coverUrl,
         imageUrls: generatedImageUrls,
       }

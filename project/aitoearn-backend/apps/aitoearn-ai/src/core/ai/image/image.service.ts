@@ -263,7 +263,7 @@ export class ImageService {
       type: AiLogType.Image,
       points,
       request: params,
-      response: result,
+      response: { ...result, data: void 0 },
       status: AiLogStatus.Success,
       startedAt,
       duration,

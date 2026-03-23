@@ -87,13 +87,13 @@ export class OpenAIVideoService {
     }
 
     const result = await this.openaiLibService.createVideo({
-      prompt,
-      input_reference: inputReferenceUploadable,
-      model: model as 'sora-2' | 'sora-2-pro',
-      // SDK 类型定义有误，实际支持 '10' | '15' | '25'
-      seconds: seconds as '4' | '8' | '12' | undefined,
-      size,
-    })
+        prompt,
+        input_reference: inputReferenceUploadable,
+        model: model as 'sora-2' | 'sora-2-pro',
+        // SDK 类型定义有误，实际支持 '10' | '15' | '25'
+        seconds: seconds as '4' | '8' | '12' | undefined,
+        size,
+      })
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({
@@ -126,6 +126,7 @@ export class OpenAIVideoService {
     return {
       ...result,
       id: aiLog.id,
+      points: pricing,
     }
   }
 
@@ -157,7 +158,7 @@ export class OpenAIVideoService {
     }
 
     const startedAt = new Date()
-    const result = await this.openaiLibService.remixVideo(aiLog.taskId, prompt)
+    const result = await this.openaiLibService.remixVideo(aiLog.taskId!, prompt)
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({
@@ -263,6 +264,12 @@ export class OpenAIVideoService {
       duration,
       errorMessage: status === 'failed' ? data.error?.message : undefined,
     })
+
+    if (aiLogStatus === AiLogStatus.Failed) {
+    }
+
+    if (aiLogStatus === AiLogStatus.Success || aiLogStatus === AiLogStatus.Failed) {
+    }
   }
 
   /**

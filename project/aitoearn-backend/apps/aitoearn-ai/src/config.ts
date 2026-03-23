@@ -115,7 +115,7 @@ export const aiModelsConfigSchema = z.object({
       description: z.string(),
       summary: z.string().optional(),
       logo: z.string().optional(),
-      tags: z.string().array().default([]),
+      tags: z.array(z.object({ 'en-US': z.string(), 'zh-CN': z.string() })).default([]),
       mainTag: z.string().optional(),
       channel: z.enum(AiLogChannel),
       modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video', 'video2video'])),

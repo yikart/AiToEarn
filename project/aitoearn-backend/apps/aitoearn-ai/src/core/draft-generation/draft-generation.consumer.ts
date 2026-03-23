@@ -24,9 +24,9 @@ export class DraftGenerationConsumer extends WorkerHost {
 
     try {
       if (version === 'v2-image-text') {
-        const { prompt, imageUrls, imageModel, imageCount, aspectRatio } = job.data
+        const { prompt, imageUrls, imageModel, imageCount, aspectRatio, imageTextDraftType, platforms } = job.data
         this.logger.log(
-          { aiLogId, imageModel, imageCount, aspectRatio, imageUrlsCount: imageUrls?.length ?? 0, promptLength: prompt?.length ?? 0 },
+          { aiLogId, imageModel, imageCount, aspectRatio, imageUrlsCount: imageUrls?.length ?? 0, promptLength: prompt?.length ?? 0, draftType: imageTextDraftType },
           'Processing v2-image-text generation',
         )
         const { consumedPoints } = await this.draftGenerationService.generateContentImageText(aiLogId, userId, userType, groupId, {
@@ -35,11 +35,13 @@ export class DraftGenerationConsumer extends WorkerHost {
           imageModel: imageModel ?? 'gemini-3.1-flash-image-preview',
           imageCount: imageCount ?? 3,
           aspectRatio,
+          draftType: imageTextDraftType,
+          platforms,
         })
         this.logger.log({ aiLogId, consumedPoints }, 'v2-image-text generation completed')
       }
       else if (version === 'v2') {
-        const { prompt, imageUrls, model, duration, aspectRatio, videoUrls } = job.data
+        const { prompt, imageUrls, model, duration, aspectRatio, videoUrls, draftType, platforms } = job.data
         const { consumedPoints } = await this.draftGenerationService.generateContentV2(aiLogId, userId, userType, groupId, {
           prompt,
           imageUrls,
@@ -47,6 +49,8 @@ export class DraftGenerationConsumer extends WorkerHost {
           duration,
           aspectRatio,
           videoUrls,
+          draftType,
+          platforms,
         })
         this.logger.log({ aiLogId, consumedPoints }, 'v2 generation completed')
       }
