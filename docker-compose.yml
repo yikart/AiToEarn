@@ -3,6 +3,7 @@ services:
     image: mongo:latest
     container_name: aitoearn-mongodb
     restart: unless-stopped
+    entrypoint: ["bash", "-c", "openssl rand -base64 756 > /data/mongodb-keyfile && chmod 400 /data/mongodb-keyfile && chown mongodb:mongodb /data/mongodb-keyfile && exec docker-entrypoint.sh mongod --replSet rs0 --keyFile /data/mongodb-keyfile"]
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
@@ -14,11 +15,22 @@ services:
     networks:
       - aitoearn-network
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      test: mongosh --quiet --eval "try { rs.status().ok } catch(e) { 0 }"
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
       start_period: 40s
+
+  mongodb-rs-init:
+    image: mongo:latest
+    container_name: aitoearn-mongodb-rs-init
+    depends_on:
+      mongodb:
+        condition: service_started
+    entrypoint: ["/bin/sh", "-c", "sleep 5 && mongosh mongodb://admin:password@mongodb:27017/?authSource=admin --eval \"try { rs.initiate({_id:'rs0', members:[{_id:0, host:'mongodb:27017'}]}) } catch(e) { if (e.codeName!=='AlreadyInitialized') throw e }\""]
+    restart: "no"
+    networks:
+      - aitoearn-network
 
   redis:
     image: redis:latest
@@ -99,6 +111,7 @@ services:
 
   aitoearn-ai:
     image: aitoearn/aitoearn-ai:latest
+    pull_policy: ${PULL_POLICY:-never}
     container_name: aitoearn-ai
     restart: unless-stopped
     depends_on:
@@ -107,8 +120,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./config/aitoearn-ai.config.js:/app/config.js:ro
-      - ./config/gcs-placeholder.json:/app/config/gcs-placeholder.json:ro
+      - ./project/aitoearn-backend/apps/aitoearn-ai/config/config.js:/app/config.js:ro
     networks:
       - aitoearn-network
     environment:
@@ -130,6 +142,8 @@ services:
 
       SERVER_URL: http://aitoearn-server:3002
 
+      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+
       # AI Services
       OPENAI_API_KEY: sk-placeholder
       OPENAI_BASE_URL: https://api.openai.com/v1
@@ -142,7 +156,7 @@ services:
       GROK_API_KEY: ""
       AICSO_API_KEY: ""
       AICSO_BASE_URL: ""
-      GEMINI_KEY_PAIRS: '[{"projectId":"placeholder","apiKey":"placeholder","keyFile":"/app/config/gcs-placeholder.json","bucket":"placeholder"}]'
+      GEMINI_KEY_PAIRS: '[]'
       GEMINI_LOCATION: us-central1
       AI_PROXY_URL: ""
     healthcheck:
@@ -154,6 +168,7 @@ services:
 
   aitoearn-server:
     image: aitoearn/aitoearn-server:latest
+    pull_policy: ${PULL_POLICY:-never}
     container_name: aitoearn-server
     restart: unless-stopped
     depends_on:
@@ -164,7 +179,7 @@ services:
       aitoearn-ai:
         condition: service_healthy
     volumes:
-      - ./config/aitoearn-server.config.js:/app/config.js:ro
+      - ./project/aitoearn-backend/apps/aitoearn-server/config/config.js:/app/config.js:ro
     networks:
       - aitoearn-network
     environment:
@@ -178,11 +193,6 @@ services:
       MONGODB_USERNAME: admin
       MONGODB_PASSWORD: password
 
-      STATISTICS_DB_HOST: mongodb
-      STATISTICS_DB_PORT: 27017
-      STATISTICS_DB_USERNAME: admin
-      STATISTICS_DB_PASSWORD: password
-
       REDIS_HOST: redis
       REDIS_PORT: 6379
       REDIS_PASSWORD: password
@@ -192,12 +202,10 @@ services:
       JWT_SECRET: change-this-jwt-secret
       INTERNAL_TOKEN: change-this-secret-token
 
+      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+
       MAIL_USER: ""
       MAIL_PASS: ""
-
-      # AI Services
-      OPENAI_API_KEY: sk-placeholder
-      OPENAI_BASE_URL: https://api.openai.com/v1
 
       # Third-party OAuth
       BILIBILI_CLIENT_ID: ""
@@ -236,13 +244,10 @@ services:
       ALI_SMS_SIGN_NAME: ""
       ALI_SMS_TEMPLATE_CODE: ""
 
-      # Aliyun Content Safety
-      ALI_GREEN_ACCESS_KEY_ID: ""
-      ALI_GREEN_ACCESS_KEY_SECRET: ""
-
-      # New API
-      NEW_API_URL: ""
-      NEW_API_TOKEN: ""
+      # Relay (optional)
+      RELAY_SERVER_URL: https://aitoearn.ai
+      RELAY_API_KEY: ak_qnFAC9zMvRiT1U7LcIlnukhtAnCGQpCP2ZWGiQewbO7dfrPq
+      RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
@@ -252,6 +257,7 @@ services:
 
   aitoearn-web:
     image: aitoearn/aitoearn-web:latest
+    pull_policy: ${PULL_POLICY:-never}
     container_name: aitoearn-web
     restart: unless-stopped
     depends_on:
@@ -261,10 +267,10 @@ services:
       - init-data:/data/init:ro
     networks:
       - aitoearn-network
+    command: ["/bin/sh", "-c", "AUTO_LOGIN_TOKEN=$$(cat /data/init/token.txt 2>/dev/null || echo '') exec node server.js"]
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: 1
-      AUTO_LOGIN_TOKEN_PATH: /data/init/token.txt
 
   nginx:
     image: nginx:alpine
@@ -285,7 +291,7 @@ services:
     networks:
       - aitoearn-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/_nhealth"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/_nhealth"]
       interval: 10s
       timeout: 5s
       retries: 3

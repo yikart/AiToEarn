@@ -95,19 +95,16 @@ NEXT_PUBLIC_API_URL: https://your-domain.com/api
 
 ### 3. Configure Application Config Files
 
-The `config/` directory contains application configuration files mounted as read-only volumes into containers:
+Configuration files are located in each application's `config/` subdirectory, mounted as read-only volumes into containers:
 
 | File | Mounted to | Description |
 |------|------------|-------------|
-| `config/aitoearn-ai.config.js` | aitoearn-ai:/app/config.js | AI service config (AI model definitions, storage) |
-| `config/aitoearn-server.config.js` | aitoearn-server:/app/config.js | Backend config (OAuth callbacks, email, storage) |
-| `config/gcs-placeholder.json` | aitoearn-ai:/app/config/gcs-placeholder.json | Google Cloud credentials placeholder |
+| `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` | aitoearn-ai:/app/config.js | AI service config (AI model definitions, storage) |
+| `project/aitoearn-backend/apps/aitoearn-server/config/config.js` | aitoearn-server:/app/config.js | Backend config (OAuth callbacks, email, storage) |
 
 These config files read environment variables from `process.env` (set by docker-compose.yml) and also contain hardcoded configuration (storage endpoints, AI model lists, etc.).
 
-**To change RustFS credentials or switch to external S3/OSS**, update the `assets` configuration in both config.js files.
-
-**To use real Gemini services**, replace `config/gcs-placeholder.json` with actual Google Cloud service account credentials.
+**To change RustFS credentials or switch to external S3/OSS**, update the `assets` configuration in both config.js files, or override via the `ASSETS_CONFIG` environment variable (see below).
 
 ### 4. Start Services
 
@@ -148,6 +145,7 @@ All variables below are configured in the `environment` section of each service 
 | `JWT_SECRET` | aitoearn-ai, aitoearn-server | JWT signing secret | `change-this-jwt-secret` |
 | `INTERNAL_TOKEN` | aitoearn-ai, aitoearn-server | Inter-service auth token | `change-this-secret-token` |
 | `APP_DOMAIN` | aitoearn-server | Application domain (for OAuth callbacks) | `localhost` |
+| `ASSETS_CONFIG` | aitoearn-ai, aitoearn-server | Asset storage config (JSON format, see above) | Built-in RustFS config |
 | `NEXT_PUBLIC_API_URL` | aitoearn-web | Frontend API URL (browser-facing) | `http://localhost:8080/api` |
 
 ### Internal Service Communication
@@ -180,25 +178,23 @@ On startup, the `aitoearn` bucket is automatically created. Application services
 - Default username: `rustfsadmin`
 - Default password: `rustfsadmin`
 
-To change RustFS credentials, update all three locations:
+To change RustFS credentials, update these locations:
 
 1. `docker-compose.yml` — `rustfs` service: `RUSTFS_ACCESS_KEY` and `RUSTFS_SECRET_KEY`
 2. `docker-compose.yml` — `rustfs-init` service: credentials in the `mc alias set` command
-3. `config/aitoearn-ai.config.js` and `config/aitoearn-server.config.js` — `accessKeyId` and `secretAccessKey` in the `assets` config
+3. `docker-compose.yml` — `ASSETS_CONFIG` environment variable in both `aitoearn-ai` and `aitoearn-server` services
 
-**For production** with AWS S3 or other providers, update the `assets` config in both config.js files:
+**`ASSETS_CONFIG` environment variable** (JSON format) configures asset storage. Required in both `aitoearn-ai` and `aitoearn-server` services:
 
-```javascript
-// Example assets config for AWS S3 in config.js
-assets: {
-  provider: 's3',
-  region: 'ap-southeast-1',
-  bucketName: 'your-bucket',
-  endpoint: 'https://s3.ap-southeast-1.amazonaws.com',
-  accessKeyId: 'xxx',
-  secretAccessKey: 'xxx',
-  cdnEndpoint: 'https://your-cdn.com',
-}
+```yaml
+ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+```
+
+**For production** with AWS S3 or other providers, update `ASSETS_CONFIG` or the `assets` config in both config.js files:
+
+```yaml
+# In docker-compose.yml (AWS S3 example)
+ASSETS_CONFIG: '{"provider":"s3","region":"ap-southeast-1","bucketName":"your-bucket","endpoint":"https://s3.ap-southeast-1.amazonaws.com","accessKeyId":"xxx","secretAccessKey":"xxx","cdnEndpoint":"https://your-cdn.com"}'
 ```
 
 ### AI Services
@@ -238,13 +234,17 @@ All supported AI services (configured in the `aitoearn-ai` service):
 | `GEMINI_LOCATION` | Google Gemini | Default: `us-central1` |
 | `AI_PROXY_URL` | AI Proxy | Optional, for proxied AI API access |
 
-`GEMINI_KEY_PAIRS` format (JSON array):
+`GEMINI_KEY_PAIRS` format (JSON array), defaults to `'[]'` (empty array):
 
 ```yaml
-GEMINI_KEY_PAIRS: '[{"projectId":"your-gcp-project-id","apiKey":"your-gemini-api-key","keyFile":"/app/config/gcs-placeholder.json","bucket":"your-bucket"}]'
+# Default (Gemini disabled)
+GEMINI_KEY_PAIRS: '[]'
+
+# Example with Gemini configured
+GEMINI_KEY_PAIRS: '[{"projectId":"your-gcp-project-id","apiKey":"your-gemini-api-key","bucket":"your-bucket"}]'
 ```
 
-AI model definitions (available models, pricing, etc.) are configured in `config/aitoearn-ai.config.js`.
+AI model definitions (available models, pricing, etc.) are configured in `project/aitoearn-backend/apps/aitoearn-ai/config/config.js`.
 
 ### Third-party OAuth (Optional)
 
@@ -277,13 +277,41 @@ Configure social media OAuth credentials as needed in the `aitoearn-server` serv
 | `MAIL_USER` / `MAIL_PASS` | aitoearn-server | Email (AWS SES SMTP) | AWS Console → SES → SMTP |
 | `ALI_SMS_*` (4 vars) | aitoearn-server | Aliyun SMS | https://dysms.console.aliyun.com |
 | `ALI_GREEN_ACCESS_KEY_ID/SECRET` | aitoearn-server | Aliyun Content Safety | https://yundun.console.aliyun.com |
-| `NEW_API_URL` / `NEW_API_TOKEN` | aitoearn-server | Internal API relay service | Self-deploy new-api |
+
+### Auto-Login Configuration (Optional)
+
+To automatically initialize an admin token when aitoearn-server starts, use the docker-compose `command` to read a token file and set it as the `AUTO_LOGIN_TOKEN` environment variable:
+
+```yaml
+aitoearn-server:
+  command: >
+    sh -c 'export AUTO_LOGIN_TOKEN=$$(cat /run/secrets/auto-login-token 2>/dev/null || echo ""); exec node main.js'
+```
+
+> Note: The previous `AUTO_LOGIN_TOKEN_PATH` environment variable has been removed. The file contents are now read directly in the startup command.
+
+### Image Pull Policy
+
+All application service images in Docker Compose use `pull_policy: always` to ensure the latest images are pulled on every `docker compose up`:
+
+```yaml
+services:
+  aitoearn-web:
+    image: aitoearn/web:latest
+    pull_policy: always
+  aitoearn-server:
+    image: aitoearn/server:latest
+    pull_policy: always
+  aitoearn-ai:
+    image: aitoearn/ai:latest
+    pull_policy: always
+```
 
 ## Config Files Reference
 
-The `config/` directory contains configuration files mounted as read-only volumes into containers. Restart the corresponding service after making changes.
+Each application has its own configuration file, mounted as read-only volumes into containers. Restart the corresponding service after making changes.
 
-### config/aitoearn-ai.config.js
+### project/aitoearn-backend/apps/aitoearn-ai/config/config.js
 
 Complete configuration for the AI service, mounted to `aitoearn-ai:/app/config.js`.
 
@@ -426,7 +454,7 @@ Pricing is per resolution (1K/2K/4K), all default to `0`.
 
 ---
 
-### config/aitoearn-server.config.js
+### project/aitoearn-backend/apps/aitoearn-server/config/config.js
 
 Complete configuration for the backend service, mounted to `aitoearn-server:/app/config.js`.
 
@@ -486,7 +514,7 @@ Same config structure as aitoearn-ai.config.js, read from environment variables.
 
 #### Assets Storage
 
-Same as `assets` in aitoearn-ai.config.js. Both must be kept in sync.
+Same as `assets` in the aitoearn-ai config.js. Both must be kept in sync. Can also be overridden via the `ASSETS_CONFIG` environment variable.
 
 #### Email Configuration (mail)
 
@@ -517,20 +545,23 @@ To switch email providers (e.g., SendGrid, Mailgun), modify the `mail.transport`
 | `aiClient.baseUrl` | URL to reach AI service | Env var `AI_URL` |
 | `aiClient.token` | Service communication token | Env var `INTERNAL_TOKEN` |
 
-#### New API Relay Service
+#### Relay Configuration (Optional)
 
-| Config | Description | Source |
-|--------|-------------|--------|
-| `newApi.baseUrl` | New API service URL | Env var `NEW_API_URL` |
-| `newApi.token` | New API access token | Env var `NEW_API_TOKEN` |
+Relay allows forwarding requests through a relay server. All of the following environment variables are optional:
 
----
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `RELAY_SERVER_URL` | Relay server URL | None (disabled) |
+| `RELAY_API_KEY` | Relay API key | None |
+| `RELAY_CALLBACK_URL` | Relay callback URL | None |
 
-### config/gcs-placeholder.json
+Configure in the `aitoearn-server` service of `docker-compose.yml`:
 
-Google Cloud service account credentials placeholder file. Required by Gemini service to access Google Cloud APIs.
-
-Contains placeholder values by default. To use real Gemini services, replace with an actual service account JSON key file downloaded from Google Cloud Console.
+```yaml
+RELAY_SERVER_URL: https://your-relay-server.com
+RELAY_API_KEY: your-relay-api-key
+RELAY_CALLBACK_URL: https://your-domain.com/api/relay/callback
+```
 
 ## Common Commands
 
@@ -630,19 +661,18 @@ After building, start services normally with `docker compose up -d`.
 
 > Prerequisites: Node.js and pnpm must be installed, and `pnpm install` must have been run in `project/aitoearn-backend`.
 
-### Q: What are the config/ files for?
+### Q: What are the config files for?
 
-The `config/` directory contains two application config files and a credentials placeholder:
+Each application has its own config file in its `config/` subdirectory:
 
-- **aitoearn-ai.config.js**: Detailed AI service configuration including AI model definitions (available models, pricing), storage config, and Gemini settings
-- **aitoearn-server.config.js**: Backend service configuration including OAuth callback URL patterns, email transport settings, and storage config
-- **gcs-placeholder.json**: Google Cloud service account credentials placeholder — replace with real credentials for production Gemini usage
+- **project/aitoearn-backend/apps/aitoearn-ai/config/config.js**: Detailed AI service configuration including AI model definitions (available models, pricing), storage config, and Gemini settings
+- **project/aitoearn-backend/apps/aitoearn-server/config/config.js**: Backend service configuration including OAuth callback URL patterns, email transport settings, and storage config
 
 These files are mounted as read-only volumes. After editing, restart the relevant services: `docker compose restart aitoearn-ai aitoearn-server`
 
 ### Q: How to add or change AI models?
 
-Edit the `ai.models` section in `config/aitoearn-ai.config.js` to modify the available model list, pricing, and model parameters. Then restart the AI service:
+Edit the `ai.models` section in `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` to modify the available model list, pricing, and model parameters. Then restart the AI service:
 
 ```bash
 docker compose restart aitoearn-ai
@@ -675,7 +705,7 @@ lsof -i :6379
 1. Verify `OPENAI_API_KEY` and `OPENAI_BASE_URL` are correctly configured in `docker-compose.yml`
 2. Recommended: deploy [new-api](https://github.com/Calcium-Ion/new-api) relay service to manage all AI models
 3. The default `sk-placeholder` is just a placeholder — no AI service will work until real keys are set
-4. AI model configuration is in `config/aitoearn-ai.config.js` — ensure model definitions match your API service
+4. AI model configuration is in `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` — ensure model definitions match your API service
 
 ### Q: How to update to the latest version?
 
