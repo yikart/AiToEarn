@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
-import { GoogleBusinessAuthCallbackDto } from './google-business.dto'
+import { GetAuthUrlDto, GoogleBusinessAuthCallbackDto } from './google-business.dto'
 import { GoogleBusinessService } from './google-business.service'
 
 @ApiTags('Platform/Google Business')
@@ -15,8 +15,15 @@ export class GoogleBusinessController {
 
   @ApiDoc({ summary: '获取授权 URL' })
   @Get('/auth/url')
-  async getAuthUrl(@GetToken() token: TokenInfo) {
-    return await this.googleBusinessService.getAuthUrl(token.id)
+  async getAuthUrl(
+    @GetToken() token: TokenInfo,
+    @Query() query: GetAuthUrlDto,
+  ) {
+    return await this.googleBusinessService.getAuthUrl(
+      token.id,
+      query.callbackUrl,
+      query.callbackMethod,
+    )
   }
 
   @Public()
@@ -28,12 +35,18 @@ export class GoogleBusinessController {
   ) {
     const result = await this.googleBusinessService.handleCallback(query.code, query.state)
 
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', {
+        ...result,
+        autoPostCallback: true,
+      })
+    }
+
     if (result.status === 1) {
-      res.redirect(`/auth/success?accountId=${result.accountId}`)
+      return res.redirect(`/auth/success?accountId=${result.accountId}`)
     }
-    else {
-      res.redirect(`/auth/error?message=${encodeURIComponent(result.message)}`)
-    }
+
+    return res.redirect(`/auth/error?message=${encodeURIComponent(result.message || '')}`)
   }
 
   @ApiDoc({ summary: '获取授权状态' })

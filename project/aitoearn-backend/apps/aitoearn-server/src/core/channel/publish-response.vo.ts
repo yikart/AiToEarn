@@ -1,7 +1,7 @@
 import { AccountType, createZodDto } from '@yikart/common'
 import { PublishStatus } from '@yikart/mongodb'
 import { z } from 'zod'
-import { PublishingChannel } from './channel.types'
+import { PublishingChannel } from './channel.interfaces'
 
 export const PublishRecordItemVoSchema = z.object({
   dataId: z.string().optional().describe('数据ID'),

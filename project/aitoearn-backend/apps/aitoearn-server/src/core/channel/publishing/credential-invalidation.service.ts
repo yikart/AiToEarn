@@ -2,9 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { OAuth2CredentialRepository } from '@yikart/channel-db'
 import { RedisService } from '@yikart/redis'
-import { MetaRedisKeys } from '../platforms/meta/constants'
-import { TiktokRedisKeys } from '../platforms/tiktok/constants'
-import { TwitterRedisKeys } from '../platforms/twitter/constants'
+import { ChannelRedisKeys } from '../channel.constants'
 
 @Injectable()
 export class CredentialInvalidationService {
@@ -19,15 +17,15 @@ export class CredentialInvalidationService {
   private getRedisKeysToDelete(accountId: string, accountType: AccountType): string {
     switch (accountType) {
       case AccountType.FACEBOOK:
-        return MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId)
+        return ChannelRedisKeys.pageAccessToken('facebook', accountId)
       case AccountType.INSTAGRAM:
       case AccountType.THREADS:
       case AccountType.LINKEDIN:
-        return MetaRedisKeys.getAccessTokenKey(accountType, accountId)
+        return ChannelRedisKeys.accessToken(accountType, accountId)
       case AccountType.TWITTER:
-        return TwitterRedisKeys.getAccessTokenKey(accountId)
+        return ChannelRedisKeys.accessToken('twitter', accountId)
       case AccountType.TIKTOK:
-        return TiktokRedisKeys.getAccessTokenKey(accountId)
+        return ChannelRedisKeys.accessToken('tiktok', accountId)
       case AccountType.YOUTUBE:
       case AccountType.PINTEREST:
       case AccountType.BILIBILI:

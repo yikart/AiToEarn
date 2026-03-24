@@ -4,6 +4,7 @@ import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { PublishRecordService } from '../../publish-record/publish-record.service'
+import { RelayAccountException } from '../../relay/relay-account.exception'
 import { ChannelAccountService } from '../platforms/channel-account.service'
 import { InteracteBase } from './interact.base'
 import {
@@ -30,6 +31,9 @@ export class InteracteController {
     const account = await this.channelAccountService.getAccountInfo(accountId)
     if (!account)
       throw new AppException(ResponseCode.ChannelAccountNotFound)
+    if (account.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
+    }
     const interact = this.interactMap.get(account.type)
     if (!interact)
       throw new AppException(ResponseCode.InteractAccountTypeNotSupported)

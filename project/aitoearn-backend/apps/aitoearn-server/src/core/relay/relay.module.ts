@@ -14,7 +14,9 @@ import { RelayOAuthController } from './relay-oauth.controller'
     RelayClientService,
     {
       provide: APP_FILTER,
-      useValue: new RelayExceptionFilter(config.relay),
+      useFactory: (relayClientService: RelayClientService) =>
+        new RelayExceptionFilter(config.relay, config.assets, relayClientService),
+      inject: [RelayClientService],
     },
   ],
   exports: [RelayClientService],

@@ -11,6 +11,8 @@ import { RedisService } from '@yikart/redis'
 import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import {
   FacebookPageDetailRequest,
   FacebookPageDetailResponse,
@@ -19,7 +21,6 @@ import { ChannelAccountService } from '../channel-account.service'
 import {
   META_TIME_CONSTANTS,
   metaOAuth2ConfigMap,
-  MetaRedisKeys,
 } from './constants'
 import {
   FacebookAccountResponse,
@@ -55,11 +56,16 @@ export class MetaService {
     platform: string,
     oAuth2Scopes?: string[],
     spaceId = '',
+    callbackUrl?: string,
+    callbackMethod?: 'GET' | 'POST',
   ) {
     this.logger.log(
       `Generating authorize URL for userId: ${userId}, platform: ${platform}}`,
     )
     const oauthConfig = config.channel.oauth[platform as keyof typeof config.channel.oauth]
+    if (!oauthConfig.clientId && config.relay) {
+      throw new RelayAuthException()
+    }
     const scopes
       = oAuth2Scopes
         || oauthConfig.scopes
@@ -96,7 +102,7 @@ export class MetaService {
     this.logger.debug(`Generated meta auth URL: ${authorizeURL.toString()}`)
 
     const success = await this.redisService.setJson(
-      MetaRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('meta', state),
       {
         state,
         status: 0,
@@ -104,6 +110,8 @@ export class MetaService {
         pkce: false,
         platform,
         spaceId,
+        callbackUrl,
+        callbackMethod,
       },
       META_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
     )
@@ -358,7 +366,7 @@ export class MetaService {
 
   async getOAuth2TaskInfo(state: string) {
     const result = await this.redisService.getJson<MetaOAuth2TaskStatus>(
-      MetaRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('meta', state),
     )
     if (!result) {
       this.logger.warn(`OAuth2 task not found for state: ${state}`)
@@ -502,7 +510,7 @@ export class MetaService {
   }
 
   async getFacebookPageList(userId: string): Promise<FacebookPage[]> {
-    const key = MetaRedisKeys.getUserPageListKey('facebook', userId)
+    const key = ChannelRedisKeys.userPageList('facebook', userId)
     const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (pages) {
       return pages
@@ -519,7 +527,7 @@ export class MetaService {
       message: '',
       selectedPageIds: [],
     }
-    const key = MetaRedisKeys.getUserPageListKey('facebook', userId)
+    const key = ChannelRedisKeys.userPageList('facebook', userId)
     const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (!pages || pages.length === 0) {
       this.logger.warn(`No Facebook pages found for userId: ${userId}`)
@@ -540,7 +548,7 @@ export class MetaService {
         result.message = `Page ID ${pageId} not found in user's Facebook pages`
         return result
       }
-      const pageCredentialKey = MetaRedisKeys.getUserPageAccessTokenKey(
+      const pageCredentialKey = ChannelRedisKeys.pageAccessToken(
         'facebook',
         pageId,
       )
@@ -570,7 +578,7 @@ export class MetaService {
         result.message = `Failed to create account for userId: ${userId}, pageId: ${pageId}`
         return result
       }
-      const newPageCredentialKey = MetaRedisKeys.getUserPageAccessTokenKey(
+      const newPageCredentialKey = ChannelRedisKeys.pageAccessToken(
         'facebook',
         accountInfo.id,
       )
@@ -586,11 +594,11 @@ export class MetaService {
           raw: JSON.stringify(pageCredential),
         },
       )
-      const previousFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey(
+      const previousFacebookCredentialKey = ChannelRedisKeys.accessToken(
         'facebook',
         userId,
       )
-      const newFacebookCredentialKey = MetaRedisKeys.getAccessTokenKey(
+      const newFacebookCredentialKey = ChannelRedisKeys.accessToken(
         'facebook',
         pageCredential.facebook_user_id,
       )
@@ -656,7 +664,7 @@ export class MetaService {
     const { code } = authData
 
     const authTaskInfo = await this.redisService.getJson<MetaOAuth2TaskInfo>(
-      MetaRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('meta', state),
     )
     if (!authTaskInfo) {
       this.logger.error(`OAuth task not found for state: ${state}`)
@@ -667,7 +675,7 @@ export class MetaService {
     }
 
     void this.redisService.expire(
-      MetaRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('meta', state),
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
 
@@ -731,7 +739,7 @@ export class MetaService {
                 + credential.expires_in
                 - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
             await this.redisService.setJson(
-              MetaRedisKeys.getUserPageAccessTokenKey(
+              ChannelRedisKeys.pageAccessToken(
                 authTaskInfo.platform,
                 pageAccount.id,
               ),
@@ -749,7 +757,7 @@ export class MetaService {
             })
           }
           await this.redisService.setJson(
-            MetaRedisKeys.getUserPageListKey(
+            ChannelRedisKeys.userPageList(
               authTaskInfo.platform,
               authTaskInfo.userId,
             ),
@@ -803,7 +811,17 @@ export class MetaService {
         )
         return null
       }
-      return accountInfo
+      return {
+        status: 1,
+        accountId: accountInfo.id,
+        nickname: accountInfo.nickname,
+        avatar: accountInfo.avatar,
+        platformUid: accountInfo.uid,
+        accountType: accountInfo.type,
+        callbackUrl: authTaskInfo?.callbackUrl,
+        callbackMethod: authTaskInfo.callbackMethod,
+        taskId: state,
+      }
     }
     catch (error) {
       if (isAxiosError(error) && error.response) {
@@ -871,7 +889,7 @@ export class MetaService {
       = now + tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     tokenInfo.expires_in = expireTime
     const cached = await this.redisService.setJson(
-      MetaRedisKeys.getAccessTokenKey(platform, accountId),
+      ChannelRedisKeys.accessToken(platform, accountId),
       tokenInfo,
     )
     const persistResult = await this.oauth2CredentialRepository.upsertOne(
@@ -900,16 +918,16 @@ export class MetaService {
     authTaskInfo.accountId = accountId
 
     return await this.redisService.setJson(
-      MetaRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('meta', state),
       authTaskInfo,
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
   }
 
   private async getOAuth2Credential(platform: string, accountId: string): Promise<MetaUserOAuthCredential | null> {
-    let key = MetaRedisKeys.getAccessTokenKey(platform, accountId)
+    let key = ChannelRedisKeys.accessToken(platform, accountId)
     if (platform === 'facebook') {
-      key = MetaRedisKeys.getUserPageAccessTokenKey('facebook', accountId)
+      key = ChannelRedisKeys.pageAccessToken('facebook', accountId)
     }
     let credential = await this.redisService.getJson<MetaUserOAuthCredential>(key)
     if (!credential) {

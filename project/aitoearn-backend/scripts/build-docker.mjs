@@ -215,7 +215,7 @@ async function buildImage(projectName, contextDir, options = {}) {
     verbose = false,
     registries = ['registry.fly.io', 'registry.aitoearn.cn'],
     push = false,
-    platforms = ['linux/amd64'],
+    platforms = getDefaultPlatform(),
   } = options
 
   if (platforms.length > 1 && !push) {
@@ -243,7 +243,7 @@ async function buildImage(projectName, contextDir, options = {}) {
 
   // 为每个 registry 生成 tag 参数
   const tagArgs = registries.flatMap(registry => ['-t', `${registry}/${projectName}:${tag}`])
-  const pushArgs = push ? ['--push'] : []
+  const pushArgs = push ? ['--push'] : ['--load']
 
   try {
     // 构建镜像并打所有 tag

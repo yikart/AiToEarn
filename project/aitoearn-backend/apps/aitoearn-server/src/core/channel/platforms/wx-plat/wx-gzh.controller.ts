@@ -22,9 +22,11 @@ export class WxGzhController {
     @GetToken() token: TokenInfo,
     @Param('type') type: 'h5' | 'pc',
     @Query('spaceId') spaceId?: string,
+    @Query('callbackUrl') callbackUrl?: string,
+    @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
     const res = await this.wxPlatService.createAuthTask(
-      { userId: token.id, type, spaceId: spaceId || '' },
+      { userId: token.id, type, spaceId: spaceId || '', callbackUrl, callbackMethod },
     )
 
     return {

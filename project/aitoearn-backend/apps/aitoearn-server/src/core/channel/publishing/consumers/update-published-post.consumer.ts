@@ -16,6 +16,7 @@ import { QueueName, QueueProcessor } from '@yikart/aitoearn-queue'
 import { AccountType, getErrorMessage, getErrorStack } from '@yikart/common'
 import { PublishStatus } from '@yikart/mongodb'
 import { Job } from 'bullmq'
+import { ChannelAccountService } from '../../platforms/channel-account.service'
 import { PublishingErrorHandler } from '../error-handler.service'
 import { PublishService } from '../providers/base.service'
 import { PublishingUnrecoverableError } from '../publishing.exception'
@@ -35,6 +36,7 @@ export class UpdatePublishedPostConsumer extends WorkerHost {
   constructor(
     readonly publishingService: PublishingService,
     private readonly publishingErrorHandler: PublishingErrorHandler,
+    private readonly channelAccountService: ChannelAccountService,
   ) {
     super()
   }
@@ -56,6 +58,18 @@ export class UpdatePublishedPostConsumer extends WorkerHost {
       if (!publishTaskInfo) {
         this.logger.error(`[task-${taskId}] Update published post task not found: ${taskId}`)
         return
+      }
+
+      if (publishTaskInfo.accountId) {
+        const account = await this.channelAccountService.getAccountInfo(publishTaskInfo.accountId)
+        if (account?.relayAccountRef) {
+          this.logger.warn(`[task-${taskId}] Relay account task reached update consumer, skipping`)
+          await this.publishingService.updatePublishTaskStatus(taskId, {
+            status: PublishStatus.FAILED,
+            errorMsg: 'Relay account task should not reach queue consumer',
+          })
+          return
+        }
       }
 
       if (publishTaskInfo.status !== PublishStatus.WAITING_FOR_UPDATE) {

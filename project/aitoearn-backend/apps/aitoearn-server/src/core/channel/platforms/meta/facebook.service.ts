@@ -3,6 +3,7 @@ import { PublishType } from '@yikart/aitoearn-server-client'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
 import axios, { AxiosResponse } from 'axios'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
+import { ChannelRedisKeys } from '../../channel.constants'
 import {
   ChunkedVideoUploadRequest,
   ChunkedVideoUploadResponse,
@@ -42,7 +43,7 @@ import {
 import { FacebookService as FacebookAPIService } from '../../libs/facebook/facebook.service'
 import { PlatformAuthExpiredException } from '../platform.exception'
 import { MetaBaseService } from './base.service'
-import { META_TIME_CONSTANTS, metaOAuth2ConfigMap, MetaRedisKeys } from './constants'
+import { META_TIME_CONSTANTS, metaOAuth2ConfigMap } from './constants'
 import { FacebookAccountResponse, FacebookPageCredentials, MetaFacebookPageResponse, MetaUserOAuthCredential } from './meta.interfaces'
 
 @Injectable()
@@ -59,6 +60,7 @@ export class FacebookService extends MetaBaseService {
   private async authorize(
     accountId: string,
   ): Promise<MetaUserOAuthCredential | null> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       throw new PlatformAuthExpiredException(this.platform, accountId)
@@ -145,7 +147,7 @@ export class FacebookService extends MetaBaseService {
             newPageCredential = credential
           }
           await this.redisService.setJson(
-            MetaRedisKeys.getUserPageAccessTokenKey(
+            ChannelRedisKeys.pageAccessToken(
               'facebook',
               fbAccount.id,
             ),

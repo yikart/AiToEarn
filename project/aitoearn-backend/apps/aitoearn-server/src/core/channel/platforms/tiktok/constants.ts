@@ -6,27 +6,6 @@
  * @Description: TikTok模块常量定义
  */
 
-/**
- * TikTok Redis键管理类
- */
-export class TiktokRedisKeys {
-  private static readonly PREFIX = 'tiktok:'
-
-  /**
-   * 获取授权任务键
-   */
-  static getAuthTaskKey(taskId: string): string {
-    return `${this.PREFIX}auth_task:${taskId}`
-  }
-
-  /**
-   * 获取访问令牌键
-   */
-  static getAccessTokenKey(accountId: string): string {
-    return `${this.PREFIX}access_token:${accountId}`
-  }
-}
-
 // 时间常量（秒）
 export const TIKTOK_TIME_CONSTANTS = {
   AUTH_TASK_EXPIRE: 5 * 60, // 认证任务过期时间：5分钟

@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
-import { ApiKeyRepository } from '@yikart/mongodb'
+import { ApiKeyRepository, UserRepository, UserStatus } from '@yikart/mongodb'
 import { AitoearnAuthConfig } from './aitoearn-auth.config'
 import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 
@@ -21,6 +21,7 @@ export class AitoearnAuthGuard implements CanActivate {
     private readonly jwtService: JwtService,
     private readonly config: AitoearnAuthConfig,
     private readonly apiKeyRepository: ApiKeyRepository,
+    private readonly userRepository: UserRepository,
   ) {
     this.secret = config.secret
   }
@@ -42,7 +43,15 @@ export class AitoearnAuthGuard implements CanActivate {
         throw new UnauthorizedException()
       }
       await this.apiKeyRepository.updateLastUsedAt(record.id)
-      request['user'] = { id: record.userId }
+      const user = await this.userRepository.getById(record.userId)
+      if (!user || user.isDelete || user.status !== UserStatus.OPEN) {
+        throw new UnauthorizedException()
+      }
+      request['user'] = {
+        id: record.userId,
+        mail: user.mail,
+        name: user.name,
+      }
       return true
     }
 

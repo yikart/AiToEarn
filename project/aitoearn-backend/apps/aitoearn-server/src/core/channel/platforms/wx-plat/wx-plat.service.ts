@@ -4,6 +4,8 @@ import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { v4 as uuidv4 } from 'uuid'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { WxPlatAuthorizerInfo } from '../../libs/my-wx-plat/comment'
 import { MyWxPlatApiService } from '../../libs/my-wx-plat/my-wx-plat.service'
 import { ChannelAccountService } from '../channel-account.service'
@@ -22,10 +24,6 @@ export class WxPlatService {
     private readonly channelAccountService: ChannelAccountService,
   ) {
     this.encodingAESKey = config.channel.wxPlat.encodingAESKey
-  }
-
-  private getAuthDataCacheKey(taskId: string) {
-    return `channel:wxPlat:authTask:${taskId}`
   }
 
   // 公众号token缓存key
@@ -50,12 +48,17 @@ export class WxPlatService {
       userId: string
       type: 'h5' | 'pc'
       spaceId: string
+      callbackUrl?: string
+      callbackMethod?: 'GET' | 'POST'
     },
     options?: {
       transpond?: string
       accountAddPath?: string
     },
   ) {
+    if (!config.channel.wxPlat.id && config.relay) {
+      throw new RelayAuthException()
+    }
     const taskId = uuidv4()
 
     const authUrl = await this.getAuthPageUrl(data.type, taskId)
@@ -63,7 +66,7 @@ export class WxPlatService {
       throw new AppException(ResponseCode.ChannelPlatformTokenNotFound)
 
     const rRes = await this.redisService.setJson(
-      this.getAuthDataCacheKey(taskId),
+      ChannelRedisKeys.authTask('wx_gzh', taskId),
       {
         taskId,
         spaceId: data.spaceId,
@@ -74,6 +77,8 @@ export class WxPlatService {
           userId: data.userId,
         },
         status: 0,
+        callbackUrl: data.callbackUrl,
+        callbackMethod: data.callbackMethod,
       },
       60 * 5,
     )
@@ -90,7 +95,7 @@ export class WxPlatService {
   // 获取授权任务信息
   async getAuthTaskInfo(taskId: string) {
     const taskInfo = await this.redisService.getJson<AuthTaskInfo<WxPlatAuthInfo>>(
-      this.getAuthDataCacheKey(taskId),
+      ChannelRedisKeys.authTask('wx_gzh', taskId),
     )
 
     return taskInfo
@@ -139,7 +144,7 @@ export class WxPlatService {
   ) {
     try {
       const taskInfo = await this.redisService.getJson<AuthTaskInfo<WxPlatAuthInfo>>(
-        this.getAuthDataCacheKey(taskId),
+        ChannelRedisKeys.authTask('wx_gzh', taskId),
       )
       if (!taskInfo || !taskInfo.data)
         return { status: 0, message: '任务不存在或已完成' }
@@ -148,17 +153,17 @@ export class WxPlatService {
 
       // 计算是否超时
       if (Date.now() - taskInfo.data.createTime > authData.expiresIn * 1000) {
-        void this.redisService.del(this.getAuthDataCacheKey(taskId))
+        void this.redisService.del(ChannelRedisKeys.authTask('wx_gzh', taskId))
         return { status: 0, message: '任务已超时' }
       }
 
       // 延长授权时间
-      void this.redisService.expire(this.getAuthDataCacheKey(taskId), 60 * 3)
+      void this.redisService.expire(ChannelRedisKeys.authTask('wx_gzh', taskId), 60 * 3)
 
       // 根据授权码获取授权信息
       const auth = await this.myWxPlatApiService.getQueryAuth(authData.authCode)
       if (!auth) {
-        void this.redisService.del(this.getAuthDataCacheKey(taskId))
+        void this.redisService.del(ChannelRedisKeys.authTask('wx_gzh', taskId))
         return { status: 0, message: '获取授权信缓存失败' }
       }
       const { authorizer_appid, expires_in } = auth
@@ -211,14 +216,21 @@ export class WxPlatService {
       taskInfo.data.accountId = accountInfo.id
 
       const res = await this.redisService.setJson(
-        this.getAuthDataCacheKey(taskId),
+        ChannelRedisKeys.authTask('wx_gzh', taskId),
         taskInfo,
         60 * 5,
       )
       if (!res)
         return { status: 0, message: '更新任务信息失败' }
 
-      return { status: 1, message: '添加账号成功', accountId: accountInfo.id }
+      return {
+        status: 1,
+        message: '添加账号成功',
+        accountId: accountInfo.id,
+        callbackUrl: taskInfo.callbackUrl,
+        callbackMethod: taskInfo.callbackMethod,
+        taskId,
+      }
     }
     catch (error) {
       this.logger.error('createAccountAndSetAccessToken error:', error)

@@ -38,6 +38,7 @@ export class InstagramService extends MetaBaseService {
   private async authorize(
     accountId: string,
   ): Promise<MetaUserOAuthCredential> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       throw new PlatformAuthExpiredException(this.platform, accountId)

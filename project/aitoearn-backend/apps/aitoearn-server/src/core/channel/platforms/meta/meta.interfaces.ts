@@ -7,6 +7,8 @@ export interface MetaOAuth2TaskInfo {
   status: 0 | 1
   accountId?: string
   spaceId?: string
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }
 
 export interface MetaOAuth2TaskStatus extends Partial<MetaOAuth2TaskInfo> {

@@ -7,6 +7,6 @@ const RelayCallbackDtoSchema = z.object({
   avatar: z.string().optional().describe('账号头像'),
   platformUid: z.string().min(1).describe('平台用户 ID'),
   accountType: z.enum(AccountType).describe('平台类型'),
-  userId: z.string().min(1).describe('用户 ID'),
+  taskId: z.string().optional().describe('授权任务 ID'),
 })
 export class RelayCallbackDto extends createZodDto(RelayCallbackDtoSchema, 'RelayCallbackDto') {}

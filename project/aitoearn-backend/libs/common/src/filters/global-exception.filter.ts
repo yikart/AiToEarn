@@ -24,7 +24,7 @@ export class GlobalExceptionFilter<T> implements ExceptionFilter<T> {
   protected readonly logger = new Logger(GlobalExceptionFilter.name)
   constructor(private options: GlobalExceptionFilterOptions = {}) { }
 
-  catch(exception: T, host: ArgumentsHost): void | Observable<CommonResponse<unknown>> {
+  catch(exception: T, host: ArgumentsHost): void | Observable<CommonResponse<unknown> | void> {
     if (
       exception instanceof InternalServerErrorException
     ) {

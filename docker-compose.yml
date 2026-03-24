@@ -142,7 +142,7 @@ services:
 
       SERVER_URL: http://aitoearn-server:3002
 
-      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 
       # AI Services
       OPENAI_API_KEY: sk-placeholder
@@ -202,7 +202,7 @@ services:
       JWT_SECRET: change-this-jwt-secret
       INTERNAL_TOKEN: change-this-secret-token
 
-      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 
       MAIL_USER: ""
       MAIL_PASS: ""
@@ -245,7 +245,7 @@ services:
       ALI_SMS_TEMPLATE_CODE: ""
 
       # Relay (optional)
-      RELAY_SERVER_URL: https://aitoearn.ai
+      RELAY_SERVER_URL: https://aitoearn.ai/api
       RELAY_API_KEY: ak_qnFAC9zMvRiT1U7LcIlnukhtAnCGQpCP2ZWGiQewbO7dfrPq
       RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
     healthcheck:

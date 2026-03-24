@@ -268,12 +268,12 @@
                     Redirecting...
                   </div>
                   <form id="callbackForm" method="POST" action="<%= callbackUrl %>" style="display:none">
-                    <input type="hidden" name="relayAccountRef" value="<%= accountId %>" />
+                    <input type="hidden" name="relayAccountRef" value="<%= typeof accountId !== 'undefined' ? accountId : '' %>" />
                     <input type="hidden" name="nickname" value="<%= typeof nickname !== 'undefined' ? nickname : '' %>" />
                     <input type="hidden" name="avatar" value="<%= typeof avatar !== 'undefined' ? avatar : '' %>" />
                     <input type="hidden" name="platformUid" value="<%= typeof platformUid !== 'undefined' ? platformUid : '' %>" />
                     <input type="hidden" name="accountType" value="<%= typeof accountType !== 'undefined' ? accountType : '' %>" />
-                    <input type="hidden" name="userId" value="<%= typeof userId !== 'undefined' ? userId : '' %>" />
+                    <input type="hidden" name="taskId" value="<%= typeof taskId !== 'undefined' ? taskId : '' %>" />
                   </form>
                 <% } else { %>
                   <div class="redirect-message">

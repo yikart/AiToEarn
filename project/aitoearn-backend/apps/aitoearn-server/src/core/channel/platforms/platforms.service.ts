@@ -2,8 +2,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AccountStatus } from '@yikart/channel-db'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
 import { BatchAccountStatusVo } from '../../account/account.vo'
+import { RelayAccountException } from '../../relay/relay-account.exception'
 import { RelayClientService } from '../../relay/relay-client.service'
-import { RelayRequiredException } from '../../relay/relay-required.exception'
 import { SocialMediaError } from '../libs/exception/base'
 import { PlatformBaseService, WorkDetailInfo } from './base.service'
 import { ChannelAccountService } from './channel-account.service'
@@ -37,7 +37,7 @@ export class PlatformService {
           account.status = status
         }
         catch (error) {
-          if (error instanceof RelayRequiredException) {
+          if (error instanceof RelayAccountException) {
             throw error
           }
           this.logger.error(`user:[${userId}] -- ${account.type} get access token status failed: ${error}`)

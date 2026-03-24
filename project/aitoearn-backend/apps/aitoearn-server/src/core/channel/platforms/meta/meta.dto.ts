@@ -32,6 +32,8 @@ export const GetAuthUrlBodySchema = z.object({
   scopes: z.array(z.string()).optional().describe('授权 scopes'),
   spaceId: z.string().optional().describe('空间ID'),
   platform: z.string().describe('平台标识'),
+  callbackUrl: z.string().url().optional().describe('OAuth 完成后回调地址'),
+  callbackMethod: z.enum(['GET', 'POST']).optional().describe('回调方式，默认 GET'),
 })
 export class GetAuthUrlBodyDto extends createZodDto(GetAuthUrlBodySchema) {}
 

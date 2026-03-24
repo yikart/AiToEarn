@@ -1,6 +1,12 @@
 import { createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
+export const GetAuthUrlSchema = z.object({
+  callbackUrl: z.string().url().optional().describe('OAuth 完成后回调地址'),
+  callbackMethod: z.enum(['GET', 'POST']).optional().describe('回调方式，默认 GET'),
+})
+export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema, 'GetAuthUrlDto') {}
+
 export const GoogleBusinessAuthCallbackDtoSchema = z.object({
   code: z.string().describe('OAuth 授权码'),
   state: z.string().describe('状态码'),

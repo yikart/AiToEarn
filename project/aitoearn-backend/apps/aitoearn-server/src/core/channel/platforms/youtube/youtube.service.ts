@@ -10,6 +10,8 @@ import { Auth, google, youtube_v3 } from 'googleapis'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { YoutubeApiService } from '../../libs/youtube/youtube-api.service'
 import { PlatformBaseService, WorkDetailInfo } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
@@ -28,6 +30,8 @@ interface AuthTaskInfo {
   type?: string
   account?: string
   spaceId?: string
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }
 
 @Injectable()
@@ -72,7 +76,7 @@ export class YoutubeService extends PlatformBaseService {
     const { code } = data
 
     const authTask = await this.redisService.getJson<AuthTaskInfo>(
-      `youtube:authTask:${taskId}`,
+      ChannelRedisKeys.authTask('youtube', taskId),
     )
     if (!authTask || authTask?.state !== taskId) {
       this.logger.error(`无效的任务ID: ${taskId}`)
@@ -118,7 +122,7 @@ export class YoutubeService extends PlatformBaseService {
 
       // 缓存令牌
       let res = await this.redisService.setJson(
-        `youtube:accessToken:${accountInfo.id}`,
+        ChannelRedisKeys.accessToken('youtube', accountInfo.id),
         {
           access_token,
           refresh_token,
@@ -171,7 +175,7 @@ export class YoutubeService extends PlatformBaseService {
       authTask.accountId = accountInfo.id
       authTask.mail = email || ''
       res = await this.redisService.setJson(
-        `youtube:authTask:${taskId}`,
+        ChannelRedisKeys.authTask('youtube', taskId),
         authTask,
         60 * 3,
       )
@@ -191,7 +195,7 @@ export class YoutubeService extends PlatformBaseService {
   private async saveOAuthCredential(accountId: string, accessTokenInfo: any) {
     accessTokenInfo.expires_in = getCurrentTimestamp() + accessTokenInfo.expires_in
     const cached = await this.redisService.setJson(
-      `youtube:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('youtube', accountId),
       accessTokenInfo,
     )
     const persistResult = await this.oauth2CredentialRepository.upsertOne(
@@ -209,7 +213,7 @@ export class YoutubeService extends PlatformBaseService {
 
   private async getOAuth2Credential(accountId: string): Promise<any | null> {
     let credential = await this.redisService.getJson<any>(
-      `youtube:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('youtube', accountId),
     )
     if (!credential || !credential.refresh_token) {
       const oauth2Credential = await this.oauth2CredentialRepository.getOne(
@@ -237,7 +241,7 @@ export class YoutubeService extends PlatformBaseService {
    */
   async setAccessToken(taskId: string, code: string) {
     const authTaskState = await this.redisService.getJson<AuthTaskInfo>(
-      `youtube:authTask:${taskId}`,
+      ChannelRedisKeys.authTask('youtube', taskId),
     )
     if (!authTaskState || authTaskState.state !== taskId)
       return { status: 0, message: '无效的任务ID' }
@@ -287,7 +291,7 @@ export class YoutubeService extends PlatformBaseService {
       authTaskState.type = 'youtube'
       authTaskState.account = accountInfo.id
       await this.redisService.setJson(
-        `youtube:authTask:${taskId}`,
+        ChannelRedisKeys.authTask('youtube', taskId),
         authTaskState,
         60 * 3,
       )
@@ -296,6 +300,13 @@ export class YoutubeService extends PlatformBaseService {
         status: 1,
         message: '授权成功',
         accountId: accountInfo.id,
+        nickname: accountInfo.nickname,
+        avatar: accountInfo.avatar,
+        platformUid: accountInfo.uid,
+        accountType: AccountType.YOUTUBE,
+        callbackUrl: authTaskState.callbackUrl,
+        callbackMethod: authTaskState.callbackMethod,
+        taskId,
       }
     }
     catch (error) {
@@ -428,6 +439,7 @@ export class YoutubeService extends PlatformBaseService {
    * @returns 访问令牌
    */
   async getUserAccessToken(accountId: string) {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential || !credential.access_token) {
       this.logger.error(`youtube credential not found for accountId: ${accountId}`)
@@ -490,7 +502,12 @@ export class YoutubeService extends PlatformBaseService {
     mail: string,
     prefix?: string,
     spaceId?: string,
+    callbackUrl?: string,
+    callbackMethod?: 'GET' | 'POST',
   ) {
+    if (!config.channel.youtube.id && config.relay) {
+      throw new RelayAuthException()
+    }
     const state = uuidv4()
     // 指定YouTube特定的scope
     const youtubeScopes = [
@@ -527,8 +544,8 @@ export class YoutubeService extends PlatformBaseService {
     const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth')
     authUrl.search = params.toString()
     const rRes = await this.redisService.setJson(
-      `youtube:authTask:${state}`,
-      { state, status: 0, userId, mail, spaceId },
+      ChannelRedisKeys.authTask('youtube', state),
+      { state, status: 0, userId, mail, spaceId, callbackUrl, callbackMethod },
       60 * 5,
     )
     this.logger.log(`youtubeService getAuthUrl rRes: ${rRes}`)
@@ -551,7 +568,7 @@ export class YoutubeService extends PlatformBaseService {
       state: string
       status: number
       accountId?: string
-    }>(`youtube:authTask:${taskId}`)
+    }>(ChannelRedisKeys.authTask('youtube', taskId))
     return data
   }
 

@@ -6,12 +6,12 @@ import {
   Param,
   Post,
   Query,
-  Render,
   Res,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { AccountType, ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
+import { Response } from 'express'
 import { DouyinWebhookSchema } from '../../publishing/douyin-webhook.dto'
 import { PublishingService } from '../../publishing/publishing.service'
 import { WebhookEvent } from './common'
@@ -107,27 +107,40 @@ export class DouyinController {
   async getAuthUrl(
     @GetToken() token: TokenInfo,
     @Query('spaceId') spaceId?: string,
+    @Query('callbackUrl') callbackUrl?: string,
+    @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
     return this.douyinService.createAuthTask({
       userId: token.id,
       spaceId: spaceId || '',
+      callbackUrl,
+      callbackMethod,
     })
   }
 
   @Public()
   @Get('auth/back')
-  @Render('auth/back')
   async getAccessToken(
     @Query()
     query: {
       code: string
       state: string
     },
+    @Res() res: Response,
   ) {
-    return this.douyinService.createAccountAndSetAccessToken(
+    const result = await this.douyinService.createAccountAndSetAccessToken(
       query.state,
       { code: query.code, state: query.state },
     )
+
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', {
+        ...result,
+        autoPostCallback: true,
+      })
+    }
+
+    return res.render('auth/back', result)
   }
 
   @ApiDoc({

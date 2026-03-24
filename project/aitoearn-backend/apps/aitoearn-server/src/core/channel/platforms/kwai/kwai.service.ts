@@ -4,6 +4,9 @@ import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
+import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { KwaiOAuthCredentialsResponse } from '../../libs/kwai/kwai.interfaces'
 import { KwaiApiService } from '../../libs/kwai/kwai.service'
 import { BilibiliAuthInfo } from '../../platforms/bilibili/common'
@@ -27,7 +30,7 @@ export class KwaiService extends PlatformBaseService {
 
   private async getOAuth2Credential(accountId: string): Promise<KwaiOAuthCredentialsResponse | null> {
     let credential = await this.redisService.getJson<KwaiOAuthCredentialsResponse>(
-      `${this.platform.toLowerCase()}:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('kwai', accountId),
     )
     if (!credential) {
       const oauth2Credential = await this.oauth2CredentialRepository.getOne(
@@ -69,6 +72,7 @@ export class KwaiService extends PlatformBaseService {
    * @param accountId
    */
   async getAccessTokenAndRefresh(accountId: string) {
+    await this.ensureLocalAccount(accountId)
     const accessTokenInfo = await this.getOAuth2Credential(accountId)
     if (!accessTokenInfo) {
       throw new PlatformAuthExpiredException(this.platform, accountId)
@@ -101,10 +105,6 @@ export class KwaiService extends PlatformBaseService {
     return newAccountToken.access_token
   }
 
-  private getAuthDataCacheKey(taskId: string) {
-    return `channel:kwai:authTask:${taskId}`
-  }
-
   /**
    * 创建用户授权任务
    * @returns
@@ -116,16 +116,21 @@ export class KwaiService extends PlatformBaseService {
       userId: string
       type: 'h5' | 'pc'
       spaceId: string
+      callbackUrl?: string
+      callbackMethod?: 'GET' | 'POST'
     },
     options?: {
       transpond?: string
       accountAddPath?: string
     },
   ) {
+    if (!config.channel.kwai.id && config.relay) {
+      throw new RelayAuthException()
+    }
     const taskId = uuidv4()
     const urlInfo = this.kwaiApiService.getAuthPage(taskId, data.type)
     const rRes = await this.redisService.setJson(
-      this.getAuthDataCacheKey(taskId),
+      ChannelRedisKeys.authTask('kwai', taskId),
       {
         taskId,
         spaceId: data.spaceId,
@@ -136,6 +141,8 @@ export class KwaiService extends PlatformBaseService {
           userId: data.userId,
         },
         status: 0,
+        callbackUrl: data.callbackUrl,
+        callbackMethod: data.callbackMethod,
       },
       60 * 5,
     )
@@ -149,7 +156,7 @@ export class KwaiService extends PlatformBaseService {
   }
 
   async createAccountAndSetAccessToken(taskId: string, data: { code: string, state: string }) {
-    const cacheKey = this.getAuthDataCacheKey(taskId)
+    const cacheKey = ChannelRedisKeys.authTask('kwai', taskId)
     const { code } = data
     const taskInfo = await this.redisService.getJson<AuthTaskInfo<BilibiliAuthInfo>>(
       cacheKey,
@@ -174,7 +181,18 @@ export class KwaiService extends PlatformBaseService {
           taskInfo,
           60 * 3,
         )
-        return { status: 1, message: '添加账号成功', accountId: account.id }
+        return {
+          status: 1,
+          message: '添加账号成功',
+          accountId: account.id,
+          nickname: account.nickname,
+          avatar: account.avatar,
+          platformUid: account.uid,
+          accountType: AccountType.KWAI,
+          callbackUrl: taskInfo.callbackUrl,
+          callbackMethod: taskInfo.callbackMethod,
+          taskId,
+        }
       }
       else {
         return { status: 0, message: '添加账号失败' }
@@ -191,7 +209,7 @@ export class KwaiService extends PlatformBaseService {
       state: string
       status: number
       accountId?: string
-    }>(this.getAuthDataCacheKey(taskId))
+    }>(ChannelRedisKeys.authTask('kwai', taskId))
     this.logger.log({
       path: 'debug----getAuthInfo',
       taskInfo,
@@ -203,7 +221,7 @@ export class KwaiService extends PlatformBaseService {
     accessTokenInfo.expires_in = accessTokenInfo.expires_in + getCurrentTimestamp() - KWAI_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     accessTokenInfo.refresh_token_expires_in = accessTokenInfo.refresh_token_expires_in + getCurrentTimestamp() - KWAI_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     const cached = await this.redisService.setJson(
-      `${this.platform.toLowerCase()}:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('kwai', accountId),
       accessTokenInfo,
     )
     const persistResult = await this.oauth2CredentialRepository.upsertOne(

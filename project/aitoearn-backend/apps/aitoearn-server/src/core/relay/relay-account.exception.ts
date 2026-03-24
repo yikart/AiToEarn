@@ -1,4 +1,4 @@
-export class RelayRequiredException extends Error {
+export class RelayAccountException extends Error {
   constructor(
     public readonly relayAccountRef: string,
     public readonly originalAccountId: string,

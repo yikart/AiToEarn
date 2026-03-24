@@ -7,13 +7,16 @@ import { isAxiosError } from 'axios'
 import { v4 as uuidV4 } from 'uuid'
 import { chunkedDownloadFile, fileUrlToBlob, getFileSizeFromUrl, getFileTypeFromUrl } from '../../../../common/utils/file.util'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
+import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { XMediaCategory, XMediaType } from '../../libs/twitter/twitter.enum'
 import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '../../libs/twitter/twitter.service'
 import { PlatformBaseService } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
 import { PlatformAuthExpiredException } from '../platform.exception'
-import { TWITTER_TIME_CONSTANTS, TwitterRedisKeys } from './constants'
+import { TWITTER_TIME_CONSTANTS } from './constants'
 import { UserTimelineDto } from './twitter.dto'
 import { TwitterOAuthTaskInfo } from './twitter.interfaces'
 
@@ -61,7 +64,7 @@ export class TwitterService extends PlatformBaseService {
   private async saveOAuthCredential(accountId: string, accessTokenInfo: TwitterOAuthCredential) {
     accessTokenInfo.expires_in = accessTokenInfo.expires_in + getCurrentTimestamp() - TWITTER_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     const cached = await this.redisService.setJson(
-      TwitterRedisKeys.getAccessTokenKey(accountId),
+      ChannelRedisKeys.accessToken('twitter', accountId),
       accessTokenInfo,
     )
     const persistResult = await this.oauth2CredentialRepository.upsertOne(
@@ -78,7 +81,7 @@ export class TwitterService extends PlatformBaseService {
 
   private async getOAuth2Credential(accountId: string): Promise<TwitterOAuthCredential | null> {
     let credential = await this.redisService.getJson<TwitterOAuthCredential>(
-      TwitterRedisKeys.getAccessTokenKey(accountId),
+      ChannelRedisKeys.accessToken('twitter', accountId),
     )
     if (!credential) {
       const oauth2Credential = await this.oauth2CredentialRepository.getOne(
@@ -100,6 +103,7 @@ export class TwitterService extends PlatformBaseService {
   private async authorize(
     accountId: string,
   ): Promise<TwitterOAuthCredential> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       throw new PlatformAuthExpiredException(this.platform, accountId)
@@ -148,19 +152,38 @@ export class TwitterService extends PlatformBaseService {
     }
   }
 
-  async generateAuthorizeURL(userId: string, scopes?: string[], spaceId = '') {
+  async generateAuthorizeURL(data: {
+    userId: string
+    scopes?: string[]
+    spaceId?: string
+    callbackUrl?: string
+    callbackMethod?: 'GET' | 'POST'
+  }) {
+    if (!config.channel.twitter.clientId && config.relay) {
+      throw new RelayAuthException()
+    }
     const taskId = uuidV4()
     const codeVerifier = randomBytes(64).toString('hex')
     const codeChallenge = createHash('sha256')
       .update(codeVerifier)
       .digest('base64url')
     const state = randomBytes(32).toString('hex')
+    const authTaskInfo: TwitterOAuthTaskInfo = {
+      state,
+      status: 0,
+      userId: data.userId,
+      codeVerifier,
+      taskId,
+      spaceId: data.spaceId,
+      callbackUrl: data.callbackUrl,
+      callbackMethod: data.callbackMethod,
+    }
     const success = await this.redisService.setJson(
-      TwitterRedisKeys.getAuthTaskKey(state),
-      { state, status: 0, userId, codeVerifier, taskId, spaceId },
+      ChannelRedisKeys.authTask('twitter', state),
+      authTaskInfo,
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
     )
-    scopes = scopes || this.defaultScopes
+    const scopes = data.scopes || this.defaultScopes
     const authorizeURL = this.twitterApiService.generateAuthorizeURL(
       scopes,
       state,
@@ -171,7 +194,7 @@ export class TwitterService extends PlatformBaseService {
 
   async getOAuth2TaskInfo(state: string) {
     return await this.redisService.getJson<TwitterOAuthTaskInfo>(
-      TwitterRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('twitter', state),
     )
   }
 
@@ -192,7 +215,7 @@ export class TwitterService extends PlatformBaseService {
 
     // 延长授权任务时间
     void this.redisService.expire(
-      TwitterRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('twitter', state),
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
 
@@ -281,6 +304,13 @@ export class TwitterService extends PlatformBaseService {
       status: 1,
       message: '授权成功',
       accountId: accountInfo.id,
+      callbackUrl: authTaskInfo.callbackUrl,
+      callbackMethod: authTaskInfo.callbackMethod,
+      taskId: state,
+      nickname: userRes.data.name,
+      avatar: userRes.data.profile_image_url,
+      platformUid: userRes.data.id,
+      accountType: AccountType.TWITTER,
     }
   }
 
@@ -293,7 +323,7 @@ export class TwitterService extends PlatformBaseService {
     authTaskInfo.accountId = accountId
 
     return await this.redisService.setJson(
-      TwitterRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('twitter', state),
       authTaskInfo,
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
@@ -310,7 +340,7 @@ export class TwitterService extends PlatformBaseService {
     )
     if (result.revoked) {
       await this.redisService.del(
-        TwitterRedisKeys.getAccessTokenKey(accountId),
+        ChannelRedisKeys.accessToken('twitter', accountId),
       )
       return true
     }

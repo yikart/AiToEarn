@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { AccountStatus } from '@yikart/mongodb'
 import { AccountService } from '../account/account.service'
+import { RelayAccountException } from '../relay/relay-account.exception'
 import { PlatformService } from './platforms/platforms.service'
 
 @Injectable()
@@ -29,6 +30,9 @@ export class ChannelService {
     const account = await this.accountService.getAccountById(accountId)
     if (!account || account.userId !== userId) {
       throw new AppException(ResponseCode.AccountNotFound)
+    }
+    if (account.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
     }
     try {
       const res = await this.platformsService.deletePost(accountId, account.type, postId)

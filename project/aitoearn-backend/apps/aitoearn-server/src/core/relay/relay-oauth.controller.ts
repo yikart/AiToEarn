@@ -1,8 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common'
+import { Body, Controller, Post, Query, Render } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
-import { ApiDoc } from '@yikart/common'
+import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import { AccountStatus } from '@yikart/mongodb'
+import { RedisService } from '@yikart/redis'
+import { ChannelRedisKeys } from '../channel/channel.constants'
 import { ChannelAccountService } from '../channel/platforms/channel-account.service'
 import { RelayCallbackDto } from './relay-callback.dto'
 
@@ -11,20 +13,29 @@ import { RelayCallbackDto } from './relay-callback.dto'
 export class RelayOAuthController {
   constructor(
     private readonly channelAccountService: ChannelAccountService,
+    private readonly redisService: RedisService,
   ) {}
 
   @Public()
   @ApiDoc({
     summary: 'Relay OAuth 回调',
-    description: '接收官方服务器 OAuth 完成后 POST 过来的账号信息，在本地创建 relay 账号',
+    description: '接收官方服务器 OAuth 完成后浏览器 form POST 过来的账号信息，在本地创建 relay 账号',
     body: RelayCallbackDto.schema,
   })
   @Post('/relay-callback')
-  async handleRelayCallback(@Body() body: RelayCallbackDto) {
+  @Render('auth/back')
+  async handleRelayCallback(
+    @Body() body: RelayCallbackDto,
+    @Query('userId') userId: string,
+  ) {
+    if (!userId) {
+      throw new AppException(ResponseCode.UserNotFound)
+    }
+
     const account = await this.channelAccountService.createAccount(
       { type: body.accountType, uid: body.platformUid },
       {
-        userId: body.userId,
+        userId,
         type: body.accountType,
         uid: body.platformUid,
         nickname: body.nickname,
@@ -33,6 +44,24 @@ export class RelayOAuthController {
         relayAccountRef: body.relayAccountRef,
       },
     )
-    return { accountId: account?.id }
+
+    if (body.taskId) {
+      const authTaskPlatform = this.getAuthTaskPlatform(body.accountType)
+      await this.redisService.setJson(
+        ChannelRedisKeys.authTask(authTaskPlatform, body.taskId),
+        { status: 1, accountId: account?.id },
+        600,
+      )
+    }
+
+    return { status: 1, message: '授权成功', accountId: account?.id }
+  }
+
+  private getAuthTaskPlatform(accountType: string): string {
+    const META_PLATFORMS = ['facebook', 'instagram', 'threads', 'linkedin']
+    if (META_PLATFORMS.includes(accountType)) {
+      return 'meta'
+    }
+    return accountType
   }
 }

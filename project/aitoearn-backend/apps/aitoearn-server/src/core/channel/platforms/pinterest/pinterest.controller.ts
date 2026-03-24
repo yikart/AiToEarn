@@ -122,8 +122,10 @@ export class PinterestController {
   async getAuth(
     @GetToken() token: TokenInfo,
     @Query('spaceId') spaceId?: string,
+    @Query('callbackUrl') callbackUrl?: string,
+    @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
-    return await this.pinterestService.getAuth(token.id, spaceId || '')
+    return await this.pinterestService.getAuth(token.id, spaceId || '', callbackUrl, callbackMethod)
   }
 
   @ApiDoc({
@@ -144,6 +146,9 @@ export class PinterestController {
   @Get('/authWebhook')
   async authWebhook(@Query() query: { code?: string, state?: string }, @Res() res: Response) {
     const result = await this.pinterestService.authWebhook(query)
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', { ...result, autoPostCallback: true })
+    }
     return res.render('auth/back', result)
   }
 

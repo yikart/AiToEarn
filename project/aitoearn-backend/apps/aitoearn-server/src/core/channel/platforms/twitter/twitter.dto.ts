@@ -4,6 +4,8 @@ import z from 'zod'
 const GetAuthUrlSchema = z.object({
   scopes: z.array(z.string()).optional().describe('OAuth 权限范围'),
   spaceId: z.string().optional().describe('空间 ID'),
+  callbackUrl: z.string().url().optional().describe('OAuth 完成后回调地址'),
+  callbackMethod: z.enum(['GET', 'POST']).optional().describe('回调方式，默认 GET'),
 })
 export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 
