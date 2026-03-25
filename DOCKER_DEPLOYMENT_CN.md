@@ -547,20 +547,23 @@ AI 服务的完整配置文件，挂载到 `aitoearn-ai:/app/config.js`。
 
 #### Relay 配置（可选）
 
-Relay 功能允许通过中继服务器转发请求。以下环境变量均为可选：
+Relay 允许自部署实例通过官方 AiToEarn 中继服务器连接社交媒体平台账号，无需自行配置各平台的 OAuth 凭据。
+
+**配置步骤：**
+
+1. 在 [https://aitoearn.ai](https://aitoearn.ai) 的 **设置 → API Key** 中创建一个 API Key。
+2. 在 `docker-compose.yml` 的 `aitoearn-server` 服务中配置：
 
 | 变量 | 说明 | 默认值 |
 |------|------|--------|
-| `RELAY_SERVER_URL` | Relay 服务器地址 | 无（不启用） |
-| `RELAY_API_KEY` | Relay API 密钥 | 无 |
-| `RELAY_CALLBACK_URL` | Relay 回调地址 | 无 |
-
-在 `docker-compose.yml` 的 `aitoearn-server` 服务中配置：
+| `RELAY_SERVER_URL` | Relay 服务器地址 | `https://aitoearn.ai/api` |
+| `RELAY_API_KEY` | 你的 API Key（第 1 步创建） | 无 |
+| `RELAY_CALLBACK_URL` | 本地回调地址，用于接收中继结果 | `http://127.0.0.1:8080/api/plat/relay-callback` |
 
 ```yaml
-RELAY_SERVER_URL: https://your-relay-server.com
-RELAY_API_KEY: your-relay-api-key
-RELAY_CALLBACK_URL: https://your-domain.com/api/relay/callback
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: 你的API-Key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
 ```
 
 ## 常用命令

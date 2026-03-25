@@ -111,7 +111,7 @@ services:
 
   aitoearn-ai:
     image: aitoearn/aitoearn-ai:latest
-    pull_policy: ${PULL_POLICY:-never}
+    pull_policy: always
     container_name: aitoearn-ai
     restart: unless-stopped
     depends_on:
@@ -168,7 +168,7 @@ services:
 
   aitoearn-server:
     image: aitoearn/aitoearn-server:latest
-    pull_policy: ${PULL_POLICY:-never}
+    pull_policy: always
     container_name: aitoearn-server
     restart: unless-stopped
     depends_on:
@@ -216,7 +216,6 @@ services:
       KWAI_CLIENT_SECRET: ""
       PINTEREST_CLIENT_ID: ""
       PINTEREST_CLIENT_SECRET: ""
-      PINTEREST_TEST_AUTHORIZATION: ""
       TIKTOK_CLIENT_ID: ""
       TIKTOK_CLIENT_SECRET: ""
       TWITTER_CLIENT_ID: ""
@@ -246,7 +245,7 @@ services:
 
       # Relay (optional)
       RELAY_SERVER_URL: https://aitoearn.ai/api
-      RELAY_API_KEY: ak_qnFAC9zMvRiT1U7LcIlnukhtAnCGQpCP2ZWGiQewbO7dfrPq
+      RELAY_API_KEY: ""
       RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
@@ -257,7 +256,7 @@ services:
 
   aitoearn-web:
     image: aitoearn/aitoearn-web:latest
-    pull_policy: ${PULL_POLICY:-never}
+    pull_policy: always
     container_name: aitoearn-web
     restart: unless-stopped
     depends_on:

@@ -547,20 +547,23 @@ To switch email providers (e.g., SendGrid, Mailgun), modify the `mail.transport`
 
 #### Relay Configuration (Optional)
 
-Relay allows forwarding requests through a relay server. All of the following environment variables are optional:
+Relay allows self-hosted instances to connect social media platform accounts via the official AiToEarn relay server, without needing to configure OAuth credentials for each platform.
+
+**Setup:**
+
+1. Go to **Settings → API Key** at [https://aitoearn.ai](https://aitoearn.ai) and create an API Key.
+2. Configure in the `aitoearn-server` service of `docker-compose.yml`:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `RELAY_SERVER_URL` | Relay server URL | None (disabled) |
-| `RELAY_API_KEY` | Relay API key | None |
-| `RELAY_CALLBACK_URL` | Relay callback URL | None |
-
-Configure in the `aitoearn-server` service of `docker-compose.yml`:
+| `RELAY_SERVER_URL` | Relay server URL | `https://aitoearn.ai/api` |
+| `RELAY_API_KEY` | Your API Key (created in step 1) | None |
+| `RELAY_CALLBACK_URL` | Local callback URL for receiving relay results | `http://127.0.0.1:8080/api/plat/relay-callback` |
 
 ```yaml
-RELAY_SERVER_URL: https://your-relay-server.com
-RELAY_API_KEY: your-relay-api-key
-RELAY_CALLBACK_URL: https://your-domain.com/api/relay/callback
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: your-api-key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
 ```
 
 ## Common Commands

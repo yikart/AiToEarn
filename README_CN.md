@@ -230,8 +230,62 @@ Electron 项目为 AiToEarn 提供桌面客户端。
 
 ## MCP 服务
 
-- [ModelScope MCP Servers](https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn)
-- [NPM Packages](https://www.npmjs.com/~aitoearn?activeTab=packages)
+AiToEarn 提供 MCP（Model Context Protocol）服务端点，让 AI 助手（如 Claude、Cursor 等）能够以编程方式与您的 AiToEarn 实例交互——包括发布内容、管理账号等。
+
+### 端点
+
+AiToEarn 支持两种 MCP 传输协议：
+
+| 传输方式 | 端点 | 说明 |
+|---------|------|------|
+| **HTTP** | `{baseUrl}/api/unified/mcp` | 推荐。基于 HTTP 的无状态 MCP 传输 |
+| **SSE** | `{baseUrl}/api/unified/sse` | 基于 Server-Sent Events 的长连接传输 |
+
+### 快速配置
+
+1. 在 AiToEarn Web 界面中进入 **设置 → API Key**，创建一个 API Key。
+2. 在你的 AI 助手中配置 MCP 客户端连接到上述端点，通过 `x-api-key` header 传入你的 API Key。
+
+**以 Claude Desktop 为例**（`claude_desktop_config.json`）：
+
+```json
+{
+  "mcpServers": {
+    "aitoearn": {
+      "type": "http",
+      "url": "https://aitoearn.ai/api/unified/mcp",
+      "headers": {
+        "x-api-key": "你的API-Key"
+      }
+    }
+  }
+}
+```
+
+> 如果是自部署实例，将 URL 替换为你自己的地址（如 `http://localhost:8080/api/unified/mcp`）。
+
+## Relay 中继服务
+
+Relay 允许自部署的 AiToEarn 实例通过官方中继服务器（`https://aitoearn.ai`）连接社交媒体平台账号，无需自行配置各平台的 OAuth 凭据。
+
+### 工作原理
+
+1. 您的自部署实例通过中继服务器发送 OAuth 请求。
+2. 用户通过中继服务器的 OAuth 凭据在平台上授权。
+3. 中继服务器通过回调 URL 将授权结果转发回您的实例。
+
+### 配置步骤
+
+1. 在 [https://aitoearn.ai](https://aitoearn.ai) 的 **设置 → API Key** 中创建一个 API Key。
+2. 在 `docker-compose.yml` 的 `aitoearn-server` 服务中配置以下环境变量：
+
+```yaml
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: 你的API-Key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+```
+
+3. 重启服务：`docker compose restart aitoearn-server`
 
 ## 高级设置
 
