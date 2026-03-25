@@ -280,6 +280,21 @@ AiToEarn exposes two MCP transport protocols:
 
 > For self-hosted instances, replace the URL with your own (e.g., `http://localhost:8080/api/unified/mcp`).
 
+**Example for OpenClaw**:
+
+**Method 1**: Send the following message to OpenClaw:
+
+> Help me use mcporter to install this MCP server: `https://aitoearn.ai/api/unified/mcp`, authentication header is `x-api-key: your-api-key`
+
+OpenClaw will handle the rest automatically.
+
+**Method 2**: Install via [mcporter](https://github.com/steipete/mcporter):
+
+```bash
+npm install -g mcporter
+mcporter config add aitoearn --url "https://aitoearn.ai/api/unified/mcp" --header "x-api-key=your-api-key"
+```
+
 ## Relay Service
 
 Relay enables self-hosted AiToEarn instances to connect social media platform accounts via the official AiToEarn relay server (`https://aitoearn.ai`), without needing to configure OAuth credentials for each platform yourself.

@@ -267,6 +267,21 @@ AiToEarn 支持两种 MCP 传输协议：
 
 > 如果是自部署实例，将 URL 替换为你自己的地址（如 `http://localhost:8080/api/unified/mcp`）。
 
+**OpenClaw（龙虾）配置示例**：
+
+**方式一**：发送以下消息给龙虾：
+
+> 使用 mcporter 帮我安装这个 MCP 服务：`https://aitoearn.ai/api/unified/mcp`，认证 header 是 `x-api-key: 你的API-Key`
+
+龙虾会自动完成安装配置。
+
+**方式二**：通过 [mcporter](https://github.com/steipete/mcporter) 安装：
+
+```bash
+npm install -g mcporter
+mcporter config add aitoearn --url "https://aitoearn.ai/api/unified/mcp" --header "x-api-key=你的API-Key"
+```
+
 ## Relay 中继服务
 
 Relay 允许自部署的 AiToEarn 实例通过官方中继服务器（`https://aitoearn.ai`）连接社交媒体平台账号，无需自行配置各平台的 OAuth 凭据。
