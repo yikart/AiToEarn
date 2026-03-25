@@ -186,9 +186,12 @@ Docker 成功启动后，您可以通过以下地址访问服务：
 ```bash
 cd project/aitoearn-backend
 pnpm install
-npx nx serve aitoearn-ai
+# 复制配置文件用于本地开发
+cp apps/aitoearn-ai/config/config.js apps/aitoearn-ai/config/local.config.js
+cp apps/aitoearn-server/config/config.js apps/aitoearn-server/config/local.config.js
+pnpm nx serve aitoearn-ai
 # 在另一个终端
-npx nx serve aitoearn-server
+pnpm nx serve aitoearn-server
 ```
 
 #### 2. 启动前端 `aitoearn-web`
